@@ -594,6 +594,12 @@ public class BiffViewer {
             case TickRecord.sid:
                 retval = new TickRecord(rectype, size, data);
                 break;
+            case SeriesTextRecord.sid:
+                retval = new SeriesTextRecord(rectype, size, data);
+                break;
+            case ObjectLinkRecord.sid:
+                retval = new ObjectLinkRecord(rectype, size, data);
+                break;
                 
                 
             default:
