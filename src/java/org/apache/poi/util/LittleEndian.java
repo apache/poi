@@ -475,22 +475,9 @@ public class LittleEndian
         return getLong(readFromStream(stream, LONG_SIZE));
     }
 
-
-    private final static byte[] _short_buffer = new byte[SHORT_SIZE];
-    private final static byte[] _int_buffer = new byte[INT_SIZE];
-    private final static byte[] _long_buffer = new byte[LONG_SIZE];
-
-
     /**
      *  Read the appropriate number of bytes from the stream and return them to
      *  the caller. <p>
-     *
-     *  It should be noted that, in an attempt to improve system performance and
-     *  to prevent a transient explosion of discarded byte arrays to be garbage
-     *  collected, static byte arrays are employed for the standard cases of
-     *  reading a short, an int, or a long. <p>
-     *
-     *  <b>THIS INTRODUCES A RISK FOR THREADED OPERATIONS!</b> <p>
      *
      *  However, for the purposes of the POI project, this risk is deemed
      *  negligible. It is, however, so noted.
@@ -510,23 +497,8 @@ public class LittleEndian
     public static byte[] readFromStream(final InputStream stream,
             final int size)
              throws IOException, BufferUnderrunException {
-        byte[] buffer = null;
+        byte[] buffer = new byte[size];
 
-        switch (size) {
-
-            case SHORT_SIZE:
-                buffer = _short_buffer;
-                break;
-            case INT_SIZE:
-                buffer = _int_buffer;
-                break;
-            case LONG_SIZE:
-                buffer = _long_buffer;
-                break;
-            default:
-                buffer = new byte[size];
-                break;
-        }
         int count = stream.read(buffer);
 
         if (count == -1) {
