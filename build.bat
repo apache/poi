@@ -4,6 +4,7 @@ set OLD_ANT_HOME=%ANT_HOME%
 set ANT_HOME=tools\antipede
 
 set OLD_CLASSPATH=%CLASSPATH%
+set CLASSPATH=
 for %%i in (.\lib\endorsed\*.jar) do call appendcp.bat %%i
 
 echo Using classpath: "%CLASSPATH%"
