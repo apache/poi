@@ -87,6 +87,7 @@ public abstract class FormattedDiskPage
     public FormattedDiskPage(byte[] fkp)
     {
         _crun = LittleEndian.getUnsignedByte(fkp, 511);
+        _fkp = fkp;
     }
     /**
      * Used to get a text offset corresponding to a grpprl in this fkp.

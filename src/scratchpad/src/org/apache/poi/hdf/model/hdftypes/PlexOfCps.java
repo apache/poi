@@ -81,8 +81,11 @@ public class PlexOfCps
     public PlexOfCps(int size, int sizeOfStruct)
     {
         _count = (size - 4)/(4 + sizeOfStruct);
-        _offset = offset;
         _sizeOfStruct = sizeOfStruct;
+    }
+    public int getIntOffset(int index)
+    {
+      return index * 4;
     }
     /**
      * returns the number of data structures in this PlexOfCps.

@@ -64,12 +64,16 @@ package org.apache.poi.hdf.model;
 
 import java.util.ArrayList;
 import java.io.InputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.TreeSet;
 
 
 import org.apache.poi.hdf.model.hdftypes.*;
+import org.apache.poi.hdf.event.HDFLowLevelParsingListener;
+import org.apache.poi.hdf.model.util.BTreeSet;
+import org.apache.poi.hdf.model.util.ParsingState;
 
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSDocument;
@@ -84,7 +88,7 @@ import org.apache.poi.util.LittleEndian;
  * that represent the data.
  * @author  andy
  */
-public class HDFObjectFactory
+public class HDFObjectFactory implements HDFLowLevelParsingListener
 {
 
     /** OLE stuff*/
@@ -99,16 +103,22 @@ public class HDFObjectFactory
     private ListTables _listTables;
     /** Font info */
     private FontTable _fonts;
+    /** Used to set up the object model*/
+    private HDFLowLevelParsingListener _listener;
+
+    private ParsingState _charParsingState;
+
+    private ParsingState _parParsingState;
 
     /** text pieces */
     //BTreeSet _text = new BTreeSet();
-    TreeSet _text = new TreeSet();
+    BTreeSet _text = new BTreeSet();
     /** document sections */
-    TreeSet _sections = new TreeSet();
+    BTreeSet _sections = new BTreeSet();
     /** document paragraphs */
-    TreeSet _paragraphs = new TreeSet();
+    BTreeSet _paragraphs = new BTreeSet();
     /** document character runs */
-    TreeSet _characterRuns = new TreeSet();
+    BTreeSet _characterRuns = new BTreeSet();
 
     /** main document stream buffer*/
     byte[] _mainDocument;
@@ -116,14 +126,34 @@ public class HDFObjectFactory
     byte[] _tableBuffer;
 
 
-
+    public static void main(String args[])
+    {
+      try
+      {
+        HDFObjectFactory f = new HDFObjectFactory(new FileInputStream("c:\\test.doc"));
+        int k = 0;
+      }
+      catch(Throwable t)
+      {
+        t.printStackTrace();
+      }
+    }
     /** Creates a new instance of HDFObjectFactory
      *
      * @param istream The InputStream that is the Word document
      *
      */
-    public HDFObjectFactory(InputStream istream) throws IOException
+    protected HDFObjectFactory(InputStream istream, HDFLowLevelParsingListener l) throws IOException
     {
+        if (l == null)
+        {
+            _listener = this;
+        }
+        else
+        {
+            _listener = l;
+        }
+
         //do Ole stuff
         _filesystem = new POIFSFileSystem(istream);
 
@@ -139,6 +169,20 @@ public class HDFObjectFactory
         initTextPieces();
         initFormattingProperties();
 
+
+    }
+
+
+
+
+    /** Creates a new instance of HDFObjectFactory
+     *
+     * @param istream The InputStream that is the Word document
+     *
+     */
+    public HDFObjectFactory(InputStream istream) throws IOException
+    {
+        this(istream, null);
     }
 
     public static List getTypes(InputStream istream) throws IOException
@@ -156,14 +200,31 @@ public class HDFObjectFactory
 
         FileInformationBlock fib = new FileInformationBlock(mainDocument);
 
-       // initTableStream();
-       // initTextPieces();
-       // initFormattingProperties();
 
         results.add(fib);
         return results;
     }
 
+    public void document(DocumentProperties dop)
+    {
+      _dop = dop;
+    }
+    public void section(SepxNode sepx)
+    {
+      _sections.add(sepx);
+    }
+    public void paragraph(PapxNode papx)
+    {
+      _paragraphs.add(papx);
+    }
+    public void characterRun(ChpxNode chpx)
+    {
+      _characterRuns.add(chpx);
+    }
+    public void text(TextPiece t)
+    {
+      _text.add(t);
+    }
     /**
      * Initializes the table stream
      *
@@ -234,7 +295,7 @@ public class HDFObjectFactory
                                 LittleEndian.getInt(_tableBuffer, pos + (x * 4));
 
                 TextPiece piece = new TextPiece(filePos, totLength, unicode);
-                _text.add(piece);
+                _listener.text(piece);
 
             }
 
@@ -252,18 +313,64 @@ public class HDFObjectFactory
 
         initDocumentProperties();
         initSectionProperties();
-        initCharacterProperties();
+        //initCharacterProperties();
         initParagraphProperties();
+    }
+    private void initCharacterProperties(int charOffset, PlexOfCps charPlcf, int start, int end)
+    {
+    }
+    private void initParagraphProperties(int parOffset, PlexOfCps parPlcf, int end)
+    {
+        //Initialize character property stuff
+        int currentParPage = _parParsingState.getCurrentPage();
+        int parPlcfLen = parPlcf.length();
+        int currentPageIndex = _parParsingState.getCurrentPageIndex();
+        //byte[] fkp = new byte[512];
+        //System.arraycopy(_mainDocument, (currentCharPage * 512), fkp, 0, 512);
+        FormattedDiskPage fkp = _parParsingState.getFkp();
+        int currentPapxIndex = _parParsingState.getCurrentPropIndex();
+        int currentArraySize = fkp.size();
+
+        do
+        {
+          if (currentPapxIndex < currentArraySize)
+          {
+            int parStart = fkp.getStart(currentPapxIndex);
+            int parEnd = fkp.getEnd(currentPapxIndex);
+            byte[] papx = fkp.getGrpprl(currentPapxIndex);
+            _listener.paragraph(new PapxNode(parStart, parEnd, papx));
+            if (parEnd < end)
+            {
+              currentPapxIndex++;
+            }
+            else
+            {
+              //save the state
+              _parParsingState.setState(currentParPage, currentPageIndex, fkp, currentPapxIndex);
+              break;
+            }
+          }
+          else
+          {
+            currentParPage = LittleEndian.getInt(_tableBuffer, parOffset + parPlcf.getStructOffset(++currentPageIndex));
+            byte byteFkp[] = new byte[512];
+            System.arraycopy(_mainDocument, (currentParPage * 512), fkp, 0, 512);
+            fkp = new PAPFormattedDiskPage(byteFkp);
+            currentPapxIndex = 0;
+            currentArraySize = fkp.size();
+          }
+        }
+        while(currentParPage <= parPlcfLen + 1);
     }
     /**
      * initializes the CharacterProperties BTree
      */
-    private void initCharacterProperties()
+    /*private void initCharacterProperties()
     {
         int charOffset = _fib.getFcPlcfbteChpx();
         int charPlcSize = _fib.getLcbPlcfbteChpx();
 
-        int arraySize = (charPlcSize - 4)/8;
+        //int arraySize = (charPlcSize - 4)/8;
 
         //first we must go through the bin table and find the fkps
         for(int x = 0; x < arraySize; x++)
@@ -302,46 +409,90 @@ public class HDFObjectFactory
             }
 
         }
-    }
+    }*/
     /**
      * intializes the Paragraph Properties BTree
      */
     private void initParagraphProperties()
     {
-        //find paragraphs
+        //paragraphs
         int parOffset = _fib.getFcPlcfbtePapx();
         int parPlcSize = _fib.getLcbPlcfbtePapx();
 
-        int arraySize = (parPlcSize - 4)/8;
+        //characters
+        int charOffset = _fib.getFcPlcfbteChpx();
+        int charPlcSize = _fib.getLcbPlcfbteChpx();
+
+        PlexOfCps charPlcf = new PlexOfCps(charPlcSize, 4);
+        PlexOfCps parPlcf = new PlexOfCps(parPlcSize, 4);
+
+        //Initialize character property stuff
+        int currentCharPage = LittleEndian.getInt(_tableBuffer, charOffset + charPlcf.getStructOffset(0));
+        int charPlcfLen = charPlcf.length();
+        int currentPageIndex = 0;
+        byte[] fkp = new byte[512];
+        System.arraycopy(_mainDocument, (currentCharPage * 512), fkp, 0, 512);
+        CHPFormattedDiskPage cfkp = new CHPFormattedDiskPage(fkp);
+        int currentChpxIndex = 0;
+        int currentArraySize = cfkp.size();
+
+
+        int arraySize = parPlcf.length();
+
         //first we must go through the bin table and find the fkps
         for(int x = 0; x < arraySize; x++)
         {
-            int PN = LittleEndian.getInt(_tableBuffer, parOffset + (4 * (arraySize + 1) + (4 * x)));
+            int PN = LittleEndian.getInt(_tableBuffer, parOffset + parPlcf.getStructOffset(x));
 
-            byte[] fkp = new byte[512];
+            fkp = new byte[512];
             System.arraycopy(_mainDocument, (PN * 512), fkp, 0, 512);
+
+            PAPFormattedDiskPage pfkp = new PAPFormattedDiskPage(fkp);
             //take each fkp and get the paps
-            int crun = LittleEndian.getUnsignedByte(fkp, 511);
+            int crun = pfkp.size();
             for(int y = 0; y < crun; y++)
             {
                 //get the beginning fc of each paragraph text run
-                int fcStart = LittleEndian.getInt(fkp, y * 4);
-                int fcEnd = LittleEndian.getInt(fkp, (y+1) * 4);
-                //get the offset in fkp of the papx for this paragraph
-                int papxOffset = 2 * LittleEndian.getUnsignedByte(fkp, ((crun + 1) * 4) + (y * 13));
-                int size = 2 * LittleEndian.getUnsignedByte(fkp, papxOffset);
-                if(size == 0)
-                {
-                    size = 2 * LittleEndian.getUnsignedByte(fkp, ++papxOffset);
-                }
-                else
-                {
-                    size--;
-                }
+                int fcStart = pfkp.getStart(y);
+                int fcEnd = pfkp.getEnd(y);
 
-                byte[] papx = new byte[size];
-                System.arraycopy(fkp, ++papxOffset, papx, 0, size);
-                _paragraphs.add(new PapxNode(fcStart, fcEnd, papx));
+                //get the papx for this paragraph
+                byte[] papx = pfkp.getGrpprl(y);
+
+                _listener.paragraph(new PapxNode(fcStart, fcEnd, papx));
+
+                //get the character runs for this paragraph
+                int charStart = 0;
+                int charEnd = 0;
+                //add the character runs
+                do
+                {
+                  if (currentChpxIndex < currentArraySize)
+                  {
+                    charStart = cfkp.getStart(currentChpxIndex);
+                    charEnd = cfkp.getEnd(currentChpxIndex);
+                    byte[] chpx = cfkp.getGrpprl(currentChpxIndex);
+                    _listener.characterRun(new ChpxNode(charStart, charEnd, chpx));
+                    if (charEnd < fcEnd)
+                    {
+                      currentChpxIndex++;
+                    }
+                    else
+                    {
+                      break;
+                    }
+                  }
+                  else
+                  {
+                    currentCharPage = LittleEndian.getInt(_tableBuffer, charOffset + charPlcf.getStructOffset(++currentPageIndex));
+                    fkp = new byte[512];
+                    System.arraycopy(_mainDocument, (currentCharPage * 512), fkp, 0, 512);
+                    cfkp = new CHPFormattedDiskPage(fkp);
+                    currentChpxIndex = 0;
+                    currentArraySize = cfkp.size();
+                  }
+                }
+                while(currentCharPage <= charPlcfLen + 1);
 
             }
 
@@ -353,22 +504,38 @@ public class HDFObjectFactory
      */
     private void initSectionProperties()
     {
-      //find sections
+
+
+      //sections
       int fcMin = _fib.getFcMin();
       int plcfsedFC = _fib.getFcPlcfsed();
       int plcfsedSize = _fib.getLcbPlcfsed();
-      byte[] plcfsed = new byte[plcfsedSize];
-      System.arraycopy(_tableBuffer, plcfsedFC, plcfsed, 0, plcfsedSize);
 
-      int arraySize = (plcfsedSize - 4)/16;
+      //paragraphs
+      int parOffset = _fib.getFcPlcfbtePapx();
+      int parPlcSize = _fib.getLcbPlcfbtePapx();
+
+      //characters
+      int charOffset = _fib.getFcPlcfbteChpx();
+      int charPlcSize = _fib.getLcbPlcfbteChpx();
+
+      PlexOfCps charPlcf = new PlexOfCps(charPlcSize, 4);
+      PlexOfCps parPlcf = new PlexOfCps(parPlcSize, 4);
+
+      //byte[] plcfsed = new byte[plcfsedSize];
+      //System.arraycopy(_tableBuffer, plcfsedFC, plcfsed, 0, plcfsedSize);
+
+      PlexOfCps plcfsed = new PlexOfCps(plcfsedSize, 12);
+      int arraySize = plcfsed.length();
 
 
       for(int x = 0; x < arraySize; x++)
       {
-          int sectionStart = LittleEndian.getInt(plcfsed, x * 4) + fcMin;
-          int sectionEnd = LittleEndian.getInt(plcfsed, (x+1) * 4) + fcMin;
-          int sepxStart = LittleEndian.getInt(plcfsed, 4 * (arraySize + 1) + (x * 12) + 2);
+          int sectionStart = LittleEndian.getInt(_tableBuffer, plcfsed.getIntOffset(x)) + fcMin;
+          int sectionEnd = LittleEndian.getInt(_tableBuffer, plcfsed.getIntOffset(x + 1)) + fcMin;
+          int sepxStart = LittleEndian.getInt(_tableBuffer, plcfsed.getStructOffset(x));
           int sepxSize = LittleEndian.getShort(_mainDocument, sepxStart);
+
           byte[] sepx = new byte[sepxSize];
           System.arraycopy(_mainDocument, sepxStart + 2, sepx, 0, sepxSize);
           SepxNode node = new SepxNode(x + 1, sectionStart, sectionEnd, sepx);
@@ -385,7 +552,7 @@ public class HDFObjectFactory
         byte[] dopArray = new byte[size];
 
         System.arraycopy(_tableBuffer, pos, dopArray, 0, size);
-        _dop = new DocumentProperties(dopArray);
+        _listener.document(new DocumentProperties(dopArray));
     }
     /**
      * Uncompresses the StyleSheet from file into memory.
