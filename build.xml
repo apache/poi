@@ -37,9 +37,9 @@
  -->
 <project name="POI Build" default="help" basedir=".">
 
-    <description>
-        The POI project Ant build.
-    </description>
+  <description>
+    The POI project Ant build.
+  </description>
 
     <property environment="env"/>
 
@@ -117,30 +117,33 @@
         <pathelement location="${contrib.output.test.dir}"/>
     </path>
 
-    <target name="help">
-        <echo>
-Main targets:
 
- compile           Compiles the POI classes
- test              Tests main, contrib and scratchpad
- jar               Creates jar files for distribution
- docs              Builds the POI website
- fetch-jars        Fetches needed JAR files from the Internet
- generate-records  Generates HSSF records
- generate-types    Generates word types
- javadocs          Generate javadocs
- single-test       Runs a single test case specified with 
-                   -Dtestcase=classname
- debug-test        Runs a single test case specified with 
-                   -Dtestcase=classname with remote debug 
-                   options turned on.
- reports           Creates junit, jdepend and javadoc reports
- site              Generates the documentation and reports
- dist              Creates the entire distribution into build/dist
- clean-dist        Cleans the build directory then creates a 
-                   distribution
-        </echo>
-    </target>
+
+  <!-- Prints POI's Ant usage help -->
+  <target name="help" description="Prints POI's Ant usage help">
+    <echo>
+      - Execute "ant -projecthelp" to view a listing of the main build
+        targets.
+      - Execute "ant help-properties" to view a listing of some properties
+        controlling the build process.
+    </echo>
+  </target>
+
+
+
+  <target name="help-properties"
+    description="Prints a listing of build controlling properties">
+    <echo>
+      The following properties control the build process:
+
+      -Ddisconnected="true": Do not execute any targets that require an online
+          connection to the Internet.
+
+      WARNING: This list is not exhaustive.
+    </echo>
+  </target>
+
+
 
     <target name="with.clover" if="clover.present">
         <taskdef resource="clovertasks"/>
@@ -471,29 +474,54 @@ FORREST_HOME environment variable!</echo>
         </condition>
     </target>
 
-    <target name="-cvschangelog" unless="disconnected">
-        <cvschangelog destfile="${changelog.file}" daysinpast="30"/>
 
-        <style in="${changelog.file}"
-            out="${build.site.src}/src/documentation/content/changelog.html"
-            style="changelog.xsl">
-            <param name="title" expression="POI Change Log"/>
-            <param name="module" expression="jakarta-poi"/>
-            <param name="cvsweb" expression="http://cvs.apache.org/viewcvs/"/>
-        </style>
-    </target>
 
-  <!-- FIXME: This target has to be split into several targets so that each
-       of them can be executed individually. -->
-  <target name="reports"
-    depends="-check-reports, is-available-junit, is-available-jdepend"
-    unless="reports.notRequired"
-    description="Creates JUnit and JDepend reports and generates the API documentation">
+  <!-- Generates a log of the latest changes in the CVS repository. -->
+  <target name="cvschangelog" unless="disconnected" depends="is-available-xslt"
+    description="Generates a CVS change log report">
+    <antcall target="cvs-rsh-warning"/>
+    <cvschangelog destfile="${changelog.file}" daysinpast="30"/>
 
+    <style in="${changelog.file}"
+      out="${build.site.src}/src/documentation/content/changelog.html"
+      style="changelog.xsl">
+      <param name="title"  expression="POI Change Log"/>
+      <param name="module" expression="jakarta-poi"/>
+      <param name="cvsweb" expression="http://cvs.apache.org/viewcvs/"/>
+    </style>
+  </target>
+
+  <target name="cvs-rsh-warning" unless="env.CVS_RSH">
+    <echo>
+      WARNING: The environment variable CVS_RSH is not set. If you cannot
+      access the CVS repository this could be one of the reasons for the
+      failure.
+    </echo>
+  </target>
+
+
+
+  <!-- Creates reports and API documentation -->
+  <target name="reports" unless="reports.notRequired" depends="-check-reports,
+    is-available-xslt, is-available-junit, is-available-jdepend,
+    test-ignore-failures, jdepend, cvschangelog, javadocs, clover.html"
+    description="Creates various reports and the API documentation">
+  </target>
+
+
+
+  <!-- Runs all JUnit tests without aborting if one of the tests fails. -->
+  <target name="test-ignore-failures" depends="init">
     <antcall target="test">
       <param name="halt.on.test.failure" value="false"/>
     </antcall>
+  </target>
 
+
+
+  <!-- Produces a report of the JUnit test results -->
+  <target name="junitreport" depends="is-available-xslt, test-ignore-failures"
+    description="Produces a report of the JUnit test results">
     <junitreport todir="${junit.report.dir}">
       <fileset dir="${main.reports.test}">
         <include name="TEST-*.xml"/>
@@ -506,19 +534,11 @@ FORREST_HOME environment variable!</echo>
       </fileset>
       <report format="frames" todir="${junit.report.dir}"/>
     </junitreport>
-
-    <antcall target="jdepend"/>
-
-    <antcall target="-cvschangelog"/>
-
-    <antcall target="javadocs"/>
-
-    <antcall target="clover.html"/>
-
   </target>
 
 
 
+  <!-- Generates the API documentation. -->
   <target name="javadocs" description="Generates the API documentation">
     <javadoc
       destdir="${apidocs.report.dir}"
@@ -545,11 +565,14 @@ FORREST_HOME environment variable!</echo>
       </classpath>
 
       <doctitle><![CDATA[<h1>POI Documentation</h1>]]></doctitle>
-      <bottom><![CDATA[<i>Copyright &#169; 2003 Apache Software Foundation.</i>]]></bottom>
-      <group title="HSSF" packages="org.apache.poi.hssf*"/>
-      <group title="HPSF" packages="org.apache.poi.hpsf*"/>
-      <group title="POIFS" packages="org.apache.poi.poifs*"/>
+      <bottom>
+        <![CDATA[<i>Copyright &#169; 2005 Apache Software Foundation.</i>]]>
+      </bottom>
       <group title="HDF" packages="org.apache.poi.hdf*"/>
+      <group title="HPSF" packages="org.apache.poi.hpsf*"/>
+      <group title="HSSF" packages="org.apache.poi.hssf*"/>
+      <group title="HWPF" packages="org.apache.poi.hwpf*"/>
+      <group title="POIFS" packages="org.apache.poi.poifs*"/>
       <group title="Record Generator" packages="org.apache.poi.record*"/>
       <group title="Utils" packages="org.apache.poi.util*"/>
     </javadoc>
@@ -603,8 +626,13 @@ FORREST_HOME environment variable!</echo>
 
     </target>
 
-    <target name="site" depends="reports,docs"
-        description="Generates the documentation and reports"/>
+
+
+    <!-- Generates documentation and reports -->
+    <target name="site" depends="reports, docs"
+      description="Generates POI's website's contents"/>
+
+
 
     <target name="jar" depends="compile" description="Creates jar files for distribution">
         <jar basedir="${main.output.dir}" destfile="${dist.dir}/${jar.name}-${version.id}-${DSTAMP}.jar">
@@ -703,7 +731,7 @@ FORREST_HOME environment variable!</echo>
 
   <!-- Generates the ANT document type definition (DTD) -->
   <target name="dtd"
-    description="Generates the ANT document type definition (DTD)">
+    description="Generates the Ant document type definition (DTD)">
     <antstructure output="ant.dtd"/>
   </target>
 
@@ -711,6 +739,7 @@ FORREST_HOME environment variable!</echo>
 
   <!-- Still experimental targets: -->
 
+  <!-- Abort the build if JUnit is missing. -->
   <target name="is-available-junit" depends="init">
     <condition property="isAvailable.junit">
       <available classname="junit.framework.TestCase"/>
@@ -718,16 +747,18 @@ FORREST_HOME environment variable!</echo>
     <antcall target="check-junit"/>
   </target>
 
-  <!-- Abort the build because JUnit is missing. -->
   <target name="check-junit" unless="isAvailable.junit">
     <echo>
       JUnit is not available. You must download JUnit from
       &lt;http://www.junit.org/&gt; and include the JAR file in your
-      classpath."
+      classpath.
     </echo> 
-    <fail message="JUnit is not available." unless="available.junit"/>
+    <fail message="JUnit is not available."/>
   </target>
 
+
+
+  <!-- Abort the build if JDepend is missing. -->
   <target name="is-available-jdepend" depends="init">
     <condition property="isAvailable.jdepend">
       <available classname="jdepend.framework.JDepend"/>
@@ -735,17 +766,44 @@ FORREST_HOME environment variable!</echo>
     <antcall target="check-jdepend"/>
   </target>
 
-  <!-- Abort the build because JDepend is missing. -->
   <target name="check-jdepend" unless="isAvailable.jdepend">
     <echo>
       JDepend is not available. You must download JDepend from
       &lt;http://www.clarkware.com/software/JDepend.html&gt; and include the
-      JAR file in your classpath."
+      JAR file in your classpath.
     </echo> 
-    <fail message="JDepend is not available." unless="available.jdepend"/>
+    <fail message="JDepend is not available."/>
   </target>
 
-  <!-- FIXME: Make target "reports" depend on this! -->
+
+
+  <!-- Abort the build if the Xalan XSLT processor is missing. The
+       "junitreport" task seems to explicitly require Xalan instead of being
+       able to cope with any XSLT processor. -->
+  <target name="is-available-xslt" depends="init">
+    <condition property="isAvailable.xslt">
+      <and>
+        <available
+          classname="javax.xml.transform.TransformerFactory"/>
+        <available
+          classname="org.apache.xalan.processor.TransformerFactoryImpl"/> 
+      </and>
+    </condition>
+    <antcall target="check-xslt"/>
+  </target>
+
+  <target name="check-xslt" unless="isAvailable.xslt">
+    <echo>
+      The Xalan XSLT processor is not available. You must download Xalan from
+      &lt;http://xml.apache.org/xalan-j/&gt; and include the JAR file in your
+      classpath.
+    </echo> 
+    <fail message="The Xalan XSLT processor is not available."/>
+  </target>
+
+
+
+  <!-- Runs jdepend to produce a report about package dependencies -->
   <target name="jdepend" depends="is-available-jdepend"
     description="Runs jdepend to produce a report about package dependencies">
     <jdepend outputfile="${jdepend.report.dir}/jdepend.xml" format="xml">
