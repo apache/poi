@@ -1,4 +1,3 @@
-
 /* ====================================================================
  * The Apache Software License, Version 1.1
  *
@@ -58,7 +57,7 @@ package org.apache.poi.util;
 import java.util.*;
 
 /**
- * A List of int's; as full an implementation of the java.util.List
+ * A List of double's; as full an implementation of the java.util.List
  * interface as possible, with an eye toward minimal creation of
  * objects
  *
@@ -67,9 +66,9 @@ import java.util.*;
  * <li> if possible, operations designated 'optional' in the List
  *      interface are attempted
  * <li> wherever the List interface refers to an Object, substitute
- *      int
+ *      double
  * <li> wherever the List interface refers to a Collection or List,
- *      substitute IntList
+ *      substitute DoubleList
  * </ul>
  *
  * the mimicry is not perfect, however:
@@ -84,35 +83,28 @@ import java.util.*;
  * @author Marc Johnson
  */
 
-public class IntList
+public class DoubleList
 {
-    private int[]            _array;
+    private double[]            _array;
     private int              _limit;
-    private int              fillval = 0;
     private static final int _default_size = 128;
 
     /**
-     * create an IntList of default size
+     * create an DoubleList of default size
      */
 
-    public IntList()
+    public DoubleList()
     {
         this(_default_size);
-    }    
-
-    public IntList(final int initialCapacity)
-    {
-        this(initialCapacity,0);
     }
-    
-    
+
     /**
-     * create a copy of an existing IntList
+     * create a copy of an existing DoubleList
      *
-     * @param list the existing IntList
+     * @param list the existing DoubleList
      */
 
-    public IntList(final IntList list)
+    public DoubleList(final DoubleList list)
     {
         this(list._array.length);
         System.arraycopy(list._array, 0, _array, 0, _array.length);
@@ -120,27 +112,17 @@ public class IntList
     }
 
     /**
-     * create an IntList with a predefined initial size
+     * create an DoubleList with a predefined initial size
      *
      * @param initialCapacity the size for the internal array
      */
 
-    public IntList(final int initialCapacity, int fillvalue)
+    public DoubleList(final int initialCapacity)
     {
-        _array = new int[ initialCapacity ];
-        if (fillval != 0) {
-            fillval = fillvalue;
-            fillArray(fillval, _array, 0);        
-        }
+        _array = new double[ initialCapacity ];
         _limit = 0;
     }
 
-    private void fillArray(int val, int[] array, int index) {
-      for (int k = index; k < array.length; k++) {
-        array[k] = val;   
-      }
-    }
-    
     /**
      * add the specfied value at the specified index
      *
@@ -151,7 +133,7 @@ public class IntList
      *            range (index < 0 || index > size()).
      */
 
-    public void add(final int index, final int value)
+    public void add(final int index, final double value)
     {
         if (index > _limit)
         {
@@ -185,7 +167,7 @@ public class IntList
      *         method).
      */
 
-    public boolean add(final int value)
+    public boolean add(final double value)
     {
         if (_limit == _array.length)
         {
@@ -210,7 +192,7 @@ public class IntList
      * @return true if this list changed as a result of the call.
      */
 
-    public boolean addAll(final IntList c)
+    public boolean addAll(final DoubleList c)
     {
         if (c._limit != 0)
         {
@@ -246,7 +228,7 @@ public class IntList
      *            range (index < 0 || index > size())
      */
 
-    public boolean addAll(final int index, final IntList c)
+    public boolean addAll(final int index, final DoubleList c)
     {
         if (index > _limit)
         {
@@ -290,7 +272,7 @@ public class IntList
      * @return true if this list contains the specified element.
      */
 
-    public boolean contains(final int o)
+    public boolean contains(final double o)
     {
         boolean rval = false;
 
@@ -314,7 +296,7 @@ public class IntList
      *         specified collection.
      */
 
-    public boolean containsAll(final IntList c)
+    public boolean containsAll(final DoubleList c)
     {
         boolean rval = true;
 
@@ -353,7 +335,7 @@ public class IntList
 
         if (!rval && (o != null) && (o.getClass() == this.getClass()))
         {
-            IntList other = ( IntList ) o;
+            DoubleList other = ( DoubleList ) o;
 
             if (other._limit == _limit)
             {
@@ -380,7 +362,7 @@ public class IntList
      *            range (index < 0 || index >= size()).
      */
 
-    public int get(final int index)
+    public double get(final int index)
     {
         if (index >= _limit)
         {
@@ -390,6 +372,7 @@ public class IntList
     }
 
     /**
+     * THIS MOST LIKELY DOES NOT WORK
      * Returns the hash code value for this list.  The hash code of a
      * list is defined to be the result of the following calculation:
      *
@@ -415,7 +398,7 @@ public class IntList
 
         for (int j = 0; j < _limit; j++)
         {
-            hash = (31 * hash) + _array[ j ];
+            hash = (31 * hash) + ((int) _array[ j ]);
         }
         return hash;
     }
@@ -433,7 +416,7 @@ public class IntList
      *         this element.
      */
 
-    public int indexOf(final int o)
+    public int indexOf(final double o)
     {
         int rval = 0;
 
@@ -475,7 +458,7 @@ public class IntList
      *         this element.
      */
 
-    public int lastIndexOf(final int o)
+    public int lastIndexOf(final double o)
     {
         int rval = _limit - 1;
 
@@ -503,13 +486,13 @@ public class IntList
      *            range (index < 0 || index >= size()).
      */
 
-    public int remove(final int index)
+    public double remove(final int index)
     {
         if (index >= _limit)
         {
             throw new IndexOutOfBoundsException();
         }
-        int rval = _array[ index ];
+        double rval = _array[ index ];
 
         System.arraycopy(_array, index + 1, _array, index, _limit - index);
         _limit--;
@@ -528,7 +511,7 @@ public class IntList
      * @return true if this list contained the specified element.
      */
 
-    public boolean removeValue(final int o)
+    public boolean removeValue(final double o)
     {
         boolean rval = false;
 
@@ -536,9 +519,7 @@ public class IntList
         {
             if (o == _array[ j ])
             {
-                if (j+1 < _limit) {
-                    System.arraycopy(_array, j + 1, _array, j, _limit - j);
-                }
+                System.arraycopy(_array, j + 1, _array, j, _limit - j);
                 _limit--;
                 rval = true;
             }
@@ -556,7 +537,7 @@ public class IntList
      * @return true if this list changed as a result of the call.
      */
 
-    public boolean removeAll(final IntList c)
+    public boolean removeAll(final DoubleList c)
     {
         boolean rval = false;
 
@@ -582,7 +563,7 @@ public class IntList
      * @return true if this list changed as a result of the call.
      */
 
-    public boolean retainAll(final IntList c)
+    public boolean retainAll(final DoubleList c)
     {
         boolean rval = false;
 
@@ -614,13 +595,13 @@ public class IntList
      *            range (index < 0 || index >= size()).
      */
 
-    public int set(final int index, final int element)
+    public double set(final int index, final double element)
     {
         if (index >= _limit)
         {
             throw new IndexOutOfBoundsException();
         }
-        int rval = _array[ index ];
+        double rval = _array[ index ];
 
         _array[ index ] = element;
         return rval;
@@ -628,10 +609,10 @@ public class IntList
 
     /**
      * Returns the number of elements in this list. If this list
-     * contains more than Integer.MAX_VALUE elements, returns
-     * Integer.MAX_VALUE.
+     * contains more than Doubleeger.MAX_VALUE elements, returns
+     * Doubleeger.MAX_VALUE.
      *
-     * @return the number of elements in this IntList
+     * @return the number of elements in this DoubleList
      */
 
     public int size()
@@ -648,9 +629,9 @@ public class IntList
      *         proper sequence.
      */
 
-    public int [] toArray()
+    public double [] toArray()
     {
-        int[] rval = new int[ _limit ];
+        double[] rval = new double[ _limit ];
 
         System.arraycopy(_array, 0, rval, 0, _limit);
         return rval;
@@ -668,9 +649,9 @@ public class IntList
      * @return an array containing the elements of this list.
      */
 
-    public int [] toArray(final int [] a)
+    public double [] toArray(final double [] a)
     {
-        int[] rval;
+        double[] rval;
 
         if (a.length == _limit)
         {
@@ -688,14 +669,9 @@ public class IntList
     {
         int   size      = (new_size == _array.length) ? new_size + 1
                                                       : new_size;
-        int[] new_array = new int[ size ];
-        
-        if (fillval != 0) {
-          fillArray(fillval, new_array, _array.length);                
-        }
-        
+        double[] new_array = new double[ size ];
+
         System.arraycopy(_array, 0, new_array, 0, _limit);
         _array = new_array;
     }
-}   // end public class IntList
-
+}   // end public class DoubleList
