@@ -279,6 +279,8 @@ public class VariantSupport extends Variant
                 ("Codepage number may not be " + codepage);
         switch (codepage)
         {
+            case 932:
+                return "SJIS";
             case 1200:
                 return "UTF-16";
             case 65001:
