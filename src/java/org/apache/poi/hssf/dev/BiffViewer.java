@@ -614,7 +614,15 @@ public class BiffViewer
                 break;
 
             case SeriesListRecord.sid :
-                retval = new ValueRangeRecord(rectype, size, data);
+                retval = new SeriesListRecord(rectype, size, data);
+                break;
+
+            case FontBasisRecord.sid :
+                retval = new FontBasisRecord(rectype, size, data);
+                break;
+
+            case FontIndexRecord.sid :
+                retval = new FontIndexRecord(rectype, size, data);
                 break;
 
             default :
