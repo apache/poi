@@ -6,9 +6,6 @@
   <question>
     What is the HSSF "eventmodel"? 
   </question>
-  <question>
-    When will all the documentation be ported to the new site?
-  </question>
   <answer>
     <p>
       The HSSF eventmodel package is a new API for reading XLS files more efficiently.  It does 
@@ -16,11 +13,17 @@
       tenfold.  It is based on the AWT event model in combination with SAX.  If you need read-only
       access to a given XLS file, this is the best way to do it.  
     </p>
-<!--    <note>This is a note.</note>-->
   </answer>
+
+</faq>
+<faq>
+    <question>
+      Why can't read the document I created using Star Office 5.1?
+    </question>
   <answer>
     <p>
-      Soon, very soon.
+      Star Office 5.1 writes some records using the older BIFF standard.  This causes some problems
+      with POI which supports only BIFF8.
     </p>
   </answer>
 
