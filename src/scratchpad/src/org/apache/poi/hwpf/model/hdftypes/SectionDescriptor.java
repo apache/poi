@@ -91,6 +91,12 @@ public class SectionDescriptor
     this.fc = fc;
   }
 
+  public boolean equals(Object o)
+  {
+    SectionDescriptor sed = (SectionDescriptor)o;
+    return sed.fn == fn && sed.fnMpr == fnMpr;
+  }
+
   public byte[] toByteArray()
   {
     int offset = 0;

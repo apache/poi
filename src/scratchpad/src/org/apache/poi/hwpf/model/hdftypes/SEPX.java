@@ -78,4 +78,13 @@ public class SEPX extends PropertyNode
     return _sed;
   }
 
+  public boolean equals(Object o)
+  {
+    SEPX sepx = (SEPX)o;
+    if (super.equals(o))
+    {
+      return sepx._sed.equals(_sed);
+    }
+    return false;
+  }
 }

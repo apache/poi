@@ -100,6 +100,11 @@ public class SectionTable
     }
   }
 
+  public ArrayList getSections()
+  {
+    return _sections;
+  }
+
   public void writeTo(HWPFFileSystem sys, int fcMin)
     throws IOException
   {
