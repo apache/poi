@@ -116,6 +116,7 @@ printed.
     <echo message=" Builds will be in /build directory, distributions in /dist."/>        
     <echo message="  "/>    
     <echo message=" compile ---------- compiles the source code "/>     
+    <echo message=" jar -------------- create the jar files "/>
     <echo message=" docs ------------- generates the html docs"/>        
     <echo message=" cleandocs -------- cleans the build docs directory"/>    
     <echo message=" javadocs --------- generates the API documentation"/>     
@@ -414,7 +415,7 @@ printed.
   <!-- ================================== -->
   
   <target  name="all"   
-           depends="gump"
+           depends="gump,jar"
            description="Generate all"/>
            
   <!-- ================================== -->
