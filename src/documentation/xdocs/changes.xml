@@ -19,6 +19,7 @@
         <action dev="POI-DEVELOPERS" type="add">Support for cloning objects</action>
         <action dev="POI-DEVELOPERS" type="add">Fixes for header/footer</action>
         <action dev="POI-DEVELOPERS" type="add">Spanish Documentation translations</action>
+        <action dev="POI-DEVELOPERS" type="add">Support for preserving VBA macros</action>
     </release>
     <release version="1.7-dev" date="???">
         <action dev="NKB" type="update">Removed runtime dependency on commons logging.</action>
