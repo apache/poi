@@ -419,7 +419,7 @@
     <target name="reports" depends="-check-reports" unless="reports.notRequired"
         description="Creates junit,jdepend and javadoc reports">
         <antcall target="test">
-            <param name="${halt.on.test.failure}" value="false"/>
+            <param name="halt.on.test.failure" value="false"/>
         </antcall>
         <junitreport todir="${junit.report.dir}">
             <fileset dir="${main.reports.test}">
