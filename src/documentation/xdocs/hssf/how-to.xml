@@ -19,16 +19,17 @@
     </s2>  
 
     <s2 title="Capabilities">
-    <p>This release of the how-to outlines functionality included in a
-	development build of HSSF.  Those looking for information on the
-	release edition should look in the poi-src for the release or at a
+    <p>This release of the how-to outlines functionality for 1.5.
+    Those looking for information on the release edition should
+    look in the poi-src for the release or at a
 	previous edition in CVS tagged for that release.</p>
   <p>
 	This release allows numeric and string cell values to be written to
-	or read from an XLS file. Also in this release is row and column
-	sizing, cell styling (bold, italics, borders,etc), and support for
-	built-in data formats.  New to this release is an event-based API
-	for reading XLS files.  It differs greatly from the read/write API
+	or read from an XLS file as well as reading and writing dates. Also
+    in this release is row and column sizing, cell styling (bold,
+    italics, borders,etc), and support for built-in data formats.  New
+    to this release is an event-based API for reading XLS files.
+    It differs greatly from the read/write API
 	and is intended for intermediate developers who need a smaller
 	memory footprint.  It will also serve as the basis for the HSSF
 	Generator.</p>
@@ -57,10 +58,8 @@ org.apache.poi.hssf.usermodel.HSSFWorkbook.
 </p>
 <p>Sheets are created by calling createSheet() from an existing
 instance of HSSFWorkbook, the created sheet is automatically added in
-sequence to the workbook. In this release there will always be at
-least three sheets generated regardless of whether you have three
-sheets. More than three sheets is probably not supported. Sheets do
-not in themselves have a sheet name (the tab at the bottom); you set
+sequence to the workbook. Sheets do not in themselves have a sheet
+name (the tab at the bottom); you set
 the name associated with a sheet by calling
 HSSFWorkbook.setSheetName(sheetindex,&quot;SheetName&quot;).</p>
 <p>Rows are created by calling createRow(rowNumber) from an existing
@@ -242,7 +241,7 @@ method (sheet.removeRow(hssfrow)) and create objects just as you
 would if creating a new xls. When you are done modifying cells just
 call workbook.write(outputstream) just as you did above.</p>
 <p>An example of this can be seen in
-<link href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/*checkout*/poi/poi/production/src/net/sourceforge/poi/hssf/dev/HSSF.java?rev=HEAD&amp;content-type=text/plain">org.apache.poi.hssf.dev.HSSF</link>.</p>
+<link href="http://cvs.apache.org/viewcvs/~checkout~/jakarta-poi/src/java/org/apache/poi/hssf/dev/HSSF.java?rev=1.1">org.apache.poi.hssf.dev.HSSF</link>.</p>
          </s4>       </s3>
                 <s3 title="Event API">
 
@@ -438,34 +437,46 @@ most likely fail.  No big deal.  </code></li>
 </ul>
      </s3>
                 <s3 title="HSSF Logging facility">
-<p>HSSF now has a logging facility (using log4j - thanks jakarta!)
+<p>HSSF now has a logging facility (using
+ <link href="http://jakarta.apache.org/commons/logging.html">commons logging</link>)
 that will record massive amounts of debugging information. Its mostly
 useful to us hssf-developing geeks, but might be useful in tracking
-down problems. By default we turn this off because it results in
-unnecessary performance degradation when fully turned on! Using it is
-simple. You need an hssflog.properties file (example listed below,
-those familiar with log4j can customize this as they wish). You can
-either put this in your home directory (or wherever the default
-directory is on windows which I suspect is c:\windows) or you can put
-it wherever you want and set the HSSF.log to the path ending in &quot;/&quot;
-(or &quot;\\&quot; on windows). If for any reason HSSF can't find it,
-you get no logging. If the log configuration dictates the logging be
-turned off, you get no logging.</p>
-<p>Here is an example hssflog.properties (actually its not an example
-its mine):
-<source># Set root category priority to DEBUG and its only appender to A1.
-log4j.rootCategory=DEBUG, A1
-  
-# A1 is set to be a ConsoleAppender. 
-log4j.appender.A1=org.apache.log4j.ConsoleAppender
-  
-# A1 uses PatternLayout.
-log4j.appender.A1.layout=org.apache.log4j.PatternLayout
-log4j.appender.A1.layout.ConversionPattern=%-4r [%t] %-5p %c %x - %m%n
-#uncomment below to change the level to WARN to disable debugging information.  This effectively turns off logging.
-#the default level is DEBUG (and changing it to DEBUG is the basically the same thing as leaving it commented out).
-#log4j.category.org.apache.poi=WARN</source></p>
-
+down problems.
+</p>
+<p>So Why use commons logging rather than log4j? Well the following discussion from
+the jakarta-general mailing list sums it up pretty well.  (Thanks Morgan)
+</p>
+<p>Here's the problem, as I see it.
+</p>
+<p><em>Suppose Commons component A decides to adopt Log4J, Commons component B
+decides to adopt LogKit, and Commons component C adopts JDK1.4 logging.
+They will all minimally function with the right jars in the classpath.
+However you (the end-user) are left with maintaining configuration for 3
+different logging APIs, which is tedious at best.  When you take into
+account cool features like variable log levels, Log4J appenders and the
+like, you're pretty much guaranteed to swallow up useful configuration
+options because sophisticated configurations are too difficult to maintain
+over mutiple logging implementations.</em>
+</p>
+<p>
+<em>Contrarily, if all three Commons components use a logging facade, you can
+focus all your configuration efforts on one logging implementation.  Sure,
+there is a trade-off; you don't have access to all the features, and the
+interface between the facade and the implementation must be maintained.  But
+the benefits are not just political; they potentially make the end-users
+configuration much easier.</em>
+</p>
+<p><em>Even if all Commons components used the same logging implementation (Log4J
+for example), other projects in Jakarta-land may choose otherwise.  If you
+add enough Jakarta projects to your environment, you eventually end up with
+the scenario described above.  It's a worthwhile effort to attempt a logging
+solution that plays well with the Jakarta community at large.  I think in
+many cases the Commons Logging component can fill that role.</em>
+</p>
+<p>
+Refer to the commons logging package level javadoc for more information concerning how to
+<link href="http://jakarta.apache.org/commons/logging/api/index.html">configure commons logging.</link>
+</p>
      </s3>
                 <s3 title="HSSF Developer's tools">
 
@@ -523,108 +534,8 @@ As a general principal, HSSF's goal is to support HSSF-Serializer
 are you using HSSF/POIFS? How would you like to use it? What features
 are most important first? 
 </p>
-<p>This release is near feature freeze for the 1.0-beta. All
-priorities refer to things we'll be adding in the next release
-(probably 2.0). The 1.0-beta is scheduled for release in the mid to
-late December timeframe. While it's way to early to say when the
-2.0-beta will be released, my &quot;gut&quot; feeling is to aim for
-around March and have at least the first three items.</p>
-<p>Current list of priorities:</p>
-<ol>
-	<li>Helper class for fonts, etc.</li>
-	<li>Add Formulas.</li>
-	<li>Implement more record types (for other things ... not sure
-	what this will mean yet).</li>
-	<li>Add more dummy checks (for when API user's do things they
-	&quot;can't&quot; do)</li>
-	<li>Add support for embedded graphics and stuff like that.</li>
-	<li>Create new adapter object for handling MulBlank, MulRk, Rk
-	records.</li>
-</ol>
      </s3>
-                <s3 title="Changes">
-                                <s4 title="1.1.0">
 
-<ol>
-	<li>Created new event model</li>
-	<li>Optimizations made to HSSF including aggregate records for
-	values, rows, etc.</li>
-	<li>predictive sizing, offset based writing (instead of lots of
-	array copies)</li>
-	<li>minor re-factoring and bug fixes.</li>
-</ol>
-</s4>
-<s4 title="1.0.0">
-
-<ol>
-	<li>Minor documentation updates.</li>
-</ol>
-</s4>
-<s4 title="0.14.0">
-<ol>
-	<ol>
-		<li>Added DataFormat helper class and exposed set and get format
-		on HSSFCellStyle</li>
-		<li>Fixed column width apis (unit wise) and various javadoc on
-		the subject</li>
-		<li>Fix for Dimensions record (again)... (one of these days I'll
-		write a unit test for this ;-p).</li>
-		<li>Some optimization on sheet creation.</li>
-	</ol>
-</ol>
-</s4>
-<s4 title="0.13.0">
-<p>- NO WAY!</p>
-</s4>
-<s4 title="0.12.0">
-<ol>
-	<li>Added MulBlank, Blank, ColInfo</li>
-	<li>Added log4j facility and removed all sys.out type logging</li>
-	<li>Added support for adding font's, styles and corresponding
-	high level api for styling cells</li>
-	<li>added support for changing row height, cell width and default
-	row height/cell width.</li>
-	<li>Added fixes for internationalization (UTF-16 should work now
-	from HSSFCell.setStringValue, etc when the encoding is set)</li>
-	<li>added support for adding/removing and naming sheets.</li>
-</ol>
-</s4>
-<s4 title="0.11.0">
-<ol>
-	<li>Bugfix release. We were throwing an exception when reading
-	RKRecord objects.</li>
-</ol>
-</s4>
-<s4 title="0.10.0">
-<ol>
-	<li>Got continuation records to work (read/write)</li>
-	<li>Added various pre-support for formulas</li>
-	<li>Massive API reorganization, repackaging.</li>
-	<li>BiffViewer class added for validating HSSF &amp; POI and/or
-	HSSF Output.</li>
-	<li>Better API support for modification.</li>
-</ol>
-</s4>
-<s4 title="0.7 (and interim releases)">
-<ol>
-	<li>Added encoding flag to high and low level api to use utf-16
-	when needed (HSSFCell.setEncoding())</li>
-	<li>added read only support for Label records (which are
-	reinterpreted as LabelSST when written)</li>
-	<li>Broken continuation record implementation (oops)</li>
-	<li>BiffViewer class added for validating HSSF &amp; POI and/or
-	HSSF Output.</li>
-</ol>
-</s4>
-<s4 title="0.6 (release)">
-<ol>
-	<li>Support for read/write and modify.</li>
-	<li>Read only support for MulRK records (converted to Number when
-	writing) 
-	</li>
-</ol>
-</s4>
-</s3>
 </s2>
 
 </s1>
