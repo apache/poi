@@ -10,7 +10,7 @@
     <menu-item label="Index" href="index.html"/>
     <menu-item label="History" href="historyandfuture.html"/>
     <menu-item label="Future"  href="historyandfuture.html"/>
-    <menu-item label="Download" href="http://sourceforge.net/project/showfiles.php?group_id=32701"/>
+    <menu-item label="Download" href="http://jakarta.apache.org/builds/jakarta-poi/"/>
     <menu-item label="1.0 Vision" href="plan/POI10Vision.html"/>
     <menu-item label="2.0 Vision" href="plan/POI20Vision.html"/>
     <menu-item label="Who we are" href="who.html"/>    
