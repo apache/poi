@@ -281,12 +281,10 @@ public class HSSFCellUtil
 
     static
     {
-        unicodeMappings.put( "&alpha;", "\u03B1" );
-        unicodeMappings.put( "&gamma;", "\u03B3" );
-        unicodeMappings.put( "&theta;", "\u03B8" );
+        unicodeMappings.put( "&alpha;",   "\u03B1" );
+        unicodeMappings.put( "&gamma;",   "\u03B3" );
+        unicodeMappings.put( "&epsilon;", "\u03B5" );
+        unicodeMappings.put( "&theta;",   "\u03B8" );
     }
 
 }
-
-
-
