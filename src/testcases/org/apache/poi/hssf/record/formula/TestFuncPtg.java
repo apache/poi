@@ -86,15 +86,17 @@ public class TestFuncPtg extends TestCase {
 		
 		fakeData[0] = (byte)0x41;  
 		fakeData[1] = (byte)0x20;  //function index
-		fakeData[2] = (byte)0;     //leftovers begin
+		fakeData[2] = (byte)0;     
 		fakeData[3] = (byte)8;
 		
 		FuncPtg ptg = new FuncPtg(fakeData, 0);
 		
 		assertEquals("Len formula index is not 32(20H)",(int)0x20, ptg.getFunctionIndex());
 		assertEquals("Number of operands in the len formula",1, ptg.getNumberOfOperands());
-		assertEquals("first leftover byte is not 0", (byte)0, ptg.leftOvers[0]);
-		assertEquals("second leftover byte is not 8", (byte)8, ptg.leftOvers[1]);
+    assertEquals("Function Name","LEN",ptg.getName());
+    assertEquals("Ptg Size",3,ptg.getSize());
+		//assertEquals("first leftover byte is not 0", (byte)0, ptg.leftOvers[0]);
+		//assertEquals("second leftover byte is not 8", (byte)8, ptg.leftOvers[1]);
 		
 	}
 
