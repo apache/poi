@@ -19,7 +19,6 @@
     <menu-item label="2.0 Vision" href="plan/POI20Vision.html"/>
     <menu-item label="Who we are" href="who.html"/>    
     <menu-item label="Changes" href="changes.html"/>
-    <menu-item label="Todo" href="todo.html"/>    
   </menu>
   
   <menu label="Sub-Projects">
@@ -32,6 +31,7 @@
   </menu>
 
   <menu label="References">
+    <menu-item label="In The News" href="inthenews.html"/>  
     <menu-item label="Live Sites" href="livesites.html"/>
     <menu-item label="Building" href="building.xml"/>
     <menu-item label="XLS spec [PDF]" href="http://sc.openoffice.org/excelfileformat.pdf"/>
