@@ -756,7 +756,7 @@ extends TestCase {
     {
         String filename = System.getProperty("HSSF.testdata.path");
 
-    File file = File.createTempFile("testSheetFormula",".xls");
+            File file = File.createTempFile("testSheetFormula",".xls");
             FileOutputStream out    = new FileOutputStream(file);
             HSSFWorkbook     wb     = new HSSFWorkbook();
             HSSFSheet        s      = wb.createSheet("A");
@@ -770,7 +770,7 @@ extends TestCase {
             r = s.createRow((short)0);
             c=r.createCell((short)0); c.setCellFormula("AVERAGE(A!A1:B1)");
             c=r.createCell((short)1); c.setCellFormula("A!A1+A!B1");
-            c=r.createCell((short)2); c.setCellFormula("C!A1+C!B1");
+            c=r.createCell((short)2); c.setCellFormula("A!$A$1+A!$B1");
             wb.write(out);
             out.close();
             
@@ -781,9 +781,9 @@ extends TestCase {
             s = wb.getSheet("B");
             r = s.getRow(0);
             c = r.getCell((short)0);
-            //assertTrue("expected: AVERAGE(A!A1:B1) got: "+c.getCellFormula(), ("AVERAGE(A!A1:B1)").equals(c.getCellFormula()));
+            assertTrue("expected: AVERAGE(A!A1:B1) got: "+c.getCellFormula(), ("AVERAGE(A!A1:B1)").equals(c.getCellFormula()));
             c = r.getCell((short)1);
-            //assertTrue("expected: A!A1+A!B1 got: "+c.getCellFormula(), ("A!A1+A!B1").equals(c.getCellFormula()));
+            assertTrue("expected: A!A1+A!B1 got: "+c.getCellFormula(), ("A!A1+A!B1").equals(c.getCellFormula()));
             in.close();
     }
     

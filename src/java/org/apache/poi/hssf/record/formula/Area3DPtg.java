@@ -58,12 +58,17 @@ package org.apache.poi.hssf.record.formula;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.hssf.util.RangeAddress;
 import org.apache.poi.hssf.util.AreaReference;
+import org.apache.poi.hssf.util.CellReference;
+
+import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.util.BitField;
 
 /**
  * Title:        Area 3D Ptg - 3D referecnce (Sheet + Area)<P>
  * Description:  Defined a area in Extern Sheet. <P>
  * REFERENCE:  <P>
  * @author Libin Roman (Vista Portal LDT. Developer)
+ * @author avik
  * @version 1.0-pre
  */
 
@@ -76,6 +81,9 @@ public class Area3DPtg extends Ptg
     private short             field_3_last_row;
     private short             field_4_first_column;
     private short             field_5_last_column;
+    
+    private BitField         rowRelative = new BitField(0x8000);
+    private BitField         colRelative = new BitField(0x4000);
 
     /** Creates new AreaPtg */
     public Area3DPtg() {}
@@ -87,10 +95,10 @@ public class Area3DPtg extends Ptg
         setFirstColumn((short)ar.getCells()[0].getCol());
         setLastRow((short)ar.getCells()[1].getRow());
         setLastColumn((short)ar.getCells()[1].getCol());
-        //setFirstColRelative(!ar.getCells()[0].isColAbsolute());
-        //setLastColRelative(!ar.getCells()[1].isColAbsolute());
-        //setFirstRowRelative(!ar.getCells()[0].isRowAbsolute());
-        //setLastRowRelative(!ar.getCells()[1].isRowAbsolute());
+        setFirstColRelative(!ar.getCells()[0].isColAbsolute());
+        setLastColRelative(!ar.getCells()[1].isColAbsolute());
+        setFirstRowRelative(!ar.getCells()[0].isRowAbsolute());
+        setLastRowRelative(!ar.getCells()[1].isRowAbsolute());
         setExternSheetIndex(externIdx);
         
     }
@@ -114,10 +122,10 @@ public class Area3DPtg extends Ptg
         buffer.append("lastRow  = " + getLastRow()).append("\n");
         buffer.append("firstCol = " + getFirstColumn()).append("\n");
         buffer.append("lastCol  = " + getLastColumn()).append("\n");
-        buffer.append("firstColRowRel= "
-                      + isFirstColRowRelative()).append("\n");
+        buffer.append("firstColRel= "
+                      + isFirstRowRelative()).append("\n");
         buffer.append("lastColRowRel = "
-                      + isLastColRowRelative()).append("\n");
+                      + isLastRowRelative()).append("\n");
         buffer.append("firstColRel   = " + isFirstColRelative()).append("\n");
         buffer.append("lastColRel    = " + isLastColRelative()).append("\n");
         return buffer.toString();
@@ -176,14 +184,14 @@ public class Area3DPtg extends Ptg
         return field_4_first_column;
     }
 
-    public boolean isFirstColRowRelative()
+    public boolean isFirstRowRelative()
     {
-        return (((getFirstColumnRaw()) & 0x8000) == 0x8000);
+        return rowRelative.isSet(field_4_first_column);
     }
-
+    
     public boolean isFirstColRelative()
     {
-        return (((getFirstColumnRaw()) & 0x4000) == 0x4000);
+        return colRelative.isSet(field_4_first_column);
     }
 
     public void setFirstColumn(short column)
@@ -207,16 +215,15 @@ public class Area3DPtg extends Ptg
         return field_5_last_column;
     }
 
-    public boolean isLastColRowRelative()
+     public boolean isLastRowRelative()
     {
-        return (((getLastColumnRaw()) & 0x8000) == 1);
+        return rowRelative.isSet(field_5_last_column);
     }
-
     public boolean isLastColRelative()
     {
-        return (((getFirstColumnRaw()) & 0x4000) == 1);
+        return colRelative.isSet(field_5_last_column);
     }
-
+    
     public void setLastColumn(short column)
     {
         field_5_last_column &= 0xFF00;
@@ -227,6 +234,37 @@ public class Area3DPtg extends Ptg
     {
         field_5_last_column = column;
     }
+    
+        /**
+     * sets the first row to relative or not
+     * @param isRelative or not.
+     */
+    public void setFirstRowRelative(boolean rel) {
+        field_4_first_column=rowRelative.setShortBoolean(field_4_first_column,rel);
+    }
+
+    /**
+     * set whether the first column is relative 
+     */
+    public void setFirstColRelative(boolean rel) {
+        field_4_first_column=colRelative.setShortBoolean(field_4_first_column,rel);
+    }
+    
+    /**
+     * set whether the last row is relative or not
+     * @param last row relative
+     */
+    public void setLastRowRelative(boolean rel) {
+        field_5_last_column=rowRelative.setShortBoolean(field_5_last_column,rel);
+    }
+    
+    /**
+     * set whether the last column should be relative or not
+     */
+    public void setLastColRelative(boolean rel) {
+        field_5_last_column=colRelative.setShortBoolean(field_5_last_column,rel);
+    }
+    
 
     public String getArea(){
         RangeAddress ra = new RangeAddress( getFirstColumn(),getFirstRow() + 1, getLastColumn(), getLastRow() + 1);
@@ -250,13 +288,20 @@ public class Area3DPtg extends Ptg
 
     public String toFormulaString()
     {
-        String result = getArea();
-
-        return result;
+        StringBuffer retval = new StringBuffer();
+        Object book = Workbook.currentBook.get();
+        if (book != null) {
+            retval.append(((Workbook) book).findSheetNameFromExternSheet(this.field_1_index_extern_sheet));
+            retval.append('!');
+        }
+        retval.append((new CellReference(getFirstRow(),getFirstColumn(),!isFirstRowRelative(),!isFirstColRelative())).toString()); 
+        retval.append(':');
+        retval.append((new CellReference(getLastRow(),getLastColumn(),!isLastRowRelative(),!isLastColRelative())).toString());
+        return retval.toString();
     }
 
    public byte getDefaultOperandClass() {
-       return Ptg.CLASS_VALUE;
+       return Ptg.CLASS_REF;
    }
 
 }

@@ -88,9 +88,7 @@ public class AreaPtg
     
    
     protected AreaPtg(String arearef) {
-        //int[] xyxy = ReferenceUtil.getXYXYFromAreaRef(arearef);
         AreaReference ar = new AreaReference(arearef);
-        
         setFirstRow((short)ar.getCells()[0].getRow());
         setFirstColumn((short)ar.getCells()[0].getCol());
         setLastRow((short)ar.getCells()[1].getRow());

@@ -59,6 +59,9 @@ package org.apache.poi.hssf.record.formula;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.hssf.util.RangeAddress;
 import org.apache.poi.hssf.util.CellReference;
+import org.apache.poi.util.BitField;
+import org.apache.poi.hssf.model.Workbook;
+
 /**
  * Title:        Reference 3D Ptg <P>
  * Description:  Defined a cell in extern sheet. <P>
@@ -73,6 +76,8 @@ public class Ref3DPtg extends Ptg {
     private short             field_1_index_extern_sheet;
     private short             field_2_row;
     private short             field_3_column;
+    private BitField         rowRelative = new BitField(0x8000);
+    private BitField         colRelative = new BitField(0x4000);
 
     /** Creates new AreaPtg */
     public Ref3DPtg() {}
@@ -88,8 +93,8 @@ public class Ref3DPtg extends Ptg {
         CellReference c= new CellReference(cellref);
         setRow((short) c.getRow());
         setColumn((short) c.getCol());
-        //setColRelative(!c.isColAbsolute());
-        //setRowRelative(!c.isRowAbsolute());   
+        setColRelative(!c.isColAbsolute());
+        setRowRelative(!c.isRowAbsolute());   
         setExternSheetIndex(externIdx);
     }
 
@@ -101,7 +106,7 @@ public class Ref3DPtg extends Ptg {
         buffer.append("Row = " + getRow()).append("\n");
         buffer.append("Col  = " + getColumn()).append("\n");
         buffer.append("ColRowRel= "
-        + isColRowRelative()).append("\n");
+        + isRowRelative()).append("\n");
         buffer.append("ColRel   = " + isColRelative()).append("\n");
         return buffer.toString();
     }
@@ -141,14 +146,23 @@ public class Ref3DPtg extends Ptg {
         return field_3_column;
     }
 
-    public boolean isColRowRelative() {
-        return (((getColumnRaw()) & 0x8000) == 0x8000);
+     public boolean isRowRelative()
+    {
+        return rowRelative.isSet(field_3_column);
     }
-
-    public boolean isColRelative() {
-        return (((getColumnRaw()) & 0x4000) == 0x4000);
+    
+    public void setRowRelative(boolean rel) {
+        field_3_column=rowRelative.setShortBoolean(field_3_column,rel);
     }
-
+    
+    public boolean isColRelative()
+    {
+        return colRelative.isSet(field_3_column);
+    }
+    
+    public void setColRelative(boolean rel) {
+        field_3_column=colRelative.setShortBoolean(field_3_column,rel);
+    }
     public void setColumn(short column) {
         field_3_column &= 0xFF00;
         field_3_column |= column & 0xFF;
@@ -177,11 +191,16 @@ public class Ref3DPtg extends Ptg {
     }
 
     public String toFormulaString() {
-        String result = getArea();
-
-        return result;
+        StringBuffer retval = new StringBuffer();
+        Object book = Workbook.currentBook.get();
+        if (book != null) {
+            retval.append(((Workbook) book).findSheetNameFromExternSheet(this.field_1_index_extern_sheet));
+            retval.append('!');
+        }
+        retval.append((new CellReference(getRow(),getColumn(),!isRowRelative(),!isColRelative())).toString()); 
+        return retval.toString();
     }
 
-   public byte getDefaultOperandClass() {return Ptg.CLASS_VALUE;}
+   public byte getDefaultOperandClass() {return Ptg.CLASS_REF;}
 
 }
