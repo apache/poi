@@ -21,6 +21,7 @@ package org.apache.poi.hssf.usermodel;
 import junit.framework.TestCase;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.util.TempFile;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -64,7 +65,7 @@ public class TestSheetShiftRows extends TestCase {
 
         // Shift the second row down 1 and write to temp file
         s.shiftRows( 1, 1, 1 );
-        File tempFile = File.createTempFile( "shift", "test.xls" );
+        File tempFile = TempFile.createTempFile( "shift", "test.xls" );
         FileOutputStream fout = new FileOutputStream( tempFile );
         wb.write( fout );
         fout.close();
@@ -85,7 +86,7 @@ public class TestSheetShiftRows extends TestCase {
         // Shift rows 1-3 down 3 in the current one.  This tests when
         // 1 row is blank.  Write to a another temp file
         s.shiftRows( 0, 2, 3 );
-        tempFile = File.createTempFile( "shift", "test.xls" );
+        tempFile = TempFile.createTempFile( "shift", "test.xls" );
         fout = new FileOutputStream( tempFile );
         wb.write( fout );
         fout.close();
@@ -110,7 +111,7 @@ public class TestSheetShiftRows extends TestCase {
 
         // Shift rows 3 and 4 up and write to temp file
         s.shiftRows( 2, 3, -2 );
-        tempFile = File.createTempFile( "shift", "test.xls" );
+        tempFile = TempFile.createTempFile( "shift", "test.xls" );
         fout = new FileOutputStream( tempFile );
         wb.write( fout );
         fout.close();

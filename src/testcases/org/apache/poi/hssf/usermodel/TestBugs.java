@@ -20,6 +20,7 @@ package org.apache.poi.hssf.usermodel;
 
 import junit.framework.TestCase;
 import org.apache.poi.hssf.util.Region;
+import org.apache.poi.util.TempFile;
 
 import java.io.*;
 
@@ -48,7 +49,7 @@ extends TestCase {
         HSSFRow r = s.createRow(0);
         HSSFCell c = r.createCell((short)0);
         c.setCellValue(10);
-        File file = File.createTempFile("test15228",".xls");
+        File file = TempFile.createTempFile("test15228",".xls");
         FileOutputStream out    = new FileOutputStream(file);
         wb.write(out);
         assertTrue("No exception thrown", true);
@@ -65,7 +66,7 @@ extends TestCase {
         HSSFRow r = s.createRow(0);
         HSSFCell c = r.createCell((short)0);
         c.setCellValue(10);
-        File file = File.createTempFile("test13796",".xls");
+        File file = TempFile.createTempFile("test13796",".xls");
         FileOutputStream out    = new FileOutputStream(file);
         wb.write(out);
         assertTrue("No exception thrown", true);
@@ -75,7 +76,7 @@ extends TestCase {
     /**Test writing a hyperlink
      * Open resulting sheet in Excel and check that A1 contains a hyperlink*/
     public void test23094() throws Exception {
-        File file = File.createTempFile("test23094",".xls");
+        File file = TempFile.createTempFile("test23094",".xls");
         FileOutputStream out    = new FileOutputStream(file);
         HSSFWorkbook     wb     = new HSSFWorkbook();
         HSSFSheet        s      = wb.createSheet();
@@ -98,7 +99,7 @@ extends TestCase {
         cell.setCellFormula("HYPERLINK(\"http://google.com\",\"Google\")");
         
         // Write out the workbook
-        File f = File.createTempFile("test15353",".xls");
+        File f = TempFile.createTempFile("test15353",".xls");
         FileOutputStream fileOut = new FileOutputStream(f);
         wb.write(fileOut);
         fileOut.close();
@@ -158,7 +159,7 @@ extends TestCase {
             oCell.setCellValue("0.3");
             
             // Write the output to a file
-            File f = File.createTempFile("test15375",".xls");
+            File f = TempFile.createTempFile("test15375",".xls");
             FileOutputStream fileOut = new FileOutputStream(f);
             wb.write(fileOut);
             fileOut.close();
@@ -199,7 +200,7 @@ extends TestCase {
             cell = row.createCell((short)2);
             cell.setCellValue(tmp3);
         }
-        File f = File.createTempFile("test15375-2",".xls");
+        File f = TempFile.createTempFile("test15375-2",".xls");
         FileOutputStream fileOut = new FileOutputStream(f);
         wb.write(fileOut);
         fileOut.close();
@@ -238,7 +239,7 @@ extends TestCase {
         sheet.setDefaultColumnWidth((short) 18) ;
         
         try {
-            File f = File.createTempFile("test22568",".xls");
+            File f = TempFile.createTempFile("test22568",".xls");
             FileOutputStream out = new FileOutputStream(f) ;
             wb.write(out) ;
             
@@ -425,7 +426,7 @@ extends TestCase {
 		assertEquals("String Cell value", c1.getStringCellValue(), c2.getStringCellValue());
 		assertEquals("String Cell value", d1.getStringCellValue(), d2.getStringCellValue());
 
-		File xls = File.createTempFile("testFormulaUnicode", ".xls");
+		File xls = TempFile.createTempFile("testFormulaUnicode", ".xls");
 		FileOutputStream out = new FileOutputStream(xls);
 		w.write(out);
 		out.close();

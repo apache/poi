@@ -32,6 +32,7 @@ import org.apache.poi.hssf.record.VCenterRecord;
 import org.apache.poi.hssf.record.WSBoolRecord;
 import org.apache.poi.hssf.record.WindowTwoRecord;
 import org.apache.poi.hssf.util.Region;
+import org.apache.poi.util.TempFile;
 
 /**
  * Tests HSSFSheet.  This test case is very incomplete at the moment.
@@ -165,7 +166,7 @@ public class TestHSSFSheet
         cell.setCellValue(true);
         cell = row.createCell((short) 11);
         cell.setCellValue(true);
-        File tempFile = File.createTempFile("bool", "test.xls");
+        File tempFile = TempFile.createTempFile("bool", "test.xls");
         FileOutputStream stream = new FileOutputStream(tempFile);
         workbook.write(stream);
         stream.close();
@@ -312,7 +313,7 @@ public class TestHSSFSheet
     	HSSFWorkbook wb = new HSSFWorkbook();
     	HSSFSheet sheet = wb.createSheet();
 	
-        File tempFile = File.createTempFile("display", "test.xls");
+        File tempFile = TempFile.createTempFile("display", "test.xls");
         FileOutputStream stream = new FileOutputStream(tempFile);
         wb.write(stream);
         stream.close();
@@ -330,7 +331,7 @@ public class TestHSSFSheet
     	sheet.setDisplayRowColHeadings(false);
     	sheet.setDisplayFormulas(true);
 
-        tempFile = File.createTempFile("display", "test.xls");
+        tempFile = TempFile.createTempFile("display", "test.xls");
         stream = new FileOutputStream(tempFile);
         wb.write(stream);
         stream.close();
@@ -377,7 +378,7 @@ public class TestHSSFSheet
         assertEquals("row breaks number", 2, sheet.getRowBreaks().length);
         assertEquals("column breaks number", 2, sheet.getColumnBreaks().length);
         
-        File tempFile = File.createTempFile("display", "testPagebreaks.xls");
+        File tempFile = TempFile.createTempFile("display", "testPagebreaks.xls");
         FileOutputStream stream = new FileOutputStream(tempFile);
         wb.write(stream);
         stream.close();

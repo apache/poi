@@ -27,6 +27,7 @@ import java.util.Date;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.util.CellReference;
+import org.apache.poi.util.TempFile;
 
 /**
  * @author Andrew C. Oliver (acoliver at apache dot org)
@@ -47,7 +48,7 @@ extends TestCase {
     throws Exception {
         
         short            rownum = 0;
-        File file = File.createTempFile("testFormula",".xls");
+        File file = TempFile.createTempFile("testFormula",".xls");
         FileOutputStream out    = new FileOutputStream(file);
         HSSFWorkbook     wb     = new HSSFWorkbook();
         HSSFSheet        s      = wb.createSheet();
@@ -169,7 +170,7 @@ extends TestCase {
     private void floatTest(String operator)
     throws Exception {
         short            rownum = 0;
-        File file = File.createTempFile("testFormulaFloat",".xls");
+        File file = TempFile.createTempFile("testFormulaFloat",".xls");
         FileOutputStream out    = new FileOutputStream(file);
         HSSFWorkbook     wb     = new HSSFWorkbook();
         HSSFSheet        s      = wb.createSheet();
@@ -260,7 +261,7 @@ extends TestCase {
     
     private void operationRefTest(String operator) 
     throws Exception {
-        File file = File.createTempFile("testFormula",".xls");
+        File file = TempFile.createTempFile("testFormula",".xls");
         FileOutputStream out    = new FileOutputStream(file);
         HSSFWorkbook     wb     = new HSSFWorkbook();
         HSSFSheet        s      = wb.createSheet();
@@ -412,7 +413,7 @@ extends TestCase {
      */    
     private void orderTest(String formula) 
     throws Exception {
-        File file = File.createTempFile("testFormula",".xls");
+        File file = TempFile.createTempFile("testFormula",".xls");
         FileOutputStream out    = new FileOutputStream(file);
         HSSFWorkbook     wb     = new HSSFWorkbook();
         HSSFSheet        s      = wb.createSheet();
@@ -450,7 +451,7 @@ extends TestCase {
     private void binomialOperator(String operator)
     throws Exception {
         short            rownum = 0;
-        File file = File.createTempFile("testFormula",".xls");
+        File file = TempFile.createTempFile("testFormula",".xls");
         FileOutputStream out    = new FileOutputStream(file);
         HSSFWorkbook     wb     = new HSSFWorkbook();
         HSSFSheet        s      = wb.createSheet();
@@ -548,7 +549,7 @@ extends TestCase {
     throws Exception {
             
             short            rownum = 0;
-            File file = File.createTempFile("testFormulaAreaFunction"+function,".xls");
+            File file = TempFile.createTempFile("testFormulaAreaFunction"+function,".xls");
             FileOutputStream out    = new FileOutputStream(file);
             HSSFWorkbook     wb     = new HSSFWorkbook();
             HSSFSheet        s      = wb.createSheet();
@@ -586,7 +587,7 @@ extends TestCase {
     throws Exception {
             
             short            rownum = 0;
-            File file = File.createTempFile("testFormulaArrayFunction"+function,".xls");
+            File file = TempFile.createTempFile("testFormulaArrayFunction"+function,".xls");
             FileOutputStream out    = new FileOutputStream(file);
             HSSFWorkbook     wb     = new HSSFWorkbook();
             HSSFSheet        s      = wb.createSheet();
@@ -625,7 +626,7 @@ extends TestCase {
     throws Exception {
             
             short            rownum = 0;
-            File file = File.createTempFile("testFormulaAreaArrayFunction"+function,".xls");
+            File file = TempFile.createTempFile("testFormulaAreaArrayFunction"+function,".xls");
             FileOutputStream out    = new FileOutputStream(file);
             HSSFWorkbook     wb     = new HSSFWorkbook();
             HSSFSheet        s      = wb.createSheet();
@@ -664,7 +665,7 @@ extends TestCase {
     
     
     public void testAbsRefs() throws Exception {
-            File file = File.createTempFile("testFormulaAbsRef",".xls");
+            File file = TempFile.createTempFile("testFormulaAbsRef",".xls");
             FileOutputStream out    = new FileOutputStream(file);
             HSSFWorkbook     wb     = new HSSFWorkbook();
             HSSFSheet        s      = wb.createSheet();
@@ -711,7 +712,7 @@ extends TestCase {
     {
         String filename = System.getProperty("HSSF.testdata.path");
 
-            File file = File.createTempFile("testSheetFormula",".xls");
+            File file = TempFile.createTempFile("testSheetFormula",".xls");
             FileOutputStream out    = new FileOutputStream(file);
             HSSFWorkbook     wb     = new HSSFWorkbook();
             HSSFSheet        s      = wb.createSheet("A");
@@ -743,7 +744,7 @@ extends TestCase {
     }
     
     public void testRVAoperands() throws Exception {
-         File file = File.createTempFile("testFormulaRVA",".xls");
+         File file = TempFile.createTempFile("testFormulaRVA",".xls");
             FileOutputStream out    = new FileOutputStream(file);
             HSSFWorkbook     wb     = new HSSFWorkbook();
             HSSFSheet        s      = wb.createSheet();
@@ -785,7 +786,7 @@ extends TestCase {
     {
         String readFilename = System.getProperty("HSSF.testdata.path");
 
-            File file = File.createTempFile("testStringFormula",".xls");
+            File file = TempFile.createTempFile("testStringFormula",".xls");
             FileOutputStream out    = new FileOutputStream(file);
             HSSFWorkbook     wb     = new HSSFWorkbook();
             HSSFSheet        s      = wb.createSheet("A");
@@ -818,7 +819,7 @@ extends TestCase {
         throws IOException
     {
 
-            File file = File.createTempFile("testLogicalFormula",".xls");
+            File file = TempFile.createTempFile("testLogicalFormula",".xls");
             FileOutputStream out    = new FileOutputStream(file);
             HSSFWorkbook     wb     = new HSSFWorkbook();
             HSSFSheet        s      = wb.createSheet("A");
@@ -847,7 +848,7 @@ extends TestCase {
     {
         String readFilename = System.getProperty("HSSF.testdata.path");
 
-            File file = File.createTempFile("testDateFormula",".xls");
+            File file = TempFile.createTempFile("testDateFormula",".xls");
             FileOutputStream out    = new FileOutputStream(file);
             HSSFWorkbook     wb     = new HSSFWorkbook();
             HSSFSheet        s      = wb.createSheet("Sheet1");
@@ -885,7 +886,7 @@ extends TestCase {
     {
         String readFilename = System.getProperty("HSSF.testdata.path");
 
-            File file = File.createTempFile("testIfFormula",".xls");
+            File file = TempFile.createTempFile("testIfFormula",".xls");
             FileOutputStream out    = new FileOutputStream(file);
             HSSFWorkbook     wb     = new HSSFWorkbook();
             HSSFSheet        s      = wb.createSheet("Sheet1");
@@ -922,7 +923,7 @@ extends TestCase {
             //assertTrue("expected: A!A1+A!B1 got: "+c.getCellFormula(), ("A!A1+A!B1").equals(c.getCellFormula()));
             in.close();
             
-		File simpleIf = File.createTempFile("testSimpleIfFormulaWrite",".xls");
+		File simpleIf = TempFile.createTempFile("testSimpleIfFormulaWrite",".xls");
 		out    = new FileOutputStream(simpleIf);
 		wb     = new HSSFWorkbook();
 		s      = wb.createSheet("Sheet1");
@@ -937,7 +938,7 @@ extends TestCase {
 			
 		assertTrue("length of simpleIf file is zero", (simpleIf.length()>0));
 			
-		File nestedIf = File.createTempFile("testNestedIfFormula",".xls");
+		File nestedIf = TempFile.createTempFile("testNestedIfFormula",".xls");
 		out    = new FileOutputStream(nestedIf);
 		wb     = new HSSFWorkbook();
 		s      = wb.createSheet("Sheet1");
@@ -987,7 +988,7 @@ extends TestCase {
 		assertEquals(function, c.getCellFormula());
 		
 
-		File file = File.createTempFile("testSumIfFormula",".xls");
+		File file = TempFile.createTempFile("testSumIfFormula",".xls");
 		FileOutputStream out    = new FileOutputStream(file);
 		wb     = new HSSFWorkbook();
 		s      = wb.createSheet();

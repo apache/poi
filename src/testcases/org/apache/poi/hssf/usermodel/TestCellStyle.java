@@ -28,6 +28,7 @@ import java.io.*;
 import java.util.*;
 
 import junit.framework.*;
+import org.apache.poi.util.TempFile;
 
 /**
  * Class to test cell styling functionality
@@ -59,7 +60,7 @@ public class TestCellStyle
     public void testWriteSheetFont()
         throws IOException
     {
-        File             file = File.createTempFile("testWriteSheetFont",
+        File             file = TempFile.createTempFile("testWriteSheetFont",
                                                     ".xls");
         FileOutputStream out  = new FileOutputStream(file);
         HSSFWorkbook     wb   = new HSSFWorkbook();
@@ -104,7 +105,7 @@ public class TestCellStyle
     public void testDataStyle()
             throws Exception
     {
-        File             file = File.createTempFile("testWriteSheetStyleDate",
+        File             file = TempFile.createTempFile("testWriteSheetStyleDate",
                                                     ".xls");
         FileOutputStream out  = new FileOutputStream(file);
         HSSFWorkbook     wb   = new HSSFWorkbook();
@@ -150,7 +151,7 @@ public class TestCellStyle
     public void testWriteSheetStyle()
         throws IOException
     {
-        File             file = File.createTempFile("testWriteSheetStyle",
+        File             file = TempFile.createTempFile("testWriteSheetStyle",
                                                     ".xls");
         FileOutputStream out  = new FileOutputStream(file);
         HSSFWorkbook     wb   = new HSSFWorkbook();
