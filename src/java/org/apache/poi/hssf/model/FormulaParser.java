@@ -738,17 +738,18 @@ end;
     }
     
     private void setParameterRVA(Node n, int formulaType) {
-        Ptg p = (Ptg) n.getValue();
+        Ptg p = n.getValue();
+        int numOperands = n.getNumChildren();
         if (p instanceof AbstractFunctionPtg) {
-            int numOperands = n.getNumChildren();
-            for (int i =0;i<n.getNumChildren();i++) {
+            for (int i =0;i<numOperands;i++) {
                 setParameterRVA(n.getChild(i),((AbstractFunctionPtg)p).getParameterClass(i),formulaType);
-                if (n.getChild(i).getValue() instanceof AbstractFunctionPtg) {
-                    setParameterRVA(n.getChild(i),formulaType);
-                }
-            }  
+//                if (n.getChild(i).getValue() instanceof AbstractFunctionPtg) {
+//                    setParameterRVA(n.getChild(i),formulaType);
+//                }
+                setParameterRVA(n.getChild(i),formulaType);
+            }
         } else {
-            for (int i =0;i<n.getNumChildren();i++) {
+            for (int i =0;i<numOperands;i++) {
                 setParameterRVA(n.getChild(i),formulaType);
             }
         } 
