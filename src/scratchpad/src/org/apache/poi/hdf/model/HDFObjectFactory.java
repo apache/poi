@@ -7,10 +7,18 @@
 package org.apache.poi.hdf.model;
 
 
-import java.io.*;
+//import java.io;
+
+import java.util.ArrayList;
+import java.io.InputStream;
+import java.io.IOException;
+import java.util.List;
+import java.util.TreeSet;
+
 
 import org.apache.poi.hdf.model.hdftypes.*;
-import org.apache.poi.hdf.model.util.*;
+//import org.apache.poi.hdf.model.util.*;
+
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSDocument;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
@@ -41,13 +49,14 @@ public class HDFObjectFactory
     private FontTable _fonts;
 
     /** text pieces */
-    BTreeSet _text = new BTreeSet();
+    //BTreeSet _text = new BTreeSet();
+    TreeSet _text = new TreeSet();
     /** document sections */
-    BTreeSet _sections = new BTreeSet();
+    TreeSet _sections = new TreeSet();
     /** document paragraphs */
-    BTreeSet _paragraphs = new BTreeSet();
+    TreeSet _paragraphs = new TreeSet();
     /** document character runs */
-    BTreeSet _characterRuns = new BTreeSet();
+    TreeSet _characterRuns = new TreeSet();
 
     /** main document stream buffer*/
     byte[] _mainDocument;
@@ -78,9 +87,31 @@ public class HDFObjectFactory
         initTextPieces();
         initFormattingProperties();
 
-        istream.close();
-
     }
+    
+    public static List getTypes(InputStream istream) throws IOException
+    {
+        List results = new ArrayList(1);
+        
+        //do Ole stuff
+        POIFSFileSystem filesystem = new POIFSFileSystem(istream);
+        
+        DocumentEntry headerProps =
+            (DocumentEntry)filesystem.getRoot().getEntry("WordDocument");
+
+        byte[] mainDocument = new byte[headerProps.getSize()];
+        filesystem.createDocumentInputStream("WordDocument").read(mainDocument);
+
+        FileInformationBlock fib = new FileInformationBlock(mainDocument);
+
+       // initTableStream();
+       // initTextPieces();
+       // initFormattingProperties();
+        
+        results.add(fib);
+        return results;
+    }
+   
     /**
      * Initializes the table stream
      *
