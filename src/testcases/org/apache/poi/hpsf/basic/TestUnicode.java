@@ -104,6 +104,9 @@ public class TestUnicode extends TestCase
 
     /**
      * <p>Read a the test file from the "data" directory.</p>
+     * 
+     * @exception FileNotFoundException if the file to be read does not exist.
+     * @exception IOException if any other I/O exception occurs
      */
     protected void setUp() throws FileNotFoundException, IOException
     {
@@ -118,6 +121,9 @@ public class TestUnicode extends TestCase
      * <p>Tests the {@link PropertySet} methods. The test file has two
      * property set: the first one is a {@link SummaryInformation},
      * the second one is a {@link DocumentSummaryInformation}.</p>
+     * 
+     * @exception IOException if an I/O exception occurs
+     * @exception HPSFException if an HPSF exception occurs
      */
     public void testPropertySetMethods() throws IOException, HPSFException
     {
@@ -144,6 +150,8 @@ public class TestUnicode extends TestCase
 
     /**
      * <p>Runs the test cases stand-alone.</p>
+     * 
+     * @param args Command-line arguments.
      */
     public static void main(final String[] args)
     {

@@ -55,16 +55,11 @@
 package org.apache.poi.hpsf.basic;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
@@ -77,8 +72,6 @@ import org.apache.poi.hpsf.PropertySet;
 import org.apache.poi.hpsf.PropertySetFactory;
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hpsf.UnexpectedPropertySetTypeException;
-import org.apache.poi.poifs.filesystem.DocumentEntry;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 
 
@@ -122,6 +115,11 @@ public class TestBasic extends TestCase
 
 
 
+    /**
+     * <p>Test case constructor.</p>
+     * 
+     * @param name The test case's name.
+     */
     public TestBasic(final String name)
     {
         super(name);
@@ -131,6 +129,9 @@ public class TestBasic extends TestCase
 
     /**
      * <p>Read a the test file from the "data" directory.</p>
+     * 
+     * @exception FileNotFoundException if the file to be read does not exist.
+     * @exception IOException if any other I/O exception occurs.
      */
     public void setUp() throws FileNotFoundException, IOException
     {
@@ -146,6 +147,8 @@ public class TestBasic extends TestCase
     /**
      * <p>Checks the names of the files in the POI filesystem. They
      * are expected to be in a certain order.</p>
+     * 
+     * @exception IOException if an I/O exception occurs
      */
     public void testReadFiles() throws IOException
     {
@@ -164,6 +167,8 @@ public class TestBasic extends TestCase
      * property sets. In the latter cases a {@link
      * NoPropertySetStreamException} will be thrown when trying to
      * create a {@link PropertySet}.</p>
+     * 
+     * @exception IOException if an I/O exception occurs
      */
     public void testCreatePropertySets() throws IOException
     {
@@ -206,6 +211,9 @@ public class TestBasic extends TestCase
      * <p>Tests the {@link PropertySet} methods. The test file has two
      * property sets: the first one is a {@link SummaryInformation},
      * the second one is a {@link DocumentSummaryInformation}.</p>
+     * 
+     * @exception IOException if an I/O exception occurs
+     * @exception HPSFException if any HPSF exception occurs
      */
     public void testPropertySetMethods() throws IOException, HPSFException
     {
@@ -251,7 +259,6 @@ public class TestBasic extends TestCase
             for (int i = 0; i < fileList.length; i++)
             {
                 File f = fileList[i];
-                System.out.println("Reading file " + f);
                 /* Read the POI filesystem's property set streams: */
                 final POIFile[] psf1 = Util.readPropertySets(f);
 
@@ -266,7 +273,7 @@ public class TestBasic extends TestCase
         catch (Throwable t)
         {
             final String s = Util.toString(t);
-            System.err.println(s);
+            fail(s);
         }
     }
 
