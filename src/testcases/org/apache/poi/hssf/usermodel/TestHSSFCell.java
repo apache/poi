@@ -74,6 +74,8 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 /**
+ * Tests various functionity having to do with HSSFCell.  For instance support for
+ * paticular datatypes, etc.
  * @author Andrew C. Oliver (andy at superlinksoftware dot com)
  */
 
@@ -83,6 +85,9 @@ extends TestCase {
         super(s);
     }
 
+    /**
+     * test that Boolean and Error types (BoolErrRecord) are supported properly.
+     */
     public void testBoolErr()
             throws java.io.IOException {
         String readFilename = System.getProperty("HSSF.testdata.path");
