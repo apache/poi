@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
 "../dtd/document-v11.dtd">
 <!-- $Id$ -->
@@ -436,7 +436,7 @@ for (Iterator i = sections.iterator(); i.hasNext();)
     /* Print a single section: */
     Section sec = (Section) i.next();
 
-    // ...
+    // See below for the complete loop body.
 }</source>
 
     <p>The <code>PropertySet</code>'s method <code>getSectionCount()</code>
@@ -446,7 +446,171 @@ for (Iterator i = sections.iterator(); i.hasNext();)
      method. This method returns a <code>java.util.List</code> containing
      instances of the <code>Section</code> class in their proper order.</p>
 
+    <p>The sample code shows a loop that retrieves the <code>Section</code>
+     objects one by one and prints some information about each one. Here is the
+     complete body of the loop:</p>
+
+    <source>/* Print a single section: */
+Section sec = (Section) i.next();
+out("   Section " + nr++ + ":");
+String s = hex(sec.getFormatID().getBytes());
+s = s.substring(0, s.length() - 1);
+out("      Format ID: " + s);
+
+/* Print the number of properties in this section. */
+int propertyCount = sec.getPropertyCount();
+out("      No. of properties: " + propertyCount);
+
+/* Print the properties: */
+Property[] properties = sec.getProperties();
+for (int i2 = 0; i2 &lt; properties.length; i2++)
+{
+    /* Print a single property: */
+    Property p = properties[i2];
+    int id = p.getID();
+    long type = p.getType();
+    Object value = p.getValue();
+    out("      Property ID: " + id + ", type: " + type +
+        ", value: " + value);
+}</source>
+
+    <p>The first method called on the <code>Section</code> instance is
+     <code>getFormatID()</code>. As explained above, the format ID of the first
+     section in a property set determines the type of the property set. Its
+     type is <code>ClassID</code> which is essentially a sequence of 16
+     bytes. A real application using its own type of a custom property set
+     should have defined a unique format ID and, when reading a property set
+     stream, should check the format ID is equal to that unique format ID. The
+     sample program just prints the format ID it finds in a section:</p>
+
+    <source>String s = hex(sec.getFormatID().getBytes());
+s = s.substring(0, s.length() - 1);
+out("      Format ID: " + s);</source>
+
+    <p>As you can see, the <code>getFormatID()</code> method returns a
+     <code>ClassID</code> object. An array containing the bytes can be
+     retrieved with <code>ClassID.getBytes()</code>. In order to get a nicely
+     formatted printout, the sample program uses the <code>hex()</code> helper
+     method which in turn uses the POI utility class <code>HexDump</code> in
+     the <code>org.apache.poi.util</code> package. Another helper method is
+     <code>out()</code> which just saves typing
+     <code>System.out.println()</code>.</p>
+
+    <p>Before getting the properties, it is possible to find out how many
+     properties are available in the section via the
+     <code>Section.getPropertyCount()</code>. The sample application uses this
+     method to print the number of properties to the standard output:</p>
+
+    <source>int propertyCount = sec.getPropertyCount();
+out("      No. of properties: " + propertyCount);</source>
+
+    <p>Now its time to get to the properties themselves. You can retrieve a
+     section's properties with the method
+     <code>Section.getProperties()</code>:</p>
+
+    <source>Property[] properties = sec.getProperties();</source>
+
+    <p>As you can see the result is an array of <code>Property</code>
+     objects. This class has three methods to retrieve a property's ID, its
+     type, and its value. The following code snippet shows how to call
+     them:</p>
+
+    <source>for (int i2 = 0; i2 &lt; properties.length; i2++)
+{
+    /* Print a single property: */
+    Property p = properties[i2];
+    int id = p.getID();
+    long type = p.getType();
+    Object value = p.getValue();
+    out("      Property ID: " + id + ", type: " + type +
+        ", value: " + value);
+}</source>
+
+    <p>The output of the sample program might look like the following. It shows
+     the summary information and the document summary information property sets
+     of a Microsoft Word document. However, unlike the first and second section
+     of this HOW-TO the application does not have any code which is specific to
+     the <code>SummaryInformation</code> and
+     <code>DocumentSummaryInformation</code> classes.</p>
+
+    <source>Property set stream "/SummaryInformation":
+   No. of sections: 1
+   Section 0:
+      Format ID: 00000000 F2 9F 85 E0 4F F9 10 68 AB 91 08 00 2B 27 B3 D9 ....O..h....+'..
+      No. of properties: 17
+      Property ID: 1, type: 2, value: 1252
+      Property ID: 2, type: 30, value: Titel
+      Property ID: 3, type: 30, value: Thema
+      Property ID: 4, type: 30, value: Rainer Klute (Autor)
+      Property ID: 5, type: 30, value: Test (Stichwörter)
+      Property ID: 6, type: 30, value: This is a document for testing HPSF
+      Property ID: 7, type: 30, value: Normal.dot
+      Property ID: 8, type: 30, value: Unknown User
+      Property ID: 9, type: 30, value: 3
+      Property ID: 18, type: 30, value: Microsoft Word 9.0
+      Property ID: 12, type: 64, value: Mon Jan 01 00:59:25 CET 1601
+      Property ID: 13, type: 64, value: Thu Jul 18 16:22:00 CEST 2002
+      Property ID: 14, type: 3, value: 1
+      Property ID: 15, type: 3, value: 20
+      Property ID: 16, type: 3, value: 93
+      Property ID: 19, type: 3, value: 0
+      Property ID: 17, type: 71, value: [B@13582d
+Property set stream "/DocumentSummaryInformation":
+   No. of sections: 2
+   Section 0:
+      Format ID: 00000000 D5 CD D5 02 2E 9C 10 1B 93 97 08 00 2B 2C F9 AE ............+,..
+      No. of properties: 14
+      Property ID: 1, type: 2, value: 1252
+      Property ID: 2, type: 30, value: Test
+      Property ID: 14, type: 30, value: Rainer Klute (Manager)
+      Property ID: 15, type: 30, value: Rainer Klute IT-Consulting GmbH
+      Property ID: 5, type: 3, value: 3
+      Property ID: 6, type: 3, value: 2
+      Property ID: 17, type: 3, value: 111
+      Property ID: 23, type: 3, value: 592636
+      Property ID: 11, type: 11, value: false
+      Property ID: 16, type: 11, value: false
+      Property ID: 19, type: 11, value: false
+      Property ID: 22, type: 11, value: false
+      Property ID: 13, type: 4126, value: [B@56a499
+      Property ID: 12, type: 4108, value: [B@506411
+   Section 1:
+      Format ID: 00000000 D5 CD D5 05 2E 9C 10 1B 93 97 08 00 2B 2C F9 AE ............+,..
+      No. of properties: 7
+      Property ID: 0, type: 0, value: {6=Test-JaNein, 5=Test-Zahl, 4=Test-Datum, 3=Test-Text, 2=_PID_LINKBASE}
+      Property ID: 1, type: 2, value: 1252
+      Property ID: 2, type: 65, value: [B@c9ba38
+      Property ID: 3, type: 30, value: This is some text.
+      Property ID: 4, type: 64, value: Wed Jul 17 00:00:00 CEST 2002
+      Property ID: 5, type: 3, value: 27
+      Property ID: 6, type: 11, value: true
+No property set stream: "/WordDocument"
+No property set stream: "/CompObj"
+No property set stream: "/1Table"</source>
+
+    <p>There are some interestion items to note:</p>
+
+    <ul>
+     <li>The first property set (summary information) consists of a single
+       section, the second property set (document summary information) consists
+       of two sections.</li>
+
+     <li>Each section type (identified by its format ID) has its own domain of
+      property ID. For example, in the second property set the properties with
+      ID 2 have different meanings in the two section. By the way, the format
+      IDs of these sections are <strong>not</strong> equal, but you have to
+      look hard to find the difference.</li>
+
+     <li>The properties are not in any particular order in the section,
+      although they slightly tend to be sorted by their IDs.</li>
+    </ul>
+
     <note>[To be continued.]</note>
+
+    <note>A last note: There are still some aspects of HSPF left which are not
+     documented in this HOW-TO. You should dig into the Javadoc API
+     documentation to learn further details. Since you struggled through this
+     document up to this point, you are well prepared.</note>
    </section>
   </section>
  </body>
