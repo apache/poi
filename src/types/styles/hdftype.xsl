@@ -76,7 +76,7 @@ import org.apache.poi.hdf.model.hdftypes.HDFType;
  *       remove the record in src/records/definitions.
 <xsl:apply-templates select="author"/>
  */
-public class <xsl:value-of select="@name"/>Type
+public abstract class <xsl:value-of select="@name"/>AbstractType
     implements HDFType
 {
 
@@ -84,7 +84,7 @@ public class <xsl:value-of select="@name"/>Type
 <xsl:apply-templates select="./bit|./const"/>
 </xsl:for-each>
 
-    public <xsl:value-of select="@name"/>Type()
+    public <xsl:value-of select="@name"/>AbstractType()
     {
 <xsl:for-each select="//fields/field"><xsl:if test="@default">
 <xsl:text>        </xsl:text>
