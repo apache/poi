@@ -65,6 +65,8 @@ import junit.framework.TestCase;
 
 
 /**
+ * Testcases for bugs entered in bugzilla
+ * the Test name contains the bugzilla bug id
  * @author Avik Sengupta
  */
 
@@ -351,12 +353,21 @@ extends TestCase {
     
     /** Reference to Name*/
     public void test13224() throws java.io.IOException {
-
         String filename = System.getProperty("HSSF.testdata.path");
         filename=filename+"/13224.xls";
         FileInputStream in = new FileInputStream(filename);
         HSSFWorkbook wb = new HSSFWorkbook(in);
         this.assertTrue("Read workbook!" , true);
+
+    }
+    
+    /** Illegal argument exception - cannot store duplicate value in Map*/
+     public void test19599() throws java.io.IOException {
+        FileInputStream in = new FileInputStream("19599-1.xls");
+        HSSFWorkbook wb = new HSSFWorkbook(in);
+        in = new FileInputStream("19599-2.xls");
+        wb = new HSSFWorkbook(in);
+        this.assertTrue("Read workbook, No exceptions" , true);
 
     }
 }
