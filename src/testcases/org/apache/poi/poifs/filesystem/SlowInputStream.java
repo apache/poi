@@ -2,7 +2,7 @@
 /* ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 2003 The Apache Software Foundation.  All rights
+ * Copyright (c) 2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -53,94 +53,24 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.poi.poifs.storage;
-
-import org.apache.poi.poifs.common.POIFSConstants;
-import org.apache.poi.util.IOUtils;
+package org.apache.poi.poifs.filesystem;
 
 import java.io.*;
+import java.util.Random;
 
 /**
- * A big block created from an InputStream, holding the raw data
- *
- * @author Marc Johnson (mjohnson at apache dot org
+ * Returns a random amount of requested data. Used to check conformance with
+ * InputStream API contracts.
  */
-
-public class RawDataBlock
-    implements ListManagedBlock
+public class SlowInputStream extends FilterInputStream
 {
-    private byte[]  _data;
-    private boolean _eof;
-
-    /**
-     * Constructor RawDataBlock
-     *
-     * @param stream the InputStream from which the data will be read
-     *
-     * @exception IOException on I/O errors, and if an insufficient
-     *            amount of data is read
-     */
-
-    public RawDataBlock(final InputStream stream)
-        throws IOException
-    {
-        _data = new byte[ POIFSConstants.BIG_BLOCK_SIZE ];
-        int count = IOUtils.readFully(stream, _data);
-
-        if (count == -1)
-        {
-            _eof = true;
-        }
-        else if (count != POIFSConstants.BIG_BLOCK_SIZE)
-        {
-            String type = " byte" + ((count == 1) ? ("")
-                                                  : ("s"));
-
-            throw new IOException("Unable to read entire block; " + count
-                                  + type + " read; expected "
-                                  + POIFSConstants.BIG_BLOCK_SIZE + " bytes");
-        }
-        else
-        {
-            _eof = false;
-        }
+    private Random r = new Random(0);
+    
+    public SlowInputStream(InputStream in) {
+        super(in);
     }
 
-    /**
-     * When we read the data, did we hit end of file?
-     *
-     * @return true if no data was read because we were at the end of
-     *         the file, else false
-     *
-     * @exception IOException
-     */
-
-    public boolean eof()
-        throws IOException
-    {
-        return _eof;
+    public int read(byte[] b, int off, int len) throws IOException {
+        return super.read(b, off, r.nextInt(len) + 1);
     }
-
-    /* ********** START implementation of ListManagedBlock ********** */
-
-    /**
-     * Get the data from the block
-     *
-     * @return the block's data as a byte array
-     *
-     * @exception IOException if there is no data
-     */
-
-    public byte [] getData()
-        throws IOException
-    {
-        if (eof())
-        {
-            throw new IOException("Cannot return empty data");
-        }
-        return _data;
-    }
-
-    /* **********  END  implementation of ListManagedBlock ********** */
-}   // end public class RawDataBlock
-
+}
