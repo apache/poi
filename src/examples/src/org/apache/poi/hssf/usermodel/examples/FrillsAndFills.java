@@ -78,7 +78,7 @@ public class FrillsAndFills
 
         // Aqua background
         HSSFCellStyle style = wb.createCellStyle();
-        style.setFillBackgroundColor(HSSFColor.AQUA.index);
+        style.setFillBackgroundColor(HSSFCellStyle.AQUA);
         style.setFillPattern(HSSFCellStyle.BIG_SPOTS);
         HSSFCell cell = row.createCell((short) 1);
         cell.setCellValue("X");
@@ -86,7 +86,7 @@ public class FrillsAndFills
 
         // Orange "foreground", foreground being the fill foreground not the font color.
         style = wb.createCellStyle();
-        style.setFillForegroundColor(HSSFColor.ORANGE.index);
+        style.setFillForegroundColor(HSSFCellStyle.ORANGE);
         style.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
         cell = row.createCell((short) 2);
         cell.setCellValue("X");
