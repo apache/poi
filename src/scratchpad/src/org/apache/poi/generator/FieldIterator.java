@@ -81,6 +81,8 @@ public class FieldIterator
         String result = "";
         if (javaType.equals("short"))
             result = "LittleEndian.getShort(data, " + offset + " + offset)";
+        else if (javaType.equals("short[]"))
+            result = "LittleEndian.getShortArray(data, " + offset + " + offset)";
         else if (javaType.equals("int"))
             result = "LittleEndian.getInt(data, " + offset + " + offset)";
         else if (javaType.equals("byte"))
@@ -109,6 +111,8 @@ public class FieldIterator
         String result = "";
         if (javaType.equals("short"))
             result = "LittleEndian.putShort(data, " + (offset+4) + " + offset, " + javaFieldName + ");";
+        else if (javaType.equals("short[]"))
+            result = "LittleEndian.putShortArray(data, " + (offset+4) + " + offset, " + javaFieldName + ");";
         else if (javaType.equals("int"))
             result = "LittleEndian.putInt(data, " + (offset+4) + " + offset, " + javaFieldName + ");";
         else if (javaType.equals("byte"))
@@ -136,6 +140,11 @@ public class FieldIterator
         {
             String javaFieldName = RecordUtil.getFieldName(fieldNumber,fieldName,0);
             return result + javaFieldName + ".sizeInBytes()";
+        }
+        else if ("varword".equals(size))
+        {
+            String javaFieldName = RecordUtil.getFieldName(fieldNumber,fieldName,0);
+            return result + javaFieldName + ".length * 2 + 2";
         }
         else
         {

@@ -96,6 +96,21 @@ public class LittleEndian
     }
 
     /**
+     * get a short array from a byte array.  The short array is assumed
+     * to start with a word describing the length of the array.
+     */
+    public static short[] getShortArray(final byte [] data, final int offset)
+    {
+        int size = ( short) getNumber(data, offset, SHORT_SIZE);
+        short[] results = new short[size];
+        for (int i = 0; i < size; i++)
+        {
+            results[i] = getShort(data, offset + 2 + (i*2));
+        }
+        return results;
+    }
+
+    /**
      * get a short value from the beginning of a byte array
      *
      * @param data the byte array
@@ -219,6 +234,24 @@ public class LittleEndian
                                 final short value)
     {
         putNumber(data, offset, value, SHORT_SIZE);
+    }
+
+    /**
+     * put a array of shorts into a byte array
+     *
+     * @param data the byte array
+     * @param offset a starting offset into the byte array
+     * @param value the short array
+     *
+     * @exception ArrayIndexOutOfBoundsException may be thrown
+     */
+    public static void putShortArray(final byte [] data, final int offset, final short[] value)
+    {
+        putNumber(data, offset, value.length, SHORT_SIZE);
+        for (int i = 0; i < value.length; i++)
+        {
+            putNumber(data, offset + 2 + (i * 2), value[i], SHORT_SIZE);
+        }
     }
 
     /**
