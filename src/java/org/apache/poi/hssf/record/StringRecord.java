@@ -237,5 +237,14 @@ public class StringRecord
         buffer.append("[/STRING]\n");
         return buffer.toString();
     }
+    
+    public Object clone() {
+        StringRecord rec = new StringRecord();
+        rec.field_1_string_length = this.field_1_string_length;
+        rec.field_2_unicode_flag= this.field_2_unicode_flag;
+        rec.field_3_string = this.field_3_string;
+        return rec;
+
+    }
 
 }

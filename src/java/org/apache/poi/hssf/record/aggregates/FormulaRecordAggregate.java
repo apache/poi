@@ -205,6 +205,14 @@ public class FormulaRecordAggregate
     {
         return formulaRecord.toString();
     }
+    
+    /**
+     * @see java.lang.Object#clone()
+     */
+    public Object clone() {
+        return new FormulaRecordAggregate((FormulaRecord) this.formulaRecord.clone(), (StringRecord) this.stringRecord.clone());
+    }
+
 
 
 }
