@@ -59,6 +59,7 @@ package org.apache.poi.hdf.model.hdftypes;
 
 import java.util.*;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.hdf.model.hdftypes.definitions.TCAbstractType;
 /**
  * Comment me
  *
@@ -181,54 +182,56 @@ public class StyleSheet implements HDFType
       switch(operand)
       {
           case 0:
-               newCHP._fRMarkDel = getFlag(param);
+               newCHP.setFRMarkDel(getFlag(param));
                break;
           case 0x1:
-               newCHP._fRMark = getFlag(param);
+               newCHP.setFRMark(getFlag(param));
                break;
           case 0x2:
                break;
           case 0x3:
-               newCHP._fcPic = param;
-               newCHP._fSpec = true;
+               newCHP.setFcPic(param);
+               newCHP.setFSpec(true);
                break;
           case 0x4:
-               newCHP._ibstRMark = (short)param;
+               newCHP.setIbstRMark((short)param);
                break;
           case 0x5:
-               newCHP._dttmRMark[0] = LittleEndian.getShort(grpprl, (offset - 4));
-               newCHP._dttmRMark[1] = LittleEndian.getShort(grpprl, (offset - 2));
+               short[] dttmRMark = new short[2];
+               dttmRMark[0] = LittleEndian.getShort(grpprl, (offset - 4));
+               dttmRMark[1] = LittleEndian.getShort(grpprl, (offset - 2));
+               newCHP.setDttmRMark(dttmRMark);
                break;
           case 0x6:
-               newCHP._fData = getFlag(param);
+               newCHP.setFData(getFlag(param));
                break;
           case 0x7:
                //don't care about this
                break;
           case 0x8:
                short chsDiff = (short)((param & 0xff0000) >>> 8);
-               newCHP._fChsDiff = getFlag(chsDiff);
-               newCHP._chse = (short)(param & 0xffff);
+               newCHP.setFChsDiff(getFlag(chsDiff));
+               newCHP.setChse((short)(param & 0xffff));
                break;
           case 0x9:
-               newCHP._fSpec = true;
-               newCHP._ftcSym = (short)LittleEndian.getShort(varParam, 0);
-               newCHP._xchSym = (short)LittleEndian.getShort(varParam, 2);
+               newCHP.setFSpec(true);
+               newCHP.setFtcSym((short)LittleEndian.getShort(varParam, 0));
+               newCHP.setXchSym((short)LittleEndian.getShort(varParam, 2));
                break;
           case 0xa:
-               newCHP._fOle2 = getFlag(param);
+               newCHP.setFOle2(getFlag(param));
                break;
           case 0xb:
                //?
                break;
           case 0xc:
-               newCHP._icoHighlight = (byte)param;
-               newCHP._highlighted = getFlag(param);
+               newCHP.setIcoHighlight((byte)param);
+               newCHP.setFHighlight(getFlag(param));
                break;
           case 0xd:
                break;
           case 0xe:
-               newCHP._fcObj = param;
+               newCHP.setFcObj(param);
                break;
           case 0xf:
                break;
@@ -298,246 +301,253 @@ public class StyleSheet implements HDFType
           case 0x2f:
                break;
           case 0x30:
-               newCHP._istd = param;
+               newCHP.setIstd(param);
                break;
           case 0x31:
-               //permutation vector for fast saves who cares!
+               //permutation vector for fast saves, who cares!
                break;
           case 0x32:
-               newCHP._bold = false;
-               newCHP._italic = false;
-               newCHP._fOutline = false;
-               newCHP._fStrike = false;
-               newCHP._fShadow = false;
-               newCHP._fSmallCaps = false;
-               newCHP._fCaps = false;
-               newCHP._fVanish = false;
-               newCHP._kul = 0;
-               newCHP._ico = 0;
+               newCHP.setFBold(false);
+               newCHP.setFItalic(false);
+               newCHP.setFOutline(false);
+               newCHP.setFStrike(false);
+               newCHP.setFShadow(false);
+               newCHP.setFSmallCaps(false);
+               newCHP.setFCaps(false);
+               newCHP.setFVanish(false);
+               newCHP.setKul((byte)0);
+               newCHP.setIco((byte)0);
                break;
           case 0x33:
-               newCHP.copy(oldCHP);
+               try
+               {
+                   newCHP = (CharacterProperties)oldCHP.clone();
+               }
+               catch(CloneNotSupportedException e)
+               {
+                   //do nothing
+               }
                return;
           case 0x34:
                break;
           case 0x35:
-               newCHP._bold = getCHPFlag((byte)param, oldCHP._bold);
+               newCHP.setFBold(getCHPFlag((byte)param, oldCHP.isFBold()));
                break;
           case 0x36:
-               newCHP._italic = getCHPFlag((byte)param, oldCHP._italic);
+               newCHP.setFItalic(getCHPFlag((byte)param, oldCHP.isFItalic()));
                break;
           case 0x37:
-               newCHP._fStrike = getCHPFlag((byte)param, oldCHP._fStrike);
+               newCHP.setFStrike(getCHPFlag((byte)param, oldCHP.isFStrike()));
                break;
           case 0x38:
-               newCHP._fOutline = getCHPFlag((byte)param, oldCHP._fOutline);
+               newCHP.setFOutline(getCHPFlag((byte)param, oldCHP.isFOutline()));
                break;
           case 0x39:
-               newCHP._fShadow = getCHPFlag((byte)param, oldCHP._fShadow);
+               newCHP.setFShadow(getCHPFlag((byte)param, oldCHP.isFShadow()));
                break;
           case 0x3a:
-               newCHP._fSmallCaps = getCHPFlag((byte)param, oldCHP._fSmallCaps);
+               newCHP.setFSmallCaps(getCHPFlag((byte)param, oldCHP.isFSmallCaps()));
                break;
           case 0x3b:
-               newCHP._fCaps = getCHPFlag((byte)param, oldCHP._fCaps);
+               newCHP.setFCaps(getCHPFlag((byte)param, oldCHP.isFCaps()));
                break;
           case 0x3c:
-               newCHP._fVanish = getCHPFlag((byte)param, oldCHP._fVanish);
+               newCHP.setFVanish(getCHPFlag((byte)param, oldCHP.isFVanish()));
                break;
           case 0x3d:
-               newCHP._ftc = (short)param;
+               newCHP.setFtcAscii((short)param);
                break;
           case 0x3e:
-               newCHP._kul = (byte)param;
+               newCHP.setKul((byte)param);
                break;
           case 0x3f:
                int hps = param & 0xff;
                if(hps != 0)
                {
-                  newCHP._hps = hps;
+                  newCHP.setHps(hps);
                }
                byte cInc = (byte)(((byte)(param & 0xfe00) >>> 4) >> 1);
                if(cInc != 0)
                {
-                  newCHP._hps = Math.max(newCHP._hps + (cInc * 2), 2);
+                  newCHP.setHps(Math.max(newCHP.getHps() + (cInc * 2), 2));
                }
                byte hpsPos = (byte)((param & 0xff0000) >>> 8);
                if(hpsPos != 0x80)
                {
-                  newCHP._hpsPos = hpsPos;
+                  newCHP.setHpsPos(hpsPos);
                }
                boolean fAdjust = (param & 0x0100) > 0;
-               if(fAdjust && hpsPos != 128 && hpsPos != 0 && oldCHP._hpsPos == 0)
+               if(fAdjust && hpsPos != 128 && hpsPos != 0 && oldCHP.getHpsPos() == 0)
                {
-                  newCHP._hps = Math.max(newCHP._hps + (-2), 2);
+                  newCHP.setHps(Math.max(newCHP.getHps() + (-2), 2));
                }
-               if(fAdjust && hpsPos == 0 && oldCHP._hpsPos != 0)
+               if(fAdjust && hpsPos == 0 && oldCHP.getHpsPos() != 0)
                {
-                  newCHP._hps = Math.max(newCHP._hps + 2, 2);
+                  newCHP.setHps(Math.max(newCHP.getHps() + 2, 2));
                }
                break;
           case 0x40:
-               newCHP._dxaSpace = param;
+               newCHP.setDxaSpace(param);
                break;
           case 0x41:
-               newCHP._lidDefault = (short)param;
+               newCHP.setLidDefault((short)param);
                break;
           case 0x42:
-               newCHP._ico = (byte)param;
+               newCHP.setIco((byte)param);
                break;
           case 0x43:
-               newCHP._hps = param;
+               newCHP.setHps(param);
                break;
           case 0x44:
                byte hpsLvl = (byte)param;
-               newCHP._hps = Math.max(newCHP._hps + (hpsLvl * 2), 2);
+               newCHP.setHps(Math.max(newCHP.getHps() + (hpsLvl * 2), 2));
                break;
           case 0x45:
-               newCHP._hpsPos = (short)param;
+               newCHP.setHpsPos((short)param);
                break;
           case 0x46:
                if(param != 0)
                {
-                  if(oldCHP._hpsPos == 0)
+                  if(oldCHP.getHpsPos() == 0)
                   {
-                      newCHP._hps = Math.max(newCHP._hps + (-2), 2);
+                      newCHP.setHps(Math.max(newCHP.getHps() + (-2), 2));
                   }
                }
                else
                {
-                  if(oldCHP._hpsPos != 0)
+                  if(oldCHP.getHpsPos() != 0)
                   {
-                      newCHP._hps = Math.max(newCHP._hps + 2, 2);
+                      newCHP.setHps(Math.max(newCHP.getHps() + 2, 2));
                   }
                }
                break;
           case 0x47:
                CharacterProperties genCHP = new CharacterProperties();
-               genCHP._ftc = 4;
+               genCHP.setFtcAscii(4);
                genCHP = (CharacterProperties)uncompressProperty(varParam, genCHP, styleSheet);
-               CharacterProperties styleCHP = styleSheet.getStyleDescription(oldCHP._baseIstd).getCHP();
-               if(genCHP._bold == newCHP._bold)
+               CharacterProperties styleCHP = styleSheet.getStyleDescription(oldCHP.getBaseIstd()).getCHP();
+               if(genCHP.isFBold() == newCHP.isFBold())
                {
-                  newCHP._bold = styleCHP._bold;
+                  newCHP.setFBold(styleCHP.isFBold());
                }
-               if(genCHP._italic == newCHP._italic)
+               if(genCHP.isFItalic() == newCHP.isFItalic())
                {
-                  newCHP._italic = styleCHP._italic;
+                  newCHP.setFItalic(styleCHP.isFItalic());
                }
-               if(genCHP._fSmallCaps == newCHP._fSmallCaps)
+               if(genCHP.isFSmallCaps() == newCHP.isFSmallCaps())
                {
-                  newCHP._fSmallCaps = styleCHP._fSmallCaps;
+                  newCHP.setFSmallCaps(styleCHP.isFSmallCaps());
                }
-               if(genCHP._fVanish == newCHP._fVanish)
+               if(genCHP.isFVanish() == newCHP.isFVanish())
                {
-                  newCHP._fVanish = styleCHP._fVanish;
+                  newCHP.setFVanish(styleCHP.isFVanish());
                }
-               if(genCHP._fStrike == newCHP._fStrike)
+               if(genCHP.isFStrike() == newCHP.isFStrike())
                {
-                  newCHP._fStrike = styleCHP._fStrike;
+                  newCHP.setFStrike(styleCHP.isFStrike());
                }
-               if(genCHP._fCaps == newCHP._fCaps)
+               if(genCHP.isFCaps() == newCHP.isFCaps())
                {
-                  newCHP._fCaps = styleCHP._fCaps;
+                  newCHP.setFCaps(styleCHP.isFCaps());
                }
-               if(genCHP._ftcAscii == newCHP._ftcAscii)
+               if(genCHP.getFtcAscii() == newCHP.getFtcAscii())
                {
-                  newCHP._ftcAscii = styleCHP._ftcAscii;
+                  newCHP.setFtcAscii(styleCHP.getFtcAscii());
                }
-               if(genCHP._ftcFE == newCHP._ftcFE)
+               if(genCHP.getFtcFE() == newCHP.getFtcFE())
                {
-                  newCHP._ftcFE = styleCHP._ftcFE;
+                  newCHP.setFtcFE(styleCHP.getFtcFE());
                }
-               if(genCHP._ftcOther == newCHP._ftcOther)
+               if(genCHP.getFtcOther() == newCHP.getFtcOther())
                {
-                  newCHP._ftcOther = styleCHP._ftcOther;
+                  newCHP.setFtcOther(styleCHP.getFtcOther());
                }
-               if(genCHP._hps == newCHP._hps)
+               if(genCHP.getHps() == newCHP.getHps())
                {
-                  newCHP._hps = styleCHP._hps;
+                  newCHP.setHps(styleCHP.getHps());
                }
-               if(genCHP._hpsPos == newCHP._hpsPos)
+               if(genCHP.getHpsPos() == newCHP.getHpsPos())
                {
-                  newCHP._hpsPos = styleCHP._hpsPos;
+                  newCHP.setHpsPos(styleCHP.getHpsPos());
                }
-               if(genCHP._kul == newCHP._kul)
+               if(genCHP.getKul() == newCHP.getKul())
                {
-                  newCHP._kul = styleCHP._kul;
+                  newCHP.setKul(styleCHP.getKul());
                }
-               if(genCHP._dxaSpace == newCHP._dxaSpace)
+               if(genCHP.getDxaSpace() == newCHP.getDxaSpace())
                {
-                  newCHP._dxaSpace = styleCHP._dxaSpace;
+                  newCHP.setDxaSpace(styleCHP.getDxaSpace());
                }
-               if(genCHP._ico == newCHP._ico)
+               if(genCHP.getIco() == newCHP.getIco())
                {
-                  newCHP._ico = styleCHP._ico;
+                  newCHP.setIco(styleCHP.getIco());
                }
-               if(genCHP._lidDefault == newCHP._lidDefault)
+               if(genCHP.getLidDefault() == newCHP.getLidDefault())
                {
-                  newCHP._lidDefault = styleCHP._lidDefault;
+                  newCHP.setLidDefault(styleCHP.getLidDefault());
                }
-               if(genCHP._lidFE == newCHP._lidFE)
+               if(genCHP.getLidFE() == newCHP.getLidFE())
                {
-                  newCHP._lidFE = styleCHP._lidFE;
+                  newCHP.setLidFE(styleCHP.getLidFE());
                }
                break;
           case 0x48:
-               newCHP._iss = (byte)param;
+               newCHP.setIss((byte)param);
                break;
           case 0x49:
-               newCHP._hps = LittleEndian.getShort(varParam, 0);
+               newCHP.setHps(LittleEndian.getShort(varParam, 0));
                break;
           case 0x4a:
                int increment = LittleEndian.getShort(varParam, 0);
-               newCHP._hps = Math.max(newCHP._hps + increment, 8);
+               newCHP.setHps(Math.max(newCHP.getHps() + increment, 8));
                break;
           case 0x4b:
-               newCHP._hpsKern = param;
+               newCHP.setHpsKern(param);
                break;
           case 0x4c:
                doCHPOperation(oldCHP, newCHP, 0x47, param, varParam, grpprl, offset, styleSheet);
                break;
           case 0x4d:
                float percentage = (float)param/100.0f;
-               int add = (int)((float)percentage * (float)newCHP._hps);
-               newCHP._hps += add;
+               int add = (int)((float)percentage * (float)newCHP.getHps());
+               newCHP.setHps(newCHP.getHps() + add);
                break;
           case 0x4e:
-               newCHP._ysr = (byte)param;
+               newCHP.setYsr((byte)param);
                break;
           case 0x4f:
-               newCHP._ftcAscii = (short)param;
+               newCHP.setFtcAscii((short)param);
                break;
           case 0x50:
-               newCHP._ftcFE = (short)param;
+               newCHP.setFtcFE((short)param);
                break;
           case 0x51:
-               newCHP._ftcOther = (short)param;
+               newCHP.setFtcOther((short)param);
                break;
           case 0x52:
                break;
           case 0x53:
-               newCHP._fDStrike = getFlag(param);
+               newCHP.setFDStrike(getFlag(param));
                break;
           case 0x54:
-               newCHP._fImprint = getFlag(param);
+               newCHP.setFImprint(getFlag(param));
                break;
           case 0x55:
-               newCHP._fSpec = getFlag(param);
+               newCHP.setFSpec(getFlag(param));
                break;
           case 0x56:
-               newCHP._fObj = getFlag(param);
+               newCHP.setFObj(getFlag(param));
                break;
           case 0x57:
-               newCHP._fPropMark = getFlag(varParam[0]);
-               newCHP._ibstPropRMark = (short)LittleEndian.getShort(varParam, 1);
-               newCHP._dttmPropRMark = LittleEndian.getInt(varParam, 3);
+               newCHP.setFPropMark(varParam[0]);
+               newCHP.setIbstPropRMark((short)LittleEndian.getShort(varParam, 1));
+               newCHP.setDttmPropRMark(LittleEndian.getInt(varParam, 3));
                break;
           case 0x58:
-               newCHP._fEmboss = getFlag(param);
+               newCHP.setFEmboss(getFlag(param));
                break;
           case 0x59:
-               newCHP._sfxtText = (byte)param;
+               newCHP.setSfxtText((byte)param);
                break;
           case 0x5a:
                break;
@@ -556,24 +566,30 @@ public class StyleSheet implements HDFType
           case 0x61:
                break;
           case 0x62:
-               newCHP._fDispFldRMark = getFlag(varParam[0]);
-               newCHP._ibstDispFldRMark = (short)LittleEndian.getShort(varParam, 1);
-               newCHP._dttmDispFldRMark = LittleEndian.getInt(varParam, 3);
-               System.arraycopy(varParam, 7, newCHP._xstDispFldRMark, 0, 32);
+               byte[] xstDispFldRMark = new byte[32];
+               newCHP.setFDispFldRMark(varParam[0]);
+               newCHP.setIbstDispFldRMark((short)LittleEndian.getShort(varParam, 1));
+               newCHP.setDttmDispFldRMark(LittleEndian.getInt(varParam, 3));
+               System.arraycopy(varParam, 7, xstDispFldRMark, 0, 32);
+               newCHP.setXstDispFldRMark(xstDispFldRMark);
                break;
           case 0x63:
-               newCHP._ibstRMarkDel = (short)param;
+               newCHP.setIbstRMarkDel((short)param);
                break;
           case 0x64:
-               newCHP._dttmRMarkDel[0] = LittleEndian.getShort(grpprl, offset - 4);
-               newCHP._dttmRMarkDel[1] = LittleEndian.getShort(grpprl, offset - 2);
+               short[] dttmRMarkDel = new short[2];
+               dttmRMarkDel[0] = LittleEndian.getShort(grpprl, offset - 4);
+               dttmRMarkDel[1] = LittleEndian.getShort(grpprl, offset - 2);
+               newCHP.setDttmRMarkDel(dttmRMarkDel);
                break;
           case 0x65:
-               newCHP._brc[0] = (short)LittleEndian.getShort(grpprl, offset - 4);
-               newCHP._brc[1] = (short)LittleEndian.getShort(grpprl, offset - 2);
+               short[] brc = new short[2];
+               brc[0] = (short)LittleEndian.getShort(grpprl, offset - 4);
+               brc[1] = (short)LittleEndian.getShort(grpprl, offset - 2);
+               newCHP.setBrc(brc);
                break;
           case 0x66:
-               newCHP._shd = (short)param;
+               newCHP.setShd((short)param);
                break;
           case 0x67:
                break;
@@ -588,13 +604,13 @@ public class StyleSheet implements HDFType
           case 0x6c:
                break;
           case 0x6d:
-               newCHP._lidDefault = (short)param;
+               newCHP.setLidDefault((short)param);
                break;
           case 0x6e:
-               newCHP._lidFE = (short)param;
+               newCHP.setLidFE((short)param);
                break;
           case 0x6f:
-               newCHP._idctHint = (byte)param;
+               newCHP.setIdctHint((byte)param);
                break;
       }
   }
@@ -621,7 +637,7 @@ public class StyleSheet implements HDFType
           catch(Exception e){}
           if(doIstd)
           {
-            ((ParagraphProperties)newProperty)._istd = LittleEndian.getShort(grpprl, 0);
+            ((ParagraphProperties)newProperty).setIstd(LittleEndian.getShort(grpprl, 0));
 
             offset = 2;
           }
@@ -631,7 +647,7 @@ public class StyleSheet implements HDFType
           try
           {
               newProperty = ((CharacterProperties)parent).clone();
-              ((CharacterProperties)newProperty)._baseIstd = ((CharacterProperties)parent)._istd;
+              ((CharacterProperties)newProperty).setBaseIstd(((CharacterProperties)parent).getIstd());
           }
           catch(Exception e){}
           propertyType = CHP_TYPE;
@@ -756,98 +772,99 @@ public class StyleSheet implements HDFType
       switch(operand)
       {
           case 0:
-               newPAP._istd = param;
+               newPAP.setIstd(param);
                break;
           case 0x1:
                //permuteIstd(newPAP, varParam);
                break;
           case 0x2:
-               if(newPAP._istd <=9 || newPAP._istd >=1)
+               if(newPAP.getIstd() <=9 || newPAP.getIstd() >=1)
                {
-                  newPAP._istd += param;
+                  newPAP.setIstd(newPAP.getIstd() + param);
                   if(param > 0)
                   {
-                      newPAP._istd = Math.max(newPAP._istd, 9);
+                      newPAP.setIstd(Math.max(newPAP.getIstd(), 9));
                   }
                   else
                   {
-                      newPAP._istd = Math.min(newPAP._istd, 1);
+                      newPAP.setIstd(Math.min(newPAP.getIstd(), 1));
                   }
                }
                break;
           case 0x3:
-               newPAP._jc = (byte)param;
+               newPAP.setJc((byte)param);
                break;
           case 0x4:
-               newPAP._fSideBySide = (byte)param;
+               newPAP.setFSideBySide((byte)param);
                break;
           case 0x5:
-               newPAP._fKeep = (byte)param;
+               newPAP.setFKeep((byte)param);
                break;
           case 0x6:
-               newPAP._fKeepFollow = (byte)param;
+               newPAP.setFKeepFollow((byte)param);
                break;
           case 0x7:
-               newPAP._fPageBreakBefore = (byte)param;
+               newPAP.setFPageBreakBefore((byte)param);
                break;
           case 0x8:
-               newPAP._brcl = (byte)param;
+               newPAP.setBrcl((byte)param);
                break;
           case 0x9:
-               newPAP._brcp = (byte)param;
+               newPAP.setBrcp((byte)param);
                break;
           case 0xa:
-               newPAP._ilvl = (byte)param;
+               newPAP.setIlvl((byte)param);
                break;
           case 0xb:
-               newPAP._ilfo = param;
+               newPAP.setIlfo(param);
                break;
           case 0xc:
-               newPAP._fNoLnn = (byte)param;
+               newPAP.setFNoLnn((byte)param);
                break;
           case 0xd:
                /**@todo handle tabs*/
                break;
           case 0xe:
-               newPAP._dxaRight = param;
+               newPAP.setDxaRight(param);
                break;
           case 0xf:
-               newPAP._dxaLeft = param;
+               newPAP.setDxaLeft(param);
                break;
           case 0x10:
-               newPAP._dxaLeft += param;
-               newPAP._dxaLeft = Math.max(0, newPAP._dxaLeft);
+               newPAP.setDxaLeft(newPAP.getDxaLeft() + param);
+               newPAP.setDxaLeft(Math.max(0, newPAP.getDxaLeft()));
                break;
           case 0x11:
-               newPAP._dxaLeft1 = param;
+               newPAP.setDxaLeft1(param);
                break;
           case 0x12:
-               newPAP._lspd[0] = LittleEndian.getShort(grpprl, offset - 4);
-               newPAP._lspd[1] = LittleEndian.getShort(grpprl, offset - 2);
+               short[] lspd = newPAP.getLspd();
+               lspd[0] = LittleEndian.getShort(grpprl, offset - 4);
+               lspd[1] = LittleEndian.getShort(grpprl, offset - 2);
                break;
           case 0x13:
-               newPAP._dyaBefore = param;
+               newPAP.setDyaBefore(param);
                break;
           case 0x14:
-               newPAP._dyaAfter = param;
+               newPAP.setDyaAfter(param);
                break;
           case 0x15:
                /**@todo handle tabs*/
                break;
           case 0x16:
-               newPAP._fInTable = (byte)param;
+               newPAP.setFInTable((byte)param);
                break;
           case 0x17:
-               newPAP._fTtp =(byte)param;
+               newPAP.setFTtp((byte)param);
                break;
           case 0x18:
-               newPAP._dxaAbs = param;
+               newPAP.setDxaAbs(param);
                break;
           case 0x19:
-               newPAP._dyaAbs = param;
+               newPAP.setDyaAbs(param);
                break;
           case 0x1a:
-               newPAP._dxaWidth = param;
+               newPAP.setDxaWidth(param);
                break;
           case 0x1b:
                /** @todo handle paragraph postioning*/
@@ -863,109 +880,115 @@ public class StyleSheet implements HDFType
                }*/
                break;
           case 0x1c:
-               newPAP._brcTop1 = (short)param;
+               //newPAP.setBrcTop1((short)param);
                break;
           case 0x1d:
-               newPAP._brcLeft1 = (short)param;
+               //newPAP.setBrcLeft1((short)param);
                break;
           case 0x1e:
-               newPAP._brcBottom1 = (short)param;
+               //newPAP.setBrcBottom1((short)param);
                break;
           case 0x1f:
-               newPAP._brcRight1 = (short)param;
+               //newPAP.setBrcRight1((short)param);
                break;
           case 0x20:
-               newPAP._brcBetween1 = (short)param;
+               //newPAP.setBrcBetween1((short)param);
                break;
           case 0x21:
-               newPAP._brcBar1 = (byte)param;
+               //newPAP.setBrcBar1((byte)param);
                break;
           case 0x22:
-               newPAP._dxaFromText = param;
+               newPAP.setDxaFromText(param);
                break;
           case 0x23:
-               newPAP._wr = (byte)param;
+               newPAP.setWr((byte)param);
                break;
           case 0x24:
-               newPAP._brcTop[0] = (short)LittleEndian.getShort(grpprl, offset - 4);
-               newPAP._brcTop[1] = (short)LittleEndian.getShort(grpprl, offset - 2);
+               short[] brcTop = newPAP.getBrcTop();
+               brcTop[0] = (short)LittleEndian.getShort(grpprl, offset - 4);
+               brcTop[1] = (short)LittleEndian.getShort(grpprl, offset - 2);
                break;
           case 0x25:
-               newPAP._brcLeft[0] = (short)LittleEndian.getShort(grpprl, offset - 4);
-               newPAP._brcLeft[1] = (short)LittleEndian.getShort(grpprl, offset - 2);
+               short[] brcLeft = newPAP.getBrcLeft();
+               brcLeft[0] = (short)LittleEndian.getShort(grpprl, offset - 4);
+               brcLeft[1] = (short)LittleEndian.getShort(grpprl, offset - 2);
                break;
           case 0x26:
-               newPAP._brcBottom[0] = (short)LittleEndian.getShort(grpprl, offset - 4);
-               newPAP._brcBottom[1] = (short)LittleEndian.getShort(grpprl, offset - 2);
+               short[] brcBottom = newPAP.getBrcBottom();
+               brcBottom[0] = (short)LittleEndian.getShort(grpprl, offset - 4);
+               brcBottom[1] = (short)LittleEndian.getShort(grpprl, offset - 2);
                break;
           case 0x27:
-               newPAP._brcRight[0] = (short)LittleEndian.getShort(grpprl, offset - 4);
-               newPAP._brcRight[1] = (short)LittleEndian.getShort(grpprl, offset - 2);
+               short[] brcRight = newPAP.getBrcRight();
+               brcRight[0] = (short)LittleEndian.getShort(grpprl, offset - 4);
+               brcRight[1] = (short)LittleEndian.getShort(grpprl, offset - 2);
                break;
           case 0x28:
-               newPAP._brcBetween[0] = (short)LittleEndian.getShort(grpprl, offset - 4);
-               newPAP._brcBetween[1] = (short)LittleEndian.getShort(grpprl, offset - 2);
+               short[] brcBetween = newPAP.getBrcBetween();
+               brcBetween[0] = (short)LittleEndian.getShort(grpprl, offset - 4);
+               brcBetween[1] = (short)LittleEndian.getShort(grpprl, offset - 2);
                break;
           case 0x29:
-               newPAP._brcBar[0] = (short)LittleEndian.getShort(grpprl, offset - 4);
-               newPAP._brcBar[1] = (short)LittleEndian.getShort(grpprl, offset - 2);
+               short[] brcBar = newPAP.getBrcBar();
+               brcBar[0] = (short)LittleEndian.getShort(grpprl, offset - 4);
+               brcBar[1] = (short)LittleEndian.getShort(grpprl, offset - 2);
                break;
           case 0x2a:
-               newPAP._fNoAutoHyph = (byte)param;
+               newPAP.setFNoAutoHyph((byte)param);
                break;
           case 0x2b:
-               newPAP._dyaHeight = param;
+               newPAP.setDyaHeight(param);
                break;
           case 0x2c:
-               newPAP._dcs = param;
+               newPAP.setDcs((short)param);
                break;
           case 0x2d:
-               newPAP._shd = param;
+               newPAP.setShd((short)param);
                break;
           case 0x2e:
-               newPAP._dyaFromText = param;
+               newPAP.setDyaFromText(param);
                break;
           case 0x2f:
-               newPAP._dxaFromText = param;
+               newPAP.setDxaFromText(param);
                break;
           case 0x30:
-               newPAP._fLocked = (byte)param;
+               newPAP.setFLocked((byte)param);
                break;
           case 0x31:
-               newPAP._fWindowControl = (byte)param;
+               newPAP.setFWidowControl((byte)param);
                break;
           case 0x32:
                //undocumented
                break;
           case 0x33:
-               newPAP._fKinsoku = (byte)param;
+               newPAP.setFKinsoku((byte)param);
                break;
           case 0x34:
-               newPAP._fWordWrap = (byte)param;
+               newPAP.setFWordWrap((byte)param);
                break;
           case 0x35:
-               newPAP._fOverflowPunct = (byte)param;
+               newPAP.setFOverflowPunct((byte)param);
                break;
           case 0x36:
-               newPAP._fTopLinePunct = (byte)param;
+               newPAP.setFTopLinePunct((byte)param);
                break;
           case 0x37:
-               newPAP._fAutoSpaceDE = (byte)param;
+               newPAP.setFAutoSpaceDE((byte)param);
                break;
           case 0x38:
-               newPAP._fAutoSpaceDN = (byte)param;
+               newPAP.setFAutoSpaceDN((byte)param);
                break;
           case 0x39:
-               newPAP._wAlignFont = param;
+               newPAP.setWAlignFont(param);
                break;
           case 0x3a:
-               newPAP._fontAlign = (short)param;
+               newPAP.setFontAlign((short)param);
                break;
           case 0x3b:
                //obsolete
                break;
           case 0x3e:
-               newPAP._anld = varParam;
+               newPAP.setAnld(varParam);
                break;
           case 0x3f:
                //don't really need this. spec is confusing regarding this
@@ -986,7 +1009,7 @@ public class StyleSheet implements HDFType
           case 0x45:
                if(spra == 6)
                {
-                  newPAP._numrm = varParam;
+                  newPAP.setNumrm(varParam);
                }
                else
                {
@@ -995,10 +1018,10 @@ public class StyleSheet implements HDFType
                break;
 
           case 0x47:
-               newPAP._fUsePgsuSettings = (byte)param;
+               newPAP.setFUsePgsuSettings((byte)param);
                break;
           case 0x48:
-               newPAP._fAdjustRight = (byte)param;
+               newPAP.setFAdjustRight((byte)param);
                break;
           default:
                break;
@@ -1009,70 +1032,88 @@ public class StyleSheet implements HDFType
       switch(operand)
       {
           case 0:
-               newTAP._jc = (short)param;
+               newTAP.setJc((short)param);
                break;
           case 0x01:
           {
-               int adjust = param - (newTAP._rgdxaCenter[0] + newTAP._dxaGapHalf);
-               for(int x = 0; x < newTAP._itcMac; x++)
+               short[] rgdxaCenter = newTAP.getRgdxaCenter();
+               short itcMac = newTAP.getItcMac();
+               int adjust = param - (rgdxaCenter[0] + newTAP.getDxaGapHalf());
+               for(int x = 0; x < itcMac; x++)
                {
-                  newTAP._rgdxaCenter[x] += adjust;
+                  rgdxaCenter[x] += adjust;
                }
                break;
           }
           case 0x02:
-               if(newTAP._rgdxaCenter != null)
+          {
+               short[] rgdxaCenter = newTAP.getRgdxaCenter();
+               if(rgdxaCenter != null)
                {
-                 int adjust = newTAP._dxaGapHalf - param;
-                 newTAP._rgdxaCenter[0] += adjust;
+                 int adjust = newTAP.getDxaGapHalf() - param;
+                 rgdxaCenter[0] += adjust;
                }
-               newTAP._dxaGapHalf = param;
+               newTAP.setDxaGapHalf(param);
                break;
+          }
           case 0x03:
-               newTAP._fCantSplit = getFlag(param);
+               newTAP.setFCantSplit(getFlag(param));
                break;
           case 0x04:
-               newTAP._fTableHeader = getFlag(param);
+               newTAP.setFTableHeader(getFlag(param));
                break;
           case 0x05:
+          {
+               short[] brcTop = newTAP.getBrcTop();
+               short[] brcLeft = newTAP.getBrcLeft();
+               short[] brcBottom = newTAP.getBrcBottom();
+               short[] brcRight = newTAP.getBrcRight();
+               short[] brcVertical = newTAP.getBrcVertical();
+               short[] brcHorizontal = newTAP.getBrcHorizontal();
 
-               newTAP._brcTop[0] = LittleEndian.getShort(varParam, 0);
-               newTAP._brcTop[1] = LittleEndian.getShort(varParam, 2);
+               brcTop[0] = LittleEndian.getShort(varParam, 0);
+               brcTop[1] = LittleEndian.getShort(varParam, 2);
 
-               newTAP._brcLeft[0] = LittleEndian.getShort(varParam, 4);
-               newTAP._brcLeft[1] = LittleEndian.getShort(varParam, 6);
+               brcLeft[0] = LittleEndian.getShort(varParam, 4);
+               brcLeft[1] = LittleEndian.getShort(varParam, 6);
 
-               newTAP._brcBottom[0] = LittleEndian.getShort(varParam, 8);
-               newTAP._brcBottom[1] = LittleEndian.getShort(varParam, 10);
+               brcBottom[0] = LittleEndian.getShort(varParam, 8);
+               brcBottom[1] = LittleEndian.getShort(varParam, 10);
 
-               newTAP._brcRight[0] = LittleEndian.getShort(varParam, 12);
-               newTAP._brcRight[1] = LittleEndian.getShort(varParam, 14);
+               brcRight[0] = LittleEndian.getShort(varParam, 12);
+               brcRight[1] = LittleEndian.getShort(varParam, 14);
 
-               newTAP._brcHorizontal[0] = LittleEndian.getShort(varParam, 16);
-               newTAP._brcHorizontal[1] = LittleEndian.getShort(varParam, 18);
+               brcHorizontal[0] = LittleEndian.getShort(varParam, 16);
+               brcHorizontal[1] = LittleEndian.getShort(varParam, 18);
 
-               newTAP._brcVertical[0] = LittleEndian.getShort(varParam, 20);
-               newTAP._brcVertical[1] = LittleEndian.getShort(varParam, 22);
+               brcVertical[0] = LittleEndian.getShort(varParam, 20);
+               brcVertical[1] = LittleEndian.getShort(varParam, 22);
                break;
+          }
           case 0x06:
                //obsolete, used in word 1.x
                break;
           case 0x07:
-               newTAP._dyaRowHeight = param;
+               newTAP.setDyaRowHeight(param);
                break;
           case 0x08:
+          {
+               short[] rgdxaCenter = new short[varParam[0] + 1];
+               TableCellDescriptor[] rgtc = new TableCellDescriptor[varParam[0]];
+               short itcMac = varParam[0];
                //I use varParam[0] and newTAP._itcMac interchangably
-               newTAP._itcMac = varParam[0];
-               newTAP._rgdxaCenter = new short[varParam[0] + 1];
-               newTAP._rgtc = new TableCellDescriptor[varParam[0]];
+               newTAP.setItcMac(itcMac);
+               newTAP.setRgdxaCenter(rgdxaCenter) ;
+               newTAP.setRgtc(rgtc);
 
-               for(int x = 0; x < newTAP._itcMac; x++)
+               for(int x = 0; x < itcMac; x++)
                {
-                 newTAP._rgdxaCenter[x] = LittleEndian.getShort(varParam , 1 + (x * 2));
-                 newTAP._rgtc[x] = TableCellDescriptor.convertBytesToTC(varParam, 1 + ((varParam[0] + 1) * 2) + (x * 20));
+                 rgdxaCenter[x] = LittleEndian.getShort(varParam , 1 + (x * 2));
+                 rgtc[x] = TableCellDescriptor.convertBytesToTC(varParam, 1 + ((itcMac + 1) * 2) + (x * 20));
                }
-               newTAP._rgdxaCenter[newTAP._itcMac] = LittleEndian.getShort(varParam , 1 + (newTAP._itcMac * 2));
+               rgdxaCenter[itcMac] = LittleEndian.getShort(varParam , 1 + (itcMac * 2));
                break;
+          }
           case 0x09:
                /** @todo handle cell shading*/
                break;
@@ -1080,51 +1121,61 @@ public class StyleSheet implements HDFType
                /** @todo handle word defined table styles*/
                break;
           case 0x20:
+          {
+               TCAbstractType[] rgtc = newTAP.getRgtc();
+
                for(int x = varParam[0]; x < varParam[1]; x++)
                {
+
                  if((varParam[2] & 0x08) > 0)
                  {
-                   newTAP._rgtc[x]._brcRight[0] = LittleEndian.getShort(varParam, 6);
-                   newTAP._rgtc[x]._brcRight[1] = LittleEndian.getShort(varParam, 8);
+                   short[] brcRight = rgtc[x].getBrcRight();
+                   brcRight[0] = LittleEndian.getShort(varParam, 6);
+                   brcRight[1] = LittleEndian.getShort(varParam, 8);
                  }
                  else if((varParam[2] & 0x04) > 0)
                  {
-                   newTAP._rgtc[x]._brcBottom[0] = LittleEndian.getShort(varParam, 6);
-                   newTAP._rgtc[x]._brcBottom[1] = LittleEndian.getShort(varParam, 8);
+                   short[] brcBottom = rgtc[x].getBrcBottom();
+                   brcBottom[0] = LittleEndian.getShort(varParam, 6);
+                   brcBottom[1] = LittleEndian.getShort(varParam, 8);
                  }
                  else if((varParam[2] & 0x02) > 0)
                  {
-                   newTAP._rgtc[x]._brcLeft[0] = LittleEndian.getShort(varParam, 6);
-                   newTAP._rgtc[x]._brcLeft[1] = LittleEndian.getShort(varParam, 8);
+                   short[] brcLeft = rgtc[x].getBrcLeft();
+                   brcLeft[0] = LittleEndian.getShort(varParam, 6);
+                   brcLeft[1] = LittleEndian.getShort(varParam, 8);
                  }
                  else if((varParam[2] & 0x01) > 0)
                  {
-                   newTAP._rgtc[x]._brcTop[0] = LittleEndian.getShort(varParam, 6);
-                   newTAP._rgtc[x]._brcTop[1] = LittleEndian.getShort(varParam, 8);
+                   short[] brcTop = rgtc[x].getBrcTop();
+                   brcTop[0] = LittleEndian.getShort(varParam, 6);
+                   brcTop[1] = LittleEndian.getShort(varParam, 8);
                  }
                }
                break;
+          }
           case 0x21:
                int index = (param & 0xff000000) >> 24;
                int count = (param & 0x00ff0000) >> 16;
                int width = (param & 0x0000ffff);
+               int itcMac = newTAP.getItcMac();
 
-               short[] rgdxaCenter = new short[newTAP._itcMac + count + 1];
-               TableCellDescriptor[] rgtc = new TableCellDescriptor[newTAP._itcMac + count];
-               if(index >= newTAP._itcMac)
+               short[] rgdxaCenter = new short[itcMac + count + 1];
+               TableCellDescriptor[] rgtc = new TableCellDescriptor[itcMac + count];
+               if(index >= itcMac)
                {
-                 index = newTAP._itcMac;
-                 System.arraycopy(newTAP._rgdxaCenter, 0, rgdxaCenter, 0, newTAP._itcMac + 1);
-                 System.arraycopy(newTAP._rgtc, 0, rgtc, 0, newTAP._itcMac);
+                 index = itcMac;
+                 System.arraycopy(newTAP.getRgdxaCenter(), 0, rgdxaCenter, 0, itcMac + 1);
+                 System.arraycopy(newTAP.getRgtc(), 0, rgtc, 0, itcMac);
                }
                else
                {
                  //copy rgdxaCenter
-                 System.arraycopy(newTAP._rgdxaCenter, 0, rgdxaCenter, 0, index + 1);
-                 System.arraycopy(newTAP._rgdxaCenter, index + 1, rgdxaCenter, index + count, (newTAP._itcMac) - (index));
+                 System.arraycopy(newTAP.getRgdxaCenter(), 0, rgdxaCenter, 0, index + 1);
+                 System.arraycopy(newTAP.getRgdxaCenter(), index + 1, rgdxaCenter, index + count, itcMac - (index));
                  //copy rgtc
-                 System.arraycopy(newTAP._rgtc, 0, rgtc, 0, index);
-                 System.arraycopy(newTAP._rgtc, index, rgtc, index + count, newTAP._itcMac - index);
+                 System.arraycopy(newTAP.getRgtc(), 0, rgtc, 0, index);
+                 System.arraycopy(newTAP.getRgtc(), index, rgtc, index + count, itcMac - index);
                }
 
                for(int x = index; x < index + count; x++)
@@ -1156,13 +1207,13 @@ public class StyleSheet implements HDFType
       switch(operand)
       {
           case 0:
-               newSEP._cnsPgn = (byte)param;
+               newSEP.setCnsPgn((byte)param);
                break;
           case 0x1:
-               newSEP._iHeadingPgn = (byte)param;
+               newSEP.setIHeadingPgn((byte)param);
                break;
           case 0x2:
-               newSEP._olstAnn = varParam;
+               newSEP.setOlstAnm(varParam);
                break;
           case 0x3:
                //not quite sure
@@ -1171,109 +1222,109 @@ public class StyleSheet implements HDFType
                //not quite sure
                break;
           case 0x5:
-               newSEP._fEvenlySpaced = getFlag(param);
+               newSEP.setFEvenlySpaced(getFlag(param));
                break;
           case 0x6:
-               newSEP._fUnlocked = getFlag(param);
+               newSEP.setFUnlocked(getFlag(param));
                break;
           case 0x7:
-               newSEP._dmBinFirst = (short)param;
+               newSEP.setDmBinFirst((short)param);
                break;
           case 0x8:
-               newSEP._dmBinOther = (short)param;
+               newSEP.setDmBinOther((short)param);
                break;
           case 0x9:
-               newSEP._bkc = (byte)param;
+               newSEP.setBkc((byte)param);
                break;
           case 0xa:
-               newSEP._fTitlePage = getFlag(param);
+               newSEP.setFTitlePage(getFlag(param));
                break;
           case 0xb:
-               newSEP._ccolM1 = (short)param;
+               newSEP.setCcolM1((short)param);
                break;
           case 0xc:
-               newSEP._dxaColumns = param;
+               newSEP.setDxaColumns(param);
                break;
           case 0xd:
-               newSEP._fAutoPgn = getFlag(param);
+               newSEP.setFAutoPgn(getFlag(param));
                break;
           case 0xe:
-               newSEP._nfcPgn = (byte)param;
+               newSEP.setNfcPgn((byte)param);
                break;
           case 0xf:
-               newSEP._dyaPgn = (short)param;
+               newSEP.setDyaPgn((short)param);
                break;
           case 0x10:
-               newSEP._dxaPgn = (short)param;
+               newSEP.setDxaPgn((short)param);
                break;
           case 0x11:
-               newSEP._fPgnRestart = getFlag(param);
+               newSEP.setFPgnRestart(getFlag(param));
                break;
           case 0x12:
-               newSEP._fEndNote = getFlag(param);
+               newSEP.setFEndNote(getFlag(param));
                break;
           case 0x13:
-               newSEP._lnc = (byte)param;
+               newSEP.setLnc((byte)param);
                break;
           case 0x14:
-               newSEP._grpfIhdt = (byte)param;
+               newSEP.setGrpfIhdt((byte)param);
                break;
           case 0x15:
-               newSEP._nLnnMod = (short)param;
+               newSEP.setNLnnMod((short)param);
                break;
           case 0x16:
-               newSEP._dxaLnn = param;
+               newSEP.setDxaLnn(param);
                break;
           case 0x17:
-               newSEP._dyaHdrTop = param;
+               newSEP.setDyaHdrTop(param);
                break;
           case 0x18:
-               newSEP._dyaHdrBottom = param;
+               newSEP.setDyaHdrBottom(param);
                break;
           case 0x19:
-               newSEP._fLBetween = getFlag(param);
+               newSEP.setFLBetween(getFlag(param));
                break;
           case 0x1a:
-               newSEP._vjc = (byte)param;
+               newSEP.setVjc((byte)param);
                break;
           case 0x1b:
-               newSEP._lnnMin = (short)param;
+               newSEP.setLnnMin((short)param);
                break;
           case 0x1c:
-               newSEP._pgnStart = (short)param;
+               newSEP.setPgnStart((short)param);
                break;
           case 0x1d:
-               newSEP._dmOrientPage = (byte)param;
+               newSEP.setDmOrientPage((byte)param);
                break;
           case 0x1e:
                //nothing
                break;
           case 0x1f:
-               newSEP._xaPage = param;
+               newSEP.setXaPage(param);
                break;
           case 0x20:
-               newSEP._yaPage = param;
+               newSEP.setYaPage(param);
                break;
           case 0x21:
-               newSEP._dxaLeft = param;
+               newSEP.setDxaLeft(param);
                break;
           case 0x22:
-               newSEP._dxaRight = param;
+               newSEP.setDxaRight(param);
                break;
           case 0x23:
-               newSEP._dyaTop = param;
+               newSEP.setDyaTop(param);
                break;
           case 0x24:
-               newSEP._dyaBottom = param;
+               newSEP.setDyaBottom(param);
                break;
           case 0x25:
-               newSEP._dzaGutter = param;
+               newSEP.setDzaGutter(param);
                break;
           case 0x26:
-               newSEP._dmPaperReq = (short)param;
+               newSEP.setDmPaperReq((short)param);
                break;
           case 0x27:
-               newSEP._fPropMark = getFlag(varParam[0]);
+               newSEP.setFPropMark(getFlag(varParam[0]));
                break;
           case 0x28:
                break;
@@ -1282,32 +1333,36 @@ public class StyleSheet implements HDFType
           case 0x2a:
                break;
           case 0x2b:
-               newSEP._brcTop[0] = (short)(param & 0xffff);
-               newSEP._brcTop[1] = (short)((param & 0xffff0000) >> 16);
+               short[] brcTop = newSEP.getBrcTop();
+               brcTop[0] = (short)(param & 0xffff);
+               brcTop[1] = (short)((param & 0xffff0000) >> 16);
                break;
           case 0x2c:
-               newSEP._brcLeft[0] = (short)(param & 0xffff);
-               newSEP._brcLeft[1] = (short)((param & 0xffff0000) >> 16);
+               short[] brcLeft = newSEP.getBrcLeft();
+               brcLeft[0] = (short)(param & 0xffff);
+               brcLeft[1] = (short)((param & 0xffff0000) >> 16);
                break;
           case 0x2d:
-               newSEP._brcBottom[0] = (short)(param & 0xffff);
-               newSEP._brcBottom[1] = (short)((param & 0xffff0000) >> 16);
+               short[] brcBottom = newSEP.getBrcBottom();
+               brcBottom[0] = (short)(param & 0xffff);
+               brcBottom[1] = (short)((param & 0xffff0000) >> 16);
                break;
           case 0x2e:
-               newSEP._brcRight[0] = (short)(param & 0xffff);
-               newSEP._brcRight[1] = (short)((param & 0xffff0000) >> 16);
+               short[] brcRight = newSEP.getBrcRight();
+               brcRight[0] = (short)(param & 0xffff);
+               brcRight[1] = (short)((param & 0xffff0000) >> 16);
                break;
           case 0x2f:
-               newSEP._pgbProp = (short)param;
+               newSEP.setPgbProp(param);
                break;
           case 0x30:
-               newSEP._dxtCharSpace = param;
+               newSEP.setDxtCharSpace(param);
                break;
           case 0x31:
-               newSEP._dyaLinePitch = param;
+               newSEP.setDyaLinePitch(param);
                break;
           case 0x33:
-               newSEP._wTextFlow = (short)param;
+               newSEP.setWTextFlow((short)param);
                break;
           default:
                break;
