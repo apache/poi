@@ -71,6 +71,8 @@ public class AddPtg
 {
     public final static int  SIZE = 1;
     public final static byte sid  = 0x03;
+    
+    private final static String ADD = "+";
 
     /** Creates new AddPtg */
 
@@ -82,6 +84,10 @@ public class AddPtg
     {
 
         // doesn't need anything
+    }
+    
+    protected AddPtg(String formula, int offset) {
+        
     }
 
     public void writeBytes(byte [] array, int offset)
@@ -108,6 +114,21 @@ public class AddPtg
     {
         return "+";
     }
+    
+    
+    public static boolean isNextStringToken(String formula, int pos) {
+        boolean retval = false;
+        while (pos < formula.length() && Character.isWhitespace(formula.charAt(pos))) {
+            pos++;
+        }
+        
+        if (pos < formula.length()) {
+            if (formula.charAt(pos) == ADD.toCharArray()[0]) {
+                retval = true;
+            }
+        }
+        return retval;
+    }
 
     public String toFormulaString(Ptg [] operands)
     {
@@ -117,5 +138,13 @@ public class AddPtg
         buffer.append("+");
         buffer.append(operands[ 1 ].toFormulaString());
         return buffer.toString();
+    }
+    
+    public int getPrecedence() {
+        return 5;
+    }
+    
+    public int getStringLength() {
+        return 1;
     }
 }
