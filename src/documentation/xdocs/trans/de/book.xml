@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE book PUBLIC "-//APACHE//DTD Cocoon Documentation Book V1.0//EN" "./dtd/book-cocoon-v10.dtd">
 
 <book software="Poi" 
@@ -6,47 +6,47 @@
       copyright="@year@ Poi Project"
       xmlns:xlink="http://www.w3.org/1999/xlink">
 
-  <menu label="Community">
-    <menu-item label="News" href="../../news.html"/>    
-    <menu-item label="Changes" href="../../changes.html"/> 
-    <menu-item label="To do" href="../../todo.html"/> 
-    <menu-item label="Get Involved" href="../../getinvolved/index.html"/>
-    <menu-item label="Vision" href="../../plan/POI20Vision.html"/>
-    <menu-item label="History and Future" href="../../historyandfuture.html"/>
-    <menu-item label="Who we are" href="../../who.html"/> 
-    <menu-item label="Resolutions" href="../../resolutions/index.html"/>    
+  <menu label="Gemeinschaft">
+    <menu-item label="Nachrichten" href="../../news.html"/>    
+    <menu-item label="Änderungen" href="../../changes.html"/> 
+    <menu-item label="Aufgaben" href="../../todo.html"/> 
+    <menu-item label="Werden verwickelt" href="../../getinvolved/index.html"/>
+    <menu-item label="Sicht" href="../../plan/POI20Vision.html"/>
+    <menu-item label="Geschichte und Zukunft" href="../../historyandfuture.html"/>
+    <menu-item label="Wer wir sind" href="../../who.html"/> 
+    <menu-item label="Beschlußfassungen" href="../../resolutions/index.html"/>    
   </menu>
   
   <menu label="Marketing">
-    <menu-item label="Case Studies" href="../../casestudies.html"/>
+    <menu-item label="Fall Studiert" href="../../casestudies.html"/>
   </menu>
 
-  <menu label="Project">
-    <menu-item label="Overview" href="../../overview.html"/>
+  <menu label="Projekt">
+    <menu-item label="Überblick" href="../../overview.html"/>
     <menu-item label="POIFS" href="../../poifs/index.html"/>
     <menu-item label="HSSF" href="../../hssf/index.html"/>
     <menu-item label="HDF" href="../../hdf/index.html"/>
     <menu-item label="HPSF" href="../../hpsf/index.html"/>
     <menu-item label="POI-Utils" href="../../utils/index.html"/>  
-    <menu-item label="Download" href="http://jakarta.apache.org/builds/jakarta-poi/"/> 
+    <menu-item label="Laden" href="http://jakarta.apache.org/builds/jakarta-poi/"/>
   </menu>
   
-  <menu label="Docs">
+  <menu label="Projektdokumentation">
     <menu-item label="Javadocs" href="http://jakarta.apache.org/poi/javadocs/"/>  
     <menu-item label="FAQ" href="../../faq.html"/>
-    <menu-item label="References" href="../../references/index.html"/>  
+    <menu-item label="Verweisungen" href="../../references/index.html"/>  
   </menu>
   
   <menu label="Code">
-    <menu-item label="Source Code" href="http://jakarta.apache.org/poi/javadocs/javasrc/"/>       
+    <menu-item label="Quellcode" href="http://jakarta.apache.org/poi/javadocs/javasrc/"/>       
     <menu-item label="CVS" href="http://jakarta.apache.org/site/cvsindex.html"/>  
-    <menu-item label="Top Voted Bugs" href="http://nagoya.apache.org/bugzilla/buglist.cgi?votes=1&amp;product=POI&amp;order=bugs.votes"/>  
-    <menu-item label="Bug Database" href="http://nagoya.apache.org/bugzilla/buglist.cgi?product=POI"/>  
-    <menu-item label="Patches" href="http://nagoya.apache.org/bugzilla/buglist.cgi?product=POI&amp;short_desc=%5BPATCH%5D&amp;short_desc_type=allwordssubstr"/>  
+    <menu-item label="Oberteil hat Fehler gewählt" href="http://nagoya.apache.org/bugzilla/buglist.cgi?votes=1&amp;product=POI&amp;order=bugs.votes"/>  
+    <menu-item label="Gehen Sie Datenbank über" href="http://nagoya.apache.org/bugzilla/buglist.cgi?product=POI"/>  
+    <menu-item label="Repariert" href="http://nagoya.apache.org/bugzilla/buglist.cgi?product=POI&amp;short_desc=%5BPATCH%5D&amp;short_desc_type=allwordssubstr"/>  
 
-    <menu-item label="Junit Test Results" href="http://jakarta.apache.org/poi/tests/junit/"/>  
-    <menu-item label="Dependency Metrics" href="http://jakarta.apache.org/poi/metrics/jdepend/"/> 
-    <menu-item label="Checkstyle Metrics" href="http://jakarta.apache.org/poi/metrics/checkstyle/"/> 
+    <menu-item label="Junit ergibt Prüfung sich" href="http://jakarta.apache.org/poi/tests/junit/"/>  
+    <menu-item label="Abhängigkeit metrisch" href="http://jakarta.apache.org/poi/metrics/jdepend/"/> 
+    <menu-item label="Checkstyle metrisch" href="http://jakarta.apache.org/poi/metrics/checkstyle/"/> 
   </menu>
 
 </book>
