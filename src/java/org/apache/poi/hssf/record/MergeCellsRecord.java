@@ -24,19 +24,18 @@ import java.util.Iterator;
 import org.apache.poi.util.LittleEndian;
 
 /**
- * Title: Merged Cells Record<P>
+ * Title: Merged Cells Record
+ * <br>
  * Description:  Optional record defining a square area of cells to "merged" into
- *               one cell. <P>
- * REFERENCE:  NONE (UNDOCUMENTED PRESENTLY) <P>
+ *               one cell. <br>
+ * REFERENCE:  NONE (UNDOCUMENTED PRESENTLY) <br>
  * @author Andrew C. Oliver (acoliver at apache dot org)
  * @version 2.0-pre
  */
-
 public class MergeCellsRecord
     extends Record
 {
     public final static short sid = 0xe5;
-    private short             field_1_num_areas;
     private ArrayList         field_2_regions;
 
     public MergeCellsRecord()
@@ -72,11 +71,11 @@ public class MergeCellsRecord
 
     protected void fillFields(byte [] data, short size, int offset)
     {
-        field_1_num_areas = LittleEndian.getShort(data, 0 + offset);
-        field_2_regions   = new ArrayList(field_1_num_areas + 10);
+        short numAreas    = LittleEndian.getShort(data, 0 + offset);
+        field_2_regions   = new ArrayList(numAreas + 10);
         int pos = 2;
 
-        for (int k = 0; k < field_1_num_areas; k++)
+        for (int k = 0; k < numAreas; k++)
         {
             MergedRegion region =
                 new MergedRegion(LittleEndian
@@ -98,7 +97,9 @@ public class MergeCellsRecord
 
     public short getNumAreas()
     {
-        return field_1_num_areas;
+        //if the array size is larger than a short (65536), the record can't hold that many merges anyway
+        if (field_2_regions == null) return 0;
+        return (short)field_2_regions.size();
     }
 
     /**
@@ -106,13 +107,14 @@ public class MergeCellsRecord
      * it will be incremented automatically or decremented when an area is removed.  If
      * you are setting this to 0 then you are a terrible person.  Just remove the record.
      * (just kidding about you being a terrible person..hehe)
-     *
+     * @deprecated We now link the size to the actual array of merged regions
+     * @see #getNumAreas()
      * @param numareas  number of areas
      */
 
     public void setNumAreas(short numareas)
     {
-        field_1_num_areas = numareas;
+        
     }
 
     /**
@@ -138,7 +140,6 @@ public class MergeCellsRecord
                                                colto);
 
         field_2_regions.add(region);
-        field_1_num_areas++;
         return field_2_regions.size() - 1;
     }
 
@@ -150,7 +151,6 @@ public class MergeCellsRecord
     public void removeAreaAt(int area)
     {
         field_2_regions.remove(area);
-        field_1_num_areas--;
     }
 
     /**
@@ -209,9 +209,9 @@ public class MergeCellsRecord
 
         retval.append("[MERGEDCELLS]").append("\n");
         retval.append("     .sid        =").append(sid).append("\n");
-        retval.append("     .numregions =").append(field_1_num_areas)
+        retval.append("     .numregions =").append(getNumAreas())
             .append("\n");
-        for (int k = 0; k < field_1_num_areas; k++)
+        for (int k = 0; k < getNumAreas(); k++)
         {
             MergedRegion region = ( MergedRegion ) field_2_regions.get(k);
 
@@ -288,8 +288,7 @@ public class MergeCellsRecord
     }
 
     public Object clone() {
-        MergeCellsRecord rec = new MergeCellsRecord();
-        rec.field_1_num_areas = field_1_num_areas;
+        MergeCellsRecord rec = new MergeCellsRecord();        
         rec.field_2_regions = new ArrayList();
         Iterator iterator = field_2_regions.iterator();
         while (iterator.hasNext()) {

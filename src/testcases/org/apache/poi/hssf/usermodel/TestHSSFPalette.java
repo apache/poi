@@ -156,7 +156,6 @@ public class TestHSSFPalette extends TestCase
         }
     }
 
-
     private static interface ColorComparator
     {
         void compare(HSSFColor expected, HSSFColor palette);

@@ -98,7 +98,8 @@ public class TestEscherBSERecord extends TestCase
                 "  Name: 5" + nl +
                 "  Unused2: 6" + nl +
                 "  Unused3: 7" + nl +
-                "  Extra Data:" + nl, record.toString() );
+                "  Extra Data:" + nl +
+                "No Data", record.toString() );
     }
 
 }

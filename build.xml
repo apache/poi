@@ -643,9 +643,45 @@ FORREST_HOME environment variable!</echo>
         description="Generates the documentation and reports"/>
 
     <target name="jar" depends="compile" description="Creates jar files for distribution">
-        <jar basedir="${main.output.dir}" destfile="${dist.dir}/${jar.name}-${version.id}-${DSTAMP}.jar"/>
-        <jar basedir="${contrib.output.dir}" destfile="${dist.dir}/${jar.name}-contrib-${version.id}-${DSTAMP}.jar"/>
-        <jar basedir="${scratchpad.output.dir}" destfile="${dist.dir}/${jar.name}-scratchpad-${version.id}-${DSTAMP}.jar"/>
+        <jar basedir="${main.output.dir}" destfile="${dist.dir}/${jar.name}-${version.id}-${DSTAMP}.jar">
+            <manifest>
+                <attribute name="Built-By" value="${user.name}"/>
+                <section name="common">
+                  <attribute name="Specification-Title" value="Jakarta POI"/>
+                  <attribute name="Specification-Version" value="${version.id}-${DSTAMP}"/>
+                  <attribute name="Specification-Vendor" value="Apache"/>
+                  <attribute name="Implementation-Title" value="Jakarta POI"/>
+                  <attribute name="Implementation-Version" value="${version.id}-${DSTAMP}"/>
+                  <attribute name="Implementation-Vendor" value="Apache"/>
+                </section>
+            </manifest>        
+        </jar>
+        <jar basedir="${contrib.output.dir}" destfile="${dist.dir}/${jar.name}-contrib-${version.id}-${DSTAMP}.jar">
+            <manifest>
+                <attribute name="Built-By" value="${user.name}"/>
+                <section name="common">
+                  <attribute name="Specification-Title" value="Jakarta POI"/>
+                  <attribute name="Specification-Version" value="${version.id}-${DSTAMP}"/>
+                  <attribute name="Specification-Vendor" value="Apache"/>
+                  <attribute name="Implementation-Title" value="Jakarta POI"/>
+                  <attribute name="Implementation-Version" value="${version.id}-${DSTAMP}"/>
+                  <attribute name="Implementation-Vendor" value="Apache"/>
+                </section>
+            </manifest>        
+        </jar>
+        <jar basedir="${scratchpad.output.dir}" destfile="${dist.dir}/${jar.name}-scratchpad-${version.id}-${DSTAMP}.jar">
+            <manifest>
+                <attribute name="Built-By" value="${user.name}"/>
+                <section name="common">
+                  <attribute name="Specification-Title" value="Jakarta POI"/>
+                  <attribute name="Specification-Version" value="${version.id}-${DSTAMP}"/>
+                  <attribute name="Specification-Vendor" value="Apache"/>
+                  <attribute name="Implementation-Title" value="Jakarta POI"/>
+                  <attribute name="Implementation-Version" value="${version.id}-${DSTAMP}"/>
+                  <attribute name="Implementation-Vendor" value="Apache"/>
+                </section>
+            </manifest>        
+        </jar>
     </target>
 
     <target name="dist" depends="compile,site,jar" description="Creates the entire distribution into build/dist">

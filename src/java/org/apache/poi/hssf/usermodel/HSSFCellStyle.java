@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Copyright 2002-2004   Apache Software Foundation
 
@@ -14,13 +13,8 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
-/*
- * HSSFCellStyle.java
- *
- * Created on September 30, 2001, 3:47 PM
- */
+
 package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.hssf.record.ExtendedFormatRecord;

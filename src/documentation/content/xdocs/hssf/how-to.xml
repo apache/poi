@@ -421,7 +421,7 @@ most likely fail.  No big deal.  </li>
 </ul>
      </section>
     <section><title>Logging facility</title>
-        <p>POI can dynamically select it's logging implementation. POI tries to
+        <p>POI can dynamically select its logging implementation. POI tries to
         create a logger using the System property named "org.apache.poi.util.POILogger".
         Out of the box this can be set to one of three values:
         </p>
@@ -477,9 +477,7 @@ yet. When it does something, we'll document it.</p>
 
 <p>Further effort on HSSF is going to focus on the following major areas: </p>
 <ul>
-<li>Performance: A lot of work is going on in CVS and mailing lists for greatly improving the
-memory efficiency of POI, as well as improving speed. Many approaches have been suggested, and a lot of code as been written.
-It now needs a lot of testing and bugfixing. </li>
+<li>Performance:  POI currently uses a lot of memory for large sheets.</li>
 <li>Charts: This is a hard problem, with very little documentation.</li>
 </ul>
 <p><link href="../getinvolved/index.html"> So jump in! </link> </p>

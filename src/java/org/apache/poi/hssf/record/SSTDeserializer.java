@@ -110,7 +110,7 @@ class SSTDeserializer
                   //Since all of the characters will have been read, but the entire string (including formatting runs etc)
                   //hasnt, Compute the number of bytes to skip when the continue record starts
                   continueSkipBytes = offsetForContinuedRecord(0) - (remainingBytes - calculateByteCount(charsRead));
-            }
+                }
             }
             processString( data, offset, charsRead );
             offset += totalStringSize();
@@ -223,6 +223,7 @@ class SSTDeserializer
      */
     static public void addToStringTable( BinaryTree strings, Integer integer, UnicodeString string )
     {
+
         if ( string.isRichText() )
             string.setOptionFlags( (byte) ( string.getOptionFlags() & ( ~8 ) ) );
         if ( string.isExtendedText() )

@@ -1,6 +1,5 @@
-
 /* ====================================================================
-   Copyright 2002-2004   Apache Software Foundation
+   Copyright 2003-2004   Apache Software Foundation
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -14,13 +13,8 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
-/*
- * AreaPtg.java
- *
- * Created on November 17, 2001, 9:30 PM
- */
+
 package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.util.LittleEndian;
@@ -134,7 +128,7 @@ public class AreaPtg
     }
 
     /**
-     * @param row last row number in the area 
+     * @param last row number in the area 
      */
     public void setLastRow(short row)
     {
@@ -230,7 +224,7 @@ public class AreaPtg
     
     /**
      * set whether the last row is relative or not
-     * @param rel specifies whether the last row is relative or not
+     * @param last row relative
      */
     public void setLastRowRelative(boolean rel) {
         field_4_last_column=rowRelative.setShortBoolean(field_4_last_column,rel);

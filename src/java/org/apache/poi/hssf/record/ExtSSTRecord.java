@@ -30,7 +30,7 @@ import java.util.ArrayList;
  *              position relative to the start of the SST record.
  * REFERENCE:  PG 313 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
  * @author Andrew C. Oliver (acoliver at apache dot org)
- * @author Jason Height
+ * @author Jason Height (jheight at apache dot org)
  * @version 2.0-pre
  * @see org.apache.poi.hssf.record.ExtSSTInfoSubRecord
  */
@@ -162,18 +162,16 @@ public class ExtSSTRecord
 
         for (int k = 0; k < getNumInfoRecords(); k++)
         {
-          ExtSSTInfoSubRecord rec = getInfoRecordAt(k);
-          int length = rec.serialize(pos + offset, data);
-          pos += length;
+            ExtSSTInfoSubRecord rec = getInfoRecordAt(k);
+            pos += rec.serialize(pos + offset, data);
         }
-
         return pos;
     }
 
     /** Returns the size of this record */
     public int getRecordSize()
     {
-        return 6+8*getNumInfoRecords();
+        return 6 + 8*getNumInfoRecords();
     }
 
     public static final int getNumberOfInfoRecsForStrings(int numStrings) {

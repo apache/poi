@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 
 package org.apache.poi.hssf.eventusermodel;
 
@@ -29,10 +29,10 @@ import org.apache.poi.hssf.record.RecordFactory;
  * An HSSFRequest object should be constructed registering an instance or multiple
  * instances of HSSFListener with each Record.sid you wish to listen for.
  *
- * @see org.apache.poi.hssf.eventusermodel.HSSFEventFactory
- * @see org.apache.poi.hssf.eventusermodel.HSSFRequest
+ * @see org.apache.poi.hssf.eventmodel.HSSFEventFactory
+ * @see org.apache.poi.hssf.eventmodel.HSSFListener
  * @see org.apache.poi.hssf.dev.EFHSSF
- * @see org.apache.poi.hssf.eventusermodel.HSSFUserException
+ * @see org.apache.poi.hssf.HSSFUserException
  * @author  Andrew C. Oliver (acoliver at apache dot org)
  * @author Carey Sublette (careysub@earthling.net)
  */

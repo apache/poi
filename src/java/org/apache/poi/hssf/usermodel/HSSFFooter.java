@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Copyright 2002-2004   Apache Software Foundation
 
@@ -14,7 +13,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 
 package org.apache.poi.hssf.usermodel;
 
@@ -30,9 +29,6 @@ import org.apache.poi.hssf.record.FooterRecord;
  * that return the characters used to represent these.  One can also change the
  * fonts by using similar methods.
  * <P>
- * To get an instance of HSSFFooter for a HSSFSheet is to call <a
- * href="HSSFSheet.html#getFooter()">getFooter()</a> on the sheet.
- * <p>
  * @author Shawn Laubach (slaubach at apache dot org)
  */
 public class HSSFFooter extends Object {
@@ -97,7 +93,7 @@ public class HSSFFooter extends Object {
 
   /**
    * Sets the left string.
-   * @param newLeft The string to set as the left side.
+   * @newLeft The string to set as the left side.
    */
   public void setLeft(String newLeft) {
     left = newLeft;
@@ -114,7 +110,7 @@ public class HSSFFooter extends Object {
 
   /**
    * Sets the center string.
-   * @param newCenter The string to set as the center.
+   * @newLeft The string to set as the center.
    */
   public void setCenter(String newCenter) {
     center = newCenter;
@@ -131,7 +127,7 @@ public class HSSFFooter extends Object {
 
   /**
    * Sets the right string.
-   * @param newRight The string to set as the right side.
+   * @newLeft The string to set as the right side.
    */
   public void setRight(String newRight) {
     right = newRight;

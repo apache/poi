@@ -21,18 +21,16 @@ package org.apache.poi.hssf.record;
 import org.apache.poi.util.LittleEndian;
 
 /**
- * Title:        DBCell Record
- * Description:  Used by Excel and other MS apps to quickly find rows in the sheets.<P>
+ * Title:        DBCell Record (Currently read only.  Not required.)
+ * Description:  Used to find rows in blocks...TODO<P>
  * REFERENCE:  PG 299/440 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
  * @author Andrew C. Oliver (acoliver at apache dot org)
- * @author Jason Height
  * @version 2.0-pre
  */
 
 public class DBCellRecord
     extends Record
 {
-    public final static int BLOCK_SIZE = 32;
     public final static short sid = 0xd7;
     private int               field_1_row_offset;
     private short[]           field_2_cell_offsets;
@@ -182,7 +180,7 @@ public class DBCellRecord
         LittleEndian.putInt(data, 4 + offset, getRowOffset());
         for (int k = 0; k < getNumCellOffsets(); k++)
         {
-            LittleEndian.putShort(data, 8 + 2*k + offset, getCellOffsetAt(k));
+            LittleEndian.putShort(data, 8 + k + offset, getCellOffsetAt(k));
         }
         return getRecordSize();
     }
@@ -190,11 +188,6 @@ public class DBCellRecord
     public int getRecordSize()
     {
         return 8 + (getNumCellOffsets() * 2);
-    }
-
-    /** Returns the size of a DBCellRecord when it needs to reference a certain number of rows*/
-    public static int getRecordSizeForRows(int rows) {
-      return 8 + (rows * 2);
     }
 
     public short getSid()

@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Copyright 2002-2004   Apache Software Foundation
 
@@ -14,7 +13,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 
 /*
  * GreaterThanPtg.java
@@ -95,10 +94,11 @@ public class GreaterThanPtg
     
     /** 
      * Implementation of method from Ptg 
+     * @param refs the Sheet References
      */
     public String toFormulaString(Workbook book)
     {
-        return GreaterThanPtg.GREATERTHAN;
+        return this.GREATERTHAN;
     }
       
     /** 

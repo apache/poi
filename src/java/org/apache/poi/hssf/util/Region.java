@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Copyright 2002-2004   Apache Software Foundation
 
@@ -14,7 +13,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 
 package org.apache.poi.hssf.util;
 
@@ -153,7 +152,7 @@ public class Region
     /**
      * Answers: "is the row/column inside this range?"
      *
-     * @return true if the cell is in the range and false if it is not
+     * @returns boolean - true if the cell is in the range and false if it is not
      */
 
     public boolean contains(int row, short col)
@@ -209,7 +208,7 @@ public class Region
     }
 
     /**
-     * @return the area contained by this region (number of cells)
+     * @returns the area contained by this region (number of cells)
      */
 
     public int getArea()

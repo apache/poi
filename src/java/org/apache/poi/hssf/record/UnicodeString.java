@@ -18,10 +18,10 @@
 
 package org.apache.poi.hssf.record;
 
-import java.io.UnsupportedEncodingException;
-
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
+
+import java.io.UnsupportedEncodingException;
 
 /**
  * Title: Unicode String<P>
@@ -283,12 +283,10 @@ public class UnicodeString
 
 //        System.out.println("Unicode: We've got "+retval[2]+" for our option flag");
         try {
-            String unicodeString = new
-String(getString().getBytes("Unicode"),"Unicode");
+            String unicodeString = new String(getString().getBytes("Unicode"),"Unicode");
             if (getOptionFlags() == 0)
             {
-                StringUtil.putCompressedUnicode(unicodeString, data, 0x3 +
-offset);
+                StringUtil.putCompressedUnicode(unicodeString, data, 0x3 +offset);
             }
             else
             {

@@ -44,6 +44,8 @@ public class ReadWriteWorkbook
         HSSFWorkbook wb = new HSSFWorkbook(fs);
         HSSFSheet sheet = wb.getSheetAt(0);
         HSSFRow row = sheet.getRow(2);
+        if (row == null)
+            row = sheet.createRow(2);
         HSSFCell cell = row.getCell((short)3);
         if (cell == null)
             cell = row.createCell((short)3);

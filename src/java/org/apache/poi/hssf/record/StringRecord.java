@@ -18,9 +18,8 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.*;
-
-import java.io.IOException;
+import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.StringUtil;
 
 /**
  * Supports the STRING record structure.
@@ -102,6 +101,11 @@ public class StringRecord
         }
     }
 
+    public boolean isInValueSection()
+    {
+        return true;
+    }
+
     private int getStringLength()
     {
         return field_1_string_length;
@@ -128,12 +132,6 @@ public class StringRecord
     {
         return (field_2_unicode_flag == 1);
     }
-
-    public boolean isInValueSection()
-    {
-        return true;
-    }
-
 
     /**
      * called by the class that is responsible for writing this sucker.
@@ -207,7 +205,7 @@ public class StringRecord
         buffer.append("[/STRING]\n");
         return buffer.toString();
     }
-
+    
     public Object clone() {
         StringRecord rec = new StringRecord();
         rec.field_1_string_length = this.field_1_string_length;

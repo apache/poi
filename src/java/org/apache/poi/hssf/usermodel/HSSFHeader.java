@@ -1,6 +1,5 @@
-
 /* ====================================================================
-   Copyright 2002-2004   Apache Software Foundation
+   Copyright 2003-2004   Apache Software Foundation
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -14,7 +13,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.usermodel;
 
@@ -30,9 +28,6 @@ import org.apache.poi.hssf.record.HeaderRecord;
  * that return the characters used to represent these.  One can also change the
  * fonts by using similar methods.
  * <P>
- * To get an instance of HSSFHeader for a HSSFSheet is to call <a
- * href="HSSFSheet.html#getHeader()">getHeader()</a> on the sheet.
- * <p>
  * @author Shawn Laubach (slaubach at apache dot org)
  */
 public class HSSFHeader extends Object {
@@ -97,7 +92,7 @@ public class HSSFHeader extends Object {
 
   /**
    * Sets the left string.
-   * @param newLeft The string to set as the left side.
+   * @newLeft The string to set as the left side.
    */
   public void setLeft(String newLeft) {
     left = newLeft;
@@ -114,7 +109,7 @@ public class HSSFHeader extends Object {
 
   /**
    * Sets the center string.
-   * @param newCenter The string to set as the center.
+   * @newLeft The string to set as the center.
    */
   public void setCenter(String newCenter) {
     center = newCenter;
@@ -131,7 +126,7 @@ public class HSSFHeader extends Object {
 
   /**
    * Sets the right string.
-   * @param newRight The string to set as the right side.
+   * @newLeft The string to set as the right side.
    */
   public void setRight(String newRight) {
     right = newRight;

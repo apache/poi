@@ -1,6 +1,5 @@
-
 /* ====================================================================
-   Copyright 2002-2004   Apache Software Foundation
+   Copyright 2003-2004   Apache Software Foundation
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -14,7 +13,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record.formula;
 
@@ -200,7 +198,7 @@ public class Area3DPtg extends Ptg
 
 	/**
 	 * sets the first row to relative or not
-         * @param rel specifies whether the first row is relative or not
+	 * @param isRelative or not.
 	 */
 	public void setFirstRowRelative( boolean rel )
 	{
@@ -217,7 +215,7 @@ public class Area3DPtg extends Ptg
 
 	/**
 	 * set whether the last row is relative or not
-	 * @param rel specifies whether the last row is relative
+	 * @param last row relative
 	 */
 	public void setLastRowRelative( boolean rel )
 	{
@@ -283,7 +281,7 @@ public class Area3DPtg extends Ptg
 		ptg.field_3_last_row = field_3_last_row;
 		ptg.field_4_first_column = field_4_first_column;
 		ptg.field_5_last_column = field_5_last_column;
-		ptg.setClass(ptgClass);
+            ptg.setClass(ptgClass);
 		return ptg;
 	}
 

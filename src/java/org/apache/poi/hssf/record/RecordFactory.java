@@ -18,14 +18,12 @@
 
 package org.apache.poi.hssf.record;
 
-import java.io.InputStream;
-import java.io.IOException;
-
-import java.util.*;
-
-import java.lang.reflect.Constructor;
-
 import org.apache.poi.util.LittleEndian;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Constructor;
+import java.util.*;
 
 /**
  * Title:  Record Factory<P>
@@ -75,9 +73,9 @@ public class RecordFactory
                 FormulaRecord.class, BoolErrRecord.class, ExternSheetRecord.class,
                 NameRecord.class, LeftMarginRecord.class, RightMarginRecord.class,
                 TopMarginRecord.class, BottomMarginRecord.class,
-                PaletteRecord.class, StringRecord.class, RecalcIdRecord.class, SharedFormulaRecord.class,
                 DrawingRecord.class, DrawingGroupRecord.class, DrawingSelectionRecord.class,
                 ObjRecord.class, TextObjectRecord.class,
+                PaletteRecord.class, StringRecord.class, RecalcIdRecord.class, SharedFormulaRecord.class,
                 HorizontalPageBreakRecord.class, VerticalPageBreakRecord.class
             };
         } else {
@@ -329,6 +327,7 @@ public class RecordFactory
             }
             catch (Exception illegalArgumentException)
             {
+                illegalArgumentException.printStackTrace();
                 throw new RecordFormatException(
                     "Unable to determine record types");
             }

@@ -1,6 +1,5 @@
-
 /* ====================================================================
-   Copyright 2002-2004   Apache Software Foundation
+   Copyright 2003-2004   Apache Software Foundation
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -14,7 +13,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hssf.usermodel;
 
 import junit.framework.TestCase;
@@ -66,7 +65,7 @@ public class TestEscherGraphics2d extends TestCase
     public void testGetFontMetrics() throws Exception
     {
         FontMetrics fontMetrics = graphics.getFontMetrics(graphics.getFont());
-     if (graphics.getFont().toString().indexOf("dialog") != -1) // if dialog is returned we can't run the test properly.
+	if (graphics.getFont().toString().indexOf("dialog") != -1) // if dialog is returned we can't run the test properly.
             return;
         assertEquals(7, fontMetrics.charWidth('X'));
         assertEquals("java.awt.Font[family=Arial,name=Arial,style=plain,size=10]", fontMetrics.getFont().toString());

@@ -44,7 +44,6 @@ public abstract class POILogger
      * package scope so it cannot be instantiated outside of the util
      * package. You need a POILogger? Go to the POILogFactory for one
      *
-     * @param log the object that does the real work of logging
      */
     POILogger()
     {}

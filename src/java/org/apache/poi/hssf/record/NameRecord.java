@@ -924,7 +924,8 @@ public class NameRecord extends Record {
             .append("\n");
         buffer.append("    .Status bar text (Unicode string without length field)  = ").append( field_17_status_bar_text )
             .append("\n");
-        buffer.append(org.apache.poi.util.HexDump.dump(this.field_13_raw_name_definition,0,0));
+        if (field_13_raw_name_definition != null)
+            buffer.append(org.apache.poi.util.HexDump.dump(this.field_13_raw_name_definition,0,0));
         buffer.append("[/NAME]\n");
         
         return buffer.toString();
