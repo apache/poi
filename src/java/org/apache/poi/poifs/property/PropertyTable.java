@@ -60,7 +60,7 @@ import java.io.OutputStream;
 
 import java.util.*;
 
-import org.apache.poi.poifs.common.PoiFSConstants;
+import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.filesystem.BATManaged;
 import org.apache.poi.poifs.storage.BlockWritable;
 import org.apache.poi.poifs.storage.PropertyBlock;
@@ -88,7 +88,7 @@ public class PropertyTable
 
     public PropertyTable()
     {
-        _start_block = PoiFSConstants.END_OF_CHAIN;
+        _start_block = POIFSConstants.END_OF_CHAIN;
         _properties  = new ArrayList();
         addProperty(new RootProperty());
         _blocks = null;
@@ -110,7 +110,7 @@ public class PropertyTable
                          final RawDataBlockList blockList)
         throws IOException
     {
-        _start_block = PoiFSConstants.END_OF_CHAIN;
+        _start_block = POIFSConstants.END_OF_CHAIN;
         _blocks      = null;
         _properties  =
             PropertyFactory

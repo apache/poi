@@ -61,7 +61,7 @@ import java.util.*;
 
 import junit.framework.*;
 
-import org.apache.poi.poifs.common.PoiFSConstants;
+import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
 
@@ -1254,7 +1254,7 @@ public class TestBlockAllocationTableReader
             else if (i % 256 == 255)
             {
                 assertEquals("Verify end of chain for block " + i,
-                             PoiFSConstants.END_OF_CHAIN,
+                             POIFSConstants.END_OF_CHAIN,
                              table.getNextBlockIndex(i));
             }
             else

@@ -59,7 +59,7 @@ import java.io.*;
 
 import java.util.*;
 
-import org.apache.poi.poifs.common.PoiFSConstants;
+import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.util.IntegerField;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
@@ -103,17 +103,17 @@ public class HeaderBlockReader
     public HeaderBlockReader(final InputStream stream)
         throws IOException
     {
-        _data = new byte[ PoiFSConstants.BIG_BLOCK_SIZE ];
+        _data = new byte[ POIFSConstants.BIG_BLOCK_SIZE ];
         int byte_count = stream.read(_data);
 
-        if (byte_count != PoiFSConstants.BIG_BLOCK_SIZE)
+        if (byte_count != POIFSConstants.BIG_BLOCK_SIZE)
         {
             String type = " byte" + ((byte_count == 1) ? ("")
                                                        : ("s"));
 
             throw new IOException("Unable to read entire header; "
                                   + byte_count + type + " read; expected "
-                                  + PoiFSConstants.BIG_BLOCK_SIZE + " bytes");
+                                  + POIFSConstants.BIG_BLOCK_SIZE + " bytes");
         }
 
         // verify signature

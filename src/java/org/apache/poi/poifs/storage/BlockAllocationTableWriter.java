@@ -60,7 +60,7 @@ import java.io.OutputStream;
 
 import java.util.*;
 
-import org.apache.poi.poifs.common.PoiFSConstants;
+import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.filesystem.BATManaged;
 import org.apache.poi.util.IntList;
 import org.apache.poi.util.LittleEndian;
@@ -95,7 +95,7 @@ public class BlockAllocationTableWriter
 
     public BlockAllocationTableWriter()
     {
-        _start_block = PoiFSConstants.END_OF_CHAIN;
+        _start_block = POIFSConstants.END_OF_CHAIN;
         _entries     = new IntList();
         _blocks      = new BATBlock[ 0 ];
     }
@@ -162,7 +162,7 @@ public class BlockAllocationTableWriter
             {
                 _entries.add(index++);
             }
-            _entries.add(PoiFSConstants.END_OF_CHAIN);
+            _entries.add(POIFSConstants.END_OF_CHAIN);
         }
         return startBlock;
     }

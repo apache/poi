@@ -61,7 +61,7 @@ import java.util.*;
 
 import junit.framework.*;
 
-import org.apache.poi.poifs.common.PoiFSConstants;
+import org.apache.poi.poifs.common.POIFSConstants;
 
 /**
  * Class to test RootProperty functionality
@@ -124,7 +124,7 @@ public class TestRootProperty
         {
             _testblock[ index ] = ( byte ) 0;
         }
-        _testblock[ index++ ] = ( byte ) PoiFSConstants.END_OF_CHAIN;
+        _testblock[ index++ ] = ( byte ) POIFSConstants.END_OF_CHAIN;
         for (; index < 0x78; index++)
         {
             _testblock[ index ] = ( byte ) 0xff;

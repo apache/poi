@@ -59,7 +59,7 @@ import java.io.*;
 
 import java.util.*;
 
-import org.apache.poi.poifs.common.PoiFSConstants;
+import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.util.IntegerField;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LongField;
@@ -99,7 +99,7 @@ public class HeaderBlockWriter
 
     public HeaderBlockWriter()
     {
-        _data = new byte[ PoiFSConstants.BIG_BLOCK_SIZE ];
+        _data = new byte[ POIFSConstants.BIG_BLOCK_SIZE ];
         Arrays.fill(_data, _default_value);
         new LongField(_signature_offset, _signature, _data);
         new IntegerField(0x08, 0, _data);
@@ -115,15 +115,15 @@ public class HeaderBlockWriter
         new IntegerField(0x28, 0, _data);
         _bat_count      = new IntegerField(_bat_count_offset, 0, _data);
         _property_start = new IntegerField(_property_start_offset,
-                                           PoiFSConstants.END_OF_CHAIN,
+                                           POIFSConstants.END_OF_CHAIN,
                                            _data);
         new IntegerField(0x34, 0, _data);
         new IntegerField(0x38, 0x1000, _data);
         _sbat_start = new IntegerField(_sbat_start_offset,
-                                       PoiFSConstants.END_OF_CHAIN, _data);
+                                       POIFSConstants.END_OF_CHAIN, _data);
         new IntegerField(0x40, 1, _data);
         _xbat_start = new IntegerField(_xbat_start_offset,
-                                       PoiFSConstants.END_OF_CHAIN, _data);
+                                       POIFSConstants.END_OF_CHAIN, _data);
         _xbat_count = new IntegerField(_xbat_count_offset, 0, _data);
     }
 
@@ -170,7 +170,7 @@ public class HeaderBlockWriter
         else
         {
             rvalue = BATBlock.createXBATBlocks(new int[ 0 ], 0);
-            _xbat_start.set(PoiFSConstants.END_OF_CHAIN, _data);
+            _xbat_start.set(POIFSConstants.END_OF_CHAIN, _data);
         }
         _xbat_count.set(rvalue.length, _data);
         return rvalue;

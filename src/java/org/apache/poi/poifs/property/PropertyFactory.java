@@ -59,7 +59,7 @@ import java.io.IOException;
 
 import java.util.*;
 
-import org.apache.poi.poifs.common.PoiFSConstants;
+import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.storage.ListManagedBlock;
 
 /**
@@ -102,7 +102,7 @@ class PropertyFactory
         {
             byte[] data           = blocks[ j ].getData();
             int    property_count = data.length
-                                    / PoiFSConstants.PROPERTY_SIZE;
+                                    / POIFSConstants.PROPERTY_SIZE;
             int    offset         = 0;
 
             for (int k = 0; k < property_count; k++)
@@ -130,7 +130,7 @@ class PropertyFactory
                         properties.add(null);
                         break;
                 }
-                offset += PoiFSConstants.PROPERTY_SIZE;
+                offset += POIFSConstants.PROPERTY_SIZE;
             }
         }
         return properties;

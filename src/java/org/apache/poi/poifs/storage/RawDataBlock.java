@@ -55,7 +55,7 @@
 
 package org.apache.poi.poifs.storage;
 
-import org.apache.poi.poifs.common.PoiFSConstants;
+import org.apache.poi.poifs.common.POIFSConstants;
 
 import java.io.*;
 
@@ -83,21 +83,21 @@ public class RawDataBlock
     public RawDataBlock(final InputStream stream)
         throws IOException
     {
-        _data = new byte[ PoiFSConstants.BIG_BLOCK_SIZE ];
+        _data = new byte[ POIFSConstants.BIG_BLOCK_SIZE ];
         int count = stream.read(_data);
 
         if (count == -1)
         {
             _eof = true;
         }
-        else if (count != PoiFSConstants.BIG_BLOCK_SIZE)
+        else if (count != POIFSConstants.BIG_BLOCK_SIZE)
         {
             String type = " byte" + ((count == 1) ? ("")
                                                   : ("s"));
 
             throw new IOException("Unable to read entire block; " + count
                                   + type + " read; expected "
-                                  + PoiFSConstants.BIG_BLOCK_SIZE + " bytes");
+                                  + POIFSConstants.BIG_BLOCK_SIZE + " bytes");
         }
         else
         {
