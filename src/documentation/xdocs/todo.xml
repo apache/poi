@@ -17,7 +17,7 @@
         <action context="code" assigned-to="NKB">
           Finish HDF
         </action>
-        <action context="code" assigned-to="NKB">
+        <action context="code" assigned-to="GS">
           Finish Charts
         </action>
         <action context="code">
@@ -30,19 +30,15 @@
           Expose functionality in low level records in higher level API
         </action>
         <action context="code">
-          Implement more record types (for other things ... not sure
-          what this will mean yet).
-        </action>
-        <action context="code">
-          Implement more record types (for other things ... not sure
-          what this will mean yet).
+          Implement more record types.
         </action>
         <action context="code">
           Add more dummy checks (for when API user's do things they
-          &quot;can't&quot; do)
+          &quot;can't&quot; do).  This will involve exploring the various
+          upper limits on the things Excel can handle.
         </action>
         <action context="code">
-              Add support for embedded graphics and stuff like that.
+              Add support for embedded graphics and other objects.
         </action>
         <action context="code">
           Create new adapter object for handling MulBlank, MulRk, Rk
