@@ -176,6 +176,16 @@ public class ExternSheetRecord extends Record {
     public String toString() {
         StringBuffer buffer = new StringBuffer();
         
+        buffer.append("[EXTERNSHEET]\n");
+        buffer.append("   numOfRefs     = ").append(getNumOfREFStructures()).append("\n");
+        for (int k=0; k < this.getNumOfREFRecord(); k++) {
+            buffer.append("refrec         #").append(k).append('\n');
+            buffer.append(getREFRecordAt(k).toString());
+            buffer.append("----refrec     #").append(k).append('\n');
+        }
+        buffer.append("[/EXTERNSHEET]\n");
+        
+        
         return buffer.toString();
     }
     

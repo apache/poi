@@ -169,7 +169,9 @@ public class ExternSheetSubRecord extends Record {
     
     public String toString() {
         StringBuffer buffer = new StringBuffer();
-        
+        buffer.append("   supbookindex =").append(getIndexToSupBook()).append('\n');
+        buffer.append("   1stsbindex   =").append(getIndexToFirstSupBook()).append('\n');
+        buffer.append("   lastsbindex  =").append(getIndexToLastSupBook()).append('\n');
         return buffer.toString();
     }
     

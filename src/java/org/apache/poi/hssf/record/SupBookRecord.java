@@ -136,7 +136,12 @@ public class SupBookRecord extends Record
 
     public String toString()
     {
-        return "";
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("[SUPBOOK]\n");
+        buffer.append("numberosheets = ").append(getNumberOfSheets()).append('\n');
+        buffer.append("flag          = ").append(getFlag()).append('\n');
+        buffer.append("[/SUPBOOK]\n");
+        return buffer.toString();
     }
 
     /**
