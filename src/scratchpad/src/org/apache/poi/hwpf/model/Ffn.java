@@ -108,7 +108,7 @@ public class Ffn
     offset += _fontSig.length;
 
     offsetTmp = offset - offsetTmp;
-    _xszFfnLength = this.getSize() - offsetTmp;
+    _xszFfnLength = (this.getSize() - offsetTmp)/2;
     _xszFfn = new char[_xszFfnLength];
 
     for(int i = 0; i < _xszFfnLength; i++)
@@ -206,13 +206,13 @@ public class Ffn
 
     for(int i = 0; i < _xszFfn.length; i++)
     {
-      buf[offset] = (byte)_xszFfn[i];
-        offset += LittleEndian.BYTE_SIZE;
+      LittleEndian.putShort(buf, offset, (short)_xszFfn[i]);
+      offset += LittleEndian.SHORT_SIZE;
     }
 
-      return buf;
+    return buf;
 
-    }
+  }
 
     public boolean equals(Object o)
     {

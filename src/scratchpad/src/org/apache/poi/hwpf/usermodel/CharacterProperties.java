@@ -420,6 +420,8 @@ public class CharacterProperties
     cp.field_41_xstDispFldRMark = (byte[])field_41_xstDispFldRMark.clone();
     cp.field_42_shd = (ShadingDescriptor)field_42_shd.clone();
 
+    cp._ico24 = _ico24;
+
     return cp;
   }
 
