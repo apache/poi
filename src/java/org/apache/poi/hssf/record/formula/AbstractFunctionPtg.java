@@ -3,6 +3,8 @@ package org.apache.poi.hssf.record.formula;
 import org.apache.poi.util.BinaryTree;
 import org.apache.poi.hssf.util.SheetReferences;
 
+import java.util.Stack;
+
 /**
  * This class provides the base functionality for Excel sheet functions 
  * There are two kinds of function Ptgs - tFunc and tFuncVar
@@ -44,11 +46,7 @@ public abstract class AbstractFunctionPtg extends OperationPtg {
     }
     
     public String getName() {
-       if(field_2_fnc_index != 1) {
         return lookupName(field_2_fnc_index);
-       } else {
-        return "Funky case of formula recombinating";
-       }
     }
     
     public String toFormulaString(SheetReferences refs) {
@@ -56,9 +54,12 @@ public abstract class AbstractFunctionPtg extends OperationPtg {
     }
     
     public String toFormulaString(String[] operands) {
-        StringBuffer buf = new StringBuffer();
-        if (field_2_fnc_index != 1) {
-          buf.append(getName()+"(");
+        StringBuffer buf = new StringBuffer();        
+          
+          if (field_2_fnc_index != 1) {
+              buf.append(getName());
+              buf.append('(');
+          }
           if (operands.length >0) {
               for (int i=0;i<operands.length;i++) {
                   buf.append(operands[i]);
@@ -66,12 +67,9 @@ public abstract class AbstractFunctionPtg extends OperationPtg {
               }
               buf.deleteCharAt(buf.length()-1);
           }
-        buf.append(")");
-        } else {
-         throw new RuntimeException("FUNKY CASE OF FORMULA RECOMBINATION NOT "+
-         "YET IMPLEMENTED");
-         
-        }
+          if (field_2_fnc_index != 1) {
+            buf.append(")");
+          }
         return buf.toString();
     }
     
@@ -98,6 +96,7 @@ public abstract class AbstractFunctionPtg extends OperationPtg {
         BinaryTree dmap = new BinaryTree();
 
         dmap.put(new Integer(0),"COUNT");
+        dmap.put(new Integer(1),"specialflag");
         dmap.put(new Integer(2),"ISNA");
         dmap.put(new Integer(3),"ISERROR");
         dmap.put(new Integer(4),"SUM");

@@ -603,20 +603,42 @@ end;
         int numPtgs = ptgs.length;
         OperationPtg o;
         int numOperands;
+        String result=null;
         String[] operands;
+        AttrPtg ifptg = null;
         for (int i=0;i<numPtgs;i++) {
            // Excel allows to have AttrPtg at position 0 (such as Blanks) which
            // do not have any operands. Skip them.
             if (ptgs[i] instanceof OperationPtg && i>0) {
                   o = (OperationPtg) ptgs[i];
-                  numOperands = o.getNumberOfOperands();
-                  operands = new String[numOperands];
-                  for (int j=0;j<numOperands;j++) {
-                      operands[numOperands-j-1] = (String) stack.pop(); //TODO: catch stack underflow and throw parse exception. 
+                  
+                  if (o instanceof AttrPtg && ((AttrPtg)o).isOptimizedIf()) {
+                        ifptg=(AttrPtg)o;
+                  } else {
                       
-                  }  
-                  String result = o.toFormulaString(operands);
-                  stack.push(result);
+                      numOperands = o.getNumberOfOperands();
+                      operands = new String[numOperands];
+                      
+                      for (int j=0;j<numOperands;j++) {
+                          operands[numOperands-j-1] = (String) stack.pop(); //TODO: catch stack underflow and throw parse exception. 
+                      }  
+
+                      if ( (o instanceof AbstractFunctionPtg) && 
+                            ((AbstractFunctionPtg)o).getName().equals("specialflag") &&
+                            ifptg != null
+                            ) {
+                             // this special case will be way different.
+                             result = ifptg.toFormulaString(
+                                  new String[] {(o.toFormulaString(operands))}
+                                                           );
+                             ifptg = null;
+                      } else {                      
+                        result = o.toFormulaString(operands);                                              
+                      }
+                      stack.push(result);                                        
+                  }
+                      
+                  
             } else {
                 stack.push(ptgs[i].toFormulaString(refs));
             }
