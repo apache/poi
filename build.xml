@@ -7,7 +7,7 @@
 
 
     This build was tested with and 1.5.3 although it will probably work with
-    other versions.  The following optional jar files should be installed
+    other versions.  The following jar files should be installed
     into the ant lib directory:
 
     LIBRARY         LOCATION

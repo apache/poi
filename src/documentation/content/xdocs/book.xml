@@ -37,6 +37,7 @@
         <menu-item label="Javadocs" href="ext:javadoc"/>
         <menu-item label="FAQ" href="faq.html"/>
         <menu-item label="References" href="references/index.html"/>
+        <menu-item label="How to Build" href="howtobuild.html"/>
     </menu>
 
     <menu label="Translations">
