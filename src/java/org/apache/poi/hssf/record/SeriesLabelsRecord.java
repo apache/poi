@@ -97,6 +97,7 @@ public class SeriesLabelsRecord
     public SeriesLabelsRecord(short id, short size, byte [] data)
     {
         super(id, size, data);
+    
     }
 
     /**
@@ -112,6 +113,7 @@ public class SeriesLabelsRecord
     public SeriesLabelsRecord(short id, short size, byte [] data, int offset)
     {
         super(id, size, data, offset);
+    
     }
 
     /**
@@ -129,7 +131,9 @@ public class SeriesLabelsRecord
 
     protected void fillFields(byte [] data, short size, int offset)
     {
-        field_1_formatFlags             = LittleEndian.getShort(data, 0x0 + offset);
+
+        int pos = 0;
+        field_1_formatFlags            = LittleEndian.getShort(data, pos + 0x0 + offset);
 
     }
 
@@ -137,29 +141,30 @@ public class SeriesLabelsRecord
     {
         StringBuffer buffer = new StringBuffer();
 
-        buffer.append("[SeriesLabels]\n");
-
+        buffer.append("[ATTACHEDLABEL]\n");
         buffer.append("    .formatFlags          = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getFormatFlags()))
-            .append(" (").append(getFormatFlags()).append(" )\n");
-        buffer.append("         .showActual               = ").append(isShowActual          ()).append('\n');
-        buffer.append("         .showPercent              = ").append(isShowPercent         ()).append('\n');
-        buffer.append("         .labelAsPercentage        = ").append(isLabelAsPercentage   ()).append('\n');
-        buffer.append("         .smoothedLine             = ").append(isSmoothedLine        ()).append('\n');
-        buffer.append("         .showLabel                = ").append(isShowLabel           ()).append('\n');
-        buffer.append("         .showBubbleSizes          = ").append(isShowBubbleSizes     ()).append('\n');
+            .append("0x").append(HexDump.toHex(  getFormatFlags ()))
+            .append(" (").append( getFormatFlags() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
+        buffer.append("         .showActual               = ").append(isShowActual()).append('\n'); 
+        buffer.append("         .showPercent              = ").append(isShowPercent()).append('\n'); 
+        buffer.append("         .labelAsPercentage        = ").append(isLabelAsPercentage()).append('\n'); 
+        buffer.append("         .smoothedLine             = ").append(isSmoothedLine()).append('\n'); 
+        buffer.append("         .showLabel                = ").append(isShowLabel()).append('\n'); 
+        buffer.append("         .showBubbleSizes          = ").append(isShowBubbleSizes()).append('\n'); 
 
-        buffer.append("[/SeriesLabels]\n");
+        buffer.append("[/ATTACHEDLABEL]\n");
         return buffer.toString();
     }
 
     public int serialize(int offset, byte[] data)
     {
+        int pos = 0;
+
         LittleEndian.putShort(data, 0 + offset, sid);
         LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
 
-        LittleEndian.putShort(data, 4 + offset, field_1_formatFlags);
+        LittleEndian.putShort(data, 4 + offset + pos, field_1_formatFlags);
 
         return getRecordSize();
     }
@@ -169,7 +174,7 @@ public class SeriesLabelsRecord
      */
     public int getRecordSize()
     {
-        return 4 + 2;
+        return 4  + 2;
     }
 
     public short getSid()
@@ -178,12 +183,13 @@ public class SeriesLabelsRecord
     }
 
     public Object clone() {
-      SeriesLabelsRecord rec = new SeriesLabelsRecord();
-      
-      rec.field_1_formatFlags = field_1_formatFlags;
-
-      return rec;
+        SeriesLabelsRecord rec = new SeriesLabelsRecord();
+    
+        rec.field_1_formatFlags = field_1_formatFlags;
+        return rec;
     }
+
+
 
 
     /**

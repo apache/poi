@@ -95,6 +95,7 @@ public class FontBasisRecord
     public FontBasisRecord(short id, short size, byte [] data)
     {
         super(id, size, data);
+    
     }
 
     /**
@@ -110,6 +111,7 @@ public class FontBasisRecord
     public FontBasisRecord(short id, short size, byte [] data, int offset)
     {
         super(id, size, data, offset);
+    
     }
 
     /**
@@ -127,11 +129,13 @@ public class FontBasisRecord
 
     protected void fillFields(byte [] data, short size, int offset)
     {
-        field_1_xBasis                  = LittleEndian.getShort(data, 0x0 + offset);
-        field_2_yBasis                  = LittleEndian.getShort(data, 0x2 + offset);
-        field_3_heightBasis             = LittleEndian.getShort(data, 0x4 + offset);
-        field_4_scale                   = LittleEndian.getShort(data, 0x6 + offset);
-        field_5_indexToFontTable        = LittleEndian.getShort(data, 0x8 + offset);
+
+        int pos = 0;
+        field_1_xBasis                 = LittleEndian.getShort(data, pos + 0x0 + offset);
+        field_2_yBasis                 = LittleEndian.getShort(data, pos + 0x2 + offset);
+        field_3_heightBasis            = LittleEndian.getShort(data, pos + 0x4 + offset);
+        field_4_scale                  = LittleEndian.getShort(data, pos + 0x6 + offset);
+        field_5_indexToFontTable       = LittleEndian.getShort(data, pos + 0x8 + offset);
 
     }
 
@@ -139,47 +143,44 @@ public class FontBasisRecord
     {
         StringBuffer buffer = new StringBuffer();
 
-        buffer.append("[FontBasis]\n");
-
+        buffer.append("[FBI]\n");
         buffer.append("    .xBasis               = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getXBasis()))
-            .append(" (").append(getXBasis()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getXBasis ()))
+            .append(" (").append( getXBasis() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .yBasis               = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getYBasis()))
-            .append(" (").append(getYBasis()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getYBasis ()))
+            .append(" (").append( getYBasis() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .heightBasis          = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getHeightBasis()))
-            .append(" (").append(getHeightBasis()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getHeightBasis ()))
+            .append(" (").append( getHeightBasis() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .scale                = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getScale()))
-            .append(" (").append(getScale()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getScale ()))
+            .append(" (").append( getScale() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .indexToFontTable     = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getIndexToFontTable()))
-            .append(" (").append(getIndexToFontTable()).append(" )\n");
+            .append("0x").append(HexDump.toHex(  getIndexToFontTable ()))
+            .append(" (").append( getIndexToFontTable() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
 
-        buffer.append("[/FontBasis]\n");
+        buffer.append("[/FBI]\n");
         return buffer.toString();
     }
 
     public int serialize(int offset, byte[] data)
     {
+        int pos = 0;
+
         LittleEndian.putShort(data, 0 + offset, sid);
         LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
 
-        LittleEndian.putShort(data, 4 + offset, field_1_xBasis);
-        LittleEndian.putShort(data, 6 + offset, field_2_yBasis);
-        LittleEndian.putShort(data, 8 + offset, field_3_heightBasis);
-        LittleEndian.putShort(data, 10 + offset, field_4_scale);
-        LittleEndian.putShort(data, 12 + offset, field_5_indexToFontTable);
+        LittleEndian.putShort(data, 4 + offset + pos, field_1_xBasis);
+        LittleEndian.putShort(data, 6 + offset + pos, field_2_yBasis);
+        LittleEndian.putShort(data, 8 + offset + pos, field_3_heightBasis);
+        LittleEndian.putShort(data, 10 + offset + pos, field_4_scale);
+        LittleEndian.putShort(data, 12 + offset + pos, field_5_indexToFontTable);
 
         return getRecordSize();
     }
@@ -189,7 +190,7 @@ public class FontBasisRecord
      */
     public int getRecordSize()
     {
-        return 4 + 2 + 2 + 2 + 2 + 2;
+        return 4  + 2 + 2 + 2 + 2 + 2;
     }
 
     public short getSid()
@@ -198,16 +199,17 @@ public class FontBasisRecord
     }
 
     public Object clone() {
-      FontBasisRecord rec = new FontBasisRecord();
-      
-      rec.field_1_xBasis = field_1_xBasis;
-      rec.field_2_yBasis = field_2_yBasis;
-      rec.field_3_heightBasis = field_3_heightBasis;
-      rec.field_4_scale = field_4_scale;
-      rec.field_5_indexToFontTable = field_5_indexToFontTable;
-
-      return rec;
+        FontBasisRecord rec = new FontBasisRecord();
+    
+        rec.field_1_xBasis = field_1_xBasis;
+        rec.field_2_yBasis = field_2_yBasis;
+        rec.field_3_heightBasis = field_3_heightBasis;
+        rec.field_4_scale = field_4_scale;
+        rec.field_5_indexToFontTable = field_5_indexToFontTable;
+        return rec;
     }
+
+
 
 
     /**

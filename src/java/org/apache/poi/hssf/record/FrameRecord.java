@@ -96,6 +96,7 @@ public class FrameRecord
     public FrameRecord(short id, short size, byte [] data)
     {
         super(id, size, data);
+    
     }
 
     /**
@@ -111,6 +112,7 @@ public class FrameRecord
     public FrameRecord(short id, short size, byte [] data, int offset)
     {
         super(id, size, data, offset);
+    
     }
 
     /**
@@ -128,8 +130,10 @@ public class FrameRecord
 
     protected void fillFields(byte [] data, short size, int offset)
     {
-        field_1_borderType              = LittleEndian.getShort(data, 0x0 + offset);
-        field_2_options                 = LittleEndian.getShort(data, 0x2 + offset);
+
+        int pos = 0;
+        field_1_borderType             = LittleEndian.getShort(data, pos + 0x0 + offset);
+        field_2_options                = LittleEndian.getShort(data, pos + 0x2 + offset);
 
     }
 
@@ -137,31 +141,31 @@ public class FrameRecord
     {
         StringBuffer buffer = new StringBuffer();
 
-        buffer.append("[Frame]\n");
-
+        buffer.append("[FRAME]\n");
         buffer.append("    .borderType           = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getBorderType()))
-            .append(" (").append(getBorderType()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getBorderType ()))
+            .append(" (").append( getBorderType() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .options              = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getOptions()))
-            .append(" (").append(getOptions()).append(" )\n");
-        buffer.append("         .autoSize                 = ").append(isAutoSize            ()).append('\n');
-        buffer.append("         .autoPosition             = ").append(isAutoPosition        ()).append('\n');
+            .append("0x").append(HexDump.toHex(  getOptions ()))
+            .append(" (").append( getOptions() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
+        buffer.append("         .autoSize                 = ").append(isAutoSize()).append('\n'); 
+        buffer.append("         .autoPosition             = ").append(isAutoPosition()).append('\n'); 
 
-        buffer.append("[/Frame]\n");
+        buffer.append("[/FRAME]\n");
         return buffer.toString();
     }
 
     public int serialize(int offset, byte[] data)
     {
+        int pos = 0;
+
         LittleEndian.putShort(data, 0 + offset, sid);
         LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
 
-        LittleEndian.putShort(data, 4 + offset, field_1_borderType);
-        LittleEndian.putShort(data, 6 + offset, field_2_options);
+        LittleEndian.putShort(data, 4 + offset + pos, field_1_borderType);
+        LittleEndian.putShort(data, 6 + offset + pos, field_2_options);
 
         return getRecordSize();
     }
@@ -171,7 +175,7 @@ public class FrameRecord
      */
     public int getRecordSize()
     {
-        return 4 + 2 + 2;
+        return 4  + 2 + 2;
     }
 
     public short getSid()
@@ -180,13 +184,14 @@ public class FrameRecord
     }
 
     public Object clone() {
-      FrameRecord rec = new FrameRecord();
-      
-      rec.field_1_borderType = field_1_borderType;
-      rec.field_2_options = field_2_options;
-
-      return rec;
+        FrameRecord rec = new FrameRecord();
+    
+        rec.field_1_borderType = field_1_borderType;
+        rec.field_2_options = field_2_options;
+        return rec;
     }
+
+
 
 
     /**

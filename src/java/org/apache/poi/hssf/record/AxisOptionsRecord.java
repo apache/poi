@@ -107,6 +107,7 @@ public class AxisOptionsRecord
     public AxisOptionsRecord(short id, short size, byte [] data)
     {
         super(id, size, data);
+    
     }
 
     /**
@@ -122,6 +123,7 @@ public class AxisOptionsRecord
     public AxisOptionsRecord(short id, short size, byte [] data, int offset)
     {
         super(id, size, data, offset);
+    
     }
 
     /**
@@ -139,15 +141,17 @@ public class AxisOptionsRecord
 
     protected void fillFields(byte [] data, short size, int offset)
     {
-        field_1_minimumCategory         = LittleEndian.getShort(data, 0x0 + offset);
-        field_2_maximumCategory         = LittleEndian.getShort(data, 0x2 + offset);
-        field_3_majorUnitValue          = LittleEndian.getShort(data, 0x4 + offset);
-        field_4_majorUnit               = LittleEndian.getShort(data, 0x6 + offset);
-        field_5_minorUnitValue          = LittleEndian.getShort(data, 0x8 + offset);
-        field_6_minorUnit               = LittleEndian.getShort(data, 0xa + offset);
-        field_7_baseUnit                = LittleEndian.getShort(data, 0xc + offset);
-        field_8_crossingPoint           = LittleEndian.getShort(data, 0xe + offset);
-        field_9_options                 = LittleEndian.getShort(data, 0x10 + offset);
+
+        int pos = 0;
+        field_1_minimumCategory        = LittleEndian.getShort(data, pos + 0x0 + offset);
+        field_2_maximumCategory        = LittleEndian.getShort(data, pos + 0x2 + offset);
+        field_3_majorUnitValue         = LittleEndian.getShort(data, pos + 0x4 + offset);
+        field_4_majorUnit              = LittleEndian.getShort(data, pos + 0x6 + offset);
+        field_5_minorUnitValue         = LittleEndian.getShort(data, pos + 0x8 + offset);
+        field_6_minorUnit              = LittleEndian.getShort(data, pos + 0xa + offset);
+        field_7_baseUnit               = LittleEndian.getShort(data, pos + 0xc + offset);
+        field_8_crossingPoint          = LittleEndian.getShort(data, pos + 0xe + offset);
+        field_9_options                = LittleEndian.getShort(data, pos + 0x10 + offset);
 
     }
 
@@ -155,79 +159,72 @@ public class AxisOptionsRecord
     {
         StringBuffer buffer = new StringBuffer();
 
-        buffer.append("[AxisOptions]\n");
-
+        buffer.append("[AXCEXT]\n");
         buffer.append("    .minimumCategory      = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getMinimumCategory()))
-            .append(" (").append(getMinimumCategory()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getMinimumCategory ()))
+            .append(" (").append( getMinimumCategory() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .maximumCategory      = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getMaximumCategory()))
-            .append(" (").append(getMaximumCategory()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getMaximumCategory ()))
+            .append(" (").append( getMaximumCategory() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .majorUnitValue       = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getMajorUnitValue()))
-            .append(" (").append(getMajorUnitValue()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getMajorUnitValue ()))
+            .append(" (").append( getMajorUnitValue() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .majorUnit            = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getMajorUnit()))
-            .append(" (").append(getMajorUnit()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getMajorUnit ()))
+            .append(" (").append( getMajorUnit() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .minorUnitValue       = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getMinorUnitValue()))
-            .append(" (").append(getMinorUnitValue()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getMinorUnitValue ()))
+            .append(" (").append( getMinorUnitValue() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .minorUnit            = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getMinorUnit()))
-            .append(" (").append(getMinorUnit()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getMinorUnit ()))
+            .append(" (").append( getMinorUnit() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .baseUnit             = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getBaseUnit()))
-            .append(" (").append(getBaseUnit()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getBaseUnit ()))
+            .append(" (").append( getBaseUnit() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .crossingPoint        = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getCrossingPoint()))
-            .append(" (").append(getCrossingPoint()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getCrossingPoint ()))
+            .append(" (").append( getCrossingPoint() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .options              = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getOptions()))
-            .append(" (").append(getOptions()).append(" )\n");
-        buffer.append("         .defaultMinimum           = ").append(isDefaultMinimum      ()).append('\n');
-        buffer.append("         .defaultMaximum           = ").append(isDefaultMaximum      ()).append('\n');
-        buffer.append("         .defaultMajor             = ").append(isDefaultMajor        ()).append('\n');
-        buffer.append("         .defaultMinorUnit         = ").append(isDefaultMinorUnit    ()).append('\n');
-        buffer.append("         .isDate                   = ").append(isIsDate              ()).append('\n');
-        buffer.append("         .defaultBase              = ").append(isDefaultBase         ()).append('\n');
-        buffer.append("         .defaultCross             = ").append(isDefaultCross        ()).append('\n');
-        buffer.append("         .defaultDateSettings      = ").append(isDefaultDateSettings ()).append('\n');
+            .append("0x").append(HexDump.toHex(  getOptions ()))
+            .append(" (").append( getOptions() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
+        buffer.append("         .defaultMinimum           = ").append(isDefaultMinimum()).append('\n'); 
+        buffer.append("         .defaultMaximum           = ").append(isDefaultMaximum()).append('\n'); 
+        buffer.append("         .defaultMajor             = ").append(isDefaultMajor()).append('\n'); 
+        buffer.append("         .defaultMinorUnit         = ").append(isDefaultMinorUnit()).append('\n'); 
+        buffer.append("         .isDate                   = ").append(isIsDate()).append('\n'); 
+        buffer.append("         .defaultBase              = ").append(isDefaultBase()).append('\n'); 
+        buffer.append("         .defaultCross             = ").append(isDefaultCross()).append('\n'); 
+        buffer.append("         .defaultDateSettings      = ").append(isDefaultDateSettings()).append('\n'); 
 
-        buffer.append("[/AxisOptions]\n");
+        buffer.append("[/AXCEXT]\n");
         return buffer.toString();
     }
 
     public int serialize(int offset, byte[] data)
     {
+        int pos = 0;
+
         LittleEndian.putShort(data, 0 + offset, sid);
         LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
 
-        LittleEndian.putShort(data, 4 + offset, field_1_minimumCategory);
-        LittleEndian.putShort(data, 6 + offset, field_2_maximumCategory);
-        LittleEndian.putShort(data, 8 + offset, field_3_majorUnitValue);
-        LittleEndian.putShort(data, 10 + offset, field_4_majorUnit);
-        LittleEndian.putShort(data, 12 + offset, field_5_minorUnitValue);
-        LittleEndian.putShort(data, 14 + offset, field_6_minorUnit);
-        LittleEndian.putShort(data, 16 + offset, field_7_baseUnit);
-        LittleEndian.putShort(data, 18 + offset, field_8_crossingPoint);
-        LittleEndian.putShort(data, 20 + offset, field_9_options);
+        LittleEndian.putShort(data, 4 + offset + pos, field_1_minimumCategory);
+        LittleEndian.putShort(data, 6 + offset + pos, field_2_maximumCategory);
+        LittleEndian.putShort(data, 8 + offset + pos, field_3_majorUnitValue);
+        LittleEndian.putShort(data, 10 + offset + pos, field_4_majorUnit);
+        LittleEndian.putShort(data, 12 + offset + pos, field_5_minorUnitValue);
+        LittleEndian.putShort(data, 14 + offset + pos, field_6_minorUnit);
+        LittleEndian.putShort(data, 16 + offset + pos, field_7_baseUnit);
+        LittleEndian.putShort(data, 18 + offset + pos, field_8_crossingPoint);
+        LittleEndian.putShort(data, 20 + offset + pos, field_9_options);
 
         return getRecordSize();
     }
@@ -237,7 +234,7 @@ public class AxisOptionsRecord
      */
     public int getRecordSize()
     {
-        return 4 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2;
+        return 4  + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2;
     }
 
     public short getSid()
@@ -246,20 +243,21 @@ public class AxisOptionsRecord
     }
 
     public Object clone() {
-      AxisOptionsRecord rec = new AxisOptionsRecord();
-      
-      rec.field_1_minimumCategory = field_1_minimumCategory;
-      rec.field_2_maximumCategory = field_2_maximumCategory;
-      rec.field_3_majorUnitValue = field_3_majorUnitValue;
-      rec.field_4_majorUnit = field_4_majorUnit;
-      rec.field_5_minorUnitValue = field_5_minorUnitValue;
-      rec.field_6_minorUnit = field_6_minorUnit;
-      rec.field_7_baseUnit = field_7_baseUnit;
-      rec.field_8_crossingPoint = field_8_crossingPoint;
-      rec.field_9_options = field_9_options;
-
-      return rec;
+        AxisOptionsRecord rec = new AxisOptionsRecord();
+    
+        rec.field_1_minimumCategory = field_1_minimumCategory;
+        rec.field_2_maximumCategory = field_2_maximumCategory;
+        rec.field_3_majorUnitValue = field_3_majorUnitValue;
+        rec.field_4_majorUnit = field_4_majorUnit;
+        rec.field_5_minorUnitValue = field_5_minorUnitValue;
+        rec.field_6_minorUnit = field_6_minorUnit;
+        rec.field_7_baseUnit = field_7_baseUnit;
+        rec.field_8_crossingPoint = field_8_crossingPoint;
+        rec.field_9_options = field_9_options;
+        return rec;
     }
+
+
 
 
     /**

@@ -112,6 +112,7 @@ public class LegendRecord
     public LegendRecord(short id, short size, byte [] data)
     {
         super(id, size, data);
+    
     }
 
     /**
@@ -127,6 +128,7 @@ public class LegendRecord
     public LegendRecord(short id, short size, byte [] data, int offset)
     {
         super(id, size, data, offset);
+    
     }
 
     /**
@@ -144,13 +146,15 @@ public class LegendRecord
 
     protected void fillFields(byte [] data, short size, int offset)
     {
-        field_1_xAxisUpperLeft          = LittleEndian.getInt(data, 0x0 + offset);
-        field_2_yAxisUpperLeft          = LittleEndian.getInt(data, 0x4 + offset);
-        field_3_xSize                   = LittleEndian.getInt(data, 0x8 + offset);
-        field_4_ySize                   = LittleEndian.getInt(data, 0xc + offset);
-        field_5_type                    = data[ 0x10 + offset ];
-        field_6_spacing                 = data[ 0x11 + offset ];
-        field_7_options                 = LittleEndian.getShort(data, 0x12 + offset);
+
+        int pos = 0;
+        field_1_xAxisUpperLeft         = LittleEndian.getInt(data, pos + 0x0 + offset);
+        field_2_yAxisUpperLeft         = LittleEndian.getInt(data, pos + 0x4 + offset);
+        field_3_xSize                  = LittleEndian.getInt(data, pos + 0x8 + offset);
+        field_4_ySize                  = LittleEndian.getInt(data, pos + 0xc + offset);
+        field_5_type                   = data[ pos + 0x10 + offset ];
+        field_6_spacing                = data[ pos + 0x11 + offset ];
+        field_7_options                = LittleEndian.getShort(data, pos + 0x12 + offset);
 
     }
 
@@ -158,65 +162,60 @@ public class LegendRecord
     {
         StringBuffer buffer = new StringBuffer();
 
-        buffer.append("[Legend]\n");
-
+        buffer.append("[LEGEND]\n");
         buffer.append("    .xAxisUpperLeft       = ")
-            .append("0x")
-            .append(HexDump.toHex((int)getXAxisUpperLeft()))
-            .append(" (").append(getXAxisUpperLeft()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getXAxisUpperLeft ()))
+            .append(" (").append( getXAxisUpperLeft() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .yAxisUpperLeft       = ")
-            .append("0x")
-            .append(HexDump.toHex((int)getYAxisUpperLeft()))
-            .append(" (").append(getYAxisUpperLeft()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getYAxisUpperLeft ()))
+            .append(" (").append( getYAxisUpperLeft() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .xSize                = ")
-            .append("0x")
-            .append(HexDump.toHex((int)getXSize()))
-            .append(" (").append(getXSize()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getXSize ()))
+            .append(" (").append( getXSize() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .ySize                = ")
-            .append("0x")
-            .append(HexDump.toHex((int)getYSize()))
-            .append(" (").append(getYSize()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getYSize ()))
+            .append(" (").append( getYSize() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .type                 = ")
-            .append("0x")
-            .append(HexDump.toHex((byte)getType()))
-            .append(" (").append(getType()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getType ()))
+            .append(" (").append( getType() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .spacing              = ")
-            .append("0x")
-            .append(HexDump.toHex((byte)getSpacing()))
-            .append(" (").append(getSpacing()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getSpacing ()))
+            .append(" (").append( getSpacing() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .options              = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getOptions()))
-            .append(" (").append(getOptions()).append(" )\n");
-        buffer.append("         .autoPosition             = ").append(isAutoPosition        ()).append('\n');
-        buffer.append("         .autoSeries               = ").append(isAutoSeries          ()).append('\n');
-        buffer.append("         .autoXPositioning         = ").append(isAutoXPositioning    ()).append('\n');
-        buffer.append("         .autoYPositioning         = ").append(isAutoYPositioning    ()).append('\n');
-        buffer.append("         .vertical                 = ").append(isVertical            ()).append('\n');
-        buffer.append("         .dataTable                = ").append(isDataTable           ()).append('\n');
+            .append("0x").append(HexDump.toHex(  getOptions ()))
+            .append(" (").append( getOptions() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
+        buffer.append("         .autoPosition             = ").append(isAutoPosition()).append('\n'); 
+        buffer.append("         .autoSeries               = ").append(isAutoSeries()).append('\n'); 
+        buffer.append("         .autoXPositioning         = ").append(isAutoXPositioning()).append('\n'); 
+        buffer.append("         .autoYPositioning         = ").append(isAutoYPositioning()).append('\n'); 
+        buffer.append("         .vertical                 = ").append(isVertical()).append('\n'); 
+        buffer.append("         .dataTable                = ").append(isDataTable()).append('\n'); 
 
-        buffer.append("[/Legend]\n");
+        buffer.append("[/LEGEND]\n");
         return buffer.toString();
     }
 
     public int serialize(int offset, byte[] data)
     {
+        int pos = 0;
+
         LittleEndian.putShort(data, 0 + offset, sid);
         LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
 
-        LittleEndian.putInt(data, 4 + offset, field_1_xAxisUpperLeft);
-        LittleEndian.putInt(data, 8 + offset, field_2_yAxisUpperLeft);
-        LittleEndian.putInt(data, 12 + offset, field_3_xSize);
-        LittleEndian.putInt(data, 16 + offset, field_4_ySize);
-        data[ 20 + offset ] = field_5_type;
-        data[ 21 + offset ] = field_6_spacing;
-        LittleEndian.putShort(data, 22 + offset, field_7_options);
+        LittleEndian.putInt(data, 4 + offset + pos, field_1_xAxisUpperLeft);
+        LittleEndian.putInt(data, 8 + offset + pos, field_2_yAxisUpperLeft);
+        LittleEndian.putInt(data, 12 + offset + pos, field_3_xSize);
+        LittleEndian.putInt(data, 16 + offset + pos, field_4_ySize);
+        data[ 20 + offset + pos ] = field_5_type;
+        data[ 21 + offset + pos ] = field_6_spacing;
+        LittleEndian.putShort(data, 22 + offset + pos, field_7_options);
 
         return getRecordSize();
     }
@@ -235,18 +234,19 @@ public class LegendRecord
     }
 
     public Object clone() {
-      LegendRecord rec = new LegendRecord();
-      
-      rec.field_1_xAxisUpperLeft = field_1_xAxisUpperLeft;
-      rec.field_2_yAxisUpperLeft = field_2_yAxisUpperLeft;
-      rec.field_3_xSize = field_3_xSize;
-      rec.field_4_ySize = field_4_ySize;
-      rec.field_5_type = field_5_type;
-      rec.field_6_spacing = field_6_spacing;
-      rec.field_7_options = field_7_options;
-
-      return rec;
+        LegendRecord rec = new LegendRecord();
+    
+        rec.field_1_xAxisUpperLeft = field_1_xAxisUpperLeft;
+        rec.field_2_yAxisUpperLeft = field_2_yAxisUpperLeft;
+        rec.field_3_xSize = field_3_xSize;
+        rec.field_4_ySize = field_4_ySize;
+        rec.field_5_type = field_5_type;
+        rec.field_6_spacing = field_6_spacing;
+        rec.field_7_options = field_7_options;
+        return rec;
     }
+
+
 
 
     /**

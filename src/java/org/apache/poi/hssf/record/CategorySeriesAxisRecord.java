@@ -97,6 +97,7 @@ public class CategorySeriesAxisRecord
     public CategorySeriesAxisRecord(short id, short size, byte [] data)
     {
         super(id, size, data);
+    
     }
 
     /**
@@ -112,6 +113,7 @@ public class CategorySeriesAxisRecord
     public CategorySeriesAxisRecord(short id, short size, byte [] data, int offset)
     {
         super(id, size, data, offset);
+    
     }
 
     /**
@@ -129,10 +131,12 @@ public class CategorySeriesAxisRecord
 
     protected void fillFields(byte [] data, short size, int offset)
     {
-        field_1_crossingPoint           = LittleEndian.getShort(data, 0x0 + offset);
-        field_2_labelFrequency          = LittleEndian.getShort(data, 0x2 + offset);
-        field_3_tickMarkFrequency       = LittleEndian.getShort(data, 0x4 + offset);
-        field_4_options                 = LittleEndian.getShort(data, 0x6 + offset);
+
+        int pos = 0;
+        field_1_crossingPoint          = LittleEndian.getShort(data, pos + 0x0 + offset);
+        field_2_labelFrequency         = LittleEndian.getShort(data, pos + 0x2 + offset);
+        field_3_tickMarkFrequency      = LittleEndian.getShort(data, pos + 0x4 + offset);
+        field_4_options                = LittleEndian.getShort(data, pos + 0x6 + offset);
 
     }
 
@@ -140,44 +144,42 @@ public class CategorySeriesAxisRecord
     {
         StringBuffer buffer = new StringBuffer();
 
-        buffer.append("[CategorySeriesAxis]\n");
-
+        buffer.append("[CATSERRANGE]\n");
         buffer.append("    .crossingPoint        = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getCrossingPoint()))
-            .append(" (").append(getCrossingPoint()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getCrossingPoint ()))
+            .append(" (").append( getCrossingPoint() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .labelFrequency       = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getLabelFrequency()))
-            .append(" (").append(getLabelFrequency()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getLabelFrequency ()))
+            .append(" (").append( getLabelFrequency() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .tickMarkFrequency    = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getTickMarkFrequency()))
-            .append(" (").append(getTickMarkFrequency()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getTickMarkFrequency ()))
+            .append(" (").append( getTickMarkFrequency() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .options              = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getOptions()))
-            .append(" (").append(getOptions()).append(" )\n");
-        buffer.append("         .valueAxisCrossing        = ").append(isValueAxisCrossing   ()).append('\n');
-        buffer.append("         .crossesFarRight          = ").append(isCrossesFarRight     ()).append('\n');
-        buffer.append("         .reversed                 = ").append(isReversed            ()).append('\n');
+            .append("0x").append(HexDump.toHex(  getOptions ()))
+            .append(" (").append( getOptions() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
+        buffer.append("         .valueAxisCrossing        = ").append(isValueAxisCrossing()).append('\n'); 
+        buffer.append("         .crossesFarRight          = ").append(isCrossesFarRight()).append('\n'); 
+        buffer.append("         .reversed                 = ").append(isReversed()).append('\n'); 
 
-        buffer.append("[/CategorySeriesAxis]\n");
+        buffer.append("[/CATSERRANGE]\n");
         return buffer.toString();
     }
 
     public int serialize(int offset, byte[] data)
     {
+        int pos = 0;
+
         LittleEndian.putShort(data, 0 + offset, sid);
         LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
 
-        LittleEndian.putShort(data, 4 + offset, field_1_crossingPoint);
-        LittleEndian.putShort(data, 6 + offset, field_2_labelFrequency);
-        LittleEndian.putShort(data, 8 + offset, field_3_tickMarkFrequency);
-        LittleEndian.putShort(data, 10 + offset, field_4_options);
+        LittleEndian.putShort(data, 4 + offset + pos, field_1_crossingPoint);
+        LittleEndian.putShort(data, 6 + offset + pos, field_2_labelFrequency);
+        LittleEndian.putShort(data, 8 + offset + pos, field_3_tickMarkFrequency);
+        LittleEndian.putShort(data, 10 + offset + pos, field_4_options);
 
         return getRecordSize();
     }
@@ -187,7 +189,7 @@ public class CategorySeriesAxisRecord
      */
     public int getRecordSize()
     {
-        return 4 + 2 + 2 + 2 + 2;
+        return 4  + 2 + 2 + 2 + 2;
     }
 
     public short getSid()
@@ -196,15 +198,16 @@ public class CategorySeriesAxisRecord
     }
 
     public Object clone() {
-      CategorySeriesAxisRecord rec = new CategorySeriesAxisRecord();
-      
-      rec.field_1_crossingPoint = field_1_crossingPoint;
-      rec.field_2_labelFrequency = field_2_labelFrequency;
-      rec.field_3_tickMarkFrequency = field_3_tickMarkFrequency;
-      rec.field_4_options = field_4_options;
-
-      return rec;
+        CategorySeriesAxisRecord rec = new CategorySeriesAxisRecord();
+    
+        rec.field_1_crossingPoint = field_1_crossingPoint;
+        rec.field_2_labelFrequency = field_2_labelFrequency;
+        rec.field_3_tickMarkFrequency = field_3_tickMarkFrequency;
+        rec.field_4_options = field_4_options;
+        return rec;
     }
+
+
 
 
     /**

@@ -56,15 +56,11 @@
 
 package org.apache.poi.hssf.model;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Stack;
-
-import java.io.FileOutputStream;
-import java.io.File;
-
-import org.apache.poi.hssf.util.SheetReferences;
 import org.apache.poi.hssf.record.formula.*;
+import org.apache.poi.hssf.util.SheetReferences;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -101,7 +97,7 @@ public class FormulaParser {
     private static char TAB = '\t';
     private static char CR = '\n';
     
-   private char Look;              // Lookahead Character 
+   private char look;              // Lookahead Character
    
    private Workbook book;
     
@@ -115,7 +111,7 @@ public class FormulaParser {
         formulaString = formula;
         pointer=0;
         this.book = book;
-	formulaLength = formulaString.length();
+    	formulaLength = formulaString.length();
     }
     
 
@@ -125,10 +121,10 @@ public class FormulaParser {
 	// Just return if so and reset Look to smoething to keep 
 	// SkipWhitespace from spinning
         if (pointer == formulaLength) {
-            Look = (char)0;
+            look = (char)0;
 	    return;
 	}
-        Look=formulaString.charAt(pointer++);
+        look=formulaString.charAt(pointer++);
         //System.out.println("Got char: "+Look);
     }
     
@@ -193,7 +189,7 @@ public class FormulaParser {
 
     /** Skip Over Leading White Space */
     private void SkipWhite() {
-        while (IsWhite(Look)) {
+        while (IsWhite(look)) {
             GetChar();
         }
     }
@@ -202,7 +198,7 @@ public class FormulaParser {
 
     /** Match a Specific Input Character */
     private void Match(char x) {
-        if (Look != x) {
+        if (look != x) {
             Expected("" + x + "");
         }else {
             GetChar();
@@ -213,11 +209,11 @@ public class FormulaParser {
     /** Get an Identifier */
     private String GetName() {
         StringBuffer Token = new StringBuffer();
-        if (!IsAlpha(Look)) {
+        if (!IsAlpha(look)) {
             Expected("Name");
         }
-        while (IsAlNum(Look)) {
-            Token = Token.append(Character.toUpperCase(Look));
+        while (IsAlNum(look)) {
+            Token = Token.append(Character.toUpperCase(look));
             GetChar();
         }
         SkipWhite();
@@ -228,11 +224,11 @@ public class FormulaParser {
        converting to uppercase; used for literals */
     private String GetNameAsIs() {
         StringBuffer Token = new StringBuffer();
-        if (!IsAlpha(Look)) {
+        if (!IsAlpha(look)) {
             Expected("Name");
         }
-        while (IsAlNum(Look) || IsWhite(Look)) {
-            Token = Token.append(Look);
+        while (IsAlNum(look) || IsWhite(look)) {
+            Token = Token.append(look);
             GetChar();
         }
         return Token.toString();
@@ -242,9 +238,9 @@ public class FormulaParser {
     /** Get a Number */
     private String GetNum() {
         String Value ="";
-        if  (!IsDigit(Look)) Expected("Integer");
-        while (IsDigit(Look)){
-            Value = Value + Look;
+        if  (!IsDigit(look)) Expected("Integer");
+        while (IsDigit(look)){
+            Value = Value + look;
             GetChar();
         }
         SkipWhite();
@@ -266,20 +262,20 @@ public class FormulaParser {
     private void Ident() {
         String name;
         name = GetName();
-        if (Look == '('){
+        if (look == '('){
             //This is a function
             function(name);
-        } else if (Look == ':') { // this is a AreaReference
+        } else if (look == ':') { // this is a AreaReference
             String first = name;
             Match(':');
             String second = GetName();
             tokens.add(new AreaPtg(first+":"+second));
-        } else if (Look == '!') {
+        } else if (look == '!') {
             Match('!');
             String sheetName = name;
             String first = GetName();
             short externIdx = book.checkExternSheet(book.getSheetIndex(sheetName));
-            if (Look == ':') {
+            if (look == ':') {
                 Match(':');
                 String second=GetName();
                 
@@ -326,12 +322,12 @@ public class FormulaParser {
     /** get arguments to a function */
     private int Arguments() {
         int numArgs = 0;
-        if (Look != ')')  {
+        if (look != ')')  {
             numArgs++; 
             Expression();
         }
-        while (Look == ','  || Look == ';') { //TODO handle EmptyArgs
-            if(Look == ',') {
+        while (look == ','  || look == ';') { //TODO handle EmptyArgs
+            if(look == ',') {
               Match(',');
             }
             else {
@@ -345,23 +341,23 @@ public class FormulaParser {
 
    /** Parse and Translate a Math Factor  */
     private void Factor() {
-        if (Look == '(' ) {
+        if (look == '(' ) {
             Match('(');
             Expression();
             Match(')');
             tokens.add(new ParenthesisPtg());
             return;
-        } else if (IsAlpha(Look)){
+        } else if (IsAlpha(look)){
             Ident();
-        } else if(Look == '"') {
+        } else if(look == '"') {
            StringLiteral();
         } else {
              
             String number = GetNum();
-            if (Look=='.') { 
+            if (look=='.') {
                 Match('.');
                 String decimalPart = null;
-                if (IsDigit(Look)) number = number +"."+ GetNum(); //this also takes care of someone entering "1234."
+                if (IsDigit(look)) number = number +"."+ GetNum(); //this also takes care of someone entering "1234."
                 tokens.add(new NumberPtg(number));
             } else {
                 tokens.add(new IntPtg(number));  //TODO:what if the number is too big to be a short? ..add factory to return Int or Number!
@@ -397,13 +393,13 @@ public class FormulaParser {
     /** Parse and Translate a Math Term */
     private void  Term(){
         Factor();
-        while (Look == '*' || Look == '/' || Look == '^' || Look == '&' || Look == '=' ) {
+        while (look == '*' || look == '/' || look == '^' || look == '&' || look == '=' ) {
             ///TODO do we need to do anything here??
-            if (Look == '*') Multiply();
-            if (Look == '/') Divide();
-            if (Look == '^') Power();
-            if (Look == '&') Concat();
-            if (Look == '=') Equal();
+            if (look == '*') Multiply();
+            if (look == '/') Divide();
+            if (look == '^') Power();
+            if (look == '&') Concat();
+            if (look == '=') Equal();
         }
     }
     
@@ -444,16 +440,16 @@ public class FormulaParser {
     
     /** Parse and Translate an Expression */
     private void Expression() {
-        if (IsAddop(Look)) {
+        if (IsAddop(look)) {
             EmitLn("CLR D0");  //unaryAdd ptg???
         } else {
             Term();
         }
-        while (IsAddop(Look)) {
-            if ( Look == '+' )  Add();
-            if (Look == '-') Subtract();
-            if (Look == '*') Multiply();
-            if (Look == '/') Divide();
+        while (IsAddop(look)) {
+            if ( look == '+' )  Add();
+            if (look == '-') Subtract();
+            if (look == '*') Multiply();
+            if (look == '/') Divide();
         }
     }
     

@@ -91,6 +91,7 @@ public class UnitsRecord
     public UnitsRecord(short id, short size, byte [] data)
     {
         super(id, size, data);
+    
     }
 
     /**
@@ -106,6 +107,7 @@ public class UnitsRecord
     public UnitsRecord(short id, short size, byte [] data, int offset)
     {
         super(id, size, data, offset);
+    
     }
 
     /**
@@ -123,7 +125,9 @@ public class UnitsRecord
 
     protected void fillFields(byte [] data, short size, int offset)
     {
-        field_1_units                   = LittleEndian.getShort(data, 0x0 + offset);
+
+        int pos = 0;
+        field_1_units                  = LittleEndian.getShort(data, pos + 0x0 + offset);
 
     }
 
@@ -131,23 +135,24 @@ public class UnitsRecord
     {
         StringBuffer buffer = new StringBuffer();
 
-        buffer.append("[Units]\n");
-
+        buffer.append("[UNITS]\n");
         buffer.append("    .units                = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getUnits()))
-            .append(" (").append(getUnits()).append(" )\n");
+            .append("0x").append(HexDump.toHex(  getUnits ()))
+            .append(" (").append( getUnits() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
 
-        buffer.append("[/Units]\n");
+        buffer.append("[/UNITS]\n");
         return buffer.toString();
     }
 
     public int serialize(int offset, byte[] data)
     {
+        int pos = 0;
+
         LittleEndian.putShort(data, 0 + offset, sid);
         LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
 
-        LittleEndian.putShort(data, 4 + offset, field_1_units);
+        LittleEndian.putShort(data, 4 + offset + pos, field_1_units);
 
         return getRecordSize();
     }
@@ -157,7 +162,7 @@ public class UnitsRecord
      */
     public int getRecordSize()
     {
-        return 4 + 2;
+        return 4  + 2;
     }
 
     public short getSid()
@@ -166,12 +171,13 @@ public class UnitsRecord
     }
 
     public Object clone() {
-      UnitsRecord rec = new UnitsRecord();
-      
-      rec.field_1_units = field_1_units;
-
-      return rec;
+        UnitsRecord rec = new UnitsRecord();
+    
+        rec.field_1_units = field_1_units;
+        return rec;
     }
+
+
 
 
     /**

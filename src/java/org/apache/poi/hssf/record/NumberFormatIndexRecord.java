@@ -91,6 +91,7 @@ public class NumberFormatIndexRecord
     public NumberFormatIndexRecord(short id, short size, byte [] data)
     {
         super(id, size, data);
+    
     }
 
     /**
@@ -106,6 +107,7 @@ public class NumberFormatIndexRecord
     public NumberFormatIndexRecord(short id, short size, byte [] data, int offset)
     {
         super(id, size, data, offset);
+    
     }
 
     /**
@@ -123,7 +125,9 @@ public class NumberFormatIndexRecord
 
     protected void fillFields(byte [] data, short size, int offset)
     {
-        field_1_formatIndex             = LittleEndian.getShort(data, 0x0 + offset);
+
+        int pos = 0;
+        field_1_formatIndex            = LittleEndian.getShort(data, pos + 0x0 + offset);
 
     }
 
@@ -131,23 +135,24 @@ public class NumberFormatIndexRecord
     {
         StringBuffer buffer = new StringBuffer();
 
-        buffer.append("[NumberFormatIndex]\n");
-
+        buffer.append("[IFMT]\n");
         buffer.append("    .formatIndex          = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getFormatIndex()))
-            .append(" (").append(getFormatIndex()).append(" )\n");
+            .append("0x").append(HexDump.toHex(  getFormatIndex ()))
+            .append(" (").append( getFormatIndex() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
 
-        buffer.append("[/NumberFormatIndex]\n");
+        buffer.append("[/IFMT]\n");
         return buffer.toString();
     }
 
     public int serialize(int offset, byte[] data)
     {
+        int pos = 0;
+
         LittleEndian.putShort(data, 0 + offset, sid);
         LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
 
-        LittleEndian.putShort(data, 4 + offset, field_1_formatIndex);
+        LittleEndian.putShort(data, 4 + offset + pos, field_1_formatIndex);
 
         return getRecordSize();
     }
@@ -157,7 +162,7 @@ public class NumberFormatIndexRecord
      */
     public int getRecordSize()
     {
-        return 4 + 2;
+        return 4  + 2;
     }
 
     public short getSid()
@@ -166,12 +171,13 @@ public class NumberFormatIndexRecord
     }
 
     public Object clone() {
-      NumberFormatIndexRecord rec = new NumberFormatIndexRecord();
-      
-      rec.field_1_formatIndex = field_1_formatIndex;
-
-      return rec;
+        NumberFormatIndexRecord rec = new NumberFormatIndexRecord();
+    
+        rec.field_1_formatIndex = field_1_formatIndex;
+        return rec;
     }
+
+
 
 
     /**

@@ -702,14 +702,14 @@ public class HSSFWorkbook
         workbook.removeName(index);        
     }
 
-        /**
+    /**
      * Creates an instance of HSSFDataFormat.
      * @return the HSSFDataFormat object
      * @see org.apache.poi.hssf.record.FormatRecord
      * @see org.apache.poi.hssf.record.Record
      */
     public HSSFDataFormat createDataFormat() {
-	return new HSSFDataFormat(workbook);
+        return new HSSFDataFormat(workbook);
     }
 	
     /** remove the named range by his name

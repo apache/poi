@@ -84,7 +84,7 @@ public class LinkedDataRecord
     private  short      field_3_options;
     private  BitField   customNumberFormat                          = new BitField(0x1);
     private  short      field_4_indexNumberFmtRecord;
-    private  short      field_5_formulaOfLink;
+    private  LinkedDataFormulaField field_5_formulaOfLink = new org.apache.poi.hssf.record.LinkedDataFormulaField();
 
 
     public LinkedDataRecord()
@@ -104,6 +104,7 @@ public class LinkedDataRecord
     public LinkedDataRecord(short id, short size, byte [] data)
     {
         super(id, size, data);
+    
     }
 
     /**
@@ -119,6 +120,7 @@ public class LinkedDataRecord
     public LinkedDataRecord(short id, short size, byte [] data, int offset)
     {
         super(id, size, data, offset);
+    
     }
 
     /**
@@ -136,11 +138,14 @@ public class LinkedDataRecord
 
     protected void fillFields(byte [] data, short size, int offset)
     {
-        field_1_linkType                = data[ 0x0 + offset ];
-        field_2_referenceType           = data[ 0x1 + offset ];
-        field_3_options                 = LittleEndian.getShort(data, 0x2 + offset);
-        field_4_indexNumberFmtRecord    = LittleEndian.getShort(data, 0x4 + offset);
-        field_5_formulaOfLink           = LittleEndian.getShort(data, 0x6 + offset);
+
+        int pos = 0;
+        field_1_linkType               = data[ pos + 0x0 + offset ];
+        field_2_referenceType          = data[ pos + 0x1 + offset ];
+        field_3_options                = LittleEndian.getShort(data, pos + 0x2 + offset);
+        field_4_indexNumberFmtRecord   = LittleEndian.getShort(data, pos + 0x4 + offset);
+        field_5_formulaOfLink = new org.apache.poi.hssf.record.LinkedDataFormulaField();
+        pos += field_5_formulaOfLink.fillField(data,size,pos + 6);
 
     }
 
@@ -148,48 +153,44 @@ public class LinkedDataRecord
     {
         StringBuffer buffer = new StringBuffer();
 
-        buffer.append("[LinkedData]\n");
-
+        buffer.append("[AI]\n");
         buffer.append("    .linkType             = ")
-            .append("0x")
-            .append(HexDump.toHex((byte)getLinkType()))
-            .append(" (").append(getLinkType()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getLinkType ()))
+            .append(" (").append( getLinkType() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .referenceType        = ")
-            .append("0x")
-            .append(HexDump.toHex((byte)getReferenceType()))
-            .append(" (").append(getReferenceType()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getReferenceType ()))
+            .append(" (").append( getReferenceType() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .options              = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getOptions()))
-            .append(" (").append(getOptions()).append(" )\n");
-        buffer.append("         .customNumberFormat       = ").append(isCustomNumberFormat  ()).append('\n');
-
+            .append("0x").append(HexDump.toHex(  getOptions ()))
+            .append(" (").append( getOptions() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
+        buffer.append("         .customNumberFormat       = ").append(isCustomNumberFormat()).append('\n'); 
         buffer.append("    .indexNumberFmtRecord = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getIndexNumberFmtRecord()))
-            .append(" (").append(getIndexNumberFmtRecord()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getIndexNumberFmtRecord ()))
+            .append(" (").append( getIndexNumberFmtRecord() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .formulaOfLink        = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getFormulaOfLink()))
-            .append(" (").append(getFormulaOfLink()).append(" )\n");
+            .append(" (").append( getFormulaOfLink() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
 
-        buffer.append("[/LinkedData]\n");
+        buffer.append("[/AI]\n");
         return buffer.toString();
     }
 
     public int serialize(int offset, byte[] data)
     {
+        int pos = 0;
+
         LittleEndian.putShort(data, 0 + offset, sid);
         LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
 
-        data[ 4 + offset ] = field_1_linkType;
-        data[ 5 + offset ] = field_2_referenceType;
-        LittleEndian.putShort(data, 6 + offset, field_3_options);
-        LittleEndian.putShort(data, 8 + offset, field_4_indexNumberFmtRecord);
-        LittleEndian.putShort(data, 10 + offset, field_5_formulaOfLink);
+        data[ 4 + offset + pos ] = field_1_linkType;
+        data[ 5 + offset + pos ] = field_2_referenceType;
+        LittleEndian.putShort(data, 6 + offset + pos, field_3_options);
+        LittleEndian.putShort(data, 8 + offset + pos, field_4_indexNumberFmtRecord);
+        pos += field_5_formulaOfLink.serializeField( pos + offset, data );
 
         return getRecordSize();
     }
@@ -199,7 +200,7 @@ public class LinkedDataRecord
      */
     public int getRecordSize()
     {
-        return 4 + 1 + 1 + 2 + 2 + 2;
+        return 4  + 1 + 1 + 2 + 2 + field_5_formulaOfLink.getSize();
     }
 
     public short getSid()
@@ -208,16 +209,17 @@ public class LinkedDataRecord
     }
 
     public Object clone() {
-      LinkedDataRecord rec = new LinkedDataRecord();
-      
-      rec.field_1_linkType = field_1_linkType;
-      rec.field_2_referenceType = field_2_referenceType;
-      rec.field_3_options = field_3_options;
-      rec.field_4_indexNumberFmtRecord = field_4_indexNumberFmtRecord;
-      rec.field_5_formulaOfLink = field_5_formulaOfLink;
-
-      return rec;
+        LinkedDataRecord rec = new LinkedDataRecord();
+    
+        rec.field_1_linkType = field_1_linkType;
+        rec.field_2_referenceType = field_2_referenceType;
+        rec.field_3_options = field_3_options;
+        rec.field_4_indexNumberFmtRecord = field_4_indexNumberFmtRecord;
+        rec.field_5_formulaOfLink = ((org.apache.poi.hssf.record.LinkedDataFormulaField)field_5_formulaOfLink.clone());;
+        return rec;
     }
+
+
 
 
     /**
@@ -313,7 +315,7 @@ public class LinkedDataRecord
     /**
      * Get the formula of link field for the LinkedData record.
      */
-    public short getFormulaOfLink()
+    public LinkedDataFormulaField getFormulaOfLink()
     {
         return field_5_formulaOfLink;
     }
@@ -321,7 +323,7 @@ public class LinkedDataRecord
     /**
      * Set the formula of link field for the LinkedData record.
      */
-    public void setFormulaOfLink(short field_5_formulaOfLink)
+    public void setFormulaOfLink(LinkedDataFormulaField field_5_formulaOfLink)
     {
         this.field_5_formulaOfLink = field_5_formulaOfLink;
     }

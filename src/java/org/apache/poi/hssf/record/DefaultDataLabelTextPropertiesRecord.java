@@ -94,6 +94,7 @@ public class DefaultDataLabelTextPropertiesRecord
     public DefaultDataLabelTextPropertiesRecord(short id, short size, byte [] data)
     {
         super(id, size, data);
+    
     }
 
     /**
@@ -109,6 +110,7 @@ public class DefaultDataLabelTextPropertiesRecord
     public DefaultDataLabelTextPropertiesRecord(short id, short size, byte [] data, int offset)
     {
         super(id, size, data, offset);
+    
     }
 
     /**
@@ -126,7 +128,9 @@ public class DefaultDataLabelTextPropertiesRecord
 
     protected void fillFields(byte [] data, short size, int offset)
     {
-        field_1_categoryDataType        = LittleEndian.getShort(data, 0x0 + offset);
+
+        int pos = 0;
+        field_1_categoryDataType       = LittleEndian.getShort(data, pos + 0x0 + offset);
 
     }
 
@@ -134,23 +138,24 @@ public class DefaultDataLabelTextPropertiesRecord
     {
         StringBuffer buffer = new StringBuffer();
 
-        buffer.append("[DefaultDataLabelTextProperties]\n");
-
+        buffer.append("[DEFAULTTEXT]\n");
         buffer.append("    .categoryDataType     = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getCategoryDataType()))
-            .append(" (").append(getCategoryDataType()).append(" )\n");
+            .append("0x").append(HexDump.toHex(  getCategoryDataType ()))
+            .append(" (").append( getCategoryDataType() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
 
-        buffer.append("[/DefaultDataLabelTextProperties]\n");
+        buffer.append("[/DEFAULTTEXT]\n");
         return buffer.toString();
     }
 
     public int serialize(int offset, byte[] data)
     {
+        int pos = 0;
+
         LittleEndian.putShort(data, 0 + offset, sid);
         LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
 
-        LittleEndian.putShort(data, 4 + offset, field_1_categoryDataType);
+        LittleEndian.putShort(data, 4 + offset + pos, field_1_categoryDataType);
 
         return getRecordSize();
     }
@@ -160,7 +165,7 @@ public class DefaultDataLabelTextPropertiesRecord
      */
     public int getRecordSize()
     {
-        return 4 + 2;
+        return 4  + 2;
     }
 
     public short getSid()
@@ -169,12 +174,13 @@ public class DefaultDataLabelTextPropertiesRecord
     }
 
     public Object clone() {
-      DefaultDataLabelTextPropertiesRecord rec = new DefaultDataLabelTextPropertiesRecord();
-      
-      rec.field_1_categoryDataType = field_1_categoryDataType;
-
-      return rec;
+        DefaultDataLabelTextPropertiesRecord rec = new DefaultDataLabelTextPropertiesRecord();
+    
+        rec.field_1_categoryDataType = field_1_categoryDataType;
+        return rec;
     }
+
+
 
 
     /**

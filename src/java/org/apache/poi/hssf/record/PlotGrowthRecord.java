@@ -92,6 +92,7 @@ public class PlotGrowthRecord
     public PlotGrowthRecord(short id, short size, byte [] data)
     {
         super(id, size, data);
+    
     }
 
     /**
@@ -107,6 +108,7 @@ public class PlotGrowthRecord
     public PlotGrowthRecord(short id, short size, byte [] data, int offset)
     {
         super(id, size, data, offset);
+    
     }
 
     /**
@@ -124,8 +126,10 @@ public class PlotGrowthRecord
 
     protected void fillFields(byte [] data, short size, int offset)
     {
-        field_1_horizontalScale         = LittleEndian.getInt(data, 0x0 + offset);
-        field_2_verticalScale           = LittleEndian.getInt(data, 0x4 + offset);
+
+        int pos = 0;
+        field_1_horizontalScale        = LittleEndian.getInt(data, pos + 0x0 + offset);
+        field_2_verticalScale          = LittleEndian.getInt(data, pos + 0x4 + offset);
 
     }
 
@@ -133,29 +137,29 @@ public class PlotGrowthRecord
     {
         StringBuffer buffer = new StringBuffer();
 
-        buffer.append("[PlotGrowth]\n");
-
+        buffer.append("[PLOTGROWTH]\n");
         buffer.append("    .horizontalScale      = ")
-            .append("0x")
-            .append(HexDump.toHex((int)getHorizontalScale()))
-            .append(" (").append(getHorizontalScale()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getHorizontalScale ()))
+            .append(" (").append( getHorizontalScale() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .verticalScale        = ")
-            .append("0x")
-            .append(HexDump.toHex((int)getVerticalScale()))
-            .append(" (").append(getVerticalScale()).append(" )\n");
+            .append("0x").append(HexDump.toHex(  getVerticalScale ()))
+            .append(" (").append( getVerticalScale() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
 
-        buffer.append("[/PlotGrowth]\n");
+        buffer.append("[/PLOTGROWTH]\n");
         return buffer.toString();
     }
 
     public int serialize(int offset, byte[] data)
     {
+        int pos = 0;
+
         LittleEndian.putShort(data, 0 + offset, sid);
         LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
 
-        LittleEndian.putInt(data, 4 + offset, field_1_horizontalScale);
-        LittleEndian.putInt(data, 8 + offset, field_2_verticalScale);
+        LittleEndian.putInt(data, 4 + offset + pos, field_1_horizontalScale);
+        LittleEndian.putInt(data, 8 + offset + pos, field_2_verticalScale);
 
         return getRecordSize();
     }
@@ -165,7 +169,7 @@ public class PlotGrowthRecord
      */
     public int getRecordSize()
     {
-        return 4 + 4 + 4;
+        return 4  + 4 + 4;
     }
 
     public short getSid()
@@ -174,13 +178,14 @@ public class PlotGrowthRecord
     }
 
     public Object clone() {
-      PlotGrowthRecord rec = new PlotGrowthRecord();
-      
-      rec.field_1_horizontalScale = field_1_horizontalScale;
-      rec.field_2_verticalScale = field_2_verticalScale;
-
-      return rec;
+        PlotGrowthRecord rec = new PlotGrowthRecord();
+    
+        rec.field_1_horizontalScale = field_1_horizontalScale;
+        rec.field_2_verticalScale = field_2_verticalScale;
+        return rec;
     }
+
+
 
 
     /**

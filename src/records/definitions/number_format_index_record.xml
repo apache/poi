@@ -1,4 +1,5 @@
-<record id="0x104e" name="NumberFormatIndex" package="org.apache.poi.hssf.record">
+<record id="0x104e" name="NumberFormatIndex" excel-record-id="IFMT"
+    package="org.apache.poi.hssf.record">
     <suffix>Record</suffix>
     <extends>Record</extends>
     <description>The number format index record indexes format table.  This applies to an axis.</description>

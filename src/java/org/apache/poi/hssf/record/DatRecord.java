@@ -95,6 +95,7 @@ public class DatRecord
     public DatRecord(short id, short size, byte [] data)
     {
         super(id, size, data);
+    
     }
 
     /**
@@ -110,6 +111,7 @@ public class DatRecord
     public DatRecord(short id, short size, byte [] data, int offset)
     {
         super(id, size, data, offset);
+    
     }
 
     /**
@@ -127,7 +129,9 @@ public class DatRecord
 
     protected void fillFields(byte [] data, short size, int offset)
     {
-        field_1_options                 = LittleEndian.getShort(data, 0x0 + offset);
+
+        int pos = 0;
+        field_1_options                = LittleEndian.getShort(data, pos + 0x0 + offset);
 
     }
 
@@ -135,27 +139,28 @@ public class DatRecord
     {
         StringBuffer buffer = new StringBuffer();
 
-        buffer.append("[Dat]\n");
-
+        buffer.append("[DAT]\n");
         buffer.append("    .options              = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getOptions()))
-            .append(" (").append(getOptions()).append(" )\n");
-        buffer.append("         .horizontalBorder         = ").append(isHorizontalBorder    ()).append('\n');
-        buffer.append("         .verticalBorder           = ").append(isVerticalBorder      ()).append('\n');
-        buffer.append("         .border                   = ").append(isBorder              ()).append('\n');
-        buffer.append("         .showSeriesKey            = ").append(isShowSeriesKey       ()).append('\n');
+            .append("0x").append(HexDump.toHex(  getOptions ()))
+            .append(" (").append( getOptions() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
+        buffer.append("         .horizontalBorder         = ").append(isHorizontalBorder()).append('\n'); 
+        buffer.append("         .verticalBorder           = ").append(isVerticalBorder()).append('\n'); 
+        buffer.append("         .border                   = ").append(isBorder()).append('\n'); 
+        buffer.append("         .showSeriesKey            = ").append(isShowSeriesKey()).append('\n'); 
 
-        buffer.append("[/Dat]\n");
+        buffer.append("[/DAT]\n");
         return buffer.toString();
     }
 
     public int serialize(int offset, byte[] data)
     {
+        int pos = 0;
+
         LittleEndian.putShort(data, 0 + offset, sid);
         LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
 
-        LittleEndian.putShort(data, 4 + offset, field_1_options);
+        LittleEndian.putShort(data, 4 + offset + pos, field_1_options);
 
         return getRecordSize();
     }
@@ -165,7 +170,7 @@ public class DatRecord
      */
     public int getRecordSize()
     {
-        return 4 + 2;
+        return 4  + 2;
     }
 
     public short getSid()
@@ -174,12 +179,13 @@ public class DatRecord
     }
 
     public Object clone() {
-      DatRecord rec = new DatRecord();
-      
-      rec.field_1_options = field_1_options;
-
-      return rec;
+        DatRecord rec = new DatRecord();
+    
+        rec.field_1_options = field_1_options;
+        return rec;
     }
+
+
 
 
     /**

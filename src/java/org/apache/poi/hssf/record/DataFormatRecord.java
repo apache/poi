@@ -95,6 +95,7 @@ public class DataFormatRecord
     public DataFormatRecord(short id, short size, byte [] data)
     {
         super(id, size, data);
+    
     }
 
     /**
@@ -110,6 +111,7 @@ public class DataFormatRecord
     public DataFormatRecord(short id, short size, byte [] data, int offset)
     {
         super(id, size, data, offset);
+    
     }
 
     /**
@@ -127,10 +129,12 @@ public class DataFormatRecord
 
     protected void fillFields(byte [] data, short size, int offset)
     {
-        field_1_pointNumber             = LittleEndian.getShort(data, 0x0 + offset);
-        field_2_seriesIndex             = LittleEndian.getShort(data, 0x2 + offset);
-        field_3_seriesNumber            = LittleEndian.getShort(data, 0x4 + offset);
-        field_4_formatFlags             = LittleEndian.getShort(data, 0x6 + offset);
+
+        int pos = 0;
+        field_1_pointNumber            = LittleEndian.getShort(data, pos + 0x0 + offset);
+        field_2_seriesIndex            = LittleEndian.getShort(data, pos + 0x2 + offset);
+        field_3_seriesNumber           = LittleEndian.getShort(data, pos + 0x4 + offset);
+        field_4_formatFlags            = LittleEndian.getShort(data, pos + 0x6 + offset);
 
     }
 
@@ -138,42 +142,40 @@ public class DataFormatRecord
     {
         StringBuffer buffer = new StringBuffer();
 
-        buffer.append("[DataFormat]\n");
-
+        buffer.append("[DATAFORMAT]\n");
         buffer.append("    .pointNumber          = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getPointNumber()))
-            .append(" (").append(getPointNumber()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getPointNumber ()))
+            .append(" (").append( getPointNumber() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .seriesIndex          = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getSeriesIndex()))
-            .append(" (").append(getSeriesIndex()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getSeriesIndex ()))
+            .append(" (").append( getSeriesIndex() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .seriesNumber         = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getSeriesNumber()))
-            .append(" (").append(getSeriesNumber()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getSeriesNumber ()))
+            .append(" (").append( getSeriesNumber() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .formatFlags          = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getFormatFlags()))
-            .append(" (").append(getFormatFlags()).append(" )\n");
-        buffer.append("         .useExcel4Colors          = ").append(isUseExcel4Colors     ()).append('\n');
+            .append("0x").append(HexDump.toHex(  getFormatFlags ()))
+            .append(" (").append( getFormatFlags() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
+        buffer.append("         .useExcel4Colors          = ").append(isUseExcel4Colors()).append('\n'); 
 
-        buffer.append("[/DataFormat]\n");
+        buffer.append("[/DATAFORMAT]\n");
         return buffer.toString();
     }
 
     public int serialize(int offset, byte[] data)
     {
+        int pos = 0;
+
         LittleEndian.putShort(data, 0 + offset, sid);
         LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
 
-        LittleEndian.putShort(data, 4 + offset, field_1_pointNumber);
-        LittleEndian.putShort(data, 6 + offset, field_2_seriesIndex);
-        LittleEndian.putShort(data, 8 + offset, field_3_seriesNumber);
-        LittleEndian.putShort(data, 10 + offset, field_4_formatFlags);
+        LittleEndian.putShort(data, 4 + offset + pos, field_1_pointNumber);
+        LittleEndian.putShort(data, 6 + offset + pos, field_2_seriesIndex);
+        LittleEndian.putShort(data, 8 + offset + pos, field_3_seriesNumber);
+        LittleEndian.putShort(data, 10 + offset + pos, field_4_formatFlags);
 
         return getRecordSize();
     }
@@ -183,7 +185,7 @@ public class DataFormatRecord
      */
     public int getRecordSize()
     {
-        return 4 + 2 + 2 + 2 + 2;
+        return 4  + 2 + 2 + 2 + 2;
     }
 
     public short getSid()
@@ -192,15 +194,16 @@ public class DataFormatRecord
     }
 
     public Object clone() {
-      DataFormatRecord rec = new DataFormatRecord();
-      
-      rec.field_1_pointNumber = field_1_pointNumber;
-      rec.field_2_seriesIndex = field_2_seriesIndex;
-      rec.field_3_seriesNumber = field_3_seriesNumber;
-      rec.field_4_formatFlags = field_4_formatFlags;
-
-      return rec;
+        DataFormatRecord rec = new DataFormatRecord();
+    
+        rec.field_1_pointNumber = field_1_pointNumber;
+        rec.field_2_seriesIndex = field_2_seriesIndex;
+        rec.field_3_seriesNumber = field_3_seriesNumber;
+        rec.field_4_formatFlags = field_4_formatFlags;
+        return rec;
     }
+
+
 
 
     /**

@@ -1,4 +1,5 @@
-<record id="0x101A" name="Area" package="org.apache.poi.hssf.record">
+<record id="0x101A" name="Area" excel-record-id="AREA"
+    package="org.apache.poi.hssf.record">
     <suffix>Record</suffix>
     <extends>Record</extends>
     <description>The area record is used to define a area chart.</description>

@@ -111,6 +111,7 @@ public class LineFormatRecord
     public LineFormatRecord(short id, short size, byte [] data)
     {
         super(id, size, data);
+    
     }
 
     /**
@@ -126,6 +127,7 @@ public class LineFormatRecord
     public LineFormatRecord(short id, short size, byte [] data, int offset)
     {
         super(id, size, data, offset);
+    
     }
 
     /**
@@ -143,11 +145,13 @@ public class LineFormatRecord
 
     protected void fillFields(byte [] data, short size, int offset)
     {
-        field_1_lineColor               = LittleEndian.getInt(data, 0x0 + offset);
-        field_2_linePattern             = LittleEndian.getShort(data, 0x4 + offset);
-        field_3_weight                  = LittleEndian.getShort(data, 0x6 + offset);
-        field_4_format                  = LittleEndian.getShort(data, 0x8 + offset);
-        field_5_colourPaletteIndex      = LittleEndian.getShort(data, 0xa + offset);
+
+        int pos = 0;
+        field_1_lineColor              = LittleEndian.getInt(data, pos + 0x0 + offset);
+        field_2_linePattern            = LittleEndian.getShort(data, pos + 0x4 + offset);
+        field_3_weight                 = LittleEndian.getShort(data, pos + 0x6 + offset);
+        field_4_format                 = LittleEndian.getShort(data, pos + 0x8 + offset);
+        field_5_colourPaletteIndex     = LittleEndian.getShort(data, pos + 0xa + offset);
 
     }
 
@@ -155,50 +159,47 @@ public class LineFormatRecord
     {
         StringBuffer buffer = new StringBuffer();
 
-        buffer.append("[LineFormat]\n");
-
+        buffer.append("[LINEFORMAT]\n");
         buffer.append("    .lineColor            = ")
-            .append("0x")
-            .append(HexDump.toHex((int)getLineColor()))
-            .append(" (").append(getLineColor()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getLineColor ()))
+            .append(" (").append( getLineColor() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .linePattern          = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getLinePattern()))
-            .append(" (").append(getLinePattern()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getLinePattern ()))
+            .append(" (").append( getLinePattern() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .weight               = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getWeight()))
-            .append(" (").append(getWeight()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getWeight ()))
+            .append(" (").append( getWeight() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .format               = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getFormat()))
-            .append(" (").append(getFormat()).append(" )\n");
-        buffer.append("         .auto                     = ").append(isAuto                ()).append('\n');
-        buffer.append("         .drawTicks                = ").append(isDrawTicks           ()).append('\n');
-        buffer.append("         .unknown                  = ").append(isUnknown             ()).append('\n');
-
+            .append("0x").append(HexDump.toHex(  getFormat ()))
+            .append(" (").append( getFormat() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
+        buffer.append("         .auto                     = ").append(isAuto()).append('\n'); 
+        buffer.append("         .drawTicks                = ").append(isDrawTicks()).append('\n'); 
+        buffer.append("         .unknown                  = ").append(isUnknown()).append('\n'); 
         buffer.append("    .colourPaletteIndex   = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getColourPaletteIndex()))
-            .append(" (").append(getColourPaletteIndex()).append(" )\n");
+            .append("0x").append(HexDump.toHex(  getColourPaletteIndex ()))
+            .append(" (").append( getColourPaletteIndex() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
 
-        buffer.append("[/LineFormat]\n");
+        buffer.append("[/LINEFORMAT]\n");
         return buffer.toString();
     }
 
     public int serialize(int offset, byte[] data)
     {
+        int pos = 0;
+
         LittleEndian.putShort(data, 0 + offset, sid);
         LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
 
-        LittleEndian.putInt(data, 4 + offset, field_1_lineColor);
-        LittleEndian.putShort(data, 8 + offset, field_2_linePattern);
-        LittleEndian.putShort(data, 10 + offset, field_3_weight);
-        LittleEndian.putShort(data, 12 + offset, field_4_format);
-        LittleEndian.putShort(data, 14 + offset, field_5_colourPaletteIndex);
+        LittleEndian.putInt(data, 4 + offset + pos, field_1_lineColor);
+        LittleEndian.putShort(data, 8 + offset + pos, field_2_linePattern);
+        LittleEndian.putShort(data, 10 + offset + pos, field_3_weight);
+        LittleEndian.putShort(data, 12 + offset + pos, field_4_format);
+        LittleEndian.putShort(data, 14 + offset + pos, field_5_colourPaletteIndex);
 
         return getRecordSize();
     }
@@ -208,7 +209,7 @@ public class LineFormatRecord
      */
     public int getRecordSize()
     {
-        return 4 + 4 + 2 + 2 + 2 + 2;
+        return 4  + 4 + 2 + 2 + 2 + 2;
     }
 
     public short getSid()
@@ -217,16 +218,17 @@ public class LineFormatRecord
     }
 
     public Object clone() {
-      LineFormatRecord rec = new LineFormatRecord();
-      
-      rec.field_1_lineColor = field_1_lineColor;
-      rec.field_2_linePattern = field_2_linePattern;
-      rec.field_3_weight = field_3_weight;
-      rec.field_4_format = field_4_format;
-      rec.field_5_colourPaletteIndex = field_5_colourPaletteIndex;
-
-      return rec;
+        LineFormatRecord rec = new LineFormatRecord();
+    
+        rec.field_1_lineColor = field_1_lineColor;
+        rec.field_2_linePattern = field_2_linePattern;
+        rec.field_3_weight = field_3_weight;
+        rec.field_4_format = field_4_format;
+        rec.field_5_colourPaletteIndex = field_5_colourPaletteIndex;
+        return rec;
     }
+
+
 
 
     /**
