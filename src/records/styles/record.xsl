@@ -166,7 +166,7 @@ public class <xsl:value-of select="@name"/>Record
     public int getRecordSize()
     {
 <xsl:variable name="fieldIterator" select="field:new()"/>
-<xsl:text>        return 4 + </xsl:text>
+<xsl:text>        return 4 </xsl:text>
 <xsl:for-each select="//fields/field">
     <xsl:value-of select="field:calcSize($fieldIterator,position(),@name,@size,@type)"/>
 </xsl:for-each>;
