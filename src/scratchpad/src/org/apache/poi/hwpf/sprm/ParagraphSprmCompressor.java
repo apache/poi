@@ -1,0 +1,346 @@
+/* ====================================================================
+ * The Apache Software License, Version 1.1
+ *
+ * Copyright (c) 2003 The Apache Software Foundation.  All rights
+ * reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in
+ *    the documentation and/or other materials provided with the
+ *    distribution.
+ *
+ * 3. The end-user documentation included with the redistribution,
+ *    if any, must include the following acknowledgment:
+ *       "This product includes software developed by the
+ *        Apache Software Foundation (http://www.apache.org/)."
+ *    Alternately, this acknowledgment may appear in the software itself,
+ *    if and wherever such third-party acknowledgments normally appear.
+ *
+ * 4. The names "Apache" and "Apache Software Foundation" and
+ *    "Apache POI" must not be used to endorse or promote products
+ *    derived from this software without prior written permission. For
+ *    written permission, please contact apache@apache.org.
+ *
+ * 5. Products derived from this software may not be called "Apache",
+ *    "Apache POI", nor may "Apache" appear in their name, without
+ *    prior written permission of the Apache Software Foundation.
+ *
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
+ * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
+ * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+ * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
+ * ====================================================================
+ *
+ * This software consists of voluntary contributions made by many
+ * individuals on behalf of the Apache Software Foundation.  For more
+ * information on the Apache Software Foundation, please see
+ * <http://www.apache.org/>.
+ */
+
+package org.apache.poi.hwpf.sprm;
+
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import org.apache.poi.util.LittleEndian;
+
+import org.apache.poi.hwpf.usermodel.ParagraphProperties;
+
+public class ParagraphSprmCompressor
+{
+  public ParagraphSprmCompressor()
+  {
+  }
+
+  public static byte[] compressParagraphProperty(ParagraphProperties newPAP,
+                                                 ParagraphProperties oldPAP)
+  {
+    ArrayList sprmList = new ArrayList();
+    int size = 0;
+
+    if (newPAP.getJc() != oldPAP.getJc())
+    {
+      size += SprmUtils.addSprm((short)0x2403, newPAP.getJc(), null, sprmList);
+    }
+    if (newPAP.getFKeep() != oldPAP.getFKeep())
+    {
+      size += SprmUtils.addSprm((short)0x2405, newPAP.getFKeep(), null, sprmList);
+    }
+    if (newPAP.getFKeepFollow() != oldPAP.getFKeepFollow())
+    {
+      size += SprmUtils.addSprm((short)0x2406, newPAP.getFKeepFollow(), null, sprmList);
+    }
+    if (newPAP.getFPageBreakBefore() != oldPAP.getFPageBreakBefore())
+    {
+      size += SprmUtils.addSprm((short)0x2407, newPAP.getFPageBreakBefore(), null, sprmList);
+    }
+    if (newPAP.getBrcl() != oldPAP.getBrcl())
+    {
+      size += SprmUtils.addSprm((short)0x2408, newPAP.getBrcl(), null, sprmList);
+    }
+    if (newPAP.getBrcp() != oldPAP.getBrcp())
+    {
+      size += SprmUtils.addSprm((short)0x2409, newPAP.getBrcp(), null, sprmList);
+    }
+    if (newPAP.getIlvl() != oldPAP.getIlvl())
+    {
+      size += SprmUtils.addSprm((short)0x260A, newPAP.getIlvl(), null, sprmList);
+    }
+    if (newPAP.getIlfo() != oldPAP.getIlfo())
+    {
+      size += SprmUtils.addSprm((short)0x460b, newPAP.getIlfo(), null, sprmList);
+    }
+    if (newPAP.getFNoLnn() != oldPAP.getFNoLnn())
+    {
+      size += SprmUtils.addSprm((short)0x240C, newPAP.getFNoLnn(), null, sprmList);
+    }
+    if (newPAP.getFSideBySide() != oldPAP.getFSideBySide())
+    {
+      size += SprmUtils.addSprm((short)0x2404, newPAP.getFSideBySide(), null, sprmList);
+    }
+    if (newPAP.getFNoAutoHyph() != oldPAP.getFNoAutoHyph())
+    {
+      size += SprmUtils.addSprm((short)0x242A, newPAP.getFNoAutoHyph(), null, sprmList);
+    }
+    if (newPAP.getFWidowControl() != oldPAP.getFWidowControl())
+    {
+      size += SprmUtils.addSprm((short)0x2431, newPAP.getFWidowControl(), null, sprmList);
+    }
+    if (newPAP.getItbdMac() != oldPAP.getItbdMac() ||
+        !Arrays.equals(newPAP.getRgdxaTab(), oldPAP.getRgdxaTab()) ||
+        !Arrays.equals(newPAP.getRgtbd(), oldPAP.getRgtbd()))
+    {
+      byte[] oldTabArray = oldPAP.getRgdxaTab();
+      byte[] newTabArray = newPAP.getRgdxaTab();
+      byte[] newTabDescriptors = newPAP.getRgtbd();
+      byte[] varParam = new byte[2 + oldTabArray.length + newTabArray.length +
+                                 newTabDescriptors.length];
+      varParam[0] = (byte)(oldTabArray.length/2);
+      int offset = 1;
+      System.arraycopy(oldTabArray, 0, varParam, offset, oldTabArray.length);
+      offset += oldTabArray.length;
+      varParam[offset] = (byte)(newTabArray.length/2);
+      offset += 1;
+      System.arraycopy(newTabArray, 0, varParam, offset, newTabArray.length);
+      offset += newTabArray.length;
+      System.arraycopy(newTabDescriptors, 0, varParam, offset, newTabDescriptors.length);
+
+      size += SprmUtils.addSprm((short)0xC60D, 0, varParam, sprmList);
+    }
+    if (newPAP.getDxaRight() != oldPAP.getDxaRight())
+    {
+      size += SprmUtils.addSprm((short)0x840E, newPAP.getDxaRight(), null, sprmList);
+    }
+    if (newPAP.getDxaLeft() != oldPAP.getDxaLeft())
+    {
+      size += SprmUtils.addSprm((short)0x840F, newPAP.getDxaLeft(), null, sprmList);
+    }
+    if (newPAP.getDxaLeft1() != oldPAP.getDxaLeft1())
+    {
+      size += SprmUtils.addSprm((short)0x8411, newPAP.getDxaLeft1(), null, sprmList);
+    }
+    if (!Arrays.equals(newPAP.getLspd(), oldPAP.getLspd()))
+    {
+      short[] lspd = newPAP.getLspd();
+      byte[] buf = new byte[4];
+      LittleEndian.putShort(buf, 0, lspd[0]);
+      LittleEndian.putShort(buf, 2, lspd[1]);
+
+      size += SprmUtils.addSprm((short)0x6412, LittleEndian.getInt(buf), null, sprmList);
+    }
+    if (newPAP.getDyaBefore() != oldPAP.getDyaBefore())
+    {
+      size += SprmUtils.addSprm((short)0xA413, newPAP.getDyaBefore(), null, sprmList);
+    }
+    if (newPAP.getDyaAfter() != oldPAP.getDyaAfter())
+    {
+      size += SprmUtils.addSprm((short)0xA414, newPAP.getDyaAfter(), null, sprmList);
+    }
+    if (newPAP.getDyaBefore() != oldPAP.getDyaBefore())
+    {
+      size += SprmUtils.addSprm((short)0x2404, newPAP.getDyaBefore(), null, sprmList);
+    }
+    if (newPAP.getFKinsoku() != oldPAP.getFKinsoku())
+    {
+      size += SprmUtils.addSprm((short)0x2433, newPAP.getDyaBefore(), null, sprmList);
+    }
+    if (newPAP.getFWordWrap() != oldPAP.getFWordWrap())
+    {
+      size += SprmUtils.addSprm((short)0x2434, newPAP.getFWordWrap(), null, sprmList);
+    }
+    if (newPAP.getFOverflowPunct() != oldPAP.getFOverflowPunct())
+    {
+      size += SprmUtils.addSprm((short)0x2435, newPAP.getFOverflowPunct(), null, sprmList);
+    }
+    if (newPAP.getFTopLinePunct() != oldPAP.getFTopLinePunct())
+    {
+      size += SprmUtils.addSprm((short)0x2436, newPAP.getFTopLinePunct(), null, sprmList);
+    }
+    if (newPAP.getFAutoSpaceDE() != oldPAP.getFAutoSpaceDE())
+    {
+      size += SprmUtils.addSprm((short)0x2437, newPAP.getFAutoSpaceDE(), null, sprmList);
+    }
+    if (newPAP.getFAutoSpaceDN() != oldPAP.getFAutoSpaceDN())
+    {
+      size += SprmUtils.addSprm((short)0x2438, newPAP.getFAutoSpaceDN(), null, sprmList);
+    }
+    if (newPAP.getWAlignFont() != oldPAP.getWAlignFont())
+    {
+      size += SprmUtils.addSprm((short)0x4439, newPAP.getWAlignFont(), null, sprmList);
+    }
+    if (newPAP.isFBackward() != oldPAP.isFBackward() ||
+        newPAP.isFVertical() != oldPAP.isFVertical() ||
+        newPAP.isFRotateFont() != oldPAP.isFRotateFont())
+    {
+      int val = 0;
+      if (newPAP.isFBackward())
+      {
+        val |= 0x2;
+      }
+      if (newPAP.isFVertical())
+      {
+        val |= 0x1;
+      }
+      if (newPAP.isFRotateFont())
+      {
+        val |= 0x4;
+      }
+      size += SprmUtils.addSprm((short)0x443A, val, null, sprmList);
+    }
+    if (!Arrays.equals(newPAP.getAnld(), oldPAP.getAnld()))
+    {
+      size += SprmUtils.addSprm((short)0xC63E, 0, newPAP.getAnld(), sprmList);
+    }
+    if (newPAP.getFInTable() != oldPAP.getFInTable())
+    {
+      size += SprmUtils.addSprm((short)0x2416, newPAP.getFInTable(), null, sprmList);
+    }
+    if (newPAP.getFTtp() != oldPAP.getFTtp())
+    {
+      size += SprmUtils.addSprm((short)0x2417, newPAP.getFTtp(), null, sprmList);
+    }
+    if (newPAP.getWr() != oldPAP.getWr())
+    {
+      size += SprmUtils.addSprm((short)0x2423, newPAP.getWr(), null, sprmList);
+    }
+    if (newPAP.getFLocked() != oldPAP.getFLocked())
+    {
+      size += SprmUtils.addSprm((short)0x2430, newPAP.getFLocked(), null, sprmList);
+    }
+    if (newPAP.getDxaAbs() != oldPAP.getDxaAbs())
+    {
+      size += SprmUtils.addSprm((short)0x8418, newPAP.getDxaAbs(), null, sprmList);
+    }
+    if (newPAP.getDyaAbs() != oldPAP.getDyaAbs())
+    {
+      size += SprmUtils.addSprm((short)0x8419, newPAP.getDyaAbs(), null, sprmList);
+    }
+    if (newPAP.getDxaWidth() != oldPAP.getDxaWidth())
+    {
+      size += SprmUtils.addSprm((short)0x841A, newPAP.getDxaWidth(), null, sprmList);
+    }
+    if (!Arrays.equals(newPAP.getBrcTop(), oldPAP.getBrcTop()))
+    {
+      int brc = SprmUtils.convertBrcToInt(newPAP.getBrcTop());
+      size += SprmUtils.addSprm((short)0x6424, brc, null, sprmList);
+    }
+    if (!Arrays.equals(newPAP.getBrcLeft(), oldPAP.getBrcLeft()))
+    {
+      int brc = SprmUtils.convertBrcToInt(newPAP.getBrcLeft());
+      size += SprmUtils.addSprm((short)0x6425, brc, null, sprmList);
+    }
+    if (!Arrays.equals(newPAP.getBrcBottom(), oldPAP.getBrcBottom()))
+    {
+      int brc = SprmUtils.convertBrcToInt(newPAP.getBrcBottom());
+      size += SprmUtils.addSprm((short)0x6426, brc, null, sprmList);
+    }
+    if (!Arrays.equals(newPAP.getBrcRight(), oldPAP.getBrcRight()))
+    {
+      int brc = SprmUtils.convertBrcToInt(newPAP.getBrcRight());
+      size += SprmUtils.addSprm((short)0x6427, brc, null, sprmList);
+    }
+    if (!Arrays.equals(newPAP.getBrcBar(), oldPAP.getBrcBar()))
+    {
+      int brc = SprmUtils.convertBrcToInt(newPAP.getBrcBar());
+      size += SprmUtils.addSprm((short)0x6428, brc, null, sprmList);
+    }
+    if (newPAP.getDxaFromText() != oldPAP.getDxaFromText())
+    {
+      size += SprmUtils.addSprm((short)0x842F, newPAP.getDxaFromText(), null, sprmList);
+    }
+    if (newPAP.getDyaFromText() != oldPAP.getDyaFromText())
+    {
+      size += SprmUtils.addSprm((short)0x842E, newPAP.getDyaFromText(), null, sprmList);
+    }
+    if (newPAP.getDyaHeight() != oldPAP.getDyaHeight() ||
+        newPAP.getFMinHeight() != oldPAP.getFMinHeight())
+    {
+      short val = (short)newPAP.getDyaHeight();
+      if (newPAP.getFMinHeight() > 0)
+      {
+        val |= 0x8000;
+      }
+      size += SprmUtils.addSprm((short)0x442B, val, null, sprmList);
+    }
+    if (newPAP.getShd() != oldPAP.getShd())
+    {
+      size += SprmUtils.addSprm((short)0x442D, newPAP.getShd(), null, sprmList);
+    }
+    if (newPAP.getDcs() != oldPAP.getDcs())
+    {
+      size += SprmUtils.addSprm((short)0x442C, newPAP.getDcs(), null, sprmList);
+    }
+    if (newPAP.getLvl() != oldPAP.getLvl())
+    {
+      size += SprmUtils.addSprm((short)0x2640, newPAP.getLvl(), null, sprmList);
+    }
+    if (newPAP.getFNumRMIns() != oldPAP.getFNumRMIns())
+    {
+      size += SprmUtils.addSprm((short)0x2443, newPAP.getFNumRMIns(), null, sprmList);
+    }
+    if (newPAP.getFPropRMark() != oldPAP.getFPropRMark() ||
+        newPAP.getIbstPropRMark() != oldPAP.getIbstPropRMark() ||
+        !Arrays.equals(newPAP.getDttmPropRMark(), oldPAP.getDttmPropRMark()))
+    {
+      byte[] buf = new byte[7];
+      buf[0] = (byte)newPAP.getFPropRMark();
+      LittleEndian.putShort(buf, 1, (short)newPAP.getIbstPropRMark());
+      System.arraycopy(newPAP.getDttmPropRMark(), 0, buf, 3, 4);
+      size += SprmUtils.addSprm((short)0xC63F, 0, buf, sprmList);
+    }
+    if (!Arrays.equals(newPAP.getNumrm(), oldPAP.getNumrm()))
+    {
+      size += SprmUtils.addSprm((short)0xC645, 0, newPAP.getNumrm(), sprmList);
+    }
+
+    // spit out the final grpprl
+    byte[] grpprl = new byte[size];
+    int listSize = sprmList.size() - 1;
+    int index = 0;
+    for (; listSize >= 0; listSize--)
+    {
+      byte[] sprm = (byte[])sprmList.remove(0);
+      System.arraycopy(sprm, 0, grpprl, index, sprm.length);
+      index += sprm.length;
+    }
+
+    return grpprl;
+
+  }
+}
