@@ -1,4 +1,4 @@
-<record fromfile="true" name="FIB" package="org.apache.poi.hdf.model.hdftypes.definitions">
+<record fromfile="true" name="FIB" package="org.apache.poi.hwpf.model.hdftypes.definitions">
     <suffix>AbstractType</suffix>
     <extends>HDFType</extends>
     <description>File information Block.</description>
@@ -247,10 +247,10 @@
     <field type="int" size="4" name="lcbSttbAutoCaption"/>
     <field type="int" size="4" name="fcPlcfwkb"/>
     <field type="int" size="4" name="lcbPlcfwkb"/>
-    <!-- 
+    <!--
         possible typo - was
         <field type="int" size="4" name="fcPlcfsplfcPlcfspl"/>
-        
+
         documented as fcPlcfspl in MS Word Binary Format doc
     -->
     <field type="int" size="4" name="fcPlcfspl"/>
@@ -275,7 +275,7 @@
         Bug - this field is meant to be an array that "overlays"
               the following fields.  See MS Word Binary Format doc
               for details.
-        <field type="int" size="4" name="rgpgdbkd"/> 
+        <field type="int" size="4" name="rgpgdbkd"/>
     -->
     <field type="int" size="4" name="fcPgdMother"/>
     <field type="int" size="4" name="lcbPgdMother"/>
@@ -333,7 +333,7 @@
         Bug - this field is meant to "overlay" the following
               two fields.  See MS Word Binary Format doc
               for details.
-        <field type="int" size="4" name="ftModified"/> 
+        <field type="int" size="4" name="ftModified"/>
     -->
     <field type="int" size="4" name="dwLowDateTime"/>
     <field type="int" size="4" name="dwHighDateTime"/>
