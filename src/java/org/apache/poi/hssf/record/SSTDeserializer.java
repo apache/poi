@@ -62,13 +62,14 @@ import org.apache.poi.util.LittleEndianConsts;
  * Handles the task of deserializing a SST string.  The two main entry points are
  *
  * @author Glen Stampoultzis (glens at apache.org)
+ * @author Jason Height (jheight at apache.org)
  */
 class SSTDeserializer
 {
 
     private BinaryTree strings;
-    /** this is the number of characters we expect in the first sub-record in a subsequent continuation record */
-    private int continuationExpectedChars;
+    /** this is the number of characters that have been read prior to the continuation */
+    private int continuationReadChars;
     /** this is the string we were working on before hitting the end of the current record. This string is NOT finished. */
     private String unfinishedString;
     /** this is true if the string uses wide characters */
@@ -82,6 +83,7 @@ class SSTDeserializer
     /** Number of characters in current string */
     private int charCount;
     private int extensionLength;
+    private int continueSkipBytes = 0;
 
 
     public SSTDeserializer( BinaryTree strings )
@@ -93,13 +95,14 @@ class SSTDeserializer
     private void initVars()
     {
         runCount = 0;
-        continuationExpectedChars = 0;
+        continuationReadChars = 0;
         unfinishedString = "";
 //        bytesInCurrentSegment = 0;
 //        stringDataOffset = 0;
         wideChar = false;
         richText = false;
         extendedText = false;
+        continueSkipBytes = 0;
     }
 
     /**
@@ -107,14 +110,15 @@ class SSTDeserializer
      * strings may span across multiple continuations. Read the SST record
      * carefully before beginning to hack.
      */
-    public void manufactureStrings( final byte[] data, final int initialOffset, short dataSize )
+    public void manufactureStrings( final byte[] data, final int initialOffset)
     {
         initVars();
 
         int offset = initialOffset;
-        while ( ( offset - initialOffset ) < dataSize )
+        final int dataSize = data.length;
+        while ( offset < dataSize )
         {
-            int remaining = dataSize - offset + initialOffset;
+            int remaining = dataSize - offset;
 
             if ( ( remaining > 0 ) && ( remaining < LittleEndianConsts.SHORT_SIZE ) )
             {
@@ -122,26 +126,31 @@ class SSTDeserializer
             }
             if ( remaining == LittleEndianConsts.SHORT_SIZE )
             {
-                setContinuationExpectedChars( LittleEndian.getUShort( data, offset ) );
+              //JMH Dont know about this
+                setContinuationCharsRead( 0 );//LittleEndian.getUShort( data, offset ) );
                 unfinishedString = "";
                 break;
             }
             charCount = LittleEndian.getUShort( data, offset );
+            int charsRead = charCount;
             readStringHeader( data, offset );
             boolean stringContinuesOverContinuation = remaining < totalStringSize();
             if ( stringContinuesOverContinuation )
             {
-                int remainingBytes = ( initialOffset + dataSize ) - offset - stringHeaderOverhead();
-                setContinuationExpectedChars( charCount - calculateCharCount( remainingBytes ) );
-                charCount -= getContinuationExpectedChars();
+                int remainingBytes = dataSize - offset - stringHeaderOverhead();
+                //Only read the size of the string or whatever is left before the
+                //continuation
+                charsRead = Math.min(charsRead, calculateCharCount( remainingBytes ));
+                setContinuationCharsRead( charsRead );                
+                if (charsRead == charCount) {
+                  //Since all of the characters will have been read, but the entire string (including formatting runs etc)
+                  //hasnt, Compute the number of bytes to skip when the continue record starts
+                  continueSkipBytes = offsetForContinuedRecord(0) - (remainingBytes - calculateByteCount(charsRead));
+                }
             }
-            else
-            {
-                setContinuationExpectedChars( 0 );
-            }
-            processString( data, offset, charCount );
+            processString( data, offset, charsRead );
             offset += totalStringSize();
-            if ( getContinuationExpectedChars() != 0 )
+            if ( stringContinuesOverContinuation )
             {
                 break;
             }
@@ -222,6 +231,7 @@ class SSTDeserializer
         UnicodeString string = new UnicodeString( UnicodeString.sid,
                 (short) unicodeStringBuffer.length,
                 unicodeStringBuffer );
+        setContinuationCharsRead( calculateCharCount(bytesRead));
 
         if ( isStringFinished() )
         {
@@ -238,7 +248,7 @@ class SSTDeserializer
 
     private boolean isStringFinished()
     {
-        return getContinuationExpectedChars() == 0;
+        return getContinuationCharsRead() == charCount;
     }
 
     /**
@@ -301,8 +311,9 @@ class SSTDeserializer
     {
         if ( isStringFinished() )
         {
+            final int offset = continueSkipBytes;
             initVars();
-            manufactureStrings( record, 0, (short) record.length );
+            manufactureStrings( record, offset);
         }
         else
         {
@@ -330,13 +341,12 @@ class SSTDeserializer
      */
     private void readStringRemainder( final byte[] record )
     {
-        int stringRemainderSizeInBytes = calculateByteCount( getContinuationExpectedChars() );
-//        stringDataOffset = LittleEndianConsts.BYTE_SIZE;
+        int stringRemainderSizeInBytes = calculateByteCount( charCount-getContinuationCharsRead() );
         byte[] unicodeStringData = new byte[SSTRecord.STRING_MINIMAL_OVERHEAD
-                + calculateByteCount( getContinuationExpectedChars() )];
+                + stringRemainderSizeInBytes];
 
         // write the string length
-        LittleEndian.putShort( unicodeStringData, 0, (short) getContinuationExpectedChars() );
+        LittleEndian.putShort( unicodeStringData, 0, (short) (charCount-getContinuationCharsRead()) );
 
         // write the options flag
         unicodeStringData[LittleEndianConsts.SHORT_SIZE] = createOptionByte( wideChar, richText, extendedText );
@@ -345,7 +355,7 @@ class SSTDeserializer
         // past all the overhead of the str_data array
         arraycopy( record, LittleEndianConsts.BYTE_SIZE, unicodeStringData,
                 SSTRecord.STRING_MINIMAL_OVERHEAD,
-                unicodeStringData.length - SSTRecord.STRING_MINIMAL_OVERHEAD );
+                stringRemainderSizeInBytes );
 
         // use special constructor to create the final string
         UnicodeString string = new UnicodeString( UnicodeString.sid,
@@ -356,7 +366,7 @@ class SSTDeserializer
         addToStringTable( strings, integer, string );
 
         int newOffset = offsetForContinuedRecord( stringRemainderSizeInBytes );
-        manufactureStrings( record, newOffset, (short) ( record.length - newOffset ) );
+        manufactureStrings( record, newOffset);
     }
 
     /**
@@ -388,8 +398,12 @@ class SSTDeserializer
 
     private int offsetForContinuedRecord( int stringRemainderSizeInBytes )
     {
-        return stringRemainderSizeInBytes + LittleEndianConsts.BYTE_SIZE
-                + runCount * LittleEndianConsts.INT_SIZE + extensionLength;
+        int offset = stringRemainderSizeInBytes + runCount * LittleEndianConsts.INT_SIZE + extensionLength;        
+        if (stringRemainderSizeInBytes != 0)
+          //If a portion of the string remains then the wideChar options byte is repeated,
+          //so need to skip this.
+          offset += + LittleEndianConsts.BYTE_SIZE;
+        return offset;  
     }
 
     private byte createOptionByte( boolean wideChar, boolean richText, boolean farEast )
@@ -409,17 +423,18 @@ class SSTDeserializer
         int dataLengthInBytes = record.length - LittleEndianConsts.BYTE_SIZE;
         byte[] unicodeStringData = new byte[record.length + LittleEndianConsts.SHORT_SIZE];
 
-        LittleEndian.putShort( unicodeStringData, (byte) 0, (short) calculateCharCount( dataLengthInBytes ) );
+        int charsRead = calculateCharCount( dataLengthInBytes );
+        LittleEndian.putShort( unicodeStringData, (byte) 0, (short) charsRead );
         arraycopy( record, 0, unicodeStringData, LittleEndianConsts.SHORT_SIZE, record.length );
         UnicodeString ucs = new UnicodeString( UnicodeString.sid, (short) unicodeStringData.length, unicodeStringData );
 
         unfinishedString = unfinishedString + ucs.getString();
-        setContinuationExpectedChars( getContinuationExpectedChars() - calculateCharCount( dataLengthInBytes ) );
+        setContinuationCharsRead( charsRead );
     }
 
     private boolean stringSpansContinuation( int continuationSizeInBytes )
     {
-        return calculateByteCount( getContinuationExpectedChars() ) > continuationSizeInBytes;
+        return calculateByteCount( charCount - getContinuationCharsRead() ) > continuationSizeInBytes;
     }
 
     /**
@@ -427,14 +442,14 @@ class SSTDeserializer
      *         sub-record in a subsequent continuation record
      */
 
-    int getContinuationExpectedChars()
+    int getContinuationCharsRead()
     {
-        return continuationExpectedChars;
+        return continuationReadChars;
     }
 
-    private void setContinuationExpectedChars( final int count )
+    private void setContinuationCharsRead( final int count )
     {
-        continuationExpectedChars = count;
+        continuationReadChars = count;
     }
 
     private int calculateByteCount( final int character_count )
