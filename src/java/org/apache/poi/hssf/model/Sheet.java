@@ -55,17 +55,21 @@
 
 package org.apache.poi.hssf.model;
 
+import java.io.OutputStream;
+
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.apache.poi.util.POILogFactory;
-import org.apache.poi.hssf.record.*;       // normally I don't do this, buy we literally mean ALL
+import org.apache.poi.hssf
+    .record.*;       // normally I don't do this, buy we literally mean ALL
 import org.apache.poi.hssf.record.formula.FormulaUtil;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.util.IntList;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.hssf.record.aggregates.*;   // normally I don't do this, buy we literally mean ALL
+import org.apache.poi.hssf.record
+    .aggregates.*;   // normally I don't do this, buy we literally mean ALL
 
 /**
  * Low level model implementation of a Sheet (one workbook contains many sheets)
@@ -112,7 +116,7 @@ public class Sheet
 
     /**
      * Creates new Sheet with no intialization --useless at this point
-     * @see #createSheet(List,int)
+     * @see #createSheet(List,int,int)
      */
 
     public Sheet()
@@ -128,6 +132,7 @@ public class Sheet
      * is normally called via Workbook.
      *
      * @param recs array containing those records in the sheet in sequence (normally obtained from RecordFactory)
+     * @param sheetnum integer specifying the sheet's number (0,1 or 2 in this release)
      * @param offset of the sheet's BOF record
      *
      * @return Sheet object with all values set to those read from the file
@@ -135,7 +140,7 @@ public class Sheet
      * @see org.apache.poi.hssf.model.Workbook
      * @see org.apache.poi.hssf.record.Record
      */
-    public static Sheet createSheet(List recs, int offset)
+    public static Sheet createSheet(List recs, int sheetnum, int offset)
     {
         log.logFormatted(log.DEBUG,
                          "Sheet createSheet (existing file) with %",
@@ -235,14 +240,15 @@ public class Sheet
      * only the record offset is assumed to be 0.
      *
      * @param records  array containing those records in the sheet in sequence (normally obtained from RecordFactory)
+     * @param sheetnum integer specifying the sheet's number (0,1 or 2 in this release)
      * @return Sheet object
      */
 
-    public static Sheet createSheet(List records)
+    public static Sheet createSheet(List records, int sheetnum)
     {
         log.log(log.DEBUG,
                 "Sheet createSheet (exisiting file) assumed offset 0");
-        return createSheet(records);
+        return createSheet(records, sheetnum, 0);
     }
 
     /**
@@ -520,7 +526,7 @@ public class Sheet
         // for (int k = 0; k < records.size(); k++)
         // {
         // bytes.add((( Record ) records.get(k)).serialize());
-        // 
+        //
         // }
         // for (int k = 0; k < bytes.size(); k++)
         // {
@@ -562,7 +568,7 @@ public class Sheet
         // for (int k = 0; k < records.size(); k++)
         // {
         // bytes.add((( Record ) records.get(k)).serialize());
-        // 
+        //
         // }
         // for (int k = 0; k < bytes.size(); k++)
         // {
