@@ -55,16 +55,18 @@
 
 package org.apache.poi.hssf.model;
 
-import java.util.List;
+import org.apache.poi.hssf.record.*;
+import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
+import org.apache.poi.hssf.record.aggregates.RowRecordsAggregate;
+import org.apache.poi.hssf.record.aggregates.ValueRecordsAggregate;
+import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.util.IntList;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
+
 import java.util.ArrayList;
 import java.util.Iterator;
-
-import org.apache.poi.hssf
-    .record.*;       // normally I don't do this, buy we literally mean ALL
-import org.apache.poi.hssf.record.formula.Ptg;
-import org.apache.poi.util.*;
-import org.apache.poi.hssf.record
-    .aggregates.*;   // normally I don't do this, buy we literally mean ALL
+import java.util.List;
 
 /**
  * Low level model implementation of a Sheet (one workbook contains many sheets)
@@ -795,12 +797,17 @@ public class Sheet implements Model
             // System.arraycopy(rec, 0, data, offset + pos, rec.length);
             Record record = (( Record ) records.get(k));
 
-            //uncomment to test record sizes
+            //// uncomment to test record sizes ////
+//            System.out.println( record.getClass().getName() );
 //            byte[] data2 = new byte[record.getRecordSize()];
 //            record.serialize(0, data2 );   // rec.length;
 //            if (LittleEndian.getUShort(data2, 2) != record.getRecordSize() - 4
-//                    && record instanceof RowRecordsAggregate == false && record instanceof ValueRecordsAggregate == false)
-//                throw new RuntimeException("Blah!!!");
+//                    && record instanceof RowRecordsAggregate == false
+//                    && record instanceof ValueRecordsAggregate == false
+//                    && record instanceof EscherAggregate == false)
+//            {
+//                throw new RuntimeException("Blah!!!  Size off by " + ( LittleEndian.getUShort(data2, 2) - record.getRecordSize() - 4) + " records.");
+//            }
 
             pos += record.serialize(pos + offset, data );   // rec.length;
 
@@ -2609,7 +2616,7 @@ public class Sheet implements Model
      * @return whether RowColHeadings are displayed
      */
     public boolean isDisplayRowColHeadings() {
-	return windowTwo.getDisplayRowColHeadings();
+	    return windowTwo.getDisplayRowColHeadings();
     }
 
     /**
@@ -2620,9 +2627,63 @@ public class Sheet implements Model
     protected Margin[] getMargins() {
         if (margins == null)
             margins = new Margin[4];
-	return margins;
+    	return margins;
     }
-    
+
+    public int aggregateDrawingRecords(DrawingManager drawingManager)
+    {
+        int loc = findFirstRecordLocBySid(DrawingRecord.sid);
+        boolean noDrawingRecordsFound = loc == -1;
+        if (noDrawingRecordsFound)
+        {
+            EscherAggregate aggregate = new EscherAggregate( drawingManager );
+            loc = findFirstRecordLocBySid(EscherAggregate.sid);
+            if (loc == -1)
+            {
+                loc = findFirstRecordLocBySid( WindowTwoRecord.sid );
+            }
+            else
+            {
+                getRecords().remove(loc);
+            }
+            getRecords().add( loc, aggregate );
+            return loc;
+        }
+        else
+        {
+            List records = getRecords();
+            EscherAggregate r = EscherAggregate.createAggregate( records, loc, drawingManager );
+            int startloc = loc;
+            while ( loc + 1 < records.size()
+                    && records.get( loc ) instanceof DrawingRecord
+                    && records.get( loc + 1 ) instanceof ObjRecord )
+            {
+                loc += 2;
+            }
+            int endloc = loc-1;
+            for(int i = 0; i < (endloc - startloc + 1); i++)
+                records.remove(startloc);
+            records.add(startloc, r);
+
+            return startloc;
+        }
+    }
+
+    /**
+     * Perform any work necessary before the sheet is about to be serialized.
+     * For instance the escher aggregates size needs to be calculated before
+     * serialization so that the dgg record (which occurs first) can be written.
+     */
+    public void preSerialize()
+    {
+        for ( Iterator iterator = getRecords().iterator(); iterator.hasNext(); )
+        {
+            Record r = (Record) iterator.next();
+            if (r instanceof EscherAggregate)
+                r.getRecordSize();   // Trigger flatterning of user model and corresponding update of dgg record.
+        }
+    }
+
     /**
      * Shifts all the page breaks in the range "count" number of rows/columns
      * @param breaks The page record to be shifted
