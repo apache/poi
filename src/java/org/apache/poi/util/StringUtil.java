@@ -114,7 +114,7 @@ public class StringUtil {
         
         char[] chars = new char[ len ];
         for ( int i = 0; i < chars.length; i++ ) {
-            chars[i] = (char)( string[ offset + ( 2*i ) ] + 
+            chars[i] = (char)( string[ offset + ( 2*i ) ] & 0xFF | 
                              ( string[ offset + ( 2*i+1 ) ] << 8 ) );
         }
 
