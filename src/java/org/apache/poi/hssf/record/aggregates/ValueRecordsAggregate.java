@@ -22,7 +22,9 @@ import org.apache.poi.hssf.record.*;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.SortedMap;
 import java.util.TreeMap;
+
 
 /**
  *
@@ -40,8 +42,114 @@ public class ValueRecordsAggregate
     int                       firstcell = -1;
     int                       lastcell  = -1;
     TreeMap                   records   = null;
-//    int                       size      = 0;
 
+   /** This class is used to find a row in the TreeMap.
+    *  
+    * This instance of which is used by the rowHasCells method as the key.
+    */
+   private class RowComparator implements CellValueRecordInterface, Comparable {
+     private int row;
+     
+     public void setRow(int row) {
+       this.row = row;
+     }
+     
+     public int compareTo(Object obj) {
+         CellValueRecordInterface cell = (CellValueRecordInterface) obj;
+ 
+         if (row == cell.getRow()) {
+           return 0;
+         }
+         else if (row < cell.getRow()) {
+           return -1;
+         }
+         else if (row > cell.getRow()){
+           return 1;
+         }
+         return -1;         
+     }
+     public int getRow() { return row;}     
+     public short getColumn() { return 0;}
+     public void setColumn(short col){}
+     public void setXFIndex(short xf){}
+     public short getXFIndex(){return 0;}
+     public boolean isBefore(CellValueRecordInterface i){ return false; }
+     public boolean isAfter(CellValueRecordInterface i){ return false; }
+     public boolean isEqual(CellValueRecordInterface i){ return false; }
+     public Object clone(){ return null;}     
+   }
+   
+   /**
+    * Iterates the cell records that exist between the startRow and endRow (inclusive).
+    * 
+    * User must ensure that hasNext & next are called insequence for correct
+    * operation. Could fix, but since this is only used internally to the
+    * ValueRecordsAggregate class there doesnt seem much point.
+    */   
+   private class RowCellIterator implements Iterator {
+     private int startRow;
+     private int endRow;
+     private Iterator internalIterator;
+     private CellValueRecordInterface atCell;
+     
+     public class RowCellComparator extends RowComparator {
+       public int compareTo(Object obj) {
+           CellValueRecordInterface cell = (CellValueRecordInterface) obj;
+  
+           if (getRow() == cell.getRow() && cell.getColumn() == 0) {
+             return 0;
+           }
+           else if (getRow() < cell.getRow()) {
+             return -1;
+           }
+           else if (getRow() > cell.getRow()){
+             return 1;
+           }
+           if (cell.getColumn() > 0)
+           {
+               return -1;
+           }
+           if (cell.getColumn() < 0)
+           {
+               return 1;
+           }
+           return -1;         
+       }
+     }
+     
+     private RowCellComparator rowCellCompare;
+     
+     
+     public RowCellIterator(int startRow, int endRow) {
+       this.startRow = startRow;
+       this.endRow = endRow;
+       rowCellCompare = new RowCellComparator();
+       rowCellCompare.setRow(startRow);
+     }
+     
+     public boolean hasNext() {
+       if (internalIterator == null) {
+         internalIterator = records.tailMap(rowCellCompare).values().iterator();
+       }
+       if (internalIterator.hasNext()) {
+         atCell = (CellValueRecordInterface) internalIterator.next();
+         return (atCell.getRow() <= endRow);
+       } else return false;
+     }
+     
+     public Object next() {
+       return atCell;
+     }
+     
+     public void remove() {
+       //Do Nothing (Not called)
+     }
+   }
+   
+   //Only need a single instance of this class, but the row fields
+   //will probably change each use. Instance is only used in the rowHasCells method.
+   public final RowComparator compareRow = new RowComparator();
+   
     /** Creates a new instance of ValueRecordsAggregate */
 
     public ValueRecordsAggregate()
@@ -51,17 +159,6 @@ public class ValueRecordsAggregate
 
     public void insertCell(CellValueRecordInterface cell)
     {
-/*        if (records.get(cell) == null)
-        {
-            size += (( Record ) cell).getRecordSize();
-        }
-        else
-        {
-            size += (( Record ) cell).getRecordSize()
-                    - (( Record ) records.get(cell)).getRecordSize();
-        }*/
-
-        // XYLocator xy = new XYLocator(cell.getRow(), cell.getColumn());
         Object o = records.put(cell, cell);
 
         if ((cell.getColumn() < firstcell) || (firstcell == -1))
@@ -76,9 +173,6 @@ public class ValueRecordsAggregate
 
     public void removeCell(CellValueRecordInterface cell)
     {
-  //      size -= (( Record ) cell).getRecordSize();
-
-        // XYLocator xy = new XYLocator(cell.getRow(), cell.getColumn());
         records.remove(cell);
     }
 
@@ -145,15 +239,49 @@ public class ValueRecordsAggregate
 
     public int serialize(int offset, byte [] data)
     {
-        Iterator itr = records.values().iterator();
+      throw new RuntimeException("This method shouldnt be called. ValueRecordsAggregate.serializeCellRow() should be called from RowRecordsAggregate.");
+    }
+    
+    /** Tallies a count of the size of the cell records
+     *  that are attached to the rows in the range specified.
+     */
+    public int getRowCellBlockSize(int startRow, int endRow) {
+      RowCellIterator itr = new RowCellIterator(startRow, endRow);
+      int size = 0;
+      while (itr.hasNext()) {
+        CellValueRecordInterface cell = (CellValueRecordInterface)itr.next();
+        int row = cell.getRow();
+        if (row > endRow)
+          break;
+        if ((row >=startRow) && (row <= endRow))
+          size += ((Record)cell).getRecordSize();
+      }
+      return size;
+    }
+
+    /** Returns true if the row has cells attached to it */
+    public boolean rowHasCells(int row) {
+      compareRow.setRow(row);
+      return records.containsKey(compareRow);
+    }
+
+    /** Serializes the cells that are allocated to a certain row range*/
+    public int serializeCellRow(final int row, int offset, byte [] data)
+    {
+        RowCellIterator itr = new RowCellIterator(row, row);      
         int      pos = offset;
 
         while (itr.hasNext())
         {
-            pos += (( Record ) itr.next()).serialize(pos, data);
+            CellValueRecordInterface cell = (CellValueRecordInterface)itr.next();
+            if (cell.getRow() != row)
+              break;
+            pos += (( Record ) cell).serialize(pos, data);
         }
         return pos - offset;
     }
+
+    
     /**
      * called by the constructor, should set class level fields.  Should throw
      * runtime exception for bad/icomplete data.
@@ -197,7 +325,6 @@ public class ValueRecordsAggregate
         }
 
         return size;
-//        return size;
     }
 
     public Iterator getIterator()
@@ -215,58 +342,3 @@ public class ValueRecordsAggregate
       return rec;
     }
 }
-
-/*
- * class XYLocator implements Comparable {
- *   private int row = 0;
- *   private int col = 0;
- *   public XYLocator(int row, int col) {
- *       this.row = row;
- *       this.col = col;
- *   }
- *
- *   public int getRow() {
- *       return row;
- *   }
- *
- *   public int getCol() {
- *       return col;
- *   }
- *
- *   public int compareTo(Object obj) {
- *        XYLocator loc = (XYLocator)obj;
- *
- *        if (this.getRow() == loc.getRow() &&
- *            this.getCol() == loc.getCol() )
- *               return 0;
- *
- *        if (this.getRow() < loc.getRow())
- *               return -1;
- *
- *        if (this.getRow() > loc.getRow())
- *               return 1;
- *
- *        if (this.getCol() < loc.getCol())
- *               return -1;
- *
- *        if (this.getCol() > loc.getCol())
- *               return 1;
- *
- *        return -1;
- *
- *   }
- *
- *   public boolean equals(Object obj) {
- *       if (!(obj instanceof XYLocator)) return false;
- *
- *       XYLocator loc = (XYLocator)obj;
- *       if (this.getRow() == loc.getRow()
- *             &&
- *           this.getCol() == loc.getCol()
- *           ) return true;
- *      return false;
- *   }
- *
- *
- * }
- */
