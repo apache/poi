@@ -621,7 +621,10 @@ public class BiffViewer {
 	    case BottomMarginRecord.sid:
 	        retval = new BottomMarginRecord(rectype, size, data);
 	        break;
-                
+	    case PaletteRecord.sid:
+	        retval = new PaletteRecord(rectype, size, data);
+	        break;
+
             default:
                 retval = new UnknownRecord(rectype, size, data);
         }

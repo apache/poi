@@ -108,7 +108,8 @@ public class RecordFactory
                 MulRKRecord.class, MulBlankRecord.class, MergeCellsRecord.class,
                 FormulaRecord.class, BoolErrRecord.class, ExternSheetRecord.class,
 		NameRecord.class, LeftMarginRecord.class, RightMarginRecord.class, 
-		TopMarginRecord.class, BottomMarginRecord.class
+		TopMarginRecord.class, BottomMarginRecord.class,
+                PaletteRecord.class
             };
         } else {
             records = new Class[]
@@ -138,7 +139,8 @@ public class RecordFactory
                 MulRKRecord.class, MulBlankRecord.class, MergeCellsRecord.class,
                 BoolErrRecord.class, ExternSheetRecord.class, NameRecord.class,
 		LeftMarginRecord.class, RightMarginRecord.class, 
-		TopMarginRecord.class, BottomMarginRecord.class
+		TopMarginRecord.class, BottomMarginRecord.class,
+                PaletteRecord.class
             };
             
         }
