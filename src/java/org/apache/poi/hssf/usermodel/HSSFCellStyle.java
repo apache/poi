@@ -74,7 +74,6 @@ import org.apache.poi.hssf.record.ExtendedFormatRecord;
  */
 
 public class HSSFCellStyle
-    implements HSSFColorConstants
 {
     private ExtendedFormatRecord format                     = null;
     private short                index                      = 0;
