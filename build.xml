@@ -275,6 +275,7 @@ Main targets:
             <classpath refid="test.classpath"/>
             <sysproperty key="HSSF.testdata.path" file="${main.src.test}/org/apache/poi/hssf/data"/>
             <sysproperty key="HPSF.testdata.path" file="${main.src.test}/org/apache/poi/hpsf/data"/>
+            <sysproperty key="java.awt.headless" value="true"/>
             <formatter type="plain"/>
             <formatter type="xml"/>
             <batchtest todir="${main.reports.test}">
@@ -293,6 +294,7 @@ Main targets:
             <classpath refid="test.classpath"/>
             <sysproperty key="HSSF.testdata.path" file="${main.src.test}/org/apache/poi/hssf/data"/>
             <sysproperty key="HPSF.testdata.path" file="${main.src.test}/org/apache/poi/hpsf/data"/>
+            <sysproperty key="java.awt.headless" value="true"/>
             <formatter type="plain" usefile="no"/>
             <formatter type="xml"/>
             <test name="${testcase}"/>
@@ -307,6 +309,7 @@ Main targets:
             <classpath refid="test.classpath"/>
             <sysproperty key="HSSF.testdata.path" file="${main.src.test}/org/apache/poi/hssf/data"/>
             <sysproperty key="HPSF.testdata.path" file="${main.src.test}/org/apache/poi/hpsf/data"/>
+            <sysproperty key="java.awt.headless" value="true"/>
             <formatter type="plain" usefile="no"/>
             <test name="${testcase}"/>
         </junit>
@@ -341,6 +344,7 @@ Main targets:
             <sysproperty key="HPSF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hpsf/data"/>
             <sysproperty key="HDF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hdf/data"/>
             <sysproperty key="HWPF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hwpf/data"/>
+            <sysproperty key="java.awt.headless" value="true"/>
             <formatter type="plain"/>
             <formatter type="xml"/>
             <batchtest todir="${scratchpad.reports.test}">
@@ -376,6 +380,7 @@ Main targets:
             </classpath>
             <sysproperty key="HSSF.testdata.path" file="${contrib.src.test}/org/apache/poi/hssf/data"/>
             <sysproperty key="HPSF.testdata.path" file="${contrib.src.test}/org/apache/poi/hpsf/data"/>
+            <sysproperty key="java.awt.headless" value="true"/>
             <formatter type="plain"/>
             <formatter type="xml"/>
             <batchtest todir="${contrib.reports.test}">
