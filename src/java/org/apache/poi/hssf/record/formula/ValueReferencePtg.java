@@ -108,7 +108,7 @@ public class ValueReferencePtg
         offset++;   // adjust for ptg
         field_1_row = LittleEndian.getShort(data, offset + 0);
         field_2_col = LittleEndian.getShort(data, offset + 2);
-        System.out.println(toString());
+
     }
 
     public String toString()
