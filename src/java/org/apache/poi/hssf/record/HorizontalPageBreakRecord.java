@@ -1,8 +1,7 @@
-
 /* ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 2003 The Apache Software Foundation.  All rights
+ * Copyright (c) 2004 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -52,53 +51,57 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-
-package org.apache.poi.hssf.usermodel;
-
-import junit.framework.TestCase;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.util.Region;
+package org.apache.poi.hssf.record;
 
 /**
- * Test the ability to clone a sheet. 
- *  If adding new records that belong to a sheet (as opposed to a book)
- *  add that record to the sheet in the testCloneSheetBasic method. 
- * @author  avik
+ * HorizontalPageBreak record that stores page breaks at rows
+ * <p>
+ * This class is just used so that SID compares work properly in the RecordFactory
+ * @see PageBreakRecord
+ * @author Danny Mui (dmui at apache dot org) 
  */
-public class TestCloneSheet extends TestCase {
+public class HorizontalPageBreakRecord extends PageBreakRecord {
 
-	public TestCloneSheet(String arg0) {
-		super(arg0);
-	}
-	
-	public void testCloneSheetBasic(){
-		try{
-			HSSFWorkbook b = new HSSFWorkbook();
-			HSSFSheet s = b.createSheet("Test");
-			s.addMergedRegion(new Region((short)0,(short)0,(short)1,(short)1));
-			b.cloneSheet(0);
-		}
-		catch(Exception e){e.printStackTrace();fail(e.getMessage());}
+    public static final short sid = PageBreakRecord.HORIZONTAL_SID; 
+    
+	/**
+	 * 
+	 */
+	public HorizontalPageBreakRecord() {
+		super();
 	}
 
-   /**
-    * Ensures that pagebreak cloning works properly
-    *
-    */
-   public void testPageBreakClones() {
-      HSSFWorkbook b = new HSSFWorkbook();
-      HSSFSheet s = b.createSheet("Test");
-      s.setRowBreak(3);
-      s.setColumnBreak((short)6);
-      
-      HSSFSheet clone = b.cloneSheet(0);
-      assertTrue("Row 3 not broken", clone.isRowBroken(3));
-      assertTrue("Column 6 not broken", clone.isColumnBroken((short)6));
-      
-      s.removeRowBreak(3);
-      
-      assertTrue("Row 3 still should be broken", clone.isRowBroken(3));
-   }
-   
+	/**
+	 * @param sid
+	 */
+	public HorizontalPageBreakRecord(short sid) {
+		super(sid);
+	}
+
+	/**
+	 * @param id
+	 * @param size
+	 * @param data
+	 */
+	public HorizontalPageBreakRecord(short id, short size, byte[] data) {
+		super(id, size, data);
+	}
+
+	/**
+	 * @param id
+	 * @param size
+	 * @param data
+	 * @param offset
+	 */
+	public HorizontalPageBreakRecord(short id, short size, byte[] data, int offset) {
+		super(id, size, data, offset);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.apache.poi.hssf.record.Record#getSid()
+	 */
+	public short getSid() {
+		return sid;
+	}
+
 }
