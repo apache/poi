@@ -11,7 +11,7 @@
   </authors>
  </header>
  <body>
-  <section title="How To Use the HPSF API">
+  <section><title>How To Use the HPSF API</title>
 
    <p>This HOW-TO is organized in four sections. You should read them
     sequentially because the later sections build upon the earlier ones.</p>
@@ -51,7 +51,7 @@
 
 
    <anchor id="sec1"/>
-   <section title="Reading Standard Properties">
+   <section><title>Reading Standard Properties</title>
 
     <note>This section explains how to read
       the most important standard properties of a Microsoft Office
@@ -94,8 +94,8 @@
     <p>Sounds easy, doesn't it? Here are the steps in detail.</p>
 
 
-    <section title="Open the document \005SummaryInformation in the root of the
-       POI filesystem">
+    <section><title>Open the document \005SummaryInformation in the root of the
+       POI filesystem</title>
 
      <p>An application that wants to open a document in a POI filesystem
       (POIFS) proceeds as shown by the following code fragment. (The full
@@ -230,8 +230,8 @@ else
    </section>
 
    <anchor id="sec2"/>
-   <section title="Additional Standard Properties, Exceptions And Embedded
-    Objects">
+   <section><title>Additional Standard Properties, Exceptions And Embedded
+    Objects</title>
 
     <note>This section focusses on reading additional standard properties. It
      also talks about exceptions that may be thrown when dealing with HPSF and
@@ -309,12 +309,12 @@ else
    </section>
 
    <anchor id="sec3"/>
-   <section title="Reading Non-Standard Properties">
+   <section><title>Reading Non-Standard Properties</title>
 
     <note>This section tells how to read non-standard properties. Non-standard
      properties are application-specific ID/type/value triples.</note>
 
-    <section title="Overview">
+    <section><title>Overview</title>
      <p>Now comes the real hardcode stuff. As mentioned above,
       <code>SummaryInformation</code> and
       <code>DocumentSummaryInformation</code> are just special cases of the
@@ -360,7 +360,7 @@ else
      </ol>
     </section>
 
-    <section title="A Sample Application">
+    <section><title>A Sample Application</title>
      <p>Let's have a look at a sample Java application that dumps all property
       set streams contained in a POI file system. The full source code of this
       program can be found as <em>ReadCustomPropertySets.java</em> in the
@@ -398,7 +398,7 @@ import org.apache.poi.util.HexDump;</source>
     system.</p>
     </section>
 
-    <section title="The Property Set">
+    <section><title>The Property Set</title>
      <p>The listener class tries to create a <code>PropertySet</code> from each
      stream using the <code>PropertySetFactory.create()</code> method:</p>
 
@@ -439,7 +439,7 @@ import org.apache.poi.util.HexDump;</source>
      set stream.</p>
     </section>
 
-    <section title="The Sections">
+    <section><title>The Sections</title>
      <p>The next step is to print the number of sections followed by the
      sections themselves:</p>
 
@@ -494,7 +494,7 @@ for (int i2 = 0; i2 &lt; properties.length; i2++)
 }</source>
     </section>
 
-    <section title="The Section's Format ID">
+    <section><title>The Section's Format ID</title>
      <p>The first method called on the <code>Section</code> instance is
       <code>getFormatID()</code>. As explained above, the format ID of the
       first section in a property set determines the type of the property
@@ -518,7 +518,7 @@ out("      Format ID: " + s);</source>
       <code>System.out.println()</code>.</p>
     </section>
 
-    <section title="The Properties">
+    <section><title>The Properties</title>
      <p>Before getting the properties, it is possible to find out how many
       properties are available in the section via the
       <code>Section.getPropertyCount()</code>. The sample application uses this
@@ -550,7 +550,7 @@ out("      No. of properties: " + propertyCount);</source>
 }</source>
     </section>
 
-    <section title="Sample Output">
+    <section><title>Sample Output</title>
      <p>The output of the sample program might look like the following. It
       shows the summary information and the document summary information
       property sets of a Microsoft Word document. However, unlike the first and
@@ -631,7 +631,7 @@ No property set stream: "/1Table"</source>
      </ul>
     </section>
 
-    <section title="Property IDs">
+    <section><title>Property IDs</title>
      <p>Properties in the same section are distinguished by their IDs. This is
       similar to variables in a programming language like Java, which are
       distinguished by their names. But unlike variable names, property IDs are
@@ -715,7 +715,7 @@ No property set stream: "/1Table"</source>
      </table>
     </section>
 
-    <section title="Property types">
+    <section><title>Property types</title>
      <p>A property is nothing without its value. It is stored in a property set
       stream as a sequence of bytes. You must know the property's
       <strong>type</strong> in order to properly interpret those bytes and
@@ -735,7 +735,7 @@ No property set stream: "/1Table"</source>
       the work for you.</p>
     </section>
 
-    <section title="Property values">
+    <section><title>Property values</title>
      <p>When an application wants to retrieve a property's value and calls
       <code>Property.getValue()</code>, HPSF has to interpret the bytes making
       out the value according to the property's type. The type determines how
@@ -810,7 +810,7 @@ No property set stream: "/1Table"</source>
     </section>
 
 
-    <section title="Dictionaries">
+    <section><title>Dictionaries</title>
      <p>The property with ID 0 has a very special meaning: It is a
       <strong>dictionary</strong> mapping property IDs to property names. We
       have seen already that the meanings of standard properties in the
@@ -833,7 +833,7 @@ No property set stream: "/1Table"</source>
       sections.</p>
     </section>
 
-    <section title="Codepage support">
+    <section><title>Codepage support</title>
      <fixme author="Rainer Klute">Improve codepage support!</fixme>
 
      <p>The property with ID 1 holds the number of the codepage which was used
@@ -850,11 +850,11 @@ No property set stream: "/1Table"</source>
    </section>
 
    <anchor id="sec4"/>
-   <section title="Writing Properties">
+   <section><title>Writing Properties</title>
 
     <note>This section describes how to write properties.</note>
 
-    <section title="Overview">
+    <section><title>Overview</title>
      <p>Writing properties is possible at a low level only at the moment. You
       have to deal with property IDs and variant types to write
       properties. There are no convenient classes or convenient methods for
@@ -896,12 +896,12 @@ No property set stream: "/1Table"</source>
      </ol>
     </section>
 
-    <section title="Low-level Writing Functions In Details">
+    <section><title>Low-level Writing Functions In Details</title>
      <fixme author="Rainer Klute">This section is still to be written.</fixme>
     </section>
    </section>
 
-   <section title="Further Reading">
+   <section><title>Further Reading</title>
     <p>There are still some aspects of HSPF left which are not covered by this
      HOW-TO. You should dig into the Javadoc API documentation to learn
      further details. Since you've struggled through this document up to this
