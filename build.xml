@@ -429,7 +429,7 @@ printed.
   <!-- ================================== -->
   
   <target  name="testmodule"   
-           depends="clean, compile, test, jar, docs, metrics, javadocs"
+           depends="clean, docs, compile, test, jar, metrics, javadocs"
            description="Testing that all major targets work; useful before a commit"/>
 
   <!-- ================================== -->
