@@ -157,8 +157,8 @@ public class RowRecordsAggregate
      * Subclasses should implement this so that their data is passed back in a
      * byte array.
      *
-     * @param offset to begin writing at
-     * @param byte array containing instance data
+     * @param offset    offset to begin writing at
+     * @param data      byte array containing instance data
      * @return number of bytes written
      */
 
