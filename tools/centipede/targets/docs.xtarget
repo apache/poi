@@ -57,9 +57,8 @@
   <!-- =================================================================== -->
   <!-- The documentation system                                            -->
   <!-- =================================================================== -->
-  <target name="docs"
-          depends="cleandocs, prepare-docs, making-docs"
-          unless="docs.notrequired"
+  <target name="owdocs"
+          depends="prepare-docs, making-docs"
           description="* Generates the documentation">
 
     <java classname="org.apache.cocoon.Main" fork="true" dir="${build.context}" failonerror="true">
@@ -87,6 +86,15 @@
     
   </target>
   
+  <!-- =================================================================== -->
+  <!-- The documentation system                                            -->
+  <!-- =================================================================== -->
+  <target name="docs"
+          depends="cleandocs, owdocs"
+          description="Cleans docs and generates the documentation">
+
+  </target>
+    
   <!-- =================================================================== -->
   <!-- Create the announcements                                            -->
   <!-- =================================================================== -->
