@@ -71,7 +71,7 @@ import org.apache.poi.hdf.model.hdftypes.HDFType;
 
  * @author Andrew C. Oliver
  */
-public class FIBType
+public abstract class FIBAbstractType
     implements HDFType
 {
 
@@ -79,7 +79,7 @@ public class FIBType
     private  short      field_2_version;
     private  short      field_3_productVersion;
     private  short      field_4_languageStamp;
-    private  short      field_5_unknown1;
+    private  short      field_5_unknown0;
     private  short      field_6_options;
     private BitField   template                                   = new BitField(0x0001);
     private BitField   glossary                                   = new BitField(0x0002);
@@ -232,7 +232,7 @@ public class FIBType
     private  int        field_136_lengthPlcfAnnBkmrkFirst;
     private  int        field_137_offsetPlcfAnnBkmrkFirst;
     private  int        field_138_lengthPlcfAnnBkarkLast;
-    private  int        field_139_lengthPlcfAnnBkarkLast;
+    private  int        field_139_PlcfAtnbkl;
     private  int        field_140_fcPms;
     private  int        field_141_lcbPms;
     private  int        field_142_fcFormFldSttbs;
@@ -335,7 +335,7 @@ public class FIBType
     private  int        field_239_lcbSttbfUssr;
 
 
-    public FIBType()
+    public FIBAbstractType()
     {
 
     }
@@ -346,7 +346,7 @@ public class FIBType
         field_2_version                 = LittleEndian.getShort(data, 0x2 + offset);
         field_3_productVersion          = LittleEndian.getShort(data, 0x4 + offset);
         field_4_languageStamp           = LittleEndian.getShort(data, 0x6 + offset);
-        field_5_unknown1                = LittleEndian.getShort(data, 0x8 + offset);
+        field_5_unknown0                = LittleEndian.getShort(data, 0x8 + offset);
         field_6_options                 = LittleEndian.getShort(data, 0xa + offset);
         field_7_minversion              = LittleEndian.getShort(data, 0xc + offset);
         field_8_encryptedKey            = LittleEndian.getShort(data, 0xe + offset);
@@ -480,7 +480,7 @@ public class FIBType
         field_136_lengthPlcfAnnBkmrkFirst  = LittleEndian.getInt(data, 0x1e2 + offset);
         field_137_offsetPlcfAnnBkmrkFirst  = LittleEndian.getInt(data, 0x1e6 + offset);
         field_138_lengthPlcfAnnBkarkLast  = LittleEndian.getInt(data, 0x1ea + offset);
-        field_139_lengthPlcfAnnBkarkLast  = LittleEndian.getInt(data, 0x1ee + offset);
+        field_139_PlcfAtnbkl            = LittleEndian.getInt(data, 0x1ee + offset);
         field_140_fcPms                 = LittleEndian.getInt(data, 0x1f2 + offset);
         field_141_lcbPms                = LittleEndian.getInt(data, 0x1f6 + offset);
         field_142_fcFormFldSttbs        = LittleEndian.getInt(data, 0x1fa + offset);
@@ -610,10 +610,10 @@ public class FIBType
             .append(HexDump.toHex((short)getLanguageStamp()))
             .append(" (").append(getLanguageStamp()).append(" )\n");
 
-        buffer.append("    .unknown1             = ")
+        buffer.append("    .unknown0             = ")
             .append("0x")
-            .append(HexDump.toHex((short)getUnknown1()))
-            .append(" (").append(getUnknown1()).append(" )\n");
+            .append(HexDump.toHex((short)getUnknown0()))
+            .append(" (").append(getUnknown0()).append(" )\n");
 
         buffer.append("    .options              = ")
             .append("0x")
@@ -1299,10 +1299,10 @@ public class FIBType
             .append(HexDump.toHex((int)getLengthPlcfAnnBkarkLast()))
             .append(" (").append(getLengthPlcfAnnBkarkLast()).append(" )\n");
 
-        buffer.append("    .lengthPlcfAnnBkarkLast = ")
+        buffer.append("    .PlcfAtnbkl           = ")
             .append("0x")
-            .append(HexDump.toHex((int)getLengthPlcfAnnBkarkLast()))
-            .append(" (").append(getLengthPlcfAnnBkarkLast()).append(" )\n");
+            .append(HexDump.toHex((int)getPlcfAtnbkl()))
+            .append(" (").append(getPlcfAtnbkl()).append(" )\n");
 
         buffer.append("    .fcPms                = ")
             .append("0x")
@@ -1883,19 +1883,19 @@ public class FIBType
     }
 
     /**
-     * Get the unknown 1 field for the FIB record.
+     * Get the unknown 0 field for the FIB record.
      */
-    public short getUnknown1()
+    public short getUnknown0()
     {
-        return field_5_unknown1;
+        return field_5_unknown0;
     }
 
     /**
-     * Set the unknown 1 field for the FIB record.
+     * Set the unknown 0 field for the FIB record.
      */
-    public void setUnknown1(short field_5_unknown1)
+    public void setUnknown0(short field_5_unknown0)
     {
-        this.field_5_unknown1 = field_5_unknown1;
+        this.field_5_unknown0 = field_5_unknown0;
     }
 
     /**
@@ -4027,19 +4027,19 @@ public class FIBType
     }
 
     /**
-     * Get the length Plcf Ann Bkark Last field for the FIB record.
+     * Get the PlcfAtnbkl field for the FIB record.
      */
-    public int getLengthPlcfAnnBkarkLast()
+    public int getPlcfAtnbkl()
     {
-        return field_139_lengthPlcfAnnBkarkLast;
+        return field_139_PlcfAtnbkl;
     }
 
     /**
-     * Set the length Plcf Ann Bkark Last field for the FIB record.
+     * Set the PlcfAtnbkl field for the FIB record.
      */
-    public void setLengthPlcfAnnBkarkLast(int field_139_lengthPlcfAnnBkarkLast)
+    public void setPlcfAtnbkl(int field_139_PlcfAtnbkl)
     {
-        this.field_139_lengthPlcfAnnBkarkLast = field_139_lengthPlcfAnnBkarkLast;
+        this.field_139_PlcfAtnbkl = field_139_PlcfAtnbkl;
     }
 
     /**
