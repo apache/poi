@@ -104,10 +104,9 @@
     
     <condition property="cent-unjar.not.required">
       <and>
-        <uptodate targetfile="${current.cent.jar}">
-          <srcfiles dir= "." includes="${cents.dir}/${current.cent.jar.name}.${cent.dir.suffix}/${task.properties.name}"/>      
-        </uptodate>
-       <available type="file" file="${cents.dir}/${current.cent.jar.name}.${cent.dir.suffix}/${task.properties.name}"/>
+        <uptodate targetfile="${cents.dir}/${current.cent.jar.name}.${cent.dir.suffix}/${task.properties.name}"
+                  srcfile="${current.cent.jar}"/>
+        <available type="file" file="${cents.dir}/${current.cent.jar.name}.${cent.dir.suffix}/${task.properties.name}"/>
       </and>
     </condition>
  
@@ -120,6 +119,9 @@
            depends="-cent-unjar-check">
       <echo message="Expanding ${current.cent.jar}..." />
       <unjar src="${current.cent.jar}" dest="${cents.dir}"/> 
+      <touch>
+        <fileset dir="${cents.dir}/${current.cent.jar.name}.${cent.dir.suffix}"/>
+      </touch>      
       <echo message="... ${current.cent.jar} expanded in ${current.cent.jar.name}." />    
   </target> 
 
