@@ -73,7 +73,7 @@
 
     <depend project="xml-xerces"/>
     <depend project="xml-xalan2"/>   
-    <depend project="jakarta-ant-embed"  inherit="all"/>
+    <depend project="jakarta-ant" inherit="all"/>
     <depend project="jakarta-ant-embed-optional"/>  
     <depend property="jxpath.jar" project="commons-jxpath"/>     
 
