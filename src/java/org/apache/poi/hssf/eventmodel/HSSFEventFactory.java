@@ -59,7 +59,7 @@ import java.io.InputStream;
 import java.io.IOException;
 
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.hssf.HSSFUserException;
+import org.apache.poi.hssf.eventmodel.HSSFUserException;
 import org.apache.poi.hssf.record.RecordFormatException;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RecordFactory;
