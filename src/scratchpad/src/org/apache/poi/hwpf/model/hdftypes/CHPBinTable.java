@@ -142,7 +142,7 @@ public class CHPBinTable
       int end = endingFc;
       if (overflow != null)
       {
-        end = ((PropertyNode)overflow.get(0)).getStart();
+        end = ((PropertyNode)overflow.get(0)).getStart() + fcMin;
       }
 
       byte[] intHolder = new byte[4];

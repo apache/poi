@@ -161,7 +161,7 @@ public class StyleSheet implements HDFType
     throws IOException
   {
     int offset = 0;
-    // add two bytes so we can prepend the styelsheet w/ its size
+    // add two bytes so we can prepend the stylesheet w/ its size
     byte[] buf = new byte[_stshiLength + 2];
     LittleEndian.putShort(buf, offset, (short)_stshiLength);
     offset += LittleEndian.SHORT_SIZE;
