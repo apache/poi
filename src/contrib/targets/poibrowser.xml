@@ -1,0 +1,26 @@
+<!-- try.xml ... these are trial build targets which are currently
+  undergoing testing. When ready they can be moved into the main build.xml -->
+
+<project default="poibrowser" basedir="../../" name="POIBrowser build">
+
+  <!-- =================================================================== -->
+  <!-- GUI Run Target                                                      -->
+  <!-- =================================================================== -->
+  <target name="poibrowser">
+
+    <property name="contrib.input.selection" value=""/>
+    <user-input name="contrib.input.selection">Please select a file to view </user-input>
+
+    <java classname="org.apache.poi.contrib.poibrowser.POIBrowser" fork="true">
+         <arg value="${contrib.input.selection}"/>
+         <classpath>
+           <pathelement location="build/jakarta-poi/classes"/>
+           <pathelement location="build/jakarta-poi/contrib/classes"/>
+         </classpath>   
+    </java>       
+  </target>
+
+
+</project>
+
+<!-- End of file -->
