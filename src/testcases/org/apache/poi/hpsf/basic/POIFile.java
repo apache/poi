@@ -72,31 +72,62 @@ public class POIFile
     private POIFSDocumentPath path;
     private byte[] bytes;
 
+
+    /**
+     * <p>Sets the POI file's name.</p>
+     *
+     * @param name The POI file's name.
+     */
     public void setName(final String name)
     {
         this.name = name;
     }
 
+    /**
+     * <p>Returns the POI file's name.</p>
+     *
+     * @return The POI file's name.
+     */
     public String getName()
     {
         return name;
     }
 
+    /**
+     * <p>Sets the POI file's path.</p>
+     *
+     * @param path The POI file's path.
+     */
     public void setPath(final POIFSDocumentPath path)
     {
         this.path = path;
     }
 
+    /**
+     * <p>Returns the POI file's path.</p>
+     *
+     * @return The POI file's path.
+     */
     public POIFSDocumentPath getPath()
     {
         return path;
     }
 
+    /**
+     * <p>Sets the POI file's content bytes.</p>
+     *
+     * @param bytes The POI file's content bytes.
+     */
     public void setBytes(final byte[] bytes)
     {
         this.bytes = bytes;
     }
 
+    /**
+     * <p>Returns the POI file's content bytes.</p>
+     *
+     * @return The POI file's content bytes.
+     */
     public byte[] getBytes()
     {
         return bytes;
