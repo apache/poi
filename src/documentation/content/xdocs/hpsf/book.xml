@@ -5,8 +5,8 @@
       title="HPSF" 
       copyright="@year@ POI Project">
 
-  <menu label="Navigation">
-    <menu-item label="Main" href="../index.html"/>
+  <menu label="Jakarta Poi">
+    <menu-item label="Top" href="../index.html"/>
   </menu>
   <menu label="HPSF">
     <menu-item label="Overview" href="index.html"/>
