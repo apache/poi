@@ -34,6 +34,8 @@
             <td><link href="es/index.html">link</link></td></tr>
         <tr><td>jp</td><td>Japanese</td><td>Complete XML translation</td><td>Off</td>
             <td><link href="http://jakarta.terra-intl.com/poi/">link</link></td></tr>
+        <tr><td>kr</td><td>Korean</td><td>Conducted by <link href="http://jakarta.apache-korea.org/">Jakarta-Seoul-Project</link></td><td>Off</td>
+            <td><link href="http://jakarta.apache-korea.org/poi/">link</link></td></tr>
       </table>
    </section>
   </body>

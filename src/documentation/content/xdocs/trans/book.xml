@@ -15,6 +15,7 @@
     <menu-item label="Spanish" href="es/index.html"/>    
     <menu-item label="German" href="de/index.html"/>    
     <menu-item label="Japanese" href="http://jakarta.terra-intl.com/poi/"/>    
+    <menu-item label="Korean" href="http://jakarta.apache-korea.org/poi/"/>    
   </menu>
 
 </book>
