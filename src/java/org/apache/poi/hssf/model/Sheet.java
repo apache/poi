@@ -111,8 +111,7 @@ public class Sheet implements Model
     protected WindowTwoRecord           windowTwo        = null;
     protected MergeCellsRecord          merged           = null;
     protected Margin                    margins[]        = null;
-    protected ArrayList                 mergedRecords    = new ArrayList();
-    protected ArrayList                 mergedLocs       = new ArrayList();
+    protected List                 		mergedRecords    = new ArrayList();
     protected int                       numMergedRegions = 0;
     protected SelectionRecord           selection        = null;
     private static POILogger            log              = POILogFactory.getLogger(Sheet.class);
@@ -198,7 +197,6 @@ public class Sheet implements Model
             {
                 retval.mergedRecords.add(rec);
                 retval.merged = ( MergeCellsRecord ) rec;
-                retval.mergedLocs.add(new Integer(k - offset));
                 retval.numMergedRegions += retval.merged.getNumAreas();
             }
             else if (rec.getSid() == ColumnInfoRecord.sid)
@@ -456,8 +454,7 @@ public class Sheet implements Model
         if (merged == null || merged.getNumAreas() == 1027)
         {
             merged = ( MergeCellsRecord ) createMergedCells();
-            mergedRecords.add(merged);
-            mergedLocs.add(new Integer(records.size() - 1));
+            mergedRecords.add(merged);            
             records.add(records.size() - 1, merged);
         }
         merged.addArea(rowFrom, colFrom, rowTo, colTo);
@@ -498,7 +495,9 @@ public class Sheet implements Model
         numMergedRegions--;
         if (rec.getNumAreas() == 0)
         {
-				mergedRecords.remove(pos);            
+			mergedRecords.remove(pos);
+			//get rid of the record from the sheet
+			records.remove(merged);            
             if (merged == rec) {
             	//pull up the LAST record for operations when we finally
             	//support continue records for mergedRegions
@@ -508,11 +507,6 @@ public class Sheet implements Model
             		merged = null;
             	}
             }
-            
-            int removePos = ((Integer) mergedLocs.get(pos)).intValue();
-            records.remove(removePos);
-            mergedLocs.remove(pos);
-            
         }
     }
 
