@@ -1,3 +1,4 @@
+[header]
 1D 00                                               # String length 0x1b=29
 09                                                  # Option flag, rich text + 16bit
 02 00                                               # Formatting runs
@@ -7,6 +8,7 @@
 72 00 20 00 70 00 61 00 72 00
 74 00 79 00 20 00 6F 00 72 00
 
+[continue1]
 # Continuation record
 00                                                  # option flag
 
