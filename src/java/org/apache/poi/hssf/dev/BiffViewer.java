@@ -144,13 +144,14 @@ public class BiffViewer
 
         try
         {
-            long  offset  = 0;
+//            long  offset  = 0;
             short rectype = 0;
 
             do
             {
-                System.out.println("you are at offset " + loc);
                 rectype = LittleEndian.readShort(in);
+                System.out.println("============================================");
+                System.out.println("you are at offset " + loc);
                 loc     += 2;
                 if (rectype != 0)
                 {
@@ -165,14 +166,14 @@ public class BiffViewer
                         System.out.println(loc);
                     }
                     loc    += recsize;
-                    offset += 4 + recsize;
+//                    offset += 4 + recsize;
                     if (dump)
                     {
-                        System.out
-                            .println("fixing to recordize the following");
-                        System.out.println("rectype = "
+//                        System.out
+//                            .println("fixing to recordize the following");
+                        System.out.println("rectype = 0x"
                                            + Integer.toHexString(rectype));
-                        System.out.println("recsize = "
+                        System.out.println("recsize = 0x"
                                            + Integer.toHexString(recsize));
                         System.out.println(
                             "--------------------------------------------");
@@ -632,7 +633,7 @@ public class BiffViewer
         {
             realretval      = new Record[ 1 ];
             realretval[ 0 ] = retval;
-            System.out.println("recordid = " + rectype + ", size =" + size);
+            System.out.println("recordid = 0x" + Integer.toHexString(rectype) + ", size =" + size);
             System.out.println(realretval[ 0 ].toString());
         }
         return realretval;
