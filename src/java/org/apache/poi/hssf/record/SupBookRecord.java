@@ -183,4 +183,3 @@ public class SupBookRecord extends Record
         return this.sid;
     }
 }
-
