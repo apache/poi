@@ -247,14 +247,6 @@ public class BiffViewer {
     }
 
 
-    /**
-     *  Description of the Method
-     *
-     *@param  rectype          Description of the Parameter
-     *@param  recsize          Description of the Parameter
-     *@param  data             Description of the Parameter
-     *@exception  IOException  Description of the Exception
-     */
     private static void dump( short rectype, short recsize, byte[] data ) throws IOException
     {
         //                        System.out
