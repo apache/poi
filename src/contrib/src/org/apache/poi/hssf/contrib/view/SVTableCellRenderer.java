@@ -243,6 +243,8 @@ public class SVTableCellRenderer extends JLabel
             default:
               setValue("?");
           }
+       } else {
+           setValue("");
        }
 
 
@@ -288,7 +290,9 @@ public class SVTableCellRenderer extends JLabel
      */
     private HSSFCell getCell(int row, int col) {
       HSSFRow r = st.getRow(row);
-      HSSFCell c = r.getCell((short)col);
+      HSSFCell c = null;
+      if ( r != null)
+       c = r.getCell((short)col);
       return c;
     }
 }
