@@ -55,6 +55,7 @@
 package org.apache.poi.hdf.generator;
 
 import org.apache.poi.generator.FieldIterator;
+import org.apache.poi.generator.RecordUtil;
 
 /**
  * This class overrides FieldIterator to handle HDF specific types
@@ -65,16 +66,17 @@ public class HDFFieldIterator extends FieldIterator
     public HDFFieldIterator()
     {
     }
+
     public String fillDecoder(String size, String type)
     {
 
         String result = "";
 
         if (type.equals("short[]"))
-            result = "LittleEndian.getSimpleShortArray(data, 0x" + Integer.toHexString(offset) + " + offset, size)";
+            result = "LittleEndian.getSimpleShortArray(data, 0x" + Integer.toHexString(offset) + " + offset," +  size + ")";
         else if (type.equals("byte[]"))
-            result = "LittleEndian.getByteArray(data, 0x" + Integer.toHexString(offset) + " + offset, size)";
-        if (size.equals("2"))
+            result = "LittleEndian.getByteArray(data, 0x" + Integer.toHexString(offset) + " + offset," + size + ")";
+        else if (size.equals("2"))
             result = "LittleEndian.getShort(data, 0x" + Integer.toHexString(offset) + " + offset)";
         else if (size.equals("4"))
             result = "LittleEndian.getInt(data, 0x" + Integer.toHexString(offset) + " + offset)";
@@ -92,4 +94,37 @@ public class HDFFieldIterator extends FieldIterator
         }
         return result;
     }
+
+    public String serialiseEncoder( int fieldNumber, String fieldName, String size, String type)
+    {
+        String javaType = RecordUtil.getType(size, type, 0);
+        String javaFieldName = RecordUtil.getFieldName(fieldNumber,fieldName,0);
+
+        String result = "";
+
+
+        if (javaType.equals("short[]"))
+            result = "LittleEndian.putShortArray(data, 0x" + Integer.toHexString(offset) + " + offset, " + javaFieldName + ");";
+        else if (javaType.equals("byte[]"))
+            result = "LittleEndian.putByteArray(data, 0x" + Integer.toHexString(offset) + " + offset, " + javaFieldName + ");";
+        else if (size.equals("2"))
+          result = "LittleEndian.putShort(data, 0x" + Integer.toHexString(offset) + " + offset, (short)" + javaFieldName + ");";
+        else if (size.equals("4"))
+          result = "LittleEndian.putInt(data, 0x" + Integer.toHexString(offset) + " + offset, " + javaFieldName + ");";
+        else if (size.equals("1"))
+            result = "data[ 0x" + Integer.toHexString(offset) + " + offset] = " + javaFieldName + ";";
+        else if (javaType.equals("double"))
+            result = "LittleEndian.putDouble(data, 0x" + Integer.toHexString(offset) + " + offset, " + javaFieldName + ");";
+
+        try
+        {
+            offset += Integer.parseInt(size);
+        }
+        catch (NumberFormatException ignore)
+        {
+        }
+        return result;
+
+    }
+
 }
