@@ -78,7 +78,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  * @see org.apache.poi.hssf.dev.EFHSSF
  *
  * @author Andrew C. Oliver (acoliver at apache dot org)
- * @authro Carey Sublette  (careysub@earthling.net)
+ * @author Carey Sublette  (careysub@earthling.net)
  */
 
 public class HSSFEventFactory
@@ -103,7 +103,7 @@ public class HSSFEventFactory
 
         processEvents(req, in);
     }
-    
+
     /**
 	 * Processes a file into essentially record events.
 	 *
@@ -111,7 +111,7 @@ public class HSSFEventFactory
 	 * @param fs        a POIFS filesystem containing your workbook
 	 * @return 			numeric user-specified result code.
 	 */
-	
+
 	public short abortableProcessWorkbookEvents(HSSFRequest req, POIFSFileSystem fs)
 		throws IOException, HSSFUserException
 	{
@@ -121,9 +121,9 @@ public class HSSFEventFactory
 
     /**
      * Processes a DocumentInputStream into essentially Record events.
-     * 
+     *
      * If an <code>AbortableHSSFListener</code> causes a halt to processing during this call
-     * the method will return just as with <code>abortableProcessEvents</code>, but no 
+     * the method will return just as with <code>abortableProcessEvents</code>, but no
      * user code or <code>HSSFUserException</code> will be passed back.
      *
      * @see org.apache.poi.poifs.filesystem.POIFSFileSystem#createDocumentInputStream(String)
@@ -133,15 +133,15 @@ public class HSSFEventFactory
 
     public void processEvents(HSSFRequest req, InputStream in)
         throws IOException
-	{ 
+	{
 		try
 		{
 			genericProcessEvents(req, in);
 		}
-		catch (HSSFUserException hue) 
+		catch (HSSFUserException hue)
 		{/*If an HSSFUserException user exception is thrown, ignore it.*/ }
 	}
-    
+
 
     /**
      * Processes a DocumentInputStream into essentially Record events.
@@ -153,11 +153,11 @@ public class HSSFEventFactory
      */
 
     public short abortableProcessEvents(HSSFRequest req, InputStream in)
-        throws IOException, HSSFUserException 
+        throws IOException, HSSFUserException
     {
 		return genericProcessEvents(req, in);
-    } 
-    
+    }
+
      /**
 	 * Processes a DocumentInputStream into essentially Record events.
 	 *

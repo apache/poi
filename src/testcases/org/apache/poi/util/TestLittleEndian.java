@@ -147,9 +147,13 @@ public class TestLittleEndian
     {
         56, 50, -113, -4, -63, -64, -13, 63, 76, -32, -42, -35, 60, -43, 3, 64
     };
+    private static final byte[]   _nan_double_array =
+    {
+        (byte)0x00, (byte)0x00, (byte)0x3C, (byte)0x00, (byte)0x20, (byte)0x04, (byte)0xFF, (byte)0xFF
+    };
     private static final double[] _doubles      =
     {
-        1.23456, 2.47912
+        1.23456, 2.47912, Double.NaN
     };
 
     /**
@@ -158,10 +162,21 @@ public class TestLittleEndian
 
     public void testGetDouble()
     {
-        assertEquals(_doubles[ 0 ], LittleEndian.getDouble(_double_array),
-                     0.000001);
-        assertEquals(_doubles[ 1 ], LittleEndian
-            .getDouble(_double_array, LittleEndian.DOUBLE_SIZE), 0.000001);
+        assertEquals(_doubles[ 0 ], LittleEndian.getDouble(_double_array), 0.000001 );
+        assertEquals(_doubles[ 1 ], LittleEndian.getDouble( _double_array, LittleEndian.DOUBLE_SIZE), 0.000001);
+        assertTrue(Double.isNaN(LittleEndian.getDouble(_nan_double_array)));
+
+        // does not work.  apparently nan does not always equal nan!
+        //assertEquals(_doubles[ 2 ], LittleEndian.getDouble(_nan_double_array), 0.000001);
+
+        double nan = LittleEndian.getDouble(_nan_double_array);
+        byte[] data = new byte[8];
+        LittleEndian.putDouble(data, nan);
+        for ( int i = 0; i < data.length; i++ )
+        {
+            byte b = data[i];
+            assertEquals(data[i], _nan_double_array[i]);
+        }
     }
 
     /**

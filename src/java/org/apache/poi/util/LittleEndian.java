@@ -386,7 +386,7 @@ public class LittleEndian
 
     public static void putDouble(final byte[] data, final int offset,
             final double value) {
-        putNumber(data, offset, Double.doubleToLongBits(value), DOUBLE_SIZE);
+        putNumber(data, offset, Double.doubleToRawLongBits(value), DOUBLE_SIZE);
     }
 
 
