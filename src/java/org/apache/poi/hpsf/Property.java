@@ -148,7 +148,7 @@ public class Property
      * list.
      */
     public Property(final int id, final byte[] src, final int offset,
-                    final int length)
+                    int length)
     {
         this.id = id;
 
