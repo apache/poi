@@ -60,14 +60,15 @@
  */
 package org.apache.poi.hssf.record.formula;
 
+import java.util.List;
+
 /**
  *
  * @author  andy
  */
 
 public class AddPtg
-    extends Ptg
-    implements OperationPtg
+    extends OperationPtg
 {
     public final static int  SIZE = 1;
     public final static byte sid  = 0x03;
@@ -147,4 +148,10 @@ public class AddPtg
     public int getStringLength() {
         return 1;
     }
+    
+    public void manipulate(List source, List results, int pos) {
+        standardBinaryManipulation(source,results,pos);
+        
+    }
+    
 }

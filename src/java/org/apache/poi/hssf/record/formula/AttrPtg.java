@@ -63,6 +63,8 @@ package org.apache.poi.hssf.record.formula;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.BitField;
 
+import java.util.List;
+
 /**
  * "Special Attributes"
  * This seems to be a Misc Stuff and Junk record.  One function it serves is
@@ -71,8 +73,7 @@ import org.apache.poi.util.BitField;
  */
 
 public class AttrPtg
-    extends Ptg
-    implements OperationPtg
+    extends OperationPtg
 {
     public final static short sid  = 0x19;
     private final static int  SIZE = 4;
@@ -205,4 +206,9 @@ public class AttrPtg
     {
         return -1;
     }
+    
+    public void manipulate(List source, List results, int pos) {
+    }
+    
+    
 }

@@ -55,16 +55,18 @@
 
 package org.apache.poi.hssf.record.formula;
 
+import java.util.List;
+
 /**
  * Dummy class, we want it only for for the parsing process
  * does not actually get into the file  -- note by andy...there is a parenthesis PTG
  * that can be written and is sometimes!
  *
  * Avik Sengupta <lists@aviksengupta.com>
+ * Andrew C. Oliver (acoliver at apache dot org)
  */
 public class ParenthesisPtg
-    extends Ptg
-    implements OperationPtg
+    extends OperationPtg
 {
    
 
@@ -99,5 +101,9 @@ public class ParenthesisPtg
     {
         return "(";
     }
+    
+    public void manipulate(List source, List results, int pos) {
+    }
+    
 }
 

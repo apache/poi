@@ -60,14 +60,15 @@
  */
 package org.apache.poi.hssf.record.formula;
 
+import java.util.List;
+
 /**
  *
  * @author  andy
  */
 
 public class PowerPtg
-    extends Ptg
-    implements OperationPtg
+    extends OperationPtg
 {
     public final static int  SIZE = 1;
     public final static byte sid  = 0x07;
@@ -118,4 +119,8 @@ public class PowerPtg
         buffer.append(operands[ 0 ].toFormulaString());
         return buffer.toString();
     }
+    
+    public void manipulate(List source, List results, int pos) {
+    }
+    
 }

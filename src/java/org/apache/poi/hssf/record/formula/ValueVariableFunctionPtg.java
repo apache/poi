@@ -63,14 +63,15 @@ package org.apache.poi.hssf.record.formula;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.LittleEndian;
 
+import java.util.List;
+
 /**
  * An excel function with variable number of value arguments.
  * @author  andy
  */
 
 public class ValueVariableFunctionPtg
-    extends Ptg
-    implements OperationPtg
+    extends OperationPtg
 {
     public final static short  sid  = 0x42;
     private final static short SIZE = 4;
@@ -127,4 +128,8 @@ public class ValueVariableFunctionPtg
     {
         return toFormulaString();
     }
+    
+    public void manipulate(List source, List results, int pos) {
+    }
+    
 }

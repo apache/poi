@@ -60,17 +60,20 @@
  */
 package org.apache.poi.hssf.record.formula;
 
+import java.util.List;
+
 /**
  *
  * @author  andy
  */
 
 public class MultiplyPtg
-    extends Ptg
-    implements OperationPtg
+    extends OperationPtg
 {
     public final static int  SIZE = 1;
     public final static byte sid  = 0x05;
+    
+    private final static String MULTIPLY="*";
 
     /** Creates new AddPtg */
 
@@ -83,6 +86,11 @@ public class MultiplyPtg
 
         // doesn't need anything
     }
+    
+    protected MultiplyPtg(String formula, int offset) {
+        
+    }
+    
 
     public void writeBytes(byte [] array, int offset)
     {
@@ -104,6 +112,11 @@ public class MultiplyPtg
         return 2;
     }
 
+    public int getStringLength() {
+        return 1;
+    }
+    
+
     public String toFormulaString()
     {
         return "*";
@@ -118,4 +131,28 @@ public class MultiplyPtg
         buffer.append(operands[ 1 ].toFormulaString());
         return buffer.toString();
     }
+    
+    public void manipulate(List source, List results, int pos) {
+        standardBinaryManipulation(source, results, pos);
+    }
+    
+    public int getPrecedence() {
+        return 3;
+    }
+    
+    public static boolean isNextStringToken(String formula, int pos) {
+        boolean retval = false;
+        while (pos < formula.length() && Character.isWhitespace(formula.charAt(pos))) {
+            pos++;
+        }
+        
+        if (pos < formula.length()) {
+            if (formula.charAt(pos) == MULTIPLY.toCharArray()[0]) {
+                retval = true;
+            }
+        }
+        return retval;
+    }
+    
+    
 }
