@@ -193,7 +193,7 @@ public class CopyCompare
             }
             catch (FileNotFoundException ex)
             {
-                msg.append("Document \"" + e1 + "\" exitsts, document \"" +
+                msg.append("Document \"" + e1 + "\" exists, document \"" +
                            e2 + "\" does not.\n");
                 equal = false;
                 break;
