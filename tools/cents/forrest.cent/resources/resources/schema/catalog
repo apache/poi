@@ -1,0 +1,34 @@
+-- OASIS TR 9401 Catalog for Forrest --
+
+OVERRIDE YES
+
+-- Document Type Definitions --
+PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
+       "dtd/document-v11.dtd"
+PUBLIC "-//APACHE//DTD Specification V1.1//EN"
+       "dtd/specification-v11.dtd"
+PUBLIC "-//APACHE//DTD FAQ V1.1//EN"
+       "dtd/faq-v11.dtd"
+PUBLIC "-//APACHE//DTD Changes V1.1//EN"
+       "dtd/changes-v11.dtd"
+PUBLIC "-//APACHE//DTD Todo V1.1//EN"
+       "dtd/todo-v11.dtd"
+PUBLIC "-//APACHE//DTD Cocoon Documentation Book V1.0//EN"
+       "dtd/book-cocoon-v10.dtd"
+
+-- ISO public identifiers for sets of character entities --
+PUBLIC "ISO 8879-1986//ENTITIES Added Latin 1//EN//XML"
+       "entity/ISOlat1.pen"
+PUBLIC "ISO 9573-15:1993//ENTITIES Greek Letters//EN//XML"
+       "entity/ISOgrk1.pen"
+PUBLIC "ISO 8879:1986//ENTITIES Publishing//EN//XML"
+       "entity/ISOpub.pen"
+PUBLIC "ISO 8879:1986//ENTITIES General Technical//EN//XML"
+       "entity/ISOtech.pen"
+PUBLIC "ISO 8879:1986//ENTITIES Numeric and Special Graphic//EN//XML"
+       "entity/ISOnum.pen"
+PUBLIC "ISO 8879:1986//ENTITIES Diacritical Marks//EN//XML"
+       "entity/ISOdia.pen"
+PUBLIC "ISO 8879:1986//ENTITIES Added Latin 1//EN//XML"
+       "entity/ISOlat1.pen"
+

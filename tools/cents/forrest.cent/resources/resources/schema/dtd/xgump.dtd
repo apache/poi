@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!ELEMENT module  ( url, cvs, mailing-lists, description, detailed, what, why, who, todo, changes, licence, credits, project* ) >
+<!ELEMENT url           EMPTY >
+<!ELEMENT cvs EMPTY >
+<!ELEMENT mailing-lists ( mailing-list ) >
+<!ELEMENT mailing-list EMPTY >
+<!ELEMENT description ( #PCDATA ) >
+<!ELEMENT detailed ( #PCDATA ) >
+<!ELEMENT what ( goal+ ) >
+<!ELEMENT goal ( #PCDATA ) >
+<!ELEMENT why ( #PCDATA ) >
+<!ELEMENT who ( person+ ) >
+<!ELEMENT person EMPTY >
+<!ELEMENT todo ( actions ) >
+<!ELEMENT actions ( action+ ) >
+<!ELEMENT changes ( release ) >
+<!ELEMENT release ( action+ ) >
+<!ELEMENT action ( #PCDATA ) >
+<!ELEMENT licence ( #PCDATA ) >
+<!ELEMENT credits ( credit+ ) >
+<!ELEMENT credit ( #PCDATA ) >
+<!ELEMENT project ( ant | depend | description | home | jar | javadoc | package | url | version | work )* >
+<!ELEMENT ant         ( property | depend )* >
+<!ELEMENT property      EMPTY >
+<!ELEMENT depend        EMPTY >
+<!ELEMENT description ( #PCDATA ) >
+<!ELEMENT home EMPTY >
+<!ELEMENT jar           EMPTY >
+<!ELEMENT javadoc EMPTY >
+<!ELEMENT package ( #PCDATA ) >
+<!ELEMENT version EMPTY >
+<!ELEMENT work EMPTY >
+
+
+<!ATTLIST module 
+  name CDATA #REQUIRED >
+
+<!ATTLIST url
+  href  CDATA #REQUIRED >
+
+<!ATTLIST cvs 
+  repository  CDATA #REQUIRED 
+  host-prefix CDATA #IMPLIED
+  dir         CDATA #IMPLIED >
+  
+<!ATTLIST mailing-list 
+  mail CDATA #REQUIRED 
+  subscribe CDATA #REQUIRED
+  unsubscribe CDATA #REQUIRED
+  user NMTOKEN #REQUIRED>
+  
+<!ATTLIST person 
+  email CDATA #REQUIRED 
+  id NMTOKEN #REQUIRED
+  name CDATA #REQUIRED>
+
+<!ATTLIST actions 
+  priority NMTOKEN #REQUIRED >
+
+<!ATTLIST action 
+  assigned-to NMTOKEN #IMPLIED 
+  context NMTOKEN #IMPLIED
+  dev ( DC | NKB | SM | SN ) #IMPLIED 
+  due-to CDATA #IMPLIED 
+  due-to-email CDATA #IMPLIED
+  type ( add | update ) #IMPLIED >
+  
+<!ATTLIST ant
+  target    CDATA #REQUIRED
+  buildfile CDATA #IMPLIED
+  basedir   CDATA #IMPLIED >
+    
+<!ATTLIST depend
+  project   CDATA #REQUIRED
+  property  CDATA #IMPLIED
+  version   CDATA #IMPLIED
+  id        CDATA #IMPLIED >
+
+<!ATTLIST property
+  name  CDATA #REQUIRED
+  value CDATA #REQUIRED >
+  
+<!ATTLIST work
+  nested    CDATA #REQUIRED >  
+  
+<!ATTLIST home
+  nested    CDATA #REQUIRED >  
+  
+<!ATTLIST jar
+  name CDATA #REQUIRED
+  id   CDATA #IMPLIED >  
+  
+<!ATTLIST release 
+  date NMTOKEN #REQUIRED
+  version NMTOKEN #REQUIRED  >
+
+<!ATTLIST javadoc 
+  parent CDATA #REQUIRED >
+
+<!ATTLIST depend 
+  project NMTOKEN #REQUIRED >
+
+<!ATTLIST project 
+  name NMTOKEN #REQUIRED >
+
+<!ATTLIST version 
+  major NMTOKEN #REQUIRED
+  minor NMTOKEN #REQUIRED
+  tag NMTOKEN #REQUIRED 
+  fix NMTOKEN #REQUIRED  >

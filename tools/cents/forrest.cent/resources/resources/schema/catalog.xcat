@@ -1,0 +1,35 @@
+<!-- OASIS XML Catalog for Forrest -->
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
+
+-- Document Type Definitions --
+<public publicId="-//APACHE//DTD Documentation V1.1//EN"
+        uri="dtd/document-v11.dtd"/>
+<public publicId="-//APACHE//DTD Specification V1.1//EN"
+        uri="dtd/specification-v11.dtd"/>
+<public publicId="-//APACHE//DTD FAQ V1.1//EN"
+        uri="dtd/faq-v11.dtd"/>
+<public publicId="-//APACHE//DTD Changes V1.1//EN"
+        uri="dtd/changes-v11.dtd"/>
+<public publicId="-//APACHE//DTD Todo V1.1//EN"
+        uri="dtd/todo-v11.dtd"/>
+<public publicId="-//APACHE//DTD Cocoon Documentation Book V1.0//EN"
+        uri="dtd/book-cocoon-v10.dtd"/>
+
+<!-- ISO public identifiers for sets of character entities -->
+<public publicId="ISO 8879-1986//ENTITIES Added Latin 1//EN//XML"
+        uri="entity/ISOlat1.pen"/>
+<public publicId="ISO 9573-15:1993//ENTITIES Greek Letters//EN//XML"
+        uri="entity/ISOgrk1.pen"/>
+<public publicId="ISO 8879:1986//ENTITIES Publishing//EN//XML"
+        uri="entity/ISOpub.pen"/>
+<public publicId="ISO 8879:1986//ENTITIES General Technical//EN//XML"
+        uri="entity/ISOtech.pen"/>
+<public publicId="ISO 8879:1986//ENTITIES Numeric and Special Graphic//EN//XML"
+        uri="entity/ISOnum.pen"/>
+<public publicId="ISO 8879:1986//ENTITIES Diacritical Marks//EN//XML"
+        uri="entity/ISOdia.pen"/>
+<public publicId="ISO 8879:1986//ENTITIES Added Latin 1//EN//XML"
+        uri="entity/ISOlat1.pen"/>
+
+</catalog>
+

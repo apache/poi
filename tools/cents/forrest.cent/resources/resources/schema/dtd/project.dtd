@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!ELEMENT module      ( project* ) >
+<!ELEMENT description ( #PCDATA ) >
+<!ELEMENT url           EMPTY >
+<!ELEMENT cvs           EMPTY >
+<!ELEMENT ant         ( property | depend )* >
+<!ELEMENT depend        EMPTY >
+<!ELEMENT property      EMPTY >
+<!ELEMENT work          EMPTY >
+<!ELEMENT home          EMPTY >
+<!ELEMENT jar           EMPTY >
+
+<!ATTLIST module 
+  name CDATA #REQUIRED >
+
+<!ATTLIST url
+  href  CDATA #REQUIRED >
+
+<!ATTLIST cvs 
+  repository  CDATA #REQUIRED 
+  host-prefix CDATA #IMPLIED
+  dir         CDATA #IMPLIED >
+
+<!ATTLIST ant
+  target    CDATA #REQUIRED
+  buildfile CDATA #IMPLIED
+  basedir   CDATA #IMPLIED >
+
+<!ATTLIST depend
+  project   CDATA #REQUIRED
+  property  CDATA #IMPLIED
+  version   CDATA #IMPLIED
+  id        CDATA #IMPLIED >
+
+<!ATTLIST property
+  name  CDATA #REQUIRED
+  value CDATA #REQUIRED >
+
+<!ATTLIST work
+  nested    CDATA #REQUIRED >
+
+<!ATTLIST home
+  nested    CDATA #REQUIRED >
+
+<!ATTLIST jar
+  name CDATA #REQUIRED
+  id   CDATA #IMPLIED >

@@ -1,0 +1,118 @@
+<?xml version="1.0"?>
+<project default="test" name="junit tests build file">
+ 
+  <!-- =================================================================== -->
+  <!-- Tests                                                          -->
+  <!-- =================================================================== -->
+  <target name="test" description="Perform jUnit tests">
+    <mkdir dir="${xlayout.build.test.dir}"/>
+    <!-- Compile tests -->
+    <javac srcdir="${xlayout.source.test.dir}"
+            destdir="${xlayout.build.test.dir}"
+            debug=      "${build.compiler.debug}"
+            optimize=   "${build.compiler.optimize}"
+            deprecation="${build.compiler.deprecation}"
+            target=     "${build.compiler.vm}"
+            nowarn=     "false">
+     <classpath>
+       <path>
+       <fileset dir="." casesensitive="yes"> 
+        <patternset>
+         <include name="${cents.dir}/*.${cent.dir.suffix}/${cent.lib.dir.name}/*.jar"/>
+         <include name="${cents.dir}/*.${cent.dir.suffix}/${cent.lib.dir.name}/*.zip"/>
+        </patternset>
+       </fileset>         
+          <fileset dir="${xlayout.library.dir}" casesensitive="yes"> 
+           <patternset>
+             <include name="*/*.jar"/>
+             <include name="*/*.zip"/>
+           </patternset>
+         </fileset>  
+          <fileset dir="${xlayout.source.scratchpad.library.dir}" casesensitive="yes"> 
+           <patternset>
+             <include name="*.jar"/>
+             <include name="*.zip"/>
+           </patternset>
+         </fileset>           
+          <fileset dir="${xlayout.source.examples.library.dir}" casesensitive="yes"> 
+           <patternset>
+             <include name="*.jar"/>
+             <include name="*.zip"/>
+           </patternset>
+         </fileset>           
+       </path> 
+      <pathelement path="${xlayout.build.classes.dir}" />
+     </classpath>
+    </javac>
+    
+    <junit2 printsummary="yes" haltonfailure="yes" fork="yes">
+
+      <formatter type="xml" />
+
+    <!--nicolaken: We gotta zap these!!! -->
+      <sysproperty key="UTIL.testdata.path"
+                   value="${xlayout.source.test.dir}/org/apache/poi/util/data"/>
+      <sysproperty key="HSSF.testdata.path"
+                   value="${xlayout.source.test.dir}/org/apache/poi/hssf/data"/>
+                   
+     <classpath>
+       <path>
+       <fileset dir="." casesensitive="yes"> 
+        <patternset>
+         <include name="${cents.dir}/*.${cent.dir.suffix}/${cent.lib.dir.name}/*.jar"/>
+         <include name="${cents.dir}/*.${cent.dir.suffix}/${cent.lib.dir.name}/*.zip"/>
+        </patternset>
+       </fileset>         
+          <fileset dir="${xlayout.library.dir}" casesensitive="yes"> 
+           <patternset>
+             <include name="*/*.jar"/>
+             <include name="*/*.zip"/>
+           </patternset>
+         </fileset>  
+          <fileset dir="${xlayout.source.scratchpad.library.dir}" casesensitive="yes"> 
+           <patternset>
+             <include name="*.jar"/>
+             <include name="*.zip"/>
+           </patternset>
+         </fileset>           
+          <fileset dir="${xlayout.source.examples.library.dir}" casesensitive="yes"> 
+           <patternset>
+             <include name="*.jar"/>
+             <include name="*.zip"/>
+           </patternset>
+         </fileset>           
+       </path> 
+      <pathelement path="${xlayout.build.classes.dir}" />      
+      <pathelement location="${xlayout.build.test.dir}" />
+      <pathelement location="${xlayout.build.classes.dir}" />
+    </classpath>
+
+     <batchtest todir="${xlayout.build.test.dir}">
+        <fileset dir="${xlayout.build.test.dir}">
+          <include name="**/test/*TestCase.class"/>
+          <include name="**/*Test.class" />
+          <include name="**/Test*.class" />
+          <exclude name="**/AllTest.class" />
+          <exclude name="**/*$$*Test.class" />
+        </fileset>
+      </batchtest>
+    </junit2>
+ 
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Test reports                                                       -->
+  <!-- =================================================================== -->
+  <target name="report" description="Perform jUnit test reports">
+   <mkdir dir="${xlayout.build.documentation.dir}"/>
+   <mkdir dir="${xlayout.build.documentation.test.dir}"/>
+
+   <junitreport todir="${xlayout.build.documentation.test.dir}">
+    <fileset dir="${xlayout.build.test.dir}">
+      <include name="TEST-*.xml"/>
+     </fileset>
+    <report format="frames" todir="${xlayout.build.documentation.test.dir}"/>
+   </junitreport>
+  </target>
+
+</project>  
