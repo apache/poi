@@ -772,59 +772,66 @@ public class HSSFSheet
      * @param newPrintGridlines boolean to turn on or off the printing of
      * gridlines
      */
-    public void setPrintGridlines(boolean newPrintGridlines) {
-        getSheet().getPrintGridlines().setPrintGridlines(newPrintGridlines);
+    public void setPrintGridlines( boolean newPrintGridlines )
+    {
+        getSheet().getPrintGridlines().setPrintGridlines( newPrintGridlines );
     }
 
     /**
      * Gets the print setup object.
      * @return The user model for the print setup object.
      */
-    public HSSFPrintSetup getPrintSetup() {
-	return new HSSFPrintSetup(getSheet().getPrintSetup());
+    public HSSFPrintSetup getPrintSetup()
+    {
+        return new HSSFPrintSetup( getSheet().getPrintSetup() );
     }
 
     /**
      * Gets the user model for the document header.
      * @return The Document header.
      */
-    public HSSFHeader getHeader() {
-	return new HSSFHeader(getSheet().getHeader());
+    public HSSFHeader getHeader()
+    {
+        return new HSSFHeader( getSheet().getHeader() );
     }
 
     /**
      * Gets the user model for the document footer.
      * @return The Document footer.
      */
-    public HSSFFooter getFooter() {
-        return new HSSFFooter(getSheet().getFooter());
-     }
+    public HSSFFooter getFooter()
+    {
+        return new HSSFFooter( getSheet().getFooter() );
+    }
 
-     /**
-      * Sets whether sheet is selected.
-      * @param sel Whether to select the sheet or deselect the sheet.
-      */
-     public void setSelected(boolean sel) {
-       getSheet().setSelected(sel);
-     }
+    /**
+     * Sets whether sheet is selected.
+     * @param sel Whether to select the sheet or deselect the sheet.
+     */
+    public void setSelected( boolean sel )
+    {
+        getSheet().setSelected( sel );
+    }
 
-     /**
-      * Gets the size of the margin in inches.
-      * @param margin which margin to get
-      * @return the size of the margin
-      */
-     public double getMargin(short margin) {
-       return getSheet().getMargin(margin);
-     }
+    /**
+     * Gets the size of the margin in inches.
+     * @param margin which margin to get
+     * @return the size of the margin
+     */
+    public double getMargin( short margin )
+    {
+        return getSheet().getMargin( margin );
+    }
 
-     /**
-      * Sets the size of the margin in inches.
-      * @param margin which margin to get
-      * @param size the size of the margin
-      */
-     public void setMargin(short margin, double size) {
-       getSheet().setMargin(margin, size);
-      }
+    /**
+     * Sets the size of the margin in inches.
+     * @param margin which margin to get
+     * @param size the size of the margin
+     */
+    public void setMargin( short margin, double size )
+    {
+        getSheet().setMargin( margin, size );
+    }
 
     /**
      * Shifts rows between startRow and endRow n number of rows.
@@ -835,47 +842,55 @@ public class HSSFSheet
      * @param endRow the row to end shifting
      * @param n the number of rows to shift
      */
-    public void shiftRows(int startRow, int endRow, int n) {
-	int s, e, inc;
-	if (n < 0) {
-	    s = startRow;
-	    e = endRow;
-	    inc = 1;
-	} else {
-	    s = endRow;
-	    e = startRow;
-	    inc = -1;
-	}
-	for (int rowNum = s; rowNum >= startRow && rowNum <= endRow && rowNum >= 0 && rowNum < 65536; rowNum+=inc) {
-	    HSSFRow row = getRow(rowNum);
-	    HSSFRow row2Replace = getRow(rowNum + n);
-	    if (row2Replace == null) 
-		row2Replace = createRow(rowNum + n);
+    public void shiftRows( int startRow, int endRow, int n )
+    {
+        int s, e, inc;
+        if ( n < 0 )
+        {
+            s = startRow;
+            e = endRow;
+            inc = 1;
+        }
+        else
+        {
+            s = endRow;
+            e = startRow;
+            inc = -1;
+        }
+        for ( int rowNum = s; rowNum >= startRow && rowNum <= endRow && rowNum >= 0 && rowNum < 65536; rowNum += inc )
+        {
+            HSSFRow row = getRow( rowNum );
+            HSSFRow row2Replace = getRow( rowNum + n );
+            if ( row2Replace == null )
+                row2Replace = createRow( rowNum + n );
 
-	    HSSFCell cell;
-	    for (short col = row2Replace.getFirstCellNum(); col <= row2Replace.getLastCellNum(); col++) {
-		cell = row2Replace.getCell(col);
-		if (cell != null)
-		    row2Replace.removeCell(cell);
-	    }
-	    for (short col = row.getFirstCellNum(); col <= row.getLastCellNum(); col++) {
-		cell = row.getCell(col);
-		if (cell != null) {
-		    row.removeCell(cell);
-		    CellValueRecordInterface cellRecord = cell.getCellValueRecord();
-		    cellRecord.setRow(rowNum + n);
-		    row2Replace.createCellFromRecord(cellRecord);
-		    sheet.addValueRecord(rowNum + n, cellRecord);
-		}
-	    }
-	}
-	if (endRow == lastrow || endRow + n > lastrow) lastrow = Math.min(endRow + n, 65535);
-	if (startRow == firstrow || startRow + n < firstrow) firstrow = Math.max(startRow + n, 0);
+            HSSFCell cell;
+            for ( short col = row2Replace.getFirstCellNum(); col <= row2Replace.getLastCellNum(); col++ )
+            {
+                cell = row2Replace.getCell( col );
+                if ( cell != null )
+                    row2Replace.removeCell( cell );
+            }
+            for ( short col = row.getFirstCellNum(); col <= row.getLastCellNum(); col++ )
+            {
+                cell = row.getCell( col );
+                if ( cell != null )
+                {
+                    row.removeCell( cell );
+                    CellValueRecordInterface cellRecord = cell.getCellValueRecord();
+                    cellRecord.setRow( rowNum + n );
+                    row2Replace.createCellFromRecord( cellRecord );
+                    sheet.addValueRecord( rowNum + n, cellRecord );
+                }
+            }
+        }
+        if ( endRow == lastrow || endRow + n > lastrow ) lastrow = Math.min( endRow + n, 65535 );
+        if ( startRow == firstrow || startRow + n < firstrow ) firstrow = Math.max( startRow + n, 0 );
     }
 
     protected void insertChartRecords( List records )
     {
-        int window2Loc = sheet.findFirstRecordLocBySid(WindowTwoRecord.sid);
-        sheet.getRecords().addAll(window2Loc, records );
+        int window2Loc = sheet.findFirstRecordLocBySid( WindowTwoRecord.sid );
+        sheet.getRecords().addAll( window2Loc, records );
     }
 }
