@@ -108,6 +108,7 @@ public class Sheet implements Model
     protected HeaderRecord              header           = null;
     protected FooterRecord              footer           = null;
     protected PrintGridlinesRecord      printGridlines   = null;
+    protected WindowTwoRecord           windowTwo        = null;
     protected MergeCellsRecord          merged           = null;
     protected Margin                    margins[]        = null;
     protected ArrayList                 mergedRecords    = new ArrayList();
@@ -280,6 +281,10 @@ public class Sheet implements Model
             {
 		retval.getMargins()[BottomMargin] = (BottomMarginRecord) rec;
 	    }
+	    else if ( rec.getSid() == WindowTwoRecord.sid )
+	    {
+		retval.windowTwo = (WindowTwoRecord) rec;
+	    }
 	    
             if (rec != null)
             {
@@ -406,7 +411,7 @@ public class Sheet implements Model
         retval.dims    = ( DimensionsRecord ) retval.createDimensions();
         retval.dimsloc = 19;
         records.add(retval.dims);
-        records.add(retval.createWindowTwo());
+        records.add(retval.windowTwo = retval.createWindowTwo());
         retval.setLoc(records.size() - 1);
         retval.selection = 
                 (SelectionRecord) retval.createSelection();
@@ -2066,7 +2071,7 @@ public class Sheet implements Model
      * @return record containing a WindowTwoRecord
      */
 
-    protected Record createWindowTwo()
+    protected WindowTwoRecord createWindowTwo()
     {
         WindowTwoRecord retval = new WindowTwoRecord();
 
@@ -2399,7 +2404,6 @@ public class Sheet implements Model
      * @param sel True to select the sheet, false otherwise.
      */
     public void setSelected(boolean sel) {
-        WindowTwoRecord windowTwo = (WindowTwoRecord) findFirstRecordBySid(WindowTwoRecord.sid);
         windowTwo.setSelected(sel);
     }
 
@@ -2498,9 +2502,8 @@ public class Sheet implements Model
         }
         records.add(loc+1, pane);
 
-        WindowTwoRecord windowRecord = (WindowTwoRecord) records.get(loc);
-        windowRecord.setFreezePanes(true);
-        windowRecord.setFreezePanesNoSplit(true);
+        windowTwo.setFreezePanes(true);
+        windowTwo.setFreezePanesNoSplit(true);
 
         SelectionRecord sel = (SelectionRecord) findFirstRecordBySid(SelectionRecord.sid);
 //        SelectionRecord sel2 = (SelectionRecord) sel.clone();
@@ -2548,9 +2551,8 @@ public class Sheet implements Model
         r.setActivePane((short) activePane);
         records.add(loc+1, r);
 
-        WindowTwoRecord windowRecord = (WindowTwoRecord) records.get(loc);
-        windowRecord.setFreezePanes(false);
-        windowRecord.setFreezePanesNoSplit(false);
+        windowTwo.setFreezePanes(false);
+        windowTwo.setFreezePanesNoSplit(false);
 
         SelectionRecord sel = (SelectionRecord) findFirstRecordBySid(SelectionRecord.sid);
 //        SelectionRecord sel2 = (SelectionRecord) sel.clone();
@@ -2585,6 +2587,54 @@ public class Sheet implements Model
     }
 
     /**
+     * Sets whether the gridlines are shown in a viewer.
+     * @param show whether to show gridlines or not
+     */
+    public void setDisplayGridlines(boolean show) {
+        windowTwo.setDisplayGridlines(show);
+    }
+
+    /**
+     * Returns if gridlines are displayed.
+     * @return whether gridlines are displayed
+     */
+    public boolean isDisplayGridlines() {
+	return windowTwo.getDisplayGridlines();
+    }
+
+    /**
+     * Sets whether the formulas are shown in a viewer.
+     * @param show whether to show formulas or not
+     */
+    public void setDisplayFormulas(boolean show) {
+        windowTwo.setDisplayFormulas(show);
+    }
+
+    /**
+     * Returns if formulas are displayed.
+     * @return whether formulas are displayed
+     */
+    public boolean isDisplayFormulas() {
+	return windowTwo.getDisplayFormulas();
+    }
+
+    /**
+     * Sets whether the RowColHeadings are shown in a viewer.
+     * @param show whether to show RowColHeadings or not
+     */
+    public void setDisplayRowColHeadings(boolean show) {
+        windowTwo.setDisplayRowColHeadings(show);
+    }
+
+    /**
+     * Returns if RowColHeadings are displayed.
+     * @return whether RowColHeadings are displayed
+     */
+    public boolean isDisplayRowColHeadings() {
+	return windowTwo.getDisplayRowColHeadings();
+    }
+
+    /**
      * Returns the array of margins.  If not created, will create.
      *
      * @return the array of marings.
@@ -2594,5 +2644,4 @@ public class Sheet implements Model
             margins = new Margin[4];
 	return margins;
     }
-
 }
