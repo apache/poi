@@ -143,19 +143,13 @@ public class HSSFDateUtil
     }
     
     /**
-     *  Check if a cell contains a date
-     *  Since dates are stored internally in Excel as double values 
-     *  we infer it is a date if it is formatted as such. 
+     * given a format ID this will check whether the format represents
+     * an internal date format or not. 
      */
-    public static boolean isCellDateFormatted(HSSFCell cell) {
-        if (cell == null) return false;
-        boolean bDate = false;
-        
-        double d = cell.getNumericCellValue();
-        if ( HSSFDateUtil.isValidExcelDate(d) ) {
-            HSSFCellStyle style = cell.getCellStyle();
-            int i = style.getDataFormat();
-            switch(i) {
+    public static boolean isInternalDateFormat(int format) {
+      boolean retval =false;
+
+            switch(format) {
                 // Internal Date Formats as described on page 427 in
                 // Microsoft Excel Dev's Kit...
                 case 0x0e:
@@ -170,13 +164,31 @@ public class HSSFDateUtil
                 case 0x2d:
                 case 0x2e:
                 case 0x2f:
-                    bDate = true;
+                    retval = true;
                     break;
                     
                 default:
-                    bDate = false;
+                    retval = false;
                     break;
             }
+       return retval;
+    }
+
+    /**
+     *  Check if a cell contains a date
+     *  Since dates are stored internally in Excel as double values 
+     *  we infer it is a date if it is formatted as such. 
+     *  @see #isInternalDateFormat(int)
+     */
+    public static boolean isCellDateFormatted(HSSFCell cell) {
+        if (cell == null) return false;
+        boolean bDate = false;
+        
+        double d = cell.getNumericCellValue();
+        if ( HSSFDateUtil.isValidExcelDate(d) ) {
+            HSSFCellStyle style = cell.getCellStyle();
+            int i = style.getDataFormat();
+            bDate = isInternalDateFormat(i);
         }
         return bDate;
     }
