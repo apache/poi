@@ -510,7 +510,7 @@ public class HSSFWorkbook
         if (removingRange )
         {
             if (nameRecord != null)
-                workbook.removeName(findExistingRowColHeaderNameRecordIdx(sheetIndex));
+                workbook.removeName(findExistingRowColHeaderNameRecordIdx(sheetIndex+1));
             return;
         }
         if ( nameRecord == null )
