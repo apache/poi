@@ -54,12 +54,14 @@
  */
 package org.apache.poi.hssf.eventmodel;
 
-import java.io.InputStream;
 import java.io.IOException;
-
-import java.util.*;
-
+import java.io.InputStream;
 import java.lang.reflect.Constructor;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.poi.hssf.record.BOFRecord;
 import org.apache.poi.hssf.record.BackupRecord;
@@ -126,6 +128,7 @@ import org.apache.poi.hssf.record.RowRecord;
 import org.apache.poi.hssf.record.SSTRecord;
 import org.apache.poi.hssf.record.SaveRecalcRecord;
 import org.apache.poi.hssf.record.SelectionRecord;
+import org.apache.poi.hssf.record.SharedFormulaRecord;
 import org.apache.poi.hssf.record.StringRecord;
 import org.apache.poi.hssf.record.StyleRecord;
 import org.apache.poi.hssf.record.TabIdRecord;
@@ -189,7 +192,7 @@ public class EventRecordFactory
                 BoolErrRecord.class, ExternSheetRecord.class, NameRecord.class,
                 LeftMarginRecord.class, RightMarginRecord.class,
                 TopMarginRecord.class, BottomMarginRecord.class,
-                PaletteRecord.class, StringRecord.class
+                PaletteRecord.class, StringRecord.class, SharedFormulaRecord.class
             };
        
     }

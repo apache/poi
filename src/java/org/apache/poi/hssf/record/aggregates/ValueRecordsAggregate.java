@@ -157,6 +157,11 @@ public class ValueRecordsAggregate
             {
                 lastFormulaAggregate.setStringRecord((StringRecord)rec);
             }
+            else if (rec instanceof SharedFormulaRecord)
+            {
+            	//these follow the first formula in a group
+            	lastFormulaAggregate.setSharedFormulaRecord((SharedFormulaRecord)rec);
+            }
             else if (rec.isValue())
             {
                 insertCell(( CellValueRecordInterface ) rec);

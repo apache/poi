@@ -52,65 +52,45 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
+package org.apache.poi.hssf.record.aggregates;
 
-/*
- * ExpPtg.java
- *
- * Created on November 25, 2001, 4:00 PM
- */
-package org.apache.poi.hssf.record.formula;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
-import org.apache.poi.hssf.util.SheetReferences;
+import org.apache.poi.hssf.record.FormulaRecord;
+import org.apache.poi.hssf.record.Record;
+import org.apache.poi.hssf.record.SharedFormulaRecord;
 
-/**
- *
- * @author  andy
- * @author Jason Height (jheight at chariot dot net dot au)
- * @author dmui (save existing implementation)
- */
-
-public class ExpPtg
-    extends Ptg
-{
-    private final static int  SIZE = 5;
-    public final static short sid  = 0x1;
-	 private	byte[] existing = null;
-
-    /** Creates new ExpPtg */
-
-    public ExpPtg()
-    {
-    }
-
-    /** Creates new ExpPtg */
-
-    public ExpPtg(byte [] array, int offset)
-    {
-    	existing = new byte[this.getSize()];
-    	System.arraycopy(array, offset, existing, 0, this.getSize());
-    }
-
-    public void writeBytes(byte [] array, int offset)
-    {
-    	if (existing != null) {
-			System.arraycopy(existing, 0, array, offset, existing.length);
-    	}
-    }
-
-    public int getSize()
-    {
-        return SIZE;
-    }
-
-    public String toFormulaString(SheetReferences refs)
-    {
-        return "NO IDEA SHARED FORMULA EXP PTG";
+public class TestValueRecordsAggregate extends junit.framework.TestCase {
+    public TestValueRecordsAggregate(String name) {
+        super (name);
     }
     
-    public byte getDefaultOperandClass() {return Ptg.CLASS_VALUE;}
-    
-    public Object clone() {
-      throw new RuntimeException("NO IDEA SHARED FORMULA EXP PTG");
+    /**
+     * Make sure the shared formula makes it to the FormulaRecordAggregate when being parsed
+     * as part of the value records
+     *
+     */
+    public void testSharedFormula() {
+			List records = new ArrayList();
+			records.add(new FormulaRecord());
+			records.add(new SharedFormulaRecord());
+			
+			ValueRecordsAggregate valueRecord = new ValueRecordsAggregate();
+			valueRecord.construct(0, records); 
+			Iterator iterator = valueRecord.getIterator();			
+			Record record = (Record)iterator.next();
+			assertNotNull("Row contains a value", record);
+			assertTrue("First record is a FormulaRecordsAggregate", (record instanceof FormulaRecordAggregate));
+			FormulaRecordAggregate aggregate = (FormulaRecordAggregate)record;
+			assertNotNull("SharedFormulaRecord is null", aggregate.getSharedFormulaRecord());
+				
     }
-
+    
+     public static void main(String [] args) {
+        System.out
+        .println("Testing org.apache.poi.hssf.record.aggregates.TestValueRecordAggregate");
+        junit.textui.TestRunner.run(TestValueRecordsAggregate.class);
+    }
 }

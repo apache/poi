@@ -121,6 +121,30 @@ public class TestFormulaRecord
 		
     }
     
+    /**
+     * Tests to see if the shared formula cells properly reserialize the expPtg
+     *
+     */
+    public void testExpFormula() {
+    	byte[] formulaByte = new byte[27];
+    	
+		for (int i = 0; i < formulaByte.length; i++) formulaByte[i] = (byte)0;
+    	
+    	formulaByte[4] =(byte)0x0F;
+		formulaByte[14]=(byte)0x08;
+		formulaByte[18]=(byte)0xE0;
+		formulaByte[19]=(byte)0xFD;
+		formulaByte[20]=(byte)0x05;
+		formulaByte[22]=(byte)0x01;
+		FormulaRecord record = new FormulaRecord(FormulaRecord.sid, (short)27, formulaByte);
+		assertEquals("Row", 0, record.getRow());
+		assertEquals("Column", 0, record.getColumn());
+		byte[] output = record.serialize();
+		assertEquals("Output size", 31, output.length); //includes sid+recordlength
+    	assertEquals("Offset 22", 1, output[26]);
+    }
+    
+    
     public static void main(String [] ignored_args)
     {
         String filename = System.getProperty("HSSF.testdata.path");
