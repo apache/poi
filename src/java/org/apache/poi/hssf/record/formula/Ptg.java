@@ -167,6 +167,10 @@ public abstract class Ptg
             case PowerPtg.sid :
                 retval = new PowerPtg(data, offset);
                 break;
+ 
+            case EqualPtg.sid:
+                retval = new EqualPtg(data, offset);
+                break;
                 
             case ConcatPtg.sid :
                 retval = new ConcatPtg(data, offset);
