@@ -249,7 +249,6 @@ class SSTDeserializer
      */
     static public void addToStringTable( BinaryTree strings, Integer integer, UnicodeString string )
     {
-
         if ( string.isRichText() )
             string.setOptionFlags( (byte) ( string.getOptionFlags() & ( ~8 ) ) );
         if ( string.isExtendedText() )

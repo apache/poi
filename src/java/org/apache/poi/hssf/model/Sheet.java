@@ -288,6 +288,15 @@ public class Sheet implements Model
 	    {
 		retval.windowTwo = (WindowTwoRecord) rec;
 	    }
+            else if ( rec.getSid() == DBCellRecord.sid )
+            {
+                rec = null;
+            }
+            else if ( rec.getSid() == IndexRecord.sid )
+            {
+                rec = null;
+            }
+
 	    
             if (rec != null)
             {
@@ -704,49 +713,6 @@ public class Sheet implements Model
      * Serializes all records in the sheet into one big byte array.  Use this to write
      * the sheet out.
      *
-     * @return byte[] array containing the binary representation of the records in this sheet
-     *
-     */
-
-    public byte [] serialize()
-    {
-        log.log(log.DEBUG, "Sheet.serialize");
-
-        // addDBCellRecords();
-        byte[] retval    = null;
-
-        // ArrayList bytes     = new ArrayList(4096);
-        int    arraysize = getSize();
-        int    pos       = 0;
-
-        // for (int k = 0; k < records.size(); k++)
-        // {
-        // bytes.add((( Record ) records.get(k)).serialize());
-        //
-        // }
-        // for (int k = 0; k < bytes.size(); k++)
-        // {
-        // arraysize += (( byte [] ) bytes.get(k)).length;
-        // log.debug((new StringBuffer("arraysize=")).append(arraysize)
-        // .toString());
-        // }
-        retval = new byte[ arraysize ];
-        for (int k = 0; k < records.size(); k++)
-        {
-
-            // byte[] rec = (( byte [] ) bytes.get(k));
-            // System.arraycopy(rec, 0, retval, pos, rec.length);
-            pos += (( Record ) records.get(k)).serialize(pos,
-                    retval);   // rec.length;
-        }
-        log.log(log.DEBUG, "Sheet.serialize returning " + retval);
-        return retval;
-    }
-
-    /**
-     * Serializes all records in the sheet into one big byte array.  Use this to write
-     * the sheet out.
-     *
      * @param offset to begin write at
      * @param data   array containing the binary representation of the records in this sheet
      *
@@ -756,40 +722,69 @@ public class Sheet implements Model
     {
         log.log(log.DEBUG, "Sheet.serialize using offsets");
 
-        // addDBCellRecords();
-        // ArrayList bytes     = new ArrayList(4096);
-        // int arraysize = getSize();   // 0;
-        int pos       = 0;
-
-        // for (int k = 0; k < records.size(); k++)
-        // {
-        // bytes.add((( Record ) records.get(k)).serialize());
-        //
-        // }
-        // for (int k = 0; k < bytes.size(); k++)
-        // {
-        // arraysize += (( byte [] ) bytes.get(k)).length;
-        // log.debug((new StringBuffer("arraysize=")).append(arraysize)
-        // .toString());
-        // }
+        int pos = offset;
+        boolean haveSerializedIndex = false;
         for (int k = 0; k < records.size(); k++)
         {
-//             byte[] rec = (( byte [] ) bytes.get(k));
-            // System.arraycopy(rec, 0, data, offset + pos, rec.length);
             Record record = (( Record ) records.get(k));
+            int startPos = pos;
+            //Once the rows have been found in the list of records, start
+            //writing out the blocked row information. This includes the DBCell references
+            if (record instanceof RowRecordsAggregate) {
+              pos += ((RowRecordsAggregate)record).serialize(pos, data, cells);   // rec.length;
+            } else if (record instanceof ValueRecordsAggregate) {
+              //Do nothing here. The records were serialized during the RowRecordAggregate block serialization
+            } else {
+              pos += record.serialize(pos, data );   // rec.length;
+            }
 
-            //uncomment to test record sizes
-//            byte[] data2 = new byte[record.getRecordSize()];
-//            record.serialize(0, data2 );   // rec.length;
-//            if (LittleEndian.getUShort(data2, 2) != record.getRecordSize() - 4
-//                    && record instanceof RowRecordsAggregate == false && record instanceof ValueRecordsAggregate == false)
-//                throw new RuntimeException("Blah!!!");
-
-            pos += record.serialize(pos + offset, data );   // rec.length;
-
+            //If the BOF record was just serialized then add the IndexRecord
+            if (record.getSid() == BOFRecord.sid) {
+              //Can there be more than one BOF for a sheet? If not then we can
+              //remove this guard. So be safe it is left here.
+              if (!haveSerializedIndex) {
+                haveSerializedIndex = true;
+                pos += serializeIndexRecord(k, pos, data);
+              }
+            }
         }
         log.log(log.DEBUG, "Sheet.serialize returning ");
-        return pos;
+        return pos-offset;
+    }
+
+    private int serializeIndexRecord(final int BOFRecordIndex, final int offset, byte[] data) {
+      IndexRecord index = new IndexRecord();
+      index.setFirstRow(rows.getFirstRowNum());
+      index.setLastRowAdd1(rows.getLastRowNum()+1);
+      //Calculate the size of the records from the end of the BOF
+      //and up to the RowRecordsAggregate...
+      int sheetRecSize = 0;
+      for (int j = BOFRecordIndex+1; j < records.size(); j++)
+      {
+        Record tmpRec = (( Record ) records.get(j));
+        if (tmpRec instanceof RowRecordsAggregate)
+          break;
+        sheetRecSize+= tmpRec.getRecordSize();
+      }
+      //Add the references to the DBCells in the IndexRecord (one for each block)
+      int blockCount = rows.getRowBlockCount();
+      //Calculate the size of this IndexRecord
+      int indexRecSize = index.getRecordSizeForBlockCount(blockCount);
+
+      int rowBlockOffset = 0;
+      int cellBlockOffset = 0;
+      int dbCellOffset = 0;
+      for (int block=0;block<blockCount;block++) {
+        rowBlockOffset += rows.getRowBlockSize(block);
+        cellBlockOffset += cells.getRowCellBlockSize(rows.getStartRowNumberForBlock(block),
+                                                     rows.getEndRowNumberForBlock(block));
+        //Note: The offsets are relative to the Workbook BOF. Assume that this is
+        //0 for now.....
+        index.addDbcell(offset + indexRecSize + sheetRecSize + dbCellOffset + rowBlockOffset + cellBlockOffset);
+        //Add space required to write the dbcell record(s) (whose references were just added).
+        dbCellOffset += (8 + (rows.getRowCountForBlock(block) * 2));
+      }
+      return index.serialize(offset, data);
     }
 
     /**
@@ -1369,125 +1364,12 @@ public class Sheet implements Model
         return this.cells.getRowCellIterator(row);
     }
 
-    /**
-     * Not currently used method to calculate and add dbcell records
-     *
-     */
-
-    public void addDBCellRecords()
-    {
-        int         offset        = 0;
-        int         recnum        = 0;
-        int         rownum        = 0;
-        //int         lastrow       = 0;
-        //long        lastrowoffset = 0;
-        IndexRecord index         = null;
-
-        // ArrayList rowOffsets = new ArrayList();
-        IntList     rowOffsets    = new IntList();
-
-        for (recnum = 0; recnum < records.size(); recnum++)
-        {
-            Record rec = ( Record ) records.get(recnum);
-
-            if (rec.getSid() == IndexRecord.sid)
-            {
-                index = ( IndexRecord ) rec;
-            }
-            if (rec.getSid() != RowRecord.sid)
-            {
-                offset += rec.serialize().length;
-            }
-            else
-            {
-                break;
-            }
-        }
-
-        // First Row Record
-        for (; recnum < records.size(); recnum++)
-        {
-            Record rec = ( Record ) records.get(recnum);
-
-            if (rec.getSid() == RowRecord.sid)
-            {
-                rownum++;
-                rowOffsets.add(offset);
-                if ((rownum % 32) == 0)
-                {
-
-                    // if this is the last rec in a  dbcell block
-                    // find the next row or last value record
-                    for (int rn = recnum; rn < records.size(); rn++)
-                    {
-                        rec = ( Record ) records.get(rn);
-                        if ((!rec.isInValueSection())
-                                || (rec.getSid() == RowRecord.sid))
-                        {
-
-                            // here is the next row or last value record
-                            records.add(rn,
-                                        createDBCell(offset, rowOffsets,
-                                                     index));
-                            recnum = rn;
-                            break;
-                        }
-                    }
-                }
-                else
-                {
-                }
-            }
-            if (!rec.isInValueSection())
-            {
-                records.add(recnum, createDBCell(offset, rowOffsets, index));
-                break;
-            }
-            offset += rec.serialize().length;
-        }
-    }
-
     public int getFirstRow() {
         return rows.getFirstRowNum();
     }
 
     public int getLastRow() {
         return rows.getLastRowNum();
-    }
-
-
-    /** not currently used */
-
-    private DBCellRecord createDBCell(int offset, IntList rowoffsets,
-                                      IndexRecord index)
-    {
-        DBCellRecord rec = new DBCellRecord();
-
-        rec.setRowOffset(offset - rowoffsets.get(0));
-
-        // test hack
-        rec.addCellOffset(( short ) 0x0);
-
-        // end test hack
-        addDbCellToIndex(offset, index);
-        return rec;
-    }
-
-    /** not currently used */
-
-    private void addDbCellToIndex(int offset, IndexRecord index)
-    {
-        int numdbcells = index.getNumDbcells() + 1;
-
-        index.addDbcell(offset + preoffset);
-
-        // stupid but whenever we add an offset that causes everything to be shifted down 4
-        for (int k = 0; k < numdbcells; k++)
-        {
-            int dbval = index.getDbcellAt(k);
-
-            index.setDbcell(k, dbval + 4);
-        }
     }
 
     /**
@@ -2237,6 +2119,21 @@ public class Sheet implements Model
         for (int k = 0; k < records.size(); k++)
         {
             retval += (( Record ) records.get(k)).getRecordSize();
+        }
+        //Add space for the IndexRecord
+        final int blocks = rows.getRowBlockCount();
+        retval += IndexRecord.getRecordSizeForBlockCount(blocks);
+
+        //Add space for the DBCell records
+        //Once DBCell per block.
+        //8 bytes per DBCell (non variable section)
+        //2 bytes per row reference
+        int startRetVal = retval;
+        retval += (8 * blocks);
+        for (Iterator itr = rows.getIterator(); itr.hasNext();) {
+          RowRecord row = (RowRecord)itr.next();
+          if (cells.rowHasCells(row.getRowNumber()))
+            retval += 2;
         }
 
         return retval;

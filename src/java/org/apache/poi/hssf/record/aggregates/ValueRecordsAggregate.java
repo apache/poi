@@ -115,22 +115,7 @@ public class ValueRecordsAggregate
 
     public int serialize(int offset, byte [] data)
     {
-        //throw new RuntimeException("Not Implemented serialize");
-        int      pos = offset;
-        Iterator irecs = getIterator();
-
-        while (irecs.hasNext()) {
-                pos += (( Record ) irecs.next()).serialize(pos,data);
-        }
-
-/*        Iterator itr = records.values().iterator();
-        int      pos = offset;
-
-        while (itr.hasNext())
-        {
-            pos += (( Record ) itr.next()).serialize(pos, data);
-        }*/
-        return pos - offset;
+        throw new RuntimeException("This method shouldnt be called. ValueRecordsAggregate.serializeCellRow() should be called from RowRecordsAggregate.");
     }
 
     public ValueRecordsAggregate() {
@@ -146,6 +131,42 @@ public class ValueRecordsAggregate
     public Iterator getIterator() {
       return new VRAIterator(this);
     }
+
+    /** Tallies a count of the size of the cell records
+     *  that are attached to the rows in the range specified.
+     */
+    public int getRowCellBlockSize(int startRow, int endRow) {
+      Iterator cellRec = new VRAIterator(this, startRow, endRow);;
+      int size = 0;
+      while (cellRec.hasNext()) {
+        CellValueRecordInterface cell = (CellValueRecordInterface)cellRec.next();
+        int row = cell.getRow();
+        if ((row >=startRow) && (row <= endRow))
+          size += ((Record)cell).getRecordSize();
+      }
+      return size;
+    }
+
+    /** Returns true if the row has cells attached to it */
+    public boolean rowHasCells(int row) {
+      IntList ctRow = (IntList) celltype.get(row);
+      return ((ctRow != null) && (ctRow.size() > 0));
+    }
+
+    /** Serializes the cells that are allocated to a certain row range*/
+    public int serializeCellRow(final int row, int offset, byte [] data)
+    {
+        Iterator itr = new VRAIterator(this, row);
+        int      pos = offset;
+
+        while (itr.hasNext())
+        {
+            CellValueRecordInterface cell = (CellValueRecordInterface)itr.next();
+            pos += (( Record ) cell).serialize(pos, data);
+        }
+        return pos - offset;
+    }
+
 
 
     public int construct(int offset, List records)
@@ -512,29 +533,32 @@ public class ValueRecordsAggregate
 class VRAIterator implements Iterator {
     private boolean hasNext;
     private ValueRecordsAggregate vra;
-    int popindex;
-    int row;
-    int rowlimit;
-    int col;
+    private int popindex;
+    private int row;
+    private int rowlimit;
+    private int col;
     CellValueRecordInterface current = null;
     CellValueRecordInterface next    = null;
 
     public VRAIterator(ValueRecordsAggregate vra) {
-        this.vra = vra;
-        this.rowlimit = -1;
-        popindex = 0;
-        if (vra.getPhysicalNumberOfCells() > 0) {
-            hasNext = true;
-            next = findNextCell(null);
-        }
+      this(vra, 0, -1);
     }
 
     public VRAIterator(ValueRecordsAggregate vra, int row) {
-        this(vra);
-        rowlimit = row;
-        this.row = row;
-        this.popindex = vra.populatedRows.indexOf(row);
+        this(vra, row, row);
     }
+
+    public VRAIterator(ValueRecordsAggregate vra, int startRow, int endRow) {
+        this.vra = vra;
+        this.row = startRow;
+        this.rowlimit = endRow;
+        this.popindex = vra.populatedRows.indexOf(row);
+        if (vra.getPhysicalNumberOfCells() > 0) {
+            next = findNextCell(null);
+            hasNext = (next != null);
+        }
+    }
+
 
     public boolean hasNext() {
         return hasNext;
@@ -575,7 +599,7 @@ class VRAIterator implements Iterator {
             rowNum = vra.populatedRows.get(popindex);
             ctRow = (IntList)vra.celltype.get(rowNum);
             if (ctRow.size() == 0) {
-                if (rowlimit == -1) {
+                if ((rowlimit == -1)||(rowNum<=rowlimit)) {
                     popindex++;
                 } else {
                     this.hasNext = false;
@@ -592,8 +616,11 @@ class VRAIterator implements Iterator {
             colNum = newCol;
             if (colNum == -1) {                          //end of row, forward one row
                 popindex++;
-                if (popindex < vra.populatedRows.size() && rowlimit == -1) {
+                if (popindex < vra.populatedRows.size() && ((rowlimit == -1)||(rowNum<=rowlimit))) {
                     rowNum = vra.populatedRows.get(popindex);
+                    //Return null if the row is out of range
+                    if ((rowlimit != -1) &&( rowNum > rowlimit))
+                      return null;
                 } else {
                     return null;
                 }

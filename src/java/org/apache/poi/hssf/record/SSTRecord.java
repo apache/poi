@@ -586,7 +586,10 @@ public class SSTRecord
      */
     public int calcExtSSTRecordSize()
     {
-        return 4 + 2 + ((field_3_strings.size() / SSTSerializer.DEFAULT_BUCKET_SIZE) + 1) * 8;
+        int infoRecs = (field_3_strings.size() / SSTSerializer.DEFAULT_BUCKET_SIZE);
+        if ((field_3_strings.size() % SSTSerializer.DEFAULT_BUCKET_SIZE) != 0)
+          infoRecs ++;
+        return 4 + 2 + (infoRecs * 8);
     }
 }
 
