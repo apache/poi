@@ -1,4 +1,3 @@
-
 /* ====================================================================
  * The Apache Software License, Version 1.1
  *
@@ -57,8 +56,6 @@ package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.LittleEndian;
 
-import java.util.ArrayList;
-
 /**
  * Title:        Sup Book  <P>
  * Description:  A Extrenal Workbook Deciption (Sup Book)
@@ -66,15 +63,14 @@ import java.util.ArrayList;
  * REFERENCE:  <P>
  * @author Libin Roman (Vista Portal LDT. Developer)
  * @author Andrew C. Oliver (acoliver@apache.org)
- * 
+ *
  */
-
 public class SupBookRecord extends Record
 {
     public final static short sid = 0x1AE;
     private short             field_1_number_of_sheets;
     private short             field_2_flag;
-    
+
 
     public SupBookRecord()
     {
@@ -88,7 +84,6 @@ public class SupBookRecord extends Record
      * @param size  the size of the data area of the record
      * @param data  data of the record (should not contain sid/len)
      */
-
     public SupBookRecord(short id, short size, byte[] data)
     {
         super(id, size, data);
@@ -102,7 +97,6 @@ public class SupBookRecord extends Record
      * @param data  data of the record (should not contain sid/len)
      * @param offset of the record's data
      */
-
     public SupBookRecord(short id, short size, byte[] data, int offset)
     {
         super(id, size, data, offset);
@@ -124,10 +118,10 @@ public class SupBookRecord extends Record
      * @param size size of data
      * @param offset of the record's data (provided a big array of the file)
      */
-    protected void fillFields(byte [] data, short size, int offset) 
+    protected void fillFields(byte [] data, short size, int offset)
     {
         //For now We use it only for one case
-        //When we need to add an named range when no named ranges was 
+        //When we need to add an named range when no named ranges was
         //before it
         field_1_number_of_sheets = LittleEndian.getShort(data,offset+0);
         field_2_flag = LittleEndian.getShort(data,offset+2);
@@ -159,30 +153,29 @@ public class SupBookRecord extends Record
         LittleEndian.putShort(data, 2 + offset, (short) 4);
         LittleEndian.putShort(data, 4 + offset, field_1_number_of_sheets);
         LittleEndian.putShort(data, 6 + offset, field_2_flag);
-        
 
         return getRecordSize();
     }
-    
+
     public void setNumberOfSheets(short number){
         field_1_number_of_sheets = number;
     }
-    
+
     public short getNumberOfSheets(){
         return field_1_number_of_sheets;
-    }    
-    
-    public void setFlag(short flag){        
+    }
+
+    public void setFlag(short flag){
         field_2_flag = flag;
     }
-    
+
     public short getFlag() {
         return field_2_flag;
     }
 
     public int getRecordSize()
     {
-        return 4 + 4; 
+        return 4 + 4;
     }
 
     public short getSid()
@@ -190,3 +183,4 @@ public class SupBookRecord extends Record
         return this.sid;
     }
 }
+
