@@ -186,18 +186,6 @@ public class HSSFDateUtil
                 case 0x2d:
                 case 0x2e:
                 case 0x2f:
-                // Additional internal date formats found by inspection
-                // Using Excel v.X 10.1.0 (Mac)
-                case 0xa4:
-                case 0xa5:
-                case 0xa6:
-                case 0xa7:
-                case 0xa8:
-                case 0xa9:
-                case 0xaa:
-                case 0xab:
-                case 0xac:
-                case 0xad:
                     retval = true;
                     break;
                     

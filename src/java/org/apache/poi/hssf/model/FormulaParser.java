@@ -80,6 +80,7 @@ import org.apache.poi.hssf.record.formula.*;
  *  @author Andrew C. oliver (acoliver at apache dot org)
  *  @author Eric Ladner (eladner at goldinc dot com)
  *  @author Cameron Riley (criley at ekmail.com)
+ *  @author Peter M. Murray (pete at quantrix dot com)
  */
 public class FormulaParser {
     
@@ -228,13 +229,31 @@ public class FormulaParser {
     /** Get an Identifier */
     private String GetName() {
         StringBuffer Token = new StringBuffer();
-        if (!IsAlpha(look)) {
+        if (!IsAlpha(look) && look != '\'') {
             Expected("Name");
         }
-        while (IsAlNum(look)) {
-            Token = Token.append(Character.toUpperCase(look));
-            GetChar();
+        if(look == '\'')
+        {
+        	Match('\'');
+        	boolean done = look == '\'';
+        	while(!done)
+        	{
+        		Token.append(Character.toUpperCase(look));
+        		GetChar();
+        		if(look == '\'')
+        		{
+        			Match('\'');
+        			done = look != '\'';
+        		}
+        	}
         }
+        else
+        {
+	        while (IsAlNum(look)) {
+	            Token.append(Character.toUpperCase(look));
+	            GetChar();
+	        }
+		}
         SkipWhite();
         return Token.toString();
     }
@@ -478,12 +497,18 @@ public class FormulaParser {
 
    /** Parse and Translate a Math Factor  */
     private void Factor() {
-        if (look == '(' ) {
+    	if (look == '-')
+    	{
+    		Match('-');
+    		Factor();
+    		tokens.add(new UnaryMinusPtg());
+    	}
+        else if (look == '(' ) {
             Match('(');
             Expression();
             Match(')');
             tokens.add(new ParenthesisPtg());
-        } else if (IsAlpha(look)){
+        } else if (IsAlpha(look) || look == '\''){
             Ident();
         } else if(look == '"') {
            StringLiteral();
@@ -501,26 +526,42 @@ public class FormulaParser {
         }
     }
     
-    private void StringLiteral() {
-        Match('"');
-		  StringBuffer Token = new StringBuffer();
-	 	  for(;;) {
-		  	     if(look == '"') {
-		        GetChar();
-		        SkipWhite(); //potential white space here since it doesnt matter up to the operator
-		        if(look == '"')
-		            Token.append("\"");
-		        else
-		            break;
-		    } else if(look == 0) {
-		        break;
-		    } else {
-		        Token.append(look);
-		        GetChar();
-		    }
+    private void StringLiteral() 
+	{
+		// Can't use match here 'cuz it consumes whitespace
+		// which we need to preserve inside the string.
+		// - pete
+		// Match('"');
+		if (look != '"')
+			Expected("\"");
+		else
+		{
+			GetChar();
+			StringBuffer Token = new StringBuffer();
+			for (;;)
+			{
+				if (look == '"')
+				{
+					GetChar();
+					SkipWhite(); //potential white space here since it doesnt matter up to the operator
+					if (look == '"')
+						Token.append("\"");
+					else
+						break;
+				}
+				else if (look == 0)
+				{
+					break;
+				}
+				else
+				{
+					Token.append(look);
+					GetChar();
+				}
+			}
+			tokens.add(new StringPtg(Token.toString()));
 		}
-		tokens.add(new StringPtg(Token.toString()));        
-    }
+	}
     
     /** Recognize and Translate a Multiply */
     private void Multiply(){
@@ -590,11 +631,7 @@ public class FormulaParser {
     
     /** Parse and Translate an Expression */
     private void Expression() {
-        if (IsAddop(look)) {
-            EmitLn("CLR D0");  //unaryAdd ptg???
-        } else {
-            Term();
-        }
+        Term();
         while (IsAddop(look)) {
             if (look == '+' )  Add();
             else if (look == '-') Subtract();
@@ -725,7 +762,7 @@ end;
     private void setRootLevelRVA(Node n, int formulaType) {
         //Pg 16, excelfileformat.pdf @ openoffice.org
         Ptg p = (Ptg) n.getValue();
-            if (formulaType == this.FORMULA_TYPE_NAMEDRANGE) {
+            if (formulaType == FormulaParser.FORMULA_TYPE_NAMEDRANGE) {
                 if (p.getDefaultOperandClass() == Ptg.CLASS_REF) {
                     setClass(n,Ptg.CLASS_REF);
                 } else {
