@@ -1396,6 +1396,19 @@
 [EOF]
             </source>
             <p>
+                Just a quick note on some of the unknown records:
+            </p>
+            <ul>
+                <li>EC: MSODRAWING - A Microsoft drawing record. (Need to
+                track down where this is documented).</li>
+                <li>5D: OBJ: Description of a drawing object. (This is going to
+                be a PITA to implement).</li>
+                <li>33: Not documented. :-(</li>
+                <li>105f: Not documented.  :-(</li>
+                <li>104f: POS: Position record (should be able to safely leave this out).</li>
+                <li>1022: CHARTFORMATLINK: Can be left out.</li>
+            </ul>
+            <p>
                 It is currently suspected that many of those records could be
                 left out when generating a bar chart from scratch.  The way
                 we will be proceeding with this is to write code that generates
