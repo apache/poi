@@ -62,7 +62,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.LittleEndianConsts;
 
 /**
  * <p>Adds writing capability to the {@link Section} class.</p>
