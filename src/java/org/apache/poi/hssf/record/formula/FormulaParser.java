@@ -310,10 +310,11 @@ public class FormulaParser {
     /** Parse and Translate a Math Term */
     private void  Term(){
         Factor();
-        while (Look == '*' || Look == '/' ) {
+        while (Look == '*' || Look == '/' || Look == '^') {
             ///TODO do we need to do anything here??
             if (Look == '*') Multiply();
             if (Look == '/') Divide();
+            if (Look == '^') Power();
         }
     }
     
@@ -330,6 +331,12 @@ public class FormulaParser {
         Match('-');
         Term();
         tokens.add(new SubtractPtg());
+    }
+    
+    private void Power() {
+        Match('^');
+        Term();
+        tokens.add(new PowerPtg());
     }
     
     
