@@ -162,6 +162,11 @@ public abstract class Ptg
         byte id     = data[ offset + 0 ];
         Ptg  retval = null;
         
+        final int valueRef = ReferencePtg.sid + 0x20;  //note this only matters for READ
+        final int arrayRef = ReferencePtg.sid + 0x40; // excel doesn't really care which one you 
+                                                      // write.  
+        
+        
         switch (id)
         {
 
@@ -209,6 +214,14 @@ public abstract class Ptg
             case ReferencePtg.sid :
                 retval = new ReferencePtg(data, offset);
                 break;
+                
+            case valueRef :
+                retval = new ReferencePtg(data, offset);
+                break;
+
+            case arrayRef :
+                retval = new ReferencePtg(data, offset);
+                break;                
 
             case ParenthesisPtg.sid :
                 retval = new ParenthesisPtg(data, offset);
