@@ -91,6 +91,11 @@ import org.apache.poi.hssf.record
 public class Sheet
     extends java.lang.Object
 {
+    public static final short LeftMargin = 0;
+    public static final short RightMargin = 1;
+    public static final short TopMargin = 2;
+    public static final short BottomMargin = 3;
+
     protected ArrayList              records        = null;
     int                              preoffset      = 0;      // offset of the sheet in a new file
     int                              loc            = 0;
@@ -2037,4 +2042,78 @@ public class Sheet
 	WindowTwoRecord windowTwo = (WindowTwoRecord) findFirstRecordBySid(WindowTwoRecord.sid);
 	windowTwo.setSelected(sel);
     }
+
+     /**
+      * Gets the size of the margin in inches.
+      * @param margin which margin to get
+      * @return the size of the margin
+      */
+     public double getMargin(short margin) {
+       Margin m;
+       switch (margin) {
+       case LeftMargin :
+           m = (Margin)findFirstRecordBySid(LeftMarginRecord.sid);
+           if (m == null)
+               return .75;
+           break;
+       case RightMargin :
+           m = (Margin)findFirstRecordBySid(RightMarginRecord.sid);
+           if (m == null)
+               return .75;
+           break;
+       case TopMargin :
+           m = (Margin)findFirstRecordBySid(TopMarginRecord.sid);
+           if (m == null)
+               return 1.0;
+           break;
+       case BottomMargin :
+           m = (Margin)findFirstRecordBySid(BottomMarginRecord.sid);
+           if (m == null)
+               return 1.0;
+           break;
+       default : throw new RuntimeException("Unknown margin constant:  " + margin);
+       }
+       return m.getMargin();
+     }
+
+     /**
+      * Sets the size of the margin in inches.
+      * @param margin which margin to get
+      * @param size the size of the margin
+      */
+     public void setMargin(short margin, double size) {
+       Margin m;
+       switch (margin) {
+       case LeftMargin :
+           m = (Margin)findFirstRecordBySid(LeftMarginRecord.sid);
+           if (m == null) {
+               m = new LeftMarginRecord();
+               records.add(getDimsLoc() + 1, (Record)m);
+           }
+           break;
+       case RightMargin :
+           m = (Margin)findFirstRecordBySid(RightMarginRecord.sid);
+           if (m == null) {
+               m = new RightMarginRecord();
+               records.add(getDimsLoc() + 1, (Record)m);
+           }
+           break;
+       case TopMargin :
+           m = (Margin)findFirstRecordBySid(TopMarginRecord.sid);
+           if (m == null) {
+               m = new TopMarginRecord();
+               records.add(getDimsLoc() + 1, (Record)m);
+           }
+           break;
+       case BottomMargin :
+           m = (Margin)findFirstRecordBySid(BottomMarginRecord.sid);
+           if (m == null) {
+               m = new BottomMarginRecord();
+               records.add(getDimsLoc() + 1, (Record)m);
+           }
+           break;
+       default : throw new RuntimeException("Unknown margin constant:  " + margin);
+       }
+       m.setMargin(size);
+     }
 }

@@ -609,7 +609,18 @@ public class BiffViewer {
             case LegendRecord.sid:
                 retval = new LegendRecord(rectype, size, data);
                 break;
-                
+	    case LeftMarginRecord.sid:
+	        retval = new LeftMarginRecord(rectype, size, data);
+	        break;
+	    case RightMarginRecord.sid:
+	        retval = new RightMarginRecord(rectype, size, data);
+	        break;
+	    case TopMarginRecord.sid:
+	        retval = new TopMarginRecord(rectype, size, data);
+	        break;
+	    case BottomMarginRecord.sid:
+	        retval = new BottomMarginRecord(rectype, size, data);
+	        break;
                 
             default:
                 retval = new UnknownRecord(rectype, size, data);
