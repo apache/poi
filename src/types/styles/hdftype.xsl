@@ -140,25 +140,28 @@ public abstract class <xsl:value-of select="@name"/>AbstractType
      * Sets the <xsl:value-of select="@name"/> field value.
      * <xsl:value-of select="@description"/>
      */
-    public void set<xsl:value-of select="recutil:getFieldName1stCap(@name,0)"/>(boolean value)
+    public void set<xsl:value-of select="recutil:getFieldName1stCap(@name,0)"/>(<xsl:value-of select="recutil:getBitFieldType(@name, @mask, ../@type)"/> value)
     {
-        <xsl:value-of select="recutil:getFieldName($fieldNum,../@name,0)"/> = <xsl:value-of select="recutil:getFieldName(@name,0)"/>.set<xsl:value-of select="recutil:getType1stCap(../@size,../@type,0)"/>Boolean(<xsl:value-of select="recutil:getFieldName($fieldNum,../@name,0)"/>, value);
+        <xsl:value-of select="recutil:getFieldName($fieldNum,../@name,0)"/> = <xsl:value-of select="recutil:getBitFieldSet(@name, @mask, ../@type, recutil:getFieldName($fieldNum,../@name,0))"/>;
+
+        <!--<xsl:value-of select="recutil:getFieldName(@name,0)"/>.setValue(<xsl:value-of select="recutil:getFieldName($fieldNum,../@name,0)"/>, value);-->
     }
 
     /**
      * <xsl:value-of select="@description"/>
      * @return  the <xsl:value-of select="@name"/> field value.
      */
-    public boolean is<xsl:value-of select="recutil:getFieldName1stCap(@name,0)"/>()
+    public <xsl:value-of select="recutil:getBitFieldFunction(@name,@mask,../@type, 'true')"/>()
     {
-        return <xsl:value-of select="recutil:getFieldName(@name,0)"/>.isSet(<xsl:value-of select="recutil:getFieldName($fieldNum,../@name,0)"/>);
+        return <xsl:value-of select="recutil:getBitFieldGet(@name, @mask,../@type, recutil:getFieldName($fieldNum,../@name,0))"/>
+        <!--return <xsl:value-of select="recutil:getFieldName(@name,0)"/>.isSet(<xsl:value-of select="recutil:getFieldName($fieldNum,../@name,0)"/>);-->
     }
 </xsl:for-each>
 </xsl:template>
 
-<xsl:template match = "bit" >    private BitField  <xsl:value-of select="@name"/> = new BitField(<xsl:value-of select="@mask"/>);
+<xsl:template match = "bit" >        private BitField  <xsl:value-of select="@name"/> = new BitField(<xsl:value-of select="@mask"/>);
 </xsl:template>
-<xsl:template match = "const">    public final static <xsl:value-of select="@type"/><xsl:text>  </xsl:text><xsl:value-of select="@name"/> = <xsl:value-of select="@value"/>;
+<xsl:template match = "const">        public final static <xsl:value-of select="@type"/><xsl:text>  </xsl:text><xsl:value-of select="@name"/> = <xsl:value-of select="@value"/>;
 </xsl:template>
 
 <xsl:template match = "const" mode="listconsts">
@@ -196,7 +199,7 @@ public abstract class <xsl:value-of select="@name"/>AbstractType
 <xsl:apply-templates select="bit" mode="bittostring"/>
 </xsl:template>
 
-<xsl:template match="bit" mode="bittostring">        buffer.append("         .<xsl:value-of select="recutil:getFieldName(@name,20)"/>     = ").append(is<xsl:value-of select="recutil:getFieldName1stCap(@name,20)"/>()).append('\n');
+<xsl:template match="bit" mode="bittostring">        buffer.append("         .<xsl:value-of select="recutil:getFieldName(@name,20)"/>     = ").append(<xsl:value-of select="recutil:getBitFieldFunction(@name, @mask, ../@type, 'false')"/>()).append('\n');
 </xsl:template>
 
 <xsl:template match="author">
