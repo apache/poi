@@ -159,7 +159,7 @@ public class POIBrowser extends JFrame
                       new PropertySetDescriptorRenderer());
         treeUI.setCellRenderer(etcr);
         setSize(600, 450);
-        setTitle("POI Browser 0.07");
+        setTitle("POI Browser 0.08");
         setVisible(true);
     }
 
