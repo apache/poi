@@ -75,7 +75,7 @@ import java.util.List;
 public class AttrPtg
     extends OperationPtg
 {
-    public final static short sid  = 0x19;
+    public final static byte sid  = 0x19;
     private final static int  SIZE = 4;
     private byte              field_1_options;
     private short             field_2_data;
