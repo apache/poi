@@ -296,5 +296,19 @@ public abstract class Ptg
         return 0;
     }
     
+    /**
+     * dump a debug representation (hexdump) to a strnig
+     */
+    public void toDebugString() {
+        byte[] ba = new byte[getSize()];
+        String retval=null;
+        writeBytes(ba,0);        
+        try {
+        retval = org.apache.poi.util.HexDump.dump(ba,0,0);       
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
     
 }
