@@ -95,23 +95,24 @@ import java.util.Vector;
  *       0x15, "h:mm:ss"<br>
  *       0x16, "m/d/yy h:mm"<br>
  *<P>
- *       // 0x17 - 0x24 reserved for international and undocumented<br>
- *       0x25, "(#,##0_);(#,##0)"<br>
- *       0x26, "(#,##0_);[Red](#,##0)"<br>
- *       0x27, "(#,##0.00_);(#,##0.00)"<br>
- *       0x28, "(#,##0.00_);[Red](#,##0.00)"<br>
- *       0x29, "_(*#,##0_);_(*(#,##0);_(* \"-\"_);_(@_)"<br>
- *       0x2a, "_($*#,##0_);_($*(#,##0);_($* \"-\"_);_(@_)"<br>
- *       0x2b, "_(*#,##0.00_);_(*(#,##0.00);_(*\"-\"??_);_(@_)"<br>
- *       0x2c, "_($*#,##0.00_);_($*(#,##0.00);_($*\"-\"??_);_(@_)"<br>
- *       0x2d, "mm:ss"<br>
- *       0x2e, "[h]:mm:ss"<br>
- *       0x2f, "mm:ss.0"<br>
- *       0x30, "##0.0E+0"<br>
- *       0x31, "@"<br>
- *
+ *       // 0x17 - 0x24 reserved for international and undocumented
+ *       0x25, "(#,##0_);(#,##0)"<P>
+ *       0x26, "(#,##0_);[Red](#,##0)"<P>
+ *       0x27, "(#,##0.00_);(#,##0.00)"<P>
+ *       0x28, "(#,##0.00_);[Red](#,##0.00)"<P>
+ *       0x29, "_(*#,##0_);_(*(#,##0);_(* \"-\"_);_(@_)"<P>
+ *       0x2a, "_($*#,##0_);_($*(#,##0);_($* \"-\"_);_(@_)"<P>
+ *       0x2b, "_(*#,##0.00_);_(*(#,##0.00);_(*\"-\"??_);_(@_)"<P>
+ *       0x2c, "_($*#,##0.00_);_($*(#,##0.00);_($*\"-\"??_);_(@_)"<P>
+ *       0x2d, "mm:ss"<P>
+ *       0x2e, "[h]:mm:ss"<P>
+ *       0x2f, "mm:ss.0"<P>
+ *       0x30, "##0.0E+0"<P>
+ *       0x31, "@" - This is text format.<P>
+ *       0x31  "text" - Alias for "@"<P>
  *
  * @author  Andrew C. Oliver (acoliver at apache dot org)
+ * @author  Shawn M. Laubach (slaubach at apache dot org)
  */
 
 public class HSSFDataFormat
@@ -217,20 +218,24 @@ public class HSSFDataFormat
     }
 
     /**
-     * get the format index that matches the given format string
+     * get the format index that matches the given format string<p>
+     * Automatically converts "text" to excel's format string to represent text.
      * @param format string matching a built in format
      * @return index of format or -1 if undefined.
      */
 
     public static short getBuiltinFormat( String format )
     {
+	if (format.toUpperCase().equals("TEXT")) 
+		format = "@";
+
         if ( builtinFormats == null )
         {
             populateBuiltinFormats();
         }
         short retval = -1;
 
-        for ( short k = 0; k < 0x31; k++ )
+        for (short k = 0; k <= 0x31; k++)
         {
             String nformat = (String) builtinFormats.get( k );
 
@@ -245,7 +250,7 @@ public class HSSFDataFormat
 
     /**
      * get the format index that matches the given format string.
-     * Creates a new format if one is not found.
+     * Creates a new format if one is not found.  Aliases text to the proper format.
      * @param format string matching a built in format
      * @return index of format.
      */
@@ -254,6 +259,10 @@ public class HSSFDataFormat
     {
         ListIterator i;
         int ind;
+
+	if (format.toUpperCase().equals("TEXT")) 
+		format = "@";
+
         if ( !movedBuiltins )
         {
             i = builtinFormats.listIterator();
