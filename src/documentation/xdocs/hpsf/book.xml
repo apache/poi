@@ -11,6 +11,7 @@
   <menu label="HPSF">
     <menu-item label="Overview" href="index.html"/>
     <menu-item label="How To" href="how-to.html"/>
+    <menu-item label="Thumbnails" href="thumbnails.html"/>
     <menu-item label="Internals" href="internals.html"/>
     <menu-item label="To Do" href="todo.html"/>
   </menu>
