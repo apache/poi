@@ -352,11 +352,10 @@
     </target>
 
     <target name="-check-forrest-installed" unless="env.FORREST_HOME">
-        <echo>
-            Please install apache forrest and set the
-            FORREST_HOME environment variable.
-        </echo>
-        <fail/>
+        <echo>Please install Apache Forrest (see
+&lt;http://xml.apache.org/forrest/index.html&gt;) and set the
+FORREST_HOME environment variable!</echo>
+        <fail message="Apache Forrest is not installed."/>
     </target>
 
     <!--    <target name="check-docs">-->
