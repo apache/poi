@@ -2,7 +2,11 @@
   <!-- Initialization target                                               -->
   <!-- =================================================================== -->
   <target name="init">
-    <tstamp/>
+    <tstamp>
+      <format property="TODAY" pattern="dd-MMMM-yyyy" locale="en"/>
+      <format property="YEAR"  pattern="yyyy"/>
+    </tstamp>
+
     <echo message="--------------------------------------------------------------"/>    
     <echo message="Setting up customized ant tasks..."/>  
            
@@ -38,7 +42,7 @@
     <taskdef name="xml-property"    classname="XmlPropertyTask"         classpath="${tools.anttasks.dir}"/>
     <taskdef name="jtidy"           classname="JTidyTask"               classpath="${tools.anttasks.dir}"/>
     <taskdef name="class-available" classname="ClassAvailableTask"      classpath="${tools.anttasks.dir}"/>
-    <taskdef name="compress-html"   classname="IZPressHtmlCompressTask" classpath="${tools.anttasks.dir}"/>
+    <!--<taskdef name="compress-html"   classname="IZPressHtmlCompressTask" classpath="${tools.anttasks.dir}"/>-->
 
     <echo message="... done."/>     
 
