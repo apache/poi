@@ -18,13 +18,16 @@
  
     <import file="${ant.home}/src/core/xbuild.xml"/>
     <taskdef file="${ant.home}/src/core/tasks.properties"/>
-    <importcent name="java" />
     
-    <!-- commenting these out till the base build works on Gump
+    <importcent name="java" />
     <importcent name="junit" />
+        
+    <!-- commenting these out till the base build works on Gump-->
     <importcent name="checkstyle" />
     <importcent name="forrest" />
-    -->
+    <importcent name="changelog" />
+    <importcent name="changelog" />    
+    <!---->
     
             
   <!-- =================================================================== -->
@@ -112,7 +115,7 @@
   <!-- ================================== -->
   
   <target  name="gump"   
-           depends="compile, package"
+           depends="compile, package, test"
            description="Target used by Gump"/>
 
   <!-- ================================== -->
