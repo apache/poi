@@ -87,7 +87,7 @@ public class HSSFColor
      * it takes to create it once per request but you will not hold onto it
      * if you have none of those requests.
      *
-     * @returns a hashtable containing all colors mapped to their gnumeric-like
+     * @return a hashtable containing all colors mapped to their gnumeric-like
      * triplet string
      */
 
@@ -148,7 +148,7 @@ public class HSSFColor
     }
 
     /**
-     * @returns index to the standard palet
+     * @return index to the standard palet
      */
 
     public short getIndex()
@@ -157,7 +157,7 @@ public class HSSFColor
     }
 
     /**
-     * @returns short[] triplet representation like that in Excel
+     * @return  triplet representation like that in Excel
      */
 
     public short [] getTriplet()
@@ -168,7 +168,7 @@ public class HSSFColor
     // its a hack but its a good hack
 
     /**
-     * @returns a hex string exactly like a gnumeric triplet
+     * @return a hex string exactly like a gnumeric triplet
      */
 
     public String getHexString()

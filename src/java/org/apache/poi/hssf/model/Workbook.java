@@ -1772,4 +1772,9 @@ public class Workbook {
         }
         return null;
     }
+
+    public List getRecords()
+    {
+        return records;
+    }
 }
