@@ -363,8 +363,7 @@ public class HSSFCell
     }
 
     /**
-     * set the cells type (numeric, formula or string) -- DONT USE FORMULAS IN THIS RELEASE
-     * WE'LL THROW YOU A RUNTIME EXCEPTION IF YOU DO
+     * set the cells type (numeric, formula or string)
      * @see #CELL_TYPE_NUMERIC
      * @see #CELL_TYPE_STRING
      * @see #CELL_TYPE_FORMULA
