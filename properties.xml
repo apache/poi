@@ -33,8 +33,15 @@
 
    <centipede>
       <tools>
-         <cents>
-            <forrest-cent>
+         <cents repository="http://krysalis.org/jars/">
+            <antidote/>
+            <centipede/>
+            <junit/>
+            <jdepend/>
+            <checkstyle/>
+            <xmldoclet/>
+            <umldoclet/>
+            <forrest>
               <!-- available skins:
 
                    basic
@@ -67,7 +74,7 @@
                       href="http://jakarta.apache.org/poi/" />
                   </logo>
                </skin>
-            </forrest-cent>
+            </forrest>
          </cents>
       </tools>
    </centipede>
