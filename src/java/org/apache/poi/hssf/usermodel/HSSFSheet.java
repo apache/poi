@@ -1085,5 +1085,51 @@ public class HSSFSheet
         getSheet().createSplitPane( xSplitPos, ySplitPos, topRow, leftmostColumn, activePane );
     }
 
+    /**
+     * Sets whether the gridlines are shown in a viewer.
+     * @param show whether to show gridlines or not
+     */
+    public void setDisplayGridlines(boolean show) {
+        sheet.setDisplayGridlines(show);
+    }
 
+    /**
+     * Returns if gridlines are displayed.
+     * @return whether gridlines are displayed
+     */
+    public boolean isDisplayGridlines() {
+	return sheet.isDisplayGridlines();
+    }
+
+    /**
+     * Sets whether the formulas are shown in a viewer.
+     * @param show whether to show formulas or not
+     */
+    public void setDisplayFormulas(boolean show) {
+        sheet.setDisplayFormulas(show);
+    }
+
+    /**
+     * Returns if formulas are displayed.
+     * @return whether formulas are displayed
+     */
+    public boolean isDisplayFormulas() {
+	return sheet.isDisplayFormulas();
+    }
+
+    /**
+     * Sets whether the RowColHeadings are shown in a viewer.
+     * @param show whether to show RowColHeadings or not
+     */
+    public void setDisplayRowColHeadings(boolean show) {
+        sheet.setDisplayRowColHeadings(show);
+    }
+
+    /**
+     * Returns if RowColHeadings are displayed.
+     * @return whether RowColHeadings are displayed
+     */
+    public boolean isDisplayRowColHeadings() {
+	return sheet.isDisplayRowColHeadings();
+    }
 }
