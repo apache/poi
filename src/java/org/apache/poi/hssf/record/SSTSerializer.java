@@ -111,7 +111,7 @@ class SSTSerializer
     private void serializeSingleSSTRecord( byte[] data, int offset, int record_length_index )
     {
         int len = ( (Integer) recordLengths.get( record_length_index ) ).intValue();
-        int recordSize = SSTRecord.SST_RECORD_OVERHEAD + len - SSTRecord.STD_RECORD_OVERHEAD;
+        int recordSize = len - SSTRecord.STD_RECORD_OVERHEAD;
         sstRecordHeader.writeSSTHeader( data, 0 + offset, recordSize );
         int pos = SSTRecord.SST_RECORD_OVERHEAD;
 
@@ -149,13 +149,16 @@ class SSTSerializer
 
         while ( totalWritten != record_size )
         {
-            int recordLength = ( (Integer) recordLengths.get( record_length_index++ ) ).intValue();
+            //Total record length, including excel record header and sst/continue header
+            final int recordLength = ( (Integer) recordLengths.get( record_length_index++ ) ).intValue();
+            //Total available data length (minus the excel record header size)
+            final int recordDataLength = recordLength - 4;
             RecordProcessor recordProcessor = new RecordProcessor( buffer,
-                    recordLength, numStrings, numUniqueStrings );
+                    recordDataLength, numStrings, numUniqueStrings );
 
             // write the appropriate header
             startOfRecord = offset + totalWritten;
-            recordProcessor.writeRecordHeader( offset, totalWritten, recordLength, first_record );
+            recordProcessor.writeRecordHeader( offset, totalWritten, recordDataLength, first_record );
             first_record = false;
 
             // now, write the rest of the data into the current
@@ -166,6 +169,11 @@ class SSTSerializer
                 // the last string in the previous record was not written out completely
                 stringReminant = recordProcessor.writeStringRemainder( lastneedcontinue,
                         stringReminant, offset, totalWritten );
+                //Check to see if still not written out completely
+                if (lastneedcontinue) {
+                  totalWritten += recordLength;
+                  continue;
+                }
             }
 
             // last string's remnant, if any, is cleaned up as best as can be done ... now let's try and write
@@ -204,7 +212,7 @@ class SSTSerializer
                     break;
                 }
             }
-            totalWritten += recordLength + SSTRecord.STD_RECORD_OVERHEAD;
+            totalWritten += recordLength;
         }
     }
 

@@ -161,7 +161,8 @@ public class TestValueRecordsAggregate extends TestCase
         };
         List records = testData();
         valueRecord.construct( 0, records );
-        int bytesWritten = valueRecord.serialize( 0, actualArray );
+        int bytesWritten = valueRecord.serializeCellRow(1, 0, actualArray );
+        bytesWritten += valueRecord.serializeCellRow(2, bytesWritten, actualArray );
         assertEquals( 36, bytesWritten );
         for (int i = 0; i < 36; i++)
             assertEquals( expectedArray[i], actualArray[i] );

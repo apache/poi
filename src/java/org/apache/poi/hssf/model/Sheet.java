@@ -763,7 +763,7 @@ public class Sheet implements Model
             if (record.getSid() == BOFRecord.sid) {
               //Can there be more than one BOF for a sheet? If not then we can
               //remove this guard. So be safe it is left here.
-              if (!haveSerializedIndex) {
+              if ((rows != null) && (!haveSerializedIndex)) {
                 haveSerializedIndex = true;
                 pos += serializeIndexRecord(k, pos, data);
               }
@@ -2029,6 +2029,7 @@ public class Sheet implements Model
             retval += (( Record ) records.get(k)).getRecordSize();
         }
         //Add space for the IndexRecord
+        if (rows != null) {
         final int blocks = rows.getRowBlockCount();
         retval += IndexRecord.getRecordSizeForBlockCount(blocks);
 
@@ -2042,6 +2043,7 @@ public class Sheet implements Model
           RowRecord row = (RowRecord)itr.next();
           if (cells.rowHasCells(row.getRowNumber()))
             retval += 2;
+        }
         }
         return retval;
     }

@@ -30,6 +30,7 @@ import java.util.Map;
  * the SST serialization code needs to be rewritten.
  *
  * @author Glen Stampoultzis (glens at apache.org)
+ * @author Jason Height (jheight at apache.org)
  */
 class SSTRecordSizeCalculator
 {
@@ -52,180 +53,76 @@ class SSTRecordSizeCalculator
         this.strings = strings;
     }
 
-    /**
-     * Calculate the size in bytes of the SST record.  This will include continue
-     * records.
-     *
-     * @return the size of the SST record.
-     */
-    public int getRecordSize()
-    {
-        initVars();
+    private boolean canFitStringInRecord(int recordLength) {
+      return (recordLength+SSTRecord.STRING_MINIMAL_OVERHEAD) < SSTRecord.MAX_RECORD_SIZE;
+                    }
 
-        int retval;
-        int totalStringSpaceRequired = SSTSerializer.calculateUnicodeSize(strings);
+    public int getRecordSize() {
+       //Indicates how much of the current base or continue record has
+       //been written
+       int continueSize = SSTRecord.SST_RECORD_OVERHEAD;
+       int recordSize = 0;
+        for (int i=0; i < strings.size(); i++ )
+        {
+          Integer intunipos = new Integer(i);    
+          UnicodeString unistr = ( (UnicodeString) strings.get(intunipos));
+          final int stringLength = unistr.getRecordSize();
+          if ((continueSize + stringLength) <= SSTRecord.MAX_RECORD_SIZE) {
+            //String can fit within the bounds of the current record (SST or Continue)
+            continueSize += stringLength;
+            
+            if ((i < (strings.size()-1)) && !canFitStringInRecord(continueSize)) {
+              //Start new continueRecord if there is another string              
+              recordLengths.add(new Integer(continueSize));
+              recordSize += continueSize;
+              //Minimum ammount of space for a new continue record.
+              continueSize = 4;   
+            }
+          } else {
+            int stringRemainder = stringLength;
+            while (stringRemainder != 0) {              
+              if ( (continueSize + stringRemainder) > SSTRecord.MAX_RECORD_SIZE) {
+                //Determine number of bytes that can be written in the space
+                //available
+                int bytesWritten = Math.min((SSTRecord.MAX_RECORD_SIZE - continueSize), stringRemainder);
 
-        if ( totalStringSpaceRequired > SSTRecord.MAX_DATA_SPACE )
-        {
-            retval = sizeOverContinuation( totalStringSpaceRequired );
+                //Ensure that the Unicode String writes both the high and low
+                //byte in the one action. Since the string overhead is 3 bytes
+                //if the bytes that can be written is even, then we need to 
+                //write one less byte to capture both the high and low bytes.
+                bytesWritten = unistr.maxBrokenLength(bytesWritten);
+                continueSize += bytesWritten;
+                stringRemainder -= bytesWritten;
+                recordLengths.add(new Integer(continueSize));
+                recordSize += continueSize;
+                //Minimum ammount of space for a new continue record.
+                continueSize = 4;
+                //Add one to the size of the string that is remaining, since the
+                //first byte for the next continue record will be compressed unicode indicator
+                stringRemainder++;
+              } else {
+                //Remainder of string can fit within the bounds of the current
+                //continue record
+                continueSize += stringRemainder;
+                stringRemainder = 0;
+                if ((i < (strings.size()-1)) && !canFitStringInRecord(continueSize)) {
+                  //Start new continueRecord if there is another string
+                  recordLengths.add(new Integer(continueSize));
+                  recordSize += continueSize;
+                  //Minimum ammount of space for a new continue record.
+                  continueSize = 4;          
         }
-        else
-        {
-            // short data: write one simple SST record
-            retval = SSTRecord.SST_RECORD_OVERHEAD + totalStringSpaceRequired;
-            recordLengths.add( new Integer( totalStringSpaceRequired ) );
+    }
         }
-        return retval;
+            }
+        }
+        recordLengths.add(new Integer(continueSize));
+        recordSize += continueSize;        
+        return recordSize;
     }
 
     public List getRecordLengths()
     {
         return recordLengths;
     }
-
-    private int sizeOverContinuation( int totalStringSpaceRequired )
-    {
-        int retval;
-
-        while ( !finished )
-        {
-            recordSize = 0;
-            pos = 0;
-
-            if ( firstRecord )
-            {
-                addMaxLengthRecordSize();
-            }
-            else
-            {
-
-                // writing continue record
-                pos = 0;
-                int toBeWritten = ( totalStringSpaceRequired - totalBytesWritten ) + ( isRemainingString ? 1 : 0 );
-                int size = Math.min( SSTRecord.MAX_RECORD_SIZE - SSTRecord.STD_RECORD_OVERHEAD, toBeWritten );
-
-                if ( size == toBeWritten )
-                {
-                    finished = true;
-                }
-                recordSize = size + SSTRecord.STD_RECORD_OVERHEAD;
-                recordLengths.add( new Integer( size ) );
-                pos = 4;
-            }
-            if ( isRemainingString )
-            {
-                calcReminant();
-            }
-            calcRemainingStrings();
-            totalWritten += recordSize;
-        }
-        retval = totalWritten;
-
-        return retval;
-    }
-
-    private void addMaxLengthRecordSize()
-    {
-        // writing SST record
-        recordSize = SSTRecord.MAX_RECORD_SIZE;
-        pos = 12;
-        firstRecord = false;
-        recordLengths.add( new Integer( recordSize - SSTRecord.STD_RECORD_OVERHEAD ) );
-    }
-
-    private void calcRemainingStrings()
-    {
-        for ( ; unipos < strings.size(); unipos++ )
-        {
-            int available = SSTRecord.MAX_RECORD_SIZE - pos;
-            Integer intunipos = new Integer( unipos );
-
-            unistr = ( (UnicodeString) strings.get( intunipos ) );
-            if ( unistr.getRecordSize() <= available )
-            {
-                totalBytesWritten += unistr.getRecordSize();
-                pos += unistr.getRecordSize();
-            }
-            else
-            {
-                if ( available >= SSTRecord.STRING_MINIMAL_OVERHEAD )
-                {
-                    int toBeWritten =
-                            unistr.maxBrokenLength( available );
-
-                    totalBytesWritten += toBeWritten;
-                    stringReminant =
-                            ( unistr.getRecordSize() - toBeWritten )
-                            + LittleEndianConsts.BYTE_SIZE;
-                    if ( available != toBeWritten )
-                    {
-                        int shortrecord = recordSize
-                                - ( available - toBeWritten );
-
-                        recordLengths.set(
-                                recordLengths.size() - 1,
-                                new Integer(
-                                        shortrecord - SSTRecord.STD_RECORD_OVERHEAD ) );
-                        recordSize = shortrecord;
-                    }
-                    isRemainingString = true;
-                    unipos++;
-                }
-                else
-                {
-                    int shortrecord = recordSize - available;
-
-                    recordLengths.set( recordLengths.size() - 1,
-                            new Integer( shortrecord - SSTRecord.STD_RECORD_OVERHEAD ) );
-                    recordSize = shortrecord;
-                }
-                break;
-            }
-        }
-    }
-
-    private void calcReminant()
-    {
-        int available = SSTRecord.MAX_RECORD_SIZE - pos;
-
-        if ( stringReminant <= available )
-        {
-
-            // write reminant
-            totalBytesWritten += stringReminant - 1;
-            pos += stringReminant;
-            isRemainingString = false;
-        }
-        else
-        {
-
-            // write as much of the remnant as possible
-            int toBeWritten = unistr.maxBrokenLength( available );
-
-            if ( available != toBeWritten )
-            {
-                int shortrecord = recordSize - ( available - toBeWritten );
-                recordLengths.set( recordLengths.size() - 1,
-                        new Integer( shortrecord - SSTRecord.STD_RECORD_OVERHEAD ) );
-                recordSize = shortrecord;
-            }
-            totalBytesWritten += toBeWritten - 1;
-            pos += toBeWritten;
-            stringReminant -= toBeWritten - 1;
-            isRemainingString = true;
-        }
-    }
-
-    private void initVars()
-    {
-        unistr = null;
-        stringReminant = 0;
-        unipos = 0;
-        isRemainingString = false;
-        totalBytesWritten = 0;
-        finished = false;
-        firstRecord = true;
-        totalWritten = 0;
-    }
-
 }
