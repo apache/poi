@@ -386,7 +386,11 @@ public class LittleEndian
 
     public static void putDouble(final byte[] data, final int offset,
             final double value) {
-        putNumber(data, offset, Double.doubleToRawLongBits(value), DOUBLE_SIZE);
+        // Excel likes NaN to be a specific value.
+        if (Double.isNaN(value))
+            putNumber(data, offset, -276939487313920L, DOUBLE_SIZE);
+        else
+            putNumber(data, offset, Double.doubleToLongBits(value), DOUBLE_SIZE);
     }
 
 
