@@ -54,9 +54,14 @@
  */
 package org.apache.poi.hpsf.examples;
 
-import java.io.*;
-import org.apache.poi.hpsf.*;
-import org.apache.poi.poifs.eventfilesystem.*;
+import java.io.FileInputStream;
+import java.io.IOException;
+
+import org.apache.poi.hpsf.PropertySetFactory;
+import org.apache.poi.hpsf.SummaryInformation;
+import org.apache.poi.poifs.eventfilesystem.POIFSReader;
+import org.apache.poi.poifs.eventfilesystem.POIFSReaderEvent;
+import org.apache.poi.poifs.eventfilesystem.POIFSReaderListener;
 
 /**
  * <p>Sample application showing how to read a OLE 2 document's
@@ -71,8 +76,14 @@ import org.apache.poi.poifs.eventfilesystem.*;
  */
 public class ReadTitle
 {
-
-    public static void main(String[] args) throws IOException
+    /**
+     * <p>Runs the example program.</p>
+     *
+     * @param args Command-line arguments. The first command-line argument must
+     * be the name of a POI filesystem to read.
+     * @throws IOException if any I/O exception occurs.
+     */
+    public static void main(final String[] args) throws IOException
     {
         final String filename = args[0];
         POIFSReader r = new POIFSReader();
@@ -84,7 +95,7 @@ public class ReadTitle
 
     static class MyPOIFSReaderListener implements POIFSReaderListener
     {
-        public void processPOIFSReaderEvent(POIFSReaderEvent event)
+        public void processPOIFSReaderEvent(final POIFSReaderEvent event)
         {
             SummaryInformation si = null;
             try

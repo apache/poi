@@ -211,11 +211,7 @@ public class TestWrite extends TestCase
         si.setProperty(p);
         si.setProperty(PropertyIDMap.PID_TITLE, Variant.VT_LPSTR, TITLE);
 
-        final ByteArrayOutputStream psStream = new ByteArrayOutputStream();
-        ps.write(psStream);
-        psStream.close();
-        final byte[] streamData = psStream.toByteArray();
-        poiFs.createDocument(new ByteArrayInputStream(streamData),
+        poiFs.createDocument(ps.toInputStream(),
                              SummaryInformation.DEFAULT_STREAM_NAME);
         poiFs.writeFilesystem(out);
         out.close();
@@ -225,7 +221,8 @@ public class TestWrite extends TestCase
         final POIFSReader r = new POIFSReader();
         r.registerListener(new POIFSReaderListener()
             {
-                public void processPOIFSReaderEvent(final POIFSReaderEvent event)
+                public void processPOIFSReaderEvent
+                    (final POIFSReaderEvent event)
                 {
                     try
                     {
