@@ -115,9 +115,32 @@ public class Util
     public static POIFile[] readPOIFiles(final File poiFs)
 	throws FileNotFoundException, IOException
     {
+	return readPOIFiles(poiFs, null);
+    }
+
+
+
+    /**
+     * <p>Reads a set of files from a POI filesystem and returns them
+     * as an array of {@link POIFile} instances. This method loads all
+     * files into memory and thus does not cope well with large POI
+     * filessystems.</p>
+     * 
+     * @param file The name of the POI filesystem as seen by the
+     * operating system. (This is the "filename".)
+     *
+     * @param poiFiles The names of the POI files to be read.
+     *
+     * @return The POI files. The elements are ordered in the same way
+     * as the files in the POI filesystem.
+     */
+    public static POIFile[] readPOIFiles(final File poiFs,
+					 final String[] poiFiles)
+	throws FileNotFoundException, IOException
+    {
 	final List files = new ArrayList();
 	POIFSReader r = new POIFSReader();
-	r.registerListener(new POIFSReaderListener()
+	POIFSReaderListener pfl = new POIFSReaderListener()
 	    {
 		public void processPOIFSReaderEvent(POIFSReaderEvent event)
 		{
@@ -140,7 +163,17 @@ public class Util
 			throw new RuntimeException(ex.getMessage());
 		    }
 		}
-	    });
+	    };
+	if (poiFiles == null)
+	    /* Register the listener for all POI files. */
+	    r.registerListener(pfl);
+	else
+	    /* Register the listener for the specified POI files
+	     * only. */
+	    for (int i = 0; i < poiFiles.length; i++)
+		r.registerListener(pfl, poiFiles[i]);
+
+	/* Read the POI filesystem. */
 	r.read(new FileInputStream(poiFs));
 	POIFile[] result = new POIFile[files.size()];
 	for (int i = 0; i < result.length; i++)

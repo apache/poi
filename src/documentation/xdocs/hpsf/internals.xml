@@ -690,6 +690,19 @@
 	<th><p>Property ID string</p></th>
 	<th><p>VT type</p></th>
        </tr>
+
+       <tr>
+	<td><p>0</p></td>
+	<td><p>Dictionary</p></td>
+	<td><p>PID_DICTIONARY</p></td>
+	<td><p>[Special format]</p></td>
+       </tr>
+       <tr>
+	<td><p>1</p></td>
+	<td><p>Code page</p></td>
+	<td><p>PID_CODEPAGE</p></td>
+	<td><p>VT_I2</p></td>
+       </tr>
        <tr>
 	<td><p>2</p></td>
 	<td><p>Category</p></td>
@@ -1128,20 +1141,25 @@
     </li>
 
     <li>
-     <p>What is a <code>FILETIME</code>? The answer can be found for example under
-      <link href="http://www.vbapi.com/ref/f/filetime.html">http://www.vbapi.com/ref/f/filetime.html</link>
+     <p>What is a <code>FILETIME</code>? The answer can be found for example
+      under <link href="http://www.vbapi.com/ref/f/filetime.html">http://www.vbapi.com/ref/f/filetime.html</link>
       or
-      <link href="http://www.cs.rpi.edu/courses/fall01/os/FILETIME.html">http://www.cs.rpi.edu/courses/fall01/os/FILETIME.html</link>. In
-      short:
-      <em>The FILETIME structure holds a date and time associated with a file.
-       The structure identifies a 64-bit integer specifying the number of
-       100-nanosecond intervals which have passed since January 1, 1601. This
-       64-bit value is split into the two dwords stored in the
-       structure.</em></p>
-	    </li>
+      <link href="http://www.cs.rpi.edu/courses/fall01/os/FILETIME.html">http://www.cs.rpi.edu/courses/fall01/os/FILETIME.html</link>.
+      In short: <em>The FILETIME structure holds a date and time associated
+      with a file. The structure identifies a 64-bit integer specifying the
+      number of 100-nanosecond intervals which have passed since January 1,
+      1601. This 64-bit value is split into the two dwords stored in the
+      structure.</em></p>
+    </li>
 
-     <li>
-      <p>This documentation origins from the <link href="http://www.rainer-klute.de/~klute/Software/poibrowser/doc/HPSF-Description.html">HPSF description</link> available at <link href="http://www.rainer-klute.de/~klute/Software/poibrowser/doc/HPSF-Description.html">http://www.rainer-klute.de/~klute/Software/poibrowser/doc/HPSF-Description.html</link>.</p>
+    <li>
+     <p>Information about the code page property in the
+     DocumentSummaryInformation stream is available at <link
+      href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/stg/stg/property_id_1.asp">http://msdn.microsoft.com/library/default.asp?url=/library/en-us/stg/stg/property_id_1.asp</link>.</p>
+    </li>
+
+    <li>
+     <p>This documentation origins from the <link href="http://www.rainer-klute.de/~klute/Software/poibrowser/doc/HPSF-Description.html">HPSF description</link> available at <link href="http://www.rainer-klute.de/~klute/Software/poibrowser/doc/HPSF-Description.html">http://www.rainer-klute.de/~klute/Software/poibrowser/doc/HPSF-Description.html</link>.</p>
      </li>
     </ol>
    </section>

@@ -59,257 +59,236 @@ import java.util.*;
 import org.apache.poi.hpsf.wellknown.*;
 
 /**
- *  <p>
+ * <p>Convenience class representing a DocumentSummary Information stream in a
+ * Microsoft Office document.</p>
  *
- *  Convenience class representing a DocumentSummary Information stream in a
- *  Microsoft Office document.</p>
- *
- *@author     Rainer Klute (klute@rainer-klute.de)
- *@author     Drew Varner (Drew.Varner closeTo sc.edu)
- *@created    May 10, 2002
- *@see        SummaryInformation
- *@version    $Id: DocumentSummaryInformation.java,v 1.6 2002/05/03 07:29:09
- *      klute Exp $
- *@since      2002-02-09
+ * @author Rainer Klute (klute@rainer-klute.de)
+ * @author Drew Varner (Drew.Varner closeTo sc.edu)
+ * @see SummaryInformation
+ * @version $Id$
+ * @since 2002-02-09
  */
-public class DocumentSummaryInformation extends SpecialPropertySet {
+public class DocumentSummaryInformation extends SpecialPropertySet
+{
 
     /**
-     *  <p>
+     * <p>Creates a {@link DocumentSummaryInformation} from a given
+     * {@link PropertySet}.</p>
      *
-     *  Creates a {@link DocumentSummaryInformation} from a given {@link
-     *  PropertySet}.</p>
-     *
-     *@param  ps                                      A property set which
-     *      should be created from a document summary information stream.
-     *@exception  UnexpectedPropertySetTypeException  Description of the
-     *      Exception
-     *@throws  UnexpectedPropertySetTypeException     if <var>ps</var> does not
-     *      contain a document summary information stream.
+     * @param ps A property set which should be created from a
+     * document summary information stream.
+     * @throws UnexpectedPropertySetTypeException if <var>ps</var>
+     * does not contain a document summary information stream.
      */
     public DocumentSummaryInformation(final PropertySet ps)
-             throws UnexpectedPropertySetTypeException {
+	throws UnexpectedPropertySetTypeException
+    {
         super(ps);
-        if (!isDocumentSummaryInformation()) {
+        if (!isDocumentSummaryInformation())
             throw new UnexpectedPropertySetTypeException
-                    ("Not a " + getClass().getName());
-        }
+		("Not a " + getClass().getName());
     }
 
 
 
     /**
-     *  <p>
+     * <p>Returns the stream's category (or <code>null</code>).</p>
      *
-     *  Returns the stream's category (or <code>null</code>).</p>
-     *
-     *@return    The category value
+     * @return The category value
      */
-    public String getCategory() {
+    public String getCategory()
+    {
         return (String) getProperty(PropertyIDMap.PID_CATEGORY);
     }
 
 
 
     /**
-     *  <p>
+     * <p>Returns the stream's presentation format (or
+     * <code>null</code>).</p>
      *
-     *  Returns the stream's presentation format (or <code>null</code>).</p>
-     *
-     *@return    The presentationFormat value
+     * @return The presentationFormat value
      */
-    public String getPresentationFormat() {
+    public String getPresentationFormat()
+    {
         return (String) getProperty(PropertyIDMap.PID_PRESFORMAT);
     }
 
 
 
     /**
-     *  <p>
+     * <p>Returns the stream's byte count or 0 if the {@link
+     * DocumentSummaryInformation} does not contain a byte count.</p>
      *
-     *  Returns the stream's byte count or 0 if the {@link
-     *  DocumentSummaryInformation} does not contain a byte count.</p>
-     *
-     *@return    The byteCount value
+     * @return The byteCount value
      */
-    public int getByteCount() {
+    public int getByteCount()
+    {
         return getPropertyIntValue(PropertyIDMap.PID_BYTECOUNT);
     }
 
 
 
     /**
-     *  <p>
+     * <p>Returns the stream's line count or 0 if the {@link
+     * DocumentSummaryInformation} does not contain a line count.</p>
      *
-     *  Returns the stream's line count or 0 if the {@link
-     *  DocumentSummaryInformation} does not contain a line count.</p>
-     *
-     *@return    The lineCount value
+     * @return The lineCount value
      */
-    public int getLineCount() {
+    public int getLineCount()
+    {
         return getPropertyIntValue(PropertyIDMap.PID_LINECOUNT);
     }
 
 
 
     /**
-     *  <p>
+     * <p>Returns the stream's par count or 0 if the {@link
+     * DocumentSummaryInformation} does not contain a par count.</p>
      *
-     *  Returns the stream's par count or 0 if the {@link
-     *  DocumentSummaryInformation} does not contain a par count.</p>
-     *
-     *@return    The parCount value
+     * @return The parCount value
      */
-    public int getParCount() {
+    public int getParCount()
+    {
         return getPropertyIntValue(PropertyIDMap.PID_PARCOUNT);
     }
 
 
 
     /**
-     *  <p>
+     * <p>Returns the stream's slide count or 0 if the {@link
+     * DocumentSummaryInformation} does not contain a slide count.</p>
      *
-     *  Returns the stream's slide count or 0 if the {@link
-     *  DocumentSummaryInformation} does not contain a slide count.</p>
-     *
-     *@return    The slideCount value
+     * @return The slideCount value
      */
-    public int getSlideCount() {
+    public int getSlideCount()
+    {
         return getPropertyIntValue(PropertyIDMap.PID_SLIDECOUNT);
     }
 
 
 
     /**
-     *  <p>
+     * <p>Returns the stream's note count or 0 if the {@link
+     * DocumentSummaryInformation} does not contain a note count.</p>
      *
-     *  Returns the stream's note count or 0 if the {@link
-     *  DocumentSummaryInformation} does not contain a note count.</p>
-     *
-     *@return    The noteCount value
+     * @return The noteCount value
      */
-    public int getNoteCount() {
+    public int getNoteCount()
+    {
         return getPropertyIntValue(PropertyIDMap.PID_NOTECOUNT);
     }
 
 
 
     /**
-     *  <p>
+     * <p>Returns the stream's hidden count or 0 if the {@link
+     * DocumentSummaryInformation} does not contain a hidden
+     * count.</p>
      *
-     *  Returns the stream's hidden count or 0 if the {@link
-     *  DocumentSummaryInformation} does not contain a hidden count.</p>
-     *
-     *@return    The hiddenCount value
+     * @return The hiddenCount value
      */
-    public int getHiddenCount() {
+    public int getHiddenCount()
+    {
         return getPropertyIntValue(PropertyIDMap.PID_HIDDENCOUNT);
     }
 
 
 
     /**
-     *  <p>
+     * <p>Returns the stream's mmclip count or 0 if the {@link
+     * DocumentSummaryInformation} does not contain a mmclip
+     * count.</p>
      *
-     *  Returns the stream's mmclip count or 0 if the {@link
-     *  DocumentSummaryInformation} does not contain a mmclip count.</p>
-     *
-     *@return    The mMClipCount value
+     * @return The mMClipCount value
      */
-    public int getMMClipCount() {
+    public int getMMClipCount()
+    {
         return getPropertyIntValue(PropertyIDMap.PID_MMCLIPCOUNT);
     }
 
 
 
     /**
-     *  <p>
+     * <p>Returns <code>true</code> when scaling of the thumbnail is
+     * desired, <code>false</code> if cropping is desired.</p>
      *
-     *  Returns <code>true</code> when scaling of the thumbnail is desired,
-     *  <code>false</code> if cropping is desired.</p>
-     *
-     *@return    The scale value
+     * @return The scale value
      */
-    public boolean getScale() {
+    public boolean getScale()
+    {
         return getPropertyBooleanValue(PropertyIDMap.PID_SCALE);
     }
 
 
 
     /**
-     *  <p>
+     * <p>Returns the stream's heading pair (or <code>null</code>)
+     * <strong>when this method is implemented. Please note that the
+     * return type is likely to change!</strong>
      *
-     *  Returns the stream's heading pair (or <code>null</code>) <strong>when
-     *  this method is implemented. Please note that the return type is likely
-     *  to change!</strong>
-     *
-     *@return    The headingPair value
+     * @return The headingPair value
      */
-    public byte[] getHeadingPair() {
-        if (true) {
+    public byte[] getHeadingPair()
+    {
+        if (true)
             throw new UnsupportedOperationException("FIXME");
-        }
         return (byte[]) getProperty(PropertyIDMap.PID_HEADINGPAIR);
     }
 
 
 
     /**
-     *  <p>
+     * <p>Returns the stream's doc parts (or <code>null</code>)
+     * <strong>when this method is implemented. Please note that the
+     * return type is likely to change!</strong>
      *
-     *  Returns the stream's doc parts (or <code>null</code>) <strong>when this
-     *  method is implemented. Please note that the return type is likely to
-     *  change!</strong>
-     *
-     *@return    The docparts value
+     * @return The docparts value
      */
-    public byte[] getDocparts() {
-        if (true) {
+    public byte[] getDocparts()
+    {
+        if (true)
             throw new UnsupportedOperationException("FIXME");
-        }
         return (byte[]) getProperty(PropertyIDMap.PID_DOCPARTS);
     }
 
 
 
     /**
-     *  <p>
+     * <p>Returns the stream's manager (or <code>null</code>).</p>
      *
-     *  Returns the stream's manager (or <code>null</code>).</p>
-     *
-     *@return    The manager value
+     * @return The manager value
      */
-    public String getManager() {
+    public String getManager()
+    {
         return (String) getProperty(PropertyIDMap.PID_MANAGER);
     }
 
 
 
     /**
-     *  <p>
+     * <p>Returns the stream's company (or <code>null</code>).</p>
      *
-     *  Returns the stream's company (or <code>null</code>).</p>
-     *
-     *@return    The company value
+     * @return The company value
      */
-    public String getCompany() {
+    public String getCompany()
+    {
         return (String) getProperty(PropertyIDMap.PID_COMPANY);
     }
 
 
 
     /**
-     *  <p>
+     * <p>Returns <code>true</code> if the custom links are hampered
+     * by excessive noise, for all applications.</p> <p>
      *
-     *  Returns <code>true</code> if the custom links are hampered by excessive
-     *  noise, for all applications.</p> <p>
+     * <strong>FIXME:</strong> Explain this some more! I (Rainer)
+     * don't understand it.</p>
      *
-     *  <strong>FIXME:</strong> Explain this some more! I (Rainer) don't
-     *  understand it.</p>
-     *
-     *@return    The linksDirty value
+     * @return The linksDirty value
      */
-    public boolean getLinksDirty() {
+    public boolean getLinksDirty()
+    {
         return getPropertyBooleanValue(PropertyIDMap.PID_LINKSDIRTY);
     }
 

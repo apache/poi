@@ -100,24 +100,109 @@ public class PropertyIDMap extends HashMap
     public final static int PID_APPNAME = 18;
     public final static int PID_SECURITY = 19;
 
+
+
     /*
      * The following definitions are for the Document Summary Information.
      */
+
+    /** 
+     * <p>The entry is a dictionary.</p>
+     */
+    public final static int PID_DICTIONARY = 0;
+
+    /**
+     * <p>The entry denotes a code page.</p>
+     */
+    public final static int PID_CODEPAGE = 1;
+
+    /** 
+     * <p>The entry is a string denoting the category the file belongs
+     * to, e.g. review, memo, etc. This is useful to find documents of
+     * same type.</p>
+     */
     public final static int PID_CATEGORY = 2;
+
+    /** 
+     * <p>Target format for power point presentation, e.g. 35mm,
+     * printer, video etc.</p>
+     */
     public final static int PID_PRESFORMAT = 3;
+
+    /** 
+     * <p>Number of bytes.</p>
+     */
     public final static int PID_BYTECOUNT = 4;
+
+    /** 
+     * <p>Number of lines.</p>
+     */
     public final static int PID_LINECOUNT = 5;
+
+    /** 
+     * <p>Number of paragraphs.</p>
+     */
     public final static int PID_PARCOUNT = 6;
+
+    /** 
+     * <p>Number of slides in a power point presentation.</p>
+     */
     public final static int PID_SLIDECOUNT = 7;
+
+    /** 
+     * <p>Number of slides with notes.</p>
+     */
     public final static int PID_NOTECOUNT = 8;
+
+    /** 
+     * <p>Number of hidden slides.</p>
+     */
     public final static int PID_HIDDENCOUNT = 9;
+
+    /** 
+     * <p>Number of multimedia clips, e.g. sound or video.</p>
+     */
     public final static int PID_MMCLIPCOUNT = 10;
+
+    /** 
+     * <p>This entry is set to -1 when scaling of the thumbnail is
+     * desired. Otherwise the thumbnail should be cropped.</p>
+     */
     public final static int PID_SCALE = 11;
+
+    /** 
+     * <p>This entry denotes an internally used property. It is a
+     * vector of variants consisting of pairs of a string (VT_LPSTR)
+     * and a number (VT_I4). The string is a heading name, and the
+     * number tells how many document parts are under that
+     * heading.</p>
+     */
     public final static int PID_HEADINGPAIR = 12;
+
+    /** 
+     * <p>This entry contains the names of document parts (word: names
+     * of the documents in the master document, excel: sheet names,
+     * power point: slide titles, binder: document names).</p>
+     */
     public final static int PID_DOCPARTS = 13;
+
+    /** 
+     * <p>This entry contains the name of the project manager.</p>
+     */
     public final static int PID_MANAGER = 14;
+
+    /** 
+     * <p>This entry contains the company name.</p>
+     */
     public final static int PID_COMPANY = 15;
+
+    /** 
+     * <p>If this entry is -1 the links are dirty and should be
+     * re-evaluated.</p>
+     */
     public final static int PID_LINKSDIRTY = 16;
+
+
 
     /**
      * <p>Contains the summary information property ID values and
@@ -184,7 +269,7 @@ public class PropertyIDMap extends HashMap
     {
         if (summaryInformationProperties == null)
 	{
-            PropertyIDMap m = new PropertyIDMap(17, (float) 1.0);
+            PropertyIDMap m = new PropertyIDMap(18, (float) 1.0);
             m.put(PID_TITLE, "PID_TITLE");
             m.put(PID_SUBJECT, "PID_SUBJECT");
             m.put(PID_AUTHOR, "PID_AUTHOR");
@@ -221,6 +306,8 @@ public class PropertyIDMap extends HashMap
         if (documentSummaryInformationProperties == null)
 	{
             PropertyIDMap m = new PropertyIDMap(17, (float) 1.0);
+            m.put(PID_DICTIONARY, "PID_DICTIONARY");
+            m.put(PID_CODEPAGE, "PID_CODEPAGE");
             m.put(PID_CATEGORY, "PID_CATEGORY");
             m.put(PID_PRESFORMAT, "PID_PRESFORMAT");
             m.put(PID_BYTECOUNT, "PID_BYTECOUNT");
