@@ -53,51 +53,51 @@
  * <http://www.apache.org/>.
  */
 
-/*
- * ParenthesisPtg.java
- *
- * Created on November 21, 2001, 6:42 PM
- */
 package org.apache.poi.hssf.record.formula;
 
 /**
- * Denotes that the previous operation (if just after an operation) or operand
- * (if just after an operand) should appear in parenthesis.  For display purposes only.
+ * Dummy class, we want it only for for the parsing process
+ * does not actually get into the file  -- note by andy...there is a parenthesis PTG
+ * that can be written and is sometimes!
  *
- * @author  andy
+ * Avik Sengupta <lists@aviksengupta.com>
  */
-
 public class ParenthesisPtg
     extends Ptg
+    implements OperationPtg
 {
-    private final static int SIZE = 1;
-    public final static byte sid  = 0x15;
+   
 
-    /** Creates new ParenthesisPtg */
-
-    public ParenthesisPtg()
-    {
-    }
-
-    /** Creates new ParenthesisPtg */
-
-    public ParenthesisPtg(byte [] data, int offset)
-    {
-
-        // doesn't read anything
-    }
+   
 
     public void writeBytes(byte [] array, int offset)
     {
+        //do nothing
     }
 
     public int getSize()
     {
-        return SIZE;
+        return 0;
+    }
+
+    public int getType()
+    {
+        return TYPE_BINARY;
+    }
+
+    public int getNumberOfOperands()
+    {
+        return 0;
     }
 
     public String toFormulaString()
     {
-        return "()";   // bug...should be an operation?  have a new "Cosmetic and unnecessary" interface?
+        return "(";
+    }
+
+    public String toFormulaString(Ptg [] operands)
+    {
+        return "(";
     }
 }
+
