@@ -40,7 +40,7 @@
 
   <menu label="Get Involved">
     <menu-item label="Contributing" href="contrib.html"/>
-    <menu-item label="Bug Database" href="https://sourceforge.net/tracker/?atid=406288&amp;group_id=32701&amp;func=browse"/>
+    <menu-item label="Bug Database" href="http://nagoya.apache.org/bugzilla/buglist.cgi?product=POI"/>
     <menu-item label="CVS" href="http://jakarta.apache.org/site/cvsindex.html"/>
     <menu-item label="Mail Lists" href="http://jakarta.apache.org/site/mail.html"/>
   </menu>
