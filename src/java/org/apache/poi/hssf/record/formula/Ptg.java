@@ -307,6 +307,12 @@ public abstract class Ptg
             case MissingArgPtg.sid:
                 retval = new MissingArgPtg(data,offset);
                 break;
+            case UnaryPlusPtg.sid:
+                retval=new UnaryPlusPtg(data,offset);
+                break;
+            case UnaryMinusPtg.sid:
+                retval=new UnaryMinusPtg(data,offset);
+                break;
 
             default :
 
