@@ -104,7 +104,7 @@ public class Ref3DPtg extends Ptg {
     public String toString() {
         StringBuffer buffer = new StringBuffer();
 
-        buffer.append("Ref3dPrg\n");
+        buffer.append("Ref3dPtg\n");
         buffer.append("Index to Extern Sheet = " + getExternSheetIndex()).append("\n");
         buffer.append("Row = " + getRow()).append("\n");
         buffer.append("Col  = " + getColumn()).append("\n");
