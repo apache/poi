@@ -63,7 +63,7 @@
 package org.apache.poi.hpsf;
 
 import java.util.*;
-import org.apache.poi.util.LittleEndian; 
+import org.apache.poi.util.LittleEndian;
 
 /**
  *  <p>
@@ -257,13 +257,7 @@ public class Property {
                 } else if (bool == 0) {
                     value = new Boolean(false);
                 } else {
-                    /*
-                     *  FIXME: Someone might invent a new
-                     *  HPSFRuntimeException subclass
-                     *  IllegalPropertySetDataException for this and
-                     *  similar cases.
-                     */
-                    throw new HPSFRuntimeException
+                    throw new IllegalPropertySetDataException
                             ("Illegal property set data: A boolean must be " +
                             "either -1 (true) or 0 (false).");
                 }
