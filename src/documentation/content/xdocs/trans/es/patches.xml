@@ -18,7 +18,7 @@
                 of some of the noteworthy patches that have been posted
                 to the
                 <code>developers</code> mailing list.
-                These patches are not (yet) part of the Poi project, but need reviewing for possible
+                These patches are not (yet) part of the POI project, but need reviewing for possible
                 inclusion. This system was instituted because, due to the large volume of mail and
                 the lack of time of the committers, some patches tended to get forgotten about. This
                 queue does not guarantee that any patch will be reviewed within a reasonable time frame,
@@ -34,7 +34,7 @@
                     Contributions</link>. The preferred submission method for patches is:
             </p>
             <ul>
-                <li>Post to Poi developers list</li>
+                <li>Post to POI developers list</li>
                 <li>Describe the patch, the reason for it and (if necessary) why this is important.</li>
                 <li>Generate the patch in
                     <code>diff -u</code> format from CVS

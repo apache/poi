@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <!DOCTYPE book PUBLIC "-//APACHE//DTD Cocoon Documentation Book V1.0//EN" "../dtd/book-cocoon-v10.dtd">
 
-<book software="Poi Project" 
-      title="Poi Project News Pages" 
-      copyright="@year@ Poi Project">
+<book software="POI Project" 
+      title="POI Project News Pages" 
+      copyright="@year@ POI Project">
 
   <menu label="Navigation">
     <menu-item label="Main" href="../index.html"/>

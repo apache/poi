@@ -3,7 +3,7 @@
 
 <document>
   <header>
-    <title>Jakarta Poi - Project History</title>
+    <title>Jakarta POI - Project History</title>
     <authors>
       <person id="AO" name="Andrew C. Oliver" email="acoliver@apache.org"/>
     </authors>
@@ -12,9 +12,9 @@
   <body>
 
 
-    <section><title>Jakarta Poi - Brief Project History</title>
+    <section><title>Jakarta POI - Brief Project History</title>
 
-        <p>The Poi project was dreamed up back around April 2001, when
+        <p>The POI project was dreamed up back around April 2001, when
         Andrew Oliver landed a short term contract to do Java-based
         reporting to Excel. He'd done this project a few times before
         and knew right where to look for the tools he needed.
@@ -41,18 +41,18 @@
         on Marc's library. Several users wrote in asking to read XLS
         (not just write as had originally been planned) and one user
         had special requests for a different use for POIFS. Before
-        long, the project scope had tripled.  Poi 1.0 was released a
+        long, the project scope had tripled.  POI 1.0 was released a
         month later than planned, but with far more features. Marc
         quickly wrote the serializer framework and HSSF Serializer in
         record time and Andrew banged out more documentation and worked
         on making people aware of the project
         </p>
 
-        <p> Shortly before the release, Poi was fortunate to come into
+        <p> Shortly before the release, POI was fortunate to come into
           contact with Nicola -Ken- Barrozzi who gave them samples for
           the HSSF Serializer and help uncover its unfortunate bugs
           (which were promptly fixed).  More recently, Ken ported most
-          of the Poi project documentation to XML from Andrew's crappy
+          of the POI project documentation to XML from Andrew's crappy
           HTML docs he wrote with Star Office.
         </p>
 
@@ -60,7 +60,7 @@
 joined the project.  Glen was ticked off at Andrew's flippant attitude
 towards adding graphing to HSSF.  Glen got so ticked off he decided to
 grab a hammer and do it himself.  Glen has already become an integral
-part of the Poi development community; his contributions to HSSF have
+part of the POI development community; his contributions to HSSF have
 already started making waves.
         </p>
 
@@ -69,9 +69,9 @@ already started making waves.
          Cocoon Project</link>, only to discover the project had
          outgrown fitting nicely into just Cocoon long ago.
          Furthermore, Andrew started eyeing other projects he'd like to
-         see Poi functionality added to.  So it was decided to donate
-         the Serializers and Generators to Cocoon, other Poi
-         integration components to other projects, and the Poi APIs
+         see POI functionality added to.  So it was decided to donate
+         the Serializers and Generators to Cocoon, other POI
+         integration components to other projects, and the POI APIs
          would become part of Jakarta.  It was a bumpy road but it
          looks like everything turned out since you're reading this!
         </p>
@@ -87,7 +87,7 @@ already started making waves.
         pay us to go away.
         </p>
         <p>Next, we've got some work to do here at Jakarta to finish
-           integrating Poi into the community.  Furthermore, we're
+           integrating POI into the community.  Furthermore, we're
            still transitioning the Serializer to Cocoon.
         </p>-->
         <p>HSSF, during the 2.0 cycle, will undergo a few

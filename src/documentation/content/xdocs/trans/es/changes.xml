@@ -9,7 +9,7 @@
         <person id="GJS"  name="Glen Stampoultzis" email="poi-user@jakarta.apache.org"/>
         <person id="MJ"  name="Marc Johnson"       email="mjohnson@apache.org"/>
         <person id="NKB" name="Nicola Ken Barozzi" email="barozzi@nicolaken.com"/>
-        <person id="POI-DEVELOPERS" name="Poi Developers"    email="poi-dev@jakarta.apache.org"/>
+        <person id="POI-DEVELOPERS" name="POI Developers"    email="poi-dev@jakarta.apache.org"/>
     </devs>
     <release version="1.8-dev" date="20 Septiembre 2002">
         <action dev="POI-DEVELOPERS" type="add">Soporte para Formato de Datos Personalizado (Custom)</action>

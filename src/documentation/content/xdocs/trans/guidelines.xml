@@ -3,7 +3,7 @@
 
 <document>
   <header>
-    <title>Welcome to POI -- Poi Website Translation Guildeline</title>
+    <title>Welcome to POI -- POI Website Translation Guildeline</title>
     <authors>
       <person id="AO" name="Andrew C. Oliver" email="acoliver@apache.org"/>
       <person id="TK" name="Tetsuya Kitahata" email="tetsuya@apache.org"/>
@@ -32,8 +32,8 @@
      </p>
      <p>
        To generate all of the documentation such as it would appear on the 
-       <link href="http://jakarta.apache.org/poi/">Poi Website</link> you can execute the "site" target (optionally
-       preceeded by the "clean" target. See "<link href="../howtobuild.html">How to Build</link>" page for more detail (Now, Poi build uses <link href="http://xml.apache.org/forrest/">Forrest</link>).
+       <link href="http://jakarta.apache.org/poi/">POI Website</link> you can execute the "site" target (optionally
+       preceeded by the "clean" target. See "<link href="../howtobuild.html">How to Build</link>" page for more detail (Now, POI build uses <link href="http://xml.apache.org/forrest/">Forrest</link>).
      </p>
      <p> 
        The source for POI's XML documentation is in src/documentation/content/xdocs.  To edit one of these files you can use

@@ -3,7 +3,7 @@
 
 <book software="Poi" 
       title="Documentación del Proyecto Poi" 
-      copyright="@year@ Poi Project"
+      copyright="@year@ POI Project"
       xmlns:xlink="http://www.w3.org/1999/xlink">
 
   <menu label="Marketing">
