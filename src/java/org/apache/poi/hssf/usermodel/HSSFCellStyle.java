@@ -68,6 +68,7 @@ import org.apache.poi.hssf.record.ExtendedFormatRecord;
  * @version 1.0-pre
  *
  * @author  Andrew C. Oliver (acoliver at apache dot org)
+ * @author Jason Height (jheight at chariot dot net dot au)
  * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#createCellStyle()
  * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#getCellStyleAt(short)
  * @see org.apache.poi.hssf.usermodel.HSSFCell#setCellStyle(HSSFCellStyle)
@@ -473,22 +474,34 @@ public class HSSFCellStyle
 
     /**
      * set the degree of rotation for the text in the cell
-     * @param rotation degrees
+     * @param rotation degrees (between -90 and 90 degrees)
      */
 
     public void setRotation(short rotation)
     {
+      if ((rotation < 0)&&(rotation >= -90)) {
+        //Take care of the funny 4th quadrant issue
+        //The 4th quadrant (-1 to -90) is stored as (91 to 180)
+        rotation = (short)(90 - rotation);
+      }
+      else if ((rotation < -90)  ||(rotation > 90))
+        //Do not allow an incorrect rotation to be set
+        throw new IllegalArgumentException("The rotation must be between -90 and 90 degrees");
         format.setRotation(rotation);
     }
 
     /**
      * get the degree of rotation for the text in the cell
-     * @return rotation degrees
+     * @return rotation degrees (between -90 and 90 degrees)
      */
 
     public short getRotation()
     {
-        return format.getRotation();
+      short rotation = format.getRotation();
+      if (rotation > 90)
+        //This is actually the 4th quadrant
+        rotation = (short)(90-rotation);
+      return rotation;
     }
 
     /**
