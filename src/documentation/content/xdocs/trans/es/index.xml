@@ -108,9 +108,9 @@
              <p>HSSF es nuestra adaptaci del formato de fichero de Microsoft Excel 97(-2002) a Java puro. Soporta lectura y
 	     escritura. Por favor, vea <link href="../../hssf/index.html">la pina del proyecto HSSF</link> para m informaci.</p>
         </section>
-        <section><title>HDF (Formato de Documento Horrible)</title>
-             <p>HDF es nuestra adaptaci del formato de fichero de Microsoft Word 97 a Java puro. Soporta lectura y escritura.
-	     Por favor, vea <link href="../../hdf/index.html">la pina del proyecto HDF para m informaci</link>. Este
+        <section><title>HWPF (Formato de Documento Horrible)</title>
+             <p>HWPF es nuestra adaptaci del formato de fichero de Microsoft Word 97 a Java puro. Soporta lectura y escritura.
+	     Por favor, vea <link href="../../hwpf/index.html">la pina del proyecto HWPF para m informaci</link>. Este
 	     componente esten la fase inicial de dise. alta dentro!</p>
         </section>
         <section><title>HPSF (Formato de Conjunto de Propiedades Horrible)</title>

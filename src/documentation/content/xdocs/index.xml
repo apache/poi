@@ -74,7 +74,7 @@
         </section>
         <section><title>HWPF</title>
              <p>HWPF is our port of the Microsoft Word 97 file format to pure Java.  It supports read and write capability.
-             Please see <link href="./hdf/index.html">the HWPF project page for more information</link>.  This component is
+             Please see <link href="./hwpf/index.html">the HWPF project page for more information</link>.  This component is
              in the early stages of design.  Jump in!</p>
         </section>
         <section><title>HPSF</title>

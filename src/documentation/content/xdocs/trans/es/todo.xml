@@ -15,7 +15,7 @@
 
     <actions priority="high">
         <action context="code" dev="NKB">
-          Terminar HDF
+          Terminar HWPF
         </action>
         <action context="code" dev="NKB">
           Terminar Gráficas (Charts)

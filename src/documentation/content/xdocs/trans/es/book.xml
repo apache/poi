@@ -14,7 +14,7 @@
     <menu-item label="Descripción General" href="overview.html"/>
     <menu-item label="POIFS" href="../../poifs/index.html"/>
     <menu-item label="HSSF" href="../../hssf/index.html"/>
-    <menu-item label="HDF" href="../../hdf/index.html"/>
+    <menu-item label="HWPF" href="../../hwpf/index.html"/>
     <menu-item label="HPSF" href="../../hpsf/index.html"/>
     <menu-item label="POI-Utils" href="../../utils/index.html"/>  
     <menu-item label="Descargas" href="http://jakarta.apache.org/builds/jakarta-poi/"/> 
