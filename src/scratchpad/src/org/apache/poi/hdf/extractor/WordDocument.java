@@ -125,6 +125,9 @@ public class WordDocument
   /** length of footnotes text*/
   int _ccpFtn;
 
+  /** The name of the file to write to */
+  String _outName
+
   /** OLE stuff*/
   private InputStream istream;
   /** OLE stuff*/
@@ -158,6 +161,7 @@ public class WordDocument
       }*/
       try
       {
+          _outName = args[1];
           WordDocument file = new WordDocument(args[0]);
           file.closeDoc();
       }
@@ -1529,7 +1533,7 @@ public class WordDocument
     //test code
     try
     {
-      OutputStreamWriter test = new OutputStreamWriter(new FileOutputStream("/home/andy/test.xml"), "8859_1");
+      OutputStreamWriter test = new OutputStreamWriter(new FileOutputStream(_outName), "8859_1");
       test.write(_headerBuffer.toString());
       test.write(_bodyBuffer.toString());
       test.flush();
