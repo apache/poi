@@ -3,16 +3,15 @@
 
 <document>
  <header>
-  <title>Who we are</title>
+  <title>Jakarta Poi - Who we are</title>
   <authors>
-   <person name="Davanum Srinivas" email="dims@yahoo.com"/>
-   <person name="Nicola Ken Barozzi" email="barozzi@nicolaken.com"/>
+   <person name="Jakarta Poi Documentation Team" email="poi-dev@jakarta.apache.org"/>
    </authors>
  </header>
 
  <body>
 
- <section><title>Who we are</title>
+ <section><title>Jakarta Poi - Who we are</title>
   <p>
     The Poi Project operates on a meritocracy: the more you do, the more
     responsibility you will obtain. This page lists all of the people who have
