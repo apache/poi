@@ -78,221 +78,219 @@ extends TestCase {
     
     /** Test reading AND writing a complicated workbook
      *Test opening resulting sheet in excel*/
-          public void test15228()
-        throws java.io.IOException
-    {
-         String readFilename = System.getProperty("HSSF.testdata.path");
-          FileInputStream in = new FileInputStream(readFilename+File.separator+"15228.xls");
-          HSSFWorkbook wb = new HSSFWorkbook(in);
-          HSSFSheet s = wb.getSheetAt(0);
-          HSSFRow r = s.createRow(0);
-          HSSFCell c = r.createCell((short)0);
-          c.setCellValue(10);
-          File file = File.createTempFile("test15228",".xls");
-          FileOutputStream out    = new FileOutputStream(file);
-          wb.write(out);
-          assertTrue("No exception thrown", true); 
-          assertTrue("File Should Exist", file.exists());
-            
+    public void test15228()
+    throws java.io.IOException {
+        String readFilename = System.getProperty("HSSF.testdata.path");
+        FileInputStream in = new FileInputStream(readFilename+File.separator+"15228.xls");
+        HSSFWorkbook wb = new HSSFWorkbook(in);
+        HSSFSheet s = wb.getSheetAt(0);
+        HSSFRow r = s.createRow(0);
+        HSSFCell c = r.createCell((short)0);
+        c.setCellValue(10);
+        File file = File.createTempFile("test15228",".xls");
+        FileOutputStream out    = new FileOutputStream(file);
+        wb.write(out);
+        assertTrue("No exception thrown", true);
+        assertTrue("File Should Exist", file.exists());
+        
     }
-          
-                 public void test13796()
-        throws java.io.IOException
-    {
-         String readFilename = System.getProperty("HSSF.testdata.path");
-          FileInputStream in = new FileInputStream(readFilename+File.separator+"13796.xls");
-          HSSFWorkbook wb = new HSSFWorkbook(in);
-          HSSFSheet s = wb.getSheetAt(0);
-          HSSFRow r = s.createRow(0);
-          HSSFCell c = r.createCell((short)0);
-          c.setCellValue(10);
-          File file = File.createTempFile("test13796",".xls");
-          FileOutputStream out    = new FileOutputStream(file);
-          wb.write(out);
-          assertTrue("No exception thrown", true); 
-          assertTrue("File Should Exist", file.exists());
-            
+    
+    public void test13796()
+    throws java.io.IOException {
+        String readFilename = System.getProperty("HSSF.testdata.path");
+        FileInputStream in = new FileInputStream(readFilename+File.separator+"13796.xls");
+        HSSFWorkbook wb = new HSSFWorkbook(in);
+        HSSFSheet s = wb.getSheetAt(0);
+        HSSFRow r = s.createRow(0);
+        HSSFCell c = r.createCell((short)0);
+        c.setCellValue(10);
+        File file = File.createTempFile("test13796",".xls");
+        FileOutputStream out    = new FileOutputStream(file);
+        wb.write(out);
+        assertTrue("No exception thrown", true);
+        assertTrue("File Should Exist", file.exists());
+        
     }
-     /**Test writing a hyperlink
-      * Open resulting sheet in Excel and check that A1 contains a hyperlink*/            
-     public void test23094() throws Exception {
-         File file = File.createTempFile("test23094",".xls");
-         FileOutputStream out    = new FileOutputStream(file);
-         HSSFWorkbook     wb     = new HSSFWorkbook();
-         HSSFSheet        s      = wb.createSheet();
-         HSSFRow r = s.createRow(0);
-         r.createCell((short)0).setCellFormula("HYPERLINK( \"http://jakarta.apache.org\", \"Jakarta\" )");
-         assertTrue("No Exception expected",true);
-         wb.write(out);
-         out.close();
-     }
-      
+    /**Test writing a hyperlink
+     * Open resulting sheet in Excel and check that A1 contains a hyperlink*/
+    public void test23094() throws Exception {
+        File file = File.createTempFile("test23094",".xls");
+        FileOutputStream out    = new FileOutputStream(file);
+        HSSFWorkbook     wb     = new HSSFWorkbook();
+        HSSFSheet        s      = wb.createSheet();
+        HSSFRow r = s.createRow(0);
+        r.createCell((short)0).setCellFormula("HYPERLINK( \"http://jakarta.apache.org\", \"Jakarta\" )");
+        assertTrue("No Exception expected",true);
+        wb.write(out);
+        out.close();
+    }
+    
      /* test hyperlinks
       * open resulting file in excel, and check that there is a link to Google
       **/
-      public void test15353() throws Exception {
-            HSSFWorkbook wb = new HSSFWorkbook();
-            HSSFSheet sheet = wb.createSheet("My sheet");
+    public void test15353() throws Exception {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet("My sheet");
+        
+        HSSFRow row = sheet.createRow( (short) 0 );
+        HSSFCell cell = row.createCell( (short) 0 );
+        cell.setCellFormula("HYPERLINK(\"http://google.com\",\"Google\")");
+        
+        // Write out the workbook
+        File f = File.createTempFile("test15353",".xls");
+        FileOutputStream fileOut = new FileOutputStream(f);
+        wb.write(fileOut);
+        fileOut.close();
+    }
+    
+    /** test reading of a formula with a name and a cell ref in one
+     **/
+    public void test14460() throws Exception {
+        String filename = System.getProperty("HSSF.testdata.path");
+        filename=filename+"/14460.xls";
+        FileInputStream in = new FileInputStream(filename);
+        HSSFWorkbook wb = new HSSFWorkbook(in);
+        HSSFSheet sheet = wb.getSheetAt(0);
+        assertTrue("No exception throws", true);
+    }
+    
+    public void test14330() throws Exception {
+        String filedir = System.getProperty("HSSF.testdata.path");
+        String filename=filedir+"/14330-1.xls";
+        FileInputStream in = new FileInputStream(filename);
+        HSSFWorkbook wb = new HSSFWorkbook(in);
+        HSSFSheet sheet = wb.getSheetAt(0);
+        
+        filename=filedir+"/14330-2.xls";
+        in = new FileInputStream(filename);
+        wb = new HSSFWorkbook(in);
+        sheet = wb.getSheetAt(0);
+        assertTrue("No exception throws", true);
+    }
+    
+    /** test rewriting a file with large number of unique strings
+     *open resulting file in Excel to check results!*/
+    public void test15375() {
+        
+        try {
+            String filename = System.getProperty("HSSF.testdata.path");
+            filename=filename+"/15375.xls";
+            FileInputStream in = new FileInputStream(filename);
+            HSSFWorkbook wb = new HSSFWorkbook(in);
+            HSSFSheet sheet = wb.getSheetAt(0);
             
-            HSSFRow row = sheet.createRow( (short) 0 );
-            HSSFCell cell = row.createCell( (short) 0 );
-            cell.setCellFormula("HYPERLINK(\"http://google.com\",\"Google\")");
+            HSSFRow row = sheet.getRow(5);
+            HSSFCell cell = row.getCell((short)3);
+            if (cell == null)
+                cell = row.createCell((short)3);
             
-            // Write out the workbook
-            File f = File.createTempFile("test15353",".xls");
+            // Write test
+            cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+            cell.setCellValue("a test");
+            
+            // change existing numeric cell value
+            
+            HSSFRow oRow = sheet.getRow(14);
+            HSSFCell oCell = oRow.getCell((short)4);
+            oCell.setCellValue(75);
+            oCell = oRow.getCell((short)5);
+            oCell.setCellValue("0.3");
+            
+            // Write the output to a file
+            File f = File.createTempFile("test15375",".xls");
             FileOutputStream fileOut = new FileOutputStream(f);
             wb.write(fileOut);
             fileOut.close();
         }
-          
-       /** test reading of a formula with a name and a cell ref in one
-        **/
-       public void test14460() throws Exception {
-        String filename = System.getProperty("HSSF.testdata.path");
-        filename=filename+"/14460.xls";
-        FileInputStream in = new FileInputStream(filename);
-            HSSFWorkbook wb = new HSSFWorkbook(in);
-            HSSFSheet sheet = wb.getSheetAt(0);
-            assertTrue("No exception throws", true);
-     }
-       
-       public void test14330() throws Exception {
-           String filedir = System.getProperty("HSSF.testdata.path");
-           String filename=filedir+"/14330-1.xls";
-           FileInputStream in = new FileInputStream(filename);
-           HSSFWorkbook wb = new HSSFWorkbook(in);
-           HSSFSheet sheet = wb.getSheetAt(0);
-           
-           filename=filedir+"/14330-2.xls";
-           in = new FileInputStream(filename);
-           wb = new HSSFWorkbook(in);
-           sheet = wb.getSheetAt(0);
-           assertTrue("No exception throws", true);
-       }
+        catch (java.io.FileNotFoundException ex) {
+            ex.printStackTrace();
+        }
+        catch (java.io.IOException ex) {
+            ex.printStackTrace();
+        }
+        
+    }
     
-       /** test rewriting a file with large number of unique strings
-        *open resulting file in Excel to check results!*/
-       public void test15375() {
-           
-           try {
-               String filename = System.getProperty("HSSF.testdata.path");
-               filename=filename+"/15375.xls";
-               FileInputStream in = new FileInputStream(filename);
-               HSSFWorkbook wb = new HSSFWorkbook(in);
-               HSSFSheet sheet = wb.getSheetAt(0);
-               
-               HSSFRow row = sheet.getRow(5);
-               HSSFCell cell = row.getCell((short)3);
-               if (cell == null)
-                   cell = row.createCell((short)3);
-               
-               // Write test
-               cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-               cell.setCellValue("a test");
-               
-               // change existing numeric cell value
-               
-               HSSFRow oRow = sheet.getRow(14);
-               HSSFCell oCell = oRow.getCell((short)4);
-               oCell.setCellValue(75);
-               oCell = oRow.getCell((short)5);
-               oCell.setCellValue("0.3");
-               
-               // Write the output to a file
-               File f = File.createTempFile("test15375",".xls");
-               FileOutputStream fileOut = new FileOutputStream(f);
-               wb.write(fileOut);
-               fileOut.close();
-           }
-           catch (java.io.FileNotFoundException ex) {
-               ex.printStackTrace();
-           }
-           catch (java.io.IOException ex) {
-               ex.printStackTrace();
-           }
-           
-       }
-       
-       /** test writing a file with large number of unique strings
-        *open resulting file in Excel to check results!*/
-       
-       public void test15375_2() throws Exception{
-           
-           
-           HSSFWorkbook wb = new HSSFWorkbook();
-           HSSFSheet sheet = wb.createSheet();
-           
-           String tmp1 = null;
-           String tmp2 = null;
-           String tmp3 = null;
-           
-           for (int i = 0; i < 6000; i++) {
-               tmp1 = "Test1" + i;
-               tmp2 = "Test2" + i;
-               tmp3 = "Test3" + i;
-               
-               HSSFRow row = sheet.createRow((short)i);
-               
-               HSSFCell cell = row.createCell((short)0);
-               cell.setCellValue(tmp1);
-               cell = row.createCell((short)1);
-               cell.setCellValue(tmp2);
-               cell = row.createCell((short)2);
-               cell.setCellValue(tmp3);
-           }
-           File f = File.createTempFile("test15375-2",".xls");
-           FileOutputStream fileOut = new FileOutputStream(f);
-           wb.write(fileOut);
-           fileOut.close();
-       }
-       /** another test for the number of unique strings issue
-        *test opening the resulting file in Excel*/
-       public void test22568() {
-           int r=2000;int c=3;
-           
-           HSSFWorkbook wb = new HSSFWorkbook() ;
-           HSSFSheet sheet = wb.createSheet("ExcelTest") ;
-         
-           int col_cnt=0, rw_cnt=0 ;
-           
-           col_cnt = c;
-           rw_cnt = r;
-           
-           HSSFRow rw = null ;
-           HSSFCell cell =null;
-           rw = sheet.createRow((short)0) ;
-           //Header row
-           for(short j=0; j<col_cnt; j++){
-               cell = rw.createCell((short)j) ;
-               cell.setCellValue("Col " + (j+1)) ;
-           }
-           
-           for(int i=1; i<rw_cnt; i++){
-               rw = sheet.createRow((short)i) ;
-               for(short j=0; j<col_cnt; j++){
-                   cell = rw.createCell((short)j) ;
-                   cell.setCellValue("Row:" + (i+1) + ",Column:" +
-                   (j+1)) ;
-               }
-           }
-           
-           sheet.setDefaultColumnWidth((short) 18) ;
-           
-           try {
-               File f = File.createTempFile("test22568",".xls");
-               FileOutputStream out = new FileOutputStream(f) ;
-               wb.write(out) ;
-               
-               out.close() ;
-           }
-           catch(java.io.IOException io_Excp) {
-               System.out.println(io_Excp.getMessage()) ;
-           }
-       }
-       
+    /** test writing a file with large number of unique strings
+     *open resulting file in Excel to check results!*/
+    
+    public void test15375_2() throws Exception{
+        
+        
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet();
+        
+        String tmp1 = null;
+        String tmp2 = null;
+        String tmp3 = null;
+        
+        for (int i = 0; i < 6000; i++) {
+            tmp1 = "Test1" + i;
+            tmp2 = "Test2" + i;
+            tmp3 = "Test3" + i;
+            
+            HSSFRow row = sheet.createRow((short)i);
+            
+            HSSFCell cell = row.createCell((short)0);
+            cell.setCellValue(tmp1);
+            cell = row.createCell((short)1);
+            cell.setCellValue(tmp2);
+            cell = row.createCell((short)2);
+            cell.setCellValue(tmp3);
+        }
+        File f = File.createTempFile("test15375-2",".xls");
+        FileOutputStream fileOut = new FileOutputStream(f);
+        wb.write(fileOut);
+        fileOut.close();
+    }
+    /** another test for the number of unique strings issue
+     *test opening the resulting file in Excel*/
+    public void test22568() {
+        int r=2000;int c=3;
+        
+        HSSFWorkbook wb = new HSSFWorkbook() ;
+        HSSFSheet sheet = wb.createSheet("ExcelTest") ;
+        
+        int col_cnt=0, rw_cnt=0 ;
+        
+        col_cnt = c;
+        rw_cnt = r;
+        
+        HSSFRow rw = null ;
+        HSSFCell cell =null;
+        rw = sheet.createRow((short)0) ;
+        //Header row
+        for(short j=0; j<col_cnt; j++){
+            cell = rw.createCell((short)j) ;
+            cell.setCellValue("Col " + (j+1)) ;
+        }
+        
+        for(int i=1; i<rw_cnt; i++){
+            rw = sheet.createRow((short)i) ;
+            for(short j=0; j<col_cnt; j++){
+                cell = rw.createCell((short)j) ;
+                cell.setCellValue("Row:" + (i+1) + ",Column:" +
+                (j+1)) ;
+            }
+        }
+        
+        sheet.setDefaultColumnWidth((short) 18) ;
+        
+        try {
+            File f = File.createTempFile("test22568",".xls");
+            FileOutputStream out = new FileOutputStream(f) ;
+            wb.write(out) ;
+            
+            out.close() ;
+        }
+        catch(java.io.IOException io_Excp) {
+            System.out.println(io_Excp.getMessage()) ;
+        }
+    }
+    
     /**Double byte strings*/
     public void test15556() throws java.io.IOException {
-
+        
         String filename = System.getProperty("HSSF.testdata.path");
         filename=filename+"/15556.xls";
         FileInputStream in = new FileInputStream(filename);
@@ -300,8 +298,8 @@ extends TestCase {
         HSSFSheet sheet = wb.getSheetAt(0);
         HSSFRow row = sheet.getRow(45);
         this.assertTrue("Read row fine!" , true);
-
-    } 
+        
+    }
     
     /*Double byte strings */
     public void test22742() throws java.io.IOException {
@@ -309,29 +307,29 @@ extends TestCase {
         filename=filename+"/22742.xls";
         FileInputStream in = new FileInputStream(filename);
         HSSFWorkbook wb = new HSSFWorkbook(in);        this.assertTrue("Read workbook!" , true);
-
+        
     }
     /*Double byte strings */
     public void test12561_1() throws java.io.IOException {
-
+        
         String filename = System.getProperty("HSSF.testdata.path");
         filename=filename+"/12561-1.xls";
         FileInputStream in = new FileInputStream(filename);
         HSSFWorkbook wb = new HSSFWorkbook(in);
         this.assertTrue("Read workbook!" , true);
-
+        
     }
     /*Double byte strings */
     public void test12561_2() throws java.io.IOException {
-
+        
         String filename = System.getProperty("HSSF.testdata.path");
         filename=filename+"/12561-2.xls";
         FileInputStream in = new FileInputStream(filename);
         HSSFWorkbook wb = new HSSFWorkbook(in);
         this.assertTrue("Read workbook!" , true);
-
+        
     }
-    /*Double byte strings 
+    /*Double byte strings
      File supplied by jubeson*/
     public void test12843_1() throws java.io.IOException {
         String filename = System.getProperty("HSSF.testdata.path");
@@ -341,7 +339,7 @@ extends TestCase {
         this.assertTrue("Read workbook!" , true);
     }
     
-    /*Double byte strings 
+    /*Double byte strings
      File supplied by Paul Chung*/
     public void test12843_2() throws java.io.IOException {
         String filename = System.getProperty("HSSF.testdata.path");
@@ -358,19 +356,40 @@ extends TestCase {
         FileInputStream in = new FileInputStream(filename);
         HSSFWorkbook wb = new HSSFWorkbook(in);
         this.assertTrue("Read workbook!" , true);
-
+        
     }
     
     /** Illegal argument exception - cannot store duplicate value in Map*/
-     public void test19599() throws java.io.IOException {
-        FileInputStream in = new FileInputStream("19599-1.xls");
+    public void test19599() throws java.io.IOException {
+        String filename = System.getProperty("HSSF.testdata.path");
+        FileInputStream in = new FileInputStream(filename+"/19599-1.xls");
         HSSFWorkbook wb = new HSSFWorkbook(in);
-        in = new FileInputStream("19599-2.xls");
+        in = new FileInputStream(filename+"/19599-2.xls");
         wb = new HSSFWorkbook(in);
         this.assertTrue("Read workbook, No exceptions" , true);
-
+        
+    }
+    
+    public void test24215() throws Exception {
+        String filename = System.getProperty("HSSF.testdata.path");
+        HSSFWorkbook wb = new HSSFWorkbook(new FileInputStream(filename+"/24215.xls"));
+        
+        for (int sheetIndex = 0; sheetIndex < wb.getNumberOfSheets();sheetIndex++) {
+            HSSFSheet sheet = wb.getSheetAt(sheetIndex);
+            int rows = sheet.getLastRowNum();
+            
+            for (int rowIndex = 0; rowIndex < rows; rowIndex++) {
+                HSSFRow row = sheet.getRow(rowIndex);
+                int cells = row.getLastCellNum();
+                
+                for (short cellIndex = 0; cellIndex < cells; cellIndex++) {
+                    HSSFCell cell  = row.getCell(cellIndex);
+                }
+            }
+        }
+        assertTrue("No Exceptions while reading file", true);
     }
 }
-    
+
 
 
