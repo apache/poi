@@ -11,7 +11,8 @@
      <classpath>
        <path>
           <pathelement path="${xlayout.build.classes.dir}"/>       
-          <fileset dir="${xlayout.library.dir}" casesensitive="yes"> 
+          <pathelement path="${xlayout.build.scratchpad.classes.dir}"/>
+          <fileset dir="${xlayout.library.dir}" casesensitive="yes">
            <patternset>
              <include name="*/*.jar"/>
              <include name="*/*.zip"/>
