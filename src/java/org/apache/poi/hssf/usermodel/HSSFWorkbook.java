@@ -142,10 +142,11 @@ public class HSSFWorkbook
         workbook = Workbook.createWorkbook(records);
         setPropertiesFromWorkbook(workbook);
         int numRecords = workbook.getNumRecords();
+        int sheetNum = 0;
 
         while (numRecords < records.size())
         {
-            Sheet sheet = Sheet.createSheet(records);
+            Sheet sheet = Sheet.createSheet(records, sheetNum++, numRecords);
 
             numRecords += sheet.getNumRecords();
             sheet.convertLabelRecords(
