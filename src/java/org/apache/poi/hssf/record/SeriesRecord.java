@@ -217,6 +217,19 @@ public class SeriesRecord
         return this.sid;
     }
 
+    public Object clone() {
+      SeriesRecord rec = new SeriesRecord();
+      
+      rec.field_1_categoryDataType = field_1_categoryDataType;
+      rec.field_2_valuesDataType = field_2_valuesDataType;
+      rec.field_3_numCategories = field_3_numCategories;
+      rec.field_4_numValues = field_4_numValues;
+      rec.field_5_bubbleSeriesType = field_5_bubbleSeriesType;
+      rec.field_6_numBubbleValues = field_6_numBubbleValues;
+
+      return rec;
+    }
+
 
     /**
      * Get the category data type field for the Series record.

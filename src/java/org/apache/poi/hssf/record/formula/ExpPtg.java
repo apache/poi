@@ -65,6 +65,7 @@ import org.apache.poi.hssf.util.SheetReferences;
 /**
  *
  * @author  andy
+ * @author Jason Height (jheight at chariot dot net dot au)
  */
 
 public class ExpPtg
@@ -101,4 +102,8 @@ public class ExpPtg
     
     public byte getDefaultOperandClass() {return Ptg.CLASS_VALUE;}
     
+    public Object clone() {
+      throw new RuntimeException("NO IDEA SHARED FORMULA EXP PTG");
+    }
+
 }

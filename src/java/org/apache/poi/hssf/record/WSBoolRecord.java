@@ -65,6 +65,7 @@ import org.apache.poi.util.LittleEndian;
  * REFERENCE:  PG 425 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
  * @author Andrew C. Oliver (acoliver at apache dot org)
  * @author Glen Stampoultzis (gstamp@iprimus.com.au)
+ * @author Jason Height (jheight at chariot dot net dot au)
  * @version 2.0-pre
  */
 
@@ -414,5 +415,12 @@ public class WSBoolRecord
     public short getSid()
     {
         return this.sid;
+    }
+
+    public Object clone() {
+      WSBoolRecord rec = new WSBoolRecord();
+      rec.field_1_wsbool = field_1_wsbool;
+      rec.field_2_wsbool = field_2_wsbool;
+      return rec;
     }
 }

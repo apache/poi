@@ -63,6 +63,7 @@ import org.apache.poi.util.LittleEndian;
  * Description:  stores the row information for the sheet. <P>
  * REFERENCE:  PG 379 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
  * @author Andrew C. Oliver (acoliver at apache dot org)
+ * @author Jason Height (jheight at chariot dot net dot au)
  * @version 2.0-pre
  */
 
@@ -511,5 +512,18 @@ public class RowRecord
             return true;
         }
         return false;
+    }
+
+    public Object clone() {
+      RowRecord rec = new RowRecord();
+      rec.field_1_row_number = field_1_row_number;
+      rec.field_2_first_col = field_2_first_col;
+      rec.field_3_last_col = field_3_last_col;
+      rec.field_4_height = field_4_height;
+      rec.field_5_optimize = field_5_optimize;
+      rec.field_6_reserved = field_6_reserved;
+      rec.field_7_option_flags = field_7_option_flags;
+      rec.field_8_xf_index = field_8_xf_index;
+      return rec;
     }
 }

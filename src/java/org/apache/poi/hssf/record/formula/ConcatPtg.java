@@ -67,6 +67,7 @@ import org.apache.poi.hssf.util.SheetReferences;
 /**
  *
  * @author  andy
+ * @author Jason Height (jheight at chariot dot net dot au)
  */
 
 public class ConcatPtg
@@ -122,4 +123,8 @@ public class ConcatPtg
         return buffer.toString();
     }
            
+    public Object clone() {
+      return new ConcatPtg();
+    }
+
 }

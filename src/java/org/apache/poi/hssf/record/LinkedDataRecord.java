@@ -207,6 +207,18 @@ public class LinkedDataRecord
         return this.sid;
     }
 
+    public Object clone() {
+      LinkedDataRecord rec = new LinkedDataRecord();
+      
+      rec.field_1_linkType = field_1_linkType;
+      rec.field_2_referenceType = field_2_referenceType;
+      rec.field_3_options = field_3_options;
+      rec.field_4_indexNumberFmtRecord = field_4_indexNumberFmtRecord;
+      rec.field_5_formulaOfLink = field_5_formulaOfLink;
+
+      return rec;
+    }
+
 
     /**
      * Get the link type field for the LinkedData record.

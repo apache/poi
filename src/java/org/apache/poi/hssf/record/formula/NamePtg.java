@@ -66,6 +66,7 @@ import org.apache.poi.hssf.util.SheetReferences;
 /**
  *
  * @author  andy
+ * @author Jason Height (jheight at chariot dot net dot au)
  */
 
 public class NamePtg
@@ -76,6 +77,11 @@ public class NamePtg
     private short             field_1_ixti;   // unknown function
     private short             field_2_label_index;
     private short             field_3_zero;   // reserved must be 0
+
+
+    private NamePtg() {
+      //Required for clone methods
+    }
 
     /** Creates new NamePtg */
 
@@ -109,4 +115,12 @@ public class NamePtg
     }
     
     public byte getDefaultOperandClass() {return Ptg.CLASS_VALUE;}
+
+    public Object clone() {
+      NamePtg ptg = new NamePtg();
+      ptg.field_1_ixti = field_1_ixti;
+      ptg.field_2_label_index = field_2_label_index;
+      ptg.field_3_zero = field_3_zero;
+      return ptg;
+    }
 }

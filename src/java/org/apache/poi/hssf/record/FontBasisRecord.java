@@ -197,6 +197,18 @@ public class FontBasisRecord
         return this.sid;
     }
 
+    public Object clone() {
+      FontBasisRecord rec = new FontBasisRecord();
+      
+      rec.field_1_xBasis = field_1_xBasis;
+      rec.field_2_yBasis = field_2_yBasis;
+      rec.field_3_heightBasis = field_3_heightBasis;
+      rec.field_4_scale = field_4_scale;
+      rec.field_5_indexToFontTable = field_5_indexToFontTable;
+
+      return rec;
+    }
+
 
     /**
      * Get the x Basis field for the FontBasis record.

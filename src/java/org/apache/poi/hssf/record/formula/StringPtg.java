@@ -62,6 +62,7 @@ import org.apache.poi.hssf.util.SheetReferences;
  * Number
  * Stores a String value in a formula value stored in the format <length 2 bytes>char[]
  * @author  Werner Froidevaux
+ * @author Jason Height (jheight at chariot dot net dot au)
  */
 
 public class StringPtg
@@ -71,6 +72,9 @@ public class StringPtg
     public final static byte sid  = 0x17;
     private String            field_1_value;
 
+    private StringPtg() {
+      //Required for clone methods
+    }
 
     /** Create a StringPtg from a byte array read from disk */
     public StringPtg(byte [] data, int offset)
@@ -118,6 +122,12 @@ public class StringPtg
     }
     public byte getDefaultOperandClass() {
        return Ptg.CLASS_VALUE;
+   }
+
+   public Object clone() {
+     StringPtg ptg = new StringPtg();
+     ptg.field_1_value = field_1_value;
+     return ptg;
    }
 
 }

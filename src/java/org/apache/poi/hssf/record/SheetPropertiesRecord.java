@@ -186,6 +186,15 @@ public class SheetPropertiesRecord
         return this.sid;
     }
 
+    public Object clone() {
+      SheetPropertiesRecord rec = new SheetPropertiesRecord();
+      
+      rec.field_1_flags = field_1_flags;
+      rec.field_2_empty = field_2_empty;
+
+      return rec;
+    }
+
 
     /**
      * Get the flags field for the SheetProperties record.

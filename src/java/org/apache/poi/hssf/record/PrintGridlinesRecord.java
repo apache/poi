@@ -62,6 +62,7 @@ import org.apache.poi.util.LittleEndian;
  * Description:  whether to print the gridlines when you enjoy you spreadsheet on paper.<P>
  * REFERENCE:  PG 373 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
  * @author Andrew C. Oliver (acoliver at apache dot org)
+ * @author Jason Height (jheight at chariot dot net dot au)
  * @version 2.0-pre
  */
 
@@ -172,5 +173,11 @@ public class PrintGridlinesRecord
     public short getSid()
     {
         return this.sid;
+    }
+
+    public Object clone() {
+      PrintGridlinesRecord rec = new PrintGridlinesRecord();
+      rec.field_1_print_gridlines = field_1_print_gridlines;
+      return rec;
     }
 }

@@ -190,6 +190,16 @@ public class BarRecord
         return this.sid;
     }
 
+    public Object clone() {
+      BarRecord rec = new BarRecord();
+      
+      rec.field_1_barSpace = field_1_barSpace;
+      rec.field_2_categorySpace = field_2_categorySpace;
+      rec.field_3_formatFlags = field_3_formatFlags;
+
+      return rec;
+    }
+
 
     /**
      * Get the bar space field for the Bar record.

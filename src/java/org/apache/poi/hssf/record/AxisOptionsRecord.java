@@ -245,6 +245,22 @@ public class AxisOptionsRecord
         return this.sid;
     }
 
+    public Object clone() {
+      AxisOptionsRecord rec = new AxisOptionsRecord();
+      
+      rec.field_1_minimumCategory = field_1_minimumCategory;
+      rec.field_2_maximumCategory = field_2_maximumCategory;
+      rec.field_3_majorUnitValue = field_3_majorUnitValue;
+      rec.field_4_majorUnit = field_4_majorUnit;
+      rec.field_5_minorUnitValue = field_5_minorUnitValue;
+      rec.field_6_minorUnit = field_6_minorUnit;
+      rec.field_7_baseUnit = field_7_baseUnit;
+      rec.field_8_crossingPoint = field_8_crossingPoint;
+      rec.field_9_options = field_9_options;
+
+      return rec;
+    }
+
 
     /**
      * Get the minimum category field for the AxisOptions record.

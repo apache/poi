@@ -179,6 +179,15 @@ public class FrameRecord
         return this.sid;
     }
 
+    public Object clone() {
+      FrameRecord rec = new FrameRecord();
+      
+      rec.field_1_borderType = field_1_borderType;
+      rec.field_2_options = field_2_options;
+
+      return rec;
+    }
+
 
     /**
      * Get the border type field for the Frame record.

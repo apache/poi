@@ -199,4 +199,20 @@ public class TestHSSFSheet
         sheet.removeRow(row);
     }
 
+    public void testCloneSheet() {
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        HSSFSheet sheet = workbook.createSheet("Test Clone");
+        HSSFRow row = sheet.createRow((short) 0);
+        HSSFCell cell = row.createCell((short) 0);
+        cell.setCellValue("clone_test"); 
+        HSSFSheet cloned = workbook.cloneSheet(0);
+  
+        //Check for a good clone
+        assertEquals(cloned.getRow((short)0).getCell((short)0).getStringCellValue(), "clone_test");
+        
+        //Check that the cells are not somehow linked
+        cell.setCellValue("Difference Check");
+        assertEquals(cloned.getRow((short)0).getCell((short)0).getStringCellValue(), "clone_test");
+    }
+
 }

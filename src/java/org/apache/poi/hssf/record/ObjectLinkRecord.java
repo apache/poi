@@ -186,6 +186,16 @@ public class ObjectLinkRecord
         return this.sid;
     }
 
+    public Object clone() {
+      ObjectLinkRecord rec = new ObjectLinkRecord();
+      
+      rec.field_1_anchorId = field_1_anchorId;
+      rec.field_2_link1 = field_2_link1;
+      rec.field_3_link2 = field_3_link2;
+
+      return rec;
+    }
+
 
     /**
      * Get the anchor id field for the ObjectLink record.

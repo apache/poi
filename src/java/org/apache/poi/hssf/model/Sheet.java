@@ -80,6 +80,7 @@ import org.apache.poi.hssf.record
  * @author  Andrew C. Oliver (acoliver at apache dot org)
  * @author  Glen Stampoultzis (glens at apache.org)
  * @author  Shawn Laubach (laubach at acm.org) Just Gridlines, Headers, Footers, and PrintSetup
+ * @author Jason Height (jheight at chariot dot net dot au) Clone support
  *
  * @see org.apache.poi.hssf.model.Workbook
  * @see org.apache.poi.hssf.usermodel.HSSFSheet
@@ -270,6 +271,46 @@ public class Sheet
         log.log(log.DEBUG, "sheet createSheet (existing file) exited");
         return retval;
     }
+
+    /**
+     * Clones the low level records of this sheet and returns the new sheet instance.
+     */
+    public Sheet cloneSheet()
+    {
+      ArrayList clonedRecords = new ArrayList(this.records.size());
+      for (int i=0; i<this.records.size();i++) {
+        Record rec = (Record)((Record)this.records.get(i)).clone();
+        //Need to pull out the Row record and the Value records from their
+        //Aggregates.
+        //This is probably the best way to do it since we probably dont want the createSheet
+        //To cater for these artificial Record types
+        if (rec instanceof RowRecordsAggregate) {
+          RowRecordsAggregate rrAgg = (RowRecordsAggregate)rec;
+          for (Iterator rowIter = rrAgg.getIterator();rowIter.hasNext();) {
+            Record rowRec = (Record)rowIter.next();
+            clonedRecords.add(rowRec);
+          }
+        } else if (rec instanceof ValueRecordsAggregate) {
+          ValueRecordsAggregate vrAgg = (ValueRecordsAggregate)rec;
+          for (Iterator cellIter = vrAgg.getIterator();cellIter.hasNext();) {
+            Record valRec = (Record)cellIter.next();
+            clonedRecords.add(valRec);
+          }
+        } else if (rec instanceof FormulaRecordAggregate) {
+          FormulaRecordAggregate fmAgg = (FormulaRecordAggregate)rec;
+          Record fmAggRec = fmAgg.getFormulaRecord();
+          if (fmAggRec != null)
+            clonedRecords.add(fmAggRec);
+          fmAggRec =   fmAgg.getStringRecord();
+          if (fmAggRec != null)
+            clonedRecords.add(fmAggRec);
+        } else {
+          clonedRecords.add(rec);
+        }
+      }
+      return createSheet(clonedRecords, 0, 0);
+    }
+
 
     /**
      * read support  (offset = 0) Same as createSheet(Record[] recs, int, int)

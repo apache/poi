@@ -306,6 +306,25 @@ public class TextRecord
         return this.sid;
     }
 
+    public Object clone() {
+      TextRecord rec = new TextRecord();
+      
+      rec.field_1_horizontalAlignment = field_1_horizontalAlignment;
+      rec.field_2_verticalAlignment = field_2_verticalAlignment;
+      rec.field_3_displayMode = field_3_displayMode;
+      rec.field_4_rgbColor = field_4_rgbColor;
+      rec.field_5_x = field_5_x;
+      rec.field_6_y = field_6_y;
+      rec.field_7_width = field_7_width;
+      rec.field_8_height = field_8_height;
+      rec.field_9_options1 = field_9_options1;
+      rec.field_10_indexOfColorValue = field_10_indexOfColorValue;
+      rec.field_11_options2 = field_11_options2;
+      rec.field_12_textRotation = field_12_textRotation;
+
+      return rec;
+    }
+
 
     /**
      * Get the horizontal alignment field for the Text record.

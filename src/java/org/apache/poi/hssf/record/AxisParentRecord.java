@@ -199,6 +199,18 @@ public class AxisParentRecord
         return this.sid;
     }
 
+    public Object clone() {
+      AxisParentRecord rec = new AxisParentRecord();
+      
+      rec.field_1_axisType = field_1_axisType;
+      rec.field_2_x = field_2_x;
+      rec.field_3_y = field_3_y;
+      rec.field_4_width = field_4_width;
+      rec.field_5_height = field_5_height;
+
+      return rec;
+    }
+
 
     /**
      * Get the axis type field for the AxisParent record.

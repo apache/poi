@@ -61,6 +61,7 @@ import org.apache.poi.hssf.util.SheetReferences;
  * Stores a floating point value in a formula
  * value stored in a 8 byte field using IEEE notation
  * @author  Avik Sengupta
+ * @author Jason Height (jheight at chariot dot net dot au)
  */
 
 public class NumberPtg
@@ -70,6 +71,9 @@ public class NumberPtg
     public final static byte sid  = 0x1f;
     private double            field_1_value;
 
+    private NumberPtg() {
+      //Required for clone methods
+    }
         
     /** Create a NumberPtg from a byte array read from disk */
     public NumberPtg(byte [] data, int offset)
@@ -114,5 +118,11 @@ public class NumberPtg
         return "" + getValue();
     }
        public byte getDefaultOperandClass() {return Ptg.CLASS_VALUE;}
+
+    public Object clone() {
+      NumberPtg ptg = new NumberPtg();
+      ptg.field_1_value = field_1_value;
+      return ptg;
+    }
 }
 

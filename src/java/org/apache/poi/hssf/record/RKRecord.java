@@ -71,6 +71,7 @@ import org.apache.poi.hssf.util.RKUtil;
  *
  * REFERENCE:  PG 376 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
  * @author Andrew C. Oliver (acoliver at apache dot org)
+ * @author Jason Height (jheight at chariot dot net dot au)
  * @version 2.0-pre
  * @see org.apache.poi.hssf.record.NumberRecord
  */
@@ -338,5 +339,14 @@ public class RKRecord
 
     public void setXFIndex(short xf)
     {
+    }
+
+    public Object clone() {
+      RKRecord rec = new RKRecord();
+      rec.field_1_row = field_1_row;
+      rec.field_2_col = field_2_col;
+      rec.field_3_xf_index = field_3_xf_index;
+      rec.field_4_rk_number = field_4_rk_number;
+      return rec;
     }
 }

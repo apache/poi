@@ -195,6 +195,17 @@ public class CategorySeriesAxisRecord
         return this.sid;
     }
 
+    public Object clone() {
+      CategorySeriesAxisRecord rec = new CategorySeriesAxisRecord();
+      
+      rec.field_1_crossingPoint = field_1_crossingPoint;
+      rec.field_2_labelFrequency = field_2_labelFrequency;
+      rec.field_3_tickMarkFrequency = field_3_tickMarkFrequency;
+      rec.field_4_options = field_4_options;
+
+      return rec;
+    }
+
 
     /**
      * Get the crossing point field for the CategorySeriesAxis record.

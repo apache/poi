@@ -165,6 +165,14 @@ public class UnitsRecord
         return this.sid;
     }
 
+    public Object clone() {
+      UnitsRecord rec = new UnitsRecord();
+      
+      rec.field_1_units = field_1_units;
+
+      return rec;
+    }
+
 
     /**
      * Get the units field for the Units record.

@@ -292,6 +292,28 @@ public class HSSFWorkbook
     }
 
     /**
+     * create an HSSFSheet from an existing sheet in the HSSFWorkbook.
+     *
+     * @return HSSFSheet representing the cloned sheet.
+     */
+
+    public HSSFSheet cloneSheet(int sheetNum) {
+      HSSFSheet srcSheet = (HSSFSheet)sheets.get(sheetNum);
+      String srcName = workbook.getSheetName(sheetNum);
+      if (srcSheet != null) {
+        HSSFSheet clonedSheet = srcSheet.cloneSheet(workbook);
+        WindowTwoRecord windowTwo = (WindowTwoRecord) clonedSheet.getSheet().findFirstRecordBySid(WindowTwoRecord.sid);
+        windowTwo.setSelected(sheets.size() == 1);
+        windowTwo.setPaged(sheets.size() == 1);
+
+        sheets.add(clonedSheet);
+        workbook.setSheetName(sheets.size()-1, srcName+"[1]");
+        return clonedSheet;
+      }
+      return null;
+    }
+
+    /**
      * create an HSSFSheet for this HSSFWorkbook, adds it to the sheets and returns
      * the high level representation.  Use this to create new sheets.
      *

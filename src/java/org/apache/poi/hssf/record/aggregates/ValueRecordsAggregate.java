@@ -67,6 +67,7 @@ import java.util.TreeMap;
  *
  * @author  andy
  * @author  Glen Stampoultzis (glens at apache.org)
+ * @author Jason Height (jheight at chariot dot net dot au)
  */
 
 public class ValueRecordsAggregate
@@ -234,6 +235,16 @@ public class ValueRecordsAggregate
     public Iterator getIterator()
     {
         return records.values().iterator();
+    }
+
+    /** Performs a deep clone of the record*/
+    public Object clone() {
+      ValueRecordsAggregate rec = new ValueRecordsAggregate();
+      for (Iterator valIter = getIterator(); valIter.hasNext();) {
+        CellValueRecordInterface val = (CellValueRecordInterface)((CellValueRecordInterface)valIter.next()).clone();
+        rec.insertCell(val);
+      }
+      return rec;
     }
 }
 

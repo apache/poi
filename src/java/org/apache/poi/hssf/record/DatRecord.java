@@ -173,6 +173,14 @@ public class DatRecord
         return this.sid;
     }
 
+    public Object clone() {
+      DatRecord rec = new DatRecord();
+      
+      rec.field_1_options = field_1_options;
+
+      return rec;
+    }
+
 
     /**
      * Get the options field for the Dat record.

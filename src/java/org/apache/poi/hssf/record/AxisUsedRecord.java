@@ -165,6 +165,14 @@ public class AxisUsedRecord
         return this.sid;
     }
 
+    public Object clone() {
+      AxisUsedRecord rec = new AxisUsedRecord();
+      
+      rec.field_1_numAxis = field_1_numAxis;
+
+      return rec;
+    }
+
 
     /**
      * Get the num axis field for the AxisUsed record.

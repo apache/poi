@@ -165,6 +165,14 @@ public class FontIndexRecord
         return this.sid;
     }
 
+    public Object clone() {
+      FontIndexRecord rec = new FontIndexRecord();
+      
+      rec.field_1_fontIndex = field_1_fontIndex;
+
+      return rec;
+    }
+
 
     /**
      * Get the font index field for the FontIndex record.

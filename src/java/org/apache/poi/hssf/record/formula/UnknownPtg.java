@@ -65,6 +65,7 @@ import org.apache.poi.hssf.util.SheetReferences;
 /**
  *
  * @author  andy
+ * @author Jason Height (jheight at chariot dot net dot au)
  */
 
 public class UnknownPtg
@@ -98,6 +99,10 @@ public class UnknownPtg
         return "UNKNOWN";
     }
     public byte getDefaultOperandClass() {return Ptg.CLASS_VALUE;}
+
+    public Object clone() {
+      return new UnknownPtg();
+    }
 
     
 }

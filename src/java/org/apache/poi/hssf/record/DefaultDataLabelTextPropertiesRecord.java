@@ -168,6 +168,14 @@ public class DefaultDataLabelTextPropertiesRecord
         return this.sid;
     }
 
+    public Object clone() {
+      DefaultDataLabelTextPropertiesRecord rec = new DefaultDataLabelTextPropertiesRecord();
+      
+      rec.field_1_categoryDataType = field_1_categoryDataType;
+
+      return rec;
+    }
+
 
     /**
      * Get the category data type field for the DefaultDataLabelTextProperties record.

@@ -187,6 +187,17 @@ public class SeriesTextRecord
         return this.sid;
     }
 
+    public Object clone() {
+      SeriesTextRecord rec = new SeriesTextRecord();
+      
+      rec.field_1_id = field_1_id;
+      rec.field_2_textLength = field_2_textLength;
+      rec.field_3_undocumented = field_3_undocumented;
+      rec.field_4_text = field_4_text;
+
+      return rec;
+    }
+
 
     /**
      * Get the id field for the SeriesText record.

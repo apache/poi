@@ -69,6 +69,7 @@ import org.apache.poi.hssf.util.SheetReferences;
  *
  * @author  andy
  * @author avik
+ * @author Jason Height (jheight at chariot dot net dot au)
  */
 
 public abstract class Ptg
@@ -333,6 +334,8 @@ public abstract class Ptg
     }
     
     public abstract byte getDefaultOperandClass();
+
+    public abstract Object clone();
 
     
     

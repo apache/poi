@@ -66,6 +66,7 @@ import org.apache.poi.util.LittleEndian;
  * Creates new BoolErrRecord. <P>
  * REFERENCE:  PG ??? Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
  * @author Michael P. Harhen
+ * @author Jason Height (jheight at chariot dot net dot au)
  * @version 2.0-pre
  */
 
@@ -412,5 +413,15 @@ public class BoolErrRecord
             return true;
         }
         return false;
+    }
+
+    public Object clone() {
+      BoolErrRecord rec = new BoolErrRecord();
+      rec.field_1_row = field_1_row;
+      rec.field_2_column = field_2_column;
+      rec.field_3_xf_index = field_3_xf_index;
+      rec.field_4_bBoolErr = field_4_bBoolErr;
+      rec.field_5_fError = field_5_fError;
+      return rec;
     }
 }

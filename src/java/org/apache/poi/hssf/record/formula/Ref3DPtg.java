@@ -69,6 +69,7 @@ import org.apache.poi.hssf.model.Workbook;
  * Description:  Defined a cell in extern sheet. <P>
  * REFERENCE:  <P>
  * @author Libin Roman (Vista Portal LDT. Developer)
+ * @author Jason Height (jheight at chariot dot net dot au)
  * @version 1.0-pre
  */
 
@@ -203,5 +204,13 @@ public class Ref3DPtg extends Ptg {
     }
 
    public byte getDefaultOperandClass() {return Ptg.CLASS_REF;}
+
+   public Object clone() {
+     Ref3DPtg ptg = new Ref3DPtg();
+     ptg.field_1_index_extern_sheet = field_1_index_extern_sheet;
+     ptg.field_2_row = field_2_row;
+     ptg.field_3_column = field_3_column;
+     return ptg;
+   }
 
 }

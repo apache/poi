@@ -68,6 +68,7 @@ import org.apache.poi.hssf.util.SheetReferences;
  * Addition operator PTG the "+" binomial operator.  If you need more 
  * explanation than that then well...We really can't help you here.
  * @author  Andrew C. Oliver (acoliver@apache.org)
+ * @author Jason Height (jheight at chariot dot net dot au)
  */
 
 public class AddPtg
@@ -129,4 +130,8 @@ public class AddPtg
     
     public byte getDefaultOperandClass() {return Ptg.CLASS_VALUE;}
            
+    public Object clone() {
+      return new AddPtg();
+    }
+
 }

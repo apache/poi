@@ -169,6 +169,14 @@ public class AxisLineFormatRecord
         return this.sid;
     }
 
+    public Object clone() {
+      AxisLineFormatRecord rec = new AxisLineFormatRecord();
+      
+      rec.field_1_axisType = field_1_axisType;
+
+      return rec;
+    }
+
 
     /**
      * Get the axis type field for the AxisLineFormat record.

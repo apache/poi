@@ -66,6 +66,7 @@ import org.apache.poi.hssf.util.SheetReferences;
 /**
  * Implements the standard mathmatical multiplication - *
  * @author  Andrew C. Oliver (acoliver at apache dot org)
+ * @author Jason Height (jheight at chariot dot net dot au)
  */
 
 public class MultiplyPtg
@@ -136,4 +137,8 @@ public class MultiplyPtg
         buffer.append(operands[ 1 ]);
         return buffer.toString();
     }                  
+
+    public Object clone() {
+      return new MultiplyPtg();
+    }
 }

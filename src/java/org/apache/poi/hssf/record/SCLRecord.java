@@ -173,6 +173,15 @@ public class SCLRecord
         return this.sid;
     }
 
+    public Object clone() {
+      SCLRecord rec = new SCLRecord();
+      
+      rec.field_1_numerator = field_1_numerator;
+      rec.field_2_denominator = field_2_denominator;
+
+      return rec;
+    }
+
 
     /**
      * Get the numerator field for the SCL record.

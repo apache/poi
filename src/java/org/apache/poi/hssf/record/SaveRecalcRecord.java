@@ -62,6 +62,7 @@ import org.apache.poi.util.LittleEndian;
  * Description:  defines whether to recalculate before saving (set to true)<P>
  * REFERENCE:  PG 381 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
  * @author Andrew C. Oliver (acoliver at apache dot org)
+ * @author Jason Height (jheight at chariot dot net dot au)
  * @version 2.0-pre
  */
 
@@ -163,5 +164,11 @@ public class SaveRecalcRecord
     public short getSid()
     {
         return this.sid;
+    }
+
+    public Object clone() {
+      SaveRecalcRecord rec = new SaveRecalcRecord();
+      rec.field_1_recalc = field_1_recalc;
+      return rec;
     }
 }

@@ -209,6 +209,19 @@ public class AreaFormatRecord
         return this.sid;
     }
 
+    public Object clone() {
+      AreaFormatRecord rec = new AreaFormatRecord();
+      
+      rec.field_1_foregroundColor = field_1_foregroundColor;
+      rec.field_2_backgroundColor = field_2_backgroundColor;
+      rec.field_3_pattern = field_3_pattern;
+      rec.field_4_formatFlags = field_4_formatFlags;
+      rec.field_5_forecolorIndex = field_5_forecolorIndex;
+      rec.field_6_backcolorIndex = field_6_backcolorIndex;
+
+      return rec;
+    }
+
 
     /**
      * Get the foreground color field for the AreaFormat record.

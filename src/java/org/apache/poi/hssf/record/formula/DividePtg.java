@@ -67,6 +67,7 @@ import org.apache.poi.hssf.util.SheetReferences;
 /**
  * This PTG implements the standard binomial divide "/"
  * @author  Andrew C. Oliver acoliver at apache dot org
+ * @author Jason Height (jheight at chariot dot net dot au)
  */
 
 public class DividePtg
@@ -120,4 +121,9 @@ public class DividePtg
         buffer.append(operands[ 1 ]);
         return buffer.toString();
     }      
+
+    public Object clone() {
+      DividePtg ptg = new DividePtg();
+      return ptg;
+    }
 }

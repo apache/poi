@@ -64,6 +64,7 @@ import org.apache.poi.util.LittleEndian;
  *               don't know all the records to.  (HSSF leaves these alone!) <P>
  * Company:      SuperLink Software, Inc.<P>
  * @author Andrew C. Oliver (acoliver at apache dot org)
+ * @author Jason Height (jheight at chariot dot net dot au)
  * @version 2.0-pre
  */
 
@@ -173,5 +174,15 @@ public class UnknownRecord
     {
         throw new RecordFormatException(
             "Unknown record cannot be constructed via offset -- we need a copy of the data");
+    }
+
+    /** Unlike the other Record.clone methods this is a shallow clone*/
+    public Object clone() {
+      UnknownRecord rec = new UnknownRecord();
+      rec.offset = offset;
+      rec.sid = sid;
+      rec.size = size;
+      rec.thedata = thedata;
+      return rec;
     }
 }

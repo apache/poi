@@ -245,6 +245,23 @@ public class TickRecord
         return this.sid;
     }
 
+    public Object clone() {
+      TickRecord rec = new TickRecord();
+      
+      rec.field_1_majorTickType = field_1_majorTickType;
+      rec.field_2_minorTickType = field_2_minorTickType;
+      rec.field_3_labelPosition = field_3_labelPosition;
+      rec.field_4_background = field_4_background;
+      rec.field_5_labelColorRgb = field_5_labelColorRgb;
+      rec.field_6_zero1 = field_6_zero1;
+      rec.field_7_zero2 = field_7_zero2;
+      rec.field_8_options = field_8_options;
+      rec.field_9_tickColor = field_9_tickColor;
+      rec.field_10_zero3 = field_10_zero3;
+
+      return rec;
+    }
+
 
     /**
      * Get the major tick type field for the Tick record.

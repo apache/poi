@@ -200,6 +200,18 @@ public class AxisRecord
         return this.sid;
     }
 
+    public Object clone() {
+      AxisRecord rec = new AxisRecord();
+      
+      rec.field_1_axisType = field_1_axisType;
+      rec.field_2_reserved1 = field_2_reserved1;
+      rec.field_3_reserved2 = field_3_reserved2;
+      rec.field_4_reserved3 = field_4_reserved3;
+      rec.field_5_reserved4 = field_5_reserved4;
+
+      return rec;
+    }
+
 
     /**
      * Get the axis type field for the Axis record.

@@ -67,6 +67,7 @@ import org.apache.poi.util.LittleEndian;
  * Description:  Represents a column in a row with no value but with styling.<P>
  * REFERENCE:  PG 287 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
  * @author Andrew C. Oliver (acoliver at apache dot org)
+ * @author Jason Height (jheight at chariot dot net dot au)
  * @version 2.0-pre
  */
 
@@ -348,5 +349,13 @@ public class BlankRecord
             return true;
         }
         return false;
+    }
+
+    public Object clone() {
+      BlankRecord rec = new BlankRecord();
+      rec.field_1_row = field_1_row;
+      rec.field_2_col = field_2_col;
+      rec.field_3_xf = field_3_xf;
+      return rec;
     }
 }

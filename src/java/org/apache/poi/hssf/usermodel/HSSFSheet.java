@@ -143,6 +143,10 @@ public class HSSFSheet
         setPropertiesFromSheet(sheet);
     }
 
+    HSSFSheet cloneSheet(Workbook book) {
+      return new HSSFSheet(book, sheet.cloneSheet());
+    }
+
 
     /**
      * used internally to set the properties given a Sheet object

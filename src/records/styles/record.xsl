@@ -177,6 +177,16 @@ public class <xsl:value-of select="@name"/>Record
         return this.sid;
     }
 
+    public Object clone() {
+      <xsl:value-of select="@name"/>Record rec = new <xsl:value-of select="@name"/>Record();
+
+<xsl:for-each select="//fields/field"><xsl:text>      rec.</xsl:text><xsl:value-of select="recutil:getFieldName(position(),@name,0)"/><xsl:text> = </xsl:text><xsl:value-of select="recutil:getFieldName(position(),@name,0)"/><xsl:text>;
+</xsl:text></xsl:for-each>
+      return rec;
+    }
+
+
+
 <xsl:apply-templates select="//field" mode="getset"/>
 <xsl:apply-templates select="//field" mode="bits"/>
 
