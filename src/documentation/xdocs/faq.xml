@@ -67,20 +67,20 @@
 
             <source>
 
-                       case HSSFCell.CELL_TYPE_NUMERIC:
-                             double d = cell.getNumericCellValue();
-                             // test if a date!
-                             if (HSSFDateUtil.isCellDateFormatted(cell)) {
-                               // format in form of M/D/YY
-                               cal.setTime(HSSFDateUtil.getJavaDate(d));
-                               cellText =
-                                 (String.valueOf(cal.get(Calendar.YEAR))).substring(2);
-                               cellText = cal.get(Calendar.MONTH)+1 + "/" +
-                                          cal.get(Calendar.DAY_OF_MONTH) + "/" +
-                                          cellText;
-                             }
+   case HSSFCell.CELL_TYPE_NUMERIC:
+         double d = cell.getNumericCellValue();
+         // test if a date!
+         if (HSSFDateUtil.isCellDateFormatted(cell)) {
+           // format in form of M/D/YY
+           cal.setTime(HSSFDateUtil.getJavaDate(d));
+           cellText =
+             (String.valueOf(cal.get(Calendar.YEAR))).substring(2);
+           cellText = cal.get(Calendar.MONTH)+1 + "/" +
+                      cal.get(Calendar.DAY_OF_MONTH) + "/" +
+                      cellText;
+         }
 
-                      </source>
+             </source>
         </answer>
     </faq>
     <faq>
@@ -188,6 +188,15 @@
 
             </source>
             Make sure you make the call to setEncoding() before calling setCellValue(), otherwise what you pass in won't be interpreted properly.
+        </answer>
+    </faq>
+    <faq>
+        <question>
+            I'm having trouble creating a spreadsheet using POI using
+            websphere 3.5.
+        </question>
+        <answer>
+            Make sure you have fix pack 4 installed.
         </answer>
     </faq>
 </faqs>
