@@ -3,9 +3,10 @@
 
 <document>
   <header>
-    <title>Jakarta POI en los medios de comunicación</title>
+    <title>Jakarta POI - En las Noticias del mundo</title>
     <authors>
       <person id="AO" name="Andrew C. Oliver" email="acoliver@apache.org"/>
+      <person id="TK" name="Tetsuya Kitahata" email="tetsuya@apache.org"/>
       <person id="AMB" name="Agustín Martín Barbero" email="-"/>
     </authors>
   </header>
@@ -137,7 +138,9 @@
                         OLE2 desde Java nativo
                         </link> - javaHispano
                 </li>
-                
+                <li>
+                      <link href="http://p2p.wrox.com/archive/java_espanol/2002-08/3.asp">Discusión sobre Excel y Java incluyendo POI de los foros de Wrox</link>
+                </li> 
         </ul>
     </section>
     <section><title>Francais (Francés)</title>
@@ -166,19 +169,19 @@
                 <li><link href="http://taka-2.com/jclass/POI/">Java?Excel?????</link> - appears to show how to use Japanese with POI</li>
                 <li><link href="http://www.tech-arts.co.jp/macosx/webobjects-jp/htdocs/3200/3218.html">Various discussion in Japanese including on POI</link></li>
                 <li><link href="http://muimi.com/j/jakarta/">Japanese resources on Jakarta projects including POI</link></li>
-                <li><link href="http://www.fk.urban.ne.jp/home/kishida/">Kishida's site</link> various information, includes a snip about POI and Japanese.</li>
+                <li><link href="http://www.fk.urban.ne.jp/home/kishida/">Kishida's site</link> -- Weekly Forte Lectures -- includes a snip about POI and Japanese.</li>
         </ul>
     </section>
-    <section><title>No sé cómo decir Ruso en Ruso (Ruso)</title>
+    <section><title>Russkii Yazyk (Ruso)</title>
         <ul>
           <li>
              <link href="http://www.nestor.minsk.by/kg/kg02/21/kg22108.html">
              Probably a translation of the Javalobby announcement of 1.5-final
-             </link> Java-???????
+             </link> -- Computer News (What's New)
           </li>
         </ul>
     </section>
-    <section><title>No sé cómo de cir Coreano en Coreano (Coreano)</title>
+    <section><title>Hangul (Coreano)</title>
         <ul>
            <li>
              <link href="http://www.javabrain.co.kr/AnswerView?questionId=1189&amp;categoryId=8">Various discussion in Korean about Excel output/APIs including POI</link>

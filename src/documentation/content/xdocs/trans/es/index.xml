@@ -3,145 +3,104 @@
 
 <document>
   <header>
-    <title>Bienvenido a POI</title>
+    <title>Jakarta POI - API Java Para Acceder Ficheros con Formato Microsoft</title>
     <authors>
       <person id="AO" name="Andrew C. Oliver" email="acoliver@apache.org"/>
       <person id="GJS" name="Glen Stampoultzis" email="poi-user@jakarta.apache.org"/>
-      <person id="AMB" name="Agustç Martç Barbero" email="-"/>
+      <person id="AS" name="Avik Sengupta" email="poi-user@jakarta.apache.org"/>
+      <person id="AMB" name="Agustín Martín Barbero" email="poi-user@jakarta.apache.org"/>
     </authors>
   </header>
 
   <body>
-   <section><title>Noticias</title>
-    <section><title>Traducciones</title>
-        <p> 
-            El proyecto de traducciê de la documentaciê de POI ha comenzado.
-	    Los primeros en empezar han sido las traducciones al <link href="index.html">Espaél 
-            </link>, al <link href="http://www.terra-intl.com/jakarta/poi/">Japonå“</link> y al
-            <link href="../de/index.html">Alemá</link>.
-	    Otras será bienvenidas. oodå‰s participar si querå‰s!
-        </p>
+   <section><title>Noticias POI</title>
+        <p>Todas las noticias sobre POI pueden encontrarse en el <link href="http://nagoya.apache.org/poi/news/">weblog de noticias poi</link>.</p>
+
     </section>
-    <section><title>Concurso de Logotipo</title>
-        <p>
-            Se ha terminado el plazo de votaciones para el concurso de logotipo de POI. Gracias por vuestros votos.
-        </p>
-<!--        <p>-->
-<!--            <link href="http://vote.sparklit.com/poll.spark/640946">Pinche aquç[/link> para ver los resultados actuales.-->
-<!--        </p>-->
-    </section>
-    </section>
-    <section><title>Propê“ito</title>
+    <section><title>Propósito</title>
       <p>
-      El proyecto POI consiste en APIs para manipular varios formatos de ficheros,
-      basados en el formato de Documento Compuesto OLE 2 de Microsoft, utilizando Java puro.
+      El proyecto POI consiste en APIs para manipular varios formatos de ficheros
+      basados en el formato de Documento Compuesto OLE 2 de Microsoft, utilizando Java puro. En concreto, se pueden
+      leer y escribir ficheros MS Excel utilizando Java. Pronto se podrá leer y escribir 
+      ficheros Word utilizando Java. POI es su solución Java Excel así como su solución Java Word.
+      En cualquier caso, tenemos un API completo para portar otros formatos de Documento Compuesto OLE 2 y todo aquel
+      que quiera participar será bienvenido.
       </p>
       <p>
-      Entre los ficheros basados en el formato de Documento Compuesto OLE 2 de Microsoft se
-      incluyen la mayor parte de los ficheros de Microsoft Office tales como XLS y DOC.
+      Entre los ficheros basados en el formato de Documento Compuesto OLE 2 de Microsoft se incluyen la mayor parte de los 
+      ficheros de Microsoft Office tales como XLS y DOC así como formatos de fichero basados en el API de serialización MFC.
       </p>
       <p>
-         Como regla general intentamos colaborar lo má“ posible con otros proyectos para proporcionar esta
+         Como regla general intentamos colaborar lo más posible con otros proyectos para proporcionar esta
 	 funcionalidad. Algunos ejemplos: <link href="http://xml.apache.org/cocoon">Cocoon</link> para
-	 el que pronto encontrarå‰s generadores y serializadores para nuestros proyectos;
-	 <link href="http://www.openoffice.org">Open Office.org</link> con quienes colaboramos en la
-	 documentaciê del formato XLS; y <link href="http://jakarta.apache.org/lucene">Lucene</link> para
-	 el que pronto tendremos intå’pretes del formato de fichero. Cuando sea práƒtico, donaremos componentes
-	 directamente a aquellos proyectos para dotarles de capacidad-POI.
+	 el que hay serializadores para HSSF;
+	 <link href="http://www.openoffice.org">Open Office.org</link> con quienes colaboramos en la documentación del 
+         formato XLS; y <link href="http://jakarta.apache.org/lucene">Lucene</link> para el que pronto tendremos intérpretes del 
+         formato de fichero. Cuando es práctico, donamos componentes directamente a los proyectos para dotarles de capacidad-POI.
       </p>
-      <section><title>oor quåNcuádo utilizarç POI?</title>
+      <section><title>¿Por qué/cuándo utilizar POI?</title>
         <p>
  		Abordaremos esto a nivel de componente. POI se refiere al proyecto completo.
         </p>
         <p>
-		Asç?que, or quå?deberç utilizar POIFS o HSSF?
+		Así que, ¿por qué debería utilizar POIFS o HSSF?
         </p>
         <p>
-		Utilizarçs POIFS si tuvieras un documento escrito en el Formato de Documento Compuesto OLE 2, probablemente
-		escrito utilizando MFC, que necesitaras leer en Java. Alternativamente, utilizarçs POI para escribir
-		en el Formato de Documento Compuesto OLE 2 si necesitaras inter-operar con programas ejecutádose en la
-		plataforma Windows. No nos estamos jactando cuando decimos que POIFS es la adaptaciê má“ completa y correcta
-		de este formato de fichero hasta la fecha.
+		Utilizarías POIFS si tuvieras un documento escrito en el Formato de Documento Compuesto OLE 2, probablemente escrito utilizando 
+                MFC, que necesitaras leer en Java. Alternativamente, utilizarías POI para escribir en el Formato de Documento Compuesto OLE 2 
+                si necesitaras inter-operar con programas ejecutándose en la plataforma Windows. No nos estamos jactando cuando decimos que 
+                ¡POIFS es la adaptación más completa y correcta de este formato de fichero hasta la fecha!
         </p>
         <p>
-		Utilizarçs HSSF si necesitaras leer o escribir un fichero XLS (Excel) utilizando Java. Tambiå se pueden
-		leer y modificar hojas de cáŒculo utilizando este API, aunque ahora mismo la escritura está?má“ madura.
-        </p>
-      </section>
-
-      <section><title>puå?significa POI?</title>
-        <p>
-		POI significa Implementaciê Pobre de Ofuscaciê (Poor Obfuscation Implementation). oor quå?darçmos a
-		nuestro proyecto un nombre tan derogatorio? Bien, el Formato de Documento Compuesto OLE 2 de Microsoft es
-		algo bastante mal concebido. Esencialmente es un fichero estructurado muy a la manera del viejo sistema FAT
-		del DOS. Redmon eligiêK en vez de utilizar tar, gzip, o arc, inventar su propio formato de fichero que no
-		proporciona ningíì estádar de cifrado o compresiê, no es fáƒil de unir con otros ficheros del mismo tipo, y
-		es dado a sufrir problemas de fragmentaciê.
-        </p>
-      <p>
-		Poi  tambiå es una delicatessen Hawaiiana que <link href="http://www.m-w.com">el diccionario Merriam Webster's</link>
-		define como "Comida Hawaiiana de raiz de taro cocinada, machacada y amasada en una pasta que a menudo se deja fermentar."
-		Esto extraémente parecç una descripciê del formato del fichero.
-        </p>
-      <p>
-		Asç?que si te gustan los acrêimos, entonces POI es un acrêimo. Si los odias, entonces sêŒo usamos el nombre de la
-		comida para nuestro proyecto. Si deseas expresar amor u odio por los acrêimos, utiliza POI o Poi respectivamente
-		para referirte al proyecto.
+		Utilizarías HSSF si necesitaras leer o escribir un fichero Excel utilizando Java (XLS). También se pueden leer y modificar 
+                hojas de cálculo utilizando este API, aunque ahora mismo la escritura está más madura.
       </p>
       </section>
-
     </section>
 
 
-    <section><title>Componentes hasta Hoy</title>
-        <section><title>Visiê General</title>
-	     <p>Un concepto errêeo es que POI escribe ficheros Excel. POI es el nombre del proyecto. POI contiene varios
-	     componentes, uno de los cuales, HSSF, escribe ficheros Excel. Siguen a continuaciê los componentes del
-	     proyecto POI completo y un pequeé sumario de su propê“ito.</p>
+    <section><title>Componentes a Día de Hoy</title>
+        <section><title>Visión General</title>
+	     <p>Un pensamiento erróneo generalizado es que POI escribe ficheros Excel. POI es el nombre del proyecto. POI contiene varios
+	     componentes, uno de los cuales, HSSF, escribe ficheros Excel. Siguen a continuación los componentes del
+	     proyecto POI completo y un pequeño sumario de su propósito.</p>
         </section>
-        <section><title>POIFS (Sistema de Ficheros POI)</title>
-             <p>POIFS es la parte má“ vieja y má“ estable del proyecto. Es nuestra adaptaciê del Formato de Documento Compuesto
-	     OLE 2 a Java puro. Soporta funcionalidad de lectura y escritura. Todos nuestros componentes se sirven de åŒ por
-	     definiciê. Por favor, vea <link href="../../poifs/index.html">la pá‡ina del proyecto POIFS</link> para má“ informaciê.</p>
+        <section><title>POIFS</title>
+             <p>POIFS es la parte más vieja y más estable del proyecto. Es nuestra adaptación del Formato de Documento Compuesto
+	     OLE 2 a Java puro. Soporta funcionalidad de lectura y escritura. Todos nuestros componentes se sirven de él por
+	     definición. Por favor, vea <link href="../../poifs/index.html">la página del proyecto POIFS [EN]</link> para más información.</p>
         </section>
         <section><title>HSSF</title>
-             <p>HSSF es nuestra adaptaciê del formato de fichero de Microsoft Excel 97(-2002) a Java puro. Soporta lectura y
-	     escritura. Por favor, vea <link href="../../hssf/index.html">la pá‡ina del proyecto HSSF</link> para má“ informaciê.</p>
+             <p>HSSF es nuestra adaptación del formato de fichero de Microsoft Excel 97(-2002) (BIFF8) a Java puro. Soporta lectura y
+	     escritura. Por favor, vea <link href="../../hssf/index.html">la página del proyecto HSSF [EN]</link> para más información.</p>
         </section>
         <section><title>HWPF</title>
-             <p>HWPF es nuestra adaptaciê del formato de fichero de Microsoft Word 97 a Java puro. Soporta lectura y escritura.
-	     Por favor, vea <link href="../../hwpf/index.html">la pá‡ina del proyecto HWPF para má“ informaciê</link>. Este
-	     componente está?en la fase inicial de diseé. ralta dentro!</p>
+             <p>HWPF es nuestra adaptación del formato de fichero de Microsoft Word 97 a Java puro. Soporta lectura y escritura.
+	     Por favor, vea <link href="../../hwpf/index.html">la página del proyecto HWPF [EN] para más información</link>. Este
+	     componente está en la fase inicial de diseño. Ya puede leer y escribir ficheros sencillos. ¡Entra!</p>
         </section>
         <section><title>HPSF</title>
-	<p>HPSF es nuestra adaptaciê del formato de conjunto de propiedades OLE 2 a java puro.
-	  Los conjuntos de propiedades se utilizan mayoritariamente para almacenar las propiedades de un documento
-	  (tç”ulo, autor, fecha de la íêtima modificaciêK etc.), pero tambiå pueden ser utilizados para propê“itos
-	  especç†icos de una aplicaciê. Actualmente HPSF soporta sêŒo funcionalidad de lectura. Por favor, vea
-	  <link href="../../hpsf/index.html">la pá‡ina del proyecto HPSF</link> para má“ informaciê.</p>
-        </section>
-
+	<p>HPSF es nuestra adaptación del formato de conjunto de propiedades OLE 2 a java puro.
+	  Los conjuntos de propiedades se utilizan mayoritariamente para almacenar las propiedades 
+          de un documento (título, autor, fecha de la última modificación etc.), pero también pueden ser 
+          utilizados para propósitos específicos de una aplicación. Actualmente HPSF soporta 
+          sólo funcionalidad de lectura. Por favor, vea
+	  <link href="../../hpsf/index.html">la página del proyecto HPSF [EN]</link> para más 
+          información.</p>
      </section>
 
-    <section><title>puå?le ocurriê?al Serializador HSSF?</title>
-	<p>El Serializador HSSF, que era parte de nuestra release 1.0 y de las íêtimas compilaciones en
-	<link href="http://www.sourceforge.net/projects/poi">Sourceforge</link>, ha sido donado al proyecto
-	<link href="http://xml.apache.org/cocoon/">Cocoon</link>, y está?disponible a partir de la versiê
-	2.0.2.</p>
     </section>
 
     <section><title>Contribuyendo </title>
         <p>
-		`sç?que te gustarç contribuir al proyecto? fenial! Necesitamos gente entusiasta, que trabaje duro,
-		que tenga talento para ayudarnos con el proyecto en varias á’eas. ka primera es peticiê de nuevas
-		funciones y aviso de errores! La segunda es documentaciê - estaremos a tu entera disposiciê si
-		tienes alguna crç”ica o te gustarç contribuir o mejorar de alguna forma la documentaciê. dspecialmente
-		no nos vendrç mal algo de ayuda en documentar el formato de fichero HSSF! oor íêtimo, aunque no por ello
-		menos importante, nos vendrç bien algunos programadores Java que mastiquen binario, para que le echen el diente
-		a la convoluciê que caracteriza los formatos de fichero de Microsoft y para que nos ayude a adaptar nuevos
-		formatos a una plataforma Java superior!
+		Así que ¿te gustaría contribuir al proyecto? ¡Genial! Necesitamos gente entusiasta, que trabaje duro, que tenga talento para ayudarnos 
+                con el proyecto en varias áreas. ¡La primera es petición de nuevas funciones y aviso de errores! La segunda es documentación - 
+                estaremos a tu entera disposición si tienes alguna crítica o te gustaría contribuir o mejorar de alguna forma la documentación. 
+                ¡Especialmente no nos vendría mal algo de ayuda en documentar el formato de fichero HSSF! ¡Por último, aunque no por ello
+		menos importante, nos vendría bien algunos programadores Java que mastiquen binario, para que le echen el diente a la convolución que caracteriza 
+                los formatos de fichero de Microsoft y para que nos ayude a adaptar nuevos formatos a una plataforma Java superior!
         </p>
-        <p> `sç?que si está“ motivado, listo, y tienes tiempo, íìete a las listas de correo y estaremos encantados de ayudarte a
+        <p> ¡Así que si estás motivado, listo, y tienes tiempo, únete a las listas de correo y estaremos encantados de ayudarte a
 	   empezar en el proyecto!
         </p>
 
