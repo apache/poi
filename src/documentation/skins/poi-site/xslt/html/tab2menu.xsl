@@ -1,4 +1,5 @@
 <?xml version="1.0"?>
+<!-- Copyright (C) 2004 The Apache Software Foundation. All rights reserved. -->
 <!--
 This stylesheet generates 'tabs' at the top left of the screen.
 See the imported tab2menu.xsl for details.

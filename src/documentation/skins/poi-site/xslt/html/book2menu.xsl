@@ -1,4 +1,5 @@
 <?xml version="1.0"?>
+<!-- Copyright (C) 2004 The Apache Software Foundation. All rights reserved. -->
 <!--
 book2menu.xsl generates the HTML menu.  See the imported book2menu.xsl for
 details.

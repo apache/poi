@@ -1,3 +1,4 @@
+<!-- Copyright (C) 2004 The Apache Software Foundation. All rights reserved. -->
 <record id="0x1051" name="LinkedData" excel-record-id="AI" package="org.apache.poi.hssf.record">
     <suffix>Record</suffix>
     <extends>Record</extends>

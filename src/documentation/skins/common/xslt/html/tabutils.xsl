@@ -1,4 +1,5 @@
 <?xml version="1.0"?>
+<!-- Copyright (C) 2004 The Apache Software Foundation. All rights reserved. -->
 
 <!--
 Some callable templates useful when dealing with tab paths.  Mostly used in
