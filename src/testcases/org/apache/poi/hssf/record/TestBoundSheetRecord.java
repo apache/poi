@@ -92,5 +92,25 @@ public class TestBoundSheetRecord
 
         assertEquals(" 2  +  2  +  4  +   2   +    1     +    1    + len(str) * 2", 24, record.getRecordSize());
     }
+    
+    public void testName() {
+        BoundSheetRecord record = new BoundSheetRecord();
+        record.setSheetname("1234567890223456789032345678904");
+        assertTrue("Success", true);
+        try {
+            record.setSheetname("12345678902234567890323456789042");
+            assertTrue("Should have thrown IllegalArgumentException, but didnt", false);
+        } catch (IllegalArgumentException e) {
+            assertTrue("succefully threw exception",true);
+        }
+        
+        try {
+            record.setSheetname("s//*s");
+            assertTrue("Should have thrown IllegalArgumentException, but didnt", false);
+        } catch (IllegalArgumentException e) {
+            assertTrue("succefully threw exception",true);
+        }
+            
+    }
 
 }
