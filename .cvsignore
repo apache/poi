@@ -9,3 +9,5 @@ build.number
 log*.*
 *.log
 build
+.classpath
+.project
