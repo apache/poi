@@ -266,12 +266,12 @@ public class Area3DPtg extends Ptg
     }
     
 
-    public String getArea(){
+    /*public String getArea(){
         RangeAddress ra = new RangeAddress( getFirstColumn(),getFirstRow() + 1, getLastColumn(), getLastRow() + 1);
         String result = ra.getAddress();
 
         return result;
-    }
+    }*/
 
     public void setArea(String ref){
         RangeAddress ra = new RangeAddress(ref);

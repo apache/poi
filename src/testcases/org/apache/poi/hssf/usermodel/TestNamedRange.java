@@ -99,6 +99,16 @@ public class TestNamedRange
         wb.write(fileOut);
         fis.close();
         fileOut.close();
+        
+        assertTrue("file exists",file.exists());
+            
+        FileInputStream in = new FileInputStream(file);
+        wb = new HSSFWorkbook(in);
+        HSSFName nm =wb.getNameAt(wb.getNameIndex("RangeTest"));
+        assertTrue("Name is "+nm.getNameName(),"RangeTest".equals(nm.getNameName()));
+        assertTrue("Reference is "+nm.getReference(),(wb.getSheetName(0)+"!$D$4:$E$8").equals(nm.getReference()));
+        
+        
     }
         
 }

@@ -507,10 +507,10 @@ public class NameRecord extends Record {
         String result = "";
 
         if (ptg.getClass() == Area3DPtg.class){
-            result = ((Area3DPtg) ptg).getArea();
+            result = ((Area3DPtg) ptg).toFormulaString();
 
         } else if (ptg.getClass() == Ref3DPtg.class){
-            result = ((Ref3DPtg) ptg).getArea();
+            result = ((Ref3DPtg) ptg).toFormulaString();
         }
 
         return result;
