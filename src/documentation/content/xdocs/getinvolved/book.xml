@@ -13,7 +13,7 @@
   <menu label="Get Involved">
     <menu-item label="Contributing" href="index.html"/>
     <menu-item label="Branching" href="branching.html"/>
-    <menu-item label="Mail Lists" href="http://jakarta.apache.org/site/mail.html"/>
+    <menu-item label="Mail Lists" href="http://jakarta.apache.org/site/mail2.html#poi"/>
   </menu>
 
 </book>
