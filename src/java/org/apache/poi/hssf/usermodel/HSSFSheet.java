@@ -1,4 +1,3 @@
-
 /* ====================================================================
  * The Apache Software License, Version 1.1
  *
@@ -60,11 +59,14 @@
  */
 package org.apache.poi.hssf.usermodel;
 
-import org.apache.poi.util.POILogFactory;
 import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.model.Workbook;
-import org.apache.poi.hssf.record.*;
+import org.apache.poi.hssf.record.CellValueRecordInterface;
+import org.apache.poi.hssf.record.RowRecord;
+import org.apache.poi.hssf.record.VCenterRecord;
+import org.apache.poi.hssf.record.WSBoolRecord;
 import org.apache.poi.hssf.util.Region;
+import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
 import java.util.Iterator;
@@ -74,12 +76,12 @@ import java.util.TreeMap;
  * High level representation of a worksheet.
  * @author  Andrew C. Oliver (acoliver at apache dot org)
  * @author  Glen Stampoultzis (glens at apache.org)
- * @version 1.0-pre
+ * @author  Libin Roman (romal at vistaportal.com)
  */
 
 public class HSSFSheet
 {
-    private static final int DEBUG            = POILogger.DEBUG;
+    private static final int DEBUG = POILogger.DEBUG;
 
     /**
      * Used for compile-time optimization.  This is the initial size for the collection of
@@ -87,17 +89,17 @@ public class HSSFSheet
      * by setting this to a higher number and recompiling a custom edition of HSSFSheet.
      */
 
-    public final static int  INITIAL_CAPACITY = 20;
+    public final static int INITIAL_CAPACITY = 20;
 
     /**
      * reference to the low level Sheet object
      */
 
-    private Sheet            sheet;
-    private TreeMap          rows;
-    private Workbook         book;
-    private int              firstrow;
-    private int              lastrow;
+    private Sheet sheet;
+    private TreeMap rows;
+    private Workbook book;
+    private int firstrow;
+    private int lastrow;
     private static POILogger log = POILogFactory.getLogger(HSSFSheet.class);
 
     /**
@@ -110,8 +112,8 @@ public class HSSFSheet
 
     protected HSSFSheet(Workbook book)
     {
-        sheet     = Sheet.createSheet();
-        rows      = new TreeMap();   // new ArrayList(INITIAL_CAPACITY);
+        sheet = Sheet.createSheet();
+        rows = new TreeMap();   // new ArrayList(INITIAL_CAPACITY);
         this.book = book;
     }
 
@@ -127,16 +129,11 @@ public class HSSFSheet
     protected HSSFSheet(Workbook book, Sheet sheet)
     {
         this.sheet = sheet;
-        rows       = new TreeMap();
-        this.book  = book;
+        rows = new TreeMap();
+        this.book = book;
         setPropertiesFromSheet(sheet);
     }
 
-    /** private default constructor prevents bogus initializationless construction */
-
-    private HSSFSheet()
-    {
-    }
 
     /**
      * used internally to set the properties given a Sheet object
@@ -144,8 +141,8 @@ public class HSSFSheet
 
     private void setPropertiesFromSheet(Sheet sheet)
     {
-        int       sloc = sheet.getLoc();
-        RowRecord row  = sheet.getNextRow();
+        int sloc = sheet.getLoc();
+        RowRecord row = sheet.getNextRow();
 
         while (row != null)
         {
@@ -154,8 +151,8 @@ public class HSSFSheet
             row = sheet.getNextRow();
         }
         sheet.setLoc(sloc);
-        CellValueRecordInterface cval      = sheet.getNextValueRecord();
-        long                     timestart = System.currentTimeMillis();
+        CellValueRecordInterface cval = sheet.getNextValueRecord();
+        long timestart = System.currentTimeMillis();
 
         log.log(DEBUG, "Time at start of cell creating in HSSF sheet = ",
                 new Long(timestart));
@@ -163,8 +160,8 @@ public class HSSFSheet
 
         while (cval != null)
         {
-            long    cellstart = System.currentTimeMillis();
-            HSSFRow hrow      = lastrow;
+            long cellstart = System.currentTimeMillis();
+            HSSFRow hrow = lastrow;
 
             if ((lastrow == null) || (lastrow.getRowNum() != cval.getRow()))
             {
@@ -236,10 +233,10 @@ public class HSSFSheet
 
             while (iter.hasNext())
             {
-                HSSFCell cell = ( HSSFCell ) iter.next();
+                HSSFCell cell = (HSSFCell) iter.next();
 
                 sheet.removeValueRecord(row.getRowNum(),
-                                        cell.getCellValueRecord());
+                        cell.getCellValueRecord());
             }
             sheet.removeRow(row.getRowRecord());
         }
@@ -251,10 +248,10 @@ public class HSSFSheet
 
     private int findLastRow(int lastrow)
     {
-        int     rownum = lastrow - 1;
-        HSSFRow r      = getRow(rownum);
+        int rownum = lastrow - 1;
+        HSSFRow r = getRow(rownum);
 
-        while (r == null)
+        while (r == null && rownum >= 0)
         {
             r = getRow(--rownum);
         }
@@ -267,13 +264,17 @@ public class HSSFSheet
 
     private int findFirstRow(int firstrow)
     {
-        int     rownum = firstrow + 1;
-        HSSFRow r      = getRow(rownum);
+        int rownum = firstrow + 1;
+        HSSFRow r = getRow(rownum);
 
-        while (r == null)
+        while (r == null && rownum <= getLastRowNum())
         {
             r = getRow(++rownum);
         }
+
+        if (rownum > getLastRowNum())
+            return -1;
+
         return rownum;
     }
 
@@ -311,8 +312,8 @@ public class HSSFSheet
     {
         HSSFRow row = new HSSFRow();
 
-        row.setRowNum(( short ) rownum);
-        return ( HSSFRow ) rows.get(row);
+        row.setRowNum((short) rownum);
+        return (HSSFRow) rows.get(row);
     }
 
     /**
@@ -342,26 +343,6 @@ public class HSSFSheet
     public int getLastRowNum()
     {
         return lastrow;
-    }
-
-    /**
-     * Seems to be unused (gjs)
-     *
-     * used internally to add cells from a high level row to the low level model
-     * @param row  the row object to represent in low level RowRecord.
-     */
-    private void addCellsFromRow(HSSFRow row)
-    {
-        Iterator iter = row.cellIterator();
-
-        // for (int k = 0; k < row.getPhysicalNumberOfCells(); k++)
-        while (iter.hasNext())
-        {
-            HSSFCell cell =
-                ( HSSFCell ) iter.next();   // row.getPhysicalCellAt(k);
-
-            sheet.addValueRecord(row.getRowNum(), cell.getCellValueRecord());
-        }
     }
 
     /**
@@ -400,7 +381,7 @@ public class HSSFSheet
     /**
      * get the default row height for the sheet (if the rows do not define their own height) in
      * twips (1/20 of  a point)
-     * @retun  default row height
+     * @return  default row height
      */
 
     public short getDefaultRowHeight()
@@ -449,7 +430,7 @@ public class HSSFSheet
 
     public void setDefaultRowHeightInPoints(float height)
     {
-        sheet.setDefaultRowHeight(( short ) (height * 20));
+        sheet.setDefaultRowHeight((short) (height * 20));
     }
 
     /**
@@ -480,10 +461,10 @@ public class HSSFSheet
 
     public int addMergedRegion(Region region)
     {
-        return sheet.addMergedRegion(( short ) region.getRowFrom(),
-                                     region.getColumnFrom(),
-                                     ( short ) region.getRowTo(),
-                                     region.getColumnTo());
+        return sheet.addMergedRegion((short) region.getRowFrom(),
+                region.getColumnFrom(),
+                (short) region.getRowTo(),
+                region.getColumnTo());
     }
 
     /**
@@ -494,7 +475,7 @@ public class HSSFSheet
     public void setVerticallyCenter(boolean value)
     {
         VCenterRecord record =
-            ( VCenterRecord ) sheet.findFirstRecordBySid(VCenterRecord.sid);
+                (VCenterRecord) sheet.findFirstRecordBySid(VCenterRecord.sid);
 
         record.setVCenter(value);
     }
@@ -506,7 +487,7 @@ public class HSSFSheet
     public boolean getVerticallyCenter(boolean value)
     {
         VCenterRecord record =
-            ( VCenterRecord ) sheet.findFirstRecordBySid(VCenterRecord.sid);
+                (VCenterRecord) sheet.findFirstRecordBySid(VCenterRecord.sid);
 
         return record.getVCenter();
     }
@@ -543,7 +524,7 @@ public class HSSFSheet
     }
 
     /**
-     * @returns an iterator of the PHYSICAL rows.  Meaning the 3rd element may not
+     * @return an iterator of the PHYSICAL rows.  Meaning the 3rd element may not
      * be the third row if say for instance the second row is undefined.
      */
 
@@ -571,7 +552,7 @@ public class HSSFSheet
     public void setAlternativeExpression(boolean b)
     {
         WSBoolRecord record =
-            ( WSBoolRecord ) sheet.findFirstRecordBySid(WSBoolRecord.sid);
+                (WSBoolRecord) sheet.findFirstRecordBySid(WSBoolRecord.sid);
 
         record.setAlternateExpression(b);
     }
@@ -584,7 +565,7 @@ public class HSSFSheet
     public void setAlternativeFormula(boolean b)
     {
         WSBoolRecord record =
-            ( WSBoolRecord ) sheet.findFirstRecordBySid(WSBoolRecord.sid);
+                (WSBoolRecord) sheet.findFirstRecordBySid(WSBoolRecord.sid);
 
         record.setAlternateFormula(b);
     }
@@ -597,7 +578,7 @@ public class HSSFSheet
     public void setAutobreaks(boolean b)
     {
         WSBoolRecord record =
-            ( WSBoolRecord ) sheet.findFirstRecordBySid(WSBoolRecord.sid);
+                (WSBoolRecord) sheet.findFirstRecordBySid(WSBoolRecord.sid);
 
         record.setAutobreaks(b);
     }
@@ -610,7 +591,7 @@ public class HSSFSheet
     public void setDialog(boolean b)
     {
         WSBoolRecord record =
-            ( WSBoolRecord ) sheet.findFirstRecordBySid(WSBoolRecord.sid);
+                (WSBoolRecord) sheet.findFirstRecordBySid(WSBoolRecord.sid);
 
         record.setDialog(b);
     }
@@ -624,7 +605,7 @@ public class HSSFSheet
     public void setDisplayGuts(boolean b)
     {
         WSBoolRecord record =
-            ( WSBoolRecord ) sheet.findFirstRecordBySid(WSBoolRecord.sid);
+                (WSBoolRecord) sheet.findFirstRecordBySid(WSBoolRecord.sid);
 
         record.setDisplayGuts(b);
     }
@@ -637,7 +618,7 @@ public class HSSFSheet
     public void setFitToPage(boolean b)
     {
         WSBoolRecord record =
-            ( WSBoolRecord ) sheet.findFirstRecordBySid(WSBoolRecord.sid);
+                (WSBoolRecord) sheet.findFirstRecordBySid(WSBoolRecord.sid);
 
         record.setFitToPage(b);
     }
@@ -650,7 +631,7 @@ public class HSSFSheet
     public void setRowSumsBelow(boolean b)
     {
         WSBoolRecord record =
-            ( WSBoolRecord ) sheet.findFirstRecordBySid(WSBoolRecord.sid);
+                (WSBoolRecord) sheet.findFirstRecordBySid(WSBoolRecord.sid);
 
         record.setRowSumsBelow(b);
     }
@@ -663,7 +644,7 @@ public class HSSFSheet
     public void setRowSumsRight(boolean b)
     {
         WSBoolRecord record =
-            ( WSBoolRecord ) sheet.findFirstRecordBySid(WSBoolRecord.sid);
+                (WSBoolRecord) sheet.findFirstRecordBySid(WSBoolRecord.sid);
 
         record.setRowSumsRight(b);
     }
@@ -675,8 +656,8 @@ public class HSSFSheet
 
     public boolean getAlternateExpression()
     {
-        return (( WSBoolRecord ) sheet.findFirstRecordBySid(WSBoolRecord.sid))
-            .getAlternateExpression();
+        return ((WSBoolRecord) sheet.findFirstRecordBySid(WSBoolRecord.sid))
+                .getAlternateExpression();
     }
 
     /**
@@ -686,8 +667,8 @@ public class HSSFSheet
 
     public boolean getAlternateFormula()
     {
-        return (( WSBoolRecord ) sheet.findFirstRecordBySid(WSBoolRecord.sid))
-            .getAlternateFormula();
+        return ((WSBoolRecord) sheet.findFirstRecordBySid(WSBoolRecord.sid))
+                .getAlternateFormula();
     }
 
     /**
@@ -697,8 +678,8 @@ public class HSSFSheet
 
     public boolean getAutobreaks()
     {
-        return (( WSBoolRecord ) sheet.findFirstRecordBySid(WSBoolRecord.sid))
-            .getAutobreaks();
+        return ((WSBoolRecord) sheet.findFirstRecordBySid(WSBoolRecord.sid))
+                .getAutobreaks();
     }
 
     /**
@@ -708,8 +689,8 @@ public class HSSFSheet
 
     public boolean getDialog()
     {
-        return (( WSBoolRecord ) sheet.findFirstRecordBySid(WSBoolRecord.sid))
-            .getDialog();
+        return ((WSBoolRecord) sheet.findFirstRecordBySid(WSBoolRecord.sid))
+                .getDialog();
     }
 
     /**
@@ -720,8 +701,8 @@ public class HSSFSheet
 
     public boolean getDisplayGuts()
     {
-        return (( WSBoolRecord ) sheet.findFirstRecordBySid(WSBoolRecord.sid))
-            .getDisplayGuts();
+        return ((WSBoolRecord) sheet.findFirstRecordBySid(WSBoolRecord.sid))
+                .getDisplayGuts();
     }
 
     /**
@@ -731,8 +712,8 @@ public class HSSFSheet
 
     public boolean getFitToPage()
     {
-        return (( WSBoolRecord ) sheet.findFirstRecordBySid(WSBoolRecord.sid))
-            .getFitToPage();
+        return ((WSBoolRecord) sheet.findFirstRecordBySid(WSBoolRecord.sid))
+                .getFitToPage();
     }
 
     /**
@@ -742,8 +723,8 @@ public class HSSFSheet
 
     public boolean getRowSumsBelow()
     {
-        return (( WSBoolRecord ) sheet.findFirstRecordBySid(WSBoolRecord.sid))
-            .getRowSumsBelow();
+        return ((WSBoolRecord) sheet.findFirstRecordBySid(WSBoolRecord.sid))
+                .getRowSumsBelow();
     }
 
     /**
@@ -753,7 +734,7 @@ public class HSSFSheet
 
     public boolean getRowSumsRight()
     {
-        return (( WSBoolRecord ) sheet.findFirstRecordBySid(WSBoolRecord.sid))
-            .getRowSumsRight();
+        return ((WSBoolRecord) sheet.findFirstRecordBySid(WSBoolRecord.sid))
+                .getRowSumsRight();
     }
 }

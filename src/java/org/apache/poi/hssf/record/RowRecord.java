@@ -452,8 +452,8 @@ public class RowRecord
         LittleEndian.putShort(data, 0 + offset, sid);
         LittleEndian.putShort(data, 2 + offset, ( short ) 16);
         LittleEndian.putShort(data, 4 + offset, getRowNumber());
-        LittleEndian.putShort(data, 6 + offset, getFirstCol());
-        LittleEndian.putShort(data, 8 + offset, getLastCol());
+        LittleEndian.putShort(data, 6 + offset, getFirstCol() == -1 ? (short)0 : getFirstCol());
+        LittleEndian.putShort(data, 8 + offset, getLastCol() == -1 ? (short)0 : getLastCol());
         LittleEndian.putShort(data, 10 + offset, getHeight());
         LittleEndian.putShort(data, 12 + offset, getOptimize());
         LittleEndian.putShort(data, 14 + offset, field_6_reserved);
