@@ -609,6 +609,10 @@ public class BiffViewer
                 retval = new FrameRecord(rectype, size, data);
                 break;
 
+            case ValueRangeRecord.sid :
+                retval = new ValueRangeRecord(rectype, size, data);
+                break;
+
             default :
                 retval = new UnknownRecord(rectype, size, data);
         }

@@ -14,15 +14,16 @@
     <echo message=" You can also invoke them directly; see build.xml for more info. "/> 
     <echo message=" Builds will be in /build directory, distributions in /dist."/>        
     <echo message="  "/>    
-    <echo message=" compile ------ compiles the source code "/>     
-    <echo message=" docs --------- generates the html docs"/>        
-    <echo message=" cleandocs ---- cleans the build docs directory"/>    
-    <echo message=" javadocs ----- generates the API documentation"/>     
-    <echo message=" test --------- performs the jUnit tests"/>       
-    <echo message=" clean -------- cleans the build directory"/>    
-    <echo message=" dist --------- creates src and bin distributions"/>    
-    <echo message=" contrib ------ build-run contributed components"/>    
-    <taskdef name="user-input" classname="UserInput" 
+    <echo message=" compile ----------- compiles the source code "/>
+    <echo message=" docs -------------- generates the html docs"/>
+    <echo message=" cleandocs --------- cleans the build docs directory"/>
+    <echo message=" javadocs ---------- generates the API documentation"/>
+    <echo message=" test -------------- performs the jUnit tests"/>
+    <echo message=" clean ------------- cleans the build directory"/>
+    <echo message=" dist -------------- creates src and bin distributions"/>
+    <echo message=" contrib ----------- build-run contributed components"/>
+    <echo message=" generate-records -- generate records from xml"/>
+    <taskdef name="user-input" classname="UserInput"
         classpath="./tools/anttasks"/>
 
     <property name="input.selection" value="compile"/>        

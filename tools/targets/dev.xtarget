@@ -206,4 +206,18 @@
           <fixcrlf srcdir="${java.dir}" includes="**/*.java"       eol="lf"/>
   </target>
   
-  
+  <target name="generate-records" depends="prepare"
+     description="Generates the record source code">
+
+      <java classname="org.apache.poi.hssf.util.RecordGenerator" fork="yes">
+          <arg value="src/records/definitions"/>
+          <arg value="src/records/styles"/>
+          <arg value="src/java"/>
+          <arg value="src/testcases"/>
+          <classpath>
+              <path refid="classpath"/>
+              <pathelement location="${build.dest}"/>
+          </classpath>
+      </java>
+
+  </target>
