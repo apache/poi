@@ -83,6 +83,42 @@ public class HSSFFooter extends Object {
   protected HSSFFooter(FooterRecord footerRecord) {
     this.footerRecord = footerRecord;
     String foot = footerRecord.getFooter();
+    while (foot != null && foot.length() > 1) {
+	int pos = foot.length();
+	switch (foot.substring(1, 2).charAt(0)) {
+	case 'L' :
+ 	    if (foot.indexOf("&C") >= 0) {
+		pos = Math.min(pos, foot.indexOf("&C"));
+	    } 
+	    if (foot.indexOf("&R") >= 0) {
+		pos = Math.min(pos, foot.indexOf("&R"));
+	    } 
+	    left = foot.substring(2, pos);
+	    foot = foot.substring(pos);
+	    break;
+	case 'C' : 
+	    if (foot.indexOf("&L") >= 0) {
+		pos = Math.min(pos, foot.indexOf("&L"));
+	    } 
+	    if (foot.indexOf("&R") >= 0) {
+		pos = Math.min(pos, foot.indexOf("&R"));
+	    } 
+	    center = foot.substring(2, pos);
+	    foot = foot.substring(pos);
+	    break;
+	case 'R' : 
+ 	    if (foot.indexOf("&C") >= 0) {
+		pos = Math.min(pos, foot.indexOf("&C"));
+	    } 
+	    if (foot.indexOf("&L") >= 0) {
+		pos = Math.min(pos, foot.indexOf("&L"));
+	    } 
+	    right = foot.substring(2, pos);
+	    foot = foot.substring(pos);
+	    break;
+	default : foot = null;
+	}
+    }
   }
 
   /**

@@ -82,6 +82,42 @@ public class HSSFHeader extends Object {
   protected HSSFHeader(HeaderRecord headerRecord) {
     this.headerRecord = headerRecord;
     String head = headerRecord.getHeader();
+    while (head != null && head.length() > 1) {
+	int pos = head.length();
+	switch (head.substring(1, 2).charAt(0)) {
+	case 'L' :
+ 	    if (head.indexOf("&C") >= 0) {
+		pos = Math.min(pos, head.indexOf("&C"));
+	    } 
+	    if (head.indexOf("&R") >= 0) {
+		pos = Math.min(pos, head.indexOf("&R"));
+	    } 
+	    left = head.substring(2, pos);
+	    head = head.substring(pos);
+	    break;
+	case 'C' : 
+	    if (head.indexOf("&L") >= 0) {
+		pos = Math.min(pos, head.indexOf("&L"));
+	    } 
+	    if (head.indexOf("&R") >= 0) {
+		pos = Math.min(pos, head.indexOf("&R"));
+	    } 
+	    center = head.substring(2, pos);
+	    head = head.substring(pos);
+	    break;
+	case 'R' : 
+ 	    if (head.indexOf("&C") >= 0) {
+		pos = Math.min(pos, head.indexOf("&C"));
+	    } 
+	    if (head.indexOf("&L") >= 0) {
+		pos = Math.min(pos, head.indexOf("&L"));
+	    } 
+	    right = head.substring(2, pos);
+	    head = head.substring(pos);
+	    break;
+	default : head = null;
+	}
+    }
   }
 
   /**
