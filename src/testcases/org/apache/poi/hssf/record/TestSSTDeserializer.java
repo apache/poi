@@ -72,6 +72,11 @@ public class TestSSTDeserializer
     private String _test_file_path;
     private static final String _test_file_path_property = "HSSF.testdata.path";
 
+    public TestSSTDeserializer( String s )
+    {
+        super( s );
+    }
+
     protected void setUp() throws Exception
     {
         _test_file_path = System.getProperty( _test_file_path_property );
@@ -83,7 +88,7 @@ public class TestSSTDeserializer
         byte[] bytes = HexRead.readData( _test_file_path + File.separator + "richtextdata.txt", "header" );
         BinaryTree strings = new BinaryTree();
         SSTDeserializer deserializer = new SSTDeserializer( strings );
-        deserializer.manufactureStrings( bytes, 0, (short) 45 );
+        deserializer.manufactureStrings( bytes, 0, (short)bytes.length );
         byte[] continueBytes = HexRead.readData( _test_file_path + File.separator + "richtextdata.txt", "continue1" );
         deserializer.processContinueRecord( continueBytes );
 
@@ -96,7 +101,7 @@ public class TestSSTDeserializer
         byte[] bytes = HexRead.readData( _test_file_path + File.separator + "evencontinuation.txt", "header" );
         BinaryTree strings = new BinaryTree();
         SSTDeserializer deserializer = new SSTDeserializer( strings );
-        deserializer.manufactureStrings( bytes, 0, (short) 43 );
+        deserializer.manufactureStrings( bytes, 0, (short)bytes.length );
         byte[] continueBytes = HexRead.readData( _test_file_path + File.separator + "evencontinuation.txt", "continue1" );
         deserializer.processContinueRecord( continueBytes );
 
@@ -114,7 +119,7 @@ public class TestSSTDeserializer
         byte[] bytes = HexRead.readData( _test_file_path + File.separator + "stringacross2continuations.txt", "header" );
         BinaryTree strings = new BinaryTree();
         SSTDeserializer deserializer = new SSTDeserializer( strings );
-        deserializer.manufactureStrings( bytes, 0, (short) 43 );
+        deserializer.manufactureStrings( bytes, 0, (short)bytes.length );
         bytes = HexRead.readData( _test_file_path + File.separator + "stringacross2continuations.txt", "continue1" );
         deserializer.processContinueRecord( bytes );
         bytes = HexRead.readData( _test_file_path + File.separator + "stringacross2continuations.txt", "continue2" );
@@ -122,6 +127,30 @@ public class TestSSTDeserializer
 
         assertEquals( "At a dinner party or", strings.get( new Integer( 0 ) ) + "" );
         assertEquals( "At a dinner partyAt a dinner party", strings.get( new Integer( 1 ) ) + "" );
+
+    }
+
+    public void testExtendedStrings()
+            throws Exception
+    {
+        byte[] bytes = HexRead.readData( _test_file_path + File.separator + "extendedtextstrings.txt", "rich-header" );
+        BinaryTree strings = new BinaryTree();
+        SSTDeserializer deserializer = new SSTDeserializer( strings );
+        deserializer.manufactureStrings( bytes, 0, (short)bytes.length );
+        byte[] continueBytes = HexRead.readData( _test_file_path + File.separator + "extendedtextstrings.txt", "rich-continue1" );
+        deserializer.processContinueRecord( continueBytes );
+
+        assertEquals( "At a dinner party orAt At At ", strings.get( new Integer( 0 ) ) + "" );
+
+
+        bytes = HexRead.readData( _test_file_path + File.separator + "extendedtextstrings.txt", "norich-header" );
+        strings = new BinaryTree();
+        deserializer = new SSTDeserializer( strings );
+        deserializer.manufactureStrings( bytes, 0, (short)bytes.length );
+        continueBytes = HexRead.readData( _test_file_path + File.separator + "extendedtextstrings.txt", "norich-continue1" );
+        deserializer.processContinueRecord( continueBytes );
+
+        assertEquals( "At a dinner party orAt At At ", strings.get( new Integer( 0 ) ) + "" );
 
     }
 
