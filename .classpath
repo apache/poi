@@ -3,6 +3,7 @@
     <classpathentry kind="src" path="src/testcases"/>
     <classpathentry kind="src" path="src/java"/>
     <classpathentry kind="src" path="src/examples/src"/>
+    <classpathentry kind="src" path="src/documentation/xdocs"/>
     <classpathentry kind="var" path="JRE_LIB" rootpath="JRE_SRCROOT" sourcepath="JRE_SRC"/>
     <classpathentry exported="true" kind="lib" path="D:/cygwin/opt/eclipse/workspace/jakarta-poi/tools/cents/junit.cent/lib/junit-3.7.jar"/>
     <classpathentry kind="output" path="build"/>
