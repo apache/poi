@@ -27,6 +27,7 @@
                     <li><link href="#FrillsAndFills">Fills and color</link></li>
                     <li><link href="#MergedCells">Merging cells</link></li>
                     <li><link href="#WorkingWithFonts">Working with fonts</link></li>
+                    <li><link href="#CustomColors">Custom colors</link></li>
                     <li><link href="#ReadWriteWorkbook">Reading and writing</link></li>
                     <li><link href="#NewLinesInCells">Use newlines in cells.</link></li>
                     <li><link href="#DataFormats">Create user defined data formats.</link></li>
@@ -278,6 +279,60 @@
     FileOutputStream fileOut = new FileOutputStream("workbook.xls");
     wb.write(fileOut);
     fileOut.close();
+                    </source>
+                </section>
+                <anchor id="CustomColors"/>
+                <section title="Custom colors">
+                    <source>
+    HSSFWorkbook wb = new HSSFWorkbook();
+    HSSFSheet sheet = wb.createSheet();
+    HSSFRow row = sheet.createRow((short) 0);
+    HSSFCell cell = row.createCell((short) 0);
+    cell.setCellValue("Default Palette");
+
+    //apply some colors from the standard palette,
+    // as in the previous examples.
+    //we'll use red text on a lime background
+
+    HSSFCellStyle style = wb.createCellStyle();
+    style.setFillForegroundColor(HSSFColor.LIME.index);
+    style.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+
+    HSSFFont font = wb.createFont();
+    font.setColor(HSSFColor.RED.index);
+    style.setFont(font);
+
+    cell.setCellStyle(style);
+
+    //save with the default palette
+    FileOutputStream out = new FileOutputStream("default_palette.xls");
+    wb.write(out);
+    out.close();
+
+    //now, let's replace RED and LIME in the palette
+    // with a more attractive combination
+    // (lovingly borrowed from freebsd.org)
+
+    cell.setCellValue("Modified Palette");
+
+    //creating a custom palette for the workbook
+    HSSFPalette palette = wb.getCustomPalette();
+
+    //replacing the standard red with freebsd.org red
+    palette.setColorAtIndex(HSSFColor.RED.index,
+            (byte) 153,  //RGB red (0-255)
+            (byte) 0,    //RGB green
+            (byte) 0     //RGB blue
+    );
+    //replacing lime with freebsd.org gold
+    palette.setColorAtIndex(HSSFColor.LIME.index, (byte) 255, (byte) 204, (byte) 102);
+
+    //save with the modified palette
+    // note that wherever we have previously used RED or LIME, the
+    // new colors magically appear
+    out = new FileOutputStream("modified_palette.xls");
+    wb.write(out);
+    out.close();
                     </source>
                 </section>
                 <anchor id="ReadWriteWorkbook"/>

@@ -728,6 +728,11 @@ public class HSSFWorkbook
         
     }
 
+    public HSSFPalette getCustomPalette()
+    {
+        return new HSSFPalette(workbook.getCustomPalette());
+    }
+    
    /**
     * Copies nodes from one POIFS to the other minus the excepts
     * @param source is the source POIFS to copy from
