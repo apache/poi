@@ -10,8 +10,11 @@
   </menu>
 
   <menu label="Planning Documents">
-    <menu-item label="Release Plan" href="POI10Vision.html"/>
+    <menu-item label="1.0 Vision" href="POI10Vision.html"/>
+    <menu-item label="2.0 Vision" href="POI20Vision.html"/>
   </menu>
+
+
 </book>
 
 
