@@ -126,7 +126,7 @@ public class BoundSheetRecord
         field_3_sheetname_length        = data[ 6 + offset ];
         field_4_compressed_unicode_flag = data[ 7 + offset ];
         field_5_sheetname               = new String(data, 8 + offset,
-                ( int ) field_3_sheetname_length);
+                LittleEndian.ubyteToInt( field_3_sheetname_length));
     }
 
     /**

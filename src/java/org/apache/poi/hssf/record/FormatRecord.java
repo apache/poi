@@ -121,7 +121,7 @@ public class FormatRecord
         field_2_formatstring_len = data[ 2 + offset ];
         field_3_zero             = LittleEndian.getShort(data, 3 + offset);
         field_4_formatstring     = new String(data, 5 + offset,
-                                              field_2_formatstring_len);
+                                              LittleEndian.ubyteToInt(field_2_formatstring_len));
     }
 
     /**

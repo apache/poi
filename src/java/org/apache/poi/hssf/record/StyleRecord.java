@@ -135,7 +135,7 @@ public class StyleRecord
         {
             field_2_name_length = data[ 2 + offset ];
             field_3_name        = new String(data, 3 + offset,
-                                             field_2_name_length);
+                                             LittleEndian.ubyteToInt(field_2_name_length));
         }
 
         // todo sanity check exception to make sure we're one or the other

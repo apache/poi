@@ -165,7 +165,7 @@ public class FontRecord
             if (data[ 15 ] == 0)
             {   // is compressed unicode
                 field_11_font_name = new String(data, 16,
-                                                field_10_font_name_len);
+                                                LittleEndian.ubyteToInt(field_10_font_name_len));
             }
             else
             {   // is not compressed unicode
