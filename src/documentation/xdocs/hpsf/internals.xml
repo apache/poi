@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "../dtd/document-v10.dtd">
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "../dtd/document-v11.dtd">
 <!-- $Id$ -->
 
 <document>
@@ -10,9 +10,9 @@
     </authors>
   </header>
   <body>
-    <s1 title="HPSF Internals">
+    <section title="HPSF Internals">
 
-    <s2 title="Introduction">
+    <section title="Introduction">
 
     <p>A Microsoft Office document is internally organized like a filesystem
      with directory and files. Microsoft calls these files
@@ -45,11 +45,11 @@
      Embedded documents may have their own property set streams. You cannot
      tell by a stream's name whether it is a property set stream or not.
      Instead you have to open the stream and look at its bytes.</p>
-   </s2>
+   </section>
 
 
 
-    <s2 title="Data Types">
+    <section title="Data Types">
 
     <p>Before delving into the details of the property set stream format we
      have to have a short look at data types. Integral values are stored in the
@@ -148,11 +148,11 @@
       </td>
      </tr>
     </table>
-   </s2>
+   </section>
 
 
 
-   <s2 title="HPSF Overview">
+   <section title="HPSF Overview">
 
     <p>A property set stream consists of three main parts:</p>
 
@@ -164,11 +164,11 @@
       <p>the <strong>section(s)</strong> containing the properties.</p>
      </li>
     </ol>
-   </s2>
+   </section>
 
 
 
-   <s2 title="The Header">
+   <section title="The Header">
 
     <p>The first bytes in a property set stream is the <strong>header</strong>.
      It has a fixed length and looks like this:</p>
@@ -265,11 +265,11 @@
        </td>
      </tr>
     </table>
-   </s2>
+   </section>
 
 
 
-   <s2 title="Section List">
+   <section title="Section List">
 
     <p>Following the header is the section list. This is an array of pairs each
      consisting of a section format ID and an offset. This array has as many
@@ -355,11 +355,11 @@
        </td>
       </tr>
     </table>
-   </s2>
+   </section>
 
 
 
-   <s2 title="Section">
+   <section title="Section">
 
     <p>A section is divided into three parts: the section header (with the
      section length and the number of properties in the section), the
@@ -509,11 +509,11 @@
        </td>
       </tr>
     </table>
-   </s2>
+   </section>
 
 
 
-   <s2 title="Property IDs">
+   <section title="Property IDs">
     <anchor id="property_ids"/>
 
     <p>As seen above, a section holds a property list: an array with property
@@ -535,7 +535,7 @@
      Information and the Document Summary Information streams. You can extend
      them by your own additional IDs. This will be described below.</p>
 
-    <s3 title="Property IDs in The Summary Information Stream">
+    <section title="Property IDs in The Summary Information Stream">
 
      <p>The Summary Information stream has a single section with a section
       format ID of <code>0xF29F85E04FF91068AB9108002B27B3D9</code>. The following
@@ -672,11 +672,11 @@
 	<td><p>VT_I4</p></td>
       </tr>
      </table>
-    </s3>
+    </section>
 
 
 
-    <s3 title="Property IDs in The Document Summary Information Stream">
+    <section title="Property IDs in The Document Summary Information Stream">
 
      <p>The Document Summary Information stream has two sections with a section
       format ID of <code>0xD5CDD5022E9C101B939708002B2CF9AE</code> for the first
@@ -781,12 +781,12 @@
 	<td><p>VT_BOOL</p></td>
        </tr>
      </table>
-    </s3>
-   </s2>
+    </section>
+   </section>
 
 
 
-   <s2 title="Property Types">
+   <section title="Property Types">
     <anchor id="property_types"/>
 
     <p>A property consists of a DWord <em>type field</em> followed by the
@@ -1090,11 +1090,11 @@
        <td><p><br/></p></td>
       </tr>
     </table>
-   </s2>
+   </section>
 
 
 
-   <s2 title="References">
+   <section title="References">
 
     <p>In order to assemble the HPSF description I used information publically
      available on the Internet only. The references given below have been very
@@ -1144,8 +1144,8 @@
       <p>This documentation origins from the <link href="http://www.rainer-klute.de/~klute/Software/poibrowser/doc/HPSF-Description.html">HPSF description</link> available at <link href="http://www.rainer-klute.de/~klute/Software/poibrowser/doc/HPSF-Description.html">http://www.rainer-klute.de/~klute/Software/poibrowser/doc/HPSF-Description.html</link>.</p>
      </li>
     </ol>
-   </s2>
-  </s1>
+   </section>
+  </section>
  </body>
 </document>
 

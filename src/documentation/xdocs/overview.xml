@@ -10,47 +10,47 @@
   </header>
   
   <body>
-    <s1 title="What is it?">
+    <section title="What is it?">
       <p>The POI project is the master project for developing pure
         Java ports of file formats based on Microsoft's OLE 2 Compound
         Document Format.  OLE 2 Compound Document Format is used by
         Microsoft Office Documents, as well as by programs using MFC
         property sets to serialize their document objects.
       </p>
-    </s1>
-    <s1 title="Sub-Projects">
+    </section>
+    <section title="Sub-Projects">
       <p>
         There following are ports, packages or components contained in the POI project.
       </p>
-      <s2 title="POIFS">
+      <section title="POIFS">
         <p>
           <link href="poifs/index.html">POIFS</link> is the set of APIs 
           for reading and writing OLE 2 Compound Document Formats using (only) Java.
         </p> 
-      </s2>
+      </section>
       
-      <s2 title="HSSF">
+      <section title="HSSF">
         <p>
           <link href="hssf/index.html">HSSF</link> is the set of APIs 
  	  for reading and writing Microsoft Excel 97(-XP) spreadsheet using (only) Java.
         </p>
-      </s2>
+      </section>
 
-      <s2 title="HDF">
+      <section title="HDF">
         <p>
           <link href="hdf/index.html">HDF</link>  is the set of APIs                   
           for reading and writing Microsoft Word 97(-XP) spreadsheet using (only) Java.
         </p>
-      </s2>
+      </section>
 
-      <s2 title="HPSF">
+      <section title="HPSF">
         <p>
           <link href="hpsf/index.html">HPSF</link> is the set of APIs 
           for reading property sets using (only) Java.
         </p> 
-      </s2>
+      </section>
 
-      <s2 title="POI-Utils">
+      <section title="POI-Utils">
         <p>
           <link href="utils/index.html">POI-Utils</link> are general purpose artifacts
 	  from POI development that have not yet been implemented elsewhere.  We're 
@@ -58,8 +58,8 @@
           used in another project.  These are things we need to complete our mission but
           are generally outside of it.  
         </p>
-      </s2>
-    </s1>
+      </section>
+    </section>
   </body>
   <footer>
     <legal>

@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "./dtd/document-v11.dtd">
 
 <document>
  <header>
@@ -11,14 +10,14 @@
 
  <body>
 
- <s1 title="How to Contribute">
+ <section title="How to Contribute">
   <p>
    See <link href="contrib.xml">How to contribute to Poi</link>.
   </p>
 
- </s1>
+ </section>
 
- <s1 title="Contributed Components">
+ <section title="Contributed Components">
   <p>
    These are not necessarily deemed to be high enough quality to be included in the
    core distribution, but they have been tested under <connect href="contrib.xml">
@@ -32,18 +31,18 @@
    listed below will eventually migrate to the "contributed components" level, and
    then maybe even into the main distribution.
   </p>
- </s1>
+ </section>
 
- <s1 title="Patch Queue">
+ <section title="Patch Queue">
   <p><link href="patches.html">Submissions of modifications</link>
    to Poi which are awaiting review. Anyone can
    comment on them on the dev mailing list - code reviewers are needed!
    <strong>Use these at your own risk</strong> - although Poi has no guarantee
    either, these patches have not been reviewed, let alone accepted.
   </p>
- </s1>
+ </section>
 
- <s1 title="Other Extensions">
+ <section title="Other Extensions">
   <p>The other extensions listed here are <strong>not endorsed</strong> by the Poi
    project either - they are provided as a convenience only. They may or may not work,
    they may or may not be open source, etc.
@@ -63,6 +62,6 @@
    </tr>
   </table>
 
- </s1>
+ </section>
 </body>
 </document>

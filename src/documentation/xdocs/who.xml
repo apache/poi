@@ -12,7 +12,7 @@
 
  <body>
 
- <s1 title="Who we are">
+ <section title="Who we are">
   <p>
     The Poi Project operates on a meritocracy: the more you do, the more 
     responsibility you will obtain. This page lists all of the people who have 
@@ -31,14 +31,14 @@
     community we all grow together. 
   </p>
   
-  <s2 title="Advisors">
+  <section title="Advisors">
     <ul>
        <li><link href="http://jakarta.apache.org/avalon/authors/stefano.html">Stefano Mazzocchi</link> (stefano at apache dot org)
        </li>
     </ul>
-  </s2>
+  </section>
 
-  <s2 title="Committers">
+  <section title="Committers">
     <ul>
       <li><link href="http://trilug.org/~acoliver">Andrew C. Oliver</link> (acoliver at apache dot org)</li>
       <li><link href="http://www.marcj.com">Marc Johnson</link> (mjohnson at apache dot org)</li>
@@ -46,13 +46,13 @@
       <li><link href="http://www.rainer-klute.de/">Rainer Klute</link> (klute at apache dot org)</li>
       <li>Nicola Ken Barozzi (barozzi at nicolaken dot com)</li>
     </ul>
-  </s2>
-  <s2 title="Developers">
+  </section>
+  <section title="Developers">
     <ul>
       <li>Ryan Ackley (sackley at cfl dot rr dot com)</li>
     </ul>
-  </s2>
- </s1>
+  </section>
+ </section>
 
 </body>
 </document>

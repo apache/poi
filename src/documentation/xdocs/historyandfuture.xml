@@ -12,7 +12,7 @@
   <body>
 
 
-    <s1 title="Brief Project History">
+    <section title="Brief Project History">
 
         <p>The POI project was dreamed up back around April 2001, when
         Andy Oliver landed a short term contract to do Java-based
@@ -76,9 +76,9 @@ already started making waves.
          looks like everything turned out since you're reading this!
         </p>
 
-    </s1>
+    </section>
 
-    <s1 title="What's next for POI">
+    <section title="What's next for POI">
         <p>First we'll tackle this from a project standpoint: Well, we
         made an offer to Microsoft and Actuate (tongue in cheek
         ... well mostly) that we'd quit the project and retire if
@@ -120,7 +120,7 @@ already started making waves.
         that new blood will join the team and allow us to tackle this
         even faster (in part because POIFS is already finished). But
         maybe what we need most is you!  </p>
-      </s1>
+      </section>
 
     </body>
   <footer>

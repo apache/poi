@@ -12,7 +12,7 @@
 
  <body>
 
- <s1 title="Preface"> 
+ <section title="Preface"> 
         <p> 
 		(21-Jan-02) While this document is just full of useful project 
 		introductory information and I do suggest those interested in getting
@@ -42,10 +42,10 @@
 		Cocoon 2 Serializers worked.  (that just about covers the whole range
 		huh?)
 	</p>
- </s1>
+ </section>
 
- <s1 title="1. Introduction">
-  <s2 title="1.1 Purpose of this document">
+ <section title="1. Introduction">
+  <section title="1.1 Purpose of this document">
 	<p>
 		The purpose of this document is to
 		collect, analyze and define high-level requirements, user needs and
@@ -56,10 +56,10 @@
 		The HSSF Serializer will be responsible for converting XML
 		spreadsheet-like documents into Excel-compatible XLS spreadsheets.
 	</p>
-  </s2>
+  </section>
   
 
-  <s2 title="1.2 Project Overview">
+  <section title="1.2 Project Overview">
 	<p>
 		Many web apps today hit a brick wall
 		when it comes to the user request that they be able to easily
@@ -89,10 +89,10 @@
 			</li>
 		</ul>
 	
-  </s2>
- </s1>
- <s1 title="2. User Description">
-   <s2 title="2.1 User/Market Demographics">
+  </section>
+ </section>
+ <section title="2. User Description">
+   <section title="2.1 User/Market Demographics">
 	<p>
 		There are a number of enthusiastic
 		users of XML, UNIX and Java technology. Secondly, the Microsoft
@@ -122,15 +122,15 @@
 		Compound Document Format in Java.
 		</li>
 	</ol>
-   </s2>
-   <s2 title="2.2. User environment">
+   </section>
+   <section title="2.2. User environment">
 	<p>
 		The users of this software shall be
 		developers in a Java environment on any Operating System or power
 		users who are capable of XML document generation/deployment.		
 	</p>
-   </s2>
-   <s2 title="2.3. Key User Needs">
+   </section>
+   <section title="2.3. Key User Needs">
 	<p>
 		The OLE 2 Compound Document format is
 		undocumented for all practical purposes and cryptic for all
@@ -156,16 +156,16 @@
 	</p>
 	
 
-   </s2>
-   <s2 title="2.4. Alternatives and Competition">
+   </section>
+   <section title="2.4. Alternatives and Competition">
 	<p>
         Originally there weren't any decent <link href="../hssf/alternatives.html">alternatives</link> for reading or writing
         to Excel.  This has changed somewhat.
 	</p>
-   </s2>
- </s1>
- <s1 title="3. Project Overview">
-   <s2 title="3.1. Project Perspective">
+   </section>
+ </section>
+ <section title="3. Project Overview">
+   <section title="3.1. Project Perspective">
 	<p>
 		The produced code shall be licensed by
 		the Apache License as used by the Cocoon 2 project and maintained on
@@ -173,8 +173,8 @@
 		as a donation (at which time the copyright will be turned over to
 		them).	
 	</p>
-   </s2>
-   <s2 title="3.2. Project Position Statement">
+   </section>
+   <section title="3.2. Project Position Statement">
 	<p>
 		For developers on a Java and/or XML
 		environment this project will provide all the tools necessary for
@@ -187,8 +187,8 @@
 		projects to convert other OLE 2 Compound Document formats to pure
 		Java APIs.
 	</p>
-   </s2>
-   <s2 title="3.3. Summary of Capabilities">
+   </section>
+   <section title="3.3. Summary of Capabilities">
 	<p>
 		HSSF Serializer for Apache Cocoon 2
 	</p>
@@ -239,8 +239,8 @@
 			</td>
 		</tr>
 	</table>   
-   </s2>
-   <s2 title="3.4. Assumptions and Dependencies">
+   </section>
+   <section title="3.4. Assumptions and Dependencies">
 	<ul>
 		<li>
 			The HSSF Serializer will run on
@@ -256,9 +256,9 @@
 			implementation.
 		</li>
 	</ul>	
-   </s2>
- </s1>
- <s1 title="4. Project Features">
+   </section>
+ </section>
+ <section title="4. Project Features">
 	<p> 
 		The POIFS API will include:
 	</p>
@@ -295,7 +295,7 @@
 			about the Excel format itself.
 		</li>
 	</ul>	
-   <s2 title="4.1 POI Filesystem API">
+   <section title="4.1 POI Filesystem API">
 	<p>
 		The POI Filesystem API includes:
 	</p>
@@ -329,8 +329,8 @@
 		with system specifications and execution times for given operations)
 		</li>
 	</ul>
-   </s2>
-   <s2 title="4.2 HSSF API">
+   </section>
+   <section title="4.2 HSSF API">
 	<p>
 		The HSSF API includes:
 	</p>
@@ -364,8 +364,8 @@
 		specifications and execution times for given operations - possibly
 		the same files used for POI's tests)</li>
 	</ul>
-   </s2>
-   <s2 title="4.3 HSSF Serializer">
+   </section>
+   <section title="4.3 HSSF Serializer">
 	<p>
 		The HSSF Serializer subproject:
 	</p>
@@ -384,15 +384,15 @@
 		(Example XML docs and stylesheets rated by some measure of
 		complexity along with system specifications and execution times)</li>
 	</ul>	
-   </s2>
- </s1>
- <s1 title="5. Other Product Requirements">
-   <s2 title="5.1. Applicable Standards">
+   </section>
+ </section>
+ <section title="5. Other Product Requirements">
+   <section title="5.1. Applicable Standards">
 	<p>
 		All Java code will be 100% pure Java.
 	</p>
-   </s2>
-   <s2 title="5.2. System Requirements">
+   </section>
+   <section title="5.2. System Requirements">
 	<p>
 		The minimum system requirements for POIFS are:
 	</p>
@@ -421,15 +421,15 @@
 		<li>HSSF API</li>
 		<li>POI API</li>
 	</ul>	
-   </s2>
-   <s2 title="5.3. Performance Requirements">
+   </section>
+   <section title="5.3. Performance Requirements">
 	<p>
 		All components must perform well enough
 		to be practical for use in a webserver environment (especially
 		Cocoon2/Tomcat/Apache combo)
 	</p>
-   </s2>
-   <s2 title="5.4. Environmental Requirements">
+   </section>
+   <section title="5.4. Environmental Requirements">
 	<p>
 		The software will run primarily in
 		developer environments. We should make some allowances for
@@ -441,25 +441,25 @@
 		concepts introduced for writing spreadsheets and to POI filesystems
 		will be brand new to Java and many Java developers.
 	</p>
-   </s2>
- </s1>
- <s1 title="6. Documentation Requirements">
-   <s2 title="6.1 POI Filesystem">
+   </section>
+ </section>
+ <section title="6. Documentation Requirements">
+   <section title="6.1 POI Filesystem">
 	<p>
 		The filesystem as read and written by
 		POI shall be fully documented and explained so that the average Java
 		developer can understand it.
 	</p>
-   </s2>
-   <s2 title="6.2. POI API">
+   </section>
+   <section title="6.2. POI API">
 	<p>
 		The POI API will be fully documented
 		through Javadoc. A walkthrough of using the high level POI API shall
 		be provided. No documentation outside of the Javadoc shall be
 		provided for the low-level POI APIs.	
 	</p>
-   </s2>
-   <s2 title="6.3. HSSF File Format">
+   </section>
+   <section title="6.3. HSSF File Format">
 	<p>
 		The HSSF File Format as implemented by
 		the HSSF API will be fully documented. No documentation will be
@@ -467,43 +467,43 @@
 		supported by the Excel 97 File Format. Care will be taken not to
 		infringe on any &quot;legal stuff&quot;.	
 	</p>
-   </s2>
-   <s2 title="6.4. HSSF API">
+   </section>
+   <section title="6.4. HSSF API">
 	<p>
 		The HSSF API will be documented by
 		javadoc. A walkthrough of using the high level HSSF API shall be
 		provided. No documentation outside of the Javadoc shall be provided
 		for the low level HSSF APIs.	
 	</p>
-   </s2>
+   </section>
 
-   <s2 title="6.5. HSSF Serializer">
+   <section title="6.5. HSSF Serializer">
 	<p>
 		The HSSF Serializer will be documented
 		by javadoc. 	
 	</p>
-   </s2>
+   </section>
 
-   <s2 title="6.6 HSSF Serializer Tag language">
+   <section title="6.6 HSSF Serializer Tag language">
 	<p>
 		The XML tag language along with
 		function and usage shall be fully documented. Examples will be
 		provided as well.
 	</p>
-   </s2>
- </s1>
- <s1 title="7. Terminology">
-   <s2 title="7.1 Filesystem">
+   </section>
+ </section>
+ <section title="7. Terminology">
+   <section title="7.1 Filesystem">
 	<p>
 		filesystem shall refer only to the POI formatted archive.
 	</p>
-   </s2>
-   <s2 title="7.2 File">
+   </section>
+   <section title="7.2 File">
 	<p>
 		file shall refer to the embedded data stream within a 
 		POI filesystem. This will be the actual embedded document. 
 	</p>
-   </s2>
- </s1>
+   </section>
+ </section>
 </body>
 </document>

@@ -15,7 +15,7 @@
 
  <body>
 
- <s1 title="Introduction">
+ <section title="Introduction">
 
   <p>
    The POI Project is an <link href="http://www.opensource.org/">Open Source</link>
@@ -48,9 +48,9 @@
    we have work for you!  And we'll be very available to you for any questions!
   </p>
 
- </s1>
+ </section>
 
- <s1 title="Help Wanted Here">
+ <section title="Help Wanted Here">
   <p>
    The rest of this document is mainly about
    contributing new or improved code and/or documentation, but we would also be glad to have
@@ -81,10 +81,10 @@
     </li>
   </ul>
  
- </s1>
+ </section>
 
  <anchor id="cvshowto"/>
- <s1 title="CVS Usage Precis">
+ <section title="CVS Usage Precis">
   <p>An overview of how to use CVS to participate in POI development.
    Do not be afraid - you cannot accidently destroy the actual code repository,
    because you are working with a local copy as an anonymous user.
@@ -105,9 +105,9 @@
    repository, how to keep it up-to-date, and how to generate the differences
    to create a patch. (The commands are for Linux.)
   </p>
- </s1>
+ </section>
  <anchor id="ssh"/>
- <s1 title="CVS Committer with Secure Shell access">
+ <section title="CVS Committer with Secure Shell access">
   <p>After a developer has consistently provided contributions (code,
    documentation and discussion), then the rest of the dev community
    may vote to grant this developer commit access to CVS.
@@ -125,10 +125,10 @@
     - See the bottom of the page for links to tips for UNIX and Windows.
     Even if you are on UNIX, the Windows page will also help.</li>
   </ul>
- </s1>
+ </section>
 
  <anchor id="procedure"/>
- <s1 title="Procedure for Raising Development Issues">
+ <section title="Procedure for Raising Development Issues">
   <p>
    There are two methods for discussing development and submitting patches.
    So that everyone can be productive, it is important to know which method
@@ -178,10 +178,10 @@
    posting - perhaps it was not clear enough
    and the readers' eyes glazed over.
   </p>
- </s1>
+ </section>
 
  <anchor id="tips"/>
- <s1 title="Contribution Notes and Tips">
+ <section title="Contribution Notes and Tips">
   <p>
    This is a collection of tips for contributing to the project in a manner
    that is productive for all parties.
@@ -273,7 +273,7 @@
     see the way other people do things. Follow the leading examples.
    </li>
   </ul>
- </s1>
+ </section>
 
 </body>
 </document>

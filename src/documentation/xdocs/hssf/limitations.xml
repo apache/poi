@@ -6,7 +6,7 @@
         </authors>
     </header>
     <body>
-        <s1 title="Version 1.5 limitations">
+        <section title="Version 1.5 limitations">
             <p>
                 The intent of this document is to outline some of the known limitations of the
                 POI HSSF API's.  It is not intended to be complete list of every bug or missing
@@ -47,6 +47,6 @@
                     has not been tested.
                 </li>
             </ul>
-        </s1>
+        </section>
     </body>
 </document>

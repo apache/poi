@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "../dtd/document-v10.dtd"> 
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "../dtd/document-v11.dtd"> 
 <document>
   <header>
     <authors>
@@ -7,8 +7,8 @@
     </authors>
   </header>
   <body>
-    <s1 title="POIFS File System Internals">
-      <s2 title="Introduction">
+    <section title="POIFS File System Internals">
+      <section title="Introduction">
         <p>POIFS file systems are essentially normal files stored on a
            Java-compatible platform's native file system. They are
            typically identified by names ending in a four character
@@ -35,8 +35,8 @@
            with the extension &quot;.doc&quot;, you would actually
            have a POIFS file system with a document file archived
            inside of that file system.</p>
-      </s2>
-      <s2 title="Document Conventions">
+      </section>
+      <section title="Document Conventions">
         <p>This document utilizes the numeric types as described by
            the Java Language Specification, which can be found at
            <link href="http://java.sun.com">http://java.sun.com</link>. In
@@ -67,8 +67,8 @@ public int getShort (byte[] rec)
 {
     return ((rec[1] &lt;&lt; 8) | (rec[0] &amp; 0x00ff));
 }</source>
-      </s2>
-      <s2 title="File System Walkthrough">
+      </section>
+      <section title="File System Walkthrough">
         <p>This is a walkthrough of a POIFS file system and how it is
            put together. It is not intended to give a concise
            description but to give a &quot;big picture&quot; of the
@@ -114,8 +114,8 @@ public int getShort (byte[] rec)
 	   blocks into smaller blocks and there is a special small
 	   block allocation table that, like the main BAT for larger
 	   files, is used to map a small file to its small blocks.</p>
-      </s2>
-	<s3 title="Header Block">
+      </section>
+	<section title="Header Block">
           <p>The POIFS file system begins with a <b>header
              block</b>. The first 64 bits of the header form a long
              <b>file type id</b> or <b>magic number identifier</b> of
@@ -127,14 +127,14 @@ public int getShort (byte[] rec)
           <p>It's important to know the most important parts of the
              header. These are discussed in the rest of this
              section.</p>
-	  <s4 title="BATs">
+	  <section title="BATs">
             <p>At offset <b>0x2C</b> is an int specifying the number
                of elements in the <b>BAT array</b>. The array at
                <b>0x4C</b> an array of ints. This array contains the
                indices of every block in the Block Allocation
                Table.</p>
-	  </s4>
-	  <s4 title="XBATs">
+	  </section>
+	  <section title="XBATs">
 	    <p>Very large POIFS archives may have more blocks than can
                be addressed by the BAT blocks enumerated in the header
                block. How large? Well, the BAT array in the header can
@@ -170,8 +170,8 @@ public int getShort (byte[] rec)
 	       yet to see a disk drive large enough to accommodate
 	       such a file on the shelves at the local office supply
 	       stores.</p>
-	  </s4>
-	  <s4 title="SBATs">
+	  </section>
+	  <section title="SBATs">
             <p>If a file contained in a POIFS archive is smaller than
                4096 bytes, it is stored in small blocks. Small blocks
                are 64 bytes in length and are contained within big
@@ -184,17 +184,17 @@ public int getShort (byte[] rec)
                walking the main BAT as if it were an ordinary file in
                the POIFS file system (this process is described
                below).</p>
-	  </s4>
-	  <s4 title="Property Table Start Index">
+	  </section>
+	  <section title="Property Table Start Index">
             <p>An integer at address <b>0x30</b> specifies the start
                index of the property table. This integer is specified
                as a <b>&quot;block index&quot;</b>. The Property Table
                is stored, as is almost everything in a POIFS file
                system, in big blocks and walked via the BAT. The
                Property Table is described below.</p>
-	  </s4>
-	</s3>
-	<s3 title="Property Table">
+	  </section>
+	</section>
+	<section title="Property Table">
           <p>The property table is essentially nothing more than the
              directory system. Properties are 128 byte records
              contained within the 512 byte blocks. The first property
@@ -252,8 +252,8 @@ public int getShort (byte[] rec)
                 used to walk the big blocks making up this special
                 file.</li>
 	  </ul>
-	</s3>
-	<s3 title="Root Entry">
+	</section>
+	<section title="Root Entry">
           <p>The <b>Root Entry</b> in the <b>Property Table</b>
              contains the information necessary to read and write
              small files, which are files less than 4096 bytes
@@ -266,8 +266,8 @@ public int getShort (byte[] rec)
              Block Array are divided into 64-byte small blocks, up to
              the size indicated in the Root Entry (which should always
              be a multiple of 64).</p>
-	</s3>
-	<s3 title="Walking the Nodes of the Property Table">
+	</section>
+	<section title="Walking the Nodes of the Property Table">
           <p>The individual properties form a directory tree, with the
              <b>Root Entry</b> as the directory tree's root, as shown
              in the accompanying drawing. Note the numbers in
@@ -293,8 +293,8 @@ public int getShort (byte[] rec)
              <b>CHILD_PROP</b> fields contain the marker value of
              -1. All file properties have a value of -1 for their
              CHILD_PROP fields for example.</p>
-	</s3>
-	<s3 title="Block Allocation Table">
+	</section>
+	<section title="Block Allocation Table">
 	  <p>The <b>BAT blocks</b> are pointed at by the bat array
              contained in the header and supplemented, if necessary,
              by the <b>XBAT blocks</b>. These blocks form a large
@@ -337,10 +337,10 @@ public int getShort (byte[] rec)
                 as a block used to make up the Small Block Array, the
                 Property Table, the main BAT, or the SBAT</li>
           </ul>
-	</s3>
-      <s2 title="File System Structures">
+	</section>
+      <section title="File System Structures">
         <p>The following outlines the basic file system structures.</p>
-	<s3 title="Header (block 1) -- 512 (0x200) bytes">
+	<section title="Header (block 1) -- 512 (0x200) bytes">
           <table>
 	    <tr>
 	      <td><b>Field</b></td>
@@ -505,8 +505,8 @@ public int getShort (byte[] rec)
 	      <td>-1</td>
 	    </tr>
           </table>
-	</s3>
-	<s3 title="Block Allocation Table Block -- 512 (0x200) bytes">
+	</section>
+	<section title="Block Allocation Table Block -- 512 (0x200) bytes">
           <table>
 	    <tr>
 	      <td><B>Field</B></td>
@@ -532,8 +532,8 @@ public int getShort (byte[] rec)
 	      </td>
 	    </tr>
           </table>
-	</s3>
-	<s3 title="Property Block -- 512 (0x200) byte block">
+	</section>
+	<section title="Property Block -- 512 (0x200) byte block">
           <table>
 	    <tr>
 	      <td><B>Field</B></td>
@@ -550,8 +550,8 @@ public int getShort (byte[] rec)
 	      <td>All unused space is set to -1.</td>
 	    </tr>
           </table>
-	</s3>
-	<s3 title="Property -- 128 (0x80) byte block">
+	</section>
+	<section title="Property -- 128 (0x80) byte block">
           <table>
 	    <tr>
 	      <td><B>Field</B></td>
@@ -659,8 +659,8 @@ public int getShort (byte[] rec)
 	      <td>0</td>
 	    </tr>
           </table>
-	</s3>
-      </s2>
-    </s1>
+	</section>
+      </section>
+    </section>
   </body>
 </document>

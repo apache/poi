@@ -10,7 +10,7 @@
     </authors>
   </header>
   <body>
-    <s1 title="Overview">
+    <section title="Overview">
       <p>POIFS is a pure Java implementation of the OLE 2 Compound
          Document format.</p>
       <p>By definition, all APIs developed by the POI project are
@@ -37,6 +37,6 @@
       <p>TODO: copy POIFS docs and port to XML (in progress). For now
          please reference <link href="http://poi.sourceforge.net">old
          site</link>.</p>
-    </s1>
+    </section>
   </body>
 </document>

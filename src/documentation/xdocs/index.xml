@@ -10,7 +10,7 @@
   </header>
   
   <body>
-    <s1 title="Logo Contest">
+    <section title="Logo Contest">
       <p>
         The POI committers have voted to 
         <link href="http://jakarta.apache.org/ant">"innovate"</link> and hold a 
@@ -62,8 +62,8 @@
         You can see the current submissions <link
         href="news/logocontest.html">here.</link>
       </p>
-    </s1>
-    <s1 title="Purpose">
+    </section>
+    <section title="Purpose">
       <p>
       The POI project consists of APIs for manipulating various file formats
       based upon Microsoft's OLE 2 Compound Document format using pure Java.
@@ -80,7 +80,7 @@
          XLS format; and <link href="http://jakarta.apache.org/lucene">Lucene</link> for which we'll soon have file 
          format interpretors.  When practical, we donate components directly to those projects for POI-enabling them.
       </p>
-      <s2 title="Why/when would I use POI?">
+      <section title="Why/when would I use POI?">
         <p>
  		We'll tackle this on a component level. POI refers to the whole project.
         </p> 
@@ -97,9 +97,9 @@
 		You'd use HSSF if you needed to read or write an XLS (Excel) file using Java. You can also read and modify 
 		spreadsheets using this API, although right now writing is more mature.
         </p> 
-      </s2>
+      </section>
       
-      <s2 title="What does POI stand for?">
+      <section title="What does POI stand for?">
         <p>
 		POI stands for Poor Obfuscation Implementation. Why would we name our project such a derogatory name? Well, 
 		Microsoft's OLE 2 Compound Document Format is a poorly conceived thing. It is essentially an archive structured
@@ -116,32 +116,32 @@
 		So if you like acronyms, then POI is an acronym.  If you hate them, then we just used the name of the food for our
 		project.  If you wish to signify your love or hate for acronyms, use POI or Poi to refer to the project respectively.  
       </p>
-      </s2>
+      </section>
 
-    </s1>
+    </section>
 
 
-    <s1 title="Components To Date">
-        <s2 title="Overview">
+    <section title="Components To Date">
+        <section title="Overview">
 	     <p>A common misconception is that POI writes Excel files.  POI is the name of the project.  POI contains several
              components, one of which, HSSF, writes Excel files.  The following are components of the entire POI project
              and a brief summary of their purpose.</p>
-        </s2>
-        <s2 title="POIFS (POI Filesystem)">
+        </section>
+        <section title="POIFS (POI Filesystem)">
              <p>POIFS is the oldest and most stable part of the project.  It is our port of the OLE 2 Compound Document Format to
              pure Java.  It supports both read and write functionality.  All of our components ultimately rely on it by 
              definition.  Please see <link href="./poifs/index.html">the POIFS project page</link> for more information.</p>
-        </s2>
-        <s2 title="HSSF (Horrible Spreadsheet Format)">
+        </section>
+        <section title="HSSF (Horrible Spreadsheet Format)">
              <p>HSSF is our port of the Microsoft Excel 97(-2002) file format (BIFF8) to pure Java.  It supports read and write 
              capability.  Please see <link href="./hssf/index.html">the HSSF project page</link> for more information.</p>
-        </s2>
-        <s2 title="HDF (Horrible Document Format)">
+        </section>
+        <section title="HDF (Horrible Document Format)">
              <p>HDF is our port of the Microsoft Word 97 file format to pure Java.  It supports read and write capability.
              Please see <link href="./hdf/index.html">the HDF project page for more information</link>.  This component is 
              in the early stages of design.  Jump in!</p>
-        </s2>
-        <s2 title="HPSF (Horrible Property Set Format)">
+        </section>
+        <section title="HPSF (Horrible Property Set Format)">
 	<p>HPSF is our port of the OLE 2 property set format to pure
 	  Java. Property sets are mostly use to store a document's properties
 	  (title, author, date of last modification etc.), but they can be used
@@ -149,17 +149,17 @@
 	  read functionality only. Please see <link
 	    href="./hpsf/index.html">the HPSF project page</link> for more
 	  information.</p>
-        </s2>
+        </section>
 
-     </s1>
+     </section>
 
-    <s1 title="What happened to the HSSF Serializer?">
+    <section title="What happened to the HSSF Serializer?">
 	<p>The HSSF Serializer, which was part of our 1.0 release and last builds on 
         <link href="http://www.sourceforge.net/projects/poi">Sourceforge</link>, has been donated to the Cocoon project.  We're
         currently in the process of porting it over.</p>
-    </s1>
+    </section>
 
-    <s1 title="Contributing ">
+    <section title="Contributing ">
         <p>
 		So you'd like to contribute to the project? Great! We need enthusiastic, hard-working, talented folks to help 
 		us on the project in several areas. The first is bug reports and feature requests! The second is documentation - 
@@ -173,7 +173,7 @@
         </p>
 
 
-    </s1>
+    </section>
   </body>
   <footer>
     <legal>

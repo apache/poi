@@ -12,7 +12,7 @@
  </header>
 
  <body>
- <s1 title="Overview">
+ <section title="Overview">
 
   <p>This is a collection of notes to assist with long-term planning and
    development.
@@ -40,9 +40,9 @@
    also ever-evolving, because as issues are addressed these notes will be
    revised.
   </p>
- </s1>
+ </section>
 
- <s1 title="Topics and Issues">
+ <section title="Topics and Issues">
 
   <ul>
    <li><link href="release.html">Release Plan</link>
@@ -52,7 +52,7 @@
    <li>See the general <link href="../todo.html">To Do</link> list 
     and the <code>dev</code> email archives for other issues</li>
   </ul>
- </s1>
+ </section>
 
  </body>
 </document>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "../dtd/document-v10.dtd">
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "../dtd/document-v11.dtd">
 
 <document>
     <header>
@@ -11,7 +11,7 @@
     </header>
 
     <body>
-        <s1 title="Alternatives">
+        <section title="Alternatives">
             <p>
                 Maybe it's unwise to advertise your competitors but we believe
                 competition is good and we have the best support reading and
@@ -78,6 +78,6 @@
                     <td>There are a number of perl and C libraries, however none of them are consistent.</td>
                 </tr>
             </table>
-        </s1>
+        </section>
     </body>
 </document>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "../dtd/document-v10.dtd"> 
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "../dtd/document-v11.dtd"> 
      
 <document>
   <header>
@@ -9,8 +9,8 @@
    </authors>
   </header>
   <body>
-    <s1 title="HSSF Use Cases">
-    <s2 title="Use Case 1: Read existing HSSF">
+    <section title="HSSF Use Cases">
+    <section title="Use Case 1: Read existing HSSF">
 
 <p><strong>Primary Actor:</strong> HSSF client</p>
 <p><strong>Scope:</strong> HSSF</p>
@@ -39,8 +39,8 @@
 <p><strong>Extensions:</strong></p>
 <p>2a. Exceptions
 thrown by POIFS will be passed on to the HSSF client.</p>
-</s2>
-    <s2 title="Use Case 2: Write HSSF file">
+</section>
+    <section title="Use Case 2: Write HSSF file">
 
 <p><strong>Primary Actor:</strong> HSSF client</p>
 <p><strong>Scope:</strong> HSSF</p>
@@ -77,8 +77,8 @@ thrown by POIFS will be passed on to the HSSF client.</p>
 <p>3a. Exceptions
 from POIFS are passed to the HSSF client.</p>
 
-</s2>
-    <s2 title="Use Case 3:Create HSSF file">
+</section>
+    <section title="Use Case 3:Create HSSF file">
 
 <p><strong>Primary Actor:</strong> HSSF client</p>
 <p><strong>Scope:</strong> HSSF</p>
@@ -104,8 +104,8 @@ from POIFS are passed to the HSSF client.</p>
 <p><strong>Extensions:</strong>
 None</p>
 
-</s2>
-    <s2 title="Use Case 4: Read workbook entry">
+</section>
+    <section title="Use Case 4: Read workbook entry">
 <p><strong>Primary Actor:</strong> HSSF</p>
 <p><strong>Scope:</strong> HSSF</p>
 <p>
@@ -140,8 +140,8 @@ Guarantee:</strong> None</p>
 <p><strong>Extensions:</strong></p>
 <p>3a. Exceptions
 thrown by POIFS will be passed on</p>
-</s2>
-    <s2 title="Use Case 5: Write workbook entry">
+</section>
+    <section title="Use Case 5: Write workbook entry">
 
 
 <p><strong>Primary Actor:</strong> HSSF</p>
@@ -175,8 +175,8 @@ thrown by POIFS will be passed on</p>
 	write new file to file system)</li>
 </ol>
 <p><strong>Extensions:</strong>None</p>
-</s2>
+</section>
 
-</s1>
+</section>
 </body>
 </document>

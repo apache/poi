@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "../dtd/document-v10.dtd"> 
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "../dtd/document-v11.dtd"> 
 <document>
   <header>
     <authors>
@@ -7,8 +7,8 @@
     </authors>
   </header>
   <body>
-    <s1 title="POIFS Use Cases">
-      <s2 title="Use Case 1: Read existing file system">
+    <section title="POIFS Use Cases">
+      <section title="Use Case 1: Read existing file system">
         <table>
 	  <tr>
 	    <td><B>Primary Actor:</B></td>
@@ -86,8 +86,8 @@
 	    </td>
 	  </tr>
 	</table>
-      </s2>
-      <s2 title="Use Case 2: Write file system">
+      </section>
+      <section title="Use Case 2: Write file system">
         <table>
 	  <tr>
 	    <td><B>Primary Actor:</B></td>
@@ -191,8 +191,8 @@
 	    </td>
 	  </tr>
 	</table>
-      </s2>
-      <s2 title="Use Case 3: Create new file system">
+      </section>
+      <section title="Use Case 3: Create new file system">
         <table>
 	  <tr>
 	    <td><B>Primary Actor:</B></td>
@@ -237,8 +237,8 @@
 	    <td>None</td>
 	  </tr>
 	</table>
-      </s2>
-      <s2 title="Use Case 4: Replace file in file system">
+      </section>
+      <section title="Use Case 4: Replace file in file system">
         <table>
 	  <tr>
 	    <td><B>Primary Actor:</B></td>
@@ -306,8 +306,8 @@
 	    </td>
 	  </tr>
 	</table>
-      </s2>
-      <s2 title="Use Case 5: Delete file from file system">
+      </section>
+      <section title="Use Case 5: Delete file from file system">
         <table>
 	  <tr>
 	    <td><B>Primary Actor:</B></td>
@@ -374,8 +374,8 @@
 	    </td>
 	  </tr>
 	</table>
-      </s2>
-      <s2 title="Use Case 6: Write new file to file system">
+      </section>
+      <section title="Use Case 6: Write new file to file system">
         <table>
 	  <tr>
 	    <td><B>Primary Actor:</B></td>
@@ -440,8 +440,8 @@
 	    </td>
 	  </tr>
 	</table>
-      </s2>
-      <s2 title="Use Case 7: Read existing file from file system">
+      </section>
+      <section title="Use Case 7: Read existing file from file system">
         <table>
 	  <tr>
 	    <td><B>Primary Actor:</B></td>
@@ -502,8 +502,8 @@
 	        specified name exists.</td>
 	  </tr>
 	</table>
-      </s2>
-      <s2 title="Use Case 8: Read file system directory">
+      </section>
+      <section title="Use Case 8: Read file system directory">
         <table>
 	  <tr>
 	    <td><B>Primary Actor:</B></td>
@@ -556,8 +556,8 @@
 	    <td>None</td>
 	  </tr>
 	</table>
-      </s2>
-      <s2 title="Use Case 9: Read file">
+      </section>
+      <section title="Use Case 9: Read file">
         <table>
 	  <tr>
 	    <td><B>Primary Actor:</B></td>
@@ -617,8 +617,8 @@
 	        extending past the known size of the file.</td>
 	  </tr>
 	</table>
-      </s2>
-      <s2 title="Use Case 10: Rename existing file in the file system">
+      </section>
+      <section title="Use Case 10: Rename existing file in the file system">
         <table>
 	  <tr>
 	    <td><B>Primary Actor:</B></td>
@@ -683,7 +683,7 @@
 	    </td>
 	  </tr>
 	</table>
-      </s2>
-    </s1>
+      </section>
+    </section>
   </body>
 </document>

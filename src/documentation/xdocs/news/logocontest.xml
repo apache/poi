@@ -10,33 +10,33 @@
   </header>
   
   <body>
-    <s1 title="POI logos">
+    <section title="POI logos">
         <p>
                 Here are the current logo submissions.  Thanks to the artists!
         </p>
-        <s2 title="Michael Mosmann">
+        <section title="Michael Mosmann">
                 <p>
                 <img src="images/logoMichaelMosmann.png"/>
                 </p>
-        </s2>
-        <s2 title="Loïc Lefèvre">
+        </section>
+        <section title="Loïc Lefèvre">
                 <p>
                 <img src="images/logoLoicLefevre.png"/>&nbsp;&nbsp;&nbsp;
                 <img src="images/logoLoicLefevre2.png"/>
                 </p>
-        </s2>
-        <s2 title="Glen Stampoultzis">
+        </section>
+        <section title="Glen Stampoultzis">
                 <p>
                 <img src="images/logoGlenStampoutlzis.png"/>
                 </p>
-        </s2>
-        <s2 title="Marcus Gustafsson">
+        </section>
+        <section title="Marcus Gustafsson">
                 <p>
                 <img src="images/logoGustafsson1.png"/>&nbsp;&nbsp;&nbsp;
                 <img src="images/logoGustafsson2.png"/>
                 </p>
-        </s2>        
-    </s1>    
+        </section>        
+    </section>    
   </body>
   <footer>
     <legal>

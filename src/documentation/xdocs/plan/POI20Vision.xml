@@ -14,7 +14,7 @@
 
  <body>
  
- <s1 title="Preface">
+ <section title="Preface">
         <p>
                 This is the POI 2.0 cycle vision document.  Although the vision
                 has not changed and this document is certainly not out of date and 
@@ -35,10 +35,10 @@
                 other groups), but they are no longer technically part of the
                 POI project itself.
         </p>
- </s1>
+ </section>
 
- <s1 title="1. Introduction">
-  <s2 title="1.1 Purpose of this document">
+ <section title="1. Introduction">
+  <section title="1.1 Purpose of this document">
 	<p>
                 The purpose of this document is to
                 collect, analyze and define high-level requirements, user needs, 
@@ -78,10 +78,10 @@
 	        Java.</li>
         </ul>
         
-  </s2>
+  </section>
   
 
-  <s2 title="1.2 Project Overview">
+  <section title="1.2 Project Overview">
         <p>
                 The first release of the POI project
                 was an astounding success. This release seeks to build on that
@@ -119,10 +119,10 @@
                         Providing the create excel charts. (write only)
                 </li>
         </ul>
-  </s2>
- </s1>
- <s1 title="2. User Description">
-   <s2 title="2.1 User/Market Demographics">
+  </section>
+ </section>
+ <section title="2. User Description">
+   <section title="2.1 User/Market Demographics">
 	<p>
                 There are a number of enthusiastic
                 users of XML, UNIX and Java technology. Furthermore, the Microsoft
@@ -163,15 +163,15 @@
                         creation to their projects.
                 </li>
         </ol>        
-   </s2>
-   <s2 title="2.2. User environment">
+   </section>
+   <section title="2.2. User environment">
         <p>
                 The users of this software shall be
                 developers in a Java environment on any operating system, or power
                 users who are capable of XML document generation/deployment.
         </p>
-   </s2>
-   <s2 title="2.3. Key User Needs">
+   </section>
+   <section title="2.3. Key User Needs">
 	<p>
                 The HSSF library currently requires a
                 full object representation to be created before reading values. This
@@ -213,16 +213,16 @@
                 the DOC file format using pure Java.
         </p>	
 
-   </s2>
-   <s2 title="2.4. Alternatives and Competition">        
+   </section>
+   <section title="2.4. Alternatives and Competition">        
 	        <p>
             Originally there weren't any decent <link href="../hssf/alternatives.html">alternatives</link> for reading or writing
             to Excel.  This has changed somewhat.
             </p>
-   </s2>
- </s1>
- <s1 title="3. Project Overview">
-   <s2 title="3.1. Project Perspective">
+   </section>
+ </section>
+ <section title="3. Project Overview">
+   <section title="3.1. Project Perspective">
 	<p>
                 The produced code shall be licensed by
                 the Apache License as used by the Cocoon 2 project (APL 1.1) and
@@ -232,8 +232,8 @@
                 projects (xml.apache.org and jakarta.apache.org), at which point we'd
                 turn the copyright over to them.
 	</p>
-   </s2>
-   <s2 title="3.2. Project Position Statement">
+   </section>
+   <section title="3.2. Project Position Statement">
 	<p>
                 For developers on a Java and/or XML
                 environment this project will provide all the tools necessary for
@@ -246,8 +246,8 @@
                 tools for later projects to convert other OLE 2 Compound Document
                 formats to pure Java APIs.
 	</p>
-   </s2>
-   <s2 title="3.3. Summary of Capabilities">
+   </section>
+   <section title="3.3. Summary of Capabilities">
 	<p>
 		HSSF Serializer for Apache Cocoon 2
 	</p>
@@ -315,8 +315,8 @@
 		</tr>
                 
 	</table>   
-   </s2>
-   <s2 title="3.4. Assumptions and Dependencies">
+   </section>
+   <section title="3.4. Assumptions and Dependencies">
 	<ul>
 		<li>
                         The HSSF Serializer and Generator
@@ -355,9 +355,9 @@
                 </li>
                 
 	</ul>	
-   </s2>
- </s1>
- <s1 title="4. Project Features">
+   </section>
+ </section>
+ <section title="4. Project Features">
 	<p> 
                 Enhancements to the POIFS API will
                 include:
@@ -434,14 +434,14 @@
                         format or enhancements to existing documentation.
                 </li>                
 	</ul>	
- </s1>		
- <s1 title="5. Other Product Requirements">
-   <s2 title="5.1. Applicable Standards">
+ </section>		
+ <section title="5. Other Product Requirements">
+   <section title="5.1. Applicable Standards">
 	<p>
 		All Java code will be 100% pure Java.
 	</p>
-   </s2>
-   <s2 title="5.2. System Requirements">
+   </section>
+   <section title="5.2. System Requirements">
 	<p>
 		The minimum system requirements for the POIFS API are:
 	</p>
@@ -480,15 +480,15 @@
 		<li>HSSF API</li>
 		<li>POI API</li>
 	</ul>	
-   </s2>
-   <s2 title="5.3. Performance Requirements">
+   </section>
+   <section title="5.3. Performance Requirements">
 	<p>
 		All components must perform well enough
 		to be practical for use in a webserver environment (especially
 		the "killer trio": Cocoon2/Tomcat/Apache combo)
 	</p>
-   </s2>
-   <s2 title="5.4. Environmental Requirements">
+   </section>
+   <section title="5.4. Environmental Requirements">
 	<p>
 		The software will run primarily in
 		developer environments. We should make some allowances for
@@ -500,25 +500,25 @@
 		concepts introduced for writing spreadsheets and to POI filesystems
 		will be brand new to Java and many Java developers.
 	</p>
-   </s2>
- </s1>
- <s1 title="6. Documentation Requirements">
-   <s2 title="6.1 POI Filesystem">
+   </section>
+ </section>
+ <section title="6. Documentation Requirements">
+   <section title="6.1 POI Filesystem">
 	<p>
 		The filesystem as read and written by
 		POI shall be fully documented and explained so that the average Java
 		developer can understand it.
 	</p>
-   </s2>
-   <s2 title="6.2. POI API">
+   </section>
+   <section title="6.2. POI API">
 	<p>
 		The POI API will be fully documented
 		through Javadoc. A walkthrough of using the high level POI API shall
 		be provided. No documentation outside of the Javadoc shall be
 		provided for the low-level POI APIs.	
 	</p>
-   </s2>
-   <s2 title="6.3. HSSF File Format">
+   </section>
+   <section title="6.3. HSSF File Format">
 	<p>
 		The HSSF File Format as implemented by
 		the HSSF API will be fully documented. No documentation will be
@@ -528,55 +528,55 @@
                 collaborating with the fine folks at OpenOffice.org on
                 *free* documentation of the format.
 	</p>
-   </s2>
-   <s2 title="6.4. HSSF API">
+   </section>
+   <section title="6.4. HSSF API">
 	<p>
 		The HSSF API will be documented by
 		javadoc. A walkthrough of using the high level HSSF API shall be
 		provided. No documentation outside of the Javadoc shall be provided
 		for the low level HSSF APIs.	
 	</p>
-   </s2>
-   <s2 title="6.5 HDF API">
+   </section>
+   <section title="6.5 HDF API">
 	<p>
                 The HDF API will be documented by
                 javadoc. A walkthrough of using the high level HDF API shall be
                 provided. No documentation outside of the Javadoc shall be provided
                 for the low level HDF APIs.        
 	</p>
-   </s2>   
-   <s2 title="6.6 HSSF Serializer">
+   </section>   
+   <section title="6.6 HSSF Serializer">
 	<p>
 		The HSSF Serializer will be documented
 		by javadoc. 	
 	</p>
-   </s2>
-   <s2 title="6.7 HSSF Generator">
+   </section>
+   <section title="6.7 HSSF Generator">
 	<p>
 		The HSSF Generator will be documented
 		by javadoc. 	
 	</p>
-   </s2>      
-   <s2 title="6.8 HSSF Serializer Tag language">
+   </section>      
+   <section title="6.8 HSSF Serializer Tag language">
 	<p>
 		The XML tag language along with
 		function and usage shall be fully documented. Examples will be
 		provided as well.
 	</p>
-   </s2>
- </s1>
- <s1 title="7. Terminology">
-   <s2 title="7.1 Filesystem">
+   </section>
+ </section>
+ <section title="7. Terminology">
+   <section title="7.1 Filesystem">
 	<p>
 		filesystem shall refer only to the POI formatted archive.
 	</p>
-   </s2>
-   <s2 title="7.2 File">
+   </section>
+   <section title="7.2 File">
 	<p>
 		file shall refer to the embedded data stream within a 
 		POI filesystem. This will be the actual embedded document. 
 	</p>
-   </s2>
- </s1>
+   </section>
+ </section>
 </body>
 </document>
