@@ -55,6 +55,7 @@
 
 package org.apache.poi.hdf.extractor;
 
+
 import org.apache.poi.hdf.extractor.util.*;
 import org.apache.poi.hdf.extractor.data.*;
 import java.util.*;
@@ -63,13 +64,19 @@ import javax.swing.*;
 //import javax.swing.text.StyleContext;
 import java.awt.*;
 
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.poifs.filesystem.POIFSDocument;
+import org.apache.poi.poifs.filesystem.Entry;
+
+import org.apache.poi.util.LittleEndian;
+
 /**
  * Comment me
  *
  * @author Ryan Ackley 
  */
 
-public class WordDocument extends NewOleFile
+public class WordDocument
 {
   byte[] _header;
 
@@ -91,8 +98,8 @@ public class WordDocument extends NewOleFile
   StringBuffer _bodyBuffer = new StringBuffer();
   StringBuffer _cellBuffer;
 
-  Vector _cells;
-  Vector _table;
+  ArrayList _cells;
+  ArrayList _table;
 
   byte[] _plcfHdd;
   int _fcMin;
@@ -100,6 +107,9 @@ public class WordDocument extends NewOleFile
   int _ccpFtn;
 
 
+  private InputStream istream;
+  private POIFSFileSystem filesystem;
+  
   private static int HEADER_EVEN_INDEX = 0;
   private static int HEADER_ODD_INDEX = 1;
   private static int FOOTER_EVEN_INDEX = 2;
@@ -137,7 +147,7 @@ public class WordDocument extends NewOleFile
   {
     int textStart = Utils.convertBytesToInt(_header, 0x18);
     int textEnd = Utils.convertBytesToInt(_header, 0x1c);
-    Vector textPieces = findProperties(textStart, textEnd, _text.root);
+    ArrayList textPieces = findProperties(textStart, textEnd, _text.root);
     int size = textPieces.size();
 
     for(int x = 0; x < size; x++)
@@ -169,11 +179,15 @@ public class WordDocument extends NewOleFile
   }
   public WordDocument(String fileName, String mode) throws IOException
   {
-        super(fileName, mode);
-
+//        super(fileName, mode);
+      
+      
+        istream = new FileInputStream(fileName);
+        filesystem = new POIFSFileSystem(istream);
+      
         readFIB();
 
-        Vector sections = findProperties(_fcMin, _fcMin + _ccpText, _sectionTable.root);
+        ArrayList sections = findProperties(_fcMin, _fcMin + _ccpText, _sectionTable.root);
 
         int size = sections.size();
         for(int x = 0; x < size; x++)
@@ -184,17 +198,22 @@ public class WordDocument extends NewOleFile
           SEP sep = (SEP)StyleSheet.uncompressProperty(node.getSepx(), new SEP(), _styleSheet);
           writeSection(Math.max(_fcMin, start), Math.min(_fcMin + _ccpText, end), sep, _text, _paragraphTable, _characterTable, _styleSheet);
         }
+        
+        istream.close();
 
   }
   private void readFIB() throws IOException
   {
-      PropertySet headerProps = (PropertySet)_propertySetsHT.get("WordDocument");
-
-      if(headerProps.getSize() >= 4096)
-      {
-          _header = createBufferFromBBD(headerProps.getStartBlock());
-      }
-      int info = Utils.convertBytesToShort(_header, 0xa);
+      //PropertySet headerProps = (PropertySet)_propertySetsHT.get("WordDocument");
+      Entry headerProps = filesystem.getRoot().getEntry("WordDocument");
+      
+ //     if(headerProps.getSize() >= 4096)
+   //   {
+          //_header = createBufferFromBBD(headerProps.getStartBlock());      
+          _header = new byte[4096];
+          filesystem.createDocumentInputStream("WordDocument").read(_header);
+     // }
+      int info = LittleEndian.getShort(_header, 0xa);
 
       _fcMin = Utils.convertBytesToInt(_header, 0x18);
       _ccpText = Utils.convertBytesToInt(_header, 0x4c);
@@ -220,24 +239,28 @@ public class WordDocument extends NewOleFile
       //    return false;
       //}
 
-      PropertySet tableProps = null;
+      String tablename=null;
+      Entry tableProps = null;
       if(useTable1)
       {
-          tableProps = (PropertySet)_propertySetsHT.get("1Table");
+          tableProps = filesystem.getRoot().getEntry("1Table");
+          tablename="1Table";
       }
       else
       {
-          tableProps = (PropertySet)_propertySetsHT.get("0Table");
+          tableProps = filesystem.getRoot().getEntry("0Table");
+          tablename="0Table";
       }
       //get table properties
-      int size = tableProps.getSize();
-      int startBlock = tableProps.getStartBlock();
+      //int size = tableProps.getSize();
+      int size = 4096; //hardcoded -- need to learn more about new POIFS api..??
+      //int startBlock = tableProps.getStartBlock();
 
-      byte[] tableStream = null;
+      byte[] tableStream = new byte[size];
       //big enough to use BBD?
       if(size >= 4096)
       {
-          tableStream = createBufferFromBBD(startBlock);
+          filesystem.createDocumentInputStream(tablename).read(tableStream); //createBufferFromBBD(startBlock);
       }
       initDocProperties(tableStream);
       initPclfHdd(tableStream);
@@ -618,9 +641,9 @@ public class WordDocument extends NewOleFile
 
   private int calculateHeaderHeight(int start, int end, int pageWidth)
   {
-    Vector paragraphs = findProperties(start, end, _paragraphTable.root);
+    ArrayList paragraphs = findProperties(start, end, _paragraphTable.root);
     int size = paragraphs.size();
-    Vector lineHeights = new Vector();
+    ArrayList lineHeights = new ArrayList();
     //StyleContext context = StyleContext.getDefaultStyleContext();
 
     for(int x = 0; x < size; x++)
@@ -632,7 +655,7 @@ public class WordDocument extends NewOleFile
       int lineWidth = 0;
       int maxHeight = 0;
 
-      Vector textRuns = findProperties(parStart, parEnd, _characterTable.root);
+      ArrayList textRuns = findProperties(parStart, parEnd, _characterTable.root);
       int charSize = textRuns.size();
 
       //StringBuffer lineBuffer = new StringBuffer();
@@ -652,7 +675,7 @@ public class WordDocument extends NewOleFile
         int charStart = Math.max(parStart, charNode.getStart());
         int charEnd = Math.min(parEnd, charNode.getEnd());
 
-        Vector text = findProperties(charStart, charEnd, _text.root);
+        ArrayList text = findProperties(charStart, charEnd, _text.root);
 
         int textSize = text.size();
         StringBuffer buf = new StringBuffer();
@@ -797,7 +820,7 @@ public class WordDocument extends NewOleFile
   {
 
     BTreeSet.BTreeNode root = paragraphTable.root;
-    Vector pars = findProperties(start, end, root);
+    ArrayList pars = findProperties(start, end, root);
     //root = characterTable.root;
     int size = pars.size();
 
@@ -848,7 +871,7 @@ public class WordDocument extends NewOleFile
       {
         if(_table == null)
         {
-          _table = new Vector();
+          _table = new ArrayList();
         }
         TAP tap = (TAP)StyleSheet.uncompressProperty(papx, new TAP(), _styleSheet);
         TableRow nextRow = new TableRow(_cells, tap);
@@ -883,7 +906,7 @@ public class WordDocument extends NewOleFile
 
     addParagraphProperties(pap, blockBuffer);
 
-    Vector charRuns = findProperties(Math.max(currentNode.getStart(), start),
+    ArrayList charRuns = findProperties(Math.max(currentNode.getStart(), start),
                                      Math.min(currentNode.getEnd(), end),
                                      _characterTable.root);
     int len = charRuns.size();
@@ -941,7 +964,7 @@ public class WordDocument extends NewOleFile
 
       int charStart = Math.max(charNode.getStart(), currentNode.getStart());
       int charEnd = Math.min(charNode.getEnd(), currentNode.getEnd());
-      Vector textRuns = findProperties(charStart, charEnd, _text.root);
+      ArrayList textRuns = findProperties(charStart, charEnd, _text.root);
       int textRunLen = textRuns.size();
       for(int y = 0; y < textRunLen; y++)
       {
@@ -969,7 +992,7 @@ public class WordDocument extends NewOleFile
   {
     addParagraphProperties(pap, blockBuffer);
 
-    Vector charRuns = findProperties(Math.max(currentNode.getStart(), start),
+    ArrayList charRuns = findProperties(Math.max(currentNode.getStart(), start),
                                      Math.min(currentNode.getEnd(), end),
                                      _characterTable.root);
     int len = charRuns.size();
@@ -984,7 +1007,7 @@ public class WordDocument extends NewOleFile
 
       int charStart = Math.max(charNode.getStart(), currentNode.getStart());
       int charEnd = Math.min(charNode.getEnd(), currentNode.getEnd());
-      Vector textRuns = findProperties(charStart, charEnd, _text.root);
+      ArrayList textRuns = findProperties(charStart, charEnd, _text.root);
       int textRunLen = textRuns.size();
       for(int y = 0; y < textRunLen; y++)
       {
@@ -1030,7 +1053,7 @@ public class WordDocument extends NewOleFile
 
       if(_cells == null)
       {
-        _cells = new Vector();
+        _cells = new ArrayList();
       }
       closeLine(_cellBuffer);
       closeBlock(_cellBuffer);
@@ -1217,9 +1240,9 @@ public class WordDocument extends NewOleFile
   /**
    * finds all chpx's that are between start and end
    */
-  private Vector findProperties(int start, int end, BTreeSet.BTreeNode root)
+  private ArrayList findProperties(int start, int end, BTreeSet.BTreeNode root)
   {
-    Vector results = new Vector();
+    ArrayList results = new ArrayList();
     BTreeSet.Entry[] entries = root.entries;
 
     for(int x = 0; x < entries.length; x++)
@@ -1238,7 +1261,7 @@ public class WordDocument extends NewOleFile
             {
               if(child != null)
               {
-                Vector beforeItems = findProperties(start, end, child);
+                ArrayList beforeItems = findProperties(start, end, child);
                 results.addAll(beforeItems);
               }
               results.add(xNode);
@@ -1253,7 +1276,7 @@ public class WordDocument extends NewOleFile
           {
             if(child != null)
             {
-              Vector beforeItems = findProperties(start, end, child);
+              ArrayList beforeItems = findProperties(start, end, child);
               results.addAll(beforeItems);
             }
             break;
@@ -1261,7 +1284,7 @@ public class WordDocument extends NewOleFile
         }
         else if(child != null)
         {
-          Vector afterItems = findProperties(start, end, child);
+          ArrayList afterItems = findProperties(start, end, child);
           results.addAll(afterItems);
         }
       }
@@ -1296,9 +1319,9 @@ public class WordDocument extends NewOleFile
   {
     buf.append("</fo:block>\r\n");
   }
-  private Vector findPAPProperties(int start, int end, BTreeSet.BTreeNode root)
+  private ArrayList findPAPProperties(int start, int end, BTreeSet.BTreeNode root)
   {
-    Vector results = new Vector();
+    ArrayList results = new ArrayList();
     BTreeSet.Entry[] entries = root.entries;
 
     for(int x = 0; x < entries.length; x++)
@@ -1316,7 +1339,7 @@ public class WordDocument extends NewOleFile
             {
               if(child != null)
               {
-                Vector beforeItems = findPAPProperties(start, end, child);
+                ArrayList beforeItems = findPAPProperties(start, end, child);
                 results.addAll(beforeItems);
               }
               results.add(papxNode);
@@ -1326,7 +1349,7 @@ public class WordDocument extends NewOleFile
           {
             if(child != null)
             {
-              Vector beforeItems = findPAPProperties(start, end, child);
+              ArrayList beforeItems = findPAPProperties(start, end, child);
               results.addAll(beforeItems);
             }
             break;
@@ -1334,7 +1357,7 @@ public class WordDocument extends NewOleFile
         }
         else if(child != null)
         {
-          Vector afterItems = findPAPProperties(start, end, child);
+          ArrayList afterItems = findPAPProperties(start, end, child);
           results.addAll(afterItems);
         }
       }
@@ -1585,23 +1608,23 @@ public class WordDocument extends NewOleFile
     _fonts = new FontTable(fontTable);
   }
 
-  private byte[] createBufferFromBBD(int startBlock) throws IOException
-  {
-
-      int[] blockChain = readChain(_big_block_depot, startBlock);
-      byte[] streamBuffer = new byte[512 * blockChain.length];
-
-
-      for(int x = 0; x < blockChain.length; x++)
-      {
-          byte[] bigBlock = new byte[512];
-          seek((blockChain[x] + 1) * 512);
-          read(bigBlock);
-          System.arraycopy(bigBlock, 0, streamBuffer, x * 512, 512);
-      }
-      return streamBuffer;
-
-  }
+//  private byte[] createBufferFromBBD(int startBlock) throws IOException
+//  {
+//
+//      int[] blockChain = readChain(_big_block_depot, startBlock);
+//      byte[] streamBuffer = new byte[512 * blockChain.length];
+//
+//
+//      for(int x = 0; x < blockChain.length; x++)
+//      {
+//          byte[] bigBlock = new byte[512];
+//          seek((blockChain[x] + 1) * 512);
+//          read(bigBlock);
+//          System.arraycopy(bigBlock, 0, streamBuffer, x * 512, 512);
+//      }
+//      return streamBuffer;
+//
+//  }
   private void overrideCellBorder(int row, int col, int height,
                                   int width, TC tc, TAP tap)
   {
@@ -1688,7 +1711,7 @@ public class WordDocument extends NewOleFile
         StringBuffer rowBuffer = tableBodyBuffer;
         TableRow row = (TableRow)_table.get(x);
         TAP tap = row.getTAP();
-        Vector cells = row.getCells();
+        ArrayList cells = row.getCells();
 
         if(tap._fTableHeader)
         {
