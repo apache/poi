@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Copyright 2002-2004   Apache Software Foundation
 
@@ -20,9 +19,12 @@ package org.apache.poi.hpsf;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 
 import org.apache.poi.hpsf.wellknown.PropertyIDMap;
@@ -370,9 +372,25 @@ public class MutableSection extends Section
                     ("The codepage property (ID = 1) must be set.");
         }
 
+        /* Sort the property list by their property IDs: */
+        Collections.sort(preprops, new Comparator()
+            {
+                public int compare(final Object o1, final Object o2)
+                {
+                    final Property p1 = (Property) o1;
+                    final Property p2 = (Property) o2;
+                    if (p1.getID() < p2.getID())
+                        return -1;
+                    else if (p1.getID() == p2.getID())
+                        return 0;
+                    else
+                        return 1;
+                }
+            });
+
         /* Write the properties and the property list into their respective
          * streams: */
-        for (final Iterator i = preprops.iterator(); i.hasNext();)
+        for (final ListIterator i = preprops.listIterator(); i.hasNext();)
         {
             final MutableProperty p = (MutableProperty) i.next();
             final long id = p.getID();
