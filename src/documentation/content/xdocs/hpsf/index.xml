@@ -4,7 +4,8 @@
 
 <document>
  <header>
-  <title>Jakarta POI - HPSF - Java API to Handle Microsoft Format Document Properties</title>
+  <title>Jakarta POI - HPSF - Java API to Handle Microsoft Format Document
+   Properties</title>
   <subtitle>Overview</subtitle>
   <authors>     
    <person name="Rainer Klute" email="klute@apache.org"/>
@@ -20,11 +21,12 @@
      streams</strong>. A property set stream is a separate document within a
     <link href="../poifs/index.html">POI filesystem</link>. We'll call property
     set streams mostly just "property sets". HPSF is POI's pure-Java
-    implementation to read and property sets.</p>
+    implementation to read and write property sets.</p>
 
    <p>The <link href="how-to.html">HPSF HOWTO</link> describes what a Java
-    application should do to read a property set using HPSF and to retrieve the
-    information it needs.</p>
+    application should do to read a property set using HPSF, how to retrieve
+    the information it needs, and how to write properties into the
+    document.</p>
 
    <p>HPSF supports OLE2 property set streams in general, and is not limited to
     the special case of document properties in the Microsoft Office files
