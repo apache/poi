@@ -67,7 +67,6 @@ package org.apache.poi.hpsf;
  *  <strong>[S]</strong> - may appear in a Safe Array.</p>
  *
  *@author     Rainer Klute (klute@rainer-klute.de)
- *@created    May 10, 2002
  *@version    $Id$
  *@since      2002-02-09
  */

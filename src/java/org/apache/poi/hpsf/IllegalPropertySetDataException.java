@@ -65,7 +65,6 @@ package org.apache.poi.hpsf;
  *  </p>
  *
  *@author     Drew Varner(Drew.Varner atDomain sc.edu)
- *@created    May 26, 2002
  *@version    $Id$
  *@since      2002-05-26
  */

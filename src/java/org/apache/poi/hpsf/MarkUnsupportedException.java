@@ -61,9 +61,7 @@ package org.apache.poi.hpsf;
  *  the {@link java.io.InputStream#mark} operation.</p>
  *
  *@author     Rainer Klute (klute@rainer-klute.de)
- *@created    May 10, 2002
- *@version    $Id: MarkUnsupportedException.java,v 1.3 2002/05/01 09:31:52 klute
- *      Exp $
+ *@version    $Id$
  *@since      2002-02-09
  */
 public class MarkUnsupportedException extends HPSFException {

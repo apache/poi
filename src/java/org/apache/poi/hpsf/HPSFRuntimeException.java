@@ -62,7 +62,6 @@ package org.apache.poi.hpsf;
  *  that caused this one to be thrown.</p>
  *
  *@author     Rainer Klute (klute@rainer-klute.de)
- *@created    May 10, 2002
  *@version    $Id: HPSFRuntimeException.java,v 1.3 2002/05/01 09:31:52 klute Exp
  *      $
  *@since      2002-02-09

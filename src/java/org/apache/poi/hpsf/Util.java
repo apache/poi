@@ -62,7 +62,6 @@ import java.util.*;
  *  Provides various static utility methods.</p>
  *
  *@author     Rainer Klute (klute@rainer-klute.de)
- *@created    May 10, 2002
  *@version    $Id$
  *@since      2002-02-09
  */

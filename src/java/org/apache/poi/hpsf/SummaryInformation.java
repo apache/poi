@@ -73,7 +73,6 @@ import org.apache.poi.hpsf.wellknown.*;
  *  </a> for documentation from That Redmond Company.
  *
  *@author     Rainer Klute (klute@rainer-klute.de)
- *@created    May 10, 2002
  *@see        DocumentSummaryInformation
  *@version    $Id$
  *@since      2002-02-09
