@@ -153,7 +153,7 @@ public class HSSFCell
     private String                   stringValue;
     private boolean                  booleanValue;
     private byte                     errorValue;
-    private short                    encoding = ENCODING_UTF_16;
+    private short                    encoding = ENCODING_COMPRESSED_UNICODE;
     private Workbook                 book;
     private Sheet                    sheet;
     //private short                    row;
@@ -655,7 +655,8 @@ public class HSSFCell
     }
 
     /**
-     * set a string value for the cell.
+     * set a string value for the cell. Please note that if you are using
+     * full 16 bit unicode you should call <code>setEncoding()</code> first.
      *
      * @param value  value to set the cell to.  For formulas we'll set the formula
      * string, for String cells we'll set its value.  For other types we will
