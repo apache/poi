@@ -96,6 +96,8 @@ public class HWPFDocument
   /** Contains text of the document wrapped in a obfuscated Wod data structure*/
   private ComplexFileTable _cft;
 
+  private TextPieceTable _tpt;
+
   /** Contains formatting properties for text*/
   private CHPBinTable _cbt;
 
@@ -151,8 +153,19 @@ public class HWPFDocument
     // load up our standard structures.
     _dop = new DocumentProperties(_tableStream, _fib.getFcDop());
     _cft = new ComplexFileTable(_mainStream, _tableStream, _fib.getFcClx(), fcMin);
+    _tpt = _cft.getTextPieceTable();
     _cbt = new CHPBinTable(_mainStream, _tableStream, _fib.getFcPlcfbteChpx(), _fib.getLcbPlcfbteChpx(), fcMin);
     _pbt = new PAPBinTable(_mainStream, _tableStream, _fib.getFcPlcfbtePapx(), _fib.getLcbPlcfbtePapx(), fcMin);
+
+    // Word XP puts in a zero filled buffer in front of the text and it screws
+    // up my system for offsets. This is an adjustment.
+    int cpMin = _tpt.getCpMin();
+    if (cpMin > 0)
+    {
+      _cbt.adjustForDelete(0, 0, cpMin);
+      _pbt.adjustForDelete(0, 0, cpMin);
+    }
+
     _st = new SectionTable(_mainStream, _tableStream, _fib.getFcPlcfsed(), _fib.getLcbPlcfsed(), fcMin);
     _ss = new StyleSheet(_tableStream, _fib.getFcStshf());
     _ft = new FontTable(_tableStream, _fib.getFcSttbfffn(), _fib.getLcbSttbfffn());
@@ -166,6 +179,10 @@ public class HWPFDocument
     return _ss;
   }
 
+  public Range getRange()
+  {
+    return new Range(0, _fib.getFcMac() - _fib.getFcMin(), this);
+  }
 
   /**
    * Writes out the word file that is represented by an instance of this class.
@@ -310,6 +327,8 @@ public class HWPFDocument
     try
     {
       HWPFDocument doc = new HWPFDocument(new FileInputStream(args[0]));
+      Range range = doc.getRange();
+      range.insertBefore("Hello World!!! HAHAHAHAHA I DID IT!!!");
 
       OutputStream out = new FileOutputStream(args[1]);
       doc.write(out);
