@@ -903,12 +903,16 @@ No property set stream: "/1Table"</source>
       will hold the document's title only. This is artificial in that it does
       not contain any Word, Excel or other kind of useful application document
       data. A document containing just a property set is without any practical
-      use. However, is makes the example very simple, and you will get quickly
-      used to writing properties.</p>
+      use. However, it is perfectly fine for an example because it make it very
+      simple and easy to understand, and you will get used to writing
+      properties in real applications quickly.</p>
 
-     <p>Here's the source code of the sample application. You can also find it
-      in the "examples" section of the POI source code
-      distribution. Explanations are following below.</p>
+     <p>The application expects the name of the POI file system to be written
+      on the command line. The title property it writes is "Sample title".</p>
+
+     <p>Here's the application's source code. You can also find it in the
+      "examples" section of the POI source code distribution. Explanations are
+      following below.</p>
 
      <source>package org.apache.poi.hpsf.examples;
 
@@ -972,9 +976,10 @@ public class WriteTitle
 
 }</source>
 
-     <p>The application expects the name of the POI file system to be created
-      on the command line. It checks that there is exactly a single argument
-      and stores it in the <code>fileName</code> variable:</p>
+     <p>The applications first checks that there is exactly a single argument
+      on the command line. If this is true, the application stores it in the
+      <code>fileName</code> variable. It will be used in the end when the POI
+      file system is written to a disk file.</p>
 
      <source>if (args.length != 1)
 {
@@ -985,53 +990,67 @@ public class WriteTitle
 final String fileName = args[0];</source>
 
      <p>Let's create a property set now. We cannot use the
-      <code>PropertySet</code> class, because it is read-only: It does not have
+      <code>PropertySet</code> class, because it is read-only. It does not have
       a constructor creating an empty property set, and it does not have any
-      methods to modify its contents. Instead use the class
-      <code>MutablePropertySet</code>. It is a subclass of
-      <code>PropertySet</code>, and its no-args constructor established an
-      empty property set which we will fill later.</p>
+      methods to modify its contents, i.e. to write sections containing
+      properties into it.</p>
+
+     <p>The class to use is <code>MutablePropertySet</code>. It is a subclass
+      of <code>PropertySet</code>. The sample application calls its no-args
+      constructor in order to establish an empty property set:</p>
 
      <source>final MutablePropertySet mps = new MutablePropertySet();</source>
 
+     <p>As said, we have an empty property set now. Later we will put some
+      contents into it.</p>
+
      <p>By the way, the <code>MutablePropertySet</code> class has another
       constructor taking a <code>PropertySet</code> as parameter. It creates a
-      mutable copy of its parameter.</p>
+      mutable deep copy of the property set given to it.</p>
 
      <p>The <code>MutablePropertySet</code> created by the no-args constructor
-      is not really empty: It contains a single section without any
-      properties. We can either retrieve that section and fill it with
-      properties, or we can replace it by another section. Of course we can
-      also add further sections to the property set. The sample application
-      decides to retrieve the section being already there:</p>
+      is not really empty: It contains a single section without properties. We
+      can either retrieve that section and fill it with properties or we can
+      replace it by another section. We can also add further sections to the
+      property set. The sample application decides to retrieve the section
+      being already there:</p>
 
      <source>final MutableSection ms = (MutableSection) mps.getSections().get(0);</source>
 
      <p>The <code>getSections()</code> method returns the property set's
       sections as a list, i.e. an instance of
       <code>java.util.List</code>. Calling <code>get(0)</code> returns the
-      list's first (or zeroth if you prefer) element. It is a
-      <code>MutableSection</code>: a subclass of <code>Section</code> you can
-      modify.</p>
+      list's first (or zeroth, if you prefer) element. The <code>Section</code>
+      returned is a <code>MutableSection</code>: a subclass of
+      <code>Section</code> you can modify.</p>
 
-     <p>Presently the <code>MutableSection</code> is still empty: It contains
-      no properties and does not have a format ID. As you have read in <link
-       href="#sec3">above</link> the format ID of the first section in a
-      property set determines the property set's type. If our property set
-      should become a summary information property set we have to set the
-      format ID of its first (and only) section to
-      <code>F29F85E0-4FF9-1068-AB-91-08-00-2B-27-B3-D9</code>. However, you
-      won't have to remember that ID if you want to write your own
-      summary information property sets: HPSF has it defined as the well-known
-      constant <code>Section.getFormatID()</code>. The sample application
-      writes it to the section with the <code>setFormatID(byte[])</code>
-      method.</p>
+     <p>The alternative to retrieving the <code>MutableSection</code> being
+      already there would have been to create an new
+      <code>MutableSection</code> like this:</p>
+
+     <source>MutableSection s = new MutableSection();</source>
+
+     <p>There is also a constructor which takes a <code>Section</code> as
+      parameter and creates a mutable deep copy of it.</p>
+
+     <p>The <code>MutableSection</code> the sample application retrieved from
+      the <code>MutablePropertySet</code> is still empty. It contains no
+      properties and does not have a format ID. As you have read <link
+       href="#sec3"> above the format ID of the first section in a property set
+       determines the property set's type. Since our property set should become
+       a SummaryInformation property set we have to set the format ID of its
+       first (and only) section to
+       <code>F29F85E0-4FF9-1068-AB-91-08-00-2B-27-B3-D9</code>. However, you
+       won't have to remember that ID: HPSF has it defined as the well-known
+       constant <code>SectionIDMap.SUMMARY_INFORMATION_ID</code>. The sample
+       application writes it to the section using the
+       <code>setFormatID(byte[])</code> method:</p>
 
      <source>ms.setFormatID(SectionIDMap.SUMMARY_INFORMATION_ID);</source>
 
      <p>Now it is time to create a property. As you might expect there is a
       subclass of <code>Property</code> called
-      <code>MutableProperty</code>.</p>
+      <code>MutableProperty</code> with a no-args constructor:</p>
 
      <source>final MutableProperty p = new MutableProperty();</source>
 
@@ -1043,35 +1062,40 @@ final String fileName = args[0];</source>
 p.setType(Variant.VT_LPWSTR);
 p.setValue("Sample title");</source>
 
-     <p>Now the sample property set is complete: We have a
+     <p>The <code>MutableProperty</code> class has a constructor which you can
+      use to pass in all three attributes in a single call. See the Javadoc API
+      documentation for details!</p>
+
+     <p>The sample property set is complete now. We have a
       <code>MutablePropertySet</code> containing a  <code>MutableSection</code>
       containing a <code>MutableProperty</code>. Of course we could have added
-      more sections and properties but we wanted to keep things simple.</p>
+      more sections to the property set and more properties to the sections but
+      we wanted to keep things simple.</p>
 
      <p>The property set has to be written to a POI file system. The following
       statement creates it.</p>
 
      <source>final POIFSFileSystem poiFs = new POIFSFileSystem();</source>
 
-     <p>In order to write the property set to a POI file system it must be
-      converted into a sequence of bytes. The <code>MutablePropertySet</code>
-      class has a method <code>toInputStream()</code>. This method returns an
-      <code>InputStream</code> containing the bytes making out the property set
-      stream.</p>
+     <p>Writing the property set includes the step of converting it into a
+      sequence of bytes. The <code>MutablePropertySet</code> class has the
+      method <code>toInputStream()</code> for this purpose. It returns the
+      bytes making out the property set stream as an
+      <code>InputStream</code>:</p>
 
      <source>final InputStream is = mps.toInputStream();</source>
 
-     <p>If you'd read from this input stream you'd receive all these
-      bytes. However, it is very likely that you never do that. Instead you'll
-      pass the input stream to the <code>createDocument()</code> method of a
-      <code>POIFSFileSystem</code> instance, like the one we created a few
-      lines ago. Besides an <code>InputStream</code> the
-      <code>createDocument()</code> method takes another parameter: the name of
-      the document to be created. For a summary information property set stream
-      the default name is available as
-      <code>SummaryInformation.DEFAULT_STREAM_NAME</code>:</p>
+     <p>If you'd read from this input stream you'd receive all the property
+      set's bytes. However, it is very likely that you'll never do
+      that. Instead you'll pass the input stream to the
+      <code>POIFSFileSystem.createDocument()</code> method, like this:</p>
 
      <source>poiFs.createDocument(is, SummaryInformation.DEFAULT_STREAM_NAME);</source>
+
+     <p>Besides the <code>InputStream</code> <code>createDocument()</code>
+      takes a second parameter: the name of the document to be created. For a
+      SummaryInformation property set stream the default name is available as
+      the constant <code>SummaryInformation.DEFAULT_STREAM_NAME</code>.</p>
 
      <p>The last step is to write the POI file system to a disk file:</p>
 
