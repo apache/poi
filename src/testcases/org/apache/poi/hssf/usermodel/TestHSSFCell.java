@@ -63,6 +63,7 @@ import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.BOFRecord;
 import org.apache.poi.hssf.record.EOFRecord;
 import org.apache.poi.hssf.util.CellReference;
+import org.apache.poi.hssf.util.HSSFColor;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -225,6 +226,61 @@ extends TestCase {
             3, s.getActiveCellRow());
     }
 
+    /**
+     * test that Cell Styles being applied to formulas remain intact
+     */
+    public void testFormulaStyle()
+            throws java.io.IOException {
+        String readFilename = System.getProperty("HSSF.testdata.path");
+
+            File file = File.createTempFile("testBoolErr",".xls");
+            FileOutputStream out    = new FileOutputStream(file);
+            HSSFWorkbook     wb     = new HSSFWorkbook();
+            HSSFSheet        s      = wb.createSheet("Sheet1");
+            HSSFRow          r      = null;
+            HSSFCell         c      = null;
+            HSSFCellStyle cs = wb.createCellStyle();
+            HSSFFont f = wb.createFont();
+            f.setFontHeightInPoints((short) 20);
+            f.setColor((short) HSSFColor.RED.index);
+            f.setBoldweight(f.BOLDWEIGHT_BOLD);
+            f.setFontName("Arial Unicode MS");
+            cs.setFillBackgroundColor((short)3);
+            cs.setFont(f);
+            cs.setBorderTop((short)1);
+            cs.setBorderRight((short)1);
+            cs.setBorderLeft((short)1);
+            cs.setBorderBottom((short)1);
+            
+            r = s.createRow((short)0);
+            c=r.createCell((short)0);
+            c.setCellStyle(cs);
+            c.setCellFormula("2*3");
+            
+            wb.write(out);
+            out.close();
+
+            assertTrue("file exists",file.exists());
+
+            FileInputStream in = new FileInputStream(file);
+            wb = new HSSFWorkbook(in);
+            s = wb.getSheetAt(0);
+            r = s.getRow(0);
+            c = r.getCell((short)0);
+            
+            assertTrue("Formula Cell at 0,0", (c.getCellType()==c.CELL_TYPE_FORMULA));
+            cs = c.getCellStyle();
+            
+            assertNotNull("Formula Cell Style", cs);
+            assertTrue("Font Index Matches", (cs.getFontIndex() == f.getIndex()));
+            assertTrue("Top Border", (cs.getBorderTop() == (short)1));
+            assertTrue("Left Border", (cs.getBorderLeft() == (short)1));
+            assertTrue("Right Border", (cs.getBorderRight() == (short)1));
+            assertTrue("Bottom Border", (cs.getBorderBottom() == (short)1));
+            
+            in.close();
+    }    
+    
     public static void main(String [] args) {
         System.out
         .println("Testing org.apache.poi.hssf.usermodel.TestHSSFCell");
