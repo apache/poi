@@ -61,6 +61,9 @@
 package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.BitField;
+
+import org.apache.poi.hssf.util.ReferenceUtil;
 
 /**
  * Specifies a rectangular area of cells 
@@ -76,11 +79,25 @@ public class AreaPtg
     private short             field_2_last_row;
     private short             field_3_first_column;
     private short             field_4_last_column;
+    
+    private BitField         rowRelative = new BitField(0x8000);
+    private BitField         colRelative = new BitField(0x4000);
+    private BitField         column      = new BitField(0x3FFF);
 
+    
     /** Creates new AreaPtg */
 
     public AreaPtg()
     {
+    }
+    
+    public AreaPtg(String arearef) {
+        int[] xyxy = ReferenceUtil.getXYXYFromAreaRef(arearef);
+        setFirstRow((short)xyxy[0]);
+        setFirstColumn((short)xyxy[1]);
+        setLastRow((short)xyxy[2]);
+        setLastColumn((short)xyxy[3]);
+        
     }
 
     public AreaPtg(byte [] data, int offset)
@@ -103,16 +120,20 @@ public class AreaPtg
         buffer.append("firstCol = " + getFirstColumn()).append("\n");
         buffer.append("lastCol  = " + getLastColumn()).append("\n");
         buffer.append("firstColRowRel= "
-                      + isFirstColRowRelative()).append("\n");
+                      + isFirstRowRelative()).append("\n");
         buffer.append("lastColRowRel = "
-                      + isLastColRowRelative()).append("\n");
+                      + isLastRowRelative()).append("\n");
         buffer.append("firstColRel   = " + isFirstColRelative()).append("\n");
         buffer.append("lastColRel    = " + isLastColRelative()).append("\n");
         return buffer.toString();
     }
 
-    public void writeBytes(byte [] array, int offset)
-    {
+    public void writeBytes(byte [] array, int offset) {
+        array[offset] = sid;
+        LittleEndian.putShort(array,offset+1,field_1_first_row);
+        LittleEndian.putShort(array,offset+3,field_2_last_row);
+        LittleEndian.putShort(array,offset+5,field_3_first_column);
+        LittleEndian.putShort(array,offset+7,field_4_last_column);        
     }
 
     public int getSize()
@@ -142,7 +163,7 @@ public class AreaPtg
 
     public short getFirstColumn()
     {
-        return ( short ) (field_3_first_column & 0x3FFF);
+        return column.getShortValue(field_3_first_column);
     }
 
     public short getFirstColumnRaw()
@@ -150,16 +171,25 @@ public class AreaPtg
         return field_3_first_column;
     }
 
-    public boolean isFirstColRowRelative()
+    public boolean isFirstRowRelative()
     {
-        return (((getFirstColumnRaw()) & 0x8000) == 0x8000);
+        return rowRelative.isSet(field_3_first_column);
+    }
+    
+    public void setFirstRowRelative(boolean rel) {
+        field_3_first_column=rowRelative.setShortBoolean(field_3_first_column,rel);
     }
 
     public boolean isFirstColRelative()
     {
-        return (((getFirstColumnRaw()) & 0x4000) == 0x4000);
+        return colRelative.isSet(field_3_first_column);
+    }
+    
+    public void setFirstColRelative(boolean rel) {
+        field_3_first_column=colRelative.setShortBoolean(field_3_first_column,rel);
     }
 
+    
     public void setFirstColumn(short column)
     {
         field_3_first_column = column;   // fixme
@@ -172,7 +202,7 @@ public class AreaPtg
 
     public short getLastColumn()
     {
-        return ( short ) (field_4_last_column & 0x3FFF);   // fixme
+        return column.getShortValue(field_4_last_column);
     }
 
     public short getLastColumnRaw()
@@ -180,15 +210,24 @@ public class AreaPtg
         return field_4_last_column;
     }
 
-    public boolean isLastColRowRelative()
+    public boolean isLastRowRelative()
     {
-        return (((getLastColumnRaw()) & 0x8000) == 1);
+        return rowRelative.isSet(field_4_last_column);
+    }
+    
+    public void setLastRowRelative(boolean rel) {
+        field_4_last_column=rowRelative.setShortBoolean(field_4_last_column,rel);
     }
 
     public boolean isLastColRelative()
     {
-        return (((getFirstColumnRaw()) & 0x4000) == 1);
+        return colRelative.isSet(field_4_last_column);
     }
+    
+    public void setLastColRelative(boolean rel) {
+        field_4_last_column=colRelative.setShortBoolean(field_4_last_column,rel);
+    }
+    
 
     public void setLastColumn(short column)
     {
@@ -204,41 +243,10 @@ public class AreaPtg
     {
         String firstrow = "" + (getFirstRow() + 1);
         String lastrow  = null;
-
-        if (isLastColRowRelative())
-        {
-            lastrow = "" + (getFirstRow() + getLastRow());
-        }
-        else
-        {
-            lastrow = "" + (getLastRow() + 1);
-        }
-
         // String firstcol = ""+
         // String lastcol
-        return colNumToLetter(getFirstColumn()) + firstrow + ":"
-               + colNumToLetter(getLastColumn()) + lastrow;
+        return ReferenceUtil.getReferenceFromXY(getFirstRow(),getFirstColumn()) + ":"
+               + ReferenceUtil.getReferenceFromXY(getLastRow(),getLastColumn());
     }
 
-    public String colNumToLetter(int col)
-    {
-        byte[] b =
-        {
-            0x41
-        };
-
-        b[ 0 ] += ( byte ) col;
-        String retval = null;
-
-        try
-        {
-            retval = new String(b, "UTF-8");
-        }
-        catch (java.io.UnsupportedEncodingException e)
-        {
-            throw new RuntimeException(
-                "NON JDK 1.3 COMPLIANT JVM -- YOUR JVM MUST SUPPORT UTF-8 encoding as per docs!");
-        }
-        return retval;
-    }
 }
