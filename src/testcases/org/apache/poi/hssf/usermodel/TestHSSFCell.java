@@ -116,7 +116,7 @@ extends TestCase {
 
             c=r.createCell((short)2);
             //c.setCellType(HSSFCell.CELL_TYPE_ERROR);
-            c.setCellErrorValue((byte)1);
+            c.setCellErrorValue((byte)7);
 
 
             wb.write(out);
@@ -136,7 +136,7 @@ extends TestCase {
             c = r.getCell((short)1);
             assertTrue("boolean value 0,1 = 0",c.getErrorCellValue() == 0);
             c = r.getCell((short)2);
-            assertTrue("boolean value 0,2 = 1",c.getErrorCellValue() == 1);
+            assertTrue("boolean value 0,2 = 7",c.getErrorCellValue() == 7);
 
             in.close();
     }
