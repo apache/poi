@@ -128,8 +128,20 @@ public class ValueVariableFunctionPtg
     {
         return toFormulaString();
     }
+
     
+    public String toFormulaString(String[] operands) {
+        return toFormulaString();
+    }
+    
+   
     public void manipulate(List source, List results, int pos) {
     }
     
+    public int getPrecedence() {
+        return 1;
+    }    
+    
+    
+
 }

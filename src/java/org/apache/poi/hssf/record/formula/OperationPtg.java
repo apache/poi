@@ -74,6 +74,10 @@ public abstract class OperationPtg extends Ptg
     public final static int TYPE_FUNCTION = 2;
 
     public abstract int getType();
+    
+    public abstract String toFormulaString(String[] operands);
+    
+    public abstract int getPrecedence();
 
     public abstract int getNumberOfOperands();
     

@@ -58,9 +58,9 @@ package org.apache.poi.hssf.record.formula;
 import java.util.List;
 
 /**
- * Dummy class, we want it only for for the parsing process
- * does not actually get into the file  -- note by andy...there is a parenthesis PTG
- * that can be written and is sometimes!
+ * While formula tokens are stored in RPN order and thus do not need parenthesis for 
+ * precedence reasons, Parenthesis tokens ARE written to ensure that user entered
+ * parenthesis are displayed as-is on reading back
  *
  * Avik Sengupta <lists@aviksengupta.com>
  * Andrew C. Oliver (acoliver at apache dot org)
@@ -69,17 +69,18 @@ public class ParenthesisPtg
     extends OperationPtg
 {
    
-
+    private final static int SIZE = 1;
+    public final static byte sid  = 0x15;
    
 
     public void writeBytes(byte [] array, int offset)
     {
-        //do nothing
+        array[ offset + 0 ] = sid;
     }
 
     public int getSize()
     {
-        return 0;
+        return SIZE;
     }
 
     public int getType()
@@ -89,21 +90,29 @@ public class ParenthesisPtg
 
     public int getNumberOfOperands()
     {
-        return 0;
+        return 1;
     }
 
     public String toFormulaString()
     {
-        return "(";
+        return "()";
     }
 
     public String toFormulaString(Ptg [] operands)
     {
-        return "(";
+        return "";
     }
     
     public void manipulate(List source, List results, int pos) {
     }
+    
+    public String toFormulaString(String[] operands) {
+        return "("+operands[0]+")";
+    }    
+    
+    public int getPrecedence() {
+        return 2;
+    }    
     
 }
 

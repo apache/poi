@@ -70,6 +70,9 @@ import org.apache.poi.hssf.record.NumberRecord;
 import org.apache.poi.hssf.record.BlankRecord;
 import org.apache.poi.hssf.record.BoolErrRecord;
 import org.apache.poi.hssf.record.ExtendedFormatRecord;
+import org.apache.poi.hssf.record.formula.Ptg;
+
+import org.apache.poi.hssf.record.formula.FormulaParser;
 
 import java.util.Date;
 import java.util.Calendar;
@@ -684,6 +687,32 @@ public class HSSFCell
         }
     }
 
+    public void setCellFormula(String formula) {
+        if (formula==null) {
+            setCellType(CELL_TYPE_BLANK,false);
+        } else {
+            
+            setCellType(CELL_TYPE_FORMULA,false);
+            FormulaRecord rec = (FormulaRecord) record;
+            rec.setOptions(( short ) 2);
+            rec.setValue(0);
+            rec.setXFIndex(( short ) 0x0f);
+            FormulaParser fp = new FormulaParser(formula+";");
+            fp.parse();
+            Ptg[] ptg  = fp.getRPNPtg();
+            int   size = 0;
+            System.out.println("got Ptgs " + ptg.length);
+            for (int k = 0; k < ptg.length; k++) {
+                size += ptg[ k ].getSize();
+                rec.pushExpressionToken(ptg[ k ]);
+            }
+            rec.setExpressionLength(( short ) size);
+            //return rec;
+            
+        }
+    }
+    
+    
     /**
      * get the value of the cell as a number.  For strings we throw an exception.
      * For blank cells we return a 0.

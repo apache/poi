@@ -78,7 +78,7 @@ public class FormulaRecord
     implements CellValueRecordInterface, Comparable
 {
     
-    public static final boolean EXPERIMENTAL_FORMULA_SUPPORT_ENABLED=false;
+    public static final boolean EXPERIMENTAL_FORMULA_SUPPORT_ENABLED=true;
     
     public static final short sid =
         0x06;   // docs say 406...because of a bug Microsoft support site article #Q184647)
@@ -359,11 +359,10 @@ public class FormulaRecord
         LittleEndian.putShort(data, 18 + offset, getOptions());
         LittleEndian.putInt(data, 20 + offset, field_6_zero);
         LittleEndian.putShort(data, 24 + offset, getExpressionLength());
+        serializePtgs(data, 26+offset);
         } else {
             System.arraycopy(all_data,0,data,offset,all_data.length);
         }
-
-        // serializePtgs(data, 26+offset);
         return getRecordSize();
     }
 

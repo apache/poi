@@ -119,7 +119,25 @@ public class DividePtg
         buffer.append(operands[ 1 ].toFormulaString());
         return buffer.toString();
     }
+
+     public int getPrecedence() {
+        return 4;
+    }
     
+    public int getStringLength() {
+        return 1;
+    }
+    
+    public String toFormulaString(String[] operands) {
+        StringBuffer buffer = new StringBuffer();
+
+        buffer.append(operands[ 0 ]);
+        buffer.append("/");
+        buffer.append(operands[ 1 ]);
+        return buffer.toString();
+    }
+    
+
     public void manipulate(List source, List results, int pos) {
     }
     
