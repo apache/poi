@@ -476,6 +476,10 @@ public class Sheet implements Model
             records.remove(removePos);
 				mergedRecords.remove(pos);
             mergedLocs.remove(pos);
+            
+            //if we're not tracking merged records, kill the pointer to reset the state
+            if (mergedRecords.size() == 0) merged = null;
+            
         }
     }
 
