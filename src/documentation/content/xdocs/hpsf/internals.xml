@@ -32,9 +32,9 @@
      <strong>property set stream</strong>.</p>
 
     <p>This document describes the internal structure of a property set stream,
-     i.e. the <strong>Horrible Property Set Format (HWPF)</strong>.  It does not
-     describe how a Microsoft Office document is organized internally and how
-     to retrieve a stream from it. See the <link
+     i.e. the <strong>Horrible Property Set Format (HPSF)</strong>.  It does
+     not describe how a Microsoft Office document is organized internally and
+     how to retrieve a stream from it. See the <link
       href="../poifs/index.html">POIFS documentation</link> for that kind of
      stuff.</p>
 
@@ -172,9 +172,10 @@
        <td>Denotes the operating system and the OS version under which this
 	 stream was created. The operating system ID is in the DWord's higher
 	 word (after little endian decoding): <code>0x0000</code> for Win16,
-	 <code>0x0001</code> for Macintosh and <code>0x0002</code> for Win32 - that's
-	 all. The reader is most likely aware of the fact that there are some
-	 more operating systems. However, Microsoft does not seem to know.</td>
+	 <code>0x0001</code> for Macintosh and <code>0x0002</code> for Win32 -
+         that's all. The reader is most likely aware of the fact that there are
+         some more operating systems. However, Microsoft does not seem to
+       know.</td>
       <td></td>
       </tr>
 
