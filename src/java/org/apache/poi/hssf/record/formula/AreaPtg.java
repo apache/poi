@@ -63,7 +63,7 @@ package org.apache.poi.hssf.record.formula;
 import org.apache.poi.util.LittleEndian;
 
 /**
- *
+ * Specifies a rectangular area of cells 
  * @author  andy
  */
 

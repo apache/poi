@@ -206,8 +206,8 @@ public abstract class Ptg
                 retval = new AttrPtg(data, offset);
                 break;
 
-            case ValueReferencePtg.sid :
-                retval = new ValueReferencePtg(data, offset);
+            case ReferencePtg.sid :
+                retval = new ReferencePtg(data, offset);
                 break;
 
             case ParenthesisPtg.sid :

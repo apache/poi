@@ -250,7 +250,7 @@ public class FormulaParser {
             
             boolean cellRef = true ; //we should probably do it with reg exp??
             if (cellRef) {
-                tokens.add(new ValueReferencePtg(name)); //TODO we need to pass in Name somewhere??
+                tokens.add(new ReferencePtg(name)); //TODO we need to pass in Name somewhere??
             }else {
                 //handle after named range is integrated!!
             }
