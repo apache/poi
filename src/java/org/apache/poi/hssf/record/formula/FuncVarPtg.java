@@ -8,6 +8,7 @@ import org.apache.poi.util.LittleEndian;
 public class FuncVarPtg extends AbstractFunctionPtg{
     
     public final static byte sid  = 0x22;
+    private final static int  SIZE = 4;  
     
     private FuncVarPtg() {
       //Required for clone methods
@@ -52,6 +53,21 @@ public class FuncVarPtg extends AbstractFunctionPtg{
       ptg.field_1_num_args = field_1_num_args;
       ptg.field_2_fnc_index = field_2_fnc_index;
       return ptg;
+    }
+    
+    public int getSize() {
+        return SIZE;
+    }
+    
+    public String toString() {
+        StringBuffer buffer = new StringBuffer();
+        buffer
+        .append("<FunctionVarPtg>").append("\n")
+        .append("   field_1_num_args=").append(field_1_num_args).append("\n")
+        .append("      name         =").append(lookupName(field_2_fnc_index)).append("\n")
+        .append("   field_2_fnc_index=").append(field_2_fnc_index).append("\n")
+        .append("</FunctionPtg>");
+        return buffer.toString();
     }
 
     

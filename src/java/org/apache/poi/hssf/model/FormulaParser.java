@@ -797,7 +797,9 @@ end;
         }
         return (String) stack.pop(); //TODO: catch stack underflow and throw parse exception. 
     }
-    
+    /** Create a tree representation of the RPN token array
+     *used to run the class(RVA) change algo
+     */
     private Node createTree() {
         java.util.Stack stack = new java.util.Stack();
         int numPtgs = tokens.size();
@@ -837,7 +839,8 @@ end;
         return buf.toString();
     }
     
-}    
+}   
+    /** Private helper class, used to create a tree representation of the formula*/
     class Node {
         private Ptg value=null;
         private Node[] children=new Node[0];
