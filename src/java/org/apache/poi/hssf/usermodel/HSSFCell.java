@@ -71,6 +71,8 @@ import org.apache.poi.hssf.record.BlankRecord;
 import org.apache.poi.hssf.record.BoolErrRecord;
 import org.apache.poi.hssf.record.ExtendedFormatRecord;
 
+import java.util.Date;
+
 /**
  * High level representation of a cell in a row of a spreadsheet.
  * Cells can be numeric, formula-based or string-based (text).  The cell type
@@ -608,16 +610,27 @@ public class HSSFCell
      *        precalculated value, for numerics we'll set its value. For other types we
      *        will change the cell to a numeric cell and set its value.
      */
-
     public void setCellValue(double value)
     {
-        if ((cellType != CELL_TYPE_NUMERIC)
-                && (cellType != CELL_TYPE_FORMULA))
+        if ((cellType != CELL_TYPE_NUMERIC) && (cellType != CELL_TYPE_FORMULA))
         {
             setCellType(CELL_TYPE_NUMERIC, false);
         }
         (( NumberRecord ) record).setValue(value);
         cellValue = value;
+    }
+
+    /**
+     * set a date value for the cell. Excel treats dates as numeric so you will need to format the cell as
+     * a date.
+     *
+     * @param value  the date value to set this cell to.  For formulas we'll set the
+     *        precalculated value, for numerics we'll set its value. For other types we
+     *        will change the cell to a numeric cell and set its value.
+     */
+    public void setCellValue(Date value)
+    {
+        setCellValue(HSSFDateUtil.getExcelDate(value));
     }
 
     /**
@@ -684,6 +697,34 @@ public class HSSFCell
                 "You cannot get a numeric value from an error cell");
         }
         return cellValue;
+    }
+
+    /**
+     * get the value of the cell as a date.  For strings we throw an exception.
+     * For blank cells we return a null.
+     */
+    public Date getDateCellValue()
+    {
+        if (cellType == CELL_TYPE_BLANK)
+        {
+            return null;
+        }
+        if (cellType == CELL_TYPE_STRING)
+        {
+            throw new NumberFormatException(
+                "You cannot get a date value from a String based cell");
+        }
+        if (cellType == CELL_TYPE_BOOLEAN)
+        {
+            throw new NumberFormatException(
+                "You cannot get a date value from a boolean cell");
+        }
+        if (cellType == CELL_TYPE_ERROR)
+        {
+            throw new NumberFormatException(
+                "You cannot get a date value from an error cell");
+        }
+        return HSSFDateUtil.getJavaDate(cellValue);
     }
 
     /**
