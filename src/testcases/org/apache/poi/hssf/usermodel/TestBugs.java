@@ -1,8 +1,7 @@
-
 /* ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 2003 The Apache Software Foundation.  All rights
+ * Copyright (c) 2003, 2003 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -53,77 +52,47 @@
  * <http://www.apache.org/>.
  */
 
-/*
- * NamePtg.java
- *
- * Created on November 25, 2001, 3:30 PM
- */
-package org.apache.poi.hssf.record.formula;
+package org.apache.poi.hssf.usermodel;
 
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.hssf.util.SheetReferences;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Date;
+
+import junit.framework.TestCase;
+
+
 
 /**
- *
- * @author  andy
- * @author Jason Height (jheight at chariot dot net dot au)
+ * @author Avik Sengupta
  */
 
-public class NamePtg
-    extends Ptg
-{
-    public final static short sid  = 0x23;
-    private final static int  SIZE = 5;
-    private short             field_1_label_index;
-    private short             field_2_zero;   // reserved must be 0
-    boolean xtra=false;
-
-
-    private NamePtg() {
-      //Required for clone methods
-    }
-
-    /** Creates new NamePtg */
-
-    public NamePtg(String name)
-    {
-        //TODO
-    }
-
-    /** Creates new NamePtg */
-
-    public NamePtg(byte [] data, int offset)
-    {
-        offset++;
-        //field_1_ixti        = LittleEndian.getShort(data, offset);
-        field_1_label_index = LittleEndian.getShort(data, offset );
-        field_2_zero        = LittleEndian.getShort(data, offset + 2);
-        //if (data[offset+6]==0) xtra=true;
-    }
-
-    public void writeBytes(byte [] array, int offset)
-    {
-        array[offset+0]= (byte) (sid + ptgClass);
-        LittleEndian.putShort(array,offset+1,field_1_label_index);
-        LittleEndian.putShort(array,offset+3, field_2_zero);
-    }
-
-    public int getSize()
-    {
-        return SIZE;
-    }
-
-    public String toFormulaString(SheetReferences refs)
-    {
-        return "NAMED RANGE";
+public class TestBugs
+extends TestCase {
+    public TestBugs(String s) {
+        super(s);
     }
     
-    public byte getDefaultOperandClass() {return Ptg.CLASS_VALUE;}
-
-    public Object clone() {
-      NamePtg ptg = new NamePtg();
-      ptg.field_1_label_index = field_1_label_index;
-      ptg.field_2_zero = field_2_zero;
-      return ptg;
+          public void test15228()
+        throws java.io.IOException
+    {
+         String readFilename = System.getProperty("HSSF.testdata.path");
+          FileInputStream in = new FileInputStream(readFilename+File.separator+"15228.xls");
+          HSSFWorkbook wb = new HSSFWorkbook(in);
+          HSSFSheet s = wb.getSheetAt(0);
+          HSSFRow r = s.createRow(0);
+          HSSFCell c = r.createCell((short)0);
+          c.setCellValue(10);
+          File file = File.createTempFile("test15228",".xls");
+          FileOutputStream out    = new FileOutputStream(file);
+          wb.write(out);
+          assertTrue("No exception thrown", true); 
+          assertTrue("File Should Exist", file.exists());
+            
     }
+    
 }
+    
+
+

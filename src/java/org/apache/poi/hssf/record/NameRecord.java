@@ -794,6 +794,8 @@ public class NameRecord extends Record {
                 pos += ptg.getSize();
                 sizeCounter += ptg.getSize();
                 stack.push(ptg);
+                field_13_raw_name_definition=new byte[size];
+                System.arraycopy(data,offset,field_13_raw_name_definition,0,size);
             }
         } catch (java.lang.UnsupportedOperationException uoe) {
             System.err.println("[WARNING] Unknown Ptg "
@@ -880,7 +882,7 @@ public class NameRecord extends Record {
             .append("\n");
         buffer.append("    .unused                   = ").append( field_5_index_to_sheet )
             .append("\n");
-        buffer.append("    .( 0 = Global name, otherwise index to sheet (one-based) ) = ").append( field_6_equals_to_index_to_sheet )
+        buffer.append("    .index to sheet (1-based, 0=Global)           = ").append( field_6_equals_to_index_to_sheet )
             .append("\n");
         buffer.append("    .Length of menu text (character count)        = ").append( field_7_length_custom_menu )
             .append("\n");
@@ -906,6 +908,7 @@ public class NameRecord extends Record {
             .append("\n");
         buffer.append("    .Status bar text (Unicode string without length field)  = ").append( field_17_status_bar_text )
             .append("\n");
+        buffer.append(org.apache.poi.util.HexDump.dump(this.field_13_raw_name_definition,0,0));
         buffer.append("[/NAME]\n");
         
         return buffer.toString();
