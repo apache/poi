@@ -71,16 +71,6 @@ public abstract class Record
 {
 
     /**
-     * The static ID, subclasses should override this value with the id for the
-     * record type they handle.
-     */
-
-    public short   sid  = 0;
-    private short  id   = 0;
-    private short  size = 0;
-    private byte[] data = null;
-
-    /**
      * instantiates a blank record strictly for ID matching
      */
 
@@ -98,9 +88,6 @@ public abstract class Record
 
     public Record(short id, short size, byte [] data)
     {
-        this.id   = id;
-        this.size = size;
-        this.data = data;
         validateSid(id);
         fillFields(data, size);
     }
@@ -115,9 +102,6 @@ public abstract class Record
 
     public Record(short id, short size, byte [] data, int offset)
     {
-        this.id   = id;
-        this.size = size;
-        this.data = data;
         validateSid(id);
         fillFields(data, size, offset);
     }
