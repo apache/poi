@@ -1,0 +1,100 @@
+  <target name="-init">
+   <tstamp>
+     <format property="YEAR" pattern="yyyy" locale="en"/>
+   </tstamp>
+   
+   <buildnumber/>
+
+   <!--
+    The location of tools.jar, relative to the JAVA_HOME home.
+    If tools.jar is not present, exit with an error, since it
+    means that a JDK is not installed.
+    -->
+    <property name="tools.jar" value="${java.home}/../lib/tools.jar"/>
+    <available file="${tools.jar}" property="tools.jar.present"/>
+    <fail unless="tools.jar.present" message="tools.jar not found. Probably JDK not installed."/>    
+
+
+    <!-- create fixed centipede dirs -->
+    <property name="tools.dir"                   value="tools"/>
+    <property name="temp.dir"                    value="tools/tmp"/>
+    <property name="cents.dir"                   value="tools/cents"/>
+    <property name="installed.cents.dir"         value="tools/installed"/>
+    <property name="antipede.dir"                value="tools/antipede"/>
+    <property name="antipede.lib.dir"            value="tools/antipede/lib"/>
+    <property name="cent.lib.dir.name"           value="lib"/>
+    <property name="task.properties.name"        value="tasks.properties"/>
+    <property name="cent.jar.suffix"             value="cent.jar"/>    
+    <property name="cent.dir.suffix"             value="cent"/>    
+    <property name="cent.installed.suffix"       value="installed"/>      
+    
+                
+    <!-- define all ant tasks in antipede -->
+    <taskdef file="${antipede.dir}/${task.properties.name}">
+     <classpath>
+      <path>
+       <fileset dir="${antipede.lib.dir}" casesensitive="yes"> 
+         <include name="*.jar"/>
+         <include name="*.zip"/>
+       </fileset>  
+      </path>
+     </classpath>
+    </taskdef>
+ 
+    <!-- Unpack jarred cents -->
+    <antipede-foreach target="-cent-unjar" param="current.cent.jar">
+     <fileset dir="." casesensitive="yes"> 
+      <patternset>
+       <include name="${cents.dir}/*.${cent.jar.suffix}"/>
+      </patternset>
+     </fileset>  
+    </antipede-foreach>
+ 
+    <mkdir dir="${temp.dir}"/>
+    <delete file="${temp.dir}/${task.properties.name}"/>
+              
+    <!-- put all ant task definitions in cents in a single file -->
+    <concat destfile="${temp.dir}/${task.properties.name}" append="no">
+      <fileset dir=".">
+       <patternset>
+         <include name="${cents.dir}/*.${cent.dir.suffix}/${task.properties.name}"/>
+       </patternset>
+     </fileset>          
+    </concat>
+    
+    <!-- define the tasks found in cents -->
+    <taskdef file="${temp.dir}/${task.properties.name}">
+     <classpath>
+       <fileset dir="${tools.dir}" casesensitive="yes"> 
+         <include name="**/*.jar"/>
+       </fileset> 
+     </classpath>
+    </taskdef>
+    
+   <!--
+    Load project information
+    -->
+    <centipede-xml-property file="module.xml"     prefix="xgump"    keeproot="true" />
+    <centipede-xml-property file="status.xml"     prefix="xstatus"  keeproot="false"  />   
+    <centipede-xml-property file="layout.xml"     prefix="xlayout"  keeproot="false"  />
+    <centipede-xml-property file="properties.xml"                   keeproot="false"  /> 
+    
+  </target>
+
+  <!-- ================================ -->
+  <!--  Used only by the -init target   -->
+  <!-- =================================--> 
+  <target  name="-cent-unjar">
+    <unjar src="${current.cent.jar}" dest="${cents.dir}"/> 
+    <move file="${current.cent.jar}" toFile="${current.cent.jar}.${cent.installed.suffix}"/> 
+  </target>       
+           
+  <!-- ============================================= -->
+  <!-- Simple utility target to call a cent target   -->
+  <!-- ==============================================-->
+  <target name="call-cent">
+     <ant antfile="tools/cents/${cent-name}.cent/xbuild.xml"
+         inheritAll="true" 
+         dir="."
+         target="${cent-target}" />       
+  </target>           
