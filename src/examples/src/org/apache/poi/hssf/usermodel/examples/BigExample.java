@@ -55,6 +55,7 @@
 package org.apache.poi.hssf.usermodel.examples;
 
 import org.apache.poi.hssf.usermodel.*;
+import org.apache.poi.hssf.util.HSSFColor;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -93,7 +94,7 @@ public class BigExample
         //set font 1 to 12 point type
         f.setFontHeightInPoints((short) 12);
         //make it red
-        f.setColor((short) HSSFCellStyle.RED);
+        f.setColor((short) HSSFColor.RED.index);
         // make it bold
         //arial is the default font
         f.setBoldweight(f.BOLDWEIGHT_BOLD);
@@ -101,7 +102,7 @@ public class BigExample
         //set font 2 to 10 point type
         f2.setFontHeightInPoints((short) 10);
         //make it the color at palette index 0xf (white)
-        f2.setColor((short) HSSFCellStyle.WHITE);
+        f2.setColor((short) HSSFColor.WHITE.index);
         //make it bold
         f2.setBoldweight(f2.BOLDWEIGHT_BOLD);
 
@@ -115,7 +116,7 @@ public class BigExample
         //fill w fg fill color
         cs2.setFillPattern((short) HSSFCellStyle.SOLID_FOREGROUND);
         // set foreground fill to red
-        cs2.setFillForegroundColor((short) HSSFCellStyle.RED);
+        cs2.setFillForegroundColor((short) HSSFColor.RED.index);
 
         // set the font
         cs2.setFont(f2);

@@ -21,9 +21,8 @@
           Finish Charts
         </action>
         <action context="code">
-          Add Formulas.
+          Finish Formulas.
         </action>
-
     </actions>
 
     <actions priority="medium">

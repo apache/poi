@@ -55,6 +55,7 @@
 package org.apache.poi.hssf.usermodel.examples;
 
 import org.apache.poi.hssf.usermodel.*;
+import org.apache.poi.hssf.util.HSSFColor;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -77,7 +78,7 @@ public class FrillsAndFills
 
         // Aqua background
         HSSFCellStyle style = wb.createCellStyle();
-        style.setFillBackgroundColor(HSSFCellStyle.AQUA);
+        style.setFillBackgroundColor(HSSFColor.AQUA.index);
         style.setFillPattern(HSSFCellStyle.BIG_SPOTS);
         HSSFCell cell = row.createCell((short) 1);
         cell.setCellValue("X");
@@ -85,7 +86,7 @@ public class FrillsAndFills
 
         // Orange "foreground", foreground being the fill foreground not the font color.
         style = wb.createCellStyle();
-        style.setFillForegroundColor(HSSFCellStyle.ORANGE);
+        style.setFillForegroundColor(HSSFColor.ORANGE.index);
         style.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
         cell = row.createCell((short) 2);
         cell.setCellValue("X");
