@@ -179,9 +179,6 @@ public class HSSFColor
     /**
      * Class BLACK
      *
-     *
-     * @author
-     * @version %I%, %G%
      */
 
     public final static class BLACK
@@ -213,9 +210,6 @@ public class HSSFColor
     /**
      * Class BROWN
      *
-     *
-     * @author
-     * @version %I%, %G%
      */
 
     public final static class BROWN
@@ -247,9 +241,6 @@ public class HSSFColor
     /**
      * Class OLIVE_GREEN
      *
-     *
-     * @author
-     * @version %I%, %G%
      */
 
     public static class OLIVE_GREEN
@@ -281,9 +272,6 @@ public class HSSFColor
     /**
      * Class DARK_GREEN
      *
-     *
-     * @author
-     * @version %I%, %G%
      */
 
     public final static class DARK_GREEN
@@ -315,9 +303,6 @@ public class HSSFColor
     /**
      * Class DARK_TEAL
      *
-     *
-     * @author
-     * @version %I%, %G%
      */
 
     public final static class DARK_TEAL
@@ -349,9 +334,6 @@ public class HSSFColor
     /**
      * Class DARK_BLUE
      *
-     *
-     * @author
-     * @version %I%, %G%
      */
 
     public final static class DARK_BLUE
@@ -383,9 +365,6 @@ public class HSSFColor
     /**
      * Class INDIGO
      *
-     *
-     * @author
-     * @version %I%, %G%
      */
 
     public final static class INDIGO
@@ -417,9 +396,6 @@ public class HSSFColor
     /**
      * Class GREY_80_PERCENT
      *
-     *
-     * @author
-     * @version %I%, %G%
      */
 
     public final static class GREY_80_PERCENT
@@ -451,9 +427,6 @@ public class HSSFColor
     /**
      * Class DARK_RED
      *
-     *
-     * @author
-     * @version %I%, %G%
      */
 
     public final static class DARK_RED
@@ -485,9 +458,6 @@ public class HSSFColor
     /**
      * Class ORANGE
      *
-     *
-     * @author
-     * @version %I%, %G%
      */
 
     public final static class ORANGE
@@ -519,9 +489,6 @@ public class HSSFColor
     /**
      * Class DARK_YELLOW
      *
-     *
-     * @author
-     * @version %I%, %G%
      */
 
     public final static class DARK_YELLOW
@@ -553,9 +520,6 @@ public class HSSFColor
     /**
      * Class GREEN
      *
-     *
-     * @author
-     * @version %I%, %G%
      */
 
     public final static class GREEN
@@ -587,9 +551,6 @@ public class HSSFColor
     /**
      * Class TEAL
      *
-     *
-     * @author
-     * @version %I%, %G%
      */
 
     public final static class TEAL
@@ -621,9 +582,6 @@ public class HSSFColor
     /**
      * Class BLUE
      *
-     *
-     * @author
-     * @version %I%, %G%
      */
 
     public final static class BLUE
@@ -655,9 +613,6 @@ public class HSSFColor
     /**
      * Class BLUE_GREY
      *
-     *
-     * @author
-     * @version %I%, %G%
      */
 
     public final static class BLUE_GREY
@@ -689,9 +644,6 @@ public class HSSFColor
     /**
      * Class GREY_50_PERCENT
      *
-     *
-     * @author
-     * @version %I%, %G%
      */
 
     public final static class GREY_50_PERCENT
@@ -723,9 +675,6 @@ public class HSSFColor
     /**
      * Class RED
      *
-     *
-     * @author
-     * @version %I%, %G%
      */
 
     public final static class RED
@@ -757,9 +706,6 @@ public class HSSFColor
     /**
      * Class LIGHT_ORANGE
      *
-     *
-     * @author
-     * @version %I%, %G%
      */
 
     public final static class LIGHT_ORANGE
@@ -791,9 +737,6 @@ public class HSSFColor
     /**
      * Class LIME
      *
-     *
-     * @author
-     * @version %I%, %G%
      */
 
     public final static class LIME
@@ -825,9 +768,6 @@ public class HSSFColor
     /**
      * Class SEA_GREEN
      *
-     *
-     * @author
-     * @version %I%, %G%
      */
 
     public final static class SEA_GREEN
@@ -859,9 +799,6 @@ public class HSSFColor
     /**
      * Class AQUA
      *
-     *
-     * @author
-     * @version %I%, %G%
      */
 
     public final static class AQUA
@@ -893,9 +830,6 @@ public class HSSFColor
     /**
      * Class LIGHT_BLUE
      *
-     *
-     * @author
-     * @version %I%, %G%
      */
 
     public final static class LIGHT_BLUE
@@ -927,9 +861,6 @@ public class HSSFColor
     /**
      * Class VIOLET
      *
-     *
-     * @author
-     * @version %I%, %G%
      */
 
     public final static class VIOLET
@@ -961,9 +892,6 @@ public class HSSFColor
     /**
      * Class GREY_40_PERCENT
      *
-     *
-     * @author
-     * @version %I%, %G%
      */
 
     public final static class GREY_40_PERCENT
@@ -995,9 +923,6 @@ public class HSSFColor
     /**
      * Class PINK
      *
-     *
-     * @author
-     * @version %I%, %G%
      */
 
     public final static class PINK
@@ -1029,9 +954,6 @@ public class HSSFColor
     /**
      * Class GOLD
      *
-     *
-     * @author
-     * @version %I%, %G%
      */
 
     public final static class GOLD
@@ -1063,9 +985,6 @@ public class HSSFColor
     /**
      * Class YELLOW
      *
-     *
-     * @author
-     * @version %I%, %G%
      */
 
     public final static class YELLOW
@@ -1097,9 +1016,6 @@ public class HSSFColor
     /**
      * Class BRIGHT_GREEN
      *
-     *
-     * @author
-     * @version %I%, %G%
      */
 
     public final static class BRIGHT_GREEN
@@ -1131,9 +1047,6 @@ public class HSSFColor
     /**
      * Class TURQUOISE
      *
-     *
-     * @author
-     * @version %I%, %G%
      */
 
     public final static class TURQUOISE
@@ -1165,9 +1078,6 @@ public class HSSFColor
     /**
      * Class SKY_BLUE
      *
-     *
-     * @author
-     * @version %I%, %G%
      */
 
     public final static class SKY_BLUE
@@ -1199,9 +1109,6 @@ public class HSSFColor
     /**
      * Class PLUM
      *
-     *
-     * @author
-     * @version %I%, %G%
      */
 
     public final static class PLUM
@@ -1233,9 +1140,6 @@ public class HSSFColor
     /**
      * Class GREY_25_PERCENT
      *
-     *
-     * @author
-     * @version %I%, %G%
      */
 
     public final static class GREY_25_PERCENT
@@ -1267,9 +1171,6 @@ public class HSSFColor
     /**
      * Class ROSE
      *
-     *
-     * @author
-     * @version %I%, %G%
      */
 
     public final static class ROSE
@@ -1301,9 +1202,6 @@ public class HSSFColor
     /**
      * Class TAN
      *
-     *
-     * @author
-     * @version %I%, %G%
      */
 
     public final static class TAN
@@ -1335,9 +1233,6 @@ public class HSSFColor
     /**
      * Class LIGHT_YELLOW
      *
-     *
-     * @author
-     * @version %I%, %G%
      */
 
     public final static class LIGHT_YELLOW
@@ -1369,9 +1264,6 @@ public class HSSFColor
     /**
      * Class LIGHT_GREEN
      *
-     *
-     * @author
-     * @version %I%, %G%
      */
 
     public final static class LIGHT_GREEN
@@ -1403,9 +1295,6 @@ public class HSSFColor
     /**
      * Class LIGHT_TURQUOISE
      *
-     *
-     * @author
-     * @version %I%, %G%
      */
 
     public final static class LIGHT_TURQUOISE
@@ -1437,9 +1326,6 @@ public class HSSFColor
     /**
      * Class PALE_BLUE
      *
-     *
-     * @author
-     * @version %I%, %G%
      */
 
     public final static class PALE_BLUE
@@ -1471,9 +1357,6 @@ public class HSSFColor
     /**
      * Class LAVENDER
      *
-     *
-     * @author
-     * @version %I%, %G%
      */
 
     public final static class LAVENDER
@@ -1505,9 +1388,6 @@ public class HSSFColor
     /**
      * Class WHITE
      *
-     *
-     * @author
-     * @version %I%, %G%
      */
 
     public final static class WHITE
