@@ -58,7 +58,7 @@ package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.hssf.util.RangeAddress;
-
+import org.apache.poi.hssf.util.CellReference;
 /**
  * Title:        Reference 3D Ptg <P>
  * Description:  Defined a cell in extern sheet. <P>
@@ -75,15 +75,22 @@ public class Ref3DPtg extends Ptg {
     private short             field_3_column;
 
     /** Creates new AreaPtg */
-
-    public Ref3DPtg() {
-    }
+    public Ref3DPtg() {}
 
     public Ref3DPtg(byte[] data, int offset) {
         offset++;
         field_1_index_extern_sheet = LittleEndian.getShort(data, 0 + offset);
         field_2_row          = LittleEndian.getShort(data, 2 + offset);
         field_3_column        = LittleEndian.getShort(data, 4 + offset);
+    }
+    
+    protected Ref3DPtg(String cellref, short externIdx ) {
+        CellReference c= new CellReference(cellref);
+        setRow((short) c.getRow());
+        setColumn((short) c.getCol());
+        //setColRelative(!c.isColAbsolute());
+        //setRowRelative(!c.isRowAbsolute());   
+        setExternSheetIndex(externIdx);
     }
 
     public String toString() {
@@ -100,7 +107,7 @@ public class Ref3DPtg extends Ptg {
     }
 
     public void writeBytes(byte [] array, int offset) {
-        array[ 0 + offset ] = sid;
+        array[ 0 + offset ] = (byte) (sid + ptgClass);
         LittleEndian.putShort(array, 1 + offset , getExternSheetIndex());
         LittleEndian.putShort(array, 3 + offset , getRow());
         LittleEndian.putShort(array, 5 + offset , getColumnRaw());

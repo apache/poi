@@ -743,7 +743,7 @@ public class Sheet
         rec.setOptions(( short ) 2);
         rec.setValue(0);
         rec.setXFIndex(( short ) 0x0f);
-        FormulaParser fp = new FormulaParser(formula);
+        FormulaParser fp = new FormulaParser(formula,null); //fix - do we need this method?
         fp.parse();
         Ptg[] ptg  = fp.getRPNPtg();
         int   size = 0;
