@@ -155,6 +155,7 @@
         </question>
         <answer>
             Add blank cells around where the cells normally would have been and set the borders individually for each cell.
+            We will probably enhance HSSF in the future to make this process easier.
         </answer>
     </faq>
 </faqs>
