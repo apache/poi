@@ -1,4 +1,4 @@
-<record id="0x101B" name="TAP" package="org.apache.poi.hwpf.model.hdftypes.definitions">
+<record id="0x101B" name="TAP" package="org.apache.poi.hwpf.model.types">
     <suffix>AbstractType</suffix>
     <extends>HDFType</extends>
     <description>Table Properties.</description>

@@ -1,4 +1,4 @@
-<record id="0x101A" name="PAP" package="org.apache.poi.hwpf.model.hdftypes.definitions">
+<record id="0x101A" name="PAP" package="org.apache.poi.hwpf.model.types">
     <suffix>AbstractType</suffix>
     <extends>HDFType</extends>
     <description>Paragraph Properties.</description>
@@ -63,8 +63,8 @@
         <field type="int" size="4" name="dyaFromText"/>
         <field type="int" size="2" name="dyaHeight"/>
         <field type="byte" size="1" name="fMinHeight"/>
-        <field type="short" size="2" name="shd"/>
-        <field type="short" size="2" name="dcs"/>
+        <field type="ShadingDescriptor" size="2" name="shd"/>
+        <field type="DropCapSpecifier" size="2" name="dcs"/>
         <field type="byte" size="1" name="lvl"/>
         <field type="byte" size="1" name="fNumRMIns"/>
         <field type="byte[]" size="84" name="anld"/>
@@ -75,5 +75,8 @@
         <field type="int" size="2" name="itbdMac"/>
         <field type="int[]" size="128" name="rgdxaTab"/>
         <field type="byte[]" size="128" name="rgtbd"/>
+        <field type="byte" size="1" name="tableLevel"/>
+        <field type="byte" size="1" name="fTtpEmbedded"/>
+        <field type="byte" size="1" name="embeddedCellMark"/>
     </fields>
 </record>
