@@ -329,6 +329,25 @@ extends TestCase {
         this.assertTrue("Read workbook!" , true);
 
     }
+    /*Double byte strings 
+     File supplied by jubeson*/
+    public void test12843_1() throws java.io.IOException {
+        String filename = System.getProperty("HSSF.testdata.path");
+        filename=filename+"/12843-1.xls";
+        FileInputStream in = new FileInputStream(filename);
+        HSSFWorkbook wb = new HSSFWorkbook(in);
+        this.assertTrue("Read workbook!" , true);
+    }
+    
+    /*Double byte strings 
+     File supplied by Paul Chung*/
+    public void test12843_2() throws java.io.IOException {
+        String filename = System.getProperty("HSSF.testdata.path");
+        filename=filename+"/12843-2.xls";
+        FileInputStream in = new FileInputStream(filename);
+        HSSFWorkbook wb = new HSSFWorkbook(in);
+        this.assertTrue("Read workbook!" , true);
+    }
     
     /** Reference to Name*/
     public void test13224() throws java.io.IOException {
