@@ -17,6 +17,18 @@ public class ReferenceUtil {
     }
     
     /**
+     * takes in a cell range and returns an array of integers x1,y1,x2,y2
+     */
+    public static int[] getXYXYFromAreaRef(String reference) {
+        int retval[] = null;
+        String[] refs = seperateAreaRefs(reference);
+        int[] xy1 = getXYFromReference(refs[0]);
+        int[] xy2 = getXYFromReference(refs[1]);
+        retval = new int[] {xy1[0],xy1[1],xy2[0],xy2[1]};
+        return retval;
+    }
+    
+    /**
      * takes in a cell reference string A1 for instance and returns an integer
      * array with the first element being the row number and the second being 
      * the column number, all in 0-based base 10 format.
@@ -104,5 +116,22 @@ public class ReferenceUtil {
         retval[1] = reference.substring(loc);        
         return retval;
     }
+    
+    
+    /**
+     * seperates Area refs in two parts and returns them as seperate elements in a 
+     * String array
+     */
+    private static String[] seperateAreaRefs(String reference) {
+        String retval[] = new String[2];
+        int length = reference.length();
+        
+        int loc = reference.indexOf(':',0);
+        
+        retval[0] = reference.substring(0,loc);
+        retval[1] = reference.substring(loc+1);        
+        return retval;
+    }
+    
         
 }
