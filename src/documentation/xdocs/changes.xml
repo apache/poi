@@ -11,6 +11,11 @@
         <person id="NKB" name="Nicola Ken Barozzi" email="barozzi@nicolaken.com"/>
         <person id="POI-DEVELOPERS" name="Poi Developers" email="poi-dev@jakarta.apache.org"/>
     </devs>
+    <release version="1.10-dev" date="19 Feb 2002">
+	<action dev="POI-DEVELOPERS" type="add">Support for zoom level</action>
+	<action dev="POI-DEVELOPERS" type="add">Freeze and split pane support</action>
+	<action dev="POI-DEVELOPERS" type="add">Row and column headers on printouts</action>
+    </release>
     <release version="1.8-dev" date="20 Sep 2002">
         <action dev="POI-DEVELOPERS" type="add">Custom Data Format Support</action>
         <action dev="POI-DEVELOPERS" type="add">Enhanced Unicode Support for Russian and Japanese</action>
