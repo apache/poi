@@ -100,13 +100,20 @@ extends TestCase {
         
         //get our minimum values
         r = s.createRow((short)1);
-        c = r.createCell((short)1);
+        c = r.createCell((short)1);        
         c.setCellFormula(1 + "+" + 1);
-        
         
         wb.write(out);
         out.close();        
         
+        FileInputStream in = new FileInputStream(file);
+        wb = new HSSFWorkbook(in);
+        s  = wb.getSheetAt(0);
+        r  = s.getRow((short)1);
+        c  = r.getCell((short)1);
+        
+        assertTrue("Formula is as expected",("1+1".equals(c.getCellFormula())));
+        in.close();
     }
     
     /**
@@ -115,7 +122,46 @@ extends TestCase {
     
     public void testAddIntegers()
     throws Exception {
-        
+        binomialOperator("+");
+    }
+    
+    /**
+     * Multiply various integers
+     */
+    
+    public void testMultplyIntegers()
+    throws Exception {
+        binomialOperator("*");
+    }
+    
+    /**
+     * Subtract various integers
+     */    
+    public void testSubtractIntegers()
+    throws Exception {
+        binomialOperator("-");
+    }
+    
+    /**
+     * Subtract various integers
+     */    
+    public void testDivideIntegers()
+    throws Exception {
+        binomialOperator("/");
+    }
+    
+    /**
+     * Exponentialize various integers;
+     */
+    public void testExponentIntegers() 
+    throws Exception {
+        binomialOperator("^");
+    }
+    
+    
+    
+    private void binomialOperator(String operator) 
+    throws Exception {
         short            rownum = 0;
         File file = File.createTempFile("testFormula",".xls");
         FileOutputStream out    = new FileOutputStream(file);
@@ -125,17 +171,17 @@ extends TestCase {
         HSSFCell         c      = null;
         
         //get our minimum values
-        r = s.createRow((short)1);
+        r = s.createRow((short)0);
         c = r.createCell((short)1);
-        c.setCellFormula(1 + "+" + 1);
+        c.setCellFormula(1 + operator + 1);
         
         for (short x = 1; x < Short.MAX_VALUE && x > 0; x=(short)(x*2)) {
             r = s.createRow((short) x);
             //System.out.println("x="+x);
-            for (short y = 1; y < 200 && y > 0; y++) {
+            for (short y = 1; y < 256 && y > 0; y++) {
                 //System.out.println("y="+y);
                 c = r.createCell((short) y);
-                c.setCellFormula("" + x + "+" + y);
+                c.setCellFormula("" + x + operator + y);
                 
             }
         }
@@ -144,15 +190,65 @@ extends TestCase {
         if (s.getLastRowNum() < Short.MAX_VALUE) {
             r = s.createRow((short)0);
             c = r.createCell((short)0);
-            c.setCellFormula("" + Short.MAX_VALUE + "+" + Short.MAX_VALUE);
+            c.setCellFormula("" + Short.MAX_VALUE + operator + Short.MAX_VALUE);
         }
         
         wb.write(out);
         out.close();
+        assertTrue("file exists",file.exists());
         
-        
-        
+        binomialVerify(operator,file);
     }
+    
+    private void binomialVerify(String operator, File file) 
+    throws Exception {
+        short            rownum = 0;
+        
+        FileInputStream  in     = new FileInputStream(file);
+        HSSFWorkbook     wb     = new HSSFWorkbook(in);
+        HSSFSheet        s      = wb.getSheetAt(0);
+        HSSFRow          r      = null;
+        HSSFCell         c      = null;
+        
+        //get our minimum values
+        r = s.getRow((short)0);
+        c = r.getCell((short)1);
+        assertTrue("minval Formula is as expected",
+                            ( ("1"+operator+"1").equals(c.getCellFormula())
+                            ));
+        
+        for (short x = 1; x < Short.MAX_VALUE && x > 0; x=(short)(x*2)) {
+            r = s.getRow((short) x);
+            //System.out.println("x="+x);
+            for (short y = 1; y < 256 && y > 0; y++) {
+                //System.out.println("y="+y);
+                c = r.getCell((short) y);
+
+                assertTrue("loop Formula is as expected",(
+                           (""+x+operator+y).equals(
+                                                 c.getCellFormula()
+                                                   )
+                                                           ) 
+                          );
+
+                
+            }
+        }
+
+        //test our maximum values
+        r = s.getRow((short)0);
+        c = r.getCell((short)0);
+        assertTrue("maxval Formula is as expected",(
+                (""+Short.MAX_VALUE+operator+Short.MAX_VALUE).equals(
+                                                                c.getCellFormula()
+                                                                  )
+                                                   ) 
+                  );
+                        
+        in.close();
+        assertTrue("file exists",file.exists());               
+    }
+
     
     
     public static void main(String [] args) {
