@@ -109,8 +109,6 @@ public class SViewer extends Applet {
     boolean isurl = false;
     if (filename == null) filename = getParameter("filename");
 
-    System.out.println("filename="+filename);
-    System.out.println("start="+filename.substring(0,7));
     if (filename == null || filename.substring(0,7).equals("http://")) {
       isurl = true;
       if (filename == null) filename = getParameter("url");
