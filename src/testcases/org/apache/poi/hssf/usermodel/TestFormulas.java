@@ -1106,6 +1106,20 @@ extends TestCase {
         assertEquals(4d, d2.getNumericCellValue(), 1e-9);
     }
 
+    public void testStringFormulaRead() throws IOException {
+        File dir = new File(System.getProperty("HSSF.testdata.path"));
+        File xls = new File(dir, "StringFormulas.xls");
+        FileInputStream in = new FileInputStream(xls);
+        HSSFWorkbook w;
+        try {
+            w = new HSSFWorkbook(in);
+        } finally {
+            in.close();
+        }
+        HSSFCell c = w.getSheetAt(0).getRow(0).getCell((short)0);
+        assertEquals("String Cell value","XYZ",c.getStringCellValue());
+    }
+    
     public static void main(String [] args) {
         System.out
         .println("Testing org.apache.poi.hssf.usermodel.TestFormulas");
