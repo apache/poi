@@ -31,6 +31,7 @@ See http://xml.apache.org/forrest/linking.html for more info
         <junit href="junit/index.html"/>
         <jdepend href="jdepend/index.html"/>
         <javadoc href="apidocs/index.html"/>
+	<download href="http://jakarta.apache.org/builds/jakarta-poi/"/>
     </external-refs>
 
 </site>
