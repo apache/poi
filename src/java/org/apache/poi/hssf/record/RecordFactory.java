@@ -2,7 +2,7 @@
 /* ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 2003 The Apache Software Foundation.  All rights
+ * Copyright (c) 2004 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -112,7 +112,8 @@ public class RecordFactory
                 FormulaRecord.class, BoolErrRecord.class, ExternSheetRecord.class,
                 NameRecord.class, LeftMarginRecord.class, RightMarginRecord.class,
                 TopMarginRecord.class, BottomMarginRecord.class,
-                PaletteRecord.class, StringRecord.class, RecalcIdRecord.class, SharedFormulaRecord.class
+                PaletteRecord.class, StringRecord.class, RecalcIdRecord.class, SharedFormulaRecord.class,
+                HorizontalPageBreakRecord.class, VerticalPageBreakRecord.class
             };
         } else {
             records = new Class[]
@@ -143,7 +144,8 @@ public class RecordFactory
                 BoolErrRecord.class, ExternSheetRecord.class, NameRecord.class,
                 LeftMarginRecord.class, RightMarginRecord.class,
                 TopMarginRecord.class, BottomMarginRecord.class,
-                PaletteRecord.class, StringRecord.class, RecalcIdRecord.class, SharedFormulaRecord.class
+                PaletteRecord.class, StringRecord.class, RecalcIdRecord.class, SharedFormulaRecord.class,
+                HorizontalPageBreakRecord.class, VerticalPageBreakRecord.class
             };
 
         }

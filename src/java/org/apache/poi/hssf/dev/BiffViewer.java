@@ -2,7 +2,7 @@
  *  ====================================================================
  *  The Apache Software License, Version 1.1
  *
- *  Copyright (c) 2003 The Apache Software Foundation.  All rights
+ *  Copyright (c) 2004 The Apache Software Foundation.  All rights
  *  reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -633,6 +633,14 @@ public class BiffViewer {
             case SharedFormulaRecord.sid:
             	 retval = new SharedFormulaRecord( rectype, size, data);
             	 break;
+            case HorizontalPageBreakRecord.sid:
+                retval = new HorizontalPageBreakRecord( rectype, size, data);
+                break;
+            case VerticalPageBreakRecord.sid:
+                retval = new VerticalPageBreakRecord( rectype, size, data);
+                break;
+                
+                 
             default:
                 retval = new UnknownRecord( rectype, size, data );
         }

@@ -2,12 +2,14 @@ package org.apache.poi.hssf.model;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.record.ColumnInfoRecord;
 import org.apache.poi.hssf.record.MergeCellsRecord;
+import org.apache.poi.hssf.record.PageBreakRecord;
 import org.apache.poi.hssf.record.RowRecord;
 import org.apache.poi.hssf.record.StringRecord;
 
@@ -171,6 +173,125 @@ public class SheetTest extends TestCase
 		Sheet sheet = Sheet.createSheet(records, 0);
 		assertNotNull("Row [2] was skipped", sheet.getRow(2));
 		
+	}
+	
+	/**
+	 * Make sure page break functionality works (in memory)
+	 *
+	 */
+	public void testRowPageBreaks(){
+		short colFrom = 0;
+		short colTo = 255;
+		
+		Sheet sheet = Sheet.createSheet();
+		sheet.setRowBreak(0, colFrom, colTo);
+		
+		assertTrue("no row break at 0", sheet.isRowBroken(0));
+		assertEquals("1 row break available", 1, sheet.getNumRowBreaks());
+		
+		sheet.setRowBreak(0, colFrom, colTo);		
+		sheet.setRowBreak(0, colFrom, colTo);		
+
+		assertTrue("no row break at 0", sheet.isRowBroken(0));
+		assertEquals("1 row break available", 1, sheet.getNumRowBreaks());
+		
+		sheet.setRowBreak(10, colFrom, colTo);
+		sheet.setRowBreak(11, colFrom, colTo);
+
+		assertTrue("no row break at 10", sheet.isRowBroken(10));
+		assertTrue("no row break at 11", sheet.isRowBroken(11));
+		assertEquals("3 row break available", 3, sheet.getNumRowBreaks());
+		
+		
+		boolean is10 = false;
+		boolean is0 = false;
+		boolean is11 = false;
+		
+		Iterator iterator = sheet.getRowBreaks();
+		while (iterator.hasNext()) {
+			PageBreakRecord.Break breakItem = (PageBreakRecord.Break)iterator.next();
+			int main = (int)breakItem.main;
+			if (main != 0 && main != 10 && main != 11) fail("Invalid page break");
+			if (main == 0) 	is0 = true;
+			if (main == 10) is10= true;
+			if (main == 11) is11 = true;
+		}
+		
+		assertTrue("one of the breaks didnt make it", is0 && is10 && is11); 
+		
+		sheet.removeRowBreak(11);
+		assertFalse("row should be removed", sheet.isRowBroken(11));
+		
+		sheet.removeRowBreak(0);
+		assertFalse("row should be removed", sheet.isRowBroken(0));
+		
+		sheet.removeRowBreak(10);
+		assertFalse("row should be removed", sheet.isRowBroken(10));
+		
+		assertEquals("no more breaks", 0, sheet.getNumRowBreaks());
+		
+		
+	}
+	
+	/**
+	 * Make sure column pag breaks works properly (in-memory)
+	 *
+	 */
+	public void testColPageBreaks(){
+		short rowFrom = 0;
+		short rowTo = (short)65535;
+		
+		Sheet sheet = Sheet.createSheet();
+		sheet.setColumnBreak((short)0, rowFrom, rowTo); 
+		
+		assertTrue("no col break at 0", sheet.isColumnBroken((short)0));
+		assertEquals("1 col break available", 1, sheet.getNumColumnBreaks());		
+		
+		sheet.setColumnBreak((short)0, rowFrom, rowTo);
+		
+		assertTrue("no col break at 0", sheet.isColumnBroken((short)0));
+		assertEquals("1 col break available", 1, sheet.getNumColumnBreaks());		
+		
+		sheet.setColumnBreak((short)1, rowFrom, rowTo);
+		sheet.setColumnBreak((short)10, rowFrom, rowTo);
+		sheet.setColumnBreak((short)15, rowFrom, rowTo);
+		
+		assertTrue("no col break at 1", sheet.isColumnBroken((short)1));
+		assertTrue("no col break at 10", sheet.isColumnBroken((short)10));
+		assertTrue("no col break at 15", sheet.isColumnBroken((short)15));
+		assertEquals("4 col break available", 4, sheet.getNumColumnBreaks());		
+
+		boolean is10 = false;
+		boolean is0 = false;
+		boolean is1 = false;
+		boolean is15 = false;
+		
+		Iterator iterator = sheet.getColumnBreaks();
+		while (iterator.hasNext()) {
+			PageBreakRecord.Break breakItem = (PageBreakRecord.Break)iterator.next();
+			int main = (int)breakItem.main;
+			if (main != 0 && main != 1 && main != 10 && main != 15) fail("Invalid page break");
+			if (main == 0) 	is0 = true;
+			if (main == 1) 	is1 = true;
+			if (main == 10) is10= true;
+			if (main == 15) is15 = true;
+		}
+		
+		assertTrue("one of the breaks didnt make it", is0 && is1 && is10 && is15); 
+		
+		sheet.removeColumnBreak((short)15);
+		assertFalse("column break should not be there", sheet.isColumnBroken((short)15));
+
+		sheet.removeColumnBreak((short)0);
+		assertFalse("column break should not be there", sheet.isColumnBroken((short)0));
+		
+		sheet.removeColumnBreak((short)1);
+		assertFalse("column break should not be there", sheet.isColumnBroken((short)1));
+		
+		sheet.removeColumnBreak((short)10);
+		assertFalse("column break should not be there", sheet.isColumnBroken((short)10));
+		
+		assertEquals("no more breaks", 0, sheet.getNumColumnBreaks());
 	}
 
 }

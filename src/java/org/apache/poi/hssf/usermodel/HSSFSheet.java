@@ -1,7 +1,7 @@
 /* ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 2003 The Apache Software Foundation.  All rights
+ * Copyright (c) 2004 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -68,6 +68,7 @@ import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.CellValueRecordInterface;
 import org.apache.poi.hssf.record.HCenterRecord;
+import org.apache.poi.hssf.record.PageBreakRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RowRecord;
 import org.apache.poi.hssf.record.SCLRecord;
@@ -981,6 +982,8 @@ public class HSSFSheet
      * <p>
      * Additionally shifts merged regions that are completely defined in these
      * rows (ie. merged 2 cells on a row to be shifted).
+     * <p>
+     * TODO Might want to add bounds checking here
      * @param startRow the row to start shifting
      * @param endRow the row to end shifting
      * @param n the number of rows to shift
@@ -1004,7 +1007,8 @@ public class HSSFSheet
         }
 
 			shiftMerged(startRow, endRow, n, true);        
-        
+			sheet.shiftRowBreaks(startRow, endRow, n);
+			
         for ( int rowNum = s; rowNum >= startRow && rowNum <= endRow && rowNum >= 0 && rowNum < 65536; rowNum += inc )
         {
             HSSFRow row = getRow( rowNum );
@@ -1130,7 +1134,7 @@ public class HSSFSheet
      * @return whether formulas are displayed
      */
     public boolean isDisplayFormulas() {
-	return sheet.isDisplayFormulas();
+    	return sheet.isDisplayFormulas();
     }
 
     /**
@@ -1146,6 +1150,109 @@ public class HSSFSheet
      * @return whether RowColHeadings are displayed
      */
     public boolean isDisplayRowColHeadings() {
-	return sheet.isDisplayRowColHeadings();
+    	return sheet.isDisplayRowColHeadings();
+    }
+    
+    /**
+     * Sets a page break at the indicated row
+     * @param row
+     */
+    public void setRowBreak(int row) {
+    	validateRow(row);
+    	sheet.setRowBreak(row, (short)0, (short)255);
+    }
+
+    /**
+     * Determines if there is a page break at the indicated row
+     * @param row
+     * @return
+     */
+    public boolean isRowBroken(int row) {
+    	return sheet.isRowBroken(row);
+    }
+    
+    /**
+     * Removes the page break at the indicated row
+     * @param row
+     */
+    public void removeRowBreak(int row) {
+    	sheet.removeRowBreak(row);
+    }
+    
+    /**
+     * Retrieves all the horizontal page breaks
+     * @return
+     */
+    public int[] getRowBreaks(){
+    	//we can probably cache this information, but this should be a sparsely used function 
+    	int[] returnValue = new int[sheet.getNumRowBreaks()];
+    	Iterator iterator = sheet.getRowBreaks();
+    	int i = 0;
+    	while (iterator.hasNext()) {
+    		PageBreakRecord.Break breakItem = (PageBreakRecord.Break)iterator.next();
+    		returnValue[i++] = (int)breakItem.main;
+    	}
+    	return returnValue;
+    }
+
+    /**
+     * Retrieves all the vertical page breaks
+     * @return
+     */
+    public short[] getColumnBreaks(){
+    	//we can probably cache this information, but this should be a sparsely used function 
+    	short[] returnValue = new short[sheet.getNumColumnBreaks()];
+    	Iterator iterator = sheet.getColumnBreaks();
+    	int i = 0;
+    	while (iterator.hasNext()) {
+    		PageBreakRecord.Break breakItem = (PageBreakRecord.Break)iterator.next();
+    		returnValue[i++] = breakItem.main;
+    	}
+    	return returnValue;
+    }
+    
+    
+    /**
+     * Sets a page break at the indicated column
+     * @param column
+     */
+    public void setColumnBreak(short column) {
+    	validateColumn(column);
+    	sheet.setColumnBreak(column, (short)0, (short)65535);
+    }
+
+    /**
+     * Determines if there is a page break at the indicated column
+     * @param column
+     * @return
+     */
+    public boolean isColumnBroken(short column) {
+    	return sheet.isColumnBroken(column);
+    }
+    
+    /**
+     * Removes a page break at the indicated column
+     * @param column
+     */
+    public void removeColumnBreak(short column) {
+    	sheet.removeColumnBreak(column);
+    }
+    
+    /**
+     * Runs a bounds check for row numbers
+     * @param row
+     */
+    protected void validateRow(int row) {
+    	if (row > 65535) throw new IllegalArgumentException("Maximum row number is 65535");
+    	if (row < 0) throw new IllegalArgumentException("Minumum row number is 0");
+    }
+    
+    /**
+     * Runs a bounds check for column numbers
+     * @param column
+     */
+    protected void validateColumn(short column) {
+    	if (column > 255) throw new IllegalArgumentException("Maximum column number is 255");
+    	if (column < 0)	throw new IllegalArgumentException("Minimum column number is 0");
     }
 }

@@ -2,7 +2,7 @@
 /* ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 2003 The Apache Software Foundation.  All rights
+ * Copyright (c) 2004 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -111,7 +111,7 @@ public class Sheet implements Model
     protected WindowTwoRecord           windowTwo        = null;
     protected MergeCellsRecord          merged           = null;
     protected Margin                    margins[]        = null;
-    protected List                 		mergedRecords    = new ArrayList();
+    protected List                 		 mergedRecords    = new ArrayList();
     protected int                       numMergedRegions = 0;
     protected SelectionRecord           selection        = null;
     private static POILogger            log              = POILogFactory.getLogger(Sheet.class);
@@ -121,8 +121,11 @@ public class Sheet implements Model
     private Iterator                    valueRecIterator = null;
     private Iterator                    rowRecIterator   = null;
     protected int                       eofLoc           = 0;
-	protected ProtectRecord             protect          = null;
-
+	 protected ProtectRecord             protect          = null;
+	 protected PageBreakRecord 			 rowBreaks		   = null;
+	 protected PageBreakRecord 			 colBreaks		   = null;
+	
+	
     public static final byte PANE_LOWER_RIGHT = (byte)0;
     public static final byte PANE_UPPER_RIGHT = (byte)1;
     public static final byte PANE_LOWER_LEFT = (byte)2;
@@ -155,7 +158,7 @@ public class Sheet implements Model
      */
     public static Sheet createSheet(List recs, int sheetnum, int offset)
     {
-        log.logFormatted(log.DEBUG,
+        log.logFormatted(POILogger.DEBUG,
                          "Sheet createSheet (existing file) with %",
                          new Integer(recs.size()));
         Sheet     retval             = new Sheet();
@@ -170,18 +173,18 @@ public class Sheet implements Model
 
             if (rec.getSid() == LabelRecord.sid)
             {
-                log.log(log.DEBUG, "Hit label record.");
+                log.log(POILogger.DEBUG, "Hit label record.");
                 retval.containsLabels = true;
             }
             else if (rec.getSid() == BOFRecord.sid)
             {
                 bofEofNestingLevel++;
-                log.log(log.DEBUG, "Hit BOF record. Nesting increased to " + bofEofNestingLevel);
+                log.log(POILogger.DEBUG, "Hit BOF record. Nesting increased to " + bofEofNestingLevel);
             }
             else if (rec.getSid() == EOFRecord.sid)
             {
                 --bofEofNestingLevel;
-                log.log(log.DEBUG, "Hit EOF record. Nesting decreased to " + bofEofNestingLevel);
+                log.log(POILogger.DEBUG, "Hit EOF record. Nesting decreased to " + bofEofNestingLevel);
                 if (bofEofNestingLevel == 0) {
                     records.add(rec);
                     retval.eofLoc = k;
@@ -289,8 +292,16 @@ public class Sheet implements Model
 			else if ( rec.getSid() == ProtectRecord.sid )
 			{
 				retval.protect = (ProtectRecord) rec;
+			} 
+			else if (rec.getSid() == PageBreakRecord.HORIZONTAL_SID) 
+			{	
+				retval.rowBreaks = (PageBreakRecord)rec;				
 			}
-
+			else if (rec.getSid() == PageBreakRecord.VERTICAL_SID) 
+			{	
+				retval.colBreaks = (PageBreakRecord)rec;				
+			}
+            
             if (rec != null)
             {
                 records.add(rec);
@@ -307,7 +318,7 @@ public class Sheet implements Model
 //        {
 //            retval.cells = new ValueRecordsAggregate();
 //        }
-        log.log(log.DEBUG, "sheet createSheet (existing file) exited");
+        log.log(POILogger.DEBUG, "sheet createSheet (existing file) exited");
         return retval;
     }
 
@@ -366,7 +377,7 @@ public class Sheet implements Model
 
     public static Sheet createSheet(List records, int sheetnum)
     {
-        log.log(log.DEBUG,
+        log.log(POILogger.DEBUG,
                 "Sheet createSheet (exisiting file) assumed offset 0");
         return createSheet(records, sheetnum, 0);
     }
@@ -381,7 +392,7 @@ public class Sheet implements Model
 
     public static Sheet createSheet()
     {
-        log.log(log.DEBUG, "Sheet createsheet from scratch called");
+        log.log(POILogger.DEBUG, "Sheet createsheet from scratch called");
         Sheet     retval  = new Sheet();
         ArrayList records = new ArrayList(30);
 
@@ -404,8 +415,14 @@ public class Sheet implements Model
                 (DefaultRowHeightRecord) retval.createDefaultRowHeight();
         records.add( retval.defaultrowheight );
         records.add( retval.createWSBool() );
+
+        retval.rowBreaks = new PageBreakRecord(PageBreakRecord.HORIZONTAL_SID);
+        records.add(retval.rowBreaks);
+        retval.colBreaks = new PageBreakRecord(PageBreakRecord.VERTICAL_SID);
+        records.add(retval.colBreaks);
+        
         retval.header = (HeaderRecord) retval.createHeader();
-        records.add( retval.header );
+        records.add( retval.header );        
         retval.footer = (FooterRecord) retval.createFooter();
         records.add( retval.footer );
         records.add( retval.createHCenter() );
@@ -415,9 +432,9 @@ public class Sheet implements Model
         retval.defaultcolwidth =
                 (DefaultColWidthRecord) retval.createDefaultColWidth();
         records.add( retval.defaultcolwidth);
-        retval.dims    = ( DimensionsRecord ) retval.createDimensions();
-        retval.dimsloc = 19;
+        retval.dims    = ( DimensionsRecord ) retval.createDimensions();        
         records.add(retval.dims);
+        retval.dimsloc = records.size()-1;
         records.add(retval.windowTwo = retval.createWindowTwo());
         retval.setLoc(records.size() - 1);
         retval.selection = 
@@ -426,8 +443,9 @@ public class Sheet implements Model
 		retval.protect = (ProtectRecord) retval.createProtect();
 		records.add(retval.protect);
         records.add(retval.createEOF());
+        
         retval.records = records;
-        log.log(log.DEBUG, "Sheet createsheet from scratch exit");
+        log.log(POILogger.DEBUG, "Sheet createsheet from scratch exit");
         return retval;
     }
 
@@ -566,7 +584,7 @@ public class Sheet implements Model
 
     public void convertLabelRecords(Workbook wb)
     {
-        log.log(log.DEBUG, "convertLabelRecords called");
+        log.log(POILogger.DEBUG, "convertLabelRecords called");
         if (containsLabels)
         {
             for (int k = 0; k < records.size(); k++)
@@ -590,7 +608,7 @@ public class Sheet implements Model
                 }
             }
         }
-        log.log(log.DEBUG, "convertLabelRecords exit");
+        log.log(POILogger.DEBUG, "convertLabelRecords exit");
     }
 
     /**
@@ -604,8 +622,8 @@ public class Sheet implements Model
     {
         checkCells();
         checkRows();
-        log.log(log.DEBUG, "Sheet.getNumRecords");
-        log.logFormatted(log.DEBUG, "returning % + % + % - 2 = %", new int[]
+        log.log(POILogger.DEBUG, "Sheet.getNumRecords");
+        log.logFormatted(POILogger.DEBUG, "returning % + % + % - 2 = %", new int[]
         {
             records.size(), cells.getPhysicalNumberOfCells(),
             rows.getPhysicalNumberOfRows(),
@@ -628,8 +646,8 @@ public class Sheet implements Model
     public void setDimensions(int firstrow, short firstcol, int lastrow,
                               short lastcol)
     {
-        log.log(log.DEBUG, "Sheet.setDimensions");
-        log.log(log.DEBUG,
+        log.log(POILogger.DEBUG, "Sheet.setDimensions");
+        log.log(POILogger.DEBUG,
                 (new StringBuffer("firstrow")).append(firstrow)
                     .append("firstcol").append(firstcol).append("lastrow")
                     .append(lastrow).append("lastcol").append(lastcol)
@@ -638,7 +656,7 @@ public class Sheet implements Model
         dims.setFirstRow(firstrow);
         dims.setLastCol(lastcol);
         dims.setLastRow(lastrow);
-        log.log(log.DEBUG, "Sheet.setDimensions exiting");
+        log.log(POILogger.DEBUG, "Sheet.setDimensions exiting");
     }
 
     /**
@@ -660,7 +678,7 @@ public class Sheet implements Model
     public void setLoc(int loc)
     {
         valueRecIterator = null;
-        log.log(log.DEBUG, "sheet.setLoc(): " + loc);
+        log.log(POILogger.DEBUG, "sheet.setLoc(): " + loc);
         this.loc = loc;
     }
 
@@ -671,7 +689,7 @@ public class Sheet implements Model
 
     public int getLoc()
     {
-        log.log(log.DEBUG, "sheet.getLoc():" + loc);
+        log.log(POILogger.DEBUG, "sheet.getLoc():" + loc);
         return loc;
     }
 
@@ -709,7 +727,7 @@ public class Sheet implements Model
 
     public byte [] serialize()
     {
-        log.log(log.DEBUG, "Sheet.serialize");
+        log.log(POILogger.DEBUG, "Sheet.serialize");
 
         // addDBCellRecords();
         byte[] retval    = null;
@@ -726,7 +744,7 @@ public class Sheet implements Model
         // for (int k = 0; k < bytes.size(); k++)
         // {
         // arraysize += (( byte [] ) bytes.get(k)).length;
-        // log.debug((new StringBuffer("arraysize=")).append(arraysize)
+        // POILogger.DEBUG((new StringBuffer("arraysize=")).append(arraysize)
         // .toString());
         // }
         retval = new byte[ arraysize ];
@@ -738,7 +756,7 @@ public class Sheet implements Model
             pos += (( Record ) records.get(k)).serialize(pos,
                     retval);   // rec.length;
         }
-        log.log(log.DEBUG, "Sheet.serialize returning " + retval);
+        log.log(POILogger.DEBUG, "Sheet.serialize returning " + retval);
         return retval;
     }
 
@@ -753,7 +771,7 @@ public class Sheet implements Model
 
     public int serialize(int offset, byte [] data)
     {
-        log.log(log.DEBUG, "Sheet.serialize using offsets");
+        log.log(POILogger.DEBUG, "Sheet.serialize using offsets");
 
         // addDBCellRecords();
         // ArrayList bytes     = new ArrayList(4096);
@@ -768,7 +786,7 @@ public class Sheet implements Model
         // for (int k = 0; k < bytes.size(); k++)
         // {
         // arraysize += (( byte [] ) bytes.get(k)).length;
-        // log.debug((new StringBuffer("arraysize=")).append(arraysize)
+        // POILogger.DEBUG((new StringBuffer("arraysize=")).append(arraysize)
         // .toString());
         // }
         for (int k = 0; k < records.size(); k++)
@@ -787,7 +805,7 @@ public class Sheet implements Model
             pos += record.serialize(pos + offset, data );   // rec.length;
 
         }
-        log.log(log.DEBUG, "Sheet.serialize returning ");
+        log.log(POILogger.DEBUG, "Sheet.serialize returning ");
         return pos;
     }
 
@@ -801,7 +819,7 @@ public class Sheet implements Model
 
     public RowRecord createRow(int row)
     {
-        log.log(log.DEBUG, "create row number " + row);
+        log.log(POILogger.DEBUG, "create row number " + row);
         RowRecord rowrec = new RowRecord();
 
         //rowrec.setRowNumber(( short ) row);
@@ -826,7 +844,7 @@ public class Sheet implements Model
     //public LabelSSTRecord createLabelSST(short row, short col, int index)
     public LabelSSTRecord createLabelSST(int row, short col, int index)
     {
-        log.logFormatted(log.DEBUG, "create labelsst row,col,index %,%,%",
+        log.logFormatted(POILogger.DEBUG, "create labelsst row,col,index %,%,%",
                          new int[]
         {
             row, col, index
@@ -853,7 +871,7 @@ public class Sheet implements Model
     //public NumberRecord createNumber(short row, short col, double value)
     public NumberRecord createNumber(int row, short col, double value)
     {
-        log.logFormatted(log.DEBUG, "create number row,col,value %,%,%",
+        log.logFormatted(POILogger.DEBUG, "create number row,col,value %,%,%",
                          new double[]
         {
             row, col, value
@@ -878,8 +896,8 @@ public class Sheet implements Model
     //public BlankRecord createBlank(short row, short col)
     public BlankRecord createBlank(int row, short col)
     {
-        //log.logFormatted(log.DEBUG, "create blank row,col %,%", new short[]
-        log.logFormatted(log.DEBUG, "create blank row,col %,%", new int[]
+        //log.logFormatted(POILogger.DEBUG, "create blank row,col %,%", new short[]
+        log.logFormatted(POILogger.DEBUG, "create blank row,col %,%", new int[]
         {
             row, col
         });
@@ -905,7 +923,7 @@ public class Sheet implements Model
     //public FormulaRecord createFormula(short row, short col, String formula)
     public FormulaRecord createFormula(int row, short col, String formula)
     {
-        log.logFormatted(log.DEBUG, "create formula row,col,formula %,%,%",
+        log.logFormatted(POILogger.DEBUG, "create formula row,col,formula %,%,%",
                          //new short[]
                          new int[]
         {
@@ -949,7 +967,7 @@ public class Sheet implements Model
     public void addValueRecord(int row, CellValueRecordInterface col)
     {
         checkCells();
-        log.logFormatted(log.DEBUG, "add value record  row,loc %,%", new int[]
+        log.logFormatted(POILogger.DEBUG, "add value record  row,loc %,%", new int[]
         {
             row, loc
         });
@@ -1003,7 +1021,7 @@ public class Sheet implements Model
     public void removeValueRecord(int row, CellValueRecordInterface col)
     {
         checkCells();
-        log.logFormatted(log.DEBUG, "remove value record row,dimsloc %,%",
+        log.logFormatted(POILogger.DEBUG, "remove value record row,dimsloc %,%",
                          new int[]{row, dimsloc} );
         loc = dimsloc;
         cells.removeCell(col);
@@ -1044,7 +1062,7 @@ public class Sheet implements Model
     {
         checkCells();
         setLoc(dimsloc);
-        log.log(log.DEBUG, "replaceValueRecord ");
+        log.log(POILogger.DEBUG, "replaceValueRecord ");
         cells.insertCell(newval);
 
         /*
@@ -1080,7 +1098,7 @@ public class Sheet implements Model
     public void addRow(RowRecord row)
     {
         checkRows();
-        log.log(log.DEBUG, "addRow ");
+        log.log(POILogger.DEBUG, "addRow ");
         DimensionsRecord d = ( DimensionsRecord ) records.get(getDimsLoc());
 
         if (row.getRowNumber() > d.getLastRow())
@@ -1134,7 +1152,7 @@ public class Sheet implements Model
          *   }
          * }
          */
-        log.log(log.DEBUG, "exit addRow");
+        log.log(POILogger.DEBUG, "exit addRow");
     }
 
     /**
@@ -1194,7 +1212,7 @@ public class Sheet implements Model
 
     public CellValueRecordInterface getNextValueRecord()
     {
-        log.log(log.DEBUG, "getNextValue loc= " + loc);
+        log.log(POILogger.DEBUG, "getNextValue loc= " + loc);
         if (valueRecIterator == null)
         {
             valueRecIterator = cells.getIterator();
@@ -1241,7 +1259,7 @@ public class Sheet implements Model
 
 /*    public Record getNextRowOrValue()
     {
-        log.debug((new StringBuffer("getNextRow loc= ")).append(loc)
+        POILogger.DEBUG((new StringBuffer("getNextRow loc= ")).append(loc)
             .toString());
         if (this.getLoc() < records.size())
         {
@@ -1281,7 +1299,7 @@ public class Sheet implements Model
 
     public RowRecord getNextRow()
     {
-        log.log(log.DEBUG, "getNextRow loc= " + loc);
+        log.log(POILogger.DEBUG, "getNextRow loc= " + loc);
         if (rowRecIterator == null)
         {
             rowRecIterator = rows.getIterator();
@@ -1327,7 +1345,7 @@ public class Sheet implements Model
     //public RowRecord getRow(short rownum)
     public RowRecord getRow(int rownum)
     {
-        log.log(log.DEBUG, "getNextRow loc= " + loc);
+        log.log(POILogger.DEBUG, "getNextRow loc= " + loc);
         return rows.getRow(rownum);
 
         /*
@@ -1543,7 +1561,7 @@ public class Sheet implements Model
     {
         RefModeRecord retval = new RefModeRecord();
 
-        retval.setMode(retval.USE_A1_MODE);
+        retval.setMode(RefModeRecord.USE_A1_MODE);
         return retval;
     }
 
@@ -2161,7 +2179,7 @@ public class Sheet implements Model
 
     public int getDimsLoc()
     {
-        log.log(log.DEBUG, "getDimsLoc dimsloc= " + dimsloc);
+        log.log(POILogger.DEBUG, "getDimsLoc dimsloc= " + dimsloc);
         return dimsloc;
     }
 
@@ -2533,7 +2551,7 @@ public class Sheet implements Model
 
        protected Record createProtect()
        {
-               log.log(log.DEBUG, "create protect record with protection disabled");
+               log.log(POILogger.DEBUG, "create protect record with protection disabled");
                ProtectRecord retval = new ProtectRecord();
 
                retval.setProtect(false);
@@ -2603,5 +2621,138 @@ public class Sheet implements Model
         if (margins == null)
             margins = new Margin[4];
 	return margins;
+    }
+    
+    /**
+     * Shifts all the page breaks in the range "count" number of rows/columns
+     * @param breaks The page record to be shifted
+     * @param start Starting "main" value to shift breaks
+     * @param stop Ending "main" value to shift breaks
+     * @param count number of units (rows/columns) to shift by 
+     */
+    public void shiftBreaks(PageBreakRecord breaks, short start, short stop, int count) {
+   	
+    	if(rowBreaks == null)
+    		return;
+    	Iterator iterator = breaks.getBreaksIterator();
+    	List shiftedBreak = new ArrayList();
+    	while(iterator.hasNext()) 
+    	{
+    		PageBreakRecord.Break breakItem = (PageBreakRecord.Break)iterator.next();
+    		short breakLocation = breakItem.main;
+    		boolean inStart = (breakLocation >= start);
+    		boolean inEnd = (breakLocation <= stop);
+    		if(inStart && inEnd)
+    			shiftedBreak.add(breakItem);
+    	}
+    	
+    	iterator = shiftedBreak.iterator();
+    	while (iterator.hasNext()) {    		
+			PageBreakRecord.Break breakItem = (PageBreakRecord.Break)iterator.next();
+    		breaks.removeBreak(breakItem.main);
+    		breaks.addBreak((short)(breakItem.main+count), breakItem.subFrom, breakItem.subTo);
+    	}
+    }
+    
+    /**
+     * Sets a page break at the indicated row
+     * @param row
+     */
+    public void setRowBreak(int row, short fromCol, short toCol) {    	
+    	rowBreaks.addBreak((short)row, fromCol, toCol);
+    }
+
+    /**
+     * Removes a page break at the indicated row
+     * @param row
+     */
+    public void removeRowBreak(int row) {
+    	rowBreaks.removeBreak((short)row);
+    }
+
+    /**
+     * Queries if the specified row has a page break
+     * @param row
+     * @return true if the specified row has a page break
+     */
+    public boolean isRowBroken(int row) {
+    	return rowBreaks.getBreak((short)row) != null;
+    }
+
+    /**
+     * Sets a page break at the indicated column
+     * @param row
+     */
+    public void setColumnBreak(short column, short fromRow, short toRow) {    	
+    	colBreaks.addBreak(column, fromRow, toRow);
+    }
+
+    /**
+     * Removes a page break at the indicated column
+     * @param row
+     */
+    public void removeColumnBreak(short column) {
+    	colBreaks.removeBreak(column);
+    }
+
+    /**
+     * Queries if the specified column has a page break
+     * @param row
+     * @return true if the specified column has a page break
+     */
+    public boolean isColumnBroken(short column) {
+    	return colBreaks.getBreak(column) != null;
+    }
+    
+    /**
+     * Shifts the horizontal page breaks for the indicated count
+     * @param startingRow
+     * @param endingRow
+     * @param count
+     */
+    public void shiftRowBreaks(int startingRow, int endingRow, int count) {
+    	shiftBreaks(rowBreaks, (short)startingRow, (short)endingRow, (short)count);
+    }
+
+    /**
+     * Shifts the vertical page breaks for the indicated count
+     * @param startingCol
+     * @param endingCol
+     * @param count
+     */
+    public void shiftColumnBreaks(short startingCol, short endingCol, short count) {
+    	shiftBreaks(colBreaks, startingCol, endingCol, count);
+    }
+    
+    /**
+     * Returns all the row page breaks
+     * @return
+     */
+    public Iterator getRowBreaks() {
+    	return rowBreaks.getBreaksIterator();
+    }
+    
+    /**
+     * Returns the number of row page breaks
+     * @return
+     */
+    public int getNumRowBreaks(){
+    	return (int)rowBreaks.getNumBreaks();
+    }
+    
+    /**
+     * Returns all the column page breaks
+     * @return
+     */
+    public Iterator getColumnBreaks(){
+    	return colBreaks.getBreaksIterator();
+    }
+    
+    /**
+     * Returns the number of column page breaks
+     * @return
+     */
+    public int getNumColumnBreaks(){
+    	return (int)colBreaks.getNumBreaks();
     }
 }

@@ -1,7 +1,7 @@
 /* ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 2003 The Apache Software Foundation.  All rights
+ * Copyright (c) 2004 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -345,8 +345,8 @@ public class TestHSSFSheet
      * @author Shawn Laubach (slaubach at apache dot org)
      */
     public void testDisplayOptions() throws Exception {
-	HSSFWorkbook wb = new HSSFWorkbook();
-	HSSFSheet sheet = wb.createSheet();
+    	HSSFWorkbook wb = new HSSFWorkbook();
+    	HSSFSheet sheet = wb.createSheet();
 	
         File tempFile = File.createTempFile("display", "test.xls");
         FileOutputStream stream = new FileOutputStream(tempFile);
@@ -356,15 +356,15 @@ public class TestHSSFSheet
         FileInputStream readStream = new FileInputStream(tempFile);
         wb = new HSSFWorkbook(readStream);
         sheet = wb.getSheetAt(0);
-	readStream.close();
-
-	assertEquals(sheet.isDisplayGridlines(), true);
-	assertEquals(sheet.isDisplayRowColHeadings(), true);
-	assertEquals(sheet.isDisplayFormulas(), false);
-
-	sheet.setDisplayGridlines(false);
-	sheet.setDisplayRowColHeadings(false);
-	sheet.setDisplayFormulas(true);
+    	readStream.close();
+    
+    	assertEquals(sheet.isDisplayGridlines(), true);
+    	assertEquals(sheet.isDisplayRowColHeadings(), true);
+    	assertEquals(sheet.isDisplayFormulas(), false);
+    
+    	sheet.setDisplayGridlines(false);
+    	sheet.setDisplayRowColHeadings(false);
+    	sheet.setDisplayFormulas(true);
 
         tempFile = File.createTempFile("display", "test.xls");
         stream = new FileOutputStream(tempFile);
@@ -374,14 +374,63 @@ public class TestHSSFSheet
         readStream = new FileInputStream(tempFile);
         wb = new HSSFWorkbook(readStream);
         sheet = wb.getSheetAt(0);
-	readStream.close();
-
-
-	assertEquals(sheet.isDisplayGridlines(), false);
-	assertEquals(sheet.isDisplayRowColHeadings(), false);
-	assertEquals(sheet.isDisplayFormulas(), true);
+    	readStream.close();
+    
+    
+    	assertEquals(sheet.isDisplayGridlines(), false);
+    	assertEquals(sheet.isDisplayRowColHeadings(), false);
+    	assertEquals(sheet.isDisplayFormulas(), true);
     }
 
+    
+    /**
+     * Make sure the excel file loads work
+     *
+     */
+    public void testPageBreakFiles() throws Exception{
+        FileInputStream fis = null;
+        HSSFWorkbook wb     = null;
+        
+        String filename = System.getProperty("HSSF.testdata.path");
+
+        filename = filename + "/SimpleWithPageBreaks.xls";
+        fis = new FileInputStream(filename);
+        wb = new HSSFWorkbook(fis);
+        fis.close();
+        
+        HSSFSheet sheet = wb.getSheetAt(0);
+        assertNotNull(sheet);
+        
+        assertEquals("1 row page break", 1, sheet.getRowBreaks().length);
+        assertEquals("1 column page break", 1, sheet.getColumnBreaks().length);
+
+        assertTrue("No row page break", sheet.isRowBroken(22));
+        assertTrue("No column page break", sheet.isColumnBroken((short)4));
+        
+        sheet.setRowBreak(10);        
+        sheet.setColumnBreak((short)13);
+
+        assertEquals("row breaks number", 2, sheet.getRowBreaks().length);
+        assertEquals("column breaks number", 2, sheet.getColumnBreaks().length);
+        
+        File tempFile = File.createTempFile("display", "testPagebreaks.xls");
+        FileOutputStream stream = new FileOutputStream(tempFile);
+        wb.write(stream);
+        stream.close();
+        
+        wb = new HSSFWorkbook(new FileInputStream(tempFile));
+        sheet = wb.getSheetAt(0);
+
+        assertTrue("No row page break", sheet.isRowBroken(22));
+        assertTrue("No column page break", sheet.isColumnBroken((short)4));
+
+        
+        assertEquals("row breaks number", 2, sheet.getRowBreaks().length);
+        assertEquals("column breaks number", 2, sheet.getColumnBreaks().length);
+        
+        
+    }
+    
 	public static void main(java.lang.String[] args) {
 		 junit.textui.TestRunner.run(TestHSSFSheet.class);
 	}    
