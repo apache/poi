@@ -58,7 +58,7 @@ package org.apache.poi.util;
 import java.util.*;
 
 /**
- * A logger interface that strives to make it as easy as possible for
+ * A logger class that strives to make it as easy as possible for
  * developers to write log calls, while simultaneously making those
  * calls as cheap as possible by performing lazy evaluation of the log
  * message.<p>
@@ -68,27 +68,24 @@ import java.util.*;
  * @author Nicola Ken Barozzi (nicolaken at apache.org)
  */
 
-public abstract class POILogger
+public class NullLogger extends POILogger
 {
-
-    public static final int DEBUG = 1;
-    public static final int INFO  = 3;
-    public static final int WARN  = 5;
-    public static final int ERROR = 7;
-    public static final int FATAL = 9;
-
+    public void initialize(final String cat)
+    {
+       //do nothing    
+    }
+    
     /**
-     * package scope so it cannot be instantiated outside of the util
-     * package. You need a POILogger? Go to the POILogFactory for one
+     * Log a message
      *
-     * @param log the object that does the real work of logging
+     * @param level One of DEBUG, INFO, WARN, ERROR, FATAL
+     * @param obj1 The object to log.
      */
-    POILogger()
-    {}
-    
-    abstract public void initialize(final String cat);
-    
-    abstract public void log(final int level, final Object obj1);
+
+    public void log(final int level, final Object obj1)
+    {
+        //do nothing
+    }
 
     /**
      * Check if a logger is enabled to log at the specified level
@@ -96,17 +93,13 @@ public abstract class POILogger
      * @param level One of DEBUG, INFO, WARN, ERROR, FATAL
      * @param obj1 The logger to check.
      */
-    abstract public boolean check(final int level);
+
+    public boolean check(final int level)
+    {
+       return false;
+    }
 
     /**
-     * Log a message. Lazily appends Object parameters together.
-     *
-     * @param level One of DEBUG, INFO, WARN, ERROR, FATAL
-     * @param obj1 first object to place in the message
-     * @param obj2 second object to place in the message
-     */
-
-   /**
      * Log a message. Lazily appends Object parameters together.
      *
      * @param level One of DEBUG, INFO, WARN, ERROR, FATAL
@@ -116,10 +109,7 @@ public abstract class POILogger
 
     public void log(final int level, final Object obj1, final Object obj2)
     {
-        if (check(level))
-        {
-            log(level, new StringBuffer(32).append(obj1).append(obj2));
-        }
+       //do nothing
     }
 
     /**
@@ -134,14 +124,7 @@ public abstract class POILogger
     public void log(final int level, final Object obj1, final Object obj2,
                     final Object obj3)
     {
-        
-
-        if (check(level))
-        {
-            log(level,
-                    new StringBuffer(48).append(obj1).append(obj2)
-                        .append(obj3));
-        }
+       //do nothing
     }
 
     /**
@@ -157,14 +140,7 @@ public abstract class POILogger
     public void log(final int level, final Object obj1, final Object obj2,
                     final Object obj3, final Object obj4)
     {
-        
-
-        if (check(level))
-        {
-            log(level,
-                    new StringBuffer(64).append(obj1).append(obj2)
-                        .append(obj3).append(obj4));
-        }
+       //do nothing
     }
 
     /**
@@ -181,14 +157,7 @@ public abstract class POILogger
     public void log(final int level, final Object obj1, final Object obj2,
                     final Object obj3, final Object obj4, final Object obj5)
     {
-        
-
-        if (check(level))
-        {
-            log(level,
-                    new StringBuffer(80).append(obj1).append(obj2)
-                        .append(obj3).append(obj4).append(obj5));
-        }
+       //do nothing
     }
 
     /**
@@ -207,14 +176,7 @@ public abstract class POILogger
                     final Object obj3, final Object obj4, final Object obj5,
                     final Object obj6)
     {
-        
-
-        if (check(level))
-        {
-            log(level ,
-                    new StringBuffer(96).append(obj1).append(obj2)
-                        .append(obj3).append(obj4).append(obj5).append(obj6));
-        }
+       //do nothing
     }
 
     /**
@@ -234,15 +196,7 @@ public abstract class POILogger
                     final Object obj3, final Object obj4, final Object obj5,
                     final Object obj6, final Object obj7)
     {
-        
-
-        if (check(level))
-        {
-            log(level,
-                    new StringBuffer(112).append(obj1).append(obj2)
-                        .append(obj3).append(obj4).append(obj5).append(obj6)
-                        .append(obj7));
-        }
+       //do nothing
     }
 
     /**
@@ -263,15 +217,7 @@ public abstract class POILogger
                     final Object obj3, final Object obj4, final Object obj5,
                     final Object obj6, final Object obj7, final Object obj8)
     {
-        
-
-        if (check(level))
-        {
-            log(level,
-                    new StringBuffer(128).append(obj1).append(obj2)
-                        .append(obj3).append(obj4).append(obj5).append(obj6)
-                        .append(obj7).append(obj8));
-        }
+       //do nothing
     }
 
     /**
@@ -285,7 +231,7 @@ public abstract class POILogger
     public void log(final int level, final Object obj1,
                     final Throwable exception)
     {
-        log(level , obj1, exception);
+       //do nothing
     }
 
     /**
@@ -300,13 +246,7 @@ public abstract class POILogger
     public void log(final int level, final Object obj1, final Object obj2,
                     final Throwable exception)
     {
-        
-
-        if (check(level))
-        {
-            log(level, new StringBuffer(32).append(obj1).append(obj2),
-                    exception);
-        }
+       //do nothing
     }
 
     /**
@@ -322,13 +262,7 @@ public abstract class POILogger
     public void log(final int level, final Object obj1, final Object obj2,
                     final Object obj3, final Throwable exception)
     {
-        
-
-        if (check(level))
-        {
-            log(level, new StringBuffer(48).append(obj1).append(obj2)
-                .append(obj3), exception);
-        }
+       //do nothing
     }
 
     /**
@@ -346,13 +280,7 @@ public abstract class POILogger
                     final Object obj3, final Object obj4,
                     final Throwable exception)
     {
-        
-
-        if (check(level))
-        {
-            log(level, new StringBuffer(64).append(obj1).append(obj2)
-                .append(obj3).append(obj4), exception);
-        }
+       //do nothing
     }
 
     /**
@@ -371,13 +299,7 @@ public abstract class POILogger
                     final Object obj3, final Object obj4, final Object obj5,
                     final Throwable exception)
     {
-        
-
-        if (check(level))
-        {
-            log(level, new StringBuffer(80).append(obj1).append(obj2)
-                .append(obj3).append(obj4).append(obj5), exception);
-        }
+       //do nothing
     }
 
     /**
@@ -397,14 +319,7 @@ public abstract class POILogger
                     final Object obj3, final Object obj4, final Object obj5,
                     final Object obj6, final Throwable exception)
     {
-        
-
-        if (check(level))
-        {
-            log(level , new StringBuffer(96).append(obj1)
-                .append(obj2).append(obj3).append(obj4).append(obj5)
-                .append(obj6), exception);
-        }
+       //do nothing
     }
 
     /**
@@ -426,14 +341,7 @@ public abstract class POILogger
                     final Object obj6, final Object obj7,
                     final Throwable exception)
     {
-        
-
-        if (check(level))
-        {
-            log(level, new StringBuffer(112).append(obj1).append(obj2)
-                .append(obj3).append(obj4).append(obj5).append(obj6)
-                .append(obj7), exception);
-        }
+      //do nothing
     }
 
     /**
@@ -456,14 +364,7 @@ public abstract class POILogger
                     final Object obj6, final Object obj7, final Object obj8,
                     final Throwable exception)
     {
-        
-
-        if (check(level))
-        {
-            log(level, new StringBuffer(128).append(obj1).append(obj2)
-                .append(obj3).append(obj4).append(obj5).append(obj6)
-                .append(obj7).append(obj8), exception);
-        }
+       //do nothing
     }
 
     /**
@@ -494,10 +395,7 @@ public abstract class POILogger
     public void logFormatted(final int level, final String message,
                              final Object obj1)
     {
-        commonLogFormatted(level, message, new Object[]
-        {
-            obj1
-        });
+       //do nothing
     }
 
     /**
@@ -529,10 +427,7 @@ public abstract class POILogger
     public void logFormatted(final int level, final String message,
                              final Object obj1, final Object obj2)
     {
-        commonLogFormatted(level, message, new Object[]
-        {
-            obj1, obj2
-        });
+       //do nothing
     }
 
     /**
@@ -566,10 +461,7 @@ public abstract class POILogger
                              final Object obj1, final Object obj2,
                              final Object obj3)
     {
-        commonLogFormatted(level, message, new Object[]
-        {
-            obj1, obj2, obj3
-        });
+       //do nothing
     }
 
     /**
@@ -604,130 +496,8 @@ public abstract class POILogger
                              final Object obj1, final Object obj2,
                              final Object obj3, final Object obj4)
     {
-        commonLogFormatted(level, message, new Object[]
-        {
-            obj1, obj2, obj3, obj4
-        });
-    }                             
-
-    private void commonLogFormatted(final int level, final String message,
-                                    final Object [] unflatParams)
-    {
-        
-
-        if (check(level))
-        {
-            Object[] params = flattenArrays(unflatParams);
-
-            if (params[ params.length - 1 ] instanceof Throwable)
-            {
-                log(level, StringUtil.format(message, params),
-                    ( Throwable ) params[ params.length - 1 ]);
-            }
-            else
-            {
-                log(level, StringUtil.format(message, params));
-            }
-        }
+       //do nothing
     }
 
-    /**
-     * Flattens any contained objects. Only tranverses one level deep.
-     */
-
-    private Object [] flattenArrays(final Object [] objects)
-    {
-        List results = new ArrayList();
-
-        for (int i = 0; i < objects.length; i++)
-        {
-            results.addAll(objectToObjectArray(objects[ i ]));
-        }
-        return ( Object [] ) results.toArray(new Object[ results.size() ]);
-    }
-
-    private List objectToObjectArray(Object object)
-    {
-        List results = new ArrayList();
-
-        if (object instanceof byte [])
-        {
-            byte[] array = ( byte [] ) object;
-
-            for (int j = 0; j < array.length; j++)
-            {
-                results.add(new Byte(array[ j ]));
-            }
-        }
-        if (object instanceof char [])
-        {
-            char[] array = ( char [] ) object;
-
-            for (int j = 0; j < array.length; j++)
-            {
-                results.add(new Character(array[ j ]));
-            }
-        }
-        else if (object instanceof short [])
-        {
-            short[] array = ( short [] ) object;
-
-            for (int j = 0; j < array.length; j++)
-            {
-                results.add(new Short(array[ j ]));
-            }
-        }
-        else if (object instanceof int [])
-        {
-            int[] array = ( int [] ) object;
-
-            for (int j = 0; j < array.length; j++)
-            {
-                results.add(new Integer(array[ j ]));
-            }
-        }
-        else if (object instanceof long [])
-        {
-            long[] array = ( long [] ) object;
-
-            for (int j = 0; j < array.length; j++)
-            {
-                results.add(new Long(array[ j ]));
-            }
-        }
-        else if (object instanceof float [])
-        {
-            float[] array = ( float [] ) object;
-
-            for (int j = 0; j < array.length; j++)
-            {
-                results.add(new Float(array[ j ]));
-            }
-        }
-        else if (object instanceof double [])
-        {
-            double[] array = ( double [] ) object;
-
-            for (int j = 0; j < array.length; j++)
-            {
-                results.add(new Double(array[ j ]));
-            }
-        }
-        else if (object instanceof Object [])
-        {
-            Object[] array = ( Object [] ) object;
-
-            for (int j = 0; j < array.length; j++)
-            {
-                results.add(array[ j ]);
-            }
-        }
-        else
-        {
-            results.add(object);
-        }
-        return results;
-    }
-                                 
-}   // end package scope abstract class POILogger
+} 
 
