@@ -152,31 +152,21 @@
       <section><title>HPSF</title>
         <p>
           HPSF ist unsere Portierung des OLE 2 Property Formats.
-          Property Sets werden häufig genutzt, um Metadaten eines
-          Dokuments wie Titel, Autor und Datum zu speichern. Sie
-          können aber auch für applikationsspezifische Anwendungen
-          genutzt werden. Mehr Informationen gibt es auf der
+          Property Sets nehmen die  Metadaten eines
+          Dokuments auf, wie Titel, Autor und Datum. Sie
+          lassen sich aber auch für applikationsspezifische Aufgaben
+          nutzen. Mehr Informationen gibt es auf der
           <link href="../../hpsf/index.html">HPSF-Seite</link>.
         </p>
       </section>
     </section>
-    <section><title>Wo ist der HSSF-Serializer geblieben?</title>
+    <section><title>Mitmachen</title>
       <p>
-        Der HSSF-Serializer war Teil der Version 1.0 und der letzten Versionen
-        von <link
-        href="http://www.sourceforge.net/projects/poi">Sourceforge</link>.
-        Er wurde an das <link
-        href="http://xml.apache.org/cocoon/">Cocoon</link>-Projekt 
-        übertragen und ist Bestandteil von Cocoon seit Version 2.0.2.
-      </p>
-    </section>
-    <section><title>Beitragen</title>
-      <p>
-        Sie möchten zu diesem Projekt beitragen? Hervorragend!
+        Sie möchten bei diesem Projekt mitmachen? Hervorragend!
         Wir brauchen immer begeisterte, fleißige und talentierte Leute, die
-        uns bei den verschiedenen Aufgaben des Projektes helfen. Nummer eins
-        sind Fehlerberichte und Vorschläge für neue Funktionen. Nummer zwei
-        ist die Dokumentation.</p>
+        uns bei den verschiedenen Aufgaben des Projektes helfen. An erster
+	Stelle stehen Hinweise auf Fehler und Vorschläge für neue
+	Funktionen. Ebenso wichtig ist die Dokumentation.</p>
       <p>Egal, ob sie Kritik oder Vorschläge haben,
         oder ob Sie Beiträge in Form von Code oder Dokumentation liefern
 	möchten, immer werden Sie bei uns ein offenes Ohr
