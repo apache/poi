@@ -67,15 +67,11 @@ import java.awt.Rectangle;
 import java.awt.Font;
 
 import java.io.Serializable;
+import java.text.*;
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFFont;
+import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.hssf.util.HSSFColor;
-import org.apache.poi.hssf.util.HSSFColor.WHITE;
+
 
 
 /**
@@ -87,9 +83,92 @@ import org.apache.poi.hssf.util.HSSFColor.WHITE;
 public class SVTableCellRenderer extends JLabel
     implements TableCellRenderer, Serializable
 {
+  private static final Color black = getAWTColor(new HSSFColor.BLACK());
+  private static final Color white = getAWTColor(new HSSFColor.WHITE());
+
     protected static Border noFocusBorder = new EmptyBorder(1, 1, 1, 1);
+    protected SVBorder cellBorder = new SVBorder();
+
+
     private HSSFWorkbook wb = null;
     private Hashtable colors = HSSFColor.getIndexHash();
+
+    /** This class holds the references to the predefined cell formats.
+     */
+    private class CellFormatter {
+      private Format[] textFormatter;
+
+      private DecimalFormat generalNumberFormat = new DecimalFormat("0");
+
+      public CellFormatter() {
+        textFormatter = new Format[0x31];
+
+        textFormatter[0x01] = new DecimalFormat("0");
+        textFormatter[0x02] = new DecimalFormat("0.00");
+        textFormatter[0x03] = new DecimalFormat("#,##0");
+        textFormatter[0x04] = new DecimalFormat("#,##0.00");
+        textFormatter[0x05] = new DecimalFormat("$#,##0;$#,##0");
+        textFormatter[0x06] = new DecimalFormat("$#,##0;$#,##0");
+        textFormatter[0x07] = new DecimalFormat("$#,##0.00;$#,##0.00");
+        textFormatter[0x08] = new DecimalFormat("$#,##0.00;$#,##0.00");
+        textFormatter[0x09] = new DecimalFormat("0%");
+        textFormatter[0x0A] = new DecimalFormat("0.00%");
+        textFormatter[0x0B] = new DecimalFormat("0.00E0");
+//??        textFormatter[0x0C] = new DecimalFormat("# ?/?");
+//??        textFormatter[0x0D] = new DecimalFormat("# ??/??");
+        textFormatter[0x0E] = new SimpleDateFormat("M/d/yy");
+        textFormatter[0x0F] = new SimpleDateFormat("d-MMM-yy");
+        textFormatter[0x10] = new SimpleDateFormat("d-MMM");
+        textFormatter[0x11] = new SimpleDateFormat("MMM-yy");
+        textFormatter[0x12] = new SimpleDateFormat("h:mm a");
+        textFormatter[0x13] = new SimpleDateFormat("h:mm:ss a");
+        textFormatter[0x14] = new SimpleDateFormat("h:mm");
+        textFormatter[0x15] = new SimpleDateFormat("h:mm:ss");
+        textFormatter[0x16] = new SimpleDateFormat("M/d/yy h:mm");
+        // 0x17 - 0x24 reserved for international and undocumented 0x25, "(#,##0_);(#,##0)"
+        //start at 0x26
+        //jmh need to do colour
+        //"(#,##0_);[Red](#,##0)"
+        textFormatter[0x26] = new DecimalFormat("#,##0;#,##0");
+        //jmh need to do colour
+        //(#,##0.00_);(#,##0.00)
+        textFormatter[0x27] = new DecimalFormat("#,##0.00;#,##0.00");
+        textFormatter[0x28] = new DecimalFormat("#,##0.00;#,##0.00");
+//??        textFormatter[0x29] = new DecimalFormat("_(*#,##0_);_(*(#,##0);_(* \"-\"_);_(@_)");
+//??        textFormatter[0x2A] = new DecimalFormat("_($*#,##0_);_($*(#,##0);_($* \"-\"_);_(@_)");
+//??        textFormatter[0x2B] = new DecimalFormat("_(*#,##0.00_);_(*(#,##0.00);_(*\"-\"??_);_(@_)");
+//??        textFormatter[0x2C] = new DecimalFormat("_($*#,##0.00_);_($*(#,##0.00);_($*\"-\"??_);_(@_)");
+        textFormatter[0x2D] = new SimpleDateFormat("mm:ss");
+//??        textFormatter[0x2E] = new SimpleDateFormat("[h]:mm:ss");
+        textFormatter[0x2F] = new SimpleDateFormat("mm:ss.0");
+        textFormatter[0x30] = new DecimalFormat("##0.0E0");
+      }
+
+      public String format(short index, Object value) {
+        if (index == 0)
+          return value.toString();
+        if (textFormatter[index] == null)
+          throw new RuntimeException("Sorry. I cant handle the format code :"+Integer.toHexString(index));
+        return textFormatter[index].format(value);
+      }
+
+      public String format(short index, double value) {
+        if (index == 0)
+          return generalNumberFormat.format(value);
+        if (textFormatter[index] == null)
+          throw new RuntimeException("Sorry. I cant handle the format code :"+Integer.toHexString(index));
+        if (textFormatter[index] instanceof DecimalFormat) {
+          return ((DecimalFormat)textFormatter[index]).format(value);
+        }
+        else throw new RuntimeException("Sorry. I cant handle a non decimal formatter for a decimal value :"+Integer.toHexString(index));
+      }
+
+      public boolean useRedColor(short index, double value) {
+        return (((index == 0x06)||(index == 0x08)||(index == 0x26) || (index == 0x27)) && (value < 0));
+      }
+    }
+
+    private final CellFormatter cellFormatter = new CellFormatter();
 
     public SVTableCellRenderer(HSSFWorkbook wb) {
 	super();
@@ -102,17 +181,11 @@ public class SVTableCellRenderer extends JLabel
                           boolean isSelected, boolean hasFocus, int row, int column) {
 	boolean isBorderSet = false;
 
-	if (isSelected) {
-	   setForeground(table.getSelectionForeground());
-	   setBackground(table.getSelectionBackground());
-	}
-
         //If the JTables default cell renderer has been setup correctly the
         //value will be the HSSFCell that we are trying to render
         HSSFCell c = (HSSFCell)value;
 
         if (c != null) {
-
           HSSFCellStyle s = c.getCellStyle();
           HSSFFont f = wb.getFontAt(s.getFontIndex());
           boolean isbold = f.getBoldweight() > HSSFFont.BOLDWEIGHT_NORMAL;
@@ -128,98 +201,87 @@ public class SVTableCellRenderer extends JLabel
 
           Font font = new Font(f.getFontName(),fontstyle,fontheight);
           setFont(font);
-          
-          HSSFColor clr = null;
+
           if (s.getFillPattern() == HSSFCellStyle.SOLID_FOREGROUND) {
-            clr = (HSSFColor)colors.get(new Integer(s.getFillForegroundColor()));
-          }
-          if (clr == null) clr = new HSSFColor.WHITE();
+            setBackground(getAWTColor(s.getFillForegroundColor(), white));
+          } else setBackground(white);
 
-          short[] rgb = clr.getTriplet();
-          Color awtcolor = new Color(rgb[0],rgb[1],rgb[2]);
+          setForeground(getAWTColor(f.getColor(), black));
 
-          setBackground(awtcolor);
+          cellBorder.setBorder(getAWTColor(s.getTopBorderColor(), black),
+                               getAWTColor(s.getRightBorderColor(), black),
+                               getAWTColor(s.getBottomBorderColor(), black),
+                               getAWTColor(s.getLeftBorderColor(), black),
+                               s.getBorderTop(), s.getBorderRight(),
+                               s.getBorderBottom(), s.getBorderLeft(),
+                               hasFocus);
+            setBorder(cellBorder);
+            isBorderSet=true;
 
-          clr = (HSSFColor)colors.get(new Integer(f.getColor()));
-          if (clr == null) clr = new HSSFColor.BLACK();
-          rgb = clr.getTriplet();
-          awtcolor = new Color(rgb[0],rgb[1],rgb[2]);
-          setForeground(awtcolor);
-
-/*          if (s.getBorderBottom() != HSSFCellStyle.BORDER_NONE ||
-              s.getBorderTop()    != HSSFCellStyle.BORDER_NONE ||
-              s.getBorderLeft()   != HSSFCellStyle.BORDER_NONE ||
-              s.getBorderRight()  != HSSFCellStyle.BORDER_NONE) {
-*/
-              int borderTop = s.getBorderTop();
-              int borderRight = s.getBorderRight();
-              int borderBottom = s.getBorderBottom();
-              int borderLeft = s.getBorderLeft();
-              
-              //OUCH! This could causing rendering performance problems.
-              //Need to somehow create once and store
-              SVBorder border = new SVBorder(Color.black, Color.black,
-                                           Color.black, Color.black,
-                                           borderTop, borderRight,
-                                           borderBottom, borderLeft,
-                                           s.getBorderTop() != HSSFCellStyle.BORDER_NONE,
-                                           s.getBorderRight() != HSSFCellStyle.BORDER_NONE,
-                                           s.getBorderBottom() != HSSFCellStyle.BORDER_NONE,
-                                           s.getBorderLeft() != HSSFCellStyle.BORDER_NONE);
-              setBorder(border);
-              isBorderSet=true;
-
-              //Set the value that is rendered for the cell
-          switch (c.getCellType()) {
-            case HSSFCell.CELL_TYPE_BLANK:
-              setValue("");
-            break;
-            case HSSFCell.CELL_TYPE_BOOLEAN:
-              if (c.getBooleanCellValue()) {
-                setValue("true");
-              } else {
-                setValue("false");
-              }
-            break;
-            case HSSFCell.CELL_TYPE_FORMULA:
-            case HSSFCell.CELL_TYPE_NUMERIC:
-              setValue(""+c.getNumericCellValue());
-            break;
-            case HSSFCell.CELL_TYPE_STRING:
-              setValue(c.getStringCellValue());
-            break;
-            default:
-              setValue("?");
-          }
-              //Set the text alignment of the cell
-              switch (s.getAlignment()) {
-                case HSSFCellStyle.ALIGN_GENERAL:
-                case HSSFCellStyle.ALIGN_LEFT:
-                case HSSFCellStyle.ALIGN_JUSTIFY:
-                case HSSFCellStyle.ALIGN_FILL:
-                  setHorizontalAlignment(SwingConstants.LEFT);
-                  break;
-                case HSSFCellStyle.ALIGN_CENTER:
-                case HSSFCellStyle.ALIGN_CENTER_SELECTION:
-                  setHorizontalAlignment(SwingConstants.CENTER);
-                  break;
-                case HSSFCellStyle.ALIGN_RIGHT:
-                  setHorizontalAlignment(SwingConstants.RIGHT);
-                  break;
-                default:
-                  setHorizontalAlignment(SwingConstants.LEFT);
-                  break;
-              }
-//          }
-       } else {
-           setValue("");
-          setBackground(Color.white);
-       }
+            //Set the value that is rendered for the cell
+            switch (c.getCellType()) {
+              case HSSFCell.CELL_TYPE_BLANK:
+                setValue("");
+              break;
+              case HSSFCell.CELL_TYPE_BOOLEAN:
+                if (c.getBooleanCellValue()) {
+                  setValue("true");
+                } else {
+                  setValue("false");
+                }
+              break;
+              case HSSFCell.CELL_TYPE_FORMULA:
+              case HSSFCell.CELL_TYPE_NUMERIC:
+                short format = s.getDataFormat();
+                double numericValue = c.getNumericCellValue();
+                if (cellFormatter.useRedColor(format, numericValue))
+                  setForeground(Color.red);
+                else setForeground(null);
+                setValue(cellFormatter.format(format, c.getNumericCellValue()));
+              break;
+              case HSSFCell.CELL_TYPE_STRING:
+                setValue(c.getStringCellValue());
+              break;
+              default:
+                setValue("?");
+            }
+            //Set the text alignment of the cell
+            switch (s.getAlignment()) {
+              case HSSFCellStyle.ALIGN_LEFT:
+              case HSSFCellStyle.ALIGN_JUSTIFY:
+              case HSSFCellStyle.ALIGN_FILL:
+                setHorizontalAlignment(SwingConstants.LEFT);
+                break;
+              case HSSFCellStyle.ALIGN_CENTER:
+              case HSSFCellStyle.ALIGN_CENTER_SELECTION:
+                setHorizontalAlignment(SwingConstants.CENTER);
+                break;
+              case HSSFCellStyle.ALIGN_GENERAL:
+              case HSSFCellStyle.ALIGN_RIGHT:
+                setHorizontalAlignment(SwingConstants.RIGHT);
+                break;
+              default:
+                setHorizontalAlignment(SwingConstants.LEFT);
+                break;
+            }
+        } else {
+          setValue("");
+          setBackground(white);
+        }
 
 
 	if (hasFocus) {
             if (!isBorderSet) {
-	        setBorder( UIManager.getBorder("Table.focusCellHighlightBorder") );
+              cellBorder.setBorder(black,
+                                   black,
+                                   black,
+                                   black,
+                                   HSSFCellStyle.BORDER_NONE,
+                                   HSSFCellStyle.BORDER_NONE,
+                                   HSSFCellStyle.BORDER_NONE,
+                                   HSSFCellStyle.BORDER_NONE,
+                                   isSelected);
+              setBorder(cellBorder);
             }
 	    if (table.isCellEditable(row, column)) {
 	        setForeground( UIManager.getColor("Table.focusCellForeground") );
@@ -234,10 +296,8 @@ public class SVTableCellRenderer extends JLabel
 	boolean colorMatch = (back != null) && ( back.equals(table.getBackground()) ) && table.isOpaque();
         setOpaque(!colorMatch);
 	// ---- end optimization to aviod painting background ----
-
 	return this;
     }
-
 
     public void validate() {}
 
@@ -263,4 +323,20 @@ public class SVTableCellRenderer extends JLabel
     protected void setValue(Object value) {
 	setText((value == null) ? "" : value.toString());
     }
+
+    /** This method retrieves the AWT Color representation from the colour hash table
+     *
+     */
+    private final Color getAWTColor(int index, Color deflt) {
+      HSSFColor clr = (HSSFColor)colors.get(new Integer(index));
+      if (clr == null) return deflt;
+      return getAWTColor(clr);
+    }
+
+    private static final Color getAWTColor(HSSFColor clr) {
+      short[] rgb = clr.getTriplet();
+      return new Color(rgb[0],rgb[1],rgb[2]);
+    }
+
+
 }
