@@ -10,6 +10,9 @@ package org.apache.poi.hpsf;
  */
 public class Constants
 {
+
+    /** <p>Codepage for Macintosh Roman (MacRoman)</p> */
+    public static final int CP_MACROMAN = 10000;
     
     /** <p>Codepage for SJIS</p> */
     public static final int CP_SJIS = 932;
