@@ -19,6 +19,7 @@
     <import file="${ant.home}/src/core/xbuild.xml"/>
     <taskdef file="${ant.home}/src/core/tasks.properties"/>
     <importcent name="java" />
+    <importcent name="junit" />
     <importcent name="checkstyle" />
     <importcent name="forrest" />
             
@@ -33,7 +34,7 @@
     <echo> 
     --------------------------------------------------------------
 
-          ${xgump.module.project.name} ${xgump.module.project.version.major}.${xgump.module.project.version.minor}   [${YEAR}]
+          ${jxpath:/references/module.xml/root/module/project[1]/@name}  [${YEAR}]
 
     --------------------------------------------------------------
      Using ${ant.version}
@@ -84,7 +85,7 @@
   <target  name="generate-records"
            description="generate-records">
 
-    <ant antfile="${xlayout.source.targets.dir}/record-generation/xbuild.xml"
+    <ant antfile="${project.src.dir}/targets/record-generation/xbuild.xml"
             target="generate-records"/>
     
   </target>     
@@ -96,7 +97,7 @@
   <target  name="generate-types"
            description="generate-types">
 
-    <ant antfile="${xlayout.source.targets.dir}/record-generation/xbuild.xml"
+    <ant antfile="${project.src.dir}/targets/record-generation/xbuild.xml"
             target="generate-types"/>
     
   </target>     
