@@ -7,6 +7,9 @@
     <mkdir dir="${dist.root}"/>
     <mkdir dir="${dist.src.dir}"/>
     <mkdir dir="${dist.src.dir}/lib"/>
+    <mkdir dir="${dist.src.dir}/lib/core"/>
+    <mkdir dir="${dist.src.dir}/lib/optional"/>
+    <mkdir dir="${dist.src.dir}/lib/endorsed"/>        
     <mkdir dir="${dist.src.dir}/src"/>
     <mkdir dir="${dist.src.dir}/src/java"/>
     <mkdir dir="${dist.src.dir}/src/documentation"/>
@@ -14,6 +17,7 @@
     <mkdir dir="${dist.src.dir}/src/scratchpad"/>
     <mkdir dir="${dist.src.dir}/src/testcases"/>
     <mkdir dir="${dist.src.dir}/src/contrib"/>
+    <mkdir dir="${dist.src.dir}/src/examples"/>
     <mkdir dir="${dist.src.dir}/src/targets"/>    
     <mkdir dir="${dist.src.dir}/docs"/>
     <mkdir dir="${dist.src.dir}/docs/apidocs"/>
@@ -34,7 +38,7 @@
     <copy todir="${dist.src.dir}/lib">
       <fileset dir="${lib.dir}"/>
     </copy>
-
+        
     <copy todir="${dist.src.dir}/src/resources" filtering="on">
       <fileset dir="${resource.dir}">
         <exclude name="**/*.gif"/>
@@ -63,6 +67,10 @@
       <fileset dir="${contrib.dir}"/>
     </copy>
 
+    <copy todir="${dist.src.dir}/src/examples" filtering="off">
+      <fileset dir="${examples.dir}"/>
+    </copy>
+    
     <copy todir="${dist.src.dir}/src/targets" filtering="off">
       <fileset dir="./src/targets"/>
     </copy>
@@ -131,10 +139,20 @@
     <mkdir dir="${dist.root}"/>
     <mkdir dir="${dist.bin.dir}"/>
     <mkdir dir="${dist.bin.dir}/lib"/>
+    <mkdir dir="${dist.src.dir}/lib/core"/>
+    <mkdir dir="${dist.src.dir}/lib/optional"/>    
     <mkdir dir="${dist.bin.dir}/docs"/>
     <mkdir dir="${dist.bin.dir}/docs/apidocs"/>
 
-    <copy file="${build.dir}/${name}.jar" tofile="${dist.bin.dir}/lib/${name}-${version}.jar"/>
+    <copy todir="${dist.bin.dir}/lib/core">
+      <fileset dir="${lib.dir}/core"/>
+    </copy>
+    
+    <copy todir="${dist.bin.dir}/lib/optional">
+      <fileset dir="${lib.dir}/optional"/>
+    </copy>
+    
+    <copy file="${build.dir}/${name}.jar" tofile="${dist.bin.dir}/lib/core/${name}-${version}.jar"/>
     
     <copy todir="${dist.bin.dir}/docs">
       <fileset dir="${build.docs}"/>
@@ -184,15 +202,15 @@
   <!-- =================================================================== -->
   <target name="distclean" depends="clean" description="* Cleans everything to the original state">
     <delete dir="${build.root}"/>
-    <delete file="${dist.target}/${Name}-${version}.tar.gz"/>
-    <delete file="${dist.target}/${Name}-${version}.tar"/>
-    <delete file="${dist.target}/${Name}-${version}.zip"/>
-    <delete file="${dist.target}/${Name}-${version}-src.tar.gz"/>
-    <delete file="${dist.target}/${Name}-${version}-src.tar"/>
-    <delete file="${dist.target}/${Name}-${version}-src.zip"/>
-    <delete file="${dist.target}/${Name}-${version}-bin.tar.gz"/>
-    <delete file="${dist.target}/${Name}-${version}-bin.tar"/>
-    <delete file="${dist.target}/${Name}-${version}-bin.zip"/>
+    <delete file="${dist.target}/core/${Name}-${version}.tar.gz"/>
+    <delete file="${dist.target}/core/${Name}-${version}.tar"/>
+    <delete file="${dist.target}/core/${Name}-${version}.zip"/>
+    <delete file="${dist.target}/core/${Name}-${version}-src.tar.gz"/>
+    <delete file="${dist.target}/core/${Name}-${version}-src.tar"/>
+    <delete file="${dist.target}/core/${Name}-${version}-src.zip"/>
+    <delete file="${dist.target}/core/${Name}-${version}-bin.tar.gz"/>
+    <delete file="${dist.target}/core/${Name}-${version}-bin.tar"/>
+    <delete file="${dist.target}/core/${Name}-${version}-bin.zip"/>
     <delete dir="${dist.root}"/>
   </target>
   
