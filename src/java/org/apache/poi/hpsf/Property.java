@@ -89,6 +89,7 @@ import org.apache.poi.hpsf.littleendian.*;
  * @see Variant
  *
  * @author Rainer Klute (klute@rainer-klute.de)
+ * @author Drew Varner (Drew.Varner InAndAround sc.edu)
  * @version $Id$
  * @since 2002-02-09
  */
@@ -202,6 +203,23 @@ public class Property
                 while (src[last] == 0 && first <= last)
                     last--;
                 value = new String(src, first, last - first + 1);
+                break;
+            }
+            case Variant.VT_CF:
+            {
+                // the first four bytes in src, from
+                // src[offset] to src[offset + 3] contain
+                // the DWord for VT_CF, so skip it, we don't
+                // need it
+
+                // truncate the length of the return array by
+                // a DWord length (4 bytes)
+                length = length - DWord.LENGTH;
+
+                final byte[] v = new byte[length];
+                for (int i = 0; i < length; i++)
+                    v[i] = src[offset + i + DWord.LENGTH];
+                value = v;
                 break;
             }
             default:

@@ -50,14 +50,6 @@
  * individuals on behalf of the Apache Software Foundation.  For more
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
-*
-* Portions of this software are based upon public domain software
-* originally written at the National Center for Supercomputing Applications,
-* University of Illinois, Urbana-Champaign.
- *
- * Portions of this software are based upon public domain software
- * originally written at the National Center for Supercomputing Applications,
- * University of Illinois, Urbana-Champaign.
  */
 
 package org.apache.poi.hpsf;
@@ -307,9 +299,34 @@ public class Variant
     public final static int VT_CF = 71;
 
     /**
-     * <p>[P] A Class ID. <span style="background-color:
-     * #ffff00">How long is this? How is it to be
-     * interpreted?</span></p>
+     * <p>[P] A Class ID.</p>
+     * <p>It consists of a 32 bit unsigned integer indicating the size
+     * of the structure, a 32 bit signed integer indicating (Clipboard
+     * Format Tag) indicating the type of data that it contains, and
+     * then a byte array containing the data.</p>
+     *
+     * <p>The valid Clipboard Format Tags are:
+     * <ul>
+     *     <li>{@link Thumbnail#CFTAG_WINDOWS}</li>
+     *     <li>{@link Thumbnail#CFTAG_MACINTOSH}</li>
+     *     <li>{@link Thumbnail#CFTAG_NODATA}</li>
+     *     <li>{@link Thumbnail#CFTAG_FMTID}</li>
+     * </ul></p>
+     *
+     * <p>
+     * <pre>typedef struct  tagCLIPDATA {
+     * // cbSize is the size of the buffer pointed to
+     * // by pClipData, plus sizeof(ulClipFmt)
+     * ULONG              cbSize;
+     * long               ulClipFmt;
+     * BYTE*              pClipData;
+     * } CLIPDATA;</pre>
+     * See
+     * <a href="msdn.microsoft.com/library/en-us/com/stgrstrc_0uwk.asp"
+     *    target="_blank">
+     *   msdn.microsoft.com/library/en-us/com/stgrstrc_0uwk.asp
+     * </a>
+     * </p>
      */
     public final static int VT_CLSID = 72;
 
