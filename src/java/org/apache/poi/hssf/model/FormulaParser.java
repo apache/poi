@@ -214,6 +214,14 @@ public class FormulaParser {
         return  (c ==' ' || c== TAB);
     }
     
+    /**
+     * Determines special characters;primarily in use for definition of string literals
+     * @param c
+     * @return boolean
+     */
+    private boolean IsSpecialChar(char c) {
+    	return (c == '>' || c== '<' || c== '=' || c=='&' || c=='[' || c==']');
+    }
     
 
     /** Skip Over Leading White Space */
@@ -253,10 +261,8 @@ public class FormulaParser {
        converting to uppercase; used for literals */
     private String GetNameAsIs() {
         StringBuffer Token = new StringBuffer();
-        if (!IsAlpha(look)) {
-            Expected("Name");
-        }
-        while (IsAlNum(look) || IsWhite(look)) {
+		
+		while (IsAlNum(look) || IsWhite(look) || IsSpecialChar(look)) {
             Token = Token.append(look);
             GetChar();
         }
