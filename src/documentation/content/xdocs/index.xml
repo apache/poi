@@ -3,7 +3,7 @@
 
 <document>
   <header>
-    <title>Jakarta POI - Java APIs with XML manipulate MS Format</title>
+    <title>Jakarta POI - Java API To Access Microsoft Format Files</title>
     <authors>
       <person id="AO" name="Andrew C. Oliver" email="acoliver@apache.org"/>
       <person id="GJS" name="Glen Stampoultzis" email="poi-user@jakarta.apache.org"/>
