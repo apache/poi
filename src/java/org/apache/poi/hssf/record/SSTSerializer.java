@@ -93,8 +93,11 @@ class SSTSerializer
         this.numUniqueStrings = numUniqueStrings;
         this.sstRecordHeader = new SSTRecordHeader( numStrings, numUniqueStrings );
 
-        this.bucketAbsoluteOffsets = new int[strings.size()/DEFAULT_BUCKET_SIZE+1];
-        this.bucketRelativeOffsets = new int[strings.size()/DEFAULT_BUCKET_SIZE+1];
+        int infoRecs = (strings.size() / SSTSerializer.DEFAULT_BUCKET_SIZE);
+        if ((strings.size() % SSTSerializer.DEFAULT_BUCKET_SIZE) != 0)
+          infoRecs ++;
+        this.bucketAbsoluteOffsets = new int[infoRecs];
+        this.bucketRelativeOffsets = new int[infoRecs];
     }
 
     /**

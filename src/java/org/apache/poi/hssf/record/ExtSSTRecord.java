@@ -61,13 +61,13 @@ import java.util.ArrayList;
 
 /**
  * Title:        Extended Static String Table<P>
- * Description:  I really don't understand this thing... its supposed to be "a hash
- *               table for optimizing external copy operations"  --
- *<P>
- *               This sounds like a job for Marc "BitMaster" Johnson aka the
- *               "Hawaiian Master Chef".<P>
+ * Description: This record is used for a quick lookup into the SST record. This
+ *              record breaks the SST table into a set of buckets. The offsets
+ *              to these buckets within the SST record are kept as well as the
+ *              position relative to the start of the SST record.
  * REFERENCE:  PG 313 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
  * @author Andrew C. Oliver (acoliver at apache dot org)
+ * @author Jason Height (jheight at apache dot org)
  * @version 2.0-pre
  * @see org.apache.poi.hssf.record.ExtSSTInfoSubRecord
  */
@@ -75,8 +75,9 @@ import java.util.ArrayList;
 public class ExtSSTRecord
     extends Record
 {
+    public static final int DEFAULT_BUCKET_SIZE = 8;
     public final static short sid = 0xff;
-    private short             field_1_strings_per_bucket;
+    private short             field_1_strings_per_bucket = DEFAULT_BUCKET_SIZE;
     private ArrayList         field_2_sst_info;
 
 
@@ -120,12 +121,11 @@ public class ExtSSTRecord
         }
     }
 
-    // this probably doesn't work but we don't really care at this point
     protected void fillFields(byte [] data, short size, int offset)
     {
         field_2_sst_info           = new ArrayList();
         field_1_strings_per_bucket = LittleEndian.getShort(data, 0 + offset);
-        for (int k = 2; k < ((data.length - offset) - size); k += 8)
+        for (int k = 2; k < (size-offset); k += 8)
         {
             byte[] tempdata = new byte[ 8 + offset ];
 
@@ -196,16 +196,15 @@ public class ExtSSTRecord
 
         for (int k = 0; k < getNumInfoRecords(); k++)
         {
-            System.arraycopy(getInfoRecordAt(k).serialize(), 0, data,
-                             pos + offset, 8);
-            pos += getInfoRecordAt(k).getRecordSize();
+            ExtSSTInfoSubRecord rec = getInfoRecordAt(k);
+            pos += rec.serialize(pos + offset, data);
         }
-        return getRecordSize();
+        return pos;
     }
 
     public int getRecordSize()
     {
-        return 4 + 2 + field_2_sst_info.size() * 8;
+        return 6 + 8*getNumInfoRecords();
     }
 
     public short getSid()
