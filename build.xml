@@ -207,8 +207,7 @@
   <target  name="test"   depends="-init, compile"
            description="Compile java source code">
 
- 
-    <antcall target="call-cent">
+     <antcall target="call-cent">
       <param name="cent-name"   value="junit"/> 
       <param name="cent-target" value="test"/> 
     </antcall>
@@ -232,6 +231,11 @@
       <param name="cent-target" value="jdepend-html"/> 
     </antcall>
  
+    <antcall target="call-cent">
+      <param name="cent-name"   value="checkstyle"/> 
+      <param name="cent-target" value="check"/> 
+    </antcall>
+
  </target>     
 
   
@@ -277,36 +281,14 @@
       <param name="cent-name"   value="umldoclet"/> 
       <param name="cent-target" value="doclet"/> 
     </antcall>
-        
-  </target>     
-
-  <!-- ================================== -->
-  <!--       Check style                  -->
-  <!-- ================================== -->
-  
-  <target  name="checkstyle"  depends="-init"
-           description="generate-uml">
-    
-    <antcall target="call-cent">
-      <param name="cent-name"   value="checkstyle"/> 
-      <param name="cent-target" value="check"/> 
-    </antcall>
-
-  </target> 
-
-  <!-- ================================== -->
-  <!--       Generate records                -->
-  <!-- ================================== -->
-  
-  <target  name="try"   depends="-init">
 
     <antcall target="call-cent">
       <param name="cent-name"   value="javasrc"/> 
       <param name="cent-target" value="javasrc"/> 
     </antcall>
-    
+        
   </target>     
-    
+
   <!-- ================================== -->
   <!--       Generate records                -->
   <!-- ================================== -->
@@ -395,21 +377,6 @@
            depends="-init, jar, site"
            description="Generate all"/>
                       
-  <!-- ================================== -->
-  <!--   Create a cent.jar package        -->
-  <!--   using an already deployed cent   -->
-  <!-- ================================== -->
-  
-  <target  name="jar-cent"   depends="-init"
-           description="Compile java source code">
-
-    <antcall target="call-cent">
-      <param name="cent-name"   value="centipede"/> 
-      <param name="cent-target" value="jar-cent"/> 
-    </antcall>
-    
-  </target>     
-
   <!-- =================================================================== -->
   <!-- Import Ant-Centipede -init targets - sets up basic build stuff                          -->
   <!-- =================================================================== -->
