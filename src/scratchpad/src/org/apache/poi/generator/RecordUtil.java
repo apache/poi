@@ -137,6 +137,9 @@ public class RecordUtil
             return pad(new StringBuffer("double"), padTo).toString();
         else if (type.equals("string"))
             return pad(new StringBuffer("String"), padTo).toString();
+        else if (type.equals("hbstring"))
+            return pad(new StringBuffer("String"), padTo).toString();
+        
 
         return "short";   // if we don't know, default to short
     }
@@ -153,6 +156,9 @@ public class RecordUtil
             result = pad(new StringBuffer("short"), padTo);
         else if (type.equals("string"))
             result = pad(new StringBuffer("String"), padTo);
+        else if (type.equals("hbstring"))
+            result = pad(new StringBuffer("HighByteString"), padTo);
+        
         else
             return "";
 
