@@ -1,4 +1,3 @@
-
 /* ====================================================================
  * The Apache Software License, Version 1.1
  *
@@ -55,11 +54,9 @@
 
 package org.apache.poi.util;
 
-import org.apache.log4j.Category;
+import junit.framework.TestCase;
 
-import junit.framework.*;
-
-import java.io.*;
+import java.io.IOException;
 
 /**
  * @author Marc Johnson (mjohnson at apache dot org)
@@ -68,7 +65,7 @@ import java.io.*;
  */
 
 public class TestPOILogFactory
-    extends TestCase
+        extends TestCase
 {
     /**
      * Creates new TestPOILogFactory
@@ -76,9 +73,9 @@ public class TestPOILogFactory
      * @param name
      */
 
-    public TestPOILogFactory(String name)
+    public TestPOILogFactory( String name )
     {
-        super(name);
+        super( name );
     }
 
     /**
@@ -88,26 +85,26 @@ public class TestPOILogFactory
      */
 
     public void testLog()
-        throws IOException
+            throws IOException
     {
         //NKB Testing only that logging classes use gives no exception
         //    Since logging can be disabled, no checking of logging
         //    output is done.
-                 
-        POILogger     l1 = POILogFactory.getLogger("org.apache.poi.hssf.test");
-        POILogger     l2 = POILogFactory.getLogger("org.apache.poi.hdf.test");
 
-        l1.log(POILogger.FATAL, "testing cat org.apache.poi.hssf.*:FATAL");
-        l1.log(POILogger.ERROR, "testing cat org.apache.poi.hssf.*:ERROR");
-        l1.log(POILogger.WARN,  "testing cat org.apache.poi.hssf.*:WARN");
-        l1.log(POILogger.INFO,  "testing cat org.apache.poi.hssf.*:INFO");
-        l1.log(POILogger.DEBUG, "testing cat org.apache.poi.hssf.*:DEBUG");
+        POILogger l1 = POILogFactory.getLogger( "org.apache.poi.hssf.test" );
+        POILogger l2 = POILogFactory.getLogger( "org.apache.poi.hdf.test" );
 
-        l2.log(POILogger.FATAL, "testing cat org.apache.poi.hdf.*:FATAL");
-        l2.log(POILogger.ERROR, "testing cat org.apache.poi.hdf.*:ERROR");
-        l2.log(POILogger.WARN,  "testing cat org.apache.poi.hdf.*:WARN");
-        l2.log(POILogger.INFO,  "testing cat org.apache.poi.hdf.*:INFO");
-        l2.log(POILogger.DEBUG, "testing cat org.apache.poi.hdf.*:DEBUG");
+        l1.log( POILogger.FATAL, "testing cat org.apache.poi.hssf.*:FATAL" );
+        l1.log( POILogger.ERROR, "testing cat org.apache.poi.hssf.*:ERROR" );
+        l1.log( POILogger.WARN, "testing cat org.apache.poi.hssf.*:WARN" );
+        l1.log( POILogger.INFO, "testing cat org.apache.poi.hssf.*:INFO" );
+        l1.log( POILogger.DEBUG, "testing cat org.apache.poi.hssf.*:DEBUG" );
+
+        l2.log( POILogger.FATAL, "testing cat org.apache.poi.hdf.*:FATAL" );
+        l2.log( POILogger.ERROR, "testing cat org.apache.poi.hdf.*:ERROR" );
+        l2.log( POILogger.WARN, "testing cat org.apache.poi.hdf.*:WARN" );
+        l2.log( POILogger.INFO, "testing cat org.apache.poi.hdf.*:INFO" );
+        l2.log( POILogger.DEBUG, "testing cat org.apache.poi.hdf.*:DEBUG" );
 
     }
 
@@ -117,9 +114,9 @@ public class TestPOILogFactory
      * @param ignored_args
      */
 
-    public static void main(String [] ignored_args)
+    public static void main( String[] ignored_args )
     {
-        System.out.println("Testing basic util.POILogFactory functionality");
-        junit.textui.TestRunner.run(TestPOILogFactory.class);
+        System.out.println( "Testing basic util.POILogFactory functionality" );
+        junit.textui.TestRunner.run( TestPOILogFactory.class );
     }
 }

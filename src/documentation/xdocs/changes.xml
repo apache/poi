@@ -11,7 +11,11 @@
         <person id="NKB" name="Nicola Ken Barozzi" email="barozzi@nicolaken.com"/>
         <person id="POI-DEVELOPERS" name="Poi Developers"    email="poi-dev@jakarta.apache.org"/>
     </devs>
-    <release version="1.5" date="Coming Soon">
+    <release version="1.5.1" date="16 June 2002">
+        <action dev="GJS" type="update">Removed depedency on commons logging.  Now define poi.logging system property to enable logging to standard out.</action>
+        <action dev="GJS" type="fix">Fixed SST string handling so that spreadsheets with rich text or extended text will be read correctly.</action>
+    </release>
+    <release version="1.5" date="06 May 2002">
         <action dev="NKB" type="update">New project build.</action>
         <action dev="NKB" type="update">New project documentation system based on Cocoon.</action>
         <action dev="POI-DEVELOPERS" type="update">Package rename</action>
