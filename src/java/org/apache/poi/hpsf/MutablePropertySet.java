@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Copyright 2002-2004   Apache Software Foundation
 
@@ -22,6 +21,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.ListIterator;
@@ -223,7 +223,18 @@ public class MutablePropertySet extends PropertySet
                 throw new NoFormatIDException();
             length += TypeWriter.writeToStream(out, s.getFormatID());
             length += TypeWriter.writeUIntToStream(out, offset);
-            offset += s.getSize();
+            try
+            {
+                offset += s.getSize();
+            }
+            catch (HPSFRuntimeException ex)
+            {
+                final Throwable cause = ex.getReason();
+                if (cause instanceof UnsupportedEncodingException)
+                    throw new IllegalPropertySetDataException(cause);
+                else
+                    throw ex;
+            }
         }
 
         /* Write the sections themselves. */

@@ -302,7 +302,9 @@ public class MutableSection extends Section
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         write(out);
         out.close();
-        sectionBytes = out.toByteArray();
+        /* Pad to multiple of 4 bytes so that even the Windows shell (explorer)
+         * shows custom properties. */
+        sectionBytes = Util.pad4(out.toByteArray());
         return sectionBytes.length;
     }
 
@@ -356,6 +358,7 @@ public class MutableSection extends Section
         /* Writing the section's dictionary it tricky. If there is a dictionary
          * (property 0) the codepage property (property 1) has to be set, too.
          * Since HPSF supports Unicode only, the codepage must be 1200. */
+        int codepage = -1;
         if (getProperty(PropertyIDMap.PID_DICTIONARY) != null)
         {
             final Object p1 = getProperty(PropertyIDMap.PID_CODEPAGE);
@@ -365,14 +368,12 @@ public class MutableSection extends Section
                     throw new IllegalPropertySetDataException
                         ("The codepage property (ID = 1) must be an " +
                          "Integer object.");
-                else if (((Integer) p1).intValue() != Constants.CP_UNICODE)
-                    throw new IllegalPropertySetDataException
-                        ("The codepage property (ID = 1) must be " +
-                         "1200 (Unicode).");
             }
             else
                 throw new IllegalPropertySetDataException
-                    ("The codepage property (ID = 1) must be set.");
+                    ("The codepage property (ID = 1) must be set if the " +
+                     "section contains a dictionary.");
+            codepage = getCodepage();
         }
 
         /* Sort the property list by their property IDs: */
@@ -412,11 +413,11 @@ public class MutableSection extends Section
                 position += p.write(propertyStream, getCodepage());
             else
             {
-                final int codepage = getCodepage();
                 if (codepage == -1)
                     throw new IllegalPropertySetDataException
                         ("Codepage (property 1) is undefined.");
-                position += writeDictionary(propertyStream, dictionary);
+                position += writeDictionary(propertyStream, dictionary,
+                                            codepage);
             }
         }
         propertyStream.close();
@@ -450,40 +451,61 @@ public class MutableSection extends Section
      *
      * @param out The output stream to write to.
      * @param dictionary The dictionary.
+     * @param codepage The codepage to be used to write the dictionary items.
      * @return The number of bytes written
      * @exception IOException if an I/O exception occurs.
      */
     private static int writeDictionary(final OutputStream out,
-                                       final Map dictionary)
+                                       final Map dictionary, final int codepage)
         throws IOException
     {
-        int length = 0;
-        length += TypeWriter.writeUIntToStream(out, dictionary.size());
+        int length = TypeWriter.writeUIntToStream(out, dictionary.size());
         for (final Iterator i = dictionary.keySet().iterator(); i.hasNext();)
         {
             final Long key = (Long) i.next();
             final String value = (String) dictionary.get(key);
-            int sLength = value.length() + 1;
-            if (sLength % 2 == 1)
-                sLength++;
-            length += TypeWriter.writeUIntToStream(out, key.longValue());
-            length += TypeWriter.writeUIntToStream(out, sLength);
-            final char[] ca = value.toCharArray();
-            for (int j = 0; j < ca.length; j++)
+
+            if (codepage == Constants.CP_UNICODE)
             {
-                int high = (ca[j] & 0x0ff00) >> 8;
-                int low  = (ca[j] & 0x000ff);
-                out.write(low);
-                out.write(high);
-                length += 2;
-                sLength--;
+                /* Write the dictionary item in Unicode. */
+                int sLength = value.length() + 1;
+                if (sLength % 2 == 1)
+                    sLength++;
+                length += TypeWriter.writeUIntToStream(out, key.longValue());
+                length += TypeWriter.writeUIntToStream(out, sLength);
+                final char[] ca = value.toCharArray();
+                for (int j = 0; j < ca.length; j++)
+                {
+                    int high = (ca[j] & 0x0ff00) >> 8;
+                    int low  = (ca[j] & 0x000ff);
+                    out.write(low);
+                    out.write(high);
+                    length += 2;
+                    sLength--;
+                }
+                while (sLength > 0)
+                {
+                    out.write(0x00);
+                    out.write(0x00);
+                    length += 2;
+                    sLength--;
+                }
             }
-            while (sLength > 0)
+            else
             {
+                /* Write the dictionary item in another codepage than
+                 * Unicode. */
+                length += TypeWriter.writeUIntToStream(out, key.longValue());
+                length += TypeWriter.writeUIntToStream(out, value.length() + 1);
+                final byte[] ba =
+                    value.getBytes(VariantSupport.codepageToEncoding(codepage));
+                for (int j = 0; j < ba.length; j++)
+                {
+                    out.write(ba[j]);
+                    length++;
+                }
                 out.write(0x00);
-                out.write(0x00);
-                length += 2;
-                sLength--;
+                length++;
             }
         }
         return length;
