@@ -1910,7 +1910,7 @@ public class Sheet implements Model
             for (k = 0; k < columnSizes.size(); k++)
             {
                 ci = ( ColumnInfoRecord ) columnSizes.get(k);
-                if ((ci.getFirstColumn() >= column)
+                if ((column >= ci.getFirstColumn())
                         && (column <= ci.getLastColumn()))
                 {
                     break;
