@@ -61,7 +61,7 @@ import java.util.*;
 
 import junit.framework.*;
 
-import org.apache.poi.poifs.common.PoiFSConstants;
+import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
 
@@ -189,7 +189,7 @@ public class TestBlockAllocationTableWriter
                 offset += LittleEndianConsts.INT_SIZE;
             }
             LittleEndian.putInt(expected, offset,
-                                PoiFSConstants.END_OF_CHAIN);
+                                POIFSConstants.END_OF_CHAIN);
             offset += 4;
             block_index++;
         }
@@ -197,7 +197,7 @@ public class TestBlockAllocationTableWriter
         // add BAT block indices
         LittleEndian.putInt(expected, offset, block_index++);
         offset += LittleEndianConsts.INT_SIZE;
-        LittleEndian.putInt(expected, offset, PoiFSConstants.END_OF_CHAIN);
+        LittleEndian.putInt(expected, offset, POIFSConstants.END_OF_CHAIN);
         for (int k = 0; k < expected.length; k++)
         {
             assertEquals("At offset " + k, expected[ k ], output[ k ]);

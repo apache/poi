@@ -59,7 +59,7 @@ import java.io.*;
 
 import java.util.*;
 
-import org.apache.poi.poifs.common.PoiFSConstants;
+import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.property.Property;
 import org.apache.poi.util.IntegerField;
 import org.apache.poi.util.LittleEndian;
@@ -75,7 +75,7 @@ public class PropertyBlock
     extends BigBlock
 {
     private static final int _properties_per_block =
-        PoiFSConstants.BIG_BLOCK_SIZE / PoiFSConstants.PROPERTY_SIZE;
+        POIFSConstants.BIG_BLOCK_SIZE / POIFSConstants.PROPERTY_SIZE;
     private Property[]       _properties;
 
     /**

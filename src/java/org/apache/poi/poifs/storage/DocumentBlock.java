@@ -61,7 +61,7 @@ import java.io.OutputStream;
 
 import java.util.Arrays;
 
-import org.apache.poi.poifs.common.PoiFSConstants;
+import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.util.IntegerField;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
@@ -118,7 +118,7 @@ public class DocumentBlock
 
     private DocumentBlock()
     {
-        _data = new byte[ PoiFSConstants.BIG_BLOCK_SIZE ];
+        _data = new byte[ POIFSConstants.BIG_BLOCK_SIZE ];
         Arrays.fill(_data, _default_value);
     }
 
@@ -141,7 +141,7 @@ public class DocumentBlock
 
     public boolean partiallyRead()
     {
-        return _bytes_read != PoiFSConstants.BIG_BLOCK_SIZE;
+        return _bytes_read != POIFSConstants.BIG_BLOCK_SIZE;
     }
 
     /**
@@ -168,7 +168,7 @@ public class DocumentBlock
                                            final int size)
     {
         DocumentBlock[] rval   =
-            new DocumentBlock[ (size + PoiFSConstants.BIG_BLOCK_SIZE - 1) / PoiFSConstants.BIG_BLOCK_SIZE ];
+            new DocumentBlock[ (size + POIFSConstants.BIG_BLOCK_SIZE - 1) / POIFSConstants.BIG_BLOCK_SIZE ];
         int             offset = 0;
 
         for (int k = 0; k < rval.length; k++)
@@ -176,14 +176,14 @@ public class DocumentBlock
             rval[ k ] = new DocumentBlock();
             if (offset < array.length)
             {
-                int length = Math.min(PoiFSConstants.BIG_BLOCK_SIZE,
+                int length = Math.min(POIFSConstants.BIG_BLOCK_SIZE,
                                       array.length - offset);
 
                 System.arraycopy(array, offset, rval[ k ]._data, 0, length);
-                if (length != PoiFSConstants.BIG_BLOCK_SIZE)
+                if (length != POIFSConstants.BIG_BLOCK_SIZE)
                 {
                     Arrays.fill(rval[ k ]._data, length,
-                                PoiFSConstants.BIG_BLOCK_SIZE,
+                                POIFSConstants.BIG_BLOCK_SIZE,
                                 _default_value);
                 }
             }
@@ -191,7 +191,7 @@ public class DocumentBlock
             {
                 Arrays.fill(rval[ k ]._data, _default_value);
             }
-            offset += PoiFSConstants.BIG_BLOCK_SIZE;
+            offset += POIFSConstants.BIG_BLOCK_SIZE;
         }
         return rval;
     }
@@ -207,10 +207,10 @@ public class DocumentBlock
     public static void read(final DocumentBlock [] blocks,
                             final byte [] buffer, final int offset)
     {
-        int firstBlockIndex  = offset / PoiFSConstants.BIG_BLOCK_SIZE;
-        int firstBlockOffset = offset % PoiFSConstants.BIG_BLOCK_SIZE;
+        int firstBlockIndex  = offset / POIFSConstants.BIG_BLOCK_SIZE;
+        int firstBlockOffset = offset % POIFSConstants.BIG_BLOCK_SIZE;
         int lastBlockIndex   = (offset + buffer.length - 1)
-                               / PoiFSConstants.BIG_BLOCK_SIZE;
+                               / POIFSConstants.BIG_BLOCK_SIZE;
 
         if (firstBlockIndex == lastBlockIndex)
         {
@@ -223,14 +223,14 @@ public class DocumentBlock
 
             System.arraycopy(blocks[ firstBlockIndex ]._data,
                              firstBlockOffset, buffer, buffer_offset,
-                             PoiFSConstants.BIG_BLOCK_SIZE
+                             POIFSConstants.BIG_BLOCK_SIZE
                              - firstBlockOffset);
-            buffer_offset += PoiFSConstants.BIG_BLOCK_SIZE - firstBlockOffset;
+            buffer_offset += POIFSConstants.BIG_BLOCK_SIZE - firstBlockOffset;
             for (int j = firstBlockIndex + 1; j < lastBlockIndex; j++)
             {
                 System.arraycopy(blocks[ j ]._data, 0, buffer, buffer_offset,
-                                 PoiFSConstants.BIG_BLOCK_SIZE);
-                buffer_offset += PoiFSConstants.BIG_BLOCK_SIZE;
+                                 POIFSConstants.BIG_BLOCK_SIZE);
+                buffer_offset += POIFSConstants.BIG_BLOCK_SIZE;
             }
             System.arraycopy(blocks[ lastBlockIndex ]._data, 0, buffer,
                              buffer_offset, buffer.length - buffer_offset);

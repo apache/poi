@@ -135,7 +135,7 @@ public class TestCellStyle
     }
 
     /**
-     * Tests that is creating a file with a date works correctly.
+     * Tests that is creating a file with a date or an calendar works correctly.
      */
     public void testDataStyle()
             throws Exception
@@ -147,10 +147,21 @@ public class TestCellStyle
         HSSFSheet        s    = wb.createSheet();
         HSSFCellStyle    cs   = wb.createCellStyle();
         HSSFRow row = s.createRow((short)0);
+
+        // with Date:
         HSSFCell cell = row.createCell((short)1);
         cs.setDataFormat(HSSFDataFormat.getFormat("m/d/yy"));
         cell.setCellStyle(cs);
         cell.setCellValue(new Date());
+
+        // with Calendar:
+        cell = row.createCell((short)2);
+        cs.setDataFormat(HSSFDataFormat.getFormat("m/d/yy"));
+        cell.setCellStyle(cs);
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        cell.setCellValue(cal);
+
         wb.write(out);
         out.close();
 

@@ -59,7 +59,7 @@ import java.io.*;
 
 import java.util.*;
 
-import org.apache.poi.poifs.common.PoiFSConstants;
+import org.apache.poi.poifs.common.POIFSConstants;
 
 /**
  * Storage for documents that are too small to use regular
@@ -75,7 +75,7 @@ public class SmallDocumentBlock
     private static final byte _default_fill         = ( byte ) 0xff;
     private static final int  _block_size           = 64;
     private static final int  _blocks_per_big_block =
-        PoiFSConstants.BIG_BLOCK_SIZE / _block_size;
+        POIFSConstants.BIG_BLOCK_SIZE / _block_size;
 
     private SmallDocumentBlock(final byte [] data, final int index)
     {

@@ -55,7 +55,7 @@
 
 package org.apache.poi.poifs.storage;
 
-import org.apache.poi.poifs.common.PoiFSConstants;
+import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.util.IntegerField;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
@@ -73,7 +73,7 @@ public interface HeaderBlockConstants
     public static final long _signature             = 0xE11AB1A1E011CFD0L;
     public static final int  _bat_array_offset      = 0x4c;
     public static final int  _max_bats_in_header    =
-        (PoiFSConstants.BIG_BLOCK_SIZE - _bat_array_offset)
+        (POIFSConstants.BIG_BLOCK_SIZE - _bat_array_offset)
         / LittleEndianConsts.INT_SIZE;
 
     // useful offsets

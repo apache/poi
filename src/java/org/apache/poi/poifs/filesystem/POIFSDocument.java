@@ -59,7 +59,7 @@ import java.io.*;
 
 import java.util.*;
 
-import org.apache.poi.poifs.common.PoiFSConstants;
+import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.dev.POIFSViewable;
 import org.apache.poi.poifs.property.DocumentProperty;
 import org.apache.poi.poifs.property.Property;
@@ -628,7 +628,7 @@ public class POIFSDocument
                     writer.processPOIFSWriterEvent(
                         new POIFSWriterEvent(dstream, path, name, size));
                     dstream.writeFiller(countBlocks()
-                                        * PoiFSConstants
+                                        * POIFSConstants
                                             .BIG_BLOCK_SIZE, DocumentBlock
                                             .getFillByte());
                 }
@@ -654,8 +654,8 @@ public class POIFSDocument
             {
                 if (writer != null)
                 {
-                    rval = (size + PoiFSConstants.BIG_BLOCK_SIZE - 1)
-                           / PoiFSConstants.BIG_BLOCK_SIZE;
+                    rval = (size + POIFSConstants.BIG_BLOCK_SIZE - 1)
+                           / POIFSConstants.BIG_BLOCK_SIZE;
                 }
                 else
                 {

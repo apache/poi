@@ -61,7 +61,7 @@ import java.util.*;
 
 import junit.framework.*;
 
-import org.apache.poi.poifs.common.PoiFSConstants;
+import org.apache.poi.poifs.common.POIFSConstants;
 
 /**
  * Class to test DirectoryProperty functionality

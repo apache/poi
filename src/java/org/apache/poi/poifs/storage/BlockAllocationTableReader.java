@@ -60,7 +60,7 @@ import java.io.OutputStream;
 
 import java.util.*;
 
-import org.apache.poi.poifs.common.PoiFSConstants;
+import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.util.IntList;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
@@ -158,7 +158,7 @@ public class BlockAllocationTableReader
                     offset                  += LittleEndianConsts.INT_SIZE;
                 }
                 chain_index = LittleEndian.getInt(data, chain_index_offset);
-                if (chain_index == PoiFSConstants.END_OF_CHAIN)
+                if (chain_index == POIFSConstants.END_OF_CHAIN)
                 {
                     break;
                 }
@@ -222,7 +222,7 @@ public class BlockAllocationTableReader
         List blocks       = new ArrayList();
         int  currentBlock = startBlock;
 
-        while (currentBlock != PoiFSConstants.END_OF_CHAIN)
+        while (currentBlock != POIFSConstants.END_OF_CHAIN)
         {
             blocks.add(blockList.remove(currentBlock));
             currentBlock = _entries.get(currentBlock);
@@ -261,7 +261,7 @@ public class BlockAllocationTableReader
      * @param index of the current block
      *
      * @return index of the next block (may be
-     *         PoiFSConstants.END_OF_CHAIN, indicating end of chain
+     *         POIFSConstants.END_OF_CHAIN, indicating end of chain
      *         (duh))
      *
      * @exception IOException if the current block is unused
@@ -305,7 +305,7 @@ public class BlockAllocationTableReader
             {
                 int entry = LittleEndian.getInt(data, offset);
 
-                if (entry == PoiFSConstants.UNUSED_BLOCK)
+                if (entry == POIFSConstants.UNUSED_BLOCK)
                 {
                     raw_blocks.zap(_entries.size());
                 }

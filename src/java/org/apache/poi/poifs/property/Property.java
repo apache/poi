@@ -59,7 +59,7 @@ import java.io.*;
 
 import java.util.*;
 
-import org.apache.poi.poifs.common.PoiFSConstants;
+import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.dev.POIFSViewable;
 import org.apache.poi.util.ByteField;
 import org.apache.poi.util.IntegerField;
@@ -124,7 +124,7 @@ public abstract class Property
 
     protected Property()
     {
-        _raw_data = new byte[ PoiFSConstants.PROPERTY_SIZE ];
+        _raw_data = new byte[ POIFSConstants.PROPERTY_SIZE ];
         Arrays.fill(_raw_data, _default_fill);
         _name_size         = new ShortField(_name_size_offset);
         _property_type     =
@@ -160,9 +160,9 @@ public abstract class Property
 
     protected Property(final int index, final byte [] array, final int offset)
     {
-        _raw_data = new byte[ PoiFSConstants.PROPERTY_SIZE ];
+        _raw_data = new byte[ POIFSConstants.PROPERTY_SIZE ];
         System.arraycopy(array, offset, _raw_data, 0,
-                         PoiFSConstants.PROPERTY_SIZE);
+                         POIFSConstants.PROPERTY_SIZE);
         _name_size         = new ShortField(_name_size_offset, _raw_data);
         _property_type     =
             new ByteField(PropertyConstants.PROPERTY_TYPE_OFFSET, _raw_data);

@@ -59,7 +59,7 @@ import java.util.*;
 
 import java.io.IOException;
 
-import org.apache.poi.poifs.common.PoiFSConstants;
+import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.storage.SmallDocumentBlock;
 
 /**
@@ -83,7 +83,7 @@ public class RootProperty
         // overrides
         setNodeColor(_NODE_BLACK);
         setPropertyType(PropertyConstants.ROOT_TYPE);
-        setStartBlock(PoiFSConstants.END_OF_CHAIN);
+        setStartBlock(POIFSConstants.END_OF_CHAIN);
     }
 
     /**

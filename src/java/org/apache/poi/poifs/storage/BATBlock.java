@@ -60,7 +60,7 @@ import java.io.OutputStream;
 
 import java.util.Arrays;
 
-import org.apache.poi.poifs.common.PoiFSConstants;
+import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.util.IntegerField;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
@@ -76,7 +76,7 @@ public class BATBlock
     extends BigBlock
 {
     private static final int  _entries_per_block      =
-        PoiFSConstants.BIG_BLOCK_SIZE / LittleEndianConsts.INT_SIZE;
+        POIFSConstants.BIG_BLOCK_SIZE / LittleEndianConsts.INT_SIZE;
     private static final int  _entries_per_xbat_block = _entries_per_block
                                                             - 1;
     private static final int  _xbat_chain_offset      =
@@ -91,7 +91,7 @@ public class BATBlock
 
     private BATBlock()
     {
-        _data = new byte[ PoiFSConstants.BIG_BLOCK_SIZE ];
+        _data = new byte[ POIFSConstants.BIG_BLOCK_SIZE ];
         Arrays.fill(_data, _default_value);
         _fields = new IntegerField[ _entries_per_block ];
         int offset = 0;
@@ -164,7 +164,7 @@ public class BATBlock
             {
                 blocks[ index ].setXBATChain(startBlock + index + 1);
             }
-            blocks[ index ].setXBATChain(PoiFSConstants.END_OF_CHAIN);
+            blocks[ index ].setXBATChain(POIFSConstants.END_OF_CHAIN);
         }
         return blocks;
     }

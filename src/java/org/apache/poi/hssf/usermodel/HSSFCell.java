@@ -72,6 +72,7 @@ import org.apache.poi.hssf.record.BoolErrRecord;
 import org.apache.poi.hssf.record.ExtendedFormatRecord;
 
 import java.util.Date;
+import java.util.Calendar;
 
 /**
  * High level representation of a cell in a row of a spreadsheet.
@@ -631,6 +632,19 @@ public class HSSFCell
     public void setCellValue(Date value)
     {
         setCellValue(HSSFDateUtil.getExcelDate(value));
+    }
+
+    /**
+     * set a date value for the cell. Excel treats dates as numeric so you will need to format the cell as
+     * a date.
+     *
+     * @param value  the date value to set this cell to.  For formulas we'll set the
+     *        precalculated value, for numerics we'll set its value. For othertypes we
+     *        will change the cell to a numeric cell and set its value.
+     */
+    public void setCellValue(Calendar value)
+    {
+        setCellValue(value.getTime());
     }
 
     /**
