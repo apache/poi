@@ -90,23 +90,23 @@
                     responde en formato XLS.  - Arian Lashkov (alaskov at lbank.lt)
                 </p>
             </section>
-            <section>
-                <title>Bit Tracker by Tracker Inc., and ThinkVirtual</title>
-                <p>
-                    Bit Tracker (http://www.bittracker.com/) es el primer sistema a nivel mundial 
-                    basado en web de registro de brocas (drill bit) para gestionar la información crítica 
-                    de brocas de la compañía y sacar el mayor partido a esos datos. Gestiona todos los datos 
-                    relacionados con las brocas, incluyendo su uso, localización, cómo se utilizan, y 
-                    resultados como su relación de penetración y grado de desgaste con el uso. Estos datos 
-                    necesitan estar disponibles en formato Excel para obtener compatibilidad hacia atrás 
-                    y otros usos en la industria. Después de utilizar los formatos CSV y HTML, necesitábamos
-                    algo mejor para la creación de hojas de cálculo y POI es la respuesta. Funciona fenomenal
-                    y fue muy sencillo de implementar. Gracias al equipo de POI.
-                </p>
-                <p>
-                    Travis Reeder (travis at thinkvirtual dot com)
-                </p>
-            </section>
+<!--            <section>-->
+<!--                <title>Bit Tracker by Tracker Inc., and ThinkVirtual</title>-->
+<!--                <p>-->
+<!--                    Bit Tracker (http://www.bittracker.com/) es el primer sistema a nivel mundial -->
+<!--                    basado en web de registro de brocas (drill bit) para gestionar la información crítica -->
+<!--                    de brocas de la compañía y sacar el mayor partido a esos datos. Gestiona todos los datos -->
+<!--                    relacionados con las brocas, incluyendo su uso, localización, cómo se utilizan, y -->
+<!--                    resultados como su relación de penetración y grado de desgaste con el uso. Estos datos -->
+<!--                    necesitan estar disponibles en formato Excel para obtener compatibilidad hacia atrás -->
+<!--                    y otros usos en la industria. Después de utilizar los formatos CSV y HTML, necesitábamos-->
+<!--                    algo mejor para la creación de hojas de cálculo y POI es la respuesta. Funciona fenomenal-->
+<!--                    y fue muy sencillo de implementar. Gracias al equipo de POI.-->
+<!--                </p>-->
+<!--                <p>-->
+<!--                    Travis Reeder (travis at thinkvirtual dot com)-->
+<!--                </p>-->
+<!--            </section>-->
             <section>
                 <title>Edwards And Kelcey Technology</title>
                 <p>
