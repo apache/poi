@@ -290,7 +290,10 @@ public class FormulaParser {
         } else {
             //this can be either a cell ref or a named range !!
             boolean cellRef = true ; //we should probably do it with reg exp??
-            if (cellRef) {
+            boolean boolLit = (name.equals("TRUE") || name.equals("FALSE"));
+            if (boolLit) {
+                tokens.add(new BoolPtg(name));
+            } else if (cellRef) {
                 tokens.add(new ReferencePtg(name));
             }else {
                 //handle after named range is integrated!!
@@ -697,4 +700,3 @@ end;
         public Node getChild(int number) {return children[number];}
         public Ptg getValue() {return value;}
     }
-    

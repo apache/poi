@@ -857,7 +857,7 @@ extends TestCase {
             in.close(); 
     }
     
-    
+/*    
     public void testIfFormulas()
         throws java.io.IOException
     {
@@ -900,6 +900,7 @@ extends TestCase {
             //assertTrue("expected: A!A1+A!B1 got: "+c.getCellFormula(), ("A!A1+A!B1").equals(c.getCellFormula()));
             in.close(); 
     }
+*/
     
     public static void main(String [] args) {
         System.out

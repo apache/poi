@@ -3,6 +3,7 @@ package org.apache.poi.hssf.model;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.record.formula.*;
+import org.apache.poi.hssf.util.SheetReferences;
 
 /**
  * Test the low level formula parser functionality. High level tests are to 
@@ -65,12 +66,36 @@ public class TestFormulaParser extends TestCase {
         assertTrue("three token expected, got " + ptgs.length, ptgs.length == 3);
     }
 
+    public void testTRUE() throws Exception {
+        FormulaParser fp = new FormulaParser("TRUE", null);
+        fp.parse();
+        Ptg[] asts = fp.getRPNPtg();
+        assertEquals(1, asts.length);
+        BoolPtg flag  = (BoolPtg) asts[0];
+        assertEquals(true, flag.getValue());
+    }
+
+    public void testYN() throws Exception {
+        final String yn = "IF(TRUE,\"Y\",\"N\")";
+        FormulaParser fp = new FormulaParser(yn, null);
+        fp.parse();
+        Ptg[] asts = fp.getRPNPtg();
+        assertEquals(4, asts.length);
+
+        BoolPtg flag  = (BoolPtg) asts[0];
+        StringPtg y = (StringPtg) asts[1];
+        StringPtg n = (StringPtg) asts[2];
+        AttrPtg funif = (AttrPtg) asts[3];
+
+        assertEquals(true, flag.getValue());
+        assertEquals("Y", y.getValue());
+        assertEquals("N", n.getValue());
+        assertEquals("IF", funif.toFormulaString(new SheetReferences()));
+    }
+
     
      public static void main(String [] args) {
         System.out.println("Testing org.apache.poi.hssf.record.formula.FormulaParser");
         junit.textui.TestRunner.run(TestFormulaParser.class);
     }
 }
-
-
-
