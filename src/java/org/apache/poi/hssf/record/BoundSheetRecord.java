@@ -142,7 +142,7 @@ public class BoundSheetRecord
         }
         else
         {
-            field_5_sheetname = new String( data, 8 + offset, nameLength );
+            field_5_sheetname = StringUtil.getFromCompressedUnicode( data, 8 + offset, nameLength );
         }
     }
 

@@ -157,7 +157,7 @@ public class LabelRecord
         }
         else
         {
-            field_6_value = new String(data, 9 + offset, getStringLength());
+            field_6_value = StringUtil.getFromCompressedUnicode(data, 9 + offset, getStringLength());
         }
     }
 

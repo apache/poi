@@ -134,7 +134,7 @@ public class StringRecord
         }
         else
         {
-            field_3_string = new String(data, 3 + offset, field_1_string_length);
+            field_3_string = StringUtil.getFromCompressedUnicode(data, 3 + offset, field_1_string_length);
         }
     }
 

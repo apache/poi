@@ -756,7 +756,7 @@ public class NameRecord extends Record {
 				field_12_builtIn_name = data[ 15 + offset ];
 			}
             
-            field_12_name_text = new String(data, 15 + offset,
+            field_12_name_text = StringUtil.getFromCompressedUnicode(data, 15 + offset,
             LittleEndian.ubyteToInt(field_3_length_name_text));
         
             int start_of_name_definition    = 15 + field_3_length_name_text;
@@ -764,19 +764,19 @@ public class NameRecord extends Record {
             offset, start_of_name_definition);
     
             int start_of_custom_menu_text   = start_of_name_definition + field_4_length_name_definition;
-            field_14_custom_menu_text       = new String(data, start_of_custom_menu_text + offset,
+            field_14_custom_menu_text       = StringUtil.getFromCompressedUnicode(data, start_of_custom_menu_text + offset,
             LittleEndian.ubyteToInt(field_7_length_custom_menu));
     
             int start_of_description_text   = start_of_custom_menu_text + field_8_length_description_text;
-            field_15_description_text       = new String(data, start_of_description_text + offset,
+            field_15_description_text       = StringUtil.getFromCompressedUnicode(data, start_of_description_text + offset,
             LittleEndian.ubyteToInt(field_8_length_description_text));
     
             int start_of_help_topic_text    = start_of_description_text + field_9_length_help_topic_text;
-            field_16_help_topic_text        = new String(data, start_of_help_topic_text + offset,
+            field_16_help_topic_text        = StringUtil.getFromCompressedUnicode(data, start_of_help_topic_text + offset,
             LittleEndian.ubyteToInt(field_9_length_help_topic_text));
     
             int start_of_status_bar_text       = start_of_help_topic_text + field_10_length_status_bar_text;
-            field_17_status_bar_text        = new String(data, start_of_status_bar_text +  offset,
+            field_17_status_bar_text        = StringUtil.getFromCompressedUnicode(data, start_of_status_bar_text +  offset,
             LittleEndian.ubyteToInt(field_10_length_status_bar_text));
         /*} */
     }

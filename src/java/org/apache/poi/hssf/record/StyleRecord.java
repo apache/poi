@@ -134,7 +134,7 @@ public class StyleRecord
         else if (getType() == 0)
         {
             field_2_name_length = data[ 2 + offset ];
-            field_3_name        = new String(data, 3 + offset,
+            field_3_name        = StringUtil.getFromCompressedUnicode(data, 3 + offset,
                                              LittleEndian.ubyteToInt(field_2_name_length));
         }
 
