@@ -15,14 +15,14 @@ import java.util.List;
  * @author  aviks
  * @version 
  */
-public class DummyFunctionPtg extends OperationPtg {
+public class FunctionPtg extends OperationPtg {
     private String name;
     private int numOperands;
     /** Creates new DummyFunctionPtg */
-    public DummyFunctionPtg() {
+    public FunctionPtg() {
     }
     
-    public DummyFunctionPtg(String pName,int pNumOperands) {
+    public FunctionPtg(String pName, int pNumOperands) {
         name=pName;
         numOperands = pNumOperands;
     }

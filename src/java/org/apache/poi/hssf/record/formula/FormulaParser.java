@@ -245,6 +245,12 @@ public class FormulaParser {
             Match(')');
             //this is the end of the function
             tokens.add(new DummyFunctionPtg(name,numArgs));
+        } else if (Look == ':') { // this is a AreaReference
+            String first = name;
+            GetChar();
+            String second = GetName();
+                tokens.add(new AreaPtg(first+":"+second));
+            //String second = ;
         } else {
             //this can be either a cell ref or a named range !!
             
@@ -383,7 +389,7 @@ end;
  
     /** Initialize */
     
-    private void  Init() {
+    private void  init() {
         GetChar();
         SkipWhite();
     }
@@ -393,7 +399,7 @@ end;
      */
     public void parse() {
         synchronized (tokens) {
-            Init();
+            init();
             Expression();
         }
     }
