@@ -6,6 +6,7 @@
     <title>Welcome to POI</title>
     <authors>
       <person id="AO" name="Andrew C. Oliver" email="acoliver@apache.org"/>
+      <person id="TK" name="Tetsuya Kitahata" email="tetsuya@apache.org"/>
     </authors>
   </header>
 
@@ -31,15 +32,15 @@
      </p>
      <p>
        To generate all of teh documentation such as it would appear on the 
-       <link href="http://jakarta.apache.org/poi">POI Website</link> you can execute the "site" target (optionally
+       <link href="http://jakarta.apache.org/poi/">POI Website</link> you can execute the "site" target (optionally
        preceeded by the "clean" target.
      </p>
      <p> 
-       The source for POI's XML documentation is in src/documentation/xdocs.  To edit one of these files you can use
-       a standard text editor.  Translated documentation is under src/documentation/xdocs/trans/xx, where xx is a 
+       The source for POI's XML documentation is in src/documentation/content/xdocs.  To edit one of these files you can use
+       a standard text editor.  Translated documentation is under src/documentation/content/xdocs/trans/xx, where xx is a 
        two to three letter country code, in general this should match the internet domain suffix of the country where
        that language generally evolved or just be generally recognizable and unique.  The directory structure under 
-       src/documentation/trans/xx should match the structure of src/documentation (the English edition) minus the 
+       build/site/trans/xx should match the structure of build/site (the English edition) minus the 
        trans directory.  
      </p>
      <p>
@@ -49,7 +50,7 @@
        requesting it be translated) into English and applied to the master before being applied to a translation.
      </p>
      <p>
-       We prefer you donate translations directly to the <link href="http://jakarta.apache.org/poi">Jakarta POI</link>
+       We prefer you donate translations directly to the <link href="http://jakarta.apache.org/poi/">Jakarta POI</link>
        project rather than hosting them offsite.  We will make every effort to accomidate you as we greatly appreciate your 
        efforts.  However, we understand that sites located within a country are the fastest and most searchable.  Therefore,
        we recommend and welcome folks mirroring the POI site and making the translated page the home page.  You can do this 
@@ -81,12 +82,12 @@
    </section>
    <section><title>Starting a new translation</title>
       <p>
-        To start a translation for a language not already in existance you must create a directory under src/documentation/xdocs/trans with a 
+        To start a translation for a language not already in existance you must create a directory under src/documentation/content/xdocs/trans with a 
         two or three letter designation of the country where the language originated.  (For example es = Spanish, de = German)
-        Copy the book.xml and index.xml file from src/documentation/xdocs directory into the src/documentation/xdocs/trans/xx directory.  
+        Copy the book.xml and index.xml file from src/documentation/content/xdocs directory into the src/documentation/content/xdocs/trans/xx directory.  
         Change all paths in the book.xml and index.xml to match the relative location of the English version.  For example if there is a 
         link in index.html that references ./poifs/index.html, you'd change that to ../../poifs/index.html (up 2 directories from trans/xx).
-        Create a link from the book.xml file in the src/documentation/trans directory (this is necessary or the build will ignore your 
+        Create a link from the book.xml file in the src/documentation/content/trans directory (this is necessary or the build will ignore your 
         documentation) similar to the other languages.
         Run the clean target followed by the docs target.  If the build is successful, congradulations!  If it fails, you probably got one of
         the relative paths incorrect!  Go fix it (the first error message generally contains the most useful information).  If you need help
