@@ -1,57 +1,57 @@
-/* ====================================================================
- * The Apache Software License, Version 1.1
+/*
+ *  ====================================================================
+ *  The Apache Software License, Version 1.1
  *
- * Copyright (c) 2000 The Apache Software Foundation.  All rights
- * reserved.
+ *  Copyright (c) 2000 The Apache Software Foundation.  All rights
+ *  reserved.
  *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
+ *  Redistribution and use in source and binary forms, with or without
+ *  modification, are permitted provided that the following conditions
+ *  are met:
  *
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
+ *  1. Redistributions of source code must retain the above copyright
+ *  notice, this list of conditions and the following disclaimer.
  *
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in
- *    the documentation and/or other materials provided with the
- *    distribution.
+ *  2. Redistributions in binary form must reproduce the above copyright
+ *  notice, this list of conditions and the following disclaimer in
+ *  the documentation and/or other materials provided with the
+ *  distribution.
  *
- * 3. The end-user documentation included with the redistribution,
- *    if any, must include the following acknowledgment:
- *       "This product includes software developed by the
- *        Apache Software Foundation (http://www.apache.org/)."
- *    Alternately, this acknowledgment may appear in the software itself,
- *    if and wherever such third-party acknowledgments normally appear.
+ *  3. The end-user documentation included with the redistribution,
+ *  if any, must include the following acknowledgment:
+ *  "This product includes software developed by the
+ *  Apache Software Foundation (http://www.apache.org/)."
+ *  Alternately, this acknowledgment may appear in the software itself,
+ *  if and wherever such third-party acknowledgments normally appear.
  *
- * 4. The names "Apache" and "Apache Software Foundation" must
- *    not be used to endorse or promote products derived from this
- *    software without prior written permission. For written
- *    permission, please contact apache@apache.org.
+ *  4. The names "Apache" and "Apache Software Foundation" must
+ *  not be used to endorse or promote products derived from this
+ *  software without prior written permission. For written
+ *  permission, please contact apache@apache.org.
  *
- * 5. Products derived from this software may not be called "Apache",
- *    nor may "Apache" appear in their name, without prior written
- *    permission of the Apache Software Foundation.
+ *  5. Products derived from this software may not be called "Apache",
+ *  nor may "Apache" appear in their name, without prior written
+ *  permission of the Apache Software Foundation.
  *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
- * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
- * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
- * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
- * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
- * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- * SUCH DAMAGE.
- * ====================================================================
+ *  THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ *  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ *  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ *  DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
+ *  ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ *  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
+ *  USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ *  ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ *  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+ *  OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ *  SUCH DAMAGE.
+ *  ====================================================================
  *
- * This software consists of voluntary contributions made by many
- * individuals on behalf of the Apache Software Foundation.  For more
- * information on the Apache Software Foundation, please see
- * <http://www.apache.org/>.
+ *  This software consists of voluntary contributions made by many
+ *  individuals on behalf of the Apache Software Foundation.  For more
+ *  information on the Apache Software Foundation, please see
+ *  <http://www.apache.org/>.
  */
-
 package org.apache.poi.hpsf;
 
 import java.io.*;
@@ -59,207 +59,257 @@ import java.util.*;
 import org.apache.poi.hpsf.wellknown.*;
 
 /**
- * <p>Convenience class representing a DocumentSummary Information
- * stream in a Microsoft Office document.</p>
+ *  <p>
  *
- * @see SummaryInformation
+ *  Convenience class representing a DocumentSummary Information stream in a
+ *  Microsoft Office document.</p>
  *
- * @author Rainer Klute (klute@rainer-klute.de)
- * @author Drew Varner (Drew.Varner closeTo sc.edu)
- *
- * @version $Id$
- * @since 2002-02-09
+ *@author     Rainer Klute (klute@rainer-klute.de)
+ *@author     Drew Varner (Drew.Varner closeTo sc.edu)
+ *@created    May 10, 2002
+ *@see        SummaryInformation
+ *@version    $Id: DocumentSummaryInformation.java,v 1.6 2002/05/03 07:29:09
+ *      klute Exp $
+ *@since      2002-02-09
  */
-public class DocumentSummaryInformation extends SpecialPropertySet
-{
+public class DocumentSummaryInformation extends SpecialPropertySet {
 
     /**
-     * <p>Creates a {@link DocumentSummaryInformation} from a given
-     * {@link PropertySet}.</p>
+     *  <p>
      *
-     * @param ps A property set which should be created from a
-     * document summary information stream.
+     *  Creates a {@link DocumentSummaryInformation} from a given {@link
+     *  PropertySet}.</p>
      *
-     * @throws UnexpectedPropertySetTypeException if <var>ps</var>
-     * does not contain a document summary information stream.
+     *@param  ps                                      A property set which
+     *      should be created from a document summary information stream.
+     *@exception  UnexpectedPropertySetTypeException  Description of the
+     *      Exception
+     *@throws  UnexpectedPropertySetTypeException     if <var>ps</var> does not
+     *      contain a document summary information stream.
      */
     public DocumentSummaryInformation(final PropertySet ps)
-        throws UnexpectedPropertySetTypeException
-    {
+             throws UnexpectedPropertySetTypeException {
         super(ps);
-        if (!isDocumentSummaryInformation())
+        if (!isDocumentSummaryInformation()) {
             throw new UnexpectedPropertySetTypeException
-                ("Not a " + getClass().getName());
+                    ("Not a " + getClass().getName());
+        }
     }
 
 
 
     /**
-     * <p>Returns the stream's category (or <code>null</code>).</p>
+     *  <p>
+     *
+     *  Returns the stream's category (or <code>null</code>).</p>
+     *
+     *@return    The category value
      */
-    public String getCategory()
-    {
+    public String getCategory() {
         return (String) getProperty(PropertyIDMap.PID_CATEGORY);
     }
 
 
 
     /**
-     * <p>Returns the stream's presentation format (or
-     * <code>null</code>).</p>
+     *  <p>
+     *
+     *  Returns the stream's presentation format (or <code>null</code>).</p>
+     *
+     *@return    The presentationFormat value
      */
-    public String getPresentationFormat()
-    {
+    public String getPresentationFormat() {
         return (String) getProperty(PropertyIDMap.PID_PRESFORMAT);
     }
 
 
 
     /**
-     * <p>Returns the stream's byte count or 0 if the {@link
-     * DocumentSummaryInformation} does not contain a byte count.</p>
+     *  <p>
+     *
+     *  Returns the stream's byte count or 0 if the {@link
+     *  DocumentSummaryInformation} does not contain a byte count.</p>
+     *
+     *@return    The byteCount value
      */
-    public int getByteCount()
-    {
+    public int getByteCount() {
         return getPropertyIntValue(PropertyIDMap.PID_BYTECOUNT);
     }
 
 
 
     /**
-     * <p>Returns the stream's line count or 0 if the {@link
-     * DocumentSummaryInformation} does not contain a line count.</p>
+     *  <p>
+     *
+     *  Returns the stream's line count or 0 if the {@link
+     *  DocumentSummaryInformation} does not contain a line count.</p>
+     *
+     *@return    The lineCount value
      */
-    public int getLineCount()
-    {
+    public int getLineCount() {
         return getPropertyIntValue(PropertyIDMap.PID_LINECOUNT);
     }
 
 
 
     /**
-     * <p>Returns the stream's par count or 0 if the {@link
-     * DocumentSummaryInformation} does not contain a par count.</p>
+     *  <p>
+     *
+     *  Returns the stream's par count or 0 if the {@link
+     *  DocumentSummaryInformation} does not contain a par count.</p>
+     *
+     *@return    The parCount value
      */
-    public int getParCount()
-    {
+    public int getParCount() {
         return getPropertyIntValue(PropertyIDMap.PID_PARCOUNT);
     }
 
 
 
     /**
-     * <p>Returns the stream's slide count or 0 if the {@link
-     * DocumentSummaryInformation} does not contain a slide count.</p>
+     *  <p>
+     *
+     *  Returns the stream's slide count or 0 if the {@link
+     *  DocumentSummaryInformation} does not contain a slide count.</p>
+     *
+     *@return    The slideCount value
      */
-    public int getSlideCount()
-    {
+    public int getSlideCount() {
         return getPropertyIntValue(PropertyIDMap.PID_SLIDECOUNT);
     }
 
 
 
     /**
-     * <p>Returns the stream's note count or 0 if the {@link
-     * DocumentSummaryInformation} does not contain a note count.</p>
+     *  <p>
+     *
+     *  Returns the stream's note count or 0 if the {@link
+     *  DocumentSummaryInformation} does not contain a note count.</p>
+     *
+     *@return    The noteCount value
      */
-    public int getNoteCount()
-    {
+    public int getNoteCount() {
         return getPropertyIntValue(PropertyIDMap.PID_NOTECOUNT);
     }
 
 
 
     /**
-     * <p>Returns the stream's hidden count or 0 if the {@link
-     * DocumentSummaryInformation} does not contain a hidden count.</p>
+     *  <p>
+     *
+     *  Returns the stream's hidden count or 0 if the {@link
+     *  DocumentSummaryInformation} does not contain a hidden count.</p>
+     *
+     *@return    The hiddenCount value
      */
-    public int getHiddenCount()
-    {
+    public int getHiddenCount() {
         return getPropertyIntValue(PropertyIDMap.PID_HIDDENCOUNT);
     }
 
 
 
     /**
-     * <p>Returns the stream's mmclip count or 0 if the {@link
-     * DocumentSummaryInformation} does not contain a mmclip count.</p>
+     *  <p>
+     *
+     *  Returns the stream's mmclip count or 0 if the {@link
+     *  DocumentSummaryInformation} does not contain a mmclip count.</p>
+     *
+     *@return    The mMClipCount value
      */
-    public int getMMClipCount()
-    {
+    public int getMMClipCount() {
         return getPropertyIntValue(PropertyIDMap.PID_MMCLIPCOUNT);
     }
 
 
 
     /**
-     * <p>Returns <code>true</code> when scaling of the thumbnail is
-     * desired, <code>false</code> if cropping is desired.</p>
+     *  <p>
+     *
+     *  Returns <code>true</code> when scaling of the thumbnail is desired,
+     *  <code>false</code> if cropping is desired.</p>
+     *
+     *@return    The scale value
      */
-    public boolean getScale()
-    {
+    public boolean getScale() {
         return getPropertyBooleanValue(PropertyIDMap.PID_SCALE);
     }
 
 
 
     /**
-     * <p>Returns the stream's heading pair (or <code>null</code>)
-     * <strong>when this method is implemented. Please note that the
-     * return type is likely to change!</strong>
+     *  <p>
+     *
+     *  Returns the stream's heading pair (or <code>null</code>) <strong>when
+     *  this method is implemented. Please note that the return type is likely
+     *  to change!</strong>
+     *
+     *@return    The headingPair value
      */
-    public byte[] getHeadingPair()
-    {
-        if (true)
+    public byte[] getHeadingPair() {
+        if (true) {
             throw new UnsupportedOperationException("FIXME");
+        }
         return (byte[]) getProperty(PropertyIDMap.PID_HEADINGPAIR);
     }
 
 
 
     /**
-     * <p>Returns the stream's doc parts (or <code>null</code>)
-     * <strong>when this method is implemented. Please note that the
-     * return type is likely to change!</strong>
+     *  <p>
+     *
+     *  Returns the stream's doc parts (or <code>null</code>) <strong>when this
+     *  method is implemented. Please note that the return type is likely to
+     *  change!</strong>
+     *
+     *@return    The docparts value
      */
-    public byte[] getDocparts()
-    {
-        if (true)
+    public byte[] getDocparts() {
+        if (true) {
             throw new UnsupportedOperationException("FIXME");
+        }
         return (byte[]) getProperty(PropertyIDMap.PID_DOCPARTS);
     }
 
 
 
     /**
-     * <p>Returns the stream's manager (or <code>null</code>).</p>
+     *  <p>
+     *
+     *  Returns the stream's manager (or <code>null</code>).</p>
+     *
+     *@return    The manager value
      */
-    public String getManager()
-    {
+    public String getManager() {
         return (String) getProperty(PropertyIDMap.PID_MANAGER);
     }
 
 
 
     /**
-     * <p>Returns the stream's company (or <code>null</code>).</p>
+     *  <p>
+     *
+     *  Returns the stream's company (or <code>null</code>).</p>
+     *
+     *@return    The company value
      */
-    public String getCompany()
-    {
+    public String getCompany() {
         return (String) getProperty(PropertyIDMap.PID_COMPANY);
     }
 
 
 
     /**
-     * <p>Returns <code>true</code> if the custom links are hampered
-     * by excessive noise, for all applications.</p>
+     *  <p>
      *
-     * <p><strong>FIXME:</strong> Explain this some more! I (Rainer)
-     * don't understand it.</p>
+     *  Returns <code>true</code> if the custom links are hampered by excessive
+     *  noise, for all applications.</p> <p>
+     *
+     *  <strong>FIXME:</strong> Explain this some more! I (Rainer) don't
+     *  understand it.</p>
+     *
+     *@return    The linksDirty value
      */
-    public boolean getLinksDirty()
-    {
+    public boolean getLinksDirty() {
         return getPropertyBooleanValue(PropertyIDMap.PID_LINKSDIRTY);
     }
 

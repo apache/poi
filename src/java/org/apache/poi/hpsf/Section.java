@@ -1,103 +1,111 @@
-/* ====================================================================
- * The Apache Software License, Version 1.1
+/*
+ *  ====================================================================
+ *  The Apache Software License, Version 1.1
  *
- * Copyright (c) 2000 The Apache Software Foundation.  All rights
- * reserved.
+ *  Copyright (c) 2000 The Apache Software Foundation.  All rights
+ *  reserved.
  *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
+ *  Redistribution and use in source and binary forms, with or without
+ *  modification, are permitted provided that the following conditions
+ *  are met:
  *
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
+ *  1. Redistributions of source code must retain the above copyright
+ *  notice, this list of conditions and the following disclaimer.
  *
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in
- *    the documentation and/or other materials provided with the
- *    distribution.
+ *  2. Redistributions in binary form must reproduce the above copyright
+ *  notice, this list of conditions and the following disclaimer in
+ *  the documentation and/or other materials provided with the
+ *  distribution.
  *
- * 3. The end-user documentation included with the redistribution,
- *    if any, must include the following acknowledgment:
- *       "This product includes software developed by the
- *        Apache Software Foundation (http://www.apache.org/)."
- *    Alternately, this acknowledgment may appear in the software itself,
- *    if and wherever such third-party acknowledgments normally appear.
+ *  3. The end-user documentation included with the redistribution,
+ *  if any, must include the following acknowledgment:
+ *  "This product includes software developed by the
+ *  Apache Software Foundation (http://www.apache.org/)."
+ *  Alternately, this acknowledgment may appear in the software itself,
+ *  if and wherever such third-party acknowledgments normally appear.
  *
- * 4. The names "Apache" and "Apache Software Foundation" must
- *    not be used to endorse or promote products derived from this
- *    software without prior written permission. For written
- *    permission, please contact apache@apache.org.
+ *  4. The names "Apache" and "Apache Software Foundation" must
+ *  not be used to endorse or promote products derived from this
+ *  software without prior written permission. For written
+ *  permission, please contact apache@apache.org.
  *
- * 5. Products derived from this software may not be called "Apache",
- *    nor may "Apache" appear in their name, without prior written
- *    permission of the Apache Software Foundation.
+ *  5. Products derived from this software may not be called "Apache",
+ *  nor may "Apache" appear in their name, without prior written
+ *  permission of the Apache Software Foundation.
  *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
- * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
- * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
- * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
- * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
- * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- * SUCH DAMAGE.
- * ====================================================================
+ *  THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ *  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ *  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ *  DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
+ *  ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ *  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
+ *  USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ *  ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ *  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+ *  OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ *  SUCH DAMAGE.
+ *  ====================================================================
  *
- * This software consists of voluntary contributions made by many
- * individuals on behalf of the Apache Software Foundation.  For more
- * information on the Apache Software Foundation, please see
- * <http://www.apache.org/>.
+ *  This software consists of voluntary contributions made by many
+ *  individuals on behalf of the Apache Software Foundation.  For more
+ *  information on the Apache Software Foundation, please see
+ *  <http://www.apache.org/>.
  */
-
 package org.apache.poi.hpsf;
 
 import java.util.*;
-import org.apache.poi.hpsf.littleendian.*;
+import org.apache.poi.util.LittleEndian;
 import org.apache.poi.hpsf.wellknown.*;
 
 /**
- * <p>Represents a section in a {@link PropertySet}.</p>
+ *  <p>
  *
- * @author Rainer Klute (klute@rainer-klute.de)
- * @author Drew Varner (Drew.Varner allUpIn sc.edu)
+ *  Represents a section in a {@link PropertySet}.</p>
  *
- * @version $Id$
- * @since 2002-02-09
+ *@author     Rainer Klute (klute@rainer-klute.de)
+ *@author     Drew Varner (Drew.Varner allUpIn sc.edu)
+ *@created    May 10, 2002
+ *@version    $Id$
+ *@since      2002-02-09
  */
-public class Section
-{
+public class Section {
 
     /**
-     * <p>Maps property IDs to section-private PID strings. These
-     * strings can be found in the property with ID 0.</p>
+     *  <p>
+     *
+     *  Maps property IDs to section-private PID strings. These strings can be
+     *  found in the property with ID 0.</p>
      */
     protected Map dictionary;
 
-
-
     private ClassID formatID;
 
+
     /**
-     * <p>Returns the format ID. The format ID is the "type" of the
-     * section.</p>
+     *  <p>
+     *
+     *  Returns the format ID. The format ID is the "type" of the section.</p>
+     *
+     *@return    The formatID value
      */
-    public ClassID getFormatID()
-    {
+    public ClassID getFormatID() {
         return formatID;
     }
 
 
 
-    private int offset;
+    private long offset;
+
 
     /**
-     * <p>Returns the offset of the section in the stream.</p>
+     *  <p>
+     *
+     *  Returns the offset of the section in the stream.</p>
+     *
+     *@return    The offset value
      */
-    public int getOffset()
-    {
+    public int getOffset() {
         return offset;
     }
 
@@ -105,11 +113,15 @@ public class Section
 
     private int size;
 
+
     /**
-     * <p>Returns the section's size in bytes.</p>
+     *  <p>
+     *
+     *  Returns the section's size in bytes.</p>
+     *
+     *@return    The size value
      */
-    public int getSize()
-    {
+    public int getSize() {
         return size;
     }
 
@@ -117,11 +129,15 @@ public class Section
 
     private int propertyCount;
 
+
     /**
-     * <p>Returns the number of properties in this section.</p>
+     *  <p>
+     *
+     *  Returns the number of properties in this section.</p>
+     *
+     *@return    The propertyCount value
      */
-    public int getPropertyCount()
-    {
+    public int getPropertyCount() {
         return propertyCount;
     }
 
@@ -129,86 +145,113 @@ public class Section
 
     private Property[] properties;
 
+
     /**
-     * <p>Returns this section's properties.</p>
+     *  <p>
+     *
+     *  Returns this section's properties.</p>
+     *
+     *@return    The properties value
      */
-    public Property[] getProperties()
-    {
+    public Property[] getProperties() {
         return properties;
     }
 
 
 
     /**
-     * <p>Creates a {@link Section} instance from a byte array.</p>
+     *  <p>
      *
-     * @param src Contains the complete property set stream.
+     *  Creates a {@link Section} instance from a byte array.</p>
      *
-     * @param offset The position in the stream that points to the
-     * section's format ID.
+     *@param  src     Contains the complete property set stream.
+     *@param  offset  The position in the stream that points to the section's
+     *      format ID.
      */
-    public Section(final byte[] src, int offset)
-    {
-        /* Read the format ID. */
+    public Section(final byte[] src, int offset) {
+        /*
+         *  Read the format ID.
+         */
         formatID = new ClassID(src, offset);
         offset += ClassID.LENGTH;
 
-        /* Read the offset from the stream's start and positions to
-         * the section header. */
-        this.offset = new DWord(src, offset).intValue();
-        offset = this.offset;
+        /*
+         *  Read the offset from the stream's start and positions to
+         *  the section header.
+         */
+        this.offset = LittleEndian.getUInt(src, offset);
+        offset = (int)this.offset;
 
-        /* Read the section length. */
-        size = new DWord(src, offset).intValue();
-        offset += DWord.LENGTH;
+        /*
+         *  Read the section length.
+         */
+        size = (int)LittleEndian.getUInt(src, offset);
+        offset += LittleEndian.INT_SIZE;
 
-        /* Read the number of properties. */
-        propertyCount = new DWord(src, offset).intValue();
-        offset += DWord.LENGTH;
+        /*
+         *  Read the number of properties.
+         */
+        propertyCount = (int)LittleEndian.getUInt(src, offset);
+        offset += LittleEndian.INT_SIZE;
 
-        /* Read the properties. The offset is positioned at the first
-         * entry of the property list. */
+        /*
+         *  Read the properties. The offset is positioned at the first
+         *  entry of the property list.
+         */
         properties = new Property[propertyCount];
-        for (int i = 0; i < properties.length; i++)
-        {
-            final int id = new DWord(src, offset).intValue();
-            offset += DWord.LENGTH;
+        for (int i = 0; i < properties.length; i++) {
+            final int id = (int)LittleEndian.getUInt(src, offset);
+            offset += LittleEndian.INT_SIZE;
 
-            /* Offset from the section. */
-            final int sOffset = new DWord(src, offset).intValue();
-            offset += DWord.LENGTH;
+            /*
+             *  Offset from the section.
+             */
+            final int sOffset = (int)LittleEndian.getUInt(src, offset);
+            offset += LittleEndian.INT_SIZE;
 
-            /* Calculate the length of the property. */
+            /*
+             *  Calculate the length of the property.
+             */
             int length;
-            if (i == properties.length - 1)
-                length = src.length - this.offset - sOffset;
-            else
-                length =
-                    new DWord(src, offset + DWord.LENGTH).intValue() - sOffset;
+            if (i == properties.length - 1) {
+                length = (int)(src.length - this.offset - sOffset);
+            } else {
+                length = (int)
+                        LittleEndian.getUInt(src, offset + LittleEndian.INT_SIZE) - sOffset;
+            }
 
-            /* Create it. */
+            /*
+             *  Create it.
+             */
             properties[i] =
-                new Property(id, src, this.offset + sOffset, length);
+                    new Property(id, src, this.offset + sOffset, length);
         }
 
-        /* Extract the dictionary (if available). */
+        /*
+         *  Extract the dictionary (if available).
+         */
         dictionary = (Map) getProperty(0);
     }
 
 
 
     /**
-     * <p>Returns the value of the property with the specified ID. If
-     * the property is not available, <code>null</code> is returned
-     * and a subsequent call to {@link #wasNull} will return
-     * <code>true</code>.</p>
+     *  <p>
+     *
+     *  Returns the value of the property with the specified ID. If the property
+     *  is not available, <code>null</code> is returned and a subsequent call to
+     *  {@link #wasNull} will return <code>true</code>.</p>
+     *
+     *@param  id  Description of the Parameter
+     *@return     The property value
      */
-    protected Object getProperty(final int id)
-    {
+    protected Object getProperty(final int id) {
         wasNull = false;
-        for (int i = 0; i < properties.length; i++)
-            if (id == properties[i].getID())
+        for (int i = 0; i < properties.length; i++) {
+            if (id == properties[i].getID()) {
                 return properties[i].getValue();
+            }
+        }
         wasNull = true;
         return null;
     }
@@ -216,78 +259,94 @@ public class Section
 
 
     /**
-     * <p>Returns the value of the numeric property with the specified
-     * ID. If the property is not available, 0 is returned. A
-     * subsequent call to {@link #wasNull} will return
-     * <code>true</code> to let the caller distinguish that case from
-     * a real property value of 0.</p>
+     *  <p>
+     *
+     *  Returns the value of the numeric property with the specified ID. If the
+     *  property is not available, 0 is returned. A subsequent call to {@link
+     *  #wasNull} will return <code>true</code> to let the caller distinguish
+     *  that case from a real property value of 0.</p>
+     *
+     *@param  id  Description of the Parameter
+     *@return     The propertyIntValue value
      */
-    protected int getPropertyIntValue(final int id)
-    {
+    protected int getPropertyIntValue(final int id) {
         final Integer i = (Integer) getProperty(id);
-        if (i != null)
+        if (i != null) {
             return i.intValue();
-        else
+        } else {
             return 0;
+        }
     }
 
 
 
     /**
-     * <p>Returns the value of the boolean property with the specified
-     * ID. If the property is not available, <code>false</code> is
-     * returned. A subsequent call to {@link #wasNull} will return
-     * <code>true</code> to let the caller distinguish that case from
-     * a real property value of <code>false</code>.</p>
+     *  <p>
+     *
+     *  Returns the value of the boolean property with the specified ID. If the
+     *  property is not available, <code>false</code> is returned. A subsequent
+     *  call to {@link #wasNull} will return <code>true</code> to let the caller
+     *  distinguish that case from a real property value of <code>false</code>.
+     *  </p>
+     *
+     *@param  id  Description of the Parameter
+     *@return     The propertyBooleanValue value
      */
-    protected boolean getPropertyBooleanValue(final int id)
-    {
+    protected boolean getPropertyBooleanValue(final int id) {
         final Boolean b = (Boolean) getProperty(id);
-        if (b != null)
+        if (b != null) {
             return b.booleanValue();
-        else
+        } else {
             return false;
+        }
     }
 
 
 
     private boolean wasNull;
 
+
     /**
-     * <p>Checks whether the property which the last call to {@link
-     * #getPropertyIntValue} or {@link #getProperty} tried to access
-     * was available or not. This information might be important for
-     * callers of {@link #getPropertyIntValue} since the latter
-     * returns 0 if the property does not exist. Using {@link
-     * #wasNull} the caller can distiguish this case from a property's
-     * real value of 0.</p>
+     *  <p>
      *
-     * @return <code>true</code> if the last call to {@link
-     * #getPropertyIntValue} or {@link #getProperty} tried to access a
-     * property that was not available, else <code>false</code>.
+     *  Checks whether the property which the last call to {@link
+     *  #getPropertyIntValue} or {@link #getProperty} tried to access was
+     *  available or not. This information might be important for callers of
+     *  {@link #getPropertyIntValue} since the latter returns 0 if the property
+     *  does not exist. Using {@link #wasNull} the caller can distiguish this
+     *  case from a property's real value of 0.</p>
+     *
+     *@return    <code>true</code> if the last call to {@link
+     *      #getPropertyIntValue} or {@link #getProperty} tried to access a
+     *      property that was not available, else <code>false</code>.
      */
-    public boolean wasNull()
-    {
+    public boolean wasNull() {
         return wasNull;
     }
 
 
 
     /**
-     * <p>Returns the PID string associated with a property ID. The ID
-     * is first looked up in the {@link Section}'s private
-     * dictionary. If it is not found there, the method calls {@link
-     * SectionIDMap#getPIDString}.</p>
+     *  <p>
+     *
+     *  Returns the PID string associated with a property ID. The ID is first
+     *  looked up in the {@link Section}'s private dictionary. If it is not
+     *  found there, the method calls {@link SectionIDMap#getPIDString}.</p>
+     *
+     *@param  pid  Description of the Parameter
+     *@return      The pIDString value
      */
-    public String getPIDString(final int pid)
-    {
+    public String getPIDString(final int pid) {
         String s = null;
-        if (dictionary != null)
+        if (dictionary != null) {
             s = (String) dictionary.get(new Integer(pid));
-        if (s == null)
-            s =  SectionIDMap.getPIDString(getFormatID().getBytes(), pid);
-        if (s == null)
+        }
+        if (s == null) {
+            s = SectionIDMap.getPIDString(getFormatID().getBytes(), pid);
+        }
+        if (s == null) {
             s = SectionIDMap.UNDEFINED;
+        }
         return s;
     }
 
