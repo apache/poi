@@ -56,6 +56,8 @@
 package org.apache.poi.hwpf.model.hdftypes;
 
 
+import org.apache.poi.util.LittleEndian;
+
 import org.apache.poi.hwpf.usermodel.Paragraph;
 import org.apache.poi.hwpf.sprm.SprmBuffer;
 
@@ -89,6 +91,19 @@ public class PAPX extends PropertyNode
   public byte[] getBuf()
   {
     return getGrpprl();
+  }
+
+  public short getIstd()
+  {
+    byte[] buf = getGrpprl();
+    if (buf.length == 0)
+    {
+      return 0;
+    }
+    else
+    {
+      return LittleEndian.getShort(buf);
+    }
   }
 
   public boolean equals(Object o)

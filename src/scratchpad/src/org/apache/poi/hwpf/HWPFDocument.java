@@ -64,6 +64,7 @@ import java.io.FileOutputStream;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.common.POIFSConstants;
+import org.apache.poi.hwpf.usermodel.CharacterRun;
 
 import org.apache.poi.hwpf.model.hdftypes.*;
 import org.apache.poi.hwpf.model.io.*;
@@ -327,8 +328,13 @@ public class HWPFDocument
     try
     {
       HWPFDocument doc = new HWPFDocument(new FileInputStream(args[0]));
+      CharacterRun run = new CharacterRun();
+      run.setBold(true);
+      run.setItalic(true);
+      run.setCapitalized(true);
+
       Range range = doc.getRange();
-      range.insertBefore("Hello World!!! HAHAHAHAHA I DID IT!!!");
+      range.insertBefore("Hello World!!! HAHAHAHAHA I DID IT!!!", run);
 
       OutputStream out = new FileOutputStream(args[1]);
       doc.write(out);
