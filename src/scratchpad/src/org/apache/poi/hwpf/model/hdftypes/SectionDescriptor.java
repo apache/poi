@@ -66,6 +66,10 @@ public class SectionDescriptor
   private short fnMpr;
   private int fcMpr;
 
+  public SectionDescriptor()
+  {
+  }
+
   public SectionDescriptor(byte[] buf, int offset)
   {
     fn = LittleEndian.getShort(buf, offset);
@@ -82,4 +86,24 @@ public class SectionDescriptor
     return fc;
   }
 
+  public void setFc(int fc)
+  {
+    this.fc = fc;
+  }
+
+  public byte[] toByteArray()
+  {
+    int offset = 0;
+    byte[] buf = new byte[12];
+
+    LittleEndian.putShort(buf, offset, fn);
+    offset += LittleEndian.SHORT_SIZE;
+    LittleEndian.putInt(buf, offset, fc);
+    offset += LittleEndian.INT_SIZE;
+    LittleEndian.putShort(buf, offset, fnMpr);
+    offset += LittleEndian.SHORT_SIZE;
+    LittleEndian.putInt(buf, offset, fcMpr);
+
+    return buf;
+  }
 }

@@ -60,14 +60,22 @@ package org.apache.poi.hwpf.model.hdftypes;
 public class SEPX extends PropertyNode
 {
 
-  public SEPX(int start, int end, byte[] grpprl)
+  SectionDescriptor _sed;
+
+  public SEPX(SectionDescriptor sed, int start, int end, byte[] grpprl)
   {
     super(start, end, grpprl);
+    _sed = sed;
   }
 
   public byte[] getGrpprl()
   {
     return super.getBuf();
+  }
+
+  public SectionDescriptor getSectionDescriptor()
+  {
+    return _sed;
   }
 
 }
