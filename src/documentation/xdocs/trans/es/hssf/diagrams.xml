@@ -1,10 +1,10 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "../dtd/document-v11.dtd">
 
 <document>
  <header>
   <title>HSSF</title>
-  <subtitle>Overview</subtitle>
+  <subtitle>Vista General</subtitle>
   <authors>
    <person name="Andrew C. Oliver" email="acoliver@apache.org"/>     
    <person name="Nicola Ken Barozzi" email="barozzi@nicolaken.com"/>     
@@ -12,26 +12,20 @@
  </header>
 
  <body>
- <section title="Overview">
+ <section title="Vista General">
         <p>
-                This section is intended for diagrams (UML/etc) that help
-                explain HSSF. 
+        		Se espera usar esta sección para diagramas (UML/etc) que ayudan a 
+        		explicar HSSF.
         </p>
         <ul>
                <li>
-                      <link href="diagram1.html">HSSF usermodel class diagram</link> -                
-                      by Matthew Young (myoung at westernasset dot com)
+                      <link href="diagram1.html">Diagrama de Clases del UserModel</link> -                
+                      por Matthew Young (myoung at westernasset dot com)
                </li>
         </ul>
         <p>
-                Have more?  Add a new &quot;bug&quot; to the bug database with [DOCUMENTATION]
-                prefacing the description and a link to the file on an http server 
-                somewhere.  If you don't have your own webserver, then you can email it
-                to (acoliver at apache dot org) provided its &lt; 5MB.  Diagrams should be 
-                in some format that can be read at least on Linux and Windows.  Diagrams
-                that can be edited are preferrable, but lets face it, there aren't too 
-                many good affordable UML tools yet!  And no they don't HAVE to be UML...
-                just useful.
+        		Tiene más?  Agrega un nuevo &quot;bug&quot; al archivo de bugs con la
+        		palabra [DOCUMENTATION] antes de la descripción y un link al file en algun webserver.  Si no tiene su propio webserver, mandaselo por email a  (acoliver at apache dot org) siempre y cuando el tamaño del archivo es menor a 5 Mb.  Diagramas deben estar en algun formato compatible, por lo menos, con Linux y Windows.  Se prefieren diagramas que se pueden cambiar o modificar pero entendemos que hay pocos programas para crear UML que están a buen precio.  Y no, no TIENEN que ser UML... solo tienen que ser utiles.
         </p>
   </section>
  </body>
