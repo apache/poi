@@ -1,0 +1,291 @@
+HTML BODY {
+	FONT-FAMILY: Verdana, Helvetica, Arial, sans-serif
+}
+BODY DIV {
+	FONT-FAMILY: Verdana, Helvetica, Arial, sans-serif
+}
+BODY P {
+	FONT-FAMILY: Verdana, Helvetica, Arial, sans-serif
+}
+BODY TH {
+	FONT-FAMILY: Verdana, Helvetica, Arial, sans-serif
+}
+BODY TD {
+	FONT-FAMILY: Verdana, Helvetica, Arial, sans-serif
+}
+BODY LI {
+	FONT-FAMILY: Verdana, Helvetica, Arial, sans-serif
+}
+BODY DL {
+	FONT-FAMILY: Verdana, Helvetica, Arial, sans-serif
+}
+BODY DD {
+	FONT-FAMILY: Verdana, Helvetica, Arial, sans-serif
+}
+INPUT {
+	FONT-FAMILY: Verdana, Helvetica, Arial, sans-serif
+}
+SELECT {
+	FONT-FAMILY: Verdana, Helvetica, Arial, sans-serif
+}
+TEXTAREA {
+	FONT-FAMILY: Verdana, Helvetica, Arial, sans-serif
+}
+.app H3 {
+	FONT-FAMILY: Verdana, Helvetica, Arial, sans-serif
+}
+.app H4 {
+	FONT-FAMILY: Verdana, Helvetica, Arial, sans-serif
+}
+HTML BODY {
+	FONT-SIZE: 12px; voice-family: inherit
+}
+BODY TH {
+	FONT-SIZE: 12px; voice-family: inherit
+}
+BODY TD {
+	FONT-SIZE: 12px; voice-family: inherit
+}
+TEXTAREA {
+	FONT-SIZE: 12px; voice-family: inherit
+}
+.app H3 {
+	FONT-SIZE: 12px; voice-family: inherit
+}
+.app H4 {
+	FONT-SIZE: 12px; voice-family: inherit
+}
+#rightcol H3 {
+	FONT-SIZE: 12px; voice-family: inherit
+}
+.app PRE {
+	FONT-SIZE: 12px; voice-family: inherit
+}
+.app CODE {
+	FONT-SIZE: 12px; voice-family: inherit
+}
+UNKNOWN {
+	FONT-SIZE: 12px
+}
+small {
+	FONT-SIZE: 10px! important; voice-family: inherit
+}
+DIV#footer TD {
+	FONT-SIZE: 10px! important; voice-family: inherit
+}
+DIV#login {
+	FONT-SIZE: 10px! important; voice-family: inherit
+}
+DIV#helptext TH {
+	FONT-SIZE: 10px! important; voice-family: inherit
+}
+DIV#helptext TD {
+	FONT-SIZE: 10px! important; voice-family: inherit
+}
+DIV.tabs TH {
+	FONT-SIZE: 10px! important; voice-family: inherit
+}
+DIV.tabs TD {
+	FONT-SIZE: 10px! important; voice-family: inherit
+}
+INPUT {
+	FONT-SIZE: 10px! important; voice-family: inherit
+}
+SELECT {
+	FONT-SIZE: 10px! important; voice-family: inherit
+}
+.paginate {
+	FONT-SIZE: 10px! important; voice-family: inherit
+}
+.functnbar {
+	FONT-SIZE: 10px! important; voice-family: inherit
+}
+.functnbar2 {
+	FONT-SIZE: 10px! important; voice-family: inherit
+}
+.functnbar3 {
+	FONT-SIZE: 10px! important; voice-family: inherit
+}
+UNKNOWN {
+	FONT-SIZE: 10px! important
+}
+P {
+	MARGIN-TOP: 0.67em; MARGIN-BOTTOM: 0.67em
+}
+UL {
+	MARGIN-TOP: 0.67em; MARGIN-BOTTOM: 0.67em
+}
+OL {
+	MARGIN-TOP: 0.67em; MARGIN-BOTTOM: 0.67em
+}
+DL {
+	MARGIN-TOP: 0.67em; MARGIN-BOTTOM: 0.67em
+}
+#bodycol {
+	LINE-HEIGHT: 1.4
+}
+TABLE {
+	BORDER-TOP-STYLE: none; BORDER-RIGHT-STYLE: none; BORDER-LEFT-STYLE: none; BORDER-BOTTOM-STYLE: none
+}
+TH {
+	BORDER-TOP-STYLE: none; BORDER-RIGHT-STYLE: none; BORDER-LEFT-STYLE: none; BORDER-BOTTOM-STYLE: none
+}
+TD {
+	BORDER-TOP-STYLE: none; BORDER-RIGHT-STYLE: none; BORDER-LEFT-STYLE: none; BORDER-BOTTOM-STYLE: none
+}
+#leftcol DIV DIV {
+	MARGIN-TOP: 0.4em
+}
+.app H3 {
+	BACKGROUND: url(../images/nw_min.gif) #036 no-repeat
+}
+.app H3 {
+	PADDING-RIGHT: 5px; PADDING-LEFT: 5px; PADDING-BOTTOM: 5px; MARGIN-LEFT: 2px; COLOR: #fff; MARGIN-RIGHT: 2px; PADDING-TOP: 5px
+}
+.app H4 {
+	PADDING-RIGHT: 5px; PADDING-LEFT: 5px; PADDING-BOTTOM: 5px; MARGIN-LEFT: 2px; COLOR: #fff; MARGIN-RIGHT: 2px; PADDING-TOP: 5px
+}
+.functnbar {
+	PADDING-RIGHT: 5px; PADDING-LEFT: 5px; PADDING-BOTTOM: 5px; MARGIN-LEFT: 2px; COLOR: #fff; MARGIN-RIGHT: 2px; PADDING-TOP: 5px
+}
+.app H3 A {
+	COLOR: white; TEXT-DECORATION: none
+}
+.app H4 {
+	BACKGROUND: url(../images/nw_min.gif) #ccc no-repeat; COLOR: #000
+}
+#apphead H2 {
+	MARGIN-TOP: 0px; MARGIN-BOTTOM: 0.2em
+}
+FORM {
+	MARGIN-TOP: 0px; MARGIN-BOTTOM: 0px
+}
+DT {
+	FONT-WEIGHT: bold
+}
+H3 {
+	MARGIN-BOTTOM: 0px
+}
+H4 {
+	MARGIN-BOTTOM: 0px
+}
+.mtb {
+	BORDER-TOP: #ccc 1px solid
+}
+.colbar {
+	BACKGROUND: #ccc
+}
+.colbar {
+	PADDING-RIGHT: 5px; MARGIN-TOP: 2px; PADDING-LEFT: 5px; PADDING-BOTTOM: 5px; MARGIN-LEFT: 2px; MARGIN-RIGHT: 2px; PADDING-TOP: 5px
+}
+.courtesylinks {
+	MARGIN: 1.5em 0px
+}
+.docs .toc {
+	BORDER-RIGHT: #666 1px solid; PADDING-RIGHT: 0.5em; BORDER-TOP: #666 1px solid; PADDING-LEFT: 0.5em; BACKGROUND: #efefef; PADDING-BOTTOM: 0.5em; BORDER-LEFT: #666 1px solid; PADDING-TOP: 0.5em; BORDER-BOTTOM: #666 1px solid
+}
+.docs .toc H3 {
+	MARGIN-TOP: 0px; BORDER-TOP-STYLE: none; BORDER-RIGHT-STYLE: none; BORDER-LEFT-STYLE: none; BORDER-BOTTOM-STYLE: none
+}
+UNKNOWN {
+	MARGIN-TOP: -0.67em; TEXT-INDENT: 5%
+}
+.docs .courtesylinks P {
+	TEXT-INDENT: 0px
+}
+.docs UL {
+	PADDING-LEFT: 5%; MARGIN-LEFT: 0px
+}
+.docs OL {
+	PADDING-LEFT: 5%; MARGIN-LEFT: 0px
+}
+.docs DD {
+	PADDING-LEFT: 5%; MARGIN-LEFT: 0px
+}
+.docs H3 {
+	MARGIN-BOTTOM: 0.1em
+}
+.docs H4 {
+	MARGIN-BOTTOM: 0.1em
+}
+.docs H3 {
+	BORDER-TOP: #666 1px solid
+}
+.docs H4 {
+	BORDER-TOP: #ccc 1px solid
+}
+#banner {
+	BORDER-TOP: #369 1px solid; BORDER-BOTTOM: #003 1px solid
+}
+#helptext TH {
+	BORDER-RIGHT: #996 1px solid; BORDER-BOTTOM: #996 1px solid
+}
+#helptext TD {
+	BORDER-RIGHT: #cc9 1px solid; BORDER-BOTTOM: #cc9 1px solid
+}
+UL.tasks {
+	PADDING-LEFT: 0px; MARGIN-LEFT: 2px
+}
+UL.tasks LI {
+	DISPLAY: inline; MARGIN-RIGHT: 1.5em
+}
+.tabs {
+	MARGIN-TOP: 0.67em; MARGIN-LEFT: 2px; MARGIN-RIGHT: 2px; BORDER-BOTTOM: #999 1em solid
+}
+.tabs TH {
+	BORDER-RIGHT: #666 1px solid; BACKGROUND: url(../images/nw_min.gif) no-repeat left top
+}
+.tabs TD {
+	BORDER-RIGHT: #666 1px solid; BACKGROUND: url(../images/nw_min.gif) no-repeat left top; BORDER-BOTTOM: #ccc 1px solid
+}
+#navcolumn DIV DIV {
+	BACKGROUND-POSITION: 0.5em 0.5em; BACKGROUND-IMAGE: url(../images/strich.gif); BACKGROUND-REPEAT: no-repeat
+}
+#navcolumn DIV DIV DIV {
+	BACKGROUND-IMAGE: none; PADDING-BOTTOM: 0.1em; BACKGROUND-COLOR: white
+}
+#navcolumn DIV.selected {
+	BACKGROUND-IMAGE: none; PADDING-BOTTOM: 0.1em; BACKGROUND-COLOR: white
+}
+.modbar {
+	BACKGROUND: #ccc
+}
+.modbar {
+	PADDING-RIGHT: 5px; PADDING-LEFT: 5px; PADDING-BOTTOM: 5px; PADDING-TOP: 5px; BORDER-BOTTOM: #999 1px solid
+}
+.collapsebar {
+	MARGIN-BOTTOM: 0.67em
+}
+.functnbar {
+	BACKGROUND: url(../images/nw_min.gif) #999 no-repeat left top
+}
+.functnbar2 {
+	BACKGROUND: url(../images/sw_min.gif) #999 no-repeat left bottom
+}
+.functnbar3 {
+	BACKGROUND: url(../images/sw_min.gif) #ccc no-repeat left bottom
+}
+.functnbar {
+	PADDING-RIGHT: 5px; PADDING-LEFT: 5px; MARGIN-BOTTOM: 0.67em; PADDING-BOTTOM: 5px; MARGIN-LEFT: 2px; MARGIN-RIGHT: 2px; PADDING-TOP: 5px
+}
+.functnbar2 {
+	PADDING-RIGHT: 5px; PADDING-LEFT: 5px; MARGIN-BOTTOM: 0.67em; PADDING-BOTTOM: 5px; MARGIN-LEFT: 2px; MARGIN-RIGHT: 2px; PADDING-TOP: 5px
+}
+.functnbar3 {
+	PADDING-RIGHT: 5px; PADDING-LEFT: 5px; MARGIN-BOTTOM: 0.67em; PADDING-BOTTOM: 5px; MARGIN-LEFT: 2px; MARGIN-RIGHT: 2px; PADDING-TOP: 5px
+}
+.functnbar {
+	COLOR: #000
+}
+.functnbar2 {
+	COLOR: #000
+}
+.functnbar A {
+	COLOR: #000; TEXT-DECORATION: underline
+}
+.functnbar2 A {
+	COLOR: #000; TEXT-DECORATION: underline
+}
+#topmodule {
+	BORDER-RIGHT: #999 1px solid; BORDER-TOP: white 1px solid; MARGIN-TOP: -8px; BORDER-BOTTOM: #999 1px solid
+}

@@ -1,0 +1,207 @@
+BODY {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; BACKGROUND: white; PADDING-BOTTOM: 0px; MARGIN: 0px; COLOR: black; PADDING-TOP: 0px
+}
+BODY {
+	FONT-FAMILY: Lucida, Arial, Helvetica, sans-serif
+}
+DIV {
+	FONT-FAMILY: Lucida, Arial, Helvetica, sans-serif
+}
+P {
+	FONT-FAMILY: Lucida, Arial, Helvetica, sans-serif
+}
+TH {
+	FONT-FAMILY: Lucida, Arial, Helvetica, sans-serif
+}
+TD {
+	FONT-FAMILY: Lucida, Arial, Helvetica, sans-serif
+}
+LI {
+	FONT-FAMILY: Lucida, Arial, Helvetica, sans-serif
+}
+DL {
+	FONT-FAMILY: Lucida, Arial, Helvetica, sans-serif
+}
+DD {
+	FONT-FAMILY: Lucida, Arial, Helvetica, sans-serif
+}
+CODE {
+	FONT-FAMILY: 'Andale Mono', Courier, monospace
+}
+PRE {
+	FONT-FAMILY: 'Andale Mono', Courier, monospace
+}
+H2 {
+	FONT-FAMILY: Tahoma, Verdana, Helvetica, Arial, sans-serif
+}
+H3 {
+	FONT-FAMILY: Tahoma, Verdana, Helvetica, Arial, sans-serif
+}
+H4 {
+	FONT-FAMILY: Tahoma, Verdana, Helvetica, Arial, sans-serif
+}
+H2 {
+	FONT-SIZE: 1.5em
+}
+TH {
+	VERTICAL-ALIGN: top; TEXT-ALIGN: left
+}
+TD {
+	VERTICAL-ALIGN: top; TEXT-ALIGN: left
+}
+.right {
+	TEXT-ALIGN: right
+}
+.center {
+	TEXT-ALIGN: center
+}
+#globalnav {
+	FONT-WEIGHT: bold
+}
+#leftcol A:link {
+	COLOR: blue
+}
+#leftcol A:visited {
+	COLOR: blue
+}
+A:active {
+	COLOR: #f60! important
+}
+A:hover {
+	COLOR: #f60! important
+}
+#leftcol A:active {
+	COLOR: #f60! important
+}
+#leftcol A:hover {
+	COLOR: #f60! important
+}
+#login A:link {
+	COLOR: white; TEXT-DECORATION: underline
+}
+#login A:visited {
+	COLOR: white; TEXT-DECORATION: underline
+}
+#login A:active {
+	COLOR: #f60! important
+}
+#login A:hover {
+	COLOR: #f60! important
+}
+#helptext A {
+	TEXT-DECORATION: none
+}
+.app TH {
+	BACKGROUND-COLOR: #ccc
+}
+.a TD {
+	BACKGROUND: #efefef
+}
+.b TD {
+	BACKGROUND: #fff
+}
+.directory .a TD {
+	BACKGROUND: #ffff99
+}
+.directory .b TD {
+	BACKGROUND: #ffffcc
+}
+.datatablechild TH {
+	BACKGROUND: #efefef; COLOR: #000
+}
+.datatablechild TR.a TD {
+	BACKGROUND: #cf9
+}
+.axial TH {
+	COLOR: black; BACKGROUND-COLOR: #efefef; TEXT-ALIGN: right
+}
+.alert {
+	COLOR: red
+}
+.confirm {
+	COLOR: green
+}
+.info {
+	COLOR: blue
+}
+.selection {
+	FONT-WEIGHT: bold; BACKGROUND: #ffc
+}
+.stb {
+	MARGIN-TOP: 1em
+}
+.mtb {
+	MARGIN-TOP: 2em
+}
+DD {
+	MARGIN-BOTTOM: 0.67em
+}
+#footer {
+	MARGIN: 8px
+}
+.username {
+	WHITE-SPACE: nowrap
+}
+#login {
+	COLOR: white
+}
+#login .username {
+	FONT-WEIGHT: bold
+}
+#helptext {
+	MARGIN-TOP: 2em
+}
+#helptext TD DIV {
+	MARGIN: 0.5em
+}
+#helptext TH {
+	BACKGROUND: #cc9
+}
+#helptext TD {
+	BACKGROUND: #ffc
+}
+.docs H2 {
+	COLOR: #666
+}
+.docs H3 {
+	COLOR: #333
+}
+.docs H4 {
+	COLOR: #000
+}
+.tabs A {
+	TEXT-DECORATION: none
+}
+.courtesylinks {
+	MARGIN-TOP: 1em; PADDING-TOP: 1em
+}
+#navcolumn DIV {
+	MARGIN-BOTTOM: 0.67em
+}
+#navcolumn DIV DIV {
+	PADDING-LEFT: 1em; MARGIN-BOTTOM: 0px
+}
+#banner {
+	BACKGROUND: #036; VERTICAL-ALIGN: middle; COLOR: white
+}
+#banner TD {
+	BACKGROUND: #036; VERTICAL-ALIGN: middle; COLOR: white
+}
+BODY #banner #login A {
+	COLOR: white
+}
+.tabs TH {
+	PADDING-RIGHT: 7px; PADDING-LEFT: 7px; COLOR: white; BACKGROUND-COLOR: #999
+}
+.tabs TD {
+	PADDING-RIGHT: 7px; PADDING-LEFT: 7px; BACKGROUND-COLOR: #ccc
+}
+#topmodule TD {
+	PADDING-LEFT: 12px; BACKGROUND: #efefef; VERTICAL-ALIGN: middle
+}
+.datatablechild TH {
+	FONT-WEIGHT: bold; BACKGROUND: #c3c3c3; COLOR: #000
+}
+#navsearch FORM {
+	DISPLAY: inline
+}
