@@ -54,17 +54,19 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import junit.framework.TestCase;
-import org.apache.poi.hssf.model.Sheet;
-import org.apache.poi.hssf.record.HCenterRecord;
-import org.apache.poi.hssf.record.VCenterRecord;
-import org.apache.poi.hssf.record.WSBoolRecord;
-import org.apache.poi.hssf.record.SCLRecord;
-import org.apache.poi.hssf.record.WindowTwoRecord;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+
+import junit.framework.TestCase;
+
+import org.apache.poi.hssf.model.Sheet;
+import org.apache.poi.hssf.record.HCenterRecord;
+import org.apache.poi.hssf.record.SCLRecord;
+import org.apache.poi.hssf.record.VCenterRecord;
+import org.apache.poi.hssf.record.WSBoolRecord;
+import org.apache.poi.hssf.record.WindowTwoRecord;
+import org.apache.poi.hssf.util.Region;
 
 /**
  * Tests HSSFSheet.  This test case is very incomplete at the moment.
@@ -254,4 +256,30 @@ public class TestHSSFSheet
         assertTrue(sclLoc == window2Loc + 1);
 
     }
+    
+
+	/**
+	 * When removing one merged region, it would break
+	 *
+	 */    
+	public void testRemoveMerged() {
+		HSSFWorkbook wb = new HSSFWorkbook();
+		HSSFSheet sheet = wb.createSheet();
+		Region region = new Region(0, (short)0, 1, (short)1);   	
+		sheet.addMergedRegion(region);
+		region = new Region(1, (short)0, 2, (short)1);
+		sheet.addMergedRegion(region);
+		
+    	sheet.removeMergedRegion(0);
+    	
+    	region = sheet.getMergedRegionAt(0);
+    	assertEquals("Left over region should be starting at row 1", 1, region.getRowFrom());
+    	
+    	sheet.removeMergedRegion(0);
+    }
+
+	public static void main(java.lang.String[] args) {
+		 junit.textui.TestRunner.run(TestHSSFSheet.class);
+	}
+    
 }
