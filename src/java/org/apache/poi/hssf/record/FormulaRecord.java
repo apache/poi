@@ -557,8 +557,13 @@ public class FormulaRecord
                 .append("\n");
             buffer.append("    .xf              = ")
                 .append(Integer.toHexString(getXFIndex())).append("\n");
-            buffer.append("    .value           = ").append(getValue())
-                .append("\n");
+            if (Double.isNaN(this.getValue()) && value_data != null)
+              buffer.append("    .value (NaN)     = ")
+                  .append(org.apache.poi.util.HexDump.dump(value_data,0,0))
+                  .append("\n");
+            else
+              buffer.append("    .value           = ").append(getValue())
+                  .append("\n");
             buffer.append("    .options         = ").append(getOptions())
                 .append("\n");
             buffer.append("    .zero            = ").append(field_6_zero)
@@ -610,6 +615,7 @@ public class FormulaRecord
         Ptg ptg = (Ptg)((Ptg)field_8_parsed_expr.get(i)).clone();        
         rec.field_8_parsed_expr.add(i, ptg);
       }
+      rec.value_data = value_data;
       rec.all_data = all_data;
       return rec;
     }

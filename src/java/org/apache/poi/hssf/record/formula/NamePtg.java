@@ -121,6 +121,7 @@ public class NamePtg
       ptg.field_1_ixti = field_1_ixti;
       ptg.field_2_label_index = field_2_label_index;
       ptg.field_3_zero = field_3_zero;
+      ptg.setClass(ptgClass);
       return ptg;
     }
 }

@@ -63,7 +63,8 @@ public class FuncPtg extends AbstractFunctionPtg{
       FuncPtg ptg = new FuncPtg();
       //ptg.field_1_num_args = field_1_num_args;
       ptg.field_2_fnc_index = field_2_fnc_index;
-      return ptg;
+      ptg.setClass(ptgClass);
+     return ptg;
     }
     
     public int getSize() {
