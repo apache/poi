@@ -821,7 +821,7 @@ public class HSSFColor
         {
             255, 153, 0
         };
-        public final static String  hexString = "FFF:9999:0";
+        public final static String  hexString = "FFFF:9999:0";
 
         public short getIndex()
         {
@@ -1654,9 +1654,9 @@ public class HSSFColor
         public final static short   index     = 0x1d;
         public final static short[] triplet   =
         {
-            255, 255, 128
+            255, 128, 128
         };
-        public final static String  hexString = "FFFF:FFFF:8080";
+        public final static String  hexString = "FFFF:8080:8080";
 
         public short getIndex()
         {
@@ -1685,7 +1685,7 @@ public class HSSFColor
         {
             0, 102, 204
         };
-        public final static String  hexString = "0000:6666:CCCC";
+        public final static String  hexString = "0:6666:CCCC";
 
         public short getIndex()
         {
