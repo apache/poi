@@ -55,81 +55,137 @@
  */
 package org.apache.poi.util;
 
-import java.io.FileInputStream;
-import java.io.IOException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.util.*;
 
 /**
- * Provides logging without clients having to mess with
- * configuration/initialization.
+ * A logger class that strives to make it as easy as possible for
+ * developers to write log calls, while simultaneously making those
+ * calls as cheap as possible by performing lazy evaluation of the log
+ * message.<p>
  *
- * @author Andrew C. Oliver (acoliver at apache dot org)
  * @author Marc Johnson (mjohnson at apache dot org)
+ * @author Glen Stampoultzis (glens at apache.org)
  * @author Nicola Ken Barozzi (nicolaken at apache.org)
  */
 
-public class POILogFactory
+public class CommonsLogger extends POILogger
 {
 
-    // map of POILogger instances, with classes as keys
-    private static Map          _loggers = new HashMap();;
+    private static LogFactory   _creator = LogFactory.getFactory();
+    private Log             log   = null;
 
-
+   
+    public void initialize(final String cat)
+    {
+        this.log = _creator.getInstance(cat);
+    }   
+     
     /**
-     * construct a POILogFactory.
+     * Log a message
+     *
+     * @param level One of DEBUG, INFO, WARN, ERROR, FATAL
+     * @param obj1 The object to log.
      */
 
-    private POILogFactory()
+    public void log(final int level, final Object obj1)
     {
-    }
-
-    /**
-     * Get a logger, based on a class name
-     *
-     * @param theclass the class whose name defines the log
-     *
-     * @return a POILogger for the specified class
-     */
-
-    public static POILogger getLogger(final Class theclass)
-    {
-        return getLogger(theclass.getName());
-    }
-    
-    /**
-     * Get a logger, based on a String
-     *
-     * @param cat the String that defines the log
-     *
-     * @return a POILogger for the specified class
-     */
-
-    public static POILogger getLogger(final String cat)
-    {
-        POILogger logger = null;
-
-        if (_loggers.containsKey(cat))
+        if(level==FATAL)
         {
-            logger = ( POILogger ) _loggers.get(cat);
+          if(log.isFatalEnabled())
+          {
+            log.fatal(obj1);
+          }
+        }
+        else if(level==ERROR)
+        {
+          if(log.isErrorEnabled())
+          {
+            log.error(obj1);
+          }
+        }
+        else if(level==WARN)
+        {
+          if(log.isWarnEnabled())
+          {
+            log.warn(obj1);
+          }
+        }
+        else if(level==INFO)
+        {
+          if(log.isInfoEnabled())
+          {
+            log.info(obj1);
+          }
+        }
+        else if(level==DEBUG)
+        {
+          if(log.isDebugEnabled())
+          {
+            log.debug(obj1);
+          }
         }
         else
         {
-            try{
-              String loggerClassName = System.getProperty("org.apache.poi.util.POILogger");
-              Class loggerClass = Class.forName(loggerClassName);
-              logger = ( POILogger ) loggerClass.newInstance();
-            }
-            catch(Exception e){
-            
-              logger = new NullLogger();
-            }
-            
-            logger.initialize(cat);
-            
-            _loggers.put(cat, logger);
+          if(log.isTraceEnabled())
+          {
+            log.trace(obj1);
+          }
         }
-        return logger;
+
     }
-        
-}   // end public class POILogFactory
+
+    /**
+     * Check if a logger is enabled to log at the specified level
+     *
+     * @param level One of DEBUG, INFO, WARN, ERROR, FATAL
+     * @param obj1 The logger to check.
+     */
+
+    public boolean check(final int level)
+    {
+        if(level==FATAL)
+        {
+          if(log.isFatalEnabled())
+          {
+            return true;
+          }
+        }
+        else if(level==ERROR)
+        {
+          if(log.isErrorEnabled())
+          {
+            return true;
+          }
+        }
+        else if(level==WARN)
+        {
+          if(log.isWarnEnabled())
+          {
+            return true;
+          }
+        }
+        else if(level==INFO)
+        {
+          if(log.isInfoEnabled())
+          {
+            return true;
+          }
+        }
+        else if(level==DEBUG)
+        {
+          if(log.isDebugEnabled())
+          {
+            return true;
+          }
+        }
+
+        return false;
+
+    }
+
+ 
+}   // end package scope class POILogger
+

@@ -55,81 +55,54 @@
  */
 package org.apache.poi.util;
 
-import java.io.FileInputStream;
-import java.io.IOException;
+import org.apache.commons.logging.Log;
 
 import java.util.*;
 
 /**
- * Provides logging without clients having to mess with
- * configuration/initialization.
+ * A logger class that strives to make it as easy as possible for
+ * developers to write log calls, while simultaneously making those
+ * calls as cheap as possible by performing lazy evaluation of the log
+ * message.<p>
  *
- * @author Andrew C. Oliver (acoliver at apache dot org)
  * @author Marc Johnson (mjohnson at apache dot org)
+ * @author Glen Stampoultzis (glens at apache.org)
  * @author Nicola Ken Barozzi (nicolaken at apache.org)
  */
 
-public class POILogFactory
+public class SystemOutLogger extends POILogger
 {
+    private String cat;
 
-    // map of POILogger instances, with classes as keys
-    private static Map          _loggers = new HashMap();;
-
-
-    /**
-     * construct a POILogFactory.
-     */
-
-    private POILogFactory()
+    public void initialize(final String cat)
     {
-    }
-
-    /**
-     * Get a logger, based on a class name
-     *
-     * @param theclass the class whose name defines the log
-     *
-     * @return a POILogger for the specified class
-     */
-
-    public static POILogger getLogger(final Class theclass)
-    {
-        return getLogger(theclass.getName());
+       this.cat=cat;
     }
     
     /**
-     * Get a logger, based on a String
+     * Log a message
      *
-     * @param cat the String that defines the log
-     *
-     * @return a POILogger for the specified class
+     * @param level One of DEBUG, INFO, WARN, ERROR, FATAL
+     * @param obj1 The object to log.
      */
 
-    public static POILogger getLogger(final String cat)
+    public void log(final int level, final Object obj1)
     {
-        POILogger logger = null;
-
-        if (_loggers.containsKey(cat))
-        {
-            logger = ( POILogger ) _loggers.get(cat);
-        }
-        else
-        {
-            try{
-              String loggerClassName = System.getProperty("org.apache.poi.util.POILogger");
-              Class loggerClass = Class.forName(loggerClassName);
-              logger = ( POILogger ) loggerClass.newInstance();
-            }
-            catch(Exception e){
-            
-              logger = new NullLogger();
-            }
-            
-            logger.initialize(cat);
-            
-            _loggers.put(cat, logger);
-        }
-        return logger;
+        System.out.println("["+cat+"] "+obj1);
     }
-        
-}   // end public class POILogFactory
+
+    /**
+     * Check if a logger is enabled to log at the specified level
+     *
+     * @param level One of DEBUG, INFO, WARN, ERROR, FATAL
+     * @param obj1 The logger to check.
+     */
+
+    public boolean check(final int level)
+    {
+       return true;
+    }
+
+ 
+}   // end package scope class POILogger
+
