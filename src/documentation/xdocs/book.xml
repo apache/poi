@@ -8,8 +8,7 @@
 
   <menu label="About">
     <menu-item label="Index" href="index.html"/>
-    <menu-item label="History" href="historyandfuture.html"/>
-    <menu-item label="Future"  href="historyandfuture.html"/>
+    <menu-item label="History and Future" href="historyandfuture.html"/>
     <menu-item label="Download" href="http://jakarta.apache.org/builds/jakarta-poi/"/>
     <menu-item label="1.0 Vision" href="plan/POI10Vision.html"/>
     <menu-item label="2.0 Vision" href="plan/POI20Vision.html"/>
@@ -28,6 +27,9 @@
   </menu>
 
   <menu label="References">
+    <menu-item label="Javadocs" href="http://jakarta.apache.org/poi/javadocs/"/>  
+    <menu-item label="Test Results" href="http://jakarta.apache.org/poi/test/"/>  
+    <menu-item label="Metrics" href="http://jakarta.apache.org/poi/metrics/jdepend-report.html"/>  
     <menu-item label="In The News" href="inthenews.html"/>  
     <menu-item label="Live Sites" href="livesites.html"/>
     <menu-item label="XLS spec [PDF]" href="http://sc.openoffice.org/excelfileformat.pdf"/>
