@@ -210,9 +210,9 @@ public abstract class Ptg
                 retval = new ValueReferencePtg(data, offset);
                 break;
 
-    //        case ParenthesisPtg.sid :
-      //          retval = new ParenthesisPtg(data, offset);
-        //        break;
+            case ParenthesisPtg.sid :
+                retval = new ParenthesisPtg(data, offset);
+                break;
 
             case ValueVariableFunctionPtg.sid :
                 retval = new ValueVariableFunctionPtg(data, offset);
