@@ -91,6 +91,8 @@ import org.apache.poi.poifs.filesystem.*;
  * Section}).
  *
  * @author Rainer Klute (klute@rainer-klute.de)
+ * @author Drew Varner (Drew.Varner hanginIn sc.edu)
+ *
  * @version $Id$
  * @since 2002-02-09
  */
@@ -461,6 +463,25 @@ public class PropertySet
         throws NoSingleSectionException
     {
         return getSingleSection().getProperty(id);
+    }
+
+
+
+    /**
+     * <p>Convenience method returning the value of a boolean property
+     * with the specified ID. If the property is not available,
+     * <code>false</code> is returned. A subsequent call to {@link
+     * #wasNull} will return <code>true</code> to let the caller
+     * distinguish that case from a real property value of
+     * <code>false</code>.</p>
+     *
+     * @throws NoSingleSectionException if the {@link PropertySet} has
+     * more or less than one {@link Section}.
+     */
+    protected boolean getPropertyBooleanValue(final int id)
+        throws NoSingleSectionException
+    {
+        return getSingleSection().getPropertyBooleanValue(id);
     }
 
 

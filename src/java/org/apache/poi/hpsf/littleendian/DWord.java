@@ -63,7 +63,7 @@
 package org.apache.poi.hpsf.littleendian;
 
 /**
- * <p>Represents a double word (4 bytes).</p>
+ * <p>Represents an unsigned double word (4 bytes).</p>
  *
  * @author Rainer Klute (klute@rainer-klute.de)
  * @version $Id$
@@ -97,7 +97,7 @@ public class DWord extends LittleEndian
 
 
     /**
-     * <p>Return the integral value of this {@link DWord}.</p>
+     * <p>Returns the integral value of this {@link DWord}.</p>
      *
      * <p><strong>FIXME:</strong> Introduce a superclass for the
      * numeric types and make this a method of the superclass!</p>

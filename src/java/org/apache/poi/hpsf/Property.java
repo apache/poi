@@ -90,6 +90,7 @@ import org.apache.poi.hpsf.littleendian.*;
  *
  * @author Rainer Klute (klute@rainer-klute.de)
  * @author Drew Varner (Drew.Varner InAndAround sc.edu)
+ *
  * @version $Id$
  * @since 2002-02-09
  */
@@ -207,19 +208,43 @@ public class Property
             }
             case Variant.VT_CF:
             {
-                // the first four bytes in src, from
-                // src[offset] to src[offset + 3] contain
-                // the DWord for VT_CF, so skip it, we don't
-                // need it
+                /* The first four bytes in src, from rc[offset] to
+                 * src[offset + 3] contain the DWord for VT_CF, so
+                 * skip it, we don't need it. */
 
-                // truncate the length of the return array by
-                // a DWord length (4 bytes)
+                /* Truncate the length of the return array by a DWord
+                 * length (4 bytes). */
                 length = length - DWord.LENGTH;
 
                 final byte[] v = new byte[length];
                 for (int i = 0; i < length; i++)
-                    v[i] = src[offset + i + DWord.LENGTH];
+                    v[i] = src[o + i];
                 value = v;
+                break;
+            }
+            case Variant.VT_BOOL:
+            {
+                /* The first four bytes in src, from src[offset] to
+                 * src[offset + 3] contain the DWord for VT_BOOL, so
+                 * skip it, we don't need it. */
+                final int first = o + DWord.LENGTH;
+                DWord bool = new DWord(src,o);
+                if (bool.intValue() == -1)
+                {
+                    value = new Boolean(true);
+                }
+                else if (bool.intValue() == 0)
+                {
+                    value = new Boolean(false);
+                }
+                else
+                    /* FIXME: Someone might invent a new
+                     * HPSFRuntimeException subclass
+                     * IllegalPropertySetDataException for this and
+                     * similar cases. */
+                    throw new HPSFRuntimeException
+                        ("Illegal property set data: A boolean must be " +
+                         "either -1 (true) or 0 (false).");
                 break;
             }
             default:

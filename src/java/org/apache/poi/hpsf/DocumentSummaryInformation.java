@@ -65,6 +65,8 @@ import org.apache.poi.hpsf.wellknown.*;
  * @see SummaryInformation
  *
  * @author Rainer Klute (klute@rainer-klute.de)
+ * @author Drew Varner (Drew.Varner closeTo sc.edu)
+ *
  * @version $Id$
  * @since 2002-02-09
  */
@@ -191,16 +193,12 @@ public class DocumentSummaryInformation extends SpecialPropertySet
 
 
     /**
-     * <p>Returns the stream's scale (or <code>null</code>)
-     * <strong>when this method is implemented. Please note that the
-     * return type is likely to change!</strong>
+     * <p>Returns <code>true</code> when scaling of the thumbnail is
+     * desired, <code>false</code> if cropping is desired.</p>
      */
     public boolean getScale()
     {
-        if (true)
-            throw new UnsupportedOperationException("FIXME");
-	// return (byte[]) getProperty(PropertyIDMap.PID_SCALE);
-	return false;
+        return getPropertyBooleanValue(PropertyIDMap.PID_SCALE);
     }
 
 
@@ -254,15 +252,15 @@ public class DocumentSummaryInformation extends SpecialPropertySet
 
 
     /**
-     * <p>Returns the stream's links dirty information <strong>when
-     * this method is implemented.</strong>
+     * <p>Returns <code>true</code> if the custom links are hampered
+     * by excessive noise, for all applications.</p>
+     *
+     * <p><strong>FIXME:</strong> Explain this some more! I (Rainer)
+     * don't understand it.</p>
      */
     public boolean getLinksDirty()
     {
-        if (true)
-            throw new UnsupportedOperationException("FIXME");
-        // return (byte[]) getProperty(PropertyIDMap.PID_LINKSDIRTY);
-        return false;
+        return getPropertyBooleanValue(PropertyIDMap.PID_LINKSDIRTY);
     }
 
 }
