@@ -3,7 +3,7 @@
 
 <document>
  <header>
-  <title>HSSF</title>
+  <title>Jakarta POI - HSSF</title>
   <subtitle>Overview</subtitle>
   <authors>
    <person name="Andrew C. Oliver" email="acoliver@apache.org"/>     
@@ -27,7 +27,7 @@
         Truth be told there is probably a better way to generate your spreadsheet
         generation (yet you'll still be using HSSF indirectly).  At the time of
         this writing we're in the process of moving the HSSF Serializer over to 
-        the <link href="http://xml.apache.org/cocoon">Apache Cocoon
+        the <link href="http://cocoon.apache.org/">Apache Cocoon
         Project</link>.  With Cocoon you can serialize any XML datasource (of
         which might be a ESQL page outputting in SQL for instance) by simply 
         applying the stylesheet and designating the serializer.

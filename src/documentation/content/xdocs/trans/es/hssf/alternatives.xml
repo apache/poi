@@ -3,10 +3,10 @@
 
 <document>
     <header>
-        <title>HSSF</title>
+        <title>Jakarta POI - HSSF</title>
         <subtitle>Programas Alternativos a HSSF</subtitle>
         <authors>
-            <person name="Glen Stampoultzis" email="poi-user@jakarta.apache.org"/>
+            <person name="Glen Stampoultzis" email="glens@apache.org"/>
         </authors>
     </header>
 

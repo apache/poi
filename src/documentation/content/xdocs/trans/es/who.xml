@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "../../dtd/document-v11.dtd">
+
 <document>
  <header>
   <title>Jakarta POI - Who we are</title>
   <authors>
-   <person name="Jakarta POI Documentation Team" email="poi-dev@jakarta.apache.org"/>
+   <person name="Davanum Srinivas" email="dims@yahoo.com"/>
+   <person name="Nicola Ken Barozzi" email="barozzi@nicolaken.com"/>
    </authors>
  </header>
 
@@ -15,7 +17,7 @@
     The POI Project operates on a meritocracy: the more you do, the more
     responsibility you will obtain. This page lists all of the people who have
     gone the extra mile and are Committers. If you would like to get involved,
-    the first step is to join the <link href="http://jakarta.apache.org/site/mail2.html#poi">mailing lists</link>.
+    the first step is to join the mailing lists.
   </p>
 
   <p>
@@ -67,6 +69,6 @@
     </ul>
   </section>
  </section>
-
+ 
 </body>
 </document>

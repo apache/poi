@@ -2,12 +2,12 @@
 
 <!DOCTYPE todo PUBLIC "-//APACHE//DTD Todo V1.1//EN" "../../dtd/todo-v11.dtd">
 
-<todo><title>Tareas Pendientes para Poi</title>
+<todo><title>Jakarta POI - Tareas Pendientes para POI</title>
 
     <devs>
         <!-- in strict alphabetical order -->
         <person id="AO"  name="Andrew C. Oliver"   email="acoliver2@users.sourceforge.net"/>
-        <person id="GS"  name="Glen Stampoultzis"  email="poi-user@jakarta.apache.org"/>
+        <person id="GS"  name="Glen Stampoultzis"  email="gstamp@iprimus.com.au"/>
         <person id="MJ"  name="Marc Johnson"       email="mjohnson at apache dot org"/>
         <person id="NKB" name="Nicola Ken Barozzi" email="barozzi@nicolaken.com"/>
         <person id="open" name="POI Developers"    email="poi-dev@jakarta.apache.org"/>

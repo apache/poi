@@ -45,7 +45,7 @@
     <menu-item label="Alemán" href="../de/index.html"/>
     <menu-item label="Español" href="index.html"/>
     <menu-item label="Japonés" href="http://jakarta.terra-intl.com/poi/"/>
-    <menu-item label="Coreano" href="http://jakarta.apache-korea.org/poi/"/>
+    <menu-item label="Casano" href="http://jakarta.apache-korea.org/poi/"/>
   </menu>
   
   <menu label="Código">

@@ -3,10 +3,10 @@
 
 <document>
     <header>
-        <title>The New Halloween Document</title>
+        <title>Jakarta POI - The New Halloween Document</title>
         <authors>
             <person email="acoliver2@users.sourceforge.net" name="Andrew C. Oliver" id="AO"/>
-            <person email="poi-user@jakarta.apache.org" name="Glen Stampoultzis" id="GJS"/>
+            <person email="glens@apache.org" name="Glen Stampoultzis" id="GJS"/>
             <person email="sergeikozello@mail.ru" name="Sergei Kozello" id="SK"/>
         </authors>
     </header>

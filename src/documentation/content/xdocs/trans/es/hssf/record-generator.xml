@@ -3,9 +3,9 @@
 
 <document>
   <header>
-   <title>Record Generator HOWTO</title>
+   <title>Jakarta POI - Record Generator HOWTO</title>
    <authors>
-    <person email="poi-user@jakarta.apache.org" name="Glen Stampoultzis" id="glens"/>
+    <person email="glens@apache.org" name="Glen Stampoultzis" id="glens"/>
     <person email="acoliver@apache.org" name="Andrew C. Oliver" id="acoliver"/>
    </authors>
   </header>
