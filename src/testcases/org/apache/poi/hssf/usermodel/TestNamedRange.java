@@ -370,6 +370,26 @@ public class TestNamedRange
 	 }
 
 	 /**
+	  * For Convenience, dont force sheet names to be used
+	  */
+	 public void testSinglePrintAreaWOSheet()
+	 {
+		 HSSFWorkbook workbook = new HSSFWorkbook();        
+		 HSSFSheet sheet = workbook.createSheet("Test Print Area");                
+		 String sheetName = workbook.getSheetName(0);
+	     
+		 String reference = "$A$1:$B$1";
+		 workbook.setPrintArea(0, reference);
+	             
+		 String retrievedPrintArea = workbook.getPrintArea(0);
+	    
+		 assertNotNull("Print Area not defined for first sheet", retrievedPrintArea);        
+		 assertEquals(sheetName+"!"+reference, retrievedPrintArea);
+	     
+	 }
+
+
+	 /**
 	  * Test to see if the print area can be retrieved from an excel created file
 	  */
 	 public void testPrintAreaFileRead()
@@ -486,6 +506,44 @@ public class TestNamedRange
 	    
 	    
 	}
+    
+    /**
+     * Tests the setting of print areas with coordinates (Row/Column designations)
+     *
+     */
+    public void testPrintAreaCoords(){
+		HSSFWorkbook workbook = new HSSFWorkbook();        
+		HSSFSheet sheet = workbook.createSheet("Test Print Area");                
+		String sheetName = workbook.getSheetName(0);
+	     
+		String reference = sheetName+"!$A$1:$B$1";
+		workbook.setPrintArea(0, 0, 1, 0, 0);
+	             
+		String retrievedPrintArea = workbook.getPrintArea(0);
+	    
+		assertNotNull("Print Area not defined for first sheet", retrievedPrintArea);        
+		assertEquals(reference, retrievedPrintArea);    	
+    }
+     
+    /**
+     * Verifies an existing print area is deleted
+     *
+     */
+    public void testPrintAreaRemove() {
+		HSSFWorkbook workbook = new HSSFWorkbook();        
+		HSSFSheet sheet = workbook.createSheet("Test Print Area");                
+		String sheetName = workbook.getSheetName(0);
+	     
+		String reference = sheetName+"!$A$1:$B$1";
+		workbook.setPrintArea(0, 0, 1, 0, 0);
+	             
+		String retrievedPrintArea = workbook.getPrintArea(0);
+	    
+		assertNotNull("Print Area not defined for first sheet", retrievedPrintArea);        
+    	
+    	workbook.removePrintArea(0);
+    	assertNull("PrintArea was not removed", workbook.getPrintArea(0)); 
+    }
         
 }
 
