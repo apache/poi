@@ -52,8 +52,7 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-
-package org.apache.poi.hssf.record;
+package org.apache.poi.hssf.eventmodel;
 
 import java.io.InputStream;
 import java.io.IOException;
@@ -62,58 +61,102 @@ import java.util.*;
 
 import java.lang.reflect.Constructor;
 
+import org.apache.poi.hssf.record.BOFRecord;
+import org.apache.poi.hssf.record.BackupRecord;
+import org.apache.poi.hssf.record.BlankRecord;
+import org.apache.poi.hssf.record.BookBoolRecord;
+import org.apache.poi.hssf.record.BoolErrRecord;
+import org.apache.poi.hssf.record.BottomMarginRecord;
+import org.apache.poi.hssf.record.BoundSheetRecord;
+import org.apache.poi.hssf.record.CalcCountRecord;
+import org.apache.poi.hssf.record.CalcModeRecord;
+import org.apache.poi.hssf.record.CodepageRecord;
+import org.apache.poi.hssf.record.ColumnInfoRecord;
+import org.apache.poi.hssf.record.ContinueRecord;
+import org.apache.poi.hssf.record.CountryRecord;
+import org.apache.poi.hssf.record.DBCellRecord;
+import org.apache.poi.hssf.record.DSFRecord;
+import org.apache.poi.hssf.record.DateWindow1904Record;
+import org.apache.poi.hssf.record.DefaultColWidthRecord;
+import org.apache.poi.hssf.record.DefaultRowHeightRecord;
+import org.apache.poi.hssf.record.DeltaRecord;
+import org.apache.poi.hssf.record.DimensionsRecord;
+import org.apache.poi.hssf.record.EOFRecord;
+import org.apache.poi.hssf.record.ExtSSTRecord;
+import org.apache.poi.hssf.record.ExtendedFormatRecord;
+import org.apache.poi.hssf.record.ExternSheetRecord;
+import org.apache.poi.hssf.record.FnGroupCountRecord;
+import org.apache.poi.hssf.record.FontRecord;
+import org.apache.poi.hssf.record.FooterRecord;
+import org.apache.poi.hssf.record.FormatRecord;
+import org.apache.poi.hssf.record.FormulaRecord;
+import org.apache.poi.hssf.record.GridsetRecord;
+import org.apache.poi.hssf.record.GutsRecord;
+import org.apache.poi.hssf.record.HCenterRecord;
+import org.apache.poi.hssf.record.HeaderRecord;
+import org.apache.poi.hssf.record.HideObjRecord;
+import org.apache.poi.hssf.record.IndexRecord;
+import org.apache.poi.hssf.record.InterfaceEndRecord;
+import org.apache.poi.hssf.record.InterfaceHdrRecord;
+import org.apache.poi.hssf.record.IterationRecord;
+import org.apache.poi.hssf.record.LabelRecord;
+import org.apache.poi.hssf.record.LabelSSTRecord;
+import org.apache.poi.hssf.record.LeftMarginRecord;
+import org.apache.poi.hssf.record.MMSRecord;
+import org.apache.poi.hssf.record.MergeCellsRecord;
+import org.apache.poi.hssf.record.MulBlankRecord;
+import org.apache.poi.hssf.record.MulRKRecord;
+import org.apache.poi.hssf.record.NameRecord;
+import org.apache.poi.hssf.record.NumberRecord;
+import org.apache.poi.hssf.record.PaletteRecord;
+import org.apache.poi.hssf.record.PasswordRecord;
+import org.apache.poi.hssf.record.PasswordRev4Record;
+import org.apache.poi.hssf.record.PrecisionRecord;
+import org.apache.poi.hssf.record.PrintGridlinesRecord;
+import org.apache.poi.hssf.record.PrintHeadersRecord;
+import org.apache.poi.hssf.record.PrintSetupRecord;
+import org.apache.poi.hssf.record.ProtectRecord;
+import org.apache.poi.hssf.record.ProtectionRev4Record;
+import org.apache.poi.hssf.record.RKRecord;
+import org.apache.poi.hssf.record.Record;
+import org.apache.poi.hssf.record.RecordFormatException;
+import org.apache.poi.hssf.record.RefModeRecord;
+import org.apache.poi.hssf.record.RefreshAllRecord;
+import org.apache.poi.hssf.record.RightMarginRecord;
+import org.apache.poi.hssf.record.RowRecord;
+import org.apache.poi.hssf.record.SSTRecord;
+import org.apache.poi.hssf.record.SaveRecalcRecord;
+import org.apache.poi.hssf.record.SelectionRecord;
+import org.apache.poi.hssf.record.StringRecord;
+import org.apache.poi.hssf.record.StyleRecord;
+import org.apache.poi.hssf.record.TabIdRecord;
+import org.apache.poi.hssf.record.TopMarginRecord;
+import org.apache.poi.hssf.record.UnknownRecord;
+import org.apache.poi.hssf.record.UseSelFSRecord;
+import org.apache.poi.hssf.record.VCenterRecord;
+import org.apache.poi.hssf.record.WSBoolRecord;
+import org.apache.poi.hssf.record.WindowOneRecord;
+import org.apache.poi.hssf.record.WindowProtectRecord;
+import org.apache.poi.hssf.record.WindowTwoRecord;
+import org.apache.poi.hssf.record.WriteAccessRecord;
 import org.apache.poi.util.LittleEndian;
 
-/**
- * Title:  Record Factory<P>
- * Description:  Takes a stream and outputs an array of Record objects.<P>
- *
- * @deprecated use EventRecordFactory instead
- * @see org.apache.poi.hssf.record.EventRecordFactory
- * @author Andrew C. Oliver (acoliver at apache dot org)
- * @author Marc Johnson (mjohnson at apache dot org)
- * @author Glen Stampoultzis (glens at apache.org)
- * @version 1.0-pre
- */
 
-public class RecordFactory
+/**
+ * Event-based record factory.  As opposed to RecordFactory
+ * this refactored version throws record events as it comes
+ * accross the records.  I throws the "lazily" one record behind
+ * to ensure that ContinueRecords are processed first.
+ * 
+ * @author Andrew C. Oliver acoliver@apache.org
+ */
+public class EventRecordFactory
 {
     private static int           NUM_RECORDS = 10000;
     private static final Class[] records;
 
     static {
-        if (FormulaRecord.EXPERIMENTAL_FORMULA_SUPPORT_ENABLED) {
-            records = new Class[]
-            {
-                BOFRecord.class, InterfaceHdrRecord.class, MMSRecord.class,
-                InterfaceEndRecord.class, WriteAccessRecord.class,
-                CodepageRecord.class, DSFRecord.class, TabIdRecord.class,
-                FnGroupCountRecord.class, WindowProtectRecord.class,
-                ProtectRecord.class, PasswordRecord.class, ProtectionRev4Record.class,
-                PasswordRev4Record.class, WindowOneRecord.class, BackupRecord.class,
-                HideObjRecord.class, DateWindow1904Record.class,
-                PrecisionRecord.class, RefreshAllRecord.class, BookBoolRecord.class,
-                FontRecord.class, FormatRecord.class, ExtendedFormatRecord.class,
-                StyleRecord.class, UseSelFSRecord.class, BoundSheetRecord.class,
-                CountryRecord.class, SSTRecord.class, ExtSSTRecord.class,
-                EOFRecord.class, IndexRecord.class, CalcModeRecord.class,
-                CalcCountRecord.class, RefModeRecord.class, IterationRecord.class,
-                DeltaRecord.class, SaveRecalcRecord.class, PrintHeadersRecord.class,
-                PrintGridlinesRecord.class, GridsetRecord.class, GutsRecord.class,
-                DefaultRowHeightRecord.class, WSBoolRecord.class, HeaderRecord.class,
-                FooterRecord.class, HCenterRecord.class, VCenterRecord.class,
-                PrintSetupRecord.class, DefaultColWidthRecord.class,
-                DimensionsRecord.class, RowRecord.class, LabelSSTRecord.class,
-                RKRecord.class, NumberRecord.class, DBCellRecord.class,
-                WindowTwoRecord.class, SelectionRecord.class, ContinueRecord.class,
-                LabelRecord.class, BlankRecord.class, ColumnInfoRecord.class,
-                MulRKRecord.class, MulBlankRecord.class, MergeCellsRecord.class,
-                FormulaRecord.class, BoolErrRecord.class, ExternSheetRecord.class,
-                NameRecord.class, LeftMarginRecord.class, RightMarginRecord.class,
-                TopMarginRecord.class, BottomMarginRecord.class,
-                PaletteRecord.class, StringRecord.class
-            };
-        } else {
+ 
             records = new Class[]
             {
                 BOFRecord.class, InterfaceHdrRecord.class, MMSRecord.class,
@@ -144,18 +187,67 @@ public class RecordFactory
                 TopMarginRecord.class, BottomMarginRecord.class,
                 PaletteRecord.class, StringRecord.class
             };
-
-        }
+       
     }
     private static Map           recordsMap  = recordsToMap(records);
 
-    /**
-     * changes the default capacity (10000) to handle larger files
-     */
+    private static short[] sidscache;
+    
+    private List listeners;
 
-    public static void setCapacity(int capacity)
+    private boolean abortable;
+    
+    public EventRecordFactory() {
+        this(true);                  
+    }
+    
+    public EventRecordFactory(boolean abortable) {
+        this.abortable = abortable;
+        listeners = new ArrayList(recordsMap.size());    
+        
+        if (sidscache == null) {
+         sidscache = getAllKnownRecordSIDs();   
+        }
+
+    }
+    
+    /**
+     * Register a listener for records.  These can be for all records 
+     * or just a subset.
+     * 
+     * @param sids an array of Record.sid values identifying the records
+     * the listener will work with.  Alternatively if this is "null" then 
+     * all records are passed.
+     */
+    public void registerListener(ERFListener listener, short[] sids) {
+      if (sids == null)
+        sids = sidscache;
+      ERFListener wrapped = new ListenerWrapper(listener, sids, abortable);    
+      listeners.add(wrapped);
+    }
+    
+    /**
+     * used for unit tests to test the registration of record listeners.
+     * @return Iterator of ERFListeners
+     */
+    protected Iterator listeners() {
+        return listeners.iterator();
+    }
+
+    /**
+     * sends the record event to all registered listeners.
+     * @param record the record to be thrown.
+     * @return boolean abort.  If exitability is turned on this aborts
+     * out of the event loop should any listener specify to do so.
+     */
+    private boolean throwRecordEvent(Record record)
     {
-        NUM_RECORDS = capacity;
+        Iterator i = listeners.iterator();
+        
+        while (i.hasNext()) {
+            ((ERFListener) i.next()).processRecord(record);  
+        }
+        return false;
     }
 
     /**
@@ -169,11 +261,9 @@ public class RecordFactory
      * @exception RecordFormatException on error processing the
      *            InputStream
      */
-
-    public static List createRecords(InputStream in)
+    public void processRecords(InputStream in)
         throws RecordFormatException
     {
-        ArrayList records     = new ArrayList(NUM_RECORDS);
         Record    last_record = null;
 
         try
@@ -196,8 +286,14 @@ public class RecordFactory
                     {
                         for (int k = 0; k < recs.length; k++)
                         {
-                            records.add(
-                                recs[ k ]);               // these will be number records
+                            if ( last_record != null ) {
+                                if (throwRecordEvent(last_record) == false && abortable == true) {
+                                 last_record = null;
+                                 break;   
+                                }
+                            }
+                         //   records.add(
+                         //       recs[ k ]);               // these will be number records
                             last_record =
                                 recs[ k ];                // do to keep the algorythm homogenous...you can't
                         }                                 // actually continue a number record anyhow.
@@ -219,14 +315,26 @@ public class RecordFactory
                             }
                             else
                             {
+                                if (last_record != null) {
+                                    if (throwRecordEvent(last_record) == false && abortable == true) {
+                                        last_record = null;
+                                        break;   
+                                    }
+                                }
+                                
                                 last_record = record;
-                                records.add(record);
+                                
+                                //records.add(record);
                             }
                         }
                     }
                 }
             }
             while (rectype != 0);
+            
+            if (last_record != null) {
+               throwRecordEvent(last_record);               
+            }
         }
         catch (IOException e)
         {
@@ -235,7 +343,7 @@ public class RecordFactory
 
         // Record[] retval = new Record[ records.size() ];
         // retval = ( Record [] ) records.toArray(retval);
-        return records;
+     
     }
 
     public static Record [] createRecord(short rectype, short size,
@@ -364,4 +472,33 @@ public class RecordFactory
         }
         return result;
     }
+
+}
+
+class ListenerWrapper implements ERFListener {
+       private ERFListener listener;
+       private short[] sids;
+       private boolean abortable;
+
+    ListenerWrapper(ERFListener listener, short[] sids, boolean abortable) {
+        this.listener = listener;
+        this.sids = sids;   
+        this.abortable = abortable;
+    }       
+    
+
+    public boolean processRecord(Record rec)
+    {
+        boolean result = false;
+        for (int k = 0; k < sids.length; k++) {
+            if (sids[k] == rec.getSid()) {
+                result = listener.processRecord(rec);
+            
+                if (abortable == true && result == false) {
+                    break;   
+                }
+            }
+        }
+        return result;
+    }   
 }

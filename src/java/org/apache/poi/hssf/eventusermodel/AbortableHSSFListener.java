@@ -53,9 +53,10 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.poi.hssf.eventmodel;
+package org.apache.poi.hssf.eventusermodel;
 
 import org.apache.poi.hssf.record.Record;
+import org.apache.poi.hssf.eventusermodel.HSSFUserException;
 
 /**
  * Interface for use with the HSSFRequest and HSSFEventFactory.  Users should create
@@ -64,15 +65,42 @@ import org.apache.poi.hssf.record.Record;
  *
  * @see org.apache.poi.hssf.eventmodel.HSSFEventFactory
  * @see org.apache.poi.hssf.eventmodel.HSSFRequest
- * @author  andy
+ * @see org.apache.poi.hssf.HSSFUserException
+ *
+ * @author Carey Sublette (careysub@earthling.net)
+ *
  */
 
-public interface HSSFListener
+public abstract class AbortableHSSFListener implements HSSFListener
 {
-
     /**
-     * process an HSSF Record. Called when a record occurs in an HSSF file.
+     * This method, inherited from HSSFListener is implemented as a stub.
+     * It is never called by HSSFEventFActory or HSSFRequest.
+     *
      */
+     
+	public void processRecord(Record record)
+	{
+	}
 
-    public void processRecord(Record record);
+   /**
+	 * Process an HSSF Record. Called when a record occurs in an HSSF file. 
+	 * Provides two options for halting the processing of the HSSF file.
+	 *
+	 * The return value provides a means of non-error termination with a 
+	 * user-defined result code. A value of zero must be returned to 
+	 * continue processing, any other value will halt processing by
+	 * <code>HSSFEventFactory</code> with the code being passed back by 
+	 * its abortable process events methods.
+	 * 
+	 * Error termination can be done by throwing the HSSFUserException.
+	 *
+	 * Note that HSSFEventFactory will not call the inherited process 
+	 *
+     * @return result code of zero for continued processing.
+     *
+	 * @throws HSSFUserException User code can throw this to abort 
+	 * file processing by HSSFEventFactory and return diagnostic information.
+     */
+    public abstract short abortableProcessRecord(Record record) throws HSSFUserException;
 }

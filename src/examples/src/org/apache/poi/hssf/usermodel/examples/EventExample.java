@@ -1,8 +1,8 @@
 package org.apache.poi.hssf.usermodel.examples;
 
-import org.apache.poi.hssf.eventmodel.HSSFEventFactory;
-import org.apache.poi.hssf.eventmodel.HSSFListener;
-import org.apache.poi.hssf.eventmodel.HSSFRequest;
+import org.apache.poi.hssf.eventusermodel.HSSFEventFactory;
+import org.apache.poi.hssf.eventusermodel.HSSFListener;
+import org.apache.poi.hssf.eventusermodel.HSSFRequest;
 import org.apache.poi.hssf.record.*;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 

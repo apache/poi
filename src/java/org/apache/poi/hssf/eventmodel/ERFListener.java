@@ -1,4 +1,3 @@
-
 /* ====================================================================
  * The Apache Software License, Version 1.1
  *
@@ -52,55 +51,24 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-
 package org.apache.poi.hssf.eventmodel;
 
 import org.apache.poi.hssf.record.Record;
-import org.apache.poi.hssf.eventmodel.HSSFUserException;
 
 /**
- * Interface for use with the HSSFRequest and HSSFEventFactory.  Users should create
- * a listener supporting this interface and register it with the HSSFRequest (associating
- * it with Record SID's).
- *
- * @see org.apache.poi.hssf.eventmodel.HSSFEventFactory
- * @see org.apache.poi.hssf.eventmodel.HSSFRequest
- * @see org.apache.poi.hssf.HSSFUserException
- *
- * @author Carey Sublette (careysub@earthling.net)
- *
+ * An ERFListener is registered with the EventRecordFactory.
+ * An ERFListener listens for Records coming from the stream
+ * via the EventRecordFactory
+ * 
+ * @see EventRecordFactory
+ * @author Andrew C. Oliver acoliver@apache.org
  */
-
-public abstract class AbortableHSSFListener implements HSSFListener
+public interface ERFListener
 {
     /**
-     * This method, inherited from HSSFListener is implemented as a stub.
-     * It is never called by HSSFEventFActory or HSSFRequest.
-     *
+     * Process a Record.  This method is called by the 
+     * EventRecordFactory when a record is returned.
+     * @return boolean specifying whether the effort was a success.
      */
-     
-	public void processRecord(Record record)
-	{
-	}
-
-   /**
-	 * Process an HSSF Record. Called when a record occurs in an HSSF file. 
-	 * Provides two options for halting the processing of the HSSF file.
-	 *
-	 * The return value provides a means of non-error termination with a 
-	 * user-defined result code. A value of zero must be returned to 
-	 * continue processing, any other value will halt processing by
-	 * <code>HSSFEventFactory</code> with the code being passed back by 
-	 * its abortable process events methods.
-	 * 
-	 * Error termination can be done by throwing the HSSFUserException.
-	 *
-	 * Note that HSSFEventFactory will not call the inherited process 
-	 *
-     * @return result code of zero for continued processing.
-     *
-	 * @throws HSSFUserException User code can throw this to abort 
-	 * file processing by HSSFEventFactory and return diagnostic information.
-     */
-    public abstract short abortableProcessRecord(Record record) throws HSSFUserException;
+    public boolean processRecord(Record rec);
 }
