@@ -201,6 +201,47 @@ extends TestCase {
         }
     }
     
+    /**
+     * Tests creating a file with floating point in a formula.
+     *
+     */
+    public void testFloat()
+        throws Exception {
+            String operator = "+";
+            short            rownum = 0;
+            File file = File.createTempFile("testFormulaFloat",".xls");
+            FileOutputStream out    = new FileOutputStream(file);
+            HSSFWorkbook     wb     = new HSSFWorkbook();
+            HSSFSheet        s      = wb.createSheet();
+            HSSFRow          r      = null;
+            HSSFCell         c      = null;
+
+                for (short x = 1; x < Short.MAX_VALUE && x > 0; x=(short)(x*2)) {
+                r = s.createRow((short) x);
+
+                for (short y = 1; y < 256 && y > 0; y++) {
+
+                    c = r.createCell((short) y);
+                    c.setCellFormula("" + (100*x)+"."+y + operator + (10000*y) + 
+                                     "."+x);
+    
+
+                }
+            }
+
+            wb.write(out);
+            out.close();
+            assertTrue("file exists",file.exists());
+
+
+        }
+    
+    public void testAreaSum() 
+    throws Exception {
+        areaFunctionTest("SUM");
+    }
+    
+    
     private void operationRefTest(String operator) 
     throws Exception {
         File file = File.createTempFile("testFormula",".xls");
@@ -477,44 +518,45 @@ extends TestCase {
         assertTrue("file exists",file.exists());
     }
 
+ 
+    
     /**
-     * Tests creating a file with floating point in a formula.
+     * Writes a function then tests to see if its correct
      *
      */
-    public void testFloat()
-        throws Exception {
-            String operator = "+";
+    public void areaFunctionTest(String function) 
+    throws Exception {
+            
             short            rownum = 0;
-            File file = File.createTempFile("testFormulaFloat",".xls");
+            File file = File.createTempFile("testFormulaAreaFunction"+function,".xls");
             FileOutputStream out    = new FileOutputStream(file);
             HSSFWorkbook     wb     = new HSSFWorkbook();
             HSSFSheet        s      = wb.createSheet();
             HSSFRow          r      = null;
             HSSFCell         c      = null;
 
-                for (short x = 1; x < Short.MAX_VALUE && x > 0; x=(short)(x*2)) {
-                r = s.createRow((short) x);
 
-                for (short y = 1; y < 256 && y > 0; y++) {
+            r = s.createRow((short) 0);
 
-                    c = r.createCell((short) y);
-                    c.setCellFormula("" + (100*x)+"."+y + operator + (10000*y) + 
-                                     "."+x);
-    
+            c = r.createCell((short) 0);
+            c.setCellFormula(function+"(A2:A3)");
 
-                }
-            }
 
             wb.write(out);
             out.close();
             assertTrue("file exists",file.exists());
-
-
-        }
-
-
-    
-    
+            
+            FileInputStream in = new FileInputStream(file);
+            wb = new HSSFWorkbook(in);
+            s = wb.getSheetAt(0);
+            r = s.getRow(0);
+            c = r.getCell((short)0);
+            
+            assertTrue("function ="+function+"(A2:A3)",
+                        ( (function+"(A2:A3)").equals((function+"(A2:A3)")) )
+                      );
+            in.close();
+    }
     
     
     public static void main(String [] args) {
