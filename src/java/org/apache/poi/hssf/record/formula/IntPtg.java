@@ -95,6 +95,10 @@ public class IntPtg
         field_1_value = Short.parseShort(val);
     }
     
+    // IntPtg should be able to create itself, shouldnt have to call setValue
+    protected IntPtg(String formulaToken) {
+        setValue(Short.parseShort(formulaToken));
+    }
 
     public void setValue(short value)
     {
