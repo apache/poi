@@ -673,7 +673,7 @@ public class PropertySet
         b.append(getOSVersion());
         b.append(", sectionCount: ");
         b.append(sectionCount);
-        b.append(", sections: [");
+        b.append(", sections: [\n");
         final List sections = getSections();
         for (int i = 0; i < sectionCount; i++)
             b.append(((Section) sections.get(0)).toString());
