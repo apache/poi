@@ -45,7 +45,7 @@
 <br>
 <a class="s1" href="historyandfuture.html">Future</a>
 <br>
-<a class="s1" href="http://sourceforge.net/project/showfiles.php?group_id=32701">Download</a>
+<a class="s1" href="http://jakarta.apache.org/builds/jakarta-poi/">Download</a>
 <br>
 <a class="s1" href="plan/POI10Vision.html">1.0 Vision</a>
 <br>
@@ -54,6 +54,8 @@
 <a class="s1" href="who.html">Who we are</a>
 <br>
 <a class="s1" href="changes.html">Changes</a>
+<br>
+<a class="s1" href="faq.html">FAQ</a>
 <br>
 <br>
 <span class="s1">Sub-Projects</span>
@@ -140,6 +142,11 @@
     What is the HSSF "eventmodel"? 
   </jump>
 </li>
+<li>
+<jump anchor="faq-2">
+      Why can't read the document I created using Star Office 5.1?
+    </jump>
+</li>
 </ul>
 </td>
 </tr>
@@ -167,7 +174,6 @@
 <br>
   
   
-  
     
 <p align="justify">
       The HSSF eventmodel package is a new API for reading XLS files more efficiently.  It does 
@@ -175,12 +181,31 @@
       tenfold.  It is based on the AWT event model in combination with SAX.  If you need read-only
       access to a given XLS file, this is the best way to do it.  
     </p>
-
   
+
+
+</td>
+</tr>
+</table>
+</div>
+<br>
+<anchor id="faq-2"></anchor>
+<div align="right">
+<table cellspacing="0" cellpadding="2" border="0" width="99%">
+<tr>
+<td bgcolor="#525D76"><font color="#ffffff" size="+0"><font face="Arial,sans-serif"><b>
+      Why can't read the document I created using Star Office 5.1?
+    </b></font></font></td>
+</tr>
+<tr>
+<td>
+<br>
+    
   
     
 <p align="justify">
-      Soon, very soon.
+      Star Office 5.1 writes some records using the older BIFF standard.  This causes some problems
+      with POI which supports only BIFF8.
     </p>
   
 
