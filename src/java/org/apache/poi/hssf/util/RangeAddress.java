@@ -62,7 +62,7 @@ package org.apache.poi.hssf.util;
  *
  * REFERENCE:  <P>
  * @author IgOr KaTz && EuGeNe BuMaGiN (Tal Moshaiov) (VistaPortal LDT.)
- * @version 1.0
+@version 1.0
  */
 
 public class RangeAddress {
@@ -72,7 +72,13 @@ public class RangeAddress {
   String m_sheetName;
   String m_cellFrom;
   String m_cellTo;
-  
+
+  /**
+   * Accepts an external reference from excel.
+   * <p>
+   * i.e. Sheet1!$A$4:$B$9
+   * @param _url
+   */  
   public RangeAddress (String _url) {
     init (_url);
   }
@@ -82,10 +88,14 @@ public class RangeAddress {
     + numTo26Sys (_endCol) + _endRow);
   }
   
+  /**
+   * 
+   * @return String <b>note: </b> All absolute references are removed
+   */
   public String getAddress (){
     String result = "";
     if(m_sheetName != null)
-      result += m_sheetName;
+      result += m_sheetName+"!";
     if(m_cellFrom != null){
       result += m_cellFrom;
       if(m_cellTo != null)
@@ -93,6 +103,7 @@ public class RangeAddress {
     }
     return result;
   }
+  
   
   public String getSheetName (){
     return m_sheetName;
@@ -231,21 +242,21 @@ public class RangeAddress {
     if (index >= 0) {
       String fromStr = _url.substring(0, index);
       String toStr = _url.substring(index+1);
-      index = fromStr.indexOf('.');
+      index = fromStr.indexOf('!');
       if (index >= 0) {
         result[0] = fromStr.substring(0, index);
         result[1] = fromStr.substring(index+1);
       } else {
         result[1] = fromStr;
       }
-      index = toStr.indexOf('.');
+      index = toStr.indexOf('!');
       if (index >= 0) {
         result[2] = toStr.substring(index+1); 
       } else {
         result[2] = toStr; 
       }     
     } else {
-      index = _url.indexOf('.');
+      index = _url.indexOf('!');
       if (index >= 0) {
         result[0] = _url.substring(0, index);
         result[1] = _url.substring(index+1);

@@ -335,6 +335,29 @@ public class Workbook implements Model {
         return retval;
     }
 
+
+	/**Retrieves the Builtin NameRecord that matches the name and index
+	 * There shouldn't be too many names to make the sequential search too slow
+	 * @param name byte representation of the builtin name to match
+	 * @param sheetIndex zero-based sheet reference
+	 * @return null if no builtin NameRecord matches
+	 */
+	public NameRecord getSpecificBuiltinRecord(byte name, int sheetIndex)
+	{
+	    Iterator iterator = names.iterator();
+	    while (iterator.hasNext()) {
+	        NameRecord record = ( NameRecord ) iterator.next();
+	
+	        //print areas are one based
+	        if (record.getBuiltInName() == name && record.getIndexToSheet() == sheetIndex) {
+	            return record;
+	        }
+	    }
+	    
+	    return null;
+	    
+	}
+
     public int getNumRecords() {
         return records.size();
     }
@@ -1817,6 +1840,7 @@ public class Workbook implements Model {
         return name;
     }
 
+
     /** creates new name
      * @return new name record
      */
@@ -1831,6 +1855,22 @@ public class Workbook implements Model {
 
         return name;
     }
+
+	/**Generates a NameRecord to represent a built-in region
+	 * @return a new NameRecord unless the index is invalid
+	 */
+	public NameRecord createBuiltInName(byte builtInName, int index)
+	{
+		if (index == -1 || index+1 > (int)Short.MAX_VALUE) 
+			throw new IllegalArgumentException("Index is not valid ["+index+"]");
+	    
+		NameRecord name = new NameRecord(builtInName, (short)(index));
+	            
+		addName(name);
+	    
+		return name;
+	}
+
 
     /** removes the name
      * @param namenum name index
@@ -2018,4 +2058,7 @@ public class Workbook implements Model {
         }
         return palette;
     }
+ 
+    
 }
+

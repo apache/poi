@@ -232,7 +232,7 @@ extends TestCase {
             throws java.io.IOException {
         String readFilename = System.getProperty("HSSF.testdata.path");
 
-            File file = File.createTempFile("testBoolErr",".xls");
+            File file = File.createTempFile("testFormulaStyle",".xls");
             FileOutputStream out    = new FileOutputStream(file);
             HSSFWorkbook     wb     = new HSSFWorkbook();
             HSSFSheet        s      = wb.createSheet("Sheet1");
