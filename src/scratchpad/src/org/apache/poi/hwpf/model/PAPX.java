@@ -61,6 +61,7 @@ import org.apache.poi.util.LittleEndian;
 import org.apache.poi.hwpf.usermodel.ParagraphProperties;
 import org.apache.poi.hwpf.sprm.ParagraphSprmUncompressor;
 import org.apache.poi.hwpf.sprm.SprmBuffer;
+import org.apache.poi.hwpf.sprm.SprmOperation;
 
 /**
  * Comment me
@@ -72,17 +73,55 @@ public class PAPX extends CachedPropertyNode
 {
 
   private ParagraphHeight _phe;
+  private int _hugeGrpprlOffset = -1;
 
-  public PAPX(int fcStart, int fcEnd, byte[] papx, ParagraphHeight phe)
+  public PAPX(int fcStart, int fcEnd, byte[] papx, ParagraphHeight phe, byte[] dataStream)
   {
     super(fcStart, fcEnd, new SprmBuffer(papx));
     _phe = phe;
+    SprmBuffer buf = findHuge(new SprmBuffer(papx), dataStream);
+    if(buf != null)
+      _buf = buf;
   }
 
-  public PAPX(int fcStart, int fcEnd, SprmBuffer buf)
+  public PAPX(int fcStart, int fcEnd, SprmBuffer buf, byte[] dataStream)
   {
     super(fcStart, fcEnd, buf);
     _phe = new ParagraphHeight();
+    buf = findHuge(buf, dataStream);
+    if(buf != null)
+      _buf = buf;
+  }
+
+  private SprmBuffer findHuge(SprmBuffer buf, byte[] datastream)
+  {
+    byte[] grpprl = buf.toByteArray();
+    if(grpprl.length==8 && datastream!=null) // then check for sprmPHugePapx
+    {
+      SprmOperation sprm = new SprmOperation(grpprl, 2);
+      if ((sprm.getOperation()==0x45 || sprm.getOperation()==0x46)
+          && sprm.getSizeCode() == 3)
+      {
+        int hugeGrpprlOffset = sprm.getOperand();
+        if(hugeGrpprlOffset+1 < datastream.length)
+        {
+          int grpprlSize = LittleEndian.getShort(datastream, hugeGrpprlOffset);
+          if( hugeGrpprlOffset+grpprlSize < datastream.length)
+          {
+            byte[] hugeGrpprl = new byte[grpprlSize];
+            // copy original istd into huge Grpprl
+            hugeGrpprl[0] = grpprl[0]; hugeGrpprl[1] = grpprl[1];
+            // copy Grpprl from dataStream
+            System.arraycopy(datastream, hugeGrpprlOffset + 2, hugeGrpprl, 2,
+                             grpprlSize-2);
+            // save a pointer to where we got the huge Grpprl from
+            _hugeGrpprlOffset = hugeGrpprlOffset;
+            return new SprmBuffer(hugeGrpprl);
+          }
+        }
+      }
+    }
+    return null;
   }
 
 
@@ -94,6 +133,11 @@ public class PAPX extends CachedPropertyNode
   public byte[] getGrpprl()
   {
     return ((SprmBuffer)_buf).toByteArray();
+  }
+
+  public int getHugeGrpprlOffset()
+  {
+    return _hugeGrpprlOffset;
   }
 
   public short getIstd()

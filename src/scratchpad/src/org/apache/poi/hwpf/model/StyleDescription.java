@@ -220,6 +220,11 @@ public class StyleDescription implements HDFType
       _chp = chp;
   }
 
+  public String getName()
+  {
+    return _name;
+  }
+
   public byte[] toByteArray()
   {
     // size equals _baseLength bytes for known variables plus 2 bytes for name

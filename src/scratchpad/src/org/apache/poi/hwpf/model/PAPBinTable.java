@@ -68,8 +68,9 @@ import org.apache.poi.util.LittleEndian;
 public class PAPBinTable
 {
   ArrayList _paragraphs = new ArrayList();
+  byte[] _dataStream;
 
-  public PAPBinTable(byte[] documentStream, byte[] tableStream, int offset,
+  public PAPBinTable(byte[] documentStream, byte[] tableStream, byte[] dataStream, int offset,
                      int size, int fcMin)
   {
     PlexOfCps binTable = new PlexOfCps(tableStream, offset, size, 4);
@@ -83,7 +84,7 @@ public class PAPBinTable
       int pageOffset = POIFSConstants.BIG_BLOCK_SIZE * pageNum;
 
       PAPFormattedDiskPage pfkp = new PAPFormattedDiskPage(documentStream,
-        pageOffset, fcMin);
+        dataStream, pageOffset, fcMin);
 
       int fkpSize = pfkp.size();
 
@@ -92,11 +93,12 @@ public class PAPBinTable
         _paragraphs.add(pfkp.getPAPX(y));
       }
     }
+    _dataStream = dataStream;
   }
 
   public void insert(int listIndex, int cpStart, SprmBuffer buf)
   {
-    PAPX forInsert = new PAPX(cpStart, cpStart, buf);
+    PAPX forInsert = new PAPX(cpStart, cpStart, buf, _dataStream);
     if (listIndex == _paragraphs.size())
     {
        _paragraphs.add(forInsert);
@@ -116,7 +118,7 @@ public class PAPBinTable
           exc.printStackTrace();
         }
         currentPap.setEnd(cpStart);
-        PAPX splitPap = new PAPX(cpStart, currentPap.getEnd(), clonedBuf);
+        PAPX splitPap = new PAPX(cpStart, currentPap.getEnd(), clonedBuf, _dataStream);
         _paragraphs.add(++listIndex, forInsert);
         _paragraphs.add(++listIndex, splitPap);
       }
@@ -220,7 +222,7 @@ public class PAPBinTable
       PropertyNode startingProp = (PropertyNode)overflow.get(0);
       int start = startingProp.getStart() + fcMin;
 
-      PAPFormattedDiskPage pfkp = new PAPFormattedDiskPage();
+      PAPFormattedDiskPage pfkp = new PAPFormattedDiskPage(_dataStream);
       pfkp.fill(overflow);
 
       byte[] bufFkp = pfkp.toByteArray(fcMin);

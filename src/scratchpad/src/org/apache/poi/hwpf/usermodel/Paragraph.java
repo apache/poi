@@ -125,8 +125,8 @@ public class Paragraph
   public final static short SPRM_FADJUSTRIGHT = 0x2448;
 
 
-  private short _istd;
-  private ParagraphProperties _props;
+  protected short _istd;
+  protected ParagraphProperties _props;
   protected SprmBuffer _papx;
 
   protected Paragraph(int startIdx, int endIdx, Table parent)
@@ -135,13 +135,20 @@ public class Paragraph
     PAPX papx = (PAPX)_paragraphs.get(_parEnd - 1);
     _props = papx.getParagraphProperties(_doc.getStyleSheet());
     _papx = papx.getSprmBuf();
+    _istd = papx.getIstd();
   }
 
-  public Paragraph(int start, int end, ParagraphProperties pap, SprmBuffer papx, Range parent)
+  protected Paragraph(PAPX papx, Range parent)
   {
-    super(start, end, parent);
-    _props = pap;
-    _papx = papx;
+    super(papx.getStart(), papx.getEnd(), parent);
+    _props = papx.getParagraphProperties(_doc.getStyleSheet());
+    _papx = papx.getSprmBuf();
+    _istd = papx.getIstd();
+  }
+
+  public short getStyleIndex()
+  {
+    return _istd;
   }
 
   public int type()

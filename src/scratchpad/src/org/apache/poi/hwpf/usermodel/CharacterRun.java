@@ -447,6 +447,12 @@ public class CharacterRun
     _chpx.addSprm(SPRM_HIGHLIGHT, color);
   }
 
+  public int getFontNameIndex()
+  {
+    return _props.getFtcAscii();
+  }
+
+
   /**
   * Get the ico24 field for the CHP record.
   */

@@ -426,13 +426,11 @@ public class Range
     Paragraph pap = null;
     if (props.getIlfo() > 0)
     {
-      pap = new ListEntry(papx.getStart(), papx.getEnd(), _doc.getListTables(),
-                          props, papx.getSprmBuf(), this);
+      pap = new ListEntry(papx, this, _doc.getListTables());
     }
     else
     {
-      pap = new Paragraph(papx.getStart(), papx.getEnd(), props,
-                          papx.getSprmBuf(), this);
+      pap = new Paragraph(papx, this);
     }
 
     return pap;
@@ -441,6 +439,45 @@ public class Range
   public int type()
   {
     return TYPE_UNDEFINED;
+  }
+
+  public Table getTable(Paragraph paragraph)
+  {
+    if (!paragraph.isInTable())
+    {
+      throw new IllegalArgumentException("This paragraph doesn't belong to a table");
+    }
+
+    Range r = (Range)paragraph;
+    if (r._parent.get() != this)
+    {
+      throw new IllegalArgumentException("This paragraph is not a child of this range");
+    }
+
+    r.initAll();
+    int tableEnd = r._parEnd;
+
+    if (r._parStart != 0 && ((Paragraph)r._paragraphs.get(r._parStart - 1)).isInTable())
+    {
+      throw new IllegalArgumentException("This paragraph is not the first one in the table");
+    }
+
+    int limit = r._paragraphs.size();
+    for (; tableEnd < limit; tableEnd++)
+    {
+      if (!((Paragraph)r._paragraphs.get(tableEnd)).isInTable())
+      {
+        break;
+      }
+    }
+
+    initAll();
+    if (tableEnd > _parEnd)
+    {
+      throw new ArrayIndexOutOfBoundsException("The table's bounds fall outside of this Range");
+    }
+
+    return new Table(r._parStart, tableEnd, r._doc.getRange(), 1);
   }
 
   private void initAll()

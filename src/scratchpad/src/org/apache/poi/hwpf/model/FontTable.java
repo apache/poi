@@ -119,7 +119,7 @@ public class FontTable
     return lcbSttbfffn;
   }
 
-  public char [] getMainFont(int chpFtc )
+  public String getMainFont(int chpFtc )
   {
     if(chpFtc >= _stringCount)
     {
@@ -130,7 +130,7 @@ public class FontTable
     return _fontNames[chpFtc].getMainFontName();
   }
 
-  public char [] getAltFont(int chpFtc )
+  public String getAltFont(int chpFtc )
   {
     if(chpFtc >= _stringCount)
     {

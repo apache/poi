@@ -84,11 +84,12 @@ public class PAPFormattedDiskPage extends FormattedDiskPage
 
     private ArrayList _papxList = new ArrayList();
     private ArrayList _overFlow;
+    private byte[] _dataStream;
 
 
-    public PAPFormattedDiskPage()
+    public PAPFormattedDiskPage(byte[] dataStream)
     {
-
+      _dataStream = dataStream;
     }
 
     /**
@@ -96,15 +97,16 @@ public class PAPFormattedDiskPage extends FormattedDiskPage
      *
      * @param fkp a 512 byte array.
      */
-    public PAPFormattedDiskPage(byte[] documentStream, int offset, int fcMin)
+    public PAPFormattedDiskPage(byte[] documentStream, byte[] dataStream, int offset, int fcMin)
     {
       super(documentStream, offset);
 
       for (int x = 0; x < _crun; x++)
       {
-        _papxList.add(new PAPX(getStart(x) - fcMin, getEnd(x) - fcMin, getGrpprl(x), getParagraphHeight(x)));
+        _papxList.add(new PAPX(getStart(x) - fcMin, getEnd(x) - fcMin, getGrpprl(x), getParagraphHeight(x), dataStream));
       }
       _fkp = null;
+      _dataStream = dataStream;
     }
 
     public void fill(List filler)
@@ -164,6 +166,12 @@ public class PAPFormattedDiskPage extends FormattedDiskPage
         byte[] grpprl = ((PAPX)_papxList.get(index)).getGrpprl();
         int grpprlLength = grpprl.length;
 
+        // is grpprl huge?
+        if(grpprlLength > 488)
+        {
+          grpprlLength = 8; // set equal to size of sprmPHugePapx grpprl
+        }
+
         // check to see if we have enough room for an FC, a BX, and the grpprl
         // and the 1 byte size of the grpprl.
         int addition = 0;
@@ -219,6 +227,40 @@ public class PAPFormattedDiskPage extends FormattedDiskPage
         byte[] phe = papx.getParagraphHeight().toByteArray();
         byte[] grpprl = papx.getGrpprl();
 
+        // is grpprl huge?
+        if(grpprl.length > 488)
+        {
+          // if so do we have storage at getHugeGrpprlOffset()
+          int hugeGrpprlOffset = papx.getHugeGrpprlOffset();
+          if(hugeGrpprlOffset == -1) // then we have no storage...
+          {
+            throw new UnsupportedOperationException(
+                  "This Paragraph has no dataStream storage.");
+          }
+          else // we have some storage...
+          {
+            // get the size of the existing storage
+            int maxHugeGrpprlSize = LittleEndian.getUShort(_dataStream,
+                hugeGrpprlOffset);
+
+            if (maxHugeGrpprlSize < grpprl.length)
+              throw new UnsupportedOperationException(
+                  "This Paragraph's dataStream storage is too small.");
+          }
+
+          // store grpprl at hugeGrpprlOffset
+          System.arraycopy(grpprl, 2, _dataStream, hugeGrpprlOffset + 2,
+                           grpprl.length - 2);
+          LittleEndian.putUShort(_dataStream, hugeGrpprlOffset, grpprl.length);
+
+          // grpprl = grpprl containing only a sprmPHugePapx2
+          int istd = LittleEndian.getUShort(grpprl, 0);
+          grpprl = new byte[8];
+          LittleEndian.putUShort(grpprl, 0, istd);
+          LittleEndian.putUShort(grpprl, 2, 0x6646); // sprmPHugePapx2
+          LittleEndian.putInt(grpprl, 4, hugeGrpprlOffset);
+        }
+
         boolean same = Arrays.equals(lastGrpprl, grpprl);
         if (!same)
         {
@@ -252,7 +294,7 @@ public class PAPFormattedDiskPage extends FormattedDiskPage
         fcOffset += FC_SIZE;
 
       }
-      // put the last papx's end in
+
       LittleEndian.putInt(buf, fcOffset, papx.getEnd() + fcMin);
       return buf;
     }

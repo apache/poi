@@ -50,7 +50,7 @@ public class TableRow
   public void setRowJustification(int jc)
   {
     _tprops.setJc(jc);
-    _papx.addSprm(SPRM_TJC, (short)jc);
+    _papx.updateSprm(SPRM_TJC, (short)jc);
   }
 
   public int getGapHalf()
@@ -61,7 +61,7 @@ public class TableRow
   public void setGapHalf(int dxaGapHalf)
   {
     _tprops.setDxaGapHalf(dxaGapHalf);
-    _papx.addSprm(SPRM_DXAGAPHALF, (short)dxaGapHalf);
+    _papx.updateSprm(SPRM_DXAGAPHALF, (short)dxaGapHalf);
   }
 
   public int getRowHeight()
@@ -72,7 +72,7 @@ public class TableRow
   public void setRowHeight(int dyaRowHeight)
   {
     _tprops.setDyaRowHeight(dyaRowHeight);
-    _papx.addSprm(SPRM_DYAROWHEIGHT, (short)dyaRowHeight);
+    _papx.updateSprm(SPRM_DYAROWHEIGHT, (short)dyaRowHeight);
   }
 
   public boolean cantSplit()
@@ -83,7 +83,7 @@ public class TableRow
   public void setCantSplit(boolean cantSplit)
   {
     _tprops.setFCantSplit(cantSplit);
-    _papx.addSprm(SPRM_FCANTSPLIT, (byte)(cantSplit ? 1 : 0));
+    _papx.updateSprm(SPRM_FCANTSPLIT, (byte)(cantSplit ? 1 : 0));
   }
 
   public boolean isTableHeader()
@@ -94,7 +94,7 @@ public class TableRow
   public void setTableHeader(boolean tableHeader)
   {
     _tprops.setFTableHeader(tableHeader);
-    _papx.addSprm(SPRM_FTABLEHEADER, (byte)(tableHeader ? 1 : 0));
+    _papx.updateSprm(SPRM_FTABLEHEADER, (byte)(tableHeader ? 1 : 0));
   }
 
 }
