@@ -1,3 +1,4 @@
+<!-- Copyright (C) 2004 The Apache Software Foundation. All rights reserved. -->
 <record id="0x1003" name="Series" excel-record-id="SERIES" package="org.apache.poi.hssf.record">
     <suffix>Record</suffix>
     <extends>Record</extends>

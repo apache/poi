@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2004 The Apache Software Foundation. All rights reserved. -->
 
 <!--
 Contains the 'dotdots' template, which, given a path, will output a set of

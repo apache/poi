@@ -1,3 +1,4 @@
+<!-- Copyright (C) 2004 The Apache Software Foundation. All rights reserved. -->
 <record fromfile="true" name="DOP" package="org.apache.poi.hwpf.model.types">
     <suffix>AbstractType</suffix>
     <extends>HDFType</extends>

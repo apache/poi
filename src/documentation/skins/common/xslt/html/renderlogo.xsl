@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2004 The Apache Software Foundation. All rights reserved. -->
 
 <!--
 A simple callable template that renders a logo for an entity. The logo will 
