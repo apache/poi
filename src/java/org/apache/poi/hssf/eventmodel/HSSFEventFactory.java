@@ -172,6 +172,8 @@ public class HSSFEventFactory
 		throws IOException, HSSFUserException
 	{
 		short userCode = 0;
+
+		short sid = 0;
 		process:
 		try
 		{
@@ -181,7 +183,6 @@ public class HSSFEventFactory
 
 			while (bytesread > 0)
 			{
-				short sid = 0;
 
 				sid = LittleEndian.getShort(sidbytes);
 				if ((rec != null) && (sid != ContinueRecord.sid))
@@ -238,7 +239,8 @@ public class HSSFEventFactory
 		}
 		catch (IOException e)
 		{
-			throw new RecordFormatException("Error reading bytes");
+			throw new RecordFormatException("Error reading bytes" +
+                        "while processing record sid="+sid);
 		}
 		return userCode;
 
