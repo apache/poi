@@ -152,13 +152,13 @@ public class TestCellStyle
 
         // with Date:
         HSSFCell cell = row.createCell((short)1);
-        cs.setDataFormat(HSSFDataFormat.getFormat("m/d/yy"));
+        cs.setDataFormat(HSSFDataFormat.getBuiltinFormat("m/d/yy"));
         cell.setCellStyle(cs);
         cell.setCellValue(new Date());
 
         // with Calendar:
         cell = row.createCell((short)2);
-        cs.setDataFormat(HSSFDataFormat.getFormat("m/d/yy"));
+        cs.setDataFormat(HSSFDataFormat.getBuiltinFormat("m/d/yy"));
         cell.setCellStyle(cs);
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date());

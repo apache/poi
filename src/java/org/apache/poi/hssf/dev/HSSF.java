@@ -145,7 +145,7 @@ public class HSSF
         f2.setColor(( short ) 0xf);
         f2.setBoldweight(f2.BOLDWEIGHT_BOLD);
         cs.setFont(f);
-        cs.setDataFormat(HSSFDataFormat.getFormat("($#,##0_);[Red]($#,##0)"));
+        cs.setDataFormat(HSSFDataFormat.getBuiltinFormat("($#,##0_);[Red]($#,##0)"));
         cs2.setBorderBottom(cs2.BORDER_THIN);
         cs2.setFillPattern(( short ) 1);   // fill w fg
         cs2.setFillForegroundColor(( short ) 0xA);

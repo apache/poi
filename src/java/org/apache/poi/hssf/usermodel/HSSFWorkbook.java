@@ -82,6 +82,7 @@ import java.util.List;
  * @see org.apache.poi.hssf.usermodel.HSSFSheet
  * @author  Andrew C. Oliver (acoliver at apache dot org)
  * @author  Glen Stampoultzis (glens at apache.org)
+ * @author  Shawn Laubach (shawnlaubach at cox.net)
  * @version 2.0-pre
  */
 
@@ -615,7 +616,17 @@ public class HSSFWorkbook
         names.remove(index);
         workbook.removeName(index);        
     }
-    
+
+        /**
+     * Creates an instance of HSSFDataFormat.
+     * @return the HSSFDataFormat object
+     * @see org.apache.poi.hssf.record.FormatRecord
+     * @see org.apache.poi.hssf.record.Record
+     */
+    public HSSFDataFormat createDataFormat() {
+	return new HSSFDataFormat(workbook);
+    }
+	
     /** remove the named range by his name
      * @param name named range name
      */    

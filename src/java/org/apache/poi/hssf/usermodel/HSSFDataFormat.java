@@ -1,4 +1,3 @@
-
 /* ====================================================================
  * The Apache Software License, Version 1.1
  *
@@ -60,11 +59,16 @@
  */
 package org.apache.poi.hssf.usermodel;
 
-import java.util.ArrayList;
+import java.util.Vector;
 import java.util.List;
+import java.util.ListIterator;
+
+import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.record.Record;
+import org.apache.poi.hssf.record.FormatRecord;
 
 /**
- * Utility to identify builin formats.  The following is a list of the formats as
+ * Utility to identify builin formats.  Now can handle user defined data formats also.  The following is a list of the formats as
  * returned by this class.<P>
  *<P>
  *       0, "General"<P>
@@ -112,75 +116,92 @@ import java.util.List;
 
 public class HSSFDataFormat
 {
-    private static ArrayList formats;
+    private static Vector builtinFormats;
 
-    private static synchronized void populateFormats()
-    {
-        formats = new ArrayList();
-        formats.add(0, "General");
-        formats.add(1, "0");
-        formats.add(2, "0.00");
-        formats.add(3, "#,##0");
-        formats.add(4, "#,##0.00");
-        formats.add(5, "($#,##0_);($#,##0)");
-        formats.add(6, "($#,##0_);[Red]($#,##0)");
-        formats.add(7, "($#,##0.00);($#,##0.00)");
-        formats.add(8, "($#,##0.00_);[Red]($#,##0.00)");
-        formats.add(9, "0%");
-        formats.add(0xa, "0.00%");
-        formats.add(0xb, "0.00E+00");
-        formats.add(0xc, "# ?/?");
-        formats.add(0xd, "# ??/??");
-        formats.add(0xe, "m/d/yy");
-        formats.add(0xf, "d-mmm-yy");
-        formats.add(0x10, "d-mmm");
-        formats.add(0x11, "mmm-yy");
-        formats.add(0x12, "h:mm AM/PM");
-        formats.add(0x13, "h:mm:ss AM/PM");
-        formats.add(0x14, "h:mm");
-        formats.add(0x15, "h:mm:ss");
-        formats.add(0x16, "m/d/yy h:mm");
+    private Vector formats = new Vector();
+    private Workbook workbook;
+    private boolean movedBuiltins = false;  // Flag to see if need to
+					    // check the built in list
+					    // or if the regular list
+					    // has all entries.
 
-        // 0x17 - 0x24 reserved for international and undocumented
-        formats.add(0x17, "0x17");
-        formats.add(0x18, "0x18");
-        formats.add(0x19, "0x19");
-        formats.add(0x1a, "0x1a");
-        formats.add(0x1b, "0x1b");
-        formats.add(0x1c, "0x1c");
-        formats.add(0x1d, "0x1d");
-        formats.add(0x1e, "0x1e");
-        formats.add(0x1f, "0x1f");
-        formats.add(0x20, "0x20");
-        formats.add(0x21, "0x21");
-        formats.add(0x22, "0x22");
-        formats.add(0x23, "0x23");
-        formats.add(0x24, "0x24");
-
-        // 0x17 - 0x24 reserved for international and undocumented
-        formats.add(0x25, "(#,##0_);(#,##0)");
-        formats.add(0x26, "(#,##0_);[Red](#,##0)");
-        formats.add(0x27, "(#,##0.00_);(#,##0.00)");
-        formats.add(0x28, "(#,##0.00_);[Red](#,##0.00)");
-        formats.add(0x29, "_(*#,##0_);_(*(#,##0);_(* \"-\"_);_(@_)");
-        formats.add(0x2a, "_($*#,##0_);_($*(#,##0);_($* \"-\"_);_(@_)");
-        formats.add(0x2b, "_(*#,##0.00_);_(*(#,##0.00);_(*\"-\"??_);_(@_)");
-        formats.add(0x2c,
-                    "_($*#,##0.00_);_($*(#,##0.00);_($*\"-\"??_);_(@_)");
-        formats.add(0x2d, "mm:ss");
-        formats.add(0x2e, "[h]:mm:ss");
-        formats.add(0x2f, "mm:ss.0");
-        formats.add(0x30, "##0.0E+0");
-        formats.add(0x31, "@");
+    /** 
+     * Construncts a new data formatter.  It takes a workbook to have
+     * access to the workbooks format records.
+     * @param workbook the workbook the formats are tied to.
+     */
+    public HSSFDataFormat(Workbook workbook) {
+	this.workbook = workbook;
+	if (builtinFormats == null) populateBuiltinFormats();
     }
 
-    public static List getFormats()
+    private static synchronized void populateBuiltinFormats()
     {
-        if (formats == null)
+        builtinFormats = new Vector();
+        builtinFormats.add(0, "General");
+        builtinFormats.add(1, "0");
+        builtinFormats.add(2, "0.00");
+        builtinFormats.add(3, "#,##0");
+        builtinFormats.add(4, "#,##0.00");
+        builtinFormats.add(5, "($#,##0_);($#,##0)");
+        builtinFormats.add(6, "($#,##0_);[Red]($#,##0)");
+        builtinFormats.add(7, "($#,##0.00);($#,##0.00)");
+        builtinFormats.add(8, "($#,##0.00_);[Red]($#,##0.00)");
+        builtinFormats.add(9, "0%");
+        builtinFormats.add(0xa, "0.00%");
+        builtinFormats.add(0xb, "0.00E+00");
+        builtinFormats.add(0xc, "# ?/?");
+        builtinFormats.add(0xd, "# ??/??");
+        builtinFormats.add(0xe, "m/d/yy");
+        builtinFormats.add(0xf, "d-mmm-yy");
+        builtinFormats.add(0x10, "d-mmm");
+        builtinFormats.add(0x11, "mmm-yy");
+        builtinFormats.add(0x12, "h:mm AM/PM");
+        builtinFormats.add(0x13, "h:mm:ss AM/PM");
+        builtinFormats.add(0x14, "h:mm");
+        builtinFormats.add(0x15, "h:mm:ss");
+        builtinFormats.add(0x16, "m/d/yy h:mm");
+
+        // 0x17 - 0x24 reserved for international and undocumented
+        builtinFormats.add(0x17, "0x17");
+        builtinFormats.add(0x18, "0x18");
+        builtinFormats.add(0x19, "0x19");
+        builtinFormats.add(0x1a, "0x1a");
+        builtinFormats.add(0x1b, "0x1b");
+        builtinFormats.add(0x1c, "0x1c");
+        builtinFormats.add(0x1d, "0x1d");
+        builtinFormats.add(0x1e, "0x1e");
+        builtinFormats.add(0x1f, "0x1f");
+        builtinFormats.add(0x20, "0x20");
+        builtinFormats.add(0x21, "0x21");
+        builtinFormats.add(0x22, "0x22");
+        builtinFormats.add(0x23, "0x23");
+        builtinFormats.add(0x24, "0x24");
+
+        // 0x17 - 0x24 reserved for international and undocumented
+        builtinFormats.add(0x25, "(#,##0_);(#,##0)");
+        builtinFormats.add(0x26, "(#,##0_);[Red](#,##0)");
+        builtinFormats.add(0x27, "(#,##0.00_);(#,##0.00)");
+        builtinFormats.add(0x28, "(#,##0.00_);[Red](#,##0.00)");
+        builtinFormats.add(0x29, "_(*#,##0_);_(*(#,##0);_(* \"-\"_);_(@_)");
+        builtinFormats.add(0x2a, "_($*#,##0_);_($*(#,##0);_($* \"-\"_);_(@_)");
+        builtinFormats.add(0x2b, "_(*#,##0.00_);_(*(#,##0.00);_(*\"-\"??_);_(@_)");
+        builtinFormats.add(0x2c,
+                    "_($*#,##0.00_);_($*(#,##0.00);_($*\"-\"??_);_(@_)");
+        builtinFormats.add(0x2d, "mm:ss");
+        builtinFormats.add(0x2e, "[h]:mm:ss");
+        builtinFormats.add(0x2f, "mm:ss.0");
+        builtinFormats.add(0x30, "##0.0E+0");
+        builtinFormats.add(0x31, "@");
+    }
+
+    public static List getBuiltinFormats()
+    {
+        if (builtinFormats == null)
         {
-            populateFormats();
+            populateBuiltinFormats();
         }
-        return formats;
+        return builtinFormats;
     }
 
     /**
@@ -189,17 +210,17 @@ public class HSSFDataFormat
      * @return index of format or -1 if undefined.
      */
 
-    public static short getFormat(String format)
+    public static short getBuiltinFormat(String format)
     {
-        if (formats == null)
+        if (builtinFormats == null)
         {
-            populateFormats();
+            populateBuiltinFormats();
         }
         short retval = -1;
 
         for (short k = 0; k < 0x31; k++)
         {
-            String nformat = ( String ) formats.get(k);
+            String nformat = ( String ) builtinFormats.get(k);
 
             if ((nformat != null) && nformat.equals(format))
             {
@@ -211,31 +232,79 @@ public class HSSFDataFormat
     }
 
     /**
+     * get the format index that matches the given format string.
+     * Creates a new format if one is not found.
+     * @param format string matching a built in format
+     * @return index of format.
+     */
+
+    public short getFormat(String format)
+    {
+	ListIterator i;
+	int ind;
+	if (!movedBuiltins) {
+	    i = builtinFormats.listIterator();
+	    while (i.hasNext()) {
+		ind = i.nextIndex();
+		formats.add(ind, i.next());
+	    }
+	    movedBuiltins = true;
+	}
+	i = formats.listIterator();
+	while (i.hasNext()) {
+	    ind = i.nextIndex();
+	    if (format.equals(i.next())) 
+		return (short)ind;
+	}
+	
+	ind = workbook.getFormat(format, true);
+	if (formats.size() <= ind) 
+	    formats.setSize(ind + 1);
+	formats.add(ind, format);
+
+        return (short)ind;
+    }
+
+    /**
+     * get the format string that matches the given format index
+     * @param index of a format
+     * @return string represented at index of format or null if there is not a  format at that index
+     */
+
+    public String getFormat(short index)
+    {
+	if (movedBuiltins)
+	    return ( String ) formats.get(index);
+	else
+	    return (String) (builtinFormats.get(index) != null ? builtinFormats.get(index) : formats.get(index));
+    }
+
+    /**
      * get the format string that matches the given format index
      * @param index of a built in format
      * @return string represented at index of format or null if there is not a builtin format at that index
      */
 
-    public static String getFormat(short index)
+    public static String getBuiltinFormat(short index)
     {
-        if (formats == null)
+        if (builtinFormats == null)
         {
-            populateFormats();
+            populateBuiltinFormats();
         }
-        return ( String ) formats.get(index);
+        return ( String ) builtinFormats.get(index);
     }
 
     /**
-     * get the number of builtin and reserved formats
-     * @return number of builtin and reserved formats
+     * get the number of builtin and reserved builtinFormats
+     * @return number of builtin and reserved builtinFormats
      */
 
-    public static int getNumberOfBuiltinFormats()
+    public static int getNumberOfBuiltinBuiltinFormats()
     {
-        if (formats == null)
+        if (builtinFormats == null)
         {
-            populateFormats();
+            populateBuiltinFormats();
         }
-        return formats.size();
+        return builtinFormats.size();
     }
 }
