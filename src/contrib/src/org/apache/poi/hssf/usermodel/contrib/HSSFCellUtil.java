@@ -1,72 +1,69 @@
-
-/*
- *  ====================================================================
- *  The Apache Software License, Version 1.1
+/* ====================================================================
+ * The Apache Software License, Version 1.1
  *
- *  Copyright (c) 2002 The Apache Software Foundation.  All rights
- *  reserved.
+ * Copyright (c) 2002 The Apache Software Foundation.  All rights
+ * reserved.
  *
- *  Redistribution and use in source and binary forms, with or without
- *  modification, are permitted provided that the following conditions
- *  are met:
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
  *
- *  1. Redistributions of source code must retain the above copyright
- *  notice, this list of conditions and the following disclaimer.
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
  *
- *  2. Redistributions in binary form must reproduce the above copyright
- *  notice, this list of conditions and the following disclaimer in
- *  the documentation and/or other materials provided with the
- *  distribution.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in
+ *    the documentation and/or other materials provided with the
+ *    distribution.
  *
- *  3. The end-user documentation included with the redistribution,
- *  if any, must include the following acknowledgment:
- *  "This product includes software developed by the
- *  Apache Software Foundation (http://www.apache.org/)."
- *  Alternately, this acknowledgment may appear in the software itself,
- *  if and wherever such third-party acknowledgments normally appear.
+ * 3. The end-user documentation included with the redistribution,
+ *    if any, must include the following acknowledgment:
+ *       "This product includes software developed by the
+ *        Apache Software Foundation (http://www.apache.org/)."
+ *    Alternately, this acknowledgment may appear in the software itself,
+ *    if and wherever such third-party acknowledgments normally appear.
  *
- *  4. The names "Apache" and "Apache Software Foundation" and
- *  "Apache POI" must not be used to endorse or promote products
- *  derived from this software without prior written permission. For
- *  written permission, please contact apache@apache.org.
+ * 4. The names "Apache" and "Apache Software Foundation" and
+ *    "Apache POI" must not be used to endorse or promote products
+ *    derived from this software without prior written permission. For
+ *    written permission, please contact apache@apache.org.
  *
- *  5. Products derived from this software may not be called "Apache",
- *  "Apache POI", nor may "Apache" appear in their name, without
- *  prior written permission of the Apache Software Foundation.
+ * 5. Products derived from this software may not be called "Apache",
+ *    "Apache POI", nor may "Apache" appear in their name, without
+ *    prior written permission of the Apache Software Foundation.
  *
- *  THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
- *  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- *  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- *  DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
- *  ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- *  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
- *  USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
- *  ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- *  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
- *  OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- *  SUCH DAMAGE.
- *  ====================================================================
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
+ * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
+ * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+ * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
+ * ====================================================================
  *
- *  This software consists of voluntary contributions made by many
- *  individuals on behalf of the Apache Software Foundation.  For more
- *  information on the Apache Software Foundation, please see
- *  <http://www.apache.org/>.
+ * This software consists of voluntary contributions made by many
+ * individuals on behalf of the Apache Software Foundation.  For more
+ * information on the Apache Software Foundation, please see
+ * <http://www.apache.org/>.
  */
+
 package org.apache.poi.hssf.usermodel.contrib;
 
-import java.util.*;
-
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFFont;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.lang.exception.NestableException;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.exception.NestableException;
+import org.apache.poi.hssf.usermodel.*;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 /**
  *  Various utility functions that make working with a cells and rows easier.  The various
  * methods that deal with style's allow you to create your HSSFCellStyles as you need them.
@@ -76,193 +73,219 @@ import org.apache.commons.lang.StringUtils;
  * can be supported.
  *
  *@author     Eric Pugh epugh@upstate.com
- *@created    July 29, 2002
  */
 
-public class HSSFCellUtil {
-  private static HashMap unicodeMappings = new HashMap();
+public class HSSFCellUtil
+{
+
+    private static HashMap unicodeMappings = new HashMap();
 
 
-  /**
-   *  Get a row from the spreadsheet, and create it if it doesn't exist.
-   *
-   *@param  rowCounter  The 0 based row number
-   *@param  sheet       The sheet that the row is part of.
-   *@return             The row indicated by the rowCounter
-   */
-  public static HSSFRow getRow( int rowCounter, HSSFSheet sheet ) {
-    HSSFRow row = sheet.getRow( (short) rowCounter );
-    if ( row == null ) {
-      row = sheet.createRow( (short) rowCounter );
-    }
-    return row;
-  }
-
-  /**
-   *  Get a specific cell from a row. If the cell doesn't exist, then create it.
-   *
-   *@param  row     The row that the cell is part of
-   *@param  column  The column index that the cell is in.
-   *@return         The cell indicated by the column.
-   */
-  public static HSSFCell getCell( HSSFRow row, int column ) {
-    HSSFCell cell = row.getCell( (short) column );
-    if ( cell == null ) {
-      cell = row.createCell( (short) column );
-    }
-    return cell;
-  }
-
-
-  /**
-   *  Creates a cell, gives it a value, and applies a style if provided
-   *
-   *@param  row     the row to create the cell in
-   *@param  column  the column index to create the cell in
-   *@param  value   The value of the cell
-   *@param  style   If the style is not null, then set
-   *@return         A new HSSFCell
-   */
-  public static HSSFCell createCell( HSSFRow row, int column, String value, HSSFCellStyle style ) {
-    HSSFCell cell = getCell( row, column );
-
-    cell.setCellValue( value );
-    if ( style != null ) {
-      cell.setCellStyle( style );
-    }
-    return cell;
-  }
-
-  /**
-   *  Create a cell, and give it a value.
-   *
-   *@param  row     the row to create the cell in
-   *@param  column  the column index to create the cell in
-   *@param  value   The value of the cell
-   *@return         A new HSSFCell.
-   */
-  public static HSSFCell createCell( HSSFRow row, int column, String value ) {
-    return createCell( row, column, value, null );
-  }
-
-  /**
-   *  Take a cell, and align it.
-   *
-   *@param  cell     the cell to set the alignment for
-   *@param  workbook               The workbook that is being worked with.
-   *@param  align  the column alignment to use.
-   *@return         The HSSFCell aligned.
-   *@exception  NestableException  Thrown if an error happens.
-   */
-  public static void setAlignment(HSSFCell cell, HSSFWorkbook workbook, short align) throws NestableException {
-    setCellStyleProperty(cell, workbook, "alignment", new Short(align) );
-
-  }
-
-  /**
-   *  Take a cell, and apply a font to it
-   *
-   *@param  cell     the cell to set the alignment for
-   *@param  workbook               The workbook that is being worked with.
-   *@param  font  The HSSFFont that you want to set...
-   *@return         The HSSFCell with the font
-   *@exception  NestableException  Thrown if an error happens.
-   */
-  public static void setFont(HSSFCell cell, HSSFWorkbook workbook, HSSFFont font) throws NestableException {
-    setCellStyleProperty(cell, workbook, "font", font );
-
-  }
-  /**
-   *  This method attempt to find an already existing HSSFCellStyle that matches
-   *  what you want the style to be. If it does not find the style, then it
-   *  creates a new one. If it does create a new one, then it applyies the
-   *  propertyName and propertyValue to the style. This is nessasary because
-   *  Excel has an upper limit on the number of Styles that it supports.
-   *
-   *@param  workbook               The workbook that is being worked with.
-   *@param  propertyName           The name of the property that is to be
-   *      changed.
-   *@param  propertyValue          The value of the property that is to be
-   *      changed.
-   *@param  cell                   The cell that needs it's style changes
-   *@exception  NestableException  Thrown if an error happens.
-   */
-  public static void setCellStyleProperty( HSSFCell cell, HSSFWorkbook workbook, String propertyName, Object propertyValue )
-    throws NestableException {
-    try {
-      HSSFCellStyle originalStyle = cell.getCellStyle();
-      HSSFCellStyle newStyle = null;
-      Map values = PropertyUtils.describe( originalStyle );
-      values.put( propertyName, propertyValue );
-      values.remove( "index" );
-      // index seems like what  index the cellstyle is in the list of styles for a workbook.
-      // not good to compare on!
-
-      short numberCellStyles = workbook.getNumCellStyles();
-
-      for ( short i = 0; i < numberCellStyles; i++ ) {
-        HSSFCellStyle wbStyle = workbook.getCellStyleAt( i );
-        Map wbStyleMap = PropertyUtils.describe( wbStyle );
-        wbStyleMap.remove( "index" );
-
-        if ( wbStyleMap.equals( values ) ) {
-          newStyle = wbStyle;
-          break;
+    /**
+     *  Get a row from the spreadsheet, and create it if it doesn't exist.
+     *
+     *@param  rowCounter  The 0 based row number
+     *@param  sheet       The sheet that the row is part of.
+     *@return             The row indicated by the rowCounter
+     */
+    public static HSSFRow getRow( int rowCounter, HSSFSheet sheet )
+    {
+        HSSFRow row = sheet.getRow( (short) rowCounter );
+        if ( row == null )
+        {
+            row = sheet.createRow( (short) rowCounter );
         }
-      }
 
-      if ( newStyle == null ) {
-        newStyle = workbook.createCellStyle();
-        newStyle.setFont( workbook.getFontAt( originalStyle.getFontIndex() ) );
-        PropertyUtils.copyProperties( newStyle, originalStyle );
-        PropertyUtils.setProperty( newStyle, propertyName, propertyValue );
-      }
-
-      cell.setCellStyle( newStyle );
-    }
-    catch ( Exception e ) {
-      e.printStackTrace();
-      throw new NestableException( "Couldn't setCellStyleProperty.", e );
-    }
-  }
-
-
-  /**
-   *  Looks for text in the cell that should be unicode, like &alpha; and provides the
-   *  unicode version of it.
-   *
-   *@param  cell  The cell to check for unicode values
-   *@return       transalted to unicode
-   */
-  public static HSSFCell translateUnicodeValues( HSSFCell cell ) {
-    String s = cell.getStringCellValue();
-    boolean foundUnicode = false;
-
-    for ( Iterator i = unicodeMappings.entrySet().iterator(); i.hasNext();  ) {
-      Map.Entry entry = (Map.Entry) i.next();
-      String key = (String) entry.getKey();
-      if ( s.toLowerCase().indexOf( key ) != -1 ) {
-        s = StringUtils.replace( s, key, "" + entry.getValue().toString() + "" );
-        foundUnicode = true;
-      }
-
+        return row;
     }
 
-    if ( foundUnicode ) {
 
-      cell.setEncoding( HSSFCell.ENCODING_UTF_16 );
-      cell.setCellValue( s );
+    /**
+     *  Get a specific cell from a row. If the cell doesn't exist, then create it.
+     *
+     *@param  row     The row that the cell is part of
+     *@param  column  The column index that the cell is in.
+     *@return         The cell indicated by the column.
+     */
+    public static HSSFCell getCell( HSSFRow row, int column )
+    {
+        HSSFCell cell = row.getCell( (short) column );
+
+        if ( cell == null )
+        {
+            cell = row.createCell( (short) column );
+        }
+        return cell;
     }
-    return cell;
-  }
 
 
-  static {
-    unicodeMappings.put( "&alpha;", "\u03B1" );
-    unicodeMappings.put( "&gamma;", "\u03B3" );
-    unicodeMappings.put( "&theta;", "\u03B8" );
+    /**
+     *  Creates a cell, gives it a value, and applies a style if provided
+     *
+     * @param  row     the row to create the cell in
+     * @param  column  the column index to create the cell in
+     * @param  value   The value of the cell
+     * @param  style   If the style is not null, then set
+     * @return         A new HSSFCell
+     */
 
-  }
+    public static HSSFCell createCell( HSSFRow row, int column, String value, HSSFCellStyle style )
+    {
+        HSSFCell cell = getCell( row, column );
+
+        cell.setCellValue( value );
+        if ( style != null )
+        {
+            cell.setCellStyle( style );
+        }
+
+        return cell;
+    }
+
+
+    /**
+     *  Create a cell, and give it a value.
+     *
+     *@param  row     the row to create the cell in
+     *@param  column  the column index to create the cell in
+     *@param  value   The value of the cell
+     *@return         A new HSSFCell.
+     */
+    public static HSSFCell createCell( HSSFRow row, int column, String value )
+    {
+        return createCell( row, column, value, null );
+    }
+
+
+    /**
+     *  Take a cell, and align it.
+     *
+     *@param  cell     the cell to set the alignment for
+     *@param  workbook               The workbook that is being worked with.
+     *@param  align  the column alignment to use.
+     *@exception  NestableException  Thrown if an error happens.
+     */
+    public static void setAlignment( HSSFCell cell, HSSFWorkbook workbook, short align ) throws NestableException
+    {
+        setCellStyleProperty( cell, workbook, "alignment", new Short( align ) );
+    }
+
+    /**
+     *  Take a cell, and apply a font to it
+     *
+     *@param  cell     the cell to set the alignment for
+     *@param  workbook               The workbook that is being worked with.
+     *@param  font  The HSSFFont that you want to set...
+     *@exception  NestableException  Thrown if an error happens.
+     */
+    public static void setFont( HSSFCell cell, HSSFWorkbook workbook, HSSFFont font ) throws NestableException
+    {
+        setCellStyleProperty( cell, workbook, "font", font );
+    }
+
+    /**
+     *  This method attempt to find an already existing HSSFCellStyle that matches
+     *  what you want the style to be. If it does not find the style, then it
+     *  creates a new one. If it does create a new one, then it applyies the
+     *  propertyName and propertyValue to the style. This is nessasary because
+     *  Excel has an upper limit on the number of Styles that it supports.
+     *
+     *@param  workbook               The workbook that is being worked with.
+     *@param  propertyName           The name of the property that is to be
+     *      changed.
+     *@param  propertyValue          The value of the property that is to be
+     *      changed.
+     *@param  cell                   The cell that needs it's style changes
+     *@exception  NestableException  Thrown if an error happens.
+     */
+
+    public static void setCellStyleProperty( HSSFCell cell, HSSFWorkbook workbook, String propertyName, Object propertyValue )
+            throws NestableException
+    {
+        try
+        {
+            HSSFCellStyle originalStyle = cell.getCellStyle();
+            HSSFCellStyle newStyle = null;
+            Map values = PropertyUtils.describe( originalStyle );
+            values.put( propertyName, propertyValue );
+            values.remove( "index" );
+
+            // index seems like what  index the cellstyle is in the list of styles for a workbook.
+            // not good to compare on!
+            short numberCellStyles = workbook.getNumCellStyles();
+
+            for ( short i = 0; i < numberCellStyles; i++ )
+            {
+                HSSFCellStyle wbStyle = workbook.getCellStyleAt( i );
+                Map wbStyleMap = PropertyUtils.describe( wbStyle );
+                wbStyleMap.remove( "index" );
+
+                if ( wbStyleMap.equals( values ) )
+                {
+                    newStyle = wbStyle;
+                    break;
+                }
+            }
+
+            if ( newStyle == null )
+            {
+                newStyle = workbook.createCellStyle();
+                newStyle.setFont( workbook.getFontAt( originalStyle.getFontIndex() ) );
+                PropertyUtils.copyProperties( newStyle, originalStyle );
+                PropertyUtils.setProperty( newStyle, propertyName, propertyValue );
+            }
+
+            cell.setCellStyle( newStyle );
+        }
+        catch ( Exception e )
+        {
+            e.printStackTrace();
+
+            throw new NestableException( "Couldn't setCellStyleProperty.", e );
+        }
+    }
+
+
+    /**
+     *  Looks for text in the cell that should be unicode, like &alpha; and provides the
+     *  unicode version of it.
+     *
+     *@param  cell  The cell to check for unicode values
+     *@return       transalted to unicode
+     */
+    public static HSSFCell translateUnicodeValues( HSSFCell cell )
+    {
+
+        String s = cell.getStringCellValue();
+        boolean foundUnicode = false;
+
+        for ( Iterator i = unicodeMappings.entrySet().iterator(); i.hasNext(); )
+        {
+            Map.Entry entry = (Map.Entry) i.next();
+            String key = (String) entry.getKey();
+            if ( s.toLowerCase().indexOf( key ) != -1 )
+            {
+                s = StringUtils.replace( s, key, "" + entry.getValue().toString() + "" );
+                foundUnicode = true;
+            }
+        }
+        if ( foundUnicode )
+        {
+            cell.setEncoding( HSSFCell.ENCODING_UTF_16 );
+            cell.setCellValue( s );
+        }
+        return cell;
+    }
+
+
+    static
+    {
+        unicodeMappings.put( "&alpha;", "\u03B1" );
+        unicodeMappings.put( "&gamma;", "\u03B3" );
+        unicodeMappings.put( "&theta;", "\u03B8" );
+    }
 
 }
+
+
 
