@@ -142,8 +142,6 @@ public class TestWorkbook
         wb.write(out);
         out.close();
         sanityChecker.checkHSSFWorkbook(wb);
-        assertEquals("FILE LENGTH == 87040", 87040,
-                     file.length());                            // remove me
         assertEquals("LAST ROW == 99", 99, s.getLastRowNum());
         assertEquals("FIRST ROW == 0", 0, s.getFirstRowNum());
 
@@ -201,8 +199,6 @@ public class TestWorkbook
         out.close();
 
         sanityChecker.checkHSSFWorkbook(wb);
-        assertEquals("FILE LENGTH == 45568", 45568,
-                     file.length());   // remove
         assertEquals("LAST ROW == 74", 74, s.getLastRowNum());
         assertEquals("FIRST ROW == 25", 25, s.getFirstRowNum());
     }

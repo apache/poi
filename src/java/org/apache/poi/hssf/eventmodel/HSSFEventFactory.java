@@ -185,6 +185,24 @@ public class HSSFEventFactory
 			{
 
 				sid = LittleEndian.getShort(sidbytes);
+                
+                //
+                // for some reasons we have to make the workbook to be at least 4096 bytes
+                // but if we have such workbook we fill the end of it with zeros (many zeros)
+                //
+                // it is not good:
+                // if the length( all zero records ) % 4 = 1
+                // e.g.: any zero record would be readed as  4 bytes at once ( 2 - id and 2 - size ).
+                // And the last 1 byte will be readed WRONG ( the id must be 2 bytes )
+                //
+                // So we should better to check if the sid is zero and not to read more data
+                // The zero sid shows us that rest of the stream data is a fake to make workbook 
+                // certain size
+                //
+                if ( sid == 0 )
+                    break;
+
+
 				if ((rec != null) && (sid != ContinueRecord.sid))
 				{
 					userCode = req.processRecord(rec);

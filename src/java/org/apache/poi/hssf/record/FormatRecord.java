@@ -73,7 +73,8 @@ public class FormatRecord
     public final static short sid = 0x41e;
     private short             field_1_index_code;
     private byte              field_2_formatstring_len;
-    private short             field_3_zero;   // undocumented 2 bytes of 0
+    private short             field_3_unicode_len;      // unicode string length
+    private boolean          field_3_unicode_flag;     // it is not undocumented - it is unicode flag
     private String            field_4_formatstring;
 
     public FormatRecord()
@@ -118,10 +119,19 @@ public class FormatRecord
     protected void fillFields(byte [] data, short size, int offset)
     {
         field_1_index_code       = LittleEndian.getShort(data, 0 + offset);
-        field_2_formatstring_len = data[ 2 + offset ];
-        field_3_zero             = LittleEndian.getShort(data, 3 + offset);
-        field_4_formatstring     = new String(data, 5 + offset,
-                                              LittleEndian.ubyteToInt(field_2_formatstring_len));
+        // field_2_formatstring_len = data[ 2 + offset ];
+        field_3_unicode_len      = LittleEndian.getShort( data, 2 + offset );
+        field_3_unicode_flag     = ( data[ 4 + offset ] & (byte)0x01 ) != 0;
+                                              
+                                              
+      if ( field_3_unicode_flag  ) {
+          // unicode
+          field_4_formatstring = StringUtil.getFromUnicodeHigh( data, 5 + offset, field_3_unicode_len );
+      }
+      else {
+          // not unicode
+          field_4_formatstring = new String(data, 5 + offset, field_3_unicode_len );
+      }
     }
 
     /**
@@ -142,7 +152,7 @@ public class FormatRecord
      * @param len  the length of the format string
      * @see #setFormatString(String)
      */
-
+    
     public void setFormatStringLength(byte len)
     {
         field_2_formatstring_len = len;
@@ -203,11 +213,15 @@ public class FormatRecord
         buffer.append("[FORMAT]\n");
         buffer.append("    .indexcode       = ")
             .append(Integer.toHexString(getIndexCode())).append("\n");
+        /*
         buffer.append("    .formatstringlen = ")
             .append(Integer.toHexString(getFormatStringLength()))
             .append("\n");
-        buffer.append("    .zero            = ")
-            .append(Integer.toHexString(field_3_zero)).append("\n");
+        */
+        buffer.append("    .unicode length  = ")
+            .append(Integer.toHexString(field_3_unicode_len)).append("\n");
+        buffer.append("    .isUnicode       = ")
+            .append( field_3_unicode_flag ).append("\n");
         buffer.append("    .formatstring    = ").append(getFormatString())
             .append("\n");
         buffer.append("[/FORMAT]\n");
@@ -217,20 +231,29 @@ public class FormatRecord
     public int serialize(int offset, byte [] data)
     {
         LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset,
-                              ( short ) (5 + getFormatStringLength()));
-
-        // 9 - 4(len/sid) + format string length
+        LittleEndian.putShort(data, 2 + offset, (short)( 2 + 2 + 1 + ( (field_3_unicode_flag) 
+                                                                  ? 2 * field_3_unicode_len 
+                                                                  : field_3_unicode_len ) ) );
+                                                  // index + len + flag + format string length
         LittleEndian.putShort(data, 4 + offset, getIndexCode());
-        data[ 6 + offset ] = getFormatStringLength();
-        LittleEndian.putShort(data, 7 + offset, ( short ) 0);
-        StringUtil.putCompressedUnicode(getFormatString(), data, 9 + offset);
+        LittleEndian.putShort(data, 6 + offset, field_3_unicode_len);
+        data[ 8 + offset ] = (byte)( (field_3_unicode_flag) ? 0x01 : 0x00 );
+
+      if ( field_3_unicode_flag ) {
+          // unicode
+          StringUtil.putUncompressedUnicode( getFormatString(), data, 9 + offset );
+      }
+      else {
+          // not unicode
+          StringUtil.putCompressedUnicode( getFormatString(), data, 9 + offset );
+      }
+      
         return getRecordSize();
     }
 
     public int getRecordSize()
     {
-        return 9 + getFormatStringLength();
+        return 9 + ( ( field_3_unicode_flag ) ? 2 * field_3_unicode_len : field_3_unicode_len );
     }
 
     public short getSid()
