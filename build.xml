@@ -1,19 +1,29 @@
 <?xml version="1.0"?>
 
 <!--
-    In order to build this project you need Ant 1.4 or higher.  The following
-    optional jar files should be installed into the ant lib directory:
+    POI Build System.  Written by:
+
+        Glen Stampoultzis   glens at apache.org
+
+
+    This build was tested with and 1.5.3 although it will probably work with
+    other versions.  The following optional jar files should be installed
+    into the ant lib directory:
 
     LIBRARY         LOCATION
     =======         ========
-    junit           TODO
-    xerces
-    jdepend
+    junit           http://www.ibiblio.org/maven/junit/jars/
+    xerces          http://www.ibiblio.org/maven/xerces/jars/
+    jdepend         http://www.ibiblio.org/maven/jdepend/jars/
+
+    To build the documentation you will need to install forrest and set
+    the FORREST_HOME environment variable.
 
 
     TO BE COMPLETED:
 
-    NONE
+    Convert book.xml files to a sitemap.
+
  -->
 <project name="POI Build" default="compile" basedir=".">
 
@@ -64,11 +74,13 @@
     <property name="build.site.src" value="build/tmp/site"/>
     <property name="junit.report.dir" value="${build.site}/junit"/>
     <property name="jdepend.report.dir" value="${build.site}/jdepend"/>
+    <property name="jdepend.report.out.dir" value="${build.site.src}/src/documentation/content/jdepend"/>
     <property name="apidocs.report.dir" value="${build.site}/apidocs"/>
     <property name="changelog.file" value="${build.site}/changelog.html"/>
     <property name="dist.dir" value="build/dist"/>
     <property name="jar.name" value="poi"/>
     <property name="version.id" value="1.10.0-dev"/>
+    <property name="halt.on.test.failure" value="true"/>
 
     <path id="main.classpath">
         <pathelement location="${main.jar1.dir}"/>
@@ -109,6 +121,7 @@
         <mkdir dir="${contrib.reports.test}"/>
         <mkdir dir="${junit.report.dir}"/>
         <mkdir dir="${jdepend.report.dir}"/>
+        <mkdir dir="${jdepend.report.out.dir}"/>
         <mkdir dir="${apidocs.report.dir}"/>
         <mkdir dir="${dist.dir}"/>
         <mkdir dir="${build.site.src}/${main.documentation}"/>
@@ -199,7 +212,8 @@
     </target>
 
     <target name="test-main" depends="compile-main,-test-main-check" unless="main.test.notRequired">
-        <junit printsummary="yes" fork="no" haltonfailure="no" failureproperty="main.test.failed">
+        <junit printsummary="yes" showoutput="true" filtertrace="no" fork="no"
+            haltonfailure="${halt.on.test.failure}" failureproperty="main.test.failed">
             <classpath>
                 <path refid="main.classpath"/>
                 <pathelement location="${main.output.dir}"/>
@@ -208,6 +222,7 @@
             </classpath>
             <sysproperty key="HSSF.testdata.path" value="${main.src.test}/org/apache/poi/hssf/data"/>
             <sysproperty key="HPSF.testdata.path" value="${main.src.test}/org/apache/poi/hpsf/data"/>
+            <formatter type="plain"/>
             <formatter type="xml"/>
             <batchtest todir="${main.reports.test}">
                 <fileset dir="${main.src.test}">
@@ -232,7 +247,7 @@
     </target>
 
     <target name="test-scratchpad" depends="compile-scratchpad,-test-scratchpad-check" unless="scratchpad.test.notRequired">
-        <junit printsummary="yes" fork="no" haltonfailure="no">
+        <junit printsummary="yes" fork="no" haltonfailure="${halt.on.test.failure}">
             <classpath>
                 <path refid="scratchpad.classpath"/>
                 <pathelement location="${main.output.dir}"/>
@@ -266,7 +281,7 @@
     </target>
 
     <target name="test-contrib" depends="compile-contrib,-test-contrib-check" unless="contrib.test.notRequired">
-        <junit printsummary="yes" fork="no" haltonfailure="no">
+        <junit printsummary="yes" fork="no" haltonfailure="${halt.on.test.failure}">
             <classpath>
                 <path refid="contrib.classpath"/>
                 <pathelement location="${main.output.dir}"/>
@@ -325,9 +340,15 @@
             <fileset dir="${junit.report.dir}"/>
         </copy>
 
+        <move file="${build.site.src}/src/documentation/content/xdocs/status.xml" tofile="${build.site.src}/status.xml"/>
+
+
         <ant antfile="${forrest.home}/forrest.antproxy.xml" target="site">
             <property name="project.home" value="${build.site.src}"/>
         </ant>
+
+        <echo>Broken links:</echo>
+        <echo file="${build.site}/../tmp/brokenlinks.txt"/>
 
         <touch>
             <fileset dir="${build.site}"/>
@@ -345,8 +366,11 @@
         </condition>
     </target>
 
-    <target name="reports" depends="test,-check-reports" unless="reports.notRequired"
+    <target name="reports" depends="-check-reports" unless="reports.notRequired"
         description="Creates junit,jdepend and javadoc reports">
+        <antcall target="test">
+            <param name="${halt.on.test.failure}" value="false"/>
+        </antcall>
         <junitreport todir="${junit.report.dir}">
             <fileset dir="${main.reports.test}">
                 <include name="TEST-*.xml"/>
@@ -378,7 +402,7 @@
 
         <style basedir="${jdepend.report.dir}"
             in="${jdepend.report.dir}/jdepend.xml"
-            out="${jdepend.report.dir}/index.html"
+            out="${jdepend.report.out.dir}/index.html"
             style="jdepend.xsl"/>
 
         <cvschangelog destfile="${changelog.file}" daysinpast="30"/>
@@ -424,6 +448,51 @@
             <group title="Record Generator" packages="org.apache.poi.record*"/>
             <group title="Utils" packages="org.apache.poi.util*"/>
         </javadoc>
+
+
+    </target>
+
+    <!-- ================================== -->
+    <!--       Generate records                -->
+    <!-- ================================== -->
+
+    <target name="generate-records" depends="init"
+        description="generate-records">
+        <java classname="org.apache.poi.dev.RecordGenerator" fork="yes">
+            <arg value="src/records/definitions"/>
+            <arg value="src/records/styles"/>
+            <arg value="src/java"/>
+            <arg value="src/testcases"/>
+            <classpath>
+                <path refid="scratchpad.classpath">
+                </path>
+                <pathelement location="${main.output.dir}"/>
+                <pathelement location="${scratchpad.output.dir}"/>
+            </classpath>
+        </java>
+
+    </target>
+
+    <!-- ================================== -->
+    <!--       Generate types                -->
+    <!-- ================================== -->
+
+    <target name="generate-types" depends="init"
+        description="generate-types">
+
+        <java classname="org.apache.poi.dev.RecordGenerator" fork="yes">
+            <arg value="src/types/definitions"/>
+            <arg value="src/types/styles"/>
+            <arg value="src/scratchpad/src"/>
+            <arg value="src/scratchpad/testcases"/>
+            <classpath>
+                <path refid="scratchpad.classpath">
+                </path>
+                <pathelement location="${main.output.dir}"/>
+                <pathelement location="${scratchpad.output.dir}"/>
+            </classpath>
+        </java>
+
     </target>
 
     <target name="site" depends="reports,docs"

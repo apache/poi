@@ -25,7 +25,7 @@ See http://xml.apache.org/forrest/linking.html for more info
             <cocoon href="cocoon/"/>
         </xml.apache.org>
         <junit href="junit/index.html"/>
-        <jdepend href="jdepend.ehtml"/>
+        <jdepend href="jdepend/index.html"/>
         <javadoc href="apidocs/index.html"/>
     </external-refs>
 
