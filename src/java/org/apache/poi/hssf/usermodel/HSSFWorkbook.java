@@ -110,6 +110,13 @@ public class HSSFWorkbook
      */
 
     private ArrayList sheets;
+    
+    /**
+     * this holds the HSSFName objects attached to this workbook
+     */
+
+    private ArrayList names;
+    
     private static POILogger log = POILogFactory.getLogger(HSSFWorkbook.class);
 
     /**
@@ -121,6 +128,7 @@ public class HSSFWorkbook
     {
         workbook = Workbook.createWorkbook();
         sheets = new ArrayList(INITIAL_CAPACITY);
+        names  = new ArrayList(INITIAL_CAPACITY);
     }
 
     /**
@@ -136,6 +144,8 @@ public class HSSFWorkbook
             throws IOException
     {
         sheets = new ArrayList(INITIAL_CAPACITY);
+        names  = new ArrayList(INITIAL_CAPACITY);
+        
         InputStream stream = fs.createDocumentInputStream("Workbook");
         List records = RecordFactory.createRecords(stream);
 
@@ -156,6 +166,11 @@ public class HSSFWorkbook
             sheets.add(hsheet);
 
             // workbook.setSheetName(sheets.size() -1, "Sheet"+sheets.size());
+        }
+        
+        for (int i = 0 ; i < workbook.getNumNames() ; ++i){
+            HSSFName name = new HSSFName(workbook, workbook.getNameRecord(i));
+            names.add(name);
         }
     }
 
@@ -216,29 +231,23 @@ public class HSSFWorkbook
         return workbook.getSheetName(sheet);
     }
 
-    /**
+    /*
      * get the sheet's index
      * @param name  sheet name
      * @return sheet index or -1 if it was not found.
      */
 
+    /** Returns the index of the sheet by his name
+     * @param name the sheet name
+     * @return index of the sheet (0 based)
+     */    
     public int getSheetIndex(String name)
     {
-        int retval = -1;
-
-        for (int k = 0; k < sheets.size(); k++)
-        {
-            String sheet = workbook.getSheetName(k);
-
-            if (sheet.equals(name))
-            {
-                retval = k;
-                break;
-            }
-        }
+        int retval = workbook.getSheetIndex(name);
+        
         return retval;
     }
-
+    
     /**
      * create an HSSFSheet for this HSSFWorkbook, adds it to the sheets and returns
      * the high level representation.  Use this to create new sheets.
@@ -534,4 +543,87 @@ public class HSSFWorkbook
     {
         return workbook;
     }
+    
+    /** gets the total number of named ranges in the workboko
+     * @return number of named ranges
+     */    
+    public int getNumberOfNames(){
+        int result = names.size();
+        return result;
+    }
+    
+    /** gets the Named range
+     * @param index position of the named range
+     * @return named range high level
+     */    
+    public HSSFName getNameAt(int index){
+        HSSFName result = (HSSFName) names.get(index);
+        
+        return result;
+    }
+    
+    /** gets the named range name
+     * @param index the named range index (0 based)
+     * @return named range name
+     */    
+    public String getNameName(int index){
+        String result = getNameAt(index).getNameName();
+                
+        return result;
+    }
+    
+    
+    /** creates a new named range and add it to the model
+     * @return named range high level
+     */    
+    public HSSFName createName(){
+        NameRecord nameRecord = workbook.createName();
+        
+        HSSFName newName = new HSSFName(workbook, nameRecord);
+        
+        names.add(newName);
+        
+        return newName; 
+    }
+    
+    /** gets the named range index by his name
+     * @param name named range name
+     * @return named range index 
+     */    
+    public int getNameIndex(String name)
+    {
+        int retval = -1;
+
+        for (int k = 0; k < names.size(); k++)
+        {
+            String nameName = getNameName(k);
+
+            if (nameName.equals(name))
+            {
+                retval = k;
+                break;
+            }
+        }
+        return retval;
+    }
+
+
+    /** remove the named range by his index
+     * @param index named range index (0 based)
+     */    
+    public void removeName(int index){
+        names.remove(index);
+        workbook.removeName(index);        
+    }
+    
+    /** remove the named range by his name
+     * @param name named range name
+     */    
+    public void removeName(String name){
+        int index = getNameIndex(name);
+        
+        removeName(index);          
+        
+    }
+    
 }

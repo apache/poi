@@ -113,9 +113,7 @@ public abstract class Ptg
     {
         byte id     = data[ offset + 0 ];
         Ptg  retval = null;
-
-        System.out.println("PTG = " + Integer.toHexString(id) + " (" + id
-                           + ")");
+        
         switch (id)
         {
 
@@ -173,6 +171,14 @@ public abstract class Ptg
 
             case ExpPtg.sid :
                 retval = new ExpPtg(data, offset);
+                break;
+
+            case Area3DPtg.sid :
+                retval = new Area3DPtg(data, offset);
+                break;
+
+            case Ref3DPtg.sid:
+                retval = new Ref3DPtg(data, offset);
                 break;
 
             default :
