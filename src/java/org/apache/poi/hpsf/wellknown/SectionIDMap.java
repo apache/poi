@@ -151,7 +151,7 @@ public class SectionIDMap extends HashMap
      * string "[undefined]" is returned.
      */
     public static String getPIDString(final byte[] sectionFormatID,
-                                      final int pid)
+                                      final long pid)
     {
         final PropertyIDMap m =
             (PropertyIDMap) getInstance().get(sectionFormatID);

@@ -304,9 +304,9 @@ public class PropertyIDMap extends HashMap
      * @param id The ID.
      * @return The ID string associated with <var>id</var>.
      */
-    public Object get(final int id)
+    public Object get(final long id)
     {
-        return get(new Integer(id));
+        return get(new Long(id));
     }
 
 

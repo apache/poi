@@ -477,11 +477,11 @@ public class Section
      *
      * @return The property ID's string value
      */
-    public String getPIDString(final int pid)
+    public String getPIDString(final long pid)
     {
         String s = null;
         if (dictionary != null)
-            s = (String) dictionary.get(new Integer(pid));
+            s = (String) dictionary.get(new Long(pid));
         if (s == null)
             s = SectionIDMap.getPIDString(getFormatID().getBytes(), pid);
         if (s == null)
