@@ -630,6 +630,9 @@ public class BiffViewer {
             case PaneRecord.sid:
                 retval = new PaneRecord( rectype, size, data );
                 break;
+            case SharedFormulaRecord.sid:
+            	 retval = new SharedFormulaRecord( rectype, size, data);
+            	 break;
             default:
                 retval = new UnknownRecord( rectype, size, data );
         }
