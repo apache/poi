@@ -57,6 +57,8 @@ package org.apache.poi.hssf.record;
 import org.apache.poi.util.BinaryTree;
 
 import java.util.List;
+import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * This class handles serialization of SST records.  It utilizes the record processor
@@ -68,8 +70,8 @@ class SSTSerializer
 {
 
     // todo: make private again
-    List recordLengths;
-    BinaryTree strings;
+    private List recordLengths;
+    private BinaryTree strings;
 
     private int numStrings;
     private int numUniqueStrings;
@@ -95,9 +97,8 @@ class SSTSerializer
      *
      * @return the byte array
      */
-    public int serialize( int offset, byte[] data )
+    public int serialize( int record_size, int offset, byte[] data )
     {
-        int record_size = getRecordSize();
         int record_length_index = 0;
 
         if ( calculateUnicodeSize() > SSTRecord.MAX_DATA_SPACE )
@@ -109,21 +110,25 @@ class SSTSerializer
 
 
 
-    // todo: make private again
     /**
      * Calculates the total unicode size for all the strings.
      *
      * @return the total size.
      */
-    int calculateUnicodeSize()
+    public static int calculateUnicodeSize(Map strings)
     {
         int retval = 0;
 
         for ( int k = 0; k < strings.size(); k++ )
         {
-            retval += getUnicodeString( k ).getRecordSize();
+            retval += getUnicodeString( strings, k ).getRecordSize();
         }
         return retval;
+    }
+
+    public int calculateUnicodeSize()
+    {
+        return calculateUnicodeSize(strings);
     }
 
     /**
@@ -132,7 +137,7 @@ class SSTSerializer
      */
     private void serializeSingleSSTRecord( byte[] data, int offset, int record_length_index )
     {
-        int len = ( (Integer) recordLengths.get( record_length_index++ ) ).intValue();
+        int len = ( (Integer) recordLengths.get( record_length_index ) ).intValue();
         int recordSize = SSTRecord.SST_RECORD_OVERHEAD + len - SSTRecord.STD_RECORD_OVERHEAD;
         sstRecordHeader.writeSSTHeader( data, 0 + offset, recordSize );
         int pos = SSTRecord.SST_RECORD_OVERHEAD;
@@ -209,13 +214,25 @@ class SSTSerializer
 
     private UnicodeString getUnicodeString( int index )
     {
+        return getUnicodeString(strings, index);
+    }
+
+    private static UnicodeString getUnicodeString( Map strings, int index )
+    {
         Integer intunipos = new Integer( index );
         return ( (UnicodeString) strings.get( intunipos ) );
     }
 
     public int getRecordSize()
     {
-        return new SSTRecordSizeCalculator(this).getRecordSize();
+        SSTRecordSizeCalculator calculator = new SSTRecordSizeCalculator(strings);
+        int recordSize = calculator.getRecordSize();
+        recordLengths = calculator.getRecordLengths();
+        return recordSize;
     }
 
+    public List getRecordLengths()
+    {
+        return recordLengths;
+    }
 }

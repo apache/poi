@@ -60,6 +60,7 @@ import org.apache.poi.util.LittleEndianConsts;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Title:        Static String Table Record
@@ -513,18 +514,16 @@ public class SSTRecord
     {
         SSTSerializer serializer = new SSTSerializer(
                 _record_lengths, field_3_strings, getNumStrings(), getNumUniqueStrings() );
-        return serializer.serialize( offset, data );
+        return serializer.serialize( getRecordSize(), offset, data );
     }
 
 
-    // we can probably simplify this later...this calculates the size
-    // w/o serializing but still is a bit slow
     public int getRecordSize()
     {
-        SSTSerializer serializer = new SSTSerializer(
-                _record_lengths, field_3_strings, getNumStrings(), getNumUniqueStrings() );
-
-        return serializer.getRecordSize();
+        SSTRecordSizeCalculator calculator = new SSTRecordSizeCalculator(field_3_strings);
+        int recordSize = calculator.getRecordSize();
+        _record_lengths = calculator.getRecordLengths();
+        return recordSize;
     }
 
     SSTDeserializer getDeserializer()
