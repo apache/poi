@@ -11,10 +11,11 @@
   
   <body>
     <s1 title="What is it?">
-      <p>The POI project is the master project for developing pure Java ports of those
-        file formats based on Microsoft's OLE 2 Compound Document Format.  OLE 2 
-        Compound Document Format is by Microsoft Office Documents, as well as 
-        programs using MFC property sets to serialize their document objects.
+      <p>The POI project is the master project for developing pure
+        Java ports of file formats based on Microsoft's OLE 2 Compound
+        Document Format.  OLE 2 Compound Document Format is used by
+        Microsoft Office Documents, as well as by programs using MFC
+        property sets to serialize their document objects.
       </p>
     </s1>
     <s1 title="Sub-Projects">
