@@ -63,6 +63,7 @@ import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.hdf.model.hdftypes.HDFType;
+import org.apache.poi.hwpf.usermodel.*;
 
 /**
  * Table Properties.
@@ -75,22 +76,22 @@ public abstract class TAPAbstractType
     implements HDFType
 {
 
-    private  int field_1_jc;
-    private  int field_2_dxaGapHalf;
-    private  int field_3_dyaRowHeight;
-    private  boolean field_4_fCantSplit;
-    private  boolean field_5_fTableHeader;
-    private  int field_6_tlp;
-    private  short field_7_itcMac;
-    private  short[] field_8_rgdxaCenter;
-    private  TCAbstractType[] field_9_rgtc;
-    private  byte[] field_10_rgshd;
-    private  short[] field_11_brcBottom;
-    private  short[] field_12_brcTop;
-    private  short[] field_13_brcLeft;
-    private  short[] field_14_brcRight;
-    private  short[] field_15_brcVertical;
-    private  short[] field_16_brcHorizontal;
+    protected  int field_1_jc;
+    protected  int field_2_dxaGapHalf;
+    protected  int field_3_dyaRowHeight;
+    protected  boolean field_4_fCantSplit;
+    protected  boolean field_5_fTableHeader;
+    protected  int field_6_tlp;
+    protected  short field_7_itcMac;
+    protected  short[] field_8_rgdxaCenter;
+    protected  TableCellDescriptor[] field_9_rgtc;
+    protected  ShadingDescriptor[] field_10_rgshd;
+    protected  BorderCode field_11_brcBottom;
+    protected  BorderCode field_12_brcTop;
+    protected  BorderCode field_13_brcLeft;
+    protected  BorderCode field_14_brcRight;
+    protected  BorderCode field_15_brcVertical;
+    protected  BorderCode field_16_brcHorizontal;
 
 
     public TAPAbstractType()
@@ -239,7 +240,7 @@ public abstract class TAPAbstractType
     /**
      * Get the rgtc field for the TAP record.
      */
-    public TCAbstractType[] getRgtc()
+    public TableCellDescriptor[] getRgtc()
     {
         return field_9_rgtc;
     }
@@ -247,7 +248,7 @@ public abstract class TAPAbstractType
     /**
      * Set the rgtc field for the TAP record.
      */
-    public void setRgtc(TCAbstractType[] field_9_rgtc)
+    public void setRgtc(TableCellDescriptor[] field_9_rgtc)
     {
         this.field_9_rgtc = field_9_rgtc;
     }
@@ -255,7 +256,7 @@ public abstract class TAPAbstractType
     /**
      * Get the rgshd field for the TAP record.
      */
-    public byte[] getRgshd()
+    public ShadingDescriptor[] getRgshd()
     {
         return field_10_rgshd;
     }
@@ -263,7 +264,7 @@ public abstract class TAPAbstractType
     /**
      * Set the rgshd field for the TAP record.
      */
-    public void setRgshd(byte[] field_10_rgshd)
+    public void setRgshd(ShadingDescriptor[] field_10_rgshd)
     {
         this.field_10_rgshd = field_10_rgshd;
     }
@@ -271,7 +272,7 @@ public abstract class TAPAbstractType
     /**
      * Get the brcBottom field for the TAP record.
      */
-    public short[] getBrcBottom()
+    public BorderCode getBrcBottom()
     {
         return field_11_brcBottom;
     }
@@ -279,7 +280,7 @@ public abstract class TAPAbstractType
     /**
      * Set the brcBottom field for the TAP record.
      */
-    public void setBrcBottom(short[] field_11_brcBottom)
+    public void setBrcBottom(BorderCode field_11_brcBottom)
     {
         this.field_11_brcBottom = field_11_brcBottom;
     }
@@ -287,7 +288,7 @@ public abstract class TAPAbstractType
     /**
      * Get the brcTop field for the TAP record.
      */
-    public short[] getBrcTop()
+    public BorderCode getBrcTop()
     {
         return field_12_brcTop;
     }
@@ -295,7 +296,7 @@ public abstract class TAPAbstractType
     /**
      * Set the brcTop field for the TAP record.
      */
-    public void setBrcTop(short[] field_12_brcTop)
+    public void setBrcTop(BorderCode field_12_brcTop)
     {
         this.field_12_brcTop = field_12_brcTop;
     }
@@ -303,7 +304,7 @@ public abstract class TAPAbstractType
     /**
      * Get the brcLeft field for the TAP record.
      */
-    public short[] getBrcLeft()
+    public BorderCode getBrcLeft()
     {
         return field_13_brcLeft;
     }
@@ -311,7 +312,7 @@ public abstract class TAPAbstractType
     /**
      * Set the brcLeft field for the TAP record.
      */
-    public void setBrcLeft(short[] field_13_brcLeft)
+    public void setBrcLeft(BorderCode field_13_brcLeft)
     {
         this.field_13_brcLeft = field_13_brcLeft;
     }
@@ -319,7 +320,7 @@ public abstract class TAPAbstractType
     /**
      * Get the brcRight field for the TAP record.
      */
-    public short[] getBrcRight()
+    public BorderCode getBrcRight()
     {
         return field_14_brcRight;
     }
@@ -327,7 +328,7 @@ public abstract class TAPAbstractType
     /**
      * Set the brcRight field for the TAP record.
      */
-    public void setBrcRight(short[] field_14_brcRight)
+    public void setBrcRight(BorderCode field_14_brcRight)
     {
         this.field_14_brcRight = field_14_brcRight;
     }
@@ -335,7 +336,7 @@ public abstract class TAPAbstractType
     /**
      * Get the brcVertical field for the TAP record.
      */
-    public short[] getBrcVertical()
+    public BorderCode getBrcVertical()
     {
         return field_15_brcVertical;
     }
@@ -343,7 +344,7 @@ public abstract class TAPAbstractType
     /**
      * Set the brcVertical field for the TAP record.
      */
-    public void setBrcVertical(short[] field_15_brcVertical)
+    public void setBrcVertical(BorderCode field_15_brcVertical)
     {
         this.field_15_brcVertical = field_15_brcVertical;
     }
@@ -351,7 +352,7 @@ public abstract class TAPAbstractType
     /**
      * Get the brcHorizontal field for the TAP record.
      */
-    public short[] getBrcHorizontal()
+    public BorderCode getBrcHorizontal()
     {
         return field_16_brcHorizontal;
     }
@@ -359,7 +360,7 @@ public abstract class TAPAbstractType
     /**
      * Set the brcHorizontal field for the TAP record.
      */
-    public void setBrcHorizontal(short[] field_16_brcHorizontal)
+    public void setBrcHorizontal(BorderCode field_16_brcHorizontal)
     {
         this.field_16_brcHorizontal = field_16_brcHorizontal;
     }

@@ -64,6 +64,7 @@ package org.apache.poi.hwpf.model.hdftypes;
 
 public class CHPX extends PropertyNode
 {
+
   public CHPX(int fcStart, int fcEnd, byte[] grpprl)
   {
     super(fcStart, fcEnd, grpprl);

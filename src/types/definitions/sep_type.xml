@@ -23,13 +23,13 @@
       <field type="int" size="2" name="dmBinFirst"/>
       <field type="int" size="2" name="dmBinOther"/>
       <field type="int" size="2" name="dmPaperReq"/>
-      <field type="short[]" size="4" name="brcTop"/>
-      <field type="short[]" size="4" name="brcLeft"/>
-      <field type="short[]" size="4" name="brcBottom"/>
-      <field type="short[]" size="4" name="brcRight"/>
+      <field type="BorderCode" size="4" name="brcTop"/>
+      <field type="BorderCode" size="4" name="brcLeft"/>
+      <field type="BorderCode" size="4" name="brcBottom"/>
+      <field type="BorderCode" size="4" name="brcRight"/>
       <field type="boolean" size="0" name="fPropMark"/>
       <field type="int" size="2" name="ibstPropRMark"/>
-      <field type="int" size="4" name="dttmPropRMark"/>
+      <field type="DateAndTime" size="4" name="dttmPropRMark"/>
       <field type="int" size="4" name="dxtCharSpace"/>
       <field type="int" size="4" name="dyaLinePitch"/>
       <field type="int" size="2" name="clm"/>

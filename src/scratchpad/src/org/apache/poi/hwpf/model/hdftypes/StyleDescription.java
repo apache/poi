@@ -59,6 +59,8 @@ package org.apache.poi.hwpf.model.hdftypes;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 
+import org.apache.poi.hwpf.usermodel.CharacterProperties;
+import org.apache.poi.hwpf.usermodel.ParagraphProperties;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.BitField;
 /**
@@ -70,8 +72,8 @@ import org.apache.poi.util.BitField;
 public class StyleDescription implements HDFType
 {
 
-  private static int PARAGRAPH_STYLE = 1;
-  private static int CHARACTER_STYLE = 2;
+  private final static int PARAGRAPH_STYLE = 1;
+  private final static int CHARACTER_STYLE = 2;
 
   private int _istd;
   private int _baseLength;
@@ -92,11 +94,10 @@ public class StyleDescription implements HDFType
     private static BitField _fAutoRedef = new BitField(0x1);
     private static BitField _fHidden = new BitField(0x2);
 
-  byte[] _papx;
-  byte[] _chpx;
+  UPX[] _upxs;
   String _name;
-//  ParagraphProperties _pap;
-//  CharacterProperties _chp;
+  ParagraphProperties _pap;
+  CharacterProperties _chp;
 
   public StyleDescription()
   {
@@ -149,33 +150,17 @@ public class StyleDescription implements HDFType
       // that more may be added in the future
       int varOffset = grupxStart;
       int numUPX = _numUPX.getValue(_infoShort3);
+      _upxs = new UPX[numUPX];
       for(int x = 0; x < numUPX; x++)
       {
           int upxSize = LittleEndian.getShort(std, varOffset);
           varOffset += LittleEndian.SHORT_SIZE;
-          if(_styleTypeCode.getValue(_infoShort2) == PARAGRAPH_STYLE)
-          {
-              if(x == 0)
-              {
-                  _istd = LittleEndian.getShort(std, varOffset);
-                  //varOffset += LittleEndian.SHORT_SIZE;
-                  int grrprlSize = upxSize;
-                  _papx = new byte[grrprlSize];
-                  System.arraycopy(std, varOffset, _papx, 0, grrprlSize);
-                  varOffset += grrprlSize;
-              }
-              else if(x == 1)
-              {
-                  _chpx = new byte[upxSize];
-                  System.arraycopy(std, varOffset, _chpx, 0, upxSize);
-                  varOffset += upxSize;
-              }
-          }
-          else if(_styleTypeCode.getValue(_infoShort2) == CHARACTER_STYLE && x == 0)
-          {
-              _chpx = new byte[upxSize];
-              System.arraycopy(std, varOffset, _chpx, 0, upxSize);
-          }
+
+          byte[] upx = new byte[upxSize];
+          System.arraycopy(std, varOffset, upx, 0, upxSize);
+          _upxs[x] = new UPX(upx);
+          varOffset += upxSize;
+
 
           // the upx will always start on a word boundary.
           if(upxSize % 2 == 1)
@@ -189,32 +174,52 @@ public class StyleDescription implements HDFType
   }
   public int getBaseStyle()
   {
-      return _baseStyle.getValue(_infoShort2);
+    return _baseStyle.getValue(_infoShort2);
   }
   public byte[] getCHPX()
   {
-      return _chpx;
+    switch (_styleTypeCode.getValue(_infoShort2))
+    {
+      case PARAGRAPH_STYLE:
+        if (_upxs.length > 1)
+        {
+          return _upxs[1].getUPX();
+        }
+        return null;
+      case CHARACTER_STYLE:
+        return _upxs[0].getUPX();
+      default:
+        return null;
+    }
+
   }
   public byte[] getPAPX()
   {
-      return _papx;
+    switch (_styleTypeCode.getValue(_infoShort2))
+    {
+      case PARAGRAPH_STYLE:
+        return _upxs[0].getUPX();
+      default:
+        return null;
+    }
   }
-//  public ParagraphProperties getPAP()
-//  {
-//      return _pap;
-//  }
-//  public CharacterProperties getCHP()
-//  {
-//      return _chp;
-//  }
-//  public void setPAP(ParagraphProperties pap)
-//  {
-//      _pap = pap;
-//  }
-//  public void setCHP(CharacterProperties chp)
-//  {
-//      _chp = chp;
-//  }
+  public ParagraphProperties getPAP()
+  {
+      return _pap;
+  }
+  public CharacterProperties getCHP()
+  {
+      return _chp;
+  }
+  void setPAP(ParagraphProperties pap)
+  {
+      _pap = pap;
+  }
+  void setCHP(CharacterProperties chp)
+  {
+      _chp = chp;
+  }
+
   public byte[] toByteArray()
   {
     // size equals _baseLength bytes for known variables plus 2 bytes for name
@@ -222,19 +227,15 @@ public class StyleDescription implements HDFType
     // length
     int size = _baseLength + 2 + ((_name.length() + 1) * 2);
 
-    //only worry about papx and chpx for upxs
-    if(_styleTypeCode.getValue(_infoShort2) == PARAGRAPH_STYLE)
+    // determine the size needed for the upxs. They always fall on word
+    // boundaries.
+    size += _upxs[0].size() + 2;
+    for (int x = 1; x < _upxs.length; x++)
     {
-      size += _papx.length + 2 + (_papx.length % 2);
-      if (_chpx != null)
-      {
-        size += _chpx.length + 2;
-      }
+      size += _upxs[x-1].size() % 2;
+      size += _upxs[x].size() + 2;
     }
-    else if (_styleTypeCode.getValue(_infoShort2) == CHARACTER_STYLE)
-    {
-      size += _chpx.length + 2;
-    }
+
 
     byte[] buf = new byte[size];
 
@@ -248,10 +249,10 @@ public class StyleDescription implements HDFType
     LittleEndian.putShort(buf, offset, _bchUpe);
     offset += LittleEndian.SHORT_SIZE;
     LittleEndian.putShort(buf, offset, _infoShort4);
-    offset += LittleEndian.SHORT_SIZE;
+    offset = _baseLength;
 
     char[] letters = _name.toCharArray();
-    LittleEndian.putShort(buf, offset, (short)letters.length);
+    LittleEndian.putShort(buf, _baseLength, (short)letters.length);
     offset += LittleEndian.SHORT_SIZE;
     for (int x = 0; x < letters.length; x++)
     {
@@ -261,28 +262,13 @@ public class StyleDescription implements HDFType
     // get past the null delimiter for the name.
     offset += LittleEndian.SHORT_SIZE;
 
-    //only worry about papx and chpx for upxs
-    if(_styleTypeCode.getValue(_infoShort2) == PARAGRAPH_STYLE)
+    for (int x = 0; x < _upxs.length; x++)
     {
-      LittleEndian.putShort(buf, offset, (short)(_papx.length));
+      short upxSize = (short)_upxs[x].size();
+      LittleEndian.putShort(buf, offset, upxSize);
       offset += LittleEndian.SHORT_SIZE;
-      System.arraycopy(_papx, 0, buf, offset, _papx.length);
-      offset += _papx.length + (_papx.length % 2);
-
-      if (_chpx != null)
-      {
-        LittleEndian.putShort(buf, offset, (short) _chpx.length);
-        offset += LittleEndian.SHORT_SIZE;
-        System.arraycopy(_chpx, 0, buf, offset, _chpx.length);
-        offset += _chpx.length;
-      }
-    }
-    else if (_styleTypeCode.getValue(_infoShort2) == CHARACTER_STYLE)
-    {
-      LittleEndian.putShort(buf, offset, (short)_chpx.length);
-      offset += LittleEndian.SHORT_SIZE;
-      System.arraycopy(_chpx, 0, buf, offset, _chpx.length);
-      offset += _chpx.length;
+      System.arraycopy(_upxs[x].getUPX(), 0, buf, offset, upxSize);
+      offset += upxSize + (upxSize % 2);
     }
 
     return buf;
@@ -297,16 +283,10 @@ public class StyleDescription implements HDFType
         _name.equals(sd._name))
     {
 
-      if (!Arrays.equals(_chpx, sd._chpx))
+      if (!Arrays.equals(_upxs, sd._upxs))
       {
         return false;
       }
-
-      if (!Arrays.equals(_papx, sd._papx))
-      {
-        return false;
-      }
-
       return true;
     }
     return false;

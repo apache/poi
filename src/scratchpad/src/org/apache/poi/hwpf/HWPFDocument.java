@@ -161,6 +161,12 @@ public class HWPFDocument
 
   }
 
+  public StyleSheet getStyleSheet()
+  {
+    return _ss;
+  }
+
+
   /**
    * Writes out the word file that is represented by an instance of this class.
    *
@@ -270,6 +276,28 @@ public class HWPFDocument
 
     pfs.writeFilesystem(out);
   }
+
+  CHPBinTable getCharacterTable()
+  {
+    return _cbt;
+  }
+
+  PAPBinTable getParagraphTable()
+  {
+    return _pbt;
+  }
+
+  SectionTable getSectionTable()
+  {
+    return _st;
+  }
+
+  TextPieceTable getTextTable()
+  {
+    return _cft.getTextPieceTable();
+  }
+
+
 
   /**
    * Takes two arguments, 1) name of the Word file to read in 2) location to

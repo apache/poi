@@ -1,4 +1,4 @@
-<record id="0x101B" name="TC" package="org.apache.poi.hwpf.model.hdftypes.definitions">
+<record fromfile="true" id="0x101B" name="TC" package="org.apache.poi.hwpf.model.hdftypes.definitions">
     <suffix>AbstractType</suffix>
     <extends>HDFType</extends>
     <description>Table Cell Descriptor.</description>
@@ -15,9 +15,9 @@
         <bit number="7" mask="0x0180" name="vertAlign"/>
       </field>
       <field type="short" size="2" name="unused"/>
-      <field type="short[]" size="4" name="brcTop"/>
-      <field type="short[]" size="4" name="brcLeft"/>
-      <field type="short[]" size="4" name="brcBottom"/>
-      <field type="short[]" size="4" name="brcRight"/>
+      <field type="BorderCode" size="4" name="brcTop"/>
+      <field type="BorderCode" size="4" name="brcLeft"/>
+      <field type="BorderCode" size="4" name="brcBottom"/>
+      <field type="BorderCode" size="4" name="brcRight"/>
     </fields>
 </record>

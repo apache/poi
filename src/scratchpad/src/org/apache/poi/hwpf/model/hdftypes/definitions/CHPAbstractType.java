@@ -63,6 +63,7 @@ import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.hdf.model.hdftypes.HDFType;
+import org.apache.poi.hwpf.usermodel.*;
 
 /**
  * Character Properties.
@@ -75,8 +76,8 @@ public abstract class CHPAbstractType
     implements HDFType
 {
 
-    private  short field_1_chse;
-    private  int field_2_format_flags;
+    protected  short field_1_chse;
+    protected  int field_2_format_flags;
         private static BitField  fBold = new BitField(0x0001);
         private static BitField  fItalic = new BitField(0x0002);
         private static BitField  fRMarkDel = new BitField(0x0004);
@@ -93,41 +94,41 @@ public abstract class CHPAbstractType
         private static BitField  fLowerCase = new BitField(0x2000);
         private static BitField  fData = new BitField(0x4000);
         private static BitField  fOle2 = new BitField(0x8000);
-    private  int field_3_format_flags1;
+    protected  int field_3_format_flags1;
         private static BitField  fEmboss = new BitField(0x0001);
         private static BitField  fImprint = new BitField(0x0002);
         private static BitField  fDStrike = new BitField(0x0004);
         private static BitField  fUsePgsuSettings = new BitField(0x0008);
-    private  int field_4_ftcAscii;
-    private  int field_5_ftcFE;
-    private  int field_6_ftcOther;
-    private  int field_7_hps;
-    private  int field_8_dxaSpace;
-    private  byte field_9_iss;
-    private  byte field_10_kul;
-    private  byte field_11_ico;
-    private  int field_12_hpsPos;
-    private  int field_13_lidDefault;
-    private  int field_14_lidFE;
-    private  byte field_15_idctHint;
-    private  int field_16_wCharScale;
-    private  int field_17_fcPic;
-    private  int field_18_fcObj;
-    private  int field_19_lTagObj;
-    private  int field_20_ibstRMark;
-    private  int field_21_ibstRMarkDel;
-    private  short[] field_22_dttmRMark;
-    private  short[] field_23_dttmRMarkDel;
-    private  int field_24_istd;
-    private  int field_25_baseIstd;
-    private  int field_26_ftcSym;
-    private  int field_27_xchSym;
-    private  int field_28_idslRMReason;
-    private  int field_29_idslReasonDel;
-    private  byte field_30_ysr;
-    private  byte field_31_chYsr;
-    private  int field_32_hpsKern;
-    private  short field_33_Highlight;
+    protected  int field_4_ftcAscii;
+    protected  int field_5_ftcFE;
+    protected  int field_6_ftcOther;
+    protected  int field_7_hps;
+    protected  int field_8_dxaSpace;
+    protected  byte field_9_iss;
+    protected  byte field_10_kul;
+    protected  byte field_11_ico;
+    protected  int field_12_hpsPos;
+    protected  int field_13_lidDefault;
+    protected  int field_14_lidFE;
+    protected  byte field_15_idctHint;
+    protected  int field_16_wCharScale;
+    protected  int field_17_fcPic;
+    protected  int field_18_fcObj;
+    protected  int field_19_lTagObj;
+    protected  int field_20_ibstRMark;
+    protected  int field_21_ibstRMarkDel;
+    protected  DateAndTime field_22_dttmRMark;
+    protected  DateAndTime field_23_dttmRMarkDel;
+    protected  int field_24_istd;
+    protected  int field_25_baseIstd;
+    protected  int field_26_ftcSym;
+    protected  int field_27_xchSym;
+    protected  int field_28_idslRMReason;
+    protected  int field_29_idslReasonDel;
+    protected  byte field_30_ysr;
+    protected  byte field_31_chYsr;
+    protected  int field_32_hpsKern;
+    protected  short field_33_Highlight;
         private static BitField  icoHighlight = new BitField(0x001f);
         private static BitField  fHighlight = new BitField(0x0020);
         private static BitField  kcd = new BitField(0x01c0);
@@ -135,16 +136,16 @@ public abstract class CHPAbstractType
         private static BitField  fChsDiff = new BitField(0x0400);
         private static BitField  fMacChs = new BitField(0x0800);
         private static BitField  fFtcAsciSym = new BitField(0x1000);
-    private  short field_34_fPropMark;
-    private  int field_35_ibstPropRMark;
-    private  int field_36_dttmPropRMark;
-    private  byte field_37_sfxtText;
-    private  byte field_38_fDispFldRMark;
-    private  int field_39_ibstDispFldRMark;
-    private  int field_40_dttmDispFldRMark;
-    private  byte[] field_41_xstDispFldRMark;
-    private  int field_42_shd;
-    private  short[] field_43_brc;
+    protected  short field_34_fPropMark;
+    protected  int field_35_ibstPropRMark;
+    protected  DateAndTime field_36_dttmPropRMark;
+    protected  byte field_37_sfxtText;
+    protected  byte field_38_fDispFldRMark;
+    protected  int field_39_ibstDispFldRMark;
+    protected  DateAndTime field_40_dttmDispFldRMark;
+    protected  byte[] field_41_xstDispFldRMark;
+    protected  ShadingDescriptor field_42_shd;
+    protected  BorderCode field_43_brc;
 
 
     public CHPAbstractType()
@@ -501,7 +502,7 @@ public abstract class CHPAbstractType
     /**
      * Get the dttmRMark field for the CHP record.
      */
-    public short[] getDttmRMark()
+    public DateAndTime getDttmRMark()
     {
         return field_22_dttmRMark;
     }
@@ -509,7 +510,7 @@ public abstract class CHPAbstractType
     /**
      * Set the dttmRMark field for the CHP record.
      */
-    public void setDttmRMark(short[] field_22_dttmRMark)
+    public void setDttmRMark(DateAndTime field_22_dttmRMark)
     {
         this.field_22_dttmRMark = field_22_dttmRMark;
     }
@@ -517,7 +518,7 @@ public abstract class CHPAbstractType
     /**
      * Get the dttmRMarkDel field for the CHP record.
      */
-    public short[] getDttmRMarkDel()
+    public DateAndTime getDttmRMarkDel()
     {
         return field_23_dttmRMarkDel;
     }
@@ -525,7 +526,7 @@ public abstract class CHPAbstractType
     /**
      * Set the dttmRMarkDel field for the CHP record.
      */
-    public void setDttmRMarkDel(short[] field_23_dttmRMarkDel)
+    public void setDttmRMarkDel(DateAndTime field_23_dttmRMarkDel)
     {
         this.field_23_dttmRMarkDel = field_23_dttmRMarkDel;
     }
@@ -725,7 +726,7 @@ public abstract class CHPAbstractType
     /**
      * Get the dttmPropRMark field for the CHP record.
      */
-    public int getDttmPropRMark()
+    public DateAndTime getDttmPropRMark()
     {
         return field_36_dttmPropRMark;
     }
@@ -733,7 +734,7 @@ public abstract class CHPAbstractType
     /**
      * Set the dttmPropRMark field for the CHP record.
      */
-    public void setDttmPropRMark(int field_36_dttmPropRMark)
+    public void setDttmPropRMark(DateAndTime field_36_dttmPropRMark)
     {
         this.field_36_dttmPropRMark = field_36_dttmPropRMark;
     }
@@ -789,7 +790,7 @@ public abstract class CHPAbstractType
     /**
      * Get the dttmDispFldRMark field for the CHP record.
      */
-    public int getDttmDispFldRMark()
+    public DateAndTime getDttmDispFldRMark()
     {
         return field_40_dttmDispFldRMark;
     }
@@ -797,7 +798,7 @@ public abstract class CHPAbstractType
     /**
      * Set the dttmDispFldRMark field for the CHP record.
      */
-    public void setDttmDispFldRMark(int field_40_dttmDispFldRMark)
+    public void setDttmDispFldRMark(DateAndTime field_40_dttmDispFldRMark)
     {
         this.field_40_dttmDispFldRMark = field_40_dttmDispFldRMark;
     }
@@ -821,7 +822,7 @@ public abstract class CHPAbstractType
     /**
      * Get the shd field for the CHP record.
      */
-    public int getShd()
+    public ShadingDescriptor getShd()
     {
         return field_42_shd;
     }
@@ -829,7 +830,7 @@ public abstract class CHPAbstractType
     /**
      * Set the shd field for the CHP record.
      */
-    public void setShd(int field_42_shd)
+    public void setShd(ShadingDescriptor field_42_shd)
     {
         this.field_42_shd = field_42_shd;
     }
@@ -837,7 +838,7 @@ public abstract class CHPAbstractType
     /**
      * Get the brc field for the CHP record.
      */
-    public short[] getBrc()
+    public BorderCode getBrc()
     {
         return field_43_brc;
     }
@@ -845,7 +846,7 @@ public abstract class CHPAbstractType
     /**
      * Set the brc field for the CHP record.
      */
-    public void setBrc(short[] field_43_brc)
+    public void setBrc(BorderCode field_43_brc)
     {
         this.field_43_brc = field_43_brc;
     }

@@ -53,7 +53,10 @@
  */
 package org.apache.poi.hwpf.model.hdftypes;
 
+import java.lang.ref.SoftReference;
+import java.io.ByteArrayOutputStream;
 
+import org.apache.poi.hwpf.sprm.SprmBuffer;
 
 /**
  * Represents a lightweight node in the Trees used to store content
@@ -63,9 +66,10 @@ package org.apache.poi.hwpf.model.hdftypes;
  */
 public class PropertyNode implements Comparable
 {
-  private byte[] _buf;
+  private SprmBuffer _buf;
   private int _cpStart;
   private int _cpEnd;
+  private SoftReference _propCache;
 
   /**
    * @param fcStart The start of the text for this property.
@@ -76,7 +80,8 @@ public class PropertyNode implements Comparable
   {
       _cpStart = fcStart;
       _cpEnd = fcEnd;
-      _buf = buf;
+      _buf = new SprmBuffer(buf);
+
   }
   /**
    * @return The offset of this property's text.
@@ -97,21 +102,22 @@ public class PropertyNode implements Comparable
    */
   public byte[] getBuf()
   {
-    return _buf;
+    return _buf.toByteArray();
   }
 
   public boolean equals(Object o)
   {
+    byte[] buf = _buf.toByteArray();
     if (((PropertyNode)o).getStart() == _cpStart &&
         ((PropertyNode)o).getEnd() == _cpEnd)
     {
       byte[] testBuf = ((PropertyNode)o).getBuf();
 
-      if (testBuf.length == _buf.length)
+      if (testBuf.length == buf.length)
       {
-        for (int x = 0; x < _buf.length; x++)
+        for (int x = 0; x < buf.length; x++)
         {
-          if (testBuf[x] != _buf[x])
+          if (testBuf[x] != buf[x])
           {
             return false;
           }
@@ -140,4 +146,17 @@ public class PropertyNode implements Comparable
         return 1;
       }
   }
+
+  public void fillCache(Object ref)
+  {
+    _propCache = new SoftReference(ref);
+  }
+
+  public Object getCacheContents()
+  {
+    return _propCache == null ? null : _propCache.get();
+  }
+
+
+
 }

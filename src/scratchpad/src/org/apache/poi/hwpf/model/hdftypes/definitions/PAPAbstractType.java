@@ -63,6 +63,7 @@ import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.hdf.model.hdftypes.HDFType;
+import org.apache.poi.hwpf.usermodel.*;
 
 /**
  * Paragraph Properties.
@@ -75,76 +76,76 @@ public abstract class PAPAbstractType
     implements HDFType
 {
 
-    private  int field_1_istd;
-    private  byte field_2_jc;
-    private  byte field_3_fKeep;
-    private  byte field_4_fKeepFollow;
-    private  byte field_5_fPageBreakBefore;
-    private  byte field_6_fBrLnAbove;
-    private  byte field_7_fBrLnBelow;
-    private  byte field_8_pcVert;
-    private  byte field_9_pcHorz;
-    private  byte field_10_brcp;
-    private  byte field_11_brcl;
-    private  byte field_12_ilvl;
-    private  byte field_13_fNoLnn;
-    private  int field_14_ilfo;
-    private  byte field_15_fSideBySide;
-    private  byte field_16_fNoAutoHyph;
-    private  byte field_17_fWidowControl;
-    private  int field_18_dxaRight;
-    private  int field_19_dxaLeft;
-    private  int field_20_dxaLeft1;
-    private  short[] field_21_lspd;
-    private  int field_22_dyaBefore;
-    private  int field_23_dyaAfter;
-    private  byte[] field_24_phe;
-    private  byte field_25_fCrLf;
-    private  byte field_26_fUsePgsuSettings;
-    private  byte field_27_fAdjustRight;
-    private  byte field_28_fKinsoku;
-    private  byte field_29_fWordWrap;
-    private  byte field_30_fOverflowPunct;
-    private  byte field_31_fTopLinePunct;
-    private  byte field_32_fAutoSpaceDE;
-    private  byte field_33_fAutoSpaceDN;
-    private  int field_34_wAlignFont;
-    private  short field_35_fontAlign;
+    protected  int field_1_istd;
+    protected  byte field_2_jc;
+    protected  byte field_3_fKeep;
+    protected  byte field_4_fKeepFollow;
+    protected  byte field_5_fPageBreakBefore;
+    protected  byte field_6_fBrLnAbove;
+    protected  byte field_7_fBrLnBelow;
+    protected  byte field_8_pcVert;
+    protected  byte field_9_pcHorz;
+    protected  byte field_10_brcp;
+    protected  byte field_11_brcl;
+    protected  byte field_12_ilvl;
+    protected  byte field_13_fNoLnn;
+    protected  int field_14_ilfo;
+    protected  byte field_15_fSideBySide;
+    protected  byte field_16_fNoAutoHyph;
+    protected  byte field_17_fWidowControl;
+    protected  int field_18_dxaRight;
+    protected  int field_19_dxaLeft;
+    protected  int field_20_dxaLeft1;
+    protected  LineSpacingDescriptor field_21_lspd;
+    protected  int field_22_dyaBefore;
+    protected  int field_23_dyaAfter;
+    protected  byte[] field_24_phe;
+    protected  byte field_25_fCrLf;
+    protected  byte field_26_fUsePgsuSettings;
+    protected  byte field_27_fAdjustRight;
+    protected  byte field_28_fKinsoku;
+    protected  byte field_29_fWordWrap;
+    protected  byte field_30_fOverflowPunct;
+    protected  byte field_31_fTopLinePunct;
+    protected  byte field_32_fAutoSpaceDE;
+    protected  byte field_33_fAutoSpaceDN;
+    protected  int field_34_wAlignFont;
+    protected  short field_35_fontAlign;
         private static BitField  fVertical = new BitField(0x0001);
         private static BitField  fBackward = new BitField(0x0002);
         private static BitField  fRotateFont = new BitField(0x0004);
-    private  byte field_36_fBackward;
-    private  byte field_37_fRotateFont;
-    private  byte field_38_fInTable;
-    private  byte field_39_fTtp;
-    private  byte field_40_wr;
-    private  byte field_41_fLocked;
-    private  byte[] field_42_ptap;
-    private  int field_43_dxaAbs;
-    private  int field_44_dyaAbs;
-    private  int field_45_dxaWidth;
-    private  short[] field_46_brcTop;
-    private  short[] field_47_brcLeft;
-    private  short[] field_48_brcBottom;
-    private  short[] field_49_brcRight;
-    private  short[] field_50_brcBetween;
-    private  short[] field_51_brcBar;
-    private  int field_52_dxaFromText;
-    private  int field_53_dyaFromText;
-    private  int field_54_dyaHeight;
-    private  byte field_55_fMinHeight;
-    private  short field_56_shd;
-    private  short field_57_dcs;
-    private  byte field_58_lvl;
-    private  byte field_59_fNumRMIns;
-    private  byte[] field_60_anld;
-    private  int field_61_fPropRMark;
-    private  int field_62_ibstPropRMark;
-    private  byte[] field_63_dttmPropRMark;
-    private  byte[] field_64_numrm;
-    private  int field_65_itbdMac;
-    private  byte[] field_66_rgdxaTab;
-    private  byte[] field_67_rgtbd;
+    protected  byte field_36_fBackward;
+    protected  byte field_37_fRotateFont;
+    protected  byte field_38_fInTable;
+    protected  byte field_39_fTtp;
+    protected  byte field_40_wr;
+    protected  byte field_41_fLocked;
+    protected  byte[] field_42_ptap;
+    protected  int field_43_dxaAbs;
+    protected  int field_44_dyaAbs;
+    protected  int field_45_dxaWidth;
+    protected  BorderCode field_46_brcTop;
+    protected  BorderCode field_47_brcLeft;
+    protected  BorderCode field_48_brcBottom;
+    protected  BorderCode field_49_brcRight;
+    protected  BorderCode field_50_brcBetween;
+    protected  BorderCode field_51_brcBar;
+    protected  int field_52_dxaFromText;
+    protected  int field_53_dyaFromText;
+    protected  int field_54_dyaHeight;
+    protected  byte field_55_fMinHeight;
+    protected  short field_56_shd;
+    protected  short field_57_dcs;
+    protected  byte field_58_lvl;
+    protected  byte field_59_fNumRMIns;
+    protected  byte[] field_60_anld;
+    protected  int field_61_fPropRMark;
+    protected  int field_62_ibstPropRMark;
+    protected  DateAndTime field_63_dttmPropRMark;
+    protected  byte[] field_64_numrm;
+    protected  int field_65_itbdMac;
+    protected  int[] field_66_rgdxaTab;
+    protected  byte[] field_67_rgtbd;
 
 
     public PAPAbstractType()
@@ -485,7 +486,7 @@ public abstract class PAPAbstractType
     /**
      * Get the lspd field for the PAP record.
      */
-    public short[] getLspd()
+    public LineSpacingDescriptor getLspd()
     {
         return field_21_lspd;
     }
@@ -493,7 +494,7 @@ public abstract class PAPAbstractType
     /**
      * Set the lspd field for the PAP record.
      */
-    public void setLspd(short[] field_21_lspd)
+    public void setLspd(LineSpacingDescriptor field_21_lspd)
     {
         this.field_21_lspd = field_21_lspd;
     }
@@ -885,7 +886,7 @@ public abstract class PAPAbstractType
     /**
      * Get the brcTop field for the PAP record.
      */
-    public short[] getBrcTop()
+    public BorderCode getBrcTop()
     {
         return field_46_brcTop;
     }
@@ -893,7 +894,7 @@ public abstract class PAPAbstractType
     /**
      * Set the brcTop field for the PAP record.
      */
-    public void setBrcTop(short[] field_46_brcTop)
+    public void setBrcTop(BorderCode field_46_brcTop)
     {
         this.field_46_brcTop = field_46_brcTop;
     }
@@ -901,7 +902,7 @@ public abstract class PAPAbstractType
     /**
      * Get the brcLeft field for the PAP record.
      */
-    public short[] getBrcLeft()
+    public BorderCode getBrcLeft()
     {
         return field_47_brcLeft;
     }
@@ -909,7 +910,7 @@ public abstract class PAPAbstractType
     /**
      * Set the brcLeft field for the PAP record.
      */
-    public void setBrcLeft(short[] field_47_brcLeft)
+    public void setBrcLeft(BorderCode field_47_brcLeft)
     {
         this.field_47_brcLeft = field_47_brcLeft;
     }
@@ -917,7 +918,7 @@ public abstract class PAPAbstractType
     /**
      * Get the brcBottom field for the PAP record.
      */
-    public short[] getBrcBottom()
+    public BorderCode getBrcBottom()
     {
         return field_48_brcBottom;
     }
@@ -925,7 +926,7 @@ public abstract class PAPAbstractType
     /**
      * Set the brcBottom field for the PAP record.
      */
-    public void setBrcBottom(short[] field_48_brcBottom)
+    public void setBrcBottom(BorderCode field_48_brcBottom)
     {
         this.field_48_brcBottom = field_48_brcBottom;
     }
@@ -933,7 +934,7 @@ public abstract class PAPAbstractType
     /**
      * Get the brcRight field for the PAP record.
      */
-    public short[] getBrcRight()
+    public BorderCode getBrcRight()
     {
         return field_49_brcRight;
     }
@@ -941,7 +942,7 @@ public abstract class PAPAbstractType
     /**
      * Set the brcRight field for the PAP record.
      */
-    public void setBrcRight(short[] field_49_brcRight)
+    public void setBrcRight(BorderCode field_49_brcRight)
     {
         this.field_49_brcRight = field_49_brcRight;
     }
@@ -949,7 +950,7 @@ public abstract class PAPAbstractType
     /**
      * Get the brcBetween field for the PAP record.
      */
-    public short[] getBrcBetween()
+    public BorderCode getBrcBetween()
     {
         return field_50_brcBetween;
     }
@@ -957,7 +958,7 @@ public abstract class PAPAbstractType
     /**
      * Set the brcBetween field for the PAP record.
      */
-    public void setBrcBetween(short[] field_50_brcBetween)
+    public void setBrcBetween(BorderCode field_50_brcBetween)
     {
         this.field_50_brcBetween = field_50_brcBetween;
     }
@@ -965,7 +966,7 @@ public abstract class PAPAbstractType
     /**
      * Get the brcBar field for the PAP record.
      */
-    public short[] getBrcBar()
+    public BorderCode getBrcBar()
     {
         return field_51_brcBar;
     }
@@ -973,7 +974,7 @@ public abstract class PAPAbstractType
     /**
      * Set the brcBar field for the PAP record.
      */
-    public void setBrcBar(short[] field_51_brcBar)
+    public void setBrcBar(BorderCode field_51_brcBar)
     {
         this.field_51_brcBar = field_51_brcBar;
     }
@@ -1157,7 +1158,7 @@ public abstract class PAPAbstractType
     /**
      * Get the dttmPropRMark field for the PAP record.
      */
-    public byte[] getDttmPropRMark()
+    public DateAndTime getDttmPropRMark()
     {
         return field_63_dttmPropRMark;
     }
@@ -1165,7 +1166,7 @@ public abstract class PAPAbstractType
     /**
      * Set the dttmPropRMark field for the PAP record.
      */
-    public void setDttmPropRMark(byte[] field_63_dttmPropRMark)
+    public void setDttmPropRMark(DateAndTime field_63_dttmPropRMark)
     {
         this.field_63_dttmPropRMark = field_63_dttmPropRMark;
     }
@@ -1205,7 +1206,7 @@ public abstract class PAPAbstractType
     /**
      * Get the rgdxaTab field for the PAP record.
      */
-    public byte[] getRgdxaTab()
+    public int[] getRgdxaTab()
     {
         return field_66_rgdxaTab;
     }
@@ -1213,7 +1214,7 @@ public abstract class PAPAbstractType
     /**
      * Set the rgdxaTab field for the PAP record.
      */
-    public void setRgdxaTab(byte[] field_66_rgdxaTab)
+    public void setRgdxaTab(int[] field_66_rgdxaTab)
     {
         this.field_66_rgdxaTab = field_66_rgdxaTab;
     }

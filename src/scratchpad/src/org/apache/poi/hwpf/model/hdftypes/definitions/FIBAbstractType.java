@@ -63,6 +63,7 @@ import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.hdf.model.hdftypes.HDFType;
+import org.apache.poi.hwpf.usermodel.*;
 
 /**
  * File information Block.
@@ -75,12 +76,12 @@ public abstract class FIBAbstractType
     implements HDFType
 {
 
-    private  int field_1_wIdent;
-    private  int field_2_nFib;
-    private  int field_3_nProduct;
-    private  int field_4_lid;
-    private  int field_5_pnNext;
-    private  short field_6_options;
+    protected  int field_1_wIdent;
+    protected  int field_2_nFib;
+    protected  int field_3_nProduct;
+    protected  int field_4_lid;
+    protected  int field_5_pnNext;
+    protected  short field_6_options;
         private static BitField  fDot = new BitField(0x0001);
         private static BitField  fGlsy = new BitField(0x0002);
         private static BitField  fComplex = new BitField(0x0004);
@@ -94,245 +95,245 @@ public abstract class FIBAbstractType
         private static BitField  fLoadOverride = new BitField(0x2000);
         private static BitField  fFarEast = new BitField(0x4000);
         private static BitField  fCrypto = new BitField(0x8000);
-    private  int field_7_nFibBack;
-    private  int field_8_lKey;
-    private  int field_9_envr;
-    private  short field_10_history;
+    protected  int field_7_nFibBack;
+    protected  int field_8_lKey;
+    protected  int field_9_envr;
+    protected  short field_10_history;
         private static BitField  fMac = new BitField(0x0001);
         private static BitField  fEmptySpecial = new BitField(0x0002);
         private static BitField  fLoadOverridePage = new BitField(0x0004);
         private static BitField  fFutureSavedUndo = new BitField(0x0008);
         private static BitField  fWord97Saved = new BitField(0x0010);
         private static BitField  fSpare0 = new BitField(0x00FE);
-    private  int field_11_chs;
-    private  int field_12_chsTables;
-    private  int field_13_fcMin;
-    private  int field_14_fcMac;
-    private  int field_15_csw;
-    private  int field_16_wMagicCreated;
-    private  int field_17_wMagicRevised;
-    private  int field_18_wMagicCreatedPrivate;
-    private  int field_19_wMagicRevisedPrivate;
-    private  int field_20_pnFbpChpFirst_W6;
-    private  int field_21_pnChpFirst_W6;
-    private  int field_22_cpnBteChp_W6;
-    private  int field_23_pnFbpPapFirst_W6;
-    private  int field_24_pnPapFirst_W6;
-    private  int field_25_cpnBtePap_W6;
-    private  int field_26_pnFbpLvcFirst_W6;
-    private  int field_27_pnLvcFirst_W6;
-    private  int field_28_cpnBteLvc_W6;
-    private  int field_29_lidFE;
-    private  int field_30_clw;
-    private  int field_31_cbMac;
-    private  int field_32_lProductCreated;
-    private  int field_33_lProductRevised;
-    private  int field_34_ccpText;
-    private  int field_35_ccpFtn;
-    private  int field_36_ccpHdd;
-    private  int field_37_ccpMcr;
-    private  int field_38_ccpAtn;
-    private  int field_39_ccpEdn;
-    private  int field_40_ccpTxbx;
-    private  int field_41_ccpHdrTxbx;
-    private  int field_42_pnFbpChpFirst;
-    private  int field_43_pnChpFirst;
-    private  int field_44_cpnBteChp;
-    private  int field_45_pnFbpPapFirst;
-    private  int field_46_pnPapFirst;
-    private  int field_47_cpnBtePap;
-    private  int field_48_pnFbpLvcFirst;
-    private  int field_49_pnLvcFirst;
-    private  int field_50_cpnBteLvc;
-    private  int field_51_fcIslandFirst;
-    private  int field_52_fcIslandLim;
-    private  int field_53_cfclcb;
-    private  int field_54_fcStshfOrig;
-    private  int field_55_lcbStshfOrig;
-    private  int field_56_fcStshf;
-    private  int field_57_lcbStshf;
-    private  int field_58_fcPlcffndRef;
-    private  int field_59_lcbPlcffndRef;
-    private  int field_60_fcPlcffndTxt;
-    private  int field_61_lcbPlcffndTxt;
-    private  int field_62_fcPlcfandRef;
-    private  int field_63_lcbPlcfandRef;
-    private  int field_64_fcPlcfandTxt;
-    private  int field_65_lcbPlcfandTxt;
-    private  int field_66_fcPlcfsed;
-    private  int field_67_lcbPlcfsed;
-    private  int field_68_fcPlcpad;
-    private  int field_69_lcbPlcpad;
-    private  int field_70_fcPlcfphe;
-    private  int field_71_lcbPlcfphe;
-    private  int field_72_fcSttbfglsy;
-    private  int field_73_lcbSttbfglsy;
-    private  int field_74_fcPlcfglsy;
-    private  int field_75_lcbPlcfglsy;
-    private  int field_76_fcPlcfhdd;
-    private  int field_77_lcbPlcfhdd;
-    private  int field_78_fcPlcfbteChpx;
-    private  int field_79_lcbPlcfbteChpx;
-    private  int field_80_fcPlcfbtePapx;
-    private  int field_81_lcbPlcfbtePapx;
-    private  int field_82_fcPlcfsea;
-    private  int field_83_lcbPlcfsea;
-    private  int field_84_fcSttbfffn;
-    private  int field_85_lcbSttbfffn;
-    private  int field_86_fcPlcffldMom;
-    private  int field_87_lcbPlcffldMom;
-    private  int field_88_fcPlcffldHdr;
-    private  int field_89_lcbPlcffldHdr;
-    private  int field_90_fcPlcffldFtn;
-    private  int field_91_lcbPlcffldFtn;
-    private  int field_92_fcPlcffldAtn;
-    private  int field_93_lcbPlcffldAtn;
-    private  int field_94_fcPlcffldMcr;
-    private  int field_95_lcbPlcffldMcr;
-    private  int field_96_fcSttbfbkmk;
-    private  int field_97_lcbSttbfbkmk;
-    private  int field_98_fcPlcfbkf;
-    private  int field_99_lcbPlcfbkf;
-    private  int field_100_fcPlcfbkl;
-    private  int field_101_lcbPlcfbkl;
-    private  int field_102_fcCmds;
-    private  int field_103_lcbCmds;
-    private  int field_104_fcPlcmcr;
-    private  int field_105_lcbPlcmcr;
-    private  int field_106_fcSttbfmcr;
-    private  int field_107_lcbSttbfmcr;
-    private  int field_108_fcPrDrvr;
-    private  int field_109_lcbPrDrvr;
-    private  int field_110_fcPrEnvPort;
-    private  int field_111_lcbPrEnvPort;
-    private  int field_112_fcPrEnvLand;
-    private  int field_113_lcbPrEnvLand;
-    private  int field_114_fcWss;
-    private  int field_115_lcbWss;
-    private  int field_116_fcDop;
-    private  int field_117_lcbDop;
-    private  int field_118_fcSttbfAssoc;
-    private  int field_119_lcbSttbfAssoc;
-    private  int field_120_fcClx;
-    private  int field_121_lcbClx;
-    private  int field_122_fcPlcfpgdFtn;
-    private  int field_123_lcbPlcfpgdFtn;
-    private  int field_124_fcAutosaveSource;
-    private  int field_125_lcbAutosaveSource;
-    private  int field_126_fcGrpXstAtnOwners;
-    private  int field_127_lcbGrpXstAtnOwners;
-    private  int field_128_fcSttbfAtnbkmk;
-    private  int field_129_lcbSttbfAtnbkmk;
-    private  int field_130_fcPlcdoaMom;
-    private  int field_131_lcbPlcdoaMom;
-    private  int field_132_fcPlcdoaHdr;
-    private  int field_133_lcbPlcdoaHdr;
-    private  int field_134_fcPlcspaMom;
-    private  int field_135_lcbPlcspaMom;
-    private  int field_136_fcPlcspaHdr;
-    private  int field_137_lcbPlcspaHdr;
-    private  int field_138_fcPlcfAtnbkf;
-    private  int field_139_lcbPlcfAtnbkf;
-    private  int field_140_fcPlcfAtnbkl;
-    private  int field_141_lcbPlcfAtnbkl;
-    private  int field_142_fcPms;
-    private  int field_143_lcbPms;
-    private  int field_144_fcFormFldSttbs;
-    private  int field_145_lcbFormFldSttbs;
-    private  int field_146_fcPlcfendRef;
-    private  int field_147_lcbPlcfendRef;
-    private  int field_148_fcPlcfendTxt;
-    private  int field_149_lcbPlcfendTxt;
-    private  int field_150_fcPlcffldEdn;
-    private  int field_151_lcbPlcffldEdn;
-    private  int field_152_fcPlcfpgdEdn;
-    private  int field_153_lcbPlcfpgdEdn;
-    private  int field_154_fcDggInfo;
-    private  int field_155_lcbDggInfo;
-    private  int field_156_fcSttbfRMark;
-    private  int field_157_lcbSttbfRMark;
-    private  int field_158_fcSttbCaption;
-    private  int field_159_lcbSttbCaption;
-    private  int field_160_fcSttbAutoCaption;
-    private  int field_161_lcbSttbAutoCaption;
-    private  int field_162_fcPlcfwkb;
-    private  int field_163_lcbPlcfwkb;
-    private  int field_164_fcPlcfspl;
-    private  int field_165_lcbPlcfspl;
-    private  int field_166_fcPlcftxbxTxt;
-    private  int field_167_lcbPlcftxbxTxt;
-    private  int field_168_fcPlcffldTxbx;
-    private  int field_169_lcbPlcffldTxbx;
-    private  int field_170_fcPlcfhdrtxbxTxt;
-    private  int field_171_lcbPlcfhdrtxbxTxt;
-    private  int field_172_fcPlcffldHdrTxbx;
-    private  int field_173_lcbPlcffldHdrTxbx;
-    private  int field_174_fcStwUser;
-    private  int field_175_lcbStwUser;
-    private  int field_176_fcSttbttmbd;
-    private  int field_177_cbSttbttmbd;
-    private  int field_178_fcUnused;
-    private  int field_179_lcbUnused;
-    private  int field_180_fcPgdMother;
-    private  int field_181_lcbPgdMother;
-    private  int field_182_fcBkdMother;
-    private  int field_183_lcbBkdMother;
-    private  int field_184_fcPgdFtn;
-    private  int field_185_lcbPgdFtn;
-    private  int field_186_fcBkdFtn;
-    private  int field_187_lcbBkdFtn;
-    private  int field_188_fcPgdEdn;
-    private  int field_189_lcbPgdEdn;
-    private  int field_190_fcBkdEdn;
-    private  int field_191_lcbBkdEdn;
-    private  int field_192_fcSttbfIntlFld;
-    private  int field_193_lcbSttbfIntlFld;
-    private  int field_194_fcRouteSlip;
-    private  int field_195_lcbRouteSlip;
-    private  int field_196_fcSttbSavedBy;
-    private  int field_197_lcbSttbSavedBy;
-    private  int field_198_fcSttbFnm;
-    private  int field_199_lcbSttbFnm;
-    private  int field_200_fcPlcfLst;
-    private  int field_201_lcbPlcfLst;
-    private  int field_202_fcPlfLfo;
-    private  int field_203_lcbPlfLfo;
-    private  int field_204_fcPlcftxbxBkd;
-    private  int field_205_lcbPlcftxbxBkd;
-    private  int field_206_fcPlcftxbxHdrBkd;
-    private  int field_207_lcbPlcftxbxHdrBkd;
-    private  int field_208_fcDocUndo;
-    private  int field_209_lcbDocUndo;
-    private  int field_210_fcRgbuse;
-    private  int field_211_lcbRgbuse;
-    private  int field_212_fcUsp;
-    private  int field_213_lcbUsp;
-    private  int field_214_fcUskf;
-    private  int field_215_lcbUskf;
-    private  int field_216_fcPlcupcRgbuse;
-    private  int field_217_lcbPlcupcRgbuse;
-    private  int field_218_fcPlcupcUsp;
-    private  int field_219_lcbPlcupcUsp;
-    private  int field_220_fcSttbGlsyStyle;
-    private  int field_221_lcbSttbGlsyStyle;
-    private  int field_222_fcPlgosl;
-    private  int field_223_lcbPlgosl;
-    private  int field_224_fcPlcocx;
-    private  int field_225_lcbPlcocx;
-    private  int field_226_fcPlcfbteLvc;
-    private  int field_227_lcbPlcfbteLvc;
-    private  int field_228_dwLowDateTime;
-    private  int field_229_dwHighDateTime;
-    private  int field_230_fcPlcflvc;
-    private  int field_231_lcbPlcflvc;
-    private  int field_232_fcPlcasumy;
-    private  int field_233_lcbPlcasumy;
-    private  int field_234_fcPlcfgram;
-    private  int field_235_lcbPlcfgram;
-    private  int field_236_fcSttbListNames;
-    private  int field_237_lcbSttbListNames;
-    private  int field_238_fcSttbfUssr;
-    private  int field_239_lcbSttbfUssr;
+    protected  int field_11_chs;
+    protected  int field_12_chsTables;
+    protected  int field_13_fcMin;
+    protected  int field_14_fcMac;
+    protected  int field_15_csw;
+    protected  int field_16_wMagicCreated;
+    protected  int field_17_wMagicRevised;
+    protected  int field_18_wMagicCreatedPrivate;
+    protected  int field_19_wMagicRevisedPrivate;
+    protected  int field_20_pnFbpChpFirst_W6;
+    protected  int field_21_pnChpFirst_W6;
+    protected  int field_22_cpnBteChp_W6;
+    protected  int field_23_pnFbpPapFirst_W6;
+    protected  int field_24_pnPapFirst_W6;
+    protected  int field_25_cpnBtePap_W6;
+    protected  int field_26_pnFbpLvcFirst_W6;
+    protected  int field_27_pnLvcFirst_W6;
+    protected  int field_28_cpnBteLvc_W6;
+    protected  int field_29_lidFE;
+    protected  int field_30_clw;
+    protected  int field_31_cbMac;
+    protected  int field_32_lProductCreated;
+    protected  int field_33_lProductRevised;
+    protected  int field_34_ccpText;
+    protected  int field_35_ccpFtn;
+    protected  int field_36_ccpHdd;
+    protected  int field_37_ccpMcr;
+    protected  int field_38_ccpAtn;
+    protected  int field_39_ccpEdn;
+    protected  int field_40_ccpTxbx;
+    protected  int field_41_ccpHdrTxbx;
+    protected  int field_42_pnFbpChpFirst;
+    protected  int field_43_pnChpFirst;
+    protected  int field_44_cpnBteChp;
+    protected  int field_45_pnFbpPapFirst;
+    protected  int field_46_pnPapFirst;
+    protected  int field_47_cpnBtePap;
+    protected  int field_48_pnFbpLvcFirst;
+    protected  int field_49_pnLvcFirst;
+    protected  int field_50_cpnBteLvc;
+    protected  int field_51_fcIslandFirst;
+    protected  int field_52_fcIslandLim;
+    protected  int field_53_cfclcb;
+    protected  int field_54_fcStshfOrig;
+    protected  int field_55_lcbStshfOrig;
+    protected  int field_56_fcStshf;
+    protected  int field_57_lcbStshf;
+    protected  int field_58_fcPlcffndRef;
+    protected  int field_59_lcbPlcffndRef;
+    protected  int field_60_fcPlcffndTxt;
+    protected  int field_61_lcbPlcffndTxt;
+    protected  int field_62_fcPlcfandRef;
+    protected  int field_63_lcbPlcfandRef;
+    protected  int field_64_fcPlcfandTxt;
+    protected  int field_65_lcbPlcfandTxt;
+    protected  int field_66_fcPlcfsed;
+    protected  int field_67_lcbPlcfsed;
+    protected  int field_68_fcPlcpad;
+    protected  int field_69_lcbPlcpad;
+    protected  int field_70_fcPlcfphe;
+    protected  int field_71_lcbPlcfphe;
+    protected  int field_72_fcSttbfglsy;
+    protected  int field_73_lcbSttbfglsy;
+    protected  int field_74_fcPlcfglsy;
+    protected  int field_75_lcbPlcfglsy;
+    protected  int field_76_fcPlcfhdd;
+    protected  int field_77_lcbPlcfhdd;
+    protected  int field_78_fcPlcfbteChpx;
+    protected  int field_79_lcbPlcfbteChpx;
+    protected  int field_80_fcPlcfbtePapx;
+    protected  int field_81_lcbPlcfbtePapx;
+    protected  int field_82_fcPlcfsea;
+    protected  int field_83_lcbPlcfsea;
+    protected  int field_84_fcSttbfffn;
+    protected  int field_85_lcbSttbfffn;
+    protected  int field_86_fcPlcffldMom;
+    protected  int field_87_lcbPlcffldMom;
+    protected  int field_88_fcPlcffldHdr;
+    protected  int field_89_lcbPlcffldHdr;
+    protected  int field_90_fcPlcffldFtn;
+    protected  int field_91_lcbPlcffldFtn;
+    protected  int field_92_fcPlcffldAtn;
+    protected  int field_93_lcbPlcffldAtn;
+    protected  int field_94_fcPlcffldMcr;
+    protected  int field_95_lcbPlcffldMcr;
+    protected  int field_96_fcSttbfbkmk;
+    protected  int field_97_lcbSttbfbkmk;
+    protected  int field_98_fcPlcfbkf;
+    protected  int field_99_lcbPlcfbkf;
+    protected  int field_100_fcPlcfbkl;
+    protected  int field_101_lcbPlcfbkl;
+    protected  int field_102_fcCmds;
+    protected  int field_103_lcbCmds;
+    protected  int field_104_fcPlcmcr;
+    protected  int field_105_lcbPlcmcr;
+    protected  int field_106_fcSttbfmcr;
+    protected  int field_107_lcbSttbfmcr;
+    protected  int field_108_fcPrDrvr;
+    protected  int field_109_lcbPrDrvr;
+    protected  int field_110_fcPrEnvPort;
+    protected  int field_111_lcbPrEnvPort;
+    protected  int field_112_fcPrEnvLand;
+    protected  int field_113_lcbPrEnvLand;
+    protected  int field_114_fcWss;
+    protected  int field_115_lcbWss;
+    protected  int field_116_fcDop;
+    protected  int field_117_lcbDop;
+    protected  int field_118_fcSttbfAssoc;
+    protected  int field_119_lcbSttbfAssoc;
+    protected  int field_120_fcClx;
+    protected  int field_121_lcbClx;
+    protected  int field_122_fcPlcfpgdFtn;
+    protected  int field_123_lcbPlcfpgdFtn;
+    protected  int field_124_fcAutosaveSource;
+    protected  int field_125_lcbAutosaveSource;
+    protected  int field_126_fcGrpXstAtnOwners;
+    protected  int field_127_lcbGrpXstAtnOwners;
+    protected  int field_128_fcSttbfAtnbkmk;
+    protected  int field_129_lcbSttbfAtnbkmk;
+    protected  int field_130_fcPlcdoaMom;
+    protected  int field_131_lcbPlcdoaMom;
+    protected  int field_132_fcPlcdoaHdr;
+    protected  int field_133_lcbPlcdoaHdr;
+    protected  int field_134_fcPlcspaMom;
+    protected  int field_135_lcbPlcspaMom;
+    protected  int field_136_fcPlcspaHdr;
+    protected  int field_137_lcbPlcspaHdr;
+    protected  int field_138_fcPlcfAtnbkf;
+    protected  int field_139_lcbPlcfAtnbkf;
+    protected  int field_140_fcPlcfAtnbkl;
+    protected  int field_141_lcbPlcfAtnbkl;
+    protected  int field_142_fcPms;
+    protected  int field_143_lcbPms;
+    protected  int field_144_fcFormFldSttbs;
+    protected  int field_145_lcbFormFldSttbs;
+    protected  int field_146_fcPlcfendRef;
+    protected  int field_147_lcbPlcfendRef;
+    protected  int field_148_fcPlcfendTxt;
+    protected  int field_149_lcbPlcfendTxt;
+    protected  int field_150_fcPlcffldEdn;
+    protected  int field_151_lcbPlcffldEdn;
+    protected  int field_152_fcPlcfpgdEdn;
+    protected  int field_153_lcbPlcfpgdEdn;
+    protected  int field_154_fcDggInfo;
+    protected  int field_155_lcbDggInfo;
+    protected  int field_156_fcSttbfRMark;
+    protected  int field_157_lcbSttbfRMark;
+    protected  int field_158_fcSttbCaption;
+    protected  int field_159_lcbSttbCaption;
+    protected  int field_160_fcSttbAutoCaption;
+    protected  int field_161_lcbSttbAutoCaption;
+    protected  int field_162_fcPlcfwkb;
+    protected  int field_163_lcbPlcfwkb;
+    protected  int field_164_fcPlcfspl;
+    protected  int field_165_lcbPlcfspl;
+    protected  int field_166_fcPlcftxbxTxt;
+    protected  int field_167_lcbPlcftxbxTxt;
+    protected  int field_168_fcPlcffldTxbx;
+    protected  int field_169_lcbPlcffldTxbx;
+    protected  int field_170_fcPlcfhdrtxbxTxt;
+    protected  int field_171_lcbPlcfhdrtxbxTxt;
+    protected  int field_172_fcPlcffldHdrTxbx;
+    protected  int field_173_lcbPlcffldHdrTxbx;
+    protected  int field_174_fcStwUser;
+    protected  int field_175_lcbStwUser;
+    protected  int field_176_fcSttbttmbd;
+    protected  int field_177_cbSttbttmbd;
+    protected  int field_178_fcUnused;
+    protected  int field_179_lcbUnused;
+    protected  int field_180_fcPgdMother;
+    protected  int field_181_lcbPgdMother;
+    protected  int field_182_fcBkdMother;
+    protected  int field_183_lcbBkdMother;
+    protected  int field_184_fcPgdFtn;
+    protected  int field_185_lcbPgdFtn;
+    protected  int field_186_fcBkdFtn;
+    protected  int field_187_lcbBkdFtn;
+    protected  int field_188_fcPgdEdn;
+    protected  int field_189_lcbPgdEdn;
+    protected  int field_190_fcBkdEdn;
+    protected  int field_191_lcbBkdEdn;
+    protected  int field_192_fcSttbfIntlFld;
+    protected  int field_193_lcbSttbfIntlFld;
+    protected  int field_194_fcRouteSlip;
+    protected  int field_195_lcbRouteSlip;
+    protected  int field_196_fcSttbSavedBy;
+    protected  int field_197_lcbSttbSavedBy;
+    protected  int field_198_fcSttbFnm;
+    protected  int field_199_lcbSttbFnm;
+    protected  int field_200_fcPlcfLst;
+    protected  int field_201_lcbPlcfLst;
+    protected  int field_202_fcPlfLfo;
+    protected  int field_203_lcbPlfLfo;
+    protected  int field_204_fcPlcftxbxBkd;
+    protected  int field_205_lcbPlcftxbxBkd;
+    protected  int field_206_fcPlcftxbxHdrBkd;
+    protected  int field_207_lcbPlcftxbxHdrBkd;
+    protected  int field_208_fcDocUndo;
+    protected  int field_209_lcbDocUndo;
+    protected  int field_210_fcRgbuse;
+    protected  int field_211_lcbRgbuse;
+    protected  int field_212_fcUsp;
+    protected  int field_213_lcbUsp;
+    protected  int field_214_fcUskf;
+    protected  int field_215_lcbUskf;
+    protected  int field_216_fcPlcupcRgbuse;
+    protected  int field_217_lcbPlcupcRgbuse;
+    protected  int field_218_fcPlcupcUsp;
+    protected  int field_219_lcbPlcupcUsp;
+    protected  int field_220_fcSttbGlsyStyle;
+    protected  int field_221_lcbSttbGlsyStyle;
+    protected  int field_222_fcPlgosl;
+    protected  int field_223_lcbPlgosl;
+    protected  int field_224_fcPlcocx;
+    protected  int field_225_lcbPlcocx;
+    protected  int field_226_fcPlcfbteLvc;
+    protected  int field_227_lcbPlcfbteLvc;
+    protected  int field_228_dwLowDateTime;
+    protected  int field_229_dwHighDateTime;
+    protected  int field_230_fcPlcflvc;
+    protected  int field_231_lcbPlcflvc;
+    protected  int field_232_fcPlcasumy;
+    protected  int field_233_lcbPlcasumy;
+    protected  int field_234_fcPlcfgram;
+    protected  int field_235_lcbPlcfgram;
+    protected  int field_236_fcSttbListNames;
+    protected  int field_237_lcbSttbListNames;
+    protected  int field_238_fcSttbfUssr;
+    protected  int field_239_lcbSttbfUssr;
 
 
     public FIBAbstractType()
@@ -340,7 +341,7 @@ public abstract class FIBAbstractType
 
     }
 
-    protected void fillFields(byte [] data, short size, int offset)
+    protected void fillFields(byte [] data, int offset)
     {
         field_1_wIdent                  = LittleEndian.getShort(data, 0x0 + offset);
         field_2_nFib                    = LittleEndian.getShort(data, 0x2 + offset);
@@ -835,33 +836,21 @@ public abstract class FIBAbstractType
         buffer.append("[FIB]\n");
 
         buffer.append("    .wIdent               = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getWIdent()));
         buffer.append(" (").append(getWIdent()).append(" )\n");
 
         buffer.append("    .nFib                 = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getNFib()));
         buffer.append(" (").append(getNFib()).append(" )\n");
 
         buffer.append("    .nProduct             = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getNProduct()));
         buffer.append(" (").append(getNProduct()).append(" )\n");
 
         buffer.append("    .lid                  = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLid()));
         buffer.append(" (").append(getLid()).append(" )\n");
 
         buffer.append("    .pnNext               = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getPnNext()));
         buffer.append(" (").append(getPnNext()).append(" )\n");
 
         buffer.append("    .options              = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((short)getOptions()));
         buffer.append(" (").append(getOptions()).append(" )\n");
         buffer.append("         .fDot                     = ").append(isFDot()).append('\n');
         buffer.append("         .fGlsy                    = ").append(isFGlsy()).append('\n');
@@ -878,23 +867,15 @@ public abstract class FIBAbstractType
         buffer.append("         .fCrypto                  = ").append(isFCrypto()).append('\n');
 
         buffer.append("    .nFibBack             = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getNFibBack()));
         buffer.append(" (").append(getNFibBack()).append(" )\n");
 
         buffer.append("    .lKey                 = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLKey()));
         buffer.append(" (").append(getLKey()).append(" )\n");
 
         buffer.append("    .envr                 = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getEnvr()));
         buffer.append(" (").append(getEnvr()).append(" )\n");
 
         buffer.append("    .history              = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((short)getHistory()));
         buffer.append(" (").append(getHistory()).append(" )\n");
         buffer.append("         .fMac                     = ").append(isFMac()).append('\n');
         buffer.append("         .fEmptySpecial            = ").append(isFEmptySpecial()).append('\n');
@@ -904,1148 +885,690 @@ public abstract class FIBAbstractType
         buffer.append("         .fSpare0                  = ").append(getFSpare0()).append('\n');
 
         buffer.append("    .chs                  = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getChs()));
         buffer.append(" (").append(getChs()).append(" )\n");
 
         buffer.append("    .chsTables            = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getChsTables()));
         buffer.append(" (").append(getChsTables()).append(" )\n");
 
         buffer.append("    .fcMin                = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcMin()));
         buffer.append(" (").append(getFcMin()).append(" )\n");
 
         buffer.append("    .fcMac                = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcMac()));
         buffer.append(" (").append(getFcMac()).append(" )\n");
 
         buffer.append("    .csw                  = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getCsw()));
         buffer.append(" (").append(getCsw()).append(" )\n");
 
         buffer.append("    .wMagicCreated        = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getWMagicCreated()));
         buffer.append(" (").append(getWMagicCreated()).append(" )\n");
 
         buffer.append("    .wMagicRevised        = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getWMagicRevised()));
         buffer.append(" (").append(getWMagicRevised()).append(" )\n");
 
         buffer.append("    .wMagicCreatedPrivate = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getWMagicCreatedPrivate()));
         buffer.append(" (").append(getWMagicCreatedPrivate()).append(" )\n");
 
         buffer.append("    .wMagicRevisedPrivate = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getWMagicRevisedPrivate()));
         buffer.append(" (").append(getWMagicRevisedPrivate()).append(" )\n");
 
         buffer.append("    .pnFbpChpFirst_W6     = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getPnFbpChpFirst_W6()));
         buffer.append(" (").append(getPnFbpChpFirst_W6()).append(" )\n");
 
         buffer.append("    .pnChpFirst_W6        = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getPnChpFirst_W6()));
         buffer.append(" (").append(getPnChpFirst_W6()).append(" )\n");
 
         buffer.append("    .cpnBteChp_W6         = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getCpnBteChp_W6()));
         buffer.append(" (").append(getCpnBteChp_W6()).append(" )\n");
 
         buffer.append("    .pnFbpPapFirst_W6     = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getPnFbpPapFirst_W6()));
         buffer.append(" (").append(getPnFbpPapFirst_W6()).append(" )\n");
 
         buffer.append("    .pnPapFirst_W6        = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getPnPapFirst_W6()));
         buffer.append(" (").append(getPnPapFirst_W6()).append(" )\n");
 
         buffer.append("    .cpnBtePap_W6         = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getCpnBtePap_W6()));
         buffer.append(" (").append(getCpnBtePap_W6()).append(" )\n");
 
         buffer.append("    .pnFbpLvcFirst_W6     = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getPnFbpLvcFirst_W6()));
         buffer.append(" (").append(getPnFbpLvcFirst_W6()).append(" )\n");
 
         buffer.append("    .pnLvcFirst_W6        = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getPnLvcFirst_W6()));
         buffer.append(" (").append(getPnLvcFirst_W6()).append(" )\n");
 
         buffer.append("    .cpnBteLvc_W6         = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getCpnBteLvc_W6()));
         buffer.append(" (").append(getCpnBteLvc_W6()).append(" )\n");
 
         buffer.append("    .lidFE                = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLidFE()));
         buffer.append(" (").append(getLidFE()).append(" )\n");
 
         buffer.append("    .clw                  = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getClw()));
         buffer.append(" (").append(getClw()).append(" )\n");
 
         buffer.append("    .cbMac                = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getCbMac()));
         buffer.append(" (").append(getCbMac()).append(" )\n");
 
         buffer.append("    .lProductCreated      = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLProductCreated()));
         buffer.append(" (").append(getLProductCreated()).append(" )\n");
 
         buffer.append("    .lProductRevised      = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLProductRevised()));
         buffer.append(" (").append(getLProductRevised()).append(" )\n");
 
         buffer.append("    .ccpText              = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getCcpText()));
         buffer.append(" (").append(getCcpText()).append(" )\n");
 
         buffer.append("    .ccpFtn               = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getCcpFtn()));
         buffer.append(" (").append(getCcpFtn()).append(" )\n");
 
         buffer.append("    .ccpHdd               = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getCcpHdd()));
         buffer.append(" (").append(getCcpHdd()).append(" )\n");
 
         buffer.append("    .ccpMcr               = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getCcpMcr()));
         buffer.append(" (").append(getCcpMcr()).append(" )\n");
 
         buffer.append("    .ccpAtn               = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getCcpAtn()));
         buffer.append(" (").append(getCcpAtn()).append(" )\n");
 
         buffer.append("    .ccpEdn               = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getCcpEdn()));
         buffer.append(" (").append(getCcpEdn()).append(" )\n");
 
         buffer.append("    .ccpTxbx              = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getCcpTxbx()));
         buffer.append(" (").append(getCcpTxbx()).append(" )\n");
 
         buffer.append("    .ccpHdrTxbx           = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getCcpHdrTxbx()));
         buffer.append(" (").append(getCcpHdrTxbx()).append(" )\n");
 
         buffer.append("    .pnFbpChpFirst        = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getPnFbpChpFirst()));
         buffer.append(" (").append(getPnFbpChpFirst()).append(" )\n");
 
         buffer.append("    .pnChpFirst           = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getPnChpFirst()));
         buffer.append(" (").append(getPnChpFirst()).append(" )\n");
 
         buffer.append("    .cpnBteChp            = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getCpnBteChp()));
         buffer.append(" (").append(getCpnBteChp()).append(" )\n");
 
         buffer.append("    .pnFbpPapFirst        = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getPnFbpPapFirst()));
         buffer.append(" (").append(getPnFbpPapFirst()).append(" )\n");
 
         buffer.append("    .pnPapFirst           = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getPnPapFirst()));
         buffer.append(" (").append(getPnPapFirst()).append(" )\n");
 
         buffer.append("    .cpnBtePap            = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getCpnBtePap()));
         buffer.append(" (").append(getCpnBtePap()).append(" )\n");
 
         buffer.append("    .pnFbpLvcFirst        = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getPnFbpLvcFirst()));
         buffer.append(" (").append(getPnFbpLvcFirst()).append(" )\n");
 
         buffer.append("    .pnLvcFirst           = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getPnLvcFirst()));
         buffer.append(" (").append(getPnLvcFirst()).append(" )\n");
 
         buffer.append("    .cpnBteLvc            = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getCpnBteLvc()));
         buffer.append(" (").append(getCpnBteLvc()).append(" )\n");
 
         buffer.append("    .fcIslandFirst        = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcIslandFirst()));
         buffer.append(" (").append(getFcIslandFirst()).append(" )\n");
 
         buffer.append("    .fcIslandLim          = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcIslandLim()));
         buffer.append(" (").append(getFcIslandLim()).append(" )\n");
 
         buffer.append("    .cfclcb               = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getCfclcb()));
         buffer.append(" (").append(getCfclcb()).append(" )\n");
 
         buffer.append("    .fcStshfOrig          = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcStshfOrig()));
         buffer.append(" (").append(getFcStshfOrig()).append(" )\n");
 
         buffer.append("    .lcbStshfOrig         = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbStshfOrig()));
         buffer.append(" (").append(getLcbStshfOrig()).append(" )\n");
 
         buffer.append("    .fcStshf              = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcStshf()));
         buffer.append(" (").append(getFcStshf()).append(" )\n");
 
         buffer.append("    .lcbStshf             = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbStshf()));
         buffer.append(" (").append(getLcbStshf()).append(" )\n");
 
         buffer.append("    .fcPlcffndRef         = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcPlcffndRef()));
         buffer.append(" (").append(getFcPlcffndRef()).append(" )\n");
 
         buffer.append("    .lcbPlcffndRef        = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbPlcffndRef()));
         buffer.append(" (").append(getLcbPlcffndRef()).append(" )\n");
 
         buffer.append("    .fcPlcffndTxt         = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcPlcffndTxt()));
         buffer.append(" (").append(getFcPlcffndTxt()).append(" )\n");
 
         buffer.append("    .lcbPlcffndTxt        = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbPlcffndTxt()));
         buffer.append(" (").append(getLcbPlcffndTxt()).append(" )\n");
 
         buffer.append("    .fcPlcfandRef         = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcPlcfandRef()));
         buffer.append(" (").append(getFcPlcfandRef()).append(" )\n");
 
         buffer.append("    .lcbPlcfandRef        = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbPlcfandRef()));
         buffer.append(" (").append(getLcbPlcfandRef()).append(" )\n");
 
         buffer.append("    .fcPlcfandTxt         = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcPlcfandTxt()));
         buffer.append(" (").append(getFcPlcfandTxt()).append(" )\n");
 
         buffer.append("    .lcbPlcfandTxt        = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbPlcfandTxt()));
         buffer.append(" (").append(getLcbPlcfandTxt()).append(" )\n");
 
         buffer.append("    .fcPlcfsed            = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcPlcfsed()));
         buffer.append(" (").append(getFcPlcfsed()).append(" )\n");
 
         buffer.append("    .lcbPlcfsed           = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbPlcfsed()));
         buffer.append(" (").append(getLcbPlcfsed()).append(" )\n");
 
         buffer.append("    .fcPlcpad             = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcPlcpad()));
         buffer.append(" (").append(getFcPlcpad()).append(" )\n");
 
         buffer.append("    .lcbPlcpad            = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbPlcpad()));
         buffer.append(" (").append(getLcbPlcpad()).append(" )\n");
 
         buffer.append("    .fcPlcfphe            = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcPlcfphe()));
         buffer.append(" (").append(getFcPlcfphe()).append(" )\n");
 
         buffer.append("    .lcbPlcfphe           = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbPlcfphe()));
         buffer.append(" (").append(getLcbPlcfphe()).append(" )\n");
 
         buffer.append("    .fcSttbfglsy          = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcSttbfglsy()));
         buffer.append(" (").append(getFcSttbfglsy()).append(" )\n");
 
         buffer.append("    .lcbSttbfglsy         = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbSttbfglsy()));
         buffer.append(" (").append(getLcbSttbfglsy()).append(" )\n");
 
         buffer.append("    .fcPlcfglsy           = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcPlcfglsy()));
         buffer.append(" (").append(getFcPlcfglsy()).append(" )\n");
 
         buffer.append("    .lcbPlcfglsy          = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbPlcfglsy()));
         buffer.append(" (").append(getLcbPlcfglsy()).append(" )\n");
 
         buffer.append("    .fcPlcfhdd            = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcPlcfhdd()));
         buffer.append(" (").append(getFcPlcfhdd()).append(" )\n");
 
         buffer.append("    .lcbPlcfhdd           = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbPlcfhdd()));
         buffer.append(" (").append(getLcbPlcfhdd()).append(" )\n");
 
         buffer.append("    .fcPlcfbteChpx        = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcPlcfbteChpx()));
         buffer.append(" (").append(getFcPlcfbteChpx()).append(" )\n");
 
         buffer.append("    .lcbPlcfbteChpx       = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbPlcfbteChpx()));
         buffer.append(" (").append(getLcbPlcfbteChpx()).append(" )\n");
 
         buffer.append("    .fcPlcfbtePapx        = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcPlcfbtePapx()));
         buffer.append(" (").append(getFcPlcfbtePapx()).append(" )\n");
 
         buffer.append("    .lcbPlcfbtePapx       = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbPlcfbtePapx()));
         buffer.append(" (").append(getLcbPlcfbtePapx()).append(" )\n");
 
         buffer.append("    .fcPlcfsea            = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcPlcfsea()));
         buffer.append(" (").append(getFcPlcfsea()).append(" )\n");
 
         buffer.append("    .lcbPlcfsea           = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbPlcfsea()));
         buffer.append(" (").append(getLcbPlcfsea()).append(" )\n");
 
         buffer.append("    .fcSttbfffn           = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcSttbfffn()));
         buffer.append(" (").append(getFcSttbfffn()).append(" )\n");
 
         buffer.append("    .lcbSttbfffn          = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbSttbfffn()));
         buffer.append(" (").append(getLcbSttbfffn()).append(" )\n");
 
         buffer.append("    .fcPlcffldMom         = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcPlcffldMom()));
         buffer.append(" (").append(getFcPlcffldMom()).append(" )\n");
 
         buffer.append("    .lcbPlcffldMom        = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbPlcffldMom()));
         buffer.append(" (").append(getLcbPlcffldMom()).append(" )\n");
 
         buffer.append("    .fcPlcffldHdr         = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcPlcffldHdr()));
         buffer.append(" (").append(getFcPlcffldHdr()).append(" )\n");
 
         buffer.append("    .lcbPlcffldHdr        = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbPlcffldHdr()));
         buffer.append(" (").append(getLcbPlcffldHdr()).append(" )\n");
 
         buffer.append("    .fcPlcffldFtn         = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcPlcffldFtn()));
         buffer.append(" (").append(getFcPlcffldFtn()).append(" )\n");
 
         buffer.append("    .lcbPlcffldFtn        = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbPlcffldFtn()));
         buffer.append(" (").append(getLcbPlcffldFtn()).append(" )\n");
 
         buffer.append("    .fcPlcffldAtn         = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcPlcffldAtn()));
         buffer.append(" (").append(getFcPlcffldAtn()).append(" )\n");
 
         buffer.append("    .lcbPlcffldAtn        = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbPlcffldAtn()));
         buffer.append(" (").append(getLcbPlcffldAtn()).append(" )\n");
 
         buffer.append("    .fcPlcffldMcr         = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcPlcffldMcr()));
         buffer.append(" (").append(getFcPlcffldMcr()).append(" )\n");
 
         buffer.append("    .lcbPlcffldMcr        = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbPlcffldMcr()));
         buffer.append(" (").append(getLcbPlcffldMcr()).append(" )\n");
 
         buffer.append("    .fcSttbfbkmk          = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcSttbfbkmk()));
         buffer.append(" (").append(getFcSttbfbkmk()).append(" )\n");
 
         buffer.append("    .lcbSttbfbkmk         = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbSttbfbkmk()));
         buffer.append(" (").append(getLcbSttbfbkmk()).append(" )\n");
 
         buffer.append("    .fcPlcfbkf            = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcPlcfbkf()));
         buffer.append(" (").append(getFcPlcfbkf()).append(" )\n");
 
         buffer.append("    .lcbPlcfbkf           = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbPlcfbkf()));
         buffer.append(" (").append(getLcbPlcfbkf()).append(" )\n");
 
         buffer.append("    .fcPlcfbkl            = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcPlcfbkl()));
         buffer.append(" (").append(getFcPlcfbkl()).append(" )\n");
 
         buffer.append("    .lcbPlcfbkl           = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbPlcfbkl()));
         buffer.append(" (").append(getLcbPlcfbkl()).append(" )\n");
 
         buffer.append("    .fcCmds               = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcCmds()));
         buffer.append(" (").append(getFcCmds()).append(" )\n");
 
         buffer.append("    .lcbCmds              = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbCmds()));
         buffer.append(" (").append(getLcbCmds()).append(" )\n");
 
         buffer.append("    .fcPlcmcr             = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcPlcmcr()));
         buffer.append(" (").append(getFcPlcmcr()).append(" )\n");
 
         buffer.append("    .lcbPlcmcr            = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbPlcmcr()));
         buffer.append(" (").append(getLcbPlcmcr()).append(" )\n");
 
         buffer.append("    .fcSttbfmcr           = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcSttbfmcr()));
         buffer.append(" (").append(getFcSttbfmcr()).append(" )\n");
 
         buffer.append("    .lcbSttbfmcr          = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbSttbfmcr()));
         buffer.append(" (").append(getLcbSttbfmcr()).append(" )\n");
 
         buffer.append("    .fcPrDrvr             = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcPrDrvr()));
         buffer.append(" (").append(getFcPrDrvr()).append(" )\n");
 
         buffer.append("    .lcbPrDrvr            = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbPrDrvr()));
         buffer.append(" (").append(getLcbPrDrvr()).append(" )\n");
 
         buffer.append("    .fcPrEnvPort          = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcPrEnvPort()));
         buffer.append(" (").append(getFcPrEnvPort()).append(" )\n");
 
         buffer.append("    .lcbPrEnvPort         = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbPrEnvPort()));
         buffer.append(" (").append(getLcbPrEnvPort()).append(" )\n");
 
         buffer.append("    .fcPrEnvLand          = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcPrEnvLand()));
         buffer.append(" (").append(getFcPrEnvLand()).append(" )\n");
 
         buffer.append("    .lcbPrEnvLand         = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbPrEnvLand()));
         buffer.append(" (").append(getLcbPrEnvLand()).append(" )\n");
 
         buffer.append("    .fcWss                = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcWss()));
         buffer.append(" (").append(getFcWss()).append(" )\n");
 
         buffer.append("    .lcbWss               = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbWss()));
         buffer.append(" (").append(getLcbWss()).append(" )\n");
 
         buffer.append("    .fcDop                = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcDop()));
         buffer.append(" (").append(getFcDop()).append(" )\n");
 
         buffer.append("    .lcbDop               = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbDop()));
         buffer.append(" (").append(getLcbDop()).append(" )\n");
 
         buffer.append("    .fcSttbfAssoc         = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcSttbfAssoc()));
         buffer.append(" (").append(getFcSttbfAssoc()).append(" )\n");
 
         buffer.append("    .lcbSttbfAssoc        = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbSttbfAssoc()));
         buffer.append(" (").append(getLcbSttbfAssoc()).append(" )\n");
 
         buffer.append("    .fcClx                = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcClx()));
         buffer.append(" (").append(getFcClx()).append(" )\n");
 
         buffer.append("    .lcbClx               = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbClx()));
         buffer.append(" (").append(getLcbClx()).append(" )\n");
 
         buffer.append("    .fcPlcfpgdFtn         = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcPlcfpgdFtn()));
         buffer.append(" (").append(getFcPlcfpgdFtn()).append(" )\n");
 
         buffer.append("    .lcbPlcfpgdFtn        = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbPlcfpgdFtn()));
         buffer.append(" (").append(getLcbPlcfpgdFtn()).append(" )\n");
 
         buffer.append("    .fcAutosaveSource     = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcAutosaveSource()));
         buffer.append(" (").append(getFcAutosaveSource()).append(" )\n");
 
         buffer.append("    .lcbAutosaveSource    = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbAutosaveSource()));
         buffer.append(" (").append(getLcbAutosaveSource()).append(" )\n");
 
         buffer.append("    .fcGrpXstAtnOwners    = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcGrpXstAtnOwners()));
         buffer.append(" (").append(getFcGrpXstAtnOwners()).append(" )\n");
 
         buffer.append("    .lcbGrpXstAtnOwners   = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbGrpXstAtnOwners()));
         buffer.append(" (").append(getLcbGrpXstAtnOwners()).append(" )\n");
 
         buffer.append("    .fcSttbfAtnbkmk       = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcSttbfAtnbkmk()));
         buffer.append(" (").append(getFcSttbfAtnbkmk()).append(" )\n");
 
         buffer.append("    .lcbSttbfAtnbkmk      = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbSttbfAtnbkmk()));
         buffer.append(" (").append(getLcbSttbfAtnbkmk()).append(" )\n");
 
         buffer.append("    .fcPlcdoaMom          = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcPlcdoaMom()));
         buffer.append(" (").append(getFcPlcdoaMom()).append(" )\n");
 
         buffer.append("    .lcbPlcdoaMom         = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbPlcdoaMom()));
         buffer.append(" (").append(getLcbPlcdoaMom()).append(" )\n");
 
         buffer.append("    .fcPlcdoaHdr          = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcPlcdoaHdr()));
         buffer.append(" (").append(getFcPlcdoaHdr()).append(" )\n");
 
         buffer.append("    .lcbPlcdoaHdr         = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbPlcdoaHdr()));
         buffer.append(" (").append(getLcbPlcdoaHdr()).append(" )\n");
 
         buffer.append("    .fcPlcspaMom          = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcPlcspaMom()));
         buffer.append(" (").append(getFcPlcspaMom()).append(" )\n");
 
         buffer.append("    .lcbPlcspaMom         = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbPlcspaMom()));
         buffer.append(" (").append(getLcbPlcspaMom()).append(" )\n");
 
         buffer.append("    .fcPlcspaHdr          = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcPlcspaHdr()));
         buffer.append(" (").append(getFcPlcspaHdr()).append(" )\n");
 
         buffer.append("    .lcbPlcspaHdr         = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbPlcspaHdr()));
         buffer.append(" (").append(getLcbPlcspaHdr()).append(" )\n");
 
         buffer.append("    .fcPlcfAtnbkf         = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcPlcfAtnbkf()));
         buffer.append(" (").append(getFcPlcfAtnbkf()).append(" )\n");
 
         buffer.append("    .lcbPlcfAtnbkf        = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbPlcfAtnbkf()));
         buffer.append(" (").append(getLcbPlcfAtnbkf()).append(" )\n");
 
         buffer.append("    .fcPlcfAtnbkl         = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcPlcfAtnbkl()));
         buffer.append(" (").append(getFcPlcfAtnbkl()).append(" )\n");
 
         buffer.append("    .lcbPlcfAtnbkl        = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbPlcfAtnbkl()));
         buffer.append(" (").append(getLcbPlcfAtnbkl()).append(" )\n");
 
         buffer.append("    .fcPms                = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcPms()));
         buffer.append(" (").append(getFcPms()).append(" )\n");
 
         buffer.append("    .lcbPms               = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbPms()));
         buffer.append(" (").append(getLcbPms()).append(" )\n");
 
         buffer.append("    .fcFormFldSttbs       = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcFormFldSttbs()));
         buffer.append(" (").append(getFcFormFldSttbs()).append(" )\n");
 
         buffer.append("    .lcbFormFldSttbs      = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbFormFldSttbs()));
         buffer.append(" (").append(getLcbFormFldSttbs()).append(" )\n");
 
         buffer.append("    .fcPlcfendRef         = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcPlcfendRef()));
         buffer.append(" (").append(getFcPlcfendRef()).append(" )\n");
 
         buffer.append("    .lcbPlcfendRef        = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbPlcfendRef()));
         buffer.append(" (").append(getLcbPlcfendRef()).append(" )\n");
 
         buffer.append("    .fcPlcfendTxt         = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcPlcfendTxt()));
         buffer.append(" (").append(getFcPlcfendTxt()).append(" )\n");
 
         buffer.append("    .lcbPlcfendTxt        = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbPlcfendTxt()));
         buffer.append(" (").append(getLcbPlcfendTxt()).append(" )\n");
 
         buffer.append("    .fcPlcffldEdn         = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcPlcffldEdn()));
         buffer.append(" (").append(getFcPlcffldEdn()).append(" )\n");
 
         buffer.append("    .lcbPlcffldEdn        = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbPlcffldEdn()));
         buffer.append(" (").append(getLcbPlcffldEdn()).append(" )\n");
 
         buffer.append("    .fcPlcfpgdEdn         = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcPlcfpgdEdn()));
         buffer.append(" (").append(getFcPlcfpgdEdn()).append(" )\n");
 
         buffer.append("    .lcbPlcfpgdEdn        = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbPlcfpgdEdn()));
         buffer.append(" (").append(getLcbPlcfpgdEdn()).append(" )\n");
 
         buffer.append("    .fcDggInfo            = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcDggInfo()));
         buffer.append(" (").append(getFcDggInfo()).append(" )\n");
 
         buffer.append("    .lcbDggInfo           = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbDggInfo()));
         buffer.append(" (").append(getLcbDggInfo()).append(" )\n");
 
         buffer.append("    .fcSttbfRMark         = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcSttbfRMark()));
         buffer.append(" (").append(getFcSttbfRMark()).append(" )\n");
 
         buffer.append("    .lcbSttbfRMark        = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbSttbfRMark()));
         buffer.append(" (").append(getLcbSttbfRMark()).append(" )\n");
 
         buffer.append("    .fcSttbCaption        = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcSttbCaption()));
         buffer.append(" (").append(getFcSttbCaption()).append(" )\n");
 
         buffer.append("    .lcbSttbCaption       = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbSttbCaption()));
         buffer.append(" (").append(getLcbSttbCaption()).append(" )\n");
 
         buffer.append("    .fcSttbAutoCaption    = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcSttbAutoCaption()));
         buffer.append(" (").append(getFcSttbAutoCaption()).append(" )\n");
 
         buffer.append("    .lcbSttbAutoCaption   = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbSttbAutoCaption()));
         buffer.append(" (").append(getLcbSttbAutoCaption()).append(" )\n");
 
         buffer.append("    .fcPlcfwkb            = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcPlcfwkb()));
         buffer.append(" (").append(getFcPlcfwkb()).append(" )\n");
 
         buffer.append("    .lcbPlcfwkb           = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbPlcfwkb()));
         buffer.append(" (").append(getLcbPlcfwkb()).append(" )\n");
 
         buffer.append("    .fcPlcfspl            = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcPlcfspl()));
         buffer.append(" (").append(getFcPlcfspl()).append(" )\n");
 
         buffer.append("    .lcbPlcfspl           = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbPlcfspl()));
         buffer.append(" (").append(getLcbPlcfspl()).append(" )\n");
 
         buffer.append("    .fcPlcftxbxTxt        = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcPlcftxbxTxt()));
         buffer.append(" (").append(getFcPlcftxbxTxt()).append(" )\n");
 
         buffer.append("    .lcbPlcftxbxTxt       = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbPlcftxbxTxt()));
         buffer.append(" (").append(getLcbPlcftxbxTxt()).append(" )\n");
 
         buffer.append("    .fcPlcffldTxbx        = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcPlcffldTxbx()));
         buffer.append(" (").append(getFcPlcffldTxbx()).append(" )\n");
 
         buffer.append("    .lcbPlcffldTxbx       = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbPlcffldTxbx()));
         buffer.append(" (").append(getLcbPlcffldTxbx()).append(" )\n");
 
         buffer.append("    .fcPlcfhdrtxbxTxt     = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcPlcfhdrtxbxTxt()));
         buffer.append(" (").append(getFcPlcfhdrtxbxTxt()).append(" )\n");
 
         buffer.append("    .lcbPlcfhdrtxbxTxt    = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbPlcfhdrtxbxTxt()));
         buffer.append(" (").append(getLcbPlcfhdrtxbxTxt()).append(" )\n");
 
         buffer.append("    .fcPlcffldHdrTxbx     = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcPlcffldHdrTxbx()));
         buffer.append(" (").append(getFcPlcffldHdrTxbx()).append(" )\n");
 
         buffer.append("    .lcbPlcffldHdrTxbx    = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbPlcffldHdrTxbx()));
         buffer.append(" (").append(getLcbPlcffldHdrTxbx()).append(" )\n");
 
         buffer.append("    .fcStwUser            = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcStwUser()));
         buffer.append(" (").append(getFcStwUser()).append(" )\n");
 
         buffer.append("    .lcbStwUser           = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbStwUser()));
         buffer.append(" (").append(getLcbStwUser()).append(" )\n");
 
         buffer.append("    .fcSttbttmbd          = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcSttbttmbd()));
         buffer.append(" (").append(getFcSttbttmbd()).append(" )\n");
 
         buffer.append("    .cbSttbttmbd          = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getCbSttbttmbd()));
         buffer.append(" (").append(getCbSttbttmbd()).append(" )\n");
 
         buffer.append("    .fcUnused             = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcUnused()));
         buffer.append(" (").append(getFcUnused()).append(" )\n");
 
         buffer.append("    .lcbUnused            = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbUnused()));
         buffer.append(" (").append(getLcbUnused()).append(" )\n");
 
         buffer.append("    .fcPgdMother          = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcPgdMother()));
         buffer.append(" (").append(getFcPgdMother()).append(" )\n");
 
         buffer.append("    .lcbPgdMother         = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbPgdMother()));
         buffer.append(" (").append(getLcbPgdMother()).append(" )\n");
 
         buffer.append("    .fcBkdMother          = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcBkdMother()));
         buffer.append(" (").append(getFcBkdMother()).append(" )\n");
 
         buffer.append("    .lcbBkdMother         = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbBkdMother()));
         buffer.append(" (").append(getLcbBkdMother()).append(" )\n");
 
         buffer.append("    .fcPgdFtn             = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcPgdFtn()));
         buffer.append(" (").append(getFcPgdFtn()).append(" )\n");
 
         buffer.append("    .lcbPgdFtn            = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbPgdFtn()));
         buffer.append(" (").append(getLcbPgdFtn()).append(" )\n");
 
         buffer.append("    .fcBkdFtn             = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcBkdFtn()));
         buffer.append(" (").append(getFcBkdFtn()).append(" )\n");
 
         buffer.append("    .lcbBkdFtn            = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbBkdFtn()));
         buffer.append(" (").append(getLcbBkdFtn()).append(" )\n");
 
         buffer.append("    .fcPgdEdn             = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcPgdEdn()));
         buffer.append(" (").append(getFcPgdEdn()).append(" )\n");
 
         buffer.append("    .lcbPgdEdn            = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbPgdEdn()));
         buffer.append(" (").append(getLcbPgdEdn()).append(" )\n");
 
         buffer.append("    .fcBkdEdn             = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcBkdEdn()));
         buffer.append(" (").append(getFcBkdEdn()).append(" )\n");
 
         buffer.append("    .lcbBkdEdn            = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbBkdEdn()));
         buffer.append(" (").append(getLcbBkdEdn()).append(" )\n");
 
         buffer.append("    .fcSttbfIntlFld       = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcSttbfIntlFld()));
         buffer.append(" (").append(getFcSttbfIntlFld()).append(" )\n");
 
         buffer.append("    .lcbSttbfIntlFld      = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbSttbfIntlFld()));
         buffer.append(" (").append(getLcbSttbfIntlFld()).append(" )\n");
 
         buffer.append("    .fcRouteSlip          = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcRouteSlip()));
         buffer.append(" (").append(getFcRouteSlip()).append(" )\n");
 
         buffer.append("    .lcbRouteSlip         = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbRouteSlip()));
         buffer.append(" (").append(getLcbRouteSlip()).append(" )\n");
 
         buffer.append("    .fcSttbSavedBy        = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcSttbSavedBy()));
         buffer.append(" (").append(getFcSttbSavedBy()).append(" )\n");
 
         buffer.append("    .lcbSttbSavedBy       = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbSttbSavedBy()));
         buffer.append(" (").append(getLcbSttbSavedBy()).append(" )\n");
 
         buffer.append("    .fcSttbFnm            = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcSttbFnm()));
         buffer.append(" (").append(getFcSttbFnm()).append(" )\n");
 
         buffer.append("    .lcbSttbFnm           = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbSttbFnm()));
         buffer.append(" (").append(getLcbSttbFnm()).append(" )\n");
 
         buffer.append("    .fcPlcfLst            = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcPlcfLst()));
         buffer.append(" (").append(getFcPlcfLst()).append(" )\n");
 
         buffer.append("    .lcbPlcfLst           = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbPlcfLst()));
         buffer.append(" (").append(getLcbPlcfLst()).append(" )\n");
 
         buffer.append("    .fcPlfLfo             = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcPlfLfo()));
         buffer.append(" (").append(getFcPlfLfo()).append(" )\n");
 
         buffer.append("    .lcbPlfLfo            = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbPlfLfo()));
         buffer.append(" (").append(getLcbPlfLfo()).append(" )\n");
 
         buffer.append("    .fcPlcftxbxBkd        = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcPlcftxbxBkd()));
         buffer.append(" (").append(getFcPlcftxbxBkd()).append(" )\n");
 
         buffer.append("    .lcbPlcftxbxBkd       = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbPlcftxbxBkd()));
         buffer.append(" (").append(getLcbPlcftxbxBkd()).append(" )\n");
 
         buffer.append("    .fcPlcftxbxHdrBkd     = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcPlcftxbxHdrBkd()));
         buffer.append(" (").append(getFcPlcftxbxHdrBkd()).append(" )\n");
 
         buffer.append("    .lcbPlcftxbxHdrBkd    = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbPlcftxbxHdrBkd()));
         buffer.append(" (").append(getLcbPlcftxbxHdrBkd()).append(" )\n");
 
         buffer.append("    .fcDocUndo            = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcDocUndo()));
         buffer.append(" (").append(getFcDocUndo()).append(" )\n");
 
         buffer.append("    .lcbDocUndo           = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbDocUndo()));
         buffer.append(" (").append(getLcbDocUndo()).append(" )\n");
 
         buffer.append("    .fcRgbuse             = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcRgbuse()));
         buffer.append(" (").append(getFcRgbuse()).append(" )\n");
 
         buffer.append("    .lcbRgbuse            = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbRgbuse()));
         buffer.append(" (").append(getLcbRgbuse()).append(" )\n");
 
         buffer.append("    .fcUsp                = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcUsp()));
         buffer.append(" (").append(getFcUsp()).append(" )\n");
 
         buffer.append("    .lcbUsp               = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbUsp()));
         buffer.append(" (").append(getLcbUsp()).append(" )\n");
 
         buffer.append("    .fcUskf               = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcUskf()));
         buffer.append(" (").append(getFcUskf()).append(" )\n");
 
         buffer.append("    .lcbUskf              = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbUskf()));
         buffer.append(" (").append(getLcbUskf()).append(" )\n");
 
         buffer.append("    .fcPlcupcRgbuse       = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcPlcupcRgbuse()));
         buffer.append(" (").append(getFcPlcupcRgbuse()).append(" )\n");
 
         buffer.append("    .lcbPlcupcRgbuse      = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbPlcupcRgbuse()));
         buffer.append(" (").append(getLcbPlcupcRgbuse()).append(" )\n");
 
         buffer.append("    .fcPlcupcUsp          = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcPlcupcUsp()));
         buffer.append(" (").append(getFcPlcupcUsp()).append(" )\n");
 
         buffer.append("    .lcbPlcupcUsp         = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbPlcupcUsp()));
         buffer.append(" (").append(getLcbPlcupcUsp()).append(" )\n");
 
         buffer.append("    .fcSttbGlsyStyle      = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcSttbGlsyStyle()));
         buffer.append(" (").append(getFcSttbGlsyStyle()).append(" )\n");
 
         buffer.append("    .lcbSttbGlsyStyle     = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbSttbGlsyStyle()));
         buffer.append(" (").append(getLcbSttbGlsyStyle()).append(" )\n");
 
         buffer.append("    .fcPlgosl             = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcPlgosl()));
         buffer.append(" (").append(getFcPlgosl()).append(" )\n");
 
         buffer.append("    .lcbPlgosl            = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbPlgosl()));
         buffer.append(" (").append(getLcbPlgosl()).append(" )\n");
 
         buffer.append("    .fcPlcocx             = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcPlcocx()));
         buffer.append(" (").append(getFcPlcocx()).append(" )\n");
 
         buffer.append("    .lcbPlcocx            = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbPlcocx()));
         buffer.append(" (").append(getLcbPlcocx()).append(" )\n");
 
         buffer.append("    .fcPlcfbteLvc         = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcPlcfbteLvc()));
         buffer.append(" (").append(getFcPlcfbteLvc()).append(" )\n");
 
         buffer.append("    .lcbPlcfbteLvc        = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbPlcfbteLvc()));
         buffer.append(" (").append(getLcbPlcfbteLvc()).append(" )\n");
 
         buffer.append("    .dwLowDateTime        = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getDwLowDateTime()));
         buffer.append(" (").append(getDwLowDateTime()).append(" )\n");
 
         buffer.append("    .dwHighDateTime       = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getDwHighDateTime()));
         buffer.append(" (").append(getDwHighDateTime()).append(" )\n");
 
         buffer.append("    .fcPlcflvc            = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcPlcflvc()));
         buffer.append(" (").append(getFcPlcflvc()).append(" )\n");
 
         buffer.append("    .lcbPlcflvc           = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbPlcflvc()));
         buffer.append(" (").append(getLcbPlcflvc()).append(" )\n");
 
         buffer.append("    .fcPlcasumy           = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcPlcasumy()));
         buffer.append(" (").append(getFcPlcasumy()).append(" )\n");
 
         buffer.append("    .lcbPlcasumy          = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbPlcasumy()));
         buffer.append(" (").append(getLcbPlcasumy()).append(" )\n");
 
         buffer.append("    .fcPlcfgram           = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcPlcfgram()));
         buffer.append(" (").append(getFcPlcfgram()).append(" )\n");
 
         buffer.append("    .lcbPlcfgram          = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbPlcfgram()));
         buffer.append(" (").append(getLcbPlcfgram()).append(" )\n");
 
         buffer.append("    .fcSttbListNames      = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcSttbListNames()));
         buffer.append(" (").append(getFcSttbListNames()).append(" )\n");
 
         buffer.append("    .lcbSttbListNames     = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbSttbListNames()));
         buffer.append(" (").append(getLcbSttbListNames()).append(" )\n");
 
         buffer.append("    .fcSttbfUssr          = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcSttbfUssr()));
         buffer.append(" (").append(getFcSttbfUssr()).append(" )\n");
 
         buffer.append("    .lcbSttbfUssr         = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLcbSttbfUssr()));
         buffer.append(" (").append(getLcbSttbfUssr()).append(" )\n");
 
         buffer.append("[/FIB]\n");

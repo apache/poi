@@ -150,25 +150,26 @@ public class CHPFormattedDiskPage extends FormattedDiskPage
       int fcOffset = 0;
 
       // total size is currently the size of one FC
-      int totalSize = FC_SIZE;
+      int totalSize = FC_SIZE + 1;
 
       int index = 0;
       for (; index < size; index++)
       {
         int grpprlLength = ((CHPX)_chpxList.get(index)).getGrpprl().length;
 
-        // check to see if we have enough room for an FC, a byte, and the grpprl.
-        totalSize += (FC_SIZE + 1 + grpprlLength);
+        // check to see if we have enough room for an FC, the grpprl offset,
+        // the grpprl size byte and the grpprl.
+        totalSize += (FC_SIZE + 2 + grpprlLength);
         // if size is uneven we will have to add one so the first grpprl falls
         // on a word boundary
         if (totalSize > 511 + (index % 2))
         {
-          totalSize -= (FC_SIZE + 1 + grpprlLength);
+          totalSize -= (FC_SIZE + 2 + grpprlLength);
           break;
         }
 
         // grpprls must fall on word boundaries
-        if (grpprlLength % 2 > 0)
+        if ((1 + grpprlLength) % 2 > 0)
         {
           totalSize += 1;
         }

@@ -69,6 +69,7 @@ import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.hdf.model.hdftypes.HDFType;
+import org.apache.poi.hwpf.usermodel.*;
 
 /**
  * <xsl:value-of select="/record/description"/>
@@ -80,7 +81,7 @@ public abstract class <xsl:value-of select="@name"/>AbstractType
     implements HDFType
 {
 
-<xsl:for-each select="//fields/field">    private  <xsl:value-of select="@type"/><xsl:text> field_</xsl:text><xsl:value-of select="position()"/>_<xsl:value-of select="@name"/>;
+<xsl:for-each select="//fields/field">    protected  <xsl:value-of select="@type"/><xsl:text> field_</xsl:text><xsl:value-of select="position()"/>_<xsl:value-of select="@name"/>;
 <xsl:apply-templates select="./bit|./const"/>
 </xsl:for-each>
 
@@ -92,7 +93,7 @@ public abstract class <xsl:value-of select="@name"/>AbstractType
 </xsl:if></xsl:for-each>
     }
 <xsl:if test='//@fromfile="true"'>
-    protected void fillFields(byte [] data, short size, int offset)
+    protected void fillFields(byte [] data, int offset)
     {
 <xsl:variable name="fieldIterator" select="field:new()"/>
 <xsl:for-each select="//fields/field">
@@ -200,9 +201,7 @@ public abstract class <xsl:value-of select="@name"/>AbstractType
 </xsl:template>
 
 <xsl:template match="field" mode="tostring">
-        buffer.append("    .<xsl:value-of select="recutil:getFieldName(@name,20)"/> = ");<xsl:choose><xsl:when test="@type != 'string' and @type != 'float' and @size != 'varword'">
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((<xsl:value-of select="@type"/>)get<xsl:value-of select="recutil:getFieldName1stCap(@name,0)"/>()));</xsl:when></xsl:choose>
+        buffer.append("    .<xsl:value-of select="recutil:getFieldName(@name,20)"/> = ");
         buffer.append(" (").append(get<xsl:value-of select="recutil:getFieldName1stCap(@name,0)"/>()).append(" )\n");
 <xsl:apply-templates select="bit" mode="bittostring"/>
 </xsl:template>

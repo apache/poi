@@ -56,6 +56,7 @@
 
 package org.apache.poi.hwpf.model.hdftypes;
 
+import java.util.List;
 import java.util.ArrayList;
 import java.io.OutputStream;
 import java.io.IOException;
@@ -64,11 +65,25 @@ import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.hwpf.model.io.*;
 
-
+/**
+ * This class holds all of the character formatting properties.
+ *
+ * @author Ryan Ackley
+ */
 public class CHPBinTable
 {
+  /** List of character properties.*/
   ArrayList _textRuns = new ArrayList();
 
+  /**
+   * Constructor used to read a binTable in from a Word document.
+   *
+   * @param documentStream
+   * @param tableStream
+   * @param offset
+   * @param size
+   * @param fcMin
+   */
   public CHPBinTable(byte[] documentStream, byte[] tableStream, int offset,
                      int size, int fcMin)
   {
@@ -94,7 +109,7 @@ public class CHPBinTable
     }
   }
 
-  public ArrayList getTextRuns()
+  public List getTextRuns()
   {
     return _textRuns;
   }

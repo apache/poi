@@ -1,5 +1,3 @@
-
-
 /* ====================================================================
  * The Apache Software License, Version 1.1
  *
@@ -54,24 +52,82 @@
  * <http://www.apache.org/>.
  */
 
-
 package org.apache.poi.hwpf.model.hdftypes;
 
+import org.apache.poi.util.BitField;
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.hwpf.model.hdftypes.definitions.DOPAbstractType;
 
-/**
- * Comment me
- *
- * @author Ryan Ackley
- */
-
-public class DocumentProperties extends DOPAbstractType
+public class ListData
 {
+  private int _lsid;
+  private int _tplc;
+  private short[] _rglst;
+  private byte _info;
+    private static BitField _fSimpleList = new BitField(0x1);
+    private static BitField _fRestartHdn = new BitField(0x2);
+  private byte _reserved;
+  ListLevel[] _levels;
 
 
-  public DocumentProperties(byte[] tableStream, int offset)
+  public ListData(byte[] buf, int offset)
   {
-    super.fillFields(tableStream, offset);
+    _lsid = LittleEndian.getInt(buf, offset);
+    offset += LittleEndian.INT_SIZE;
+    _tplc = LittleEndian.getInt(buf, offset);
+    offset += LittleEndian.INT_SIZE;
+    _rglst = new short[9];
+    for (int x = 0; x < 9; x++)
+    {
+      _rglst[x] = LittleEndian.getShort(buf, offset);
+      offset += LittleEndian.SHORT_SIZE;
+    }
+    _info = buf[offset++];
+    _reserved = buf[offset];
+    if (_fSimpleList.getValue(_info) > 0)
+    {
+      _levels = new ListLevel[1];
+    }
+    else
+    {
+      _levels = new ListLevel[9];
+    }
+  }
+
+  public int getLsid()
+  {
+    return _lsid;
+  }
+
+  public int numLevels()
+  {
+    return _levels.length;
+  }
+
+  public void setLevel(int index, ListLevel level)
+  {
+    _levels[index] = level;
+  }
+
+  public ListLevel[] getLevels()
+  {
+    return _levels;
+  }
+
+  public byte[] toByteArray()
+  {
+    byte[] buf = new byte[28];
+    int offset = 0;
+    LittleEndian.putInt(buf, _lsid);
+    offset += LittleEndian.INT_SIZE;
+    LittleEndian.putInt(buf, offset, _tplc);
+    offset += LittleEndian.INT_SIZE;
+    for (int x = 0; x < 9; x++)
+    {
+      LittleEndian.putShort(buf, offset, _rglst[x]);
+      offset += LittleEndian.SHORT_SIZE;
+    }
+    buf[offset++] = _info;
+    buf[offset] = _reserved;
+    return buf;
   }
 }
