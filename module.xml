@@ -53,9 +53,16 @@
     <credit>This software includes software developed by the Krysalis Project 
             (http://www.krysalis.org/).
     </credit>
+    <credit>This software started as an extension of the the Apache Cocoon Build System 
+            (http://xml.apache.org/cocoon/) by Stefano Mazzocchi (stefano@apache.org)
+            and Carsten Ziegeler (cziegeler@apache.org)
+    </credit>
     <credit>This software includes software developed by Clarkware Consulting, Inc.
     </credit>    
   </credits>
+
+
+
 
   <project name="jakarta-poi">
   
