@@ -451,6 +451,24 @@ public class Workbook implements Model
         setSheetName( sheetnum, sheetname, (byte)0 );
     }
 
+    /**
+     * Determines whether a workbook contains the privided sheet name.
+     *
+     * @param name the name to test
+     * @param excludeSheetIdx the sheet to exclude from the check or -1 to include all sheets in the check.
+     * @return true if the sheet contains the name, false otherwise.
+     */
+    public boolean doesContainsSheetName( String name, int excludeSheetIdx )
+    {
+        for ( int i = 0; i < boundsheets.size(); i++ )
+        {
+            BoundSheetRecord boundSheetRecord = (BoundSheetRecord) boundsheets.get( i );
+            if (excludeSheetIdx != i && name.equals(boundSheetRecord.getSheetname()))
+                return true;
+        }
+        return false;
+    }
+
     public void setSheetName(int sheetnum, String sheetname, short encoding ) {
         checkSheets(sheetnum);
         BoundSheetRecord sheet = (BoundSheetRecord)boundsheets.get( sheetnum );
@@ -459,7 +477,7 @@ public class Workbook implements Model
 		sheet.setCompressedUnicodeFlag( (byte)encoding );
     }
     
-    	/**
+    /**
 	 * sets the order of appearance for a given sheet.
 	 *
 	 * @param sheetname the name of the sheet to reorder
