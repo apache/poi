@@ -143,6 +143,7 @@
         .copies         = 15
     [/PRINTSETUP]
 
+	<!-- Comment to avoid forrest bug -->
     ============================================
     rectype = 0x33, recsize = 0x2
     -BEGIN DUMP---------------------------------
@@ -238,6 +239,7 @@
         .denominator          = 0x0001 (1 )
     [/SCL]
 
+	<!-- Comment to avoid forrest bug -->
     ============================================
     Offset 0xf48 (3912)
     rectype = 0x1064, recsize = 0x8
@@ -346,6 +348,7 @@
     [BEGIN]
     [/BEGIN]
 
+	<!-- Comment to avoid forrest bug -->
     ============================================
     Offset 0xf9c (3996)
     rectype = 0x1051, recsize = 0x8
@@ -554,6 +557,7 @@
     [BEGIN]
     [/BEGIN]
 
+	<!-- Comment to avoid forrest bug -->
     ============================================
     Offset 0x103c (4156)
     rectype = 0x104f, recsize = 0x14
@@ -881,6 +885,7 @@
         .reserved4            = 0x00000000 (0 )
     [/AXIS]
 
+	<!-- Comment to avoid forrest bug -->
     ============================================
     Offset 0x1176 (4470)
     rectype = 0x1033, recsize = 0x0
@@ -1247,6 +1252,7 @@
     [END]
     [/END]
 
+	<!-- Comment to avoid forrest bug -->
     ============================================
     Offset 0x12d4 (4820)
     rectype = 0x1034, recsize = 0x0
