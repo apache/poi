@@ -136,7 +136,7 @@ public class RecordUtil
         else if (type.equals("float") && "8".equals(size))
             return pad(new StringBuffer("double"), padTo).toString();
         else if (type.equals("string"))
-            return pad(new StringBuffer("ExcelString"), padTo).toString();
+            return pad(new StringBuffer("String"), padTo).toString();
 
         return "short";   // if we don't know, default to short
     }
@@ -152,7 +152,7 @@ public class RecordUtil
         else if (numeric && "2".equals(size))
             result = pad(new StringBuffer("short"), padTo);
         else if (type.equals("string"))
-            result = pad(new StringBuffer("ExcelString"), padTo);
+            result = pad(new StringBuffer("String"), padTo);
         else
             return "";
 

@@ -74,6 +74,12 @@ public class FieldIterator
         offset = 0;
     }
 
+    /** 
+     * This utility function returns a fill method entry for a given field
+     *
+     * @param size - how big of an "int" or the name of the size field for a string
+     * @param type - int or string
+     */    
     public String fillDecoder(String size, String type)
     {
         String javaType = RecordUtil.getType(size, type, 0);
@@ -89,8 +95,8 @@ public class FieldIterator
             result = "data[ 0x" + Integer.toHexString(offset) + " + offset ]";
         else if (javaType.equals("double"))
             result = "LittleEndian.getDouble(data, 0x" + Integer.toHexString(offset) + " + offset)";
-        else if (javaType.equals("ExcelString"))
-            result = "ExcelStringUtil.decodeExcelString(data, 0x" + Integer.toHexString(offset) + " + offset)";
+        else if (javaType.equals("String"))
+            result = "StringUtil.getFromUnicode(data, 0x" + Integer.toHexString(offset) + " + offset,"+ size + ")";
 
         try
         {
@@ -101,6 +107,7 @@ public class FieldIterator
         }
         return result;
     }
+    
 
     //position(),@name,@size,@type
     public String serialiseEncoder( int fieldNumber, String fieldName, String size, String type)
@@ -120,7 +127,7 @@ public class FieldIterator
         else if (javaType.equals("double"))
             result = "LittleEndian.putDouble(data, " + (offset+4) + " + offset, " + javaFieldName + ");";
         else if (javaType.equals("ExcelString"))
-            result = "StringUtil.putUncompressedUnicode(getFontName(), data, 20 + offset);";
+            result = "StringUtil.putUncompressedUnicode("+ javaFieldName +", data, 20 + offset);";
 
         try
         {
@@ -139,7 +146,7 @@ public class FieldIterator
         if ("var".equals(size))
         {
             String javaFieldName = RecordUtil.getFieldName(fieldNumber,fieldName,0);
-            return result + javaFieldName + ".sizeInBytes()";
+            return result + " ("+javaFieldName + ".length() *2)";
         }
         else if ("varword".equals(size))
         {
