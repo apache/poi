@@ -8,7 +8,7 @@ public class GenericPropertyNode
     super(start, end, buf);
   }
 
-  protected byte[] getBytes()
+  public byte[] getBytes()
   {
     return (byte[])_buf;
   }
