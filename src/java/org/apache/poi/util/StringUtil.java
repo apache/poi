@@ -335,6 +335,9 @@ public class StringUtil {
         return 1;
     }
     
+    /**
+     * @return the encoding we want to use (ISO-8859-1)
+     */
     public static String getPreferredEncoding() {
         return ENCODING;   
     }
