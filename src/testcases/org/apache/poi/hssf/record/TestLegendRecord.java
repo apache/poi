@@ -1,3 +1,4 @@
+
 /* ====================================================================
  * The Apache Software License, Version 1.1
  *
@@ -52,7 +53,9 @@
  * <http://www.apache.org/>.
  */
 
+
 package org.apache.poi.hssf.record;
+
 
 import junit.framework.TestCase;
 
@@ -61,19 +64,14 @@ import junit.framework.TestCase;
  * class works correctly.  Test data taken directly from a real
  * Excel file.
  *
- * @author Glen Stampoultzis (glens at apache.org)
+
+ * @author Andrew C. Oliver (acoliver at apache.org)
  */
 public class TestLegendRecord
         extends TestCase
 {
     byte[] data = new byte[] {
-        (byte)0xB2,(byte)0x0D,(byte)0x00,(byte)0x00,  //field_1_xPosition
-        (byte)0x39,(byte)0x06,(byte)0x00,(byte)0x00,  //field_2_yPosition
-        (byte)0xD9,(byte)0x01,(byte)0x00,(byte)0x00,  //field_3_xSize
-        (byte)0x34,(byte)0x02,(byte)0x00,(byte)0x00,  //field_4_ySize
-        (byte)0x03,                                   //field_5_type
-        (byte)0x01,                                   //field_6_spacing
-        (byte)0x1F,(byte)0x00                         //field_7_options
+	(byte)0x76,(byte)0x0E,(byte)0x00,(byte)0x00,(byte)0x86,(byte)0x07,(byte)0x00,(byte)0x00,(byte)0x19,(byte)0x01,(byte)0x00,(byte)0x00,(byte)0x8B,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x03,(byte)0x01,(byte)0x1F,(byte)0x00
     };
 
     public TestLegendRecord(String name)
@@ -84,44 +82,63 @@ public class TestLegendRecord
     public void testLoad()
             throws Exception
     {
+        LegendRecord record = new LegendRecord((short)0x1015, (short)data.length, data);
+        
 
-        LegendRecord legendRecord = new LegendRecord((short)0x1015, (short)data.length, data);
-        assertEquals(3506, legendRecord.getXPosition());
-        assertEquals(1593, legendRecord.getYPosition());
-        assertEquals(473, legendRecord.getXSize());
-        assertEquals(564, legendRecord.getYSize());
-        assertEquals(LegendRecord.TYPE_RIGHT, legendRecord.getType());
-        assertEquals(LegendRecord.SPACING_MEDIUM, legendRecord.getSpacing());
-        assertEquals(31, legendRecord.getOptions());
-        assertEquals(true, legendRecord.isAutoPosition());
-        assertEquals(true, legendRecord.isAutoSeries());
-        assertEquals(true, legendRecord.isAutoPosX());
-        assertEquals(true, legendRecord.isAutoPosY());
-        assertEquals(true, legendRecord.isVert());
-        assertEquals(false, legendRecord.isContainsDataTable());
+        assertEquals( (int)0xe76, record.getXAxisUpperLeft());
 
-        assertEquals(24, legendRecord.getRecordSize());
+        assertEquals( (int)0x786, record.getYAxisUpperLeft());
 
-        legendRecord.validateSid((short)0x1015);
+        assertEquals( (int)0x119, record.getXSize());
+
+        assertEquals( (int)0x8b, record.getYSize());
+
+        assertEquals( (byte)0x3, record.getType());
+
+        assertEquals( (byte)0x1, record.getSpacing());
+
+        assertEquals( (short)0x1f, record.getOptions());
+        assertEquals( true, record.isAutoPosition() );
+        assertEquals( true, record.isAutoSeries() );
+        assertEquals( true, record.isAutoXPositioning() );
+        assertEquals( true, record.isAutoYPositioning() );
+        assertEquals( true, record.isVertical() );
+        assertEquals( false, record.isDataTable() );
+
+
+        assertEquals( 24, record.getRecordSize() );
+
+        record.validateSid((short)0x1015);
     }
 
     public void testStore()
     {
-        LegendRecord legendRecord = new LegendRecord();
-        legendRecord.setXPosition(3506);
-        legendRecord.setYPosition(1593);
-        legendRecord.setXSize(473);
-        legendRecord.setYSize(564);
-        legendRecord.setType(LegendRecord.TYPE_RIGHT);
-        legendRecord.setSpacing(LegendRecord.SPACING_MEDIUM);
-        legendRecord.setAutoPosition(true);
-        legendRecord.setAutoSeries(true);
-        legendRecord.setAutoPosX(true);
-        legendRecord.setAutoPosY(true);
-        legendRecord.setVert(true);
-        legendRecord.setContainsDataTable(false);
+        LegendRecord record = new LegendRecord();
 
-        byte [] recordBytes = legendRecord.serialize();
+
+
+        record.setXAxisUpperLeft( (int)0xe76 );
+
+        record.setYAxisUpperLeft( (int)0x786 );
+
+        record.setXSize( (int)0x119 );
+
+        record.setYSize( (int)0x8b );
+
+        record.setType( (byte)0x3 );
+
+        record.setSpacing( (byte)0x1 );
+
+        record.setOptions( (short)0x1f );
+        record.setAutoPosition( true );
+        record.setAutoSeries( true );
+        record.setAutoXPositioning( true );
+        record.setAutoYPositioning( true );
+        record.setVertical( true );
+        record.setDataTable( false );
+
+
+        byte [] recordBytes = record.serialize();
         assertEquals(recordBytes.length - 4, data.length);
         for (int i = 0; i < data.length; i++)
             assertEquals("At offset " + i, data[i], recordBytes[i+4]);

@@ -32,12 +32,24 @@
             <testresult  value="0x1"/>
         </field>
         <field type="int" size="2" name="options" description="various bit settings">
-            <bit number="0" name="auto position" description="automatic positioning (1=docked)"/>
-            <bit number="1" name="auto series" description="excel 5 only (true)"/>
-            <bit mask="0x4" name="auto x positioning" description="position of legend on the x axis is automatic"/>
-            <bit mask="0x8" name="auto y positioning" description="position of legend on the y axis is automatic"/>
-            <bit mask="0x10" name="vertical" description="vertical or horizontal legend (1 or 0 respectively).  Always 0 if not automatic."/>
-            <bit mask="0x20" name="data table" description="1 if chart contains data table"/>
+            <bit number="0" name="auto position" description="automatic positioning (1=docked)">
+            <testresult value="true"/>
+            </bit>
+            <bit number="1" name="auto series" description="excel 5 only (true)">
+            <testresult value="true"/>
+            </bit>
+            <bit number="2" name="auto x positioning" description="position of legend on the x axis is automatic">
+            <testresult value="true"/>
+            </bit>
+            <bit number="3" name="auto y positioning" description="position of legend on the y axis is automatic">
+            <testresult value="true"/>
+            </bit>
+            <bit number="4" name="vertical" description="vertical or horizontal legend (1 or 0 respectively).  Always 0 if not automatic.">
+            <testresult value="true"/>
+            </bit>
+            <bit number="5" name="data table" description="1 if chart contains data table">
+            <testresult value="false"/>
+            </bit>
  <!-- rest is always 0 -->
             <testresult  value="0x1f"/>
         </field>
@@ -45,5 +57,5 @@
     <testdata>
 	76 0E 00 00 86 07 00 00 19 01 00 00 8B 00 00 00 03 01 1F 00
      </testdata>
-    <testsize>10</testsize>
+    <testsize>24</testsize>
 </record>

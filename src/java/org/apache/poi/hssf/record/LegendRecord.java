@@ -61,18 +61,18 @@ package org.apache.poi.hssf.record;
 import org.apache.poi.util.*;
 
 /**
- * The legend record specifies the location of legend on a chart and it's overall size.
+ * Defines a legend for a chart.
  * NOTE: This source is automatically generated please do not modify this file.  Either subclass or
  *       remove the record in src/records/definitions.
 
- * @author Glen Stampoultzis (glens at apache.org)
+ * @author Andrew C. Oliver (acoliver at apache.org)
  */
 public class LegendRecord
     extends Record
 {
     public final static short      sid                             = 0x1015;
-    private  int        field_1_xPosition;
-    private  int        field_2_yPosition;
+    private  int        field_1_xAxisUpperLeft;
+    private  int        field_2_yAxisUpperLeft;
     private  int        field_3_xSize;
     private  int        field_4_ySize;
     private  byte       field_5_type;
@@ -81,7 +81,7 @@ public class LegendRecord
     public final static byte        TYPE_TOP                       = 2;
     public final static byte        TYPE_RIGHT                     = 3;
     public final static byte        TYPE_LEFT                      = 4;
-    public final static byte        TYPE_NOT_DOCKED                = 7;
+    public final static byte        TYPE_UNDOCKED                  = 7;
     private  byte       field_6_spacing;
     public final static byte        SPACING_CLOSE                  = 0;
     public final static byte        SPACING_MEDIUM                 = 1;
@@ -89,10 +89,10 @@ public class LegendRecord
     private  short      field_7_options;
     private  BitField   autoPosition                                = new BitField(0x1);
     private  BitField   autoSeries                                  = new BitField(0x2);
-    private  BitField   autoPosX                                    = new BitField(0x4);
-    private  BitField   autoPosY                                    = new BitField(0x8);
-    private  BitField   vert                                        = new BitField(0x10);
-    private  BitField   containsDataTable                           = new BitField(0x20);
+    private  BitField   autoXPositioning                            = new BitField(0x4);
+    private  BitField   autoYPositioning                            = new BitField(0x8);
+    private  BitField   vertical                                    = new BitField(0x10);
+    private  BitField   dataTable                                   = new BitField(0x20);
 
 
     public LegendRecord()
@@ -144,8 +144,8 @@ public class LegendRecord
 
     protected void fillFields(byte [] data, short size, int offset)
     {
-        field_1_xPosition               = LittleEndian.getInt(data, 0x0 + offset);
-        field_2_yPosition               = LittleEndian.getInt(data, 0x4 + offset);
+        field_1_xAxisUpperLeft          = LittleEndian.getInt(data, 0x0 + offset);
+        field_2_yAxisUpperLeft          = LittleEndian.getInt(data, 0x4 + offset);
         field_3_xSize                   = LittleEndian.getInt(data, 0x8 + offset);
         field_4_ySize                   = LittleEndian.getInt(data, 0xc + offset);
         field_5_type                    = data[ 0x10 + offset ];
@@ -160,15 +160,15 @@ public class LegendRecord
 
         buffer.append("[Legend]\n");
 
-        buffer.append("    .xPosition            = ")
+        buffer.append("    .xAxisUpperLeft       = ")
             .append("0x")
-            .append(HexDump.toHex((int)getXPosition()))
-            .append(" (").append(getXPosition()).append(" )\n");
+            .append(HexDump.toHex((int)getXAxisUpperLeft()))
+            .append(" (").append(getXAxisUpperLeft()).append(" )\n");
 
-        buffer.append("    .yPosition            = ")
+        buffer.append("    .yAxisUpperLeft       = ")
             .append("0x")
-            .append(HexDump.toHex((int)getYPosition()))
-            .append(" (").append(getYPosition()).append(" )\n");
+            .append(HexDump.toHex((int)getYAxisUpperLeft()))
+            .append(" (").append(getYAxisUpperLeft()).append(" )\n");
 
         buffer.append("    .xSize                = ")
             .append("0x")
@@ -196,10 +196,10 @@ public class LegendRecord
             .append(" (").append(getOptions()).append(" )\n");
         buffer.append("         .autoPosition             = ").append(isAutoPosition        ()).append('\n');
         buffer.append("         .autoSeries               = ").append(isAutoSeries          ()).append('\n');
-        buffer.append("         .autoPosX                 = ").append(isAutoPosX            ()).append('\n');
-        buffer.append("         .autoPosY                 = ").append(isAutoPosY            ()).append('\n');
-        buffer.append("         .vert                     = ").append(isVert                ()).append('\n');
-        buffer.append("         .containsDataTable        = ").append(isContainsDataTable   ()).append('\n');
+        buffer.append("         .autoXPositioning         = ").append(isAutoXPositioning    ()).append('\n');
+        buffer.append("         .autoYPositioning         = ").append(isAutoYPositioning    ()).append('\n');
+        buffer.append("         .vertical                 = ").append(isVertical            ()).append('\n');
+        buffer.append("         .dataTable                = ").append(isDataTable           ()).append('\n');
 
         buffer.append("[/Legend]\n");
         return buffer.toString();
@@ -210,8 +210,8 @@ public class LegendRecord
         LittleEndian.putShort(data, 0 + offset, sid);
         LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
 
-        LittleEndian.putInt(data, 4 + offset, field_1_xPosition);
-        LittleEndian.putInt(data, 8 + offset, field_2_yPosition);
+        LittleEndian.putInt(data, 4 + offset, field_1_xAxisUpperLeft);
+        LittleEndian.putInt(data, 8 + offset, field_2_yAxisUpperLeft);
         LittleEndian.putInt(data, 12 + offset, field_3_xSize);
         LittleEndian.putInt(data, 16 + offset, field_4_ySize);
         data[ 20 + offset ] = field_5_type;
@@ -226,7 +226,7 @@ public class LegendRecord
      */
     public int getRecordSize()
     {
-        return 4 + 4 + 4 + 4 + 4 + 1 + 1 + 2;
+        return 4  + 4 + 4 + 4 + 4 + 1 + 1 + 2;
     }
 
     public short getSid()
@@ -236,35 +236,35 @@ public class LegendRecord
 
 
     /**
-     * Get the x position field for the Legend record.
+     * Get the x axis upper left field for the Legend record.
      */
-    public int getXPosition()
+    public int getXAxisUpperLeft()
     {
-        return field_1_xPosition;
+        return field_1_xAxisUpperLeft;
     }
 
     /**
-     * Set the x position field for the Legend record.
+     * Set the x axis upper left field for the Legend record.
      */
-    public void setXPosition(int field_1_xPosition)
+    public void setXAxisUpperLeft(int field_1_xAxisUpperLeft)
     {
-        this.field_1_xPosition = field_1_xPosition;
+        this.field_1_xAxisUpperLeft = field_1_xAxisUpperLeft;
     }
 
     /**
-     * Get the y position field for the Legend record.
+     * Get the y axis upper left field for the Legend record.
      */
-    public int getYPosition()
+    public int getYAxisUpperLeft()
     {
-        return field_2_yPosition;
+        return field_2_yAxisUpperLeft;
     }
 
     /**
-     * Set the y position field for the Legend record.
+     * Set the y axis upper left field for the Legend record.
      */
-    public void setYPosition(int field_2_yPosition)
+    public void setYAxisUpperLeft(int field_2_yAxisUpperLeft)
     {
-        this.field_2_yPosition = field_2_yPosition;
+        this.field_2_yAxisUpperLeft = field_2_yAxisUpperLeft;
     }
 
     /**
@@ -308,7 +308,7 @@ public class LegendRecord
      *        TYPE_TOP
      *        TYPE_RIGHT
      *        TYPE_LEFT
-     *        TYPE_NOT_DOCKED
+     *        TYPE_UNDOCKED
      */
     public byte getType()
     {
@@ -325,7 +325,7 @@ public class LegendRecord
      *        TYPE_TOP
      *        TYPE_RIGHT
      *        TYPE_LEFT
-     *        TYPE_NOT_DOCKED
+     *        TYPE_UNDOCKED
      */
     public void setType(byte field_5_type)
     {
@@ -377,7 +377,7 @@ public class LegendRecord
 
     /**
      * Sets the auto position field value.
-     * set to true if legend is docked
+     * automatic positioning (1=docked)
      */
     public void setAutoPosition(boolean value)
     {
@@ -385,7 +385,7 @@ public class LegendRecord
     }
 
     /**
-     * set to true if legend is docked
+     * automatic positioning (1=docked)
      * @return  the auto position field value.
      */
     public boolean isAutoPosition()
@@ -395,7 +395,7 @@ public class LegendRecord
 
     /**
      * Sets the auto series field value.
-     * automatic series distribution
+     * excel 5 only (true)
      */
     public void setAutoSeries(boolean value)
     {
@@ -403,7 +403,7 @@ public class LegendRecord
     }
 
     /**
-     * automatic series distribution
+     * excel 5 only (true)
      * @return  the auto series field value.
      */
     public boolean isAutoSeries()
@@ -412,75 +412,75 @@ public class LegendRecord
     }
 
     /**
-     * Sets the auto pos x field value.
-     * x positioning is done automatically
+     * Sets the auto x positioning field value.
+     * position of legend on the x axis is automatic
      */
-    public void setAutoPosX(boolean value)
+    public void setAutoXPositioning(boolean value)
     {
-        field_7_options = autoPosX.setShortBoolean(field_7_options, value);
+        field_7_options = autoXPositioning.setShortBoolean(field_7_options, value);
     }
 
     /**
-     * x positioning is done automatically
-     * @return  the auto pos x field value.
+     * position of legend on the x axis is automatic
+     * @return  the auto x positioning field value.
      */
-    public boolean isAutoPosX()
+    public boolean isAutoXPositioning()
     {
-        return autoPosX.isSet(field_7_options);
+        return autoXPositioning.isSet(field_7_options);
     }
 
     /**
-     * Sets the auto pos y field value.
-     * y positioning is done automatically
+     * Sets the auto y positioning field value.
+     * position of legend on the y axis is automatic
      */
-    public void setAutoPosY(boolean value)
+    public void setAutoYPositioning(boolean value)
     {
-        field_7_options = autoPosY.setShortBoolean(field_7_options, value);
+        field_7_options = autoYPositioning.setShortBoolean(field_7_options, value);
     }
 
     /**
-     * y positioning is done automatically
-     * @return  the auto pos y field value.
+     * position of legend on the y axis is automatic
+     * @return  the auto y positioning field value.
      */
-    public boolean isAutoPosY()
+    public boolean isAutoYPositioning()
     {
-        return autoPosY.isSet(field_7_options);
+        return autoYPositioning.isSet(field_7_options);
     }
 
     /**
-     * Sets the vert field value.
-     * if true legend is vertical (otherwise it's horizonal)
+     * Sets the vertical field value.
+     * vertical or horizontal legend (1 or 0 respectively).  Always 0 if not automatic.
      */
-    public void setVert(boolean value)
+    public void setVertical(boolean value)
     {
-        field_7_options = vert.setShortBoolean(field_7_options, value);
+        field_7_options = vertical.setShortBoolean(field_7_options, value);
     }
 
     /**
-     * if true legend is vertical (otherwise it's horizonal)
-     * @return  the vert field value.
+     * vertical or horizontal legend (1 or 0 respectively).  Always 0 if not automatic.
+     * @return  the vertical field value.
      */
-    public boolean isVert()
+    public boolean isVertical()
     {
-        return vert.isSet(field_7_options);
+        return vertical.isSet(field_7_options);
     }
 
     /**
-     * Sets the contains data table field value.
-     * true if the chart contains the data table
+     * Sets the data table field value.
+     * 1 if chart contains data table
      */
-    public void setContainsDataTable(boolean value)
+    public void setDataTable(boolean value)
     {
-        field_7_options = containsDataTable.setShortBoolean(field_7_options, value);
+        field_7_options = dataTable.setShortBoolean(field_7_options, value);
     }
 
     /**
-     * true if the chart contains the data table
-     * @return  the contains data table field value.
+     * 1 if chart contains data table
+     * @return  the data table field value.
      */
-    public boolean isContainsDataTable()
+    public boolean isDataTable()
     {
-        return containsDataTable.isSet(field_7_options);
+        return dataTable.isSet(field_7_options);
     }
 
 
