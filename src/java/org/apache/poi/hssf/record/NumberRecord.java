@@ -81,7 +81,6 @@ public class NumberRecord
     private double            field_4_value;
 
     /** Creates new NumberRecord */
-
     public NumberRecord()
     {
     }
