@@ -54,10 +54,15 @@
  */
 package org.apache.poi.hpsf;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
-import org.apache.poi.util.LittleEndian;
+
 import org.apache.poi.hpsf.wellknown.PropertyIDMap;
 import org.apache.poi.hpsf.wellknown.SectionIDMap;
+import org.apache.poi.util.LittleEndian;
 
 /**
  * <p>Represents a section in a {@link PropertySet}.</p>
@@ -227,50 +232,81 @@ public class Section
 
         /*
          * Read the properties. The offset is positioned at the first
-         * entry of the property list. The problem is that we have to
-         * read the property with ID 1 before we read other
-         * properties, at least before other properties containing
-         * strings. The reason is that property 1 specifies the
-         * codepage. If it is 1200, all strings are in Unicode. In
-         * other words: Before we can read any strings we have to know
-         * whether they are in Unicode or not. Unfortunately property
-         * 1 is not guaranteed to be the first in a section.
+         * entry of the property list. There are two problems:
+         * 
+         * 1. For each property we have to find out its length. In the
+         *    property list we find each property's ID and its offset relative
+         *    to the section's beginning. Unfortunately the properties in the
+         *    property list need not to be in ascending order, so it is not
+         *    possible to calculate the length as
+         *    (offset of property(i+1) - offset of property(i)). Before we can
+         *    that we first have to sort the property list by ascending offsets.
+         * 
+         * 2. We have to read the property with ID 1 before we read other 
+         *    properties, at least before other properties containing strings.
+         *    The reason is that property 1 specifies the codepage. If it is
+         *    1200, all strings are in Unicode. In other words: Before we can
+         *    read any strings we have to know whether they are in Unicode or
+         *    not. Unfortunately property 1 is not guaranteed to be the first in
+         *    a section.
          *
-         * The algorithm below reads the properties in two passes: The
-         * first one looks for property ID 1 and extracts the codepage
-         * number. The seconds pass reads the other properties.
+         *    The algorithm below reads the properties in two passes: The first
+         *    one looks for property ID 1 and extracts the codepage number. The
+         *    seconds pass reads the other properties.
          */
         properties = new Property[propertyCount];
-
-        /* Pass 1: Look for the codepage. */
-        int codepage = -1;
+        
+        /* Pass 1: Read the property list. */
         int pass1Offset = o1;
+        List propertyList = new ArrayList(propertyCount);
+        PropertyListEntry ple;
         for (int i = 0; i < properties.length; i++)
         {
+            ple = new PropertyListEntry();
+
             /* Read the property ID. */
-            final int id = (int) LittleEndian.getUInt(src, pass1Offset);
+            ple.id = (int) LittleEndian.getUInt(src, pass1Offset);
             pass1Offset += LittleEndian.INT_SIZE;
 
             /* Offset from the section's start. */
-            final int sOffset = (int) LittleEndian.getUInt(src, pass1Offset);
+            ple.offset = (int) LittleEndian.getUInt(src, pass1Offset);
             pass1Offset += LittleEndian.INT_SIZE;
 
-            /* Calculate the length of the property. */
-//            int length;
-//            if (i == properties.length - 1)
-//                length = (int) (src.length - this.offset - sOffset);
-//            else
-//                length = (int)
-//                    LittleEndian.getUInt(src, pass1Offset +
-//                                         LittleEndian.INT_SIZE) - sOffset;
+            /* Add the entry to the property list. */
+            propertyList.add(ple);
+        }
 
-            if (id == PropertyIDMap.PID_CODEPAGE)
+        /* Sort the property list by ascending offsets: */
+        Collections.sort(propertyList);
+
+        /* Calculate the properties' lengths. */
+        for (int i = 0; i < propertyCount - 1; i++)
+        {
+            final PropertyListEntry ple1 =
+                (PropertyListEntry) propertyList.get(i);
+            final PropertyListEntry ple2 =
+                (PropertyListEntry) propertyList.get(i + 1);
+            ple1.length = ple2.offset - ple1.offset;
+        }
+        if (propertyCount > 0)
+        {
+            ple = (PropertyListEntry) propertyList.get(propertyCount - 1);
+            ple.length = size - ple.offset;
+        }
+
+        /* Look for the codepage. */
+        int codepage = -1;
+        for (final Iterator i = propertyList.iterator();
+             codepage == -1 && i.hasNext();)
+        {
+            ple = (PropertyListEntry) i.next();
+
+            /* Read the codepage if the property ID is 1. */
+            if (ple.id == PropertyIDMap.PID_CODEPAGE)
             {
-                /* Read the codepage if the property ID is 1. */
-
                 /* Read the property's value type. It must be
                  * VT_I2. */
-                int o = (int) (this.offset + sOffset);
+                int o = (int) (this.offset + ple.offset);
                 final long type = LittleEndian.getUInt(src, o);
                 o += LittleEndian.INT_SIZE;
 
@@ -284,35 +320,54 @@ public class Section
             }
         }
 
-        /* Pass 2: Read all properties, including 1. */
-        for (int i = 0; i < properties.length; i++)
+        /* Pass 2: Read all properties - including the codepage property,
+         * if available. */
+        int i1 = 0;
+        for (final Iterator i = propertyList.iterator(); i.hasNext();)
         {
-            /* Read the property ID. */
-            final int id = (int) LittleEndian.getUInt(src, o1);
-            o1 += LittleEndian.INT_SIZE;
-
-            /* Offset from the section. */
-            final int sOffset = (int) LittleEndian.getUInt(src, o1);
-            o1 += LittleEndian.INT_SIZE;
-
-            /* Calculate the length of the property. */
-            int length;
-            if (i == properties.length - 1)
-                length = (int) (src.length - this.offset - sOffset);
-            else
-                length = (int)
-                    LittleEndian.getUInt(src, o1 + LittleEndian.INT_SIZE) -
-                    sOffset;
-
-            /* Create it. */
-            properties[i] = new Property(id, src, this.offset + sOffset,
-                                         length, codepage);
+            ple = (PropertyListEntry) i.next();
+            properties[i1++] = new Property(ple.id, src,
+                                            this.offset + ple.offset,
+                                            ple.length, codepage);
         }
 
         /*
          * Extract the dictionary (if available).
          */
         dictionary = (Map) getProperty(0);
+    }
+
+
+
+    /**
+     * <p>Represents an entry in the property list and holds a property's ID and
+     * its offset from the section's beginning.</p>
+     */
+    class PropertyListEntry implements Comparable
+    {
+        int id;
+        int offset;
+        int length;
+
+        /**
+         * <p>Compares this {@link PropertyListEntry} with another one by their
+         * offsets. A {@link PropertyListEntry} is "smaller" than another one if
+         * its offset from the section's begin is smaller.</p>
+         *
+         * @see Comparable#compareTo(java.lang.Object)
+         */
+        public int compareTo(final Object o)
+        {
+            if (!(o instanceof PropertyListEntry))
+                throw new ClassCastException(o.toString());
+            final int otherOffset = ((PropertyListEntry) o).offset;
+            if (offset < otherOffset)
+                return -1;
+            else if (offset == otherOffset)
+                return 0;
+            else
+                return 1;
+        }
     }
 
 

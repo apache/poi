@@ -54,6 +54,9 @@
  */
 package org.apache.poi.hpsf;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * <p>The <em>Variant</em> types as defined by Microsoft's COM. I
  * found this information in <a
@@ -372,5 +375,61 @@ public class Variant
      * <p>FIXME: Document this!</p>
      */
     public static final int VT_TYPEMASK = 0xFFF;
+
+
+
+    public static final Map m = new HashMap();
+
+    static
+    {
+        m.put(new Integer(0), "VT_EMPTY");
+        m.put(new Integer(1), "VT_NULL");
+        m.put(new Integer(2), "VT_I2");
+        m.put(new Integer(3), "VT_I4");
+        m.put(new Integer(4), "VT_R4");
+        m.put(new Integer(5), "VT_R8");
+        m.put(new Integer(6), "VT_CY");
+        m.put(new Integer(7), "VT_DATE");
+        m.put(new Integer(8), "VT_BSTR");
+        m.put(new Integer(9), "VT_DISPATCH");
+        m.put(new Integer(10), "VT_ERROR");
+        m.put(new Integer(11), "VT_BOOL");
+        m.put(new Integer(12), "VT_VARIANT");
+        m.put(new Integer(13), "VT_UNKNOWN");
+        m.put(new Integer(14), "VT_DECIMAL");
+        m.put(new Integer(16), "VT_I1");
+        m.put(new Integer(17), "VT_UI1");
+        m.put(new Integer(18), "VT_UI2");
+        m.put(new Integer(19), "VT_UI4");
+        m.put(new Integer(20), "VT_I8");
+        m.put(new Integer(21), "VT_UI8");
+        m.put(new Integer(22), "VT_INT");
+        m.put(new Integer(23), "VT_UINT");
+        m.put(new Integer(24), "VT_VOID");
+        m.put(new Integer(25), "VT_HRESULT");
+        m.put(new Integer(26), "VT_PTR");
+        m.put(new Integer(27), "VT_SAFEARRAY");
+        m.put(new Integer(28), "VT_CARRAY");
+        m.put(new Integer(29), "VT_USERDEFINED");
+        m.put(new Integer(30), "VT_LPSTR");
+        m.put(new Integer(31), "VT_LPWSTR");
+        m.put(new Integer(64), "VT_FILETIME");
+        m.put(new Integer(65), "VT_BLOB");
+        m.put(new Integer(66), "VT_STREAM");
+        m.put(new Integer(67), "VT_STORAGE");
+        m.put(new Integer(68), "VT_STREAMED_OBJECT");
+        m.put(new Integer(69), "VT_STORED_OBJECT");
+        m.put(new Integer(70), "VT_BLOB_OBJECT");
+        m.put(new Integer(71), "VT_CF");
+        m.put(new Integer(72), "VT_CLSID");
+    }
+
+
+
+    public static String getVariantName(final long variantType)
+    {
+        String name = (String) m.get(new Integer((int) variantType));
+        return name != null ? name : "unknown variant type";
+    }
 
 }
