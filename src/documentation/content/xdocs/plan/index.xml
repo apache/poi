@@ -7,7 +7,7 @@
   <subtitle>Overview</subtitle>
   <authors>
    <person name="David Crossley" email="crossley@apache.org"/>
-   <person name="Nicola Ken Barozzi" email="barozzi@nicolaken.com"/>     
+   <person name="Nicola Ken Barozzi" email="barozzi@nicolaken.com"/>
   </authors>
  </header>
 
@@ -32,7 +32,7 @@
 
   <p>Anyone can participate in this process. Please get involved in discussion
    on <code>dev</code> and contribute patches for these summary planning
-   documents via the normal <link href="../contrib.html">contribution</link>
+   documents via the normal <link href="../getinvolved/index.html">contribution</link>
    process.
   </p>
 
@@ -45,10 +45,10 @@
  <section><title>Topics and Issues</title>
 
   <ul>
-   <li><link href="release.html">Release Plan</link>
-    - major things to do before the 2.0 release</li>
-   <li><link href="doc.html">Documentation</link>
-    - revisions and additions are required</li>
+   <li><link href="POI20Vision.html">Poi Version 2.0 Vision</link>
+    </li>
+   <li><link href="POI10Vision.html">Poi Version 1.0 Vision</link>
+    </li>
    <li>See the general <link href="../todo.html">To Do</link> list 
     and the <code>dev</code> email archives for other issues</li>
   </ul>
