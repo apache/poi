@@ -55,6 +55,8 @@ package org.apache.poi.hssf.record;
 
 import junit.framework.TestCase;
 
+import org.apache.poi.hssf.record.MergeCellsRecord.MergedRegion;
+
 /**
  * Make sure the merge cells record behaves
  * @author Danny Mui (dmui at apache dot org)
@@ -72,6 +74,15 @@ public class TestMergeCellsRecord extends TestCase {
       MergeCellsRecord clone = (MergeCellsRecord)merge.clone();
       
       assertNotSame("Merged and cloned objects are the same", merge, clone);
+      
+      MergedRegion mergeRegion = merge.getAreaAt(0);
+      MergedRegion cloneRegion = clone.getAreaAt(0);
+      assertNotSame("Should not point to same objects when cloning", mergeRegion, cloneRegion);
+      assertEquals("New Clone Row From doesnt match", mergeRegion.row_from, cloneRegion.row_from);
+      assertEquals("New Clone Row To doesnt match", mergeRegion.row_to, cloneRegion.row_to);
+      assertEquals("New Clone Col From doesnt match", mergeRegion.col_from, cloneRegion.col_from);
+      assertEquals("New Clone Col To doesnt match", mergeRegion.col_to, cloneRegion.col_to);      
+      
       merge.removeAreaAt(0);
       assertNotNull("Clone's item not removed", clone.getAreaAt(0));
    }
