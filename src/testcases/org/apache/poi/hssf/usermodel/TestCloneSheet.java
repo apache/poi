@@ -2,7 +2,7 @@
 /* ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 2003 The Apache Software Foundation.  All rights
+ * Copyright (c) 2004 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -55,10 +55,14 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+
 import junit.framework.TestCase;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+
 import org.apache.poi.hssf.util.Region;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
  * Test the ability to clone a sheet. 
@@ -77,7 +81,10 @@ public class TestCloneSheet extends TestCase {
 			HSSFWorkbook b = new HSSFWorkbook();
 			HSSFSheet s = b.createSheet("Test");
 			s.addMergedRegion(new Region((short)0,(short)0,(short)1,(short)1));
-			b.cloneSheet(0);
+			HSSFSheet clonedSheet = b.cloneSheet(0);
+			
+			assertEquals("One merged area", 1, clonedSheet.getNumMergedRegions());
+
 		}
 		catch(Exception e){e.printStackTrace();fail(e.getMessage());}
 	}
