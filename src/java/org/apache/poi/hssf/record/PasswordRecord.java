@@ -166,4 +166,14 @@ public class PasswordRecord
     {
         return this.sid;
     }
+
+    /**
+     * Clone this record.
+     */
+    public Object clone() {
+      PasswordRecord clone = new PasswordRecord();
+      clone.setPassword(field_1_password);
+      return clone;
+    }
+
 }

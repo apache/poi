@@ -193,6 +193,7 @@ public class ReferencePtg extends Ptg
       ReferencePtg ptg = new ReferencePtg();
       ptg.field_1_row = field_1_row;
       ptg.field_2_col = field_2_col;
+      ptg.setClass(ptgClass);
       return ptg;
     }
 }
