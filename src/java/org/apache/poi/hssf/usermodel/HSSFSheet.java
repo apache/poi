@@ -759,7 +759,7 @@ public class HSSFSheet
     public boolean isPrintGridlines() {
         return getSheet().getPrintGridlines().getPrintGridlines();
     }
-    
+
     /**
      * Turns on or off the printing of gridlines.
      * @param newPrintGridlines boolean to turn on or off the printing of
@@ -768,7 +768,7 @@ public class HSSFSheet
     public void setPrintGridlines(boolean newPrintGridlines) {
         getSheet().getPrintGridlines().setPrintGridlines(newPrintGridlines);
     }
-    
+
     /**
      * Gets the print setup object.
      * @return The user model for the print setup object.
@@ -776,7 +776,7 @@ public class HSSFSheet
     public HSSFPrintSetup getPrintSetup() {
 	return new HSSFPrintSetup(getSheet().getPrintSetup());
     }
-    
+
     /**
      * Gets the user model for the document header.
      * @return The Document header.
@@ -784,12 +784,20 @@ public class HSSFSheet
     public HSSFHeader getHeader() {
 	return new HSSFHeader(getSheet().getHeader());
     }
-    
+
     /**
      * Gets the user model for the document footer.
      * @return The Document footer.
      */
     public HSSFFooter getFooter() {
         return new HSSFFooter(getSheet().getFooter());
-    }
+     }
+     /**
+      * Sets whether sheet is selected.
+      * @param sel Whether to select the sheet or deselect the sheet.
+      */
+     public void setSelected(boolean sel) {
+       getSheet().setSelected(sel);
+
+     }
 }

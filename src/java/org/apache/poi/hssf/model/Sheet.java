@@ -55,8 +55,6 @@
 
 package org.apache.poi.hssf.model;
 
-import java.io.OutputStream;
-
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -83,9 +81,10 @@ import org.apache.poi.hssf.record
  * <P>
  * @author  Andrew C. Oliver (acoliver at apache dot org)
  * @author  Glen Stampoultzis (glens at apache.org)
+ * @author  Shawn Laubach (laubach at acm.org) Just Gridlines, Headers, Footers, and PrintSetup
+ *
  * @see org.apache.poi.hssf.model.Workbook
  * @see org.apache.poi.hssf.usermodel.HSSFSheet
- * @author  Shawn Laubach (laubach at acm.org) Just Gridlines, Headers, Footers, and PrintSetup
  * @version 1.0-pre
  */
 
@@ -1395,7 +1394,7 @@ public class Sheet
     {
         DeltaRecord retval = new DeltaRecord();
 
-        retval.setMaxChange((( double ) 0.0010));
+        retval.setMaxChange(0.0010);
         return retval;
     }
 
@@ -1592,8 +1591,8 @@ public class Sheet
         retval.setOptions(( short ) 2);
         retval.setHResolution(( short ) 300);
         retval.setVResolution(( short ) 300);
-        retval.setHeaderMargin(( double ) 0.5);
-        retval.setFooterMargin(( double ) 0.5);
+        retval.setHeaderMargin( 0.5);
+        retval.setFooterMargin( 0.5);
         retval.setCopies(( short ) 0);
         return retval;
     }
@@ -1966,7 +1965,7 @@ public class Sheet
     {
 	return header;
     }
-    
+
     /**
      * Sets the HeaderRecord.
      * @param newHeader The new HeaderRecord for the sheet.
@@ -1975,7 +1974,7 @@ public class Sheet
     {
 	header = newHeader;
     }
-    
+
     /**
      * Returns the FooterRecord.
      * @return FooterRecord for the sheet.
@@ -1984,7 +1983,7 @@ public class Sheet
     {
 	return footer;
     }
-    
+
     /**
      * Sets the FooterRecord.
      * @param newFooter The new FooterRecord for the sheet.
@@ -1993,7 +1992,7 @@ public class Sheet
     {
 	footer = newFooter;
     }
-    
+
     /**
      * Returns the PrintSetupRecord.
      * @return PrintSetupRecord for the sheet.
@@ -2011,7 +2010,7 @@ public class Sheet
     {
 	printSetup = newPrintSetup;
     }
-    
+
     /**
      * Returns the PrintGridlinesRecord.
      * @return PrintGridlinesRecord for the sheet.
@@ -2020,7 +2019,7 @@ public class Sheet
     {
 	return printGridlines;
     }
-    
+
     /**
      * Sets the PrintGridlinesRecord.
      * @param newPrintGridlines The new PrintGridlinesRecord for the sheet.
@@ -2030,4 +2029,12 @@ public class Sheet
 	printGridlines = newPrintGridlines;
     }
 
+    /**
+     * Sets whether the sheet is selected
+     * @param sel True to select the sheet, false otherwise.
+     */
+    public void setSelected(boolean sel) {
+	WindowTwoRecord windowTwo = (WindowTwoRecord) findFirstRecordBySid(WindowTwoRecord.sid);
+	windowTwo.setSelected(sel);
+    }
 }
