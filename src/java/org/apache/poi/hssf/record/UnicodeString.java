@@ -292,17 +292,43 @@ public class UnicodeString
 
     public int serialize(int offset, byte [] data)
     {
+        int charsize = 1;
+
+        if (getOptionFlags() == 1)
+        {
+            charsize = 2;
+        }
+
+        // byte[] retval = new byte[ 3 + (getString().length() * charsize)];
         LittleEndian.putShort(data, 0 + offset, getCharCount());
         data[ 2 + offset ] = getOptionFlags();
 
-        if (!isUncompressedUnicode())
-        {
-            StringUtil.putCompressedUnicode(getString(), data, 0x3 + offset);
+//        System.out.println("Unicode: We've got "+retval[2]+" for our option flag");
+        try {
+            String unicodeString = new
+String(getString().getBytes("Unicode"),"Unicode");
+            if (getOptionFlags() == 0)
+            {
+                StringUtil.putCompressedUnicode(unicodeString, data, 0x3 +
+offset);
+            }
+            else
+            {
+                StringUtil.putUncompressedUnicode(unicodeString, data,
+                                                    0x3 + offset);
+            }
         }
-        else
-        {
-            StringUtil.putUncompressedUnicode(getString(), data,
-                                              0x3 + offset);
+        catch (Exception e) {
+            if (getOptionFlags() == 0)
+            {
+                StringUtil.putCompressedUnicode(getString(), data, 0x3 +
+                                                offset);
+            }
+            else
+            {
+                StringUtil.putUncompressedUnicode(getString(), data,
+                                                  0x3 + offset);
+            }
         }
         return getRecordSize();
     }
