@@ -17,7 +17,9 @@
         
 package org.apache.poi.hpsf.wellknown;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * <p>This is a dictionary which maps property ID values to property
@@ -29,12 +31,8 @@ import java.util.HashMap;
  * should treat them as unmodifiable, copy them and modifiy the
  * copies.</p>
  *
- * <p><strong>FIXME (3):</strong> Make the singletons unmodifiable. However, 
- * since this requires to use a {@link HashMap} delegate instead of
- * extending {@link HashMap} and thus requires a lot of stupid typing, I won't
- * do that for the time being.</p>
- *
- * @author Rainer Klute (klute@rainer-klute.de)
+ * @author Rainer Klute <a
+ * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
  * @version $Id$
  * @since 2002-02-09
  */
@@ -104,7 +102,31 @@ public class PropertyIDMap extends HashMap
      * document</p> */
     public static final int PID_APPNAME = 18;
 
-    /** <p>FIXME (2): ID of the property that denotes...</p> */
+    /** <p>ID of the property that denotes whether read/write access to the
+     * document is allowed or whether is should be opened as read-only. It can
+     * have the following values:</p>
+     * 
+     * <table>
+     *  <tbody>
+     *   <tr>
+     *    <th><p>Value</p></th>
+     *    <th><p>Description</p></th>
+     *   </tr>
+     *   <tr>
+     *    <th><p>0</p></th>
+     *    <th><p>No restriction</p></th>
+     *   </tr>
+     *   <tr>
+     *    <th><p>2</p></th>
+     *    <th><p>Read-only recommended</p></th>
+     *   </tr>
+     *   <tr>
+     *    <th><p>4</p></th>
+     *    <th><p>Read-only enforced</p></th>
+     *   </tr>
+     *  </tbody>
+     * </table>
+     */
     public static final int PID_SECURITY = 19;
 
 
@@ -243,6 +265,18 @@ public class PropertyIDMap extends HashMap
 
 
     /**
+     * <p>Creates a {@link PropertyIDMap} backed by another map.</p>
+     * 
+     * @param map The instance to be created is backed by this map.
+     */
+    public PropertyIDMap(final Map map)
+    {
+        super(map);
+    }
+
+
+
+    /**
      * <p>Puts a ID string for an ID into the {@link
      * PropertyIDMap}.</p>
      *
@@ -300,7 +334,8 @@ public class PropertyIDMap extends HashMap
             m.put(PID_THUMBNAIL, "PID_THUMBNAIL");
             m.put(PID_APPNAME, "PID_APPNAME");
             m.put(PID_SECURITY, "PID_SECURITY");
-            summaryInformationProperties = m;
+            summaryInformationProperties =
+                new PropertyIDMap(Collections.unmodifiableMap(m));
         }
         return summaryInformationProperties;
     }
@@ -335,7 +370,8 @@ public class PropertyIDMap extends HashMap
             m.put(PID_MANAGER, "PID_MANAGER");
             m.put(PID_COMPANY, "PID_COMPANY");
             m.put(PID_LINKSDIRTY, "PID_LINKSDIRTY");
-            documentSummaryInformationProperties = m;
+            documentSummaryInformationProperties =
+                new PropertyIDMap(Collections.unmodifiableMap(m));
         }
         return documentSummaryInformationProperties;
     }

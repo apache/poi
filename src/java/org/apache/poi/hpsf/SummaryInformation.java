@@ -264,10 +264,9 @@ public class SummaryInformation extends SpecialPropertySet
      * <strong>when this method is implemented. Please note that the
      * return type is likely to change!</strong></p>
      *
-     * <p><strong>FIXME (3) / Hint to developers:</strong> Drew Varner
-     * &lt;Drew.Varner -at- sc.edu&gt; said that this is an image in
-     * WMF or Clipboard (BMP?) format. He also provided two links that
-     * might be helpful: <a
+     * <p><strong>Hint to developers:</strong> Drew Varner &lt;Drew.Varner -at-
+     * sc.edu&gt; said that this is an image in WMF or Clipboard (BMP?) format.
+     * He also provided two links that might be helpful: <a
      * href="http://www.csn.ul.ie/~caolan/publink/file/OLE2SummaryAgainst_file-3.27.patch"
      * target="_blank">http://www.csn.ul.ie/~caolan/publink/file/OLE2SummaryAgainst_file-3.27.patch</a>
      * and <a
