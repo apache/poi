@@ -66,46 +66,45 @@ import java.util.*;
 import org.apache.poi.util.LittleEndian;
 
 /**
- *  <p>
+ * <p>A property in a {@link Section} of a {@link PropertySet}.</p>
  *
- *  A property in a {@link Section} of a {@link PropertySet}.</p> <p>
+ * <p>The property's <strong>ID</strong> gives the property a meaning
+ * in the context of its {@link Section}. Each {@link Section} spans
+ * its own name space of property IDs.</p>
  *
- *  The property's <strong>ID</strong> gives the property a meaning in the
- *  context of its {@link Section}. Each {@link Section} spans its own name
- *  space of property IDs.</p> <p>
+ * <p>The property's <strong>type</strong> determines how its
+ * <strong>value </strong> is interpreted. For example, if the type is
+ * {@link Variant#VT_LPSTR} (byte string), the value consists of a
+ * {@link DWord} telling how many bytes the string contains. The bytes
+ * follow immediately, including any null bytes that terminate the
+ * string. The type {@link Variant#VT_I4} denotes a four-byte integer
+ * value, {@link Variant#VT_FILETIME} some date and time (of a
+ * file).</p>
  *
- *  The property's <strong>type</strong> determines how its <strong>value
- *  </strong> is interpreted. For example, if the type is {@link
- *  Variant#VT_LPSTR} (byte string), the value consists of a {@link DWord}
- *  telling how many bytes the string contains. The bytes follow immediately,
- *  including any null bytes that terminate the string. The type {@link
- *  Variant#VT_I4} denotes a four-byte integer value, {@link
- *  Variant#VT_FILETIME} some date and time (of a file).</p> <p>
+ * <p><strong>FIXME:</strong> Reading of other types than those
+ * mentioned above and the dictionary property is not yet
+ * implemented.</p>
  *
- *  <strong>FIXME:</strong> Reading of other types than those mentioned above
- *  and the dictionary property is not yet implemented.</p>
- *
- *@author     Rainer Klute (klute@rainer-klute.de)
- *@author     Drew Varner (Drew.Varner InAndAround sc.edu)
- *@created    May 10, 2002
- *@see        Section
- *@see        Variant
- *@version    $Id$
- *@since      2002-02-09
+ * @author Rainer Klute (klute@rainer-klute.de)
+ * @author Drew Varner (Drew.Varner InAndAround sc.edu)
+ * @see Section
+ * @see Variant
+ * @version $Id$
+ * @since 2002-02-09
  */
-public class Property {
+public class Property
+{
 
     private int id;
 
 
     /**
-     *  <p>
+     * <p>Returns the property's ID.</p>
      *
-     *  Returns the property's ID.</p>
-     *
-     *@return    The iD value
+     * @return The ID value
      */
-    public int getID() {
+    public int getID()
+    {
         return id;
     }
 
@@ -115,13 +114,12 @@ public class Property {
 
 
     /**
-     *  <p>
+     * <p>Returns the property's type.</p>
      *
-     *  Returns the property's type.</p>
-     *
-     *@return    The type value
+     * @return The type value
      */
-    public long getType() {
+    public long getType()
+    {
         return type;
     }
 
@@ -131,38 +129,38 @@ public class Property {
 
 
     /**
-     *  <p>
+     * <p>Returns the property's value.</p>
      *
-     *  Returns the property value's.</p>
-     *
-     *@return    The value value
+     * @return The property's value
      */
-    public Object getValue() {
+    public Object getValue()
+    {
         return value;
     }
 
 
 
     /**
-     *  <p>
+     * <p>Creates a {@link Property} instance by reading its bytes
+     * from the property set stream.</p>
      *
-     *  Creates a {@link Property} instance by reading its bytes from the
-     *  property set stream.</p>
-     *
-     *@param  id      The property's ID.
-     *@param  src     The bytes the property set stream consists of.
-     *@param  offset  The property's type/value pair's offset in the section.
-     *@param  length  The property's type/value pair's length in bytes. list.
+     * @param id The property's ID.
+     * @param src The bytes the property set stream consists of.
+     * @param offset The property's type/value pair's offset in the
+     * section.
+     * @param length The property's type/value pair's length in bytes.
      */
     public Property(final int id, final byte[] src, final long offset,
-            int length) {
+		    int length)
+    {
         this.id = id;
 
         /*
          *  ID 0 is a special case since it specifies a dictionary of
          *  property IDs and property names.
          */
-        if (id == 0) {
+        if (id == 0)
+	{
             value = readDictionary(src, offset, length);
             return;
         }
@@ -237,10 +235,9 @@ public class Property {
                 length = length - LittleEndian.INT_SIZE;
 
                 final byte[] v = new byte[length];
-                for (int i = 0; i < length; i++) {
+                for (int i = 0; i < length; i++)
                     v[i] = src[(int)(o + i)];
-                }
-                value = v;
+		value = v;
                 break;
             }
             case Variant.VT_BOOL:
@@ -252,24 +249,18 @@ public class Property {
                  */
                 final int first = o + LittleEndian.INT_SIZE;
                 long bool = LittleEndian.getUInt(src, o);
-                if (bool == -1) {
+                if (bool != 0)
                     value = new Boolean(true);
-                } else if (bool == 0) {
+                else
                     value = new Boolean(false);
-                } else {
-                    throw new IllegalPropertySetDataException
-                            ("Illegal property set data: A boolean must be " +
-                            "either -1 (true) or 0 (false).");
-                }
-                break;
+		break;
             }
             default:
             {
                 final byte[] v = new byte[length];
-                for (int i = 0; i < length; i++) {
+                for (int i = 0; i < length; i++)
                     v[i] = src[(int)(offset + i)];
-                }
-                value = v;
+		value = v;
                 break;
             }
         }
@@ -278,19 +269,18 @@ public class Property {
 
 
     /**
-     *  <p>
+     * <p>Reads a dictionary.</p>
      *
-     *  Reads a dictionary.</p>
-     *
-     *@param  src     The byte array containing the bytes making out the
-     *      dictionary.
-     *@param  offset  At this offset within <var>src</var> the dictionary
-     *      starts.
-     *@param  length  The dictionary contains at most this many bytes.
-     *@return         Description of the Return Value
+     * @param src The byte array containing the bytes making out the
+     * dictionary.
+     * @param offset At this offset within <var>src</var> the
+     * dictionary starts.
+     * @param length The dictionary contains at most this many bytes.
+     * @return The dictonary
      */
     protected Map readDictionary(final byte[] src, final long offset,
-            final int length) {
+				 final int length)
+    {
         /*
          *  FIXME: Check the length!
          */
@@ -303,7 +293,8 @@ public class Property {
         o += LittleEndian.INT_SIZE;
 
         final Map m = new HashMap((int)nrEntries, (float) 1.0);
-        for (int i = 0; i < nrEntries; i++) {
+        for (int i = 0; i < nrEntries; i++)
+	{
             /*
              *  The key
              */
@@ -315,13 +306,13 @@ public class Property {
              */
             final long sLength = LittleEndian.getUInt(src, o);
             o += LittleEndian.INT_SIZE;
+
             /*
              *  Strip trailing 0x00 bytes.
              */
             long l = sLength;
-            while (src[(int)(o + l - 1)] == 0x00) {
+            while (src[(int)(o + l - 1)] == 0x00)
                 l--;
-            }
             final String s = new String(src, o, (int)l);
             o += sLength;
             m.put(id, s);
@@ -332,16 +323,16 @@ public class Property {
 
 
     /**
-     *  <p>
+     * <p>Reads a code page.</p>
      *
-     *  Reads a code page.</p>
-     *
-     *@param  src     The byte array containing the bytes making out the code
-     *      page.
-     *@param  offset  At this offset within <var>src</var> the code page starts.
-     *@return         Description of the Return Value
+     * @param src The byte array containing the bytes making out the
+     * code page.
+     * @param offset At this offset within <var>src</var> the code
+     * page starts.
+     * @return The code page.
      */
-    protected int readCodePage(final byte[] src, final long offset) {
+    protected int readCodePage(final byte[] src, final long offset)
+    {
         throw new UnsupportedOperationException("FIXME");
     }
 
