@@ -6,15 +6,350 @@
 
 package org.apache.poi.hdf.model;
 
+
+import java.io.*;
+
+import org.apache.poi.hdf.model.hdftypes.*;
+import org.apache.poi.hdf.model.util.*;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.poifs.filesystem.POIFSDocument;
+import org.apache.poi.poifs.filesystem.DocumentEntry;
+import org.apache.poi.util.LittleEndian;
+
+
+
+
 /**
- * The Object Factory takes in a stream and creates the low level objects 
+ * The Object Factory takes in a stream and creates the low level objects
  * that represent the data.
  * @author  andy
  */
-public class HDFObjectFactory {
+public class HDFObjectFactory
+{
 
-    /** Creates a new instance of HDFObjectFactory */
-    public HDFObjectFactory() {
+    /** OLE stuff*/
+    private POIFSFileSystem _filesystem;
+    /** The FIB*/
+    private FileInformationBlock _fib;
+    /** The DOP*/
+    private DocumentProperties _dop;
+    /**the StyleSheet*/
+    private StyleSheet _styleSheet;
+    /**list info */
+    private ListTables _listTables;
+    /** Font info */
+    private FontTable _fonts;
+
+    /** text pieces */
+    BTreeSet _text = new BTreeSet();
+    /** document sections */
+    BTreeSet _sections = new BTreeSet();
+    /** document paragraphs */
+    BTreeSet _paragraphs = new BTreeSet();
+    /** document character runs */
+    BTreeSet _characterRuns = new BTreeSet();
+
+    /** main document stream buffer*/
+    byte[] _mainDocument;
+    /** table stream buffer*/
+    byte[] _tableBuffer;
+
+
+
+    /** Creates a new instance of HDFObjectFactory
+     *
+     * @param istream The InputStream that is the Word document
+     *
+     */
+    public HDFObjectFactory(InputStream istream) throws IOException
+    {
+        //do Ole stuff
+        _filesystem = new POIFSFileSystem(istream);
+
+        DocumentEntry headerProps =
+            (DocumentEntry)_filesystem.getRoot().getEntry("WordDocument");
+
+        _mainDocument = new byte[headerProps.getSize()];
+        _filesystem.createDocumentInputStream("WordDocument").read(_mainDocument);
+
+        _fib = new FileInformationBlock(_mainDocument);
+
+        initTableStream();
+        initTextPieces();
+        initFormattingProperties();
+
+        istream.close();
+
+    }
+    /**
+     * Initializes the table stream
+     *
+     * @throws IOException
+     */
+    private void initTableStream() throws IOException
+    {
+        String tablename = null;
+        if(_fib.useTable1())
+        {
+            tablename="1Table";
+        }
+        else
+        {
+          tablename="0Table";
+        }
+
+        DocumentEntry tableEntry = (DocumentEntry)_filesystem.getRoot().getEntry(tablename);
+
+        //load the table stream into a buffer
+        int size = tableEntry.getSize();
+        _tableBuffer = new byte[size];
+        _filesystem.createDocumentInputStream(tablename).read(_tableBuffer);
+    }
+    /**
+     * Initializes the text pieces. Text is divided into pieces because some
+     * "pieces" may only contain unicode characters.
+     *
+     * @throws IOException
+     */
+    private void initTextPieces() throws IOException
+    {
+        int pos = _fib.getComplexOffset();
+
+        //skips through the prms before we reach the piece table. These contain data
+        //for actual fast saved files
+        while (_tableBuffer[pos] == 1)
+        {
+            pos++;
+            int skip = LittleEndian.getShort(_tableBuffer, pos);
+            pos += 2 + skip;
+        }
+        if(_tableBuffer[pos] != 2)
+        {
+            throw new IOException("The text piece table is corrupted");
+        }
+        else
+        {
+            //parse out the text pieces
+            int pieceTableSize = LittleEndian.getInt(_tableBuffer, ++pos);
+            pos += 4;
+            int pieces = (pieceTableSize - 4) / 12;
+            for (int x = 0; x < pieces; x++)
+            {
+                int filePos = LittleEndian.getInt(_tableBuffer, pos + ((pieces + 1) * 4) + (x * 8) + 2);
+                boolean unicode = false;
+                if ((filePos & 0x40000000) == 0)
+                {
+                    unicode = true;
+                }
+                else
+                {
+                    unicode = false;
+                    filePos &= ~(0x40000000);//gives me FC in doc stream
+                    filePos /= 2;
+                }
+                int totLength = LittleEndian.getInt(_tableBuffer, pos + (x + 1) * 4) -
+                                LittleEndian.getInt(_tableBuffer, pos + (x * 4));
+
+                TextPiece piece = new TextPiece(filePos, totLength, unicode);
+                _text.add(piece);
+
+            }
+
+        }
+
+    }
+    /**
+     * initializes all of the formatting properties for a Word Document
+     */
+    private void initFormattingProperties()
+    {
+        createStyleSheet();
+        createListTables();
+        createFontTable();
+
+        initDocumentProperties();
+        initSectionProperties();
+        initCharacterProperties();
+        initParagraphProperties();
+    }
+    /**
+     * initializes the CharacterProperties BTree
+     */
+    private void initCharacterProperties()
+    {
+        int charOffset = _fib.getChpBinTableOffset();
+        int charPlcSize = _fib.getChpBinTableSize();
+
+        int arraySize = (charPlcSize - 4)/8;
+
+        //first we must go through the bin table and find the fkps
+        for(int x = 0; x < arraySize; x++)
+        {
+
+            //get page number(has nothing to do with document page)
+            //containing the chpx for the paragraph
+            int PN = LittleEndian.getInt(_tableBuffer, charOffset + (4 * (arraySize + 1) + (4 * x)));
+
+            byte[] fkp = new byte[512];
+            System.arraycopy(_mainDocument, (PN * 512), fkp, 0, 512);
+            //take each fkp and get the chpxs
+            int crun = LittleEndian.getUnsignedByte(fkp, 511);
+            for(int y = 0; y < crun; y++)
+            {
+                //get the beginning fc of each paragraph text run
+                int fcStart = LittleEndian.getInt(fkp, y * 4);
+                int fcEnd = LittleEndian.getInt(fkp, (y+1) * 4);
+                //get the offset in fkp of the papx for this paragraph
+                int chpxOffset = 2 * LittleEndian.getUnsignedByte(fkp, ((crun + 1) * 4) + y);
+
+                //optimization if offset == 0 use "Normal" style
+                if(chpxOffset == 0)
+
+                {
+                    _characterRuns.add(new ChpxNode(fcStart, fcEnd, new byte[0]));
+                    continue;
+                }
+
+                int size = LittleEndian.getUnsignedByte(fkp, chpxOffset);
+
+                byte[] chpx = new byte[size];
+                System.arraycopy(fkp, ++chpxOffset, chpx, 0, size);
+                //_papTable.put(new Integer(fcStart), papx);
+                _characterRuns.add(new ChpxNode(fcStart, fcEnd, chpx));
+            }
+
+        }
+    }
+    /**
+     * intializes the Paragraph Properties BTree
+     */
+    private void initParagraphProperties()
+    {
+        //find paragraphs
+        int parOffset = _fib.getPapBinTableOffset();
+        int parPlcSize = _fib.getPapBinTableSize();
+
+        int arraySize = (parPlcSize - 4)/8;
+        //first we must go through the bin table and find the fkps
+        for(int x = 0; x < arraySize; x++)
+        {
+            int PN = LittleEndian.getInt(_tableBuffer, parOffset + (4 * (arraySize + 1) + (4 * x)));
+
+            byte[] fkp = new byte[512];
+            System.arraycopy(_mainDocument, (PN * 512), fkp, 0, 512);
+            //take each fkp and get the paps
+            int crun = LittleEndian.getUnsignedByte(fkp, 511);
+            for(int y = 0; y < crun; y++)
+            {
+                //get the beginning fc of each paragraph text run
+                int fcStart = LittleEndian.getInt(fkp, y * 4);
+                int fcEnd = LittleEndian.getInt(fkp, (y+1) * 4);
+                //get the offset in fkp of the papx for this paragraph
+                int papxOffset = 2 * LittleEndian.getUnsignedByte(fkp, ((crun + 1) * 4) + (y * 13));
+                int size = 2 * LittleEndian.getUnsignedByte(fkp, papxOffset);
+                if(size == 0)
+                {
+                    size = 2 * LittleEndian.getUnsignedByte(fkp, ++papxOffset);
+                }
+                else
+                {
+                    size--;
+                }
+
+                byte[] papx = new byte[size];
+                System.arraycopy(fkp, ++papxOffset, papx, 0, size);
+                _paragraphs.add(new PapxNode(fcStart, fcEnd, papx));
+
+            }
+
+        }
+
+    }
+    /**
+     * initializes the SectionProperties BTree
+     */
+    private void initSectionProperties()
+    {
+      //find sections
+      int fcMin = _fib.getFirstCharOffset();
+      int plcfsedFC = _fib.getSectionDescriptorOffset();
+      int plcfsedSize = _fib.getSectionDescriptorSize();
+      byte[] plcfsed = new byte[plcfsedSize];
+      System.arraycopy(_tableBuffer, plcfsedFC, plcfsed, 0, plcfsedSize);
+
+      int arraySize = (plcfsedSize - 4)/16;
+
+
+      for(int x = 0; x < arraySize; x++)
+      {
+          int sectionStart = LittleEndian.getInt(plcfsed, x * 4) + fcMin;
+          int sectionEnd = LittleEndian.getInt(plcfsed, (x+1) * 4) + fcMin;
+          int sepxStart = LittleEndian.getInt(plcfsed, 4 * (arraySize + 1) + (x * 12) + 2);
+          int sepxSize = LittleEndian.getShort(_mainDocument, sepxStart);
+          byte[] sepx = new byte[sepxSize];
+          System.arraycopy(_mainDocument, sepxStart + 2, sepx, 0, sepxSize);
+          SepxNode node = new SepxNode(x + 1, sectionStart, sectionEnd, sepx);
+          _sections.add(node);
+      }
+    }
+    /**
+     * Initializes the DocumentProperties object unique to this document.
+     */
+    private void initDocumentProperties()
+    {
+        int pos = _fib.getDOPOffset();
+        int size = _fib.getDOPSize();
+        byte[] dopArray = new byte[size];
+
+        System.arraycopy(_tableBuffer, pos, dopArray, 0, size);
+        _dop = new DocumentProperties(dopArray);
+    }
+    /**
+     * Uncompresses the StyleSheet from file into memory.
+     */
+    private void createStyleSheet()
+    {
+      int stshIndex = _fib.getStshOffset();
+      int stshSize = _fib.getStshSize();
+      byte[] stsh = new byte[stshSize];
+      System.arraycopy(_tableBuffer, stshIndex, stsh, 0, stshSize);
+
+      _styleSheet = new StyleSheet(stsh);
+    }
+    /**
+     * Initializes the list tables for this document
+     */
+    private void createListTables()
+    {
+        int lfoOffset = _fib.getLFOOffset();
+        int lfoSize = _fib.getLFOSize();
+        byte[] plflfo = new byte[lfoSize];
+
+        System.arraycopy(_tableBuffer, lfoOffset, plflfo, 0, lfoSize);
+
+        int lstOffset = _fib.getLSTOffset();
+        int lstSize = lstOffset;
+        //not sure if this is a mistake or what. I vaguely remember a trick like
+        //this
+        //int lstSize = LittleEndian.getInt(_header, 0x2e2);
+        if(lstOffset > 0 && lstSize > 0)
+        {
+          lstSize = lfoOffset - lstOffset;
+          byte[] plcflst = new byte[lstSize];
+          System.arraycopy(_tableBuffer, lstOffset, plcflst, 0, lstSize);
+          _listTables = new ListTables(plcflst, plflfo);
+        }
+    }
+    /**
+     * Initializes this document's FontTable;
+     */
+    private void createFontTable()
+    {
+        int fontTableIndex = _fib.getFontsOffset();
+        int fontTableSize = _fib.getFontsSize();
+        byte[] fontTable = new byte[fontTableSize];
+        System.arraycopy(_tableBuffer, fontTableIndex, fontTable, 0, fontTableSize);
+        _fonts = new FontTable(fontTable);
     }
 
 }
