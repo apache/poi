@@ -2,7 +2,7 @@
 /* ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 2002 The Apache Software Foundation.  All rights
+ * Copyright (c) 2002, 2003 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -60,11 +60,11 @@
  */
 package org.apache.poi.hssf.record;
 
-import java.util.Stack;
 import java.util.List;
+import java.util.Stack;
 
+import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.hssf.record.formula.*;
 
 /**
  * Formula Record.
@@ -94,6 +94,10 @@ public class FormulaRecord
     private short             field_7_expression_len;
     private Stack             field_8_parsed_expr;
     
+    /**
+     * Since the NaN support seems sketchy (different constants) we'll store and spit it out directly
+     */
+    private byte[]			value_data;
     private byte[]            all_data; //if formula support is not enabled then
                                         //we'll just store/reserialize
 
@@ -141,7 +145,13 @@ public class FormulaRecord
         field_2_column         = LittleEndian.getShort(data, 2 + offset);
         field_3_xf             = LittleEndian.getShort(data, 4 + offset);
         field_4_value          = LittleEndian.getDouble(data, 6 + offset);
-        field_5_options        = LittleEndian.getShort(data, 14 + offset);
+		field_5_options        = LittleEndian.getShort(data, 14 + offset);
+		        
+        if (Double.isNaN(field_4_value)) {
+        	value_data = new byte[8];
+        	System.arraycopy(data, offset+6, value_data, 0, 8);
+        }
+        
         field_6_zero           = LittleEndian.getInt(data, 16 + offset);
         field_7_expression_len = LittleEndian.getShort(data, 20 + offset);
         field_8_parsed_expr    = getParsedExpressionTokens(data, size,
@@ -371,9 +381,19 @@ public class FormulaRecord
         LittleEndian.putShort(data, 4 + offset, ( short ) getRow());
         LittleEndian.putShort(data, 6 + offset, getColumn());
         LittleEndian.putShort(data, 8 + offset, getXFIndex());
-        LittleEndian.putDouble(data, 10 + offset, field_4_value);
+        
+        //only reserialize if the value is still NaN and we have old nan data
+        if (Double.isNaN(this.getValue()) && value_data != null) {        	
+			System.arraycopy(value_data,0,data,10 + offset,value_data.length);
+        } else {
+			LittleEndian.putDouble(data, 10 + offset, field_4_value);
+        }
+        	
         LittleEndian.putShort(data, 18 + offset, getOptions());
-        LittleEndian.putInt(data, 20 + offset, field_6_zero);
+        
+        //when writing the chn field (offset 20), it's supposed to be 0 but ignored on read
+        //Microsoft Excel Developer's Kit Page 318
+        LittleEndian.putInt(data, 20 + offset, 0);
         LittleEndian.putShort(data, 24 + offset, getExpressionLength());
         serializePtgs(data, 26+offset);
         } else {
