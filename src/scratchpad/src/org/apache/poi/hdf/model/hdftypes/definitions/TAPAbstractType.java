@@ -83,9 +83,9 @@ public abstract class TAPAbstractType
     private  int field_6_tlp;
     private  int field_7_itcMac;
     private  short[] field_8_rgdxaCenter;
-    private  TableCell[] field_9_rgtc;
-    private  ShadeDescriptor[] field_10_rgshd;
-    private  BorderCode[] field_11_rgbrcTable;
+    private  byte[] field_9_rgtc;
+    private  byte[] field_10_rgshd;
+    private  byte[] field_11_rgbrcTable;
 
 
     public TAPAbstractType()
@@ -234,7 +234,7 @@ public abstract class TAPAbstractType
     /**
      * Get the rgtc field for the TAP record.
      */
-    public TableCell[] getRgtc()
+    public byte[] getRgtc()
     {
         return field_9_rgtc;
     }
@@ -242,7 +242,7 @@ public abstract class TAPAbstractType
     /**
      * Set the rgtc field for the TAP record.
      */
-    public void setRgtc(TableCell[] field_9_rgtc)
+    public void setRgtc(byte[] field_9_rgtc)
     {
         this.field_9_rgtc = field_9_rgtc;
     }
@@ -250,7 +250,7 @@ public abstract class TAPAbstractType
     /**
      * Get the rgshd field for the TAP record.
      */
-    public ShadeDescriptor[] getRgshd()
+    public byte[] getRgshd()
     {
         return field_10_rgshd;
     }
@@ -258,7 +258,7 @@ public abstract class TAPAbstractType
     /**
      * Set the rgshd field for the TAP record.
      */
-    public void setRgshd(ShadeDescriptor[] field_10_rgshd)
+    public void setRgshd(byte[] field_10_rgshd)
     {
         this.field_10_rgshd = field_10_rgshd;
     }
@@ -266,7 +266,7 @@ public abstract class TAPAbstractType
     /**
      * Get the rgbrcTable field for the TAP record.
      */
-    public BorderCode[] getRgbrcTable()
+    public byte[] getRgbrcTable()
     {
         return field_11_rgbrcTable;
     }
@@ -274,7 +274,7 @@ public abstract class TAPAbstractType
     /**
      * Set the rgbrcTable field for the TAP record.
      */
-    public void setRgbrcTable(BorderCode[] field_11_rgbrcTable)
+    public void setRgbrcTable(byte[] field_11_rgbrcTable)
     {
         this.field_11_rgbrcTable = field_11_rgbrcTable;
     }

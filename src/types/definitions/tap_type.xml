@@ -12,8 +12,8 @@
       <field type="int" size="4" name="tlp"/>
       <field type="int" size="2" name="itcMac"/>
       <field type="short[]" size="130" name="rgdxaCenter"/>
-      <field type="TableCell[]" size="0" name="rgtc"/>
-      <field type="ShadeDescriptor[]" size="0" name="rgshd"/>
-      <field type="BorderCode[]" size="0" name="rgbrcTable"/>
+      <field type="byte[]" size="0" name="rgtc"/>
+      <field type="byte[]" size="0" name="rgshd"/>
+      <field type="byte[]" size="0" name="rgbrcTable"/>
     </fields>
 </record>
