@@ -97,6 +97,16 @@ public class SprmOperation
     _size = initSize(sprmStart);
   }
 
+  public static int getOperationFromOpcode(short opcode)
+  {
+    return OP_BITFIELD.getValue(opcode);
+  }
+
+  public static int getTypeFromOpcode(short opcode)
+  {
+    return TYPE_BITFIELD.getValue(opcode);
+  }
+
   public int getType()
   {
     return _type;

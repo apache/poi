@@ -96,6 +96,9 @@ public class HWPFDocument
   /** table stream buffer*/
   private byte[] _tableStream;
 
+  /** data stream buffer*/
+  private byte[] _dataStream;
+
   /** Document wide Properties*/
   private DocumentProperties _dop;
 
@@ -157,6 +160,19 @@ public class HWPFDocument
 
     _fib.fillVariableFields(_mainStream, _tableStream);
 
+    // read in the data stream.
+    try
+    {
+      DocumentEntry dataProps =
+          (DocumentEntry) _filesystem.getRoot().getEntry("Data");
+      _dataStream = new byte[dataProps.getSize()];
+      _filesystem.createDocumentInputStream("Data").read(_dataStream);
+    }
+    catch(java.io.FileNotFoundException e)
+    {
+        _dataStream = new byte[0];
+    }
+
     // get the start of text in the main stream
     int fcMin = _fib.getFcMin();
 
@@ -165,7 +181,7 @@ public class HWPFDocument
     _cft = new ComplexFileTable(_mainStream, _tableStream, _fib.getFcClx(), fcMin);
     _tpt = _cft.getTextPieceTable();
     _cbt = new CHPBinTable(_mainStream, _tableStream, _fib.getFcPlcfbteChpx(), _fib.getLcbPlcfbteChpx(), fcMin);
-    _pbt = new PAPBinTable(_mainStream, _tableStream, _fib.getFcPlcfbtePapx(), _fib.getLcbPlcfbtePapx(), fcMin);
+    _pbt = new PAPBinTable(_mainStream, _tableStream, _dataStream, _fib.getFcPlcfbtePapx(), _fib.getLcbPlcfbtePapx(), fcMin);
 
     // Word XP puts in a zero filled buffer in front of the text and it screws
     // up my system for offsets. This is an adjustment.
@@ -187,8 +203,13 @@ public class HWPFDocument
       _lt = new ListTables(_tableStream, _fib.getFcPlcfLst(), _fib.getFcPlfLfo());
     }
 
-    int x = 0;
-
+    PlexOfCps plc = new PlexOfCps(_tableStream, _fib.getFcPlcffldMom(), _fib.getLcbPlcffldMom(), 2);
+    for (int x = 0; x < plc.length(); x++)
+    {
+      GenericPropertyNode node = plc.getProperty(x);
+      byte[] fld = node.getBytes();
+      int breakpoint = 0;
+    }
   }
 
   public StyleSheet getStyleSheet()
@@ -198,7 +219,11 @@ public class HWPFDocument
 
   public Range getRange()
   {
-    return new Range(0, _fib.getFcMac() - _fib.getFcMin(), this);
+    // hack to get the ending cp of the document, Have to revisit this.
+    java.util.List paragraphs = _pbt.getParagraphs();
+    PAPX p = (PAPX)paragraphs.get(paragraphs.size() - 1);
+
+    return new Range(0, p.getEnd(), this);
   }
 
   public ListTables getListTables()
@@ -219,6 +244,7 @@ public class HWPFDocument
     HWPFFileSystem docSys = new HWPFFileSystem();
     HWPFOutputStream mainStream = docSys.getStream("WordDocument");
     HWPFOutputStream tableStream = docSys.getStream("1Table");
+    HWPFOutputStream dataStream = docSys.getStream("Data");
     int tableOffset = 0;
 
     // FileInformationBlock fib = (FileInformationBlock)_fib.clone();
@@ -302,7 +328,7 @@ public class HWPFDocument
     _fib.setFcMac(fcMac);
     _fib.setCbMac(mainStream.getOffset());
 
-    // make sure that the table and doc stream use big blocks.
+    // make sure that the table, doc and data streams use big blocks.
     byte[] mainBuf = mainStream.toByteArray();
     if (mainBuf.length < 4096)
     {
@@ -323,11 +349,20 @@ public class HWPFDocument
       tableBuf = tempBuf;
     }
 
+    byte[] dataBuf = _dataStream;
+    if (dataBuf.length < 4096)
+    {
+      byte[] tempBuf = new byte[4096];
+      System.arraycopy(dataBuf, 0, tempBuf, 0, dataBuf.length);
+      dataBuf = tempBuf;
+    }
+
 
     // spit out the Word document.
     POIFSFileSystem pfs = new POIFSFileSystem();
     pfs.createDocument(new ByteArrayInputStream(mainBuf), "WordDocument");
     pfs.createDocument(new ByteArrayInputStream(tableBuf), "1Table");
+    pfs.createDocument(new ByteArrayInputStream(dataBuf), "Data");
 
     pfs.writeFilesystem(out);
   }
@@ -352,6 +387,11 @@ public class HWPFDocument
     return _cft.getTextPieceTable();
   }
 
+  public byte[] getDataStream()
+  {
+    return _dataStream;
+  }
+
   public int registerList(List list)
   {
     if (_lt == null)
@@ -359,6 +399,11 @@ public class HWPFDocument
       _lt = new ListTables();
     }
     return _lt.addList(list.getListData(), list.getOverride());
+  }
+
+  public FontTable getFontTable()
+  {
+    return _ft;
   }
 
   /**
@@ -373,15 +418,8 @@ public class HWPFDocument
     {
       HWPFDocument doc = new HWPFDocument(new FileInputStream(args[0]));
       Range r = doc.getRange();
-      TableIterator ti = new TableIterator(r);
-      while (ti.hasNext())
-      {
-        Table t = ti.next();
-        int x = 0;
-      }
-
-
-
+      String str = r.text();
+      int x = 0;
 //      CharacterRun run = new CharacterRun();
 //      run.setBold(true);
 //      run.setItalic(true);

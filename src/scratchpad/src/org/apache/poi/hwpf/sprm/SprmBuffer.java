@@ -80,6 +80,55 @@ public class SprmBuffer
     _buf = new byte[4];
     _offset = 0;
   }
+
+  private int findSprm(short opcode)
+  {
+    int operation = SprmOperation.getOperationFromOpcode(opcode);
+    int type = SprmOperation.getTypeFromOpcode(opcode);
+
+    SprmIterator si = new SprmIterator(_buf, 2);
+    while(si.hasNext())
+    {
+      SprmOperation i = si.next();
+      if(i.getOperation() == operation && i.getType() == type)
+        return i.getGrpprlOffset();
+    }
+    return -1;
+  }
+
+  public void updateSprm(short opcode, byte operand)
+  {
+    int grpprlOffset = findSprm(opcode);
+    if(grpprlOffset != -1)
+    {
+      _buf[grpprlOffset] = operand;
+      return;
+    }
+    else addSprm(opcode, operand);
+  }
+
+  public void updateSprm(short opcode, short operand)
+  {
+    int grpprlOffset = findSprm(opcode);
+    if(grpprlOffset != -1)
+    {
+      LittleEndian.putShort(_buf, grpprlOffset, operand);
+      return;
+    }
+    else addSprm(opcode, operand);
+  }
+
+  public void updateSprm(short opcode, int operand)
+  {
+    int grpprlOffset = findSprm(opcode);
+    if(grpprlOffset != -1)
+    {
+      LittleEndian.putInt(_buf, grpprlOffset, operand);
+      return;
+    }
+    else addSprm(opcode, operand);
+  }
+
   public void addSprm(short opcode, byte operand)
   {
     int addition = LittleEndian.SHORT_SIZE + LittleEndian.BYTE_SIZE;

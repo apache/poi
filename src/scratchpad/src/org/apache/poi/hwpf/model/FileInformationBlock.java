@@ -96,6 +96,7 @@ public class FileInformationBlock extends FIBAbstractType
       fieldSet.add(new Integer(FIBFieldHandler.PLCFSED));
       fieldSet.add(new Integer(FIBFieldHandler.PLCFLST));
       fieldSet.add(new Integer(FIBFieldHandler.PLFLFO));
+      fieldSet.add(new Integer(FIBFieldHandler.PLCFFLDMOM));
       fieldSet.add(new Integer(FIBFieldHandler.STTBFFFN));
       fieldSet.add(new Integer(FIBFieldHandler.MODIFIED));
 
@@ -315,6 +316,16 @@ public class FileInformationBlock extends FIBAbstractType
     public void clearOffsetsSizes()
     {
       _fieldHandler.clearFields();
+    }
+
+    public int getFcPlcffldMom()
+    {
+      return _fieldHandler.getFieldOffset(FIBFieldHandler.PLCFFLDMOM);
+    }
+
+    public int getLcbPlcffldMom()
+    {
+      return _fieldHandler.getFieldSize(FIBFieldHandler.PLCFFLDMOM);
     }
 
     public void writeTo (byte[] mainStream, HWPFOutputStream tableStream)
