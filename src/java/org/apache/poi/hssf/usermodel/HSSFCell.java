@@ -153,7 +153,7 @@ public class HSSFCell
     private String                   stringValue;
     private boolean                  booleanValue;
     private byte                     errorValue;
-    private short                    encoding;
+    private short                    encoding = ENCODING_UTF_16;
     private Workbook                 book;
     private Sheet                    sheet;
     //private short                    row;
