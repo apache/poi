@@ -230,6 +230,42 @@ public class HSSFCellStyle
 
     public final static short    BORDER_SLANTED_DASH_DOT    = 0xD;
 
+    /**  No background */
+    public final static short     NO_FILL             = 0  ;
+    /**  Solidly filled */
+    public final static short     SOLID_FILL          = 1  ;
+    /**  Small fine dots */
+    public final static short     FINE_DOTS           = 2  ;
+    /**  Wide dots */
+    public final static short     ALT_BARS            = 3  ;
+    /**  Sparse dots */
+    public final static short     SPARSE_DOTS         = 4  ;
+    /**  Thick horizontal bands */
+    public final static short     THICK_HORZ_BANDS    = 5  ;
+    /**  Thick vertical bands */
+    public final static short     THICK_VERT_BANDS    = 6  ;
+    /**  Thick backward facing diagonals */
+    public final static short     THICK_BACKWARD_DIAG = 7  ;
+    /**  Thick forward facing diagonals */
+    public final static short     THICK_FORWARD_DIAG  = 8  ;
+    /**  Large spots */
+    public final static short     BIG_SPOTS           = 9  ;
+    /**  Brick-like layout */
+    public final static short     BRICKS              = 10 ;
+    /**  Thin horizontal bands */
+    public final static short     THIN_HORZ_BANDS     = 11 ;
+    /**  Thin vertical bands */
+    public final static short     THIN_VERT_BANDS     = 12 ;
+    /**  Thin backward diagonal */
+    public final static short     THIN_BACKWARD_DIAG  = 13 ;
+    /**  Thin forward diagonal */
+    public final static short     THIN_FORWARD_DIAG   = 14 ;
+    /**  Squares */
+    public final static short     SQUARES             = 15 ;
+    /**  Diamonds */
+    public final static short     DIAMONDS            = 16 ;
+
+
     /** Creates new HSSFCellStyle why would you want to do this?? */
 
     protected HSSFCellStyle(short index, ExtendedFormatRecord rec)
@@ -755,9 +791,27 @@ public class HSSFCellStyle
     /**
      * setting to one fills the cell with the foreground color... No idea about
      * other values
-     * @param fp  fill pattern (set to 1 to fill w/foreground color
+     *
+     * @see #NO_FILL
+     * @see #SOLID_FILL
+     * @see #FINE_DOTS
+     * @see #ALT_BARS
+     * @see #SPARSE_DOTS
+     * @see #THICK_HORZ_BANDS
+     * @see #THICK_VERT_BANDS
+     * @see #THICK_BACKWARD_DIAG
+     * @see #THICK_FORWARD_DIAG
+     * @see #BIG_SPOTS
+     * @see #BRICKS
+     * @see #THIN_HORZ_BANDS
+     * @see #THIN_VERT_BANDS
+     * @see #THIN_BACKWARD_DIAG
+     * @see #THIN_FORWARD_DIAG
+     * @see #SQUARES
+     * @see #DIAMONDS
+     *
+     * @param fp  fill pattern (set to 1 to fill w/foreground color)
      */
-
     public void setFillPattern(short fp)
     {
         format.setAdtlFillPattern(fp);
@@ -774,7 +828,15 @@ public class HSSFCellStyle
     }
 
     /**
-     * set the background fill color
+     * set the background fill color.
+     * <p>
+     * For example:
+     * <pre>
+     * cs.setFillPattern( (short) 1 );
+     * cs.setFillBackgroundColor(HSSFColor.RED.index);
+     * </pre>
+     * You will need to set the fill style first.
+     *
      * @param bg  color
      */
 

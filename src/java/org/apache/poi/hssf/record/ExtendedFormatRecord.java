@@ -80,7 +80,7 @@ public class ExtendedFormatRecord
     public final static short     sid                 = 0xE0;
 
     // null constant
-    public final static short     NULL                = 0xfffffff0;
+    public final static short     NULL                = (short)0xfff0;
 
     // xf type
     public final static short     XF_STYLE            = 1;
@@ -116,6 +116,25 @@ public class ExtendedFormatRecord
     public final static short     VERTICAL_CENTER     = 0x1;
     public final static short     VERTICAL_BOTTOM     = 0x2;
     public final static short     VERTICAL_JUSTIFY    = 0x3;
+
+    // fill
+    public final static short     NO_FILL             = 0  ;
+    public final static short     SOLID_FILL          = 1  ;
+    public final static short     FINE_DOTS           = 2  ;
+    public final static short     ALT_BARS            = 3  ;
+    public final static short     SPARSE_DOTS         = 4  ;
+    public final static short     THICK_HORZ_BANDS    = 5  ;
+    public final static short     THICK_VERT_BANDS    = 6  ;
+    public final static short     THICK_BACKWARD_DIAG = 7  ;
+    public final static short     THICK_FORWARD_DIAG  = 8  ;
+    public final static short     BIG_SPOTS           = 9  ;
+    public final static short     BRICKS              = 10 ;
+    public final static short     THIN_HORZ_BANDS     = 11 ;
+    public final static short     THIN_VERT_BANDS     = 12 ;
+    public final static short     THIN_BACKWARD_DIAG  = 13 ;
+    public final static short     THIN_FORWARD_DIAG   = 14 ;
+    public final static short     SQUARES             = 15 ;
+    public final static short     DIAMONDS            = 16 ;
 
     // fields in BOTH style and Cell XF records
     private short                 field_1_font_index;             // not bit-mapped
@@ -374,7 +393,7 @@ public class ExtendedFormatRecord
      * for cell XF types this is the parent style (usually 0/normal).  For
      * style this should be NULL.
      *
-     * @param index of parent XF
+     * @param parent  index of parent XF
      * @see #NULL
      * @see #setCellOptions(short)
      */
@@ -439,7 +458,7 @@ public class ExtendedFormatRecord
      * set the vertical alignment of text in the cell
      *
      *
-     * @param where to align the text
+     * @param align     where to align the text
      * @see #VERTICAL_TOP
      * @see #VERTICAL_CENTER
      * @see #VERTICAL_BOTTOM
@@ -938,8 +957,25 @@ public class ExtendedFormatRecord
     }
 
     /**
-     * set the fill pattern - ???
+     * set the fill pattern
      *
+     * @see #NO_FILL
+     * @see #SOLID_FILL
+     * @see #FINE_DOTS
+     * @see #ALT_BARS
+     * @see #SPARSE_DOTS
+     * @see #THICK_HORZ_BANDS
+     * @see #THICK_VERT_BANDS
+     * @see #THICK_BACKWARD_DIAG
+     * @see #THICK_FORWARD_DIAG
+     * @see #BIG_SPOTS
+     * @see #BRICKS
+     * @see #THIN_HORZ_BANDS
+     * @see #THIN_VERT_BANDS
+     * @see #THIN_BACKWARD_DIAG
+     * @see #THIN_FORWARD_DIAG
+     * @see #SQUARES
+     * @see #DIAMONDS
      *
      * @param fill - fill pattern??
      * @see #setAdtlPaletteOptions(short)
@@ -1633,8 +1669,25 @@ public class ExtendedFormatRecord
     }
 
     /**
-     * get the additional fill pattern - ???
+     * get the additional fill pattern
      *
+     * @see #NO_FILL
+     * @see #SOLID_FILL
+     * @see #FINE_DOTS
+     * @see #ALT_BARS
+     * @see #SPARSE_DOTS
+     * @see #THICK_HORZ_BANDS
+     * @see #THICK_VERT_BANDS
+     * @see #THICK_BACKWARD_DIAG
+     * @see #THICK_FORWARD_DIAG
+     * @see #BIG_SPOTS
+     * @see #BRICKS
+     * @see #THIN_HORZ_BANDS
+     * @see #THIN_VERT_BANDS
+     * @see #THIN_BACKWARD_DIAG
+     * @see #THIN_FORWARD_DIAG
+     * @see #SQUARES
+     * @see #DIAMONDS
      *
      * @return fill - fill pattern??
      * @see #getAdtlPaletteOptions()
@@ -1680,8 +1733,7 @@ public class ExtendedFormatRecord
     /**
      * get the background palette color index
      *
-     *
-     * @param color - palette index
+     * @retyrb color palette index
      * @see #getFillPaletteOptions()
      */
 
