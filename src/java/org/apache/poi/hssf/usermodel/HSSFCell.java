@@ -81,10 +81,10 @@ import java.util.Calendar;
  * contain strings (at least according to our model).  Client apps should do the
  * conversions themselves.  Formula cells are treated like string cells, simply
  * containing a formula string.  They'll be rendered differently.
- *
+ * <p>
  * Cells should have their number (0 based) before being added to a row.  Only
  * cells that have values should be added.
- *
+ * <p>
  * NOTE: the alpha won't be implementing formulas
  *
  * @author  Andrew C. Oliver (acoliver at apache dot org)
