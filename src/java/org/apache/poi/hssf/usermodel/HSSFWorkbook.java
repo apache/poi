@@ -71,14 +71,7 @@ import java.util.Stack;
 import org.apache.poi.hssf.eventmodel.EventRecordFactory;
 import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.model.Workbook;
-import org.apache.poi.hssf.record.BackupRecord;
-import org.apache.poi.hssf.record.ExtendedFormatRecord;
-import org.apache.poi.hssf.record.FontRecord;
-import org.apache.poi.hssf.record.NameRecord;
-import org.apache.poi.hssf.record.RecordFactory;
-import org.apache.poi.hssf.record.SSTRecord;
-import org.apache.poi.hssf.record.UnknownRecord;
-import org.apache.poi.hssf.record.WindowTwoRecord;
+import org.apache.poi.hssf.record.*;
 import org.apache.poi.hssf.record.formula.Area3DPtg;
 import org.apache.poi.hssf.record.formula.MemFuncPtg;
 import org.apache.poi.hssf.record.formula.UnionPtg;
@@ -90,6 +83,8 @@ import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.util.HexDump;
+import org.apache.poi.ddf.*;
 
 /**
  * High level representation of a workbook.  This is the first object most users
@@ -129,16 +124,16 @@ public class HSSFWorkbook
      */
 
     private ArrayList sheets;
-    
+
     /**
      * this holds the HSSFName objects attached to this workbook
      */
 
     private ArrayList names;
- 
+
     /**
      * holds whether or not to preserve other nodes in the POIFS.  Used
-     * for macros and embedded objects. 
+     * for macros and embedded objects.
      */
     private boolean   preserveNodes;
 
@@ -155,7 +150,7 @@ public class HSSFWorkbook
      * someplace else.
      */
     private HSSFDataFormat formatter;
-    
+
     private static POILogger log = POILogFactory.getLogger(HSSFWorkbook.class);
 
     /**
@@ -179,7 +174,7 @@ public class HSSFWorkbook
      * low level models.  If you're reading in a workbook...start here.
      *
      * @param fs the POI filesystem that contains the Workbook stream.
-     * @param preserveNodes whether to preseve other nodes, such as 
+     * @param preserveNodes whether to preseve other nodes, such as
      *        macros.  This takes more memory, so only say yes if you
      *        need to.
      * @see org.apache.poi.poifs.filesystem.POIFSFileSystem
@@ -190,20 +185,20 @@ public class HSSFWorkbook
             throws IOException
     {
         this.preserveNodes = preserveNodes;
-     
+
         if (preserveNodes) {
-           this.poifs = fs; 
+           this.poifs = fs;
         }
 
         sheets = new ArrayList(INITIAL_CAPACITY);
         names  = new ArrayList(INITIAL_CAPACITY);
-        
+
         InputStream stream = fs.createDocumentInputStream("Workbook");
-        
+
         EventRecordFactory factory = new EventRecordFactory();
-       
-        
-        
+
+
+
         List records = RecordFactory.createRecords(stream);
 
         workbook = Workbook.createWorkbook(records);
@@ -224,7 +219,7 @@ public class HSSFWorkbook
 
             // workbook.setSheetName(sheets.size() -1, "Sheet"+sheets.size());
         }
-        
+
         for (int i = 0 ; i < workbook.getNumNames() ; ++i){
             HSSFName name = new HSSFName(workbook, workbook.getNameRecord(i));
             names.add(name);
@@ -240,7 +235,7 @@ public class HSSFWorkbook
      * inputstream.
      *
      * @param s  the POI filesystem that contains the Workbook stream.
-     * @param preserveNodes whether to preseve other nodes, such as 
+     * @param preserveNodes whether to preseve other nodes, such as
      *        macros.  This takes more memory, so only say yes if you
      *        need to.
      * @see org.apache.poi.poifs.filesystem.POIFSFileSystem
@@ -264,22 +259,22 @@ public class HSSFWorkbook
 
         // none currently
     }
-    
+
     /**
      * sets the order of appearance for a given sheet.
      *
      * @param sheetname the name of the sheet to reorder
      * @param pos the position that we want to insert the sheet into (0 based)
      */
-    
+
     public void setSheetOrder(String sheetname, int pos ) {
         workbook.setSheetOrder(sheetname, pos);
     }
-    
+
     public final static byte ENCODING_COMPRESSED_UNICODE = 0;
     public final static byte ENCODING_UTF_16             = 1;
-    
-     
+
+
     /**
      * set the sheet name. 
      * Will throw IllegalArgumentException if the name is greater than 31 chars
@@ -299,17 +294,17 @@ public class HSSFWorkbook
         {
             throw new RuntimeException("Sheet out of bounds");
         }
-        
+
         switch ( encoding ) {
         case ENCODING_COMPRESSED_UNICODE:
         case ENCODING_UTF_16:
             break;
-            
+
         default:
             // TODO java.io.UnsupportedEncodingException
             throw new RuntimeException( "Unsupported encoding" );
         }
-        
+
         workbook.setSheetName( sheet, name, encoding );
     }
 
@@ -337,14 +332,14 @@ public class HSSFWorkbook
     /** Returns the index of the sheet by his name
      * @param name the sheet name
      * @return index of the sheet (0 based)
-     */    
+     */
     public int getSheetIndex(String name)
     {
         int retval = workbook.getSheetIndex(name);
-        
+
         return retval;
     }
-    
+
     /**
      * create an HSSFSheet for this HSSFWorkbook, adds it to the sheets and returns
      * the high level representation.  Use this to create new sheets.
@@ -561,7 +556,7 @@ public class HSSFWorkbook
             //does a lot of the house keeping for builtin records, like setting lengths to zero etc
             isNewRecord = true;
         }
-        
+
         short definitionTextLength = settingRowAndColumn ? (short)0x001a : (short)0x000b;
         nameRecord.setDefinitionTextLength(definitionTextLength);
 
@@ -664,6 +659,40 @@ public class HSSFWorkbook
     }
 
     /**
+     * Finds a font that matches the one with the supplied attributes
+     */
+    public HSSFFont findFont(short boldWeight, short color, short fontHeight,
+                             String name, boolean italic, boolean strikeout,
+                             short typeOffset, byte underline)
+    {
+//        System.out.println( boldWeight + ", " + color + ", " + fontHeight + ", " + name + ", " + italic + ", " + strikeout + ", " + typeOffset + ", " + underline );
+        for (short i = 0; i < workbook.getNumberOfFontRecords(); i++)
+        {
+            if (i == 4)
+                continue;
+
+            FontRecord font = workbook.getFontRecordAt(i);
+            HSSFFont hssfFont = new HSSFFont(i, font);
+//            System.out.println( hssfFont.getBoldweight() + ", " + hssfFont.getColor() + ", " + hssfFont.getFontHeight() + ", " + hssfFont.getFontName() + ", " + hssfFont.getItalic() + ", " + hssfFont.getStrikeout() + ", " + hssfFont.getTypeOffset() + ", " + hssfFont.getUnderline() );
+            if (hssfFont.getBoldweight() == boldWeight
+                    && hssfFont.getColor() == color
+                    && hssfFont.getFontHeight() == fontHeight
+                    && hssfFont.getFontName().equals(name)
+                    && hssfFont.getItalic() == italic
+                    && hssfFont.getStrikeout() == strikeout
+                    && hssfFont.getTypeOffset() == typeOffset
+                    && hssfFont.getUnderline() == underline)
+            {
+//                System.out.println( "Found font" );
+                return hssfFont;
+            }
+        }
+
+//        System.out.println( "No font found" );
+        return null;
+    }
+
+    /**
      * get the number of fonts in the font table
      * @return number of fonts
      */
@@ -741,10 +770,10 @@ public class HSSFWorkbook
     {
         byte[] bytes = getBytes();
         POIFSFileSystem fs = new POIFSFileSystem();
-      
+
         fs.createDocument(new ByteArrayInputStream(bytes), "Workbook");
 
-        if (preserveNodes) { 
+        if (preserveNodes) {
             List excepts = new ArrayList(1);
             excepts.add("Workbook");
             copyNodes(this.poifs,fs,excepts);
@@ -768,6 +797,12 @@ public class HSSFWorkbook
     public byte[] getBytes()
     {
         log.log(DEBUG, "HSSFWorkbook.getBytes()");
+
+        // before getting the workbook size we must tell the sheets that
+        // serialization is about to occur.
+        for (int k = 0; k < sheets.size(); k++)
+            ((HSSFSheet) sheets.get(k)).getSheet().preSerialize();
+
         int wbsize = workbook.getSize();
 
         // log.debug("REMOVEME: old sizing method "+workbook.serialize().length);
@@ -777,10 +812,10 @@ public class HSSFWorkbook
         for (int k = 0; k < sheets.size(); k++)
         {
             workbook.setSheetBof(k, totalsize);
-
-            // sheetbytes.add((( HSSFSheet ) sheets.get(k)).getSheet().getSize());
             totalsize += ((HSSFSheet) sheets.get(k)).getSheet().getSize();
         }
+
+
 /*        if (totalsize < 4096)
         {
             totalsize = 4096;
@@ -818,58 +853,58 @@ public class HSSFWorkbook
     {
         return workbook;
     }
-    
+
     /** gets the total number of named ranges in the workboko
      * @return number of named ranges
-     */    
+     */
     public int getNumberOfNames(){
         int result = names.size();
         return result;
     }
-    
+
     /** gets the Named range
      * @param index position of the named range
      * @return named range high level
-     */    
+     */
     public HSSFName getNameAt(int index){
         HSSFName result = (HSSFName) names.get(index);
-        
+
         return result;
     }
-    
+
     /** gets the named range name
      * @param index the named range index (0 based)
      * @return named range name
-     */    
+     */
     public String getNameName(int index){
         String result = getNameAt(index).getNameName();
-                
+
         return result;
     }
-    
+
 	/**
 	 * Sets the printarea for the sheet provided
 	 * <p>
 	 * i.e. Reference = $A$1:$B$2
 	 * @param sheetIndex Zero-based sheet index (0 Represents the first sheet to keep consistent with java)
-	 * @param reference Valid name Reference for the Print Area 
+	 * @param reference Valid name Reference for the Print Area
 	 */
 	public void setPrintArea(int sheetIndex, String reference)
 	{
 		NameRecord name = workbook.getSpecificBuiltinRecord(NameRecord.BUILTIN_PRINT_AREA, sheetIndex+1);
-		
+
 
 		if (name == null)
 			name = workbook.createBuiltInName(NameRecord.BUILTIN_PRINT_AREA, sheetIndex+1);
        //adding one here because 0 indicates a global named region; doesnt make sense for print areas
-       
+
 	    short externSheetIndex = getWorkbook().checkExternSheet(sheetIndex);
-		name.setExternSheetNumber(externSheetIndex);       
+		name.setExternSheetNumber(externSheetIndex);
 		name.setAreaReference(reference);
-       
-		
+
+
 	}
-	
+
 	/**
 	 * For the Convenience of Java Programmers maintaining pointers.
 	 * @see setPrintArea(int, String)
@@ -881,57 +916,57 @@ public class HSSFWorkbook
 	 */
 	public void setPrintArea(int sheetIndex, int startColumn, int endColumn,
 							  int startRow, int endRow) {
-							  	
-		//using absolute references because they dont get copied and pasted anyway							  	
+
+		//using absolute references because they dont get copied and pasted anyway
 		CellReference cell = new CellReference(startRow, startColumn, true, true);
 		String reference = cell.toString();
-		
+
 		cell = new CellReference(endRow, endColumn, true, true);
 		reference = reference+":"+cell.toString();
-		
-		setPrintArea(sheetIndex, reference);							  	
+
+		setPrintArea(sheetIndex, reference);
 	}
-							  
-	    
+
+
 	/**
 	 * Retrieves the reference for the printarea of the specified sheet, the sheet name is appended to the reference even if it was not specified.
-	 * @param sheetIndex Zero-based sheet index (0 Represents the first sheet to keep consistent with java) 
+	 * @param sheetIndex Zero-based sheet index (0 Represents the first sheet to keep consistent with java)
 	 * @return String Null if no print area has been defined
-	 */	    
+	 */
 	public String getPrintArea(int sheetIndex)
 	{
-		NameRecord name = workbook.getSpecificBuiltinRecord(NameRecord.BUILTIN_PRINT_AREA, sheetIndex+1);		
+		NameRecord name = workbook.getSpecificBuiltinRecord(NameRecord.BUILTIN_PRINT_AREA, sheetIndex+1);
 		if (name == null) return null;
 		//adding one here because 0 indicates a global named region; doesnt make sense for print areas
-   
+
 		return name.getAreaReference(workbook);
-	}    
-    
+	}
+
     /**
      * Delete the printarea for the sheet specified
      * @param sheetIndex Zero-based sheet index (0 = First Sheet)
      */
     public void removePrintArea(int sheetIndex) {
-    	getWorkbook().removeBuiltinRecord(NameRecord.BUILTIN_PRINT_AREA, sheetIndex+1); 
+    	getWorkbook().removeBuiltinRecord(NameRecord.BUILTIN_PRINT_AREA, sheetIndex+1);
     }
-    
+
     /** creates a new named range and add it to the model
      * @return named range high level
-     */    
+     */
     public HSSFName createName(){
         NameRecord nameRecord = workbook.createName();
-        
+
         HSSFName newName = new HSSFName(workbook, nameRecord);
-        
+
         names.add(newName);
-        
-        return newName; 
+
+        return newName;
     }
-    
+
     /** gets the named range index by his name
      * @param name named range name
-     * @return named range index 
-     */    
+     * @return named range index
+     */
     public int getNameIndex(String name)
     {
         int retval = -1;
@@ -952,10 +987,10 @@ public class HSSFWorkbook
 
     /** remove the named range by his index
      * @param index named range index (0 based)
-     */    
+     */
     public void removeName(int index){
         names.remove(index);
-        workbook.removeName(index);        
+        workbook.removeName(index);
     }
 
     /**
@@ -969,29 +1004,29 @@ public class HSSFWorkbook
 	    formatter = new HSSFDataFormat(workbook);
 	return formatter;
     }
-	
+
     /** remove the named range by his name
      * @param name named range name
-     */    
+     */
     public void removeName(String name){
         int index = getNameIndex(name);
-        
-        removeName(index);          
-        
+
+        removeName(index);
+
     }
 
     public HSSFPalette getCustomPalette()
     {
         return new HSSFPalette(workbook.getCustomPalette());
     }
-    
+
    /**
     * Copies nodes from one POIFS to the other minus the excepts
     * @param source is the source POIFS to copy from
-    * @param target is the target POIFS to copy to 
-    * @param excepts is a list of Strings specifying what nodes NOT to copy 
+    * @param target is the target POIFS to copy to
+    * @param excepts is a list of Strings specifying what nodes NOT to copy
     */
-   private void copyNodes(POIFSFileSystem source, POIFSFileSystem target, 
+   private void copyNodes(POIFSFileSystem source, POIFSFileSystem target,
                           List excepts) throws IOException {
       //System.err.println("CopyNodes called");
 
@@ -999,13 +1034,13 @@ public class HSSFWorkbook
       DirectoryEntry newRoot = target.getRoot();
 
       Iterator entries = root.getEntries();
-       
+
       while (entries.hasNext()) {
          Entry entry = (Entry)entries.next();
          if (!isInList(entry.getName(), excepts)) {
              copyNodeRecursively(entry,newRoot);
          }
-      } 
+      }
    }
 
    private boolean isInList(String entry, List list) {
@@ -1017,18 +1052,18 @@ public class HSSFWorkbook
        return false;
    }
 
-   private void copyNodeRecursively(Entry entry, DirectoryEntry target) 
+   private void copyNodeRecursively(Entry entry, DirectoryEntry target)
    throws IOException {
        //System.err.println("copyNodeRecursively called with "+entry.getName()+
        //                   ","+target.getName());
-       DirectoryEntry newTarget = null; 
+       DirectoryEntry newTarget = null;
        if (entry.isDirectoryEntry()) {
            newTarget = target.createDirectory(entry.getName());
            Iterator entries = ((DirectoryEntry)entry).getEntries();
 
            while (entries.hasNext()) {
               copyNodeRecursively((Entry)entries.next(),newTarget);
-           } 
+           }
        } else {
          DocumentEntry dentry = (DocumentEntry)entry;
          DocumentInputStream dstream = new DocumentInputStream(dentry);
@@ -1037,6 +1072,7 @@ public class HSSFWorkbook
        }
    }
 
+    /** Test only. Do not use */
     public void insertChartRecord()
     {
         int loc = workbook.findFirstRecordLocBySid(SSTRecord.sid);
