@@ -73,6 +73,7 @@ import java.util.Iterator;
  * Only rows that have cells should be added to a Sheet.
  * @version 1.0-pre
  * @author  Andrew C. Oliver (acoliver at apache dot org)
+ * @author Glen Stampoultzis (glens at apache.org)
  */
 
 public class HSSFRow
@@ -83,8 +84,8 @@ public class HSSFRow
     public final static int INITIAL_CAPACITY = 5;
     private short rowNum;
     private HashMap cells;
-    private short firstcell = -1;
-    private short lastcell = -1;
+//    private short firstcell = -1;
+//    private short lastcell = -1;
 
     /**
      * reference to low level representation
@@ -125,6 +126,8 @@ public class HSSFRow
         this.sheet = sheet;
         row = new RowRecord();
         row.setHeight((short) 0xff);
+        row.setLastCol((short)-1);
+        row.setFirstCol((short)-1);
 
         // row.setRowNumber(rowNum);
         setRowNum(rowNum);
@@ -201,7 +204,6 @@ public class HSSFRow
      * remove the HSSFCell from this row.
      * @param cell to remove
      */
-
     public void removeCell(HSSFCell cell)
     {
         CellValueRecordInterface cval = cell.getCellValueRecord();
@@ -209,12 +211,12 @@ public class HSSFRow
         sheet.removeValueRecord(getRowNum(), cval);
         cells.remove(new Integer(cell.getCellNum()));
 
-        if (cell.getCellNum() == lastcell)
+        if (cell.getCellNum() == row.getLastCol())
         {
-            lastcell = findLastCell(lastcell);
-        } else if (cell.getCellNum() == firstcell)
+            row.setLastCol( findLastCell(row.getLastCol()) );
+        } else if (cell.getCellNum() == row.getFirstCol())
         {
-            firstcell = findFirstCell(firstcell);
+            row.setFirstCol( findFirstCell(row.getFirstCol()) );
         }
     }
 
@@ -265,13 +267,13 @@ public class HSSFRow
 
     private void addCell(HSSFCell cell)
     {
-        if (firstcell == -1)
+        if (row.getFirstCol() == -1)
         {
-            firstcell = cell.getCellNum();
+            row.setFirstCol( cell.getCellNum() );
         }
-        if (lastcell == -1)
+        if (row.getLastCol() == -1)
         {
-            lastcell = cell.getCellNum();
+            row.setLastCol( cell.getCellNum() );
         }
         cells.put(new Integer(cell.getCellNum()), cell);
 
@@ -315,7 +317,7 @@ public class HSSFRow
 
     public short getFirstCellNum()
     {
-        return firstcell;
+        return row.getFirstCol();
     }
 
     /**
@@ -325,10 +327,7 @@ public class HSSFRow
 
     public short getLastCellNum()
     {
-
-        // if (cells.size() == 0) return -1;
-        // return ((HSSFCell)cells.get(cells.size()-1)).getCellNum();
-        return lastcell;
+        return row.getLastCol();
     }
 
     /**
