@@ -55,6 +55,7 @@
 
 package org.apache.poi.hssf.record;
 
+import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
 import java.util.Stack;
@@ -70,6 +71,7 @@ import org.apache.poi.hssf.util.SheetReferences;
  * Description:  Defines a named range within a workbook. <P>
  * REFERENCE:  <P>
  * @author Libin Roman (Vista Portal LDT. Developer)
+ * @author  Sergei Kozello (sergeikozello at mail.ru)
  * @version 1.0-pre
  */
 
@@ -88,9 +90,10 @@ public class NameRecord extends Record {
     private byte              field_9_length_help_topic_text;
     private byte              field_10_length_status_bar_text;
     private byte              field_11_compressed_unicode_flag;   // not documented
+    private byte              field_12_builtIn_name;
     private String            field_12_name_text;
     private Stack             field_13_name_definition;
-    private byte[]            field_13_raw_name_definition = null; // raw data
+    private byte[]            field_13_raw_name_definition;       // raw data
     private String            field_14_custom_menu_text;
     private String            field_15_description_text;
     private String            field_16_help_topic_text;
@@ -378,7 +381,7 @@ public class NameRecord extends Record {
      */
     public int serialize(int offset, byte[] data) {
         LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset, (short)( 15 + getTextsLength()));
+        // size defined below
         LittleEndian.putShort(data, 4 + offset, getOptionFlag());
         data[6 + offset] = getKeyboardShortcut();
         data[7 + offset] = getNameTextLength();
@@ -390,31 +393,43 @@ public class NameRecord extends Record {
         data [16 + offset] =  getHelpTopicLength();
         data [17 + offset] =  getStatusBarLength();
         data [18 + offset] =  getCompressedUnicodeFlag();
-
-        StringUtil.putCompressedUnicode(getNameText(), data , 19 + offset);
-
-        int start_of_name_definition    = 19  + field_3_length_name_text;
-        if (this.field_13_name_definition != null) {
-            serializePtgs(data, start_of_name_definition + offset);
-        } else {
-            System.arraycopy(field_13_raw_name_definition,0,data
-            ,start_of_name_definition + offset,field_13_raw_name_definition.length);
-        }
-
-        int start_of_custom_menu_text   = start_of_name_definition + field_4_length_name_definition;
-        StringUtil.putCompressedUnicode(getCustomMenuText(), data , start_of_custom_menu_text + offset);
-
-        int start_of_description_text   = start_of_custom_menu_text + field_8_length_description_text;
-        StringUtil.putCompressedUnicode(getDescriptionText(), data , start_of_description_text + offset);
-
-        int start_of_help_topic_text    = start_of_description_text + field_9_length_help_topic_text;
-        StringUtil.putCompressedUnicode(getHelpTopicText(), data , start_of_help_topic_text + offset);
-
-        int start_of_status_bar_text       = start_of_help_topic_text + field_10_length_status_bar_text;
-        StringUtil.putCompressedUnicode(getStatusBarText(), data , start_of_status_bar_text + offset);
-
-
-        return getRecordSize();
+        
+      if ( ( field_1_option_flag & (short)0x20 ) != 0 ) {
+          LittleEndian.putShort(data, 2 + offset, (short)( 16 + field_13_raw_name_definition.length ));
+          
+            data [19 + offset] =  field_12_builtIn_name;
+            System.arraycopy( field_13_raw_name_definition, 0, data, 20 + offset, field_13_raw_name_definition.length );
+            
+            return 20 + field_13_raw_name_definition.length;
+      }
+      else {
+          LittleEndian.putShort(data, 2 + offset, (short)( 15 + getTextsLength()));
+          
+          
+            StringUtil.putCompressedUnicode(getNameText(), data , 19 + offset);
+    
+            int start_of_name_definition    = 19  + field_3_length_name_text;
+            if (this.field_13_name_definition != null) {
+                serializePtgs(data, start_of_name_definition + offset);
+            } else {
+                System.arraycopy(field_13_raw_name_definition,0,data
+                ,start_of_name_definition + offset,field_13_raw_name_definition.length);
+            }
+    
+            int start_of_custom_menu_text   = start_of_name_definition + field_4_length_name_definition;
+            StringUtil.putCompressedUnicode(getCustomMenuText(), data , start_of_custom_menu_text + offset);
+    
+            int start_of_description_text   = start_of_custom_menu_text + field_8_length_description_text;
+            StringUtil.putCompressedUnicode(getDescriptionText(), data , start_of_description_text + offset);
+    
+            int start_of_help_topic_text    = start_of_description_text + field_9_length_help_topic_text;
+            StringUtil.putCompressedUnicode(getHelpTopicText(), data , start_of_help_topic_text + offset);
+    
+            int start_of_status_bar_text       = start_of_help_topic_text + field_10_length_status_bar_text;
+            StringUtil.putCompressedUnicode(getStatusBarText(), data , start_of_status_bar_text + offset);
+            
+          return getRecordSize();
+      }
     }
 
     private void serializePtgs(byte [] data, int offset) {
@@ -579,30 +594,53 @@ public class NameRecord extends Record {
         field_9_length_help_topic_text  = data [12 + offset];
         field_10_length_status_bar_text = data [13 + offset];
 
-        field_11_compressed_unicode_flag= data [14 + offset];
-        field_12_name_text = new String(data, 15 + offset,
-        LittleEndian.ubyteToInt(field_3_length_name_text));
+        
+        if ( ( field_1_option_flag & (short)0x20 ) != 0 ) {
+            // DEBUG
+            // System.out.println( "Built-in name" );
+            
+            field_11_compressed_unicode_flag = data[ 14 + offset ];
+            field_12_builtIn_name = data[ 15 + offset ];
 
-        int start_of_name_definition    = 15 + field_3_length_name_text;
-        field_13_name_definition = getParsedExpressionTokens(data, field_4_length_name_definition,
-        offset, start_of_name_definition);
-
-        int start_of_custom_menu_text   = start_of_name_definition + field_4_length_name_definition;
-        field_14_custom_menu_text       = new String(data, start_of_custom_menu_text + offset,
-        LittleEndian.ubyteToInt(field_7_length_custom_menu));
-
-        int start_of_description_text   = start_of_custom_menu_text + field_8_length_description_text;
-        field_15_description_text       = new String(data, start_of_description_text + offset,
-        LittleEndian.ubyteToInt(field_8_length_description_text));
-
-        int start_of_help_topic_text    = start_of_description_text + field_9_length_help_topic_text;
-        field_16_help_topic_text        = new String(data, start_of_help_topic_text + offset,
-        LittleEndian.ubyteToInt(field_9_length_help_topic_text));
-
-        int start_of_status_bar_text       = start_of_help_topic_text + field_10_length_status_bar_text;
-        field_17_status_bar_text        = new String(data, start_of_status_bar_text +  offset,
-        LittleEndian.ubyteToInt(field_10_length_status_bar_text));
-
+            if ( (field_12_builtIn_name & (short)0x07) != 0 ) {
+                field_12_name_text = "Print_Titles";
+                
+                // DEBUG
+                // System.out.println( field_12_name_text );
+                
+                field_13_raw_name_definition = new byte[ field_4_length_name_definition ];
+                System.arraycopy( data, 16 + offset, field_13_raw_name_definition, 0, field_13_raw_name_definition.length );
+                
+                // DEBUG
+                // System.out.println( HexDump.toHex( field_13_raw_name_definition ) );
+            }
+        }
+        else {
+    
+            field_11_compressed_unicode_flag= data [14 + offset];
+            field_12_name_text = new String(data, 15 + offset,
+            LittleEndian.ubyteToInt(field_3_length_name_text));
+        
+            int start_of_name_definition    = 15 + field_3_length_name_text;
+            field_13_name_definition = getParsedExpressionTokens(data, field_4_length_name_definition,
+            offset, start_of_name_definition);
+    
+            int start_of_custom_menu_text   = start_of_name_definition + field_4_length_name_definition;
+            field_14_custom_menu_text       = new String(data, start_of_custom_menu_text + offset,
+            LittleEndian.ubyteToInt(field_7_length_custom_menu));
+    
+            int start_of_description_text   = start_of_custom_menu_text + field_8_length_description_text;
+            field_15_description_text       = new String(data, start_of_description_text + offset,
+            LittleEndian.ubyteToInt(field_8_length_description_text));
+    
+            int start_of_help_topic_text    = start_of_description_text + field_9_length_help_topic_text;
+            field_16_help_topic_text        = new String(data, start_of_help_topic_text + offset,
+            LittleEndian.ubyteToInt(field_9_length_help_topic_text));
+    
+            int start_of_status_bar_text       = start_of_help_topic_text + field_10_length_status_bar_text;
+            field_17_status_bar_text        = new String(data, start_of_status_bar_text +  offset,
+            LittleEndian.ubyteToInt(field_10_length_status_bar_text));
+        }
     }
 
     private Stack getParsedExpressionTokens(byte [] data, short size,
@@ -634,6 +672,102 @@ public class NameRecord extends Record {
      */
     public short getSid() {
         return this.sid;
+    }
+    /*
+      20 00 
+      00 
+      01 
+      1A 00 // sz = 0x1A = 26
+      00 00 
+      01 00 
+      00 
+      00 
+      00 
+      00 
+      00 // unicode flag
+      07 // name
+      
+      29 17 00 3B 00 00 00 00 FF FF 00 00 02 00 3B 00 //{ 26
+      00 07 00 07 00 00 00 FF 00 10                   //  }
+      
+      
+      
+      20 00 
+      00 
+      01 
+      0B 00 // sz = 0xB = 11
+      00 00 
+      01 00 
+      00 
+      00 
+      00 
+      00 
+      00 // unicode flag
+      07 // name
+      
+      3B 00 00 07 00 07 00 00 00 FF 00   // { 11 }
+  */
+    /*
+      18, 00, 
+      1B, 00, 
+      
+      20, 00, 
+      00, 
+      01, 
+      0B, 00, 
+      00, 
+      00, 
+      00, 
+      00, 
+      00, 
+      07, 
+      3B 00 00 07 00 07 00 00 00 FF 00 ]     
+     */
+
+    /**
+     * @see Object#toString()
+     */
+    public String toString() {
+        StringBuffer buffer = new StringBuffer();
+
+        buffer.append("[NAME]\n");
+        buffer.append("    .option flags         = ").append( HexDump.toHex( field_1_option_flag ) )
+            .append("\n");
+        buffer.append("    .keyboard shortcut    = ").append( HexDump.toHex( field_2_keyboard_shortcut ) )
+            .append("\n");
+        buffer.append("    .length of the name   = ").append( field_3_length_name_text )
+            .append("\n");
+        buffer.append("    .size of the formula data = ").append( field_4_length_name_definition )
+            .append("\n");
+        buffer.append("    .unused                 = ").append( field_5_index_to_sheet )
+            .append("\n");
+        buffer.append("    .( 0 = Global name, otherwise index to sheet (one-based) ) = ").append( field_6_equals_to_index_to_sheet )
+            .append("\n");
+        buffer.append("    .Length of menu text (character count)        = ").append( field_7_length_custom_menu )
+            .append("\n");
+        buffer.append("    .Length of description text (character count) = ").append( field_8_length_description_text )
+            .append("\n");
+        buffer.append("    .Length of help topic text (character count)  = ").append( field_9_length_help_topic_text )
+            .append("\n");
+        buffer.append("    .Length of status bar text (character count)  = ").append( field_10_length_status_bar_text )
+            .append("\n");
+        buffer.append("    .Name (Unicode flag)  = ").append( field_11_compressed_unicode_flag )
+            .append("\n");
+        buffer.append("    .Name (Unicode text)  = ").append( field_12_name_text )
+            .append("\n");
+        buffer.append("    .Formula data (RPN token array without size field)      = ").append( HexDump.toHex( field_13_raw_name_definition ) )
+            .append("\n");
+        buffer.append("    .Menu text (Unicode string without length field)        = ").append( field_14_custom_menu_text )
+            .append("\n");
+        buffer.append("    .Description text (Unicode string without length field) = ").append( field_15_description_text )
+            .append("\n");
+        buffer.append("    .Help topic text (Unicode string without length field)  = ").append( field_16_help_topic_text )
+            .append("\n");
+        buffer.append("    .Status bar text (Unicode string without length field)  = ").append( field_17_status_bar_text )
+            .append("\n");
+        buffer.append("[/NAME]\n");
+        
+        return buffer.toString();
     }
 
 }

@@ -624,6 +624,9 @@ public class BiffViewer {
             case StringRecord.sid:
                 retval = new StringRecord( rectype, size, data );
                 break;
+            case NameRecord.sid:
+                retval = new NameRecord( rectype, size, data );
+                break;
             default:
                 retval = new UnknownRecord( rectype, size, data );
         }
