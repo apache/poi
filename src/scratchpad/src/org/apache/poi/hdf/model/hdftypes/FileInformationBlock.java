@@ -1,19 +1,16 @@
-/*
- * FileInformationBlock.java
- *
- * Created on February 24, 2002, 2:37 PM
- */
-
 package org.apache.poi.hdf.model.hdftypes;
 
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.LittleEndian;
 
+
+import org.apache.poi.hdf.model.hdftypes.definitions;
+
 /**
  *
  * @author  andy
  */
-public class FileInformationBlock implements HDFType
+public class FileInformationBlock extends FIBAbstractType
 {
 
     private  short field_1_id;

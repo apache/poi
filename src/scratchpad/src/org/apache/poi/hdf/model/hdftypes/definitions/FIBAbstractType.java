@@ -113,15 +113,15 @@ public class FIBType
     private  short      field_17_revisorId;
     private  short      field_18_creatorPrivate;
     private  short      field_19_revisorPrivate;
-    private  short      field_20_unused;
-    private  short      field_21_unused;
-    private  short      field_22_unused;
-    private  short      field_23_unused;
-    private  short      field_24_unused;
-    private  short      field_25_unused;
-    private  short      field_26_unused;
-    private  short      field_27_unused;
-    private  short      field_28_unused;
+    private  short      field_20_unused1;
+    private  short      field_21_unused2;
+    private  short      field_22_unused3;
+    private  short      field_23_unused4;
+    private  short      field_24_unused5;
+    private  short      field_25_unused6;
+    private  short      field_26_unused7;
+    private  short      field_27_unused8;
+    private  short      field_28_unused9;
     private  short      field_29_fareastid;
     private  short      field_30_countints;
     private  int        field_31_lastByteOrBegInts;
@@ -144,8 +144,8 @@ public class FIBType
     private  int        field_48_ptrToPlcListLvc;
     private  int        field_49_firstLvc;
     private  int        field_50_countLvc;
-    private  int        field_51_unknown;
-    private  int        field_52_unknown;
+    private  int        field_51_unknown1;
+    private  int        field_52_unknown2;
     private  short      field_53_lcbArraySize;
     private  int        field_54_originalStylesheetOffset;
     private  int        field_55_originalStylesheetSize;
@@ -161,8 +161,8 @@ public class FIBType
     private  int        field_65_annotationPlcSize;
     private  int        field_66_sectionPlcOffset;
     private  int        field_67_sectionPlcSize;
-    private  int        field_68_unused;
-    private  int        field_69_unused;
+    private  int        field_68_unusedA;
+    private  int        field_69_unusedB;
     private  int        field_70_pheplcOffset;
     private  int        field_71_pheplcSize;
     private  int        field_72_glossarySTOffset;
@@ -187,18 +187,18 @@ public class FIBType
     private  int        field_91_footnote_fields_size;
     private  int        field_92_ann_fields_offset;
     private  int        field_93_ann_fields_size;
-    private  int        field_94_unused;
-    private  int        field_95_unused;
+    private  int        field_94_unusedC;
+    private  int        field_95_unusedD;
     private  int        field_96_bookmark_names_offset;
     private  int        field_97_bookmark_names_size;
     private  int        field_98_bookmark_offsets_offset;
     private  int        field_99_bookmark_offsets_size;
     private  int        field_100_macros_offset;
     private  int        field_101_macros_size;
-    private  int        field_102_unused;
-    private  int        field_103_unused;
-    private  int        field_104_unused;
-    private  int        field_105_unused;
+    private  int        field_102_unusedE;
+    private  int        field_103_unusedF;
+    private  int        field_104_unused10;
+    private  int        field_105_unused11;
     private  int        field_106_printerOffset;
     private  int        field_107_printerSize;
     private  int        field_108_printerPortraitOffset;
@@ -213,24 +213,126 @@ public class FIBType
     private  int        field_117_sttbfassoc_size;
     private  int        field_118_textPieceTableOffset;
     private  int        field_119_textPieceTableSize;
-    private  int        field_120_unused;
-    private  int        field_121_unused;
+    private  int        field_120_unused12;
+    private  int        field_121_unused13;
     private  int        field_122_offsetAutosaveSource;
     private  int        field_123_countAutosaveSource;
     private  int        field_124_offsetGrpXstAtnOwners;
     private  int        field_125_countGrpXstAtnOwners;
     private  int        field_126_offsetSttbfAtnbkmk;
     private  int        field_127_lengthSttbfAtnbkmk;
-    private  int        field_128_unused;
-    private  int        field_129_unused;
-    private  int        field_130_unused;
-    private  int        field_131_unused;
+    private  int        field_128_unused14;
+    private  int        field_129_unused15;
+    private  int        field_130_unused16;
+    private  int        field_131_unused17;
     private  int        field_132_offsetPlcspaMom;
     private  int        field_133_lengthPlcspaMom;
     private  int        field_134_offsetPlcspaHdr;
     private  int        field_135_lengthPlcspaHdr;
-    private  int        field_136_lengthPlcfBookmarkFirst;
-    private  int        field_137_offsetPlcfBookmarkFirst;
+    private  int        field_136_lengthPlcfAnnBkmrkFirst;
+    private  int        field_137_offsetPlcfAnnBkmrkFirst;
+    private  int        field_138_lengthPlcfAnnBkarkLast;
+    private  int        field_139_lengthPlcfAnnBkarkLast;
+    private  int        field_140_fcPms;
+    private  int        field_141_lcbPms;
+    private  int        field_142_fcFormFldSttbs;
+    private  int        field_143_lcbFormFldSttbs;
+    private  int        field_144_fcPlcfendRef;
+    private  int        field_145_lcbPlcfendRef;
+    private  int        field_146_fcPlcfendTxt;
+    private  int        field_147_lcbPlcfendTxt;
+    private  int        field_148_fcPlcffldEdn;
+    private  int        field_149_lcbPlcffldEdn;
+    private  int        field_150_fcPlcfpgdEdn;
+    private  int        field_151_lcbPlcfpgdEdn;
+    private  int        field_152_fcDggInfo;
+    private  int        field_153_lcbDggInfo;
+    private  int        field_154_fcSttbfRMark;
+    private  int        field_155_lcbSttbfRMark;
+    private  int        field_156_fcSttbCaption;
+    private  int        field_157_lcbSttbCaption;
+    private  int        field_158_fcSttbAutoCaption;
+    private  int        field_159_lcbSttbAutoCaption;
+    private  int        field_160_fcPlcfwkb;
+    private  int        field_161_lcbPlcfwkb;
+    private  int        field_162_fcPlcfsplfcPlcfspl;
+    private  int        field_163_lcbPlcfspl;
+    private  int        field_164_fcPlcftxbxTxt;
+    private  int        field_165_lcbPlcftxbxTxt;
+    private  int        field_166_fcPlcffldTxbx;
+    private  int        field_167_lcbPlcffldTxbx;
+    private  int        field_168_fcPlcfhdrtxbxTxt;
+    private  int        field_169_lcbPlcfhdrtxbxTxt;
+    private  int        field_170_fcPlcffldHdrTxbx;
+    private  int        field_171_lcbPlcffldHdrTxbx;
+    private  int        field_172_fcStwUser;
+    private  int        field_173_lcbStwUser;
+    private  int        field_174_fcSttbttmbd;
+    private  int        field_175_cbSttbttmbd;
+    private  int        field_176_fcUnused;
+    private  int        field_177_lcbUnused;
+    private  int        field_178_rgpgdbkd;
+    private  int        field_179_fcPgdMother;
+    private  int        field_180_lcbPgdMother;
+    private  int        field_181_fcBkdMother;
+    private  int        field_182_lcbBkdMother;
+    private  int        field_183_fcPgdFtn;
+    private  int        field_184_lcbPgdFtn;
+    private  int        field_185_fcBkdFtn;
+    private  int        field_186_lcbBkdFtn;
+    private  int        field_187_fcPgdEdn;
+    private  int        field_188_lcbPgdEdn;
+    private  int        field_189_fcBkdEdn;
+    private  int        field_190_lcbBkdEdn;
+    private  int        field_191_fcSttbfIntlFld;
+    private  int        field_192_lcbSttbfIntlFld;
+    private  int        field_193_fcRouteSlip;
+    private  int        field_194_lcbRouteSlip;
+    private  int        field_195_fcSttbSavedBy;
+    private  int        field_196_lcbSttbSavedBy;
+    private  int        field_197_fcSttbFnm;
+    private  int        field_198_lcbSttbFnm;
+    private  int        field_199_fcPlcfLst;
+    private  int        field_200_lcbPlcfLst;
+    private  int        field_201_fcPlfLfo;
+    private  int        field_202_lcbPlfLfo;
+    private  int        field_203_fcPlcftxbxBkd;
+    private  int        field_204_lcbPlcftxbxBkd;
+    private  int        field_205_fcPlcftxbxHdrBkd;
+    private  int        field_206_lcbPlcftxbxHdrBkd;
+    private  int        field_207_fcDocUndo;
+    private  int        field_208_lcbDocUndo;
+    private  int        field_209_fcRgbuse;
+    private  int        field_210_lcbRgbuse;
+    private  int        field_211_fcUsp;
+    private  int        field_212_lcbUsp;
+    private  int        field_213_fcUskf;
+    private  int        field_214_lcbUskf;
+    private  int        field_215_fcPlcupcRgbuse;
+    private  int        field_216_lcbPlcupcRgbuse;
+    private  int        field_217_fcPlcupcUsp;
+    private  int        field_218_lcbPlcupcUsp;
+    private  int        field_219_fcSttbGlsyStyle;
+    private  int        field_220_lcbSttbGlsyStyle;
+    private  int        field_221_fcPlgosl;
+    private  int        field_222_lcbPlgosl;
+    private  int        field_223_fcPlcocx;
+    private  int        field_224_lcbPlcocx;
+    private  int        field_225_fcPlcfbteLvc;
+    private  int        field_226_lcbPlcfbteLvc;
+    private  int        field_227_ftModified;
+    private  int        field_228_dwLowDateTime;
+    private  int        field_229_dwHighDateTime;
+    private  int        field_230_fcPlcflvc;
+    private  int        field_231_lcbPlcflvc;
+    private  int        field_232_fcPlcasumy;
+    private  int        field_233_lcbPlcasumy;
+    private  int        field_234_fcPlcfgram;
+    private  int        field_235_lcbPlcfgram;
+    private  int        field_236_fcSttbListNames;
+    private  int        field_237_lcbSttbListNames;
+    private  int        field_238_fcSttbfUssr;
+    private  int        field_239_lcbSttbfUssr;
 
 
     public FIBType()
@@ -259,15 +361,15 @@ public class FIBType
         field_17_revisorId              = LittleEndian.getShort(data, 0x24 + offset);
         field_18_creatorPrivate         = LittleEndian.getShort(data, 0x26 + offset);
         field_19_revisorPrivate         = LittleEndian.getShort(data, 0x28 + offset);
-        field_20_unused                 = LittleEndian.getShort(data, 0x2a + offset);
-        field_21_unused                 = LittleEndian.getShort(data, 0x2c + offset);
-        field_22_unused                 = LittleEndian.getShort(data, 0x2e + offset);
-        field_23_unused                 = LittleEndian.getShort(data, 0x30 + offset);
-        field_24_unused                 = LittleEndian.getShort(data, 0x32 + offset);
-        field_25_unused                 = LittleEndian.getShort(data, 0x34 + offset);
-        field_26_unused                 = LittleEndian.getShort(data, 0x36 + offset);
-        field_27_unused                 = LittleEndian.getShort(data, 0x38 + offset);
-        field_28_unused                 = LittleEndian.getShort(data, 0x3a + offset);
+        field_20_unused1                = LittleEndian.getShort(data, 0x2a + offset);
+        field_21_unused2                = LittleEndian.getShort(data, 0x2c + offset);
+        field_22_unused3                = LittleEndian.getShort(data, 0x2e + offset);
+        field_23_unused4                = LittleEndian.getShort(data, 0x30 + offset);
+        field_24_unused5                = LittleEndian.getShort(data, 0x32 + offset);
+        field_25_unused6                = LittleEndian.getShort(data, 0x34 + offset);
+        field_26_unused7                = LittleEndian.getShort(data, 0x36 + offset);
+        field_27_unused8                = LittleEndian.getShort(data, 0x38 + offset);
+        field_28_unused9                = LittleEndian.getShort(data, 0x3a + offset);
         field_29_fareastid              = LittleEndian.getShort(data, 0x3c + offset);
         field_30_countints              = LittleEndian.getShort(data, 0x3e + offset);
         field_31_lastByteOrBegInts      = LittleEndian.getInt(data, 0x40 + offset);
@@ -290,8 +392,8 @@ public class FIBType
         field_48_ptrToPlcListLvc        = LittleEndian.getInt(data, 0x84 + offset);
         field_49_firstLvc               = LittleEndian.getInt(data, 0x88 + offset);
         field_50_countLvc               = LittleEndian.getInt(data, 0x8c + offset);
-        field_51_unknown                = LittleEndian.getInt(data, 0x90 + offset);
-        field_52_unknown                = LittleEndian.getInt(data, 0x94 + offset);
+        field_51_unknown1               = LittleEndian.getInt(data, 0x90 + offset);
+        field_52_unknown2               = LittleEndian.getInt(data, 0x94 + offset);
         field_53_lcbArraySize           = LittleEndian.getShort(data, 0x98 + offset);
         field_54_originalStylesheetOffset  = LittleEndian.getInt(data, 0x9a + offset);
         field_55_originalStylesheetSize  = LittleEndian.getInt(data, 0x9e + offset);
@@ -307,8 +409,8 @@ public class FIBType
         field_65_annotationPlcSize      = LittleEndian.getInt(data, 0xc6 + offset);
         field_66_sectionPlcOffset       = LittleEndian.getInt(data, 0xca + offset);
         field_67_sectionPlcSize         = LittleEndian.getInt(data, 0xce + offset);
-        field_68_unused                 = LittleEndian.getInt(data, 0xd2 + offset);
-        field_69_unused                 = LittleEndian.getInt(data, 0xd6 + offset);
+        field_68_unusedA                = LittleEndian.getInt(data, 0xd2 + offset);
+        field_69_unusedB                = LittleEndian.getInt(data, 0xd6 + offset);
         field_70_pheplcOffset           = LittleEndian.getInt(data, 0xda + offset);
         field_71_pheplcSize             = LittleEndian.getInt(data, 0xde + offset);
         field_72_glossarySTOffset       = LittleEndian.getInt(data, 0xe2 + offset);
@@ -333,18 +435,18 @@ public class FIBType
         field_91_footnote_fields_size   = LittleEndian.getInt(data, 0x12e + offset);
         field_92_ann_fields_offset      = LittleEndian.getInt(data, 0x132 + offset);
         field_93_ann_fields_size        = LittleEndian.getInt(data, 0x136 + offset);
-        field_94_unused                 = LittleEndian.getInt(data, 0x13a + offset);
-        field_95_unused                 = LittleEndian.getInt(data, 0x13e + offset);
+        field_94_unusedC                = LittleEndian.getInt(data, 0x13a + offset);
+        field_95_unusedD                = LittleEndian.getInt(data, 0x13e + offset);
         field_96_bookmark_names_offset  = LittleEndian.getInt(data, 0x142 + offset);
         field_97_bookmark_names_size    = LittleEndian.getInt(data, 0x146 + offset);
         field_98_bookmark_offsets_offset  = LittleEndian.getInt(data, 0x14a + offset);
         field_99_bookmark_offsets_size  = LittleEndian.getInt(data, 0x14e + offset);
         field_100_macros_offset         = LittleEndian.getInt(data, 0x152 + offset);
         field_101_macros_size           = LittleEndian.getInt(data, 0x156 + offset);
-        field_102_unused                = LittleEndian.getInt(data, 0x15a + offset);
-        field_103_unused                = LittleEndian.getInt(data, 0x15e + offset);
-        field_104_unused                = LittleEndian.getInt(data, 0x162 + offset);
-        field_105_unused                = LittleEndian.getInt(data, 0x166 + offset);
+        field_102_unusedE               = LittleEndian.getInt(data, 0x15a + offset);
+        field_103_unusedF               = LittleEndian.getInt(data, 0x15e + offset);
+        field_104_unused10              = LittleEndian.getInt(data, 0x162 + offset);
+        field_105_unused11              = LittleEndian.getInt(data, 0x166 + offset);
         field_106_printerOffset         = LittleEndian.getInt(data, 0x16a + offset);
         field_107_printerSize           = LittleEndian.getInt(data, 0x16e + offset);
         field_108_printerPortraitOffset  = LittleEndian.getInt(data, 0x172 + offset);
@@ -359,24 +461,126 @@ public class FIBType
         field_117_sttbfassoc_size       = LittleEndian.getInt(data, 0x196 + offset);
         field_118_textPieceTableOffset  = LittleEndian.getInt(data, 0x19a + offset);
         field_119_textPieceTableSize    = LittleEndian.getInt(data, 0x19e + offset);
-        field_120_unused                = LittleEndian.getInt(data, 0x1a2 + offset);
-        field_121_unused                = LittleEndian.getInt(data, 0x1a6 + offset);
+        field_120_unused12              = LittleEndian.getInt(data, 0x1a2 + offset);
+        field_121_unused13              = LittleEndian.getInt(data, 0x1a6 + offset);
         field_122_offsetAutosaveSource  = LittleEndian.getInt(data, 0x1aa + offset);
         field_123_countAutosaveSource   = LittleEndian.getInt(data, 0x1ae + offset);
         field_124_offsetGrpXstAtnOwners  = LittleEndian.getInt(data, 0x1b2 + offset);
         field_125_countGrpXstAtnOwners  = LittleEndian.getInt(data, 0x1b6 + offset);
         field_126_offsetSttbfAtnbkmk    = LittleEndian.getInt(data, 0x1ba + offset);
         field_127_lengthSttbfAtnbkmk    = LittleEndian.getInt(data, 0x1be + offset);
-        field_128_unused                = LittleEndian.getInt(data, 0x1c2 + offset);
-        field_129_unused                = LittleEndian.getInt(data, 0x1c6 + offset);
-        field_130_unused                = LittleEndian.getInt(data, 0x1ca + offset);
-        field_131_unused                = LittleEndian.getInt(data, 0x1ce + offset);
+        field_128_unused14              = LittleEndian.getInt(data, 0x1c2 + offset);
+        field_129_unused15              = LittleEndian.getInt(data, 0x1c6 + offset);
+        field_130_unused16              = LittleEndian.getInt(data, 0x1ca + offset);
+        field_131_unused17              = LittleEndian.getInt(data, 0x1ce + offset);
         field_132_offsetPlcspaMom       = LittleEndian.getInt(data, 0x1d2 + offset);
         field_133_lengthPlcspaMom       = LittleEndian.getInt(data, 0x1d6 + offset);
         field_134_offsetPlcspaHdr       = LittleEndian.getInt(data, 0x1da + offset);
         field_135_lengthPlcspaHdr       = LittleEndian.getInt(data, 0x1de + offset);
-        field_136_lengthPlcfBookmarkFirst  = LittleEndian.getInt(data, 0x1e2 + offset);
-        field_137_offsetPlcfBookmarkFirst  = LittleEndian.getInt(data, 0x1e6 + offset);
+        field_136_lengthPlcfAnnBkmrkFirst  = LittleEndian.getInt(data, 0x1e2 + offset);
+        field_137_offsetPlcfAnnBkmrkFirst  = LittleEndian.getInt(data, 0x1e6 + offset);
+        field_138_lengthPlcfAnnBkarkLast  = LittleEndian.getInt(data, 0x1ea + offset);
+        field_139_lengthPlcfAnnBkarkLast  = LittleEndian.getInt(data, 0x1ee + offset);
+        field_140_fcPms                 = LittleEndian.getInt(data, 0x1f2 + offset);
+        field_141_lcbPms                = LittleEndian.getInt(data, 0x1f6 + offset);
+        field_142_fcFormFldSttbs        = LittleEndian.getInt(data, 0x1fa + offset);
+        field_143_lcbFormFldSttbs       = LittleEndian.getInt(data, 0x1fe + offset);
+        field_144_fcPlcfendRef          = LittleEndian.getInt(data, 0x202 + offset);
+        field_145_lcbPlcfendRef         = LittleEndian.getInt(data, 0x206 + offset);
+        field_146_fcPlcfendTxt          = LittleEndian.getInt(data, 0x20a + offset);
+        field_147_lcbPlcfendTxt         = LittleEndian.getInt(data, 0x20e + offset);
+        field_148_fcPlcffldEdn          = LittleEndian.getInt(data, 0x212 + offset);
+        field_149_lcbPlcffldEdn         = LittleEndian.getInt(data, 0x216 + offset);
+        field_150_fcPlcfpgdEdn          = LittleEndian.getInt(data, 0x21a + offset);
+        field_151_lcbPlcfpgdEdn         = LittleEndian.getInt(data, 0x21e + offset);
+        field_152_fcDggInfo             = LittleEndian.getInt(data, 0x222 + offset);
+        field_153_lcbDggInfo            = LittleEndian.getInt(data, 0x226 + offset);
+        field_154_fcSttbfRMark          = LittleEndian.getInt(data, 0x22a + offset);
+        field_155_lcbSttbfRMark         = LittleEndian.getInt(data, 0x22e + offset);
+        field_156_fcSttbCaption         = LittleEndian.getInt(data, 0x232 + offset);
+        field_157_lcbSttbCaption        = LittleEndian.getInt(data, 0x236 + offset);
+        field_158_fcSttbAutoCaption     = LittleEndian.getInt(data, 0x23a + offset);
+        field_159_lcbSttbAutoCaption    = LittleEndian.getInt(data, 0x23e + offset);
+        field_160_fcPlcfwkb             = LittleEndian.getInt(data, 0x242 + offset);
+        field_161_lcbPlcfwkb            = LittleEndian.getInt(data, 0x246 + offset);
+        field_162_fcPlcfsplfcPlcfspl    = LittleEndian.getInt(data, 0x24a + offset);
+        field_163_lcbPlcfspl            = LittleEndian.getInt(data, 0x24e + offset);
+        field_164_fcPlcftxbxTxt         = LittleEndian.getInt(data, 0x252 + offset);
+        field_165_lcbPlcftxbxTxt        = LittleEndian.getInt(data, 0x256 + offset);
+        field_166_fcPlcffldTxbx         = LittleEndian.getInt(data, 0x25a + offset);
+        field_167_lcbPlcffldTxbx        = LittleEndian.getInt(data, 0x25e + offset);
+        field_168_fcPlcfhdrtxbxTxt      = LittleEndian.getInt(data, 0x262 + offset);
+        field_169_lcbPlcfhdrtxbxTxt     = LittleEndian.getInt(data, 0x266 + offset);
+        field_170_fcPlcffldHdrTxbx      = LittleEndian.getInt(data, 0x26a + offset);
+        field_171_lcbPlcffldHdrTxbx     = LittleEndian.getInt(data, 0x26e + offset);
+        field_172_fcStwUser             = LittleEndian.getInt(data, 0x272 + offset);
+        field_173_lcbStwUser            = LittleEndian.getInt(data, 0x276 + offset);
+        field_174_fcSttbttmbd           = LittleEndian.getInt(data, 0x27a + offset);
+        field_175_cbSttbttmbd           = LittleEndian.getInt(data, 0x27e + offset);
+        field_176_fcUnused              = LittleEndian.getInt(data, 0x282 + offset);
+        field_177_lcbUnused             = LittleEndian.getInt(data, 0x286 + offset);
+        field_178_rgpgdbkd              = LittleEndian.getInt(data, 0x28a + offset);
+        field_179_fcPgdMother           = LittleEndian.getInt(data, 0x28e + offset);
+        field_180_lcbPgdMother          = LittleEndian.getInt(data, 0x292 + offset);
+        field_181_fcBkdMother           = LittleEndian.getInt(data, 0x296 + offset);
+        field_182_lcbBkdMother          = LittleEndian.getInt(data, 0x29a + offset);
+        field_183_fcPgdFtn              = LittleEndian.getInt(data, 0x29e + offset);
+        field_184_lcbPgdFtn             = LittleEndian.getInt(data, 0x2a2 + offset);
+        field_185_fcBkdFtn              = LittleEndian.getInt(data, 0x2a6 + offset);
+        field_186_lcbBkdFtn             = LittleEndian.getInt(data, 0x2aa + offset);
+        field_187_fcPgdEdn              = LittleEndian.getInt(data, 0x2ae + offset);
+        field_188_lcbPgdEdn             = LittleEndian.getInt(data, 0x2b2 + offset);
+        field_189_fcBkdEdn              = LittleEndian.getInt(data, 0x2b6 + offset);
+        field_190_lcbBkdEdn             = LittleEndian.getInt(data, 0x2ba + offset);
+        field_191_fcSttbfIntlFld        = LittleEndian.getInt(data, 0x2be + offset);
+        field_192_lcbSttbfIntlFld       = LittleEndian.getInt(data, 0x2c2 + offset);
+        field_193_fcRouteSlip           = LittleEndian.getInt(data, 0x2c6 + offset);
+        field_194_lcbRouteSlip          = LittleEndian.getInt(data, 0x2ca + offset);
+        field_195_fcSttbSavedBy         = LittleEndian.getInt(data, 0x2ce + offset);
+        field_196_lcbSttbSavedBy        = LittleEndian.getInt(data, 0x2d2 + offset);
+        field_197_fcSttbFnm             = LittleEndian.getInt(data, 0x2d6 + offset);
+        field_198_lcbSttbFnm            = LittleEndian.getInt(data, 0x2da + offset);
+        field_199_fcPlcfLst             = LittleEndian.getInt(data, 0x2de + offset);
+        field_200_lcbPlcfLst            = LittleEndian.getInt(data, 0x2e2 + offset);
+        field_201_fcPlfLfo              = LittleEndian.getInt(data, 0x2e6 + offset);
+        field_202_lcbPlfLfo             = LittleEndian.getInt(data, 0x2ea + offset);
+        field_203_fcPlcftxbxBkd         = LittleEndian.getInt(data, 0x2ee + offset);
+        field_204_lcbPlcftxbxBkd        = LittleEndian.getInt(data, 0x2f2 + offset);
+        field_205_fcPlcftxbxHdrBkd      = LittleEndian.getInt(data, 0x2f6 + offset);
+        field_206_lcbPlcftxbxHdrBkd     = LittleEndian.getInt(data, 0x2fa + offset);
+        field_207_fcDocUndo             = LittleEndian.getInt(data, 0x2fe + offset);
+        field_208_lcbDocUndo            = LittleEndian.getInt(data, 0x302 + offset);
+        field_209_fcRgbuse              = LittleEndian.getInt(data, 0x306 + offset);
+        field_210_lcbRgbuse             = LittleEndian.getInt(data, 0x30a + offset);
+        field_211_fcUsp                 = LittleEndian.getInt(data, 0x30e + offset);
+        field_212_lcbUsp                = LittleEndian.getInt(data, 0x312 + offset);
+        field_213_fcUskf                = LittleEndian.getInt(data, 0x316 + offset);
+        field_214_lcbUskf               = LittleEndian.getInt(data, 0x31a + offset);
+        field_215_fcPlcupcRgbuse        = LittleEndian.getInt(data, 0x31e + offset);
+        field_216_lcbPlcupcRgbuse       = LittleEndian.getInt(data, 0x322 + offset);
+        field_217_fcPlcupcUsp           = LittleEndian.getInt(data, 0x326 + offset);
+        field_218_lcbPlcupcUsp          = LittleEndian.getInt(data, 0x32a + offset);
+        field_219_fcSttbGlsyStyle       = LittleEndian.getInt(data, 0x32e + offset);
+        field_220_lcbSttbGlsyStyle      = LittleEndian.getInt(data, 0x332 + offset);
+        field_221_fcPlgosl              = LittleEndian.getInt(data, 0x336 + offset);
+        field_222_lcbPlgosl             = LittleEndian.getInt(data, 0x33a + offset);
+        field_223_fcPlcocx              = LittleEndian.getInt(data, 0x33e + offset);
+        field_224_lcbPlcocx             = LittleEndian.getInt(data, 0x342 + offset);
+        field_225_fcPlcfbteLvc          = LittleEndian.getInt(data, 0x346 + offset);
+        field_226_lcbPlcfbteLvc         = LittleEndian.getInt(data, 0x34a + offset);
+        field_227_ftModified            = LittleEndian.getInt(data, 0x34e + offset);
+        field_228_dwLowDateTime         = LittleEndian.getInt(data, 0x352 + offset);
+        field_229_dwHighDateTime        = LittleEndian.getInt(data, 0x356 + offset);
+        field_230_fcPlcflvc             = LittleEndian.getInt(data, 0x35a + offset);
+        field_231_lcbPlcflvc            = LittleEndian.getInt(data, 0x35e + offset);
+        field_232_fcPlcasumy            = LittleEndian.getInt(data, 0x362 + offset);
+        field_233_lcbPlcasumy           = LittleEndian.getInt(data, 0x366 + offset);
+        field_234_fcPlcfgram            = LittleEndian.getInt(data, 0x36a + offset);
+        field_235_lcbPlcfgram           = LittleEndian.getInt(data, 0x36e + offset);
+        field_236_fcSttbListNames       = LittleEndian.getInt(data, 0x372 + offset);
+        field_237_lcbSttbListNames      = LittleEndian.getInt(data, 0x376 + offset);
+        field_238_fcSttbfUssr           = LittleEndian.getInt(data, 0x37a + offset);
+        field_239_lcbSttbfUssr          = LittleEndian.getInt(data, 0x37e + offset);
 
     }
 
@@ -500,50 +704,50 @@ public class FIBType
             .append(HexDump.toHex((short)getRevisorPrivate()))
             .append(" (").append(getRevisorPrivate()).append(" )\n");
 
-        buffer.append("    .unused               = ")
+        buffer.append("    .unused1              = ")
             .append("0x")
-            .append(HexDump.toHex((short)getUnused()))
-            .append(" (").append(getUnused()).append(" )\n");
+            .append(HexDump.toHex((short)getUnused1()))
+            .append(" (").append(getUnused1()).append(" )\n");
 
-        buffer.append("    .unused               = ")
+        buffer.append("    .unused2              = ")
             .append("0x")
-            .append(HexDump.toHex((short)getUnused()))
-            .append(" (").append(getUnused()).append(" )\n");
+            .append(HexDump.toHex((short)getUnused2()))
+            .append(" (").append(getUnused2()).append(" )\n");
 
-        buffer.append("    .unused               = ")
+        buffer.append("    .unused3              = ")
             .append("0x")
-            .append(HexDump.toHex((short)getUnused()))
-            .append(" (").append(getUnused()).append(" )\n");
+            .append(HexDump.toHex((short)getUnused3()))
+            .append(" (").append(getUnused3()).append(" )\n");
 
-        buffer.append("    .unused               = ")
+        buffer.append("    .unused4              = ")
             .append("0x")
-            .append(HexDump.toHex((short)getUnused()))
-            .append(" (").append(getUnused()).append(" )\n");
+            .append(HexDump.toHex((short)getUnused4()))
+            .append(" (").append(getUnused4()).append(" )\n");
 
-        buffer.append("    .unused               = ")
+        buffer.append("    .unused5              = ")
             .append("0x")
-            .append(HexDump.toHex((short)getUnused()))
-            .append(" (").append(getUnused()).append(" )\n");
+            .append(HexDump.toHex((short)getUnused5()))
+            .append(" (").append(getUnused5()).append(" )\n");
 
-        buffer.append("    .unused               = ")
+        buffer.append("    .unused6              = ")
             .append("0x")
-            .append(HexDump.toHex((short)getUnused()))
-            .append(" (").append(getUnused()).append(" )\n");
+            .append(HexDump.toHex((short)getUnused6()))
+            .append(" (").append(getUnused6()).append(" )\n");
 
-        buffer.append("    .unused               = ")
+        buffer.append("    .unused7              = ")
             .append("0x")
-            .append(HexDump.toHex((short)getUnused()))
-            .append(" (").append(getUnused()).append(" )\n");
+            .append(HexDump.toHex((short)getUnused7()))
+            .append(" (").append(getUnused7()).append(" )\n");
 
-        buffer.append("    .unused               = ")
+        buffer.append("    .unused8              = ")
             .append("0x")
-            .append(HexDump.toHex((short)getUnused()))
-            .append(" (").append(getUnused()).append(" )\n");
+            .append(HexDump.toHex((short)getUnused8()))
+            .append(" (").append(getUnused8()).append(" )\n");
 
-        buffer.append("    .unused               = ")
+        buffer.append("    .unused9              = ")
             .append("0x")
-            .append(HexDump.toHex((short)getUnused()))
-            .append(" (").append(getUnused()).append(" )\n");
+            .append(HexDump.toHex((short)getUnused9()))
+            .append(" (").append(getUnused9()).append(" )\n");
 
         buffer.append("    .fareastid            = ")
             .append("0x")
@@ -655,15 +859,15 @@ public class FIBType
             .append(HexDump.toHex((int)getCountLvc()))
             .append(" (").append(getCountLvc()).append(" )\n");
 
-        buffer.append("    .unknown              = ")
+        buffer.append("    .unknown1             = ")
             .append("0x")
-            .append(HexDump.toHex((int)getUnknown()))
-            .append(" (").append(getUnknown()).append(" )\n");
+            .append(HexDump.toHex((int)getUnknown1()))
+            .append(" (").append(getUnknown1()).append(" )\n");
 
-        buffer.append("    .unknown              = ")
+        buffer.append("    .unknown2             = ")
             .append("0x")
-            .append(HexDump.toHex((int)getUnknown()))
-            .append(" (").append(getUnknown()).append(" )\n");
+            .append(HexDump.toHex((int)getUnknown2()))
+            .append(" (").append(getUnknown2()).append(" )\n");
 
         buffer.append("    .lcbArraySize         = ")
             .append("0x")
@@ -740,15 +944,15 @@ public class FIBType
             .append(HexDump.toHex((int)getSectionPlcSize()))
             .append(" (").append(getSectionPlcSize()).append(" )\n");
 
-        buffer.append("    .unused               = ")
+        buffer.append("    .unusedA              = ")
             .append("0x")
-            .append(HexDump.toHex((int)getUnused()))
-            .append(" (").append(getUnused()).append(" )\n");
+            .append(HexDump.toHex((int)getUnusedA()))
+            .append(" (").append(getUnusedA()).append(" )\n");
 
-        buffer.append("    .unused               = ")
+        buffer.append("    .unusedB              = ")
             .append("0x")
-            .append(HexDump.toHex((int)getUnused()))
-            .append(" (").append(getUnused()).append(" )\n");
+            .append(HexDump.toHex((int)getUnusedB()))
+            .append(" (").append(getUnusedB()).append(" )\n");
 
         buffer.append("    .pheplcOffset         = ")
             .append("0x")
@@ -870,15 +1074,15 @@ public class FIBType
             .append(HexDump.toHex((int)getAnn_fields_size()))
             .append(" (").append(getAnn_fields_size()).append(" )\n");
 
-        buffer.append("    .unused               = ")
+        buffer.append("    .unusedC              = ")
             .append("0x")
-            .append(HexDump.toHex((int)getUnused()))
-            .append(" (").append(getUnused()).append(" )\n");
+            .append(HexDump.toHex((int)getUnusedC()))
+            .append(" (").append(getUnusedC()).append(" )\n");
 
-        buffer.append("    .unused               = ")
+        buffer.append("    .unusedD              = ")
             .append("0x")
-            .append(HexDump.toHex((int)getUnused()))
-            .append(" (").append(getUnused()).append(" )\n");
+            .append(HexDump.toHex((int)getUnusedD()))
+            .append(" (").append(getUnusedD()).append(" )\n");
 
         buffer.append("    .bookmark_names_offset = ")
             .append("0x")
@@ -910,25 +1114,25 @@ public class FIBType
             .append(HexDump.toHex((int)getMacros_size()))
             .append(" (").append(getMacros_size()).append(" )\n");
 
-        buffer.append("    .unused               = ")
+        buffer.append("    .unusedE              = ")
             .append("0x")
-            .append(HexDump.toHex((int)getUnused()))
-            .append(" (").append(getUnused()).append(" )\n");
+            .append(HexDump.toHex((int)getUnusedE()))
+            .append(" (").append(getUnusedE()).append(" )\n");
 
-        buffer.append("    .unused               = ")
+        buffer.append("    .unusedF              = ")
             .append("0x")
-            .append(HexDump.toHex((int)getUnused()))
-            .append(" (").append(getUnused()).append(" )\n");
+            .append(HexDump.toHex((int)getUnusedF()))
+            .append(" (").append(getUnusedF()).append(" )\n");
 
-        buffer.append("    .unused               = ")
+        buffer.append("    .unused10             = ")
             .append("0x")
-            .append(HexDump.toHex((int)getUnused()))
-            .append(" (").append(getUnused()).append(" )\n");
+            .append(HexDump.toHex((int)getUnused10()))
+            .append(" (").append(getUnused10()).append(" )\n");
 
-        buffer.append("    .unused               = ")
+        buffer.append("    .unused11             = ")
             .append("0x")
-            .append(HexDump.toHex((int)getUnused()))
-            .append(" (").append(getUnused()).append(" )\n");
+            .append(HexDump.toHex((int)getUnused11()))
+            .append(" (").append(getUnused11()).append(" )\n");
 
         buffer.append("    .printerOffset        = ")
             .append("0x")
@@ -1000,15 +1204,15 @@ public class FIBType
             .append(HexDump.toHex((int)getTextPieceTableSize()))
             .append(" (").append(getTextPieceTableSize()).append(" )\n");
 
-        buffer.append("    .unused               = ")
+        buffer.append("    .unused12             = ")
             .append("0x")
-            .append(HexDump.toHex((int)getUnused()))
-            .append(" (").append(getUnused()).append(" )\n");
+            .append(HexDump.toHex((int)getUnused12()))
+            .append(" (").append(getUnused12()).append(" )\n");
 
-        buffer.append("    .unused               = ")
+        buffer.append("    .unused13             = ")
             .append("0x")
-            .append(HexDump.toHex((int)getUnused()))
-            .append(" (").append(getUnused()).append(" )\n");
+            .append(HexDump.toHex((int)getUnused13()))
+            .append(" (").append(getUnused13()).append(" )\n");
 
         buffer.append("    .offsetAutosaveSource = ")
             .append("0x")
@@ -1040,25 +1244,25 @@ public class FIBType
             .append(HexDump.toHex((int)getLengthSttbfAtnbkmk()))
             .append(" (").append(getLengthSttbfAtnbkmk()).append(" )\n");
 
-        buffer.append("    .unused               = ")
+        buffer.append("    .unused14             = ")
             .append("0x")
-            .append(HexDump.toHex((int)getUnused()))
-            .append(" (").append(getUnused()).append(" )\n");
+            .append(HexDump.toHex((int)getUnused14()))
+            .append(" (").append(getUnused14()).append(" )\n");
 
-        buffer.append("    .unused               = ")
+        buffer.append("    .unused15             = ")
             .append("0x")
-            .append(HexDump.toHex((int)getUnused()))
-            .append(" (").append(getUnused()).append(" )\n");
+            .append(HexDump.toHex((int)getUnused15()))
+            .append(" (").append(getUnused15()).append(" )\n");
 
-        buffer.append("    .unused               = ")
+        buffer.append("    .unused16             = ")
             .append("0x")
-            .append(HexDump.toHex((int)getUnused()))
-            .append(" (").append(getUnused()).append(" )\n");
+            .append(HexDump.toHex((int)getUnused16()))
+            .append(" (").append(getUnused16()).append(" )\n");
 
-        buffer.append("    .unused               = ")
+        buffer.append("    .unused17             = ")
             .append("0x")
-            .append(HexDump.toHex((int)getUnused()))
-            .append(" (").append(getUnused()).append(" )\n");
+            .append(HexDump.toHex((int)getUnused17()))
+            .append(" (").append(getUnused17()).append(" )\n");
 
         buffer.append("    .offsetPlcspaMom      = ")
             .append("0x")
@@ -1080,15 +1284,525 @@ public class FIBType
             .append(HexDump.toHex((int)getLengthPlcspaHdr()))
             .append(" (").append(getLengthPlcspaHdr()).append(" )\n");
 
-        buffer.append("    .lengthPlcfBookmarkFirst = ")
+        buffer.append("    .lengthPlcfAnnBkmrkFirst = ")
             .append("0x")
-            .append(HexDump.toHex((int)getLengthPlcfBookmarkFirst()))
-            .append(" (").append(getLengthPlcfBookmarkFirst()).append(" )\n");
+            .append(HexDump.toHex((int)getLengthPlcfAnnBkmrkFirst()))
+            .append(" (").append(getLengthPlcfAnnBkmrkFirst()).append(" )\n");
 
-        buffer.append("    .offsetPlcfBookmarkFirst = ")
+        buffer.append("    .offsetPlcfAnnBkmrkFirst = ")
             .append("0x")
-            .append(HexDump.toHex((int)getOffsetPlcfBookmarkFirst()))
-            .append(" (").append(getOffsetPlcfBookmarkFirst()).append(" )\n");
+            .append(HexDump.toHex((int)getOffsetPlcfAnnBkmrkFirst()))
+            .append(" (").append(getOffsetPlcfAnnBkmrkFirst()).append(" )\n");
+
+        buffer.append("    .lengthPlcfAnnBkarkLast = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getLengthPlcfAnnBkarkLast()))
+            .append(" (").append(getLengthPlcfAnnBkarkLast()).append(" )\n");
+
+        buffer.append("    .lengthPlcfAnnBkarkLast = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getLengthPlcfAnnBkarkLast()))
+            .append(" (").append(getLengthPlcfAnnBkarkLast()).append(" )\n");
+
+        buffer.append("    .fcPms                = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getFcPms()))
+            .append(" (").append(getFcPms()).append(" )\n");
+
+        buffer.append("    .lcbPms               = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getLcbPms()))
+            .append(" (").append(getLcbPms()).append(" )\n");
+
+        buffer.append("    .fcFormFldSttbs       = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getFcFormFldSttbs()))
+            .append(" (").append(getFcFormFldSttbs()).append(" )\n");
+
+        buffer.append("    .lcbFormFldSttbs      = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getLcbFormFldSttbs()))
+            .append(" (").append(getLcbFormFldSttbs()).append(" )\n");
+
+        buffer.append("    .fcPlcfendRef         = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getFcPlcfendRef()))
+            .append(" (").append(getFcPlcfendRef()).append(" )\n");
+
+        buffer.append("    .lcbPlcfendRef        = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getLcbPlcfendRef()))
+            .append(" (").append(getLcbPlcfendRef()).append(" )\n");
+
+        buffer.append("    .fcPlcfendTxt         = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getFcPlcfendTxt()))
+            .append(" (").append(getFcPlcfendTxt()).append(" )\n");
+
+        buffer.append("    .lcbPlcfendTxt        = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getLcbPlcfendTxt()))
+            .append(" (").append(getLcbPlcfendTxt()).append(" )\n");
+
+        buffer.append("    .fcPlcffldEdn         = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getFcPlcffldEdn()))
+            .append(" (").append(getFcPlcffldEdn()).append(" )\n");
+
+        buffer.append("    .lcbPlcffldEdn        = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getLcbPlcffldEdn()))
+            .append(" (").append(getLcbPlcffldEdn()).append(" )\n");
+
+        buffer.append("    .fcPlcfpgdEdn         = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getFcPlcfpgdEdn()))
+            .append(" (").append(getFcPlcfpgdEdn()).append(" )\n");
+
+        buffer.append("    .lcbPlcfpgdEdn        = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getLcbPlcfpgdEdn()))
+            .append(" (").append(getLcbPlcfpgdEdn()).append(" )\n");
+
+        buffer.append("    .fcDggInfo            = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getFcDggInfo()))
+            .append(" (").append(getFcDggInfo()).append(" )\n");
+
+        buffer.append("    .lcbDggInfo           = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getLcbDggInfo()))
+            .append(" (").append(getLcbDggInfo()).append(" )\n");
+
+        buffer.append("    .fcSttbfRMark         = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getFcSttbfRMark()))
+            .append(" (").append(getFcSttbfRMark()).append(" )\n");
+
+        buffer.append("    .lcbSttbfRMark        = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getLcbSttbfRMark()))
+            .append(" (").append(getLcbSttbfRMark()).append(" )\n");
+
+        buffer.append("    .fcSttbCaption        = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getFcSttbCaption()))
+            .append(" (").append(getFcSttbCaption()).append(" )\n");
+
+        buffer.append("    .lcbSttbCaption       = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getLcbSttbCaption()))
+            .append(" (").append(getLcbSttbCaption()).append(" )\n");
+
+        buffer.append("    .fcSttbAutoCaption    = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getFcSttbAutoCaption()))
+            .append(" (").append(getFcSttbAutoCaption()).append(" )\n");
+
+        buffer.append("    .lcbSttbAutoCaption   = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getLcbSttbAutoCaption()))
+            .append(" (").append(getLcbSttbAutoCaption()).append(" )\n");
+
+        buffer.append("    .fcPlcfwkb            = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getFcPlcfwkb()))
+            .append(" (").append(getFcPlcfwkb()).append(" )\n");
+
+        buffer.append("    .lcbPlcfwkb           = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getLcbPlcfwkb()))
+            .append(" (").append(getLcbPlcfwkb()).append(" )\n");
+
+        buffer.append("    .fcPlcfsplfcPlcfspl   = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getFcPlcfsplfcPlcfspl()))
+            .append(" (").append(getFcPlcfsplfcPlcfspl()).append(" )\n");
+
+        buffer.append("    .lcbPlcfspl           = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getLcbPlcfspl()))
+            .append(" (").append(getLcbPlcfspl()).append(" )\n");
+
+        buffer.append("    .fcPlcftxbxTxt        = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getFcPlcftxbxTxt()))
+            .append(" (").append(getFcPlcftxbxTxt()).append(" )\n");
+
+        buffer.append("    .lcbPlcftxbxTxt       = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getLcbPlcftxbxTxt()))
+            .append(" (").append(getLcbPlcftxbxTxt()).append(" )\n");
+
+        buffer.append("    .fcPlcffldTxbx        = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getFcPlcffldTxbx()))
+            .append(" (").append(getFcPlcffldTxbx()).append(" )\n");
+
+        buffer.append("    .lcbPlcffldTxbx       = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getLcbPlcffldTxbx()))
+            .append(" (").append(getLcbPlcffldTxbx()).append(" )\n");
+
+        buffer.append("    .fcPlcfhdrtxbxTxt     = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getFcPlcfhdrtxbxTxt()))
+            .append(" (").append(getFcPlcfhdrtxbxTxt()).append(" )\n");
+
+        buffer.append("    .lcbPlcfhdrtxbxTxt    = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getLcbPlcfhdrtxbxTxt()))
+            .append(" (").append(getLcbPlcfhdrtxbxTxt()).append(" )\n");
+
+        buffer.append("    .fcPlcffldHdrTxbx     = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getFcPlcffldHdrTxbx()))
+            .append(" (").append(getFcPlcffldHdrTxbx()).append(" )\n");
+
+        buffer.append("    .lcbPlcffldHdrTxbx    = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getLcbPlcffldHdrTxbx()))
+            .append(" (").append(getLcbPlcffldHdrTxbx()).append(" )\n");
+
+        buffer.append("    .fcStwUser            = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getFcStwUser()))
+            .append(" (").append(getFcStwUser()).append(" )\n");
+
+        buffer.append("    .lcbStwUser           = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getLcbStwUser()))
+            .append(" (").append(getLcbStwUser()).append(" )\n");
+
+        buffer.append("    .fcSttbttmbd          = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getFcSttbttmbd()))
+            .append(" (").append(getFcSttbttmbd()).append(" )\n");
+
+        buffer.append("    .cbSttbttmbd          = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getCbSttbttmbd()))
+            .append(" (").append(getCbSttbttmbd()).append(" )\n");
+
+        buffer.append("    .fcUnused             = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getFcUnused()))
+            .append(" (").append(getFcUnused()).append(" )\n");
+
+        buffer.append("    .lcbUnused            = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getLcbUnused()))
+            .append(" (").append(getLcbUnused()).append(" )\n");
+
+        buffer.append("    .rgpgdbkd             = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getRgpgdbkd()))
+            .append(" (").append(getRgpgdbkd()).append(" )\n");
+
+        buffer.append("    .fcPgdMother          = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getFcPgdMother()))
+            .append(" (").append(getFcPgdMother()).append(" )\n");
+
+        buffer.append("    .lcbPgdMother         = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getLcbPgdMother()))
+            .append(" (").append(getLcbPgdMother()).append(" )\n");
+
+        buffer.append("    .fcBkdMother          = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getFcBkdMother()))
+            .append(" (").append(getFcBkdMother()).append(" )\n");
+
+        buffer.append("    .lcbBkdMother         = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getLcbBkdMother()))
+            .append(" (").append(getLcbBkdMother()).append(" )\n");
+
+        buffer.append("    .fcPgdFtn             = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getFcPgdFtn()))
+            .append(" (").append(getFcPgdFtn()).append(" )\n");
+
+        buffer.append("    .lcbPgdFtn            = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getLcbPgdFtn()))
+            .append(" (").append(getLcbPgdFtn()).append(" )\n");
+
+        buffer.append("    .fcBkdFtn             = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getFcBkdFtn()))
+            .append(" (").append(getFcBkdFtn()).append(" )\n");
+
+        buffer.append("    .lcbBkdFtn            = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getLcbBkdFtn()))
+            .append(" (").append(getLcbBkdFtn()).append(" )\n");
+
+        buffer.append("    .fcPgdEdn             = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getFcPgdEdn()))
+            .append(" (").append(getFcPgdEdn()).append(" )\n");
+
+        buffer.append("    .lcbPgdEdn            = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getLcbPgdEdn()))
+            .append(" (").append(getLcbPgdEdn()).append(" )\n");
+
+        buffer.append("    .fcBkdEdn             = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getFcBkdEdn()))
+            .append(" (").append(getFcBkdEdn()).append(" )\n");
+
+        buffer.append("    .lcbBkdEdn            = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getLcbBkdEdn()))
+            .append(" (").append(getLcbBkdEdn()).append(" )\n");
+
+        buffer.append("    .fcSttbfIntlFld       = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getFcSttbfIntlFld()))
+            .append(" (").append(getFcSttbfIntlFld()).append(" )\n");
+
+        buffer.append("    .lcbSttbfIntlFld      = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getLcbSttbfIntlFld()))
+            .append(" (").append(getLcbSttbfIntlFld()).append(" )\n");
+
+        buffer.append("    .fcRouteSlip          = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getFcRouteSlip()))
+            .append(" (").append(getFcRouteSlip()).append(" )\n");
+
+        buffer.append("    .lcbRouteSlip         = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getLcbRouteSlip()))
+            .append(" (").append(getLcbRouteSlip()).append(" )\n");
+
+        buffer.append("    .fcSttbSavedBy        = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getFcSttbSavedBy()))
+            .append(" (").append(getFcSttbSavedBy()).append(" )\n");
+
+        buffer.append("    .lcbSttbSavedBy       = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getLcbSttbSavedBy()))
+            .append(" (").append(getLcbSttbSavedBy()).append(" )\n");
+
+        buffer.append("    .fcSttbFnm            = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getFcSttbFnm()))
+            .append(" (").append(getFcSttbFnm()).append(" )\n");
+
+        buffer.append("    .lcbSttbFnm           = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getLcbSttbFnm()))
+            .append(" (").append(getLcbSttbFnm()).append(" )\n");
+
+        buffer.append("    .fcPlcfLst            = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getFcPlcfLst()))
+            .append(" (").append(getFcPlcfLst()).append(" )\n");
+
+        buffer.append("    .lcbPlcfLst           = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getLcbPlcfLst()))
+            .append(" (").append(getLcbPlcfLst()).append(" )\n");
+
+        buffer.append("    .fcPlfLfo             = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getFcPlfLfo()))
+            .append(" (").append(getFcPlfLfo()).append(" )\n");
+
+        buffer.append("    .lcbPlfLfo            = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getLcbPlfLfo()))
+            .append(" (").append(getLcbPlfLfo()).append(" )\n");
+
+        buffer.append("    .fcPlcftxbxBkd        = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getFcPlcftxbxBkd()))
+            .append(" (").append(getFcPlcftxbxBkd()).append(" )\n");
+
+        buffer.append("    .lcbPlcftxbxBkd       = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getLcbPlcftxbxBkd()))
+            .append(" (").append(getLcbPlcftxbxBkd()).append(" )\n");
+
+        buffer.append("    .fcPlcftxbxHdrBkd     = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getFcPlcftxbxHdrBkd()))
+            .append(" (").append(getFcPlcftxbxHdrBkd()).append(" )\n");
+
+        buffer.append("    .lcbPlcftxbxHdrBkd    = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getLcbPlcftxbxHdrBkd()))
+            .append(" (").append(getLcbPlcftxbxHdrBkd()).append(" )\n");
+
+        buffer.append("    .fcDocUndo            = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getFcDocUndo()))
+            .append(" (").append(getFcDocUndo()).append(" )\n");
+
+        buffer.append("    .lcbDocUndo           = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getLcbDocUndo()))
+            .append(" (").append(getLcbDocUndo()).append(" )\n");
+
+        buffer.append("    .fcRgbuse             = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getFcRgbuse()))
+            .append(" (").append(getFcRgbuse()).append(" )\n");
+
+        buffer.append("    .lcbRgbuse            = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getLcbRgbuse()))
+            .append(" (").append(getLcbRgbuse()).append(" )\n");
+
+        buffer.append("    .fcUsp                = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getFcUsp()))
+            .append(" (").append(getFcUsp()).append(" )\n");
+
+        buffer.append("    .lcbUsp               = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getLcbUsp()))
+            .append(" (").append(getLcbUsp()).append(" )\n");
+
+        buffer.append("    .fcUskf               = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getFcUskf()))
+            .append(" (").append(getFcUskf()).append(" )\n");
+
+        buffer.append("    .lcbUskf              = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getLcbUskf()))
+            .append(" (").append(getLcbUskf()).append(" )\n");
+
+        buffer.append("    .fcPlcupcRgbuse       = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getFcPlcupcRgbuse()))
+            .append(" (").append(getFcPlcupcRgbuse()).append(" )\n");
+
+        buffer.append("    .lcbPlcupcRgbuse      = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getLcbPlcupcRgbuse()))
+            .append(" (").append(getLcbPlcupcRgbuse()).append(" )\n");
+
+        buffer.append("    .fcPlcupcUsp          = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getFcPlcupcUsp()))
+            .append(" (").append(getFcPlcupcUsp()).append(" )\n");
+
+        buffer.append("    .lcbPlcupcUsp         = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getLcbPlcupcUsp()))
+            .append(" (").append(getLcbPlcupcUsp()).append(" )\n");
+
+        buffer.append("    .fcSttbGlsyStyle      = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getFcSttbGlsyStyle()))
+            .append(" (").append(getFcSttbGlsyStyle()).append(" )\n");
+
+        buffer.append("    .lcbSttbGlsyStyle     = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getLcbSttbGlsyStyle()))
+            .append(" (").append(getLcbSttbGlsyStyle()).append(" )\n");
+
+        buffer.append("    .fcPlgosl             = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getFcPlgosl()))
+            .append(" (").append(getFcPlgosl()).append(" )\n");
+
+        buffer.append("    .lcbPlgosl            = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getLcbPlgosl()))
+            .append(" (").append(getLcbPlgosl()).append(" )\n");
+
+        buffer.append("    .fcPlcocx             = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getFcPlcocx()))
+            .append(" (").append(getFcPlcocx()).append(" )\n");
+
+        buffer.append("    .lcbPlcocx            = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getLcbPlcocx()))
+            .append(" (").append(getLcbPlcocx()).append(" )\n");
+
+        buffer.append("    .fcPlcfbteLvc         = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getFcPlcfbteLvc()))
+            .append(" (").append(getFcPlcfbteLvc()).append(" )\n");
+
+        buffer.append("    .lcbPlcfbteLvc        = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getLcbPlcfbteLvc()))
+            .append(" (").append(getLcbPlcfbteLvc()).append(" )\n");
+
+        buffer.append("    .ftModified           = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getFtModified()))
+            .append(" (").append(getFtModified()).append(" )\n");
+
+        buffer.append("    .dwLowDateTime        = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getDwLowDateTime()))
+            .append(" (").append(getDwLowDateTime()).append(" )\n");
+
+        buffer.append("    .dwHighDateTime       = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getDwHighDateTime()))
+            .append(" (").append(getDwHighDateTime()).append(" )\n");
+
+        buffer.append("    .fcPlcflvc            = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getFcPlcflvc()))
+            .append(" (").append(getFcPlcflvc()).append(" )\n");
+
+        buffer.append("    .lcbPlcflvc           = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getLcbPlcflvc()))
+            .append(" (").append(getLcbPlcflvc()).append(" )\n");
+
+        buffer.append("    .fcPlcasumy           = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getFcPlcasumy()))
+            .append(" (").append(getFcPlcasumy()).append(" )\n");
+
+        buffer.append("    .lcbPlcasumy          = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getLcbPlcasumy()))
+            .append(" (").append(getLcbPlcasumy()).append(" )\n");
+
+        buffer.append("    .fcPlcfgram           = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getFcPlcfgram()))
+            .append(" (").append(getFcPlcfgram()).append(" )\n");
+
+        buffer.append("    .lcbPlcfgram          = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getLcbPlcfgram()))
+            .append(" (").append(getLcbPlcfgram()).append(" )\n");
+
+        buffer.append("    .fcSttbListNames      = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getFcSttbListNames()))
+            .append(" (").append(getFcSttbListNames()).append(" )\n");
+
+        buffer.append("    .lcbSttbListNames     = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getLcbSttbListNames()))
+            .append(" (").append(getLcbSttbListNames()).append(" )\n");
+
+        buffer.append("    .fcSttbfUssr          = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getFcSttbfUssr()))
+            .append(" (").append(getFcSttbfUssr()).append(" )\n");
+
+        buffer.append("    .lcbSttbfUssr         = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getLcbSttbfUssr()))
+            .append(" (").append(getLcbSttbfUssr()).append(" )\n");
 
         buffer.append("[/FIB]\n");
         return buffer.toString();
@@ -1099,7 +1813,7 @@ public class FIBType
      */
     public int getSize()
     {
-        return 4 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 4 + 4 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 2 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4;
+        return 4 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 4 + 4 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 2 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4;
     }
 
 
@@ -1409,147 +2123,147 @@ public class FIBType
     }
 
     /**
-     * Get the unused field for the FIB record.
+     * Get the unused1 field for the FIB record.
      */
-    public short getUnused()
+    public short getUnused1()
     {
-        return field_20_unused;
+        return field_20_unused1;
     }
 
     /**
-     * Set the unused field for the FIB record.
+     * Set the unused1 field for the FIB record.
      */
-    public void setUnused(short field_20_unused)
+    public void setUnused1(short field_20_unused1)
     {
-        this.field_20_unused = field_20_unused;
+        this.field_20_unused1 = field_20_unused1;
     }
 
     /**
-     * Get the unused field for the FIB record.
+     * Get the unused2 field for the FIB record.
      */
-    public short getUnused()
+    public short getUnused2()
     {
-        return field_21_unused;
+        return field_21_unused2;
     }
 
     /**
-     * Set the unused field for the FIB record.
+     * Set the unused2 field for the FIB record.
      */
-    public void setUnused(short field_21_unused)
+    public void setUnused2(short field_21_unused2)
     {
-        this.field_21_unused = field_21_unused;
+        this.field_21_unused2 = field_21_unused2;
     }
 
     /**
-     * Get the unused field for the FIB record.
+     * Get the unused3 field for the FIB record.
      */
-    public short getUnused()
+    public short getUnused3()
     {
-        return field_22_unused;
+        return field_22_unused3;
     }
 
     /**
-     * Set the unused field for the FIB record.
+     * Set the unused3 field for the FIB record.
      */
-    public void setUnused(short field_22_unused)
+    public void setUnused3(short field_22_unused3)
     {
-        this.field_22_unused = field_22_unused;
+        this.field_22_unused3 = field_22_unused3;
     }
 
     /**
-     * Get the unused field for the FIB record.
+     * Get the unused4 field for the FIB record.
      */
-    public short getUnused()
+    public short getUnused4()
     {
-        return field_23_unused;
+        return field_23_unused4;
     }
 
     /**
-     * Set the unused field for the FIB record.
+     * Set the unused4 field for the FIB record.
      */
-    public void setUnused(short field_23_unused)
+    public void setUnused4(short field_23_unused4)
     {
-        this.field_23_unused = field_23_unused;
+        this.field_23_unused4 = field_23_unused4;
     }
 
     /**
-     * Get the unused field for the FIB record.
+     * Get the unused5 field for the FIB record.
      */
-    public short getUnused()
+    public short getUnused5()
     {
-        return field_24_unused;
+        return field_24_unused5;
     }
 
     /**
-     * Set the unused field for the FIB record.
+     * Set the unused5 field for the FIB record.
      */
-    public void setUnused(short field_24_unused)
+    public void setUnused5(short field_24_unused5)
     {
-        this.field_24_unused = field_24_unused;
+        this.field_24_unused5 = field_24_unused5;
     }
 
     /**
-     * Get the unused field for the FIB record.
+     * Get the unused6 field for the FIB record.
      */
-    public short getUnused()
+    public short getUnused6()
     {
-        return field_25_unused;
+        return field_25_unused6;
     }
 
     /**
-     * Set the unused field for the FIB record.
+     * Set the unused6 field for the FIB record.
      */
-    public void setUnused(short field_25_unused)
+    public void setUnused6(short field_25_unused6)
     {
-        this.field_25_unused = field_25_unused;
+        this.field_25_unused6 = field_25_unused6;
     }
 
     /**
-     * Get the unused field for the FIB record.
+     * Get the unused7 field for the FIB record.
      */
-    public short getUnused()
+    public short getUnused7()
     {
-        return field_26_unused;
+        return field_26_unused7;
     }
 
     /**
-     * Set the unused field for the FIB record.
+     * Set the unused7 field for the FIB record.
      */
-    public void setUnused(short field_26_unused)
+    public void setUnused7(short field_26_unused7)
     {
-        this.field_26_unused = field_26_unused;
+        this.field_26_unused7 = field_26_unused7;
     }
 
     /**
-     * Get the unused field for the FIB record.
+     * Get the unused8 field for the FIB record.
      */
-    public short getUnused()
+    public short getUnused8()
     {
-        return field_27_unused;
+        return field_27_unused8;
     }
 
     /**
-     * Set the unused field for the FIB record.
+     * Set the unused8 field for the FIB record.
      */
-    public void setUnused(short field_27_unused)
+    public void setUnused8(short field_27_unused8)
     {
-        this.field_27_unused = field_27_unused;
+        this.field_27_unused8 = field_27_unused8;
     }
 
     /**
-     * Get the unused field for the FIB record.
+     * Get the unused9 field for the FIB record.
      */
-    public short getUnused()
+    public short getUnused9()
     {
-        return field_28_unused;
+        return field_28_unused9;
     }
 
     /**
-     * Set the unused field for the FIB record.
+     * Set the unused9 field for the FIB record.
      */
-    public void setUnused(short field_28_unused)
+    public void setUnused9(short field_28_unused9)
     {
-        this.field_28_unused = field_28_unused;
+        this.field_28_unused9 = field_28_unused9;
     }
 
     /**
@@ -1905,35 +2619,35 @@ public class FIBType
     }
 
     /**
-     * Get the unknown field for the FIB record.
+     * Get the unknown1 field for the FIB record.
      */
-    public int getUnknown()
+    public int getUnknown1()
     {
-        return field_51_unknown;
+        return field_51_unknown1;
     }
 
     /**
-     * Set the unknown field for the FIB record.
+     * Set the unknown1 field for the FIB record.
      */
-    public void setUnknown(int field_51_unknown)
+    public void setUnknown1(int field_51_unknown1)
     {
-        this.field_51_unknown = field_51_unknown;
+        this.field_51_unknown1 = field_51_unknown1;
     }
 
     /**
-     * Get the unknown field for the FIB record.
+     * Get the unknown2 field for the FIB record.
      */
-    public int getUnknown()
+    public int getUnknown2()
     {
-        return field_52_unknown;
+        return field_52_unknown2;
     }
 
     /**
-     * Set the unknown field for the FIB record.
+     * Set the unknown2 field for the FIB record.
      */
-    public void setUnknown(int field_52_unknown)
+    public void setUnknown2(int field_52_unknown2)
     {
-        this.field_52_unknown = field_52_unknown;
+        this.field_52_unknown2 = field_52_unknown2;
     }
 
     /**
@@ -2177,35 +2891,35 @@ public class FIBType
     }
 
     /**
-     * Get the unused field for the FIB record.
+     * Get the unusedA field for the FIB record.
      */
-    public int getUnused()
+    public int getUnusedA()
     {
-        return field_68_unused;
+        return field_68_unusedA;
     }
 
     /**
-     * Set the unused field for the FIB record.
+     * Set the unusedA field for the FIB record.
      */
-    public void setUnused(int field_68_unused)
+    public void setUnusedA(int field_68_unusedA)
     {
-        this.field_68_unused = field_68_unused;
+        this.field_68_unusedA = field_68_unusedA;
     }
 
     /**
-     * Get the unused field for the FIB record.
+     * Get the unusedB field for the FIB record.
      */
-    public int getUnused()
+    public int getUnusedB()
     {
-        return field_69_unused;
+        return field_69_unusedB;
     }
 
     /**
-     * Set the unused field for the FIB record.
+     * Set the unusedB field for the FIB record.
      */
-    public void setUnused(int field_69_unused)
+    public void setUnusedB(int field_69_unusedB)
     {
-        this.field_69_unused = field_69_unused;
+        this.field_69_unusedB = field_69_unusedB;
     }
 
     /**
@@ -2593,35 +3307,35 @@ public class FIBType
     }
 
     /**
-     * Get the unused field for the FIB record.
+     * Get the unusedC field for the FIB record.
      */
-    public int getUnused()
+    public int getUnusedC()
     {
-        return field_94_unused;
+        return field_94_unusedC;
     }
 
     /**
-     * Set the unused field for the FIB record.
+     * Set the unusedC field for the FIB record.
      */
-    public void setUnused(int field_94_unused)
+    public void setUnusedC(int field_94_unusedC)
     {
-        this.field_94_unused = field_94_unused;
+        this.field_94_unusedC = field_94_unusedC;
     }
 
     /**
-     * Get the unused field for the FIB record.
+     * Get the unusedD field for the FIB record.
      */
-    public int getUnused()
+    public int getUnusedD()
     {
-        return field_95_unused;
+        return field_95_unusedD;
     }
 
     /**
-     * Set the unused field for the FIB record.
+     * Set the unusedD field for the FIB record.
      */
-    public void setUnused(int field_95_unused)
+    public void setUnusedD(int field_95_unusedD)
     {
-        this.field_95_unused = field_95_unused;
+        this.field_95_unusedD = field_95_unusedD;
     }
 
     /**
@@ -2721,67 +3435,67 @@ public class FIBType
     }
 
     /**
-     * Get the unused field for the FIB record.
+     * Get the unusedE field for the FIB record.
      */
-    public int getUnused()
+    public int getUnusedE()
     {
-        return field_102_unused;
+        return field_102_unusedE;
     }
 
     /**
-     * Set the unused field for the FIB record.
+     * Set the unusedE field for the FIB record.
      */
-    public void setUnused(int field_102_unused)
+    public void setUnusedE(int field_102_unusedE)
     {
-        this.field_102_unused = field_102_unused;
+        this.field_102_unusedE = field_102_unusedE;
     }
 
     /**
-     * Get the unused field for the FIB record.
+     * Get the unusedF field for the FIB record.
      */
-    public int getUnused()
+    public int getUnusedF()
     {
-        return field_103_unused;
+        return field_103_unusedF;
     }
 
     /**
-     * Set the unused field for the FIB record.
+     * Set the unusedF field for the FIB record.
      */
-    public void setUnused(int field_103_unused)
+    public void setUnusedF(int field_103_unusedF)
     {
-        this.field_103_unused = field_103_unused;
+        this.field_103_unusedF = field_103_unusedF;
     }
 
     /**
-     * Get the unused field for the FIB record.
+     * Get the unused10 field for the FIB record.
      */
-    public int getUnused()
+    public int getUnused10()
     {
-        return field_104_unused;
+        return field_104_unused10;
     }
 
     /**
-     * Set the unused field for the FIB record.
+     * Set the unused10 field for the FIB record.
      */
-    public void setUnused(int field_104_unused)
+    public void setUnused10(int field_104_unused10)
     {
-        this.field_104_unused = field_104_unused;
+        this.field_104_unused10 = field_104_unused10;
     }
 
     /**
-     * Get the unused field for the FIB record.
+     * Get the unused11 field for the FIB record.
      */
-    public int getUnused()
+    public int getUnused11()
     {
-        return field_105_unused;
+        return field_105_unused11;
     }
 
     /**
-     * Set the unused field for the FIB record.
+     * Set the unused11 field for the FIB record.
      */
-    public void setUnused(int field_105_unused)
+    public void setUnused11(int field_105_unused11)
     {
-        this.field_105_unused = field_105_unused;
+        this.field_105_unused11 = field_105_unused11;
     }
 
     /**
@@ -3009,35 +3723,35 @@ public class FIBType
     }
 
     /**
-     * Get the unused field for the FIB record.
+     * Get the unused12 field for the FIB record.
      */
-    public int getUnused()
+    public int getUnused12()
     {
-        return field_120_unused;
+        return field_120_unused12;
     }
 
     /**
-     * Set the unused field for the FIB record.
+     * Set the unused12 field for the FIB record.
      */
-    public void setUnused(int field_120_unused)
+    public void setUnused12(int field_120_unused12)
     {
-        this.field_120_unused = field_120_unused;
+        this.field_120_unused12 = field_120_unused12;
     }
 
     /**
-     * Get the unused field for the FIB record.
+     * Get the unused13 field for the FIB record.
      */
-    public int getUnused()
+    public int getUnused13()
     {
-        return field_121_unused;
+        return field_121_unused13;
     }
 
     /**
-     * Set the unused field for the FIB record.
+     * Set the unused13 field for the FIB record.
      */
-    public void setUnused(int field_121_unused)
+    public void setUnused13(int field_121_unused13)
     {
-        this.field_121_unused = field_121_unused;
+        this.field_121_unused13 = field_121_unused13;
     }
 
     /**
@@ -3137,67 +3851,67 @@ public class FIBType
     }
 
     /**
-     * Get the unused field for the FIB record.
+     * Get the unused14 field for the FIB record.
      */
-    public int getUnused()
+    public int getUnused14()
     {
-        return field_128_unused;
+        return field_128_unused14;
     }
 
     /**
-     * Set the unused field for the FIB record.
+     * Set the unused14 field for the FIB record.
      */
-    public void setUnused(int field_128_unused)
+    public void setUnused14(int field_128_unused14)
     {
-        this.field_128_unused = field_128_unused;
+        this.field_128_unused14 = field_128_unused14;
     }
 
     /**
-     * Get the unused field for the FIB record.
+     * Get the unused15 field for the FIB record.
      */
-    public int getUnused()
+    public int getUnused15()
     {
-        return field_129_unused;
+        return field_129_unused15;
     }
 
     /**
-     * Set the unused field for the FIB record.
+     * Set the unused15 field for the FIB record.
      */
-    public void setUnused(int field_129_unused)
+    public void setUnused15(int field_129_unused15)
     {
-        this.field_129_unused = field_129_unused;
+        this.field_129_unused15 = field_129_unused15;
     }
 
     /**
-     * Get the unused field for the FIB record.
+     * Get the unused16 field for the FIB record.
      */
-    public int getUnused()
+    public int getUnused16()
     {
-        return field_130_unused;
+        return field_130_unused16;
     }
 
     /**
-     * Set the unused field for the FIB record.
+     * Set the unused16 field for the FIB record.
      */
-    public void setUnused(int field_130_unused)
+    public void setUnused16(int field_130_unused16)
     {
-        this.field_130_unused = field_130_unused;
+        this.field_130_unused16 = field_130_unused16;
     }
 
     /**
-     * Get the unused field for the FIB record.
+     * Get the unused17 field for the FIB record.
      */
-    public int getUnused()
+    public int getUnused17()
     {
-        return field_131_unused;
+        return field_131_unused17;
     }
 
     /**
-     * Set the unused field for the FIB record.
+     * Set the unused17 field for the FIB record.
      */
-    public void setUnused(int field_131_unused)
+    public void setUnused17(int field_131_unused17)
     {
-        this.field_131_unused = field_131_unused;
+        this.field_131_unused17 = field_131_unused17;
     }
 
     /**
@@ -3265,35 +3979,1667 @@ public class FIBType
     }
 
     /**
-     * Get the length Plcf Bookmark First field for the FIB record.
+     * Get the length Plcf Ann Bkmrk First field for the FIB record.
      */
-    public int getLengthPlcfBookmarkFirst()
+    public int getLengthPlcfAnnBkmrkFirst()
     {
-        return field_136_lengthPlcfBookmarkFirst;
+        return field_136_lengthPlcfAnnBkmrkFirst;
     }
 
     /**
-     * Set the length Plcf Bookmark First field for the FIB record.
+     * Set the length Plcf Ann Bkmrk First field for the FIB record.
      */
-    public void setLengthPlcfBookmarkFirst(int field_136_lengthPlcfBookmarkFirst)
+    public void setLengthPlcfAnnBkmrkFirst(int field_136_lengthPlcfAnnBkmrkFirst)
     {
-        this.field_136_lengthPlcfBookmarkFirst = field_136_lengthPlcfBookmarkFirst;
+        this.field_136_lengthPlcfAnnBkmrkFirst = field_136_lengthPlcfAnnBkmrkFirst;
     }
 
     /**
-     * Get the offset Plcf Bookmark First field for the FIB record.
+     * Get the offset Plcf Ann Bkmrk First field for the FIB record.
      */
-    public int getOffsetPlcfBookmarkFirst()
+    public int getOffsetPlcfAnnBkmrkFirst()
     {
-        return field_137_offsetPlcfBookmarkFirst;
+        return field_137_offsetPlcfAnnBkmrkFirst;
     }
 
     /**
-     * Set the offset Plcf Bookmark First field for the FIB record.
+     * Set the offset Plcf Ann Bkmrk First field for the FIB record.
      */
-    public void setOffsetPlcfBookmarkFirst(int field_137_offsetPlcfBookmarkFirst)
+    public void setOffsetPlcfAnnBkmrkFirst(int field_137_offsetPlcfAnnBkmrkFirst)
     {
-        this.field_137_offsetPlcfBookmarkFirst = field_137_offsetPlcfBookmarkFirst;
+        this.field_137_offsetPlcfAnnBkmrkFirst = field_137_offsetPlcfAnnBkmrkFirst;
+    }
+
+    /**
+     * Get the length Plcf Ann Bkark Last field for the FIB record.
+     */
+    public int getLengthPlcfAnnBkarkLast()
+    {
+        return field_138_lengthPlcfAnnBkarkLast;
+    }
+
+    /**
+     * Set the length Plcf Ann Bkark Last field for the FIB record.
+     */
+    public void setLengthPlcfAnnBkarkLast(int field_138_lengthPlcfAnnBkarkLast)
+    {
+        this.field_138_lengthPlcfAnnBkarkLast = field_138_lengthPlcfAnnBkarkLast;
+    }
+
+    /**
+     * Get the length Plcf Ann Bkark Last field for the FIB record.
+     */
+    public int getLengthPlcfAnnBkarkLast()
+    {
+        return field_139_lengthPlcfAnnBkarkLast;
+    }
+
+    /**
+     * Set the length Plcf Ann Bkark Last field for the FIB record.
+     */
+    public void setLengthPlcfAnnBkarkLast(int field_139_lengthPlcfAnnBkarkLast)
+    {
+        this.field_139_lengthPlcfAnnBkarkLast = field_139_lengthPlcfAnnBkarkLast;
+    }
+
+    /**
+     * Get the fcPms field for the FIB record.
+     */
+    public int getFcPms()
+    {
+        return field_140_fcPms;
+    }
+
+    /**
+     * Set the fcPms field for the FIB record.
+     */
+    public void setFcPms(int field_140_fcPms)
+    {
+        this.field_140_fcPms = field_140_fcPms;
+    }
+
+    /**
+     * Get the lcbPms field for the FIB record.
+     */
+    public int getLcbPms()
+    {
+        return field_141_lcbPms;
+    }
+
+    /**
+     * Set the lcbPms field for the FIB record.
+     */
+    public void setLcbPms(int field_141_lcbPms)
+    {
+        this.field_141_lcbPms = field_141_lcbPms;
+    }
+
+    /**
+     * Get the fcFormFldSttbs field for the FIB record.
+     */
+    public int getFcFormFldSttbs()
+    {
+        return field_142_fcFormFldSttbs;
+    }
+
+    /**
+     * Set the fcFormFldSttbs field for the FIB record.
+     */
+    public void setFcFormFldSttbs(int field_142_fcFormFldSttbs)
+    {
+        this.field_142_fcFormFldSttbs = field_142_fcFormFldSttbs;
+    }
+
+    /**
+     * Get the lcbFormFldSttbs field for the FIB record.
+     */
+    public int getLcbFormFldSttbs()
+    {
+        return field_143_lcbFormFldSttbs;
+    }
+
+    /**
+     * Set the lcbFormFldSttbs field for the FIB record.
+     */
+    public void setLcbFormFldSttbs(int field_143_lcbFormFldSttbs)
+    {
+        this.field_143_lcbFormFldSttbs = field_143_lcbFormFldSttbs;
+    }
+
+    /**
+     * Get the fcPlcfendRef field for the FIB record.
+     */
+    public int getFcPlcfendRef()
+    {
+        return field_144_fcPlcfendRef;
+    }
+
+    /**
+     * Set the fcPlcfendRef field for the FIB record.
+     */
+    public void setFcPlcfendRef(int field_144_fcPlcfendRef)
+    {
+        this.field_144_fcPlcfendRef = field_144_fcPlcfendRef;
+    }
+
+    /**
+     * Get the lcbPlcfendRef field for the FIB record.
+     */
+    public int getLcbPlcfendRef()
+    {
+        return field_145_lcbPlcfendRef;
+    }
+
+    /**
+     * Set the lcbPlcfendRef field for the FIB record.
+     */
+    public void setLcbPlcfendRef(int field_145_lcbPlcfendRef)
+    {
+        this.field_145_lcbPlcfendRef = field_145_lcbPlcfendRef;
+    }
+
+    /**
+     * Get the fcPlcfendTxt field for the FIB record.
+     */
+    public int getFcPlcfendTxt()
+    {
+        return field_146_fcPlcfendTxt;
+    }
+
+    /**
+     * Set the fcPlcfendTxt field for the FIB record.
+     */
+    public void setFcPlcfendTxt(int field_146_fcPlcfendTxt)
+    {
+        this.field_146_fcPlcfendTxt = field_146_fcPlcfendTxt;
+    }
+
+    /**
+     * Get the lcbPlcfendTxt field for the FIB record.
+     */
+    public int getLcbPlcfendTxt()
+    {
+        return field_147_lcbPlcfendTxt;
+    }
+
+    /**
+     * Set the lcbPlcfendTxt field for the FIB record.
+     */
+    public void setLcbPlcfendTxt(int field_147_lcbPlcfendTxt)
+    {
+        this.field_147_lcbPlcfendTxt = field_147_lcbPlcfendTxt;
+    }
+
+    /**
+     * Get the fcPlcffldEdn field for the FIB record.
+     */
+    public int getFcPlcffldEdn()
+    {
+        return field_148_fcPlcffldEdn;
+    }
+
+    /**
+     * Set the fcPlcffldEdn field for the FIB record.
+     */
+    public void setFcPlcffldEdn(int field_148_fcPlcffldEdn)
+    {
+        this.field_148_fcPlcffldEdn = field_148_fcPlcffldEdn;
+    }
+
+    /**
+     * Get the lcbPlcffldEdn field for the FIB record.
+     */
+    public int getLcbPlcffldEdn()
+    {
+        return field_149_lcbPlcffldEdn;
+    }
+
+    /**
+     * Set the lcbPlcffldEdn field for the FIB record.
+     */
+    public void setLcbPlcffldEdn(int field_149_lcbPlcffldEdn)
+    {
+        this.field_149_lcbPlcffldEdn = field_149_lcbPlcffldEdn;
+    }
+
+    /**
+     * Get the fcPlcfpgdEdn field for the FIB record.
+     */
+    public int getFcPlcfpgdEdn()
+    {
+        return field_150_fcPlcfpgdEdn;
+    }
+
+    /**
+     * Set the fcPlcfpgdEdn field for the FIB record.
+     */
+    public void setFcPlcfpgdEdn(int field_150_fcPlcfpgdEdn)
+    {
+        this.field_150_fcPlcfpgdEdn = field_150_fcPlcfpgdEdn;
+    }
+
+    /**
+     * Get the lcbPlcfpgdEdn field for the FIB record.
+     */
+    public int getLcbPlcfpgdEdn()
+    {
+        return field_151_lcbPlcfpgdEdn;
+    }
+
+    /**
+     * Set the lcbPlcfpgdEdn field for the FIB record.
+     */
+    public void setLcbPlcfpgdEdn(int field_151_lcbPlcfpgdEdn)
+    {
+        this.field_151_lcbPlcfpgdEdn = field_151_lcbPlcfpgdEdn;
+    }
+
+    /**
+     * Get the fcDggInfo field for the FIB record.
+     */
+    public int getFcDggInfo()
+    {
+        return field_152_fcDggInfo;
+    }
+
+    /**
+     * Set the fcDggInfo field for the FIB record.
+     */
+    public void setFcDggInfo(int field_152_fcDggInfo)
+    {
+        this.field_152_fcDggInfo = field_152_fcDggInfo;
+    }
+
+    /**
+     * Get the lcbDggInfo field for the FIB record.
+     */
+    public int getLcbDggInfo()
+    {
+        return field_153_lcbDggInfo;
+    }
+
+    /**
+     * Set the lcbDggInfo field for the FIB record.
+     */
+    public void setLcbDggInfo(int field_153_lcbDggInfo)
+    {
+        this.field_153_lcbDggInfo = field_153_lcbDggInfo;
+    }
+
+    /**
+     * Get the fcSttbfRMark field for the FIB record.
+     */
+    public int getFcSttbfRMark()
+    {
+        return field_154_fcSttbfRMark;
+    }
+
+    /**
+     * Set the fcSttbfRMark field for the FIB record.
+     */
+    public void setFcSttbfRMark(int field_154_fcSttbfRMark)
+    {
+        this.field_154_fcSttbfRMark = field_154_fcSttbfRMark;
+    }
+
+    /**
+     * Get the lcbSttbfRMark field for the FIB record.
+     */
+    public int getLcbSttbfRMark()
+    {
+        return field_155_lcbSttbfRMark;
+    }
+
+    /**
+     * Set the lcbSttbfRMark field for the FIB record.
+     */
+    public void setLcbSttbfRMark(int field_155_lcbSttbfRMark)
+    {
+        this.field_155_lcbSttbfRMark = field_155_lcbSttbfRMark;
+    }
+
+    /**
+     * Get the fcSttbCaption field for the FIB record.
+     */
+    public int getFcSttbCaption()
+    {
+        return field_156_fcSttbCaption;
+    }
+
+    /**
+     * Set the fcSttbCaption field for the FIB record.
+     */
+    public void setFcSttbCaption(int field_156_fcSttbCaption)
+    {
+        this.field_156_fcSttbCaption = field_156_fcSttbCaption;
+    }
+
+    /**
+     * Get the lcbSttbCaption field for the FIB record.
+     */
+    public int getLcbSttbCaption()
+    {
+        return field_157_lcbSttbCaption;
+    }
+
+    /**
+     * Set the lcbSttbCaption field for the FIB record.
+     */
+    public void setLcbSttbCaption(int field_157_lcbSttbCaption)
+    {
+        this.field_157_lcbSttbCaption = field_157_lcbSttbCaption;
+    }
+
+    /**
+     * Get the fcSttbAutoCaption field for the FIB record.
+     */
+    public int getFcSttbAutoCaption()
+    {
+        return field_158_fcSttbAutoCaption;
+    }
+
+    /**
+     * Set the fcSttbAutoCaption field for the FIB record.
+     */
+    public void setFcSttbAutoCaption(int field_158_fcSttbAutoCaption)
+    {
+        this.field_158_fcSttbAutoCaption = field_158_fcSttbAutoCaption;
+    }
+
+    /**
+     * Get the lcbSttbAutoCaption field for the FIB record.
+     */
+    public int getLcbSttbAutoCaption()
+    {
+        return field_159_lcbSttbAutoCaption;
+    }
+
+    /**
+     * Set the lcbSttbAutoCaption field for the FIB record.
+     */
+    public void setLcbSttbAutoCaption(int field_159_lcbSttbAutoCaption)
+    {
+        this.field_159_lcbSttbAutoCaption = field_159_lcbSttbAutoCaption;
+    }
+
+    /**
+     * Get the fcPlcfwkb field for the FIB record.
+     */
+    public int getFcPlcfwkb()
+    {
+        return field_160_fcPlcfwkb;
+    }
+
+    /**
+     * Set the fcPlcfwkb field for the FIB record.
+     */
+    public void setFcPlcfwkb(int field_160_fcPlcfwkb)
+    {
+        this.field_160_fcPlcfwkb = field_160_fcPlcfwkb;
+    }
+
+    /**
+     * Get the lcbPlcfwkb field for the FIB record.
+     */
+    public int getLcbPlcfwkb()
+    {
+        return field_161_lcbPlcfwkb;
+    }
+
+    /**
+     * Set the lcbPlcfwkb field for the FIB record.
+     */
+    public void setLcbPlcfwkb(int field_161_lcbPlcfwkb)
+    {
+        this.field_161_lcbPlcfwkb = field_161_lcbPlcfwkb;
+    }
+
+    /**
+     * Get the fcPlcfsplfcPlcfspl field for the FIB record.
+     */
+    public int getFcPlcfsplfcPlcfspl()
+    {
+        return field_162_fcPlcfsplfcPlcfspl;
+    }
+
+    /**
+     * Set the fcPlcfsplfcPlcfspl field for the FIB record.
+     */
+    public void setFcPlcfsplfcPlcfspl(int field_162_fcPlcfsplfcPlcfspl)
+    {
+        this.field_162_fcPlcfsplfcPlcfspl = field_162_fcPlcfsplfcPlcfspl;
+    }
+
+    /**
+     * Get the lcbPlcfspl field for the FIB record.
+     */
+    public int getLcbPlcfspl()
+    {
+        return field_163_lcbPlcfspl;
+    }
+
+    /**
+     * Set the lcbPlcfspl field for the FIB record.
+     */
+    public void setLcbPlcfspl(int field_163_lcbPlcfspl)
+    {
+        this.field_163_lcbPlcfspl = field_163_lcbPlcfspl;
+    }
+
+    /**
+     * Get the fcPlcftxbxTxt field for the FIB record.
+     */
+    public int getFcPlcftxbxTxt()
+    {
+        return field_164_fcPlcftxbxTxt;
+    }
+
+    /**
+     * Set the fcPlcftxbxTxt field for the FIB record.
+     */
+    public void setFcPlcftxbxTxt(int field_164_fcPlcftxbxTxt)
+    {
+        this.field_164_fcPlcftxbxTxt = field_164_fcPlcftxbxTxt;
+    }
+
+    /**
+     * Get the lcbPlcftxbxTxt field for the FIB record.
+     */
+    public int getLcbPlcftxbxTxt()
+    {
+        return field_165_lcbPlcftxbxTxt;
+    }
+
+    /**
+     * Set the lcbPlcftxbxTxt field for the FIB record.
+     */
+    public void setLcbPlcftxbxTxt(int field_165_lcbPlcftxbxTxt)
+    {
+        this.field_165_lcbPlcftxbxTxt = field_165_lcbPlcftxbxTxt;
+    }
+
+    /**
+     * Get the fcPlcffldTxbx field for the FIB record.
+     */
+    public int getFcPlcffldTxbx()
+    {
+        return field_166_fcPlcffldTxbx;
+    }
+
+    /**
+     * Set the fcPlcffldTxbx field for the FIB record.
+     */
+    public void setFcPlcffldTxbx(int field_166_fcPlcffldTxbx)
+    {
+        this.field_166_fcPlcffldTxbx = field_166_fcPlcffldTxbx;
+    }
+
+    /**
+     * Get the lcbPlcffldTxbx field for the FIB record.
+     */
+    public int getLcbPlcffldTxbx()
+    {
+        return field_167_lcbPlcffldTxbx;
+    }
+
+    /**
+     * Set the lcbPlcffldTxbx field for the FIB record.
+     */
+    public void setLcbPlcffldTxbx(int field_167_lcbPlcffldTxbx)
+    {
+        this.field_167_lcbPlcffldTxbx = field_167_lcbPlcffldTxbx;
+    }
+
+    /**
+     * Get the fcPlcfhdrtxbxTxt field for the FIB record.
+     */
+    public int getFcPlcfhdrtxbxTxt()
+    {
+        return field_168_fcPlcfhdrtxbxTxt;
+    }
+
+    /**
+     * Set the fcPlcfhdrtxbxTxt field for the FIB record.
+     */
+    public void setFcPlcfhdrtxbxTxt(int field_168_fcPlcfhdrtxbxTxt)
+    {
+        this.field_168_fcPlcfhdrtxbxTxt = field_168_fcPlcfhdrtxbxTxt;
+    }
+
+    /**
+     * Get the lcbPlcfhdrtxbxTxt field for the FIB record.
+     */
+    public int getLcbPlcfhdrtxbxTxt()
+    {
+        return field_169_lcbPlcfhdrtxbxTxt;
+    }
+
+    /**
+     * Set the lcbPlcfhdrtxbxTxt field for the FIB record.
+     */
+    public void setLcbPlcfhdrtxbxTxt(int field_169_lcbPlcfhdrtxbxTxt)
+    {
+        this.field_169_lcbPlcfhdrtxbxTxt = field_169_lcbPlcfhdrtxbxTxt;
+    }
+
+    /**
+     * Get the fcPlcffldHdrTxbx field for the FIB record.
+     */
+    public int getFcPlcffldHdrTxbx()
+    {
+        return field_170_fcPlcffldHdrTxbx;
+    }
+
+    /**
+     * Set the fcPlcffldHdrTxbx field for the FIB record.
+     */
+    public void setFcPlcffldHdrTxbx(int field_170_fcPlcffldHdrTxbx)
+    {
+        this.field_170_fcPlcffldHdrTxbx = field_170_fcPlcffldHdrTxbx;
+    }
+
+    /**
+     * Get the lcbPlcffldHdrTxbx field for the FIB record.
+     */
+    public int getLcbPlcffldHdrTxbx()
+    {
+        return field_171_lcbPlcffldHdrTxbx;
+    }
+
+    /**
+     * Set the lcbPlcffldHdrTxbx field for the FIB record.
+     */
+    public void setLcbPlcffldHdrTxbx(int field_171_lcbPlcffldHdrTxbx)
+    {
+        this.field_171_lcbPlcffldHdrTxbx = field_171_lcbPlcffldHdrTxbx;
+    }
+
+    /**
+     * Get the fcStwUser field for the FIB record.
+     */
+    public int getFcStwUser()
+    {
+        return field_172_fcStwUser;
+    }
+
+    /**
+     * Set the fcStwUser field for the FIB record.
+     */
+    public void setFcStwUser(int field_172_fcStwUser)
+    {
+        this.field_172_fcStwUser = field_172_fcStwUser;
+    }
+
+    /**
+     * Get the lcbStwUser field for the FIB record.
+     */
+    public int getLcbStwUser()
+    {
+        return field_173_lcbStwUser;
+    }
+
+    /**
+     * Set the lcbStwUser field for the FIB record.
+     */
+    public void setLcbStwUser(int field_173_lcbStwUser)
+    {
+        this.field_173_lcbStwUser = field_173_lcbStwUser;
+    }
+
+    /**
+     * Get the fcSttbttmbd field for the FIB record.
+     */
+    public int getFcSttbttmbd()
+    {
+        return field_174_fcSttbttmbd;
+    }
+
+    /**
+     * Set the fcSttbttmbd field for the FIB record.
+     */
+    public void setFcSttbttmbd(int field_174_fcSttbttmbd)
+    {
+        this.field_174_fcSttbttmbd = field_174_fcSttbttmbd;
+    }
+
+    /**
+     * Get the cbSttbttmbd field for the FIB record.
+     */
+    public int getCbSttbttmbd()
+    {
+        return field_175_cbSttbttmbd;
+    }
+
+    /**
+     * Set the cbSttbttmbd field for the FIB record.
+     */
+    public void setCbSttbttmbd(int field_175_cbSttbttmbd)
+    {
+        this.field_175_cbSttbttmbd = field_175_cbSttbttmbd;
+    }
+
+    /**
+     * Get the fcUnused field for the FIB record.
+     */
+    public int getFcUnused()
+    {
+        return field_176_fcUnused;
+    }
+
+    /**
+     * Set the fcUnused field for the FIB record.
+     */
+    public void setFcUnused(int field_176_fcUnused)
+    {
+        this.field_176_fcUnused = field_176_fcUnused;
+    }
+
+    /**
+     * Get the lcbUnused field for the FIB record.
+     */
+    public int getLcbUnused()
+    {
+        return field_177_lcbUnused;
+    }
+
+    /**
+     * Set the lcbUnused field for the FIB record.
+     */
+    public void setLcbUnused(int field_177_lcbUnused)
+    {
+        this.field_177_lcbUnused = field_177_lcbUnused;
+    }
+
+    /**
+     * Get the rgpgdbkd field for the FIB record.
+     */
+    public int getRgpgdbkd()
+    {
+        return field_178_rgpgdbkd;
+    }
+
+    /**
+     * Set the rgpgdbkd field for the FIB record.
+     */
+    public void setRgpgdbkd(int field_178_rgpgdbkd)
+    {
+        this.field_178_rgpgdbkd = field_178_rgpgdbkd;
+    }
+
+    /**
+     * Get the fcPgdMother field for the FIB record.
+     */
+    public int getFcPgdMother()
+    {
+        return field_179_fcPgdMother;
+    }
+
+    /**
+     * Set the fcPgdMother field for the FIB record.
+     */
+    public void setFcPgdMother(int field_179_fcPgdMother)
+    {
+        this.field_179_fcPgdMother = field_179_fcPgdMother;
+    }
+
+    /**
+     * Get the lcbPgdMother field for the FIB record.
+     */
+    public int getLcbPgdMother()
+    {
+        return field_180_lcbPgdMother;
+    }
+
+    /**
+     * Set the lcbPgdMother field for the FIB record.
+     */
+    public void setLcbPgdMother(int field_180_lcbPgdMother)
+    {
+        this.field_180_lcbPgdMother = field_180_lcbPgdMother;
+    }
+
+    /**
+     * Get the fcBkdMother field for the FIB record.
+     */
+    public int getFcBkdMother()
+    {
+        return field_181_fcBkdMother;
+    }
+
+    /**
+     * Set the fcBkdMother field for the FIB record.
+     */
+    public void setFcBkdMother(int field_181_fcBkdMother)
+    {
+        this.field_181_fcBkdMother = field_181_fcBkdMother;
+    }
+
+    /**
+     * Get the lcbBkdMother field for the FIB record.
+     */
+    public int getLcbBkdMother()
+    {
+        return field_182_lcbBkdMother;
+    }
+
+    /**
+     * Set the lcbBkdMother field for the FIB record.
+     */
+    public void setLcbBkdMother(int field_182_lcbBkdMother)
+    {
+        this.field_182_lcbBkdMother = field_182_lcbBkdMother;
+    }
+
+    /**
+     * Get the fcPgdFtn field for the FIB record.
+     */
+    public int getFcPgdFtn()
+    {
+        return field_183_fcPgdFtn;
+    }
+
+    /**
+     * Set the fcPgdFtn field for the FIB record.
+     */
+    public void setFcPgdFtn(int field_183_fcPgdFtn)
+    {
+        this.field_183_fcPgdFtn = field_183_fcPgdFtn;
+    }
+
+    /**
+     * Get the lcbPgdFtn field for the FIB record.
+     */
+    public int getLcbPgdFtn()
+    {
+        return field_184_lcbPgdFtn;
+    }
+
+    /**
+     * Set the lcbPgdFtn field for the FIB record.
+     */
+    public void setLcbPgdFtn(int field_184_lcbPgdFtn)
+    {
+        this.field_184_lcbPgdFtn = field_184_lcbPgdFtn;
+    }
+
+    /**
+     * Get the fcBkdFtn field for the FIB record.
+     */
+    public int getFcBkdFtn()
+    {
+        return field_185_fcBkdFtn;
+    }
+
+    /**
+     * Set the fcBkdFtn field for the FIB record.
+     */
+    public void setFcBkdFtn(int field_185_fcBkdFtn)
+    {
+        this.field_185_fcBkdFtn = field_185_fcBkdFtn;
+    }
+
+    /**
+     * Get the lcbBkdFtn field for the FIB record.
+     */
+    public int getLcbBkdFtn()
+    {
+        return field_186_lcbBkdFtn;
+    }
+
+    /**
+     * Set the lcbBkdFtn field for the FIB record.
+     */
+    public void setLcbBkdFtn(int field_186_lcbBkdFtn)
+    {
+        this.field_186_lcbBkdFtn = field_186_lcbBkdFtn;
+    }
+
+    /**
+     * Get the fcPgdEdn field for the FIB record.
+     */
+    public int getFcPgdEdn()
+    {
+        return field_187_fcPgdEdn;
+    }
+
+    /**
+     * Set the fcPgdEdn field for the FIB record.
+     */
+    public void setFcPgdEdn(int field_187_fcPgdEdn)
+    {
+        this.field_187_fcPgdEdn = field_187_fcPgdEdn;
+    }
+
+    /**
+     * Get the lcbPgdEdn field for the FIB record.
+     */
+    public int getLcbPgdEdn()
+    {
+        return field_188_lcbPgdEdn;
+    }
+
+    /**
+     * Set the lcbPgdEdn field for the FIB record.
+     */
+    public void setLcbPgdEdn(int field_188_lcbPgdEdn)
+    {
+        this.field_188_lcbPgdEdn = field_188_lcbPgdEdn;
+    }
+
+    /**
+     * Get the fcBkdEdn field for the FIB record.
+     */
+    public int getFcBkdEdn()
+    {
+        return field_189_fcBkdEdn;
+    }
+
+    /**
+     * Set the fcBkdEdn field for the FIB record.
+     */
+    public void setFcBkdEdn(int field_189_fcBkdEdn)
+    {
+        this.field_189_fcBkdEdn = field_189_fcBkdEdn;
+    }
+
+    /**
+     * Get the lcbBkdEdn field for the FIB record.
+     */
+    public int getLcbBkdEdn()
+    {
+        return field_190_lcbBkdEdn;
+    }
+
+    /**
+     * Set the lcbBkdEdn field for the FIB record.
+     */
+    public void setLcbBkdEdn(int field_190_lcbBkdEdn)
+    {
+        this.field_190_lcbBkdEdn = field_190_lcbBkdEdn;
+    }
+
+    /**
+     * Get the fcSttbfIntlFld field for the FIB record.
+     */
+    public int getFcSttbfIntlFld()
+    {
+        return field_191_fcSttbfIntlFld;
+    }
+
+    /**
+     * Set the fcSttbfIntlFld field for the FIB record.
+     */
+    public void setFcSttbfIntlFld(int field_191_fcSttbfIntlFld)
+    {
+        this.field_191_fcSttbfIntlFld = field_191_fcSttbfIntlFld;
+    }
+
+    /**
+     * Get the lcbSttbfIntlFld field for the FIB record.
+     */
+    public int getLcbSttbfIntlFld()
+    {
+        return field_192_lcbSttbfIntlFld;
+    }
+
+    /**
+     * Set the lcbSttbfIntlFld field for the FIB record.
+     */
+    public void setLcbSttbfIntlFld(int field_192_lcbSttbfIntlFld)
+    {
+        this.field_192_lcbSttbfIntlFld = field_192_lcbSttbfIntlFld;
+    }
+
+    /**
+     * Get the fcRouteSlip field for the FIB record.
+     */
+    public int getFcRouteSlip()
+    {
+        return field_193_fcRouteSlip;
+    }
+
+    /**
+     * Set the fcRouteSlip field for the FIB record.
+     */
+    public void setFcRouteSlip(int field_193_fcRouteSlip)
+    {
+        this.field_193_fcRouteSlip = field_193_fcRouteSlip;
+    }
+
+    /**
+     * Get the lcbRouteSlip field for the FIB record.
+     */
+    public int getLcbRouteSlip()
+    {
+        return field_194_lcbRouteSlip;
+    }
+
+    /**
+     * Set the lcbRouteSlip field for the FIB record.
+     */
+    public void setLcbRouteSlip(int field_194_lcbRouteSlip)
+    {
+        this.field_194_lcbRouteSlip = field_194_lcbRouteSlip;
+    }
+
+    /**
+     * Get the fcSttbSavedBy field for the FIB record.
+     */
+    public int getFcSttbSavedBy()
+    {
+        return field_195_fcSttbSavedBy;
+    }
+
+    /**
+     * Set the fcSttbSavedBy field for the FIB record.
+     */
+    public void setFcSttbSavedBy(int field_195_fcSttbSavedBy)
+    {
+        this.field_195_fcSttbSavedBy = field_195_fcSttbSavedBy;
+    }
+
+    /**
+     * Get the lcbSttbSavedBy field for the FIB record.
+     */
+    public int getLcbSttbSavedBy()
+    {
+        return field_196_lcbSttbSavedBy;
+    }
+
+    /**
+     * Set the lcbSttbSavedBy field for the FIB record.
+     */
+    public void setLcbSttbSavedBy(int field_196_lcbSttbSavedBy)
+    {
+        this.field_196_lcbSttbSavedBy = field_196_lcbSttbSavedBy;
+    }
+
+    /**
+     * Get the fcSttbFnm field for the FIB record.
+     */
+    public int getFcSttbFnm()
+    {
+        return field_197_fcSttbFnm;
+    }
+
+    /**
+     * Set the fcSttbFnm field for the FIB record.
+     */
+    public void setFcSttbFnm(int field_197_fcSttbFnm)
+    {
+        this.field_197_fcSttbFnm = field_197_fcSttbFnm;
+    }
+
+    /**
+     * Get the lcbSttbFnm field for the FIB record.
+     */
+    public int getLcbSttbFnm()
+    {
+        return field_198_lcbSttbFnm;
+    }
+
+    /**
+     * Set the lcbSttbFnm field for the FIB record.
+     */
+    public void setLcbSttbFnm(int field_198_lcbSttbFnm)
+    {
+        this.field_198_lcbSttbFnm = field_198_lcbSttbFnm;
+    }
+
+    /**
+     * Get the fcPlcfLst field for the FIB record.
+     */
+    public int getFcPlcfLst()
+    {
+        return field_199_fcPlcfLst;
+    }
+
+    /**
+     * Set the fcPlcfLst field for the FIB record.
+     */
+    public void setFcPlcfLst(int field_199_fcPlcfLst)
+    {
+        this.field_199_fcPlcfLst = field_199_fcPlcfLst;
+    }
+
+    /**
+     * Get the lcbPlcfLst field for the FIB record.
+     */
+    public int getLcbPlcfLst()
+    {
+        return field_200_lcbPlcfLst;
+    }
+
+    /**
+     * Set the lcbPlcfLst field for the FIB record.
+     */
+    public void setLcbPlcfLst(int field_200_lcbPlcfLst)
+    {
+        this.field_200_lcbPlcfLst = field_200_lcbPlcfLst;
+    }
+
+    /**
+     * Get the fcPlfLfo field for the FIB record.
+     */
+    public int getFcPlfLfo()
+    {
+        return field_201_fcPlfLfo;
+    }
+
+    /**
+     * Set the fcPlfLfo field for the FIB record.
+     */
+    public void setFcPlfLfo(int field_201_fcPlfLfo)
+    {
+        this.field_201_fcPlfLfo = field_201_fcPlfLfo;
+    }
+
+    /**
+     * Get the lcbPlfLfo field for the FIB record.
+     */
+    public int getLcbPlfLfo()
+    {
+        return field_202_lcbPlfLfo;
+    }
+
+    /**
+     * Set the lcbPlfLfo field for the FIB record.
+     */
+    public void setLcbPlfLfo(int field_202_lcbPlfLfo)
+    {
+        this.field_202_lcbPlfLfo = field_202_lcbPlfLfo;
+    }
+
+    /**
+     * Get the fcPlcftxbxBkd field for the FIB record.
+     */
+    public int getFcPlcftxbxBkd()
+    {
+        return field_203_fcPlcftxbxBkd;
+    }
+
+    /**
+     * Set the fcPlcftxbxBkd field for the FIB record.
+     */
+    public void setFcPlcftxbxBkd(int field_203_fcPlcftxbxBkd)
+    {
+        this.field_203_fcPlcftxbxBkd = field_203_fcPlcftxbxBkd;
+    }
+
+    /**
+     * Get the lcbPlcftxbxBkd field for the FIB record.
+     */
+    public int getLcbPlcftxbxBkd()
+    {
+        return field_204_lcbPlcftxbxBkd;
+    }
+
+    /**
+     * Set the lcbPlcftxbxBkd field for the FIB record.
+     */
+    public void setLcbPlcftxbxBkd(int field_204_lcbPlcftxbxBkd)
+    {
+        this.field_204_lcbPlcftxbxBkd = field_204_lcbPlcftxbxBkd;
+    }
+
+    /**
+     * Get the fcPlcftxbxHdrBkd field for the FIB record.
+     */
+    public int getFcPlcftxbxHdrBkd()
+    {
+        return field_205_fcPlcftxbxHdrBkd;
+    }
+
+    /**
+     * Set the fcPlcftxbxHdrBkd field for the FIB record.
+     */
+    public void setFcPlcftxbxHdrBkd(int field_205_fcPlcftxbxHdrBkd)
+    {
+        this.field_205_fcPlcftxbxHdrBkd = field_205_fcPlcftxbxHdrBkd;
+    }
+
+    /**
+     * Get the lcbPlcftxbxHdrBkd field for the FIB record.
+     */
+    public int getLcbPlcftxbxHdrBkd()
+    {
+        return field_206_lcbPlcftxbxHdrBkd;
+    }
+
+    /**
+     * Set the lcbPlcftxbxHdrBkd field for the FIB record.
+     */
+    public void setLcbPlcftxbxHdrBkd(int field_206_lcbPlcftxbxHdrBkd)
+    {
+        this.field_206_lcbPlcftxbxHdrBkd = field_206_lcbPlcftxbxHdrBkd;
+    }
+
+    /**
+     * Get the fcDocUndo field for the FIB record.
+     */
+    public int getFcDocUndo()
+    {
+        return field_207_fcDocUndo;
+    }
+
+    /**
+     * Set the fcDocUndo field for the FIB record.
+     */
+    public void setFcDocUndo(int field_207_fcDocUndo)
+    {
+        this.field_207_fcDocUndo = field_207_fcDocUndo;
+    }
+
+    /**
+     * Get the lcbDocUndo field for the FIB record.
+     */
+    public int getLcbDocUndo()
+    {
+        return field_208_lcbDocUndo;
+    }
+
+    /**
+     * Set the lcbDocUndo field for the FIB record.
+     */
+    public void setLcbDocUndo(int field_208_lcbDocUndo)
+    {
+        this.field_208_lcbDocUndo = field_208_lcbDocUndo;
+    }
+
+    /**
+     * Get the fcRgbuse field for the FIB record.
+     */
+    public int getFcRgbuse()
+    {
+        return field_209_fcRgbuse;
+    }
+
+    /**
+     * Set the fcRgbuse field for the FIB record.
+     */
+    public void setFcRgbuse(int field_209_fcRgbuse)
+    {
+        this.field_209_fcRgbuse = field_209_fcRgbuse;
+    }
+
+    /**
+     * Get the lcbRgbuse field for the FIB record.
+     */
+    public int getLcbRgbuse()
+    {
+        return field_210_lcbRgbuse;
+    }
+
+    /**
+     * Set the lcbRgbuse field for the FIB record.
+     */
+    public void setLcbRgbuse(int field_210_lcbRgbuse)
+    {
+        this.field_210_lcbRgbuse = field_210_lcbRgbuse;
+    }
+
+    /**
+     * Get the fcUsp field for the FIB record.
+     */
+    public int getFcUsp()
+    {
+        return field_211_fcUsp;
+    }
+
+    /**
+     * Set the fcUsp field for the FIB record.
+     */
+    public void setFcUsp(int field_211_fcUsp)
+    {
+        this.field_211_fcUsp = field_211_fcUsp;
+    }
+
+    /**
+     * Get the lcbUsp field for the FIB record.
+     */
+    public int getLcbUsp()
+    {
+        return field_212_lcbUsp;
+    }
+
+    /**
+     * Set the lcbUsp field for the FIB record.
+     */
+    public void setLcbUsp(int field_212_lcbUsp)
+    {
+        this.field_212_lcbUsp = field_212_lcbUsp;
+    }
+
+    /**
+     * Get the fcUskf field for the FIB record.
+     */
+    public int getFcUskf()
+    {
+        return field_213_fcUskf;
+    }
+
+    /**
+     * Set the fcUskf field for the FIB record.
+     */
+    public void setFcUskf(int field_213_fcUskf)
+    {
+        this.field_213_fcUskf = field_213_fcUskf;
+    }
+
+    /**
+     * Get the lcbUskf field for the FIB record.
+     */
+    public int getLcbUskf()
+    {
+        return field_214_lcbUskf;
+    }
+
+    /**
+     * Set the lcbUskf field for the FIB record.
+     */
+    public void setLcbUskf(int field_214_lcbUskf)
+    {
+        this.field_214_lcbUskf = field_214_lcbUskf;
+    }
+
+    /**
+     * Get the fcPlcupcRgbuse field for the FIB record.
+     */
+    public int getFcPlcupcRgbuse()
+    {
+        return field_215_fcPlcupcRgbuse;
+    }
+
+    /**
+     * Set the fcPlcupcRgbuse field for the FIB record.
+     */
+    public void setFcPlcupcRgbuse(int field_215_fcPlcupcRgbuse)
+    {
+        this.field_215_fcPlcupcRgbuse = field_215_fcPlcupcRgbuse;
+    }
+
+    /**
+     * Get the lcbPlcupcRgbuse field for the FIB record.
+     */
+    public int getLcbPlcupcRgbuse()
+    {
+        return field_216_lcbPlcupcRgbuse;
+    }
+
+    /**
+     * Set the lcbPlcupcRgbuse field for the FIB record.
+     */
+    public void setLcbPlcupcRgbuse(int field_216_lcbPlcupcRgbuse)
+    {
+        this.field_216_lcbPlcupcRgbuse = field_216_lcbPlcupcRgbuse;
+    }
+
+    /**
+     * Get the fcPlcupcUsp field for the FIB record.
+     */
+    public int getFcPlcupcUsp()
+    {
+        return field_217_fcPlcupcUsp;
+    }
+
+    /**
+     * Set the fcPlcupcUsp field for the FIB record.
+     */
+    public void setFcPlcupcUsp(int field_217_fcPlcupcUsp)
+    {
+        this.field_217_fcPlcupcUsp = field_217_fcPlcupcUsp;
+    }
+
+    /**
+     * Get the lcbPlcupcUsp field for the FIB record.
+     */
+    public int getLcbPlcupcUsp()
+    {
+        return field_218_lcbPlcupcUsp;
+    }
+
+    /**
+     * Set the lcbPlcupcUsp field for the FIB record.
+     */
+    public void setLcbPlcupcUsp(int field_218_lcbPlcupcUsp)
+    {
+        this.field_218_lcbPlcupcUsp = field_218_lcbPlcupcUsp;
+    }
+
+    /**
+     * Get the fcSttbGlsyStyle field for the FIB record.
+     */
+    public int getFcSttbGlsyStyle()
+    {
+        return field_219_fcSttbGlsyStyle;
+    }
+
+    /**
+     * Set the fcSttbGlsyStyle field for the FIB record.
+     */
+    public void setFcSttbGlsyStyle(int field_219_fcSttbGlsyStyle)
+    {
+        this.field_219_fcSttbGlsyStyle = field_219_fcSttbGlsyStyle;
+    }
+
+    /**
+     * Get the lcbSttbGlsyStyle field for the FIB record.
+     */
+    public int getLcbSttbGlsyStyle()
+    {
+        return field_220_lcbSttbGlsyStyle;
+    }
+
+    /**
+     * Set the lcbSttbGlsyStyle field for the FIB record.
+     */
+    public void setLcbSttbGlsyStyle(int field_220_lcbSttbGlsyStyle)
+    {
+        this.field_220_lcbSttbGlsyStyle = field_220_lcbSttbGlsyStyle;
+    }
+
+    /**
+     * Get the fcPlgosl field for the FIB record.
+     */
+    public int getFcPlgosl()
+    {
+        return field_221_fcPlgosl;
+    }
+
+    /**
+     * Set the fcPlgosl field for the FIB record.
+     */
+    public void setFcPlgosl(int field_221_fcPlgosl)
+    {
+        this.field_221_fcPlgosl = field_221_fcPlgosl;
+    }
+
+    /**
+     * Get the lcbPlgosl field for the FIB record.
+     */
+    public int getLcbPlgosl()
+    {
+        return field_222_lcbPlgosl;
+    }
+
+    /**
+     * Set the lcbPlgosl field for the FIB record.
+     */
+    public void setLcbPlgosl(int field_222_lcbPlgosl)
+    {
+        this.field_222_lcbPlgosl = field_222_lcbPlgosl;
+    }
+
+    /**
+     * Get the fcPlcocx field for the FIB record.
+     */
+    public int getFcPlcocx()
+    {
+        return field_223_fcPlcocx;
+    }
+
+    /**
+     * Set the fcPlcocx field for the FIB record.
+     */
+    public void setFcPlcocx(int field_223_fcPlcocx)
+    {
+        this.field_223_fcPlcocx = field_223_fcPlcocx;
+    }
+
+    /**
+     * Get the lcbPlcocx field for the FIB record.
+     */
+    public int getLcbPlcocx()
+    {
+        return field_224_lcbPlcocx;
+    }
+
+    /**
+     * Set the lcbPlcocx field for the FIB record.
+     */
+    public void setLcbPlcocx(int field_224_lcbPlcocx)
+    {
+        this.field_224_lcbPlcocx = field_224_lcbPlcocx;
+    }
+
+    /**
+     * Get the fcPlcfbteLvc field for the FIB record.
+     */
+    public int getFcPlcfbteLvc()
+    {
+        return field_225_fcPlcfbteLvc;
+    }
+
+    /**
+     * Set the fcPlcfbteLvc field for the FIB record.
+     */
+    public void setFcPlcfbteLvc(int field_225_fcPlcfbteLvc)
+    {
+        this.field_225_fcPlcfbteLvc = field_225_fcPlcfbteLvc;
+    }
+
+    /**
+     * Get the lcbPlcfbteLvc field for the FIB record.
+     */
+    public int getLcbPlcfbteLvc()
+    {
+        return field_226_lcbPlcfbteLvc;
+    }
+
+    /**
+     * Set the lcbPlcfbteLvc field for the FIB record.
+     */
+    public void setLcbPlcfbteLvc(int field_226_lcbPlcfbteLvc)
+    {
+        this.field_226_lcbPlcfbteLvc = field_226_lcbPlcfbteLvc;
+    }
+
+    /**
+     * Get the ftModified field for the FIB record.
+     */
+    public int getFtModified()
+    {
+        return field_227_ftModified;
+    }
+
+    /**
+     * Set the ftModified field for the FIB record.
+     */
+    public void setFtModified(int field_227_ftModified)
+    {
+        this.field_227_ftModified = field_227_ftModified;
+    }
+
+    /**
+     * Get the dwLowDateTime field for the FIB record.
+     */
+    public int getDwLowDateTime()
+    {
+        return field_228_dwLowDateTime;
+    }
+
+    /**
+     * Set the dwLowDateTime field for the FIB record.
+     */
+    public void setDwLowDateTime(int field_228_dwLowDateTime)
+    {
+        this.field_228_dwLowDateTime = field_228_dwLowDateTime;
+    }
+
+    /**
+     * Get the dwHighDateTime field for the FIB record.
+     */
+    public int getDwHighDateTime()
+    {
+        return field_229_dwHighDateTime;
+    }
+
+    /**
+     * Set the dwHighDateTime field for the FIB record.
+     */
+    public void setDwHighDateTime(int field_229_dwHighDateTime)
+    {
+        this.field_229_dwHighDateTime = field_229_dwHighDateTime;
+    }
+
+    /**
+     * Get the fcPlcflvc field for the FIB record.
+     */
+    public int getFcPlcflvc()
+    {
+        return field_230_fcPlcflvc;
+    }
+
+    /**
+     * Set the fcPlcflvc field for the FIB record.
+     */
+    public void setFcPlcflvc(int field_230_fcPlcflvc)
+    {
+        this.field_230_fcPlcflvc = field_230_fcPlcflvc;
+    }
+
+    /**
+     * Get the lcbPlcflvc field for the FIB record.
+     */
+    public int getLcbPlcflvc()
+    {
+        return field_231_lcbPlcflvc;
+    }
+
+    /**
+     * Set the lcbPlcflvc field for the FIB record.
+     */
+    public void setLcbPlcflvc(int field_231_lcbPlcflvc)
+    {
+        this.field_231_lcbPlcflvc = field_231_lcbPlcflvc;
+    }
+
+    /**
+     * Get the fcPlcasumy field for the FIB record.
+     */
+    public int getFcPlcasumy()
+    {
+        return field_232_fcPlcasumy;
+    }
+
+    /**
+     * Set the fcPlcasumy field for the FIB record.
+     */
+    public void setFcPlcasumy(int field_232_fcPlcasumy)
+    {
+        this.field_232_fcPlcasumy = field_232_fcPlcasumy;
+    }
+
+    /**
+     * Get the lcbPlcasumy field for the FIB record.
+     */
+    public int getLcbPlcasumy()
+    {
+        return field_233_lcbPlcasumy;
+    }
+
+    /**
+     * Set the lcbPlcasumy field for the FIB record.
+     */
+    public void setLcbPlcasumy(int field_233_lcbPlcasumy)
+    {
+        this.field_233_lcbPlcasumy = field_233_lcbPlcasumy;
+    }
+
+    /**
+     * Get the fcPlcfgram field for the FIB record.
+     */
+    public int getFcPlcfgram()
+    {
+        return field_234_fcPlcfgram;
+    }
+
+    /**
+     * Set the fcPlcfgram field for the FIB record.
+     */
+    public void setFcPlcfgram(int field_234_fcPlcfgram)
+    {
+        this.field_234_fcPlcfgram = field_234_fcPlcfgram;
+    }
+
+    /**
+     * Get the lcbPlcfgram field for the FIB record.
+     */
+    public int getLcbPlcfgram()
+    {
+        return field_235_lcbPlcfgram;
+    }
+
+    /**
+     * Set the lcbPlcfgram field for the FIB record.
+     */
+    public void setLcbPlcfgram(int field_235_lcbPlcfgram)
+    {
+        this.field_235_lcbPlcfgram = field_235_lcbPlcfgram;
+    }
+
+    /**
+     * Get the fcSttbListNames field for the FIB record.
+     */
+    public int getFcSttbListNames()
+    {
+        return field_236_fcSttbListNames;
+    }
+
+    /**
+     * Set the fcSttbListNames field for the FIB record.
+     */
+    public void setFcSttbListNames(int field_236_fcSttbListNames)
+    {
+        this.field_236_fcSttbListNames = field_236_fcSttbListNames;
+    }
+
+    /**
+     * Get the lcbSttbListNames field for the FIB record.
+     */
+    public int getLcbSttbListNames()
+    {
+        return field_237_lcbSttbListNames;
+    }
+
+    /**
+     * Set the lcbSttbListNames field for the FIB record.
+     */
+    public void setLcbSttbListNames(int field_237_lcbSttbListNames)
+    {
+        this.field_237_lcbSttbListNames = field_237_lcbSttbListNames;
+    }
+
+    /**
+     * Get the fcSttbfUssr field for the FIB record.
+     */
+    public int getFcSttbfUssr()
+    {
+        return field_238_fcSttbfUssr;
+    }
+
+    /**
+     * Set the fcSttbfUssr field for the FIB record.
+     */
+    public void setFcSttbfUssr(int field_238_fcSttbfUssr)
+    {
+        this.field_238_fcSttbfUssr = field_238_fcSttbfUssr;
+    }
+
+    /**
+     * Get the lcbSttbfUssr field for the FIB record.
+     */
+    public int getLcbSttbfUssr()
+    {
+        return field_239_lcbSttbfUssr;
+    }
+
+    /**
+     * Set the lcbSttbfUssr field for the FIB record.
+     */
+    public void setLcbSttbfUssr(int field_239_lcbSttbfUssr)
+    {
+        this.field_239_lcbSttbfUssr = field_239_lcbSttbfUssr;
     }
 
     /**
