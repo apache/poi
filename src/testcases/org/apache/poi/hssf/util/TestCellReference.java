@@ -97,6 +97,42 @@ public class TestCellReference extends TestCase {
         assertTrue("col is rel",!cf.isColAbsolute());
         assertTrue("string is B$5",cf.toString().equals("B$5"));
     }
+    
+    public void  testAbsRef5(){
+        CellReference cf = new CellReference("$B5");
+        assertTrue("row is 4",cf.getRow()==4);
+        assertTrue("col is 1",cf.getCol()==1);
+        assertTrue("row is abs",!cf.isRowAbsolute());
+        assertTrue("col is rel",cf.isColAbsolute());
+        assertTrue("string is B$5",cf.toString().equals("$B5"));
+    }
+    
+    public void  testAbsRef6(){
+        CellReference cf = new CellReference(4,1,false,true);
+        assertTrue("row is 4",cf.getRow()==4);
+        assertTrue("col is 1",cf.getCol()==1);
+        assertTrue("row is abs",!cf.isRowAbsolute());
+        assertTrue("col is rel",cf.isColAbsolute());
+        assertTrue("string is B$5",cf.toString().equals("$B5"));
+    }
+
+    public void  testAbsRef7(){
+        CellReference cf = new CellReference("B5");
+        assertTrue("row is 4",cf.getRow()==4);
+        assertTrue("col is 1",cf.getCol()==1);
+        assertTrue("row is abs",!cf.isRowAbsolute());
+        assertTrue("col is rel",!cf.isColAbsolute());
+        assertTrue("string is B$5",cf.toString().equals("B5"));
+    }
+    
+    public void  testAbsRef8(){
+        CellReference cf = new CellReference(4,1,false,false);
+        assertTrue("row is 4",cf.getRow()==4);
+        assertTrue("col is 1",cf.getCol()==1);
+        assertTrue("row is abs",!cf.isRowAbsolute());
+        assertTrue("col is rel",!cf.isColAbsolute());
+        assertTrue("string is B$5",cf.toString().equals("B5"));
+    }
 
     
     public static void main(String [] args) {

@@ -63,7 +63,8 @@ package org.apache.poi.hssf.record.formula;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.BitField;
 
-import org.apache.poi.hssf.util.ReferenceUtil;
+import org.apache.poi.hssf.util.AreaReference;
+import org.apache.poi.hssf.util.CellReference;
 
 /**
  * Specifies a rectangular area of cells A1:A4 for instance.
@@ -87,15 +88,17 @@ public class AreaPtg
     
    
     protected AreaPtg(String arearef) {
-        int[] xyxy = ReferenceUtil.getXYXYFromAreaRef(arearef);
-        setFirstRow((short)xyxy[0]);
-        setFirstColumn((short)xyxy[1]);
-        setLastRow((short)xyxy[2]);
-        setLastColumn((short)xyxy[3]);
-        setFirstColRelative(true);
-        setLastColRelative(true);
-        setFirstRowRelative(true);
-        setLastRowRelative(true);
+        //int[] xyxy = ReferenceUtil.getXYXYFromAreaRef(arearef);
+        AreaReference ar = new AreaReference(arearef);
+        
+        setFirstRow((short)ar.getCells()[0].getRow());
+        setFirstColumn((short)ar.getCells()[0].getCol());
+        setLastRow((short)ar.getCells()[1].getRow());
+        setLastColumn((short)ar.getCells()[1].getCol());
+        setFirstColRelative(!ar.getCells()[0].isColAbsolute());
+        setLastColRelative(!ar.getCells()[1].isColAbsolute());
+        setFirstRowRelative(!ar.getCells()[0].isRowAbsolute());
+        setLastRowRelative(!ar.getCells()[1].isRowAbsolute());
         
     }
 
@@ -302,12 +305,8 @@ public class AreaPtg
 
     public String toFormulaString()
     {
-        String firstrow = "" + (getFirstRow() + 1);
-        String lastrow  = null;
-        // String firstcol = ""+
-        // String lastcol
-        return ReferenceUtil.getReferenceFromXY(getFirstRow(),getFirstColumn()) + ":"
-               + ReferenceUtil.getReferenceFromXY(getLastRow(),getLastColumn());
+         return (new CellReference(getFirstRow(),getFirstColumn(),!isFirstRowRelative(),!isFirstColRelative())).toString() + ":" +
+                (new CellReference(getLastRow(),getLastColumn(),!isLastRowRelative(),!isLastColRelative())).toString();
     }
 
 }

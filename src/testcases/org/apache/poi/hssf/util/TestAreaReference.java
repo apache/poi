@@ -54,55 +54,27 @@
 
 package org.apache.poi.hssf.util;
 
-public class AreaReference {
-    
-    
-private CellReference [] cells;
-private int dim;
+import junit.framework.TestCase;
 
-    /** Create an area ref from a string representation
-     */
-    public AreaReference(String reference) {
-        String[] refs = seperateAreaRefs(reference);
-        dim = refs.length;
-        cells = new CellReference[dim];
-        for (int i=0;i<dim;i++) {
-            cells[i]=new CellReference(refs[i]);
-        }
+public class TestAreaReference extends TestCase {
+     public TestAreaReference(String s) {
+        super(s);
     }
-    //not sure if we need to be flexible here!
-    /** return the dimensions of this area
-     **/
-    public int getDim() {
-        return dim;
-    }
-    /** return the cell references that define this area */
-    public CellReference[] getCells() {
-        return cells;
-    }
-    
-    public String toString() {
-        StringBuffer retval = new StringBuffer();
-        for (int i=0;i<dim;i++){
-            retval.append(':');
-            retval.append(cells[i].toString());
-        }
-        retval.deleteCharAt(0);
-        return retval.toString();
-    }
-    
-    /**
-     * seperates Area refs in two parts and returns them as seperate elements in a 
-     * String array
-     */
-    private String[] seperateAreaRefs(String reference) {
-        String retval[] = new String[2];
-        int length = reference.length();
+    public void testAreaRef1() {
+        AreaReference ar = new AreaReference("$A$1:$B$2");
+        assertTrue("Two cells expected",ar.getCells().length == 2);
+        CellReference cf = ar.getCells()[0];
+        assertTrue("row is 4",cf.getRow()==0);
+        assertTrue("col is 1",cf.getCol()==0);
+        assertTrue("row is abs",cf.isRowAbsolute());
+        assertTrue("col is abs",cf.isColAbsolute());
+        assertTrue("string is $A$1",cf.toString().equals("$A$1"));
         
-        int loc = reference.indexOf(':',0);
-        
-        retval[0] = reference.substring(0,loc);
-        retval[1] = reference.substring(loc+1);        
-        return retval;
+        cf = ar.getCells()[1];
+        assertTrue("row is 4",cf.getRow()==1);
+        assertTrue("col is 1",cf.getCol()==1);
+        assertTrue("row is abs",cf.isRowAbsolute());
+        assertTrue("col is abs",cf.isColAbsolute());
+        assertTrue("string is $B$2",cf.toString().equals("$B$2"));
     }
 }
