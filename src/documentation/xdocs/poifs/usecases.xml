@@ -2,6 +2,7 @@
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "../dtd/document-v11.dtd"> 
 <document>
   <header>
+    <title>POIFS Use Cases</title>
     <authors>
       <person email="mjohnson@apache.org" name="Marc Johnson" id="MJ"/>
     </authors>
