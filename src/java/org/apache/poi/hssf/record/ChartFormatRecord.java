@@ -62,7 +62,7 @@ import org.apache.poi.util.BitField;
  * Class ChartFormatRecord
  *
  *
- * @author
+ * @author Glen Stampoultzis (glens at apache.org)
  * @version %I%, %G%
  */
 
@@ -86,7 +86,7 @@ public class ChartFormatRecord
     /**
      * Constructs a ChartFormatRecord record and sets its fields appropriately.
      *
-     * @param short id must equal the sid or an exception will be throw upon validation
+     * @param id    id must equal the sid or an exception will be throw upon validation
      * @param size  the size of the data area of the record
      * @param data  data of the record (should not contain sid/len)
      */
@@ -99,7 +99,7 @@ public class ChartFormatRecord
     /**
      * Constructs a ChartFormatRecord record and sets its fields appropriately.
      *
-     * @param short id must equal the sid or an exception will be throw upon validation
+     * @param id    id must equal the sid or an exception will be throw upon validation
      * @param size  the size of the data area of the record
      * @param data  data of the record (should not contain sid/len)
      * @param offset of the record's data
