@@ -79,7 +79,7 @@ import org.apache.poi.hdf.model.hdftypes.HDFType;
 public class <xsl:value-of select="@name"/>Type
     implements HDFType
 {
-    public final static short      sid                             = <xsl:value-of select="@id"/>;
+
 <xsl:for-each select="//fields/field">    private  <xsl:value-of select="recutil:getType(@size,@type,10)"/><xsl:text> </xsl:text><xsl:value-of select="recutil:getFieldName(position(),@name,0)"/>;
 <xsl:apply-templates select="./bit|./const"/>
 </xsl:for-each>
@@ -110,18 +110,6 @@ public class <xsl:value-of select="@name"/>Type
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte[] data)
-    {
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset, (short)(getSize() - 4));
-<xsl:variable name="fieldIterator" select="field:new()"/>
-<xsl:for-each select="//fields/field"><xsl:text>
-        </xsl:text><xsl:value-of select="field:serialiseEncoder($fieldIterator,position(),@name,@size,@type)"/>
-</xsl:for-each>
-
-        return getSize();
-    }
-
     /**
      * Size of record (exluding 4 byte header)
      */
@@ -134,10 +122,6 @@ public class <xsl:value-of select="@name"/>Type
 </xsl:for-each>;
     }
 
-    public short getSid()
-    {
-        return this.sid;
-    }
 
 <xsl:apply-templates select="//field" mode="getset"/>
 <xsl:apply-templates select="//field" mode="bits"/>
@@ -172,7 +156,7 @@ public class <xsl:value-of select="@name"/>Type
 </xsl:for-each>
 </xsl:template>
 
-<xsl:template match = "bit" >    private BitField   <xsl:value-of select="recutil:getFieldName(@name,42)"/> = new BitField(<xsl:value-of select="recutil:getMask(@number)"/>);
+<xsl:template match = "bit" >    private BitField   <xsl:value-of select="recutil:getFieldName(@name,42)"/> = new BitField(<xsl:value-of select="@mask"/>);
 </xsl:template>
 <xsl:template match = "const">    public final static <xsl:value-of select="recutil:getType(../@size,../@type,10)"/><xsl:text>  </xsl:text><xsl:value-of select="recutil:getConstName(../@name,@name,30)"/> = <xsl:value-of select="@value"/>;
 </xsl:template>

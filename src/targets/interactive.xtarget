@@ -24,6 +24,7 @@
     <echo message=" scratchpad ------- build-run scratchpad code"/>       
     <echo message=" contrib ---------- build-run contributed code"/>    
     <echo message=" generate-records - generate excel records"/>    
+    <echo message=" generate-types --- generate word types"/>    
 
     <property name="input.selection" value="compile"/>        
     <user-input name="input.selection">Please select a target </user-input>   
