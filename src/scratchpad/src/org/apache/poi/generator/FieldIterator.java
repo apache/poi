@@ -95,8 +95,10 @@ public class FieldIterator
             result = "data[ 0x" + Integer.toHexString(offset) + " + offset ]";
         else if (javaType.equals("double"))
             result = "LittleEndian.getDouble(data, 0x" + Integer.toHexString(offset) + " + offset)";
-        else if (javaType.equals("String"))
-            result = "StringUtil.getFromUnicode(data, 0x" + Integer.toHexString(offset) + " + offset,"+ size + ")";
+        else if (javaType.equals("String") && !type.equals("hbstring"))
+            result = "StringUtil.getFromUnicode(data, 0x" + Integer.toHexString(offset) + " + offset,("+ size + "-1)/2)";
+        else if (javaType.equals("String") && type.equals("hbstring"))
+            result = "StringUtil.getFromUnicodeHigh(data, 0x" + Integer.toHexString(offset) + " + offset, ("+ size+"/2))";
 
         try
         {
@@ -126,8 +128,11 @@ public class FieldIterator
             result = "data[ " + (offset+4) + " + offset ] = " + javaFieldName + ";";
         else if (javaType.equals("double"))
             result = "LittleEndian.putDouble(data, " + (offset+4) + " + offset, " + javaFieldName + ");";
-        else if (javaType.equals("ExcelString"))
-            result = "StringUtil.putUncompressedUnicode("+ javaFieldName +", data, 20 + offset);";
+        else if (javaType.equals("String") && !type.equals("hbstring"))
+            result = "StringUtil.putUncompressedUnicode("+ javaFieldName +", data, offset+4);";
+        else if (javaType.equals("String") && type.equals("hbstring"))
+            result = "StringUtil.putUncompressedUnicodeHigh("+ javaFieldName +", data, "+(offset+4)+" + offset);";
+        
 
         try
         {
@@ -152,12 +157,12 @@ public class FieldIterator
         {
             String javaFieldName = RecordUtil.getFieldName(fieldNumber,fieldName,0);
             return result + javaFieldName + ".length * 2 + 2";
-        }
-        else
+        } else 
         {
             return result + size;
         }
     }
+    
 
 }
 
