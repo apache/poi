@@ -75,7 +75,8 @@ public abstract class CHPAbstractType
     implements HDFType
 {
 
-    private  int field_1_format_flags;
+    private  short field_1_chse;
+    private  int field_2_format_flags;
         private BitField  fBold = new BitField(0x0001);
         private BitField  fItalic = new BitField(0x0002);
         private BitField  fRMarkDel = new BitField(0x0004);
@@ -92,46 +93,58 @@ public abstract class CHPAbstractType
         private BitField  fLowerCase = new BitField(0x2000);
         private BitField  fData = new BitField(0x4000);
         private BitField  fOle2 = new BitField(0x8000);
-    private  int field_2_format_flags1;
+    private  int field_3_format_flags1;
         private BitField  fEmboss = new BitField(0x0001);
         private BitField  fImprint = new BitField(0x0002);
         private BitField  fDStrike = new BitField(0x0004);
         private BitField  fUsePgsuSettings = new BitField(0x0008);
-    private  int field_3_ftcAscii;
-    private  int field_4_ftcFE;
-    private  int field_5_ftcOther;
-    private  int field_6_hps;
-    private  int field_7_dxaSpace;
-    private  int field_8_iss;
-    private  int field_9_kul;
-    private  int field_10_ico;
-    private  int field_11_hpsPos;
-    private  int field_12_lidDefault;
-    private  int field_13_lidFE;
-    private  int field_14_idctHint;
-    private  int field_15_wCharScale;
-    private  int field_16_FC;
-    private  int field_17_ibstRMark;
-    private  int field_18_ibstRMarkDel;
-    private  int field_19_istd;
-    private  int field_20_ftcSym;
-    private  int field_21_xchSym;
-    private  int field_22_idslRMReason;
-    private  int field_23_idslReasonDel;
-    private  int field_24_ysr;
-    private  int field_25_chYsr;
-    private  int field_26_hpsKern;
-    private  int field_27_icoHighlight;
-    private  int field_28_fHighlight;
-    private  int field_29_fPropMark;
-    private  int field_30_ibstPropRMark;
-    private  int field_31_dttmPropRMark;
-    private  int field_32_sfxtText;
-    private  int field_33_fDispFldRMark;
-    private  int field_34_ibstDispFldRMark;
-    private  int field_35_dttmDispFldRMark;
-    private  int field_36_shd;
-    private  int field_37_brc;
+    private  int field_4_ftcAscii;
+    private  int field_5_ftcFE;
+    private  int field_6_ftcOther;
+    private  int field_7_hps;
+    private  int field_8_dxaSpace;
+    private  byte field_9_iss;
+    private  byte field_10_kul;
+    private  byte field_11_ico;
+    private  int field_12_hpsPos;
+    private  int field_13_lidDefault;
+    private  int field_14_lidFE;
+    private  byte field_15_idctHint;
+    private  int field_16_wCharScale;
+    private  int field_17_fcPic;
+    private  int field_18_fcObj;
+    private  int field_19_lTagObj;
+    private  int field_20_ibstRMark;
+    private  int field_21_ibstRMarkDel;
+    private  short[] field_22_dttmRMark;
+    private  short[] field_23_dttmRMarkDel;
+    private  int field_24_istd;
+    private  int field_25_baseIstd;
+    private  int field_26_ftcSym;
+    private  int field_27_xchSym;
+    private  int field_28_idslRMReason;
+    private  int field_29_idslReasonDel;
+    private  byte field_30_ysr;
+    private  byte field_31_chYsr;
+    private  int field_32_hpsKern;
+    private  short field_33_Highlight;
+        private BitField  icoHighlight = new BitField(0x001f);
+        private BitField  fHighlight = new BitField(0x0020);
+        private BitField  kcd = new BitField(0x01c0);
+        private BitField  fNavHighlight = new BitField(0x0200);
+        private BitField  fChsDiff = new BitField(0x0400);
+        private BitField  fMacChs = new BitField(0x0800);
+        private BitField  fFtcAsciSym = new BitField(0x1000);
+    private  short field_34_fPropMark;
+    private  int field_35_ibstPropRMark;
+    private  int field_36_dttmPropRMark;
+    private  byte field_37_sfxtText;
+    private  byte field_38_fDispFldRMark;
+    private  int field_39_ibstDispFldRMark;
+    private  int field_40_dttmDispFldRMark;
+    private  byte[] field_41_xstDispFldRMark;
+    private  int field_42_shd;
+    private  short[] field_43_brc;
 
 
     public CHPAbstractType()
@@ -144,25 +157,41 @@ public abstract class CHPAbstractType
      */
     public int getSize()
     {
-        return 4 + 2 + 2 + 2 + 2 + 2 + 2 + 4 + 1 + 1 + 1 + 2 + 2 + 2 + 1 + 2 + 4 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 1 + 1 + 2 + 1 + 1 + 2 + 2 + 4 + 1 + 1 + 2 + 4 + 2 + 2;
+        return 4 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 4 + 1 + 1 + 1 + 2 + 2 + 2 + 1 + 2 + 4 + 4 + 4 + 2 + 2 + 4 + 4 + 2 + 2 + 2 + 2 + 2 + 2 + 1 + 1 + 2 + 2 + 2 + 2 + 4 + 1 + 1 + 2 + 4 + 32 + 2 + 4;
     }
 
 
+
+    /**
+     * Get the chse field for the CHP record.
+     */
+    public short getChse()
+    {
+        return field_1_chse;
+    }
+
+    /**
+     * Set the chse field for the CHP record.
+     */
+    public void setChse(short field_1_chse)
+    {
+        this.field_1_chse = field_1_chse;
+    }
 
     /**
      * Get the format_flags field for the CHP record.
      */
     public int getFormat_flags()
     {
-        return field_1_format_flags;
+        return field_2_format_flags;
     }
 
     /**
      * Set the format_flags field for the CHP record.
      */
-    public void setFormat_flags(int field_1_format_flags)
+    public void setFormat_flags(int field_2_format_flags)
     {
-        this.field_1_format_flags = field_1_format_flags;
+        this.field_2_format_flags = field_2_format_flags;
     }
 
     /**
@@ -170,15 +199,15 @@ public abstract class CHPAbstractType
      */
     public int getFormat_flags1()
     {
-        return field_2_format_flags1;
+        return field_3_format_flags1;
     }
 
     /**
      * Set the format_flags1 field for the CHP record.
      */
-    public void setFormat_flags1(int field_2_format_flags1)
+    public void setFormat_flags1(int field_3_format_flags1)
     {
-        this.field_2_format_flags1 = field_2_format_flags1;
+        this.field_3_format_flags1 = field_3_format_flags1;
     }
 
     /**
@@ -186,15 +215,15 @@ public abstract class CHPAbstractType
      */
     public int getFtcAscii()
     {
-        return field_3_ftcAscii;
+        return field_4_ftcAscii;
     }
 
     /**
      * Set the ftcAscii field for the CHP record.
      */
-    public void setFtcAscii(int field_3_ftcAscii)
+    public void setFtcAscii(int field_4_ftcAscii)
     {
-        this.field_3_ftcAscii = field_3_ftcAscii;
+        this.field_4_ftcAscii = field_4_ftcAscii;
     }
 
     /**
@@ -202,15 +231,15 @@ public abstract class CHPAbstractType
      */
     public int getFtcFE()
     {
-        return field_4_ftcFE;
+        return field_5_ftcFE;
     }
 
     /**
      * Set the ftcFE field for the CHP record.
      */
-    public void setFtcFE(int field_4_ftcFE)
+    public void setFtcFE(int field_5_ftcFE)
     {
-        this.field_4_ftcFE = field_4_ftcFE;
+        this.field_5_ftcFE = field_5_ftcFE;
     }
 
     /**
@@ -218,15 +247,15 @@ public abstract class CHPAbstractType
      */
     public int getFtcOther()
     {
-        return field_5_ftcOther;
+        return field_6_ftcOther;
     }
 
     /**
      * Set the ftcOther field for the CHP record.
      */
-    public void setFtcOther(int field_5_ftcOther)
+    public void setFtcOther(int field_6_ftcOther)
     {
-        this.field_5_ftcOther = field_5_ftcOther;
+        this.field_6_ftcOther = field_6_ftcOther;
     }
 
     /**
@@ -234,15 +263,15 @@ public abstract class CHPAbstractType
      */
     public int getHps()
     {
-        return field_6_hps;
+        return field_7_hps;
     }
 
     /**
      * Set the hps field for the CHP record.
      */
-    public void setHps(int field_6_hps)
+    public void setHps(int field_7_hps)
     {
-        this.field_6_hps = field_6_hps;
+        this.field_7_hps = field_7_hps;
     }
 
     /**
@@ -250,63 +279,63 @@ public abstract class CHPAbstractType
      */
     public int getDxaSpace()
     {
-        return field_7_dxaSpace;
+        return field_8_dxaSpace;
     }
 
     /**
      * Set the dxaSpace field for the CHP record.
      */
-    public void setDxaSpace(int field_7_dxaSpace)
+    public void setDxaSpace(int field_8_dxaSpace)
     {
-        this.field_7_dxaSpace = field_7_dxaSpace;
+        this.field_8_dxaSpace = field_8_dxaSpace;
     }
 
     /**
      * Get the iss field for the CHP record.
      */
-    public int getIss()
+    public byte getIss()
     {
-        return field_8_iss;
+        return field_9_iss;
     }
 
     /**
      * Set the iss field for the CHP record.
      */
-    public void setIss(int field_8_iss)
+    public void setIss(byte field_9_iss)
     {
-        this.field_8_iss = field_8_iss;
+        this.field_9_iss = field_9_iss;
     }
 
     /**
      * Get the kul field for the CHP record.
      */
-    public int getKul()
+    public byte getKul()
     {
-        return field_9_kul;
+        return field_10_kul;
     }
 
     /**
      * Set the kul field for the CHP record.
      */
-    public void setKul(int field_9_kul)
+    public void setKul(byte field_10_kul)
     {
-        this.field_9_kul = field_9_kul;
+        this.field_10_kul = field_10_kul;
     }
 
     /**
      * Get the ico field for the CHP record.
      */
-    public int getIco()
+    public byte getIco()
     {
-        return field_10_ico;
+        return field_11_ico;
     }
 
     /**
      * Set the ico field for the CHP record.
      */
-    public void setIco(int field_10_ico)
+    public void setIco(byte field_11_ico)
     {
-        this.field_10_ico = field_10_ico;
+        this.field_11_ico = field_11_ico;
     }
 
     /**
@@ -314,15 +343,15 @@ public abstract class CHPAbstractType
      */
     public int getHpsPos()
     {
-        return field_11_hpsPos;
+        return field_12_hpsPos;
     }
 
     /**
      * Set the hpsPos field for the CHP record.
      */
-    public void setHpsPos(int field_11_hpsPos)
+    public void setHpsPos(int field_12_hpsPos)
     {
-        this.field_11_hpsPos = field_11_hpsPos;
+        this.field_12_hpsPos = field_12_hpsPos;
     }
 
     /**
@@ -330,15 +359,15 @@ public abstract class CHPAbstractType
      */
     public int getLidDefault()
     {
-        return field_12_lidDefault;
+        return field_13_lidDefault;
     }
 
     /**
      * Set the lidDefault field for the CHP record.
      */
-    public void setLidDefault(int field_12_lidDefault)
+    public void setLidDefault(int field_13_lidDefault)
     {
-        this.field_12_lidDefault = field_12_lidDefault;
+        this.field_13_lidDefault = field_13_lidDefault;
     }
 
     /**
@@ -346,31 +375,31 @@ public abstract class CHPAbstractType
      */
     public int getLidFE()
     {
-        return field_13_lidFE;
+        return field_14_lidFE;
     }
 
     /**
      * Set the lidFE field for the CHP record.
      */
-    public void setLidFE(int field_13_lidFE)
+    public void setLidFE(int field_14_lidFE)
     {
-        this.field_13_lidFE = field_13_lidFE;
+        this.field_14_lidFE = field_14_lidFE;
     }
 
     /**
      * Get the idctHint field for the CHP record.
      */
-    public int getIdctHint()
+    public byte getIdctHint()
     {
-        return field_14_idctHint;
+        return field_15_idctHint;
     }
 
     /**
      * Set the idctHint field for the CHP record.
      */
-    public void setIdctHint(int field_14_idctHint)
+    public void setIdctHint(byte field_15_idctHint)
     {
-        this.field_14_idctHint = field_14_idctHint;
+        this.field_15_idctHint = field_15_idctHint;
     }
 
     /**
@@ -378,31 +407,63 @@ public abstract class CHPAbstractType
      */
     public int getWCharScale()
     {
-        return field_15_wCharScale;
+        return field_16_wCharScale;
     }
 
     /**
      * Set the wCharScale field for the CHP record.
      */
-    public void setWCharScale(int field_15_wCharScale)
+    public void setWCharScale(int field_16_wCharScale)
     {
-        this.field_15_wCharScale = field_15_wCharScale;
+        this.field_16_wCharScale = field_16_wCharScale;
     }
 
     /**
-     * Get the FC field for the CHP record.
+     * Get the fcPic field for the CHP record.
      */
-    public int getFC()
+    public int getFcPic()
     {
-        return field_16_FC;
+        return field_17_fcPic;
     }
 
     /**
-     * Set the FC field for the CHP record.
+     * Set the fcPic field for the CHP record.
      */
-    public void setFC(int field_16_FC)
+    public void setFcPic(int field_17_fcPic)
     {
-        this.field_16_FC = field_16_FC;
+        this.field_17_fcPic = field_17_fcPic;
+    }
+
+    /**
+     * Get the fcObj field for the CHP record.
+     */
+    public int getFcObj()
+    {
+        return field_18_fcObj;
+    }
+
+    /**
+     * Set the fcObj field for the CHP record.
+     */
+    public void setFcObj(int field_18_fcObj)
+    {
+        this.field_18_fcObj = field_18_fcObj;
+    }
+
+    /**
+     * Get the lTagObj field for the CHP record.
+     */
+    public int getLTagObj()
+    {
+        return field_19_lTagObj;
+    }
+
+    /**
+     * Set the lTagObj field for the CHP record.
+     */
+    public void setLTagObj(int field_19_lTagObj)
+    {
+        this.field_19_lTagObj = field_19_lTagObj;
     }
 
     /**
@@ -410,15 +471,15 @@ public abstract class CHPAbstractType
      */
     public int getIbstRMark()
     {
-        return field_17_ibstRMark;
+        return field_20_ibstRMark;
     }
 
     /**
      * Set the ibstRMark field for the CHP record.
      */
-    public void setIbstRMark(int field_17_ibstRMark)
+    public void setIbstRMark(int field_20_ibstRMark)
     {
-        this.field_17_ibstRMark = field_17_ibstRMark;
+        this.field_20_ibstRMark = field_20_ibstRMark;
     }
 
     /**
@@ -426,15 +487,47 @@ public abstract class CHPAbstractType
      */
     public int getIbstRMarkDel()
     {
-        return field_18_ibstRMarkDel;
+        return field_21_ibstRMarkDel;
     }
 
     /**
      * Set the ibstRMarkDel field for the CHP record.
      */
-    public void setIbstRMarkDel(int field_18_ibstRMarkDel)
+    public void setIbstRMarkDel(int field_21_ibstRMarkDel)
     {
-        this.field_18_ibstRMarkDel = field_18_ibstRMarkDel;
+        this.field_21_ibstRMarkDel = field_21_ibstRMarkDel;
+    }
+
+    /**
+     * Get the dttmRMark field for the CHP record.
+     */
+    public short[] getDttmRMark()
+    {
+        return field_22_dttmRMark;
+    }
+
+    /**
+     * Set the dttmRMark field for the CHP record.
+     */
+    public void setDttmRMark(short[] field_22_dttmRMark)
+    {
+        this.field_22_dttmRMark = field_22_dttmRMark;
+    }
+
+    /**
+     * Get the dttmRMarkDel field for the CHP record.
+     */
+    public short[] getDttmRMarkDel()
+    {
+        return field_23_dttmRMarkDel;
+    }
+
+    /**
+     * Set the dttmRMarkDel field for the CHP record.
+     */
+    public void setDttmRMarkDel(short[] field_23_dttmRMarkDel)
+    {
+        this.field_23_dttmRMarkDel = field_23_dttmRMarkDel;
     }
 
     /**
@@ -442,15 +535,31 @@ public abstract class CHPAbstractType
      */
     public int getIstd()
     {
-        return field_19_istd;
+        return field_24_istd;
     }
 
     /**
      * Set the istd field for the CHP record.
      */
-    public void setIstd(int field_19_istd)
+    public void setIstd(int field_24_istd)
     {
-        this.field_19_istd = field_19_istd;
+        this.field_24_istd = field_24_istd;
+    }
+
+    /**
+     * Get the baseIstd field for the CHP record.
+     */
+    public int getBaseIstd()
+    {
+        return field_25_baseIstd;
+    }
+
+    /**
+     * Set the baseIstd field for the CHP record.
+     */
+    public void setBaseIstd(int field_25_baseIstd)
+    {
+        this.field_25_baseIstd = field_25_baseIstd;
     }
 
     /**
@@ -458,15 +567,15 @@ public abstract class CHPAbstractType
      */
     public int getFtcSym()
     {
-        return field_20_ftcSym;
+        return field_26_ftcSym;
     }
 
     /**
      * Set the ftcSym field for the CHP record.
      */
-    public void setFtcSym(int field_20_ftcSym)
+    public void setFtcSym(int field_26_ftcSym)
     {
-        this.field_20_ftcSym = field_20_ftcSym;
+        this.field_26_ftcSym = field_26_ftcSym;
     }
 
     /**
@@ -474,15 +583,15 @@ public abstract class CHPAbstractType
      */
     public int getXchSym()
     {
-        return field_21_xchSym;
+        return field_27_xchSym;
     }
 
     /**
      * Set the xchSym field for the CHP record.
      */
-    public void setXchSym(int field_21_xchSym)
+    public void setXchSym(int field_27_xchSym)
     {
-        this.field_21_xchSym = field_21_xchSym;
+        this.field_27_xchSym = field_27_xchSym;
     }
 
     /**
@@ -490,15 +599,15 @@ public abstract class CHPAbstractType
      */
     public int getIdslRMReason()
     {
-        return field_22_idslRMReason;
+        return field_28_idslRMReason;
     }
 
     /**
      * Set the idslRMReason field for the CHP record.
      */
-    public void setIdslRMReason(int field_22_idslRMReason)
+    public void setIdslRMReason(int field_28_idslRMReason)
     {
-        this.field_22_idslRMReason = field_22_idslRMReason;
+        this.field_28_idslRMReason = field_28_idslRMReason;
     }
 
     /**
@@ -506,47 +615,47 @@ public abstract class CHPAbstractType
      */
     public int getIdslReasonDel()
     {
-        return field_23_idslReasonDel;
+        return field_29_idslReasonDel;
     }
 
     /**
      * Set the idslReasonDel field for the CHP record.
      */
-    public void setIdslReasonDel(int field_23_idslReasonDel)
+    public void setIdslReasonDel(int field_29_idslReasonDel)
     {
-        this.field_23_idslReasonDel = field_23_idslReasonDel;
+        this.field_29_idslReasonDel = field_29_idslReasonDel;
     }
 
     /**
      * Get the ysr field for the CHP record.
      */
-    public int getYsr()
+    public byte getYsr()
     {
-        return field_24_ysr;
+        return field_30_ysr;
     }
 
     /**
      * Set the ysr field for the CHP record.
      */
-    public void setYsr(int field_24_ysr)
+    public void setYsr(byte field_30_ysr)
     {
-        this.field_24_ysr = field_24_ysr;
+        this.field_30_ysr = field_30_ysr;
     }
 
     /**
      * Get the chYsr field for the CHP record.
      */
-    public int getChYsr()
+    public byte getChYsr()
     {
-        return field_25_chYsr;
+        return field_31_chYsr;
     }
 
     /**
      * Set the chYsr field for the CHP record.
      */
-    public void setChYsr(int field_25_chYsr)
+    public void setChYsr(byte field_31_chYsr)
     {
-        this.field_25_chYsr = field_25_chYsr;
+        this.field_31_chYsr = field_31_chYsr;
     }
 
     /**
@@ -554,63 +663,47 @@ public abstract class CHPAbstractType
      */
     public int getHpsKern()
     {
-        return field_26_hpsKern;
+        return field_32_hpsKern;
     }
 
     /**
      * Set the hpsKern field for the CHP record.
      */
-    public void setHpsKern(int field_26_hpsKern)
+    public void setHpsKern(int field_32_hpsKern)
     {
-        this.field_26_hpsKern = field_26_hpsKern;
+        this.field_32_hpsKern = field_32_hpsKern;
     }
 
     /**
-     * Get the icoHighlight field for the CHP record.
+     * Get the Highlight field for the CHP record.
      */
-    public int getIcoHighlight()
+    public short getHighlight()
     {
-        return field_27_icoHighlight;
+        return field_33_Highlight;
     }
 
     /**
-     * Set the icoHighlight field for the CHP record.
+     * Set the Highlight field for the CHP record.
      */
-    public void setIcoHighlight(int field_27_icoHighlight)
+    public void setHighlight(short field_33_Highlight)
     {
-        this.field_27_icoHighlight = field_27_icoHighlight;
-    }
-
-    /**
-     * Get the fHighlight field for the CHP record.
-     */
-    public int getFHighlight()
-    {
-        return field_28_fHighlight;
-    }
-
-    /**
-     * Set the fHighlight field for the CHP record.
-     */
-    public void setFHighlight(int field_28_fHighlight)
-    {
-        this.field_28_fHighlight = field_28_fHighlight;
+        this.field_33_Highlight = field_33_Highlight;
     }
 
     /**
      * Get the fPropMark field for the CHP record.
      */
-    public int getFPropMark()
+    public short getFPropMark()
     {
-        return field_29_fPropMark;
+        return field_34_fPropMark;
     }
 
     /**
      * Set the fPropMark field for the CHP record.
      */
-    public void setFPropMark(int field_29_fPropMark)
+    public void setFPropMark(short field_34_fPropMark)
     {
-        this.field_29_fPropMark = field_29_fPropMark;
+        this.field_34_fPropMark = field_34_fPropMark;
     }
 
     /**
@@ -618,15 +711,15 @@ public abstract class CHPAbstractType
      */
     public int getIbstPropRMark()
     {
-        return field_30_ibstPropRMark;
+        return field_35_ibstPropRMark;
     }
 
     /**
      * Set the ibstPropRMark field for the CHP record.
      */
-    public void setIbstPropRMark(int field_30_ibstPropRMark)
+    public void setIbstPropRMark(int field_35_ibstPropRMark)
     {
-        this.field_30_ibstPropRMark = field_30_ibstPropRMark;
+        this.field_35_ibstPropRMark = field_35_ibstPropRMark;
     }
 
     /**
@@ -634,47 +727,47 @@ public abstract class CHPAbstractType
      */
     public int getDttmPropRMark()
     {
-        return field_31_dttmPropRMark;
+        return field_36_dttmPropRMark;
     }
 
     /**
      * Set the dttmPropRMark field for the CHP record.
      */
-    public void setDttmPropRMark(int field_31_dttmPropRMark)
+    public void setDttmPropRMark(int field_36_dttmPropRMark)
     {
-        this.field_31_dttmPropRMark = field_31_dttmPropRMark;
+        this.field_36_dttmPropRMark = field_36_dttmPropRMark;
     }
 
     /**
      * Get the sfxtText field for the CHP record.
      */
-    public int getSfxtText()
+    public byte getSfxtText()
     {
-        return field_32_sfxtText;
+        return field_37_sfxtText;
     }
 
     /**
      * Set the sfxtText field for the CHP record.
      */
-    public void setSfxtText(int field_32_sfxtText)
+    public void setSfxtText(byte field_37_sfxtText)
     {
-        this.field_32_sfxtText = field_32_sfxtText;
+        this.field_37_sfxtText = field_37_sfxtText;
     }
 
     /**
      * Get the fDispFldRMark field for the CHP record.
      */
-    public int getFDispFldRMark()
+    public byte getFDispFldRMark()
     {
-        return field_33_fDispFldRMark;
+        return field_38_fDispFldRMark;
     }
 
     /**
      * Set the fDispFldRMark field for the CHP record.
      */
-    public void setFDispFldRMark(int field_33_fDispFldRMark)
+    public void setFDispFldRMark(byte field_38_fDispFldRMark)
     {
-        this.field_33_fDispFldRMark = field_33_fDispFldRMark;
+        this.field_38_fDispFldRMark = field_38_fDispFldRMark;
     }
 
     /**
@@ -682,15 +775,15 @@ public abstract class CHPAbstractType
      */
     public int getIbstDispFldRMark()
     {
-        return field_34_ibstDispFldRMark;
+        return field_39_ibstDispFldRMark;
     }
 
     /**
      * Set the ibstDispFldRMark field for the CHP record.
      */
-    public void setIbstDispFldRMark(int field_34_ibstDispFldRMark)
+    public void setIbstDispFldRMark(int field_39_ibstDispFldRMark)
     {
-        this.field_34_ibstDispFldRMark = field_34_ibstDispFldRMark;
+        this.field_39_ibstDispFldRMark = field_39_ibstDispFldRMark;
     }
 
     /**
@@ -698,15 +791,31 @@ public abstract class CHPAbstractType
      */
     public int getDttmDispFldRMark()
     {
-        return field_35_dttmDispFldRMark;
+        return field_40_dttmDispFldRMark;
     }
 
     /**
      * Set the dttmDispFldRMark field for the CHP record.
      */
-    public void setDttmDispFldRMark(int field_35_dttmDispFldRMark)
+    public void setDttmDispFldRMark(int field_40_dttmDispFldRMark)
     {
-        this.field_35_dttmDispFldRMark = field_35_dttmDispFldRMark;
+        this.field_40_dttmDispFldRMark = field_40_dttmDispFldRMark;
+    }
+
+    /**
+     * Get the xstDispFldRMark field for the CHP record.
+     */
+    public byte[] getXstDispFldRMark()
+    {
+        return field_41_xstDispFldRMark;
+    }
+
+    /**
+     * Set the xstDispFldRMark field for the CHP record.
+     */
+    public void setXstDispFldRMark(byte[] field_41_xstDispFldRMark)
+    {
+        this.field_41_xstDispFldRMark = field_41_xstDispFldRMark;
     }
 
     /**
@@ -714,31 +823,31 @@ public abstract class CHPAbstractType
      */
     public int getShd()
     {
-        return field_36_shd;
+        return field_42_shd;
     }
 
     /**
      * Set the shd field for the CHP record.
      */
-    public void setShd(int field_36_shd)
+    public void setShd(int field_42_shd)
     {
-        this.field_36_shd = field_36_shd;
+        this.field_42_shd = field_42_shd;
     }
 
     /**
      * Get the brc field for the CHP record.
      */
-    public int getBrc()
+    public short[] getBrc()
     {
-        return field_37_brc;
+        return field_43_brc;
     }
 
     /**
      * Set the brc field for the CHP record.
      */
-    public void setBrc(int field_37_brc)
+    public void setBrc(short[] field_43_brc)
     {
-        this.field_37_brc = field_37_brc;
+        this.field_43_brc = field_43_brc;
     }
 
     /**
@@ -747,7 +856,7 @@ public abstract class CHPAbstractType
      */
     public void setFBold(boolean value)
     {
-        field_1_format_flags = (int)fBold.setBoolean(field_1_format_flags, value);
+        field_2_format_flags = (int)fBold.setBoolean(field_2_format_flags, value);
 
         
     }
@@ -758,7 +867,7 @@ public abstract class CHPAbstractType
      */
     public boolean isFBold()
     {
-        return fBold.isSet(field_1_format_flags);
+        return fBold.isSet(field_2_format_flags);
         
     }
 
@@ -768,7 +877,7 @@ public abstract class CHPAbstractType
      */
     public void setFItalic(boolean value)
     {
-        field_1_format_flags = (int)fItalic.setBoolean(field_1_format_flags, value);
+        field_2_format_flags = (int)fItalic.setBoolean(field_2_format_flags, value);
 
         
     }
@@ -779,7 +888,7 @@ public abstract class CHPAbstractType
      */
     public boolean isFItalic()
     {
-        return fItalic.isSet(field_1_format_flags);
+        return fItalic.isSet(field_2_format_flags);
         
     }
 
@@ -789,7 +898,7 @@ public abstract class CHPAbstractType
      */
     public void setFRMarkDel(boolean value)
     {
-        field_1_format_flags = (int)fRMarkDel.setBoolean(field_1_format_flags, value);
+        field_2_format_flags = (int)fRMarkDel.setBoolean(field_2_format_flags, value);
 
         
     }
@@ -800,7 +909,7 @@ public abstract class CHPAbstractType
      */
     public boolean isFRMarkDel()
     {
-        return fRMarkDel.isSet(field_1_format_flags);
+        return fRMarkDel.isSet(field_2_format_flags);
         
     }
 
@@ -810,7 +919,7 @@ public abstract class CHPAbstractType
      */
     public void setFOutline(boolean value)
     {
-        field_1_format_flags = (int)fOutline.setBoolean(field_1_format_flags, value);
+        field_2_format_flags = (int)fOutline.setBoolean(field_2_format_flags, value);
 
         
     }
@@ -821,7 +930,7 @@ public abstract class CHPAbstractType
      */
     public boolean isFOutline()
     {
-        return fOutline.isSet(field_1_format_flags);
+        return fOutline.isSet(field_2_format_flags);
         
     }
 
@@ -831,7 +940,7 @@ public abstract class CHPAbstractType
      */
     public void setFFldVanish(boolean value)
     {
-        field_1_format_flags = (int)fFldVanish.setBoolean(field_1_format_flags, value);
+        field_2_format_flags = (int)fFldVanish.setBoolean(field_2_format_flags, value);
 
         
     }
@@ -842,7 +951,7 @@ public abstract class CHPAbstractType
      */
     public boolean isFFldVanish()
     {
-        return fFldVanish.isSet(field_1_format_flags);
+        return fFldVanish.isSet(field_2_format_flags);
         
     }
 
@@ -852,7 +961,7 @@ public abstract class CHPAbstractType
      */
     public void setFSmallCaps(boolean value)
     {
-        field_1_format_flags = (int)fSmallCaps.setBoolean(field_1_format_flags, value);
+        field_2_format_flags = (int)fSmallCaps.setBoolean(field_2_format_flags, value);
 
         
     }
@@ -863,7 +972,7 @@ public abstract class CHPAbstractType
      */
     public boolean isFSmallCaps()
     {
-        return fSmallCaps.isSet(field_1_format_flags);
+        return fSmallCaps.isSet(field_2_format_flags);
         
     }
 
@@ -873,7 +982,7 @@ public abstract class CHPAbstractType
      */
     public void setFCaps(boolean value)
     {
-        field_1_format_flags = (int)fCaps.setBoolean(field_1_format_flags, value);
+        field_2_format_flags = (int)fCaps.setBoolean(field_2_format_flags, value);
 
         
     }
@@ -884,7 +993,7 @@ public abstract class CHPAbstractType
      */
     public boolean isFCaps()
     {
-        return fCaps.isSet(field_1_format_flags);
+        return fCaps.isSet(field_2_format_flags);
         
     }
 
@@ -894,7 +1003,7 @@ public abstract class CHPAbstractType
      */
     public void setFVanish(boolean value)
     {
-        field_1_format_flags = (int)fVanish.setBoolean(field_1_format_flags, value);
+        field_2_format_flags = (int)fVanish.setBoolean(field_2_format_flags, value);
 
         
     }
@@ -905,7 +1014,7 @@ public abstract class CHPAbstractType
      */
     public boolean isFVanish()
     {
-        return fVanish.isSet(field_1_format_flags);
+        return fVanish.isSet(field_2_format_flags);
         
     }
 
@@ -915,7 +1024,7 @@ public abstract class CHPAbstractType
      */
     public void setFRMark(boolean value)
     {
-        field_1_format_flags = (int)fRMark.setBoolean(field_1_format_flags, value);
+        field_2_format_flags = (int)fRMark.setBoolean(field_2_format_flags, value);
 
         
     }
@@ -926,7 +1035,7 @@ public abstract class CHPAbstractType
      */
     public boolean isFRMark()
     {
-        return fRMark.isSet(field_1_format_flags);
+        return fRMark.isSet(field_2_format_flags);
         
     }
 
@@ -936,7 +1045,7 @@ public abstract class CHPAbstractType
      */
     public void setFSpec(boolean value)
     {
-        field_1_format_flags = (int)fSpec.setBoolean(field_1_format_flags, value);
+        field_2_format_flags = (int)fSpec.setBoolean(field_2_format_flags, value);
 
         
     }
@@ -947,7 +1056,7 @@ public abstract class CHPAbstractType
      */
     public boolean isFSpec()
     {
-        return fSpec.isSet(field_1_format_flags);
+        return fSpec.isSet(field_2_format_flags);
         
     }
 
@@ -957,7 +1066,7 @@ public abstract class CHPAbstractType
      */
     public void setFStrike(boolean value)
     {
-        field_1_format_flags = (int)fStrike.setBoolean(field_1_format_flags, value);
+        field_2_format_flags = (int)fStrike.setBoolean(field_2_format_flags, value);
 
         
     }
@@ -968,7 +1077,7 @@ public abstract class CHPAbstractType
      */
     public boolean isFStrike()
     {
-        return fStrike.isSet(field_1_format_flags);
+        return fStrike.isSet(field_2_format_flags);
         
     }
 
@@ -978,7 +1087,7 @@ public abstract class CHPAbstractType
      */
     public void setFObj(boolean value)
     {
-        field_1_format_flags = (int)fObj.setBoolean(field_1_format_flags, value);
+        field_2_format_flags = (int)fObj.setBoolean(field_2_format_flags, value);
 
         
     }
@@ -989,7 +1098,7 @@ public abstract class CHPAbstractType
      */
     public boolean isFObj()
     {
-        return fObj.isSet(field_1_format_flags);
+        return fObj.isSet(field_2_format_flags);
         
     }
 
@@ -999,7 +1108,7 @@ public abstract class CHPAbstractType
      */
     public void setFShadow(boolean value)
     {
-        field_1_format_flags = (int)fShadow.setBoolean(field_1_format_flags, value);
+        field_2_format_flags = (int)fShadow.setBoolean(field_2_format_flags, value);
 
         
     }
@@ -1010,7 +1119,7 @@ public abstract class CHPAbstractType
      */
     public boolean isFShadow()
     {
-        return fShadow.isSet(field_1_format_flags);
+        return fShadow.isSet(field_2_format_flags);
         
     }
 
@@ -1020,7 +1129,7 @@ public abstract class CHPAbstractType
      */
     public void setFLowerCase(boolean value)
     {
-        field_1_format_flags = (int)fLowerCase.setBoolean(field_1_format_flags, value);
+        field_2_format_flags = (int)fLowerCase.setBoolean(field_2_format_flags, value);
 
         
     }
@@ -1031,7 +1140,7 @@ public abstract class CHPAbstractType
      */
     public boolean isFLowerCase()
     {
-        return fLowerCase.isSet(field_1_format_flags);
+        return fLowerCase.isSet(field_2_format_flags);
         
     }
 
@@ -1041,7 +1150,7 @@ public abstract class CHPAbstractType
      */
     public void setFData(boolean value)
     {
-        field_1_format_flags = (int)fData.setBoolean(field_1_format_flags, value);
+        field_2_format_flags = (int)fData.setBoolean(field_2_format_flags, value);
 
         
     }
@@ -1052,7 +1161,7 @@ public abstract class CHPAbstractType
      */
     public boolean isFData()
     {
-        return fData.isSet(field_1_format_flags);
+        return fData.isSet(field_2_format_flags);
         
     }
 
@@ -1062,7 +1171,7 @@ public abstract class CHPAbstractType
      */
     public void setFOle2(boolean value)
     {
-        field_1_format_flags = (int)fOle2.setBoolean(field_1_format_flags, value);
+        field_2_format_flags = (int)fOle2.setBoolean(field_2_format_flags, value);
 
         
     }
@@ -1073,7 +1182,7 @@ public abstract class CHPAbstractType
      */
     public boolean isFOle2()
     {
-        return fOle2.isSet(field_1_format_flags);
+        return fOle2.isSet(field_2_format_flags);
         
     }
 
@@ -1083,7 +1192,7 @@ public abstract class CHPAbstractType
      */
     public void setFEmboss(boolean value)
     {
-        field_2_format_flags1 = (int)fEmboss.setBoolean(field_2_format_flags1, value);
+        field_3_format_flags1 = (int)fEmboss.setBoolean(field_3_format_flags1, value);
 
         
     }
@@ -1094,7 +1203,7 @@ public abstract class CHPAbstractType
      */
     public boolean isFEmboss()
     {
-        return fEmboss.isSet(field_2_format_flags1);
+        return fEmboss.isSet(field_3_format_flags1);
         
     }
 
@@ -1104,7 +1213,7 @@ public abstract class CHPAbstractType
      */
     public void setFImprint(boolean value)
     {
-        field_2_format_flags1 = (int)fImprint.setBoolean(field_2_format_flags1, value);
+        field_3_format_flags1 = (int)fImprint.setBoolean(field_3_format_flags1, value);
 
         
     }
@@ -1115,7 +1224,7 @@ public abstract class CHPAbstractType
      */
     public boolean isFImprint()
     {
-        return fImprint.isSet(field_2_format_flags1);
+        return fImprint.isSet(field_3_format_flags1);
         
     }
 
@@ -1125,7 +1234,7 @@ public abstract class CHPAbstractType
      */
     public void setFDStrike(boolean value)
     {
-        field_2_format_flags1 = (int)fDStrike.setBoolean(field_2_format_flags1, value);
+        field_3_format_flags1 = (int)fDStrike.setBoolean(field_3_format_flags1, value);
 
         
     }
@@ -1136,7 +1245,7 @@ public abstract class CHPAbstractType
      */
     public boolean isFDStrike()
     {
-        return fDStrike.isSet(field_2_format_flags1);
+        return fDStrike.isSet(field_3_format_flags1);
         
     }
 
@@ -1146,7 +1255,7 @@ public abstract class CHPAbstractType
      */
     public void setFUsePgsuSettings(boolean value)
     {
-        field_2_format_flags1 = (int)fUsePgsuSettings.setBoolean(field_2_format_flags1, value);
+        field_3_format_flags1 = (int)fUsePgsuSettings.setBoolean(field_3_format_flags1, value);
 
         
     }
@@ -1157,7 +1266,154 @@ public abstract class CHPAbstractType
      */
     public boolean isFUsePgsuSettings()
     {
-        return fUsePgsuSettings.isSet(field_2_format_flags1);
+        return fUsePgsuSettings.isSet(field_3_format_flags1);
+        
+    }
+
+    /**
+     * Sets the icoHighlight field value.
+     * 
+     */
+    public void setIcoHighlight(byte value)
+    {
+        field_33_Highlight = (short)icoHighlight.setValue(field_33_Highlight, value);
+
+        
+    }
+
+    /**
+     * 
+     * @return  the icoHighlight field value.
+     */
+    public byte getIcoHighlight()
+    {
+        return ( byte )icoHighlight.getValue(field_33_Highlight);
+        
+    }
+
+    /**
+     * Sets the fHighlight field value.
+     * 
+     */
+    public void setFHighlight(boolean value)
+    {
+        field_33_Highlight = (short)fHighlight.setBoolean(field_33_Highlight, value);
+
+        
+    }
+
+    /**
+     * 
+     * @return  the fHighlight field value.
+     */
+    public boolean isFHighlight()
+    {
+        return fHighlight.isSet(field_33_Highlight);
+        
+    }
+
+    /**
+     * Sets the kcd field value.
+     * 
+     */
+    public void setKcd(byte value)
+    {
+        field_33_Highlight = (short)kcd.setValue(field_33_Highlight, value);
+
+        
+    }
+
+    /**
+     * 
+     * @return  the kcd field value.
+     */
+    public byte getKcd()
+    {
+        return ( byte )kcd.getValue(field_33_Highlight);
+        
+    }
+
+    /**
+     * Sets the fNavHighlight field value.
+     * 
+     */
+    public void setFNavHighlight(boolean value)
+    {
+        field_33_Highlight = (short)fNavHighlight.setBoolean(field_33_Highlight, value);
+
+        
+    }
+
+    /**
+     * 
+     * @return  the fNavHighlight field value.
+     */
+    public boolean isFNavHighlight()
+    {
+        return fNavHighlight.isSet(field_33_Highlight);
+        
+    }
+
+    /**
+     * Sets the fChsDiff field value.
+     * 
+     */
+    public void setFChsDiff(boolean value)
+    {
+        field_33_Highlight = (short)fChsDiff.setBoolean(field_33_Highlight, value);
+
+        
+    }
+
+    /**
+     * 
+     * @return  the fChsDiff field value.
+     */
+    public boolean isFChsDiff()
+    {
+        return fChsDiff.isSet(field_33_Highlight);
+        
+    }
+
+    /**
+     * Sets the fMacChs field value.
+     * 
+     */
+    public void setFMacChs(boolean value)
+    {
+        field_33_Highlight = (short)fMacChs.setBoolean(field_33_Highlight, value);
+
+        
+    }
+
+    /**
+     * 
+     * @return  the fMacChs field value.
+     */
+    public boolean isFMacChs()
+    {
+        return fMacChs.isSet(field_33_Highlight);
+        
+    }
+
+    /**
+     * Sets the fFtcAsciSym field value.
+     * 
+     */
+    public void setFFtcAsciSym(boolean value)
+    {
+        field_33_Highlight = (short)fFtcAsciSym.setBoolean(field_33_Highlight, value);
+
+        
+    }
+
+    /**
+     * 
+     * @return  the fFtcAsciSym field value.
+     */
+    public boolean isFFtcAsciSym()
+    {
+        return fFtcAsciSym.isSet(field_33_Highlight);
         
     }
 

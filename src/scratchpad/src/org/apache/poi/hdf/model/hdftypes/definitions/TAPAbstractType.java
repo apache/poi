@@ -78,14 +78,19 @@ public abstract class TAPAbstractType
     private  int field_1_jc;
     private  int field_2_dxaGapHalf;
     private  int field_3_dyaRowHeight;
-    private  byte field_4_fCantSplit;
-    private  byte field_5_fTableHeader;
+    private  boolean field_4_fCantSplit;
+    private  boolean field_5_fTableHeader;
     private  int field_6_tlp;
-    private  int field_7_itcMac;
+    private  short field_7_itcMac;
     private  short[] field_8_rgdxaCenter;
-    private  byte[] field_9_rgtc;
+    private  TCAbstractType[] field_9_rgtc;
     private  byte[] field_10_rgshd;
-    private  byte[] field_11_rgbrcTable;
+    private  short[] field_11_brcBottom;
+    private  short[] field_12_brcTop;
+    private  short[] field_13_brcLeft;
+    private  short[] field_14_brcRight;
+    private  short[] field_15_brcVertical;
+    private  short[] field_16_brcHorizontal;
 
 
     public TAPAbstractType()
@@ -98,7 +103,7 @@ public abstract class TAPAbstractType
      */
     public int getSize()
     {
-        return 4 + 2 + 4 + 4 + 1 + 1 + 4 + 2 + 130 + 0 + 0 + 0;
+        return 4 + 2 + 4 + 4 + 0 + 0 + 4 + 2 + 130 + 0 + 0 + 4 + 4 + 4 + 4 + 4 + 4;
     }
 
 
@@ -154,7 +159,7 @@ public abstract class TAPAbstractType
     /**
      * Get the fCantSplit field for the TAP record.
      */
-    public byte getFCantSplit()
+    public boolean getFCantSplit()
     {
         return field_4_fCantSplit;
     }
@@ -162,7 +167,7 @@ public abstract class TAPAbstractType
     /**
      * Set the fCantSplit field for the TAP record.
      */
-    public void setFCantSplit(byte field_4_fCantSplit)
+    public void setFCantSplit(boolean field_4_fCantSplit)
     {
         this.field_4_fCantSplit = field_4_fCantSplit;
     }
@@ -170,7 +175,7 @@ public abstract class TAPAbstractType
     /**
      * Get the fTableHeader field for the TAP record.
      */
-    public byte getFTableHeader()
+    public boolean getFTableHeader()
     {
         return field_5_fTableHeader;
     }
@@ -178,7 +183,7 @@ public abstract class TAPAbstractType
     /**
      * Set the fTableHeader field for the TAP record.
      */
-    public void setFTableHeader(byte field_5_fTableHeader)
+    public void setFTableHeader(boolean field_5_fTableHeader)
     {
         this.field_5_fTableHeader = field_5_fTableHeader;
     }
@@ -202,7 +207,7 @@ public abstract class TAPAbstractType
     /**
      * Get the itcMac field for the TAP record.
      */
-    public int getItcMac()
+    public short getItcMac()
     {
         return field_7_itcMac;
     }
@@ -210,7 +215,7 @@ public abstract class TAPAbstractType
     /**
      * Set the itcMac field for the TAP record.
      */
-    public void setItcMac(int field_7_itcMac)
+    public void setItcMac(short field_7_itcMac)
     {
         this.field_7_itcMac = field_7_itcMac;
     }
@@ -234,7 +239,7 @@ public abstract class TAPAbstractType
     /**
      * Get the rgtc field for the TAP record.
      */
-    public byte[] getRgtc()
+    public TCAbstractType[] getRgtc()
     {
         return field_9_rgtc;
     }
@@ -242,7 +247,7 @@ public abstract class TAPAbstractType
     /**
      * Set the rgtc field for the TAP record.
      */
-    public void setRgtc(byte[] field_9_rgtc)
+    public void setRgtc(TCAbstractType[] field_9_rgtc)
     {
         this.field_9_rgtc = field_9_rgtc;
     }
@@ -264,19 +269,99 @@ public abstract class TAPAbstractType
     }
 
     /**
-     * Get the rgbrcTable field for the TAP record.
+     * Get the brcBottom field for the TAP record.
      */
-    public byte[] getRgbrcTable()
+    public short[] getBrcBottom()
     {
-        return field_11_rgbrcTable;
+        return field_11_brcBottom;
     }
 
     /**
-     * Set the rgbrcTable field for the TAP record.
+     * Set the brcBottom field for the TAP record.
      */
-    public void setRgbrcTable(byte[] field_11_rgbrcTable)
+    public void setBrcBottom(short[] field_11_brcBottom)
     {
-        this.field_11_rgbrcTable = field_11_rgbrcTable;
+        this.field_11_brcBottom = field_11_brcBottom;
+    }
+
+    /**
+     * Get the brcTop field for the TAP record.
+     */
+    public short[] getBrcTop()
+    {
+        return field_12_brcTop;
+    }
+
+    /**
+     * Set the brcTop field for the TAP record.
+     */
+    public void setBrcTop(short[] field_12_brcTop)
+    {
+        this.field_12_brcTop = field_12_brcTop;
+    }
+
+    /**
+     * Get the brcLeft field for the TAP record.
+     */
+    public short[] getBrcLeft()
+    {
+        return field_13_brcLeft;
+    }
+
+    /**
+     * Set the brcLeft field for the TAP record.
+     */
+    public void setBrcLeft(short[] field_13_brcLeft)
+    {
+        this.field_13_brcLeft = field_13_brcLeft;
+    }
+
+    /**
+     * Get the brcRight field for the TAP record.
+     */
+    public short[] getBrcRight()
+    {
+        return field_14_brcRight;
+    }
+
+    /**
+     * Set the brcRight field for the TAP record.
+     */
+    public void setBrcRight(short[] field_14_brcRight)
+    {
+        this.field_14_brcRight = field_14_brcRight;
+    }
+
+    /**
+     * Get the brcVertical field for the TAP record.
+     */
+    public short[] getBrcVertical()
+    {
+        return field_15_brcVertical;
+    }
+
+    /**
+     * Set the brcVertical field for the TAP record.
+     */
+    public void setBrcVertical(short[] field_15_brcVertical)
+    {
+        this.field_15_brcVertical = field_15_brcVertical;
+    }
+
+    /**
+     * Get the brcHorizontal field for the TAP record.
+     */
+    public short[] getBrcHorizontal()
+    {
+        return field_16_brcHorizontal;
+    }
+
+    /**
+     * Set the brcHorizontal field for the TAP record.
+     */
+    public void setBrcHorizontal(short[] field_16_brcHorizontal)
+    {
+        this.field_16_brcHorizontal = field_16_brcHorizontal;
     }
 
 

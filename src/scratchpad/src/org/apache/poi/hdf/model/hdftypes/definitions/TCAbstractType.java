@@ -85,10 +85,10 @@ public abstract class TCAbstractType
         private BitField  fVertRestart = new BitField(0x0040);
         private BitField  vertAlign = new BitField(0x0180);
     private  short field_2_unused;
-    private  byte[] field_3_brcTop;
-    private  byte[] field_4_brcLeft;
-    private  byte[] field_5_brcBottom;
-    private  byte[] field_6_brcRight;
+    private  short[] field_3_brcTop;
+    private  short[] field_4_brcLeft;
+    private  short[] field_5_brcBottom;
+    private  short[] field_6_brcRight;
 
 
     public TCAbstractType()
@@ -141,7 +141,7 @@ public abstract class TCAbstractType
     /**
      * Get the brcTop field for the TC record.
      */
-    public byte[] getBrcTop()
+    public short[] getBrcTop()
     {
         return field_3_brcTop;
     }
@@ -149,7 +149,7 @@ public abstract class TCAbstractType
     /**
      * Set the brcTop field for the TC record.
      */
-    public void setBrcTop(byte[] field_3_brcTop)
+    public void setBrcTop(short[] field_3_brcTop)
     {
         this.field_3_brcTop = field_3_brcTop;
     }
@@ -157,7 +157,7 @@ public abstract class TCAbstractType
     /**
      * Get the brcLeft field for the TC record.
      */
-    public byte[] getBrcLeft()
+    public short[] getBrcLeft()
     {
         return field_4_brcLeft;
     }
@@ -165,7 +165,7 @@ public abstract class TCAbstractType
     /**
      * Set the brcLeft field for the TC record.
      */
-    public void setBrcLeft(byte[] field_4_brcLeft)
+    public void setBrcLeft(short[] field_4_brcLeft)
     {
         this.field_4_brcLeft = field_4_brcLeft;
     }
@@ -173,7 +173,7 @@ public abstract class TCAbstractType
     /**
      * Get the brcBottom field for the TC record.
      */
-    public byte[] getBrcBottom()
+    public short[] getBrcBottom()
     {
         return field_5_brcBottom;
     }
@@ -181,7 +181,7 @@ public abstract class TCAbstractType
     /**
      * Set the brcBottom field for the TC record.
      */
-    public void setBrcBottom(byte[] field_5_brcBottom)
+    public void setBrcBottom(short[] field_5_brcBottom)
     {
         this.field_5_brcBottom = field_5_brcBottom;
     }
@@ -189,7 +189,7 @@ public abstract class TCAbstractType
     /**
      * Get the brcRight field for the TC record.
      */
-    public byte[] getBrcRight()
+    public short[] getBrcRight()
     {
         return field_6_brcRight;
     }
@@ -197,7 +197,7 @@ public abstract class TCAbstractType
     /**
      * Set the brcRight field for the TC record.
      */
-    public void setBrcRight(byte[] field_6_brcRight)
+    public void setBrcRight(short[] field_6_brcRight)
     {
         this.field_6_brcRight = field_6_brcRight;
     }
