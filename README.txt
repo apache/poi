@@ -7,9 +7,33 @@
   What is it?
   -----------
 
-
-
-
+  The POI project consists of APIs for manipulating various file formats 
+  based upon Microsoft's OLE 2 Compound Document format using pure Java.
+  
+  A common misconception is that POI writes Excel files. POI is the name 
+  of the project. 
+  POI contains several components, one of which, HSSF, writes Excel files. 
+  The following are components of the entire POI project.
+  
+    POIFS 
+    -----
+    The oldest and most stable part of the project. 
+    It is our port of the OLE 2 Compound Document Format to pure Java. 
+    It supports both read and write functionality. 
+    All of our components ultimately rely on it by definition. 
+  
+    HSSF
+    ----- 
+    It's our port of the Microsoft Excel 97(-2002) file format (BIFF8) 
+    to pure Java. It supports read and write capability. 
+  
+    HDF 
+    ---
+    It's our port of the Microsoft Word 97 file format to pure Java. 
+    It supports read and write capability. 
+    This component is in the early stages of design. 
+    Jump in! 
+   
   Where is it?
   ------------
 
