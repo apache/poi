@@ -134,26 +134,28 @@ public class Range
   public String text()
     throws UnsupportedEncodingException
   {
-    if (!_textRangeFound)
-    {
-      int[] point = findRange(_text, _textStart, _start, _end);
-      _textStart = point[0];
-      _textEnd = point[1];
-      _textRangeFound = true;
-    }
+    initText();
 
     StringBuffer sb = new StringBuffer();
     int size = _text.size();
     for (int x = 0; x < size; x++)
     {
       TextPiece tp = (TextPiece)_text.get(x);
-      String encoding = "Cp1252";
-      if (tp.usesUnicode())
+      StringBuffer pieceSb = (StringBuffer)tp.getCacheContents();
+      if (pieceSb == null)
       {
-        encoding = "UTF-16LE";
+        String encoding = "Cp1252";
+        if (tp.usesUnicode())
+        {
+          encoding = "UTF-16LE";
+        }
+        String str = new String(tp.getBuf(), encoding);
+        pieceSb = new StringBuffer(str);
+        tp.fillCache(pieceSb);
       }
-      String str = new String (tp.getBuf(), Math.max(_start, tp.getStart()), Math.min(_end, tp.getEnd()), encoding);
-      sb.append(str);
+      int startIndex = Math.max(0, (tp.getStart() - _start));
+      int endIndex = Math.min(tp.getEnd() - startIndex, _end - startIndex);
+      sb.append(pieceSb.toString().substring(startIndex, endIndex));
     }
     return sb.toString();
   }
@@ -177,7 +179,21 @@ public class Range
   }
 
   public CharacterRange insertBefore(String text)
+    throws UnsupportedEncodingException
   {
+    initAll();
+
+    TextPiece tp = (TextPiece)_text.get(_textStart);
+    StringBuffer sb = (StringBuffer)tp.getStringBuffer();
+
+    // Since this is the first item in our list, it is safe to assume that
+    // _start >= tp.getStart()
+    int insertIndex = _start - tp.getStart();
+    sb.insert(insertIndex, text);
+    int adjustedLength = _doc.getTextTable().adjustForInsert(_textStart, text.length());
+    _doc.getCharacterTable().adjustForInsert(_textStart, adjustedLength);
+    _doc.getParagraphTable().adjustForInsert(_textStart, adjustedLength);
+    _doc.getSectionTable().adjustForInsert(_textStart, adjustedLength);
     return null;
   }
 
@@ -295,6 +311,15 @@ public class Range
     return new CharacterRange(_start, _end, _doc);
   }
 
+  private void initAll()
+  {
+    initText();
+    initCharacterRuns();
+    initParagraphs();
+    initSections();
+  }
+
+
   private void initParagraphs()
   {
     if (!_parRangeFound)
@@ -314,6 +339,17 @@ public class Range
       _charStart = point[0];
       _charEnd = point[1];
       _charRangeFound = true;
+    }
+  }
+
+  private void initText()
+  {
+    if (!_textRangeFound)
+    {
+      int[] point = findRange(_text, _textStart, _start, _end);
+      _textStart = point[0];
+      _textEnd = point[1];
+      _textRangeFound = true;
     }
   }
 

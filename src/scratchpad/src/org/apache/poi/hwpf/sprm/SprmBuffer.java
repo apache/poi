@@ -63,7 +63,8 @@ public class SprmBuffer
 
   public SprmBuffer(byte[] buf)
   {
-    _offset = _buf.length;
+    _offset = buf.length;
+    _buf = buf;
   }
 
   public void addSprm(short opcode, byte operand)
