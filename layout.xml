@@ -41,21 +41,22 @@
    <documentation dir="./build/documentation">
      <javadocs dir="./build/docs/javadocs"/>
      <test dir="./build/docs/test"/>
+     <metrics dir="./build/docs/metrics"/>
    </documentation>
    <work dir="./build/work"/>   
    <scratchpad dir="./build/scratchpad">
      <java dir="./build/scratchpad/java"/>
-     <classes dir="./build/classes"/>          
+     <classes dir="./build/scratchpad/classes"/>          
      <library dir="./build/scratchpad/lib"/>     
    </scratchpad>  
    <contributions dir="./build/contrib">
      <java dir="./build/contrib/java"/>
-     <classes dir="./build/classes"/>
+     <classes dir="./build/contrib/classes"/>
      <library dir="./build/contrib/lib"/>
    </contributions>      
    <examples dir="./build/examples">
      <java dir="./build/examples/java"/>
-     <classes dir="./build/classes"/>
+     <classes dir="./build/examples/classes"/>
      <library dir="./build/examples/lib"/>
    </examples>           
   </build>   
