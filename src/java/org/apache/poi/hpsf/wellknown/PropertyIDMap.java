@@ -50,14 +50,6 @@
  * individuals on behalf of the Apache Software Foundation.  For more
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
-*
-* Portions of this software are based upon public domain software
-* originally written at the National Center for Supercomputing Applications,
-* University of Illinois, Urbana-Champaign.
- *
- * Portions of this software are based upon public domain software
- * originally written at the National Center for Supercomputing Applications,
- * University of Illinois, Urbana-Champaign.
  */
 
 package org.apache.poi.hpsf.wellknown;

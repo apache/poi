@@ -276,8 +276,6 @@ public class SummaryInformation extends SpecialPropertySet
      */
     public byte[] getThumbnail()
     {
-        if (true)
-            throw new UnsupportedOperationException("FIXME");
         return (byte[]) getProperty(PropertyIDMap.PID_THUMBNAIL);
     }
 
