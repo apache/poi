@@ -42,3 +42,10 @@
       </batchtest>
     </junit>
   </target>
+
+  <!-- =================================================================== -->
+  <!-- Testing that all major targets work; useful before a commit         -->
+  <!-- =================================================================== -->
+  <target name="testmodule" depends="clean, test, docs" 
+          description="Testing that all major targets work; useful before a commit  ">
+  </target>
