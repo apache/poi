@@ -22,12 +22,12 @@
     <importcent name="java" />
     <importcent name="junit" />
         
-    <!-- commenting these out till the base build works on Gump-->
+    <!-- commenting these out till the base build works on Gump
     <importcent name="checkstyle" />
     <importcent name="forrest" />
     <importcent name="changelog" />
     <importcent name="changelog" />    
-    <!---->
+    -->
     
             
   <!-- =================================================================== -->
