@@ -82,24 +82,24 @@ public class TestClassID extends TestCase
     public void testEquals()
     {
         ClassID clsidTest1 = new ClassID(
-              new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08
-                         , 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x10 }
+              new byte[] {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08,
+                          0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x10}
             , 0
         );
         ClassID clsidTest2 = new ClassID(
-              new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08
-                         , 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x10 }
+              new byte[] {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08,
+                          0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x10}
             , 0
         );
         ClassID clsidTest3 = new ClassID(
-              new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08
-                         , 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x11 }
+              new byte[] {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08,
+                          0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x11 }
             , 0
         );
-        Assert.assertEquals( clsidTest1, clsidTest1);
-        Assert.assertEquals( clsidTest1, clsidTest2);
-        Assert.assertFalse( clsidTest1.equals( clsidTest3));
-        Assert.assertFalse( clsidTest1.equals( null));
+        Assert.assertEquals(clsidTest1, clsidTest1);
+        Assert.assertEquals(clsidTest1, clsidTest2);
+        Assert.assertFalse(clsidTest1.equals(clsidTest3));
+        Assert.assertFalse(clsidTest1.equals(null));
     }
     /**
      * Try to write to a buffer that is too small. This should
@@ -108,35 +108,44 @@ public class TestClassID extends TestCase
     public void testWriteArrayStoreException()
     {
         ClassID clsidTest = new ClassID(
-              new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08
-                         , 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x10 }
+              new byte[] {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08,
+                          0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x10}
             , 0
         );
         boolean bExceptionOccurred = false;
-        try {
-            clsidTest.write( new byte[ 15], 0);
-        } catch( Exception e) {
+        try
+        {
+            clsidTest.write(new byte[15], 0);
+        }
+        catch (Exception e)
+        {
             bExceptionOccurred = true;
         }
-        Assert.assertTrue( bExceptionOccurred);
+        Assert.assertTrue(bExceptionOccurred);
 
         bExceptionOccurred = false;
-        try {
-            clsidTest.write( new byte[ 16], 1);
-        } catch( Exception e) {
+        try
+        {
+            clsidTest.write(new byte[16], 1);
+        }
+        catch (Exception e)
+        {
             bExceptionOccurred = true;
         }
-        Assert.assertTrue( bExceptionOccurred);
+        Assert.assertTrue(bExceptionOccurred);
 
         // These should work without throwing an Exception
         bExceptionOccurred = false;
-        try {
-            clsidTest.write( new byte[ 16], 0);
-            clsidTest.write( new byte[ 17], 1);
-        } catch( Exception e) {
+        try
+        {
+            clsidTest.write(new byte[16], 0);
+            clsidTest.write(new byte[17], 1);
+        }
+        catch (Exception e)
+        {
             bExceptionOccurred = true;
         }
-        Assert.assertFalse( bExceptionOccurred);
+        Assert.assertFalse(bExceptionOccurred);
     }
     /**
      * <p>Tests the {@link PropertySet} methods. The test file has two
@@ -146,13 +155,12 @@ public class TestClassID extends TestCase
     public void testClassID()
     {
         ClassID clsidTest = new ClassID(
-              new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08
-                         , 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x10 }
+              new byte[] {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08,
+                          0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x10}
             , 0
         );
-        Assert.assertEquals( 
-              clsidTest.toString().toUpperCase()
-            , "{04030201-0605-0807-090A-0B0C0D0E0F10}"
+        Assert.assertEquals(clsidTest.toString().toUpperCase(),
+                            "{04030201-0605-0807-090A-0B0C0D0E0F10}"
         );
     }
 
@@ -160,6 +168,8 @@ public class TestClassID extends TestCase
 
     /**
      * <p>Runs the test cases stand-alone.</p>
+     * 
+     * @param args Command-line parameters (ignored)
      */
     public static void main(final String[] args)
     {
