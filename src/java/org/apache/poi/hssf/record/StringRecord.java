@@ -54,8 +54,9 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.StringUtil;
+import org.apache.poi.util.*;
+
+import java.io.IOException;
 
 /**
  * Supports the STRING record structure.
@@ -65,10 +66,10 @@ import org.apache.poi.util.StringUtil;
 public class StringRecord
         extends Record
 {
-    public final static short sid = 0x207;
-    private int field_1_string_length;
-    private byte field_2_unicode_flag;
-    private String field_3_string;
+    public final static short   sid = 0x207;
+    private int                 field_1_string_length;
+    private byte                field_2_unicode_flag;
+    private String              field_3_string;
 
 
     public StringRecord()
@@ -123,7 +124,6 @@ public class StringRecord
      * @param size size of data
      * @param offset of the record's data (provided a big array of the file)
      */
-
     protected void fillFields( byte[] data, short size, int offset )
     {
         field_1_string_length           = LittleEndian.getUShort(data, 0 + offset);
@@ -134,7 +134,7 @@ public class StringRecord
         }
         else
         {
-            field_3_string = new String(data, 3 + offset, getStringLength());
+            field_3_string = new String(data, 3 + offset, field_1_string_length);
         }
     }
 
@@ -155,7 +155,6 @@ public class StringRecord
     {
         return 4 + 2 + 1 + getStringByteLength();
     }
-
 
     /**
      * is this uncompressed unicode (16bit)?  Or just 8-bit compressed?
@@ -178,7 +177,7 @@ public class StringRecord
     public int serialize( int offset, byte[] data )
     {
         LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset, ( short ) (2 + getStringByteLength()));
+        LittleEndian.putShort(data, 2 + offset, ( short ) (3 + getStringByteLength()));
         LittleEndian.putUShort(data, 4 + offset, field_1_string_length);
         data[6 + offset] = field_2_unicode_flag;
         if (isUnCompressedUnicode())
