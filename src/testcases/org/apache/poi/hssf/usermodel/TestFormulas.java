@@ -678,7 +678,8 @@ extends TestCase {
 
             c = r.createCell((short) 0);
             c.setCellFormula(function+"(A2:A4,B2:B4)");
-
+            c=r.createCell((short) 1);
+            c.setCellFormula(function+"($A$2:$A4,B$2:B4)");
 
             wb.write(out);
             out.close();
@@ -692,6 +693,11 @@ extends TestCase {
             
             assertTrue("function ="+function+"(A2:A4,B2:B4)",
                         ( (function+"(A2:A4,B2:B4)").equals(c.getCellFormula()) )
+                      );
+            
+            c=r.getCell((short) 1);
+             assertTrue("function ="+function+"($A$2:$A4,B$2:B4)",
+                        ( (function+"($A$2:$A4,B$2:B4)").equals(c.getCellFormula()) )
                       );
             in.close();
     }
