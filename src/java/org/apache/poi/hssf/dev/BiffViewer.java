@@ -603,6 +603,9 @@ public class BiffViewer {
             case PlotAreaRecord.sid:
                 retval = new PlotAreaRecord(rectype, size, data);
                 break;
+            case SeriesIndexRecord.sid:
+                retval = new SeriesIndexRecord(rectype, size, data);
+                break;
                 
                 
             default:
