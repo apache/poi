@@ -85,13 +85,8 @@ public class AreaPtg
     private BitField         column      = new BitField(0x3FFF);
 
     
-    /** Creates new AreaPtg */
-
-    public AreaPtg()
-    {
-    }
-    
-    public AreaPtg(String arearef) {
+   
+    protected AreaPtg(String arearef) {
         int[] xyxy = ReferenceUtil.getXYXYFromAreaRef(arearef);
         setFirstRow((short)xyxy[0]);
         setFirstColumn((short)xyxy[1]);

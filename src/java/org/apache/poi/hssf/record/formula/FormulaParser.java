@@ -310,8 +310,6 @@ public class FormulaParser {
                 if (IsDigit(Look)) number = number +"."+ GetNum(); //this also takes care of someone entering "1234."
                 tokens.add(new NumberPtg(number));
             } else {
-                //IntPtg p = new IntPtg(GetNum());   // removing since a ptg should be able to create itself from parser results. 
-                //p.setValue(Short.parseShort(GetNum()));
                 tokens.add(new IntPtg(number));  //TODO:what if the number is too big to be a short? ..add factory to return Int or Number!
             }
         }
@@ -450,7 +448,6 @@ end;
     
     /** Static method to convert an array of Ptgs in RPN order 
      *  to a human readable string format in infix mode
-     *  TODO - extra brackets might appear, but string will be semantically correct. 
      */
     public static String toFormulaString(Ptg[] ptgs) {
         java.util.Stack stack = new java.util.Stack();
@@ -468,7 +465,6 @@ end;
                     
                 }  
                 String result = o.toFormulaString(operands);
-                //if (! (o instanceof DummyFunctionPtg) ) result = "("+result+")" ;
                 stack.push(result);
             } else {
                 stack.push(ptgs[i].toFormulaString());
@@ -477,6 +473,9 @@ end;
         return (String) stack.pop(); //TODO: catch stack underflow and throw parse exception. 
     }
    
+    /** toString on the parser instance returns the RPN ordered list of tokens
+     *   Useful for testing
+     */
     public String toString() {
         StringBuffer buf = new StringBuffer();
            for (int i=0;i<tokens.size();i++) {

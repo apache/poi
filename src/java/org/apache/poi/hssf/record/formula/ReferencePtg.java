@@ -82,17 +82,13 @@ public class ReferencePtg extends Ptg
     private BitField         rowRelative = new BitField(0x8000);
     private BitField         colRelative = new BitField(0x4000);
 
-    /** Creates new ValueReferencePtg */
-
-    public ReferencePtg()
-    {
-    }
+    
     
     /**
      * Takes in a String represnetation of a cell reference and fills out the 
      * numeric fields.
      */
-    public ReferencePtg(String cellref) {
+    protected ReferencePtg(String cellref) {
         int[] xy = ReferenceUtil.getXYFromReference(cellref);
         setRow((short)xy[0]);
         setColumn((short)xy[1]);

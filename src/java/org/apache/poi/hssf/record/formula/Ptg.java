@@ -77,7 +77,7 @@ public abstract class Ptg
      * @param infixPtgs List of ptgs in infix order
      */
     
-    /* DO NOI REMOVE
+    /* DO NOT REMOVE
      *we keep this method in case we wish to change the way we parse
      *It needs a getPrecedence in OperationsPtg
     
@@ -287,15 +287,13 @@ public abstract class Ptg
         writeBytes(bytes, 0);
         return bytes;
     }
-
+    /** write this Ptg to a byte array*/
     public abstract void writeBytes(byte [] array, int offset);
-
-    public abstract String toFormulaString();
-       
-    public int getStringLength() {
-        return 0;
-    }
     
+    /**
+     * return a string representation of this token alone
+     */
+    public abstract String toFormulaString();
     /**
      * dump a debug representation (hexdump) to a strnig
      */

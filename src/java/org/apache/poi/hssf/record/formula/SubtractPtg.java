@@ -73,9 +73,7 @@ public class SubtractPtg
     public final static int  SIZE = 1;
     public final static byte sid  = 0x04;
 
-    /** Creates new AddPtg */
-
-    public SubtractPtg()
+    protected SubtractPtg()
     {
     }
 
@@ -110,21 +108,7 @@ public class SubtractPtg
         return "-";
     }
 
-    public String toFormulaString(Ptg [] operands)
-    {
-        StringBuffer buffer = new StringBuffer();
-
-        buffer.append(operands[ 0 ].toFormulaString());
-        buffer.append("-");
-        buffer.append(operands[ 1 ].toFormulaString());
-        return buffer.toString();
-    }
-
-    
-    public int getStringLength() {
-        return 1;
-    }
-    
+       
     public String toFormulaString(String[] operands) {
         StringBuffer buffer = new StringBuffer();
 

@@ -77,23 +77,12 @@ public class IntPtg
 
     private String val;
     private int strlen = 0;
-    /** Creates new IntPtg */
-
-    public IntPtg()
-    {
-    }
-
+  
     public IntPtg(byte [] data, int offset)
     {
         setValue(LittleEndian.getShort(data, offset + 1));
     }
     
-    protected IntPtg(String formula, int offset) {
-        val = parseString(formula, offset);
-        if (val == null) throw new RuntimeException("WHOOAA there...thats got no int!");
-        strlen=val.length();
-        field_1_value = Short.parseShort(val);
-    }
     
     // IntPtg should be able to create itself, shouldnt have to call setValue
     protected IntPtg(String formulaToken) {
@@ -126,37 +115,4 @@ public class IntPtg
         return "" + getValue();
     }
     
-    private static String parseString(String formula, int pos) {
-        String retval = null;
-        while (pos < formula.length() && Character.isWhitespace(formula.charAt(pos))) {
-            pos++;
-        }
-        
-        if (pos < formula.length()) {
-            if (Character.isDigit(formula.charAt(pos)) ) {
-                int numpos = pos;
-                
-                while (numpos < formula.length() && Character.isDigit(formula.charAt(numpos))){
-                    numpos++;
-                }
-                
-                if (numpos == formula.length() || formula.charAt(numpos) != '.') {
-                    String numberstr = formula.substring(pos,numpos);
-                    try {
-                        int number = Short.parseShort(numberstr);
-                        retval = numberstr;
-                    } catch (NumberFormatException e) {
-                        retval = null;
-                    }
-                }
-            }
-        }
-        return retval;
-        
-    }
-    
-        
-    public int getStringLength() {
-        return strlen;
-    }    
 }

@@ -64,7 +64,7 @@ import java.util.Iterator;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.hssf
     .record.*;       // normally I don't do this, buy we literally mean ALL
-import org.apache.poi.hssf.record.formula.FormulaUtil;
+import org.apache.poi.hssf.record.formula.FormulaParser;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.util.IntList;
 import org.apache.poi.util.POILogger;
@@ -706,7 +706,9 @@ public class Sheet
         rec.setOptions(( short ) 2);
         rec.setValue(0);
         rec.setXFIndex(( short ) 0x0f);
-        Ptg[] ptg  = FormulaUtil.parseFormula(formula);
+        FormulaParser fp = new FormulaParser(formula);
+        fp.parse();
+        Ptg[] ptg  = fp.getRPNPtg();
         int   size = 0;
 
         for (int k = 0; k < ptg.length; k++)

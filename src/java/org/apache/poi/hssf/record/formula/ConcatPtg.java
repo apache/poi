@@ -75,19 +75,13 @@ public class ConcatPtg
     
     private final static String CONCAT = "&";
 
-    /** Creates new ConcatPtg */
-
-    public ConcatPtg()
-    {
-    }
-
     public ConcatPtg(byte [] data, int offset)
     {
 
         // doesn't need anything
     }
     
-    protected ConcatPtg(String formula, int offset) {
+    protected ConcatPtg() {
         
     }
 
@@ -116,21 +110,7 @@ public class ConcatPtg
         return CONCAT;
     }    
 
-    public String toFormulaString(Ptg [] operands)
-    {
-        StringBuffer buffer = new StringBuffer();
-
-        buffer.append(operands[ 0 ].toFormulaString());
-        buffer.append(CONCAT);
-        buffer.append(operands[ 1 ].toFormulaString());
-        return buffer.toString();
-    }
-           
-    public int getStringLength() {
-        return 1;
-    }
-
-    
+       
     public String toFormulaString(String[] operands) {
         StringBuffer buffer = new StringBuffer();
 

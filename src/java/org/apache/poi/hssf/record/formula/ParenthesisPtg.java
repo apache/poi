@@ -72,7 +72,7 @@ public class ParenthesisPtg
     private final static int SIZE = 1;
     public final static byte sid  = 0x15;
    
-    public ParenthesisPtg()
+    protected ParenthesisPtg()
     {
     }
 
@@ -82,10 +82,7 @@ public class ParenthesisPtg
         // doesn't need anything
     }
     
-    protected ParenthesisPtg(String formula, int offset) {
-        
-    }
-
+  
     
     public void writeBytes(byte [] array, int offset)
     {
@@ -112,11 +109,7 @@ public class ParenthesisPtg
         return "()";
     }
 
-    public String toFormulaString(Ptg [] operands)
-    {
-        return "";
-    }
-        
+          
     public String toFormulaString(String[] operands) {
         return "("+operands[0]+")";
     }    

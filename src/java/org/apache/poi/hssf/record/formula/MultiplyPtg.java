@@ -77,7 +77,7 @@ public class MultiplyPtg
 
     /** Creates new AddPtg */
 
-    public MultiplyPtg()
+    protected MultiplyPtg()
     {
     }
 
@@ -87,11 +87,6 @@ public class MultiplyPtg
         // doesn't need anything
     }
     
-    protected MultiplyPtg(String formula, int offset) {
-        
-    }
-    
-
     public void writeBytes(byte [] array, int offset)
     {
         array[ offset + 0 ] = sid;
@@ -136,7 +131,7 @@ public class MultiplyPtg
         StringBuffer buffer = new StringBuffer();
 
         buffer.append(operands[ 0 ]);
-        buffer.append("*");
+        buffer.append(toFormulaString());
         buffer.append(operands[ 1 ]);
         return buffer.toString();
     }                  

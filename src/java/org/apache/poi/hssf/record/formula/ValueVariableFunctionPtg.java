@@ -124,24 +124,13 @@ public class ValueVariableFunctionPtg
         return "NO IDEA YET VALUE VARIABLE";
     }
 
-    public String toFormulaString(Ptg [] operands)
-    {
-        return toFormulaString();
-    }
-
-    
+       
     public String toFormulaString(String[] operands) {
         return toFormulaString();
     }
     
    
-    public void manipulate(List source, List results, int pos) {
-    }
-    
-    public int getPrecedence() {
-        return 1;
-    }    
-    
+      
     
 
 }

@@ -75,7 +75,7 @@ public class PowerPtg
 
     /** Creates new AddPtg */
 
-    public PowerPtg()
+   protected PowerPtg()
     {
     }
 
@@ -110,24 +110,14 @@ public class PowerPtg
         return "^";
     }
     
-    public String toFormulaString(Ptg [] operands)
-    {
-        StringBuffer buffer = new StringBuffer();
-
-        buffer.append(operands[ 0 ].toFormulaString());
-        buffer.append("^");
-        buffer.append(operands[ 1 ].toFormulaString());        
-        
-        return buffer.toString();
-    }
-        
+          
     
     public String toFormulaString(String[] operands) {
          StringBuffer buffer = new StringBuffer();
 
         
         buffer.append(operands[ 0 ]);
-        buffer.append("^");
+        buffer.append(toFormulaString());
         buffer.append(operands[ 1 ]);
         return buffer.toString();
     }       
