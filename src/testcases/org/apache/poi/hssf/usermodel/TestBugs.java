@@ -123,5 +123,23 @@ extends TestCase {
                  out.close();
                  }
 
-
+  /* test hyperlinks
+      * open resulting file in excel, and check that there is a link to Google
+      **/
+      public void test15353() throws Exception {
+            HSSFWorkbook wb = new HSSFWorkbook();
+            HSSFSheet sheet = wb.createSheet("My sheet");
+            
+            HSSFRow row = sheet.createRow( (short) 0 );
+            HSSFCell cell = row.createCell( (short) 0 );
+            cell.setCellFormula("HYPERLINK(\"http://google.com\",\"Google\")");
+            
+            // Write out the workbook
+            File f = File.createTempFile("test15353",".xls");
+            FileOutputStream fileOut = new FileOutputStream(f);
+            wb.write(fileOut);
+            fileOut.close();
+        }
+          
+          
 }
