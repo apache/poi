@@ -155,20 +155,23 @@ public abstract class Ptg
         }
         return result;
     }*/
-    
 
+    
     public static Ptg createPtg(byte [] data, int offset)
     {
         byte id     = data[ offset + 0 ];
         Ptg  retval = null;
         
-        final int valueRef = ReferencePtg.sid + 0x20;  //note this only matters for READ
-        final int arrayRef = ReferencePtg.sid + 0x40; // excel doesn't really care which one you 
-                                                      // write.  
+        final int refRef = ReferencePtg.sid - 0x20;  
+        final int arrayRef = ReferencePtg.sid + 0x20;  
+                                                        
         
-        final int valueFunc = FunctionPtg.sid + 0x20;  //note this only matters for READ
-        final int arrayFunc = FunctionPtg.sid + 0x40; // excel doesn't really care which one you 
-                                                      // write.  
+        final int valueFunc = FunctionPtg.sid + 0x20;  
+        final int arrayFunc = FunctionPtg.sid + 0x40; 
+                                                        
+        
+        final int refArea = AreaPtg.sid-0x20;
+        final int arrayArea = AreaPtg.sid+0x20;
 
         
         switch (id)
@@ -219,7 +222,7 @@ public abstract class Ptg
                 retval = new ReferencePtg(data, offset);
                 break;
                 
-            case valueRef :
+            case refRef :
                 retval = new ReferencePtg(data, offset);
                 break;
 
