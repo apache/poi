@@ -289,7 +289,7 @@ public class Area3DPtg extends Ptg
     public String toFormulaString()
     {
         StringBuffer retval = new StringBuffer();
-        Object book = Workbook.currentBook.get();
+        Object book = Workbook.currentBook;
         if (book != null) {
             retval.append(((Workbook) book).findSheetNameFromExternSheet(this.field_1_index_extern_sheet));
             retval.append('!');
