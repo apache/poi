@@ -514,6 +514,33 @@ public class HSSFSheet
     }
 
     /**
+     * determines whether the output is horizontally centered on the page.
+     * @param value true to horizontally center, false otherwise.
+     */
+
+    public void setHorizontallyCenter(boolean value)
+    {
+        HCenterRecord record =
+                (HCenterRecord) sheet.findFirstRecordBySid(HCenterRecord.sid);
+
+        record.setHCenter(value);
+    }
+
+    /**
+     * Determine whether printed output for this sheet will be horizontally centered.
+     */
+
+    public boolean getHorizontallyCenter()
+    {
+        HCenterRecord record =
+                (HCenterRecord) sheet.findFirstRecordBySid(HCenterRecord.sid);
+
+        return record.getHCenter();
+    }
+    
+    
+    
+    /**
      * removes a merged region of cells (hence letting them free)
      * @param index of the region to unmerge
      */
