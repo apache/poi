@@ -31,7 +31,7 @@
                     <li><link href="#ReadWriteWorkbook">Reading and writing</link></li>
                     <li><link href="#NewLinesInCells">Use newlines in cells.</link></li>
                     <li><link href="#DataFormats">Create user defined data formats.</link></li>
-                    <li><link href="#PrintArea">Fit sheet to one page</link></li>
+                    <li><link href="#FitTo">Fit Sheet to One Page</link></li>
                     <li><link href="#PrintArea2">Set print area for a sheet.</link></li>		    
                     <li><link href="#FooterPageNumbers">Set page numbers on the footer of a sheet.</link></li>
                     <li><link href="#ShiftRows">Shift rows.</link></li>
@@ -420,14 +420,14 @@
     fileOut.close();
                     </source>
                 </section>
-                <anchor id="PrintArea"/>
-                <section><title>Set Print Area to One Page</title>
+                <anchor id="FitTo"/>
+                <section><title>Fit Sheet to One Page</title>
                     <source>
     HSSFWorkbook wb = new HSSFWorkbook();
     HSSFSheet sheet = wb.createSheet("format sheet");
-    HSSFPrintSetup ps = sheet.getPrintSetup()
+    HSSFPrintSetup ps = sheet.getPrintSetup();
     
-    sheet.setAutobreaks(true)
+    sheet.setAutobreaks(true);
     
     ps.setFitHeight((short)1);
     ps.setFitWidth((short)1);
