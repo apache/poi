@@ -126,16 +126,16 @@ public class TableSprmCompressor
         cellDescriptors[x].serialize(buf,
           1+((itcMac+1)*LittleEndian.SHORT_SIZE)+(x*TableCellDescriptor.SIZE));
       }
-      size += SprmUtils.addSprm((short)0xD608, 0, buf, sprmList);
+      size += SprmUtils.addSpecialSprm((short)0xD608, buf, sprmList);
 
-      buf = new byte[(itcMac * ShadingDescriptor.SIZE) + 1];
-      buf[0] = (byte)itcMac;
-      ShadingDescriptor[] shds = newTAP.getRgshd();
-      for (int x = 0; x < itcMac; x++)
-      {
-        shds[x].serialize(buf, 1 + (x * ShadingDescriptor.SIZE));
-      }
-      size += SprmUtils.addSprm((short)0xD608, 0, buf, sprmList);
+//      buf = new byte[(itcMac * ShadingDescriptor.SIZE) + 1];
+//      buf[0] = (byte)itcMac;
+//      ShadingDescriptor[] shds = newTAP.getRgshd();
+//      for (int x = 0; x < itcMac; x++)
+//      {
+//        shds[x].serialize(buf, 1 + (x * ShadingDescriptor.SIZE));
+//      }
+//      size += SprmUtils.addSpecialSprm((short)0xD609, buf, sprmList);
     }
     if (newTAP.getTlp() != 0)
     {

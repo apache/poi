@@ -73,7 +73,12 @@ public class ShadingDescriptor
 
   public ShadingDescriptor(byte[] buf, int offset)
   {
-    _info = LittleEndian.getShort(buf, offset);
+    this(LittleEndian.getShort(buf, offset));
+  }
+
+  public ShadingDescriptor(short info)
+  {
+    _info = info;
   }
 
   public short toShort()

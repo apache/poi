@@ -67,25 +67,23 @@ public class TableSprmUncompressor
   {
   }
 
-  public static TableProperties uncompressTAP(TableProperties parent,
-                                                  byte[] grpprl,
+  public static TableProperties uncompressTAP(byte[] grpprl,
                                                   int offset)
   {
-    TableProperties newProperties = null;
-    try
-    {
-      newProperties = (TableProperties) parent.clone();
-    }
-    catch (CloneNotSupportedException cnse)
-    {
-      throw new RuntimeException("There is no way this exception should happen!!");
-    }
+    TableProperties newProperties = new TableProperties();
+
     SprmIterator sprmIt = new SprmIterator(grpprl, offset);
 
     while (sprmIt.hasNext())
     {
       SprmOperation sprm = (SprmOperation)sprmIt.next();
-      unCompressTAPOperation(newProperties, sprm);
+
+      //TAPXs are actually PAPXs so we have to make sure we are only trying to
+      //uncompress the right type of sprm.
+      if (sprm.getType() == SprmOperation.TAP_TYPE)
+      {
+        unCompressTAPOperation(newProperties, sprm);
+      }
     }
 
     return newProperties;

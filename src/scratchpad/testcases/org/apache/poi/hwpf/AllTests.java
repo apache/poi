@@ -52,64 +52,34 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.poi.hwpf.usermodel;
+package org.apache.poi.hwpf;
 
-import org.apache.poi.hwpf.model.types.SEPAbstractType;
+import junit.framework.*;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.AccessibleObject;
-import java.lang.reflect.Array;
-
-public class SectionProperties
-  extends SEPAbstractType
+public class AllTests
+  extends TestCase
 {
-  public SectionProperties()
+
+  public AllTests(String s)
   {
-    field_20_brcTop = new BorderCode();
-    field_21_brcLeft = new BorderCode();
-    field_22_brcBottom = new BorderCode();
-    field_23_brcRight = new BorderCode();
-    field_26_dttmPropRMark = new DateAndTime();
+    super(s);
   }
 
-  public Object clone()
-    throws CloneNotSupportedException
+  public static Test suite()
   {
-    SectionProperties copy = (SectionProperties)super.clone();
-    copy.field_20_brcTop = (BorderCode)field_20_brcTop.clone();
-    copy.field_21_brcLeft = (BorderCode)field_21_brcLeft.clone();
-    copy.field_22_brcBottom = (BorderCode)field_22_brcBottom.clone();
-    copy.field_23_brcRight = (BorderCode)field_23_brcRight.clone();
-    copy.field_26_dttmPropRMark = (DateAndTime)field_26_dttmPropRMark.clone();
-
-    return copy;
+    TestSuite suite = new TestSuite();
+    suite.addTestSuite(org.apache.poi.hwpf.model.TestCHPBinTable.class);
+    suite.addTestSuite(org.apache.poi.hwpf.model.
+                       TestDocumentProperties.class);
+    suite.addTestSuite(org.apache.poi.hwpf.model.
+                       TestFileInformationBlock.class);
+    suite.addTestSuite(org.apache.poi.hwpf.model.TestFontTable.class);
+    suite.addTestSuite(org.apache.poi.hwpf.model.TestPAPBinTable.class);
+    suite.addTestSuite(org.apache.poi.hwpf.model.TestPlexOfCps.class);
+    suite.addTestSuite(org.apache.poi.hwpf.model.TestSectionTable.class);
+    suite.addTestSuite(org.apache.poi.hwpf.model.TestStyleSheet.class);
+    suite.addTestSuite(org.apache.poi.hwpf.model.TestTextPieceTable.class);
+    suite.addTestSuite(org.apache.poi.hwpf.model.TestListTables.class);
+    return suite;
   }
-
-  public boolean equals(Object obj)
-  {
-    Field[] fields = SectionProperties.class.getSuperclass().getDeclaredFields();
-    AccessibleObject.setAccessible(fields, true);
-    try
-    {
-      for (int x = 0; x < fields.length; x++)
-      {
-        Object obj1 = fields[x].get(this);
-        Object obj2 = fields[x].get(obj);
-        if (obj1 == null && obj2 == null)
-        {
-          continue;
-        }
-        if (!obj1.equals(obj2))
-        {
-          return false;
-        }
-      }
-      return true;
-    }
-    catch (Exception e)
-    {
-      return false;
-    }
-  }
-
 }

@@ -65,9 +65,14 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.hwpf.usermodel.CharacterRun;
+import org.apache.poi.hwpf.usermodel.Paragraph;
+import org.apache.poi.hwpf.usermodel.TableProperties;
+import org.apache.poi.hwpf.sprm.TableSprmUncompressor;
+import org.apache.poi.hwpf.sprm.ParagraphSprmUncompressor;
 
-import org.apache.poi.hwpf.model.hdftypes.*;
+import org.apache.poi.hwpf.model.*;
 import org.apache.poi.hwpf.model.io.*;
+import org.apache.poi.hwpf.usermodel.*;
 
 
 /**
@@ -114,6 +119,8 @@ public class HWPFDocument
   /** Holds fonts for this document.*/
   private FontTable _ft;
 
+  private ListTables _lt;
+
 
   /**
    * This constructor loads a Word document from an InputStream.
@@ -148,6 +155,8 @@ public class HWPFDocument
     _tableStream = new byte[tableProps.getSize()];
     _filesystem.createDocumentInputStream(name).read(_tableStream);
 
+    _fib.fillVariableFields(_mainStream, _tableStream);
+
     // get the start of text in the main stream
     int fcMin = _fib.getFcMin();
 
@@ -171,6 +180,13 @@ public class HWPFDocument
     _ss = new StyleSheet(_tableStream, _fib.getFcStshf());
     _ft = new FontTable(_tableStream, _fib.getFcSttbfffn(), _fib.getLcbSttbfffn());
 
+    int listOffset = _fib.getFcPlcfLst();
+    int lfoOffset = _fib.getFcPlfLfo();
+    if (listOffset != 0 && _fib.getLcbPlcfLst() != 0)
+    {
+      _lt = new ListTables(_tableStream, _fib.getFcPlcfLst(), _fib.getFcPlfLfo());
+    }
+
     int x = 0;
 
   }
@@ -185,6 +201,10 @@ public class HWPFDocument
     return new Range(0, _fib.getFcMac() - _fib.getFcMin(), this);
   }
 
+  public ListTables getListTables()
+  {
+    return _lt;
+  }
   /**
    * Writes out the word file that is represented by an instance of this class.
    *
@@ -201,6 +221,7 @@ public class HWPFDocument
     HWPFOutputStream tableStream = docSys.getStream("1Table");
     int tableOffset = 0;
 
+    // FileInformationBlock fib = (FileInformationBlock)_fib.clone();
     // clear the offsets and sizes in our FileInformationBlock.
     _fib.clearOffsetsSizes();
 
@@ -250,6 +271,19 @@ public class HWPFDocument
     _fib.setLcbPlcfsed(tableStream.getOffset() - tableOffset);
     tableOffset = tableStream.getOffset();
 
+    // write out the list tables
+    if (_lt != null)
+    {
+      _fib.setFcPlcfLst(tableOffset);
+      _lt.writeListDataTo(tableStream);
+      _fib.setLcbPlcfLst(tableStream.getOffset() - tableOffset);
+
+      _fib.setFcPlfLfo(tableStream.getOffset());
+      _lt.writeListOverridesTo(tableStream);
+      _fib.setLcbPlfLfo(tableStream.getOffset() - tableOffset);
+      tableOffset = tableStream.getOffset();
+    }
+
     // write out the FontTable.
     _fib.setFcSttbfffn(tableOffset);
     _ft.writeTo(docSys);
@@ -276,6 +310,11 @@ public class HWPFDocument
       System.arraycopy(mainBuf, 0, tempBuf, 0, mainBuf.length);
       mainBuf = tempBuf;
     }
+
+    // write out the FileInformationBlock.
+    //_fib.serialize(mainBuf, 0);
+    _fib.writeTo(mainBuf, tableStream);
+
     byte[] tableBuf = tableStream.toByteArray();
     if (tableBuf.length < 4096)
     {
@@ -284,8 +323,6 @@ public class HWPFDocument
       tableBuf = tempBuf;
     }
 
-    // write out the FileInformationBlock.
-    _fib.serialize(mainBuf, 0);
 
     // spit out the Word document.
     POIFSFileSystem pfs = new POIFSFileSystem();
@@ -295,27 +332,34 @@ public class HWPFDocument
     pfs.writeFilesystem(out);
   }
 
-  CHPBinTable getCharacterTable()
+  public CHPBinTable getCharacterTable()
   {
     return _cbt;
   }
 
-  PAPBinTable getParagraphTable()
+  public PAPBinTable getParagraphTable()
   {
     return _pbt;
   }
 
-  SectionTable getSectionTable()
+  public SectionTable getSectionTable()
   {
     return _st;
   }
 
-  TextPieceTable getTextTable()
+  public TextPieceTable getTextTable()
   {
     return _cft.getTextPieceTable();
   }
 
-
+  public int registerList(List list)
+  {
+    if (_lt == null)
+    {
+      _lt = new ListTables();
+    }
+    return _lt.addList(list.getListData(), list.getOverride());
+  }
 
   /**
    * Takes two arguments, 1) name of the Word file to read in 2) location to
@@ -328,19 +372,29 @@ public class HWPFDocument
     try
     {
       HWPFDocument doc = new HWPFDocument(new FileInputStream(args[0]));
-      CharacterRun run = new CharacterRun();
-      run.setBold(true);
-      run.setItalic(true);
-      run.setCapitalized(true);
+      Range r = doc.getRange();
+      TableIterator ti = new TableIterator(r);
+      while (ti.hasNext())
+      {
+        Table t = ti.next();
+        int x = 0;
+      }
 
-      Range range = doc.getRange();
-      range.insertBefore("Hello World!!! HAHAHAHAHA I DID IT!!!", run);
 
-      OutputStream out = new FileOutputStream(args[1]);
-      doc.write(out);
 
-      out.flush();
-      out.close();
+//      CharacterRun run = new CharacterRun();
+//      run.setBold(true);
+//      run.setItalic(true);
+//      run.setCapitalized(true);
+//
+//      Range range = doc.getRange();
+//      range.insertBefore("Hello World!!! HAHAHAHAHA I DID IT!!!", run);
+//
+//      OutputStream out = new FileOutputStream(args[1]);
+//      doc.write(out);
+//
+//      out.flush();
+//      out.close();
 
 
     }

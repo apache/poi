@@ -54,7 +54,7 @@
 
 package org.apache.poi.hwpf.usermodel;
 
-import org.apache.poi.hwpf.model.hdftypes.definitions.TCAbstractType;
+import org.apache.poi.hwpf.model.types.TCAbstractType;
 
 public class TableCellDescriptor
   extends TCAbstractType
@@ -63,6 +63,11 @@ public class TableCellDescriptor
 
   public TableCellDescriptor()
   {
+    field_3_brcTop = new BorderCode();
+    field_4_brcLeft = new BorderCode();
+    field_5_brcBottom = new BorderCode();
+    field_6_brcRight = new BorderCode();
+
   }
 
   public Object clone()

@@ -54,14 +54,37 @@
 
 package org.apache.poi.hwpf.usermodel;
 
-import org.apache.poi.hwpf.model.hdftypes.definitions.TAPAbstractType;
+import org.apache.poi.hwpf.model.types.TAPAbstractType;
 
 public class TableProperties
   extends TAPAbstractType
     implements Cloneable
 {
+
   public TableProperties()
   {
+
+  }
+  public TableProperties(int columns)
+  {
+    field_7_itcMac = (short)columns;
+    field_10_rgshd = new ShadingDescriptor[columns];
+    for (int x = 0; x < columns; x++)
+    {
+      field_10_rgshd[x] = new ShadingDescriptor();
+    }
+    field_11_brcBottom =  new BorderCode();
+    field_12_brcTop = new BorderCode();
+    field_13_brcLeft = new BorderCode();
+    field_14_brcRight = new BorderCode();
+    field_15_brcVertical = new BorderCode();
+    field_16_brcHorizontal = new BorderCode();
+    field_8_rgdxaCenter = new short[columns];
+    field_9_rgtc = new TableCellDescriptor[columns];
+    for (int x = 0; x < columns; x++)
+    {
+      field_9_rgtc[x] = new TableCellDescriptor();
+    }
   }
 
   public Object clone()

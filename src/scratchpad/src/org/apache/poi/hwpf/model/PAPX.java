@@ -52,64 +52,84 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.poi.hwpf.usermodel;
 
-import org.apache.poi.hwpf.model.types.SEPAbstractType;
+package org.apache.poi.hwpf.model;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.AccessibleObject;
-import java.lang.reflect.Array;
 
-public class SectionProperties
-  extends SEPAbstractType
+import org.apache.poi.util.LittleEndian;
+
+import org.apache.poi.hwpf.usermodel.ParagraphProperties;
+import org.apache.poi.hwpf.sprm.ParagraphSprmUncompressor;
+import org.apache.poi.hwpf.sprm.SprmBuffer;
+
+/**
+ * Comment me
+ *
+ * @author Ryan Ackley
+ */
+
+public class PAPX extends CachedPropertyNode
 {
-  public SectionProperties()
+
+  private ParagraphHeight _phe;
+
+  public PAPX(int fcStart, int fcEnd, byte[] papx, ParagraphHeight phe)
   {
-    field_20_brcTop = new BorderCode();
-    field_21_brcLeft = new BorderCode();
-    field_22_brcBottom = new BorderCode();
-    field_23_brcRight = new BorderCode();
-    field_26_dttmPropRMark = new DateAndTime();
+    super(fcStart, fcEnd, new SprmBuffer(papx));
+    _phe = phe;
   }
 
-  public Object clone()
-    throws CloneNotSupportedException
+  public PAPX(int fcStart, int fcEnd, SprmBuffer buf)
   {
-    SectionProperties copy = (SectionProperties)super.clone();
-    copy.field_20_brcTop = (BorderCode)field_20_brcTop.clone();
-    copy.field_21_brcLeft = (BorderCode)field_21_brcLeft.clone();
-    copy.field_22_brcBottom = (BorderCode)field_22_brcBottom.clone();
-    copy.field_23_brcRight = (BorderCode)field_23_brcRight.clone();
-    copy.field_26_dttmPropRMark = (DateAndTime)field_26_dttmPropRMark.clone();
-
-    return copy;
+    super(fcStart, fcEnd, buf);
+    _phe = new ParagraphHeight();
   }
 
-  public boolean equals(Object obj)
+
+  public ParagraphHeight getParagraphHeight()
   {
-    Field[] fields = SectionProperties.class.getSuperclass().getDeclaredFields();
-    AccessibleObject.setAccessible(fields, true);
-    try
+    return _phe;
+  }
+
+  public byte[] getGrpprl()
+  {
+    return ((SprmBuffer)_buf).toByteArray();
+  }
+
+  public short getIstd()
+  {
+    byte[] buf = getGrpprl();
+    if (buf.length == 0)
     {
-      for (int x = 0; x < fields.length; x++)
-      {
-        Object obj1 = fields[x].get(this);
-        Object obj2 = fields[x].get(obj);
-        if (obj1 == null && obj2 == null)
-        {
-          continue;
-        }
-        if (!obj1.equals(obj2))
-        {
-          return false;
-        }
-      }
-      return true;
+      return 0;
     }
-    catch (Exception e)
+    else
     {
-      return false;
+      return LittleEndian.getShort(buf);
     }
   }
 
+  public ParagraphProperties getParagraphProperties(StyleSheet ss)
+  {
+
+    ParagraphProperties props = (ParagraphProperties)super.getCacheContents();
+    if (props == null)
+    {
+      short istd = getIstd();
+      ParagraphProperties baseStyle = ss.getParagraphStyle(istd);
+      props = ParagraphSprmUncompressor.uncompressPAP(baseStyle, getGrpprl(), 2);
+      super.fillCache(props);
+    }
+    return props;
+
+  }
+
+  public boolean equals(Object o)
+  {
+    if (super.equals(o))
+    {
+      return _phe.equals(((PAPX)o)._phe);
+    }
+    return false;
+  }
 }

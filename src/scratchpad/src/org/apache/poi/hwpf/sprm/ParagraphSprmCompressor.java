@@ -60,7 +60,7 @@ import java.util.Arrays;
 
 import org.apache.poi.util.LittleEndian;
 
-import org.apache.poi.hwpf.usermodel.Paragraph;
+import org.apache.poi.hwpf.usermodel.ParagraphProperties;
 
 public class ParagraphSprmCompressor
 {
@@ -68,8 +68,8 @@ public class ParagraphSprmCompressor
   {
   }
 
-  public static byte[] compressParagraphProperty(Paragraph newPAP,
-                                                 Paragraph oldPAP)
+  public static byte[] compressParagraphProperty(ParagraphProperties newPAP,
+                                                 ParagraphProperties oldPAP)
   {
     ArrayList sprmList = new ArrayList();
     int size = 0;
@@ -297,13 +297,13 @@ public class ParagraphSprmCompressor
       }
       size += SprmUtils.addSprm((short)0x442B, val, null, sprmList);
     }
-    if (newPAP.getShd() != oldPAP.getShd())
+    if (newPAP.getShd() != null && !newPAP.getShd().equals(oldPAP.getShd()))
     {
-      size += SprmUtils.addSprm((short)0x442D, newPAP.getShd(), null, sprmList);
+      size += SprmUtils.addSprm((short)0x442D, newPAP.getShd().toShort(), null, sprmList);
     }
-    if (newPAP.getDcs() != oldPAP.getDcs())
+    if (newPAP.getDcs() != null && !newPAP.getDcs().equals(oldPAP.getDcs()))
     {
-      size += SprmUtils.addSprm((short)0x442C, newPAP.getDcs(), null, sprmList);
+      size += SprmUtils.addSprm((short)0x442C, newPAP.getDcs().toShort(), null, sprmList);
     }
     if (newPAP.getLvl() != oldPAP.getLvl())
     {
@@ -326,6 +326,21 @@ public class ParagraphSprmCompressor
     if (!Arrays.equals(newPAP.getNumrm(), oldPAP.getNumrm()))
     {
       size += SprmUtils.addSprm((short)0xC645, 0, newPAP.getNumrm(), sprmList);
+    }
+
+    if (newPAP.getTableLevel() != oldPAP.getTableLevel())
+    {
+      size += SprmUtils.addSprm((short)0x6649, newPAP.getTableLevel(), null, sprmList);
+    }
+
+    if (newPAP.getEmbeddedCellMark() != oldPAP.getEmbeddedCellMark())
+    {
+      size += SprmUtils.addSprm((short)0x244b, newPAP.getEmbeddedCellMark(), null, sprmList);
+    }
+
+    if (newPAP.getFTtpEmbedded() != oldPAP.getFTtpEmbedded())
+    {
+      size += SprmUtils.addSprm((short)0x244c, newPAP.getFTtpEmbedded(), null, sprmList);
     }
 
     return SprmUtils.getGrpprl(sprmList, size);

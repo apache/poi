@@ -52,21 +52,31 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.poi.hwpf.usermodel;
+package org.apache.poi.hwpf.model;
 
-import org.apache.poi.hwpf.*;
+import java.util.Arrays;
 
-import java.util.List;
-
-public class ParagraphRange extends Range
+public class UPX
 {
-  public ParagraphRange(int start, int end, HWPFDocument doc)
+  private byte[] _upx;
+
+  public UPX(byte[] upx)
   {
-    super(start, end, doc);
-  }
-  public ParagraphRange(int start, int end, Range parent)
-  {
-   super(start, end, parent);
+    _upx = upx;
   }
 
+  public byte[] getUPX()
+  {
+    return _upx;
+  }
+  public int size()
+  {
+    return _upx.length;
+  }
+
+  public boolean equals(Object o)
+  {
+    UPX upx = (UPX)o;
+    return Arrays.equals(_upx, upx._upx);
+  }
 }

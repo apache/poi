@@ -58,7 +58,7 @@ package org.apache.poi.hwpf.sprm;
 //import java.util.ArrayList;
 //import java.util.Arrays;
 //
-//import org.apache.poi.hwpf.model.hdftypes.definitions.SEPAbstractType;
+//import org.apache.poi.hwpf.model.types.SEPAbstractType;
 //import org.apache.poi.hwpf.usermodel.SectionProperties;
 //import org.apache.poi.util.LittleEndian;
 //
@@ -276,19 +276,18 @@ package org.apache.poi.hwpf.sprm;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import org.apache.poi.hwpf.model.hdftypes.definitions.SEPAbstractType;
-import org.apache.poi.hwpf.usermodel.Section;
+import org.apache.poi.hwpf.model.types.SEPAbstractType;
+import org.apache.poi.hwpf.usermodel.SectionProperties;
 import org.apache.poi.util.LittleEndian;
 
 
 public class SectionSprmCompressor
 {
-  private final static Section DEFAULT_SEP = new Section();
+  private final static SectionProperties DEFAULT_SEP = new SectionProperties();
   public SectionSprmCompressor()
   {
   }
-  public static byte[] compressSectionProperty(Section newSEP,
-                                               Section oldSEP)
+  public static byte[] compressSectionProperty(SectionProperties newSEP)
   {
     int size = 0;
     ArrayList sprmList = new ArrayList();
