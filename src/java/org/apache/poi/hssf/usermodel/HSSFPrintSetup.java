@@ -64,7 +64,7 @@ import org.apache.poi.hssf.record.PrintSetupRecord;
 public class HSSFPrintSetup extends Object {
 
     PrintSetupRecord printSetupRecord;
-    
+
     /**
      * Constructor.  Takes the low level print setup record.
      * @param printSetupRecord the low level print setup record
@@ -118,7 +118,7 @@ public class HSSFPrintSetup extends Object {
 	printSetupRecord.setFitHeight(height);
     }
 
-    
+
     /**
      * Sets the options flags.  Not advisable to do it directly.
      * @param options The bit flags for the options
@@ -144,7 +144,7 @@ public class HSSFPrintSetup extends Object {
      */
     public void setLandscape(boolean ls)
     {
-	printSetupRecord.setLandscape(ls);
+	printSetupRecord.setLandscape(!ls);
     }
 
     /**
@@ -156,7 +156,7 @@ public class HSSFPrintSetup extends Object {
 	printSetupRecord.setValidSettings(valid);
     }
 
-    
+
     /**
      * Set whether it is black and white
      * @param mono Black and white
@@ -316,7 +316,7 @@ public class HSSFPrintSetup extends Object {
      */
     public boolean getLandscape()
     {
-        return printSetupRecord.getLandscape();
+        return !printSetupRecord.getLandscape();
     }
 
     /**
