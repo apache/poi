@@ -858,6 +858,39 @@ extends TestCase {
     }
     
     
+    public void testIfFormulas()
+        throws java.io.IOException
+    {
+        String readFilename = System.getProperty("HSSF.testdata.path");
+
+            File file = File.createTempFile("testIfFormula",".xls");
+            FileOutputStream out    = new FileOutputStream(file);
+            HSSFWorkbook     wb     = new HSSFWorkbook();
+            HSSFSheet        s      = wb.createSheet("Sheet1");
+            HSSFRow          r      = null;
+            HSSFCell         c      = null;
+            r = s.createRow((short)0);
+            c=r.createCell((short)1); c.setCellValue(1);
+            c=r.createCell((short)2); c.setCellValue(2);
+            c=r.createCell((short)3); c.setCellFormula("MAX(A1:B1)");
+            c=r.createCell((short)4); c.setCellFormula("IF(A1=D1,\"A1\",\"B1\")");
+            
+            wb.write(out);
+            out.close();
+            
+             assertTrue("file exists",file.exists());
+            
+            FileInputStream in = new FileInputStream(readFilename+File.separator+"IfFormulaTest.xls");
+            wb = new HSSFWorkbook(in);
+            s = wb.getSheetAt(0);
+            r = s.getRow(3);
+            c = r.getCell((short)0);
+            assertTrue("expected: IF(A3=A1,\"A1\",\"B1\") got "+c.getCellFormula(), ("IF(A3=A1,\"A1\",\"B1\")").equals(c.getCellFormula()));
+            //c = r.getCell((short)1);
+            //assertTrue("expected: A!A1+A!B1 got: "+c.getCellFormula(), ("A!A1+A!B1").equals(c.getCellFormula()));
+            in.close(); 
+    }
+    
     public static void main(String [] args) {
         System.out
         .println("Testing org.apache.poi.hssf.usermodel.TestFormulas");
