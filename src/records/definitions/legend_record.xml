@@ -1,4 +1,6 @@
 <record id="0x1015" name="Legend" package="org.apache.poi.hssf.record">
+    <suffix>Record</suffix>
+    <extends>Record</extends>
     <description>The legend record specifies the location of legend on a chart and it's overall size.</description>
     <author>Glen Stampoultzis (glens at apache.org)</author>
     <fields>
