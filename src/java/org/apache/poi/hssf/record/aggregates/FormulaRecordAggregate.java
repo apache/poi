@@ -266,5 +266,10 @@ public class FormulaRecordAggregate
 
       return true;
    }
+   
+   public String getStringValue() {
+        if(stringRecord==null) return null;
+        return stringRecord.getString();
+   }
 
 }
