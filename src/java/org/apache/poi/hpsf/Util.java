@@ -54,6 +54,7 @@
  */
 package org.apache.poi.hpsf;
 
+import java.util.Collection;
 import java.util.Date;
 
 /**
@@ -188,6 +189,61 @@ public class Util
         final long ms_since_16010101 = filetime / (1000 * 10);
         final long ms_since_19700101 = ms_since_16010101 - EPOCH_DIFF;
         return new Date(ms_since_19700101);
+    }
+
+
+
+    /**
+     * <p>Checks whether two collections are equal. Two collections
+     * C<sub>1</sub> and C<sub>2</sub> are equal, if the following conditions
+     * are true:</p>
+     *
+     * <ul>
+     *
+     * <li><p>For each c<sub>1<em>i</em></sub> (element of C<sub>1</sub>) there
+     * is a c<sub>2<em>j</em></sub> (element of C<sub>2</sub>), and
+     * c<sub>1<em>i</em></sub> equals c<sub>2<em>j</em></sub>.</p></li>
+     *
+     * <li><p>For each c<sub>2<em>i</em></sub> (element of C<sub>2</sub>) there
+     * is a c<sub>1<em>j</em></sub> (element of C<sub>1</sub>) and
+     * c<sub>2<em>i</em></sub> equals c<sub>1<em>j</em></sub>.</p></li>
+     *
+     * </ul>
+     *
+     * @param c1 the first collection
+     * @param c2 the second collection
+     * @return <code>true</code> if the collections are equal, else
+     * <code>false</code>.
+     */
+    public static boolean equals(final Collection c1, final Collection c2)
+    {
+        final Object[] o1 = c1.toArray();
+        final Object[] o2 = c2.toArray();
+        return internalEquals(o1, o2);
+    }
+
+    public static boolean equals(final Object[] c1, final Object[] c2)
+    {
+        final Object[] o1 = (Object[]) c1.clone();
+        final Object[] o2 = (Object[]) c2.clone();
+        return internalEquals(o1, o2);
+    }
+
+    private static boolean internalEquals(final Object[] o1, final Object[] o2)
+    {
+        for (int i1 = 0; i1 < o1.length; i1++)
+        {
+            boolean matchFound = false;
+            for (int i2 = 0; !matchFound && i2 < o1.length; i2++)
+                if (o1[i1].equals(o2[i2]))
+                {
+                    matchFound = true;
+                    o2[i2] = null;
+                }
+            if (!matchFound)
+                return false;
+        }
+        return true;
     }
 
 }

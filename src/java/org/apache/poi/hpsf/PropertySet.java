@@ -54,10 +54,12 @@
  */
 package org.apache.poi.hpsf;
 
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+
 import org.apache.poi.hpsf.wellknown.SectionIDMap;
 import org.apache.poi.util.LittleEndian;
 
@@ -634,6 +636,40 @@ public class PropertySet
             throw new NoSingleSectionException
                 ("Property set contains " + sectionCount + " sections.");
         return ((Section) sections.get(0));
+    }
+
+
+
+    /**
+     * <p>Returns <code>true</code> if the <code>PropertySet</code> is equal
+     * to the specified parameter, else <code>false</code>.</p>
+     *
+     * @param o the object to compare this <code>PropertySet</code> with
+     */
+    public boolean equals(final Object o)
+    {
+        if (o == null || !(o instanceof PropertySet))
+            return false;
+        final PropertySet ps = (PropertySet) o;
+        int byteOrder1 = ps.getByteOrder();
+        int byteOrder2 = getByteOrder();
+        ClassID classId1 = ps.getClassID();
+        ClassID classID2 = getClassID();
+        int format1 = ps.getFormat();
+        int format2 = getFormat();
+        int osVersion1 = ps.getOSVersion();
+        int osVersion2 = getOSVersion();
+        int sectionCount1 = ps.getSectionCount();
+        int sectionCount2 = getSectionCount();
+        if (byteOrder1 != byteOrder2      ||
+            !classId1.equals(classID2)    ||
+            format1 != format2            ||
+            osVersion1 != osVersion2      ||
+            sectionCount1 != sectionCount2)
+            return false;
+
+        /* Compare the sections: */
+        return Util.equals(getSections(), ps.getSections());
     }
 
 }

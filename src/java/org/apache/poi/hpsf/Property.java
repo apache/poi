@@ -100,7 +100,7 @@ public class Property
     private static final int CP_UNICODE = 1200;
 
     /** <p>The property's ID.</p> */
-    private int id;
+    protected int id;
 
 
     /**
@@ -116,7 +116,7 @@ public class Property
 
 
     /** <p>The property's type.</p> */
-    private long type;
+    protected long type;
 
 
     /**
@@ -132,7 +132,7 @@ public class Property
 
 
     /** <p>The property's value.</p> */
-    private Object value;
+    protected Object value;
 
 
     /**
@@ -188,6 +188,15 @@ public class Property
             value = "*** null ***";
         }
     }
+
+
+
+    /**
+     * <p>Creates an empty property. It must be filled using the set method to
+     * be usable.</p>
+     */
+    protected Property()
+    {}
 
 
 
@@ -271,6 +280,13 @@ public class Property
      * @return the property's size in bytes
      */
     protected int getSize()
+    {
+        throw new UnsupportedOperationException("FIXME: Not yet implemented.");
+    }
+
+
+
+    public boolean equals(Object o)
     {
         throw new UnsupportedOperationException("FIXME: Not yet implemented.");
     }

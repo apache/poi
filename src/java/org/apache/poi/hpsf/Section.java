@@ -138,7 +138,7 @@ public class Section
     /**
      * @see #getPropertyCount
      */
-    protected int propertyCount;
+    private int propertyCount;
 
 
     /**
@@ -156,7 +156,7 @@ public class Section
     /**
      * @see #getProperties
      */
-    protected Property[] properties;
+    private Property[] properties;
 
 
     /**
@@ -167,6 +167,16 @@ public class Section
     public Property[] getProperties()
     {
         return properties;
+    }
+
+    /**
+     * <p>Sets this section's properties.</p>
+     *
+     * @param properties This section's new properties.
+     */
+    protected void setProperties(final Property[] properties)
+    {
+        this.properties = properties;
     }
 
 
@@ -421,6 +431,27 @@ public class Section
         if (s == null)
             s = SectionIDMap.UNDEFINED;
         return s;
+    }
+
+
+
+    /**
+     * <p>Checks whether this section is equal to another object.</p>
+     * 
+     * @param o The object to cpmpare this section with
+     * @return <code>true</code> if the objects are equal, <code>false</code> if
+     * not
+     */
+    public boolean equals(final Object o)
+    {
+        if (o == null || !(o instanceof Section))
+            return false;
+        final Section s = (Section) o;
+        if (!s.getFormatID().equals(getFormatID()))
+            return false;
+        if (s.getPropertyCount() != getPropertyCount())
+            return false;
+        return Util.equals(s.getProperties(), getProperties());
     }
 
 }
