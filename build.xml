@@ -40,48 +40,48 @@
     <property name="repository" value="http://www.ibiblio.org/maven"/>
     <property name="forrest.home" value="${env.FORREST_HOME}"/>
 
-    <property name="main.src" value="src/java"/>
-    <property name="main.src.test" value="src/testcases"/>
+    <property name="main.src" location="src/java"/>
+    <property name="main.src.test" location="src/testcases"/>
     <property name="main.documentation" value="src/documentation"/>
-    <property name="main.output.dir" value="build/classes"/>
-    <property name="main.output.test.dir" value="build/test-classes"/>
-    <property name="main.lib" value="lib"/>
-    <property name="main.reports.test" value="build/test-results"/>
-    <property name="main.jar1.dir" value="${main.lib}/commons-logging-1.0.1.jar"/>
+    <property name="main.output.dir" location="build/classes"/>
+    <property name="main.output.test.dir" location="build/test-classes"/>
+    <property name="main.lib" location="lib"/>
+    <property name="main.reports.test" location="build/test-results"/>
+    <property name="main.jar1.dir" location="${main.lib}/commons-logging-1.0.1.jar"/>
     <property name="main.jar1.url" value="${repository}/commons-logging/jars/commons-logging-1.0.1.jar"/>
-    <property name="main.jar2.dir" value="${main.lib}/log4j-1.2.8.jar"/>
+    <property name="main.jar2.dir" location="${main.lib}/log4j-1.2.8.jar"/>
     <property name="main.jar2.url" value="${repository}/log4j/jars/log4j-1.2.8.jar"/>
-    <property name="main.testokfile" value="build/main-testokfile.txt"/>
-    <property name="scratchpad.src" value="src/scratchpad/src"/>
-    <property name="scratchpad.src.test" value="src/scratchpad/testcases"/>
-    <property name="scratchpad.lib" value="src/scratchpad/lib"/>
-    <property name="scratchpad.reports.test" value="build/scratchpad-test-results"/>
-    <property name="scratchpad.output.dir" value="build/scratchpad-classes"/>
-    <property name="scratchpad.output.test.dir" value="build/scratchpad-test-classes"/>
-    <property name="scratchpad.testokfile" value="build/scratchpad-testokfile.txt"/>
-    <property name="contrib.src" value="src/contrib/src"/>
-    <property name="contrib.src.test" value="src/contrib/testcases"/>
-    <property name="contrib.lib" value="src/contrib/lib"/>
-    <property name="contrib.reports.test" value="build/contrib-test-results"/>
-    <property name="contrib.output.dir" value="build/contrib-classes"/>
-    <property name="contrib.output.test.dir" value="build/contrib-test-classes"/>
-    <property name="contrib.jar1.dir" value="${contrib.lib}/commons-beanutils-1.6.jar"/>
+    <property name="main.testokfile" location="build/main-testokfile.txt"/>
+    <property name="scratchpad.src" location="src/scratchpad/src"/>
+    <property name="scratchpad.src.test" location="src/scratchpad/testcases"/>
+    <property name="scratchpad.lib" location="src/scratchpad/lib"/>
+    <property name="scratchpad.reports.test" location="build/scratchpad-test-results"/>
+    <property name="scratchpad.output.dir" location="build/scratchpad-classes"/>
+    <property name="scratchpad.output.test.dir" location="build/scratchpad-test-classes"/>
+    <property name="scratchpad.testokfile" location="build/scratchpad-testokfile.txt"/>
+    <property name="contrib.src" location="src/contrib/src"/>
+    <property name="contrib.src.test" location="src/contrib/testcases"/>
+    <property name="contrib.lib" location="src/contrib/lib"/>
+    <property name="contrib.reports.test" location="build/contrib-test-results"/>
+    <property name="contrib.output.dir" location="build/contrib-classes"/>
+    <property name="contrib.output.test.dir" location="build/contrib-test-classes"/>
+    <property name="contrib.jar1.dir" location="${contrib.lib}/commons-beanutils-1.6.jar"/>
     <property name="contrib.jar1.url" value="${repository}/commons-beanutils/jars/commons-beanutils-1.6.jar"/>
-    <property name="contrib.jar2.dir" value="${contrib.lib}/commons-collections-2.1.jar"/>
+    <property name="contrib.jar2.dir" location="${contrib.lib}/commons-collections-2.1.jar"/>
     <property name="contrib.jar2.url" value="${repository}/commons-collections/jars/commons-collections-2.1.jar"/>
-    <property name="contrib.jar3.dir" value="${contrib.lib}/commons-lang-1.0-b1.jar"/>
+    <property name="contrib.jar3.dir" location="${contrib.lib}/commons-lang-1.0-b1.jar"/>
     <property name="contrib.jar3.url" value="${repository}/commons-lang/jars/commons-lang-1.0-b1.jar"/>
-    <property name="contrib.testokfile" value="build/contrib-testokfile.txt"/>
-    <property name="junit.jar1.dir" value="${main.lib}/junit-3.8.1.jar"/>
+    <property name="contrib.testokfile" location="build/contrib-testokfile.txt"/>
+    <property name="junit.jar1.dir" location="${main.lib}/junit-3.8.1.jar"/>
     <property name="junit.jar1.url" value="${repository}/junit/jars/junit-3.8.1.jar"/>
-    <property name="build.site" value="build/tmp/site/build/site"/>
-    <property name="build.site.src" value="build/tmp/site"/>
-    <property name="junit.report.dir" value="${build.site}/junit"/>
-    <property name="jdepend.report.dir" value="${build.site}/jdepend"/>
-    <property name="jdepend.report.out.dir" value="${build.site.src}/src/documentation/content/jdepend"/>
-    <property name="apidocs.report.dir" value="${build.site}/apidocs"/>
-    <property name="changelog.file" value="${build.site}/changelog.html"/>
-    <property name="dist.dir" value="build/dist"/>
+    <property name="build.site" location="build/tmp/site/build/site"/>
+    <property name="build.site.src" location="build/tmp/site"/>
+    <property name="junit.report.dir" location="${build.site}/junit"/>
+    <property name="jdepend.report.dir" location="${build.site}/jdepend"/>
+    <property name="jdepend.report.out.dir" location="${build.site.src}/src/documentation/content/jdepend"/>
+    <property name="apidocs.report.dir" location="${build.site}/apidocs"/>
+    <property name="changelog.file" location="${build.site}/changelog.html"/>
+    <property name="dist.dir" location="build/dist"/>
     <property name="jar.name" value="poi"/>
     <property name="version.id" value="2.1"/>
     <property name="halt.on.test.failure" value="true"/>
@@ -229,8 +229,8 @@
         <junit printsummary="yes" showoutput="true" filtertrace="no" fork="no"
             haltonfailure="${halt.on.test.failure}" failureproperty="main.test.failed">
             <classpath refid="test.classpath"/>
-            <sysproperty key="HSSF.testdata.path" value="${main.src.test}/org/apache/poi/hssf/data"/>
-            <sysproperty key="HPSF.testdata.path" value="${main.src.test}/org/apache/poi/hpsf/data"/>
+            <sysproperty key="HSSF.testdata.path" file="${main.src.test}/org/apache/poi/hssf/data"/>
+            <sysproperty key="HPSF.testdata.path" file="${main.src.test}/org/apache/poi/hpsf/data"/>
             <formatter type="plain"/>
             <formatter type="xml"/>
             <batchtest todir="${main.reports.test}">
@@ -247,8 +247,8 @@
     <target name="single-test" depends="-test-property-check,compile-main">
         <junit printsummary="no" showoutput="true" filtertrace="no" haltonfailure="${halt.on.test.failure}" failureproperty="main.test.failed">
             <classpath refid="test.classpath"/>
-            <sysproperty key="HSSF.testdata.path" value="${main.src.test}/org/apache/poi/hssf/data"/>
-            <sysproperty key="HPSF.testdata.path" value="${main.src.test}/org/apache/poi/hpsf/data"/>
+            <sysproperty key="HSSF.testdata.path" file="${main.src.test}/org/apache/poi/hssf/data"/>
+            <sysproperty key="HPSF.testdata.path" file="${main.src.test}/org/apache/poi/hpsf/data"/>
             <formatter type="plain" usefile="no"/>
             <formatter type="xml"/>
             <test name="${testcase}"/>
@@ -261,8 +261,8 @@
             <jvmarg value="-Xrunjdwp:transport=dt_socket,address=5001,server=y,suspend=y"/>
             <sysproperty key="java.compiler" value="NONE"/>
             <classpath refid="test.classpath"/>
-            <sysproperty key="HSSF.testdata.path" value="${main.src.test}/org/apache/poi/hssf/data"/>
-            <sysproperty key="HPSF.testdata.path" value="${main.src.test}/org/apache/poi/hpsf/data"/>
+            <sysproperty key="HSSF.testdata.path" file="${main.src.test}/org/apache/poi/hssf/data"/>
+            <sysproperty key="HPSF.testdata.path" file="${main.src.test}/org/apache/poi/hpsf/data"/>
             <formatter type="plain" usefile="no"/>
             <test name="${testcase}"/>
         </junit>
@@ -285,7 +285,7 @@
     </target>
 
     <target name="test-scratchpad" depends="compile-scratchpad,-test-scratchpad-check" unless="scratchpad.test.notRequired">
-        <junit printsummary="yes" fork="no" haltonfailure="${halt.on.test.failure}">
+        <junit printsummary="yes" fork="no" haltonfailure="${halt.on.test.failure}" failureproperty="scratchpad.test.failed">
             <classpath>
                 <path refid="scratchpad.classpath"/>
                 <pathelement location="${main.output.dir}"/>
@@ -293,10 +293,11 @@
                 <pathelement location="${scratchpad.output.test.dir}"/>
                 <pathelement location="${junit.jar1.dir}"/>
             </classpath>
-            <sysproperty key="HSSF.testdata.path" value="${scratchpad.src.test}/org/apache/poi/hssf/data"/>
-            <sysproperty key="HPSF.testdata.path" value="${scratchpad.src.test}/org/apache/poi/hpsf/data"/>
-            <sysproperty key="HDF.testdata.path" value="${scratchpad.src.test}/org/apache/poi/hdf/data"/>
-            <sysproperty key="HWPF.testdata.path" value="${scratchpad.src.test}/org/apache/poi/hwpf/data"/>
+            <sysproperty key="HSSF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hssf/data"/>
+            <sysproperty key="HPSF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hpsf/data"/>
+            <sysproperty key="HDF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hdf/data"/>
+            <sysproperty key="HWPF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hwpf/data"/>
+            <formatter type="plain"/>
             <formatter type="xml"/>
             <batchtest todir="${scratchpad.reports.test}">
                 <fileset dir="${scratchpad.src.test}">
@@ -321,7 +322,7 @@
     </target>
 
     <target name="test-contrib" depends="compile-contrib,-test-contrib-check" unless="contrib.test.notRequired">
-        <junit printsummary="yes" fork="no" haltonfailure="${halt.on.test.failure}">
+        <junit printsummary="yes" fork="no" haltonfailure="${halt.on.test.failure}" failureproperty="contrib.test.failed">
             <classpath>
                 <path refid="contrib.classpath"/>
                 <pathelement location="${main.output.dir}"/>
@@ -329,8 +330,9 @@
                 <pathelement location="${contrib.output.test.dir}"/>
                 <pathelement location="${junit.jar1.dir}"/>
             </classpath>
-            <sysproperty key="HSSF.testdata.path" value="${contrib.src.test}/org/apache/poi/hssf/data"/>
-            <sysproperty key="HPSF.testdata.path" value="${contrib.src.test}/org/apache/poi/hpsf/data"/>
+            <sysproperty key="HSSF.testdata.path" file="${contrib.src.test}/org/apache/poi/hssf/data"/>
+            <sysproperty key="HPSF.testdata.path" file="${contrib.src.test}/org/apache/poi/hpsf/data"/>
+            <formatter type="plain"/>
             <formatter type="xml"/>
             <batchtest todir="${contrib.reports.test}">
                 <fileset dir="${contrib.src.test}">
@@ -383,7 +385,7 @@ FORREST_HOME environment variable!</echo>
 
 
         <ant antfile="${forrest.home}/forrest.antproxy.xml" target="site">
-            <property name="project.home" value="${build.site.src}"/>
+            <property name="project.home" location="${build.site.src}"/>
         </ant>
 
         <echo>Broken links:</echo>
@@ -502,10 +504,10 @@ FORREST_HOME environment variable!</echo>
     <target name="generate-records" depends="init"
         description="Generates records">
         <java classname="org.apache.poi.dev.RecordGenerator" fork="yes">
-            <arg value="src/records/definitions"/>
-            <arg value="src/records/styles"/>
-            <arg value="src/java"/>
-            <arg value="src/testcases"/>
+            <arg location="src/records/definitions"/>
+            <arg location="src/records/styles"/>
+            <arg location="src/java"/>
+            <arg location="src/testcases"/>
             <classpath>
                 <path refid="scratchpad.classpath">
                 </path>
@@ -524,10 +526,10 @@ FORREST_HOME environment variable!</echo>
         description="Generates types">
 
         <java classname="org.apache.poi.dev.RecordGenerator" fork="yes">
-            <arg value="src/types/definitions"/>
-            <arg value="src/types/styles"/>
-            <arg value="src/scratchpad/src"/>
-            <arg value="src/scratchpad/testcases"/>
+            <arg location="src/types/definitions"/>
+            <arg location="src/types/styles"/>
+            <arg location="src/scratchpad/src"/>
+            <arg location="src/scratchpad/testcases"/>
             <classpath>
                 <path refid="scratchpad.classpath">
                 </path>
@@ -590,6 +592,8 @@ FORREST_HOME environment variable!</echo>
         <echo>Distribution located in build/dist</echo>
 
     </target>
+
+    <target name="clean-compile" depends="clean,compile"/>
 
     <target name="clean-dist" depends="clean,dist" description="Cleans the build directory then creates a distribution"/>
 
