@@ -66,9 +66,9 @@ import java.util.*;
 public class TableRow
 {
   TAP _descriptor;
-  Vector _cells;
+  ArrayList _cells;
 
-  public TableRow(Vector cells, TAP descriptor)
+  public TableRow(ArrayList cells, TAP descriptor)
   {
     _cells = cells;
     _descriptor = descriptor;
@@ -77,7 +77,7 @@ public class TableRow
   {
     return _descriptor;
   }
-  public Vector getCells()
+  public ArrayList getCells()
   {
     return _cells;
   }
