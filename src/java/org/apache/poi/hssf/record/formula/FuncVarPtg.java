@@ -52,6 +52,7 @@ public class FuncVarPtg extends AbstractFunctionPtg{
       FuncVarPtg ptg = new FuncVarPtg();
       ptg.field_1_num_args = field_1_num_args;
       ptg.field_2_fnc_index = field_2_fnc_index;
+      ptg.setClass(ptgClass);
       return ptg;
     }
     

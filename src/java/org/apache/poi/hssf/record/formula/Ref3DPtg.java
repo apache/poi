@@ -210,6 +210,7 @@ public class Ref3DPtg extends Ptg {
      ptg.field_1_index_extern_sheet = field_1_index_extern_sheet;
      ptg.field_2_row = field_2_row;
      ptg.field_3_column = field_3_column;
+     ptg.setClass(ptgClass);
      return ptg;
    }
 

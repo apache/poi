@@ -321,6 +321,7 @@ public class AreaPtg
       ptg.field_2_last_row = field_2_last_row;
       ptg.field_3_first_column = field_3_first_column;
       ptg.field_4_last_column = field_4_last_column;
+      ptg.setClass(ptgClass);
       return ptg;
     }
 

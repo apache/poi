@@ -267,4 +267,14 @@ public class ContinueRecord
     protected void fillFields(byte [] ignored_parm1, short ignored_parm2, int ignored_parm3)
     {
     }
+
+    /**
+     * Clone this record.
+     */
+    public Object clone() {
+      ContinueRecord clone = new ContinueRecord();
+      clone.setData(field_1_data);
+      return clone;
+    }
+
 }
