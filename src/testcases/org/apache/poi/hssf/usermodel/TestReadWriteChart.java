@@ -90,15 +90,19 @@ public class TestReadWriteChart
     public void testBOFandEOFRecords()
         throws Exception
     {
+        //System.out.println("made it in testBOFandEOF");
         String          path      = System.getProperty("HSSF.testdata.path");
         String          filename  = path + "/SimpleChart.xls";
+        //System.out.println("path is "+path);
         POIFSFileSystem fs        =
             new POIFSFileSystem(new FileInputStream(filename));
+        //System.out.println("opened file");
         HSSFWorkbook    workbook  = new HSSFWorkbook(fs);
         HSSFSheet       sheet     = workbook.getSheetAt(0);
         HSSFRow         firstRow  = sheet.getRow(0);
         HSSFCell        firstCell = firstRow.getCell(( short ) 0);
 
+        //System.out.println("first assertion for date");
         assertEquals(new GregorianCalendar(2000, 0, 1, 10, 51, 2).getTime(),
                      HSSFDateUtil
                          .getJavaDate(firstCell.getNumericCellValue()));
@@ -110,7 +114,35 @@ public class TestReadWriteChart
         Sheet newSheet = workbook.getSheetAt(0).getSheet();
         List  records  = newSheet.getRecords();
 
+        //System.out.println("BOF Assertion");
         assertTrue(records.get(0) instanceof BOFRecord);
+        //System.out.println("EOF Assertion");
         assertTrue(records.get(records.size() - 1) instanceof EOFRecord);
     }
+    
+    public static void main(String [] args)
+    {
+        String filename = System.getProperty("HSSF.testdata.path");
+
+        // assume andy is running this in the debugger
+        if (filename == null)
+        {
+            if (args != null && args[0].length() == 1) {
+            System.setProperty(
+                "HSSF.testdata.path",
+                args[0]);
+            } else {
+                System.err.println("Geesh, no HSSF.testdata.path system " +
+                          "property, no command line arg with the path "+
+                          "what do you expect me to do, guess where teh data " +
+                          "files are?  Sorry, I give up!");
+                                   
+            }
+            
+        }
+        System.out
+            .println("Testing org.apache.poi.hssf.usermodel.TestReadWriteChart");
+        junit.textui.TestRunner.run(TestReadWriteChart.class);
+    }
+    
 }
