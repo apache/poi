@@ -134,7 +134,7 @@ public class TreeReaderListener implements POIFSReaderListener
     {
         this.filename = filename;
         this.rootNode = rootNode;
-        pathToNode = new HashMap(15);
+        pathToNode = new HashMap(15); // Should be a reasonable guess.
     }
 
 

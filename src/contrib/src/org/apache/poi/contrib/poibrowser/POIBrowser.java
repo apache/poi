@@ -110,7 +110,7 @@ public class POIBrowser extends JFrame
         /* Create the tree model with a root node. The latter is
          * invisible but it must be present because a tree model
          * always needs a root. */
-        rootNode = new DefaultMutableTreeNode("POIFS");
+        rootNode = new DefaultMutableTreeNode("POI Filesystems");
         DefaultTreeModel treeModel = new DefaultTreeModel(rootNode);
 
         /* Create the tree UI element. */
@@ -118,6 +118,7 @@ public class POIBrowser extends JFrame
         getContentPane().add(new JScrollPane(treeUI));
 
         /* Add the POI filesystems to the tree. */
+        int displayedFiles = 0;
         for (int i = 0; i < args.length; i++)
         {
             final String filename = args[i];
@@ -126,6 +127,7 @@ public class POIBrowser extends JFrame
                 POIFSReader r = new POIFSReader();
                 r.registerListener(new TreeReaderListener(filename, rootNode));
                 r.read(new FileInputStream(filename));
+                displayedFiles++;
             }
             catch (IOException ex)
             {
@@ -139,6 +141,14 @@ public class POIBrowser extends JFrame
             }
         }
 
+        /* Exit if there is no file to display (none specified or only
+         * files with problems). */
+        if (displayedFiles == 0)
+        {
+            System.out.println("No POI filesystem(s) to display.");
+            System.exit(0);
+        }
+
         /* Make the tree UI element visible. */
         treeUI.setRootVisible(true);
         treeUI.setShowsRootHandles(true);
@@ -149,7 +159,7 @@ public class POIBrowser extends JFrame
                       new PropertySetDescriptorRenderer());
         treeUI.setCellRenderer(etcr);
         setSize(600, 450);
-	setTitle("POI Browser 0.10");
+        setTitle("POI Browser 0.06");
         setVisible(true);
     }
 
