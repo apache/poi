@@ -116,6 +116,13 @@ public class TextPiece extends PropertyNode implements Comparable
 
    }
 
+   public String substring(int start, int end)
+   {
+     int denominator = _usesUnicode ? 2 : 1;
+
+     return ((StringBuffer)_buf).substring(start/denominator, end/denominator);
+   }
+
    public boolean equals(Object o)
    {
      if (limitsAreEqual(o))
