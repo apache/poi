@@ -28,7 +28,7 @@ import org.apache.poi.hwpf.sprm.SprmBuffer;
  *
  * @author Ryan Ackley
  */
-public abstract class PropertyNode implements Comparable
+public abstract class PropertyNode implements Comparable, Cloneable
 {
   protected Object _buf;
   private int _cpStart;
@@ -56,7 +56,7 @@ public abstract class PropertyNode implements Comparable
       return _cpStart;
   }
 
-  void setStart(int start)
+  public void setStart(int start)
   {
     _cpStart = start;
   }
@@ -69,7 +69,7 @@ public abstract class PropertyNode implements Comparable
     return _cpEnd;
   }
 
-  void setEnd(int end)
+  public void setEnd(int end)
   {
     _cpEnd = end;
   }
@@ -118,6 +118,13 @@ public abstract class PropertyNode implements Comparable
     }
     return false;
   }
+
+  public Object clone()
+    throws CloneNotSupportedException
+  {
+    return super.clone();
+  }
+
   /**
    * Used for sorting in collections.
    */

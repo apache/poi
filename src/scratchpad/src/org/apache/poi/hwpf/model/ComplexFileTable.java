@@ -30,7 +30,7 @@ public class ComplexFileTable
   private static final byte GRPPRL_TYPE = 1;
   private static final byte TEXT_PIECE_TABLE_TYPE = 2;
 
-  TextPieceTable _tpt;
+  protected TextPieceTable _tpt;
 
   public ComplexFileTable()
   {

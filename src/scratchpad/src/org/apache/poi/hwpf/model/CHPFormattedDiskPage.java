@@ -114,7 +114,7 @@ public class CHPFormattedDiskPage extends FormattedDiskPage
       int fcOffset = 0;
 
       // total size is currently the size of one FC
-      int totalSize = FC_SIZE + 1;
+      int totalSize = FC_SIZE + 2;
 
       int index = 0;
       for (; index < size; index++)
@@ -164,7 +164,6 @@ public class CHPFormattedDiskPage extends FormattedDiskPage
         buf[offsetOffset] = (byte)(grpprlOffset/2);
         buf[grpprlOffset] = (byte)grpprl.length;
         System.arraycopy(grpprl, 0, buf, grpprlOffset + 1, grpprl.length);
-
 
         offsetOffset += 1;
         fcOffset += FC_SIZE;

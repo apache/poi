@@ -34,7 +34,7 @@ import org.apache.poi.hwpf.sprm.SprmBuffer;
 public class CHPBinTable
 {
   /** List of character properties.*/
-  ArrayList _textRuns = new ArrayList();
+  protected ArrayList _textRuns = new ArrayList();
 
 
   public CHPBinTable()

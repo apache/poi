@@ -64,6 +64,11 @@ public class TextPiece extends PropertyNode implements Comparable
      return (StringBuffer)_buf;
    }
 
+   public void setStringBuffer(StringBuffer buf)
+   {
+     _buf = buf;
+   }
+
    public byte[] getRawBytes()
    {
      try

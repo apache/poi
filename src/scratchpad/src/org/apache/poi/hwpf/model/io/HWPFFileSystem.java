@@ -38,6 +38,7 @@ public class HWPFFileSystem
   {
     _streams.put("WordDocument", new HWPFOutputStream());
     _streams.put("1Table", new HWPFOutputStream());
+    _streams.put("Data", new HWPFOutputStream());
   }
 
   public HWPFOutputStream getStream(String name)

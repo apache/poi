@@ -719,7 +719,7 @@ public class Range
   /**
    * loads all of the list indexes.
    */
-  private void initAll()
+  protected void initAll()
   {
     initText();
     initCharacterRuns();

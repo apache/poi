@@ -80,10 +80,19 @@ public class ListFormatOverrideLevel
     {
       return false;
     }
-
     ListFormatOverrideLevel lfolvl = (ListFormatOverrideLevel)obj;
-    return lfolvl._iStartAt == _iStartAt && lfolvl._info == _info &&
-      lfolvl._lvl.equals(_lvl) && Arrays.equals(lfolvl._reserved, _reserved);
+    boolean lvlEquality = false;
+    if (_lvl != null)
+    {
+      lvlEquality = _lvl.equals(lfolvl._lvl);
+    }
+    else
+    {
+      lvlEquality = lfolvl._lvl == null;
+    }
+
+    return lvlEquality && lfolvl._iStartAt == _iStartAt && lfolvl._info == _info &&
+      Arrays.equals(lfolvl._reserved, _reserved);
   }
 
   public byte[] toByteArray()

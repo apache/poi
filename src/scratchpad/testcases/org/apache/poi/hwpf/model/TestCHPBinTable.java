@@ -68,7 +68,6 @@ public class TestCHPBinTable
     {
       PropertyNode oldNode = (PropertyNode)oldTextRuns.get(x);
       PropertyNode newNode = (PropertyNode)newTextRuns.get(x);
-
       assertTrue(oldNode.equals(newNode));
     }
 
