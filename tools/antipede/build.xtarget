@@ -107,7 +107,7 @@
         <uptodate targetfile="${current.cent.jar}">
           <srcfiles dir= "." includes="${cents.dir}/${current.cent.jar.name}.${cent.dir.suffix}/${task.properties.name}"/>      
         </uptodate>
-       <available type="dir" file="${cents.dir}/${current.cent.jar.name}.${cent.dir.suffix}"/>
+       <available type="file" file="${cents.dir}/${current.cent.jar.name}.${cent.dir.suffix}/${task.properties.name}"/>
       </and>
     </condition>
  
