@@ -58,7 +58,7 @@
   <project name="jakarta-poi">
   
      <version major="1"
-             minor="9"
+             minor="11"
              fix  ="0"   
              tag="dev"/> 
 
