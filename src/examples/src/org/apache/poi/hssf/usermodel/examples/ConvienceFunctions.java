@@ -56,7 +56,9 @@ package org.apache.poi.hssf.usermodel.examples;
 
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.hssf.usermodel.contrib.HSSFRegionUtil;
+import org.apache.poi.hssf.usermodel.contrib.HSSFCellUtil;
 import org.apache.poi.hssf.util.Region;
+import org.apache.poi.hssf.util.HSSFColor;
 
 import java.io.FileOutputStream;
 
@@ -67,34 +69,43 @@ import java.io.FileOutputStream;
  */
 public class ConvienceFunctions
 {
-    public static void main( String[] args ) throws Exception
+    public static void main( String[] args )
+            throws Exception
     {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet1 = wb.createSheet( "new sheet" );
 
+        // Create a merged region
         HSSFRow row = sheet1.createRow( (short) 1 );
+        HSSFRow row2 = sheet1.createRow( (short) 2 );
         HSSFCell cell = row.createCell( (short) 1 );
         cell.setCellValue( "This is a test of merging" );
         Region region = new Region( 1, (short) 1, 4, (short) 4 );
         sheet1.addMergedRegion( region );
 
-        HSSFRegionUtil.setBorderBottom( HSSFCellStyle.BORDER_MEDIUM_DASHED,
-                region,
-                sheet1,
-                wb);
-        HSSFRegionUtil.setBorderTop( HSSFCellStyle.BORDER_MEDIUM_DASHED,
-                region,
-                sheet1,
-                wb);
-        HSSFRegionUtil.setBorderLeft( HSSFCellStyle.BORDER_MEDIUM_DASHED,
-                region,
-                sheet1,
-                wb);
-        HSSFRegionUtil.setBorderRight( HSSFCellStyle.BORDER_MEDIUM_DASHED,
-                region,
-                sheet1,
-                wb);
+        // Set the border and border colors.
+        final short borderMediumDashed = HSSFCellStyle.BORDER_MEDIUM_DASHED;
+        HSSFRegionUtil.setBorderBottom( borderMediumDashed,
+                region, sheet1, wb );
+        HSSFRegionUtil.setBorderTop( borderMediumDashed,
+                region, sheet1, wb );
+        HSSFRegionUtil.setBorderLeft( borderMediumDashed,
+                region, sheet1, wb );
+        HSSFRegionUtil.setBorderRight( borderMediumDashed,
+                region, sheet1, wb );
+        HSSFRegionUtil.setBottomBorderColor(HSSFColor.AQUA.index, region, sheet1, wb);
+        HSSFRegionUtil.setTopBorderColor(HSSFColor.AQUA.index, region, sheet1, wb);
+        HSSFRegionUtil.setLeftBorderColor(HSSFColor.AQUA.index, region, sheet1, wb);
+        HSSFRegionUtil.setRightBorderColor(HSSFColor.AQUA.index, region, sheet1, wb);
 
+        // Shows some usages of HSSFCellUtil
+        HSSFCellStyle style = wb.createCellStyle();
+        style.setIndention((short)4);
+        HSSFCellUtil.createCell(row, 8, "This is the value of the cell", style);
+        HSSFCell cell2 = HSSFCellUtil.createCell( row2, 8, "This is the value of the cell");
+        HSSFCellUtil.setAlignment(cell2, wb, HSSFCellStyle.ALIGN_CENTER);
+
+        // Write out the workbook
         FileOutputStream fileOut = new FileOutputStream( "workbook.xls" );
         wb.write( fileOut );
         fileOut.close();
