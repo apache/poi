@@ -60,18 +60,21 @@ import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
+import org.apache.poi.hpsf.ClassID;
 import org.apache.poi.hpsf.DocumentSummaryInformation;
 import org.apache.poi.hpsf.HPSFException;
 import org.apache.poi.hpsf.MarkUnsupportedException;
 import org.apache.poi.hpsf.NoPropertySetStreamException;
 import org.apache.poi.hpsf.PropertySet;
 import org.apache.poi.hpsf.PropertySetFactory;
+import org.apache.poi.hpsf.Section;
 import org.apache.poi.hpsf.SummaryInformation;
-import org.apache.poi.hpsf.UnexpectedPropertySetTypeException;
+import org.apache.poi.hpsf.wellknown.SectionIDMap;
 
 
 
@@ -138,7 +141,6 @@ public class TestBasic extends TestCase
         final File dataDir =
             new File(System.getProperty("HPSF.testdata.path"));
         final File data = new File(dataDir, POI_FS);
-
         poiFiles = Util.readPOIFiles(data);
     }
 
@@ -192,10 +194,6 @@ public class TestBasic extends TestCase
             {
                 o = ex;
             }
-            catch (UnexpectedPropertySetTypeException ex)
-            {
-                o = ex;
-            }
             catch (MarkUnsupportedException ex)
             {
                 o = ex;
@@ -217,7 +215,6 @@ public class TestBasic extends TestCase
      */
     public void testPropertySetMethods() throws IOException, HPSFException
     {
-
         /* Loop over the two property sets. */
         for (int i = 0; i < 2; i++)
         {
@@ -235,6 +232,31 @@ public class TestBasic extends TestCase
             Assert.assertEquals(ps.isDocumentSummaryInformation(),
                                 IS_DOCUMENT_SUMMARY_INFORMATION[i]);
         }
+    }
+
+
+
+    /**
+     * <p>Tests the {@link Section} methods. The test file has two
+     * property sets: the first one is a {@link SummaryInformation},
+     * the second one is a {@link DocumentSummaryInformation}.</p>
+     * 
+     * @exception IOException if an I/O exception occurs
+     * @exception HPSFException if any HPSF exception occurs
+     */
+    public void testSectionMethods() throws IOException, HPSFException
+    {
+        final SummaryInformation si = (SummaryInformation)
+            PropertySetFactory.create(new ByteArrayInputStream
+                (poiFiles[0].getBytes()));
+        final List sections = si.getSections();
+        final Section s = (Section) sections.get(0);
+        Assert.assertTrue(org.apache.poi.hpsf.Util.equal
+            (s.getFormatID().getBytes(), SectionIDMap.SUMMARY_INFORMATION_ID));
+        Assert.assertNotNull(s.getProperties());
+        Assert.assertEquals(17, s.getPropertyCount());
+        Assert.assertEquals("Titel", s.getProperty(2));
+        Assert.assertEquals(1764, s.getSize());
     }
 
 
