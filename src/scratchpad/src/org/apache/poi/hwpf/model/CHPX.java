@@ -65,7 +65,7 @@ import org.apache.poi.hwpf.sprm.CharacterSprmUncompressor;
  * @author Ryan Ackley
  */
 
-public class CHPX extends CachedPropertyNode
+public class CHPX extends PropertyNode
 {
 
   public CHPX(int fcStart, int fcEnd, byte[] grpprl)
@@ -84,17 +84,15 @@ public class CHPX extends CachedPropertyNode
     return ((SprmBuffer)_buf).toByteArray();
   }
 
-  public CharacterProperties getCharacterProperties(StyleSheet ss, short istd)
+  public SprmBuffer getSprmBuf()
   {
-    CharacterProperties props = (CharacterProperties)super.getCacheContents();
-    if (props == null)
-    {
-      CharacterProperties baseStyle = ss.getCharacterStyle(istd);
-      props = CharacterSprmUncompressor.uncompressCHP(baseStyle, getGrpprl(), 0);
-      super.fillCache(props);
-    }
-    return props;
+    return (SprmBuffer)_buf;
   }
 
-
+  public CharacterProperties getCharacterProperties(StyleSheet ss, short istd)
+  {
+    CharacterProperties baseStyle = ss.getCharacterStyle(istd);
+    CharacterProperties props = CharacterSprmUncompressor.uncompressCHP(baseStyle, getGrpprl(), 0);
+    return props;
+  }
 }

@@ -392,7 +392,7 @@ public class HWPFDocument
     return _dataStream;
   }
 
-  public int registerList(List list)
+  public int registerList(HWPFList list)
   {
     if (_lt == null)
     {
