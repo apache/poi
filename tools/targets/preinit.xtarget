@@ -50,6 +50,11 @@
     <pathelement path="./build/${name}/classes"/>
   </path>
 
+  <path id="examples.classpath">
+    <!-- FIXME : how to build a path that references a property set in 'init' target ? -->
+    <pathelement path="./build/${name}/classes"/>
+  </path>
+
   <path id="contrib.classpath">
     <fileset dir="./lib/core">
       <include name="*.jar"/>
