@@ -20,7 +20,7 @@
 package org.apache.poi.generator;
 
 /**
- * For iterating through our fields.
+ * <p>For iterating through our fields.</p>
  *
  * @author Glen Stampoultzis (glens at apache.org)
  */
@@ -160,6 +160,3 @@ public class FieldIterator
 
 
 }
-
-
-
