@@ -156,7 +156,8 @@
         </condition>
     </target>
 
-    <target name="fetch-jars" unless="jars.present">
+    <target name="fetch-jars" unless="jars.present"
+     description="Fetches needed JAR files from the Internet">
         <get src="${main.jar1.url}" dest="${main.jar1.dir}"/>
         <get src="${main.jar2.url}" dest="${main.jar2.dir}"/>
         <get src="${contrib.jar1.url}" dest="${contrib.jar1.dir}"/>
@@ -209,7 +210,7 @@
     </target>
 
     <target name="test" depends="test-main,test-scratchpad,test-contrib"
-        description="Test main, contrib and scratchpad"/>
+        description="Tests main, contrib and scratchpad"/>
 
     <target name="-test-main-check">
         <uptodate property="main.test.notRequired" targetfile="${main.testokfile}">
@@ -500,7 +501,7 @@
     <!-- ================================== -->
 
     <target name="generate-records" depends="init"
-        description="generate-records">
+        description="Generates records">
         <java classname="org.apache.poi.dev.RecordGenerator" fork="yes">
             <arg value="src/records/definitions"/>
             <arg value="src/records/styles"/>
@@ -521,7 +522,7 @@
     <!-- ================================== -->
 
     <target name="generate-types" depends="init"
-        description="generate-types">
+        description="Generates types">
 
         <java classname="org.apache.poi.dev.RecordGenerator" fork="yes">
             <arg value="src/types/definitions"/>
@@ -539,7 +540,7 @@
     </target>
 
     <target name="site" depends="reports,docs"
-        description="generate the documentation and reports"/>
+        description="Generates the documentation and reports"/>
 
     <target name="jar" depends="compile" description="Creates jar files for distribution">
         <jar basedir="${main.output.dir}" destfile="${dist.dir}/${jar.name}-${version.id}-${DSTAMP}.jar"/>
