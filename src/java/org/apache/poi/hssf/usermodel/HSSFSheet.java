@@ -165,16 +165,23 @@ public class HSSFSheet
             long cellstart = System.currentTimeMillis();
             HSSFRow hrow = lastrow;
 
-            if ((lastrow == null) || (lastrow.getRowNum() != cval.getRow()))
+            if ( ( lastrow == null ) || ( lastrow.getRowNum() != cval.getRow() ) )
             {
-                hrow = getRow(cval.getRow());
+                hrow = getRow( cval.getRow() );
             }
-            lastrow = hrow;
-            log.log(DEBUG, "record id = "+ Integer.toHexString(((Record)cval).getSid()));
-            hrow.createCellFromRecord(cval);
-            cval = sheet.getNextValueRecord();
-            log.log(DEBUG, "record took ",
-                    new Long(System.currentTimeMillis() - cellstart));
+            if ( hrow != null )
+            {
+                lastrow = hrow;
+                log.log( DEBUG, "record id = " + Integer.toHexString( ( (Record) cval ).getSid() ) );
+                hrow.createCellFromRecord( cval );
+                cval = sheet.getNextValueRecord();
+                log.log( DEBUG, "record took ",
+                        new Long( System.currentTimeMillis() - cellstart ) );
+            }
+            else
+            {
+                cval = null;
+            }
         }
         log.log(DEBUG, "total sheet cell creation took ",
                 new Long(System.currentTimeMillis() - timestart));

@@ -93,8 +93,7 @@ public class Sheet
     extends java.lang.Object
 {
     protected ArrayList              records        = null;
-    int                              preoffset      =
-        0;      // offset of the sheet in a new file
+    int                              preoffset      = 0;      // offset of the sheet in a new file
     int                              loc            = 0;
     protected boolean                containsLabels = false;
     ;
@@ -103,9 +102,9 @@ public class Sheet
     protected DefaultColWidthRecord  defaultcolwidth  = null;
     protected DefaultRowHeightRecord defaultrowheight = null;
     protected GridsetRecord          gridset          = null;
-    protected PrintSetupRecord printSetup             = null;
-    protected HeaderRecord header                     = null;
-    protected FooterRecord footer                     = null;
+    protected PrintSetupRecord       printSetup       = null;
+    protected HeaderRecord           header           = null;
+    protected FooterRecord           footer           = null;
     protected PrintGridlinesRecord printGridlines     = null;
     protected MergeCellsRecord       merged           = null;
     protected int                    mergedloc        = 0;
@@ -201,13 +200,13 @@ public class Sheet
             {
                 retval.defaultrowheight = ( DefaultRowHeightRecord ) rec;
             }
-            else if (rec.isValue())
+            else if ( rec.isValue() )
             {
-                if (isfirstcell)
+                if ( isfirstcell )
                 {
                     retval.cells = new ValueRecordsAggregate();
-                    rec          = retval.cells;
-                    retval.cells.construct(k, recs);
+                    rec = retval.cells;
+                    retval.cells.construct( k, recs );
                     isfirstcell = false;
                 }
                 else
@@ -215,13 +214,13 @@ public class Sheet
                     rec = null;
                 }
             }
-            else if (rec.getSid() == RowRecord.sid)
+            else if ( rec.getSid() == RowRecord.sid )
             {
-                if (isfirstrow)
+                if ( isfirstrow )
                 {
                     retval.rows = new RowRecordsAggregate();
-                    rec         = retval.rows;
-                    retval.rows.construct(k, recs);
+                    rec = retval.rows;
+                    retval.rows.construct( k, recs );
                     isfirstrow = false;
                 }
                 else
@@ -229,22 +228,22 @@ public class Sheet
                     rec = null;
                 }
             }
-	    else if (rec.getSid () == PrintGridlinesRecord.sid)
-		{
-		    retval.printGridlines = (PrintGridlinesRecord) rec;
-		}
-	    else if (rec.getSid () == HeaderRecord.sid)
-		{
-		    retval.header = (HeaderRecord) rec;
-		}
-	    else if (rec.getSid () == FooterRecord.sid)
-		{
-		    retval.footer = (FooterRecord) rec;
-		}
-	    else if (rec.getSid () == PrintSetupRecord.sid)
-		{
-		    retval.printSetup = (PrintSetupRecord) rec;
-		}
+            else if ( rec.getSid() == PrintGridlinesRecord.sid )
+            {
+                retval.printGridlines = (PrintGridlinesRecord) rec;
+            }
+            else if ( rec.getSid() == HeaderRecord.sid )
+            {
+                retval.header = (HeaderRecord) rec;
+            }
+            else if ( rec.getSid() == FooterRecord.sid )
+            {
+                retval.footer = (FooterRecord) rec;
+            }
+            else if ( rec.getSid() == PrintSetupRecord.sid )
+            {
+                retval.printSetup = (PrintSetupRecord) rec;
+            }
 
             if (rec != null)
             {
@@ -290,32 +289,32 @@ public class Sheet
 
         // records.add(retval.createIndex());
         records.add(retval.createCalcMode());
-        records.add(retval.createCalcCount());
-        records.add(retval.createRefMode());
-        records.add(retval.createIteration());
-        records.add(retval.createDelta());
-        records.add(retval.createSaveRecalc());
-        records.add(retval.createPrintHeaders());
-	retval.printGridlines = (PrintGridlinesRecord) retval.createPrintGridlines ();
-	records.add (retval.printGridlines);
-        retval.gridset = ( GridsetRecord ) retval.createGridset();
-        records.add(retval.gridset);
-        records.add(retval.createGuts());
+        records.add(retval.createCalcCount() );
+        records.add( retval.createRefMode() );
+        records.add( retval.createIteration() );
+        records.add( retval.createDelta() );
+        records.add( retval.createSaveRecalc() );
+        records.add( retval.createPrintHeaders() );
+        retval.printGridlines = (PrintGridlinesRecord) retval.createPrintGridlines();
+        records.add( retval.printGridlines );
+        retval.gridset = (GridsetRecord) retval.createGridset();
+        records.add( retval.gridset );
+        records.add( retval.createGuts() );
         retval.defaultrowheight =
-            ( DefaultRowHeightRecord ) retval.createDefaultRowHeight();
-        records.add(retval.defaultrowheight);
-        records.add(retval.createWSBool());
-	retval.header = (HeaderRecord) retval.createHeader ();
-	records.add (retval.header);
-	retval.footer = (FooterRecord) retval.createFooter ();
-	records.add (retval.footer);
-        records.add(retval.createHCenter());
-        records.add(retval.createVCenter());
-	retval.printSetup = (PrintSetupRecord) retval.createPrintSetup ();
-	records.add (retval.printSetup);
+                (DefaultRowHeightRecord) retval.createDefaultRowHeight();
+        records.add( retval.defaultrowheight );
+        records.add( retval.createWSBool() );
+        retval.header = (HeaderRecord) retval.createHeader();
+        records.add( retval.header );
+        retval.footer = (FooterRecord) retval.createFooter();
+        records.add( retval.footer );
+        records.add( retval.createHCenter() );
+        records.add( retval.createVCenter() );
+        retval.printSetup = (PrintSetupRecord) retval.createPrintSetup();
+        records.add( retval.printSetup );
         retval.defaultcolwidth =
-            ( DefaultColWidthRecord ) retval.createDefaultColWidth();
-        records.add(retval.defaultcolwidth);
+                (DefaultColWidthRecord) retval.createDefaultColWidth();
+        records.add( retval.defaultcolwidth);
         retval.dims    = ( DimensionsRecord ) retval.createDimensions();
         retval.dimsloc = 19;
         records.add(retval.dims);
