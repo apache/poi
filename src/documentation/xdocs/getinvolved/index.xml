@@ -8,6 +8,7 @@
    <person name="Nicola Ken Barozzi" email="barozzi@nicolaken.com"/> 
    <person name="Marc Johnson" email="mjohnson@apache.org"/>
    <person name="Andrew C. Oliver" email="acoliver@apache.org"/>
+   <person name="Tetsuya Kitahata" email="tetsuya.kitahata@nifty.com"/>
    </authors>
  </header>
 
@@ -16,7 +17,7 @@
  <section title="Introduction">
   <section title="Disclaimer">
    <p>
-     Any information in here that might be percieved as legal information is 
+     Any information in here that might be perceived as legal information is 
      informational only.  We're not lawyers, so consult a legal professional
      if needed. 
    </p>
@@ -47,7 +48,7 @@
    <p> 
      If you've ever received information regarding the OLE 2 Compound Document
      Format under any type of exclusionary agreement from Microsoft, or  
-     (probably illegally) recieved such information from a person bound by
+     (probably illegally) received such information from a person bound by
      such an agreement, you cannot participate in this project.  (Sorry)
    </p>
    <p>
@@ -80,6 +81,12 @@
      in a patch file of the appropriate format.  Next, if you've added any 
      files, create an archive (tar.bz2 preferred as its the smallest) in a 
      path-preserving archive format, relative to your jakarta-poi directory. 
+     (Note: If you use <a href="http://www.wincvs.org/">WinCVS</a>, move to 
+     [Admin] -&gt; [Command Line] Menu and type "cvs diff -u" at 
+     [Enter a cvs line command] input field ([Commandline Settings] Tab), 
+     while selecting the target directories or files, in order to create 
+     unified diffs. 
+     In other words, [Alt+A]+[Alt+C]+[Alt+C] and type "cvs diff -u".) 
      You'll attach both files in the next step.
    </p>
    <p> 
