@@ -780,7 +780,7 @@ public abstract class AbstractFunctionPtg extends OperationPtg {
         functionData[342][0]=new Byte(Ptg.CLASS_VALUE);functionData[342][1]=new byte[] {Ptg.CLASS_VALUE};functionData[342][2]=new Integer(1);
         functionData[343][0]=new Byte(Ptg.CLASS_VALUE);functionData[343][1]=new byte[] {Ptg.CLASS_VALUE};functionData[343][2]=new Integer(1);
         functionData[344][0]=new Byte(Ptg.CLASS_VALUE);functionData[344][1]=new byte[] {Ptg.CLASS_REF};functionData[344][2]=new Integer(-1);
-        functionData[345][0]=new Byte(Ptg.CLASS_VALUE);functionData[345][1]=new byte[] {Ptg.CLASS_VALUE};functionData[345][2]=new Integer(-1);
+        functionData[345][0]=new Byte(Ptg.CLASS_VALUE);functionData[345][1]=new byte[] {Ptg.CLASS_REF};functionData[345][2]=new Integer(-1);
         functionData[346][0]=new Byte(Ptg.CLASS_VALUE);functionData[346][1]=new byte[] {Ptg.CLASS_VALUE};functionData[346][2]=new Integer(2);
         functionData[347][0]=new Byte(Ptg.CLASS_VALUE);functionData[347][1]=new byte[] {Ptg.CLASS_REF};functionData[347][2]=new Integer(1);
         
