@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE tabs PUBLIC "-//APACHE//DTD Cocoon Documentation Tab V1.0//EN" "tab-cocoon-v10.dtd">
 
-<tabs software="MyProj"
-  title="MyProj"
-  copyright="Foo"
+<tabs software="POI"
+  title="POI"
+  copyright="Apache Foundation"
   xmlns:xlink="http://www.w3.org/1999/xlink">
 
   <!-- The rules are:
