@@ -592,6 +592,6 @@
 
     <target name="clean-dist" depends="clean,dist" description="Cleans the build directory then creates a distribution"/>
 
-    <target name="gump" depends="clean-dist"/>
+    <target name="gump" depends="test,jar"/>
 
 </project>
