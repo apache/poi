@@ -5,13 +5,22 @@
 
     <devs>
         <!-- in strict alphabetical order -->
-        <person id="AO"  name="Andrew C. Oliver"   email="acoliver2@users.sourceforge.net"/>
-        <person id="GJS"  name="Glen Stampoultzis" email="glens@apache.org"/>
-        <person id="MJ"  name="Marc Johnson"       email="mjohnson@apache.org"/>
+        <person id="AO" name="Andrew C. Oliver" email="acoliver2@users.sourceforge.net"/>
+        <person id="GJS" name="Glen Stampoultzis" email="glens@apache.org"/>
+        <person id="MJ" name="Marc Johnson" email="mjohnson@apache.org"/>
         <person id="NKB" name="Nicola Ken Barozzi" email="barozzi@nicolaken.com"/>
-        <person id="POI-DEVELOPERS" name="Poi Developers"    email="poi-dev@jakarta.apache.org"/>
+        <person id="POI-DEVELOPERS" name="Poi Developers" email="poi-dev@jakarta.apache.org"/>
     </devs>
-    <release version="1.7-dev" date="Ongoing">
+    <release version="1.8-dev" date="20 Sep 2002">
+        <action dev="POI-DEVELOPERS" type="add">Custom Data Format Support</action>
+        <action dev="POI-DEVELOPERS" type="add">Enhanced Unicode Support for Russian and Japanese</action>
+        <action dev="POI-DEVELOPERS" type="add">Enhanced formula support including read-only for
+            "optimized if" statements.</action>
+        <action dev="POI-DEVELOPERS" type="add">Support for cloning objects</action>
+        <action dev="POI-DEVELOPERS" type="add">Fixes for header/footer</action>
+        <action dev="POI-DEVELOPERS" type="add">Spanish Documentation translations</action>
+    </release>
+    <release version="1.7-dev" date="???">
         <action dev="NKB" type="update">Removed runtime dependency on commons logging.</action>
         <action dev="POI-DEVELOPERS" type="update">Formula support</action>
     </release>
