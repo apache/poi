@@ -1,0 +1,234 @@
+  <!-- =================================================================== -->
+  <!-- Prepares the docs                                                   -->
+  <!-- =================================================================== -->
+  <target name="prepare-docs" depends="init">
+
+    <mkdir dir="${build.context}"/>
+    <mkdir dir="${build.context}/images"/>
+    <mkdir dir="${build.docs}"/>
+    <mkdir dir="${build.dir}/work"/>
+
+    <!-- make filtered copy of XML docs -->
+    <copy todir="${build.context}" filtering="on">
+      <fileset dir="${context.dir}">
+        <exclude name="images/**"/>
+      </fileset>
+    </copy>
+
+    <!-- Copy images -->
+    <copy todir="${build.context}/images" filtering="off">
+      <fileset dir="${context.dir}/images"/>
+    </copy>
+
+    <!-- Copy entity catalog and entities -->
+    <copy todir="${build.context}/resources/entities" filtering="on">
+      <fileset dir="${resource.dir}/entities"/>
+    </copy>
+    <mkdir dir="${build.context}/WEB-INF/classes"/>
+    <move todir="${build.context}/WEB-INF/classes">
+      <fileset dir="${build.context}/resources/entities">
+        <include name="CatalogManager.properties"/>
+      </fileset>
+    </move>
+
+  </target>
+
+
+  <!-- =================================================================== -->
+  <!-- Set a variable if the generated docs are already up-to-date.        -->
+  <!-- =================================================================== -->
+  <target name="docs_check" depends="init">
+    <uptodate property="docs.notrequired" targetfile="${build.docs}/index.html" >
+      <srcfiles dir="." includes="changes.xml,todo.xml"/>
+      <srcfiles dir="${context.dir}/xdocs" includes="**/*.xml"/>
+    </uptodate>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- If generated  docs is already up-to-date, print a message saying so. -->
+  <!-- =================================================================== -->
+  <target name="docs_done" if="docs.notrequired">
+    <echo message="-------------------------------------------------------------"/>
+    <echo message="Not rebuilding docs, as they are up-to-date:"/>
+    <echo message="  ${build.docs}/index.html is more recent than"/>
+    <echo message="  todo.xml, changes.xml, ${context.dir}/xdocs/*.xml"/>
+    <echo message="-------------------------------------------------------------"/>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- The documentation system                                            -->
+  <!-- =================================================================== -->
+  <target name="docs"
+          depends="package, prepare-docs, docs_check, docs_done"
+          unless="docs.notrequired"
+          description="* Generates the documentation">
+
+    <java classname="org.apache.cocoon.Main" fork="true" dir="${build.context}" failonerror="true">
+      <arg value="-c."/>
+      <arg value="-d../docs"/>
+      <arg value="-w../work"/>
+      <arg value="-l../work/cocoon.log"/>
+      <arg value="-uINFO"/>
+      <arg value="index.html"/>
+      <classpath>
+        <path refid="classpath"/>
+        <fileset dir="${build.dir}">
+          <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${tools.lib.dir}">
+          <include name="*.jar"/>
+        </fileset>        
+        <pathelement location="${tools.jar}"/>
+        <pathelement location="${build.context}/WEB-INF/classes"/>
+      </classpath>
+    </java>
+
+  </target>
+  
+  <!-- =================================================================== -->
+  <!-- Set a variable if the generated printer docs are already up-to-date. -->
+  <!-- =================================================================== -->
+  <target name="printer-docs_check" depends="init">
+    <uptodate property="printer-docs.notrequired" targetfile="${build.docs.printer}/index.html" >
+      <srcfiles dir="." includes="changes.xml,todo.xml"/>
+      <srcfiles dir="${docs.dir}" includes="**/*.xml"/>
+    </uptodate>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- If generated printer docs is already up-to-date, print a message saying so. -->
+  <!-- =================================================================== -->
+  <target name="printer-docs_done" if="printer-docs.notrequired">
+    <echo message="-------------------------------------------------------------"/>
+    <echo message="Not rebuilding printer docs, as they are up-to-date:"/>
+    <echo message="  ${build.docs.printer}/index.html is more recent than"/>
+    <echo message="  todo.xml, changes.xml, ${docs.dir}/*.xml"/>
+    <echo message="-------------------------------------------------------------"/>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Create the announcements                                            -->
+  <!-- =================================================================== -->
+ <target name="announcement" depends="prepare" description="* Creates the announcement for new releases">
+
+    <copy file="${project-info}" tofile="${build.project-info}" filtering="on"/>
+
+    <style basedir="./" destdir="./" style="${projectinfo2announcement}"
+           includes="project-info.xml" extension=".txt"/>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Create the text version of projectinfo                                            -->
+  <!-- =================================================================== -->
+  <target name="projectinfo" depends="prepare" description="* Creates the text version of projectinfo">
+
+    <copy file="${project-info}" tofile="${build.project-info}" filtering="on"/>
+
+    <style basedir="./" destdir="./" style="${project-info2txt}"
+           includes="project-info.xml" extension=".txt"/>
+
+  </target>
+  <!-- =================================================================== -->
+  <!-- Prepares the printer-docs                                           -->
+  <!-- =================================================================== -->
+  <target name="prepare-printer-docs" depends="prepare-docs">
+
+    <mkdir dir="${build.dir}/printer_documentation"/>
+
+    <!-- copy prepared docs -->
+    <copy todir="${build.dir}/printer_documentation" filtering="off">
+      <fileset dir="${build.context}">
+      </fileset>
+    </copy>
+
+    <!-- copy printer skin -->
+    <copy todir="${build.dir}/printer_documentation/stylesheets" filtering="off" overwrite="yes">
+      <fileset dir="${build.context}/stylesheets/printer_skin">
+      </fileset>
+    </copy>
+
+  </target>
+
+
+  <!-- =================================================================== -->
+  <!-- Generate printer-friendly HTML docs                                 -->
+  <!-- =================================================================== -->
+  <target name="printer-docs" depends="package, prepare-printer-docs, printer-docs_check, printer-docs_done"
+      unless="printer-docs.notrequired"
+      description="* Generates printer-friendly documentation">
+    <mkdir dir="${build.docs.printer}"/>
+
+    <java classname="org.apache.cocoon.Main" fork="true" dir="${build.dir}/printer_documentation" failonerror="true">
+      <arg value="-c."/>
+      <arg value="-d../printer-docs"/>
+      <arg value="-w../work-printer"/>
+      <arg value="-l../work-printer/cocoon.log"/>
+      <arg value="-uINFO"/>
+      <arg value="index.html"/>
+      <classpath>
+        <path refid="classpath"/>
+        <fileset dir="${build.dir}">
+          <include name="*.jar"/>
+        </fileset>
+        <pathelement location="${tools.jar}"/>
+        <pathelement location="${build.context}/WEB-INF/classes"/>
+      </classpath>
+    </java>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Creates the web site                                                -->
+  <!-- =================================================================== -->
+  <target name="site" depends="docs, javadocs"
+      description="Generates the web site (for site maintainers only)">
+    <mkdir dir="${site}"/>
+    <copy todir="${site}" filtering="off">
+      <fileset dir="${build.docs}">
+      </fileset>
+    </copy>
+    <copy todir="${site}/apidocs" filtering="off">
+      <fileset dir="${build.javadocs}"/>
+    </copy>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Set a variable if javadoc is already up-to-date.                    -->
+  <!-- =================================================================== -->
+  <target name="javadocs_check">
+    <uptodate property="javadocs.notrequired" targetfile="${build.javadocs}/packages.html" >
+      <srcfiles dir= "${build.src}" includes="**/*.java"/>
+    </uptodate>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- If javadoc is already up-to-date, print a message saying so.        -->
+  <!-- =================================================================== -->
+  <target name="javadocs_done" if="javadocs.notrequired">
+    <echo message="-------------------------------------------------------------"/>
+    <echo message="Not rebuilding Javadocs, as they are up-to-date:"/>
+    <echo message="  ${build.javadocs}/packages.html is more recent than"/>
+    <echo message="  ${build.src}/**/*.java"/>
+    <echo message="-------------------------------------------------------------"/>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Creates the API documentation                                       -->
+  <!-- =================================================================== -->
+  <target name="javadocs" depends="prepare-src, javadocs_check, javadocs_done"
+      unless="javadocs.notrequired"
+      description="* Generates the API documentation">
+    <mkdir dir="${build.javadocs}"/>
+    <javadoc packagenames="${packages}"
+             sourcepath="${build.src}"
+             destdir="${build.javadocs}"
+             author="true"
+             version="true"
+             use="false"
+             noindex="true"
+             windowtitle="${Name} API"
+             doctitle="${Name}"
+             bottom="Copyright &#169; ${year} ${fullname} project. All Rights Reserved."
+             stylesheetfile="${resource.dir}/javadoc.css">
+      <classpath refid="classpath"/>
+    </javadoc>
+  </target>
