@@ -145,7 +145,7 @@ public class FormulaRecord
         field_6_zero           = LittleEndian.getInt(data, 16 + offset);
         field_7_expression_len = LittleEndian.getShort(data, 20 + offset);
         field_8_parsed_expr    = getParsedExpressionTokens(data, size,
-                                 offset);
+                                 22 + offset);
         
         } catch (java.lang.UnsupportedOperationException uoe)  {
             field_8_parsed_expr = null;
@@ -164,7 +164,7 @@ public class FormulaRecord
                                             int offset)
     {
         Stack stack = new Stack();
-        int   pos   = 22 + offset;
+        int   pos   = offset;
 
         while (pos < size)
         {
@@ -329,7 +329,7 @@ public class FormulaRecord
 
     public List getParsedExpression()
     {
-        return ( List ) field_8_parsed_expr;
+        return field_8_parsed_expr;
     }
 
     /**
@@ -555,7 +555,7 @@ public class FormulaRecord
                 buffer.append("Formula ")
                 .append(k)
                 .append("=")
-                .append(((Ptg)field_8_parsed_expr.get(k)).toString())
+                .append(field_8_parsed_expr.get(k).toString())
                 .append("\n")
                 .append(((Ptg)field_8_parsed_expr.get(k)).toDebugString())
                 .append("\n");                

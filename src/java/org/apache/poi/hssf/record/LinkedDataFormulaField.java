@@ -54,6 +54,12 @@
 
 package org.apache.poi.hssf.record;
 
+import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.util.LittleEndian;
+
+import java.util.Stack;
+import java.util.Iterator;
+
 /**
  * Not implemented yet. May commit it anyway just so people can see
  * where I'm heading.
@@ -63,29 +69,92 @@ package org.apache.poi.hssf.record;
 public class LinkedDataFormulaField
         implements CustomField
 {
+    Stack formulaTokens = new Stack();
+
     public int getSize()
     {
-        return 2;
+        int size = 0;
+        for ( Iterator iterator = formulaTokens.iterator(); iterator.hasNext(); )
+        {
+            Ptg token = (Ptg) iterator.next();
+            size += token.getSize();
+        }
+        return size + 2;
     }
 
     public int fillField( byte[] data, short size, int offset )
     {
-        return 0;
+        short tokenSize = LittleEndian.getShort(data, offset);
+        formulaTokens = getParsedExpressionTokens(data, size, offset + 2);
+
+        return tokenSize + 2;
     }
 
-    public void toString( StringBuffer str )
+    public void toString( StringBuffer buffer )
     {
-        str.append("todo");
+        for ( int k = 0; k < formulaTokens.size(); k++ )
+        {
+            buffer.append( "Formula " )
+                    .append( k )
+                    .append( "=" )
+                    .append( formulaTokens.get( k ).toString() )
+                    .append( "\n" )
+                    .append( ( (Ptg) formulaTokens.get( k ) ).toDebugString() )
+                    .append( "\n" );
+        }
     }
 
     public int serializeField( int offset, byte[] data )
     {
-        return 0;
+        int size = getSize();
+        LittleEndian.putShort(data, offset, (short)(size - 2));
+        int pos = offset + 2;
+        for ( Iterator iterator = formulaTokens.iterator(); iterator.hasNext(); )
+        {
+            Ptg ptg = (Ptg) iterator.next();
+            ptg.writeBytes(data, pos);
+            pos += ptg.getSize();
+        }
+        return size;
     }
 
     public Object clone()
     {
-        return this;
+        try
+        {
+            // todo: clone tokens? or are they immutable?
+            return super.clone();
+        }
+        catch ( CloneNotSupportedException e )
+        {
+            // should not happen
+            return null;
+        }
+    }
+
+    private Stack getParsedExpressionTokens( byte[] data, short size,
+                                             int offset )
+    {
+        Stack stack = new Stack();
+        int pos = offset;
+
+        while ( pos < size )
+        {
+            Ptg ptg = Ptg.createPtg( data, pos );
+            pos += ptg.getSize();
+            stack.push( ptg );
+        }
+        return stack;
+    }
+
+    public void setFormulaTokens( Stack formulaTokens )
+    {
+        this.formulaTokens = (Stack) formulaTokens.clone();
+    }
+
+    public Stack getFormulaTokens()
+    {
+        return (Stack)this.formulaTokens.clone();
     }
 
 }
