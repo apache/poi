@@ -80,40 +80,32 @@ public abstract class FormattedDiskPage
 {
     protected byte[] _fkp;
     protected int _crun;
-    protected int _offset;
-
-
-    public FormattedDiskPage()
-    {
-
-    }
 
     /**
      * Uses a 512-byte array to create a FKP
      */
-    public FormattedDiskPage(byte[] documentStream, int offset)
+    public FormattedDiskPage(byte[] fkp)
     {
-        _crun = LittleEndian.getUnsignedByte(documentStream, offset + 511);
-        _fkp = documentStream;
-        _offset = offset;
+        _crun = LittleEndian.getUnsignedByte(fkp, 511);
+        _fkp = fkp;
     }
     /**
      * Used to get a text offset corresponding to a grpprl in this fkp.
      * @param index The index of the property in this FKP
      * @return an int representing an offset in the "WordDocument" stream
      */
-    protected int getStart(int index)
+    public int getStart(int index)
     {
-        return LittleEndian.getInt(_fkp, _offset + (index * 4));
+        return LittleEndian.getInt(_fkp, (index * 4));
     }
     /**
      * Used to get the end of the text corresponding to a grpprl in this fkp.
      * @param index The index of the property in this fkp.
      * @return an int representing an offset in the "WordDocument" stream
      */
-    protected int getEnd(int index)
+    public int getEnd(int index)
     {
-        return LittleEndian.getInt(_fkp, _offset + ((index + 1) * 4));
+        return LittleEndian.getInt(_fkp, ((index + 1) * 4));
     }
     /**
      * Used to get the total number of grrprl's stored int this FKP
@@ -124,5 +116,5 @@ public abstract class FormattedDiskPage
         return _crun;
     }
 
-    protected abstract byte[] getGrpprl(int index);
+    public abstract byte[] getGrpprl(int index);
 }

@@ -54,62 +54,61 @@
 package org.apache.poi.hdf.model.hdftypes;
 
 
-
 /**
- * Represents a lightweight node in the Trees used to store content
+ * Represents a lightweight node in the Trees used to store formatting
  * properties.
  *
  * @author Ryan Ackley
  */
 public class PropertyNode implements Comparable
 {
-  private byte[] _buf;
-  private int _cpStart;
-  private int _cpEnd;
+  private byte[] _grpprl;
+  private int _fcStart;
+  private int _fcEnd;
 
   /**
    * @param fcStart The start of the text for this property.
    * @param fcEnd The end of the text for this property.
    * @param grpprl The property description in compressed form.
    */
-  public PropertyNode(int fcStart, int fcEnd, byte[] buf)
+  public PropertyNode(int fcStart, int fcEnd, byte[] grpprl)
   {
-      _cpStart = fcStart;
-      _cpEnd = fcEnd;
-      _buf = buf;
+      _fcStart = fcStart;
+      _fcEnd = fcEnd;
+      _grpprl = grpprl;
   }
   /**
    * @return The offset of this property's text.
    */
   public int getStart()
   {
-      return _cpStart;
+      return _fcStart;
   }
   /**
    * @retrun The offset of the end of this property's text.
    */
   public int getEnd()
   {
-    return _cpEnd;
+    return _fcEnd;
   }
   /**
    * @return This property's property in copmpressed form.
    */
-  public byte[] getBuf()
+  protected byte[] getGrpprl()
   {
-    return _buf;
+    return _grpprl;
   }
   /**
    * Used for sorting in collections.
    */
   public int compareTo(Object o)
   {
-      int cpEnd = ((PropertyNode)o).getEnd();
-      if(_cpEnd == cpEnd)
+      int fcEnd = ((PropertyNode)o).getEnd();
+      if(_fcEnd == fcEnd)
       {
         return 0;
       }
-      else if(_cpEnd < cpEnd)
+      else if(_fcEnd < fcEnd)
       {
         return -1;
       }
