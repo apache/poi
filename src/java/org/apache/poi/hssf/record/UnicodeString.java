@@ -280,7 +280,8 @@ public class UnicodeString
     {
         int charsize = 1;
 
-        if (getOptionFlags() == 1)
+        // Note: I suspect this may not be right
+        if ((getOptionFlags() & 0x01) == 1)
         {
             charsize = 2;
         }
@@ -290,7 +291,7 @@ public class UnicodeString
         data[ 2 + offset ] = getOptionFlags();
 
 //        System.out.println("Unicode: We've got "+retval[2]+" for our option flag");
-        if (getOptionFlags() == 0)
+        if ((getOptionFlags() & 0x01) == 0)
         {
             StringUtil.putCompressedUnicode(getString(), data, 0x3 + offset);
         }
@@ -306,7 +307,7 @@ public class UnicodeString
     {
         int charsize = 1;
 
-        if (getOptionFlags() == 1)
+        if ((getOptionFlags() & 0x01) == 1)
         {
             charsize = 2;
         }

@@ -643,26 +643,11 @@ public class Workbook
     {
         log.log(DEBUG, "Serializing Workbook with offsets");
 
-        // ArrayList bytes     = new ArrayList(records.size());
-//        int arraysize = getSize();   // 0;
         int pos       = 0;
 
-//        for (int k = 0; k < records.size(); k++)
-//        {
-//            bytes.add((( Record ) records.get(k)).serialize());
-//
-//        }
-//        for (int k = 0; k < bytes.size(); k++)
-//       {
-//            arraysize += (( byte [] ) bytes.get(k)).length;
-//        }
         for (int k = 0; k < records.size(); k++)
         {
-
-            // byte[] rec = (( byte [] ) bytes.get(k));
-            // System.arraycopy(rec, 0, data, offset + pos, rec.length);
-            pos += (( Record ) records.get(k)).serialize(pos + offset,
-                    data);   // rec.length;
+            pos += (( Record ) records.get(k)).serialize(pos + offset, data);   // rec.length;
         }
         log.log(DEBUG, "Exiting serialize workbook");
         return pos;
