@@ -5,12 +5,7 @@
 	<xsl:template match="status">	
 			 <h1>Project Status</h1>	
 
-			 <h2>Descriptors</h2>			 
-			 <xsl:for-each select = "descriptors/descriptor">
-			 <br/><xsl:value-of select="@id" />: <a><xsl:attribute  name = "href" ><xsl:value-of select="@href" /></xsl:attribute>
-			    <xsl:value-of select="." /></a>	
-			 </xsl:for-each>
-			 	
+		 	
 			 <h2>Developers</h2>			 	
 			 <table>
 			 <xsl:for-each select = "developers/person">

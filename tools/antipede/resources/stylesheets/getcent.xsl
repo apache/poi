@@ -61,13 +61,20 @@
        
 	   <target>
 	      <xsl:attribute name="name"><xsl:value-of select="name()"/>-present</xsl:attribute>
+	      
+          <condition>
+	        <xsl:attribute name="property"><xsl:value-of select="name()"/>.present</xsl:attribute>          
+            <or>
+             <available>
+              <xsl:attribute name="file">${cents.dir}/<xsl:value-of select="name()"/>.cent.jar</xsl:attribute>          
+             </available>
+             <available type="dir">
+              <xsl:attribute name="file">${cents.dir}/<xsl:value-of select="name()"/>.cent</xsl:attribute>          
+            </available>
+           </or>
+          </condition>
 
-          <available>
-            <xsl:attribute name="file">${cents.dir}/<xsl:value-of select="name()"/>.cent.jar</xsl:attribute>          
-	        <xsl:attribute name="property"><xsl:value-of select="name()"/>.present</xsl:attribute>
-          </available>
-
-          <echo><xsl:value-of select="name()"/>.cent.jar is present: ${<xsl:value-of select="name()"/>.present}</echo> 
+          <echo><xsl:value-of select="name()"/> cent is present: ${<xsl:value-of select="name()"/>.present}</echo> 
  
        </target>       
       </xsl:for-each>

@@ -27,20 +27,23 @@
     <fail unless="tools.jar.present" message="tools.jar not found. Probably JDK not installed."/>    
 
 
-    <!-- create fixed centipede dirs -->
+    <!-- fixed centipede dirs -->
     <property name="tools.dir"                   value="tools"/>
+    
     <property name="temp.dir"                    value="tools/tmp"/>
+    <mkdir   dir="${temp.dir}"/>
     <property name="cents.dir"                   value="tools/cents"/>
+    <mkdir   dir="${cents.dir}"/>
+        
     <property name="antipede.dir"                value="tools/antipede"/>
     <property name="antipede.lib.dir"            value="tools/antipede/lib"/>
+    
     <property name="cent.lib.dir.name"           value="lib"/>
     <property name="task.properties.name"        value="tasks.properties"/>
     <property name="cent.jar.suffix"             value="cent.jar"/>    
     <property name="cent.dir.suffix"             value="cent"/>    
-    <property name="cent.installed.suffix"       value="installed"/>      
     
-    <mkdir dir="${cents.dir}"/>
-                    
+                        
     <!-- define all ant tasks in antipede -->
     <taskdef file="${antipede.dir}/${task.properties.name}">
      <classpath>
@@ -56,46 +59,13 @@
     <!--
     Load project information
     -->
-    <centipede-xml-property file="module.xml"     prefix="xgump"    keeproot="true"   />
-    <centipede-xml-property file="status.xml"     prefix="xstatus"  keeproot="false"  />   
-    <centipede-xml-property file="layout.xml"     prefix="xlayout"  keeproot="false"  />
-    <centipede-xml-property file="properties.xml"                   keeproot="false"  />
+    <xmlproperty file="module.xml"     prefix="xgump"    keeproot="true"  collapseAttributes="true" />
+    <xmlproperty file="status.xml"     prefix="xstatus"  keeproot="false" collapseAttributes="true" />   
+    <xmlproperty file="layout.xml"     prefix="xlayout"  keeproot="false" collapseAttributes="true" />
+    <xmlproperty file="properties.xml"                   keeproot="false" collapseAttributes="true" />
     
-    <style basedir="."
-           destdir="${temp.dir}"
-           includes="properties.xml"
-           extension=".build.xml"
-           style="${antipede.dir}/resources/stylesheets/getcent.xsl"/>
-           
-     <ant antfile="${temp.dir}/properties.build.xml"
-         inheritAll="true" 
-         dir="."
-         target="getcents" />        
-<!--
-    <style basedir="."
-           destdir="${temp.dir}"
-           includes="module.xml"
-           extension=".build.xml"
-           style="${antipede.dir}/resources/stylesheets/getlibs.xsl"/>
-           
-     <ant antfile="${temp.dir}/module.build.xml"
-         inheritAll="true" 
-         dir="."
-         target="getlibs" />        
--->
-    
-    <!-- Unpack jarred cents -->
-    <antipede-foreach target="-cent-unjar" param="current.cent.jar">
-     <fileset dir="." casesensitive="yes"> 
-      <patternset>
-       <include name="${cents.dir}/*.${cent.jar.suffix}"/>
-      </patternset>
-     </fileset>  
-    </antipede-foreach>
+    <antcall target="get-needed-cents"/>
 
-    <delete dir="${cents.dir}/META-INF"/>
-
-    <mkdir dir="${temp.dir}"/>
     <delete file="${temp.dir}/${task.properties.name}"/>
                         
     <!-- put all ant task definitions in cents in a single file -->
@@ -125,6 +95,47 @@
    
   </target>
 
+  <!-- ================================ -->
+  <!--  Used only by the -init target   -->
+  <!-- =================================--> 
+  <target  name="get-needed-cents">
+  
+    <style basedir="."
+           destdir="${temp.dir}"
+           includes="properties.xml"
+           extension=".build.xml"
+           style="${antipede.dir}/resources/stylesheets/getcent.xsl"/>
+           
+    <ant antfile="${temp.dir}/properties.build.xml"
+         inheritall="true" 
+         dir="."
+         target="getcents" />        
+
+    <style basedir="."
+           destdir="${temp.dir}"
+           includes="module.xml"
+           extension=".build.xml"
+           style="${antipede.dir}/resources/stylesheets/getcorelibs.xsl"/>
+<!--           
+     <ant antfile="${temp.dir}/module.build.xml"
+         inheritall="true" 
+         dir="."
+         target="getcorelibs" />        
+-->
+    
+    <!-- Unpack jarred cents -->
+    <antipede-foreach target="-cent-unjar" param="current.cent.jar">
+     <fileset dir="." casesensitive="yes"> 
+      <patternset>
+       <include name="${cents.dir}/*.${cent.jar.suffix}"/>
+      </patternset>
+     </fileset>  
+    </antipede-foreach>
+
+    <delete dir="${cents.dir}/META-INF"/>  
+    
+  </target>   
+  
   <!-- ================================ -->
   <!--  Used only by the -init target   -->
   <!-- =================================--> 
@@ -174,23 +185,72 @@
   <!-- ==============================================-->
   <target name="call-cent">
      <ant antfile="tools/cents/${cent-name}.cent/xbuild.xml"
-         inheritAll="true" 
+         inheritall="true" 
          dir="."
          target="${cent-target}" />       
   </target>            
   
   
-    <!-- ================================== -->
+  <!-- ================================== -->
   <!--   Create a cent.jar package        -->
   <!--   using an already deployed cent   -->
   <!-- ================================== -->
   
-  <target  name="jar-cent"   depends="-init"
-           description="Compile java source code">
+  <target  name="jar-cent"   depends="-init">
 
     <antcall target="call-cent">
       <param name="cent-name"   value="centipede"/> 
       <param name="cent-target" value="jar-cent"/> 
     </antcall>
     
-  </target>         
+  </target>      
+
+  <!-- ================================== -->
+  <!--   Create a cent.jar package        -->
+  <!--   using an already deployed cent   -->
+  <!-- ================================== -->
+  
+  <target  name="update-cent">
+
+    <centipede-user-input name="cent-name">Please select a cent to update: </centipede-user-input> 
+    <delete file="${cents.dir}/${cent-name}.${cent.jar.suffix}"/>
+    <delete  dir="${cents.dir}/${cent-name}.${cent.dir.suffix}"/>
+    
+    <antcall target="get-needed-cents"/>
+            
+  </target>   
+
+  <!-- ================================== -->
+  <!--   Create a cent.jar package        -->
+  <!--   using an already deployed cent   -->
+  <!-- ================================== -->
+  
+  <target  name="update-all-cents">
+  
+    <property name="yn" value="n"/>
+    <centipede-user-input name="yn">This will delete and download all cents. Are you sure? [y/n]: </centipede-user-input> 
+   
+   
+    <condition property="stopit">
+     <not>
+      <equals arg1="${yn}" arg2="y"/>
+     </not>
+    </condition>
+
+    <fail if="stopit"/>
+   
+    <delete  dir="${cents.dir}"/>
+    <mkdir   dir="${cents.dir}"/>
+    
+    <antcall target="get-needed-cents"/>
+    
+  </target>   
+      
+  <!-- ================================== -->
+  <!--   Create a cent.jar package        -->
+  <!--   using an already deployed cent   -->
+  <!-- ================================== -->
+  
+  <target  name="create-dtd"   depends="-init">
+    <antstructure output="${xlayout.build.dir}/build.dtd"/>
+  </target>       
