@@ -6,13 +6,19 @@
     <title>Welcome to POI</title>
     <authors>
       <person id="AO" name="Andrew C. Oliver" email="acoliver@apache.org"/>
+      <person id="GJS" name="Glen Stampoultzis" email="glens@apache.org"/>
     </authors>
   </header>
   
   <body>
+    <section title="POI Survey">
+        <p>
+            How are you using HSSF?  <link href="http://www.coolsurveys.com/cgi-bin/Survey?POI">Vote now!</link>
+        </p>
+    </section>
     <section title="Logo Contest">
       <p>
-        The POI committers have voted to 
+        The POI committers have voted to
         <link href="http://jakarta.apache.org/ant">"innovate"</link> and hold a 
         logo contest.  The big P at the top of the page is just a placeholder.  
         So the rules are pretty much this:
