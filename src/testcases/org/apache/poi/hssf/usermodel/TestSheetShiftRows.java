@@ -175,5 +175,18 @@ public class TestSheetShiftRows extends TestCase {
 	s.createRow(3).createCell((short)0).setCellValue("TEST2");
 	s.shiftRows(0,4,1);
     }
+
+    /**
+     * Tests when shifting the first row.
+     *
+     * @author Toshiaki Kamoshida (kamoshida.toshiaki at future dot co dot jp)
+     */
+    public void testShiftRow0(){
+	HSSFWorkbook b = new HSSFWorkbook();
+	HSSFSheet s    = b.createSheet();
+	s.createRow(0).createCell((short)0).setCellValue("TEST1");
+	s.createRow(3).createCell((short)0).setCellValue("TEST2");
+	s.shiftRows(0,4,1);
+    }
 }
 
