@@ -4,7 +4,7 @@
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "../dtd/document-v11.dtd">
 <document>
  <header>
-  <title>Jakarta POI - HWPF -Java APIs with XML manipulate MS-Word</title>
+  <title>Jakarta POI - HWPF - Java API to Handle Microsoft Word Files</title>
   <subtitle>Project Plan</subtitle>
   <authors>
    <person name="Ryan Ackley" email="sackley@apache.org"/>
