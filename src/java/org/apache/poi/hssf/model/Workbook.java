@@ -1848,6 +1848,8 @@ public class Workbook {
      * @see org.apache.poi.hssf.record.Record
      */
     public short createFormat(String format) {
+	++xfpos;	//These are to ensure that positions are updated properly
+        ++bspos;
 	FormatRecord rec = new FormatRecord();
 	maxformatid = maxformatid >= (short)0xa4 ? (short)(maxformatid + 1) : (short)0xa4; //Starting value from M$ empiracle study.
 	rec.setIndexCode(maxformatid);
