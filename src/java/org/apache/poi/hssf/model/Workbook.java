@@ -89,6 +89,7 @@ import java.util.Locale;
  * @author  Sergei Kozello (sergeikozello at mail.ru)
  * @author  Luc Girardin (luc dot girardin at macrofocus dot com)
  * @author  Dan Sherman (dsherman at isisph.com)
+ * @author  Brian Sanders (bsanders at risklabs dot com) - custom palette
  * @see org.apache.poi.hssf.usermodel.HSSFWorkbook
  * @version 1.0-pre
  */
@@ -146,6 +147,7 @@ public class Workbook implements Model {
     private int                backuppos   = 0;   // holds the position of the backup record.
     private int                namepos   = 0;   // holds the position of last name record
     private int                supbookpos   = 0;   // holds the position of sup book
+    private int                palettepos  = 0;   // hold the position of the palette, if applicable
     private short              maxformatid  = -1;  // holds the max format id
     private boolean            uses1904datewindowing  = false;  // whether 1904 date windowing is being used
 
@@ -249,7 +251,9 @@ public class Workbook implements Model {
                     log.log(DEBUG, "found datewindow1904 record at " + k);
                     retval.uses1904datewindowing = ((DateWindow1904Record)rec).getWindowing() == 1;
                     break;
-
+                case PaletteRecord.sid:
+                    log.log(DEBUG, "found palette record at " + k);
+                    retval.palettepos = k;
                 default :
             }
             records.add(rec);
@@ -328,6 +332,7 @@ public class Workbook implements Model {
         {
             records.add( retval.createStyle( k ) );
         }
+        retval.palettepos = records.size();
         records.add( retval.createUseSelFS() );
         for ( int k = 0; k < 1; k++ )
         {   // now just do 1
@@ -578,6 +583,7 @@ public class Workbook implements Model {
         ExtendedFormatRecord xf = createExtendedFormat();
 
         ++xfpos;
+        ++palettepos;
         ++bspos;
         records.add(xfpos, xf);
         numxfs++;
@@ -1567,6 +1573,16 @@ public class Workbook implements Model {
     }
 
     /**
+     * Creates a palette record initialized to the default palette
+     * @return a PaletteRecord instance populated with the default colors
+     * @see org.apache.poi.hssf.record.PaletteRecord
+     */
+    protected PaletteRecord createPalette()
+    {
+        return new PaletteRecord(PaletteRecord.sid);
+    }
+    
+    /**
      * Creates the UseSelFS object with the use natural language flag set to 0 (false)
      * @return record containing a UseSelFSRecord
      * @see org.apache.poi.hssf.record.UseSelFSRecord
@@ -1864,6 +1880,7 @@ public class Workbook implements Model {
     public short createFormat( String format )
     {
         ++xfpos;	//These are to ensure that positions are updated properly
+        ++palettepos;
         ++bspos;
         FormatRecord rec = new FormatRecord();
         maxformatid = maxformatid >= (short) 0xa4 ? (short) ( maxformatid + 1 ) : (short) 0xa4; //Starting value from M$ empiracle study.
@@ -1941,6 +1958,7 @@ public class Workbook implements Model {
 //    {
 //        backuppos += chartRecords.size();
 //        fontpos += chartRecords.size();
+//        palettepos += chartRecords.size();
 //        bspos += chartRecords.size();
 //        xfpos += chartRecords.size();
 //
@@ -1955,5 +1973,26 @@ public class Workbook implements Model {
     */
     public boolean isUsing1904DateWindowing() {
         return uses1904datewindowing;
+    }
+    
+    /**
+     * Returns the custom palette in use for this workbook; if a custom palette record
+     * does not exist, then it is created.
+     */
+    public PaletteRecord getCustomPalette()
+    {
+        PaletteRecord palette;
+        Record rec = (Record) records.get(palettepos);
+        if (rec instanceof PaletteRecord)
+        {
+            palette = (PaletteRecord) rec;
+        }
+        else
+        {
+            palette = createPalette();
+            records.add(palettepos, palette);
+            ++bspos;
+        }
+        return palette;
     }
 }
