@@ -57,8 +57,6 @@ package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.LittleEndian;
 
-import java.util.ArrayList;
-
 /**
  * Title:        DBCell Record (Currently read only.  Not required.)
  * Description:  Used to find rows in blocks...TODO<P>
@@ -130,7 +128,7 @@ public class DBCellRecord
      * sets offset from the start of this DBCellRecord to the start of the first cell in
      * the next DBCell block.
      *
-     * @param rowoffset to the start of the first cell in the next DBCell block
+     * @param offset    offset to the start of the first cell in the next DBCell block
      */
 
     public void setRowOffset(int offset)

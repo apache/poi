@@ -55,9 +55,7 @@
 
 package org.apache.poi.hssf.record.aggregates;
 
-import org.apache.poi.hssf.record.CellValueRecordInterface;
-import org.apache.poi.hssf.record.Record;
-import org.apache.poi.hssf.record.UnknownRecord;
+import org.apache.poi.hssf.record.*;
 
 import java.util.Iterator;
 import java.util.List;
@@ -100,7 +98,8 @@ public class ValueRecordsAggregate
         }*/
 
         // XYLocator xy = new XYLocator(cell.getRow(), cell.getColumn());
-        records.put(cell, cell);
+        Object o = records.put(cell, cell);
+
         if ((cell.getColumn() < firstcell) || (firstcell == -1))
         {
             firstcell = cell.getColumn();
@@ -138,15 +137,26 @@ public class ValueRecordsAggregate
     {
         int k = 0;
 
+        FormulaRecordAggregate lastFormulaAggregate = null;
+
         for (k = offset; k < records.size(); k++)
         {
             Record rec = ( Record ) records.get(k);
 
-            if (!rec.isInValueSection() && !(rec instanceof UnknownRecord))
+            if (rec instanceof StringRecord == false && !rec.isInValueSection() && !(rec instanceof UnknownRecord))
             {
                 break;
             }
-            if (rec.isValue())
+            if (rec instanceof FormulaRecord)
+            {
+                lastFormulaAggregate = new FormulaRecordAggregate((FormulaRecord)rec, null);
+                insertCell( lastFormulaAggregate );
+            }
+            else if (rec instanceof StringRecord)
+            {
+                lastFormulaAggregate.setStringRecord((StringRecord)rec);
+            }
+            else if (rec.isValue())
             {
                 insertCell(( CellValueRecordInterface ) rec);
             }
@@ -175,7 +185,6 @@ public class ValueRecordsAggregate
         }
         return pos - offset;
     }
-
     /**
      * called by the constructor, should set class level fields.  Should throw
      * runtime exception for bad/icomplete data.

@@ -152,14 +152,14 @@ public class HSSFWorkbook
 
         workbook = Workbook.createWorkbook(records);
         setPropertiesFromWorkbook(workbook);
-        int numRecords = workbook.getNumRecords();
+        int recOffset = workbook.getNumRecords();
         int sheetNum = 0;
 
-        while (numRecords < records.size())
+        while (recOffset < records.size())
         {
-            Sheet sheet = Sheet.createSheet(records, sheetNum++, numRecords);
+            Sheet sheet = Sheet.createSheet(records, sheetNum++, recOffset );
 
-            numRecords += sheet.getNumRecords();
+            recOffset = sheet.getEofLoc()+1;
             sheet.convertLabelRecords(
                     workbook);   // convert all LabelRecord records to LabelSSTRecord
             HSSFSheet hsheet = new HSSFSheet(workbook, sheet);
@@ -511,8 +511,8 @@ public class HSSFWorkbook
         {
             totalsize = 4096;
         }
-        byte[] retval = new byte[totalsize];
-        int pos = workbook.serialize(0, retval);
+        byte[] data = new byte[totalsize];
+        int pos = workbook.serialize(0, data);
 
         // System.arraycopy(wb, 0, retval, 0, wb.length);
         for (int k = 0; k < sheets.size(); k++)
@@ -521,13 +521,13 @@ public class HSSFWorkbook
             // byte[] sb = (byte[])sheetbytes.get(k);
             // System.arraycopy(sb, 0, retval, pos, sb.length);
             pos += ((HSSFSheet) sheets.get(k)).getSheet().serialize(pos,
-                    retval);   // sb.length;
+                    data);   // sb.length;
         }
         for (int k = pos; k < totalsize; k++)
         {
-            retval[k] = 0;
+            data[k] = 0;
         }
-        return retval;
+        return data;
     }
 
     public int addSSTString(String string)

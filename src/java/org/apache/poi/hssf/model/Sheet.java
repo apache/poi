@@ -59,12 +59,10 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import org.apache.poi.util.POILogFactory;
 import org.apache.poi.hssf
     .record.*;       // normally I don't do this, buy we literally mean ALL
 import org.apache.poi.hssf.record.formula.Ptg;
-import org.apache.poi.util.IntList;
-import org.apache.poi.util.POILogger;
+import org.apache.poi.util.*;
 import org.apache.poi.hssf.record
     .aggregates.*;   // normally I don't do this, buy we literally mean ALL
 
@@ -91,35 +89,33 @@ import org.apache.poi.hssf.record
 public class Sheet
     extends java.lang.Object
 {
-    public static final short LeftMargin = 0;
-    public static final short RightMargin = 1;
-    public static final short TopMargin = 2;
-    public static final short BottomMargin = 3;
+    public static final short   LeftMargin = 0;
+    public static final short   RightMargin = 1;
+    public static final short   TopMargin = 2;
+    public static final short   BottomMargin = 3;
 
-    protected ArrayList              records        = null;
-    int                              preoffset      = 0;      // offset of the sheet in a new file
-    int                              loc            = 0;
-    protected boolean                containsLabels = false;
-    ;
-    protected int                    dimsloc        = 0;
-    protected DimensionsRecord       dims;
-    protected DefaultColWidthRecord  defaultcolwidth  = null;
-    protected DefaultRowHeightRecord defaultrowheight = null;
-    protected GridsetRecord          gridset          = null;
-    protected PrintSetupRecord       printSetup       = null;
-    protected HeaderRecord           header           = null;
-    protected FooterRecord           footer           = null;
-    protected PrintGridlinesRecord printGridlines     = null;
-    protected MergeCellsRecord       merged           = null;
-    protected int                    mergedloc        = 0;
-    private static POILogger         log              =
-        POILogFactory.getLogger(Sheet.class);
-    private ArrayList                columnSizes      =
-        null;   // holds column info
-    protected ValueRecordsAggregate  cells            = null;
-    protected RowRecordsAggregate    rows             = null;
-    private Iterator                 valueRecIterator = null;
-    private Iterator                 rowRecIterator   = null;
+    protected ArrayList                 records        = null;
+    int                                 preoffset      = 0;      // offset of the sheet in a new file
+    int                                 loc            = 0;
+    protected boolean                   containsLabels = false;
+    protected int                       dimsloc        = 0;
+    protected DimensionsRecord          dims;
+    protected DefaultColWidthRecord     defaultcolwidth  = null;
+    protected DefaultRowHeightRecord    defaultrowheight = null;
+    protected GridsetRecord             gridset          = null;
+    protected PrintSetupRecord          printSetup       = null;
+    protected HeaderRecord              header           = null;
+    protected FooterRecord              footer           = null;
+    protected PrintGridlinesRecord      printGridlines   = null;
+    protected MergeCellsRecord          merged           = null;
+    protected int                       mergedloc        = 0;
+    private static POILogger            log              = POILogFactory.getLogger(Sheet.class);
+    private ArrayList                   columnSizes      = null;  // holds column info
+    protected ValueRecordsAggregate     cells            = null;
+    protected RowRecordsAggregate       rows             = null;
+    private Iterator                    valueRecIterator = null;
+    private Iterator                    rowRecIterator   = null;
+    protected int                       eofLoc           = 0;
 
     /**
      * Creates new Sheet with no intialization --useless at this point
@@ -164,19 +160,23 @@ public class Sheet
 
             if (rec.getSid() == LabelRecord.sid)
             {
-                log.log(log.DEBUG, "Hit label record");
+                log.log(log.DEBUG, "Hit label record.");
                 retval.containsLabels = true;
             }
             else if (rec.getSid() == BOFRecord.sid)
             {
                 bofEofNestingLevel++;
+                log.log(log.DEBUG, "Hit BOF record. Nesting increased to " + bofEofNestingLevel);
             }
-            else if ((rec.getSid() == EOFRecord.sid)
-                     && (--bofEofNestingLevel == 0))
+            else if (rec.getSid() == EOFRecord.sid)
             {
-                log.log(log.DEBUG, "Hit EOF record at ");
-                records.add(rec);
-                break;
+                --bofEofNestingLevel;
+                log.log(log.DEBUG, "Hit EOF record. Nesting decreased to " + bofEofNestingLevel);
+                if (bofEofNestingLevel == 0) {
+                    records.add(rec);
+                    retval.eofLoc = k;
+                    break;
+                }
             }
             else if (rec.getSid() == DimensionsRecord.sid)
             {
@@ -204,7 +204,7 @@ public class Sheet
             {
                 retval.defaultrowheight = ( DefaultRowHeightRecord ) rec;
             }
-            else if ( rec.isValue() )
+            else if ( rec.isValue() && bofEofNestingLevel == 1 )
             {
                 if ( isfirstcell )
                 {
@@ -217,6 +217,10 @@ public class Sheet
                 {
                     rec = null;
                 }
+            }
+            else if ( rec.getSid() == StringRecord.sid )
+            {
+                rec = null;
             }
             else if ( rec.getSid() == RowRecord.sid )
             {
@@ -255,6 +259,14 @@ public class Sheet
             }
         }
         retval.records = records;
+        if (retval.rows == null)
+        {
+            retval.rows = new RowRecordsAggregate();
+        }
+        if (retval.cells == null)
+        {
+            retval.cells = new ValueRecordsAggregate();
+        }
         log.log(log.DEBUG, "sheet createSheet (existing file) exited");
         return retval;
     }
@@ -421,7 +433,7 @@ public class Sheet
                     newrec.setColumn(oldrec.getColumn());
                     newrec.setXFIndex(oldrec.getXFIndex());
                     newrec.setSSTIndex(stringid);
-                    records.add(k, newrec);
+                          records.add(k, newrec);
                 }
             }
         }
@@ -608,11 +620,19 @@ public class Sheet
         // }
         for (int k = 0; k < records.size(); k++)
         {
-
-            // byte[] rec = (( byte [] ) bytes.get(k));
+//             byte[] rec = (( byte [] ) bytes.get(k));
             // System.arraycopy(rec, 0, data, offset + pos, rec.length);
-            pos += (( Record ) records.get(k)).serialize(pos + offset,
-                    data);   // rec.length;
+            Record record = (( Record ) records.get(k));
+
+            //uncomment to test record sizes
+//            byte[] data2 = new byte[record.getRecordSize()];
+//            record.serialize(0, data2 );   // rec.length;
+//            if (LittleEndian.getUShort(data2, 2) != record.getRecordSize() - 4
+//                    && record instanceof RowRecordsAggregate == false && record instanceof ValueRecordsAggregate == false)
+//                throw new RuntimeException("Blah!!!");
+
+            pos += record.serialize(pos + offset, data );   // rec.length;
+
         }
         log.log(log.DEBUG, "Sheet.serialize returning ");
         return pos;
@@ -2116,4 +2136,10 @@ public class Sheet
        }
        m.setMargin(size);
      }
+
+    public int getEofLoc()
+    {
+        return eofLoc;
+    }
+
 }

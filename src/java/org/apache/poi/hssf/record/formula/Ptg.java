@@ -299,14 +299,14 @@ public abstract class Ptg
      */
     public abstract String toFormulaString(SheetReferences refs);
     /**
-     * dump a debug representation (hexdump) to a strnig
+     * dump a debug representation (hexdump) to a string
      */
     public String toDebugString() {
         byte[] ba = new byte[getSize()];
         String retval=null;
         writeBytes(ba,0);        
         try {
-        retval = org.apache.poi.util.HexDump.dump(ba,0,0);       
+            retval = org.apache.poi.util.HexDump.dump(ba,0,0);
         } catch (Exception e) {
             e.printStackTrace();
         }

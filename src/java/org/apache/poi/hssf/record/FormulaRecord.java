@@ -370,7 +370,7 @@ public class FormulaRecord
         LittleEndian.putShort(data, 4 + offset, ( short ) getRow());
         LittleEndian.putShort(data, 6 + offset, getColumn());
         LittleEndian.putShort(data, 8 + offset, getXFIndex());
-        LittleEndian.putDouble(data, 10 + offset, getValue());
+        LittleEndian.putDouble(data, 10 + offset, field_4_value);
         LittleEndian.putShort(data, 18 + offset, getOptions());
         LittleEndian.putInt(data, 20 + offset, field_6_zero);
         LittleEndian.putShort(data, 24 + offset, getExpressionLength());

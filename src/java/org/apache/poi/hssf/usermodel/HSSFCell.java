@@ -71,6 +71,7 @@ import org.apache.poi.hssf.record.NumberRecord;
 import org.apache.poi.hssf.record.BlankRecord;
 import org.apache.poi.hssf.record.BoolErrRecord;
 import org.apache.poi.hssf.record.ExtendedFormatRecord;
+import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.util.SheetReferences;
 
@@ -259,10 +260,11 @@ public class HSSFCell
                 break;
 
             case CELL_TYPE_FORMULA :
-                record = new FormulaRecord();
-                (( FormulaRecord ) record).setColumn(col);
-                (( FormulaRecord ) record).setRow(row);
-                (( FormulaRecord ) record).setXFIndex(( short ) 0);
+                FormulaRecord formulaRecord = new FormulaRecord();
+                record = new FormulaRecordAggregate(formulaRecord,null);
+                formulaRecord.setColumn(col);
+                formulaRecord.setRow(row);
+                formulaRecord.setXFIndex(( short ) 0);
             case CELL_TYPE_BOOLEAN :
                 record = new BoolErrRecord();
                 (( BoolErrRecord ) record).setColumn(col);
@@ -314,15 +316,14 @@ public class HSSFCell
 
             case CELL_TYPE_STRING :
                 stringValue =
-                    book
-                    .getSSTString((( LabelSSTRecord ) cval).getSSTIndex());
+                    book.getSSTString( ( (LabelSSTRecord ) cval).getSSTIndex());
                 break;
 
             case CELL_TYPE_BLANK :
                 break;
 
             case CELL_TYPE_FORMULA :
-                cellValue = (( FormulaRecord ) cval).getValue();
+                cellValue = (( FormulaRecordAggregate ) cval).getFormulaRecord().getValue();
                 break;
 
             case CELL_TYPE_BOOLEAN :
@@ -369,7 +370,7 @@ public class HSSFCell
                 retval = HSSFCell.CELL_TYPE_STRING;
                 break;
 
-            case FormulaRecord.sid :
+            case FormulaRecordAggregate.sid :
                 retval = HSSFCell.CELL_TYPE_FORMULA;
                 break;
 
@@ -446,20 +447,20 @@ public class HSSFCell
         {
 
             case CELL_TYPE_FORMULA :
-                FormulaRecord frec = null;
+                FormulaRecordAggregate frec = null;
 
                 if (cellType != this.cellType)
                 {
-                    frec = new FormulaRecord();
+                    frec = new FormulaRecordAggregate(new FormulaRecord(),null);
                 }
                 else
                 {
-                    frec = ( FormulaRecord ) record;
+                    frec = ( FormulaRecordAggregate ) record;
                 }
                 frec.setColumn(getCellNum());
                 if (setValue)
                 {
-                    frec.setValue(getNumericCellValue());
+                    frec.getFormulaRecord().setValue(getNumericCellValue());
                 }
                 frec.setXFIndex(( short ) cellStyle.getIndex());
                 frec.setRow(row);
@@ -676,8 +677,7 @@ public class HSSFCell
         }
         else
         {
-            if ((cellType != CELL_TYPE_STRING)
-                    && (cellType != CELL_TYPE_FORMULA))
+            if ((cellType != CELL_TYPE_STRING ) && ( cellType != CELL_TYPE_FORMULA))
             {
                 setCellType(CELL_TYPE_STRING, false);
             }
@@ -702,9 +702,9 @@ public class HSSFCell
             setCellType(CELL_TYPE_BLANK,false);
         } else {
             setCellType(CELL_TYPE_FORMULA,false);
-            FormulaRecord rec = (FormulaRecord) record;
-            rec.setOptions(( short ) 2);
-            rec.setValue(0);
+            FormulaRecordAggregate rec = (FormulaRecordAggregate) record;
+            rec.getFormulaRecord().setOptions(( short ) 2);
+            rec.getFormulaRecord().setValue(0);
             rec.setXFIndex(( short ) 0x0f);
             FormulaParser fp = new FormulaParser(formula+";",book);
             fp.parse();
@@ -713,9 +713,9 @@ public class HSSFCell
             //System.out.println("got Ptgs " + ptg.length);
             for (int k = 0; k < ptg.length; k++) {
                 size += ptg[ k ].getSize();
-                rec.pushExpressionToken(ptg[ k ]);
+                rec.getFormulaRecord().pushExpressionToken(ptg[ k ]);
             }
-            rec.setExpressionLength(( short ) size);
+            rec.getFormulaRecord().setExpressionLength(( short ) size);
             //Workbook.currentBook = null;
         }
     }
@@ -723,7 +723,7 @@ public class HSSFCell
     public String getCellFormula() {
         //Workbook.currentBook=book;
         SheetReferences refs = book.getSheetReferences();
-        String retval = FormulaParser.toFormulaString(refs, ((FormulaRecord)record).getParsedExpression());
+        String retval = FormulaParser.toFormulaString(refs, ((FormulaRecordAggregate)record).getFormulaRecord().getParsedExpression());
         //Workbook.currentBook=null;
         return retval;   
     }
@@ -825,8 +825,7 @@ public class HSSFCell
 
     public void setCellValue(boolean value)
     {
-        if ((cellType != CELL_TYPE_BOOLEAN)
-                && (cellType != CELL_TYPE_FORMULA))
+        if ((cellType != CELL_TYPE_BOOLEAN ) && ( cellType != CELL_TYPE_FORMULA))
         {
             setCellType(CELL_TYPE_BOOLEAN, false);
         }
