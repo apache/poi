@@ -18,4 +18,44 @@ public class TestHSSFWorkbook extends TestCase
         NameRecord nameRecord = b.getWorkbook().getNameRecord( 0 );
         assertEquals( 3, nameRecord.getIndexToSheet() );
     }
+
+    public void testDuplicateNames()
+            throws Exception
+    {
+        HSSFWorkbook b = new HSSFWorkbook( );
+        b.createSheet();
+        b.createSheet();
+        b.createSheet("name1");
+        try
+        {
+            b.createSheet("name1");
+            fail();
+        }
+        catch ( IllegalArgumentException pass )
+        {
+        }
+        b.createSheet();
+        try
+        {
+            b.setSheetName( 3,  "name1" );
+            fail();
+        }
+        catch ( IllegalArgumentException pass )
+        {
+        }
+
+        try
+        {
+            b.setSheetName( 3,  "name1", HSSFWorkbook.ENCODING_UTF_16 );
+            fail();
+        }
+        catch ( IllegalArgumentException pass )
+        {
+        }
+
+        b.setSheetName( 3,  "name2", HSSFWorkbook.ENCODING_UTF_16 );
+        b.setSheetName( 3,  "name2", HSSFWorkbook.ENCODING_UTF_16 );
+        b.setSheetName( 3,  "name2" );
+
+    }
 }

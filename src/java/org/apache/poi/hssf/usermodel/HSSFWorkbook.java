@@ -244,14 +244,19 @@ public class HSSFWorkbook
      * @param sheet number (0 based)
      * @param sheet name
      */
-
     public void setSheetName(int sheet, String name)
     {
+        if (workbook.doesContainsSheetName( name, sheet ))
+            throw new IllegalArgumentException( "The workbook already contains a sheet with this name" );
+
         workbook.setSheetName( sheet, name, ENCODING_COMPRESSED_UNICODE );
     }
 
     public void setSheetName( int sheet, String name, short encoding )
     {
+        if (workbook.doesContainsSheetName( name, sheet ))
+            throw new IllegalArgumentException( "The workbook already contains a sheet with this name" );
+
         if (sheet > (sheets.size() - 1))
         {
             throw new RuntimeException("Sheet out of bounds");
@@ -361,9 +366,9 @@ public class HSSFWorkbook
 
     public HSSFSheet createSheet(String sheetname)
     {
+        if (workbook.doesContainsSheetName( sheetname, -1 ))
+            throw new IllegalArgumentException( "The workbook already contains a sheet of this name" );
 
-//        if (getNumberOfSheets() == 3)
-//            throw new RuntimeException("You cannot have more than three sheets in HSSF 1.0");
         HSSFSheet sheet = new HSSFSheet(workbook);
 
         sheets.add(sheet);
