@@ -264,17 +264,17 @@ public class FormulaParser {
     
     private Ptg function(String name,byte numArgs) {
         Ptg retval = null;
-        
-        if (numArgs == 1 && name.equals("SUM")) {
+        retval = new FuncVarPtg(name,numArgs);
+       /** if (numArgs == 1 && name.equals("SUM")) {
             AttrPtg ptg = new AttrPtg();
             ptg.setData((short)1); //sums don't care but this is what excel does.
             ptg.setSum(true);
             retval = ptg;
         } else {
             retval = new FuncVarPtg(name,numArgs);
-        }
+        }*/
         
-        return retval;
+        return retval; 
     }
     
     /** get arguments to a function */

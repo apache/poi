@@ -142,6 +142,7 @@ public class FormulaViewer
             
             StringBuffer buf = new StringBuffer();
             
+            if (token instanceof ExpPtg) return;
             buf.append(name=((OperationPtg) token).toFormulaString());
             buf.append(sep);
             switch (token.getPtgClass()) {
