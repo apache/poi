@@ -12,6 +12,16 @@
 
   <body>
    <section title="News">
+       <section title="Latest Development Release">
+        <p>
+            The latest development release of POI is version 1.10. 
+            Binary distributions are available <link href="http://jakarta.apache.org/builds/jakarta-poi/dev/bin/">here</link> 
+            and source distributions are <link href="http://jakarta.apache.org/builds/jakarta-poi/dev/src/">here</link>.
+        </p>
+<!--        <p>-->
+<!--            <link href="http://vote.sparklit.com/poll.spark/640946">Click here</link> to see the current results.-->
+<!--        </p>-->
+     </section>
     <section title="Translations">
         <p> 
             The POI documentation translation project has begun.  The first ones 
