@@ -66,7 +66,6 @@
             Thanks to Jason Hoffman for providing the solution.
 
             <source>
-
    case HSSFCell.CELL_TYPE_NUMERIC:
          double d = cell.getNumericCellValue();
          // test if a date!
@@ -78,9 +77,7 @@
            cellText = cal.get(Calendar.MONTH)+1 + "/" +
                       cal.get(Calendar.DAY_OF_MONTH) + "/" +
                       cellText;
-         }
-
-             </source>
+         } </source>
         </answer>
     </faq>
     <faq>
@@ -93,7 +90,7 @@
             screen. The problem persists even though you have set the correct mime type.
             </p>
             <p>
-            The short answer is, dont depend on IE to display a binary file type  you an attachment properly if you stream it via a
+            The short answer is, dont depend on IE to display a binary file type properly if you stream it via a
             servlet. Every minor version of IE has different bugs on this issue.
             </p>
             <p>
@@ -112,9 +109,8 @@
             <p>
             To guarantee opening the file properly in Excel from IE, write out your file to a
             temporary file under your web root from your servelet. Then send an http response
-            to the browser to do a client side redirection to your temp file. (If you do a
-            server side redirect using RequestDispatcher, you will have to add .xls to the
-            request as mentioned above.)
+            to the browser to do a client side redirection to your temp file. (Note that using a 
+            server side redirect using RequestDispatcher will not be effective in this case)
             </p>
             <p>
             Note also that when you request a document that is opened with an
@@ -171,25 +167,17 @@
             so to support localization you should use Unicode. 
             To do it you should set it manually:
             <source>
-
-                //
                 // for sheet name
-                //
                 HSSFWorkbook wb = new HSSFWorkbook();
                 HSSFSheet s = wb.createSheet();
                 wb.setSheetName( 0, "SomeUnicodeName", HSSFWorkbook.ENCODING_UTF_16 );
 
-
-                //
                 // for cell value
-                //
                 HSSFRow r = s.createRow( 0 );
                 HSSFCell c = r.createCell( (short)0 );
                 c.setCellType( HSSFCell.CELL_TYPE_STRING );
                 c.setEncoding( HSSFCell.ENCODING_UTF_16 );
-                c.setCellValue( "\u0422\u0435\u0441\u0442\u043E\u0432\u0430\u044F" );
-
-            </source>
+                c.setCellValue( "\u0422\u0435\u0441\u0442\u043E\u0432\u0430\u044F" ); </source>
             Make sure you make the call to setEncoding() before calling setCellValue(), otherwise what you pass in won't be interpreted properly.
         </answer>
     </faq>
@@ -201,5 +189,83 @@
         <answer>
             Make sure you have fix pack 4 installed.
         </answer>
+    </faq>
+    <faq>
+	<question> I am using styles when creating a workbook in POI, but Excel refuses to open the file, complaining about "Too Many Styles".
+	</question>
+	<answer>
+	<p>You just create the styles OUTSIDE of the loop in which you create cells.</p>
+	<p>GOOD:</p>
+	<source>
+ HSSFWorkbook wb = new HSSFWorkbook();
+ HSSFSheet sheet = wb.createSheet("new sheet");
+ HSSFRow row = null;
+
+ // Aqua background
+ HSSFCellStyle style = wb.createCellStyle();
+ style.setFillBackgroundColor(HSSFColor.AQUA.index);
+ style.setFillPattern(HSSFCellStyle.BIG_SPOTS);
+ HSSFCell cell = row.createCell((short) 1);
+ cell.setCellValue("X");
+ cell.setCellStyle(style);
+
+ // Orange "foreground", foreground being the fill foreground not the font color.
+ style = wb.createCellStyle();
+ style.setFillForegroundColor(HSSFColor.ORANGE.index);
+ style.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+
+ for (int x = 0; x &lt; 1000; x++) {
+
+ // Create a row and put some cells in it. Rows are 0 based.
+	 row = sheet.createRow((short) k);
+
+	 for (int y = 0; y &lt; 100; y++) {
+		cell = row.createCell((short) k);
+ 		cell.setCellValue("X");
+		cell.setCellStyle(style);
+	 }
+ }
+
+ // Write the output to a file
+ FileOutputStream fileOut = new FileOutputStream("workbook.xls");
+ wb.write(fileOut);
+ fileOut.close(); </source>
+
+	<p>BAD:</p>
+	<source>
+ HSSFWorkbook wb = new HSSFWorkbook();
+ HSSFSheet sheet = wb.createSheet("new sheet");
+ HSSFRow row = null;
+
+ for (int x = 0; x &lt; 1000; x++) {
+	 // Aqua background
+	 HSSFCellStyle style = wb.createCellStyle();
+	 style.setFillBackgroundColor(HSSFColor.AQUA.index);
+	 style.setFillPattern(HSSFCellStyle.BIG_SPOTS);
+	 HSSFCell cell = row.createCell((short) 1);
+	 cell.setCellValue("X");
+	 cell.setCellStyle(style);
+
+	 // Orange "foreground", foreground being the fill foreground not the font color.
+	 style = wb.createCellStyle();
+	 style.setFillForegroundColor(HSSFColor.ORANGE.index);
+	 style.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+
+	 // Create a row and put some cells in it. Rows are 0 based.
+	 row = sheet.createRow((short) k);
+
+	 for (int y = 0; y &lt; 100; y++) {
+		 cell = row.createCell((short) k);
+		 cell.setCellValue("X");
+		 cell.setCellStyle(style);
+	 }
+ }
+
+ // Write the output to a file
+ FileOutputStream fileOut = new FileOutputStream("workbook.xls");
+ wb.write(fileOut);
+ fileOut.close(); </source>
+	</answer>
+
     </faq>
 </faqs>
