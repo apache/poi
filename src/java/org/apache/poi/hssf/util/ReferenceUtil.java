@@ -46,8 +46,7 @@ public class ReferenceUtil {
             } else {
                 retval += (Character.getNumericValue(thechar)-9) * (pos * 26);
             }
-            pos++;
-            //System.out.println(val);
+            pos++;            
         }
         return retval-1;
     }
@@ -72,8 +71,7 @@ public class ReferenceUtil {
         }
         
         retval[0] = reference.substring(0,loc);
-        retval[1] = reference.substring(loc);
-        System.out.println("PART1=="+retval[1]);        
+        retval[1] = reference.substring(loc);        
         return retval;
     }
     
