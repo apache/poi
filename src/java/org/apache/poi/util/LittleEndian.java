@@ -592,4 +592,17 @@ public class LittleEndian
         return copy;
     }
 
+    /**
+     * Retrieves and unsigned short.  This is converted UP to a int
+     * so it can fit.
+     *
+     * @param data      The data to read
+     * @param offset    The offset to read the short from
+     * @return An integer representation of the short.
+     */
+    public static int getUShort( byte[] data, int offset )
+    {
+        return (int)getNumber(data, offset, SHORT_SIZE);
+    }
+
 }
