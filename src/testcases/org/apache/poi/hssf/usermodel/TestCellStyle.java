@@ -136,6 +136,32 @@ public class TestCellStyle
     }
 
     /**
+     * Tests that is creating a file with a date works correctly.
+     */
+    public void testDataStyle()
+            throws Exception
+    {
+        File             file = File.createTempFile("testWriteSheetStyleDate",
+                                                    ".xls");
+        FileOutputStream out  = new FileOutputStream(file);
+        HSSFWorkbook     wb   = new HSSFWorkbook();
+        HSSFSheet        s    = wb.createSheet();
+        HSSFCellStyle    cs   = wb.createCellStyle();
+        HSSFRow row = s.createRow((short)0);
+        HSSFCell cell = row.createCell((short)1);
+        cs.setDataFormat(HSSFDataFormat.getFormat("m/d/yy"));
+        cell.setCellStyle(cs);
+        cell.setCellValue(new Date());
+        wb.write(out);
+        out.close();
+
+        assertEquals("FILE LENGTH ", 5632, file.length());
+        assertEquals("LAST ROW ", 0, s.getLastRowNum());
+        assertEquals("FIRST ROW ", 0, s.getFirstRowNum());
+
+    }
+
+    /**
      * TEST NAME:  Test Write Sheet Style <P>
      * OBJECTIVE:  Test that HSSF can create a simple spreadsheet with numeric and string values and styled with colors
      *             and borders.<P>
