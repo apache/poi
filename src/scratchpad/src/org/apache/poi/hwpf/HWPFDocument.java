@@ -55,6 +55,7 @@
 package org.apache.poi.hwpf;
 
 import java.io.InputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
@@ -75,23 +76,61 @@ public class HWPFDocument
   private FileInformationBlock _fib;
 
   /** main document stream buffer*/
-  byte[] _mainDocument;
+  byte[] _mainStream;
 
   /** table stream buffer*/
-  byte[] _tableBuffer;
+  byte[] _tableStream;
 
   public HWPFDocument(InputStream istream) throws IOException
   {
     //do Ole stuff
     _filesystem = new POIFSFileSystem(istream);
 
-    DocumentEntry headerProps =
+    // read in the main stream.
+    DocumentEntry documentProps =
        (DocumentEntry)_filesystem.getRoot().getEntry("WordDocument");
+    _mainStream = new byte[documentProps.getSize()];
+    _filesystem.createDocumentInputStream("WordDocument").read(_mainStream);
 
-    _mainDocument = new byte[headerProps.getSize()];
-    _filesystem.createDocumentInputStream("WordDocument").read(_mainDocument);
+    // use the fib to determine the name of the table stream.
+    _fib = new FileInformationBlock(_mainStream);
 
-    _fib = new FileInformationBlock(_mainDocument);
+    String name = "0Table";
+    if (_fib.isFWhichTblStm())
+    {
+      name = "1Table";
+    }
+
+    // read in the table stream.
+    DocumentEntry tableProps =
+      (DocumentEntry)_filesystem.getRoot().getEntry(name);
+    _tableStream = new byte[tableProps.getSize()];
+    _filesystem.createDocumentInputStream(name).read(_tableStream);
+
+    // get the start of text in the main stream
+    int fcMin = _fib.getFcMin();
+
+    DocumentProperties dop = new DocumentProperties(_tableStream, _fib.getFcDop());
+    ComplexFileTable cft = new ComplexFileTable(_mainStream, _tableStream, _fib.getFcClx(), fcMin);
+    CHPBinTable cbt = new CHPBinTable(_mainStream, _tableStream, _fib.getFcPlcfbteChpx(), _fib.getLcbPlcfbteChpx(), fcMin);
+    PAPBinTable pbt = new PAPBinTable(_mainStream, _tableStream, _fib.getFcPlcfbtePapx(), _fib.getLcbPlcfbtePapx(), fcMin);
+    SectionTable st = new SectionTable(_mainStream, _tableStream, _fib.getFcPlcfsed(), _fib.getLcbPlcfsed(), fcMin);
+    StyleSheet ss = new StyleSheet(_tableStream, _fib.getFcStshf());
+
+    int x = 0;
+
   }
 
+  public static void main(String[] args)
+  {
+    try
+    {
+      HWPFDocument doc = new HWPFDocument(new FileInputStream(args[0]));
+
+    }
+    catch (Throwable t)
+    {
+      t.printStackTrace();
+    }
+  }
 }

@@ -4,7 +4,7 @@
  * Created on February 24, 2002, 2:37 PM
  */
 
-package org.apache.poi.hdf.model.hdftypes;
+package org.apache.poi.hwpf.model.hdftypes;
 
 /**
  *

@@ -54,7 +54,7 @@
  */
 
 
-package org.apache.poi.hdf.model.hdftypes.definitions;
+package org.apache.poi.hwpf.model.hdftypes.definitions;
 
 
 
@@ -110,9 +110,9 @@ public abstract class PAPAbstractType
     private  byte field_33_fAutoSpaceDN;
     private  int field_34_wAlignFont;
     private  short field_35_fontAlign;
-        private BitField  fVertical = new BitField(0x0001);
-        private BitField  fBackward = new BitField(0x0002);
-        private BitField  fRotateFont = new BitField(0x0004);
+        private static BitField  fVertical = new BitField(0x0001);
+        private static BitField  fBackward = new BitField(0x0002);
+        private static BitField  fRotateFont = new BitField(0x0004);
     private  byte field_36_fBackward;
     private  byte field_37_fRotateFont;
     private  byte field_38_fInTable;
@@ -157,7 +157,7 @@ public abstract class PAPAbstractType
      */
     public int getSize()
     {
-        return 4 + 2 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 2 + 1 + 1 + 1 + 4 + 4 + 4 + 4 + 4 + 4 + 12 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 2 + 2 + 1 + 1 + 1 + 1 + 1 + 1 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 2 + 1 + 2 + 2 + 1 + 1 + 84 + 1 + 2 + 4 + 128 + 2 + 128 + 128;
+        return 4 +  + 2 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 2 + 1 + 1 + 1 + 4 + 4 + 4 + 4 + 4 + 4 + 12 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 2 + 2 + 1 + 1 + 1 + 1 + 1 + 1 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 2 + 1 + 2 + 2 + 1 + 1 + 84 + 1 + 2 + 4 + 128 + 2 + 128 + 128;
     }
 
 

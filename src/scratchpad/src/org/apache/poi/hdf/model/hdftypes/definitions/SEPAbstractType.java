@@ -54,7 +54,7 @@
  */
 
 
-package org.apache.poi.hdf.model.hdftypes.definitions;
+package org.apache.poi.hwpf.model.hdftypes.definitions;
 
 
 
@@ -146,7 +146,7 @@ public abstract class SEPAbstractType
      */
     public int getSize()
     {
-        return 4 + 1 + 0 + 0 + 1 + 0 + 1 + 0 + 0 + 1 + 1 + 2 + 4 + 2 + 2 + 0 + 1 + 2 + 2 + 2 + 4 + 4 + 4 + 4 + 0 + 2 + 4 + 4 + 4 + 2 + 2 + 1 + 1 + 2 + 2 + 2 + 2 + 2 + 2 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 2 + 0 + 1 + 4 + 356 + 4 + 1 + 1 + 2 + 212;
+        return 4 +  + 1 + 0 + 0 + 1 + 0 + 1 + 0 + 0 + 1 + 1 + 2 + 4 + 2 + 2 + 0 + 1 + 2 + 2 + 2 + 4 + 4 + 4 + 4 + 0 + 2 + 4 + 4 + 4 + 2 + 2 + 1 + 1 + 2 + 2 + 2 + 2 + 2 + 2 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 2 + 0 + 1 + 4 + 356 + 4 + 1 + 1 + 2 + 212;
     }
 
 

@@ -54,7 +54,7 @@
  */
 
 
-package org.apache.poi.hdf.model.hdftypes.definitions;
+package org.apache.poi.hwpf.model.hdftypes.definitions;
 
 
 
@@ -103,7 +103,7 @@ public abstract class TAPAbstractType
      */
     public int getSize()
     {
-        return 4 + 2 + 4 + 4 + 0 + 0 + 4 + 2 + 130 + 0 + 0 + 4 + 4 + 4 + 4 + 4 + 4;
+        return 4 +  + 2 + 4 + 4 + 0 + 0 + 4 + 2 + 130 + 0 + 0 + 4 + 4 + 4 + 4 + 4 + 4;
     }
 
 

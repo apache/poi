@@ -54,7 +54,7 @@
  */
 
 
-package org.apache.poi.hdf.model.hdftypes.definitions;
+package org.apache.poi.hwpf.model.hdftypes.definitions;
 
 
 
@@ -77,27 +77,27 @@ public abstract class CHPAbstractType
 
     private  short field_1_chse;
     private  int field_2_format_flags;
-        private BitField  fBold = new BitField(0x0001);
-        private BitField  fItalic = new BitField(0x0002);
-        private BitField  fRMarkDel = new BitField(0x0004);
-        private BitField  fOutline = new BitField(0x0008);
-        private BitField  fFldVanish = new BitField(0x0010);
-        private BitField  fSmallCaps = new BitField(0x0020);
-        private BitField  fCaps = new BitField(0x0040);
-        private BitField  fVanish = new BitField(0x0080);
-        private BitField  fRMark = new BitField(0x0100);
-        private BitField  fSpec = new BitField(0x0200);
-        private BitField  fStrike = new BitField(0x0400);
-        private BitField  fObj = new BitField(0x0800);
-        private BitField  fShadow = new BitField(0x1000);
-        private BitField  fLowerCase = new BitField(0x2000);
-        private BitField  fData = new BitField(0x4000);
-        private BitField  fOle2 = new BitField(0x8000);
+        private static BitField  fBold = new BitField(0x0001);
+        private static BitField  fItalic = new BitField(0x0002);
+        private static BitField  fRMarkDel = new BitField(0x0004);
+        private static BitField  fOutline = new BitField(0x0008);
+        private static BitField  fFldVanish = new BitField(0x0010);
+        private static BitField  fSmallCaps = new BitField(0x0020);
+        private static BitField  fCaps = new BitField(0x0040);
+        private static BitField  fVanish = new BitField(0x0080);
+        private static BitField  fRMark = new BitField(0x0100);
+        private static BitField  fSpec = new BitField(0x0200);
+        private static BitField  fStrike = new BitField(0x0400);
+        private static BitField  fObj = new BitField(0x0800);
+        private static BitField  fShadow = new BitField(0x1000);
+        private static BitField  fLowerCase = new BitField(0x2000);
+        private static BitField  fData = new BitField(0x4000);
+        private static BitField  fOle2 = new BitField(0x8000);
     private  int field_3_format_flags1;
-        private BitField  fEmboss = new BitField(0x0001);
-        private BitField  fImprint = new BitField(0x0002);
-        private BitField  fDStrike = new BitField(0x0004);
-        private BitField  fUsePgsuSettings = new BitField(0x0008);
+        private static BitField  fEmboss = new BitField(0x0001);
+        private static BitField  fImprint = new BitField(0x0002);
+        private static BitField  fDStrike = new BitField(0x0004);
+        private static BitField  fUsePgsuSettings = new BitField(0x0008);
     private  int field_4_ftcAscii;
     private  int field_5_ftcFE;
     private  int field_6_ftcOther;
@@ -128,13 +128,13 @@ public abstract class CHPAbstractType
     private  byte field_31_chYsr;
     private  int field_32_hpsKern;
     private  short field_33_Highlight;
-        private BitField  icoHighlight = new BitField(0x001f);
-        private BitField  fHighlight = new BitField(0x0020);
-        private BitField  kcd = new BitField(0x01c0);
-        private BitField  fNavHighlight = new BitField(0x0200);
-        private BitField  fChsDiff = new BitField(0x0400);
-        private BitField  fMacChs = new BitField(0x0800);
-        private BitField  fFtcAsciSym = new BitField(0x1000);
+        private static BitField  icoHighlight = new BitField(0x001f);
+        private static BitField  fHighlight = new BitField(0x0020);
+        private static BitField  kcd = new BitField(0x01c0);
+        private static BitField  fNavHighlight = new BitField(0x0200);
+        private static BitField  fChsDiff = new BitField(0x0400);
+        private static BitField  fMacChs = new BitField(0x0800);
+        private static BitField  fFtcAsciSym = new BitField(0x1000);
     private  short field_34_fPropMark;
     private  int field_35_ibstPropRMark;
     private  int field_36_dttmPropRMark;
@@ -157,7 +157,7 @@ public abstract class CHPAbstractType
      */
     public int getSize()
     {
-        return 4 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 4 + 1 + 1 + 1 + 2 + 2 + 2 + 1 + 2 + 4 + 4 + 4 + 2 + 2 + 4 + 4 + 2 + 2 + 2 + 2 + 2 + 2 + 1 + 1 + 2 + 2 + 2 + 2 + 4 + 1 + 1 + 2 + 4 + 32 + 2 + 4;
+        return 4 +  + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 4 + 1 + 1 + 1 + 2 + 2 + 2 + 1 + 2 + 4 + 4 + 4 + 2 + 2 + 4 + 4 + 2 + 2 + 2 + 2 + 2 + 2 + 1 + 1 + 2 + 2 + 2 + 2 + 4 + 1 + 1 + 2 + 4 + 32 + 2 + 4;
     }
 
 
