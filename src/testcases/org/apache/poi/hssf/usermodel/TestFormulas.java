@@ -857,6 +857,43 @@ extends TestCase {
             in.close(); 
     }
     
+    public void testDateFormulas()
+        throws java.io.IOException
+    {
+        String readFilename = System.getProperty("HSSF.testdata.path");
+
+            File file = File.createTempFile("testDateFormula",".xls");
+            FileOutputStream out    = new FileOutputStream(file);
+            HSSFWorkbook     wb     = new HSSFWorkbook();
+            HSSFSheet        s      = wb.createSheet("Sheet1");
+            HSSFRow          r      = null;
+            HSSFCell         c      = null;
+
+            r = s.createRow(  (short)0 );
+            c = r.createCell( (short)0 );
+
+            HSSFCellStyle cellStyle = wb.createCellStyle();
+            cellStyle.setDataFormat(HSSFDataFormat.getBuiltinFormat("m/d/yy h:mm"));
+            c.setCellValue(new Date());
+            c.setCellStyle(cellStyle);
+
+           // assertEquals("Checking hour = " + hour, date.getTime().getTime(),
+           //              HSSFDateUtil.getJavaDate(excelDate).getTime());
+           
+            for (int k=1; k < 100; k++) { 
+              r=s.createRow((short)k);
+              c=r.createCell((short)0); 
+              c.setCellFormula("A"+(k)+"+1");
+              c.setCellStyle(cellStyle);
+            }
+
+            wb.write(out);
+            out.close();
+            
+            assertTrue("file exists",file.exists());
+            
+    }
+
 /*    
     public void testIfFormulas()
         throws java.io.IOException
