@@ -113,8 +113,30 @@ public class TestSSTRecordSizeCalculator
         strings.put(new Integer(0), makeUnicodeString(perfectFit));
         SSTRecordSizeCalculator calculator = new SSTRecordSizeCalculator(new SSTSerializer(recordLengths, strings, 1, 1));
         assertEquals(SSTRecord.SST_RECORD_OVERHEAD
-                + SSTRecord.MAX_DATA_SPACE,
+                + COMPRESSED_PLAIN_STRING_OVERHEAD
+                + perfectFit.length(),
                 calculator.getRecordSize());
+    }
+
+    /**
+     * Test the case where it's too big by one.
+     */
+    public void testJustOversized()
+            throws Exception
+    {
+        String tooBig = new String(new char[SSTRecord.MAX_DATA_SPACE - COMPRESSED_PLAIN_STRING_OVERHEAD + 1]);
+        strings.put(new Integer(0), makeUnicodeString(tooBig));
+        SSTRecordSizeCalculator calculator = new SSTRecordSizeCalculator(new SSTSerializer(recordLengths, strings, 1, 1));
+        assertEquals(SSTRecord.SST_RECORD_OVERHEAD
+                + COMPRESSED_PLAIN_STRING_OVERHEAD
+                + tooBig.length() - 1
+                // continued
+                + SSTRecord.STD_RECORD_OVERHEAD
+                + OPTION_FIELD_SIZE
+                + 1  // 1 char continued
+                ,
+                calculator.getRecordSize());
+
     }
 
     public void testSecondStringStartsOnNewContinuation()
@@ -131,6 +153,25 @@ public class TestSSTRecordSizeCalculator
                 + COMPRESSED_PLAIN_STRING_OVERHEAD
                 + SMALL_STRING.length(),
                 calculator.getRecordSize());
+    }
+
+    public void testHeaderCrossesNormalContinuePoint()
+            throws Exception
+    {
+        String almostPerfectFit = new String(new char[SSTRecord.MAX_DATA_SPACE - COMPRESSED_PLAIN_STRING_OVERHEAD - 2]);
+        strings.put(new Integer(0), makeUnicodeString(almostPerfectFit));
+        String oneCharString = new String(new char[1]);
+        strings.put(new Integer(1), makeUnicodeString(oneCharString));
+        SSTRecordSizeCalculator calculator = new SSTRecordSizeCalculator(new SSTSerializer(recordLengths, strings, 1, 1));
+        assertEquals(SSTRecord.SST_RECORD_OVERHEAD
+                + COMPRESSED_PLAIN_STRING_OVERHEAD
+                + almostPerfectFit.length()
+                // second string
+                + SSTRecord.STD_RECORD_OVERHEAD
+                + COMPRESSED_PLAIN_STRING_OVERHEAD
+                + oneCharString.length(),
+                calculator.getRecordSize());
+
     }
 
 
