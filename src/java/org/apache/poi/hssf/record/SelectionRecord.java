@@ -75,7 +75,8 @@ public class SelectionRecord
 {
     public final static short sid = 0x1d;
     private byte              field_1_pane;
-    private short             field_2_row_active_cell;
+    //private short             field_2_row_active_cell;
+    private int             field_2_row_active_cell;
     private short             field_3_col_active_cell;
     private short             field_4_ref_active_cell;
     private short             field_5_num_refs;
@@ -123,7 +124,8 @@ public class SelectionRecord
     protected void fillFields(byte [] data, short size, int offset)
     {
         field_1_pane            = data[ 0 + offset ];
-        field_2_row_active_cell = LittleEndian.getShort(data, 1 + offset);
+        //field_2_row_active_cell = LittleEndian.getShort(data, 1 + offset);
+        field_2_row_active_cell = LittleEndian.getUShort(data, 1 + offset);
         field_3_col_active_cell = LittleEndian.getShort(data, 3 + offset);
         field_4_ref_active_cell = LittleEndian.getShort(data, 5 + offset);
         field_5_num_refs        = LittleEndian.getShort(data, 7 + offset);
@@ -144,7 +146,8 @@ public class SelectionRecord
      * @param row number of active cell
      */
 
-    public void setActiveCellRow(short row)
+    //public void setActiveCellRow(short row)
+    public void setActiveCellRow(int row)
     {
         field_2_row_active_cell = row;
     }
@@ -194,7 +197,8 @@ public class SelectionRecord
      * @return row number of active cell
      */
 
-    public short getActiveCellRow()
+    //public short getActiveCellRow()
+    public int getActiveCellRow()
     {
         return field_2_row_active_cell;
     }
@@ -254,7 +258,8 @@ public class SelectionRecord
         LittleEndian.putShort(data, 0 + offset, sid);
         LittleEndian.putShort(data, 2 + offset, ( short ) 15);
         data[ 4 + offset ] = getPane();
-        LittleEndian.putShort(data, 5 + offset, getActiveCellRow());
+        //LittleEndian.putShort(data, 5 + offset, getActiveCellRow());
+        LittleEndian.putShort(data, 5 + offset, ( short ) getActiveCellRow());
         LittleEndian.putShort(data, 7 + offset, getActiveCellCol());
         LittleEndian.putShort(data, 9 + offset, getActiveCellRef());
         LittleEndian.putShort(data, 11 + offset, ( short ) 1);

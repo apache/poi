@@ -74,7 +74,8 @@ public class BoolErrRecord
     implements CellValueRecordInterface, Comparable
 {
     public final static short sid = 0x205;
-    private short             field_1_row;
+    //private short             field_1_row;
+    private int             field_1_row;
     private short             field_2_column;
     private short             field_3_xf_index;
     private byte              field_4_bBoolErr;
@@ -123,14 +124,16 @@ public class BoolErrRecord
 
     protected void fillFields(byte [] data, short size, int offset)
     {
-        field_1_row      = LittleEndian.getShort(data, 0 + offset);
+        //field_1_row      = LittleEndian.getShort(data, 0 + offset);
+        field_1_row      = LittleEndian.getUShort(data, 0 + offset);
         field_2_column   = LittleEndian.getShort(data, 2 + offset);
         field_3_xf_index = LittleEndian.getShort(data, 4 + offset);
         field_4_bBoolErr = data[ 6 + offset ];
         field_5_fError   = data[ 7 + offset ];
     }
 
-    public void setRow(short row)
+    //public void setRow(short row)
+    public void setRow(int row)
     {
         field_1_row = row;
     }
@@ -176,7 +179,8 @@ public class BoolErrRecord
         field_5_fError   = ( byte ) 1;
     }
 
-    public short getRow()
+    //public short getRow()
+    public int getRow()
     {
         return field_1_row;
     }
@@ -278,7 +282,8 @@ public class BoolErrRecord
     {
         LittleEndian.putShort(data, 0 + offset, sid);
         LittleEndian.putShort(data, 2 + offset, ( short ) 8);
-        LittleEndian.putShort(data, 4 + offset, getRow());
+        //LittleEndian.putShort(data, 4 + offset, getRow());
+        LittleEndian.putShort(data, 4 + offset, ( short ) getRow());
         LittleEndian.putShort(data, 6 + offset, getColumn());
         LittleEndian.putShort(data, 8 + offset, getXFIndex());
         data[ 10 + offset ] = field_4_bBoolErr;

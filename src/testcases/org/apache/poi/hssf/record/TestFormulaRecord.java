@@ -77,11 +77,13 @@ public class TestFormulaRecord
     public void testCreateFormulaRecord () {
         FormulaRecord record = new FormulaRecord();
         record.setColumn((short)0);
-        record.setRow((short)1);
+        //record.setRow((short)1);
+        record.setRow(1);
         record.setXFIndex((short)4);
         
         assertEquals(record.getColumn(),(short)0);
-        assertEquals(record.getRow(),(short)1);
+        //assertEquals(record.getRow(),(short)1);
+        assertEquals((short)record.getRow(),(short)1);
         assertEquals(record.getXFIndex(),(short)4);
     }
     

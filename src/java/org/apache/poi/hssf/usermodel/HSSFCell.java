@@ -156,7 +156,8 @@ public class HSSFCell
     private short                    encoding;
     private Workbook                 book;
     private Sheet                    sheet;
-    private short                    row;
+    //private short                    row;
+    private int                    row;
     private CellValueRecordInterface record;
 
     /**
@@ -176,7 +177,8 @@ public class HSSFCell
      * @see org.apache.poi.hssf.usermodel.HSSFRow#createCell(short)
      */
 
-    protected HSSFCell(Workbook book, Sheet sheet, short row, short col)
+    //protected HSSFCell(Workbook book, Sheet sheet, short row, short col)
+    protected HSSFCell(Workbook book, Sheet sheet, int row, short col)
     {
         cellNum      = col;
         this.row     = row;
@@ -213,7 +215,8 @@ public class HSSFCell
      * and use setCellValue to specify the type lazily.
      */
 
-    protected HSSFCell(Workbook book, Sheet sheet, short row, short col,
+    //protected HSSFCell(Workbook book, Sheet sheet, short row, short col,
+    protected HSSFCell(Workbook book, Sheet sheet, int row, short col,
                        int type)
     {
         cellNum      = col;
@@ -286,7 +289,8 @@ public class HSSFCell
      * @param cval - the Cell Value Record we wish to represent
      */
 
-    protected HSSFCell(Workbook book, Sheet sheet, short row,
+    //protected HSSFCell(Workbook book, Sheet sheet, short row,
+    protected HSSFCell(Workbook book, Sheet sheet, int row,
                        CellValueRecordInterface cval)
     {
         cellNum     = cval.getColumn();

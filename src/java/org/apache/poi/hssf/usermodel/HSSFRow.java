@@ -82,7 +82,8 @@ public class HSSFRow
 
     // used for collections
     public final static int INITIAL_CAPACITY = 5;
-    private short rowNum;
+    //private short rowNum;
+    private int rowNum;
     private HashMap cells;
 //    private short firstcell = -1;
 //    private short lastcell = -1;
@@ -118,7 +119,8 @@ public class HSSFRow
      * @see org.apache.poi.hssf.usermodel.HSSFSheet#createRow(short)
      */
 
-    protected HSSFRow(Workbook book, Sheet sheet, short rowNum)
+    //protected HSSFRow(Workbook book, Sheet sheet, short rowNum)
+    protected HSSFRow(Workbook book, Sheet sheet, int rowNum)
     {
         this.rowNum = rowNum;
         cells = new HashMap(10);   // new ArrayList(INITIAL_CAPACITY);
@@ -145,7 +147,7 @@ public class HSSFRow
 
     protected HSSFRow(Workbook book, Sheet sheet, RowRecord record)
     {
-        this.rowNum = rowNum;
+        //this.rowNum = rowNum;
         cells = new HashMap();   // ArrayList(INITIAL_CAPACITY);
         this.book = book;
         this.sheet = sheet;
@@ -243,7 +245,8 @@ public class HSSFRow
      * @param rowNum  the row number (0-based)
      */
 
-    public void setRowNum(short rowNum)
+    //public void setRowNum(short rowNum)
+    public void setRowNum(int rowNum)
     {
         this.rowNum = rowNum;
         if (row != null)
@@ -257,7 +260,8 @@ public class HSSFRow
      * @return the row number (0 based)
      */
 
-    public short getRowNum()
+    //public short getRowNum()
+    public int getRowNum()
     {
         return rowNum;
     }

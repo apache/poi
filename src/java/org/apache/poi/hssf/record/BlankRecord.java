@@ -75,7 +75,8 @@ public class BlankRecord
     implements CellValueRecordInterface, Comparable
 {
     public final static short sid = 0x201;
-    private short             field_1_row;
+    //private short             field_1_row;
+    private int             field_1_row;
     private short             field_2_col;
     private short             field_3_xf;
 
@@ -114,7 +115,8 @@ public class BlankRecord
 
     protected void fillFields(byte [] data, short size, int offset)
     {
-        field_1_row = LittleEndian.getShort(data, 0 + offset);
+        //field_1_row = LittleEndian.getShort(data, 0 + offset);
+        field_1_row = LittleEndian.getUShort(data, 0 + offset);
         field_2_col = LittleEndian.getShort(data, 2 + offset);
         field_3_xf  = LittleEndian.getShort(data, 4 + offset);
     }
@@ -139,7 +141,8 @@ public class BlankRecord
      * @param row the row this cell occurs within
      */
 
-    public void setRow(short row)
+    //public void setRow(short row)
+    public void setRow(int row)
     {
         field_1_row = row;
     }
@@ -150,7 +153,8 @@ public class BlankRecord
      * @return the row
      */
 
-    public short getRow()
+    //public short getRow()
+    public int getRow()
     {
         return field_1_row;
     }
@@ -290,7 +294,8 @@ public class BlankRecord
     {
         LittleEndian.putShort(data, 0 + offset, sid);
         LittleEndian.putShort(data, 2 + offset, ( short ) 6);
-        LittleEndian.putShort(data, 4 + offset, getRow());
+        //LittleEndian.putShort(data, 4 + offset, getRow());
+        LittleEndian.putShort(data, 4 + offset, ( short ) getRow());
         LittleEndian.putShort(data, 6 + offset, getColumn());
         LittleEndian.putShort(data, 8 + offset, getXFIndex());
         return getRecordSize();

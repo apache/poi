@@ -91,9 +91,30 @@ public class LittleEndian
 
     public static short getShort(final byte[] data, final int offset)
     {
-        return (short) getNumber(data, offset, SHORT_SIZE);
+        return (short)getNumber(data, offset, SHORT_SIZE);
     }
 
+    /**
+     * get an unsigned short value from a byte array
+     *
+     * @param data the byte array
+     * @param offset a starting offset into the byte array
+     *
+     * @return the unsigned short (16-bit) value in an integer
+     *
+     * @exception ArrayIndexOutOfBoundsException may be thrown
+     */
+    public static int getUShort(final byte[] data, final int offset)
+    {
+        short num = (short)getNumber(data, offset, SHORT_SIZE);
+        int retNum;
+        if (num < 0)
+            retNum = ((int)Short.MAX_VALUE+1)*2+(int)num;
+        else
+            retNum = (int)num;
+        return retNum;
+    }
+    
     /**
      * get a short array from a byte array.
      */
@@ -130,6 +151,20 @@ public class LittleEndian
     public static short getShort(final byte[] data)
     {
         return getShort(data, 0);
+    }
+
+    /**
+     * get an unsigned short value from the beginning of a byte array
+     *
+     * @param data the byte array
+     *
+     * @return the unsigned short (16-bit) value in an int
+     *
+     * @exception ArrayIndexOutOfBoundsException may be thrown
+     */
+    public static int getUShort(final byte[] data)
+    {
+        return getUShort(data, 0);
     }
 
     /**

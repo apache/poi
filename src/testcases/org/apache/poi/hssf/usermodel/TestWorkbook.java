@@ -611,6 +611,42 @@ public class TestWorkbook
         assertEquals(1, sstRecords);
     }
 
+
+    public void testManyRows()
+        throws Exception
+    {
+        String testName = "TestManyRows";
+        File file = File.createTempFile(testName, ".xls");
+        FileOutputStream out  = new FileOutputStream(file);
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        HSSFSheet sheet = workbook.createSheet();
+        HSSFRow row = null;
+        HSSFCell cell = null;
+        int i, j;
+        for ( i = 0, j = 32771; j > 0; i++, j-- )
+        {
+            row = sheet.createRow(i);
+            cell = row.createCell((short) 0);
+            cell.setCellValue(i);
+        }
+        workbook.write(out);
+        out.close();
+        sanityChecker.checkHSSFWorkbook(workbook);
+        assertEquals("LAST ROW == 32770", 32770, sheet.getLastRowNum());
+        double lastVal = cell.getNumericCellValue();
+
+        FileInputStream in      = new FileInputStream(file);
+        POIFSFileSystem fs       = new POIFSFileSystem(in);
+        HSSFWorkbook    wb = new HSSFWorkbook(fs);
+        HSSFSheet       s    = wb.getSheetAt(0);
+        row = s.getRow(32770);
+        cell = row.getCell(( short ) 0);
+        assertEquals("Value from last row == 32770", lastVal, cell.getNumericCellValue(), 0);
+        assertEquals("LAST ROW == 32770", 32770, s.getLastRowNum());
+        in.close();
+        file.deleteOnExit();
+    }
+    
     public static void main(String [] ignored_args)
     {
         String filename = System.getProperty("HSSF.testdata.path");

@@ -84,7 +84,8 @@ public class RKRecord
     public final static short RK_IEEE_NUMBER_TIMES_100 = 1;
     public final static short RK_INTEGER               = 2;
     public final static short RK_INTEGER_TIMES_100     = 3;
-    private short             field_1_row;
+    //private short             field_1_row;
+    private int             field_1_row;
     private short             field_2_col;
     private short             field_3_xf_index;
     private int               field_4_rk_number;
@@ -130,13 +131,15 @@ public class RKRecord
 
     protected void fillFields(byte [] data, short size, int offset)
     {
-        field_1_row       = LittleEndian.getShort(data, 0 + offset);
+        //field_1_row       = LittleEndian.getShort(data, 0 + offset);
+        field_1_row       = LittleEndian.getUShort(data, 0 + offset);
         field_2_col       = LittleEndian.getShort(data, 2 + offset);
         field_3_xf_index  = LittleEndian.getShort(data, 4 + offset);
         field_4_rk_number = LittleEndian.getInt(data, 6 + offset);
     }
 
-    public short getRow()
+    //public short getRow()
+    public int getRow()
     {
         return field_1_row;
     }
@@ -324,7 +327,8 @@ public class RKRecord
     {
     }
 
-    public void setRow(short row)
+    //public void setRow(short row)
+    public void setRow(int row)
     {
     }
 
