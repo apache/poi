@@ -153,6 +153,7 @@ format,
                     <p>It is obvious that Microsoft Excel files are also supported.
                         POI has been used to successfully implement this support in ETL4ALL.</p>
             </section>
+       </section>
       </body>
   <footer>
     <legal>
