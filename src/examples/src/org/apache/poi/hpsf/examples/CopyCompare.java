@@ -47,6 +47,7 @@ import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.poifs.filesystem.POIFSDocumentPath;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.util.TempFile;
 
 /**
  * <p>This class copies a POI file system to a new file and compares the copy
@@ -112,7 +113,7 @@ public class CopyCompare
         if (args.length == 1)
         {
             originalFileName = args[0];
-            File f = File.createTempFile("CopyOfPOIFileSystem-", ".ole2");
+            File f = TempFile.createTempFile("CopyOfPOIFileSystem-", ".ole2");
             f.deleteOnExit();
             copyFileName = f.getAbsolutePath();
         }

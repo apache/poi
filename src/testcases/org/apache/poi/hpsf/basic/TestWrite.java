@@ -62,6 +62,7 @@ import org.apache.poi.poifs.eventfilesystem.POIFSReaderEvent;
 import org.apache.poi.poifs.eventfilesystem.POIFSReaderListener;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.TempFile;
 
 
 
@@ -710,7 +711,7 @@ public class TestWrite extends TestCase
 
             /* Create a new POI filesystem containing the origin file's
              * property set streams: */
-            final File copy = File.createTempFile(f.getName(), "");
+            final File copy = TempFile.createTempFile(f.getName(), "");
             copy.deleteOnExit();
             final OutputStream out = new FileOutputStream(copy);
             final POIFSFileSystem poiFs = new POIFSFileSystem();
@@ -764,7 +765,7 @@ public class TestWrite extends TestCase
     {
         try
         {
-            final File copy = File.createTempFile("Test-HPSF", "ole2");
+            final File copy = TempFile.createTempFile("Test-HPSF", "ole2");
             copy.deleteOnExit();
 
             /* Write: */
@@ -816,7 +817,7 @@ public class TestWrite extends TestCase
     {
         try
         {
-            final File copy = File.createTempFile("Test-HPSF", "ole2");
+            final File copy = TempFile.createTempFile("Test-HPSF", "ole2");
             copy.deleteOnExit();
 
             /* Write: */

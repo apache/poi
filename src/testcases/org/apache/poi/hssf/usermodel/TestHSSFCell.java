@@ -27,6 +27,7 @@ import org.apache.poi.hssf.record.BOFRecord;
 import org.apache.poi.hssf.record.EOFRecord;
 import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.util.TempFile;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -57,7 +58,7 @@ extends TestCase {
             throws java.io.IOException {
         String readFilename = System.getProperty("HSSF.testdata.path");
 
-            File file = File.createTempFile("testBoolErr",".xls");
+            File file = TempFile.createTempFile("testBoolErr",".xls");
             FileOutputStream out    = new FileOutputStream(file);
             HSSFWorkbook     wb     = new HSSFWorkbook();
             HSSFSheet        s      = wb.createSheet("Sheet1");
@@ -171,7 +172,7 @@ extends TestCase {
             3, s.getActiveCellRow());
         
         //write book to temp file; read and verify that position is serialized
-        File temp = File.createTempFile("testActiveCell", ".xls");
+        File temp = TempFile.createTempFile("testActiveCell", ".xls");
         FileOutputStream fos = new FileOutputStream(temp);
         book.write(fos);
         fos.close();
@@ -195,7 +196,7 @@ extends TestCase {
             throws java.io.IOException {
         String readFilename = System.getProperty("HSSF.testdata.path");
 
-            File file = File.createTempFile("testFormulaStyle",".xls");
+            File file = TempFile.createTempFile("testFormulaStyle",".xls");
             FileOutputStream out    = new FileOutputStream(file);
             HSSFWorkbook     wb     = new HSSFWorkbook();
             HSSFSheet        s      = wb.createSheet("Sheet1");

@@ -24,6 +24,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 
+import org.apache.poi.util.TempFile;
+
 /**
  * Test HSSFRow is okay.
  *
@@ -83,7 +85,7 @@ public class TestHSSFRow
         assertEquals(0, data[6]);
         assertEquals(0, data[8]);
 
-        File file = File.createTempFile("XXX", "XLS");
+        File file = TempFile.createTempFile("XXX", "XLS");
         FileOutputStream stream = new FileOutputStream(file);
         workbook.write(stream);
         stream.close();

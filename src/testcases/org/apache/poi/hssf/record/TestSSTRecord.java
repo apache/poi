@@ -24,6 +24,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.util.HexRead;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
+import org.apache.poi.util.TempFile;
 
 import java.io.*;
 import java.util.Arrays;
@@ -458,7 +459,7 @@ public class TestSSTRecord
         assertEquals( "01/05 (Wed) ", sheet.getRow( 0 ).getCell( (short) 8 ).getStringCellValue() );
         assertEquals( "01/05 (Wed)", sheet.getRow( 1 ).getCell( (short) 8 ).getStringCellValue() );
 
-        file = File.createTempFile( "testout", "xls" );
+        file = TempFile.createTempFile( "testout", "xls" );
         FileOutputStream outStream = new FileOutputStream( file );
         wb.write( outStream );
         outStream.close();
@@ -479,7 +480,7 @@ public class TestSSTRecord
         assertEquals( "Testing", sheet.getRow( row++ ).getCell( (short) 0 ).getStringCellValue() );
 
 //        file = new File("/tryme.xls");
-        file = File.createTempFile( "testout", ".xls" );
+        file = TempFile.createTempFile( "testout", ".xls" );
         outStream = new FileOutputStream( file );
         wb.write( outStream );
         outStream.close();

@@ -26,6 +26,7 @@ import java.util.Map;
 import junit.framework.TestCase;
 import org.apache.poi.hssf.record.PaletteRecord;
 import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.util.TempFile;
 
 /**
  * @author Brian Sanders (bsanders at risklabs dot com)
@@ -65,7 +66,7 @@ public class TestHSSFPalette extends TestCase
         palette.setColorAtIndex((short) 0x3b, (byte) 0, (byte) 255, (byte) 52);
         
         //writing to disk; reading in and verifying palette
-        File temp = File.createTempFile("testCustomPalette", ".xls");
+        File temp = TempFile.createTempFile("testCustomPalette", ".xls");
         FileOutputStream fos = new FileOutputStream(temp);
         book.write(fos);
         fos.close();

@@ -18,14 +18,7 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.Iterator;
-
 import junit.framework.TestCase;
-
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.BackupRecord;
 import org.apache.poi.hssf.record.LabelSSTRecord;
@@ -33,6 +26,13 @@ import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.aggregates.ValueRecordsAggregate;
 import org.apache.poi.hssf.util.Region;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.util.TempFile;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Iterator;
 
 /**
  * Class to test Workbook functionality
@@ -81,7 +81,7 @@ public class TestWorkbook
     public void testWriteSheetSimple()
         throws IOException
     {
-        File             file = File.createTempFile("testWriteSheetSimple",
+        File             file = TempFile.createTempFile("testWriteSheetSimple",
                                                     ".xls");
         FileOutputStream out  = new FileOutputStream(file);
         HSSFWorkbook     wb   = new HSSFWorkbook();
@@ -127,7 +127,7 @@ public class TestWorkbook
     public void testWriteModifySheetSimple()
         throws IOException
     {
-        File             file = File.createTempFile("testWriteSheetSimple",
+        File             file = TempFile.createTempFile("testWriteSheetSimple",
                                                     ".xls");
         FileOutputStream out  = new FileOutputStream(file);
         HSSFWorkbook     wb   = new HSSFWorkbook();
@@ -235,7 +235,7 @@ public class TestWorkbook
     public void testWriteDataFormat()
         throws IOException
     {
-	File             file = File.createTempFile("testWriteDataFormat",
+	File             file = TempFile.createTempFile("testWriteDataFormat",
                                                     ".xls");
         FileOutputStream out  = new FileOutputStream(file);
         HSSFWorkbook     wb   = new HSSFWorkbook();
@@ -335,7 +335,7 @@ public class TestWorkbook
             sheet.getRow(( short ) 0).getCell(( short ) 0);
 
         cell.setCellValue(REPLACED);
-        File             destination = File.createTempFile("SimpleResult",
+        File             destination = TempFile.createTempFile("SimpleResult",
                                            ".xls");
         FileOutputStream outstream   = new FileOutputStream(destination);
 
@@ -381,7 +381,7 @@ public class TestWorkbook
         cell = sheet.getRow(( short ) 1).getCell(( short ) 0);
         cell.setCellValue(REPLACED);
         File             destination =
-            File.createTempFile("SimpleWithSkipResult", ".xls");
+            TempFile.createTempFile("SimpleWithSkipResult", ".xls");
         FileOutputStream outstream   = new FileOutputStream(destination);
 
         workbook.write(outstream);
@@ -433,7 +433,7 @@ public class TestWorkbook
             cell.setCellValue(REPLACED);
         }
         File             destination =
-            File.createTempFile("SimpleWithStylingResult", ".xls");
+            TempFile.createTempFile("SimpleWithStylingResult", ".xls");
         FileOutputStream outstream   = new FileOutputStream(destination);
 
         workbook.write(outstream);
@@ -483,7 +483,7 @@ public class TestWorkbook
         cell.setCellValue(FIRST_NAME_VALUE);
         cell = sheet.getRow(( short ) 5).getCell(( short ) 2);
         cell.setCellValue(SSN_VALUE);
-        File             destination = File.createTempFile("EmployeeResult",
+        File             destination = TempFile.createTempFile("EmployeeResult",
                                            ".xls");
         FileOutputStream outstream   = new FileOutputStream(destination);
 
@@ -550,7 +550,7 @@ public class TestWorkbook
     public void testWriteModifySheetMerged()
         throws IOException
     {
-        File             file = File.createTempFile("testWriteSheetMerged",
+        File             file = TempFile.createTempFile("testWriteSheetMerged",
                                                     ".xls");
         FileOutputStream out  = new FileOutputStream(file);
         FileInputStream  in   = null;
@@ -656,7 +656,7 @@ public class TestWorkbook
         throws Exception
     {
         String testName = "TestManyRows";
-        File file = File.createTempFile(testName, ".xls");
+        File file = TempFile.createTempFile(testName, ".xls");
         FileOutputStream out  = new FileOutputStream(file);
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet();
@@ -704,7 +704,7 @@ public class TestWorkbook
 	     
 		workbook.setRepeatingRowsAndColumns(0, 0, 1, 0, 0); 
 	     
-		File file = File.createTempFile("testPrintTitles",".xls");        
+		File file = TempFile.createTempFile("testPrintTitles",".xls");        
 	     
 		FileOutputStream fileOut = new FileOutputStream(file);
 		workbook.write(fileOut);

@@ -26,6 +26,7 @@ import java.io.IOException;
 import junit.framework.TestCase;
 
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.util.TempFile;
 
 
 /**
@@ -105,7 +106,7 @@ public class TestNamedRange
         SanityChecker c = new SanityChecker();
         c.checkHSSFWorkbook(wb);
 
-        File             file = File.createTempFile("testNamedRange",
+        File             file = TempFile.createTempFile("testNamedRange",
                                         ".xls");
 
         FileOutputStream fileOut = new FileOutputStream(file);
@@ -229,7 +230,7 @@ public class TestNamedRange
 		HSSFName namedRange1 = wb.getNameAt(0);
 		String referece = namedRange1.getReference();
                                 
-	    File file = File.createTempFile("testMultiNamedRange", ".xls");
+	    File file = TempFile.createTempFile("testMultiNamedRange", ".xls");
  
 		FileOutputStream fileOut = new FileOutputStream(file);
 		wb.write(fileOut);
@@ -293,7 +294,7 @@ public class TestNamedRange
 		 namedRange2.setReference("sheet2" + "!$A$1:$O$21");        
  
 		 // Write the workbook to a file
-		 File file = File.createTempFile("testMuiltipletNamedRanges", ".xls");
+		 File file = TempFile.createTempFile("testMuiltipletNamedRanges", ".xls");
 		 FileOutputStream fileOut = new FileOutputStream(file);
 		 wb.write(fileOut);
 		 fileOut.close();
@@ -401,7 +402,7 @@ public class TestNamedRange
 	 	String reference = sheetName+"!$A$1:$B$1";
 	 	workbook.setPrintArea(0, reference);
 	     
-	    File file = File.createTempFile("testPrintArea",".xls");        
+	    File file = TempFile.createTempFile("testPrintArea",".xls");
 	     
 	    FileOutputStream fileOut = new FileOutputStream(file);
 	    workbook.write(fileOut);
@@ -444,7 +445,7 @@ public class TestNamedRange
 		String reference3 = sheetName+"!$D$2:$F$5";
 		workbook.setPrintArea(2, reference3);
 	    
-	    File file = File.createTempFile("testMultiPrintArea",".xls");        
+	    File file = TempFile.createTempFile("testMultiPrintArea",".xls");        
 	    
 	    FileOutputStream fileOut = new FileOutputStream(file);
 	    workbook.write(fileOut);
