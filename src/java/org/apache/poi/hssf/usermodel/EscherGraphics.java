@@ -253,9 +253,9 @@ public class EscherGraphics
             excelFont = new Font( font.getName(), font.getStyle(), (int) ( font.getSize() / verticalPixelsPerPoint ));
         }
         FontDetails d = StaticFontMetrics.getFontDetails( excelFont );
-        int width = (int) ( (d.getStringWidth( str ) * 2.5)  + 12 );
-        int height = (int) ( ( font.getSize() * 2.0 * verticalPixelsPerPoint ) + 6 );
-        y -= ( font.getSize() * verticalPixelsPerPoint );    // we want to draw the shape from the top-left
+        int width = (int) ( (d.getStringWidth( str ) * 8)  + 12 );
+        int height = (int) ( ( font.getSize() / verticalPixelsPerPoint ) + 6 ) * 2;
+        y -= ( font.getSize() / verticalPixelsPerPoint ) + 2 * verticalPixelsPerPoint;    // we want to draw the shape from the top-left
         HSSFTextbox textbox = escherGroup.createTextbox( new HSSFChildAnchor( x, y, x + width, y + height ) );
         textbox.setNoFill( true );
         textbox.setLineStyle( HSSFShape.LINESTYLE_NONE );
