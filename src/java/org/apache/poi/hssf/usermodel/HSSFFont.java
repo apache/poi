@@ -200,7 +200,7 @@ public class HSSFFont
     /**
      * set the font height in unit's of 1/20th of a point.  Maybe you might want to
      * use the setFontHeightInPoints which matches to the familiar 10, 12, 14 etc..
-     * @param short - height in 1/20ths of a point
+     * @param height in 1/20ths of a point
      * @see #setFontHeightInPoints(short)
      */
 
@@ -211,7 +211,7 @@ public class HSSFFont
 
     /**
      * set the font height
-     * @param short - height in the familiar unit of measure - points
+     * @param height in the familiar unit of measure - points
      * @see #setFontHeight(short)
      */
 

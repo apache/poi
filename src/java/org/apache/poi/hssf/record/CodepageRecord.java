@@ -102,7 +102,7 @@ public class CodepageRecord
      * @param id     id must be 0x42 or an exception will be throw upon validation
      * @param size  the size of the data area of the record
      * @param data  data of the record (should not contain sid/len)
-     * @param int offset of the record
+     * @param offset of the record
      */
 
     public CodepageRecord(short id, short size, byte [] data, int offset)
@@ -127,7 +127,7 @@ public class CodepageRecord
      * set the codepage for this workbook
      *
      * @see #CODEPAGE
-     * @param codepage - the codepage to set
+     * @param the codepage to set
      */
 
     public void setCodepage(short cp)
