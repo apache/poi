@@ -64,9 +64,10 @@ import org.apache.poi.hssf.util.TestRKUtil;
 import org.apache.poi.hssf.util.TestSheetReferences;
 
 /**
- * enclosing_type describe the purpose here
+ * Test Suite for running just HSSF tests.  Mostly
+ * this is for my convienience.
  * 
- * @author Andrew C. Oliver androliv@cisco.com
+ * @author Andrew C. Oliver acoliver@apache.org
  */
 public class HSSFTests
 {
