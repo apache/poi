@@ -172,14 +172,19 @@ public class BoolErrRecord
      * set the error value for the cell
      *
      * @param value     error representing the error value
+     *                  this value can only be 0,7,15,23,29,36 or 42
+     *                  see bugzilla bug 16560 for an explanation
      */
 
     public void setValue(byte value)
     {
-        field_4_bBoolErr = value;
-        field_5_fError   = ( byte ) 1;
+        if ( (value==0)||(value==7)||(value==15)||(value==23)||(value==29)||(value==36)||(value==42)) {
+            field_4_bBoolErr = value;
+            field_5_fError   = ( byte ) 1;
+        } else {
+            throw new RuntimeException("Error Value can only be 0,7,15,23,29,36 or 42. It cannot be "+value);
+        }
     }
-
     //public short getRow()
     public int getRow()
     {
