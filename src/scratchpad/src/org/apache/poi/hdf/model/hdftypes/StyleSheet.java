@@ -55,7 +55,7 @@
  */
 
 
-package org.apache.poi.hwpf.model.hdftypes;
+package org.apache.poi.hdf.model.hdftypes;
 
 import java.util.*;
 import java.io.IOException;
