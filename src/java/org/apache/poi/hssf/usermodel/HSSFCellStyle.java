@@ -233,7 +233,7 @@ public class HSSFCellStyle
     /**  No background */
     public final static short     NO_FILL             = 0  ;
     /**  Solidly filled */
-    public final static short     SOLID_FILL          = 1  ;
+    public final static short     SOLID_FOREGROUND    = 1  ;
     /**  Small fine dots */
     public final static short     FINE_DOTS           = 2  ;
     /**  Wide dots */
