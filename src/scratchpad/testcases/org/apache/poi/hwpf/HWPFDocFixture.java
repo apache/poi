@@ -6,6 +6,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 
 import org.apache.poi.hwpf.model.hdftypes.*;
+import java.io.File;
 
 
 public class HWPFDocFixture
@@ -23,14 +24,17 @@ public class HWPFDocFixture
   {
     try
     {
-
-      String filename = System.getProperty("HSSF.testdata.path");
+      String filename = System.getProperty("HWPF.testdata.path");
+      if (filename == null)
+      {
+        filename = "c:";
+      }
 
       filename = filename + "/test.doc";
 
 
       POIFSFileSystem filesystem = new POIFSFileSystem(new FileInputStream(
-        "C:\\test.doc"));
+        new File(filename)));
 
       DocumentEntry documentProps =
         (DocumentEntry) filesystem.getRoot().getEntry("WordDocument");
