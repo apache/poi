@@ -12,6 +12,17 @@
 
   <body>
    <section title="News">
+       <section title="Get your POI news here">
+         <p>
+            You can now read your POI news in a handy dandy 
+            <a href="http://nagoya.apache.org/poi/news/?flavor=rss">RSS feed</a> or read it <a href="http://nagoya.apache.org/poi/news/">here</a> (links to 
+ other syndication formats there as well).  Thanks to the good guys of the 
+ <a href="http://blojsom.sourceforge.net">Blojsom</a> project for writing such
+ a great piece of software!  Subscribe using your favorite aggregator today and
+ stay current on important POI news and events such as releases, new development
+ features, etc.  
+         </p>
+       </section>
        <section title="Latest Development Release">
         <p>
             The latest development release of POI is version 1.10. 
