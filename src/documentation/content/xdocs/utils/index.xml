@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "./dtd/document-v11.dtd">
+
+<document>
+ <header>
+  <title>Poi Utils</title>
+  <subtitle>Overview</subtitle>
+  <authors>
+   <person name="Nicola Ken Barozzi" email="barozzi@nicolaken.com"/>     
+  </authors>
+ </header>
+
+ <body>
+ <section><title>Overview</title>
+
+  <p>The POI Utils are classes we're looking to donate elsewhere and include.  
+     These are usually classes that while are required for our mission, 
+     are somehow outside of it.  General utilities that could be used in 
+     any project are what we would normally put here.  If you see one, and you
+     think "gee that would be great as part of X project" then let us know.
+     While we wish to put these in their rightful place, we also don't want to 
+     include a 40mb jar file just to process text strings, so that will 
+     be a consideraton.
+  </p>
+  <p>
+     Currently, we're looking into which subprojects in the Jakarta Commons project
+     to donate these too.  The "Poi Utils" package won't go away, as there may 
+     be later classes.  The idea is that "go ahead and add it, we'll merge it or
+     find an alternative later, just keep pounding out that poi!"
+  </p>
+
+  </section>
+ </body>
+</document>

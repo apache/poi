@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "../dtd/document-v11.dtd">
+
+<document>
+    <header>
+        <title>HSSF</title>
+        <subtitle>Programas Alternativos a HSSF</subtitle>
+        <authors>
+            <person name="Glen Stampoultzis" email="glens@apache.org"/>
+        </authors>
+    </header>
+
+    <body>
+        <section><title>Alternativos</title>
+            <p>
+            	Puede ser que no es buen idea hablar de nuestra competidores pero nosotros creemos que la compentencia es bueno y que tenemos disponible hoy en día la mejor solución para escribir y leer archivos de Excel
+            </p>
+            <table>
+                <tr>
+                    <th>Producto</th>
+                    <th>URL</th>
+                    <th>Descripción</th>
+                </tr>
+                <tr>
+                    <td>Formula One</td>
+                    <td>
+                        <link href="http://www.tidestone.com/">www.tidestone.com</link>
+                    </td>
+                    <td>
+                      Una alternativa a este proyecto es comprar a $10,000 (dolares EEUU) el "Formula 1 library" y aceptar su API immadura y sus limitaciones.
+                    </td>
+                </tr>
+                <tr>
+                    <td>Visual Basic</td>
+                    <td>
+                        <link href="http://www.microsoft.com/">www.microsoft.com</link>
+                    </td>
+                    <td>
+                      Deja de usar XML y escriba su programa usando Visual Basic en una computadora de Microsoft Windows.  O trata de crear una solución usando la versión beta e indocumentada del nuevo formato de Microsoft llamado 'XML for Office'. 
+				    </td>
+                </tr>
+                <tr>
+                    <td>JExcel</td>
+                    <td>http://stareyes.homeip.net:8888</td>
+                    <td>Frequentemente no está disponible.  Se conoce poco acerca de  
+                        las habilidades de este programa.
+                    </td>
+                </tr>
+                <tr>
+                    <td>JWorkbook</td>
+                    <td>http://www.object-refinery.com/jworkbook/index.html</td>
+                    <td>
+                      Este esfuerzo puede trabajar con Gnumeric y Excel, pero la parte de Excel lo hace usando POI de todas formas.
+                    </td>
+                </tr>
+                <tr>
+                    <td>xlReader</td>
+                    <td><link href="http://www.sourceforge.net/projects/xlrd">http://www.sourceforge.net/projects/xlrd</link></td>
+                    <td>Funciona bastante bien leyendo Excel.
+                    </td>
+                </tr>
+                <tr>
+                    <td>Excel ODBC Driver</td>
+                    <td><link href="http://www.nwlink.com/~leewal/content/exceljavasample.htm">http://www.nwlink.com/~leewal/content/exceljavasample.htm</link></td>
+                    <td>ODBC ofrece una forma bastante rara para trabajar con Excel.
+                    </td>
+                </tr>
+                <tr>
+                    <td>ExtenXLS</td>
+                    <td><link href="http://www.extentech.com/products/ExtenXLS/docs/intro3.jsp">http://www.extentech.com/products/ExtenXLS/docs/intro3.jsp</link></td>
+                    <td>Una biblioteca commercial para leer, modificar, y escribir hojas de balance de Excel.  No es barato pero cuesta menos que Formula 1.  No tenemos idea de la calidad de este software.
+                    </td>
+                </tr>
+                <tr>
+                    <td>J-Integra Java-Excel Bridge</td>
+                    <td><link href="http://www.intrinsyc.com/products/bridging/jintegra.asp">http://www.intrinsyc.com/products/bridging/jintegra.asp</link></td>
+                    <td>Usa DCOM a una instancia de Excel en una computadora de Windows.
+                    </td>
+                </tr>
+                <tr>
+                    <td>Perl &amp; C</td>
+                    <td>-</td>
+                    <td>Hay varias bibliotecas en los idiomas de Perl y C.  Pero no son consistentes o compatibles.
+                    </td>
+                </tr>
+                <tr>
+                    <td>VistaJDBC</td>
+                    <td><link href="http://www.vistaportal.com/products/vistajdbc.htm">http://www.vistaportal.com/products/vistajdbc.htm</link></td>
+                    <td>El driver de VistaJDBC trabaja con hojas de balance de StarOffice y Excel y proveen acceso al data sin tener que programar usando SQL estandar.  VistaJDBC tambien permite escoger cellulas no solo por columna y fila per tambien cellulas individuales específicas, juegos de celulas, etc.
+                    </td>
+                </tr>
+                <tr>
+                    <td>Coldtags Excel Tag Library</td>
+                    <td><link href="http://www.servletsuite.com/servlets/exceltag.htm">http://www.servletsuite.com/servlets/exceltag.htm</link></td>
+                    <td>
+                       Esta biblioteca ayuda a crear archivos en el formato de CSV, en la cual se permiten numeros y textos.  Puede crear achivos de CSV sin esta ayuda, pero la bibioteca da estructura y leabilidad a su codigo y lo puede extender si necesita manejar casos mas complejos.  Cuando un browser encuentra uno de estos páginas de JSP, abre una instancia de Excel automaticamente.  No hay formatting, hojas de balance distintas, etc.  O sea que, estrictamente, no es un competidor pero en algunos casos es todo lo que se necesita.
+                    </td>
+                </tr>
+            </table>
+        </section>
+    </body>
+</document>

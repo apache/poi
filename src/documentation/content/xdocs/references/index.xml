@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "./dtd/document-v11.dtd">
+
+<document>
+    <header>
+        <title>Live Sites using Poi</title>
+        <authors>
+            <person name="Donald Ball" email="balld@webslingerZ.com"/>
+            <person name="Stefano Mazzocchi" email="stefano@apache.org"/>
+            <person name="Robin Green" email="greenrd@hotmail.com"/>
+            <person name="Nicola Ken Barozzi" email="barozzi@nicolaken.com"/>
+            <person name="Glen Stampoultzis" email="glens@apache.org"/>
+        </authors>
+    </header>
+
+    <body>
+        <section><title>Live Sites using Poi</title>
+            <p>Currently we don't have any sites listed that use Poi, but we're sure they're out there.
+            Help us change this.  If you've
+            written a site that utilises Poi let us know.
+            </p>
+            <!--
+            <ul>
+             <li><link href=""></link></li>
+            </ul>
+           </section>
+            -->
+        </section>
+        <section><title>Products/Projects using POI</title>
+            <p> Publically available products/projects using POI include:
+            </p>
+            <ul>
+              <li><link href="http://jtimetracker.sourceforge.net/">JTimeTracker</link></li>
+            </ul> 
+        </section>
+    </body>
+</document>

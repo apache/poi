@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "../dtd/document-v11.dtd">
+
+<document>
+    <header>
+        <title>HSSF</title>
+        <subtitle>Alternatives to HSSF</subtitle>
+        <authors>
+            <person name="Andrew Oliver" email="acoliver at apache.org"/>
+            <person name="Glen Stampoultzis" email="glens at apache.org"/>
+        </authors>
+    </header>
+
+    <body>
+        <section><title>Alternatives</title>
+            <p>
+                Maybe it's unwise to advertise your competitors but we believe
+                competition is good and we have the best support reading and
+                write Excel workbooks currently available.
+            </p>
+            <table>
+                <tr>
+                    <th>Product</th>
+                    <th>URL</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td>JSC</td>
+                    <td>
+                        <link href="http://jsc.tomschuetz.com">jsc.tomschuetz.com</link>
+                    </td>
+                    <td>Reading, calculating standard and VBA functions with 
+                        Java at runtime.  
+                    </td>
+                </tr>
+                <tr>
+                    <td>Formula One</td>
+                    <td>
+                        <link href="http://www.tidestone.com/">ReportingEngines (division of Actuate Corporation)</link>
+                    </td>
+                    <td>An alternative to this project is to
+                        buy the $5000 per server installation.</td>
+                </tr>
+                <tr>
+                    <td>Visual Basic</td>
+                    <td>
+                        <link href="http://www.microsoft.com/">www.microsoft.com</link>
+                    </td>
+                    <td>Give up XML and write Visual Basic code on a Microsoft Windows based
+                    Environment or output in Microsoft's beta and primarily undocumented
+                    XML for office format.</td>
+                </tr>
+                <tr>
+                    <td>JExcel</td>
+                    <td>http://stareyes.homeip.net:8888</td>
+                    <td>Frequently unavailable.  Little currently known about it's capabilities.</td>
+                </tr>
+                <tr>
+                    <td>JWorkbook</td>
+                    <td>http://www.object-refinery.com/jworkbook/index.html</td>
+                    <td>This effort supports Gnumeric and Excel, however the Excel part is done using POI anyway.</td>
+                </tr>
+                <tr>
+                    <td>xlReader</td>
+                    <td><link href="http://www.sourceforge.net/projects/xlrd">http://www.sourceforge.net/projects/xlrd</link></td>
+                    <td>Provides decent support for reading Excel.</td>
+                </tr>
+                <tr>
+                    <td>Excel ODBC Driver</td>
+                    <td><link href="http://www.nwlink.com/~leewal/content/exceljavasample.htm">http://www.nwlink.com/~leewal/content/exceljavasample.htm</link></td>
+                    <td>ODBC offers a somewhat wierd method for using Excel.</td>
+                </tr>
+                <tr>
+                    <td>ExtenXLS</td>
+                    <td><link href="http://www.extentech.com/products/ExtenXLS/docs/intro3.jsp">http://www.extentech.com/products/ExtenXLS/docs/intro3.jsp</link></td>
+                    <td>Commercial library for reading, modifying and writing Excel spreadsheets.  Not cheap but
+                    certainly a lot more affordable than Formula 1.  No idea as to it's quality.</td>
+                </tr>
+                <tr>
+                    <td>J-Integra Java-Excel Bridge</td>
+                    <td><link href="http://www.intrinsyc.com/products/bridging/jintegra.asp">http://www.intrinsyc.com/products/bridging/jintegra.asp</link></td>
+                    <td>Uses DCOM to an Excel instance on a windows machine.</td>
+                </tr>
+                <tr>
+                    <td>Perl &amp; C</td>
+                    <td>-</td>
+                    <td>There are a number of perl and C libraries, however none of them are consistent.</td>
+                </tr>
+                <tr>
+                    <td>VistaJDBC</td>
+                    <td><link href="http://www.vistaportal.com/products/vistajdbc.htm">http://www.vistaportal.com/products/vistajdbc.htm</link></td>
+                    <td>VistaJDBC driver works with both StarOffice and Excel spreadsheets and
+                        can access data using standard SQL statements without any API programming.
+                        VistaJDBC also implemented ability to choose by not just rows and columns but by
+                        specific cells, ranges of cells, etc.
+                    </td>
+                </tr>
+                <tr>
+                    <td>Coldtags Excel Tag Library</td>
+                    <td><link href="http://www.servletsuite.com/servlets/exceltag.htm">http://www.servletsuite.com/servlets/exceltag.htm</link></td>
+                    <td>
+                        This library outputs a simple CSV file, in which cells can
+                        contain numbers or text.  You could output a CSV file without its
+                        help, but it gives a little more readability/structure to the code, and
+                        could be extended to handle more complexity.  When
+                        you invoke one of these JSP pages from your browser, you open up an Excel
+                        spreadsheet.  There's no formatting, worksheets, or anything fancy like that.
+                        So it's not strictly a competitor but it does the job.
+                    </td>
+                </tr>
+            </table>
+        </section>
+    </body>
+</document>

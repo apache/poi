@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book PUBLIC "-//APACHE//DTD Cocoon Documentation Book V1.0//EN" "./dtd/book-cocoon-v10.dtd">
+
+<book software="Poi" 
+      title="Poi Project Documentation" 
+      copyright="@year@ Poi Project"
+      xmlns:xlink="http://www.w3.org/1999/xlink">
+
+  <menu label="Get Involved">
+    <menu-item label="Contributing" href="index.html"/>
+    <menu-item label="Branching" href="branching.html"/>
+    <menu-item label="Mail Lists" href="http://jakarta.apache.org/site/mail.html"/>
+  </menu>
+
+</book>
