@@ -83,15 +83,11 @@ import org.apache.poi.hssf.util.HSSFColor;
 public class SVTableCellRenderer extends JLabel
     implements TableCellRenderer, Serializable
 {
-  private static final Color black = getAWTColor(new HSSFColor.BLACK());
-  private static final Color white = getAWTColor(new HSSFColor.WHITE());
-
     protected static Border noFocusBorder = new EmptyBorder(1, 1, 1, 1);
     protected SVBorder cellBorder = new SVBorder();
 
 
     private HSSFWorkbook wb = null;
-    private Hashtable colors = HSSFColor.getIndexHash();
 
     /** This class holds the references to the predefined cell formats.
      */
@@ -114,8 +110,8 @@ public class SVTableCellRenderer extends JLabel
         textFormatter[0x09] = new DecimalFormat("0%");
         textFormatter[0x0A] = new DecimalFormat("0.00%");
         textFormatter[0x0B] = new DecimalFormat("0.00E0");
-//??        textFormatter[0x0C] = new DecimalFormat("# ?/?");
-//??        textFormatter[0x0D] = new DecimalFormat("# ??/??");
+        textFormatter[0x0C] = new SVFractionalFormat("# ?/?");
+        textFormatter[0x0D] = new SVFractionalFormat("# ??/??");
         textFormatter[0x0E] = new SimpleDateFormat("M/d/yy");
         textFormatter[0x0F] = new SimpleDateFormat("d-MMM-yy");
         textFormatter[0x10] = new SimpleDateFormat("d-MMM");
@@ -160,7 +156,10 @@ public class SVTableCellRenderer extends JLabel
         if (textFormatter[index] instanceof DecimalFormat) {
           return ((DecimalFormat)textFormatter[index]).format(value);
         }
-        else throw new RuntimeException("Sorry. I cant handle a non decimal formatter for a decimal value :"+Integer.toHexString(index));
+        if (textFormatter[index] instanceof SVFractionalFormat) {
+          return ((SVFractionalFormat)textFormatter[index]).format(value);
+        }
+        throw new RuntimeException("Sorry. I cant handle a non decimal formatter for a decimal value :"+Integer.toHexString(index));
       }
 
       public boolean useRedColor(short index, double value) {
@@ -188,30 +187,18 @@ public class SVTableCellRenderer extends JLabel
         if (c != null) {
           HSSFCellStyle s = c.getCellStyle();
           HSSFFont f = wb.getFontAt(s.getFontIndex());
-          boolean isbold = f.getBoldweight() > HSSFFont.BOLDWEIGHT_NORMAL;
-          boolean isitalics = f.getItalic();
-
-          int fontstyle = Font.PLAIN;
-
-          if (isbold) fontstyle = Font.BOLD;
-          if (isitalics) fontstyle = fontstyle | Font.ITALIC;
-
-          int fontheight = f.getFontHeightInPoints();
-          if (fontheight == 9) fontheight = 10; //fix for stupid ol Windows
-
-          Font font = new Font(f.getFontName(),fontstyle,fontheight);
-          setFont(font);
+          setFont(SVTableUtils.makeFont(f));
 
           if (s.getFillPattern() == HSSFCellStyle.SOLID_FOREGROUND) {
-            setBackground(getAWTColor(s.getFillForegroundColor(), white));
-          } else setBackground(white);
+            setBackground(SVTableUtils.getAWTColor(s.getFillForegroundColor(), SVTableUtils.white));
+          } else setBackground(SVTableUtils.white);
 
-          setForeground(getAWTColor(f.getColor(), black));
+          setForeground(SVTableUtils.getAWTColor(f.getColor(), SVTableUtils.black));
 
-          cellBorder.setBorder(getAWTColor(s.getTopBorderColor(), black),
-                               getAWTColor(s.getRightBorderColor(), black),
-                               getAWTColor(s.getBottomBorderColor(), black),
-                               getAWTColor(s.getLeftBorderColor(), black),
+          cellBorder.setBorder(SVTableUtils.getAWTColor(s.getTopBorderColor(), SVTableUtils.black),
+                               SVTableUtils.getAWTColor(s.getRightBorderColor(), SVTableUtils.black),
+                               SVTableUtils.getAWTColor(s.getBottomBorderColor(), SVTableUtils.black),
+                               SVTableUtils.getAWTColor(s.getLeftBorderColor(), SVTableUtils.black),
                                s.getBorderTop(), s.getBorderRight(),
                                s.getBorderBottom(), s.getBorderLeft(),
                                hasFocus);
@@ -230,7 +217,6 @@ public class SVTableCellRenderer extends JLabel
                   setValue("false");
                 }
               break;
-              case HSSFCell.CELL_TYPE_FORMULA:
               case HSSFCell.CELL_TYPE_NUMERIC:
                 short format = s.getDataFormat();
                 double numericValue = c.getNumericCellValue();
@@ -242,6 +228,7 @@ public class SVTableCellRenderer extends JLabel
               case HSSFCell.CELL_TYPE_STRING:
                 setValue(c.getStringCellValue());
               break;
+              case HSSFCell.CELL_TYPE_FORMULA:
               default:
                 setValue("?");
             }
@@ -266,16 +253,18 @@ public class SVTableCellRenderer extends JLabel
             }
         } else {
           setValue("");
-          setBackground(white);
+          setBackground(SVTableUtils.white);
         }
 
 
 	if (hasFocus) {
             if (!isBorderSet) {
-              cellBorder.setBorder(black,
-                                   black,
-                                   black,
-                                   black,
+              //This is the border to paint when there is no border
+              //and the cell has focus
+              cellBorder.setBorder(SVTableUtils.black,
+                                   SVTableUtils.black,
+                                   SVTableUtils.black,
+                                   SVTableUtils.black,
                                    HSSFCellStyle.BORDER_NONE,
                                    HSSFCellStyle.BORDER_NONE,
                                    HSSFCellStyle.BORDER_NONE,
@@ -323,20 +312,4 @@ public class SVTableCellRenderer extends JLabel
     protected void setValue(Object value) {
 	setText((value == null) ? "" : value.toString());
     }
-
-    /** This method retrieves the AWT Color representation from the colour hash table
-     *
-     */
-    private final Color getAWTColor(int index, Color deflt) {
-      HSSFColor clr = (HSSFColor)colors.get(new Integer(index));
-      if (clr == null) return deflt;
-      return getAWTColor(clr);
-    }
-
-    private static final Color getAWTColor(HSSFColor clr) {
-      short[] rgb = clr.getTriplet();
-      return new Color(rgb[0],rgb[1],rgb[2]);
-    }
-
-
 }

@@ -58,11 +58,9 @@ package org.apache.poi.hssf.contrib.view;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.net.URL;
-import java.net.URLConnection;
+import java.net.*;
 import java.applet.*;
-import java.io.InputStream;
-import java.io.FileInputStream;
+import java.io.*;
 import javax.swing.*;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -100,6 +98,7 @@ public class SViewer extends JApplet {
     }
     catch(Exception e) {
       e.printStackTrace();
+      System.exit(1);
     }
   }
 
@@ -121,34 +120,24 @@ public class SViewer extends JApplet {
     } else {
       wb = constructWorkbook(filename);
     }
-    panel = new SViewerPanel(wb);
+    panel = new SViewerPanel(wb, false);
     getContentPane().setLayout(new BorderLayout());
     getContentPane().add(panel, BorderLayout.CENTER);
   }
 
-  private HSSFWorkbook constructWorkbook(String filename) {
+  private HSSFWorkbook constructWorkbook(String filename) throws FileNotFoundException, IOException {
     HSSFWorkbook wb = null;
-
-    try {
       FileInputStream in = new FileInputStream(filename);
       wb = new HSSFWorkbook(in);
       in.close();
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
     return wb;
   }
 
-  private HSSFWorkbook constructWorkbook(InputStream in) {
+  private HSSFWorkbook constructWorkbook(InputStream in) throws IOException {
     HSSFWorkbook wb = null;
 
-    try {
       wb = new HSSFWorkbook(in);
       in.close();
-
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
     return wb;
   }
 
@@ -174,14 +163,15 @@ public class SViewer extends JApplet {
    * opens a url and returns an inputstream
    *
    */
-  private InputStream getXLSFromURL(String urlstring) {
-  InputStream is = null;
-  try {
+  private InputStream getXLSFromURL(String urlstring) throws MalformedURLException, IOException {
     URL url = new URL(urlstring);
-    is = url.openStream();
-  } catch (Exception e) {
-    e.printStackTrace();
+    URLConnection uc = url.openConnection();
+    String field = uc.getHeaderField(0);
+    for (int i=0;field != null; i++) {
+      System.out.println(field);
+      field = uc.getHeaderField(i);
   }
+    BufferedInputStream is = new BufferedInputStream(uc.getInputStream());
     return is;
   }
 
