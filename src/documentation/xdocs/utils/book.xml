@@ -9,6 +9,11 @@
     <menu-item label="Main" href="../index.html"/>
   </menu>
 
+  <menu label="POI Util">
+    <menu-item label="Overview" href="index.html"/>
+    <menu-item label="Logging"  href="logging.html"/>
+  </menu>
+  
 </book>
 
 
