@@ -14,15 +14,16 @@
     <echo message=" You can also invoke them directly; see build.xml for more info. "/> 
     <echo message=" Builds will be in /build directory, distributions in /dist."/>        
     <echo message="  "/>    
-    <echo message=" compile ------ compiles the source code "/>     
-    <echo message=" docs --------- generates the html docs"/>        
-    <echo message=" cleandocs ---- cleans the build docs directory"/>    
-    <echo message=" javadocs ----- generates the API documentation"/>     
-    <echo message=" test --------- performs the jUnit tests"/>       
-    <echo message=" clean -------- cleans the build directory"/>    
-    <echo message=" dist --------- creates src and bin distributions"/>    
-    <echo message=" scratchpad --- build-run scratchpad code"/>       
-    <echo message=" contrib ------ build-run contributed code"/>    
+    <echo message=" compile ---------- compiles the source code "/>     
+    <echo message=" docs ------------- generates the html docs"/>        
+    <echo message=" cleandocs -------- cleans the build docs directory"/>    
+    <echo message=" javadocs --------- generates the API documentation"/>     
+    <echo message=" test ------------- performs the jUnit tests"/>       
+    <echo message=" clean ------------ cleans the build directory"/>    
+    <echo message=" dist ------------- creates src and bin distributions"/>    
+    <echo message=" scratchpad ------- build-run scratchpad code"/>       
+    <echo message=" contrib ---------- build-run contributed code"/>    
+    <echo message=" generate-records - generate excel records"/>    
 
     <property name="input.selection" value="compile"/>        
     <user-input name="input.selection">Please select a target </user-input>   
