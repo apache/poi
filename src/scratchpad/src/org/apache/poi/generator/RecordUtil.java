@@ -137,7 +137,7 @@ public class RecordUtil
         else if (type.equals("string"))
             return pad(new StringBuffer("ExcelString"), padTo).toString();
 
-        return "";
+        return "short";   // if we don't know, default to short
     }
 
     public static String getType1stCap(String size, String type, int padTo)

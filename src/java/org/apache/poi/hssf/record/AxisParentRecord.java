@@ -61,52 +61,55 @@ package org.apache.poi.hssf.record;
 import org.apache.poi.util.*;
 
 /**
- * The default data label text properties record identifies the text characteristics of the preceeding text record.
+ * The axis size and location
  * NOTE: This source is automatically generated please do not modify this file.  Either subclass or
  *       remove the record in src/records/definitions.
 
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class DefaultDataLabelTextPropertiesRecord
+public class AxisParentRecord
     extends Record
 {
-    public final static short      sid                             = 0x1024;
-    private  short      field_1_categoryDataType;
-    public final static short       CATEGORY_DATA_TYPE_SHOW_LABELS_CHARACTERISTIC = 0;
-    public final static short       CATEGORY_DATA_TYPE_VALUE_AND_PERCENTAGE_CHARACTERISTIC = 1;
-    public final static short       CATEGORY_DATA_TYPE_ALL_TEXT_CHARACTERISTIC = 2;
+    public final static short      sid                             = 0x1041;
+    private  short      field_1_axisType;
+    public final static short       AXIS_TYPE_MAIN                 = 0;
+    public final static short       AXIS_TYPE_SECONDARY            = 1;
+    private  int        field_2_x;
+    private  int        field_3_y;
+    private  int        field_4_width;
+    private  int        field_5_height;
 
 
-    public DefaultDataLabelTextPropertiesRecord()
+    public AxisParentRecord()
     {
 
     }
 
     /**
-     * Constructs a DefaultDataLabelTextProperties record and sets its fields appropriately.
+     * Constructs a AxisParent record and sets its fields appropriately.
      *
-     * @param id    id must be 0x1024 or an exception
+     * @param id    id must be 0x1041 or an exception
      *              will be throw upon validation
      * @param size  size the size of the data area of the record
      * @param data  data of the record (should not contain sid/len)
      */
 
-    public DefaultDataLabelTextPropertiesRecord(short id, short size, byte [] data)
+    public AxisParentRecord(short id, short size, byte [] data)
     {
         super(id, size, data);
     }
 
     /**
-     * Constructs a DefaultDataLabelTextProperties record and sets its fields appropriately.
+     * Constructs a AxisParent record and sets its fields appropriately.
      *
-     * @param id    id must be 0x1024 or an exception
+     * @param id    id must be 0x1041 or an exception
      *              will be throw upon validation
      * @param size  size the size of the data area of the record
      * @param data  data of the record (should not contain sid/len)
      * @param offset of the record's data
      */
 
-    public DefaultDataLabelTextPropertiesRecord(short id, short size, byte [] data, int offset)
+    public AxisParentRecord(short id, short size, byte [] data, int offset)
     {
         super(id, size, data, offset);
     }
@@ -120,13 +123,17 @@ public class DefaultDataLabelTextPropertiesRecord
     {
         if (id != sid)
         {
-            throw new RecordFormatException("Not a DefaultDataLabelTextProperties record");
+            throw new RecordFormatException("Not a AxisParent record");
         }
     }
 
     protected void fillFields(byte [] data, short size, int offset)
     {
-        field_1_categoryDataType        = LittleEndian.getShort(data, 0x0 + offset);
+        field_1_axisType                = LittleEndian.getShort(data, 0x0 + offset);
+        field_2_x                       = LittleEndian.getInt(data, 0x2 + offset);
+        field_3_y                       = LittleEndian.getInt(data, 0x6 + offset);
+        field_4_width                   = LittleEndian.getInt(data, 0xa + offset);
+        field_5_height                  = LittleEndian.getInt(data, 0xe + offset);
 
     }
 
@@ -134,14 +141,34 @@ public class DefaultDataLabelTextPropertiesRecord
     {
         StringBuffer buffer = new StringBuffer();
 
-        buffer.append("[DefaultDataLabelTextProperties]\n");
+        buffer.append("[AxisParent]\n");
 
-        buffer.append("    .categoryDataType     = ")
+        buffer.append("    .axisType             = ")
             .append("0x")
-            .append(HexDump.toHex((short)getCategoryDataType()))
-            .append(" (").append(getCategoryDataType()).append(" )\n");
+            .append(HexDump.toHex((short)getAxisType()))
+            .append(" (").append(getAxisType()).append(" )\n");
 
-        buffer.append("[/DefaultDataLabelTextProperties]\n");
+        buffer.append("    .x                    = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getX()))
+            .append(" (").append(getX()).append(" )\n");
+
+        buffer.append("    .y                    = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getY()))
+            .append(" (").append(getY()).append(" )\n");
+
+        buffer.append("    .width                = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getWidth()))
+            .append(" (").append(getWidth()).append(" )\n");
+
+        buffer.append("    .height               = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getHeight()))
+            .append(" (").append(getHeight()).append(" )\n");
+
+        buffer.append("[/AxisParent]\n");
         return buffer.toString();
     }
 
@@ -150,7 +177,11 @@ public class DefaultDataLabelTextPropertiesRecord
         LittleEndian.putShort(data, 0 + offset, sid);
         LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
 
-        LittleEndian.putShort(data, 4 + offset, field_1_categoryDataType);
+        LittleEndian.putShort(data, 4 + offset, field_1_axisType);
+        LittleEndian.putInt(data, 6 + offset, field_2_x);
+        LittleEndian.putInt(data, 10 + offset, field_3_y);
+        LittleEndian.putInt(data, 14 + offset, field_4_width);
+        LittleEndian.putInt(data, 18 + offset, field_5_height);
 
         return getRecordSize();
     }
@@ -160,7 +191,7 @@ public class DefaultDataLabelTextPropertiesRecord
      */
     public int getRecordSize()
     {
-        return 4 + 2;
+        return 4 + 2 + 4 + 4 + 4 + 4;
     }
 
     public short getSid()
@@ -170,30 +201,92 @@ public class DefaultDataLabelTextPropertiesRecord
 
 
     /**
-     * Get the category data type field for the DefaultDataLabelTextProperties record.
+     * Get the axis type field for the AxisParent record.
      *
      * @return  One of 
-     *        CATEGORY_DATA_TYPE_SHOW_LABELS_CHARACTERISTIC
-     *        CATEGORY_DATA_TYPE_VALUE_AND_PERCENTAGE_CHARACTERISTIC
-     *        CATEGORY_DATA_TYPE_ALL_TEXT_CHARACTERISTIC
+     *        AXIS_TYPE_MAIN
+     *        AXIS_TYPE_SECONDARY
      */
-    public short getCategoryDataType()
+    public short getAxisType()
     {
-        return field_1_categoryDataType;
+        return field_1_axisType;
     }
 
     /**
-     * Set the category data type field for the DefaultDataLabelTextProperties record.
+     * Set the axis type field for the AxisParent record.
      *
-     * @param field_1_categoryDataType
+     * @param field_1_axisType
      *        One of 
-     *        CATEGORY_DATA_TYPE_SHOW_LABELS_CHARACTERISTIC
-     *        CATEGORY_DATA_TYPE_VALUE_AND_PERCENTAGE_CHARACTERISTIC
-     *        CATEGORY_DATA_TYPE_ALL_TEXT_CHARACTERISTIC
+     *        AXIS_TYPE_MAIN
+     *        AXIS_TYPE_SECONDARY
      */
-    public void setCategoryDataType(short field_1_categoryDataType)
+    public void setAxisType(short field_1_axisType)
     {
-        this.field_1_categoryDataType = field_1_categoryDataType;
+        this.field_1_axisType = field_1_axisType;
+    }
+
+    /**
+     * Get the x field for the AxisParent record.
+     */
+    public int getX()
+    {
+        return field_2_x;
+    }
+
+    /**
+     * Set the x field for the AxisParent record.
+     */
+    public void setX(int field_2_x)
+    {
+        this.field_2_x = field_2_x;
+    }
+
+    /**
+     * Get the y field for the AxisParent record.
+     */
+    public int getY()
+    {
+        return field_3_y;
+    }
+
+    /**
+     * Set the y field for the AxisParent record.
+     */
+    public void setY(int field_3_y)
+    {
+        this.field_3_y = field_3_y;
+    }
+
+    /**
+     * Get the width field for the AxisParent record.
+     */
+    public int getWidth()
+    {
+        return field_4_width;
+    }
+
+    /**
+     * Set the width field for the AxisParent record.
+     */
+    public void setWidth(int field_4_width)
+    {
+        this.field_4_width = field_4_width;
+    }
+
+    /**
+     * Get the height field for the AxisParent record.
+     */
+    public int getHeight()
+    {
+        return field_5_height;
+    }
+
+    /**
+     * Set the height field for the AxisParent record.
+     */
+    public void setHeight(int field_5_height)
+    {
+        this.field_5_height = field_5_height;
     }
 
 

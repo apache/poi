@@ -58,10 +58,7 @@ package org.apache.poi.hssf.record;
 
 
 
-import org.apache.poi.util.BitField;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.StringUtil;
-import org.apache.poi.util.HexDump;
+import org.apache.poi.util.*;
 
 /**
  * This record refers to a category or series axis and is used to specify label/tickmark frequency.
@@ -78,9 +75,9 @@ public class CategorySeriesAxisRecord
     private  short      field_2_labelFrequency;
     private  short      field_3_tickMarkFrequency;
     private  short      field_4_options;
-    private BitField   valueAxisCrossing                          = new BitField(0x1);
-    private BitField   crossesFarRight                            = new BitField(0x2);
-    private BitField   reversed                                   = new BitField(0x4);
+    private  BitField   valueAxisCrossing                           = new BitField(0x1);
+    private  BitField   crossesFarRight                             = new BitField(0x2);
+    private  BitField   reversed                                    = new BitField(0x4);
 
 
     public CategorySeriesAxisRecord()

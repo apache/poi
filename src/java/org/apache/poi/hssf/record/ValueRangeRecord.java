@@ -58,10 +58,7 @@ package org.apache.poi.hssf.record;
 
 
 
-import org.apache.poi.util.BitField;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.StringUtil;
-import org.apache.poi.util.HexDump;
+import org.apache.poi.util.*;
 
 /**
  * The value range record defines the range of the value axis.
@@ -80,15 +77,15 @@ public class ValueRangeRecord
     private  double     field_4_minorIncrement;
     private  double     field_5_categoryAxisCross;
     private  short      field_6_options;
-    private BitField   automaticMinimum                           = new BitField(0x1);
-    private BitField   automaticMaximum                           = new BitField(0x2);
-    private BitField   automaticMajor                             = new BitField(0x4);
-    private BitField   automaticMinor                             = new BitField(0x8);
-    private BitField   automaticCategoryCrossing                  = new BitField(0x10);
-    private BitField   logarithmicScale                           = new BitField(0x20);
-    private BitField   valuesInReverse                            = new BitField(0x40);
-    private BitField   crossCategoryAxisAtMaximum                 = new BitField(0x80);
-    private BitField   reserved                                   = new BitField(0x100);
+    private  BitField   automaticMinimum                            = new BitField(0x1);
+    private  BitField   automaticMaximum                            = new BitField(0x2);
+    private  BitField   automaticMajor                              = new BitField(0x4);
+    private  BitField   automaticMinor                              = new BitField(0x8);
+    private  BitField   automaticCategoryCrossing                   = new BitField(0x10);
+    private  BitField   logarithmicScale                            = new BitField(0x20);
+    private  BitField   valuesInReverse                             = new BitField(0x40);
+    private  BitField   crossCategoryAxisAtMaximum                  = new BitField(0x80);
+    private  BitField   reserved                                    = new BitField(0x100);
 
 
     public ValueRangeRecord()

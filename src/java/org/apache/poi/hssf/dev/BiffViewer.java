@@ -639,6 +639,22 @@ public class BiffViewer
                 retval = new SheetPropertiesRecord(rectype, size, data);
                 break;
 
+            case DefaultDataLabelTextPropertiesRecord.sid:
+                retval = new DefaultDataLabelTextPropertiesRecord(rectype, size, data);
+                break;
+
+            case TextRecord.sid:
+                retval = new TextRecord(rectype, size, data);
+                break;
+
+            case AxisParentRecord.sid:
+                retval = new AxisParentRecord(rectype, size, data);
+                break;
+
+            case AxisLineFormatRecord.sid:
+                retval = new AxisLineFormatRecord(rectype, size, data);
+                break;
+
 
             default :
                 retval = new UnknownRecord(rectype, size, data);
