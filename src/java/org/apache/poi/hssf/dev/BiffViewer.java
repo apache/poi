@@ -609,9 +609,6 @@ public class BiffViewer {
             case LeftMarginRecord.sid:
                 retval = new LeftMarginRecord( rectype, size, data );
                 break;
-            case LeftMarginRecord.sid:
-                retval = new LeftMarginRecord( rectype, size, data );
-                break;
             case RightMarginRecord.sid:
                 retval = new RightMarginRecord( rectype, size, data );
                 break;
