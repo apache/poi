@@ -69,10 +69,11 @@ import org.apache.poi.util.LittleEndian;
  * Description:  Takes a stream and outputs an array of Record objects.<P>
  *
  * @deprecated use EventRecordFactory instead
- * @see org.apache.poi.hssf.record.EventRecordFactory
+ * @see org.apache.poi.hssf.eventmodel.EventRecordFactory
  * @author Andrew C. Oliver (acoliver at apache dot org)
  * @author Marc Johnson (mjohnson at apache dot org)
  * @author Glen Stampoultzis (glens at apache.org)
+ * @author Csaba Nagy (ncsaba at yahoo dot com)
  * @version 1.0-pre
  */
 
@@ -208,7 +209,9 @@ public class RecordFactory
 
                         if (record != null)
                         {
-                            if (rectype == ContinueRecord.sid)
+                            if (rectype == ContinueRecord.sid &&
+                                ! (last_record instanceof ContinueRecord) && // include continuation records after
+                                ! (last_record instanceof UnknownRecord) )   // unknown records or previous continuation records
                             {
                                 if (last_record == null)
                                 {

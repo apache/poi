@@ -65,6 +65,7 @@ import org.apache.poi.util.LittleEndian;
  *               stream; content is tailored to that prior record<P>
  * @author Marc Johnson (mjohnson at apache dot org)
  * @author Andrew C. Oliver (acoliver at apache dot org)
+ * @author Csaba Nagy (ncsaba at yahoo dot com)
  * @version 2.0-pre
  */
 
@@ -116,17 +117,19 @@ public class ContinueRecord
     public byte [] serialize()
     {
         byte[] retval = new byte[ field_1_data.length + 4 ];
-
-        LittleEndian.putShort(retval, 0, sid);
-        LittleEndian.putShort(retval, 2, ( short ) field_1_data.length);
-        System.arraycopy(field_1_data, 0, retval, 4, field_1_data.length);
+        serialize(0, retval);
         return retval;
     }
 
     public int serialize(int offset, byte [] data)
     {
-        throw new RecordFormatException(
-            "You're not supposed to serialize Continue records like this directly");
+
+        LittleEndian.putShort(data, offset, sid);
+        LittleEndian.putShort(data, offset + 2, ( short ) field_1_data.length);
+        System.arraycopy(field_1_data, 0, data, offset + 4, field_1_data.length);
+        return field_1_data.length + 4;
+        // throw new RecordFormatException(
+        //    "You're not supposed to serialize Continue records like this directly");
     }
 
     /**
@@ -212,7 +215,7 @@ public class ContinueRecord
 
     protected void fillFields(byte [] ignored_parm1, short ignored_parm2)
     {
-
+        this.field_1_data = ignored_parm1;
         // throw new RecordFormatException("Are you crazy?  Don't fill a continue record");
         // do nothing
     }
