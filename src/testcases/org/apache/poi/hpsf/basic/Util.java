@@ -90,7 +90,10 @@ public class Util
      * output stream until end of file is encountered.</p>
      *
      * @param in the input stream to read from
+     * 
      * @param out the output stream to write to
+     * 
+     * @exception IOException if an I/O exception occurs
      */
     public static void copy(final InputStream in, final OutputStream out)
         throws IOException
@@ -129,6 +132,11 @@ public class Util
      *
      * @return The POI files. The elements are ordered in the same way
      * as the files in the POI filesystem.
+     * 
+     * @exception FileNotFoundException if the file containing the POI 
+     * filesystem does not exist
+     * 
+     * @exception IOException if an I/O exception occurs
      */
     public static POIFile[] readPOIFiles(final File poiFs)
         throws FileNotFoundException, IOException
@@ -151,6 +159,11 @@ public class Util
      *
      * @return The POI files. The elements are ordered in the same way
      * as the files in the POI filesystem.
+     * 
+     * @exception FileNotFoundException if the file containing the POI 
+     * filesystem does not exist
+     * 
+     * @exception IOException if an I/O exception occurs
      */
     public static POIFile[] readPOIFiles(final File poiFs,
                                          final String[] poiFiles)
