@@ -54,7 +54,7 @@
     <property name="fullname"      value="${xml.project.name}"/>
     <property name="name"          value="${xml.project.info.module}"/>
     <property name="Name"          value="${xml.project.name}"/>
-    <property name="packages"      value="${xml.project.info.packages}"/>
+    <property name="packages"      value="${xml.project.module.project.package}.*"/>
     <property name="short.version" value="${xml.project.info.version}"/>
     <property name="version.tag"   value="${xml.project.info.tag}"/>
     <property name="version"       value="${short.version}-${version.tag}"/>
