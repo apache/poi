@@ -59,25 +59,19 @@
  */
 package org.apache.poi.hssf.usermodel;
 
+import org.apache.poi.ddf.EscherRecord;
+import org.apache.poi.hssf.model.Sheet;
+import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.record.*;
+import org.apache.poi.hssf.util.Region;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
+
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.TreeMap;
-
-import org.apache.poi.hssf.model.Sheet;
-import org.apache.poi.hssf.model.Workbook;
-import org.apache.poi.hssf.record.CellValueRecordInterface;
-import org.apache.poi.hssf.record.HCenterRecord;
-import org.apache.poi.hssf.record.PageBreakRecord;
-import org.apache.poi.hssf.record.Record;
-import org.apache.poi.hssf.record.RowRecord;
-import org.apache.poi.hssf.record.SCLRecord;
-import org.apache.poi.hssf.record.VCenterRecord;
-import org.apache.poi.hssf.record.WSBoolRecord;
-import org.apache.poi.hssf.record.WindowTwoRecord;
-import org.apache.poi.hssf.util.Region;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 /**
  * High level representation of a worksheet.
@@ -874,13 +868,13 @@ public class HSSFSheet
     {
         getSheet().setMargin( margin, size );
     }
-    
+
 	/**
 	 * Answer whether protection is enabled or disabled
 	 * @return true => protection enabled; false => protection disabled
 	 */
 	public boolean getProtect() {
-		return getSheet().getProtect().getProtect();		
+		return getSheet().getProtect().getProtect();
 	}
 
 	/**
@@ -888,7 +882,7 @@ public class HSSFSheet
 	 * @param protect true => protection enabled; false => protection disabled
 	 */
 	public void setProtect(boolean protect) {
-		getSheet().getProtect().setProtect(protect);		
+		getSheet().getProtect().setProtect(protect);
 	}
 
     /**
@@ -926,34 +920,34 @@ public class HSSFSheet
 		//move merged regions completely if they fall within the new region boundaries when they are shifted
 		for (int i = 0; i < this.getNumMergedRegions(); i++) {
 			 Region merged = this.getMergedRegionAt(i);
-        		
+
 			 boolean inStart = (merged.getRowFrom() >= startRow || merged.getRowTo() >= startRow);
 			 boolean inEnd =  (merged.getRowTo() <= endRow || merged.getRowFrom() <= endRow);
-        		
+
 			 //dont check if it's not within the shifted area
 			 if (! (inStart && inEnd)) continue;
-        		
-			 //only shift if the region outside the shifted rows is not merged too        	           		
+
+			 //only shift if the region outside the shifted rows is not merged too
 			 if (!merged.contains(startRow-1, (short)0) && !merged.contains(endRow+1, (short)0)){
-				 merged.setRowFrom(merged.getRowFrom()+n);					
+				 merged.setRowFrom(merged.getRowFrom()+n);
 				 merged.setRowTo(merged.getRowTo()+n);
 				 //have to remove/add it back
 				 shiftedRegions.add(merged);
 				 this.removeMergedRegion(i);
 				 i = i -1; // we have to back up now since we removed one
-					
+
 			 }
-        		
+
 		}
-		
+
 		//readd so it doesn't get shifted again
 		Iterator iterator = shiftedRegions.iterator();
 		while (iterator.hasNext()) {
 			Region region = (Region)iterator.next();
-			
+
 			this.addMergedRegion(region);
 		}
-		
+
 	}
 
     /**
@@ -978,7 +972,7 @@ public class HSSFSheet
      * Shifts rows between startRow and endRow n number of rows.
      * If you use a negative number, it will shift rows up.
      * Code ensures that rows don't wrap around
-     * 
+     *
      * <p>
      * Additionally shifts merged regions that are completely defined in these
      * rows (ie. merged 2 cells on a row to be shifted).
@@ -1006,19 +1000,19 @@ public class HSSFSheet
             inc = -1;
         }
 
-			shiftMerged(startRow, endRow, n, true);        
-			sheet.shiftRowBreaks(startRow, endRow, n);
+        shiftMerged(startRow, endRow, n, true);
+        sheet.shiftRowBreaks(startRow, endRow, n);
 			
         for ( int rowNum = s; rowNum >= startRow && rowNum <= endRow && rowNum >= 0 && rowNum < 65536; rowNum += inc )
         {
             HSSFRow row = getRow( rowNum );
-            HSSFRow row2Replace = getRow( rowNum + n );	    
+            HSSFRow row2Replace = getRow( rowNum + n );
             if ( row2Replace == null )
                 row2Replace = createRow( rowNum + n );
-	    
+
             HSSFCell cell;
 
-			
+
 
 
 	    // Removes the cells before over writting them.
@@ -1033,10 +1027,10 @@ public class HSSFSheet
 		if (copyRowHeight) {
 		    row2Replace.setHeight(row.getHeight());
 		}
-		
+
 		if (resetOriginalRowHeight) {
 		    row.setHeight((short)0xff);
-		} 
+		}
 	    }
             for ( short col = row.getFirstCellNum(); col <= row.getLastCellNum(); col++ )
             {
@@ -1255,4 +1249,46 @@ public class HSSFSheet
     	if (column > 255) throw new IllegalArgumentException("Maximum column number is 255");
     	if (column < 0)	throw new IllegalArgumentException("Minimum column number is 0");
     }
+
+    /**
+     * Aggregates the drawing records and dumps the escher record hierarchy
+     * to the standard output.
+     */
+    public void dumpDrawingRecords()
+    {
+        sheet.aggregateDrawingRecords(book.getDrawingManager());
+
+        EscherAggregate r = (EscherAggregate) getSheet().findFirstRecordBySid(EscherAggregate.sid);
+        List escherRecords = r.getEscherRecords();
+        for ( Iterator iterator = escherRecords.iterator(); iterator.hasNext(); )
+        {
+            EscherRecord escherRecord = (EscherRecord) iterator.next();
+            PrintWriter w = new PrintWriter(System.out);
+            escherRecord.display(w, 0);
+            w.close();
+        }
+    }
+
+    /**
+     * Creates the toplevel drawing patriarch.  This will have the effect of
+     * removing any existing drawings on this sheet.
+     *
+     * @return  The new patriarch.
+     */
+    public HSSFPatriarch createDrawingPatriarch()
+    {
+        // Create the drawing group if it doesn't already exist.
+        book.createDrawingGroup();
+
+        sheet.aggregateDrawingRecords(book.getDrawingManager());
+        EscherAggregate agg = (EscherAggregate) sheet.findFirstRecordBySid(EscherAggregate.sid);
+        HSSFPatriarch patriarch = new HSSFPatriarch(this);
+        agg.clear();     // Initially the behaviour will be to clear out any existing shapes in the sheet when
+                         // creating a new patriarch.
+        agg.setPatriarch(patriarch);
+        return patriarch;
+    }
+
+
+
 }

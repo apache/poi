@@ -165,7 +165,7 @@ public class HSSFFont
 
     /**
      * set the name for the font (i.e. Arial)
-     * @param String representing the name of the font to use
+     * @param name  String representing the name of the font to use
      * @see #FONT_ARIAL
      */
 
@@ -359,7 +359,7 @@ public class HSSFFont
 
     /**
      * set type of text underlining to use
-     * @param underlining type
+     * @param underline type
      * @see #U_NONE
      * @see #U_SINGLE
      * @see #U_DOUBLE
@@ -386,4 +386,13 @@ public class HSSFFont
     {
         return font.getUnderline();
     }
+
+    public String toString()
+    {
+        return "org.apache.poi.hssf.usermodel.HSSFFont{" +
+                 font +
+                "}";
+    }
+
+
 }
