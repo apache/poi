@@ -7,6 +7,7 @@
     <authors>
       <person id="AO" name="Andrew C. Oliver" email="acoliver@apache.org"/>
       <person id="GJS" name="Glen Stampoultzis" email="poi-user@jakarta.apache.org"/>
+      <person id="AS" name="Avik Sengupta" email="poi-user@jakarta.apache.org"/>
     </authors>
   </header>
 
@@ -31,7 +32,7 @@
       <p>
          As a general policy we try to collaborate as much as possible with other projects to
          provide this functionality.  Examples include: <link href="http://xml.apache.org/cocoon">Cocoon</link> for
-         which you'll soon find generators and serializers for our projects;
+         which there are serializers for HSSF;
          <link href="http://www.openoffice.org">Open Office.org</link> with whom we collaborate in documenting the
          XLS format; and <link href="http://jakarta.apache.org/lucene">Lucene</link> for which we'll soon have file
          format interpretors.  When practical, we donate components directly to those projects for POI-enabling them.
@@ -45,7 +46,7 @@
         </p>
         <p>
 		You'd use POIFS if you had a document written in OLE 2 Compound Document Format, probably written using
-		MFC, that you needed to read in Java. Alternatively, you'd use POI to write OLE 2 Compound Document Format
+		MFC, that you needed to read in Java. Alternatively, you'd use POIFS to write OLE 2 Compound Document Format
 		if you needed to inter-operate with software running on the Windows platform. We are not just bragging when
 		we say that POIFS is the most complete and correct implementation of this file format to date!
         </p>
@@ -75,7 +76,7 @@
         <section><title>HWPF</title>
              <p>HWPF is our port of the Microsoft Word 97 file format to pure Java.  It supports read and write capability.
              Please see <link href="./hwpf/index.html">the HWPF project page for more information</link>.  This component is
-             in the early stages of design.  Jump in!</p>
+             in the early stages of development.It can already read and write simple files.  Jump in!</p>
         </section>
         <section><title>HPSF</title>
 	<p>HPSF is our port of the OLE 2 property set format to pure

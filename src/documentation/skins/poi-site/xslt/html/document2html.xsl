@@ -48,7 +48,7 @@ $Id$
                   </xsl:for-each>
               </div>
          </xsl:if>         
-        <xsl:call-template name="pdflink"/>
+        <!--xsl:call-template name="pdflink"/-->
       </body>
       </document>
    </xsl:if>
