@@ -89,8 +89,6 @@ public class CHPFormattedDiskPage extends FormattedDiskPage
     /**
      * This constructs a CHPFormattedDiskPage from a raw fkp (512 byte array
      * read from a Word file).
-     *
-     * @param fkp The 512 byte array to read data from
      */
     public CHPFormattedDiskPage(byte[] documentStream, int offset, int fcMin)
     {

@@ -131,11 +131,10 @@ public class GreaterThanPtg
     
     /** 
      * Implementation of method from Ptg 
-     * @param refs the Sheet References
      */
     public String toFormulaString(Workbook book)
     {
-        return this.GREATERTHAN;
+        return GreaterThanPtg.GREATERTHAN;
     }
       
     /** 

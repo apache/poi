@@ -98,10 +98,6 @@ public class StyleSheet implements HDFType
 
   /**
    * StyleSheet constructor. Loads a document's stylesheet information,
-   *
-   * @param styleSheet A byte array containing a document's raw stylesheet
-   *        info. Found by using FileInformationBlock.getFcStshf() and
-   *        FileInformationBLock.getLcbStshf()
    */
   public StyleSheet(byte[] tableStream, int offset)
   {

@@ -117,7 +117,7 @@ public class HSSFRow
      * @param book low-level Workbook object containing the sheet that contains this row
      * @param sheet low-level Sheet object that contains this Row
      * @param rowNum the row number of this row (0 based)
-     * @see org.apache.poi.hssf.usermodel.HSSFSheet#createRow(short)
+     * @see org.apache.poi.hssf.usermodel.HSSFSheet#createRow(int)
      */
 
     //protected HSSFRow(Workbook book, Sheet sheet, short rowNum)
@@ -143,7 +143,7 @@ public class HSSFRow
      * @param book low-level Workbook object containing the sheet that contains this row
      * @param sheet low-level Sheet object that contains this Row
      * @param record the low level api object this row should represent
-     * @see org.apache.poi.hssf.usermodel.HSSFSheet#createRow(short)
+     * @see org.apache.poi.hssf.usermodel.HSSFSheet#createRow(int)
      */
 
     protected HSSFRow(Workbook book, Sheet sheet, RowRecord record)

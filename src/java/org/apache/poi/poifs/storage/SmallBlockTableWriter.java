@@ -150,9 +150,6 @@ public class SmallBlockTableWriter
     /**
      * Set the start block for this instance
      *
-     * @param index index into the array of BigBlock instances making
-     *              up the the filesystem
-     *
      * @param start_block
      */
 

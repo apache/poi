@@ -75,16 +75,16 @@ import org.apache.poi.hssf.model.Workbook;
 public abstract class Ptg
 {
 
-        
-    /** convert infix order ptg list to rpn order ptg list
-     * @return List ptgs in RPN order
-     * @param infixPtgs List of ptgs in infix order
-     */
     
     /* DO NOT REMOVE
      *we keep this method in case we wish to change the way we parse
      *It needs a getPrecedence in OperationsPtg
     
+    /** convert infix order ptg list to rpn order ptg list
+     * @return List ptgs in RPN order
+     * @param infixPtgs List of ptgs in infix order
+     */
+    /*
     public static List ptgsToRpn(List infixPtgs) {
         java.util.Stack operands = new java.util.Stack();
         java.util.List retval = new java.util.Stack();

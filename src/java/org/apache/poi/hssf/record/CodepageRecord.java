@@ -127,7 +127,7 @@ public class CodepageRecord
      * set the codepage for this workbook
      *
      * @see #CODEPAGE
-     * @param the codepage to set
+     * @param cp the codepage to set
      */
 
     public void setCodepage(short cp)

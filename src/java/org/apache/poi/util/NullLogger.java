@@ -91,7 +91,6 @@ public class NullLogger extends POILogger
      * Check if a logger is enabled to log at the specified level
      *
      * @param level One of DEBUG, INFO, WARN, ERROR, FATAL
-     * @param obj1 The logger to check.
      */
 
     public boolean check(final int level)
