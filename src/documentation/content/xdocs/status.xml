@@ -11,6 +11,20 @@
 
     <changes>
 
+        <release version="2.0-FINAL" date="26 Janurary 2004">
+            <action dev="POI-DEVELOPERS" type="update" context="All">No changes</action>
+        </release>
+        
+        <release version="2.0-RC2" date="11 Janurary 2004">
+            <action dev="POI-DEVELOPERS" type="fix" context="All">Bug 25695 - HSSFCell.getStringCellValue() on cell which has string formula will return swap bye unicode characters.</action>
+            <action dev="POI-DEVELOPERS" type="fix" context="All">Updated website for upcoming release</action>
+            <action dev="POI-DEVELOPERS" type="fix" context="All">Formula Parser fixes with tests, by Peter M Murray Bug 25457</action>
+            <action dev="POI-DEVELOPERS" type="fix" context="All">Fixed cloning merge regions</action>
+            <action dev="POI-DEVELOPERS" type="fix" context="All">The cloned reference for merged cells did not create a new collection, so deletes cascaded to the original.</action>
+            <action dev="POI-DEVELOPERS" type="fix" context="All">Fix to 24519 call to getCustomPalette() from a newly created workbook now works</action>
+            <action dev="POI-DEVELOPERS" type="fix" context="All">Fix supplied for bug 24397 where some compilation got ambiguous classes.  Explicitly imports the classes.  Patch supplied by Jean-Pierre Paris.</action>
+        </release>
+
         <release verion="2.0-RC1" date="2 November 2003">
             <action dev="POI-DEVELOPERS" type="fix" context="All">12561 (Min)	HSSFWorkbook throws Exceptions</action>
             <action dev="POI-DEVELOPERS" type="fix" context="All">12730 (Nor)	values dont get copied to another sheet.</action>
