@@ -165,6 +165,12 @@ public class StringRecord
         return (field_2_unicode_flag == 1);
     }
 
+    public boolean isInValueSection()
+    {
+        return true;
+    }
+
+
     /**
      * called by the class that is responsible for writing this sucker.
      * Subclasses should implement this so that their data is passed back in a
@@ -237,7 +243,7 @@ public class StringRecord
         buffer.append("[/STRING]\n");
         return buffer.toString();
     }
-    
+
     public Object clone() {
         StringRecord rec = new StringRecord();
         rec.field_1_string_length = this.field_1_string_length;
