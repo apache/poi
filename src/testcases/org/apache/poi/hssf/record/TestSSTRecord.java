@@ -57,7 +57,6 @@ package org.apache.poi.hssf.record;
 import junit.framework.TestCase;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
-import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 
@@ -432,12 +431,12 @@ public class TestSSTRecord
         assertEquals( 1464, record.getNumStrings() );
         assertEquals( 688, record.getNumUniqueStrings() );
         assertEquals( 492, record.countStrings() );
-        assertEquals( 1, record.getExpectedChars() );
+        assertEquals( 1, record.getDeserializer().getExpectedChars() );
         assertEquals( "Consolidated B-24J Liberator The Dragon & His Tai",
-                record.getUnfinishedString() );
-        assertEquals( 52, record.getTotalLength() );
-        assertEquals( 3, record.getStringDataOffset() );
-        assertTrue( !record.isWideChar() );
+                record.getDeserializer().getUnfinishedString() );
+        assertEquals( 52, record.getDeserializer().getTotalLength() );
+        assertEquals( 3, record.getDeserializer().getStringDataOffset() );
+        assertTrue( !record.getDeserializer().isWideChar() );
     }
 
     /**
@@ -451,11 +450,11 @@ public class TestSSTRecord
         assertEquals( 0, record.getNumStrings() );
         assertEquals( 0, record.getNumUniqueStrings() );
         assertEquals( 0, record.countStrings() );
-        assertEquals( 0, record.getExpectedChars() );
-        assertEquals( "", record.getUnfinishedString() );
-        assertEquals( 0, record.getTotalLength() );
-        assertEquals( 0, record.getStringDataOffset() );
-        assertTrue( !record.isWideChar() );
+        assertEquals( 0, record.getDeserializer().getExpectedChars() );
+        assertEquals( "", record.getDeserializer().getUnfinishedString() );
+        assertEquals( 0, record.getDeserializer().getTotalLength() );
+        assertEquals( 0, record.getDeserializer().getStringDataOffset() );
+        assertTrue( !record.getDeserializer().isWideChar() );
         byte[] output = record.serialize();
         byte[] expected =
                 {
