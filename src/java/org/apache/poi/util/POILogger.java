@@ -55,8 +55,6 @@
  */
 package org.apache.poi.util;
 
-import org.apache.commons.logging.Log;
-
 import java.util.*;
 
 /**
@@ -72,7 +70,7 @@ import java.util.*;
 
 public class POILogger
 {
-    private Log             log   = null;
+//    private Log             log   = null;
     public static final int DEBUG = 1;
     public static final int INFO  = 3;
     public static final int WARN  = 5;
@@ -82,13 +80,10 @@ public class POILogger
     /**
      * package scope so it cannot be instantiated outside of the util
      * package. You need a POILogger? Go to the POILogFactory for one
-     *
-     * @param log the object that does the real work of logging
      */
 
-    POILogger(final Log log)
+    POILogger()
     {
-        this.log = log;
     }
 
     /**
@@ -100,91 +95,73 @@ public class POILogger
 
     public void log(final int level, final Object obj1)
     {
-        if(level==FATAL)
-        {
-          if(log.isFatalEnabled())
-          {
-            log.fatal(obj1);
-          }
-        }
-        else if(level==ERROR)
-        {
-          if(log.isErrorEnabled())
-          {
-            log.error(obj1);
-          }
-        }
-        else if(level==WARN)
-        {
-          if(log.isWarnEnabled())
-          {
-            log.warn(obj1);
-          }
-        }
-        else if(level==INFO)
-        {
-          if(log.isInfoEnabled())
-          {
-            log.info(obj1);
-          }
-        }
-        else if(level==DEBUG)
-        {
-          if(log.isDebugEnabled())
-          {
-            log.debug(obj1);
-          }
-        }
-        else
-        {
-          if(log.isTraceEnabled())
-          {
-            log.trace(obj1);
-          }
-        }
+        if (check(level))
+            System.out.println( obj1 );
+    }
 
+    private boolean isDebugEnabled()
+    {
+        return System.getProperty("poi.logging") != null;
+    }
+
+    private boolean isInfoEnabled()
+    {
+        return false;
+    }
+
+    private boolean isWarnEnabled()
+    {
+        return System.getProperty("poi.logging") != null;
+    }
+
+    private boolean isErrorEnabled()
+    {
+        return System.getProperty("poi.logging") != null;
+    }
+
+    private boolean isFatalEnabled()
+    {
+        return System.getProperty("poi.logging") != null;
     }
 
     /**
      * Check if a logger is enabled to log at the specified level
      *
      * @param level One of DEBUG, INFO, WARN, ERROR, FATAL
-     * @param obj1 The logger to check.
      */
-
-    public boolean check(final Log log, final int level)
+    public boolean check(final int level)
     {
         if(level==FATAL)
         {
-          if(log.isFatalEnabled())
+          if(isFatalEnabled())
           {
             return true;
           }
         }
         else if(level==ERROR)
         {
-          if(log.isErrorEnabled())
+          if(isErrorEnabled())
           {
             return true;
           }
         }
         else if(level==WARN)
         {
-          if(log.isWarnEnabled())
+          if(isWarnEnabled())
           {
             return true;
           }
         }
         else if(level==INFO)
         {
-          if(log.isInfoEnabled())
+          if(isInfoEnabled())
           {
             return true;
           }
         }
         else if(level==DEBUG)
         {
-          if(log.isDebugEnabled())
+          if(isDebugEnabled())
           {
             return true;
           }
@@ -204,7 +181,7 @@ public class POILogger
 
     public void log(final int level, final Object obj1, final Object obj2)
     {
-        if (check(log, level))
+        if (check( level))
         {
             log(level, new StringBuffer(32).append(obj1).append(obj2));
         }
@@ -222,13 +199,9 @@ public class POILogger
     public void log(final int level, final Object obj1, final Object obj2,
                     final Object obj3)
     {
-        
-
-        if (check(log, level))
+        if (check( level))
         {
-            log(level,
-                    new StringBuffer(48).append(obj1).append(obj2)
-                        .append(obj3));
+            log(level, new StringBuffer(48).append(obj1).append(obj2 ).append(obj3));
         }
     }
 
@@ -247,7 +220,7 @@ public class POILogger
     {
         
 
-        if (check(log, level))
+        if (check( level))
         {
             log(level,
                     new StringBuffer(64).append(obj1).append(obj2)
@@ -271,7 +244,7 @@ public class POILogger
     {
         
 
-        if (check(log, level))
+        if (check( level))
         {
             log(level,
                     new StringBuffer(80).append(obj1).append(obj2)
@@ -297,7 +270,7 @@ public class POILogger
     {
         
 
-        if (check(log, level))
+        if (check( level))
         {
             log(level ,
                     new StringBuffer(96).append(obj1).append(obj2)
@@ -324,7 +297,7 @@ public class POILogger
     {
         
 
-        if (check(log, level))
+        if (check( level))
         {
             log(level,
                     new StringBuffer(112).append(obj1).append(obj2)
@@ -353,7 +326,7 @@ public class POILogger
     {
         
 
-        if (check(log, level))
+        if (check( level))
         {
             log(level,
                     new StringBuffer(128).append(obj1).append(obj2)
@@ -390,7 +363,7 @@ public class POILogger
     {
         
 
-        if (check(log, level))
+        if (check( level))
         {
             log(level, new StringBuffer(32).append(obj1).append(obj2),
                     exception);
@@ -412,7 +385,7 @@ public class POILogger
     {
         
 
-        if (check(log, level))
+        if (check( level))
         {
             log(level, new StringBuffer(48).append(obj1).append(obj2)
                 .append(obj3), exception);
@@ -436,7 +409,7 @@ public class POILogger
     {
         
 
-        if (check(log, level))
+        if (check( level))
         {
             log(level, new StringBuffer(64).append(obj1).append(obj2)
                 .append(obj3).append(obj4), exception);
@@ -461,7 +434,7 @@ public class POILogger
     {
         
 
-        if (check(log, level))
+        if (check( level))
         {
             log(level, new StringBuffer(80).append(obj1).append(obj2)
                 .append(obj3).append(obj4).append(obj5), exception);
@@ -487,7 +460,7 @@ public class POILogger
     {
         
 
-        if (check(log, level))
+        if (check( level))
         {
             log(level , new StringBuffer(96).append(obj1)
                 .append(obj2).append(obj3).append(obj4).append(obj5)
@@ -516,7 +489,7 @@ public class POILogger
     {
         
 
-        if (check(log, level))
+        if (check( level))
         {
             log(level, new StringBuffer(112).append(obj1).append(obj2)
                 .append(obj3).append(obj4).append(obj5).append(obj6)
@@ -546,7 +519,7 @@ public class POILogger
     {
         
 
-        if (check(log, level))
+        if (check( level))
         {
             log(level, new StringBuffer(128).append(obj1).append(obj2)
                 .append(obj3).append(obj4).append(obj5).append(obj6)
@@ -703,7 +676,7 @@ public class POILogger
     {
         
 
-        if (check(log, level))
+        if (check( level))
         {
             Object[] params = flattenArrays(unflatParams);
 
