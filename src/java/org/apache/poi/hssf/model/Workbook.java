@@ -17,13 +17,12 @@
 
 package org.apache.poi.hssf.model;
 
+import org.apache.poi.ddf.*;
 import org.apache.poi.hssf.record.*;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.hssf.util.SheetReferences;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.ddf.*;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -830,7 +829,16 @@ public class Workbook implements Model
     protected Record createWriteAccess() {
         WriteAccessRecord retval = new WriteAccessRecord();
 
-        retval.setUsername(System.getProperty("user.name"));
+        try
+        {
+            retval.setUsername(System.getProperty("user.name"));
+        }
+        catch (java.security.AccessControlException e)
+        {
+                // AccessControlException can occur in a restricted context
+                // (client applet/jws application or restricted security server)
+                retval.setUsername("POI");
+        }
         return retval;
     }
 
