@@ -12,10 +12,15 @@
 
     <changes>
 
+        <release version="2.5-FINAL" date="29 Feburary 2004">
+            <action dev="POI-DEVELOPERS" type="add" context="All">Add support for the Escher file format</action>
+            <action dev="POI-DEVELOPERS" type="fix" context="All">27005 java.lang.IndexOutOfBoundsException during Workbook.cloneSheet()</action>
+        </release>
+
         <release version="2.0-FINAL" date="26 Janurary 2004">
             <action dev="POI-DEVELOPERS" type="update" context="All">No changes</action>
         </release>
-        
+
         <release version="2.0-RC2" date="11 Janurary 2004">
             <action dev="POI-DEVELOPERS" type="fix" context="All">Bug 25695 - HSSFCell.getStringCellValue() on cell which has string formula will return swap bye unicode characters.</action>
             <action dev="POI-DEVELOPERS" type="fix" context="All">Updated website for upcoming release</action>
@@ -25,7 +30,7 @@
             <action dev="POI-DEVELOPERS" type="fix" context="All">Fix to 24519 call to getCustomPalette() from a newly created workbook now works</action>
             <action dev="POI-DEVELOPERS" type="fix" context="All">Fix supplied for bug 24397 where some compilation got ambiguous classes.  Explicitly imports the classes.  Patch supplied by Jean-Pierre Paris.</action>
         </release>
-        
+
         <release verion="2.0-RC1" date="2 November 2003">
             <action dev="POI-DEVELOPERS" type="fix" context="All">12561 (Min)	HSSFWorkbook throws Exceptions</action>
             <action dev="POI-DEVELOPERS" type="fix" context="All">12730 (Nor)	values dont get copied to another sheet.</action>
@@ -77,7 +82,7 @@
             <action dev="POI-DEVELOPERS" type="fix" context="All">There were some issues when removing merged
 		    regions (specifically, removing all of them and then adding some more) and have been resolved.</action>
             <action dev="POI-DEVELOPERS" type="fix" context="All">When a sheet contained shared formulas (when a formula is
-		    dragged across greater than 6 cells), the clone would fail. We now support cloning of 
+		    dragged across greater than 6 cells), the clone would fail. We now support cloning of
 		    sheets that contain this Excel optimization. </action>
             <action dev="POI-DEVELOPERS" type="add" context="All">Support added for reading formulas with UnaryPlus and UnaryMinus operators.</action>
         </release>
