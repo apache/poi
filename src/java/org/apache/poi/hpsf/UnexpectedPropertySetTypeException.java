@@ -55,57 +55,41 @@
 package org.apache.poi.hpsf;
 
 /**
- *  <p>
+ * <p>This exception is thrown if a certain type of property set is
+ * expected (e.g. a Document Summary Information) but the provided
+ * property set is not of that type.</p>
  *
- *  This exception is thrown if a certain type of property set is expected (e.g.
- *  a Document Summary Information) but the provided property set is not of that
- *  type.</p> <p>
+ * <p>The constructors of this class are analogous to those of its
+ * superclass and documented there.</p>
  *
- *  The constructors of this class are analogous to those of its superclass and
- *  documented there.</p>
- *
- *@author     Rainer Klute (klute@rainer-klute.de)
- *@version    $Id$
- *@since      2002-02-09
+ * @author Rainer Klute (klute@rainer-klute.de)
+ * @version $Id$
+ * @since 2002-02-09
  */
-public class UnexpectedPropertySetTypeException extends HPSFException {
+public class UnexpectedPropertySetTypeException extends HPSFException
+{
 
-    /**
-     *  Constructor for the UnexpectedPropertySetTypeException object
-     */
-    public UnexpectedPropertySetTypeException() {
+    public UnexpectedPropertySetTypeException()
+    {
         super();
     }
 
 
-    /**
-     *  Constructor for the UnexpectedPropertySetTypeException object
-     *
-     *@param  msg  Description of the Parameter
-     */
-    public UnexpectedPropertySetTypeException(final String msg) {
+    public UnexpectedPropertySetTypeException(final String msg)
+    {
         super(msg);
     }
 
 
-    /**
-     *  Constructor for the UnexpectedPropertySetTypeException object
-     *
-     *@param  reason  Description of the Parameter
-     */
-    public UnexpectedPropertySetTypeException(final Throwable reason) {
+    public UnexpectedPropertySetTypeException(final Throwable reason)
+    {
         super(reason);
     }
 
 
-    /**
-     *  Constructor for the UnexpectedPropertySetTypeException object
-     *
-     *@param  msg     Description of the Parameter
-     *@param  reason  Description of the Parameter
-     */
     public UnexpectedPropertySetTypeException(final String msg,
-            final Throwable reason) {
+					      final Throwable reason)
+    {
         super(msg, reason);
     }
 

@@ -68,44 +68,30 @@ package org.apache.poi.hpsf;
  *@version    $Id$
  *@since      2002-02-09
  */
-public class NoPropertySetStreamException extends HPSFException {
+public class NoPropertySetStreamException extends HPSFException
+{
 
-    /**
-     *  Constructor for the NoPropertySetStreamException object
-     */
-    public NoPropertySetStreamException() {
+    public NoPropertySetStreamException()
+    {
         super();
     }
 
 
-    /**
-     *  Constructor for the NoPropertySetStreamException object
-     *
-     *@param  msg  Description of the Parameter
-     */
-    public NoPropertySetStreamException(final String msg) {
+    public NoPropertySetStreamException(final String msg)
+    {
         super(msg);
     }
 
 
-    /**
-     *  Constructor for the NoPropertySetStreamException object
-     *
-     *@param  reason  Description of the Parameter
-     */
-    public NoPropertySetStreamException(final Throwable reason) {
+    public NoPropertySetStreamException(final Throwable reason)
+    {
         super(reason);
     }
 
 
-    /**
-     *  Constructor for the NoPropertySetStreamException object
-     *
-     *@param  msg     Description of the Parameter
-     *@param  reason  Description of the Parameter
-     */
     public NoPropertySetStreamException(final String msg,
-            final Throwable reason) {
+					final Throwable reason)
+    {
         super(msg, reason);
     }
 

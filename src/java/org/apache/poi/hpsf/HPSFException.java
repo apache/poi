@@ -55,54 +55,52 @@
 package org.apache.poi.hpsf;
 
 /**
- *  <p>
+ * <p>This exception is the superclass of all other checked exceptions
+ * thrown in this package. It supports a nested "reason" throwable,
+ * i.e. an exception that caused this one to be thrown.</p>
  *
- *  This exception is the superclass of all other checked exceptions thrown in
- *  this package. It supports a nested "reason" throwable, i.e. an exception
- *  that caused this one to be thrown.</p>
- *
- *@author     Rainer Klute (klute@rainer-klute.de)
- *@version    $Id$
- *@since      2002-02-09
+ * @author Rainer Klute (klute@rainer-klute.de)
+ * @version $Id$
+ * @since 2002-02-09
  */
-public class HPSFException extends Exception {
+public class HPSFException extends Exception
+{
 
     private Throwable reason;
 
 
 
     /**
-     *  <p>
-     *
-     *  Creates a new {@link HPSFException}.</p>
+     * <p>Creates a new {@link HPSFException}.</p>
      */
-    public HPSFException() {
+    public HPSFException()
+    {
         super();
     }
 
 
 
     /**
-     *  <p>
+     * <p>Creates a new {@link HPSFException} with a message
+     * string.</p>
      *
-     *  Creates a new {@link HPSFException} with a message string.</p>
-     *
-     *@param  msg  Description of the Parameter
+     * @param msg The message string.
      */
-    public HPSFException(final String msg) {
+    public HPSFException(final String msg)
+    {
         super(msg);
     }
 
 
 
     /**
-     *  <p>
+     * <p>Creates a new {@link HPSFException} with a reason.</p>
      *
-     *  Creates a new {@link HPSFException} with a reason.</p>
-     *
-     *@param  reason  Description of the Parameter
+     * @param reason The reason, i.e. a throwable that indirectly
+     * caused this exception.
      */
-    public HPSFException(final Throwable reason) {
+    public HPSFException(final Throwable reason)
+    {
         super();
         this.reason = reason;
     }
@@ -110,15 +108,15 @@ public class HPSFException extends Exception {
 
 
     /**
-     *  <p>
+     * <p>Creates a new {@link HPSFException} with a message string
+     * and a reason.</p>
      *
-     *  Creates a new {@link HPSFException} with a message string and a reason.
-     *  </p>
-     *
-     *@param  msg     Description of the Parameter
-     *@param  reason  Description of the Parameter
+     * @param msg The message string.
+     * @param reason The reason, i.e. a throwable that indirectly
+     * caused this exception.
      */
-    public HPSFException(final String msg, final Throwable reason) {
+    public HPSFException(final String msg, final Throwable reason)
+    {
         super(msg);
         this.reason = reason;
     }
@@ -126,14 +124,14 @@ public class HPSFException extends Exception {
 
 
     /**
-     *  <p>
+     * <p>Returns the {@link Throwable} that caused this exception to
+     * be thrown or <code>null</code> if there was no such {@link
+     * Throwable}.</p>
      *
-     *  Returns the {@link Throwable} that caused this exception to be thrown or
-     *  <code>null</code> if there was no such {@link Throwable}.</p>
-     *
-     *@return    The reason value
+     * @return The reason
      */
-    public Throwable getReason() {
+    public Throwable getReason()
+    {
         return reason;
     }
 
