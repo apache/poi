@@ -9,7 +9,7 @@
  * modification, are permitted provided that the following conditions
  * are met:
  *
- * 1. Redistributions of source code must retain the above copyright
+ * 1. Redistributions of source userCode must retain the above copyright
  *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
@@ -59,6 +59,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
 
+import org.apache.poi.hssf.HSSFUserException;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RecordFactory;
 
@@ -69,7 +70,9 @@ import org.apache.poi.hssf.record.RecordFactory;
  * @see org.apache.poi.hssf.eventmodel.HSSFEventFactory
  * @see org.apache.poi.hssf.eventmodel.HSSFListener
  * @see org.apache.poi.hssf.dev.EFHSSF
- * @author  andy
+ * @see org.apache.poi.hssf.HSSFUserException
+ * @author  Andrew C. Oliver (acoliver at apache dot org)
+ * @author Carey Sublette (careysub@earthling.net)
  */
 
 public class HSSFRequest
@@ -137,14 +140,20 @@ public class HSSFRequest
         }
     }
 
-    /**
-     * called by HSSFEventFactory, passes the Record to each listener associated with
-     * a record.sid.
-     */
+	/**
+	 * Called by HSSFEventFactory, passes the Record to each listener associated with
+	 * a record.sid.
+	 *
+	 * Exception and return value added 2002-04-19 by Carey Sublette
+	 *
+	 * @return numeric user-specified result code. If zero continue processing.
+	 * @throws HSSFUserException User exception condition
+	 */
 
-    protected void processRecord(Record rec)
+    protected short processRecord(Record rec) throws HSSFUserException
     {
         Object obj = records.get(new Short(rec.getSid()));
+        short userCode = 0;
 
         if (obj != null)
         {
@@ -152,10 +161,20 @@ public class HSSFRequest
 
             for (int k = 0; k < listeners.size(); k++)
             {
-                HSSFListener listener = ( HSSFListener ) listeners.get(k);
-
-                listener.processRecord(rec);
+                Object listenObj = listeners.get(k);
+                if (listenObj instanceof AbortableHSSFListener)
+                {
+					AbortableHSSFListener listener = ( AbortableHSSFListener ) listenObj;
+                	userCode = listener.abortableProcessRecord(rec);
+                	if (userCode!=0) break;
+				}
+				else
+				{ 
+					HSSFListener listener = ( HSSFListener ) listenObj;
+					listener.processRecord(rec);
+				}
             }
         }
+        return userCode;
     }
 }
