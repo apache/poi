@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Copyright 2002-2004   Apache Software Foundation
 
@@ -101,7 +100,7 @@ public class WriteAuthorAndTitle
         if (args.length != 2)
         {
             System.err.println("Usage: " + WriteAuthorAndTitle.class.getName() +
-                               "originPOIFS destinationPOIFS");
+                               " originPOIFS destinationPOIFS");
             System.exit(1);
         }
         
