@@ -150,15 +150,17 @@ public class LabelRecord
         field_3_xf_index     = LittleEndian.getShort(data, 4 + offset);
         field_4_string_len   = LittleEndian.getShort(data, 6 + offset);
         field_5_unicode_flag = data[ 8 + offset ];
-        if (isUnCompressedUnicode())
-        {
-            field_6_value = StringUtil.getFromUnicodeBE(data, 8 + offset,
-                                                      field_4_string_len);
-        }
-        else
-        {
-            field_6_value = StringUtil.getFromCompressedUnicode(data, 9 + offset, getStringLength());
-        }
+        if (field_4_string_len > 0) {
+          if (isUnCompressedUnicode())
+          {
+              field_6_value = StringUtil.getFromUnicodeBE(data, 9 + offset,
+                                                        field_4_string_len);
+          }
+          else
+          {
+              field_6_value = StringUtil.getFromCompressedUnicode(data, 9 + offset, getStringLength());
+          }
+        } else field_6_value = null;
     }
 
 /* READ ONLY ACCESS... THIS IS FOR COMPATIBILITY ONLY...USE LABELSST!
@@ -236,6 +238,27 @@ public class LabelRecord
     {
         return this.sid;
     }
+
+    public String toString()
+    {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("[LABEL]\n");
+        buffer.append("    .row            = ")
+            .append(Integer.toHexString(getRow())).append("\n");
+        buffer.append("    .column         = ")
+            .append(Integer.toHexString(getColumn())).append("\n");
+        buffer.append("    .xfindex        = ")
+            .append(Integer.toHexString(getXFIndex())).append("\n");
+        buffer.append("    .string_len       = ")
+            .append(Integer.toHexString(field_4_string_len)).append("\n");
+        buffer.append("    .unicode_flag       = ")
+            .append(Integer.toHexString(field_5_unicode_flag)).append("\n");
+        buffer.append("    .value       = ")
+            .append(getValue()).append("\n");
+        buffer.append("[/LABEL]\n");
+        return buffer.toString();
+    }
+
 
     public boolean isBefore(CellValueRecordInterface i)
     {
