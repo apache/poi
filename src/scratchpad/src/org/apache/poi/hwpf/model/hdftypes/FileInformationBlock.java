@@ -55,6 +55,9 @@
 
 package org.apache.poi.hwpf.model.hdftypes;
 
+import java.lang.reflect.AccessibleObject;
+import java.lang.reflect.Field;
+
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.LittleEndian;
 
@@ -66,6 +69,7 @@ import org.apache.poi.hwpf.model.hdftypes.definitions.FIBAbstractType;
  * @author  andy
  */
 public class FileInformationBlock extends FIBAbstractType
+  implements Cloneable
 {
 
     /** Creates a new instance of FileInformationBlock */
@@ -74,5 +78,48 @@ public class FileInformationBlock extends FIBAbstractType
         fillFields(mainDocument, (short)0, (short)0);
     }
 
+    public void clearOffsetsSizes()
+    {
+      try
+      {
+        Field[] fields = FileInformationBlock.class.getSuperclass().getDeclaredFields();
+        AccessibleObject.setAccessible(fields, true);
+
+        for (int x = 0; x < fields.length; x++)
+        {
+          String name = fields[x].getName();
+          int index = name.indexOf('_');
+          if (index != -1)
+          {
+            int nextIndex = name.indexOf('_', index + 1);
+            if (nextIndex != -1)
+            {
+              // clear any field greater than field_53
+              if (Integer.parseInt(name.substring(index + 1, nextIndex)) > 53)
+              {
+                fields[x].setInt(this, 0);
+              }
+            }
+          }
+        }
+      }
+      catch (IllegalAccessException iae)
+      {
+        iae.printStackTrace();
+      }
+    }
+
+    public Object clone()
+    {
+      try
+      {
+        return super.clone();
+      }
+      catch (CloneNotSupportedException e)
+      {
+        e.printStackTrace();
+        return null;
+      }
+    }
 }
 

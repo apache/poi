@@ -146,38 +146,42 @@ public class StyleDescription implements HDFType
 
       // the spec only refers to two possible upxs but it mentions
       // that more may be added in the future
-      int add = 0;
+      int varOffset = grupxStart;
       int numUPX = _numUPX.getValue(_infoShort3);
       for(int x = 0; x < numUPX; x++)
       {
-          int upxSize = LittleEndian.getShort(std, grupxStart + add);
+          int upxSize = LittleEndian.getShort(std, varOffset);
+          varOffset += LittleEndian.SHORT_SIZE;
           if(_styleTypeCode.getValue(_infoShort2) == PARAGRAPH_STYLE)
           {
               if(x == 0)
               {
-                  _istd = LittleEndian.getShort(std, grupxStart + add + 2);
+                  _istd = LittleEndian.getShort(std, varOffset);
+                  varOffset += LittleEndian.SHORT_SIZE;
                   int grrprlSize = upxSize - 2;
-                  _papx = new byte[upxSize];
-                  System.arraycopy(std, grupxStart + add + 4, _papx, 0, grrprlSize);
+                  _papx = new byte[grrprlSize];
+                  System.arraycopy(std, varOffset, _papx, 0, grrprlSize);
+                  varOffset += grrprlSize;
               }
               else if(x == 1)
               {
                   _chpx = new byte[upxSize];
-                  System.arraycopy(std, grupxStart + add + 2, _chpx, 0, upxSize);
+                  System.arraycopy(std, varOffset, _chpx, 0, upxSize);
+                  varOffset += upxSize;
               }
           }
           else if(_styleTypeCode.getValue(_infoShort2) == CHARACTER_STYLE && x == 0)
           {
               _chpx = new byte[upxSize];
-              System.arraycopy(std, grupxStart + add + 2, _chpx, 0, upxSize);
+              System.arraycopy(std, varOffset, _chpx, 0, upxSize);
           }
 
           // the upx will always start on a word boundary.
           if(upxSize % 2 == 1)
           {
-              ++upxSize;
+              ++varOffset;
           }
-          add += 2 + upxSize;
+
       }
 
 
@@ -259,7 +263,7 @@ public class StyleDescription implements HDFType
     //only worry about papx and chpx for upxs
     if(_styleTypeCode.getValue(_infoShort2) == PARAGRAPH_STYLE)
     {
-      LittleEndian.putShort(buf, offset, (short)_papx.length);
+      LittleEndian.putShort(buf, offset, (short)(_papx.length + 2));
       offset += LittleEndian.SHORT_SIZE;
       LittleEndian.putShort(buf, offset, (short)_istd);
       offset += LittleEndian.SHORT_SIZE;

@@ -57,14 +57,23 @@ package org.apache.poi.hwpf;
 import java.io.InputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.FileOutputStream;
 
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
+import org.apache.poi.poifs.common.POIFSConstants;
 
 import org.apache.poi.hwpf.model.hdftypes.*;
+import org.apache.poi.hwpf.model.io.*;
 
 
 /**
+ *
+ * This class acts as the bucket that we throw all of the Word data structures
+ * into.
+ *
  * @author Ryan Ackley
  */
 public class HWPFDocument
@@ -76,11 +85,40 @@ public class HWPFDocument
   private FileInformationBlock _fib;
 
   /** main document stream buffer*/
-  byte[] _mainStream;
+  private byte[] _mainStream;
 
   /** table stream buffer*/
-  byte[] _tableStream;
+  private byte[] _tableStream;
 
+  /** Document wide Properties*/
+  private DocumentProperties _dop;
+
+  /** Contains text of the document wrapped in a obfuscated Wod data structure*/
+  private ComplexFileTable _cft;
+
+  /** Contains formatting properties for text*/
+  private CHPBinTable _cbt;
+
+  /** Contains formatting properties for paragraphs*/
+  private PAPBinTable _pbt;
+
+  /** Contains formatting properties for sections.*/
+  private SectionTable _st;
+
+  /** Holds styles for this document.*/
+  private StyleSheet _ss;
+
+  /** Holds fonts for this document.*/
+  private FontTable _ft;
+
+
+  /**
+   * This constructor loads a Word document from an InputStream.
+   *
+   * @param istream The InputStream that contains the Word document.
+   * @throws IOException If there is an unexpected IOException from the passed
+   *         in InputStream.
+   */
   public HWPFDocument(InputStream istream) throws IOException
   {
     //do Ole stuff
@@ -110,22 +148,147 @@ public class HWPFDocument
     // get the start of text in the main stream
     int fcMin = _fib.getFcMin();
 
-    DocumentProperties dop = new DocumentProperties(_tableStream, _fib.getFcDop());
-    ComplexFileTable cft = new ComplexFileTable(_mainStream, _tableStream, _fib.getFcClx(), fcMin);
-    CHPBinTable cbt = new CHPBinTable(_mainStream, _tableStream, _fib.getFcPlcfbteChpx(), _fib.getLcbPlcfbteChpx(), fcMin);
-    PAPBinTable pbt = new PAPBinTable(_mainStream, _tableStream, _fib.getFcPlcfbtePapx(), _fib.getLcbPlcfbtePapx(), fcMin);
-    SectionTable st = new SectionTable(_mainStream, _tableStream, _fib.getFcPlcfsed(), _fib.getLcbPlcfsed(), fcMin);
-    StyleSheet ss = new StyleSheet(_tableStream, _fib.getFcStshf());
+    // load up our standard structures.
+    _dop = new DocumentProperties(_tableStream, _fib.getFcDop());
+    _cft = new ComplexFileTable(_mainStream, _tableStream, _fib.getFcClx(), fcMin);
+    _cbt = new CHPBinTable(_mainStream, _tableStream, _fib.getFcPlcfbteChpx(), _fib.getLcbPlcfbteChpx(), fcMin);
+    _pbt = new PAPBinTable(_mainStream, _tableStream, _fib.getFcPlcfbtePapx(), _fib.getLcbPlcfbtePapx(), fcMin);
+    _st = new SectionTable(_mainStream, _tableStream, _fib.getFcPlcfsed(), _fib.getLcbPlcfsed(), fcMin);
+    _ss = new StyleSheet(_tableStream, _fib.getFcStshf());
+    _ft = new FontTable(_tableStream, _fib.getFcSttbfffn(), _fib.getLcbSttbfffn());
 
     int x = 0;
 
   }
 
+  /**
+   * Writes out the word file that is represented by an instance of this class.
+   *
+   * @param out The OutputStream to write to.
+   * @throws IOException If there is an unexpected IOException from the passed
+   *         in OutputStream.
+   */
+  public void write(OutputStream out)
+    throws IOException
+  {
+    // initialize our streams for writing.
+    HWPFFileSystem docSys = new HWPFFileSystem();
+    HWPFOutputStream mainStream = docSys.getStream("WordDocument");
+    HWPFOutputStream tableStream = docSys.getStream("1Table");
+    int tableOffset = 0;
+
+    // clear the offsets and sizes in our FileInformationBlock.
+    _fib.clearOffsetsSizes();
+
+    // determine the FileInformationBLock size
+    int fibSize = _fib.getSize();
+    fibSize  += POIFSConstants.BIG_BLOCK_SIZE -
+        (fibSize % POIFSConstants.BIG_BLOCK_SIZE);
+
+    // preserve space for the FileInformationBlock because we will be writing
+    // it after we write everything else.
+    byte[] placeHolder = new byte[fibSize];
+    mainStream.write(placeHolder);
+    int mainOffset = mainStream.getOffset();
+
+    // write out the StyleSheet.
+    _fib.setFcStshf(tableOffset);
+    _ss.writeTo(tableStream);
+    _fib.setLcbStshf(tableStream.getOffset() - tableOffset);
+    tableOffset = tableStream.getOffset();
+
+    // get fcMin and fcMac because we will be writing the actual text with the
+    // complex table.
+    int fcMin = mainOffset;
+
+    // write out the Complex table, includes text.
+    _fib.setFcClx(tableOffset);
+    _cft.writeTo(docSys);
+    _fib.setLcbClx(tableStream.getOffset() - tableOffset);
+    tableOffset = tableStream.getOffset();
+    int fcMac = mainStream.getOffset();
+
+    // write out the CHPBinTable.
+    _fib.setFcPlcfbteChpx(tableOffset);
+    _cbt.writeTo(docSys, fcMin);
+    _fib.setLcbPlcfbteChpx(tableStream.getOffset() - tableOffset);
+    tableOffset = tableStream.getOffset();
+
+    // write out the PAPBinTable.
+    _fib.setFcPlcfbtePapx(tableOffset);
+    _pbt.writeTo(docSys, fcMin);
+    _fib.setLcbPlcfbtePapx(tableStream.getOffset() - tableOffset);
+    tableOffset = tableStream.getOffset();
+
+    // write out the SectionTable.
+    _fib.setFcPlcfsed(tableOffset);
+    _st.writeTo(docSys, fcMin);
+    _fib.setLcbPlcfsed(tableStream.getOffset() - tableOffset);
+    tableOffset = tableStream.getOffset();
+
+    // write out the FontTable.
+    _fib.setFcSttbfffn(tableOffset);
+    _ft.writeTo(docSys);
+    _fib.setLcbSttbfffn(tableStream.getOffset() - tableOffset);
+    tableOffset = tableStream.getOffset();
+
+    // write out the DocumentProperties.
+    _fib.setFcDop(tableOffset);
+    byte[] buf = new byte[_dop.getSize()];
+    _fib.setLcbDop(_dop.getSize());
+    _dop.serialize(buf, 0);
+    tableStream.write(buf);
+
+    // set some variables in the FileInformationBlock.
+    _fib.setFcMin(fcMin);
+    _fib.setFcMac(fcMac);
+    _fib.setCbMac(mainStream.getOffset());
+
+    // make sure that the table and doc stream use big blocks.
+    byte[] mainBuf = mainStream.toByteArray();
+    if (mainBuf.length < 4096)
+    {
+      byte[] tempBuf = new byte[4096];
+      System.arraycopy(mainBuf, 0, tempBuf, 0, mainBuf.length);
+      mainBuf = tempBuf;
+    }
+    byte[] tableBuf = tableStream.toByteArray();
+    if (tableBuf.length < 4096)
+    {
+      byte[] tempBuf = new byte[4096];
+      System.arraycopy(tableBuf, 0, tempBuf, 0, tableBuf.length);
+      tableBuf = tempBuf;
+    }
+
+    // write out the FileInformationBlock.
+    _fib.serialize(mainBuf, 0);
+
+    // spit out the Word document.
+    POIFSFileSystem pfs = new POIFSFileSystem();
+    pfs.createDocument(new ByteArrayInputStream(mainBuf), "WordDocument");
+    pfs.createDocument(new ByteArrayInputStream(tableBuf), "1Table");
+
+    pfs.writeFilesystem(out);
+  }
+
+  /**
+   * Takes two arguments, 1) name of the Word file to read in 2) location to
+   * write it out at.
+   * @param args
+   */
   public static void main(String[] args)
   {
+
     try
     {
       HWPFDocument doc = new HWPFDocument(new FileInputStream(args[0]));
+
+      OutputStream out = new FileOutputStream(args[1]);
+      doc.write(out);
+
+      out.flush();
+      out.close();
+
 
     }
     catch (Throwable t)

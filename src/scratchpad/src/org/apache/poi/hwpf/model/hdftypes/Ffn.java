@@ -56,93 +56,212 @@ package org.apache.poi.hwpf.model.hdftypes;
 
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.LittleEndian;
+import java.util.Arrays;
 
-
+/**
+ * FFN - Font Family Name. FFN is a data structure that stores the names of the Main
+ * Font and that of Alternate font as an array of characters. It has also a header
+ * that stores info about the whole structure and the fonts
+ *
+ * @author Praveen Mathew
+ */
 public class Ffn
 {
-  private int field1_cbFfnM1;            //total length of FFN - 1.
-  private byte field2;
+  private int field_1_cbFfnM1;//total length of FFN - 1.
+  private byte field_2;
     private  static BitField _prq = new BitField(0x0003);// pitch request
     private  static BitField _fTrueType = new BitField(0x0004);// when 1, font is a TrueType font
     private  static BitField _ff = new BitField(0x0070);
-  private short field3_wWeight;// base weight of font
-  private byte field4_chs;// character set identifier
-  private byte field5_ixchSzAlt;  // index into ffn.szFfn to the name of
+  private short field_3_wWeight;// base weight of font
+  private byte field_4_chs;// character set identifier
+  private byte field_5_ixchSzAlt;  // index into ffn.szFfn to the name of
                                   // the alternate font
-  private byte [] panose = new byte[10];                  //????
-  private byte [] fontSig         = new byte[24]; //????
+  private byte [] field_6_panose = new byte[10];//????
+  private byte [] field_7_fontSig = new byte[24];//????
 
   // zero terminated string that records name of font, cuurently not
   // supporting Extended chars
-  private char [] xszFfn;
+  private char [] field_8_xszFfn;
+
+  // extra facilitator members
   private int xszFfnLength;
 
   public Ffn(byte[] buf, int offset)
   {
-    field1_cbFfnM1 = LittleEndian.getUnsignedByte(buf, offset);
+	  int offsetTmp = offset;
+
+	  field_1_cbFfnM1 = LittleEndian.getUnsignedByte(buf,offset);
     offset += LittleEndian.BYTE_SIZE;
-    field2 = buf[offset];
+	  field_2 = buf[offset];
     offset += LittleEndian.BYTE_SIZE;
-    field3_wWeight = LittleEndian.getShort(buf, offset);
+	  field_3_wWeight = LittleEndian.getShort(buf, offset);
     offset += LittleEndian.SHORT_SIZE;
-    field4_chs = buf[offset];
+	  field_4_chs = buf[offset];
     offset += LittleEndian.BYTE_SIZE;
-    field5_ixchSzAlt = buf[offset];
+	  field_5_ixchSzAlt = buf[offset];
     offset += LittleEndian.BYTE_SIZE;
 
     // read panose and fs so we can write them back out.
-    System.arraycopy(buf, offset, panose, 0, panose.length);
-    offset += panose.length;
-    System.arraycopy(buf, offset, fontSig, 0, fontSig.length);
-    offset += fontSig.length;
+    System.arraycopy(buf, offset, field_6_panose, 0, field_6_panose.length);
+    offset += field_6_panose.length;
+    System.arraycopy(buf, offset, field_7_fontSig, 0, field_7_fontSig.length);
+    offset += field_7_fontSig.length;
 
-    xszFfnLength = this.getSize() - offset;
-    xszFfn = new char[xszFfnLength];
+	  offsetTmp = offset - offsetTmp;
+    xszFfnLength = this.getSize() - offsetTmp;
+	  field_8_xszFfn = new char[xszFfnLength];
 
     for(int i = 0; i < xszFfnLength; i++)
     {
-      xszFfn[i] = (char)LittleEndian.getUnsignedByte(buf, offset);
+	    field_8_xszFfn[i] = (char)LittleEndian.getUnsignedByte(buf, offset);
       offset += LittleEndian.BYTE_SIZE;
     }
 
 
   }
 
-  public int getField1_cbFfnM1()
+  public int getField_1_cbFfnM1()
   {
-    return  field1_cbFfnM1;
+    return  field_1_cbFfnM1;
+  }
+
+  public byte getField_2()
+  {
+	  return  field_2;
+  }
+
+  public short getField_3_wWeight()
+  {
+	  return  field_3_wWeight;
+  }
+
+  public byte getField_4_chs()
+  {
+	  return  field_4_chs;
+  }
+
+  public byte getField_5_ixchSzAlt()
+  {
+	  return  field_5_ixchSzAlt;
+  }
+
+  public byte [] getField_6_panose()
+  {
+	  return  field_6_panose;
+  }
+
+  public byte [] getField_7_fontSig()
+  {
+	  return  field_7_fontSig;
+  }
+
+  public char [] getField_8_xszFfn()
+  {
+	  return  field_8_xszFfn;
   }
 
   public int getSize()
   {
-    return (field1_cbFfnM1 + 1);
+    return (field_1_cbFfnM1 + 1);
   }
 
   public char [] getMainFontName()
   {
-    char [] temp = new char[field5_ixchSzAlt];
-    System.arraycopy(xszFfn,0,temp,0,temp.length);
+    char [] temp = new char[field_5_ixchSzAlt];
+    System.arraycopy(field_8_xszFfn,0,temp,0,temp.length);
     return temp;
   }
 
   public char [] getAltFontName()
   {
-    char [] temp = new char[xszFfnLength - field5_ixchSzAlt];
-    System.arraycopy(xszFfn, field5_ixchSzAlt, temp, 0, temp.length);
+    char [] temp = new char[xszFfnLength - field_5_ixchSzAlt];
+    System.arraycopy(field_8_xszFfn, field_5_ixchSzAlt, temp, 0, temp.length);
     return temp;
   }
 
-  public void setField1_cbFfnM1(short field1_cbFfnM1)
+  public void setField_1_cbFfnM1(int field_1_cbFfnM1)
   {
-    this.field1_cbFfnM1 = field1_cbFfnM1;
+    this.field_1_cbFfnM1 = field_1_cbFfnM1;
   }
 
-  protected byte[] toByteArray()
+  // changed protected to public
+  public byte[] toByteArray()
   {
-     //return buf;
-     return null;
+    int offset = 0;
+    byte[] buf = new byte[this.getSize()];
+
+    buf[offset] = (byte)field_1_cbFfnM1;
+    offset += LittleEndian.BYTE_SIZE;
+    buf[offset] = field_2;
+    offset += LittleEndian.BYTE_SIZE;
+    LittleEndian.putShort(buf, offset, field_3_wWeight);
+    offset += LittleEndian.SHORT_SIZE;
+    buf[offset] = field_4_chs;
+    offset += LittleEndian.BYTE_SIZE;
+    buf[offset] = field_5_ixchSzAlt;
+    offset += LittleEndian.BYTE_SIZE;
+
+    System.arraycopy(field_6_panose,0,buf, offset,field_6_panose.length);
+    offset += field_6_panose.length;
+    System.arraycopy(field_7_fontSig,0,buf, offset, field_7_fontSig.length);
+    offset += field_7_fontSig.length;
+
+    for(int i = 0; i < field_8_xszFfn.length; i++)
+    {
+      buf[offset] = (byte)field_8_xszFfn[i];
+        offset += LittleEndian.BYTE_SIZE;
+    }
+
+      return buf;
+
+    }
+
+    public boolean equals(Object o)
+    {
+    boolean retVal = true;
+
+    if (((Ffn)o).getField_1_cbFfnM1() == field_1_cbFfnM1)
+    {
+      if(((Ffn)o).getField_2() == field_2)
+      {
+      if(((Ffn)o).getField_3_wWeight() == field_3_wWeight)
+      {
+        if(((Ffn)o).getField_4_chs() == field_4_chs)
+        {
+        if(((Ffn)o).getField_5_ixchSzAlt() == field_5_ixchSzAlt)
+        {
+          if(Arrays.equals(((Ffn)o).getField_6_panose(),field_6_panose))
+          {
+          if(Arrays.equals(((Ffn)o).getField_7_fontSig(),field_7_fontSig))
+          {
+                  if(!(Arrays.equals(((Ffn)o).getField_8_xszFfn(),field_8_xszFfn)))
+                    retVal = false;
+          }
+          else
+            retVal = false;
+          }
+          else
+          retVal = false;
+        }
+        else
+          retVal = false;
+        }
+        else
+        retVal = false;
+      }
+      else
+        retVal = false;
+      }
+      else
+      retVal = false;
+    }
+    else
+      retVal = false;
+
+    return retVal;
   }
 
 
 }
+
 

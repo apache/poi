@@ -54,67 +54,64 @@
 
 package org.apache.poi.hwpf.model.hdftypes;
 
-import org.apache.poi.util.BitField;
+import java.io.IOException;
+import org.apache.poi.hwpf.model.io.HWPFFileSystem;
+import org.apache.poi.hwpf.model.io.HWPFOutputStream;
 import org.apache.poi.util.LittleEndian;
 
-
+/**
+ * FontTable or in MS terminology sttbfffn is a common data structure written in all
+ * Word files. The sttbfffn is an sttbf where each string is an FFN structure instead
+ * of pascal-style strings. An sttbf is a string Table stored in file. Thus sttbffn
+ * is like an Sttbf with an array of FFN structures that stores the font name strings
+ *
+ * @author Praveen Mathew
+ */
 public class FontTable
 {
-  private short exntdChar; // strings are extended character if = 0xFFFF
-  private short stringCount; // how many strings are included in the string table
-  private short extraDataSz; // size in bytes of the extra data
+  private short _stringCount;// how many strings are included in the string table
+  private short _extraDataSz;// size in bytes of the extra data
 
-  private int lcbSttbfffn; // count of bytes in sttbfffn
-  private boolean isExtndChar;
-
+  // added extra facilitator members
+  private int lcbSttbfffn;// count of bytes in sttbfffn
+  private int fcSttbfffn;// table stream offset for sttbfffn
 
   // FFN structure containing strings of font names
-  private Ffn     [] fontNames = null;
+  private Ffn[] _fontNames = null;
+
 
   public FontTable(byte[] buf, int offset, int lcbSttbfffn)
   {
     this.lcbSttbfffn = lcbSttbfffn;
+    this.fcSttbfffn = offset;
 
-    exntdChar = LittleEndian.getShort(buf, offset);
+    _stringCount = LittleEndian.getShort(buf, offset);
     offset += LittleEndian.SHORT_SIZE;
-    stringCount = LittleEndian.getShort(buf, offset);
-    offset += LittleEndian.SHORT_SIZE;
-    extraDataSz = LittleEndian.getShort(buf, offset);
+    _extraDataSz = LittleEndian.getShort(buf, offset);
     offset += LittleEndian.SHORT_SIZE;
 
-    if ((exntdChar & 0xFFFF) == 0xFFFF)
+    _fontNames = new Ffn[_stringCount]; //Ffn corresponds to a Pascal style String in STTBF.
+
+    for(int i = 0;i<_stringCount; i++)
     {
-      isExtndChar = true;
+      _fontNames[i] = new Ffn(buf,offset);
+      offset += _fontNames[i].getSize();
     }
-    else
-    {
-      isExtndChar = false;
-    }
-
-    fontNames = new Ffn[stringCount]; //Ffn corresponds to a Pascal style String in STTBF.
-
-    for(int i = 0;i<stringCount; i++)
-    {
-      // some mistake in the fields we have chosen
-      if(offset >= this.getSize())
-      {
-        System.out.println("Total size of Sttbfn mismatched with calculated size");
-        break;
-      }
-
-      fontNames[i] = new Ffn(buf,offset);
-      offset += fontNames[i].getSize();
-    }
-  }
-
-  public boolean isExtndChar()
-  {
-    return  isExtndChar;
   }
 
   public short getStringCount()
   {
-    return  stringCount;
+    return  _stringCount;
+  }
+
+  public short getExtraDataSz()
+  {
+  	return _extraDataSz;
+  }
+
+  public Ffn[] getFontNames()
+  {
+  	return _fontNames;
   }
 
   public int getSize()
@@ -124,31 +121,76 @@ public class FontTable
 
   public char [] getMainFont(int chpFtc )
   {
-    if(chpFtc >= stringCount)
+    if(chpFtc >= _stringCount)
     {
       System.out.println("Mismatch in chpFtc with stringCount");
       return null;
     }
 
-    return fontNames[chpFtc].getMainFontName();
+    return _fontNames[chpFtc].getMainFontName();
   }
 
   public char [] getAltFont(int chpFtc )
   {
-    if(chpFtc >= stringCount)
+    if(chpFtc >= _stringCount)
     {
       System.out.println("Mismatch in chpFtc with stringCount");
       return null;
     }
 
-    return fontNames[chpFtc].getAltFontName();
+    return _fontNames[chpFtc].getAltFontName();
   }
 
   public void setStringCount(short stringCount)
   {
-    this.stringCount = stringCount;
+    this._stringCount = stringCount;
+  }
+
+  public void writeTo(HWPFFileSystem sys)
+	  throws IOException
+  {
+	  HWPFOutputStream tableStream = sys.getStream("1Table");
+
+	  byte[] buf = new byte[LittleEndian.SHORT_SIZE];
+	  LittleEndian.putShort(buf, _stringCount);
+	  tableStream.write(buf);
+	  LittleEndian.putShort(buf, _extraDataSz);
+	  tableStream.write(buf);
+
+	  for(int i = 0; i < _fontNames.length; i++)
+	  {
+		tableStream.write(_fontNames[i].toByteArray());
+	  }
+
+  }
+
+  public boolean equals(Object o)
+  {
+  	boolean retVal = true;
+
+    if(((FontTable)o).getStringCount() == _stringCount)
+    {
+      if(((FontTable)o).getExtraDataSz() == _extraDataSz)
+      {
+        Ffn[] fontNamesNew = ((FontTable)o).getFontNames();
+        for(int i = 0;i<_stringCount; i++)
+        {
+          if(!(_fontNames[i].equals(fontNamesNew[i])))
+            retVal = false;
+        }
+      }
+      else
+        retVal = false;
+    }
+    else
+	    retVal = false;
+
+
+	  return retVal;
   }
 
 
+
 }
+
 
