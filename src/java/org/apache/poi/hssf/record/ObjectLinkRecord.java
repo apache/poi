@@ -178,7 +178,7 @@ public class ObjectLinkRecord
      */
     public int getRecordSize()
     {
-        return 4 + 2 + 2 + 2;
+        return 4  + 2 + 2 + 2;
     }
 
     public short getSid()
