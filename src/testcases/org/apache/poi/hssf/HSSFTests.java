@@ -97,7 +97,7 @@ public class HSSFTests
 
     public static void main(String[] args)
     {
-        junit.textui.TestRunner.run(HSSFTests.class);
+        junit.textui.TestRunner.run(suite());
     }
 
     public static Test suite()
