@@ -8,6 +8,6 @@ scripts
 build.number
 log*.*
 *.log
-build
+.clover
 .classpath
 .project
