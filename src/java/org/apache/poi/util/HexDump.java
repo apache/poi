@@ -225,7 +225,7 @@ public class HexDump
         buf.setLength(0);
         for (int j = 0; j < 8; j++)
         {
-            buf.append( _hexcodes[ (( int ) (value >> _shifts[ j ])) & 15 ]);
+            buf.append( _hexcodes[ (( int ) (value >> _shifts[ j + _shifts.length - 8 ])) & 15 ]);
         }
         return buf.toString();
     }
