@@ -52,7 +52,7 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.poi.hdf.model.hdftypes;
+package org.apache.poi.hwpf.model.hdftypes;
 
 
 
@@ -66,6 +66,7 @@ public class TextPiece extends PropertyNode implements Comparable
 {
   private boolean _usesUnicode;
   private int _length;
+  private PieceDescriptor _pd;
 
   /**
    * @param start Offset in main document stream.
@@ -73,12 +74,11 @@ public class TextPiece extends PropertyNode implements Comparable
    *        does not necessarily refer to 1 byte.
    * @param unicode true if this text is unicode.
    */
-  public TextPiece(int start, int length, boolean unicode)
+  public TextPiece(int start, int end, byte[] text, PieceDescriptor pd)
   {
-      super(start, start + length, null);
-      _usesUnicode = unicode;
-      _length = length;
-
+      super(start, end, text);
+      _usesUnicode = pd.isUnicode();
+      _length = end - start;
   }
   /**
    * @return If this text piece uses unicode
@@ -86,5 +86,10 @@ public class TextPiece extends PropertyNode implements Comparable
    public boolean usesUnicode()
    {
       return _usesUnicode;
+   }
+
+   public PieceDescriptor getPieceDescriptor()
+   {
+     return _pd;
    }
 }

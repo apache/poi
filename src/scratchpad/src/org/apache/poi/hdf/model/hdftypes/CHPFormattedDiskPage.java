@@ -51,7 +51,10 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.poi.hdf.model.hdftypes;
+package org.apache.poi.hwpf.model.hdftypes;
+
+import java.util.List;
+import java.util.ArrayList;
 
 import org.apache.poi.util.LittleEndian;
 
@@ -73,7 +76,15 @@ import org.apache.poi.util.LittleEndian;
  */
 public class CHPFormattedDiskPage extends FormattedDiskPage
 {
+    private static final int FC_SIZE = 4;
 
+    private ArrayList _chpxList = new ArrayList();
+    private ArrayList _overFlow;
+
+
+    public CHPFormattedDiskPage()
+    {
+    }
 
     /**
      * This constructs a CHPFormattedDiskPage from a raw fkp (512 byte array
@@ -81,9 +92,29 @@ public class CHPFormattedDiskPage extends FormattedDiskPage
      *
      * @param fkp The 512 byte array to read data from
      */
-    public CHPFormattedDiskPage(byte[] fkp)
+    public CHPFormattedDiskPage(byte[] documentStream, int offset, int fcMin)
     {
-        super(fkp);
+      super(documentStream, offset);
+
+      for (int x = 0; x < _crun; x++)
+      {
+        _chpxList.add(new CHPX(getStart(x) - fcMin, getEnd(x) - fcMin, getGrpprl(x)));
+      }
+    }
+
+    public CHPX getCHPX(int index)
+    {
+      return (CHPX)_chpxList.get(index);
+    }
+
+    public void fill(List filler)
+    {
+      _chpxList.addAll(filler);
+    }
+
+    public ArrayList getOverflow()
+    {
+      return _overFlow;
     }
 
     /**
@@ -92,22 +123,87 @@ public class CHPFormattedDiskPage extends FormattedDiskPage
      * @param index The index of the chpx to get.
      * @return a chpx grpprl.
      */
-    public byte[] getGrpprl(int index)
+    protected byte[] getGrpprl(int index)
     {
-        int chpxOffset = 2 * LittleEndian.getUnsignedByte(_fkp, ((_crun + 1) * 4) + index);
+        int chpxOffset = 2 * LittleEndian.getUnsignedByte(_fkp, _offset + (((_crun + 1) * 4) + index));
 
         //optimization if offset == 0 use "Normal" style
         if(chpxOffset == 0)
         {
             return new byte[0];
-
         }
 
-        int size = LittleEndian.getUnsignedByte(_fkp, chpxOffset);
+        int size = LittleEndian.getUnsignedByte(_fkp, _offset + chpxOffset);
 
         byte[] chpx = new byte[size];
 
-        System.arraycopy(_fkp, ++chpxOffset, chpx, 0, size);
+        System.arraycopy(_fkp, _offset + ++chpxOffset, chpx, 0, size);
         return chpx;
     }
+
+    protected byte[] toByteArray(int fcMin)
+    {
+      byte[] buf = new byte[512];
+      int size = _chpxList.size();
+      int grpprlOffset = 0;
+      int offsetOffset = 0;
+      int fcOffset = 0;
+
+      // total size is currently the size of one FC
+      int totalSize = FC_SIZE;
+
+      int index = 0;
+      for (; index < size; index++)
+      {
+        int grpprlLength = ((CHPX)_chpxList.get(index)).getGrpprl().length;
+
+        // check to see if we have enough room for an FC, a byte, and the grpprl.
+        totalSize += (FC_SIZE + 1 + grpprlLength);
+        // if size is uneven we will have to add one so the first grpprl falls
+        // on a word boundary
+        if (totalSize > 511 + (index % 2))
+        {
+          totalSize -= (FC_SIZE + 1 + grpprlLength);
+          break;
+        }
+
+        // grpprls must fall on word boundaries
+        if (grpprlLength % 2 > 0)
+        {
+          totalSize += 1;
+        }
+      }
+
+      // see if we couldn't fit some
+      if (index != size)
+      {
+        _overFlow = new ArrayList();
+        _overFlow.addAll(index, _chpxList);
+      }
+
+      // index should equal number of CHPXs that will be in this fkp now.
+      buf[511] = (byte)index;
+
+      offsetOffset = (FC_SIZE * index) + FC_SIZE;
+      grpprlOffset =  offsetOffset + index + (grpprlOffset % 2);
+
+      CHPX chpx = null;
+      for (int x = 0; x < index; x++)
+      {
+        chpx = (CHPX)_chpxList.get(x);
+        byte[] grpprl = chpx.getGrpprl();
+
+        LittleEndian.putInt(buf, fcOffset, chpx.getStart() + fcMin);
+        buf[offsetOffset] = (byte)(grpprlOffset/2);
+        System.arraycopy(grpprl, 0, buf, grpprlOffset, grpprl.length);
+
+        grpprlOffset += grpprl.length + (grpprl.length % 2);
+        offsetOffset += 1;
+        fcOffset += FC_SIZE;
+      }
+      // put the last chpx's end in
+      LittleEndian.putInt(buf, fcOffset, chpx.getEnd() + fcMin);
+      return buf;
+    }
+
 }

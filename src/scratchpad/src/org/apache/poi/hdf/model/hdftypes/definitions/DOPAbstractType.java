@@ -54,7 +54,7 @@
  */
 
 
-package org.apache.poi.hdf.model.hdftypes.definitions;
+package org.apache.poi.hwpf.model.hdftypes.definitions;
 
 
 
@@ -76,58 +76,58 @@ public abstract class DOPAbstractType
 {
 
     private  byte field_1_formatFlags;
-        private BitField  fFacingPages = new BitField(0x01);
-        private BitField  fWidowControl = new BitField(0x02);
-        private BitField  fPMHMainDoc = new BitField(0x04);
-        private BitField  grfSupression = new BitField(0x18);
-        private BitField  fpc = new BitField(0x60);
-        private BitField  unused1 = new BitField(0x80);
-    private  short field_2_unused2;
+        private static BitField  fFacingPages = new BitField(0x01);
+        private static BitField  fWidowControl = new BitField(0x02);
+        private static BitField  fPMHMainDoc = new BitField(0x04);
+        private static BitField  grfSupression = new BitField(0x18);
+        private static BitField  fpc = new BitField(0x60);
+        private static BitField  unused1 = new BitField(0x80);
+    private  byte field_2_unused2;
     private  short field_3_footnoteInfo;
-        private BitField  rncFtn = new BitField(0x0003);
-        private BitField  nFtn = new BitField(0xfffc);
+        private static BitField  rncFtn = new BitField(0x0003);
+        private static BitField  nFtn = new BitField(0xfffc);
     private  byte field_4_fOutlineDirtySave;
     private  byte field_5_docinfo;
-        private BitField  fOnlyMacPics = new BitField(0x01);
-        private BitField  fOnlyWinPics = new BitField(0x02);
-        private BitField  fLabelDoc = new BitField(0x04);
-        private BitField  fHyphCapitals = new BitField(0x08);
-        private BitField  fAutoHyphen = new BitField(0x10);
-        private BitField  fFormNoFields = new BitField(0x20);
-        private BitField  fLinkStyles = new BitField(0x40);
-        private BitField  fRevMarking = new BitField(0x80);
+        private static BitField  fOnlyMacPics = new BitField(0x01);
+        private static BitField  fOnlyWinPics = new BitField(0x02);
+        private static BitField  fLabelDoc = new BitField(0x04);
+        private static BitField  fHyphCapitals = new BitField(0x08);
+        private static BitField  fAutoHyphen = new BitField(0x10);
+        private static BitField  fFormNoFields = new BitField(0x20);
+        private static BitField  fLinkStyles = new BitField(0x40);
+        private static BitField  fRevMarking = new BitField(0x80);
     private  byte field_6_docinfo1;
-        private BitField  fBackup = new BitField(0x01);
-        private BitField  fExactCWords = new BitField(0x02);
-        private BitField  fPagHidden = new BitField(0x04);
-        private BitField  fPagResults = new BitField(0x08);
-        private BitField  fLockAtn = new BitField(0x10);
-        private BitField  fMirrorMargins = new BitField(0x20);
-        private BitField  unused3 = new BitField(0x40);
-        private BitField  fDfltTrueType = new BitField(0x80);
+        private static BitField  fBackup = new BitField(0x01);
+        private static BitField  fExactCWords = new BitField(0x02);
+        private static BitField  fPagHidden = new BitField(0x04);
+        private static BitField  fPagResults = new BitField(0x08);
+        private static BitField  fLockAtn = new BitField(0x10);
+        private static BitField  fMirrorMargins = new BitField(0x20);
+        private static BitField  unused3 = new BitField(0x40);
+        private static BitField  fDfltTrueType = new BitField(0x80);
     private  byte field_7_docinfo2;
-        private BitField  fPagSupressTopSpacing = new BitField(0x01);
-        private BitField  fProtEnabled = new BitField(0x02);
-        private BitField  fDispFormFldSel = new BitField(0x04);
-        private BitField  fRMView = new BitField(0x08);
-        private BitField  fRMPrint = new BitField(0x10);
-        private BitField  unused4 = new BitField(0x20);
-        private BitField  fLockRev = new BitField(0x40);
-        private BitField  fEmbedFonts = new BitField(0x80);
+        private static BitField  fPagSupressTopSpacing = new BitField(0x01);
+        private static BitField  fProtEnabled = new BitField(0x02);
+        private static BitField  fDispFormFldSel = new BitField(0x04);
+        private static BitField  fRMView = new BitField(0x08);
+        private static BitField  fRMPrint = new BitField(0x10);
+        private static BitField  unused4 = new BitField(0x20);
+        private static BitField  fLockRev = new BitField(0x40);
+        private static BitField  fEmbedFonts = new BitField(0x80);
     private  short field_8_docinfo3;
-        private BitField  oldfNoTabForInd = new BitField(0x0001);
-        private BitField  oldfNoSpaceRaiseLower = new BitField(0x0002);
-        private BitField  oldfSuppressSpbfAfterPageBreak = new BitField(0x0004);
-        private BitField  oldfWrapTrailSpaces = new BitField(0x0008);
-        private BitField  oldfMapPrintTextColor = new BitField(0x0010);
-        private BitField  oldfNoColumnBalance = new BitField(0x0020);
-        private BitField  oldfConvMailMergeEsc = new BitField(0x0040);
-        private BitField  oldfSupressTopSpacing = new BitField(0x0080);
-        private BitField  oldfOrigWordTableRules = new BitField(0x0100);
-        private BitField  oldfTransparentMetafiles = new BitField(0x0200);
-        private BitField  oldfShowBreaksInFrames = new BitField(0x0400);
-        private BitField  oldfSwapBordersFacingPgs = new BitField(0x0800);
-        private BitField  unused5 = new BitField(0xf000);
+        private static BitField  oldfNoTabForInd = new BitField(0x0001);
+        private static BitField  oldfNoSpaceRaiseLower = new BitField(0x0002);
+        private static BitField  oldfSuppressSpbfAfterPageBreak = new BitField(0x0004);
+        private static BitField  oldfWrapTrailSpaces = new BitField(0x0008);
+        private static BitField  oldfMapPrintTextColor = new BitField(0x0010);
+        private static BitField  oldfNoColumnBalance = new BitField(0x0020);
+        private static BitField  oldfConvMailMergeEsc = new BitField(0x0040);
+        private static BitField  oldfSupressTopSpacing = new BitField(0x0080);
+        private static BitField  oldfOrigWordTableRules = new BitField(0x0100);
+        private static BitField  oldfTransparentMetafiles = new BitField(0x0200);
+        private static BitField  oldfShowBreaksInFrames = new BitField(0x0400);
+        private static BitField  oldfSwapBordersFacingPgs = new BitField(0x0800);
+        private static BitField  unused5 = new BitField(0xf000);
     private  int field_9_dxaTab;
     private  int field_10_wSpare;
     private  int field_11_dxaHotz;
@@ -143,16 +143,16 @@ public abstract class DOPAbstractType
     private  int field_21_cPg;
     private  int field_22_cParas;
     private  short field_23_Edn;
-        private BitField  rncEdn = new BitField(0x0003);
-        private BitField  nEdn = new BitField(0xfffc);
+        private static BitField  rncEdn = new BitField(0x0003);
+        private static BitField  nEdn = new BitField(0xfffc);
     private  short field_24_Edn1;
-        private BitField  epc = new BitField(0x0003);
-        private BitField  nfcFtnRef1 = new BitField(0x003c);
-        private BitField  nfcEdnRef1 = new BitField(0x03c0);
-        private BitField  fPrintFormData = new BitField(0x0400);
-        private BitField  fSaveFormData = new BitField(0x0800);
-        private BitField  fShadeFormData = new BitField(0x1000);
-        private BitField  fWCFtnEdn = new BitField(0x8000);
+        private static BitField  epc = new BitField(0x0003);
+        private static BitField  nfcFtnRef1 = new BitField(0x003c);
+        private static BitField  nfcEdnRef1 = new BitField(0x03c0);
+        private static BitField  fPrintFormData = new BitField(0x0400);
+        private static BitField  fSaveFormData = new BitField(0x0800);
+        private static BitField  fShadeFormData = new BitField(0x1000);
+        private static BitField  fWCFtnEdn = new BitField(0x8000);
     private  int field_25_cLines;
     private  int field_26_cWordsFtnEnd;
     private  int field_27_cChFtnEdn;
@@ -161,55 +161,55 @@ public abstract class DOPAbstractType
     private  int field_30_cLinesFtnEdn;
     private  int field_31_lKeyProtDoc;
     private  short field_32_view;
-        private BitField  wvkSaved = new BitField(0x0007);
-        private BitField  wScaleSaved = new BitField(0x0ff8);
-        private BitField  zkSaved = new BitField(0x3000);
-        private BitField  fRotateFontW6 = new BitField(0x4000);
-        private BitField  iGutterPos = new BitField(0x8000);
+        private static BitField  wvkSaved = new BitField(0x0007);
+        private static BitField  wScaleSaved = new BitField(0x0ff8);
+        private static BitField  zkSaved = new BitField(0x3000);
+        private static BitField  fRotateFontW6 = new BitField(0x4000);
+        private static BitField  iGutterPos = new BitField(0x8000);
     private  int field_33_docinfo4;
-        private BitField  fNoTabForInd = new BitField(0x00000001);
-        private BitField  fNoSpaceRaiseLower = new BitField(0x00000002);
-        private BitField  fSupressSpdfAfterPageBreak = new BitField(0x00000004);
-        private BitField  fWrapTrailSpaces = new BitField(0x00000008);
-        private BitField  fMapPrintTextColor = new BitField(0x00000010);
-        private BitField  fNoColumnBalance = new BitField(0x00000020);
-        private BitField  fConvMailMergeEsc = new BitField(0x00000040);
-        private BitField  fSupressTopSpacing = new BitField(0x00000080);
-        private BitField  fOrigWordTableRules = new BitField(0x00000100);
-        private BitField  fTransparentMetafiles = new BitField(0x00000200);
-        private BitField  fShowBreaksInFrames = new BitField(0x00000400);
-        private BitField  fSwapBordersFacingPgs = new BitField(0x00000800);
-        private BitField  fSuppressTopSPacingMac5 = new BitField(0x00010000);
-        private BitField  fTruncDxaExpand = new BitField(0x00020000);
-        private BitField  fPrintBodyBeforeHdr = new BitField(0x00040000);
-        private BitField  fNoLeading = new BitField(0x00080000);
-        private BitField  fMWSmallCaps = new BitField(0x00200000);
+        private static BitField  fNoTabForInd = new BitField(0x00000001);
+        private static BitField  fNoSpaceRaiseLower = new BitField(0x00000002);
+        private static BitField  fSupressSpdfAfterPageBreak = new BitField(0x00000004);
+        private static BitField  fWrapTrailSpaces = new BitField(0x00000008);
+        private static BitField  fMapPrintTextColor = new BitField(0x00000010);
+        private static BitField  fNoColumnBalance = new BitField(0x00000020);
+        private static BitField  fConvMailMergeEsc = new BitField(0x00000040);
+        private static BitField  fSupressTopSpacing = new BitField(0x00000080);
+        private static BitField  fOrigWordTableRules = new BitField(0x00000100);
+        private static BitField  fTransparentMetafiles = new BitField(0x00000200);
+        private static BitField  fShowBreaksInFrames = new BitField(0x00000400);
+        private static BitField  fSwapBordersFacingPgs = new BitField(0x00000800);
+        private static BitField  fSuppressTopSPacingMac5 = new BitField(0x00010000);
+        private static BitField  fTruncDxaExpand = new BitField(0x00020000);
+        private static BitField  fPrintBodyBeforeHdr = new BitField(0x00040000);
+        private static BitField  fNoLeading = new BitField(0x00080000);
+        private static BitField  fMWSmallCaps = new BitField(0x00200000);
     private  short field_34_adt;
     private  byte[] field_35_doptypography;
     private  byte[] field_36_dogrid;
     private  short field_37_docinfo5;
-        private BitField  lvl = new BitField(0x001e);
-        private BitField  fGramAllDone = new BitField(0x0020);
-        private BitField  fGramAllClean = new BitField(0x0040);
-        private BitField  fSubsetFonts = new BitField(0x0080);
-        private BitField  fHideLastVersion = new BitField(0x0100);
-        private BitField  fHtmlDoc = new BitField(0x0200);
-        private BitField  fSnapBorder = new BitField(0x0800);
-        private BitField  fIncludeHeader = new BitField(0x1000);
-        private BitField  fIncludeFooter = new BitField(0x2000);
-        private BitField  fForcePageSizePag = new BitField(0x4000);
-        private BitField  fMinFontSizePag = new BitField(0x8000);
+        private static BitField  lvl = new BitField(0x001e);
+        private static BitField  fGramAllDone = new BitField(0x0020);
+        private static BitField  fGramAllClean = new BitField(0x0040);
+        private static BitField  fSubsetFonts = new BitField(0x0080);
+        private static BitField  fHideLastVersion = new BitField(0x0100);
+        private static BitField  fHtmlDoc = new BitField(0x0200);
+        private static BitField  fSnapBorder = new BitField(0x0800);
+        private static BitField  fIncludeHeader = new BitField(0x1000);
+        private static BitField  fIncludeFooter = new BitField(0x2000);
+        private static BitField  fForcePageSizePag = new BitField(0x4000);
+        private static BitField  fMinFontSizePag = new BitField(0x8000);
     private  short field_38_docinfo6;
-        private BitField  fHaveVersions = new BitField(0x0001);
-        private BitField  fAutoVersions = new BitField(0x0002);
+        private static BitField  fHaveVersions = new BitField(0x0001);
+        private static BitField  fAutoVersions = new BitField(0x0002);
     private  byte[] field_39_asumyi;
     private  int field_40_cChWS;
     private  int field_41_cChWSFtnEdn;
     private  int field_42_grfDocEvents;
     private  int field_43_virusinfo;
-        private BitField  fVirusPrompted = new BitField(0x0001);
-        private BitField  fVirusLoadSafe = new BitField(0x0002);
-        private BitField  KeyVirusSession30 = new BitField(0xfffffffc);
+        private static BitField  fVirusPrompted = new BitField(0x0001);
+        private static BitField  fVirusLoadSafe = new BitField(0x0002);
+        private static BitField  KeyVirusSession30 = new BitField(0xfffffffc);
     private  byte[] field_44_Spare;
     private  int field_45_reserved1;
     private  int field_46_reserved2;
@@ -230,58 +230,116 @@ public abstract class DOPAbstractType
     protected void fillFields(byte [] data, short size, int offset)
     {
         field_1_formatFlags             = data[ 0x0 + offset ];
-        field_2_unused2                 = LittleEndian.getShort(data, 0x1 + offset);
-        field_3_footnoteInfo            = LittleEndian.getShort(data, 0x3 + offset);
-        field_4_fOutlineDirtySave       = data[ 0x5 + offset ];
-        field_5_docinfo                 = data[ 0x6 + offset ];
-        field_6_docinfo1                = data[ 0x7 + offset ];
-        field_7_docinfo2                = data[ 0x8 + offset ];
-        field_8_docinfo3                = LittleEndian.getShort(data, 0x9 + offset);
-        field_9_dxaTab                  = LittleEndian.getShort(data, 0xb + offset);
-        field_10_wSpare                 = LittleEndian.getShort(data, 0xd + offset);
-        field_11_dxaHotz                = LittleEndian.getShort(data, 0xf + offset);
-        field_12_cConsexHypLim          = LittleEndian.getShort(data, 0x11 + offset);
-        field_13_wSpare2                = LittleEndian.getShort(data, 0x13 + offset);
-        field_14_dttmCreated            = LittleEndian.getInt(data, 0x15 + offset);
-        field_15_dttmRevised            = LittleEndian.getInt(data, 0x19 + offset);
-        field_16_dttmLastPrint          = LittleEndian.getInt(data, 0x1d + offset);
-        field_17_nRevision              = LittleEndian.getShort(data, 0x21 + offset);
-        field_18_tmEdited               = LittleEndian.getInt(data, 0x23 + offset);
-        field_19_cWords                 = LittleEndian.getInt(data, 0x27 + offset);
-        field_20_cCh                    = LittleEndian.getInt(data, 0x2b + offset);
-        field_21_cPg                    = LittleEndian.getShort(data, 0x2f + offset);
-        field_22_cParas                 = LittleEndian.getInt(data, 0x31 + offset);
-        field_23_Edn                    = LittleEndian.getShort(data, 0x35 + offset);
-        field_24_Edn1                   = LittleEndian.getShort(data, 0x37 + offset);
-        field_25_cLines                 = LittleEndian.getInt(data, 0x39 + offset);
-        field_26_cWordsFtnEnd           = LittleEndian.getInt(data, 0x3d + offset);
-        field_27_cChFtnEdn              = LittleEndian.getInt(data, 0x41 + offset);
-        field_28_cPgFtnEdn              = LittleEndian.getShort(data, 0x45 + offset);
-        field_29_cParasFtnEdn           = LittleEndian.getInt(data, 0x47 + offset);
-        field_30_cLinesFtnEdn           = LittleEndian.getInt(data, 0x4b + offset);
-        field_31_lKeyProtDoc            = LittleEndian.getInt(data, 0x4f + offset);
-        field_32_view                   = LittleEndian.getShort(data, 0x53 + offset);
-        field_33_docinfo4               = LittleEndian.getInt(data, 0x55 + offset);
-        field_34_adt                    = LittleEndian.getShort(data, 0x59 + offset);
-        field_35_doptypography          = LittleEndian.getByteArray(data, 0x5b + offset, size);
-        field_36_dogrid                 = LittleEndian.getByteArray(data, 0x191 + offset, size);
-        field_37_docinfo5               = LittleEndian.getShort(data, 0x19b + offset);
-        field_38_docinfo6               = LittleEndian.getShort(data, 0x19d + offset);
-        field_39_asumyi                 = LittleEndian.getByteArray(data, 0x19f + offset, size);
-        field_40_cChWS                  = LittleEndian.getInt(data, 0x1ab + offset);
-        field_41_cChWSFtnEdn            = LittleEndian.getInt(data, 0x1af + offset);
-        field_42_grfDocEvents           = LittleEndian.getInt(data, 0x1b3 + offset);
-        field_43_virusinfo              = LittleEndian.getInt(data, 0x1b7 + offset);
-        field_44_Spare                  = LittleEndian.getByteArray(data, 0x1bb + offset, size);
-        field_45_reserved1              = LittleEndian.getInt(data, 0x1d9 + offset);
-        field_46_reserved2              = LittleEndian.getInt(data, 0x1dd + offset);
-        field_47_cDBC                   = LittleEndian.getInt(data, 0x1e1 + offset);
-        field_48_cDBCFtnEdn             = LittleEndian.getInt(data, 0x1e5 + offset);
-        field_49_reserved               = LittleEndian.getInt(data, 0x1e9 + offset);
-        field_50_nfcFtnRef              = LittleEndian.getShort(data, 0x1ed + offset);
-        field_51_nfcEdnRef              = LittleEndian.getShort(data, 0x1ef + offset);
-        field_52_hpsZoonFontPag         = LittleEndian.getShort(data, 0x1f1 + offset);
-        field_53_dywDispPag             = LittleEndian.getShort(data, 0x1f3 + offset);
+        field_2_unused2                 = data[ 0x1 + offset ];
+        field_3_footnoteInfo            = LittleEndian.getShort(data, 0x2 + offset);
+        field_4_fOutlineDirtySave       = data[ 0x4 + offset ];
+        field_5_docinfo                 = data[ 0x5 + offset ];
+        field_6_docinfo1                = data[ 0x6 + offset ];
+        field_7_docinfo2                = data[ 0x7 + offset ];
+        field_8_docinfo3                = LittleEndian.getShort(data, 0x8 + offset);
+        field_9_dxaTab                  = LittleEndian.getShort(data, 0xa + offset);
+        field_10_wSpare                 = LittleEndian.getShort(data, 0xc + offset);
+        field_11_dxaHotz                = LittleEndian.getShort(data, 0xe + offset);
+        field_12_cConsexHypLim          = LittleEndian.getShort(data, 0x10 + offset);
+        field_13_wSpare2                = LittleEndian.getShort(data, 0x12 + offset);
+        field_14_dttmCreated            = LittleEndian.getInt(data, 0x14 + offset);
+        field_15_dttmRevised            = LittleEndian.getInt(data, 0x18 + offset);
+        field_16_dttmLastPrint          = LittleEndian.getInt(data, 0x1c + offset);
+        field_17_nRevision              = LittleEndian.getShort(data, 0x20 + offset);
+        field_18_tmEdited               = LittleEndian.getInt(data, 0x22 + offset);
+        field_19_cWords                 = LittleEndian.getInt(data, 0x26 + offset);
+        field_20_cCh                    = LittleEndian.getInt(data, 0x2a + offset);
+        field_21_cPg                    = LittleEndian.getShort(data, 0x2e + offset);
+        field_22_cParas                 = LittleEndian.getInt(data, 0x30 + offset);
+        field_23_Edn                    = LittleEndian.getShort(data, 0x34 + offset);
+        field_24_Edn1                   = LittleEndian.getShort(data, 0x36 + offset);
+        field_25_cLines                 = LittleEndian.getInt(data, 0x38 + offset);
+        field_26_cWordsFtnEnd           = LittleEndian.getInt(data, 0x3c + offset);
+        field_27_cChFtnEdn              = LittleEndian.getInt(data, 0x40 + offset);
+        field_28_cPgFtnEdn              = LittleEndian.getShort(data, 0x44 + offset);
+        field_29_cParasFtnEdn           = LittleEndian.getInt(data, 0x46 + offset);
+        field_30_cLinesFtnEdn           = LittleEndian.getInt(data, 0x4a + offset);
+        field_31_lKeyProtDoc            = LittleEndian.getInt(data, 0x4e + offset);
+        field_32_view                   = LittleEndian.getShort(data, 0x52 + offset);
+        field_33_docinfo4               = LittleEndian.getInt(data, 0x54 + offset);
+        field_34_adt                    = LittleEndian.getShort(data, 0x58 + offset);
+        field_35_doptypography          = LittleEndian.getByteArray(data, 0x5a + offset,310);
+        field_36_dogrid                 = LittleEndian.getByteArray(data, 0x190 + offset,10);
+        field_37_docinfo5               = LittleEndian.getShort(data, 0x19a + offset);
+        field_38_docinfo6               = LittleEndian.getShort(data, 0x19c + offset);
+        field_39_asumyi                 = LittleEndian.getByteArray(data, 0x19e + offset,12);
+        field_40_cChWS                  = LittleEndian.getInt(data, 0x1aa + offset);
+        field_41_cChWSFtnEdn            = LittleEndian.getInt(data, 0x1ae + offset);
+        field_42_grfDocEvents           = LittleEndian.getInt(data, 0x1b2 + offset);
+        field_43_virusinfo              = LittleEndian.getInt(data, 0x1b6 + offset);
+        field_44_Spare                  = LittleEndian.getByteArray(data, 0x1ba + offset,30);
+        field_45_reserved1              = LittleEndian.getInt(data, 0x1d8 + offset);
+        field_46_reserved2              = LittleEndian.getInt(data, 0x1dc + offset);
+        field_47_cDBC                   = LittleEndian.getInt(data, 0x1e0 + offset);
+        field_48_cDBCFtnEdn             = LittleEndian.getInt(data, 0x1e4 + offset);
+        field_49_reserved               = LittleEndian.getInt(data, 0x1e8 + offset);
+        field_50_nfcFtnRef              = LittleEndian.getShort(data, 0x1ec + offset);
+        field_51_nfcEdnRef              = LittleEndian.getShort(data, 0x1ee + offset);
+        field_52_hpsZoonFontPag         = LittleEndian.getShort(data, 0x1f0 + offset);
+        field_53_dywDispPag             = LittleEndian.getShort(data, 0x1f2 + offset);
+
+    }
+
+    public void serialize(byte[] data, int offset)
+    {
+        data[ 0x0 + offset] = field_1_formatFlags;;
+        data[ 0x1 + offset] = field_2_unused2;;
+        LittleEndian.putShort(data, 0x2 + offset, (short)field_3_footnoteInfo);;
+        data[ 0x4 + offset] = field_4_fOutlineDirtySave;;
+        data[ 0x5 + offset] = field_5_docinfo;;
+        data[ 0x6 + offset] = field_6_docinfo1;;
+        data[ 0x7 + offset] = field_7_docinfo2;;
+        LittleEndian.putShort(data, 0x8 + offset, (short)field_8_docinfo3);;
+        LittleEndian.putShort(data, 0xa + offset, (short)field_9_dxaTab);;
+        LittleEndian.putShort(data, 0xc + offset, (short)field_10_wSpare);;
+        LittleEndian.putShort(data, 0xe + offset, (short)field_11_dxaHotz);;
+        LittleEndian.putShort(data, 0x10 + offset, (short)field_12_cConsexHypLim);;
+        LittleEndian.putShort(data, 0x12 + offset, (short)field_13_wSpare2);;
+        LittleEndian.putInt(data, 0x14 + offset, field_14_dttmCreated);;
+        LittleEndian.putInt(data, 0x18 + offset, field_15_dttmRevised);;
+        LittleEndian.putInt(data, 0x1c + offset, field_16_dttmLastPrint);;
+        LittleEndian.putShort(data, 0x20 + offset, (short)field_17_nRevision);;
+        LittleEndian.putInt(data, 0x22 + offset, field_18_tmEdited);;
+        LittleEndian.putInt(data, 0x26 + offset, field_19_cWords);;
+        LittleEndian.putInt(data, 0x2a + offset, field_20_cCh);;
+        LittleEndian.putShort(data, 0x2e + offset, (short)field_21_cPg);;
+        LittleEndian.putInt(data, 0x30 + offset, field_22_cParas);;
+        LittleEndian.putShort(data, 0x34 + offset, (short)field_23_Edn);;
+        LittleEndian.putShort(data, 0x36 + offset, (short)field_24_Edn1);;
+        LittleEndian.putInt(data, 0x38 + offset, field_25_cLines);;
+        LittleEndian.putInt(data, 0x3c + offset, field_26_cWordsFtnEnd);;
+        LittleEndian.putInt(data, 0x40 + offset, field_27_cChFtnEdn);;
+        LittleEndian.putShort(data, 0x44 + offset, (short)field_28_cPgFtnEdn);;
+        LittleEndian.putInt(data, 0x46 + offset, field_29_cParasFtnEdn);;
+        LittleEndian.putInt(data, 0x4a + offset, field_30_cLinesFtnEdn);;
+        LittleEndian.putInt(data, 0x4e + offset, field_31_lKeyProtDoc);;
+        LittleEndian.putShort(data, 0x52 + offset, (short)field_32_view);;
+        LittleEndian.putInt(data, 0x54 + offset, field_33_docinfo4);;
+        LittleEndian.putShort(data, 0x58 + offset, (short)field_34_adt);;
+        ;
+        ;
+        LittleEndian.putShort(data, 0x19a + offset, (short)field_37_docinfo5);;
+        LittleEndian.putShort(data, 0x19c + offset, (short)field_38_docinfo6);;
+        ;
+        LittleEndian.putInt(data, 0x1aa + offset, field_40_cChWS);;
+        LittleEndian.putInt(data, 0x1ae + offset, field_41_cChWSFtnEdn);;
+        LittleEndian.putInt(data, 0x1b2 + offset, field_42_grfDocEvents);;
+        LittleEndian.putInt(data, 0x1b6 + offset, field_43_virusinfo);;
+        ;
+        LittleEndian.putInt(data, 0x1d8 + offset, field_45_reserved1);;
+        LittleEndian.putInt(data, 0x1dc + offset, field_46_reserved2);;
+        LittleEndian.putInt(data, 0x1e0 + offset, field_47_cDBC);;
+        LittleEndian.putInt(data, 0x1e4 + offset, field_48_cDBCFtnEdn);;
+        LittleEndian.putInt(data, 0x1e8 + offset, field_49_reserved);;
+        LittleEndian.putShort(data, 0x1ec + offset, (short)field_50_nfcFtnRef);;
+        LittleEndian.putShort(data, 0x1ee + offset, (short)field_51_nfcEdnRef);;
+        LittleEndian.putShort(data, 0x1f0 + offset, (short)field_52_hpsZoonFontPag);;
+        LittleEndian.putShort(data, 0x1f2 + offset, (short)field_53_dywDispPag);;
 
     }
 
@@ -304,7 +362,7 @@ public abstract class DOPAbstractType
 
         buffer.append("    .unused2              = ");
         buffer.append("0x");
-        buffer.append(HexDump.toHex((short)getUnused2()));
+        buffer.append(HexDump.toHex((byte)getUnused2()));
         buffer.append(" (").append(getUnused2()).append(" )\n");
 
         buffer.append("    .footnoteInfo         = ");
@@ -657,7 +715,7 @@ public abstract class DOPAbstractType
      */
     public int getSize()
     {
-        return 4 + 1 + 2 + 2 + 1 + 1 + 1 + 1 + 2 + 2 + 2 + 2 + 2 + 2 + 4 + 4 + 4 + 2 + 4 + 4 + 4 + 2 + 4 + 2 + 2 + 4 + 4 + 4 + 2 + 4 + 4 + 4 + 2 + 4 + 2 + 310 + 10 + 2 + 2 + 12 + 4 + 4 + 4 + 4 + 30 + 4 + 4 + 4 + 4 + 4 + 2 + 2 + 2 + 2;
+        return 4 +  + 1 + 1 + 2 + 1 + 1 + 1 + 1 + 2 + 2 + 2 + 2 + 2 + 2 + 4 + 4 + 4 + 2 + 4 + 4 + 4 + 2 + 4 + 2 + 2 + 4 + 4 + 4 + 2 + 4 + 4 + 4 + 2 + 4 + 2 + 310 + 10 + 2 + 2 + 12 + 4 + 4 + 4 + 4 + 30 + 4 + 4 + 4 + 4 + 4 + 2 + 2 + 2 + 2;
     }
 
 
@@ -681,7 +739,7 @@ public abstract class DOPAbstractType
     /**
      * Get the unused2 field for the DOP record.
      */
-    public short getUnused2()
+    public byte getUnused2()
     {
         return field_2_unused2;
     }
@@ -689,7 +747,7 @@ public abstract class DOPAbstractType
     /**
      * Set the unused2 field for the DOP record.
      */
-    public void setUnused2(short field_2_unused2)
+    public void setUnused2(byte field_2_unused2)
     {
         this.field_2_unused2 = field_2_unused2;
     }

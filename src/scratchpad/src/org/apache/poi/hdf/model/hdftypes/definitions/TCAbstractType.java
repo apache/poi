@@ -54,7 +54,7 @@
  */
 
 
-package org.apache.poi.hdf.model.hdftypes.definitions;
+package org.apache.poi.hwpf.model.hdftypes.definitions;
 
 
 
@@ -76,14 +76,14 @@ public abstract class TCAbstractType
 {
 
     private  short field_1_rgf;
-        private BitField  fFirstMerged = new BitField(0x0001);
-        private BitField  fMerged = new BitField(0x0002);
-        private BitField  fVertical = new BitField(0x0004);
-        private BitField  fBackward = new BitField(0x0008);
-        private BitField  fRotateFont = new BitField(0x0010);
-        private BitField  fVertMerge = new BitField(0x0020);
-        private BitField  fVertRestart = new BitField(0x0040);
-        private BitField  vertAlign = new BitField(0x0180);
+        private static BitField  fFirstMerged = new BitField(0x0001);
+        private static BitField  fMerged = new BitField(0x0002);
+        private static BitField  fVertical = new BitField(0x0004);
+        private static BitField  fBackward = new BitField(0x0008);
+        private static BitField  fRotateFont = new BitField(0x0010);
+        private static BitField  fVertMerge = new BitField(0x0020);
+        private static BitField  fVertRestart = new BitField(0x0040);
+        private static BitField  vertAlign = new BitField(0x0180);
     private  short field_2_unused;
     private  short[] field_3_brcTop;
     private  short[] field_4_brcLeft;
@@ -101,7 +101,7 @@ public abstract class TCAbstractType
      */
     public int getSize()
     {
-        return 4 + 2 + 2 + 4 + 4 + 4 + 4;
+        return 4 +  + 2 + 2 + 4 + 4 + 4 + 4;
     }
 
 
