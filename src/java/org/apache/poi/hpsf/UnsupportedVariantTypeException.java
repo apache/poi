@@ -49,7 +49,7 @@ extends VariantTypeException
               HexDump.toHex(variantType) + "). If you want support for " +
               "this variant type in one of the next POI releases please " +
               "submit a request for enhancement (RFE) to " +
-              "<http://nagoya.apache.org/bugzilla/>! Thank you!");
+              "<http://issues.apache.org/bugzilla/>! Thank you!");
     }
 
 

@@ -212,7 +212,7 @@ public class TestFormulaParser extends TestCase {
 	 
 	/**
 	 * Bug Reported by xt-jens.riis@nokia.com (Jens Riis)
-	 * Refers to Bug <a href="http://nagoya.apache.org/bugzilla/show_bug.cgi?id=17582">#17582</a>
+	 * Refers to Bug <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=17582">#17582</a>
 	 *
 	 */
 	public void testNonAlphaFormula(){
