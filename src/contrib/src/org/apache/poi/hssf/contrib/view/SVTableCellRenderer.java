@@ -142,7 +142,7 @@ public class SVTableCellRenderer extends JLabel
 
           Font font = new Font(f.getFontName(),fontstyle,f.getFontHeightInPoints());
           setFont(font);
-
+          
 
           HSSFColor clr = null;
           if (s.getFillPattern() == HSSFCellStyle.SOLID_FOREGROUND) {
@@ -155,6 +155,11 @@ public class SVTableCellRenderer extends JLabel
 
           setBackground(awtcolor);
 
+          clr = (HSSFColor)colors.get(new Integer(f.getColor()));
+          if (clr == null) clr = new HSSFColor.BLACK();
+          rgb = clr.getTriplet();
+          awtcolor = new Color(rgb[0],rgb[1],rgb[2]);
+          setForeground(awtcolor);
         }
 
 

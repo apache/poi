@@ -91,7 +91,7 @@ public class SVTableModel extends AbstractTableModel {
 
 
   public int getColumnCount() {
-    return this.maxcol;
+    return this.maxcol+1;
   }
   public Object getValueAt(int row, int col) {
     HSSFRow r = st.getRow(row);
