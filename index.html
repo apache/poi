@@ -404,38 +404,25 @@ menu.show();
 menu.showCaption();
 
 //Add submenus
-menu.addItem("STATUS","location='status.xml'");
-menu.addItem("LAYOUT","location='layout.xml'");
-menu.addItem("MODULE","location='module.xml'");
-menu.addItem("BUILD","location='build.xml'");
-menu.addItem("LOG","toggle");
-
-menu.subMenus[1].addItem("FoldOutMenu","window.open('/script/script22.asp')");
-menu.subMenus[1].addItem("Loading Bar","window.open('/script/script17.asp')");
-menu.subMenus[1].addItem("Window Script","window.open('/script/script16.asp')");
-menu.subMenus[1].addItem("PageSlideFade","window.open('/script/script15.asp')");
-menu.subMenus[1].addItem("Circle Menu","window.open('/script/script14.asp')");
-menu.subMenus[1].addItem("Annimation Intro","window.open('/script/script9.asp')");
-menu.subMenus[1].addItem("NewsSlideFade","window.open('/script/script10.asp')");
-menu.subMenus[1].addItem("Other Scripts","window.open('/script/')");
+menu.addItem("STATUS","window.open('status.html')");
+menu.addItem("BUILD","toggle");
+menu.addItem("DOCS","toggle");
+menu.addItem("MODULE","toggle");
 
 
-menu.subMenus[2].addItem("Scripting for vs5 browsers","window.open('/tutorials/tutorial5.asp')");
-menu.subMenus[2].addItem("Makeing a Dhtml Script","window.open('/tutorials/tutorial6.asp')");
-menu.subMenus[2].addItem("Filters & Transitions","window.open('/tutorials/tutorial4.asp')");
-menu.subMenus[2].addItem("Dhtml Library","window.open('/tutorials/tutorial3.asp')");
-menu.subMenus[2].addItem("Document Size","window.open('/tutorials/tutorial2.asp')");
-menu.subMenus[2].addItem("Dhtml Intro","window.open('/tutorials/tutorial1.asp')");
-
-menu.subMenus[3].addItem("Forum listings","window.open('/forums')");
-menu.subMenus[3].addItem("Cool Sites","window.open('/forums/forum.asp?FORUM_ID=1&CAT_ID=1&Forum_Title=Cool+sites')");
-menu.subMenus[3].addItem("CoolMenus","window.open('/forums/forum.asp?FORUM_ID=2&CAT_ID=1&Forum_Title=CoolMenus')");
-menu.subMenus[3].addItem("Cross Browser","window.open('/forums/forum.asp?FORUM_ID=3&CAT_ID=1&Forum_Title=Crossbrowser+DHTML')");
-menu.subMenus[3].addItem("Scripts","window.open('/forums/forum.asp?FORUM_ID=4&CAT_ID=1&Forum_Title=DHTML+Scripts')");
-menu.subMenus[3].addItem("General","window.open('/forums/forum.asp?FORUM_ID=6&CAT_ID=1&Forum_Title=General+DHTML+issues')");
-menu.subMenus[3].addItem("Off-Topic","window.open('/forums/forum.asp?FORUM_ID=9&CAT_ID=1&Forum_Title=Off%2Dtopic')");
+menu.subMenus[1].addItem("build.xml","window.open('build.xml')");
+menu.subMenus[1].addItem("log.xml","window.open('log.xml')");
 
 
+menu.subMenus[2].addItem("site","window.open('http://jakarta.apache.org/poi/')");
+menu.subMenus[2].addItem("local","window.open('./build/docs/index.html')");
+menu.subMenus[2].addItem("local javadocs","window.open('./build/docs/javadocs/index.html')");
+menu.subMenus[2].addItem("test results","window.open('./build/docs/test/index.html')");
+
+menu.subMenus[3].addItem("module.xml","window.open('module.xml')");
+menu.subMenus[3].addItem("layout.xml","window.open('layout.xml')");
+
+/*
 c = menu.subMenus[4].addItem("Cool Sites","toggle");
 c.startAngle = 15;
 menu.subMenus[4].addItem("Portals","window.open('/resources/default.asp?catid=7&cattitle=Portals')");
@@ -448,7 +435,7 @@ menu.subMenus[4].subMenus[0].addItem("Experimental Projects","window.open('/reso
 
 menu.subMenus[4].subMenus[3].addItem("References","window.open('/resources/default.asp?catid=8&cattitle=References')");
 menu.subMenus[4].subMenus[3].addItem("Tutorials & Articles","window.open('/resources/default.asp?catid=9&cattitle=Tutorials+and+Articles')");
-
+*/
 
 //--></script>
 
