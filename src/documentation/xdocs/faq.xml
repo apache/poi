@@ -62,7 +62,7 @@
         <answer>
             Excel stores dates as numbers therefore the only way to determine if a cell is
             actually stored as a date is to look at the formatting. There is a helper method
-            in HSSFDateUtil (since after 1.6.0-dev) that checks for this. 
+            in HSSFDateUtil (since the 1.7.0-dev release) that checks for this. 
             Thanks to Jason Hoffman for providing the solution.
             <source>
 
@@ -79,9 +79,7 @@
                                cellText;
                   }
 
-
-
-            </source>
+           </source>
         </answer>
     </faq>
     <faq>
