@@ -4,7 +4,19 @@
    </tstamp>
    
    <buildnumber/>
+   <echo>
+    --------------------------------------------------------------
 
+      Using ${ant.version}
+      Build file ${ant.file}
+      Build number ${build.number}
+      Project Name ${ant.project.name}
+      Java Version ${ant.java.version}      
+      Timestamp ${DSTAMP}${TSTAMP}
+
+    --------------------------------------------------------------
+   </echo>
+       
    <!--
     The location of tools.jar, relative to the JAVA_HOME home.
     If tools.jar is not present, exit with an error, since it
