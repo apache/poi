@@ -95,98 +95,135 @@ does not close it for you.
 </p>
 <p>Here is some example code (excerpted and adapted from
 org.apache.poi.hssf.dev.HSSF test class):</p>
-<source>        FileOutputStream out    = new FileOutputStream(&quot;/home/me/myfile.xls&quot;);  // create a new file
-        HSSFWorkbook     wb     = new HSSFWorkbook();                           // create a new workbook
-        HSSFSheet        s      = wb.createSheet();                             // create a new sheet
-        HSSFRow          r      = null;                                         // declare a row object reference
-        HSSFCell         c      = null;                                         // declare a cell object reference
-        HSSFCellStyle    cs     = wb.createCellStyle();                         // create 3 cell styles
-        HSSFCellStyle    cs2    = wb.createCellStyle();        
-        HSSFCellStyle    cs3    = wb.createCellStyle();          
-        HSSFFont         f      = wb.createFont();                              // create 2 fonts objects
-        HSSFFont         f2     = wb.createFont();                              
-        
-        f.setFontHeightInPoints((short)12);                                    //set font 1 to 12 point type
-        f.setColor((short)0xA);                                                //make it red
-        f.setBoldweight(f.BOLDWEIGHT_BOLD);                                   // make it bold
-                                                                             //arial is the default font
-        
-        f2.setFontHeightInPoints((short)10);                                   //set font 2 to 10 point type
-        f2.setColor((short)0xf);                                               //make it the color at palette index 0xf (white)
-        f2.setBoldweight(f2.BOLDWEIGHT_BOLD);                                 //make it bold
-        
-        cs.setFont(f);                                                        //set cell stlye 
-        cs.setDataFormat(HSSFDataFormat.getFormat(&quot;($#,##0_);[Red]($#,##0)&quot;));//set the cell format see HSSFDataFromat for a full list
-        
-        cs2.setBorderBottom(cs2.BORDER_THIN);                                 //set a thin border
-        cs2.setFillPattern((short)1);                                         //fill w fg fill color
-        cs2.setFillForegroundColor((short)0xA);                               // set foreground fill to red
+<source>        // create a new file
+        FileOutputStream out    = new FileOutputStream(&quot;/home/me/myfile.xls&quot;);
+        // create a new workbook
+        HSSFWorkbook     wb     = new HSSFWorkbook();
+        // create a new sheet
+        HSSFSheet        s      = wb.createSheet();
+        // declare a row object reference
+        HSSFRow          r      = null;
+        // declare a cell object reference
+        HSSFCell         c      = null;
+        // create 3 cell styles
+        HSSFCellStyle    cs     = wb.createCellStyle();
+        HSSFCellStyle    cs2    = wb.createCellStyle();
+        HSSFCellStyle    cs3    = wb.createCellStyle();
+        // create 2 fonts objects
+        HSSFFont         f      = wb.createFont();
+        HSSFFont         f2     = wb.createFont();
 
-        cs2.setFont(f2);                                                      // set the font
+        //set font 1 to 12 point type
+        f.setFontHeightInPoints((short)12);
+        //make it red
+        f.setColor((short)0xA);
+        // make it bold
+        //arial is the default font
+        f.setBoldweight(f.BOLDWEIGHT_BOLD);
 
-        wb.setSheetName(0,&quot;HSSF Test&quot;);                                       // set the sheet name to HSSF Test
-        for (rownum = (short)0; rownum &lt; 300; rownum++)                       // create a sheet with 300 rows (0-299)
-        { 
-            r = s.createRow(rownum);                                          // create a row 
-            if ( (rownum % 2) == 0) {                                         // on every other row 
-                r.setHeight((short)0x249);                                    // make the row height bigger  (in twips - 1/20 of a point)
+        //set font 2 to 10 point type
+        f2.setFontHeightInPoints((short)10);
+        //make it the color at palette index 0xf (white)
+        f2.setColor((short)0xf);
+        //make it bold
+        f2.setBoldweight(f2.BOLDWEIGHT_BOLD);
+
+        //set cell stlye
+        cs.setFont(f);
+        //set the cell format see HSSFDataFromat for a full list
+        cs.setDataFormat(HSSFDataFormat.getFormat(&quot;($#,##0_);[Red]($#,##0)&quot;));
+
+        //set a thin border
+        cs2.setBorderBottom(cs2.BORDER_THIN);
+        //fill w fg fill color
+        cs2.setFillPattern((short)1);
+        // set foreground fill to red
+        cs2.setFillForegroundColor((short)0xA);
+
+        // set the font
+        cs2.setFont(f2);
+
+        // set the sheet name to HSSF Test
+        wb.setSheetName(0,&quot;HSSF Test&quot;);
+        // create a sheet with 300 rows (0-299)
+        for (rownum = (short)0; rownum &lt; 300; rownum++)
+        {
+            // create a row
+            r = s.createRow(rownum);
+            // on every other row
+            if ( (rownum % 2) == 0) {
+                // make the row height bigger  (in twips - 1/20 of a point)
+                r.setHeight((short)0x249);
             }
-            
+
             //r.setRowNum(( short ) rownum);
-            for (short cellnum = (short)0; cellnum &lt; 50; cellnum += 2)       // create 50 cells (0-49) (the += 2 becomes apparent later
+            // create 50 cells (0-49) (the += 2 becomes apparent later
+            for (short cellnum = (short)0; cellnum &lt; 50; cellnum += 2)
             {
-                c = r.createCell(cellnum,HSSFCell.CELL_TYPE_NUMERIC);        // create a numeric cell
-                c.setCellValue(rownum * 10000 + cellnum                      // do some goofy math to demonstrate decimals 
+                // create a numeric cell
+                c = r.createCell(cellnum,HSSFCell.CELL_TYPE_NUMERIC);
+                // do some goofy math to demonstrate decimals
+                c.setCellValue(rownum * 10000 + cellnum
                                + ((( double ) rownum / 1000)
                                   + (( double ) cellnum / 10000)));
-          
-                if ( (rownum % 2) == 0) {                                    // on every other row
-                    c.setCellStyle(cs);                                      // set this cell to the first cell style we defined
+
+                // on every other row
+                if ( (rownum % 2) == 0) {
+                    // set this cell to the first cell style we defined
+                    c.setCellStyle(cs);
                 }
 
+                // create a string cell (see why += 2 in the
+                c = r.createCell((short)(cellnum+1),HSSFCell.CELL_TYPE_STRING);
 
-                c = r.createCell((short)(cellnum+1),HSSFCell.CELL_TYPE_STRING);              // create a string cell (see why += 2 in the
-                                                                                             // for loop (we want 2 cells per loop)
-                c.setCellValue(&quot;TEST&quot;);                                                      // set the cell's string value to &quot;TEST&quot;
-                s.setColumnWidth((short)(cellnum+1), (short)((50*8) / ((double)1/20)) );     // make this column a bit wider
-                
-                if ( (rownum % 2) == 0) {                                                    // on every other row
-                    c.setCellStyle(cs2);                                                     // set this to the white on red cell style
-                }                                                                            // we defined above
-                
-            }           
+                // set the cell's string value to &quot;TEST&quot;
+                c.setCellValue(&quot;TEST&quot;);
+                // make this column a bit wider
+                s.setColumnWidth((short)(cellnum+1), (short)((50*8) / ((double)1/20)) );
+
+                // on every other row
+                if ( (rownum % 2) == 0) {
+                    // set this to the white on red cell style
+                    // we defined above
+                    c.setCellStyle(cs2);
+                }
+
+            }
         }
-        
-        
+
         //draw a thick black border on the row at the bottom using BLANKS
-        rownum++;                                                                            // advance 2 rows
+        // advance 2 rows
         rownum++;
-        
+        rownum++;
+
         r = s.createRow(rownum);
-        
-      
-        
-        cs3.setBorderBottom(cs3.BORDER_THICK);                                                // define the third style to be the default
-                                                                                              // except with a thick black border at the bottom        
-              
-        for (short cellnum = (short)0; cellnum &lt; 50; cellnum++) {                             //create 50 cells
-            c = r.createCell(cellnum,HSSFCell.CELL_TYPE_BLANK);                               //create a blank type cell (no value)
-            c.setCellStyle(cs3);                                                              // set it to the thick black border style
+
+        // define the third style to be the default
+        // except with a thick black border at the bottom
+        cs3.setBorderBottom(cs3.BORDER_THICK);
+
+        //create 50 cells
+        for (short cellnum = (short)0; cellnum &lt; 50; cellnum++) {
+            //create a blank type cell (no value)
+            c = r.createCell(cellnum,HSSFCell.CELL_TYPE_BLANK);
+            // set it to the thick black border style
+            c.setCellStyle(cs3);
         }
-        
+
         //end draw thick black border
-        
-        
-                                                                                             //demonstrate adding/naming and deleting a sheet
-                                                                                            // create a sheet, set its title then delete it
-        s = wb.createSheet();  
+
+
+        // demonstrate adding/naming and deleting a sheet
+        // create a sheet, set its title then delete it
+        s = wb.createSheet();
         wb.setSheetName(1,&quot;DeletedSheet&quot;);
         wb.removeSheetAt(1);
         //end deleted sheet
-        
-        
-        wb.write(out);                                                                   // write the workbook to the output stream
-        out.close();                                                                     // close our file (don't blow out our file handles
+
+        // write the workbook to the output stream
+        // close our file (don't blow out our file handles
+        wb.write(out);
+        out.close();
         </source>
         </s4>
                 <s4 title="Reading or modifying an existing file">
@@ -205,8 +242,7 @@ method (sheet.removeRow(hssfrow)) and create objects just as you
 would if creating a new xls. When you are done modifying cells just
 call workbook.write(outputstream) just as you did above.</p>
 <p>An example of this can be seen in
-org.apache.poi.hssf.dev.HSSF.  See
-<link href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/*checkout*/poi/poi/production/src/net/sourceforge/poi/hssf/dev/HSSF.java?rev=HEAD&amp;content-type=text/plain">http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/*checkout*/poi/poi/production/src/net/sourceforge/poi/hssf/dev/HSSF.java?rev=HEAD&amp;content-type=text/plain</link>.</p>
+<link href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/*checkout*/poi/poi/production/src/net/sourceforge/poi/hssf/dev/HSSF.java?rev=HEAD&amp;content-type=text/plain">org.apache.poi.hssf.dev.HSSF</link>.</p>
          </s4>       </s3>
                 <s3 title="Event API">
 
@@ -246,77 +282,117 @@ registered to listen for until the file has been completely read.
 <p>A code excerpt from org.apache.poi.hssf.dev.EFHSSF (which is
 in CVS or the source distribution) is reprinted below with excessive
 comments:</p>
-<source>class EFHSSFListener implements HSSFListener {  //this non-public class implements the required interface 
-    EFHSSF efhssf;                              // we construct it with a copy of its container class...this is cheap but effective 
-    public EFHSSFListener(EFHSSF efhssf) {      
+<source>
+//this non-public class implements the required interface
+// we construct it with a copy of its container class...this is cheap but effective
+class EFHSSFListener implements HSSFListener {
+    EFHSSF efhssf;
+    public EFHSSFListener(EFHSSF efhssf) {
         this.efhssf = efhssf;
     }
-    
-    public void processRecord(Record record) {  // we just use this as an adapter so we pass the record to the method in the container class
+
+    // we just use this as an adapter so we pass the record to the method in the container class
+    public void processRecord(Record record) {
         efhssf.recordHandler(record);
     }
 }
 
      //here is an excerpt of the main line execution code from EFHSSF
     public void run() throws IOException {
-        FileInputStream fin = new FileInputStream(infile);              // create a new file input stream with the input file specified 
-                                                                        // at the command line
-        Filesystem poifs = new Filesystem(fin);                         // create a new org.apache.poi.poifs.filesystem.Filesystem
-        InputStream din  = poifs.createDocumentInputStream(&quot;Workbook&quot;); // get the Workbook (excel part) stream in a InputStream
-        HSSFRequest req = new HSSFRequest();                            // construct out HSSFRequest object
-        req.addListenerForAllRecords(new EFHSSFListener(this));         // lazy listen for ALL records with the listener shown above
-        HSSFEventFactory factory = new HSSFEventFactory();              // create our event factory
-        factory.processEvents(req,din);                                 // process our events based on the document input stream
-        fin.close();                                                    // once all the events are processed close our file input stream
-        din.close();                                                    // and our document input stream (don't want to leak these!)
-        FileOutputStream fout = new FileOutputStream(outfile);          // create a new output stream from filename specified at the command line
-        workbook.write(fout);                                           // write the HSSFWorkbook (class member) we created out to the file.
-        fout.close();                                                   // close our file output stream
-        System.out.println(&quot;done.&quot;);                                    // print done.  Go enjoy your copy of the file.
+        // create a new file input stream with the input file specified
+        // at the command line
+        FileInputStream fin = new FileInputStream(infile);
+        // create a new org.apache.poi.poifs.filesystem.Filesystem
+        Filesystem poifs = new Filesystem(fin);
+        // get the Workbook (excel part) stream in a InputStream
+        InputStream din  = poifs.createDocumentInputStream(&quot;Workbook&quot;);
+        // construct out HSSFRequest object
+        HSSFRequest req = new HSSFRequest();
+        // lazy listen for ALL records with the listener shown above
+        req.addListenerForAllRecords(new EFHSSFListener(this));
+        // create our event factory
+        HSSFEventFactory factory = new HSSFEventFactory();
+        // process our events based on the document input stream
+        factory.processEvents(req,din);
+        // once all the events are processed close our file input stream
+        fin.close();
+        // and our document input stream (don't want to leak these!)
+        din.close();
+        // create a new output stream from filename specified at the command line
+        FileOutputStream fout = new FileOutputStream(outfile);
+        // write the HSSFWorkbook (class member) we created out to the file.
+        workbook.write(fout);
+        // close our file output stream
+        fout.close();
+        // print done.  Go enjoy your copy of the file.
+        System.out.println(&quot;done.&quot;);
     }
 
 
     //here is an excerpt of the recordHander called from our listener.
-    public void recordHandler(Record record) {  // the record handler in the container class is intent on just rewriting the fire         
-        HSSFRow row = null;                          
+    // the record handler in the container class is intent on just rewriting the file
+    public void recordHandler(Record record) {
+        HSSFRow row = null;
         HSSFCell cell = null;
         int sheetnum = -1;
         switch (record.getSid()) {
-            case BOFRecord.sid:                 // the BOFRecord can represent either the beginning of a sheet or the workbook 
+            // the BOFRecord can represent either the beginning of a sheet or the workbook
+            case BOFRecord.sid:
                 BOFRecord bof = (BOFRecord) record;
                 if (bof.getType() == bof.TYPE_WORKBOOK) {
-                    workbook = new HSSFWorkbook();                    //if its the workbook then create a new HSSFWorkbook 
-                } else if (bof.getType() == bof.TYPE_WORKSHEET) {     // assigned to the class level member
+                    //if its the workbook then create a new HSSFWorkbook
+                    workbook = new HSSFWorkbook();
+                // assigned to the class level member
+                } else if (bof.getType() == bof.TYPE_WORKSHEET) {
                     sheetnum++;
-                    cursheet = workbook.getSheetAt(sheetnum);         // otherwise if its a sheet increment the sheetnum index 
-                }                                                     // get the sheet at that index and assign it to method variable 
-            break;                                                    // cursheet (the sheet was created when the BoundSheetRecord record occurred
-            case BoundSheetRecord.sid:                               
-                BoundSheetRecord bsr = (BoundSheetRecord) record;     // when we find a boundsheet record create a new sheet in the workbook and 
-                workbook.createSheet(bsr.getSheetname());             // assign it the name specified in this record. 
+                    // otherwise if its a sheet increment the sheetnum index
+                    cursheet = workbook.getSheetAt(sheetnum);
+                }
             break;
-            case RowRecord.sid:                                       // if this is a row record add the row to the current sheet 
+            // get the sheet at that index and assign it to method variable
+            // cursheet (the sheet was created when the BoundSheetRecord record occurred
+            case BoundSheetRecord.sid:
+                // when we find a boundsheet record create a new sheet in the workbook and
+                BoundSheetRecord bsr = (BoundSheetRecord) record;
+                // assign it the name specified in this record.
+                workbook.createSheet(bsr.getSheetname());
+            break;
+            // if this is a row record add the row to the current sheet
+            case RowRecord.sid:
                 RowRecord rowrec = (RowRecord) record;
-                cursheet.createRow(rowrec.getRowNumber());            // assign our row the rownumber specified in the Row Record
+                // assign our row the rownumber specified in the Row Record
+                cursheet.createRow(rowrec.getRowNumber());
             break;
-            case NumberRecord.sid:                                    // if this is a NumberRecord (RKRecord, MulRKRecord get converted to Number
-                NumberRecord numrec = (NumberRecord) record;          // records) then get the row specified in the number record from the current
-                row = cursheet.getRow(numrec.getRow());               // sheet.  With this instance of HSSFRow create a new HSSFCell with the column
-                cell = row.createCell(numrec.getColumn(),HSSFCell.CELL_TYPE_NUMERIC); //number specified in the record and assign it type NUMERIC
-                cell.setCellValue(numrec.getValue());                 // set the HSSFCell's value to the value stored in the NumberRecord
+            // if this is a NumberRecord (RKRecord, MulRKRecord get converted to Number
+            // records) then get the row specified in the number record from the current
+            // sheet.  With this instance of HSSFRow create a new HSSFCell with the column
+            // number specified in the record and assign it type NUMERIC
+            case NumberRecord.sid:
+                NumberRecord numrec = (NumberRecord) record;
+                row = cursheet.getRow(numrec.getRow());
+                cell = row.createCell(numrec.getColumn(),HSSFCell.CELL_TYPE_NUMERIC);
+                // set the HSSFCell's value to the value stored in the NumberRecord
+                cell.setCellValue(numrec.getValue());
             break;
-            case SSTRecord.sid:                                       // if this is the SSTRecord (occurs once in the workbook) then add all of its 
-                SSTRecord sstrec = (SSTRecord) record;                // strings to our workbook.  We'll look them up later when we add LABELSST records.
+            // if this is the SSTRecord (occurs once in the workbook) then add all of its
+            // strings to our workbook.  We'll look them up later when we add LABELSST records.
+            case SSTRecord.sid:
+                SSTRecord sstrec = (SSTRecord) record;
                 for (int k = 0; k &lt; sstrec.getNumUniqueStrings(); k++) {
                     workbook.addSSTString(sstrec.getString(k));
                 }
             break;
-            case LabelSSTRecord.sid:                                  // if this is a LabelSSTRecord then get the row specified in the LabelSSTRecord from
-                LabelSSTRecord lrec = (LabelSSTRecord) record;        // the current sheet.  With this instance of HSSFRow create a new HSSFCell with the
-                row = cursheet.getRow(lrec.getRow());                 // column nubmer specified in the record and set the type to type STRING.  
+            // if this is a LabelSSTRecord then get the row specified in the LabelSSTRecord from
+            // the current sheet.  With this instance of HSSFRow create a new HSSFCell with the
+            // column nubmer specified in the record and set the type to type STRING.
+            case LabelSSTRecord.sid:
+                LabelSSTRecord lrec = (LabelSSTRecord) record;
+                row = cursheet.getRow(lrec.getRow());
                 cell = row.createCell(lrec.getColumn(),HSSFCell.CELL_TYPE_STRING);
-                cell.setCellValue(workbook.getSSTString(lrec.getSSTIndex())); //set the cells value to the string in our workbook object (added in the case
-            break;                                                            //above) at the index specified by the LabelSSTRecord.
+                //set the cells value to the string in our workbook object (added in the case
+                //above) at the index specified by the LabelSSTRecord.
+                cell.setCellValue(workbook.getSSTString(lrec.getSSTIndex()));
+            break;
         }
     }</source>
      </s3>
@@ -356,7 +432,9 @@ export CLASSPATH=$CLASSPATH:$HSSFDIR/hssf.jar:$HSSFDIR/poi-poifs.jar:$HSSFDIR/po
 <ul>
 	<li>Type:
 	<code>java org.apache.poi.hssf.dev.HSSF ~/input.xls output.xls
-This is the read/write/modify test.  It reads in the spreadsheet, modifies a cell, and writes it back out.  Failing this test is not necessarily a bad thing.  If HSSF tries to modify a non-existant sheet then this will most likely fail.  No big deal.  </code></li>
+This is the read/write/modify test.  It reads in the spreadsheet, modifies a cell, and writes it back out.
+Failing this test is not necessarily a bad thing.  If HSSF tries to modify a non-existant sheet then this will
+most likely fail.  No big deal.  </code></li>
 </ul>
      </s3>
                 <s3 title="HSSF Logging facility">
@@ -375,7 +453,7 @@ you get no logging. If the log configuration dictates the logging be
 turned off, you get no logging.</p>
 <p>Here is an example hssflog.properties (actually its not an example
 its mine):
-<code># Set root category priority to DEBUG and its only appender to A1.
+<source># Set root category priority to DEBUG and its only appender to A1.
 log4j.rootCategory=DEBUG, A1
   
 # A1 is set to be a ConsoleAppender. 
@@ -386,7 +464,7 @@ log4j.appender.A1.layout=org.apache.log4j.PatternLayout
 log4j.appender.A1.layout.ConversionPattern=%-4r [%t] %-5p %c %x - %m%n
 #uncomment below to change the level to WARN to disable debugging information.  This effectively turns off logging.
 #the default level is DEBUG (and changing it to DEBUG is the basically the same thing as leaving it commented out).
-#log4j.category.org.apache.poi=WARN</code></p>
+#log4j.category.org.apache.poi=WARN</source></p>
 
      </s3>
                 <s3 title="HSSF Developer's tools">
