@@ -93,8 +93,8 @@ public class HSSFRequest
      *
      * @see #addListenerForAllRecords(HSSFListener)
      *
-     * @param listener for the event
-     * @param static identifier for the record type this is the .sid static member on the individual records
+     * @param lsnr      for the event
+     * @param sid       identifier for the record type this is the .sid static member on the individual records
      *        for example req.addListener(myListener, BOFRecord.sid)
      */
 
@@ -124,7 +124,7 @@ public class HSSFRequest
      * compelling reason to do so (like maybe you send the event two places or log it or
      * something?).
      *
-     * @param a single listener to associate with ALL records
+     * @param lsnr      a single listener to associate with ALL records
      */
 
     public void addListenerForAllRecords(HSSFListener lsnr)

@@ -91,8 +91,8 @@ public class HSSFEventFactory
     /**
      * Processes a file into essentially record events.
      *
-     * @param request an Instance of HSSFRequest which has your registered listeners
-     * @param filesystem a POIFS filesystem containing your workbook
+     * @param req       an Instance of HSSFRequest which has your registered listeners
+     * @param fs        a POIFS filesystem containing your workbook
      */
 
     public void processWorkbookEvents(HSSFRequest req, POIFSFileSystem fs)
@@ -107,8 +107,8 @@ public class HSSFEventFactory
      * Processes a DocumentInputStream into essentially Record events.
      *
      * @see org.apache.poi.poifs.filesystem.POIFSFileSystem#createDocumentInputStream(String)
-     * @param request an Instance of HSSFRequest which has your registered listeners
-     * @param InputStream - a DocumentInputStream obtained from POIFS's POIFSFileSystem object
+     * @param req       an Instance of HSSFRequest which has your registered listeners
+     * @param in        a DocumentInputStream obtained from POIFS's POIFSFileSystem object
      */
 
     public void processEvents(HSSFRequest req, InputStream in)
