@@ -1,4 +1,4 @@
-<record id="0x101A" name="PAP" package="org.apache.poi.hdf.model.hdftypes.definitions">
+<record id="0x101A" name="PAP" package="org.apache.poi.hwpf.model.hdftypes.definitions">
     <suffix>AbstractType</suffix>
     <extends>HDFType</extends>
     <description>Paragraph Properties.</description>

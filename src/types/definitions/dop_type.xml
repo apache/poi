@@ -1,4 +1,4 @@
-<record fromfile="true" name="DOP" package="org.apache.poi.hdf.model.hdftypes.definitions">
+<record fromfile="true" name="DOP" package="org.apache.poi.hwpf.model.hdftypes.definitions">
     <suffix>AbstractType</suffix>
     <extends>HDFType</extends>
     <description>Document Properties.</description>
@@ -12,7 +12,7 @@
         <bit number="4" mask="0x60" name="fpc"/>
         <bit number="5" mask="0x80" name="unused1"/>
       </field>
-      <field type="short" size="2" name="unused2"/>
+      <field type="byte" size="1" name="unused2"/>
       <field type="short" size="2" name="footnoteInfo">
         <bit number="0" mask="0x0003" name="rncFtn"/>
         <bit number="1" mask="0xfffc" name="nFtn"/>
