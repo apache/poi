@@ -2086,6 +2086,7 @@ public class Workbook implements Model {
             palette = createPalette();
           //Add the palette record after the bof which is always the first record
           records.add(1, palette);
+          records.setPalettepos(1);
         }
         return palette;
     }
