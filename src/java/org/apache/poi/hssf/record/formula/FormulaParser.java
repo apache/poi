@@ -68,7 +68,6 @@ import java.io.File;
 /**
  * EXPERIMENTAL 
  *
- * @author Avik Sengupta <avik AT Avik Sengupta DOT com>
  *
  * This class parses a formula string into a List of tokens in RPN order
  * Inspired by 
@@ -77,6 +76,9 @@ import java.io.File;
  * <expression> ::= <term> [<addop> <term>]*
  * <term> ::= <factor>  [ <mulop> <factor ]*
  * <factor> ::= <number> | (<expression>) | <cellRef> 
+ *
+ *  @author Avik Sengupta <avik AT Avik Sengupta DOT com>
+ *  @author Andrew C. oliver (acoliver at apache dot org)
  */
 public class FormulaParser {
     
@@ -234,21 +236,21 @@ public class FormulaParser {
     
     /** Parse and Translate a Identifier */
     private void Ident() {
-        String Name;
-        Name = GetName();
+        String name;
+        name = GetName();
         if (Look == '('){
             //This is a function 
             Match('(');
             int numArgs = Arguments(); 
             Match(')');
             //this is the end of the function
-            tokens.add(new DummyFunctionPtg(Name,numArgs));
+            tokens.add(new DummyFunctionPtg(name,numArgs));
         } else {
             //this can be either a cell ref or a named range !!
             
             boolean cellRef = true ; //we should probably do it with reg exp??
             if (cellRef) {
-                tokens.add(new ValueReferencePtg()); //TODO we need to pass in Name somewhere??
+                tokens.add(new ValueReferencePtg(name)); //TODO we need to pass in Name somewhere??
             }else {
                 //handle after named range is integrated!!
             }

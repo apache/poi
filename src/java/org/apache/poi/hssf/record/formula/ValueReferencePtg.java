@@ -63,9 +63,14 @@ package org.apache.poi.hssf.record.formula;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.BitField;
 
+import org.apache.poi.hssf.util.ReferenceUtil;
+
 /**
- *
- * @author  andy
+ * ValueReferencePtg - handles references (such as A1, A2, IA4) - Should also
+ * be made to handle relative versus absolute references but I don't know enough
+ * about using them in excel to know if its correct.  Seems inverted to me.  
+ * FIXME = correct abs vs relative references
+ * @author  Andrew C. Oliver (acoliver@apache.org)
  */
 
 public class ValueReferencePtg
@@ -82,6 +87,18 @@ public class ValueReferencePtg
 
     public ValueReferencePtg()
     {
+    }
+    
+    /**
+     * Takes in a String represnetation of a cell reference and fills out the 
+     * numeric fields.
+     */
+    public ValueReferencePtg(String cellref) {
+        int[] xy = ReferenceUtil.getXYFromReference(cellref);
+        setRow((short)xy[0]);
+        setColumn((short)xy[1]);
+        setColRelative(true);
+        setRowRelative(true);
     }
 
     /** Creates new ValueReferencePtg */
@@ -107,6 +124,9 @@ public class ValueReferencePtg
 
     public void writeBytes(byte [] array, int offset)
     {
+        array[offset] = sid;
+        LittleEndian.putShort(array,offset+1,field_1_row);
+        LittleEndian.putShort(array,offset+3,field_2_col);
     }
 
     public void setRow(short row)
@@ -123,10 +143,18 @@ public class ValueReferencePtg
     {
         return rowRelative.isSet(field_2_col);
     }
-
+    
+    public void setRowRelative(boolean rel) {
+        field_2_col=rowRelative.setShortBoolean(field_2_col,rel);
+    }
+    
     public boolean isColRelative()
     {
-        return rowRelative.isSet(field_2_col);
+        return colRelative.isSet(field_2_col);
+    }
+    
+    public void setColRelative(boolean rel) {
+        field_2_col=colRelative.setShortBoolean(field_2_col,rel);
     }
 
     public void setColumnRaw(short col)
@@ -146,7 +174,7 @@ public class ValueReferencePtg
 
     public short getColumn()
     {
-        return field_2_col;   // fix this
+        return rowRelative.setShortBoolean(colRelative.setShortBoolean(field_2_col,false),false);
     }
 
     public int getSize()
@@ -156,6 +184,6 @@ public class ValueReferencePtg
 
     public String toFormulaString()
     {
-        return "NO IDEA YET VALUE REF";
+        return ReferenceUtil.getReferenceFromXY(getRow(),getColumn());
     }
 }
