@@ -178,7 +178,7 @@ public class CHPFormattedDiskPage extends FormattedDiskPage
       if (index != size)
       {
         _overFlow = new ArrayList();
-        _overFlow.addAll(index, _chpxList);
+        _overFlow.addAll(_chpxList.subList(index, size));
       }
 
       // index should equal number of CHPXs that will be in this fkp now.

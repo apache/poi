@@ -187,7 +187,7 @@ public class PAPFormattedDiskPage extends FormattedDiskPage
       if (index != size)
       {
         _overFlow = new ArrayList();
-        _overFlow.addAll(index, _papxList);
+        _overFlow.addAll(_papxList.subList(index, size));
       }
 
       // index should equal number of papxs that will be in this fkp now.
@@ -234,7 +234,7 @@ public class PAPFormattedDiskPage extends FormattedDiskPage
 
     private ParagraphHeight getParagraphHeight(int index)
     {
-      int pheOffset = 1 + (((_crun + 1) * 4) + (index * 13));
+      int pheOffset = _offset + 1 + (((_crun + 1) * 4) + (index * 13));
 
       ParagraphHeight phe = new ParagraphHeight(_fkp, pheOffset);
 

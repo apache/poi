@@ -147,5 +147,23 @@ public class TextPieceTable
 
   }
 
+  public boolean equals(Object o)
+  {
+    TextPieceTable tpt = (TextPieceTable)o;
+
+    int size = tpt._textPieces.size();
+    if (size == _textPieces.size())
+    {
+      for (int x = 0; x < size; x++)
+      {
+        if (!tpt._textPieces.get(x).equals(_textPieces.get(x)))
+        {
+          return false;
+        }
+      }
+      return true;
+    }
+    return false;
+  }
 
 }
