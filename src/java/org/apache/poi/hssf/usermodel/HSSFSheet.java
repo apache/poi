@@ -65,6 +65,7 @@ import org.apache.poi.hssf.record.CellValueRecordInterface;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RowRecord;
 import org.apache.poi.hssf.record.VCenterRecord;
+import org.apache.poi.hssf.record.WindowTwoRecord;
 import org.apache.poi.hssf.record.WSBoolRecord;
 import org.apache.poi.hssf.util.Region;
 import org.apache.poi.util.POILogFactory;
@@ -84,6 +85,12 @@ import java.util.TreeMap;
 public class HSSFSheet
 {
     private static final int DEBUG = POILogger.DEBUG;
+
+    /* Constants for margins */
+    public static final short LeftMargin = Sheet.LeftMargin;
+    public static final short RightMargin = Sheet.RightMargin;
+    public static final short TopMargin = Sheet.TopMargin;
+    public static final short BottomMargin = Sheet.BottomMargin;
 
     /**
      * Used for compile-time optimization.  This is the initial size for the collection of
@@ -792,12 +799,30 @@ public class HSSFSheet
     public HSSFFooter getFooter() {
         return new HSSFFooter(getSheet().getFooter());
      }
+
      /**
       * Sets whether sheet is selected.
       * @param sel Whether to select the sheet or deselect the sheet.
       */
      public void setSelected(boolean sel) {
        getSheet().setSelected(sel);
-
      }
+
+     /**
+      * Gets the size of the margin in inches.
+      * @param margin which margin to get
+      * @return the size of the margin
+      */
+     public double getMargin(short margin) {
+       return getSheet().getMargin(margin);
+     }
+
+     /**
+      * Sets the size of the margin in inches.
+      * @param margin which margin to get
+      * @param size the size of the margin
+      */
+     public void setMargin(short margin, double size) {
+       getSheet().setMargin(margin, size);
+      }
 }
