@@ -61,55 +61,76 @@ import org.apache.poi.hdf.extractor.data.*;
 import java.util.*;
 import java.io.*;
 import javax.swing.*;
-//import javax.swing.text.StyleContext;
+
 import java.awt.*;
 
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSDocument;
-import org.apache.poi.poifs.filesystem.Entry;
+import org.apache.poi.poifs.filesystem.DocumentEntry;
 
 import org.apache.poi.util.LittleEndian;
 
 /**
- * Comment me
+ * This class contains the main functionality for the Word file "reader". Much
+ * of the code in this class is based on the Word 97 document file format. Only
+ * works for non-complex files
  *
- * @author Ryan Ackley 
+ * @author Ryan Ackley
  */
 
 public class WordDocument
 {
+  /** byte buffer containing the main Document stream*/
   byte[] _header;
-
+  /** contains all style information for this document see Word 97 Doc spec*/
   StyleSheet _styleSheet;
+  /** contains All list information for this document*/
   ListTables _listTables;
+  /** contains global Document properties for this document*/
   DOP _docProps = new DOP();
+
   int _currentList = -1;
   int _tableSize;
   int _sectionCounter = 1;
+  /** fonts available for this document*/
   FontTable _fonts;
 
+  /** document's text blocks*/
   BTreeSet _text = new BTreeSet();
+  /** document's character runs */
   BTreeSet _characterTable = new BTreeSet();
+  /** document's paragraphs*/
   BTreeSet _paragraphTable = new BTreeSet();
+  /** doucment's sections*/
   BTreeSet _sectionTable = new BTreeSet();
 
-  //WordDocWriter _writer = this;
+  /** used for XSL-FO conversion*/
   StringBuffer _headerBuffer = new StringBuffer();
+  /** used for XSL-FO conversion*/
   StringBuffer _bodyBuffer = new StringBuffer();
+  /** used for XSL-FO table conversion*/
   StringBuffer _cellBuffer;
-
+  /** used for XSL-FO table conversion*/
   ArrayList _cells;
+  /** used for XSL-FO table conversion*/
   ArrayList _table;
 
+  /** document's header and footer information*/
   byte[] _plcfHdd;
+
+  /** starting position of text in main document stream*/
   int _fcMin;
+  /** length of main document text stream*/
   int _ccpText;
+  /** length of footnotes text*/
   int _ccpFtn;
 
-
+  /** OLE stuff*/
   private InputStream istream;
+  /** OLE stuff*/
   private POIFSFileSystem filesystem;
-  
+
+  //used internally
   private static int HEADER_EVEN_INDEX = 0;
   private static int HEADER_ODD_INDEX = 1;
   private static int FOOTER_EVEN_INDEX = 2;
@@ -117,7 +138,10 @@ public class WordDocument
   private static int HEADER_FIRST_INDEX = 4;
   private static int FOOTER_FIRST_INDEX = 5;
 
-
+  /**
+   *  right now this function takes one parameter: a Word file, and outputs an
+   *  XSL-FO document at c:\test.xml (this is hardcoded)
+   */
   public static void main(String args[])
   {
       /*try
@@ -134,7 +158,7 @@ public class WordDocument
       }*/
       try
       {
-          WordDocument file = new WordDocument(args[0], "r");
+          WordDocument file = new WordDocument(args[0]);
           file.closeDoc();
       }
       catch(Exception e)
@@ -143,6 +167,13 @@ public class WordDocument
       }
       System.exit(0);
   }
+  /**
+   * Spits out the document text
+   *
+   * @param out The Writer to write the text to.
+   * @throws IOException if there is a problem while reading from the file or
+   *         writing out the text.
+   */
   public void writeAllText(Writer out) throws IOException
   {
     int textStart = Utils.convertBytesToInt(_header, 0x18);
@@ -177,18 +208,30 @@ public class WordDocument
       }
     }
   }
-  public WordDocument(String fileName, String mode) throws IOException
+  /**
+   * Constructs a Word document from fileName. Parses the document and places
+   * all the important stuff into data structures.
+   *
+   * @param fileName The name of the file to read.
+   * @throws IOException if there is a problem while parsing the document.
+   */
+  public WordDocument(String fileName) throws IOException
   {
-//        super(fileName, mode);
-      
-      
+
+
+        //do Ole stuff
         istream = new FileInputStream(fileName);
         filesystem = new POIFSFileSystem(istream);
-      
+
+        //get important stuff from the Header block and parse all the
+        //data structures
         readFIB();
 
+        //get the SEPS for the main document text
         ArrayList sections = findProperties(_fcMin, _fcMin + _ccpText, _sectionTable.root);
 
+        //iterate through sections, paragraphs, and character runs doing what
+        //you will with the data.
         int size = sections.size();
         for(int x = 0; x < size; x++)
         {
@@ -198,86 +241,110 @@ public class WordDocument
           SEP sep = (SEP)StyleSheet.uncompressProperty(node.getSepx(), new SEP(), _styleSheet);
           writeSection(Math.max(_fcMin, start), Math.min(_fcMin + _ccpText, end), sep, _text, _paragraphTable, _characterTable, _styleSheet);
         }
-        
+        //finish
         istream.close();
 
   }
+  /**
+   * Extracts the main document stream from the POI file then hands off to other
+   * functions that parse other areas.
+   *
+   * @throws IOException
+   */
   private void readFIB() throws IOException
   {
-      //PropertySet headerProps = (PropertySet)_propertySetsHT.get("WordDocument");
-      Entry headerProps = filesystem.getRoot().getEntry("WordDocument");
-      
- //     if(headerProps.getSize() >= 4096)
-   //   {
-          //_header = createBufferFromBBD(headerProps.getStartBlock());      
-          _header = new byte[4096];
-          filesystem.createDocumentInputStream("WordDocument").read(_header);
-     // }
+      //get the main document stream
+      DocumentEntry headerProps =
+        (DocumentEntry)filesystem.getRoot().getEntry("WordDocument");
+
+      //I call it the header but its also the main document stream
+      _header = new byte[headerProps.getSize()];
+      filesystem.createDocumentInputStream("WordDocument").read(_header);
+
+      //Get the information we need from the header
       int info = LittleEndian.getShort(_header, 0xa);
 
-      _fcMin = Utils.convertBytesToInt(_header, 0x18);
-      _ccpText = Utils.convertBytesToInt(_header, 0x4c);
-      _ccpFtn = Utils.convertBytesToInt(_header, 0x50);
+      _fcMin = LittleEndian.getInt(_header, 0x18);
+      _ccpText = LittleEndian.getInt(_header, 0x4c);
+      _ccpFtn = LittleEndian.getInt(_header, 0x50);
 
-      int charPLC = Utils.convertBytesToInt(_header, 0xfa);
-      int charPlcSize = Utils.convertBytesToInt(_header, 0xfe);
-      int parPLC = Utils.convertBytesToInt(_header, 0x102);
-      int parPlcSize = Utils.convertBytesToInt(_header, 0x106);
+      int charPLC = LittleEndian.getInt(_header, 0xfa);
+      int charPlcSize = LittleEndian.getInt(_header, 0xfe);
+      int parPLC = LittleEndian.getInt(_header, 0x102);
+      int parPlcSize = LittleEndian.getInt(_header, 0x106);
       boolean useTable1 = (info & 0x200) != 0;
 
+      //process the text and formatting properties
       processComplexFile(useTable1, charPLC, charPlcSize, parPLC, parPlcSize);
   }
 
-  private boolean processComplexFile(boolean useTable1, int charTable,
+  /**
+   * Extracts the correct Table stream from the POI filesystem then hands off to
+   * other functions to process text and formatting info. the name is based on
+   * the fact that in Word 8(97) all text (not character or paragraph formatting)
+   * is stored in complex format.
+   *
+   * @param useTable1 boolean that specifies if we should use table1 or table0
+   * @param charTable offset in table stream of character property bin table
+   * @param charPlcSize size of character property bin table
+   * @param parTable offset in table stream of paragraph property bin table.
+   * @param parPlcSize size of paragraph property bin table.
+   * @return boolean indocating success of
+   * @throws IOException
+   */
+  private void processComplexFile(boolean useTable1, int charTable,
                                      int charPlcSize, int parTable, int parPlcSize) throws IOException
   {
-      int complexOffset = Utils.convertBytesToInt(_header, 0x1a2);
-      //int complexSize = Utils.convertBytesToInt(_header, 0x1a6);
 
-      //if(complexSize <= 0)
-      //{
-      //    return false;
-      //}
+      //get the location of the piece table
+      int complexOffset = LittleEndian.getInt(_header, 0x1a2);
 
       String tablename=null;
-      Entry tableProps = null;
+      DocumentEntry tableEntry = null;
       if(useTable1)
       {
-          tableProps = filesystem.getRoot().getEntry("1Table");
           tablename="1Table";
       }
       else
       {
-          tableProps = filesystem.getRoot().getEntry("0Table");
           tablename="0Table";
       }
-      //get table properties
-      //int size = tableProps.getSize();
-      int size = 4096; //hardcoded -- need to learn more about new POIFS api..??
-      //int startBlock = tableProps.getStartBlock();
+      tableEntry = (DocumentEntry)filesystem.getRoot().getEntry(tablename);
 
+      //load the table stream into a buffer
+      int size = tableEntry.getSize();
       byte[] tableStream = new byte[size];
-      //big enough to use BBD?
-      if(size >= 4096)
-      {
-          filesystem.createDocumentInputStream(tablename).read(tableStream); //createBufferFromBBD(startBlock);
-      }
+      filesystem.createDocumentInputStream(tablename).read(tableStream);
+
+      //init the DOP for this document
       initDocProperties(tableStream);
+      //load the header/footer raw data for this document
       initPclfHdd(tableStream);
+      //parse out the text locations
       findText(tableStream, complexOffset);
+      //parse out text formatting
       findFormatting(tableStream, charTable, charPlcSize, parTable, parPlcSize);
 
-      return true;
-
   }
+  /**
+   * Goes through the piece table and parses out the info regarding the text
+   * blocks. For Word 97 and greater all text is stored in the "complex" way
+   * because of unicode.
+   *
+   * @param tableStream buffer containing the main table stream.
+   * @param beginning of the complex data.
+   * @throws IOException
+   */
   private void findText(byte[] tableStream, int complexOffset) throws IOException
   {
     //actual text
     int pos = complexOffset;
+    //skips through the prms before we reach the piece table. These contain data
+    //for actual fast saved files
     while(tableStream[pos] == 1)
     {
         pos++;
-        int skip = Utils.convertBytesToShort(tableStream, pos);
+        int skip = LittleEndian.getShort(tableStream, pos);
         pos += 2 + skip;
     }
     if(tableStream[pos] != 2)
@@ -286,12 +353,13 @@ public class WordDocument
     }
     else
     {
-        int pieceTableSize = Utils.convertBytesToInt(tableStream, ++pos);
+        //parse out the text pieces
+        int pieceTableSize = LittleEndian.getInt(tableStream, ++pos);
         pos += 4;
         int pieces = (pieceTableSize - 4) / 12;
         for (int x = 0; x < pieces; x++)
         {
-            int filePos = Utils.convertBytesToInt(tableStream, pos + ((pieces + 1) * 4) + (x * 8) + 2);
+            int filePos = LittleEndian.getInt(tableStream, pos + ((pieces + 1) * 4) + (x * 8) + 2);
             boolean unicode = false;
             if ((filePos & 0x40000000) == 0)
             {
@@ -303,8 +371,8 @@ public class WordDocument
                 filePos &= ~(0x40000000);//gives me FC in doc stream
                 filePos /= 2;
             }
-            int totLength = Utils.convertBytesToInt(tableStream, pos + (x + 1) * 4) -
-                            Utils.convertBytesToInt(tableStream, pos + (x * 4));
+            int totLength = LittleEndian.getInt(tableStream, pos + (x + 1) * 4) -
+                            LittleEndian.getInt(tableStream, pos + (x * 4));
 
             TextPiece piece = new TextPiece(filePos, totLength, unicode);
             _text.add(piece);
@@ -313,11 +381,16 @@ public class WordDocument
 
     }
   }
-  private void printText(CHP chp, byte[] grpprl, int filePos, int length)
-  {
 
-  }
-
+  /**
+   * Does all of the formatting parsing
+   *
+   * @param tableStream Main table stream buffer.
+   * @param charOffset beginning of the character bin table.
+   * @param chrPlcSize size of the char bin table.
+   * @param parOffset offset of the paragraph bin table.
+   * @param size of the paragraph bin table.
+   */
   private void findFormatting(byte[] tableStream, int charOffset,
                               int charPlcSize, int parOffset, int parPlcSize) throws IOException
   {
@@ -330,26 +403,25 @@ public class WordDocument
       //Get all the chpx info and store it
 
       int arraySize = (charPlcSize - 4)/8;
-      //int[][] parFkpTable = new int[arraySize][2];
+
       //first we must go through the bin table and find the fkps
       for(int x = 0; x < arraySize; x++)
       {
 
-          //get fc of the start of the paragraph
-          //parFkpTable[x][0] = Utils.convertBytesToInt(tableStream, parOffset + (x * 4));
-          //get pn containing the chpx for the paragraph
-          //parFkpTable[x][1] = Utils.convertBytesToInt(tableStream, parOffset + (4 * (arraySize + 1) + (4 * x)));
-          int PN = Utils.convertBytesToInt(tableStream, charOffset + (4 * (arraySize + 1) + (4 * x)));
+
+          //get page number(has nothing to do with document page)
+          //containing the chpx for the paragraph
+          int PN = LittleEndian.getInt(tableStream, charOffset + (4 * (arraySize + 1) + (4 * x)));
 
           byte[] fkp = new byte[512];
           System.arraycopy(_header, (PN * 512), fkp, 0, 512);
-          //take each fkp and get the paps
+          //take each fkp and get the chpxs
           int crun = Utils.convertUnsignedByteToInt(fkp[511]);
           for(int y = 0; y < crun; y++)
           {
               //get the beginning fc of each paragraph text run
-              int fcStart = Utils.convertBytesToInt(fkp, y * 4);
-              int fcEnd = Utils.convertBytesToInt(fkp, (y+1) * 4);
+              int fcStart = LittleEndian.getInt(fkp, y * 4);
+              int fcEnd = LittleEndian.getInt(fkp, (y+1) * 4);
               //get the offset in fkp of the papx for this paragraph
               int chpxOffset = 2 * Utils.convertUnsignedByteToInt(fkp[((crun + 1) * 4) + y]);
 
@@ -376,7 +448,7 @@ public class WordDocument
       //first we must go through the bin table and find the fkps
       for(int x = 0; x < arraySize; x++)
       {
-          int PN = Utils.convertBytesToInt(tableStream, parOffset + (4 * (arraySize + 1) + (4 * x)));
+          int PN = LittleEndian.getInt(tableStream, parOffset + (4 * (arraySize + 1) + (4 * x)));
 
           byte[] fkp = new byte[512];
           System.arraycopy(_header, (PN * 512), fkp, 0, 512);
@@ -385,8 +457,8 @@ public class WordDocument
           for(int y = 0; y < crun; y++)
           {
               //get the beginning fc of each paragraph text run
-              int fcStart = Utils.convertBytesToInt(fkp, y * 4);
-              int fcEnd = Utils.convertBytesToInt(fkp, (y+1) * 4);
+              int fcStart = LittleEndian.getInt(fkp, y * 4);
+              int fcEnd = LittleEndian.getInt(fkp, (y+1) * 4);
               //get the offset in fkp of the papx for this paragraph
               int papxOffset = 2 * Utils.convertUnsignedByteToInt(fkp[((crun + 1) * 4) + (y * 13)]);
               int size = 2 * Utils.convertUnsignedByteToInt(fkp[papxOffset]);
@@ -406,6 +478,7 @@ public class WordDocument
           }
 
       }
+
       //find sections
       int fcMin = Utils.convertBytesToInt(_header, 0x18);
       int plcfsedFC = Utils.convertBytesToInt(_header, 0xca);
@@ -427,17 +500,16 @@ public class WordDocument
           System.arraycopy(_header, sepxStart + 2, sepx, 0, sepxSize);
           SepxNode node = new SepxNode(x + 1, sectionStart, sectionEnd, sepx);
           _sectionTable.add(node);
-          //HeaderFooter[] hdrftr = findSectionHdrFtr(x);
       }
 
 
   }
+
   public void openDoc()
   {
     _headerBuffer.append("<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>\r\n");
     _headerBuffer.append("<fo:root xmlns:fo=\"http://www.w3.org/1999/XSL/Format\">\r\n");
     _headerBuffer.append("<fo:layout-master-set>\r\n");
-    //_headerBuffer.append("<fo:simple-page-master master-name=\"my-page\">\r\n");
 
   }
   private HeaderFooter findSectionHdrFtr(int type, int index)
@@ -482,10 +554,15 @@ public class WordDocument
     }
     return retValue;
   }
+  /**
+   * inits this document DOP structure.
+   *
+   * @param tableStream The documents table stream.
+   */
   private void initDocProperties(byte[] tableStream)
   {
-    int pos = Utils.convertBytesToInt(_header, 0x192);
-    int size = Utils.convertBytesToInt(_header, 0x196);
+    int pos = LittleEndian.getInt(_header, 0x192);
+    int size = LittleEndian.getInt(_header, 0x196);
     byte[] dop = new byte[size];
 
     System.arraycopy(tableStream, pos, dop, 0, size);
@@ -493,13 +570,13 @@ public class WordDocument
     _docProps._fFacingPages = (dop[0] & 0x1) > 0;
     _docProps._fpc = (dop[0] & 0x60) >> 5;
 
-    short num = Utils.convertBytesToShort(dop, 2);
+    short num = LittleEndian.getShort(dop, 2);
     _docProps._rncFtn = (num & 0x3);
     _docProps._nFtn = (short)(num & 0xfffc) >> 2;
-    num = Utils.convertBytesToShort(dop, 52);
+    num = LittleEndian.getShort(dop, 52);
     _docProps._rncEdn = num & 0x3;
     _docProps._nEdn = (short)(num & 0xfffc) >> 2;
-    num = Utils.convertBytesToShort(dop, 54);
+    num = LittleEndian.getShort(dop, 54);
     _docProps._epc = num & 0x3;
   }
 
@@ -1568,18 +1645,23 @@ public class WordDocument
         return "solid";
     }
   }
+  /**
+   * creates the List data
+   *
+   * @param tableStream Main table stream buffer.
+   */
   private void createListTables(byte[] tableStream)
   {
 
 
-    int lfoOffset = Utils.convertBytesToInt(_header, 0x2ea);
-    int lfoSize = Utils.convertBytesToInt(_header, 0x2ee);
+    int lfoOffset = LittleEndian.getInt(_header, 0x2ea);
+    int lfoSize = LittleEndian.getInt(_header, 0x2ee);
     byte[] plflfo = new byte[lfoSize];
 
     System.arraycopy(tableStream, lfoOffset, plflfo, 0, lfoSize);
 
-    int lstOffset = Utils.convertBytesToInt(_header, 0x2e2);
-    int lstSize = Utils.convertBytesToInt(_header, 0x2e2);
+    int lstOffset = LittleEndian.getInt(_header, 0x2e2);
+    int lstSize = LittleEndian.getInt(_header, 0x2e2);
     if(lstOffset > 0 && lstSize > 0)
     {
       lstSize = lfoOffset - lstOffset;
@@ -1589,42 +1671,37 @@ public class WordDocument
     }
 
   }
+  /**
+   * Creates the documents StyleSheet
+   *
+   * @param tableStream Main table stream buffer.
+   *
+   */
   private void createStyleSheet(byte[] tableStream)
   {
-      int stshIndex = Utils.convertBytesToInt(_header, 0xa2);
-      int stshSize = Utils.convertBytesToInt(_header, 0xa6);
+      int stshIndex = LittleEndian.getInt(_header, 0xa2);
+      int stshSize = LittleEndian.getInt(_header, 0xa6);
       byte[] stsh = new byte[stshSize];
       System.arraycopy(tableStream, stshIndex, stsh, 0, stshSize);
 
       _styleSheet = new StyleSheet(stsh);
 
   }
+  /**
+   * creates the Font table
+   *
+   * @param tableStream Main table stream buffer.
+   */
   private void createFontTable(byte[] tableStream)
   {
-    int fontTableIndex = Utils.convertBytesToInt(_header, 0x112);
-    int fontTableSize = Utils.convertBytesToInt(_header, 0x116);
+    int fontTableIndex = LittleEndian.getInt(_header, 0x112);
+    int fontTableSize = LittleEndian.getInt(_header, 0x116);
     byte[] fontTable = new byte[fontTableSize];
     System.arraycopy(tableStream, fontTableIndex, fontTable, 0, fontTableSize);
     _fonts = new FontTable(fontTable);
   }
 
-//  private byte[] createBufferFromBBD(int startBlock) throws IOException
-//  {
-//
-//      int[] blockChain = readChain(_big_block_depot, startBlock);
-//      byte[] streamBuffer = new byte[512 * blockChain.length];
-//
-//
-//      for(int x = 0; x < blockChain.length; x++)
-//      {
-//          byte[] bigBlock = new byte[512];
-//          seek((blockChain[x] + 1) * 512);
-//          read(bigBlock);
-//          System.arraycopy(bigBlock, 0, streamBuffer, x * 512, 512);
-//      }
-//      return streamBuffer;
-//
-//  }
+
   private void overrideCellBorder(int row, int col, int height,
                                   int width, TC tc, TAP tap)
   {
