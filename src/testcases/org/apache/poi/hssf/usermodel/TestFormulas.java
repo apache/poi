@@ -55,23 +55,15 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import junit.framework.TestCase;
-
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.hssf.model.Sheet;
-import org.apache.poi.hssf.record.Record;
-import org.apache.poi.hssf.record.BOFRecord;
-import org.apache.poi.hssf.record.EOFRecord;
-import org.apache.poi.hssf.util.CellReference;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-
-import java.util.List;
-import java.util.Iterator;
+import java.io.IOException;
 import java.util.Date;
-import java.util.GregorianCalendar;
+
+import junit.framework.TestCase;
+
+import org.apache.poi.hssf.util.CellReference;
 
 /**
  * @author Andrew C. Oliver (acoliver at apache dot org)
@@ -985,6 +977,58 @@ extends TestCase {
 		assertTrue("length of nestedIf file is zero", (nestedIf.length()>0));             
     }
 
+	public void testSumIf()
+		throws java.io.IOException
+	{
+		String readFilename = System.getProperty("HSSF.testdata.path");		
+		String function ="SUMIF(A1:A5,\">4000\",B1:B5)";
+		
+		File inFile = new File(readFilename+"/sumifformula.xls");
+		FileInputStream in = new FileInputStream(inFile);
+		HSSFWorkbook wb = new HSSFWorkbook(in);
+		in.close();
+		
+		HSSFSheet        s      = wb.getSheetAt(0);
+		HSSFRow          r      = s.getRow(0);
+		HSSFCell         c      = r.getCell((short)2);
+		assertEquals(function, c.getCellFormula());
+		
+
+		File file = File.createTempFile("testSumIfFormula",".xls");
+		FileOutputStream out    = new FileOutputStream(file);
+		wb     = new HSSFWorkbook();
+		s      = wb.createSheet();
+		
+		r = s.createRow((short)0);
+		c=r.createCell((short)0); c.setCellValue((double)1000);
+		c=r.createCell((short)1); c.setCellValue((double)1);
+		
+		
+		r = s.createRow((short)1);
+		c=r.createCell((short)0); c.setCellValue((double)2000);
+		c=r.createCell((short)1); c.setCellValue((double)2);
+
+		r = s.createRow((short)2);
+		c=r.createCell((short)0); c.setCellValue((double)3000);
+		c=r.createCell((short)1); c.setCellValue((double)3);
+
+		r = s.createRow((short)3);
+		c=r.createCell((short)0); c.setCellValue((double)4000);
+		c=r.createCell((short)1); c.setCellValue((double)4);
+
+		r = s.createRow((short)4);
+		c=r.createCell((short)0); c.setCellValue((double)5000);
+		c=r.createCell((short)1); c.setCellValue((double)5);
+		
+		r = s.getRow(0);
+		c=r.createCell((short)2); c.setCellFormula(function);
+			
+		wb.write(out);				
+		out.close();
+		
+		assertTrue("sumif file doesnt exists", (file.exists()));
+		assertTrue("sumif == 0 bytes", file.length() > 0);
+	}
     
     public static void main(String [] args) {
         System.out

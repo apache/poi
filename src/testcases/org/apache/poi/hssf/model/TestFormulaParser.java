@@ -217,10 +217,39 @@ public class TestFormulaParser extends TestCase {
 		FuncVarPtg funcPtg = (FuncVarPtg)asts[6];
 		assertEquals("Arguments", 2, funcPtg.getNumberOfOperands());
 		
-						
-		
 		
 	}
+
+	public void testSumIf() {
+		String function ="SUMIF(A1:A5,\">4000\",B1:B5)";
+		FormulaParser fp = new FormulaParser(function, null);
+		fp.parse();
+		Ptg[] asts = fp.getRPNPtg();
+		assertEquals("4 Ptgs expected", 4, asts.length);
+		
+	}
+	 
+	/**
+	 * Bug Reported by xt-jens.riis@nokia.com (Jens Riis)
+	 * Refers to Bug <a href="http://nagoya.apache.org/bugzilla/show_bug.cgi?id=17582">#17582</a>
+	 *
+	 */
+	public void testNonAlphaFormula(){
+		String currencyCell = "F3";
+		String function="\"TOTAL[\"&"+currencyCell+"&\"]\"";
+
+		FormulaParser fp = new FormulaParser(function, null);
+		fp.parse();
+		Ptg[] asts = fp.getRPNPtg();
+		assertEquals("5 ptgs expected", 5, asts.length);
+		assertTrue ("Ptg[0] is a string", (asts[0] instanceof StringPtg));
+		StringPtg firstString = (StringPtg)asts[0];		
+		
+		assertEquals("TOTAL[", firstString.getValue());
+		//the PTG order isn't 100% correct but it still works - dmui
+		
+					
+	}	 
 	    
      public static void main(String [] args) {
         System.out.println("Testing org.apache.poi.hssf.record.formula.FormulaParser");
