@@ -16,3 +16,4 @@ release-bin
 POILogger.log
 jakarta-poi.ipr
 build.number
+log*.*
