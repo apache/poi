@@ -77,6 +77,54 @@ public abstract class Ptg
     {
     }
     
+    /** convert infix order ptg list to rpn order ptg list
+     * @return List ptgs in RPN order
+     * @param infixPtgs List of ptgs in infix order
+     */
+    public static List ptgsToRpn(List infixPtgs) {
+        java.util.Stack operands = new java.util.Stack();
+        java.util.List retval = new java.util.Stack();
+        
+        java.util.ListIterator i = infixPtgs.listIterator();
+        Object p;
+        OperationPtg o ;
+        boolean weHaveABracket = false;
+        while (i.hasNext()) {
+            p=i.next();
+            if (p instanceof OperationPtg) {
+                if (p instanceof ParenthesisPtg) {
+                    if (!weHaveABracket) {
+                        operands.push(p);
+                        weHaveABracket = true;
+                    } else {
+                        o = (OperationPtg) operands.pop();
+                        while (!(o instanceof ParenthesisPtg)) { 
+                            retval.add(o);
+                        }
+                        weHaveABracket = false;
+                    }
+                } else {
+                    
+                    while  (!operands.isEmpty() && ((OperationPtg) operands.peek()).getPrecedence() >= ((OperationPtg) p).getPrecedence() ) { //TODO handle ^ since it is right associative
+                        retval.add(operands.pop());
+                    }
+                    operands.push(p);
+                }
+            } else {
+                retval.add(p);
+            }
+        }
+        while (!operands.isEmpty()) {
+            if (operands.peek() instanceof ParenthesisPtg ){
+                //throw some error
+            } else {
+                retval.add(operands.pop());
+            }   
+        }
+        return retval;
+    }
+    
+
     
     
     /*

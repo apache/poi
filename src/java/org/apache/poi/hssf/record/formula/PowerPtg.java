@@ -109,6 +109,10 @@ public class PowerPtg
     {
         return "^";
     }
+    
+    public int getPrecedence() {
+        return 3;
+    }
 
     public String toFormulaString(Ptg [] operands)
     {
@@ -119,8 +123,21 @@ public class PowerPtg
         buffer.append(operands[ 0 ].toFormulaString());
         return buffer.toString();
     }
+        
+    
+    public String toFormulaString(String[] operands) {
+         StringBuffer buffer = new StringBuffer();
+
+        buffer.append(operands[ 1 ]);
+        buffer.append("^");
+        buffer.append(operands[ 0 ]);
+        return buffer.toString();
+    }
+    
+
     
     public void manipulate(List source, List results, int pos) {
     }
     
+
 }

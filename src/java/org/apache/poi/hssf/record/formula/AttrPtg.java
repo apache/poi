@@ -210,5 +210,12 @@ public class AttrPtg
     public void manipulate(List source, List results, int pos) {
     }
     
+    public String toFormulaString(String[] operands) {
+        return "SUM(" + operands[ 0 ] + ")";
+    }    
+    
+    public int getPrecedence() {
+        return 1;
+    }    
     
 }
