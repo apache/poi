@@ -66,10 +66,10 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 
 /**
- * Class TestHSSFSheet
+ * Tests HSSFSheet.  This test case is very incomplete at the moment.
  *
  *
- * @author
+ * @author Glen Stampoultzis (glens at apache.org)
  * @version %I%, %G%
  */
 
