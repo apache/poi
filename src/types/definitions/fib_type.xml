@@ -1,4 +1,4 @@
-<record fromfile="true" name="FIB" package="org.apache.poi.hwpf.model.hdftypes.definitions">
+<record fromfile="true" name="FIB" package="org.apache.poi.hwpf.model.types">
     <suffix>AbstractType</suffix>
     <extends>HDFType</extends>
     <description>File information Block.</description>
@@ -45,7 +45,7 @@
     <field type="int" size="2" name="chsTables" longname="default extcharset"/>
     <field type="int" size="4" name="fcMin" longname="offset first char"/>
     <field type="int" size="4" name="fcMac" longname="offset last char"/>
-    <field type="int" size="2" name="csw" longname="count shorts"/>
+    <!--<field type="int" size="2" name="csw" longname="count shorts"/>
 
     <field type="int" size="2" name="wMagicCreated" longname="creator id or beg shorts"/>
     <field type="int" size="2" name="wMagicRevised" longname="revisor id"/>
@@ -246,14 +246,14 @@
     <field type="int" size="4" name="fcSttbAutoCaption"/>
     <field type="int" size="4" name="lcbSttbAutoCaption"/>
     <field type="int" size="4" name="fcPlcfwkb"/>
-    <field type="int" size="4" name="lcbPlcfwkb"/>
+    <field type="int" size="4" name="lcbPlcfwkb"/> -->
     <!--
         possible typo - was
         <field type="int" size="4" name="fcPlcfsplfcPlcfspl"/>
 
         documented as fcPlcfspl in MS Word Binary Format doc
     -->
-    <field type="int" size="4" name="fcPlcfspl"/>
+    <!--<field type="int" size="4" name="fcPlcfspl"/>
     <field type="int" size="4" name="lcbPlcfspl"/>
 
     <field type="int" size="4" name="fcPlcftxbxTxt"/>
@@ -270,14 +270,14 @@
     <field type="int" size="4" name="fcSttbttmbd"/>
     <field type="int" size="4" name="cbSttbttmbd"/>
     <field type="int" size="4" name="fcUnused"/>
-    <field type="int" size="4" name="lcbUnused"/>
+    <field type="int" size="4" name="lcbUnused"/> -->
     <!--
         Bug - this field is meant to be an array that "overlays"
               the following fields.  See MS Word Binary Format doc
               for details.
         <field type="int" size="4" name="rgpgdbkd"/>
     -->
-    <field type="int" size="4" name="fcPgdMother"/>
+    <!--<field type="int" size="4" name="fcPgdMother"/>
     <field type="int" size="4" name="lcbPgdMother"/>
     <field type="int" size="4" name="fcBkdMother"/>
     <field type="int" size="4" name="lcbBkdMother"/>
@@ -328,14 +328,14 @@
     <field type="int" size="4" name="fcPlcocx"/>
     <field type="int" size="4" name="lcbPlcocx"/>
     <field type="int" size="4" name="fcPlcfbteLvc"/>
-    <field type="int" size="4" name="lcbPlcfbteLvc"/>
+    <field type="int" size="4" name="lcbPlcfbteLvc"/> -->
     <!--
         Bug - this field is meant to "overlay" the following
               two fields.  See MS Word Binary Format doc
               for details.
         <field type="int" size="4" name="ftModified"/>
     -->
-    <field type="int" size="4" name="dwLowDateTime"/>
+    <!--<field type="int" size="4" name="dwLowDateTime"/>
     <field type="int" size="4" name="dwHighDateTime"/>
     <field type="int" size="4" name="fcPlcflvc"/>
     <field type="int" size="4" name="lcbPlcflvc"/>
@@ -347,7 +347,7 @@
     <field type="int" size="4" name="fcSttbListNames"/>
     <field type="int" size="4" name="lcbSttbListNames"/>
     <field type="int" size="4" name="fcSttbfUssr"/>
-    <field type="int" size="4" name="lcbSttbfUssr"/>
+    <field type="int" size="4" name="lcbSttbfUssr"/> -->
 
 
     </fields>

@@ -1,4 +1,4 @@
-<record fromfile="true" name="DOP" package="org.apache.poi.hwpf.model.hdftypes.definitions">
+<record fromfile="true" name="DOP" package="org.apache.poi.hwpf.model.types">
     <suffix>AbstractType</suffix>
     <extends>HDFType</extends>
     <description>Document Properties.</description>

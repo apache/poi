@@ -1,4 +1,4 @@
-<record fromfile="true" id="0x101B" name="TC" package="org.apache.poi.hwpf.model.hdftypes.definitions">
+<record fromfile="true" id="0x101B" name="TC" package="org.apache.poi.hwpf.model.types">
     <suffix>AbstractType</suffix>
     <extends>HDFType</extends>
     <description>Table Cell Descriptor.</description>
