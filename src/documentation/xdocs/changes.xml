@@ -12,7 +12,7 @@
         <person id="POI-DEVELOPERS" name="Poi Developers"    email="poi-dev@jakarta.apache.org"/>
     </devs>
     <release version="1.6-dev" date="Unreleased">
-        <action dev="NKB" type="update">Removed runtime dependency on commonds logging.</action>
+        <action dev="NKB" type="update">Removed runtime dependency on commons logging.</action>
         <action dev="POI-DEVELOPERS" type="update">Formula support</action>
     </release>
     <release version="1.5.1" date="16 June 2002">
