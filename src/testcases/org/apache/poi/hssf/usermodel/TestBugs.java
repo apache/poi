@@ -140,7 +140,16 @@ extends TestCase {
             fileOut.close();
         }
           
-          
+       /** test reading of a formula with a name and a cell ref in one
+        **/
+       public void test14460() throws Exception {
+        String filename = System.getProperty("HSSF.testdata.path");
+        filename=filename+"/14460.xls";
+        FileInputStream in = new FileInputStream(filename);
+            HSSFWorkbook wb = new HSSFWorkbook(in);
+            HSSFSheet sheet = wb.getSheetAt(0);
+            assertTrue("No exception throws", true);
+     }
     
 }
     
