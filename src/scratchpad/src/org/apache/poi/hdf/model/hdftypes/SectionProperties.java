@@ -55,15 +55,16 @@
 
 package org.apache.poi.hdf.model.hdftypes;
 
+import org.apache.poi.hdf.model.hdftypes.definitions.SEPAbstractType;
 /**
  * Comment me
  *
  * @author Ryan Ackley
  */
 
-public class SectionProperties implements HDFType
+public class SectionProperties extends SEPAbstractType implements HDFType
 {
-  int _index;
+  /*int _index;
   byte _bkc;
   boolean _fTitlePage;
   boolean _fAutoPgn;
@@ -111,28 +112,28 @@ public class SectionProperties implements HDFType
   int _dxaColumns;
   int[] _rgdxaColumnWidthSpacing;
   byte _dmOrientFirst;
-  byte[] _olstAnn;
+  byte[] _olstAnn;*/
 
 
 
   public SectionProperties()
   {
-      _bkc = 2;
-      _dyaPgn = 720;
-      _dxaPgn = 720;
-      _fEndNote = true;
-      _fEvenlySpaced = true;
-      _xaPage = 12240;
-      _yaPage = 15840;
-      _dyaHdrTop = 720;
-      _dyaHdrBottom = 720;
-      _dmOrientPage = 1;
-      _dxaColumns = 720;
-      _dyaTop = 1440;
-      _dxaLeft = 1800;
-      _dyaBottom = 1440;
-      _dxaRight = 1800;
-      _pgnStart = 1;
+      setBkc((byte)2);
+      setDyaPgn(720);
+      setDxaPgn(720);
+      setFEndNote(true);
+      setFEvenlySpaced(true);
+      setXaPage(12240);
+      setYaPage(15840);
+      setDyaHdrTop(720);
+      setDyaHdrBottom(720);
+      setDmOrientPage((byte)1);
+      setDxaColumns(720);
+      setDyaTop(1440);
+      setDxaLeft(1800);
+      setDyaBottom(1440);
+      setDxaRight(1800);
+      setPgnStart(1);
 
   }
 }

@@ -55,114 +55,79 @@
 
 package org.apache.poi.hdf.model.hdftypes;
 
+import org.apache.poi.hdf.model.hdftypes.definitions.PAPAbstractType;
 /**
  * Comment me
  *
  * @author Ryan Ackley
  */
 
-public class ParagraphProperties implements Cloneable, HDFType
+public class ParagraphProperties  extends PAPAbstractType implements Cloneable
 {
-  public int _istd;//index to style descriptor.
-  public byte _jc;//justification code
-  public byte _fKeep;//keep entire paragraph on one page if possible
-  public byte _fKeepFollow;//keep paragraph on same page with next paragraph if possible
-  public byte _fPageBreakBefore;//start this paragraph on new page
-  public byte _positionByte;//multiple flags see spec;
-  public byte _brcp;//rectangle border codes for Macword 3.0
-  public byte _brcl;//border line styles for Macword 3.0
-  public byte _ilvl;//when non-zero, list level for this paragraph
-  public byte _fNoLnn;//no line numbering for this paragraph. (makes this an exception to the section property of line numbering)
-  public int  _ilfo;//when non-zero, (1-based) index into the pllfo identifying the list to which the paragraph belongs
-  public byte _fSideBySide;//when 1, paragraph is a side by side paragraph
-  public byte _fNoAutoHyph;//when 0, text in paragraph may be auto hyphenated.
-  public byte _fWindowControl;//when 1, Word will prevent widowed lines in this paragraph from being placed at the beginning of a page
-  public int _dxaRight;//indent from right margin (signed).
-  public int _dxaLeft;//indent from left margin (signed)
-  public int _dxaLeft1;//first line indent; signed number relative to dxaLeft
-  public int[] _lspd = new int[2];//line spacing descriptor see spec
-  public int _dyaBefore;// vertical spacing before paragraph (unsigned)
-  public int _dyaAfter;//vertical spacing after paragraph (unsigned)
-  public byte[] _phe = new byte[12];//height of current paragraph
-  public byte _fCrLf;//undocumented
-  public byte _fUsePgsuSettings;//undocumented
-  public byte _fAdjustRight;//undocumented
-  public byte _fKinsoku;// when 1, apply kinsoku rules when performing line wrapping
-  public byte _fWordWrap;//when 1, perform word wrap
-  public byte _fOverflowPunct;//when 1, apply overflow punctuation rules when performing line wrapping
-  public byte _fTopLinePunct;//when 1, perform top line punctuation processing
-  public byte _fAutoSpaceDE;//when 1, auto space FE and alphabetic characters
-  public byte _fAutoSpaceDN;// when 1, auto space FE and numeric characters
-  public int _wAlignFont;//font alignment 0 Hanging 1 Centered 2 Roman 3 Variable 4 Auto
-  public short _fontAlign;//multiVal see Spec.
-  public byte _fInTable;//when 1, paragraph is contained in a table row
-  public byte _fTtp;//when 1, paragraph consists only of the row mark special character and marks the end of a table row
-  public byte _wr;//Wrap Code for absolute objects
-  public byte _fLocked;//when 1, paragraph may not be edited
-  public int _dxaAbs;//see spec
-  public int _dyaAbs;//see spec
-  public int _dxaWidth;//when not == 0, paragraph is constrained to be dxaWidth wide, independent of current margin or column settings
-  public short[] _brcTop = new short[2];//spec for border above paragraph
-  public short[] _brcLeft = new short[2];//specification for border to the left of
-  public short[] _brcBottom = new short[2];//paragraphspecification for border below
-  public short[] _brcRight = new short[2];//paragraphspecification for border to the
-  public short[] _brcBetween = new short[2];//right of paragraphsee spec
-  public short[] _brcBar = new short[2];//specification of border to place on
-  public short _brcTop1;//outside of text when facing pages are to be displayed.spec
-  public short _brcLeft1;//for border above paragraphspecification for border to the
-  public short _brcBottom1;//left ofparagraphspecification for border below
-  public short _brcRight1;//paragraphspecification for border to the
-  public short _brcBetween1;//right of paragraphsee spec
-  public short _brcBar1;//specification of border to place on outside of text when facing pages are to be displayed.
-  public int _dxaFromText;//horizontal distance to be maintained between an absolutely positioned paragraph and any non-absolute positioned text
-  public int _dyaFromText;//vertical distance to be maintained between an absolutely positioned paragraph and any non-absolute positioned text
-  public int _dyaHeight;//see spec
-  public int _shd;//shading
-  public int _dcs;//drop cap specifier
-  public byte[] _anld = new byte[84];//autonumber list descriptor (see ANLD definition)
-  public short _fPropRMark;//when 1, properties have been changed with revision marking on
-  public short _ibstPropRMark;//index to author IDs stored in hsttbfRMark. used when properties have been changed when revision marking was enabled
-  public byte[] _dttmPropRMark = new byte[4];//Date/time at which properties of this were changed for this run of text by the author. (Only recorded when revision marking is on.)
-  public byte[] _numrm = new byte[8];//paragraph numbering revision mark data (see NUMRM)
-  public short _itbdMac;//number of tabs stops defined for paragraph. Must be >= 0 and <= 64.
-
 
 
   public ParagraphProperties()
   {
-    _fWindowControl = 1;
+    short[] lspd = new short[2];
+    setFWidowControl((byte)1);
     //lspd[0] = 240;
-    _lspd[1] = 1;
-    _ilvl = 9;
+    lspd[1] = 1;
+    setIlvl((byte)9);
+
+    setLspd(lspd);
+    setBrcBar(new short[2]);
+    setBrcBottom(new short[2]);
+    setBrcLeft(new short[2]);
+    setBrcBetween(new short[2]);
+    setBrcRight(new short[2]);
+    setBrcTop(new short[2]);
+    setPhe(new byte[12]);
+    setAnld(new byte[84]);
+    setDttmPropRMark(new byte[4]);
+    setNumrm(new byte[8]);
+
+
   }
   public Object clone() throws CloneNotSupportedException
   {
       ParagraphProperties clone =  (ParagraphProperties)super.clone();
 
-      clone._brcBar = new short[2];
-      clone._brcBottom = new short[2];
-      clone._brcLeft = new short[2];
-      clone._brcBetween = new short[2];
-      clone._brcRight = new short[2];
-      clone._brcTop = new short[2];
-      clone._lspd = new int[2];
-      clone._phe = new byte[12];
-      clone._anld = new byte[84];
-      clone._dttmPropRMark = new byte[4];
-      clone._numrm = new byte[8];
+      short[] brcBar = new short[2];
+      short[] brcBottom = new short[2];
+      short[] brcLeft = new short[2];
+      short[] brcBetween = new short[2];
+      short[] brcRight = new short[2];
+      short[] brcTop = new short[2];
+      short[] lspd = new short[2];
+      byte[] phe = new byte[12];
+      byte[] anld = new byte[84];
+      byte[] dttmPropRMark = new byte[4];
+      byte[] numrm = new byte[8];
 
-      System.arraycopy(_brcBar, 0, clone._brcBar, 0, 2);
-      System.arraycopy(_brcBottom, 0, clone._brcBottom, 0, 2);
-      System.arraycopy(_brcLeft, 0, clone._brcLeft, 0, 2);
-      System.arraycopy(_brcBetween, 0, clone._brcBetween, 0, 2);
-      System.arraycopy(_brcRight, 0, clone._brcRight, 0, 2);
-      System.arraycopy(_brcTop, 0, clone._brcTop, 0, 2);
-      System.arraycopy(_lspd, 0, clone._lspd, 0, 2);
-      System.arraycopy(_phe, 0, clone._phe, 0, 12);
-      System.arraycopy(_anld, 0, clone._anld, 0, 84);
-      System.arraycopy(_dttmPropRMark, 0, clone._dttmPropRMark, 0, 4);
-      System.arraycopy(_numrm, 0, clone._numrm, 0, 8);
+      System.arraycopy(getBrcBar(), 0, brcBar, 0, 2);
+      System.arraycopy(getBrcBottom(), 0, brcBottom, 0, 2);
+      System.arraycopy(getBrcLeft(), 0, brcLeft, 0, 2);
+      System.arraycopy(getBrcBetween(), 0, brcBetween, 0, 2);
+      System.arraycopy(getBrcRight(), 0, brcRight, 0, 2);
+      System.arraycopy(getBrcTop(), 0, brcTop, 0, 2);
+      System.arraycopy(getLspd(), 0, lspd, 0, 2);
+      System.arraycopy(getPhe(), 0, phe, 0, 12);
+      System.arraycopy(getAnld(), 0, anld, 0, 84);
+      System.arraycopy(getDttmPropRMark(), 0, dttmPropRMark, 0, 4);
+      System.arraycopy(getNumrm(), 0, numrm, 0, 8);
 
+
+      clone.setBrcBar(brcBar);
+      clone.setBrcBottom(brcBottom);
+      clone.setBrcLeft(brcLeft);
+      clone.setBrcBetween(brcBetween);
+      clone.setBrcRight(brcRight);
+      clone.setBrcTop(brcTop);
+      clone.setLspd(lspd);
+      clone.setPhe(phe);
+      clone.setAnld(anld);
+      clone.setDttmPropRMark(dttmPropRMark);
+      clone.setNumrm(numrm);
       return clone;
   }
 

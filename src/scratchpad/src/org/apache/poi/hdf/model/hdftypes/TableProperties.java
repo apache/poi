@@ -55,30 +55,16 @@
 
 package org.apache.poi.hdf.model.hdftypes;
 
+import org.apache.poi.hdf.model.hdftypes.definitions.TAPAbstractType;
+
 /**
  * Comment me
  *
  * @author Ryan Ackley
  */
 
-public class TableProperties implements HDFType
+public class TableProperties extends TAPAbstractType
 {
-  short _jc;
-  int _dxaGapHalf;
-  int _dyaRowHeight;
-  boolean _fCantSplit;
-  boolean _fTableHeader;
-  boolean _fLastRow;
-  short _itcMac;
-  short[] _rgdxaCenter;
-  short[] _brcLeft = new short[2];
-  short[] _brcRight = new short[2];
-  short[] _brcTop = new short[2];
-  short[] _brcBottom = new short[2];
-  short[] _brcHorizontal = new short[2];
-  short[] _brcVertical = new short[2];
-
-  TableCellDescriptor[] _rgtc;
 
 
   public TableProperties()
