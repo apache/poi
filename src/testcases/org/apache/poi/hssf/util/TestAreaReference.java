@@ -56,6 +56,10 @@ package org.apache.poi.hssf.util;
 
 import junit.framework.TestCase;
 
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+
 public class TestAreaReference extends TestCase {
      public TestAreaReference(String s) {
         super(s);
@@ -77,4 +81,23 @@ public class TestAreaReference extends TestCase {
         assertTrue("col is abs",cf.isColAbsolute());
         assertTrue("string is $B$2",cf.toString().equals("$B$2"));
     }
+    
+    /**
+     * References failed when sheet names were being used
+     * Reported by Arne.Clauss@gedas.de
+     */
+    public void testReferenceWithSheet() {
+    	String ref = "Tabelle1!$B$5";
+		AreaReference myAreaReference = new AreaReference(ref);
+		CellReference[] myCellReference = myAreaReference.getCells();
+		
+		assertNotNull("cell reference not null : "+myCellReference[0]);
+    	assertEquals("Not Column B", (short)1,myCellReference[0].getCol());
+		assertEquals("Not Row 5", 4,myCellReference[0].getRow());
+    }
+    
+	public static void main(java.lang.String[] args) {        
+		junit.textui.TestRunner.run(TestAreaReference.class);
+	}
+        
 }

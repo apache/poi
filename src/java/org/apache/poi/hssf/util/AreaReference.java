@@ -55,8 +55,8 @@
 package org.apache.poi.hssf.util;
 
 public class AreaReference {
-    
-    
+
+
 private CellReference [] cells;
 private int dim;
 
@@ -80,7 +80,7 @@ private int dim;
     public CellReference[] getCells() {
         return cells;
     }
-    
+
     public String toString() {
         StringBuffer retval = new StringBuffer();
         for (int i=0;i<dim;i++){
@@ -90,19 +90,28 @@ private int dim;
         retval.deleteCharAt(0);
         return retval.toString();
     }
-    
+
     /**
-     * seperates Area refs in two parts and returns them as seperate elements in a 
+     * seperates Area refs in two parts and returns them as seperate elements in a
      * String array
      */
     private String[] seperateAreaRefs(String reference) {
-        String retval[] = new String[2];
+        String[] retval = null;
+
         int length = reference.length();
-        
+
         int loc = reference.indexOf(':',0);
-        
-        retval[0] = reference.substring(0,loc);
-        retval[1] = reference.substring(loc+1);        
+        if(loc == -1){
+           retval = new String[1];
+           retval[0] = reference;
+        }
+        else{
+           retval = new String[2];
+           int sheetStart = reference.indexOf("!");
+
+           retval[0] = reference.substring(0, sheetStart+1) + reference.substring(sheetStart + 1,loc);
+           retval[1] = reference.substring(0, sheetStart+1) + reference.substring(loc+1);
+        }
         return retval;
     }
 }
