@@ -153,13 +153,70 @@ extends TestCase {
     /**
      * Exponentialize various integers;
      */
-    public void testExponentIntegers()
+    public void testPowerIntegers()
     throws Exception {
         binomialOperator("^");
     }
-    
-    
 
+    /**
+     * Concatinate two numbers 1&2 = 12
+     */
+    public void testConcatIntegers() 
+    throws Exception {
+        binomialOperator("&");
+    }
+    
+    /**
+     * tests 1*2+3*4
+     */
+    public void testOrderOfOperationsMultiply() 
+    throws Exception {
+        orderTest("1*2+3*4");
+    }
+    
+    /**
+     * tests 1*2+3^4
+     */
+    public void testOrderOfOperationsPower() 
+    throws Exception {
+        orderTest("1*2+3^4");
+    }
+
+    /**
+     * tests order wrting out == order writing in for a given formula
+     */    
+    private void orderTest(String formula) 
+    throws Exception {
+        File file = File.createTempFile("testFormula",".xls");
+        FileOutputStream out    = new FileOutputStream(file);
+        HSSFWorkbook     wb     = new HSSFWorkbook();
+        HSSFSheet        s      = wb.createSheet();
+        HSSFRow          r      = null;
+        HSSFCell         c      = null;
+        
+        //get our minimum values
+        r = s.createRow((short)0);
+        c = r.createCell((short)1);
+        c.setCellFormula(formula);
+                       
+        wb.write(out);
+        out.close();
+        assertTrue("file exists",file.exists());
+
+        FileInputStream  in     = new FileInputStream(file);
+        wb     = new HSSFWorkbook(in);
+        s      = wb.getSheetAt(0);
+        
+        //get our minimum values
+        r = s.getRow((short)0);
+        c = r.getCell((short)1);
+        assertTrue("minval Formula is as expected",
+                   formula.equals(c.getCellFormula())
+                  );
+        
+        in.close();
+    }
+    
     /**
      * All multi-binomial operator tests use this to create a worksheet with a
      * huge set of x operator y formulas.  Next we call binomialVerify and verify
