@@ -57,6 +57,8 @@ package org.apache.poi.hssf.usermodel;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Date;
 
@@ -388,6 +390,22 @@ extends TestCase {
             }
         }
         assertTrue("No Exceptions while reading file", true);
+    }
+    
+     public void test18800() throws Exception {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        HSSFWorkbook book = new HSSFWorkbook();
+        book.createSheet("TEST");
+        HSSFSheet sheet = book.cloneSheet(0);
+        book.setSheetName(1,"CLONE");
+        sheet.createRow(0).createCell((short)0).setCellValue("Test");
+        book.write(out);
+        
+        book = new HSSFWorkbook(new ByteArrayInputStream(out.toByteArray()));
+        sheet = book.getSheet("CLONE");
+        HSSFRow row = sheet.getRow(0);
+        HSSFCell cell = row.getCell((short)0);
+        System.out.println(cell.getStringCellValue());
     }
 }
 
