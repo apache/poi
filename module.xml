@@ -71,81 +71,13 @@
     <!-- Project jars POI *build* strictly depends on -->
     <!-- needed for build -->
 
-    <depend project="krysalis-centipede-ant-sax2-patched" inherit="all"/>    
-    <depend project="xml-xerces"/>
-    <depend project="xml-xalan2"/>   
-    <depend property="jxpath.jar" project="commons-jxpath"/> 
-   
-    <depend project="krysalis-ant-tasks"/>
-    <depend project="ant-contrib"/>
-    <depend project="commons-jjar"/>
-        
-    <depend project="krysalis-ruper"/>
-    <depend project="commons-vfs"/>
-    <depend project="commons-logging"/>
-    <depend project="commons-cli"/>
-    <depend project="jakarta-regexp"/>
-
-    <depend project="junit"/>
-           
-    <!-- needed for POI -->
-    <depend id="api" project="commons-logging" property="commons-logging.jar"/>
-            
-    <!-- Project jars POI build can use  -->    
-    <option project="jakarta-log4j"/>
-     
-    <!-- Work dirs to be included in classpath  -->          
-    <work nested="build/classes"/>
-    <work nested="build/testcases"/>
-    
-    <!-- Build home  -->        
-    <home nested="build/jakarta-poi"/>
-    
-    <!-- Source dirs with type  -->        
-    <code type="java/plain" dir="src/java"/>
-    <test type="test/junit" dir="src/testcases"/>
-    <documentation type="xml/forrest" dir="src/documentation"/>
-        
-    <!-- POI jars - the result of the build  -->        
-    <jar name="jakarta-poi.jar"            id="poi"/>
-    
-    <!-- POI Javadocs - location in the build dirs  -->         
-    <javadoc parent="build/jakarta-poi/docs/apidocs"/>
-    
-    <!-- Getting ready for automatic site updates
-    <deliver fromdir="build/jakarta-poi/docs" 
-             tosite="jakarta-apache-org"
-             todir="poi/" />    
-    -->         
-            
-    <nag to="poi-dev@jakarta.apache.org"
-         from="Nicola Ken Barozzi &lt;nicolaken@apache.org&gt;"/>
-         
-  </project>
-
-  <project name="jakarta-poi-cuttingedge">
-  
-     <version major="1"
-             minor="9"
-             fix  ="0"   
-             tag="dev"/> 
-
-    <package>org.apache.poi</package>
-    
-    <ant buildfile="centibuild.xml" basedir="." target="compile" vm="1.2">
-      <property name="ant.home" reference="home" project="krysalis-centipede"/>
-    </ant>
-        
-    <!-- Project jars POI *build* strictly depends on -->
-    <!-- needed for build -->
-
     <depend project="xml-xerces"/>
     <depend project="xml-xalan2"/>   
     <depend project="jakarta-ant-embed"  inherit="all"/>
+    <depend project="jakarta-ant-embed-optional"/>  
     <depend property="jxpath.jar" project="commons-jxpath"/>     
-    <depend project="jakarta-ant-embed-optional"/>   
+
     <depend project="ant-contrib"/>
-         
     <depend project="krysalis-ant-tasks"/>
     <depend project="krysalis-ruper" inherit="all"/>
     
