@@ -69,7 +69,7 @@ public abstract class AbstractFunctionPtg extends OperationPtg {
 	//constant used allow a ptgAttr to be mapped properly for its functionPtg
 	public static final String ATTR_NAME = "specialflag";
 	    
-    private final static int  SIZE = 4;    
+      
     
     private static BinaryTree map = produceHash(); 
     protected static Object[][] functionData = produceFunctionData();
@@ -129,14 +129,13 @@ public abstract class AbstractFunctionPtg extends OperationPtg {
     }
     
     public abstract void writeBytes(byte[] array, int offset);
+    public abstract int getSize();
     
    
     
-    public int getSize() {
-        return SIZE;
-    }
+
     
-    private String lookupName(short index) {
+    protected String lookupName(short index) {
         return ((String)map.get(new Integer(index))); 
     }
     
