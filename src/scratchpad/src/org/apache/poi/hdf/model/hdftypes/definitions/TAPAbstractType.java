@@ -54,7 +54,7 @@
  */
 
 
-package org.apache.poi.hwpf.model.hdftypes.definitions;
+package org.apache.poi.hdf.model.hdftypes.definitions;
 
 
 

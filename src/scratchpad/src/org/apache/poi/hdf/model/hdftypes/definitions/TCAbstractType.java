@@ -54,7 +54,7 @@
  */
 
 
-package org.apache.poi.hwpf.model.hdftypes.definitions;
+package org.apache.poi.hdf.model.hdftypes.definitions;
 
 
 
@@ -204,170 +204,170 @@ public abstract class TCAbstractType
 
     /**
      * Sets the fFirstMerged field value.
-     * 
+     *
      */
     public void setFFirstMerged(boolean value)
     {
         field_1_rgf = (short)fFirstMerged.setBoolean(field_1_rgf, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fFirstMerged field value.
      */
     public boolean isFFirstMerged()
     {
         return fFirstMerged.isSet(field_1_rgf);
-        
+
     }
 
     /**
      * Sets the fMerged field value.
-     * 
+     *
      */
     public void setFMerged(boolean value)
     {
         field_1_rgf = (short)fMerged.setBoolean(field_1_rgf, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fMerged field value.
      */
     public boolean isFMerged()
     {
         return fMerged.isSet(field_1_rgf);
-        
+
     }
 
     /**
      * Sets the fVertical field value.
-     * 
+     *
      */
     public void setFVertical(boolean value)
     {
         field_1_rgf = (short)fVertical.setBoolean(field_1_rgf, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fVertical field value.
      */
     public boolean isFVertical()
     {
         return fVertical.isSet(field_1_rgf);
-        
+
     }
 
     /**
      * Sets the fBackward field value.
-     * 
+     *
      */
     public void setFBackward(boolean value)
     {
         field_1_rgf = (short)fBackward.setBoolean(field_1_rgf, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fBackward field value.
      */
     public boolean isFBackward()
     {
         return fBackward.isSet(field_1_rgf);
-        
+
     }
 
     /**
      * Sets the fRotateFont field value.
-     * 
+     *
      */
     public void setFRotateFont(boolean value)
     {
         field_1_rgf = (short)fRotateFont.setBoolean(field_1_rgf, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fRotateFont field value.
      */
     public boolean isFRotateFont()
     {
         return fRotateFont.isSet(field_1_rgf);
-        
+
     }
 
     /**
      * Sets the fVertMerge field value.
-     * 
+     *
      */
     public void setFVertMerge(boolean value)
     {
         field_1_rgf = (short)fVertMerge.setBoolean(field_1_rgf, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fVertMerge field value.
      */
     public boolean isFVertMerge()
     {
         return fVertMerge.isSet(field_1_rgf);
-        
+
     }
 
     /**
      * Sets the fVertRestart field value.
-     * 
+     *
      */
     public void setFVertRestart(boolean value)
     {
         field_1_rgf = (short)fVertRestart.setBoolean(field_1_rgf, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fVertRestart field value.
      */
     public boolean isFVertRestart()
     {
         return fVertRestart.isSet(field_1_rgf);
-        
+
     }
 
     /**
      * Sets the vertAlign field value.
-     * 
+     *
      */
     public void setVertAlign(byte value)
     {
         field_1_rgf = (short)vertAlign.setValue(field_1_rgf, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the vertAlign field value.
      */
     public byte getVertAlign()
     {
         return ( byte )vertAlign.getValue(field_1_rgf);
-        
+
     }
 
 

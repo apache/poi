@@ -54,7 +54,7 @@
  */
 
 
-package org.apache.poi.hwpf.model.hdftypes;
+package org.apache.poi.hdf.model.hdftypes;
 
 import java.io.UnsupportedEncodingException;
 

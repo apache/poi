@@ -53,7 +53,7 @@
  *  <http://www.apache.org/>.
  */
 
-package org.apache.poi.hwpf.model.hdftypes;
+package org.apache.poi.hdf.model.hdftypes;
 
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.LittleEndian;

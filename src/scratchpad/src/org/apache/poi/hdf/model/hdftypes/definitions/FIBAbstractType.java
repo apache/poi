@@ -54,7 +54,7 @@
  */
 
 
-package org.apache.poi.hwpf.model.hdftypes.definitions;
+package org.apache.poi.hdf.model.hdftypes.definitions;
 
 
 
@@ -5888,401 +5888,401 @@ public abstract class FIBAbstractType
 
     /**
      * Sets the fDot field value.
-     * 
+     *
      */
     public void setFDot(boolean value)
     {
         field_6_options = (short)fDot.setBoolean(field_6_options, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fDot field value.
      */
     public boolean isFDot()
     {
         return fDot.isSet(field_6_options);
-        
+
     }
 
     /**
      * Sets the fGlsy field value.
-     * 
+     *
      */
     public void setFGlsy(boolean value)
     {
         field_6_options = (short)fGlsy.setBoolean(field_6_options, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fGlsy field value.
      */
     public boolean isFGlsy()
     {
         return fGlsy.isSet(field_6_options);
-        
+
     }
 
     /**
      * Sets the fComplex field value.
-     * 
+     *
      */
     public void setFComplex(boolean value)
     {
         field_6_options = (short)fComplex.setBoolean(field_6_options, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fComplex field value.
      */
     public boolean isFComplex()
     {
         return fComplex.isSet(field_6_options);
-        
+
     }
 
     /**
      * Sets the fHasPic field value.
-     * 
+     *
      */
     public void setFHasPic(boolean value)
     {
         field_6_options = (short)fHasPic.setBoolean(field_6_options, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fHasPic field value.
      */
     public boolean isFHasPic()
     {
         return fHasPic.isSet(field_6_options);
-        
+
     }
 
     /**
      * Sets the cQuickSaves field value.
-     * 
+     *
      */
     public void setCQuickSaves(byte value)
     {
         field_6_options = (short)cQuickSaves.setValue(field_6_options, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the cQuickSaves field value.
      */
     public byte getCQuickSaves()
     {
         return ( byte )cQuickSaves.getValue(field_6_options);
-        
+
     }
 
     /**
      * Sets the fEncrypted field value.
-     * 
+     *
      */
     public void setFEncrypted(boolean value)
     {
         field_6_options = (short)fEncrypted.setBoolean(field_6_options, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fEncrypted field value.
      */
     public boolean isFEncrypted()
     {
         return fEncrypted.isSet(field_6_options);
-        
+
     }
 
     /**
      * Sets the fWhichTblStm field value.
-     * 
+     *
      */
     public void setFWhichTblStm(boolean value)
     {
         field_6_options = (short)fWhichTblStm.setBoolean(field_6_options, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fWhichTblStm field value.
      */
     public boolean isFWhichTblStm()
     {
         return fWhichTblStm.isSet(field_6_options);
-        
+
     }
 
     /**
      * Sets the fReadOnlyRecommended field value.
-     * 
+     *
      */
     public void setFReadOnlyRecommended(boolean value)
     {
         field_6_options = (short)fReadOnlyRecommended.setBoolean(field_6_options, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fReadOnlyRecommended field value.
      */
     public boolean isFReadOnlyRecommended()
     {
         return fReadOnlyRecommended.isSet(field_6_options);
-        
+
     }
 
     /**
      * Sets the fWriteReservation field value.
-     * 
+     *
      */
     public void setFWriteReservation(boolean value)
     {
         field_6_options = (short)fWriteReservation.setBoolean(field_6_options, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fWriteReservation field value.
      */
     public boolean isFWriteReservation()
     {
         return fWriteReservation.isSet(field_6_options);
-        
+
     }
 
     /**
      * Sets the fExtChar field value.
-     * 
+     *
      */
     public void setFExtChar(boolean value)
     {
         field_6_options = (short)fExtChar.setBoolean(field_6_options, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fExtChar field value.
      */
     public boolean isFExtChar()
     {
         return fExtChar.isSet(field_6_options);
-        
+
     }
 
     /**
      * Sets the fLoadOverride field value.
-     * 
+     *
      */
     public void setFLoadOverride(boolean value)
     {
         field_6_options = (short)fLoadOverride.setBoolean(field_6_options, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fLoadOverride field value.
      */
     public boolean isFLoadOverride()
     {
         return fLoadOverride.isSet(field_6_options);
-        
+
     }
 
     /**
      * Sets the fFarEast field value.
-     * 
+     *
      */
     public void setFFarEast(boolean value)
     {
         field_6_options = (short)fFarEast.setBoolean(field_6_options, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fFarEast field value.
      */
     public boolean isFFarEast()
     {
         return fFarEast.isSet(field_6_options);
-        
+
     }
 
     /**
      * Sets the fCrypto field value.
-     * 
+     *
      */
     public void setFCrypto(boolean value)
     {
         field_6_options = (short)fCrypto.setBoolean(field_6_options, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fCrypto field value.
      */
     public boolean isFCrypto()
     {
         return fCrypto.isSet(field_6_options);
-        
+
     }
 
     /**
      * Sets the fMac field value.
-     * 
+     *
      */
     public void setFMac(boolean value)
     {
         field_10_history = (short)fMac.setBoolean(field_10_history, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fMac field value.
      */
     public boolean isFMac()
     {
         return fMac.isSet(field_10_history);
-        
+
     }
 
     /**
      * Sets the fEmptySpecial field value.
-     * 
+     *
      */
     public void setFEmptySpecial(boolean value)
     {
         field_10_history = (short)fEmptySpecial.setBoolean(field_10_history, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fEmptySpecial field value.
      */
     public boolean isFEmptySpecial()
     {
         return fEmptySpecial.isSet(field_10_history);
-        
+
     }
 
     /**
      * Sets the fLoadOverridePage field value.
-     * 
+     *
      */
     public void setFLoadOverridePage(boolean value)
     {
         field_10_history = (short)fLoadOverridePage.setBoolean(field_10_history, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fLoadOverridePage field value.
      */
     public boolean isFLoadOverridePage()
     {
         return fLoadOverridePage.isSet(field_10_history);
-        
+
     }
 
     /**
      * Sets the fFutureSavedUndo field value.
-     * 
+     *
      */
     public void setFFutureSavedUndo(boolean value)
     {
         field_10_history = (short)fFutureSavedUndo.setBoolean(field_10_history, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fFutureSavedUndo field value.
      */
     public boolean isFFutureSavedUndo()
     {
         return fFutureSavedUndo.isSet(field_10_history);
-        
+
     }
 
     /**
      * Sets the fWord97Saved field value.
-     * 
+     *
      */
     public void setFWord97Saved(boolean value)
     {
         field_10_history = (short)fWord97Saved.setBoolean(field_10_history, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fWord97Saved field value.
      */
     public boolean isFWord97Saved()
     {
         return fWord97Saved.isSet(field_10_history);
-        
+
     }
 
     /**
      * Sets the fSpare0 field value.
-     * 
+     *
      */
     public void setFSpare0(byte value)
     {
         field_10_history = (short)fSpare0.setValue(field_10_history, value);
 
-        
+
     }
 
     /**
-     * 
+     *
      * @return  the fSpare0 field value.
      */
     public byte getFSpare0()
     {
         return ( byte )fSpare0.getValue(field_10_history);
-        
+
     }
 
 
