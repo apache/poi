@@ -150,6 +150,7 @@ public class TestDocumentProperty
             ( byte ) 0xFE, ( byte ) 0xFF, ( byte ) 0xFF, ( byte ) 0xFF,
             ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
             ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
+
             ( byte ) 0x57, ( byte ) 0x00, ( byte ) 0x6F, ( byte ) 0x00,
             ( byte ) 0x72, ( byte ) 0x00, ( byte ) 0x6B, ( byte ) 0x00,
             ( byte ) 0x62, ( byte ) 0x00, ( byte ) 0x6F, ( byte ) 0x00,
@@ -182,6 +183,7 @@ public class TestDocumentProperty
             ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
             ( byte ) 0x00, ( byte ) 0x10, ( byte ) 0x00, ( byte ) 0x00,
             ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
+
             ( byte ) 0x05, ( byte ) 0x00, ( byte ) 0x53, ( byte ) 0x00,
             ( byte ) 0x75, ( byte ) 0x00, ( byte ) 0x6D, ( byte ) 0x00,
             ( byte ) 0x6D, ( byte ) 0x00, ( byte ) 0x61, ( byte ) 0x00,
@@ -214,6 +216,7 @@ public class TestDocumentProperty
             ( byte ) 0x08, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
             ( byte ) 0x00, ( byte ) 0x10, ( byte ) 0x00, ( byte ) 0x00,
             ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00,
+
             ( byte ) 0x05, ( byte ) 0x00, ( byte ) 0x44, ( byte ) 0x00,
             ( byte ) 0x6F, ( byte ) 0x00, ( byte ) 0x63, ( byte ) 0x00,
             ( byte ) 0x75, ( byte ) 0x00, ( byte ) 0x6D, ( byte ) 0x00,

@@ -55,6 +55,10 @@
  */
 package org.apache.poi.hpsf;
 
+import java.io.*;
+import org.apache.poi.util.HexDump;
+import org.apache.poi.util.LittleEndian;
+
 /**
  *  <p>Represents a class ID (16 bytes). Unlike other little-endian
  *  type the {@link ClassID} is not just 16 bytes stored in the wrong
@@ -229,7 +233,25 @@ public class ClassID
         return true;
     }
 
-
+    /**
+     * Returns a human readable representation of the Class ID
+     *   in standard format <code>"{xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx}"</code>
+     * @return String representation of the Class ID represented
+     *   by this object.
+     */
+    public String toString()
+    {
+        StringBuffer sbClassId = new StringBuffer( 38);
+        sbClassId.append( '{');
+        for( int i=0; i < 16; i++) {
+            sbClassId.append( HexDump.toHex( bytes[ i]));
+            if( i == 3 || i == 5 || i == 7 || i == 9) {
+                sbClassId.append( '-');
+            }
+        }
+        sbClassId.append( '}');
+        return sbClassId.toString();
+    }
 
     /**
      * @see Object#hashCode()
