@@ -448,7 +448,24 @@ public class Section
 
 
     /**
-     * <p>Checks whether this section is equal to another object.</p>
+     * <p>Checks whether this section is equal to another object. The result is
+     * <code>false</code> if one of the the following conditions holds:</p>
+     * 
+     * <ul>
+     * 
+     * <li><p>The other object is not a {@link Section}.</p></li>
+     * 
+     * <li><p>The format IDs of the two sections are not equal.</p></li>
+     *   
+     * <li><p>The sections have a different number of properties. However,
+     * properties with ID 1 (codepage) are not counted.</p></li>
+     * 
+     * <li><p>The other object is not a {@link Section}.</p></li>
+     * 
+     * <li><p>The properties have different values. The order of the properties
+     * is irrelevant.</p></li>
+     * 
+     * </ul>
      * 
      * @param o The object to compare this section with
      * @return <code>true</code> if the objects are equal, <code>false</code> if
@@ -460,8 +477,6 @@ public class Section
             return false;
         final Section s = (Section) o;
         if (!s.getFormatID().equals(getFormatID()))
-            return false;
-        if (s.getPropertyCount() != getPropertyCount())
             return false;
 
         /* Compare all properties except 0 and 1 as they must be handled 
@@ -508,6 +523,12 @@ public class Section
             }
         }
 
+        /* If the number of properties (not counting property 1) is unequal the
+         * sections are unequal. */
+        if (pa1.length != pa2.length)
+            return false;
+
+        /* If the dictionaries are unequal the sections are unequal. */
         boolean dictionaryEqual = true;
         if (p10 != null && p20 != null)
             dictionaryEqual = p10.getValue().equals(p20.getValue());
