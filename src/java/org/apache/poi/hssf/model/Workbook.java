@@ -88,6 +88,7 @@ import org.apache.poi.hssf.util.HSSFColor;
  * @author  Andrew C. Oliver (acoliver at apache dot org)
  * @author  Glen Stampoultzis (glens at apache.org)
  * @author  Sergei Kozello (sergeikozello at mail.ru)
+ * @author  Luc Girardin (luc dot girardin at macrofocus dot com)
  * @see org.apache.poi.hssf.usermodel.HSSFWorkbook
  * @version 1.0-pre
  */
@@ -670,8 +671,11 @@ public class Workbook implements Model {
 
             // byte[] rec = (( byte [] ) bytes.get(k));
             // System.arraycopy(rec, 0, retval, pos, rec.length);
-            pos += (( Record ) records.get(k)).serialize(pos,
-            retval);   // rec.length;
+            Record record = (( Record ) records.get(k));
+            // Let's skip RECALCID records, as they are only use for optimization
+            if(record.getSid() != RecalcIdRecord.sid || ((RecalcIdRecord)record).isNeeded()) {
+               pos += record.serialize(pos, retval);   // rec.length;
+            }
         }
         log.log(DEBUG, "Exiting serialize workbook");
         return retval;
@@ -704,8 +708,11 @@ public class Workbook implements Model {
 
             // byte[] rec = (( byte [] ) bytes.get(k));
             // System.arraycopy(rec, 0, data, offset + pos, rec.length);
-            pos += (( Record ) records.get(k)).serialize(pos + offset,
-            data);   // rec.length;
+            Record record = (( Record ) records.get(k));
+            // Let's skip RECALCID records, as they are only use for optimization
+            if(record.getSid() != RecalcIdRecord.sid || ((RecalcIdRecord)record).isNeeded()) {
+               pos += record.serialize(pos + offset, data);   // rec.length;
+            }
         }
         log.log(DEBUG, "Exiting serialize workbook");
         return pos;
@@ -715,7 +722,11 @@ public class Workbook implements Model {
         int retval = 0;
 
         for (int k = 0; k < records.size(); k++) {
-            retval += (( Record ) records.get(k)).getRecordSize();
+            Record record = (( Record ) records.get(k));
+            // Let's skip RECALCID records, as they are only use for optimization
+            if(record.getSid() != RecalcIdRecord.sid || ((RecalcIdRecord)record).isNeeded()) {
+               retval += record.getRecordSize();
+            }
         }
         return retval;
     }
