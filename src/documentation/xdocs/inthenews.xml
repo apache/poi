@@ -70,7 +70,7 @@
                 
         </ul>
     </s1>
-    <s1 title="Deutschspeche (German)">
+    <s1 title="Deutsch (German)">
         <ul>
                 <li>
                         <link
@@ -90,19 +90,30 @@
                 
         </ul>
     </s1>
-    <s1 title="No freaking idea">
+    <s1 title="Japanese">
         <p>
-                If you can read one of these languages, send mail to the list
-                telling us what language it is and we'll categorize it!
+                If anyone knows how to spell Japanese in a way that Japanese
+                speakers (who don't recognize the English -- I hope to one day
+                have the site translated into other lanugages -- volunteers?)
+                can recognize it without making everyone download new
+                charactersets just to view the page please step up and send in a 
+                patch to the poi-dev list!
         </p>
         <ul>
                 <li>
                         <link
                         href="http://www.gimlay.org/~andoh/java/javanew.html">
-                        What's new with java
+                        What's new with java?
                         </link> - gimlay.org
                 </li>
         </ul>
+        
+    </s1>
+    <s1 title="No freaking idea">
+        <p>
+                If you can read one of these languages, send mail to the list
+                telling us what language it is and we'll categorize it!
+        </p>
     </s1>
   </body>
   <footer>
