@@ -176,7 +176,7 @@ public class Util
      * file. The structure identifies a 64-bit integer specifying the
      * number of 100-nanosecond intervals which have passed since
      * January 1, 1601. This 64-bit value is split into the two double
-     * word stored in the structure.</p>
+     * words stored in the structure.</p>
      *
      * @param high The higher double word of the FILETIME structure.
      * @param low The lower double word of the FILETIME structure.
@@ -184,7 +184,7 @@ public class Util
      */
     public static Date filetimeToDate(final int high, final int low)
     {
-        final long filetime = ((long) high) << 32 | ((long) low);
+        final long filetime = ((long) high) << 32 | (low & 0xffffffffL);
         final long ms_since_16010101 = filetime / (1000 * 10);
         final long ms_since_19700101 = ms_since_16010101 - EPOCH_DIFF;
         return new Date(ms_since_19700101);
