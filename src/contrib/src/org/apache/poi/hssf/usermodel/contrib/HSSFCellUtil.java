@@ -278,13 +278,23 @@ public class HSSFCellUtil
         return cell;
     }
 
-
-    static
-    {
+    
+    static {
         unicodeMappings.put( "&alpha;",   "\u03B1" );
+        unicodeMappings.put( "&beta;",    "\u03B2" );
         unicodeMappings.put( "&gamma;",   "\u03B3" );
+        unicodeMappings.put( "&delta;",   "\u03B4" );
         unicodeMappings.put( "&epsilon;", "\u03B5" );
+        unicodeMappings.put( "&zeta;",    "\u03B6" );
+        unicodeMappings.put( "&eta;",     "\u03B7" );
         unicodeMappings.put( "&theta;",   "\u03B8" );
+        unicodeMappings.put( "&iota;",    "\u03B9" );
+        unicodeMappings.put( "&kappa;",   "\u03BA" );
+        unicodeMappings.put( "&lambda;",  "\u03BB" );
+        unicodeMappings.put( "&mu;",      "\u03BC" );
+        unicodeMappings.put( "&nu;",      "\u03BD" );
+        unicodeMappings.put( "&xi;",      "\u03BE" );
+        unicodeMappings.put( "&omicron;", "\u03BF" );
     }
 
 }
