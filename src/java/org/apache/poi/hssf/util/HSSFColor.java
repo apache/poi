@@ -68,11 +68,13 @@ import java.util.*;
  * a reasonable one in this case.
  *
  * @author  Andrew C. Oliver (acoliver at apache dot org)
+ * @author  Brian Sanders (bsanders at risklabs dot com) - full default color palette
  */
 
 public class HSSFColor
 {
-    private final static int PALETTE_SIZE = 50;
+    private final static int PALETTE_SIZE = 56;
+    private final static int DISTINCT_COLOR_COUNT = 46;
 
     /** Creates a new instance of HSSFColor */
 
@@ -101,6 +103,7 @@ public class HSSFColor
         hash.put(new Integer(HSSFColor.DARK_GREEN.index), new HSSFColor.DARK_GREEN());
         hash.put(new Integer(HSSFColor.DARK_TEAL.index), new HSSFColor.DARK_TEAL());
         hash.put(new Integer(HSSFColor.DARK_BLUE.index), new HSSFColor.DARK_BLUE());
+        hash.put(new Integer(HSSFColor.DARK_BLUE.index2), new HSSFColor.DARK_BLUE());
         hash.put(new Integer(HSSFColor.INDIGO.index), new HSSFColor.INDIGO());
         hash.put(new Integer(HSSFColor.GREY_80_PERCENT.index),
                  new HSSFColor.GREY_80_PERCENT());
@@ -109,7 +112,9 @@ public class HSSFColor
                  new HSSFColor.DARK_YELLOW());
         hash.put(new Integer(HSSFColor.GREEN.index), new HSSFColor.GREEN());
         hash.put(new Integer(HSSFColor.TEAL.index), new HSSFColor.TEAL());
+        hash.put(new Integer(HSSFColor.TEAL.index2), new HSSFColor.TEAL());
         hash.put(new Integer(HSSFColor.BLUE.index), new HSSFColor.BLUE());
+        hash.put(new Integer(HSSFColor.BLUE.index2), new HSSFColor.BLUE());
         hash.put(new Integer(HSSFColor.BLUE_GREY.index), new HSSFColor.BLUE_GREY());
         hash.put(new Integer(HSSFColor.GREY_50_PERCENT.index),
                  new HSSFColor.GREY_50_PERCENT());
@@ -121,16 +126,25 @@ public class HSSFColor
         hash.put(new Integer(HSSFColor.AQUA.index), new HSSFColor.AQUA());
         hash.put(new Integer(HSSFColor.LIGHT_BLUE.index), new HSSFColor.LIGHT_BLUE());
         hash.put(new Integer(HSSFColor.VIOLET.index), new HSSFColor.VIOLET());
+        hash.put(new Integer(HSSFColor.VIOLET.index2), new HSSFColor.VIOLET());
         hash.put(new Integer(HSSFColor.GREY_40_PERCENT.index),
                  new HSSFColor.GREY_40_PERCENT());
         hash.put(new Integer(HSSFColor.PINK.index), new HSSFColor.PINK());
+        hash.put(new Integer(HSSFColor.PINK.index2), new HSSFColor.PINK());
         hash.put(new Integer(HSSFColor.GOLD.index), new HSSFColor.GOLD());
         hash.put(new Integer(HSSFColor.YELLOW.index), new HSSFColor.YELLOW());
+        hash.put(new Integer(HSSFColor.YELLOW.index2), new HSSFColor.YELLOW());
         hash.put(new Integer(HSSFColor.BRIGHT_GREEN.index),
                  new HSSFColor.BRIGHT_GREEN());
-        hash.put(new Integer(HSSFColor.BRIGHT_GREEN.index), new HSSFColor.TURQUOISE());
+        hash.put(new Integer(HSSFColor.BRIGHT_GREEN.index2),
+                 new HSSFColor.BRIGHT_GREEN());
+        hash.put(new Integer(HSSFColor.TURQUOISE.index), new HSSFColor.TURQUOISE());
+        hash.put(new Integer(HSSFColor.TURQUOISE.index2), new HSSFColor.TURQUOISE());
+        hash.put(new Integer(HSSFColor.DARK_RED.index), new HSSFColor.DARK_RED());
+        hash.put(new Integer(HSSFColor.DARK_RED.index2), new HSSFColor.DARK_RED());
         hash.put(new Integer(HSSFColor.SKY_BLUE.index), new HSSFColor.SKY_BLUE());
         hash.put(new Integer(HSSFColor.PLUM.index), new HSSFColor.PLUM());
+        hash.put(new Integer(HSSFColor.PLUM.index2), new HSSFColor.PLUM());
         hash.put(new Integer(HSSFColor.GREY_25_PERCENT.index),
                  new HSSFColor.GREY_25_PERCENT());
         hash.put(new Integer(HSSFColor.ROSE.index), new HSSFColor.ROSE());
@@ -140,9 +154,21 @@ public class HSSFColor
                  new HSSFColor.LIGHT_GREEN());
         hash.put(new Integer(HSSFColor.LIGHT_TURQUOISE.index),
                  new HSSFColor.LIGHT_TURQUOISE());
+        hash.put(new Integer(HSSFColor.LIGHT_TURQUOISE.index2),
+                 new HSSFColor.LIGHT_TURQUOISE());
         hash.put(new Integer(HSSFColor.PALE_BLUE.index), new HSSFColor.PALE_BLUE());
         hash.put(new Integer(HSSFColor.LAVENDER.index), new HSSFColor.LAVENDER());
         hash.put(new Integer(HSSFColor.WHITE.index), new HSSFColor.WHITE());
+        hash.put(new Integer(HSSFColor.CORNFLOWER_BLUE.index),
+                 new HSSFColor.CORNFLOWER_BLUE());
+        hash.put(new Integer(HSSFColor.LEMON_CHIFFON.index),
+                 new HSSFColor.LEMON_CHIFFON());
+        hash.put(new Integer(HSSFColor.MAROON.index), new HSSFColor.MAROON());
+        hash.put(new Integer(HSSFColor.ORCHID.index), new HSSFColor.ORCHID());
+        hash.put(new Integer(HSSFColor.CORAL.index), new HSSFColor.CORAL());
+        hash.put(new Integer(HSSFColor.ROYAL_BLUE.index), new HSSFColor.ROYAL_BLUE());
+        hash.put(new Integer(HSSFColor.LIGHT_CORNFLOWER_BLUE.index),
+                 new HSSFColor.LIGHT_CORNFLOWER_BLUE());
 	return hash;
     }
 
@@ -159,7 +185,7 @@ public class HSSFColor
 
     public final static Hashtable getTripletHash()
     {
-        Hashtable hash = new Hashtable(PALETTE_SIZE);
+        Hashtable hash = new Hashtable(DISTINCT_COLOR_COUNT);
 
         hash.put(HSSFColor.BLACK.hexString, new HSSFColor.BLACK());
         hash.put(HSSFColor.BROWN.hexString, new HSSFColor.BROWN());
@@ -196,6 +222,7 @@ public class HSSFColor
         hash.put(HSSFColor.BRIGHT_GREEN.hexString,
                  new HSSFColor.BRIGHT_GREEN());
         hash.put(HSSFColor.BRIGHT_GREEN.hexString, new HSSFColor.TURQUOISE());
+        hash.put(HSSFColor.DARK_RED.hexString, new HSSFColor.DARK_RED());
         hash.put(HSSFColor.SKY_BLUE.hexString, new HSSFColor.SKY_BLUE());
         hash.put(HSSFColor.PLUM.hexString, new HSSFColor.PLUM());
         hash.put(HSSFColor.GREY_25_PERCENT.hexString,
@@ -210,11 +237,19 @@ public class HSSFColor
         hash.put(HSSFColor.PALE_BLUE.hexString, new HSSFColor.PALE_BLUE());
         hash.put(HSSFColor.LAVENDER.hexString, new HSSFColor.LAVENDER());
         hash.put(HSSFColor.WHITE.hexString, new HSSFColor.WHITE());
+        hash.put(HSSFColor.CORNFLOWER_BLUE.hexString, new HSSFColor.CORNFLOWER_BLUE());
+        hash.put(HSSFColor.LEMON_CHIFFON.hexString, new HSSFColor.LEMON_CHIFFON());
+        hash.put(HSSFColor.MAROON.hexString, new HSSFColor.MAROON());
+        hash.put(HSSFColor.ORCHID.hexString, new HSSFColor.ORCHID());
+        hash.put(HSSFColor.CORAL.hexString, new HSSFColor.CORAL());
+        hash.put(HSSFColor.ROYAL_BLUE.hexString, new HSSFColor.ROYAL_BLUE());
+        hash.put(HSSFColor.LIGHT_CORNFLOWER_BLUE.hexString,
+                 new HSSFColor.LIGHT_CORNFLOWER_BLUE());
         return hash;
     }
 
     /**
-     * @return index to the standard palet
+     * @return index to the standard palette
      */
 
     public short getIndex()
@@ -406,6 +441,7 @@ public class HSSFColor
         extends HSSFColor
     {
         public final static short   index     = 0x12;
+        public final static short   index2    = 0x20;
         public final static short[] triplet   =
         {
             0, 0, 128
@@ -499,6 +535,7 @@ public class HSSFColor
         extends HSSFColor
     {
         public final static short   index     = 0x10;
+        public final static short   index2    = 0x25;
         public final static short[] triplet   =
         {
             128, 0, 0
@@ -623,6 +660,7 @@ public class HSSFColor
         extends HSSFColor
     {
         public final static short   index     = 0x15;
+        public final static short   index2    = 0x26;
         public final static short[] triplet   =
         {
             0, 128, 128
@@ -654,6 +692,7 @@ public class HSSFColor
         extends HSSFColor
     {
         public final static short   index     = 0xc;
+        public final static short   index2    = 0x27;
         public final static short[] triplet   =
         {
             0, 0, 255
@@ -933,6 +972,7 @@ public class HSSFColor
         extends HSSFColor
     {
         public final static short   index     = 0x14;
+        public final static short   index2    = 0x24;
         public final static short[] triplet   =
         {
             128, 0, 128
@@ -995,6 +1035,7 @@ public class HSSFColor
         extends HSSFColor
     {
         public final static short   index     = 0xe;
+        public final static short   index2    = 0x21;
         public final static short[] triplet   =
         {
             255, 0, 255
@@ -1057,6 +1098,7 @@ public class HSSFColor
         extends HSSFColor
     {
         public final static short   index     = 0xd;
+        public final static short   index2    = 0x22;
         public final static short[] triplet   =
         {
             255, 255, 0
@@ -1088,6 +1130,7 @@ public class HSSFColor
         extends HSSFColor
     {
         public final static short   index     = 0xb;
+        public final static short   index2    = 0x23;
         public final static short[] triplet   =
         {
             0, 255, 0
@@ -1119,6 +1162,7 @@ public class HSSFColor
         extends HSSFColor
     {
         public final static short   index     = 0xf;
+        public final static short   index2    = 0x23;
         public final static short[] triplet   =
         {
             0, 255, 255
@@ -1181,6 +1225,7 @@ public class HSSFColor
         extends HSSFColor
     {
         public final static short   index     = 0x3d;
+        public final static short   index2    = 0x19;
         public final static short[] triplet   =
         {
             153, 51, 102
@@ -1367,6 +1412,7 @@ public class HSSFColor
         extends HSSFColor
     {
         public final static short   index     = 0x29;
+        public final static short   index2    = 0x1b;
         public final static short[] triplet   =
         {
             204, 255, 255
@@ -1465,6 +1511,210 @@ public class HSSFColor
             255, 255, 255
         };
         public final static String  hexString = "FFFF:FFFF:FFFF";
+
+        public short getIndex()
+        {
+            return index;
+        }
+
+        public short [] getTriplet()
+        {
+            return triplet;
+        }
+
+        public String getHexString()
+        {
+            return hexString;
+        }
+    }
+    
+    /**
+     * Class CORNFLOWER_BLUE
+     */
+    public final static class CORNFLOWER_BLUE
+        extends HSSFColor
+    {
+        public final static short   index     = 0x18;
+        public final static short[] triplet   =
+        {
+            153, 153, 255
+        };
+        public final static String  hexString = "9999:9999:FFFF";
+
+        public short getIndex()
+        {
+            return index;
+        }
+
+        public short [] getTriplet()
+        {
+            return triplet;
+        }
+
+        public String getHexString()
+        {
+            return hexString;
+        }
+    }
+    
+    
+    /**
+     * Class LEMON_CHIFFON
+     */
+    public final static class LEMON_CHIFFON
+        extends HSSFColor
+    {
+        public final static short   index     = 0x1a;
+        public final static short[] triplet   =
+        {
+            255, 255, 204
+        };
+        public final static String  hexString = "FFFF:FFFF:CCCC";
+
+        public short getIndex()
+        {
+            return index;
+        }
+
+        public short [] getTriplet()
+        {
+            return triplet;
+        }
+
+        public String getHexString()
+        {
+            return hexString;
+        }
+    }
+    
+    /**
+     * Class MAROON
+     */
+    public final static class MAROON
+        extends HSSFColor
+    {
+        public final static short   index     = 0x19;
+        public final static short[] triplet   =
+        {
+            153, 51, 102
+        };
+        public final static String  hexString = "9999:3333:6666";
+
+        public short getIndex()
+        {
+            return index;
+        }
+
+        public short [] getTriplet()
+        {
+            return triplet;
+        }
+
+        public String getHexString()
+        {
+            return hexString;
+        }
+    }
+    
+    /**
+     * Class ORCHID
+     */
+    public final static class ORCHID
+        extends HSSFColor
+    {
+        public final static short   index     = 0x1c;
+        public final static short[] triplet   =
+        {
+            102, 0, 102
+        };
+        public final static String  hexString = "6666:0:6666";
+
+        public short getIndex()
+        {
+            return index;
+        }
+
+        public short [] getTriplet()
+        {
+            return triplet;
+        }
+
+        public String getHexString()
+        {
+            return hexString;
+        }
+    }
+    
+    /**
+     * Class CORAL
+     */
+    public final static class CORAL
+        extends HSSFColor
+    {
+        public final static short   index     = 0x1d;
+        public final static short[] triplet   =
+        {
+            255, 255, 128
+        };
+        public final static String  hexString = "FFFF:FFFF:8080";
+
+        public short getIndex()
+        {
+            return index;
+        }
+
+        public short [] getTriplet()
+        {
+            return triplet;
+        }
+
+        public String getHexString()
+        {
+            return hexString;
+        }
+    }
+    
+    /**
+     * Class ROYAL_BLUE
+     */
+    public final static class ROYAL_BLUE
+        extends HSSFColor
+    {
+        public final static short   index     = 0x1e;
+        public final static short[] triplet   =
+        {
+            0, 102, 204
+        };
+        public final static String  hexString = "0000:6666:CCCC";
+
+        public short getIndex()
+        {
+            return index;
+        }
+
+        public short [] getTriplet()
+        {
+            return triplet;
+        }
+
+        public String getHexString()
+        {
+            return hexString;
+        }
+    }
+    
+    /**
+     * Class LIGHT_CORNFLOWER_BLUE
+     */
+    public final static class LIGHT_CORNFLOWER_BLUE
+        extends HSSFColor
+    {
+        public final static short   index     = 0x1f;
+        public final static short[] triplet   =
+        {
+            204, 204, 255
+        };
+        public final static String  hexString = "CCCC:CCCC:FFFF";
 
         public short getIndex()
         {
