@@ -72,7 +72,6 @@ import junit.framework.TestCase;
 import org.apache.poi.hpsf.DocumentSummaryInformation;
 import org.apache.poi.hpsf.HPSFException;
 import org.apache.poi.hpsf.MarkUnsupportedException;
-import org.apache.poi.hpsf.MutablePropertySet;
 import org.apache.poi.hpsf.NoPropertySetStreamException;
 import org.apache.poi.hpsf.PropertySet;
 import org.apache.poi.hpsf.PropertySetFactory;
