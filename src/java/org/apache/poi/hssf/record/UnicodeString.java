@@ -158,7 +158,15 @@ public class UnicodeString
                 field_3_string = new String(data, 3, getCharCount(), 
                                         StringUtil.getPreferredEncoding());
             } catch (UnsupportedEncodingException e) {
-                throw new RuntimeException(e);
+                // Extract the message out of our encoding
+            	// error and then bubble a runtime exception.
+            	String errorMessage = e.getMessage();
+            	
+            	// Make sure the message isn't null
+            	if (errorMessage == null) {
+            		errorMessage = e.toString();
+           	}
+                throw new RuntimeException(errorMessage);
             }
         }
         else
