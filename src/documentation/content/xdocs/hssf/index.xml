@@ -25,23 +25,17 @@
                 <li>a full usermodel api for creating, reading and modifying XLS files</li>
             </ul>
             <p>
-        Truth be told there is probably a better way to generate your spreadsheet
-        generation (yet you'll still be using HSSF indirectly).  At the time of
-        this writing we're in the process of moving the HSSF Serializer over to 
-        the
-                <link href="http://xml.apache.org/cocoon">Apache Cocoon
-        Project</link>.  With Cocoon you can serialize any XML datasource (of
-        which might be a ESQL page outputting in SQL for instance) by simply 
+        An alternate way of generating a spreadsheet is via the <link href="http://cocoon.apache.org">Cocoon</link> serializer (yet you'll still be using HSSF indirectly). 
+         With Cocoon you can serialize any XML datasource (which might be a ESQL page outputting in SQL for instance) by simply 
         applying the stylesheet and designating the serializer.
             </p>
             <p>
         If you're merely reading spreadsheet data, then use the eventmodel api
-        in the org.apache.poi.hssf.eventmodel package.
+        in the org.apache.poi.hssf.eventusermodel package.
             </p>
             <p>
         If you're modifying spreadsheet data then use the usermodel api.  You
-        can also generate spreadsheets this way, but using Cocoon (which will do
-        it this way indirectly) is the best way...we promise.
+        can also generate spreadsheets this way.
             </p>
 
         </section>

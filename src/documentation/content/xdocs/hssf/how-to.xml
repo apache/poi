@@ -11,23 +11,23 @@
         </authors>
     </header>
   <body>
-    <section><title>How to use the HSSF prototype API</title>
+    <section><title>How to use the HSSF API</title>
 
         <section><title>Capabilities</title>
             <p>This release of the how-to outlines functionality for the CVS HEAD.
             Those looking for information on previous releases should
             look in the documentation distributed with that release.</p>
             <p>
-              This release allows numeric and string cell values to be written to
-              or read from an XLS file as well as reading and writing dates. Also
+              HSSF allows numeric, string, date or formuala cell values to be written to
+              or read from an XLS file. Also
               in this release is row and column sizing, cell styling (bold,
               italics, borders,etc), and support for both built-in and user 
-	      defined data formats.  New
-              to this release is an event-based API for reading XLS files.
+	      defined data formats.  Also available is
+              an event-based API for reading XLS files.
               It differs greatly from the read/write API
               and is intended for intermediate developers who need a smaller
-              memory footprint.  It will also serve as the basis for the HSSF
-              Generator.</p>
+              memory footprint. 
+              </p>
         </section>
     <section><title>General Use</title>
         <section><title>User API</title>
@@ -474,25 +474,15 @@ yet. When it does something, we'll document it.</p>
      </section>
                 <section><title>What's Next?</title>
 
-<p>This release contains code that supports &quot;internationalization&quot;
-or more accurately non-US/UK languages; however, it has not been
-tested with the new API changes (please help us with this). We've
-shifted focus a bit for this release in recognition of the
-international support we've gotten. We're going to focus on western
-European languages for our first beta. We're more than happy to
-accept help in supporting non-Western European languages if someone
-who knows what they're doing in this area is willing to pitch in!
-(There is next to no documentation on what is necessary to support
-such a move and its really hard to support a language when you don't even
-know the alphabet).</p>
-<p>This release of HSSF does not yet support Formulas. I've been
-focusing on the requests I've gotten in. That being said, if we get
-more user feedback on what is most useful first we'll aim for that.
-As a general principal, HSSF's goal is to support HSSF-Serializer
-(meaning an emphasis on write). We would like to hear from you! How
-are you using HSSF/POIFS? How would you like to use it? What features
-are most important first?
-</p>
+<p>Further effort on HSSF is going to focus on the following major areas: </p>
+<ul>
+<li>Performance: A lot of work is going on in CVS and mailing lists for greatly improving the
+memory efficiency of POI, as well as improving speed. Many approaches have been suggested, and a lot of code as been written.
+It now needs a lot of testing and bugfixing. </li>
+<li>Charts: This is a hard problem, with very little documentation.</li>
+</ul>
+<p><link href="../getinvolved/index.html"> So jump in! </link> </p>
+
      </section>
 
 </section>
