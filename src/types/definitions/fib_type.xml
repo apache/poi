@@ -247,7 +247,13 @@
     <field type="int" size="4" name="lcbSttbAutoCaption"/>
     <field type="int" size="4" name="fcPlcfwkb"/>
     <field type="int" size="4" name="lcbPlcfwkb"/>
-    <field type="int" size="4" name="fcPlcfsplfcPlcfspl"/>
+    <!-- 
+        possible typo - was
+        <field type="int" size="4" name="fcPlcfsplfcPlcfspl"/>
+        
+        documented as fcPlcfspl in MS Word Binary Format doc
+    -->
+    <field type="int" size="4" name="fcPlcfspl"/>
     <field type="int" size="4" name="lcbPlcfspl"/>
 
     <field type="int" size="4" name="fcPlcftxbxTxt"/>
@@ -265,7 +271,12 @@
     <field type="int" size="4" name="cbSttbttmbd"/>
     <field type="int" size="4" name="fcUnused"/>
     <field type="int" size="4" name="lcbUnused"/>
-    <field type="int" size="4" name="rgpgdbkd"/>
+    <!--
+        Bug - this field is meant to be an array that "overlays"
+              the following fields.  See MS Word Binary Format doc
+              for details.
+        <field type="int" size="4" name="rgpgdbkd"/> 
+    -->
     <field type="int" size="4" name="fcPgdMother"/>
     <field type="int" size="4" name="lcbPgdMother"/>
     <field type="int" size="4" name="fcBkdMother"/>
@@ -318,7 +329,12 @@
     <field type="int" size="4" name="lcbPlcocx"/>
     <field type="int" size="4" name="fcPlcfbteLvc"/>
     <field type="int" size="4" name="lcbPlcfbteLvc"/>
-    <field type="int" size="4" name="ftModified"/>
+    <!--
+        Bug - this field is meant to "overlay" the following
+              two fields.  See MS Word Binary Format doc
+              for details.
+        <field type="int" size="4" name="ftModified"/> 
+    -->
     <field type="int" size="4" name="dwLowDateTime"/>
     <field type="int" size="4" name="dwHighDateTime"/>
     <field type="int" size="4" name="fcPlcflvc"/>

@@ -257,7 +257,7 @@ public abstract class FIBAbstractType
     private  int field_161_lcbSttbAutoCaption;
     private  int field_162_fcPlcfwkb;
     private  int field_163_lcbPlcfwkb;
-    private  int field_164_fcPlcfsplfcPlcfspl;
+    private  int field_164_fcPlcfspl;
     private  int field_165_lcbPlcfspl;
     private  int field_166_fcPlcftxbxTxt;
     private  int field_167_lcbPlcftxbxTxt;
@@ -273,68 +273,66 @@ public abstract class FIBAbstractType
     private  int field_177_cbSttbttmbd;
     private  int field_178_fcUnused;
     private  int field_179_lcbUnused;
-    private  int field_180_rgpgdbkd;
-    private  int field_181_fcPgdMother;
-    private  int field_182_lcbPgdMother;
-    private  int field_183_fcBkdMother;
-    private  int field_184_lcbBkdMother;
-    private  int field_185_fcPgdFtn;
-    private  int field_186_lcbPgdFtn;
-    private  int field_187_fcBkdFtn;
-    private  int field_188_lcbBkdFtn;
-    private  int field_189_fcPgdEdn;
-    private  int field_190_lcbPgdEdn;
-    private  int field_191_fcBkdEdn;
-    private  int field_192_lcbBkdEdn;
-    private  int field_193_fcSttbfIntlFld;
-    private  int field_194_lcbSttbfIntlFld;
-    private  int field_195_fcRouteSlip;
-    private  int field_196_lcbRouteSlip;
-    private  int field_197_fcSttbSavedBy;
-    private  int field_198_lcbSttbSavedBy;
-    private  int field_199_fcSttbFnm;
-    private  int field_200_lcbSttbFnm;
-    private  int field_201_fcPlcfLst;
-    private  int field_202_lcbPlcfLst;
-    private  int field_203_fcPlfLfo;
-    private  int field_204_lcbPlfLfo;
-    private  int field_205_fcPlcftxbxBkd;
-    private  int field_206_lcbPlcftxbxBkd;
-    private  int field_207_fcPlcftxbxHdrBkd;
-    private  int field_208_lcbPlcftxbxHdrBkd;
-    private  int field_209_fcDocUndo;
-    private  int field_210_lcbDocUndo;
-    private  int field_211_fcRgbuse;
-    private  int field_212_lcbRgbuse;
-    private  int field_213_fcUsp;
-    private  int field_214_lcbUsp;
-    private  int field_215_fcUskf;
-    private  int field_216_lcbUskf;
-    private  int field_217_fcPlcupcRgbuse;
-    private  int field_218_lcbPlcupcRgbuse;
-    private  int field_219_fcPlcupcUsp;
-    private  int field_220_lcbPlcupcUsp;
-    private  int field_221_fcSttbGlsyStyle;
-    private  int field_222_lcbSttbGlsyStyle;
-    private  int field_223_fcPlgosl;
-    private  int field_224_lcbPlgosl;
-    private  int field_225_fcPlcocx;
-    private  int field_226_lcbPlcocx;
-    private  int field_227_fcPlcfbteLvc;
-    private  int field_228_lcbPlcfbteLvc;
-    private  int field_229_ftModified;
-    private  int field_230_dwLowDateTime;
-    private  int field_231_dwHighDateTime;
-    private  int field_232_fcPlcflvc;
-    private  int field_233_lcbPlcflvc;
-    private  int field_234_fcPlcasumy;
-    private  int field_235_lcbPlcasumy;
-    private  int field_236_fcPlcfgram;
-    private  int field_237_lcbPlcfgram;
-    private  int field_238_fcSttbListNames;
-    private  int field_239_lcbSttbListNames;
-    private  int field_240_fcSttbfUssr;
-    private  int field_241_lcbSttbfUssr;
+    private  int field_180_fcPgdMother;
+    private  int field_181_lcbPgdMother;
+    private  int field_182_fcBkdMother;
+    private  int field_183_lcbBkdMother;
+    private  int field_184_fcPgdFtn;
+    private  int field_185_lcbPgdFtn;
+    private  int field_186_fcBkdFtn;
+    private  int field_187_lcbBkdFtn;
+    private  int field_188_fcPgdEdn;
+    private  int field_189_lcbPgdEdn;
+    private  int field_190_fcBkdEdn;
+    private  int field_191_lcbBkdEdn;
+    private  int field_192_fcSttbfIntlFld;
+    private  int field_193_lcbSttbfIntlFld;
+    private  int field_194_fcRouteSlip;
+    private  int field_195_lcbRouteSlip;
+    private  int field_196_fcSttbSavedBy;
+    private  int field_197_lcbSttbSavedBy;
+    private  int field_198_fcSttbFnm;
+    private  int field_199_lcbSttbFnm;
+    private  int field_200_fcPlcfLst;
+    private  int field_201_lcbPlcfLst;
+    private  int field_202_fcPlfLfo;
+    private  int field_203_lcbPlfLfo;
+    private  int field_204_fcPlcftxbxBkd;
+    private  int field_205_lcbPlcftxbxBkd;
+    private  int field_206_fcPlcftxbxHdrBkd;
+    private  int field_207_lcbPlcftxbxHdrBkd;
+    private  int field_208_fcDocUndo;
+    private  int field_209_lcbDocUndo;
+    private  int field_210_fcRgbuse;
+    private  int field_211_lcbRgbuse;
+    private  int field_212_fcUsp;
+    private  int field_213_lcbUsp;
+    private  int field_214_fcUskf;
+    private  int field_215_lcbUskf;
+    private  int field_216_fcPlcupcRgbuse;
+    private  int field_217_lcbPlcupcRgbuse;
+    private  int field_218_fcPlcupcUsp;
+    private  int field_219_lcbPlcupcUsp;
+    private  int field_220_fcSttbGlsyStyle;
+    private  int field_221_lcbSttbGlsyStyle;
+    private  int field_222_fcPlgosl;
+    private  int field_223_lcbPlgosl;
+    private  int field_224_fcPlcocx;
+    private  int field_225_lcbPlcocx;
+    private  int field_226_fcPlcfbteLvc;
+    private  int field_227_lcbPlcfbteLvc;
+    private  int field_228_dwLowDateTime;
+    private  int field_229_dwHighDateTime;
+    private  int field_230_fcPlcflvc;
+    private  int field_231_lcbPlcflvc;
+    private  int field_232_fcPlcasumy;
+    private  int field_233_lcbPlcasumy;
+    private  int field_234_fcPlcfgram;
+    private  int field_235_lcbPlcfgram;
+    private  int field_236_fcSttbListNames;
+    private  int field_237_lcbSttbListNames;
+    private  int field_238_fcSttbfUssr;
+    private  int field_239_lcbSttbfUssr;
 
 
     public FIBAbstractType()
@@ -507,7 +505,7 @@ public abstract class FIBAbstractType
         field_161_lcbSttbAutoCaption    = LittleEndian.getInt(data, 0x246 + offset);
         field_162_fcPlcfwkb             = LittleEndian.getInt(data, 0x24a + offset);
         field_163_lcbPlcfwkb            = LittleEndian.getInt(data, 0x24e + offset);
-        field_164_fcPlcfsplfcPlcfspl    = LittleEndian.getInt(data, 0x252 + offset);
+        field_164_fcPlcfspl             = LittleEndian.getInt(data, 0x252 + offset);
         field_165_lcbPlcfspl            = LittleEndian.getInt(data, 0x256 + offset);
         field_166_fcPlcftxbxTxt         = LittleEndian.getInt(data, 0x25a + offset);
         field_167_lcbPlcftxbxTxt        = LittleEndian.getInt(data, 0x25e + offset);
@@ -523,68 +521,66 @@ public abstract class FIBAbstractType
         field_177_cbSttbttmbd           = LittleEndian.getInt(data, 0x286 + offset);
         field_178_fcUnused              = LittleEndian.getInt(data, 0x28a + offset);
         field_179_lcbUnused             = LittleEndian.getInt(data, 0x28e + offset);
-        field_180_rgpgdbkd              = LittleEndian.getInt(data, 0x292 + offset);
-        field_181_fcPgdMother           = LittleEndian.getInt(data, 0x296 + offset);
-        field_182_lcbPgdMother          = LittleEndian.getInt(data, 0x29a + offset);
-        field_183_fcBkdMother           = LittleEndian.getInt(data, 0x29e + offset);
-        field_184_lcbBkdMother          = LittleEndian.getInt(data, 0x2a2 + offset);
-        field_185_fcPgdFtn              = LittleEndian.getInt(data, 0x2a6 + offset);
-        field_186_lcbPgdFtn             = LittleEndian.getInt(data, 0x2aa + offset);
-        field_187_fcBkdFtn              = LittleEndian.getInt(data, 0x2ae + offset);
-        field_188_lcbBkdFtn             = LittleEndian.getInt(data, 0x2b2 + offset);
-        field_189_fcPgdEdn              = LittleEndian.getInt(data, 0x2b6 + offset);
-        field_190_lcbPgdEdn             = LittleEndian.getInt(data, 0x2ba + offset);
-        field_191_fcBkdEdn              = LittleEndian.getInt(data, 0x2be + offset);
-        field_192_lcbBkdEdn             = LittleEndian.getInt(data, 0x2c2 + offset);
-        field_193_fcSttbfIntlFld        = LittleEndian.getInt(data, 0x2c6 + offset);
-        field_194_lcbSttbfIntlFld       = LittleEndian.getInt(data, 0x2ca + offset);
-        field_195_fcRouteSlip           = LittleEndian.getInt(data, 0x2ce + offset);
-        field_196_lcbRouteSlip          = LittleEndian.getInt(data, 0x2d2 + offset);
-        field_197_fcSttbSavedBy         = LittleEndian.getInt(data, 0x2d6 + offset);
-        field_198_lcbSttbSavedBy        = LittleEndian.getInt(data, 0x2da + offset);
-        field_199_fcSttbFnm             = LittleEndian.getInt(data, 0x2de + offset);
-        field_200_lcbSttbFnm            = LittleEndian.getInt(data, 0x2e2 + offset);
-        field_201_fcPlcfLst             = LittleEndian.getInt(data, 0x2e6 + offset);
-        field_202_lcbPlcfLst            = LittleEndian.getInt(data, 0x2ea + offset);
-        field_203_fcPlfLfo              = LittleEndian.getInt(data, 0x2ee + offset);
-        field_204_lcbPlfLfo             = LittleEndian.getInt(data, 0x2f2 + offset);
-        field_205_fcPlcftxbxBkd         = LittleEndian.getInt(data, 0x2f6 + offset);
-        field_206_lcbPlcftxbxBkd        = LittleEndian.getInt(data, 0x2fa + offset);
-        field_207_fcPlcftxbxHdrBkd      = LittleEndian.getInt(data, 0x2fe + offset);
-        field_208_lcbPlcftxbxHdrBkd     = LittleEndian.getInt(data, 0x302 + offset);
-        field_209_fcDocUndo             = LittleEndian.getInt(data, 0x306 + offset);
-        field_210_lcbDocUndo            = LittleEndian.getInt(data, 0x30a + offset);
-        field_211_fcRgbuse              = LittleEndian.getInt(data, 0x30e + offset);
-        field_212_lcbRgbuse             = LittleEndian.getInt(data, 0x312 + offset);
-        field_213_fcUsp                 = LittleEndian.getInt(data, 0x316 + offset);
-        field_214_lcbUsp                = LittleEndian.getInt(data, 0x31a + offset);
-        field_215_fcUskf                = LittleEndian.getInt(data, 0x31e + offset);
-        field_216_lcbUskf               = LittleEndian.getInt(data, 0x322 + offset);
-        field_217_fcPlcupcRgbuse        = LittleEndian.getInt(data, 0x326 + offset);
-        field_218_lcbPlcupcRgbuse       = LittleEndian.getInt(data, 0x32a + offset);
-        field_219_fcPlcupcUsp           = LittleEndian.getInt(data, 0x32e + offset);
-        field_220_lcbPlcupcUsp          = LittleEndian.getInt(data, 0x332 + offset);
-        field_221_fcSttbGlsyStyle       = LittleEndian.getInt(data, 0x336 + offset);
-        field_222_lcbSttbGlsyStyle      = LittleEndian.getInt(data, 0x33a + offset);
-        field_223_fcPlgosl              = LittleEndian.getInt(data, 0x33e + offset);
-        field_224_lcbPlgosl             = LittleEndian.getInt(data, 0x342 + offset);
-        field_225_fcPlcocx              = LittleEndian.getInt(data, 0x346 + offset);
-        field_226_lcbPlcocx             = LittleEndian.getInt(data, 0x34a + offset);
-        field_227_fcPlcfbteLvc          = LittleEndian.getInt(data, 0x34e + offset);
-        field_228_lcbPlcfbteLvc         = LittleEndian.getInt(data, 0x352 + offset);
-        field_229_ftModified            = LittleEndian.getInt(data, 0x356 + offset);
-        field_230_dwLowDateTime         = LittleEndian.getInt(data, 0x35a + offset);
-        field_231_dwHighDateTime        = LittleEndian.getInt(data, 0x35e + offset);
-        field_232_fcPlcflvc             = LittleEndian.getInt(data, 0x362 + offset);
-        field_233_lcbPlcflvc            = LittleEndian.getInt(data, 0x366 + offset);
-        field_234_fcPlcasumy            = LittleEndian.getInt(data, 0x36a + offset);
-        field_235_lcbPlcasumy           = LittleEndian.getInt(data, 0x36e + offset);
-        field_236_fcPlcfgram            = LittleEndian.getInt(data, 0x372 + offset);
-        field_237_lcbPlcfgram           = LittleEndian.getInt(data, 0x376 + offset);
-        field_238_fcSttbListNames       = LittleEndian.getInt(data, 0x37a + offset);
-        field_239_lcbSttbListNames      = LittleEndian.getInt(data, 0x37e + offset);
-        field_240_fcSttbfUssr           = LittleEndian.getInt(data, 0x382 + offset);
-        field_241_lcbSttbfUssr          = LittleEndian.getInt(data, 0x386 + offset);
+        field_180_fcPgdMother           = LittleEndian.getInt(data, 0x292 + offset);
+        field_181_lcbPgdMother          = LittleEndian.getInt(data, 0x296 + offset);
+        field_182_fcBkdMother           = LittleEndian.getInt(data, 0x29a + offset);
+        field_183_lcbBkdMother          = LittleEndian.getInt(data, 0x29e + offset);
+        field_184_fcPgdFtn              = LittleEndian.getInt(data, 0x2a2 + offset);
+        field_185_lcbPgdFtn             = LittleEndian.getInt(data, 0x2a6 + offset);
+        field_186_fcBkdFtn              = LittleEndian.getInt(data, 0x2aa + offset);
+        field_187_lcbBkdFtn             = LittleEndian.getInt(data, 0x2ae + offset);
+        field_188_fcPgdEdn              = LittleEndian.getInt(data, 0x2b2 + offset);
+        field_189_lcbPgdEdn             = LittleEndian.getInt(data, 0x2b6 + offset);
+        field_190_fcBkdEdn              = LittleEndian.getInt(data, 0x2ba + offset);
+        field_191_lcbBkdEdn             = LittleEndian.getInt(data, 0x2be + offset);
+        field_192_fcSttbfIntlFld        = LittleEndian.getInt(data, 0x2c2 + offset);
+        field_193_lcbSttbfIntlFld       = LittleEndian.getInt(data, 0x2c6 + offset);
+        field_194_fcRouteSlip           = LittleEndian.getInt(data, 0x2ca + offset);
+        field_195_lcbRouteSlip          = LittleEndian.getInt(data, 0x2ce + offset);
+        field_196_fcSttbSavedBy         = LittleEndian.getInt(data, 0x2d2 + offset);
+        field_197_lcbSttbSavedBy        = LittleEndian.getInt(data, 0x2d6 + offset);
+        field_198_fcSttbFnm             = LittleEndian.getInt(data, 0x2da + offset);
+        field_199_lcbSttbFnm            = LittleEndian.getInt(data, 0x2de + offset);
+        field_200_fcPlcfLst             = LittleEndian.getInt(data, 0x2e2 + offset);
+        field_201_lcbPlcfLst            = LittleEndian.getInt(data, 0x2e6 + offset);
+        field_202_fcPlfLfo              = LittleEndian.getInt(data, 0x2ea + offset);
+        field_203_lcbPlfLfo             = LittleEndian.getInt(data, 0x2ee + offset);
+        field_204_fcPlcftxbxBkd         = LittleEndian.getInt(data, 0x2f2 + offset);
+        field_205_lcbPlcftxbxBkd        = LittleEndian.getInt(data, 0x2f6 + offset);
+        field_206_fcPlcftxbxHdrBkd      = LittleEndian.getInt(data, 0x2fa + offset);
+        field_207_lcbPlcftxbxHdrBkd     = LittleEndian.getInt(data, 0x2fe + offset);
+        field_208_fcDocUndo             = LittleEndian.getInt(data, 0x302 + offset);
+        field_209_lcbDocUndo            = LittleEndian.getInt(data, 0x306 + offset);
+        field_210_fcRgbuse              = LittleEndian.getInt(data, 0x30a + offset);
+        field_211_lcbRgbuse             = LittleEndian.getInt(data, 0x30e + offset);
+        field_212_fcUsp                 = LittleEndian.getInt(data, 0x312 + offset);
+        field_213_lcbUsp                = LittleEndian.getInt(data, 0x316 + offset);
+        field_214_fcUskf                = LittleEndian.getInt(data, 0x31a + offset);
+        field_215_lcbUskf               = LittleEndian.getInt(data, 0x31e + offset);
+        field_216_fcPlcupcRgbuse        = LittleEndian.getInt(data, 0x322 + offset);
+        field_217_lcbPlcupcRgbuse       = LittleEndian.getInt(data, 0x326 + offset);
+        field_218_fcPlcupcUsp           = LittleEndian.getInt(data, 0x32a + offset);
+        field_219_lcbPlcupcUsp          = LittleEndian.getInt(data, 0x32e + offset);
+        field_220_fcSttbGlsyStyle       = LittleEndian.getInt(data, 0x332 + offset);
+        field_221_lcbSttbGlsyStyle      = LittleEndian.getInt(data, 0x336 + offset);
+        field_222_fcPlgosl              = LittleEndian.getInt(data, 0x33a + offset);
+        field_223_lcbPlgosl             = LittleEndian.getInt(data, 0x33e + offset);
+        field_224_fcPlcocx              = LittleEndian.getInt(data, 0x342 + offset);
+        field_225_lcbPlcocx             = LittleEndian.getInt(data, 0x346 + offset);
+        field_226_fcPlcfbteLvc          = LittleEndian.getInt(data, 0x34a + offset);
+        field_227_lcbPlcfbteLvc         = LittleEndian.getInt(data, 0x34e + offset);
+        field_228_dwLowDateTime         = LittleEndian.getInt(data, 0x352 + offset);
+        field_229_dwHighDateTime        = LittleEndian.getInt(data, 0x356 + offset);
+        field_230_fcPlcflvc             = LittleEndian.getInt(data, 0x35a + offset);
+        field_231_lcbPlcflvc            = LittleEndian.getInt(data, 0x35e + offset);
+        field_232_fcPlcasumy            = LittleEndian.getInt(data, 0x362 + offset);
+        field_233_lcbPlcasumy           = LittleEndian.getInt(data, 0x366 + offset);
+        field_234_fcPlcfgram            = LittleEndian.getInt(data, 0x36a + offset);
+        field_235_lcbPlcfgram           = LittleEndian.getInt(data, 0x36e + offset);
+        field_236_fcSttbListNames       = LittleEndian.getInt(data, 0x372 + offset);
+        field_237_lcbSttbListNames      = LittleEndian.getInt(data, 0x376 + offset);
+        field_238_fcSttbfUssr           = LittleEndian.getInt(data, 0x37a + offset);
+        field_239_lcbSttbfUssr          = LittleEndian.getInt(data, 0x37e + offset);
 
     }
 
@@ -1428,10 +1424,10 @@ public abstract class FIBAbstractType
         buffer.append(HexDump.toHex((int)getLcbPlcfwkb()));
         buffer.append(" (").append(getLcbPlcfwkb()).append(" )\n");
 
-        buffer.append("    .fcPlcfsplfcPlcfspl   = ");
+        buffer.append("    .fcPlcfspl            = ");
         buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFcPlcfsplfcPlcfspl()));
-        buffer.append(" (").append(getFcPlcfsplfcPlcfspl()).append(" )\n");
+        buffer.append(HexDump.toHex((int)getFcPlcfspl()));
+        buffer.append(" (").append(getFcPlcfspl()).append(" )\n");
 
         buffer.append("    .lcbPlcfspl           = ");
         buffer.append("0x");
@@ -1507,11 +1503,6 @@ public abstract class FIBAbstractType
         buffer.append("0x");
         buffer.append(HexDump.toHex((int)getLcbUnused()));
         buffer.append(" (").append(getLcbUnused()).append(" )\n");
-
-        buffer.append("    .rgpgdbkd             = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getRgpgdbkd()));
-        buffer.append(" (").append(getRgpgdbkd()).append(" )\n");
 
         buffer.append("    .fcPgdMother          = ");
         buffer.append("0x");
@@ -1753,11 +1744,6 @@ public abstract class FIBAbstractType
         buffer.append(HexDump.toHex((int)getLcbPlcfbteLvc()));
         buffer.append(" (").append(getLcbPlcfbteLvc()).append(" )\n");
 
-        buffer.append("    .ftModified           = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getFtModified()));
-        buffer.append(" (").append(getFtModified()).append(" )\n");
-
         buffer.append("    .dwLowDateTime        = ");
         buffer.append("0x");
         buffer.append(HexDump.toHex((int)getDwLowDateTime()));
@@ -1827,7 +1813,7 @@ public abstract class FIBAbstractType
      */
     public int getSize()
     {
-        return 4 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 4 + 4 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 2 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4;
+        return 4 +  + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 4 + 4 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 2 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4;
     }
 
 
@@ -4441,19 +4427,19 @@ public abstract class FIBAbstractType
     }
 
     /**
-     * Get the fcPlcfsplfcPlcfspl field for the FIB record.
+     * Get the fcPlcfspl field for the FIB record.
      */
-    public int getFcPlcfsplfcPlcfspl()
+    public int getFcPlcfspl()
     {
-        return field_164_fcPlcfsplfcPlcfspl;
+        return field_164_fcPlcfspl;
     }
 
     /**
-     * Set the fcPlcfsplfcPlcfspl field for the FIB record.
+     * Set the fcPlcfspl field for the FIB record.
      */
-    public void setFcPlcfsplfcPlcfspl(int field_164_fcPlcfsplfcPlcfspl)
+    public void setFcPlcfspl(int field_164_fcPlcfspl)
     {
-        this.field_164_fcPlcfsplfcPlcfspl = field_164_fcPlcfsplfcPlcfspl;
+        this.field_164_fcPlcfspl = field_164_fcPlcfspl;
     }
 
     /**
@@ -4697,35 +4683,19 @@ public abstract class FIBAbstractType
     }
 
     /**
-     * Get the rgpgdbkd field for the FIB record.
-     */
-    public int getRgpgdbkd()
-    {
-        return field_180_rgpgdbkd;
-    }
-
-    /**
-     * Set the rgpgdbkd field for the FIB record.
-     */
-    public void setRgpgdbkd(int field_180_rgpgdbkd)
-    {
-        this.field_180_rgpgdbkd = field_180_rgpgdbkd;
-    }
-
-    /**
      * Get the fcPgdMother field for the FIB record.
      */
     public int getFcPgdMother()
     {
-        return field_181_fcPgdMother;
+        return field_180_fcPgdMother;
     }
 
     /**
      * Set the fcPgdMother field for the FIB record.
      */
-    public void setFcPgdMother(int field_181_fcPgdMother)
+    public void setFcPgdMother(int field_180_fcPgdMother)
     {
-        this.field_181_fcPgdMother = field_181_fcPgdMother;
+        this.field_180_fcPgdMother = field_180_fcPgdMother;
     }
 
     /**
@@ -4733,15 +4703,15 @@ public abstract class FIBAbstractType
      */
     public int getLcbPgdMother()
     {
-        return field_182_lcbPgdMother;
+        return field_181_lcbPgdMother;
     }
 
     /**
      * Set the lcbPgdMother field for the FIB record.
      */
-    public void setLcbPgdMother(int field_182_lcbPgdMother)
+    public void setLcbPgdMother(int field_181_lcbPgdMother)
     {
-        this.field_182_lcbPgdMother = field_182_lcbPgdMother;
+        this.field_181_lcbPgdMother = field_181_lcbPgdMother;
     }
 
     /**
@@ -4749,15 +4719,15 @@ public abstract class FIBAbstractType
      */
     public int getFcBkdMother()
     {
-        return field_183_fcBkdMother;
+        return field_182_fcBkdMother;
     }
 
     /**
      * Set the fcBkdMother field for the FIB record.
      */
-    public void setFcBkdMother(int field_183_fcBkdMother)
+    public void setFcBkdMother(int field_182_fcBkdMother)
     {
-        this.field_183_fcBkdMother = field_183_fcBkdMother;
+        this.field_182_fcBkdMother = field_182_fcBkdMother;
     }
 
     /**
@@ -4765,15 +4735,15 @@ public abstract class FIBAbstractType
      */
     public int getLcbBkdMother()
     {
-        return field_184_lcbBkdMother;
+        return field_183_lcbBkdMother;
     }
 
     /**
      * Set the lcbBkdMother field for the FIB record.
      */
-    public void setLcbBkdMother(int field_184_lcbBkdMother)
+    public void setLcbBkdMother(int field_183_lcbBkdMother)
     {
-        this.field_184_lcbBkdMother = field_184_lcbBkdMother;
+        this.field_183_lcbBkdMother = field_183_lcbBkdMother;
     }
 
     /**
@@ -4781,15 +4751,15 @@ public abstract class FIBAbstractType
      */
     public int getFcPgdFtn()
     {
-        return field_185_fcPgdFtn;
+        return field_184_fcPgdFtn;
     }
 
     /**
      * Set the fcPgdFtn field for the FIB record.
      */
-    public void setFcPgdFtn(int field_185_fcPgdFtn)
+    public void setFcPgdFtn(int field_184_fcPgdFtn)
     {
-        this.field_185_fcPgdFtn = field_185_fcPgdFtn;
+        this.field_184_fcPgdFtn = field_184_fcPgdFtn;
     }
 
     /**
@@ -4797,15 +4767,15 @@ public abstract class FIBAbstractType
      */
     public int getLcbPgdFtn()
     {
-        return field_186_lcbPgdFtn;
+        return field_185_lcbPgdFtn;
     }
 
     /**
      * Set the lcbPgdFtn field for the FIB record.
      */
-    public void setLcbPgdFtn(int field_186_lcbPgdFtn)
+    public void setLcbPgdFtn(int field_185_lcbPgdFtn)
     {
-        this.field_186_lcbPgdFtn = field_186_lcbPgdFtn;
+        this.field_185_lcbPgdFtn = field_185_lcbPgdFtn;
     }
 
     /**
@@ -4813,15 +4783,15 @@ public abstract class FIBAbstractType
      */
     public int getFcBkdFtn()
     {
-        return field_187_fcBkdFtn;
+        return field_186_fcBkdFtn;
     }
 
     /**
      * Set the fcBkdFtn field for the FIB record.
      */
-    public void setFcBkdFtn(int field_187_fcBkdFtn)
+    public void setFcBkdFtn(int field_186_fcBkdFtn)
     {
-        this.field_187_fcBkdFtn = field_187_fcBkdFtn;
+        this.field_186_fcBkdFtn = field_186_fcBkdFtn;
     }
 
     /**
@@ -4829,15 +4799,15 @@ public abstract class FIBAbstractType
      */
     public int getLcbBkdFtn()
     {
-        return field_188_lcbBkdFtn;
+        return field_187_lcbBkdFtn;
     }
 
     /**
      * Set the lcbBkdFtn field for the FIB record.
      */
-    public void setLcbBkdFtn(int field_188_lcbBkdFtn)
+    public void setLcbBkdFtn(int field_187_lcbBkdFtn)
     {
-        this.field_188_lcbBkdFtn = field_188_lcbBkdFtn;
+        this.field_187_lcbBkdFtn = field_187_lcbBkdFtn;
     }
 
     /**
@@ -4845,15 +4815,15 @@ public abstract class FIBAbstractType
      */
     public int getFcPgdEdn()
     {
-        return field_189_fcPgdEdn;
+        return field_188_fcPgdEdn;
     }
 
     /**
      * Set the fcPgdEdn field for the FIB record.
      */
-    public void setFcPgdEdn(int field_189_fcPgdEdn)
+    public void setFcPgdEdn(int field_188_fcPgdEdn)
     {
-        this.field_189_fcPgdEdn = field_189_fcPgdEdn;
+        this.field_188_fcPgdEdn = field_188_fcPgdEdn;
     }
 
     /**
@@ -4861,15 +4831,15 @@ public abstract class FIBAbstractType
      */
     public int getLcbPgdEdn()
     {
-        return field_190_lcbPgdEdn;
+        return field_189_lcbPgdEdn;
     }
 
     /**
      * Set the lcbPgdEdn field for the FIB record.
      */
-    public void setLcbPgdEdn(int field_190_lcbPgdEdn)
+    public void setLcbPgdEdn(int field_189_lcbPgdEdn)
     {
-        this.field_190_lcbPgdEdn = field_190_lcbPgdEdn;
+        this.field_189_lcbPgdEdn = field_189_lcbPgdEdn;
     }
 
     /**
@@ -4877,15 +4847,15 @@ public abstract class FIBAbstractType
      */
     public int getFcBkdEdn()
     {
-        return field_191_fcBkdEdn;
+        return field_190_fcBkdEdn;
     }
 
     /**
      * Set the fcBkdEdn field for the FIB record.
      */
-    public void setFcBkdEdn(int field_191_fcBkdEdn)
+    public void setFcBkdEdn(int field_190_fcBkdEdn)
     {
-        this.field_191_fcBkdEdn = field_191_fcBkdEdn;
+        this.field_190_fcBkdEdn = field_190_fcBkdEdn;
     }
 
     /**
@@ -4893,15 +4863,15 @@ public abstract class FIBAbstractType
      */
     public int getLcbBkdEdn()
     {
-        return field_192_lcbBkdEdn;
+        return field_191_lcbBkdEdn;
     }
 
     /**
      * Set the lcbBkdEdn field for the FIB record.
      */
-    public void setLcbBkdEdn(int field_192_lcbBkdEdn)
+    public void setLcbBkdEdn(int field_191_lcbBkdEdn)
     {
-        this.field_192_lcbBkdEdn = field_192_lcbBkdEdn;
+        this.field_191_lcbBkdEdn = field_191_lcbBkdEdn;
     }
 
     /**
@@ -4909,15 +4879,15 @@ public abstract class FIBAbstractType
      */
     public int getFcSttbfIntlFld()
     {
-        return field_193_fcSttbfIntlFld;
+        return field_192_fcSttbfIntlFld;
     }
 
     /**
      * Set the fcSttbfIntlFld field for the FIB record.
      */
-    public void setFcSttbfIntlFld(int field_193_fcSttbfIntlFld)
+    public void setFcSttbfIntlFld(int field_192_fcSttbfIntlFld)
     {
-        this.field_193_fcSttbfIntlFld = field_193_fcSttbfIntlFld;
+        this.field_192_fcSttbfIntlFld = field_192_fcSttbfIntlFld;
     }
 
     /**
@@ -4925,15 +4895,15 @@ public abstract class FIBAbstractType
      */
     public int getLcbSttbfIntlFld()
     {
-        return field_194_lcbSttbfIntlFld;
+        return field_193_lcbSttbfIntlFld;
     }
 
     /**
      * Set the lcbSttbfIntlFld field for the FIB record.
      */
-    public void setLcbSttbfIntlFld(int field_194_lcbSttbfIntlFld)
+    public void setLcbSttbfIntlFld(int field_193_lcbSttbfIntlFld)
     {
-        this.field_194_lcbSttbfIntlFld = field_194_lcbSttbfIntlFld;
+        this.field_193_lcbSttbfIntlFld = field_193_lcbSttbfIntlFld;
     }
 
     /**
@@ -4941,15 +4911,15 @@ public abstract class FIBAbstractType
      */
     public int getFcRouteSlip()
     {
-        return field_195_fcRouteSlip;
+        return field_194_fcRouteSlip;
     }
 
     /**
      * Set the fcRouteSlip field for the FIB record.
      */
-    public void setFcRouteSlip(int field_195_fcRouteSlip)
+    public void setFcRouteSlip(int field_194_fcRouteSlip)
     {
-        this.field_195_fcRouteSlip = field_195_fcRouteSlip;
+        this.field_194_fcRouteSlip = field_194_fcRouteSlip;
     }
 
     /**
@@ -4957,15 +4927,15 @@ public abstract class FIBAbstractType
      */
     public int getLcbRouteSlip()
     {
-        return field_196_lcbRouteSlip;
+        return field_195_lcbRouteSlip;
     }
 
     /**
      * Set the lcbRouteSlip field for the FIB record.
      */
-    public void setLcbRouteSlip(int field_196_lcbRouteSlip)
+    public void setLcbRouteSlip(int field_195_lcbRouteSlip)
     {
-        this.field_196_lcbRouteSlip = field_196_lcbRouteSlip;
+        this.field_195_lcbRouteSlip = field_195_lcbRouteSlip;
     }
 
     /**
@@ -4973,15 +4943,15 @@ public abstract class FIBAbstractType
      */
     public int getFcSttbSavedBy()
     {
-        return field_197_fcSttbSavedBy;
+        return field_196_fcSttbSavedBy;
     }
 
     /**
      * Set the fcSttbSavedBy field for the FIB record.
      */
-    public void setFcSttbSavedBy(int field_197_fcSttbSavedBy)
+    public void setFcSttbSavedBy(int field_196_fcSttbSavedBy)
     {
-        this.field_197_fcSttbSavedBy = field_197_fcSttbSavedBy;
+        this.field_196_fcSttbSavedBy = field_196_fcSttbSavedBy;
     }
 
     /**
@@ -4989,15 +4959,15 @@ public abstract class FIBAbstractType
      */
     public int getLcbSttbSavedBy()
     {
-        return field_198_lcbSttbSavedBy;
+        return field_197_lcbSttbSavedBy;
     }
 
     /**
      * Set the lcbSttbSavedBy field for the FIB record.
      */
-    public void setLcbSttbSavedBy(int field_198_lcbSttbSavedBy)
+    public void setLcbSttbSavedBy(int field_197_lcbSttbSavedBy)
     {
-        this.field_198_lcbSttbSavedBy = field_198_lcbSttbSavedBy;
+        this.field_197_lcbSttbSavedBy = field_197_lcbSttbSavedBy;
     }
 
     /**
@@ -5005,15 +4975,15 @@ public abstract class FIBAbstractType
      */
     public int getFcSttbFnm()
     {
-        return field_199_fcSttbFnm;
+        return field_198_fcSttbFnm;
     }
 
     /**
      * Set the fcSttbFnm field for the FIB record.
      */
-    public void setFcSttbFnm(int field_199_fcSttbFnm)
+    public void setFcSttbFnm(int field_198_fcSttbFnm)
     {
-        this.field_199_fcSttbFnm = field_199_fcSttbFnm;
+        this.field_198_fcSttbFnm = field_198_fcSttbFnm;
     }
 
     /**
@@ -5021,15 +4991,15 @@ public abstract class FIBAbstractType
      */
     public int getLcbSttbFnm()
     {
-        return field_200_lcbSttbFnm;
+        return field_199_lcbSttbFnm;
     }
 
     /**
      * Set the lcbSttbFnm field for the FIB record.
      */
-    public void setLcbSttbFnm(int field_200_lcbSttbFnm)
+    public void setLcbSttbFnm(int field_199_lcbSttbFnm)
     {
-        this.field_200_lcbSttbFnm = field_200_lcbSttbFnm;
+        this.field_199_lcbSttbFnm = field_199_lcbSttbFnm;
     }
 
     /**
@@ -5037,15 +5007,15 @@ public abstract class FIBAbstractType
      */
     public int getFcPlcfLst()
     {
-        return field_201_fcPlcfLst;
+        return field_200_fcPlcfLst;
     }
 
     /**
      * Set the fcPlcfLst field for the FIB record.
      */
-    public void setFcPlcfLst(int field_201_fcPlcfLst)
+    public void setFcPlcfLst(int field_200_fcPlcfLst)
     {
-        this.field_201_fcPlcfLst = field_201_fcPlcfLst;
+        this.field_200_fcPlcfLst = field_200_fcPlcfLst;
     }
 
     /**
@@ -5053,15 +5023,15 @@ public abstract class FIBAbstractType
      */
     public int getLcbPlcfLst()
     {
-        return field_202_lcbPlcfLst;
+        return field_201_lcbPlcfLst;
     }
 
     /**
      * Set the lcbPlcfLst field for the FIB record.
      */
-    public void setLcbPlcfLst(int field_202_lcbPlcfLst)
+    public void setLcbPlcfLst(int field_201_lcbPlcfLst)
     {
-        this.field_202_lcbPlcfLst = field_202_lcbPlcfLst;
+        this.field_201_lcbPlcfLst = field_201_lcbPlcfLst;
     }
 
     /**
@@ -5069,15 +5039,15 @@ public abstract class FIBAbstractType
      */
     public int getFcPlfLfo()
     {
-        return field_203_fcPlfLfo;
+        return field_202_fcPlfLfo;
     }
 
     /**
      * Set the fcPlfLfo field for the FIB record.
      */
-    public void setFcPlfLfo(int field_203_fcPlfLfo)
+    public void setFcPlfLfo(int field_202_fcPlfLfo)
     {
-        this.field_203_fcPlfLfo = field_203_fcPlfLfo;
+        this.field_202_fcPlfLfo = field_202_fcPlfLfo;
     }
 
     /**
@@ -5085,15 +5055,15 @@ public abstract class FIBAbstractType
      */
     public int getLcbPlfLfo()
     {
-        return field_204_lcbPlfLfo;
+        return field_203_lcbPlfLfo;
     }
 
     /**
      * Set the lcbPlfLfo field for the FIB record.
      */
-    public void setLcbPlfLfo(int field_204_lcbPlfLfo)
+    public void setLcbPlfLfo(int field_203_lcbPlfLfo)
     {
-        this.field_204_lcbPlfLfo = field_204_lcbPlfLfo;
+        this.field_203_lcbPlfLfo = field_203_lcbPlfLfo;
     }
 
     /**
@@ -5101,15 +5071,15 @@ public abstract class FIBAbstractType
      */
     public int getFcPlcftxbxBkd()
     {
-        return field_205_fcPlcftxbxBkd;
+        return field_204_fcPlcftxbxBkd;
     }
 
     /**
      * Set the fcPlcftxbxBkd field for the FIB record.
      */
-    public void setFcPlcftxbxBkd(int field_205_fcPlcftxbxBkd)
+    public void setFcPlcftxbxBkd(int field_204_fcPlcftxbxBkd)
     {
-        this.field_205_fcPlcftxbxBkd = field_205_fcPlcftxbxBkd;
+        this.field_204_fcPlcftxbxBkd = field_204_fcPlcftxbxBkd;
     }
 
     /**
@@ -5117,15 +5087,15 @@ public abstract class FIBAbstractType
      */
     public int getLcbPlcftxbxBkd()
     {
-        return field_206_lcbPlcftxbxBkd;
+        return field_205_lcbPlcftxbxBkd;
     }
 
     /**
      * Set the lcbPlcftxbxBkd field for the FIB record.
      */
-    public void setLcbPlcftxbxBkd(int field_206_lcbPlcftxbxBkd)
+    public void setLcbPlcftxbxBkd(int field_205_lcbPlcftxbxBkd)
     {
-        this.field_206_lcbPlcftxbxBkd = field_206_lcbPlcftxbxBkd;
+        this.field_205_lcbPlcftxbxBkd = field_205_lcbPlcftxbxBkd;
     }
 
     /**
@@ -5133,15 +5103,15 @@ public abstract class FIBAbstractType
      */
     public int getFcPlcftxbxHdrBkd()
     {
-        return field_207_fcPlcftxbxHdrBkd;
+        return field_206_fcPlcftxbxHdrBkd;
     }
 
     /**
      * Set the fcPlcftxbxHdrBkd field for the FIB record.
      */
-    public void setFcPlcftxbxHdrBkd(int field_207_fcPlcftxbxHdrBkd)
+    public void setFcPlcftxbxHdrBkd(int field_206_fcPlcftxbxHdrBkd)
     {
-        this.field_207_fcPlcftxbxHdrBkd = field_207_fcPlcftxbxHdrBkd;
+        this.field_206_fcPlcftxbxHdrBkd = field_206_fcPlcftxbxHdrBkd;
     }
 
     /**
@@ -5149,15 +5119,15 @@ public abstract class FIBAbstractType
      */
     public int getLcbPlcftxbxHdrBkd()
     {
-        return field_208_lcbPlcftxbxHdrBkd;
+        return field_207_lcbPlcftxbxHdrBkd;
     }
 
     /**
      * Set the lcbPlcftxbxHdrBkd field for the FIB record.
      */
-    public void setLcbPlcftxbxHdrBkd(int field_208_lcbPlcftxbxHdrBkd)
+    public void setLcbPlcftxbxHdrBkd(int field_207_lcbPlcftxbxHdrBkd)
     {
-        this.field_208_lcbPlcftxbxHdrBkd = field_208_lcbPlcftxbxHdrBkd;
+        this.field_207_lcbPlcftxbxHdrBkd = field_207_lcbPlcftxbxHdrBkd;
     }
 
     /**
@@ -5165,15 +5135,15 @@ public abstract class FIBAbstractType
      */
     public int getFcDocUndo()
     {
-        return field_209_fcDocUndo;
+        return field_208_fcDocUndo;
     }
 
     /**
      * Set the fcDocUndo field for the FIB record.
      */
-    public void setFcDocUndo(int field_209_fcDocUndo)
+    public void setFcDocUndo(int field_208_fcDocUndo)
     {
-        this.field_209_fcDocUndo = field_209_fcDocUndo;
+        this.field_208_fcDocUndo = field_208_fcDocUndo;
     }
 
     /**
@@ -5181,15 +5151,15 @@ public abstract class FIBAbstractType
      */
     public int getLcbDocUndo()
     {
-        return field_210_lcbDocUndo;
+        return field_209_lcbDocUndo;
     }
 
     /**
      * Set the lcbDocUndo field for the FIB record.
      */
-    public void setLcbDocUndo(int field_210_lcbDocUndo)
+    public void setLcbDocUndo(int field_209_lcbDocUndo)
     {
-        this.field_210_lcbDocUndo = field_210_lcbDocUndo;
+        this.field_209_lcbDocUndo = field_209_lcbDocUndo;
     }
 
     /**
@@ -5197,15 +5167,15 @@ public abstract class FIBAbstractType
      */
     public int getFcRgbuse()
     {
-        return field_211_fcRgbuse;
+        return field_210_fcRgbuse;
     }
 
     /**
      * Set the fcRgbuse field for the FIB record.
      */
-    public void setFcRgbuse(int field_211_fcRgbuse)
+    public void setFcRgbuse(int field_210_fcRgbuse)
     {
-        this.field_211_fcRgbuse = field_211_fcRgbuse;
+        this.field_210_fcRgbuse = field_210_fcRgbuse;
     }
 
     /**
@@ -5213,15 +5183,15 @@ public abstract class FIBAbstractType
      */
     public int getLcbRgbuse()
     {
-        return field_212_lcbRgbuse;
+        return field_211_lcbRgbuse;
     }
 
     /**
      * Set the lcbRgbuse field for the FIB record.
      */
-    public void setLcbRgbuse(int field_212_lcbRgbuse)
+    public void setLcbRgbuse(int field_211_lcbRgbuse)
     {
-        this.field_212_lcbRgbuse = field_212_lcbRgbuse;
+        this.field_211_lcbRgbuse = field_211_lcbRgbuse;
     }
 
     /**
@@ -5229,15 +5199,15 @@ public abstract class FIBAbstractType
      */
     public int getFcUsp()
     {
-        return field_213_fcUsp;
+        return field_212_fcUsp;
     }
 
     /**
      * Set the fcUsp field for the FIB record.
      */
-    public void setFcUsp(int field_213_fcUsp)
+    public void setFcUsp(int field_212_fcUsp)
     {
-        this.field_213_fcUsp = field_213_fcUsp;
+        this.field_212_fcUsp = field_212_fcUsp;
     }
 
     /**
@@ -5245,15 +5215,15 @@ public abstract class FIBAbstractType
      */
     public int getLcbUsp()
     {
-        return field_214_lcbUsp;
+        return field_213_lcbUsp;
     }
 
     /**
      * Set the lcbUsp field for the FIB record.
      */
-    public void setLcbUsp(int field_214_lcbUsp)
+    public void setLcbUsp(int field_213_lcbUsp)
     {
-        this.field_214_lcbUsp = field_214_lcbUsp;
+        this.field_213_lcbUsp = field_213_lcbUsp;
     }
 
     /**
@@ -5261,15 +5231,15 @@ public abstract class FIBAbstractType
      */
     public int getFcUskf()
     {
-        return field_215_fcUskf;
+        return field_214_fcUskf;
     }
 
     /**
      * Set the fcUskf field for the FIB record.
      */
-    public void setFcUskf(int field_215_fcUskf)
+    public void setFcUskf(int field_214_fcUskf)
     {
-        this.field_215_fcUskf = field_215_fcUskf;
+        this.field_214_fcUskf = field_214_fcUskf;
     }
 
     /**
@@ -5277,15 +5247,15 @@ public abstract class FIBAbstractType
      */
     public int getLcbUskf()
     {
-        return field_216_lcbUskf;
+        return field_215_lcbUskf;
     }
 
     /**
      * Set the lcbUskf field for the FIB record.
      */
-    public void setLcbUskf(int field_216_lcbUskf)
+    public void setLcbUskf(int field_215_lcbUskf)
     {
-        this.field_216_lcbUskf = field_216_lcbUskf;
+        this.field_215_lcbUskf = field_215_lcbUskf;
     }
 
     /**
@@ -5293,15 +5263,15 @@ public abstract class FIBAbstractType
      */
     public int getFcPlcupcRgbuse()
     {
-        return field_217_fcPlcupcRgbuse;
+        return field_216_fcPlcupcRgbuse;
     }
 
     /**
      * Set the fcPlcupcRgbuse field for the FIB record.
      */
-    public void setFcPlcupcRgbuse(int field_217_fcPlcupcRgbuse)
+    public void setFcPlcupcRgbuse(int field_216_fcPlcupcRgbuse)
     {
-        this.field_217_fcPlcupcRgbuse = field_217_fcPlcupcRgbuse;
+        this.field_216_fcPlcupcRgbuse = field_216_fcPlcupcRgbuse;
     }
 
     /**
@@ -5309,15 +5279,15 @@ public abstract class FIBAbstractType
      */
     public int getLcbPlcupcRgbuse()
     {
-        return field_218_lcbPlcupcRgbuse;
+        return field_217_lcbPlcupcRgbuse;
     }
 
     /**
      * Set the lcbPlcupcRgbuse field for the FIB record.
      */
-    public void setLcbPlcupcRgbuse(int field_218_lcbPlcupcRgbuse)
+    public void setLcbPlcupcRgbuse(int field_217_lcbPlcupcRgbuse)
     {
-        this.field_218_lcbPlcupcRgbuse = field_218_lcbPlcupcRgbuse;
+        this.field_217_lcbPlcupcRgbuse = field_217_lcbPlcupcRgbuse;
     }
 
     /**
@@ -5325,15 +5295,15 @@ public abstract class FIBAbstractType
      */
     public int getFcPlcupcUsp()
     {
-        return field_219_fcPlcupcUsp;
+        return field_218_fcPlcupcUsp;
     }
 
     /**
      * Set the fcPlcupcUsp field for the FIB record.
      */
-    public void setFcPlcupcUsp(int field_219_fcPlcupcUsp)
+    public void setFcPlcupcUsp(int field_218_fcPlcupcUsp)
     {
-        this.field_219_fcPlcupcUsp = field_219_fcPlcupcUsp;
+        this.field_218_fcPlcupcUsp = field_218_fcPlcupcUsp;
     }
 
     /**
@@ -5341,15 +5311,15 @@ public abstract class FIBAbstractType
      */
     public int getLcbPlcupcUsp()
     {
-        return field_220_lcbPlcupcUsp;
+        return field_219_lcbPlcupcUsp;
     }
 
     /**
      * Set the lcbPlcupcUsp field for the FIB record.
      */
-    public void setLcbPlcupcUsp(int field_220_lcbPlcupcUsp)
+    public void setLcbPlcupcUsp(int field_219_lcbPlcupcUsp)
     {
-        this.field_220_lcbPlcupcUsp = field_220_lcbPlcupcUsp;
+        this.field_219_lcbPlcupcUsp = field_219_lcbPlcupcUsp;
     }
 
     /**
@@ -5357,15 +5327,15 @@ public abstract class FIBAbstractType
      */
     public int getFcSttbGlsyStyle()
     {
-        return field_221_fcSttbGlsyStyle;
+        return field_220_fcSttbGlsyStyle;
     }
 
     /**
      * Set the fcSttbGlsyStyle field for the FIB record.
      */
-    public void setFcSttbGlsyStyle(int field_221_fcSttbGlsyStyle)
+    public void setFcSttbGlsyStyle(int field_220_fcSttbGlsyStyle)
     {
-        this.field_221_fcSttbGlsyStyle = field_221_fcSttbGlsyStyle;
+        this.field_220_fcSttbGlsyStyle = field_220_fcSttbGlsyStyle;
     }
 
     /**
@@ -5373,15 +5343,15 @@ public abstract class FIBAbstractType
      */
     public int getLcbSttbGlsyStyle()
     {
-        return field_222_lcbSttbGlsyStyle;
+        return field_221_lcbSttbGlsyStyle;
     }
 
     /**
      * Set the lcbSttbGlsyStyle field for the FIB record.
      */
-    public void setLcbSttbGlsyStyle(int field_222_lcbSttbGlsyStyle)
+    public void setLcbSttbGlsyStyle(int field_221_lcbSttbGlsyStyle)
     {
-        this.field_222_lcbSttbGlsyStyle = field_222_lcbSttbGlsyStyle;
+        this.field_221_lcbSttbGlsyStyle = field_221_lcbSttbGlsyStyle;
     }
 
     /**
@@ -5389,15 +5359,15 @@ public abstract class FIBAbstractType
      */
     public int getFcPlgosl()
     {
-        return field_223_fcPlgosl;
+        return field_222_fcPlgosl;
     }
 
     /**
      * Set the fcPlgosl field for the FIB record.
      */
-    public void setFcPlgosl(int field_223_fcPlgosl)
+    public void setFcPlgosl(int field_222_fcPlgosl)
     {
-        this.field_223_fcPlgosl = field_223_fcPlgosl;
+        this.field_222_fcPlgosl = field_222_fcPlgosl;
     }
 
     /**
@@ -5405,15 +5375,15 @@ public abstract class FIBAbstractType
      */
     public int getLcbPlgosl()
     {
-        return field_224_lcbPlgosl;
+        return field_223_lcbPlgosl;
     }
 
     /**
      * Set the lcbPlgosl field for the FIB record.
      */
-    public void setLcbPlgosl(int field_224_lcbPlgosl)
+    public void setLcbPlgosl(int field_223_lcbPlgosl)
     {
-        this.field_224_lcbPlgosl = field_224_lcbPlgosl;
+        this.field_223_lcbPlgosl = field_223_lcbPlgosl;
     }
 
     /**
@@ -5421,15 +5391,15 @@ public abstract class FIBAbstractType
      */
     public int getFcPlcocx()
     {
-        return field_225_fcPlcocx;
+        return field_224_fcPlcocx;
     }
 
     /**
      * Set the fcPlcocx field for the FIB record.
      */
-    public void setFcPlcocx(int field_225_fcPlcocx)
+    public void setFcPlcocx(int field_224_fcPlcocx)
     {
-        this.field_225_fcPlcocx = field_225_fcPlcocx;
+        this.field_224_fcPlcocx = field_224_fcPlcocx;
     }
 
     /**
@@ -5437,15 +5407,15 @@ public abstract class FIBAbstractType
      */
     public int getLcbPlcocx()
     {
-        return field_226_lcbPlcocx;
+        return field_225_lcbPlcocx;
     }
 
     /**
      * Set the lcbPlcocx field for the FIB record.
      */
-    public void setLcbPlcocx(int field_226_lcbPlcocx)
+    public void setLcbPlcocx(int field_225_lcbPlcocx)
     {
-        this.field_226_lcbPlcocx = field_226_lcbPlcocx;
+        this.field_225_lcbPlcocx = field_225_lcbPlcocx;
     }
 
     /**
@@ -5453,15 +5423,15 @@ public abstract class FIBAbstractType
      */
     public int getFcPlcfbteLvc()
     {
-        return field_227_fcPlcfbteLvc;
+        return field_226_fcPlcfbteLvc;
     }
 
     /**
      * Set the fcPlcfbteLvc field for the FIB record.
      */
-    public void setFcPlcfbteLvc(int field_227_fcPlcfbteLvc)
+    public void setFcPlcfbteLvc(int field_226_fcPlcfbteLvc)
     {
-        this.field_227_fcPlcfbteLvc = field_227_fcPlcfbteLvc;
+        this.field_226_fcPlcfbteLvc = field_226_fcPlcfbteLvc;
     }
 
     /**
@@ -5469,31 +5439,15 @@ public abstract class FIBAbstractType
      */
     public int getLcbPlcfbteLvc()
     {
-        return field_228_lcbPlcfbteLvc;
+        return field_227_lcbPlcfbteLvc;
     }
 
     /**
      * Set the lcbPlcfbteLvc field for the FIB record.
      */
-    public void setLcbPlcfbteLvc(int field_228_lcbPlcfbteLvc)
+    public void setLcbPlcfbteLvc(int field_227_lcbPlcfbteLvc)
     {
-        this.field_228_lcbPlcfbteLvc = field_228_lcbPlcfbteLvc;
-    }
-
-    /**
-     * Get the ftModified field for the FIB record.
-     */
-    public int getFtModified()
-    {
-        return field_229_ftModified;
-    }
-
-    /**
-     * Set the ftModified field for the FIB record.
-     */
-    public void setFtModified(int field_229_ftModified)
-    {
-        this.field_229_ftModified = field_229_ftModified;
+        this.field_227_lcbPlcfbteLvc = field_227_lcbPlcfbteLvc;
     }
 
     /**
@@ -5501,15 +5455,15 @@ public abstract class FIBAbstractType
      */
     public int getDwLowDateTime()
     {
-        return field_230_dwLowDateTime;
+        return field_228_dwLowDateTime;
     }
 
     /**
      * Set the dwLowDateTime field for the FIB record.
      */
-    public void setDwLowDateTime(int field_230_dwLowDateTime)
+    public void setDwLowDateTime(int field_228_dwLowDateTime)
     {
-        this.field_230_dwLowDateTime = field_230_dwLowDateTime;
+        this.field_228_dwLowDateTime = field_228_dwLowDateTime;
     }
 
     /**
@@ -5517,15 +5471,15 @@ public abstract class FIBAbstractType
      */
     public int getDwHighDateTime()
     {
-        return field_231_dwHighDateTime;
+        return field_229_dwHighDateTime;
     }
 
     /**
      * Set the dwHighDateTime field for the FIB record.
      */
-    public void setDwHighDateTime(int field_231_dwHighDateTime)
+    public void setDwHighDateTime(int field_229_dwHighDateTime)
     {
-        this.field_231_dwHighDateTime = field_231_dwHighDateTime;
+        this.field_229_dwHighDateTime = field_229_dwHighDateTime;
     }
 
     /**
@@ -5533,15 +5487,15 @@ public abstract class FIBAbstractType
      */
     public int getFcPlcflvc()
     {
-        return field_232_fcPlcflvc;
+        return field_230_fcPlcflvc;
     }
 
     /**
      * Set the fcPlcflvc field for the FIB record.
      */
-    public void setFcPlcflvc(int field_232_fcPlcflvc)
+    public void setFcPlcflvc(int field_230_fcPlcflvc)
     {
-        this.field_232_fcPlcflvc = field_232_fcPlcflvc;
+        this.field_230_fcPlcflvc = field_230_fcPlcflvc;
     }
 
     /**
@@ -5549,15 +5503,15 @@ public abstract class FIBAbstractType
      */
     public int getLcbPlcflvc()
     {
-        return field_233_lcbPlcflvc;
+        return field_231_lcbPlcflvc;
     }
 
     /**
      * Set the lcbPlcflvc field for the FIB record.
      */
-    public void setLcbPlcflvc(int field_233_lcbPlcflvc)
+    public void setLcbPlcflvc(int field_231_lcbPlcflvc)
     {
-        this.field_233_lcbPlcflvc = field_233_lcbPlcflvc;
+        this.field_231_lcbPlcflvc = field_231_lcbPlcflvc;
     }
 
     /**
@@ -5565,15 +5519,15 @@ public abstract class FIBAbstractType
      */
     public int getFcPlcasumy()
     {
-        return field_234_fcPlcasumy;
+        return field_232_fcPlcasumy;
     }
 
     /**
      * Set the fcPlcasumy field for the FIB record.
      */
-    public void setFcPlcasumy(int field_234_fcPlcasumy)
+    public void setFcPlcasumy(int field_232_fcPlcasumy)
     {
-        this.field_234_fcPlcasumy = field_234_fcPlcasumy;
+        this.field_232_fcPlcasumy = field_232_fcPlcasumy;
     }
 
     /**
@@ -5581,15 +5535,15 @@ public abstract class FIBAbstractType
      */
     public int getLcbPlcasumy()
     {
-        return field_235_lcbPlcasumy;
+        return field_233_lcbPlcasumy;
     }
 
     /**
      * Set the lcbPlcasumy field for the FIB record.
      */
-    public void setLcbPlcasumy(int field_235_lcbPlcasumy)
+    public void setLcbPlcasumy(int field_233_lcbPlcasumy)
     {
-        this.field_235_lcbPlcasumy = field_235_lcbPlcasumy;
+        this.field_233_lcbPlcasumy = field_233_lcbPlcasumy;
     }
 
     /**
@@ -5597,15 +5551,15 @@ public abstract class FIBAbstractType
      */
     public int getFcPlcfgram()
     {
-        return field_236_fcPlcfgram;
+        return field_234_fcPlcfgram;
     }
 
     /**
      * Set the fcPlcfgram field for the FIB record.
      */
-    public void setFcPlcfgram(int field_236_fcPlcfgram)
+    public void setFcPlcfgram(int field_234_fcPlcfgram)
     {
-        this.field_236_fcPlcfgram = field_236_fcPlcfgram;
+        this.field_234_fcPlcfgram = field_234_fcPlcfgram;
     }
 
     /**
@@ -5613,15 +5567,15 @@ public abstract class FIBAbstractType
      */
     public int getLcbPlcfgram()
     {
-        return field_237_lcbPlcfgram;
+        return field_235_lcbPlcfgram;
     }
 
     /**
      * Set the lcbPlcfgram field for the FIB record.
      */
-    public void setLcbPlcfgram(int field_237_lcbPlcfgram)
+    public void setLcbPlcfgram(int field_235_lcbPlcfgram)
     {
-        this.field_237_lcbPlcfgram = field_237_lcbPlcfgram;
+        this.field_235_lcbPlcfgram = field_235_lcbPlcfgram;
     }
 
     /**
@@ -5629,15 +5583,15 @@ public abstract class FIBAbstractType
      */
     public int getFcSttbListNames()
     {
-        return field_238_fcSttbListNames;
+        return field_236_fcSttbListNames;
     }
 
     /**
      * Set the fcSttbListNames field for the FIB record.
      */
-    public void setFcSttbListNames(int field_238_fcSttbListNames)
+    public void setFcSttbListNames(int field_236_fcSttbListNames)
     {
-        this.field_238_fcSttbListNames = field_238_fcSttbListNames;
+        this.field_236_fcSttbListNames = field_236_fcSttbListNames;
     }
 
     /**
@@ -5645,15 +5599,15 @@ public abstract class FIBAbstractType
      */
     public int getLcbSttbListNames()
     {
-        return field_239_lcbSttbListNames;
+        return field_237_lcbSttbListNames;
     }
 
     /**
      * Set the lcbSttbListNames field for the FIB record.
      */
-    public void setLcbSttbListNames(int field_239_lcbSttbListNames)
+    public void setLcbSttbListNames(int field_237_lcbSttbListNames)
     {
-        this.field_239_lcbSttbListNames = field_239_lcbSttbListNames;
+        this.field_237_lcbSttbListNames = field_237_lcbSttbListNames;
     }
 
     /**
@@ -5661,15 +5615,15 @@ public abstract class FIBAbstractType
      */
     public int getFcSttbfUssr()
     {
-        return field_240_fcSttbfUssr;
+        return field_238_fcSttbfUssr;
     }
 
     /**
      * Set the fcSttbfUssr field for the FIB record.
      */
-    public void setFcSttbfUssr(int field_240_fcSttbfUssr)
+    public void setFcSttbfUssr(int field_238_fcSttbfUssr)
     {
-        this.field_240_fcSttbfUssr = field_240_fcSttbfUssr;
+        this.field_238_fcSttbfUssr = field_238_fcSttbfUssr;
     }
 
     /**
@@ -5677,15 +5631,15 @@ public abstract class FIBAbstractType
      */
     public int getLcbSttbfUssr()
     {
-        return field_241_lcbSttbfUssr;
+        return field_239_lcbSttbfUssr;
     }
 
     /**
      * Set the lcbSttbfUssr field for the FIB record.
      */
-    public void setLcbSttbfUssr(int field_241_lcbSttbfUssr)
+    public void setLcbSttbfUssr(int field_239_lcbSttbfUssr)
     {
-        this.field_241_lcbSttbfUssr = field_241_lcbSttbfUssr;
+        this.field_239_lcbSttbfUssr = field_239_lcbSttbfUssr;
     }
 
     /**
