@@ -331,6 +331,22 @@ public class HSSFRow
     }
 
     /**
+     * set whether or not to display this row with 0 height
+     * @param zHeight  height is zero or not.
+     */
+    public void setZeroHeight(boolean zHeight) {
+        row.setZeroHeight(zHeight);
+    }
+  
+    /**
+     * get whether or not to display this row with 0 height
+     * @return - zHeight height is zero or not.
+     */
+    public boolean getZeroHeight() {
+        return row.getZeroHeight();
+    }
+
+    /**
      * set the row's height in points.
      * @param height  row height in points
      */
