@@ -1,67 +1,64 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE faqs PUBLIC "-//APACHE//DTD FAQ V1.1//EN" "./dtd/faq-v11.dtd">
 
-<faqs title="Frequently Asked Questions">
+<faqs title="Preguntas Más Frecuentes (FAQ)">
     <faq>
         <question>
-          What is the HSSF "eventmodel"?
+          ¿Qué es el "eventmodel" (modelo de evento) de HSSF?
         </question>
         <answer>
-              The HSSF eventmodel package is a new API for reading XLS files more efficiently.  It does
-              require more knowledge on the part of the user, but reduces memory consumption by more than
-              tenfold.  It is based on the AWT event model in combination with SAX.  If you need read-only
-              access to a given XLS file, this is the best way to do it.
+              <p> El paquete "eventmodel" de HSSF es un nuevo API para la lectura más eficiente de ficheros
+              XML. Requiere mayor conocimiento por parte del usuario, pero reduce el consumo de memoria a
+              una décima parte. Está basado en el modelo de eventos AWT en combinación con SAX. Si necesita
+              acceso de sólo-lectura a un fichero XML determinado, esta es la mejor manera de hacerlo.</p>
         </answer>
 
     </faq>
     <faq>
         <question>
-          Why can't read the document I created using Star Office 5.1?
+          ¿Por qué no puedo leer el documento que creé utilizando Star Office 5.1?
         </question>
         <answer>
-              Star Office 5.1 writes some records using the older BIFF standard.  This causes some problems
-              with POI which supports only BIFF8.
+              <p>Star Office 5.1 escribe algunos registros utilizando el viejo estándar BIFF.
+              Esto provoca algunos problemas con POI que sólo soporta BIFF8.</p>
         </answer>
     </faq>
     <faq>
         <question>
-            Why am I getting an exception each time I attempt to read my spreadsheet?
+            ¿Por qué recibo una excepción cada vez que intento leer mi hoja de cálculo?
         </question>
         <answer>
-            It's possible your spreadsheet contains a feature that is not currently supported by HSSF.
-            For example - spreadsheets containing cells with rich text are not currently supported.
+            <p>Es posible que su hoja de cálculo contenga alguna característica que no esté
+            soportada actualmente por HSSF. Por ejemplo - hojas de cálculo que contengan
+            celdas con formato RTF (rich text) no están soportadas actualmente.</p>
         </answer>
     </faq>
     <faq>
         <question>
-            Does HSSF support protected spreadsheets?
+            ¿Soporta HSSF hojas de cálculo protegidas?
         </question>
         <answer>
-            Protecting a spreadsheet encripts it.  We wont touch encription because we're not legally educated
-            and don't understand the full implications of trying to implement this.  If you wish to have a go
-            at this feel free to add it as a plugin module.  We wont be hosting it here however.
+            <p>Al proteger una hoja de cálculo, ésta se cifra. No tocaremos el cifrado, porque no
+            tenemos el suficiente conocimiento legal y no estamos seguros de las implicaciones que
+            conllevaría el intentar implementar esto. Si desea intentarlo, es libre de hacerlo y
+            de añadirlo como un módulo enchufable (plugin). Sin embargo, no lo guardaremos aquí.</p>
         </answer>
     </faq>
     <faq>
         <question>
-            How do you tell if a field contains a date with HSSF?
+            ¿Cómo se sabe si un campo contiene una fecha con HSSF?
         </question>
         <answer>
-            Excel stores dates as numbers therefore the only way to determine if a cell is
-            actually stored as a date is to look at the formatting. This solution from
-            Jason Hoffman:
-            <p>
-            Okay, here is a little code I used to determine if the cell was a number or
-            date, and then format appropriately.  I hope it helps.  I keep meaning to
-            submit a patch with the helper method below.... but just haven't had a
-            chance.
-            </p>
+            <p>Excel almacena las fechas como números. Así la única manera para determinar
+            si una celda está realmente almacenada como una fecha consiste en mirar su formato.
+            Hay un método de ayuda (helper) en HSSFDateUtil (desde la distribución 1.7.0-dev)
+            que lo comprueba. Gracias a Jason Hoffman por proporcionar la solución.</p>
             <source>
-/////// code snippet ////////////
+
 case HSSFCell.CELL_TYPE_NUMERIC:
                   double d = cell.getNumericCellValue();
                   // test if a date!
-                  if (isCellDateFormatted(cell)) {
+                             if (HSSFDateUtil.isCellDateFormatted(cell)) {
                     // format in form of M/D/YY
                     cal.setTime(HSSFDateUtil.getJavaDate(d));
                     cellText =
@@ -70,44 +67,126 @@ case HSSFCell.CELL_TYPE_NUMERIC:
                                cal.get(Calendar.DAY_OF_MONTH) + "/" +
                                cellText;
                   }
-/////// end code snippet ////////////
 
-// HELPER METHOD BELOW TO DETERMINE IF DATE
-
-// method to determine if the cell is a date, versus a number...
-public static boolean isCellDateFormatted(HSSFCell cell) {
-    boolean bDate = false;
-
-    double d = cell.getNumericCellValue();
-    if ( HSSFDateUtil.isValidExcelDate(d) ) {
-      HSSFCellStyle style = cell.getCellStyle();
-      int i = style.getDataFormat();
-      switch(i) {
-        // Internal Date Formats as described on page 427 in
-        // Microsoft Excel Dev's Kit...
-        case 0x0e:
-        case 0x0f:
-        case 0x10:
-        case 0x11:
-        case 0x12:
-        case 0x13:
-        case 0x14:
-        case 0x15:
-        case 0x16:
-        case 0x2d:
-        case 0x2e:
-        case 0x2f:
-         bDate = true;
-        break;
-
-        default:
-         bDate = false;
-        break;
-      }
-    }
-    return bDate;
-  }
             </source>
+        </answer>
+    </faq>
+    <faq>
+        <question>
+            Estoy intentando ver un fichero XLS enviado como flujo (stream) desde un servlet y tengo
+            complicaciones. ¿Cuál es el problema?
+        </question>
+        <answer>
+            <p>
+            El problema normalmente se manifiesta como un montón de caracteres basura
+            en la pantalla. El problema persiste incluso aunque hayas configurado el tipo mime
+            correcto.
+            </p>
+            <p>
+            La respuesta breve es: no dependas de IE para mostrar un fichero binario. 
+            Escribe un documento adjunto como es debido si lo envías a través de un servlet. 
+            Toda versión de IE tiene diferentes fallos (bugs) en este sentido.
+            </p>
+            <p>
+            El problema en la mayoría de las versiones de IE reside en que no utiliza el tipo mime
+            de la respuesta HTTP para determinar el tipo de fichero; en su lugar utiliza la extensión
+            del fichero en la petición. Así podría añadir un <strong>.xls</strong> a su cadena de petición.
+            Por ejemplo: <em>http://yourserver.com/myServelet.xls?param1=xx</em>. Esto se consigue
+            fácilmente a través del mapeo de URL en cualquier contenedor servlet. A veces una
+            petición como
+                <em>http://yourserver.com/myServelet?param1=xx&amp;dummy=file.xls</em> 
+            también funciona.
+            </p>
+            <p>
+            Para garantizar la correcta apertura del fichero en Excel desde IE, escribe
+            tu fichero a un fichero temporal bajo su raiz web desde tu servlet. Envía entonces
+            una respuesta http al navegador para que haga una redirección en el lado del cliente
+            a tu fichero temporal. (Si haces una redirección en el lado del servidor utilizando
+            RequestDispatcher, tendrás que añadir .xls a la petición como se ha mendionado más
+            arriba)
+            </p>
+            <p>
+            Date cuenta de que cuando pides un documento que se abre con un manejador externo,
+            IE a veces realiza dos peticiones al servidor web. Así que si tu proceso generador
+            es pesado, tiene sentido escribir a un fichero temporal, para que peticiones
+            múltiples utilicen el fichero estático.
+            </p>
+            <p>
+            Nada de esto pertenece a Excel. El mismo problema ocurre cuando intentas general
+            cualquier fichero binario dinámicamente a un cliente IE. Por ejemplo, si generas
+            ficheros pdf utilizando
+                <link href="http://xml.apache.org/fop">FOP</link>,
+                te encontrarás con los mismos problemas.
+            </p>
+            <!-- Gracias a Avik por la respuesta -->
+        </answer>
+    </faq>
+    <faq>
+        <question>
+            Quiero dar formato a una celda (Data format of a cell) de una hoja excel como
+            ###,###,###.#### o ###,###,###.0000. ¿Es posible hacer esto con POI?
+        </question>
+        <answer>
+            <p>
+                HSSF no soporta todavía formatos de datos personalizados, sin embargo,
+                debería ser una facilidad razonablemente sencilla de añadir y aceptaremos
+                gustosos contribuciones en este área.
+            </p>
+            <p>
+                Estos son los formatos incluidos que soporta:
+            </p>
+            <p>
+            <link href="http://jakarta.apache.org/poi/javadocs/javasrc/org/apache/poi/hssf/usermodel/HSSFDataFormat_java.html#HSSFDataFormat">http://jakarta.apache.org/poi/javadocs/javasrc/org/apache/poi/hssf/usermodel/HSSFDataFormat_java.html#HSSFDataFormat</link>
+            </p>
+        </answer>
+    </faq>
+    <faq>
+        <question>
+            ¿Cómo añado un borde alrededor de una celda unida (merged)?
+        </question>
+        <answer>
+            <p>
+            Añade celdas vacías alrededor de donde las celdas hubieran estado normalmente y
+            configura los bordes individualmente para cada celda.
+            Probablemente mejoraremos HSSF en el futuro para facilitar este proceso.
+            </p>
+        </answer>
+    </faq>
+    <faq>
+        <question>
+            Intenté escribir valores en celdas así como cambiar el nombre de la hoja Excel
+            en mi lengua nativa, pero no pude hacerlo. :(
+        </question>
+        <answer>
+            <p>
+            Por defecto HSSF utiliza valores de celdas y nombres de hoja en unicode comprimido,
+            asi que para soportar la localización deberías utilizar Unicode.
+            Para hacerlo deberías configurarlo manualmente:
+            </p>
+            <source>
+
+                //
+                // para el nombre de la hoja
+                //
+                HSSFWorkbook wb = new HSSFWorkbook();
+                HSSFSheet s = wb.createSheet();
+                wb.setSheetName( 0, "SomeUnicodeName", HSSFWorkbook.ENCODING_UTF_16 );
+
+
+                //
+                // para el valor de la celda
+                //
+                HSSFRow r = s.createRow( 0 );
+                HSSFCell c = r.createCell( (short)0 );
+                c.setCellType( HSSFCell.CELL_TYPE_STRING );
+                c.setEncoding( HSSFCell.ENCODING_UTF_16 );
+                c.setCellValue( "\u0422\u0435\u0441\u0442\u043E\u0432\u0430\u044F" );
+
+            </source>
+            <p>
+            Asegúrate de que haces la llamada a setEncoding() antes de llamar a setCellValue(),
+            si no, lo que le pases no será interpretado correctamente.
+            </p>
         </answer>
     </faq>
 </faqs>
