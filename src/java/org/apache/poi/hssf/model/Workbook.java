@@ -311,7 +311,6 @@ public class Workbook implements Model {
         {
             records.add( retval.createStyle( k ) );
         }
-        retval.records.setPalettepos( records.size() );
         records.add( retval.createUseSelFS() );
         for ( int k = 0; k < 1; k++ )
         {   // now just do 1
