@@ -72,22 +72,25 @@
     <!-- needed for build -->
     <depend project="jakarta-ant"/>
     <depend project="xml-xerces"/>
-    <depend project="xml-xalan2"/>
-    <depend project="xml-cocoon2"/>
-    <depend project="junit"/>
-
+    <depend project="xml-xalan2"/>    
+    
     <!-- needed for POI -->
     <depend project="commons-logging"/>
     
     <!-- Project jars POI build can use  -->    
     <option project="jakarta-log4j"/>
- 
+     
     <!-- Work dirs to be included in classpath  -->          
-    <work nested="build/jakarta-poi/classes"/>
-    <work nested="build/jakarta-poi/testcases"/>
-    <work nested="tools/tmp/anttasks"/>
-
-    <home nested="build/jakarta-poi"/>
+    <work nested="build/classes"/>
+    <work nested="build/testcases"/>
+    <work nested="tools/cents/checkstyle.cent/lib"/>
+    <work nested="tools/cents/forrest.cent/lib"/>
+    <work nested="tools/cents/javasrc.cent/lib"/>
+    <work nested="tools/cents/jdepend.cent/lib"/>        
+    <work nested="tools/cents/junit.cent/lib"/>        
+    <work nested="tools/cents/umldoclet.cent/lib"/>        
+    
+    <home nested="build"/>
 
     <!-- POI jars - the result of the build  -->        
     <jar name="jakarta-poi.jar"            id="poi"/>
@@ -96,7 +99,7 @@
     <jar name="jakarta-poi-examples.jar"   id="examples"/>
     
     <!-- POI Javadocs - location in the build dirs  -->         
-    <javadoc parent="build/jakarta-poi/docs/apidocs"/>
+    <javadoc parent="build/docs/apidocs"/>
     
     <!-- Getting ready for automatic site updates
     <deliver fromdir="build/jakarta-poi/docs" 
