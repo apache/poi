@@ -68,6 +68,7 @@ import java.io.StringWriter;
 import java.util.Date;
 import java.util.Iterator;
 
+import junit.framework.Assert;
 import junit.framework.TestCase;
 
 import org.apache.poi.hpsf.HPSFRuntimeException;
@@ -82,6 +83,7 @@ import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hpsf.UnsupportedVariantTypeException;
 import org.apache.poi.hpsf.Variant;
 import org.apache.poi.hpsf.VariantSupport;
+import org.apache.poi.hpsf.wellknown.PropertyIDMap;
 import org.apache.poi.hpsf.wellknown.SectionIDMap;
 import org.apache.poi.poifs.eventfilesystem.POIFSReader;
 import org.apache.poi.poifs.eventfilesystem.POIFSReaderEvent;
@@ -173,6 +175,78 @@ public class TestWrite extends TestCase
         r.registerListener(new MyPOIFSReaderListener(),
                            SummaryInformation.DEFAULT_STREAM_NAME);
         r.read(new FileInputStream(filename));
+    }
+
+
+
+    /**
+     * <p>Writes a simple property set with a SummaryInformation and a
+     * DocumentSummaryInformation stream to a POIFS and reads it back in.</p>
+     * 
+     * @exception IOException if an I/O exception occurs
+     * @exception UnsupportedVariantTypeException if HPSF does not yet support
+     * a variant type to be written
+     */
+    public void testWriteSimplePropertySet()
+        throws IOException, UnsupportedVariantTypeException
+    {
+        final String AUTHOR = "Rainer Klute";
+        final String TITLE = "Test Document"; 
+        final File dataDir =
+            new File(System.getProperty("HPSF.testdata.path"));
+        final File filename = new File(dataDir, POI_FS);
+        filename.deleteOnExit();
+        final OutputStream out = new FileOutputStream(filename);
+        final POIFSFileSystem poiFs = new POIFSFileSystem();
+
+        final MutablePropertySet ps = new MutablePropertySet();
+        final MutableSection si = new MutableSection();
+        si.setFormatID(SectionIDMap.SUMMARY_INFORMATION_ID);
+        ps.getSections().set(0, si);
+
+        final MutableProperty p = new MutableProperty();
+        p.setID(PropertyIDMap.PID_AUTHOR);
+        p.setType(Variant.VT_LPWSTR);
+        p.setValue(AUTHOR);
+        si.setProperty(p);
+        si.setProperty(PropertyIDMap.PID_TITLE, Variant.VT_LPSTR, TITLE);
+
+        final ByteArrayOutputStream psStream = new ByteArrayOutputStream();
+        ps.write(psStream);
+        psStream.close();
+        final byte[] streamData = psStream.toByteArray();
+        poiFs.createDocument(new ByteArrayInputStream(streamData),
+                             SummaryInformation.DEFAULT_STREAM_NAME);
+        poiFs.writeFilesystem(out);
+        out.close();
+
+        /* Read the POIFS: */
+        final PropertySet[] psa = new PropertySet[1];
+        final POIFSReader r = new POIFSReader();
+        r.registerListener(new POIFSReaderListener()
+            {
+                public void processPOIFSReaderEvent(final POIFSReaderEvent event)
+                {
+                    try
+                    {
+                        psa[0] = PropertySetFactory.create(event.getStream());
+                    }
+                    catch (Exception ex)
+                    {
+                        ex.printStackTrace();
+                        throw new RuntimeException(ex);
+                    }
+                }
+
+            },
+            SummaryInformation.DEFAULT_STREAM_NAME);
+        r.read(new FileInputStream(filename));
+        Assert.assertNotNull(psa[0]);
+        final Section s = (Section) (psa[0].getSections().get(0));
+        Object p1 = s.getProperty(PropertyIDMap.PID_AUTHOR);
+        Object p2 = s.getProperty(PropertyIDMap.PID_TITLE);
+        Assert.assertEquals(AUTHOR, p1);
+        Assert.assertEquals(TITLE, p2);
     }
 
 
