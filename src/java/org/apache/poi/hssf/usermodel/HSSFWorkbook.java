@@ -147,6 +147,14 @@ public class HSSFWorkbook
      * memory.
      */
     private POIFSFileSystem poifs;
+
+    /**
+     * Used to keep track of the data formatter so that all
+     * createDataFormatter calls return the same one for a given
+     * book.  This ensures that updates from one places is visible
+     * someplace else.
+     */
+    private HSSFDataFormat formatter;
     
     private static POILogger log = POILogFactory.getLogger(HSSFWorkbook.class);
 
@@ -945,13 +953,15 @@ public class HSSFWorkbook
     }
 
     /**
-     * Creates an instance of HSSFDataFormat.
+     * Returns the instance of HSSFDataFormat for this workbook.
      * @return the HSSFDataFormat object
      * @see org.apache.poi.hssf.record.FormatRecord
      * @see org.apache.poi.hssf.record.Record
      */
     public HSSFDataFormat createDataFormat() {
-        return new HSSFDataFormat(workbook);
+	if (formatter == null)
+	    formatter = new HSSFDataFormat(workbook);
+	return formatter;
     }
 	
     /** remove the named range by his name

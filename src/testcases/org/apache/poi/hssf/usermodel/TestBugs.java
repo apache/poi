@@ -1,7 +1,7 @@
 /* ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 2003 The Apache Software Foundation.  All rights
+ * Copyright (c) 2003, 2003 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -52,54 +52,47 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.poi.hpsf.basic;
+package org.apache.poi.hssf.usermodel;
 
-import org.apache.poi.poifs.filesystem.POIFSDocumentPath;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Date;
+
+import junit.framework.TestCase;
 
 
 
 /**
- * <p>A POI file just for testing.</p>
- *
- * @author Rainer Klute (klute@rainer-klute.de)
- * @since 2002-07-20
- * @version $Id$
+ * @author Avik Sengupta
  */
-public class POIFile
-{
 
-    private String name;
-    private POIFSDocumentPath path;
-    private byte[] bytes;
-
-    public void setName(final String name)
-    {
-        this.name = name;
+public class TestBugs
+extends TestCase {
+    public TestBugs(String s) {
+        super(s);
     }
-
-    public String getName()
+    
+          public void test15228()
+        throws java.io.IOException
     {
-        return name;
+         String readFilename = System.getProperty("HSSF.testdata.path");
+          FileInputStream in = new FileInputStream(readFilename+File.separator+"15228.xls");
+          HSSFWorkbook wb = new HSSFWorkbook(in);
+          HSSFSheet s = wb.getSheetAt(0);
+          HSSFRow r = s.createRow(0);
+          HSSFCell c = r.createCell((short)0);
+          c.setCellValue(10);
+          File file = File.createTempFile("test15228",".xls");
+          FileOutputStream out    = new FileOutputStream(file);
+          wb.write(out);
+          assertTrue("No exception thrown", true); 
+          assertTrue("File Should Exist", file.exists());
+            
     }
-
-    public void setPath(final POIFSDocumentPath path)
-    {
-        this.path = path;
-    }
-
-    public POIFSDocumentPath getPath()
-    {
-        return path;
-    }
-
-    public void setBytes(final byte[] bytes)
-    {
-        this.bytes = bytes;
-    }
-
-    public byte[] getBytes()
-    {
-        return bytes;
-    }
-
+    
 }
+    
+
+

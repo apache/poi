@@ -1,3 +1,4 @@
+
 /* ====================================================================
  * The Apache Software License, Version 1.1
  *
@@ -51,55 +52,76 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
+package org.apache.poi.hssf.record.formula;
 
-package org.apache.poi.hpsf.basic;
+import java.util.List;
 
-import org.apache.poi.poifs.filesystem.POIFSDocumentPath;
-
-
+import org.apache.poi.hssf.util.SheetReferences;
 
 /**
- * <p>A POI file just for testing.</p>
- *
- * @author Rainer Klute (klute@rainer-klute.de)
- * @since 2002-07-20
- * @version $Id$
+ * Unary Plus operator
+ * does not have any effect on the operand
+ * @author Avik Sengupta
  */
-public class POIFile
+
+public class UnaryMinusPtg extends OperationPtg
 {
+    public final static int  SIZE = 1;
+    public final static byte sid  = 0x13;
+    
+    private final static String MINUS = "-";
 
-    private String name;
-    private POIFSDocumentPath path;
-    private byte[] bytes;
+    /** Creates new AddPtg */
 
-    public void setName(final String name)
+    public UnaryMinusPtg()
     {
-        this.name = name;
     }
 
-    public String getName()
+    public UnaryMinusPtg(byte[] data, int offset)
     {
-        return name;
+
+        // doesn't need anything
+    }
+    
+   
+    public void writeBytes(byte [] array, int offset)
+    {
+        array[ offset + 0 ] = sid;
     }
 
-    public void setPath(final POIFSDocumentPath path)
+    public int getSize()
     {
-        this.path = path;
+        return SIZE;
     }
 
-    public POIFSDocumentPath getPath()
+    public int getType()
     {
-        return path;
+        return this.TYPE_UNARY;
     }
 
-    public void setBytes(final byte[] bytes)
+    public int getNumberOfOperands()
     {
-        this.bytes = bytes;
+        return 1;
     }
-
-    public byte[] getBytes()
+    
+    /** Implementation of method from Ptg */
+    public String toFormulaString(SheetReferences refs)
     {
-        return bytes;
+        return "+";
+    }
+       
+   /** implementation of method from OperationsPtg*/  
+    public String toFormulaString(String[] operands) {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append(MINUS);
+        buffer.append(operands[ 0]);
+        return buffer.toString();
+    }
+    
+    public byte getDefaultOperandClass() {return Ptg.CLASS_VALUE;}
+           
+    public Object clone() {
+      return new UnaryPlusPtg();
     }
 
 }

@@ -103,7 +103,7 @@ public class HSSFPalette
         for (short i = (short) PaletteRecord.FIRST_COLOR_INDEX; b != null;
             b = palette.getColor(++i))
         {
-            if (b[0] == red && b[1] == blue && b[2] == green)
+            if (b[0] == red && b[1] == green && b[2] == blue)
             {
                 return new CustomColor(i, b);
             }

@@ -57,12 +57,14 @@ package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
+import org.apache.poi.util.BitField;
 
 /**
  * Title:        Style Record<P>
  * Description:  Describes a builtin to the gui or user defined style<P>
  * REFERENCE:  PG 390 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
  * @author Andrew C. Oliver (acoliver at apache dot org)
+ * @author aviks : string fixes for UserDefined Style
  * @version 2.0-pre
  */
 
@@ -81,8 +83,10 @@ public class StyleRecord
     private byte              field_3_outline_style_level;
 
     // only for user defined styles
-    private byte              field_2_name_length;
-    private String            field_3_name;
+    private short              field_2_name_length; //OO doc says 16 bit length, so we believe
+    private byte               field_3_string_options;
+    private BitField fHighByte;
+    private String             field_4_name;
 
     public StyleRecord()
     {
@@ -125,17 +129,24 @@ public class StyleRecord
 
     protected void fillFields(byte [] data, short size, int offset)
     {
+        fHighByte = new BitField(0x01); //have to init here, since we are being called
+                                        //from super, and class level init hasnt been done. 
         field_1_xf_index = LittleEndian.getShort(data, 0 + offset);
-        if (getType() == 1)
+        if (getType() == STYLE_BUILT_IN)
         {
             field_2_builtin_style       = data[ 2 + offset ];
             field_3_outline_style_level = data[ 3 + offset ];
         }
-        else if (getType() == 0)
+        else if (getType() == STYLE_USER_DEFINED)
         {
-            field_2_name_length = data[ 2 + offset ];
-            field_3_name        = StringUtil.getFromCompressedUnicode(data, 3 + offset,
-                                             LittleEndian.ubyteToInt(field_2_name_length));
+            field_2_name_length = LittleEndian.getShort(data, 2 + offset );
+            field_3_string_options = data[4+offset];
+            
+            if (fHighByte.isSet(field_3_string_options)) {
+                field_4_name= StringUtil.getFromUnicode(data,offset+5,field_2_name_length);
+            }else {
+                field_4_name=StringUtil.getFromCompressedUnicode(data,offset+5,field_2_name_length);
+            }
         }
 
         // todo sanity check exception to make sure we're one or the other
@@ -199,7 +210,8 @@ public class StyleRecord
 
     public void setName(String name)
     {
-        field_3_name = name;
+        field_4_name = name;
+        //TODO set name length and string options
     }
 
     // end user defined
@@ -273,7 +285,7 @@ public class StyleRecord
      * @see #getName()
      */
 
-    public byte getNameLength()
+    public short getNameLength()
     {
         return field_2_name_length;
     }
@@ -286,7 +298,7 @@ public class StyleRecord
 
     public String getName()
     {
-        return field_3_name;
+        return field_4_name;
     }
 
     // end user defined
@@ -361,7 +373,7 @@ public class StyleRecord
         else
         {
             LittleEndian.putShort(data, 2 + offset,
-                                  (( short ) (0x03 + getNameLength())));
+                                  (( short ) (getRecordSize()-4)));
         }
         LittleEndian.putShort(data, 4 + offset, getIndex());
         if (getType() == STYLE_BUILT_IN)
@@ -371,8 +383,9 @@ public class StyleRecord
         }
         else
         {
-            data[ 6 + offset ] = getNameLength();
-            StringUtil.putCompressedUnicode(getName(), data, 7 + offset);
+            LittleEndian.putShort(data, 6 + offset , getNameLength());
+            data[8+offset]=this.field_3_string_options;
+            StringUtil.putCompressedUnicode(getName(), data, 9 + offset);
         }
         return getRecordSize();
     }
@@ -387,7 +400,11 @@ public class StyleRecord
         }
         else
         {
-            retval = 7 + getNameLength();
+             if (fHighByte.isSet(field_3_string_options))  {
+                 retval= 9+2*getNameLength();
+             }else {
+                retval = 9 + getNameLength();
+             }
         }
         return retval;
     }

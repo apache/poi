@@ -6,7 +6,7 @@
         Glen Stampoultzis   glens at apache.org
 
 
-    This build was tested with and 1.5.3 although it will probably work with
+    This build was tested with ant 1.5.3 although it will probably work with
     other versions.  The following jar files should be installed
     into the ant lib directory:
 
@@ -15,6 +15,7 @@
     junit(3.8+)     http://www.ibiblio.org/maven/junit/jars/
     xerces          http://www.ibiblio.org/maven/xerces/jars/
     jdepend         http://www.ibiblio.org/maven/jdepend/jars/
+    xalan           http://www.ibiblio.org/maven/xalan/jars/
 
     The ant jar "optional.jar" should also be available otherwise the
     build will fail.
@@ -82,7 +83,7 @@
     <property name="changelog.file" value="${build.site}/changelog.html"/>
     <property name="dist.dir" value="build/dist"/>
     <property name="jar.name" value="poi"/>
-    <property name="version.id" value="2.0-pre1"/>
+    <property name="version.id" value="2.0-pre3"/>
     <property name="halt.on.test.failure" value="true"/>
 
     <path id="main.classpath">
@@ -141,14 +142,17 @@
 
     <target name="check-jars">
         <condition property="jars.present">
+	    <or>
             <and>
                 <available file="${main.jar1.dir}"/>
                 <available file="${main.jar2.dir}"/>
                 <available file="${contrib.jar1.dir}"/>
                 <available file="${contrib.jar2.dir}"/>
-                <available file="${contrib.jar3.dir}"/>
-                <available file="${junit.jar1.dir}"/>
+              	<available file="${contrib.jar3.dir}"/>
+               	<available file="${junit.jar1.dir}"/>
             </and>
+			<isset property="disconnected"/>
+	    </or>
         </condition>
     </target>
 
@@ -214,15 +218,16 @@
         </uptodate>
     </target>
 
-    <target name="test-main" depends="compile-main,-test-main-check" unless="main.test.notRequired">
-        <junit printsummary="yes" showoutput="true" filtertrace="no" fork="no"
-            haltonfailure="${halt.on.test.failure}" failureproperty="main.test.failed">
-            <classpath>
+	<path id="test.classpath">
                 <path refid="main.classpath"/>
                 <pathelement location="${main.output.dir}"/>
                 <pathelement location="${main.output.test.dir}"/>
                 <pathelement location="${junit.jar1.dir}"/>
-            </classpath>
+         </path>
+    <target name="test-main" depends="compile-main,-test-main-check" unless="main.test.notRequired">
+        <junit printsummary="yes" showoutput="true" filtertrace="no" fork="no"
+            haltonfailure="${halt.on.test.failure}" failureproperty="main.test.failed">
+            <classpath refid="test.classpath"/>
             <sysproperty key="HSSF.testdata.path" value="${main.src.test}/org/apache/poi/hssf/data"/>
             <sysproperty key="HPSF.testdata.path" value="${main.src.test}/org/apache/poi/hpsf/data"/>
             <formatter type="plain"/>
@@ -238,20 +243,33 @@
         <antcall target="-test-main-write-testfile"/>
     </target>
 
-    <target name="single-test" depends="compile-main">
-	<junit printsummary="no" showoutput="true" filtertrace="no" fork="no" haltonfailure="${halt.on.test.failure}" failureproperty="main.test.failed" >
-	<classpath>
-                <path refid="main.classpath"/>
-                <pathelement location="${main.output.dir}"/>
-                <pathelement location="${main.output.test.dir}"/>
-                <pathelement location="${junit.jar1.dir}"/>
-            </classpath>
+    <target name="single-test" depends="-test-property-check,compile-main">
+	<junit printsummary="no" showoutput="true" filtertrace="no" haltonfailure="${halt.on.test.failure}" failureproperty="main.test.failed" >
+            <classpath refid="test.classpath"/>
 	    <sysproperty key="HSSF.testdata.path" value="${main.src.test}/org/apache/poi/hssf/data"/>
             <sysproperty key="HPSF.testdata.path" value="${main.src.test}/org/apache/poi/hpsf/data"/>
             <formatter type="plain" usefile="no"/>
             <formatter type="xml"/>
 	    <test name="${testcase}" />
 	</junit>
+    </target>
+
+    <target name="debug-test" depends="-test-property-check,compile-main">
+	<junit printsummary="no" showoutput="true" filtertrace="no" fork="yes" haltonfailure="${halt.on.test.failure}" failureproperty="main.test.failed" >
+	<jvmarg value="-Xdebug"/>
+	<jvmarg value="-Xrunjdwp:transport=dt_socket,address=5001,server=y,suspend=y"/>
+	<sysproperty key="java.compiler" value="NONE"/>
+	<classpath refid="test.classpath"/>
+	    <sysproperty key="HSSF.testdata.path" value="${main.src.test}/org/apache/poi/hssf/data"/>
+            <sysproperty key="HPSF.testdata.path" value="${main.src.test}/org/apache/poi/hpsf/data"/>
+            <formatter type="plain" usefile="no"/>
+	    <test name="${testcase}" />
+	</junit>
+    </target>
+
+    <target name="-test-property-check" unless="testcase">
+	<echo message="Please use -Dtestcase=org.your.testcase to run a single test"/>
+	<fail/>
     </target>
 
     <target name="-test-main-write-testfile" unless="main.test.failed">
@@ -386,6 +404,18 @@
         </condition>
     </target>
 
+    <target name="-cvschangelog" unless="disconnected">
+        <cvschangelog destfile="${changelog.file}" daysinpast="30"/>
+
+	<style in="${changelog.file}"
+            out="${build.site.src}/src/documentation/content/changelog.html"
+            style="changelog.xsl">
+            <param name="title" expression="POI Change Log"/>
+            <param name="module" expression="jakarta-poi"/>
+            <param name="cvsweb" expression="http://cvs.apache.org/viewcvs/"/>
+        </style>
+    </target>
+
     <target name="reports" depends="-check-reports" unless="reports.notRequired"
         description="Creates junit,jdepend and javadoc reports">
         <antcall target="test">
@@ -425,15 +455,7 @@
             out="${jdepend.report.out.dir}/index.html"
             style="jdepend.xsl"/>
 
-        <cvschangelog destfile="${changelog.file}" daysinpast="30"/>
-
-        <style in="${changelog.file}"
-            out="${build.site.src}/src/documentation/content/changelog.html"
-            style="changelog.xsl">
-            <param name="title" expression="POI Change Log"/>
-            <param name="module" expression="jakarta-poi"/>
-            <param name="cvsweb" expression="http://cvs.apache.org/viewcvs/"/>
-        </style>
+	<antcall target="-cvschangelog"/>
 
         <javadoc
             destdir="${apidocs.report.dir}"
@@ -547,9 +569,9 @@
 
         <tar destfile="${dist.dir}/${jar.name}-bin-${version.id}-${DSTAMP}.tar.gz" compression="gzip">
             <tarfileset dir="${build.site}" prefix="docs"/>
-            <tarfileset file="${dist.dir}/${jar.name}-${version.id}.jar"/>
-            <tarfileset file="${dist.dir}/${jar.name}-contrib-${version.id}.jar"/>
-            <tarfileset file="${dist.dir}/${jar.name}-scratchpad-${version.id}.jar"/>
+            <tarfileset file="${dist.dir}/${jar.name}-${version.id}-${DSTAMP}.jar"/>
+            <tarfileset file="${dist.dir}/${jar.name}-contrib-${version.id}-${DSTAMP}.jar"/>
+            <tarfileset file="${dist.dir}/${jar.name}-scratchpad-${version.id}-${DSTAMP}.jar"/>
             <tarfileset dir="legal" prefix="legal"/>
         </tar>
 
@@ -570,6 +592,6 @@
 
     <target name="clean-dist" depends="clean,dist" description="Cleans the build directory then creates a distribution"/>
 
-    <target name="gump" depends="jar"/>
+    <target name="gump" depends="jar,test"/>
 
 </project>

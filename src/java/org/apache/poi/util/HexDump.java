@@ -67,6 +67,20 @@ import java.io.*;
 
 public class HexDump
 {
+    public static final String        EOL         =
+        System.getProperty("line.separator");
+//    private static final StringBuffer _lbuffer    = new StringBuffer(8);
+//    private static final StringBuffer _cbuffer    = new StringBuffer(2);
+    private static final char         _hexcodes[] =
+    {
+        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D',
+        'E', 'F'
+    };
+    private static final int          _shifts[]   =
+    {
+        28, 24, 20, 16, 12, 8, 4, 0
+    };
+
 
     // all static methods, so no need for a public constructor
     private HexDump()
@@ -95,12 +109,14 @@ public class HexDump
             throws IOException, ArrayIndexOutOfBoundsException,
                     IllegalArgumentException
     {
-        if ((index < 0) || (index >= data.length))
+        if ((index < 0) || (data.length != 0 && index >= data.length))
         {
             throw new ArrayIndexOutOfBoundsException(
                 "illegal index: " + index + " into array of length "
                 + data.length);
         }
+        if (data.length == 0)
+            return; // nothing more to do.
         if (stream == null)
         {
             throw new IllegalArgumentException("cannot write to nullstream");
@@ -241,39 +257,26 @@ public class HexDump
     }
     
 
-    public static final String        EOL         =
-        System.getProperty("line.separator");
-    private static final StringBuffer _lbuffer    = new StringBuffer(8);
-    private static final StringBuffer _cbuffer    = new StringBuffer(2);
-    private static final char         _hexcodes[] =
-    {
-        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D',
-        'E', 'F'
-    };
-    private static final int          _shifts[]   =
-    {
-        28, 24, 20, 16, 12, 8, 4, 0
-    };
-
     private static String dump(final long value)
     {
-        _lbuffer.setLength(0);
+        StringBuffer buf = new StringBuffer();
+        buf.setLength(0);
         for (int j = 0; j < 8; j++)
         {
-            _lbuffer
-                .append(_hexcodes[ (( int ) (value >> _shifts[ j ])) & 15 ]);
+            buf.append( _hexcodes[ (( int ) (value >> _shifts[ j ])) & 15 ]);
         }
-        return _lbuffer.toString();
+        return buf.toString();
     }
 
     private static String dump(final byte value)
     {
-        _cbuffer.setLength(0);
+        StringBuffer buf = new StringBuffer();
+        buf.setLength(0);
         for (int j = 0; j < 2; j++)
         {
-            _cbuffer.append(_hexcodes[ (value >> _shifts[ j + 6 ]) & 15 ]);
+            buf.append(_hexcodes[ (value >> _shifts[ j + 6 ]) & 15 ]);
         }
-        return _cbuffer.toString();
+        return buf.toString();
     }
 
     /**
@@ -294,6 +297,7 @@ public class HexDump
         retVal.append(']');
         return retVal.toString();
     }
+
     /**
      * Converts the parameter to a hex value.
      *
@@ -336,5 +340,42 @@ public class HexDump
             result.append( _hexcodes[ (int) ((value >> _shifts[ j + (8 - digits) ]) & 15)]);
         }
         return result.toString();
+    }
+
+    /**
+     * Dumps <code>bytesToDump</code> bytes to an output stream.
+     *
+     * @param in          The stream to read from
+     * @param out         The output stream
+     * @param start       The index to use as the starting position for the left hand side label
+     * @param bytesToDump The number of bytes to output.  Use -1 to read until the end of file.
+     */
+    public static void dump( InputStream in, PrintStream out, int start, int bytesToDump ) throws IOException
+    {
+        ByteArrayOutputStream buf = new ByteArrayOutputStream();
+        if (bytesToDump == -1)
+        {
+            int c = in.read();
+            while (c != -1)
+            {
+                buf.write(c);
+                c = in.read();
+            }
+        }
+        else
+        {
+            int bytesRemaining = bytesToDump;
+            while (bytesRemaining-- > 0)
+            {
+                int c = in.read();
+                if (c == -1)
+                    break;
+                else
+                    buf.write(c);
+            }
+        }
+
+        byte[] data = buf.toByteArray();
+        dump(data, 0, out, start, data.length);
     }
 }

@@ -52,54 +52,75 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.poi.hpsf.basic;
+package org.apache.poi.hssf.usermodel;
 
-import org.apache.poi.poifs.filesystem.POIFSDocumentPath;
+import junit.framework.TestCase;
+import org.apache.poi.hssf.usermodel.HSSFHeader;
+import org.apache.poi.hssf.usermodel.HSSFFooter;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
-
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 
 /**
- * <p>A POI file just for testing.</p>
+ * Tests row shifting capabilities.
  *
- * @author Rainer Klute (klute@rainer-klute.de)
- * @since 2002-07-20
- * @version $Id$
+ *
+ * @author Shawn Laubach (slaubach at apache dot com)
  */
-public class POIFile
-{
 
-    private String name;
-    private POIFSDocumentPath path;
-    private byte[] bytes;
+public class TestHSSFHeaderFooter extends TestCase {
 
-    public void setName(final String name)
-    {
-        this.name = name;
+    /**
+     * Constructor for TestHeaderFooter.
+     * @param arg0
+     */
+    public TestHSSFHeaderFooter(String arg0) {
+	super(arg0);
     }
 
-    public String getName()
+    /**
+     * Tests that get header retreives the proper values.
+     *
+     * @author Shawn Laubach (slaubach at apache dot org)
+     */
+    public void testRetrieveCorrectHeader() throws Exception
     {
-        return name;
+        // Read initial file in
+        String filename = System.getProperty( "HSSF.testdata.path" );
+        filename = filename + "/EmbeddedChartHeaderTest.xls";
+        FileInputStream fin = new FileInputStream( filename );
+        HSSFWorkbook wb = new HSSFWorkbook( fin );
+        fin.close();
+        HSSFSheet s = wb.getSheetAt( 0 );
+	HSSFHeader head = s.getHeader();
+
+	assertEquals("Top Left", head.getLeft());
+	assertEquals("Top Center", head.getCenter());
+	assertEquals("Top Right", head.getRight());
     }
 
-    public void setPath(final POIFSDocumentPath path)
+    /**
+     * Tests that get header retreives the proper values.
+     *
+     * @author Shawn Laubach (slaubach at apache dot org)
+     */
+    public void testRetrieveCorrectFooter() throws Exception
     {
-        this.path = path;
-    }
+        // Read initial file in
+        String filename = System.getProperty( "HSSF.testdata.path" );
+        filename = filename + "/EmbeddedChartHeaderTest.xls";
+        FileInputStream fin = new FileInputStream( filename );
+        HSSFWorkbook wb = new HSSFWorkbook( fin );
+        fin.close();
+        HSSFSheet s = wb.getSheetAt( 0 );
+	HSSFFooter foot = s.getFooter();
 
-    public POIFSDocumentPath getPath()
-    {
-        return path;
+	assertEquals("Bottom Left", foot.getLeft());
+	assertEquals("Bottom Center", foot.getCenter());
+	assertEquals("Bottom Right", foot.getRight());
     }
-
-    public void setBytes(final byte[] bytes)
-    {
-        this.bytes = bytes;
-    }
-
-    public byte[] getBytes()
-    {
-        return bytes;
-    }
-
 }
+
