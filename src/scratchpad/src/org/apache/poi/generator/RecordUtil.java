@@ -162,6 +162,7 @@ public class RecordUtil
 
     public static String getMask(int bit)
     {
+	if (bit > 1) bit--;
         int mask = (int)Math.pow(2, bit);
 
         return "0x" + Integer.toHexString(mask);
