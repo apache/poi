@@ -81,10 +81,9 @@ import org.apache.poi.util.LittleEndian;
  * value, {@link Variant#VT_FILETIME} some date and time (of a
  * file).</p>
  *
- * <p><strong>FIXME:</strong> Reading of other types than {@link
- * Variant#VT_I4}, {@link Variant#VT_FILETIME}, {@link
- * Variant#VT_LPSTR}, {@link Variant#VT_CF}, {@link Variant#VT_BOOL},
- * and reading the dictionary property is not yet implemented.</p>
+ * <p><strong>FIXME:</strong> Reading is not implemented for all
+ * {@link Variant} types yet. Feel free to submit error reports or
+ * patches for the types you need.</p>
  *
  * @author Rainer Klute (klute@rainer-klute.de)
  * @author Drew Varner (Drew.Varner InAndAround sc.edu)
@@ -95,6 +94,9 @@ import org.apache.poi.util.LittleEndian;
  */
 public class Property
 {
+
+    /* Codepage 1200 denotes Unicode. */
+    private static int CP_UNICODE = 1200;
 
     private int id;
 
@@ -150,121 +152,37 @@ public class Property
      * @param offset The property's type/value pair's offset in the
      * section.
      * @param length The property's type/value pair's length in bytes.
+     * @param codepage The section's and thus the property's
+     * codepage. It is needed only when reading string values.
      */
     public Property(final int id, final byte[] src, final long offset,
-		    int length)
+		    int length, int codepage)
     {
         this.id = id;
 
         /*
-         *  ID 0 is a special case since it specifies a dictionary of
-         *  property IDs and property names.
+         * ID 0 is a special case since it specifies a dictionary of
+         * property IDs and property names.
          */
         if (id == 0)
 	{
-            value = readDictionary(src, offset, length);
+            value = readDictionary(src, offset, length, codepage);
             return;
         }
-
-        /*
-         *  FIXME: Support this!
-         */
-//        /* ID 1 is another special case: It denotes the code page of
-//         * byte strings in this section. */
-//        if (id == 1)
-//        {
-//            value = readCodepage(src, offset);
-//            return;
-//        }
 
         int o = (int) offset;
         type = LittleEndian.getUInt(src, o);
         o += LittleEndian.INT_SIZE;
 
-        /*
-         *  FIXME: Support reading more types!
-         */
-        switch ((int)type) {
-            case Variant.VT_I4:
-            {
-                /*
-                 *  Read a word. In Java it is represented as an
-                 *  Integer object.
-                 */
-                value = new Long(LittleEndian.getUInt(src, o));
-                break;
-            }
-            case Variant.VT_FILETIME:
-            {
-                /*
-                 *  Read a FILETIME object. In Java it is represented
-                 *  as a Date.
-                 */
-                final long low = LittleEndian.getUInt(src, o);
-                o += LittleEndian.INT_SIZE;
-                final long high = LittleEndian.getUInt(src, o);
-                value = Util.filetimeToDate((int)high, (int)low);
-                break;
-            }
-            case Variant.VT_LPSTR:
-            {
-                /*
-                 *  Read a byte string. In Java it is represented as a
-                 *  String. The null bytes at the end of the byte
-                 *  strings must be stripped.
-                 */
-                final int first = o + LittleEndian.INT_SIZE;
-                long last = first + LittleEndian.getUInt(src, o) - 1;
-                o += LittleEndian.INT_SIZE;
-                while (src[(int)last] == 0 && first <= last) {
-                    last--;
-                }
-                value = new String(src, (int)first, (int)(last - first + 1));
-                break;
-            }
-            case Variant.VT_CF:
-            {
-                /*
-                 *  The first four bytes in src, from rc[offset] to
-                 *  src[offset + 3] contain the DWord for VT_CF, so
-                 *  skip it, we don't need it.
-                 */
-                /*
-                 *  Truncate the length of the return array by a DWord
-                 *  length (4 bytes).
-                 */
-                length = length - LittleEndian.INT_SIZE;
-
-                final byte[] v = new byte[length];
-                for (int i = 0; i < length; i++)
-                    v[i] = src[(int)(o + i)];
-		value = v;
-                break;
-            }
-            case Variant.VT_BOOL:
-            {
-                /*
-                 *  The first four bytes in src, from src[offset] to
-                 *  src[offset + 3] contain the DWord for VT_BOOL, so
-                 *  skip it, we don't need it.
-                 */
-                final int first = o + LittleEndian.INT_SIZE;
-                long bool = LittleEndian.getUInt(src, o);
-                if (bool != 0)
-                    value = new Boolean(true);
-                else
-                    value = new Boolean(false);
-		break;
-            }
-            default:
-            {
-                final byte[] v = new byte[length];
-                for (int i = 0; i < length; i++)
-                    v[i] = src[(int)(offset + i)];
-		value = v;
-                break;
-            }
-        }
+	try
+	{
+	    value = TypeReader.read(src, o, length, (int) type);
+	}
+	catch (Throwable t)
+	{
+	    t.printStackTrace();
+	    value = "*** null ***";
+	}
     }
 
 
@@ -277,64 +195,67 @@ public class Property
      * @param offset At this offset within <var>src</var> the
      * dictionary starts.
      * @param length The dictionary contains at most this many bytes.
+     * @param codepage The codepage of the string values.
      * @return The dictonary
      */
     protected Map readDictionary(final byte[] src, final long offset,
-				 final int length)
+				 final int length, final int codepage)
     {
-        /*
-         *  FIXME: Check the length!
-         */
-        int o = (int)offset;
+	/* Check whether "offset" points into the "src" array". */
+	if (offset < 0 || offset > src.length)
+	    throw new HPSFRuntimeException
+		("Illegal offset " + offset + " while HPSF stream contains " +
+		 length + " bytes.");
+        int o = (int) offset;
 
         /*
-         *  Read the number of dictionary entries.
+         * Read the number of dictionary entries.
          */
         final long nrEntries = LittleEndian.getUInt(src, o);
         o += LittleEndian.INT_SIZE;
 
-        final Map m = new HashMap((int)nrEntries, (float) 1.0);
+        final Map m = new HashMap((int) nrEntries, (float) 1.0);
         for (int i = 0; i < nrEntries; i++)
 	{
-            /*
-             *  The key
-             */
+            /* The key. */
             final Long id = new Long(LittleEndian.getUInt(src, o));
             o += LittleEndian.INT_SIZE;
 
-            /*
-             *  The value (a string)
-             */
-            final long sLength = LittleEndian.getUInt(src, o);
+            /* The value (a string). The length is the either the
+             * number of characters if the character set is Unicode or
+             * else the number of bytes. The length includes
+             * terminating 0x00 bytes which we have to strip off to
+             * create a Java string. */
+            long sLength = LittleEndian.getUInt(src, o);
             o += LittleEndian.INT_SIZE;
 
-            /*
-             *  Strip trailing 0x00 bytes.
-             */
-            long l = sLength;
-            while (src[(int)(o + l - 1)] == 0x00)
-                l--;
-            final String s = new String(src, o, (int)l);
-            o += sLength;
-            m.put(id, s);
+            /* Read the bytes or characters depending on whether the
+             * character set is Unicode or not. */
+	    StringBuffer b = new StringBuffer((int) sLength);
+	    for (int j = 0; j < sLength; j++)
+		if (codepage == CP_UNICODE)
+		{
+		    final int i1 = o + (j * 2);
+		    final int i2 = i1 + 1;
+		    b.append((char) ((src[i2] << 8) + src[i1]));
+		}
+		else
+		    b.append((char) src[o + j]);
+
+	    /* Strip 0x00 characters from the end of the string: */
+	    while (b.charAt(b.length() - 1) == 0x00)
+		b.setLength(b.length() - 1);
+	    if (codepage == CP_UNICODE)
+	    {
+		if (sLength % 2 == 1)
+		    sLength++;
+		o += (sLength + sLength);
+	    }
+	    else
+		o += sLength;
+            m.put(id, b.toString());
         }
         return m;
-    }
-
-
-
-    /**
-     * <p>Reads a code page.</p>
-     *
-     * @param src The byte array containing the bytes making out the
-     * code page.
-     * @param offset At this offset within <var>src</var> the code
-     * page starts.
-     * @return The code page.
-     */
-    protected int readCodePage(final byte[] src, final long offset)
-    {
-        throw new UnsupportedOperationException("FIXME");
     }
 
 }

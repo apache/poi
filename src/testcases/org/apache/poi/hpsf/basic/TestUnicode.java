@@ -62,46 +62,27 @@ import org.apache.poi.hpsf.*;
 
 
 /**
- * <p>Tests the basic HPSF functionality.</p>
+ * <p>Tests whether Unicode string can be read from a
+ * DocumentSummaryInformation.</p>
  *
  * @author Rainer Klute (klute@rainer-klute.de)
- * @since 2002-07-20
+ * @since 2002-12-09
  * @version $Id$
  */
-public class TestBasic extends TestCase
+public class TestUnicode extends TestCase
 {
 
-    final static String POI_FS = "TestGermanWord90.doc";
+    final static String POI_FS = "TestUnicode.xls";
     final static String[] POI_FILES = new String[]
 	{
-	    "\005SummaryInformation",
 	    "\005DocumentSummaryInformation",
-	    "WordDocument",
-	    "\001CompObj",
-	    "1Table"
 	};
-    final static int BYTE_ORDER = 0xfffe;
-    final static int FORMAT     = 0x0000;
-    final static int OS_VERSION = 0x00020A04;
-    final static byte[] CLASS_ID =
-	{
-	    (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-	    (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-	    (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-	    (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00
-	};
-    final static int[] SECTION_COUNT =
-        {1, 2};
-    final static boolean[] IS_SUMMARY_INFORMATION =
-        {true, false};
-    final static boolean[] IS_DOCUMENT_SUMMARY_INFORMATION =
-        {false, true};	    
-
+    File data;
     POIFile[] poiFiles;
 
 
 
-    public TestBasic(String name)
+    public TestUnicode(String name)
     {
         super(name);
     }
@@ -115,98 +96,35 @@ public class TestBasic extends TestCase
     {
 	final File dataDir =
 	    new File(System.getProperty("HPSF.testdata.path"));
-	final File data = new File(dataDir, POI_FS);
-
-	poiFiles = Util.readPOIFiles(data);
-    }
-
-
-
-    /**
-     * <p>Checks the names of the files in the POI filesystem. They
-     * are expected to be in a certain order.</p>
-     */
-    public void testReadFiles() throws IOException
-    {
-	String[] expected = POI_FILES;
-	for (int i = 0; i < expected.length; i++)
-	    Assert.assertEquals(poiFiles[i].getName(), expected[i]);
-    }
-
-
-
-    /**
-     * <p>Tests whether property sets can be created from the POI
-     * files in the POI file system. This test case expects the first
-     * file to be a {@link SummaryInformation}, the second file to be
-     * a {@link DocumentSummaryInformation} and the rest to be no
-     * property sets. In the latter cases a {@link
-     * NoPropertySetStreamException} will be thrown when trying to
-     * create a {@link PropertySet}.</p>
-     */
-    public void testCreatePropertySets() throws IOException
-    {
-	Class[] expected = new Class[]
-	    {
-		SummaryInformation.class,
-		DocumentSummaryInformation.class,
-		NoPropertySetStreamException.class,
-		NoPropertySetStreamException.class,
-		NoPropertySetStreamException.class
-	    };
-	for (int i = 0; i < expected.length; i++)
-	{
-	    InputStream in = new ByteArrayInputStream(poiFiles[i].getBytes());
-	    Object o;
-	    try
-	    {
-		o = PropertySetFactory.create(in);
-	    }
-	    catch (NoPropertySetStreamException ex)
-	    {
-		o = ex;
-	    }
-	    catch (UnexpectedPropertySetTypeException ex)
-	    {
-		o = ex;
-	    }
-	    catch (MarkUnsupportedException ex)
-	    {
-		o = ex;
-	    }
-	    in.close();
-	    Assert.assertEquals(o.getClass(), expected[i]);
-	}
+	data = new File(dataDir, POI_FS);
     }
 
 
 
     /**
      * <p>Tests the {@link PropertySet} methods. The test file has two
-     * property sets: the first one is a {@link SummaryInformation},
+     * property set: the first one is a {@link SummaryInformation},
      * the second one is a {@link DocumentSummaryInformation}.</p>
      */
     public void testPropertySetMethods() throws IOException, HPSFException
     {
-	String[] expected = POI_FILES;
-
-	/* Loop over the two property sets. */
-	for (int i = 0; i < 2; i++)
-	{
-	    byte[] b = poiFiles[i].getBytes();
-	    PropertySet ps =
-		PropertySetFactory.create(new ByteArrayInputStream(b));
-	    Assert.assertEquals(ps.getByteOrder(), BYTE_ORDER);
-	    Assert.assertEquals(ps.getFormat(), FORMAT);
-	    Assert.assertEquals(ps.getOSVersion(), OS_VERSION);
-	    Assert.assertEquals(new String(ps.getClassID().getBytes()),
-				new String(CLASS_ID));
-	    Assert.assertEquals(ps.getSectionCount(), SECTION_COUNT[i]);
-	    Assert.assertEquals(ps.isSummaryInformation(),
-				IS_SUMMARY_INFORMATION[i]);
-	    Assert.assertEquals(ps.isDocumentSummaryInformation(),
-				IS_DOCUMENT_SUMMARY_INFORMATION[i]);
-	}
+	POIFile poiFile = Util.readPOIFiles(data, POI_FILES)[0];
+	byte[] b = poiFile.getBytes();
+	PropertySet ps =
+	    PropertySetFactory.create(new ByteArrayInputStream(b));
+	Assert.assertTrue(ps.isDocumentSummaryInformation());
+	Assert.assertEquals(ps.getSectionCount(), 2);
+	Section s = (Section) ps.getSections().get(1);
+	Assert.assertEquals(s.getProperty(1),
+			    new Integer(1200));
+	Assert.assertEquals(s.getProperty(2),
+			    new Long(4198897018l));
+	Assert.assertEquals(s.getProperty(3),
+			    "MCon_Info zu Office bei Schreiner");
+	Assert.assertEquals(s.getProperty(4),
+			    "petrovitsch@schreiner-online.de");
+	Assert.assertEquals(s.getProperty(5),
+			    "Petrovitsch, Wilhelm");
     }
 
 
@@ -214,11 +132,11 @@ public class TestBasic extends TestCase
     /**
      * <p>Runs the test cases stand-alone.</p>
      */
-    public static void main(String[] args) throws Throwable
+    public static void main(String[] args)
     {
 	System.setProperty("HPSF.testdata.path",
 			   "./src/testcases/org/apache/poi/hpsf/data");
-	junit.textui.TestRunner.run(TestBasic.class);
+        junit.textui.TestRunner.run(TestUnicode.class);
     }
 
 }
