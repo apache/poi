@@ -755,7 +755,8 @@ public class NameRecord extends Record {
             .append("\n");
         buffer.append("    .Name (Unicode text)  = ").append( field_12_name_text )
             .append("\n");
-        buffer.append("    .Formula data (RPN token array without size field)      = ").append( HexDump.toHex( field_13_raw_name_definition ) )
+        buffer.append("    .Formula data (RPN token array without size field)      = ").append( HexDump.toHex( 
+                       ((field_13_raw_name_definition != null) ? field_13_raw_name_definition : new byte[0] ) ) )
             .append("\n");
         buffer.append("    .Menu text (Unicode string without length field)        = ").append( field_14_custom_menu_text )
             .append("\n");
