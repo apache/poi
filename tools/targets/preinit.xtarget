@@ -48,6 +48,7 @@
     </fileset>
     <!-- FIXME : how to build a path that references a property set in 'init' target ? -->
     <pathelement path="./build/${name}/scratchpad/classes"/>
+    <pathelement path="./build/${name}/classes"/>
   </path>
 
   <path id="examples.classpath">
