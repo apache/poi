@@ -504,7 +504,77 @@ public class Section
             return false;
         if (s.getPropertyCount() != getPropertyCount())
             return false;
-        return Util.equals(s.getProperties(), getProperties());
+
+        /* Compare all properties except 0 and 1 as they must be handled 
+         * specially. */
+        Property[] pa1 = new Property[getProperties().length];
+        Property[] pa2 = new Property[s.getProperties().length];
+        System.arraycopy(getProperties(), 0, pa1, 0, pa1.length);
+        System.arraycopy(s.getProperties(), 0, pa2, 0, pa2.length);
+
+        /* Extract properties 0 and 1 and remove them from the copy of the
+         * arrays. */
+        Property p10 = null;
+        Property p11;
+        Property p20 = null;
+        Property p21;
+        for (int i = 0; i < pa1.length; i++)
+        {
+            final long id = pa1[i].getID();
+            if (id == 0)
+            {
+                p10 = pa1[i];
+                pa1 = remove(pa1, i);
+                i--;
+            }
+            if (id == 1)
+            {
+                p11 = pa1[i];
+                pa1 = remove(pa1, i);
+                i--;
+            }
+        }
+        for (int i = 0; i < pa2.length; i++)
+        {
+            final long id = pa2[i].getID();
+            if (id == 0)
+            {
+                p20 = pa2[i];
+                pa2 = remove(pa2, i);
+                i--;
+            }
+            if (id == 1)
+            {
+                p21 = pa2[i];
+                pa2 = remove(pa2, i);
+                i--;
+            }
+        }
+
+        boolean dictionaryEqual = true;
+        if (p10 != null && p20 != null)
+            dictionaryEqual = p10.getValue().equals(p20.getValue());
+        else if (p10 != null || p20 != null)
+            dictionaryEqual = false;
+        if (!dictionaryEqual)
+            return false;
+        else
+            return Util.equals(pa1, pa2);
+    }
+
+
+
+    /**
+     * <p>Removes a field from a property array. The resulting array is
+     * compactified and returned.</p>
+     */
+    private Property[] remove(final Property[] pa, final int i)
+    {
+        final Property[] h = new Property[pa.length - 1];
+        if (i > 0)
+            System.arraycopy(pa, 0, h, 0, i);
+        System.arraycopy(pa, i + 1, h, i, h.length - i);
+        return h;
     }
 
 

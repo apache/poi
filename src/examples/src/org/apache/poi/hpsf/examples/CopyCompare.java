@@ -56,6 +56,7 @@ package org.apache.poi.hpsf.examples;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -63,112 +64,279 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.poi.hpsf.HPSFRuntimeException;
 import org.apache.poi.hpsf.MarkUnsupportedException;
 import org.apache.poi.hpsf.MutablePropertySet;
-import org.apache.poi.hpsf.MutableSection;
 import org.apache.poi.hpsf.NoPropertySetStreamException;
 import org.apache.poi.hpsf.PropertySet;
 import org.apache.poi.hpsf.PropertySetFactory;
 import org.apache.poi.hpsf.Util;
-import org.apache.poi.hpsf.Variant;
 import org.apache.poi.hpsf.WritingNotSupportedException;
-import org.apache.poi.hpsf.wellknown.PropertyIDMap;
 import org.apache.poi.poifs.eventfilesystem.POIFSReader;
 import org.apache.poi.poifs.eventfilesystem.POIFSReaderEvent;
 import org.apache.poi.poifs.eventfilesystem.POIFSReaderListener;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
+import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
+import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.poifs.filesystem.POIFSDocumentPath;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
- * <p>This class is a sample application which shows how to write or modify the
- * author and title property of an OLE 2 document. This could be done in two
- * different ways:</p>
+ * <p>This class copies a POI file system to a new file and compares the copy
+ * with the original.</p>
  * 
- * <ul>
+ * <p>Property set streams are copied logically, i.e. the application
+ * establishes a {@link org.apache.poi.hpsf.PropertySet} of an original property
+ * set, creates a {@link org.apache.poi.hpsf.MutablePropertySet} from the
+ * {@link org.apache.poi.hpsf.PropertySet} and writes the
+ * {@link org.apache.poi.hpsf.MutablePropertySet} to the destination POI file
+ * system. - Streams which are no property set streams are copied bit by
+ * bit.</p>
  * 
- * <li><p>The first approach is to open the OLE 2 file as a POI filesystem
- * (see class {@link POIFSFileSystem}), read the summary information property
- * set (see classes {@link SummaryInformation} and {@link PropertySet}), write
- * the author and title properties into it and write the property set back into
- * the POI filesystem.</p></li>
- * 
- * <li><p>The second approach does not modify the original POI filesystem, but
- * instead creates a new one. All documents from the original POIFS are copied
- * to the destination POIFS, except for the summary information stream. The
- * latter is modified by setting the author and title property before writing
- * it to the destination POIFS. It there are several summary information streams
- * in the original POIFS - e.g. in subordinate directories - they are modified
- * just the same.</p></li>
- * 
- * </ul>
- * 
- * <p>This sample application takes the second approach. It expects the name of
- * the existing POI filesystem's name as its first command-line parameter and
- * the name of the output POIFS as the second command-line argument. The
- * program then works as described above: It copies nearly all documents
- * unmodified from the input POI filesystem to the output POI filesystem. If it
- * encounters a summary information stream it reads its properties. Then it sets
- * the "author" and "title" properties to new values and writes the modified
- * summary information stream into the output file.</p>
- * 
- * <p>Further explanations can be found in the HPSF HOW-TO.</p>
+ * <p>The comparison of the POI file systems is done logically. That means that
+ * the two disk files containing the POI file systems do not need to be
+ * exactly identical. However, both POI file systems must contain the same
+ * files, and most of these files must be bitwise identical. Property set
+ * streams, however, are compared logically: they must have the same sections
+ * with the same attributs, and the sections must contain the same properties.
+ * Details like the ordering of the properties do not matter.</p>
  *
  * @author Rainer Klute <a
  * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
  * @version $Id$
- * @since 2003-09-01
+ * @since 2003-09-19
  */
-public class WriteAuthorAndTitle
+public class CopyCompare
 {
     /**
-     * <p>Runs the example program.</p>
+     * <p>Runs the example program. The application expects one or two
+     * arguments:</p>
+     * 
+     * <ol>
+     * 
+     * <li><p>The first argument is the disk file name of the POI filesystem to
+     * copy.</p></li>
+     * 
+     * <li><p>The second argument is optional. If it is given, it is the name of
+     * a disk file the copy of the POI filesystem will be written to. If it is
+     * not given, the copy will be written to a temporary file which will be
+     * deleted at the end of the program.</p></li>
+     * 
+     * </ol>
      *
-     * @param args Command-line arguments. The first command-line argument must
-     * be the name of a POI filesystem to read.
-     * @throws IOException if any I/O exception occurs.
+     * @param args Command-line arguments.
+     * @exception MarkUnsupportedException if a POI document stream does not
+     * support the mark() operation.
+     * @exception NoPropertySetStreamException if the application tries to
+     * create a property set from a POI document stream that is not a property
+     * set stream.
+     * @exception IOException if any I/O exception occurs.
      */
-    public static void main(final String[] args) throws IOException
+    public static void main(final String[] args)
+    throws MarkUnsupportedException, NoPropertySetStreamException, IOException
     {
-        /* Check whether we have exactly two command-line arguments. */
-        if (args.length != 2)
+        String originalFileName = null;
+        String copyFileName = null;
+
+        /* Check the command-line arguments. */
+        if (args.length == 1)
         {
-            System.err.println("Usage: " + WriteAuthorAndTitle.class.getName() +
-                               "originPOIFS destinationPOIFS");
+            originalFileName = args[0];
+            File f = File.createTempFile("CopyOfPOIFileSystem-", ".ole2");
+            f.deleteOnExit();
+            copyFileName = f.getAbsolutePath();
+        }
+        else if (args.length == 2)
+        {
+            originalFileName = args[0];
+            copyFileName = args[1];
+        }
+        else
+        {
+            System.err.println("Usage: " + CopyCompare.class.getName() +
+                               "originPOIFS [copyPOIFS]");
             System.exit(1);
         }
-        
-        /* Read the names of the origin and destination POI filesystems. */
-        final String srcName = args[0];
-        final String dstName = args[1];
 
         /* Read the origin POIFS using the eventing API. The real work is done
-         * in the class ModifySICopyTheRest which is registered here as a
-         * POIFSReader. */
+         * in the class CopyFile which is registered here as a POIFSReader. */
         final POIFSReader r = new POIFSReader();
-        final ModifySICopyTheRest msrl = new ModifySICopyTheRest(dstName);
-        r.registerListener(msrl);
-        r.read(new FileInputStream(srcName));
+        final CopyFile cf = new CopyFile(copyFileName);
+        r.registerListener(cf);
+        r.read(new FileInputStream(originalFileName));
         
         /* Write the new POIFS to disk. */
-        msrl.close();
+        cf.close();
+
+        /* Read all documents from the original POI file system and compare them
+         * with the equivalent document from the copy. */
+        final POIFSFileSystem opfs =
+            new POIFSFileSystem(new FileInputStream(originalFileName));
+        final POIFSFileSystem cpfs =
+            new POIFSFileSystem(new FileInputStream(copyFileName));
+
+        final DirectoryEntry oRoot = opfs.getRoot();
+        final DirectoryEntry cRoot = cpfs.getRoot();
+        final StringBuffer messages = new StringBuffer();
+        if (equal(oRoot, cRoot, messages))
+            System.out.println("Equal");
+        else
+            System.out.println("Not equal: " + messages.toString());
     }
 
 
 
     /**
-     * <p>This class does all the work. As its name implies it modifies a
-     * summary information property set and copies everything else unmodified
-     * to the destination POI filesystem. Since an instance of it is registered
-     * as a {@link POIFSReader} its method {@link 
-     * #processPOIFSReaderEvent(POIFSReaderEvent) is called for each document in
-     * the origin POIFS.</p>
+     * <p>Compares two {@link DirectoryEntry} instances of a POI file system.
+     * The directories must contain the same streams with the same names and
+     * contents.</p>
+     *
+     * @param d1 The first directory.
+     * @param d2 The second directory.
+     * @param msg The method may append human-readable comparison messages to
+     * this string buffer. 
+     * @return <code>true</code> if the directories are equal, else
+     * <code>false</code>.
+     * @exception MarkUnsupportedException if a POI document stream does not
+     * support the mark() operation.
+     * @exception NoPropertySetStreamException if the application tries to
+     * create a property set from a POI document stream that is not a property
+     * set stream.
+     * @exception IOException if any I/O exception occurs.
      */
-    static class ModifySICopyTheRest implements POIFSReaderListener
+    private static boolean equal(final DirectoryEntry d1,
+                                 final DirectoryEntry d2,
+                                 final StringBuffer msg)
+    throws MarkUnsupportedException, NoPropertySetStreamException, IOException
+    {
+        boolean equal = true;
+        /* Iterate over d1 and compare each entry with its counterpart in d2. */
+        for (final Iterator i = d1.getEntries(); equal && i.hasNext();)
+        {
+            final Entry e1 = (Entry) i.next();
+            final String n1 = e1.getName();
+            Entry e2 = null;
+            try
+            {
+                e2 = d2.getEntry(n1);
+            }
+            catch (FileNotFoundException ex)
+            {
+                msg.append("Document \"" + e1 + "\" exitsts, document \"" +
+                           e2 + "\" does not.\n");
+                equal = false;
+                break;
+            }
+
+            if (e1.isDirectoryEntry() && e2.isDirectoryEntry())
+                equal = equal((DirectoryEntry) e1, (DirectoryEntry) e2, msg);
+            else if (e1.isDocumentEntry() && e2.isDocumentEntry())
+                equal = equal((DocumentEntry) e1, (DocumentEntry) e2, msg);
+            else
+            {
+                msg.append("One of \"" + e1 + "\" and \"" + e2 + "\" is a " +
+                           "document while the other one is a directory.\n");
+                equal = false;
+            }
+        }
+
+        /* Iterate over d2 just to make sure that there are no entries in d2
+         * that are not in d1. */
+        for (final Iterator i = d2.getEntries(); equal && i.hasNext();)
+        {
+            final Entry e2 = (Entry) i.next();
+            final String n2 = e2.getName();
+            Entry e1 = null;
+            try
+            {
+                e1 = d1.getEntry(n2);
+            }
+            catch (FileNotFoundException ex)
+            {
+                msg.append("Document \"" + e2 + "\" exitsts, document \"" +
+                           e1 + "\" does not.\n");
+                equal = false;
+                break;
+            }
+        }
+        return equal;
+    }
+
+
+
+    /**
+     * <p>Compares two {@link DocumentEntry} instances of a POI file system.
+     * Documents that are not property set streams must be bitwise identical.
+     * Property set streams must be logically equal.</p>
+     *
+     * @param d1 The first document.
+     * @param d2 The second document.
+     * @param msg The method may append human-readable comparison messages to
+     * this string buffer. 
+     * @return <code>true</code> if the documents are equal, else
+     * <code>false</code>.
+     * @exception MarkUnsupportedException if a POI document stream does not
+     * support the mark() operation.
+     * @exception NoPropertySetStreamException if the application tries to
+     * create a property set from a POI document stream that is not a property
+     * set stream.
+     * @exception IOException if any I/O exception occurs.
+     */
+    private static boolean equal(final DocumentEntry d1, final DocumentEntry d2,
+                                 final StringBuffer msg)
+    throws MarkUnsupportedException, NoPropertySetStreamException, IOException
+    {
+        boolean equal = true;
+        final DocumentInputStream dis1 = new DocumentInputStream(d1);
+        final DocumentInputStream dis2 = new DocumentInputStream(d2);
+        if (PropertySet.isPropertySetStream(dis1) &&
+            PropertySet.isPropertySetStream(dis2))
+        {
+            final PropertySet ps1 = PropertySetFactory.create(dis1);
+            final PropertySet ps2 = PropertySetFactory.create(dis2);
+            equal = ps1.equals(ps2);
+            if (!equal)
+            {
+                msg.append("Property sets are not equal.\n");
+                return equal;
+            }
+        }
+        else
+        {
+            int i1;
+            int i2;
+            do
+            {
+                i1 = dis1.read();
+                i2 = dis2.read();
+                if (i1 != i2)
+                {
+                    equal = false;
+                    msg.append("Documents are not equal.\n");
+                    break;
+                }
+            }
+            while (equal && i1 == -1);
+        }
+        return true;
+    }
+
+
+
+    /**
+     * <p>This class does all the work. Its method {@link
+     * #processPOIFSReaderEvent(POIFSReaderEvent)} is called for each file in
+     * the original POI file system. Except for property set streams it copies
+     * everything unmodified to the destination POI filesystem. Property set
+     * streams are copied by creating a new {@link PropertySet} from the
+     * original property set by using the {@link
+     * MutablePropertySet#MutablePropertySet(PropertySet) constructor.</p>
+     */
+    static class CopyFile implements POIFSReaderListener
     {
         String dstName;
         OutputStream out;
@@ -176,15 +344,15 @@ public class WriteAuthorAndTitle
 
 
         /**
-         * <p>The constructor of a {@link ModifySICopyTheRest} instance creates
-         * the target POIFS. It also stores the name of the file the POIFS will
-         * be written to once it is complete.</p>
+         * <p>The constructor of a {@link CopyFile} instance creates the target
+         * POIFS. It also stores the name of the file the POIFS will be written
+         * to once it is complete.</p>
          * 
          * @param dstName The name of the disk file the destination POIFS is to
          * be written to.
          * @throws FileNotFoundException
          */
-        public ModifySICopyTheRest(final String dstName)
+        public CopyFile(final String dstName)
         {
             this.dstName = dstName;
             poiFs = new POIFSFileSystem();
@@ -224,18 +392,9 @@ public class WriteAuthorAndTitle
                          * checked above. */
                     }
 
-                    /* Now we know that we really have a property set. The next
-                     * step is to find out whether it is a summary information
-                     * or not. */
-                    if (ps.isSummaryInformation())
-                        /* Yes, it is a summary information. We will modify it
-                         * and write the result to the destination POIFS. */
-                        editSI(poiFs, path, name, ps);
-                    else
-                        /* No, it is not a summary information. We don't care
-                         * about its internals and copy it unmodified to the
-                         * destination POIFS. */
-                        copy(poiFs, path, name, ps);
+                    /* Copy the property set to the destination POI file
+                     * system. */
+                    copy(poiFs, path, name, ps);
                 }
                 else
                     /* No, the current document is not a property set stream. We
@@ -269,54 +428,9 @@ public class WriteAuthorAndTitle
         }
 
 
-        /**
-         * <p>Receives a summary information property set modifies (or creates)
-         * its "author" and "title" properties and writes the result under the
-         * same path and name as the origin to a destination POI filesystem.</p>
-         *
-         * @param poiFs The POI filesystem to write to.
-         * @param path The original (and destination) stream's path.
-         * @param name The original (and destination) stream's name.
-         * @param si The property set. It should be a summary information
-         * property set.
-         */
-        public void editSI(final POIFSFileSystem poiFs,
-                           final POIFSDocumentPath path,
-                           final String name,
-                           final PropertySet si)
-            throws WritingNotSupportedException, IOException
-        {
-            /* Get the directory entry for the target stream. */
-            final DirectoryEntry de = getPath(poiFs, path);
-
-            /* Create a mutable property set as a copy of the original read-only
-             * property set. */
-            final MutablePropertySet mps = new MutablePropertySet(si);
-            
-            /* Retrieve the section containing the properties to modify. A
-             * summary information property set contains exactly one section. */
-            final MutableSection s =
-                (MutableSection) mps.getSections().get(0);
-
-            /* Set the properties. */
-            s.setProperty(PropertyIDMap.PID_AUTHOR, Variant.VT_LPSTR,
-                          "Rainer Klute");
-            s.setProperty(PropertyIDMap.PID_TITLE, Variant.VT_LPWSTR,
-                          "Test");
-
-            /* Create an input stream containing the bytes the property set
-             * stream consists of. */
-            final InputStream pss = mps.toInputStream();
-
-            /* Write the property set stream to the POIFS. */
-            de.createDocument(name, pss);
-        }
-
 
         /**
-         * <p>Writes a {@link PropertySet} to a POI filesystem. This method is
-         * simpler than {@link #editSI} because the origin property set has just
-         * to be copied.</p>
+         * <p>Writes a {@link PropertySet} to a POI filesystem.</p>
          *
          * @param poiFs The POI filesystem to write to.
          * @param path The file's path in the POI filesystem.

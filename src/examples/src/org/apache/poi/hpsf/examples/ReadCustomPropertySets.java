@@ -70,13 +70,13 @@ import org.apache.poi.poifs.eventfilesystem.POIFSReaderListener;
 import org.apache.poi.util.HexDump;
 
 /**
- * <p>Sample application showing how to read a custom property set of
- * a document. Call it with the document's file name as command line
- * parameter.</p>
+ * <p>Sample application showing how to read a document's custom property set.
+ * Call it with the document's file name as command-line parameter.</p>
  *
  * <p>Explanations can be found in the HPSF HOW-TO.</p>
  *
- * @author Rainer Klute (klute@rainer-klute.de)
+ * @author Rainer Klute <a
+ * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
  * @version $Id$
  * @since 2003-02-01
  */

@@ -700,16 +700,16 @@ No property set stream: "/1Table"</source>
       <tr>
        <td>0</td>
        <td>The property's value is a <strong>dictionary</strong>, i.e. a
-	mapping from property IDs to strings.</td>
+        mapping from property IDs to strings.</td>
       </tr>
 
       <tr>
        <td>1</td>
        <td>The property's value is the number of a <strong>codepage</strong>,
-	i.e. a mapping from character codes to characters. All strings in the
-	section containing this property must be interpreted using this
-	codepage. Typical property values are 1252 (8-bit "western" characters)
-	or 1200 (16-bit Unicode characters).</td>
+        i.e. a mapping from character codes to characters. All strings in the
+        section containing this property must be interpreted using this
+        codepage. Typical property values are 1252 (8-bit "western" characters)
+        or 1200 (16-bit Unicode characters).</td>
       </tr>
      </table>
     </section>
@@ -1036,15 +1036,15 @@ final String fileName = args[0];</source>
      <p>The <code>MutableSection</code> the sample application retrieved from
       the <code>MutablePropertySet</code> is still empty. It contains no
       properties and does not have a format ID. As you have read <link
-       href="#sec3">above</link> the format ID of the first section in a property set
-       determines the property set's type. Since our property set should become
-       a SummaryInformation property set we have to set the format ID of its
-       first (and only) section to
-       <code>F29F85E0-4FF9-1068-AB-91-08-00-2B-27-B3-D9</code>. However, you
-       won't have to remember that ID: HPSF has it defined as the well-known
-       constant <code>SectionIDMap.SUMMARY_INFORMATION_ID</code>. The sample
-       application writes it to the section using the
-       <code>setFormatID(byte[])</code> method:</p>
+       href="#sec3">above</link> the format ID of the first section in a
+      property set determines the property set's type. Since our property set
+      should become a SummaryInformation property set we have to set the format
+      ID of its first (and only) section to
+      <code>F29F85E0-4FF9-1068-AB-91-08-00-2B-27-B3-D9</code>. However, you
+      won't have to remember that ID: HPSF has it defined as the well-known
+      constant <code>SectionIDMap.SUMMARY_INFORMATION_ID</code>. The sample
+      application writes it to the section using the
+      <code>setFormatID(byte[])</code> method:</p>
 
      <source>ms.setFormatID(SectionIDMap.SUMMARY_INFORMATION_ID);</source>
 
