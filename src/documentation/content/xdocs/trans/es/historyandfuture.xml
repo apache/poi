@@ -132,8 +132,8 @@
         <p>
           Estamos empezando a expandir nuestro alcance de nuevo. Si pudimos
           hacer todo esto para ficheros XLS, ¿ñuhay de ficheros Doc o PPT?
-          Pensamos que nuestro siguiente componente (HWPF - Formato de 
-          Documento Horrible) deber seguir el mismo patr. Esperamos
+          Pensamos que nuestro siguiente componente (HWPF)
+          deber seguir el mismo patr. Esperamos
           que se nos una sangre nueva al equipo y que nos permita abordar
           esto con mayor celeridad (en parte porque POIFS ya estterminado).
           ¡Ðero a lo mejor lo que m necesitamos es a ti!
