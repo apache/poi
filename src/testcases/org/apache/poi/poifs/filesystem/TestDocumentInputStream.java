@@ -217,8 +217,10 @@ public class TestDocumentInputStream
 
         for (int j = 0; j < _workbook_size; j++)
         {
+	    int b = stream.read();
+	    assertTrue("checking sign of " + j, b >= 0);
             assertEquals("validating byte " + j, _workbook_data[ j ],
-                         ( byte ) stream.read());
+                         ( byte ) b);
             remaining--;
             assertEquals("checking remaining after reading byte " + j,
                          remaining, stream.available());
