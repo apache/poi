@@ -184,6 +184,13 @@ public class IndexRecord
     {
         return 20 + (getNumDbcells() * 4);
     }
+    
+    /** Returns the size of an INdexRecord when it needs to index the specified number of blocks
+      *
+      */
+     public static int getRecordSizeForBlockCount(int blockCount) {
+       return 20 + (4 * blockCount);
+     }  
 
     public short getSid()
     {
