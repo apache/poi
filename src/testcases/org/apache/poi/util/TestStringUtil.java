@@ -1,4 +1,3 @@
-
 /* ====================================================================
  * The Apache Software License, Version 1.1
  *
@@ -52,7 +51,6 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-
 package org.apache.poi.util;
 
 import junit.framework.*;
@@ -66,138 +64,131 @@ import java.text.NumberFormat;
  * @author  Glen Stampoultzis (glens at apache.org)
  * @author  Sergei Kozello (sergeikozello at mail.ru)
  */
-
 public class TestStringUtil
-    extends TestCase
+        extends TestCase
 {
-
     /**
      * Creates new TestStringUtil
      *
      * @param name
      */
-
-    public TestStringUtil(String name)
+    public TestStringUtil( String name )
     {
-        super(name);
+        super( name );
     }
 
     /**
      * test simple form of getFromUnicode
      */
-
     public void testSimpleGetFromUnicode()
     {
-        byte[] test_data = new byte[ 32 ];
-        int    index     = 0;
+        byte[] test_data = new byte[32];
+        int index = 0;
 
-        for (int k = 0; k < 16; k++)
+        for ( int k = 0; k < 16; k++ )
         {
-            test_data[ index++ ] = ( byte ) 0;
-            test_data[ index++ ] = ( byte ) ('a' + k);
+            test_data[index++] = (byte) 0;
+            test_data[index++] = (byte) ( 'a' + k );
         }
-        assertEquals("abcdefghijklmnop",
-                     StringUtil.getFromUnicode(test_data));
+
+        assertEquals( "abcdefghijklmnop",
+                StringUtil.getFromUnicode( test_data ) );
     }
 
     /**
      * test simple form of getFromUnicode with symbols with code below and more 127
      */
-
     public void testGetFromUnicodeSymbolsWithCodesMoreThan127()
     {
-        byte[] test_data = new byte[] {   0x04, 0x22,
-                                          0x04, 0x35,
-                                          0x04, 0x41,
-                                          0x04, 0x42,
-                                          0x00, 0x20,
-                                          0x00, 0x74,
-                                          0x00, 0x65,
-                                          0x00, 0x73,
-                                          0x00, 0x74,
-                                          };
+        byte[] test_data = new byte[]{0x04, 0x22,
+                                      0x04, 0x35,
+                                      0x04, 0x41,
+                                      0x04, 0x42,
+                                      0x00, 0x20,
+                                      0x00, 0x74,
+                                      0x00, 0x65,
+                                      0x00, 0x73,
+                                      0x00, 0x74,
+        };
 
-        assertEquals("\u0422\u0435\u0441\u0442 test",
-                     StringUtil.getFromUnicode(test_data));
+        assertEquals( "\u0422\u0435\u0441\u0442 test",
+                StringUtil.getFromUnicode( test_data ) );
     }
 
     /**
      * test getFromUnicodeHigh for symbols with code below and more 127
      */
-
     public void testGetFromUnicodeHighSymbolsWithCodesMoreThan127()
     {
-        byte[] test_data = new byte[] {   0x22, 0x04,
-                                          0x35, 0x04,
-                                          0x41, 0x04,
-                                          0x42, 0x04,
-                                          0x20, 0x00,
-                                          0x74, 0x00,
-                                          0x65, 0x00,
-                                          0x73, 0x00,
-                                          0x74, 0x00,
-                                          };
+        byte[] test_data = new byte[]{0x22, 0x04,
+                                      0x35, 0x04,
+                                      0x41, 0x04,
+                                      0x42, 0x04,
+                                      0x20, 0x00,
+                                      0x74, 0x00,
+                                      0x65, 0x00,
+                                      0x73, 0x00,
+                                      0x74, 0x00,
+        };
 
-        assertEquals("\u0422\u0435\u0441\u0442 test",
-                     StringUtil.getFromUnicodeHigh( test_data ) );
+
+        assertEquals( "\u0422\u0435\u0441\u0442 test",
+                StringUtil.getFromUnicodeHigh( test_data ) );
     }
 
     /**
      * Test more complex form of getFromUnicode
      */
-
     public void testComplexGetFromUnicode()
     {
-        byte[] test_data = new byte[ 32 ];
-        int    index     = 0;
-
-        for (int k = 0; k < 16; k++)
+        byte[] test_data = new byte[32];
+        int index = 0;
+        for ( int k = 0; k < 16; k++ )
         {
-            test_data[ index++ ] = ( byte ) 0;
-            test_data[ index++ ] = ( byte ) ('a' + k);
+            test_data[index++] = (byte) 0;
+            test_data[index++] = (byte) ( 'a' + k );
         }
-        assertEquals("abcdefghijklmno",
-                     StringUtil.getFromUnicode(test_data, 0, 15));
-        assertEquals("bcdefghijklmnop",
-                     StringUtil.getFromUnicode(test_data, 2, 15));
+        assertEquals( "abcdefghijklmno",
+                StringUtil.getFromUnicode( test_data, 0, 15 ) );
+        assertEquals( "bcdefghijklmnop",
+                StringUtil.getFromUnicode( test_data, 2, 15 ) );
         try
         {
-            StringUtil.getFromUnicode(test_data, -1, 16);
-            fail("Should have caught ArrayIndexOutOfBoundsException");
+            StringUtil.getFromUnicode( test_data, -1, 16 );
+            fail( "Should have caught ArrayIndexOutOfBoundsException" );
         }
-        catch (ArrayIndexOutOfBoundsException ignored)
+        catch ( ArrayIndexOutOfBoundsException ignored )
         {
-
             // as expected
         }
+
         try
         {
-            StringUtil.getFromUnicode(test_data, 32, 16);
-            fail("Should have caught ArrayIndexOutOfBoundsException");
+            StringUtil.getFromUnicode( test_data, 32, 16 );
+            fail( "Should have caught ArrayIndexOutOfBoundsException" );
         }
-        catch (ArrayIndexOutOfBoundsException ignored)
+        catch ( ArrayIndexOutOfBoundsException ignored )
         {
-
             // as expected
         }
+
         try
         {
-            StringUtil.getFromUnicode(test_data, 1, 16);
-            fail("Should have caught IllegalArgumentException");
+            StringUtil.getFromUnicode( test_data, 1, 16 );
+            fail( "Should have caught IllegalArgumentException" );
         }
-        catch (IllegalArgumentException ignored)
+        catch ( IllegalArgumentException ignored )
         {
-
             // as expected
         }
+
         try
         {
-            StringUtil.getFromUnicode(test_data, 1, -1);
-            fail("Should have caught IllegalArgumentException");
+            StringUtil.getFromUnicode( test_data, 1, -1 );
+            fail( "Should have caught IllegalArgumentException" );
         }
-        catch (IllegalArgumentException ignored)
+        catch ( IllegalArgumentException ignored )
         {
-
             // as expected
         }
     }
@@ -205,40 +196,38 @@ public class TestStringUtil
     /**
      * Test putCompressedUnicode
      */
-
     public void testPutCompressedUnicode() throws Exception
     {
-        byte[] output          = new byte[ 100 ];
+        byte[] output = new byte[100];
         byte[] expected_output =
-        {
-            ( byte ) 'H', ( byte ) 'e', ( byte ) 'l', ( byte ) 'l',
-            ( byte ) 'o', ( byte ) ' ', ( byte ) 'W', ( byte ) 'o',
-            ( byte ) 'r', ( byte ) 'l', ( byte ) 'd', ( byte ) 0xAE
-        };
-        String input           = new String(expected_output,StringUtil.getPreferredEncoding());
+                {
+                    (byte) 'H', (byte) 'e', (byte) 'l', (byte) 'l',
+                    (byte) 'o', (byte) ' ', (byte) 'W', (byte) 'o',
+                    (byte) 'r', (byte) 'l', (byte) 'd', (byte) 0xAE
+                };
+        String input = new String( expected_output, StringUtil.getPreferredEncoding() );
 
-        StringUtil.putCompressedUnicode(input, output, 0);
-        for (int j = 0; j < expected_output.length; j++)
+        StringUtil.putCompressedUnicode( input, output, 0 );
+        for ( int j = 0; j < expected_output.length; j++ )
         {
-            assertEquals("testing offset " + j, expected_output[ j ],
-                         output[ j ]);
+            assertEquals( "testing offset " + j, expected_output[j],
+                    output[j] );
         }
-        StringUtil.putCompressedUnicode(input, output,
-                                        100 - expected_output.length);
-        for (int j = 0; j < expected_output.length; j++)
+        StringUtil.putCompressedUnicode( input, output,
+                100 - expected_output.length );
+        for ( int j = 0; j < expected_output.length; j++ )
         {
-            assertEquals("testing offset " + j, expected_output[ j ],
-                         output[ 100 + j - expected_output.length ]);
+            assertEquals( "testing offset " + j, expected_output[j],
+                    output[100 + j - expected_output.length] );
         }
         try
         {
-            StringUtil.putCompressedUnicode(input, output,
-                                            101 - expected_output.length);
-            fail("Should have caught ArrayIndexOutOfBoundsException");
+            StringUtil.putCompressedUnicode( input, output,
+                    101 - expected_output.length );
+            fail( "Should have caught ArrayIndexOutOfBoundsException" );
         }
-        catch (ArrayIndexOutOfBoundsException ignored)
+        catch ( ArrayIndexOutOfBoundsException ignored )
         {
-
             // as expected
         }
     }
@@ -246,121 +235,126 @@ public class TestStringUtil
     /**
      * Test putUncompressedUnicode
      */
-
     public void testPutUncompressedUnicode()
     {
-        byte[] output          = new byte[ 100 ];
-        String input           = "Hello World";
+        byte[] output = new byte[100];
+        String input = "Hello World";
         byte[] expected_output =
-        {
-            ( byte ) 'H', ( byte ) 0, ( byte ) 'e', ( byte ) 0, ( byte ) 'l',
-            ( byte ) 0, ( byte ) 'l', ( byte ) 0, ( byte ) 'o', ( byte ) 0,
-            ( byte ) ' ', ( byte ) 0, ( byte ) 'W', ( byte ) 0, ( byte ) 'o',
-            ( byte ) 0, ( byte ) 'r', ( byte ) 0, ( byte ) 'l', ( byte ) 0,
-            ( byte ) 'd', ( byte ) 0
-        };
+                {
+                    (byte) 'H', (byte) 0, (byte) 'e', (byte) 0, (byte) 'l',
+                    (byte) 0, (byte) 'l', (byte) 0, (byte) 'o', (byte) 0,
+                    (byte) ' ', (byte) 0, (byte) 'W', (byte) 0, (byte) 'o',
+                    (byte) 0, (byte) 'r', (byte) 0, (byte) 'l', (byte) 0,
+                    (byte) 'd', (byte) 0
+                };
 
-        StringUtil.putUncompressedUnicode(input, output, 0);
-        for (int j = 0; j < expected_output.length; j++)
+        StringUtil.putUncompressedUnicode( input, output, 0 );
+        for ( int j = 0; j < expected_output.length; j++ )
         {
-            assertEquals("testing offset " + j, expected_output[ j ],
-                         output[ j ]);
+            assertEquals( "testing offset " + j, expected_output[j],
+                    output[j] );
         }
-        StringUtil.putUncompressedUnicode(input, output,
-                                          100 - expected_output.length);
-        for (int j = 0; j < expected_output.length; j++)
+        StringUtil.putUncompressedUnicode( input, output,
+                100 - expected_output.length );
+        for ( int j = 0; j < expected_output.length; j++ )
         {
-            assertEquals("testing offset " + j, expected_output[ j ],
-                         output[ 100 + j - expected_output.length ]);
+            assertEquals( "testing offset " + j, expected_output[j],
+                    output[100 + j - expected_output.length] );
         }
         try
         {
-            StringUtil.putUncompressedUnicode(input, output,
-                                              101 - expected_output.length);
-            fail("Should have caught ArrayIndexOutOfBoundsException");
+            StringUtil.putUncompressedUnicode( input, output,
+                    101 - expected_output.length );
+            fail( "Should have caught ArrayIndexOutOfBoundsException" );
         }
-        catch (ArrayIndexOutOfBoundsException ignored)
+        catch ( ArrayIndexOutOfBoundsException ignored )
         {
-
             // as expected
         }
     }
 
+
     public void testFormat()
-        throws Exception
+            throws Exception
     {
-        assertEquals("This is a test " + fmt(1.2345, 2, 2),
-                     StringUtil.format("This is a test %2.2", new Object[]
-        {
-            new Double(1.2345)
-        }));
-        assertEquals("This is a test " + fmt(1.2345, -1, 3),
-                     StringUtil.format("This is a test %.3", new Object[]
-        {
-            new Double(1.2345)
-        }));
-        assertEquals("This is a great test " + fmt(1.2345, -1, 3),
-                     StringUtil.format("This is a % test %.3", new Object[]
-        {
-            "great", new Double(1.2345)
-        }));
-        assertEquals("This is a test 1",
-                     StringUtil.format("This is a test %", new Object[]
-        {
-            new Integer(1)
-        }));
-        assertEquals("This is a test 1",
-                     StringUtil.format("This is a test %", new Object[]
-        {
-            new Integer(1), new Integer(1)
-        }));
-        assertEquals("This is a test 1.x",
-                     StringUtil.format("This is a test %1.x", new Object[]
-        {
-            new Integer(1)
-        }));
-        assertEquals("This is a test ?missing data?1.x",
-                     StringUtil.format("This is a test %1.x", new Object[]
-        {
-        }));
-        assertEquals("This is a test %1.x",
-                     StringUtil.format("This is a test \\%1.x", new Object[]
-        {
-        }));
+        assertEquals( "This is a test " + fmt( 1.2345, 2, 2 ),
+                StringUtil.format( "This is a test %2.2", new Object[]
+                {
+                    new Double( 1.2345 )
+                } ) );
+        assertEquals( "This is a test " + fmt( 1.2345, -1, 3 ),
+                StringUtil.format( "This is a test %.3", new Object[]
+                {
+                    new Double( 1.2345 )
+                } ) );
+        assertEquals( "This is a great test " + fmt( 1.2345, -1, 3 ),
+                StringUtil.format( "This is a % test %.3", new Object[]
+                {
+                    "great", new Double( 1.2345 )
+                } ) );
+        assertEquals( "This is a test 1",
+                StringUtil.format( "This is a test %", new Object[]
+                {
+                    new Integer( 1 )
+                } ) );
+        assertEquals( "This is a test 1",
+                StringUtil.format( "This is a test %", new Object[]
+                {
+                    new Integer( 1 ), new Integer( 1 )
+                } ) );
+        assertEquals( "This is a test 1.x",
+                StringUtil.format( "This is a test %1.x", new Object[]
+                {
+                    new Integer( 1 )
+                } ) );
+        assertEquals( "This is a test ?missing data?1.x",
+                StringUtil.format( "This is a test %1.x", new Object[]
+                {
+                } ) );
+        assertEquals( "This is a test %1.x",
+                StringUtil.format( "This is a test \\%1.x", new Object[]
+                {
+                } ) );
     }
 
-    private String fmt(double num, int minIntDigits, int maxFracDigitis)
+
+    private String fmt( double num, int minIntDigits, int maxFracDigitis )
     {
         NumberFormat nf = NumberFormat.getInstance();
 
-        if (minIntDigits != -1)
+        if ( minIntDigits != -1 )
         {
-            nf.setMinimumIntegerDigits(minIntDigits);
+            nf.setMinimumIntegerDigits( minIntDigits );
         }
-        if (maxFracDigitis != -1)
+        if ( maxFracDigitis != -1 )
         {
-            nf.setMaximumFractionDigits(maxFracDigitis);
+            nf.setMaximumFractionDigits( maxFracDigitis );
         }
-        return nf.format(num);
+
+        return nf.format( num );
     }
+
 
     /**
      * main
      *
      * @param ignored_args
      */
-
-    public static void main(String [] ignored_args)
+    public static void main( String[] ignored_args )
     {
-        System.out.println("Testing util.StringUtil functionality");
-        junit.textui.TestRunner.run(TestStringUtil.class);
+        System.out.println( "Testing util.StringUtil functionality" );
+        junit.textui.TestRunner.run( TestStringUtil.class );
     }
+
     /**
      * @see junit.framework.TestCase#setUp()
      */
-    protected void setUp() throws Exception {
+    protected void setUp() throws Exception
+    {
         super.setUp();
-       // System.setProperty()
+
+        // System.setProperty()
     }
 
 }
+
