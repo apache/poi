@@ -10,87 +10,89 @@
   </header>
   
   <body>
-    <section title="POI in the news">
+    <section title="POI en los medios de comunicación">
         <p>
-                These are articles/etc. posted about POI around the web.  If you
-                see POI in the news or mentioned at least somewhat prominently
-                on a site (not your homepage that you put the work POI on in
-                order to get us to link you and by the why here is a picture of
-                your wife in kids) then send a patch to the list.  In general
-                equal time will be given so please feel free to send inflamatory
-                defamation as well as favorable, technical and factual.  Really
-                stupid things won't be mentioned (sorry).
+                Estos son artículos/etc. sobre POI publicados en la red. Si ves
+		alguna noticia sobre POI o algún sitio en el que se le menciona
+		de manera notable (no en tu propia página en la que pones la palabra
+		POI para que enlacemos contigo y en la que casualmente hay una foto
+		de tu mujer e hijos) entonces envía un parche a la lista. En general
+		dedicaremos el mismo tiempo así que no tengáis reparos en enviar
+		difamaciones coléricas así como comentarios favorables, técnicos y
+		objetivos. No mencionaremos mensajes realmente estúpidos (lo sentimos).
         </p>                        
     </section>
-    <section title="English">
+    <section title="Inglés">
         <ul>
                 <li>   
+                       <link href="http://www.rollerweblogger.org/page/roller/20020715">Poor Obfuscation Implementation (Implementación Pobre de Ofuscación).</link> - Blog de David M. Johnson
+                </li>
+		<li>   
                        <link href="http://www.jsurfer.org/article.php?sid=322">
-                        POI 1.5-dev-rc2 released </link> - JSurfer
+                        Descarga POI 1.5-dev-rc2 </link> - JSurfer
                 </li>
 
                 <li>
-                       <link href="http://directory.google.com/Top/Computers/Programming/Languages/Java/Class_Libraries/Data_Formats/Microsoft_Formats/"> Google says we're the most important in our category </link>
+                       <link href="http://directory.google.com/Top/Computers/Programming/Languages/Java/Class_Libraries/Data_Formats/Microsoft_Formats/"> Google dice que somos los más importantes en nuestra categoría </link>
                 </li>
                 <li>
                        <link href="http://www.javaworld.com/javaworld/javaqa/2002-05/01-qa-0503-excel3.html">It's POI-fect</link> - Tony Sintes, Javaworld
                 </li>
                 <li>
                        <link href="http://www.need-a-cake.com/categories/cocoonWeblog/2002/03/07.html">
-			Nicola announces POI serialization code
+			Nicola anuncia código de serialización POI
                        </link> - Matthew Langham's Radio Weblog
                 </li>
                 <li>
                         <link href="http://javalobby.org/discussionContext/showThreaded/frm/javalobby?folderId=20&amp;discussionContextId=11523">
-                        Jakarta POI 1.4583 Released</link> - JavaLobby
+                        Descarga Jakarta POI 1.4583</link> - JavaLobby
                 </li>        
                 <li>
                         <link href="http://javalobby.org/discussionContext/showThreaded/frm/javalobby?discussionContextId=11442&amp;folderId=20">
-                        POI project moves to Jakarta (OLE 2 CDF/Excel/Word in 
-                        pure java)</link> - JavaLobby
+                        El proyecto POI se mueve a Jakarta (OLE 2 CDF/Excel/Word en 
+                        java puro)</link> - JavaLobby
                 </li>
                 <li>
                         <link
                         href="http://www.geocities.com/marcoschmidt.geo/java-image-coding.html">
-                        List of Java libraries to read and write image and document files
-                        </link> Marco Schmidt's homepage (normally we wouldn't
-                        feature someone's homepage but its an extensive list of
-                        information including "alternatives to POI" (for those
-                        of you who are very wealthy).  But heck I think I'll
-                        bookmark his page for myself since he's like got every
-                        piece of info known to man linked or featured on it!
+                        Listado de bibliotecas Java para leer y escribir ficheros de imágenes y documentos
+                        </link> - Página de Marco Schmidt (normalmente no anunciaríamos
+			la página personal de nadie, pero es un listado extensivo de información
+			que incluye "alternativas a POI" (para aquellos que son muy ricos). ¡Pero, qué
+			l3ch3s, creo que voy a marcar esta página para mí puesto que tiene enlaces a
+			direcciones que en conjunto contienen o enlazan con todo el conocimiento de la humanidad!)
                 </li>
                 <li>
                         <link href="http://radio.weblogs.com/0101350/">
-                        The Experiences of an Operator (Måns af Klercker)
+			Experiencias de un Operador (Måns af Klercker)
                         </link> - radio.weblogs.com
                 </li>
                 <li>
                         <link href="http://dataconv.org/apps_office.html">
-                        DATACONV - Data Conversion Tools: Office
+                        DATACONV - Herramientas de Conversión de Datos: Office
                         </link> DATACONV
                 </li>
                 <li>
                         <link href="http://chicago.sourceforge.net/devel/">
-                        Chicago Developer Page
+                        Página del Desarrollador de Chicago
                         </link>                        
                 </li>
                 <li>
                         <link href="http://www.onjava.com/pub/d/1157">
-                        POI/POI Serialization Project
-                        </link> - Man you know you've hit the bigtime when
-                        O'Reilly Likes you..  ;-)
+                        POI/Proyecto de Serialización de POI
+                        </link> - Tío, sabes que estás en lo alto cuando le gustas a
+                        O'Reilly.  ;-)
                 </li>
                 <li>
                         <link
                         href="http://www.javaworld.com/netnews/index.shtml">
-                        News Around the Net
+                        Noticias en la Red
                         </link> - Java World
                 </li>
                 
         </ul>
     </section>
-    <section title="Nederlandstalige (Dutch)">
+    <section title="Nederlandstalige (Holandés)">
         <ul>
                 <li>
                         <link 
@@ -100,7 +102,7 @@
                 </li>
         </ul>
     </section>
-    <section title="Deutsch (German)">
+    <section title="Deutsch (Alemán)">
         <ul>
                 <li> <link 
                       href="http://www.entwickler.com/itr/news/show.php3?id=6132&amp;nodeid=82 ">Apache POI verffentlicht</link> - entwicker.com 
@@ -128,7 +130,7 @@
                 
         </ul>
     </section>
-    <section title="Francais (French)">
+    <section title="Francais (Francés)">
         <ul>
 		<li>
 			<link href="http://linuxfr.org/section/D%E9veloppeur,0,1,8,0.html">
@@ -137,7 +139,7 @@
                 </li>
         </ul>
     </section>
-    <section title="Nihongo (Japanese)">
+    <section title="Nihongo (Japonés)">
         <ul>
                 <li>
                         <link href="http://drpanda.freezope.org/Memo/docs/jakarta/poi/poi_sample">100% PureJava...</link> - Dr. Panda Portal
@@ -151,11 +153,19 @@
         </ul>
         
     </section>
-    <section title="No freaking idea">
+    <section title="Ni idea">
         <p>
-                If you can read one of these languages, send mail to the list
-                telling us what language it is and we'll categorize it!
+                ¡Si entiendes alguno de estos idiomas, envía un correo a la lista
+		diciéndonos en qué idioma está escrito y lo pondremos donde corresponda!
         </p>
+	<ul>
+                <li> 
+                       <link 
+                       href="http://www.javacentrix.com/index.htm">
+                       Si tuviera que adivinar, diría que es Tailandés, pero a lo mejor
+		       alguno de vosotros lo sabe con seguridad.</link> - javacentrix.com
+                </li>
+        </ul>
     </section>
   </body>
   <footer>
