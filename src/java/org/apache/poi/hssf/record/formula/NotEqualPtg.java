@@ -69,7 +69,7 @@ public class NotEqualPtg
 	 public final static int  SIZE = 1;
 	 public final static byte sid  = 0x0e;
 
-	 /** Creates new AddPtg */
+	 /** Creates new NotEqualPtg */
 
 	public NotEqualPtg()
 	 {

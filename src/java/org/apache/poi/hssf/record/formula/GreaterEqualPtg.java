@@ -66,7 +66,7 @@ public class GreaterEqualPtg
     public final static int  SIZE = 1;
     public final static byte sid  = 0x0c;
 
-    /** Creates new AddPtg */
+    /** Creates new GreaterEqualPtg */
 
    public GreaterEqualPtg()
     {
