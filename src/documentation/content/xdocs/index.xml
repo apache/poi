@@ -9,6 +9,7 @@
       <person id="AO" name="Andrew C. Oliver" email="acoliver@apache.org"/>
       <person id="GJS" name="Glen Stampoultzis" email="poi-user@jakarta.apache.org"/>
       <person id="AS" name="Avik Sengupta" email="poi-user@jakarta.apache.org"/>
+      <person id="RK" name="Rainer Klute" email="klute@apache.org"/>
     </authors>
   </header>
 
@@ -61,32 +62,41 @@
 
     <section><title>Components To Date</title>
         <section><title>Overview</title>
-	     <p>A common misconception is that POI writes Excel files.  POI is the name of the project.  POI contains several
-             components, one of which, HSSF, writes Excel files.  The following are components of the entire POI project
-             and a brief summary of their purpose.</p>
+	<p>The following are components of the entire POI project and a brief
+	  summary of their purpose.</p>
         </section>
-        <section><title>POIFS</title>
+        <section><title>POIFS for OLE 2 Documents</title>
              <p>POIFS is the oldest and most stable part of the project.  It is our port of the OLE 2 Compound Document Format to
              pure Java.  It supports both read and write functionality.  All of our components ultimately rely on it by
              definition.  Please see <link href="./poifs/index.html">the POIFS project page</link> for more information.</p>
         </section>
-        <section><title>HSSF</title>
+        <section><title>HSSF for Excel Documents</title>
              <p>HSSF is our port of the Microsoft Excel 97(-2002) file format (BIFF8) to pure Java.  It supports read and write
              capability.  Please see <link href="./hssf/index.html">the HSSF project page</link> for more information.</p>
         </section>
-        <section><title>HWPF</title>
-             <p>HWPF is our port of the Microsoft Word 97 file format to pure Java.  It supports read and write capability.
-             Please see <link href="./hwpf/index.html">the HWPF project page for more information</link>.  This component is
-             in the early stages of development.It can already read and write simple files.  Jump in!</p>
+        <section><title>HWPF for Word Documents</title>
+	<p>HWPF is our port of the Microsoft Word 97 file format to pure
+	  Java.  It supports read and write capability. Please see <link
+	    href="./hwpf/index.html">the HWPF project page for more
+	    information</link>.  This component is in the early stages of
+	  development. It can already read and write simple files.</p>
+	<p>Presently we are looking for a contributor to foster the HWPF
+	  development. Jump in!</p>
         </section>
-        <section><title>HPSF</title>
+        <section><title>HPSF for Document Properties</title>
 	<p>HPSF is our port of the OLE 2 property set format to pure
 	  Java. Property sets are mostly use to store a document's properties
 	  (title, author, date of last modification etc.), but they can be used
-	  for application-specific purposes as well. Currently HPSF supports
-	  read functionality only. Please see <link
-	    href="./hpsf/index.html">the HPSF project page</link> for more
-	  information.</p>
+	  for application-specific purposes as well.</p>
+
+	<p>HPSF supports reading and writing of properties. However, with the
+	  current POI release only reading is possible. In order to write
+	  properties, you'll have to fetch the latest POI version <link
+	    href="http://jakarta.apache.org/site/cvsindex.html">from the CVS
+	    repository</link>.</p>
+
+	<p>Please see <link href="./hpsf/index.html">the HPSF project
+	    page</link> for more information.</p>
         </section>
 
      </section>
@@ -109,7 +119,7 @@
   </body>
   <footer>
     <legal>
-      Copyright (c) @year@ The Apache Software Foundation All rights reserved.
+      Copyright (c) @year@ The Apache Software Foundation. All rights reserved.
       $Revision$ $Date$
     </legal>
   </footer>
