@@ -553,8 +553,8 @@ public class MutableSection extends Section
 
     /**
      * <p>Sets the section's dictionary. All keys in the dictionary must be
-     * {@see java.lang.Long} instances, all values must be
-     * {@see java.lang.String}s. This method overwrites the properties with IDs
+     * {@link java.lang.Long} instances, all values must be
+     * {@link java.lang.String}s. This method overwrites the properties with IDs
      * 0 and 1 since they are reserved for the dictionary and the dictionary's
      * codepage. Setting these properties explicitly might have surprising
      * effects. An application should never do this but always use this

@@ -515,9 +515,7 @@ public class Section
         /* Extract properties 0 and 1 and remove them from the copy of the
          * arrays. */
         Property p10 = null;
-        Property p11;
         Property p20 = null;
-        Property p21;
         for (int i = 0; i < pa1.length; i++)
         {
             final long id = pa1[i].getID();
@@ -529,7 +527,7 @@ public class Section
             }
             if (id == 1)
             {
-                p11 = pa1[i];
+                // p11 = pa1[i];
                 pa1 = remove(pa1, i);
                 i--;
             }
@@ -545,7 +543,7 @@ public class Section
             }
             if (id == 1)
             {
-                p21 = pa2[i];
+                // p21 = pa2[i];
                 pa2 = remove(pa2, i);
                 i--;
             }

@@ -208,15 +208,6 @@ public class PropertySet
 
 
     /**
-     * <p>The number of sections in this {@link PropertySet}.</p>
-     * 
-     * <p>FIXME (2): Get rid of this! The number of sections is implicitly
-     * available.</p>
-     */
-    protected int sectionCount;
-
-
-    /**
      * <p>Returns the number of {@link Section}s in the property
      * set.</p>
      *
@@ -224,7 +215,7 @@ public class PropertySet
      */
     public int getSectionCount()
     {
-        return sectionCount;
+        return sections.size();
     }
 
 
@@ -459,7 +450,7 @@ public class PropertySet
         o += LittleEndian.INT_SIZE;
         classID = new ClassID(src, o);
         o += ClassID.LENGTH;
-        sectionCount = LittleEndian.getInt(src, o);
+        final int sectionCount = LittleEndian.getInt(src, o);
         o += LittleEndian.INT_SIZE;
         if (sectionCount <= 0)
             throw new HPSFRuntimeException("Section count " + sectionCount +
@@ -635,6 +626,7 @@ public class PropertySet
      */
     public Section getSingleSection()
     {
+        final int sectionCount = getSectionCount();
         if (sectionCount != 1)
             throw new NoSingleSectionException
                 ("Property set contains " + sectionCount + " sections.");

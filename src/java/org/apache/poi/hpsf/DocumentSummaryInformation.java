@@ -54,6 +54,10 @@
  */
 package org.apache.poi.hpsf;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 import org.apache.poi.hpsf.wellknown.PropertyIDMap;
 
 /**
@@ -63,6 +67,7 @@ import org.apache.poi.hpsf.wellknown.PropertyIDMap;
  * @author Rainer Klute <a
  * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
  * @author Drew Varner (Drew.Varner closeTo sc.edu)
+ * @author robert_flaherty@hyperion.com
  * @see SummaryInformation
  * @version $Id$
  * @since 2002-02-09
@@ -298,6 +303,37 @@ public class DocumentSummaryInformation extends SpecialPropertySet
     public boolean getLinksDirty()
     {
         return getPropertyBooleanValue(PropertyIDMap.PID_LINKSDIRTY);
+    }
+
+
+
+    /**
+     * <p>Gets the custom properties as a map from the property name to
+     * value.</p>
+     * 
+     * @return The custom properties if any exist, <code>null</code> otherwise.
+     * @since 2003-10-22
+     */
+    public Map getCustomProperties()
+    {
+        Map nameToValue = null;
+        if (getSectionCount() >= 2)
+        {
+            final Section section = (Section) getSections().get(1);
+            final Map pidToName = 
+                      (Map) section.getProperty(PropertyIDMap.PID_DICTIONARY);
+            if (pidToName != null)
+            {
+                nameToValue = new HashMap(pidToName.size());
+                for (Iterator i = pidToName.entrySet().iterator(); i.hasNext();)
+                {
+                    final Map.Entry e = (Map.Entry) i.next();
+                    final long pid = ((Number) e.getKey()).longValue();
+                    nameToValue.put(e.getValue(), section.getProperty(pid));
+                }
+            }
+        }
+        return nameToValue;
     }
 
 }
