@@ -55,6 +55,8 @@ public class HWPFDocFixture
         (DocumentEntry) filesystem.getRoot().getEntry(name);
       _tableStream = new byte[tableProps.getSize()];
       filesystem.createDocumentInputStream(name).read(_tableStream);
+
+      _fib.fillVariableFields(_mainStream, _tableStream);
     }
     catch (Throwable t)
     {
