@@ -112,7 +112,6 @@ public class Sheet implements Model
     protected MergeCellsRecord          merged           = null;
     protected Margin                    margins[]        = null;
     protected ArrayList                 mergedRecords    = new ArrayList();
-    protected ArrayList                 mergedLocs       = new ArrayList();
     protected int                       numMergedRegions = 0;
     protected SelectionRecord           selection        = null;
     private static POILogger            log              = POILogFactory.getLogger(Sheet.class);
@@ -198,7 +197,6 @@ public class Sheet implements Model
             {
                 retval.mergedRecords.add(rec);
                 retval.merged = ( MergeCellsRecord ) rec;
-                retval.mergedLocs.add(new Integer(k - offset));
                 retval.numMergedRegions += retval.merged.getNumAreas();
             }
             else if (rec.getSid() == ColumnInfoRecord.sid)
@@ -455,68 +453,60 @@ public class Sheet implements Model
         {
             merged = ( MergeCellsRecord ) createMergedCells();
             mergedRecords.add(merged);
-            mergedLocs.add(new Integer(records.size() - 1));
             records.add(records.size() - 1, merged);
         }
         merged.addArea(rowFrom, colFrom, rowTo, colTo);
         return numMergedRegions++; 
     }
 
-    public void removeMergedRegion(int index)
-    {
-        //safety checks
-        if (index >= numMergedRegions || mergedRecords.size() == 0)
-           return;
+	public void removeMergedRegion(int index)
+	{
+		//safety checks
+		if (index >= numMergedRegions || mergedRecords.size() == 0)
+		   return;
             
-        int pos = 0;
-        int startNumRegions = 0;
+		int pos = 0;
+		int startNumRegions = 0;
         
-        //optimisation for current record
-        if (numMergedRegions - index < merged.getNumAreas())
-        {
-            pos = mergedRecords.size() - 1;
-            startNumRegions = numMergedRegions - merged.getNumAreas(); 
-        }
-        else
-        {
-            for (int n = 0; n < mergedRecords.size(); n++)
-            {
-                MergeCellsRecord record = (MergeCellsRecord) mergedRecords.get(n);
-                if (startNumRegions + record.getNumAreas() > index)
-                {
-                    pos = n;
-                    break;
-                }
-                startNumRegions += record.getNumAreas(); 
-            }
-        }
+		//optimisation for current record
+		if (numMergedRegions - index < merged.getNumAreas())
+		{
+			pos = mergedRecords.size() - 1;
+			startNumRegions = numMergedRegions - merged.getNumAreas(); 
+		}
+		else
+		{
+			for (int n = 0; n < mergedRecords.size(); n++)
+			{
+				MergeCellsRecord record = (MergeCellsRecord) mergedRecords.get(n);
+				if (startNumRegions + record.getNumAreas() > index)
+				{
+					pos = n;
+					break;
+				}
+				startNumRegions += record.getNumAreas(); 
+			}
+		}
 
-        MergeCellsRecord rec = (MergeCellsRecord) mergedRecords.get(pos);
-        rec.removeAreaAt(index - startNumRegions);
-        numMergedRegions--;
-        if (rec.getNumAreas() == 0)
-        {
-				mergedRecords.remove(pos);            
-            if (merged == rec) {
-            	//pull up the LAST record for operations when we finally
-            	//support continue records for mergedRegions
-            	if (mergedRecords.size() > 0) {
-            		merged = (MergeCellsRecord) mergedRecords.get(mergedRecords.size() - 1);
-            	} else {
-            		merged = null;
-            	}
-            }
-            
-            int removePos = ((Integer) mergedLocs.get(pos)).intValue();
-            records.remove(removePos);
-
-            mergedLocs.remove(pos);
-            
-            //if we're not tracking merged records, kill the pointer to reset the state
-            if (mergedRecords.size() == 0) merged = null;
-            
-        }
-    }
+		MergeCellsRecord rec = (MergeCellsRecord) mergedRecords.get(pos);
+		rec.removeAreaAt(index - startNumRegions);
+		numMergedRegions--;
+		if (rec.getNumAreas() == 0)
+		{
+			mergedRecords.remove(pos);
+			//get rid of the record from the sheet
+			records.remove(merged);            
+			if (merged == rec) {
+				//pull up the LAST record for operations when we finally
+				//support continue records for mergedRegions
+				if (mergedRecords.size() > 0) {
+					merged = (MergeCellsRecord) mergedRecords.get(mergedRecords.size() - 1);
+				} else {
+					merged = null;
+				}
+			}
+		}
+	}
 
     public MergeCellsRecord.MergedRegion getMergedRegionAt(int index)
     {
