@@ -291,6 +291,8 @@ extends TestCase {
         areaFunctionTest("AVERAGE");
     }
     
+    
+    
     private void operationRefTest(String operator) 
     throws Exception {
         File file = File.createTempFile("testFormula",".xls");
