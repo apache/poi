@@ -65,6 +65,7 @@ import java.util.GregorianCalendar;
  *
  *
  * @author
+ * @author  Dan Sherman (dsherman at isisph.com)
  * @version %I%, %G%
  */
 
@@ -95,5 +96,23 @@ public class TestHSSFDateUtil
             assertEquals("Checking hour = " + hour, date.getTime().getTime(),
                          HSSFDateUtil.getJavaDate(excelDate).getTime());
         }
+        
+        // check 1900 and 1904 date windowing conversions
+        double excelDate = 36526.0;
+                 // with 1900 windowing, excelDate is Jan. 1, 2000
+                 // with 1904 windowing, excelDate is Jan. 2, 2004
+        GregorianCalendar cal = new GregorianCalendar(2000,0,1); // Jan. 1, 2000
+        Date dateIf1900 = cal.getTime();
+        cal.add(GregorianCalendar.YEAR,4); // now Jan. 1, 2004
+        cal.add(GregorianCalendar.DATE,1); // now Jan. 2, 2004
+        Date dateIf1904 = cal.getTime();
+        // 1900 windowing
+        assertEquals("Checking 1900 Date Windowing",
+                        dateIf1900.getTime(),
+                           HSSFDateUtil.getJavaDate(excelDate,false).getTime());
+        // 1904 windowing
+        assertEquals("Checking 1904 Date Windowing",
+                        dateIf1904.getTime(),
+                           HSSFDateUtil.getJavaDate(excelDate,true).getTime());
     }
 }

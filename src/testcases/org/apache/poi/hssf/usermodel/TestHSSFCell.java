@@ -77,6 +77,7 @@ import java.util.GregorianCalendar;
  * Tests various functionity having to do with HSSFCell.  For instance support for
  * paticular datatypes, etc.
  * @author Andrew C. Oliver (andy at superlinksoftware dot com)
+ * @author  Dan Sherman (dsherman at isisph.com)
  */
 
 public class TestHSSFCell
@@ -137,6 +138,43 @@ extends TestCase {
             assertTrue("boolean value 0,2 = 1",c.getErrorCellValue() == 1);
 
             in.close();
+    }
+
+    /**
+    * Checks that the recognition of files using 1904 date windowing
+    *  is working properly. Conversion of the date is also an issue,
+    *  but there's a separate unit test for that.
+    */
+    public void testDateWindowing() throws Exception {
+        GregorianCalendar cal = new GregorianCalendar(2000,0,1); // Jan. 1, 2000
+        Date date = cal.getTime();
+        String path = System.getProperty("HSSF.testdata.path");
+
+        // first check a file with 1900 Date Windowing
+        String filename = path + "/1900DateWindowing.xls";
+        FileInputStream stream   = new FileInputStream(filename);
+        POIFSFileSystem fs       = new POIFSFileSystem(stream);
+        HSSFWorkbook    workbook = new HSSFWorkbook(fs);
+        HSSFSheet       sheet    = workbook.getSheetAt(0);
+
+        assertEquals("Date from file using 1900 Date Windowing",
+                        date.getTime(),
+                           sheet.getRow(0).getCell((short)0)
+                              .getDateCellValue().getTime());
+        stream.close();
+        
+        // now check a file with 1904 Date Windowing
+        filename = path + "/1904DateWindowing.xls";
+        stream   = new FileInputStream(filename);
+        fs       = new POIFSFileSystem(stream);
+        workbook = new HSSFWorkbook(fs);
+        sheet    = workbook.getSheetAt(0);
+
+        assertEquals("Date from file using 1904 Date Windowing",
+                        date.getTime(),
+                           sheet.getRow(0).getCell((short)0)
+                              .getDateCellValue().getTime());
+        stream.close();
     }
 
     public static void main(String [] args) {
