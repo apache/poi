@@ -76,7 +76,7 @@ public class Test<xsl:value-of select="@name"/>Record
         extends TestCase
 {
     byte[] data = new byte[] {
-        // PASTE DATA HERE
+	<xsl:value-of select="recutil:getByteArrayString(testdata)"/>
     };
 
     public Test<xsl:value-of select="@name"/>Record(String name)
@@ -87,25 +87,46 @@ public class Test<xsl:value-of select="@name"/>Record
     public void testLoad()
             throws Exception
     {
-        fail("Not implemented");
-        /*
         <xsl:value-of select="@name"/>Record record = new <xsl:value-of select="@name"/>Record((short)<xsl:value-of select="@id"/>, (short)data.length, data);
-<xsl:for-each select="//fields/field">        assertEquals( XXX, record.get<xsl:value-of select="recutil:getFieldName1stCap(@name,0)"/>());
+        
+<xsl:for-each select="//fields/field">
+            <xsl:choose><xsl:when test="@type='string'">
+        assertEquals( "<xsl:value-of select="./testresult/@value"/>", record.get<xsl:value-of select="recutil:getFieldName1stCap(@name,0)"/>());
+</xsl:when><xsl:when test="@size='1'">
+        assertEquals( (byte)<xsl:value-of select="./testresult/@value"/>, record.get<xsl:value-of select="recutil:getFieldName1stCap(@name,0)"/>());
+</xsl:when><xsl:when test="@size='2'">
+        assertEquals( (short)<xsl:value-of select="./testresult/@value"/>, record.get<xsl:value-of select="recutil:getFieldName1stCap(@name,0)"/>());
+</xsl:when><xsl:when test="@size='4'">
+        assertEquals( (int)<xsl:value-of select="./testresult/@value"/>, record.get<xsl:value-of select="recutil:getFieldName1stCap(@name,0)"/>());
+</xsl:when><xsl:otherwise>
+       assertEquals( (double)<xsl:value-of select="./testresult/@value"/>, record.get<xsl:value-of select="recutil:getFieldName1stCap(@name,0)"/>());
+</xsl:otherwise></xsl:choose>
 <xsl:apply-templates select="./bit" mode="get"/>
 </xsl:for-each>
 
-        assertEquals( XXX, record.getRecordSize() );
+        assertEquals( <xsl:value-of select="./testsize"/>, record.getRecordSize() );
 
         record.validateSid((short)<xsl:value-of select="@id"/>);
-        */
     }
 
     public void testStore()
     {
-        fail("Not implemented");
-        /*
         <xsl:value-of select="@name"/>Record record = new <xsl:value-of select="@name"/>Record();
-<xsl:for-each select="//fields/field">        record.set<xsl:value-of select="recutil:getFieldName1stCap(@name,0)"/>( XXXX );
+
+
+<xsl:for-each select="//fields/field">
+            <xsl:choose><xsl:when test="@type='string'">
+        record.set<xsl:value-of select="recutil:getFieldName1stCap(@name,0)"/>( "<xsl:value-of select="./testresult/@value"/>" );
+</xsl:when><xsl:when test="@size='1'">
+        record.set<xsl:value-of select="recutil:getFieldName1stCap(@name,0)"/>( (byte)<xsl:value-of select="./testresult/@value"/> );
+</xsl:when><xsl:when test="@size='2'">
+        record.set<xsl:value-of select="recutil:getFieldName1stCap(@name,0)"/>( (short)<xsl:value-of select="./testresult/@value"/> );
+</xsl:when><xsl:when test="@size='4'">
+        record.set<xsl:value-of select="recutil:getFieldName1stCap(@name,0)"/>( (int)<xsl:value-of select="./testresult/@value"/> );
+</xsl:when><xsl:otherwise>
+        record.set<xsl:value-of select="recutil:getFieldName1stCap(@name,0)"/>( (double)<xsl:value-of select="./testresult/@value"/> );
+</xsl:otherwise></xsl:choose>
+
 <xsl:apply-templates select="./bit" mode="set"/>
 </xsl:for-each>
 
@@ -113,7 +134,6 @@ public class Test<xsl:value-of select="@name"/>Record
         assertEquals(recordBytes.length - 4, data.length);
         for (int i = 0; i &lt; data.length; i++)
             assertEquals("At offset " + i, data[i], recordBytes[i+4]);
-        */
     }
 }
 </xsl:template>
