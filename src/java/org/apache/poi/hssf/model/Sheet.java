@@ -1105,7 +1105,7 @@ public class Sheet implements Model
             log.log(POILogger.DEBUG, "addRow ");
         DimensionsRecord d = ( DimensionsRecord ) records.get(getDimsLoc());
 
-        if (row.getRowNumber() > d.getLastRow())
+        if (row.getRowNumber() >= d.getLastRow())
         {
             d.setLastRow(row.getRowNumber() + 1);
         }
