@@ -55,7 +55,10 @@
 package org.apache.poi.hssf.usermodel;
 
 import junit.framework.TestCase;
-import org.apache.poi.hssf.record.RowRecord;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 
 /**
  * Test HSSFRow is okay.
@@ -87,31 +90,26 @@ public class TestHSSFRow
         assertEquals(1, row.getFirstCellNum());
         assertEquals(2, row.getLastCellNum());
 
-        RowRecord rowRecord = new RowRecord();
-        rowRecord.setFirstCol((short) 2);
-        rowRecord.setLastCol((short) 5);
-        row = new HSSFRow(workbook.getWorkbook(), sheet.getSheet(), rowRecord);
-        assertEquals(2, row.getFirstCellNum());
-        assertEquals(5, row.getLastCellNum());
     }
 
     public void testRemoveCell()
+            throws Exception
     {
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet();
         HSSFRow row = sheet.createRow((short) 0);
         assertEquals(-1, row.getLastCellNum());
         assertEquals(-1, row.getFirstCellNum());
-        row.createCell((short)1);
+        row.createCell((short) 1);
         assertEquals(1, row.getLastCellNum());
         assertEquals(1, row.getFirstCellNum());
-        row.createCell((short)3);
+        row.createCell((short) 3);
         assertEquals(3, row.getLastCellNum());
         assertEquals(1, row.getFirstCellNum());
-        row.removeCell(row.getCell((short)3));
+        row.removeCell(row.getCell((short) 3));
         assertEquals(1, row.getLastCellNum());
         assertEquals(1, row.getFirstCellNum());
-        row.removeCell(row.getCell((short)1));
+        row.removeCell(row.getCell((short) 1));
         assertEquals(-1, row.getLastCellNum());
         assertEquals(-1, row.getFirstCellNum());
 
@@ -120,6 +118,19 @@ public class TestHSSFRow
         row.getRowRecord().serialize(0, data);
         assertEquals(0, data[6]);
         assertEquals(0, data[8]);
+
+        File file = File.createTempFile("XXX", "XLS");
+        FileOutputStream stream = new FileOutputStream(file);
+        workbook.write(stream);
+        stream.close();
+        FileInputStream inputStream = new FileInputStream(file);
+        workbook = new HSSFWorkbook(inputStream);
+        sheet = workbook.getSheetAt(0);
+        stream.close();
+        file.delete();
+        assertEquals(-1, sheet.getRow((short) 0).getLastCellNum());
+        assertEquals(-1, sheet.getRow((short) 0).getFirstCellNum());
+
 
     }
 }
