@@ -506,7 +506,7 @@ public class MutableSection extends Section
 
 
     /**
-     * <p>Returns this section's properties.</p>
+     * <p>Gets this section's properties.</p>
      * 
      * @return this section's properties.
      */
@@ -521,14 +521,13 @@ public class MutableSection extends Section
     /**
      * <p>Gets a property.</p>
      * 
-     * <p><strong>FIXME (2):</strong> This method ensures that properties and
-     * preprops are in sync. Cleanup this awful stuff!</p>
-     * 
      * @param id The ID of the property to get
      * @return The property or <code>null</code> if there is no such property
      */
     public Object getProperty(final long id)
     {
+        /* Calling getProperties() ensures that properties and preprops are in
+         * sync.</p> */
         getProperties();
         return super.getProperty(id);
     }

@@ -255,11 +255,7 @@ public class DocumentSummaryInformation extends SpecialPropertySet
 
 
     /**
-     * <p>Returns <code>true</code> if the custom links are hampered
-     * by excessive noise, for all applications.</p> <p>
-     *
-     * <strong>FIXME (3):</strong> Explain this some more! I (Rainer)
-     * don't understand it.</p>
+     * <p>Returns <code>true</code> if the custom links are dirty.</p> <p>
      *
      * @return The linksDirty value
      */
