@@ -405,12 +405,12 @@ COPYRIGHT:
         <!ATTLIST tr %common.att;>
 
             <!-- The table row header element -->
-            <!ELEMENT th (%content.mix;)*>
+            <!ELEMENT th (%blocks;|%content.mix;)*>
             <!ATTLIST th %common.att;
                          %cell.span;>
 
             <!-- The table row description element -->
-            <!ELEMENT td (%content.mix;)*>
+            <!ELEMENT td (%blocks;|%content.mix;)*>
             <!ATTLIST td %common.att;
                          %cell.span;>
 
@@ -443,7 +443,7 @@ COPYRIGHT:
     <!ATTLIST sl %common.att;>
 
         <!-- List item -->
-        <!ELEMENT li (%content.mix;|%lists;)*>
+        <!ELEMENT li (%blocks;|%content.mix;)*>
         <!ATTLIST li %common.att;>
 
     <!-- Definition list (typically two-column) -->
@@ -455,7 +455,7 @@ COPYRIGHT:
         <!ATTLIST dt %common.att;>
 
         <!-- Definition description -->
-        <!ELEMENT dd (%content.mix;)*>
+        <!ELEMENT dd (%blocks;|%content.mix;)*>
         <!ATTLIST dd %common.att;>
 
     <!-- ==================================================== -->
