@@ -13,86 +13,17 @@
 <project default="interactive" basedir="." name="project build file">
 
 <description>
-
                    * ===================================== *
                    |   Krysalis Centipede Build System     |
-                   * ===================================== *      
+                   * ===================================== *
                                      by               
                                              
                    Nicola Ken Barozzi (nicolaken@apache.org)
                    Marc Johnson (mjohnson@apache.org)       
-                     
-                     started as an extension of the
-                     the Apache Cocoon Build System 
-                     (http://xml.apache.org/cocoon/)
-                                     by
-                   Stefano Mazzocchi (stefano@apache.org)
-                   Carsten Ziegeler (cziegeler@apache.org)
                    
-
-Installing the build tools
-==========================
-
-The Krysalis Centipede build system is based on Apache Ant, 
-which is a Java building tool originally developed for the Tomcat 
-project but now used in many other Apache projects and extended 
-by many developers.
-
-Ant is a little but very handy tool that uses a build file written in XML
-(this file) as building instructions. For more information refer to
-"http://jakarta.apache.org/ant/".
-
-To make things easier for you, this distribution contains a precompiled
-version of Ant and the build scripts take care of running it.
-
-The only thing that you have to make sure, is the "JAVA_HOME" environment
-property should be set to match the JVM you want to use.
-
-That's all you have to do to be ready to go.
-
-
-Building instructions
-=====================
-
-First, make sure your current working directory is where this very file 
-is located. Then type
-
-  ./build.sh (unix)
-  .\build.bat (win32)
-
-if everything is right and all the required packages are visible, this action
-will start the build and prompt you with options.
-Note, that if you do further development, compilation time is reduced since
-Ant is able of detecting which files have changed and to recompile them at need.
-
-Also, you'll note that reusing a single JVM instance for each task, increases
-tremendously the performance of the whole build system, compared to other
-tools (i.e. make or shell scripts) where a new JVM is started for each task.
-
-Build targets
-=============
-
-The build system is not only responsible of compiling the project into a jar 
-file, but is also responsible for creating the HTML documentation, javadocs,
-distributions and web site. In fact, the file you have here is _exactly_ what
-is used by project maintainers to take care of everything in the project,
-no less and no more.
-
-To know more about the available targets take a look at this file, which is
-pretty self-explanatory, or run the build with "-projecthelp".
-
-Build Dependencies
-==================
-Some components are optional and require special jar files to be compiled
-and added to the application. Some of these jars are already included
-in the distribution while others not.
-For each optional package which is not available, a warning can be
-printed.
-
-
-                                            Happy hacking  :)
-
-============================================================================
+                   
+                   For a simple interactive build, simply 
+                   run the build script (build.bar or build.sh)
 </description>
  
   <!-- =================================================================== -->
@@ -103,42 +34,21 @@ printed.
   <!-- Interactive build                                                   -->
   <!-- =================================================================== -->
   <target name="interactive" description="Interactive Build" depends="-init">          
-    <echo> 
-    --------------------------------------------------------------
 
-          ${xgump.module.project.name} ${xgump.module.project.version.major}.${xgump.module.project.version.minor}   [${YEAR}]
-    
-    --------------------------------------------------------------
-     Using ${ant.version}
-     Build file ${ant.file}
-    --------------------------------------------------------------   
-     These are the most common build targets.   
-     You can also invoke them directly; see build.xml for more info. 
-     Builds will be in /build directory, distributions in /dist.        
-        
-     all -------------- creates the jars and the site      
-     compile ---------- compiles the source code      
-     test ------------- performs the jUnit tests       
-     jar -------------- create the jar files
-     docs ------------- generates the html docs - clean not needed        
-     javadocs --------- generates the API documentation   
-     site ------------- generates the html site (docs+reports)    
-     clean ------------ cleans the build directory    
-     dist ------------- creates src and bin distributions    
-     scratchpad ------- build-run scratchpad code       
-     contrib ---------- build-run contributed code    
-     generate-records - generate excel records    
-     generate-types --- generate word types    
-    
-    </echo>
-    <property name="input.selection" value="all"/>        
-    <centipede-user-input name="input.selection">Please select a target </centipede-user-input>   
 
+    <antcall target="call-cent">
+      <param name="cent-name"   value="centipede"/> 
+      <param name="cent-target" value="menu"/> 
+      <param name="definition"  value="targets/"/> 
+    </antcall>
+    
     <antcall target="call-cent">
       <param name="cent-name"   value="centipede"/> 
       <param name="cent-target" value="splash"/> 
     </antcall>
  
+     <echo message="IS::::::::${input.selection}::::"/> 
+     
     <antcall target="${input.selection}"/>
     
   </target>
@@ -225,19 +135,6 @@ printed.
     
   </target>               
 
-  <!-- ================================== -->
-  <!--           Run build gui            -->
-  <!-- ================================== -->
-
-  <target  name="gui"   depends="-init"
-           description="Run build gui">
-           
-    <antcall target="call-cent">
-      <param name="cent-name"   value="antidote"/> 
-      <param name="cent-target" value="run"/> 
-    </antcall>
-    
-  </target>     
   
   <!-- ================================== -->
   <!--             Build jars             -->
@@ -259,21 +156,6 @@ printed.
 
   <target  name="dist"   depends="-init, clean, test, jar, site"
            description="Build distribution packages wo single build checks">
-
-    <echo>**********************************************</echo>
-    <echo>*</echo>
-    <echo>*  Build all distributions:</echo> 
-    <echo>*  - source distribution for windows/unix.</echo>
-    <echo>*  - binary distribution for windows/unix.</echo>
-    <echo>*</echo>        
-    <echo>*  Since *all* main targets are tested, </echo>
-    <echo>*  first indipendently and then together to </echo>
-    <echo>*  check that everything is ok,</echo>
-    <echo>*  this may take a while...</echo>        
-    <echo>*</echo>        
-    <echo>***********************************************</echo>
-    <echo/>
-    
 
     <antcall target="call-cent">
       <param name="cent-name"   value="centipede"/> 
@@ -378,20 +260,6 @@ printed.
   </target>     
 
   <!-- ================================== -->
-  <!--       Generates the XML javadocs   -->
-  <!-- ================================== -->
-  
-  <target  name="xjavadocs"   depends="-init"
-           description="Compile java source code">
-
-    <antcall target="call-cent">
-      <param name="cent-name"   value="centipede"/> 
-      <param name="cent-target" value="xjavadocs"/> 
-    </antcall>
-    
-  </target>     
-
-  <!-- ================================== -->
   <!--       Check style                  -->
   <!-- ================================== -->
   
@@ -404,7 +272,20 @@ printed.
     </antcall>
 
   </target> 
+
+  <!-- ================================== -->
+  <!--       Generate records                -->
+  <!-- ================================== -->
   
+  <target  name="try"   depends="-init">
+
+    <antcall target="call-cent">
+      <param name="cent-name"   value="javasrc"/> 
+      <param name="cent-target" value="javasrc"/> 
+    </antcall>
+    
+  </target>     
+    
   <!-- ================================== -->
   <!--       Generate records                -->
   <!-- ================================== -->
