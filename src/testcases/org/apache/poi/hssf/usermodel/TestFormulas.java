@@ -652,7 +652,7 @@ extends TestCase {
             c = r.getCell((short)0);
             
             assertTrue("function ="+function+"(A2,A3)",
-                        ( (function+"(A2,A3)").equals((function+"(A2,A3)")) )
+                        ( (function+"(A2,A3)").equals(c.getCellFormula()) )
                       );
             in.close();
     }
@@ -691,7 +691,7 @@ extends TestCase {
             c = r.getCell((short)0);
             
             assertTrue("function ="+function+"(A2:A4,B2:B4)",
-                        ( (function+"(A2:A4,B2:B4)").equals((function+"(A2:A4,B2:B4)")) )
+                        ( (function+"(A2:A4,B2:B4)").equals(c.getCellFormula()) )
                       );
             in.close();
     }
