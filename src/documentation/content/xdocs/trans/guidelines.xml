@@ -31,9 +31,9 @@
        execute them.  
      </p>
      <p>
-       To generate all of teh documentation such as it would appear on the 
-       <link href="http://jakarta.apache.org/poi/">POI Website</link> you can execute the "site" target (optionally
-       preceeded by the "clean" target.
+       To generate all of the documentation such as it would appear on the 
+       <link href="http://jakarta.apache.org/poi/">Poi Website</link> you can execute the "site" target (optionally
+       preceeded by the "clean" target. See "<link href="../howtobuild.html">How to Build</link>" page for more detail (Now, Poi build uses <link href="http://xml.apache.org/forrest/">Forrest</link>).
      </p>
      <p> 
        The source for POI's XML documentation is in src/documentation/content/xdocs.  To edit one of these files you can use
@@ -89,7 +89,7 @@
         link in index.html that references ./poifs/index.html, you'd change that to ../../poifs/index.html (up 2 directories from trans/xx).
         Create a link from the book.xml file in the src/documentation/content/trans directory (this is necessary or the build will ignore your 
         documentation) similar to the other languages.
-        Run the clean target followed by the docs target.  If the build is successful, congradulations!  If it fails, you probably got one of
+        Run the clean target followed by the docs target.  If the build is successful, congratulations!  If it fails, you probably got one of
         the relative paths incorrect!  Go fix it (the first error message generally contains the most useful information).  If you need help
         post to the poi-dev list and ask for it (send the output from the build).
       </p>
