@@ -82,6 +82,12 @@ public abstract class FormattedDiskPage
     protected int _crun;
     protected int _offset;
 
+
+    public FormattedDiskPage()
+    {
+
+    }
+
     /**
      * Uses a 512-byte array to create a FKP
      */
@@ -89,6 +95,7 @@ public abstract class FormattedDiskPage
     {
         _crun = LittleEndian.getUnsignedByte(documentStream, offset + 511);
         _fkp = documentStream;
+        _offset = offset;
     }
     /**
      * Used to get a text offset corresponding to a grpprl in this fkp.

@@ -58,35 +58,20 @@
 package org.apache.poi.hwpf.model.hdftypes;
 
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.hwpf.model.hdftypes.definitions.DOPAbstractType;
+
 /**
  * Comment me
  *
  * @author Ryan Ackley
  */
 
-public class DocumentProperties implements HDFType
+public class DocumentProperties extends DOPAbstractType
 {
 
-  public boolean _fFacingPages;
-  public int _fpc;
-  public int _epc;
-  public int _rncFtn;
-  public int _nFtn;
-  public int _rncEdn;
-  public int _nEdn;
 
-  public DocumentProperties(byte[] dopArray)
+  public DocumentProperties(byte[] tableStream, int offset)
   {
-        _fFacingPages = (dopArray[0] & 0x1) > 0;
-        _fpc = (dopArray[0] & 0x60) >> 5;
-
-        short num = LittleEndian.getShort(dopArray, 2);
-        _rncFtn = (num & 0x3);
-        _nFtn = (short)(num & 0xfffc) >> 2;
-        num = LittleEndian.getShort(dopArray, 52);
-        _rncEdn = num & 0x3;
-        _nEdn = (short)(num & 0xfffc) >> 2;
-        num = LittleEndian.getShort(dopArray, 54);
-        _epc = num & 0x3;
+    super.fillFields(tableStream, (short)0, offset);
   }
 }
