@@ -32,6 +32,7 @@ import java.util.List;
  * must be subclassed for maximum benefit.
  *
  * @author Glen Stampoultzis (glens at apache.org)
+ * @author Michael Zalewski (zalewski at optonline.net)
  */
 public abstract class AbstractEscherHolderRecord
     extends Record
@@ -118,13 +119,13 @@ public abstract class AbstractEscherHolderRecord
         StringBuffer buffer = new StringBuffer();
 
         final String nl = System.getProperty("line.separator");
-        buffer.append("[" + getRecordName() + "]" + nl);
+        buffer.append('[' + getRecordName() + ']' + nl);
         for ( Iterator iterator = escherRecords.iterator(); iterator.hasNext(); )
         {
             EscherRecord r = (EscherRecord) iterator.next();
             buffer.append(r.toString());
         }
-        buffer.append("[/" + getRecordName() + "]" + nl);
+        buffer.append("[/" + getRecordName() + ']' + nl);
 
         return buffer.toString();
     }
@@ -133,28 +134,48 @@ public abstract class AbstractEscherHolderRecord
 
     public int serialize(int offset, byte[] data)
     {
-        if (escherRecords.size() == 0 && rawData != null)
+        LittleEndian.putShort( data, 0 + offset, getSid() );
+        LittleEndian.putShort( data, 2 + offset, (short) ( getRecordSize() - 4 ) );
+        if ( escherRecords.size() == 0 && rawData != null )
         {
-            System.arraycopy( rawData, 0, data, offset, rawData.length);
-            return rawData.length;
+            System.arraycopy( rawData, 0, data, offset + 4, rawData.length );
         }
         else
         {
-            collapseShapeInformation();
-
-            LittleEndian.putShort(data, 0 + offset, getSid());
-            LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
-
             int pos = offset + 4;
             for ( Iterator iterator = escherRecords.iterator(); iterator.hasNext(); )
             {
                 EscherRecord r = (EscherRecord) iterator.next();
-                pos += r.serialize(pos, data, new NullEscherSerializationListener() );
+                pos += r.serialize( pos, data, new NullEscherSerializationListener() );
             }
-
-            return getRecordSize();
         }
+        return getRecordSize();
     }
+
+//    public int serialize(int offset, byte[] data)
+//    {
+//        if (escherRecords.size() == 0 && rawData != null)
+//        {
+//            System.arraycopy( rawData, 0, data, offset, rawData.length);
+//            return rawData.length;
+//        }
+//        else
+//        {
+//            collapseShapeInformation();
+//
+//            LittleEndian.putShort(data, 0 + offset, getSid());
+//            LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
+//
+//            int pos = offset + 4;
+//            for ( Iterator iterator = escherRecords.iterator(); iterator.hasNext(); )
+//            {
+//                EscherRecord r = (EscherRecord) iterator.next();
+//                pos += r.serialize(pos, data, new NullEscherSerializationListener() );
+//            }
+//
+//            return getRecordSize();
+//        }
+//    }
 
     /**
      * Size of record (including 4 byte header)
@@ -163,12 +184,10 @@ public abstract class AbstractEscherHolderRecord
     {
         if (escherRecords.size() == 0 && rawData != null)
         {
-            return rawData.length;
+            return rawData.length + 4;
         }
         else
         {
-            collapseShapeInformation();
-
             int size = 4;
             for ( Iterator iterator = escherRecords.iterator(); iterator.hasNext(); )
             {
@@ -179,10 +198,29 @@ public abstract class AbstractEscherHolderRecord
         }
     }
 
-    private void collapseShapeInformation()
-    {
-
-    }
+//
+//    /**
+//     * Size of record (including 4 byte header)
+//     */
+//    public int getRecordSize()
+//    {
+//        if (escherRecords.size() == 0 && rawData != null)
+//        {
+//            return rawData.length;
+//        }
+//        else
+//        {
+//            collapseShapeInformation();
+//
+//            int size = 4;
+//            for ( Iterator iterator = escherRecords.iterator(); iterator.hasNext(); )
+//            {
+//                EscherRecord r = (EscherRecord) iterator.next();
+//                size += r.getRecordSize();
+//            }
+//            return size;
+//        }
+//    }
 
     public abstract short getSid();
 
