@@ -91,23 +91,19 @@ public class TypeReader
      *
      * @see Variant
      */
-    public static Object read(final byte[] src, int offset, int length,
-                              final int type)
+    public static Object read(final byte[] src, final int offset,
+                              final int length, final int type)
     {
         /*
          * FIXME: Support reading more types and clean up this code!
          */
         Object value;
-        length = length - LittleEndian.INT_SIZE;
+        int o1 = offset;
+        int l1 = length - LittleEndian.INT_SIZE;
         switch (type)
         {
             case Variant.VT_EMPTY:
             {
-                /*
-                 * FIXME: The value returned by this case relies on the
-                 * assumption that the value VT_EMPTY denotes consists of zero 
-                 * bytes. I'd be glad if some could confirm or correct this. 
-                 */
                 value = null;
                 break;
             }
@@ -117,7 +113,7 @@ public class TypeReader
                  * Read a short. In Java it is represented as an
                  * Integer object.
                  */
-                value = new Integer(LittleEndian.getUShort(src, offset));
+                value = new Integer(LittleEndian.getUShort(src, o1));
                 break;
             }
             case Variant.VT_I4:
@@ -126,7 +122,7 @@ public class TypeReader
                  * Read a word. In Java it is represented as a
                  * Long object.
                  */
-                value = new Long(LittleEndian.getUInt(src, offset));
+                value = new Long(LittleEndian.getUInt(src, o1));
                 break;
             }
             case Variant.VT_FILETIME:
@@ -135,9 +131,9 @@ public class TypeReader
                  * Read a FILETIME object. In Java it is represented
                  * as a Date object.
                  */
-                final long low = LittleEndian.getUInt(src, offset);
-                offset += LittleEndian.INT_SIZE;
-                final long high = LittleEndian.getUInt(src, offset);
+                final long low = LittleEndian.getUInt(src, o1);
+                o1 += LittleEndian.INT_SIZE;
+                final long high = LittleEndian.getUInt(src, o1);
                 value = Util.filetimeToDate((int) high, (int) low);
                 break;
             }
@@ -153,9 +149,9 @@ public class TypeReader
                  * property's value are interpreted according to the
                  * platform's default character set.
                  */
-                final int first = offset + LittleEndian.INT_SIZE;
-                long last = first + LittleEndian.getUInt(src, offset) - 1;
-                offset += LittleEndian.INT_SIZE;
+                final int first = o1 + LittleEndian.INT_SIZE;
+                long last = first + LittleEndian.getUInt(src, o1) - 1;
+                o1 += LittleEndian.INT_SIZE;
                 while (src[(int) last] == 0 && first <= last)
                     last--;
                 value = new String(src, (int) first, (int) (last - first + 1));
@@ -168,14 +164,14 @@ public class TypeReader
                  * a String object. The 0x00 bytes at the end must be
                  * stripped.
                  */
-                final int first = offset + LittleEndian.INT_SIZE;
-                long last = first + LittleEndian.getUInt(src, offset) - 1;
+                final int first = o1 + LittleEndian.INT_SIZE;
+                long last = first + LittleEndian.getUInt(src, o1) - 1;
                 long l = last - first;
-                offset += LittleEndian.INT_SIZE;
+                o1 += LittleEndian.INT_SIZE;
                 StringBuffer b = new StringBuffer((int) (last - first));
                 for (int i = 0; i <= l; i++)
                 {
-                    final int i1 = offset + (i * 2);
+                    final int i1 = o1 + (i * 2);
                     final int i2 = i1 + 1;
                     b.append((char) ((src[i2] << 8) + src[i1]));
                 }
@@ -187,9 +183,9 @@ public class TypeReader
             }
             case Variant.VT_CF:
             {
-                final byte[] v = new byte[length];
-                for (int i = 0; i < length; i++)
-                    v[i] = src[(int) (offset + i)];
+                final byte[] v = new byte[l1];
+                for (int i = 0; i < l1; i++)
+                    v[i] = src[(int) (o1 + i)];
                 value = v;
                 break;
             }
@@ -201,7 +197,7 @@ public class TypeReader
                  * skip it, we don't need it.
                  */
                 // final int first = offset + LittleEndian.INT_SIZE;
-                long bool = LittleEndian.getUInt(src, offset);
+                long bool = LittleEndian.getUInt(src, o1);
                 if (bool != 0)
                     value = new Boolean(true);
                 else
@@ -210,9 +206,9 @@ public class TypeReader
             }
             default:
             {
-                final byte[] v = new byte[length];
-                for (int i = 0; i < length; i++)
-                    v[i] = src[(int) (offset + i)];
+                final byte[] v = new byte[l1];
+                for (int i = 0; i < l1; i++)
+                    v[i] = src[(int) (o1 + i)];
                 value = v;
                 break;
             }
