@@ -51,11 +51,14 @@
     </antipede-foreach>
 
     <delete dir="${cents.dir}/META-INF"/>
-     
+
     <mkdir dir="${temp.dir}"/>
     <delete file="${temp.dir}/${task.properties.name}"/>
-              
+
+                        
     <!-- put all ant task definitions in cents in a single file -->
+    <antipede-trycatch><try>
+    
     <concat destfile="${temp.dir}/${task.properties.name}" append="no">
       <fileset dir=".">
        <patternset>
@@ -63,7 +66,7 @@
        </patternset>
      </fileset>          
     </concat>
-    
+
     <!-- define the tasks found in cents -->
     <taskdef file="${temp.dir}/${task.properties.name}">
      <classpath>      
@@ -73,6 +76,10 @@
      </classpath>
     </taskdef>
     
+    </try>
+    <catch><echo message="Unable to load tasks... could be already loaded." /></catch>
+    </antipede-trycatch>
+
    <!--
     Load project information
     -->
@@ -80,40 +87,51 @@
     <centipede-xml-property file="status.xml"     prefix="xstatus"  keeproot="false"  />   
     <centipede-xml-property file="layout.xml"     prefix="xlayout"  keeproot="false"  />
     <centipede-xml-property file="properties.xml"                   keeproot="false"  /> 
-    
+
   </target>
 
   <!-- ================================ -->
   <!--  Used only by the -init target   -->
   <!-- =================================--> 
-  <target  name="-cent-unjar">
+  <target  name="-cent-unjar" depends="-cent-unjar-expand,-cent-unjar-keep"/>      
+  
+  <!-- ================================ -->
+  <!--  Used only by the -init target   -->
+  <!-- =================================--> 
+  <target  name="-cent-unjar-check">
       
     <basename property="current.cent.jar.name" file="${current.cent.jar}" suffix=".jar"/>
     
     <condition property="cent-unjar.not.required">
       <and>
         <uptodate targetfile="${current.cent.jar}">
-          <srcfiles dir= "." includes="${cents.dir}/*.${cent.dir.suffix}/${task.properties.name}"/>      
+          <srcfiles dir= "." includes="${cents.dir}/${current.cent.jar.name}.${cent.dir.suffix}/${task.properties.name}"/>      
         </uptodate>
-        <available type="dir" file="${cents.dir}/${current.cent.jar.name}"/>
+       <available type="dir" file="${cents.dir}/${current.cent.jar.name}.${cent.dir.suffix}"/>
       </and>
     </condition>
  
-   <antipede-if>
-     <equals arg1="cent-unjar.not.required" arg2="true" />
-     <then>
-      <echo message="${current.cent.jar} is uptodate with respect to ${current.cent.jar.name}." />
-      <echo message="No need to expand it." />
-     </then>
-    <else>
+  </target>       
+
+  <!-- ====================================== -->
+  <!--  Used only by the -cent-unjar target   -->
+  <!-- ====================================== --> 
+  <target  name="-cent-unjar-expand" unless="cent-unjar.not.required" 
+           depends="-cent-unjar-check">
       <echo message="Expanding ${current.cent.jar}..." />
       <unjar src="${current.cent.jar}" dest="${cents.dir}"/> 
       <echo message="... ${current.cent.jar} expanded in ${current.cent.jar.name}." />    
-    </else>     
-   </antipede-if>    
+  </target> 
 
-  </target>       
-        
+  <!-- ====================================== -->
+  <!--  Used only by the -cent-unjar target   -->
+  <!-- =======================================--> 
+  <target  name="-cent-unjar-keep" if="cent-unjar.not.required"
+           depends="-cent-unjar-check">
+      <echo message="${current.cent.jar} is uptodate with respect to ${current.cent.jar.name}." />
+      <echo message="No need to expand it." />
+  </target> 
+            
   <!-- ============================================= -->
   <!-- Simple utility target to call a cent target   -->
   <!-- ==============================================-->

@@ -145,7 +145,7 @@ printed.
   <!-- =================================================================== -->
   <!-- Interactive scratchpad builds                                       -->
   <!-- =================================================================== -->
-  <target name="scratchpad" depends="-init" description="Interactive Scratchpad Build">
+  <target name="scratchpad" depends="compile" description="Interactive Scratchpad Build">
     <echo message="--------------------------------------------------------------"/>
     <echo message=" "/>    
     <echo message="          ${xgump.module.project.name} ${xgump.module.project.version.major}.${xgump.module.project.version.minor} SCRATCHPAD "/>
@@ -176,7 +176,7 @@ printed.
   <!-- =================================================================== -->
   <!-- Interactive contrib builds                                       -->
   <!-- =================================================================== -->
-  <target name="contrib" depends="-init" description="Interactive Contributors' Build">
+  <target name="contrib" depends="compile" description="Interactive Contributors' Build">
     <echo message="--------------------------------------------------------------"/>
     <echo message=" "/>    
     <echo message="          ${xgump.module.project.name} ${xgump.module.project.version.major}.${xgump.module.project.version.minor}  CONTRIB"/>
@@ -250,9 +250,25 @@ printed.
   <!--         Build distributions        -->
   <!-- ================================== -->
 
-  <target  name="dist"   depends="-init"
-           description="Compile java source code">
+  <target  name="dist"
+           description="Make distributions">
+           
+    <echo>**********************************************</echo>
+    <echo>*</echo>
+    <echo>*  Build all distributions:</echo> 
+    <echo>*  - source distribution for windows/unix.</echo>
+    <echo>*  - binary distribution for windows/unix.</echo>
+    <echo>*</echo>        
+    <echo>*  Since *all* main targets are tested, </echo>
+    <echo>*  first indipendently and then together to </echo>
+    <echo>*  check that everything is ok,</echo>
+    <echo>*  this may take a while...</echo>        
+    <echo>*</echo>        
+    <echo>***********************************************</echo>
+    <echo/>
 
+    <antcall target="gump"/>
+    
     <antcall target="call-cent">
       <param name="cent-name"   value="centipede"/> 
       <param name="cent-target" value="dist"/> 
@@ -260,6 +276,20 @@ printed.
     
   </target>     
 
+  <!-- ====================================== -->
+  <!--  dist target wo single build checks    -->
+  <!-- ====================================== -->
+
+  <target  name="quickdist"   depends="testmodule"
+           description="Build distribution packages wo single build checks">
+
+    <antcall target="call-cent">
+      <param name="cent-name"   value="centipede"/> 
+      <param name="cent-target" value="dist"/> 
+    </antcall>
+    
+  </target>    
+  
   <!-- ================================== -->
   <!--         Clean build dir            -->
   <!-- ================================== -->
