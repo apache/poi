@@ -2,7 +2,7 @@
 /* ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 2003 The Apache Software Foundation.  All rights
+ * Copyright (c) 2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -53,94 +53,47 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.poi.poifs.storage;
+package org.apache.poi.util;
 
-import org.apache.poi.poifs.common.POIFSConstants;
-import org.apache.poi.util.IOUtils;
+import java.io.IOException;
+import java.io.InputStream;
 
-import java.io.*;
-
-/**
- * A big block created from an InputStream, holding the raw data
- *
- * @author Marc Johnson (mjohnson at apache dot org
- */
-
-public class RawDataBlock
-    implements ListManagedBlock
+public class IOUtils
 {
-    private byte[]  _data;
-    private boolean _eof;
-
-    /**
-     * Constructor RawDataBlock
-     *
-     * @param stream the InputStream from which the data will be read
-     *
-     * @exception IOException on I/O errors, and if an insufficient
-     *            amount of data is read
-     */
-
-    public RawDataBlock(final InputStream stream)
-        throws IOException
+    private IOUtils()
     {
-        _data = new byte[ POIFSConstants.BIG_BLOCK_SIZE ];
-        int count = IOUtils.readFully(stream, _data);
-
-        if (count == -1)
-        {
-            _eof = true;
-        }
-        else if (count != POIFSConstants.BIG_BLOCK_SIZE)
-        {
-            String type = " byte" + ((count == 1) ? ("")
-                                                  : ("s"));
-
-            throw new IOException("Unable to read entire block; " + count
-                                  + type + " read; expected "
-                                  + POIFSConstants.BIG_BLOCK_SIZE + " bytes");
-        }
-        else
-        {
-            _eof = false;
-        }
     }
 
     /**
-     * When we read the data, did we hit end of file?
-     *
-     * @return true if no data was read because we were at the end of
-     *         the file, else false
-     *
-     * @exception IOException
+     * Helper method, just calls <tt>readFully(in, b, 0, b.length)</tt>
      */
-
-    public boolean eof()
-        throws IOException
+    public static int readFully(InputStream in, byte[] b)
+    throws IOException
     {
-        return _eof;
+        return readFully(in, b, 0, b.length);
     }
-
-    /* ********** START implementation of ListManagedBlock ********** */
 
     /**
-     * Get the data from the block
-     *
-     * @return the block's data as a byte array
-     *
-     * @exception IOException if there is no data
+     * Same as the normal <tt>in.read(b, off, len)</tt>, but tries to ensure that
+     * the entire len number of bytes is read.
+     * <p>
+     * If the end of file is reached before any bytes are read, returns -1.
+     * Otherwise, returns the number of bytes read.
      */
-
-    public byte [] getData()
-        throws IOException
+    public static int readFully(InputStream in, byte[] b, int off, int len)
+    throws IOException
     {
-        if (eof())
-        {
-            throw new IOException("Cannot return empty data");
+        int total = 0;
+        for (;;) {
+            int got = in.read(b, off + total, len - total);
+            if (got < 0) {
+                return (total == 0) ? -1 : total;
+            } else {
+                total += got;
+                if (total == len)
+                    return total;
+            }
         }
-        return _data;
     }
-
-    /* **********  END  implementation of ListManagedBlock ********** */
-}   // end public class RawDataBlock
+}
 
