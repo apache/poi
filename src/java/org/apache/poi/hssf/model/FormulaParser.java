@@ -2,7 +2,7 @@
 /* ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 2002 The Apache Software Foundation.  All rights
+ * Copyright (c) 2002, 2003 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -56,11 +56,33 @@
 
 package org.apache.poi.hssf.model;
 
-import org.apache.poi.hssf.record.formula.*;
-import org.apache.poi.hssf.util.SheetReferences;
-
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
+
+import org.apache.poi.hssf.record.formula.AbstractFunctionPtg;
+import org.apache.poi.hssf.record.formula.AddPtg;
+import org.apache.poi.hssf.record.formula.Area3DPtg;
+import org.apache.poi.hssf.record.formula.AreaPtg;
+import org.apache.poi.hssf.record.formula.AttrPtg;
+import org.apache.poi.hssf.record.formula.BoolPtg;
+import org.apache.poi.hssf.record.formula.ConcatPtg;
+import org.apache.poi.hssf.record.formula.DividePtg;
+import org.apache.poi.hssf.record.formula.EqualPtg;
+import org.apache.poi.hssf.record.formula.FuncVarPtg;
+import org.apache.poi.hssf.record.formula.IntPtg;
+import org.apache.poi.hssf.record.formula.MultiplyPtg;
+import org.apache.poi.hssf.record.formula.NumberPtg;
+import org.apache.poi.hssf.record.formula.OperationPtg;
+import org.apache.poi.hssf.record.formula.ParenthesisPtg;
+import org.apache.poi.hssf.record.formula.PowerPtg;
+import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.hssf.record.formula.Ref3DPtg;
+import org.apache.poi.hssf.record.formula.ReferencePtg;
+import org.apache.poi.hssf.record.formula.StringPtg;
+import org.apache.poi.hssf.record.formula.SubtractPtg;
+import org.apache.poi.hssf.util.SheetReferences;
 
 
 /**
@@ -90,6 +112,12 @@ public class FormulaParser {
     private int formulaLength;
     
     private List tokens = new java.util.Stack();
+    
+    /**
+     * Using an unsynchronized linkedlist to implement a stack since we're not multi-threaded.
+     */
+    private List functionTokens = new LinkedList();
+    
     //private Stack tokens = new java.util.Stack();
     private List result = new ArrayList();
     private int numParen;
@@ -98,6 +126,7 @@ public class FormulaParser {
     private static char CR = '\n';
     
    private char look;              // Lookahead Character
+   private boolean inFunction = false;
    
    private Workbook book;
     
@@ -297,25 +326,140 @@ public class FormulaParser {
         }
     }
     
+    /**
+     * Adds a pointer to the last token to the latest function argument list.
+     * @param obj
+     */
+    private void addArgumentPointer() {
+		if (this.functionTokens.size() > 0) {
+			//no bounds check because this method should not be called unless a token array is setup by function()
+			List arguments = (List)this.functionTokens.get(0);
+			arguments.add(tokens.get(tokens.size()-1));
+		}
+    }
+    
     private void function(String name) {
+    	//average 2 args per function
+    	this.functionTokens.add(0, new ArrayList(2));
+    	
         Match('(');
         int numArgs = Arguments();
         Match(')');
-        tokens.add(getFunction(name,(byte)numArgs));
+                
+        Ptg functionPtg = getFunction(name,(byte)numArgs);
+        
+		tokens.add(functionPtg);
+ 
+ 		//remove what we just put in
+		this.functionTokens.remove(0);
     }
     
+    /**
+     * Adds the size of all the ptgs after the provided index (inclusive).
+     * <p>
+     * Initially used to count a goto
+     * @param index
+     * @return int
+     */
+    private int getPtgSize(int index) {
+    	int count = 0;
+    	
+    	Iterator ptgIterator = tokens.listIterator(index);
+    	while (ptgIterator.hasNext()) {
+    		Ptg ptg = (Ptg)ptgIterator.next();
+    		count+=ptg.getSize();
+    	}
+    	
+    	return count;
+    }
+    
+    private int getPtgSize(int start, int end) {
+		int count = 0;
+    	int index = start;
+		Iterator ptgIterator = tokens.listIterator(index);
+		while (ptgIterator.hasNext() && index <= end) {
+			Ptg ptg = (Ptg)ptgIterator.next();
+			count+=ptg.getSize();
+			index++;
+		}
+    	
+		return count;
+    }
+    
+    /**
+     * Generates the variable function ptg for the formula.
+     * <p>
+     * For IF Formulas, additional PTGs are added to the tokens 
+     * @param name
+     * @param numArgs
+     * @return Ptg a null is returned if we're in an IF formula, it needs extreme manipulation and is handled in this function
+     */
     private Ptg getFunction(String name,byte numArgs) {
         Ptg retval = null;
-        //retval = new FuncVarPtg(name,numArgs);
-       if (name.equals("IF")) {
-            AttrPtg ptg = new AttrPtg();
-            ptg.setData((short)6); //sums don't care but this is what excel does.
-            ptg.setOptimizedIf(true);
-            retval = ptg;
-        } else {
-            retval = new FuncVarPtg(name,numArgs);
-        }
         
+       if (name.equals("IF")) {			
+			retval = new FuncVarPtg(AbstractFunctionPtg.ATTR_NAME, numArgs);
+			
+			//simulated pop, no bounds checking because this list better be populated by function()       	
+			List argumentPointers = (List)this.functionTokens.get(0);
+
+			
+            AttrPtg ifPtg = new AttrPtg();
+			ifPtg.setData((short)7); //mirroring excel output
+			ifPtg.setOptimizedIf(true);
+		
+            if (argumentPointers.size() != 2  && argumentPointers.size() != 3) {
+            	throw new IllegalArgumentException("["+argumentPointers.size()+"] Arguments Found - An IF formula requires 2 or 3 arguments. IF(CONDITION, TRUE_VALUE, FALSE_VALUE [OPTIONAL]");            	
+            }
+            
+            //Biffview of an IF formula record indicates the attr ptg goes after the condition ptgs and are
+            //tracked in the argument pointers
+            //The beginning first argument pointer is the last ptg of the condition
+            int ifIndex = tokens.indexOf(argumentPointers.get(0))+1;
+            tokens.add(ifIndex, ifPtg);
+             
+            //we now need a goto ptgAttr to skip to the end of the formula after a true condition
+            //the true condition is should be inserted after the last ptg in the first argument
+			 
+			int gotoIndex = tokens.indexOf(argumentPointers.get(1))+1;
+			
+			AttrPtg goto1Ptg = new AttrPtg();
+			goto1Ptg.setGoto(true);
+			
+						
+			tokens.add(gotoIndex, goto1Ptg);
+            
+            
+            if (numArgs > 2) { //only add false jump if there is a false condition
+            
+	            //second goto to skip past the function ptg
+	            AttrPtg goto2Ptg = new AttrPtg();
+	            goto2Ptg.setGoto(true);            
+	            goto2Ptg.setData((short)(retval.getSize()-1));
+				//Page 472 of the Microsoft Excel Developer's kit states that:
+				//The b(or w) field specifies the number byes (or words to skip, minus 1
+	            
+	            tokens.add(goto2Ptg); //this goes after all the arguments are defined
+            }
+            
+            //data portion of the if ptg points to the false subexpression (Page 472 of MS Excel Developer's kit)
+            //count the number of bytes after the ifPtg to the False Subexpression
+            //doesn't specify -1 in the documentation
+			ifPtg.setData((short)(getPtgSize(ifIndex+1, gotoIndex)));            
+            
+            //count all the additional (goto) ptgs but dont count itself
+			int ptgCount = this.getPtgSize(gotoIndex)-goto1Ptg.getSize()+retval.getSize();
+			if (ptgCount > (int)Short.MAX_VALUE) {
+				throw new RuntimeException("Ptg Size exceeds short when being specified for a goto ptg in an if");
+			}
+			
+			goto1Ptg.setData((short)(ptgCount-1));
+			
+        } else {
+        	
+			retval = new FuncVarPtg(name,numArgs);
+        }
+		
         return retval; 
     }
     
@@ -451,6 +595,8 @@ public class FormulaParser {
             if (look == '*') Multiply();
             if (look == '/') Divide();
         }
+        addArgumentPointer();
+        
     }
     
     
