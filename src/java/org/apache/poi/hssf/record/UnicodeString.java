@@ -66,6 +66,7 @@ import org.apache.poi.util.StringUtil;
  * REFERENCE:  PG 264 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
  * @author  Andrew C. Oliver
  * @author Marc Johnson (mjohnson at apache dot org)
+ * @author Glen Stampoultzis (glens at apache.org)
  * @version 2.0-pre
  */
 
@@ -77,12 +78,29 @@ public class UnicodeString
     private short             field_1_charCount;     // = 0;
     private byte              field_2_optionflags;   // = 0;
     private String            field_3_string;        // = null;
+    private final int RICH_TEXT_BIT = 8;
+    private final int EXT_BIT = 4;
+
+    public UnicodeString()
+    {
+    }
+
 
     public int hashCode()
     {
-        return field_1_charCount;
+        int stringHash = 0;
+        if (field_3_string != null)
+            stringHash = field_3_string.hashCode();
+        return field_1_charCount + stringHash;
     }
 
+    /**
+     * Our handling of equals is inconsistent with compareTo.  The trouble is because we don't truely understand
+     * rich text fields yet it's difficult to make a sound comparison.
+     *
+     * @param o     The object to compare.
+     * @return      true if the object is actually equal.
+     */
     public boolean equals(Object o)
     {
         if ((o == null) || (o.getClass() != this.getClass()))
@@ -94,10 +112,6 @@ public class UnicodeString
         return ((field_1_charCount == other.field_1_charCount)
                 && (field_2_optionflags == other.field_2_optionflags)
                 && field_3_string.equals(other.field_3_string));
-    }
-
-    public UnicodeString()
-    {
     }
 
     /**
@@ -278,19 +292,10 @@ public class UnicodeString
 
     public int serialize(int offset, byte [] data)
     {
-        int charsize = 1;
-
-        if (getOptionFlags() == 1)
-        {
-            charsize = 2;
-        }
-
-        // byte[] retval = new byte[ 3 + (getString().length() * charsize) ];
         LittleEndian.putShort(data, 0 + offset, getCharCount());
         data[ 2 + offset ] = getOptionFlags();
 
-//        System.out.println("Unicode: We've got "+retval[2]+" for our option flag");
-        if (getOptionFlags() == 0)
+        if (!isUncompressedUnicode())
         {
             StringUtil.putCompressedUnicode(getString(), data, 0x3 + offset);
         }
@@ -302,14 +307,14 @@ public class UnicodeString
         return getRecordSize();
     }
 
+    private boolean isUncompressedUnicode()
+    {
+        return (getOptionFlags() & 0x01) == 1;
+    }
+
     public int getRecordSize()
     {
-        int charsize = 1;
-
-        if (getOptionFlags() == 1)
-        {
-            charsize = 2;
-        }
+        int charsize = isUncompressedUnicode() ? 2 : 1;
         return 3 + (getString().length() * charsize);
     }
 
@@ -338,11 +343,16 @@ public class UnicodeString
         return this.getString().compareTo(str.getString());
     }
 
+    public boolean isRichText()
+    {
+        return (getOptionFlags() & RICH_TEXT_BIT) != 0;
+    }
+
     int maxBrokenLength(final int proposedBrokenLength)
     {
         int rval = proposedBrokenLength;
 
-        if ((field_2_optionflags & 1) == 1)
+        if (isUncompressedUnicode())
         {
             int proposedStringLength = proposedBrokenLength - 3;
 
@@ -355,12 +365,9 @@ public class UnicodeString
         return rval;
     }
 
-//    public boolean equals(Object obj) {
-//        if (!(obj instanceof UnicodeString)) return false;
-//        
-//        UnicodeString str = (UnicodeString)obj;
-//        
-//        
-//       return this.getString().equals(str.getString());
-//    }    
+    public boolean isExtendedText()
+    {
+        return (getOptionFlags() & EXT_BIT) != 0;
+    }
+
 }

@@ -161,9 +161,7 @@ public class ContinueRecord
 
         // how many continue records do we need
         // System.out.println("In ProcessContinue");
-        int       records   =
-            (data.length
-             / 8214);   // we've a 1 offset but we're also off by one due to rounding...so it balances out
+        int       records   = (data.length / 8214);   // we've a 1 offset but we're also off by one due to rounding...so it balances out
         int       offset    = 8214;
 
         // System.out.println("we have "+records+" continue records to process");
@@ -174,8 +172,7 @@ public class ContinueRecord
         for (int cr = 0; cr < records; cr++)
         {
             ContinueRecord contrec   = new ContinueRecord();
-            int            arraysize = Math.min((8214 - 4),
-                                                (data.length - offset));
+            int            arraysize = Math.min((8214 - 4), (data.length - offset));
             byte[]         crdata    = new byte[ arraysize ];
 
             System.arraycopy(data, offset, crdata, 0, arraysize);

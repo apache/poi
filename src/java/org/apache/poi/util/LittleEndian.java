@@ -236,9 +236,23 @@ public class LittleEndian
      *
      * @exception ArrayIndexOutOfBoundsException may be thrown
      */
-
     public static void putShort(final byte[] data, final int offset,
                                 final short value)
+    {
+        putNumber(data, offset, value, SHORT_SIZE);
+    }
+
+    /**
+     * put an unsigned short value into a byte array
+     *
+     * @param data the byte array
+     * @param offset a starting offset into the byte array
+     * @param value the short (16-bit) value
+     *
+     * @exception ArrayIndexOutOfBoundsException may be thrown
+     */
+    public static void putUShort(final byte[] data, final int offset,
+                                final int value)
     {
         putNumber(data, offset, value, SHORT_SIZE);
     }
@@ -590,6 +604,19 @@ public class LittleEndian
         System.arraycopy(data, offset, copy, 0, size);
 
         return copy;
+    }
+
+    /**
+     * Retrieves and unsigned short.  This is converted UP to a int
+     * so it can fit.
+     *
+     * @param data      The data to read
+     * @param offset    The offset to read the short from
+     * @return An integer representation of the short.
+     */
+    public static int getUShort( byte[] data, int offset )
+    {
+        return (int)getNumber(data, offset, SHORT_SIZE);
     }
 
 }
