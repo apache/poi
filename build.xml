@@ -42,6 +42,7 @@
     <property name="repository" value="http://www.ibiblio.org/maven"/>
     <property name="forrest.home" value="${env.FORREST_HOME}"/>
 
+    <property name="main.resource1.dir" value="src/resources/fontmetrics"/>
     <property name="main.src" location="src/java"/>
     <property name="main.src.test" location="src/testcases"/>
     <property name="main.documentation" value="src/documentation"/>
