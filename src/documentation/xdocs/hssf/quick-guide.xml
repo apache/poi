@@ -179,13 +179,13 @@
     // Style the cell with borders all around.
     HSSFCellStyle style = wb.createCellStyle();
     style.setBorderBottom(HSSFCellStyle.BORDER_THIN);
-    style.setBottomBorderColor(HSSFCellStyle.BLACK);
+    style.setBottomBorderColor(HSSFColor.BLACK.index);
     style.setBorderLeft(HSSFCellStyle.BORDER_THIN);
-    style.setLeftBorderColor(HSSFCellStyle.GREEN);
+    style.setLeftBorderColor(HSSFColor.GREEN.index);
     style.setBorderRight(HSSFCellStyle.BORDER_THIN);
-    style.setRightBorderColor(HSSFCellStyle.BLUE);
+    style.setRightBorderColor(HSSFColor.BLUE.index);
     style.setBorderTop(HSSFCellStyle.BORDER_MEDIUM_DASHED);
-    style.setTopBorderColor(HSSFCellStyle.AUTOMATIC);
+    style.setTopBorderColor(HSSFColor.BLACK.index);
     cell.setCellStyle(style);
 
     // Write the output to a file
@@ -205,7 +205,7 @@
 
     // Aqua background
     HSSFCellStyle style = wb.createCellStyle();
-    style.setFillBackgroundColor(HSSFCellStyle.AQUA);
+    style.setFillBackgroundColor(HSSFColor.AQUA.index);
     style.setFillPattern(HSSFCellStyle.BIG_SPOTS);
     HSSFCell cell = row.createCell((short) 1);
     cell.setCellValue("X");
@@ -213,7 +213,7 @@
 
     // Orange "foreground", foreground being the fill foreground not the font color.
     style = wb.createCellStyle();
-    style.setFillForegroundColor(HSSFCellStyle.ORANGE);
+    style.setFillForegroundColor(HSSFColor.ORANGE.index);
     style.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
     cell = row.createCell((short) 2);
     cell.setCellValue("X");
