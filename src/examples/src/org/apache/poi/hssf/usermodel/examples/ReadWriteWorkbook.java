@@ -39,23 +39,34 @@ public class ReadWriteWorkbook
     public static void main(String[] args)
         throws IOException
     {
-        POIFSFileSystem fs      =
-                new POIFSFileSystem(new FileInputStream("workbook.xls"));
-        HSSFWorkbook wb = new HSSFWorkbook(fs);
-        HSSFSheet sheet = wb.getSheetAt(0);
-        HSSFRow row = sheet.getRow(2);
-        if (row == null)
-            row = sheet.createRow(2);
-        HSSFCell cell = row.getCell((short)3);
-        if (cell == null)
-            cell = row.createCell((short)3);
-        cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-        cell.setCellValue("a test");
+        FileInputStream fileIn = null;
+        FileOutputStream fileOut = null;
 
-        // Write the output to a file
-        FileOutputStream fileOut = new FileOutputStream("workbook.xls");
-        wb.write(fileOut);
-        fileOut.close();
+        try
+        {
+            fileIn = new FileInputStream("workbook.xls");
+            POIFSFileSystem fs = new POIFSFileSystem(fileIn);
+            HSSFWorkbook wb = new HSSFWorkbook(fs);
+            HSSFSheet sheet = wb.getSheetAt(0);
+            HSSFRow row = sheet.getRow(2);
+            if (row == null)
+                row = sheet.createRow(2);
+            HSSFCell cell = row.getCell((short)3);
+            if (cell == null)
+                cell = row.createCell((short)3);
+            cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+            cell.setCellValue("a test");
 
+            // Write the output to a file
+            fileOut = new FileOutputStream("workbook.xls");
+            wb.write(fileOut);
+        }
+        finally
+        {
+            if (fileOut != null)
+                fileOut.close();
+            if (fileIn != null)
+                fileIn.close();
+        }
     }
 }
