@@ -79,6 +79,7 @@ public class TextPiece extends PropertyNode implements Comparable
       super(start, end, text);
       _usesUnicode = pd.isUnicode();
       _length = end - start;
+      _pd = pd;
   }
   /**
    * @return If this text piece uses unicode

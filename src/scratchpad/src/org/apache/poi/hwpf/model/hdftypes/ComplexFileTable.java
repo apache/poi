@@ -91,6 +91,11 @@ public class ComplexFileTable
     }
   }
 
+  public TextPieceTable getTextPieceTable()
+  {
+    return _tpt;
+  }
+
   public void writeTo(HWPFFileSystem sys)
     throws IOException
   {
