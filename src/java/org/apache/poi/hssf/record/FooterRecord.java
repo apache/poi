@@ -117,7 +117,7 @@ public class FooterRecord
         if (size > 0)
         {
             field_1_footer_len = data[ 0 + offset ];
-            field_2_footer     = new String(data, 1 + offset,
+            field_2_footer     = new String(data, 3 + offset, // [Shawn] Changed 1 to 3 for offset of string
                                             LittleEndian.ubyteToInt( field_1_footer_len) );
         }
     }
@@ -153,9 +153,9 @@ public class FooterRecord
      * @see #getFooter()
      */
 
-    public byte getFooterLength()
+    public short getFooterLength()
     {
-        return field_1_footer_len;
+        return (short)(0xFF & field_1_footer_len); // [Shawn] Fixed needing unsigned byte
     }
 
     /**
@@ -189,15 +189,15 @@ public class FooterRecord
 
         if (getFooterLength() > 0)
         {
-            len++;
+            len+=3; // [Shawn] Fixed for two null bytes in the length
         }
         LittleEndian.putShort(data, 0 + offset, sid);
         LittleEndian.putShort(data, 2 + offset,
                               ( short ) ((len - 4) + getFooterLength()));
         if (getFooterLength() > 0)
         {
-            data[ 4 + offset ] = getFooterLength();
-            StringUtil.putCompressedUnicode(getFooter(), data, 5 + offset);
+            data[ 4 + offset ] = (byte)getFooterLength();
+            StringUtil.putCompressedUnicode(getFooter(), data, 7 + offset); // [Shawn] Place the string in the correct offset
         }
         return getRecordSize();
     }
@@ -208,7 +208,7 @@ public class FooterRecord
 
         if (getFooterLength() > 0)
         {
-            retval++;
+            retval+=3; // [Shawn] Fixed for two null bytes in the length
         }
         return retval + getFooterLength();
     }
