@@ -249,12 +249,13 @@ public class TestWorkbook
         HSSFWorkbook    workbook = new HSSFWorkbook(fs);
         HSSFSheet       sheet    = workbook.getSheetAt(0);
         HSSFDataFormat  format   = workbook.createDataFormat();
+	HSSFCell	cell	 = 
+                     sheet.getRow(( short ) 0).getCell(( short ) 0);
 
-        assertEquals(1.25,
-                     sheet.getRow(( short ) 0).getCell(( short ) 0)
-                         .getNumericCellValue(), 1e-10);
+        assertEquals(1.25,cell.getNumericCellValue(), 1e-10);
+                         
 
-	assertEquals(format.getFormat("0.0"), 0xa4);
+	assertEquals(format.getFormat(cell.getCellStyle().getDataFormat()), "0.0");
         stream.close();
     }
 
