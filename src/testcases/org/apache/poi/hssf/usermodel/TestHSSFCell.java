@@ -176,6 +176,54 @@ extends TestCase {
                               .getDateCellValue().getTime());
         stream.close();
     }
+    
+    /**
+     * Tests that the active cell can be correctly read and set
+     */
+    public void testActiveCell() throws Exception
+    {
+        //read in sample
+        String dir = System.getProperty("HSSF.testdata.path");
+        File sample = new File(dir + "/Simple.xls");
+        assertTrue("Simple.xls exists and is readable", sample.canRead());
+        FileInputStream fis = new FileInputStream(sample);
+        HSSFWorkbook book = new HSSFWorkbook(fis);
+        fis.close();
+        
+        //check initial position
+        HSSFSheet umSheet = book.getSheetAt(0);
+        Sheet s = umSheet.getSheet();
+        assertEquals("Initial active cell should be in col 0",
+            (short) 0, s.getActiveCellCol());
+        assertEquals("Initial active cell should be on row 1",
+            1, s.getActiveCellRow());
+        
+        //modify position through HSSFCell
+        HSSFCell cell = umSheet.createRow(3).createCell((short) 2);
+        cell.setAsActiveCell();
+        assertEquals("After modify, active cell should be in col 2",
+            (short) 2, s.getActiveCellCol());
+        assertEquals("After modify, active cell should be on row 3",
+            3, s.getActiveCellRow());
+        
+        //write book to temp file; read and verify that position is serialized
+        File temp = File.createTempFile("testActiveCell", ".xls");
+        FileOutputStream fos = new FileOutputStream(temp);
+        book.write(fos);
+        fos.close();
+        
+        fis = new FileInputStream(temp);
+        book = new HSSFWorkbook(fis);
+        fis.close();
+        temp.delete();
+        umSheet = book.getSheetAt(0);
+        s = umSheet.getSheet();
+        
+        assertEquals("After serialize, active cell should be in col 2",
+            (short) 2, s.getActiveCellCol());
+        assertEquals("After serialize, active cell should be on row 3",
+            3, s.getActiveCellRow());
+    }
 
     public static void main(String [] args) {
         System.out
