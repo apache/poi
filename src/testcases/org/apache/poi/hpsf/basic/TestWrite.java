@@ -66,6 +66,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -420,21 +421,21 @@ public class TestWrite extends TestCase
             check(Variant.VT_I4, new Long(28), codepage);
             check(Variant.VT_FILETIME, new Date(), codepage);
             check(Variant.VT_LPSTR, "", codepage);
-            check(Variant.VT_LPSTR, "ה", codepage);
-            check(Variant.VT_LPSTR, "הצ", codepage);
-            check(Variant.VT_LPSTR, "הצü", codepage);
-            check(Variant.VT_LPSTR, "הצüִ", codepage);
-            check(Variant.VT_LPSTR, "הצüִײ", codepage);
-            check(Variant.VT_LPSTR, "הצüִײÜ", codepage);
-            check(Variant.VT_LPSTR, "הצüִײÜß", codepage);
+            check(Variant.VT_LPSTR, "\u00e4", codepage);
+            check(Variant.VT_LPSTR, "\u00e4\u00f6", codepage);
+            check(Variant.VT_LPSTR, "\u00e4\u00f6\u00fc", codepage);
+            check(Variant.VT_LPSTR, "\u00e4\u00f6\u00fc\u00c4", codepage);
+            check(Variant.VT_LPSTR, "\u00e4\u00f6\u00fc\u00c4\u00d6", codepage);
+            check(Variant.VT_LPSTR, "\u00e4\u00f6\u00fc\u00c4\u00d6\u00dc", codepage);
+            check(Variant.VT_LPSTR, "\u00e4\u00f6\u00fc\u00c4\u00d6\u00dc\u00df", codepage);
             check(Variant.VT_LPWSTR, "", codepage);
-            check(Variant.VT_LPWSTR, "ה", codepage);
-            check(Variant.VT_LPWSTR, "הצ", codepage);
-            check(Variant.VT_LPWSTR, "הצü", codepage);
-            check(Variant.VT_LPWSTR, "הצüִ", codepage);
-            check(Variant.VT_LPWSTR, "הצüִײ", codepage);
-            check(Variant.VT_LPWSTR, "הצüִײÜ", codepage);
-            check(Variant.VT_LPWSTR, "הצüִײÜß", codepage);
+            check(Variant.VT_LPWSTR, "\u00e4", codepage);
+            check(Variant.VT_LPWSTR, "\u00e4\u00f6", codepage);
+            check(Variant.VT_LPWSTR, "\u00e4\u00f6\u00fc", codepage);
+            check(Variant.VT_LPWSTR, "\u00e4\u00f6\u00fc\u00c4", codepage);
+            check(Variant.VT_LPWSTR, "\u00e4\u00f6\u00fc\u00c4\u00d6", codepage);
+            check(Variant.VT_LPWSTR, "\u00e4\u00f6\u00fc\u00c4\u00d6\u00dc", codepage);
+            check(Variant.VT_LPWSTR, "\u00e4\u00f6\u00fc\u00c4\u00d6\u00dc\u00df", codepage);
         }
         catch (Exception ex)
         {
@@ -465,13 +466,13 @@ public class TestWrite extends TestCase
             try
             {
                 check(Variant.VT_LPSTR, "", codepage);
-                check(Variant.VT_LPSTR, "ה", codepage);
-                check(Variant.VT_LPSTR, "הצ", codepage);
-                check(Variant.VT_LPSTR, "הצü", codepage);
-                check(Variant.VT_LPSTR, "הצüִ", codepage);
-                check(Variant.VT_LPSTR, "הצüִײ", codepage);
-                check(Variant.VT_LPSTR, "הצüִײÜ", codepage);
-                check(Variant.VT_LPSTR, "הצüִײÜß", codepage);
+                check(Variant.VT_LPSTR, "\u00e4", codepage);
+                check(Variant.VT_LPSTR, "\u00e4\u00f6", codepage);
+                check(Variant.VT_LPSTR, "\u00e4\u00f6\u00fc", codepage);
+                check(Variant.VT_LPSTR, "\u00e4\u00f6\u00fc\u00c4", codepage);
+                check(Variant.VT_LPSTR, "\u00e4\u00f6\u00fc\u00c4\u00d6", codepage);
+                check(Variant.VT_LPSTR, "\u00e4\u00f6\u00fc\u00c4\u00d6\u00dc", codepage);
+                check(Variant.VT_LPSTR, "\u00e4\u00f6\u00fc\u00c4\u00d6\u00dc\u00df", codepage);
                 if (codepage == 1200 || codepage == 65001)
                     check(Variant.VT_LPSTR, "\u79D1\u5B78", codepage);
             }
@@ -495,13 +496,13 @@ public class TestWrite extends TestCase
             try
             {
                 check(Variant.VT_LPSTR, "", codepage);
-                check(Variant.VT_LPSTR, "ה", codepage);
-                check(Variant.VT_LPSTR, "הצ", codepage);
-                check(Variant.VT_LPSTR, "הצü", codepage);
-                check(Variant.VT_LPSTR, "הצüִ", codepage);
-                check(Variant.VT_LPSTR, "הצüִײ", codepage);
-                check(Variant.VT_LPSTR, "הצüִײÜ", codepage);
-                check(Variant.VT_LPSTR, "הצüִײÜß", codepage);
+                check(Variant.VT_LPSTR, "\u00e4", codepage);
+                check(Variant.VT_LPSTR, "\u00e4\u00f6", codepage);
+                check(Variant.VT_LPSTR, "\u00e4\u00f6\u00fc", codepage);
+                check(Variant.VT_LPSTR, "\u00e4\u00f6\u00fc\u00c4", codepage);
+                check(Variant.VT_LPSTR, "\u00e4\u00f6\u00fc\u00c4\u00d6", codepage);
+                check(Variant.VT_LPSTR, "\u00e4\u00f6\u00fc\u00c4\u00d6\u00dc", codepage);
+                check(Variant.VT_LPSTR, "\u00e4\u00f6\u00fc\u00c4\u00d6\u00dc\u00df", codepage);
                 fail("UnsupportedEncodingException for codepage " + codepage +
                      " expected.");
             }
@@ -602,11 +603,23 @@ public class TestWrite extends TestCase
     {
         final File dataDir =
             new File(System.getProperty("HPSF.testdata.path"));
+        String[] filesToTest = new String[]{
+			"Test0313rur.adm",
+			"TestChineseProperties.doc",
+			"TestCorel.shw",
+			"TestEditTime.doc",
+			"TestGermanWord90.doc",
+			"TestMickey.doc",
+			"TestSectionDictionary.doc",
+			"TestUnicode.xls"
+
+        };
+        final java.util.List listFilesToTest = Arrays.asList(filesToTest);
         final File[] fileList = dataDir.listFiles(new FileFilter()
             {
                 public boolean accept(final File f)
                 {
-                    return f.isFile();
+                    return listFilesToTest.contains(f.getName());
                 }
             });
         for (int i = 0; i < fileList.length; i++)
@@ -666,7 +679,7 @@ public class TestWrite extends TestCase
             
                 /* Compare the property set stream with the corresponding one
                  * from the origin file and check whether they are equal. */
-                assertEquals(ps1, ps2);
+                assertEquals("Equality for file "+f.getName(),ps1, ps2);
             }
         }
         catch (Exception ex)
