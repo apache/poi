@@ -171,7 +171,7 @@ public class AreaPtg
     }
 
     /**
-     * @param last row number in the area 
+     * @param row last row number in the area 
      */
     public void setLastRow(short row)
     {
@@ -267,7 +267,7 @@ public class AreaPtg
     
     /**
      * set whether the last row is relative or not
-     * @param last row relative
+     * @param rel specifies whether the last row is relative or not
      */
     public void setLastRowRelative(boolean rel) {
         field_4_last_column=rowRelative.setShortBoolean(field_4_last_column,rel);

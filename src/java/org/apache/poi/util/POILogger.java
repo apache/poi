@@ -94,7 +94,6 @@ public abstract class POILogger
      * Check if a logger is enabled to log at the specified level
      *
      * @param level One of DEBUG, INFO, WARN, ERROR, FATAL
-     * @param obj1 The logger to check.
      */
     abstract public boolean check(final int level);
 

@@ -74,7 +74,6 @@ public class PropertyNode implements Comparable
   /**
    * @param fcStart The start of the text for this property.
    * @param fcEnd The end of the text for this property.
-   * @param grpprl The property description in compressed form.
    */
   public PropertyNode(int fcStart, int fcEnd, Object buf)
   {
@@ -97,7 +96,7 @@ public class PropertyNode implements Comparable
   }
 
   /**
-   * @retrun The offset of the end of this property's text.
+   * @return The offset of the end of this property's text.
    */
   public int getEnd()
   {

@@ -63,9 +63,9 @@ import org.apache.poi.hssf.eventusermodel.HSSFUserException;
  * a listener supporting this interface and register it with the HSSFRequest (associating
  * it with Record SID's).
  *
- * @see org.apache.poi.hssf.eventusermodel.HSSFEventFactory
- * @see org.apache.poi.hssf.eventusermodel.HSSFRequest
- * @see org.apache.poi.hssf.HSSFUserException
+ * @see HSSFEventFactory
+ * @see HSSFRequest
+ * @see AbortableHSSFListener
  *
  * @author Carey Sublette (careysub@earthling.net)
  *

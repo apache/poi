@@ -641,8 +641,8 @@ public class ExtendedFormatRecord
      * set whether or not to use the pattern in this XF instead of the parent XF.
      * (foregrount/background)
      *
-     * @param pattern- true if this XF has a different pattern value than its parent,
-     *                 false otherwise.
+     * @param pattern true if this XF has a different pattern value than its parent,
+     *                false otherwise.
      * @see #setIndentionOptions(short)
      */
 
@@ -657,8 +657,8 @@ public class ExtendedFormatRecord
      * set whether or not to use the locking/hidden in this XF instead of the parent XF.
      *
      *
-     * @param options- true if this XF has a different locking or hidden value than its parent,
-     *                 false otherwise.
+     * @param options true if this XF has a different locking or hidden value than its parent,
+     *                false otherwise.
      * @see #setIndentionOptions(short)
      */
 

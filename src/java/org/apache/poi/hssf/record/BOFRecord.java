@@ -212,7 +212,7 @@ public class BOFRecord
     /**
      * Year of the build that wrote this file
      * @see #BUILD_YEAR
-     * @param build year to set
+     * @param year year to set
      */
 
     public void setBuildYear(short year)

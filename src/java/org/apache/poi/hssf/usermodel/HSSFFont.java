@@ -165,7 +165,7 @@ public class HSSFFont
 
     /**
      * set the name for the font (i.e. Arial)
-     * @param String representing the name of the font to use
+     * @param name the name of the font to use
      * @see #FONT_ARIAL
      */
 
@@ -245,7 +245,7 @@ public class HSSFFont
 
     /**
      * set whether to use italics or not
-     * @param italics or not
+     * @param italic use italics or not
      */
 
     public void setItalic(boolean italic)
@@ -359,7 +359,7 @@ public class HSSFFont
 
     /**
      * set type of text underlining to use
-     * @param underlining type
+     * @param underline the underlining type to use
      * @see #U_NONE
      * @see #U_SINGLE
      * @see #U_DOUBLE

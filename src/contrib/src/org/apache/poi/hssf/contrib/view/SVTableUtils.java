@@ -79,10 +79,6 @@ public class SVTableUtils {
 
   /**
    *  Creates a new font for a specific cell style
-   *
-   * @param  wb     Description of the Parameter
-   * @param  style  Description of the Parameter
-   * @return        Description of the Return Value
    */
   public static Font makeFont(HSSFFont font) {
     boolean isbold = font.getBoldweight() > HSSFFont.BOLDWEIGHT_NORMAL;

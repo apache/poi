@@ -86,7 +86,7 @@ public class StringUtil {
 	 *@param  offset                              the initial offset into the     
 	 *      byte array. it is assumed that string[ offset ] and string[ offset +     
 	 *     1 ] contain the first 16-bit unicode character     
-	 *@param  len     
+         *@param len the length of the final string     
 	 *@return                                     the converted string     
 	 *@exception  ArrayIndexOutOfBoundsException  if offset is out of bounds for     
 	 *      the byte array (i.e., is negative or is greater than or equal to     
@@ -94,7 +94,6 @@ public class StringUtil {
 	 *@exception  IllegalArgumentException        if len is too large (i.e.,     
 	 *      there is not enough data in string to create a String of that     
 	 *      length)     
-	 *@param len the length of the final string     
 	 */
 	public static String getFromUnicodeLE(
 		final byte[] string,
@@ -138,7 +137,7 @@ public class StringUtil {
 	 **@param  offset                              the initial offset into the     
 	 *      byte array. it is assumed that string[ offset ] and string[ offset +     
 	 *      1 ] contain the first 16-bit unicode character     
-	 *@param  len     
+         *@param len the length of the final string     
 	 *@return                                     the converted string     
 	 *@exception  ArrayIndexOutOfBoundsException  if offset is out of bounds for     
 	 *      the byte array (i.e., is negative or is greater than or equal to     
@@ -146,7 +145,6 @@ public class StringUtil {
 	 *@exception  IllegalArgumentException        if len is too large (i.e.,     
 	 *      there is not enough data in string to create a String of that     
 	 *      length)     
-	 *@param len the length of the final string     
 	 */
 	public static String getFromUnicodeBE(
 		final byte[] string,
