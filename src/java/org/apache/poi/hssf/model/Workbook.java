@@ -513,7 +513,7 @@ public class Workbook implements Model {
         for (int k = 0; k < boundsheets.size(); k++) {
             String sheet = getSheetName(k);
 
-            if (sheet.equals(name)) {
+            if (sheet.equalsIgnoreCase(name)) {
                 retval = k;
                 break;
             }
