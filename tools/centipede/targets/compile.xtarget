@@ -158,6 +158,3 @@
     <delete dir="${build.dir}"/>
   </target>
 
-  <target name="cleandocs" depends="init" description="* Cleans the build docs directories">
-    <delete dir="${build.docs}"/>
-  </target>
