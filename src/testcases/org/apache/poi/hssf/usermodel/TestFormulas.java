@@ -62,6 +62,7 @@ import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.BOFRecord;
 import org.apache.poi.hssf.record.EOFRecord;
+import org.apache.poi.hssf.util.ReferenceUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -88,7 +89,6 @@ extends TestCase {
     
     public void testBasicAddIntegers()
     throws Exception {
-        //System.out.println("Converted Text form is : "+fp.toFormulaString(fp.getRPNPtg()));
         
         short            rownum = 0;
         File file = File.createTempFile("testFormula",".xls");
@@ -189,6 +189,161 @@ extends TestCase {
     throws Exception {
         orderTest("(1*3)+2+(1+2)*(3^4)^5");
     }
+    
+    public void testReferencesOpr() 
+    throws Exception {
+        String[] operation = new String[] {
+                            "+", "-", "*", "/", "^", "&"
+                           };
+        for (int k = 0; k < operation.length; k++) {
+            operationRefTest(operation[k]);
+        }
+    }
+    
+    private void operationRefTest(String operator) 
+    throws Exception {
+        File file = File.createTempFile("testFormula",".xls");
+        FileOutputStream out    = new FileOutputStream(file);
+        HSSFWorkbook     wb     = new HSSFWorkbook();
+        HSSFSheet        s      = wb.createSheet();
+        HSSFRow          r      = null;
+        HSSFCell         c      = null;
+        
+        //get our minimum values
+        r = s.createRow((short)0);
+        c = r.createCell((short)1);
+        c.setCellFormula("A2" + operator + "A3");
+        
+        for (short x = 1; x < Short.MAX_VALUE && x > 0; x=(short)(x*2)) {
+            r = s.createRow((short) x);
+
+            for (short y = 1; y < 256 && y > 0; y++) {                
+                
+                String ref=null;
+                String ref2=null;
+                short refx1=0;
+                short refy1=0;
+                short refx2=0;
+                short refy2=0;
+                if (x +50 < Short.MAX_VALUE) {
+                    refx1=(short)(x+50);
+                    refx2=(short)(x+46);
+                } else {
+                    refx1=(short)(x-4);
+                    refx2=(short)(x-3);
+                }
+                    
+                if (y+50 < 255) {
+                    refy1=(short)(y+50);
+                    refy2=(short)(y+49);
+                } else {
+                    refy1=(short)(y-4);
+                    refy2=(short)(y-3);
+                }
+                
+                ref = ReferenceUtil.getReferenceFromXY(refx1,refy1);                    
+                ref2 = ReferenceUtil.getReferenceFromXY(refx2,refy2);
+
+                c = r.createCell((short) y);
+                c.setCellFormula("" + ref + operator + ref2);
+                
+
+                
+            }
+        }
+        
+        //make sure we do the maximum value of the Int operator
+        if (s.getLastRowNum() < Short.MAX_VALUE) {
+            r = s.createRow((short)0);
+            c = r.createCell((short)0);
+            c.setCellFormula("" + "B1" + operator + "IV255");
+        }
+        
+        wb.write(out);
+        out.close();
+        assertTrue("file exists",file.exists());
+        operationalRefVerify(operator,file);
+    }
+    
+    /**
+     * Opens the sheet we wrote out by binomialOperator and makes sure the formulas
+     * all match what we expect (x operator y)
+     */
+    private void operationalRefVerify(String operator, File file)
+    throws Exception {
+        short            rownum = 0;
+        
+        FileInputStream  in     = new FileInputStream(file);
+        HSSFWorkbook     wb     = new HSSFWorkbook(in);
+        HSSFSheet        s      = wb.getSheetAt(0);
+        HSSFRow          r      = null;
+        HSSFCell         c      = null;
+        
+        //get our minimum values
+        r = s.getRow((short)0);
+        c = r.getCell((short)1);
+        //get our minimum values
+        assertTrue("minval Formula is as expected A2"+operator+"A3 != "+c.getCellFormula(),
+        ( ("A2"+operator+"A3").equals(c.getCellFormula())
+        ));
+
+        
+        for (short x = 1; x < Short.MAX_VALUE && x > 0; x=(short)(x*2)) {
+            r = s.getRow((short) x);
+
+            for (short y = 1; y < 256 && y > 0; y++) {                
+                
+                String ref=null;
+                String ref2=null;
+                short refx1=0;
+                short refy1=0;
+                short refx2=0;
+                short refy2=0;
+                if (x +50 < Short.MAX_VALUE) {
+                    refx1=(short)(x+50);
+                    refx2=(short)(x+46);
+                } else {
+                    refx1=(short)(x-4);
+                    refx2=(short)(x-3);
+                }
+                    
+                if (y+50 < 255) {
+                    refy1=(short)(y+50);
+                    refy2=(short)(y+49);
+                } else {
+                    refy1=(short)(y-4);
+                    refy2=(short)(y-3);
+                }
+
+                c = r.getCell((short) y);
+
+                ref = ReferenceUtil.getReferenceFromXY(refx1,refy1);                    
+                ref2 = ReferenceUtil.getReferenceFromXY(refx2,refy2);
+                
+                
+                assertTrue("loop Formula is as expected "+ref+operator+ref2+"!="+c.getCellFormula(),(
+                (""+ref+operator+ref2).equals(c.getCellFormula())
+                                                         )
+                );
+                
+                
+            }
+        }
+        
+        //test our maximum values
+        r = s.getRow((short)0);
+        c = r.getCell((short)0);
+                
+        assertTrue("maxval Formula is as expected",(
+        ("B1"+operator+"IV255").equals(c.getCellFormula())
+                                                   )
+        );
+        
+        in.close();
+        assertTrue("file exists",file.exists());
+    }
+    
+    
 
     /**
      * tests order wrting out == order writing in for a given formula
@@ -247,9 +402,9 @@ extends TestCase {
         
         for (short x = 1; x < Short.MAX_VALUE && x > 0; x=(short)(x*2)) {
             r = s.createRow((short) x);
-            //System.out.println("x="+x);
+
             for (short y = 1; y < 256 && y > 0; y++) {
-                //System.out.println("y="+y);
+
                 c = r.createCell((short) y);
                 c.setCellFormula("" + x + operator + y);
                 
@@ -293,9 +448,9 @@ extends TestCase {
         
         for (short x = 1; x < Short.MAX_VALUE && x > 0; x=(short)(x*2)) {
             r = s.getRow((short) x);
-            //System.out.println("x="+x);
+
             for (short y = 1; y < 256 && y > 0; y++) {
-                //System.out.println("y="+y);
+
                 c = r.getCell((short) y);
 
                 assertTrue("loop Formula is as expected "+x+operator+y+"!="+c.getCellFormula(),(
