@@ -4,7 +4,7 @@ import org.apache.poi.hdf.model.hdftypes.FormattedDiskPage;
 
 public class ParsingState
 {
-  int _currentPage;
+
   //int _numPages;// = charPlcf.length();
   int _currentPageIndex = 0;
   FormattedDiskPage _fkp;// = new CHPFormattedDiskPage(fkp);
@@ -13,15 +13,12 @@ public class ParsingState
 
   public ParsingState(int firstPage, FormattedDiskPage fkp)
   {
-    _currentPage = firstPage;
-    //_numPages = numPages;
     _fkp = fkp;
-    //_currentArraySize = fkp.size();
   }
-  public int getCurrentPage()
-  {
-    return _currentPage;
-  }
+  //public int getCurrentPage()
+  //{
+  //  return _currentPage;
+  //}
   //public int getNumPages()
   //{
   //  return _numPages;
@@ -39,10 +36,9 @@ public class ParsingState
     return _currentPropIndex;
   }
 
-  public void setState(int currentPage, int currentPageIndex,
-                       FormattedDiskPage fkp, int currentPropIndex)
+  public void setState(int currentPageIndex, FormattedDiskPage fkp, int currentPropIndex)
   {
-    _currentPage = currentPage;
+
     _currentPageIndex = currentPageIndex;
     _fkp = fkp;
     _currentPropIndex = currentPropIndex;
