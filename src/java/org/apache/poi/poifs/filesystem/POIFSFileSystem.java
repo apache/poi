@@ -423,6 +423,8 @@ public class POIFSFileSystem
                 DirectoryNode new_dir =
                     ( DirectoryNode ) parent.createDirectory(name);
 
+                new_dir.setStorageClsid( property.getStorageClsid() );
+
                 processProperties(
                     small_blocks, big_blocks,
                     (( DirectoryProperty ) property).getChildren(), new_dir);

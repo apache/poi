@@ -59,6 +59,8 @@ import java.io.*;
 
 import java.util.*;
 
+import org.apache.poi.hpsf.ClassID;
+
 /**
  * This interface defines methods specific to Directory objects
  * managed by a Filesystem instance.
@@ -160,5 +162,20 @@ public interface DirectoryEntry
 
     public DirectoryEntry createDirectory(final String name)
         throws IOException;
+
+    /**
+     * Gets the storage clsid of the directory entry
+     *
+     * @return storage Class ID
+     */
+    public ClassID getStorageClsid();
+
+    /**
+     * Sets the storage clsid for the directory entry
+     *
+     * @param clsidStorage storage Class ID
+     */
+    public void setStorageClsid(ClassID clsidStorage);
+
 }   // end public interface DirectoryEntry
 
