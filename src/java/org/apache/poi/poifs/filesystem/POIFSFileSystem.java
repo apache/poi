@@ -269,6 +269,9 @@ public class POIFSFileSystem
         // set the small block allocation table start block
         header_block_writer.setSBATStart(sbtw.getSBAT().getStartBlock());
 
+        // set the small block allocation table block count
+        header_block_writer.setSBATBlockCount(sbtw.getSBATBlockCount());
+
         // the header is now properly initialized. Make a list of
         // writers (the header block, followed by the documents, the
         // property table, the small block store, the small block
