@@ -234,16 +234,18 @@ public class Sheet implements Model
             }
             else if ( rec.getSid() == RowRecord.sid )
             {
-            	 RowRecord row = (RowRecord)rec;
-            	 if (!isfirstrow) rec = null; //only add the aggregate once
-            	 
                 if ( isfirstrow )
                 {
                     retval.rows = new RowRecordsAggregate();
-                    rec = retval.rows;                    
+                    rec = retval.rows;
+                    retval.rows.construct( k, recs );
                     isfirstrow = false;
                 }
-                retval.rows.insertRow(row);
+                else
+                {
+                    rec = null;
+                }
+
             }
             else if ( rec.getSid() == PrintGridlinesRecord.sid )
             {
@@ -260,10 +262,6 @@ public class Sheet implements Model
             else if ( rec.getSid() == PrintSetupRecord.sid && bofEofNestingLevel == 1)
             {
                 retval.printSetup = (PrintSetupRecord) rec;
-            }
-            else if ( rec.getSid() == SelectionRecord.sid )
-            {
-                retval.selection = (SelectionRecord) rec;
             }
 
             if (rec != null)
@@ -526,6 +524,11 @@ public class Sheet implements Model
     {
         return numMergedRegions;
     }
+
+    public CellValueRecordInterface getValueRecord (int row, short col) {
+       return cells.getCell(row, col);
+    }
+
 
     /**
      * This is basically a kludge to deal with the now obsolete Label records.  If
@@ -1134,6 +1137,7 @@ public class Sheet implements Model
 
         setLoc(getDimsLoc());
         rows.removeRow(row);
+        cells.removeRow(row.getRowNumber());
 
         /*
          * for (int k = loc; k < records.size(); k++)
@@ -1310,6 +1314,9 @@ public class Sheet implements Model
     public RowRecord getRow(int rownum)
     {
         log.log(log.DEBUG, "getNextRow loc= " + loc);
+        if (rows == null) {
+            return null;
+        }
         return rows.getRow(rownum);
 
         /*
@@ -1332,6 +1339,15 @@ public class Sheet implements Model
          */
 
         // return null;
+    }
+
+
+    public Iterator rowRecordIterator() {
+        return rows.getIterator();
+    }
+
+    public Iterator rowCellIterator(int row) {
+        return this.cells.getRowCellIterator(row);
     }
 
     /**
@@ -1411,6 +1427,15 @@ public class Sheet implements Model
             offset += rec.serialize().length;
         }
     }
+
+    public int getFirstRow() {
+        return rows.getFirstRowNum();
+    }
+
+    public int getLastRow() {
+        return rows.getLastRowNum();
+    }
+
 
     /** not currently used */
 
@@ -1868,7 +1893,7 @@ public class Sheet implements Model
             for (k = 0; k < columnSizes.size(); k++)
             {
                 ci = ( ColumnInfoRecord ) columnSizes.get(k);
-                if ((ci.getFirstColumn() <= column)
+                if ((ci.getFirstColumn() >= column)
                         && (column <= ci.getLastColumn()))
                 {
                     break;
@@ -1907,7 +1932,7 @@ public class Sheet implements Model
         for (k = 0; k < columnSizes.size(); k++)
         {
             ci = ( ColumnInfoRecord ) columnSizes.get(k);
-            if ((ci.getFirstColumn() <= column)
+            if ((ci.getFirstColumn() >= column)
                     && (column <= ci.getLastColumn()))
             {
                 break;
@@ -2136,6 +2161,32 @@ public class Sheet implements Model
         return new EOFRecord();
     }
 
+    public void setLastColForRow(int row, short col) {
+        this.getRow(row).setLastCol(col);
+    }
+
+    public void setFirstColForRow(int row, short col) {
+        this.getRow(row).setFirstCol(col);
+    }
+
+    public short getLastColForRow(int row) {
+        return this.getRow(row).getLastCol();
+    }
+
+
+    public short getFirstColForRow(int row) {
+        return this.getRow(row).getFirstCol();
+    }
+
+    public void setCellValue(int row, short col, double val) {
+        this.cells.setValue(row, col, val);
+    }  
+
+    public void setCellStyle(int row, short col, short xf) {
+        this.cells.setStyle(row, col, xf);
+    }
+
+
     /**
      * get the location of the DimensionsRecord (which is the last record before the value section)
      * @return location in the array of records of the DimensionsRecord
@@ -2168,6 +2219,7 @@ public class Sheet implements Model
         {
             retval += (( Record ) records.get(k)).getRecordSize();
         }
+
         return retval;
     }
 
@@ -2202,6 +2254,11 @@ public class Sheet implements Model
         }
         return null;
     }
+
+    public int getPhysicalNumberOfRows() {
+        return rows.getPhysicalNumberOfRows();
+    }
+
 
     /**
      * Sets the SCL record or creates it in the correct place if it does not

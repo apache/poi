@@ -2,7 +2,7 @@
 /* ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 2003 The Apache Software Foundation.  All rights
+ * Copyright (c) 2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -55,17 +55,22 @@
 
 package org.apache.poi.hssf.record.aggregates;
 
+import org.apache.poi.hssf.usermodel.HSSFCell; //kludge shouldn't refer to this
+
 import org.apache.poi.hssf.record.*;
+import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.util.DoubleList;
+import org.apache.poi.util.IntList;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.TreeMap;
+import java.util.ArrayList;
 
 /**
  *
  * Aggregate value records together.  Things are easier to handle that way.
  *
- * @author  andy
+ * @author  Andrew C. Oliver
  * @author  Glen Stampoultzis (glens at apache.org)
  * @author Jason Height (jheight at chariot dot net dot au)
  */
@@ -76,63 +81,72 @@ public class ValueRecordsAggregate
     public final static short sid       = -1000;
     int                       firstcell = -1;
     int                       lastcell  = -1;
-    TreeMap                   records   = null;
-//    int                       size      = 0;
+    //TreeMap                   records   = null;
 
-    /** Creates a new instance of ValueRecordsAggregate */
+    private final static int DEFAULT_ROWS=10000;
+    private final static int DEFAULT_COLS=256;
 
-    public ValueRecordsAggregate()
-    {
-        records = new TreeMap();
+    List celltype = null;
+    List xfs      = null;
+    List numericcells = null;
+    List formulaptgs = null;
+    List stringvals = null;
+    IntList populatedRows = null;
+    int physCells; //physical number of cells
+
+    public CellValueRecordInterface getCell(int row, short col) {
+        return constructRecord(row, col);
+
     }
 
-    public void insertCell(CellValueRecordInterface cell)
-    {
-/*        if (records.get(cell) == null)
-        {
-            size += (( Record ) cell).getRecordSize();
+    public int getRecordSize() {
+        //throw new RuntimeException("Not Implemented getRecordSize");
+
+        int size = 0;
+        Iterator irecs = getIterator();
+
+        while (irecs.hasNext()) {
+                size += (( Record ) irecs.next()).getRecordSize();
         }
-        else
+
+        return size;
+//        return size;
+    }
+
+    public int serialize(int offset, byte [] data)
+    {
+        //throw new RuntimeException("Not Implemented serialize");
+        int      pos = offset;
+        Iterator irecs = getIterator();
+
+        while (irecs.hasNext()) {
+                pos += (( Record ) irecs.next()).serialize(pos,data);
+        }
+
+/*        Iterator itr = records.values().iterator();
+        int      pos = offset;
+
+        while (itr.hasNext())
         {
-            size += (( Record ) cell).getRecordSize()
-                    - (( Record ) records.get(cell)).getRecordSize();
+            pos += (( Record ) itr.next()).serialize(pos, data);
         }*/
-
-        // XYLocator xy = new XYLocator(cell.getRow(), cell.getColumn());
-        Object o = records.put(cell, cell);
-
-        if ((cell.getColumn() < firstcell) || (firstcell == -1))
-        {
-            firstcell = cell.getColumn();
-        }
-        if ((cell.getColumn() > lastcell) || (lastcell == -1))
-        {
-            lastcell = cell.getColumn();
-        }
+        return pos - offset;
     }
 
-    public void removeCell(CellValueRecordInterface cell)
-    {
-  //      size -= (( Record ) cell).getRecordSize();
-
-        // XYLocator xy = new XYLocator(cell.getRow(), cell.getColumn());
-        records.remove(cell);
+    public ValueRecordsAggregate() {
+        celltype = new ArrayList(DEFAULT_ROWS);
+        xfs      = new ArrayList(DEFAULT_ROWS);
+        numericcells = new ArrayList(DEFAULT_ROWS);
+        formulaptgs  = new ArrayList(DEFAULT_ROWS);
+        stringvals   = new ArrayList(DEFAULT_ROWS);
+        populatedRows = new IntList(DEFAULT_ROWS);
+        physCells = 0;
     }
 
-    public int getPhysicalNumberOfCells()
-    {
-        return records.size();
+    public Iterator getIterator() {
+      return new VRAIterator(this);
     }
 
-    public int getFirstCellNum()
-    {
-        return firstcell;
-    }
-
-    public int getLastCellNum()
-    {
-        return lastcell;
-    }
 
     public int construct(int offset, List records)
     {
@@ -157,11 +171,6 @@ public class ValueRecordsAggregate
             {
                 lastFormulaAggregate.setStringRecord((StringRecord)rec);
             }
-            else if (rec instanceof SharedFormulaRecord)
-            {
-            	//these follow the first formula in a group
-            	lastFormulaAggregate.setSharedFormulaRecord((SharedFormulaRecord)rec);
-            }
             else if (rec.isValue())
             {
                 insertCell(( CellValueRecordInterface ) rec);
@@ -170,140 +179,449 @@ public class ValueRecordsAggregate
         return k;
     }
 
-    /**
-     * called by the class that is responsible for writing this sucker.
-     * Subclasses should implement this so that their data is passed back in a
-     * byte array.
-     *
-     * @param offset to begin writing at
-     * @param data byte array containing instance data
-     * @return number of bytes written
-     */
+    public int getPhysicalNumberOfCells() {
+        return physCells;
+    }
 
-    public int serialize(int offset, byte [] data)
+    public int getPhysicalNumberOfCellsInRow(int row) {
+        int count = -1;
+        int col = -1;
+        boolean firsttime = true;
+
+        while (col > 0 || count == -1) {
+            col = findNextPopulatedCell(row,col);
+            count++;
+        }
+        return count;
+    }
+
+    public void setValue(int row, short cell, double val) {
+        ((DoubleList)numericcells.get(row)).set(cell, val);
+    }
+
+    public void setStyle(int row, short cell, short xf) {
+        ((IntList)xfs.get(row)).set(cell, xf);
+    }
+
+
+    public Iterator getRowCellIterator(int row) {
+        return new VRAIterator(this, row);
+    }
+
+    public void removeRow(int row) {
+        Iterator iterator = this.getRowCellIterator(row);
+        while(iterator.hasNext()) {
+            iterator.next();
+            iterator.remove();
+        }
+    }
+
+    public void removeCell(CellValueRecordInterface cell) {
+        int rownum = cell.getRow();
+        int colnum = cell.getColumn();
+        int xf     = cell.getXFIndex();
+        int type   = determineType(cell);
+
+        if (rownum < celltype.size() && colnum < ((IntList)celltype.get(rownum)).size()) {
+            IntList ctRow = (IntList)celltype.get(rownum);
+            if (ctRow.size()-1 == colnum) {
+                ctRow.remove(colnum);
+                if (ctRow.size() == 0 && celltype.size()-1 == rownum) {
+                    celltype.remove(rownum);
+                    int remp = populatedRows.indexOf(rownum);
+                    System.err.println("remp == "+remp);
+                    populatedRows.removeValue(rownum);
+                }
+            } else {
+                ctRow.set(colnum,-1);
+            }
+            physCells--;
+        } else {
+          //this cell doesn't exist...
+            throw new RuntimeException("Tried to remove a cell that does not exist r,c="+rownum+","+colnum);
+        }
+    }
+
+    public void insertCell(CellValueRecordInterface cell) {
+        int rownum = cell.getRow();
+        int colnum = cell.getColumn();
+        int xf     = cell.getXFIndex();
+        int type   = determineType(cell);
+
+        if (celltype.size() < rownum+1) {
+            populatedRows.add(rownum); //this means we must never have had this row inserted
+        }
+
+        ensureRows(rownum);
+
+        IntList ctRow = (IntList)celltype.get(rownum);
+        IntList xfRow = (IntList)xfs.get(rownum);
+
+
+        adjustIntList(ctRow, colnum+1);
+        adjustIntList(xfRow, colnum+1);
+
+        ctRow.set(colnum, type);
+        xfRow.set(colnum, xf);
+
+        insertCell(cell, type);
+    }
+
+    CellValueRecordInterface constructRecord(int row, int col) {
+        if (celltype.size() < row || ((IntList)celltype.get(row)).size() < col) {
+            throw new ArrayIndexOutOfBoundsException("constructRecord called with row = "+row+
+                      "and col ="+col+" but there are only "+celltype.size()+" rows and "+
+                      ((IntList)celltype.get(row)).size()+" cols!!");
+        }
+
+        CellValueRecordInterface retval = null;
+        int type = ((IntList)celltype.get(row)).get(col);
+
+
+        switch (type) {
+            case HSSFCell.CELL_TYPE_NUMERIC:
+                NumberRecord nrecord = new NumberRecord();
+                nrecord.setColumn((short)col);
+                nrecord.setRow(row);
+                nrecord.setValue(((DoubleList)numericcells.get(row)).get(col));
+                nrecord.setXFIndex((short)((IntList)xfs.get(row)).get(col));
+                retval = nrecord;
+                break;
+            case HSSFCell.CELL_TYPE_STRING:
+                LabelSSTRecord srecord = new LabelSSTRecord();
+                srecord.setColumn((short)col);
+                srecord.setRow(row);
+                srecord.setSSTIndex((int)((DoubleList)numericcells.get(row)).get(col));
+                srecord.setXFIndex((short)((IntList)xfs.get(row)).get(col));
+                retval=srecord;
+                break;
+            case HSSFCell.CELL_TYPE_BLANK:
+                BlankRecord brecord = new BlankRecord();
+                brecord.setColumn((short)col);
+                brecord.setRow(row);
+                brecord.setXFIndex((short)((IntList)xfs.get(row)).get(col));
+                retval=brecord;
+                break;
+            case HSSFCell.CELL_TYPE_FORMULA:
+                FormulaRecord fr = new FormulaRecord();
+                fr.setColumn((short)col);
+                fr.setOptions((short)2);
+
+                fr.setRow(row);
+                fr.setXFIndex((short)((IntList)xfs.get(row)).get(col));
+                StringRecord        st = null;
+                String strval = (String)((List)stringvals.get(row)).get(col);
+                List expressionlist =  (List)((List)formulaptgs.get(row)).get(col);
+                fr.setParsedExpression(expressionlist);
+                fr.setExpressionLength(calculatePtgSize(expressionlist));
+                if (strval != null) {
+                  st = new StringRecord();
+                   st.setString(strval);
+                }
+                FormulaRecordAggregate frarecord = new FormulaRecordAggregate(fr,st);
+
+                retval= frarecord;
+                break;
+
+            default:
+                throw new RuntimeException("UnImplemented Celltype "+type);
+        }
+
+        return retval;
+    }
+
+    private short calculatePtgSize(List expressionlist) {
+        short retval = 0;
+        Iterator iter = expressionlist.iterator();
+        while (iter.hasNext()) {
+            retval += (short)((Ptg)iter.next()).getSize();
+        }
+        return retval;
+    }
+
+    private void insertCell(CellValueRecordInterface cell, int type) {
+        int rownum = cell.getRow();
+        int colnum = cell.getColumn();
+
+        DoubleList  nmRow = (DoubleList)numericcells.get(rownum);
+
+        switch (type) {
+            case HSSFCell.CELL_TYPE_NUMERIC:
+                NumberRecord nrecord = (NumberRecord)cell;
+                adjustDoubleList(nmRow, colnum+1);
+                nmRow.set(colnum,nrecord.getValue());
+                physCells++;
+                break;
+            case HSSFCell.CELL_TYPE_STRING:
+                LabelSSTRecord srecord = (LabelSSTRecord)cell;
+                adjustDoubleList(nmRow, colnum+1);
+                nmRow.set(colnum,srecord.getSSTIndex());
+                physCells++;
+                break;
+            case HSSFCell.CELL_TYPE_FORMULA:
+                List ptRow = (List)formulaptgs.get(rownum);
+                List stRow = (List)stringvals.get(rownum);
+                FormulaRecordAggregate frarecord = (FormulaRecordAggregate)cell;
+                adjustDoubleList(nmRow, colnum+1);
+                adjustObjectList(ptRow, colnum+1);
+                adjustStringList(stRow, colnum+1);
+                nmRow.set(colnum,frarecord.getFormulaRecord().getValue());
+                ptRow.set(colnum,frarecord.getFormulaRecord().getParsedExpression());
+                StringRecord str = frarecord.getStringRecord();
+                if (str != null) {
+                    stRow.set(colnum,str.getString());
+                } else {
+                    stRow.set(colnum,null);
+                }
+                physCells++;
+                break;
+            case HSSFCell.CELL_TYPE_BLANK:
+                //BlankRecord brecord = (BlankRecord)cell;
+                physCells++;
+                break;
+
+            default:
+                throw new RuntimeException("UnImplemented Celltype "+cell.toString());
+        }
+    }
+
+    private int determineType(CellValueRecordInterface cval)
     {
-        Iterator itr = records.values().iterator();
-        int      pos = offset;
+        Record record = ( Record ) cval;
+        int    sid    = record.getSid();
+        int    retval = 0;
 
-        while (itr.hasNext())
+        switch (sid)
         {
-            pos += (( Record ) itr.next()).serialize(pos, data);
+
+            case NumberRecord.sid :
+                retval = HSSFCell.CELL_TYPE_NUMERIC;
+                break;
+
+            case BlankRecord.sid :
+                retval = HSSFCell.CELL_TYPE_BLANK;
+                break;
+
+            case LabelSSTRecord.sid :
+                retval = HSSFCell.CELL_TYPE_STRING;
+                break;
+
+            case FormulaRecordAggregate.sid :
+                retval = HSSFCell.CELL_TYPE_FORMULA;
+                break;
+
+            case BoolErrRecord.sid :
+                BoolErrRecord boolErrRecord = ( BoolErrRecord ) record;
+
+                retval = (boolErrRecord.isBoolean())
+                         ? HSSFCell.CELL_TYPE_BOOLEAN
+                         : HSSFCell.CELL_TYPE_ERROR;
+                break;
         }
-        return pos - offset;
-    }
-    /**
-     * called by the constructor, should set class level fields.  Should throw
-     * runtime exception for bad/icomplete data.
-     *
-     * @param data raw data
-     * @param size size of data
-     * @param offset of the record's data (provided a big array of the file)
-     */
-
-    protected void fillFields(byte [] data, short size, int offset)
-    {
+        return retval;
     }
 
-    /**
-     * called by constructor, should throw runtime exception in the event of a
-     * record passed with a differing ID.
-     *
-     * @param id alleged id for this record
-     */
+    private void ensureRows(int rownum) {
+        adjustRows(celltype, rownum+1, IntList.class);
+        adjustRows(xfs, rownum+1, IntList.class);
+        adjustRows(numericcells, rownum+1, DoubleList.class);
+        adjustRows(formulaptgs, rownum+1, ArrayList.class);
+        adjustRows(stringvals, rownum+1, ArrayList.class);
 
-    protected void validateSid(short id)
-    {
     }
 
-    /**
-     * return the non static version of the id for this record.
-     */
-
-    public short getSid()
-    {
-        return sid;
-    }
-
-    public int getRecordSize() {
-    
-        int size = 0;
-        Iterator irecs = records.values().iterator();
-        
-        while (irecs.hasNext()) {
-                size += (( Record ) irecs.next()).getRecordSize();
+    private void adjustRows(List list, int size, Class theclass) {
+        while (list.size() < size) {
+            try {
+                list.add(theclass.newInstance());
+            } catch (Exception e) {
+                throw new RuntimeException("Could Not Instantiate Row in adjustRows");
+            }
         }
-
-        return size;
-//        return size;
     }
 
-    public Iterator getIterator()
-    {
-        return records.values().iterator();
+    private void adjustIntList(IntList list, int size) {
+        while (list.size() < size) {
+            list.add(-1);
+        }
     }
 
-    /** Performs a deep clone of the record*/
-    public Object clone() {
-      ValueRecordsAggregate rec = new ValueRecordsAggregate();
-      for (Iterator valIter = getIterator(); valIter.hasNext();) {
-        CellValueRecordInterface val = (CellValueRecordInterface)((CellValueRecordInterface)valIter.next()).clone();
-        rec.insertCell(val);
-      }
-      return rec;
+    private void adjustDoubleList(DoubleList list, int size) {
+        while (list.size() < size) {
+            list.add(-1);
+        }
     }
+
+    private void adjustObjectList(List list, int size) {
+        while (list.size() < size) {
+            list.add(new ArrayList());
+        }
+    }
+
+    private void adjustStringList(List list, int size) {
+        while (list.size() < size) {
+            list.add(new String());
+        }
+    }
+
+
+    protected int findNextPopulatedCell(int row, int col) {
+
+        IntList ctRow = (IntList) celltype.get(row);
+        int retval = -1;
+        if (ctRow.size() > col+1) {
+            for (int k = col+1; k < ctRow.size() +1; k++) {
+
+                if (k != ctRow.size()) {
+                   int val = ctRow.get(k);
+
+                   if (val != -1) {
+                       retval = k;
+                       break;
+                   }  // end if (val !=...
+
+                } //end if (k !=..
+
+            }   //end for
+
+        }  //end if (ctRow.size()...
+        return retval;
+    }
+
+
+
+    public short getSid() {
+      return sid;
+    }
+
+
+    public void fillFields(byte[] data, short size, int offset) {
+
+    }
+
+    protected void validateSid(short sid) {
+
+    }
+
+
 }
 
-/*
- * class XYLocator implements Comparable {
- *   private int row = 0;
- *   private int col = 0;
- *   public XYLocator(int row, int col) {
- *       this.row = row;
- *       this.col = col;
- *   }
- *
- *   public int getRow() {
- *       return row;
- *   }
- *
- *   public int getCol() {
- *       return col;
- *   }
- *
- *   public int compareTo(Object obj) {
- *        XYLocator loc = (XYLocator)obj;
- *
- *        if (this.getRow() == loc.getRow() &&
- *            this.getCol() == loc.getCol() )
- *               return 0;
- *
- *        if (this.getRow() < loc.getRow())
- *               return -1;
- *
- *        if (this.getRow() > loc.getRow())
- *               return 1;
- *
- *        if (this.getCol() < loc.getCol())
- *               return -1;
- *
- *        if (this.getCol() > loc.getCol())
- *               return 1;
- *
- *        return -1;
- *
- *   }
- *
- *   public boolean equals(Object obj) {
- *       if (!(obj instanceof XYLocator)) return false;
- *
- *       XYLocator loc = (XYLocator)obj;
- *       if (this.getRow() == loc.getRow()
- *             &&
- *           this.getCol() == loc.getCol()
- *           ) return true;
- *      return false;
- *   }
- *
- *
- * }
- */
+class VRAIterator implements Iterator {
+    private boolean hasNext;
+    private ValueRecordsAggregate vra;
+    int popindex;
+    int row;
+    int rowlimit;
+    int col;
+    CellValueRecordInterface current = null;
+    CellValueRecordInterface next    = null;
+
+    public VRAIterator(ValueRecordsAggregate vra) {
+        this.vra = vra;
+        this.rowlimit = -1;
+        popindex = 0;
+        if (vra.getPhysicalNumberOfCells() > 0) {
+            hasNext = true;
+            next = findNextCell(null);
+        }
+    }
+
+    public VRAIterator(ValueRecordsAggregate vra, int row) {
+        this(vra);
+        rowlimit = row;
+        this.row = row;
+        this.popindex = vra.populatedRows.indexOf(row);
+    }
+
+    public boolean hasNext() {
+        return hasNext;
+    }
+
+    public Object next() {
+        current = next;
+        next = findNextCell(current);
+        if (next == null) {
+            hasNext = false;
+        }
+        return current;
+    }
+
+    public void remove() {
+       vra.removeCell(current);
+    }
+
+    private CellValueRecordInterface findNextCell(CellValueRecordInterface current) {
+        IntList ctRow = null;
+        int rowNum = -1;
+        int colNum = -1;
+        int newCol = -1;
+        boolean wasntFirst = false;
+
+        if (current != null) {
+            wasntFirst = true;
+            rowNum = current.getRow();
+            colNum = current.getColumn();
+            ctRow = ((IntList)vra.celltype.get(rowNum));
+        }
+
+        //if popindex = row iwth no cells, fast forward till we get to one with size > 0
+        while ((ctRow == null || ctRow.size() == 0) && vra.populatedRows.size() > popindex) {
+            if (wasntFirst == true) {
+                throw new RuntimeException("CANT HAPPEN WASNTFIRST BUT WE'RE FASTFORWARDING!");
+            }
+            rowNum = vra.populatedRows.get(popindex);
+            ctRow = (IntList)vra.celltype.get(rowNum);
+            if (ctRow.size() == 0) {
+                if (rowlimit == -1) {
+                    popindex++;
+                } else {
+                    this.hasNext = false;
+                }
+            }
+        }
+
+        if (rowNum == -1) {
+            return null;
+        }
+
+        while (newCol == -1) {
+            newCol = findNextPopulatedCell(rowNum,colNum);
+            colNum = newCol;
+            if (colNum == -1) {                          //end of row, forward one row
+                popindex++;
+                if (popindex < vra.populatedRows.size() && rowlimit == -1) {
+                    rowNum = vra.populatedRows.get(popindex);
+                } else {
+                    return null;
+                }
+            }
+        }
+
+        return vra.constructRecord(rowNum,colNum);
+    }
+
+    private int findNextPopulatedCell(int row, int col) {
+
+        /*IntList ctRow = (IntList) vra.celltype.get(row);
+        int retval = -1;
+        if (ctRow.size() > col+1) {
+            for (int k = col+1; k < ctRow.size() +1; k++) {
+
+                if (k != ctRow.size()) {
+                   int val = ctRow.get(k);
+
+                   if (val != -1) {
+                       retval = k;
+                       break;
+                   }  // end if (val !=...
+
+                } //end if (k !=..
+
+            }   //end for
+
+        }  //end if (ctRow.size()...
+        return retval;*/
+        return vra.findNextPopulatedCell(row, col);
+    }
+
+}

@@ -2,9 +2,13 @@
 <classpath>
     <classpathentry kind="src" path="src/testcases"/>
     <classpathentry kind="src" path="src/java"/>
-    <classpathentry kind="src" path="src/examples/src"/>
-    <classpathentry kind="var" path="JRE_LIB" rootpath="JRE_SRCROOT" sourcepath="JRE_SRC"/>
-    <classpathentry kind="lib" path="tools/cents/junit.cent/lib/junit-3.7.jar"/>
-    <classpathentry kind="lib" path="lib/core/commons-logging-1.0.jar"/>
+    <classpathentry kind="var" path="JRE_LIB" sourcepath="JRE_SRC"/>
+    <classpathentry kind="lib" path="/Users/andrewoliver/projects/jboss/test/apache-ant-1.5.3-1/lib/ant.jar"/>
+    <classpathentry kind="lib" path="/Users/andrewoliver/projects/jboss/test/apache-ant-1.5.3-1/lib/junit.jar"/>
+    <classpathentry kind="lib" path="/Users/andrewoliver/projects/jboss/test/apache-ant-1.5.3-1/lib/commons-logging.jar"/>
+    <classpathentry kind="lib" path="/Users/andrewoliver/projects/jboss/test/apache-ant-1.5.3-1/lib/xerces-2.3.0.jar"/>
+    <classpathentry kind="lib" path="/Users/andrewoliver/projects/jboss/test/apache-ant-1.5.3-1/lib/xercesImpl.jar"/>
+    <classpathentry kind="lib" path="/Users/andrewoliver/projects/jboss/test/apache-ant-1.5.3-1/lib/xml-apis.jar"/>
+    <classpathentry kind="lib" path="/Users/andrewoliver/projects/jakarta/poimerge/jakarta-poi/lib/xalan-2.2.0.jar"/>
     <classpathentry kind="output" path="build"/>
 </classpath>
