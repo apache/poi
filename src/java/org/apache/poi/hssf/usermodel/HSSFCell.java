@@ -71,7 +71,7 @@ public class HSSFCell
      * @see #getCellType()
      */
 
-    public final static int          CELL_TYPE_NUMERIC           = 0;
+    public final static int          CELL_TYPE_NUMERIC           = 1;
 
     /**
      * String Cell type (1)
@@ -79,7 +79,7 @@ public class HSSFCell
      * @see #getCellType()
      */
 
-    public final static int          CELL_TYPE_STRING            = 1;
+    public final static int          CELL_TYPE_STRING            = 2;
 
     /**
      * Formula Cell type (2)
@@ -87,7 +87,7 @@ public class HSSFCell
      * @see #getCellType()
      */
 
-    public final static int          CELL_TYPE_FORMULA           = 2;
+    public final static int          CELL_TYPE_FORMULA           = 3;
 
     /**
      * Blank Cell type (3)
@@ -95,7 +95,7 @@ public class HSSFCell
      * @see #getCellType()
      */
 
-    public final static int          CELL_TYPE_BLANK             = 3;
+    public final static int          CELL_TYPE_BLANK             = 4;
 
     /**
      * Boolean Cell type (4)
@@ -103,7 +103,7 @@ public class HSSFCell
      * @see #getCellType()
      */
 
-    public final static int          CELL_TYPE_BOOLEAN           = 4;
+    public final static int          CELL_TYPE_BOOLEAN           = 5;
 
     /**
      * Error Cell type (5)
@@ -111,9 +111,11 @@ public class HSSFCell
      * @see #getCellType()
      */
 
-    public final static int          CELL_TYPE_ERROR             = 5;
+    public final static int          CELL_TYPE_ERROR             = 6;
+
     public final static short        ENCODING_COMPRESSED_UNICODE = 0;
     public final static short        ENCODING_UTF_16             = 1;
+
     private short                    cellNum;
     private int                      cellType;
     private HSSFCellStyle            cellStyle;

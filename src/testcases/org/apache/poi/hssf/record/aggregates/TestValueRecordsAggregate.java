@@ -144,27 +144,28 @@ public class TestValueRecordsAggregate extends TestCase
 //
 //    }
 
-    public void testSerialize() throws Exception
+    public void testSerializeCellRow() throws Exception
     {
         byte[] actualArray = new byte[36];
         byte[] expectedArray = new byte[]
         {
-            (byte)0x06, (byte)0x00, (byte)0x16, (byte)0x00,
-            (byte)0x01, (byte)0x00, (byte)0x01, (byte)0x00,
-            (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00,
-            (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00,
-            (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00,
-            (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00,
-            (byte)0x00, (byte)0x00, (byte)0x01, (byte)0x02,
-            (byte)0x06, (byte)0x00, (byte)0x02, (byte)0x00,
-            (byte)0x02, (byte)0x00, (byte)0x00, (byte)0x00,
+            (byte)0x06,(byte)0x00,(byte)0x16,(byte)0x00,
+            (byte)0x01,(byte)0x00,(byte)0x01,(byte)0x00,
+            (byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,
+            (byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,
+            (byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,
+            (byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,
+            (byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,
+            (byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,
+            (byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,
+
         };
         List records = testData();
         valueRecord.construct( 0, records );
-        int bytesWritten = valueRecord.serialize( 0, actualArray );
-        assertEquals( 36, bytesWritten );
+        int bytesWritten = valueRecord.serializeCellRow( 1, 0, actualArray );
+        assertEquals( 26, bytesWritten );
         for (int i = 0; i < 36; i++)
-            assertEquals( expectedArray[i], actualArray[i] );
+            assertEquals( "wrong value at offset " + i, expectedArray[i], actualArray[i] );
     }
 
     public static void main( String[] args )
