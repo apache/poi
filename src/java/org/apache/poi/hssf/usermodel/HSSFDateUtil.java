@@ -141,6 +141,46 @@ public class HSSFDateUtil
             return null;
         }
     }
+    
+    /**
+     *  Check if a cell contains a date
+     *  Since dates are stored internally in Excel as double values 
+     *  we infer it is a date if it is formatted as such. 
+     */
+    public static boolean isCellDateFormatted(HSSFCell cell) {
+        if (cell == null) return false;
+        boolean bDate = false;
+        
+        double d = cell.getNumericCellValue();
+        if ( HSSFDateUtil.isValidExcelDate(d) ) {
+            HSSFCellStyle style = cell.getCellStyle();
+            int i = style.getDataFormat();
+            switch(i) {
+                // Internal Date Formats as described on page 427 in
+                // Microsoft Excel Dev's Kit...
+                case 0x0e:
+                case 0x0f:
+                case 0x10:
+                case 0x11:
+                case 0x12:
+                case 0x13:
+                case 0x14:
+                case 0x15:
+                case 0x16:
+                case 0x2d:
+                case 0x2e:
+                case 0x2f:
+                    bDate = true;
+                    break;
+                    
+                default:
+                    bDate = false;
+                    break;
+            }
+        }
+        return bDate;
+    }
+
 
     /**
      * Given a double, checks if it is a valid Excel date.
