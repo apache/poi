@@ -5,6 +5,7 @@
   <title>Contribuciones de Terceras Partes</title>
   <authors>
    <person name="Nicola Ken Barozzi" email="barozzi@nicolaken.com"/>
+   <person name="Agustín Martín Barbero" email="-"/>
   </authors>
  </header>
 
@@ -12,7 +13,7 @@
 
  <section title="Cómo Contribuir">
   <p>
-   See <link href="contrib.xml">Cómo contribuir a Poi</link>.
+   Vea <link href="contrib.xml">Cómo contribuir a Poi</link>.
   </p>
 
  </section>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "./dtd/document-v11.dtd">
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "../../dtd/document-v11.dtd">
 
 <document>
   <header>
@@ -7,11 +7,12 @@
     <authors>
       <person id="AO" name="Andrew C. Oliver" email="acoliver@apache.org"/>
       <person id="CR" name="Cameron Riley" email="crileyNO@SPAMekmail.com"/>
+      <person id="AMB" name="Agustín Martín Barbero" email="-"/>
     </authors>
   </header>
   
   <body>
-    <section title="Introduction">
+    <section title="Introducción">
        <p>
           A number of people are using POI for a variety of purposes.  As with
           any new API or technology, the first question people generally ask

@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "./dtd/document-v11.dtd">
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "../../dtd/document-v11.dtd">
 
 <document>
   <header>
     <title>Historia del Proyecto</title>
     <authors>
       <person id="AO" name="Andrew C. Oliver" email="acoliver@apache.org"/>
+      <person id="AMB" name="Agustín Martín Barbero" email="-"/>
     </authors>
   </header>
   
