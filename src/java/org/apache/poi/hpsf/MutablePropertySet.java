@@ -106,7 +106,6 @@ public class MutablePropertySet extends PropertySet
          * one section it is added right here. */
         sections = new LinkedList();
         sections.add(new MutableSection());
-        sectionCount = 1;
     }
 
 
@@ -204,7 +203,6 @@ public class MutablePropertySet extends PropertySet
     public void clearSections()
     {
         sections = null;
-        sectionCount = 0;
     }
 
 
@@ -221,7 +219,6 @@ public class MutablePropertySet extends PropertySet
         if (sections == null)
             sections = new LinkedList();
         sections.add(section);
-        sectionCount = sections.size();
     }
 
 

@@ -280,9 +280,9 @@ public class VariantSupport extends Variant
                 // final int first = offset + LittleEndian.INT_SIZE;
                 long bool = LittleEndian.getUInt(src, o1);
                 if (bool != 0)
-                    value = new Boolean(true);
+                    value = Boolean.TRUE;
                 else
-                    value = new Boolean(false);
+                    value = Boolean.FALSE;
                 break;
             }
             default:
