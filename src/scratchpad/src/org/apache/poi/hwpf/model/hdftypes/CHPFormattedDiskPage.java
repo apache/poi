@@ -145,7 +145,7 @@ public class CHPFormattedDiskPage extends FormattedDiskPage
     {
       byte[] buf = new byte[512];
       int size = _chpxList.size();
-      int grpprlOffset = 0;
+      int grpprlOffset = 511;
       int offsetOffset = 0;
       int fcOffset = 0;
 
@@ -185,7 +185,7 @@ public class CHPFormattedDiskPage extends FormattedDiskPage
       buf[511] = (byte)index;
 
       offsetOffset = (FC_SIZE * index) + FC_SIZE;
-      grpprlOffset =  offsetOffset + index + (grpprlOffset % 2);
+      //grpprlOffset =  offsetOffset + index + (grpprlOffset % 2);
 
       CHPX chpx = null;
       for (int x = 0; x < index; x++)
@@ -194,10 +194,13 @@ public class CHPFormattedDiskPage extends FormattedDiskPage
         byte[] grpprl = chpx.getGrpprl();
 
         LittleEndian.putInt(buf, fcOffset, chpx.getStart() + fcMin);
+        grpprlOffset -= (1 + grpprl.length);
+        grpprlOffset -= (grpprlOffset % 2);
         buf[offsetOffset] = (byte)(grpprlOffset/2);
-        System.arraycopy(grpprl, 0, buf, grpprlOffset, grpprl.length);
+        buf[grpprlOffset] = (byte)grpprl.length;
+        System.arraycopy(grpprl, 0, buf, grpprlOffset + 1, grpprl.length);
 
-        grpprlOffset += grpprl.length + (grpprl.length % 2);
+
         offsetOffset += 1;
         fcOffset += FC_SIZE;
       }

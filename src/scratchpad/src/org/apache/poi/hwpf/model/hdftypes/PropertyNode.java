@@ -99,6 +99,28 @@ public class PropertyNode implements Comparable
   {
     return _buf;
   }
+
+  public boolean equals(Object o)
+  {
+    if (((PropertyNode)o).getStart() == _cpStart &&
+        ((PropertyNode)o).getEnd() == _cpEnd)
+    {
+      byte[] testBuf = ((PropertyNode)o).getBuf();
+
+      if (testBuf.length == _buf.length)
+      {
+        for (int x = 0; x < _buf.length; x++)
+        {
+          if (testBuf[x] != _buf[x])
+          {
+            return false;
+          }
+        }
+        return true;
+      }
+    }
+    return false;
+  }
   /**
    * Used for sorting in collections.
    */
