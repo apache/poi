@@ -117,7 +117,7 @@ public class POILogFactory
             _creator.getRootLogger()
                 .addAppender(new ConsoleAppender(new SimpleLayout(),
                                                  ConsoleAppender.SYSTEM_OUT));
-            _creator.getRootLogger().setLevel(Level.INFO);
+            _creator.getRootLogger().setLevel((Level)Level.INFO);
         }
         _loggers = new HashMap();
     }
