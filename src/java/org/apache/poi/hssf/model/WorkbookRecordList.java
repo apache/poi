@@ -103,7 +103,7 @@ public class WorkbookRecordList
         if (getBackuppos() >= pos) setBackuppos( backuppos + 1 );
         if (getNamepos() >= pos) setNamepos(namepos+1);
         if (getSupbookpos() >= pos) setSupbookpos(supbookpos+1);
-        if (getPalettepos() >= pos) setPalettepos( palettepos + 1 );
+        if ((getPalettepos() != -1) && (getPalettepos() >= pos)) setPalettepos( palettepos + 1 );
         if (getExternsheetPos() >= pos) setExternsheetPos(getExternsheetPos() + 1);
     }
 
@@ -128,7 +128,7 @@ public class WorkbookRecordList
         if (getBackuppos() >= pos) setBackuppos( backuppos - 1 );
         if (getNamepos() >= pos) setNamepos(getNamepos()-1);
         if (getSupbookpos() >= pos) setSupbookpos(getSupbookpos()-1);
-        if (getPalettepos() >= pos) setPalettepos( palettepos - 1 );
+        if ((getPalettepos() != -1) && (getPalettepos() >= pos)) setPalettepos( palettepos - 1 );
         if (getExternsheetPos() >= pos) setExternsheetPos( getExternsheetPos() -1);
     }
 
