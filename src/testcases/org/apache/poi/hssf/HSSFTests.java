@@ -50,6 +50,7 @@ import org.apache.poi.hssf.record.TestTickRecord;
 import org.apache.poi.hssf.record.TestUnitsRecord;
 import org.apache.poi.hssf.record.TestValueRangeRecord;
 import org.apache.poi.hssf.record.aggregates.TestRowRecordsAggregate;
+import org.apache.poi.hssf.record.formula.TestFuncPtg;
 import org.apache.poi.hssf.usermodel.TestCellStyle;
 import org.apache.poi.hssf.usermodel.TestFormulas;
 import org.apache.poi.hssf.usermodel.TestHSSFCell;
@@ -148,6 +149,9 @@ public class HSSFTests
 		suite.addTest(new TestSuite(TestRangeAddress.class));		
         suite.addTest(new TestSuite(TestRKUtil.class));
         suite.addTest(new TestSuite(TestSheetReferences.class));
+        
+        //not a real junit guru so i'm just adding it here
+        suite.addTest(new TestSuite(TestFuncPtg.class));
         
         //$JUnit-END$
         return suite;
