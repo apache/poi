@@ -40,6 +40,11 @@
     <property name="scratchpad.lib"  value="${scratchpad.dir}/lib"/>
     <property name="scratchpad.name" value="${name}-scratchpad"/>
 
+    <property name="examples.dir"  value="${src.dir}/examples"/>
+    <property name="examples.src"  value="${examples.dir}/src"/>
+    <property name="examples.lib"  value="${examples.dir}/lib"/>
+    <property name="examples.name" value="${name}-examples"/>
+
     <property name="contrib.dir"  value="${src.dir}/contrib"/>
     <property name="contrib.src"  value="${contrib.dir}/src"/>
     <property name="contrib.lib"  value="${contrib.dir}/lib"/>
@@ -58,6 +63,9 @@
     <property name="build.scratchpad" value="${build.dir}/scratchpad"/>
     <property name="build.scratchpad.src" value="${build.scratchpad}/src"/>
     <property name="build.scratchpad.dest" value="${build.scratchpad}/classes"/>
+    <property name="build.examples" value="${build.dir}/examples"/>
+    <property name="build.examples.src" value="${build.examples}/src"/>
+    <property name="build.examples.dest" value="${build.examples}/classes"/>
     <property name="build.contrib" value="${build.dir}/contrib"/>
     <property name="build.contrib.src" value="${build.contrib}/src"/>
     <property name="build.contrib.dest" value="${build.contrib}/classes"/>    
