@@ -109,5 +109,22 @@ public static boolean isCellDateFormatted(HSSFCell cell) {
   }
             </source>
         </answer>
+        <question>
+            I'm trying to stream an XLS file from a servlet and I'm having some trouble.  What's the problem?
+        </question>
+        <answer>
+            <p>
+            Dont depend on IE to show you an attachment properly if you stream it via a
+            servlet. Every minor version of IE has different bugs.
+            </p>
+            <p>
+            To guarantee it to work, instead of doing a server-side redirect
+            (requestdispather), try doing a client side redirect to your xls file. Thats
+            guaranteed to work ... (also keep in mind that *sometimes* IE makes TWO
+            requests for a document that is opened by an external handler .. so if your xls
+            production is heavy, you might have a problem.)
+            </p>
+            <!-- Thanks to Avik for the answer -->
+        </answer>
     </faq>
 </faqs>
