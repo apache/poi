@@ -54,11 +54,19 @@
  */
 package org.apache.poi.hpsf.examples;
 
-import java.io.*;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
-import org.apache.poi.hpsf.*;
-import org.apache.poi.hpsf.wellknown.*;
-import org.apache.poi.poifs.filesystem.*;
+import org.apache.poi.hpsf.MutableProperty;
+import org.apache.poi.hpsf.MutablePropertySet;
+import org.apache.poi.hpsf.MutableSection;
+import org.apache.poi.hpsf.SummaryInformation;
+import org.apache.poi.hpsf.Variant;
+import org.apache.poi.hpsf.WritingNotSupportedException;
+import org.apache.poi.hpsf.wellknown.PropertyIDMap;
+import org.apache.poi.hpsf.wellknown.SectionIDMap;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
  * <p>This class is a simple sample application showing how to create a property

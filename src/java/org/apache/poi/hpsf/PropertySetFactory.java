@@ -84,8 +84,6 @@ public class PropertySetFactory
      * contain a property set.
      * @throws MarkUnsupportedException if the stream does not support
      * the <code>mark</code> operation.
-     * @throws UnexpectedPropertySetTypeException if the property
-     * set's type is unexpected.
      * @throws IOException if some I/O problem occurs.
      */
     public static PropertySet create(final InputStream stream)

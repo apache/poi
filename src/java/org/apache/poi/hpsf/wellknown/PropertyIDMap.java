@@ -141,7 +141,7 @@ public class PropertyIDMap extends HashMap
      * document</p> */
     public static final int PID_APPNAME = 18;
 
-    /** <p>ID of the property that denotes... FIXME (2)</p> */
+    /** <p>FIXME (2): ID of the property that denotes...</p> */
     public static final int PID_SECURITY = 19;
 
 

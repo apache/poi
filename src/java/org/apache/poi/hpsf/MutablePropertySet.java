@@ -106,6 +106,7 @@ public class MutablePropertySet extends PropertySet
          * one section it is added right here. */
         sections = new LinkedList();
         sections.add(new MutableSection());
+        sectionCount = 1;
     }
 
 
@@ -123,7 +124,7 @@ public class MutablePropertySet extends PropertySet
         byteOrder = ps.getByteOrder();
         format = ps.getFormat();
         osVersion = ps.getOSVersion();
-        classID = new ClassID(ps.getClassID().getBytes(), 0);
+        setClassID(ps.getClassID());
         clearSections();
         for (final Iterator i = ps.getSections().iterator(); i.hasNext();)
         {

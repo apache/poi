@@ -100,7 +100,7 @@ public class Property
 {
 
     /** <p>Codepage 1200 denotes Unicode.</p> */
-    private static final int CP_UNICODE = 1200;
+    public static final int CP_UNICODE = 1200;
 
     /** <p>The property's ID.</p> */
     protected long id;
@@ -318,6 +318,10 @@ public class Property
 
 
     /**
+     * <p>Compares two properties. Please beware that a property with ID == 0 is
+     * a special case: It does not have a type, and its value is the section's
+     * dictionary.</p>
+     * 
      * @see Object#equals(java.lang.Object)
      */
     public boolean equals(final Object o)
@@ -326,13 +330,14 @@ public class Property
             return false;
         final Property p = (Property) o;
         final Object pValue = p.getValue();
-        if (id != p.getID() || type != p.getType())
+        final long pId = p.getID();
+        if (id != pId || (id != 0 && type != p.getType()))
             return false;
         if (value == null && pValue == null)
             return true;
         if (value == null || pValue == null)
             return false;
-        
+
         /* It's clear now that both values are non-null. */
         final Class valueClass = value.getClass();
         final Class pValueClass = pValue.getClass();
