@@ -2129,7 +2129,7 @@ public class Sheet implements Model
      */
     public void setHeader (HeaderRecord newHeader)
     {
-	header = newHeader;
+    	header = newHeader;
     }
 
     /**
@@ -2138,7 +2138,7 @@ public class Sheet implements Model
      */
     public FooterRecord getFooter ()
     {
-	return footer;
+	    return footer;
     }
 
     /**
@@ -2147,7 +2147,7 @@ public class Sheet implements Model
      */
     public void setFooter (FooterRecord newFooter)
     {
-	footer = newFooter;
+	    footer = newFooter;
     }
 
     /**
@@ -2156,7 +2156,7 @@ public class Sheet implements Model
      */
     public PrintSetupRecord getPrintSetup ()
     {
-	return printSetup;
+	    return printSetup;
     }
 
     /**
@@ -2165,7 +2165,7 @@ public class Sheet implements Model
      */
     public void setPrintSetup (PrintSetupRecord newPrintSetup)
     {
-	printSetup = newPrintSetup;
+	    printSetup = newPrintSetup;
     }
 
     /**
@@ -2174,7 +2174,7 @@ public class Sheet implements Model
      */
     public PrintGridlinesRecord getPrintGridlines ()
     {
-	return printGridlines;
+	    return printGridlines;
     }
 
     /**
@@ -2183,7 +2183,7 @@ public class Sheet implements Model
      */
     public void setPrintGridlines (PrintGridlinesRecord newPrintGridlines)
     {
-	printGridlines = newPrintGridlines;
+	    printGridlines = newPrintGridlines;
     }
 
     /**
@@ -2191,8 +2191,8 @@ public class Sheet implements Model
      * @param sel True to select the sheet, false otherwise.
      */
     public void setSelected(boolean sel) {
-	WindowTwoRecord windowTwo = (WindowTwoRecord) findFirstRecordBySid(WindowTwoRecord.sid);
-	windowTwo.setSelected(sel);
+        WindowTwoRecord windowTwo = (WindowTwoRecord) findFirstRecordBySid(WindowTwoRecord.sid);
+        windowTwo.setSelected(sel);
     }
 
      /**
@@ -2201,31 +2201,33 @@ public class Sheet implements Model
       * @return the size of the margin
       */
      public double getMargin(short margin) {
-       Margin m;
-       switch (margin) {
-       case LeftMargin :
-           m = (Margin)findFirstRecordBySid(LeftMarginRecord.sid);
-           if (m == null)
-               return .75;
-           break;
-       case RightMargin :
-           m = (Margin)findFirstRecordBySid(RightMarginRecord.sid);
-           if (m == null)
-               return .75;
-           break;
-       case TopMargin :
-           m = (Margin)findFirstRecordBySid(TopMarginRecord.sid);
-           if (m == null)
-               return 1.0;
-           break;
-       case BottomMargin :
-           m = (Margin)findFirstRecordBySid(BottomMarginRecord.sid);
-           if (m == null)
-               return 1.0;
-           break;
-       default : throw new RuntimeException("Unknown margin constant:  " + margin);
-       }
-       return m.getMargin();
+         Margin m;
+         switch ( margin )
+         {
+             case LeftMargin:
+                 m = (Margin) findFirstRecordBySid( LeftMarginRecord.sid );
+                 if ( m == null )
+                     return .75;
+                 break;
+             case RightMargin:
+                 m = (Margin) findFirstRecordBySid( RightMarginRecord.sid );
+                 if ( m == null )
+                     return .75;
+                 break;
+             case TopMargin:
+                 m = (Margin) findFirstRecordBySid( TopMarginRecord.sid );
+                 if ( m == null )
+                     return 1.0;
+                 break;
+             case BottomMargin:
+                 m = (Margin) findFirstRecordBySid( BottomMarginRecord.sid );
+                 if ( m == null )
+                     return 1.0;
+                 break;
+             default :
+                 throw new RuntimeException( "Unknown margin constant:  " + margin );
+         }
+         return m.getMargin();
      }
 
      /**
@@ -2234,39 +2236,45 @@ public class Sheet implements Model
       * @param size the size of the margin
       */
      public void setMargin(short margin, double size) {
-       Margin m;
-       switch (margin) {
-       case LeftMargin :
-           m = (Margin)findFirstRecordBySid(LeftMarginRecord.sid);
-           if (m == null) {
-               m = new LeftMarginRecord();
-               records.add(getDimsLoc() + 1, m);
-           }
-           break;
-       case RightMargin :
-           m = (Margin)findFirstRecordBySid(RightMarginRecord.sid);
-           if (m == null) {
-               m = new RightMarginRecord();
-               records.add(getDimsLoc() + 1, m);
-           }
-           break;
-       case TopMargin :
-           m = (Margin)findFirstRecordBySid(TopMarginRecord.sid);
-           if (m == null) {
-               m = new TopMarginRecord();
-               records.add(getDimsLoc() + 1, m);
-           }
-           break;
-       case BottomMargin :
-           m = (Margin)findFirstRecordBySid(BottomMarginRecord.sid);
-           if (m == null) {
-               m = new BottomMarginRecord();
-               records.add(getDimsLoc() + 1, m);
-           }
-           break;
-       default : throw new RuntimeException("Unknown margin constant:  " + margin);
-       }
-       m.setMargin(size);
+         Margin m;
+         switch ( margin )
+         {
+             case LeftMargin:
+                 m = (Margin) findFirstRecordBySid( LeftMarginRecord.sid );
+                 if ( m == null )
+                 {
+                     m = new LeftMarginRecord();
+                     records.add( getDimsLoc() + 1, m );
+                 }
+                 break;
+             case RightMargin:
+                 m = (Margin) findFirstRecordBySid( RightMarginRecord.sid );
+                 if ( m == null )
+                 {
+                     m = new RightMarginRecord();
+                     records.add( getDimsLoc() + 1, m );
+                 }
+                 break;
+             case TopMargin:
+                 m = (Margin) findFirstRecordBySid( TopMarginRecord.sid );
+                 if ( m == null )
+                 {
+                     m = new TopMarginRecord();
+                     records.add( getDimsLoc() + 1, m );
+                 }
+                 break;
+             case BottomMargin:
+                 m = (Margin) findFirstRecordBySid( BottomMarginRecord.sid );
+                 if ( m == null )
+                 {
+                     m = new BottomMarginRecord();
+                     records.add( getDimsLoc() + 1, m );
+                 }
+                 break;
+             default :
+                 throw new RuntimeException( "Unknown margin constant:  " + margin );
+         }
+         m.setMargin( size );
      }
 
     public int getEofLoc()
