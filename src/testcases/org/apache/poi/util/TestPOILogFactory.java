@@ -1,6 +1,5 @@
 
-/*
- * ====================================================================
+/* ====================================================================
  * The Apache Software License, Version 1.1
  *
  * Copyright (c) 2002 The Apache Software Foundation.  All rights
@@ -53,75 +52,74 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
+
 package org.apache.poi.util;
 
-import java.io.FileInputStream;
-import java.io.IOException;
+import org.apache.log4j.Category;
 
-import java.util.*;
+import junit.framework.*;
 
-import org.apache.commons.logging.*;
+import java.io.*;
 
 /**
- * Provides logging without clients having to mess with
- * configuration/initialization.
- *
- * @author Andrew C. Oliver (acoliver at apache dot org)
  * @author Marc Johnson (mjohnson at apache dot org)
+ * @author Glen Stampoultzis (glens at apache.org)
  * @author Nicola Ken Barozzi (nicolaken at apache.org)
  */
 
-public class POILogFactory
+public class TestPOILogFactory
+    extends TestCase
 {
-    private static LogFactory   _creator = LogFactory.getFactory();
-
-    // map of POILogger instances, with classes as keys
-    private static Map          _loggers = new HashMap();;
-
-
     /**
-     * construct a POILogFactory.
+     * Creates new TestPOILogFactory
+     *
+     * @param name
      */
 
-    private POILogFactory()
+    public TestPOILogFactory(String name)
     {
+        super(name);
     }
 
     /**
-     * Get a logger, based on a class name
+     * test log creation
      *
-     * @param theclass the class whose name defines the log
-     *
-     * @return a POILogger for the specified class
+     * @exception IOException
      */
 
-    public static POILogger getLogger(final Class theclass)
+    public void testLog()
+        throws IOException
     {
-        return getLogger(theclass.getName());
+        //NKB Testing only that logging classes use gives no exception
+        //    Since logging can be disabled, no checking of logging
+        //    output is done.
+                 
+        POILogger     l1 = POILogFactory.getLogger("org.apache.poi.hssf.test");
+        POILogger     l2 = POILogFactory.getLogger("org.apache.poi.hdf.test");
+
+        l1.log(POILogger.FATAL, "testing cat org.apache.poi.hssf.*:FATAL");
+        l1.log(POILogger.ERROR, "testing cat org.apache.poi.hssf.*:ERROR");
+        l1.log(POILogger.WARN,  "testing cat org.apache.poi.hssf.*:WARN");
+        l1.log(POILogger.INFO,  "testing cat org.apache.poi.hssf.*:INFO");
+        l1.log(POILogger.DEBUG, "testing cat org.apache.poi.hssf.*:DEBUG");
+
+        l2.log(POILogger.FATAL, "testing cat org.apache.poi.hdf.*:FATAL");
+        l2.log(POILogger.ERROR, "testing cat org.apache.poi.hdf.*:ERROR");
+        l2.log(POILogger.WARN,  "testing cat org.apache.poi.hdf.*:WARN");
+        l2.log(POILogger.INFO,  "testing cat org.apache.poi.hdf.*:INFO");
+        l2.log(POILogger.DEBUG, "testing cat org.apache.poi.hdf.*:DEBUG");
+
     }
-    
+
     /**
-     * Get a logger, based on a String
+     * main method to run the unit tests
      *
-     * @param cat the String that defines the log
-     *
-     * @return a POILogger for the specified class
+     * @param ignored_args
      */
 
-    public static POILogger getLogger(final String cat)
+    public static void main(String [] ignored_args)
     {
-        POILogger logger = null;
-
-        if (_loggers.containsKey(cat))
-        {
-            logger = ( POILogger ) _loggers.get(cat);
-        }
-        else
-        {
-            logger = new POILogger(_creator.getInstance(cat));
-            _loggers.put(cat, logger);
-        }
-        return logger;
+        System.out.println("Testing basic util.POILogFactory functionality");
+        junit.textui.TestRunner.run(TestPOILogFactory.class);
     }
-        
-}   // end public class POILogFactory
+}
