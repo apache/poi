@@ -432,8 +432,8 @@ FORREST_HOME environment variable!</echo>
     <!--        </uptodate>-->
     <!--    </target>-->
 
-    <target name="docs" depends="init,-check-forrest-installed,-check-docs" unless="main.docs.notRequired"
-        description="Builds the POI website">
+    <target name="docs" depends="init, -check-forrest-installed, -check-docs"
+      unless="main.docs.notRequired" description="Builds the POI website">
 
         <mkdir dir="${build.site.src}/src/documentation/content/apidocs"/>
         <copy todir="${build.site.src}/src/documentation/content/apidocs">
@@ -504,7 +504,8 @@ FORREST_HOME environment variable!</echo>
   <!-- Creates reports and API documentation -->
   <target name="reports" unless="reports.notRequired" depends="-check-reports,
     is-available-xslt, is-available-junit, is-available-jdepend,
-    test-ignore-failures, jdepend, cvschangelog, javadocs, clover.html"
+    test-ignore-failures, junitreport, jdepend, cvschangelog, javadocs,
+    clover.html"
     description="Creates various reports and the API documentation">
   </target>
 
