@@ -1,6 +1,6 @@
 <!-- ===================================================================
      
-     Apache FAQ DTD (Version 1.0)
+     Apache FAQ DTD (Version 1.1)
 
 PURPOSE:
   This DTD was developed to create a simple yet powerful document 
@@ -11,14 +11,13 @@ PURPOSE:
 TYPICAL INVOCATION:
 
   <!DOCTYPE document PUBLIC
-       "-//APACHE//DTD FAQ Vx.yz//EN"
-       "http://xml.apache.org/DTD/faq-vxyz.dtd">
+       "-//APACHE//DTD FAQ Vx.y//EN"
+       "faq-vxy.dtd">
 
   where 
   
     x := major version
     y := minor version
-    z := status identifier (optional)
       
 NOTES:  
   FAQs represent a powerful knowledge base and a very good way of solving
@@ -34,6 +33,7 @@ FIXME:
 
 CHANGE HISTORY:
   19991129 Initial version. (SM)
+  20011212 Used public identifiers for external entities (SM)
     
 COPYRIGHT:
   Copyright (c) @year@ The Apache Software Foundation.
@@ -46,14 +46,13 @@ COPYRIGHT:
 ==================================================================== -->
 
 <!-- =============================================================== -->
-<!-- Extend the Documentation DTD -->
+<!-- Include the Documentation DTD -->
 <!-- =============================================================== -->
 
-<!-- FIXME (SM): this is hardcoding. Find a better way of doing this
-     possibly using public identifiers -->
-<!ENTITY % document-dtd SYSTEM "document-v10.dtd">
-%document-dtd;
-
+<!ENTITY % document PUBLIC
+    "-//APACHE//DTD Documentation V1.1//EN"
+    "document-v11.dtd">
+%document;
 
 <!-- =============================================================== -->
 <!-- Document Type Definition -->

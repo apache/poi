@@ -1,6 +1,6 @@
 <!-- ===================================================================
      
-     Apache Specification DTD (Version 1.0)
+     Apache Specification DTD (Version 1.1)
 
 PURPOSE:
   This DTD was developed to create a simple yet powerful document 
@@ -11,14 +11,13 @@ PURPOSE:
 TYPICAL INVOCATION:
 
   <!DOCTYPE document PUBLIC
-       "-//APACHE//DTD Specification Vx.yz//EN"
-       "http://xml.apache.org/DTD/specification-vxyz.dtd">
+       "-//APACHE//DTD Specification Vx.y//EN"
+       "specification-vxy.dtd">
 
   where 
   
     x := major version
     y := minor version
-    z := status identifier (optional)
       
 NOTES:  
 
@@ -28,7 +27,10 @@ AUTHORS:
 FIXME:
 
 CHANGE HISTORY:
+[Version 1.0]
   19991129 Initial version. (SM)
+[Version 1.1]
+  20011212 Used public identifiers for external entities (SM)
     
 COPYRIGHT:
   Copyright (c) @year@ The Apache Software Foundation.
@@ -41,16 +43,22 @@ COPYRIGHT:
 ==================================================================== -->
 
 <!-- =============================================================== -->
+<!-- Include the Documentation DTD -->
+<!-- =============================================================== -->
+
+<!ENTITY % document PUBLIC
+    "-//APACHE//DTD Documentation V1.1//EN"
+    "document-v11.dtd">
+%document;
+
+
+<!-- =============================================================== -->
 <!-- Extend the Documentation DTD -->
 <!-- =============================================================== -->
 
 <!-- extend the local.xxx entities -->
-<!ENTITY % local.lists "|bl">
+<!ENTITY % local.blocks "|bl">
 
-<!-- FIXME (SM): this is hardcoding. Find a better way of doing this
-     possibly using public identifiers -->
-<!ENTITY % document-dtd SYSTEM "document-v10.dtd">
-%document-dtd;
 
 <!-- =============================================================== -->
 <!-- Document Type Definition -->
@@ -75,8 +83,7 @@ COPYRIGHT:
         <!ATTLIST bi %common.att;
                      %name.att;
                      %title.att;
-                     %xlink-simple.att;
-                     %xlink-user-new.att;
+                     %link.att;
                      authors CDATA #REQUIRED
                      date    CDATA #IMPLIED>
 

@@ -24,7 +24,7 @@ TYPICAL INVOCATION:
 
   <!DOCTYPE document PUBLIC
        "-//APACHE//DTD JavaDoc Vx.yz//EN"
-       "http://xml.apache.org/DTD/javadoc-vxyz.dtd">
+       "javadoc-vxyz.dtd">
 
   where 
   

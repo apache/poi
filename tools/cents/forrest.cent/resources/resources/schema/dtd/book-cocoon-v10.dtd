@@ -9,7 +9,7 @@ TYPICAL INVOCATION:
 
   <!DOCTYPE book PUBLIC
        "-//APACHE//DTD Cocoon Documentation Book Vx.yz//EN"
-       "http://xml.apache.org/DTD/book-cocoon-vxyz.dtd">
+       "book-cocoon-vxyz.dtd">
 
   where 
   
@@ -24,7 +24,7 @@ because every XML instance must declare its ruleset.
 
 This initial minimal DTD has been reverse-engineered from the structure
 of the current documents, e.g. 
- docuemntation/xdocs/book.xml
+ documentation/xdocs/book.xml
   
 AUTHORS:
   David Crossley <crossley@apache.org>

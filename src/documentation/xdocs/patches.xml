@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
       
-        <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.0//EN" 
+        <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" 
          "dtd/document-v10.dtd">
       
     <document><header><title>Patch Queue</title><authors><person email="greenrd@hotmail.com" name="Robin Green"/><person email="barozzi@nicolaken.com" name="Nicola Ken Barozzi"/></authors></header><body><s1 title="Introduction"><p>
