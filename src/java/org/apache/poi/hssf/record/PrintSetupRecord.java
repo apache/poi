@@ -188,42 +188,42 @@ public class PrintSetupRecord
     // option bitfields
     public void setLeftToRight(boolean ltor)
     {
-        lefttoright.setShortBoolean(field_6_options, ltor);
+        field_6_options = lefttoright.setShortBoolean(field_6_options, ltor);
     }
 
     public void setLandscape(boolean ls)
     {
-        landscape.setShortBoolean(field_6_options, ls);
+        field_6_options = landscape.setShortBoolean(field_6_options, ls);
     }
 
     public void setValidSettings(boolean valid)
     {
-        validsettings.setShortBoolean(field_6_options, valid);
+        field_6_options = validsettings.setShortBoolean(field_6_options, valid);
     }
 
     public void setNoColor(boolean mono)
     {
-        nocolor.setShortBoolean(field_6_options, mono);
+        field_6_options = nocolor.setShortBoolean(field_6_options, mono);
     }
 
     public void setDraft(boolean d)
     {
-        draft.setShortBoolean(field_6_options, d);
+        field_6_options = draft.setShortBoolean(field_6_options, d);
     }
 
     public void setNotes(boolean printnotes)
     {
-        notes.setShortBoolean(field_6_options, printnotes);
+        field_6_options = notes.setShortBoolean(field_6_options, printnotes);
     }
 
     public void setNoOrientation(boolean orientation)
     {
-        noOrientation.setShortBoolean(field_6_options, orientation);
+        field_6_options = noOrientation.setShortBoolean(field_6_options, orientation);
     }
 
     public void setUsePage(boolean page)
     {
-        usepage.setShortBoolean(field_6_options, page);
+        field_6_options = usepage.setShortBoolean(field_6_options, page);
     }
 
     // end option bitfields

@@ -177,7 +177,7 @@ public class WindowTwoRecord
 
     public void setDisplayFormulas(boolean formulas)
     {
-        displayFormulas.setBoolean(field_1_options, formulas);
+        field_1_options = displayFormulas.setShortBoolean(field_1_options, formulas);
     }
 
     /**
@@ -187,7 +187,7 @@ public class WindowTwoRecord
 
     public void setDisplayGridlines(boolean gridlines)
     {
-        displayGridlines.setBoolean(field_1_options, gridlines);
+        field_1_options = displayGridlines.setShortBoolean(field_1_options, gridlines);
     }
 
     /**
@@ -197,7 +197,7 @@ public class WindowTwoRecord
 
     public void setDisplayRowColHeadings(boolean headings)
     {
-        displayRowColHeadings.setBoolean(field_1_options, headings);
+        field_1_options = displayRowColHeadings.setShortBoolean(field_1_options, headings);
     }
 
     /**
@@ -207,7 +207,7 @@ public class WindowTwoRecord
 
     public void setFreezePanes(boolean freezepanes)
     {
-        freezePanes.setBoolean(field_1_options, freezepanes);
+        field_1_options = freezePanes.setShortBoolean(field_1_options, freezepanes);
     }
 
     /**
@@ -217,7 +217,7 @@ public class WindowTwoRecord
 
     public void setDisplayZeros(boolean zeros)
     {
-        displayZeros.setBoolean(field_1_options, zeros);
+        field_1_options = displayZeros.setShortBoolean(field_1_options, zeros);
     }
 
     /**
@@ -227,7 +227,7 @@ public class WindowTwoRecord
 
     public void setDefaultHeader(boolean header)
     {
-        defaultHeader.setBoolean(field_1_options, header);
+        field_1_options = defaultHeader.setShortBoolean(field_1_options, header);
     }
 
     /**
@@ -237,7 +237,7 @@ public class WindowTwoRecord
 
     public void setArabic(boolean isarabic)
     {
-        arabic.setBoolean(field_1_options, isarabic);
+        field_1_options = arabic.setShortBoolean(field_1_options, isarabic);
     }
 
     /**
@@ -247,7 +247,7 @@ public class WindowTwoRecord
 
     public void setDisplayGuts(boolean guts)
     {
-        displayGuts.setBoolean(field_1_options, guts);
+        field_1_options = displayGuts.setShortBoolean(field_1_options, guts);
     }
 
     /**
@@ -257,7 +257,7 @@ public class WindowTwoRecord
 
     public void setFreezePanesNoSplit(boolean freeze)
     {
-        freezePanesNoSplit.setBoolean(field_1_options, freeze);
+        field_1_options = freezePanesNoSplit.setShortBoolean(field_1_options, freeze);
     }
 
     /**
@@ -267,7 +267,7 @@ public class WindowTwoRecord
 
     public void setSelected(boolean sel)
     {
-        selected.setBoolean(field_1_options, sel);
+        field_1_options = selected.setShortBoolean(field_1_options, sel);
     }
 
     /**
@@ -277,7 +277,7 @@ public class WindowTwoRecord
 
     public void setPaged(boolean p)
     {
-        paged.setBoolean(field_1_options, p);
+        field_1_options = paged.setShortBoolean(field_1_options, p);
     }
 
     /**
@@ -287,7 +287,7 @@ public class WindowTwoRecord
 
     public void setSavedInPageBreakPreview(boolean p)
     {
-        savedInPageBreakPreview.setBoolean(field_1_options, p);
+        field_1_options = savedInPageBreakPreview.setShortBoolean(field_1_options, p);
     }
 
     // end of bitfields.
