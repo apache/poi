@@ -126,10 +126,12 @@ class SSTSerializer
         return retval;
     }
 
+    /**
+     * This case is chosen when an SST record does not span over to a continue record.
+     *
+     */
     private void serializeSingleSSTRecord( byte[] data, int offset, int record_length_index )
     {
-        // short data: write one simple SST record
-
         int len = ( (Integer) recordLengths.get( record_length_index++ ) ).intValue();
         int recordSize = SSTRecord.SST_RECORD_OVERHEAD + len - SSTRecord.STD_RECORD_OVERHEAD;
         sstRecordHeader.writeSSTHeader( data, 0 + offset, recordSize );
@@ -137,7 +139,6 @@ class SSTSerializer
 
         for ( int k = 0; k < strings.size(); k++ )
         {
-//            UnicodeString unistr = ( (UnicodeString) strings.get( new Integer( k ) ) );
             System.arraycopy( getUnicodeString( k ).serialize(), 0, data, pos + offset, getUnicodeString( k ).getRecordSize() );
             pos += getUnicodeString( k ).getRecordSize();
         }
