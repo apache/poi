@@ -60,8 +60,12 @@ package org.apache.poi.hdf.model.hdftypes;
 import java.util.*;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.hdf.model.hdftypes.definitions.TCAbstractType;
+
 /**
- * Comment me
+ * Represents a document's stylesheet. A word documents formatting is stored as
+ * compressed styles that are based on styles contained in the stylesheet. This
+ * class also contains static utility functions to uncompress different
+ * formatting properties.
  *
  * @author Ryan Ackley
  */
@@ -78,6 +82,13 @@ public class StyleSheet implements HDFType
   StyleDescription _nilStyle = new StyleDescription();
   StyleDescription[] _styleDescriptions;
 
+  /**
+   * StyleSheet constructor. Loads a document's stylesheet information,
+   *
+   * @param styleSheet A byte array containing a document's raw stylesheet
+   *        info. Found by using FileInformationBlock.getFcStshf() and
+   *        FileInformationBLock.getLcbStshf()
+   */
   public StyleSheet(byte[] styleSheet)
   {
       int stshiLength = LittleEndian.getShort(styleSheet, 0);
@@ -120,6 +131,16 @@ public class StyleSheet implements HDFType
           }
       }
   }
+  /**
+   * Creates a PartagraphProperties object from a papx stored in the
+   * StyleDescription at the index istd in the StyleDescription array. The PAP
+   * is placed in the StyleDescription at istd after its been created. Not
+   * every StyleDescription will contain a papx. In these cases this function
+   * does nothing
+   *
+   * @param istd The index of the StyleDescription to create the
+   *        ParagraphProperties  from (and also place the finished PAP in)
+   */
   private void createPap(int istd)
   {
       StyleDescription sd = _styleDescriptions[istd];
@@ -145,6 +166,16 @@ public class StyleSheet implements HDFType
           sd.setPAP(pap);
       }
   }
+  /**
+   * Creates a CharacterProperties object from a chpx stored in the
+   * StyleDescription at the index istd in the StyleDescription array. The
+   * CharacterProperties object is placed in the StyleDescription at istd after
+   * its been created. Not every StyleDescription will contain a chpx. In these
+   * cases this function does nothing.
+   *
+   * @param istd The index of the StyleDescription to create the
+   *        CharacterProperties object from.
+   */
   private void createChp(int istd)
   {
       StyleDescription sd = _styleDescriptions[istd];
@@ -170,10 +201,31 @@ public class StyleSheet implements HDFType
           sd.setCHP(chp);
       }
   }
+
+  /**
+   * Gets the StyleDescription at index x.
+   *
+   * @param x the index of the desired StyleDescription.
+   */
   public StyleDescription getStyleDescription(int x)
   {
       return _styleDescriptions[x];
   }
+
+  /**
+   * Used in decompression of a chpx. This performs an operation defined by
+   * a single sprm.
+   *
+   * @param oldCHP The base CharacterProperties.
+   * @param newCHP The current CharacterProperties.
+   * @param operand The operand defined by the sprm (See Word file format spec)
+   * @param param The parameter defined by the sprm (See Word file format spec)
+   * @param varParam The variable length parameter defined by the sprm. (See
+   *        Word file format spec)
+   * @param grpprl The entire chpx that this operation is a part of.
+   * @param offset The offset in the grpprl of the next sprm
+   * @param styleSheet The StyleSheet for this document.
+   */
   static void doCHPOperation(CharacterProperties oldCHP, CharacterProperties newCHP,
                              int operand, int param,
                              byte[] varParam, byte[] grpprl, int offset,
@@ -615,12 +667,33 @@ public class StyleSheet implements HDFType
       }
   }
 
+  /**
+   * Used to uncompress a property stored in a grpprl. These include
+   * CharacterProperties, ParagraphProperties, TableProperties, and
+   * SectionProperties.
+   *
+   * @param grpprl The compressed form of the property.
+   * @param parent The base property of the property.
+   * @param styleSheet The document's stylesheet.
+   *
+   * @return An object that should be casted to the appropriate property.
+   */
   static Object uncompressProperty(byte[] grpprl, Object parent, StyleSheet styleSheet)
   {
     return uncompressProperty(grpprl, parent, styleSheet, true);
   }
 
-
+  /**
+   * Used to uncompress a property stored in a grpprl. These include
+   * CharacterProperties, ParagraphProperties, TableProperties, and
+   * SectionProperties.
+   *
+   * @param grpprl The compressed form of the property.
+   * @param parent The base property of the property.
+   * @param styleSheet The document's stylesheet.
+   *
+   * @return An object that should be casted to the appropriate property.
+   */
   static Object uncompressProperty(byte[] grpprl, Object parent, StyleSheet styleSheet, boolean doIstd)
   {
       Object newProperty = null;
@@ -765,6 +838,18 @@ public class StyleSheet implements HDFType
       return newProperty;
 
   }
+  /**
+   * Performs an operation on a ParagraphProperties object. Used to uncompress
+   * from a papx.
+   *
+   * @param newPAP The ParagraphProperties object to perform the operation on.
+   * @param operand The operand that defines the operation.
+   * @param param The operation's parameter.
+   * @param varParam The operation's variable length parameter.
+   * @param grpprl The original papx.
+   * @param offset The current offset in the papx.
+   * @param spra A part of the sprm that defined this operation.
+   */
   static void doPAPOperation(ParagraphProperties newPAP, int operand, int param,
                              byte[] varParam, byte[] grpprl, int offset,
                              int spra)
@@ -1027,6 +1112,15 @@ public class StyleSheet implements HDFType
                break;
       }
   }
+  /**
+   * Used to uncompress a table property. Performs an operation defined
+   * by a sprm stored in a tapx.
+   *
+   * @param newTAP The TableProperties object to perform the operation on.
+   * @param operand The operand that defines this operation.
+   * @param param The parameter for this operation.
+   * @param varParam Variable length parameter for this operation.
+   */
   static void doTAPOperation(TableProperties newTAP, int operand, int param, byte[] varParam)
   {
       switch(operand)
@@ -1202,6 +1296,15 @@ public class StyleSheet implements HDFType
                break;
       }
   }
+  /**
+   * Used in decompression of a sepx. This performs an operation defined by
+   * a single sprm.
+   *
+   * @param newSEP The SectionProperty to perfrom the operation on.
+   * @param operand The operation to perform.
+   * @param param The operation's parameter.
+   * @param varParam The operation variable length parameter.
+   */
   static void doSEPOperation(SectionProperties newSEP, int operand, int param, byte[] varParam)
   {
       switch(operand)
@@ -1369,6 +1472,16 @@ public class StyleSheet implements HDFType
       }
 
   }
+  /**
+   * Converts an byte value into a boolean. The byte parameter can be 1,0, 128,
+   * or 129. if it is 128, this function returns the same value as oldVal. If
+   * it is 129, this function returns !oldVal. This is used for certain sprms
+   *
+   * @param x The byte value to convert.
+   * @param oldVal The old boolean value.
+   *
+   * @return A boolean whose value depends on x and oldVal.
+   */
   private static boolean getCHPFlag(byte x, boolean oldVal)
   {
       switch(x)
@@ -1385,6 +1498,15 @@ public class StyleSheet implements HDFType
                return false;
       }
   }
+
+  /**
+   * Converts an int into a boolean. If the int is non-zero, it returns true.
+   * Otherwise it returns false.
+   *
+   * @param x The int to convert.
+   *
+   * @return A boolean whose value depends on x.
+   */
   public static boolean getFlag(int x)
   {
       if(x != 0)

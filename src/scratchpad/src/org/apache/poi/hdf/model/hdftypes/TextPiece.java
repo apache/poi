@@ -57,7 +57,7 @@ package org.apache.poi.hdf.model.hdftypes;
 
 
 /**
- * Comment me
+ * Lightweight representation of a text piece.
  *
  * @author Ryan Ackley
  */
@@ -67,22 +67,24 @@ public class TextPiece extends PropertyNode implements Comparable
   private boolean _usesUnicode;
   private int _length;
 
+  /**
+   * @param start Offset in main document stream.
+   * @param length The total length of the text in bytes. Note: 1 character
+   *        does not necessarily refer to 1 byte.
+   * @param unicode true if this text is unicode.
+   */
   public TextPiece(int start, int length, boolean unicode)
   {
-    super(start, start + length, null);
+      super(start, start + length, null);
       _usesUnicode = unicode;
       _length = length;
-      //_fcStart = start;
-      //_fcEnd = start + length;
 
   }
+  /**
+   * @return If this text piece uses unicode
+   */
    public boolean usesUnicode()
-  {
+   {
       return _usesUnicode;
-  }
-
-   public int compareTo(Object obj) {
-       return 0;
    }
-
 }
