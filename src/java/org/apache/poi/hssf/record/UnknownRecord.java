@@ -65,16 +65,14 @@ import org.apache.poi.util.LittleEndian;
  * Company:      SuperLink Software, Inc.<P>
  * @author Andrew C. Oliver (acoliver at apache dot org)
  * @author Jason Height (jheight at chariot dot net dot au)
- * @version 2.0-pre
+ * @author Glen Stampoultzis (glens at apache.org)
  */
 
 public class UnknownRecord
     extends Record
 {
-    private short  sid     = 0;
-    private short  size    = 0;
-    private byte[] thedata = null;
-    int            offset  = 0;
+    private short   sid     = 0;
+    private byte[]  thedata = null;
 
     public UnknownRecord()
     {
@@ -91,7 +89,6 @@ public class UnknownRecord
     public UnknownRecord(short id, short size, byte [] data)
     {
         sid     = id;
-        size    = size;
         thedata = data;
     }
 
@@ -127,7 +124,7 @@ public class UnknownRecord
 
     protected void fillFields(byte [] data, short sid)
     {
-        sid     = sid;
+        this.sid     = sid;
         thedata = data;
     }
 
@@ -179,9 +176,7 @@ public class UnknownRecord
     /** Unlike the other Record.clone methods this is a shallow clone*/
     public Object clone() {
       UnknownRecord rec = new UnknownRecord();
-      rec.offset = offset;
       rec.sid = sid;
-      rec.size = size;
       rec.thedata = thedata;
       return rec;
     }

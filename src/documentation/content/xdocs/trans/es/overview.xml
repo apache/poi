@@ -5,7 +5,7 @@
   <header>
     <title>Descripción General</title>
     <authors>
-      <person id="AO" name="Andrew C. Oliver" email="acoliver2@users.sourceforge.net"/>
+      <person id="AO" name="Andrew C. Oliver" email="acoliver@apache.org"/>
       <person id="AMB" name="Agustín Martín Barbero" email="-"/>
     </authors>
   </header>
@@ -25,36 +25,35 @@
       </p>
       <section><title>POIFS</title>
         <p>
-          <link href="../../poifs/index.html">POIFS</link> es el conjunto de APIs
-	  (Interfaces de Aplicación) para la lectura y escritura del Formato de Documento Compuesto OLE 2
-	  utilizando (únicamente) Java.
+          <link href="../../poifs/index.html">POIFS [EN]</link> es el conjunto de APIs (Interfaces de Aplicación) 
+	  para la lectura y escritura del Formato de Documento Compuesto OLE 2 utilizando (únicamente) Java.
         </p> 
       </section>
       
       <section><title>HSSF</title>
         <p>
-          <link href="../../hssf/index.html">HSSF</link> es el conjunto de APIs para la lectura y
+          <link href="../../hssf/index.html">HSSF [EN]</link> es el conjunto de APIs para la lectura y
 	  escritura de hojas de cálculo de Microsoft Excel 97(-XP) utilizando (únicamente) Java.
         </p>
       </section>
 
-      <section><title>HDF</title>
+      <section><title>HWPF</title>
         <p>
-          <link href="../../hdf/index.html">HDF</link> es el conjunto de APIs para la lectura y
+          <link href="http://jakarta.apache.org/poi/hwpf/index.html">HWPF [EN]</link> es el conjunto de APIs para la lectura y
 	  escritura de documentos Word 97(-XP) de Microsoft utilizando (únicamente) Java.
         </p>
       </section>
 
       <section><title>HPSF</title>
         <p>
-          <link href="../../hpsf/index.html">HPSF</link> es el conjunto de APIs para la lectura
+          <link href="../../hpsf/index.html">HPSF [EN]</link> es el conjunto de APIs para la lectura
 	  de conjuntos de propiedades utilizando (únicamente) Java.
         </p> 
       </section>
 
       <section><title>Utilidades-POI (POI-Utils)</title>
         <p>
-          <link href="../../utils/index.html">POI-Utils</link> son artefactos de propósito
+          <link href="../../utils/index.html">POI-Utils [EN]</link> son artefactos de propósito
 	  general surgidos en el desarrollo de POI que no han sido implementados en ningún otro sitio.
 	  Siempre buscamos donarlos y mantenerlos como parte de una biblioteca general utilizada en
 	  algún otro proyecto. Estas son cosas que necesitamos para completar nuestra misión pero que
@@ -65,7 +64,7 @@
   </body>
   <footer>
     <legal>
-      Copyright (c) @year@ The Poi Project All rights reserved.
+      Copyright (c) @year@ The POI Project All rights reserved.
       $Revision$ $Date$
     </legal>
   </footer>

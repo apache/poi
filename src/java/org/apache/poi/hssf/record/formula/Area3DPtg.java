@@ -291,8 +291,9 @@ public class Area3DPtg extends Ptg
 
 	}
 
-	public String toFormulaString( SheetReferences refs )
+	public String toFormulaString(Workbook book)
 	{
+		SheetReferences refs = book == null ? null : book.getSheetReferences();
 		StringBuffer retval = new StringBuffer();
 		if ( refs != null )
 		{
@@ -318,6 +319,7 @@ public class Area3DPtg extends Ptg
 		ptg.field_3_last_row = field_3_last_row;
 		ptg.field_4_first_column = field_4_first_column;
 		ptg.field_5_last_column = field_5_last_column;
+            ptg.setClass(ptgClass);
 		return ptg;
 	}
 
@@ -351,4 +353,3 @@ public class Area3DPtg extends Ptg
 
 
 }
-

@@ -130,12 +130,17 @@ public class StringRecord
         field_2_unicode_flag            = data[ 2 + offset ];
         if (isUnCompressedUnicode())
         {
-            field_3_string = StringUtil.getFromUnicode(data, 3 + offset, field_1_string_length );
+            field_3_string = StringUtil.getFromUnicodeHigh(data, 3 + offset, field_1_string_length );
         }
         else
         {
             field_3_string = StringUtil.getFromCompressedUnicode(data, 3 + offset, field_1_string_length);
         }
+    }
+
+    public boolean isInValueSection()
+    {
+        return true;
     }
 
     private int getStringLength()

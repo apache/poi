@@ -65,7 +65,6 @@ import org.apache.poi.util.LittleEndian;
 /**
  * Extended SST table info subrecord<P>
  * contains the elements of "info" in the SST's array field<P>
- * WE HAVE VERY LITTLE INFORMATION ON HOW TO IMPLEMENT THIS RECORD! (EXTSSST)<P>
  * @author Andrew C. Oliver (acoliver at apache dot org)
  * @version 2.0-pre
  * @see org.apache.poi.hssf.record.ExtSSTRecord
@@ -74,6 +73,7 @@ import org.apache.poi.util.LittleEndian;
 public class ExtSSTInfoSubRecord
     extends Record
 {
+   public static final int INFO_SIZE = 8;
     public final static short sid =
         0xFFF;                                             // only here for conformance, doesn't really have an sid
     private int               field_1_stream_pos;          // stream pointer to the SST record
@@ -114,7 +114,7 @@ public class ExtSSTInfoSubRecord
         field_1_stream_pos = pos;
     }
 
-    public void setBucketSSTOffset(short offset)
+    public void setBucketRecordOffset(short offset)
     {
         field_2_bucket_sst_offset = offset;
     }
@@ -159,6 +159,6 @@ public class ExtSSTInfoSubRecord
 
     public short getSid()
     {
-        return this.sid;
+        return sid;
     }
 }

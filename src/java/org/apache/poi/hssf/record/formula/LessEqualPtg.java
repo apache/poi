@@ -53,7 +53,7 @@
  */
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.hssf.util.SheetReferences;
+import org.apache.poi.hssf.model.Workbook;
 
 
 /**
@@ -67,7 +67,7 @@ public class LessEqualPtg
 	 public final static int  SIZE = 1;
 	 public final static byte sid  = 0x0a;
 
-	 /** Creates new AddPtg */
+	 /** Creates new LessEqualPtg */
 
 	public LessEqualPtg()
 	 {
@@ -99,7 +99,7 @@ public class LessEqualPtg
 		  return 2;
 	 }
 
-	 public String toFormulaString(SheetReferences refs)
+    public String toFormulaString(Workbook book)
 	 {
 		  return "<=";
 	 }
@@ -109,7 +109,7 @@ public class LessEqualPtg
 
         
 		  buffer.append(operands[ 0 ]);
-		  buffer.append(toFormulaString((SheetReferences)null));
+		  buffer.append(toFormulaString((Workbook)null));
 		  buffer.append(operands[ 1 ]);
 		  return buffer.toString();
 	 }       

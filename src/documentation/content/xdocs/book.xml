@@ -9,7 +9,7 @@
     <menu label="Community">
         <menu-item label="News" href="news.html"/>
         <menu-item label="Mirrors" href="mirrors.html"/>
-        <menu-item label="Changes" href="changes.html"/>
+        <menu-item label="Changes" href="site:changes"/>
         <menu-item label="To Do" href="todo.html"/>
         <menu-item label="Get Involved" href="getinvolved/index.html"/>
         <menu-item label="Mailing Lists" href="http://jakarta.apache.org/site/mail.html"/>
@@ -27,7 +27,7 @@
         <menu-item label="Overview" href="overview.html"/>
         <menu-item label="POIFS" href="poifs/index.html"/>
         <menu-item label="HSSF" href="hssf/index.html"/>
-        <menu-item label="HDF" href="hdf/index.html"/>
+        <menu-item label="HWPF" href="http://jakarta.apache.org/poi/hwpf/index.html"/>
         <menu-item label="HPSF" href="hpsf/index.html"/>
         <menu-item label="POI-Utils" href="utils/index.html"/>
         <menu-item label="Download" href="ext:download"/>

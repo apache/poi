@@ -61,6 +61,7 @@ import org.apache.poi.util.LittleEndian;
 import org.apache.poi.hssf.util.RangeAddress;
 import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.hssf.util.SheetReferences;
+import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.util.BitField;
 import org.apache.poi.hssf.model.Workbook;
 
@@ -104,7 +105,7 @@ public class Ref3DPtg extends Ptg {
     public String toString() {
         StringBuffer buffer = new StringBuffer();
 
-        buffer.append("Ref3dPrg\n");
+        buffer.append("Ref3dPtg\n");
         buffer.append("Index to Extern Sheet = " + getExternSheetIndex()).append("\n");
         buffer.append("Row = " + getRow()).append("\n");
         buffer.append("Col  = " + getColumn()).append("\n");
@@ -193,8 +194,9 @@ public class Ref3DPtg extends Ptg {
 
     }
 
-    public String toFormulaString(SheetReferences refs) {
+    public String toFormulaString(Workbook book) {
         StringBuffer retval = new StringBuffer();
+        SheetReferences refs = book == null ? null : book.getSheetReferences();
         if (refs != null) {
             retval.append(refs.getSheetName((int)this.field_1_index_extern_sheet));
             retval.append('!');
@@ -210,6 +212,7 @@ public class Ref3DPtg extends Ptg {
      ptg.field_1_index_extern_sheet = field_1_index_extern_sheet;
      ptg.field_2_row = field_2_row;
      ptg.field_3_column = field_3_column;
+     ptg.setClass(ptgClass);
      return ptg;
    }
 

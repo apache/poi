@@ -64,7 +64,6 @@ import java.util.List;
 //import PTG's .. since we need everything, import *
 import org.apache.poi.hssf.record.formula.*;
 
-import org.apache.poi.hssf.util.SheetReferences;
 
 
 /**
@@ -81,6 +80,7 @@ import org.apache.poi.hssf.util.SheetReferences;
  *  @author Andrew C. oliver (acoliver at apache dot org)
  *  @author Eric Ladner (eladner at goldinc dot com)
  *  @author Cameron Riley (criley at ekmail.com)
+ *  @author Peter M. Murray (pete at quantrix dot com)
  */
 public class FormulaParser {
     
@@ -229,13 +229,31 @@ public class FormulaParser {
     /** Get an Identifier */
     private String GetName() {
         StringBuffer Token = new StringBuffer();
-        if (!IsAlpha(look)) {
+        if (!IsAlpha(look) && look != '\'') {
             Expected("Name");
         }
-        while (IsAlNum(look)) {
-            Token = Token.append(Character.toUpperCase(look));
-            GetChar();
+        if(look == '\'')
+        {
+        	Match('\'');
+        	boolean done = look == '\'';
+        	while(!done)
+        	{
+        		Token.append(Character.toUpperCase(look));
+        		GetChar();
+        		if(look == '\'')
+        		{
+        			Match('\'');
+        			done = look != '\'';
+        		}
+        	}
         }
+        else
+        {
+	        while (IsAlNum(look)) {
+	            Token.append(Character.toUpperCase(look));
+	            GetChar();
+	        }
+		}
         SkipWhite();
         return Token.toString();
     }
@@ -335,10 +353,14 @@ public class FormulaParser {
         int numArgs = Arguments();
         Match(')');
                 
-        Ptg functionPtg = getFunction(name,(byte)numArgs);
+        AbstractFunctionPtg functionPtg = getFunction(name,(byte)numArgs);
         
 		tokens.add(functionPtg);
  
+        if (functionPtg.getName().equals("externalflag")) {
+            tokens.add(new NamePtg(name, this.book));
+        }
+
  		//remove what we just put in
 		this.functionTokens.remove(0);
     }
@@ -382,8 +404,8 @@ public class FormulaParser {
      * @param numArgs
      * @return Ptg a null is returned if we're in an IF formula, it needs extreme manipulation and is handled in this function
      */
-    private Ptg getFunction(String name,byte numArgs) {
-        Ptg retval = null;
+    private AbstractFunctionPtg getFunction(String name, byte numArgs) {
+        AbstractFunctionPtg retval = null;
         
         if (name.equals("IF")) {
             retval = new FuncVarPtg(AbstractFunctionPtg.ATTR_NAME, numArgs);
@@ -475,12 +497,18 @@ public class FormulaParser {
 
    /** Parse and Translate a Math Factor  */
     private void Factor() {
-        if (look == '(' ) {
+    	if (look == '-')
+    	{
+    		Match('-');
+    		Factor();
+    		tokens.add(new UnaryMinusPtg());
+    	}
+        else if (look == '(' ) {
             Match('(');
             Expression();
             Match(')');
             tokens.add(new ParenthesisPtg());
-        } else if (IsAlpha(look)){
+        } else if (IsAlpha(look) || look == '\''){
             Ident();
         } else if(look == '"') {
            StringLiteral();
@@ -498,26 +526,42 @@ public class FormulaParser {
         }
     }
     
-    private void StringLiteral() {
-        Match('"');
-		  StringBuffer Token = new StringBuffer();
-	 	  for(;;) {
-		  	     if(look == '"') {
-		        GetChar();
-		        SkipWhite(); //potential white space here since it doesnt matter up to the operator
-		        if(look == '"')
-		            Token.append("\"");
-		        else
-		            break;
-		    } else if(look == 0) {
-		        break;
-		    } else {
-		        Token.append(look);
-		        GetChar();
-		    }
+    private void StringLiteral() 
+	{
+		// Can't use match here 'cuz it consumes whitespace
+		// which we need to preserve inside the string.
+		// - pete
+		// Match('"');
+		if (look != '"')
+			Expected("\"");
+		else
+		{
+			GetChar();
+			StringBuffer Token = new StringBuffer();
+			for (;;)
+			{
+				if (look == '"')
+				{
+					GetChar();
+					SkipWhite(); //potential white space here since it doesnt matter up to the operator
+					if (look == '"')
+						Token.append("\"");
+					else
+						break;
+				}
+				else if (look == 0)
+				{
+					break;
+				}
+				else
+				{
+					Token.append(look);
+					GetChar();
+				}
+			}
+			tokens.add(new StringPtg(Token.toString()));
 		}
-		tokens.add(new StringPtg(Token.toString()));        
-    }
+	}
     
     /** Recognize and Translate a Multiply */
     private void Multiply(){
@@ -587,11 +631,7 @@ public class FormulaParser {
     
     /** Parse and Translate an Expression */
     private void Expression() {
-        if (IsAddop(look)) {
-            EmitLn("CLR D0");  //unaryAdd ptg???
-        } else {
-            Term();
-        }
+        Term();
         while (IsAddop(look)) {
             if (look == '+' )  Add();
             else if (look == '-') Subtract();
@@ -722,7 +762,7 @@ end;
     private void setRootLevelRVA(Node n, int formulaType) {
         //Pg 16, excelfileformat.pdf @ openoffice.org
         Ptg p = (Ptg) n.getValue();
-            if (formulaType == this.FORMULA_TYPE_NAMEDRANGE) {
+            if (formulaType == FormulaParser.FORMULA_TYPE_NAMEDRANGE) {
                 if (p.getDefaultOperandClass() == Ptg.CLASS_REF) {
                     setClass(n,Ptg.CLASS_REF);
                 } else {
@@ -795,69 +835,85 @@ end;
     /**
      * Convience method which takes in a list then passes it to the other toFormulaString
      * signature. 
-     * @param lptgs - list of ptgs, can be null
+     * @param book   workbook for 3D and named references
+     * @param lptgs  list of Ptg, can be null or empty
+     * @return a human readable String
      */
-    public static String toFormulaString(SheetReferences refs, List lptgs) {
+    public static String toFormulaString(Workbook book, List lptgs) {
         String retval = null;
         if (lptgs == null || lptgs.size() == 0) return "#NAME";
         Ptg[] ptgs = new Ptg[lptgs.size()];
         ptgs = (Ptg[])lptgs.toArray(ptgs);
-        retval = toFormulaString(refs, ptgs);
+        retval = toFormulaString(book, ptgs);
         return retval;
     }
     
-    /** Static method to convert an array of Ptgs in RPN order 
-     *  to a human readable string format in infix mode
-     *  @param ptgs - array of ptgs, can be null or empty
+    /**
+     * Static method to convert an array of Ptgs in RPN order
+     * to a human readable string format in infix mode.
+     * @param book  workbook for named and 3D references
+     * @param ptgs  array of Ptg, can be null or empty
+     * @return a human readable String
      */
-    public static String toFormulaString(SheetReferences refs, Ptg[] ptgs) {
+    public static String toFormulaString(Workbook book, Ptg[] ptgs) {
         if (ptgs == null || ptgs.length == 0) return "#NAME";
         java.util.Stack stack = new java.util.Stack();
-        int numPtgs = ptgs.length;
-        OperationPtg o;
-        int numOperands;
-        String result=null;
-        String[] operands;
         AttrPtg ifptg = null;
-        for (int i=0;i<numPtgs;i++) {
+
            // Excel allows to have AttrPtg at position 0 (such as Blanks) which
            // do not have any operands. Skip them.
-            if (ptgs[i] instanceof OperationPtg && i>0) {
-                  o = (OperationPtg) ptgs[i];
+        stack.push(ptgs[0].toFormulaString(book));
                   
-                  if (o instanceof AttrPtg && ((AttrPtg)o).isOptimizedIf()) {
-                        ifptg=(AttrPtg)o;
-                  } else {
+        for (int i = 1; i < ptgs.length; i++) {
+            if (! (ptgs[i] instanceof OperationPtg)) {
+                stack.push(ptgs[i].toFormulaString(book));
+                continue;
+            }
                       
-                      numOperands = o.getNumberOfOperands();
-                      operands = new String[numOperands];
+            if (ptgs[i] instanceof AttrPtg && ((AttrPtg) ptgs[i]).isOptimizedIf()) {
+                ifptg = (AttrPtg) ptgs[i];
+                continue;
+            }
                       
-                      for (int j=0;j<numOperands;j++) {
-                          operands[numOperands-j-1] = (String) stack.pop(); //TODO: catch stack underflow and throw parse exception. 
+            final OperationPtg o = (OperationPtg) ptgs[i];
+            final String[] operands = new String[o.getNumberOfOperands()];
+
+            for (int j = operands.length; j > 0; j--) {
+                //TODO: catch stack underflow and throw parse exception.
+                operands[j - 1] = (String) stack.pop();
                       }  
 
-                      if ( (o instanceof AbstractFunctionPtg) && 
-                            ((AbstractFunctionPtg)o).getName().equals("specialflag") &&
-                            ifptg != null
-                            ) {
+            stack.push(o.toFormulaString(operands));
+            if (!(o instanceof AbstractFunctionPtg)) continue;
+
+            final AbstractFunctionPtg f = (AbstractFunctionPtg) o;
+            final String fname = f.getName();
+            if (fname == null) continue;
+
+            if ((ifptg != null) && (fname.equals("specialflag"))) {
                              // this special case will be way different.
-                             result = ifptg.toFormulaString(
-                                  new String[] {(o.toFormulaString(operands))}
-                                                           );
-                             ifptg = null;
-                      } else {                      
-                        result = o.toFormulaString(operands);                                              
+                stack.push(ifptg.toFormulaString(new String[]{(String) stack.pop()}));
+                continue;
                       }
-                      stack.push(result);                                        
+            if (fname.equals("externalflag")) {
+                final String top = (String) stack.pop();
+                final int paren = top.indexOf('(');
+                final int comma = top.indexOf(',');
+                if (comma == -1) {
+                    final int rparen = top.indexOf(')');
+                    stack.push(top.substring(paren + 1, rparen) + "()");
                   }
-                      
-                  
-            } else {
-                stack.push(ptgs[i].toFormulaString(refs));
+                else {
+                    stack.push(top.substring(paren + 1, comma) + '(' +
+                               top.substring(comma + 1));
             }
         }
-        return (String) stack.pop(); //TODO: catch stack underflow and throw parse exception. 
     }
+        // TODO: catch stack underflow and throw parse exception.
+        return (String) stack.pop();
+    }
+
+
     /** Create a tree representation of the RPN token array
      *used to run the class(RVA) change algo
      */
@@ -890,11 +946,9 @@ end;
      *   Useful for testing
      */
     public String toString() {
-        SheetReferences refs = null;
-        if (book!=null)  book.getSheetReferences();
         StringBuffer buf = new StringBuffer();
            for (int i=0;i<tokens.size();i++) {
-            buf.append( ( (Ptg)tokens.get(i)).toFormulaString(refs));
+            buf.append( ( (Ptg)tokens.get(i)).toFormulaString(book));
             buf.append(' ');
         } 
         return buf.toString();

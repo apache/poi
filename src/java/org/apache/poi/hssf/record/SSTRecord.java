@@ -60,7 +60,6 @@ import org.apache.poi.util.LittleEndianConsts;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.ArrayList;
 
 /**
  * Title:        Static String Table Record
@@ -73,7 +72,7 @@ import java.util.ArrayList;
  * @author Andrew C. Oliver (acoliver at apache dot org)
  * @author Marc Johnson (mjohnson at apache dot org)
  * @author Glen Stampoultzis (glens at apache.org)
- * @version 2.0-pre
+ *
  * @see org.apache.poi.hssf.record.LabelSSTRecord
  * @see org.apache.poi.hssf.record.ContinueRecord
  */
@@ -112,10 +111,14 @@ public class SSTRecord
     private List _record_lengths = null;
     private SSTDeserializer deserializer;
 
+    /** Offsets from the beginning of the SST record (even across continuations) */
+    int[] bucketAbsoluteOffsets;
+    /** Offsets relative the start of the current SST or continue record */
+    int[] bucketRelativeOffsets;
+
     /**
      * default constructor
      */
-
     public SSTRecord()
     {
         field_1_num_strings = 0;
@@ -220,7 +223,7 @@ public class SSTRecord
         field_1_num_strings++;
         String str = ( string == null ) ? ""
                 : string;
-        int rval = -1;
+        int rval;
         UnicodeString ucs = new UnicodeString();
 
         ucs.setString( str );
@@ -334,7 +337,7 @@ public class SSTRecord
         for ( int k = 0; k < field_3_strings.size(); k++ )
         {
             buffer.append( "    .string_" + k + "      = " )
-                    .append( ( (UnicodeString) field_3_strings
+                    .append( ( field_3_strings
                     .get( new Integer( k ) ) ).toString() ).append( "\n" );
         }
         buffer.append( "[/SST]\n" );
@@ -394,7 +397,7 @@ public class SSTRecord
      * The data consists of sets of string data. This string data is
      * arranged as follows:
      * <P>
-     * <CODE>
+     * <CODE><pre>
      * short  string_length;   // length of string data
      * byte   string_flag;     // flag specifying special string
      *                         // handling
@@ -407,7 +410,7 @@ public class SSTRecord
      *                         // array is run_count)
      * byte[] extension;       // optional extension (length of array
      *                         // is extend_length)
-     * </CODE>
+     * </pre></CODE>
      * <P>
      * The string_flag is bit mapped as follows:
      * <P>
@@ -479,7 +482,7 @@ public class SSTRecord
         field_2_num_unique_strings = LittleEndian.getInt( data, 4 + offset );
         field_3_strings = new BinaryTree();
         deserializer = new SSTDeserializer(field_3_strings);
-        deserializer.manufactureStrings( data, 8 + offset, (short)(size - 8) );
+        deserializer.manufactureStrings( data, 8 + offset);
     }
 
 
@@ -507,14 +510,22 @@ public class SSTRecord
      * Subclasses should implement this so that their data is passed back in a
      * byte array.
      *
-     * @return byte array containing instance data
+     * @return size
      */
 
     public int serialize( int offset, byte[] data )
     {
         SSTSerializer serializer = new SSTSerializer(
                 _record_lengths, field_3_strings, getNumStrings(), getNumUniqueStrings() );
-        return serializer.serialize( getRecordSize(), offset, data );
+        int bytes = serializer.serialize( getRecordSize(), offset, data );
+        bucketAbsoluteOffsets = serializer.getBucketAbsoluteOffsets();
+        bucketRelativeOffsets = serializer.getBucketRelativeOffsets();
+//        for ( int i = 0; i < bucketAbsoluteOffsets.length; i++ )
+//        {
+//            System.out.println( "bucketAbsoluteOffset = " + bucketAbsoluteOffsets[i] );
+//            System.out.println( "bucketRelativeOffset = " + bucketRelativeOffsets[i] );
+//        }
+        return bytes;
     }
 
 
@@ -537,6 +548,45 @@ public class SSTRecord
     public void processContinueRecord( byte[] record )
     {
         deserializer.processContinueRecord( record );
+    }
+
+    /**
+     * Creates an extended string record based on the current contents of
+     * the current SST record.  The offset within the stream to the SST record
+     * is required because the extended string record points directly to the
+     * strings in the SST record.
+     * <p>
+     * NOTE: THIS FUNCTION MUST ONLY BE CALLED AFTER THE SST RECORD HAS BEEN
+     *       SERIALIZED.
+     *
+     * @param sstOffset     The offset in the stream to the start of the
+     *                      SST record.
+     * @return  The new SST record.
+     */
+    public ExtSSTRecord createExtSSTRecord(int sstOffset)
+    {
+        if (bucketAbsoluteOffsets == null || bucketAbsoluteOffsets == null)
+            throw new IllegalStateException("SST record has not yet been serialized.");
+
+        ExtSSTRecord extSST = new ExtSSTRecord();
+        extSST.setNumStringsPerBucket((short)8);
+        int[] absoluteOffsets = (int[]) bucketAbsoluteOffsets.clone();
+        int[] relativeOffsets = (int[]) bucketRelativeOffsets.clone();
+        for ( int i = 0; i < absoluteOffsets.length; i++ )
+            absoluteOffsets[i] += sstOffset;
+        extSST.setBucketOffsets(absoluteOffsets, relativeOffsets);
+        return extSST;
+    }
+
+    /**
+     * Calculates the size in bytes of the EXTSST record as it would be if the
+     * record was serialized.
+     *
+     * @return  The size of the ExtSST record in bytes.
+     */
+    public int calcExtSSTRecordSize()
+    {
+      return ExtSSTRecord.getRecordSizeForStrings(field_3_strings.size());
     }
 }
 

@@ -46,6 +46,10 @@
                     <td>jdepend</td>
                     <td>http://www.ibiblio.org/maven/jdepend/jars/</td>
                 </tr>
+                <tr>
+                    <td>xalan</td>
+                    <td>http://www.ibiblio.org/maven/xalan/jars/</td>
+                </tr>
             </table>
             <p>
                 Just pick the latest versions of these jars and place

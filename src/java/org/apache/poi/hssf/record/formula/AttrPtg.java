@@ -60,7 +60,7 @@
  */
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.hssf.util.SheetReferences;
+import org.apache.poi.hssf.model.Workbook;
 
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.BitField;
@@ -207,11 +207,11 @@ public class AttrPtg
         if(space.isSet(field_1_options)) {
             return operands[ 0 ];
         } else if (optiIf.isSet(field_1_options)) {
-            return toFormulaString((SheetReferences)null) + "(" + operands[ 0 ]             +")"; 
+            return toFormulaString((Workbook)null) + "(" + operands[ 0 ]             +")";
         } else if (optGoto.isSet(field_1_options)) {
-            return toFormulaString((SheetReferences)null) + operands[0];   //goto isn't a real formula element should not show up
+            return toFormulaString((Workbook)null) + operands[0];   //goto isn't a real formula element should not show up
         } else {
-            return toFormulaString((SheetReferences)null) + "(" + operands[ 0 ] + ")";
+            return toFormulaString((Workbook)null) + "(" + operands[ 0 ] + ")";
         }
     }
   
@@ -226,7 +226,7 @@ public class AttrPtg
         return -1;
     }
         
-   public String toFormulaString(SheetReferences refs) {
+   public String toFormulaString(Workbook book) {
       if(semiVolatile.isSet(field_1_options)) {
         return "ATTR(semiVolatile)";
       }

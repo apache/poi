@@ -107,7 +107,7 @@ public class TestDocument
         {
             array[ j ] = ( byte ) j;
         }
-        document = new POIFSDocument("foo", new ByteArrayInputStream(array));
+        document = new POIFSDocument("foo", new SlowInputStream(new ByteArrayInputStream(array)));
         checkDocument(document, array);
 
         // verify correct number of blocks get created for document

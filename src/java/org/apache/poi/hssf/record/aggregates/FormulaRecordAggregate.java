@@ -82,6 +82,19 @@ public class FormulaRecordAggregate
         this.stringRecord = stringRecord;
     }
 
+	/**
+	 * Used only in the clone
+	 * @param formulaRecord
+	 * @param stringRecord
+	 * @param sharedRecord
+	 */
+	public FormulaRecordAggregate( FormulaRecord formulaRecord, StringRecord stringRecord, SharedFormulaRecord sharedRecord)
+	{
+		  this.formulaRecord = formulaRecord;
+		  this.stringRecord = stringRecord;
+		  this.sharedFormulaRecord = sharedRecord;
+	}
+
 
 
     protected void validateSid( short id )
@@ -106,14 +119,14 @@ public class FormulaRecordAggregate
     {
         int pos = offset;
         pos += formulaRecord.serialize(pos, data);
-        if (stringRecord != null)
-        {
-            pos += stringRecord.serialize(pos, data);
-        }
         if (this.getSharedFormulaRecord() != null) 
         {
         		pos += getSharedFormulaRecord().serialize(pos, data);
         }	
+         if (stringRecord != null)
+        {
+            pos += stringRecord.serialize(pos, data);
+        }
         return pos - offset;
         
     }
@@ -221,7 +234,10 @@ public class FormulaRecordAggregate
      * @see java.lang.Object#clone()
      */
     public Object clone() {
-        return new FormulaRecordAggregate((FormulaRecord) this.formulaRecord.clone(), (StringRecord) this.stringRecord.clone());
+			StringRecord clonedString = (stringRecord == null) ? null : (StringRecord)stringRecord.clone();
+    		SharedFormulaRecord clonedShared = (sharedFormulaRecord == null) ? null : (SharedFormulaRecord)sharedFormulaRecord.clone();
+    		
+        return new FormulaRecordAggregate((FormulaRecord) this.formulaRecord.clone(), clonedString, clonedShared);
     }
 
 
@@ -239,6 +255,21 @@ public class FormulaRecordAggregate
     */
    public void setSharedFormulaRecord(SharedFormulaRecord sharedFormulaRecord) {
       this.sharedFormulaRecord = sharedFormulaRecord;
+   }
+
+   /* 
+    * Setting to true so that this value does not abort the whole ValueAggregation
+    * (non-Javadoc)
+    * @see org.apache.poi.hssf.record.Record#isInValueSection()
+    */
+   public boolean isInValueSection() {
+
+      return true;
+   }
+   
+   public String getStringValue() {
+        if(stringRecord==null) return null;
+        return stringRecord.getString();
    }
 
 }

@@ -55,8 +55,25 @@ package org.apache.poi.hssf.model;
 
 import junit.framework.TestCase;
 
-import org.apache.poi.hssf.record.formula.*;
-import org.apache.poi.hssf.util.SheetReferences;
+import org.apache.poi.hssf.record.formula.AbstractFunctionPtg;
+import org.apache.poi.hssf.record.formula.AddPtg;
+import org.apache.poi.hssf.record.formula.AttrPtg;
+import org.apache.poi.hssf.record.formula.BoolPtg;
+import org.apache.poi.hssf.record.formula.EqualPtg;
+import org.apache.poi.hssf.record.formula.FuncVarPtg;
+import org.apache.poi.hssf.record.formula.IntPtg;
+import org.apache.poi.hssf.record.formula.LessEqualPtg;
+import org.apache.poi.hssf.record.formula.LessThanPtg;
+import org.apache.poi.hssf.record.formula.NamePtg;
+import org.apache.poi.hssf.record.formula.NotEqualPtg;
+import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.hssf.record.formula.ReferencePtg;
+import org.apache.poi.hssf.record.formula.StringPtg;
+import org.apache.poi.hssf.record.formula.UnaryMinusPtg;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 /**
  * Test the low level formula parser functionality. High level tests are to 
@@ -145,7 +162,7 @@ public class TestFormulaParser extends TestCase {
         assertEquals(true, flag.getValue());
         assertEquals("Y", y.getValue());
         assertEquals("N", n.getValue());
-        assertEquals("IF", funif.toFormulaString(new SheetReferences()));
+        assertEquals("IF", funif.toFormulaString((Workbook) null));
         assertTrue("Goto ptg exists", goto1.isGoto());
     }
 
@@ -285,6 +302,93 @@ public class TestFormulaParser extends TestCase {
 		
 	}
 	    
+    public void testMacroFunction() {
+        Workbook w = new Workbook();
+        FormulaParser fp = new FormulaParser("FOO()", w);
+        fp.parse();
+        Ptg[] ptg = fp.getRPNPtg();
+
+        AbstractFunctionPtg tfunc = (AbstractFunctionPtg) ptg[0];
+        assertEquals("externalflag", tfunc.getName());
+
+        NamePtg tname = (NamePtg) ptg[1];
+        assertEquals("FOO", tname.toFormulaString(w));
+    }
+
+    public void testEmbeddedSlash() {
+        FormulaParser fp = new FormulaParser("HYPERLINK(\"http://www.jakarta.org\",\"Jakarta\");",null);
+        fp.parse();
+        Ptg[] ptg = fp.getRPNPtg();
+        assertTrue("first ptg is string",ptg[0] instanceof StringPtg);
+        assertTrue("second ptg is string",ptg[1] instanceof StringPtg);
+        
+    }
+    
+    public void testConcatenate(){
+         FormulaParser fp = new FormulaParser("CONCATENATE(\"first\",\"second\")",null);
+         fp.parse();
+         Ptg[] ptg = fp.getRPNPtg();
+        assertTrue("first ptg is string",ptg[0] instanceof StringPtg);
+        assertTrue("second ptg is string",ptg[1] instanceof StringPtg);
+    }
+    
+    public void testWorksheetReferences()
+    {
+    	HSSFWorkbook wb = new HSSFWorkbook();
+    	
+    	wb.createSheet("NoQuotesNeeded");
+    	wb.createSheet("Quotes Needed Here &#$@");
+    	
+    	HSSFSheet sheet = wb.createSheet("Test");
+    	HSSFRow row = sheet.createRow(0);
+    	HSSFCell cell;
+    	
+    	cell = row.createCell((short)0);
+    	cell.setCellFormula("NoQuotesNeeded!A1");
+    	
+    	cell = row.createCell((short)1);
+    	cell.setCellFormula("'Quotes Needed Here &#$@'!A1");
+    }
+    
+    public void testUnaryMinus()
+    {
+		FormulaParser fp = new FormulaParser("-A1", null);
+		fp.parse();
+		Ptg[] ptg = fp.getRPNPtg();
+		assertTrue("got 2 ptgs", ptg.length == 2);
+		assertTrue("first ptg is reference",ptg[0] instanceof ReferencePtg);
+		assertTrue("second ptg is string",ptg[1] instanceof UnaryMinusPtg);
+     }
+    
+	public void testLeadingSpaceInString()
+	{
+		String value = "  hi  ";
+		FormulaParser fp = new FormulaParser("\"" + value + "\"", null);
+		fp.parse();
+		Ptg[] ptg = fp.getRPNPtg();
+    
+		assertTrue("got 1 ptg", ptg.length == 1);
+		assertTrue("ptg0 is a StringPtg", ptg[0] instanceof StringPtg);
+		assertTrue("ptg0 contains exact value", ((StringPtg)ptg[0]).getValue().equals(value));
+	}
+
+	public void testLookupAndMatchFunctionArgs()
+	{
+		FormulaParser fp = new FormulaParser("lookup(A1, A3:A52, B3:B52)", null);
+		fp.parse();
+		Ptg[] ptg = fp.getRPNPtg();
+    
+		assertTrue("got 4 ptg", ptg.length == 4);
+		assertTrue("ptg0 has Value class", ptg[0].getPtgClass() == Ptg.CLASS_VALUE);
+		
+		fp = new FormulaParser("match(A1, A3:A52)", null);
+		fp.parse();
+		ptg = fp.getRPNPtg();
+    
+		assertTrue("got 3 ptg", ptg.length == 3);
+		assertTrue("ptg0 has Value class", ptg[0].getPtgClass() == Ptg.CLASS_VALUE);
+	}
+
      public static void main(String [] args) {
         System.out.println("Testing org.apache.poi.hssf.record.formula.FormulaParser");
         junit.textui.TestRunner.run(TestFormulaParser.class);

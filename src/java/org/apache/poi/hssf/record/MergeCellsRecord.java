@@ -56,6 +56,7 @@
 package org.apache.poi.hssf.record;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.apache.poi.util.LittleEndian;
 
@@ -326,7 +327,13 @@ public class MergeCellsRecord
     public Object clone() {
         MergeCellsRecord rec = new MergeCellsRecord();
         rec.field_1_num_areas = field_1_num_areas;
-        rec.field_2_regions = field_2_regions;
+        rec.field_2_regions = new ArrayList();
+        Iterator iterator = field_2_regions.iterator();
+        while (iterator.hasNext()) {
+           MergedRegion oldRegion = (MergedRegion)iterator.next();
+           rec.addArea(oldRegion.row_from, oldRegion.col_from, oldRegion.row_to, oldRegion.col_to);
+        }
+        
         return rec;
     }
 }

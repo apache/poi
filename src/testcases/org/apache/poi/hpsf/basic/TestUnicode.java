@@ -54,10 +54,18 @@
 
 package org.apache.poi.hpsf.basic;
 
-import java.io.*;
-import java.util.*;
-import junit.framework.*;
-import org.apache.poi.hpsf.*;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
+import junit.framework.Assert;
+import junit.framework.TestCase;
+
+import org.apache.poi.hpsf.HPSFException;
+import org.apache.poi.hpsf.PropertySet;
+import org.apache.poi.hpsf.PropertySetFactory;
+import org.apache.poi.hpsf.Section;
 
 
 
@@ -72,17 +80,22 @@ import org.apache.poi.hpsf.*;
 public class TestUnicode extends TestCase
 {
 
-    final static String POI_FS = "TestUnicode.xls";
-    final static String[] POI_FILES = new String[]
-	{
-	    "\005DocumentSummaryInformation",
-	};
+    static final String POI_FS = "TestUnicode.xls";
+    static final String[] POI_FILES = new String[]
+        {
+            "\005DocumentSummaryInformation",
+        };
     File data;
     POIFile[] poiFiles;
 
 
 
-    public TestUnicode(String name)
+    /**
+     * <p>Constructor</p>
+     * 
+     * @param name the test case's name
+     */
+    public TestUnicode(final String name)
     {
         super(name);
     }
@@ -92,11 +105,11 @@ public class TestUnicode extends TestCase
     /**
      * <p>Read a the test file from the "data" directory.</p>
      */
-    public void setUp() throws FileNotFoundException, IOException
+    protected void setUp() throws FileNotFoundException, IOException
     {
-	final File dataDir =
-	    new File(System.getProperty("HPSF.testdata.path"));
-	data = new File(dataDir, POI_FS);
+        final File dataDir =
+            new File(System.getProperty("HPSF.testdata.path"));
+        data = new File(dataDir, POI_FS);
     }
 
 
@@ -108,23 +121,23 @@ public class TestUnicode extends TestCase
      */
     public void testPropertySetMethods() throws IOException, HPSFException
     {
-	POIFile poiFile = Util.readPOIFiles(data, POI_FILES)[0];
-	byte[] b = poiFile.getBytes();
-	PropertySet ps =
-	    PropertySetFactory.create(new ByteArrayInputStream(b));
-	Assert.assertTrue(ps.isDocumentSummaryInformation());
-	Assert.assertEquals(ps.getSectionCount(), 2);
-	Section s = (Section) ps.getSections().get(1);
-	Assert.assertEquals(s.getProperty(1),
-			    new Integer(1200));
-	Assert.assertEquals(s.getProperty(2),
-			    new Long(4198897018l));
-	Assert.assertEquals(s.getProperty(3),
-			    "MCon_Info zu Office bei Schreiner");
-	Assert.assertEquals(s.getProperty(4),
-			    "petrovitsch@schreiner-online.de");
-	Assert.assertEquals(s.getProperty(5),
-			    "Petrovitsch, Wilhelm");
+        POIFile poiFile = Util.readPOIFiles(data, POI_FILES)[0];
+        byte[] b = poiFile.getBytes();
+        PropertySet ps =
+            PropertySetFactory.create(new ByteArrayInputStream(b));
+        Assert.assertTrue(ps.isDocumentSummaryInformation());
+        Assert.assertEquals(ps.getSectionCount(), 2);
+        Section s = (Section) ps.getSections().get(1);
+        Assert.assertEquals(s.getProperty(1),
+                            new Integer(1200));
+        Assert.assertEquals(s.getProperty(2),
+                            new Long(4198897018L));
+        Assert.assertEquals(s.getProperty(3),
+                            "MCon_Info zu Office bei Schreiner");
+        Assert.assertEquals(s.getProperty(4),
+                            "petrovitsch@schreiner-online.de");
+        Assert.assertEquals(s.getProperty(5),
+                            "Petrovitsch, Wilhelm");
     }
 
 
@@ -132,10 +145,10 @@ public class TestUnicode extends TestCase
     /**
      * <p>Runs the test cases stand-alone.</p>
      */
-    public static void main(String[] args)
+    public static void main(final String[] args)
     {
-	System.setProperty("HPSF.testdata.path",
-			   "./src/testcases/org/apache/poi/hpsf/data");
+        System.setProperty("HPSF.testdata.path",
+                           "./src/testcases/org/apache/poi/hpsf/data");
         junit.textui.TestRunner.run(TestUnicode.class);
     }
 
