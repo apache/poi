@@ -14,7 +14,11 @@
   <property name="build.compiler.pedantic" value="false"/>
   <property name="build.compiler.depend" value="true"/>
   <property name="build.compiler.fulldepend" value="true"/>
-  
+
+  <!-- Temporary fix.  Longer term solution to be discussed. -->
+  <property name="build.root"            value="./build"/>
+
+
   <!-- =================================================================== -->
   <!-- Indentify Classpath                                                 -->
   <!-- =================================================================== -->
@@ -44,7 +48,7 @@
       <include name="*.jar"/>
     </fileset>    
     <!-- FIXME : how to build a path that references a property set in 'init' target ? -->
-    <pathelement path="./build/jakarta-poi/classes"/>
+    <pathelement path="${build.root}/jakarta-poi/classes"/>
   </path>
 
   <path id="scratchpad.classpath">
@@ -61,7 +65,7 @@
       <include name="*.jar"/>
     </fileset>
     <!-- FIXME : how to build a path that references a property set in 'init' target ? -->
-    <pathelement path="./build/jakarta-poi/classes"/>
+    <pathelement path="${build.root}/jakarta-poi/classes"/>
   </path>
 
   <path id="contrib.classpath">
@@ -78,7 +82,7 @@
       <include name="*.jar"/>
     </fileset>    
     <!-- FIXME : how to build a path that references a property set in 'init' target ? -->
-    <pathelement path="./build/jakarta-poi/classes"/>
+    <pathelement path="${build.root}/jakarta-poi/classes"/>
   </path>
   
 

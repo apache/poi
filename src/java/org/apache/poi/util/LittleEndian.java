@@ -1,4 +1,3 @@
-
 /* ====================================================================
  * The Apache Software License, Version 1.1
  *
@@ -55,9 +54,9 @@
 
 package org.apache.poi.util;
 
-import java.io.*;
-
-import java.util.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Arrays;
 
 /**
  * a utility class for handling little-endian numbers, which the 80x86
@@ -70,7 +69,7 @@ import java.util.*;
  */
 
 public class LittleEndian
-    implements LittleEndianConsts
+        implements LittleEndianConsts
 {
 
     // all methods are static, so an accessible constructor makes no
@@ -90,22 +89,22 @@ public class LittleEndian
      * @exception ArrayIndexOutOfBoundsException may be thrown
      */
 
-    public static short getShort(final byte [] data, final int offset)
+    public static short getShort(final byte[] data, final int offset)
     {
-        return ( short ) getNumber(data, offset, SHORT_SIZE);
+        return (short) getNumber(data, offset, SHORT_SIZE);
     }
 
     /**
      * get a short array from a byte array.  The short array is assumed
      * to start with a word describing the length of the array.
      */
-    public static short[] getShortArray(final byte [] data, final int offset)
+    public static short[] getShortArray(final byte[] data, final int offset)
     {
-        int size = ( short) getNumber(data, offset, SHORT_SIZE);
+        int size = (short) getNumber(data, offset, SHORT_SIZE);
         short[] results = new short[size];
         for (int i = 0; i < size; i++)
         {
-            results[i] = getShort(data, offset + 2 + (i*2));
+            results[i] = getShort(data, offset + 2 + (i * 2));
         }
         return results;
     }
@@ -120,7 +119,7 @@ public class LittleEndian
      * @exception ArrayIndexOutOfBoundsException may be thrown
      */
 
-    public static short getShort(final byte [] data)
+    public static short getShort(final byte[] data)
     {
         return getShort(data, 0);
     }
@@ -136,9 +135,9 @@ public class LittleEndian
      * @exception ArrayIndexOutOfBoundsException may be thrown
      */
 
-    public static int getInt(final byte [] data, final int offset)
+    public static int getInt(final byte[] data, final int offset)
     {
-        return ( int ) getNumber(data, offset, INT_SIZE);
+        return (int) getNumber(data, offset, INT_SIZE);
     }
 
     /**
@@ -151,7 +150,7 @@ public class LittleEndian
      * @exception ArrayIndexOutOfBoundsException may be thrown
      */
 
-    public static int getInt(final byte [] data)
+    public static int getInt(final byte[] data)
     {
         return getInt(data, 0);
     }
@@ -167,7 +166,7 @@ public class LittleEndian
      * @exception ArrayIndexOutOfBoundsException may be thrown
      */
 
-    public static long getLong(final byte [] data, final int offset)
+    public static long getLong(final byte[] data, final int offset)
     {
         return getNumber(data, offset, LONG_SIZE);
     }
@@ -182,7 +181,7 @@ public class LittleEndian
      * @exception ArrayIndexOutOfBoundsException may be thrown
      */
 
-    public static long getLong(final byte [] data)
+    public static long getLong(final byte[] data)
     {
         return getLong(data, 0);
     }
@@ -200,7 +199,7 @@ public class LittleEndian
      * @exception ArrayIndexOutOfBoundsException may be thrown
      */
 
-    public static double getDouble(final byte [] data, final int offset)
+    public static double getDouble(final byte[] data, final int offset)
     {
         return Double.longBitsToDouble(getNumber(data, offset, DOUBLE_SIZE));
     }
@@ -215,7 +214,7 @@ public class LittleEndian
      * @exception ArrayIndexOutOfBoundsException may be thrown
      */
 
-    public static double getDouble(final byte [] data)
+    public static double getDouble(final byte[] data)
     {
         return getDouble(data, 0);
     }
@@ -230,7 +229,7 @@ public class LittleEndian
      * @exception ArrayIndexOutOfBoundsException may be thrown
      */
 
-    public static void putShort(final byte [] data, final int offset,
+    public static void putShort(final byte[] data, final int offset,
                                 final short value)
     {
         putNumber(data, offset, value, SHORT_SIZE);
@@ -245,7 +244,7 @@ public class LittleEndian
      *
      * @exception ArrayIndexOutOfBoundsException may be thrown
      */
-    public static void putShortArray(final byte [] data, final int offset, final short[] value)
+    public static void putShortArray(final byte[] data, final int offset, final short[] value)
     {
         putNumber(data, offset, value.length, SHORT_SIZE);
         for (int i = 0; i < value.length; i++)
@@ -263,7 +262,7 @@ public class LittleEndian
      * @exception ArrayIndexOutOfBoundsException may be thrown
      */
 
-    public static void putShort(final byte [] data, final short value)
+    public static void putShort(final byte[] data, final short value)
     {
         putShort(data, 0, value);
     }
@@ -278,7 +277,7 @@ public class LittleEndian
      * @exception ArrayIndexOutOfBoundsException may be thrown
      */
 
-    public static void putInt(final byte [] data, final int offset,
+    public static void putInt(final byte[] data, final int offset,
                               final int value)
     {
         putNumber(data, offset, value, INT_SIZE);
@@ -293,7 +292,7 @@ public class LittleEndian
      * @exception ArrayIndexOutOfBoundsException may be thrown
      */
 
-    public static void putInt(final byte [] data, final int value)
+    public static void putInt(final byte[] data, final int value)
     {
         putInt(data, 0, value);
     }
@@ -308,7 +307,7 @@ public class LittleEndian
      * @exception ArrayIndexOutOfBoundsException may be thrown
      */
 
-    public static void putLong(final byte [] data, final int offset,
+    public static void putLong(final byte[] data, final int offset,
                                final long value)
     {
         putNumber(data, offset, value, LONG_SIZE);
@@ -323,7 +322,7 @@ public class LittleEndian
      * @exception ArrayIndexOutOfBoundsException may be thrown
      */
 
-    public static void putLong(final byte [] data, final long value)
+    public static void putLong(final byte[] data, final long value)
     {
         putLong(data, 0, value);
     }
@@ -338,7 +337,7 @@ public class LittleEndian
      * @exception ArrayIndexOutOfBoundsException may be thrown
      */
 
-    public static void putDouble(final byte [] data, final int offset,
+    public static void putDouble(final byte[] data, final int offset,
                                  final double value)
     {
         putNumber(data, offset, Double.doubleToLongBits(value), DOUBLE_SIZE);
@@ -353,7 +352,7 @@ public class LittleEndian
      * @exception ArrayIndexOutOfBoundsException may be thrown
      */
 
-    public static void putDouble(final byte [] data, final double value)
+    public static void putDouble(final byte[] data, final double value)
     {
         putDouble(data, 0, value);
     }
@@ -365,7 +364,7 @@ public class LittleEndian
      */
 
     public static class BufferUnderrunException
-        extends IOException
+            extends IOException
     {
 
         /**
@@ -392,7 +391,7 @@ public class LittleEndian
      */
 
     public static short readShort(final InputStream stream)
-        throws IOException, BufferUnderrunException
+            throws IOException, BufferUnderrunException
     {
         return getShort(readFromStream(stream, SHORT_SIZE));
     }
@@ -410,7 +409,7 @@ public class LittleEndian
      */
 
     public static int readInt(final InputStream stream)
-        throws IOException, BufferUnderrunException
+            throws IOException, BufferUnderrunException
     {
         return getInt(readFromStream(stream, INT_SIZE));
     }
@@ -428,14 +427,14 @@ public class LittleEndian
      */
 
     public static long readLong(final InputStream stream)
-        throws IOException, BufferUnderrunException
+            throws IOException, BufferUnderrunException
     {
         return getLong(readFromStream(stream, LONG_SIZE));
     }
 
-    private static final byte[] _short_buffer = new byte[ SHORT_SIZE ];
-    private static final byte[] _int_buffer   = new byte[ INT_SIZE ];
-    private static final byte[] _long_buffer  = new byte[ LONG_SIZE ];
+    private static final byte[] _short_buffer = new byte[SHORT_SIZE];
+    private static final byte[] _int_buffer = new byte[INT_SIZE];
+    private static final byte[] _long_buffer = new byte[LONG_SIZE];
 
     /**
      * Read the appropriate number of bytes from the stream and return
@@ -466,29 +465,29 @@ public class LittleEndian
      *            enough bytes
      */
 
-    public static byte [] readFromStream(final InputStream stream,
-                                         final int size)
-        throws IOException, BufferUnderrunException
+    public static byte[] readFromStream(final InputStream stream,
+                                        final int size)
+            throws IOException, BufferUnderrunException
     {
         byte[] buffer = null;
 
         switch (size)
         {
 
-            case SHORT_SIZE :
+            case SHORT_SIZE:
                 buffer = _short_buffer;
                 break;
 
-            case INT_SIZE :
+            case INT_SIZE:
                 buffer = _int_buffer;
                 break;
 
-            case LONG_SIZE :
+            case LONG_SIZE:
                 buffer = _long_buffer;
                 break;
 
             default :
-                buffer = new byte[ size ];
+                buffer = new byte[size];
                 break;
         }
         int count = stream.read(buffer);
@@ -497,16 +496,15 @@ public class LittleEndian
         {
 
             // return a zero-filled buffer
-            Arrays.fill(buffer, ( byte ) 0);
-        }
-        else if (count != size)
+            Arrays.fill(buffer, (byte) 0);
+        } else if (count != size)
         {
             throw new BufferUnderrunException();
         }
         return buffer;
     }
 
-    private static long getNumber(final byte [] data, final int offset,
+    private static long getNumber(final byte[] data, final int offset,
                                   final int size)
     {
         long result = 0;
@@ -514,21 +512,21 @@ public class LittleEndian
         for (int j = offset + size - 1; j >= offset; j--)
         {
             result <<= 8;
-            result |= 0xff & data[ j ];
+            result |= 0xff & data[j];
         }
         return result;
     }
 
-    private static void putNumber(final byte [] data, final int offset,
+    private static void putNumber(final byte[] data, final int offset,
                                   final long value, final int size)
     {
-        int  limit = size + offset;
-        long v     = value;
+        int limit = size + offset;
+        long v = value;
 
         for (int j = offset; j < limit; j++)
         {
-            data[ j ] = ( byte ) (v & 0xFF);
-            v         >>= 8;
+            data[j] = (byte) (v & 0xFF);
+            v >>= 8;
         }
     }
 
@@ -537,6 +535,36 @@ public class LittleEndian
      */
     public static int ubyteToInt(byte b)
     {
-        return ((b & 0x80) == 0 ? (int)b : (int)(b & (byte)0x7f) + 0x80 );
+        return ((b & 0x80) == 0 ? (int) b : (int) (b & (byte) 0x7f) + 0x80);
     }
+
+    /**
+     * get the unsigned value of a byte.
+     *
+     * @param data the byte array.
+     * @param offset a starting offset into the byte array.
+     *
+     * @return the unsigned value of the byte as a 32 bit integer
+     *
+     * @exception ArrayIndexOutOfBoundsException may be thrown
+     */
+    public static int getUnsignedByte(final byte[] data, final int offset)
+    {
+        return (int) getNumber(data, offset, BYTE_SIZE);
+    }
+
+    /**
+     * get the unsigned value of a byte.
+     *
+     * @param data the byte array
+     *
+     * @return the unsigned value of the byte as a 32 bit integer
+     *
+     * @exception ArrayIndexOutOfBoundsException may be thrown
+     */
+    public static int getUnsignedByte(final byte[] data)
+    {
+        return getUnsignedByte(data, 0);
+    }
+
 }
