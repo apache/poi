@@ -18,11 +18,7 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.*;
 
 import junit.framework.TestCase;
 
@@ -458,6 +454,7 @@ extends TestCase {
 		assertEquals("Re-Written Formula String Cell value", d1.getStringCellValue(), rd2.getStringCellValue());
 
 	}
+
 }
 
 

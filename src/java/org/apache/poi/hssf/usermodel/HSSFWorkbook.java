@@ -515,7 +515,7 @@ public class HSSFWorkbook
         }
         if ( nameRecord == null )
         {
-            nameRecord = workbook.createBuiltInName(NameRecord.BUILTIN_PRINT_TITLE, externSheetIndex+1);
+            nameRecord = workbook.createBuiltInName(NameRecord.BUILTIN_PRINT_TITLE, sheetIndex+1);
             //does a lot of the house keeping for builtin records, like setting lengths to zero etc
             isNewRecord = true;
         }
