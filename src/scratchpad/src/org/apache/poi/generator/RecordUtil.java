@@ -54,12 +54,13 @@
 
 package org.apache.poi.generator;
 
+import java.util.StringTokenizer;
 
 /**
- * Helper functions for the record transformations. TODO: Change this to
- * javascript in the style sheet.
+ * Helper functions for the record transformations. 
  *
  * @author Glen Stampoultzis (glens at apache.org)
+ * @author Andrew C. Oliver (acoliver at apache dot org)
  */
 public class RecordUtil
 {
@@ -177,5 +178,22 @@ public class RecordUtil
         pad(fieldName, padTo);
         return fieldName.toString();
     }
-
+    
+    /**
+     * @return a byte array formatted string from a HexDump formatted string
+     *  for example (byte)0x00,(byte)0x01 instead of 00 01
+     */
+    public static String getByteArrayString(String data) {
+        StringTokenizer tokenizer = new StringTokenizer(data);
+        StringBuffer retval = new StringBuffer();
+        
+        while (tokenizer.hasMoreTokens()) {
+            retval.append("(byte)0x").append(tokenizer.nextToken());
+            if (tokenizer.hasMoreTokens()) {
+                retval.append(",");
+            }
+        }
+        return retval.toString();
+    }
+    
 }
