@@ -90,7 +90,7 @@ public class Test<xsl:value-of select="@name"/>Record
         <xsl:value-of select="@name"/>Record record = new <xsl:value-of select="@name"/>Record((short)<xsl:value-of select="@id"/>, (short)data.length, data);
         
 <xsl:for-each select="//fields/field">
-            <xsl:choose><xsl:when test="@type='string'">
+            <xsl:choose><xsl:when test="@type='string' or @type='hbstring'">
         assertEquals( "<xsl:value-of select="./testresult/@value"/>", record.get<xsl:value-of select="recutil:getFieldName1stCap(@name,0)"/>());
 </xsl:when><xsl:when test="@size='1'">
         assertEquals( (byte)<xsl:value-of select="./testresult/@value"/>, record.get<xsl:value-of select="recutil:getFieldName1stCap(@name,0)"/>());
@@ -115,7 +115,7 @@ public class Test<xsl:value-of select="@name"/>Record
 
 
 <xsl:for-each select="//fields/field">
-            <xsl:choose><xsl:when test="@type='string'">
+            <xsl:choose><xsl:when test="@type='string' or @type='hbstring'">
         record.set<xsl:value-of select="recutil:getFieldName1stCap(@name,0)"/>( "<xsl:value-of select="./testresult/@value"/>" );
 </xsl:when><xsl:when test="@size='1'">
         record.set<xsl:value-of select="recutil:getFieldName1stCap(@name,0)"/>( (byte)<xsl:value-of select="./testresult/@value"/> );
