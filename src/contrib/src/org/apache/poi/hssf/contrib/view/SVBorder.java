@@ -53,11 +53,12 @@ public class SVBorder extends AbstractBorder {
       Color oldColor = g.getColor();
       int i;
 
+    // System.err.println("northBorder="+northBorderType);
      paintNormalBorders(g, x, y, width, height); 
      paintDottedBorders(g, x, y, width, height); 
      paintDashedBorders(g, x, y, width, height);
      paintDoubleBorders(g, x, y, width, height);
-    
+     paintDashDotDotBorders(g, x, y, width, height);
 
 
      g.setColor(oldColor);    
@@ -290,8 +291,19 @@ public class SVBorder extends AbstractBorder {
 
       	g.setColor(northColor); 
 
+        int leftx=x;
+        int rightx=width;
+
+                // if there are borders on the west or east then
+                // the second line shouldn't cross them
+        if (westBorder)
+           leftx = x+3;
+
+        if (eastBorder)
+           rightx = width-3;
+
            g.drawLine(x,y,width,y);
-           g.drawLine(x+3,y+2,width-3,y+2);
+           g.drawLine(leftx,y+2,rightx,y+2);
       }
 
       if (eastBorder && 
@@ -303,8 +315,17 @@ public class SVBorder extends AbstractBorder {
 
       	g.setColor(eastColor); 
 
+        int topy=y;
+        int bottomy=height;
+
+        if (northBorder)
+          topy=y+3;
+ 
+        if (southBorder)
+            bottomy=height-3; 
+
         g.drawLine(width-1,y,width-1,height);
-        g.drawLine(width-3,y+3,width-3,height-3);
+        g.drawLine(width-3,topy,width-3,bottomy);
       }
 
       if (southBorder && 
@@ -313,9 +334,18 @@ public class SVBorder extends AbstractBorder {
 
       	g.setColor(southColor); 
 
+        int leftx=y;
+        int rightx=width;
+     
+        if (westBorder)
+           leftx=x+3;
+
+        if (eastBorder)
+           rightx=width-3;
+         
 
         g.drawLine(x,height - 1,width,height - 1);
-        g.drawLine(x+3,height - 3,width-3,height - 3);
+        g.drawLine(leftx,height - 3,rightx,height - 3);
       }
 
       if (westBorder && 
@@ -327,9 +357,120 @@ public class SVBorder extends AbstractBorder {
 
       	g.setColor(westColor); 
 
-           g.drawLine(x,y,x,height);
-           g.drawLine(x+2,y+2,x+2,height-3);
+        int topy=y;
+        int bottomy=height-3;
+
+        if (northBorder)
+           topy=y+2;
+
+        if (southBorder)
+           bottomy=height-3;
+
+        g.drawLine(x,y,x,height);
+        g.drawLine(x+2,topy,x+2,bottomy);
       }
+   }
+
+
+   private void paintDashDotDotBorders(Graphics g, int x, int y, int width, 
+                                  int height) {
+      if (northBorder && 
+             ((northBorderType == HSSFCellStyle.BORDER_DASH_DOT_DOT) ||
+              (northBorderType == HSSFCellStyle.BORDER_MEDIUM_DASH_DOT_DOT))
+         ) {
+        int thickness = getThickness(northBorderType);
+
+      	g.setColor(northColor); 
+        for (int l=x; l < width;) {
+          l=l+drawDashDotDot(g, l, y, thickness, true, true);
+        }
+
+      }
+
+      if (eastBorder && 
+              ((eastBorderType == HSSFCellStyle.BORDER_DASH_DOT_DOT) ||
+               (eastBorderType == HSSFCellStyle.BORDER_MEDIUM_DASH_DOT_DOT))
+         ) {
+
+        int thickness = getThickness(eastBorderType);
+
+      	g.setColor(eastColor); 
+
+        for (int l=y;l < height;) {
+          //System.err.println("drawing east");
+          l=l+drawDashDotDot(g,width-1,l,thickness,false,false);
+        }
+      }
+
+      if (southBorder && 
+              ((southBorderType == HSSFCellStyle.BORDER_DASH_DOT_DOT) ||
+               (southBorderType == HSSFCellStyle.BORDER_MEDIUM_DASH_DOT_DOT))
+         ) {
+
+        int thickness = getThickness(southBorderType);
+
+      	g.setColor(southColor); 
+
+        for (int l=x; l < width;) {
+          //System.err.println("drawing south");
+          l=l+drawDashDotDot(g, l, height-1, thickness, true, false);
+        }
+      }
+
+      if (westBorder && 
+            ((westBorderType == HSSFCellStyle.BORDER_DASH_DOT_DOT) ||
+             (westBorderType == HSSFCellStyle.BORDER_MEDIUM_DASH_DOT_DOT))
+         ) {
+
+        int thickness = getThickness(westBorderType);
+
+      	g.setColor(westColor); 
+
+        for (int l=y;l < height;) {
+          //System.err.println("drawing west");
+          l=l+drawDashDotDot(g,x,l,thickness,false,true);
+        }
+
+      }
+   }
+
+   /**
+    *  Draws one dash dot dot horizontally or vertically with thickness drawn
+    *  incrementally to either the right or left. 
+    *
+    *  @param g graphics object for drawing with
+    *  @param x the x origin of the line
+    *  @param y the y origin of the line 
+    *  @param thickness the thickness of the line  
+    *  @param horizontal or vertical (true for horizontal)
+    *  @param right/bottom or left/top thickness (true for right or top),
+    *         if true then the x or y origin will be incremented to provide 
+    *         thickness, if false, they'll be decremented.  For vertical 
+    *         borders, x is incremented or decremented, for horizontal its y.
+    *         Just set to true for north and west, and false for east and 
+    *         south.
+    *  @returns length - returns the length of the line.  
+    */
+   private int drawDashDotDot(Graphics g,int x, int y, int thickness, 
+                              boolean horizontal,
+                              boolean rightBottom) {
+ 
+      for (int t=0; t < thickness; t++) {
+         if (!rightBottom) {
+            t = 0 - t; //add negative thickness so we go the other way
+                       //then we'll decrement instead of increment.
+         }
+         if (horizontal) {
+            g.drawLine(x,y+t,x+5,y+t);
+            g.drawLine(x+8,y+t,x+10,y+t);
+            g.drawLine(x+13,y+t,x+15,y+t);
+         } else {
+            g.drawLine(x+t,y,x+t,y+5);
+            g.drawLine(x+t,y+8,x+t,y+10);
+            g.drawLine(x+t,y+13,x+t,y+15);
+         }
+      }
+      return 18;
    }
 
    private int getThickness(int thickness) {
@@ -346,6 +487,12 @@ public class SVBorder extends AbstractBorder {
              break;
            case HSSFCellStyle.BORDER_DASHED:
              retval=1;
+             break;
+           case HSSFCellStyle.BORDER_DASH_DOT_DOT:
+             retval=1;
+             break;
+           case HSSFCellStyle.BORDER_MEDIUM_DASH_DOT_DOT:
+             retval=3;
              break;
            case HSSFCellStyle.BORDER_HAIR:
              retval=1;
