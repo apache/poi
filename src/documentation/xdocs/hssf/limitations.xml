@@ -41,6 +41,11 @@
                     will fail.  This is because macros are stored as extra file sytems within the
                     compound document, and these are not currently kept when the file is rewritten.<br/><br/>
                 </li>
+                <li>
+                    Pivot Tables<br/><br/>
+                    Generating pivot tables is not supported.  Reading spreadsheets containing pivot tables
+                    has not been tested.
+                </li>
             </ul>
         </s1>
     </body>
