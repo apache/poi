@@ -87,6 +87,72 @@ public class HSSFColor
      * it takes to create it once per request but you will not hold onto it
      * if you have none of those requests.
      *
+     * @return a hashtable containing all colors mapped to their excel-style 
+     * pallette index
+     */
+    public final static Hashtable getIndexHash() {
+
+        Hashtable hash = new Hashtable(PALETTE_SIZE);
+
+        hash.put(new Integer(HSSFColor.BLACK.index), new HSSFColor.BLACK());
+        hash.put(new Integer(HSSFColor.BROWN.index), new HSSFColor.BROWN());
+        hash.put(new Integer(HSSFColor.OLIVE_GREEN.index),
+                 new HSSFColor.OLIVE_GREEN());
+        hash.put(new Integer(HSSFColor.DARK_GREEN.index), new HSSFColor.DARK_GREEN());
+        hash.put(new Integer(HSSFColor.DARK_TEAL.index), new HSSFColor.DARK_TEAL());
+        hash.put(new Integer(HSSFColor.DARK_BLUE.index), new HSSFColor.DARK_BLUE());
+        hash.put(new Integer(HSSFColor.INDIGO.index), new HSSFColor.INDIGO());
+        hash.put(new Integer(HSSFColor.GREY_80_PERCENT.index),
+                 new HSSFColor.GREY_80_PERCENT());
+        hash.put(new Integer(HSSFColor.ORANGE.index), new HSSFColor.ORANGE());
+        hash.put(new Integer(HSSFColor.DARK_YELLOW.index),
+                 new HSSFColor.DARK_YELLOW());
+        hash.put(new Integer(HSSFColor.GREEN.index), new HSSFColor.GREEN());
+        hash.put(new Integer(HSSFColor.TEAL.index), new HSSFColor.TEAL());
+        hash.put(new Integer(HSSFColor.BLUE.index), new HSSFColor.BLUE());
+        hash.put(new Integer(HSSFColor.BLUE_GREY.index), new HSSFColor.BLUE_GREY());
+        hash.put(new Integer(HSSFColor.GREY_50_PERCENT.index),
+                 new HSSFColor.GREY_50_PERCENT());
+        hash.put(new Integer(HSSFColor.RED.index), new HSSFColor.RED());
+        hash.put(new Integer(HSSFColor.LIGHT_ORANGE.index),
+                 new HSSFColor.LIGHT_ORANGE());
+        hash.put(new Integer(HSSFColor.LIME.index), new HSSFColor.LIME());
+        hash.put(new Integer(HSSFColor.SEA_GREEN.index), new HSSFColor.SEA_GREEN());
+        hash.put(new Integer(HSSFColor.AQUA.index), new HSSFColor.AQUA());
+        hash.put(new Integer(HSSFColor.LIGHT_BLUE.index), new HSSFColor.LIGHT_BLUE());
+        hash.put(new Integer(HSSFColor.VIOLET.index), new HSSFColor.VIOLET());
+        hash.put(new Integer(HSSFColor.GREY_40_PERCENT.index),
+                 new HSSFColor.GREY_40_PERCENT());
+        hash.put(new Integer(HSSFColor.PINK.index), new HSSFColor.PINK());
+        hash.put(new Integer(HSSFColor.GOLD.index), new HSSFColor.GOLD());
+        hash.put(new Integer(HSSFColor.YELLOW.index), new HSSFColor.YELLOW());
+        hash.put(new Integer(HSSFColor.BRIGHT_GREEN.index),
+                 new HSSFColor.BRIGHT_GREEN());
+        hash.put(new Integer(HSSFColor.BRIGHT_GREEN.index), new HSSFColor.TURQUOISE());
+        hash.put(new Integer(HSSFColor.SKY_BLUE.index), new HSSFColor.SKY_BLUE());
+        hash.put(new Integer(HSSFColor.PLUM.index), new HSSFColor.PLUM());
+        hash.put(new Integer(HSSFColor.GREY_25_PERCENT.index),
+                 new HSSFColor.GREY_25_PERCENT());
+        hash.put(new Integer(HSSFColor.ROSE.index), new HSSFColor.ROSE());
+        hash.put(new Integer(HSSFColor.LIGHT_YELLOW.index),
+                 new HSSFColor.LIGHT_YELLOW());
+        hash.put(new Integer(HSSFColor.LIGHT_GREEN.index),
+                 new HSSFColor.LIGHT_GREEN());
+        hash.put(new Integer(HSSFColor.LIGHT_TURQUOISE.index),
+                 new HSSFColor.LIGHT_TURQUOISE());
+        hash.put(new Integer(HSSFColor.PALE_BLUE.index), new HSSFColor.PALE_BLUE());
+        hash.put(new Integer(HSSFColor.LAVENDER.index), new HSSFColor.LAVENDER());
+        hash.put(new Integer(HSSFColor.WHITE.index), new HSSFColor.WHITE());
+	return hash;
+    }
+
+    /**
+     * this function returns all colors in a hastable.  Its not implemented as a
+     * static member/staticly initialized because that would be dirty in a
+     * server environment as it is intended.  This means you'll eat the time
+     * it takes to create it once per request but you will not hold onto it
+     * if you have none of those requests.
+     *
      * @return a hashtable containing all colors mapped to their gnumeric-like
      * triplet string
      */
