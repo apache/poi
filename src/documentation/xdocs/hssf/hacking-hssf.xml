@@ -53,18 +53,18 @@
             </p>
         </section>
         <section title="Important Notice">
-            One thing to note:  ensure any participants in this process have never
+            <p>One thing to note:  ensure any participants in this process have never
             signed a "Non Disclosure Agreement" with Microsoft, and have not
             received any information covered by such an agreement.  If they have
-            they'll not be able to participate in the POI project.
+            they'll not be able to participate in the POI project.</p>
         </section>
         <section title="What Can I Work On?">
-            Check our <link href="../todo.html">todo list</link> or simply look for missing functionality.  Start small
-            and work your way up.
+            <p>Check our <link href="../todo.html">todo list</link> or simply look for missing functionality.  Start small
+            and work your way up.</p>
         </section>
         <section title="What Else Should I Know?">
-            Make sure you <link href="http://jakarta.apache.org/poi/contrib.html">read the contributing section</link>
-            as it contains more generation information about contributing to Poi in general.
+            <p>Make sure you <link href="http://jakarta.apache.org/poi/contrib.html">read the contributing section</link>
+            as it contains more generation information about contributing to Poi in general.</p>
         </section>
     </body>
 </document>
