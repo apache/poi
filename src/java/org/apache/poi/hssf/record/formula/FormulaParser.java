@@ -310,11 +310,12 @@ public class FormulaParser {
     /** Parse and Translate a Math Term */
     private void  Term(){
         Factor();
-        while (Look == '*' || Look == '/' || Look == '^') {
+        while (Look == '*' || Look == '/' || Look == '^' || Look == '&') {
             ///TODO do we need to do anything here??
             if (Look == '*') Multiply();
             if (Look == '/') Divide();
             if (Look == '^') Power();
+            if (Look == '&') Concat();
         }
     }
     
@@ -324,6 +325,14 @@ public class FormulaParser {
         Term();
         tokens.add(new AddPtg());
     }
+    
+    /** Recognize and Translate an Add */
+    private void Concat() {
+        Match('&');
+        Term();
+        tokens.add(new ConcatPtg());
+    }
+    
     
     
     /** Recognize and Translate a Subtract */

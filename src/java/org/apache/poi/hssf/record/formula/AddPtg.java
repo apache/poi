@@ -115,22 +115,7 @@ public class AddPtg
     {
         return "+";
     }
-    
-    
-    public static boolean isNextStringToken(String formula, int pos) {
-        boolean retval = false;
-        while (pos < formula.length() && Character.isWhitespace(formula.charAt(pos))) {
-            pos++;
-        }
-        
-        if (pos < formula.length()) {
-            if (formula.charAt(pos) == ADD.toCharArray()[0]) {
-                retval = true;
-            }
-        }
-        return retval;
-    }
-
+       
     public String toFormulaString(Ptg [] operands)
     {
         StringBuffer buffer = new StringBuffer();
