@@ -7,10 +7,14 @@
 
         Glen Stampoultzis   glens at apache.org
 
+    Modified by:
 
-    This build was tested with ant 1.5.3 although it will probably work with
-    other versions.  The following jar files should be installed
-    into the ant lib directory:
+        Rainer Klute        klute@rainer-klute.de
+
+
+    This build was tested with ant 1.6.2 although it will probably work with
+    other versions.  The following jar files should be available on the -->
+    classpath when running ant:
 
     LIBRARY         LOCATION
     =======         ========
@@ -130,7 +134,7 @@ Main targets:
  debug-test        Runs a single test case specified with 
                    -Dtestcase=classname with remote debug 
                    options turned on.
- reports           Creates junit,jdepend and javadoc reports
+ reports           Creates junit, jdepend and javadoc reports
  site              Generates the documentation and reports
  dist              Creates the entire distribution into build/dist
  clean-dist        Cleans the build directory then creates a 
@@ -213,9 +217,7 @@ Main targets:
     </target>
 
     <target name="compile" depends="init,compile-main,compile-scratchpad,compile-contrib"
-        description="Compiles the POI classes">
-
-    </target>
+        description="Compiles the POI classes"/>
 
     <target name="compile-main" depends="init">
         <copy todir="${main.output.dir}">
@@ -275,7 +277,11 @@ Main targets:
         <pathelement location="${main.output.test.dir}"/>
         <pathelement location="${junit.jar1.dir}"/>
     </path>
-    <target name="test-main" depends="compile-main,-test-main-check" unless="main.test.notRequired">
+
+    <target
+      name="test-main"
+      depends="compile-main, -test-main-check, is-available-junit"
+      unless="main.test.notRequired">
         <junit printsummary="no" showoutput="true" fork="no"
             haltonfailure="${halt.on.test.failure}" failureproperty="main.test.failed">
             <classpath refid="test.classpath"/>
@@ -430,14 +436,17 @@ FORREST_HOME environment variable!</echo>
         <copy todir="${build.site.src}/src/documentation/content/apidocs">
             <fileset dir="${apidocs.report.dir}"/>
         </copy>
-        <copy tofile="${build.site.src}/src/documentation/content/jdepend.ehtml" file="${jdepend.report.dir}/index.html" failonerror="false"/>
+        <copy
+          tofile="${build.site.src}/src/documentation/content/jdepend.ehtml"
+          file="${jdepend.report.dir}/index.html" failonerror="false"/>
         <mkdir dir="${build.site.src}/src/documentation/content/junit"/>
         <copy todir="${build.site.src}/src/documentation/content/junit">
             <fileset dir="${junit.report.dir}"/>
         </copy>
 
-        <move file="${build.site.src}/src/documentation/content/xdocs/status.xml" tofile="${build.site.src}/status.xml"/>
-
+        <move
+          file="${build.site.src}/src/documentation/content/xdocs/status.xml"
+          tofile="${build.site.src}/status.xml"/>
 
         <ant antfile="${forrest.home}/forrest.antproxy.xml" target="site">
             <property name="project.home" location="${build.site.src}"/>
@@ -474,88 +483,43 @@ FORREST_HOME environment variable!</echo>
         </style>
     </target>
 
-    <target name="reports" depends="-check-reports" unless="reports.notRequired"
-        description="Creates junit,jdepend and javadoc reports">
-        <antcall target="test">
-            <param name="halt.on.test.failure" value="false"/>
-        </antcall>
-        <junitreport todir="${junit.report.dir}">
-            <fileset dir="${main.reports.test}">
-                <include name="TEST-*.xml"/>
-            </fileset>
-            <fileset dir="${scratchpad.reports.test}">
-                <include name="TEST-*.xml"/>
-            </fileset>
-            <fileset dir="${contrib.reports.test}">
-                <include name="TEST-*.xml"/>
-            </fileset>
-            <report format="frames" todir="${junit.report.dir}"/>
-        </junitreport>
+  <!-- FIXME: This target has to be split into several targets so that each
+       of them can be executed individually. -->
+  <target name="reports"
+    depends="-check-reports, is-available-junit, is-available-jdepend"
+    unless="reports.notRequired"
+    description="Creates JUnit and JDepend reports and generates the API documentation">
 
-        <jdepend outputfile="${jdepend.report.dir}/jdepend.xml" format="xml">
-            <sourcespath>
-                <pathelement location="${main.src}"/>
-                <pathelement location="${contrib.src}"/>
-                <pathelement location="${scratchpad.src}"/>
-            </sourcespath>
-            <classpath>
-                <path refid="main.classpath"/>
-                <path refid="contrib.classpath"/>
-                <path refid="scratchpad.classpath"/>
-                <pathelement location="${main.output.dir}"/>
-                <pathelement location="${contrib.output.dir}"/>
-                <pathelement location="${scratchpad.output.dir}"/>
-            </classpath>
-        </jdepend>
+    <antcall target="test">
+      <param name="halt.on.test.failure" value="false"/>
+    </antcall>
 
-        <style basedir="${jdepend.report.dir}"
-            in="${jdepend.report.dir}/jdepend.xml"
-            out="${jdepend.report.out.dir}/index.html"
-            style="jdepend.xsl"/>
+    <junitreport todir="${junit.report.dir}">
+      <fileset dir="${main.reports.test}">
+        <include name="TEST-*.xml"/>
+      </fileset>
+      <fileset dir="${scratchpad.reports.test}">
+        <include name="TEST-*.xml"/>
+      </fileset>
+      <fileset dir="${contrib.reports.test}">
+        <include name="TEST-*.xml"/>
+      </fileset>
+      <report format="frames" todir="${junit.report.dir}"/>
+    </junitreport>
 
-        <antcall target="-cvschangelog"/>
+    <antcall target="jdepend"/>
 
-        <javadoc
-            destdir="${apidocs.report.dir}"
-            author="true"
-            version="true"
-            use="true"
-            verbose="false"
-            windowtitle="POI API">
+    <antcall target="-cvschangelog"/>
 
-            <packageset dir="${main.src}" defaultexcludes="yes">
-                <include name="org/apache/poi/**"/>
-            </packageset>
-            <packageset dir="${scratchpad.src}" defaultexcludes="yes">
-                <include name="org/apache/poi/**"/>
-            </packageset>
-            <packageset dir="${contrib.src}" defaultexcludes="yes">
-                <include name="org/apache/poi/**"/>
-            </packageset>
+    <antcall target="javadocs"/>
 
-            <classpath>
-                <path refid="main.classpath"/>
-                <path refid="scratchpad.classpath"/>
-                <path refid="contrib.classpath"/>
-            </classpath>
+    <antcall target="clover.html"/>
 
-            <doctitle><![CDATA[<h1>POI Documentation</h1>]]></doctitle>
-            <bottom><![CDATA[<i>Copyright &#169; 2003 Apache Software Foundation.</i>]]></bottom>
-            <group title="HSSF" packages="org.apache.poi.hssf*"/>
-            <group title="HPSF" packages="org.apache.poi.hpsf*"/>
-            <group title="POIFS" packages="org.apache.poi.poifs*"/>
-            <group title="HDF" packages="org.apache.poi.hdf*"/>
-            <group title="Record Generator" packages="org.apache.poi.record*"/>
-            <group title="Utils" packages="org.apache.poi.util*"/>
-        </javadoc>
-
-        <antcall target="clover.html"/>
-
-    </target>
+  </target>
 
 
 
-  <target name="javadocs" description="Generate javadocs">
+  <target name="javadocs" description="Generates the API documentation">
     <javadoc
       destdir="${apidocs.report.dir}"
       author="true"
@@ -565,19 +529,19 @@ FORREST_HOME environment variable!</echo>
       windowtitle="POI API">
 
       <packageset dir="${main.src}" defaultexcludes="yes">
-	<include name="org/apache/poi/**"/>
+        <include name="org/apache/poi/**"/>
       </packageset>
       <packageset dir="${scratchpad.src}" defaultexcludes="yes">
-	<include name="org/apache/poi/**"/>
+        <include name="org/apache/poi/**"/>
       </packageset>
       <packageset dir="${contrib.src}" defaultexcludes="yes">
-	<include name="org/apache/poi/**"/>
+        <include name="org/apache/poi/**"/>
       </packageset>
 
       <classpath>
-	<path refid="main.classpath"/>
-	<path refid="scratchpad.classpath"/>
-	<path refid="contrib.classpath"/>
+        <path refid="main.classpath"/>
+        <path refid="scratchpad.classpath"/>
+        <path refid="contrib.classpath"/>
       </classpath>
 
       <doctitle><![CDATA[<h1>POI Documentation</h1>]]></doctitle>
@@ -730,8 +694,95 @@ FORREST_HOME environment variable!</echo>
 
     <target name="clean-compile" depends="clean,compile"/>
 
-    <target name="clean-dist" depends="clean,dist" description="Cleans the build directory then creates a distribution"/>
+    <target name="clean-dist" depends="clean,dist"
+      description="Cleans the build directory then creates a distribution"/>
 
     <target name="gump" depends="test,jar"/>
 
+
+
+  <!-- Generates the ANT document type definition (DTD) -->
+  <target name="dtd"
+    description="Generates the ANT document type definition (DTD)">
+    <antstructure output="ant.dtd"/>
+  </target>
+
+
+
+  <!-- Still experimental targets: -->
+
+  <target name="is-available-junit" depends="init">
+    <condition property="isAvailable.junit">
+      <available classname="junit.framework.TestCase"/>
+    </condition>
+    <antcall target="check-junit"/>
+  </target>
+
+  <!-- Abort the build because JUnit is missing. -->
+  <target name="check-junit" unless="isAvailable.junit">
+    <echo>
+      JUnit is not available. You must download JUnit from
+      &lt;http://www.junit.org/&gt; and include the JAR file in your
+      classpath."
+    </echo> 
+    <fail message="JUnit is not available." unless="available.junit"/>
+  </target>
+
+  <target name="is-available-jdepend" depends="init">
+    <condition property="isAvailable.jdepend">
+      <available classname="jdepend.framework.JDepend"/>
+    </condition>
+    <antcall target="check-jdepend"/>
+  </target>
+
+  <!-- Abort the build because JDepend is missing. -->
+  <target name="check-jdepend" unless="isAvailable.jdepend">
+    <echo>
+      JDepend is not available. You must download JDepend from
+      &lt;http://www.clarkware.com/software/JDepend.html&gt; and include the
+      JAR file in your classpath."
+    </echo> 
+    <fail message="JDepend is not available." unless="available.jdepend"/>
+  </target>
+
+  <!-- FIXME: Make target "reports" depend on this! -->
+  <target name="jdepend" depends="is-available-jdepend"
+    description="Runs jdepend to produce a report about package dependencies">
+    <jdepend outputfile="${jdepend.report.dir}/jdepend.xml" format="xml">
+      <classespath>
+        <pathelement location="${main.output.dir}"/>
+        <pathelement location="${contrib.output.dir}"/>
+        <pathelement location="${scratchpad.output.dir}"/>
+      </classespath>
+      <classpath>
+        <path refid="main.classpath"/>
+        <path refid="contrib.classpath"/>
+        <path refid="scratchpad.classpath"/>
+      </classpath>
+    </jdepend>
+
+    <style basedir="${jdepend.report.dir}"
+      in="${jdepend.report.dir}/jdepend.xml"
+      out="${jdepend.report.out.dir}/index.html"
+      style="jdepend.xsl"/>
+  </target>
+
 </project>
+
+<!-- Keep this comment at the end of the file
+Local variables:
+mode: xml
+sgml-omittag:nil
+sgml-shorttag:nil
+sgml-namecase-general:nil
+sgml-general-insert-case:lower
+sgml-minimize-attributes:nil
+sgml-always-quote-attributes:t
+sgml-indent-step:2
+sgml-indent-data:t
+sgml-parent-document:nil
+sgml-exposed-tags:nil
+sgml-local-catalogs:nil
+sgml-local-ecat-files:nil
+End:
+-->
