@@ -115,5 +115,11 @@ public class TestHSSFRow
         assertEquals(-1, row.getLastCellNum());
         assertEquals(-1, row.getFirstCellNum());
 
+        // check the row record actually writes it out as 0's
+        byte[] data = new byte[100];
+        row.getRowRecord().serialize(0, data);
+        assertEquals(0, data[6]);
+        assertEquals(0, data[8]);
+
     }
 }
