@@ -60,7 +60,6 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Stack;
 
-import org.apache.poi.hssf.usermodel.*;
 import java.io.FileOutputStream;
 import java.io.File;
 
@@ -72,7 +71,8 @@ import java.io.File;
  * BNF for the formula expression is :
  * <expression> ::= <term> [<addop> <term>]*
  * <term> ::= <factor>  [ <mulop> <factor ]*
- * <factor> ::= <number> | (<expression>) | <cellRef> 
+ * <factor> ::= <number> | (<expression>) | <cellRef> | <function>
+ * <function> ::= <functionName> ([expression [, expression]*])
  *
  *  @author Avik Sengupta <avik AT Avik Sengupta DOT com>
  *  @author Andrew C. oliver (acoliver at apache dot org)
@@ -482,36 +482,5 @@ end;
         return buf.toString();
     }
     
-    
-    /** Main Program for testing*/
-    public static void main(String[] argv) {
-        FormulaParser fp = new FormulaParser(argv[0]+";");
-        System.out.println("\nFormula is: ");
-        fp.parse();
-        System.out.println("RPN Form is: " +fp.toString());
-        
-        System.out.println("Converted Text form is : "+fp.toFormulaString(fp.getRPNPtg()));
-        try {
-        short            rownum = 0;
-        File file = File.createTempFile("testFormula",".xls");
-        FileOutputStream out    = new FileOutputStream(file);
-        HSSFWorkbook     wb     = new HSSFWorkbook();
-        HSSFSheet        s      = wb.createSheet();
-        HSSFRow          r      = null;
-        HSSFCell         c      = null;
-        
-        r = s.createRow((short) 0);
-        c = r.createCell((short) 0);
-        c.setCellFormula(argv[0]);
-        
-        wb.write(out);
-        out.close();
-        
-        System.out.println(file.getCanonicalPath());
-        } catch (java.io.IOException ioe) {
-            ioe.printStackTrace();
-        }
-        //If Look <> CR then Expected('NewLine');
-    }
     
 } 
