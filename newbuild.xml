@@ -18,12 +18,14 @@
     <property name="main.jar1.url" value="${repository}/commons-logging/jars/commons-logging-1.0.1.jar"/>
     <property name="main.jar2.dir" value="${main.lib}/log4j-1.2.8.jar"/>
     <property name="main.jar2.url" value="${repository}/log4j/jars/log4j-1.2.8.jar"/>
+    <property name="main.testokfile" value="build/main-testokfile.txt"/>
     <property name="scratchpad.src" value="src/scratchpad/src"/>
     <property name="scratchpad.src.test" value="src/scratchpad/testcases"/>
     <property name="scratchpad.lib" value="src/scratchpad/lib"/>
     <property name="scratchpad.reports.test" value="build/scratchpad-test-results"/>
     <property name="scratchpad.output.dir" value="build/scratchpad-classes"/>
     <property name="scratchpad.output.test.dir" value="build/scratchpad-test-classes"/>
+    <property name="scratchpad.testokfile" value="build/scratchpad-testokfile.txt"/>
     <property name="contrib.src" value="src/contrib/src"/>
     <property name="contrib.src.test" value="src/contrib/testcases"/>
     <property name="contrib.lib" value="src/contrib/lib"/>
@@ -36,6 +38,7 @@
     <property name="contrib.jar2.url" value="${repository}/commons-collections/jars/commons-collections-2.1.jar"/>
     <property name="contrib.jar3.dir" value="${contrib.lib}/commons-lang-1.0-b1.jar"/>
     <property name="contrib.jar3.url" value="${repository}/commons-lang/jars/commons-lang-1.0-b1.jar"/>
+    <property name="contrib.testokfile" value="build/contrib-testokfile.txt"/>
     <property name="junit.jar1.dir" value="${main.lib}/junit-3.8.1.jar"/>
     <property name="junit.jar1.url" value="${repository}/junit/jars/junit-3.8.1.jar"/>
     <property name="build.site" value="build/site"/>
@@ -158,8 +161,15 @@
     <target name="test" depends="test-main,test-scratchpad,test-contrib"
         description="Test main, contrib and scratchpad"/>
 
-    <target name="test-main" depends="compile-main">
-        <junit printsummary="yes" fork="no" haltonfailure="no">
+    <target name="-test-main-check">
+        <uptodate property="main.test.notRequired" targetfile="${main.testokfile}" >
+            <srcfiles dir= "${main.src}"/>
+            <srcfiles dir= "${main.src.test}"/>
+        </uptodate>
+    </target>
+
+    <target name="test-main" depends="compile-main,-test-main-check" unless="main.test.notRequired">
+        <junit printsummary="yes" fork="no" haltonfailure="no" failureproperty="main.test.failed">
             <classpath>
                 <path refid="main.classpath"/>
                 <pathelement location="${main.output.dir}"/>
@@ -176,9 +186,22 @@
                 </fileset>
             </batchtest>
         </junit>
+        <delete file="${main.testokfile}"/>
+        <antcall target="-test-main-write-testfile"/>
     </target>
 
-    <target name="test-scratchpad" depends="compile-scratchpad">
+    <target name="-test-main-write-testfile" unless="main.test.failed">
+        <echo file="${main.testokfile}" append="false" message="testok"/>
+    </target>
+
+    <target name="-test-scratchpad-check">
+        <uptodate property="scratchpad.test.notRequired" targetfile="${scratchpad.testokfile}" >
+            <srcfiles dir= "${scratchpad.src}"/>
+            <srcfiles dir= "${scratchpad.src.test}"/>
+        </uptodate>
+    </target>
+
+    <target name="test-scratchpad" depends="compile-scratchpad,-test-scratchpad-check" unless="scratchpad.test.notRequired">
         <junit printsummary="yes" fork="no" haltonfailure="no">
             <classpath>
                 <path refid="scratchpad.classpath"/>
@@ -197,9 +220,22 @@
                 </fileset>
             </batchtest>
         </junit>
+        <delete file="${scratchpad.testokfile}"/>
+        <antcall target="-test-scratchpad-write-testfile"/>
     </target>
 
-    <target name="test-contrib" depends="compile-contrib">
+    <target name="-test-scratchpad-write-testfile" unless="scratchpad.test.failed">
+        <echo file="${scratchpad.testokfile}" append="false" message="testok"/>
+    </target>
+
+    <target name="-test-contrib-check">
+        <uptodate property="contrib.test.notRequired" targetfile="${contrib.testokfile}" >
+            <srcfiles dir= "${contrib.src}"/>
+            <srcfiles dir= "${contrib.src.test}"/>
+        </uptodate>
+    </target>
+
+    <target name="test-contrib" depends="compile-contrib,-test-contrib-check" unless="contrib.test.notRequired">
         <junit printsummary="yes" fork="no" haltonfailure="no">
             <classpath>
                 <path refid="contrib.classpath"/>
@@ -218,6 +254,12 @@
                 </fileset>
             </batchtest>
         </junit>
+        <delete file="${contrib.testokfile}"/>
+        <antcall target="-test-contrib-write-testfile"/>
+    </target>
+
+    <target name="-test-contrib-write-testfile" unless="contrib.test.failed">
+        <echo file="${contrib.testokfile}" append="false" message="testok"/>
     </target>
 
     <target name="docs" depends="init" description="Builds the POI website">
@@ -226,7 +268,7 @@
         </ant>
     </target>
 
-    <target name="reports" depends="init">
+    <target name="reports" depends="test" description="Creates junit,jdepend and javadoc reports">
         <junitreport todir="${junit.report.dir}">
             <fileset dir="${main.reports.test}">
                 <include name="TEST-*.xml"/>
