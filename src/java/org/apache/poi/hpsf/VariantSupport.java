@@ -65,6 +65,8 @@ package org.apache.poi.hpsf;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
@@ -72,8 +74,8 @@ import org.apache.poi.util.LittleEndianConsts;
 /**
  * <p>Supports reading and writing of variant data.</p>
  * 
- * <p><strong>FIXME:</strong> Reading and writing must be made more uniform than
- * it is now. The following items should be resolved:
+ * <p><strong>FIXME (3):</strong> Reading and writing should be made more
+ * uniform than it is now. The following items should be resolved:
  * 
  * <ul>
  *
@@ -87,14 +89,73 @@ import org.apache.poi.util.LittleEndianConsts;
  *
  * @author Rainer Klute <a
  * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
- * @since 08.08.2003
+ * @since 2003-08-08
  * @version $Id$
  */
 public class VariantSupport extends Variant
 {
 
+    private static boolean logUnsupportedTypes = false;
+
     /**
-     * <p>Reads a variant data type from a byte array.</p>
+     * <p>Specifies whether warnings about unsupported variant types are to be
+     * written to <code>System.err</code> or not.</p>
+     *
+     * @param logUnsupportedTypes If <code>true</code> warnings will be written,
+     * if <code>false</code> they won't.
+     */
+    public static void setLogUnsupportedTypes(final boolean logUnsupportedTypes)
+    {
+        VariantSupport.logUnsupportedTypes = logUnsupportedTypes;
+    }
+
+    /**
+     * <p>Checks whether logging of unsupported variant types warning is turned
+     * on or off.</p>
+     *
+     * @return <code>true</code> if logging is turned on, else
+     * <code>false</code>. 
+     */
+    public static boolean isLogUnsupportedTypes()
+    {
+        return logUnsupportedTypes;
+    }
+
+
+
+    /**
+     * <p>Keeps a list of the variant types an "unsupported" message has already
+     * been issued for.</p>
+     */
+    protected static List unsupportedMessage;
+
+    /**
+     * <p>Writes a warning to <code>System.err</code> that a variant type is
+     * unsupported by HPSF. Such a warning is written only once for each variant
+     * type. Log messages can be turned on or off by </p>
+     *
+     * @param ex The exception to log
+     */
+    protected static void writeUnsupportedTypeMessage
+        (final UnsupportedVariantTypeException ex)
+    {
+        if (isLogUnsupportedTypes())
+        {
+            if (unsupportedMessage == null)
+                unsupportedMessage = new LinkedList();
+            Long vt = new Long(ex.getVariantType());
+            if (!unsupportedMessage.contains(vt))
+            {
+                System.err.println(ex.getMessage());
+                unsupportedMessage.add(vt);
+            }
+        }
+    }
+
+
+
+    /**
+     * <p>Reads a variant type from a byte array.</p>
      *
      * @param src The byte array
      * @param offset The offset in the byte array where the variant
@@ -105,8 +166,8 @@ public class VariantSupport extends Variant
      * @return A Java object that corresponds best to the variant
      * field. For example, a VT_I4 is returned as a {@link Long}, a
      * VT_LPSTR as a {@link String}.
-     * @exception UnsupportedVariantTypeException if HPSF does not (yet)
-     * support the variant type which is to be read 
+     * @exception ReadingNotSupportedException if a property is to be written
+     * who's variant type HPSF does not yet support
      *
      * @see Variant
      */
@@ -161,7 +222,7 @@ public class VariantSupport extends Variant
                  * String object. The 0x00 bytes at the end must be
                  * stripped.
                  *
-                 * FIXME: Reading an 8-bit string should pay attention
+                 * FIXME (2): Reading an 8-bit string should pay attention
                  * to the codepage. Currently the byte making out the
                  * property's value are interpreted according to the
                  * platform's default character set.
@@ -238,51 +299,57 @@ public class VariantSupport extends Variant
 
 
     /**
-     * <p>Writes a variant value to an output stream.</p>
+     * <p>Writes a variant value to an output stream. This method ensures that
+     * always a multiple of 4 bytes is written.</p>
      *
      * @param out The stream to write the value to.
      * @param type The variant's type.
      * @param value The variant's value.
      * @return The number of entities that have been written. In many cases an
      * "entity" is a byte but this is not always the case.
+     * @exception IOException if an I/O exceptions occurs
+     * @exception WritingNotSupportedException if a property is to be written
+     * who's variant type HPSF does not yet support
      */
     public static int write(final OutputStream out, final long type,
-                               final Object value)
+                            final Object value)
         throws IOException, WritingNotSupportedException
     {
+        int length = 0;
         switch ((int) type)
         {
             case Variant.VT_BOOL:
             {
                 int trueOrFalse;
-                int length = 0;
                 if (((Boolean) value).booleanValue())
                     trueOrFalse = 1;
                 else
                     trueOrFalse = 0;
-                length += TypeWriter.writeUIntToStream(out, trueOrFalse);
-                return length;
+                length = TypeWriter.writeUIntToStream(out, trueOrFalse);
+                break;
             }
             case Variant.VT_LPSTR:
             {
-                TypeWriter.writeUIntToStream
+                length = TypeWriter.writeUIntToStream
                     (out, ((String) value).length() + 1);
-                char[] s = toPaddedCharArray((String) value);
-                /* FIXME: The following line forces characters to bytes. This
-                 * is generally wrong and should only be done according to a
-                 * codepage. Alternatively Unicode could be written (see 
+                char[] s = Util.pad4((String) value);
+                /* FIXME (2): The following line forces characters to bytes.
+                 * This is generally wrong and should only be done according to
+                 * a codepage. Alternatively Unicode could be written (see 
                  * Variant.VT_LPWSTR). */
-                byte[] b = new byte[s.length];
+                byte[] b = new byte[s.length + 1];
                 for (int i = 0; i < s.length; i++)
                     b[i] = (byte) s[i];
+                b[b.length - 1] = 0x00;
                 out.write(b);
-                return b.length;
+                length += b.length;
+                break;
             }
             case Variant.VT_LPWSTR:
             {
                 final int nrOfChars = ((String) value).length() + 1; 
                 TypeWriter.writeUIntToStream(out, nrOfChars);
-                char[] s = toPaddedCharArray((String) value);
+                char[] s = Util.pad4((String) value);
                 for (int i = 0; i < s.length; i++)
                 {
                     final int high = (int) ((s[i] & 0xff00) >> 8);
@@ -292,79 +359,73 @@ public class VariantSupport extends Variant
                     out.write(lowb);
                     out.write(highb);
                 }
-                return nrOfChars * 2;
+                length = nrOfChars * 2;
+                out.write(0x00);
+                out.write(0x00);
+                length += 2;
+                break;
             }
             case Variant.VT_CF:
             {
                 final byte[] b = (byte[]) value; 
                 out.write(b);
-                return b.length;
+                length = b.length;
+                break;
             }
             case Variant.VT_EMPTY:
             {
                 TypeWriter.writeUIntToStream(out, Variant.VT_EMPTY);
-                return LittleEndianConsts.INT_SIZE;
+                length = LittleEndianConsts.INT_SIZE;
+                break;
             }
             case Variant.VT_I2:
             {
                 TypeWriter.writeToStream(out, ((Integer) value).shortValue());
-                return LittleEndianConsts.SHORT_SIZE;
+                length = LittleEndianConsts.SHORT_SIZE;
+                break;
             }
             case Variant.VT_I4:
             {
                 TypeWriter.writeToStream(out, ((Long) value).intValue());
-                return LittleEndianConsts.INT_SIZE;
+                length = LittleEndianConsts.INT_SIZE;
+                break;
             }
             case Variant.VT_FILETIME:
             {
-                int length = 0;
                 long filetime = Util.dateToFileTime((Date) value);
                 int high = (int) ((filetime >> 32) & 0xFFFFFFFFL);
                 int low = (int) (filetime & 0x00000000FFFFFFFFL);
-                length += TypeWriter.writeUIntToStream(out, 0x0000000FFFFFFFFL & low);
-                length += TypeWriter.writeUIntToStream(out, 0x0000000FFFFFFFFL & high);
-                return length;
+                length += TypeWriter.writeUIntToStream
+                    (out, 0x0000000FFFFFFFFL & low);
+                length += TypeWriter.writeUIntToStream
+                    (out, 0x0000000FFFFFFFFL & high);
+                break;
             }
             default:
             {
-                throw new WritingNotSupportedException(type, value);
-             }
+                /* The variant type is not supported yet. However, if the value
+                 * is a byte array we can write it nevertheless. */
+                if (value instanceof byte[])
+                {
+                    final byte[] b = (byte[]) value; 
+                    out.write(b);
+                    length = b.length;
+                    writeUnsupportedTypeMessage
+                        (new WritingNotSupportedException(type, value));
+                }
+                else
+                    throw new WritingNotSupportedException(type, value);
+                break;
+            }
         }
-    }
 
-
-
-    /**
-     * <p>Converts a string into a 0x00-terminated character sequence padded 
-     * with 0x00 bytes to a multiple of 4.</p>
-     *
-     * @param value The string to convert
-     * @return The padded character array
-     */
-    private static char[] toPaddedCharArray(final String s)
-    {
-        final int PADDING = 4;
-        int dl = s.length() + 1;
-        final int r = dl % 4;
-        if (r > 0)
-            dl += PADDING - r;
-        char[] buffer = new char[dl];
-        s.getChars(0, s.length(), buffer, 0);
-        for (int i = s.length(); i < dl; i++)
-            buffer[i] = (char) 0;
-        return buffer;
-    }
-
-
-
-    public static int getLength(final long variantType, final int lengthInBytes)
-    {
-        switch ((int) variantType)
+        /* Add 0x00 character to write a multiple of four bytes: */
+        while (length % 4 != 0)
         {
-            case VT_LPWSTR:
-                return lengthInBytes / 2;
-            default:
-                return lengthInBytes;
+            out.write(0);
+            length++;
         }
+        return length;
     }
+
 }

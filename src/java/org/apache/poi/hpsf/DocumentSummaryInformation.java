@@ -60,7 +60,8 @@ import org.apache.poi.hpsf.wellknown.PropertyIDMap;
  * <p>Convenience class representing a DocumentSummary Information stream in a
  * Microsoft Office document.</p>
  *
- * @author Rainer Klute (klute@rainer-klute.de)
+ * @author Rainer Klute <a
+ * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
  * @author Drew Varner (Drew.Varner closeTo sc.edu)
  * @see SummaryInformation
  * @version $Id$
@@ -289,7 +290,7 @@ public class DocumentSummaryInformation extends SpecialPropertySet
      * <p>Returns <code>true</code> if the custom links are hampered
      * by excessive noise, for all applications.</p> <p>
      *
-     * <strong>FIXME:</strong> Explain this some more! I (Rainer)
+     * <strong>FIXME (3):</strong> Explain this some more! I (Rainer)
      * don't understand it.</p>
      *
      * @return The linksDirty value

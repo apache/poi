@@ -57,7 +57,6 @@ package org.apache.poi.hpsf;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.poi.hpsf.wellknown.SectionIDMap;
@@ -91,7 +90,8 @@ import org.apache.poi.util.LittleEndian;
  * NoSingleSectionException} if the {@link PropertySet} contains more
  * (or less) than exactly one {@link Section}).</p>
  *
- * @author Rainer Klute (klute@rainer-klute.de)
+ * @author Rainer Klute <a
+ * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
  * @author Drew Varner (Drew.Varner hanginIn sc.edu)
  * @version $Id$
  * @since 2002-02-09
@@ -397,7 +397,7 @@ public class PropertySet
                                               final int offset,
                                               final int length)
     {
-        /* FIXME: Ensure that at most "length" bytes are read. */
+        /* FIXME (3): Ensure that at most "length" bytes are read. */
 
         /*
          * Read the header fields of the stream. They must always be
@@ -442,7 +442,7 @@ public class PropertySet
      */
     private void init(final byte[] src, final int offset, final int length)
     {
-        /* FIXME: Ensure that at most "length" bytes are read. */
+        /* FIXME (3): Ensure that at most "length" bytes are read. */
         
         /*
          * Read the stream's header fields.
@@ -645,6 +645,9 @@ public class PropertySet
      * to the specified parameter, else <code>false</code>.</p>
      *
      * @param o the object to compare this <code>PropertySet</code> with
+     * 
+     * @return <code>true</code> if the objects are equal, <code>false</code>
+     * if not
      */
     public boolean equals(final Object o)
     {
@@ -672,4 +675,43 @@ public class PropertySet
         return Util.equals(getSections(), ps.getSections());
     }
 
+
+
+    /**
+     * @see Object#hashCode()
+     */
+    public int hashCode()
+    {
+        throw new UnsupportedOperationException("FIXME: Not yet implemented.");
+    }
+
+
+
+    /**
+     * @see Object#toString()
+     */
+    public String toString()
+    {
+        final StringBuffer b = new StringBuffer();
+        final int sectionCount = getSectionCount();
+        b.append(getClass().getName());
+        b.append('[');
+        b.append("byteOrder: ");
+        b.append(getByteOrder());
+        b.append(", classID: ");
+        b.append(getClassID());
+        b.append(", format: ");
+        b.append(getFormat());
+        b.append(", OSVersion: ");
+        b.append(getOSVersion());
+        b.append(", sectionCount: ");
+        b.append(sectionCount);
+        b.append(", sections: [");
+        final List sections = getSections();
+        for (int i = 0; i < sectionCount; i++)
+            b.append(((Section) sections.get(0)).toString());
+        b.append(']');
+        b.append(']');
+        return b.toString();
+    }
 }

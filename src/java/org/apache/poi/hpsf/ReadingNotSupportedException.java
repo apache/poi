@@ -63,8 +63,11 @@
 package org.apache.poi.hpsf;
 
 /**
- * <p>This exception is thrown when trying to read a (yet) unsupported variant
- * type.</p>
+ * <p>This exception is thrown when HPSF tries to read a (yet) unsupported
+ * variant type.</p>
+ * 
+ * @see WritingNotSupportedException
+ * @see UnsupportedVariantTypeException
  *
  * @author Rainer Klute <a
  * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
@@ -78,10 +81,11 @@ public class ReadingNotSupportedException
     /**
      * <p>Constructor</p>
      * 
-     * @param variantType
-     * @param value
+     * @param variantType The unsupported variant type.
+     * @param value The value.
      */
-    public ReadingNotSupportedException(long variantType, Object value)
+    public ReadingNotSupportedException(final long variantType,
+                                        final Object value)
     {
         super(variantType, value);
     }

@@ -63,8 +63,6 @@
 package org.apache.poi.hpsf;
 
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.util.LittleEndian;
@@ -85,11 +83,13 @@ import org.apache.poi.util.LittleEndian;
  * value, {@link Variant#VT_FILETIME} some date and time (of a
  * file).</p>
  *
- * <p><strong>FIXME:</strong> Reading is not implemented for all
- * {@link Variant} types yet. Feel free to submit error reports or
- * patches for the types you need.</p>
+ * <p>Please note that not all {@link Variant} types yet. This might change
+ * over time but largely depends on your feedback so that the POI team knows
+ * which variant types are really needed. So please feel free to submit error
+ * reports or patches for the types you need.</p>
  *
- * @author Rainer Klute (klute@rainer-klute.de)
+ * @author Rainer Klute <a
+ * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
  * @author Drew Varner (Drew.Varner InAndAround sc.edu)
  * @see Section
  * @see Variant
@@ -103,7 +103,7 @@ public class Property
     private static final int CP_UNICODE = 1200;
 
     /** <p>The property's ID.</p> */
-    protected int id;
+    protected long id;
 
 
     /**
@@ -111,7 +111,7 @@ public class Property
      *
      * @return The ID value
      */
-    public int getID()
+    public long getID()
     {
         return id;
     }
@@ -162,7 +162,7 @@ public class Property
      * @param codepage The section's and thus the property's
      * codepage. It is needed only when reading string values.
      */
-    public Property(final int id, final byte[] src, final long offset,
+    public Property(final long id, final byte[] src, final long offset,
                     final int length, final int codepage)
     {
         this.id = id;
@@ -187,7 +187,7 @@ public class Property
         }
         catch (UnsupportedVariantTypeException ex)
         {
-            logUnsupported(ex);
+            VariantSupport.writeUnsupportedTypeMessage(ex);
             value = ex.getValue();
         }
     }
@@ -281,15 +281,21 @@ public class Property
      * 4.</p>
      *
      * @return the property's size in bytes
+     * 
+     * @exception WritingNotSupportedException if HPSF does not yet support the
+     * property's variant type.
      */
-    protected int getSize()
+    protected int getSize() throws WritingNotSupportedException
     {
-        int length = LittleEndian.INT_SIZE;
+        int length = VariantSupport.getVariantLength(type);
+        if (length >= 0)
+            return length; /* Fixed length */
+        if (length == -2)
+            /* Unknown length */
+            throw new WritingNotSupportedException(type, null);
+
+        /* Variable length: */
         final int PADDING = 4; /* Pad to multiples of 4. */
-        if (type > Integer.MAX_VALUE)
-            throw new HPSFRuntimeException
-                ("Variant type " + type + " is greater than " +
-                Integer.MAX_VALUE + ".");
         switch ((int) type)
         {
             case Variant.VT_LPSTR:
@@ -304,9 +310,7 @@ public class Property
             case Variant.VT_EMPTY:
                 break;
             default:
-                throw new HPSFRuntimeException
-                    ("Writing is not yet implemented for variant type " +
-                     type + ". Please report this problem to the POI team!");
+                throw new WritingNotSupportedException(type, value);
         }
         return length;
     }
@@ -318,27 +322,65 @@ public class Property
      */
     public boolean equals(final Object o)
     {
-        throw new UnsupportedOperationException("FIXME: Not yet implemented.");
+        if (!(o instanceof Property))
+            return false;
+        final Property p = (Property) o;
+        final Object pValue = p.getValue();
+        if (id != p.getID() || type != p.getType())
+            return false;
+        if (value == null && pValue == null)
+            return true;
+        if (value == null || pValue == null)
+            return false;
+        
+        /* It's clear now that both values are non-null. */
+        final Class valueClass = value.getClass();
+        final Class pValueClass = pValue.getClass();
+        if (!(valueClass.isAssignableFrom(pValueClass)) &&
+            !(pValueClass.isAssignableFrom(valueClass)))
+            return false;
+
+        if (value instanceof byte[])
+            return Util.equal((byte[]) value, (byte[]) pValue);
+
+        return value.equals(pValue);
     }
 
 
 
     /**
-     * <p>Keeps a list of those variant types for those an "unsupported" message
-     * has already been issued.</p>
+     * @see Object#hashCode()
      */
-    protected static List unsupportedMessage;
-
-    private static void logUnsupported(final UnsupportedVariantTypeException ex)
+    public int hashCode()
     {
-        if (unsupportedMessage == null)
-            unsupportedMessage = new LinkedList();
-        Long vt = new Long(ex.getVariantType());
-        if (!unsupportedMessage.contains(vt))
-        {
-            System.err.println(ex.getMessage());
-            unsupportedMessage.add(vt);
-        }
+        long hashCode = 0;
+        hashCode += id;
+        hashCode += type;
+        if (value != null)
+            hashCode += value.hashCode();
+        final int returnHashCode = (int) (hashCode & 0x0ffffffffL );
+        return returnHashCode;
+
+    }
+
+
+
+    /**
+     * @see Object#toString()
+     */
+    public String toString()
+    {
+        final StringBuffer b = new StringBuffer();
+        b.append(getClass().getName());
+        b.append('[');
+        b.append("id: ");
+        b.append(getID());
+        b.append(", type: ");
+        b.append(getType());
+        b.append(", value: ");
+        b.append(getValue());
+        b.append(']');
+        return b.toString();
     }
 
 }

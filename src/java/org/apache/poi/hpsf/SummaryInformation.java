@@ -69,7 +69,8 @@ import org.apache.poi.hpsf.wellknown.PropertyIDMap;
  * href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/com/stgu_8910.asp">http://msdn.microsoft.com/library/default.asp?url=/library/en-us/com/stgu_8910.asp</a>
  * for documentation from That Redmond Company.</p>
  *
- * @author Rainer Klute (klute@rainer-klute.de)
+ * @author Rainer Klute <a
+ * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
  * @see DocumentSummaryInformation
  * @version $Id$
  * @since 2002-02-09
@@ -297,7 +298,7 @@ public class SummaryInformation extends SpecialPropertySet
      * <strong>when this method is implemented. Please note that the
      * return type is likely to change!</strong></p>
      *
-     * <p><strong>FIXME / Hint to developers:</strong> Drew Varner
+     * <p><strong>FIXME (3) / Hint to developers:</strong> Drew Varner
      * &lt;Drew.Varner -at- sc.edu&gt; said that this is an image in
      * WMF or Clipboard (BMP?) format. He also provided two links that
      * might be helpful: <a

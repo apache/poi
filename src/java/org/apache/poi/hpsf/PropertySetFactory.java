@@ -61,7 +61,8 @@ import java.io.IOException;
  * <p>Factory class to create instances of {@link SummaryInformation},
  * {@link DocumentSummaryInformation} and {@link PropertySet}.</p>
  *
- * @author Rainer Klute (klute@rainer-klute.de)
+ * @author Rainer Klute <a
+ * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
  * @version $Id$
  * @since 2002-02-09
  */
