@@ -126,7 +126,7 @@ public static boolean isCellDateFormatted(HSSFCell cell) {
             the HTTP response to determine the file type; rather it uses the file extension
             on the request. Thus you might want to add a <strong>.xls</strong> to your request
             string. For example http://yourserver.com/myServelet.xls?param1=xx. Sometimes
-            a request like http://yourserver.com/myServelet?param1=xx&dummy=file.xls is also
+            a request like http://yourserver.com/myServelet?param1=xx&amp;dummy=file.xls is also
             known to work. 
             </p>
             <p>
