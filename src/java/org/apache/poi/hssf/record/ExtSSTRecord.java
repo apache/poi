@@ -76,6 +76,9 @@ public class ExtSSTRecord
     extends Record
 {
     public static final int DEFAULT_BUCKET_SIZE = 8;
+    //Cant seem to find this documented but from the biffviewer it is clear that
+    //Excel only records the indexes for the first 128 buckets.
+    public static final int MAX_BUCKETS = 128;
     public final static short sid = 0xff;
     private short             field_1_strings_per_bucket = DEFAULT_BUCKET_SIZE;
     private ArrayList         field_2_sst_info;
@@ -202,9 +205,26 @@ public class ExtSSTRecord
         return pos;
     }
 
+    /** Returns the size of this record */
     public int getRecordSize()
     {
         return 6 + 8*getNumInfoRecords();
+    }
+
+    public static final int getNumberOfInfoRecsForStrings(int numStrings) {
+      int infoRecs = (numStrings / DEFAULT_BUCKET_SIZE);
+      if ((numStrings % DEFAULT_BUCKET_SIZE) != 0)
+        infoRecs ++;
+      //Excel seems to max out after 128 info records.
+      //This isnt really documented anywhere...
+      if (infoRecs > MAX_BUCKETS)
+        infoRecs = MAX_BUCKETS;
+      return infoRecs;
+    }
+
+    /** Given a number of strings (in the sst), returns the size of the extsst record*/
+    public static final int getRecordSizeForStrings(int numStrings) {
+      return 4 + 2 + (getNumberOfInfoRecsForStrings(numStrings) * 8);
     }
 
     public short getSid()
