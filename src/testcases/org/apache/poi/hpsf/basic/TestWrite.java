@@ -29,6 +29,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -82,6 +83,14 @@ public class TestWrite extends TestCase
     static final int[] SECTION_COUNT = {1, 2};
     static final boolean[] IS_SUMMARY_INFORMATION = {true, false};
     static final boolean[] IS_DOCUMENT_SUMMARY_INFORMATION = {false, true};
+
+    final String IMPROPER_DEFAULT_CHARSET_MESSAGE =
+        "Your default character set is " + getDefaultCharsetName() +
+        ". However, this testcase must be run in an environment " +
+        "with a default character set supporting at least " +
+        "8-bit-characters. You can achieve this by setting the " +
+        "LANG environment variable to a proper value, e.g. " +
+        "\"de_DE\".";
 
     POIFile[] poiFiles;
 
@@ -379,6 +388,13 @@ public class TestWrite extends TestCase
     {
         Throwable t = null;
         final int codepage = CODEPAGE_DEFAULT;
+        if (!hasProperDefaultCharset())            
+        {
+            System.err.println(IMPROPER_DEFAULT_CHARSET_MESSAGE +
+                " This testcase is skipped.");
+            return;
+        }
+
         try
         {
             check(Variant.VT_EMPTY, null, codepage);
@@ -395,6 +411,7 @@ public class TestWrite extends TestCase
             check(Variant.VT_I2, new Integer(27), codepage);
             check(Variant.VT_I4, new Long(28), codepage);
             check(Variant.VT_FILETIME, new Date(), codepage);
+
             check(Variant.VT_LPSTR,
                   "", codepage);
             check(Variant.VT_LPSTR,
@@ -404,13 +421,14 @@ public class TestWrite extends TestCase
             check(Variant.VT_LPSTR,
                   "\u00e4\u00f6\u00fc", codepage);
             check(Variant.VT_LPSTR,
-                  "\u00e4\u00f6\u00fc\u00c4", codepage);
+                  "\u00e4\u00f6\u00fc\u00df", codepage);
             check(Variant.VT_LPSTR,
-                  "\u00e4\u00f6\u00fc\u00c4\u00d6", codepage);
+                  "\u00e4\u00f6\u00fc\u00df\u00c4", codepage);
             check(Variant.VT_LPSTR,
-                  "\u00e4\u00f6\u00fc\u00c4\u00d6\u00dc", codepage);
+                  "\u00e4\u00f6\u00fc\u00df\u00c4\u00d6", codepage);
             check(Variant.VT_LPSTR,
-                  "\u00e4\u00f6\u00fc\u00c4\u00d6\u00dc\u00df", codepage);
+                  "\u00e4\u00f6\u00fc\u00df\u00c4\u00d6\u00dc", codepage);
+
             check(Variant.VT_LPWSTR,
                   "", codepage);
             check(Variant.VT_LPWSTR,
@@ -420,13 +438,13 @@ public class TestWrite extends TestCase
             check(Variant.VT_LPWSTR,
                   "\u00e4\u00f6\u00fc", codepage);
             check(Variant.VT_LPWSTR,
-                  "\u00e4\u00f6\u00fc\u00c4", codepage);
+                  "\u00e4\u00f6\u00fc\u00df", codepage);
             check(Variant.VT_LPWSTR,
-                  "\u00e4\u00f6\u00fc\u00c4\u00d6", codepage);
+                  "\u00e4\u00f6\u00fc\u00df\u00c4", codepage);
             check(Variant.VT_LPWSTR,
-                  "\u00e4\u00f6\u00fc\u00c4\u00d6\u00dc", codepage);
+                  "\u00e4\u00f6\u00fc\u00df\u00c4\u00d6", codepage);
             check(Variant.VT_LPWSTR,
-                  "\u00e4\u00f6\u00fc\u00c4\u00d6\u00dc\u00df", codepage);
+                  "\u00e4\u00f6\u00fc\u00df\u00c4\u00d6\u00dc", codepage);
         }
         catch (Exception ex)
         {
@@ -455,6 +473,13 @@ public class TestWrite extends TestCase
         for (int i = 0; i < validCodepages.length; i++)
         {
             final int cp = validCodepages[i];
+            if (cp == -1 && !hasProperDefaultCharset())            
+            {
+                System.err.println(IMPROPER_DEFAULT_CHARSET_MESSAGE +
+                     " This testcase is skipped for the default codepage.");
+                continue;
+            }
+
             final long t = cp == CODEPAGE_UTF16 ? Variant.VT_LPWSTR
                                                 : Variant.VT_LPSTR;
             try
@@ -599,8 +624,12 @@ public class TestWrite extends TestCase
         }
         else
             if (value != null && !value.equals(objRead))
+            {
                 fail("Expected: \"" + value + "\" but was: \"" + objRead +
-                     "\". Codepage: " + codepage + ".");
+                     "\". Codepage: " + codepage +
+                     (codepage == -1 ?
+                      " (" + System.getProperty("file.encoding") + ")." : "."));
+            }
             else
                 assertEquals(value, objRead);
     }
@@ -852,6 +881,35 @@ public class TestWrite extends TestCase
         }
         fail(sw.toString());
     }
+
+
+
+    /**
+     * <p>Returns the display name of the default character set.</p>
+     *
+     * @return the display name of the default character set.
+     */
+    private String getDefaultCharsetName()
+    {
+        final String charSetName = System.getProperty("file.encoding");
+        final Charset charSet = Charset.forName(charSetName);
+        return charSet.displayName();
+    }
+
+
+
+    /**
+     * <p>In order to execute tests with characters beyond US-ASCII, this
+     * method checks whether the application has is runing in an environment
+     * where the default character set is 16-bit-capable.</p>
+     */
+    private boolean hasProperDefaultCharset()
+    {
+        final String charSetName = System.getProperty("file.encoding");
+        final Charset charSet = Charset.forName(charSetName);
+        return charSet.newEncoder().canEncode('\u00e4');
+    }
+
 
 
     /**
