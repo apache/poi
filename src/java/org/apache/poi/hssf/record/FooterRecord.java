@@ -63,6 +63,7 @@ import org.apache.poi.util.StringUtil;
  * Description:  Specifies the footer for a sheet<P>
  * REFERENCE:  PG 317 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
  * @author Andrew C. Oliver (acoliver at apache dot org)
+ * @author Shawn Laubach (laubach@acm.org) Modified 3/14/02
  * @version 2.0-pre
  */
 
