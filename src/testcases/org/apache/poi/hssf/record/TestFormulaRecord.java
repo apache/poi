@@ -2,7 +2,7 @@
 /* ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 2002 The Apache Software Foundation.  All rights
+ * Copyright (c) 2002, 2003 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -85,6 +85,40 @@ public class TestFormulaRecord
         //assertEquals(record.getRow(),(short)1);
         assertEquals((short)record.getRow(),(short)1);
         assertEquals(record.getXFIndex(),(short)4);
+    }
+    
+    /**
+     * Make sure a NAN value is preserved
+     * This formula record is a representation of =1/0 at row 0, column 0 
+     */
+    public void testCheckNanPreserve() {
+    	byte[] formulaByte = new byte[29];
+    	for (int i = 0; i < formulaByte.length; i++) formulaByte[i] = (byte)0;
+    	formulaByte[4] = (byte)0x0F;
+		formulaByte[6] = (byte)0x02;
+		formulaByte[8] = (byte)0x07;
+		formulaByte[12] = (byte)0xFF;
+		formulaByte[13] = (byte)0xFF;
+		formulaByte[18] = (byte)0xE0;
+		formulaByte[19] = (byte)0xFC;
+		formulaByte[20] = (byte)0x07;
+		formulaByte[22] = (byte)0x1E;
+		formulaByte[23] = (byte)0x01;
+		formulaByte[25] = (byte)0x1E;
+		formulaByte[28] = (byte)0x06;
+    	
+		FormulaRecord record = new FormulaRecord(FormulaRecord.sid, (short)29, formulaByte);
+		assertEquals("Row", 0, record.getRow());
+		assertEquals("Column", 0, record.getColumn());		
+		assertTrue("Value is not NaN", Double.isNaN(record.getValue()));
+		
+		byte[] output = record.serialize();
+		assertEquals("Output size", 33, output.length); //includes sid+recordlength
+		
+		for (int i = 5; i < 13;i++) {
+			assertEquals("FormulaByte NaN doesn't match", formulaByte[i], output[i+4]);
+		}
+		
     }
     
     public static void main(String [] ignored_args)
