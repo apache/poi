@@ -33,9 +33,10 @@
      </li>
 
     <li>
-     <p>The <link href="#sec3">third section</link> tells how to read
+      <p>The <link href="#sec3">third section</link> tells how to read
       non-standard properties. Non-standard properties are application-specific
-      name/value/type triples.</p>
+      name/value/type triples. <em>This section is still to be written. Look up
+      the API documentation for the time being!</em></p>
      </li>
    </ol>
 
