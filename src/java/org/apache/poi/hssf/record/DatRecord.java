@@ -70,6 +70,7 @@ import org.apache.poi.util.*;
 public class DatRecord
     extends Record
 {
+
     public final static short      sid                             = 0x1063;
     private  short      field_1_options;
     private  BitField   horizontalBorder                            = new BitField(0x1);

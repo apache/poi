@@ -1,6 +1,27 @@
 <?xml version="1.0"?>
 
+<!--
+    In order to build this project you need Ant 1.4 or higher.  The following
+    optional jar files should be installed into the ant lib directory:
+
+    LIBRARY         LOCATION
+    =======         ========
+    junit           TODO
+    xerces
+    jdepend
+
+
+    TO BE COMPLETED:
+
+    * Fix logo's in site build.
+    * Add gump build
+    * Add jar target
+ -->
 <project name="POI Build" default="compile" basedir=".">
+
+    <description>
+        The POI project Ant build.
+    </description>
 
     <property environment="env"/>
 
@@ -262,13 +283,32 @@
         <echo file="${contrib.testokfile}" append="false" message="testok"/>
     </target>
 
-    <target name="docs" depends="init" description="Builds the POI website">
+    <target name="-check-docs">
+        <uptodate property="main.docs.notRequired" targetfile="${build.site}/index.html" >
+            <srcfiles dir= "${main.documentation}"/>
+        </uptodate>
+    </target>
+
+    <target name="docs" depends="init,-check-docs" unless="main.docs.notRequired"
+        description="Builds the POI website">
         <ant antfile="${forrest.home}/forrest.antproxy.xml" target="site">
             <property name="project.home" value="${basedir}"/>
         </ant>
     </target>
 
-    <target name="reports" depends="test" description="Creates junit,jdepend and javadoc reports">
+    <!-- Checks whether reports are required to be run.  If nothing has changed then they dont. -->
+    <target name="-check-reports">
+        <condition property="reports.notRequired">
+            <and>
+                <equals arg1="${main.test.notRequired}" arg2="true"/>
+                <equals arg1="${scratchpad.test.notRequired}" arg2="true"/>
+                <equals arg1="${contrib.test.notRequired}" arg2="true"/>
+            </and>
+        </condition>
+    </target>
+
+    <target name="reports" depends="test,-check-reports" unless="reports.notRequired"
+        description="Creates junit,jdepend and javadoc reports">
         <junitreport todir="${junit.report.dir}">
             <fileset dir="${main.reports.test}">
                 <include name="TEST-*.xml"/>
@@ -331,12 +371,16 @@
         </javadoc>
     </target>
 
-    <target name="site" depends="docs,reports" description="generate the documentation and reports"/>
+    <target name="site" depends="docs,reports"
+        description="generate the documentation and reports"/>
 
-    <target name="dist" depends="compile,site" >
+    <target name="jar" depends="compile" description="Creates jar files for distribution">
         <jar basedir="${main.output.dir}" destfile="${dist.dir}/${jar.name}-${version.id}.jar"/>
         <jar basedir="${contrib.output.dir}" destfile="${dist.dir}/${jar.name}-contrib-${version.id}.jar"/>
         <jar basedir="${scratchpad.output.dir}" destfile="${dist.dir}/${jar.name}-scratchpad-${version.id}.jar"/>
+    </target>
+
+    <target name="dist" depends="clean,compile,site,jar" description="Creates the entire distribution into build/dist">
 
         <zip destfile="${dist.dir}/${jar.name}-bin-${version.id}.zip">
             <zipfileset dir="${build.site}" prefix="docs" />
