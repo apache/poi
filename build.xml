@@ -100,35 +100,38 @@ printed.
   <!-- =================================================================== -->
 
   <!-- =================================================================== -->
-  <!-- Interactive build                                            -->
+  <!-- Interactive build                                                   -->
   <!-- =================================================================== -->
   <target name="interactive" description="Interactive Build" depends="-init">          
-    <echo message="--------------------------------------------------------------"/>
-    <echo message=" "/>    
-    <echo message="          ${xgump.module.project.name} ${xgump.module.project.version.major}.${xgump.module.project.version.minor}   [${YEAR}] "/>
-    <echo message=" "/>    
-    <echo message="--------------------------------------------------------------"/>
-    <echo message="Building with ${ant.version}"/>  
-    <echo message="using build file ${ant.file}"/>  
-    <echo message="--------------------------------------------------------------"/>   
-    <echo message=" These are the most common build targets."/>      
-    <echo message=" You can also invoke them directly; see build.xml for more info. "/> 
-    <echo message=" Builds will be in /build directory, distributions in /dist."/>        
-    <echo message="  "/>    
-    <echo message=" compile ---------- compiles the source code "/>     
-    <echo message=" jar -------------- create the jar files "/>
-    <echo message=" docs ------------- generates the html docs - clean not needed"/>        
-    <echo message=" site ------------- generates the html site (docs+reports)"/>    
-    <echo message=" javadocs --------- generates the API documentation"/>     
-    <echo message=" test ------------- performs the jUnit tests"/>       
-    <echo message=" clean ------------ cleans the build directory"/>    
-    <echo message=" quickdist -------- creates src and bin distributions"/>    
-    <echo message=" scratchpad ------- build-run scratchpad code"/>       
-    <echo message=" contrib ---------- build-run contributed code"/>    
-    <echo message=" generate-records - generate excel records"/>    
-    <echo message=" generate-types --- generate word types"/>    
+    <echo> 
+    --------------------------------------------------------------
 
-    <property name="input.selection" value="compile"/>        
+          ${xgump.module.project.name} ${xgump.module.project.version.major}.${xgump.module.project.version.minor}   [${YEAR}]
+    
+    --------------------------------------------------------------
+     Using ${ant.version}
+     Build file ${ant.file}
+    --------------------------------------------------------------   
+     These are the most common build targets.   
+     You can also invoke them directly; see build.xml for more info. 
+     Builds will be in /build directory, distributions in /dist.        
+        
+     all -------------- creates the jars and the site      
+     compile ---------- compiles the source code      
+     jar -------------- create the jar files
+     docs ------------- generates the html docs - clean not needed        
+     site ------------- generates the html site (docs+reports)    
+     javadocs --------- generates the API documentation     
+     test ------------- performs the jUnit tests       
+     clean ------------ cleans the build directory    
+     quickdist -------- creates src and bin distributions    
+     scratchpad ------- build-run scratchpad code       
+     contrib ---------- build-run contributed code    
+     generate-records - generate excel records    
+     generate-types --- generate word types    
+    
+    </echo>
+    <property name="input.selection" value="all"/>        
     <centipede-user-input name="input.selection">Please select a target </centipede-user-input>   
 
     <antcall target="call-cent">
@@ -146,26 +149,27 @@ printed.
   <!-- Interactive scratchpad builds                                       -->
   <!-- =================================================================== -->
   <target name="scratchpad" depends="compile" description="Interactive Scratchpad Build">
-    <echo message="--------------------------------------------------------------"/>
-    <echo message=" "/>    
-    <echo message="          ${xgump.module.project.name} ${xgump.module.project.version.major}.${xgump.module.project.version.minor} SCRATCHPAD "/>
-    <echo message=" "/>    
-    <echo message="--------------------------------------------------------------"/>  
-    <echo message="Building with ${ant.version}"/>  
-    <echo message="using build file ${ant.file}"/>  
-    <echo message="--------------------------------------------------------------"/>   
-    <echo message=" "/>        
-    <echo message=" These are SCRATCHPAD BUILDS. They are not guaranteed to work."/>
-    <echo message=" You have been warned. "/>
-    <echo message=" "/>
-    <echo message=" -"/>
-    <echo message=" -"/>
-    <echo message=" -"/>
-    <echo message=" -"/>
-    <echo message=" -"/>
-    <echo message=" -"/>
-    <echo message=" "/>
-
+    <echo> 
+    --------------------------------------------------------------
+         
+              ${xgump.module.project.name} ${xgump.module.project.version.major}.${xgump.module.project.version.minor} SCRATCHPAD 
+         
+    --------------------------------------------------------------  
+    Building with ${ant.version}  
+    using build file ${ant.file}  
+    --------------------------------------------------------------   
+             
+     These are SCRATCHPAD BUILDS. They are not guaranteed to work.
+     You have been warned. 
+     
+     -
+     -
+     -
+     -
+     -
+     -
+     
+    </echo> 
     <property name="input.selection" value=""/>
     <centipede-user-input name="input.selection">Please select a target </centipede-user-input>
 
@@ -177,25 +181,28 @@ printed.
   <!-- Interactive contrib builds                                       -->
   <!-- =================================================================== -->
   <target name="contrib" depends="compile" description="Interactive Contributors' Build">
-    <echo message="--------------------------------------------------------------"/>
-    <echo message=" "/>    
-    <echo message="          ${xgump.module.project.name} ${xgump.module.project.version.major}.${xgump.module.project.version.minor}  CONTRIB"/>
-    <echo message=" "/>    
-    <echo message="--------------------------------------------------------------"/>
-    <echo message="Building with ${ant.version}"/>  
-    <echo message="using build file ${ant.file}"/>  
-    <echo message="--------------------------------------------------------------"/>   
-    <echo message=" "/>        
-    <echo message=" These are CONTRIB BUILDS. They are not guaranteed to work."/>
-    <echo message=" You have been warned. "/>
-    <echo message=" "/>
-    <echo message=" poibrowser - POIBrowser 0.10 GUI POI Viewer"/>
-    <echo message=" -"/>
-    <echo message=" -"/>
-    <echo message=" -"/>
-    <echo message=" -"/>
-    <echo message=" -"/>
-    <echo message=" "/>
+    <echo> 
+    --------------------------------------------------------------
+         
+              ${xgump.module.project.name} ${xgump.module.project.version.major}.${xgump.module.project.version.minor}  CONTRIB
+         
+    --------------------------------------------------------------
+    Building with ${ant.version}  
+    using build file ${ant.file}  
+    --------------------------------------------------------------   
+             
+     These are CONTRIB BUILDS. They are not guaranteed to work.
+     You have been warned. 
+     
+     poibrowser - POIBrowser 0.10 GUI POI Viewer
+     -
+     -
+     -
+     -
+     -
+     
+    </echo> 
+
     <property name="input.selection" value="poibrowser"/>
     <centipede-user-input name="input.selection">Please select a target </centipede-user-input>
 
@@ -269,10 +276,7 @@ printed.
 
     <antcall target="gump"/>
     
-    <antcall target="call-cent">
-      <param name="cent-name"   value="centipede"/> 
-      <param name="cent-target" value="dist"/> 
-    </antcall>
+    <antcall target="quickdist"/>
     
   </target>     
 
@@ -280,9 +284,14 @@ printed.
   <!--  dist target wo single build checks    -->
   <!-- ====================================== -->
 
-  <target  name="quickdist"   depends="testmodule"
+  <target  name="quickdist"   depends="-init"
            description="Build distribution packages wo single build checks">
 
+    <antcall target="call-cent">
+      <param name="cent-name"   value="junit"/> 
+      <param name="cent-target" value="test"/> 
+    </antcall>
+    
     <antcall target="call-cent">
       <param name="cent-name"   value="centipede"/> 
       <param name="cent-target" value="dist"/> 
@@ -308,8 +317,13 @@ printed.
   <!--         Run Junit tests            -->
   <!-- ================================== -->
   
-  <target  name="test"   depends="compile"
+  <target  name="test"   depends="-init"
            description="Compile java source code">
+
+    <antcall target="call-cent">
+      <param name="cent-name"   value="centipede"/> 
+      <param name="cent-target" value="compile"/> 
+    </antcall>
 
     <antcall target="call-cent">
       <param name="cent-name"   value="junit"/> 
@@ -327,9 +341,14 @@ printed.
   <!--      Generate project metrics      -->
   <!-- ================================== -->
   
-  <target  name="metrics"   depends="compile"
+  <target  name="metrics"   depends="-init"
            description="Generate project metrics">
 
+    <antcall target="call-cent">
+      <param name="cent-name"   value="centipede"/> 
+      <param name="cent-target" value="compile"/> 
+    </antcall>
+    
     <antcall target="call-cent">
       <param name="cent-name"   value="jdepend"/>
       <param name="cent-target" value="jdepend-html"/> 
@@ -400,21 +419,31 @@ printed.
   <!--       Generate UML -WIP-           -->
   <!-- ================================== -->
   
-  <target  name="uml"   depends="-init"
+  <target  name="uml"   depends="compile"
            description="generate-uml">
     
-    <javadoc packagenames="${xgump.module.project.package}.*"
-             sourcepath="${xlayout.build.java.dir}"
-             destdir="${xlayout.build.documentation.metrics.dir}"
-             failonerror="true">
-   
-      <doclet name="JP.co.esm.caddies.doclets.UMLDoclet">
-     </doclet>
-
-    </javadoc>
+    <antcall target="call-cent">
+      <param name="cent-name"   value="umldoclet"/> 
+      <param name="cent-target" value="doclet"/> 
+    </antcall>
 
   </target>     
 
+
+  <!-- ================================== -->
+  <!--       Check style                  -->
+  <!-- ================================== -->
+  
+  <target  name="checkstyle"  depends="-init"
+           description="generate-uml">
+    
+    <antcall target="call-cent">
+      <param name="cent-name"   value="checkstyle"/> 
+      <param name="cent-target" value="check"/> 
+    </antcall>
+
+  </target> 
+  
   <!-- ================================== -->
   <!--       Generate records                -->
   <!-- ================================== -->
@@ -481,16 +510,19 @@ printed.
       <antcall target="testtargets"/>
       <antcall target="clean"/>
       <antcall target="testmodule"/>
+      <antcall target="clean"/>
+      <antcall target="all"/>
       
   </target>
+
   <!-- ================================== -->
   <!--        Generate all                -->
   <!-- ================================== -->
   
   <target  name="all"   
-           depends="testmodule,jar"
+           depends="-init, jar, site"
            description="Generate all"/>
-           
+                      
   <!-- ================================== -->
   <!--   Create a cent.jar package        -->
   <!--   using an already deployed cent   -->
