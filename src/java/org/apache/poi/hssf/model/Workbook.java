@@ -92,7 +92,7 @@ import org.apache.poi.hssf.util.HSSFColor;
  * @version 1.0-pre
  */
 
-public class Workbook {
+public class Workbook implements Model {
     private static final int   DEBUG       = POILogger.DEBUG;
 
 //    public static Workbook currentBook = null;

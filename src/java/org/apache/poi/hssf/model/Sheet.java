@@ -87,8 +87,7 @@ import org.apache.poi.hssf.record
  * @version 1.0-pre
  */
 
-public class Sheet
-    extends java.lang.Object
+public class Sheet implements Model
 {
     public static final short   LeftMargin = 0;
     public static final short   RightMargin = 1;
