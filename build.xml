@@ -71,7 +71,12 @@
     <property name="contrib.jar2.url" value="${repository}/commons-collections/jars/commons-collections-2.1.jar"/>
     <property name="contrib.jar3.dir" value="${contrib.lib}/commons-lang-1.0-b1.jar"/>
     <property name="contrib.jar3.url" value="${repository}/commons-lang/jars/commons-lang-1.0-b1.jar"/>
+    <property name="contrib.jar4.dir" value="${contrib.lib}/xmlParserAPIs-2.2.1.jar"/>
+    <property name="contrib.jar4.url" value="${repository}/xerces/jars/xmlParserAPIs-2.2.1.jar"/>
+    <property name="contrib.jar5.dir" value="${contrib.lib}/xercesImpl-2.4.0.jar"/>
+    <property name="contrib.jar5.url" value="${repository}/xerces/jars/xercesImpl-2.4.0.jar"/>
     <property name="contrib.testokfile" value="build/contrib-testokfile.txt"/>
+    <property name="main.resource1.dir" value="src/resources/fontmetrics"/>
     <property name="junit.jar1.dir" value="${main.lib}/junit-3.8.1.jar"/>
     <property name="junit.jar1.url" value="${repository}/junit/jars/junit-3.8.1.jar"/>
     <property name="build.site" value="build/tmp/site/build/site"/>
@@ -89,6 +94,7 @@
     <path id="main.classpath">
         <pathelement location="${main.jar1.dir}"/>
         <pathelement location="${main.jar2.dir}"/>
+        <pathelement location="${main.resource1.dir}"/>
     </path>
 
     <path id="scratchpad.classpath">
@@ -101,6 +107,8 @@
         <pathelement location="${contrib.jar1.dir}"/>
         <pathelement location="${contrib.jar2.dir}"/>
         <pathelement location="${contrib.jar3.dir}"/>
+        <pathelement location="${contrib.jar4.dir}"/>
+        <pathelement location="${contrib.jar5.dir}"/>
         <pathelement location="${main.output.dir}"/>
         <pathelement location="${main.output.test.dir}"/>
         <pathelement location="${scratchpad.output.dir}"/>
@@ -149,6 +157,8 @@
                 <available file="${contrib.jar1.dir}"/>
                 <available file="${contrib.jar2.dir}"/>
               	<available file="${contrib.jar3.dir}"/>
+              	<available file="${contrib.jar4.dir}"/>
+              	<available file="${contrib.jar5.dir}"/>
                	<available file="${junit.jar1.dir}"/>
             </and>
 			<isset property="disconnected"/>
@@ -162,6 +172,8 @@
         <get src="${contrib.jar1.url}" dest="${contrib.jar1.dir}"/>
         <get src="${contrib.jar2.url}" dest="${contrib.jar2.dir}"/>
         <get src="${contrib.jar3.url}" dest="${contrib.jar3.dir}"/>
+        <get src="${contrib.jar4.url}" dest="${contrib.jar4.dir}"/>
+        <get src="${contrib.jar5.url}" dest="${contrib.jar5.dir}"/>
         <get src="${junit.jar1.url}" dest="${junit.jar1.dir}"/>
     </target>
 
@@ -170,6 +182,9 @@
     </target>
 
     <target name="compile-main" depends="init">
+        <copy todir="${main.output.dir}">
+            <fileset dir="${main.resource1.dir}"/>
+        </copy>
         <javac srcdir="${main.src}" destdir="${main.output.dir}" debug="on">
             <classpath refid="main.classpath"/>
         </javac>
@@ -540,9 +555,45 @@ FORREST_HOME environment variable!</echo>
         description="generate the documentation and reports"/>
 
     <target name="jar" depends="compile" description="Creates jar files for distribution">
-        <jar basedir="${main.output.dir}" destfile="${dist.dir}/${jar.name}-${version.id}-${DSTAMP}.jar"/>
-        <jar basedir="${contrib.output.dir}" destfile="${dist.dir}/${jar.name}-contrib-${version.id}-${DSTAMP}.jar"/>
-        <jar basedir="${scratchpad.output.dir}" destfile="${dist.dir}/${jar.name}-scratchpad-${version.id}-${DSTAMP}.jar"/>
+        <jar basedir="${main.output.dir}" destfile="${dist.dir}/${jar.name}-${version.id}-${DSTAMP}.jar">
+            <manifest>
+                <attribute name="Built-By" value="${user.name}"/>
+                <section name="common">
+                  <attribute name="Specification-Title" value="Jakarta POI"/>
+                  <attribute name="Specification-Version" value="${version.id}-${DSTAMP}"/>
+                  <attribute name="Specification-Vendor" value="Apache"/>
+                  <attribute name="Implementation-Title" value="Jakarta POI"/>
+                  <attribute name="Implementation-Version" value="${version.id}-${DSTAMP}"/>
+                  <attribute name="Implementation-Vendor" value="Apache"/>
+                </section>
+            </manifest>
+        </jar>
+        <jar basedir="${contrib.output.dir}" destfile="${dist.dir}/${jar.name}-contrib-${version.id}-${DSTAMP}.jar">
+            <manifest>
+                <attribute name="Built-By" value="${user.name}"/>
+                <section name="common">
+                  <attribute name="Specification-Title" value="Jakarta POI"/>
+                  <attribute name="Specification-Version" value="${version.id}-${DSTAMP}"/>
+                  <attribute name="Specification-Vendor" value="Apache"/>
+                  <attribute name="Implementation-Title" value="Jakarta POI"/>
+                  <attribute name="Implementation-Version" value="${version.id}-${DSTAMP}"/>
+                  <attribute name="Implementation-Vendor" value="Apache"/>
+                </section>
+            </manifest>
+        </jar>
+        <jar basedir="${scratchpad.output.dir}" destfile="${dist.dir}/${jar.name}-scratchpad-${version.id}-${DSTAMP}.jar">
+            <manifest>
+                <attribute name="Built-By" value="${user.name}"/>
+                <section name="common">
+                  <attribute name="Specification-Title" value="Jakarta POI"/>
+                  <attribute name="Specification-Version" value="${version.id}-${DSTAMP}"/>
+                  <attribute name="Specification-Vendor" value="Apache"/>
+                  <attribute name="Implementation-Title" value="Jakarta POI"/>
+                  <attribute name="Implementation-Version" value="${version.id}-${DSTAMP}"/>
+                  <attribute name="Implementation-Vendor" value="Apache"/>
+                </section>
+            </manifest>
+        </jar>
     </target>
 
     <target name="dist" depends="compile,site,jar" description="Creates the entire distribution into build/dist">
