@@ -148,15 +148,19 @@ import org.apache.poi.util.LittleEndian;
  * accross the records.  I throws the "lazily" one record behind
  * to ensure that ContinueRecords are processed first.
  * 
- * @author Andrew C. Oliver acoliver@apache.org
+ * @author Andrew C. Oliver (acoliver@apache.org) - probably to blame for the bugs (so yank his chain on the list)
+ * @author Marc Johnson (mjohnson at apache dot org) - methods taken from RecordFactory
+ * @author Glen Stampoultzis (glens at apache.org) - methods taken from RecordFactory
  */
 public class EventRecordFactory
 {
-    private static int           NUM_RECORDS = 10000;
+    
+    /**
+     * contains the classes for all the records we want to parse.
+     */
     private static final Class[] records;
 
     static {
- 
             records = new Class[]
             {
                 BOFRecord.class, InterfaceHdrRecord.class, MMSRecord.class,
@@ -189,18 +193,43 @@ public class EventRecordFactory
             };
        
     }
+    
+    /**
+     * cache of the recordsToMap();
+     */
     private static Map           recordsMap  = recordsToMap(records);
 
+    /**
+     * cache of the return of getAllKnownSids so that we don't have to
+     * expensively get them every time.
+     */
     private static short[] sidscache;
-    
+
+    /**
+     * List of the listners that are registred.  should all be ERFListener
+     */    
     private List listeners;
 
+    /**
+     * instance is abortable or not
+     */
     private boolean abortable;
     
+    /**
+     * Construct an abortable EventRecordFactory.  
+     * The same as calling new EventRecordFactory(true)
+     * @see #EventRecordFactory(boolean)
+     */
     public EventRecordFactory() {
         this(true);                  
     }
     
+    /**
+     * Create an EventRecordFactory
+     * @param abortable specifies whether the return from the listener 
+     * handler functions are obeyed.  False means they are ignored. True
+     * means the event loop exits on error.
+     */
     public EventRecordFactory(boolean abortable) {
         this.abortable = abortable;
         listeners = new ArrayList(recordsMap.size());    
@@ -242,12 +271,16 @@ public class EventRecordFactory
      */
     private boolean throwRecordEvent(Record record)
     {
+        boolean result = true;
         Iterator i = listeners.iterator();
         
         while (i.hasNext()) {
-            ((ERFListener) i.next()).processRecord(record);  
+            result = ((ERFListener) i.next()).processRecord(record);  
+            if (abortable == true && result == false) {
+                break;   
+            }
         }
-        return false;
+        return result;
     }
 
     /**
@@ -346,6 +379,10 @@ public class EventRecordFactory
      
     }
 
+    /**
+     * create a record, if there are MUL records than multiple records
+     * are returned digested into the non-mul form.
+     */
     public static Record [] createRecord(short rectype, short size,
                                          byte [] data)
     {
@@ -429,6 +466,9 @@ public class EventRecordFactory
         return realretval;
     }
 
+    /**
+     * @return an array of all the SIDS for all known records
+     */
     public static short [] getAllKnownRecordSIDs()
     {
         short[] results = new short[ recordsMap.size() ];
@@ -444,6 +484,11 @@ public class EventRecordFactory
         return results;
     }
 
+    /**
+     * gets the record constructors and sticks them in the map by SID
+     * @return map of SIDs to short,short,byte[] constructors for Record classes
+     * most of org.apache.poi.hssf.record.*
+     */
     private static Map recordsToMap(Class [] records)
     {
         Map         result = new HashMap();
@@ -475,6 +520,10 @@ public class EventRecordFactory
 
 }
 
+/**
+ * ListenerWrapper just wraps an ERFListener and adds support for throwing
+ * the event to multiple SIDs
+ */
 class ListenerWrapper implements ERFListener {
        private ERFListener listener;
        private short[] sids;
@@ -489,7 +538,7 @@ class ListenerWrapper implements ERFListener {
 
     public boolean processRecord(Record rec)
     {
-        boolean result = false;
+        boolean result = true;
         for (int k = 0; k < sids.length; k++) {
             if (sids[k] == rec.getSid()) {
                 result = listener.processRecord(rec);
