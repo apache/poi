@@ -1,0 +1,1874 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE pgml SYSTEM "pgml.dtd">
+<pgml description="org.argouml.uml.diagram.sequence.ui.UMLSequenceDiagram|-64--88-1-2-717d91:e7cd986e07:-7ff5"
+      name="writeFilesystemSequenceDiagram"
+>
+  <group name="Fig0"
+       description="org.argouml.uml.diagram.sequence.ui.FigSeqObject[10, 10, 84, 624]"
+       href="10-10-101-65-3dcd27:e851a6400f:-7ffd"
+       shown="0"
+       dynobjects="[a|0|13|false|false, b|0, b|13]"
+       fill="1"
+       fillcolor="-1"
+       stroke="1"
+       strokecolor="-16777216"
+  >
+    <private>
+    </private>
+    <rectangle name="Fig0.0"
+      x="10"
+      y="10"
+      width="84"
+      height="24"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <rectangle name="Fig0.1"
+      x="10"
+      y="10"
+      width="84"
+      height="24"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <text name="Fig0.2"
+      context=""
+      x="10"
+      y="10"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    > : ClientApps</text>
+    <rectangle name="Fig0.3"
+      x="48"
+      y="34"
+      width="10"
+      height="600"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <path name="Fig0.4"
+      description="org.tigris.gef.presentation.FigLine"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    >
+      <moveto x="48"
+              y="633" />
+      <lineto x="57"
+              y="633" />
+    </path>
+    <path name="Fig0.5"
+      description="org.tigris.gef.presentation.FigLine"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    >
+      <moveto x="57"
+              y="633" />
+      <lineto x="48"
+              y="633" />
+    </path>
+    <rectangle name="Fig0.6"
+      x="42"
+      y="69"
+      width="21"
+      height="520"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <rectangle name="Fig0.7"
+      x="42"
+      y="69"
+      width="21"
+      height="0"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <rectangle name="Fig0.8"
+      x="42"
+      y="589"
+      width="21"
+      height="0"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+  </group>
+  <group name="Fig1"
+       description="org.argouml.uml.diagram.sequence.ui.FigSeqObject[154, 10, 97, 624]"
+       href="10-10-101-65-3dcd27:e851a6400f:-7ffc"
+       shown="0"
+       dynobjects="[a|0|12|false|false, b|0, b|1, b|2, b|3, b|5, b|9, b|10, b|11, b|12]"
+       fill="1"
+       fillcolor="-1"
+       stroke="1"
+       strokecolor="-16777216"
+  >
+    <private>
+      enclosingFig="Fig1"
+    </private>
+    <rectangle name="Fig1.0"
+      x="154"
+      y="10"
+      width="97"
+      height="24"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <rectangle name="Fig1.1"
+      x="154"
+      y="10"
+      width="97"
+      height="24"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <text name="Fig1.2"
+      context=""
+      x="154"
+      y="10"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    > : POIFileSystem</text>
+    <rectangle name="Fig1.3"
+      x="198"
+      y="34"
+      width="10"
+      height="600"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <path name="Fig1.4"
+      description="org.tigris.gef.presentation.FigLine"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    >
+      <moveto x="198"
+              y="633" />
+      <lineto x="207"
+              y="633" />
+    </path>
+    <path name="Fig1.5"
+      description="org.tigris.gef.presentation.FigLine"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    >
+      <moveto x="207"
+              y="633" />
+      <lineto x="198"
+              y="633" />
+    </path>
+    <rectangle name="Fig1.6"
+      x="192"
+      y="69"
+      width="21"
+      height="480"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <rectangle name="Fig1.7"
+      x="192"
+      y="69"
+      width="21"
+      height="0"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <rectangle name="Fig1.8"
+      x="192"
+      y="109"
+      width="21"
+      height="0"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <rectangle name="Fig1.9"
+      x="192"
+      y="149"
+      width="21"
+      height="0"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <rectangle name="Fig1.10"
+      x="192"
+      y="189"
+      width="21"
+      height="0"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <rectangle name="Fig1.11"
+      x="192"
+      y="269"
+      width="21"
+      height="0"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <rectangle name="Fig1.12"
+      x="192"
+      y="429"
+      width="21"
+      height="0"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <rectangle name="Fig1.13"
+      x="192"
+      y="469"
+      width="21"
+      height="0"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <rectangle name="Fig1.14"
+      x="192"
+      y="509"
+      width="21"
+      height="0"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <rectangle name="Fig1.15"
+      x="192"
+      y="549"
+      width="21"
+      height="0"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+  </group>
+  <group name="Fig2"
+       description="org.argouml.uml.diagram.sequence.ui.FigSeqObject[311, 10, 91, 624]"
+       href="10-10-101-65-3dcd27:e851a6400f:-7ffa"
+       shown="0"
+       dynobjects="[a|1|12|false|false, b|1, b|11, b|12]"
+       fill="1"
+       fillcolor="-1"
+       stroke="1"
+       strokecolor="-16777216"
+  >
+    <private>
+      enclosingFig="Fig2"
+    </private>
+    <rectangle name="Fig2.0"
+      x="311"
+      y="10"
+      width="91"
+      height="24"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <rectangle name="Fig2.1"
+      x="311"
+      y="10"
+      width="91"
+      height="24"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <text name="Fig2.2"
+      context=""
+      x="311"
+      y="10"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    > : HeaderBlock</text>
+    <rectangle name="Fig2.3"
+      x="352"
+      y="34"
+      width="10"
+      height="600"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <path name="Fig2.4"
+      description="org.tigris.gef.presentation.FigLine"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    >
+      <moveto x="352"
+              y="633" />
+      <lineto x="361"
+              y="633" />
+    </path>
+    <path name="Fig2.5"
+      description="org.tigris.gef.presentation.FigLine"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    >
+      <moveto x="361"
+              y="633" />
+      <lineto x="352"
+              y="633" />
+    </path>
+    <rectangle name="Fig2.6"
+      x="346"
+      y="109"
+      width="21"
+      height="440"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <rectangle name="Fig2.7"
+      x="346"
+      y="109"
+      width="21"
+      height="0"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <rectangle name="Fig2.8"
+      x="346"
+      y="509"
+      width="21"
+      height="0"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <rectangle name="Fig2.9"
+      x="346"
+      y="549"
+      width="21"
+      height="0"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+  </group>
+  <group name="Fig3"
+       description="org.argouml.uml.diagram.sequence.ui.FigSeqObject[462, 10, 57, 624]"
+       href="10-10-101-65-3dcd27:e851a6400f:-7ff9"
+       shown="0"
+       dynobjects="[a|2|2|false|false, b|2]"
+       fill="1"
+       fillcolor="-1"
+       stroke="1"
+       strokecolor="-16777216"
+  >
+    <private>
+      enclosingFig="Fig3"
+    </private>
+    <rectangle name="Fig3.0"
+      x="462"
+      y="10"
+      width="57"
+      height="24"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <rectangle name="Fig3.1"
+      x="462"
+      y="10"
+      width="57"
+      height="24"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <text name="Fig3.2"
+      context=""
+      x="462"
+      y="10"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    > : Block</text>
+    <rectangle name="Fig3.3"
+      x="486"
+      y="34"
+      width="10"
+      height="600"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <path name="Fig3.4"
+      description="org.tigris.gef.presentation.FigLine"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    >
+      <moveto x="486"
+              y="633" />
+      <lineto x="495"
+              y="633" />
+    </path>
+    <path name="Fig3.5"
+      description="org.tigris.gef.presentation.FigLine"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    >
+      <moveto x="495"
+              y="633" />
+      <lineto x="486"
+              y="633" />
+    </path>
+    <rectangle name="Fig3.6"
+      x="480"
+      y="149"
+      width="21"
+      height="10"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <rectangle name="Fig3.7"
+      x="480"
+      y="149"
+      width="21"
+      height="0"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+  </group>
+  <group name="Fig4"
+       description="org.argouml.uml.diagram.sequence.ui.FigSeqObject[579, 10, 50, 624]"
+       href="10-10-101-65-3b05de:e851e2ad5c:-7ffd"
+       shown="0"
+       dynobjects="[a|3|10|false|false, b|3, b|4, b|9, b|10]"
+       fill="1"
+       fillcolor="-1"
+       stroke="1"
+       strokecolor="-16777216"
+  >
+    <private>
+      enclosingFig="Fig4"
+    </private>
+    <rectangle name="Fig4.0"
+      x="579"
+      y="10"
+      width="50"
+      height="24"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <rectangle name="Fig4.1"
+      x="579"
+      y="10"
+      width="50"
+      height="24"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <text name="Fig4.2"
+      context=""
+      x="579"
+      y="10"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    > : BAT</text>
+    <rectangle name="Fig4.3"
+      x="600"
+      y="34"
+      width="10"
+      height="600"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <path name="Fig4.4"
+      description="org.tigris.gef.presentation.FigLine"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    >
+      <moveto x="600"
+              y="633" />
+      <lineto x="609"
+              y="633" />
+    </path>
+    <path name="Fig4.5"
+      description="org.tigris.gef.presentation.FigLine"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    >
+      <moveto x="609"
+              y="633" />
+      <lineto x="600"
+              y="633" />
+    </path>
+    <rectangle name="Fig4.6"
+      x="594"
+      y="189"
+      width="21"
+      height="280"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <rectangle name="Fig4.7"
+      x="594"
+      y="189"
+      width="21"
+      height="0"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <rectangle name="Fig4.8"
+      x="594"
+      y="229"
+      width="21"
+      height="0"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <rectangle name="Fig4.9"
+      x="594"
+      y="429"
+      width="21"
+      height="0"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <rectangle name="Fig4.10"
+      x="594"
+      y="469"
+      width="21"
+      height="0"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+  </group>
+  <group name="Fig5"
+       description="org.argouml.uml.diagram.sequence.ui.FigSeqObject[689, 10, 76, 624]"
+       href="10-10-101-65-3dcd27:e851a6400f:-7ff8"
+       shown="0"
+       dynobjects="[a|4|4|false|false, b|4]"
+       fill="1"
+       fillcolor="-1"
+       stroke="1"
+       strokecolor="-16777216"
+  >
+    <private>
+      enclosingFig="Fig5"
+    </private>
+    <rectangle name="Fig5.0"
+      x="689"
+      y="10"
+      width="76"
+      height="24"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <rectangle name="Fig5.1"
+      x="689"
+      y="10"
+      width="76"
+      height="24"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <text name="Fig5.2"
+      context=""
+      x="689"
+      y="10"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    > : BATBlock</text>
+    <rectangle name="Fig5.3"
+      x="723"
+      y="34"
+      width="10"
+      height="600"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <path name="Fig5.4"
+      description="org.tigris.gef.presentation.FigLine"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    >
+      <moveto x="723"
+              y="633" />
+      <lineto x="732"
+              y="633" />
+    </path>
+    <path name="Fig5.5"
+      description="org.tigris.gef.presentation.FigLine"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    >
+      <moveto x="732"
+              y="633" />
+      <lineto x="723"
+              y="633" />
+    </path>
+    <rectangle name="Fig5.6"
+      x="717"
+      y="229"
+      width="21"
+      height="10"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <rectangle name="Fig5.7"
+      x="717"
+      y="229"
+      width="21"
+      height="0"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+  </group>
+  <group name="Fig6"
+       description="org.argouml.uml.diagram.sequence.ui.FigSeqObject[825, 10, 97, 624]"
+       href="10-10-101-65-3b05de:e851e2ad5c:-7ffc"
+       shown="0"
+       dynobjects="[a|5|8|false|false, b|5, b|6, b|7, b|8]"
+       fill="1"
+       fillcolor="-1"
+       stroke="1"
+       strokecolor="-16777216"
+  >
+    <private>
+    </private>
+    <rectangle name="Fig6.0"
+      x="825"
+      y="10"
+      width="97"
+      height="24"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <rectangle name="Fig6.1"
+      x="825"
+      y="10"
+      width="97"
+      height="24"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <text name="Fig6.2"
+      context=""
+      x="825"
+      y="10"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    > : PropertyTable</text>
+    <rectangle name="Fig6.3"
+      x="869"
+      y="34"
+      width="10"
+      height="600"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <path name="Fig6.4"
+      description="org.tigris.gef.presentation.FigLine"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    >
+      <moveto x="869"
+              y="633" />
+      <lineto x="878"
+              y="633" />
+    </path>
+    <path name="Fig6.5"
+      description="org.tigris.gef.presentation.FigLine"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    >
+      <moveto x="878"
+              y="633" />
+      <lineto x="869"
+              y="633" />
+    </path>
+    <rectangle name="Fig6.6"
+      x="863"
+      y="269"
+      width="21"
+      height="120"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <rectangle name="Fig6.7"
+      x="863"
+      y="269"
+      width="21"
+      height="0"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <rectangle name="Fig6.8"
+      x="863"
+      y="309"
+      width="21"
+      height="0"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <rectangle name="Fig6.9"
+      x="863"
+      y="349"
+      width="21"
+      height="0"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <rectangle name="Fig6.10"
+      x="863"
+      y="389"
+      width="21"
+      height="0"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+  </group>
+  <group name="Fig7"
+       description="org.argouml.uml.diagram.sequence.ui.FigSeqObject[982, 10, 123, 624]"
+       href="10-10-101-65-3dcd27:e851a6400f:-7ff7"
+       shown="0"
+       dynobjects="[a|6|8|false|false, b|6, b|8]"
+       fill="1"
+       fillcolor="-1"
+       stroke="1"
+       strokecolor="-16777216"
+  >
+    <private>
+      enclosingFig="Fig7"
+    </private>
+    <rectangle name="Fig7.0"
+      x="982"
+      y="10"
+      width="123"
+      height="24"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <rectangle name="Fig7.1"
+      x="982"
+      y="10"
+      width="123"
+      height="24"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <text name="Fig7.2"
+      context=""
+      x="982"
+      y="10"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    > : PropertyTableBlock</text>
+    <rectangle name="Fig7.3"
+      x="1039"
+      y="34"
+      width="10"
+      height="600"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <path name="Fig7.4"
+      description="org.tigris.gef.presentation.FigLine"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    >
+      <moveto x="1039"
+              y="633" />
+      <lineto x="1048"
+              y="633" />
+    </path>
+    <path name="Fig7.5"
+      description="org.tigris.gef.presentation.FigLine"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    >
+      <moveto x="1048"
+              y="633" />
+      <lineto x="1039"
+              y="633" />
+    </path>
+    <rectangle name="Fig7.6"
+      x="1033"
+      y="309"
+      width="21"
+      height="80"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <rectangle name="Fig7.7"
+      x="1033"
+      y="309"
+      width="21"
+      height="0"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <rectangle name="Fig7.8"
+      x="1033"
+      y="389"
+      width="21"
+      height="0"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+  </group>
+  <group name="Fig8"
+       description="org.argouml.uml.diagram.sequence.ui.FigSeqObject[1165, 10, 71, 624]"
+       href="10-10-101-65-3b05de:e851e2ad5c:-7fef"
+       shown="0"
+       dynobjects="[a|7|7|false|false, b|7]"
+       fill="1"
+       fillcolor="-1"
+       stroke="1"
+       strokecolor="-16777216"
+  >
+    <private>
+      enclosingFig="Fig8"
+    </private>
+    <rectangle name="Fig8.0"
+      x="1165"
+      y="10"
+      width="71"
+      height="24"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <rectangle name="Fig8.1"
+      x="1165"
+      y="10"
+      width="71"
+      height="24"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <text name="Fig8.2"
+      context=""
+      x="1165"
+      y="10"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    > : Property</text>
+    <rectangle name="Fig8.3"
+      x="1196"
+      y="34"
+      width="10"
+      height="600"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <path name="Fig8.4"
+      description="org.tigris.gef.presentation.FigLine"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    >
+      <moveto x="1196"
+              y="633" />
+      <lineto x="1205"
+              y="633" />
+    </path>
+    <path name="Fig8.5"
+      description="org.tigris.gef.presentation.FigLine"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    >
+      <moveto x="1205"
+              y="633" />
+      <lineto x="1196"
+              y="633" />
+    </path>
+    <rectangle name="Fig8.6"
+      x="1190"
+      y="349"
+      width="21"
+      height="10"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <rectangle name="Fig8.7"
+      x="1190"
+      y="349"
+      width="21"
+      height="0"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+  </group>
+  <group name="Fig9"
+       description="org.argouml.uml.diagram.sequence.ui.FigSeqObject[1296, 10, 128, 624]"
+       href="10-10-101-65-3dcd27:e851a6400f:-7ffb"
+       shown="0"
+       dynobjects="[a|13|13|false|false, b|13]"
+       fill="1"
+       fillcolor="-1"
+       stroke="1"
+       strokecolor="-16777216"
+  >
+    <private>
+      enclosingFig="Fig9"
+    </private>
+    <rectangle name="Fig9.0"
+      x="1296"
+      y="10"
+      width="128"
+      height="24"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <rectangle name="Fig9.1"
+      x="1296"
+      y="10"
+      width="128"
+      height="24"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <text name="Fig9.2"
+      context=""
+      x="1296"
+      y="10"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    >OutputStream : Object</text>
+    <rectangle name="Fig9.3"
+      x="1356"
+      y="34"
+      width="10"
+      height="600"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <path name="Fig9.4"
+      description="org.tigris.gef.presentation.FigLine"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    >
+      <moveto x="1356"
+              y="633" />
+      <lineto x="1365"
+              y="633" />
+    </path>
+    <path name="Fig9.5"
+      description="org.tigris.gef.presentation.FigLine"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    >
+      <moveto x="1365"
+              y="633" />
+      <lineto x="1356"
+              y="633" />
+    </path>
+    <rectangle name="Fig9.6"
+      x="1350"
+      y="589"
+      width="21"
+      height="10"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <rectangle name="Fig9.7"
+      x="1350"
+      y="589"
+      width="21"
+      height="0"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+  </group>
+  <group name="Fig10.1"
+       description="org.argouml.uml.diagram.sequence.ui.FigSeqStimulus[66, 52, 111, 14]"
+       href="10-10-101-65-3dcd27:e851a6400f:-7ff5"
+       shown="0"
+       fill="1"
+       fillcolor="-1"
+       stroke="0"
+       strokecolor="-16777216"
+  >
+    <private>
+    </private>
+    <text name="Fig10.1.0"
+      context=""
+      x="66"
+      y="52"
+      fill="0"
+      fillcolor="-1"
+      stroke="0"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    > : createFileSystem</text>
+  </group>
+  <group name="Fig11.1"
+       description="org.argouml.uml.diagram.sequence.ui.FigSeqStimulus[217, 92, 111, 14]"
+       href="10-10-101-65-3dcd27:e851a6400f:-7ff3"
+       shown="0"
+       fill="1"
+       fillcolor="-1"
+       stroke="0"
+       strokecolor="-16777216"
+  >
+    <private>
+    </private>
+    <text name="Fig11.1.0"
+      context=""
+      x="217"
+      y="92"
+      fill="0"
+      fillcolor="-1"
+      stroke="0"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    > : createHeaderBlock</text>
+  </group>
+  <group name="Fig12.1"
+       description="org.argouml.uml.diagram.sequence.ui.FigSeqStimulus[278, 132, 111, 14]"
+       href="10-10-101-65-3dcd27:e851a6400f:-7feb"
+       shown="0"
+       fill="1"
+       fillcolor="-1"
+       stroke="0"
+       strokecolor="-16777216"
+  >
+    <private>
+    </private>
+    <text name="Fig12.1.0"
+      context=""
+      x="278"
+      y="132"
+      fill="0"
+      fillcolor="-1"
+      stroke="0"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    > : createBlock [until all files have blocks]</text>
+  </group>
+  <group name="Fig13.1"
+       description="org.argouml.uml.diagram.sequence.ui.FigSeqStimulus[329, 172, 111, 14]"
+       href="10-10-101-65-3b05de:e851e2ad5c:-7ff8"
+       shown="0"
+       fill="1"
+       fillcolor="-1"
+       stroke="0"
+       strokecolor="-16777216"
+  >
+    <private>
+    </private>
+    <text name="Fig13.1.0"
+      context=""
+      x="329"
+      y="172"
+      fill="0"
+      fillcolor="-1"
+      stroke="0"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    > : create a record [until all files have records]</text>
+  </group>
+  <group name="Fig14.1"
+       description="org.argouml.uml.diagram.sequence.ui.FigSeqStimulus[605, 212, 111, 14]"
+       href="10-10-101-65-3b05de:e851e2ad5c:-7ff4"
+       shown="0"
+       fill="1"
+       fillcolor="-1"
+       stroke="0"
+       strokecolor="-16777216"
+  >
+    <private>
+    </private>
+    <text name="Fig14.1.0"
+      context=""
+      x="605"
+      y="212"
+      fill="0"
+      fillcolor="-1"
+      stroke="0"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    > : create bat block [if need more]</text>
+  </group>
+  <group name="Fig15.1"
+       description="org.argouml.uml.diagram.sequence.ui.FigSeqStimulus[450, 252, 111, 14]"
+       href="10-10-101-65-3b05de:e851e2ad5c:-7ff2"
+       shown="0"
+       fill="1"
+       fillcolor="-1"
+       stroke="0"
+       strokecolor="-16777216"
+  >
+    <private>
+    </private>
+    <text name="Fig15.1.0"
+      context=""
+      x="450"
+      y="252"
+      fill="0"
+      fillcolor="-1"
+      stroke="0"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    > : create a record [until all files have records]</text>
+  </group>
+  <group name="Fig16.1"
+       description="org.argouml.uml.diagram.sequence.ui.FigSeqStimulus[329, 412, 111, 14]"
+       href="10-10-101-65-3b05de:e851e2ad5c:-7fe7"
+       shown="0"
+       fill="1"
+       fillcolor="-1"
+       stroke="0"
+       strokecolor="-16777216"
+  >
+    <private>
+    </private>
+    <text name="Fig16.1.0"
+      context=""
+      x="329"
+      y="412"
+      fill="0"
+      fillcolor="-1"
+      stroke="0"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    > : get the bat array info</text>
+  </group>
+  <group name="Fig17.1"
+       description="org.argouml.uml.diagram.sequence.ui.FigSeqStimulus[329, 452, 111, 14]"
+       href="10-10-101-65-3b05de:e851e2ad5c:-7fe5"
+       shown="0"
+       fill="1"
+       fillcolor="-1"
+       stroke="0"
+       strokecolor="-16777216"
+  >
+    <private>
+    </private>
+    <text name="Fig17.1.0"
+      context=""
+      x="329"
+      y="452"
+      fill="0"
+      fillcolor="-1"
+      stroke="0"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    > : get the extended bat array info</text>
+  </group>
+  <group name="Fig18.1"
+       description="org.argouml.uml.diagram.sequence.ui.FigSeqStimulus[217, 492, 111, 14]"
+       href="10-10-101-65-3b05de:e851e2ad5c:-7fe3"
+       shown="0"
+       fill="1"
+       fillcolor="-1"
+       stroke="0"
+       strokecolor="-16777216"
+  >
+    <private>
+    </private>
+    <text name="Fig18.1.0"
+      context=""
+      x="217"
+      y="492"
+      fill="0"
+      fillcolor="-1"
+      stroke="0"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    > : set the bat  info</text>
+  </group>
+  <group name="Fig19.1"
+       description="org.argouml.uml.diagram.sequence.ui.FigSeqStimulus[217, 532, 111, 14]"
+       href="10-10-101-65-3b05de:e851e2ad5c:-7fe1"
+       shown="0"
+       fill="1"
+       fillcolor="-1"
+       stroke="0"
+       strokecolor="-16777216"
+  >
+    <private>
+    </private>
+    <text name="Fig19.1.0"
+      context=""
+      x="217"
+      y="532"
+      fill="0"
+      fillcolor="-1"
+      stroke="0"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    > : set the extended bat info</text>
+  </group>
+  <group name="Fig20.1"
+       description="org.argouml.uml.diagram.sequence.ui.FigSeqStimulus[896, 292, 111, 14]"
+       href="10-10-101-65-3b05de:e851e2ad5c:-7fdf"
+       shown="0"
+       fill="1"
+       fillcolor="-1"
+       stroke="0"
+       strokecolor="-16777216"
+  >
+    <private>
+    </private>
+    <text name="Fig20.1.0"
+      context=""
+      x="896"
+      y="292"
+      fill="0"
+      fillcolor="-1"
+      stroke="0"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    > : create a block [if needed]</text>
+  </group>
+  <group name="Fig21.1"
+       description="org.argouml.uml.diagram.sequence.ui.FigSeqStimulus[966, 332, 111, 14]"
+       href="10-10-101-65-3b05de:e851e2ad5c:-7fdd"
+       shown="0"
+       fill="1"
+       fillcolor="-1"
+       stroke="0"
+       strokecolor="-16777216"
+  >
+    <private>
+    </private>
+    <text name="Fig21.1.0"
+      context=""
+      x="966"
+      y="332"
+      fill="0"
+      fillcolor="-1"
+      stroke="0"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    > : create a property</text>
+  </group>
+  <group name="Fig22.1"
+       description="org.argouml.uml.diagram.sequence.ui.FigSeqStimulus[896, 372, 111, 14]"
+       href="10-10-101-65-3b05de:e851e2ad5c:-7fd9"
+       shown="0"
+       fill="1"
+       fillcolor="-1"
+       stroke="0"
+       strokecolor="-16777216"
+  >
+    <private>
+    </private>
+    <text name="Fig22.1.0"
+      context=""
+      x="896"
+      y="372"
+      fill="0"
+      fillcolor="-1"
+      stroke="0"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    > : add the propert to the block</text>
+  </group>
+  <group name="Fig23.1"
+       description="org.argouml.uml.diagram.sequence.ui.FigSeqStimulus[587, 572, 111, 14]"
+       href="10-10-101-65-3b05de:e851e2ad5c:-7fd7"
+       shown="0"
+       fill="1"
+       fillcolor="-1"
+       stroke="0"
+       strokecolor="-16777216"
+  >
+    <private>
+    </private>
+    <text name="Fig23.1.0"
+      context=""
+      x="587"
+      y="572"
+      fill="0"
+      fillcolor="-1"
+      stroke="0"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    > : write all blocks to stream</text>
+  </group>
+  <group name="Fig10"
+       description="org.argouml.uml.diagram.sequence.ui.FigSeqLink"
+       href="10-10-101-65-3dcd27:e851a6400f:-7ff6"
+       stroke="1"
+       strokecolor="-16777216"
+  >
+    <private>
+      sourcePortFig="Fig0.7"
+      destPortFig="Fig1.7"
+      sourceFigNode="Fig0"
+      destFigNode="Fig1"
+    </private>
+    <path name="Fig10.1"
+      description="org.tigris.gef.presentation.FigPoly"
+      fill="0"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    >
+      <moveto x="63"
+              y="69" />
+      <lineto x="192"
+              y="69" />
+    </path>
+    <annotations>
+    </annotations>
+  </group>
+  <group name="Fig11"
+       description="org.argouml.uml.diagram.sequence.ui.FigSeqLink"
+       href="10-10-101-65-3dcd27:e851a6400f:-7ff4"
+       stroke="1"
+       strokecolor="-16777216"
+  >
+    <private>
+      sourcePortFig="Fig1.8"
+      destPortFig="Fig2.7"
+      sourceFigNode="Fig1"
+      destFigNode="Fig2"
+    </private>
+    <path name="Fig11.1"
+      description="org.tigris.gef.presentation.FigPoly"
+      fill="0"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    >
+      <moveto x="213"
+              y="109" />
+      <lineto x="346"
+              y="109" />
+    </path>
+    <annotations>
+    </annotations>
+  </group>
+  <group name="Fig12"
+       description="org.argouml.uml.diagram.sequence.ui.FigSeqLink"
+       href="10-10-101-65-3dcd27:e851a6400f:-7fec"
+       stroke="1"
+       strokecolor="-16777216"
+  >
+    <private>
+      sourcePortFig="Fig1.9"
+      destPortFig="Fig3.7"
+      sourceFigNode="Fig1"
+      destFigNode="Fig3"
+    </private>
+    <path name="Fig12.1"
+      description="org.tigris.gef.presentation.FigPoly"
+      fill="0"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    >
+      <moveto x="213"
+              y="149" />
+      <lineto x="480"
+              y="149" />
+    </path>
+    <annotations>
+    </annotations>
+  </group>
+  <group name="Fig13"
+       description="org.argouml.uml.diagram.sequence.ui.FigSeqLink"
+       href="10-10-101-65-3b05de:e851e2ad5c:-7ff9"
+       stroke="1"
+       strokecolor="-16777216"
+  >
+    <private>
+      sourcePortFig="Fig1.10"
+      destPortFig="Fig4.7"
+      sourceFigNode="Fig1"
+      destFigNode="Fig4"
+    </private>
+    <path name="Fig13.1"
+      description="org.tigris.gef.presentation.FigPoly"
+      fill="0"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    >
+      <moveto x="213"
+              y="189" />
+      <lineto x="594"
+              y="189" />
+    </path>
+    <annotations>
+    </annotations>
+  </group>
+  <group name="Fig14"
+       description="org.argouml.uml.diagram.sequence.ui.FigSeqLink"
+       href="10-10-101-65-3b05de:e851e2ad5c:-7ff5"
+       stroke="1"
+       strokecolor="-16777216"
+  >
+    <private>
+      sourcePortFig="Fig4.8"
+      destPortFig="Fig5.7"
+      sourceFigNode="Fig4"
+      destFigNode="Fig5"
+    </private>
+    <path name="Fig14.1"
+      description="org.tigris.gef.presentation.FigPoly"
+      fill="0"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    >
+      <moveto x="615"
+              y="229" />
+      <lineto x="717"
+              y="229" />
+    </path>
+    <annotations>
+    </annotations>
+  </group>
+  <group name="Fig15"
+       description="org.argouml.uml.diagram.sequence.ui.FigSeqLink"
+       href="10-10-101-65-3b05de:e851e2ad5c:-7ff3"
+       stroke="1"
+       strokecolor="-16777216"
+  >
+    <private>
+      sourcePortFig="Fig1.11"
+      destPortFig="Fig6.7"
+      sourceFigNode="Fig1"
+      destFigNode="Fig6"
+    </private>
+    <path name="Fig15.1"
+      description="org.tigris.gef.presentation.FigPoly"
+      fill="0"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    >
+      <moveto x="213"
+              y="269" />
+      <lineto x="863"
+              y="269" />
+    </path>
+    <annotations>
+    </annotations>
+  </group>
+  <group name="Fig16"
+       description="org.argouml.uml.diagram.sequence.ui.FigSeqLink"
+       href="10-10-101-65-3b05de:e851e2ad5c:-7fe8"
+       stroke="1"
+       strokecolor="-16777216"
+  >
+    <private>
+      sourcePortFig="Fig1.12"
+      destPortFig="Fig4.9"
+      sourceFigNode="Fig1"
+      destFigNode="Fig4"
+    </private>
+    <path name="Fig16.1"
+      description="org.tigris.gef.presentation.FigPoly"
+      fill="0"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    >
+      <moveto x="213"
+              y="429" />
+      <lineto x="594"
+              y="429" />
+    </path>
+    <annotations>
+    </annotations>
+  </group>
+  <group name="Fig17"
+       description="org.argouml.uml.diagram.sequence.ui.FigSeqLink"
+       href="10-10-101-65-3b05de:e851e2ad5c:-7fe6"
+       stroke="1"
+       strokecolor="-16777216"
+  >
+    <private>
+      sourcePortFig="Fig1.13"
+      destPortFig="Fig4.10"
+      sourceFigNode="Fig1"
+      destFigNode="Fig4"
+    </private>
+    <path name="Fig17.1"
+      description="org.tigris.gef.presentation.FigPoly"
+      fill="0"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    >
+      <moveto x="213"
+              y="469" />
+      <lineto x="594"
+              y="469" />
+    </path>
+    <annotations>
+    </annotations>
+  </group>
+  <group name="Fig18"
+       description="org.argouml.uml.diagram.sequence.ui.FigSeqLink"
+       href="10-10-101-65-3b05de:e851e2ad5c:-7fe4"
+       stroke="1"
+       strokecolor="-16777216"
+  >
+    <private>
+      sourcePortFig="Fig1.14"
+      destPortFig="Fig2.8"
+      sourceFigNode="Fig1"
+      destFigNode="Fig2"
+    </private>
+    <path name="Fig18.1"
+      description="org.tigris.gef.presentation.FigPoly"
+      fill="0"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    >
+      <moveto x="213"
+              y="509" />
+      <lineto x="346"
+              y="509" />
+    </path>
+    <annotations>
+    </annotations>
+  </group>
+  <group name="Fig19"
+       description="org.argouml.uml.diagram.sequence.ui.FigSeqLink"
+       href="10-10-101-65-3b05de:e851e2ad5c:-7fe2"
+       stroke="1"
+       strokecolor="-16777216"
+  >
+    <private>
+      sourcePortFig="Fig1.15"
+      destPortFig="Fig2.9"
+      sourceFigNode="Fig1"
+      destFigNode="Fig2"
+    </private>
+    <path name="Fig19.1"
+      description="org.tigris.gef.presentation.FigPoly"
+      fill="0"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    >
+      <moveto x="213"
+              y="549" />
+      <lineto x="346"
+              y="549" />
+    </path>
+    <annotations>
+    </annotations>
+  </group>
+  <group name="Fig20"
+       description="org.argouml.uml.diagram.sequence.ui.FigSeqLink"
+       href="10-10-101-65-3b05de:e851e2ad5c:-7fe0"
+       stroke="1"
+       strokecolor="-16777216"
+  >
+    <private>
+      sourcePortFig="Fig6.8"
+      destPortFig="Fig7.7"
+      sourceFigNode="Fig6"
+      destFigNode="Fig7"
+    </private>
+    <path name="Fig20.1"
+      description="org.tigris.gef.presentation.FigPoly"
+      fill="0"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    >
+      <moveto x="884"
+              y="309" />
+      <lineto x="1033"
+              y="309" />
+    </path>
+    <annotations>
+    </annotations>
+  </group>
+  <group name="Fig21"
+       description="org.argouml.uml.diagram.sequence.ui.FigSeqLink"
+       href="10-10-101-65-3b05de:e851e2ad5c:-7fde"
+       stroke="1"
+       strokecolor="-16777216"
+  >
+    <private>
+      sourcePortFig="Fig6.9"
+      destPortFig="Fig8.7"
+      sourceFigNode="Fig6"
+      destFigNode="Fig8"
+    </private>
+    <path name="Fig21.1"
+      description="org.tigris.gef.presentation.FigPoly"
+      fill="0"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    >
+      <moveto x="884"
+              y="349" />
+      <lineto x="1190"
+              y="349" />
+    </path>
+    <annotations>
+    </annotations>
+  </group>
+  <group name="Fig22"
+       description="org.argouml.uml.diagram.sequence.ui.FigSeqLink"
+       href="10-10-101-65-3b05de:e851e2ad5c:-7fda"
+       stroke="1"
+       strokecolor="-16777216"
+  >
+    <private>
+      sourcePortFig="Fig6.10"
+      destPortFig="Fig7.8"
+      sourceFigNode="Fig6"
+      destFigNode="Fig7"
+    </private>
+    <path name="Fig22.1"
+      description="org.tigris.gef.presentation.FigPoly"
+      fill="0"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    >
+      <moveto x="884"
+              y="389" />
+      <lineto x="1033"
+              y="389" />
+    </path>
+    <annotations>
+    </annotations>
+  </group>
+  <group name="Fig23"
+       description="org.argouml.uml.diagram.sequence.ui.FigSeqLink"
+       href="10-10-101-65-3b05de:e851e2ad5c:-7fd8"
+       stroke="1"
+       strokecolor="-16777216"
+  >
+    <private>
+      sourcePortFig="Fig0.8"
+      destPortFig="Fig9.7"
+      sourceFigNode="Fig0"
+      destFigNode="Fig9"
+    </private>
+    <path name="Fig23.1"
+      description="org.tigris.gef.presentation.FigPoly"
+      fill="0"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    >
+      <moveto x="63"
+              y="589" />
+      <lineto x="1350"
+              y="589" />
+    </path>
+    <annotations>
+    </annotations>
+  </group>
+</pgml>

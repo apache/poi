@@ -1,0 +1,1673 @@
+
+/* ====================================================================
+ * The Apache Software License, Version 1.1
+ *
+ * Copyright (c) 2002 The Apache Software Foundation.  All rights
+ * reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in
+ *    the documentation and/or other materials provided with the
+ *    distribution.
+ *
+ * 3. The end-user documentation included with the redistribution,
+ *    if any, must include the following acknowledgment:
+ *       "This product includes software developed by the
+ *        Apache Software Foundation (http://www.apache.org/)."
+ *    Alternately, this acknowledgment may appear in the software itself,
+ *    if and wherever such third-party acknowledgments normally appear.
+ *
+ * 4. The names "Apache" and "Apache Software Foundation" and
+ *    "Apache POI" must not be used to endorse or promote products
+ *    derived from this software without prior written permission. For
+ *    written permission, please contact apache@apache.org.
+ *
+ * 5. Products derived from this software may not be called "Apache",
+ *    "Apache POI", nor may "Apache" appear in their name, without
+ *    prior written permission of the Apache Software Foundation.
+ *
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
+ * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
+ * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+ * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
+ * ====================================================================
+ *
+ * This software consists of voluntary contributions made by many
+ * individuals on behalf of the Apache Software Foundation.  For more
+ * information on the Apache Software Foundation, please see
+ * <http://www.apache.org/>.
+ */
+
+package org.apache.poi.hssf.model;
+
+import java.io.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Iterator;
+
+import org.apache.poi.hssf.record.*;
+import org.apache.poi.util.POILogger;
+import org.apache.poi.hssf.HSSFLog;
+
+/**
+ * Workbook
+ * Low level model implementation of a Workbook.  Provides creational methods
+ * for settings and objects contained in the workbook object.
+ * <P>
+ * This file contains the low level binary records starting at the workbook's BOF and
+ * ending with the workbook's EOF.  Use HSSFWorkbook for a high level representation.
+ * <P>
+ * The structures of the highlevel API use references to this to perform most of their
+ * operations.  Its probably unwise to use these low level structures directly unless you
+ * really know what you're doing.  I recommend you read the Microsoft Excel 97 Developer's
+ * Kit (Microsoft Press) and the documentation at http://sc.openoffice.org/excelfileformat.pdf
+ * before even attempting to use this.
+ *
+ * @author  Andrew C. Oliver (acoliver at apache dot org)
+ * @author  Glen Stampoultzis (gstamp at iprimus dot com dot au)
+ * @see org.apache.poi.hssf.usermodel.HSSFWorkbook
+ * @version 1.0-pre
+ */
+
+public class Workbook
+{
+    private static final int   DEBUG       = POILogger.DEBUG;
+
+    /**
+     * constant used to set the "codepage" wherever "codepage" is set in records
+     * (which is duplciated in more than one record)
+     */
+
+    private final static short CODEPAGE    = ( short ) 0x4b0;
+
+    /**
+     * this contains the Worksheet record objects
+     */
+
+    protected ArrayList        records     = null;
+
+    /**
+     * this contains a reference to the SSTRecord so that new stings can be added
+     * to it.
+     */
+
+    protected SSTRecord        sst         = null;
+
+    /**
+     * holds the "boundsheet" records (aka bundlesheet) so that they can have their
+     * reference to their "BOF" marker
+     */
+
+    protected ArrayList        boundsheets = new ArrayList();
+    protected int              bspos       =
+        0;   // holds the position of the last bound sheet.
+    protected int              tabpos      =
+        0;   // holds the position of the tabid record
+    protected int              fontpos     =
+        0;   // hold the position of the last font record
+    protected int              numfonts    =
+        0;   // hold the number of font records
+    protected int              xfpos       =
+        0;   // hold the position of the last extended font record
+    protected int              numxfs      =
+        0;   // hold the number of extended format records
+    private int                backuppos   =
+        0;   // holds the position of the backup record.
+    private static POILogger   log         =
+        HSSFLog.getPOILogger(Workbook.class);
+
+    /**
+     * Creates new Workbook with no intitialization --useless right now
+     * @see #createWorkbook(Record[])
+     */
+
+    public Workbook()
+    {
+    }
+
+    /**
+     * read support  for low level
+     * API.  Pass in an array of Record objects, A Workbook
+     * object is constructed and passed back with all of its initialization set
+     * to the passed in records and references to those records held. Unlike Sheet
+     * workbook does not use an offset (its assumed to be 0) since its first in a file.
+     * If you need an offset then construct a new array with a 0 offset or write your
+     * own ;-p.
+     *
+     * @param recs an array of Record objects
+     * @return Workbook object
+     */
+
+    public static Workbook createWorkbook(List recs)
+    {
+        log.log(DEBUG, "Workbook (readfile) created with reclen=",
+                new Integer(recs.size()));
+        Workbook  retval  = new Workbook();
+        ArrayList records = new ArrayList(recs.size() / 3);
+
+        for (int k = 0; k < recs.size(); k++)
+        {
+            Record rec = ( Record ) recs.get(k);
+
+            if (rec.getSid() == EOFRecord.sid)
+            {
+                records.add(rec);
+                log.log(DEBUG, "found workbook eof record at " + k);
+                break;
+            }
+            switch (rec.getSid())
+            {
+
+                case BoundSheetRecord.sid :
+                    log.log(DEBUG, "found boundsheet record at " + k);
+                    retval.boundsheets.add(rec);
+                    retval.bspos = k;
+                    break;
+
+                case SSTRecord.sid :
+                    log.log(DEBUG, "found sst record at " + k);
+                    retval.sst = ( SSTRecord ) rec;
+                    break;
+
+                case FontRecord.sid :
+                    log.log(DEBUG, "found font record at " + k);
+                    retval.fontpos = k;
+                    retval.numfonts++;
+                    break;
+
+                case ExtendedFormatRecord.sid :
+                    log.log(DEBUG, "found XF record at " + k);
+                    retval.xfpos = k;
+                    retval.numxfs++;
+                    break;
+
+                case TabIdRecord.sid :
+                    log.log(DEBUG, "found tabid record at " + k);
+                    retval.tabpos = k;
+                    break;
+
+                case BackupRecord.sid :
+                    log.log(DEBUG, "found backup record at " + k);
+                    retval.backuppos = k;
+                    break;
+
+                default :
+            }
+            records.add(rec);
+        }
+        retval.records = records;
+        log.log(DEBUG, "exit create workbook from existing file function");
+        return retval;
+    }
+
+    /**
+     * Creates an empty workbook object with three blank sheets and all the empty
+     * fields.  Use this to create a workbook from scratch.
+     */
+
+    public static Workbook createWorkbook()
+    {
+        log.log(DEBUG, "creating new workbook from scratch");
+        Workbook  retval  = new Workbook();
+        ArrayList records = new ArrayList(30);
+
+        records.add(retval.createBOF());
+        records.add(retval.createInterfaceHdr());
+        records.add(retval.createMMS());
+        records.add(retval.createInterfaceEnd());
+        records.add(retval.createWriteAccess());
+        records.add(retval.createCodepage());
+        records.add(retval.createDSF());
+        records.add(retval.createTabId());
+        retval.tabpos = records.size() - 1;
+        records.add(retval.createFnGroupCount());
+        records.add(retval.createWindowProtect());
+        records.add(retval.createProtect());
+        records.add(retval.createPassword());
+        records.add(retval.createProtectionRev4());
+        records.add(retval.createPasswordRev4());
+        records.add(retval.createWindowOne());
+        records.add(retval.createBackup());
+        retval.backuppos = records.size() - 1;
+        records.add(retval.createHideObj());
+        records.add(retval.createDateWindow1904());
+        records.add(retval.createPrecision());
+        records.add(retval.createRefreshAll());
+        records.add(retval.createBookBool());
+        records.add(retval.createFont());
+        records.add(retval.createFont());
+        records.add(retval.createFont());
+        records.add(retval.createFont());
+        retval.fontpos  = records.size() - 1;   // last font record postion
+        retval.numfonts = 4;
+        records.add(retval.createFormat(0));
+        records.add(retval.createFormat(1));
+        records.add(retval.createFormat(2));
+        records.add(retval.createFormat(3));
+        records.add(retval.createFormat(4));
+        records.add(retval.createFormat(5));
+        records.add(retval.createFormat(6));
+        records.add(retval.createFormat(7));
+        for (int k = 0; k < 21; k++)
+        {
+            records.add(retval.createExtendedFormat(k));
+            retval.numxfs++;
+        }
+        retval.xfpos = records.size() - 1;
+        for (int k = 0; k < 6; k++)
+        {
+            records.add(retval.createStyle(k));
+        }
+        records.add(retval.createUseSelFS());
+        for (int k = 0; k < 1; k++)
+        {   // now just do 1
+            BoundSheetRecord bsr =
+                ( BoundSheetRecord ) retval.createBoundSheet(k);
+
+            records.add(bsr);
+            retval.boundsheets.add(bsr);
+            retval.bspos = records.size() - 1;
+        }
+        records.add(retval.createCountry());
+        retval.sst = ( SSTRecord ) retval.createSST();
+        records.add(retval.sst);
+        records.add(retval.createExtendedSST());
+
+        // TODO
+        records.add(retval.createEOF());
+        retval.records = records;
+        log.log(DEBUG, "exit create new workbook from scratch");
+        return retval;
+    }
+
+    public int getNumRecords()
+    {
+        return records.size();
+    }
+
+    /**
+     * gets the font record at the given index in the font table.  Remember
+     * "There is No Four" (someone at M$ must have gone to Rocky Horror one too
+     * many times)
+     *
+     * @param idx the index to look at (0 or greater but NOT 4)
+     * @return FontRecord located at the given index
+     */
+
+    public FontRecord getFontRecordAt(int idx)
+    {
+        int index = idx;
+
+        if (index > 4)
+        {
+            index -= 1;   // adjust for "There is no 4"
+        }
+        if (index > (numfonts - 1))
+        {
+            throw new ArrayIndexOutOfBoundsException(
+                "There are only " + numfonts
+                + " font records, you asked for " + idx);
+        }
+        FontRecord retval =
+            ( FontRecord ) records.get((fontpos - (numfonts - 1)) + index);
+
+        return retval;
+    }
+
+    /**
+     * creates a new font record and adds it to the "font table".  This causes the
+     * boundsheets to move down one, extended formats to move down (so this function moves
+     * those pointers as well)
+     *
+     * @return FontRecord that was just created
+     */
+
+    public FontRecord createNewFont()
+    {
+        FontRecord rec = ( FontRecord ) createFont();
+
+        ++fontpos;
+        ++bspos;
+        ++xfpos;
+        records.add(fontpos, rec);
+        numfonts++;
+        return rec;
+    }
+
+    /**
+     * gets the number of font records
+     *
+     * @param number of font records in the "font table"
+     */
+
+    public int getNumberOfFontRecords()
+    {
+        return numfonts;
+    }
+
+    /**
+     * Sets the BOF for a given sheet
+     *
+     * @param sheetnum the number of the sheet to set the positing of the bof for
+     * @param pos the actual bof position
+     */
+
+    public void setSheetBof(int sheetnum, int pos)
+    {
+        log.log(DEBUG, "setting bof for sheetnum =", new Integer(sheetnum),
+                " at pos=", new Integer(pos));
+        checkSheets(sheetnum);
+        (( BoundSheetRecord ) boundsheets.get(sheetnum))
+            .setPositionOfBof(pos);
+    }
+
+    /**
+     * Returns the position of the backup record.
+     */
+
+    public BackupRecord getBackupRecord()
+    {
+        return ( BackupRecord ) records.get(backuppos);
+    }
+
+    /**
+     * sets the name for a given sheet.  If the boundsheet record doesn't exist and
+     * its only one more than we have, go ahead and create it.  If its > 1 more than
+     * we have, except
+     *
+     * @param sheetnum the sheet number (0 based)
+     * @param sheetname the name for the sheet
+     */
+
+    public void setSheetName(int sheetnum, String sheetname)
+    {
+        checkSheets(sheetnum);
+        (( BoundSheetRecord ) boundsheets.get(sheetnum))
+            .setSheetname(sheetname);
+        (( BoundSheetRecord ) boundsheets.get(sheetnum))
+            .setSheetnameLength(( byte ) sheetname.length());
+    }
+
+    /**
+     * gets the name for a given sheet.
+     *
+     * @param sheetnum the sheet number (0 based)
+     * @return sheetname the name for the sheet
+     */
+
+    public String getSheetName(int sheetnum)
+    {
+        return (( BoundSheetRecord ) boundsheets.get(sheetnum))
+            .getSheetname();
+    }
+
+    /**
+     * if we're trying to address one more sheet than we have, go ahead and add it!  if we're
+     * trying to address >1 more than we have throw an exception!
+     */
+
+    private void checkSheets(int sheetnum)
+    {
+        if ((boundsheets.size()) <= sheetnum)
+        {   // if we're short one add another..
+            if ((boundsheets.size() + 1) <= sheetnum)
+            {
+                throw new RuntimeException("Sheet number out of bounds!");
+            }
+            BoundSheetRecord bsr =
+                ( BoundSheetRecord ) createBoundSheet(sheetnum);
+
+            records.add(++bspos, bsr);
+            boundsheets.add(bsr);
+            fixTabIdRecord();
+        }
+    }
+
+    public void removeSheet(int sheetnum)
+    {
+        if (boundsheets.size() > sheetnum)
+        {
+            records.remove(bspos - (boundsheets.size() - 1) + sheetnum);
+            bspos--;
+            boundsheets.remove(sheetnum);
+            fixTabIdRecord();
+        }
+    }
+
+    /**
+     * make the tabid record look like the current situation.
+     *
+     */
+
+    private void fixTabIdRecord()
+    {
+        TabIdRecord tir = ( TabIdRecord ) records.get(tabpos);
+        short[]     tia = new short[ boundsheets.size() ];
+
+        for (short k = 0; k < tia.length; k++)
+        {
+            tia[ k ] = k;
+        }
+        tir.setTabIdArray(tia);
+    }
+
+    /**
+     * returns the number of boundsheet objects contained in this workbook.
+     *
+     * @return number of BoundSheet records
+     */
+
+    public int getNumSheets()
+    {
+        log.log(DEBUG, "getNumSheets=", new Integer(boundsheets.size()));
+        return boundsheets.size();
+    }
+
+    /**
+     * get the number of ExtendedFormat records contained in this workbook.
+     *
+     * @return int count of ExtendedFormat records
+     */
+
+    public int getNumExFormats()
+    {
+        log.log(DEBUG, "getXF=", new Integer(boundsheets.size()));
+        return numxfs;
+    }
+
+    /**
+     * gets the ExtendedFormatRecord at the given 0-based index
+     *
+     * @param index of the Extended format record (0-based)
+     * @return ExtendedFormatRecord at the given index
+     */
+
+    public ExtendedFormatRecord getExFormatAt(int index)
+    {
+        int xfptr = xfpos - (numxfs - 1);
+
+        xfptr += index;
+        ExtendedFormatRecord retval =
+            ( ExtendedFormatRecord ) records.get(xfptr);
+
+        return retval;
+    }
+
+    /**
+     * creates a new Cell-type Extneded Format Record and adds it to the end of
+     *  ExtendedFormatRecords collection
+     *
+     * @return ExtendedFormatRecord that was created
+     */
+
+    public ExtendedFormatRecord createCellXF()
+    {
+        ExtendedFormatRecord xf = createExtendedFormat();
+
+        ++xfpos;
+        ++bspos;
+        records.add(xfpos, xf);
+        numxfs++;
+        return xf;
+    }
+
+    /**
+     * Adds a string to the SST table and returns its index (if its a duplicate
+     * just returns its index and update the counts)
+     *
+     * @param string the string to be added to the SSTRecord
+     * @param use16bits whether to use utf 16 or false for compressed unicode
+     * @return index of the string within the SSTRecord
+     */
+
+    public int addSSTString(String string, boolean use16bits)
+    {
+        log.log(DEBUG, "insert to sst string='", string, "' and use16bits= ",
+                new Boolean(use16bits));
+        if (sst == null)
+        {
+            insertSST();
+        }
+        return sst.addString(string, use16bits);
+    }
+
+    /**
+     * Adds a string to the SST table and returns its index (if its a duplicate
+     * just returns its index and update the counts) ASSUMES compressed unicode
+     * (meaning 8bit)
+     *
+     * @param string the string to be added to the SSTRecord
+     *
+     * @return index of the string within the SSTRecord
+     */
+
+    public int addSSTString(String string)
+    {
+        return addSSTString(string, false);
+    }
+
+    /**
+     * given an index into the SST table, this function returns the corresponding String value
+     * @return String containing the SST String
+     */
+
+    public String getSSTString(int str)
+    {
+        if (sst == null)
+        {
+            insertSST();
+        }
+        String retval = sst.getString(str);
+
+        log.log(DEBUG, "Returning SST for index=", new Integer(str),
+                " String= ", retval);
+        return retval;
+    }
+
+    /**
+     * use this function to add a Shared String Table to an existing sheet (say
+     * generated by a different java api) without an sst....
+     * @see #createSST()
+     * @see org.apache.poi.hssf.record.SSTRecord
+     */
+
+    public void insertSST()
+    {
+        log.log(DEBUG, "creating new SST via insertSST!");
+        sst = ( SSTRecord ) createSST();
+        records.add(records.size() - 1, createExtendedSST());
+        records.add(records.size() - 2, sst);
+    }
+
+    /**
+     * Serializes all records int the worksheet section into a big byte array. Use
+     * this to write the Workbook out.
+     *
+     * @return byte array containing the HSSF-only portions of the POIFS file.
+     */
+
+    public byte [] serialize()
+    {
+        log.log(DEBUG, "Serializing Workbook!");
+        byte[] retval    = null;
+
+        // ArrayList bytes     = new ArrayList(records.size());
+        int    arraysize = getSize();
+        int    pos       = 0;
+
+        // for (int k = 0; k < records.size(); k++)
+        // {
+        // bytes.add((( Record ) records.get(k)).serialize());
+//        }
+        // for (int k = 0; k < bytes.size(); k++)
+        // {
+        // arraysize += (( byte [] ) bytes.get(k)).length;
+        // }
+        retval = new byte[ arraysize ];
+        for (int k = 0; k < records.size(); k++)
+        {
+
+            // byte[] rec = (( byte [] ) bytes.get(k));
+            // System.arraycopy(rec, 0, retval, pos, rec.length);
+            pos += (( Record ) records.get(k)).serialize(pos,
+                    retval);   // rec.length;
+        }
+        log.log(DEBUG, "Exiting serialize workbook");
+        return retval;
+    }
+
+    /**
+     * Serializes all records int the worksheet section into a big byte array. Use
+     * this to write the Workbook out.
+     * @param offset of the data to be written
+     * @param data array of bytes to write this to
+     */
+
+    public int serialize(int offset, byte [] data)
+    {
+        log.log(DEBUG, "Serializing Workbook with offsets");
+
+        // ArrayList bytes     = new ArrayList(records.size());
+        int arraysize = getSize();   // 0;
+        int pos       = 0;
+
+//        for (int k = 0; k < records.size(); k++)
+//        {
+//            bytes.add((( Record ) records.get(k)).serialize());
+//
+//        }
+//        for (int k = 0; k < bytes.size(); k++)
+//       {
+//            arraysize += (( byte [] ) bytes.get(k)).length;
+//        }
+        for (int k = 0; k < records.size(); k++)
+        {
+
+            // byte[] rec = (( byte [] ) bytes.get(k));
+            // System.arraycopy(rec, 0, data, offset + pos, rec.length);
+            pos += (( Record ) records.get(k)).serialize(pos + offset,
+                    data);   // rec.length;
+        }
+        log.log(DEBUG, "Exiting serialize workbook");
+        return pos;
+    }
+
+    public int getSize()
+    {
+        int retval = 0;
+
+        for (int k = 0; k < records.size(); k++)
+        {
+            retval += (( Record ) records.get(k)).getRecordSize();
+        }
+        return retval;
+    }
+
+    /**
+     * creates the BOF record
+     * @see org.apache.poi.hssf.record.BOFRecord
+     * @see org.apache.poi.hssf.record.Record
+     * @return record containing a BOFRecord
+     */
+
+    protected Record createBOF()
+    {
+        BOFRecord retval = new BOFRecord();
+
+        retval.setVersion(( short ) 0x600);
+        retval.setType(( short ) 5);
+        retval.setBuild(( short ) 0x10d3);
+
+//        retval.setBuild((short)0x0dbb);        
+        retval.setBuildYear(( short ) 1996);
+        retval.setHistoryBitMask(0x41);   // was c1 before verify
+        retval.setRequiredVersion(0x6);
+        return retval;
+    }
+
+    /**
+     * creates the InterfaceHdr record
+     * @see org.apache.poi.hssf.record.InterfaceHdrRecord
+     * @see org.apache.poi.hssf.record.Record
+     * @return record containing a InterfaceHdrRecord
+     */
+
+    protected Record createInterfaceHdr()
+    {
+        InterfaceHdrRecord retval = new InterfaceHdrRecord();
+
+        retval.setCodepage(CODEPAGE);
+        return retval;
+    }
+
+    /**
+     * creates an MMS record
+     * @see org.apache.poi.hssf.record.MMSRecord
+     * @see org.apache.poi.hssf.record.Record
+     * @return record containing a MMSRecord
+     */
+
+    protected Record createMMS()
+    {
+        MMSRecord retval = new MMSRecord();
+
+        retval.setAddMenuCount(( byte ) 0);
+        retval.setDelMenuCount(( byte ) 0);
+        return retval;
+    }
+
+    /**
+     * creates the InterfaceEnd record
+     * @see org.apache.poi.hssf.record.InterfaceEndRecord
+     * @see org.apache.poi.hssf.record.Record
+     * @return record containing a InterfaceEndRecord
+     */
+
+    protected Record createInterfaceEnd()
+    {
+        return new InterfaceEndRecord();
+    }
+
+    /**
+     * creates the WriteAccess record containing the logged in user's name
+     * @see org.apache.poi.hssf.record.WriteAccessRecord
+     * @see org.apache.poi.hssf.record.Record
+     * @return record containing a WriteAccessRecord
+     */
+
+    protected Record createWriteAccess()
+    {
+        WriteAccessRecord retval = new WriteAccessRecord();
+
+        retval.setUsername(System.getProperty("user.name"));
+        return retval;
+    }
+
+    /**
+     * creates the Codepage record containing the constant stored in CODEPAGE
+     * @see org.apache.poi.hssf.record.CodepageRecord
+     * @see org.apache.poi.hssf.record.Record
+     * @return record containing a CodepageRecord
+     */
+
+    protected Record createCodepage()
+    {
+        CodepageRecord retval = new CodepageRecord();
+
+        retval.setCodepage(CODEPAGE);
+        return retval;
+    }
+
+    /**
+     * creates the DSF record containing a 0 since HSSF can't even create Dual Stream Files
+     * @see org.apache.poi.hssf.record.DSFRecord
+     * @see org.apache.poi.hssf.record.Record
+     * @return record containing a DSFRecord
+     */
+
+    protected Record createDSF()
+    {
+        DSFRecord retval = new DSFRecord();
+
+        retval.setDsf(
+            ( short ) 0);   // we don't even support double stream files
+        return retval;
+    }
+
+    /**
+     * creates the TabId record containing an array of 0,1,2.  This release of HSSF
+     * always has the default three sheets, no less, no more.
+     * @see org.apache.poi.hssf.record.TabIdRecord
+     * @see org.apache.poi.hssf.record.Record
+     * @return record containing a TabIdRecord
+     */
+
+    protected Record createTabId()
+    {
+        TabIdRecord retval     = new TabIdRecord();
+        short[]     tabidarray =
+        {
+            0
+        };
+
+        retval.setTabIdArray(tabidarray);
+        return retval;
+    }
+
+    /**
+     * creates the FnGroupCount record containing the Magic number constant of 14.
+     * @see org.apache.poi.hssf.record.FnGroupCountRecord
+     * @see org.apache.poi.hssf.record.Record
+     * @return record containing a FnGroupCountRecord
+     */
+
+    protected Record createFnGroupCount()
+    {
+        FnGroupCountRecord retval = new FnGroupCountRecord();
+
+        retval.setCount(( short ) 14);
+        return retval;
+    }
+
+    /**
+     * creates the WindowProtect record with protect set to false.
+     * @see org.apache.poi.hssf.record.WindowProtectRecord
+     * @see org.apache.poi.hssf.record.Record
+     * @return record containing a WindowProtectRecord
+     */
+
+    protected Record createWindowProtect()
+    {
+        WindowProtectRecord retval = new WindowProtectRecord();
+
+        retval.setProtect(
+            false);   // by default even when we support it we won't
+        return retval;   // want it to be protected
+    }
+
+    /**
+     * creates the Protect record with protect set to false.
+     * @see org.apache.poi.hssf.record.ProtectRecord
+     * @see org.apache.poi.hssf.record.Record
+     * @return record containing a ProtectRecord
+     */
+
+    protected Record createProtect()
+    {
+        ProtectRecord retval = new ProtectRecord();
+
+        retval.setProtect(
+            false);   // by default even when we support it we won't
+        return retval;   // want it to be protected
+    }
+
+    /**
+     * creates the Password record with password set to 0.
+     * @see org.apache.poi.hssf.record.PasswordRecord
+     * @see org.apache.poi.hssf.record.Record
+     * @return record containing a PasswordRecord
+     */
+
+    protected Record createPassword()
+    {
+        PasswordRecord retval = new PasswordRecord();
+
+        retval.setPassword(( short ) 0);   // no password by default!
+        return retval;
+    }
+
+    /**
+     * creates the ProtectionRev4 record with protect set to false.
+     * @see org.apache.poi.hssf.record.ProtectionRev4Record
+     * @see org.apache.poi.hssf.record.Record
+     * @return record containing a ProtectionRev4Record
+     */
+
+    protected Record createProtectionRev4()
+    {
+        ProtectionRev4Record retval = new ProtectionRev4Record();
+
+        retval.setProtect(false);
+        return retval;
+    }
+
+    /**
+     * creates the PasswordRev4 record with password set to 0.
+     * @see org.apache.poi.hssf.record.PasswordRev4Record
+     * @see org.apache.poi.hssf.record.Record
+     * @return record containing a PasswordRev4Record
+     */
+
+    protected Record createPasswordRev4()
+    {
+        PasswordRev4Record retval = new PasswordRev4Record();
+
+        retval.setPassword(( short ) 0);   // no password by default!
+        return retval;
+    }
+
+    /**
+     * creates the WindowOne record with the following magic values: <P>
+     * horizontal hold - 0x168 <P>
+     * vertical hold   - 0x10e <P>
+     * width           - 0x3a5c <P>
+     * height          - 0x23be <P>
+     * options         - 0x38 <P>
+     * selected tab    - 0 <P>
+     * displayed tab   - 0 <P>
+     * num selected tab- 0 <P>
+     * tab width ratio - 0x258 <P>
+     * @see org.apache.poi.hssf.record.WindowOneRecord
+     * @see org.apache.poi.hssf.record.Record
+     * @return record containing a WindowOneRecord
+     */
+
+    protected Record createWindowOne()
+    {
+        WindowOneRecord retval = new WindowOneRecord();
+
+        retval.setHorizontalHold(( short ) 0x168);
+        retval.setVerticalHold(( short ) 0x10e);
+        retval.setWidth(( short ) 0x3a5c);
+        retval.setHeight(( short ) 0x23be);
+        retval.setOptions(( short ) 0x38);
+        retval.setSelectedTab(( short ) 0x0);
+        retval.setDisplayedTab(( short ) 0x0);
+        retval.setNumSelectedTabs(( short ) 1);
+        retval.setTabWidthRatio(( short ) 0x258);
+        return retval;
+    }
+
+    /**
+     * creates the Backup record with backup set to 0. (loose the data, who cares)
+     * @see org.apache.poi.hssf.record.BackupRecord
+     * @see org.apache.poi.hssf.record.Record
+     * @return record containing a BackupRecord
+     */
+
+    protected Record createBackup()
+    {
+        BackupRecord retval = new BackupRecord();
+
+        retval.setBackup(
+            ( short ) 0);   // by default DONT save backups of files...just loose data
+        return retval;
+    }
+
+    /**
+     * creates the HideObj record with hide object set to 0. (don't hide)
+     * @see org.apache.poi.hssf.record.HideObjRecord
+     * @see org.apache.poi.hssf.record.Record
+     * @return record containing a HideObjRecord
+     */
+
+    protected Record createHideObj()
+    {
+        HideObjRecord retval = new HideObjRecord();
+
+        retval.setHideObj(( short ) 0);   // by default set hide object off
+        return retval;
+    }
+
+    /**
+     * creates the DateWindow1904 record with windowing set to 0. (don't window)
+     * @see org.apache.poi.hssf.record.DateWindow1904Record
+     * @see org.apache.poi.hssf.record.Record
+     * @return record containing a DateWindow1904Record
+     */
+
+    protected Record createDateWindow1904()
+    {
+        DateWindow1904Record retval = new DateWindow1904Record();
+
+        retval.setWindowing(
+            ( short ) 0);   // don't EVER use 1904 date windowing...tick tock..
+        return retval;
+    }
+
+    /**
+     * creates the Precision record with precision set to true. (full precision)
+     * @see org.apache.poi.hssf.record.PrecisionRecord
+     * @see org.apache.poi.hssf.record.Record
+     * @return record containing a PrecisionRecord
+     */
+
+    protected Record createPrecision()
+    {
+        PrecisionRecord retval = new PrecisionRecord();
+
+        retval.setFullPrecision(
+            true);   // always use real numbers in calculations!
+        return retval;
+    }
+
+    /**
+     * creates the RefreshAll record with refreshAll set to true. (refresh all calcs)
+     * @see org.apache.poi.hssf.record.RefreshAllRecord
+     * @see org.apache.poi.hssf.record.Record
+     * @return record containing a RefreshAllRecord
+     */
+
+    protected Record createRefreshAll()
+    {
+        RefreshAllRecord retval = new RefreshAllRecord();
+
+        retval.setRefreshAll(false);
+        return retval;
+    }
+
+    /**
+     * creates the BookBool record with saveLinkValues set to 0. (don't save link values)
+     * @see org.apache.poi.hssf.record.BookBoolRecord
+     * @see org.apache.poi.hssf.record.Record
+     * @return record containing a BookBoolRecord
+     */
+
+    protected Record createBookBool()
+    {
+        BookBoolRecord retval = new BookBoolRecord();
+
+        retval.setSaveLinkValues(( short ) 0);
+        return retval;
+    }
+
+    /**
+     * creates a Font record with the following magic values: <P>
+     * fontheight           = 0xc8<P>
+     * attributes           = 0x0<P>
+     * color palette index  = 0x7fff<P>
+     * bold weight          = 0x190<P>
+     * Font Name Length     = 5 <P>
+     * Font Name            = Arial <P>
+     *
+     * @see org.apache.poi.hssf.record.FontRecord
+     * @see org.apache.poi.hssf.record.Record
+     * @return record containing a FontRecord
+     */
+
+    protected Record createFont()
+    {
+        FontRecord retval = new FontRecord();
+
+        retval.setFontHeight(( short ) 0xc8);
+        retval.setAttributes(( short ) 0x0);
+        retval.setColorPaletteIndex(( short ) 0x7fff);
+        retval.setBoldWeight(( short ) 0x190);
+        retval.setFontNameLength(( byte ) 5);
+        retval.setFontName("Arial");
+        return retval;
+    }
+
+    /**
+     * Creates a FormatRecord object
+     * @param the number of the format record to create (meaning its position in
+     *        a file as M$ Excel would create it.)
+     * @return record containing a FormatRecord
+     * @see org.apache.poi.hssf.record.FormatRecord
+     * @see org.apache.poi.hssf.record.Record
+     */
+
+    protected Record createFormat(int id)
+    {   // we'll need multiple editions for
+        FormatRecord retval = new FormatRecord();   // the differnt formats
+
+        switch (id)
+        {
+
+            case 0 :
+                retval.setIndexCode(( short ) 5);
+                retval.setFormatStringLength(( byte ) 0x17);
+                retval.setFormatString("\"$\"#,##0_);\\(\"$\"#,##0\\)");
+                break;
+
+            case 1 :
+                retval.setIndexCode(( short ) 6);
+                retval.setFormatStringLength(( byte ) 0x1c);
+                retval.setFormatString("\"$\"#,##0_);[Red]\\(\"$\"#,##0\\)");
+                break;
+
+            case 2 :
+                retval.setIndexCode(( short ) 7);
+                retval.setFormatStringLength(( byte ) 0x1d);
+                retval.setFormatString("\"$\"#,##0.00_);\\(\"$\"#,##0.00\\)");
+                break;
+
+            case 3 :
+                retval.setIndexCode(( short ) 8);
+                retval.setFormatStringLength(( byte ) 0x22);
+                retval.setFormatString(
+                    "\"$\"#,##0.00_);[Red]\\(\"$\"#,##0.00\\)");
+                break;
+
+            case 4 :
+                retval.setIndexCode(( short ) 0x2a);
+                retval.setFormatStringLength(( byte ) 0x32);
+                retval.setFormatString(
+                    "_(\"$\"* #,##0_);_(\"$\"* \\(#,##0\\);_(\"$\"* \"-\"_);_(@_)");
+                break;
+
+            case 5 :
+                retval.setIndexCode(( short ) 0x29);
+                retval.setFormatStringLength(( byte ) 0x29);
+                retval.setFormatString(
+                    "_(* #,##0_);_(* \\(#,##0\\);_(* \"-\"_);_(@_)");
+                break;
+
+            case 6 :
+                retval.setIndexCode(( short ) 0x2c);
+                retval.setFormatStringLength(( byte ) 0x3a);
+                retval.setFormatString(
+                    "_(\"$\"* #,##0.00_);_(\"$\"* \\(#,##0.00\\);_(\"$\"* \"-\"??_);_(@_)");
+                break;
+
+            case 7 :
+                retval.setIndexCode(( short ) 0x2b);
+                retval.setFormatStringLength(( byte ) 0x31);
+                retval.setFormatString(
+                    "_(* #,##0.00_);_(* \\(#,##0.00\\);_(* \"-\"??_);_(@_)");
+                break;
+        }
+        return retval;
+    }
+
+    /**
+     * Creates an ExtendedFormatRecord object
+     * @param the number of the extended format record to create (meaning its position in
+     *        a file as MS Excel would create it.)
+     *
+     * @return record containing an ExtendedFormatRecord
+     * @see org.apache.poi.hssf.record.ExtendedFormatRecord
+     * @see org.apache.poi.hssf.record.Record
+     */
+
+    protected Record createExtendedFormat(int id)
+    {   // we'll need multiple editions
+        ExtendedFormatRecord retval = new ExtendedFormatRecord();
+
+        switch (id)
+        {
+
+            case 0 :
+                retval.setFontIndex(( short ) 0);
+                retval.setFormatIndex(( short ) 0);
+                retval.setCellOptions(( short ) 0xfffffff5);
+                retval.setAlignmentOptions(( short ) 0x20);
+                retval.setIndentionOptions(( short ) 0);
+                retval.setBorderOptions(( short ) 0);
+                retval.setPaletteOptions(( short ) 0);
+                retval.setAdtlPaletteOptions(( short ) 0);
+                retval.setFillPaletteOptions(( short ) 0x20c0);
+                break;
+
+            case 1 :
+                retval.setFontIndex(( short ) 1);
+                retval.setFormatIndex(( short ) 0);
+                retval.setCellOptions(( short ) 0xfffffff5);
+                retval.setAlignmentOptions(( short ) 0x20);
+                retval.setIndentionOptions(( short ) 0xfffff400);
+                retval.setBorderOptions(( short ) 0);
+                retval.setPaletteOptions(( short ) 0);
+                retval.setAdtlPaletteOptions(( short ) 0);
+                retval.setFillPaletteOptions(( short ) 0x20c0);
+                break;
+
+            case 2 :
+                retval.setFontIndex(( short ) 1);
+                retval.setFormatIndex(( short ) 0);
+                retval.setCellOptions(( short ) 0xfffffff5);
+                retval.setAlignmentOptions(( short ) 0x20);
+                retval.setIndentionOptions(( short ) 0xfffff400);
+                retval.setBorderOptions(( short ) 0);
+                retval.setPaletteOptions(( short ) 0);
+                retval.setAdtlPaletteOptions(( short ) 0);
+                retval.setFillPaletteOptions(( short ) 0x20c0);
+                break;
+
+            case 3 :
+                retval.setFontIndex(( short ) 2);
+                retval.setFormatIndex(( short ) 0);
+                retval.setCellOptions(( short ) 0xfffffff5);
+                retval.setAlignmentOptions(( short ) 0x20);
+                retval.setIndentionOptions(( short ) 0xfffff400);
+                retval.setBorderOptions(( short ) 0);
+                retval.setPaletteOptions(( short ) 0);
+                retval.setAdtlPaletteOptions(( short ) 0);
+                retval.setFillPaletteOptions(( short ) 0x20c0);
+                break;
+
+            case 4 :
+                retval.setFontIndex(( short ) 2);
+                retval.setFormatIndex(( short ) 0);
+                retval.setCellOptions(( short ) 0xfffffff5);
+                retval.setAlignmentOptions(( short ) 0x20);
+                retval.setIndentionOptions(( short ) 0xfffff400);
+                retval.setBorderOptions(( short ) 0);
+                retval.setPaletteOptions(( short ) 0);
+                retval.setAdtlPaletteOptions(( short ) 0);
+                retval.setFillPaletteOptions(( short ) 0x20c0);
+                break;
+
+            case 5 :
+                retval.setFontIndex(( short ) 0);
+                retval.setFormatIndex(( short ) 0);
+                retval.setCellOptions(( short ) 0xfffffff5);
+                retval.setAlignmentOptions(( short ) 0x20);
+                retval.setIndentionOptions(( short ) 0xfffff400);
+                retval.setBorderOptions(( short ) 0);
+                retval.setPaletteOptions(( short ) 0);
+                retval.setAdtlPaletteOptions(( short ) 0);
+                retval.setFillPaletteOptions(( short ) 0x20c0);
+                break;
+
+            case 6 :
+                retval.setFontIndex(( short ) 0);
+                retval.setFormatIndex(( short ) 0);
+                retval.setCellOptions(( short ) 0xfffffff5);
+                retval.setAlignmentOptions(( short ) 0x20);
+                retval.setIndentionOptions(( short ) 0xfffff400);
+                retval.setBorderOptions(( short ) 0);
+                retval.setPaletteOptions(( short ) 0);
+                retval.setAdtlPaletteOptions(( short ) 0);
+                retval.setFillPaletteOptions(( short ) 0x20c0);
+                break;
+
+            case 7 :
+                retval.setFontIndex(( short ) 0);
+                retval.setFormatIndex(( short ) 0);
+                retval.setCellOptions(( short ) 0xfffffff5);
+                retval.setAlignmentOptions(( short ) 0x20);
+                retval.setIndentionOptions(( short ) 0xfffff400);
+                retval.setBorderOptions(( short ) 0);
+                retval.setPaletteOptions(( short ) 0);
+                retval.setAdtlPaletteOptions(( short ) 0);
+                retval.setFillPaletteOptions(( short ) 0x20c0);
+                break;
+
+            case 8 :
+                retval.setFontIndex(( short ) 0);
+                retval.setFormatIndex(( short ) 0);
+                retval.setCellOptions(( short ) 0xfffffff5);
+                retval.setAlignmentOptions(( short ) 0x20);
+                retval.setIndentionOptions(( short ) 0xfffff400);
+                retval.setBorderOptions(( short ) 0);
+                retval.setPaletteOptions(( short ) 0);
+                retval.setAdtlPaletteOptions(( short ) 0);
+                retval.setFillPaletteOptions(( short ) 0x20c0);
+                break;
+
+            case 9 :
+                retval.setFontIndex(( short ) 0);
+                retval.setFormatIndex(( short ) 0);
+                retval.setCellOptions(( short ) 0xfffffff5);
+                retval.setAlignmentOptions(( short ) 0x20);
+                retval.setIndentionOptions(( short ) 0xfffff400);
+                retval.setBorderOptions(( short ) 0);
+                retval.setPaletteOptions(( short ) 0);
+                retval.setAdtlPaletteOptions(( short ) 0);
+                retval.setFillPaletteOptions(( short ) 0x20c0);
+                break;
+
+            case 10 :
+                retval.setFontIndex(( short ) 0);
+                retval.setFormatIndex(( short ) 0);
+                retval.setCellOptions(( short ) 0xfffffff5);
+                retval.setAlignmentOptions(( short ) 0x20);
+                retval.setIndentionOptions(( short ) 0xfffff400);
+                retval.setBorderOptions(( short ) 0);
+                retval.setPaletteOptions(( short ) 0);
+                retval.setAdtlPaletteOptions(( short ) 0);
+                retval.setFillPaletteOptions(( short ) 0x20c0);
+                break;
+
+            case 11 :
+                retval.setFontIndex(( short ) 0);
+                retval.setFormatIndex(( short ) 0);
+                retval.setCellOptions(( short ) 0xfffffff5);
+                retval.setAlignmentOptions(( short ) 0x20);
+                retval.setIndentionOptions(( short ) 0xfffff400);
+                retval.setBorderOptions(( short ) 0);
+                retval.setPaletteOptions(( short ) 0);
+                retval.setAdtlPaletteOptions(( short ) 0);
+                retval.setFillPaletteOptions(( short ) 0x20c0);
+                break;
+
+            case 12 :
+                retval.setFontIndex(( short ) 0);
+                retval.setFormatIndex(( short ) 0);
+                retval.setCellOptions(( short ) 0xfffffff5);
+                retval.setAlignmentOptions(( short ) 0x20);
+                retval.setIndentionOptions(( short ) 0xfffff400);
+                retval.setBorderOptions(( short ) 0);
+                retval.setPaletteOptions(( short ) 0);
+                retval.setAdtlPaletteOptions(( short ) 0);
+                retval.setFillPaletteOptions(( short ) 0x20c0);
+                break;
+
+            case 13 :
+                retval.setFontIndex(( short ) 0);
+                retval.setFormatIndex(( short ) 0);
+                retval.setCellOptions(( short ) 0xfffffff5);
+                retval.setAlignmentOptions(( short ) 0x20);
+                retval.setIndentionOptions(( short ) 0xfffff400);
+                retval.setBorderOptions(( short ) 0);
+                retval.setPaletteOptions(( short ) 0);
+                retval.setAdtlPaletteOptions(( short ) 0);
+                retval.setFillPaletteOptions(( short ) 0x20c0);
+                break;
+
+            case 14 :
+                retval.setFontIndex(( short ) 0);
+                retval.setFormatIndex(( short ) 0);
+                retval.setCellOptions(( short ) 0xfffffff5);
+                retval.setAlignmentOptions(( short ) 0x20);
+                retval.setIndentionOptions(( short ) 0xfffff400);
+                retval.setBorderOptions(( short ) 0);
+                retval.setPaletteOptions(( short ) 0);
+                retval.setAdtlPaletteOptions(( short ) 0);
+                retval.setFillPaletteOptions(( short ) 0x20c0);
+                break;
+
+            // cell records
+            case 15 :
+                retval.setFontIndex(( short ) 0);
+                retval.setFormatIndex(( short ) 0);
+                retval.setCellOptions(( short ) 0x1);
+                retval.setAlignmentOptions(( short ) 0x20);
+                retval.setIndentionOptions(( short ) 0x0);
+                retval.setBorderOptions(( short ) 0);
+                retval.setPaletteOptions(( short ) 0);
+                retval.setAdtlPaletteOptions(( short ) 0);
+                retval.setFillPaletteOptions(( short ) 0x20c0);
+                break;
+
+            // style
+            case 16 :
+                retval.setFontIndex(( short ) 1);
+                retval.setFormatIndex(( short ) 0x2b);
+                retval.setCellOptions(( short ) 0xfffffff5);
+                retval.setAlignmentOptions(( short ) 0x20);
+                retval.setIndentionOptions(( short ) 0xfffff800);
+                retval.setBorderOptions(( short ) 0);
+                retval.setPaletteOptions(( short ) 0);
+                retval.setAdtlPaletteOptions(( short ) 0);
+                retval.setFillPaletteOptions(( short ) 0x20c0);
+                break;
+
+            case 17 :
+                retval.setFontIndex(( short ) 1);
+                retval.setFormatIndex(( short ) 0x29);
+                retval.setCellOptions(( short ) 0xfffffff5);
+                retval.setAlignmentOptions(( short ) 0x20);
+                retval.setIndentionOptions(( short ) 0xfffff800);
+                retval.setBorderOptions(( short ) 0);
+                retval.setPaletteOptions(( short ) 0);
+                retval.setAdtlPaletteOptions(( short ) 0);
+                retval.setFillPaletteOptions(( short ) 0x20c0);
+                break;
+
+            case 18 :
+                retval.setFontIndex(( short ) 1);
+                retval.setFormatIndex(( short ) 0x2c);
+                retval.setCellOptions(( short ) 0xfffffff5);
+                retval.setAlignmentOptions(( short ) 0x20);
+                retval.setIndentionOptions(( short ) 0xfffff800);
+                retval.setBorderOptions(( short ) 0);
+                retval.setPaletteOptions(( short ) 0);
+                retval.setAdtlPaletteOptions(( short ) 0);
+                retval.setFillPaletteOptions(( short ) 0x20c0);
+                break;
+
+            case 19 :
+                retval.setFontIndex(( short ) 1);
+                retval.setFormatIndex(( short ) 0x2a);
+                retval.setCellOptions(( short ) 0xfffffff5);
+                retval.setAlignmentOptions(( short ) 0x20);
+                retval.setIndentionOptions(( short ) 0xfffff800);
+                retval.setBorderOptions(( short ) 0);
+                retval.setPaletteOptions(( short ) 0);
+                retval.setAdtlPaletteOptions(( short ) 0);
+                retval.setFillPaletteOptions(( short ) 0x20c0);
+                break;
+
+            case 20 :
+                retval.setFontIndex(( short ) 1);
+                retval.setFormatIndex(( short ) 0x9);
+                retval.setCellOptions(( short ) 0xfffffff5);
+                retval.setAlignmentOptions(( short ) 0x20);
+                retval.setIndentionOptions(( short ) 0xfffff800);
+                retval.setBorderOptions(( short ) 0);
+                retval.setPaletteOptions(( short ) 0);
+                retval.setAdtlPaletteOptions(( short ) 0);
+                retval.setFillPaletteOptions(( short ) 0x20c0);
+                break;
+
+            // unused from this point down
+            case 21 :
+                retval.setFontIndex(( short ) 5);
+                retval.setFormatIndex(( short ) 0x0);
+                retval.setCellOptions(( short ) 0x1);
+                retval.setAlignmentOptions(( short ) 0x20);
+                retval.setIndentionOptions(( short ) 0x800);
+                retval.setBorderOptions(( short ) 0);
+                retval.setPaletteOptions(( short ) 0);
+                retval.setAdtlPaletteOptions(( short ) 0);
+                retval.setFillPaletteOptions(( short ) 0x20c0);
+                break;
+
+            case 22 :
+                retval.setFontIndex(( short ) 6);
+                retval.setFormatIndex(( short ) 0x0);
+                retval.setCellOptions(( short ) 0x1);
+                retval.setAlignmentOptions(( short ) 0x20);
+                retval.setIndentionOptions(( short ) 0x5c00);
+                retval.setBorderOptions(( short ) 0);
+                retval.setPaletteOptions(( short ) 0);
+                retval.setAdtlPaletteOptions(( short ) 0);
+                retval.setFillPaletteOptions(( short ) 0x20c0);
+                break;
+
+            case 23 :
+                retval.setFontIndex(( short ) 0);
+                retval.setFormatIndex(( short ) 0x31);
+                retval.setCellOptions(( short ) 0x1);
+                retval.setAlignmentOptions(( short ) 0x20);
+                retval.setIndentionOptions(( short ) 0x5c00);
+                retval.setBorderOptions(( short ) 0);
+                retval.setPaletteOptions(( short ) 0);
+                retval.setAdtlPaletteOptions(( short ) 0);
+                retval.setFillPaletteOptions(( short ) 0x20c0);
+                break;
+
+            case 24 :
+                retval.setFontIndex(( short ) 0);
+                retval.setFormatIndex(( short ) 0x8);
+                retval.setCellOptions(( short ) 0x1);
+                retval.setAlignmentOptions(( short ) 0x20);
+                retval.setIndentionOptions(( short ) 0x5c00);
+                retval.setBorderOptions(( short ) 0);
+                retval.setPaletteOptions(( short ) 0);
+                retval.setAdtlPaletteOptions(( short ) 0);
+                retval.setFillPaletteOptions(( short ) 0x20c0);
+                break;
+
+            case 25 :
+                retval.setFontIndex(( short ) 6);
+                retval.setFormatIndex(( short ) 0x8);
+                retval.setCellOptions(( short ) 0x1);
+                retval.setAlignmentOptions(( short ) 0x20);
+                retval.setIndentionOptions(( short ) 0x5c00);
+                retval.setBorderOptions(( short ) 0);
+                retval.setPaletteOptions(( short ) 0);
+                retval.setAdtlPaletteOptions(( short ) 0);
+                retval.setFillPaletteOptions(( short ) 0x20c0);
+                break;
+        }
+        return retval;
+    }
+
+    /**
+     * creates an default cell type ExtendedFormatRecord object.
+     * @return ExtendedFormatRecord with intial defaults (cell-type)
+     */
+
+    protected ExtendedFormatRecord createExtendedFormat()
+    {
+        ExtendedFormatRecord retval = new ExtendedFormatRecord();
+
+        retval.setFontIndex(( short ) 0);
+        retval.setFormatIndex(( short ) 0x0);
+        retval.setCellOptions(( short ) 0x1);
+        retval.setAlignmentOptions(( short ) 0x20);
+        retval.setIndentionOptions(( short ) 0);
+        retval.setBorderOptions(( short ) 0);
+        retval.setPaletteOptions(( short ) 0);
+        retval.setAdtlPaletteOptions(( short ) 0);
+        retval.setFillPaletteOptions(( short ) 0x20c0);
+        return retval;
+    }
+
+    /**
+     * Creates a StyleRecord object
+     * @param the number of the style record to create (meaning its position in
+     *        a file as MS Excel would create it.
+     * @return record containing a StyleRecord
+     * @see org.apache.poi.hssf.record.StyleRecord
+     * @see org.apache.poi.hssf.record.Record
+     */
+
+    protected Record createStyle(int id)
+    {   // we'll need multiple editions
+        StyleRecord retval = new StyleRecord();
+
+        switch (id)
+        {
+
+            case 0 :
+                retval.setIndex(( short ) 0xffff8010);
+                retval.setBuiltin(( byte ) 3);
+                retval.setOutlineStyleLevel(( byte ) 0xffffffff);
+                break;
+
+            case 1 :
+                retval.setIndex(( short ) 0xffff8011);
+                retval.setBuiltin(( byte ) 6);
+                retval.setOutlineStyleLevel(( byte ) 0xffffffff);
+                break;
+
+            case 2 :
+                retval.setIndex(( short ) 0xffff8012);
+                retval.setBuiltin(( byte ) 4);
+                retval.setOutlineStyleLevel(( byte ) 0xffffffff);
+                break;
+
+            case 3 :
+                retval.setIndex(( short ) 0xffff8013);
+                retval.setBuiltin(( byte ) 7);
+                retval.setOutlineStyleLevel(( byte ) 0xffffffff);
+                break;
+
+            case 4 :
+                retval.setIndex(( short ) 0xffff8000);
+                retval.setBuiltin(( byte ) 0);
+                retval.setOutlineStyleLevel(( byte ) 0xffffffff);
+                break;
+
+            case 5 :
+                retval.setIndex(( short ) 0xffff8014);
+                retval.setBuiltin(( byte ) 5);
+                retval.setOutlineStyleLevel(( byte ) 0xffffffff);
+                break;
+        }
+        return retval;
+    }
+
+    /**
+     * Creates the UseSelFS object with the use natural language flag set to 0 (false)
+     * @return record containing a UseSelFSRecord
+     * @see org.apache.poi.hssf.record.UseSelFSRecord
+     * @see org.apache.poi.hssf.record.Record
+     */
+
+    protected Record createUseSelFS()
+    {
+        UseSelFSRecord retval = new UseSelFSRecord();
+
+        retval.setFlag(( short ) 0);
+        return retval;
+    }
+
+    /**
+     * create a "bound sheet" or "bundlesheet" (depending who you ask) record
+     * Always sets the sheet's bof to 0.  You'll need to set that yourself.
+     * @param id either sheet 0,1 or 2.
+     * @return record containing a BoundSheetRecord
+     * @see org.apache.poi.hssf.record.BoundSheetRecord
+     * @see org.apache.poi.hssf.record.Record
+     */
+
+    protected Record createBoundSheet(int id)
+    {   // 1,2,3 sheets
+        BoundSheetRecord retval = new BoundSheetRecord();
+
+        switch (id)
+        {
+
+            case 0 :
+                retval.setPositionOfBof(0x0);   // should be set later
+                retval.setOptionFlags(( short ) 0);
+                retval.setSheetnameLength(( byte ) 0x6);
+                retval.setCompressedUnicodeFlag(( byte ) 0);
+                retval.setSheetname("Sheet1");
+                break;
+
+            case 1 :
+                retval.setPositionOfBof(0x0);   // should be set later
+                retval.setOptionFlags(( short ) 0);
+                retval.setSheetnameLength(( byte ) 0x6);
+                retval.setCompressedUnicodeFlag(( byte ) 0);
+                retval.setSheetname("Sheet2");
+                break;
+
+            case 2 :
+                retval.setPositionOfBof(0x0);   // should be set later
+                retval.setOptionFlags(( short ) 0);
+                retval.setSheetnameLength(( byte ) 0x6);
+                retval.setCompressedUnicodeFlag(( byte ) 0);
+                retval.setSheetname("Sheet3");
+                break;
+        }
+        return retval;
+    }
+
+    /**
+     * Creates the Country record with the default and current country set to 1
+     * @return record containing a CountryRecord
+     * @see org.apache.poi.hssf.record.CountryRecord
+     * @see org.apache.poi.hssf.record.Record
+     */
+
+    protected Record createCountry()
+    {   // what a novel idea, create your own!
+        CountryRecord retval = new CountryRecord();
+
+        retval.setDefaultCountry(( short ) 1);
+        retval.setCurrentCountry(( short ) 1);
+        return retval;
+    }
+
+    /**
+     * Creates the SST record with no strings and the unique/num string set to 0
+     * @return record containing a SSTRecord
+     * @see org.apache.poi.hssf.record.SSTRecord
+     * @see org.apache.poi.hssf.record.Record
+     */
+
+    protected Record createSST()
+    {
+        return new SSTRecord();
+    }
+
+    /**
+     * Creates the ExtendedSST record with numstrings per bucket set to 0x8.  HSSF
+     * doesn't yet know what to do with this thing, but we create it with nothing in
+     * it hardly just to make Excel happy and our sheets look like Excel's
+     *
+     * @return record containing an ExtSSTRecord
+     * @see org.apache.poi.hssf.record.ExtSSTRecord
+     * @see org.apache.poi.hssf.record.Record
+     */
+
+    protected Record createExtendedSST()
+    {
+        ExtSSTRecord retval = new ExtSSTRecord();
+
+        retval.setNumStringsPerBucket(( short ) 0x8);
+        return retval;
+    }
+
+    /**
+     * creates the EOF record
+     * @see org.apache.poi.hssf.record.EOFRecord
+     * @see org.apache.poi.hssf.record.Record
+     * @return record containing a EOFRecord
+     */
+
+    protected Record createEOF()
+    {
+        return new EOFRecord();
+    }
+
+    /**
+     * Returns the first occurance of a record matching a particular sid.
+     */
+
+    public Record findFirstRecordBySid(short sid)
+    {
+        for (Iterator iterator = records.iterator(); iterator.hasNext(); )
+        {
+            Record record = ( Record ) iterator.next();
+
+            if (record.getSid() == sid)
+            {
+                return record;
+            }
+        }
+        return null;
+    }
+}

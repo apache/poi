@@ -1,0 +1,13 @@
+.ant.properties
+dist
+build
+distributions
+prj.el
+emacs-jprj.el
+docs
+todo
+p1.log
+p2.log
+poi.ipr
+release-bin
+POILogger.log

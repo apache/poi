@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.0//EN" "../dtd/document-v10.dtd">
+
+<document>
+ <header>
+  <title>PoiFS</title>
+  <subtitle>Overview</subtitle>
+  <authors>
+   <person name="Andrew C. Oliver" email="acoliver@apache.org"/>     
+   <person name="Nicola Ken Barozzi" email="barozzi@nicolaken.com"/>     
+  </authors>
+ </header>
+
+ <body>
+ <s1 title="Overview">
+
+  <p>POIFS is a pure Java implementation of the OLE 2 Compound Document format.</p>
+  <p> TODO: copy POIFS docs and port to XML.  For now please reference <link href="http://poi.sourceforge.net">old site</link>.
+  </p>
+  </s1>
+ </body>
+</document>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.0//EN" "../dtd/document-v10.dtd">
+
+<document>
+ <header>
+  <title>HSSF</title>
+  <subtitle>Overview</subtitle>
+  <authors>
+   <person name="Andrew C. Oliver" email="acoliver@apache.org"/>     
+   <person name="Nicola Ken Barozzi" email="barozzi@nicolaken.com"/>     
+  </authors>
+ </header>
+
+ <body>
+ <s1 title="Overview">
+
+  <p>HSSF is the POI Project's pure Java implementation of the Excel '97(-2002) file format.</p>
+  <p>Please see the HOWTO for usage information.</p>
+  <p>TODO: turn this page into a meaningful summary.</p>
+
+  </s1>
+ </body>
+</document>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE faqs PUBLIC "-//APACHE//DTD FAQ V1.0//EN" "dtd/faq-v10.dtd">
+
+<faqs title="Frequently Asked Questions">
+<faq>
+  <question>
+    Why does nothing happen?
+  </question>
+  <answer>
+    <p>
+      You might want to check a few things:
+    </p>
+    <ul>
+      <li>
+        one
+      </li>
+      <li>
+        two
+      </li>
+      <li>
+        three
+      </li>
+    </ul>
+    <note>This is a note.</note>
+  </answer>
+</faq>
+
+</faqs>

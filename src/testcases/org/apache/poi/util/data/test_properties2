@@ -1,0 +1,11 @@
+# Set root category priority to DEBUG and its only appender to A2.
+log4j.rootCategory=DEBUG, A2
+ 
+# A2 is set to be a FileAppender.
+log4j.appender.A2=org.apache.log4j.FileAppender
+log4j.appender.A2.File=p2.log
+ 
+# A2 uses PatternLayout.
+log4j.appender.A2.layout=org.apache.log4j.PatternLayout
+log4j.appender.A2.layout.ConversionPattern=%-4r [%t] %-5p %c %x - %m%n
+#log4j.category.org.apache.cocoon.poi=WARN

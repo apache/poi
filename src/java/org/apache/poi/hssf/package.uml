@@ -1,0 +1,5 @@
+V[1.1:net.sourceforge.poi.hssf]
+S[net.sourceforge.poi.hssf:HSSFLog,net.sourceforge.poi.util:POILogFactory]{2:(140,107),(148,329)}
+P[net.sourceforge.poi.hssf:HSSFLog]{20,20}
+P[net.sourceforge.poi.hssf:HSSFLog]{279,20}
+P[net.sourceforge.poi.util:POILogFactory]{11,329}

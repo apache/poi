@@ -1,0 +1,1105 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE pgml SYSTEM "pgml.dtd">
+<pgml description="org.argouml.uml.diagram.static_structure.ui.UMLClassDiagram|127-0-0-1-5b0da1:e8e6d2b713:-7ffc"
+      name="utilClasses"
+>
+  <group name="Fig0"
+       description="org.argouml.uml.diagram.static_structure.ui.FigInterface[16, 24, 300, 67]"
+       href="127-0-0-1-5b0da1:e8e6d2b713:-7ffb"
+       shown="0"
+       fill="1"
+       fillcolor="-1"
+       stroke="1"
+       strokecolor="-16777216"
+  >
+    <private>
+    </private>
+    <rectangle name="Fig0.0"
+      x="17"
+      y="25"
+      width="298"
+      height="65"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <rectangle name="Fig0.1"
+      x="16"
+      y="24"
+      width="300"
+      height="24"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <text name="Fig0.2"
+      context=""
+      x="17"
+      y="25"
+      fill="0"
+      fillcolor="-1"
+      stroke="0"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    >&lt;&lt;Interface&gt;&gt;</text>
+    <text name="Fig0.3"
+      context=""
+      x="17"
+      y="35"
+      fill="0"
+      fillcolor="-1"
+      stroke="0"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    >FixedField</text>
+    <text name="Fig0.4"
+      context=""
+      x="16"
+      y="47"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    >+readFromBytes(in data[]:byte)
++readFromStream(in stream:InputStream)
++writeToBytes(in data[]:byte)
++toString() : String</text>
+  </group>
+  <group name="Fig1"
+       description="org.argouml.uml.diagram.static_structure.ui.FigClass[16, 264, 276, 194]"
+       href="127-0-0-1-b3e62:e8e6e8d8ef:-7ffb"
+       shown="5"
+       fill="1"
+       fillcolor="-1"
+       stroke="1"
+       strokecolor="-16777216"
+  >
+    <private>
+    </private>
+    <rectangle name="Fig1.0"
+      x="16"
+      y="264"
+      width="276"
+      height="194"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <text name="Fig1.1"
+      context=""
+      x="10"
+      y="10"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    ></text>
+    <text name="Fig1.2"
+      context=""
+      x="16"
+      y="264"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    >BitField</text>
+    <rectangle name="Fig1.3"
+      x="10"
+      y="15"
+      width="2"
+      height="60"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-1"
+    />
+    <text name="Fig1.4"
+      context=""
+      x="16"
+      y="284"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    ></text>
+    <text name="Fig1.5"
+      context=""
+      x="16"
+      y="284"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    >+getValue(in holder:int) : int
++getShortValue(in holder:Short) : short
++getRawValue(in holder:int) : int
++getShortRawValue(in holder:short) : short
++isSet(in holder:int) : boolean
++isAllSet(in holder:int) : boolean
++setValue(in holder:int, in value:int) : int
++setShortValue(in holder:short, in value:short) : short
++clear(in holder:int) : int
++clearShort(in holder:short) : short
++clearByte(in holder:byte) : byte
++set(in holder:int) : int
++setShort(in holder:short) : short
++setByte(in holder:byte) : byte
++setBoolean(in holder:int, in flag:boolean) : int
++setShortBoolean(in holder:short, in flag:boolean) : short
++setByteBoolean(in holder:byte, in flag:boolean) : byte</text>
+  </group>
+  <group name="Fig2"
+       description="org.argouml.uml.diagram.static_structure.ui.FigClass[400, 24, 160, 54]"
+       href="127-0-0-1-b3e62:e8e6e8d8ef:-7ffa"
+       shown="5"
+       fill="1"
+       fillcolor="-1"
+       stroke="1"
+       strokecolor="-16777216"
+  >
+    <private>
+    </private>
+    <rectangle name="Fig2.0"
+      x="400"
+      y="24"
+      width="160"
+      height="54"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <text name="Fig2.1"
+      context=""
+      x="10"
+      y="10"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    ></text>
+    <text name="Fig2.2"
+      context=""
+      x="400"
+      y="24"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    >ByteField</text>
+    <rectangle name="Fig2.3"
+      x="10"
+      y="15"
+      width="2"
+      height="60"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-1"
+    />
+    <text name="Fig2.4"
+      context=""
+      x="400"
+      y="44"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    ></text>
+    <text name="Fig2.5"
+      context=""
+      x="400"
+      y="44"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    >+get() : byte
++set(in value:byte)
++set(in value:byte, in data[]:byte)</text>
+  </group>
+  <group name="Fig3"
+       description="org.argouml.uml.diagram.static_structure.ui.FigClass[16, 192, 357, 61]"
+       href="127-0-0-1-b3e62:e8e6e8d8ef:-7ff9"
+       shown="7"
+       fill="1"
+       fillcolor="-1"
+       stroke="1"
+       strokecolor="-16777216"
+  >
+    <private>
+    </private>
+    <rectangle name="Fig3.0"
+      x="16"
+      y="192"
+      width="357"
+      height="60"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <text name="Fig3.1"
+      context=""
+      x="10"
+      y="10"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    ></text>
+    <text name="Fig3.2"
+      context=""
+      x="16"
+      y="192"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    >HexDump</text>
+    <rectangle name="Fig3.3"
+      x="10"
+      y="15"
+      width="2"
+      height="60"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-1"
+    />
+    <text name="Fig3.4"
+      context=""
+      x="16"
+      y="212"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    >+EOL : String</text>
+    <text name="Fig3.5"
+      context=""
+      x="16"
+      y="232"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    >+dump(in data[]:byte, in offset:long, in stream:OutputStream, in index:int)</text>
+  </group>
+  <group name="Fig4"
+       description="org.argouml.uml.diagram.static_structure.ui.FigClass[8, 480, 204, 234]"
+       href="127-0-0-1-b3e62:e8e6e8d8ef:-7ff8"
+       shown="5"
+       fill="1"
+       fillcolor="-1"
+       stroke="1"
+       strokecolor="-16777216"
+  >
+    <private>
+    </private>
+    <rectangle name="Fig4.0"
+      x="8"
+      y="480"
+      width="204"
+      height="234"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <text name="Fig4.1"
+      context=""
+      x="10"
+      y="10"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    ></text>
+    <text name="Fig4.2"
+      context=""
+      x="8"
+      y="480"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    >IntList</text>
+    <rectangle name="Fig4.3"
+      x="10"
+      y="15"
+      width="2"
+      height="60"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-1"
+    />
+    <text name="Fig4.4"
+      context=""
+      x="8"
+      y="500"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    ></text>
+    <text name="Fig4.5"
+      context=""
+      x="8"
+      y="500"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    >+add(in index:int, in value:int)
++add(in value:int) : boolean
++addAll(in c:IntList) : boolean
++addAll(in index:int, in c:IntList) : boolean
++clear()
++contains(in o:int) : boolean
++containsAll(in c:IntList) : boolean
++equals(in o:Object) : boolean
++get(in index:int) : int
++hashCode() : int
++indexOf(in o:int) : int
++isEmpty() : boolean
++lastIndexOf(in o:int) : int
++remove(in index:int) : int
++removeValue(in o:int) : boolean
++removeAll(in c:IntList) : boolean
++retainAll(in c:IntList) : boolean
++set(in index:int, in element:int) : int
++size() : int
++toArray() : int
++toArray(in a[]:int) : int</text>
+  </group>
+  <group name="Fig5"
+       description="org.argouml.uml.diagram.static_structure.ui.FigClass[304, 264, 284, 204]"
+       href="127-0-0-1-b3e62:e8e6e8d8ef:-7ff7"
+       shown="5"
+       fill="1"
+       fillcolor="-1"
+       stroke="1"
+       strokecolor="-16777216"
+  >
+    <private>
+    </private>
+    <rectangle name="Fig5.0"
+      x="304"
+      y="264"
+      width="284"
+      height="204"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <text name="Fig5.1"
+      context=""
+      x="10"
+      y="10"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    ></text>
+    <text name="Fig5.2"
+      context=""
+      x="304"
+      y="264"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    >LittleEndian</text>
+    <rectangle name="Fig5.3"
+      x="10"
+      y="15"
+      width="2"
+      height="60"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-1"
+    />
+    <text name="Fig5.4"
+      context=""
+      x="304"
+      y="284"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    ></text>
+    <text name="Fig5.5"
+      context=""
+      x="304"
+      y="284"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    >+getShort(in data[]:byte, in offset:int) : short
++getShort(in data[]:byte) : short
++getInt(in data[]:byte, in offset:int) : int
++getInt(in data[]:byte) : int
++getLong(in data[]:byte, in offset:int) : long
++getDouble(in data[]:byte, in offset:int) : double
++getDouble(in data[]:byte) : double
++putShort(in data[]:byte, in offset:int, in value:short)
++putShort(in data[]:byte, in value:short)
++getLong(in data[]:byte) : long
++putInt(in data[]:byte, in offset:int, in value:int)
++putInt(in data[]:byte, in value:int)
++putLong(in data[]:byte, in offset:int, in value:long)
++putLong(in data[]:byte, in value:long)
++readShort(in stream:InputStream) : short
++readInt(in stream:InputStream) : int
++readLong(in stream:InputStream) : long
++readFromStream(in stream:InputStream, in size:int) : byte</text>
+  </group>
+  <group name="Fig6"
+       description="org.argouml.uml.diagram.static_structure.ui.FigClass[384, 192, 113, 64]"
+       href="127-0-0-1-b3e62:e8e6e8d8ef:-7ff6"
+       shown="3"
+       fill="1"
+       fillcolor="-1"
+       stroke="1"
+       strokecolor="-16777216"
+  >
+    <private>
+    </private>
+    <rectangle name="Fig6.0"
+      x="384"
+      y="192"
+      width="113"
+      height="64"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <text name="Fig6.1"
+      context=""
+      x="10"
+      y="10"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    ></text>
+    <text name="Fig6.2"
+      context=""
+      x="384"
+      y="192"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    >LittleEndianConsts</text>
+    <rectangle name="Fig6.3"
+      x="10"
+      y="15"
+      width="2"
+      height="60"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-1"
+    />
+    <text name="Fig6.4"
+      context=""
+      x="384"
+      y="212"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    >+SHORT_SIZE : int = 2
++INT_SIZE : int = 4
++LONG_SIZE : int = 8
++DOUBLE_SIZE : int = 8</text>
+    <text name="Fig6.5"
+      context=""
+      x="384"
+      y="256"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    ></text>
+  </group>
+  <group name="Fig7"
+       description="org.argouml.uml.diagram.static_structure.ui.FigClass[200, 128, 160, 54]"
+       href="127-0-0-1-b3e62:e8e6e8d8ef:-7ff5"
+       shown="5"
+       fill="1"
+       fillcolor="-1"
+       stroke="1"
+       strokecolor="-16777216"
+  >
+    <private>
+    </private>
+    <rectangle name="Fig7.0"
+      x="200"
+      y="128"
+      width="160"
+      height="54"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <text name="Fig7.1"
+      context=""
+      x="10"
+      y="10"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    ></text>
+    <text name="Fig7.2"
+      context=""
+      x="200"
+      y="128"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    >LongField</text>
+    <rectangle name="Fig7.3"
+      x="10"
+      y="15"
+      width="2"
+      height="60"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-1"
+    />
+    <text name="Fig7.4"
+      context=""
+      x="200"
+      y="148"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    ></text>
+    <text name="Fig7.5"
+      context=""
+      x="200"
+      y="148"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    >+get() : long
++set(in value:long)
++set(in value:long, in data[]:byte)</text>
+  </group>
+  <group name="Fig8"
+       description="org.argouml.uml.diagram.static_structure.ui.FigClass[24, 128, 164, 54]"
+       href="127-0-0-1-b3e62:e8e6e8d8ef:-7ff4"
+       shown="5"
+       fill="1"
+       fillcolor="-1"
+       stroke="1"
+       strokecolor="-16777216"
+  >
+    <private>
+    </private>
+    <rectangle name="Fig8.0"
+      x="24"
+      y="128"
+      width="164"
+      height="54"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <text name="Fig8.1"
+      context=""
+      x="10"
+      y="10"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    ></text>
+    <text name="Fig8.2"
+      context=""
+      x="24"
+      y="128"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    >ShortField</text>
+    <rectangle name="Fig8.3"
+      x="10"
+      y="15"
+      width="2"
+      height="60"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-1"
+    />
+    <text name="Fig8.4"
+      context=""
+      x="24"
+      y="148"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    ></text>
+    <text name="Fig8.5"
+      context=""
+      x="24"
+      y="148"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    >+get() : short
++set(in value:short)
++set(in value:short, in data[]:byte)</text>
+  </group>
+  <group name="Fig9"
+       description="org.argouml.uml.diagram.static_structure.ui.FigClass[232, 480, 216, 234]"
+       href="127-0-0-1-b3e62:e8e6e8d8ef:-7ff3"
+       shown="5"
+       fill="1"
+       fillcolor="-1"
+       stroke="1"
+       strokecolor="-16777216"
+  >
+    <private>
+    </private>
+    <rectangle name="Fig9.0"
+      x="232"
+      y="480"
+      width="216"
+      height="234"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <text name="Fig9.1"
+      context=""
+      x="10"
+      y="10"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    ></text>
+    <text name="Fig9.2"
+      context=""
+      x="232"
+      y="480"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    >ShortList</text>
+    <rectangle name="Fig9.3"
+      x="10"
+      y="15"
+      width="2"
+      height="60"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-1"
+    />
+    <text name="Fig9.4"
+      context=""
+      x="232"
+      y="500"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    ></text>
+    <text name="Fig9.5"
+      context=""
+      x="232"
+      y="500"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    >+add(in index:int, in value:short)
++add(in value:short)
++addAll(in c:ShortList) : boolean
++addAll(in index:int, in c:ShortList) : boolean
++clear()
++contains(in o:short) : boolean
++containsAll(in c:ShortList) : boolean
++equals(in o:Object) : boolean
++get(in index:int) : short
++hashCode() : int
++indexOf(in o:short) : int
++isEmpty() : boolean
++lastIndexof(in o:short) : int
++remove(in index:int) : short
++removeValue(in o:short) : boolean
++removeAll(in c:ShortList) : boolean
++retainAll(in return:boolean, in c:ShortList)
++set(in index:int, in element:short) : short
++size() : int
++toArray() : short
++toArray(in a[]:short) : short</text>
+  </group>
+  <group name="Fig10"
+       description="org.argouml.uml.diagram.static_structure.ui.FigClass[376, 128, 152, 54]"
+       href="127-0-0-1-b3e62:e8e6e8d8ef:-7ff2"
+       shown="5"
+       fill="1"
+       fillcolor="-1"
+       stroke="1"
+       strokecolor="-16777216"
+  >
+    <private>
+    </private>
+    <rectangle name="Fig10.0"
+      x="376"
+      y="128"
+      width="152"
+      height="54"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <text name="Fig10.1"
+      context=""
+      x="10"
+      y="10"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    ></text>
+    <text name="Fig10.2"
+      context=""
+      x="376"
+      y="128"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    >IntegerField</text>
+    <rectangle name="Fig10.3"
+      x="10"
+      y="15"
+      width="2"
+      height="60"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-1"
+    />
+    <text name="Fig10.4"
+      context=""
+      x="376"
+      y="148"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    ></text>
+    <text name="Fig10.5"
+      context=""
+      x="376"
+      y="148"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    >+get() : int
++set(in value:int)
++set(in value:int, in data[]:byte)</text>
+  </group>
+  <group name="Fig11"
+       description="org.argouml.uml.diagram.static_structure.ui.FigClass[8, 720, 314, 44]"
+       href="127-0-0-1-b3e62:e8e6e8d8ef:-7ff1"
+       shown="5"
+       fill="1"
+       fillcolor="-1"
+       stroke="1"
+       strokecolor="-16777216"
+  >
+    <private>
+    </private>
+    <rectangle name="Fig11.0"
+      x="8"
+      y="720"
+      width="314"
+      height="44"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    />
+    <text name="Fig11.1"
+      context=""
+      x="10"
+      y="10"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    ></text>
+    <text name="Fig11.2"
+      context=""
+      x="8"
+      y="720"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    >StringUtil</text>
+    <rectangle name="Fig11.3"
+      x="10"
+      y="15"
+      width="2"
+      height="60"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-1"
+    />
+    <text name="Fig11.4"
+      context=""
+      x="8"
+      y="740"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    ></text>
+    <text name="Fig11.5"
+      context=""
+      x="8"
+      y="740"
+      fill="1"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+      font="dialog"
+      textsize="9"
+    >+getFromUnicode(in string[]:byte, in offset:int, in len:int) : String
++getFromUnicode(in string[]:byte) : String</text>
+  </group>
+  <group name="Fig12"
+       description="org.argouml.uml.diagram.ui.FigRealization"
+       href="127-0-0-1-b3e62:e8e6e8d8ef:-7faf"
+       stroke="1"
+       strokecolor="-16777216"
+  >
+    <private>
+      sourcePortFig="Fig2.0"
+      destPortFig="Fig0.0"
+      sourceFigNode="Fig2"
+      destFigNode="Fig0"
+    </private>
+    <path name="Fig12.1"
+      description="org.tigris.gef.presentation.FigPoly"
+      fill="0"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    >
+      <moveto x="400"
+              y="56" />
+      <lineto x="315"
+              y="56" />
+    </path>
+    <annotations>
+    </annotations>
+  </group>
+  <group name="Fig13"
+       description="org.argouml.uml.diagram.ui.FigRealization"
+       href="127-0-0-1-b3e62:e8e77b88e1:-7fc2"
+       stroke="1"
+       strokecolor="-16777216"
+  >
+    <private>
+      sourcePortFig="Fig10.0"
+      destPortFig="Fig0.0"
+      sourceFigNode="Fig10"
+      destFigNode="Fig0"
+    </private>
+    <path name="Fig13.1"
+      description="org.tigris.gef.presentation.FigPoly"
+      fill="0"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    >
+      <moveto x="392"
+              y="128" />
+      <lineto x="392"
+              y="72" />
+      <lineto x="315"
+              y="72" />
+    </path>
+    <annotations>
+    </annotations>
+  </group>
+  <group name="Fig14"
+       description="org.argouml.uml.diagram.ui.FigRealization"
+       href="127-0-0-1-b3e62:e8e77b88e1:-7f78"
+       stroke="1"
+       strokecolor="-16777216"
+  >
+    <private>
+      sourcePortFig="Fig7.0"
+      destPortFig="Fig0.0"
+      sourceFigNode="Fig7"
+      destFigNode="Fig0"
+    </private>
+    <path name="Fig14.1"
+      description="org.tigris.gef.presentation.FigPoly"
+      fill="0"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    >
+      <moveto x="296"
+              y="128" />
+      <lineto x="296"
+              y="90" />
+    </path>
+    <annotations>
+    </annotations>
+  </group>
+  <group name="Fig15"
+       description="org.argouml.uml.diagram.ui.FigRealization"
+       href="127-0-0-1-b3e62:e8e77b88e1:-7f70"
+       stroke="1"
+       strokecolor="-16777216"
+  >
+    <private>
+      sourcePortFig="Fig8.0"
+      destPortFig="Fig0.0"
+      sourceFigNode="Fig8"
+      destFigNode="Fig0"
+    </private>
+    <path name="Fig15.1"
+      description="org.tigris.gef.presentation.FigPoly"
+      fill="0"
+      fillcolor="-1"
+      stroke="1"
+      strokecolor="-16777216"
+    >
+      <moveto x="96"
+              y="128" />
+      <lineto x="96"
+              y="90" />
+    </path>
+    <annotations>
+    </annotations>
+  </group>
+</pgml>

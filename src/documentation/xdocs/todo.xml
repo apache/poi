@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE todo PUBLIC "-//APACHE//DTD Todo V1.0//EN" "src/documentation/xdocs/dtd/todo-v10.dtd">
+
+<todo title="Things To Do for Poi">
+
+ <devs>
+  <!-- in strict alphabetical order -->
+  <person id="AO"  name="Andrew C. Oliver"   email="acoliver2@users.sourceforge.net"/>
+  <person id="GS"  name="Glen Stampoultzis"  email="gstamp@iprimus.com.au"/>  
+  <person id="MJ"  name="Marc Johnson"       email="mjohnson at apache dot org"/>
+  <person id="NKB" name="Nicola Ken Barozzi" email="barozzi@nicolaken.com"/>
+  <person id="open" name="Poi Developers"    email="poi-devel@lists.sourceforge.net"/>
+ </devs>
+
+ <actions priority="high">
+  <action context="code" assigned-to="NKB">
+    do it
+  </action>
+
+ </actions>
+
+ <actions priority="medium">
+  <action context="code">
+   do it
+  </action>
+ </actions>
+
+</todo>

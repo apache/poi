@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.0//EN" "dtd/document-v10.dtd">
+
+<document>
+ <header>
+  <title>Contribution to POI</title>
+  <authors>
+   <person name="Robin Green" email="greenrd@hotmail.com"/>
+   <person name="Stefano Mazzocchi" email="stefano@apache.org"/> 
+   <person name="Nicola Ken Barozzi" email="barozzi@nicolaken.com"/> 
+   </authors>
+ </header>
+
+ <body>
+
+ <s1 title="Introduction">
+
+  <p>
+   The POI Project is an <link href="http://www.opensource.org/">Open Source</link>
+   volunteer project released under a very open license.
+   This means there are many ways to contribute to the project - either
+   with direct participation (coding, documenting, answering questions,
+   proposing ideas, reporting bugs, suggesting bug-fixes, etc..) or by resource
+   donations (money, time, publicity, hardware, software, conference
+   presentations, speeches, etc...).
+  </p>
+  <p>
+   To begin with, we suggest you to subscribe to the
+   <link href="mail-lists.html">POI mailing lists</link>
+   (follow the link for information on how to subscribe and to access the mail
+   list archives). Listen-in for a while, to hear how others make contibutions.
+  </p>
+
+  <p>You can get your local working copy of the
+   <link href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/POI">latest and
+   greatest code</link> (which you find in the POI module in
+   the CVS code repository.
+   Review the <link href="todo.html">todo</link> list, choose a task
+   (or perhaps you have noticed something that needs patching). Make the
+   changes, do the testing, generate a patch, and post to the dev
+   mailing list. (Do not worry - the process is easy and explained below.)
+  </p>
+
+  <p>
+   Document writers are usually the most wanted people so if
+   you like to help but you're not familiar with the innermost technical details, don't worry:
+   we have work for you!
+  </p>
+
+ </s1>
+
+ <s1 title="Help Wanted Here">
+  <p>
+   The rest of this document is mainly about
+   contributing new or improved code and/or documentation, but we would also be glad to have
+   extra help in any of the following areas:
+  </p>
+  <ul>
+   <li>Answering questions on the <code>users</code> mailing list - there is often a problem of
+    having too many questioners and not enough experts to respond to all the questions.</li>
+   <li>Testing POI (especially its less-frequently-used features) on various configurations
+    and reporting back.</li>
+   <li>Debugging - producing reproduceable test cases and/or finding causes of bugs. Some known bugs are informally listed on
+    <link href="todo.html">To Do</link>, and some are recorded in Bugzilla
+    (see <link href="#procedure">explanation below</link>).</li>
+   <li>Specifying/analysing/designing new features - and beyond. (If you wish to get involved
+    with this, please join <code>general POI mailing list</code>
+    , install and try out POI
+    and read some of the <link href="mail-lists.html">mail archives</link>.
+    You should have a strong "fluency" in XML technologies, Java and a basic understanding of
+    the POI architecture - don't just say "it should have XYZ" without reading anything first -
+    because chances are, someone's already thought of that feature!)</li>
+   <li>Packaging easy-to-install packages (such as RPMs) for the myriad of possible configurations out
+    there. (The project does not maintain anything but the basic <code>.zip</code> and
+    <code>.tar.gz</code> packages, but anyone is welcome to build their own specific packages and
+    announce them on the <code>general POI list</code>)</li>
+   <li>... and there is just one other thing - don't forget to tell everyone who asks, how great POI is! ;-)
+    The more people that know about and start to use POI, the larger the pool of
+    potential contributors there will be.
+    </li>
+  </ul>
+ 
+ </s1>
+
+ <anchor id="cvshowto"/>
+ <s1 title="CVS Usage Precis">
+  <p>An overview of how to use CVS to participate in POI development.
+   Do not be afraid - you cannot accidently destroy the actual code repository,
+   because you are working with a local copy as an anonymous user. Therefore,
+   you do not have the system permissions to change anything. You can only 
+   update your local repository and compare your revisions with the real
+   repository.
+  </p>
+
+  <p>
+   (Further general CVS usage information is at
+   <link href="http://www.cvshome.org/">www.cvshome.org</link> and your local
+   <code>info cvs</code> pages or <code>man cvs</code> pages or user
+   documentation.) 
+  </p>
+
+  <p>
+   Let us lead by example. We will show you how to establish your local
+   repository, how to keep it up-to-date, and how to generate the differences
+   to create a patch. (The commands are for Linux.)
+  </p>
+ </s1>
+ <anchor id="ssh"/>
+ <s1 title="CVS Committer with Secure Shell access">
+  <p>After a developer has consistently provided contributions (code,
+   documentation and discussion), then the rest of the dev community
+   may vote to grant this developer commit access to CVS.
+  </p>
+
+  <p>You will need secure access to the repository to be able to commit
+   patches. Here are some resources that help to get your machine configured
+   to use the repository over SSH.
+  </p>
+
+  <ul>
+   <li><link href="http://cvsbook.red-bean.com/">The CVS Book</link></li>
+   <li><link href="http://www.cvshome.org/">www.cvshome.org</link></li>
+   <li><link href="https://sourceforge.net/cvs/?group_id=32701"></link>
+    - See the bottom of the page for links to tips for UNIX and Windows.
+    Even if you are on UNIX, the Windows page will also help.</li>
+  </ul>
+ </s1>
+
+ <anchor id="procedure"/>
+ <s1 title="Procedure for Raising Development Issues">
+  <p>
+   There are two methods for discussing development and submitting patches.
+   So that everyone can be productive, it is important to know which method
+   is appropriate for a certain situation and how to go about it without
+   confusion. This section explains when to use the 
+   <code>developer</code> <link href="mail-lists.html">mailing list</link>
+   the bug database.
+  </p>
+
+  <p>
+   Research your topic thoroughly before beginning to discuss a new
+   development issue. Search and browse through the email archives - your
+   issue may have been discussed before. Prepare your post clearly and
+   concisely.
+  </p>
+
+  <p>
+   Most issues will be discovered, resolved, and then patched quickly
+   via the <code>developer</code> mailing list. Larger issues, and ones that
+   are not yet fully understood or are hard to solve, are destined for
+   Bugzilla.
+  </p>
+
+  <p>
+   Experienced developers use Bugzilla directly, as they are very sure
+   when they have found a bug and when not. However, less experienced users
+   should first discuss it on the user or developer mailing list (as
+   appropriate). Impatient people always enter everything into Bugzilla
+   without caring if it is a bug of POI or their own
+   installation/configuration mistake - please do not do this.
+  </p>
+
+  <p>
+   As a rule-of-thumb, discuss an issue on the <code>developers</code>
+   mailing list first to work out any details.
+   After it is confirmed to be worthwhile, and you are clear about it,
+   then submit the bug description or patch via Bug Tracking.
+  </p>
+
+  <p>
+   Perhaps you do not get any answer on your first reply, so just post
+   it again until you get one. (But please not every hour - allow a few
+   days for the list to deal with it.) Do not be impatient - remember that
+   the whole world is busy, not just you. Bear in mind that other countries
+   will have holidays at different times to your country and that they are
+   in different time zones. You might also consider re-writing your initial
+   posting - perhaps it was not clear enough
+   and the readers' eyes glazed over.
+  </p>
+ </s1>
+
+ <anchor id="tips"/>
+ <s1 title="Contribution Notes and Tips">
+  <p>
+   This is a collection of tips for contributing to the project in a manner
+   that is productive for all parties.
+  </p>
+
+  <ul>
+   <li>
+    Every contribution is worthwhile. Even if the ensuing discussion
+    proves it to be off-beam, then it may jog ideas for other people.
+   </li>
+   <li>
+    Use sensible and concise email subject headings. Search engines, and
+    humans trying to browse a voluminous list, will respond favourably to a
+    descriptive title.
+   </li>
+   <li>Start new threads with new Subject for new topics, rather than
+    re-using the previous Subject line.
+   </li>
+   <li>Keep each topic focussed. If some new topic arises then start a new
+    discussion. This leaves the original topic to continue un-cluttered.
+   </li>
+   <li>Whenever you decide to start a new topic, then start with a fresh
+    new email message window. Do not use the &quot;Reply to&quot; button,
+    because threaded mail-readers get confused (they utilise the 
+    <code>In-reply-to</code> header). If so, then your new topic will get
+    lost in the previous thread and go un-answered.
+   </li>
+   <li>
+    Prepend your email subject line with a marker when that is appropriate,
+    e.g. <code>[Patch]</code>, <code>[Proposal]</code>, 
+    <code>[RT]</code> (Random Thought which quickly blossom into research
+    topics :-), <code>[STATUS]</code> (development status of a certain
+    facility).
+   </li>
+   <li>
+    When making changes to XML documentation, or any XML document for that
+    matter, use a 
+    <link href="http://www.oasis-open.org/cover/">validating parser</link>
+    (one that is tried and true is
+    <link href="http://www.jclark.com/sp/">SP/nsgmls</link>).
+    This procedure will detect errors without having to go through the whole
+    <code>build docs</code> process to find them. Do not expect POI
+    or the build system to detect the validation errors for you - they can
+    do it, but that is not their purpose. (Anyway, nsgmls validation error
+    messages are more informative.)
+   </li>
+   <li>
+    Remember that most people are participating in development on a
+    volunteer basis and in their "spare time". These enthusiasts will attempt
+    to respond to issues. It may take a little while to get your answers.
+   </li>
+   <li>
+    Research your topic thoroughly before beginning to discuss a new
+    development issue. Search and browse through the email archives - your
+    issue may have been discussed before. Do not just perceive a problem and
+    then rush out with a question - instead, delve.
+   </li>
+   <li>
+    Try to at least offer a partial solution and not just a problem statement.
+   </li>
+   <li>
+    Take the time to clearly explain your issue and write a concise email
+    message. Less confusion facilitates fast and complete resolution.
+   </li>
+   <li>
+    Do not bother to send an email reply that simply says "thanks".
+    When the issue is resolved, that is the finish - end of thread.
+    Reduce clutter.
+   </li>
+   <li>
+    You would usually do any development work against the HEAD branch of CVS.
+   </li>
+   <li>
+    When sending a patch, you usually do not need to worry about which CVS
+    branch it should be applied to. The maintainers of the repository will
+    decide.
+   </li>
+   <li>
+    If an issue starts to get bogged down in list discussion, then it may
+    be appropriate to go into private off-list discussion with a few interested
+    other people. Spare the list from the gory details. Report a summary back
+    to the list to finalise the thread.
+   </li>
+   <li>
+    Become familiar with the mailing lists. As you browse and search, you will
+    see the way other people do things. Follow the leading examples.
+   </li>
+  </ul>
+ </s1>
+
+</body>
+</document>
