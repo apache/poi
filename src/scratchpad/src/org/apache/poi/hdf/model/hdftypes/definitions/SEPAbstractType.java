@@ -76,29 +76,29 @@ public abstract class SEPAbstractType
 {
 
     private  byte field_1_bkc;
-    private  byte field_2_fTitlePage;
-    private  byte field_3_fAutoPgn;
+    private  boolean field_2_fTitlePage;
+    private  boolean field_3_fAutoPgn;
     private  byte field_4_nfcPgn;
-    private  byte field_5_fUnlocked;
+    private  boolean field_5_fUnlocked;
     private  byte field_6_cnsPgn;
-    private  byte field_7_fPgnRestart;
-    private  byte field_8_fEndNote;
+    private  boolean field_7_fPgnRestart;
+    private  boolean field_8_fEndNote;
     private  byte field_9_lnc;
-    private  byte field_10_unused1;
+    private  byte field_10_grpfIhdt;
     private  int field_11_nLnnMod;
     private  int field_12_dxaLnn;
     private  int field_13_dxaPgn;
     private  int field_14_dyaPgn;
-    private  byte field_15_fLBetween;
+    private  boolean field_15_fLBetween;
     private  byte field_16_vjc;
     private  int field_17_dmBinFirst;
     private  int field_18_dmBinOther;
     private  int field_19_dmPaperReq;
-    private  int field_20_brcTop;
-    private  int field_21_brcLeft;
-    private  int field_22_brcBottom;
-    private  int field_23_brcRight;
-    private  int field_24_fPropMark;
+    private  short[] field_20_brcTop;
+    private  short[] field_21_brcLeft;
+    private  short[] field_22_brcBottom;
+    private  short[] field_23_brcRight;
+    private  boolean field_24_fPropMark;
     private  int field_25_ibstPropRMark;
     private  int field_26_dttmPropRMark;
     private  int field_27_dxtCharSpace;
@@ -111,7 +111,7 @@ public abstract class SEPAbstractType
     private  int field_34_lnnMin;
     private  int field_35_wTextFlow;
     private  short field_36_unused3;
-    private  int field_37_pgbProb;
+    private  int field_37_pgbProp;
     private  short field_38_unused4;
     private  int field_39_xaPage;
     private  int field_40_yaPage;
@@ -125,7 +125,7 @@ public abstract class SEPAbstractType
     private  int field_48_dyaHdrTop;
     private  int field_49_dyaHdrBottom;
     private  int field_50_ccolM1;
-    private  byte field_51_fEvenlySpaced;
+    private  boolean field_51_fEvenlySpaced;
     private  byte field_52_unused5;
     private  int field_53_dxaColumns;
     private  int[] field_54_rgdxaColumn;
@@ -133,7 +133,7 @@ public abstract class SEPAbstractType
     private  byte field_56_dmOrientFirst;
     private  byte field_57_fLayout;
     private  short field_58_unused6;
-    private  byte[] field_59_olst;
+    private  byte[] field_59_olstAnm;
 
 
     public SEPAbstractType()
@@ -146,7 +146,7 @@ public abstract class SEPAbstractType
      */
     public int getSize()
     {
-        return 4 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 2 + 4 + 2 + 2 + 1 + 1 + 2 + 2 + 2 + 4 + 4 + 4 + 4 + 2 + 2 + 4 + 4 + 4 + 2 + 2 + 1 + 1 + 2 + 2 + 2 + 2 + 2 + 2 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 2 + 1 + 1 + 4 + 356 + 4 + 1 + 1 + 2 + 212;
+        return 4 + 1 + 0 + 0 + 1 + 0 + 1 + 0 + 0 + 1 + 1 + 2 + 4 + 2 + 2 + 0 + 1 + 2 + 2 + 2 + 4 + 4 + 4 + 4 + 0 + 2 + 4 + 4 + 4 + 2 + 2 + 1 + 1 + 2 + 2 + 2 + 2 + 2 + 2 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 2 + 0 + 1 + 4 + 356 + 4 + 1 + 1 + 2 + 212;
     }
 
 
@@ -170,7 +170,7 @@ public abstract class SEPAbstractType
     /**
      * Get the fTitlePage field for the SEP record.
      */
-    public byte getFTitlePage()
+    public boolean getFTitlePage()
     {
         return field_2_fTitlePage;
     }
@@ -178,7 +178,7 @@ public abstract class SEPAbstractType
     /**
      * Set the fTitlePage field for the SEP record.
      */
-    public void setFTitlePage(byte field_2_fTitlePage)
+    public void setFTitlePage(boolean field_2_fTitlePage)
     {
         this.field_2_fTitlePage = field_2_fTitlePage;
     }
@@ -186,7 +186,7 @@ public abstract class SEPAbstractType
     /**
      * Get the fAutoPgn field for the SEP record.
      */
-    public byte getFAutoPgn()
+    public boolean getFAutoPgn()
     {
         return field_3_fAutoPgn;
     }
@@ -194,7 +194,7 @@ public abstract class SEPAbstractType
     /**
      * Set the fAutoPgn field for the SEP record.
      */
-    public void setFAutoPgn(byte field_3_fAutoPgn)
+    public void setFAutoPgn(boolean field_3_fAutoPgn)
     {
         this.field_3_fAutoPgn = field_3_fAutoPgn;
     }
@@ -218,7 +218,7 @@ public abstract class SEPAbstractType
     /**
      * Get the fUnlocked field for the SEP record.
      */
-    public byte getFUnlocked()
+    public boolean getFUnlocked()
     {
         return field_5_fUnlocked;
     }
@@ -226,7 +226,7 @@ public abstract class SEPAbstractType
     /**
      * Set the fUnlocked field for the SEP record.
      */
-    public void setFUnlocked(byte field_5_fUnlocked)
+    public void setFUnlocked(boolean field_5_fUnlocked)
     {
         this.field_5_fUnlocked = field_5_fUnlocked;
     }
@@ -250,7 +250,7 @@ public abstract class SEPAbstractType
     /**
      * Get the fPgnRestart field for the SEP record.
      */
-    public byte getFPgnRestart()
+    public boolean getFPgnRestart()
     {
         return field_7_fPgnRestart;
     }
@@ -258,7 +258,7 @@ public abstract class SEPAbstractType
     /**
      * Set the fPgnRestart field for the SEP record.
      */
-    public void setFPgnRestart(byte field_7_fPgnRestart)
+    public void setFPgnRestart(boolean field_7_fPgnRestart)
     {
         this.field_7_fPgnRestart = field_7_fPgnRestart;
     }
@@ -266,7 +266,7 @@ public abstract class SEPAbstractType
     /**
      * Get the fEndNote field for the SEP record.
      */
-    public byte getFEndNote()
+    public boolean getFEndNote()
     {
         return field_8_fEndNote;
     }
@@ -274,7 +274,7 @@ public abstract class SEPAbstractType
     /**
      * Set the fEndNote field for the SEP record.
      */
-    public void setFEndNote(byte field_8_fEndNote)
+    public void setFEndNote(boolean field_8_fEndNote)
     {
         this.field_8_fEndNote = field_8_fEndNote;
     }
@@ -296,19 +296,19 @@ public abstract class SEPAbstractType
     }
 
     /**
-     * Get the unused1 field for the SEP record.
+     * Get the grpfIhdt field for the SEP record.
      */
-    public byte getUnused1()
+    public byte getGrpfIhdt()
     {
-        return field_10_unused1;
+        return field_10_grpfIhdt;
     }
 
     /**
-     * Set the unused1 field for the SEP record.
+     * Set the grpfIhdt field for the SEP record.
      */
-    public void setUnused1(byte field_10_unused1)
+    public void setGrpfIhdt(byte field_10_grpfIhdt)
     {
-        this.field_10_unused1 = field_10_unused1;
+        this.field_10_grpfIhdt = field_10_grpfIhdt;
     }
 
     /**
@@ -378,7 +378,7 @@ public abstract class SEPAbstractType
     /**
      * Get the fLBetween field for the SEP record.
      */
-    public byte getFLBetween()
+    public boolean getFLBetween()
     {
         return field_15_fLBetween;
     }
@@ -386,7 +386,7 @@ public abstract class SEPAbstractType
     /**
      * Set the fLBetween field for the SEP record.
      */
-    public void setFLBetween(byte field_15_fLBetween)
+    public void setFLBetween(boolean field_15_fLBetween)
     {
         this.field_15_fLBetween = field_15_fLBetween;
     }
@@ -458,7 +458,7 @@ public abstract class SEPAbstractType
     /**
      * Get the brcTop field for the SEP record.
      */
-    public int getBrcTop()
+    public short[] getBrcTop()
     {
         return field_20_brcTop;
     }
@@ -466,7 +466,7 @@ public abstract class SEPAbstractType
     /**
      * Set the brcTop field for the SEP record.
      */
-    public void setBrcTop(int field_20_brcTop)
+    public void setBrcTop(short[] field_20_brcTop)
     {
         this.field_20_brcTop = field_20_brcTop;
     }
@@ -474,7 +474,7 @@ public abstract class SEPAbstractType
     /**
      * Get the brcLeft field for the SEP record.
      */
-    public int getBrcLeft()
+    public short[] getBrcLeft()
     {
         return field_21_brcLeft;
     }
@@ -482,7 +482,7 @@ public abstract class SEPAbstractType
     /**
      * Set the brcLeft field for the SEP record.
      */
-    public void setBrcLeft(int field_21_brcLeft)
+    public void setBrcLeft(short[] field_21_brcLeft)
     {
         this.field_21_brcLeft = field_21_brcLeft;
     }
@@ -490,7 +490,7 @@ public abstract class SEPAbstractType
     /**
      * Get the brcBottom field for the SEP record.
      */
-    public int getBrcBottom()
+    public short[] getBrcBottom()
     {
         return field_22_brcBottom;
     }
@@ -498,7 +498,7 @@ public abstract class SEPAbstractType
     /**
      * Set the brcBottom field for the SEP record.
      */
-    public void setBrcBottom(int field_22_brcBottom)
+    public void setBrcBottom(short[] field_22_brcBottom)
     {
         this.field_22_brcBottom = field_22_brcBottom;
     }
@@ -506,7 +506,7 @@ public abstract class SEPAbstractType
     /**
      * Get the brcRight field for the SEP record.
      */
-    public int getBrcRight()
+    public short[] getBrcRight()
     {
         return field_23_brcRight;
     }
@@ -514,7 +514,7 @@ public abstract class SEPAbstractType
     /**
      * Set the brcRight field for the SEP record.
      */
-    public void setBrcRight(int field_23_brcRight)
+    public void setBrcRight(short[] field_23_brcRight)
     {
         this.field_23_brcRight = field_23_brcRight;
     }
@@ -522,7 +522,7 @@ public abstract class SEPAbstractType
     /**
      * Get the fPropMark field for the SEP record.
      */
-    public int getFPropMark()
+    public boolean getFPropMark()
     {
         return field_24_fPropMark;
     }
@@ -530,7 +530,7 @@ public abstract class SEPAbstractType
     /**
      * Set the fPropMark field for the SEP record.
      */
-    public void setFPropMark(int field_24_fPropMark)
+    public void setFPropMark(boolean field_24_fPropMark)
     {
         this.field_24_fPropMark = field_24_fPropMark;
     }
@@ -728,19 +728,19 @@ public abstract class SEPAbstractType
     }
 
     /**
-     * Get the pgbProb field for the SEP record.
+     * Get the pgbProp field for the SEP record.
      */
-    public int getPgbProb()
+    public int getPgbProp()
     {
-        return field_37_pgbProb;
+        return field_37_pgbProp;
     }
 
     /**
-     * Set the pgbProb field for the SEP record.
+     * Set the pgbProp field for the SEP record.
      */
-    public void setPgbProb(int field_37_pgbProb)
+    public void setPgbProp(int field_37_pgbProp)
     {
-        this.field_37_pgbProb = field_37_pgbProb;
+        this.field_37_pgbProp = field_37_pgbProp;
     }
 
     /**
@@ -954,7 +954,7 @@ public abstract class SEPAbstractType
     /**
      * Get the fEvenlySpaced field for the SEP record.
      */
-    public byte getFEvenlySpaced()
+    public boolean getFEvenlySpaced()
     {
         return field_51_fEvenlySpaced;
     }
@@ -962,7 +962,7 @@ public abstract class SEPAbstractType
     /**
      * Set the fEvenlySpaced field for the SEP record.
      */
-    public void setFEvenlySpaced(byte field_51_fEvenlySpaced)
+    public void setFEvenlySpaced(boolean field_51_fEvenlySpaced)
     {
         this.field_51_fEvenlySpaced = field_51_fEvenlySpaced;
     }
@@ -1080,19 +1080,19 @@ public abstract class SEPAbstractType
     }
 
     /**
-     * Get the olst field for the SEP record.
+     * Get the olstAnm field for the SEP record.
      */
-    public byte[] getOlst()
+    public byte[] getOlstAnm()
     {
-        return field_59_olst;
+        return field_59_olstAnm;
     }
 
     /**
-     * Set the olst field for the SEP record.
+     * Set the olstAnm field for the SEP record.
      */
-    public void setOlst(byte[] field_59_olst)
+    public void setOlstAnm(byte[] field_59_olstAnm)
     {
-        this.field_59_olst = field_59_olst;
+        this.field_59_olstAnm = field_59_olstAnm;
     }
 
 

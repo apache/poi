@@ -89,7 +89,7 @@ public abstract class PAPAbstractType
     private  byte field_12_ilvl;
     private  byte field_13_fNoLnn;
     private  int field_14_ilfo;
-    private  byte field_15_fSideBiSide;
+    private  byte field_15_fSideBySide;
     private  byte field_16_fNoAutoHyph;
     private  byte field_17_fWidowControl;
     private  int field_18_dxaRight;
@@ -97,50 +97,54 @@ public abstract class PAPAbstractType
     private  int field_20_dxaLeft1;
     private  short[] field_21_lspd;
     private  int field_22_dyaBefore;
-    private  byte[] field_23_phe;
-    private  byte field_24_fCrLf;
-    private  byte field_25_fUsePgsuSettings;
-    private  byte field_26_fAdjustRight;
-    private  byte field_27_fKinsoku;
-    private  byte field_28_fWordWrap;
-    private  byte field_29_fOverflowPunct;
-    private  byte field_30_fTopLinePunct;
-    private  byte field_31_fAutoSpaceDE;
-    private  byte field_32_fAtuoSpaceDN;
-    private  int field_33_wAlignFont;
-    private  byte field_34_fVertical;
-    private  byte field_35_fBackward;
-    private  byte field_36_fRotateFont;
-    private  byte field_37_fInTable;
-    private  byte field_38_fTtp;
-    private  byte field_39_wr;
-    private  byte field_40_fLocked;
-    private  byte[] field_41_ptap;
-    private  int field_42_dxaAbs;
-    private  int field_43_dyaAbs;
-    private  int field_44_dxaWidth;
-    private  short[] field_45_brcTop;
-    private  short[] field_46_brcLeft;
-    private  short[] field_47_brcBottom;
-    private  short[] field_48_brcRight;
-    private  short[] field_49_brcBetween;
-    private  short[] field_50_brcBar;
-    private  int field_51_dxaFromText;
-    private  int field_52_dyaFromText;
-    private  int field_53_dyaHeight;
-    private  byte field_54_fMinHeight;
-    private  byte[] field_55_shd;
-    private  byte[] field_56_dcs;
-    private  byte field_57_lvl;
-    private  byte field_58_fNumRMIns;
-    private  byte[] field_59_anld;
-    private  int field_60_fPropRMark;
-    private  int field_61_ibstPropRMark;
-    private  byte[] field_62_dttmPropRMark;
-    private  byte[] field_63_numrm;
-    private  int field_64_itbdMac;
-    private  byte[] field_65_rgdxaTab;
-    private  byte[] field_66_rgtbd;
+    private  int field_23_dyaAfter;
+    private  byte[] field_24_phe;
+    private  byte field_25_fCrLf;
+    private  byte field_26_fUsePgsuSettings;
+    private  byte field_27_fAdjustRight;
+    private  byte field_28_fKinsoku;
+    private  byte field_29_fWordWrap;
+    private  byte field_30_fOverflowPunct;
+    private  byte field_31_fTopLinePunct;
+    private  byte field_32_fAutoSpaceDE;
+    private  byte field_33_fAutoSpaceDN;
+    private  int field_34_wAlignFont;
+    private  short field_35_fontAlign;
+        private BitField  fVertical = new BitField(0x0001);
+        private BitField  fBackward = new BitField(0x0002);
+        private BitField  fRotateFont = new BitField(0x0004);
+    private  byte field_36_fBackward;
+    private  byte field_37_fRotateFont;
+    private  byte field_38_fInTable;
+    private  byte field_39_fTtp;
+    private  byte field_40_wr;
+    private  byte field_41_fLocked;
+    private  byte[] field_42_ptap;
+    private  int field_43_dxaAbs;
+    private  int field_44_dyaAbs;
+    private  int field_45_dxaWidth;
+    private  short[] field_46_brcTop;
+    private  short[] field_47_brcLeft;
+    private  short[] field_48_brcBottom;
+    private  short[] field_49_brcRight;
+    private  short[] field_50_brcBetween;
+    private  short[] field_51_brcBar;
+    private  int field_52_dxaFromText;
+    private  int field_53_dyaFromText;
+    private  int field_54_dyaHeight;
+    private  byte field_55_fMinHeight;
+    private  short field_56_shd;
+    private  short field_57_dcs;
+    private  byte field_58_lvl;
+    private  byte field_59_fNumRMIns;
+    private  byte[] field_60_anld;
+    private  int field_61_fPropRMark;
+    private  int field_62_ibstPropRMark;
+    private  byte[] field_63_dttmPropRMark;
+    private  byte[] field_64_numrm;
+    private  int field_65_itbdMac;
+    private  byte[] field_66_rgdxaTab;
+    private  byte[] field_67_rgtbd;
 
 
     public PAPAbstractType()
@@ -153,7 +157,7 @@ public abstract class PAPAbstractType
      */
     public int getSize()
     {
-        return 4 + 2 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 2 + 1 + 1 + 1 + 4 + 4 + 4 + 4 + 4 + 12 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 2 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 2 + 1 + 2 + 2 + 1 + 1 + 84 + 1 + 2 + 4 + 128 + 2 + 128 + 128;
+        return 4 + 2 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 2 + 1 + 1 + 1 + 4 + 4 + 4 + 4 + 4 + 4 + 12 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 2 + 2 + 1 + 1 + 1 + 1 + 1 + 1 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 2 + 1 + 2 + 2 + 1 + 1 + 84 + 1 + 2 + 4 + 128 + 2 + 128 + 128;
     }
 
 
@@ -383,19 +387,19 @@ public abstract class PAPAbstractType
     }
 
     /**
-     * Get the fSideBiSide field for the PAP record.
+     * Get the fSideBySide field for the PAP record.
      */
-    public byte getFSideBiSide()
+    public byte getFSideBySide()
     {
-        return field_15_fSideBiSide;
+        return field_15_fSideBySide;
     }
 
     /**
-     * Set the fSideBiSide field for the PAP record.
+     * Set the fSideBySide field for the PAP record.
      */
-    public void setFSideBiSide(byte field_15_fSideBiSide)
+    public void setFSideBySide(byte field_15_fSideBySide)
     {
-        this.field_15_fSideBiSide = field_15_fSideBiSide;
+        this.field_15_fSideBySide = field_15_fSideBySide;
     }
 
     /**
@@ -511,19 +515,35 @@ public abstract class PAPAbstractType
     }
 
     /**
+     * Get the dyaAfter field for the PAP record.
+     */
+    public int getDyaAfter()
+    {
+        return field_23_dyaAfter;
+    }
+
+    /**
+     * Set the dyaAfter field for the PAP record.
+     */
+    public void setDyaAfter(int field_23_dyaAfter)
+    {
+        this.field_23_dyaAfter = field_23_dyaAfter;
+    }
+
+    /**
      * Get the phe field for the PAP record.
      */
     public byte[] getPhe()
     {
-        return field_23_phe;
+        return field_24_phe;
     }
 
     /**
      * Set the phe field for the PAP record.
      */
-    public void setPhe(byte[] field_23_phe)
+    public void setPhe(byte[] field_24_phe)
     {
-        this.field_23_phe = field_23_phe;
+        this.field_24_phe = field_24_phe;
     }
 
     /**
@@ -531,15 +551,15 @@ public abstract class PAPAbstractType
      */
     public byte getFCrLf()
     {
-        return field_24_fCrLf;
+        return field_25_fCrLf;
     }
 
     /**
      * Set the fCrLf field for the PAP record.
      */
-    public void setFCrLf(byte field_24_fCrLf)
+    public void setFCrLf(byte field_25_fCrLf)
     {
-        this.field_24_fCrLf = field_24_fCrLf;
+        this.field_25_fCrLf = field_25_fCrLf;
     }
 
     /**
@@ -547,15 +567,15 @@ public abstract class PAPAbstractType
      */
     public byte getFUsePgsuSettings()
     {
-        return field_25_fUsePgsuSettings;
+        return field_26_fUsePgsuSettings;
     }
 
     /**
      * Set the fUsePgsuSettings field for the PAP record.
      */
-    public void setFUsePgsuSettings(byte field_25_fUsePgsuSettings)
+    public void setFUsePgsuSettings(byte field_26_fUsePgsuSettings)
     {
-        this.field_25_fUsePgsuSettings = field_25_fUsePgsuSettings;
+        this.field_26_fUsePgsuSettings = field_26_fUsePgsuSettings;
     }
 
     /**
@@ -563,15 +583,15 @@ public abstract class PAPAbstractType
      */
     public byte getFAdjustRight()
     {
-        return field_26_fAdjustRight;
+        return field_27_fAdjustRight;
     }
 
     /**
      * Set the fAdjustRight field for the PAP record.
      */
-    public void setFAdjustRight(byte field_26_fAdjustRight)
+    public void setFAdjustRight(byte field_27_fAdjustRight)
     {
-        this.field_26_fAdjustRight = field_26_fAdjustRight;
+        this.field_27_fAdjustRight = field_27_fAdjustRight;
     }
 
     /**
@@ -579,15 +599,15 @@ public abstract class PAPAbstractType
      */
     public byte getFKinsoku()
     {
-        return field_27_fKinsoku;
+        return field_28_fKinsoku;
     }
 
     /**
      * Set the fKinsoku field for the PAP record.
      */
-    public void setFKinsoku(byte field_27_fKinsoku)
+    public void setFKinsoku(byte field_28_fKinsoku)
     {
-        this.field_27_fKinsoku = field_27_fKinsoku;
+        this.field_28_fKinsoku = field_28_fKinsoku;
     }
 
     /**
@@ -595,15 +615,15 @@ public abstract class PAPAbstractType
      */
     public byte getFWordWrap()
     {
-        return field_28_fWordWrap;
+        return field_29_fWordWrap;
     }
 
     /**
      * Set the fWordWrap field for the PAP record.
      */
-    public void setFWordWrap(byte field_28_fWordWrap)
+    public void setFWordWrap(byte field_29_fWordWrap)
     {
-        this.field_28_fWordWrap = field_28_fWordWrap;
+        this.field_29_fWordWrap = field_29_fWordWrap;
     }
 
     /**
@@ -611,15 +631,15 @@ public abstract class PAPAbstractType
      */
     public byte getFOverflowPunct()
     {
-        return field_29_fOverflowPunct;
+        return field_30_fOverflowPunct;
     }
 
     /**
      * Set the fOverflowPunct field for the PAP record.
      */
-    public void setFOverflowPunct(byte field_29_fOverflowPunct)
+    public void setFOverflowPunct(byte field_30_fOverflowPunct)
     {
-        this.field_29_fOverflowPunct = field_29_fOverflowPunct;
+        this.field_30_fOverflowPunct = field_30_fOverflowPunct;
     }
 
     /**
@@ -627,15 +647,15 @@ public abstract class PAPAbstractType
      */
     public byte getFTopLinePunct()
     {
-        return field_30_fTopLinePunct;
+        return field_31_fTopLinePunct;
     }
 
     /**
      * Set the fTopLinePunct field for the PAP record.
      */
-    public void setFTopLinePunct(byte field_30_fTopLinePunct)
+    public void setFTopLinePunct(byte field_31_fTopLinePunct)
     {
-        this.field_30_fTopLinePunct = field_30_fTopLinePunct;
+        this.field_31_fTopLinePunct = field_31_fTopLinePunct;
     }
 
     /**
@@ -643,31 +663,31 @@ public abstract class PAPAbstractType
      */
     public byte getFAutoSpaceDE()
     {
-        return field_31_fAutoSpaceDE;
+        return field_32_fAutoSpaceDE;
     }
 
     /**
      * Set the fAutoSpaceDE field for the PAP record.
      */
-    public void setFAutoSpaceDE(byte field_31_fAutoSpaceDE)
+    public void setFAutoSpaceDE(byte field_32_fAutoSpaceDE)
     {
-        this.field_31_fAutoSpaceDE = field_31_fAutoSpaceDE;
+        this.field_32_fAutoSpaceDE = field_32_fAutoSpaceDE;
     }
 
     /**
-     * Get the fAtuoSpaceDN field for the PAP record.
+     * Get the fAutoSpaceDN field for the PAP record.
      */
-    public byte getFAtuoSpaceDN()
+    public byte getFAutoSpaceDN()
     {
-        return field_32_fAtuoSpaceDN;
+        return field_33_fAutoSpaceDN;
     }
 
     /**
-     * Set the fAtuoSpaceDN field for the PAP record.
+     * Set the fAutoSpaceDN field for the PAP record.
      */
-    public void setFAtuoSpaceDN(byte field_32_fAtuoSpaceDN)
+    public void setFAutoSpaceDN(byte field_33_fAutoSpaceDN)
     {
-        this.field_32_fAtuoSpaceDN = field_32_fAtuoSpaceDN;
+        this.field_33_fAutoSpaceDN = field_33_fAutoSpaceDN;
     }
 
     /**
@@ -675,31 +695,31 @@ public abstract class PAPAbstractType
      */
     public int getWAlignFont()
     {
-        return field_33_wAlignFont;
+        return field_34_wAlignFont;
     }
 
     /**
      * Set the wAlignFont field for the PAP record.
      */
-    public void setWAlignFont(int field_33_wAlignFont)
+    public void setWAlignFont(int field_34_wAlignFont)
     {
-        this.field_33_wAlignFont = field_33_wAlignFont;
+        this.field_34_wAlignFont = field_34_wAlignFont;
     }
 
     /**
-     * Get the fVertical field for the PAP record.
+     * Get the fontAlign field for the PAP record.
      */
-    public byte getFVertical()
+    public short getFontAlign()
     {
-        return field_34_fVertical;
+        return field_35_fontAlign;
     }
 
     /**
-     * Set the fVertical field for the PAP record.
+     * Set the fontAlign field for the PAP record.
      */
-    public void setFVertical(byte field_34_fVertical)
+    public void setFontAlign(short field_35_fontAlign)
     {
-        this.field_34_fVertical = field_34_fVertical;
+        this.field_35_fontAlign = field_35_fontAlign;
     }
 
     /**
@@ -707,15 +727,15 @@ public abstract class PAPAbstractType
      */
     public byte getFBackward()
     {
-        return field_35_fBackward;
+        return field_36_fBackward;
     }
 
     /**
      * Set the fBackward field for the PAP record.
      */
-    public void setFBackward(byte field_35_fBackward)
+    public void setFBackward(byte field_36_fBackward)
     {
-        this.field_35_fBackward = field_35_fBackward;
+        this.field_36_fBackward = field_36_fBackward;
     }
 
     /**
@@ -723,15 +743,15 @@ public abstract class PAPAbstractType
      */
     public byte getFRotateFont()
     {
-        return field_36_fRotateFont;
+        return field_37_fRotateFont;
     }
 
     /**
      * Set the fRotateFont field for the PAP record.
      */
-    public void setFRotateFont(byte field_36_fRotateFont)
+    public void setFRotateFont(byte field_37_fRotateFont)
     {
-        this.field_36_fRotateFont = field_36_fRotateFont;
+        this.field_37_fRotateFont = field_37_fRotateFont;
     }
 
     /**
@@ -739,15 +759,15 @@ public abstract class PAPAbstractType
      */
     public byte getFInTable()
     {
-        return field_37_fInTable;
+        return field_38_fInTable;
     }
 
     /**
      * Set the fInTable field for the PAP record.
      */
-    public void setFInTable(byte field_37_fInTable)
+    public void setFInTable(byte field_38_fInTable)
     {
-        this.field_37_fInTable = field_37_fInTable;
+        this.field_38_fInTable = field_38_fInTable;
     }
 
     /**
@@ -755,15 +775,15 @@ public abstract class PAPAbstractType
      */
     public byte getFTtp()
     {
-        return field_38_fTtp;
+        return field_39_fTtp;
     }
 
     /**
      * Set the fTtp field for the PAP record.
      */
-    public void setFTtp(byte field_38_fTtp)
+    public void setFTtp(byte field_39_fTtp)
     {
-        this.field_38_fTtp = field_38_fTtp;
+        this.field_39_fTtp = field_39_fTtp;
     }
 
     /**
@@ -771,15 +791,15 @@ public abstract class PAPAbstractType
      */
     public byte getWr()
     {
-        return field_39_wr;
+        return field_40_wr;
     }
 
     /**
      * Set the wr field for the PAP record.
      */
-    public void setWr(byte field_39_wr)
+    public void setWr(byte field_40_wr)
     {
-        this.field_39_wr = field_39_wr;
+        this.field_40_wr = field_40_wr;
     }
 
     /**
@@ -787,15 +807,15 @@ public abstract class PAPAbstractType
      */
     public byte getFLocked()
     {
-        return field_40_fLocked;
+        return field_41_fLocked;
     }
 
     /**
      * Set the fLocked field for the PAP record.
      */
-    public void setFLocked(byte field_40_fLocked)
+    public void setFLocked(byte field_41_fLocked)
     {
-        this.field_40_fLocked = field_40_fLocked;
+        this.field_41_fLocked = field_41_fLocked;
     }
 
     /**
@@ -803,15 +823,15 @@ public abstract class PAPAbstractType
      */
     public byte[] getPtap()
     {
-        return field_41_ptap;
+        return field_42_ptap;
     }
 
     /**
      * Set the ptap field for the PAP record.
      */
-    public void setPtap(byte[] field_41_ptap)
+    public void setPtap(byte[] field_42_ptap)
     {
-        this.field_41_ptap = field_41_ptap;
+        this.field_42_ptap = field_42_ptap;
     }
 
     /**
@@ -819,15 +839,15 @@ public abstract class PAPAbstractType
      */
     public int getDxaAbs()
     {
-        return field_42_dxaAbs;
+        return field_43_dxaAbs;
     }
 
     /**
      * Set the dxaAbs field for the PAP record.
      */
-    public void setDxaAbs(int field_42_dxaAbs)
+    public void setDxaAbs(int field_43_dxaAbs)
     {
-        this.field_42_dxaAbs = field_42_dxaAbs;
+        this.field_43_dxaAbs = field_43_dxaAbs;
     }
 
     /**
@@ -835,15 +855,15 @@ public abstract class PAPAbstractType
      */
     public int getDyaAbs()
     {
-        return field_43_dyaAbs;
+        return field_44_dyaAbs;
     }
 
     /**
      * Set the dyaAbs field for the PAP record.
      */
-    public void setDyaAbs(int field_43_dyaAbs)
+    public void setDyaAbs(int field_44_dyaAbs)
     {
-        this.field_43_dyaAbs = field_43_dyaAbs;
+        this.field_44_dyaAbs = field_44_dyaAbs;
     }
 
     /**
@@ -851,15 +871,15 @@ public abstract class PAPAbstractType
      */
     public int getDxaWidth()
     {
-        return field_44_dxaWidth;
+        return field_45_dxaWidth;
     }
 
     /**
      * Set the dxaWidth field for the PAP record.
      */
-    public void setDxaWidth(int field_44_dxaWidth)
+    public void setDxaWidth(int field_45_dxaWidth)
     {
-        this.field_44_dxaWidth = field_44_dxaWidth;
+        this.field_45_dxaWidth = field_45_dxaWidth;
     }
 
     /**
@@ -867,15 +887,15 @@ public abstract class PAPAbstractType
      */
     public short[] getBrcTop()
     {
-        return field_45_brcTop;
+        return field_46_brcTop;
     }
 
     /**
      * Set the brcTop field for the PAP record.
      */
-    public void setBrcTop(short[] field_45_brcTop)
+    public void setBrcTop(short[] field_46_brcTop)
     {
-        this.field_45_brcTop = field_45_brcTop;
+        this.field_46_brcTop = field_46_brcTop;
     }
 
     /**
@@ -883,15 +903,15 @@ public abstract class PAPAbstractType
      */
     public short[] getBrcLeft()
     {
-        return field_46_brcLeft;
+        return field_47_brcLeft;
     }
 
     /**
      * Set the brcLeft field for the PAP record.
      */
-    public void setBrcLeft(short[] field_46_brcLeft)
+    public void setBrcLeft(short[] field_47_brcLeft)
     {
-        this.field_46_brcLeft = field_46_brcLeft;
+        this.field_47_brcLeft = field_47_brcLeft;
     }
 
     /**
@@ -899,15 +919,15 @@ public abstract class PAPAbstractType
      */
     public short[] getBrcBottom()
     {
-        return field_47_brcBottom;
+        return field_48_brcBottom;
     }
 
     /**
      * Set the brcBottom field for the PAP record.
      */
-    public void setBrcBottom(short[] field_47_brcBottom)
+    public void setBrcBottom(short[] field_48_brcBottom)
     {
-        this.field_47_brcBottom = field_47_brcBottom;
+        this.field_48_brcBottom = field_48_brcBottom;
     }
 
     /**
@@ -915,15 +935,15 @@ public abstract class PAPAbstractType
      */
     public short[] getBrcRight()
     {
-        return field_48_brcRight;
+        return field_49_brcRight;
     }
 
     /**
      * Set the brcRight field for the PAP record.
      */
-    public void setBrcRight(short[] field_48_brcRight)
+    public void setBrcRight(short[] field_49_brcRight)
     {
-        this.field_48_brcRight = field_48_brcRight;
+        this.field_49_brcRight = field_49_brcRight;
     }
 
     /**
@@ -931,15 +951,15 @@ public abstract class PAPAbstractType
      */
     public short[] getBrcBetween()
     {
-        return field_49_brcBetween;
+        return field_50_brcBetween;
     }
 
     /**
      * Set the brcBetween field for the PAP record.
      */
-    public void setBrcBetween(short[] field_49_brcBetween)
+    public void setBrcBetween(short[] field_50_brcBetween)
     {
-        this.field_49_brcBetween = field_49_brcBetween;
+        this.field_50_brcBetween = field_50_brcBetween;
     }
 
     /**
@@ -947,15 +967,15 @@ public abstract class PAPAbstractType
      */
     public short[] getBrcBar()
     {
-        return field_50_brcBar;
+        return field_51_brcBar;
     }
 
     /**
      * Set the brcBar field for the PAP record.
      */
-    public void setBrcBar(short[] field_50_brcBar)
+    public void setBrcBar(short[] field_51_brcBar)
     {
-        this.field_50_brcBar = field_50_brcBar;
+        this.field_51_brcBar = field_51_brcBar;
     }
 
     /**
@@ -963,15 +983,15 @@ public abstract class PAPAbstractType
      */
     public int getDxaFromText()
     {
-        return field_51_dxaFromText;
+        return field_52_dxaFromText;
     }
 
     /**
      * Set the dxaFromText field for the PAP record.
      */
-    public void setDxaFromText(int field_51_dxaFromText)
+    public void setDxaFromText(int field_52_dxaFromText)
     {
-        this.field_51_dxaFromText = field_51_dxaFromText;
+        this.field_52_dxaFromText = field_52_dxaFromText;
     }
 
     /**
@@ -979,15 +999,15 @@ public abstract class PAPAbstractType
      */
     public int getDyaFromText()
     {
-        return field_52_dyaFromText;
+        return field_53_dyaFromText;
     }
 
     /**
      * Set the dyaFromText field for the PAP record.
      */
-    public void setDyaFromText(int field_52_dyaFromText)
+    public void setDyaFromText(int field_53_dyaFromText)
     {
-        this.field_52_dyaFromText = field_52_dyaFromText;
+        this.field_53_dyaFromText = field_53_dyaFromText;
     }
 
     /**
@@ -995,15 +1015,15 @@ public abstract class PAPAbstractType
      */
     public int getDyaHeight()
     {
-        return field_53_dyaHeight;
+        return field_54_dyaHeight;
     }
 
     /**
      * Set the dyaHeight field for the PAP record.
      */
-    public void setDyaHeight(int field_53_dyaHeight)
+    public void setDyaHeight(int field_54_dyaHeight)
     {
-        this.field_53_dyaHeight = field_53_dyaHeight;
+        this.field_54_dyaHeight = field_54_dyaHeight;
     }
 
     /**
@@ -1011,47 +1031,47 @@ public abstract class PAPAbstractType
      */
     public byte getFMinHeight()
     {
-        return field_54_fMinHeight;
+        return field_55_fMinHeight;
     }
 
     /**
      * Set the fMinHeight field for the PAP record.
      */
-    public void setFMinHeight(byte field_54_fMinHeight)
+    public void setFMinHeight(byte field_55_fMinHeight)
     {
-        this.field_54_fMinHeight = field_54_fMinHeight;
+        this.field_55_fMinHeight = field_55_fMinHeight;
     }
 
     /**
      * Get the shd field for the PAP record.
      */
-    public byte[] getShd()
+    public short getShd()
     {
-        return field_55_shd;
+        return field_56_shd;
     }
 
     /**
      * Set the shd field for the PAP record.
      */
-    public void setShd(byte[] field_55_shd)
+    public void setShd(short field_56_shd)
     {
-        this.field_55_shd = field_55_shd;
+        this.field_56_shd = field_56_shd;
     }
 
     /**
      * Get the dcs field for the PAP record.
      */
-    public byte[] getDcs()
+    public short getDcs()
     {
-        return field_56_dcs;
+        return field_57_dcs;
     }
 
     /**
      * Set the dcs field for the PAP record.
      */
-    public void setDcs(byte[] field_56_dcs)
+    public void setDcs(short field_57_dcs)
     {
-        this.field_56_dcs = field_56_dcs;
+        this.field_57_dcs = field_57_dcs;
     }
 
     /**
@@ -1059,15 +1079,15 @@ public abstract class PAPAbstractType
      */
     public byte getLvl()
     {
-        return field_57_lvl;
+        return field_58_lvl;
     }
 
     /**
      * Set the lvl field for the PAP record.
      */
-    public void setLvl(byte field_57_lvl)
+    public void setLvl(byte field_58_lvl)
     {
-        this.field_57_lvl = field_57_lvl;
+        this.field_58_lvl = field_58_lvl;
     }
 
     /**
@@ -1075,15 +1095,15 @@ public abstract class PAPAbstractType
      */
     public byte getFNumRMIns()
     {
-        return field_58_fNumRMIns;
+        return field_59_fNumRMIns;
     }
 
     /**
      * Set the fNumRMIns field for the PAP record.
      */
-    public void setFNumRMIns(byte field_58_fNumRMIns)
+    public void setFNumRMIns(byte field_59_fNumRMIns)
     {
-        this.field_58_fNumRMIns = field_58_fNumRMIns;
+        this.field_59_fNumRMIns = field_59_fNumRMIns;
     }
 
     /**
@@ -1091,15 +1111,15 @@ public abstract class PAPAbstractType
      */
     public byte[] getAnld()
     {
-        return field_59_anld;
+        return field_60_anld;
     }
 
     /**
      * Set the anld field for the PAP record.
      */
-    public void setAnld(byte[] field_59_anld)
+    public void setAnld(byte[] field_60_anld)
     {
-        this.field_59_anld = field_59_anld;
+        this.field_60_anld = field_60_anld;
     }
 
     /**
@@ -1107,15 +1127,15 @@ public abstract class PAPAbstractType
      */
     public int getFPropRMark()
     {
-        return field_60_fPropRMark;
+        return field_61_fPropRMark;
     }
 
     /**
      * Set the fPropRMark field for the PAP record.
      */
-    public void setFPropRMark(int field_60_fPropRMark)
+    public void setFPropRMark(int field_61_fPropRMark)
     {
-        this.field_60_fPropRMark = field_60_fPropRMark;
+        this.field_61_fPropRMark = field_61_fPropRMark;
     }
 
     /**
@@ -1123,15 +1143,15 @@ public abstract class PAPAbstractType
      */
     public int getIbstPropRMark()
     {
-        return field_61_ibstPropRMark;
+        return field_62_ibstPropRMark;
     }
 
     /**
      * Set the ibstPropRMark field for the PAP record.
      */
-    public void setIbstPropRMark(int field_61_ibstPropRMark)
+    public void setIbstPropRMark(int field_62_ibstPropRMark)
     {
-        this.field_61_ibstPropRMark = field_61_ibstPropRMark;
+        this.field_62_ibstPropRMark = field_62_ibstPropRMark;
     }
 
     /**
@@ -1139,15 +1159,15 @@ public abstract class PAPAbstractType
      */
     public byte[] getDttmPropRMark()
     {
-        return field_62_dttmPropRMark;
+        return field_63_dttmPropRMark;
     }
 
     /**
      * Set the dttmPropRMark field for the PAP record.
      */
-    public void setDttmPropRMark(byte[] field_62_dttmPropRMark)
+    public void setDttmPropRMark(byte[] field_63_dttmPropRMark)
     {
-        this.field_62_dttmPropRMark = field_62_dttmPropRMark;
+        this.field_63_dttmPropRMark = field_63_dttmPropRMark;
     }
 
     /**
@@ -1155,15 +1175,15 @@ public abstract class PAPAbstractType
      */
     public byte[] getNumrm()
     {
-        return field_63_numrm;
+        return field_64_numrm;
     }
 
     /**
      * Set the numrm field for the PAP record.
      */
-    public void setNumrm(byte[] field_63_numrm)
+    public void setNumrm(byte[] field_64_numrm)
     {
-        this.field_63_numrm = field_63_numrm;
+        this.field_64_numrm = field_64_numrm;
     }
 
     /**
@@ -1171,15 +1191,15 @@ public abstract class PAPAbstractType
      */
     public int getItbdMac()
     {
-        return field_64_itbdMac;
+        return field_65_itbdMac;
     }
 
     /**
      * Set the itbdMac field for the PAP record.
      */
-    public void setItbdMac(int field_64_itbdMac)
+    public void setItbdMac(int field_65_itbdMac)
     {
-        this.field_64_itbdMac = field_64_itbdMac;
+        this.field_65_itbdMac = field_65_itbdMac;
     }
 
     /**
@@ -1187,15 +1207,15 @@ public abstract class PAPAbstractType
      */
     public byte[] getRgdxaTab()
     {
-        return field_65_rgdxaTab;
+        return field_66_rgdxaTab;
     }
 
     /**
      * Set the rgdxaTab field for the PAP record.
      */
-    public void setRgdxaTab(byte[] field_65_rgdxaTab)
+    public void setRgdxaTab(byte[] field_66_rgdxaTab)
     {
-        this.field_65_rgdxaTab = field_65_rgdxaTab;
+        this.field_66_rgdxaTab = field_66_rgdxaTab;
     }
 
     /**
@@ -1203,15 +1223,78 @@ public abstract class PAPAbstractType
      */
     public byte[] getRgtbd()
     {
-        return field_66_rgtbd;
+        return field_67_rgtbd;
     }
 
     /**
      * Set the rgtbd field for the PAP record.
      */
-    public void setRgtbd(byte[] field_66_rgtbd)
+    public void setRgtbd(byte[] field_67_rgtbd)
     {
-        this.field_66_rgtbd = field_66_rgtbd;
+        this.field_67_rgtbd = field_67_rgtbd;
+    }
+
+    /**
+     * Sets the fVertical field value.
+     * 
+     */
+    public void setFVertical(boolean value)
+    {
+        field_35_fontAlign = (short)fVertical.setBoolean(field_35_fontAlign, value);
+
+        
+    }
+
+    /**
+     * 
+     * @return  the fVertical field value.
+     */
+    public boolean isFVertical()
+    {
+        return fVertical.isSet(field_35_fontAlign);
+        
+    }
+
+    /**
+     * Sets the fBackward field value.
+     * 
+     */
+    public void setFBackward(boolean value)
+    {
+        field_35_fontAlign = (short)fBackward.setBoolean(field_35_fontAlign, value);
+
+        
+    }
+
+    /**
+     * 
+     * @return  the fBackward field value.
+     */
+    public boolean isFBackward()
+    {
+        return fBackward.isSet(field_35_fontAlign);
+        
+    }
+
+    /**
+     * Sets the fRotateFont field value.
+     * 
+     */
+    public void setFRotateFont(boolean value)
+    {
+        field_35_fontAlign = (short)fRotateFont.setBoolean(field_35_fontAlign, value);
+
+        
+    }
+
+    /**
+     * 
+     * @return  the fRotateFont field value.
+     */
+    public boolean isFRotateFont()
+    {
+        return fRotateFont.isSet(field_35_fontAlign);
+        
     }
 
 
