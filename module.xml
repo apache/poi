@@ -64,7 +64,9 @@
 
     <package>org.apache.poi</package>
 
-    <ant target="gump" vm="1.2"/>
+    <ant target="gump" vm="1.2">
+      <property name="ant.home" reference="home" project="jakarta-ant"/>
+    </ant>
     
     <!-- script name="build"/> -->
     
@@ -75,7 +77,7 @@
     <depend project="xml-xalan2"/>    
     <depend project="commons-jjar"/>
     <depend project="ant-contrib"/>
-        
+       
     <!-- needed for POI -->
     <depend project="commons-logging"/>
             
@@ -113,15 +115,64 @@
          from="Sam Ruby &lt;rubys@us.ibm.com&gt;"/>
   </project>
   
-<!--
-  <project name="krysalis-centipede-beta2-legacy-jars">
-    <url href="http://www.krysalis.org/centipede/"/>
-    <description>
-      Legacy jars that Centipede-antipede beta2 wanted in the CVS and classpath.
-    </description>
-    <home nested="tools/antipede/lib"/>
-    <jar name="legacy.jar"/>
+  <project name="jakarta-poi-testnewbuild">
+  
+     <version major="1"
+             minor="9"
+             fix  ="0"   
+             tag="dev"/> 
+
+    <package>org.apache.poi</package>
+    
+    <ant basedir="." target="compile" vm="1.2">
+      <property name="ant.home" reference="home" project="jakarta-ant"/>
+    </ant>
+        
+    <!-- Project jars POI *build* strictly depends on -->
+    <!-- needed for build -->
+
+    <depend project="jakarta-ant-embed"  inherit="all"/>
+    <depend project="jakarta-ant-embed-optional"/>    
+    <depend project="krysalis-ant-tasks"/>
+    <depend project="krysalis-ruper"/>
+    <depend project="ant-contrib"/>
+    <depend project="commons-jjar"/>
+       
+    <!-- needed for POI -->
+    <depend project="commons-logging"/>
+            
+    <!-- Project jars POI build can use  -->    
+    <option project="jakarta-log4j"/>
+     
+    <!-- Work dirs to be included in classpath  -->          
+    <work nested="build/classes"/>
+    <work nested="build/testcases"/>
+    
+    <!-- Build home  -->        
+    <home nested="build"/>
+    
+    <!-- Source dirs with type  -->        
+    <code type="java/plain" dir="src/java"/>
+    <test type="test/junit" dir="src/testcases"/>
+    <documentation type="xml/forrest" dir="src/documentation"/>
+        
+    <!-- POI jars - the result of the build  -->        
+    <jar name="jakarta-poi.jar"            id="poi"/>
+    <jar name="jakarta-poi-scratchpad.jar" id="scratchpad"/>
+    <jar name="jakarta-poi-contrib.jar"    id="contrib"/>
+    <jar name="jakarta-poi-examples.jar"   id="examples"/>
+    
+    <!-- POI Javadocs - location in the build dirs  -->         
+    <javadoc parent="build/docs/apidocs"/>
+    
+    <!-- Getting ready for automatic site updates
+    <deliver fromdir="build/jakarta-poi/docs" 
+             tosite="jakarta-apache-org"
+             todir="poi/" />    
+    -->         
+            
+    <nag to="poi-dev@jakarta.apache.org"
+         from="Nicola Ken Barozzi &lt;nicolaken@apache.org&gt;"/>
   </project>
--->  
 
 </module>
