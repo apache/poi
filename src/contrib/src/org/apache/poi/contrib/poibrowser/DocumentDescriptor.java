@@ -68,6 +68,9 @@ import org.apache.poi.poifs.filesystem.*;
  * @author Rainer Klute (klute@rainer-klute.de)
  * @version $Id$
  * @since 2002-02-05
+ * *
+ * @author Rainer Klute <a
+ * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
  */
 public class DocumentDescriptor
 {

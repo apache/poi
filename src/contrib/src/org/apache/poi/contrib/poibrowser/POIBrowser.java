@@ -71,7 +71,8 @@ import org.apache.poi.poifs.eventfilesystem.*;
  *
  * @see POIFSReader
  *
- * @author Rainer Klute (klute@rainer-klute.de)
+ * @author Rainer Klute <a
+ * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
  * @version $Id$
  * @since 2002-01-19
  */

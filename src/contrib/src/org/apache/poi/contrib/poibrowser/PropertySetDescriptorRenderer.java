@@ -78,7 +78,8 @@ import org.apache.poi.hpsf.SummaryInformation;
  * <p>Renders a {@link PropertySetDescriptor} by more or less dumping
  * the stuff into a {@link JTextArea}.</p>
  *
- * @author Rainer Klute (klute@rainer-klute.de)
+ * @author Rainer Klute <a
+ * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
  * @version $Id$
  * @since 2002-02-05
  */
