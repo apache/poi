@@ -123,6 +123,8 @@ public class SVTableCellRenderer extends JLabel
     public Component getTableCellRendererComponent(JTable table, Object value,
                           boolean isSelected, boolean hasFocus, int row, int column) {
 
+	boolean isBorderSet = false;
+
 	if (isSelected) {
 	   super.setForeground(table.getSelectionForeground());
 	   super.setBackground(table.getSelectionBackground());
@@ -134,13 +136,19 @@ public class SVTableCellRenderer extends JLabel
           HSSFFont f = wb.getFontAt(s.getFontIndex());
           boolean isbold = f.getBoldweight() > HSSFFont.BOLDWEIGHT_NORMAL;
           boolean isitalics = f.getItalic();
+//          System.out.println("bold="+isbold);
+//          System.out.println("italics="+isitalics);
           int fontstyle = 0;
 
           if (isbold) fontstyle = Font.BOLD;
           if (isitalics) fontstyle = fontstyle | Font.ITALIC;
 
+          int fontheight = f.getFontHeightInPoints();
+          if (fontheight == 9) fontheight = 10; //fix for stupid ol Windows
 
-          Font font = new Font(f.getFontName(),fontstyle,f.getFontHeightInPoints());
+//          System.out.println("fontsizeinpnts="+f.getFontHeightInPoints());
+
+          Font font = new Font(f.getFontName(),fontstyle,fontheight);
           setFont(font);
           
 
@@ -160,16 +168,56 @@ public class SVTableCellRenderer extends JLabel
           rgb = clr.getTriplet();
           awtcolor = new Color(rgb[0],rgb[1],rgb[2]);
           setForeground(awtcolor);
+
+          if (s.getBorderBottom() != HSSFCellStyle.BORDER_NONE ||
+              s.getBorderTop()    != HSSFCellStyle.BORDER_NONE ||
+              s.getBorderLeft()   != HSSFCellStyle.BORDER_NONE ||
+              s.getBorderRight()  != HSSFCellStyle.BORDER_NONE) {
+              int borderTop = 0;
+              int borderRight = 0;
+              int borderBottom = 0;
+              int borderLeft = 0;
+
+              if(s.getBorderBottom() != HSSFCellStyle.BORDER_NONE) {
+                borderBottom = 2;
+              }
+
+              if(s.getBorderRight() != HSSFCellStyle.BORDER_NONE) {
+                borderRight = 2;
+              }
+
+              if(s.getBorderTop() != HSSFCellStyle.BORDER_NONE) {
+                borderTop = 2;
+              }
+
+              if(s.getBorderLeft() != HSSFCellStyle.BORDER_NONE) {
+                borderLeft = 2;
+              }
+
+              SVBorder border = new SVBorder(Color.black, Color.black,
+                                           Color.black, Color.black,
+                                           borderTop, borderRight,
+                                           borderBottom, borderLeft,
+                                           s.getBorderTop() != HSSFCellStyle.BORDER_NONE,
+                                           s.getBorderRight() != HSSFCellStyle.BORDER_NONE,
+                                           s.getBorderBottom() != HSSFCellStyle.BORDER_NONE,
+                                           s.getBorderLeft() != HSSFCellStyle.BORDER_NONE);
+              setBorder(border);
+              isBorderSet=true;
+           //need custom border that can have north,east,south,west settings
+          }
         }
 
 
 	if (hasFocus) {
-	    setBorder( UIManager.getBorder("Table.focusCellHighlightBorder") );
+            if (!isBorderSet) {
+	        setBorder( UIManager.getBorder("Table.focusCellHighlightBorder") );
+            }
 	    if (table.isCellEditable(row, column)) {
 	        super.setForeground( UIManager.getColor("Table.focusCellForeground") );
 	        super.setBackground( UIManager.getColor("Table.focusCellBackground") );
 	    }
-	} else {
+	} else if (!isBorderSet) {
 	    setBorder(noFocusBorder);
 	}
 
