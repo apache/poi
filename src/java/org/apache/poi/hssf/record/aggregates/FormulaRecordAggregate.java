@@ -119,14 +119,14 @@ public class FormulaRecordAggregate
     {
         int pos = offset;
         pos += formulaRecord.serialize(pos, data);
-        if (stringRecord != null)
-        {
-            pos += stringRecord.serialize(pos, data);
-        }
         if (this.getSharedFormulaRecord() != null) 
         {
         		pos += getSharedFormulaRecord().serialize(pos, data);
         }	
+         if (stringRecord != null)
+        {
+            pos += stringRecord.serialize(pos, data);
+        }
         return pos - offset;
         
     }
