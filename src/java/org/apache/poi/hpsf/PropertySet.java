@@ -676,7 +676,7 @@ public class PropertySet
         b.append(", sections: [\n");
         final List sections = getSections();
         for (int i = 0; i < sectionCount; i++)
-            b.append(((Section) sections.get(0)).toString());
+            b.append(((Section) sections.get(i)).toString());
         b.append(']');
         b.append(']');
         return b.toString();
