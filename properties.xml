@@ -1,55 +1,75 @@
 <?xml version="1.0"?>
 <?xml-stylesheet type="text/xsl" href="tools/antipede/resources/stylesheets/properties.xsl"?>
-<!-- Project properties -->     
+<!-- Build properties - these override any property specified in the build -->
 <properties>
-  <!-- Properties for core Ant tasks-->  
-  <ant>
-    <XmlLogger>
-      <stylesheet uri="./tools/antipede/resources/stylesheets/log.xsl"/> 
-    </XmlLogger>
-  </ant>    
-  
-  <XmlLogger file="log.xml"/>
-    
-  <!-- Properties of the build -->     
-  <build>
-  <!-- What to tell the compiler -->
-    <compiler emacs="on"
-              warnings="true"
-              pedantic="false"
-              depend="true"
-              fulldepend="true"
-              debug="on"
-              optimize="off"
-              deprecation="on"
-              nowarn="off"
-              type="classic"
-              vm="1.2"/>
-              
-  </build>           
-  <forrest>
-    <!-- available skins:
 
-         basic
-         jakarta-site
-         avalon-site
-         scarab-site
-         xml-apache-site
-         forrest-site  (Work In Progress)
- -->       
-    <skin name="avalon-site">
-     <navlinks>
-      <link1 href="http://www.apache.org/">apache.org</link1>
-      <link2 href="http://jakarta.apache.org/">jakarta.apache.org</link2>
-      <link3 href="http://jakarta.apache.org/poi/">jakarta.apache.org/poi</link3>
-     </navlinks>
-     <logo>
-      <group src="images/group-logo.gif" href="http://jakarta.apache.org"/>
-      <project src="images/project-logo.gif" href="http://jakarta.apache.org/poi/"/>
-     </logo>
-    
-    </skin>
-    
-  </forrest>    
-  
+<!-- Properties for core Ant tasks-->
+   <ant>
+      <XmlLogger>
+         <stylesheet
+          uri="./tools/antipede/resources/stylesheets/log.xsl" />
+      </XmlLogger>
+   </ant>
+
+   <XmlLogger
+    file="log.xml" />
+
+   <!-- Properties of the build -->
+   <build>
+      <!-- What to tell the compiler -->
+      <compiler
+       emacs="on"
+       warnings="true"
+       pedantic="false"
+       depend="true"
+       fulldepend="true"
+       debug="on"
+       optimize="off"
+       deprecation="on"
+       nowarn="off"
+       type="classic"
+       vm="1.2" />
+   </build>
+
+   <centipede>
+      <tools>
+         <cents>
+            <forrest-cent>
+              <!-- available skins:
+
+                   basic
+                   jakarta-site
+                   avalon-site
+                   scarab-site
+                   xml-apache-site
+                   forrest-site  (Work In Progress)
+               -->
+               <skin
+                name="avalon-site">
+                  <navlinks>
+                     <link1
+                      href="http://www.apache.org/">apache.org</link1>
+
+                     <link2
+                      href="http://jakarta.apache.org/">jakarta.apache.org</link2>
+
+                     <link3
+                      href="http://jakarta.apache.org/poi/">jakarta.apache.org/poi</link3>
+                  </navlinks>
+
+                  <logo>
+                     <group
+                      src="images/group-logo.gif"
+                      href="http://jakarta.apache.org" />
+
+                     <project
+                      src="images/project-logo.gif"
+                      href="http://jakarta.apache.org/poi/" />
+                  </logo>
+               </skin>
+            </forrest-cent>
+         </cents>
+      </tools>
+   </centipede>
 </properties>
+
