@@ -58,8 +58,6 @@ import junit.framework.TestCase;
 import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.record.VCenterRecord;
 import org.apache.poi.hssf.record.WSBoolRecord;
-import org.apache.poi.hssf.record.RowRecord;
-import org.apache.poi.hssf.dev.BiffViewer;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -191,8 +189,14 @@ public class TestHSSFSheet
         tempFile.delete();
         assertNotNull(row);
         assertEquals(2, row.getPhysicalNumberOfCells());
+    }
 
-
+    public void testRemoveRow()
+    {
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        HSSFSheet sheet = workbook.createSheet("Test boolean");
+        HSSFRow row = sheet.createRow((short) 2);
+        sheet.removeRow(row);
     }
 
 }
