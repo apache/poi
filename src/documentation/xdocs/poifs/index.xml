@@ -34,9 +34,7 @@
          use POIFS but ultimately if you use technologies that come
          from the POI project, you're using POIFS underneith.  Perhaps
          we should have a branding campaign "POIFS Inside!".  ;-)</p>
-      <p>TODO: copy POIFS docs and port to XML (in progress). For now
-         please reference <link href="http://poi.sourceforge.net">old
-         site</link>.</p>
+
     </section>
   </body>
 </document>
