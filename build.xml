@@ -175,7 +175,7 @@
   <!--  dist target wo single build checks    -->
   <!-- ====================================== -->
 
-  <target  name="dist"   depends="-init, clean, test, jar, site"
+  <target  name="dist"   depends="-init, clean, jar, site, test"
            description="Build distribution packages wo single build checks">
 
     <antcall target="call-cent">
