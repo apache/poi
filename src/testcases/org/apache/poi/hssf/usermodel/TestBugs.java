@@ -287,6 +287,55 @@ extends TestCase {
                System.out.println(io_Excp.getMessage()) ;
            }
        }
+       
+    /**Double byte strings*/
+    public void test15556() throws java.io.IOException {
+
+        String filename = System.getProperty("HSSF.testdata.path");
+        filename=filename+"/15556.xls";
+        FileInputStream in = new FileInputStream(filename);
+        HSSFWorkbook wb = new HSSFWorkbook(in);
+        HSSFSheet sheet = wb.getSheetAt(0);
+        HSSFRow row = sheet.getRow(45);
+        this.assertTrue("Read row fine!" , true);
+
+    } 
+    
+    /*Double byte strings */
+    public void test22742() throws java.io.IOException {
+        String filename = System.getProperty("HSSF.testdata.path");
+        filename=filename+"/22742.xls";
+        FileInputStream in = new FileInputStream(filename);
+        HSSFWorkbook wb = new HSSFWorkbook(in);
+        //HSSFSheet sheet = wb.getSheetAt(0);
+        //HSSFRow row = sheet.getRow(45);
+        this.assertTrue("Read workbook!" , true);
+
+    }
+    /*Double byte strings */
+    public void test12561_1() throws java.io.IOException {
+
+        String filename = System.getProperty("HSSF.testdata.path");
+        filename=filename+"/12561-1.xls";
+        FileInputStream in = new FileInputStream(filename);
+        HSSFWorkbook wb = new HSSFWorkbook(in);
+        //HSSFSheet sheet = wb.getSheetAt(0);
+        //HSSFRow row = sheet.getRow(45);
+        this.assertTrue("Read workbook!" , true);
+
+    }
+    /*Double byte strings */
+    public void test12561_2() throws java.io.IOException {
+
+        String filename = System.getProperty("HSSF.testdata.path");
+        filename=filename+"/12561-2.xls";
+        FileInputStream in = new FileInputStream(filename);
+        HSSFWorkbook wb = new HSSFWorkbook(in);
+        //HSSFSheet sheet = wb.getSheetAt(0);
+        //HSSFRow row = sheet.getRow(45);
+        this.assertTrue("Read workbook!" , true);
+
+    }
 }
     
 
