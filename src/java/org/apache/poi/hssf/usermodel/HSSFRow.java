@@ -126,8 +126,8 @@ public class HSSFRow
         this.sheet = sheet;
         row = new RowRecord();
         row.setHeight((short) 0xff);
-        row.setLastCol((short)-1);
-        row.setFirstCol((short)-1);
+        row.setLastCol((short) -1);
+        row.setFirstCol((short) -1);
 
         // row.setRowNumber(rowNum);
         setRowNum(rowNum);
@@ -213,11 +213,11 @@ public class HSSFRow
 
         if (cell.getCellNum() == row.getLastCol())
         {
-            row.setLastCol( findLastCell(row.getLastCol()) );
+            row.setLastCol(findLastCell(row.getLastCol()));
         }
         if (cell.getCellNum() == row.getFirstCol())
         {
-            row.setFirstCol( findFirstCell(row.getFirstCol()) );
+            row.setFirstCol(findFirstCell(row.getFirstCol()));
         }
     }
 
@@ -270,11 +270,11 @@ public class HSSFRow
     {
         if (row.getFirstCol() == -1)
         {
-            row.setFirstCol( cell.getCellNum() );
+            row.setFirstCol(cell.getCellNum());
         }
         if (row.getLastCol() == -1)
         {
-            row.setLastCol( cell.getCellNum() );
+            row.setLastCol(cell.getCellNum());
         }
         cells.put(new Integer(cell.getCellNum()), cell);
 
@@ -318,7 +318,10 @@ public class HSSFRow
 
     public short getFirstCellNum()
     {
-        return row.getFirstCol();
+        if (getPhysicalNumberOfCells() == 0)
+            return -1;
+        else
+            return row.getFirstCol();
     }
 
     /**
@@ -328,7 +331,10 @@ public class HSSFRow
 
     public short getLastCellNum()
     {
-        return row.getLastCol();
+        if (getPhysicalNumberOfCells() == 0)
+            return -1;
+        else
+            return row.getLastCol();
     }
 
 
