@@ -21,7 +21,8 @@
               This release allows numeric and string cell values to be written to
               or read from an XLS file as well as reading and writing dates. Also
               in this release is row and column sizing, cell styling (bold,
-              italics, borders,etc), and support for built-in data formats.  New
+              italics, borders,etc), and support for both built-in and user 
+	      defined data formats.  New
               to this release is an event-based API for reading XLS files.
               It differs greatly from the read/write API
               and is intended for intermediate developers who need a smaller
@@ -96,6 +97,7 @@ HSSFCell c = null;
 HSSFCellStyle cs = wb.createCellStyle();
 HSSFCellStyle cs2 = wb.createCellStyle();
 HSSFCellStyle cs3 = wb.createCellStyle();
+HSSFDataFormat df = wb.createDataFormat();
 // create 2 fonts objects
 HSSFFont f = wb.createFont();
 HSSFFont f2 = wb.createFont();
@@ -119,13 +121,15 @@ f2.setStrikeout( true );
 
 //set cell stlye
 cs.setFont(f);
-//set the cell format see HSSFDataFromat for a full list
-cs.setDataFormat(HSSFDataFormat.getFormat("($#,##0_);[Red]($#,##0)"));
+//set the cell format 
+cs.setDataFormat(df.getFormat("#,##0.0"));
 
 //set a thin border
 cs2.setBorderBottom(cs2.BORDER_THIN);
 //fill w fg fill color
 cs2.setFillPattern((short) HSSFCellStyle.SOLID_FOREGROUND);
+//set the cell format to text see HSSFDataFormat for a full list
+cs2.setDataFormat(HSSFDataFormat.getBuiltinFormat("text"));
 
 // set the font
 cs2.setFont(f2);
