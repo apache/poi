@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.0//EN" "dtd/document-v10.dtd">
+
+<document>
+  <header>
+    <title></title>
+    <authors>
+      <person id="AO" name="Andrew C. Oliver" email="acoliver@apache.org"/>
+    </authors>
+  </header>
+  
+  <body>
+    <s1 title="POI in the news">
+        <p>
+                These are articles/etc. posted about POI around the web.  If you
+                see POI in the news or mentioned at least somewhat prominently
+                on a site (not your homepage that you put the work POI on in
+                order to get us to link you and by the why here is a picture of
+                your wife in kids) then send a patch to the list.  In general
+                equal time will be given so please feel free to send inflamatory
+                defamation as well as favorable, technical and factual.  Really
+                stupid things won't be mentioned (sorry).
+        </p>                        
+    </s1>
+    <s1 title="English">
+        <ul>
+                <li>
+                        <link href="http://javalobby.org/discussionContext/showThreaded/frm/javalobby?discussionContextId=11442&amp;folderId=20">
+                        POI project moves to Jakarta (OLE 2 CDF/Excel/Word in 
+                        pure java)</link> - JavaLobby
+                </li>
+                <li>
+                        <link
+                        href="http://www.geocities.com/marcoschmidt.geo/java-image-coding.html">
+                        List of Java libraries to read and write image and document files
+                        </link> Marco Schmidt's homepage (normally we wouldn't
+                        feature someone's homepage but its an extensive list of
+                        information including "alternatives to POI" (for those
+                        of you who are very wealthy).  But heck I think I'll
+                        bookmark his page for myself since he's like got every
+                        piece of info known to man linked or featured on it!
+                </li>
+                <li>
+                        <link href="http://radio.weblogs.com/0101350/">
+                        The Experiences of an Operator (Måns af Klercker)
+                        </link> - radio.weblogs.com
+                </li>
+                <li>
+                        <link href="http://dataconv.org/apps_office.html">
+                        DATACONV - Data Conversion Tools: Office
+                        </link> DATACONV
+                </li>
+                <li>
+                        <link href="http://chicago.sourceforge.net/devel/">
+                        Chicago Developer Page
+                        </link>                        
+                </li>
+                <li>
+                        <link href="http://www.onjava.com/pub/d/1157">
+                        POI/POI Serialization Project
+                        </link> - Man you know you've hit the bigtime when
+                        O'Reilly Likes you..  ;-)
+                </li>
+                <li>
+                        <link
+                        href="http://www.javaworld.com/netnews/index.shtml">
+                        News Around the Net
+                        </link> - Java World
+                </li>
+                
+        </ul>
+    </s1>
+    <s1 title="Deutschspeche (German)">
+        <ul>
+                <li>
+                        <link
+                        href="http://www.entwickler.com/news/2002/02/5718/news.shtml">
+                        Neues Apache-Projekt bringt Word- und Excel nach Java
+                        </link> - entwickler.com
+                </li>
+        </ul>
+    </s1>
+    <s1 title="Español (Spanish)">
+        <ul>
+                <li>
+                        <link href="http://www.javahispano.com/noticias/todas.jsp">
+                        OLE2 desde Java nativo
+                        </link> - javaHispano
+                </li>
+                
+        </ul>
+    </s1>
+    <s1 title="No freaking idea">
+        <p>
+                If you can read one of these languages, send mail to the list
+                telling us what language it is and we'll categorize it!
+        </p>
+        <ul>
+                <li>
+                        <link
+                        href="http://www.gimlay.org/~andoh/java/javanew.html">
+                        What's new with java
+                        </link> - gimlay.org
+                </li>
+        </ul>
+    </s1>
+  </body>
+  <footer>
+    <legal>
+      Copyright (c) @year@ The Apache Software Foundation All rights reserved.
+      $Revision$ $Date$
+    </legal>
+  </footer>
+</document>
