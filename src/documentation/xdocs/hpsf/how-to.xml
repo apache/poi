@@ -1,17 +1,305 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.0//EN" "../dtd/document-v10.dtd"> 
 <document>
-  <header>
-    <title>HPSF HOW-TO</title>
-    <authors>
-      <person name="Rainer Klute" email="klute@rainer-klute.de"/>
-    </authors>
-  </header>
-  <body>
-    <s1 title="How To Use the HPSF APIs">
-      <p class="todo">TODO: This documentation is still to be written. For the
-	time being, please see the API documentation (javadocs) of the
-	<code>org.apache.poi.hpsf</code> package.</p>
-    </s1>
-  </body>
+ <header>
+  <title>HPSF HOW-TO</title>
+  <authors>
+   <person name="Rainer Klute" email="klute@rainer-klute.de"/>
+  </authors>
+ </header>
+ <body>
+  <s1 title="How To Use the HPSF APIs">
+
+   <p>This HOW-TO is organized in three section. You should read them
+    sequentially because the later sections build upon the earlier ones.</p>
+
+   <ol>
+    <li>
+     <p>The <link href="#sec1">first section</link> explains how to read
+      the most important standard properties of a Microsoft Office
+      document. Standard properties are things like title, author, creation
+      date etc. It is quite likely that you will find here what you need and
+      don't have to read the other sections.</p>
+    </li>
+
+    <li>
+     <p>The <link href="#sec2">second section</link> goes a small step
+      further and focusses on reading additional standard properties. It also
+      talks about exceptions that may be thrown when dealing with HPSF and
+      shows how you can read properties of embedded objects.</p>
+     </li>
+
+    <li>
+     <p>The <link href="#sec3">third section</link> tells how to read
+      non-standard properties. Non-standard properties are application-specific
+      name/value/type triples.</p>
+     </li>
+   </ol>
+
+   <anchor id="sec1" />
+   <s2 title="Reading Standard Properties">
+
+    <note>This section explains how to read
+      the most important standard properties of a Microsoft Office
+      document. Standard properties are things like title, author, creation
+      date etc. Chances are that you will find here what you need and
+      don't have to read the other sections.</note>
+
+    <p>The first thing you should understand is that properties are stored in
+     separate documents inside the POI filesystem. (If you don't know what a
+     POI filesystem is, read its <link
+      href="../poifs/index.html">documentation</link>.)  A document in a POI
+     filesystem is also called a <strong>stream</strong>.</p>
+
+    <p>The following example shows how to read a POI filesystem's
+     "title" property. Reading other properties is similar. Consider the API
+     documentation of <code>org.apache.poi.hpsf.SummaryInformation</code>.</p>
+
+    <p>The standard properties this section focusses on can be
+     found in a document called <em>\005SummaryInformation</em> in the root of
+     the POI filesystem. The notation <em>\005</em> in the document's name
+     means the character with the decimal value of 5. In order to read the
+     title, an application has to perform the following steps:</p>
+
+    <ol>
+     <li>
+      <p>Open the document <em>\005SummaryInformation</em> located in the root
+       of the POI filesystem.</p>
+     </li>
+     <li>
+      <p>Create an instance of the class
+       <code>SummaryInformation</code> from that
+       document.</p>
+     </li>
+     <li>
+      <p>Call the <code>SummaryInformation</code> instance's
+       <code>getTitle()</code> method.</p>
+     </li>
+    </ol>
+
+    <p>Sounds easy, doesn't it? Here are the steps in detail.</p>
+
+
+    <s3 title="Open the document \005SummaryInformation in the root of the
+       POI filesystem">
+
+     <p>An application that wants to open a document in a POI filesystem
+      (POIFS) proceeds as shown by the following code fragment. (The full
+      source code of the sample application is available in the
+      <em>examples</em> section of the POI source tree as
+      <em>ReadTitle.java</em>.)</p>
+
+     <source>
+import java.io.*;
+import org.apache.poi.hpsf.*;
+import org.apache.poi.poifs.eventfilesystem.*;
+
+// ...
+
+public static void main(String[] args)
+    throws IOException
+{
+    final String filename = args[0];
+    POIFSReader r = new POIFSReader();
+    r.registerListener(new MyPOIFSReaderListener(),
+                       "\005SummaryInformation");
+    r.read(new FileInputStream(filename));
+}</source>
+
+     <p>The first interesting statement is</p>
+
+     <source>POIFSReader r = new POIFSReader();</source>
+
+     <p>It creates a
+      <code>org.apache.poi.poifs.eventfilesystem.POIFSReader</code> instance
+      which we shall need to read the POI filesystem. Before the application
+      actually opens the POI filesystem we have to tell the
+      <code>POIFSReader</code> which documents we are interested in. In this
+      case the application should do something with the document
+      <em>\005SummaryInformation</em>.</p>
+
+     <source>
+r.registerListener(new MyPOIFSReaderListener(),
+                   "\005SummaryInformation");</source>
+
+     <p>This method call registers a
+      <code>org.apache.poi.poifs.eventfilesystem.POIFSReaderListener</code>
+      with the <code>POIFSReader</code>. The <code>POIFSReaderListener</code>
+      interface specifies the method <code>processPOIFSReaderEvent</code>
+      which processes a document. The class
+      <code>MyPOIFSReaderListener</code> implements the
+      <code>POIFSReaderListener</code> and thus the
+      <code>processPOIFSReaderEvent</code> method. The eventing POI filesystem
+      calls this method when it finds the <em>\005SummaryInformation</em>
+      document. In the sample application <code>MyPOIFSReaderListener</code> is
+      a static class in the <em>ReadTitle.java</em> source file.)</p>
+
+     <p>Now everything is prepared and reading the POI filesystem can
+      start:</p>
+
+     <source>r.read(new FileInputStream(filename));</source>
+
+     <p>The following source code fragment shows the
+      <code>MyPOIFSReaderListener</code> class and how it retrieves the
+      title.</p>
+
+     <source>
+static class MyPOIFSReaderListener implements POIFSReaderListener
+{
+    public void processPOIFSReaderEvent(POIFSReaderEvent e)
+    {
+        SummaryInformation si = null;
+        try
+        {
+            si = (SummaryInformation)
+                 PropertySetFactory.create(e.getStream());
+        }
+        catch (Exception ex)
+        {
+            throw new RuntimeException
+                ("Property set stream \"" +
+                 event.getPath() + event.getName() + "\": " + ex);
+        }
+        final String title = si.getTitle();
+        if (title != null)
+            System.out.println("Title: \"" + title + "\"");
+        else
+            System.out.println("Document has no title.");
+    }
+}
+</source>
+
+     <p>The line</p>
+
+     <source>SummaryInformation si = null;</source>
+
+     <p>declares a <code>SummaryInformation</code> variable and initializes it
+      with <code>null</code>. We need an instance of this class to access the
+      title. The instance is created in a <code>try</code> block:</p>
+
+     <source>si = (SummaryInformation)
+                 PropertySetFactory.create(e.getStream());</source>
+
+     <p>The expression <code>e.getStream()</code> returns the input stream
+      containing the bytes of the property set stream named
+      <em>\005SummaryInformation</em>. This stream is passed into the
+      <code>create</code> method of the factory class
+      <code>org.apache.poi.hpsf.PropertySetFactory</code> which returns
+      a <code>org.apache.poi.hpsf.PropertySet</code> instance. It is more or
+      less safe to cast this result to <code>SummaryInformation</code>, a
+      convenience class with methods like <code>getTitle()</code>,
+      <code>getAuthor()</code> etc.</p>
+
+     <p>The <code>PropertySetFactory.create</code> method may throw all sorts
+      of exceptions. We'll deal with them in the next sections. For now we just
+      catch all exceptions and throw a <code>RuntimeException</code>
+      containing the message text of the origin exception.</p>
+
+     <p>If all goes well, the sample application retrieves the title and prints
+     it to the standard output. As you can see you must be prepared for the
+      case that the POI filesystem does not have a title.</p>
+
+     <source>final String title = si.getTitle();
+    if (title != null)
+        System.out.println("Title: \"" + title + "\"");
+    else
+        System.out.println("Document has no title.");</source>
+
+     <p>Please note that a Microsoft Office document does not necessarily
+      contain the <em>\005SummaryInformation</em> stream. The documents created
+      by the Microsoft Office suite have one, as far as I know. However, an
+      Excel spreadsheet exported from StarOffice 5.2 won't have a
+      <em>\005SummaryInformation</em> stream. In this case the applications
+      won't throw an exception but simply does not call the
+      <code>processPOIFSReaderEvent</code> method. You have been warned!</p>
+    </s3>
+   </s2>
+
+   <anchor id="sec2"/>
+   <s2 title="Additional Standard Properties, Exceptions And Embedded Objects">
+
+    <note>This section focusses on reading additional standard properties. It
+     also talks about exceptions that may be thrown when dealing with HPSF and
+     shows how you can read properties of embedded objects.</note>
+
+    <p>A couple of <strong>additional standard properties</strong> are not
+     contained in the <em>\005SummaryInformation</em> stream explained above,
+     for example a document's category or the number of multimedia clips in a
+     PowerPoint presentation. Microsoft has invented an additional stream named
+     <em>\005DocumentSummaryInformation</em> to hold these properties. With two
+     minor exceptions you can proceed exactly as described above to read the
+     properties stored in <em>\005DocumentSummaryInformation</em>:</p>
+
+    <ul>
+     <li><p>Instead of <em>\005SummaryInformation</em> use
+       <em>\005DocumentSummaryInformation</em> as the stream's name.</p></li>
+     <li><p>Replace all occurrences of the class
+       <code>SummaryInformation</code> by
+       <code>DocumentSummaryInformation</code>.</p></li>
+    </ul>
+
+    <p>And of course you cannot call <code>getTitle()</code> because
+     <code>DocumentSummaryInformation</code> has different query methods. See
+     the API documentation for the details!</p>
+
+    <p>In the previous section the application simply caught all
+     <strong>exceptions</strong> and was in no way interested in any
+     details. However, a real application will likely want to know what went
+     wrong and act appropriately. Besides any IO exceptions there are three
+     HPSF resp. POI specific exceptions you should know about:</p>
+
+    <dl>
+     <dt><code>NoPropertySetStreamException</code>:</dt>
+     <dd><p>This exception is thrown if the application tries to create a
+       <code>PropertySet</code> or one of its subclasses
+       <code>SummaryInformation</code> and
+       <code>DocumentSummaryInformation</code> from a stream that is not a
+       property set stream. A faulty property set stream counts as not being a 
+       property set stream at all. An application should be prepared to deal
+       with this case even if opens streams named
+       <em>\005SummaryInformation</em> or
+       <em>\005DocumentSummaryInformation</em> only. These are just names. A
+       stream's name by itself does not ensure that the stream contains the
+       expected contents and that this contents is correct.</p></dd>
+
+     <dt><code>UnexpectedPropertySetTypeException</code></dt>
+     <dd><p>This exception is thrown if a certain type of property set is
+       expected somewhere (e.g. a <code>SummaryInformation</code> or
+       <code>DocumentSummaryInformation</code>) but the provided property
+       set is not of that type.</p></dd>
+
+     <dt><code>MarkUnsupportedException</code></dt>
+     <dd><p>This exception is thrown if an input stream that is to be parsed
+       into a property set does not support the
+       <code>InputStream.mark(int)</code> operation. The POI filesystem uses
+       the <code>DocumentInputStream</code> class which does support this
+       operation, so you are safe here. However, if you read a property set
+       stream from another kind of input stream things may be
+       different.</p></dd>
+    </dl>
+
+    <p>Many Microsoft Office documents contain <strong>embedded
+      objects</strong>, for example an Excel sheet on a page in a Word
+     document. Embedded objects may have property sets of their own. An
+     application can open these property set streams as described above. The
+     only difference is that they are not located in the POI filesystem's root
+     but in a nested directory instead. Just register a
+     <code>POIFSReaderListener</code> for the property set streams you are
+     interested in. For example, the <em>POIBrowser</em> application in the
+     contrib section tries to open each and every document in a POI filesystem
+     as a property set stream. If this operation was successful it displays the
+     properties.</p>
+   </s2>
+
+   <anchor id="sec3"/>
+   <s2 title="Reading Non-Standard Properties">
+
+    <note>This section tells how to read
+     non-standard properties. Non-standard properties are application-specific
+     name/value/type triples.</note>
+
+    <fixme author="Rainer Klute">Write this section!</fixme>
+   </s2>
+  </s1>
+ </body>
 </document>
