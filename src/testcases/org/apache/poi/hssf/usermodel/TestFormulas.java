@@ -62,7 +62,7 @@ import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.BOFRecord;
 import org.apache.poi.hssf.record.EOFRecord;
-import org.apache.poi.hssf.util.ReferenceUtil;
+import org.apache.poi.hssf.util.CellReference;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -344,8 +344,11 @@ extends TestCase {
                     refy2=(short)(y-3);
                 }
                 
-                ref = ReferenceUtil.getReferenceFromXY(refx1,refy1);                    
-                ref2 = ReferenceUtil.getReferenceFromXY(refx2,refy2);
+                c = r.getCell((short) y);
+                CellReference cr= new CellReference(refx1,refy1);
+                ref=cr.toString();
+                cr=new CellReference(refx2,refy2);
+                ref2=cr.toString();
 
                 c = r.createCell((short) y);
                 c.setCellFormula("" + ref + operator + ref2);
@@ -419,9 +422,10 @@ extends TestCase {
                 }
 
                 c = r.getCell((short) y);
-
-                ref = ReferenceUtil.getReferenceFromXY(refx1,refy1);                    
-                ref2 = ReferenceUtil.getReferenceFromXY(refx2,refy2);
+                CellReference cr= new CellReference(refx1,refy1);
+                ref=cr.toString();
+                cr=new CellReference(refx2,refy2);
+                ref2=cr.toString();
                 
                 
                 assertTrue("loop Formula is as expected "+ref+operator+ref2+"!="+c.getCellFormula(),(
