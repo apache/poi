@@ -55,8 +55,6 @@
 
 package org.apache.poi.util;
 
-import java.lang.reflect.Array;
-
 import java.util.*;
 
 /**
@@ -127,9 +125,8 @@ import java.util.*;
  *
  * @author Marc Johnson (mjohnson at apache dot org)
  */
+public final class BinaryTree   // final for performance
 
-// final for performance
-public final class BinaryTree
     extends AbstractMap
 {
     private Node[]                _root             = new Node[]
@@ -1059,7 +1056,7 @@ public final class BinaryTree
      * rebalances the tree (somewhat, as red-black trees are not
      * perfectly balanced -- perfect balancing takes longer)
      *
-     * @param deleted_node the node being replaced
+     * @param replacement_node  the node being replaced
      * @param index _KEY or _VALUE
      */
 
