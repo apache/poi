@@ -53,39 +53,44 @@
  * <http://www.apache.org/>.
  */
 
+
 package org.apache.poi.hssf.record;
 
+
+
+import org.apache.poi.util.BitField;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.StringUtil;
+import org.apache.poi.util.HexDump;
 
 /**
- * The CHART record defines the location of a chart an it's size.
- * <p>
- * This record supports the charting capability of the program.
- * <p>
- * This is currently based on BIFF4 but will up updated to take into
- * account changed required by BIFF8.
- *
+ * The chart record is used to define the location and size of a chart.
+ * NOTE: This source is automatically generated please do not modify this file.  Either subclass or
+ *       remove the record in src/records/definitions.
+
  * @author Glen Stampoultzis (glens at apache.org)
  */
-
 public class ChartRecord
     extends Record
 {
-    public static final short sid = 0x1002;
-    private int               field1_x_position;
-    private int               field2_y_position;
-    private int               field3_x_size;
-    private int               field4_y_size;
+    public final static short      sid                             = 0x1002;
+    private  int        field_1_x;
+    private  int        field_2_y;
+    private  int        field_3_width;
+    private  int        field_4_height;
+
 
     public ChartRecord()
     {
+
     }
 
     /**
-     * Constructs a ChartRecord record and sets its fields appropriately.
+     * Constructs a Chart record and sets its fields appropriately.
      *
-     * @param id     id must be 0x1002 or an exception will be throw upon validation
-     * @param size  the size of the data area of the record
+     * @param id    id must be 0x1002 or an exception
+     *              will be throw upon validation
+     * @param size  size the size of the data area of the record
      * @param data  data of the record (should not contain sid/len)
      */
 
@@ -95,10 +100,11 @@ public class ChartRecord
     }
 
     /**
-     * Constructs a SeriesRecord record and sets its fields appropriately.
+     * Constructs a Chart record and sets its fields appropriately.
      *
-     * @param id     id must be 0x1002 or an exception will be throw upon validation
-     * @param size  the size of the data area of the record
+     * @param id    id must be 0x1002 or an exception
+     *              will be throw upon validation
+     * @param size  size the size of the data area of the record
      * @param data  data of the record (should not contain sid/len)
      * @param offset of the record's data
      */
@@ -108,54 +114,77 @@ public class ChartRecord
         super(id, size, data, offset);
     }
 
+    /**
+     * Checks the sid matches the expected side for this record
+     *
+     * @param id   the expected sid.
+     */
     protected void validateSid(short id)
     {
         if (id != sid)
         {
-            throw new RecordFormatException("NOT A CHART RECORD");
+            throw new RecordFormatException("Not a Chart record");
         }
     }
 
     protected void fillFields(byte [] data, short size, int offset)
     {
-        field1_x_position = LittleEndian.getInt(data, 0 + offset);
-        field2_y_position = LittleEndian.getInt(data, 4 + offset);
-        field3_x_size     = LittleEndian.getInt(data, 8 + offset);
-        field4_y_size     = LittleEndian.getInt(data, 12 + offset);
+        field_1_x                       = LittleEndian.getInt(data, 0 + offset);
+        field_2_y                       = LittleEndian.getInt(data, 4 + offset);
+        field_3_width                   = LittleEndian.getInt(data, 8 + offset);
+        field_4_height                  = LittleEndian.getInt(data, 12 + offset);
+
     }
 
     public String toString()
     {
         StringBuffer buffer = new StringBuffer();
 
-        buffer.append("[CHART]\n");
-        buffer.append("    .xPosition       = ").append(getXPosition())
-            .append("\n");
-        buffer.append("    .yPosition       = ").append(getYPosition())
-            .append("\n");
-        buffer.append("    .xSize           = ").append(getXSize())
-            .append("\n");
-        buffer.append("    .ySize           = ").append(getYSize())
-            .append("\n");
-        buffer.append("[/CHART]\n");
+        buffer.append("[Chart]\n");
+
+        buffer.append("    .x                    = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getX()))
+            .append(" (").append(getX()).append(" )\n");
+
+        buffer.append("    .y                    = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getY()))
+            .append(" (").append(getY()).append(" )\n");
+
+        buffer.append("    .width                = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getWidth()))
+            .append(" (").append(getWidth()).append(" )\n");
+
+        buffer.append("    .height               = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getHeight()))
+            .append(" (").append(getHeight()).append(" )\n");
+
+        buffer.append("[/Chart]\n");
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte [] data)
+    public int serialize(int offset, byte[] data)
     {
         LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset,
-                              (( short ) 20));   // 20 byte length
-        LittleEndian.putInt(data, 4 + offset, getXPosition());
-        LittleEndian.putInt(data, 8 + offset, getYPosition());
-        LittleEndian.putInt(data, 12 + offset, getXSize());
-        LittleEndian.putInt(data, 16 + offset, getYSize());
+        LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
+
+        LittleEndian.putInt(data, 4 + offset, field_1_x);
+        LittleEndian.putInt(data, 8 + offset, field_2_y);
+        LittleEndian.putInt(data, 12 + offset, field_3_width);
+        LittleEndian.putInt(data, 16 + offset, field_4_height);
+
         return getRecordSize();
     }
 
+    /**
+     * Size of record (exluding 4 byte header)
+     */
     public int getRecordSize()
     {
-        return 20;
+        return 4 + 4 + 4 + 4 + 4;
     }
 
     public short getSid()
@@ -163,43 +192,74 @@ public class ChartRecord
         return this.sid;
     }
 
-    public int getXPosition()
+
+    /**
+     * Get the x field for the Chart record.
+     */
+    public int getX()
     {
-        return field1_x_position;
+        return field_1_x;
     }
 
-    public void setXPosition(int xPosition)
+    /**
+     * Set the x field for the Chart record.
+     */
+    public void setX(int field_1_x)
     {
-        this.field1_x_position = xPosition;
+        this.field_1_x = field_1_x;
     }
 
-    public int getYPosition()
+    /**
+     * Get the y field for the Chart record.
+     */
+    public int getY()
     {
-        return field2_y_position;
+        return field_2_y;
     }
 
-    public void setYPosition(int yPosition)
+    /**
+     * Set the y field for the Chart record.
+     */
+    public void setY(int field_2_y)
     {
-        this.field2_y_position = yPosition;
+        this.field_2_y = field_2_y;
     }
 
-    public int getXSize()
+    /**
+     * Get the width field for the Chart record.
+     */
+    public int getWidth()
     {
-        return field3_x_size;
+        return field_3_width;
     }
 
-    public void setXSize(int xSize)
+    /**
+     * Set the width field for the Chart record.
+     */
+    public void setWidth(int field_3_width)
     {
-        this.field3_x_size = xSize;
+        this.field_3_width = field_3_width;
     }
 
-    public int getYSize()
+    /**
+     * Get the height field for the Chart record.
+     */
+    public int getHeight()
     {
-        return field4_y_size;
+        return field_4_height;
     }
 
-    public void setYSize(int ySize)
+    /**
+     * Set the height field for the Chart record.
+     */
+    public void setHeight(int field_4_height)
     {
-        this.field4_y_size = ySize;
+        this.field_4_height = field_4_height;
     }
-}
+
+
+}  // END OF CLASS
+
+
+
+
