@@ -1,0 +1,32 @@
+<record id="0x1007" name="LineFormat" package="org.apache.poi.hssf.record">
+    <suffix>Record</suffix>
+    <extends>Record</extends>
+    <description>Describes a line format record.  The line format record controls how a line on a chart appears.</description>
+    <author>Glen Stampoultzis (glens at apache.org)</author>
+    <fields>
+        <field type="int" size="4" name="line color" description="The RGB color of a line (with the high byte = 0)"/>
+        <field type="int" size="2" name="line pattern">
+            <const name="solid" value="0" description="solid"/>
+            <const name="dash" value="1" description="dash"/>
+            <const name="dot" value="2" description="dot"/>
+            <const name="dash dot" value="3" description="dash dot"/>
+            <const name="dash dot dot" value="4" description="dash dot dot"/>
+            <const name="none" value="5" description="none"/>
+            <const name="dark gray pattern" value="6" description="dark gray pattern"/>
+            <const name="medium gray pattern" value="7" description="medium gray pattern"/>
+            <const name="light gray pattern" value="8" description="light gray pattern"/>
+        </field>
+        <field type="int" size="2" name="weight">
+            <const name="hairline" value="-1" description="hairline"/>
+            <const name="narrow" value="0" description="single"/>
+            <const name="medium" value="1" description="double"/>
+            <const name="wide" value="2" description="triple"/>
+        </field>
+        <field type="bits" size="2" name="format">
+            <bit number="0" name="auto" description="automatic format"/>
+            <bit number="2" name="draw ticks" description="draw tick marks"/>
+            <bit number="2" name="unknown" description="book marks this as reserved = 0 but it seems to do something"/>
+        </field>
+        <field type="int" size="2" name="colour palette index"/>
+    </fields>
+</record>
