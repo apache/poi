@@ -66,9 +66,6 @@ import java.io.File;
 
 
 /**
- * EXPERIMENTAL 
- *
- *
  * This class parses a formula string into a List of tokens in RPN order
  * Inspired by 
  *           Lets Build a Compiler, by Jack Crenshaw
