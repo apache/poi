@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
-<!DOCTYPE todo PUBLIC "-//APACHE//DTD Todo V1.1//EN" "./dtd/todo-v11.dtd">
+<!DOCTYPE todo PUBLIC "-//APACHE//DTD Todo V1.1//EN" "../../dtd/todo-v11.dtd">
 
 <todo title="Tareas Pendientes para Poi">
 
