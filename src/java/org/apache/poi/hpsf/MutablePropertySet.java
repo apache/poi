@@ -54,10 +54,14 @@
  */
 package org.apache.poi.hpsf;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.LinkedList;
 import java.util.ListIterator;
+
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
 
@@ -238,6 +242,32 @@ public class MutablePropertySet extends PropertySet
             final MutableSection s = (MutableSection) i.next();
             offset = s.write(out, offset);
         }
+    }
+
+
+
+    /**
+     * <p>Returns the contents of this property set stream as an input stream.
+     * The latter can be used for example to write the property set into a POIFS
+     * document. The input stream represents a snapshot of the property set.
+     * If the latter is modified while the input stream is still being
+     * read, the modifications will not be reflected in the input stream but in
+     * the {@link MutablePropertySet} only.</p>
+     *
+     * @return the contents of this property set stream
+     * 
+     * @throws WritingNotSupportedException if HPSF does not yet support writing
+     * of a property's variant type.
+     * @throws IOException if an I/O exception occurs.
+     */
+    public InputStream toInputStream()
+        throws IOException, WritingNotSupportedException
+    {
+        final ByteArrayOutputStream psStream = new ByteArrayOutputStream();
+        write(psStream);
+        psStream.close();
+        final byte[] streamData = psStream.toByteArray();
+        return new ByteArrayInputStream(streamData);
     }
 
 }
