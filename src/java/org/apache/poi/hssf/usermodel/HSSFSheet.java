@@ -62,6 +62,7 @@ package org.apache.poi.hssf.usermodel;
 import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.CellValueRecordInterface;
+import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RowRecord;
 import org.apache.poi.hssf.record.VCenterRecord;
 import org.apache.poi.hssf.record.WSBoolRecord;
@@ -168,6 +169,7 @@ public class HSSFSheet
                 hrow = getRow(cval.getRow());
             }
             lastrow = hrow;
+            log.log(DEBUG, "record id = "+ Integer.toHexString(((Record)cval).getSid()));
             hrow.createCellFromRecord(cval);
             cval = sheet.getNextValueRecord();
             log.log(DEBUG, "record took ",
