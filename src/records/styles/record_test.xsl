@@ -143,12 +143,12 @@ public class Test<xsl:value-of select="@name"/>Record
 </xsl:template>
 
 <xsl:template match="bit" mode="get">
-<xsl:text>        </xsl:text>assertEquals( XXX, record.is<xsl:value-of select="recutil:getFieldName1stCap(@name,0)"/>() );<xsl:text>
+<xsl:text>        </xsl:text>assertEquals( <xsl:value-of select="./testresult/@value"/>, record.is<xsl:value-of select="recutil:getFieldName1stCap(@name,0)"/>() );<xsl:text>
 </xsl:text>
 </xsl:template>
 
 <xsl:template match="bit" mode="set">
-<xsl:text>        </xsl:text>record.set<xsl:value-of select="recutil:getFieldName1stCap(@name,0)"/>( XXX );<xsl:text>
+<xsl:text>        </xsl:text>record.set<xsl:value-of select="recutil:getFieldName1stCap(@name,0)"/>( <xsl:value-of select="./testresult/@value"/> );<xsl:text>
 </xsl:text>
 </xsl:template>
 
