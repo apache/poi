@@ -249,15 +249,15 @@ public class Sheet implements Model
             {
                 retval.printGridlines = (PrintGridlinesRecord) rec;
             }
-            else if ( rec.getSid() == HeaderRecord.sid )
+            else if ( rec.getSid() == HeaderRecord.sid && bofEofNestingLevel == 1)
             {
                 retval.header = (HeaderRecord) rec;
             }
-            else if ( rec.getSid() == FooterRecord.sid )
+            else if ( rec.getSid() == FooterRecord.sid && bofEofNestingLevel == 1)
             {
                 retval.footer = (FooterRecord) rec;
             }
-            else if ( rec.getSid() == PrintSetupRecord.sid )
+            else if ( rec.getSid() == PrintSetupRecord.sid && bofEofNestingLevel == 1)
             {
                 retval.printSetup = (PrintSetupRecord) rec;
             }
