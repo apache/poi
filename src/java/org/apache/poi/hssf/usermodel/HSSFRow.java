@@ -263,7 +263,7 @@ public class HSSFRow
     }
 
     /**
-     * used internally to add a cell.  Pass anything in for dummy boolean. (possibly used in later versions)
+     * used internally to add a cell.
      */
 
     private void addCell(HSSFCell cell)
