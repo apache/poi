@@ -67,6 +67,7 @@ import org.apache.poi.util.POILogFactory;
 
 import org.apache.poi.hssf.record.*;
 import org.apache.poi.hssf.util.SheetReferences;
+import org.apache.poi.hssf.util.HSSFColor;
 
 /**
  * Workbook
@@ -1469,6 +1470,10 @@ public class Workbook {
         retval.setPaletteOptions(( short ) 0);
         retval.setAdtlPaletteOptions(( short ) 0);
         retval.setFillPaletteOptions(( short ) 0x20c0);
+        retval.setTopBorderPaletteIdx(HSSFColor.BLACK.index);
+        retval.setBottomBorderPaletteIdx(HSSFColor.BLACK.index);
+        retval.setLeftBorderPaletteIdx(HSSFColor.BLACK.index);
+        retval.setRightBorderPaletteIdx(HSSFColor.BLACK.index);
         return retval;
     }
     
