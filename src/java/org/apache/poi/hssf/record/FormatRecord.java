@@ -64,6 +64,7 @@ import org.apache.poi.util.StringUtil;
  *
  * REFERENCE:  PG 317 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
  * @author Andrew C. Oliver (acoliver at apache dot org)
+ * @author Shawn M. Laubach (shawnlaubach at cox dot net)  
  * @version 2.0-pre
  */
 
@@ -72,7 +73,7 @@ public class FormatRecord
 {
     public final static short sid = 0x41e;
     private short             field_1_index_code;
-    private byte              field_2_formatstring_len;
+    private short             field_2_formatstring_len;
     private short             field_3_unicode_len;      // unicode string length
     private boolean          field_3_unicode_flag;     // it is not undocumented - it is unicode flag
     private String            field_4_formatstring;
@@ -121,6 +122,7 @@ public class FormatRecord
         field_1_index_code       = LittleEndian.getShort(data, 0 + offset);
         // field_2_formatstring_len = data[ 2 + offset ];
         field_3_unicode_len      = LittleEndian.getShort( data, 2 + offset );
+	field_2_formatstring_len = field_3_unicode_len;
         field_3_unicode_flag     = ( data[ 4 + offset ] & (byte)0x01 ) != 0;
                                               
                                               
@@ -156,6 +158,17 @@ public class FormatRecord
     public void setFormatStringLength(byte len)
     {
         field_2_formatstring_len = len;
+	field_3_unicode_len = len;
+    }
+
+    /**
+     * set whether the string is unicode
+     *
+     * @param unicode flag for whether string is unicode
+     */
+
+    public void setUnicodeFlag(boolean unicode) {
+	field_3_unicode_flag = unicode;
     }
 
     /**
@@ -189,10 +202,20 @@ public class FormatRecord
      * @see #getFormatString()
      */
 
-    public byte getFormatStringLength()
+    public short getFormatStringLength()
     {
-        return field_2_formatstring_len;
+        return field_3_unicode_flag ? field_3_unicode_len : field_2_formatstring_len;
     }
+
+    /**
+     * get whether the string is unicode
+     *
+     * @return flag for whether string is unicode
+     */
+
+    public boolean getUnicodeFlag() {
+	return field_3_unicode_flag;
+    }    
 
     /**
      * get the format string
