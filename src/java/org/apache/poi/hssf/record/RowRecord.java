@@ -35,6 +35,12 @@ public class RowRecord
     implements Comparable
 {
     public final static short sid = 0x208;
+    
+    /** The maximum row number that excel can handle (zero bazed) ie 65536 rows is
+     *  max number of rows.
+     */
+    public final static int MAX_ROW_NUMBER = 65535;
+    
     //private short             field_1_row_number;
     private int             field_1_row_number;
     private short             field_2_first_col;

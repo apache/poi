@@ -84,7 +84,6 @@ public class HSSFRow
     //protected HSSFRow(Workbook book, Sheet sheet, short rowNum)
     protected HSSFRow(Workbook book, Sheet sheet, int rowNum)
     {
-        this.rowNum = rowNum;
         cells = new HashMap(10);   // new ArrayList(INITIAL_CAPACITY);
         this.book = book;
         this.sheet = sheet;
@@ -94,7 +93,6 @@ public class HSSFRow
         row.setLastCol((short) -1);
         row.setFirstCol((short) -1);
 
-        // row.setRowNumber(rowNum);
         setRowNum(rowNum);
     }
 
@@ -110,17 +108,12 @@ public class HSSFRow
 
     protected HSSFRow(Workbook book, Sheet sheet, RowRecord record)
     {
-        //this.rowNum = rowNum;
         cells = new HashMap();   // ArrayList(INITIAL_CAPACITY);
         this.book = book;
         this.sheet = sheet;
         row = record;
 
-        // row.setHeight(record.getHeight());
-        // row.setRowNumber(rowNum);
         setRowNum(record.getRowNumber());
-
-//        addColumns(book, sheet, record);
     }
 
     /**
@@ -206,11 +199,14 @@ public class HSSFRow
     /**
      * set the row number of this row.
      * @param rowNum  the row number (0-based)
+     * @throws IndexOutOfBoundsException if the row number is not within the range 0-65535.
      */
 
     //public void setRowNum(short rowNum)
     public void setRowNum(int rowNum)
     {
+        if ((rowNum < 0) || (rowNum > RowRecord.MAX_ROW_NUMBER))
+          throw new IndexOutOfBoundsException("Row number must be between 0 and "+RowRecord.MAX_ROW_NUMBER+", was <"+rowNum+">");
         this.rowNum = rowNum;
         if (row != null)
         {

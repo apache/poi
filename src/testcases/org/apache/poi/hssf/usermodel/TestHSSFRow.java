@@ -99,4 +99,32 @@ public class TestHSSFRow
 
 
     }
+    
+    public void testRowBounds()
+            throws Exception
+    {
+      HSSFWorkbook workbook = new HSSFWorkbook();
+      HSSFSheet sheet = workbook.createSheet();
+      //Test low row bound
+      HSSFRow row = sheet.createRow( (short) 0);
+      //Test low row bound exception      
+      boolean caughtException = false;
+      try {
+        row = sheet.createRow(-1);        
+      } catch (IndexOutOfBoundsException ex) {
+        caughtException = true;
+      }      
+      assertTrue(caughtException);
+      //Test high row bound      
+      row = sheet.createRow(65535);     
+      //Test high row bound exception           
+      caughtException = false;
+      try {
+        row = sheet.createRow(65536);        
+      } catch (IndexOutOfBoundsException ex) {
+        caughtException = true;
+      }      
+      assertTrue(caughtException);
+    }
+    
 }
