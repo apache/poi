@@ -472,7 +472,8 @@ public class TestWrite extends TestCase
                 check(Variant.VT_LPSTR, "הצüִײ", codepage);
                 check(Variant.VT_LPSTR, "הצüִײÜ", codepage);
                 check(Variant.VT_LPSTR, "הצüִײÜß", codepage);
-                check(Variant.VT_LPSTR, "\u79D1\u5B78", codepage);
+                if (codepage == 1200 || codepage == 65001)
+                    check(Variant.VT_LPSTR, "\u79D1\u5B78", codepage);
             }
             catch (Exception ex)
             {
