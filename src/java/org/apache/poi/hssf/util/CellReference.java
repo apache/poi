@@ -57,6 +57,7 @@ package org.apache.poi.hssf.util;
 /**
  *
  * @author  Avik Sengupta
+ * @author  Dennis Doubleday (patch to seperateRowColumns())
  */
 public class CellReference {
     
@@ -126,11 +127,18 @@ public class CellReference {
      * number format.
      */
     private String[] seperateRowColumns(String reference) {
-        int loc = 0; // location of first number
+        
+        // Look for end of sheet name. This will either set
+        // start to 0 (if no sheet name present) or the
+        // index after the sheet reference ends.
+        int start = reference.indexOf("!") + 1;
+
         String retval[] = new String[2];
         int length = reference.length();
-        
+
+
         char[] chars = reference.toCharArray();
+        int loc = start;
         if (chars[loc]=='$') loc++;
         for (; loc < chars.length; loc++) {
             if (Character.isDigit(chars[loc]) || chars[loc] == '$') {
@@ -139,7 +147,7 @@ public class CellReference {
         }
         
         
-        retval[0] = reference.substring(0,loc);
+        retval[0] = reference.substring(start,loc);
         retval[1] = reference.substring(loc);
         return retval;
     }
