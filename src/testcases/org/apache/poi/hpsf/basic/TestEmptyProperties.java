@@ -37,20 +37,13 @@ public class TestEmptyProperties extends TestCase
 
     static final String[] POI_FILES = new String[]
         {
-            "PerfectOffice_MAIN",
+            "SlideShow",
             "\005SummaryInformation",
-            "Main"
+            "PerfectOffice_MAIN"
         };
 
     POIFile[] poiFiles;
 
-
-
-    /**
-     * <p>Constructor</p>
-     * 
-     * @param name The name of the test case
-     */
     public TestEmptyProperties(final String name)
     {
         super(name);
@@ -60,10 +53,6 @@ public class TestEmptyProperties extends TestCase
 
     /**
      * <p>Read a the test file from the "data" directory.</p>
-     *
-     * @exception FileNotFoundException if the file containing the test data
-     * does not exist
-     * @exception IOException if an I/O exception occurs
      */
     public void setUp() throws FileNotFoundException, IOException
     {
@@ -79,8 +68,6 @@ public class TestEmptyProperties extends TestCase
     /**
      * <p>Checks the names of the files in the POI filesystem. They
      * are expected to be in a certain order.</p>
-     * 
-     * @exception IOException if an I/O exception occurs
      */
     public void testReadFiles() throws IOException
     {
@@ -99,11 +86,9 @@ public class TestEmptyProperties extends TestCase
      * property sets. In the latter cases a {@link
      * NoPropertySetStreamException} will be thrown when trying to
      * create a {@link PropertySet}.</p>
-     * 
-     * @exception IOException if an I/O exception occurs
      */
     public void testCreatePropertySets() throws IOException
-    { 
+    {
         Class[] expected = new Class[]
             {
                 NoPropertySetStreamException.class,
@@ -141,13 +126,10 @@ public class TestEmptyProperties extends TestCase
      * <p>Tests the {@link PropertySet} methods. The test file has two
      * property sets: the first one is a {@link SummaryInformation},
      * the second one is a {@link DocumentSummaryInformation}.</p>
-     * 
-     * @exception IOException if an I/O exception occurs
-     * @exception HPSFException if an HPSF operation fails
      */
     public void testPropertySetMethods() throws IOException, HPSFException
     {
-        byte[] b = poiFiles[1].getBytes();
+        byte[] b = poiFiles[2].getBytes();
         PropertySet ps =
             PropertySetFactory.create(new ByteArrayInputStream(b));
         SummaryInformation s = (SummaryInformation) ps;
@@ -163,9 +145,9 @@ public class TestEmptyProperties extends TestCase
         assertNull(s.getLastPrinted());
         assertNull(s.getCreateDateTime());
         assertNull(s.getLastSaveDateTime());
-        assertEquals(s.getPageCount(), 0);
-        assertEquals(s.getWordCount(), 0);
-        assertEquals(s.getCharCount(), 0);
+        assertEquals(s.getPageCount());
+        assertNull(s.getWordCount());
+        assertNull(s.getCharCount());
         assertNull(s.getThumbnail());
         assertNull(s.getApplicationName());
     }
@@ -174,10 +156,6 @@ public class TestEmptyProperties extends TestCase
 
     /**
      * <p>Runs the test cases stand-alone.</p>
-     * 
-     * @param args the command-line arguments (unused)
-     * 
-     * @exception Throwable if any exception or error occurs
      */
     public static void main(final String[] args) throws Throwable
     {
