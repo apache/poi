@@ -15,6 +15,7 @@
     <menu-item label="2.0 Vision" href="plan/POI20Vision.html"/>
     <menu-item label="Who we are" href="who.html"/>    
     <menu-item label="Changes" href="changes.html"/>
+    <menu-item label="FAQ" href="faq.html"/>
   </menu>
   
   <menu label="Sub-Projects">
