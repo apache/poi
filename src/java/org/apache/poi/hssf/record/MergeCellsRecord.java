@@ -322,4 +322,11 @@ public class MergeCellsRecord
 
         public short col_to;
     }
+
+    public Object clone() {
+        MergeCellsRecord rec = new MergeCellsRecord();
+        rec.field_1_num_areas = field_1_num_areas;
+        rec.field_2_regions = field_2_regions;
+        return rec;
+    }
 }

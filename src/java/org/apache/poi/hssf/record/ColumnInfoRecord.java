@@ -355,4 +355,15 @@ public class ColumnInfoRecord
         buffer.append("[/COLINFO]\n");
         return buffer.toString();
     }
+
+    public Object clone() {
+        ColumnInfoRecord rec = new ColumnInfoRecord();
+        rec.field_1_first_col = field_1_first_col;
+        rec.field_2_last_col = field_2_last_col;
+        rec.field_3_col_width = field_3_col_width;
+        rec.field_4_xf_index = field_4_xf_index;
+        rec.field_5_options = field_5_options;
+        rec.field_6_reserved = field_6_reserved;
+        return rec;
+    }
 }

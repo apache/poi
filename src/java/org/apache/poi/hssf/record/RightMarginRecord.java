@@ -178,7 +178,11 @@ public class RightMarginRecord
         this.field_1_margin = field_1_margin;
     }
 
-
+    public Object clone() {
+        RightMarginRecord rec = new RightMarginRecord();
+        rec.field_1_margin = this.field_1_margin;
+        return rec;
+    }
 }  // END OF CLASS
 
 

@@ -177,6 +177,12 @@ public class BottomMarginRecord
     {
         this.field_1_margin = field_1_margin;
     }
+    
+     public Object clone() {
+        BottomMarginRecord rec = new BottomMarginRecord();
+        rec.field_1_margin = this.field_1_margin;
+        return rec;
+    }
 
 
 }  // END OF CLASS
