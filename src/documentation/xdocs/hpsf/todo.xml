@@ -16,18 +16,10 @@
 
    <ol>
     <li>
-     <p>Rollback Andy's changes in order to have HPSF working again.</p>
-    </li>
-    <li>
      <p>Complete writing the HPSF documentation.</p>
     </li>
     <li>
      <p>Write up some junit tests.</p>
-    </li>
-    <li>
-     <p>Use the general POI little-endian classes (see <link
-      href="http://nagoya.apache.org/bugzilla/show_bug.cgi?id=8354">bug
-      8354</link>).</p>
     </li>
     <li>
      <p>Add writing capability for property sets.</p>
