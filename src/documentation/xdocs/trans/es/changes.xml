@@ -11,7 +11,17 @@
         <person id="NKB" name="Nicola Ken Barozzi" email="barozzi@nicolaken.com"/>
         <person id="POI-DEVELOPERS" name="Poi Developers"    email="poi-dev@jakarta.apache.org"/>
     </devs>
-    <release version="1.7-dev" date="En proceso">
+    <release version="1.8-dev" date="20 Septiembre 2002">
+        <action dev="POI-DEVELOPERS" type="add">Soporte para Formato de Datos Personalizado (Custom)</action>
+        <action dev="POI-DEVELOPERS" type="add">Soporte Unicode Mejorado para Ruso y Japonés</action>
+        <action dev="POI-DEVELOPERS" type="add">Soporte para Fórmulas Mejorado, incluyendo
+            sólo-lectura para sentencias tipo "optimizado si" (optimized if).</action>
+        <action dev="POI-DEVELOPERS" type="add">Soporte para la clonación de objetos</action>
+        <action dev="POI-DEVELOPERS" type="add">Arreglos en la cabecera/pie</action>
+        <action dev="POI-DEVELOPERS" type="add">Traducciones de la documentación al Español</action>
+        <action dev="POI-DEVELOPERS" type="add">Soporte para preservar macros VBA</action>
+    </release>
+    <release version="1.7-dev" date="???">
         <action dev="NKB" type="update">Se quita la dependencia en tiempo de ejecución del registro
 	(logging) de "commons".</action>
         <action dev="POI-DEVELOPERS" type="update">Soporte para fórmulas</action>
@@ -51,7 +61,7 @@
         <action dev="POI-DEVELOPERS">Alguna optimización en la creación de páginas.</action>
     </release>
     <release version="0.13.0" date="Fecha de distribución no registrada">
-
+        <action dev="POI-DEVELOPERS">Mejoras no registradas</action>
     </release>
     <release version="0.12.0" date="Fecha de distribución no registrada">
         <action dev="POI-DEVELOPERS">Se añaden MulBlank, Blank, ColInfo</action>
