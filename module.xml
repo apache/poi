@@ -64,7 +64,7 @@
 
     <package>org.apache.poi</package>
     
-    <ant buildfile="centibuild.xml" basedir="." target="compile" vm="1.2">
+    <ant buildfile="centibuild.xml" basedir="." target="gump" vm="1.2">
       <property name="ant.home" reference="home" project="krysalis-centipede"/>
     </ant>
         
