@@ -114,7 +114,7 @@ public class StringPtg
 
     public String toFormulaString(SheetReferences refs)
     {
-        return getValue();
+        return "\""+getValue()+"\"";
     }
     public byte getDefaultOperandClass() {
        return Ptg.CLASS_VALUE;
