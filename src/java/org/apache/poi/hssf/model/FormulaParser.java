@@ -79,6 +79,7 @@ import org.apache.poi.hssf.record.formula.*;
  *
  *  @author Avik Sengupta <avik AT Avik Sengupta DOT com>
  *  @author Andrew C. oliver (acoliver at apache dot org)
+ *  @author Eric Ladner (eladner at goldinc dot com)
  */
 public class FormulaParser {
     
@@ -90,6 +91,7 @@ public class FormulaParser {
     
     private String formulaString;
     private int pointer=0;
+    private int formulaLength;
     
     private List tokens = new java.util.Stack();
     //private Stack tokens = new java.util.Stack();
@@ -113,11 +115,19 @@ public class FormulaParser {
         formulaString = formula;
         pointer=0;
         this.book = book;
+	formulaLength = formulaString.length();
     }
     
 
     /** Read New Character From Input Stream */
     private void GetChar() {
+        // Check to see if we've walked off the end of the string.
+	// Just return if so and reset Look to smoething to keep 
+	// SkipWhitespace from spinning
+        if (pointer == formulaLength) {
+            Look = (char)0;
+	    return;
+	}
         Look=formulaString.charAt(pointer++);
         //System.out.println("Got char: "+Look);
     }
@@ -420,8 +430,8 @@ public class FormulaParser {
         while (IsAddop(Look)) {
             if ( Look == '+' )  Add();
             if (Look == '-') Subtract();
-            // if (Look == '*') Multiply();
-           // if (Look == '/') Divide();
+            if (Look == '*') Multiply();
+            if (Look == '/') Divide();
         }
     }
     
