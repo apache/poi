@@ -95,7 +95,7 @@ import org.apache.poi.poifs.filesystem.*;
  */
 public class PropertySet {
     final static byte[] BYTE_ORDER_ASSERTION =
-            new byte[]{(byte) 0xFF, (byte) 0xFE};
+            new byte[]{(byte) 0xFE, (byte) 0xFF};
     final static byte[] FORMAT_ASSERTION =
             new byte[]{(byte) 0x00, (byte) 0x00};
 
