@@ -125,7 +125,7 @@ public class HeaderRecord
     /**
      * set the length of the header string
      *
-     * @param length of the header string
+     * @param len  length of the header string
      * @see #setHeader(String)
      */
 

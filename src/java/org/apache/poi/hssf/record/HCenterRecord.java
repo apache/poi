@@ -117,7 +117,7 @@ public class HCenterRecord
 
     /**
      * set whether or not to horizonatally center this sheet.
-     * @param center - t/f
+     * @param hc  center - t/f
      */
 
     public void setHCenter(boolean hc)

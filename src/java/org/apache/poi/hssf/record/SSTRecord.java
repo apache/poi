@@ -294,9 +294,8 @@ public class SSTRecord
      * WRONG AND WILL RESULT IN BAD BEHAVIOR WHEN THIS RECORD IS
      * WRITTEN OUT AND ANOTHER PROCESS ATTEMPTS TO READ THE RECORD
      *
-     * @param number of strings
+     * @param count  number of strings
      *
-     * @param count
      */
 
     public void setNumStrings(final int count)
@@ -312,9 +311,7 @@ public class SSTRecord
      * THIS RECORD IS WRITTEN OUT AND ANOTHER PROCESS ATTEMPTS TO READ
      * THE RECORD
      *
-     * @param number of strings
-     *
-     * @param count
+     * @param count  number of strings
      */
 
     public void getNumUniqueStrings(final int count)
@@ -421,7 +418,7 @@ public class SSTRecord
                     pos = 0;
                     int to_be_written = (unicodesize - stringbyteswritten)
                                         + (lastneedcontinue ? 1
-                                                            : 0);
+                                                            : 0);           // not used?
 
                     size      =
                         (( Integer ) _record_lengths
@@ -527,7 +524,7 @@ public class SSTRecord
         {
 
             // short data: write one simple SST record
-            int datasize = _sst_record_overhead + unicodesize;
+            int datasize = _sst_record_overhead + unicodesize;           // not used?
 
             writeSSTHeader(
                 data, 0 + offset,
@@ -549,6 +546,7 @@ public class SSTRecord
         return rval;
     }
 
+    // not used: remove?
     private int calculateStringsize()
     {
         int retval = 0;

@@ -119,7 +119,7 @@ public class RefModeRecord
 
     /**
      * set the reference mode to use (HSSF uses/assumes A1)
-     * @param the mode to use
+     * @param mode the mode to use
      * @see #USE_A1_MODE
      * @see #USE_R1C1_MODE
      *

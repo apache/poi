@@ -142,7 +142,7 @@ public class NumberRecord
     /**
      * set the index to the ExtendedFormat
      * @see org.apache.poi.hssf.record.ExtendedFormatRecord
-     * @param index to the XF record
+     * @param xf  index to the XF record
      */
 
     public void setXFIndex(short xf)
@@ -153,7 +153,7 @@ public class NumberRecord
     /**
      * set the value for the cell
      *
-     * @param double representing the value
+     * @param value  double representing the value
      */
 
     public void setValue(double value)

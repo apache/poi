@@ -119,7 +119,7 @@ public class PasswordRev4Record
     /**
      * set the password
      *
-     * @param short  representing the password
+     * @param pw  representing the password
      */
 
     public void setPassword(short pw)

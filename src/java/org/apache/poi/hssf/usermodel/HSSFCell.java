@@ -327,16 +327,13 @@ public class HSSFCell
     /**
      * private constructor to prevent blank construction
      */
-
     private HSSFCell()
     {
     }
-    ;
 
     /**
      * used internally -- given a cell value record, figure out its type
      */
-
     private int determineType(CellValueRecordInterface cval)
     {
         Record record = ( Record ) cval;
@@ -375,7 +372,7 @@ public class HSSFCell
 
     /**
      * set the cell's number within the row (0 based)
-     * @param short the cell number
+     * @param num  short the cell number
      */
 
     public void setCellNum(short num)
@@ -607,7 +604,7 @@ public class HSSFCell
     /**
      * set a numeric value for the cell
      *
-     * @param double the numeric value to set this cell to.  For formulas we'll set the
+     * @param value  the numeric value to set this cell to.  For formulas we'll set the
      *        precalculated value, for numerics we'll set its value. For other types we
      *        will change the cell to a numeric cell and set its value.
      */
@@ -626,7 +623,7 @@ public class HSSFCell
     /**
      * set a string value for the cell.
      *
-     * @param String value to set the cell to.  For formulas we'll set the formula
+     * @param value  value to set the cell to.  For formulas we'll set the formula
      * string, for String cells we'll set its value.  For other types we will
      * change the cell to a string cell and set its value.
      * If value is null then we will change the cell to a Blank cell.
@@ -798,7 +795,7 @@ public class HSSFCell
      * set the style for the cell.  The style should be an HSSFCellStyle created/retreived from
      * the HSSFWorkbook.
      *
-     * @param HSSFCellStyle reference contained in the workbook
+     * @param style  reference contained in the workbook
      * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#createCellStyle()
      * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#getCellStyleAt(short)
      */

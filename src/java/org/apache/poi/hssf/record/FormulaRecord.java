@@ -172,7 +172,7 @@ public class FormulaRecord
     /**
      * set the calculated value of the formula
      *
-     * @param calculated value
+     * @param value  calculated value
      */
 
     public void setValue(double value)
@@ -183,7 +183,7 @@ public class FormulaRecord
     /**
      * set the option flags
      *
-     * @param bitmask
+     * @param options  bitmask
      */
 
     public void setOptions(short options)
@@ -193,7 +193,7 @@ public class FormulaRecord
 
     /**
      * set the length (in number of tokens) of the expression
-     * @param length
+     * @param len  length
      */
 
     public void setExpressionLength(short len)
@@ -251,7 +251,7 @@ public class FormulaRecord
     /**
      * push a token onto the stack
      *
-     * @param Ptg - the token
+     * @param ptg  the token
      */
 
     public void pushExpressionToken(Ptg ptg)

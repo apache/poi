@@ -143,7 +143,7 @@ public class StyleRecord
 
     /**
      * set the entire index field (including the type) (see bit setters that reference this method)
-     *  @param bitmask
+     *  @param index  bitmask
      */
 
     public void setIndex(short index)

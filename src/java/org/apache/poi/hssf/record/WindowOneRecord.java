@@ -170,7 +170,7 @@ public class WindowOneRecord
 
     /**
      * set the width of the window
-     * @param width
+     * @param w  width
      */
 
     public void setWidth(short w)
@@ -180,7 +180,7 @@ public class WindowOneRecord
 
     /**
      * set teh height of the window
-     * @param height
+     * @param h  height
      */
 
     public void setHeight(short h)
@@ -213,7 +213,7 @@ public class WindowOneRecord
 
     /**
      * set whether the window has been iconized or not
-     * @param iconize  or not
+     * @param isiconic  iconize  or not
      */
 
     public void setIconic(boolean isiconic)
@@ -223,7 +223,7 @@ public class WindowOneRecord
 
     /**
      * set whether to display the horizontal scrollbar or not
-     * @param display or not
+     * @param scroll display or not
      */
 
     public void setDisplayHorizonalScrollbar(boolean scroll)
@@ -233,7 +233,7 @@ public class WindowOneRecord
 
     /**
      * set whether to display the vertical scrollbar or not
-     * @param display or not
+     * @param scroll  display or not
      */
 
     public void setDisplayVerticalScrollbar(boolean scroll)
@@ -243,7 +243,7 @@ public class WindowOneRecord
 
     /**
      * set whether to display the tabs or not
-     * @param display or not
+     * @param disptabs  display or not
      */
 
     public void setDisplayTabs(boolean disptabs)
@@ -255,7 +255,7 @@ public class WindowOneRecord
 
     /**
      * set the selected tab number
-     * @param Tab number
+     * @param s  tab number
      */
 
     public void setSelectedTab(short s)
@@ -265,7 +265,7 @@ public class WindowOneRecord
 
     /**
      * set the displayed tab number
-     * @param Tab number
+     * @param t  tab number
      */
 
     public void setDisplayedTab(short t)
@@ -275,7 +275,7 @@ public class WindowOneRecord
 
     /**
      * set the number of selected tabs
-     * @param number of tabs
+     * @param n  number of tabs
      */
 
     public void setNumSelectedTabs(short n)
@@ -285,7 +285,7 @@ public class WindowOneRecord
 
     /**
      * ratio of the width of the tabs to the horizontal scrollbar
-     * @param ratio
+     * @param r  ratio
      */
 
     public void setTabWidthRatio(short r)

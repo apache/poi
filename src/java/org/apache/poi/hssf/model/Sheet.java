@@ -116,7 +116,7 @@ public class Sheet
 
     /**
      * Creates new Sheet with no intialization --useless at this point
-     * @see #createSheet(Record[],int,int)
+     * @see #createSheet(List,int,int)
      */
 
     public Sheet()
@@ -140,7 +140,6 @@ public class Sheet
      * @see org.apache.poi.hssf.model.Workbook
      * @see org.apache.poi.hssf.record.Record
      */
-
     public static Sheet createSheet(List recs, int sheetnum, int offset)
     {
         log.logFormatted(log.DEBUG,
@@ -240,7 +239,7 @@ public class Sheet
      * read support  (offset = 0) Same as createSheet(Record[] recs, int, int)
      * only the record offset is assumed to be 0.
      *
-     * @param recs array containing those records in the sheet in sequence (normally obtained from RecordFactory)
+     * @param records  array containing those records in the sheet in sequence (normally obtained from RecordFactory)
      * @param sheetnum integer specifying the sheet's number (0,1 or 2 in this release)
      * @return Sheet object
      */
@@ -553,7 +552,7 @@ public class Sheet
      * the sheet out.
      *
      * @param offset to begin write at
-     * @param byte[] array containing the binary representation of the records in this sheet
+     * @param data   array containing the binary representation of the records in this sheet
      *
      */
 
@@ -563,7 +562,7 @@ public class Sheet
 
         // addDBCellRecords();
         // ArrayList bytes     = new ArrayList(4096);
-        int arraysize = getSize();   // 0;
+        // int arraysize = getSize();   // 0;
         int pos       = 0;
 
         // for (int k = 0; k < records.size(); k++)
@@ -879,7 +878,7 @@ public class Sheet
         {
             d.setFirstRow(row.getRowNumber());
         }
-        IndexRecord index = null;
+        //IndexRecord index = null;
 
         rows.insertRow(row);
 
@@ -926,13 +925,13 @@ public class Sheet
      *
      * This method is not loc sensitive, it resets loc to = dimsloc so no worries.
      *
-     * @param the row record to remove
+     * @param row  the row record to remove
      */
 
     public void removeRow(RowRecord row)
     {
         checkRows();
-        IndexRecord index = null;
+        // IndexRecord index = null;
 
         setLoc(getDimsLoc());
         rows.removeRow(row);
@@ -1102,7 +1101,7 @@ public class Sheet
      * at what this sets it to.  For this method, set loc to dimsloc to start with.
      * subsequent calls will return rows in (physical) sequence or NULL when you get to the end.
      *
-     * @param row number - which row to return (careful with LOC)
+     * @param rownum   which row to return (careful with LOC)
      * @return RowRecord representing the next row record or NULL if there are no more
      * @see #setLoc(int)
      *
@@ -1145,8 +1144,8 @@ public class Sheet
         int         offset        = 0;
         int         recnum        = 0;
         int         rownum        = 0;
-        int         lastrow       = 0;
-        long        lastrowoffset = 0;
+        //int         lastrow       = 0;
+        //long        lastrowoffset = 0;
         IndexRecord index         = null;
 
         // ArrayList rowOffsets = new ArrayList();
@@ -1622,7 +1621,7 @@ public class Sheet
 
     /**
      * set the default column width for the sheet (if the columns do not define their own width)
-     * @param default column width
+     * @param dcw  default column width
      */
 
     public void setDefaultColumnWidth(short dcw)
@@ -1632,7 +1631,6 @@ public class Sheet
 
     /**
      * set the default row height for the sheet (if the rows do not define their own height)
-     * @return default row height
      */
 
     public void setDefaultRowHeight(short dch)
@@ -1642,7 +1640,7 @@ public class Sheet
 
     /**
      * get the default row height for the sheet (if the rows do not define their own height)
-     * @param default row height
+     * @return  default row height
      */
 
     public short getDefaultRowHeight()
@@ -1704,7 +1702,7 @@ public class Sheet
         {
             columnSizes = new ArrayList();
         }
-        int cioffset = getDimsLoc() - columnSizes.size();
+        //int cioffset = getDimsLoc() - columnSizes.size();
 
         for (k = 0; k < columnSizes.size(); k++)
         {

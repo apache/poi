@@ -175,7 +175,7 @@ public abstract class Record
      * byte array.
      *
      * @param offset to begin writing at
-     * @param byte array containing instance data
+     * @param data byte array containing instance data
      * @return number of bytes written
      */
 

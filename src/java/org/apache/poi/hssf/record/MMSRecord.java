@@ -120,7 +120,7 @@ public class MMSRecord
 
     /**
      * set number of add menu options (set to 0)
-     * @param number of add menu options
+     * @param am  number of add menu options
      */
 
     public void setAddMenuCount(byte am)
@@ -130,7 +130,7 @@ public class MMSRecord
 
     /**
      * set number of del menu options (set to 0)
-     * @param number of add menu options
+     * @param dm  number of del menu options
      */
 
     public void setDelMenuCount(byte dm)

@@ -119,7 +119,7 @@ public class PrintGridlinesRecord
     /**
      * set whether or not to print the gridlines (and make your spreadsheet ugly)
      *
-     * @param make spreadsheet ugly - Y/N
+     * @param pg  make spreadsheet ugly - Y/N
      */
 
     public void setPrintGridlines(boolean pg)

@@ -119,7 +119,7 @@ public class ProtectionRev4Record
 
     /**
      * set whether the this is protected shared/tracked workbook or not
-     * @param whether to protect the workbook or not
+     * @param protect  whether to protect the workbook or not
      */
 
     public void setProtect(boolean protect)

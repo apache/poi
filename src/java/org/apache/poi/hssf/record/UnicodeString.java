@@ -206,7 +206,7 @@ public class UnicodeString
      * set the option flags which among other things return if this is a 16-bit or
      * 8 bit string
      *
-     * @param optionflags bitmask
+     * @param of  optionflags bitmask
      *
      */
 
@@ -230,7 +230,7 @@ public class UnicodeString
 
     /**
      * set the actual string this contains
-     * @param String - the text
+     * @param string  the text
      */
 
     public void setString(String string)

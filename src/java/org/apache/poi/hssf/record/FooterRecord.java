@@ -125,7 +125,7 @@ public class FooterRecord
     /**
      * set the length of the footer string
      *
-     * @param length of the footer string
+     * @param len  length of the footer string
      * @see #setFooter(String)
      */
 
