@@ -62,7 +62,8 @@ package org.apache.poi.hpsf;
  * <p>The constructors of this class are analogous to those of its
  * superclass and documented there.</p>
  *
- * @author Rainer Klute (klute@rainer-klute.de)
+ * @author Rainer Klute <a
+ * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
  * @version $Id$
  * @since 2002-02-09
  */

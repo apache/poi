@@ -88,7 +88,7 @@ public abstract class UnsupportedVariantTypeException extends HPSFException
     {
         super("HPSF does not yet support the variant type " + variantType + 
               " (" + Variant.getVariantName(variantType) + ", " +
-              HexDump.toHex((int) variantType) + "). If you want support for " +
+              HexDump.toHex(variantType) + "). If you want support for " +
               "this variant type in one of the next POI releases please " +
               "submit a request for enhancement (RFE) to " +
               "<http://nagoya.apache.org/bugzilla/>! Thank you!");

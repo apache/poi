@@ -59,7 +59,8 @@ package org.apache.poi.hpsf;
  * thrown in this package. It supports a nested "reason" throwable,
  * i.e. an exception that caused this one to be thrown.</p>
  *
- * @author Rainer Klute (klute@rainer-klute.de)
+ * @author Rainer Klute <a
+ * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
  * @version $Id$
  * @since 2002-02-09
  */

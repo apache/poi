@@ -66,12 +66,12 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.LittleEndianConsts;
 
 /**
  * <p>Class for writing little-endian data and more.</p>
  *
- * @author Rainer Klute (klute@rainer-klute.de)
+ * @author Rainer Klute <a
+ * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
  * @version $Id$
  * @since 2003-02-20
  */
@@ -81,8 +81,9 @@ public class TypeWriter
     /**
      * <p>Writes a two-byte value (short) to an output stream.</p>
      *
-     * @param out The stream to write to
-     * @param n The value to write
+     * @param out The stream to write to.
+     * @param n The value to write.
+     * @return The number of bytes that have been written.
      * @exception IOException if an I/O error occurs
      */
     public static int writeToStream(final OutputStream out, final short n)
@@ -149,7 +150,7 @@ public class TypeWriter
         throws IOException
     {
         long high = n & 0xFFFFFFFF00000000L;
-        if (high != 0)
+        if (high != 0 && high != 0xFFFFFFFF00000000L)
             throw new IllegalPropertySetDataException
                 ("Value " + n + " cannot be represented by 4 bytes.");
         return writeToStream(out, (int) n);

@@ -61,7 +61,8 @@ package org.apache.poi.hpsf;
  *  order. Instead, it is a double word (4 bytes) followed by two
  *  words (2 bytes each) followed by 8 bytes.</p>
  *
- * @author Rainer Klute (klute@rainer-klute.de)
+ * @author Rainer Klute <a
+ * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
  * @version $Id$
  * @since 2002-02-09
  */
@@ -120,7 +121,7 @@ public class ClassID
     /**
      * <p>Gets the bytes making out the class ID. They are returned in
      * correct order, i.e. big-endian.</p>
-     * 
+     *
      * @return the bytes making out the class ID.
      */
     public byte[] getBytes()
@@ -175,7 +176,7 @@ public class ClassID
      *
      * @param offset The offset within the <var>dst</var> byte array.
      *
-     * @exception ArrayStoreException if there is not enough room for the class 
+     * @exception ArrayStoreException if there is not enough room for the class
      * ID 16 bytes in the byte array after the <var>offset</var> position.
      */
     public void write(final byte[] dst, final int offset)
@@ -226,6 +227,16 @@ public class ClassID
             if (bytes[i] != cid.bytes[i])
                 return false;
         return true;
+    }
+
+
+
+    /**
+     * @see Object#hashCode()
+     */
+    public int hashCode()
+    {
+        throw new UnsupportedOperationException("FIXME: Not yet implemented.");
     }
 
 }

@@ -67,7 +67,8 @@ import org.apache.poi.util.LittleEndian;
 /**
  * <p>Represents a section in a {@link PropertySet}.</p>
  *
- * @author Rainer Klute (klute@rainer-klute.de)
+ * @author Rainer Klute <a
+ * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
  * @author Drew Varner (Drew.Varner allUpIn sc.edu)
  * @version $Id$
  * @since 2002-02-09
@@ -493,7 +494,7 @@ public class Section
     /**
      * <p>Checks whether this section is equal to another object.</p>
      * 
-     * @param o The object to cpmpare this section with
+     * @param o The object to compare this section with
      * @return <code>true</code> if the objects are equal, <code>false</code> if
      * not
      */
@@ -507,6 +508,52 @@ public class Section
         if (s.getPropertyCount() != getPropertyCount())
             return false;
         return Util.equals(s.getProperties(), getProperties());
+    }
+
+
+
+    /**
+     * @see Object#hashCode()
+     */
+    public int hashCode()
+    {
+        long hashCode = 0;
+        hashCode += getFormatID().hashCode();
+        final Property[] pa = getProperties();
+        for (int i = 0; i < pa.length; i++)
+            hashCode += pa[i].hashCode();
+        final int returnHashCode = (int) (hashCode & 0x0ffffffffL);
+        return returnHashCode;
+    }
+
+
+
+    /**
+     * @see Object#toString()
+     */
+    public String toString()
+    {
+        final StringBuffer b = new StringBuffer();
+        final Property[] pa = getProperties();
+        b.append(getClass().getName());
+        b.append('[');
+        b.append("formatID: ");
+        b.append(getFormatID());
+        b.append(", offset: ");
+        b.append(getOffset());
+        b.append(", propertyCount: ");
+        b.append(getPropertyCount());
+        b.append(", size: ");
+        b.append(getSize());
+        b.append(", properties: [\n");
+        for (int i = 0; i < pa.length; i++)
+        {
+            b.append(pa[i].toString());
+            b.append(",\n");
+        }
+        b.append(']');
+        b.append(']');
+        return b.toString();
     }
 
 }

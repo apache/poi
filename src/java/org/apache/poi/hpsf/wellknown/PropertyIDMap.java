@@ -66,9 +66,9 @@ import java.util.HashMap;
  * should treat them as unmodifiable, copy them and modifiy the
  * copies.</p>
  *
- * <p><strong>FIXME:</strong> Make the singletons unmodifiable. However, 
+ * <p><strong>FIXME (3):</strong> Make the singletons unmodifiable. However, 
  * since this requires to use a {@link HashMap} delegate instead of
- * extending {@link HashMap} and thus requires a lot of stupid typing. I won't
+ * extending {@link HashMap} and thus requires a lot of stupid typing, I won't
  * do that for the time being.</p>
  *
  * @author Rainer Klute (klute@rainer-klute.de)
@@ -141,7 +141,7 @@ public class PropertyIDMap extends HashMap
      * document</p> */
     public static final int PID_APPNAME = 18;
 
-    /** <p>ID of the property that denotes... FIXME</p> */
+    /** <p>ID of the property that denotes... FIXME (2)</p> */
     public static final int PID_SECURITY = 19;
 
 

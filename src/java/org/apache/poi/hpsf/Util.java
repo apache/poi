@@ -78,7 +78,7 @@ public class Util
      *  <li><p>if for each <var>i</var> with
      *  <var>i</var>&nbsp;&gt;=&nbsp;0 and
      *  <var>i</var>&nbsp;&lt;&nbsp;<var>a.length</var> holds
-     *  <var>a</var>[<var>i</var>]&nbsp;==&nbsp;<var>b</var>[<var>i</var>].</p></li>
+     *  <var>a</var>[<var>i</var>]&nbsp;== <var>b</var>[<var>i</var>].</p></li>
      *
      * </ul>
      *
@@ -191,6 +191,16 @@ public class Util
         return new Date(ms_since_19700101);
     }
 
+
+
+    /**
+     * <p>Converts a {@link Date} into a filetime.</p>
+     *
+     * @param date The date to be converted
+     * @return The filetime
+     * 
+     * @see #filetimeToDate
+     */
     public static long dateToFileTime(final Date date)
     {
         long ms_since_19700101 = date.getTime();
@@ -228,6 +238,17 @@ public class Util
         return internalEquals(o1, o2);
     }
 
+
+
+    /**
+     * <p>Compares to object arrays with regarding the objects' order. For
+     * example, [1, 2, 3] and [2, 1, 3] are equal.</p>
+     *
+     * @param c1 The first object array.
+     * @param c2 The second object array.
+     * @return <code>true</code> if the object arrays are equal,
+     * <code>false</code> if they are not.
+     */
     public static boolean equals(final Object[] c1, final Object[] c2)
     {
         final Object[] o1 = (Object[]) c1.clone();
@@ -250,6 +271,70 @@ public class Util
                 return false;
         }
         return true;
+    }
+
+
+
+    /**
+     * <p>Pads a byte array with 0x00 bytes so that its length is a multiple of
+     * 4.</p>
+     *
+     * @param ba The byte array to pad.
+     * @return The padded byte array.
+     */
+    public static byte[] pad4(final byte[] ba)
+    {
+        final int PAD = 4;
+        final byte[] result;
+        int l = ba.length % PAD;
+        if (l == 0)
+            result = ba;
+        else
+        {
+            l = PAD - l;
+            result = new byte[ba.length + l];
+            System.arraycopy(ba, 0, result, 0, ba.length);
+        }
+        return result;
+    }
+
+
+
+    /**
+     * <p>Pads a character array with 0x0000 characters so that its length is a
+     * multiple of 4.</p>
+     *
+     * @param ca The character array to pad.
+     * @return The padded character array.
+     */
+    public static char[] pad4(final char[] ca)
+    {
+        final int PAD = 4;
+        final char[] result;
+        int l = ca.length % PAD;
+        if (l == 0)
+            result = ca;
+        else
+        {
+            l = PAD - l;
+            result = new char[ca.length + l];
+            System.arraycopy(ca, 0, result, 0, ca.length);
+        }
+        return result;
+    }
+
+
+
+    /**
+     * <p>Pads a string with 0x0000 characters so that its length is a
+     * multiple of 4.</p>
+     *
+     * @param s The string to pad.
+     * @return The padded string as a character array.
+     */
+    public static char[] pad4(final String s)
+    {
+        return pad4(s.toCharArray());
     }
 
 }
