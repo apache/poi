@@ -16,8 +16,9 @@
 
    <ol>
     <li>
-     Add writing capability for property sets. Presently property sets can
-      be read only.
+     Improve writing support! We need convenience classes and methods for
+     easily writing summary information streams and document summary
+     information streams.
     </li>
     <li>
      Add codepage support: Presently the bytes making out the string in a
@@ -38,8 +39,7 @@
     </li>
     <li>
      Add WMF to <code>java.awt.Image</code> example code in <link
-     href="thumbnails.html">Thumbnail
-     HOW TO</link>.
+     href="thumbnails.html">Thumbnail HOW TO</link>.
     </li>
    </ol>
   </section>
