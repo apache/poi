@@ -16,7 +16,7 @@
     The Poi Project operates on a meritocracy: the more you do, the more
     responsibility you will obtain. This page lists all of the people who have
     gone the extra mile and are Committers. If you would like to get involved,
-    the first step is to join the mailing lists.
+    the first step is to join the <link href="http://jakarta.apache.org/mail2.html#poi">mailing lists</link>.
   </p>
 
   <p>
@@ -37,7 +37,7 @@
     </ul>
   </section>
 
-  <section><title>Honorary Committers</title>
+  <section><title>Emeritus Committers</title>
     <ul>
       <li>Nicola Ken Barozzi (barozzi at nicolaken dot com)</li>
     </ul>
@@ -52,12 +52,13 @@
       <li>Ryan Ackley (sackley at apache dot org)</li>
       <li>Avik Sengupta (avik at apache dot org)</li>
       <li>Shawn Laubach (slaubach at apache dot org)</li>
+      <li>Danny Mui (dmui at apache dot org)</li>
+      <li>Jason Height (jheight at apache dot org)</li>
       <li><link href="http://www.apache.org/~tetsuya/">Tetsuya Kitahata</link> (tetsuya at apache dot org)</li>
     </ul>
   </section>
   <section><title>Developers</title>
     <ul>
-      <li>Jason Height (jheight at chariot dot net dot au)</li>
       <li>Agust&#237;n Mart&#237;n (agusmba at terra dot es)</li>
     </ul>
   </section>
