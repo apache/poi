@@ -353,6 +353,21 @@ printed.
   </target>     
 
   <!-- ================================== -->
+  <!--    Generates the site              -->
+  <!-- ================================== -->
+  
+  <target  name="site"
+           description="Makes all the site doco">
+
+      <antcall target="docs"/>
+      <antcall target="compile"/>
+      <antcall target="javadocs"/>
+      <antcall target="test"/>
+      <antcall target="metrics"/>
+             
+  </target>     
+  
+  <!-- ================================== -->
   <!--       Generates the javadocs       -->
   <!-- ================================== -->
   
