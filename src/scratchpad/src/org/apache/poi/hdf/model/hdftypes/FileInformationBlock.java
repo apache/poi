@@ -4,13 +4,13 @@ import org.apache.poi.util.BitField;
 import org.apache.poi.util.LittleEndian;
 
 
-import org.apache.poi.hdf.model.hdftypes.definitions;
+//import org.apache.poi.hdf.model.hdftypes.definitions;
 
 /**
  *
  * @author  andy
  */
-public class FileInformationBlock extends FIBAbstractType
+public class FileInformationBlock //extends FIBAbstractType
 {
 
     private  short field_1_id;
