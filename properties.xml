@@ -34,12 +34,13 @@
    <centipede>
       <tools>
          <cents repository="http://krysalis.org/jars/">
-            <antidote/>
+            <!-- not currently used by POI
+                 <antidote/>
+                 <xmldoclet/> -->            
             <centipede/>
             <junit/>
             <jdepend/>
             <checkstyle/>
-            <xmldoclet/>
             <umldoclet/>
             <forrest>
               <!-- available skins:
