@@ -131,7 +131,7 @@
           href="../../poifs/index.html">POIFS-Seite</link>.
         </p>
       </section>
-      <section><title>HSSF (Horrible Spreadsheet Format)</title>
+      <section><title>HSSF</title>
         <p>
           HSSF ist unsere Portierung des Microsoft Excel 97(-2002)
           Dateiformats in reinem Java. Es unterstützt Lesen und
@@ -139,7 +139,7 @@
           <link href="../../hssf/index.html">HSSF-Seite</link>.
         </p>
       </section>
-      <section><title>HWPF (Horrible Document Format)</title>
+      <section><title>HWPF</title>
         <p>
           HWPF ist unsere Portierung des Microsoft Word 97 Datei-Formats
           in reinem Java. Es unterstützt Lesen und Schreiben. Mehr
@@ -149,7 +149,7 @@
           Entwickler, die mitmachen.
         </p>
       </section>
-      <section><title>HPSF (Horrible Property Set Format)</title>
+      <section><title>HPSF</title>
         <p>
           HPSF ist unsere Portierung des OLE 2 Property Formats.
           Property Sets werden häufig genutzt, um Metadaten eines
