@@ -67,7 +67,7 @@ import org.apache.poi.util.LittleEndian;
 import org.apache.poi.hssf.record.formula.*;
 
 /**
- * Formula Record - This is not really supported in this release.  Its here for future use.<P>
+ * Formula Record.
  * REFERENCE:  PG 317/444 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
  * @author Andrew C. Oliver (acoliver at apache dot org)
  * @version 2.0-pre
@@ -134,7 +134,7 @@ public class FormulaRecord
 
     protected void fillFields(byte [] data, short size, int offset)
     {
-        if (EXPERIMENTAL_FORMULA_SUPPORT_ENABLED) {
+        try {
         //field_1_row            = LittleEndian.getShort(data, 0 + offset);
         field_1_row            = LittleEndian.getUShort(data, 0 + offset);
         field_2_column         = LittleEndian.getShort(data, 2 + offset);
@@ -146,11 +146,15 @@ public class FormulaRecord
         field_8_parsed_expr    = getParsedExpressionTokens(data, size,
                                  offset);
         
-        } else {
+        } catch (java.lang.UnsupportedOperationException uoe)  {
+            field_8_parsed_expr = null;
             all_data = new byte[size+4];
             LittleEndian.putShort(all_data,0,sid);
             LittleEndian.putShort(all_data,2,size);
             System.arraycopy(data,offset,all_data,4,size);
+            System.err.println("[WARNING] Unknown Ptg " 
+                    + uoe.getMessage() 
+                    + " at cell ("+field_1_row+","+field_2_column+")");
         }
 
     }
@@ -164,7 +168,6 @@ public class FormulaRecord
         while (pos < size)
         {
             Ptg ptg = Ptg.createPtg(data, pos);
-
             pos += ptg.getSize();
             stack.push(ptg);
         }
@@ -307,13 +310,20 @@ public class FormulaRecord
 
     public int getNumberOfExpressionTokens()
     {
-        return field_8_parsed_expr.size();
+        if (this.field_8_parsed_expr == null) {
+            return 0;
+        } else {
+            return field_8_parsed_expr.size();
+        }
     }
 
     /**
      * get the stack as a list
      *
      * @return list of tokens (casts stack to a list and returns it!)
+     * this method can return null is we are unable to create Ptgs from 
+     *     existing excel file
+     * callers should check for null!
      */
 
     public List getParsedExpression()
@@ -351,7 +361,7 @@ public class FormulaRecord
 
     public int serialize(int offset, byte [] data)
     {
-        if (EXPERIMENTAL_FORMULA_SUPPORT_ENABLED) {
+        if (this.field_8_parsed_expr != null) {
         int ptgSize = getTotalPtgSize();
 
         LittleEndian.putShort(data, 0 + offset, sid);
@@ -378,7 +388,7 @@ public class FormulaRecord
     {
         int retval =0;
         
-        if (EXPERIMENTAL_FORMULA_SUPPORT_ENABLED) {
+        if (this.field_8_parsed_expr != null) {
             retval = getTotalPtgSize() + 26;
         } else {
             retval =all_data.length;

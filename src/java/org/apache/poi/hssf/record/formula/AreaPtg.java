@@ -109,7 +109,7 @@ public class AreaPtg
         field_2_last_row     = LittleEndian.getShort(data, 2 + offset);
         field_3_first_column = LittleEndian.getShort(data, 4 + offset);
         field_4_last_column  = LittleEndian.getShort(data, 6 + offset);
-        System.out.println(toString());
+        //System.out.println(toString());
     }
 
     public String toString()

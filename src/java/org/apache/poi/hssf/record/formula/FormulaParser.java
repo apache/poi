@@ -65,7 +65,7 @@ import java.io.File;
 
 
 /**
- * This class parses a formula string into a List of tokens in RPN order
+ * This class parses a formula string into a List of tokens in RPN order.
  * Inspired by 
  *           Lets Build a Compiler, by Jack Crenshaw
  * BNF for the formula expression is :
@@ -271,8 +271,7 @@ public class FormulaParser {
             ptg.setSum(true);
             retval = ptg;
         } else {
-            FunctionPtg ptg = new FunctionPtg(name,numArgs);
-            retval = ptg;
+            retval = new FuncVarPtg(name,numArgs);
         }
         
         return retval;
@@ -438,6 +437,12 @@ end;
         }
     }
     
+    
+    /*********************************
+     * PARSER IMPLEMENTATION ENDS HERE
+     * EXCEL SPECIFIC METHODS BELOW
+     *******************************/
+    
     /** API call to retrive the array of Ptgs created as 
      * a result of the parsing
      */
@@ -469,11 +474,11 @@ end;
     
     private void setParameterRVA(Node n, int formulaType) {
         Ptg p = (Ptg) n.getValue();
-        if (p instanceof FunctionPtg) {
+        if (p instanceof AbstractFunctionPtg) {
             int numOperands = n.getNumChildren();
             for (int i =0;i<n.getNumChildren();i++) {
-                setParameterRVA(n.getChild(i),((FunctionPtg)p).getParameterClass(i),formulaType);
-                if (n.getChild(i).getValue() instanceof FunctionPtg) {
+                setParameterRVA(n.getChild(i),((AbstractFunctionPtg)p).getParameterClass(i),formulaType);
+                if (n.getChild(i).getValue() instanceof AbstractFunctionPtg) {
                     setParameterRVA(n.getChild(i),formulaType);
                 }
             }  
@@ -517,7 +522,7 @@ end;
     
      private void setClass(Node n, byte theClass) {
         Ptg p = (Ptg) n.getValue();
-        if (p instanceof FunctionPtg || !(p instanceof OperationPtg)) {
+        if (p instanceof AbstractFunctionPtg || !(p instanceof OperationPtg)) {
             p.setClass(theClass);
         } else {
             for (int i =0;i<n.getNumChildren();i++) {
@@ -527,10 +532,12 @@ end;
      }
     /**
      * Convience method which takes in a list then passes it to the other toFormulaString
-     * signature
+     * signature. 
+     * @param lptgs - list of ptgs, can be null
      */
     public static String toFormulaString(List lptgs) {
         String retval = null;
+        if (lptgs == null || lptgs.size() == 0) return "#NAME";
         Ptg[] ptgs = new Ptg[lptgs.size()];
         ptgs = (Ptg[])lptgs.toArray(ptgs);
         retval = toFormulaString(ptgs);
@@ -539,19 +546,19 @@ end;
     
     /** Static method to convert an array of Ptgs in RPN order 
      *  to a human readable string format in infix mode
+     *  @param ptgs - array of ptgs, can be null or empty
      */
     public static String toFormulaString(Ptg[] ptgs) {
+        if (ptgs == null || ptgs.length == 0) return "#NAME";
         java.util.Stack stack = new java.util.Stack();
         int numPtgs = ptgs.length;
         OperationPtg o;
         int numOperands;
         String[] operands;
         for (int i=0;i<numPtgs;i++) {
-            if (ptgs[i] instanceof OperationPtg) {
-
-                // Excel allows to have AttrPtg at position 0 (such as Blanks) which
-                // do not have any operands. Skip them.
-                if(i > 0) {
+           // Excel allows to have AttrPtg at position 0 (such as Blanks) which
+           // do not have any operands. Skip them.
+            if (ptgs[i] instanceof OperationPtg && i>0) {
                   o = (OperationPtg) ptgs[i];
                   numOperands = o.getNumberOfOperands();
                   operands = new String[numOperands];
@@ -561,7 +568,6 @@ end;
                   }  
                   String result = o.toFormulaString(operands);
                   stack.push(result);
-                }
             } else {
                 stack.push(ptgs[i].toFormulaString());
             }
