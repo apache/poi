@@ -570,11 +570,9 @@ public class FormulaRecord
                 buffer.append("    .numptgsinarray  = ").append(field_8_parsed_expr.size())
                     .append("\n");
             
-            
+
                 for (int k = 0; k < field_8_parsed_expr.size(); k++ ) {
-/*                buffer.append("formula ").append(k).append(" ")
-                  .append(((Ptg)field_8_parsed_expr.get(k)).toFormulaString());*/
-                    buffer.append("Formula ")
+                   buffer.append("Formula ")
                         .append(k)
                         .append("=")
                         .append(field_8_parsed_expr.get(k).toString())
@@ -582,6 +580,9 @@ public class FormulaRecord
                         .append(((Ptg)field_8_parsed_expr.get(k)).toDebugString())
                         .append("\n");
                 }
+            }else {
+                buffer.append("Formula full data \n")
+                    .append(org.apache.poi.util.HexDump.dump(this.all_data,0,0));
             }
             
             
