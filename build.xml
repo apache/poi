@@ -161,7 +161,9 @@
 
     <target name="init" depends="check-jars,fetch-jars">
 
-        <tstamp/>
+        <tstamp>
+          <format property="tstamp.year" pattern="yyyy"/>
+        </tstamp>
 
         <available resource="clovertasks" property="clover.present"/>
         <antcall target="with.clover"/>
@@ -540,7 +542,8 @@ FORREST_HOME environment variable!</echo>
 
 
   <!-- Generates the API documentation. -->
-  <target name="javadocs" description="Generates the API documentation">
+  <target name="javadocs" depends="init"
+    description="Generates the API documentation">
     <javadoc
       destdir="${apidocs.report.dir}"
       author="true"
@@ -567,7 +570,8 @@ FORREST_HOME environment variable!</echo>
 
       <doctitle><![CDATA[<h1>POI Documentation</h1>]]></doctitle>
       <bottom>
-        <![CDATA[<i>Copyright &#169; 2005 Apache Software Foundation.</i>]]>
+        <![CDATA[<i>Copyright ${tstamp.year} The Apache Software Foundation or
+	its licensors, as applicable.</i>]]>
       </bottom>
       <group title="HDF" packages="org.apache.poi.hdf*"/>
       <group title="HPSF" packages="org.apache.poi.hpsf*"/>
