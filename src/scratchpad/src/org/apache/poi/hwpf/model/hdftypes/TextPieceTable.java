@@ -69,6 +69,7 @@ public class TextPieceTable
 {
   ArrayList _textPieces = new ArrayList();
   int _multiple;
+  int _cpMin;
 
   public TextPieceTable(byte[] documentStream, byte[] tableStream, int offset,
                         int size, int fcMin)
@@ -94,6 +95,7 @@ public class TextPieceTable
       }
     }
 
+    _cpMin = pieces[0].getFilePosition() - fcMin;
     // using the PieceDescriptors, build our list of TextPieces.
     for (int x = 0; x < pieces.length; x++)
     {
@@ -113,6 +115,11 @@ public class TextPieceTable
       _textPieces.add(new TextPiece(nodeStart, nodeEnd, buf, pieces[x]));
 
     }
+  }
+
+  public int getCpMin()
+  {
+    return _cpMin;
   }
 
   public List getTextPieces()
@@ -150,6 +157,24 @@ public class TextPieceTable
     return textPlex.toByteArray();
 
   }
+
+
+  public int adjustForInsert(int listIndex, int length)
+  {
+    int size = _textPieces.size();
+
+    TextPiece tp = (TextPiece)_textPieces.get(listIndex);
+    length = length * (tp.usesUnicode() ? 2 : 1);
+    tp.setEnd(tp.getEnd() + length);
+    for (int x = listIndex + 1; x < size; x++)
+    {
+      tp = (TextPiece)_textPieces.get(x);
+      tp.setStart(tp.getStart() + length);
+      tp.setEnd(tp.getEnd() + length);
+    }
+    return length;
+  }
+
 
   public boolean equals(Object o)
   {

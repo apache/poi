@@ -86,7 +86,7 @@ public class SectionTable
       // check for the optimization
       if (fileOffset == 0xffffffff)
       {
-        _sections.add(new SEPX(sed, node.getStart() - fcMin, node.getEnd() - fcMin, new byte[0]));
+        _sections.add(new SEPX(sed, node.getStart(), node.getEnd(), new byte[0]));
       }
       else
       {
@@ -95,10 +95,25 @@ public class SectionTable
         byte[] buf = new byte[sepxSize];
         fileOffset += LittleEndian.SHORT_SIZE;
         System.arraycopy(documentStream, fileOffset, buf, 0, buf.length);
-        _sections.add(new SEPX(sed, node.getStart() - fcMin, node.getEnd() - fcMin, buf));
+        _sections.add(new SEPX(sed, node.getStart(), node.getEnd(), buf));
       }
     }
   }
+
+  public void adjustForInsert(int listIndex, int length)
+  {
+    int size = _sections.size();
+    SEPX sepx = (SEPX)_sections.get(listIndex);
+    sepx.setEnd(sepx.getEnd() + length);
+
+    for (int x = listIndex + 1; x < size; x++)
+    {
+      sepx = (SEPX)_sections.get(x);
+      sepx.setStart(sepx.getStart() + length);
+      sepx.setEnd(sepx.getEnd() + length);
+    }
+  }
+
 
   public ArrayList getSections()
   {
@@ -133,7 +148,7 @@ public class SectionTable
       sed.setFc(offset);
 
       // add the section descriptor bytes to the PlexOfCps.
-      PropertyNode property = new PropertyNode(sepx.getStart() - fcMin, sepx.getEnd() - fcMin, sed.toByteArray());
+      PropertyNode property = new PropertyNode(sepx.getStart(), sepx.getEnd(), sed.toByteArray());
       plex.addProperty(property);
 
       offset = docStream.getOffset();

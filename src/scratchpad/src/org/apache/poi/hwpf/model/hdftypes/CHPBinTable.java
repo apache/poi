@@ -109,6 +109,58 @@ public class CHPBinTable
     }
   }
 
+  public void adjustForDelete(int listIndex, int offset, int length)
+  {
+    int size = _textRuns.size();
+    int endMark = offset + length;
+    int endIndex = listIndex;
+
+    CHPX chpx = (CHPX)_textRuns.get(endIndex);
+    while (chpx.getEnd() < endMark)
+    {
+      chpx = (CHPX)_textRuns.get(++endIndex);
+    }
+    if (listIndex == endIndex)
+    {
+      chpx = (CHPX)_textRuns.get(endIndex);
+      chpx.setEnd((chpx.getEnd() - endMark) + offset);
+    }
+    else
+    {
+      chpx = (CHPX)_textRuns.get(listIndex);
+      chpx.setEnd(offset);
+      for (int x = listIndex + 1; x < endIndex; x++)
+      {
+        chpx = (CHPX)_textRuns.get(x);
+        chpx.setStart(offset);
+        chpx.setEnd(offset);
+      }
+      chpx = (CHPX)_textRuns.get(endIndex);
+      chpx.setEnd((chpx.getEnd() - endMark) + offset);
+    }
+
+    for (int x = endIndex + 1; x < size; x++)
+    {
+      chpx = (CHPX)_textRuns.get(x);
+      chpx.setStart(chpx.getStart() - length);
+      chpx.setEnd(chpx.getEnd() - length);
+    }
+  }
+
+  public void adjustForInsert(int listIndex, int length)
+  {
+    int size = _textRuns.size();
+    CHPX chpx = (CHPX)_textRuns.get(listIndex);
+    chpx.setEnd(chpx.getEnd() + length);
+
+    for (int x = listIndex + 1; x < size; x++)
+    {
+      chpx = (CHPX)_textRuns.get(x);
+      chpx.setStart(chpx.getStart() + length);
+      chpx.setEnd(chpx.getEnd() + length);
+    }
+  }
+
   public List getTextRuns()
   {
     return _textRuns;

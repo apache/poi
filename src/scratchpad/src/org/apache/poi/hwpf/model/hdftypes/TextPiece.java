@@ -55,7 +55,7 @@
 package org.apache.poi.hwpf.model.hdftypes;
 
 
-
+import java.io.UnsupportedEncodingException;
 /**
  * Lightweight representation of a text piece.
  *
@@ -75,8 +75,9 @@ public class TextPiece extends PropertyNode implements Comparable
    * @param unicode true if this text is unicode.
    */
   public TextPiece(int start, int end, byte[] text, PieceDescriptor pd)
+    throws UnsupportedEncodingException
   {
-      super(start, end, text);
+      super(start, end, new StringBuffer(new String(text, pd.isUnicode() ? "UTF-16LE" : "Cp1252")));
       _usesUnicode = pd.isUnicode();
       _length = end - start;
       _pd = pd;
@@ -94,6 +95,27 @@ public class TextPiece extends PropertyNode implements Comparable
      return _pd;
    }
 
+   public StringBuffer getStringBuffer()
+   {
+     return (StringBuffer)_buf;
+   }
+
+   public byte[] getBuf()
+   {
+     try
+     {
+       return ((StringBuffer)_buf).toString().getBytes(_usesUnicode ?
+           "UTF-16LE" : "Cp1252");
+     }
+     catch (UnsupportedEncodingException ignore)
+     {
+       // shouldn't ever happen considering we wouldn't have been able to
+       // create the StringBuffer w/o getting this exception
+       return ((StringBuffer)_buf).toString().getBytes();
+     }
+
+   }
+
    public boolean equals(Object o)
    {
      if (super.equals(o))
@@ -103,4 +125,5 @@ public class TextPiece extends PropertyNode implements Comparable
      }
      return false;
    }
+
 }
