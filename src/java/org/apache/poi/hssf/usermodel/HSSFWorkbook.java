@@ -898,7 +898,7 @@ public class HSSFWorkbook
 		if (name == null) return null;
 		//adding one here because 0 indicates a global named region; doesnt make sense for print areas
    
-		return name.getAreaReference(workbook.getSheetReferences());
+		return name.getAreaReference(workbook);
 	}    
     
     /**

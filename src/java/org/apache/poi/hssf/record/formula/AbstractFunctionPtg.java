@@ -54,9 +54,8 @@
 package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.util.BinaryTree;
-import org.apache.poi.hssf.util.SheetReferences;
+import org.apache.poi.hssf.model.Workbook;
 
-import java.util.Stack;
 
 /**
  * This class provides the base functionality for Excel sheet functions 
@@ -69,7 +68,7 @@ public abstract class AbstractFunctionPtg extends OperationPtg {
 	//constant used allow a ptgAttr to be mapped properly for its functionPtg
 	public static final String ATTR_NAME = "specialflag";
 	    
-      
+    public static final short INDEX_EXTERNAL = 255;
     
     private static BinaryTree map = produceHash(); 
     protected static Object[][] functionData = produceFunctionData();
@@ -104,7 +103,7 @@ public abstract class AbstractFunctionPtg extends OperationPtg {
         return lookupName(field_2_fnc_index);
     }
     
-    public String toFormulaString(SheetReferences refs) {
+    public String toFormulaString(Workbook book) {
         return getName();
     }
     
@@ -140,7 +139,9 @@ public abstract class AbstractFunctionPtg extends OperationPtg {
     }
     
     protected short lookupIndex(String name) {
-        return (short)((Integer)map.getKeyForValue(name)).intValue();
+        Integer index = (Integer) map.getKeyForValue(name);
+        if (index != null) return index.shortValue();
+        return INDEX_EXTERNAL;
     }
     
     /**
@@ -389,6 +390,7 @@ public abstract class AbstractFunctionPtg extends OperationPtg {
         dmap.put(new Integer(252),"FREQUENCY");
         dmap.put(new Integer(253),"ADDTOOLBAR");
         dmap.put(new Integer(254),"DELETETOOLBAR");
+        dmap.put(new Integer(255),"externalflag");
         dmap.put(new Integer(256),"RESETTOOLBAR");
         dmap.put(new Integer(257),"EVALUATE");
         dmap.put(new Integer(258),"GETTOOLBAR");

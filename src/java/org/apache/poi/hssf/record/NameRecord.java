@@ -58,11 +58,11 @@ package org.apache.poi.hssf.record;
 import java.util.List;
 import java.util.Stack;
 
+import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.formula.Area3DPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.record.formula.Ref3DPtg;
 import org.apache.poi.hssf.util.RangeAddress;
-import org.apache.poi.hssf.util.SheetReferences;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
@@ -127,6 +127,14 @@ public class NameRecord extends Record {
 	 */
 	public final static byte  BUILTIN_SHEET_TITLE           = (byte)12;
     
+    public static final short OPT_HIDDEN_NAME =   (short) 0x0001;
+    public static final short OPT_FUNCTION_NAME = (short) 0x0002;
+    public static final short OPT_COMMAND_NAME =  (short) 0x0004;
+    public static final short OPT_MACRO =         (short) 0x0008;
+    public static final short OPT_COMPLEX =       (short) 0x0010;
+    public static final short OPT_BUILTIN =       (short) 0x0020;
+    public static final short OPT_BINDATA =       (short) 0x1000;
+
     
     private short             field_1_option_flag;
     private byte              field_2_keyboard_shortcut;
@@ -192,7 +200,7 @@ public class NameRecord extends Record {
 	{
 	    this();	    
 	    this.field_12_builtIn_name = builtin;
-	    this.setOptionFlag((short)(this.getOptionFlag() | (short)0x20));
+	    this.setOptionFlag((short)(this.getOptionFlag() | OPT_BUILTIN));
 	    this.setNameTextLength((byte)1);
 	    this.setEqualsToIndexToSheet(index); //the extern sheets are set through references
 	    
@@ -252,12 +260,21 @@ public class NameRecord extends Record {
 
 	/**
 	 * Convenience method to retrieve the index the name refers to.
-	 * @see getEqualsToIndexToSheet()
+	 * @see #getEqualsToIndexToSheet()
 	 * @return short
 	 */
 	public short getIndexToSheet() {
 		return getEqualsToIndexToSheet();
 	}
+
+    /**
+     * @return function group
+     * @see FnGroupCountRecord
+     */
+    public byte getFnGroup() {
+        int masked = field_1_option_flag & 0x0fc0;
+        return (byte) (masked >> 4);
+    }
 
     public void setEqualsToIndexToSheet(short value)
     {
@@ -409,11 +426,47 @@ public class NameRecord extends Record {
         return field_11_compressed_unicode_flag;
     }
 
+    /**
+     * @return true if name is hidden
+     */
+    public boolean isHiddenName() {
+        return (field_1_option_flag & OPT_HIDDEN_NAME) != 0;
+    }
+
+    /**
+     * @return true if name is a function
+     */
+    public boolean isFunctionName() {
+        return (field_1_option_flag & OPT_FUNCTION_NAME) != 0;
+    }
+
+    /**
+     * @return true if name is a command
+     */
+    public boolean isCommandName() {
+        return (field_1_option_flag & OPT_COMMAND_NAME) != 0;
+    }
+
+    /**
+     * @return true if function macro or command macro
+     */
+    public boolean isMacro() {
+        return (field_1_option_flag & OPT_MACRO) != 0;
+    }
+
+    /**
+     * @return true if array formula or user defined
+     */
+    public boolean isComplexFunction() {
+        return (field_1_option_flag & OPT_COMPLEX) != 0;
+    }
+
+
 	/**Convenience Function to determine if the name is a built-in name
 	 */
 	public boolean isBuiltInName()
 	{
-	    return ((this.getOptionFlag() & (short)0x20) != 0);
+	    return ((this.getOptionFlag() & OPT_BUILTIN) != 0);
 	}
 
 
@@ -511,7 +564,7 @@ public class NameRecord extends Record {
         data[18 + offset] = getCompressedUnicodeFlag();
 
         /* temp: gjs
-        if ( ( field_1_option_flag & (short) 0x20 ) != 0 )
+        if (isBuiltInName())
         {
             LittleEndian.putShort( data, 2 + offset, (short) ( 16 + field_13_raw_name_definition.length ) );
 
@@ -647,16 +700,16 @@ public class NameRecord extends Record {
     /** gets the reference , the area only (range)
      * @return area reference
      */
-    public String getAreaReference(SheetReferences refs){
+    public String getAreaReference(Workbook book){
         if (field_13_name_definition == null) return "#REF!";
         Ptg ptg = (Ptg) field_13_name_definition.peek();
         String result = "";
 
         if (ptg.getClass() == Area3DPtg.class){
-            result = ptg.toFormulaString(refs);
+            result = ptg.toFormulaString(book);
 
         } else if (ptg.getClass() == Ref3DPtg.class){
-            result = ptg.toFormulaString(refs);
+            result = ptg.toFormulaString(book);
         }
 
         return result;
@@ -727,7 +780,7 @@ public class NameRecord extends Record {
 
         /*
         temp: gjs
-        if ( ( field_1_option_flag & (short)0x20 ) != 0 ) {
+        if (isBuiltInName()) {
             // DEBUG
             // System.out.println( "Built-in name" );
 

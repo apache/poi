@@ -56,7 +56,7 @@ package org.apache.poi.hssf.record.formula;
 
 import java.util.List;
 
-import org.apache.poi.hssf.util.SheetReferences;
+import org.apache.poi.hssf.model.Workbook;
 
 /**
  * Unary Plus operator
@@ -105,7 +105,7 @@ public class UnaryPlusPtg extends OperationPtg
     }
     
     /** Implementation of method from Ptg */
-    public String toFormulaString(SheetReferences refs)
+    public String toFormulaString(Workbook book)
     {
         return "+";
     }

@@ -61,7 +61,7 @@
 package org.apache.poi.hssf.record.formula;
 
 import java.util.List;
-import org.apache.poi.hssf.util.SheetReferences;
+import org.apache.poi.hssf.model.Workbook;
 
 /**
  * Implements the standard mathmatical multiplication - *
@@ -114,7 +114,7 @@ public class MultiplyPtg
     }
     
 
-    public String toFormulaString(SheetReferences refs)
+    public String toFormulaString(Workbook book)
     {
         return "*";
     }
@@ -123,9 +123,9 @@ public class MultiplyPtg
     {
         StringBuffer buffer = new StringBuffer();
 
-        buffer.append(operands[ 0 ].toFormulaString((SheetReferences)null));
+        buffer.append(operands[ 0 ].toFormulaString((Workbook)null));
         buffer.append("*");
-        buffer.append(operands[ 1 ].toFormulaString((SheetReferences)null));
+        buffer.append(operands[ 1 ].toFormulaString((Workbook)null));
         return buffer.toString();
     }
     
@@ -133,7 +133,7 @@ public class MultiplyPtg
         StringBuffer buffer = new StringBuffer();
 
         buffer.append(operands[ 0 ]);
-        buffer.append(toFormulaString((SheetReferences)null));
+        buffer.append(toFormulaString((Workbook)null));
         buffer.append(operands[ 1 ]);
         return buffer.toString();
     }                  
