@@ -41,44 +41,65 @@
     The POI project Ant build.
   </description>
 
-    <property environment="env"/>
+  <property environment="env"/>
 
-    <property name="repository" value="http://www.ibiblio.org/maven"/>
-    <property name="forrest.home" value="${env.FORREST_HOME}"/>
+  <property name="repository" value="http://www.ibiblio.org/maven"/>
+  <property name="forrest.home" value="${env.FORREST_HOME}"/>
 
-    <property name="main.resource1.dir" value="src/resources/fontmetrics"/>
-    <property name="main.src" location="src/java"/>
-    <property name="main.src.test" location="src/testcases"/>
-    <property name="main.documentation" value="src/documentation"/>
-    <property name="main.output.dir" location="build/classes"/>
-    <property name="main.output.test.dir" location="build/test-classes"/>
-    <property name="main.lib" location="lib"/>
-    <property name="main.reports.test" location="build/test-results"/>
-    <property name="main.jar1.dir" location="${main.lib}/commons-logging-1.0.1.jar"/>
-    <property name="main.jar1.url" value="${repository}/commons-logging/jars/commons-logging-1.0.1.jar"/>
-    <property name="main.jar2.dir" location="${main.lib}/log4j-1.2.8.jar"/>
-    <property name="main.jar2.url" value="${repository}/log4j/jars/log4j-1.2.8.jar"/>
-    <property name="main.testokfile" location="build/main-testokfile.txt"/>
-    <property name="scratchpad.src" location="src/scratchpad/src"/>
-    <property name="scratchpad.src.test" location="src/scratchpad/testcases"/>
-    <property name="scratchpad.lib" location="src/scratchpad/lib"/>
-    <property name="scratchpad.reports.test" location="build/scratchpad-test-results"/>
-    <property name="scratchpad.output.dir" location="build/scratchpad-classes"/>
-    <property name="scratchpad.output.test.dir" location="build/scratchpad-test-classes"/>
-    <property name="scratchpad.testokfile" location="build/scratchpad-testokfile.txt"/>
-    <property name="contrib.src" location="src/contrib/src"/>
-    <property name="contrib.src.test" location="src/contrib/testcases"/>
-    <property name="contrib.lib" location="src/contrib/lib"/>
-    <property name="contrib.reports.test" location="build/contrib-test-results"/>
-    <property name="contrib.output.dir" location="build/contrib-classes"/>
-    <property name="contrib.output.test.dir" location="build/contrib-test-classes"/>
-    <property name="contrib.jar1.dir" location="${contrib.lib}/commons-beanutils-1.6.jar"/>
-    <property name="contrib.jar1.url" value="${repository}/commons-beanutils/jars/commons-beanutils-1.6.jar"/>
-    <property name="contrib.jar2.dir" location="${contrib.lib}/commons-collections-2.1.jar"/>
-    <property name="contrib.jar2.url" value="${repository}/commons-collections/jars/commons-collections-2.1.jar"/>
-    <property name="contrib.jar3.dir" location="${contrib.lib}/commons-lang-1.0-b1.jar"/>
-    <property name="contrib.jar3.url" value="${repository}/commons-lang/jars/commons-lang-1.0-b1.jar"/>
-    <property name="contrib.testokfile" location="build/contrib-testokfile.txt"/>
+  <!-- Main: -->
+  <property name="main.resource1.dir" value="src/resources/fontmetrics"/>
+  <property name="main.src" location="src/java"/>
+  <property name="main.src.test" location="src/testcases"/>
+  <property name="main.documentation" value="src/documentation"/>
+  <property name="main.output.dir" location="build/classes"/>
+  <property name="main.output.test.dir" location="build/test-classes"/>
+  <property name="main.lib" location="lib"/>
+  <property name="main.reports.test" location="build/test-results"/>
+  <property name="main.jar1.dir" location="${main.lib}/commons-logging-1.0.1.jar"/>
+  <property name="main.jar1.url" value="${repository}/commons-logging/jars/commons-logging-1.0.1.jar"/>
+  <property name="main.jar2.dir" location="${main.lib}/log4j-1.2.8.jar"/>
+  <property name="main.jar2.url" value="${repository}/log4j/jars/log4j-1.2.8.jar"/>
+  <property name="main.testokfile" location="build/main-testokfile.txt"/>
+
+  <!-- Scratchpad: -->
+  <property name="scratchpad.src" location="src/scratchpad/src"/>
+  <property name="scratchpad.src.test" location="src/scratchpad/testcases"/>
+  <property name="scratchpad.lib" location="src/scratchpad/lib"/>
+  <property name="scratchpad.reports.test" location="build/scratchpad-test-results"/>
+  <property name="scratchpad.output.dir" location="build/scratchpad-classes"/>
+  <property name="scratchpad.output.test.dir" location="build/scratchpad-test-classes"/>
+  <property name="scratchpad.testokfile" location="build/scratchpad-testokfile.txt"/>
+
+  <!-- Contributed software: -->
+  <property name="contrib.src" location="src/contrib/src"/>
+  <property name="contrib.src.test" location="src/contrib/testcases"/>
+  <property name="contrib.lib" location="src/contrib/lib"/>
+  <property name="contrib.reports.test" location="build/contrib-test-results"/>
+  <property name="contrib.output.dir" location="build/contrib-classes"/>
+  <property name="contrib.output.test.dir" location="build/contrib-test-classes"/>
+  <property name="contrib.jar1.dir" location="${contrib.lib}/commons-beanutils-1.6.jar"/>
+  <property name="contrib.jar1.url" value="${repository}/commons-beanutils/jars/commons-beanutils-1.6.jar"/>
+  <property name="contrib.jar2.dir" location="${contrib.lib}/commons-collections-2.1.jar"/>
+  <property name="contrib.jar2.url" value="${repository}/commons-collections/jars/commons-collections-2.1.jar"/>
+  <property name="contrib.jar3.dir" location="${contrib.lib}/commons-lang-1.0-b1.jar"/>
+  <property name="contrib.jar3.url" value="${repository}/commons-lang/jars/commons-lang-1.0-b1.jar"/>
+  <property name="contrib.testokfile" location="build/contrib-testokfile.txt"/>
+
+  <!-- Examples: -->
+  <property name="examples.src" location="src/examples/src"/>
+  <property name="examples.src.test" location="src/examples/testcases"/>
+  <property name="examples.lib" location="src/examples/lib"/>
+  <property name="examples.reports.test" location="build/examples-test-results"/>
+  <property name="examples.output.dir" location="build/examples-classes"/>
+  <property name="examples.output.test.dir" location="build/examples-test-classes"/>
+  <property name="examples.jar1.dir" location="${examples.lib}/commons-beanutils-1.6.jar"/>
+  <property name="examples.jar1.url" value="${repository}/commons-beanutils/jars/commons-beanutils-1.6.jar"/>
+  <property name="examples.jar2.dir" location="${examples.lib}/commons-collections-2.1.jar"/>
+  <property name="examples.jar2.url" value="${repository}/commons-collections/jars/commons-collections-2.1.jar"/>
+  <property name="examples.jar3.dir" location="${examples.lib}/commons-lang-1.0-b1.jar"/>
+  <property name="examples.jar3.url" value="${repository}/commons-lang/jars/commons-lang-1.0-b1.jar"/>
+  <property name="examples.testokfile" location="build/examples-testokfile.txt"/>
+
     <property name="junit.jar1.dir" location="${main.lib}/junit-3.8.1.jar"/>
     <property name="junit.jar1.url" value="${repository}/junit/jars/junit-3.8.1.jar"/>
     <property name="build.site" location="build/tmp/site/build/site"/>
@@ -116,6 +137,11 @@
         <pathelement location="${contrib.output.dir}"/>
         <pathelement location="${contrib.output.test.dir}"/>
     </path>
+
+  <path id="examples.classpath">
+    <path refid="main.classpath"/>
+    <pathelement location="${main.output.dir}"/>
+  </path>
 
 
 
@@ -170,8 +196,9 @@
         
         <mkdir dir="build"/>
         <mkdir dir="${main.output.dir}"/>
-        <mkdir dir="${contrib.output.dir}"/>
         <mkdir dir="${scratchpad.output.dir}"/>
+        <mkdir dir="${contrib.output.dir}"/>
+        <mkdir dir="${examples.output.dir}"/>
         <mkdir dir="${main.output.test.dir}"/>
         <mkdir dir="${contrib.output.test.dir}"/>
         <mkdir dir="${scratchpad.output.test.dir}"/>
@@ -221,8 +248,9 @@
         <get src="${junit.jar1.url}" dest="${junit.jar1.dir}"/>
     </target>
 
-    <target name="compile" depends="init,compile-main,compile-scratchpad,compile-contrib"
-        description="Compiles the POI classes"/>
+  <target name="compile" depends="init, compile-main, compile-scratchpad,
+    compile-contrib, compile-examples"
+    description="Compiles the POI main classes, scratchpad, contrib, and examples"/>
 
     <target name="compile-main" depends="init">
         <copy todir="${main.output.dir}">
@@ -265,6 +293,12 @@
             </classpath>
         </javac>
     </target>
+
+  <target name="compile-examples" depends="init">
+    <javac srcdir="${examples.src}" destdir="${examples.output.dir}" debug="on">
+      <classpath refid="examples.classpath"/>
+    </javac>
+  </target>
 
     <target name="test" depends="test-main,test-scratchpad,test-contrib"
         description="Tests main, contrib and scratchpad"/>
@@ -550,7 +584,7 @@ FORREST_HOME environment variable!</echo>
       version="true"
       use="true"
       verbose="false"
-      windowtitle="POI API">
+      windowtitle="POI API Documentation">
 
       <packageset dir="${main.src}" defaultexcludes="yes">
         <include name="org/apache/poi/**"/>
@@ -561,17 +595,21 @@ FORREST_HOME environment variable!</echo>
       <packageset dir="${contrib.src}" defaultexcludes="yes">
         <include name="org/apache/poi/**"/>
       </packageset>
+      <packageset dir="${examples.src}" defaultexcludes="yes">
+        <include name="org/apache/poi/**"/>
+      </packageset>
 
       <classpath>
         <path refid="main.classpath"/>
         <path refid="scratchpad.classpath"/>
         <path refid="contrib.classpath"/>
+        <path refid="examples.classpath"/>
       </classpath>
 
-      <doctitle><![CDATA[<h1>POI Documentation</h1>]]></doctitle>
+      <doctitle><![CDATA[<h1>POI API Documentation</h1>]]></doctitle>
       <bottom>
         <![CDATA[<i>Copyright ${tstamp.year} The Apache Software Foundation or
-	its licensors, as applicable.</i>]]>
+        its licensors, as applicable.</i>]]>
       </bottom>
       <group title="HDF" packages="org.apache.poi.hdf*"/>
       <group title="HPSF" packages="org.apache.poi.hpsf*"/>
@@ -580,6 +618,11 @@ FORREST_HOME environment variable!</echo>
       <group title="POIFS" packages="org.apache.poi.poifs*"/>
       <group title="Record Generator" packages="org.apache.poi.record*"/>
       <group title="Utils" packages="org.apache.poi.util*"/>
+      <group>
+        <title>Examples</title>
+        <package name="org.apache.poi.hpsf.examples*"/>
+        <package name="org.apache.poi.hssf.usermodel.examples*"/>
+      </group>
     </javadoc>
 
     <antcall target="clover.html"/>
