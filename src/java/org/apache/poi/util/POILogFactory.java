@@ -1,4 +1,3 @@
-
 /*
  * ====================================================================
  * The Apache Software License, Version 1.1
@@ -55,12 +54,8 @@
  */
 package org.apache.poi.util;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-
-import java.util.*;
-
-import org.apache.commons.logging.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Provides logging without clients having to mess with
@@ -73,10 +68,10 @@ import org.apache.commons.logging.*;
 
 public class POILogFactory
 {
-    private static LogFactory   _creator = LogFactory.getFactory();
+//    private static LogFactory _creator = LogFactory.getFactory();
 
     // map of POILogger instances, with classes as keys
-    private static Map          _loggers = new HashMap();;
+    private static Map _loggers = new HashMap();;
 
 
     /**
@@ -95,11 +90,11 @@ public class POILogFactory
      * @return a POILogger for the specified class
      */
 
-    public static POILogger getLogger(final Class theclass)
+    public static POILogger getLogger( final Class theclass )
     {
-        return getLogger(theclass.getName());
+        return getLogger( theclass.getName() );
     }
-    
+
     /**
      * Get a logger, based on a String
      *
@@ -108,20 +103,20 @@ public class POILogFactory
      * @return a POILogger for the specified class
      */
 
-    public static POILogger getLogger(final String cat)
+    public static POILogger getLogger( final String cat )
     {
         POILogger logger = null;
 
-        if (_loggers.containsKey(cat))
+        if ( _loggers.containsKey( cat ) )
         {
-            logger = ( POILogger ) _loggers.get(cat);
+            logger = (POILogger) _loggers.get( cat );
         }
         else
         {
-            logger = new POILogger(_creator.getInstance(cat));
-            _loggers.put(cat, logger);
+            logger = new POILogger( );
+            _loggers.put( cat, logger );
         }
         return logger;
     }
-        
+
 }   // end public class POILogFactory

@@ -52,71 +52,49 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.poi.util;
+package org.apache.poi.hssf.usermodel.examples;
 
-import junit.framework.TestCase;
+import org.apache.poi.hssf.usermodel.*;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 /**
- * @author Marc Johnson (mjohnson at apache dot org)
+ * Demonstrates how to use newlines in cells.
+ *
  * @author Glen Stampoultzis (glens at apache.org)
- * @author Nicola Ken Barozzi (nicolaken at apache.org)
+ * @author Fauzia Lala <fauzia.lala at wcom.com>
  */
-
-public class TestPOILogFactory
-        extends TestCase
+public class NewLinesInCells
 {
-    /**
-     * Creates new TestPOILogFactory
-     *
-     * @param name
-     */
-
-    public TestPOILogFactory( String name )
+    public static void main( String[] args ) throws IOException
     {
-        super( name );
-    }
 
-    /**
-     * test log creation
-     *
-     * @exception IOException
-     */
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet s = wb.createSheet();
+        HSSFRow r = null;
+        HSSFCell c = null;
+        HSSFCellStyle cs = wb.createCellStyle();
+        HSSFFont f = wb.createFont();
+        HSSFFont f2 = wb.createFont();
 
-    public void testLog()
-            throws IOException
-    {
-        //NKB Testing only that logging classes use gives no exception
-        //    Since logging can be disabled, no checking of logging
-        //    output is done.
+        cs = wb.createCellStyle();
 
-        POILogger l1 = POILogFactory.getLogger( "org.apache.poi.hssf.test" );
-        POILogger l2 = POILogFactory.getLogger( "org.apache.poi.hdf.test" );
+        cs.setFont( f2 );
+        //Word Wrap MUST be turned on
+        cs.setWrapText( true );
 
-        l1.log( POILogger.FATAL, "testing cat org.apache.poi.hssf.*:FATAL" );
-        l1.log( POILogger.ERROR, "testing cat org.apache.poi.hssf.*:ERROR" );
-        l1.log( POILogger.WARN, "testing cat org.apache.poi.hssf.*:WARN" );
-        l1.log( POILogger.INFO, "testing cat org.apache.poi.hssf.*:INFO" );
-        l1.log( POILogger.DEBUG, "testing cat org.apache.poi.hssf.*:DEBUG" );
+        r = s.createRow( (short) 2 );
+        r.setHeight( (short) 0x349 );
+        c = r.createCell( (short) 2 );
+        c.setCellType( HSSFCell.CELL_TYPE_STRING );
+        c.setCellValue( "Use \n with word wrap on to create a new line" );
+        c.setCellStyle( cs );
+        s.setColumnWidth( (short) 2, (short) ( ( 50 * 8 ) / ( (double) 1 / 20 ) ) );
 
-        l2.log( POILogger.FATAL, "testing cat org.apache.poi.hdf.*:FATAL" );
-        l2.log( POILogger.ERROR, "testing cat org.apache.poi.hdf.*:ERROR" );
-        l2.log( POILogger.WARN, "testing cat org.apache.poi.hdf.*:WARN" );
-        l2.log( POILogger.INFO, "testing cat org.apache.poi.hdf.*:INFO" );
-        l2.log( POILogger.DEBUG, "testing cat org.apache.poi.hdf.*:DEBUG" );
+        FileOutputStream fileOut = new FileOutputStream( "workbook.xls" );
+        wb.write( fileOut );
+        fileOut.close();
 
-    }
-
-    /**
-     * main method to run the unit tests
-     *
-     * @param ignored_args
-     */
-
-    public static void main( String[] ignored_args )
-    {
-        System.out.println( "Testing basic util.POILogFactory functionality" );
-        junit.textui.TestRunner.run( TestPOILogFactory.class );
     }
 }

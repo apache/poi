@@ -1,4 +1,3 @@
-
 /* ====================================================================
  * The Apache Software License, Version 1.1
  *
@@ -57,19 +56,16 @@ package org.apache.poi.util;
 
 import junit.framework.TestCase;
 
-import java.io.File;
-import java.io.FileInputStream;
-
 /**
  * Tests the log class.
  *
  * @author Glen Stampoultzis (glens at apache.org)
  * @author Marc Johnson (mjohnson at apache dot org)
- * @author Nicola Ken Barozzi (nicolaken at apache.org) 
+ * @author Nicola Ken Barozzi (nicolaken at apache.org)
  */
 
 public class TestPOILogger
-    extends TestCase
+        extends TestCase
 {
     /**
      * Constructor TestPOILogger
@@ -79,23 +75,9 @@ public class TestPOILogger
      *
      */
 
-    public TestPOILogger(String s)
+    public TestPOILogger( String s )
     {
-        super(s);
-    }
-
-    /**
-     * Method setUp
-     *
-     *
-     * @exception Exception
-     *
-     */
-
-    protected void setUp()
-        throws Exception
-    {
-        super.setUp();
+        super( s );
     }
 
     /**
@@ -103,29 +85,20 @@ public class TestPOILogger
      *
      * @exception Exception
      */
-
     public void testVariousLogTypes()
-        throws Exception
+            throws Exception
     {
         //NKB Testing only that logging classes use gives no exception
         //    Since logging can be disabled, no checking of logging
         //    output is done.
-        
-        POILogger     log = POILogFactory.getLogger("foo");
 
-        log.log(POILogger.WARN, "Test = ", new Integer(1));
-        log.logFormatted(POILogger.ERROR, "Test param 1 = %, param 2 = %",
-                         "2", new Integer(3));
-        log.logFormatted(POILogger.ERROR, "Test param 1 = %, param 2 = %",
-                         new int[]
-        {
-            4, 5
-        });
-        log.logFormatted(POILogger.ERROR,
-                         "Test param 1 = %1.1, param 2 = %0.1", new double[]
-        {
-            4, 5.23
-        });
+        POILogger log = POILogFactory.getLogger( "foo" );
+
+        log.log( POILogger.WARN, "Test = ", new Integer( 1 ) );
+        log.logFormatted( POILogger.ERROR, "Test param 1 = %, param 2 = %", "2", new Integer( 3 ) );
+        log.logFormatted( POILogger.ERROR, "Test param 1 = %, param 2 = %", new int[]{4, 5} );
+        log.logFormatted( POILogger.ERROR,
+                "Test param 1 = %1.1, param 2 = %0.1", new double[]{4, 5.23} );
 
     }
 }

@@ -81,6 +81,7 @@ public class HexDump
      * @param stream the OutputStream to which the data is to be
      *               written
      * @param index initial index into the byte array
+     * @param length number of characters to output
      *
      * @exception IOException is thrown if anything goes wrong writing
      *            the data to stream
@@ -89,11 +90,10 @@ public class HexDump
      * @exception IllegalArgumentException if the output stream is
      *            null
      */
-
     public synchronized static void dump(final byte [] data, final long offset,
-                            final OutputStream stream, final int index)
-        throws IOException, ArrayIndexOutOfBoundsException,
-                IllegalArgumentException
+                            final OutputStream stream, final int index, final int length)
+            throws IOException, ArrayIndexOutOfBoundsException,
+                    IllegalArgumentException
     {
         if ((index < 0) || (index >= data.length))
         {
@@ -108,9 +108,11 @@ public class HexDump
         long         display_offset = offset + index;
         StringBuffer buffer         = new StringBuffer(74);
 
-        for (int j = index; j < data.length; j += 16)
+
+        int data_length = Math.min(data.length,index+length);
+        for (int j = index; j < data_length; j += 16)
         {
-            int chars_read = data.length - j;
+            int chars_read = data_length - j;
 
             if (chars_read > 16)
             {
@@ -146,6 +148,32 @@ public class HexDump
             buffer.setLength(0);
             display_offset += chars_read;
         }
+
+    }
+
+    /**
+     * dump an array of bytes to an OutputStream
+     *
+     * @param data the byte array to be dumped
+     * @param offset its offset, whatever that might mean
+     * @param stream the OutputStream to which the data is to be
+     *               written
+     * @param index initial index into the byte array
+     *
+     * @exception IOException is thrown if anything goes wrong writing
+     *            the data to stream
+     * @exception ArrayIndexOutOfBoundsException if the index is
+     *            outside the data array's bounds
+     * @exception IllegalArgumentException if the output stream is
+     *            null
+     */
+
+    public synchronized static void dump(final byte [] data, final long offset,
+                            final OutputStream stream, final int index)
+        throws IOException, ArrayIndexOutOfBoundsException,
+                IllegalArgumentException
+    {
+        dump(data, offset, stream, index, data.length-index);
     }
 
     public static final String        EOL         =

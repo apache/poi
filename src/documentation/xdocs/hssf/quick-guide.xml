@@ -28,6 +28,7 @@
                     <li><link href="#MergedCells">Merging cells</link></li>
                     <li><link href="#WorkingWithFonts">Working with fonts</link></li>
                     <li><link href="#ReadWriteWorkbook">Reading and writing</link></li>
+                    <li><link href="#NewLinesInCells">Use newlines in cells.</link></li>
                 </ul>
             </section>
             <section title="Features">
@@ -293,6 +294,35 @@
     wb.write(fileOut);
     fileOut.close();
                     </source>
+                </section>
+                <anchor id="UseNewLinesInCells"/>
+                <section title="Using newlines in cells">
+                    <source>
+    HSSFWorkbook wb = new HSSFWorkbook();
+    HSSFSheet s = wb.createSheet();
+    HSSFRow r = null;
+    HSSFCell c = null;
+    HSSFCellStyle cs = wb.createCellStyle();
+    HSSFFont f = wb.createFont();
+    HSSFFont f2 = wb.createFont();
+
+    cs = wb.createCellStyle();
+
+    cs.setFont( f2 );
+    //Word Wrap MUST be turned on
+    cs.setWrapText( true );
+
+    r = s.createRow( (short) 2 );
+    r.setHeight( (short) 0x349 );
+    c = r.createCell( (short) 2 );
+    c.setCellType( HSSFCell.CELL_TYPE_STRING );
+    c.setCellValue( "Use \n with word wrap on to create a new line" );
+    c.setCellStyle( cs );
+    s.setColumnWidth( (short) 2, (short) ( ( 50 * 8 ) / ( (double) 1 / 20 ) ) );
+
+    FileOutputStream fileOut = new FileOutputStream( "workbook.xls" );
+    wb.write( fileOut );
+    fileOut.close();</source>
                 </section>
             </section>
         </section>
