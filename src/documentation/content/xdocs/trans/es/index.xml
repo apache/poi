@@ -6,7 +6,7 @@
     <title>Bienvenido a POI</title>
     <authors>
       <person id="AO" name="Andrew C. Oliver" email="acoliver@apache.org"/>
-      <person id="GJS" name="Glen Stampoultzis" email="glens@apache.org"/>
+      <person id="GJS" name="Glen Stampoultzis" email="poi-user@jakarta.apache.org"/>
       <person id="AMB" name="Agust Mart Barbero" email="-"/>
     </authors>
   </header>
