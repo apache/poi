@@ -54,6 +54,37 @@
 
         <title>History of Changes</title>
 
+        <release version="2.0-pre2" date="6 July 2003">
+        <action dev="POI-DEVELOPERS" type="fix">A nasty concurrency problem has been fixed. Any users working in a multithreaded environment should seriously consider upgrading to this release.</action>
+	<action dev="POI-DEVELOPERS" type="update">The EXTSST record has been implemented. This record is used by excel for optimized reading of strings.</action>
+        <action dev="POI-DEVELOPERS" type="update">When rows are shifted, the merged regions now move with them. If a row contains 2 merged cells, the resulting shifted row should have those cells merged as well.</action>
+        <action dev="POI-DEVELOPERS" type="fix">There were some issues when removing merged 
+		    regions (specifically, removing all of them and then adding some more) and have been resolved.</action>	    
+        <action dev="POI-DEVELOPERS" type="fix">When a sheet contained shared formulas (when a formula is 
+		    dragged across greater than 6 cells), the clone would fail. We now support cloning of 
+		    sheets that contain this Excel optimization. </action>
+        <action dev="POI-DEVELOPERS" type="add">Support added for reading formulas with UnaryPlus and UnaryMinus operators.</action>
+        </release>
+        <release version="2.0-pre1" date="17 May 2003">
+        <action dev="POI-DEVELOPERS" type="add">Patch applied for deep cloning of worksheets was provided</action>
+        <action dev="POI-DEVELOPERS" type="add">Patch applied to allow sheet reordering</action>
+        <action dev="POI-DEVELOPERS" type="add">Added additional print area setting methods using row/column numbers</action>
+        <action dev="POI-DEVELOPERS" type="fix">HDF:  Negative Array size fix</action>
+        <action dev="POI-DEVELOPERS" type="update">Added argument pointers to support the IF formula</action>
+        <action dev="POI-DEVELOPERS" type="update">Formulas: Added special character support for string literals, specifically for SUMIF formula support and addresses a bug as well</action>
+        <action dev="POI-DEVELOPERS" type="fix">BlockingInputStream committed to help ensure reads</action>
+        <action dev="POI-DEVELOPERS" type="fix">Fixed problem with NaN values differing from the investigated value from file reads in FormulaRecords</action>
+        <action dev="POI-DEVELOPERS" type="fix">Patch for getColumnWidth in HSSF</action>
+        <action dev="POI-DEVELOPERS" type="add">Patch for dealing with mult-level numbered lists in HDF</action>
+        <action dev="POI-DEVELOPERS" type="fix">Due to named reference work, several named-ranged bugs were closed</action>
+        <action dev="POI-DEVELOPERS" type="fix">Patch applied to prevent sheet corruption after a template modification</action>
+        <action dev="POI-DEVELOPERS" type="update">Shared Formulas now Supported</action>
+        <action dev="POI-DEVELOPERS" type="update">Added GreaterEqual, LessEqual and NotEqual to Formula Parser</action>
+        <action dev="POI-DEVELOPERS" type="update">Added GreaterThan and LessThan functionality to formulas</action>
+        <action dev="POI-DEVELOPERS" type="fix">Patches for i10n</action>
+        <action dev="POI-DEVELOPERS" type="update">POI Build System Updated</action>
+        <action dev="POI-DEVELOPERS" type="fix">font names can now be null</action>
+        </release>
         <release version="1.10-dev" date="19 Feb 2003">
             <action dev="POI-DEVELOPERS" type="add">Support for zoom level</action>
             <action dev="POI-DEVELOPERS" type="add">Freeze and split pane support</action>

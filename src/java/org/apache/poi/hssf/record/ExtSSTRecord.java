@@ -79,6 +79,7 @@ public class ExtSSTRecord
     private short             field_1_strings_per_bucket;
     private ArrayList         field_2_sst_info;
 
+
     public ExtSSTRecord()
     {
         field_2_sst_info = new ArrayList();
@@ -189,26 +190,39 @@ public class ExtSSTRecord
     public int serialize(int offset, byte [] data)
     {
         LittleEndian.putShort(data, 0 + offset, sid);
-
-//    LittleEndian.putShort(data,2,(short)(2 + (getNumInfoRecords() *8)));
-        LittleEndian.putShort(data, 2 + offset, ( short ) (2 + (0x3fa - 2)));
-        int pos = 4;
+        LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
+        LittleEndian.putShort(data, 4 + offset, field_1_strings_per_bucket);
+        int pos = 6;
 
         for (int k = 0; k < getNumInfoRecords(); k++)
         {
             System.arraycopy(getInfoRecordAt(k).serialize(), 0, data,
                              pos + offset, 8);
+            pos += getInfoRecordAt(k).getRecordSize();
         }
         return getRecordSize();
     }
 
     public int getRecordSize()
     {
-        return 6 + 0x3fa - 2;
+        return 4 + 2 + field_2_sst_info.size() * 8;
     }
 
     public short getSid()
     {
-        return this.sid;
+        return sid;
     }
+
+    public void setBucketOffsets( int[] bucketAbsoluteOffsets, int[] bucketRelativeOffsets )
+    {
+        this.field_2_sst_info = new ArrayList(bucketAbsoluteOffsets.length);
+        for ( int i = 0; i < bucketAbsoluteOffsets.length; i++ )
+        {
+            ExtSSTInfoSubRecord r = new ExtSSTInfoSubRecord();
+            r.setBucketRecordOffset((short)bucketRelativeOffsets[i]);
+            r.setStreamPos(bucketAbsoluteOffsets[i]);
+            field_2_sst_info.add(r);
+        }
+    }
+
 }

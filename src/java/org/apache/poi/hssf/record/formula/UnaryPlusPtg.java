@@ -1,3 +1,4 @@
+
 /* ====================================================================
  * The Apache Software License, Version 1.1
  *
@@ -53,70 +54,74 @@
  */
 package org.apache.poi.hssf.record.formula;
 
+import java.util.List;
+
 import org.apache.poi.hssf.util.SheetReferences;
 
-
 /**
- * Ptg class to implement less than or equal
- * @author  fred at stsci dot edu
+ * Unary Plus operator
+ * does not have any effect on the operand
+ * @author Avik Sengupta
  */
 
-public class LessEqualPtg
-	 extends OperationPtg
+public class UnaryPlusPtg extends OperationPtg
 {
-	 public final static int  SIZE = 1;
-	 public final static byte sid  = 0x0a;
+    public final static int  SIZE = 1;
+    public final static byte sid  = 0x12;
+    
+    private final static String ADD = "+";
 
-	 /** Creates new LessEqualPtg */
+    /** Creates new AddPtg */
 
-	public LessEqualPtg()
-	 {
-	 }
+    public UnaryPlusPtg()
+    {
+    }
 
-	 public LessEqualPtg(byte [] data, int offset)
-	 {
+    public UnaryPlusPtg(byte[] data, int offset)
+    {
 
-		  // doesn't need anything
-	 }
+        // doesn't need anything
+    }
+    
+   
+    public void writeBytes(byte [] array, int offset)
+    {
+        array[ offset + 0 ] = sid;
+    }
 
-	 public void writeBytes(byte [] array, int offset)
-	 {
-		  array[ offset + 0 ] = sid;
-	 }
+    public int getSize()
+    {
+        return SIZE;
+    }
 
-	 public int getSize()
-	 {
-		  return SIZE;
-	 }
+    public int getType()
+    {
+        return this.TYPE_UNARY;
+    }
 
-	 public int getType()
-	 {
-		  return TYPE_BINARY;
-	 }
-
-	 public int getNumberOfOperands()
-	 {
-		  return 2;
-	 }
-
-	 public String toFormulaString(SheetReferences refs)
-	 {
-		  return "<=";
-	 }
- 
-	 public String toFormulaString(String[] operands) {
-			StringBuffer buffer = new StringBuffer();
-
-        
-		  buffer.append(operands[ 0 ]);
-		  buffer.append(toFormulaString((SheetReferences)null));
-		  buffer.append(operands[ 1 ]);
-		  return buffer.toString();
-	 }       
-
-	 public Object clone() {
-		return new LessEqualPtg();
-	 }
-
+    public int getNumberOfOperands()
+    {
+        return 1;
+    }
+    
+    /** Implementation of method from Ptg */
+    public String toFormulaString(SheetReferences refs)
+    {
+        return "+";
+    }
+       
+   /** implementation of method from OperationsPtg*/  
+    public String toFormulaString(String[] operands) {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append(ADD);
+        buffer.append(operands[ 0]);
+        return buffer.toString();
+    }
+    
+    public byte getDefaultOperandClass() {return Ptg.CLASS_VALUE;}
+           
+    public Object clone() {
+      return new UnaryPlusPtg();
+    }
 
 }

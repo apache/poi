@@ -51,72 +51,76 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.hssf.util.SheetReferences;
+package org.apache.poi.hssf.usermodel;
 
+import junit.framework.TestCase;
+import org.apache.poi.hssf.usermodel.HSSFHeader;
+import org.apache.poi.hssf.usermodel.HSSFFooter;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 
 /**
- * Ptg class to implement less than or equal
- * @author  fred at stsci dot edu
+ * Tests row shifting capabilities.
+ *
+ *
+ * @author Shawn Laubach (slaubach at apache dot com)
  */
 
-public class LessEqualPtg
-	 extends OperationPtg
-{
-	 public final static int  SIZE = 1;
-	 public final static byte sid  = 0x0a;
+public class TestHSSFHeaderFooter extends TestCase {
 
-	 /** Creates new LessEqualPtg */
+    /**
+     * Constructor for TestHeaderFooter.
+     * @param arg0
+     */
+    public TestHSSFHeaderFooter(String arg0) {
+	super(arg0);
+    }
 
-	public LessEqualPtg()
-	 {
-	 }
+    /**
+     * Tests that get header retreives the proper values.
+     *
+     * @author Shawn Laubach (slaubach at apache dot org)
+     */
+    public void testRetrieveCorrectHeader() throws Exception
+    {
+        // Read initial file in
+        String filename = System.getProperty( "HSSF.testdata.path" );
+        filename = filename + "/EmbeddedChartHeaderTest.xls";
+        FileInputStream fin = new FileInputStream( filename );
+        HSSFWorkbook wb = new HSSFWorkbook( fin );
+        fin.close();
+        HSSFSheet s = wb.getSheetAt( 0 );
+	HSSFHeader head = s.getHeader();
 
-	 public LessEqualPtg(byte [] data, int offset)
-	 {
+	assertEquals("Top Left", head.getLeft());
+	assertEquals("Top Center", head.getCenter());
+	assertEquals("Top Right", head.getRight());
+    }
 
-		  // doesn't need anything
-	 }
+    /**
+     * Tests that get header retreives the proper values.
+     *
+     * @author Shawn Laubach (slaubach at apache dot org)
+     */
+    public void testRetrieveCorrectFooter() throws Exception
+    {
+        // Read initial file in
+        String filename = System.getProperty( "HSSF.testdata.path" );
+        filename = filename + "/EmbeddedChartHeaderTest.xls";
+        FileInputStream fin = new FileInputStream( filename );
+        HSSFWorkbook wb = new HSSFWorkbook( fin );
+        fin.close();
+        HSSFSheet s = wb.getSheetAt( 0 );
+	HSSFFooter foot = s.getFooter();
 
-	 public void writeBytes(byte [] array, int offset)
-	 {
-		  array[ offset + 0 ] = sid;
-	 }
-
-	 public int getSize()
-	 {
-		  return SIZE;
-	 }
-
-	 public int getType()
-	 {
-		  return TYPE_BINARY;
-	 }
-
-	 public int getNumberOfOperands()
-	 {
-		  return 2;
-	 }
-
-	 public String toFormulaString(SheetReferences refs)
-	 {
-		  return "<=";
-	 }
- 
-	 public String toFormulaString(String[] operands) {
-			StringBuffer buffer = new StringBuffer();
-
-        
-		  buffer.append(operands[ 0 ]);
-		  buffer.append(toFormulaString((SheetReferences)null));
-		  buffer.append(operands[ 1 ]);
-		  return buffer.toString();
-	 }       
-
-	 public Object clone() {
-		return new LessEqualPtg();
-	 }
-
-
+	assertEquals("Bottom Left", foot.getLeft());
+	assertEquals("Bottom Center", foot.getCenter());
+	assertEquals("Bottom Right", foot.getRight());
+    }
 }
+

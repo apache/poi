@@ -1,7 +1,8 @@
+
 /* ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 2003 The Apache Software Foundation.  All rights
+ * Copyright (c) 2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -51,72 +52,48 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.hssf.util.SheetReferences;
+package org.apache.poi.util;
 
+import java.io.IOException;
+import java.io.InputStream;
 
-/**
- * Ptg class to implement less than or equal
- * @author  fred at stsci dot edu
- */
-
-public class LessEqualPtg
-	 extends OperationPtg
+public class IOUtils
 {
-	 public final static int  SIZE = 1;
-	 public final static byte sid  = 0x0a;
+    private IOUtils()
+    {
+    }
 
-	 /** Creates new LessEqualPtg */
+    /**
+     * Helper method, just calls <tt>readFully(in, b, 0, b.length)</tt>
+     */
+    public static int readFully(InputStream in, byte[] b)
+    throws IOException
+    {
+        return readFully(in, b, 0, b.length);
+    }
 
-	public LessEqualPtg()
-	 {
-	 }
-
-	 public LessEqualPtg(byte [] data, int offset)
-	 {
-
-		  // doesn't need anything
-	 }
-
-	 public void writeBytes(byte [] array, int offset)
-	 {
-		  array[ offset + 0 ] = sid;
-	 }
-
-	 public int getSize()
-	 {
-		  return SIZE;
-	 }
-
-	 public int getType()
-	 {
-		  return TYPE_BINARY;
-	 }
-
-	 public int getNumberOfOperands()
-	 {
-		  return 2;
-	 }
-
-	 public String toFormulaString(SheetReferences refs)
-	 {
-		  return "<=";
-	 }
- 
-	 public String toFormulaString(String[] operands) {
-			StringBuffer buffer = new StringBuffer();
-
-        
-		  buffer.append(operands[ 0 ]);
-		  buffer.append(toFormulaString((SheetReferences)null));
-		  buffer.append(operands[ 1 ]);
-		  return buffer.toString();
-	 }       
-
-	 public Object clone() {
-		return new LessEqualPtg();
-	 }
-
-
+    /**
+     * Same as the normal <tt>in.read(b, off, len)</tt>, but tries to ensure that
+     * the entire len number of bytes is read.
+     * <p>
+     * If the end of file is reached before any bytes are read, returns -1.
+     * Otherwise, returns the number of bytes read.
+     */
+    public static int readFully(InputStream in, byte[] b, int off, int len)
+    throws IOException
+    {
+        int total = 0;
+        for (;;) {
+            int got = in.read(b, off + total, len - total);
+            if (got < 0) {
+                return (total == 0) ? -1 : total;
+            } else {
+                total += got;
+                if (total == len)
+                    return total;
+            }
+        }
+    }
 }
+

@@ -1,7 +1,8 @@
+
 /* ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 2003 The Apache Software Foundation.  All rights
+ * Copyright (c) 2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -51,72 +52,25 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.hssf.util.SheetReferences;
+package org.apache.poi.poifs.filesystem;
 
+import java.io.*;
+import java.util.Random;
 
 /**
- * Ptg class to implement less than or equal
- * @author  fred at stsci dot edu
+ * Returns a random amount of requested data. Used to check conformance with
+ * InputStream API contracts.
  */
-
-public class LessEqualPtg
-	 extends OperationPtg
+public class SlowInputStream extends FilterInputStream
 {
-	 public final static int  SIZE = 1;
-	 public final static byte sid  = 0x0a;
+    private Random r = new Random(0);
+    
+    public SlowInputStream(InputStream in) {
+        super(in);
+    }
 
-	 /** Creates new LessEqualPtg */
-
-	public LessEqualPtg()
-	 {
-	 }
-
-	 public LessEqualPtg(byte [] data, int offset)
-	 {
-
-		  // doesn't need anything
-	 }
-
-	 public void writeBytes(byte [] array, int offset)
-	 {
-		  array[ offset + 0 ] = sid;
-	 }
-
-	 public int getSize()
-	 {
-		  return SIZE;
-	 }
-
-	 public int getType()
-	 {
-		  return TYPE_BINARY;
-	 }
-
-	 public int getNumberOfOperands()
-	 {
-		  return 2;
-	 }
-
-	 public String toFormulaString(SheetReferences refs)
-	 {
-		  return "<=";
-	 }
- 
-	 public String toFormulaString(String[] operands) {
-			StringBuffer buffer = new StringBuffer();
-
-        
-		  buffer.append(operands[ 0 ]);
-		  buffer.append(toFormulaString((SheetReferences)null));
-		  buffer.append(operands[ 1 ]);
-		  return buffer.toString();
-	 }       
-
-	 public Object clone() {
-		return new LessEqualPtg();
-	 }
-
-
+    public int read(byte[] b, int off, int len) throws IOException {
+        return super.read(b, off, r.nextInt(len) + 1);
+    }
 }

@@ -110,7 +110,10 @@ public class ExpPtg
     public byte getDefaultOperandClass() {return Ptg.CLASS_VALUE;}
     
     public Object clone() {
-      throw new RuntimeException("NO IDEA SHARED FORMULA EXP PTG");
+    	//can't clone one that doesnt have data can we??
+		if (this.existing == null) throw new RuntimeException("NO IDEA SHARED FORMULA EXP PTG"); 
+		
+    	return new ExpPtg(this.existing, 0);
     }
 
 }

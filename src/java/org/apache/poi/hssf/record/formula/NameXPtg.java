@@ -102,7 +102,7 @@ public class NameXPtg extends Ptg
 
     public void writeBytes(byte [] array, int offset)
     {
-        array[ offset + 0 ] = sid;
+        array[ offset + 0 ] = (byte)(sid + ptgClass);
         LittleEndian.putShort(array, offset + 1, field_1_ixals);
         LittleEndian.putShort(array,offset+3, field_2_ilbl);
         LittleEndian.putShort(array, offset + 5, field_3_reserved);
@@ -125,6 +125,7 @@ public class NameXPtg extends Ptg
       ptg.field_1_ixals = field_1_ixals;
       ptg.field_3_reserved = field_3_reserved;
       ptg.field_2_ilbl = field_2_ilbl;
+      ptg.setClass(ptgClass);
       return ptg;
     }
 }

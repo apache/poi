@@ -108,7 +108,9 @@ public class Sheet implements Model
     protected HeaderRecord              header           = null;
     protected FooterRecord              footer           = null;
     protected PrintGridlinesRecord      printGridlines   = null;
+    protected WindowTwoRecord           windowTwo        = null;
     protected MergeCellsRecord          merged           = null;
+    protected Margin                    margins[]        = null;
     protected ArrayList                 mergedRecords    = new ArrayList();
     protected ArrayList                 mergedLocs       = new ArrayList();
     protected int                       numMergedRegions = 0;
@@ -120,6 +122,7 @@ public class Sheet implements Model
     private Iterator                    valueRecIterator = null;
     private Iterator                    rowRecIterator   = null;
     protected int                       eofLoc           = 0;
+	protected ProtectRecord             protect          = null;
 
     public static final byte PANE_LOWER_RIGHT = (byte)0;
     public static final byte PANE_UPPER_RIGHT = (byte)1;
@@ -249,22 +252,46 @@ public class Sheet implements Model
             {
                 retval.printGridlines = (PrintGridlinesRecord) rec;
             }
-            else if ( rec.getSid() == HeaderRecord.sid )
+            else if ( rec.getSid() == HeaderRecord.sid && bofEofNestingLevel == 1)
             {
                 retval.header = (HeaderRecord) rec;
             }
-            else if ( rec.getSid() == FooterRecord.sid )
+            else if ( rec.getSid() == FooterRecord.sid && bofEofNestingLevel == 1)
             {
                 retval.footer = (FooterRecord) rec;
             }
-            else if ( rec.getSid() == PrintSetupRecord.sid )
+            else if ( rec.getSid() == PrintSetupRecord.sid && bofEofNestingLevel == 1)
             {
                 retval.printSetup = (PrintSetupRecord) rec;
+            }
+            else if ( rec.getSid() == LeftMarginRecord.sid)
+            {
+                retval.getMargins()[LeftMargin] = (LeftMarginRecord) rec;
+            }
+            else if ( rec.getSid() == RightMarginRecord.sid)
+            {
+                retval.getMargins()[RightMargin] = (RightMarginRecord) rec;
+            }
+            else if ( rec.getSid() == TopMarginRecord.sid)
+            {
+                retval.getMargins()[TopMargin] = (TopMarginRecord) rec;
+            }
+            else if ( rec.getSid() == BottomMarginRecord.sid)
+            {
+                retval.getMargins()[BottomMargin] = (BottomMarginRecord) rec;
             }
             else if ( rec.getSid() == SelectionRecord.sid )
             {
                 retval.selection = (SelectionRecord) rec;
             }
+            else if ( rec.getSid() == WindowTwoRecord.sid )
+            {
+                retval.windowTwo = (WindowTwoRecord) rec;
+            }
+			else if ( rec.getSid() == ProtectRecord.sid )
+			{
+				retval.protect = (ProtectRecord) rec;
+			}
 
             if (rec != null)
             {
@@ -391,11 +418,13 @@ public class Sheet implements Model
         retval.dims    = ( DimensionsRecord ) retval.createDimensions();
         retval.dimsloc = 19;
         records.add(retval.dims);
-        records.add(retval.createWindowTwo());
+        records.add(retval.windowTwo = retval.createWindowTwo());
         retval.setLoc(records.size() - 1);
         retval.selection = 
                 (SelectionRecord) retval.createSelection();
         records.add(retval.selection);
+		retval.protect = (ProtectRecord) retval.createProtect();
+		records.add(retval.protect);
         records.add(retval.createEOF());
         retval.records = records;
         log.log(log.DEBUG, "Sheet createsheet from scratch exit");
@@ -469,12 +498,21 @@ public class Sheet implements Model
         numMergedRegions--;
         if (rec.getNumAreas() == 0)
         {
-            mergedRecords.remove(pos);
-            if (merged == rec)
-            	merged = (MergeCellsRecord) mergedRecords.get(mergedRecords.size() - 1);
+				mergedRecords.remove(pos);            
+            if (merged == rec) {
+            	//pull up the LAST record for operations when we finally
+            	//support continue records for mergedRegions
+            	if (mergedRecords.size() > 0) {
+            		merged = (MergeCellsRecord) mergedRecords.get(mergedRecords.size() - 1);
+            	} else {
+            		merged = null;
+            	}
+            }
+            
             int removePos = ((Integer) mergedLocs.get(pos)).intValue();
             records.remove(removePos);
             mergedLocs.remove(pos);
+            
         }
     }
 
@@ -2011,7 +2049,7 @@ public class Sheet implements Model
      * @return record containing a WindowTwoRecord
      */
 
-    protected Record createWindowTwo()
+    protected WindowTwoRecord createWindowTwo()
     {
         WindowTwoRecord retval = new WindowTwoRecord();
 
@@ -2312,7 +2350,6 @@ public class Sheet implements Model
      * @param sel True to select the sheet, false otherwise.
      */
     public void setSelected(boolean sel) {
-        WindowTwoRecord windowTwo = (WindowTwoRecord) findFirstRecordBySid(WindowTwoRecord.sid);
         windowTwo.setSelected(sel);
     }
 
@@ -2321,82 +2358,59 @@ public class Sheet implements Model
       * @param margin which margin to get
       * @return the size of the margin
       */
-     public double getMargin(short margin) {
-         Margin m;
-         switch ( margin )
-         {
-             case LeftMargin:
-                 m = (Margin) findFirstRecordBySid( LeftMarginRecord.sid );
-                 if ( m == null )
-                     return .75;
-                 break;
-             case RightMargin:
-                 m = (Margin) findFirstRecordBySid( RightMarginRecord.sid );
-                 if ( m == null )
-                     return .75;
-                 break;
-             case TopMargin:
-                 m = (Margin) findFirstRecordBySid( TopMarginRecord.sid );
-                 if ( m == null )
-                     return 1.0;
-                 break;
-             case BottomMargin:
-                 m = (Margin) findFirstRecordBySid( BottomMarginRecord.sid );
-                 if ( m == null )
-                     return 1.0;
-                 break;
-             default :
-                 throw new RuntimeException( "Unknown margin constant:  " + margin );
-         }
-         return m.getMargin();
-     }
+    public double getMargin(short margin) {
+	if (getMargins()[margin] != null)
+	    return margins[margin].getMargin();
+	else {
+	    switch ( margin )
+		{
+		case LeftMargin:
+		    return .75;
+		case RightMargin:
+		    return .75;
+		case TopMargin:
+		    return 1.0;
+		case BottomMargin:
+		    return 1.0;
+		default :
+		    throw new RuntimeException( "Unknown margin constant:  " + margin );
+		}
+	}
+    }
 
      /**
       * Sets the size of the margin in inches.
       * @param margin which margin to get
       * @param size the size of the margin
       */
-     public void setMargin(short margin, double size) {
-         Margin m;
-         switch ( margin )
-         {
-             case LeftMargin:
-                 m = (Margin) findFirstRecordBySid( LeftMarginRecord.sid );
-                 if ( m == null )
-                 {
-                     m = new LeftMarginRecord();
-                     records.add( getDimsLoc() + 1, m );
-                 }
-                 break;
-             case RightMargin:
-                 m = (Margin) findFirstRecordBySid( RightMarginRecord.sid );
-                 if ( m == null )
-                 {
-                     m = new RightMarginRecord();
-                     records.add( getDimsLoc() + 1, m );
-                 }
-                 break;
-             case TopMargin:
-                 m = (Margin) findFirstRecordBySid( TopMarginRecord.sid );
-                 if ( m == null )
-                 {
-                     m = new TopMarginRecord();
-                     records.add( getDimsLoc() + 1, m );
-                 }
-                 break;
-             case BottomMargin:
-                 m = (Margin) findFirstRecordBySid( BottomMarginRecord.sid );
-                 if ( m == null )
-                 {
-                     m = new BottomMarginRecord();
-                     records.add( getDimsLoc() + 1, m );
-                 }
-                 break;
-             default :
-                 throw new RuntimeException( "Unknown margin constant:  " + margin );
-         }
-         m.setMargin( size );
-     }
+    public void setMargin(short margin, double size) {
+	Margin m = getMargins()[margin];
+	if (m  == null) {
+	    switch ( margin )
+		{
+		case LeftMargin:
+		    m = new LeftMarginRecord();
+		    records.add( getDimsLoc() + 1, m );
+		    break;
+		case RightMargin:
+		    m = new RightMarginRecord();
+		    records.add( getDimsLoc() + 1, m );
+		    break;
+		case TopMargin:
+		    m = new TopMarginRecord();
+		    records.add( getDimsLoc() + 1, m );
+		    break;
+		case BottomMargin:
+		    m = new BottomMarginRecord();
+		    records.add( getDimsLoc() + 1, m );
+		    break;
+		default :
+		    throw new RuntimeException( "Unknown margin constant:  " + margin );
+		}
+	    margins[margin] = m;
+	}
+	m.setMargin( size );
+    }
 
     public int getEofLoc()
     {
@@ -2434,9 +2448,8 @@ public class Sheet implements Model
         }
         records.add(loc+1, pane);
 
-        WindowTwoRecord windowRecord = (WindowTwoRecord) records.get(loc);
-        windowRecord.setFreezePanes(true);
-        windowRecord.setFreezePanesNoSplit(true);
+        windowTwo.setFreezePanes(true);
+        windowTwo.setFreezePanesNoSplit(true);
 
         SelectionRecord sel = (SelectionRecord) findFirstRecordBySid(SelectionRecord.sid);
 //        SelectionRecord sel2 = (SelectionRecord) sel.clone();
@@ -2484,9 +2497,8 @@ public class Sheet implements Model
         r.setActivePane((short) activePane);
         records.add(loc+1, r);
 
-        WindowTwoRecord windowRecord = (WindowTwoRecord) records.get(loc);
-        windowRecord.setFreezePanes(false);
-        windowRecord.setFreezePanesNoSplit(false);
+        windowTwo.setFreezePanes(false);
+        windowTwo.setFreezePanesNoSplit(false);
 
         SelectionRecord sel = (SelectionRecord) findFirstRecordBySid(SelectionRecord.sid);
 //        SelectionRecord sel2 = (SelectionRecord) sel.clone();
@@ -2519,5 +2531,84 @@ public class Sheet implements Model
     {
         this.selection = selection;
     }
+       /**
+        * creates a Protect record with protect set to false.
+        * @see org.apache.poi.hssf.record.ProtectRecord
+        * @see org.apache.poi.hssf.record.Record
+        * @return a ProtectRecord
+        */
 
+       protected Record createProtect()
+       {
+               log.log(log.DEBUG, "create protect record with protection disabled");
+               ProtectRecord retval = new ProtectRecord();
+
+               retval.setProtect(false);
+               // by default even when we support encryption we won't
+               return retval;
+       }
+
+       public ProtectRecord getProtect()
+       {
+               return protect;
+     }
+
+    /**
+     * Sets whether the gridlines are shown in a viewer.
+     * @param show whether to show gridlines or not
+     */
+    public void setDisplayGridlines(boolean show) {
+        windowTwo.setDisplayGridlines(show);
+    }
+
+    /**
+     * Returns if gridlines are displayed.
+     * @return whether gridlines are displayed
+     */
+    public boolean isDisplayGridlines() {
+	return windowTwo.getDisplayGridlines();
+    }
+
+    /**
+     * Sets whether the formulas are shown in a viewer.
+     * @param show whether to show formulas or not
+     */
+    public void setDisplayFormulas(boolean show) {
+        windowTwo.setDisplayFormulas(show);
+    }
+
+    /**
+     * Returns if formulas are displayed.
+     * @return whether formulas are displayed
+     */
+    public boolean isDisplayFormulas() {
+	return windowTwo.getDisplayFormulas();
+    }
+
+    /**
+     * Sets whether the RowColHeadings are shown in a viewer.
+     * @param show whether to show RowColHeadings or not
+     */
+    public void setDisplayRowColHeadings(boolean show) {
+        windowTwo.setDisplayRowColHeadings(show);
+    }
+
+    /**
+     * Returns if RowColHeadings are displayed.
+     * @return whether RowColHeadings are displayed
+     */
+    public boolean isDisplayRowColHeadings() {
+	return windowTwo.getDisplayRowColHeadings();
+    }
+
+    /**
+     * Returns the array of margins.  If not created, will create.
+     *
+     * @return the array of marings.
+     */
+    protected Margin[] getMargins() {
+        if (margins == null)
+            margins = new Margin[4];
+	return margins;
+    }
 }

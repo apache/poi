@@ -139,18 +139,18 @@ public class ProtectionRev4Record
      * @return whether to protect the workbook or not
      */
 
-    public short getProtect()
-    {
-        return field_1_protect;
-    }
+	public boolean getProtect()
+	{
+		return (field_1_protect == 1);
+	}
 
     public String toString()
     {
         StringBuffer buffer = new StringBuffer();
 
         buffer.append("[PROT4REV]\n");
-        buffer.append("    .rowheight      = ")
-            .append(Integer.toHexString(getProtect())).append("\n");
+	    buffer.append("    .protect         = ").append(getProtect())
+            .append("\n");
         buffer.append("[/PROT4REV]\n");
         return buffer.toString();
     }
@@ -160,7 +160,7 @@ public class ProtectionRev4Record
         LittleEndian.putShort(data, 0 + offset, sid);
         LittleEndian.putShort(data, 2 + offset,
                               (( short ) 0x02));   // 2 bytes (6 total)
-        LittleEndian.putShort(data, 4 + offset, getProtect());
+        LittleEndian.putShort(data, 4 + offset, field_1_protect);
         return getRecordSize();
     }
 

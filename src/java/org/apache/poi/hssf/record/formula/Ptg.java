@@ -307,6 +307,12 @@ public abstract class Ptg
             case MissingArgPtg.sid:
                 retval = new MissingArgPtg(data,offset);
                 break;
+            case UnaryPlusPtg.sid:
+                retval=new UnaryPlusPtg(data,offset);
+                break;
+            case UnaryMinusPtg.sid:
+                retval=new UnaryMinusPtg(data,offset);
+                break;
 
             default :
 
@@ -355,6 +361,14 @@ public abstract class Ptg
             e.printStackTrace();
         }
         return retval;
+    }
+    
+    /** Overridden toString method to ensure object hash is not printed.
+     * This helps get rid of gratuitous diffs when comparing two dumps
+     * Subclasses may output more relevant information by overriding this method
+     **/
+    public String toString(){
+        return this.getClass().toString();
     }
     
     public static final byte CLASS_REF = 0x00;

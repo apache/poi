@@ -314,6 +314,9 @@ public class TestHexDump
 
             // as expected
         }
+
+        // verify proper behaviour with a 0 length dump on 0 length dataset
+        HexDump.dump(new byte[0], 0, new ByteArrayOutputStream(), 0, 0);
     }
 
     public void testToHex()

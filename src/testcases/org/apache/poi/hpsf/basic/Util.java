@@ -54,9 +54,24 @@
 
 package org.apache.poi.hpsf.basic;
 
-import java.io.*;
-import java.util.*;
-import org.apache.poi.poifs.eventfilesystem.*;
+import java.io.ByteArrayOutputStream;
+import java.io.EOFException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Properties;
+
+import org.apache.poi.poifs.eventfilesystem.POIFSReader;
+import org.apache.poi.poifs.eventfilesystem.POIFSReaderEvent;
+import org.apache.poi.poifs.eventfilesystem.POIFSReaderListener;
 
 
 
@@ -73,6 +88,9 @@ public class Util
     /**
      * <p>Reads bytes from an input stream and writes them to an
      * output stream until end of file is encountered.</p>
+     *
+     * @param in the input stream to read from
+     * @param out the output stream to write to
      */
     public static void copy(final InputStream in, final OutputStream out)
         throws IOException
@@ -88,8 +106,8 @@ public class Util
                 read = in.read(b, 0, BUF_SIZE);
                 if (read > 0)
                     out.write(b, 0, read);
-		else
-		    eof = true;
+                else
+                    eof = true;
             }
             catch (EOFException ex)
             {
@@ -106,16 +124,16 @@ public class Util
      * into memory and thus does not cope well with large POI
      * filessystems.</p>
      * 
-     * @param file The name of the POI filesystem as seen by the
+     * @param poiFs The name of the POI filesystem as seen by the
      * operating system. (This is the "filename".)
      *
      * @return The POI files. The elements are ordered in the same way
      * as the files in the POI filesystem.
      */
     public static POIFile[] readPOIFiles(final File poiFs)
-	throws FileNotFoundException, IOException
+        throws FileNotFoundException, IOException
     {
-	return readPOIFiles(poiFs, null);
+        return readPOIFiles(poiFs, null);
     }
 
 
@@ -126,7 +144,7 @@ public class Util
      * files into memory and thus does not cope well with large POI
      * filessystems.</p>
      * 
-     * @param file The name of the POI filesystem as seen by the
+     * @param poiFs The name of the POI filesystem as seen by the
      * operating system. (This is the "filename".)
      *
      * @param poiFiles The names of the POI files to be read.
@@ -135,50 +153,49 @@ public class Util
      * as the files in the POI filesystem.
      */
     public static POIFile[] readPOIFiles(final File poiFs,
-					 final String[] poiFiles)
-	throws FileNotFoundException, IOException
+                                         final String[] poiFiles)
+        throws FileNotFoundException, IOException
     {
-	final List files = new ArrayList();
-	POIFSReader r = new POIFSReader();
-	POIFSReaderListener pfl = new POIFSReaderListener()
-	    {
-		public void processPOIFSReaderEvent(POIFSReaderEvent event)
-		{
-		    try
-		    {
-			POIFile f = new POIFile();
-			f.setName(event.getName());
-			f.setPath(event.getPath());
-			InputStream in = event.getStream();
-			ByteArrayOutputStream out =
-			    new ByteArrayOutputStream();
-			Util.copy(in, out);
-			out.close();
-			f.setBytes(out.toByteArray());
-			files.add(f);
-		    }
-		    catch (IOException ex)
-		    {
-			ex.printStackTrace();
-			throw new RuntimeException(ex.getMessage());
-		    }
-		}
-	    };
-	if (poiFiles == null)
-	    /* Register the listener for all POI files. */
-	    r.registerListener(pfl);
-	else
-	    /* Register the listener for the specified POI files
-	     * only. */
-	    for (int i = 0; i < poiFiles.length; i++)
-		r.registerListener(pfl, poiFiles[i]);
+        final List files = new ArrayList();
+        POIFSReader r = new POIFSReader();
+        POIFSReaderListener pfl = new POIFSReaderListener()
+        {
+            public void processPOIFSReaderEvent(final POIFSReaderEvent event)
+            {
+                try
+                {
+                    POIFile f = new POIFile();
+                    f.setName(event.getName());
+                    f.setPath(event.getPath());
+                    InputStream in = event.getStream();
+                    ByteArrayOutputStream out = new ByteArrayOutputStream();
+                    Util.copy(in, out);
+                    out.close();
+                    f.setBytes(out.toByteArray());
+                    files.add(f);
+                }
+                catch (IOException ex)
+                {
+                    ex.printStackTrace();
+                    throw new RuntimeException(ex.getMessage());
+                }
+            }
+        };
+        if (poiFiles == null)
+            /* Register the listener for all POI files. */
+            r.registerListener(pfl);
+        else
+            /* Register the listener for the specified POI files
+             * only. */
+            for (int i = 0; i < poiFiles.length; i++)
+                r.registerListener(pfl, poiFiles[i]);
 
-	/* Read the POI filesystem. */
-	r.read(new FileInputStream(poiFs));
-	POIFile[] result = new POIFile[files.size()];
-	for (int i = 0; i < result.length; i++)
-	    result[i] = (POIFile) files.get(i);
-	return result;
+        /* Read the POI filesystem. */
+        r.read(new FileInputStream(poiFs));
+        POIFile[] result = new POIFile[files.size()];
+        for (int i = 0; i < result.length; i++)
+            result[i] = (POIFile) files.get(i);
+        return result;
     }
 
 
@@ -188,19 +205,19 @@ public class Util
      */
     public static void printSystemProperties()
     {
-	Properties p = System.getProperties();
-	List names = new LinkedList();
-	for (Iterator i = p.keySet().iterator(); i.hasNext();)
-	    names.add(i.next());
-	Collections.sort(names);
-	for (Iterator i = names.iterator(); i.hasNext();)
+        final Properties p = System.getProperties();
+        final List names = new LinkedList();
+        for (Iterator i = p.keySet().iterator(); i.hasNext();)
+            names.add(i.next());
+        Collections.sort(names);
+        for (final Iterator i = names.iterator(); i.hasNext();)
         {
-	    String name = (String) i.next();
-	    String value = (String) p.get(name);
-	    System.out.println(name + ": " + value);
-	}
-	System.out.println("Current directory: " +
-			   System.getProperty("user.dir"));
+            String name = (String) i.next();
+            String value = (String) p.get(name);
+            System.out.println(name + ": " + value);
+        }
+        System.out.println("Current directory: " +
+                           System.getProperty("user.dir"));
     }
 
 }

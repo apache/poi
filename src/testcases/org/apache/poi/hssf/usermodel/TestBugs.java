@@ -1,7 +1,7 @@
 /* ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 2003 The Apache Software Foundation.  All rights
+ * Copyright (c) 2003, 2003 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -51,72 +51,69 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.hssf.util.SheetReferences;
+package org.apache.poi.hssf.usermodel;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Date;
+
+import junit.framework.TestCase;
+
 
 
 /**
- * Ptg class to implement less than or equal
- * @author  fred at stsci dot edu
+ * @author Avik Sengupta
  */
 
-public class LessEqualPtg
-	 extends OperationPtg
-{
-	 public final static int  SIZE = 1;
-	 public final static byte sid  = 0x0a;
-
-	 /** Creates new LessEqualPtg */
-
-	public LessEqualPtg()
-	 {
-	 }
-
-	 public LessEqualPtg(byte [] data, int offset)
-	 {
-
-		  // doesn't need anything
-	 }
-
-	 public void writeBytes(byte [] array, int offset)
-	 {
-		  array[ offset + 0 ] = sid;
-	 }
-
-	 public int getSize()
-	 {
-		  return SIZE;
-	 }
-
-	 public int getType()
-	 {
-		  return TYPE_BINARY;
-	 }
-
-	 public int getNumberOfOperands()
-	 {
-		  return 2;
-	 }
-
-	 public String toFormulaString(SheetReferences refs)
-	 {
-		  return "<=";
-	 }
- 
-	 public String toFormulaString(String[] operands) {
-			StringBuffer buffer = new StringBuffer();
-
-        
-		  buffer.append(operands[ 0 ]);
-		  buffer.append(toFormulaString((SheetReferences)null));
-		  buffer.append(operands[ 1 ]);
-		  return buffer.toString();
-	 }       
-
-	 public Object clone() {
-		return new LessEqualPtg();
-	 }
-
-
+public class TestBugs
+extends TestCase {
+    public TestBugs(String s) {
+        super(s);
+    }
+    
+          public void test15228()
+        throws java.io.IOException
+    {
+         String readFilename = System.getProperty("HSSF.testdata.path");
+          FileInputStream in = new FileInputStream(readFilename+File.separator+"15228.xls");
+          HSSFWorkbook wb = new HSSFWorkbook(in);
+          HSSFSheet s = wb.getSheetAt(0);
+          HSSFRow r = s.createRow(0);
+          HSSFCell c = r.createCell((short)0);
+          c.setCellValue(10);
+          File file = File.createTempFile("test15228",".xls");
+          FileOutputStream out    = new FileOutputStream(file);
+          wb.write(out);
+          assertTrue("No exception thrown", true); 
+          assertTrue("File Should Exist", file.exists());
+            
+    }
+          
+                 public void test13796()
+        throws java.io.IOException
+    {
+         String readFilename = System.getProperty("HSSF.testdata.path");
+          FileInputStream in = new FileInputStream(readFilename+File.separator+"13796.xls");
+          HSSFWorkbook wb = new HSSFWorkbook(in);
+          HSSFSheet s = wb.getSheetAt(0);
+          HSSFRow r = s.createRow(0);
+          HSSFCell c = r.createCell((short)0);
+          c.setCellValue(10);
+          File file = File.createTempFile("test13796",".xls");
+          FileOutputStream out    = new FileOutputStream(file);
+          wb.write(out);
+          assertTrue("No exception thrown", true); 
+          assertTrue("File Should Exist", file.exists());
+            
+    }
+                 
+          
+          
+    
 }
+    
+
+
