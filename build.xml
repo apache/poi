@@ -1,16 +1,11 @@
 <?xml version="1.0"?>
-<?xml-stylesheet type="text/xsl" href="./tools/antipede/resources/stylesheets/layout.xsl"?>
+<?xml-stylesheet type="text/xsl" href="./tools/antipede/resources/stylesheets/build.xsl"?>
 
 <!--<!DOCTYPE project SYSTEM "./tools/antipede/build.dtd" >-->
 <!DOCTYPE project [
   <!-- antipede -->    
   <!ENTITY import-antipede  SYSTEM "./tools/antipede/build.xtarget"> 
-
-  <!ELEMENT project  ANY>
-  <!ATTLIST project default CDATA #REQUIRED
-                    basedir CDATA #IMPLIED
-                    name CDATA #IMPLIED>  
-                    
+                   
 ]>
 <project default="interactive" basedir="." name="project build file">
 
@@ -152,7 +147,7 @@
            description="Compile java source code">
            
     <antcall target="call-cent">
-      <param name="cent-name"   value="centipede"/> 
+      <param name="cent-name"   value="automagic"/> 
       <param name="cent-target" value="compile"/> 
     </antcall>
     
@@ -167,8 +162,8 @@
            description="Compile java source code">
 
     <antcall target="call-cent">
-      <param name="cent-name"   value="centipede"/> 
-      <param name="cent-target" value="package"/> 
+      <param name="cent-name"   value="automagic"/> 
+      <param name="cent-target" value="jar"/> 
     </antcall>
     
   </target>     
@@ -176,13 +171,11 @@
   <!-- ====================================== -->
   <!--  dist target wo single build checks    -->
   <!-- ====================================== -->
-<!-- REALLY DIRTY HACK, ANDY REMOVED CLEAN TARGET, RE-ADD WHEN CENTIPEDE BUG -->
-<!-- is fixed!!!!!!!! -->
-  <target  name="dist"   depends="-init, jar, test, site"
+  <target  name="dist"   depends="-init"
            description="Build distribution packages wo single build checks">
 
     <antcall target="call-cent">
-      <param name="cent-name"   value="centipede"/> 
+      <param name="cent-name"   value="automagic"/> 
       <param name="cent-target" value="dist"/> 
     </antcall>
     
@@ -197,7 +190,7 @@
            description="Compile java source code">
 
     <antcall target="call-cent">
-      <param name="cent-name"   value="centipede"/> 
+      <param name="cent-name"   value="automagic"/> 
       <param name="cent-target" value="clean"/> 
     </antcall>
     
@@ -207,50 +200,27 @@
   <!--         Run Junit tests            -->
   <!-- ================================== -->
   
-  <target  name="test"   depends="-init, compile"
+  <target  name="test"   depends="-init"
            description="Compile java source code">
 
      <antcall target="call-cent">
-      <param name="cent-name"   value="junit"/> 
+      <param name="cent-name"   value="automagic"/> 
       <param name="cent-target" value="test"/> 
     </antcall>
  
   </target>     
 
-  <!-- ================================== -->
-  <!--         Run Junit tests            -->
-  <!-- ================================== -->
-  
-  <target  name="test-report"   depends="-init, compile"
-           description="Compile java source code">
- 
-    <antcall target="call-cent">
-      <param name="cent-name"   value="junit"/> 
-      <param name="cent-target" value="failsafe-test"/> 
-    </antcall>
-    
-    <antcall target="call-cent">
-      <param name="cent-name"   value="junit"/> 
-      <param name="cent-target" value="report"/> 
-    </antcall>
-   
-  </target> 
   
   <!-- ================================== -->
   <!--      Generate project metrics      -->
   <!-- ================================== -->
   
-  <target  name="metrics"   depends="-init, compile"
+  <target  name="metrics"   depends="-init"
            description="Generate project metrics">
 
     <antcall target="call-cent">
-      <param name="cent-name"   value="jdepend"/>
-      <param name="cent-target" value="jdepend-html"/> 
-    </antcall>
- 
-    <antcall target="call-cent">
-      <param name="cent-name"   value="checkstyle"/> 
-      <param name="cent-target" value="check"/> 
+      <param name="cent-name"   value="automagic"/>
+      <param name="cent-target" value="metrics"/> 
     </antcall>
 
  </target>     
@@ -264,7 +234,7 @@
            description="Compile java source code">
 
     <antcall target="call-cent">
-      <param name="cent-name"   value="forrest"/> 
+      <param name="cent-name"   value="automagic"/> 
       <param name="cent-target" value="docs"/> 
     </antcall>
  
@@ -276,12 +246,15 @@
   
   <target  name="site"
            description="Makes all the site doco"
-           depends="docs, 
-                    test-report,
-                    javadocs,  
-                    metrics"/>
+           depends="-init">
 
-  
+     <antcall target="call-cent">
+      <param name="cent-name"   value="automagic"/> 
+      <param name="cent-target" value="site"/> 
+    </antcall>
+ 
+  </target>     
+   
   <!-- ================================== -->
   <!--       Generates the java docs      -->
   <!-- ================================== -->
@@ -290,20 +263,10 @@
            description="Compile java source code">
 
     <antcall target="call-cent">
-      <param name="cent-name"   value="umldoclet"/> 
+      <param name="cent-name"   value="automagic"/> 
       <param name="cent-target" value="javadocs"/> 
     </antcall>
 
-    <antcall target="call-cent">
-      <param name="cent-name"   value="umldoclet"/> 
-      <param name="cent-target" value="doclet"/> 
-    </antcall>
-
-    <antcall target="call-cent">
-      <param name="cent-name"   value="javasrc"/> 
-      <param name="cent-target" value="javasrc"/> 
-    </antcall>
-        
   </target>     
 
   <!-- ================================== -->
