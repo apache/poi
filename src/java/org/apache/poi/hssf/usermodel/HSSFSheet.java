@@ -925,6 +925,7 @@ public class HSSFSheet
                 if ( cell != null )
                     row2Replace.removeCell( cell );
             }
+	    if (row == null) continue;
             for ( short col = row.getFirstCellNum(); col <= row.getLastCellNum(); col++ )
             {
                 cell = row.getCell( col );
