@@ -91,7 +91,7 @@
     
     <!-- Source dirs with type  -->        
     <code type="java/plain" dir="src/java"/>
-    <test type="test/junit" dir="src/test"/>
+    <test type="test/junit" dir="src/testcases"/>
     <documentation type="xml/forrest" dir="src/documentation"/>
         
     <!-- POI jars - the result of the build  -->        
