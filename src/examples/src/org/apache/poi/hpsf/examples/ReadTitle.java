@@ -74,36 +74,36 @@ public class ReadTitle
 
     public static void main(String[] args) throws IOException
     {
-	final String filename = args[0];
-	POIFSReader r = new POIFSReader();
-	r.registerListener(new MyPOIFSReaderListener(),
-			   "\005SummaryInformation");
-	r.read(new FileInputStream(filename));
+        final String filename = args[0];
+        POIFSReader r = new POIFSReader();
+        r.registerListener(new MyPOIFSReaderListener(),
+                           "\005SummaryInformation");
+        r.read(new FileInputStream(filename));
     }
 
 
     static class MyPOIFSReaderListener implements POIFSReaderListener
     {
-	public void processPOIFSReaderEvent(POIFSReaderEvent event)
-	{
-	    SummaryInformation si = null;
-	    try
-	    {
-		si = (SummaryInformation)
-		    PropertySetFactory.create(event.getStream());
-	    }
-	    catch (Exception ex)
-	    {
-		throw new RuntimeException
-		    ("Property set stream \"" +
-		     event.getPath() + event.getName() + "\": " + ex);
-	    }
-	    final String title = si.getTitle();
-	    if (title != null)
-		System.out.println("Title: \"" + title + "\"");
-	    else
-		System.out.println("Document has no title.");
-	}
+        public void processPOIFSReaderEvent(POIFSReaderEvent event)
+        {
+            SummaryInformation si = null;
+            try
+            {
+                si = (SummaryInformation)
+                    PropertySetFactory.create(event.getStream());
+            }
+            catch (Exception ex)
+            {
+                throw new RuntimeException
+                    ("Property set stream \"" +
+                     event.getPath() + event.getName() + "\": " + ex);
+            }
+            final String title = si.getTitle();
+            if (title != null)
+                System.out.println("Title: \"" + title + "\"");
+            else
+                System.out.println("Document has no title.");
+        }
     }
 
 }
