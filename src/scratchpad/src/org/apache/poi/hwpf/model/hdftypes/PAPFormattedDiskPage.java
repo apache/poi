@@ -204,6 +204,7 @@ public class PAPFormattedDiskPage extends FormattedDiskPage
         byte[] grpprl = papx.getGrpprl();
 
         grpprlOffset -= (grpprl.length + (2 - grpprl.length % 2));
+        grpprlOffset -= (grpprlOffset % 2);
         LittleEndian.putInt(buf, fcOffset, papx.getStart() + fcMin);
         buf[bxOffset] = (byte)(grpprlOffset/2);
         System.arraycopy(phe, 0, buf, bxOffset + 1, phe.length);
@@ -233,7 +234,7 @@ public class PAPFormattedDiskPage extends FormattedDiskPage
 
     private ParagraphHeight getParagraphHeight(int index)
     {
-      int pheOffset = 1 + (2 * LittleEndian.getUnsignedByte(_fkp, _offset + (((_crun + 1) * 4) + (index * 13))));
+      int pheOffset = 1 + (((_crun + 1) * 4) + (index * 13));
 
       ParagraphHeight phe = new ParagraphHeight(_fkp, pheOffset);
 

@@ -93,6 +93,11 @@ public class PAPBinTable
     }
   }
 
+  public ArrayList getParagraphs()
+  {
+    return _paragraphs;
+  }
+
   public void writeTo(HWPFFileSystem sys, int fcMin)
     throws IOException
   {
