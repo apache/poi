@@ -60,6 +60,8 @@
 package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.util.POILogFactory;
+import org.apache.poi.hssf.eventmodel.EventRecordFactory;
+import org.apache.poi.hssf.eventmodel.ModelFactory;
 import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.*;
@@ -178,6 +180,11 @@ public class HSSFWorkbook
         names  = new ArrayList(INITIAL_CAPACITY);
         
         InputStream stream = fs.createDocumentInputStream("Workbook");
+        
+        EventRecordFactory factory = new EventRecordFactory();
+       
+        
+        
         List records = RecordFactory.createRecords(stream);
 
         workbook = Workbook.createWorkbook(records);
