@@ -82,9 +82,13 @@ public class Borders
         // Style the cell with borders all around.
         HSSFCellStyle style = wb.createCellStyle();
         style.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+        style.setBottomBorderColor(HSSFCellStyle.BLACK);
         style.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+        style.setLeftBorderColor(HSSFCellStyle.GREEN);
         style.setBorderRight(HSSFCellStyle.BORDER_THIN);
+        style.setRightBorderColor(HSSFCellStyle.BLUE);
         style.setBorderTop(HSSFCellStyle.BORDER_MEDIUM_DASHED);
+        style.setTopBorderColor(HSSFCellStyle.AUTOMATIC);
         cell.setCellStyle(style);
 
         // Write the output to a file
