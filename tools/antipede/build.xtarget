@@ -31,7 +31,6 @@
     <property name="tools.dir"                   value="tools"/>
     <property name="temp.dir"                    value="tools/tmp"/>
     <property name="cents.dir"                   value="tools/cents"/>
-    <property name="installed.cents.dir"         value="tools/installed"/>
     <property name="antipede.dir"                value="tools/antipede"/>
     <property name="antipede.lib.dir"            value="tools/antipede/lib"/>
     <property name="cent.lib.dir.name"           value="lib"/>
@@ -40,7 +39,8 @@
     <property name="cent.dir.suffix"             value="cent"/>    
     <property name="cent.installed.suffix"       value="installed"/>      
     
-                
+    <mkdir dir="${cents.dir}"/>
+                    
     <!-- define all ant tasks in antipede -->
     <taskdef file="${antipede.dir}/${task.properties.name}">
      <classpath>
@@ -52,7 +52,38 @@
       </path>
      </classpath>
     </taskdef>
- 
+    
+    <!--
+    Load project information
+    -->
+    <centipede-xml-property file="module.xml"     prefix="xgump"    keeproot="true"   />
+    <centipede-xml-property file="status.xml"     prefix="xstatus"  keeproot="false"  />   
+    <centipede-xml-property file="layout.xml"     prefix="xlayout"  keeproot="false"  />
+    <centipede-xml-property file="properties.xml"                   keeproot="false"  />
+    
+    <style basedir="."
+           destdir="${temp.dir}"
+           includes="properties.xml"
+           extension=".build.xml"
+           style="${antipede.dir}/resources/stylesheets/getcent.xsl"/>
+           
+     <ant antfile="${temp.dir}/properties.build.xml"
+         inheritAll="true" 
+         dir="."
+         target="getcents" />        
+<!--
+    <style basedir="."
+           destdir="${temp.dir}"
+           includes="module.xml"
+           extension=".build.xml"
+           style="${antipede.dir}/resources/stylesheets/getlibs.xsl"/>
+           
+     <ant antfile="${temp.dir}/module.build.xml"
+         inheritAll="true" 
+         dir="."
+         target="getlibs" />        
+-->
+    
     <!-- Unpack jarred cents -->
     <antipede-foreach target="-cent-unjar" param="current.cent.jar">
      <fileset dir="." casesensitive="yes"> 
@@ -66,7 +97,6 @@
 
     <mkdir dir="${temp.dir}"/>
     <delete file="${temp.dir}/${task.properties.name}"/>
-
                         
     <!-- put all ant task definitions in cents in a single file -->
     <antipede-trycatch><try>
@@ -92,14 +122,7 @@
     <catch><echo message="Unable to load tasks... could be already loaded." /></catch>
     </antipede-trycatch>
 
-   <!--
-    Load project information
-    -->
-    <centipede-xml-property file="module.xml"     prefix="xgump"    keeproot="true" />
-    <centipede-xml-property file="status.xml"     prefix="xstatus"  keeproot="false"  />   
-    <centipede-xml-property file="layout.xml"     prefix="xlayout"  keeproot="false"  />
-    <centipede-xml-property file="properties.xml"                   keeproot="false"  /> 
-
+   
   </target>
 
   <!-- ================================ -->
