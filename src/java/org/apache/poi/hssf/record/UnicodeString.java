@@ -79,6 +79,7 @@ public class UnicodeString
     private byte              field_2_optionflags;   // = 0;
     private String            field_3_string;        // = null;
     private final int RICH_TEXT_BIT = 8;
+    private final int EXT_BIT = 4;
 
     public UnicodeString()
     {
@@ -362,6 +363,11 @@ public class UnicodeString
             rval = proposedStringLength + 3;
         }
         return rval;
+    }
+
+    public boolean isExtendedText()
+    {
+        return (getOptionFlags() & EXT_BIT) != 0;
     }
 
 }

@@ -236,9 +236,23 @@ public class LittleEndian
      *
      * @exception ArrayIndexOutOfBoundsException may be thrown
      */
-
     public static void putShort(final byte[] data, final int offset,
                                 final short value)
+    {
+        putNumber(data, offset, value, SHORT_SIZE);
+    }
+
+    /**
+     * put an unsigned short value into a byte array
+     *
+     * @param data the byte array
+     * @param offset a starting offset into the byte array
+     * @param value the short (16-bit) value
+     *
+     * @exception ArrayIndexOutOfBoundsException may be thrown
+     */
+    public static void putUShort(final byte[] data, final int offset,
+                                final int value)
     {
         putNumber(data, offset, value, SHORT_SIZE);
     }
