@@ -56,20 +56,14 @@
 package org.apache.poi.hssf.usermodel;
 
 import junit.framework.TestCase;
-
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.hssf.model.Sheet;
-import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.BOFRecord;
 import org.apache.poi.hssf.record.EOFRecord;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
-
-import java.util.List;
-import java.util.Iterator;
-import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 /**
  * @author Glen Stampoultzis (glens at apache.org)
