@@ -51,7 +51,7 @@
     <pathelement path="${build.root}/jakarta-poi/classes"/>
   </path>
 
-  <path id="scratchpad.classpath">
+ <path id="scratchpad.classpath">
     <fileset dir="./lib/endorsed">
       <include name="*.jar"/>
     </fileset>    
