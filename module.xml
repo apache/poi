@@ -73,22 +73,18 @@
     <depend project="jakarta-ant"/>
     <depend project="xml-xerces"/>
     <depend project="xml-xalan2"/>    
-    
+    <depend project="commons-jjar"/>
+    <depend project="ant-contrib"/>
+        
     <!-- needed for POI -->
     <depend project="commons-logging"/>
-    
+            
     <!-- Project jars POI build can use  -->    
     <option project="jakarta-log4j"/>
      
     <!-- Work dirs to be included in classpath  -->          
     <work nested="build/classes"/>
     <work nested="build/testcases"/>
-    <work nested="tools/cents/checkstyle.cent/lib"/>
-    <work nested="tools/cents/forrest.cent/lib"/>
-    <work nested="tools/cents/javasrc.cent/lib"/>
-    <work nested="tools/cents/jdepend.cent/lib"/>        
-    <work nested="tools/cents/junit.cent/lib"/>        
-    <work nested="tools/cents/umldoclet.cent/lib"/>        
     
     <home nested="build"/>
 
@@ -110,5 +106,16 @@
     <nag to="poi-dev@jakarta.apache.org"
          from="Sam Ruby &lt;rubys@us.ibm.com&gt;"/>
   </project>
+  
+<!--
+  <project name="krysalis-centipede-beta2-legacy-jars">
+    <url href="http://www.krysalis.org/centipede/"/>
+    <description>
+      Legacy jars that Centipede-antipede beta2 wanted in the CVS and classpath.
+    </description>
+    <home nested="tools/antipede/lib"/>
+    <jar name="legacy.jar"/>
+  </project>
+-->  
 
 </module>
