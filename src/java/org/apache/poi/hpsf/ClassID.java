@@ -56,6 +56,7 @@
 package org.apache.poi.hpsf;
 
 import java.io.*;
+import org.apache.poi.util.LittleEndian;
 
 /**
  *  REWRITE ME
@@ -111,34 +112,30 @@ public class ClassID {
     public byte[] read(byte[] src, int offset) {
         byte[] retval = new byte[24];
 
-        throw new RuntimeException("This fucntion must be rewritten");
-/*
-        Object[] b = new Object[11]; 
-        b[0] = new Long(LittleEndian.getUInt(src, offset));
-        b[1] = new Integer(LittleEndian.getInt(src, offset += LittleEndian.INT_SIZE));
-        b[2] = new Integer(LittleEndian.getInt(src, offset += LittleEndian.INT_SIZE));
-        b[3] = new Byte(LittleEndian.getUnsignedByte(src, offset += LittleEndian.INT_SIZE);  
-        b[4] = new Byte(LittleEndian.getUnsignedByte(src, offset += 1));
-        b[5] = new Byte(LittleEndian.getUnsignedByte(src, offset += 1));
-        b[6] = new Byte(LittleEndian.getUnsignedByte(src, offset += 1));
-        b[7] = new Byte(LittleEndian.getUnsignedByte(src, offset += 1));
-        b[8] = new Byte(LittleEndian.getUnsignedByte(src, offset += 1));
-        b[9] = new Byte(LittleEndian.getUnsignedByte(src, offset += 1));
-        b[10] = new Byte(LittleEndian.getUnsignedByte(src, offset += 1));
-        int capacity = 24;
-//        for (int i = 0; i < b.length; i++) {
-//            capacity += b[i].getBytes().length;
-//        }
-        bytes = new byte[capacity];
-        int pos = 0;
-        
-        for (int i = 0; i < b.length; i++) {
-            byte[] s = b[i].getBytes();
-            for (int j = 0; j < s.length; j++) {
-                bytes[pos++] = s[j];
-            }
-        }
-        return bytes;*/
+        //throw new RuntimeException("This fucntion must be rewritten");
+
+        //Number[] b = new Number[11];
+
+        //b[0] = new Integer(LittleEndian.getInt(src, offset));
+        //transfer the first Int from little to big endian
+        retval[0] = src[3];
+        retval[1] = src[2];
+        retval[2] = src[1];
+        retval[3] = src[0];
+
+        //b[1] = new Short(LittleEndian.getInt(src, offset += LittleEndian.INT_SIZE));
+        //transfer the second short from little to big endian
+        retval[4] = src[5];
+        retval[5] = src[4];
+
+        //b[2] = new Short(LittleEndian.getInt(src, offset += LittleEndian.SHORT_SIZE));
+        //transfer the third short from little to big endian
+        retval[6] = src[7];
+        retval[7] = src[6];
+
+        System.arraycopy(src, 8, retval, 8, retval.length - 8);
+
+        return retval;
     }
 
 }
