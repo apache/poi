@@ -184,7 +184,7 @@ public class HSSFColor
     public final static class BLACK
         extends HSSFColor
     {
-        public final static short   index     = 0x0;
+        public final static short   index     = 0x8;
         public final static short[] triplet   =
         {
             0, 0, 0
