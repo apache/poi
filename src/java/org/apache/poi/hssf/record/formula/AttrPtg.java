@@ -2,7 +2,7 @@
 /* ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 2002 The Apache Software Foundation.  All rights
+ * Copyright (c) 2002, 2003 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -144,6 +144,14 @@ public class AttrPtg
         field_1_options=optiIf.setByteBoolean(field_1_options,bif);
     }
 
+	/**
+	 * Flags this ptg as a goto/jump 
+	 * @param isGoto
+	 */
+	public void setGoto(boolean isGoto) {
+		field_1_options=optGoto.setByteBoolean(field_1_options, isGoto);
+	}
+	
     // lets hope no one uses this anymore
     public boolean isBaxcel()
     {

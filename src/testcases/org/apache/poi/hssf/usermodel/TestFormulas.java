@@ -2,7 +2,7 @@
 /* ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 2002 The Apache Software Foundation.  All rights
+ * Copyright (c) 2002, 2003 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -894,7 +894,7 @@ extends TestCase {
             
     }
 
-/*    
+    
     public void testIfFormulas()
         throws java.io.IOException
     {
@@ -935,9 +935,56 @@ extends TestCase {
             assertTrue("expected: IF(A3=A1,\"A1\",\"A2\") got "+c.getCellFormula(), ("IF(A3=A1,\"A1\",\"A2\")").equals(c.getCellFormula()));
             //c = r.getCell((short)1);
             //assertTrue("expected: A!A1+A!B1 got: "+c.getCellFormula(), ("A!A1+A!B1").equals(c.getCellFormula()));
-            in.close(); 
+            in.close();
+            
+		File simpleIf = File.createTempFile("testSimpleIfFormulaWrite",".xls");
+		out    = new FileOutputStream(simpleIf);
+		wb     = new HSSFWorkbook();
+		s      = wb.createSheet("Sheet1");
+		r      = null;
+		c      = null;
+		r = s.createRow((short)0);
+		c=r.createCell((short)0); c.setCellFormula("IF(1=1,0,1)");
+            
+		wb.write(out);
+		out.close();
+		assertTrue("file exists", simpleIf.exists());
+			
+		assertTrue("length of simpleIf file is zero", (simpleIf.length()>0));
+			
+		File nestedIf = File.createTempFile("testNestedIfFormula",".xls");
+		out    = new FileOutputStream(nestedIf);
+		wb     = new HSSFWorkbook();
+		s      = wb.createSheet("Sheet1");
+		r      = null;
+		c      = null;
+		r = s.createRow((short)0);
+		c=r.createCell((short)0);
+		c.setCellValue(1);
+
+		c=r.createCell((short)1);
+		c.setCellValue(3);
+
+			
+		HSSFCell formulaCell=r.createCell((short)3); 
+
+		r = s.createRow((short)1);
+		c=r.createCell((short)0);
+		c.setCellValue(3);
+
+		c=r.createCell((short)1);
+		c.setCellValue(7);
+
+		formulaCell.setCellFormula("IF(A1=B1,AVERAGE(A1:B1),AVERAGE(A2:B2))");
+
+            
+		wb.write(out);
+		out.close();
+		assertTrue("file exists", nestedIf.exists());
+			
+		assertTrue("length of nestedIf file is zero", (nestedIf.length()>0));             
     }
-*/
+
     
     public static void main(String [] args) {
         System.out
