@@ -167,56 +167,81 @@ public class ListTables implements HDFType
     int lfolvlNum = 0;
     for(int x = 0; x < lfoSize; x++)
     {
-      for(int y = 0; y < _pllfo[x]._clfolvl; y++)
-      {
-        int offset = lfolvlOffset + (lfolvlNum * 8) + lvlOffset;
-        LFOLVL lfolvl = new LFOLVL();
-        lfolvl._iStartAt = Utils.convertBytesToInt(plflfo, offset);
-        lfolvl._ilvl = Utils.convertBytesToInt(plflfo, offset + 4);
-        lfolvl._fStartAt = StyleSheet.getFlag(lfolvl._ilvl & 0x10);
-        lfolvl._fFormatting = StyleSheet.getFlag(lfolvl._ilvl & 0x20);
-        lfolvl._ilvl = (lfolvl._ilvl & (byte)0x0f);
+      if (_pllfo[x]._clfolvl == 0)
+        //  If LFO._clfolvl is 0, then it appears that Word writes
+        //  out a LFOLVL anyway - however, it's all 0xff.  We need
+        //  to skip over it.
         lfolvlNum++;
-
-        if(lfolvl._fFormatting)
-        {
-          offset = lfolvlOffset + (lfolvlNum * 12) + lvlOffset;
-          lfolvl._override = new LVL();
-          lvlOffset += createLVL(plflfo, offset, lfolvl._override);
-        }
-        _pllfo[x]._levels[y] = lfolvl;
+      else
+      {
+          for(int y = 0; y < _pllfo[x]._clfolvl; y++)
+          {
+            int offset = lfolvlOffset + (lfolvlNum * 8) + lvlOffset;
+            LFOLVL lfolvl = new LFOLVL();
+            lfolvl._iStartAt = Utils.convertBytesToInt(plflfo, offset);
+            lfolvl._ilvl = Utils.convertBytesToInt(plflfo, offset + 4);
+            lfolvl._fStartAt = StyleSheet.getFlag(lfolvl._ilvl & 0x10);
+            lfolvl._fFormatting = StyleSheet.getFlag(lfolvl._ilvl & 0x20);
+            lfolvl._ilvl = (lfolvl._ilvl & (byte)0x0f);
+            lfolvlNum++;
+    
+            if(lfolvl._fFormatting)
+            {
+              // The size of a LFOLVL is 8 bytes.
+              offset = lfolvlOffset + (lfolvlNum * 8) + lvlOffset;
+              lfolvl._override = new LVL();
+              lvlOffset += createLVL(plflfo, offset, lfolvl._override);
+            }
+            _pllfo[x]._levels[y] = lfolvl;
+          }
       }
     }
   }
   private int createLVL(byte[] data, int offset, LVL lvl)
   {
-
+    int startingOffset = offset;
     lvl._iStartAt = Utils.convertBytesToInt(data, offset);
-    lvl._nfc = data[offset + 4];
-    int code = Utils.convertBytesToInt(data, offset + 5);
+    offset += 4;
+    lvl._nfc = data[offset++];
+    byte code = data[offset++];
     lvl._jc = (byte)(code & 0x03);
     lvl._fLegal = StyleSheet.getFlag(code & 0x04);
     lvl._fNoRestart = StyleSheet.getFlag(code & 0x08);
     lvl._fPrev = StyleSheet.getFlag(code & 0x10);
     lvl._fPrevSpace = StyleSheet.getFlag(code & 0x20);
     lvl._fWord6 = StyleSheet.getFlag(code & 0x40);
-    System.arraycopy(data, offset + 6, lvl._rgbxchNums, 0, 9);
-    lvl._ixchFollow = data[offset + 15];
-    int chpxSize = data[offset + 24];
-    int papxSize = data[offset + 25];
+
+    //  rgbxchNums - This array should be zero terminated unless it is full 
+    //  (all 9 levels full).
+    System.arraycopy(data, offset, lvl._rgbxchNums, 0, 9);
+    offset += 9;
+
+    lvl._ixchFollow = data[offset++];
+
+    if (lvl._fWord6)
+    {
+      lvl._dxaSpace = Utils.convertBytesToInt(data, offset);
+      lvl._dxaIndent = Utils.convertBytesToInt(data, offset + 4);
+    }
+    offset += 8;
+
+    int chpxSize = data[offset++];
+    int papxSize = data[offset++];
     lvl._chpx = new byte[chpxSize];
     lvl._papx = new byte[papxSize];
-    System.arraycopy(data, offset + 28, lvl._papx, 0, papxSize);
-    System.arraycopy(data, offset + 28 + papxSize, lvl._chpx, 0, chpxSize);
-    offset += 28 + papxSize + chpxSize;//modify offset
+
+    System.arraycopy(data, offset, lvl._chpx, 0, chpxSize);
+    System.arraycopy(data, offset + chpxSize, lvl._papx, 0, papxSize);
+
+    offset += papxSize + chpxSize + 2;  //don't forget to skip reserved word
     int xstSize = Utils.convertBytesToShort(data, offset);
+    offset += 2;
     lvl._xst = new char[xstSize];
 
-    offset += 2;
     for(int x = 0; x < xstSize; x++)
     {
       lvl._xst[x] = (char)Utils.convertBytesToShort(data, offset + (x * 2));
     }
-    return 28 + papxSize + chpxSize + 2 + (xstSize * 2);
+    return offset + (xstSize * 2) - startingOffset;
   }
 }

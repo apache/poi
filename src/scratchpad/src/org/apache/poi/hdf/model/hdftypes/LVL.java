@@ -74,6 +74,8 @@ public class LVL
   boolean _fWord6;
   public byte[] _rgbxchNums = new byte[9];
   public byte _ixchFollow;
+  public int _dxaSpace;
+  public int _dxaIndent;
   public byte[] _chpx;
   public byte[] _papx;
   public char[] _xst;

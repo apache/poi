@@ -632,12 +632,13 @@ public class HDFObjectFactory
         System.arraycopy(_tableBuffer, lfoOffset, plflfo, 0, lfoSize);
 
         int lstOffset = _fib.getFcPlcfLst();
-        int lstSize = lstOffset;
-        //not sure if this is a mistake or what. I vaguely remember a trick like
-        //this
-        //int lstSize = LittleEndian.getInt(_header, 0x2e2);
-        if(lstOffset > 0 && lstSize > 0)
+        int lstSize = _fib.getLcbPlcfLst();
+        if (lstOffset > 0 && lstSize > 0)
         {
+          //  The lstSize returned by _fib.getLcbPlcfLst() doesn't appear
+          //  to take into account any LVLs.  Therefore, we recalculate
+          //  lstSize based on where the LFO section begins (because the
+          //  LFO section immediately follows the LST section).
           lstSize = lfoOffset - lstOffset;
           byte[] plcflst = new byte[lstSize];
           System.arraycopy(_tableBuffer, lstOffset, plcflst, 0, lstSize);
