@@ -73,6 +73,12 @@ public class HexDump
             throws IOException, ArrayIndexOutOfBoundsException,
                     IllegalArgumentException
     {
+        if (data.length == 0)
+        {
+            stream.write( "No Data".getBytes() );
+            stream.flush();
+            return;
+        }
         if ((index < 0) || (index >= data.length))
         {
             throw new ArrayIndexOutOfBoundsException(
@@ -83,6 +89,7 @@ public class HexDump
         {
             throw new IllegalArgumentException("cannot write to nullstream");
         }
+
         long         display_offset = offset + index;
         StringBuffer buffer         = new StringBuffer(74);
 
