@@ -66,7 +66,7 @@ import org.apache.poi.util.BitField;
 import org.apache.poi.hssf.util.ReferenceUtil;
 
 /**
- * Specifies a rectangular area of cells 
+ * Specifies a rectangular area of cells A1:A4 for instance.
  * @author  andy
  */
 
@@ -145,99 +145,161 @@ public class AreaPtg
         return SIZE;
     }
 
+    /**
+     * @return the first row in the area
+     */
     public short getFirstRow()
     {
         return field_1_first_row;
     }
 
+    /**
+     * sets the first row
+     * @param row number (0-based)
+     */
     public void setFirstRow(short row)
     {
         field_1_first_row = row;
     }
 
+    /**
+     * @return last row in the range (x2 in x1,y1-x2,y2)
+     */
     public short getLastRow()
     {
         return field_2_last_row;
     }
 
+    /**
+     * @param last row number in the area 
+     */
     public void setLastRow(short row)
     {
         field_2_last_row = row;
     }
 
+    /**
+     * @return the first column number in the area.
+     */
     public short getFirstColumn()
     {
         return column.getShortValue(field_3_first_column);
     }
 
+    /**
+     * @return the first column number + the options bit settings unstripped
+     */
     public short getFirstColumnRaw()
     {
         return field_3_first_column;
     }
 
+    /**
+     * @return whether or not the first row is a relative reference or not.
+     */
     public boolean isFirstRowRelative()
     {
         return rowRelative.isSet(field_3_first_column);
     }
     
+    /**
+     * sets the first row to relative or not
+     * @param isRelative or not.
+     */
     public void setFirstRowRelative(boolean rel) {
         field_3_first_column=rowRelative.setShortBoolean(field_3_first_column,rel);
     }
 
+    /**
+     * @return isrelative first column to relative or not
+     */
     public boolean isFirstColRelative()
     {
         return colRelative.isSet(field_3_first_column);
     }
     
+    /**
+     * set whether the first column is relative 
+     */
     public void setFirstColRelative(boolean rel) {
         field_3_first_column=colRelative.setShortBoolean(field_3_first_column,rel);
     }
 
-    
+    /**
+     * set the first column in the area
+     */
     public void setFirstColumn(short column)
     {
         field_3_first_column = column;   // fixme
     }
 
+    /**
+     * set the first column irespective of the bitmasks
+     */
     public void setFirstColumnRaw(short column)
     {
         field_3_first_column = column;
     }
 
+    /**
+     * @return lastcolumn in the area
+     */
     public short getLastColumn()
     {
         return column.getShortValue(field_4_last_column);
     }
 
+    /**
+     * @return last column and bitmask (the raw field)
+     */
     public short getLastColumnRaw()
     {
         return field_4_last_column;
     }
 
+    /**
+     * @return last row relative or not
+     */
     public boolean isLastRowRelative()
     {
         return rowRelative.isSet(field_4_last_column);
     }
     
+    /**
+     * set whether the last row is relative or not
+     * @param last row relative
+     */
     public void setLastRowRelative(boolean rel) {
         field_4_last_column=rowRelative.setShortBoolean(field_4_last_column,rel);
     }
 
+    /**
+     * @return lastcol relative or not
+     */
     public boolean isLastColRelative()
     {
         return colRelative.isSet(field_4_last_column);
     }
     
+    /**
+     * set whether the last column should be relative or not
+     */
     public void setLastColRelative(boolean rel) {
         field_4_last_column=colRelative.setShortBoolean(field_4_last_column,rel);
     }
     
 
+    /**
+     * set the last column in the area
+     */
     public void setLastColumn(short column)
     {
         field_4_last_column = column;   // fixme
     }
 
+    /**
+     * set the last column irrespective of the bitmasks
+     */
     public void setLastColumnRaw(short column)
     {
         field_4_last_column = column;

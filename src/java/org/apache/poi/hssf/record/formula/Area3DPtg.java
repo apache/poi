@@ -59,7 +59,7 @@ import org.apache.poi.util.LittleEndian;
 import org.apache.poi.hssf.util.RangeAddress;
 
 /**
- * Title:        Area 3D Ptg <P>
+ * Title:        Area 3D Ptg - 3D referecnce (Sheet + Area)<P>
  * Description:  Defined a area in Extern Sheet. <P>
  * REFERENCE:  <P>
  * @author Libin Roman (Vista Portal LDT. Developer)
