@@ -61,7 +61,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Used to calculate the record sizes for a particular record.
+ * Used to calculate the record sizes for a particular record.  This kind of
+ * sucks because it's similar to the SST serialization code.  In general
+ * the SST serialization code needs to be rewritten.
  *
  * @author Glen Stampoultzis (glens at apache.org)
  */

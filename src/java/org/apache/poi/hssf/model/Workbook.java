@@ -686,37 +686,27 @@ public class Workbook implements Model {
      *
      * @return byte array containing the HSSF-only portions of the POIFS file.
      */
-
-    public byte [] serialize() {
-        log.log(DEBUG, "Serializing Workbook!");
-        byte[] retval    = null;
-
-        // ArrayList bytes     = new ArrayList(records.size());
-        int    arraysize = getSize();
-        int    pos       = 0;
-
-        // for (int k = 0; k < records.size(); k++)
-        // {
-        // bytes.add((( Record ) records.get(k)).serialize());
-        //        }
-        // for (int k = 0; k < bytes.size(); k++)
-        // {
-        // arraysize += (( byte [] ) bytes.get(k)).length;
-        // }
-        retval = new byte[ arraysize ];
-        for (int k = 0; k < records.size(); k++) {
-
-            // byte[] rec = (( byte [] ) bytes.get(k));
-            // System.arraycopy(rec, 0, retval, pos, rec.length);
-            Record record = records.get(k);
-            // Let's skip RECALCID records, as they are only use for optimization
-	    if(record.getSid() != RecalcIdRecord.sid || ((RecalcIdRecord)record).isNeeded()) {
-                pos += record.serialize(pos, retval);   // rec.length;
-	    }
-        }
-        log.log(DEBUG, "Exiting serialize workbook");
-        return retval;
-    }
+     // GJS: Not used so why keep it.
+//    public byte [] serialize() {
+//        log.log(DEBUG, "Serializing Workbook!");
+//        byte[] retval    = null;
+//
+////         ArrayList bytes     = new ArrayList(records.size());
+//        int    arraysize = getSize();
+//        int    pos       = 0;
+//
+//        retval = new byte[ arraysize ];
+//        for (int k = 0; k < records.size(); k++) {
+//
+//            Record record = records.get(k);
+////             Let's skip RECALCID records, as they are only use for optimization
+//	    if(record.getSid() != RecalcIdRecord.sid || ((RecalcIdRecord)record).isNeeded()) {
+//                pos += record.serialize(pos, retval);   // rec.length;
+//	    }
+//        }
+//        log.log(DEBUG, "Exiting serialize workbook");
+//        return retval;
+//    }
 
     /**
      * Serializes all records int the worksheet section into a big byte array. Use
@@ -725,44 +715,54 @@ public class Workbook implements Model {
      * @param data array of bytes to write this to
      */
 
-    public int serialize(int offset, byte [] data) {
-        log.log(DEBUG, "Serializing Workbook with offsets");
+    public int serialize( int offset, byte[] data )
+    {
+        log.log( DEBUG, "Serializing Workbook with offsets" );
 
-        // ArrayList bytes     = new ArrayList(records.size());
-        //        int arraysize = getSize();   // 0;
-        int pos       = 0;
+        int pos = 0;
 
-        //        for (int k = 0; k < records.size(); k++)
-        //        {
-        //            bytes.add((( Record ) records.get(k)).serialize());
-        //
-        //        }
-        //        for (int k = 0; k < bytes.size(); k++)
-        //       {
-        //            arraysize += (( byte [] ) bytes.get(k)).length;
-        //        }
-        for (int k = 0; k < records.size(); k++) {
+        SSTRecord sst = null;
+        int sstPos = 0;
+        for ( int k = 0; k < records.size(); k++ )
+        {
 
-            // byte[] rec = (( byte [] ) bytes.get(k));
-            // System.arraycopy(rec, 0, data, offset + pos, rec.length);
-            Record record = records.get(k);
+            Record record = records.get( k );
             // Let's skip RECALCID records, as they are only use for optimization
-            if(record.getSid() != RecalcIdRecord.sid || ((RecalcIdRecord)record).isNeeded()) {
-		pos += record.serialize(pos + offset, data);   // rec.length;
+            if ( record.getSid() != RecalcIdRecord.sid || ( (RecalcIdRecord) record ).isNeeded() )
+            {
+                if (record instanceof SSTRecord)
+                {
+                    sst = (SSTRecord)record;
+                    sstPos = pos;
+                }
+                if (record.getSid() == ExtSSTRecord.sid && sst != null)
+                {
+                    record = sst.createExtSSTRecord(sstPos + offset);
+                }
+                pos += record.serialize( pos + offset, data );   // rec.length;
             }
         }
-        log.log(DEBUG, "Exiting serialize workbook");
+        log.log( DEBUG, "Exiting serialize workbook" );
         return pos;
     }
 
-    public int getSize() {
+    public int getSize()
+    {
         int retval = 0;
 
-        for (int k = 0; k < records.size(); k++) {
-            Record record = records.get(k);
+        SSTRecord sst = null;
+        for ( int k = 0; k < records.size(); k++ )
+        {
+            Record record = records.get( k );
             // Let's skip RECALCID records, as they are only use for optimization
-            if(record.getSid() != RecalcIdRecord.sid || ((RecalcIdRecord)record).isNeeded()) {
-		retval += record.getRecordSize();
+            if ( record.getSid() != RecalcIdRecord.sid || ( (RecalcIdRecord) record ).isNeeded() )
+            {
+                if (record instanceof SSTRecord)
+                    sst = (SSTRecord)record;
+                if (record.getSid() == ExtSSTRecord.sid && sst != null)
+                    retval += sst.calcExtSSTRecordSize();
+                else
+                    retval += record.getRecordSize();
             }
         }
         return retval;

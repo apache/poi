@@ -114,7 +114,7 @@ public class ExtSSTInfoSubRecord
         field_1_stream_pos = pos;
     }
 
-    public void setBucketSSTOffset(short offset)
+    public void setBucketRecordOffset(short offset)
     {
         field_2_bucket_sst_offset = offset;
     }
@@ -159,6 +159,6 @@ public class ExtSSTInfoSubRecord
 
     public short getSid()
     {
-        return this.sid;
+        return sid;
     }
 }
