@@ -60,14 +60,15 @@
  */
 package org.apache.poi.hssf.record.formula;
 
+import java.util.List;
+
 /**
  *
  * @author  andy
  */
 
 public class DividePtg
-    extends Ptg
-    implements OperationPtg
+    extends OperationPtg
 {
     public final static int  SIZE = 1;
     public final static byte sid  = 0x06;
@@ -118,4 +119,8 @@ public class DividePtg
         buffer.append(operands[ 1 ].toFormulaString());
         return buffer.toString();
     }
+    
+    public void manipulate(List source, List results, int pos) {
+    }
+    
 }

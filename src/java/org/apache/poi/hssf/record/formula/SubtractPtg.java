@@ -60,14 +60,15 @@
  */
 package org.apache.poi.hssf.record.formula;
 
+import java.util.List;
+
 /**
  *
  * @author  andy
  */
 
 public class SubtractPtg
-    extends Ptg
-    implements OperationPtg
+    extends OperationPtg    
 {
     public final static int  SIZE = 1;
     public final static byte sid  = 0x04;
@@ -118,4 +119,9 @@ public class SubtractPtg
         buffer.append(operands[ 1 ].toFormulaString());
         return buffer.toString();
     }
+    
+    public void manipulate(List source, List results, int pos) {
+    }
+    
+    
 }

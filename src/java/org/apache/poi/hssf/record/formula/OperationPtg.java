@@ -60,20 +60,31 @@
  */
 package org.apache.poi.hssf.record.formula;
 
+import java.util.List;
+
 /**
  * defines a Ptg that is an operation instead of an operand
  * @author  andy
  */
 
-public interface OperationPtg
+public abstract class OperationPtg extends Ptg
 {
     public final static int TYPE_UNARY    = 0;
     public final static int TYPE_BINARY   = 1;
     public final static int TYPE_FUNCTION = 2;
 
-    public int getType();
+    public abstract int getType();
 
-    public int getNumberOfOperands();
+    public abstract int getNumberOfOperands();
+    
+    /**
+     * manipulate the list, moving the arguments for this function to the source list
+     * followed by the operator.
+     */
+    public abstract void manipulate(List source, List results, int pos);
 
-    public String toFormulaString(Ptg [] operands);
+    public abstract String toFormulaString(Ptg [] operands);
+    
+    protected void standardBinaryManipulation(List source,List results, int pos) {
+    }
 }
