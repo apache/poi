@@ -83,7 +83,7 @@
                     <td>VistaJDBC driver works with both StarOffice and Excel spreadsheets and
                         can access data using standard SQL statements without any API programming.
                         VistaJDBC also implemented ability to choose by not just rows and columns but by
-                        specific cells, ranges of sells, etc.
+                        specific cells, ranges of cells, etc.
                     </td>
                 </tr>
             </table>
