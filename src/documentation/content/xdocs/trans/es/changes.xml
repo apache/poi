@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE changes PUBLIC "-//APACHE//DTD Changes V1.1//EN" "../../dtd/changes-v11.dtd">
 
-<changes><title>Jakarta POI - Historial de Cambios</title>
+<changes>
+
+        <title>Historial de Cambios</title>
 
     <devs>
         <!-- in strict alphabetical order -->
@@ -11,6 +13,31 @@
         <person id="NKB" name="Nicola Ken Barozzi" email="barozzi@nicolaken.com"/>
         <person id="POI-DEVELOPERS" name="POI Developers"    email="poi-dev@jakarta.apache.org"/>
     </devs>
+    <release version="2.0-pre1" date="no publicada">
+        <action dev="POI-DEVELOPERS" type="add">Parche aplicado para el clonado en profundidad de hojas.</action>
+        <action dev="POI-DEVELOPERS" type="add">Parche aplicado para permitir la reordenación de la hoja</action>
+        <action dev="POI-DEVELOPERS" type="add">Se añaden métodos adicionales para definir el área de impresión utilizando números de fila/columna</action>
+        <action dev="POI-DEVELOPERS" type="fix">HWPF: arreglado un error de tamaño negativo del Array</action>
+        <action dev="POI-DEVELOPERS" type="update">Se añaden punteros a argumento para soportar la fórmula IF</action>
+        <action dev="POI-DEVELOPERS" type="update">Formulas: Se añade soporte de caracteres especiales para cadenas literales, específicamente para soporte de fórmulas SUMIF y tratar un error tambien</action>
+        <action dev="POI-DEVELOPERS" type="fix">BlockingInputStream subido para ayudar a asegurar las lecturas</action>
+        <action dev="POI-DEVELOPERS" type="fix">Se arregló un problema con valores NaN (No es Número) que diferían del valor investigado de lectura en ficheros de FormulaRecords</action>
+        <action dev="POI-DEVELOPERS" type="fix">Parche para getColumnWidth en HSSF</action>
+        <action dev="POI-DEVELOPERS" type="add">Parche para tratar con listas multi-nivel numeradas en HWPF</action>
+        <action dev="POI-DEVELOPERS" type="fix">Debido a los trabajos en las referencias con nombre, varios errores de nombres de rango se cerraron</action>
+        <action dev="POI-DEVELOPERS" type="fix">Parche aplicado para prevenir la corrupción de la hoja tras la modificación de una plantilla (template)</action>
+        <action dev="POI-DEVELOPERS" type="update">Soporte para fórmulas compartidas</action>
+        <action dev="POI-DEVELOPERS" type="update">Añadidos GreaterEqual, LessEqual y NotEqual al Evaluador de Fórmulas (Parser)</action>
+        <action dev="POI-DEVELOPERS" type="update">Añadida la funcionalidad GreaterThan y LessThan a las fórmulas</action>
+        <action dev="POI-DEVELOPERS" type="fix">Parches para i10n</action>
+        <action dev="POI-DEVELOPERS" type="update">POI Build System Actualizado</action>
+        <action dev="POI-DEVELOPERS" type="fix">nombres de fuentes pueden ser nulos</action>
+    </release>
+    <release version="1.10-dev" date="19 Febrero 2003">
+        <action dev="POI-DEVELOPERS" type="add">Soporte para el nivel de ampliación (zoom)</action>
+        <action dev="POI-DEVELOPERS" type="add">Soporte para el congelado y división del panel</action>
+        <action dev="POI-DEVELOPERS" type="add">Cabeceras de fila y columna en impresiones</action>
+    </release>
     <release version="1.8-dev" date="20 Septiembre 2002">
         <action dev="POI-DEVELOPERS" type="add">Soporte para Formato de Datos Personalizado (Custom)</action>
         <action dev="POI-DEVELOPERS" type="add">Soporte Unicode Mejorado para Ruso y Japonés</action>
