@@ -56,7 +56,7 @@
 package org.apache.poi.hssf.eventmodel;
 
 import org.apache.poi.hssf.record.Record;
-import org.apache.poi.hssf.HSSFUserException;
+import org.apache.poi.hssf.eventmodel.HSSFUserException;
 
 /**
  * Interface for use with the HSSFRequest and HSSFEventFactory.  Users should create
