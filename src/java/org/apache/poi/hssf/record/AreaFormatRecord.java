@@ -58,10 +58,7 @@ package org.apache.poi.hssf.record;
 
 
 
-import org.apache.poi.util.BitField;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.StringUtil;
-import org.apache.poi.util.HexDump;
+import org.apache.poi.util.*;
 
 /**
  * The area format record is used to define the colours and patterns for an area.
@@ -78,8 +75,8 @@ public class AreaFormatRecord
     private  int        field_2_backgroundColor;
     private  short      field_3_pattern;
     private  short      field_4_formatFlags;
-    private BitField   automatic                                  = new BitField(0x1);
-    private BitField   invert                                     = new BitField(0x2);
+    private  BitField   automatic                                   = new BitField(0x1);
+    private  BitField   invert                                      = new BitField(0x2);
     private  short      field_5_forecolorIndex;
     private  short      field_6_backcolorIndex;
 

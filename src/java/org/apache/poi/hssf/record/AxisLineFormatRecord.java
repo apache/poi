@@ -61,52 +61,53 @@ package org.apache.poi.hssf.record;
 import org.apache.poi.util.*;
 
 /**
- * The default data label text properties record identifies the text characteristics of the preceeding text record.
+ * The axis line format record defines the axis type details.
  * NOTE: This source is automatically generated please do not modify this file.  Either subclass or
  *       remove the record in src/records/definitions.
 
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class DefaultDataLabelTextPropertiesRecord
+public class AxisLineFormatRecord
     extends Record
 {
-    public final static short      sid                             = 0x1024;
-    private  short      field_1_categoryDataType;
-    public final static short       CATEGORY_DATA_TYPE_SHOW_LABELS_CHARACTERISTIC = 0;
-    public final static short       CATEGORY_DATA_TYPE_VALUE_AND_PERCENTAGE_CHARACTERISTIC = 1;
-    public final static short       CATEGORY_DATA_TYPE_ALL_TEXT_CHARACTERISTIC = 2;
+    public final static short      sid                             = 0x1021;
+    private  short      field_1_axisType;
+    public final static short       AXIS_TYPE_AXIS_LINE            = 0;
+    public final static short       AXIS_TYPE_MAJOR_GRID_LINE      = 1;
+    public final static short       AXIS_TYPE_MINOR_GRID_LINE      = 2;
+    public final static short       AXIS_TYPE_WALLS_OR_FLOOR       = 3;
 
 
-    public DefaultDataLabelTextPropertiesRecord()
+    public AxisLineFormatRecord()
     {
 
     }
 
     /**
-     * Constructs a DefaultDataLabelTextProperties record and sets its fields appropriately.
+     * Constructs a AxisLineFormat record and sets its fields appropriately.
      *
-     * @param id    id must be 0x1024 or an exception
+     * @param id    id must be 0x1021 or an exception
      *              will be throw upon validation
      * @param size  size the size of the data area of the record
      * @param data  data of the record (should not contain sid/len)
      */
 
-    public DefaultDataLabelTextPropertiesRecord(short id, short size, byte [] data)
+    public AxisLineFormatRecord(short id, short size, byte [] data)
     {
         super(id, size, data);
     }
 
     /**
-     * Constructs a DefaultDataLabelTextProperties record and sets its fields appropriately.
+     * Constructs a AxisLineFormat record and sets its fields appropriately.
      *
-     * @param id    id must be 0x1024 or an exception
+     * @param id    id must be 0x1021 or an exception
      *              will be throw upon validation
      * @param size  size the size of the data area of the record
      * @param data  data of the record (should not contain sid/len)
      * @param offset of the record's data
      */
 
-    public DefaultDataLabelTextPropertiesRecord(short id, short size, byte [] data, int offset)
+    public AxisLineFormatRecord(short id, short size, byte [] data, int offset)
     {
         super(id, size, data, offset);
     }
@@ -120,13 +121,13 @@ public class DefaultDataLabelTextPropertiesRecord
     {
         if (id != sid)
         {
-            throw new RecordFormatException("Not a DefaultDataLabelTextProperties record");
+            throw new RecordFormatException("Not a AxisLineFormat record");
         }
     }
 
     protected void fillFields(byte [] data, short size, int offset)
     {
-        field_1_categoryDataType        = LittleEndian.getShort(data, 0x0 + offset);
+        field_1_axisType                = LittleEndian.getShort(data, 0x0 + offset);
 
     }
 
@@ -134,14 +135,14 @@ public class DefaultDataLabelTextPropertiesRecord
     {
         StringBuffer buffer = new StringBuffer();
 
-        buffer.append("[DefaultDataLabelTextProperties]\n");
+        buffer.append("[AxisLineFormat]\n");
 
-        buffer.append("    .categoryDataType     = ")
+        buffer.append("    .axisType             = ")
             .append("0x")
-            .append(HexDump.toHex((short)getCategoryDataType()))
-            .append(" (").append(getCategoryDataType()).append(" )\n");
+            .append(HexDump.toHex((short)getAxisType()))
+            .append(" (").append(getAxisType()).append(" )\n");
 
-        buffer.append("[/DefaultDataLabelTextProperties]\n");
+        buffer.append("[/AxisLineFormat]\n");
         return buffer.toString();
     }
 
@@ -150,7 +151,7 @@ public class DefaultDataLabelTextPropertiesRecord
         LittleEndian.putShort(data, 0 + offset, sid);
         LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
 
-        LittleEndian.putShort(data, 4 + offset, field_1_categoryDataType);
+        LittleEndian.putShort(data, 4 + offset, field_1_axisType);
 
         return getRecordSize();
     }
@@ -170,30 +171,32 @@ public class DefaultDataLabelTextPropertiesRecord
 
 
     /**
-     * Get the category data type field for the DefaultDataLabelTextProperties record.
+     * Get the axis type field for the AxisLineFormat record.
      *
      * @return  One of 
-     *        CATEGORY_DATA_TYPE_SHOW_LABELS_CHARACTERISTIC
-     *        CATEGORY_DATA_TYPE_VALUE_AND_PERCENTAGE_CHARACTERISTIC
-     *        CATEGORY_DATA_TYPE_ALL_TEXT_CHARACTERISTIC
+     *        AXIS_TYPE_AXIS_LINE
+     *        AXIS_TYPE_MAJOR_GRID_LINE
+     *        AXIS_TYPE_MINOR_GRID_LINE
+     *        AXIS_TYPE_WALLS_OR_FLOOR
      */
-    public short getCategoryDataType()
+    public short getAxisType()
     {
-        return field_1_categoryDataType;
+        return field_1_axisType;
     }
 
     /**
-     * Set the category data type field for the DefaultDataLabelTextProperties record.
+     * Set the axis type field for the AxisLineFormat record.
      *
-     * @param field_1_categoryDataType
+     * @param field_1_axisType
      *        One of 
-     *        CATEGORY_DATA_TYPE_SHOW_LABELS_CHARACTERISTIC
-     *        CATEGORY_DATA_TYPE_VALUE_AND_PERCENTAGE_CHARACTERISTIC
-     *        CATEGORY_DATA_TYPE_ALL_TEXT_CHARACTERISTIC
+     *        AXIS_TYPE_AXIS_LINE
+     *        AXIS_TYPE_MAJOR_GRID_LINE
+     *        AXIS_TYPE_MINOR_GRID_LINE
+     *        AXIS_TYPE_WALLS_OR_FLOOR
      */
-    public void setCategoryDataType(short field_1_categoryDataType)
+    public void setAxisType(short field_1_axisType)
     {
-        this.field_1_categoryDataType = field_1_categoryDataType;
+        this.field_1_axisType = field_1_axisType;
     }
 
 

@@ -58,10 +58,7 @@ package org.apache.poi.hssf.record;
 
 
 
-import org.apache.poi.util.BitField;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.StringUtil;
-import org.apache.poi.util.HexDump;
+import org.apache.poi.util.*;
 
 /**
  * The legend record specifies the location of legend on a chart and it's overall size.
@@ -90,12 +87,12 @@ public class LegendRecord
     public final static byte        SPACING_MEDIUM                 = 1;
     public final static byte        SPACING_OPEN                   = 2;
     private  short      field_7_options;
-    private BitField   autoPosition                               = new BitField(0x1);
-    private BitField   autoSeries                                 = new BitField(0x2);
-    private BitField   autoPosX                                   = new BitField(0x4);
-    private BitField   autoPosY                                   = new BitField(0x8);
-    private BitField   vert                                       = new BitField(0x10);
-    private BitField   containsDataTable                          = new BitField(0x20);
+    private  BitField   autoPosition                                = new BitField(0x1);
+    private  BitField   autoSeries                                  = new BitField(0x2);
+    private  BitField   autoPosX                                    = new BitField(0x4);
+    private  BitField   autoPosY                                    = new BitField(0x8);
+    private  BitField   vert                                        = new BitField(0x10);
+    private  BitField   containsDataTable                           = new BitField(0x20);
 
 
     public LegendRecord()

@@ -58,10 +58,7 @@ package org.apache.poi.hssf.record;
 
 
 
-import org.apache.poi.util.BitField;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.StringUtil;
-import org.apache.poi.util.HexDump;
+import org.apache.poi.util.*;
 
 /**
  * The data format record is used to index into a series.
@@ -78,7 +75,7 @@ public class DataFormatRecord
     private  short      field_2_seriesIndex;
     private  short      field_3_seriesNumber;
     private  short      field_4_formatFlags;
-    private BitField   useExcel4Colors                            = new BitField(0x1);
+    private  BitField   useExcel4Colors                             = new BitField(0x1);
 
 
     public DataFormatRecord()

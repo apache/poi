@@ -58,10 +58,7 @@ package org.apache.poi.hssf.record;
 
 
 
-import org.apache.poi.util.BitField;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.StringUtil;
-import org.apache.poi.util.HexDump;
+import org.apache.poi.util.*;
 
 /**
  * The bar record is used to define a bar chart.
@@ -77,10 +74,10 @@ public class BarRecord
     private  short      field_1_barSpace;
     private  short      field_2_categorySpace;
     private  short      field_3_formatFlags;
-    private BitField   horizontal                                 = new BitField(0x1);
-    private BitField   stacked                                    = new BitField(0x2);
-    private BitField   displayAsPercentage                        = new BitField(0x4);
-    private BitField   shadow                                     = new BitField(0x8);
+    private  BitField   horizontal                                  = new BitField(0x1);
+    private  BitField   stacked                                     = new BitField(0x2);
+    private  BitField   displayAsPercentage                         = new BitField(0x4);
+    private  BitField   shadow                                      = new BitField(0x8);
 
 
     public BarRecord()

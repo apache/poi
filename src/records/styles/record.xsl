@@ -64,10 +64,7 @@ package <xsl:value-of select="@package"/>;
 </xsl:if>
 
 
-import org.apache.poi.util.BitField;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.StringUtil;
-import org.apache.poi.util.HexDump;
+import org.apache.poi.util.*;
 
 /**
  * <xsl:value-of select="/record/description"/>
@@ -80,7 +77,7 @@ public class <xsl:value-of select="@name"/>Record
 {
     public final static short      sid                             = <xsl:value-of select="@id"/>;
 <xsl:for-each select="//fields/field">    private  <xsl:value-of select="recutil:getType(@size,@type,10)"/><xsl:text> </xsl:text><xsl:value-of select="recutil:getFieldName(position(),@name,0)"/>;
-<xsl:apply-templates select="./bit|./const"/>
+<xsl:apply-templates select="./bit|./const|./bit/const"/>
 </xsl:for-each>
 
     public <xsl:value-of select="@name"/>Record()
@@ -193,6 +190,7 @@ public class <xsl:value-of select="@name"/>Record
 <xsl:template match = "field" mode="bits">
 <xsl:variable name="fieldNum" select="position()"/>
 <xsl:for-each select="bit">
+<xsl:if test="not (@mask)">
     /**
      * Sets the <xsl:value-of select="@name"/> field value.
      * <xsl:value-of select="@description"/>
@@ -210,10 +208,32 @@ public class <xsl:value-of select="@name"/>Record
     {
         return <xsl:value-of select="recutil:getFieldName(@name,0)"/>.isSet(<xsl:value-of select="recutil:getFieldName($fieldNum,../@name,0)"/>);
     }
+</xsl:if>
+<xsl:if test="@mask">
+    /**
+     * Sets the <xsl:value-of select="@name"/> field value.
+     * <xsl:value-of select="@description"/>
+     */
+    public void set<xsl:value-of select="recutil:getFieldName1stCap(@name,0)"/>(short value)
+    {
+        <xsl:value-of select="recutil:getFieldName($fieldNum,../@name,0)"/> = <xsl:value-of select="recutil:getFieldName(@name,0)"/>.set<xsl:value-of select="recutil:getType1stCap(../@size,../@type,0)"/>Value(<xsl:value-of select="recutil:getFieldName($fieldNum,../@name,0)"/>, value);
+    }
+
+    /**
+     * <xsl:value-of select="@description"/>
+     * @return  the <xsl:value-of select="@name"/> field value.
+     */
+    public short get<xsl:value-of select="recutil:getFieldName1stCap(@name,0)"/>()
+    {
+        return <xsl:value-of select="recutil:getFieldName(@name,0)"/>.getShortValue(<xsl:value-of select="recutil:getFieldName($fieldNum,../@name,0)"/>);
+    }
+</xsl:if>
 </xsl:for-each>
 </xsl:template>
 
-<xsl:template match = "bit" >    private BitField   <xsl:value-of select="recutil:getFieldName(@name,42)"/> = new BitField(<xsl:value-of select="recutil:getMask(@number)"/>);
+<xsl:template match = "bit" ><xsl:if test="not (@mask)">    private  BitField   <xsl:value-of select="recutil:getFieldName(@name,42)"/>  = new BitField(<xsl:value-of select="recutil:getMask(@number)"/>);
+</xsl:if><xsl:if test="@mask">    private BitField   <xsl:value-of select="recutil:getFieldName(@name,42)"/> = new BitField(<xsl:value-of select="@mask"/>);
+</xsl:if>
 </xsl:template>
 <xsl:template match = "const">    public final static <xsl:value-of select="recutil:getType(../@size,../@type,10)"/><xsl:text>  </xsl:text><xsl:value-of select="recutil:getConstName(../@name,@name,30)"/> = <xsl:value-of select="@value"/>;
 </xsl:template>
@@ -253,7 +273,11 @@ public class <xsl:value-of select="@name"/>Record
 <xsl:apply-templates select="bit" mode="bittostring"/>
 </xsl:template>
 
-<xsl:template match="bit" mode="bittostring">        buffer.append("         .<xsl:value-of select="recutil:getFieldName(@name,20)"/>     = ").append(is<xsl:value-of select="recutil:getFieldName1stCap(@name,20)"/>()).append('\n');
+<xsl:template match="bit" mode="bittostring">
+<xsl:if test="not (@mask)">        buffer.append("         .<xsl:value-of select="recutil:getFieldName(@name,20)"/>     = ").append(is<xsl:value-of select="recutil:getFieldName1stCap(@name,20)"/>()).append('\n');
+</xsl:if>
+<xsl:if test="@mask">        buffer.append("         .<xsl:value-of select="recutil:getFieldName(@name,20)"/>     = ").append(get<xsl:value-of select="recutil:getFieldName1stCap(@name,20)"/>()).append('\n');
+</xsl:if>
 </xsl:template>
 
 <xsl:template match="author">

@@ -58,10 +58,7 @@ package org.apache.poi.hssf.record;
 
 
 
-import org.apache.poi.util.BitField;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.StringUtil;
-import org.apache.poi.util.HexDump;
+import org.apache.poi.util.*;
 
 /**
  * Describes a linked data record.  This record referes to the series data or text.
@@ -85,7 +82,7 @@ public class LinkedDataRecord
     public final static byte        REFERENCE_TYPE_NOT_USED        = 3;
     public final static byte        REFERENCE_TYPE_ERROR_REPORTED  = 4;
     private  short      field_3_options;
-    private BitField   customNumberFormat                         = new BitField(0x1);
+    private  BitField   customNumberFormat                          = new BitField(0x1);
     private  short      field_4_indexNumberFmtRecord;
     private  short      field_5_formulaOfLink;
 

@@ -58,10 +58,7 @@ package org.apache.poi.hssf.record;
 
 
 
-import org.apache.poi.util.BitField;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.StringUtil;
-import org.apache.poi.util.HexDump;
+import org.apache.poi.util.*;
 
 /**
  * The dat record is used to store options for the chart.
@@ -75,10 +72,10 @@ public class DatRecord
 {
     public final static short      sid                             = 0x1063;
     private  short      field_1_options;
-    private BitField   horizontalBorder                           = new BitField(0x1);
-    private BitField   verticalBorder                             = new BitField(0x2);
-    private BitField   border                                     = new BitField(0x4);
-    private BitField   showSeriesKey                              = new BitField(0x8);
+    private  BitField   horizontalBorder                            = new BitField(0x1);
+    private  BitField   verticalBorder                              = new BitField(0x2);
+    private  BitField   border                                      = new BitField(0x4);
+    private  BitField   showSeriesKey                               = new BitField(0x8);
 
 
     public DatRecord()

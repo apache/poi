@@ -58,10 +58,7 @@ package org.apache.poi.hssf.record;
 
 
 
-import org.apache.poi.util.BitField;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.StringUtil;
-import org.apache.poi.util.HexDump;
+import org.apache.poi.util.*;
 
 /**
  * Describes a line format record.  The line format record controls how a line on a chart appears.
@@ -91,9 +88,9 @@ public class LineFormatRecord
     public final static short       WEIGHT_MEDIUM                  = 1;
     public final static short       WEIGHT_WIDE                    = 2;
     private  short      field_4_format;
-    private BitField   auto                                       = new BitField(0x1);
-    private BitField   drawTicks                                  = new BitField(0x4);
-    private BitField   unknown                                    = new BitField(0x4);
+    private  BitField   auto                                        = new BitField(0x1);
+    private  BitField   drawTicks                                   = new BitField(0x4);
+    private  BitField   unknown                                     = new BitField(0x4);
     private  short      field_5_colourPaletteIndex;
 
 
