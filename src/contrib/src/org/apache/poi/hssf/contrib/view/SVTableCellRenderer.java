@@ -75,7 +75,7 @@ import org.apache.poi.hssf.util.HSSFColor;
 
 
 /**
- * Sucky Viewer Table Cell Render -- not commented via javadoc as it
+ * Sheet Viewer Table Cell Render -- not commented via javadoc as it
  * nearly completely consists of overridden methods.
  *
  * @author Andrew C. Oliver

@@ -7,8 +7,12 @@ import javax.swing.border.AbstractBorder;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 
 /**
- * This is an attempt to implement Excel style borders for the SuckyViewer
- *
+ * This is an attempt to implement Excel style borders for the SheetViewer.
+ * Mostly just overrides stuff so the javadoc won't appear here but will 
+ * appear in the generated stuff.
+ * 
+ * @author Andrew C. Oliver (acoliver at apache dot org)
+ * @author Jason Height
  */
 public class SVBorder extends AbstractBorder {
   private Color northColor = null;
@@ -60,6 +64,11 @@ public class SVBorder extends AbstractBorder {
      g.setColor(oldColor);
    }
 
+   /**
+    * Called by paintBorder to paint the border of a selected cell.
+    * The paramaters are the Graphics object, location and dimensions of the 
+    * cell.
+    */
    private void paintSelectedBorder(Graphics g, int x, int y, int width,
                                   int height) {
      if (selected) {
@@ -74,6 +83,10 @@ public class SVBorder extends AbstractBorder {
    }
 
 
+   /**
+    * Called by paintBorder to paint the various versions of normal line
+    * borders for a cell.  
+    */
    private void paintNormalBorders(Graphics g, int x, int y, int width,
                                   int height) {
 
@@ -141,6 +154,10 @@ public class SVBorder extends AbstractBorder {
       }
    }
 
+   /**
+    * Called by paintBorder to paint the dotted line
+    * borders for a cell.  
+    */
    private void paintDottedBorders(Graphics g, int x, int y, int width,
                                   int height) {
       if (northBorder &&
@@ -203,7 +220,10 @@ public class SVBorder extends AbstractBorder {
       }
    }
 
-
+   /**
+    * Called by paintBorder to paint the various versions of dotted line
+    * borders for a cell.  
+    */
    private void paintDashedBorders(Graphics g, int x, int y, int width,
                                   int height) {
       if (northBorder &&
@@ -293,7 +313,10 @@ public class SVBorder extends AbstractBorder {
       }
    }
 
-
+   /**
+    * Called by paintBorder to paint the double line
+    * borders for a cell.  
+    */
    private void paintDoubleBorders(Graphics g, int x, int y, int width,
                                   int height) {
       if (northBorder &&
@@ -381,7 +404,10 @@ public class SVBorder extends AbstractBorder {
       }
    }
 
-
+   /**
+    * Called by paintBorder to paint the various versions of dash dot dot line
+    * borders for a cell.  
+    */
    private void paintDashDotDotBorders(Graphics g, int x, int y, int width,
                                   int height) {
       if (northBorder &&
@@ -483,6 +509,9 @@ public class SVBorder extends AbstractBorder {
       return 18;
    }
 
+   /**
+    * @returns the line thickness for a border based on border type
+    */
    private int getThickness(int thickness) {
        int retval=1;
        switch (thickness) {
