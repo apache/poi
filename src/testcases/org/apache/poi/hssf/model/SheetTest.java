@@ -7,6 +7,7 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.record.ColumnInfoRecord;
+import org.apache.poi.hssf.record.MergeCellsRecord;
 import org.apache.poi.hssf.record.RowRecord;
 import org.apache.poi.hssf.record.StringRecord;
 
@@ -69,6 +70,31 @@ public class SheetTest extends TestCase
 		//assert any record removing was done
 		int recordsRemoved = (regionsToAdd/3)/1027; //doesn't work for particular values of regionsToAdd
 		assertTrue("Expected " + recordsRemoved + " record to be removed from the starting " + records + ".  Currently there are " + sheet.getRecords().size() + " records", records - sheet.getRecords().size() == recordsRemoved);
+	}
+
+	/**
+	 * Bug: 22922 (Reported by Xuemin Guan)
+	 * <p>
+	 * Remove mergedregion fails when a sheet loses records after an initial CreateSheet
+	 * fills up the records.
+	 *
+	 */
+	public void testMovingMergedRegion() {
+		List records = new ArrayList();
+		
+		MergeCellsRecord merged = new MergeCellsRecord();
+		merged.addArea(0, (short)0, 1, (short)2);
+		records.add(new RowRecord());
+		records.add(new RowRecord());
+		records.add(new RowRecord());
+		records.add(merged);
+		
+		Sheet sheet = Sheet.createSheet(records, 0);
+		sheet.records.remove(0);
+		
+		//stub object to throw off list INDEX operations
+		sheet.removeMergedRegion(0);
+		assertEquals("Should be no more merged regions", 0, sheet.getNumMergedRegions());
 	}
 
 	public void testGetMergedRegionAt()
@@ -146,13 +172,6 @@ public class SheetTest extends TestCase
 		assertNotNull("Row [2] was skipped", sheet.getRow(2));
 		
 	}
-
-
-	public static void main(String [] args) {
-		System.out
-		.println("Testing : "+SheetTest.class.getName());
-		junit.textui.TestRunner.run(SheetTest.class);
-  }
 
 }
 
