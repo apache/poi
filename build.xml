@@ -177,7 +177,7 @@
   <!--  dist target wo single build checks    -->
   <!-- ====================================== -->
 
-  <target  name="dist"   depends="-init, clean, jar, site, test"
+  <target  name="dist"   depends="-init, clean, jar, test, site"
            description="Build distribution packages wo single build checks">
 
     <antcall target="call-cent">
@@ -214,13 +214,27 @@
       <param name="cent-target" value="test"/> 
     </antcall>
  
+  </target>     
+
+  <!-- ================================== -->
+  <!--         Run Junit tests            -->
+  <!-- ================================== -->
+  
+  <target  name="test-report"   depends="-init, compile"
+           description="Compile java source code">
+ 
+    <antcall target="call-cent">
+      <param name="cent-name"   value="junit"/> 
+      <param name="cent-target" value="failsafe-test"/> 
+    </antcall>
+    
     <antcall target="call-cent">
       <param name="cent-name"   value="junit"/> 
       <param name="cent-target" value="report"/> 
     </antcall>
    
-  </target>     
-
+  </target> 
+  
   <!-- ================================== -->
   <!--      Generate project metrics      -->
   <!-- ================================== -->
@@ -262,7 +276,7 @@
   <target  name="site"
            description="Makes all the site doco"
            depends="docs, 
-                    test,
+                    test-report,
                     javadocs,  
                     metrics"/>
 
