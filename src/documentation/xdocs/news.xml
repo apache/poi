@@ -24,6 +24,17 @@
     </section>
     <section title="English">
         <ul>
+                <li>   
+                       <link href="http://www.jsurfer.org/article.php?sid=322">
+                        POI 1.5-dev-rc2 released </link> - JSurfer
+                </li>
+
+                <li>
+                       <link href="http://directory.google.com/Top/Computers/Programming/Languages/Java/Class_Libraries/Data_Formats/Microsoft_Formats/"> Google says we're the most important in our category </link>
+                </li>
+                <li>
+                       <link href="http://www.javaworld.com/javaworld/javaqa/2002-05/01-qa-0503-excel3.html">It's POI-fect</link> - Tony Sintes, Javaworld
+                </li>
                 <li>
                        <link href="http://www.need-a-cake.com/categories/cocoonWeblog/2002/03/07.html">
 			Nicola announces POI serialization code
@@ -79,8 +90,26 @@
                 
         </ul>
     </section>
+    <section title="Nederlandstalige (Dutch)">
+        <ul>
+                <li>
+                        <link 
+                        href="http://www.ster.be/java/java9.html">
+                        Een Excel-werkboek maken vanuit Java - Lieven Smits 
+                        </link>
+                </li>
+        </ul>
+    </section>
     <section title="Deutsch (German)">
         <ul>
+                <li> <link 
+                      href="http://www.entwickler.com/itr/news/show.php3?id=6132&amp;nodeid=82 ">Apache POI verffentlicht</link> - entwicker.com 
+                </li>
+                <li>
+                       <link 
+                       href="http://www.jsp-develop.de/newsletter/10/">
+                       Apache Jakarta-Projekt bringt Word und Excel in die Java-Welt </link> - jsp-develop.de  (for the misguided who use JSP ;-) )
+                </li>
                 <li>
                         <link
                         href="http://www.entwickler.com/news/2002/02/5718/news.shtml">
@@ -110,6 +139,9 @@
     </section>
     <section title="Nihongo (Japanese)">
         <ul>
+                <li>
+                        <link href="http://drpanda.freezope.org/Memo/docs/jakarta/poi/poi_sample">100% PureJava...</link> - Dr. Panda Portal
+                </li>
                 <li>
                         <link
                         href="http://www.gimlay.org/~andoh/java/javanew.html">
