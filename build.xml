@@ -384,8 +384,9 @@
       description="--> runs the single unit test defined in the testcase property">
   
   
-    <junit2 printsummary="yes" haltonfailure="${junit.test.haltonfailure}" fork="yes">
+    <junit2 printsummary="no" haltonfailure="${junit.test.haltonfailure}" fork="yes">
           <formatter type="xml" />
+	  <formatter type="plain" usefile="no"/>
 	  <sysproperty key="UTIL.testdata.path"
 	                   value="${xlayout.source.test.dir}/org/apache/poi/util/data"/>
 	  <sysproperty key="HSSF.testdata.path"
