@@ -71,8 +71,7 @@ public class ParagraphHeight
     private BitField clMac = new BitField(0xff00);
   private short reserved;
   private int dxaCol;
-  private int dymLine;
-  private int dymHeight;
+  private int dymLineOrHeight;
 
   public ParagraphHeight(byte[] buf, int offset)
   {
@@ -82,9 +81,7 @@ public class ParagraphHeight
     offset += LittleEndian.SHORT_SIZE;
     dxaCol = LittleEndian.getInt(buf, offset);
     offset += LittleEndian.INT_SIZE;
-    dymLine = LittleEndian.getInt(buf, offset);
-    offset += LittleEndian.INT_SIZE;
-    dymHeight = LittleEndian.getInt(buf, offset);
+    dymLineOrHeight = LittleEndian.getInt(buf, offset);
   }
 
   public void write(OutputStream out)
@@ -103,9 +100,7 @@ public class ParagraphHeight
     offset += LittleEndian.SHORT_SIZE;
     LittleEndian.putInt(buf, offset, dxaCol);
     offset += LittleEndian.INT_SIZE;
-    LittleEndian.putInt(buf, offset, dymLine);
-    offset += LittleEndian.INT_SIZE;
-    LittleEndian.putInt(buf, offset, dymHeight);
+    LittleEndian.putInt(buf, offset, dymLineOrHeight);
 
     return buf;
   }
