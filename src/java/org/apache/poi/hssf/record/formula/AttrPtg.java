@@ -191,10 +191,15 @@ public class AttrPtg
         return SIZE;
     }
 
-    public String toFormulaString()
-    {
-        return "ATTR";
+    public String toFormulaString(String[] operands) {
+        if(space.isSet(field_1_options)) {
+            return operands[ 0 ];
+        }
+        else {
+            return toFormulaString() + "(" + operands[ 0 ] + ")";
+        }
     }
+  
 
     public int getNumberOfOperands()
     {
@@ -206,9 +211,31 @@ public class AttrPtg
         return -1;
     }
         
-    public String toFormulaString(String[] operands) {
-        return "SUM(" + operands[ 0 ] + ")";
-    }    
+   public String toFormulaString() {
+      if(semiVolatile.isSet(field_1_options)) {
+        return "ATTR(semiVolatile)";
+      }
+      if(optiIf.isSet(field_1_options)) {
+        return "IF";
+      }
+      if( optiChoose.isSet(field_1_options)) {
+        return "CHOOSE";
+      }
+      if(optGoto.isSet(field_1_options)) {
+        return "GOTO";
+      }
+      if(sum.isSet(field_1_options)) {
+        return "SUM";
+      }
+      if(baxcel.isSet(field_1_options)) {
+        return "ATTR(baxcel)";
+      }
+      if(space.isSet(field_1_options)) {
+        return "";
+      }
+      return "UNKNOWN ATTRIBUTE";
+     }
+    
     
  
     public byte getDefaultOperandClass() {return Ptg.CLASS_VALUE;}
