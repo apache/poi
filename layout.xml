@@ -64,8 +64,11 @@
   <distributions dir="./dist">
    <source dir="./dist/src"/>
    <bin dir="./dist/bin">
-     <library dir="./dist/bin/lib"/>
-     <documentation dir="./dist/bin/docs"/>
+     <library dir="./dist/bin/lib">
+       <core dir="./dist/bin/lib"/>
+       <optional dir="./dist/bin/lib/optional"/>     
+     </library>
+     <documentation dir="./dist/bin/build/docs"/>
      <info dir="./dist/bin"/>
      <build dir="./dist/bin/build"/>
      <legal dir="./dist/bin/legal"/>     
