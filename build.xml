@@ -12,7 +12,7 @@
 
     LIBRARY         LOCATION
     =======         ========
-    junit           http://www.ibiblio.org/maven/junit/jars/
+    junit(3.8+)     http://www.ibiblio.org/maven/junit/jars/
     xerces          http://www.ibiblio.org/maven/xerces/jars/
     jdepend         http://www.ibiblio.org/maven/jdepend/jars/
 
@@ -233,6 +233,22 @@
         </junit>
         <delete file="${main.testokfile}"/>
         <antcall target="-test-main-write-testfile"/>
+    </target>
+    
+    <target name="single-test" depends="compile-main">
+	<junit printsummary="no" showoutput="true" filtertrace="no" fork="no" haltonfailure="${halt.on.test.failure}" failureproperty="main.test.failed" >
+	<classpath>
+                <path refid="main.classpath"/>
+                <pathelement location="${main.output.dir}"/>
+                <pathelement location="${main.output.test.dir}"/>
+                <pathelement location="${junit.jar1.dir}"/>
+            </classpath>
+	    <sysproperty key="HSSF.testdata.path" value="${main.src.test}/org/apache/poi/hssf/data"/>
+            <sysproperty key="HPSF.testdata.path" value="${main.src.test}/org/apache/poi/hpsf/data"/>
+            <formatter type="plain" usefile="no"/>
+            <formatter type="xml"/>
+	    <test name="${testcase}" />
+	</junit>
     </target>
 
     <target name="-test-main-write-testfile" unless="main.test.failed">
