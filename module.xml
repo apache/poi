@@ -44,7 +44,7 @@
   
   <vendor>Apache Software Foundation</vendor>
 
-  <licence>This software is released under the Apache Public License 1.1. 
+  <licence>This software is released under the Apache Software License 1.1. 
            For detailed legal and licensing issues, please read the LICENSE.* files
            in the /legal directory.
   </licence>
@@ -53,6 +53,8 @@
     <credit>This software includes software developed by the Krysalis Project 
             (http://www.krysalis.org/).
     </credit>
+    <credit>This software includes software developed by Clarkware Consulting, Inc.
+    </credit>    
   </credits>
 
   <project name="jakarta-poi">
