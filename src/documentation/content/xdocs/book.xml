@@ -36,6 +36,7 @@
     <menu label="Docs">
         <menu-item label="Javadocs" href="ext:javadoc"/>
         <menu-item label="FAQ" href="faq.html"/>
+        <menu-item label="legal" href="legal.html"/>
         <menu-item label="References" href="references/index.html"/>
         <menu-item label="How to Build" href="howtobuild.html"/>
     </menu>
