@@ -135,6 +135,9 @@ public class RowRecordsAggregate
         return lastrow;
     }
 
+	/*
+	 * No need to go through all the records as we're just collecting RowRecords 
+
     public int construct(int offset, List records)
     {
         int k = 0;
@@ -154,7 +157,7 @@ public class RowRecordsAggregate
         }
         return k;
     }
-
+	*/
     /**
      * called by the class that is responsible for writing this sucker.
      * Subclasses should implement this so that their data is passed back in a

@@ -234,17 +234,16 @@ public class Sheet implements Model
             }
             else if ( rec.getSid() == RowRecord.sid )
             {
+            	 RowRecord row = (RowRecord)rec;
+            	 if (!isfirstrow) rec = null; //only add the aggregate once
+            	 
                 if ( isfirstrow )
                 {
                     retval.rows = new RowRecordsAggregate();
-                    rec = retval.rows;
-                    retval.rows.construct( k, recs );
+                    rec = retval.rows;                    
                     isfirstrow = false;
                 }
-                else
-                {
-                    rec = null;
-                }
+                retval.rows.insertRow(row);
             }
             else if ( rec.getSid() == PrintGridlinesRecord.sid )
             {

@@ -7,6 +7,8 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.record.ColumnInfoRecord;
+import org.apache.poi.hssf.record.RowRecord;
+import org.apache.poi.hssf.record.StringRecord;
 
 /**
  * @author Tony Poppleton
@@ -118,6 +120,39 @@ public class SheetTest extends TestCase
 		catch(Exception e){e.printStackTrace();fail(e.getMessage());}
 
 	}
+
+	/**
+	 * Makes sure all rows registered for this sheet are aggregated, they were being skipped
+	 *
+	 */
+	public void testRowAggregation() {
+		List records = new ArrayList();
+		RowRecord row = new RowRecord();
+		row.setRowNumber(0);		
+		records.add(row);
+		
+		row = new RowRecord();
+		row.setRowNumber(1);
+		records.add(row);
+
+		records.add(new StringRecord());
+		
+		row = new RowRecord();
+		row.setRowNumber(2);
+		records.add(row);
+		
+		
+		Sheet sheet = Sheet.createSheet(records, 0);
+		assertNotNull("Row [2] was skipped", sheet.getRow(2));
+		
+	}
+
+
+	public static void main(String [] args) {
+		System.out
+		.println("Testing : "+SheetTest.class.getName());
+		junit.textui.TestRunner.run(SheetTest.class);
+  }
 
 }
 
