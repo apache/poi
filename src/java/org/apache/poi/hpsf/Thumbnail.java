@@ -70,10 +70,6 @@ public class Thumbnail
      *
      * <p>A <code>DWORD</code> indicating a built-in Windows clipboard
      * format value</p>
-     *
-     * <p>See: <a
-     * href="http://msdn.microsoft.com/library/en-us/dnolegen/html/msdn_propset.asp"
-     * target="_blank">http://msdn.microsoft.com/library/en-us/dnolegen/html/msdn_propset.asp</a>.</p>
      */
     public static int CFTAG_WINDOWS = -1;
 
@@ -82,10 +78,6 @@ public class Thumbnail
      *
      * <p>A <code>DWORD</code> indicating a Macintosh clipboard format
      * value</p>
-     *
-     * <p>See: <a
-     * href="http://msdn.microsoft.com/library/en-us/dnolegen/html/msdn_propset.asp"
-     * target="_blank">http://msdn.microsoft.com/library/en-us/dnolegen/html/msdn_propset.asp</a>.</p>
      */
     public static int CFTAG_MACINTOSH = -2;
 
@@ -94,10 +86,6 @@ public class Thumbnail
      *
      * <p>A GUID containing a format identifier (FMTID). This is
      * rarely used.</p>
-     *
-     * <p>See: <a
-     * href="http://msdn.microsoft.com/library/en-us/dnolegen/html/msdn_propset.asp"
-     * target="_blank">http://msdn.microsoft.com/library/en-us/dnolegen/html/msdn_propset.asp</a>.</p>
      */
     public static int CFTAG_FMTID = -3;
 
@@ -106,11 +94,6 @@ public class Thumbnail
      *
      * <p>A <code>DWORD</code> indicating No data. This is rarely
      * used.</p>
-     *
-     * <p>See: <a
-     * href="http://msdn.microsoft.com/library/en-us/dnolegen/html/msdn_propset.asp"
-     * target="_blank">
-     * http://msdn.microsoft.com/library/en-us/dnolegen/html/msdn_propset.asp</a>.</p>
      */
     public static int CFTAG_NODATA = 0;
 
