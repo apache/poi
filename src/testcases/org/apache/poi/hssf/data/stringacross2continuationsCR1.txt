@@ -1,9 +1,0 @@
-
-# Continuation record
-22 00                                               # String length 0x11=17
-00                                                  # Option flag, 8bit
-# String: At a dinner party
-41 74 20 61 20
-64 69 6E 6E 65
-72 20 70 61 72
-74 79
