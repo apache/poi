@@ -265,7 +265,7 @@ public class Property
                     b.append((char) src[o + j]);
 
             /* Strip 0x00 characters from the end of the string: */
-            while (b.charAt(b.length() - 1) == 0x00)
+            while (b.length() > 0 && b.charAt(b.length() - 1) == 0x00)
                 b.setLength(b.length() - 1);
             if (codepage == CP_UNICODE)
             {
