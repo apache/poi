@@ -83,8 +83,20 @@ public class LineSpacingDescriptor
     _fMultiLinespace = fMultiLinespace;
   }
 
+  public void serialize(byte[] buf, int offset)
+  {
+    LittleEndian.putShort(buf, offset, _dyaLine);
+    LittleEndian.putShort(buf, offset + LittleEndian.SHORT_SIZE, _fMultiLinespace);
+  }
+
   public void setDyaLine(short dyaLine)
   {
     _dyaLine = dyaLine;
+  }
+  public boolean equals(Object o)
+  {
+    LineSpacingDescriptor lspd = (LineSpacingDescriptor)o;
+
+    return _dyaLine == lspd._dyaLine && _fMultiLinespace == lspd._fMultiLinespace;
   }
 }

@@ -54,59 +54,31 @@
 
 package org.apache.poi.hwpf.usermodel;
 
-import org.apache.poi.util.BitField;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.hwpf.model.hdftypes.definitions.SEPAbstractType;
 
-public class BorderCode
-  implements Cloneable
+public class Section
+  extends SEPAbstractType
 {
-  public static final int SIZE = 4;
-  private short _info;
-    private final static BitField _dptLineWidth = new BitField(0xff);
-    private final static BitField _brcType = new BitField(0xff00);
-  private short _info2;
-    private final static BitField _ico = new BitField(0xff);
-    private final static BitField _dptDpace = new BitField(0x1f00);
-    private final static BitField _fShadow = new BitField(0x2000);
-    private final static BitField _fFrame = new BitField(0x4000);
-
-  public BorderCode()
+  public Section()
   {
-  }
-
-  public BorderCode(byte[] buf, int offset)
-  {
-    _info = LittleEndian.getShort(buf, offset);
-    _info2 = LittleEndian.getShort(buf, offset + LittleEndian.SHORT_SIZE);
-  }
-
-  public void serialize(byte[] buf, int offset)
-  {
-    LittleEndian.putShort(buf, offset, _info);
-    LittleEndian.putShort(buf, offset + LittleEndian.SHORT_SIZE, _info2);
-  }
-
-  public int toInt()
-  {
-    byte[] buf = new byte[4];
-    serialize(buf, 0);
-    return LittleEndian.getInt(buf);
-  }
-
-  public boolean isEmpty()
-  {
-    return _info == 0 && _info2 == 0;
-  }
-
-  public boolean equals(Object o)
-  {
-    BorderCode brc = (BorderCode)o;
-    return _info == brc._info && _info2 == brc._info2;
+    field_20_brcTop = new BorderCode();
+    field_21_brcLeft = new BorderCode();
+    field_22_brcBottom = new BorderCode();
+    field_23_brcRight = new BorderCode();
+    field_26_dttmPropRMark = new DateAndTime();
   }
 
   public Object clone()
     throws CloneNotSupportedException
   {
-    return super.clone();
+    Section copy = (Section)super.clone();
+    copy.field_20_brcTop = (BorderCode)field_20_brcTop.clone();
+    copy.field_21_brcLeft = (BorderCode)field_21_brcLeft.clone();
+    copy.field_22_brcBottom = (BorderCode)field_22_brcBottom.clone();
+    copy.field_23_brcRight = (BorderCode)field_23_brcRight.clone();
+    copy.field_26_dttmPropRMark = (DateAndTime)field_26_dttmPropRMark.clone();
+
+    return copy;
   }
+
 }

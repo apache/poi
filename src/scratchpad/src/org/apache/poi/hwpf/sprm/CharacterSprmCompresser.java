@@ -58,7 +58,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Arrays;
 
-import org.apache.poi.hwpf.usermodel.CharacterProperties;
+import org.apache.poi.hwpf.usermodel.CharacterRun;
 import org.apache.poi.util.LittleEndian;
 
 public class CharacterSprmCompresser
@@ -66,7 +66,7 @@ public class CharacterSprmCompresser
   public CharacterSprmCompresser()
   {
   }
-  public static byte[] compressCharacterProperty(CharacterProperties newCHP, CharacterProperties oldCHP)
+  public static byte[] compressCharacterProperty(CharacterRun newCHP, CharacterRun oldCHP)
   {
     ArrayList sprmList = new ArrayList();
     int size = 0;
@@ -108,13 +108,10 @@ public class CharacterSprmCompresser
     {
        size += SprmUtils.addSprm((short)0x4804, newCHP.getIbstRMark(), null, sprmList);
     }
-    if (!Arrays.equals(newCHP.getDttmRMark(), oldCHP.getDttmRMark()))
+    if (!newCHP.getDttmRMark().equals(oldCHP.getDttmRMark()))
     {
-      // Create an int for the sprm
-      short[] dttmMark = newCHP.getDttmRMark();
       byte[] buf = new byte[4];
-      LittleEndian.putShort(buf, dttmMark[0]);
-      LittleEndian.putShort(buf, 2, dttmMark[1]);
+      newCHP.getDttmRMark().serialize(buf, 0);
 
       size += SprmUtils.addSprm((short)0x6805, LittleEndian.getInt(buf), null, sprmList);
     }
