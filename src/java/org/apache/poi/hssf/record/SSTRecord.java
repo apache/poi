@@ -292,7 +292,7 @@ public class SSTRecord
      * @param count  number of strings
      */
 
-    public void getNumUniqueStrings( final int count )
+    public void setNumUniqueStrings( final int count )
     {
         field_2_num_unique_strings = count;
     }
