@@ -63,310 +63,301 @@ import java.util.*;
 import org.apache.poi.hpsf.wellknown.*;
 
 /**
- *  <p>
+ * <p>Convenience class representing a Summary Information stream in a
+ * Microsoft Office document.</p>
  *
- *  Convenience class representing a Summary Information stream in a Microsoft
- *  Office document.</p> <p>
+ * <p>See <a
+ * href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/com/stgu_8910.asp">http://msdn.microsoft.com/library/default.asp?url=/library/en-us/com/stgu_8910.asp</a>
+ * for documentation from That Redmond Company.</p>
  *
- *  See <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/com/stgu_8910.asp">
- *  http://msdn.microsoft.com/library/default.asp?url=/library/en-us/com/stgu_8910.asp
- *  </a> for documentation from That Redmond Company.
- *
- *@author     Rainer Klute (klute@rainer-klute.de)
- *@see        DocumentSummaryInformation
- *@version    $Id$
- *@since      2002-02-09
+ * @author Rainer Klute (klute@rainer-klute.de)
+ * @see DocumentSummaryInformation
+ * @version $Id$
+ * @since 2002-02-09
  */
-public class SummaryInformation extends SpecialPropertySet {
+public class SummaryInformation extends SpecialPropertySet
+{
 
     /**
-     *  <p>
+     * <p>Creates a {@link SummaryInformation} from a given {@link
+     * PropertySet}.</p>
      *
-     *  Creates a {@link SummaryInformation} from a given {@link PropertySet}.
-     *  </p>
-     *
-     *@param  ps                                      A property set which
-     *      should be created from a summary information stream.
-     *@exception  UnexpectedPropertySetTypeException  Description of the
-     *      Exception
-     *@throws  UnexpectedPropertySetTypeException     if <var>ps</var> does not
-     *      contain a summary information stream.
+     * @param ps A property set which should be created from a summary
+     * information stream.
+     * @throws UnexpectedPropertySetTypeException if <var>ps</var>
+     * does not contain a summary information stream.
      */
     public SummaryInformation(final PropertySet ps)
-             throws UnexpectedPropertySetTypeException {
+	throws UnexpectedPropertySetTypeException
+    {
         super(ps);
-        if (!isSummaryInformation()) {
+        if (!isSummaryInformation())
             throw new UnexpectedPropertySetTypeException
-                    ("Not a " + getClass().getName());
-        }
+		("Not a " + getClass().getName());
     }
 
 
 
     /**
-     *  <p>
+     * <p>Returns the stream's title (or <code>null</code>).</p>
      *
-     *  Returns the stream's title (or <code>null</code>).</p>
-     *
-     *@return    The title value
+     * @return The title or <code>null</code>
      */
-    public String getTitle() {
+    public String getTitle()
+    {
         return (String) getProperty(PropertyIDMap.PID_TITLE);
     }
 
 
 
     /**
-     *  <p>
+     * <p>Returns the stream's subject (or <code>null</code>).</p>
      *
-     *  Returns the stream's subject (or <code>null</code>).</p>
-     *
-     *@return    The subject value
+     * @return The subject or <code>null</code>
      */
-    public String getSubject() {
+    public String getSubject()
+    {
         return (String) getProperty(PropertyIDMap.PID_SUBJECT);
     }
 
 
 
     /**
-     *  <p>
+     * <p>Returns the stream's author (or <code>null</code>).</p>
      *
-     *  Returns the stream's author (or <code>null</code>).</p>
-     *
-     *@return    The author value
+     * @return The author or <code>null</code>
      */
-    public String getAuthor() {
+    public String getAuthor()
+    {
         return (String) getProperty(PropertyIDMap.PID_AUTHOR);
     }
 
 
 
     /**
-     *  <p>
+     * <p>Returns the stream's keywords (or <code>null</code>).</p>
      *
-     *  Returns the stream's keywords (or <code>null</code>).</p>
-     *
-     *@return    The keywords value
+     * @return The keywords or <code>null</code>
      */
-    public String getKeywords() {
+    public String getKeywords()
+    {
         return (String) getProperty(PropertyIDMap.PID_KEYWORDS);
     }
 
 
 
     /**
-     *  <p>
+     * <p>Returns the stream's comments (or <code>null</code>).</p>
      *
-     *  Returns the stream's comments (or <code>null</code>).</p>
-     *
-     *@return    The comments value
+     * @return The comments or <code>null</code>
      */
-    public String getComments() {
+    public String getComments()
+    {
         return (String) getProperty(PropertyIDMap.PID_COMMENTS);
     }
 
 
 
     /**
-     *  <p>
+     * <p>Returns the stream's template (or <code>null</code>).</p>
      *
-     *  Returns the stream's template (or <code>null</code>).</p>
-     *
-     *@return    The template value
+     * @return The template or <code>null</code>
      */
-    public String getTemplate() {
+    public String getTemplate()
+    {
         return (String) getProperty(PropertyIDMap.PID_TEMPLATE);
     }
 
 
 
     /**
-     *  <p>
+     * <p>Returns the stream's last author (or <code>null</code>).</p>
      *
-     *  Returns the stream's last author (or <code>null</code>).</p>
-     *
-     *@return    The lastAuthor value
+     * @return The last author or <code>null</code>
      */
-    public String getLastAuthor() {
+    public String getLastAuthor()
+    {
         return (String) getProperty(PropertyIDMap.PID_LASTAUTHOR);
     }
 
 
 
     /**
-     *  <p>
+     * <p>Returns the stream's revision number (or
+     * <code>null</code>). </p>
      *
-     *  Returns the stream's revision number (or <code>null</code>). </p>
-     *
-     *@return    The revNumber value
+     * @return The revision number or <code>null</code>
      */
-    public String getRevNumber() {
+    public String getRevNumber()
+    {
         return (String) getProperty(PropertyIDMap.PID_REVNUMBER);
     }
 
 
 
     /**
-     *  <p>
+     * <p>Returns the stream's edit time (or <code>null</code>).</p>
      *
-     *  Returns the stream's edit time (or <code>null</code>).</p>
-     *
-     *@return    The editTime value
+     * @return The edit time or <code>null</code>
      */
-    public Date getEditTime() {
+    public Date getEditTime()
+    {
         return (Date) getProperty(PropertyIDMap.PID_EDITTIME);
     }
 
 
 
     /**
-     *  <p>
+     * <p>Returns the stream's last printed time (or
+     * <code>null</code>).</p>
      *
-     *  Returns the stream's last printed time (or <code>null</code>).</p>
-     *
-     *@return    The lastPrinted value
+     * @return The last printed time or <code>null</code>
      */
-    public Date getLastPrinted() {
+    public Date getLastPrinted()
+    {
         return (Date) getProperty(PropertyIDMap.PID_LASTPRINTED);
     }
 
 
 
     /**
-     *  <p>
+     * <p>Returns the stream's creation time (or
+     * <code>null</code>).</p>
      *
-     *  Returns the stream's creation time (or <code>null</code>).</p>
-     *
-     *@return    The createDateTime value
+     * @return The creation time or <code>null</code>
      */
-    public Date getCreateDateTime() {
+    public Date getCreateDateTime()
+    {
         return (Date) getProperty(PropertyIDMap.PID_CREATE_DTM);
     }
 
 
 
     /**
-     *  <p>
+     * <p>Returns the stream's last save time (or
+     * <code>null</code>).</p>
      *
-     *  Returns the stream's last save time (or <code>null</code>).</p>
-     *
-     *@return    The lastSaveDateTime value
+     * @return The last save time or <code>null</code>
      */
-    public Date getLastSaveDateTime() {
+    public Date getLastSaveDateTime()
+    {
         return (Date) getProperty(PropertyIDMap.PID_LASTSAVE_DTM);
     }
 
 
 
     /**
-     *  <p>
+     * <p>Returns the stream's page count or 0 if the {@link
+     * SummaryInformation} does not contain a page count.</p>
      *
-     *  Returns the stream's page count or 0 if the {@link SummaryInformation}
-     *  does not contain a page count.</p>
-     *
-     *@return    The pageCount value
+     * @return The page count or <code>null</code>
      */
-    public int getPageCount() {
+    public int getPageCount()
+    {
         return getPropertyIntValue(PropertyIDMap.PID_PAGECOUNT);
     }
 
 
 
     /**
-     *  <p>
+     * <p>Returns the stream's word count or 0 if the {@link
+     * SummaryInformation} does not contain a word count.</p>
      *
-     *  Returns the stream's word count or 0 if the {@link SummaryInformation}
-     *  does not contain a word count.</p>
-     *
-     *@return    The wordCount value
+     * @return The word count or <code>null</code>
      */
-    public int getWordCount() {
+    public int getWordCount()
+    {
         return getPropertyIntValue(PropertyIDMap.PID_WORDCOUNT);
     }
 
 
 
     /**
-     *  <p>
+     * <p>Returns the stream's character count or 0 if the {@link
+     * SummaryInformation} does not contain a char count.</p>
      *
-     *  Returns the stream's char count or 0 if the {@link SummaryInformation}
-     *  does not contain a char count.</p>
-     *
-     *@return    The charCount value
+     * @return The character count or <code>null</code>
      */
-    public int getCharCount() {
+    public int getCharCount()
+    {
         return getPropertyIntValue(PropertyIDMap.PID_CHARCOUNT);
     }
 
 
 
     /**
-     *  <p>
+     * <p>Returns the stream's thumbnail (or <code>null</code>)
+     * <strong>when this method is implemented. Please note that the
+     * return type is likely to change!</strong></p>
      *
-     *  Returns the stream's thumbnail (or <code>null</code>) <strong>when this
-     *  method is implemented. Please note that the return type is likely to
-     *  change!</strong> <p>
+     * <p><strong>FIXME / Hint to developers:</strong> Drew Varner
+     * &lt;Drew.Varner -at- sc.edu&gt; said that this is an image in
+     * WMF or Clipboard (BMP?) format. He also provided two links that
+     * might be helpful: <a
+     * href="http://www.csn.ul.ie/~caolan/publink/file/OLE2SummaryAgainst_file-3.27.patch"
+     * target="_blank">http://www.csn.ul.ie/~caolan/publink/file/OLE2SummaryAgainst_file-3.27.patch
+     * </a> and <a
+     * href="http://msdn.microsoft.com/library/en-us/dno97ta/html/msdn_docprop.asp"
+     * target="_blank">http://msdn.microsoft.com/library/en-us/dno97ta/html/msdn_docprop.asp
+     * </a>. However, we won't do any conversion into any image type
+     * but instead just return a byte array.</p>
      *
-     *  <strong>FIXME / Hint to developers:</strong> Drew Varner &lt;Drew.Varner
-     *  -at- sc.edu&gt; said that this is an image in WMF or Clipboard (BMP?)
-     *  format. He also provided two links that might be helpful: <a
-     *  href="http://www.csn.ul.ie/~caolan/publink/file/OLE2SummaryAgainst_file-3.27.patch"
-     *  target="_blank">http://www.csn.ul.ie/~caolan/publink/file/OLE2SummaryAgainst_file-3.27.patch
-     *  </a> and <a href="http://msdn.microsoft.com/library/en-us/dno97ta/html/msdn_docprop.asp"
-     *  target="_blank">http://msdn.microsoft.com/library/en-us/dno97ta/html/msdn_docprop.asp
-     *  </a>. However, we won't do any conversion into any image type but
-     *  instead just return a byte array.</p>
-     *
-     *@return    The thumbnail value
+     * @return The thumbnail or <code>null</code>
      */
-    public byte[] getThumbnail() {
+    public byte[] getThumbnail()
+    {
         return (byte[]) getProperty(PropertyIDMap.PID_THUMBNAIL);
     }
 
 
 
     /**
-     *  <p>
+     * <p>Returns the stream's application name (or
+     * <code>null</code>).</p>
      *
-     *  Returns the stream's application name (or <code>null</code>).</p>
-     *
-     *@return    The applicationName value
+     * @return The application name or <code>null</code>
      */
-    public String getApplicationName() {
+    public String getApplicationName()
+    {
         return (String) getProperty(PropertyIDMap.PID_APPNAME);
     }
 
 
 
     /**
-     *  <p>
+     * <p>Returns a security code which is one of the following
+     * values:</p>
      *
-     *  Returns one of the following values:</p>
-     *  <ul>
-     *    <li> <p>
+     * <ul>
+     *  <li>
+     *   <p>0 if the {@link SummaryInformation} does not contain a
+     *   security field or if there is no security on the
+     *   document. Use {@link #wasNull} to distinguish between the
+     *   two cases!</p>
+     *  </li>
      *
-     *    0 if the {@link SummaryInformation} does not contain a security field
-     *    or if there is no security on the document. Use {@link #wasNull} to
-     *    distinguish between the two cases!</p> </li>
-     *    <li> <p>
+     *  <li>
+     *   <p>1 if the document is password protected</p>
+     *  </li>
      *
-     *    1 if the document is password protected</p> </li>
-     *    <li> <p>
+     *   <li>
+     *    <p>2 if the document is read-only recommended</p>
+     *   </li>
      *
-     *    2 if the document is read-only recommended</p> </li>
-     *    <li> <p>
+     *   <li>
+     *    <p>4 if the document is read-only enforced</p>
+     *   </li>
      *
-     *    4 if the document is read-only enforced</p> </li>
-     *    <li> <p>
+     *   <li>
+     *    <p>8 if the document is locked for annotations</p>
+     *   </li>
      *
-     *    8 if the document is locked for annotations</p> </li>
-     *  </ul>
+     * </ul>
      *
-     *
-     *@return    The security value
+     * @return The security code or <code>null</code>
      */
-    public int getSecurity() {
+    public int getSecurity()
+    {
         return getPropertyIntValue(PropertyIDMap.PID_SECURITY);
     }
 

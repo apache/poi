@@ -55,73 +55,45 @@
 package org.apache.poi.hpsf;
 
 /**
- *  <p>
+ * <p>This exception is thrown when there is an illegal value set in a
+ * {@link PropertySet}. For example, a {@link Variant#VT_BOOL} must
+ * have a value of <code>-1 (true)</code> or <code>0 (false)</code>.
+ * Any other value would trigger this exception. It supports a nested
+ * "reason" throwable, i.e. an exception that caused this one to be
+ * thrown.</p>
  *
- *  This exception is thrown when there is an illegal value set in a
- *  {@link PropertySet}. For example, a {@link Variant#VT_BOOL} must have
- *  a value of <code>-1 (true)</code> or <code>0 (false)</code>.
- *  Any other value would trigger this exception. It supports a nested
- *  "reason" throwable, i.e. an exception that caused this one to be thrown.
- *  </p>
- *
- *@author     Drew Varner(Drew.Varner atDomain sc.edu)
- *@version    $Id$
- *@since      2002-05-26
+ * @author Drew Varner(Drew.Varner atDomain sc.edu)
+ * @version $Id$
+ * @since 2002-05-26
  */
-public class  IllegalPropertySetDataException extends HPSFRuntimeException {
+public class  IllegalPropertySetDataException extends HPSFRuntimeException
+{
 
-
-
-    /**
-     *  <p>
-     *
-     *  Creates a new {@link IllegalPropertySetDataException}.</p>
-     */
-    public IllegalPropertySetDataException() {
+    public IllegalPropertySetDataException()
+    {
         super();
     }
 
 
 
-    /**
-     *  <p>
-     *
-     *  Creates a new {@link IllegalPropertySetDataException} with a message string.</p>
-     *
-     *@param  msg  Description of the Parameter
-     */
-    public IllegalPropertySetDataException(final String msg) {
+    public IllegalPropertySetDataException(final String msg)
+    {
         super(msg);
     }
 
 
 
-    /**
-     *  <p>
-     *
-     *  Creates a new {@link IllegalPropertySetDataException} with a reason.</p>
-     *
-     *@param  reason  Description of the Parameter
-     */
-    public IllegalPropertySetDataException(final Throwable reason) {
+    public IllegalPropertySetDataException(final Throwable reason)
+    {
         super(reason);
     }
 
 
 
-    /**
-     *  <p>
-     *
-     *  Creates a new {@link IllegalPropertySetDataException} with a message
-     *  string and a reason.</p>
-     *
-     *@param  msg     Description of the Parameter
-     *@param  reason  Description of the Parameter
-     */
     public IllegalPropertySetDataException(final String msg,
-                                           final Throwable reason) {
+                                           final Throwable reason)
+    {
         super(msg,reason);
     }
-
 
 }

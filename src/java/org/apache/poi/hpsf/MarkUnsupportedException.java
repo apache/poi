@@ -55,52 +55,36 @@
 package org.apache.poi.hpsf;
 
 /**
- *  <p>
+ * <p>This exception is thrown if an {@link java.io.InputStream} does
+ * not support the {@link java.io.InputStream#mark} operation.</p>
  *
- *  This exception is thrown if an {@link java.io.InputStream} does not support
- *  the {@link java.io.InputStream#mark} operation.</p>
- *
- *@author     Rainer Klute (klute@rainer-klute.de)
- *@version    $Id$
- *@since      2002-02-09
+ * @author Rainer Klute (klute@rainer-klute.de)
+ * @version $Id$
+ * @since 2002-02-09
  */
-public class MarkUnsupportedException extends HPSFException {
+public class MarkUnsupportedException extends HPSFException
+{
 
-    /**
-     *  Constructor for the MarkUnsupportedException object
-     */
-    public MarkUnsupportedException() {
+    public MarkUnsupportedException()
+    {
         super();
     }
 
 
-    /**
-     *  Constructor for the MarkUnsupportedException object
-     *
-     *@param  msg  Description of the Parameter
-     */
-    public MarkUnsupportedException(final String msg) {
+    public MarkUnsupportedException(final String msg)
+    {
         super(msg);
     }
 
 
-    /**
-     *  Constructor for the MarkUnsupportedException object
-     *
-     *@param  reason  Description of the Parameter
-     */
-    public MarkUnsupportedException(final Throwable reason) {
+    public MarkUnsupportedException(final Throwable reason)
+    {
         super(reason);
     }
 
 
-    /**
-     *  Constructor for the MarkUnsupportedException object
-     *
-     *@param  msg     Description of the Parameter
-     *@param  reason  Description of the Parameter
-     */
-    public MarkUnsupportedException(final String msg, final Throwable reason) {
+    public MarkUnsupportedException(final String msg, final Throwable reason)
+    {
         super(msg, reason);
     }
 
