@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.0//EN" "../dtd/document-v10.dtd">
+<!-- $Id$ -->
+
 <document>
  <header>
   <title>HPSF (Horrible Property Set Format)</title>
