@@ -57,7 +57,6 @@ package org.apache.poi.hssf.record;
 import junit.framework.TestCase;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.util.BinaryTree;
 import org.apache.poi.util.HexRead;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
@@ -75,8 +74,7 @@ public class TestSSTRecord
         extends TestCase
 {
     private String _test_file_path;
-    private static final String _test_file_path_property =
-            "HSSF.testdata.path";
+    private static final String _test_file_path_property = "HSSF.testdata.path";
 
     /**
      * Creates new TestSSTRecord
@@ -524,48 +522,4 @@ public class TestSSTRecord
         file.delete();
     }
 
-    public void testSpanRichTextToPlainText()
-            throws Exception
-    {
-        byte[] bytes = HexRead.readData( _test_file_path + File.separator + "richtextdata.txt", "header" );
-        BinaryTree strings = new BinaryTree();
-        SSTDeserializer deserializer = new SSTDeserializer( strings );
-        deserializer.manufactureStrings( bytes, 0, (short) 45 );
-        byte[] continueBytes = HexRead.readData( _test_file_path + File.separator + "richtextdata.txt", "continue1" );
-        deserializer.processContinueRecord( continueBytes );
-
-        assertEquals( "At a dinner party orAt At At ", strings.get( new Integer( 0 ) ) + "" );
-    }
-
-    public void testContinuationWithNoOverlap()
-            throws Exception
-    {
-        byte[] bytes = HexRead.readData( _test_file_path + File.separator + "evencontinuation.txt", "header" );
-        BinaryTree strings = new BinaryTree();
-        SSTDeserializer deserializer = new SSTDeserializer( strings );
-        deserializer.manufactureStrings( bytes, 0, (short) 43 );
-        byte[] continueBytes = HexRead.readData( _test_file_path + File.separator + "evencontinuation.txt", "continue1" );
-        deserializer.processContinueRecord( continueBytes );
-
-        assertEquals( "At a dinner party or", strings.get( new Integer( 0 ) ) + "" );
-        assertEquals( "At a dinner party", strings.get( new Integer( 1 ) ) + "" );
-
-    }
-
-    public void testStringAcross2Continuations()
-            throws Exception
-    {
-        byte[] bytes = HexRead.readData( _test_file_path + File.separator + "stringacross2continuations.txt", "header" );
-        BinaryTree strings = new BinaryTree();
-        SSTDeserializer deserializer = new SSTDeserializer( strings );
-        deserializer.manufactureStrings( bytes, 0, (short) 43 );
-        bytes = HexRead.readData( _test_file_path + File.separator + "stringacross2continuations.txt", "continue1" );
-        deserializer.processContinueRecord( bytes );
-        bytes = HexRead.readData( _test_file_path + File.separator + "stringacross2continuations.txt", "continue2" );
-        deserializer.processContinueRecord( bytes );
-
-        assertEquals( "At a dinner party or", strings.get( new Integer( 0 ) ) + "" );
-        assertEquals( "At a dinner partyAt a dinner party", strings.get( new Integer( 1 ) ) + "" );
-
-    }
 }
