@@ -172,7 +172,7 @@ public class HDFObjectFactory
     private void initTableStream() throws IOException
     {
         String tablename = null;
-        if(!_fib.isFWhichTblStm())
+        if(_fib.isFWhichTblStm())
         {
             tablename="1Table";
         }
