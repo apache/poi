@@ -77,7 +77,7 @@ tofile="${build.patchqueue}/patchqueue2text4dev.xsl"/>
   <!-- =================================================================== -->
   <!-- Calls the targets needed for Gump                                   -->
   <!-- =================================================================== -->  
-  <target name="jakarta-poi.gump" depends="all, testmodule">
+  <target name="gump" depends="testmodule">
   </target>
   
   
