@@ -32,7 +32,7 @@
 
   <section><title>Advisors</title>
     <ul>
-       <li><link href="http://avalon.apache.org/whoweare/stefano.html">Stefano Mazzocchi</link> (stefano at apache dot org)
+       <li><link href="http://www.betaversion.org/~stefano/">Stefano Mazzocchi</link> (stefano at apache dot org)
        </li>
     </ul>
   </section>
@@ -52,13 +52,18 @@
       <li>Ryan Ackley (sackley at apache dot org)</li>
       <li>Avik Sengupta (avik at apache dot org)</li>
       <li>Shawn Laubach (slaubach at apache dot org)</li>
-      <li><link href="http://cvs.apache.org/~tetsuya/">Tetsuya Kitahata</link> (tetsuya at apache dot org)</li>
+      <li><link href="http://www.apache.org/~tetsuya/">Tetsuya Kitahata</link> (tetsuya at apache dot org)</li>
     </ul>
   </section>
   <section><title>Developers</title>
     <ul>
       <li>Jason Height (jheight at chariot dot net dot au)</li>
       <li>Agust&#237;n Mart&#237;n (agusmba at terra dot es)</li>
+    </ul>
+  </section>
+  <section><title>Translators</title>
+    <ul>
+      <li>(Please add your name here!!)</li>
     </ul>
   </section>
  </section>
