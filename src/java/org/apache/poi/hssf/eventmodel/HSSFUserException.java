@@ -56,7 +56,7 @@
  * University of Illinois, Urbana-Champaign.
  */
 
-package org.apache.poi.hssf;
+package org.apache.poi.hssf.eventmodel;
 
 /**
  * <p>This exception is provided as a way for API users to throw 
