@@ -65,7 +65,6 @@ import org.apache.poi.util.LittleEndian;
 /**
  * Extended SST table info subrecord<P>
  * contains the elements of "info" in the SST's array field<P>
- * WE HAVE VERY LITTLE INFORMATION ON HOW TO IMPLEMENT THIS RECORD! (EXTSSST)<P>
  * @author Andrew C. Oliver (acoliver at apache dot org)
  * @version 2.0-pre
  * @see org.apache.poi.hssf.record.ExtSSTRecord
