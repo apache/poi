@@ -145,9 +145,9 @@ public class TestEmptyProperties extends TestCase
         assertNull(s.getLastPrinted());
         assertNull(s.getCreateDateTime());
         assertNull(s.getLastSaveDateTime());
-        assertEquals(s.getPageCount());
-        assertNull(s.getWordCount());
-        assertNull(s.getCharCount());
+        assertEquals(s.getPageCount(),0);
+        assertEquals(s.getWordCount(),0);
+        assertEquals(s.getCharCount(),0);
         assertNull(s.getThumbnail());
         assertNull(s.getApplicationName());
     }
