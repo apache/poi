@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "../dtd/document-v11.dtd">
+
+<document>
+ <header>
+  <title>HDF</title>
+  <subtitle>Overview</subtitle>
+  <authors>
+   <person name="Nicola Ken Barozzi" email="barozzi@nicolaken.com"/>
+   <person name="Andrew C. Oliver" email="acoliver@apache.org"/>
+   <person name="Ryan Ackley" email="sackley@apache.org"/>
+  </authors>
+ </header>
+
+ <body>
+ <section><title>Overview</title>
+
+  <p>HDF is the name of OUR port of the Microsoft Word 97(-2002) file format to
+     pure Java.</p>
+  <p>HDF is still in early development. It is in the
+     <link href="http://cvs.apache.org/viewcvs/jakarta-poi/src/scratchpad/">scratchpad section of the
+     CVS.</link> Source code in the <em>org.apache.poi.hdf.extractor</em> tree is
+     legacy code. Source in the <em>org.apache.poi.hdf.model</em>
+     tree is the old legacy code refactored into an object model. Check the How-To
+     page for detailed examples on using HDF.
+  </p>
+  <p>
+     We are looking for developers!!! If you are interested in helping with HDF
+     familiarize yourself with the source code and just start coding. Make sure
+     you read the guidelines for <link href="http://jakarta.apache.org/poi/getinvolved/index.html">
+     getting involved</link></p>
+  </section>
+ </body>
+</document>

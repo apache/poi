@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE book PUBLIC "-//APACHE//DTD Cocoon Documentation Book V1.0//EN" "../dtd/book-cocoon-v10.dtd">
+
+<book software="El Proyecto de POI"
+    title="HSSF"
+    copyright="El Proyecto de POI de @year@"
+    xmlns:xlink="http://www.w3.org/1999/xlink">
+
+        <menu label="Navegación">
+            <menu-item label="Página Principal" href="../index.html"/>
+        </menu>
+
+        <menu label="HSSF">
+            <menu-item label="Referencia Rápida" href="quick-guide.html"/>
+            <menu-item label="Como Se Hace" href="how-to.html"/>
+            <menu-item label="Apoyo Con Fórmulas" href="formula.html" />
+            <menu-item label="Use Case" href="use-case.html"/>
+            <menu-item label="Diagramas" href="diagrams.html"/>
+            <menu-item label="Alternativas" href="alternatives.html"/>
+            <menu-item label="Limitaciones" href="limitations.html"/>
+        </menu>
+
+        <menu label="Guía para el Contribuyente">
+            <menu-item label="Hack-eando HSSF" href="hacking-hssf.html"/>
+            <menu-item label="Generador de Registros" href="record-generator.html"/>
+        </menu>
+
+</book>

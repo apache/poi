@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "./dtd/document-v11.dtd">
+
+<document>
+ <header>
+  <title>Who we are</title>
+  <authors>
+   <person name="Davanum Srinivas" email="dims@yahoo.com"/>
+   <person name="Nicola Ken Barozzi" email="barozzi@nicolaken.com"/>
+   </authors>
+ </header>
+
+ <body>
+
+ <section><title>Who we are</title>
+  <p>
+    The Poi Project operates on a meritocracy: the more you do, the more
+    responsibility you will obtain. This page lists all of the people who have
+    gone the extra mile and are Committers. If you would like to get involved,
+    the first step is to join the mailing lists.
+  </p>
+
+  <p>
+    We ask that you please do not send us emails privately asking for support.
+    We are non-paid volunteers who help out with the project and we do not
+    necessarily have the time or energy to help people on an individual basis.
+    Instead, we have set up mailing lists which often contain hundreds of
+    individuals who will help answer detailed requests for help. The benefit of
+    using mailing lists over private communication is that it is a shared
+    resource where others can also learn from common mistakes and as a
+    community we all grow together.
+  </p>
+
+  <section><title>Advisors</title>
+    <ul>
+       <li><link href="http://jakarta.apache.org/avalon/authors/stefano.html">Stefano Mazzocchi</link> (stefano at apache dot org)
+       </li>
+    </ul>
+  </section>
+
+  <section><title>Committers</title>
+    <ul>
+      <li><link href="http://trilug.org/~acoliver">Andrew C. Oliver</link> (acoliver at apache dot org)</li>
+      <li><link href="http://www.marcj.com">Marc Johnson</link> (mjohnson at apache dot org)</li>
+      <li><link href="http://members.iinet.net.au/~gstamp/glen/">Glen Stampoultzis</link> (glens at apache.org)</li>
+      <li><link href="http://www.rainer-klute.de/">Rainer Klute</link> (klute at apache dot org)</li>
+      <li>Nicola Ken Barozzi (barozzi at nicolaken dot com)</li>
+      <li>Ryan Ackley (sackley at apache dot org)</li>
+      <li>Avik Sengupta (avik at apache dot org)</li>
+      <li>Shawn Laubach (slaubach at apache dot org)</li>
+    </ul>
+  </section>
+  <section><title>Developers</title>
+    <ul>
+      <li>Jason Height (jheight at chariot dot net dot au)</li>
+      <li>Agustin Martin (agusmba at terra dot es)</li>
+    </ul>
+  </section>
+ </section>
+
+</body>
+</document>
