@@ -1,0 +1,17 @@
+<record id="0x101d" name="Axis" package="org.apache.poi.hssf.record">
+    <suffix>Record</suffix>
+    <extends>Record</extends>
+    <description>The axis record defines the type of an axis.</description>
+    <author>Glen Stampoultzis (glens at apache.org)</author>
+    <fields>
+        <field type="int" size="2" name="axis type">
+            <const name="category or x axis" value="0"/>
+            <const name="value axis" value="1"/>
+            <const name="series axis" value="2"/>
+        </field>
+        <field type="int" size="4" name="reserved1"/>
+        <field type="int" size="4" name="reserved2"/>
+        <field type="int" size="4" name="reserved3"/>
+        <field type="int" size="4" name="reserved4"/>
+    </fields>
+</record>
