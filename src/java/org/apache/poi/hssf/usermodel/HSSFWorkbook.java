@@ -281,7 +281,9 @@ public class HSSFWorkbook
     
      
     /**
-     * set the sheet name.
+     * set the sheet name. 
+     * Will throw IllegalArgumentException if the name is greater than 31 chars
+     * or contains /\?*[]
      * @param sheet number (0 based)
      * @param sheet name
      */
