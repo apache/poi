@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<?xml-stylesheet type="text/xsl" href="tools/antipede/resources/stylesheets/layout.xsl"?>
+<?xml-stylesheet type="text/xsl" href="./tools/antipede/resources/stylesheets/layout.xsl"?>
 <!DOCTYPE project [
   <!-- antipede -->    
   <!ENTITY import-antipede  SYSTEM "./tools/antipede/build.xtarget"> 
@@ -278,7 +278,7 @@ printed.
   <!--         Run Junit tests            -->
   <!-- ================================== -->
   
-  <target  name="test"   depends="-init"
+  <target  name="test"   depends="compile"
            description="Compile java source code">
 
     <antcall target="call-cent">
@@ -297,7 +297,7 @@ printed.
   <!--      Generate project metrics      -->
   <!-- ================================== -->
   
-  <target  name="metrics"   depends="-init"
+  <target  name="metrics"   depends="compile"
            description="Generate project metrics">
 
     <antcall target="call-cent">
@@ -362,41 +362,7 @@ printed.
              sourcepath="${xlayout.build.java.dir}"
              destdir="${xlayout.build.documentation.metrics.dir}"
              failonerror="true">
-<!-- 
-     <classpath>
-       <path> 
-       <fileset dir="."> 
-        <patternset>
-         <include name="${cents.dir}/uml.${cent.dir.suffix}/*/*.jar"/>
-         <include name="${cents.dir}/uml.${cent.dir.suffix}/*/*.zip"/>
-        </patternset>
-       </fileset>         
-          <fileset dir="${xlayout.library.dir}" casesensitive="yes"> 
-           <patternset>
-             <include name="*/*.jar"/>
-             <include name="*/*.zip"/>
-           </patternset>
-         </fileset>  
-       </path> 
-     </classpath>
-     <bootclasspath>
-       <path> 
-       <fileset dir="." casesensitive="yes"> 
-        <patternset>
-         <include name="${cents.dir}/uml.${cent.dir.suffix}/*/*.jar"/>
-         <include name="${cents.dir}/uml.${cent.dir.suffix}/*/*.zip"/>
-        </patternset>
-       </fileset>         
-          <fileset dir="${xlayout.library.dir}" casesensitive="yes"> 
-           <patternset>
-             <include name="*/*.jar"/>
-             <include name="*/*.zip"/>
-           </patternset>
-         </fileset>  
-       </path> 
-     </bootclasspath>    
--->
-    
+   
       <doclet name="JP.co.esm.caddies.doclets.UMLDoclet">
      </doclet>
 
@@ -429,29 +395,55 @@ printed.
   </target>     
 
   <!-- ================================== -->
-  <!--       Test the main module stuff   -->
+  <!--    Test the main module stuff      -->
   <!-- ================================== -->
   
   <target  name="testmodule"   
-           depends="clean, compile, test, jar, docs"
+           depends="clean, compile, test, jar, docs, metrics, javadocs"
            description="Testing that all major targets work; useful before a commit"/>
+
+  <!-- ================================== -->
+  <!--    Test the main module stuff  2   -->
+  <!-- ================================== -->
+  
+  <target  name="testtargets"
+           description="Testing that all major targets work indipendently; useful before a commit">
            
-           
+      <antcall target="clean"/>
+      <antcall target="compile"/>
+      <antcall target="clean"/>
+      <antcall target="test"/>
+      <antcall target="clean"/>
+      <antcall target="jar"/>
+      <antcall target="clean"/>
+      <antcall target="docs"/>
+      <antcall target="clean"/>
+      <antcall target="metrics"/>
+      <antcall target="clean"/>
+      <antcall target="javadocs"/>
+
+  </target>
+                      
   <!-- ================================== -->
   <!--        Target used by Gump         -->
   <!-- ================================== -->
   
   <target  name="gump"   
-           depends="clean, compile, test, jar, docs, javadocs, metrics"
-           description="Target used by Gump"/>
+           depends="testmodule"
+           description="Target used by Gump">
            
-
+      <antcall target="clean"/>
+      <antcall target="testtargets"/>
+      <antcall target="clean"/>
+      <antcall target="testmodule"/>
+      
+  </target>
   <!-- ================================== -->
   <!--        Generate all                -->
   <!-- ================================== -->
   
   <target  name="all"   
-           depends="gump,jar"
+           depends="testmodule,jar"
            description="Generate all"/>
            
   <!-- ================================== -->
