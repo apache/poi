@@ -55,19 +55,20 @@
 package org.apache.poi.hssf.record;
 
 import junit.framework.TestCase;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.util.BinaryTree;
+import org.apache.poi.util.HexRead;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
 
 import java.io.*;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.List;
 
 /**
  * @author Marc Johnson (mjohnson at apache dot org)
+ * @author Glen Stampoultzis (glens at apache.org)
  */
 
 public class TestSSTRecord
@@ -98,14 +99,14 @@ public class TestSSTRecord
     public void testProcessContinueRecord()
             throws IOException
     {
-        byte[] testdata = readTestData( "BigSSTRecord" );
+        byte[] testdata = HexRead.readTestData( _test_file_path + File.separator + "BigSSTRecord" );
         byte[] input = new byte[testdata.length - 4];
 
         System.arraycopy( testdata, 4, input, 0, input.length );
         SSTRecord record =
                 new SSTRecord( LittleEndian.getShort( testdata, 0 ),
                         LittleEndian.getShort( testdata, 2 ), input );
-        byte[] continueRecord = readTestData( "BigSSTRecordCR" );
+        byte[] continueRecord = HexRead.readTestData( _test_file_path + File.separator + "BigSSTRecordCR" );
 
         input = new byte[continueRecord.length - 4];
         System.arraycopy( continueRecord, 4, input, 0, input.length );
@@ -141,42 +142,42 @@ public class TestSSTRecord
         assertEquals( record, testRecord );
 
         // testing based on new bug report
-        testdata = readTestData( "BigSSTRecord2" );
+        testdata = HexRead.readTestData( _test_file_path + File.separator + "BigSSTRecord2" );
         input = new byte[testdata.length - 4];
         System.arraycopy( testdata, 4, input, 0, input.length );
         record = new SSTRecord( LittleEndian.getShort( testdata, 0 ),
                 LittleEndian.getShort( testdata, 2 ), input );
-        byte[] continueRecord1 = readTestData( "BigSSTRecord2CR1" );
+        byte[] continueRecord1 = HexRead.readTestData( _test_file_path + File.separator + "BigSSTRecord2CR1" );
 
         input = new byte[continueRecord1.length - 4];
         System.arraycopy( continueRecord1, 4, input, 0, input.length );
         record.processContinueRecord( input );
-        byte[] continueRecord2 = readTestData( "BigSSTRecord2CR2" );
+        byte[] continueRecord2 = HexRead.readTestData( _test_file_path + File.separator + "BigSSTRecord2CR2" );
 
         input = new byte[continueRecord2.length - 4];
         System.arraycopy( continueRecord2, 4, input, 0, input.length );
         record.processContinueRecord( input );
-        byte[] continueRecord3 = readTestData( "BigSSTRecord2CR3" );
+        byte[] continueRecord3 = HexRead.readTestData( _test_file_path + File.separator + "BigSSTRecord2CR3" );
 
         input = new byte[continueRecord3.length - 4];
         System.arraycopy( continueRecord3, 4, input, 0, input.length );
         record.processContinueRecord( input );
-        byte[] continueRecord4 = readTestData( "BigSSTRecord2CR4" );
+        byte[] continueRecord4 = HexRead.readTestData( _test_file_path + File.separator + "BigSSTRecord2CR4" );
 
         input = new byte[continueRecord4.length - 4];
         System.arraycopy( continueRecord4, 4, input, 0, input.length );
         record.processContinueRecord( input );
-        byte[] continueRecord5 = readTestData( "BigSSTRecord2CR5" );
+        byte[] continueRecord5 = HexRead.readTestData( _test_file_path + File.separator + "BigSSTRecord2CR5" );
 
         input = new byte[continueRecord5.length - 4];
         System.arraycopy( continueRecord5, 4, input, 0, input.length );
         record.processContinueRecord( input );
-        byte[] continueRecord6 = readTestData( "BigSSTRecord2CR6" );
+        byte[] continueRecord6 = HexRead.readTestData( _test_file_path + File.separator + "BigSSTRecord2CR6" );
 
         input = new byte[continueRecord6.length - 4];
         System.arraycopy( continueRecord6, 4, input, 0, input.length );
         record.processContinueRecord( input );
-        byte[] continueRecord7 = readTestData( "BigSSTRecord2CR7" );
+        byte[] continueRecord7 = HexRead.readTestData( _test_file_path + File.separator + "BigSSTRecord2CR7" );
 
         input = new byte[continueRecord7.length - 4];
         System.arraycopy( continueRecord7, 4, input, 0, input.length );
@@ -208,6 +209,7 @@ public class TestSSTRecord
         }
         assertEquals( offset, ser_output.length );
         assertEquals( record, testRecord );
+        assertEquals( record.countStrings(), testRecord.countStrings() );
     }
 
     /**
@@ -333,7 +335,6 @@ public class TestSSTRecord
      *
      * @exception IOException
      */
-
     public void testSSTRecordBug()
             throws IOException
     {
@@ -366,7 +367,6 @@ public class TestSSTRecord
     /**
      * test simple addString
      */
-
     public void testSimpleAddString()
     {
         SSTRecord record = new SSTRecord();
@@ -420,7 +420,7 @@ public class TestSSTRecord
     public void testReaderConstructor()
             throws IOException
     {
-        byte[] testdata = readTestData( "BigSSTRecord" );
+        byte[] testdata = HexRead.readTestData( _test_file_path + File.separator + "BigSSTRecord" );
         byte[] input = new byte[testdata.length - 4];
 
         System.arraycopy( testdata, 4, input, 0, input.length );
@@ -431,11 +431,11 @@ public class TestSSTRecord
         assertEquals( 1464, record.getNumStrings() );
         assertEquals( 688, record.getNumUniqueStrings() );
         assertEquals( 492, record.countStrings() );
-        assertEquals( 1, record.getDeserializer().getExpectedChars() );
+        assertEquals( 1, record.getDeserializer().getContinuationExpectedChars() );
         assertEquals( "Consolidated B-24J Liberator The Dragon & His Tai",
                 record.getDeserializer().getUnfinishedString() );
-        assertEquals( 52, record.getDeserializer().getTotalLength() );
-        assertEquals( 3, record.getDeserializer().getStringDataOffset() );
+//        assertEquals( 52, record.getDeserializer().getTotalLength() );
+//        assertEquals( 3, record.getDeserializer().getStringDataOffset() );
         assertTrue( !record.getDeserializer().isWideChar() );
     }
 
@@ -450,10 +450,10 @@ public class TestSSTRecord
         assertEquals( 0, record.getNumStrings() );
         assertEquals( 0, record.getNumUniqueStrings() );
         assertEquals( 0, record.countStrings() );
-        assertEquals( 0, record.getDeserializer().getExpectedChars() );
+        assertEquals( 0, record.getDeserializer().getContinuationExpectedChars() );
         assertEquals( "", record.getDeserializer().getUnfinishedString() );
-        assertEquals( 0, record.getDeserializer().getTotalLength() );
-        assertEquals( 0, record.getDeserializer().getStringDataOffset() );
+//        assertEquals( 0, record.getDeserializer().getTotalLength() );
+//        assertEquals( 0, record.getDeserializer().getStringDataOffset() );
         assertTrue( !record.getDeserializer().isWideChar() );
         byte[] output = record.serialize();
         byte[] expected =
@@ -482,99 +482,6 @@ public class TestSSTRecord
         junit.textui.TestRunner.run( TestSSTRecord.class );
     }
 
-    private byte[] readTestData( String filename )
-            throws IOException
-    {
-        File file = new File( _test_file_path
-                + File.separator
-                + filename );
-        FileInputStream stream = new FileInputStream( file );
-        int characterCount = 0;
-        byte b = (byte) 0;
-        List bytes = new ArrayList();
-        boolean done = false;
-
-        while ( !done )
-        {
-            int count = stream.read();
-
-            switch ( count )
-            {
-
-                case '0':
-                case '1':
-                case '2':
-                case '3':
-                case '4':
-                case '5':
-                case '6':
-                case '7':
-                case '8':
-                case '9':
-                    b <<= 4;
-                    b += (byte) ( count - '0' );
-                    characterCount++;
-                    if ( characterCount == 2 )
-                    {
-                        bytes.add( new Byte( b ) );
-                        characterCount = 0;
-                        b = (byte) 0;
-                    }
-                    break;
-
-                case 'A':
-                case 'B':
-                case 'C':
-                case 'D':
-                case 'E':
-                case 'F':
-                    b <<= 4;
-                    b += (byte) ( count + 10 - 'A' );
-                    characterCount++;
-                    if ( characterCount == 2 )
-                    {
-                        bytes.add( new Byte( b ) );
-                        characterCount = 0;
-                        b = (byte) 0;
-                    }
-                    break;
-
-                case 'a':
-                case 'b':
-                case 'c':
-                case 'd':
-                case 'e':
-                case 'f':
-                    b <<= 4;
-                    b += (byte) ( count + 10 - 'a' );
-                    characterCount++;
-                    if ( characterCount == 2 )
-                    {
-                        bytes.add( new Byte( b ) );
-                        characterCount = 0;
-                        b = (byte) 0;
-                    }
-                    break;
-
-                case -1:
-                    done = true;
-                    break;
-
-                default :
-                    break;
-            }
-        }
-        stream.close();
-        Byte[] polished = (Byte[]) bytes.toArray( new Byte[0] );
-        byte[] rval = new byte[polished.length];
-
-        for ( int j = 0; j < polished.length; j++ )
-        {
-            rval[j] = polished[j].byteValue();
-        }
-        return rval;
-    }
-
     /**
      * Tests that workbooks with rich text that duplicates a non rich text cell can be read and written.
      */
@@ -582,38 +489,86 @@ public class TestSSTRecord
             throws Exception
     {
         File file = new File( _test_file_path + File.separator + "duprich1.xls" );
-        InputStream stream = new FileInputStream(file);
-        HSSFWorkbook wb = new HSSFWorkbook(stream);
+        InputStream stream = new FileInputStream( file );
+        HSSFWorkbook wb = new HSSFWorkbook( stream );
         stream.close();
-        HSSFSheet sheet = wb.getSheetAt(1);
-        assertEquals("01/05 (Wed) ", sheet.getRow(0).getCell((short)8).getStringCellValue());
-        assertEquals("01/05 (Wed)", sheet.getRow(1).getCell((short)8).getStringCellValue());
+        HSSFSheet sheet = wb.getSheetAt( 1 );
+        assertEquals( "01/05 (Wed) ", sheet.getRow( 0 ).getCell( (short) 8 ).getStringCellValue() );
+        assertEquals( "01/05 (Wed)", sheet.getRow( 1 ).getCell( (short) 8 ).getStringCellValue() );
 
-        file = File.createTempFile("testout", "xls");
-        FileOutputStream outStream = new FileOutputStream(file);
-        wb.write(outStream);
+        file = File.createTempFile( "testout", "xls" );
+        FileOutputStream outStream = new FileOutputStream( file );
+        wb.write( outStream );
         outStream.close();
         file.delete();
 
         // test the second file.
         file = new File( _test_file_path + File.separator + "duprich2.xls" );
-        stream = new FileInputStream(file);
-        wb = new HSSFWorkbook(stream);
+        stream = new FileInputStream( file );
+        wb = new HSSFWorkbook( stream );
         stream.close();
-        sheet = wb.getSheetAt(0);
+        sheet = wb.getSheetAt( 0 );
         int row = 0;
-        assertEquals("Testing ", sheet.getRow(row++).getCell((short)0).getStringCellValue());
-        assertEquals("rich", sheet.getRow(row++).getCell((short)0).getStringCellValue());
-        assertEquals("text", sheet.getRow(row++).getCell((short)0).getStringCellValue());
-        assertEquals("strings", sheet.getRow(row++).getCell((short)0).getStringCellValue());
-        assertEquals("Testing  ", sheet.getRow(row++).getCell((short)0).getStringCellValue());
-        assertEquals("Testing", sheet.getRow(row++).getCell((short)0).getStringCellValue());
+        assertEquals( "Testing ", sheet.getRow( row++ ).getCell( (short) 0 ).getStringCellValue() );
+        assertEquals( "rich", sheet.getRow( row++ ).getCell( (short) 0 ).getStringCellValue() );
+        assertEquals( "text", sheet.getRow( row++ ).getCell( (short) 0 ).getStringCellValue() );
+        assertEquals( "strings", sheet.getRow( row++ ).getCell( (short) 0 ).getStringCellValue() );
+        assertEquals( "Testing  ", sheet.getRow( row++ ).getCell( (short) 0 ).getStringCellValue() );
+        assertEquals( "Testing", sheet.getRow( row++ ).getCell( (short) 0 ).getStringCellValue() );
 
 //        file = new File("/tryme.xls");
-        file = File.createTempFile("testout", ".xls");
-        outStream = new FileOutputStream(file);
-        wb.write(outStream);
+        file = File.createTempFile( "testout", ".xls" );
+        outStream = new FileOutputStream( file );
+        wb.write( outStream );
         outStream.close();
         file.delete();
+    }
+
+    public void testSpanRichTextToPlainText()
+            throws Exception
+    {
+        byte[] bytes = HexRead.readTestData( _test_file_path + File.separator + "richtextdata.txt" );
+        BinaryTree strings = new BinaryTree();
+        SSTDeserializer deserializer = new SSTDeserializer( strings );
+        deserializer.manufactureStrings( bytes, 0, (short) 45 );
+        byte[] continueBytes = new byte[bytes.length - 45];
+        System.arraycopy( bytes, 45, continueBytes, 0, bytes.length - 45 );
+        deserializer.processContinueRecord( continueBytes );
+//        System.out.println( "strings.getKeyForValue(new Integer(0)) = " + strings.get( new Integer( 0 ) ) );
+
+        assertEquals( "At a dinner party orAt At At ", strings.get( new Integer( 0 ) ) + "" );
+    }
+
+    public void testContinuationWithNoOverlap()
+            throws Exception
+    {
+        byte[] bytes = HexRead.readTestData( _test_file_path + File.separator + "evencontinuation.txt" );
+        BinaryTree strings = new BinaryTree();
+        SSTDeserializer deserializer = new SSTDeserializer( strings );
+        deserializer.manufactureStrings( bytes, 0, (short) 43 );
+        byte[] continueBytes = new byte[bytes.length - 43];
+        System.arraycopy( bytes, 43, continueBytes, 0, bytes.length - 43 );
+        deserializer.processContinueRecord( continueBytes );
+
+        assertEquals( "At a dinner party or", strings.get( new Integer( 0 ) ) + "" );
+        assertEquals( "At a dinner party", strings.get( new Integer( 1 ) ) + "" );
+
+    }
+
+    public void testStringAcross2Continuations()
+            throws Exception
+    {
+        byte[] bytes = HexRead.readTestData( _test_file_path + File.separator + "stringacross2continuations.txt" );
+        BinaryTree strings = new BinaryTree();
+        SSTDeserializer deserializer = new SSTDeserializer( strings );
+        deserializer.manufactureStrings( bytes, 0, (short) 43 );
+        bytes = HexRead.readTestData( _test_file_path + File.separator + "stringacross2continuationsCR1.txt" );
+        deserializer.processContinueRecord( bytes );
+        bytes = HexRead.readTestData( _test_file_path + File.separator + "stringacross2continuationsCR2.txt" );
+        deserializer.processContinueRecord( bytes );
+
+        assertEquals( "At a dinner party or", strings.get( new Integer( 0 ) ) + "" );
+        assertEquals( "At a dinner partyAt a dinner party", strings.get( new Integer( 1 ) ) + "" );
+
     }
 }

@@ -1,0 +1,7 @@
+# Continuation record
+00                                                  # option flag
+# String: At a dinner party
+41 74 20 61 20
+64 69 6E 6E 65
+72 20 70 61 72
+74 79

@@ -68,8 +68,8 @@
   
      <version major="1"
              minor="5"   
-             fix  ="0"   
-             tag="dev"/> 
+	     fix  ="1"   
+	     tag="dev"/>
              
     <package>org.apache.poi</package>
 
