@@ -38,6 +38,34 @@
         </section>
         <section>
             <title>Case Studies</title>
+              <section><title>QuestionPro</title>
+              <p>
+              <link href="http://www.questionpro.com">QuestionPro</link> is an online service allowing businesses and individuals to create, deploy and do in-depth analysis of Online Surveys. The technology is build on open-source frameworks like Struts, Velocity, POI, Lucene ... the List goes on.  The application deployment is on a Linux Application Cluster farm with a Mysql database.
+              </p>
+              <p>
+              There are quite a few competitors delivering similar solutions using Microsoft Technologies like asp and .net. One of the distinct advantages our competitors had over us was the ability to generate Excel Spreadsheets, Access Databases (MDB) etc. on the fly using the Component Object Model (COM) - since their servers were running IIS and they had access to the COM registry and such.
+              </p>
+              <p>
+              QuestionPro's initial solution was to generate CSV files. This was easy however it was a cumbersome process for our clients to download the CSV files and then import them into Excel. Moreover, formatting information could not be preserved or captured using the CSV format.  This is where POI came to our rescue. With a POI based solution, we could generate a full report with multiple sheets and all the analytical reports. To keep the solution scalable, we had a dedicated cluster for generating out the reports.
+              </p>
+              <p>
+
+              The Jakarta-POI project has helped QuestionPro compete with the other players in the marketplace with proprietary technology. It leveled the playing field with respect to reporting and data analysis solutions. It helped in opening doors into closed solutions like Microsoft's CDF. Today about 100 excel reports are generated daily, each with about 10-30 sheets in them. 
+              </p>
+
+              <p>
+              Vivek Bhaskaran
+              </p>
+              <p>
+              <link href="http://www.questionpro.com">QuestionPro, Inc</link>
+              </p>
+
+              <p>
+              POI In Action - <link href="http://www.questionpro.com/marketing/SurveyReport-289.xls">http://www.questionpro.com/marketing/SurveyReport-289.xls</link>
+              </p>
+
+              </section>
+
               <section><title>Sunshine Systems</title>
                <p>
            <link href="http://www.sunshinesys.com/">Sunshine Systems</link> deveveloped a
