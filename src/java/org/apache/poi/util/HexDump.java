@@ -183,8 +183,6 @@ public class HexDump
      * @param offset its offset, whatever that might mean
      * @param index initial index into the byte array
      *
-     * @exception IOException is thrown if anything goes wrong writing
-     *            the data to stream
      * @exception ArrayIndexOutOfBoundsException if the index is
      *            outside the data array's bounds
      * @return output string
