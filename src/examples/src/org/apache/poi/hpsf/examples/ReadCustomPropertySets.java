@@ -54,10 +54,19 @@
  */
 package org.apache.poi.hpsf.examples;
 
-import java.io.*;
-import java.util.*;
-import org.apache.poi.hpsf.*;
-import org.apache.poi.poifs.eventfilesystem.*;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
+
+import org.apache.poi.hpsf.NoPropertySetStreamException;
+import org.apache.poi.hpsf.Property;
+import org.apache.poi.hpsf.PropertySet;
+import org.apache.poi.hpsf.PropertySetFactory;
+import org.apache.poi.hpsf.Section;
+import org.apache.poi.poifs.eventfilesystem.POIFSReader;
+import org.apache.poi.poifs.eventfilesystem.POIFSReaderEvent;
+import org.apache.poi.poifs.eventfilesystem.POIFSReaderListener;
 import org.apache.poi.util.HexDump;
 
 /**
@@ -74,7 +83,13 @@ import org.apache.poi.util.HexDump;
 public class ReadCustomPropertySets
 {
 
-    public static void main(String[] args)
+    /**
+     * <p>Runs the example program.</p>
+     *
+     * @param args Command-line arguments (unused).
+     * @throws IOException if any I/O exception occurs.
+     */
+    public static void main(final String[] args)
         throws IOException
     {
         final String filename = args[0];
@@ -88,7 +103,7 @@ public class ReadCustomPropertySets
 
     static class MyPOIFSReaderListener implements POIFSReaderListener
     {
-        public void processPOIFSReaderEvent(POIFSReaderEvent event)
+        public void processPOIFSReaderEvent(final POIFSReaderEvent event)
         {
             PropertySet ps = null;
             try
@@ -138,7 +153,7 @@ public class ReadCustomPropertySets
                 {
                     /* Print a single property: */
                     Property p = properties[i2];
-                    int id = p.getID();
+                    long id = p.getID();
                     long type = p.getType();
                     Object value = p.getValue();
                     out("      Property ID: " + id + ", type: " + type +
@@ -153,7 +168,7 @@ public class ReadCustomPropertySets
         System.out.println(msg);
     }
 
-    static String hex(byte[] bytes)
+    static String hex(final byte[] bytes)
     {
         return HexDump.dump(bytes, 0L, 0);
     }
