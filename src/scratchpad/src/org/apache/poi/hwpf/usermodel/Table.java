@@ -38,7 +38,7 @@ public class Table
       Paragraph p = getParagraph(rowEnd);
       if (p.isTableRowEnd() && p.getTableLevel() == levelNum)
       {
-        _rows.add(new TableRow(rowStart, rowEnd, this, levelNum));
+        _rows.add(new TableRow(rowStart, rowEnd + 1, this, levelNum));
         rowStart = rowEnd;
       }
       rowEnd++;
