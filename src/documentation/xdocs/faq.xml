@@ -7,9 +7,9 @@
           Why is reading a simple sheet taking so long?
         </question>
         <answer>
-          You've probably enabled logging.  Logging is intended only for 
+          You've probably enabled logging.  Logging is intended only for
           autopsie style debugging.  Having it enabled will reduce performance
-          by a factor of at least 100.  Logging is helpful for understanding 
+          by a factor of at least 100.  Logging is helpful for understanding
           why POI can't read some file or developing POI itself.  Important
           errors are thrown as exceptions, which means you probably don't need
           logging.
@@ -62,24 +62,25 @@
         <answer>
             Excel stores dates as numbers therefore the only way to determine if a cell is
             actually stored as a date is to look at the formatting. There is a helper method
-            in HSSFDateUtil (since the 1.7.0-dev release) that checks for this. 
+            in HSSFDateUtil (since the 1.7.0-dev release) that checks for this.
             Thanks to Jason Hoffman for providing the solution.
+
             <source>
 
-            case HSSFCell.CELL_TYPE_NUMERIC:
-                  double d = cell.getNumericCellValue();
-                  // test if a date!
-                  if (HSSFDateUtil.isCellDateFormatted(cell)) {
-                    // format in form of M/D/YY
-                    cal.setTime(HSSFDateUtil.getJavaDate(d));
-                    cellText =
-                      (String.valueOf(cal.get(Calendar.YEAR))).substring(2);
-                    cellText = cal.get(Calendar.MONTH)+1 + "/" +
-                               cal.get(Calendar.DAY_OF_MONTH) + "/" +
-                               cellText;
-                  }
+                       case HSSFCell.CELL_TYPE_NUMERIC:
+                             double d = cell.getNumericCellValue();
+                             // test if a date!
+                             if (HSSFDateUtil.isCellDateFormatted(cell)) {
+                               // format in form of M/D/YY
+                               cal.setTime(HSSFDateUtil.getJavaDate(d));
+                               cellText =
+                                 (String.valueOf(cal.get(Calendar.YEAR))).substring(2);
+                               cellText = cal.get(Calendar.MONTH)+1 + "/" +
+                                          cal.get(Calendar.DAY_OF_MONTH) + "/" +
+                                          cellText;
+                             }
 
-           </source>
+                      </source>
         </answer>
     </faq>
     <faq>
@@ -88,8 +89,8 @@
         </question>
         <answer>
             <p>
-            The problem usually manifests itself as the junk characters being shown on 
-            screen. The problem persists even though you have set the correct mime type. 
+            The problem usually manifests itself as the junk characters being shown on
+            screen. The problem persists even though you have set the correct mime type.
             </p>
             <p>
             The short answer is, dont depend on IE to display a binary file type  you an attachment properly if you stream it via a
@@ -98,29 +99,35 @@
             <p>
             The problem in most versions of IE is that it does not use the mime type on
             the HTTP response to determine the file type; rather it uses the file extension
-            on the request. Thus you might want to add a <strong>.xls</strong> to your request
-            string. For example <em>http://yourserver.com/myServelet.xls?param1=xx</em>. This is
+            on the request. Thus you might want to add a
+                <strong>.xls</strong> to your request
+            string. For example
+                <em>http://yourserver.com/myServelet.xls?param1=xx</em>. This is
             easily accomplished through URL mapping in any servlet container. Sometimes
-            a request like <em>http://yourserver.com/myServelet?param1=xx&amp;dummy=file.xls</em> is also
-            known to work. 
+            a request like
+                <em>http://yourserver.com/myServelet?param1=xx&amp;dummy=file.xls</em> is also
+            known to work.
+
             </p>
             <p>
-            To guarantee opening the file properly in Excel from IE, write out your file to a 
+            To guarantee opening the file properly in Excel from IE, write out your file to a
             temporary file under your web root from your servelet. Then send an http response
-            to the browser to do a client side redirection to your temp file. (If you do a 
-            server side redirect using RequestDispatcher, you will have to add .xls to the 
+            to the browser to do a client side redirection to your temp file. (If you do a
+            server side redirect using RequestDispatcher, you will have to add .xls to the
             request as mentioned above.)
             </p>
             <p>
-            Note also that when you request a document that is opened with an 
+            Note also that when you request a document that is opened with an
             external handler, IE sometimes makes two requests to the webserver. So if your
             generating process is heavy, it makes sense to write out to a temporary file, so that multiple
-            requests happen for a static file. 
+            requests happen for a static file.
             </p>
             <p>
             None of this is particular to Excel. The same problem arises when you try to
             generate any binary file dynamically to an IE client. For example, if you generate
-            pdf files using <link href="http://xml.apache.org/fop">FOP</link>, you will come across many of the same issues. 
+            pdf files using
+                <link href="http://xml.apache.org/fop">FOP</link>, you will come across many of the same issues.
+
             </p>
             <!-- Thanks to Avik for the answer -->
         </answer>
@@ -130,13 +137,24 @@
             I want to set a cell format (Data format of a cell) of a excel sheet as###,###,###.#### or ###,###,###.0000.    Is it possible using POI ?
         </question>
         <answer>
-            HSSF does not yet support custom data formats, however, it should be a
-            reasonably easy facillity to add and we'll gladly accept contributions
-            in this area.
+            <p>
+                HSSF does not yet support custom data formats, however, it should be a
+                reasonably easy facillity to add and we'll gladly accept contributions
+                in this area.
 
-            These are the built in formats that it does support:
+                These are the built in formats that it does support:
 
-            <link href="http://jakarta.apache.org/poi/javadocs/javasrc/org/apache/poi/hssf/usermodel/HSSFDataFormat_java.html#HSSFDataFormat">http://jakarta.apache.org/poi/javadocs/javasrc/org/apache/poi/hssf/usermodel/HSSFDataFormat_java.html#HSSFDataFormat</a>
+
+                <link href="http://jakarta.apache.org/poi/javadocs/javasrc/org/apache/poi/hssf/usermodel/HSSFDataFormat_java.html#HSSFDataFormat">http://jakarta.apache.org/poi/javadocs/javasrc/org/apache/poi/hssf/usermodel/HSSFDataFormat_java.html#HSSFDataFormat</link>
+            </p>
+        </answer>
+    </faq>
+    <faq>
+        <question>
+            How do I add a border around a merged cell?
+        </question>
+        <answer>
+            Add blank cells around where the cells normally would have been and set the borders individually for each cell.
         </answer>
     </faq>
 </faqs>
