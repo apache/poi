@@ -70,7 +70,7 @@ import java.io.File;
  *           Lets Build a Compiler, by Jack Crenshaw
  * BNF for the formula expression is :
  * <expression> ::= <term> [<addop> <term>]*
- * <term> ::= <factor>  [ <mulop> <factor ]*
+ * <term> ::= <factor>  [ <mulop> <factor> ]*
  * <factor> ::= <number> | (<expression>) | <cellRef> | <function>
  * <function> ::= <functionName> ([expression [, expression]*])
  *
@@ -281,8 +281,13 @@ public class FormulaParser {
             numArgs++; 
             Expression();
         }
-        while (Look == ',') { //TODO handle EmptyArgs
-            Match(',');
+        while (Look == ','  || Look == ';') { //TODO handle EmptyArgs
+            if(Look == ',') {
+              Match(',');
+            }
+            else {
+              Match(';');
+            }
             Expression();
             numArgs++;
         }
@@ -454,15 +459,19 @@ end;
         String[] operands;
         for (int i=0;i<numPtgs;i++) {
             if (ptgs[i] instanceof OperationPtg) {
-                o = (OperationPtg) ptgs[i];
-                numOperands = o.getNumberOfOperands();
-                operands = new String[numOperands];
-                for (int j=0;j<numOperands;j++) {
-                    operands[numOperands-j-1] = (String) stack.pop(); //TODO: catch stack underflow and throw parse exception. 
-                    
-                }  
-                String result = o.toFormulaString(operands);
-                stack.push(result);
+                // Excel allows to have AttrPtg at position 0 (such as Blanks) which
+                // do not have any operands. Skip them.
+                if(i > 0) {
+                  o = (OperationPtg) ptgs[i];
+                  numOperands = o.getNumberOfOperands();
+                  operands = new String[numOperands];
+                  for (int j=0;j<numOperands;j++) {
+                      operands[numOperands-j-1] = (String) stack.pop(); //TODO: catch stack underflow and throw parse exception. 
+                      
+                  }  
+                  String result = o.toFormulaString(operands);
+                  stack.push(result);
+                }
             } else {
                 stack.push(ptgs[i].toFormulaString());
             }

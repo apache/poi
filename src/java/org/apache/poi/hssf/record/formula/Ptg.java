@@ -173,7 +173,6 @@ public abstract class Ptg
         final int refArea = AreaPtg.sid-0x20;
         final int arrayArea = AreaPtg.sid+0x20;
 
-        
         switch (id)
         {
 
@@ -204,7 +203,6 @@ public abstract class Ptg
             case ConcatPtg.sid :
                 retval = new ConcatPtg(data, offset);
                 break;
-                
 
             case AreaPtg.sid :
                 retval = new AreaPtg(data, offset);
@@ -246,13 +244,13 @@ public abstract class Ptg
                 retval = new FunctionPtg(data, offset);
                 break;
                 
-                
-             case NumberPtg.sid :
-                retval = new NumberPtg(data, offset);
-             break;
+            case NumberPtg.sid :
+               retval = new NumberPtg(data, offset);
+               break;
 
-
-                
+            case StringPtg.sid :
+               retval = new StringPtg(data, offset);
+               break;
 
             case NamePtg.sid :
                 retval = new NamePtg(data, offset);
