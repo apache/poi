@@ -98,7 +98,7 @@ public class ObjRecord
             short subRecordSize = LittleEndian.getShort(data, pos + 2);
             Record subRecord = SubRecord.createSubRecord(subRecordSid, subRecordSize, data, pos + 4);
             subrecords.add(subRecord);
-            pos += 4 + subRecordSize;
+            pos += subRecord.getRecordSize();
         }
 
     }

@@ -42,19 +42,33 @@ abstract public class SubRecord
     {
         Record r = null;
 
+        short adjustedSize = size;
+        if ( size < 0 )
+        {
+            adjustedSize = 0;
+        }
+        else if ( offset + size > data.length )
+        {
+            adjustedSize = (short) ( data.length - offset );
+            if ( adjustedSize > 4 )
+            {
+                adjustedSize -= 4;
+            }
+        }
+
         switch ( subRecordSid )
         {
             case CommonObjectDataSubRecord.sid:
-                r = new CommonObjectDataSubRecord( subRecordSid, size, data, offset );
+                r = new CommonObjectDataSubRecord( subRecordSid, adjustedSize, data, offset );
                 break;
             case GroupMarkerSubRecord.sid:
-                r = new GroupMarkerSubRecord( subRecordSid, size, data, offset );
+                r = new GroupMarkerSubRecord( subRecordSid, adjustedSize, data, offset );
                 break;
             case EndSubRecord.sid:
-                r = new EndSubRecord( subRecordSid, size, data, offset );
+                r = new EndSubRecord( subRecordSid, adjustedSize, data, offset );
                 break;
             default:
-                r = new UnknownRecord( subRecordSid, size, data, offset );
+                r = new UnknownRecord( subRecordSid, adjustedSize, data, offset );
         }
 
         return r;
