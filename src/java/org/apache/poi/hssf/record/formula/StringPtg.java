@@ -22,7 +22,7 @@ import org.apache.poi.util.StringUtil;
 
 /**
  * Number
- * Stores a String value in a formula value stored in the format <length 2 bytes>char[]
+ * Stores a String value in a formula value stored in the format &lt;length 2 bytes&gt;char[]
  * @author  Werner Froidevaux
  * @author Jason Height (jheight at chariot dot net dot au)
  * @author Bernard Chesnoy

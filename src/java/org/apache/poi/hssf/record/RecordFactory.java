@@ -29,7 +29,7 @@ import java.util.*;
  * Title:  Record Factory<P>
  * Description:  Takes a stream and outputs an array of Record objects.<P>
  *
- * @deprecated use EventRecordFactory instead
+ * @deprecated use {@link org.apache.poi.hssf.eventmodel.EventRecordFactory} instead
  * @see org.apache.poi.hssf.eventmodel.EventRecordFactory
  * @author Andrew C. Oliver (acoliver at apache dot org)
  * @author Marc Johnson (mjohnson at apache dot org)
