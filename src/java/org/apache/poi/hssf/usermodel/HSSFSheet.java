@@ -890,13 +890,30 @@ public class HSSFSheet
     /**
      * Shifts rows between startRow and endRow n number of rows.
      * If you use a negative number, it will shift rows up.
-     * Code ensures that rows don't wrap around
+     * Code ensures that rows don't wrap around.
+     *
+     * Calls shiftRows(startRow, endRow, n, false, false);
      *
      * @param startRow the row to start shifting
      * @param endRow the row to end shifting
      * @param n the number of rows to shift
      */
-    public void shiftRows( int startRow, int endRow, int n )
+    public void shiftRows( int startRow, int endRow, int n ) {
+	shiftRows(startRow, endRow, n, false, false);
+    }
+
+    /**
+     * Shifts rows between startRow and endRow n number of rows.
+     * If you use a negative number, it will shift rows up.
+     * Code ensures that rows don't wrap around
+     *
+     * @param startRow the row to start shifting
+     * @param endRow the row to end shifting
+     * @param n the number of rows to shift
+     * @param copyRowHeight whether to copy the row height during the shift
+     * @param resetOriginalRowHeight whether to set the original row's height to the default
+     */
+    public void shiftRows( int startRow, int endRow, int n, boolean copyRowHeight, boolean resetOriginalRowHeight)
     {
         int s, e, inc;
         if ( n < 0 )
@@ -914,18 +931,29 @@ public class HSSFSheet
         for ( int rowNum = s; rowNum >= startRow && rowNum <= endRow && rowNum >= 0 && rowNum < 65536; rowNum += inc )
         {
             HSSFRow row = getRow( rowNum );
-            HSSFRow row2Replace = getRow( rowNum + n );
+            HSSFRow row2Replace = getRow( rowNum + n );	    
             if ( row2Replace == null )
                 row2Replace = createRow( rowNum + n );
-
+	    
             HSSFCell cell;
+
+	    // Removes the cells before over writting them.
             for ( short col = row2Replace.getFirstCellNum(); col <= row2Replace.getLastCellNum(); col++ )
             {
                 cell = row2Replace.getCell( col );
                 if ( cell != null )
                     row2Replace.removeCell( cell );
             }
-	    if (row == null) continue;
+	    if (row == null) continue; // Nothing to do for this row
+	    else {
+		if (copyRowHeight) {
+		    row2Replace.setHeight(row.getHeight());
+		}
+		
+		if (resetOriginalRowHeight) {
+		    row.setHeight((short)0xff);
+		} 
+	    }
             for ( short col = row.getFirstCellNum(); col <= row.getLastCellNum(); col++ )
             {
                 cell = row.getCell( col );
