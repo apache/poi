@@ -131,10 +131,5 @@ public class DividePtg
         buffer.append("/");
         buffer.append(operands[ 1 ]);
         return buffer.toString();
-    }
-    
-
-    public void manipulate(List source, List results, int pos) {
-    }
-    
+    }      
 }

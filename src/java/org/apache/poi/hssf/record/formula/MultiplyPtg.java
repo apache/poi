@@ -141,11 +141,7 @@ public class MultiplyPtg
         return buffer.toString();
     }
     
-    
-    public void manipulate(List source, List results, int pos) {
-        standardBinaryManipulation(source, results, pos);
-    }
-        
+            
     public static boolean isNextStringToken(String formula, int pos) {
         boolean retval = false;
         while (pos < formula.length() && Character.isWhitespace(formula.charAt(pos))) {
