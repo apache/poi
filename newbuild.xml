@@ -62,7 +62,8 @@
     <property name="contrib.testokfile" value="build/contrib-testokfile.txt"/>
     <property name="junit.jar1.dir" value="${main.lib}/junit-3.8.1.jar"/>
     <property name="junit.jar1.url" value="${repository}/junit/jars/junit-3.8.1.jar"/>
-    <property name="build.site" value="build/site"/>
+    <property name="build.site" value="build/tmp/site/build/site"/>
+    <property name="build.tmp.site" value="build/tmp/site"/>
     <property name="junit.report.dir" value="${build.site}/junit"/>
     <property name="jdepend.report.dir" value="${build.site}/jdepend"/>
     <property name="apidocs.report.dir" value="${build.site}/apidocs"/>
@@ -108,6 +109,13 @@
         <mkdir dir="${jdepend.report.dir}"/>
         <mkdir dir="${apidocs.report.dir}"/>
         <mkdir dir="${dist.dir}"/>
+        <mkdir dir="${build.tmp.site}/${main.documentation}"/>
+
+        <copy todir="${build.tmp.site}/${main.documentation}" preservelastmodified="true">
+            <fileset dir="${main.documentation}" />
+        </copy>
+        <copy file="forrest.properties" tofile="${build.tmp.site}/forrest.properties"
+            preservelastmodified="true" />
     </target>
 
     <target name="clean">
@@ -285,14 +293,24 @@
 
     <target name="-check-docs">
         <uptodate property="main.docs.notRequired" targetfile="${build.site}/index.html" >
-            <srcfiles dir= "${main.documentation}"/>
+            <srcfiles dir= "${build.tmp.site}"/>
         </uptodate>
     </target>
 
     <target name="docs" depends="init,-check-docs" unless="main.docs.notRequired"
         description="Builds the POI website">
+        <mkdir dir="${build.tmp.site}/src/documentation/content/apidocs"/>
+        <copy todir="${build.tmp.site}/src/documentation/content/apidocs">
+            <fileset dir="${apidocs.report.dir}" />
+        </copy>
+        <copy tofile="${build.tmp.site}/src/documentation/content/jdepend.ehtml" file="${jdepend.report.dir}/index.html"/>
+        <mkdir dir="${build.tmp.site}/src/documentation/content/junit"/>
+        <copy todir="${build.tmp.site}/src/documentation/content/junit">
+            <fileset dir="${junit.report.dir}"/>
+        </copy>
+
         <ant antfile="${forrest.home}/forrest.antproxy.xml" target="site">
-            <property name="project.home" value="${basedir}"/>
+            <property name="project.home" value="${build.tmp.site}"/>
         </ant>
     </target>
 
@@ -371,7 +389,7 @@
         </javadoc>
     </target>
 
-    <target name="site" depends="docs,reports"
+    <target name="site" depends="reports,docs"
         description="generate the documentation and reports"/>
 
     <target name="jar" depends="compile" description="Creates jar files for distribution">
