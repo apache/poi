@@ -407,10 +407,10 @@ public class HSSFCellStyle
      * @returns merged or not
      */
 
-    public boolean getMergeCells()
-    {
-        return format.getMergeCells();
-    }
+//    public boolean getMergeCells()
+//    {
+//        return format.getMergeCells();
+//    }
 
     /**
      * set whether this cell is to be part of a merged block of cells
@@ -418,10 +418,10 @@ public class HSSFCellStyle
      * @param merge  merged or not
      */
 
-    public void setMergeCells(boolean merge)
-    {
-        format.setMergeCells(merge);
-    }
+//    public void setMergeCells(boolean merge)
+//    {
+//        format.setMergeCells(merge);
+//    }
 
     /**
      * set whether the text should be wrapped
