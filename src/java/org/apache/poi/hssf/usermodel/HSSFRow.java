@@ -162,7 +162,7 @@ public class HSSFRow
      * Use this to create new cells within the row and return it.
      * <p>
      * The cell that is returned is a CELL_TYPE_BLANK. The type can be changed
-     * either through calling setCellValue or setCellType.
+     * either through calling <code>setCellValue</code> or <code>setCellType</code>.
      *
      * @param column - the column number this cell represents
      *
