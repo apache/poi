@@ -297,6 +297,34 @@ public class HexDump
     }
 
     /**
+     * <p>Converts the parameter to a hex value breaking the results into
+     * lines.</p>
+     *
+     * @param value        The value to convert
+     * @param bytesPerLine The maximum number of bytes per line. The next byte
+     *                     will be written to a new line
+     * @return             A String representing the array of bytes
+     */
+    public static String toHex(final byte[] value, final int bytesPerLine)
+    {
+        StringBuffer retVal = new StringBuffer();
+        retVal.append('[');
+        int i = -1;
+        for(int x = 0; x < value.length; x++)
+        {
+            if (++i == bytesPerLine)
+            {
+                retVal.append("\n ");
+                i = 0;
+            }
+            retVal.append(toHex(value[x]));
+            retVal.append(", ");
+        }
+        retVal.append(']');
+        return retVal.toString();
+    }
+
+    /**
      * Converts the parameter to a hex value.
      *
      * @param value     The value to convert
