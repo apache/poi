@@ -829,4 +829,51 @@ public class HSSFSheet
      public void setMargin(short margin, double size) {
        getSheet().setMargin(margin, size);
       }
+
+    /**
+     * Shifts rows between startRow and endRow n number of rows.
+     * If you use a negative number, it will shift rows up.
+     * Code ensures that rows don't wrap around
+     *
+     * @param startRow the row to start shifting
+     * @param endRow the row to end shifting
+     * @param n the number of rows to shift
+     */
+    public void shiftRows(int startRow, int endRow, int n) {
+	int s, e, inc;
+	if (n < 0) {
+	    s = startRow;
+	    e = endRow;
+	    inc = 1;
+	} else {
+	    s = endRow;
+	    e = startRow;
+	    inc = -1;
+	}
+	for (int rowNum = s; rowNum >= startRow && rowNum <= endRow && rowNum >= 0 && rowNum < 65536; rowNum+=inc) {
+	    HSSFRow row = getRow(rowNum);
+	    HSSFRow row2Replace = getRow(rowNum + n);
+	    if (row2Replace == null) 
+		row2Replace = createRow(rowNum + n);
+
+	    HSSFCell cell;
+	    for (short col = row2Replace.getFirstCellNum(); col <= row2Replace.getLastCellNum(); col++) {
+		cell = row2Replace.getCell(col);
+		if (cell != null)
+		    row2Replace.removeCell(cell);
+	    }
+	    for (short col = row.getFirstCellNum(); col <= row.getLastCellNum(); col++) {
+		cell = row.getCell(col);
+		if (cell != null) {
+		    row.removeCell(cell);
+		    CellValueRecordInterface cellRecord = cell.getCellValueRecord();
+		    cellRecord.setRow(rowNum + n);
+		    row2Replace.createCellFromRecord(cellRecord);
+		    sheet.addValueRecord(rowNum + n, cellRecord);
+		}
+	    }
+	}
+	if (endRow == lastrow || endRow + n > lastrow) lastrow = Math.min(endRow + n, 65535);
+	if (startRow == firstrow || startRow + n < firstrow) firstrow = Math.max(startRow + n, 0);
+    }
 }

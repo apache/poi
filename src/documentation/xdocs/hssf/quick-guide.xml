@@ -32,6 +32,7 @@
                     <li><link href="#DataFormats">Create user defined data formats.</link></li>
                     <li><link href="#PrintArea">Set print area for a sheet.</link></li>
                     <li><link href="#FooterPageNumbers">Set page numbers on the footer of a sheet.</link></li>
+                    <li><link href="#ShiftRows">Shift rows.</link></li>
                 </ul>
             </section>
             <section title="Features">
@@ -446,6 +447,23 @@
     fileOut.close();
                     </source>
                 </section>
+
+                <anchor id="ShiftRows"/>
+                <section title="Shift rows up or down on a sheet">
+                    <source>
+    HSSFWorkbook wb = new HSSFWorkbook();
+    HSSFSheet sheet = wb.createSheet("row sheet");
+
+    // Create various cells and rows for spreadsheet.
+
+    // Shift rows 6 - 11 on the spreadsheet to the top (rows 0 - 5)
+    sheet.shiftRows(5, 10, -5);
+
+    FileOutputStream fileOut = new FileOutputStream("workbook.xls");
+    wb.write(fileOut);
+    fileOut.close();
+                    </source>
+                </section>                
             </section>
         </section>
     </body>
