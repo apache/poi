@@ -15,6 +15,7 @@
     <menu-item label="Use Case" href="use-case.html"/>
     <menu-item label="Pictorial Docs" href="diagrams.html"/>
     <menu-item label="Alternatives" href="alternatives.html"/>
+    <menu-item label="Limitations" href="limitations.html"/>
   </menu>
  
   <menu label="Contributer's Guide">
