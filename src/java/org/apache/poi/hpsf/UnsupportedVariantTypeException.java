@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Copyright 2002-2004   Apache Software Foundation
 
@@ -31,14 +30,9 @@ import org.apache.poi.util.HexDump;
  * @since 2003-08-05
  * @version $Id$
  */
-public abstract class UnsupportedVariantTypeException extends HPSFException
+public abstract class UnsupportedVariantTypeException
+extends VariantTypeException
 {
-
-    private Object value;
-
-    private long variantType;
-
-
 
     /**
      * <p>Constructor.</p>
@@ -49,38 +43,15 @@ public abstract class UnsupportedVariantTypeException extends HPSFException
     public UnsupportedVariantTypeException(final long variantType,
                                            final Object value)
     {
-        super("HPSF does not yet support the variant type " + variantType + 
+        super(variantType, value,
+              "HPSF does not yet support the variant type " + variantType + 
               " (" + Variant.getVariantName(variantType) + ", " +
               HexDump.toHex(variantType) + "). If you want support for " +
               "this variant type in one of the next POI releases please " +
               "submit a request for enhancement (RFE) to " +
               "<http://nagoya.apache.org/bugzilla/>! Thank you!");
-        this.variantType = variantType;
-        this.value = value;
     }
 
 
-
-    /**
-     * <p>Returns the offending variant type.</p>
-     *
-     * @return the offending variant type.
-     */
-    public long getVariantType()
-    {
-        return variantType;
-    }
-
-
-
-    /**
-     * <p>Return the value who's variant type is not yet supported.</p>
-     *
-     * @return the value who's variant type is not yet supported
-     */
-    public Object getValue()
-    {
-        return value;
-    }
 
 }

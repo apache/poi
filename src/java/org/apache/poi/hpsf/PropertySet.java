@@ -233,11 +233,13 @@ public class PropertySet
      * @throws IOException if the {@link InputStream} cannot not be
      * accessed as needed.
      * @exception NoPropertySetStreamException if the input stream does not
-     * contain a property set
+     * contain a property set.
+     * @exception UnsupportedEncodingException if a character encoding is not
+     * supported.
      */
     public PropertySet(final InputStream stream)
         throws NoPropertySetStreamException, MarkUnsupportedException,
-               IOException
+               IOException, UnsupportedEncodingException
     {
         if (isPropertySetStream(stream))
         {
@@ -265,7 +267,7 @@ public class PropertySet
      * @throws NoPropertySetStreamException if the byte array is not a
      * property set stream.
      * 
-     * @exception UnsupportedEncodingException if the codepage is not supported
+     * @exception UnsupportedEncodingException if the codepage is not supported.
      */
     public PropertySet(final byte[] stream, final int offset, final int length)
         throws NoPropertySetStreamException, UnsupportedEncodingException
@@ -288,7 +290,7 @@ public class PropertySet
      * @throws NoPropertySetStreamException if the byte array is not a
      * property set stream.
      * 
-     * @exception UnsupportedEncodingException if the codepage is not supported
+     * @exception UnsupportedEncodingException if the codepage is not supported.
      */
     public PropertySet(final byte[] stream)
     throws NoPropertySetStreamException, UnsupportedEncodingException

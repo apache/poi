@@ -144,7 +144,6 @@ public class MutableSection extends Section
         for (int i = 0; i < properties.length; i++)
             preprops.add(properties[i]);
         dirty = true;
-        propertyCount = properties.length;
     }
 
 
@@ -217,7 +216,6 @@ public class MutableSection extends Section
         removeProperty(id);
         preprops.add(p);
         dirty = true;
-        propertyCount = preprops.size();
     }
 
 
@@ -236,7 +234,6 @@ public class MutableSection extends Section
                 break;
             }
         dirty = true;
-        propertyCount = preprops.size();
     }
 
 
@@ -362,7 +359,7 @@ public class MutableSection extends Section
                     throw new IllegalPropertySetDataException
                         ("The codepage property (ID = 1) must be an " +
                          "Integer object.");
-                else if (((Integer) p1).intValue() != Property.CP_UNICODE)
+                else if (((Integer) p1).intValue() != Constants.CP_UNICODE)
                     throw new IllegalPropertySetDataException
                         ("The codepage property (ID = 1) must be " +
                          "1200 (Unicode).");
@@ -574,7 +571,7 @@ public class MutableSection extends Section
              * dictionary. HPSF always writes Unicode strings to the
              * dictionary. */
             setProperty(PropertyIDMap.PID_CODEPAGE, Variant.VT_I2,
-                        new Integer(Property.CP_UNICODE));
+                        new Integer(Constants.CP_UNICODE));
         }
         else
             /* Setting the dictionary to null means to remove property 0.
