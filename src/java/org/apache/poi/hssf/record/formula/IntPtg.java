@@ -154,11 +154,7 @@ public class IntPtg
     public static boolean isNextStringToken(String formula, int pos) {
         return (parseString(formula,pos) != null);
     }
-    
-    public int getPrecedence() {
-        return 5;
-    }
-    
+        
     public int getStringLength() {
         return strlen;
     }    

@@ -145,11 +145,7 @@ public class MultiplyPtg
     public void manipulate(List source, List results, int pos) {
         standardBinaryManipulation(source, results, pos);
     }
-    
-    public int getPrecedence() {
-        return 3;
-    }
-    
+        
     public static boolean isNextStringToken(String formula, int pos) {
         boolean retval = false;
         while (pos < formula.length() && Character.isWhitespace(formula.charAt(pos))) {

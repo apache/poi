@@ -120,9 +120,6 @@ public class SubtractPtg
         return buffer.toString();
     }
 
-     public int getPrecedence() {
-        return 5;
-    }
     
     public int getStringLength() {
         return 1;
