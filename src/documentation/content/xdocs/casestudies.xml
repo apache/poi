@@ -38,6 +38,46 @@
         </section>
         <section>
             <title>Case Studies</title>
+              <section><title>Sunshine Systems</title>
+               <p>
+           <link href="http://www.sunshinesys.com">Sunshine Systems</link> deveveloped a
+            POI based reporting solution for a price optimization software package which
+            is used by major retail chains.
+         </p>
+         <p>The solution allowed the retailer's merchandise planners and managers to request a
+           markdown decision support reports and price change reports using a standard browser
+           The users could specify report type, report options, as well as company,
+division,
+           and department filter criteria. Report generation took place in the
+multi-threaded
+           application server and was capable of supporting many simultaneous report requests.
+         </p>
+         <p>The reporting application collected business information from the price
+optimization
+           application's Oracle database. The data was aggregated and summarized
+ based upon the
+           specific report type and filter criteria requested by the user. The
+final report was
+           rendered as a Microsoft Excel spreadsheet using the POI HSSF API and
+ was stored on
+           the report database server for that specific user as a BLOB. Reports
+ could be
+           seamlessly and easily viewed using the same browser.
+         </p>
+         <p>The retailers liked the solution because they had instantaneous access
+ to critical
+           business data through an extremely easy to use browser interface. They
+ did not need
+           to train the broader user community on all the complexities of the optimization
+           application. Furthermore, the reports were generated in an Excel spreadsheet
+format,
+           which everyone was familiar with and which also allowed further data
+ analysis using
+           standard Excel features.
+         </p>
+         <p>Rob Stevenson (rstevenson at sunshinesys dot com)
+         </p>
+       </section>
             <section>
                 <title>Bank of Lithuania</title>
                 <p>
