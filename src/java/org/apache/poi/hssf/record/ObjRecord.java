@@ -176,10 +176,9 @@ public class ObjRecord
     public Object clone()
     {
         ObjRecord rec = new ObjRecord();
-        rec.subrecords = new ArrayList();
 
         for ( Iterator iterator = subrecords.iterator(); iterator.hasNext(); )
-            subrecords.add(( (Record) iterator.next() ).clone());
+            rec.addSubRecord(( (Record) iterator.next() ).clone());
 
         return rec;
     }
