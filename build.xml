@@ -22,7 +22,7 @@
     build will fail.
 
     To build the documentation you will need to install forrest and set
-    the FORREST_HOME environment variable.
+    the FORREST_HOME environment variable.  Forrest 0.5.1 required.
 
 
     TO BE COMPLETED:
@@ -30,7 +30,7 @@
     Convert book.xml files to a sitemap.
 
  -->
-<project name="POI Build" default="compile" basedir=".">
+<project name="POI Build" default="help" basedir=".">
 
     <description>
         The POI project Ant build.
@@ -110,6 +110,31 @@
         <pathelement location="${contrib.output.test.dir}"/>
     </path>
 
+    <target name="help">
+        <echo>
+Main targets:
+
+ compile           Compiles the POI classes
+ test              Tests main, contrib and scratchpad
+ jar               Creates jar files for distribution
+ docs              Builds the POI website
+ fetch-jars        Fetches needed JAR files from the Internet
+ generate-records  Generates HSSF records
+ generate-types    Generates word types
+ javadocs          Generate javadocs
+ single-test       Runs a single test case specified with 
+                   -Dtestcase=classname
+ debug-test        Runs a single test case specified with 
+                   -Dtestcase=classname with remote debug 
+                   options turned on.
+ reports           Creates junit,jdepend and javadoc reports
+ site              Generates the documentation and reports
+ dist              Creates the entire distribution into build/dist
+ clean-dist        Cleans the build directory then creates a 
+                   distribution
+        </echo>
+    </target>
+
     <target name="init" depends="check-jars,fetch-jars">
 
         <tstamp/>
@@ -167,7 +192,8 @@
         <get src="${junit.jar1.url}" dest="${junit.jar1.dir}"/>
     </target>
 
-    <target name="compile" depends="init,compile-main,compile-scratchpad,compile-contrib">
+    <target name="compile" depends="init,compile-main,compile-scratchpad,compile-contrib"
+        description="Compiles the POI classes">
 
     </target>
 
@@ -245,7 +271,7 @@
         <antcall target="-test-main-write-testfile"/>
     </target>
 
-    <target name="single-test" depends="-test-property-check,compile-main">
+    <target name="single-test" depends="-test-property-check,compile-main" description="Runs a single test case specified with -Dtestcase=classname">
         <junit printsummary="no" showoutput="true" filtertrace="no" haltonfailure="${halt.on.test.failure}" failureproperty="main.test.failed">
             <classpath refid="test.classpath"/>
             <sysproperty key="HSSF.testdata.path" file="${main.src.test}/org/apache/poi/hssf/data"/>
@@ -256,7 +282,7 @@
         </junit>
     </target>
 
-    <target name="debug-test" depends="-test-property-check,compile-main">
+    <target name="debug-test" depends="-test-property-check,compile-main" description="Runs a single test case specified with -Dtestcase=classname with remote debug options turned on." >
         <junit printsummary="no" showoutput="true" filtertrace="no" fork="yes" haltonfailure="${halt.on.test.failure}" failureproperty="main.test.failed">
             <jvmarg value="-Xdebug"/>
             <jvmarg value="-Xrunjdwp:transport=dt_socket,address=5001,server=y,suspend=y"/>
@@ -500,7 +526,7 @@ FORREST_HOME environment variable!</echo>
 
 
 
-  <target name="javadocs">
+  <target name="javadocs" description="Generate javadocs">
     <javadoc
       destdir="${apidocs.report.dir}"
       author="true"
@@ -543,7 +569,7 @@ FORREST_HOME environment variable!</echo>
     <!-- ================================== -->
 
     <target name="generate-records" depends="init"
-        description="Generates records">
+        description="Generates HSSF records">
         <java classname="org.apache.poi.dev.RecordGenerator" fork="yes">
             <arg location="src/records/definitions"/>
             <arg location="src/records/styles"/>
@@ -564,7 +590,7 @@ FORREST_HOME environment variable!</echo>
     <!-- ================================== -->
 
     <target name="generate-types" depends="init"
-        description="Generates types">
+        description="Generates word types">
 
         <java classname="org.apache.poi.dev.RecordGenerator" fork="yes">
             <arg location="src/types/definitions"/>
