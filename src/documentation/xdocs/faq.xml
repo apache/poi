@@ -114,15 +114,38 @@ public static boolean isCellDateFormatted(HSSFCell cell) {
         </question>
         <answer>
             <p>
-            Dont depend on IE to show you an attachment properly if you stream it via a
-            servlet. Every minor version of IE has different bugs.
+            The problem usually manifests itself as the junk characters being shown on 
+            screen. The problem persists even though you have set the correct mime type. 
             </p>
             <p>
-            To guarantee it to work, instead of doing a server-side redirect
-            (requestdispather), try doing a client side redirect to your xls file. Thats
-            guaranteed to work ... (also keep in mind that *sometimes* IE makes TWO
-            requests for a document that is opened by an external handler .. so if your xls
-            production is heavy, you might have a problem.)
+            The short answer is, dont depend on IE to display a binary file type  you an attachment properly if you stream it via a
+            servlet. Every minor version of IE has different bugs on this issue.
+            </p>
+            <p>
+            The problem in most versions of IE is that it does not use the mime type on
+            the HTTP response to determine the file type; rather it uses the file extension
+            on the request. Thus you might want to add a <strong>.xls</strong> to your request
+            string. For example http://yourserver.com/myServelet.xls?param1=xx. Sometimes
+            a request like http://yourserver.com/myServelet?param1=xx&dummy=file.xls is also
+            known to work. 
+            </p>
+            <p>
+            To guarantee opening the file properly in Excel from IE, write out your file to a 
+            temporary file under your web root from your servelet. Then send an http response
+            to the browser to do a client side redirection to your temp file. (If you do a 
+            server side redirect using RequestDispatcher, you will have to add .xls to the 
+            request as mentioned above.)
+            </p>
+            <p>
+            Note also that sometimes when you request a document that is opened with an 
+            external handler, IE sometimes makes two requests to the webserver. So if your
+            generating process is heavy, it makes sense to write out to a temporary file, so that multiple
+            requests happen for a static file. 
+            </p>
+            <p>
+            None of this is particular to Excel. The same problem arises when you try to
+            generate any binary file dynamically to an IE client. For example, if you generate
+            pdf files using <link href="http://xml.apache.org/fop">FOP</link>, you will come across many of the same issues. 
             </p>
             <!-- Thanks to Avik for the answer -->
         </answer>
