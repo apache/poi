@@ -122,7 +122,7 @@ public class CharacterRun
 
   CharacterRun(CHPX chpx, StyleSheet ss, short istd, Range parent)
   {
-    super(chpx.getStart(), chpx.getEnd(), parent);
+    super(Math.max(parent._start, chpx.getStart()), Math.min(parent._end, chpx.getEnd()), parent);
     _props = chpx.getCharacterProperties(ss, istd);
     _chpx = chpx.getSprmBuf();
   }

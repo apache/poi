@@ -109,16 +109,38 @@ public class PAPFormattedDiskPage extends FormattedDiskPage
       _dataStream = dataStream;
     }
 
+    /**
+     * Fills the queue for writing.
+     *
+     * @param filler a List of PAPXs
+     */
     public void fill(List filler)
     {
       _papxList.addAll(filler);
     }
 
-    public ArrayList getOverflow()
+    /**
+     * Used when writing out a Word docunment. This method is part of a sequence
+     * that is necessary because there is no easy and efficient way to
+     * determine the number PAPX's that will fit into one FKP. THe sequence is
+     * as follows:
+     *
+     * fill()
+     * toByteArray()
+     * getOverflow()
+     *
+     * @return The remaining PAPXs that didn't fit into this FKP.
+     */
+    ArrayList getOverflow()
     {
       return _overFlow;
     }
 
+    /**
+     * Gets the PAPX at index.
+     * @param index The index to get the PAPX for.
+     * @return The PAPX at index.
+     */
     public PAPX getPAPX(int index)
     {
       return (PAPX)_papxList.get(index);
@@ -148,6 +170,13 @@ public class PAPFormattedDiskPage extends FormattedDiskPage
         return papx;
     }
 
+    /**
+     * Creates a byte array representation of this data structure. Suitable for
+     * writing to a Word document.
+     *
+     * @param fcMin The file offset in the main stream where text begins.
+     * @return A byte array representing this data structure.
+     */
     protected byte[] toByteArray(int fcMin)
     {
       byte[] buf = new byte[512];
@@ -250,7 +279,7 @@ public class PAPFormattedDiskPage extends FormattedDiskPage
 
           // store grpprl at hugeGrpprlOffset
           System.arraycopy(grpprl, 2, _dataStream, hugeGrpprlOffset + 2,
-                           grpprl.length - 2);
+                           grpprl.length);
           LittleEndian.putUShort(_dataStream, hugeGrpprlOffset, grpprl.length);
 
           // grpprl = grpprl containing only a sprmPHugePapx2
@@ -299,6 +328,11 @@ public class PAPFormattedDiskPage extends FormattedDiskPage
       return buf;
     }
 
+    /**
+     * Used to get the ParagraphHeight of a PAPX at a particular index.
+     * @param index
+     * @return The ParagraphHeight
+     */
     private ParagraphHeight getParagraphHeight(int index)
     {
       int pheOffset = _offset + 1 + (((_crun + 1) * 4) + (index * 13));

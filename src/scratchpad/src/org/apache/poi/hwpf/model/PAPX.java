@@ -108,12 +108,12 @@ public class PAPX extends CachedPropertyNode
           int grpprlSize = LittleEndian.getShort(datastream, hugeGrpprlOffset);
           if( hugeGrpprlOffset+grpprlSize < datastream.length)
           {
-            byte[] hugeGrpprl = new byte[grpprlSize];
+            byte[] hugeGrpprl = new byte[grpprlSize + 2];
             // copy original istd into huge Grpprl
             hugeGrpprl[0] = grpprl[0]; hugeGrpprl[1] = grpprl[1];
             // copy Grpprl from dataStream
             System.arraycopy(datastream, hugeGrpprlOffset + 2, hugeGrpprl, 2,
-                             grpprlSize-2);
+                             grpprlSize);
             // save a pointer to where we got the huge Grpprl from
             _hugeGrpprlOffset = hugeGrpprlOffset;
             return new SprmBuffer(hugeGrpprl);
