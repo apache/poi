@@ -5,7 +5,7 @@
     <header>
         <title>How To Build POI</title>
         <authors>
-            <person email="glens@apache.org" name="Glen Stampoultzis" id="GS"/>
+            <person email="poi-user@jakarta.apache.org" name="Glen Stampoultzis" id="GS"/>
             <person email="tetsuya@apache.org" name="Tetsuya Kitahata" id="TK"/>
         </authors>
     </header>
