@@ -8,6 +8,7 @@
   <menu label="Navigation">
     <menu-item label="Main" href="../index.html"/>
     <menu-item label="How To" href="how-to.html"/>
+    <menu-item label="Use Cases" href="usecases.html"/>
   </menu>
 
 </book>
