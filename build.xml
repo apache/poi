@@ -234,7 +234,7 @@
         <delete file="${main.testokfile}"/>
         <antcall target="-test-main-write-testfile"/>
     </target>
-    
+
     <target name="single-test" depends="compile-main">
 	<junit printsummary="no" showoutput="true" filtertrace="no" fork="no" haltonfailure="${halt.on.test.failure}" failureproperty="main.test.failed" >
 	<classpath>
@@ -564,5 +564,7 @@
     </target>
 
     <target name="clean-dist" depends="clean,dist" description="Cleans the build directory then creates a distribution"/>
+
+    <target name="gump" depends="jar"/>
 
 </project>
