@@ -712,6 +712,15 @@ public class HSSFCell
         }
     }
     
+    public String getCellFormula() {
+        String retval=null;
+        
+        retval = 
+              FormulaParser.toFormulaString(((FormulaRecord)record).getParsedExpression());
+        
+        return retval;   
+    }
+    
     
     /**
      * get the value of the cell as a number.  For strings we throw an exception.

@@ -157,7 +157,7 @@ public class FormulaRecord
                                             int offset)
     {
         Stack stack = new Stack();
-        /*int   pos   = 22 + offset;
+        int   pos   = 22 + offset;
 
         while (pos < size)
         {
@@ -165,7 +165,7 @@ public class FormulaRecord
 
             pos += ptg.getSize();
             stack.push(ptg);
-        }*/
+        }
         return stack;
     }
 
