@@ -110,7 +110,7 @@ public class POIBrowser extends JFrame
         /* Create the tree model with a root node. The latter is
          * invisible but it must be present because a tree model
          * always needs a root. */
-        rootNode = new DefaultMutableTreeNode();
+        rootNode = new DefaultMutableTreeNode("POIFS");
         DefaultTreeModel treeModel = new DefaultTreeModel(rootNode);
 
         /* Create the tree UI element. */
@@ -140,7 +140,7 @@ public class POIBrowser extends JFrame
         }
 
         /* Make the tree UI element visible. */
-        treeUI.setRootVisible(false);
+        treeUI.setRootVisible(true);
         treeUI.setShowsRootHandles(true);
         ExtendableTreeCellRenderer etcr = new ExtendableTreeCellRenderer();
         etcr.register(DocumentDescriptor.class,
