@@ -120,15 +120,17 @@ public class RecordUtil
 
     public static String initializeText(String size, String type)
     {
-        if (type.startsWith("custom:"))
-        {
-            String javaType = type.substring( 7 );
-            return " = new " + javaType + "()";
-        }
-        else
-        {
-            return "";
-        }
+        // Removed because of wierdo initialization sequence in constructors.
+//        if (type.startsWith("custom:"))
+//        {
+//            String javaType = type.substring( 7 );
+//            return " = new " + javaType + "()";
+//        }
+//        else
+//        {
+//            return "";
+//        }
+        return "";
     }
 
     private static void toIdentifier(String name, StringBuffer fieldName)

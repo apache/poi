@@ -122,7 +122,7 @@ public class FieldIterator
             result.append( "();\n");
             result.append( "        pos += " );
             result.append(RecordUtil.getFieldName(position, name, 0))
-                    .append(".fillField(data,size,pos + ")
+                    .append(".fillField(data,size,pos + offset + ")
                     .append(offset)
                     .append(")");
             return result.toString();
@@ -143,7 +143,7 @@ public class FieldIterator
 
         String result = "";
         if (type.startsWith("custom:"))
-            result = "pos += " + javaFieldName + ".serializeField( pos + offset, data );";
+            result = "pos += " + javaFieldName + ".serializeField( pos + " + (offset+4) + " + offset, data );";
         else if (javaType.equals("short"))
             result = "LittleEndian.putShort(data, " + (offset+4) + " + offset + pos, " + javaFieldName + ");";
         else if (javaType.equals("short[]"))

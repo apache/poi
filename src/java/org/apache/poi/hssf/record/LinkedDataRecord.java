@@ -84,7 +84,7 @@ public class LinkedDataRecord
     private  short      field_3_options;
     private  BitField   customNumberFormat                          = new BitField(0x1);
     private  short      field_4_indexNumberFmtRecord;
-    private  LinkedDataFormulaField field_5_formulaOfLink = new org.apache.poi.hssf.record.LinkedDataFormulaField();
+    private  LinkedDataFormulaField field_5_formulaOfLink;
 
 
     public LinkedDataRecord()
@@ -145,7 +145,7 @@ public class LinkedDataRecord
         field_3_options                = LittleEndian.getShort(data, pos + 0x2 + offset);
         field_4_indexNumberFmtRecord   = LittleEndian.getShort(data, pos + 0x4 + offset);
         field_5_formulaOfLink = new org.apache.poi.hssf.record.LinkedDataFormulaField();
-        pos += field_5_formulaOfLink.fillField(data,size,pos + 6);
+        pos += field_5_formulaOfLink.fillField(data,size,pos + offset + 6);
 
     }
 
@@ -190,7 +190,7 @@ public class LinkedDataRecord
         data[ 5 + offset + pos ] = field_2_referenceType;
         LittleEndian.putShort(data, 6 + offset + pos, field_3_options);
         LittleEndian.putShort(data, 8 + offset + pos, field_4_indexNumberFmtRecord);
-        pos += field_5_formulaOfLink.serializeField( pos + offset, data );
+        pos += field_5_formulaOfLink.serializeField( pos + 10 + offset, data );
 
         return getRecordSize();
     }
