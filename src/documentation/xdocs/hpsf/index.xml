@@ -18,10 +18,9 @@
      href="../poifs/index.html">POI filesystem</link>. HPSF is POI's pure-Java
     implementation to read (and in future to write) property set streams.</p>
 
-   <p>Once the <link href="how-to.html">HPSF HOWTO</link> is ready, it will
-    describe what a Java application should do to read a property set using
-    HPSF and retrieve the information it needs. Currently this is explained
-    in the javadocs of the <code>org.apache.poi.hpsf</code> package only.</p>
+   <p>The <link href="how-to.html">HPSF HOWTO</link> describes what a Java
+    application should do to read a property set using HPSF and to retrieve the
+    information it needs.</p>
 
    <p>HPSF supports OLE2 property set streams in general, not only the special
     case of document properties mentioned above. The <link
