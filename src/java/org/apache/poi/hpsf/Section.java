@@ -75,7 +75,7 @@ public class Section
      */
     protected Map dictionary;
 
-    private ClassID formatID;
+    protected ClassID formatID;
 
 
     /**
@@ -95,7 +95,7 @@ public class Section
 
 
 
-    private long offset;
+    protected long offset;
 
 
     /**
@@ -110,7 +110,7 @@ public class Section
 
 
 
-    private int size;
+    protected int size;
 
 
     /**
@@ -125,7 +125,7 @@ public class Section
 
 
 
-    private int propertyCount;
+    protected int propertyCount;
 
 
     /**
@@ -140,7 +140,7 @@ public class Section
 
 
 
-    private Property[] properties;
+    protected Property[] properties;
 
 
     /**
@@ -152,6 +152,14 @@ public class Section
     {
         return properties;
     }
+
+
+
+    /**
+     * <p>Creates an empty and uninitialized {@link Section}.
+     */
+    protected Section()
+    {}
 
 
 

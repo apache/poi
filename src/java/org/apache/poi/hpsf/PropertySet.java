@@ -103,16 +103,10 @@ public class PropertySet
 	new byte[]{(byte) 0xFE, (byte) 0xFF};
 
     /**
-     * <p>The "format" field must equal this value.</p>
-     */
-    final static byte[] FORMAT_ASSERTION =
-	new byte[]{(byte) 0x00, (byte) 0x00};
-
-    /**
      * <p>Specifies this {@link PropertySet}'s byte order. See the
      * HPFS documentation for details!</p>
      */
-    private int byteOrder;
+    protected int byteOrder;
 
     /**
      * <p>Returns the property set stream's low-level "byte order"
@@ -128,10 +122,16 @@ public class PropertySet
 
 
     /**
+     * <p>The "format" field must equal this value.</p>
+     */
+    final static byte[] FORMAT_ASSERTION =
+	new byte[]{(byte) 0x00, (byte) 0x00};
+
+    /**
      * <p>Specifies this {@link PropertySet}'s format. See the HPFS
      * documentation for details!</p>
      */
-    private int format;
+    protected int format;
 
     /**
      * <p>Returns the property set stream's low-level "format"
@@ -151,11 +151,20 @@ public class PropertySet
      * this {@link PropertySet}. See the HPFS documentation for
      * details!</p>
      */
-    private long osVersion;
+    protected int osVersion;
+
+
+    public final static int OS_WIN16     = 0x0000;
+    public final static int OS_MACINTOSH = 0x0001;
+    public final static int OS_WIN32     = 0x0002;
 
     /**
      * <p>Returns the property set stream's low-level "OS version"
      * field.</p>
+     *
+     * <p><strong>FIXME:</strong> Return an <code>int</code> instead
+     * of a <code>long</code> in the next major version, i.e. when
+     * incompatible changes are allowed.</p>
      *
      * @return The property set stream's low-level "OS version" field.
      */
@@ -170,7 +179,7 @@ public class PropertySet
      * <p>Specifies this {@link PropertySet}'s "classID" field. See
      * the HPFS documentation for details!</p>
      */
-    private ClassID classID;
+    protected ClassID classID;
 
     /**
      * <p>Returns the property set stream's low-level "class ID"
@@ -188,12 +197,16 @@ public class PropertySet
     /**
      * <p>The number of sections in this {@link PropertySet}.</p>
      */
-    private long sectionCount;
+    protected int sectionCount;
 
 
     /**
      * <p>Returns the number of {@link Section}s in the property
      * set.</p>
+     *
+     * <p><strong>FIXME:</strong> Return an <code>int</code> instead
+     * of a <code>long</code> in the next major version, i.e. when
+     * incompatible changes are allowed.</p>
      *
      * @return The number of {@link Section}s in the property set.
      */
@@ -207,7 +220,7 @@ public class PropertySet
     /**
      * <p>The sections in this {@link PropertySet}.</p>
      */
-    private List sections;
+    protected List sections;
 
 
     /**
@@ -420,12 +433,15 @@ public class PropertySet
         offset += LittleEndian.SHORT_SIZE;
         format = LittleEndian.getUShort(src, offset);
         offset += LittleEndian.SHORT_SIZE;
-        osVersion = LittleEndian.getUInt(src, offset);
+        osVersion = (int) LittleEndian.getUInt(src, offset);
         offset += LittleEndian.INT_SIZE;
         classID = new ClassID(src, offset);
         offset += ClassID.LENGTH;
-        sectionCount = LittleEndian.getUInt(src, offset);
+        sectionCount = LittleEndian.getInt(src, offset);
         offset += LittleEndian.INT_SIZE;
+	if (sectionCount <= 0)
+	    throw new HPSFRuntimeException("Section count " + sectionCount +
+					   " must be greater than 0.");
 
         /*
          * Read the sections, which are following the header. They

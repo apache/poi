@@ -72,6 +72,15 @@ public class DocumentSummaryInformation extends SpecialPropertySet
 {
 
     /**
+     * <p>The document name a document summary information stream
+     * usually has in a POIFS filesystem.</p>
+     */
+    public static final String DEFAULT_STREAM_NAME =
+        "\005DocumentSummaryInformation";
+
+
+
+    /**
      * <p>Creates a {@link DocumentSummaryInformation} from a given
      * {@link PropertySet}.</p>
      *
