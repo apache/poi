@@ -65,7 +65,8 @@ import java.util.ArrayList;
  *               Its only a dummy record for making new ExternSheet Record <P>
  * REFERENCE:  <P>
  * @author Libin Roman (Vista Portal LDT. Developer)
- * @version 1.0-pre
+ * @author Andrew C. Oliver (acoliver@apache.org)
+ * 
  */
 
 public class SupBookRecord extends Record
@@ -77,6 +78,7 @@ public class SupBookRecord extends Record
 
     public SupBookRecord()
     {
+        setFlag((short)0x401);
     }
 
     /**
@@ -95,7 +97,7 @@ public class SupBookRecord extends Record
     /**
      * Constructs a Extern Sheet record and sets its fields appropriately.
      *
-     * @param id     id must be 0x16 or an exception will be throw upon validation
+     * @param id     id must be 0x1ae or an exception will be throw upon validation
      * @param size  the size of the data area of the record
      * @param data  data of the record (should not contain sid/len)
      * @param offset of the record's data
@@ -110,7 +112,7 @@ public class SupBookRecord extends Record
     {
         if (id != sid)
         {
-            throw new RecordFormatException("NOT An ExternSheet RECORD");
+            throw new RecordFormatException("NOT An Supbook RECORD");
         }
     }
 
@@ -127,7 +129,8 @@ public class SupBookRecord extends Record
         //For now We use it only for one case
         //When we need to add an named range when no named ranges was 
         //before it
-        
+        field_1_number_of_sheets = LittleEndian.getShort(data,offset+0);
+        field_2_flag = LittleEndian.getShort(data,offset+2);
     }
 
 
@@ -160,8 +163,16 @@ public class SupBookRecord extends Record
         field_1_number_of_sheets = number;
     }
     
-    public void setFlag(){
-        field_2_flag = 0x0401;
+    public short getNumberOfSheets(){
+        return field_1_number_of_sheets;
+    }    
+    
+    public void setFlag(short flag){        
+        field_2_flag = flag;
+    }
+    
+    public short getFlag() {
+        return field_2_flag;
     }
 
     public int getRecordSize()
