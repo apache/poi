@@ -83,8 +83,8 @@
       </field>
       <field type="short" size="2" name="Edn1">
         <bit number="0" mask="0x0003" name="epc"/>
-        <bit number="1" mask="0x003c" name="nfcFtnRef"/>
-        <bit number="2" mask="0x03c0" name="nfcEdnRef"/>
+        <bit number="1" mask="0x003c" name="nfcFtnRef1"/>
+        <bit number="2" mask="0x03c0" name="nfcEdnRef1"/>
         <bit number="3" mask="0x0400" name="fPrintFormData"/>
         <bit number="4" mask="0x0800" name="fSaveFormData"/>
         <bit number="5" mask="0x1000" name="fShadeFormData"/>
