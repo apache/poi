@@ -1,0 +1,20 @@
+<record id="0x1044" name="SheetProperties" package="org.apache.poi.hssf.record">
+    <suffix>Record</suffix>
+    <extends>Record</extends>
+    <description>Describes a chart sheet properties record.</description>
+    <author>Glen Stampoultzis (glens at apache.org)</author>
+    <fields>
+        <field type="bits" size="2" name="flags">
+            <bit number="0" name="chart type manually formatted" description="Has the chart type been manually formatted?"/>
+            <bit number="1" name="plot visible only" description="Only show visible cells on the chart."/>
+            <bit number="2" name="do not size with window" description="Do not size the chart when the window changes size"/>
+            <bit number="3" name="default plot dimensions" description="Indicates that the default area dimensions should be used."/>
+            <bit number="4" name="auto plot area" description="??"/>
+        </field>
+        <field type="int" size="1" name="empty">
+            <const name="not plotted" value="0" description="Empty cells are not plotted"/>
+            <const name="zero" value="1" description="Empty cells are treated as zero"/>
+            <const name="interpolated" value="2" description="Empty cells are interpolated"/>
+        </field>
+    </fields>
+</record>
