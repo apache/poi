@@ -63,6 +63,7 @@ import org.apache.poi.hssf.usermodel.TestWorkbook;
 import org.apache.poi.hssf.util.TestAreaReference;
 import org.apache.poi.hssf.util.TestCellReference;
 import org.apache.poi.hssf.util.TestRKUtil;
+import org.apache.poi.hssf.util.TestRangeAddress;
 import org.apache.poi.hssf.util.TestSheetReferences;
 
 /**
@@ -144,6 +145,7 @@ public class HSSFTests
         suite.addTest(new TestSuite(TestRowRecordsAggregate.class));
         suite.addTest(new TestSuite(TestAreaReference.class));
         suite.addTest(new TestSuite(TestCellReference.class));
+		suite.addTest(new TestSuite(TestRangeAddress.class));		
         suite.addTest(new TestSuite(TestRKUtil.class));
         suite.addTest(new TestSuite(TestSheetReferences.class));
         

@@ -161,11 +161,8 @@ public class HSSFName {
             setSheetName(sheetName);
         }
 
-        if (ra.getFromCell().equals(ra.getToCell()) == false) {
-            name.setAreaReference(ra.getFromCell() + ":" + ra.getToCell());
-        } else {
-            name.setAreaReference(ra.getFromCell());            
-        }
+		//allow the poi utilities to parse it out
+        name.setAreaReference(ref);
 
     }
 

@@ -80,6 +80,53 @@ public class NameRecord extends Record {
     /**
      */
     public final static short sid = 0x18; //Docs says that it is 0x218
+    
+	/**Included for completeness sake, not implemented
+	   */
+	public final static byte  BUILTIN_CONSOLIDATE_AREA      = (byte)1;
+	
+	/**Included for completeness sake, not implemented
+	 */
+	public final static byte  BUILTIN_AUTO_OPEN             = (byte)2;
+
+	/**Included for completeness sake, not implemented
+	 */
+	public final static byte  BUILTIN_AUTO_CLOSE            = (byte)3;
+
+	/**Included for completeness sake, not implemented
+	 */
+	public final static byte  BUILTIN_DATABASE              = (byte)4;
+
+	/**Included for completeness sake, not implemented
+	 */
+	public final static byte  BUILTIN_CRITERIA              = (byte)5;
+	
+	public final static byte  BUILTIN_PRINT_AREA            = (byte)6;
+	public final static byte  BUILTIN_PRINT_TITLE           = (byte)7;
+	
+	/**Included for completeness sake, not implemented
+	 */
+	public final static byte  BUILTIN_RECORDER              = (byte)8;
+	
+	/**Included for completeness sake, not implemented
+	 */
+	public final static byte  BUILTIN_DATA_FORM             = (byte)9;
+	
+	/**Included for completeness sake, not implemented
+	 */
+
+	public final static byte  BUILTIN_AUTO_ACTIVATE         = (byte)10;
+	
+	/**Included for completeness sake, not implemented
+	 */
+
+	public final static byte  BUILTIN_AUTO_DEACTIVATE       = (byte)11;
+	
+	/**Included for completeness sake, not implemented
+	 */
+	public final static byte  BUILTIN_SHEET_TITLE           = (byte)12;
+    
+    
     private short             field_1_option_flag;
     private byte              field_2_keyboard_shortcut;
     private byte              field_3_length_name_text;
@@ -135,12 +182,35 @@ public class NameRecord extends Record {
         super(id, size, data, offset);
     }
 
+	/**
+	 * Constructor to create a built-in named region
+	 * @param builtin Built-in byte representation for the name record, use the public constants
+	 * @param index 
+	 */
+	public NameRecord(byte builtin, short index)
+	{
+	    this();	    
+	    this.field_12_builtIn_name = builtin;
+	    this.setOptionFlag((short)(this.getOptionFlag() | (short)0x20));
+	    this.setNameTextLength((byte)1);
+	    this.setEqualsToIndexToSheet(index); //the extern sheets are set through references
+	    
+	    //clearing these because they are not used with builtin records
+		this.setCustomMenuLength((byte)0);
+		this.setDescriptionTextLength((byte)0);
+		this.setHelpTopicLength((byte)0);
+		this.setStatusBarLength((byte)0);
+
+	    
+	}
+
     /** sets the option flag for the named range
      * @param flag option flag
      */
     public void setOptionFlag(short flag){
         field_1_option_flag = flag;
     }
+
 
     /** sets the keyboard shortcut
      * @param shortcut keyboard shortcut
@@ -178,6 +248,15 @@ public class NameRecord extends Record {
     {
         return field_6_equals_to_index_to_sheet;
     }
+
+	/**
+	 * Convenience method to retrieve the index the name refers to.
+	 * @see getEqualsToIndexToSheet()
+	 * @return short
+	 */
+	public short getIndexToSheet() {
+		return getEqualsToIndexToSheet();
+	}
 
     public void setEqualsToIndexToSheet(short value)
     {
@@ -329,12 +408,30 @@ public class NameRecord extends Record {
         return field_11_compressed_unicode_flag;
     }
 
-    /** gets the name
-     * @return name
-     */
-    public String getNameText(){
-        return field_12_name_text;
-    }
+	/**Convenience Function to determine if the name is a built-in name
+	 */
+	public boolean isBuiltInName()
+	{
+	    return ((this.getOptionFlag() & (short)0x20) != 0);
+	}
+
+
+	/** gets the name
+	 * @return name
+	 */
+	public String getNameText(){
+
+    	return this.isBuiltInName() ? this.translateBuiltInName(this.getBuiltInName()) : field_12_name_text;
+	}
+
+	/** Gets the Built In Name
+	 * @return the built in Name
+	 */
+	public byte getBuiltInName()
+	{
+	    return this.field_12_builtIn_name;
+	}
+
 
     /** gets the definition, reference (Formula)
      * @return definition -- can be null if we cant parse ptgs
@@ -425,20 +522,28 @@ public class NameRecord extends Record {
         else
         {     */
             LittleEndian.putShort( data, 2 + offset, (short) ( 15 + getTextsLength() ) );
+            
+			int start_of_name_definition = 19 + field_3_length_name_text;
+
+			if (this.isBuiltInName()) {
+				//can send the builtin name directly in
+				data [19 + offset] =  this.getBuiltInName();
+			} else {
+				StringUtil.putCompressedUnicode( getNameText(), data, 19 + offset );
+				
+			}
 
 
-            StringUtil.putCompressedUnicode( getNameText(), data, 19 + offset );
+			if ( this.field_13_name_definition != null )
+			{
+				serializePtgs( data, start_of_name_definition + offset );
+			}
+			else
+			{
+				System.arraycopy( field_13_raw_name_definition, 0, data
+					, start_of_name_definition + offset, field_13_raw_name_definition.length );
+			}				
 
-            int start_of_name_definition = 19 + field_3_length_name_text;
-            if ( this.field_13_name_definition != null )
-            {
-                serializePtgs( data, start_of_name_definition + offset );
-            }
-            else
-            {
-                System.arraycopy( field_13_raw_name_definition, 0, data
-                        , start_of_name_definition + offset, field_13_raw_name_definition.length );
-            }
 
             int start_of_custom_menu_text = start_of_name_definition + field_4_length_name_definition;
             StringUtil.putCompressedUnicode( getCustomMenuText(), data, start_of_custom_menu_text + offset );
@@ -617,7 +722,7 @@ public class NameRecord extends Record {
         field_8_length_description_text = data [11 + offset];
         field_9_length_help_topic_text  = data [12 + offset];
         field_10_length_status_bar_text = data [13 + offset];
-
+        
 
         /*
         temp: gjs
@@ -644,6 +749,13 @@ public class NameRecord extends Record {
         else { */
     
             field_11_compressed_unicode_flag= data [14 + offset];
+            
+            
+			//store the name in byte form if it's a builtin name
+			if (this.isBuiltInName()) {
+				field_12_builtIn_name = data[ 15 + offset ];
+			}
+            
             field_12_name_text = new String(data, 15 + offset,
             LittleEndian.ubyteToInt(field_3_length_name_text));
         
@@ -779,11 +891,12 @@ public class NameRecord extends Record {
             .append("\n");
         buffer.append("    .Name (Unicode flag)  = ").append( field_11_compressed_unicode_flag )
             .append("\n");
-        buffer.append("    .Name (Unicode text)  = ").append( field_12_name_text )
+        buffer.append("    .Name (Unicode text)  = ").append( getNameText() )
             .append("\n");
         buffer.append("    .Formula data (RPN token array without size field)      = ").append( HexDump.toHex( 
                        ((field_13_raw_name_definition != null) ? field_13_raw_name_definition : new byte[0] ) ) )
             .append("\n");
+            
         buffer.append("    .Menu text (Unicode string without length field)        = ").append( field_14_custom_menu_text )
             .append("\n");
         buffer.append("    .Description text (Unicode string without length field) = ").append( field_15_description_text )
@@ -796,5 +909,31 @@ public class NameRecord extends Record {
         
         return buffer.toString();
     }
+
+	/**Creates a human readable name for built in types
+	 * @return Unknown if the built-in name cannot be translated
+	 */
+	protected String translateBuiltInName(byte name)
+	{
+	    switch (name)
+	    {
+	        case NameRecord.BUILTIN_AUTO_ACTIVATE :     return "Auto_Activate";
+	        case NameRecord.BUILTIN_AUTO_CLOSE :        return "Auto_Close";
+	        case NameRecord.BUILTIN_AUTO_DEACTIVATE :   return "Auto_Deactivate";
+	        case NameRecord.BUILTIN_AUTO_OPEN :         return "Auto_Open";
+	        case NameRecord.BUILTIN_CONSOLIDATE_AREA :  return "Consolidate_Area";
+	        case NameRecord.BUILTIN_CRITERIA :          return "Criteria";
+	        case NameRecord.BUILTIN_DATABASE :          return "Database";
+	        case NameRecord.BUILTIN_DATA_FORM :         return "Data_Form";            
+	        case NameRecord.BUILTIN_PRINT_AREA :        return "Print_Area";
+	        case NameRecord.BUILTIN_PRINT_TITLE :       return "Print_Titles";
+	        case NameRecord.BUILTIN_RECORDER :          return "Recorder";
+	        case NameRecord.BUILTIN_SHEET_TITLE :       return "Sheet_Title";
+	        
+	    }
+	    
+	    return "Unknown";
+	}
+	
 
 }

@@ -55,19 +55,21 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Iterator;
 
-import java.util.*;
+import junit.framework.TestCase;
 
-import junit.framework.*;
-
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.hssf.util.*;
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.BackupRecord;
 import org.apache.poi.hssf.record.LabelSSTRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.aggregates.ValueRecordsAggregate;
+import org.apache.poi.hssf.util.Region;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
  * Class to test Workbook functionality
@@ -719,6 +721,35 @@ public class TestWorkbook
         in.close();
         file.deleteOnExit();
     }
+    
+    /**
+     * Generate a file to visually/programmatically verify repeating rows and cols made it
+     */
+    public void testRepeatingColsRows() throws IOException
+    {
+		HSSFWorkbook workbook = new HSSFWorkbook();        
+		HSSFSheet sheet = workbook.createSheet("Test Print Titles");                
+		String sheetName = workbook.getSheetName(0);
+	     
+	    HSSFRow row = sheet.createRow(0);
+	    
+	    HSSFCell cell = row.createCell((short)1);
+	    cell.setCellValue("hi");
+	     
+	     
+		workbook.setRepeatingRowsAndColumns(0, 0, 1, 0, 0); 
+	     
+		File file = File.createTempFile("testPrintTitles",".xls");        
+	     
+		FileOutputStream fileOut = new FileOutputStream(file);
+		workbook.write(fileOut);
+		fileOut.close();
+	     
+		assertTrue("file exists",file.exists());
+	     
+    	
+    }
+  
     
     public static void main(String [] ignored_args)
     {

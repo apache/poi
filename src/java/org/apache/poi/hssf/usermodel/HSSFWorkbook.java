@@ -523,21 +523,14 @@ public class HSSFWorkbook
         }
         if ( nameRecord == null )
         {
-            nameRecord = workbook.createName();
+            nameRecord = workbook.createBuiltInName(NameRecord.BUILTIN_PRINT_TITLE, externSheetIndex+1);
+            //does a lot of the house keeping for builtin records, like setting lengths to zero etc
             isNewRecord = true;
         }
-        nameRecord.setOptionFlag((short)0x20);
-        nameRecord.setKeyboardShortcut((byte)0);
+        
         short definitionTextLength = settingRowAndColumn ? (short)0x001a : (short)0x000b;
         nameRecord.setDefinitionTextLength(definitionTextLength);
-        nameRecord.setNameTextLength((byte)1);
-        nameRecord.setNameText(((char)7) + "");
-        nameRecord.setUnused((short)0);
-        nameRecord.setEqualsToIndexToSheet((short)(externSheetIndex+1));
-        nameRecord.setCustomMenuLength((byte)0);
-        nameRecord.setDescriptionTextLength((byte)0);
-        nameRecord.setHelpTopicLength((byte)0);
-        nameRecord.setStatusBarLength((byte)0);
+
         Stack ptgs = new Stack();
 
         if (settingRowAndColumn)
@@ -819,6 +812,43 @@ public class HSSFWorkbook
                 
         return result;
     }
+    
+	/**
+	 * Sets the printarea for the sheet provided
+	 * <p>
+	 * i.e. Reference = Sheet2!$A$1:$B$2
+	 * @param sheetIndex Zero-based sheet index (0 Represents the first sheet to keep consistent with java)
+	 * @param reference Valid name Reference for the Print Area 
+	 */
+	public void setPrintArea(int sheetIndex, String reference)
+	{
+		NameRecord name = workbook.getSpecificBuiltinRecord(NameRecord.BUILTIN_PRINT_AREA, sheetIndex+1);
+		
+
+		if (name == null)
+			name = workbook.createBuiltInName(NameRecord.BUILTIN_PRINT_AREA, sheetIndex+1);
+       //adding one here because 0 indicates a global named region; doesnt make sense for print areas
+       
+       HSSFName nameWrapper = new HSSFName(workbook, name);
+       //the external name does some housekeeping, refactor to lower level?
+       
+		nameWrapper.setReference(reference);
+	}
+	
+	    
+	/**
+	 * Retrieves the reference for the printarea of the specified sheet
+	 * @param sheetIndex Zero-based sheet index (0 Represents the first sheet to keep consistent with java) 
+	 * @return String Null if no print area has been defined
+	 */	    
+	public String getPrintArea(int sheetIndex)
+	{
+		NameRecord name = workbook.getSpecificBuiltinRecord(NameRecord.BUILTIN_PRINT_AREA, sheetIndex+1);		
+		if (name == null) return null;
+		//adding one here because 0 indicates a global named region; doesnt make sense for print areas
+   
+		return name.getAreaReference(workbook.getSheetReferences());
+	}    
     
     
     /** creates a new named range and add it to the model
