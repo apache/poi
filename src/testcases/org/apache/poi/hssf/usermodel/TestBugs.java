@@ -151,5 +151,17 @@ extends TestCase {
             HSSFSheet sheet = wb.getSheetAt(0);
             assertTrue("No exception throws", true);
      }      
-          
+       public void test14330() throws Exception {
+           String filedir = System.getProperty("HSSF.testdata.path");
+           String filename=filedir+"/14330-1.xls";
+           FileInputStream in = new FileInputStream(filename);
+           HSSFWorkbook wb = new HSSFWorkbook(in);
+           HSSFSheet sheet = wb.getSheetAt(0);
+           
+           filename=filedir+"/14330-2.xls";
+           in = new FileInputStream(filename);
+           wb = new HSSFWorkbook(in);
+           sheet = wb.getSheetAt(0);
+           assertTrue("No exception throws", true);
+       }    
 }
