@@ -276,7 +276,7 @@ public class HSSFDataFormat
 	if (movedBuiltins)
 	    return ( String ) formats.get(index);
 	else
-	    return (String) (builtinFormats.get(index) != null ? builtinFormats.get(index) : formats.get(index));
+           return (String) (builtinFormats.size() > index && builtinFormats.get(index) != null ? builtinFormats.get(index) : formats.get(index));
     }
 
     /**

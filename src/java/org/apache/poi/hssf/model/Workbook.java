@@ -1833,6 +1833,14 @@ public class Workbook {
     }
 
     /**
+     * Returns the list of FormatRecords in the workbook.
+     * @return ArrayList of FormatRecords in the notebook
+     */
+    public ArrayList getFormats() {
+	return formats;
+    }
+
+    /**
      * Creates a FormatRecord, inserts it, and returns the index code.
      * @param format the format string
      * @return the index code of the format record.

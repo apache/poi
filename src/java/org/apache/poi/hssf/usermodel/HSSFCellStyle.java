@@ -286,7 +286,7 @@ public class HSSFCellStyle
     }
 
     /**
-     * set the data format (only builtin formats are supported)
+     * set the data format (must be a valid format)
      * @see org.apache.poi.hssf.usermodel.HSSFDataFormat
      */
 
@@ -296,7 +296,7 @@ public class HSSFCellStyle
     }
 
     /**
-     * get the index of the built in format
+     * get the index of the format
      * @see org.apache.poi.hssf.usermodel.HSSFDataFormat
      */
 
