@@ -90,7 +90,7 @@
             screen. The problem persists even though you have set the correct mime type.
             </p>
             <p>
-            The short answer is, dont depend on IE to display a binary file type properly if you stream it via a
+            The short answer is, don't depend on IE to display a binary file type properly if you stream it via a
             servlet. Every minor version of IE has different bugs on this issue.
             </p>
             <p>
