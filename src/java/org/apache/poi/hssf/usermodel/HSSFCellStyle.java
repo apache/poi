@@ -840,7 +840,8 @@ public class HSSFCellStyle
      * cs.setFillPattern(HSSFCellStyle.SOLID_FILL );
      * cs.setFillForgroundColor(HSSFSeCellStyle.RED);
      * </pre>
-     * You will need to set the fill style first.
+     * It is necessary to set the fill style in order
+     * for the color to be shown in the cell.
      *
      * @param bg  color
      */
