@@ -575,6 +575,9 @@ public class CharacterSprmUncompressor
       case 0x6f:
         newCHP.setIdctHint ((byte) sprm.getOperand());
         break;
+      case 0x70:
+        newCHP.setIco24 (sprm.getOperand());
+        break;
     }
   }
 

@@ -68,6 +68,11 @@ public class Section
     _props = sepx.getSectionProperties();
   }
 
+  public int type()
+  {
+    return TYPE_SECTION;
+  }
+
   public Object clone()
      throws CloneNotSupportedException
    {

@@ -131,7 +131,7 @@ public class Paragraph
 
   protected Paragraph(int startIdx, int endIdx, Table parent)
   {
-    super(startIdx, endIdx, Range.PARAGRAPH_INDEX, parent);
+    super(startIdx, endIdx, Range.TYPE_PARAGRAPH, parent);
     PAPX papx = (PAPX)_paragraphs.get(_parEnd - 1);
     _props = papx.getParagraphProperties(_doc.getStyleSheet());
     _papx = papx.getSprmBuf();
@@ -142,6 +142,11 @@ public class Paragraph
     super(start, end, parent);
     _props = pap;
     _papx = papx;
+  }
+
+  public int type()
+  {
+    return TYPE_PARAGRAPH;
   }
 
   public boolean isInTable()

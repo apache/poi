@@ -9,7 +9,7 @@ public class Table
 
   Table(int startIdx, int endIdx, Range parent, int levelNum)
   {
-    super(startIdx, endIdx, Range.PARAGRAPH_INDEX, parent);
+    super(startIdx, endIdx, Range.TYPE_PARAGRAPH, parent);
     _rows = new ArrayList();
     int numParagraphs = numParagraphs();
 
@@ -31,6 +31,11 @@ public class Table
   public int numRows()
   {
     return _rows.size();
+  }
+
+  public int type()
+  {
+    return TYPE_TABLE;
   }
 
   public TableRow getRow(int index)

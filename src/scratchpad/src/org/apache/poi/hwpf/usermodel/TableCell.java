@@ -8,7 +8,7 @@ public class TableCell
 
   public TableCell(int startIdx, int endIdx, TableRow parent, int levelNum, TableCellDescriptor tcd)
   {
-    super(startIdx, endIdx, Range.PARAGRAPH_INDEX, parent);
+    super(startIdx, endIdx, Range.TYPE_PARAGRAPH, parent);
     _levelNum = levelNum;
   }
 

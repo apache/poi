@@ -127,12 +127,10 @@ public class CharacterRun
     _chpx = chpx.getSprmBuf();
   }
 
-//  SprmBuffer initProperties(CharacterProperties baseStyle)
-//  {
-//    byte[] grpprl = CharacterSprmCompressor.compressCharacterProperty(_props, baseStyle);
-//    _chpx = new SprmBuffer(grpprl);
-//    return _chpx;
-//  }
+  public int type()
+  {
+    return TYPE_CHARACTER;
+  }
 
   public boolean isMarkedDeleted()
   {
@@ -447,6 +445,22 @@ public class CharacterRun
     _props.setFHighlight(true);
     _props.setIcoHighlight(color);
     _chpx.addSprm(SPRM_HIGHLIGHT, color);
+  }
+
+  /**
+  * Get the ico24 field for the CHP record.
+  */
+  public int getIco24()
+  {
+    return _props.getIco24();
+  }
+
+  /**
+   * Set the ico24 field for the CHP record.
+   */
+  public void setIco24(int colour24)
+  {
+    _props.setIco24(colour24);
   }
 
   public Object clone()

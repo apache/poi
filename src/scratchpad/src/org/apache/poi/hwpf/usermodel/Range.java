@@ -95,10 +95,13 @@ import java.lang.ref.WeakReference;
 public class Range
 {
 
-  public static final int PARAGRAPH_INDEX = 0;
-  public static final int CHARACTER_INDEX = 1;
-  public static final int SECTION_INDEX = 2;
-  public static final int TEXT_INDEX = 3;
+  public static final int TYPE_PARAGRAPH = 0;
+  public static final int TYPE_CHARACTER= 1;
+  public static final int TYPE_SECTION = 2;
+  public static final int TYPE_TEXT = 3;
+  public static final int TYPE_LISTENTRY = 4;
+  public static final int TYPE_TABLE = 5;
+  public static final int TYPE_UNDEFINED = 6;
 
   private WeakReference _parent;
   protected int _start;
@@ -120,7 +123,6 @@ public class Range
   protected List _text;
   int _textStart;
   int _textEnd;
-
 
 //  protected Range()
 //  {
@@ -162,28 +164,28 @@ public class Range
 
     switch (idxType)
     {
-      case PARAGRAPH_INDEX:
+      case TYPE_PARAGRAPH:
         _parStart = parent._parStart + startIdx;
         _parEnd = parent._parStart + endIdx;
         _start = ((PropertyNode)_paragraphs.get(_parStart)).getStart();
         _end = ((PropertyNode)_paragraphs.get(_parEnd)).getEnd();
         _parRangeFound = true;
         break;
-      case CHARACTER_INDEX:
+      case TYPE_CHARACTER:
         _charStart = parent._charStart + startIdx;
         _charEnd = parent._charStart + endIdx;
         _start = ((PropertyNode)_characters.get(_charStart)).getStart();
         _end = ((PropertyNode)_characters.get(_charEnd)).getEnd();
         _charRangeFound = true;
         break;
-     case SECTION_INDEX:
+     case TYPE_SECTION:
         _sectionStart = parent._sectionStart + startIdx;
         _sectionEnd = parent._sectionStart + endIdx;
         _start = ((PropertyNode)_sections.get(_sectionStart)).getStart();
         _end = ((PropertyNode)_sections.get(_sectionEnd)).getEnd();
         _sectionRangeFound = true;
         break;
-     case TEXT_INDEX:
+     case TYPE_TEXT:
         _textStart = parent._textStart + startIdx;
         _textEnd = parent._textStart + endIdx;
         _start = ((PropertyNode)_text.get(_textStart)).getStart();
@@ -434,6 +436,11 @@ public class Range
     }
 
     return pap;
+  }
+
+  public int type()
+  {
+    return TYPE_UNDEFINED;
   }
 
   private void initAll()
