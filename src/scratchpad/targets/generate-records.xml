@@ -1,0 +1,20 @@
+
+<project default="generate-records" basedir=".." name="generate-records">
+  <target name="generate-records" depends="prepare"
+     description="Generates the record source code">
+
+      <java classname="org.apache.poi.dev.RecordGenerator" fork="yes">
+          <arg value="src/records/definitions"/>
+          <arg value="src/records/styles"/>
+          <arg value="src/java"/>
+          <arg value="src/testcases"/>
+          <classpath>
+              <path refid="scratchpad.classpath"/>
+              <pathelement location="${build.scratchpad.dest}"/>
+          </classpath>
+      </java>
+
+  </target>
+</project>
+
+ 

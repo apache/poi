@@ -14,8 +14,8 @@
     <echo message=" These are SCRATCHPAD BUILDS. They are not guaranteed to work."/>
     <echo message=" You have been warned. "/>
     <echo message=" "/>
-    <echo message=" --------------"/>
-    <echo message=" --------------"/>
+    <echo message=" generate-records - add description here"/>
+    <echo message=" generate-types   - add description here"/>
     <echo message=" --------------"/>
     <echo message=" --------------"/>
     <echo message=" --------------"/>
