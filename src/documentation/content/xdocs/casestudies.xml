@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "./dtd/document-v11.dtd">
 
 <document>
@@ -99,7 +99,6 @@
             </section>
             <section>
                 <title>IKAN Software NV</title>
-                <p>
                     <p>In addition to Change Management and Database Modelling, IKAN Software NV
                         (http://www.ikan.be) develops and supports its own ETL
                         (Extract/Transform/Load) tools.</p>
@@ -113,8 +112,6 @@
 
                     <p>It is obvious that Microsoft Excel files are also supported.
                         POI has been used to successfully implement this support in ETL4ALL.</p>
-
-                </p>
             </section>
 
         </section>
