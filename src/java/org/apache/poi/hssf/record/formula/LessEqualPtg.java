@@ -67,7 +67,7 @@ public class LessEqualPtg
 	 public final static int  SIZE = 1;
 	 public final static byte sid  = 0x0a;
 
-	 /** Creates new AddPtg */
+	 /** Creates new LessEqualPtg */
 
 	public LessEqualPtg()
 	 {
