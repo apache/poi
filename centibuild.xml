@@ -19,9 +19,13 @@
     <import file="${ant.home}/src/core/xbuild.xml"/>
     <taskdef file="${ant.home}/src/core/tasks.properties"/>
     <importcent name="java" />
+    
+    <!-- commenting these out till the base build works on Gump
     <importcent name="junit" />
     <importcent name="checkstyle" />
     <importcent name="forrest" />
+    -->
+    
             
   <!-- =================================================================== -->
   <!-- Basic build targets for the project                                 -->
@@ -102,19 +106,7 @@
     
   </target>     
 
-
-  <!-- ================================== -->
-  <!--         Test 4 distribution        -->
-  <!-- ================================== -->
-
-  <target  name="testall"
-           description="Make big full test">
-           
-    <antcall target="gump"/>
-    <antcall target="dist"/>
-    
-  </target>       
-                      
+                
   <!-- ================================== -->
   <!--        Target used by Gump         -->
   <!-- ================================== -->
@@ -131,109 +123,6 @@
            depends="package"
            description="Generate all"/>
                       
-    
-    <!-- ================================== -->
-    <!-- POI specific extensions to the the build file -->
-    <!-- ================================== -->
-    
-    
-      <patternset id="teststhatfail">
-      </patternset>
-  
-   <!-- ================================== -->
-   <!-- run tests one at a time -->
-   <!-- ================================== -->
-    
-    <target name="single-test" if="testcase" depends="compile-tests"
-      description="--> runs the single unit test defined in the testcase property">
-  
-  
-    <junit2 printsummary="no" haltonfailure="${junit.test.haltonfailure}" fork="yes">
-          <formatter type="xml" />
-	  <formatter type="plain" usefile="no"/>
-	  <sysproperty key="UTIL.testdata.path"
-	                   value="${xlayout.source.test.dir}/org/apache/poi/util/data"/>
-	  <sysproperty key="HSSF.testdata.path"
-                   value="${xlayout.source.test.dir}/org/apache/poi/hssf/data"/>
-	  <sysproperty key="HPSF.testdata.path"
-                   value="${xlayout.source.test.dir}/org/apache/poi/hpsf/data"/>
-        <classpath>
-        	<path>
-		         <fileset dir="." casesensitive="yes"> 
-		          <patternset>
-		           <include name="${cents.dir}/*.${cent.dir.suffix}/${cent.lib.dir.name}/*.jar"/>
-		           <include name="${cents.dir}/*.${cent.dir.suffix}/${cent.lib.dir.name}/*.zip"/>
-		          </patternset>
-		         </fileset>         
-		            <fileset dir="${xlayout.library.dir}" casesensitive="yes"> 
-		             <patternset>
-		               <include name="*/*.jar"/>
-		               <include name="*/*.zip"/>
-		             </patternset>
-		           </fileset>  
-		            <fileset dir="${xlayout.source.scratchpad.library.dir}" casesensitive="yes"> 
-		             <patternset>
-		               <include name="*.jar"/>
-		               <include name="*.zip"/>
-		             </patternset>
-		           </fileset>           
-		            <fileset dir="${xlayout.source.examples.library.dir}" casesensitive="yes"> 
-		             <patternset>
-		               <include name="*.jar"/>
-		               <include name="*.zip"/>
-		             </patternset>
-		           </fileset>           
-		         </path> 
-        <pathelement path="${xlayout.build.classes.dir}" />      
-        	 <pathelement location="${xlayout.build.test.dir}" />
-       		 <pathelement location="${xlayout.build.classes.dir}" />
-       	 </classpath>
-        <test name="${testcase}" />
-      </junit2>
-    </target>
-    
-    <target name="compile-tests" depends="compile">
-
-    <mkdir dir="${xlayout.build.test.dir}"/>
-  
-        <!-- Compile tests -->
-        <javac srcdir="${xlayout.source.test.dir}"
-                destdir="${xlayout.build.test.dir}"
-                debug=      "${build.compiler.debug}"
-                optimize=   "${build.compiler.optimize}"
-                deprecation="${build.compiler.deprecation}"
-                target=     "${build.compiler.vm}"
-                nowarn=     "false">
-         <classpath>
-         <path>
-	          <fileset dir="." casesensitive="yes"> 
-	           <patternset>
-	            <include name="${cents.dir}/*.${cent.dir.suffix}/${cent.lib.dir.name}/*.jar"/>
-	            <include name="${cents.dir}/*.${cent.dir.suffix}/${cent.lib.dir.name}/*.zip"/>
-	           </patternset>
-	          </fileset>         
-	             <fileset dir="${xlayout.library.dir}" casesensitive="yes"> 
-	              <patternset>
-	                <include name="*/*.jar"/>
-	                <include name="*/*.zip"/>
-	              </patternset>
-	            </fileset>  
-	             <fileset dir="${xlayout.source.scratchpad.library.dir}" casesensitive="yes"> 
-	              <patternset>
-	                <include name="*.jar"/>
-	                <include name="*.zip"/>
-	              </patternset>
-	            </fileset>           
-	             <fileset dir="${xlayout.source.examples.library.dir}" casesensitive="yes"> 
-	              <patternset>
-	                <include name="*.jar"/>
-	                <include name="*.zip"/>
-	              </patternset>
-	            </fileset>           
-	          </path> 
-        <pathelement path="${xlayout.build.classes.dir}" />      
-        </classpath>
-      </javac>
-    </target>
+   
       
 </project>
