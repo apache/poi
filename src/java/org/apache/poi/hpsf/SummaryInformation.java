@@ -279,8 +279,23 @@ public class SummaryInformation extends SpecialPropertySet
 
 
     /**
-     * <p>Returns the stream's security field or 0 if the {@link
-     * SummaryInformation} does not contain a security field.</p>
+     * <p>Returns one of the following values:</p>
+     *
+     * <ul>
+     *
+     * <li><p>0 if the {@link SummaryInformation} does not contain a
+     * security field or if there is no security on the document. Use
+     * {@link #wasNull} to distinguish between the two cases!</p></li>
+     *
+     * <li><p>1 if the document is password protected</p></li>
+     *
+     * <li><p>2 if the document is read-only recommended</p></li>
+     *
+     * <li><p>4 if the document is read-only enforced</p></li>
+     *
+     * <li><p>8 if the document is locked for annotations</p></li>
+     *
+     * </ul>
      */
     public int getSecurity()
     {
