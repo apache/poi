@@ -297,6 +297,27 @@ public class TestHSSFSheet
     	
     }
 
+	public void testShiftMerged() {
+		HSSFWorkbook wb = new HSSFWorkbook();
+		HSSFSheet sheet = wb.createSheet();
+		HSSFRow row = sheet.createRow(0);
+		HSSFCell cell = row.createCell((short)0);
+		cell.setCellValue("first row, first cell");
+		
+		row = sheet.createRow(1);
+		cell = row.createCell((short)1);
+		cell.setCellValue("second row, second cell");
+		
+		Region region = new Region(1, (short)0, 1, (short)1);   	
+		sheet.addMergedRegion(region);
+		
+		sheet.shiftRows(1, 1, 1);
+		
+		region = sheet.getMergedRegionAt(0);
+		assertEquals("Merged region not moved over to row 2", 2, region.getRowFrom());
+		
+	}
+
 	public static void main(java.lang.String[] args) {
 		 junit.textui.TestRunner.run(TestHSSFSheet.class);
 	}
