@@ -5,11 +5,12 @@
       title="Poi Project planning" 
       copyright="@year@ Poi Project">
 
-  <menu label="Navigation">
-    <menu-item label="Main" href="../index.html"/>
+  <menu label="Jakarta Poi">
+    <menu-item label="Top" href="../index.html"/>
   </menu>
 
   <menu label="Planning Documents">
+    <menu-item label="Overview" href="index.html"/>
     <menu-item label="1.0 Vision" href="POI10Vision.html"/>
     <menu-item label="2.0 Vision" href="POI20Vision.html"/>
   </menu>

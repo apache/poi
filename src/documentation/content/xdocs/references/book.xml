@@ -6,7 +6,10 @@
       copyright="@year@ Poi Project"
       xmlns:xlink="http://www.w3.org/1999/xlink">
 
-     
+  <menu label="Jakarta Poi">
+    <menu-item label="Top" href="../index.html"/>
+  </menu>
+
   <menu label="References">
     <menu-item label="Live Sites" href="index.html"/>
     <menu-item label="XLS spec [PDF]" href="http://sc.openoffice.org/excelfileformat.pdf"/>

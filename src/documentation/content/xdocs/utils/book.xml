@@ -5,8 +5,8 @@
       title="Poi Utils" 
       copyright="@year@ Poi Project">
 
-  <menu label="Navigation">
-    <menu-item label="Main" href="../index.html"/>
+  <menu label="Jakarta Poi">
+    <menu-item label="Top" href="../index.html"/>
   </menu>
 
   <menu label="POI Util">

@@ -5,11 +5,12 @@
     title="HSSF"
     copyright="@year@ Poi Project">
 
-    <menu label="Navigation">
-        <menu-item label="Main" href="../index.html"/>
+    <menu label="Jakarta Poi">
+        <menu-item label="Top" href="../index.html"/>
     </menu>
 
     <menu label="HSSF">
+        <menu-item label="Overview" href="index.html"/>
         <menu-item label="Quick Guide" href="quick-guide.html"/>
         <menu-item label="HOWTO" href="how-to.html"/>
         <menu-item label="Formula Support" href="formula.html" />
