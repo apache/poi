@@ -414,6 +414,12 @@ public class TestLittleEndian
         }
     }
 
+    public void testUnsignedByteToInt()
+            throws Exception
+    {
+        assertEquals(255, LittleEndian.ubyteToInt((byte)255));
+    }
+
     private boolean ba_equivalent(byte [] received, byte [] expected,
                                   int offset, int size)
     {
