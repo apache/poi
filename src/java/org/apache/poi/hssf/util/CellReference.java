@@ -60,45 +60,48 @@ package org.apache.poi.hssf.util;
  * @author  Dennis Doubleday (patch to seperateRowColumns())
  */
 public class CellReference {
-    
+
     /** Creates new CellReference */
     private int row;
     private int col;
+    private String sheetName;
     private boolean rowAbs;
     private boolean colAbs;
-    
+
     public CellReference(String cellRef) {
-        String[] parts = seperateRowColumns(cellRef);
-        String ref = parts[0];
+        String[] parts = separateRefParts(cellRef);
+        sheetName = parts[0];
+        String ref = parts[1];
         if (ref.charAt(0) == '$') {
-            colAbs=true; 
+            colAbs=true;
             ref=ref.substring(1);
         }
         col = convertColStringToNum(ref);
-        ref=parts[1];
+        ref=parts[2];
         if (ref.charAt(0) == '$') {
-            rowAbs=true; 
+            rowAbs=true;
             ref=ref.substring(1);
         }
         row = Integer.parseInt(ref)-1;
     }
-    
+
     public CellReference(int pRow, int pCol) {
         this(pRow,pCol,false,false);
     }
-    
+
     public CellReference(int pRow, int pCol, boolean pAbsRow, boolean pAbsCol) {
         row=pRow;col=pCol;
         rowAbs = pAbsRow;
         colAbs=pAbsCol;
-        
+
     }
-    
+
     public int getRow(){return row;}
-    public int getCol(){return col;}
+    public short getCol(){return (short) col;}
     public boolean isRowAbsolute(){return rowAbs;}
     public boolean isColAbsolute(){return colAbs;}
-    
+    public String getSheetName(){return sheetName;}
+
     /**
      * takes in a column reference portion of a CellRef and converts it from
      * ALPHA-26 number format to 0-based base 10.
@@ -107,7 +110,7 @@ public class CellReference {
         int len = ref.length();
         int retval=0;
         int pos = 0;
-        
+
         for (int k = ref.length()-1; k > -1; k--) {
             char thechar = ref.charAt(k);
             if ( pos == 0) {
@@ -119,21 +122,24 @@ public class CellReference {
         }
         return retval-1;
     }
-    
-    
+
+
     /**
      * Seperates the row from the columns and returns an array.  Element in
      * position one is the substring containing the columns still in ALPHA-26
      * number format.
      */
-    private String[] seperateRowColumns(String reference) {
-        
+    private String[] separateRefParts(String reference) {
+
         // Look for end of sheet name. This will either set
         // start to 0 (if no sheet name present) or the
         // index after the sheet reference ends.
-        int start = reference.indexOf("!") + 1;
+        String retval[] = new String[3];
 
-        String retval[] = new String[2];
+        int start = reference.indexOf("!");
+        if (start != -1) retval[0] = reference.substring(0, start);
+        start += 1;
+
         int length = reference.length();
 
 
@@ -145,13 +151,12 @@ public class CellReference {
                 break;
             }
         }
-        
-        
-        retval[0] = reference.substring(start,loc);
-        retval[1] = reference.substring(loc);
+
+        retval[1] = reference.substring(start,loc);
+        retval[2] = reference.substring(loc);
         return retval;
     }
-    
+
     /**
      * takes in a 0-based base-10 column and returns a ALPHA-26 representation
      */
@@ -161,24 +166,24 @@ public class CellReference {
         int div = col / 26;
         char small=(char)(mod + 65);
         char big = (char)(div + 64);
-        
+
         if (div == 0) {
             retval = ""+small;
         } else {
             retval = ""+big+""+small;
         }
-        
+
         return retval;
     }
-    
-    
+
+
     public String toString() {
         StringBuffer retval = new StringBuffer();
         retval.append( (colAbs)?"$":"");
         retval.append( convertNumToColString(col));
         retval.append((rowAbs)?"$":"");
         retval.append(row+1);
-    
+
     return retval.toString();
     }
 }
