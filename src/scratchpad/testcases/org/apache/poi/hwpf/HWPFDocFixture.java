@@ -23,6 +23,12 @@ public class HWPFDocFixture
   {
     try
     {
+
+      String filename = System.getProperty("HSSF.testdata.path");
+
+      filename = filename + "/test.doc";
+
+
       POIFSFileSystem filesystem = new POIFSFileSystem(new FileInputStream(
         "C:\\test.doc"));
 
