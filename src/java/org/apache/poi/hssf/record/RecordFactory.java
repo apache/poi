@@ -78,7 +78,7 @@ public class RecordFactory
 {
     private static int           NUM_RECORDS = 10000;
     private static final Class[] records;
-    
+
     static {
         if (FormulaRecord.EXPERIMENTAL_FORMULA_SUPPORT_ENABLED) {
             records = new Class[]
@@ -107,9 +107,9 @@ public class RecordFactory
                 LabelRecord.class, BlankRecord.class, ColumnInfoRecord.class,
                 MulRKRecord.class, MulBlankRecord.class, MergeCellsRecord.class,
                 FormulaRecord.class, BoolErrRecord.class, ExternSheetRecord.class,
-		NameRecord.class, LeftMarginRecord.class, RightMarginRecord.class, 
-		TopMarginRecord.class, BottomMarginRecord.class,
-                PaletteRecord.class
+                NameRecord.class, LeftMarginRecord.class, RightMarginRecord.class,
+                TopMarginRecord.class, BottomMarginRecord.class,
+                PaletteRecord.class, StringRecord.class
             };
         } else {
             records = new Class[]
@@ -138,11 +138,11 @@ public class RecordFactory
                 LabelRecord.class, BlankRecord.class, ColumnInfoRecord.class,
                 MulRKRecord.class, MulBlankRecord.class, MergeCellsRecord.class,
                 BoolErrRecord.class, ExternSheetRecord.class, NameRecord.class,
-		LeftMarginRecord.class, RightMarginRecord.class, 
-		TopMarginRecord.class, BottomMarginRecord.class,
-                PaletteRecord.class
+                LeftMarginRecord.class, RightMarginRecord.class,
+                TopMarginRecord.class, BottomMarginRecord.class,
+                PaletteRecord.class, StringRecord.class
             };
-            
+
         }
     }
     private static Map           recordsMap  = recordsToMap(records);

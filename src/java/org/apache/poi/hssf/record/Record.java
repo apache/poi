@@ -182,7 +182,7 @@ public abstract class Record
     public abstract int serialize(int offset, byte [] data);
 
     /**
-     * gives the current serialized size of the record.
+     * gives the current serialized size of the record. Should include the sid and reclength (4 bytes).
      */
 
     public int getRecordSize()
