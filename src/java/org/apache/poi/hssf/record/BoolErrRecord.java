@@ -236,6 +236,13 @@ public class BoolErrRecord
     }
 
     /**
+     * manually indicate this is an error rather than a boolean
+     */
+    public void setError(boolean val) {
+        field_5_fError = (byte) (val == false ? 0 : 1);
+    }
+
+    /**
      * Indicates whether the call holds an error value
      *
      * @return boolean true if the cell holds an error value
