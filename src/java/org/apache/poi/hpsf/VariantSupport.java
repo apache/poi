@@ -64,6 +64,7 @@ package org.apache.poi.hpsf;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -163,17 +164,21 @@ public class VariantSupport extends Variant
      * @param length The length of the variant including the variant
      * type field
      * @param type The variant type to read
+     * @param codepage The codepage to use to write non-wide strings
      * @return A Java object that corresponds best to the variant
      * field. For example, a VT_I4 is returned as a {@link Long}, a
      * VT_LPSTR as a {@link String}.
      * @exception ReadingNotSupportedException if a property is to be written
      * who's variant type HPSF does not yet support
+     * @exception UnsupportedEncodingException if the specified codepage is not
+     * supported
      *
      * @see Variant
      */
     public static Object read(final byte[] src, final int offset,
-                              final int length, final long type)
-        throws ReadingNotSupportedException
+                              final int length, final long type,
+                              final int codepage)
+        throws ReadingNotSupportedException, UnsupportedEncodingException
     {
         Object value;
         int o1 = offset;
@@ -221,18 +226,18 @@ public class VariantSupport extends Variant
                  * Read a byte string. In Java it is represented as a
                  * String object. The 0x00 bytes at the end must be
                  * stripped.
-                 *
-                 * FIXME (2): Reading an 8-bit string should pay attention
-                 * to the codepage. Currently the byte making out the
-                 * property's value are interpreted according to the
-                 * platform's default character set.
                  */
                 final int first = o1 + LittleEndian.INT_SIZE;
                 long last = first + LittleEndian.getUInt(src, o1) - 1;
                 o1 += LittleEndian.INT_SIZE;
+                final int rawLength = (int) (last - first + 1);
                 while (src[(int) last] == 0 && first <= last)
                     last--;
-                value = new String(src, (int) first, (int) (last - first + 1));
+                final int l = (int) (last - first + 1);
+                value = codepage != -1 ?
+                    new String(src, (int) first, l,
+                               codepageToEncoding(codepage)) :
+                    new String(src, (int) first, l);
                 break;
             }
             case Variant.VT_LPWSTR:
@@ -299,12 +304,45 @@ public class VariantSupport extends Variant
 
 
     /**
+     * <p>Turns a codepage number into the equivalent character encoding's 
+     * name.</p>
+     *
+     * @param codepage The codepage number
+     * 
+     * @return The character encoding's name. If the codepage number is 65001, 
+     * the encoding name is "UTF-8". All other positive numbers are mapped to
+     * "cp" followed by the number, e.g. if the codepage number is 1252 the 
+     * returned character encoding name will be "cp1252".
+     * 
+     * @exception UnsupportedEncodingException if the specified codepage is
+     * less than zero.
+     */
+    public static String codepageToEncoding(final int codepage)
+    throws UnsupportedEncodingException
+    {
+        if (codepage <= 0)
+            throw new UnsupportedEncodingException
+                ("Codepage number may not be " + codepage);
+        switch (codepage)
+        {
+            case 1200:
+                return "UTF-16";
+            case 65001:
+                return "UTF-8";
+            default:
+                return "cp" + codepage;
+        }
+    }
+
+
+    /**
      * <p>Writes a variant value to an output stream. This method ensures that
      * always a multiple of 4 bytes is written.</p>
      *
      * @param out The stream to write the value to.
      * @param type The variant's type.
      * @param value The variant's value.
+     * @param codepage The codepage to use to write non-wide strings
      * @return The number of entities that have been written. In many cases an
      * "entity" is a byte but this is not always the case.
      * @exception IOException if an I/O exceptions occurs
@@ -312,7 +350,7 @@ public class VariantSupport extends Variant
      * who's variant type HPSF does not yet support
      */
     public static int write(final OutputStream out, final long type,
-                            final Object value)
+                            final Object value, final int codepage)
         throws IOException, WritingNotSupportedException
     {
         int length = 0;
@@ -330,16 +368,13 @@ public class VariantSupport extends Variant
             }
             case Variant.VT_LPSTR:
             {
-                length = TypeWriter.writeUIntToStream
-                    (out, ((String) value).length() + 1);
-                char[] s = Util.pad4((String) value);
-                /* FIXME (2): The following line forces characters to bytes.
-                 * This is generally wrong and should only be done according to
-                 * a codepage. Alternatively Unicode could be written (see 
-                 * Variant.VT_LPWSTR). */
-                byte[] b = new byte[s.length + 1];
-                for (int i = 0; i < s.length; i++)
-                    b[i] = (byte) s[i];
+                final byte[] bytes =
+                    (codepage == -1 ?
+                    ((String) value).getBytes() :
+                    ((String) value).getBytes(codepageToEncoding(codepage)));
+                length = TypeWriter.writeUIntToStream(out, bytes.length + 1);
+                final byte[] b = new byte[bytes.length + 1];
+                System.arraycopy(bytes, 0, b, 0, bytes.length);
                 b[b.length - 1] = 0x00;
                 out.write(b);
                 length += b.length;
@@ -419,12 +454,13 @@ public class VariantSupport extends Variant
             }
         }
 
-        /* Add 0x00 character to write a multiple of four bytes: */
-        while (length % 4 != 0)
-        {
-            out.write(0);
-            length++;
-        }
+        /* Add 0x00 characters to write a multiple of four bytes: */
+        // FIXME (1) Try this!
+//        while (length % 4 != 0)
+//        {
+//            out.write(0);
+//            length++;
+//        }
         return length;
     }
 

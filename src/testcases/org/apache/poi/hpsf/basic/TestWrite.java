@@ -357,7 +357,10 @@ public class TestWrite extends TestCase
                     catch (Exception ex)
                     {
                         ex.printStackTrace();
-                        throw new RuntimeException(ex);
+                        throw new RuntimeException(ex.toString());
+                        /* FIXME (2): Replace the previous line by the following
+                         * one once we no longer need JDK 1.3 compatibility. */
+                        // throw new RuntimeException(ex);
                     }
                 }
             },
@@ -398,37 +401,40 @@ public class TestWrite extends TestCase
     public void testVariantTypes()
     {
         Throwable t = null;
+        final int codepage = -1;
+        /* FIXME (2): Add tests for various codepages! */
         try
         {
-            check(Variant.VT_EMPTY, null);
-            check(Variant.VT_BOOL, new Boolean(true));
-            check(Variant.VT_BOOL, new Boolean(false));
-            check(Variant.VT_CF, new byte[]{0});
-            check(Variant.VT_CF, new byte[]{0, 1});
-            check(Variant.VT_CF, new byte[]{0, 1, 2});
-            check(Variant.VT_CF, new byte[]{0, 1, 2, 3});
-            check(Variant.VT_CF, new byte[]{0, 1, 2, 3, 4});
-            check(Variant.VT_CF, new byte[]{0, 1, 2, 3, 4, 5});
-            check(Variant.VT_CF, new byte[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
-            check(Variant.VT_I2, new Integer(27));
-            check(Variant.VT_I4, new Long(28));
-            check(Variant.VT_FILETIME, new Date());
-            check(Variant.VT_LPSTR, "");
-            check(Variant.VT_LPSTR, "ä");
-            check(Variant.VT_LPSTR, "äö");
-            check(Variant.VT_LPSTR, "äöü");
-            check(Variant.VT_LPSTR, "äöüÄ");
-            check(Variant.VT_LPSTR, "äöüÄÖ");
-            check(Variant.VT_LPSTR, "äöüÄÖÜ");
-            check(Variant.VT_LPSTR, "äöüÄÖÜß");
-            check(Variant.VT_LPWSTR, "");
-            check(Variant.VT_LPWSTR, "ä");
-            check(Variant.VT_LPWSTR, "äö");
-            check(Variant.VT_LPWSTR, "äöü");
-            check(Variant.VT_LPWSTR, "äöüÄ");
-            check(Variant.VT_LPWSTR, "äöüÄÖ");
-            check(Variant.VT_LPWSTR, "äöüÄÖÜ");
-            check(Variant.VT_LPWSTR, "äöüÄÖÜß");
+            check(Variant.VT_EMPTY, null, codepage);
+            check(Variant.VT_BOOL, new Boolean(true), codepage);
+            check(Variant.VT_BOOL, new Boolean(false), codepage);
+            check(Variant.VT_CF, new byte[]{0}, codepage);
+            check(Variant.VT_CF, new byte[]{0, 1}, codepage);
+            check(Variant.VT_CF, new byte[]{0, 1, 2}, codepage);
+            check(Variant.VT_CF, new byte[]{0, 1, 2, 3}, codepage);
+            check(Variant.VT_CF, new byte[]{0, 1, 2, 3, 4}, codepage);
+            check(Variant.VT_CF, new byte[]{0, 1, 2, 3, 4, 5}, codepage);
+            check(Variant.VT_CF, new byte[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10}, 
+                  codepage);
+            check(Variant.VT_I2, new Integer(27), codepage);
+            check(Variant.VT_I4, new Long(28), codepage);
+            check(Variant.VT_FILETIME, new Date(), codepage);
+            check(Variant.VT_LPSTR, "", codepage);
+            check(Variant.VT_LPSTR, "ä", codepage);
+            check(Variant.VT_LPSTR, "äö", codepage);
+            check(Variant.VT_LPSTR, "äöü", codepage);
+            check(Variant.VT_LPSTR, "äöüÄ", codepage);
+            check(Variant.VT_LPSTR, "äöüÄÖ", codepage);
+            check(Variant.VT_LPSTR, "äöüÄÖÜ", codepage);
+            check(Variant.VT_LPSTR, "äöüÄÖÜß", codepage);
+            check(Variant.VT_LPWSTR, "", codepage);
+            check(Variant.VT_LPWSTR, "ä", codepage);
+            check(Variant.VT_LPWSTR, "äö", codepage);
+            check(Variant.VT_LPWSTR, "äöü", codepage);
+            check(Variant.VT_LPWSTR, "äöüÄ", codepage);
+            check(Variant.VT_LPWSTR, "äöüÄÖ", codepage);
+            check(Variant.VT_LPWSTR, "äöüÄÖÜ", codepage);
+            check(Variant.VT_LPWSTR, "äöüÄÖÜß", codepage);
         }
         catch (Exception ex)
         {
@@ -466,20 +472,22 @@ public class TestWrite extends TestCase
      * @throws UnsupportedVariantTypeException if the variant is not supported.
      * @throws IOException if an I/O exception occurs.
      */
-    private void check(final long variantType, final Object value)
+    private void check(final long variantType, final Object value, 
+                       final int codepage)
         throws UnsupportedVariantTypeException, IOException
     {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        VariantSupport.write(out, variantType, value);
+        VariantSupport.write(out, variantType, value, codepage);
         out.close();
         final byte[] b = out.toByteArray();
         final Object objRead =
             VariantSupport.read(b, 0, b.length + LittleEndian.INT_SIZE,
-                                variantType);
+                                variantType, -1);
         if (objRead instanceof byte[])
         {
-            final int diff = diff(org.apache.poi.hpsf.Util.pad4
-                ((byte[]) value), (byte[]) objRead);
+//            final int diff = diff(org.apache.poi.hpsf.Util.pad4
+//                ((byte[]) value), (byte[]) objRead);
+            final int diff = diff((byte[]) value, (byte[]) objRead);
             if (diff >= 0)
                 fail("Byte arrays are different. First different byte is at " +
                      "index " + diff + ".");

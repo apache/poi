@@ -944,6 +944,60 @@
 
 
 
+   <section>
+    <title>The Dictionary</title>
+
+    <p>What a dictionary is good for is explained in the <link
+      href="how-to.html">HPSF HOW-TO</link>. This chapter explains how it is
+     organized internally.</p>
+
+    <p>The dictionary has a simple header consisting of a single UInt value. It
+    tells how many entries the dictionary comprises:</p>
+
+    <table>
+     <tr>
+      <th>Name</th>
+      <th>Data type</th>
+      <th>Description</th>
+     </tr>
+     <tr>
+      <td>nrEntries</td>
+      <th>UInt</th>
+      <td>Number of dictionary entries</td>
+     </tr>
+    </table>
+
+    <p>The dictionary entries follow the header. Each one looks like this:</p>
+
+    <table>
+     <tr>
+      <th>Name</th>
+      <td>Data type</td>
+      <th>Description</th>
+     </tr>
+     <tr>
+      <td>key</td>
+      <td>UInt</td>
+      <td>The unique number of this property, i.e. the PID</td>
+     </tr>
+     <tr>
+      <td>length</td>
+      <td>UInt</td>
+      <td>The length of the property name associated with the key</td>
+     </tr>
+     <tr>
+      <td>value</td>
+      <td>String</td>
+      <td>The property's name, terminated with a 0x00 character</td>
+     </tr>
+    </table>
+
+    <p>The entries are not aligned, i.e. each one follows its predecessor
+     without any gap or fill characters.</p>
+   </section>
+
+
+
    <section><title>References</title>
 
     <p>In order to assemble the HPSF description I used information publically

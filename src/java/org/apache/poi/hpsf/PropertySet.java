@@ -56,6 +56,7 @@ package org.apache.poi.hpsf;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -300,9 +301,11 @@ public class PropertySet
      * @param length The length of the stream data.
      * @throws NoPropertySetStreamException if the byte array is not a
      * property set stream.
+     * 
+     * @exception UnsupportedEncodingException if the codepage is not supported
      */
     public PropertySet(final byte[] stream, final int offset, final int length)
-        throws NoPropertySetStreamException
+        throws NoPropertySetStreamException, UnsupportedEncodingException
     {
         if (isPropertySetStream(stream, offset, length))
             init(stream, offset, length);
@@ -321,8 +324,11 @@ public class PropertySet
      * complete byte array contents is the stream data.
      * @throws NoPropertySetStreamException if the byte array is not a
      * property set stream.
+     * 
+     * @exception UnsupportedEncodingException if the codepage is not supported
      */
-    public PropertySet(final byte[] stream) throws NoPropertySetStreamException
+    public PropertySet(final byte[] stream)
+    throws NoPropertySetStreamException, UnsupportedEncodingException
     {
         this(stream, 0, stream.length);
     }
@@ -435,6 +441,7 @@ public class PropertySet
      * @param length Length of the property set stream.
      */
     private void init(final byte[] src, final int offset, final int length)
+    throws UnsupportedEncodingException
     {
         /* FIXME (3): Ensure that at most "length" bytes are read. */
         
@@ -651,7 +658,7 @@ public class PropertySet
         final PropertySet ps = (PropertySet) o;
         int byteOrder1 = ps.getByteOrder();
         int byteOrder2 = getByteOrder();
-        ClassID classId1 = ps.getClassID();
+        ClassID classID1 = ps.getClassID();
         ClassID classID2 = getClassID();
         int format1 = ps.getFormat();
         int format2 = getFormat();
@@ -660,7 +667,7 @@ public class PropertySet
         int sectionCount1 = ps.getSectionCount();
         int sectionCount2 = getSectionCount();
         if (byteOrder1 != byteOrder2      ||
-            !classId1.equals(classID2)    ||
+            !classID1.equals(classID2)    ||
             format1 != format2            ||
             osVersion1 != osVersion2      ||
             sectionCount1 != sectionCount2)

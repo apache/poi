@@ -444,7 +444,10 @@ public class WriteAuthorAndTitle
                  * exists. However, since we have full control about directory
                  * creation we can ensure that this will never happen. */
                 ex.printStackTrace(System.err);
-                throw new RuntimeException(ex);
+                throw new RuntimeException(ex.toString());
+                /* FIXME (2): Replace the previous line by the following once we
+                 * no longer need JDK 1.3 compatibility. */
+                // throw new RuntimeException(ex);
             }
         }
     }

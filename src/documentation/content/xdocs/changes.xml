@@ -12,7 +12,11 @@
         <person id="MJ" name="Marc Johnson" email="mjohnson@apache.org"/>
         <person id="NKB" name="Nicola Ken Barozzi" email="barozzi@nicolaken.com"/>
         <person id="POI-DEVELOPERS" name="POI Developers" email="poi-dev@jakarta.apache.org"/>
+        <person id="RK" name="Rainer Klute" email="klute@apache.org"/>
     </devs>
+    <release version="2.0-pre3" date="unreleased">
+        <action dev="RK" type="add">HPSF: Much better codepage support</action>
+    </release>
     <release version="2.0-pre1" date="unreleased">
         <action dev="POI-DEVELOPERS" type="add">Patch applied for deep cloning of worksheets was provided</action>
         <action dev="POI-DEVELOPERS" type="add">Patch applied to allow sheet reordering</action>

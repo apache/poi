@@ -54,6 +54,7 @@
  */
 package org.apache.poi.hpsf;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -193,8 +194,12 @@ public class Section
      * @param src Contains the complete property set stream.
      * @param offset The position in the stream that points to the
      * section's format ID.
+     * 
+     * @exception UnsupportedEncodingException if the section's codepage is not
+     * supported.
      */
     public Section(final byte[] src, final int offset)
+    throws UnsupportedEncodingException
     {
         int o1 = offset;
 
@@ -636,6 +641,20 @@ public class Section
     public Map getDictionary()
     {
         return dictionary;
+    }
+
+
+
+    /**
+     * <p>Gets the section's codepage, if any.</p>
+     *
+     * @return The section's codepage if one is defined, else -1.
+     */
+    public int getCodepage()
+    {
+        final Integer codepage =
+            (Integer) getProperty(PropertyIDMap.PID_CODEPAGE);
+        return codepage != null ? codepage.intValue() : -1;
     }
 
 }
