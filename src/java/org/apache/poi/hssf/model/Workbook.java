@@ -134,7 +134,7 @@ public class Workbook
 
     /**
      * Creates new Workbook with no intitialization --useless right now
-     * @see #createWorkbook(Record[])
+     * @see #createWorkbook(List)
      */
 
     public Workbook()
@@ -353,7 +353,7 @@ public class Workbook
     /**
      * gets the number of font records
      *
-     * @param number of font records in the "font table"
+     * @return   number of font records in the "font table"
      */
 
     public int getNumberOfFontRecords()
@@ -644,7 +644,7 @@ public class Workbook
         log.log(DEBUG, "Serializing Workbook with offsets");
 
         // ArrayList bytes     = new ArrayList(records.size());
-        int arraysize = getSize();   // 0;
+//        int arraysize = getSize();   // 0;
         int pos       = 0;
 
 //        for (int k = 0; k < records.size(); k++)
@@ -1056,7 +1056,7 @@ public class Workbook
 
     /**
      * Creates a FormatRecord object
-     * @param the number of the format record to create (meaning its position in
+     * @param id    the number of the format record to create (meaning its position in
      *        a file as M$ Excel would create it.)
      * @return record containing a FormatRecord
      * @see org.apache.poi.hssf.record.FormatRecord
@@ -1128,7 +1128,7 @@ public class Workbook
 
     /**
      * Creates an ExtendedFormatRecord object
-     * @param the number of the extended format record to create (meaning its position in
+     * @param id    the number of the extended format record to create (meaning its position in
      *        a file as MS Excel would create it.)
      *
      * @return record containing an ExtendedFormatRecord
@@ -1484,8 +1484,8 @@ public class Workbook
 
     /**
      * Creates a StyleRecord object
-     * @param the number of the style record to create (meaning its position in
-     *        a file as MS Excel would create it.
+     * @param id        the number of the style record to create (meaning its position in
+     *                  a file as MS Excel would create it.
      * @return record containing a StyleRecord
      * @see org.apache.poi.hssf.record.StyleRecord
      * @see org.apache.poi.hssf.record.Record
