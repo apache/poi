@@ -102,7 +102,10 @@
        <pathelement location="${xlayout.build.documentation.dir}/WEB-INF/classes"/>
        <fileset dir="${xlayout.build.documentation.dir}/WEB-INF/lib">
          <include name="*.jar"/>
-       </fileset>    
+       </fileset> 
+        <fileset dir="${xlayout.library.endorsed.dir}"> 
+          <include name="*.jar"/>
+       </fileset>       
      </classpath>
     </java>
 

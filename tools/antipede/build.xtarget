@@ -86,9 +86,8 @@
   <!-- =================================--> 
   <target  name="-cent-unjar">
     <unjar src="${current.cent.jar}" dest="${cents.dir}"/> 
-    <move file="${current.cent.jar}" toFile="${current.cent.jar}.${cent.installed.suffix}"/> 
   </target>       
-           
+        
   <!-- ============================================= -->
   <!-- Simple utility target to call a cent target   -->
   <!-- ==============================================-->
