@@ -65,7 +65,8 @@ import javax.swing.*;
  * <p>Contains various (well, just one at the moment) static utility
  * methods.</p>
  *
- * @author Rainer Klute (klute@rainer-klute.de)
+ * @author Rainer Klute <a
+ * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
  * @version $Id$
  * @since 2002-01-25
  */

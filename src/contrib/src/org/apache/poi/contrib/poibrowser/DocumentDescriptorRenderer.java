@@ -67,7 +67,8 @@ import javax.swing.tree.*;
  * renderer is extremly rudimentary since displays only the document's
  * name, its size and its fist few bytes.</p>
  *
- * @author Rainer Klute (klute@rainer-klute.de)
+ * @author Rainer Klute <a
+ * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
  * @version $Id$
  * @since 2002-02-05
  */

@@ -75,7 +75,8 @@ import java.util.*;
  * default {@link Object} renderer can be replaced by another renderer
  * but it cannot be unregistered.</p>
  *
- * @author Rainer Klute (klute@rainer-klute.de)
+ * @author Rainer Klute <a
+ * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
  * @version $Id$
  * @since 2002-01-22
  */

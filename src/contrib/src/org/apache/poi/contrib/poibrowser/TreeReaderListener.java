@@ -89,7 +89,8 @@ import org.apache.poi.poifs.filesystem.*;
  * instance of {@link DocumentDescriptor} is a light-weight object and
  * contains only some meta-information about a document.</p>
  *
- * @author Rainer Klute (klute@rainer-klute.de)
+ * @author Rainer Klute <a
+ * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
  * @version $Id$
  * @since 2002-01-24
  */
