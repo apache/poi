@@ -11,8 +11,8 @@
   </header>
 
   <body>
-    <section><title>News</title>
-        <p>All POI news can now be found at the <link href="http://nagoya.apache.org/poi/news/">poi news weblog</link>.</p>
+    <section><title>Poi News</title>
+        <p>All Poi news can now be found at the <link href="http://nagoya.apache.org/poi/news/">poi news weblog</link>.</p>
 
     </section>
     <section><title>Purpose</title>
@@ -59,7 +59,7 @@
         <p>
 		POI stands for Poor Obfuscation Implementation. Why would we name our project such a derogatory name? Well,
 		Microsoft's OLE 2 Compound Document Format is a poorly conceived thing. It is essentially an archive structured
-		much like the old DOS FAT filesystem. Redmond chose, instead of using tar, gzip, zip or arc, to invent their own
+		much like the old DOS FAT filesystem. Microsoft Corporation chose, instead of using tar, gzip, zip or arc, to invent their own
 		archive format that does not provide any standard encryption or compression, is not very appendable and is prone
 		to fragmentation.
         </p>
@@ -67,6 +67,11 @@
 		Poi is also a Hawaiian delicacy that <link href="http://www.m-w.com">Merriam Webster's dictionary</link> defines as:
 		"A Hawaiian food of taro root cooked, pounded, and kneaded to a paste and often allowed to ferment." This seemed
 		strangely descriptive of the file format.
+                Poi -- paste of taro root -- is well-nourished and most of the Hawaiians eat it as baby
+                food and therefore they will become BIG and HEAVY as grown-up
+                --- we think the naming of 'Poi' might be sure to fit to 
+the project from this point of view
+                and hope that our 'Poi' project to become BIGGER and more famous.
         </p>
       <p>
 		So if you like acronyms, then POI is an acronym.  If you hate them, then we just used the name of the food for our
