@@ -215,15 +215,16 @@
         </uptodate>
     </target>
 
-    <target name="test-main" depends="compile-main,-test-main-check" unless="main.test.notRequired">
-        <junit printsummary="yes" showoutput="true" filtertrace="no" fork="no"
-            haltonfailure="${halt.on.test.failure}" failureproperty="main.test.failed">
-            <classpath>
+	<path id="test.classpath">
                 <path refid="main.classpath"/>
                 <pathelement location="${main.output.dir}"/>
                 <pathelement location="${main.output.test.dir}"/>
                 <pathelement location="${junit.jar1.dir}"/>
-            </classpath>
+         </path>
+    <target name="test-main" depends="compile-main,-test-main-check" unless="main.test.notRequired">
+        <junit printsummary="yes" showoutput="true" filtertrace="no" fork="no"
+            haltonfailure="${halt.on.test.failure}" failureproperty="main.test.failed">
+            <classpath refid="test.classpath"/>
             <sysproperty key="HSSF.testdata.path" value="${main.src.test}/org/apache/poi/hssf/data"/>
             <sysproperty key="HPSF.testdata.path" value="${main.src.test}/org/apache/poi/hpsf/data"/>
             <formatter type="plain"/>
@@ -239,20 +240,33 @@
         <antcall target="-test-main-write-testfile"/>
     </target>
 
-    <target name="single-test" depends="compile-main">
-	<junit printsummary="no" showoutput="true" filtertrace="no" fork="no" haltonfailure="${halt.on.test.failure}" failureproperty="main.test.failed" >
-	<classpath>
-                <path refid="main.classpath"/>
-                <pathelement location="${main.output.dir}"/>
-                <pathelement location="${main.output.test.dir}"/>
-                <pathelement location="${junit.jar1.dir}"/>
-            </classpath>
+    <target name="single-test" depends="-test-property-check,compile-main">
+	<junit printsummary="no" showoutput="true" filtertrace="no" haltonfailure="${halt.on.test.failure}" failureproperty="main.test.failed" >
+            <classpath refid="test.classpath"/>
 	    <sysproperty key="HSSF.testdata.path" value="${main.src.test}/org/apache/poi/hssf/data"/>
             <sysproperty key="HPSF.testdata.path" value="${main.src.test}/org/apache/poi/hpsf/data"/>
             <formatter type="plain" usefile="no"/>
             <formatter type="xml"/>
 	    <test name="${testcase}" />
 	</junit>
+    </target>
+
+    <target name="debug-test" depends="-test-property-check,compile-main">
+	<junit printsummary="no" showoutput="true" filtertrace="no" fork="yes" haltonfailure="${halt.on.test.failure}" failureproperty="main.test.failed" >
+	<jvmarg value="-Xdebug"/>
+	<jvmarg value="-Xrunjdwp:transport=dt_socket,address=5001,server=y,suspend=y"/>
+	<sysproperty key="java.compiler" value="NONE"/>
+	<classpath refid="test.classpath"/>
+	    <sysproperty key="HSSF.testdata.path" value="${main.src.test}/org/apache/poi/hssf/data"/>
+            <sysproperty key="HPSF.testdata.path" value="${main.src.test}/org/apache/poi/hpsf/data"/>
+            <formatter type="plain" usefile="no"/>
+	    <test name="${testcase}" />
+	</junit>
+    </target>
+
+    <target name="-test-property-check" unless="testcase">
+	<echo message="Please use -Dtestcase=org.your.testcase to run a single test"/>
+	<fail/>
     </target>
 
     <target name="-test-main-write-testfile" unless="main.test.failed">
