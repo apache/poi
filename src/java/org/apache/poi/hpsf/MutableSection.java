@@ -129,6 +129,7 @@ public class MutableSection extends Section
         for (int i = 0; i < pa.length; i++)
             mpa[i] = new MutableProperty(pa[i]);
         setProperties(mpa);
+        dictionary = s.dictionary;
     }
 
 
