@@ -57,6 +57,8 @@ package org.apache.poi.hssf.record;
 import org.apache.poi.util.LittleEndianConsts;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Used to calculate the record sizes for a particular record.
@@ -65,8 +67,6 @@ import java.util.ArrayList;
  */
 class SSTRecordSizeCalculator
 {
-    private SSTSerializer serializer;
-
     private UnicodeString unistr = null;
     private int stringReminant = 0;
     private int unipos = 0;
@@ -77,11 +77,13 @@ class SSTRecordSizeCalculator
     private boolean firstRecord = true;
     private int totalWritten = 0;
     private int recordSize = 0;
+    private List recordLengths = new ArrayList();
     private int pos = 0;
+    private Map strings;
 
-    public SSTRecordSizeCalculator(SSTSerializer serializer)
+    public SSTRecordSizeCalculator(Map strings)
     {
-        this.serializer = serializer;
+        this.strings = strings;
     }
 
     /**
@@ -94,9 +96,8 @@ class SSTRecordSizeCalculator
     {
         initVars();
 
-        serializer.recordLengths = new ArrayList();
-        int retval = 0;
-        int totalStringSpaceRequired = serializer.calculateUnicodeSize();
+        int retval;
+        int totalStringSpaceRequired = SSTSerializer.calculateUnicodeSize(strings);
 
         if ( totalStringSpaceRequired > SSTRecord.MAX_DATA_SPACE )
         {
@@ -106,9 +107,14 @@ class SSTRecordSizeCalculator
         {
             // short data: write one simple SST record
             retval = SSTRecord.SST_RECORD_OVERHEAD + totalStringSpaceRequired;
-            serializer.recordLengths.add( new Integer( totalStringSpaceRequired ) );
+            recordLengths.add( new Integer( totalStringSpaceRequired ) );
         }
         return retval;
+    }
+
+    public List getRecordLengths()
+    {
+        return recordLengths;
     }
 
     private int sizeOverContinuation( int totalStringSpaceRequired )
@@ -137,7 +143,7 @@ class SSTRecordSizeCalculator
                     finished = true;
                 }
                 recordSize = size + SSTRecord.STD_RECORD_OVERHEAD;
-                serializer.recordLengths.add( new Integer( size ) );
+                recordLengths.add( new Integer( size ) );
                 pos = 4;
             }
             if ( isRemainingString )
@@ -158,17 +164,17 @@ class SSTRecordSizeCalculator
         recordSize = SSTRecord.MAX_RECORD_SIZE;
         pos = 12;
         firstRecord = false;
-        serializer.recordLengths.add( new Integer( recordSize - SSTRecord.STD_RECORD_OVERHEAD ) );
+        recordLengths.add( new Integer( recordSize - SSTRecord.STD_RECORD_OVERHEAD ) );
     }
 
     private void calcRemainingStrings()
     {
-        for ( ; unipos < serializer.strings.size(); unipos++ )
+        for ( ; unipos < strings.size(); unipos++ )
         {
             int available = SSTRecord.MAX_RECORD_SIZE - pos;
             Integer intunipos = new Integer( unipos );
 
-            unistr = ( (UnicodeString) serializer.strings.get( intunipos ) );
+            unistr = ( (UnicodeString) strings.get( intunipos ) );
             if ( unistr.getRecordSize() <= available )
             {
                 totalBytesWritten += unistr.getRecordSize();
@@ -190,8 +196,8 @@ class SSTRecordSizeCalculator
                         int shortrecord = recordSize
                                 - ( available - toBeWritten );
 
-                        serializer.recordLengths.set(
-                                serializer.recordLengths.size() - 1,
+                        recordLengths.set(
+                                recordLengths.size() - 1,
                                 new Integer(
                                         shortrecord - SSTRecord.STD_RECORD_OVERHEAD ) );
                         recordSize = shortrecord;
@@ -203,7 +209,7 @@ class SSTRecordSizeCalculator
                 {
                     int shortrecord = recordSize - available;
 
-                    serializer.recordLengths.set( serializer.recordLengths.size() - 1,
+                    recordLengths.set( recordLengths.size() - 1,
                             new Integer( shortrecord - SSTRecord.STD_RECORD_OVERHEAD ) );
                     recordSize = shortrecord;
                 }
@@ -233,7 +239,7 @@ class SSTRecordSizeCalculator
             if ( available != toBeWritten )
             {
                 int shortrecord = recordSize - ( available - toBeWritten );
-                serializer.recordLengths.set( serializer.recordLengths.size() - 1,
+                recordLengths.set( recordLengths.size() - 1,
                         new Integer( shortrecord - SSTRecord.STD_RECORD_OVERHEAD ) );
                 recordSize = shortrecord;
             }

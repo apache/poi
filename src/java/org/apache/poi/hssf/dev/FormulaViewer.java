@@ -233,7 +233,7 @@ public class FormulaViewer
     
     private String composeFormula(FormulaRecord record)
     {
-       return  FormulaParser.toFormulaString((SheetReferences)null,record.getParsedExpression());
+       return  org.apache.poi.hssf.model.FormulaParser.toFormulaString((SheetReferences)null,record.getParsedExpression());
     }
 
     /**
