@@ -1729,15 +1729,17 @@ public class Workbook implements Model {
     }
 
     public SheetReferences getSheetReferences() {
-       SheetReferences refs = new SheetReferences();
-
-       if (externSheet != null) {
-          for (int k = 0; k < externSheet.getNumOfREFStructures(); k++) {
-              String sheetName = findSheetNameFromExternSheet((short)k);
-              refs.addSheetReference(sheetName, k);
-          }
-       }
-       return refs;
+        SheetReferences refs = new SheetReferences();
+        
+        if (externSheet != null) {
+            for (int k = 0; k < externSheet.getNumOfREFStructures(); k++) {
+                
+                String sheetName = findSheetNameFromExternSheet((short)k);
+                refs.addSheetReference(sheetName, k);
+                
+            }
+        }
+        return refs;
     }
 
     /** finds the sheet name by his extern sheet index
@@ -1745,10 +1747,12 @@ public class Workbook implements Model {
      * @return sheet name
      */
     public String findSheetNameFromExternSheet(short num){
-        String result;
+        String result="";
 
         short indexToSheet = externSheet.getREFRecordAt(num).getIndexToFirstSupBook();
-        result = getSheetName(indexToSheet);
+        if (indexToSheet>-1) { //error check, bail out gracefully!
+            result = getSheetName(indexToSheet);
+        }
 
         return result;
     }
