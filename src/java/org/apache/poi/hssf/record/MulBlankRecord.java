@@ -69,6 +69,7 @@ import org.apache.poi.util.LittleEndian;
  *               The RecordFactory converts this to a set of BlankRecord objects.<P>
  * REFERENCE:  PG 329 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
  * @author Andrew C. Oliver (acoliver at apache dot org)
+ * @author Glen Stampoultzis (glens at apache.org)
  * @version 2.0-pre
  * @see org.apache.poi.hssf.record.RecordFactory
  * @see org.apache.poi.hssf.record.BlankRecord
@@ -212,6 +213,8 @@ public class MulBlankRecord
         StringBuffer buffer = new StringBuffer();
 
         buffer.append("[MULBLANK]\n");
+        buffer.append("row  = ")
+            .append(Integer.toHexString(getRow())).append("\n");
         buffer.append("firstcol  = ")
             .append(Integer.toHexString(getFirstColumn())).append("\n");
         buffer.append(" lastcol  = ")
