@@ -398,8 +398,8 @@ public class Sheet implements Model
                 (DefaultColWidthRecord) retval.createDefaultColWidth();
         records.add( retval.defaultcolwidth);
         retval.dims    = ( DimensionsRecord ) retval.createDimensions();
-        retval.dimsloc = records.size()-1;
         records.add(retval.dims);
+        retval.dimsloc = records.size()-1;
         records.add(retval.windowTwo = retval.createWindowTwo());
         retval.setLoc(records.size() - 1);
         retval.selection = 

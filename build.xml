@@ -91,6 +91,7 @@
     <path id="main.classpath">
         <pathelement location="${main.jar1.dir}"/>
         <pathelement location="${main.jar2.dir}"/>
+        <pathelement location="${main.resource1.dir}"/>
     </path>
 
     <path id="scratchpad.classpath">
@@ -216,6 +217,9 @@ Main targets:
     </target>
 
     <target name="compile-main" depends="init">
+        <copy todir="${main.output.dir}">
+            <fileset dir="${main.resource1.dir}"/>
+        </copy>
         <javac srcdir="${main.src}" destdir="${main.output.dir}" debug="on">
             <classpath refid="main.classpath"/>
         </javac>

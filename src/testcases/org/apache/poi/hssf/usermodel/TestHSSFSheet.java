@@ -169,6 +169,7 @@ public class TestHSSFSheet
         FileOutputStream stream = new FileOutputStream(tempFile);
         workbook.write(stream);
         stream.close();
+        System.out.println( "tempFile.getCanonicalPath() = " + tempFile.getCanonicalPath() );
 
         FileInputStream readStream = new FileInputStream(tempFile);
         workbook = new HSSFWorkbook(readStream);
