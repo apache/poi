@@ -172,13 +172,13 @@ public class Ref3DPtg extends Ptg {
         field_3_column = column;
     }
 
-    public String getArea(){
+   /* public String getArea(){
         RangeAddress ra = new RangeAddress("");
 
         String result = (ra.numTo26Sys(getColumn()) + (getRow() + 1));
 
         return result;
-    }
+    }*/
 
     public void setArea(String ref){
         RangeAddress ra = new RangeAddress(ref);
