@@ -484,7 +484,8 @@ public class TestWrite extends TestCase
                 t = ex;
             }
             if (t != null)
-                fail(org.apache.poi.hpsf.Util.toString(t));
+                fail(org.apache.poi.hpsf.Util.toString(t) + " with codepage " +
+                     codepage);
         }
 
         final int[] invalidCodepages = new int[] {0, 1, 2, 4711, 815};
