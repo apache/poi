@@ -55,6 +55,8 @@ public class SVBorder extends AbstractBorder {
 
      paintNormalBorders(g, x, y, width, height); 
      paintDottedBorders(g, x, y, width, height); 
+     paintDashedBorders(g, x, y, width, height);
+    
 
 
      g.setColor(oldColor);    
@@ -88,6 +90,9 @@ public class SVBorder extends AbstractBorder {
 
         int thickness = getThickness(eastBorderType);
 
+        if (eastBorderType == HSSFCellStyle.BORDER_HAIR) 
+             thickness++;   
+
       	g.setColor(eastColor); 
 
         for (int k=0; k < thickness; k++) {
@@ -103,6 +108,9 @@ public class SVBorder extends AbstractBorder {
          ) {
 
         int thickness = getThickness(southBorderType);
+
+        if (southBorderType == HSSFCellStyle.BORDER_HAIR) 
+             thickness++;   
 
       	g.setColor(southColor); 
         for (int k=0; k < thickness; k++) {
@@ -184,6 +192,69 @@ public class SVBorder extends AbstractBorder {
         for (int k=0; k < thickness; k++) {
            for (int yc=y;yc < height; yc=yc+2) {
                 g.drawLine(x+k,yc,x+k,yc);
+           }
+        }
+      }
+   }
+
+
+   private void paintDashedBorders(Graphics g, int x, int y, int width, 
+                                  int height) {
+      if (northBorder && 
+             northBorderType == HSSFCellStyle.BORDER_DASHED) {
+        int thickness = getThickness(northBorderType);
+
+      	g.setColor(northColor); 
+
+        for (int k=0; k < thickness; k++) {
+           for (int xc = x; xc < width; xc=xc+5) {
+             g.drawLine(xc,y+k,xc+2,y+k);
+           }
+        }
+      }
+
+      if (eastBorder && 
+              eastBorderType == HSSFCellStyle.BORDER_DASHED
+         ) {
+
+        int thickness = getThickness(eastBorderType);
+        thickness++; //need for dotted borders to show up east
+
+      	g.setColor(eastColor); 
+
+        for (int k=0; k < thickness; k++) {
+           for (int yc=y;yc < height; yc=yc+5) {
+                g.drawLine(width-k,yc,width-k,yc+2);
+           }
+        }
+      }
+
+      if (southBorder && 
+              southBorderType == HSSFCellStyle.BORDER_DASHED
+         ) {
+
+        int thickness = getThickness(southBorderType);
+        thickness++;
+      	g.setColor(southColor); 
+        for (int k=0; k < thickness; k++) {
+           for (int xc = x; xc < width; xc=xc+5) {
+             g.drawLine(xc,height-k,xc+2,height-k);
+           }
+        }
+      }
+
+      if (westBorder && 
+            westBorderType == HSSFCellStyle.BORDER_DASHED
+         ) {
+
+        int thickness = getThickness(westBorderType);
+//        thickness++;
+
+      	g.setColor(westColor); 
+
+        for (int k=0; k < thickness; k++) {
+           for (int yc=y;yc < height; yc=yc+5) {
+                g.drawLine(x+k,yc,x+k,yc+2);
            }
         }
       }
