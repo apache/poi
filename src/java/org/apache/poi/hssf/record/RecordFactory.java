@@ -133,7 +133,6 @@ public class RecordFactory
     {
         ArrayList records     = new ArrayList(NUM_RECORDS);
         Record    last_record = null;
-        int       loc         = 0;
 
         try
         {
@@ -143,14 +142,12 @@ public class RecordFactory
             do
             {
                 rectype = LittleEndian.readShort(in);
-                loc     += 2;
                 if (rectype != 0)
                 {
                     short  recsize = LittleEndian.readShort(in);
                     byte[] data    = new byte[ ( int ) recsize ];
 
                     in.read(data);
-                    loc    += recsize;
                     offset += 4 + recsize;
                     Record[] recs = createRecord(rectype, recsize,
                                                  data);   // handle MulRK records
