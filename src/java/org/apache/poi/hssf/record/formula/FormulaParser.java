@@ -107,8 +107,6 @@ public class FormulaParser {
      *    later call the parse() method to return ptg list in rpn order
      *    then call the getRPNPtg() to retrive the parse results
      *  This class is recommended only for single threaded use
-     *  The parse and getPRNPtg are internally synchronized for safety, thus
-     *  while it is safe to use in a multithreaded environment, you will get long lock waits.  
      */
     public FormulaParser(String formula, Workbook book){
         formulaString = formula;

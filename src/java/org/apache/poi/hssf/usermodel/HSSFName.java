@@ -257,14 +257,14 @@ public class HSSFName {
      */    
 
     public String getReference() {
-        Workbook.currentBook.set(book);
+        Workbook.currentBook=book;
         String result;
 
         
 
         result = name.getAreaReference();
 
-        Workbook.currentBook.set(null);
+        Workbook.currentBook=null;
 
         return result;
 
