@@ -1,0 +1,295 @@
+<?xml version="1.0"?>
+<file-format extension="hdf">
+ <meta>
+  <title>HDF Horrible Document File Format</title>
+  <authors>
+   <person name="Nicola Ken Barozzi" email="barozzi@nicolaken.com"/>   
+  </authors>
+ </meta>
+  <!--
+    Many of the structures written in Word files differ slightly from the 
+    corresponding structures Word uses internally. The file-specific version 
+    of a structure is typically named by adding a preceding or (more often) 
+    trailing F. For example, Word uses internally a PLC (PLex of Cps), but 
+    writes to files a PLCF (PLex of Cps in File). Many discussions in this 
+    document use the name of the internal structure when the file-specific 
+    structure is what is really being referred to. The reader should remember 
+    that the name of a seemingly undefined structure type may simply be 
+    missing a leading or trailing F.
+  -->
+  <info>
+     A word docfile consists of a main stream, a summary information stream, 
+     a table stream, a data stream, and 0 or more object streams which contain 
+     private data for POI-FS 2.0 objects embedded within the Word document. 
+     The summary information stream is described in the section immediately 
+     following this one. The object storages contain binary data for embedded 
+     objects. Word has no knowledge of the contents of these storages; 
+     this information is accessed and manipulated though the POI-FS 2.0 APIs. 
+   </info> 
+  <poi-fs>
+    <main save-mode="normal">
+      <FIB> 
+        <info>
+          Stored at beginning of page 0 of the file. fib.fComplex will be set to zero.
+          The FIB contains a "magic word" and pointers to the various other parts of 
+          the file,as well as information about the length of the file. 
+          The FIB starts at the beginning of the file.            
+        </info>
+      </FIB>    
+      <text>  
+        <info>
+          text of body, footnotes, headers 
+          Text begins at the position recorded in fib.fcMin. 
+          The text of the file starts at fib.fcMin. fib.fcMin is usually set to the 
+          next 128 byte boundary after the end of the FIB. The text in a Word document 
+          is ASCII text with the following restrictions (ASCII codes given in decimal):\
+
+          Paragraph ends are stored as a single Carriage Return character (ASCII 13). 
+          No other occurrences of this character sequence are allowed. 
+          Hard line breaks which are not paragraph ends are stored as ASCII 11. Other 
+          line break or word wrap information is not stored. 
+          Breaking hyphens are stored as ASCII 45 (normal hyphen code); Non-required 
+          hyphens are ASCII 31. Non-breaking hyphens are stored as ASCII 30. 
+          Non-breaking spaces are stored as 160. Normal spaces are ASCII 32. 
+          Page breaks and Section marks are ASCII 12 (normal form feed); if there's 
+          an entry in the section table, it's a section mark, otherwise it's a page 
+          break. 
+          Column breaks are stored as ASCII 14. 
+          Tab characters are ASCII 9 (normal). 
+          The field begin mark which delimits the beginning of a field is ASCII 19. 
+          The field end mark which delimits the end of a field is ASCII 21. The field 
+          separator ,which marks the boundary between the preceding field code text 
+          and following field expansion text within a field, is ASCII 20. The field 
+          escape character is the '\' character which also serves as the formula mark. 
+          The cell mark which delimits the end of a cell in a table row is stored as 
+          ASCII 7 and has the fInTable paragraph property set to fTrue 
+          (pap.fInTable == 1). 
+          The row mark which delimits the end of a table row is stored as ASCII 7 
+          and has the fInTable paragraph property and fTtp paragraph property set 
+          to fTrue (pap.fInTable == 1 &amp;&amp; pap.fTtp == 1).           
+        </info> 
+      </text>  
+      <FKPs>
+        <info>
+          FKPs for CHPs, PAPs and LVCs 
+          The first FKP begins at a 512-byte boundary after the last byte text written.. 
+          The remaining FKPs are recorded in the 512-byte pages that immediately follow. 
+          The FKPs for CHPs PAPs and LVCs are interleaved. Previous versions of Word 
+          wrote them in contiguous chunks. The hplcfbte's of the three flavors 
+          (CHP, PAP and LVC) are used to find the relevant FKP of the appropriate type. 
+          group of SEPXs 
+        </info>              
+      </FKPs>
+      <SEPXs>
+        <info>
+          SEPXs immediately follow the FKPs and are concatenated one after the other. 
+          SEPXs are no longer guaranteed to start on a page boundary if it would span a 
+          boundary if placed immediately after the preceding SEPX. 
+        </info>              
+      </SEPXs>
+    </main>
+    <summary-information>
+     <info>
+       The summary information for a Word document is stored in two structured storage 
+       streams, SummaryInformation and DocumentSummaryInformation. Information on the 
+       layout of the SummaryInformation stream can be found in Appendix B of the POI-FS 2 
+       Programmers Reference.
+     </info>   
+    </summary-information>
+    <table>
+     <info>
+       Word stores various plcfs and tables with the stream named either "0Table" or 
+       "1Table". Ordinarily a file will contain only one table stream. However, in 
+       some unusual circumstances (e.g. crash during file save) a file might have two 
+       table streams. In that case the bit field fWhichTblStm in the FIB should be used 
+       to determine which table stream to read. If fWhichTblStm is 0, then the FIB refers 
+       to the stream named "0Table", and if fWhichTblStm is 1, then the FIB refers to 
+       the stream name "1Table".
+     </info>  
+        
+     <sttbfUssr>
+       <info>
+         Undocumented undo / versioning data 
+       </info>       
+     </sttbfUssr> 
+     
+     <plcupcRgbuse>
+       <info>
+         Undocumented undo / versioning data 
+       </info>       
+     </plcupcRgbuse> 
+
+     <plcupcUsp>
+       <info>
+         Undocumented undo / versioning data 
+       </info>       
+     </plcupcUsp> 
+
+     <uskf>
+       <info>
+         Undocumented undo / versioning data
+       </info>       
+     </uskf>      
+
+     <stsh>
+       <info>
+         (style sheet) Written immediately after the previous table. 
+         This is recorded in all Word documents. 
+       </info>       
+     </stsh> 
+     <!-- NKB TBC
+		plcffndRef (footnote reference position table) 
+		Written immediately after the stsh if the document contains footnotes 
+		plcffndTxt (footnote text position table) 
+		Written immediately after the plcffndRef if the document contains footnotes 
+		pgdFtn (footnote text page description table) 
+		Written immediately after the plcffndTxt if the document contains footnotes 
+		bkdFtn (footnote text break descriptor table) 
+		Written immediately after the pgdFtn if the document contains footnotes. 
+		plcfendRef (endnote reference position table) 
+		Written immediately after the previously recorded table if the document contains endnotes 
+		plcfendTxt (endnote text position table) 
+		Written immediately after the plcfendRef if the document contains endnotes 
+		pgdEdn (endnote text page description table) 
+		Written immediately after the plcfendTxt if the document contains endnotes 
+		bkdEdn (endnote text break descriptor table) 
+		Written immediately after the pgdEdn if the document contains endnotes 
+		plcftxbxTxt (text box link table) 
+		Written immediately after the previously recorded table if the document contains textboxes 
+		plcftxbxBkd (text box break descriptor table) 
+		Written immediately after the plcftxbxTxt if the document contains textboxes 
+		plcfhdrtxbxTxt (header text box link table) 
+		Written immediately after the previously recorded table if the header subdocument contains textboxes 
+		plcfhdrtxbxBkd (header text box break descriptor table) 
+		Written immediately after the plcfhdrtxbxTxt if the header subdocument contains textboxes. 
+		grpXstAtnOwners (annotation owner table) 
+		Written immediately after the previously recorded table if the document contains annotations. 
+		plcfandRef (annotation reference position table) 
+		Written immediately after the grpXstAtnOwners if the document contains annotations 
+		plcfandTxt (annotation text position table) 
+		Written immediately after the plcfandRef if the document contains annotations. 
+		plcfsed (section table) 
+		Written immediately after the previously recorded table. Recorded in all Word documents 
+		pgdMother (page description table) 
+		Written immediately after the plcfsed in all Word documents 
+		bkdMother (break descriptor table) 
+		Written immediately after the pgdMother in all Word documents 
+		plcfphe (paragraph height table) 
+		Written after the previously recorded table, if paragraph heights have been recorded. Only written during a fast save. 
+		plcfsea (private) 
+		PLCF reserved for private use by Word. 
+		plcflvc (list and outline level table) 
+		Written immediately after the previously recorded table during fast save only. 
+		plcasumy (AutoSummary analysis) 
+		Written immediately after the previously recorded table, if the document stored is in AutoSummary view mode. 
+		sttbGlsy (glossary name string table) 
+		Written immediately after the previously recorded table, if the document stored is a glossary. 
+		sttbGlsyStyle (glossary style name string table) 
+		Written immediately after sttbGlsy, if the document stored is a glossary. 
+		plcfglsy (glossary entry text position table) 
+		Written immediately after the previously recorded table, if the document stored is a glossary. 
+		plcfhdd (header text position table) 
+		Written immediately after the previously recorded table, if the document contains headers or footers. 
+		plcfbteChpx (bin table for CHP FKPs) 
+		Written immediately after the previously recorded table. This is recorded in all Word documents. 
+		plcfbtePapx (bin table for PAP FKPs) 
+		Written immediately after the plcfbteChpx. This is recorded in all Word documents. 
+		plcfbteLvc (bin table for LVC FKPs) 
+		Written immediately after the plcfbtePapx. This is recorded in all Word documents. 
+		sttbfRMark (revision mark author string table) 
+		Written immediately after plcfbteLvc, if the document contains revision marks. 
+		PlcffldMom (table of field positions and statuses for main document) 
+		Written immediately after the previously recorded table if the main document contains fields. 
+		PlcffldHdr (table of field positions and statuses for header subdocument) 
+		Written immediately after the previously recorded table, if the header subdocument contains fields. 
+		PlcffldFtn (table of field positions and statuses for footnote subdocument) 
+		Written immediately after the previously recorded table, if the footnote subdocument contains fields. 
+		PlcffldAtn (table of field positions and statuses for annotation subdocument) 
+		Written immediately after the previously recorded table, if the annotation subdocument contains fields. 
+		PlcffldEdn (table of field positions and statuses for endnote subdocument) 
+		Written immediately after the previously recorded table, if the endnote subdocument contains fields. 
+		PlcffldTxbx (table of field positions and statuses for textbox subdocument) 
+		Written immediately after the previously recorded table, if the textbox subdocument contains fields. 
+		plcOcx (ocx position table) 
+		Written immediately after the previously recorded table, if the document contains POI-FS controls. Undocumented. 
+		PlcffldHdrTxbx (table of field positions and statuses for textbox subdocument of header subdocument) 
+		Written immediately after the previously recorded table, if the textbox subdocument of the header subdocument contains fields. 
+		dggInfo (office drawing information) 
+		Written immediately after the previously recorded table. Format is described in the Office drawing group format document. 
+		plcspaMom (office drawing table) 
+		Written immediately after the previously recorded table, if the document contains office drawings. 
+		plcspaHdr (header office drawing table) 
+		Written immediately after the previously recorded table, if the header subdocument contains office drawings. 
+		sttbfBkmk (table of bookmark name strings) 
+		Written immediately after the previously recorded table, if the document contains bookmarks. 
+		plcfBkmkf (table recording beginning CPs of bookmarks) 
+		Written immediately after the sttbfBkmk, if the document contains bookmarks. 
+		plcfBkmkl (table recording limit CPs of bookmarks) 
+		Written immediately after the plcfBkmkf, if the document contains bookmarks. 
+		sttbfAtnBkmk (table of annotation bookmark string names) 
+		Written immediately after the previously recorded table, if the document contains annotations with bookmarks. 
+		plcfAtnbkf (table recording beginning CPs of bookmarks in the annotation subdocument) 
+		Written immediately after the sttbfAtnBkmk previously recorded table, if the document contains annotations with bookmarks. 
+		plcfAtnbkl (table recording limit CPs of bookmarks in the annotation subdocument) 
+		Written immediately after the plcfAtnbkf previously recorded table, if the document contains anotations with bookmarks. 
+		plcfspl (spelling state table) 
+		Written immediately after the previously recorded table. Records state of spell checking in a PLCF of SPLS structures. 
+		plcfgram (grammar state table) 
+		Written immediately after the previously recorded table. Records state of grammar checking in a PLCF of SPLS structures. 
+		plcfwkb (work book document partition table) 
+		Written immediately after the previously recorded table, if the document is a master document. 
+		formFldSttbs (form field dropdown string tables) 
+		Written immediately after the previously recorded table, if the document contains form field dropdown controls. 
+		sttbCaption (caption title string table) 
+		Written immediately after the previously recorded table, if the document contains captions. 
+		sttbAutoCaption (auto caption string table) 
+		Written immediately after the previously recorded table, if the document contains auto captions. 
+		sttbFnm (filename reference string table) 
+		Written immediately after the previously recorded table, if the document references other documents. 
+		sttbSavedBy (last saved by string table) 
+		Written immediately after the previously recorded table. 
+		plcflst (list formats) 
+		Written immediately after the end of the previously recorded, if there are any lists defined in the document. This begins with a short count of LSTF structures followed by those LSTF structures. 
+		This is immediately followed by the allocated data hanging off the LSTFs. This data consists of the array of LVLs for each LSTF. (Each LVL consists of an LVLF followed by two grpprls and an XST.) 
+		plflfo (more list formats) 
+		Written immediately after the end of the plcflst and its accompanying data, if there are any lists defined in the document. This consists first of a PL of LFO records, followed by the allocated data (if any) hanging off the LFOs. The allocated data consists of the array of LFOLVLFs for each LFO (and each LFOLVLF is immediately followed by some LVLs). 
+		sttbfListNames (more list formats) 
+		Written immediately after the end of the plflfo and its accompanying data, if there are any lists defined in the document. This is a string table containg the list names for each list. It is parallel with the plcflst, and may contain null strings if the corresponding LST does not have a list name. 
+		hplgosl (grammar option settings) 
+		Written immediately after the previously recorded table. This undocumented structure maps LID and grammar checker type to grammar checking options. 
+		stwUser (macro user storage) 
+		routeSlip (mailer routing slip) 
+		Written immediately after the previously recorded table, if this document has a mailer routing slip. 
+		cmds (recording of command data structures) 
+		Written immediately after the previously recorded table, if special commands are linked to this document. 
+		prDrvr (printer driver information) 
+		Written immediately after the previously recorded table, if a print environment is recorded for the document. 
+		prEnvPort (print environment in portrait mode) 
+		Written immediately after the previously recorded table, if a portrait mode print environment is recorded for this document. 
+		prEnvLand (print environment in landscape mode) 
+		Written immediately after the previously recorded table, if a landscape mode print environment is recorded for this document. 
+		wss (window state structure) 
+		Written immediately after the end of previously recorded structure, if the document was saved while a window was open. 
+		pms (print merge state) 
+		Written immediately after the previously recorded table, if information about the print / mail merge state is recorded for the document 
+		clx (encoding of the sprm lists for a complex file and piece table for a any file) 
+		Written immediately after the end of previously recorded structure. This is recorded in all Word documents. 
+		sttbfffn (table of font name strings) 
+		Written immediately after the clx. This is recorded in all Word documents. The sttbfffn is an sttbf where each string is instead an FFN structure (note that just as for a pascal-style string, the first byte in the FFN records the total number of bytes not counting the count byte itself). The names of the fonts correspond to the ftc codes in the CHP structure. For example, the first font name listed corresponds is the name for ftc = 0. 
+		sttbttmbd (true type font embedding string table) 
+		Written immediately after the end of previously recorded structure if document contains embedded true type fonts. 
+		dop (document properties record) 
+		Written immediately after the end of previously recorded structure. This is recorded in all Word documents 
+		sttbfAssoc (table of associated strings) 
+		autosaveSource (name of original) 
+		Written immediately after the sttbfAssoc table. This field only appears in autosave files. These files are normal Word documents in every other way. Also, autosaved files are typically in the complex file format except that we don't overwrite the tables (plcf*, etc.). I.e., an autosaved file is typically longer than the equivalent Word document.     
+    --> 
+    </table>
+    <data>
+    </data>       
+    <object>
+    </object>      
+    
+  </poi-fs> 
+</file-format>	
+	

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.0//EN" "dtd/document-v10.dtd">
+
+<document>
+  <header>
+    <title></title>
+    <authors>
+      <person id="AO" name="Andrew C. Oliver" email="acoliver@apache.org"/>
+    </authors>
+  </header>
+  
+  <body>
+    <s1 title="Purpose">
+      <p>The POI project aims to provide both the framework for porting and actual ports of file 
+            formats based on Microsoft's OLE 2 Compound Document Format (tm) to pure Java (tm). 
+           This includes all post-1997 MS Office (tm) file formats.
+      </p>
+      <p>
+         As a general policy we try to collaborate as much as possible with other projects to 
+         provide this functionality.  Examples include: <link href="http://xml.apache.org/cocoon">Cocoon</link> for 
+         which you'll soon find generators and serializers for our projects;
+         <link href="http://www.openoffice.org">Open Office.org</link> with whom we collaborate in documenting the 
+         XLS format; and <link href="http://jakarta.apache.org/lucene">Lucene</link> for which we'll soon have file 
+         format interpretors.  When practical, we donate components directly to those projects for POI-enabling them.
+      </p>
+      <s2 title="Why/when would I use POI">
+        <p>
+ We'll tackle this on a component level. POI refers to the whole project.
+        </p> 
+        <p>
+So why should you use POIFS or HSSF?
+        </p> 
+        <p>
+You'd use POIFS if you had a document written in OLE 2 Compound Document Format, probably written using MFC, that you needed to read in Java. Alternatively, you'd use POI to write OLE 2 Compound Document Format if you needed to inter-operate with software running on the Windows platform. We are not just bragging when we say that POIFS is the most complete and correct port of this file format to date!
+        </p> 
+        <p>
+You'd use HSSF if you needed to read or write an XLS (Excel) file using Java. You can also read and modify spreadsheets using this API, although right now writing is more mature.
+        </p> 
+      </s2>
+      
+      <s2 title="What does POI stand for?">
+        <p>
+POI stands for Poor Obfuscation Implementation. Why would we name our project such a derogatory name? Well, Microsoft's OLE 2 Compound Document Format is a poorly conceived thing. It is essentially an archive structured much like the old DOS FAT filesystem. Redmond chose, instead of using tar, gzip, zip or arc, to invent their own archive format that does not provide any standard encryption or compression, is not very appendable and is prone to fragmentation.
+        </p>
+      <p>
+Poi is also a Hawaiian delicacy that <link href="http://www.m-w.com">Merriam Webster's dictionary</link> defines as: "A Hawaiian food of taro root cooked, pounded, and kneaded to a paste and often allowed to ferment." This seemed strangely descriptive of the file format.  
+        </p>
+      <p>
+So if you like acronyms, then POI is an acronym.  If you hate them, then we just used the name of the food for our project.  If
+you wish to signify your love or hate for acronyms, use POI or Poi to refer to the project respectively.  
+      </p>
+      </s2>
+
+    </s1>
+
+
+    <s1 title="Components To Date">
+        <s2 title="Overview">
+             A common misconception is that POI writes Excel files.  POI is the name of the project.  POI contains several
+             components, one of which, HSSF, writes Excel files.  The following are components of the entire POI project
+             and a brief summary of their purpose.
+        </s2>
+        <s2 title="POIFS">
+             POIFS is the oldest and most stable part of the project.  It is our port of the OLE 2 Compound Document Format to
+             pure Java.  It supports both read and write functionality.  All of our components ultimately rely on it by 
+             definition.  Please see <link href="./poifs/index.html">the POIFS project page</link> for more information.
+        </s2>
+        <s2 title="HSSF">
+             HSSF is our port of the Microsoft Excel 97(-2002) file format (BIFF8) to pure Java.  It supports read and write 
+             capability.  Please see <link href="./hssf/index.html">the HSSF project page</link> for more information.
+        </s2>
+        <s2 title="HDF">
+             HDF is our port of the Microsoft Word 97 file format to pure Java.  It supports read and write capability.
+             Please see <link href="./hdf/index.html">the HDF project page for more information</link>.  This component is 
+             in the early stages of design.  Jump in!
+        </s2>
+
+     </s1>
+
+    <s1 title="What happened to the HSSF Serializer?">
+	The HSSF Serializer, which was part of our 1.0 release and last builds on 
+        <link href="http://www.sourceforge.net/projects/poi">Sourceforge</link>, has been donated to the Cocoon project.  We're
+        currently in the process of porting it over.
+    </s1> 
+
+    <s1 title="Contributing ">
+        <p>So you'd like to contribute to the project? Great! We need enthusiastic, hard-working, talented folks to help us on the project in several areas. The first is bug reports and feature requests! The second is documentation - we'll be at your every beck and call if you've got a critique or you'd like to contribute or otherwise improve the documentation. We could especially use some help documenting the HSSF file format! Last, but not least, we could use some binary crunching Java coders to chew through the convolution that characterizes Microsoft's file formats and help us port new ones to a superior Java platform!
+        </p>
+        <p>So if you're motivated, ready, and have the time, join the mail lists and we'll be happy to help you get started on the
+           project!
+        </p>
+
+
+    </s1>
+  </body>
+  <footer>
+    <legal>
+      Copyright (c) @year@ The Apache Software Foundation All rights reserved.
+      $Revision$ $Date$
+    </legal>
+  </footer>
+</document>

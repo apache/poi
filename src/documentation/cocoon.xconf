@@ -1,0 +1,365 @@
+<?xml version="1.0"?>
+<cocoon version="2.0">
+
+<!-- ================ Apache Cocoon configuration file ================== -->
+<!-- Please refer to the online documentation for full descriptions.
+     The notes that accompany the settings below are intended to be concise.
+-->
+
+<!-- ===================== General Components =========================== -->
+
+  <!-- Parser:
+    The default parser used in the Apache Cocoon 2 system is
+    org.apache.cocoon.components.parser.JaxpParser
+    Apache Cocoon 2 system requires a JAXP 1.1 parser.
+    If you have problems because your servlet environment uses its own
+    parser not conforming to JAXP 1.1 try using the alternative
+    XercesParser instead of the JaxpParser. To activate the XercesParser,
+    change the class attribute to
+  <parser class="org.apache.cocoon.components.parser.XercesParser"/>
+    You will also need to add a system property to your JVM
+    (probably on the startup of your servlet engine like this:
+    -Dorg.apache.cocoon.components.parser.Parser=org.apache.cocoon.components.parser.XercesParser
+
+    validate: This parameter causes the parser to be a validating parser.
+      XML validation is only being used for the documentation build.
+      (If you are going to use it elsewhere, then do so with caution.)
+      You really should have validated all of your XML documents already,
+      according to their proper DTD or schema. Do not expect Cocoon to do it.
+  -->
+  <parser class="org.apache.cocoon.components.parser.JaxpParser">
+   <parameter name="validate" value="false"/>
+  </parser>
+
+  <!-- Storing:
+    freememory: Indicates how much memory should be left free in the
+                JVM for normal operation.
+    heapsize: Indicates how big the heap size can grow to before the
+              cleanup thread kicks in.
+    objectlifetime: Indicates how long (seconds) a cache object will
+                    be hold in memory. The object will be thrown out,
+                    when the time is over.
+    interval: Indicates the interval of the cleanup thread in seconds.
+    maxobjects: Indicates how many objects will be hold in the cache.
+                When the number of maxobjects has been reached. The
+                last object in the cache will be thrown out.
+    usethread: Indicates whether we use a cleanup thread or not.
+    threadpriority: Indicates the priority of the cleanup thread.
+                    (1 is the lowest priority and 10 is the highest).
+    filesystem: Turns the filesystem storage for objects on or off.
+  -->
+  <store class="org.apache.cocoon.components.store.MRUMemoryStore">
+     <parameter name="maxobjects" value="100"/>
+     <parameter name="threadpriority" value="5"/>
+     <parameter name="filesystem" value="true"/>
+  </store>
+
+  <!-- Store Janitor:
+    freememory = How much free memory shall be available in the jvm
+    heapsize = Indicates the limit of the jvm memory consumption
+    cleanupthreadinterval = How often shall the cleanup thread check memory
+    threadpriority = Indicates the thread priority of the cleanup thread
+
+    Be careful with the heapsize and freememory paramters. Wrong values can
+    cause high cpu usage.
+    Example configuration:
+    Jvm settings: 
+      -Xms100000000 -Xmx200000000
+    store-janitor settings:
+       <parameter name="freememory" value="50000000"/>
+       <parameter name="heapsize" value="150000000"/>
+  
+    Heapsize must be higher then the -Xms parameter and freememory
+    between those both.    
+  -->
+  <store-janitor class="org.apache.cocoon.components.store.StoreJanitorImpl" logger="root.store">
+     <parameter name="freememory" value="1000000"/>
+     <parameter name="heapsize" value="60000000"/>
+     <parameter name="cleanupthreadinterval" value="10"/>
+     <parameter name="threadpriority" value="5"/>
+  </store-janitor>
+
+  <!-- Entity resolution catalogs:
+    catalog:
+    The default catalog is distributed at /resources/entities/catalog
+    This is the contextual pathname for Cocoon resources.
+    You can override this path, if necessary, using the "catalog" parameter.
+   <parameter name="catalog" value="/resources/entities/catalog"/>
+    However, it is probably desirable to leave this default catalog config
+    and declare your own local catalogs, which are loaded in addition to
+    the system catalog.
+
+    There are various ways to do local configuration (see "Entity Catalogs"
+    documentation). One way is via the CatalogManager.properties file.
+    As an additional method, you can specify the "local-catalog" parameter here.
+
+    local-catalog:
+    The full filesystem pathname to a single local catalog file.
+   <parameter name="local-catalog" value="/usr/local/sgml/mycatalog"/>
+
+    verbosity:
+    The level of messages for status/debug (messages go to standard output)
+    The following messages are provided ...
+     0 = none
+     1 = ? (... not sure yet)
+     2 = 1+, Loading catalog, Resolved public, Resolved system
+     3 = 2+, Catalog does not exist, resolvePublic, resolveSystem
+     10 = 3+, List all catalog entries when loading a catalog
+    (Cocoon also logs the "Resolved public" messages.) 
+    TODO: determine all messages at each level
+   <parameter name="verbosity" value="2"/>
+
+  -->
+  <resolver class="org.apache.cocoon.components.resolver.ResolverImpl">
+   <parameter name="catalog" value="/resources/entities/catalog"/>
+   <parameter name="verbosity" value="0"/>
+  </resolver>
+
+  <!-- XSLT Processor:
+  -->
+  <xslt-processor class="org.apache.cocoon.components.xslt.XSLTProcessorImpl" logger="root.xslt">
+     <parameter name="use-store" value="true"/>
+  </xslt-processor>
+
+  <!-- URL Factory:
+    The url factory adds special url protocols to the system, they are then
+    available inside Cocoon, e.g. as a source argument for one of the sitemap
+    components.
+  -->
+  <url-factory>
+    <protocol name="resource" class="org.apache.cocoon.components.url.ResourceURLFactory"/>
+    <protocol name="context"  class="org.apache.cocoon.components.url.ContextURLFactory"/>
+  </url-factory>
+
+  <!-- Source Handler:
+    The source handler adds special url protocols to the system, they are
+    then available inside Cocoon, e.g. as a source argument for one of the
+    sitemap components.
+  -->
+  <source-handler>
+  </source-handler>
+
+  <!-- Program Generator:
+    The ProgamGenerator builds programs from a XML document written in a
+    MarkupLanguage.
+       auto-reload:
+       root-package: persistent code repository.
+       preload:
+  -->
+  <program-generator>
+    <parameter name="auto-reload" value="false"/>
+    <parameter name="root-package" value="orgapachecocoonwww"/>
+    <parameter name="preload" value="true"/>
+  </program-generator>
+
+  <!-- Programming Languages:
+  -->
+  <programming-languages>
+    <java-language name="java">
+      <!-- compiler parameter specifies which class to use to compile Java.
+           Possible variants are Javac and Jikes compilers.
+           Javac requires javac.jar (included with Cocoon distribution).
+           Jikes requires IBM jikes compiler to be present in the PATH  -->
+      <parameter name="compiler" value="org.apache.cocoon.components.language.programming.java.Javac"/>
+      <!-- A singleton-like implementation of a ClassLoader -->
+      <parameter name="class-loader" value="org.apache.cocoon.components.classloader.ClassLoaderManagerImpl"/>
+    </java-language>
+  </programming-languages>
+
+  <!-- Class loader:
+    A singleton-like implementation of a ClassLoader.
+  -->
+  <classloader class="org.apache.cocoon.components.classloader.ClassLoaderManagerImpl"/>
+
+  <!-- Markup Languages:
+    This section defines several builtin logicsheets. A logicsheet is an XML
+    filter used to translate user-defined, dynamic markup into equivalent
+    code embedding directives for a given markup language.
+  -->
+  <markup-languages>
+    <xsp-language name="xsp">
+      <parameter name="prefix" value="xsp"/>
+      <parameter name="uri" value="http://apache.org/xsp"/>
+
+      <!-- Defines the XSP Core logicsheet for the Java language -->
+      <target-language name="java">
+        <parameter name="core-logicsheet" value="resource://org/apache/cocoon/components/language/markup/xsp/java/xsp.xsl"/>
+        
+        <!-- The Request logicsheet (taglib) is an XSP logicsheet that wraps XML tags 
+             around standard request operations -->
+        <builtin-logicsheet>
+          <parameter name="prefix" value="xsp-request"/>
+          <parameter name="uri" value="http://apache.org/xsp/request/2.0"/>
+          <parameter name="href" value="resource://org/apache/cocoon/components/language/markup/xsp/java/request.xsl"/>
+        </builtin-logicsheet>
+       
+        <!-- The Response logicsheet (taglib) is an XSP logicsheet that wraps XML tags 
+             around standard response operations -->
+        <builtin-logicsheet>
+          <parameter name="prefix" value="xsp-response"/>
+          <parameter name="uri" value="http://apache.org/xsp/response/2.0"/>
+          <parameter name="href" value="resource://org/apache/cocoon/components/language/markup/xsp/java/response.xsl"/>
+        </builtin-logicsheet>
+
+        <!-- The Session logicsheet (taglib) is an XSP logicsheet that wraps XML tags around 
+             standard session operations. Specifically, the Session logicsheet provides an 
+             XML interface to most methods of the HttpSession object (see the Java Servlet API 
+             Specification, version 2.2 ) for more information. -->
+        <builtin-logicsheet>
+          <parameter name="prefix" value="session"/>
+          <parameter name="uri" value="http://apache.org/xsp/session/2.0"/>
+          <parameter name="href" value="resource://org/apache/cocoon/components/language/markup/xsp/java/session.xsl"/>
+        </builtin-logicsheet>
+
+        <builtin-logicsheet>
+          <parameter name="prefix" value="xsp-cookie"/>
+          <parameter name="uri" value="http://apache.org/xsp/cookie/2.0"/>
+          <parameter name="href" value="resource://org/apache/cocoon/components/language/markup/xsp/java/cookie.xsl"/>
+        </builtin-logicsheet>
+
+        <!-- The ESQL logicsheet is an XSP logicsheet that performs sql queries and 
+             serializes their results as XML. This allows you to work with data from a 
+             wide variety of different sources when using Apache Cocoon. 
+        <builtin-logicsheet>
+          <parameter name="prefix" value="esql"/>
+          <parameter name="uri" value="http://apache.org/cocoon/SQL/v2"/>
+          <parameter name="href" value="resource://org/apache/cocoon/components/language/markup/xsp/java/esql.xsl"/>
+        </builtin-logicsheet>
+-->
+        <builtin-logicsheet>
+          <parameter name="prefix" value="log"/>
+          <parameter name="uri" value="http://apache.org/xsp/log/2.0"/>
+          <parameter name="href" value="resource://org/apache/cocoon/components/language/markup/xsp/java/log.xsl"/>
+        </builtin-logicsheet>
+
+        <builtin-logicsheet>
+          <parameter name="prefix" value="util"/>
+          <parameter name="uri" value="http://apache.org/xsp/util/2.0"/>
+          <parameter name="href" value="resource://org/apache/cocoon/components/language/markup/xsp/java/util.xsl"/>
+        </builtin-logicsheet>
+<!--        
+         The xsp-formval taglib serves as interface to retrieve validation results 
+             from a request attribute
+        <builtin-logicsheet>
+          <parameter name="prefix" value="xsp-formval"/>
+          <parameter name="uri" value="http://apache.org/xsp/form-validator/2.0"/>
+          <parameter name="href" value="resource://org/apache/cocoon/components/language/markup/xsp/java/form-validator.xsl"/>
+        </builtin-logicsheet>
+
+         The capture taglib is for capturing parts of the XSP-generated XML as
+             XML fragments or DOM nodes 
+        <builtin-logicsheet>
+          <parameter name="prefix" value="capture"/>
+          <parameter name="uri" value="http://apache.org/cocoon/capture/1.0"/>
+          <parameter name="href" value="resource://org/apache/cocoon/components/language/markup/xsp/java/capture.xsl"/>
+        </builtin-logicsheet>
+-->
+      </target-language>
+    </xsp-language>
+
+    <!-- Defines Sitemap Core logicsheet for the Java language -->
+    <sitemap-language name="sitemap">
+      <parameter name="prefix" value="map"/>
+      <parameter name="uri" value="http://apache.org/cocoon/sitemap/1.0"/>
+
+      <target-language name="java">
+        <parameter name="core-logicsheet" value="resource://org/apache/cocoon/components/language/markup/sitemap/java/sitemap.xsl"/>
+      </target-language>
+    </sitemap-language>
+  </markup-languages>
+
+  <!-- Stream Pipeline:
+    Either collects a Reader and lets it produce a character stream
+    or connects an EventPipeline with a Serializer and lets them produce
+    the character stream.
+  -->
+  <stream-pipeline class="org.apache.cocoon.components.pipeline.CachingStreamPipeline"
+                   pool-max="32" pool-min="4" pool-grow="4"/>
+
+  <!-- Caching of stream pipeline:
+    freememory: Indicates how much memory should be left free in the
+                JVM for normal operation.
+    heapsize: Indicates how big the heap size can grow to before the
+              cleanup thread kicks in.
+    objectlifetime: Indicates how long (seconds) a cache object will
+                    be hold in memory. The object will be thrown out,
+                    when the time is over.
+    interval: Indicates the interval of the cleanup thread in seconds.
+    maxobjects: Indicates how many objects will be hold in the cache.
+                When the number of maxobjects has been reached. The
+                last object in the cache will be thrown out.
+    usethread: Indicates whether we use a cleanup thread or not.
+    threadpriority: Indicates the priority of the cleanup thread.
+                    (1 is the lowest priority and 10 is the highest).
+    filesystem: Turns the filesystem storage for objects on or off.
+  -->
+  <stream-cache class="org.apache.cocoon.components.store.MRUMemoryStore" logger="root.store">
+     <parameter name="maxobjects" value="100"/>
+     <parameter name="threadpriority" value="5"/>
+     <parameter name="filesystem" value="true"/>
+  </stream-cache>
+
+  <!-- Event Pipeline:
+    Connects the generator and the various transformers and produces a
+    character stream. Alternatives to CachingEventPipeline are:
+    <event-pipeline class="org.apache.cocoon.components.pipeline.NonCachingEventPipeline"/>
+  -->
+  <event-pipeline class="org.apache.cocoon.components.pipeline.CachingEventPipeline"
+                  pool-max="32" pool-min="4" pool-grow="4"/>
+
+  <!-- Caching of event pipeline:
+    freememory: Indicates how much memory should be left free in the
+                JVM for normal operation.
+    heapsize: Indicates how big the heap size can grow to before the
+              cleanup thread kicks in.
+    objectlifetime: Indicates how long (seconds) a cache object will
+                    be hold in memory. The object will be thrown out,
+                    when the time is over.
+    interval: Indicates the interval of the cleanup thread in seconds.
+    maxobjects: Indicates how many objects will be hold in the cache.
+                When the number of maxobjects has been reached. The
+                last object in the cache will be thrown out.
+    usethread: Indicates whether we use a cleanup thread or not.
+    threadpriority: Indicates the priority of the cleanup thread.
+                    (1 is the lowest priority and 10 is the highest).
+    filesystem: Turns the filesystem storage for objects on or off.
+  -->
+  <event-cache class="org.apache.cocoon.components.store.MRUMemoryStore" logger="root.store">
+     <parameter name="maxobjects" value="100"/>
+     <parameter name="threadpriority" value="5"/>
+     <parameter name="filesystem" value="true"/>
+  </event-cache>
+
+  <!-- SAXConnector:
+    Connects the various pipeline components.
+    LoggingSAXConnector logs SAX events between pipeline components
+    into cocoon's log file.
+    Uncomment one of the following lines for using the SAXConnector.
+  <sax-connector class="org.apache.cocoon.components.saxconnector.LoggingSAXConnector"/>
+  -->
+
+<!-- ======================== The sitemap  ============================== -->
+
+  <!-- Reloading of the sitemap:
+    The check-reload attribute determines if the sitemap is reloaded on change.
+    Set to "no", the sitemap is generated once at startup.
+    Set to "yes", the sitemap is regenerated if it changes.
+
+    The reload-method specifies the method for the regeneration:
+    asynchron: If the sitemap changes, the sitemap is regenerated at the
+               next request in the background and the incoming request is
+               served with the old sitemap. All subsequent requests are
+               served with the old sitemap until the regeneration in the
+               background has finished.
+    synchron: If the sitemap changes, the sitemap is regenerated at the
+              next request. When the regeneration is finished, the request
+              (and all subsequent ones) is served with the new sitemap.
+
+    For development environment, set the reload-method to synchron and the
+    check-reload to yes.
+    For production environment, it is advisable to set the reload-method to
+    asynchron and for more safety the check-reload to no.
+  -->
+  <sitemap file="sitemap.xmap" reload-method="synchron" check-reload="no"/>
+
+</cocoon>

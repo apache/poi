@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE changes PUBLIC "-//APACHE//DTD Changes V1.0//EN" "src/documentation/xdocs/dtd/changes-v10.dtd">
+
+<changes title="History of Changes">
+
+ <devs>
+  <!-- in strict alphabetical order -->
+  <person id="AO"  name="Andrew C. Oliver"   email="acoliver2@users.sourceforge.net"/>
+  <person id="GS"  name="Glen Stampoultzis"  email="gstamp@iprimus.com.au"/>  
+  <person id="MJ"  name="Marc Johnson"       email="mjohnson at apache dot org"/>
+  <person id="NKB" name="Nicola Ken Barozzi" email="barozzi@nicolaken.com"/>
+  <person id="open" name="Poi Developers"    email="poi-devel@lists.sourceforge.net"/>
+ </devs>
+ <release version="@version@" date="@date@">
+  <action dev="NKB" type="update">
+    New project build.
+  </action>
+  <action dev="NKB" type="update">
+    New project documentation system based on Cocoon.
+  </action>
+ </release>
+
+</changes>

@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.0//EN" "../dtd/document-v10.dtd"> 
+     
+<document>
+  <header>
+   <title>The New Halloween Document</title>
+   <authors>
+    <person email="marc.johnson@yahoo.com" name="Marc Johnson" id="MJ"/>
+   </authors>
+  </header>
+  <body>
+    <s1 title="HSSF Use Cases">
+    <s2 title="Use Case 1: Read existing HSSF">
+
+<p><strong>Primary Actor:</strong> HSSF client</p>
+<p><strong>Scope:</strong> HSSF</p>
+<p><strong>Level:</strong> Summary</p>
+<p><strong>Stakeholders and Interests:</strong></p>
+<ul>
+	<li>HSSF client- wants to read content
+	of HSSF file</li>
+	<li>HSSF - understands HSSF file</li>
+	<li>POI - understands underlying POI
+	file system</li>
+</ul>
+<p><strong>Precondition:</strong> None</p>
+<p><strong>Minimal Guarantee:</strong> None</p>
+<p><strong>Main Success Guarantee:</strong></p>
+<ol>
+	<li>HSSF client requests HSSF to read
+	a HSSF file, providing an InputStream
+	containing HSSF file in question.</li>
+	<li>HSSF requests POI to read the HSSF
+	file, passing the InputStream
+	object to POI (POI use case 1, read existing file system)</li>
+	<li>HSSF reads the &quot;Workbook&quot;
+	file (use case 4, read workbook entry)</li>
+</ol>
+<p><strong>Extensions:</strong></p>
+<p>2a. Exceptions
+thrown by POI will be passed on to the HSSF client.</p>
+</s2>
+    <s2 title="Use Case 2: Write HSSF file">
+
+<p><strong>Primary Actor:</strong> HSSF client</p>
+<p><strong>Scope:</strong> HSSF</p>
+<p><strong>Level:</strong> Summary</p>
+<p><strong>Stakeholders and Interests:</strong></p>
+<ul>
+	<li>HSSF client- wants to write file
+	out.</li>
+	<li>HSSF - knows how to write file
+	out.</li>
+	<li>POI - knows how to write file
+	system out.</li>
+</ul>
+<p><strong>Precondition:</strong></p>
+<ul>
+	<li>File has been
+	read (use case 1, read existing HSSF file) and subsequently modified
+	or file has been created (use case 3, create HSSF file)</li>
+</ul>
+<p><strong>Minimal Guarantee:</strong> None</p>
+<p><strong>Main Success Guarantee:</strong></p>
+<ol>
+	<li>HSSF client
+	provides an OutputStream to
+	write the file to.</li>
+	<li>HSSF writes
+	the &quot;Workbook&quot; to its associated POI file system (use case
+	5, write workbook entry)</li>
+	<li>HSSF
+	requests POI to write its file system out, using the OutputStream
+	obtained from the HSSF client (POI use case 2, write file system).</li>
+</ol>
+<p><strong>Extensions:</strong></p>
+<p>3a. Exceptions
+from POI are passed to the HSSF client.</p>
+
+</s2>
+    <s2 title="Use Case 3:Create HSSF file">
+
+<p><strong>Primary Actor:</strong> HSSF client</p>
+<p><strong>Scope:</strong> HSSF</p>
+<p>
+<strong>Level:</strong> Summary</p>
+<p><strong>Stakeholders and Interests:</strong></p>
+<ul>
+	<li>HSSF client- wants to create a new
+	file.</li>
+	<li>HSSF - knows how to create a new
+	file.</li>
+	<li>POI - knows how to creat a new
+	file system.</li>
+</ul>
+<p><strong>Precondition:</strong></p>
+<p><strong>Minimal Guarantee:</strong> None</p>
+<p><strong>Main Success Guarantee:</strong></p>
+<ol>
+	<li>HSSF requests
+	POI to create a new file system (POI use case 3, create new file
+	system)</li>
+</ol>
+<p><strong>Extensions:</strong>
+None</p>
+
+</s2>
+    <s2 title="Use Case 4: Read workbook entry">
+<p><strong>Primary Actor:</strong> HSSF</p>
+<p><strong>Scope:</strong> HSSF</p>
+<p>
+<strong>Level:</strong> Summary</p>
+<p><strong>Stakeholders and Interests:</strong></p>
+<ul>
+	<li>HSSF - knows how to read the
+	workbook entry</li>
+	<li>POI - knows how to manage the file
+	system.</li>
+</ul>
+<p><strong>Precondition:</strong></p>
+<ul>
+	<li>The file
+	system has been read (use case 1, read existing HSSF file) or has
+	been created and written to (use case 3, create HSSF file system;
+	use case 5, write workbook entry).</li>
+</ul>
+<p><strong>Minimal
+Guarantee:</strong> None</p>
+<p><strong>Main Success Guarantee:</strong></p>
+<ol>
+	<li>
+	HSSF requests POI for the &quot;Workbook&quot; file</li>
+	<li>POI returns
+	an InputStream for the file.</li>
+	<li>HSSF reads
+	from the InputStream provided by POI</li>
+	<li>HSSF closes
+	the InputStream provided by POI</li>
+</ol>
+<p><strong>Extensions:</strong></p>
+<p>3a. Exceptions
+thrown by POI will be passed on</p>
+</s2>
+    <s2 title="Use Case 5: Write workbook entry">
+
+
+<p><strong>Primary Actor:</strong> HSSF</p>
+<p><strong>Scope:</strong> HSSF</p>
+<p>
+<strong>Level:</strong> Summary</p>
+<p><strong>Stakeholders and Interests:</strong></p>
+<ul>
+	<li>HSSF - knows how to manage the
+	write the workbook entry.</li>
+	<li>POI - knows how to manage the file
+	system.</li>
+</ul>
+<p><strong>Precondition:</strong> 
+</p>
+<ul>
+	<li>Either an existing HSSF file has
+	been read (use case 1, read existing HSSF file) or an HSSF file has
+	been created (use case 3, create HSSF file).</li>
+</ul>
+<p><strong>Minimal Guarantee:</strong> None</p>
+<p><strong>Main Success Guarantee:</strong></p>
+<ol>
+	<li>HSSF
+	checks the POI file system directory for the &quot;Workbook&quot;
+	file (POI use case  8, read file system directory)</li>
+	<li>If &quot;Workbook&quot; is in the directory, HSSF requests POI to
+	replace it with the new workbook entry (POI use case 4, replace file
+	in file system). Otherwise, HSSF requests POI to write the new
+	workbook file, with the name &quot;Workbook&quot; (POI use case 6,
+	write new file to file system)</li>
+</ol>
+<p><strong>Extensions:</strong>None</p>
+</s2>
+
+</s1>
+</body>
+</document>
