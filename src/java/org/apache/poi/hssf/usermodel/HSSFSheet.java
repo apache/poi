@@ -242,10 +242,12 @@ public class HSSFSheet
         int rownum = lastrow - 1;
         HSSFRow r = getRow(rownum);
 
-        while (r == null && rownum >= 0)
+        while (r == null && rownum > 0)
         {
             r = getRow(--rownum);
         }
+        if (r == null)
+          return -1;
         return rownum;
     }
 
