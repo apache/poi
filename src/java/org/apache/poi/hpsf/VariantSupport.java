@@ -320,14 +320,8 @@ public class VariantSupport extends Variant
                             final Object value, final int codepage)
         throws IOException, WritingNotSupportedException
     {
-        long lType = type;
-
-        /* Ensure that wide strings are written if the codepage is Unicode. */
-        if (codepage == Constants.CP_UNICODE && type == Variant.VT_LPSTR)
-            lType = Variant.VT_LPWSTR;
-
         int length = 0;
-        switch ((int) lType)
+        switch ((int) type)
         {
             case Variant.VT_BOOL:
             {
@@ -419,10 +413,10 @@ public class VariantSupport extends Variant
                     out.write(b);
                     length = b.length;
                     writeUnsupportedTypeMessage
-                        (new WritingNotSupportedException(lType, value));
+                        (new WritingNotSupportedException(type, value));
                 }
                 else
-                    throw new WritingNotSupportedException(lType, value);
+                    throw new WritingNotSupportedException(type, value);
                 break;
             }
         }
