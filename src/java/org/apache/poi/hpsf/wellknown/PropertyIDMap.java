@@ -57,222 +57,133 @@ package org.apache.poi.hpsf.wellknown;
 import java.util.*;
 
 /**
- *  <p>
+ * <p>This is a dictionary which maps property ID values to property
+ * ID strings.</p>
  *
- *  This is a dictionary mapping property IDs to property ID strings.</p> <p>
+ * <p>The methods {@link #getSummaryInformationProperties} and {@link
+ * #getDocumentSummaryInformationProperties} return singleton {@link
+ * PropertyIDMap}s. An application that wants to extend these maps
+ * should treat them as unmodifiable, copy them and modifiy the
+ * copies.</p>
  *
- *  The methods {@link #getSummaryInformationProperties} and {@link
- *  #getDocumentSummaryInformationProperties} return singleton {@link
- *  PropertyIDMap}s. An application that wants to extend these maps should treat
- *  them as unmodifiable, copy them and modifiy the copies.</p> <p>
+ * <p><strong>FIXME:</strong> Make the singletons
+ * unmodifiable. However, since this requires to use a {@link HashMap}
+ * delegate instead of extending {@link HashMap} and thus requires a
+ * lot of stupid typing. I won't do that for the time being.</p>
  *
- *  <strong>FIXME:</strong> Make the singletons unmodifiable. However, since
- *  this requires use a {@link HashMap} delegate instead of extending {@link
- *  HashMap} and would require a lot of stupid typing, I won't do it for the
- *  time being.</p>
- *
- *@author     Rainer Klute (klute@rainer-klute.de)
- *@created    May 10, 2002
- *@version    $Id$
- *@since      2002-02-09
+ * @author Rainer Klute (klute@rainer-klute.de)
+ * @version $Id$
+ * @since 2002-02-09
  */
-public class PropertyIDMap extends HashMap {
+public class PropertyIDMap extends HashMap
+{
 
     /*
-     *  The following definitions are for the Summary Information.
-     */
-    /**
-     *  Description of the Field
+     * The following definitions are for the Summary Information.
      */
     public final static int PID_TITLE = 2;
-    /**
-     *  Description of the Field
-     */
     public final static int PID_SUBJECT = 3;
-    /**
-     *  Description of the Field
-     */
     public final static int PID_AUTHOR = 4;
-    /**
-     *  Description of the Field
-     */
     public final static int PID_KEYWORDS = 5;
-    /**
-     *  Description of the Field
-     */
     public final static int PID_COMMENTS = 6;
-    /**
-     *  Description of the Field
-     */
     public final static int PID_TEMPLATE = 7;
-    /**
-     *  Description of the Field
-     */
     public final static int PID_LASTAUTHOR = 8;
-    /**
-     *  Description of the Field
-     */
     public final static int PID_REVNUMBER = 9;
-    /**
-     *  Description of the Field
-     */
     public final static int PID_EDITTIME = 10;
-    /**
-     *  Description of the Field
-     */
     public final static int PID_LASTPRINTED = 11;
-    /**
-     *  Description of the Field
-     */
     public final static int PID_CREATE_DTM = 12;
-    /**
-     *  Description of the Field
-     */
     public final static int PID_LASTSAVE_DTM = 13;
-    /**
-     *  Description of the Field
-     */
     public final static int PID_PAGECOUNT = 14;
-    /**
-     *  Description of the Field
-     */
     public final static int PID_WORDCOUNT = 15;
-    /**
-     *  Description of the Field
-     */
     public final static int PID_CHARCOUNT = 16;
-    /**
-     *  Description of the Field
-     */
     public final static int PID_THUMBNAIL = 17;
-    /**
-     *  Description of the Field
-     */
     public final static int PID_APPNAME = 18;
-    /**
-     *  Description of the Field
-     */
     public final static int PID_SECURITY = 19;
 
     /*
-     *  The following definitions are for the Document Summary Information.
-     */
-    /**
-     *  Description of the Field
+     * The following definitions are for the Document Summary Information.
      */
     public final static int PID_CATEGORY = 2;
-    /**
-     *  Description of the Field
-     */
     public final static int PID_PRESFORMAT = 3;
-    /**
-     *  Description of the Field
-     */
     public final static int PID_BYTECOUNT = 4;
-    /**
-     *  Description of the Field
-     */
     public final static int PID_LINECOUNT = 5;
-    /**
-     *  Description of the Field
-     */
     public final static int PID_PARCOUNT = 6;
-    /**
-     *  Description of the Field
-     */
     public final static int PID_SLIDECOUNT = 7;
-    /**
-     *  Description of the Field
-     */
     public final static int PID_NOTECOUNT = 8;
-    /**
-     *  Description of the Field
-     */
     public final static int PID_HIDDENCOUNT = 9;
-    /**
-     *  Description of the Field
-     */
     public final static int PID_MMCLIPCOUNT = 10;
-    /**
-     *  Description of the Field
-     */
     public final static int PID_SCALE = 11;
-    /**
-     *  Description of the Field
-     */
     public final static int PID_HEADINGPAIR = 12;
-    /**
-     *  Description of the Field
-     */
     public final static int PID_DOCPARTS = 13;
-    /**
-     *  Description of the Field
-     */
     public final static int PID_MANAGER = 14;
-    /**
-     *  Description of the Field
-     */
     public final static int PID_COMPANY = 15;
-    /**
-     *  Description of the Field
-     */
     public final static int PID_LINKSDIRTY = 16;
 
+    /**
+     * <p>Contains the summary information property ID values and
+     * associated strings. See the overall HPSF documentation for
+     * details!</p>
+     */
     private static PropertyIDMap summaryInformationProperties;
+
+    /**
+     * <p>Contains the summary information property ID values and
+     * associated strings. See the overall HPSF documentation for
+     * details!</p>
+     */
     private static PropertyIDMap documentSummaryInformationProperties;
 
 
 
     /**
-     *  Constructor for the PropertyIDMap object
-     *
-     *@param  initialCapacity  Description of the Parameter
-     *@param  loadFactor       Description of the Parameter
+     * <p>Creates a {@link PropertyIDMap}.</p>
      */
-    public PropertyIDMap(int initialCapacity, float loadFactor) {
+    public PropertyIDMap(int initialCapacity, float loadFactor)
+    {
         super(initialCapacity, loadFactor);
     }
 
 
 
     /**
-     *  <p>
+     * <p>Puts a ID string for an ID into the {@link
+     * PropertyIDMap}.</p>
      *
-     *  Puts a ID string for an ID into the {@link PropertyIDMap}.</p>
-     *
-     *@param  id        The ID.
-     *@param  idString  The ID string.
-     *@return           Description of the Return Value
+     * @param id The ID.
+     * @param idString The ID string.
+     * @return As specified by the {@link Map} interface, this method
+     * returns the previous value associated with the specified
+     * <var>id</var>, or <code>null</code> if there was no mapping for
+     * key.
      */
-    public Object put(int id, String idString) {
+    public Object put(int id, String idString)
+    {
         return put(new Integer(id), idString);
     }
 
 
 
     /**
-     *  <p>
+     * <p>Gets the ID string for an ID from the {@link
+     * PropertyIDMap}.</p>
      *
-     *  Gets the ID string for an ID from the {@link PropertyIDMap}.</p>
-     *
-     *@param  id  The ID.
-     *@return     Description of the Return Value
+     * @param id The ID.
+     * @return The ID string associated with <var>id</var>.
      */
-    public Object get(int id) {
+    public Object get(int id)
+    {
         return get(new Integer(id));
     }
 
 
 
     /**
-     *  <p>
-     *
-     *  Returns the Summary Information properties singleton.</p>
-     *
-     *@return    The summaryInformationProperties value
+     * <p>Returns the Summary Information properties singleton.</p>
      */
-    public static PropertyIDMap getSummaryInformationProperties() {
-        if (summaryInformationProperties == null) {
+    public static PropertyIDMap getSummaryInformationProperties()
+    {
+        if (summaryInformationProperties == null)
+	{
             PropertyIDMap m = new PropertyIDMap(17, (float) 1.0);
             m.put(PID_TITLE, "PID_TITLE");
             m.put(PID_SUBJECT, "PID_SUBJECT");
@@ -300,14 +211,15 @@ public class PropertyIDMap extends HashMap {
 
 
     /**
-     *  <p>
+     * <p>Returns the Document Summary Information properties
+     * singleton.</p>
      *
-     *  Returns the Summary Information properties singleton.</p>
-     *
-     *@return    The documentSummaryInformationProperties value
+     * @return The Document Summary Information properties singleton.
      */
-    public static PropertyIDMap getDocumentSummaryInformationProperties() {
-        if (documentSummaryInformationProperties == null) {
+    public static PropertyIDMap getDocumentSummaryInformationProperties()
+    {
+        if (documentSummaryInformationProperties == null)
+	{
             PropertyIDMap m = new PropertyIDMap(17, (float) 1.0);
             m.put(PID_CATEGORY, "PID_CATEGORY");
             m.put(PID_PRESFORMAT, "PID_PRESFORMAT");
@@ -332,11 +244,10 @@ public class PropertyIDMap extends HashMap {
 
 
     /**
-     *  Description of the Method
-     *
-     *@param  args  Description of the Parameter
+     * <p>For the most basic testing.</p>
      */
-    public static void main(String args[]) {
+    public static void main(String args[])
+    {
         PropertyIDMap s1 = getSummaryInformationProperties();
         PropertyIDMap s2 = getDocumentSummaryInformationProperties();
         System.out.println("s1: " + s1);
