@@ -32,6 +32,7 @@
 
   <menu label="References">
     <menu-item label="Live Sites" href="livesites.html"/>
+    <menu-item label="Building" href="building.xml"/>
     <menu-item label="XLS spec [PDF]" href="http://sc.openoffice.org/excelfileformat.pdf"/>
     <menu-item label="Apache Cocoon" href="http://xml.apache.org/cocoon/"/>
   </menu>
