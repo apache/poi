@@ -22,6 +22,9 @@
      <p>Add writing capability for property sets.</p>
     </li>
     <li>
+     <p>Write up some junit tests.</p>
+    </li>
+    <li>
      <p>Add codepage support.</p>
     </li>
     <li>
@@ -35,6 +38,11 @@
     <li>
      <p>Implement reading functionality for those property types that are not
       yet supported (other than byte arrays).</p>
+    </li>
+    <li>
+     <p>Add WMF to <code>java.awt.Image</code> example code in <link
+     href="thumbnails.html">Thumbnail
+     HOW TO</link>.</p>
     </li>
    </ol>
   </section>
