@@ -13,7 +13,7 @@
     <section title="How to use the HSSF prototype API">
 
         <section title="Capabilities">
-            <p>This release of the how-to outlines functionality for the 1.5 release.
+            <p>This release of the how-to outlines functionality for the CVS HEAD.
             Those looking for information on previous releases should
             look in the documentation distributed with that release.</p>
             <p>
@@ -398,55 +398,32 @@ export CLASSPATH=$CLASSPATH:$HSSFDIR/hssf.jar:$HSSFDIR/poi-poifs.jar:$HSSFDIR/po
 <ul>
 	<li>Type:
 	<code>java org.apache.poi.hssf.dev.HSSF ~/input.xls output.xls</code>
-    <p>
+    <br/>
+    <br/>
 This is the read/write/modify test.  It reads in the spreadsheet, modifies a cell, and writes it back out.
 Failing this test is not necessarily a bad thing.  If HSSF tries to modify a non-existant sheet then this will
-most likely fail.  No big deal.  </p></li>
+most likely fail.  No big deal.  </li>
 </ul>
      </section>
-                <section title="HSSF Logging facility">
-<p>HSSF now has a logging facility (using
- <link href="http://jakarta.apache.org/commons/logging.html">commons logging</link>)
-that will record massive amounts of debugging information. Its mostly
-useful to us hssf-developing geeks, but might be useful in tracking
-down problems.
-</p>
-<p>So Why use commons logging rather than log4j? Well the following discussion from
-the jakarta-general mailing list sums it up pretty well.  (Thanks Morgan)
-</p>
-<p><em>Here's the problem, as I see it.</em>
-</p>
-<p><em>Suppose Commons component A decides to adopt Log4J, Commons component B
-decides to adopt LogKit, and Commons component C adopts JDK1.4 logging.
-They will all minimally function with the right jars in the classpath.
-However you (the end-user) are left with maintaining configuration for 3
-different logging APIs, which is tedious at best.  When you take into
-account cool features like variable log levels, Log4J appenders and the
-like, you're pretty much guaranteed to swallow up useful configuration
-options because sophisticated configurations are too difficult to maintain
-over mutiple logging implementations.</em>
-</p>
-<p>
-<em>Contrarily, if all three Commons components use a logging facade, you can
-focus all your configuration efforts on one logging implementation.  Sure,
-there is a trade-off; you don't have access to all the features, and the
-interface between the facade and the implementation must be maintained.  But
-the benefits are not just political; they potentially make the end-users
-configuration much easier.</em>
-</p>
-<p><em>Even if all Commons components used the same logging implementation (Log4J
-for example), other projects in Jakarta-land may choose otherwise.  If you
-add enough Jakarta projects to your environment, you eventually end up with
-the scenario described above.  It's a worthwhile effort to attempt a logging
-solution that plays well with the Jakarta community at large.  I think in
-many cases the Commons Logging component can fill that role.</em>
-</p>
-<p>
-Refer to the commons logging package level javadoc for more information concerning how to
-<link href="http://jakarta.apache.org/commons/logging/api/index.html">configure commons logging.</link>
-</p>
+    <section title="Logging facility">
+        <p>Poi can dynamically select it's logging implementation. Poi trys to
+        create a logger using the System property named "org.apache.poi.util.POILogger".
+        Out of the box this can be set to one of three values:
+        </p>
+        <ul>
+           <li>org.apache.poi.util.CommonsLogger</li>
+           <li>org.apache.poi.util.NullLogger</li>
+           <li>org.apache.poi.util.SystemOutLogger</li>
+        </ul>
+        <p>
+        If the property is not defined or points to an invalid classthen the NullLogger is used.
+        </p>
+        <p>
+        Refer to the commons logging package level javadoc for more information concerning how to
+        <link href="http://jakarta.apache.org/commons/logging/api/index.html">configure commons logging.</link>
+        </p>
      </section>
-                <section title="HSSF Developer's tools">
+    <section title="HSSF Developer's Tools">
 
 <p>HSSF has a number of tools useful for developers to debug/develop
 stuff using HSSF (and more generally XLS files). We've already

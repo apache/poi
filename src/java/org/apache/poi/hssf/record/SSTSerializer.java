@@ -55,10 +55,8 @@
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.BinaryTree;
-import org.apache.poi.util.LittleEndianConsts;
 
 import java.util.List;
-import java.util.ArrayList;
 
 /**
  * This class handles serialization of SST records.  It utilizes the record processor
@@ -69,8 +67,10 @@ import java.util.ArrayList;
 class SSTSerializer
 {
 
-    private List recordLengths;
-    private BinaryTree strings;
+    // todo: make private again
+    List recordLengths;
+    BinaryTree strings;
+
     private int numStrings;
     private int numUniqueStrings;
     private SSTRecordHeader sstRecordHeader;
@@ -81,7 +81,7 @@ class SSTSerializer
         this.strings = strings;
         this.numStrings = numStrings;
         this.numUniqueStrings = numUniqueStrings;
-        this.sstRecordHeader = new SSTRecordHeader(numStrings, numUniqueStrings);
+        this.sstRecordHeader = new SSTRecordHeader( numStrings, numUniqueStrings );
     }
 
     /**
@@ -107,165 +107,24 @@ class SSTSerializer
         return record_size;
     }
 
-    private int calculateUnicodeSize()
+
+
+    // todo: make private again
+    /**
+     * Calculates the total unicode size for all the strings.
+     *
+     * @return the total size.
+     */
+    int calculateUnicodeSize()
     {
         int retval = 0;
 
         for ( int k = 0; k < strings.size(); k++ )
         {
-            retval += getUnicodeString(k).getRecordSize();
+            retval += getUnicodeString( k ).getRecordSize();
         }
         return retval;
     }
-
-    // we can probably simplify this later...this calculates the size
-    // w/o serializing but still is a bit slow
-    public int getRecordSize()
-    {
-        recordLengths = new ArrayList();
-        int retval = 0;
-        int unicodesize = calculateUnicodeSize();
-
-        if ( unicodesize > SSTRecord.MAX_DATA_SPACE )
-        {
-            retval = calcRecordSizesForLongStrings( unicodesize );
-        }
-        else
-        {
-            // short data: write one simple SST record
-            retval = SSTRecord.SST_RECORD_OVERHEAD + unicodesize;
-            recordLengths.add( new Integer( unicodesize ) );
-        }
-        return retval;
-    }
-
-    private int calcRecordSizesForLongStrings( int unicodesize )
-    {
-        int retval;
-        UnicodeString unistr = null;
-        int stringreminant = 0;
-        int unipos = 0;
-        boolean lastneedcontinue = false;
-        int stringbyteswritten = 0;
-        boolean finished = false;
-        boolean first_record = true;
-        int totalWritten = 0;
-
-        while ( !finished )
-        {
-            int record = 0;
-            int pos = 0;
-
-            if ( first_record )
-            {
-
-                // writing SST record
-                record = SSTRecord.MAX_RECORD_SIZE;
-                pos = 12;
-                first_record = false;
-                recordLengths.add( new Integer( record - SSTRecord.STD_RECORD_OVERHEAD ) );
-            }
-            else
-            {
-
-                // writing continue record
-                pos = 0;
-                int to_be_written = ( unicodesize - stringbyteswritten ) + ( lastneedcontinue ? 1 : 0 );
-                int size = Math.min( SSTRecord.MAX_RECORD_SIZE - SSTRecord.STD_RECORD_OVERHEAD, to_be_written );
-
-                if ( size == to_be_written )
-                {
-                    finished = true;
-                }
-                record = size + SSTRecord.STD_RECORD_OVERHEAD;
-                recordLengths.add( new Integer( size ) );
-                pos = 4;
-            }
-            if ( lastneedcontinue )
-            {
-                int available = SSTRecord.MAX_RECORD_SIZE - pos;
-
-                if ( stringreminant <= available )
-                {
-
-                    // write reminant
-                    stringbyteswritten += stringreminant - 1;
-                    pos += stringreminant;
-                    lastneedcontinue = false;
-                }
-                else
-                {
-
-                    // write as much of the remnant as possible
-                    int toBeWritten = unistr.maxBrokenLength( available );
-
-                    if ( available != toBeWritten )
-                    {
-                        int shortrecord = record - ( available - toBeWritten );
-                        recordLengths.set( recordLengths.size() - 1,
-                                new Integer( shortrecord - SSTRecord.STD_RECORD_OVERHEAD ) );
-                        record = shortrecord;
-                    }
-                    stringbyteswritten += toBeWritten - 1;
-                    pos += toBeWritten;
-                    stringreminant -= toBeWritten - 1;
-                    lastneedcontinue = true;
-                }
-            }
-            for ( ; unipos < strings.size(); unipos++ )
-            {
-                int available = SSTRecord.MAX_RECORD_SIZE - pos;
-                Integer intunipos = new Integer( unipos );
-
-                unistr = ( (UnicodeString) strings.get( intunipos ) );
-                if ( unistr.getRecordSize() <= available )
-                {
-                    stringbyteswritten += unistr.getRecordSize();
-                    pos += unistr.getRecordSize();
-                }
-                else
-                {
-                    if ( available >= SSTRecord.STRING_MINIMAL_OVERHEAD )
-                    {
-                        int toBeWritten =
-                                unistr.maxBrokenLength( available );
-
-                        stringbyteswritten += toBeWritten;
-                        stringreminant =
-                                ( unistr.getRecordSize() - toBeWritten )
-                                + LittleEndianConsts.BYTE_SIZE;
-                        if ( available != toBeWritten )
-                        {
-                            int shortrecord = record
-                                    - ( available - toBeWritten );
-
-                            recordLengths.set(
-                                    recordLengths.size() - 1,
-                                    new Integer(
-                                            shortrecord - SSTRecord.STD_RECORD_OVERHEAD ) );
-                            record = shortrecord;
-                        }
-                        lastneedcontinue = true;
-                        unipos++;
-                    }
-                    else
-                    {
-                        int shortrecord = record - available;
-
-                        recordLengths.set( recordLengths.size() - 1,
-                                new Integer( shortrecord - SSTRecord.STD_RECORD_OVERHEAD ) );
-                        record = shortrecord;
-                    }
-                    break;
-                }
-            }
-            totalWritten += record;
-        }
-        retval = totalWritten;
-
-        return retval;
-    }
-
 
     private void serializeSingleSSTRecord( byte[] data, int offset, int record_length_index )
     {
@@ -279,8 +138,8 @@ class SSTSerializer
         for ( int k = 0; k < strings.size(); k++ )
         {
 //            UnicodeString unistr = ( (UnicodeString) strings.get( new Integer( k ) ) );
-            System.arraycopy( getUnicodeString(k).serialize(), 0, data, pos + offset, getUnicodeString(k).getRecordSize() );
-            pos += getUnicodeString(k).getRecordSize();
+            System.arraycopy( getUnicodeString( k ).serialize(), 0, data, pos + offset, getUnicodeString( k ).getRecordSize() );
+            pos += getUnicodeString( k ).getRecordSize();
         }
     }
 
@@ -351,6 +210,11 @@ class SSTSerializer
     {
         Integer intunipos = new Integer( index );
         return ( (UnicodeString) strings.get( intunipos ) );
+    }
+
+    public int getRecordSize()
+    {
+        return new SSTRecordSizeCalculator(this).getRecordSize();
     }
 
 }

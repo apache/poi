@@ -52,71 +52,52 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.poi.util;
+package org.apache.poi.hssf.record;
 
-import junit.framework.TestCase;
-
-import java.io.IOException;
+import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianConsts;
 
 /**
- * @author Marc Johnson (mjohnson at apache dot org)
+ * Write out an SST header record.
+ *
  * @author Glen Stampoultzis (glens at apache.org)
- * @author Nicola Ken Barozzi (nicolaken at apache.org)
  */
-
-public class TestPOILogFactory
-        extends TestCase
+class SSTRecordHeader
 {
-    /**
-     * Creates new TestPOILogFactory
-     *
-     * @param name
-     */
+    int numStrings;
+    int numUniqueStrings;
 
-    public TestPOILogFactory( String name )
+    public SSTRecordHeader( int numStrings, int numUniqueStrings )
     {
-        super( name );
+        this.numStrings = numStrings;
+        this.numUniqueStrings = numUniqueStrings;
     }
 
     /**
-     * test log creation
+     * Writes out the SST record.  This consists of the sid, the record size, the number of
+     * strings and the number of unique strings.
      *
-     * @exception IOException
+     * @param data          The data buffer to write the header to.
+     * @param bufferIndex   The index into the data buffer where the header should be written.
+     * @param recSize       The number of records written.
+     *
+     * @return The bufer of bytes modified.
      */
-
-    public void testLog()
-            throws IOException
+    public int writeSSTHeader( byte[] data, int bufferIndex, int recSize )
     {
-        //NKB Testing only that logging classes use gives no exception
-        //    Since logging can be disabled, no checking of logging
-        //    output is done.
+        int offset = bufferIndex;
 
-        POILogger l1 = POILogFactory.getLogger( "org.apache.poi.hssf.test" );
-        POILogger l2 = POILogFactory.getLogger( "org.apache.poi.hdf.test" );
-
-        l1.log( POILogger.FATAL, "testing cat org.apache.poi.hssf.*:FATAL" );
-        l1.log( POILogger.ERROR, "testing cat org.apache.poi.hssf.*:ERROR" );
-        l1.log( POILogger.WARN, "testing cat org.apache.poi.hssf.*:WARN" );
-        l1.log( POILogger.INFO, "testing cat org.apache.poi.hssf.*:INFO" );
-        l1.log( POILogger.DEBUG, "testing cat org.apache.poi.hssf.*:DEBUG" );
-
-        l2.log( POILogger.FATAL, "testing cat org.apache.poi.hdf.*:FATAL" );
-        l2.log( POILogger.ERROR, "testing cat org.apache.poi.hdf.*:ERROR" );
-        l2.log( POILogger.WARN, "testing cat org.apache.poi.hdf.*:WARN" );
-        l2.log( POILogger.INFO, "testing cat org.apache.poi.hdf.*:INFO" );
-        l2.log( POILogger.DEBUG, "testing cat org.apache.poi.hdf.*:DEBUG" );
-
+        LittleEndian.putShort( data, offset, SSTRecord.sid );
+        offset += LittleEndianConsts.SHORT_SIZE;
+        LittleEndian.putShort( data, offset, (short) ( recSize ) );
+        offset += LittleEndianConsts.SHORT_SIZE;
+//        LittleEndian.putInt( data, offset, getNumStrings() );
+        LittleEndian.putInt( data, offset, numStrings );
+        offset += LittleEndianConsts.INT_SIZE;
+//        LittleEndian.putInt( data, offset, getNumUniqueStrings() );
+        LittleEndian.putInt( data, offset, numUniqueStrings );
+        offset += LittleEndianConsts.INT_SIZE;
+        return offset - bufferIndex;
     }
 
-    /**
-     * main method to run the unit tests
-     *
-     * @param ignored_args
-     */
-
-    public static void main( String[] ignored_args )
-    {
-        System.out.println( "Testing basic util.POILogFactory functionality" );
-        junit.textui.TestRunner.run( TestPOILogFactory.class );
-    }
 }
