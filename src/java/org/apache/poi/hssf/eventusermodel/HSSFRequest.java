@@ -53,7 +53,7 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.poi.hssf.eventmodel;
+package org.apache.poi.hssf.eventusermodel;
 
 import java.util.HashMap;
 import java.util.List;
