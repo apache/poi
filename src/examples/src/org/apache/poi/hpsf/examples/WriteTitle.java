@@ -54,19 +54,11 @@
  */
 package org.apache.poi.hpsf.examples;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 
-import org.apache.poi.hpsf.MutableProperty;
-import org.apache.poi.hpsf.MutablePropertySet;
-import org.apache.poi.hpsf.MutableSection;
-import org.apache.poi.hpsf.SummaryInformation;
-import org.apache.poi.hpsf.Variant;
-import org.apache.poi.hpsf.WritingNotSupportedException;
-import org.apache.poi.hpsf.wellknown.PropertyIDMap;
-import org.apache.poi.hpsf.wellknown.SectionIDMap;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.hpsf.*;
+import org.apache.poi.hpsf.wellknown.*;
+import org.apache.poi.poifs.filesystem.*;
 
 /**
  * <p>This class is a simple sample application showing how to create a property
@@ -99,7 +91,6 @@ public class WriteTitle
         }
 
         final String fileName = args[0];
-        final POIFSFileSystem poiFs = new POIFSFileSystem();
 
         /* Create a mutable property set. Initially it contains a single section
          * with no properties. */
@@ -121,6 +112,9 @@ public class WriteTitle
         p.setID(PropertyIDMap.PID_TITLE);
         p.setType(Variant.VT_LPWSTR);
         p.setValue("Sample title");
+
+        /* Create the POI file system the property set is to be written to. */
+        final POIFSFileSystem poiFs = new POIFSFileSystem();
 
         /* For writing the property set into a POI file system it has to be
          * handed over to the POIFS.createDocument() method as an input stream
