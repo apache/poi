@@ -182,6 +182,7 @@ public class HSSFCell
     //protected HSSFCell(Workbook book, Sheet sheet, short row, short col)
     protected HSSFCell(Workbook book, Sheet sheet, int row, short col)
     {
+        checkBounds(col);
         cellNum      = col;
         this.row     = row;
         cellStyle    = null;
@@ -221,6 +222,7 @@ public class HSSFCell
     protected HSSFCell(Workbook book, Sheet sheet, int row, short col,
                        int type)
     {
+        checkBounds(col);
         cellNum      = col;
         this.row     = row;
         cellType     = type;
@@ -952,5 +954,15 @@ public class HSSFCell
     protected CellValueRecordInterface getCellValueRecord()
     {
         return record;
+    }
+ 
+    /**
+     * @throws RuntimeException if the bounds are exceeded.
+     */
+    private void checkBounds(int cellNum) {
+      if (cellNum > 255) {
+          throw new RuntimeException("You cannot have more than 255 columns "+
+                    "in a given row (IV).  Because Excel can't handle it");
+      }  
     }
 }
