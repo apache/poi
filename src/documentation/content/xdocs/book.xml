@@ -6,6 +6,10 @@
     copyright="@year@ POI Project"
     xmlns:xlink="http://www.w3.org/1999/xlink">
 
+    <menu label="Apache POI">
+        <menu-item label="TOP" href="index.html"/>
+    </menu>
+
     <menu label="Marketing">
         <menu-item label="Case Studies" href="casestudies.html"/>
     </menu>
