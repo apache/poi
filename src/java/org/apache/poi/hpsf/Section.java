@@ -142,9 +142,12 @@ public class Section
 
 
     /**
+     * FIXME (2): Get rid of this! The property count is implicitly available as
+     * the length of the "properties" array.
+     * 
      * @see #getPropertyCount
      */
-    private int propertyCount;
+    protected int propertyCount;
 
 
     /**
@@ -162,7 +165,7 @@ public class Section
     /**
      * @see #getProperties
      */
-    private Property[] properties;
+    protected Property[] properties;
 
 
     /**
@@ -173,16 +176,6 @@ public class Section
     public Property[] getProperties()
     {
         return properties;
-    }
-
-    /**
-     * <p>Sets this section's properties.</p>
-     *
-     * @param properties This section's new properties.
-     */
-    protected void setProperties(final Property[] properties)
-    {
-        this.properties = properties;
     }
 
 
@@ -383,7 +376,7 @@ public class Section
      *
      * @return The property's value
      */
-    public Object getProperty(final int id)
+    public Object getProperty(final long id)
     {
         wasNull = false;
         for (int i = 0; i < properties.length; i++)
@@ -406,9 +399,9 @@ public class Section
      *
      * @return The property's value
      */
-    protected int getPropertyIntValue(final int id)
+    protected int getPropertyIntValue(final long id)
     {
-        final Integer i = (Integer) getProperty(id);
+        final Long i = (Long) getProperty(id);
         if (i != null)
             return i.intValue();
         else

@@ -209,6 +209,9 @@ public class PropertySet
 
     /**
      * <p>The number of sections in this {@link PropertySet}.</p>
+     * 
+     * <p>FIXME (2): Get rid of this! The number of sections is implicitly
+     * available.</p>
      */
     protected int sectionCount;
 
@@ -474,7 +477,7 @@ public class PropertySet
          * Summary Information stream has 2. Everything else is a rare
          * exception and is no longer fostered by Microsoft.
          */
-        sections = new ArrayList(2);
+        sections = new ArrayList(sectionCount);
 
         /*
          * Loop over the section descriptor array. Each descriptor

@@ -272,7 +272,7 @@ public class TestBasic extends TestCase
         }
         catch (Throwable t)
         {
-            final String s = Util.toString(t);
+            final String s = org.apache.poi.hpsf.Util.toString(t);
             fail(s);
         }
     }

@@ -70,14 +70,11 @@ import org.apache.poi.util.LittleEndianConsts;
  * <p>Please be aware that this class' functionality will be merged into the
  * {@link Section} class at a later time, so the API will change.</p>
  *
- * @author Rainer Klute <a
- * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
  * @version $Id$
  * @since 2002-02-20
  */
 public class MutableSection extends Section
 {
-
     /**
      * <p>If the "dirty" flag is true, the section's size must be
      * (re-)calculated before the section is written.</p>
@@ -96,6 +93,15 @@ public class MutableSection extends Section
 
 
     /**
+     * <p>Contains the bytes making out the section. This byte array is
+     * established when the section's size is calculated and can be reused
+     * later. It is valid only if the "dirty" flag is false.</p>
+     */
+    private byte[] sectionBytes;
+
+
+
+    /**
      * <p>Creates an empty mutable section.</p>
      */
     public MutableSection()
@@ -104,6 +110,26 @@ public class MutableSection extends Section
         formatID = null;
         offset = -1;
         preprops = new LinkedList();
+    }
+
+
+
+    /**
+     * <p>Constructs a <code>MutableSection</code> by doing a deep copy of an 
+     * existing <code>Section</code>. All nested <code>Property</code> 
+     * instances, will be their mutable counterparts in the new
+     * <code>MutableSection</code>.</p>
+     * 
+     * @param s The section set to copy
+     */
+    public MutableSection(final Section s)
+    {
+        setFormatID(s.getFormatID());
+        final Property[] pa = s.getProperties();
+        final MutableProperty[] mpa = new MutableProperty[pa.length];
+        for (int i = 0; i < pa.length; i++)
+            mpa[i] = new MutableProperty(pa[i]);
+        setProperties(mpa);
     }
 
 
@@ -146,10 +172,12 @@ public class MutableSection extends Section
      */
     public void setProperties(final Property[] properties)
     {
+        this.properties = properties;
         preprops = new LinkedList();
         for (int i = 0; i < properties.length; i++)
             preprops.add(properties[i]);
         dirty = true;
+        propertyCount = properties.length;
     }
 
 
@@ -164,7 +192,7 @@ public class MutableSection extends Section
      * @param value The property's value. It will be written as a Unicode
      * string.
      *
-     * @see #setProperty(int, int, Object)
+     * @see #setProperty(int, long, Object)
      * @see #getProperty
      */
     public void setProperty(final int id, final String value)
@@ -186,7 +214,7 @@ public class MutableSection extends Section
      * @param variantType The property's variant type.
      * @param value The property's value.
      *
-     * @see #setProperty(int, Object)
+     * @see #setProperty(int, String)
      * @see #getProperty
      * @see Variant
      */
@@ -211,7 +239,7 @@ public class MutableSection extends Section
      *
      * @param p The property to be added to the section
      *
-     * @see #setProperty(int, int, Object)
+     * @see #setProperty(int, long, Object)
      * @see #setProperty(int, String)
      * @see #getProperty
      * @see Variant
@@ -227,6 +255,7 @@ public class MutableSection extends Section
             }
         preprops.add(p);
         dirty = true;
+        propertyCount = preprops.size();
     }
 
 
@@ -238,7 +267,7 @@ public class MutableSection extends Section
      * @param id The property's ID
      * @param value The property's value
      *
-     * @see #setProperty(int, int, Object)
+     * @see #setProperty(int, long, Object)
      * @see #getProperty
      * @see Variant
      */
@@ -258,8 +287,15 @@ public class MutableSection extends Section
     {
         if (dirty)
         {
-            size = calcSize();
-            dirty = false;
+            try
+            {
+                size = calcSize();
+                dirty = false;
+            }
+            catch (Exception ex)
+            {
+                throw new HPSFRuntimeException(ex);
+            }
         }
         return size;
     }
@@ -273,58 +309,13 @@ public class MutableSection extends Section
      *
      * @return the section's length in bytes.
      */
-    private int calcSize()
+    private int calcSize() throws WritingNotSupportedException, IOException 
     {
-        int length = 0;
-
-        /* The section header. */
-        length += LittleEndianConsts.INT_SIZE * 2;
-
-        /* The length of the property list. */
-        Property[] psa = getProperties();
-        if (psa == null)
-            psa = new MutableProperty[0];
-        length += psa.length * LittleEndianConsts.INT_SIZE * 3;
-
-        /* The sum of the lengths of the properties - it is calculated by simply
-         * writing the properties to a temporary byte array output stream: */
-        final ByteArrayOutputStream b = new ByteArrayOutputStream();
-        for (int i = 0; i < psa.length; i++)
-        {
-            final MutableProperty mp = new MutableProperty();
-            mp.setID(psa[i].getID());
-            mp.setType(psa[i].getType());
-            mp.setValue(psa[i].getValue());
-            try
-            {
-                length += mp.write(b);
-            }
-            catch (WritingNotSupportedException ex)
-            {
-                /* It was not possible to write the property, not even as a
-                 * byte array. We cannot do anything about that. Instead of the
-                 * property we insert an empty one into the stream. */
-                mp.setType(Variant.VT_EMPTY);
-                mp.setValue(null);
-                try
-                {
-                    length += mp.write(b);
-                }
-                catch (Exception ex2)
-                {
-                    /* Even writing an empty property went awfully wrong.
-                     * Let's give up. */
-                    throw new HPSFRuntimeException(ex2);
-                }
-            }
-            catch (IOException ex)
-            {
-                /* Should never occur. */
-                throw new HPSFRuntimeException(ex);
-            }
-        }
-
-        return length;
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
+        write(out);
+        out.close();
+        sectionBytes = out.toByteArray();
+        return sectionBytes.length;
     }
 
 
@@ -337,19 +328,24 @@ public class MutableSection extends Section
      * the section as such. The two former are appended to the latter when they
      * have received all their data.</p>
      *
-     * @param out The stream to write into
-     * @param offset The offset from the beginning of the property set
-     * stream this section begins at
+     * @param out The stream to write into.
      *
-     * @return The offset of the first byte following this section in
-     * the property set stream.
+     * @return The number of bytes written, i.e. the section's size.
      * @exception IOException if an I/O error occurs
      * @exception WritingNotSupportedException if HPSF does not yet support
      * writing a property's variant type.
      */
-    public int write(final OutputStream out, final int offset)
+    public int write(final OutputStream out)
         throws WritingNotSupportedException, IOException
     {
+        /* Check whether we have already generated the bytes making out the
+         * section. */
+        if (!dirty && sectionBytes != null)
+        {
+            out.write(sectionBytes);
+            return sectionBytes.length;
+        }
+
         /* The properties are written to this stream. */
         final ByteArrayOutputStream propertyStream =
             new ByteArrayOutputStream();
@@ -364,7 +360,8 @@ public class MutableSection extends Section
         int position = 0;
 
         /* Increase the position variable by the size of the property list so
-         * that it points to the beginning of the properties themselves. */
+         * that it points behind the property list and to the beginning of the
+         * properties themselves. */
         position += 2 * LittleEndian.INT_SIZE +
                     getPropertyCount() * 2 * LittleEndian.INT_SIZE;
 
@@ -388,13 +385,22 @@ public class MutableSection extends Section
         /* Write the section: */
         byte[] pb1 = propertyListStream.toByteArray();
         byte[] pb2 = propertyStream.toByteArray();
-        TypeWriter.writeToStream(out, LittleEndian.INT_SIZE * 2 + pb1.length +
-                                 pb2.length);
+        
+        /* Write the section's length: */
+        TypeWriter.writeToStream(out, LittleEndian.INT_SIZE * 2 +
+                                      pb1.length + pb2.length);
+        
+        /* Write the section's number of properties: */
         TypeWriter.writeToStream(out, getPropertyCount());
+        
+        /* Write the property list: */
         out.write(pb1);
+        
+        /* Write the properties: */
         out.write(pb2);
 
-        return offset + position;
+        int streamLength = LittleEndian.INT_SIZE * 2 + pb1.length + pb2.length;
+        return streamLength;
     }
 
 

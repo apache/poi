@@ -54,6 +54,9 @@
  */
 package org.apache.poi.hpsf;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Collection;
 import java.util.Date;
 
@@ -335,6 +338,38 @@ public class Util
     public static char[] pad4(final String s)
     {
         return pad4(s.toCharArray());
+    }
+
+
+
+    /**
+     * <p>Returns a textual representation of a {@link Throwable}, including a
+     * stacktrace.</p>
+     * 
+     * @param t The {@link Throwable}
+     * 
+     * @return a string containing the output of a call to
+     * <code>t.printStacktrace()</code>.
+     */
+    public static String toString(final Throwable t)
+    {
+        final StringWriter sw = new StringWriter();
+        final PrintWriter pw = new PrintWriter(sw);
+        t.printStackTrace(pw);
+        pw.close();
+        try
+        {
+            sw.close();
+            return sw.toString();
+        }
+        catch (IOException e)
+        {
+            final StringBuffer b = new StringBuffer(t.getMessage());
+            b.append("\n");
+            b.append("Could not create a stacktrace. Reason: ");
+            b.append(e.getMessage());
+            return b.toString();
+        }
     }
 
 }

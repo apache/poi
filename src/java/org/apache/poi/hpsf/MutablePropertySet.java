@@ -59,6 +59,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
@@ -105,6 +106,30 @@ public class MutablePropertySet extends PropertySet
          * one section it is added right here. */
         sections = new LinkedList();
         sections.add(new MutableSection());
+    }
+
+
+
+    /**
+     * <p>Constructs a <code>MutablePropertySet</code> by doing a deep copy of
+     * an existing <code>PropertySet</code>. All nested elements, i.e. 
+     * <code>Section</code>s and <code>Property</code> instances, will be their
+     * mutable counterparts in the new <code>MutablePropertySet</code>.</p>
+     * 
+     * @param ps The property set to copy
+     */
+    public MutablePropertySet(final PropertySet ps)
+    {
+        byteOrder = ps.getByteOrder();
+        format = ps.getFormat();
+        osVersion = ps.getOSVersion();
+        classID = new ClassID(ps.getClassID().getBytes(), 0);
+        clearSections();
+        for (final Iterator i = ps.getSections().iterator(); i.hasNext();)
+        {
+            final MutableSection s = new MutableSection((Section) (i.next()));
+            addSection(s);
+        }
     }
 
 
@@ -178,6 +203,7 @@ public class MutablePropertySet extends PropertySet
     public void clearSections()
     {
         sections = null;
+        sectionCount = 0;
     }
 
 
@@ -194,6 +220,7 @@ public class MutablePropertySet extends PropertySet
         if (sections == null)
             sections = new LinkedList();
         sections.add(section);
+        sectionCount = sections.size();
     }
 
 
@@ -223,13 +250,16 @@ public class MutablePropertySet extends PropertySet
         int offset = OFFSET_HEADER;
 
         /* Write the section list, i.e. the references to the sections. Each
-         * entry in the section list consist of a class ID and the offset to the
-         * section's begin. */
+         * entry in the section list consist of the section's class ID and the
+         * section's offset relative to the beginning of the stream. */
         offset += nrSections * (ClassID.LENGTH + LittleEndian.INT_SIZE);
         final int sectionsBegin = offset;
         for (final ListIterator i = sections.listIterator(); i.hasNext();)
         {
             final MutableSection s = (MutableSection) i.next();
+            final ClassID formatID = s.getFormatID();
+            if (formatID == null)
+                throw new NoFormatIDException();
             length += TypeWriter.writeToStream(out, s.getFormatID());
             length += TypeWriter.writeUIntToStream(out, offset);
             offset += s.getSize();
@@ -240,7 +270,7 @@ public class MutablePropertySet extends PropertySet
         for (final ListIterator i = sections.listIterator(); i.hasNext();)
         {
             final MutableSection s = (MutableSection) i.next();
-            offset = s.write(out, offset);
+            offset += s.write(out);
         }
     }
 
