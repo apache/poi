@@ -3,7 +3,7 @@
 
 <document>
     <header>
-        <title>Jakarta POI - Case Studies</title>
+        <title>Jakarta Poi - Case Studies</title>
         <authors>
             <person id="AO" name="Andrew C. Oliver" email="acoliver@apache.org"/>
             <person id="CR" name="Cameron Riley" email="crileyNO@SPAMekmail.com"/>
@@ -26,21 +26,21 @@
             <title>Submitting a Case Study</title>
             <p>
                 We are actively seeking case studies for this page (after all it
-                just started).  Andy Oliver (acoliver at apache dot org) has
+                just started).  Andrew C. Oliver (acoliver at apache dot org) has
                 agreed to have a few T-Shirts printed with the POI logo (once its
                 chosen) for the first
                 few best submissions.  To submit a case study, either
                 <link href="http://jakarta.apache.org/poi/getinvolved/index.html">
-                    submit a patch for this page</link> (preferred) or email it to the
-                <link href="http://jakarta.apache.org/site/mail.html">mailing list
-                </link>.
+                    submit a patch for this page</link> or email it to the
+                <link href="http://jakarta.apache.org/site/mail2.html#poi">mailing list
+                </link> (with [PATCH] prefixed subject, please).
             </p>
         </section>
         <section>
             <title>Case Studies</title>
               <section><title>Sunshine Systems</title>
                <p>
-           <link href="http://www.sunshinesys.com">Sunshine Systems</link> deveveloped a
+           <link href="http://www.sunshinesys.com/">Sunshine Systems</link> deveveloped a
             POI based reporting solution for a price optimization software package which
             is used by major retail chains.
          </p>
@@ -82,11 +82,11 @@ format,
                 <title>Bank of Lithuania</title>
                 <p>
                     The
-                    <link href="http://www.lbank.lt">Bank of Lithuania</link>
+                    <link href="http://www.lbank.lt/">Bank of Lithuania</link>
                     reports financial statistical data to Excel format using the
-                    <link href="http://jakarta.apache.org/poi">Jakarta POI</link>
+                    <link href="http://jakarta.apache.org/poi/">Jakarta POI</link>
                     project's
-                    <link href="http://jakarta.apache.org/poi/hssf">
+                    <link href="http://jakarta.apache.org/poi/hssf/">
                         HSSF</link> API.  The system is based on Oracle JServer and
                     utilizes a Java stored procedure that outputs to XLS format
                     using the HSSF API.  - Arian Lashkov (alaskov at lbank.lt)
@@ -95,7 +95,7 @@ format,
             <section>
                 <title>Bit Tracker by Tracker Inc., and ThinkVirtual</title>
                 <p>
-                    Bit Tracker (http://www.bittracker.com) is the world's first and only web-based drill bit tracking system to manage your company's critical bit information and use that data to its full potential. It manages all bit related data, including their usage, locations, how they were used, and results such as rate of penetration and dull grade after use.  This data needs to be available in Excel format for backwards compatibility and other uses in the industry.  After using CSV and HTML formats, we needed something better for creating the spreadsheets and POI is the answer.  It works great and was easy to implement.  Kudos to the POI team.
+                    Bit Tracker (http://www.bittracker.com/) is the world's first and only web-based drill bit tracking system to manage your company's critical bit information and use that data to its full potential. It manages all bit related data, including their usage, locations, how they were used, and results such as rate of penetration and dull grade after use.  This data needs to be available in Excel format for backwards compatibility and other uses in the industry.  After using CSV and HTML formats, we needed something better for creating the spreadsheets and POI is the answer.  It works great and was easy to implement.  Kudos to the POI team.
                 </p>
                 <p>
                     Travis Reeder (travis at thinkvirtual dot com)
@@ -125,7 +125,7 @@ format,
             <section>
                 <title>ClickFind</title>
                 <p>
-                    <link href="http://www.clickfind.com">ClickFind Inc.</link> used the POI
+                    <link href="http://www.clickfind.com/">ClickFind Inc.</link> used the POI
                     projects HSSF API to provide their medical
                     research clients with an Excel export from their electronic data
                     collection web service Data Collector 3.0.  The POI team's assistance
@@ -140,11 +140,11 @@ format,
             <section>
                 <title>IKAN Software NV</title>
                     <p>In addition to Change Management and Database Modelling, IKAN Software NV
-                        (http://www.ikan.be) develops and supports its own ETL
+                        (http://www.ikan.be/) develops and supports its own ETL
                         (Extract/Transform/Load) tools.</p>
 
                     <p>IKAN's latest product is this domain is called ETL4ALL
-                        (http://www.ikan.be/etl4all). ETL4ALL is an open source tool
+                        (http://www.ikan.be/etl4all/). ETL4ALL is an open source tool
                         allowing data transfer from and to virtually any data source.  Users can
                         combine and examine data stored in relational databases, XML databases, PDF
                         files, EDI, CSV files, etc.
