@@ -635,6 +635,10 @@ public class BiffViewer
                 retval = new FormulaRecord(rectype, size, data);
                 break;
                 
+            case SheetPropertiesRecord.sid:
+                retval = new FormulaRecord(rectype, size, data);
+                break;
+
 
             default :
                 retval = new UnknownRecord(rectype, size, data);
