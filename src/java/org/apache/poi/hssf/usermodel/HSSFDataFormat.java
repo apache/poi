@@ -62,6 +62,7 @@ package org.apache.poi.hssf.usermodel;
 import java.util.Vector;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Iterator;
 
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.Record;
@@ -133,6 +134,15 @@ public class HSSFDataFormat
     public HSSFDataFormat(Workbook workbook) {
 	this.workbook = workbook;
 	if (builtinFormats == null) populateBuiltinFormats();
+	Iterator i = workbook.getFormats().iterator();
+ 	while (i.hasNext()) {
+ 	    FormatRecord r = (FormatRecord)i.next();
+ 	    if (formats.size() < r.getIndexCode() + 1) {
+ 		formats.setSize(r.getIndexCode() + 1);
+ 	    }
+ 	    formats.set(r.getIndexCode(), r.getFormatString());
+ 	}
+
     }
 
     private static synchronized void populateBuiltinFormats()
