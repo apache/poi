@@ -9,33 +9,44 @@ package org.apache.poi.hssf.record.formula;
 
 import java.util.List;
 /**
- * DUMMY DUMMY DUMMY
- * This class exists only becoz i dont know how to handle functions in formula's properly
- * to be used only for testing my parser. 
+ * This class provides functions with variable arguments.  
  * @author  aviks
+ * @author Andrew C. Oliver (acoliver at apache dot org)
  * @version 
  */
 public class FunctionPtg extends OperationPtg {
-    private String name;
-    private int numOperands;
+    public final static short sid  = 0x22;
+    private final static int  SIZE = 2;    
+    
+    private byte field_1_num_args;
+    private byte field_2_fnc_index;
+    
+    //private String name;
+    //private int numOperands;
     /** Creates new DummyFunctionPtg */
     public FunctionPtg() {
     }
     
-    public FunctionPtg(String pName, int pNumOperands) {
-        name=pName;
-        numOperands = pNumOperands;
+    public FunctionPtg(String pName, byte pNumOperands) {
+        field_1_num_args = pNumOperands;
+        field_2_fnc_index = lookupIndex(pName);
+        
     }
    
     public int getType() {
         return -1;
-    }
+    }   
     
     public int getNumberOfOperands() {
-        return numOperands;
+        return field_1_num_args;
     }
+    
+    public int getFunctionIndex() {
+        return field_2_fnc_index;
+    }
+    
     public String getName() {
-        return name;
+        return lookupName(field_2_fnc_index);
     }
     
     public String toFormulaString() {
@@ -46,7 +57,7 @@ public class FunctionPtg extends OperationPtg {
         StringBuffer buf = new StringBuffer();
         buf.append(getName()+"(");
         for (int i=0;i<operands.length;i++) {
-            buf.append(operands[i].toFormulaString());
+            buf.append(operands[i].toFormulaString()).append(',');
         }
         buf.append(")");
         return buf.toString();
@@ -68,13 +79,21 @@ public class FunctionPtg extends OperationPtg {
     
     
     public void writeBytes(byte[] array, int offset) {
+        array[offset]=field_1_num_args;
+        array[offset]=field_2_fnc_index;
     }
     
     public int getSize() {
-        return 0;
+        return SIZE;
     }
     
-    public void manipulate(List source, List results, int pos) {
+    private String lookupName(byte index) {
+        return "SUM"; //for now always return "SUM"
     }
+    
+    private byte lookupIndex(String name) {
+        return 4; //for now just return SUM everytime...
+    }
+    
   
 }

@@ -244,7 +244,7 @@ public class FormulaParser {
             int numArgs = Arguments(); 
             Match(')');
             //this is the end of the function
-            tokens.add(new DummyFunctionPtg(name,numArgs));
+            tokens.add(new FunctionPtg(name,(byte)numArgs));
         } else if (Look == ':') { // this is a AreaReference
             String first = name;
             GetChar();
