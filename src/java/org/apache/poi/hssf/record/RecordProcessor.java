@@ -156,5 +156,10 @@ class RecordProcessor
         recordOffset += amount;
         available -= amount;
     }
+
+    public int getRecordOffset()
+    {
+        return recordOffset;
+    }
 }
 
