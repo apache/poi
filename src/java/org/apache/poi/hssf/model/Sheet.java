@@ -482,7 +482,7 @@ public class Sheet implements Model
     public MergeCellsRecord.MergedRegion getMergedRegionAt(int index)
     {
         //safety checks
-        if (index < numMergedRegions || mergedRecords.size() == 0)
+        if (index >= numMergedRegions || mergedRecords.size() == 0)
             return null;
             
         int pos = 0;
