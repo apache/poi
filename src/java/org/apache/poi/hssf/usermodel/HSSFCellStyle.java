@@ -793,7 +793,7 @@ public class HSSFCellStyle
      * other values
      *
      * @see #NO_FILL
-     * @see #SOLID_FILL
+     * @see #SOLID_FOREGROUND
      * @see #FINE_DOTS
      * @see #ALT_BARS
      * @see #SPARSE_DOTS
@@ -880,4 +880,5 @@ public class HSSFCellStyle
     {
         return format.getFillForeground();
     }
+
 }
