@@ -6,9 +6,18 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.apache.poi.hssf.record.BOFRecord;
+import org.apache.poi.hssf.record.BlankRecord;
 import org.apache.poi.hssf.record.ColumnInfoRecord;
+import org.apache.poi.hssf.record.EOFRecord;
+import org.apache.poi.hssf.record.FormulaRecord;
+import org.apache.poi.hssf.record.LabelSSTRecord;
 import org.apache.poi.hssf.record.RowRecord;
+import org.apache.poi.hssf.record.SharedFormulaRecord;
 import org.apache.poi.hssf.record.StringRecord;
+import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
+import org.apache.poi.hssf.record.aggregates.ValueRecordsAggregate;
+import org.apache.poi.hssf.record.formula.ExpPtg;
 
 /**
  * @author Tony Poppleton
@@ -147,6 +156,80 @@ public class SheetTest extends TestCase
 		
 	}
 
+	/**
+	 * Make sure that a sheet with the sharedformula works when cloned, it used to not fail
+	 *
+	 */
+	public void testSharedFormulaClone() {
+		Sheet sheet;
+		List records = new ArrayList();
+		
+		FormulaRecord formula = new FormulaRecord();
+		byte[] array = {(byte)0,(byte)0,(byte)0,(byte)0,(byte)0};
+		ExpPtg expPtg = new ExpPtg(array, 0);
+		//an empty expptg will not be cloned
+		
+		formula.setExpressionLength((short)5);
+		formula.pushExpressionToken(expPtg);
+		
+		records.add(new RowRecord());
+		records.add(formula);	
+		records.add(new SharedFormulaRecord());
+		
+		
+		sheet = Sheet.createSheet(records, 0);
+		
+		sheet.cloneSheet();
+		
+	}
+
+
+	/**
+	 * FormulaRecordAggregates within blanks/values cause values afterwards to not be aggregated.
+	 * This usually occurs during clones 
+	 *
+	 */
+	public void testValueAggregateWithSharedFormulas() {
+		Sheet sheet;
+		List records = new ArrayList();
+		
+		FormulaRecord formula = new FormulaRecord();
+		StringRecord stringRecord = new StringRecord();
+		FormulaRecordAggregate formulaAggregate = new FormulaRecordAggregate(formula, stringRecord);
+		
+		formula.setExpressionLength((short)5);
+		formula.pushExpressionToken(new ExpPtg());
+		BlankRecord blank = new BlankRecord();
+		blank.setColumn((short)0);
+		blank.setRow(1);
+		
+		records.add(new BOFRecord());
+		records.add(new RowRecord());
+		
+		blank.setColumn((short)0);
+		blank.setRow(1);
+		
+		records.add(blank);
+		records.add(new LabelSSTRecord());
+		records.add(formula);	
+		records.add(new SharedFormulaRecord());
+		records.add(formulaAggregate);
+		
+		blank = new BlankRecord();		
+		blank.setColumn((short)0);
+		blank.setRow(2);
+
+		
+		records.add(blank);
+		records.add(new EOFRecord());
+		
+		sheet = Sheet.createSheet(records, 0);
+		ValueRecordsAggregate valueAggregate = sheet.cells;
+		
+		assertEquals("Aggregated cells not correct, the blank record following sharedformula is not here", 3, valueAggregate.getPhysicalNumberOfCells());		
+		
+		
+	}
 
 	public static void main(String [] args) {
 		System.out
