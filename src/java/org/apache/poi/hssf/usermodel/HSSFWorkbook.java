@@ -754,7 +754,8 @@ public class HSSFWorkbook
 
     public byte[] getBytes()
     {
-        log.log(DEBUG, "HSSFWorkbook.getBytes()");
+        if (log.check( POILogger.DEBUG ))
+            log.log(DEBUG, "HSSFWorkbook.getBytes()");
         int wbsize = workbook.getSize();
 
         // log.debug("REMOVEME: old sizing method "+workbook.serialize().length);

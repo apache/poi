@@ -121,8 +121,9 @@ public class Workbook implements Model {
      * @return Workbook object
      */
     public static Workbook createWorkbook(List recs) {
-        log.log(DEBUG, "Workbook (readfile) created with reclen=",
-        new Integer(recs.size()));
+        if (log.check( POILogger.DEBUG ))
+            log.log(DEBUG, "Workbook (readfile) created with reclen=",
+                    new Integer(recs.size()));
         Workbook  retval  = new Workbook();
         ArrayList records = new ArrayList(recs.size() / 3);
 
@@ -131,85 +132,100 @@ public class Workbook implements Model {
 
             if (rec.getSid() == EOFRecord.sid) {
                 records.add(rec);
-                log.log(DEBUG, "found workbook eof record at " + k);
+                if (log.check( POILogger.DEBUG ))
+                    log.log(DEBUG, "found workbook eof record at " + k);
                 break;
             }
             switch (rec.getSid()) {
 
                 case BoundSheetRecord.sid :
-                    log.log(DEBUG, "found boundsheet record at " + k);
+                    if (log.check( POILogger.DEBUG ))
+                        log.log(DEBUG, "found boundsheet record at " + k);
                     retval.boundsheets.add(rec);
                     retval.records.setBspos( k );
                     break;
 
                 case SSTRecord.sid :
-                    log.log(DEBUG, "found sst record at " + k);
+                    if (log.check( POILogger.DEBUG ))
+                        log.log(DEBUG, "found sst record at " + k);
                     retval.sst = ( SSTRecord ) rec;
                     break;
 
                 case FontRecord.sid :
-                    log.log(DEBUG, "found font record at " + k);
+                    if (log.check( POILogger.DEBUG ))
+                        log.log(DEBUG, "found font record at " + k);
                     retval.records.setFontpos( k );
                     retval.numfonts++;
                     break;
 
                 case ExtendedFormatRecord.sid :
-                    log.log(DEBUG, "found XF record at " + k);
+                    if (log.check( POILogger.DEBUG ))
+                        log.log(DEBUG, "found XF record at " + k);
                     retval.records.setXfpos( k );
                     retval.numxfs++;
                     break;
 
                 case TabIdRecord.sid :
-                    log.log(DEBUG, "found tabid record at " + k);
+                    if (log.check( POILogger.DEBUG ))
+                        log.log(DEBUG, "found tabid record at " + k);
                     retval.records.setTabpos( k );
                     break;
 
                 case ProtectRecord.sid :
-                    log.log(DEBUG, "found protect record at " + k);
+                    if (log.check( POILogger.DEBUG ))
+                        log.log(DEBUG, "found protect record at " + k);
                     retval.records.setProtpos( k );
                     break;
 
                 case BackupRecord.sid :
-                    log.log(DEBUG, "found backup record at " + k);
+                    if (log.check( POILogger.DEBUG ))
+                        log.log(DEBUG, "found backup record at " + k);
                     retval.records.setBackuppos( k );
                     break;
                 case ExternSheetRecord.sid :
-                    log.log(DEBUG, "found extern sheet record at " + k);
+                    if (log.check( POILogger.DEBUG ))
+                        log.log(DEBUG, "found extern sheet record at " + k);
                     retval.externSheet = ( ExternSheetRecord ) rec;
                     break;
                 case NameRecord.sid :
-                    log.log(DEBUG, "found name record at " + k);
+                    if (log.check( POILogger.DEBUG ))
+                        log.log(DEBUG, "found name record at " + k);
                     retval.names.add(rec);
-//                    retval.records.namepos = k;
+                    //                    retval.records.namepos = k;
                     break;
                 case SupBookRecord.sid :
-                    log.log(DEBUG, "found SupBook record at " + k);
-//                    retval.records.supbookpos = k;
+                    if (log.check( POILogger.DEBUG ))
+                        log.log(DEBUG, "found SupBook record at " + k);
+                    //                    retval.records.supbookpos = k;
                     break;
-	        case FormatRecord.sid :
-                log.log(DEBUG, "found format record at " + k);
-                retval.formats.add(rec);
-                retval.maxformatid = retval.maxformatid >= ((FormatRecord)rec).getIndexCode() ? retval.maxformatid : ((FormatRecord)rec).getIndexCode();
-		    break;
+                case FormatRecord.sid :
+                    if (log.check( POILogger.DEBUG ))
+                        log.log(DEBUG, "found format record at " + k);
+                    retval.formats.add(rec);
+                    retval.maxformatid = retval.maxformatid >= ((FormatRecord)rec).getIndexCode() ? retval.maxformatid : ((FormatRecord)rec).getIndexCode();
+                    break;
                 case DateWindow1904Record.sid :
-                    log.log(DEBUG, "found datewindow1904 record at " + k);
+                    if (log.check( POILogger.DEBUG ))
+                        log.log(DEBUG, "found datewindow1904 record at " + k);
                     retval.uses1904datewindowing = ((DateWindow1904Record)rec).getWindowing() == 1;
                     break;
                 case PaletteRecord.sid:
-                    log.log(DEBUG, "found palette record at " + k);
+                    if (log.check( POILogger.DEBUG ))
+                        log.log(DEBUG, "found palette record at " + k);
                     retval.records.setPalettepos( k );
                 default :
             }
             records.add(rec);
         }
         //What if we dont have any ranges and supbooks
-//        if (retval.records.supbookpos == 0) {
-//            retval.records.supbookpos = retval.records.bspos + 1;
-//            retval.records.namepos    = retval.records.supbookpos + 1;
-//        }
+        //        if (retval.records.supbookpos == 0) {
+        //            retval.records.supbookpos = retval.records.bspos + 1;
+        //            retval.records.namepos    = retval.records.supbookpos + 1;
+        //        }
 
         retval.records.setRecords(records);
-        log.log(DEBUG, "exit create workbook from existing file function");
+        if (log.check( POILogger.DEBUG ))
+            log.log(DEBUG, "exit create workbook from existing file function");
         return retval;
     }
 
@@ -219,7 +235,8 @@ public class Workbook implements Model {
      */
     public static Workbook createWorkbook()
     {
-        log.log( DEBUG, "creating new workbook from scratch" );
+        if (log.check( POILogger.DEBUG ))
+            log.log( DEBUG, "creating new workbook from scratch" );
         Workbook retval = new Workbook();
         ArrayList records = new ArrayList( 30 );
         ArrayList formats = new ArrayList( 8 );
@@ -295,7 +312,8 @@ public class Workbook implements Model {
 
         records.add( retval.createEOF() );
         retval.records.setRecords(records);
-        log.log( DEBUG, "exit create new workbook from scratch" );
+        if (log.check( POILogger.DEBUG ))
+            log.log( DEBUG, "exit create new workbook from scratch" );
         return retval;
     }
 
@@ -402,8 +420,9 @@ public class Workbook implements Model {
      */
 
     public void setSheetBof(int sheetnum, int pos) {
-        log.log(DEBUG, "setting bof for sheetnum =", new Integer(sheetnum),
-        " at pos=", new Integer(pos));
+        if (log.check( POILogger.DEBUG ))
+            log.log(DEBUG, "setting bof for sheetnum =", new Integer(sheetnum),
+                " at pos=", new Integer(pos));
         checkSheets(sheetnum);
         (( BoundSheetRecord ) boundsheets.get(sheetnum))
         .setPositionOfBof(pos);
@@ -534,7 +553,8 @@ public class Workbook implements Model {
      */
 
     public int getNumSheets() {
-        log.log(DEBUG, "getNumSheets=", new Integer(boundsheets.size()));
+        if (log.check( POILogger.DEBUG ))
+            log.log(DEBUG, "getNumSheets=", new Integer(boundsheets.size()));
         return boundsheets.size();
     }
 
@@ -545,7 +565,8 @@ public class Workbook implements Model {
      */
 
     public int getNumExFormats() {
-        log.log(DEBUG, "getXF=", new Integer(numxfs));
+        if (log.check( POILogger.DEBUG ))
+            log.log(DEBUG, "getXF=", new Integer(numxfs));
         return numxfs;
     }
 
@@ -592,7 +613,8 @@ public class Workbook implements Model {
      */
 
     public int addSSTString(String string, boolean use16bits) {
-        log.log(DEBUG, "insert to sst string='", string, "' and use16bits= ",
+        if (log.check( POILogger.DEBUG ))
+            log.log(DEBUG, "insert to sst string='", string, "' and use16bits= ",
         new Boolean(use16bits));
         if (sst == null) {
             insertSST();
@@ -625,8 +647,9 @@ public class Workbook implements Model {
         }
         String retval = sst.getString(str);
 
-        log.log(DEBUG, "Returning SST for index=", new Integer(str),
-        " String= ", retval);
+        if (log.check( POILogger.DEBUG ))
+            log.log(DEBUG, "Returning SST for index=", new Integer(str),
+            " String= ", retval);
         return retval;
     }
 
@@ -638,7 +661,8 @@ public class Workbook implements Model {
      */
 
     public void insertSST() {
-        log.log(DEBUG, "creating new SST via insertSST!");
+        if (log.check( POILogger.DEBUG ))
+            log.log(DEBUG, "creating new SST via insertSST!");
         sst = ( SSTRecord ) createSST();
         records.add(records.size() - 1, createExtendedSST());
         records.add(records.size() - 2, sst);
@@ -691,7 +715,8 @@ public class Workbook implements Model {
 
     public int serialize( int offset, byte[] data )
     {
-        log.log( DEBUG, "Serializing Workbook with offsets" );
+        if (log.check( POILogger.DEBUG ))
+            log.log( DEBUG, "Serializing Workbook with offsets" );
 
         int pos = 0;
 
@@ -716,7 +741,8 @@ public class Workbook implements Model {
                 pos += record.serialize( pos + offset, data );   // rec.length;
             }
         }
-        log.log( DEBUG, "Exiting serialize workbook" );
+        if (log.check( POILogger.DEBUG ))
+            log.log( DEBUG, "Exiting serialize workbook" );
         return pos;
     }
 

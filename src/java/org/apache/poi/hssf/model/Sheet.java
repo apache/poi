@@ -135,18 +135,21 @@ public class Sheet implements Model
 
             if (rec.getSid() == LabelRecord.sid)
             {
-                log.log(POILogger.DEBUG, "Hit label record.");
+                if (log.check( POILogger.DEBUG ))
+                    log.log(POILogger.DEBUG, "Hit label record.");
                 retval.containsLabels = true;
             }
             else if (rec.getSid() == BOFRecord.sid)
             {
                 bofEofNestingLevel++;
-                log.log(POILogger.DEBUG, "Hit BOF record. Nesting increased to " + bofEofNestingLevel);
+                if (log.check( POILogger.DEBUG ))
+                    log.log(POILogger.DEBUG, "Hit BOF record. Nesting increased to " + bofEofNestingLevel);
             }
             else if (rec.getSid() == EOFRecord.sid)
             {
                 --bofEofNestingLevel;
-                log.log(POILogger.DEBUG, "Hit EOF record. Nesting decreased to " + bofEofNestingLevel);
+                if (log.check( POILogger.DEBUG ))
+                    log.log(POILogger.DEBUG, "Hit EOF record. Nesting decreased to " + bofEofNestingLevel);
                 if (bofEofNestingLevel == 0) {
                     records.add(rec);
                     retval.eofLoc = k;
@@ -285,7 +288,8 @@ public class Sheet implements Model
         {
             retval.cells = new ValueRecordsAggregate();
         }
-        log.log(POILogger.DEBUG, "sheet createSheet (existing file) exited");
+        if (log.check( POILogger.DEBUG ))
+            log.log(POILogger.DEBUG, "sheet createSheet (existing file) exited");
         return retval;
     }
 
@@ -344,7 +348,8 @@ public class Sheet implements Model
 
     public static Sheet createSheet(List records, int sheetnum)
     {
-        log.log(POILogger.DEBUG,
+        if (log.check( POILogger.DEBUG ))
+            log.log(POILogger.DEBUG,
                 "Sheet createSheet (exisiting file) assumed offset 0");
         return createSheet(records, sheetnum, 0);
     }
@@ -359,7 +364,8 @@ public class Sheet implements Model
 
     public static Sheet createSheet()
     {
-        log.log(POILogger.DEBUG, "Sheet createsheet from scratch called");
+        if (log.check( POILogger.DEBUG ))
+            log.log(POILogger.DEBUG, "Sheet createsheet from scratch called");
         Sheet     retval  = new Sheet();
         ArrayList records = new ArrayList(30);
 
@@ -409,7 +415,8 @@ public class Sheet implements Model
 		records.add(retval.protect);
         records.add(retval.createEOF());
         retval.records = records;
-        log.log(POILogger.DEBUG, "Sheet createsheet from scratch exit");
+        if (log.check( POILogger.DEBUG ))
+            log.log(POILogger.DEBUG, "Sheet createsheet from scratch exit");
         return retval;
     }
 
@@ -553,7 +560,8 @@ public class Sheet implements Model
 
     public void convertLabelRecords(Workbook wb)
     {
-        log.log(POILogger.DEBUG, "convertLabelRecords called");
+        if (log.check( POILogger.DEBUG ))
+            log.log(POILogger.DEBUG, "convertLabelRecords called");
         if (containsLabels)
         {
             for (int k = 0; k < records.size(); k++)
@@ -577,7 +585,8 @@ public class Sheet implements Model
                 }
             }
         }
-        log.log(POILogger.DEBUG, "convertLabelRecords exit");
+        if (log.check( POILogger.DEBUG ))
+            log.log(POILogger.DEBUG, "convertLabelRecords exit");
     }
 
     /**
@@ -591,14 +600,17 @@ public class Sheet implements Model
     {
         checkCells();
         checkRows();
-        log.log(POILogger.DEBUG, "Sheet.getNumRecords");
-        log.logFormatted(POILogger.DEBUG, "returning % + % + % - 2 = %", new int[]
+        if (log.check( POILogger.DEBUG ))
         {
-            records.size(), cells.getPhysicalNumberOfCells(),
-            rows.getPhysicalNumberOfRows(),
-            records.size() + cells.getPhysicalNumberOfCells()
-            + rows.getPhysicalNumberOfRows() - 2
-        });
+            log.log(POILogger.DEBUG, "Sheet.getNumRecords");
+            log.logFormatted(POILogger.DEBUG, "returning % + % + % - 2 = %", new int[]
+            {
+                records.size(), cells.getPhysicalNumberOfCells(),
+                rows.getPhysicalNumberOfRows(),
+                records.size() + cells.getPhysicalNumberOfCells()
+                + rows.getPhysicalNumberOfRows() - 2
+            });
+        }
         return records.size() + cells.getPhysicalNumberOfCells()
                + rows.getPhysicalNumberOfRows() - 2;
     }
@@ -615,17 +627,23 @@ public class Sheet implements Model
     public void setDimensions(int firstrow, short firstcol, int lastrow,
                               short lastcol)
     {
-        log.log(POILogger.DEBUG, "Sheet.setDimensions");
-        log.log(POILogger.DEBUG,
-                (new StringBuffer("firstrow")).append(firstrow)
-                    .append("firstcol").append(firstcol).append("lastrow")
-                    .append(lastrow).append("lastcol").append(lastcol)
-                    .toString());
+        if (log.check( POILogger.DEBUG ))
+        {
+            log.log(POILogger.DEBUG, "Sheet.setDimensions");
+            log.log(POILogger.DEBUG,
+                    (new StringBuffer("firstrow")).append(firstrow)
+                        .append("firstcol").append(firstcol).append("lastrow")
+                        .append(lastrow).append("lastcol").append(lastcol)
+                        .toString());
+        }
         dims.setFirstCol(firstcol);
         dims.setFirstRow(firstrow);
         dims.setLastCol(lastcol);
         dims.setLastRow(lastrow);
-        log.log(log.DEBUG, "Sheet.setDimensions exiting");
+        if (log.check( POILogger.DEBUG ))
+        {
+            log.log(POILogger.DEBUG, "Sheet.setDimensions exiting");
+        }
     }
 
     /**
@@ -647,7 +665,8 @@ public class Sheet implements Model
     public void setLoc(int loc)
     {
         valueRecIterator = null;
-        log.log(log.DEBUG, "sheet.setLoc(): " + loc);
+        if (log.check( POILogger.DEBUG ))
+            log.log(POILogger.DEBUG, "sheet.setLoc(): " + loc);
         this.loc = loc;
     }
 
@@ -658,7 +677,8 @@ public class Sheet implements Model
 
     public int getLoc()
     {
-        log.log(log.DEBUG, "sheet.getLoc():" + loc);
+        if (log.check( POILogger.DEBUG ))
+            log.log(POILogger.DEBUG, "sheet.getLoc():" + loc);
         return loc;
     }
 
@@ -697,7 +717,8 @@ public class Sheet implements Model
 
     public int serialize(int offset, byte [] data)
     {
-        log.log(log.DEBUG, "Sheet.serialize using offsets");
+        if (log.check( POILogger.DEBUG ))
+            log.log(log.DEBUG, "Sheet.serialize using offsets");
 
         int pos = offset;
         boolean haveSerializedIndex = false;
@@ -725,7 +746,8 @@ public class Sheet implements Model
               }
             }
         }
-        log.log(log.DEBUG, "Sheet.serialize returning ");
+        if (log.check( POILogger.DEBUG ))
+            log.log(log.DEBUG, "Sheet.serialize returning ");
         return pos-offset;
     }
 
@@ -774,7 +796,8 @@ public class Sheet implements Model
 
     public RowRecord createRow(int row)
     {
-        log.log(log.DEBUG, "create row number " + row);
+        if (log.check( POILogger.DEBUG ))
+            log.log(log.DEBUG, "create row number " + row);
         RowRecord rowrec = new RowRecord();
 
         //rowrec.setRowNumber(( short ) row);
@@ -1020,7 +1043,8 @@ public class Sheet implements Model
     {
         checkCells();
         setLoc(dimsloc);
-        log.log(log.DEBUG, "replaceValueRecord ");
+        if (log.check( POILogger.DEBUG ))
+            log.log(log.DEBUG, "replaceValueRecord ");
         cells.insertCell(newval);
 
         /*
@@ -1056,7 +1080,8 @@ public class Sheet implements Model
     public void addRow(RowRecord row)
     {
         checkRows();
-        log.log(log.DEBUG, "addRow ");
+        if (log.check( POILogger.DEBUG ))
+            log.log(log.DEBUG, "addRow ");
         DimensionsRecord d = ( DimensionsRecord ) records.get(getDimsLoc());
 
         if (row.getRowNumber() > d.getLastRow())
@@ -1110,7 +1135,8 @@ public class Sheet implements Model
          *   }
          * }
          */
-        log.log(log.DEBUG, "exit addRow");
+        if (log.check( POILogger.DEBUG ))
+            log.log(log.DEBUG, "exit addRow");
     }
 
     /**
@@ -1171,7 +1197,8 @@ public class Sheet implements Model
 
     public CellValueRecordInterface getNextValueRecord()
     {
-        log.log(log.DEBUG, "getNextValue loc= " + loc);
+        if (log.check( POILogger.DEBUG ))
+            log.log(log.DEBUG, "getNextValue loc= " + loc);
         if (valueRecIterator == null)
         {
             valueRecIterator = cells.getIterator();
@@ -1258,7 +1285,8 @@ public class Sheet implements Model
 
     public RowRecord getNextRow()
     {
-        log.log(log.DEBUG, "getNextRow loc= " + loc);
+        if (log.check( POILogger.DEBUG ))
+            log.log(log.DEBUG, "getNextRow loc= " + loc);
         if (rowRecIterator == null)
         {
             rowRecIterator = rows.getIterator();
@@ -1304,7 +1332,8 @@ public class Sheet implements Model
     //public RowRecord getRow(short rownum)
     public RowRecord getRow(int rownum)
     {
-        log.log(log.DEBUG, "getNextRow loc= " + loc);
+        if (log.check( POILogger.DEBUG ))
+            log.log(log.DEBUG, "getNextRow loc= " + loc);
         if (rows == null) {
             return null;
         }
@@ -2072,7 +2101,8 @@ public class Sheet implements Model
 
     public int getDimsLoc()
     {
-        log.log(log.DEBUG, "getDimsLoc dimsloc= " + dimsloc);
+        if (log.check( POILogger.DEBUG ))
+            log.log(log.DEBUG, "getDimsLoc dimsloc= " + dimsloc);
         return dimsloc;
     }
 
@@ -2525,7 +2555,8 @@ public class Sheet implements Model
 
 	protected Record createProtect()
 	{
-		log.log(log.DEBUG, "create protect record with protection disabled");
+        if (log.check( POILogger.DEBUG ))
+    		log.log(log.DEBUG, "create protect record with protection disabled");
 		ProtectRecord retval = new ProtectRecord();
 
 		retval.setProtect(false);

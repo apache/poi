@@ -133,12 +133,14 @@ public class EscherGraphics
 
     public void clipRect(int x, int y, int width, int height)
     {
-        logger.log(POILogger.WARN,"clipRect not supported");
+        if (logger.check( POILogger.WARN ))
+            logger.log(POILogger.WARN,"clipRect not supported");
     }
 
     public void copyArea(int x, int y, int width, int height, int dx, int dy)
     {
-        logger.log(POILogger.WARN,"copyArea not supported");
+        if (logger.check( POILogger.WARN ))
+            logger.log(POILogger.WARN,"copyArea not supported");
     }
 
     public Graphics create()
@@ -155,7 +157,8 @@ public class EscherGraphics
     public void drawArc(int x, int y, int width, int height,
 				 int startAngle, int arcAngle)
     {
-        logger.log(POILogger.WARN,"drawArc not supported");
+        if (logger.check( POILogger.WARN ))
+            logger.log(POILogger.WARN,"drawArc not supported");
     }
 
     public boolean drawImage(Image img,
@@ -164,7 +167,8 @@ public class EscherGraphics
 				      Color bgcolor,
 				      ImageObserver observer)
     {
-        logger.log(POILogger.WARN,"drawImage not supported");
+        if (logger.check( POILogger.WARN ))
+            logger.log(POILogger.WARN,"drawImage not supported");
 
         return true;
     }
@@ -174,7 +178,8 @@ public class EscherGraphics
 				      int sx1, int sy1, int sx2, int sy2,
 				      ImageObserver observer)
     {
-        logger.log(POILogger.WARN,"drawImage not supported");
+        if (logger.check( POILogger.WARN ))
+            logger.log(POILogger.WARN,"drawImage not supported");
         return true;
     }
 
@@ -241,18 +246,21 @@ public class EscherGraphics
     public void drawPolyline(int xPoints[], int yPoints[],
 				      int nPoints)
     {
-        logger.log(POILogger.WARN,"drawPolyline not supported");
+        if (logger.check( POILogger.WARN ))
+            logger.log(POILogger.WARN,"drawPolyline not supported");
     }
 
     public void drawRect(int x, int y, int width, int height)
     {
-        logger.log(POILogger.WARN,"drawRect not supported");
+        if (logger.check( POILogger.WARN ))
+            logger.log(POILogger.WARN,"drawRect not supported");
     }
 
     public void drawRoundRect(int x, int y, int width, int height,
 				       int arcWidth, int arcHeight)
     {
-        logger.log(POILogger.WARN,"drawRoundRect not supported");
+        if (logger.check( POILogger.WARN ))
+            logger.log(POILogger.WARN,"drawRoundRect not supported");
     }
 
     public void drawString(String str, int x, int y)
@@ -318,13 +326,15 @@ public class EscherGraphics
     public void drawString(AttributedCharacterIterator iterator,
                                     int x, int y)
     {
-        logger.log(POILogger.WARN,"drawString not supported");
+        if (logger.check( POILogger.WARN ))
+            logger.log(POILogger.WARN,"drawString not supported");
     }
 
     public void fillArc(int x, int y, int width, int height,
 				 int startAngle, int arcAngle)
     {
-        logger.log(POILogger.WARN,"fillArc not supported");
+        if (logger.check( POILogger.WARN ))
+            logger.log(POILogger.WARN,"fillArc not supported");
     }
 
     public void fillOval(int x, int y, int width, int height)
@@ -384,7 +394,8 @@ public class EscherGraphics
     public void fillRoundRect(int x, int y, int width, int height,
 				       int arcWidth, int arcHeight)
     {
-        logger.log(POILogger.WARN,"fillRoundRect not supported");
+        if (logger.check( POILogger.WARN ))
+            logger.log(POILogger.WARN,"fillRoundRect not supported");
     }
 
     public Shape getClip()
@@ -439,17 +450,20 @@ public class EscherGraphics
 
     public void setPaintMode()
     {
-        logger.log(POILogger.WARN,"setPaintMode not supported");
+        if (logger.check( POILogger.WARN ))
+            logger.log(POILogger.WARN,"setPaintMode not supported");
     }
 
     public void setXORMode(Color color)
     {
-        logger.log(POILogger.WARN,"setXORMode not supported");
+        if (logger.check( POILogger.WARN ))
+            logger.log(POILogger.WARN,"setXORMode not supported");
     }
 
     public void translate(int x, int y)
     {
-        logger.log(POILogger.WARN,"translate not supported");
+        if (logger.check( POILogger.WARN ))
+            logger.log(POILogger.WARN,"translate not supported");
     }
 
     public Color getBackground()
