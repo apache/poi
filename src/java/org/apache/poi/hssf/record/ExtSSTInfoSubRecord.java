@@ -74,6 +74,7 @@ import org.apache.poi.util.LittleEndian;
 public class ExtSSTInfoSubRecord
     extends Record
 {
+   public static final int INFO_SIZE = 8;
     public final static short sid =
         0xFFF;                                             // only here for conformance, doesn't really have an sid
     private int               field_1_stream_pos;          // stream pointer to the SST record
