@@ -35,9 +35,6 @@ public class TextPiece extends PropertyNode implements Comparable
 
   /**
    * @param start Offset in main document stream.
-   * @param length The total length of the text in bytes. Note: 1 character
-   *        does not necessarily refer to 1 byte.
-   * @param unicode true if this text is unicode.
    */
   public TextPiece(int start, int end, byte[] text, PieceDescriptor pd, int cpStart)
     throws UnsupportedEncodingException
