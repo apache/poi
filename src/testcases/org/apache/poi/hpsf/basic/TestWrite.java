@@ -396,22 +396,38 @@ public class TestWrite extends TestCase
             check(Variant.VT_I2, new Integer(27), codepage);
             check(Variant.VT_I4, new Long(28), codepage);
             check(Variant.VT_FILETIME, new Date(), codepage);
-            check(Variant.VT_LPSTR, "", codepage);
-            check(Variant.VT_LPSTR, "\u00e4", codepage);
-            check(Variant.VT_LPSTR, "\u00e4\u00f6", codepage);
-            check(Variant.VT_LPSTR, "\u00e4\u00f6\u00fc", codepage);
-            check(Variant.VT_LPSTR, "\u00e4\u00f6\u00fc\u00c4", codepage);
-            check(Variant.VT_LPSTR, "\u00e4\u00f6\u00fc\u00c4\u00d6", codepage);
-            check(Variant.VT_LPSTR, "\u00e4\u00f6\u00fc\u00c4\u00d6\u00dc", codepage);
-            check(Variant.VT_LPSTR, "\u00e4\u00f6\u00fc\u00c4\u00d6\u00dc\u00df", codepage);
-            check(Variant.VT_LPWSTR, "", codepage);
-            check(Variant.VT_LPWSTR, "\u00e4", codepage);
-            check(Variant.VT_LPWSTR, "\u00e4\u00f6", codepage);
-            check(Variant.VT_LPWSTR, "\u00e4\u00f6\u00fc", codepage);
-            check(Variant.VT_LPWSTR, "\u00e4\u00f6\u00fc\u00c4", codepage);
-            check(Variant.VT_LPWSTR, "\u00e4\u00f6\u00fc\u00c4\u00d6", codepage);
-            check(Variant.VT_LPWSTR, "\u00e4\u00f6\u00fc\u00c4\u00d6\u00dc", codepage);
-            check(Variant.VT_LPWSTR, "\u00e4\u00f6\u00fc\u00c4\u00d6\u00dc\u00df", codepage);
+            check(Variant.VT_LPSTR,
+                  "", codepage);
+            check(Variant.VT_LPSTR,
+                  "\u00e4", codepage);
+            check(Variant.VT_LPSTR,
+                  "\u00e4\u00f6", codepage);
+            check(Variant.VT_LPSTR,
+                  "\u00e4\u00f6\u00fc", codepage);
+            check(Variant.VT_LPSTR,
+                  "\u00e4\u00f6\u00fc\u00c4", codepage);
+            check(Variant.VT_LPSTR,
+                  "\u00e4\u00f6\u00fc\u00c4\u00d6", codepage);
+            check(Variant.VT_LPSTR,
+                  "\u00e4\u00f6\u00fc\u00c4\u00d6\u00dc", codepage);
+            check(Variant.VT_LPSTR,
+                  "\u00e4\u00f6\u00fc\u00c4\u00d6\u00dc\u00df", codepage);
+            check(Variant.VT_LPWSTR,
+                  "", codepage);
+            check(Variant.VT_LPWSTR,
+                  "\u00e4", codepage);
+            check(Variant.VT_LPWSTR,
+                  "\u00e4\u00f6", codepage);
+            check(Variant.VT_LPWSTR,
+                  "\u00e4\u00f6\u00fc", codepage);
+            check(Variant.VT_LPWSTR,
+                  "\u00e4\u00f6\u00fc\u00c4", codepage);
+            check(Variant.VT_LPWSTR,
+                  "\u00e4\u00f6\u00fc\u00c4\u00d6", codepage);
+            check(Variant.VT_LPWSTR,
+                  "\u00e4\u00f6\u00fc\u00c4\u00d6\u00dc", codepage);
+            check(Variant.VT_LPWSTR,
+                  "\u00e4\u00f6\u00fc\u00c4\u00d6\u00dc\u00df", codepage);
         }
         catch (Exception ex)
         {
@@ -637,23 +653,11 @@ public class TestWrite extends TestCase
     {
         final File dataDir =
             new File(System.getProperty("HPSF.testdata.path"));
-        String[] filesToTest = new String[]{
-            "Test0313rur.adm",
-            "TestChineseProperties.doc",
-            "TestCorel.shw",
-            "TestEditTime.doc",
-            "TestGermanWord90.doc",
-            "TestMickey.doc",
-            "TestSectionDictionary.doc",
-            "TestUnicode.xls"
-
-        };
-        final java.util.List listFilesToTest = Arrays.asList(filesToTest);
         final File[] fileList = dataDir.listFiles(new FileFilter()
             {
                 public boolean accept(final File f)
                 {
-                    return listFilesToTest.contains(f.getName());
+                    return f.getName().startsWith("Test");
                 }
             });
         for (int i = 0; i < fileList.length; i++)
@@ -670,6 +674,7 @@ public class TestWrite extends TestCase
      */
     private void testRecreate(final File f)
     {
+        System.out.println("Recreating file \"" + f + "\"");
         try
         {
             /* Read the POI filesystem's property set streams: */
