@@ -71,7 +71,8 @@ public class NewSheet
         throws IOException
     {
         HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFSheet sheet = wb.createSheet("new sheet");
+        HSSFSheet sheet1 = wb.createSheet("new sheet");
+        HSSFSheet sheet2 = wb.createSheet("second sheet");
         FileOutputStream fileOut = new FileOutputStream("workbook.xls");
         wb.write(fileOut);
         fileOut.close();
