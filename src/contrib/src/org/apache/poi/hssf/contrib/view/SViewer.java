@@ -68,13 +68,14 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 
 /**
- * Sucky Viewer - Views XLS files via HSSF.  Can be used as an applet with
+ * Sheet Viewer - Views XLS files via HSSF.  Can be used as an applet with
  * filename="" or as a applications (pass the filename as the first parameter).
  * Or you can pass it a URL in a "url" parameter when run as an applet or just
  * that first parameter must start with http:// and it will guess its a url. I
  * only tested it as an applet though, so it probably won't work...you fix it.
  *
  * @author Andrew C. Oliver
+ * @author Jason Height
  */
 public class SViewer extends JApplet {
   private SViewerPanel panel;

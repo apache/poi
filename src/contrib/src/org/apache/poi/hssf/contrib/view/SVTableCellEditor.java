@@ -67,7 +67,7 @@ import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.hssf.util.HSSFColor;
 
 /**
- * Sucky Viewer Table Cell Editor -- not commented via javadoc as it
+ * Sheet Viewer Table Cell Editor -- not commented via javadoc as it
  * nearly completely consists of overridden methods.
  *
  * @author     Jason Height
@@ -85,11 +85,6 @@ public class SVTableCellEditor extends AbstractCellEditor implements TableCellEd
   private HSSFCell editorValue;
 
 
-  /**
-   *Constructor for the SVTableCellEditor object
-   *
-   * @param  wb  Description of the Parameter
-   */
   public SVTableCellEditor(HSSFWorkbook wb) {
     this.wb = wb;
     this.editor = new JTextField();
@@ -99,7 +94,6 @@ public class SVTableCellEditor extends AbstractCellEditor implements TableCellEd
   /**
    *  Gets the cellEditable attribute of the SVTableCellEditor object
    *
-   * @param  e  Description of the Parameter
    * @return    The cellEditable value
    */
   public boolean isCellEditable(java.util.EventObject e) {
@@ -110,34 +104,17 @@ public class SVTableCellEditor extends AbstractCellEditor implements TableCellEd
   }
 
 
-  /**
-   *  Description of the Method
-   *
-   * @param  anEvent  Description of the Parameter
-   * @return          Description of the Return Value
-   */
   public boolean shouldSelectCell(EventObject anEvent) {
     return true;
   }
 
 
-  /**
-   *  Description of the Method
-   *
-   * @param  anEvent  Description of the Parameter
-   * @return          Description of the Return Value
-   */
   public boolean startCellEditing(EventObject anEvent) {
     System.out.println("Start Cell Editing");
     return true;
   }
 
 
-  /**
-   *  Description of the Method
-   *
-   * @return    Description of the Return Value
-   */
   public boolean stopCellEditing() {
     System.out.println("Stop Cell Editing");
     fireEditingStopped();
@@ -145,18 +122,12 @@ public class SVTableCellEditor extends AbstractCellEditor implements TableCellEd
   }
 
 
-  /**  Description of the Method */
   public void cancelCellEditing() {
     System.out.println("Cancel Cell Editing");
     fireEditingCanceled();
   }
 
 
-  /**
-   *  Description of the Method
-   *
-   * @param  e  Description of the Parameter
-   */
   public void actionPerformed(ActionEvent e) {
     System.out.println("Action performed");
     stopCellEditing();
@@ -178,11 +149,6 @@ public class SVTableCellEditor extends AbstractCellEditor implements TableCellEd
   /**
    *  Gets the tableCellEditorComponent attribute of the SVTableCellEditor object
    *
-   * @param  table       Description of the Parameter
-   * @param  value       Description of the Parameter
-   * @param  isSelected  Description of the Parameter
-   * @param  row         Description of the Parameter
-   * @param  column      Description of the Parameter
    * @return             The tableCellEditorComponent value
    */
   public Component getTableCellEditorComponent(JTable table, Object value,

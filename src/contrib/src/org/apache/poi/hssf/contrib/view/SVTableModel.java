@@ -64,7 +64,7 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 
 /**
- * Sucky Viewer Table Model - The model for the Sucky Viewer just overrides things.
+ * Sheet Viewer Table Model - The model for the Sheet Viewer just overrides things.
  * @author Andrew C. Oliver
  */
 
