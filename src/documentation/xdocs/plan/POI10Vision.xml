@@ -159,12 +159,8 @@
    </s2>
    <s2 title="2.4. Alternatives and Competition">
 	<p>
-		The alternative to this project is to
-		buy the $10,000 Formula 1 library (<link href="http://www.tidestone.com/">www.tidestone.com</link>)
-		and accept its crude api and limitations. As a second alternative,
-		give up XML and write Visual Basic code on a Microsoft Windows based
-		Environment or output in Microsoft's beta and primarily undocumented
-		XML for office format.
+        Originally there weren't any decent <link href="../hssf/alternatives.html">alternatives</link> for reading or writing
+        to Excel.  This has changed somewhat.
 	</p>
    </s2>
  </s1>

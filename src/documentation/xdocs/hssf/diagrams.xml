@@ -24,7 +24,7 @@
                </li>
         </ul>
         <p>
-                Have more?  Add a new "bug" to the bug database with [DOCUMENTATION] 
+                Have more?  Add a new &quot;bug&quot; to the bug database with [DOCUMENTATION]
                 prefacing the description and a link to the file on an http server 
                 somewhere.  If you don't have your own webserver, then you can email it
                 to (acoliver at apache dot org) provided its &lt; 5MB.  Diagrams should be 
