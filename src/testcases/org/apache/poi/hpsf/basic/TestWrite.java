@@ -38,15 +38,17 @@ import java.util.Map;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
+import org.apache.poi.hpsf.Constants;
 import org.apache.poi.hpsf.HPSFRuntimeException;
 import org.apache.poi.hpsf.IllegalPropertySetDataException;
 import org.apache.poi.hpsf.MutableProperty;
 import org.apache.poi.hpsf.MutablePropertySet;
 import org.apache.poi.hpsf.MutableSection;
 import org.apache.poi.hpsf.NoFormatIDException;
-import org.apache.poi.hpsf.Property;
+import org.apache.poi.hpsf.NoPropertySetStreamException;
 import org.apache.poi.hpsf.PropertySet;
 import org.apache.poi.hpsf.PropertySetFactory;
+import org.apache.poi.hpsf.ReadingNotSupportedException;
 import org.apache.poi.hpsf.Section;
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hpsf.UnsupportedVariantTypeException;
@@ -119,8 +121,8 @@ public class TestWrite extends TestCase
     public void testNoFormatID()
         throws IOException, UnsupportedVariantTypeException
     {
-        final File dataDir =
-            new File(System.getProperty("HPSF.testdata.path"));
+        final String dataDirName = System.getProperty("HPSF.testdata.path");
+        final File dataDir = new File(dataDirName);
         final File filename = new File(dataDir, POI_FS);
         filename.deleteOnExit();
 
@@ -361,9 +363,9 @@ public class TestWrite extends TestCase
 
 
     private static final int CODEPAGE_DEFAULT = -1;
-    private static final int CODEPAGE_UTF8 = 65001;
-    private static final int CODEPAGE_UTF16 = 1200;
     private static final int CODEPAGE_1252 = 1252;
+    private static final int CODEPAGE_UTF8 = Constants.CP_UTF8;
+    private static final int CODEPAGE_UTF16 = Constants.CP_UTF16;
 
 
 
@@ -429,53 +431,57 @@ public class TestWrite extends TestCase
      */
     public void testCodepages()
     {
-        Throwable t = null;
+        Throwable thr = null;
         final int[] validCodepages = new int[]
             {CODEPAGE_DEFAULT, CODEPAGE_UTF8, CODEPAGE_UTF16, CODEPAGE_1252};
         for (int i = 0; i < validCodepages.length; i++)
         {
-            int codepage = validCodepages[i];
+            final int cp = validCodepages[i];
+            final long t = cp == CODEPAGE_UTF16 ? Variant.VT_LPWSTR
+                                                : Variant.VT_LPSTR;
             try
             {
-                check(Variant.VT_LPSTR, "", codepage);
-                check(Variant.VT_LPSTR, "\u00e4", codepage);
-                check(Variant.VT_LPSTR, "\u00e4\u00f6", codepage);
-                check(Variant.VT_LPSTR, "\u00e4\u00f6\u00fc", codepage);
-                check(Variant.VT_LPSTR, "\u00e4\u00f6\u00fc\u00c4", codepage);
-                check(Variant.VT_LPSTR, "\u00e4\u00f6\u00fc\u00c4\u00d6", codepage);
-                check(Variant.VT_LPSTR, "\u00e4\u00f6\u00fc\u00c4\u00d6\u00dc", codepage);
-                check(Variant.VT_LPSTR, "\u00e4\u00f6\u00fc\u00c4\u00d6\u00dc\u00df", codepage);
-                if (codepage == 1200 || codepage == 65001)
-                    check(Variant.VT_LPSTR, "\u79D1\u5B78", codepage);
+                check(t, "", cp);
+                check(t, "\u00e4", cp);
+                check(t, "\u00e4\u00f6", cp);
+                check(t, "\u00e4\u00f6\u00fc", cp);
+                check(t, "\u00e4\u00f6\u00fc\u00c4", cp);
+                check(t, "\u00e4\u00f6\u00fc\u00c4\u00d6", cp);
+                check(t, "\u00e4\u00f6\u00fc\u00c4\u00d6\u00dc", cp);
+                check(t, "\u00e4\u00f6\u00fc\u00c4\u00d6\u00dc\u00df", cp);
+                if (cp == Constants.CP_UTF16 || cp == Constants.CP_UTF8)
+                    check(t, "\u79D1\u5B78", cp);
             }
             catch (Exception ex)
             {
-                t = ex;
+                thr = ex;
             }
             catch (Error ex)
             {
-                t = ex;
+                thr = ex;
             }
-            if (t != null)
-                fail(org.apache.poi.hpsf.Util.toString(t) + " with codepage " +
-                     codepage);
+            if (thr != null)
+                fail(org.apache.poi.hpsf.Util.toString(thr) +
+                     " with codepage " + cp);
         }
 
         final int[] invalidCodepages = new int[] {0, 1, 2, 4711, 815};
         for (int i = 0; i < invalidCodepages.length; i++)
         {
-            int codepage = invalidCodepages[i];
+            int cp = invalidCodepages[i];
+            final long type = cp == CODEPAGE_UTF16 ? Variant.VT_LPWSTR
+                                                   : Variant.VT_LPSTR;
             try
             {
-                check(Variant.VT_LPSTR, "", codepage);
-                check(Variant.VT_LPSTR, "\u00e4", codepage);
-                check(Variant.VT_LPSTR, "\u00e4\u00f6", codepage);
-                check(Variant.VT_LPSTR, "\u00e4\u00f6\u00fc", codepage);
-                check(Variant.VT_LPSTR, "\u00e4\u00f6\u00fc\u00c4", codepage);
-                check(Variant.VT_LPSTR, "\u00e4\u00f6\u00fc\u00c4\u00d6", codepage);
-                check(Variant.VT_LPSTR, "\u00e4\u00f6\u00fc\u00c4\u00d6\u00dc", codepage);
-                check(Variant.VT_LPSTR, "\u00e4\u00f6\u00fc\u00c4\u00d6\u00dc\u00df", codepage);
-                fail("UnsupportedEncodingException for codepage " + codepage +
+                check(type, "", cp);
+                check(type, "\u00e4", cp);
+                check(type, "\u00e4\u00f6", cp);
+                check(type, "\u00e4\u00f6\u00fc", cp);
+                check(type, "\u00e4\u00f6\u00fc\u00c4", cp);
+                check(type, "\u00e4\u00f6\u00fc\u00c4\u00d6", cp);
+                check(type, "\u00e4\u00f6\u00fc\u00c4\u00d6\u00dc", cp);
+                check(type, "\u00e4\u00f6\u00fc\u00c4\u00d6\u00dc\u00df", cp);
+                fail("UnsupportedEncodingException for codepage " + cp +
                      " expected.");
             }
             catch (UnsupportedEncodingException ex)
@@ -484,16 +490,63 @@ public class TestWrite extends TestCase
             }
             catch (Exception ex)
             {
-                t = ex;
+                thr = ex;
             }
             catch (Error ex)
             {
-                t = ex;
+                thr = ex;
             }
-            if (t != null)
-                fail(org.apache.poi.hpsf.Util.toString(t));
+            if (thr != null)
+                fail(org.apache.poi.hpsf.Util.toString(thr));
         }
 
+    }
+
+
+
+    /**
+     * <p>Tests whether writing 8-bit characters to a Unicode property
+     * succeeds.</p>
+     */
+    public void testUnicodeWrite8Bit()
+    {
+        final String TITLE = "This is a sample title";
+        final MutablePropertySet mps = new MutablePropertySet();
+        final MutableSection ms = (MutableSection) mps.getSections().get(0);
+        ms.setFormatID(SectionIDMap.SUMMARY_INFORMATION_ID);
+        final MutableProperty p = new MutableProperty();
+        p.setID(PropertyIDMap.PID_TITLE);
+        p.setType(Variant.VT_LPSTR);
+        p.setValue(TITLE);
+        ms.setProperty(p);
+
+        Throwable t = null;
+        try
+        {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            mps.write(out);
+            out.close();
+            byte[] bytes = out.toByteArray();
+
+            PropertySet psr = new PropertySet(bytes);
+            Section sr = (Section) psr.getSections().get(0);
+            String title = (String) sr.getProperty(PropertyIDMap.PID_TITLE);
+            assertEquals(TITLE, title);
+        }
+        catch (WritingNotSupportedException e)
+        {
+            t = e;
+        }
+        catch (IOException e)
+        {
+            t = e;
+        }
+        catch (NoPropertySetStreamException e)
+        {
+            t = e;
+        }
+        if (t != null)
+            fail(t.getMessage());
     }
 
 
@@ -508,7 +561,8 @@ public class TestWrite extends TestCase
      */
     private void check(final long variantType, final Object value, 
                        final int codepage)
-        throws UnsupportedVariantTypeException, IOException
+        throws UnsupportedVariantTypeException, IOException,
+               ReadingNotSupportedException, UnsupportedEncodingException
     {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         VariantSupport.write(out, variantType, value, codepage);
@@ -580,14 +634,14 @@ public class TestWrite extends TestCase
         final File dataDir =
             new File(System.getProperty("HPSF.testdata.path"));
         String[] filesToTest = new String[]{
-			"Test0313rur.adm",
-			"TestChineseProperties.doc",
-			"TestCorel.shw",
-			"TestEditTime.doc",
-			"TestGermanWord90.doc",
-			"TestMickey.doc",
-			"TestSectionDictionary.doc",
-			"TestUnicode.xls"
+            "Test0313rur.adm",
+            "TestChineseProperties.doc",
+            "TestCorel.shw",
+            "TestEditTime.doc",
+            "TestGermanWord90.doc",
+            "TestMickey.doc",
+            "TestSectionDictionary.doc",
+            "TestUnicode.xls"
 
         };
         final java.util.List listFilesToTest = Arrays.asList(filesToTest);
@@ -687,7 +741,7 @@ public class TestWrite extends TestCase
             m.put(new Long(3), "String 3");
             s.setDictionary(m);
             s.setFormatID(SectionIDMap.DOCUMENT_SUMMARY_INFORMATION_ID);
-            int codepage = Property.CP_UNICODE;
+            int codepage = Constants.CP_UNICODE;
             s.setProperty(PropertyIDMap.PID_CODEPAGE, Variant.VT_I2,
                           new Integer(codepage));
             poiFs.createDocument(ps1.toInputStream(), "Test");
