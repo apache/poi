@@ -77,20 +77,17 @@ import java.util.GregorianCalendar;
  */
 
 public class TestFormulas
-    extends TestCase
-{
-    public TestFormulas(String s)
-    {
+extends TestCase {
+    public TestFormulas(String s) {
         super(s);
     }
-
+    
     /**
-     * Add various integers
+     * Add 1+1 -- WHoohoo!
      */
-
-    public void testAddIntegers()
-        throws Exception
-    {        
+    
+    public void testBasicAddIntegers()
+    throws Exception {
         //System.out.println("Converted Text form is : "+fp.toFormulaString(fp.getRPNPtg()));
         
         short            rownum = 0;
@@ -101,51 +98,66 @@ public class TestFormulas
         HSSFRow          r      = null;
         HSSFCell         c      = null;
         
-        for (short x = 2; x < Short.MAX_VALUE && x > 0; x=(short)(x*2)) {
+        //get our minimum values
+        r = s.createRow((short)1);
+        c = r.createCell((short)1);
+        c.setCellFormula(1 + "+" + 1);
+        
+        
+        wb.write(out);
+        out.close();        
+        
+    }
+    
+    /**
+     * Add various integers
+     */
+    
+    public void testAddIntegers()
+    throws Exception {
+        
+        short            rownum = 0;
+        File file = File.createTempFile("testFormula",".xls");
+        FileOutputStream out    = new FileOutputStream(file);
+        HSSFWorkbook     wb     = new HSSFWorkbook();
+        HSSFSheet        s      = wb.createSheet();
+        HSSFRow          r      = null;
+        HSSFCell         c      = null;
+        
+        //get our minimum values
+        r = s.createRow((short)1);
+        c = r.createCell((short)1);
+        c.setCellFormula(1 + "+" + 1);
+        
+        for (short x = 1; x < Short.MAX_VALUE && x > 0; x=(short)(x*2)) {
             r = s.createRow((short) x);
-            System.out.println("x="+x);
-            for (short y = 2; y < Short.MAX_VALUE && y > 0; y=(short)(y*2)) {
-                System.out.println("y="+y);
+            //System.out.println("x="+x);
+            for (short y = 1; y < 200 && y > 0; y++) {
+                //System.out.println("y="+y);
                 c = r.createCell((short) y);
                 c.setCellFormula("" + x + "+" + y);
-        
+                
             }
         }
         
         //make sure we do the maximum value of the Int operator
-   /*     if (s.getLastRowNum() < Short.MAX_VALUE) {
-            r = s.createRow(Short.MAX_VALUE);
-            c = r.createCell(Short.MAX_VALUE);
+        if (s.getLastRowNum() < Short.MAX_VALUE) {
+            r = s.createRow((short)0);
+            c = r.createCell((short)0);
             c.setCellFormula("" + Short.MAX_VALUE + "+" + Short.MAX_VALUE);
-        }*/
+        }
         
         wb.write(out);
         out.close();
         
-        /*
-        FileInputStream stream = new FileInputStream(file);
-        wb = new HSSFWorkbook(stream);
-        s = wb.getSheetAt(0);
         
-        for (short x = 0; x < Short.MAX_VALUE; x++) {
-            r = s.createRow((short) 0);
-            
-            for (short y = 0; y < Short.MAX_VALUE; y++) {
-                
-                c = r.createCell((short) 0);
-                c.getCellFormula("" + x + "+" + y);
         
-            }
-        }
-         */
-        
-
     }
     
-    public static void main(String [] args)
-    {
+    
+    public static void main(String [] args) {
         System.out
-            .println("Testing org.apache.poi.hssf.usermodel.TestFormulas");
+        .println("Testing org.apache.poi.hssf.usermodel.TestFormulas");
         junit.textui.TestRunner.run(TestFormulas.class);
     }
     
