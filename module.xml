@@ -1,0 +1,123 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="tools/antipede/resources/stylesheets/module.xsl"?>
+<?xml-stylesheet type="text/css" href="tools/antipede/resources/stylesheets/module.css"?>
+<module name="apache-poi">
+
+  <url href="http://jakarta.apache.org/poi/"/>
+  
+  <info>
+    <link id="status" href="status.xml">
+      Status </link>
+    <link id="properties" href="properties.xml">
+      properties </link>
+    <link id="layout" href="layout.xml">
+      layout </link>
+    <link id="build" href="build.xml">
+      Build </link>
+    <link id="log" href="log.xml">
+      log </link>            
+  </info>
+  
+  <cvs repository="jakarta"/> 
+
+  <mailing-lists> 
+    <mailing-list user="developer" 
+                  mail="forrest-dev@xml.apache.org" 
+                  subscribe="forrest-dev-subscribe@xml.apache.org" 
+                  unsubscribe="forrest-dev-unsubscribe@xml.apache.org"/>    
+  </mailing-lists>    
+   
+  <description>
+     The POI project consists of APIs for manipulating various file formats 
+     based upon Microsoft's OLE 2 Compound Document format using pure Java.
+  </description>
+
+  <detailed>
+     A common misconception is that POI writes Excel files. POI is the 
+     name of the project. POI contains several components, one of which, 
+     HSSF, writes Excel files. The following are components of the entire 
+     POI project.POIFS is the oldest and most stable part of the project. 
+     It is our port of the OLE 2 Compound Document Format to pure Java. 
+     It supports both read and write functionality. All of our components 
+     ultimately rely on it by definition. HSSF is our port of the 
+     Microsoft Excel 97(-2002) file format (BIFF8) to pure Java. 
+     It supports read and write capability. HDF is our port of the 
+     Microsoft Word 97 file format to pure Java. 
+     It supports read and write capability. This component is in the early 
+     stages of design. Jump in! 
+  </detailed>
+
+  <what>
+    <goal>just do it</goal>
+  </what>
+    
+  <why>
+    Why not?
+  </why>
+  
+  <licence>This software is released under the Apache Public License 1.1. 
+           For detailed legal and licensing issues, please read the LICENSE.* files
+           in the /legal directory.
+  </licence>
+  
+  <credits>
+    <credit>This software includes software developed by the Krysalis Project 
+            (http://www.krysalis.org/).
+    </credit>
+  </credits>
+
+  <project name="jakarta-poi">
+  
+     <version major="1"
+             minor="5"   
+             fix  ="0"   
+             tag="dev"/> 
+             
+    <package>org.apache.poi</package>
+
+    <ant target="gump" vm="1.2"/>
+    
+    <!-- script name="build"/> -->
+    
+    <!-- Project jars POI *build* strictly depends on -->
+    <!-- needed for build -->
+    <depend project="jakarta-ant"/>
+    <depend project="xml-xerces"/>
+    <depend project="xml-xalan2"/>
+    <depend project="xml-cocoon2"/>
+    <depend project="jtidy"/>
+    <depend project="junit"/>
+    <depend project="IzPress"/>
+    <!-- needed for POI -->
+    <depend project="commons-logging"/>
+    
+    <!-- Project jars POI build can use  -->    
+    <option project="jakarta-log4j"/>
+ 
+    <!-- Work dirs to be included in classpath  -->          
+    <work nested="build/jakarta-poi/classes"/>
+    <work nested="build/jakarta-poi/testcases"/>
+    <work nested="tools/tmp/anttasks"/>
+
+    <home nested="build/jakarta-poi"/>
+
+    <!-- POI jars - the result of the build  -->        
+    <jar name="jakarta-poi.jar"            id="poi"/>
+    <jar name="jakarta-poi-scratchpad.jar" id="scratchpad"/>
+    <jar name="jakarta-poi-contrib.jar"    id="contrib"/>
+    <jar name="jakarta-poi-examples.jar"   id="examples"/>
+    
+    <!-- POI Javadocs - location in the build dirs  -->         
+    <javadoc parent="build/jakarta-poi/docs/apidocs"/>
+    
+    <!-- Getting ready for automatic site updates
+    <deliver fromdir="build/jakarta-poi/docs" 
+             tosite="jakarta-apache-org"
+             todir="poi/" />    
+    -->         
+            
+    <nag to="poi-dev@jakarta.apache.org"
+         from="Sam Ruby &lt;rubys@us.ibm.com&gt;"/>
+  </project>
+
+</module>

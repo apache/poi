@@ -1,57 +1,36 @@
 <?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="tools/antipede/resources/stylesheets/layout.xsl"?>
 <!DOCTYPE project [
-<!-- ===========================================================================
+  <!-- antipede -->    
+  <!ENTITY import-antipede  SYSTEM "./tools/antipede/build.xtarget"> 
+]>
+<project default="interactive" basedir="." name="project build file">
 
+<description>
 
                    * ===================================== *
                    |   Krysalis Centipede Build System     |
                    * ===================================== *      
                                      by               
                                              
-                   Nicola Ken Barozzi <barozzi@nicolaken.com>
-                   Marc Johnson <mjohnson at apache dot org>       
+                   Nicola Ken Barozzi (nicolaken@apache.org)
+                   Marc Johnson (mjohnson@apache.org)       
                      
-                   extends the Apache Cocoon Build System 
-                       (http://xml.apache.org/cocoon/)
+                     started as an extension of the
+                     the Apache Cocoon Build System 
+                     (http://xml.apache.org/cocoon/)
                                      by
-                   Stefano Mazzocchi <stefano@apache.org>
-                   Carsten Ziegeler <cziegeler@apache.org>
+                   Stefano Mazzocchi (stefano@apache.org)
+                   Carsten Ziegeler (cziegeler@apache.org)
                    
--->    
-<!-- =================  Main project targets and info =================  -->
-<!ENTITY project-target     SYSTEM "./src/targets/project.xtarget"> 
-<!ENTITY interactive-target SYSTEM "./src/targets/interactive.xtarget"> 
-<!-- =================================================================== -->
-
-<!-- ======================  Scratchpad targets =======================  -->
-<!ENTITY scratchpad-target SYSTEM "./src/scratchpad/targets/scratchpad.xtarget"> 
-<!-- =================================================================== -->
-
-<!-- ========================  Contrib targets ========================  --> 
-<!ENTITY contrib-target SYSTEM "./src/contrib/targets/contrib.xtarget">
-<!-- =================================================================== -->
-
-<!-- ==================  Krysalis Centipede targets ===================  --> 
-<!ENTITY preinit-target       SYSTEM "./tools/centipede/targets/preinit.xtarget"> 
-<!ENTITY init-target          SYSTEM "./tools/centipede/targets/init.xtarget"> 
-<!ENTITY compile-target       SYSTEM "./tools/centipede/targets/compile.xtarget"> 
-<!ENTITY util-target          SYSTEM "./tools/centipede/targets/util.xtarget"> 
-<!ENTITY dev-target           SYSTEM "./tools/centipede/targets/dev.xtarget"> 
-<!ENTITY test-target          SYSTEM "./tools/centipede/targets/test.xtarget"> 
-<!ENTITY robot-target         SYSTEM "./tools/centipede/targets/robot.xtarget"> 
-<!ENTITY docs-target          SYSTEM "./tools/centipede/targets/docs.xtarget"> 
-<!-- =================================================================== -->
-]>
-
-<project default="interactive" basedir="." name="krysalis">
-<!--
 
 Installing the build tools
 ==========================
 
-The Krysalis build system is based on Apache Ant, which is a Java building tool
-originally developed for the Tomcat project but now used in many other
-Apache projects and extended by many developers.
+The Krysalis Centipede build system is based on Apache Ant, 
+which is a Java building tool originally developed for the Tomcat 
+project but now used in many other Apache projects and extended 
+by many developers.
 
 Ant is a little but very handy tool that uses a build file written in XML
 (this file) as building instructions. For more information refer to
@@ -84,24 +63,6 @@ Also, you'll note that reusing a single JVM instance for each task, increases
 tremendously the performance of the whole build system, compared to other
 tools (i.e. make or shell scripts) where a new JVM is started for each task.
 
-
-Building on another directory
-=============================
-
-Sometimes you might want to build on an external directory to keep the
-distribution clean: no worries, this is just an environment property away.
-Suppose you want to use the "../build" directory instead, you simply tipe
-
- [unix]  ./build.sh  -Dbuild.root=../build
- [win32] .\build.bat -Dbuild.root=..\build
-
-By using the -Dxxx=yyy argument, you are setting environments in the JVM: Ant
-is designed to give higher priority to system environments to allow you to
-modify _any_ <property> that you can find in the building instructions below,
-so it's just a matter of understanding what property you want to change
-and you don't have to touch this file (which you shouldn't need to do).
-
-
 Build targets
 =============
 
@@ -112,12 +73,7 @@ is used by project maintainers to take care of everything in the project,
 no less and no more.
 
 To know more about the available targets take a look at this file, which is
-pretty self-explanatory.
-To see al list of all targets, type
-
- [unix]  ./build.sh  -projecthelp
- [win32] .\build.bat -projecthelp
-
+pretty self-explanatory, or run the build with "-projecthelp".
 
 Build Dependencies
 ==================
@@ -125,63 +81,193 @@ Some components are optional and require special jar files to be compiled
 and added to the application. Some of these jars are already included
 in the distribution while others not.
 For each optional package which is not available, a warning can be
-printed. If you don't like these warnings, specify the property "omit.opt.warnings"
-(build -Domit.opt.warnings).
-
-Distribution Version
-====================
-When preparing a distribution for release, specify the version ID on
-the command line: -Dversion="dev-1.2.1", for example.
-
-Specifying a subset of unit tests to be executed
-================================================
-Specify the package on the command line:
--Dtest.specific="org.krysalis.p.testme" will select only the testme
-tests to be run. If you've run any other unit tests in a prior
-session, you'll need to specify the 'clean' target to remove
-extraneous test classes from execution:
-
-./build.sh clean test -Dtest.specific="org/krysalis/p/testme"
-
-or
-
-.\build.bat clean test -Dtest.specific="org/krysalis/p/testme"
+printed.
 
 
-                              Happy hacking from the Dev Team :)
+                                            Happy hacking  :)
 
-============================================================================ -->
-
+============================================================================
+</description>
  
   <!-- =================================================================== -->
-  <!-- external reference are relative to to **/*.xtarget;                 -->
-  <!-- see entity decalrations at the start of this file                   -->
-  <!-- =================================================================== -->  
-  <!-- Pre Initialization      -->  &preinit-target;  
-  <!-- =================================================================== -->  
-  <!-- Project targets         -->  &project-target;    
+  <!-- Basic build targets for the project                                 -->
   <!-- =================================================================== -->
-  <!-- Initialization targets  -->  &init-target;  
-  <!-- =================================================================== -->
-  <!-- Compile targets         -->  &compile-target;  
-  <!-- =================================================================== -->  
-  <!-- Interactive targets     -->  &interactive-target;  
-  <!-- =================================================================== -->
-  <!-- Scratchpad targets      -->  &scratchpad-target;
-  <!-- =================================================================== -->
-  <!-- Contrib targets         -->  &contrib-target;
-  <!-- =================================================================== -->
-  <!-- Utility  targets        -->  &util-target;  
-  <!-- =================================================================== -->
-  <!-- Developer targets       -->  &dev-target;  
-  <!-- =================================================================== -->
-  <!-- Testcases targets       -->  &test-target;
-  <!-- =================================================================== -->
-  <!-- "Scripts" targets       -->  &robot-target;
-  <!-- =================================================================== -->
-  <!-- Documentation targets   -->  &docs-target;  
-  <!-- =================================================================== -->
-    
-</project>
 
-<!-- End of file -->
+  <!-- ================================== -->
+  <!--             Interactive            -->
+  <!-- ================================== -->
+
+  <target  name="interactive"   depends="-init"
+           description="Interactive target">
+
+    <splash/>
+       
+    <antcall target="call-cent">
+      <param name="cent-name"   value="centipede"/> 
+      <param name="cent-target" value="compile"/> 
+    </antcall>
+
+  </target>    
+  
+  <!-- ================================== -->
+  <!--              Compile               -->
+  <!-- ================================== -->
+
+  <target  name="compile"   depends="-init"
+           description="Compile java source code">
+           
+    <antcall target="call-cent">
+      <param name="cent-name"   value="centipede"/> 
+      <param name="cent-target" value="compile"/> 
+    </antcall>
+    
+  </target>               
+
+  <!-- ================================== -->
+  <!--             Build jars             -->
+  <!-- ================================== -->
+
+  <target  name="jar"   depends="-init"
+           description="Compile java source code">
+
+    <antcall target="call-cent">
+      <param name="cent-name"   value="centipede"/> 
+      <param name="cent-target" value="package"/> 
+    </antcall>
+    
+  </target>     
+
+  <!-- ================================== -->
+  <!--         Build distributions        -->
+  <!-- ================================== -->
+
+  <target  name="dist"   depends="-init"
+           description="Compile java source code">
+
+    <antcall target="call-cent">
+      <param name="cent-name"   value="centipede"/> 
+      <param name="cent-target" value="dist"/> 
+    </antcall>
+    
+  </target>     
+
+  <!-- ================================== -->
+  <!--         Clean build dir            -->
+  <!-- ================================== -->
+
+  <target  name="clean"   depends="-init"
+           description="Compile java source code">
+
+    <antcall target="call-cent">
+      <param name="cent-name"   value="centipede"/> 
+      <param name="cent-target" value="clean"/> 
+    </antcall>
+    
+  </target>     
+
+  <!-- ================================== -->
+  <!--         Run Junit tests            -->
+  <!-- ================================== -->
+  
+  <target  name="test"   depends="-init"
+           description="Compile java source code">
+
+    <antcall target="call-cent">
+      <param name="cent-name"   value="junit"/> 
+      <param name="cent-target" value="test"/> 
+    </antcall>
+ 
+    <antcall target="call-cent">
+      <param name="cent-name"   value="junit"/> 
+      <param name="cent-target" value="report"/> 
+    </antcall>
+   
+  </target>     
+  
+  <!-- ================================== -->
+  <!--    Generates the documentation     -->
+  <!-- ================================== -->
+  
+  <target  name="docs"   depends="-init"
+           description="Compile java source code">
+
+    <antcall target="call-cent">
+      <param name="cent-name"   value="forrest"/> 
+      <param name="cent-target" value="docs"/> 
+    </antcall>
+ 
+  </target>     
+
+  <!-- ================================== -->
+  <!--       Generates the javadocs       -->
+  <!-- ================================== -->
+  
+  <target  name="javadocs"   depends="-init"
+           description="Compile java source code">
+
+    <antcall target="call-cent">
+      <param name="cent-name"   value="centipede"/> 
+      <param name="cent-target" value="javadocs"/> 
+    </antcall>
+    
+  </target>     
+
+  <!-- ================================== -->
+  <!--       Test the main module stuff   -->
+  <!-- ================================== -->
+  
+  <target  name="test-module"   
+           depends="clean, compile, test, jar, docs"
+           description="Testing that all major targets work; useful before a commit"/>
+           
+           
+  <!-- ================================== -->
+  <!--        Target used by Gump         -->
+  <!-- ================================== -->
+  
+  <target  name="gump"   
+           depends="clean, compile, test, jar, docs, javadocs"
+           description="Target used by Gump"/>
+           
+
+  <!-- ================================== -->
+  <!--        Generate all                -->
+  <!-- ================================== -->
+  
+  <target  name="all"   
+           depends="gump"
+           description="Generate all"/>
+           
+  <!-- ================================== -->
+  <!--   Create a cent.jar package        -->
+  <!--   using an already deployed cent   -->
+  <!-- ================================== -->
+  
+  <target  name="jar-cent"   depends="-init"
+           description="Compile java source code">
+
+    <antcall target="call-cent">
+      <param name="cent-name"   value="centipede"/> 
+      <param name="cent-target" value="jar-cent"/> 
+    </antcall>
+    
+  </target>     
+
+  <!-- =================================================================== -->
+  <!-- Import Ant-Centipede -init targets - sets up basic build stuff                          -->
+  <!-- =================================================================== -->
+  <!--  
+        This is the target that initializes tasks and properties used
+        commonly in every other target.
+        
+        Remember to add depends="-init" to every target, so that this
+        target is called before any other.
+                 
+        This target is internal; to make it unusable from the commandline,
+        its name starts with a hyphen. To make it invisible when
+        using -projecthelp, it lacks a description.
+  -->      
+
+    &import-antipede;
+      
+</project>

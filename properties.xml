@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="tools/antipede/resources/stylesheets/properties.xsl"?>
+<!-- Project properties -->     
+<properties>
+  <!-- Properties for core Ant tasks-->  
+  <ant>
+    <XmlLogger>
+      <stylesheet uri="./tools/antipede/resources/stylesheets/log.xsl"/> 
+    </XmlLogger>
+  </ant>    
+  
+  <XmlLogger file="log.xml"/>
+    
+  <!-- Properties of the build -->     
+  <build>
+  <!-- What to tell the compiler -->
+    <compiler emacs="on"
+              warnings="true"
+              pedantic="false"
+              depend="true"
+              fulldepend="true"
+              debug="on"
+              optimize="off"
+              deprecation="on"
+              nowarn="off"
+              type="classic"
+              vm="1.2"/>
+              
+  </build>           
+  <forrest>
+    <!-- available skins:
+         jakarta-site
+         scarab-site
+         xml-apache-site
+         cocoon-printer  -->       
+    <skin name="jakarta-site"/>
+  </forrest>    
+  
+</properties>
