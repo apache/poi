@@ -97,8 +97,8 @@
     <option project="jakarta-log4j"/>
      
     <!-- Work dirs to be included in classpath  -->          
-    <work nested="build/classes"/>
-    <work nested="build/testcases"/>
+    <work nested="build/jakarta-poi/classes"/>
+    <work nested="build/jakarta-poi/junit/classes"/>
     
     <!-- Build home  -->        
     <home nested="build/jakarta-poi"/>
