@@ -39,6 +39,18 @@
               -->
 		</cent>
 	</java>
+	<junit>
+   	   <cent>
+   	      <extra>
+              <sysproperty key="UTIL.testdata.path"
+	                       value="./src/testcases/org/apache/poi/util/data"/>
+              <sysproperty key="HSSF.testdata.path"
+                           value="./src/testcases/org/apache/poi/hssf/data"/>
+              <sysproperty key="HPSF.testdata.path"
+                           value="./src/testcases/org/apache/poi/hpsf/data"/>
+   	      </extra>                       
+		</cent>                   
+	</junit>
 	
    <!-- deprecated properties -->	 
    <centipede>
