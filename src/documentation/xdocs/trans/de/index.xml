@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "./dtd/document-v11.dtd">
 
 <document>
   <header>
-    <title>Welcome to POI</title>
+    <title>Willkommen zu POI!</title>
     <authors>
       <person id="AO" name="Andrew C. Oliver" email="acoliver@apache.org"/>
       <person id="GJS" name="Glen Stampoultzis" email="glens@apache.org"/>
@@ -11,41 +11,56 @@
   </header>
 
   <body>
-   <section title="News">
-    <section title="Translations">
+   <section title="Nachrichten">
+    <section title="Übersetzungen">
         <p> 
-            The POI documentation translation project has begun.  The first ones 
-            to start are the <link href="../es/index.html">Spanish 
-            (espaniol)</link> and <link href="http://www.terra-intl.com/jakarta/poi/">Japanese</link>
-            translations.  Others are welcome.  Please feel 
-            free to participate!
+            Das POI Unterlagen Übersetzung Projekt hat angefangen.   
+            Die ersten zum zu beginnen sind die
+            <link href="../es/index.html">spanisch spreche
+            (espaniol)</link> und <link href="http://www.terra-intl.com/jakarta/poi/">japanisch spreche</link>
+            und deutsch spreche Übersetzungen. Andere sind willkommen. 
+            Bitte Gefühl frei zum teilzunehmen! Firmenzeichen-Wettbewerb 
+            Das Wählen für den POI Firmenzeichenwettbewerb ist jetzt komplett. 
+            Danke für Ihre Stimmen.  
+        </p>
+        <p>
+            Ich bin für diese schreckliche Übersetzung traurig. Mein 
+            Deutschspreche ist nicht sehr gut. Wenn Sie heraus helfen, 
+            werden Sie die Welt von meinen schrecklichen Übersetzungen speichern! 
         </p>
     </section>
-    <section title="Logo Contest">
+    <section title="Firmenzeichen-Wettbewerb ">
         <p>
-            Voting for the POI logo contest is now complete.  Thank you for your votes.
+            Das Wählen für den POI Firmenzeichenwettbewerb ist jetzt komplett. 
+            Danke für Ihre Stimmen. 
         </p>
 <!--        <p>-->
 <!--            <link href="http://vote.sparklit.com/poll.spark/640946">Click here</link> to see the current results.-->
 <!--        </p>-->
      </section>
     </section>
-    <section title="Purpose">
+    <section title="Zweck">
       <p>
-      The POI project consists of APIs for manipulating various file formats
-      based upon Microsoft's OLE 2 Compound Document format using pure Java.
+          Das POI Projekt besteht aus APIs für die Manipulierung der verschiedenen
+          Akte Formate, die nach zusammengesetztem Dokumentaufbau OLE 2 Microsofts
+          mit reinem Java gegründet werden. 
       </p>
       <p>
-      OLE 2 Compound Document Format based files include most Microsoft Office
-      files such as XLS and DOC.
+           OLE 2 zusammengesetzte gegründete Akten des Dokumentaufbaus schließen 
+           die meisten Microsoft Büroakten wie XLS und Doc. mit ein.
       </p>
       <p>
-         As a general policy we try to collaborate as much as possible with other projects to
-         provide this functionality.  Examples include: <link href="http://xml.apache.org/cocoon">Cocoon</link> for
-         which you'll soon find generators and serializers for our projects;
-         <link href="http://www.openoffice.org">Open Office.org</link> with whom we collaborate in documenting the
-         XLS format; and <link href="http://jakarta.apache.org/lucene">Lucene</link> for which we'll soon have file
-         format interpretors.  When practical, we donate components directly to those projects for POI-enabling them.
+          Wie eine allgemeine Politik, die wir versuchen, soviel wie möglich mit 
+          anderen Projekten zusammenzuarbeiten, diese Funktionalität zur Verfügung
+          zu stellen. Beispiele umfassen:
+         <link href="http://xml.apache.org/cocoon">Cocoon</link> 
+          für den Sie bald Generatoren und serializers für unsere Projekte finden; 
+         <link href="http://www.openoffice.org">Open Office.org</link> 
+          mit dem wir zusammenarbeiten, wenn wir das XLS Format dokumentieren; 
+         und <link href="http://jakarta.apache.org/lucene">Lucene</link> 
+           für das wir bald Akte Format interpretors haben. Wenn praktisch, 
+           spenden wir Bestandteile direkt zu jenen Projekten für das 
+           POI-Ermöglichen sie. 
       </p>
       <section title="Why/when would I use POI?">
         <p>
