@@ -68,7 +68,7 @@ import org.apache.poi.util.HexDump;
  * NOTE: This source is automatically generated please do not modify this file.  Either subclass or
  *       remove the record in src/records/definitions.
 
- * @author Glen Stampoultzis (gstamp at iprimus dot com dot au)
+ * @author Glen Stampoultzis (glens at apache.org)
  */
 public class LegendRecord
     extends Record
@@ -305,7 +305,7 @@ public class LegendRecord
     /**
      * Get the type field for the Legend record.
      *
-     * @return  One of 
+     * @return  One of
      *        TYPE_BOTTOM
      *        TYPE_CORNER
      *        TYPE_TOP
@@ -322,7 +322,7 @@ public class LegendRecord
      * Set the type field for the Legend record.
      *
      * @param field_5_type
-     *        One of 
+     *        One of
      *        TYPE_BOTTOM
      *        TYPE_CORNER
      *        TYPE_TOP
@@ -338,7 +338,7 @@ public class LegendRecord
     /**
      * Get the spacing field for the Legend record.
      *
-     * @return  One of 
+     * @return  One of
      *        SPACING_CLOSE
      *        SPACING_MEDIUM
      *        SPACING_OPEN
@@ -352,7 +352,7 @@ public class LegendRecord
      * Set the spacing field for the Legend record.
      *
      * @param field_6_spacing
-     *        One of 
+     *        One of
      *        SPACING_CLOSE
      *        SPACING_MEDIUM
      *        SPACING_OPEN

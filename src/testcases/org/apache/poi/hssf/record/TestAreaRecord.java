@@ -65,7 +65,7 @@ import junit.framework.TestCase;
  * Excel file.
  *
  *
- * @author Glen Stampoultzis (gstamp at iprimus dot com dot au)
+ * @author Glen Stampoultzis (glens at apache.org)
  */
 public class TestAreaRecord
         extends TestCase

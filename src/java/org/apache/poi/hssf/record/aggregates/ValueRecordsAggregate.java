@@ -68,7 +68,7 @@ import java.util.TreeMap;
  * Aggregate value records together.  Things are easier to handle that way.
  *
  * @author  andy
- * @author  Glen Stampoultzis (gstamp at iprimus dot com dot au)
+ * @author  Glen Stampoultzis (glens at apache.org)
  */
 
 public class ValueRecordsAggregate

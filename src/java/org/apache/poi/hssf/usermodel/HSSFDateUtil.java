@@ -68,7 +68,7 @@ import java.util.GregorianCalendar;
  * Contains methods for dealing with Excel dates.
  *
  * @author  Michael Harhen
- * @author  Glen Stampoultzis (gstamp at iprimus dot com dot au)
+ * @author  Glen Stampoultzis (glens at apache.org)
  */
 
 public class HSSFDateUtil

@@ -72,7 +72,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 /**
- * @author Glen Stampoultzis (gstamp at iprimus dot com dot au)
+ * @author Glen Stampoultzis (glens at apache.org)
  */
 
 public class TestReadWriteChart

@@ -83,7 +83,7 @@ import org.apache.poi.hssf.record.*;
  * @see org.apache.poi.hssf.model.Workbook
  * @see org.apache.poi.hssf.usermodel.HSSFSheet
  * @author  Andrew C. Oliver (acoliver at apache dot org)
- * @author  Glen Stampoultzis (gstamp at iprimus dot com dot au)
+ * @author  Glen Stampoultzis (glens at apache.org)
  * @version 2.0-pre
  */
 

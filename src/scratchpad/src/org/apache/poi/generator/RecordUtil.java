@@ -59,7 +59,7 @@ package org.apache.poi.generator;
  * Helper functions for the record transformations. TODO: Change this to
  * javascript in the style sheet.
  *
- * @author Glen Stampoultzis (gstamp at iprimus dot com dot au)
+ * @author Glen Stampoultzis (glens at apache.org)
  */
 public class RecordUtil
 {
