@@ -13,7 +13,7 @@
 
 
     This build was tested with ant 1.6.2 although it will probably work with
-    other versions.  The following jar files should be available on the -->
+    other versions.  The following jar files should be available on the 
     classpath when running ant:
 
     LIBRARY         LOCATION
