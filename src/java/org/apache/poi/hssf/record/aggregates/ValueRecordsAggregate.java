@@ -170,6 +170,9 @@ public class ValueRecordsAggregate
             else if (rec instanceof StringRecord)
             {
                 lastFormulaAggregate.setStringRecord((StringRecord)rec);
+            } 
+            else if (rec instanceof SharedFormulaRecord) {
+            	lastFormulaAggregate.setSharedFormulaRecord((SharedFormulaRecord)rec);
             }
             else if (rec.isValue())
             {
