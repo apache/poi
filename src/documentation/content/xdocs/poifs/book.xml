@@ -1,15 +1,15 @@
 <?xml version="1.0"?>
 <!DOCTYPE book PUBLIC "-//APACHE//DTD Cocoon Documentation Book V1.0//EN" "../dtd/book-cocoon-v10.dtd">
 
-<book software="Poi Project" 
-      title="PoiFS" 
-      copyright="@year@ Poi Project">
+<book software="POI Project" 
+      title="POIFS" 
+      copyright="@year@ POI Project">
 
   <menu label="Jakarta Poi">
     <menu-item label="Top" href="../index.html"/>
   </menu>
 
-  <menu label="PoiFS">
+  <menu label="POIFS">
     <menu-item label="Overview" href="index.html"/>
     <menu-item label="How To" href="how-to.html"/>
     <menu-item label="File System Documentation" href="fileformat.html"/>

@@ -271,12 +271,12 @@
     </faq>
     <faq>
         <question>
-            Will Poi read any spreadsheet and rewrite it with modifications.
+            Will POI read any spreadsheet and rewrite it with modifications.
         </question>
         <answer>
-            <p>Poi is not guanteed to read the contents of any spreadsheet.
+            <p>POI is not guanteed to read the contents of any spreadsheet.
                 Certain features may cause spreadsheets to fail to read.  More
-                problematic is rewriting spreadsheets.  Poi tried hard to
+                problematic is rewriting spreadsheets.  POI tried hard to
                 preserve the records of the original spreadsheet but some
                 features may cause problems.  We advise that you limit the
                 formatting of spreadsheets you process so as to not be

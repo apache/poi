@@ -37,16 +37,16 @@
 
  <section><title>Cola de Parches (Patch Queue)</title>
   <p><link href="patches.html">Entregas de modificaciones (Submissions of modifications)</link>
-   a Poi que esperan revisión. Cualquiera puede realizar comentarios sobre ellas en la lista
+   a POI que esperan revisión. Cualquiera puede realizar comentarios sobre ellas en la lista
    de desarrollo - ¡se necesitan revisores del código!
-   <strong>Su utilización cae bajo su responsabilidad</strong> - aunque Poi no puede garantizarlo,
+   <strong>Su utilización cae bajo su responsabilidad</strong> - aunque POI no puede garantizarlo,
    estos parches no han sido revisados, cuando menos aceptados.
   </p>
  </section>
 
  <section><title>Otras Extensiones</title>
   <p> Las otras extensiones listadas aquí <strong>tampoco están respaldadas</strong>
-   por el proyecto Poi - se proporcionan sólo por comodidad. Pueden funcionar o no,
+   por el proyecto POI - se proporcionan sólo por comodidad. Pueden funcionar o no,
    pueden ser de código abierto o no, etc.
   </p>
 

@@ -10,7 +10,7 @@
         <person id="GS"  name="Glen Stampoultzis"  email="poi-user@jakarta.apache.org"/>
         <person id="MJ"  name="Marc Johnson"       email="mjohnson at apache dot org"/>
         <person id="NKB" name="Nicola Ken Barozzi" email="barozzi@nicolaken.com"/>
-        <person id="open" name="Poi Developers"    email="poi-dev@jakarta.apache.org"/>
+        <person id="open" name="POI Developers"    email="poi-dev@jakarta.apache.org"/>
     </devs>
 
     <actions priority="high">

@@ -36,15 +36,15 @@
 
  <section><title>Patch Queue</title>
   <p><link href="patches.html">Submissions of modifications</link>
-   to Poi which are awaiting review. Anyone can
+   to POI which are awaiting review. Anyone can
    comment on them on the dev mailing list - code reviewers are needed!
-   <strong>Use these at your own risk</strong> - although Poi has no guarantee
+   <strong>Use these at your own risk</strong> - although POI has no guarantee
    either, these patches have not been reviewed, let alone accepted.
   </p>
  </section>
 
  <section><title>Other Extensions</title>
-  <p>The other extensions listed here are <strong>not endorsed</strong> by the Poi
+  <p>The other extensions listed here are <strong>not endorsed</strong> by the POI
    project either - they are provided as a convenience only. They may or may not work,
    they may or may not be open source, etc.
   </p>

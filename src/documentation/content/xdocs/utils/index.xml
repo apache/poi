@@ -3,7 +3,7 @@
 
 <document>
  <header>
-  <title>Poi Utils</title>
+  <title>POI Utils</title>
   <subtitle>Overview</subtitle>
   <authors>
    <person name="Nicola Ken Barozzi" email="barozzi@nicolaken.com"/>     
@@ -24,7 +24,7 @@
   </p>
   <p>
      Currently, we're looking into which subprojects in the Jakarta Commons project
-     to donate these too.  The "Poi Utils" package won't go away, as there may 
+     to donate these too.  The "POI Utils" package won't go away, as there may 
      be later classes.  The idea is that "go ahead and add it, we'll merge it or
      find an alternative later, just keep pounding out that poi!"
   </p>
