@@ -99,7 +99,7 @@
 		solution for outputting Office Document formats often involves
 		actually manipulating the software as an OLE Server. This method
 		provides extremely low performance, extremely high overhead and is
-		only capable of handing one document at a time. 
+		only capable of handling one document at a time.
 	</p>
 	<ol>
 		<li>
@@ -110,7 +110,7 @@
 		<li>
 		Our intended audience for the HSSF
 		library portion of this project is ourselves as we are developing
-		the serializer and anyone who needs to write to Excel spreadsheets
+		the Serializer and anyone who needs to write to Excel spreadsheets
 		in a non-XML Java environment or who has specific needs not
 		addressed by the Serializer.
 		</li>

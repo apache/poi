@@ -2,32 +2,29 @@
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.0//EN" "dtd/document-v10.dtd">
 
 <document>
- <header>
-  <title>Live Sites using Poi</title>
-  <authors>
-   <person name="Donald Ball" email="balld@webslingerZ.com"/>
-   <person name="Stefano Mazzocchi" email="stefano@apache.org"/>
-   <person name="Robin Green" email="greenrd@hotmail.com"/>
-   <person name="Nicola Ken Barozzi" email="barozzi@nicolaken.com"/>
-  </authors>
- </header>
- 
- <body><s1 title="Live Sites using Poi">
-   <p>Here is a list of some of the web sites that are proudly using Poi 1.X (in no particular order):
-   </p>
-   <!--
-   <ul>
-    <li><link href=""></link></li>
-   </ul>
-  </s1>
-   -->
-  <p>
-    If you do not find your site here, make sure you tell us
-    (use the word &quot;Livesites&quot; in the email subject, confirm that
-    you want to be listed publicly, say which version of Poi, and do not
-    forget to tell us the URL).
-    We would like to see this list grow bigger every day :-)
-   </p>
-  </s1>
- </body>
+    <header>
+        <title>Live Sites using Poi</title>
+        <authors>
+            <person name="Donald Ball" email="balld@webslingerZ.com"/>
+            <person name="Stefano Mazzocchi" email="stefano@apache.org"/>
+            <person name="Robin Green" email="greenrd@hotmail.com"/>
+            <person name="Nicola Ken Barozzi" email="barozzi@nicolaken.com"/>
+            <person name="Glen Stampoultzis" email="glens@apache.org"/>
+        </authors>
+    </header>
+
+    <body>
+        <s1 title="Live Sites using Poi">
+            <p>Currently we don't have any sites listed that use Poi, but we're sure they're out there.
+            Help us change this.  If you've
+            written a site that utilises Poi let us know.
+            </p>
+            <!--
+            <ul>
+             <li><link href=""></link></li>
+            </ul>
+           </s1>
+            -->
+        </s1>
+    </body>
 </document>

@@ -22,7 +22,7 @@
                 changed a bit.  We're not going to change the vision document to
                 reflect this (however proper that may be) because it would only
                 involve deletion.  There is no purpose in providing less
-                information provded we give clarification.
+                information provided we give clarification.
         </p>
         <p>
                 This document was created before the POI components for 
@@ -275,10 +275,10 @@
 	<table>
 		<tr>
 			<td>
-				Benefit
+				<b>Benefit</b>
 			</td>
 			<td>
-				Supporting Features
+				<b>Supporting Features</b>
 			</td>
 		</tr>
 		<tr>
