@@ -1,4 +1,3 @@
-
 /* ====================================================================
  * The Apache Software License, Version 1.1
  *
@@ -59,7 +58,8 @@ import org.apache.poi.util.BinaryTree;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Title:        Static String Table Record
@@ -71,65 +71,45 @@ import java.util.*;
  * <P>
  * @author Andrew C. Oliver (acoliver at apache dot org)
  * @author Marc Johnson (mjohnson at apache dot org)
+ * @author Glen Stampoultzis (glens at apache.org)
  * @version 2.0-pre
  * @see org.apache.poi.hssf.record.LabelSSTRecord
  * @see org.apache.poi.hssf.record.ContinueRecord
  */
 
 public class SSTRecord
-    extends Record
+        extends Record
 {
 
-    // how big can an SST record be? As big as any record can be: 8228
-    // bytes
-    private static final int  _max                     = 8228;
+    /** how big can an SST record be? As big as any record can be: 8228 bytes */
+    static final int MAX_RECORD_SIZE = 8228;
 
-    // standard record overhead: two shorts (record id plus data space
-    // size)
-    private static final int  _std_record_overhead     =
-        2 * LittleEndianConsts.SHORT_SIZE;
+    /** standard record overhead: two shorts (record id plus data space size)*/
+    static final int STD_RECORD_OVERHEAD =
+            2 * LittleEndianConsts.SHORT_SIZE;
 
-    // SST overhead: the standard record overhead, plus the number of
-    // strings and the number of unique strings -- two ints
-    private static final int  _sst_record_overhead     =
-        (_std_record_overhead + (2 * LittleEndianConsts.INT_SIZE));
+    /** SST overhead: the standard record overhead, plus the number of strings and the number of unique strings -- two ints */
+    static final int SST_RECORD_OVERHEAD =
+            ( STD_RECORD_OVERHEAD + ( 2 * LittleEndianConsts.INT_SIZE ) );
 
-    // how much data can we stuff into an SST record? That would be
-    // _max minus the standard SST record overhead
-    private static final int  _max_data_space          =
-        _max - _sst_record_overhead;
+    /** how much data can we stuff into an SST record? That would be _max minus the standard SST record overhead */
+    static final int MAX_DATA_SPACE = MAX_RECORD_SIZE - SST_RECORD_OVERHEAD;
 
-    // overhead for each string includes the string's character count
-    // (a short) and the flag describing its characteristics (a byte)
-    private static final int  _string_minimal_overhead =
-        LittleEndianConsts.SHORT_SIZE + LittleEndianConsts.BYTE_SIZE;
-    public static final short sid                      = 0xfc;
+    /** overhead for each string includes the string's character count (a short) and the flag describing its characteristics (a byte) */
+    static final int STRING_MINIMAL_OVERHEAD = LittleEndianConsts.SHORT_SIZE + LittleEndianConsts.BYTE_SIZE;
 
-    // union of strings in the SST and EXTSST
-    private int               field_1_num_strings;
+    public static final short sid = 0xfc;
 
-    // according to docs ONLY SST
-    private int               field_2_num_unique_strings;
-    private BinaryTree        field_3_strings;
+    /** union of strings in the SST and EXTSST */
+    private int field_1_num_strings;
 
-    // this is the number of characters we expect in the first
-    // sub-record in a subsequent continuation record
-    private int               __expected_chars;
+    /** according to docs ONLY SST */
+    private int field_2_num_unique_strings;
+    private BinaryTree field_3_strings;
 
-    // this is the string we were working on before hitting the end of
-    // the current record. This string is NOT finished.
-    private String            _unfinished_string;
-
-    // this is the total length of the current string being handled
-    private int               _total_length_bytes;
-
-    // this is the offset into a string field of the actual string
-    // data
-    private int               _string_data_offset;
-
-    // this is true if the string uses wide characters
-    private boolean           _wide_char;
-    private List              _record_lengths = null;
+    /** Record lengths for initial SST record and all continue records */
+    private List _record_lengths = null;
+    private SSTDeserializer deserializer;
 
     /**
      * default constructor
@@ -137,14 +117,10 @@ public class SSTRecord
 
     public SSTRecord()
     {
-        field_1_num_strings        = 0;
+        field_1_num_strings = 0;
         field_2_num_unique_strings = 0;
-        field_3_strings            = new BinaryTree();
-        setExpectedChars(0);
-        _unfinished_string  = "";
-        _total_length_bytes = 0;
-        _string_data_offset = 0;
-        _wide_char          = false;
+        field_3_strings = new BinaryTree();
+        deserializer = new SSTDeserializer(field_3_strings);
     }
 
     /**
@@ -156,9 +132,9 @@ public class SSTRecord
      * @param data of the record (should not contain sid/len)
      */
 
-    public SSTRecord(final short id, final short size, final byte [] data)
+    public SSTRecord( final short id, final short size, final byte[] data )
     {
-        super(id, size, data);
+        super( id, size, data );
     }
 
     /**
@@ -171,10 +147,10 @@ public class SSTRecord
      * @param offset of the record
      */
 
-    public SSTRecord(final short id, final short size, final byte [] data,
-                     int offset)
+    public SSTRecord( final short id, final short size, final byte[] data,
+                      int offset )
     {
-        super(id, size, data, offset);
+        super( id, size, data, offset );
     }
 
     /**
@@ -192,13 +168,13 @@ public class SSTRecord
      * @return the index of that string in the table
      */
 
-    public int addString(final String string)
+    public int addString( final String string )
     {
         int rval;
 
-        if (string == null)
+        if ( string == null )
         {
-            rval = addString("", false);
+            rval = addString( "", false );
         }
         else
         {
@@ -207,17 +183,17 @@ public class SSTRecord
             // present, we have to use 16-bit encoding. Otherwise, we
             // can use 8-bit encoding
             boolean useUTF16 = false;
-            int     strlen   = string.length();
+            int strlen = string.length();
 
-            for (int j = 0; j < strlen; j++)
+            for ( int j = 0; j < strlen; j++ )
             {
-                if (string.charAt(j) > 255)
+                if ( string.charAt( j ) > 255 )
                 {
                     useUTF16 = true;
                     break;
                 }
             }
-            rval = addString(string, useUTF16);
+            rval = addString( string, useUTF16 );
         }
         return rval;
     }
@@ -238,21 +214,21 @@ public class SSTRecord
      * @return the index of that string in the table
      */
 
-    public int addString(final String string, final boolean useUTF16)
+    public int addString( final String string, final boolean useUTF16 )
     {
         field_1_num_strings++;
-        String        str  = (string == null) ? ""
-                                              : string;
-        int           rval = -1;
-        UnicodeString ucs  = new UnicodeString();
+        String str = ( string == null ) ? ""
+                : string;
+        int rval = -1;
+        UnicodeString ucs = new UnicodeString();
 
-        ucs.setString(str);
-        ucs.setCharCount(( short ) str.length());
-        ucs.setOptionFlags(( byte ) (useUTF16 ? 1
-                                              : 0));
-        Integer integer = ( Integer ) field_3_strings.getKeyForValue(ucs);
+        ucs.setString( str );
+        ucs.setCharCount( (short) str.length() );
+        ucs.setOptionFlags( (byte) ( useUTF16 ? 1
+                : 0 ) );
+        Integer integer = (Integer) field_3_strings.getKeyForValue( ucs );
 
-        if (integer != null)
+        if ( integer != null )
         {
             rval = integer.intValue();
         }
@@ -263,8 +239,9 @@ public class SSTRecord
             // strings we've already collected
             rval = field_3_strings.size();
             field_2_num_unique_strings++;
-            integer = new Integer(rval);
-            field_3_strings.put(integer, ucs);
+            integer = new Integer( rval );
+            SSTDeserializer.addToStringTable( field_3_strings, integer, ucs );
+//            field_3_strings.put( integer, ucs );
         }
         return rval;
     }
@@ -298,7 +275,7 @@ public class SSTRecord
      *
      */
 
-    public void setNumStrings(final int count)
+    public void setNumStrings( final int count )
     {
         field_1_num_strings = count;
     }
@@ -314,7 +291,7 @@ public class SSTRecord
      * @param count  number of strings
      */
 
-    public void getNumUniqueStrings(final int count)
+    public void getNumUniqueStrings( final int count )
     {
         field_2_num_unique_strings = count;
     }
@@ -327,16 +304,15 @@ public class SSTRecord
      * @return the desired string
      */
 
-    public String getString(final int id)
+    public String getString( final int id )
     {
-        return (( UnicodeString ) field_3_strings.get(new Integer(id)))
-            .getString();
+        return ( (UnicodeString) field_3_strings.get( new Integer( id ) ) ).getString();
     }
 
-    public boolean getString16bit(final int id)
+    public boolean isString16bit( final int id )
     {
-        return ((( UnicodeString ) field_3_strings.get(new Integer(id)))
-            .getOptionFlags() == 1);
+        UnicodeString unicodeString = ( (UnicodeString) field_3_strings.get( new Integer( id ) ) );
+        return ( ( unicodeString.getOptionFlags() & 0x01 ) == 1 );
     }
 
     /**
@@ -349,326 +325,24 @@ public class SSTRecord
     {
         StringBuffer buffer = new StringBuffer();
 
-        buffer.append("[SST]\n");
-        buffer.append("    .numstrings     = ")
-            .append(Integer.toHexString(getNumStrings())).append("\n");
-        buffer.append("    .uniquestrings  = ")
-            .append(Integer.toHexString(getNumUniqueStrings())).append("\n");
-        for (int k = 0; k < field_3_strings.size(); k++)
+        buffer.append( "[SST]\n" );
+        buffer.append( "    .numstrings     = " )
+                .append( Integer.toHexString( getNumStrings() ) ).append( "\n" );
+        buffer.append( "    .uniquestrings  = " )
+                .append( Integer.toHexString( getNumUniqueStrings() ) ).append( "\n" );
+        for ( int k = 0; k < field_3_strings.size(); k++ )
         {
-            buffer.append("    .string_" + k + "      = ")
-                .append((( UnicodeString ) field_3_strings
-                .get(new Integer(k))).toString()).append("\n");
+            buffer.append( "    .string_" + k + "      = " )
+                    .append( ( (UnicodeString) field_3_strings
+                    .get( new Integer( k ) ) ).toString() ).append( "\n" );
         }
-        buffer.append("[/SST]\n");
+        buffer.append( "[/SST]\n" );
         return buffer.toString();
-    }
-
-    /**
-     * Create a byte array consisting of an SST record and any
-     * required Continue records, ready to be written out.
-     * <p>
-     * If an SST record and any subsequent Continue records are read
-     * in to create this instance, this method should produce a byte
-     * array that is identical to the byte array produced by
-     * concatenating the input records' data.
-     *
-     * @return the byte array
-     */
-
-    public int serialize(int offset, byte [] data)
-    {
-        int rval                = getRecordSize();
-        int record_length_index = 0;
-
-        // get the linear size of that array
-        int unicodesize         = calculateUnicodeSize();
-
-        if (unicodesize > _max_data_space)
-        {
-            byte[]  stringreminant     = null;
-            int     unipos             = 0;
-            boolean lastneedcontinue   = false;
-            int     stringbyteswritten = 0;
-            boolean first_record       = true;
-            int     totalWritten       = 0;
-            int     size               = 0;
-
-            while (totalWritten != rval)
-            {
-                int pos = 0;
-
-                // write the appropriate header
-                int available;
-
-                if (first_record)
-                {
-                    size         =
-                        (( Integer ) _record_lengths
-                            .get(record_length_index++)).intValue();
-                    available    = size - 8;
-                    pos          = writeSSTHeader(data,
-                                                  pos + offset
-                                                  + totalWritten, size);
-                    size         += _std_record_overhead;
-                    first_record = false;
-                }
-                else
-                {
-                    pos = 0;
-                    int to_be_written = (unicodesize - stringbyteswritten)
-                                        + (lastneedcontinue ? 1
-                                                            : 0);           // not used?
-
-                    size      =
-                        (( Integer ) _record_lengths
-                            .get(record_length_index++)).intValue();
-                    available = size;
-                    pos       = writeContinueHeader(data,
-                                                    pos + offset
-                                                    + totalWritten, size);
-                    size      = size + _std_record_overhead;
-                }
-
-                // now, write the rest of the data into the current
-                // record space
-                if (lastneedcontinue)
-                {
-
-                    // the last string in the previous record was not
-                    // written out completely
-                    if (stringreminant.length <= available)
-                    {
-
-                        // write reminant -- it'll all fit neatly
-                        System.arraycopy(stringreminant, 0, data,
-                                         pos + offset + totalWritten,
-                                         stringreminant.length);
-                        stringbyteswritten += stringreminant.length - 1;
-                        pos                += stringreminant.length;
-                        lastneedcontinue   = false;
-                        available          -= stringreminant.length;
-                    }
-                    else
-                    {
-
-                        // write as much of the remnant as possible
-                        System.arraycopy(stringreminant, 0, data,
-                                         pos + offset + totalWritten,
-                                         available);
-                        stringbyteswritten += available - 1;
-                        pos                += available;
-                        byte[] leftover =
-                            new byte[ (stringreminant.length - available) + LittleEndianConsts.BYTE_SIZE ];
-
-                        System.arraycopy(stringreminant, available, leftover,
-                                         LittleEndianConsts.BYTE_SIZE,
-                                         stringreminant.length - available);
-                        leftover[ 0 ]    = stringreminant[ 0 ];
-                        stringreminant   = leftover;
-                        available        = 0;
-                        lastneedcontinue = true;
-                    }
-                }
-
-                // last string's remnant, if any, is cleaned up as
-                // best as can be done ... now let's try and write
-                // some more strings
-                for (; unipos < field_3_strings.size(); unipos++)
-                {
-                    Integer       intunipos = new Integer(unipos);
-                    UnicodeString unistr    =
-                        (( UnicodeString ) field_3_strings.get(intunipos));
-
-                    if (unistr.getRecordSize() <= available)
-                    {
-                        unistr.serialize(pos + offset + totalWritten, data);
-                        int rsize = unistr.getRecordSize();
-
-                        stringbyteswritten += rsize;
-                        pos                += rsize;
-                        available          -= rsize;
-                    }
-                    else
-                    {
-
-                        // can't write the entire string out
-                        if (available >= _string_minimal_overhead)
-                        {
-
-                            // we can write some of it
-                            byte[] ucs = unistr.serialize();
-
-                            System.arraycopy(ucs, 0, data,
-                                             pos + offset + totalWritten,
-                                             available);
-                            stringbyteswritten += available;
-                            stringreminant     =
-                                new byte[ (ucs.length - available) + LittleEndianConsts.BYTE_SIZE ];
-                            System.arraycopy(ucs, available, stringreminant,
-                                             LittleEndianConsts.BYTE_SIZE,
-                                             ucs.length - available);
-                            stringreminant[ 0 ] =
-                                ucs[ LittleEndianConsts.SHORT_SIZE ];
-                            available           = 0;
-                            lastneedcontinue    = true;
-                            unipos++;
-                        }
-                        break;
-                    }
-                }
-                totalWritten += size;
-            }
-        }
-        else
-        {
-
-            // short data: write one simple SST record
-            int datasize = _sst_record_overhead + unicodesize;           // not used?
-
-            writeSSTHeader(
-                data, 0 + offset,
-                _sst_record_overhead
-                + (( Integer ) _record_lengths.get(
-                record_length_index++)).intValue() - _std_record_overhead);
-            int pos = _sst_record_overhead;
-
-            for (int k = 0; k < field_3_strings.size(); k++)
-            {
-                UnicodeString unistr =
-                    (( UnicodeString ) field_3_strings.get(new Integer(k)));
-
-                System.arraycopy(unistr.serialize(), 0, data, pos + offset,
-                                 unistr.getRecordSize());
-                pos += unistr.getRecordSize();
-            }
-        }
-        return rval;
-    }
-
-    // not used: remove?
-    private int calculateStringsize()
-    {
-        int retval = 0;
-
-        for (int k = 0; k < field_3_strings.size(); k++)
-        {
-            retval +=
-                (( UnicodeString ) field_3_strings.get(new Integer(k)))
-                    .getRecordSize();
-        }
-        return retval;
-    }
-
-    /**
-     * Process a Continue record. A Continue record for an SST record
-     * contains the same kind of data that the SST record contains,
-     * with the following exceptions:
-     * <P>
-     * <OL>
-     * <LI>The string counts at the beginning of the SST record are
-     *     not in the Continue record
-     * <LI>The first string in the Continue record might NOT begin
-     *     with a size. If the last string in the previous record is
-     *     continued in this record, the size is determined by that
-     *     last string in the previous record; the first string will
-     *     begin with a flag byte, followed by the remaining bytes (or
-     *     words) of the last string from the previous
-     *     record. Otherwise, the first string in the record will
-     *     begin with a string length
-     * </OL>
-     *
-     * @param record the Continue record's byte data
-     */
-
-    public void processContinueRecord(final byte [] record)
-    {
-        if (getExpectedChars() == 0)
-        {
-            _unfinished_string  = "";
-            _total_length_bytes = 0;
-            _string_data_offset = 0;
-            _wide_char          = false;
-            manufactureStrings(record, 0, ( short ) record.length);
-        }
-        else
-        {
-            int data_length = record.length - LittleEndianConsts.BYTE_SIZE;
-
-            if (calculateByteCount(getExpectedChars()) > data_length)
-            {
-
-                // create artificial data to create a UnicodeString
-                byte[] input =
-                    new byte[ record.length + LittleEndianConsts.SHORT_SIZE ];
-                short  size  = ( short ) (((record[ 0 ] & 1) == 1)
-                                          ? (data_length
-                                             / LittleEndianConsts.SHORT_SIZE)
-                                          : (data_length
-                                             / LittleEndianConsts.BYTE_SIZE));
-
-                LittleEndian.putShort(input, ( byte ) 0, size);
-                System.arraycopy(record, 0, input,
-                                 LittleEndianConsts.SHORT_SIZE,
-                                 record.length);
-                UnicodeString ucs = new UnicodeString(UnicodeString.sid,
-                                                      ( short ) input.length,
-                                                      input);
-
-                _unfinished_string = _unfinished_string + ucs.getString();
-                setExpectedChars(getExpectedChars() - size);
-            }
-            else
-            {
-                setupStringParameters(record, -LittleEndianConsts.SHORT_SIZE,
-                                      getExpectedChars());
-                byte[] str_data = new byte[ _total_length_bytes ];
-                int    length   = _string_minimal_overhead
-                                  + (calculateByteCount(getExpectedChars()));
-                byte[] bstring  = new byte[ length ];
-
-                // Copy data from the record into the string
-                // buffer. Copy skips the length of a short in the
-                // string buffer, to leave room for the string length.
-                System.arraycopy(record, 0, str_data,
-                                 LittleEndianConsts.SHORT_SIZE,
-                                 str_data.length
-                                 - LittleEndianConsts.SHORT_SIZE);
-
-                // write the string length
-                LittleEndian.putShort(bstring, 0,
-                                      ( short ) getExpectedChars());
-
-                // write the options flag
-                bstring[ LittleEndianConsts.SHORT_SIZE ] =
-                    str_data[ LittleEndianConsts.SHORT_SIZE ];
-
-                // copy the bytes/words making up the string; skipping
-                // past all the overhead of the str_data array
-                System.arraycopy(str_data, _string_data_offset, bstring,
-                                 _string_minimal_overhead,
-                                 bstring.length - _string_minimal_overhead);
-
-                // use special constructor to create the final string
-                UnicodeString string  =
-                    new UnicodeString(UnicodeString.sid,
-                                      ( short ) bstring.length, bstring,
-                                      _unfinished_string);
-                Integer       integer = new Integer(field_3_strings.size());
-
-                field_3_strings.put(integer, string);
-                manufactureStrings(record,
-                                   _total_length_bytes
-                                   - LittleEndianConsts
-                                       .SHORT_SIZE, ( short ) record.length);
-            }
-        }
     }
 
     /**
      * @return sid
      */
-
     public short getSid()
     {
         return sid;
@@ -677,30 +351,23 @@ public class SSTRecord
     /**
      * @return hashcode
      */
-
     public int hashCode()
     {
         return field_2_num_unique_strings;
     }
 
-    /**
-     *
-     * @param o
-     * @return true if equal
-     */
-
-    public boolean equals(Object o)
+    public boolean equals( Object o )
     {
-        if ((o == null) || (o.getClass() != this.getClass()))
+        if ( ( o == null ) || ( o.getClass() != this.getClass() ) )
         {
             return false;
         }
-        SSTRecord other = ( SSTRecord ) o;
+        SSTRecord other = (SSTRecord) o;
 
-        return ((field_1_num_strings == other
-            .field_1_num_strings) && (field_2_num_unique_strings == other
-                .field_2_num_unique_strings) && field_3_strings
-                    .equals(other.field_3_strings));
+        return ( ( field_1_num_strings == other
+                .field_1_num_strings ) && ( field_2_num_unique_strings == other
+                .field_2_num_unique_strings ) && field_3_strings
+                .equals( other.field_3_strings ) );
     }
 
     /**
@@ -711,12 +378,12 @@ public class SSTRecord
      * @exception RecordFormatException if validation fails
      */
 
-    protected void validateSid(final short id)
-        throws RecordFormatException
+    protected void validateSid( final short id )
+            throws RecordFormatException
     {
-        if (id != sid)
+        if ( id != sid )
         {
-            throw new RecordFormatException("NOT An SST RECORD");
+            throw new RecordFormatException( "NOT An SST RECORD" );
         }
     }
 
@@ -800,33 +467,20 @@ public class SSTRecord
      * @param size size of the raw data
      */
 
-    protected void fillFields(final byte [] data, final short size,
-                              int offset)
+    protected void fillFields( final byte[] data, final short size,
+                               int offset )
     {
 
         // this method is ALWAYS called after construction -- using
         // the nontrivial constructor, of course -- so this is where
         // we initialize our fields
-        field_1_num_strings        = LittleEndian.getInt(data, 0 + offset);
-        field_2_num_unique_strings = LittleEndian.getInt(data, 4 + offset);
-        field_3_strings            = new BinaryTree();
-        setExpectedChars(0);
-        _unfinished_string  = "";
-        _total_length_bytes = 0;
-        _string_data_offset = 0;
-        _wide_char          = false;
-        manufactureStrings(data, 8 + offset, size);
+        field_1_num_strings = LittleEndian.getInt( data, 0 + offset );
+        field_2_num_unique_strings = LittleEndian.getInt( data, 4 + offset );
+        field_3_strings = new BinaryTree();
+        deserializer = new SSTDeserializer(field_3_strings);
+        deserializer.manufactureStrings( data, 8 + offset, size );
     }
 
-    /**
-     * @return the number of characters we expect in the first
-     *         sub-record in a subsequent continuation record
-     */
-
-    int getExpectedChars()
-    {
-        return __expected_chars;
-    }
 
     /**
      * @return an iterator of the strings we hold. All instances are
@@ -848,372 +502,43 @@ public class SSTRecord
     }
 
     /**
-     * @return the unfinished string
+     * called by the class that is responsible for writing this sucker.
+     * Subclasses should implement this so that their data is passed back in a
+     * byte array.
+     *
+     * @return byte array containing instance data
      */
 
-    String getUnfinishedString()
+    public int serialize( int offset, byte[] data )
     {
-        return _unfinished_string;
+        SSTSerializer serializer = new SSTSerializer(
+                _record_lengths, field_3_strings, getNumStrings(), getNumUniqueStrings() );
+        return serializer.serialize( offset, data );
     }
 
-    /**
-     * @return the total length of the current string
-     */
-
-    int getTotalLength()
-    {
-        return _total_length_bytes;
-    }
-
-    /**
-     * @return offset into current string data
-     */
-
-    int getStringDataOffset()
-    {
-        return _string_data_offset;
-    }
-
-    /**
-     * @return true if current string uses wide characters
-     */
-
-    boolean isWideChar()
-    {
-        return _wide_char;
-    }
-
-    private int writeSSTHeader(final byte [] data, final int pos,
-                               final int recsize)
-    {
-        int offset = pos;
-
-        LittleEndian.putShort(data, offset, sid);
-        offset += LittleEndianConsts.SHORT_SIZE;
-        LittleEndian.putShort(data, offset, ( short ) (recsize));
-        offset += LittleEndianConsts.SHORT_SIZE;
-        LittleEndian.putInt(data, offset, getNumStrings());
-        offset += LittleEndianConsts.INT_SIZE;
-        LittleEndian.putInt(data, offset, getNumUniqueStrings());
-        offset += LittleEndianConsts.INT_SIZE;
-        return offset - pos;
-    }
-
-    private int writeContinueHeader(final byte [] data, final int pos,
-                                    final int recsize)
-    {
-        int offset = pos;
-
-        LittleEndian.putShort(data, offset, ContinueRecord.sid);
-        offset += LittleEndianConsts.SHORT_SIZE;
-        LittleEndian.putShort(data, offset, ( short ) (recsize));
-        offset += LittleEndianConsts.SHORT_SIZE;
-        return offset - pos;
-    }
-
-    private int calculateUCArrayLength(final byte [][] ucarray)
-    {
-        int retval = 0;
-
-        for (int k = 0; k < ucarray.length; k++)
-        {
-            retval += ucarray[ k ].length;
-        }
-        return retval;
-    }
-
-    private void manufactureStrings(final byte [] data, final int index,
-                                    short size)
-    {
-        int offset = index;
-
-        while (offset < size)
-        {
-            int remaining = size - offset;
-
-            if ((remaining > 0)
-                    && (remaining < LittleEndianConsts.SHORT_SIZE))
-            {
-                throw new RecordFormatException(
-                    "Cannot get length of the last string in SSTRecord");
-            }
-            if (remaining == LittleEndianConsts.SHORT_SIZE)
-            {
-                setExpectedChars(LittleEndian.getShort(data, offset));
-                _unfinished_string = "";
-                break;
-            }
-            short char_count = LittleEndian.getShort(data, offset);
-
-            setupStringParameters(data, offset, char_count);
-            if (remaining < _total_length_bytes)
-            {
-                setExpectedChars(calculateCharCount(_total_length_bytes
-                                                    - remaining));
-                char_count          -= getExpectedChars();
-                _total_length_bytes = remaining;
-            }
-            else
-            {
-                setExpectedChars(0);
-            }
-            processString(data, offset, char_count);
-            offset += _total_length_bytes;
-            if (getExpectedChars() != 0)
-            {
-                break;
-            }
-        }
-    }
-
-    private void setupStringParameters(final byte [] data, final int index,
-                                       final int char_count)
-    {
-        byte flag = data[ index + LittleEndianConsts.SHORT_SIZE ];
-
-        _wide_char = (flag & 1) == 1;
-        boolean extended      = (flag & 4) == 4;
-        boolean formatted_run = (flag & 8) == 8;
-
-        _total_length_bytes = _string_minimal_overhead
-                              + calculateByteCount(char_count);
-        _string_data_offset = _string_minimal_overhead;
-        if (formatted_run)
-        {
-            short run_count = LittleEndian.getShort(data,
-                                                    index
-                                                    + _string_data_offset);
-
-            _string_data_offset += LittleEndianConsts.SHORT_SIZE;
-            _total_length_bytes += LittleEndianConsts.SHORT_SIZE
-                                   + (LittleEndianConsts.INT_SIZE
-                                      * run_count);
-        }
-        if (extended)
-        {
-            int extension_length = LittleEndian.getInt(data,
-                                                       index
-                                                       + _string_data_offset);
-
-            _string_data_offset += LittleEndianConsts.INT_SIZE;
-            _total_length_bytes += LittleEndianConsts.INT_SIZE
-                                   + extension_length;
-        }
-    }
-
-    private void processString(final byte [] data, final int index,
-                               final short char_count)
-    {
-        byte[] str_data = new byte[ _total_length_bytes ];
-        int    length   = _string_minimal_overhead
-                          + calculateByteCount(char_count);
-        byte[] bstring  = new byte[ length ];
-
-        System.arraycopy(data, index, str_data, 0, str_data.length);
-        int offset = 0;
-
-        LittleEndian.putShort(bstring, offset, char_count);
-        offset            += LittleEndianConsts.SHORT_SIZE;
-        bstring[ offset ] = str_data[ offset ];
-        System.arraycopy(str_data, _string_data_offset, bstring,
-                         _string_minimal_overhead,
-                         bstring.length - _string_minimal_overhead);
-        UnicodeString string = new UnicodeString(UnicodeString.sid,
-                                                 ( short ) bstring.length,
-                                                 bstring);
-
-        if (getExpectedChars() != 0)
-        {
-            _unfinished_string = string.getString();
-        }
-        else
-        {
-            Integer integer = new Integer(field_3_strings.size());
-
-            field_3_strings.put(integer, string);
-        }
-    }
-
-    private void setExpectedChars(final int count)
-    {
-        __expected_chars = count;
-    }
-
-    private int calculateByteCount(final int character_count)
-    {
-        return character_count * (_wide_char ? LittleEndianConsts.SHORT_SIZE
-                                             : LittleEndianConsts.BYTE_SIZE);
-    }
-
-    private int calculateCharCount(final int byte_count)
-    {
-        return byte_count / (_wide_char ? LittleEndianConsts.SHORT_SIZE
-                                        : LittleEndianConsts.BYTE_SIZE);
-    }
 
     // we can probably simplify this later...this calculates the size
     // w/o serializing but still is a bit slow
     public int getRecordSize()
     {
-        _record_lengths = new ArrayList();
-        int retval      = 0;
-        int unicodesize = calculateUnicodeSize();
+        SSTSerializer serializer = new SSTSerializer(
+                _record_lengths, field_3_strings, getNumStrings(), getNumUniqueStrings() );
 
-        if (unicodesize > _max_data_space)
-        {
-            UnicodeString unistr             = null;
-            int           stringreminant     = 0;
-            int           unipos             = 0;
-            boolean       lastneedcontinue   = false;
-            int           stringbyteswritten = 0;
-            boolean       finished           = false;
-            boolean       first_record       = true;
-            int           totalWritten       = 0;
-
-            while (!finished)
-            {
-                int record = 0;
-                int pos    = 0;
-
-                if (first_record)
-                {
-
-                    // writing SST record
-                    record       = _max;
-                    pos          = 12;
-                    first_record = false;
-                    _record_lengths.add(new Integer(record
-                                                    - _std_record_overhead));
-                }
-                else
-                {
-
-                    // writing continue record
-                    pos = 0;
-                    int to_be_written = (unicodesize - stringbyteswritten)
-                                        + (lastneedcontinue ? 1
-                                                            : 0);
-                    int size          = Math.min(_max - _std_record_overhead,
-                                                 to_be_written);
-
-                    if (size == to_be_written)
-                    {
-                        finished = true;
-                    }
-                    record = size + _std_record_overhead;
-                    _record_lengths.add(new Integer(size));
-                    pos = 4;
-                }
-                if (lastneedcontinue)
-                {
-                    int available = _max - pos;
-
-                    if (stringreminant <= available)
-                    {
-
-                        // write reminant
-                        stringbyteswritten += stringreminant - 1;
-                        pos                += stringreminant;
-                        lastneedcontinue   = false;
-                    }
-                    else
-                    {
-
-                        // write as much of the remnant as possible
-                        int toBeWritten = unistr.maxBrokenLength(available);
-
-                        if (available != toBeWritten)
-                        {
-                            int shortrecord = record
-                                              - (available - toBeWritten);
-
-                            _record_lengths.set(
-                                _record_lengths.size() - 1,
-                                new Integer(
-                                    shortrecord - _std_record_overhead));
-                            record = shortrecord;
-                        }
-                        stringbyteswritten += toBeWritten - 1;
-                        pos                += toBeWritten;
-                        stringreminant     -= toBeWritten - 1;
-                        lastneedcontinue   = true;
-                    }
-                }
-                for (; unipos < field_3_strings.size(); unipos++)
-                {
-                    int     available = _max - pos;
-                    Integer intunipos = new Integer(unipos);
-
-                    unistr =
-                        (( UnicodeString ) field_3_strings.get(intunipos));
-                    if (unistr.getRecordSize() <= available)
-                    {
-                        stringbyteswritten += unistr.getRecordSize();
-                        pos                += unistr.getRecordSize();
-                    }
-                    else
-                    {
-                        if (available >= _string_minimal_overhead)
-                        {
-                            int toBeWritten =
-                                unistr.maxBrokenLength(available);
-
-                            stringbyteswritten += toBeWritten;
-                            stringreminant     =
-                                (unistr.getRecordSize() - toBeWritten)
-                                + LittleEndianConsts.BYTE_SIZE;
-                            if (available != toBeWritten)
-                            {
-                                int shortrecord = record
-                                                  - (available - toBeWritten);
-
-                                _record_lengths.set(
-                                    _record_lengths.size() - 1,
-                                    new Integer(
-                                        shortrecord - _std_record_overhead));
-                                record = shortrecord;
-                            }
-                            lastneedcontinue = true;
-                            unipos++;
-                        }
-                        else
-                        {
-                            int shortrecord = record - available;
-
-                            _record_lengths.set(
-                                _record_lengths.size() - 1,
-                                new Integer(
-                                    shortrecord - _std_record_overhead));
-                            record = shortrecord;
-                        }
-                        break;
-                    }
-                }
-                totalWritten += record;
-            }
-            retval = totalWritten;
-        }
-        else
-        {
-
-            // short data: write one simple SST record
-            retval = _sst_record_overhead + unicodesize;
-            _record_lengths.add(new Integer(unicodesize));
-        }
-        return retval;
+        return serializer.getRecordSize();
     }
 
-    private int calculateUnicodeSize()
+    SSTDeserializer getDeserializer()
     {
-        int retval = 0;
+        return deserializer;
+    }
 
-        for (int k = 0; k < field_3_strings.size(); k++)
-        {
-            UnicodeString string =
-                ( UnicodeString ) field_3_strings.get(new Integer(k));
-
-            retval += string.getRecordSize();
-        }
-        return retval;
+    /**
+     * Strange to handle continue records this way.  Is it a smell?
+     */
+    public void processContinueRecord( byte[] record )
+    {
+        deserializer.processContinueRecord( record );
     }
 }
+
+
