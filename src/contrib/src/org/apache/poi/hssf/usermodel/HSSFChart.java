@@ -139,8 +139,8 @@ public class HSSFChart
 
 
 
-        sheet.insertChartRecords( records );
-        workbook.insertChartRecord();
+        //sheet.insertChartRecords( records );
+        //workbook.insertChartRecord();
     }
 
     private EOFRecord createEOFRecord()

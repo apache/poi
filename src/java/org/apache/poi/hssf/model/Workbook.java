@@ -55,18 +55,24 @@
 
 package org.apache.poi.hssf.model;
 
-import org.apache.poi.hssf.record.*;
-import org.apache.poi.hssf.util.HSSFColor;
-import org.apache.poi.hssf.util.SheetReferences;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+import java.io.*;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Iterator;
 import java.util.Locale;
 
+
+import org.apache.poi.util.POILogger;
+import org.apache.poi.util.POILogFactory;
+
+import org.apache.poi.hssf.model.Model;
+import org.apache.poi.hssf.record.*;
+import org.apache.poi.hssf.util.SheetReferences;
+import org.apache.poi.hssf.util.HSSFColor;
+
 /**
+ * Workbook
  * Low level model implementation of a Workbook.  Provides creational methods
  * for settings and objects contained in the workbook object.
  * <P>
@@ -79,17 +85,10 @@ import java.util.Locale;
  * Kit (Microsoft Press) and the documentation at http://sc.openoffice.org/excelfileformat.pdf
  * before even attempting to use this.
  *
- * @todo    Need a good way of keeping track of bookmarks in a list. Currently
- *          we are manually incrementing multiple indexes whenever new records
- *          are added.  This mechanism makes it very easy to introduce bugs.
- *
- * @author  Shawn Laubach (slaubach at apache dot org) (Data Formats)
+ * @author  Shawn Laubach (shawnlaubach at cox.net) (Data Formats)
  * @author  Andrew C. Oliver (acoliver at apache dot org)
  * @author  Glen Stampoultzis (glens at apache.org)
  * @author  Sergei Kozello (sergeikozello at mail.ru)
- * @author  Luc Girardin (luc dot girardin at macrofocus dot com)
- * @author  Dan Sherman (dsherman at isisph.com)
- * @author  Brian Sanders (bsanders at risklabs dot com) - custom palette
  * @see org.apache.poi.hssf.usermodel.HSSFWorkbook
  * @version 1.0-pre
  */
@@ -137,21 +136,29 @@ public class Workbook implements Model {
 
     protected ArrayList        names = new ArrayList();
 
-    protected int              protpos     = 0;   // holds the position of the protect record.
-    protected int              bspos       = 0;   // holds the position of the last bound sheet.
-    protected int              tabpos      = 0;   // holds the position of the tabid record
-    protected int              fontpos     = 0;   // hold the position of the last font record
-    protected int              numfonts    = 0;   // hold the number of font records
-    protected int              xfpos       = 0;   // hold the position of the last extended font record
-    protected int              numxfs      = 0;   // hold the number of extended format records
-    private int                backuppos   = 0;   // holds the position of the backup record.
-    private int                namepos   = 0;   // holds the position of last name record
-    private int                supbookpos   = 0;   // holds the position of sup book
-    private int                palettepos  = 0;   // hold the position of the palette, if applicable
-    private short              maxformatid  = -1;  // holds the max format id
-    private boolean            uses1904datewindowing  = false;  // whether 1904 date windowing is being used
+    protected int              bspos       =
+    0;   // holds the position of the last bound sheet.
+    protected int              tabpos      =
+    0;   // holds the position of the tabid record
+    protected int              fontpos     =
+    0;   // hold the position of the last font record
+    protected int              numfonts    =
+    0;   // hold the number of font records
+    protected int              xfpos       =
+    0;   // hold the position of the last extended font record
+    protected int              numxfs      =
+    0;   // hold the number of extended format records
+    private int                backuppos   =
+    0;   // holds the position of the backup record.
+    private int                namepos   =
+    0;   // holds the position of last name record
+    private int                supbookpos   =
+    0;   // holds the position of sup book
+    private short              maxformatid  =
+    -1;  // holds the max format id
 
-    private static POILogger   log = POILogFactory.getLogger(Workbook.class);
+    private static POILogger   log         =
+    POILogFactory.getLogger(Workbook.class);
 
     /**
      * Creates new Workbook with no intitialization --useless right now
@@ -218,11 +225,6 @@ public class Workbook implements Model {
                     retval.tabpos = k;
                     break;
 
-                case ProtectRecord.sid :
-                    log.log(DEBUG, "found protect record at " + k);
-                    retval.protpos = k;
-                    break;
-
                 case BackupRecord.sid :
                     log.log(DEBUG, "found backup record at " + k);
                     retval.backuppos = k;
@@ -247,13 +249,7 @@ public class Workbook implements Model {
 		    retval.formats.add(rec);
 		    retval.maxformatid = retval.maxformatid >= ((FormatRecord)rec).getIndexCode() ? retval.maxformatid : ((FormatRecord)rec).getIndexCode();
 		    break;
-                case DateWindow1904Record.sid :
-                    log.log(DEBUG, "found datewindow1904 record at " + k);
-                    retval.uses1904datewindowing = ((DateWindow1904Record)rec).getWindowing() == 1;
-                    break;
-                case PaletteRecord.sid:
-                    log.log(DEBUG, "found palette record at " + k);
-                    retval.palettepos = k;
+
                 default :
             }
             records.add(rec);
@@ -273,84 +269,79 @@ public class Workbook implements Model {
      * Creates an empty workbook object with three blank sheets and all the empty
      * fields.  Use this to create a workbook from scratch.
      */
-    public static Workbook createWorkbook()
-    {
-        log.log( DEBUG, "creating new workbook from scratch" );
-        Workbook retval = new Workbook();
-        ArrayList records = new ArrayList( 30 );
-        ArrayList formats = new ArrayList( 8 );
 
-        records.add( retval.createBOF() );
-        records.add( retval.createInterfaceHdr() );
-        records.add( retval.createMMS() );
-        records.add( retval.createInterfaceEnd() );
-        records.add( retval.createWriteAccess() );
-        records.add( retval.createCodepage() );
-        records.add( retval.createDSF() );
-        records.add( retval.createTabId() );
+    public static Workbook createWorkbook() {
+        log.log(DEBUG, "creating new workbook from scratch");
+        Workbook  retval  = new Workbook();
+        ArrayList records = new ArrayList(30);
+        ArrayList formats = new ArrayList(8);
+
+        records.add(retval.createBOF());
+        records.add(retval.createInterfaceHdr());
+        records.add(retval.createMMS());
+        records.add(retval.createInterfaceEnd());
+        records.add(retval.createWriteAccess());
+        records.add(retval.createCodepage());
+        records.add(retval.createDSF());
+        records.add(retval.createTabId());
         retval.tabpos = records.size() - 1;
-        records.add( retval.createFnGroupCount() );
-        records.add( retval.createWindowProtect() );
-        records.add( retval.createProtect() );
-        retval.protpos = records.size() - 1;
-        records.add( retval.createPassword() );
-        records.add( retval.createProtectionRev4() );
-        records.add( retval.createPasswordRev4() );
-        records.add( retval.createWindowOne() );
-        records.add( retval.createBackup() );
+        records.add(retval.createFnGroupCount());
+        records.add(retval.createWindowProtect());
+        records.add(retval.createProtect());
+        records.add(retval.createPassword());
+        records.add(retval.createProtectionRev4());
+        records.add(retval.createPasswordRev4());
+        records.add(retval.createWindowOne());
+        records.add(retval.createBackup());
         retval.backuppos = records.size() - 1;
-        records.add( retval.createHideObj() );
-        records.add( retval.createDateWindow1904() );
-        records.add( retval.createPrecision() );
-        records.add( retval.createRefreshAll() );
-        records.add( retval.createBookBool() );
-        records.add( retval.createFont() );
-        records.add( retval.createFont() );
-        records.add( retval.createFont() );
-        records.add( retval.createFont() );
-        retval.fontpos = records.size() - 1;   // last font record postion
+        records.add(retval.createHideObj());
+        records.add(retval.createDateWindow1904());
+        records.add(retval.createPrecision());
+        records.add(retval.createRefreshAll());
+        records.add(retval.createBookBool());
+        records.add(retval.createFont());
+        records.add(retval.createFont());
+        records.add(retval.createFont());
+        records.add(retval.createFont());
+        retval.fontpos  = records.size() - 1;   // last font record postion
         retval.numfonts = 4;
 
         // set up format records
-        for ( int i = 0; i <= 7; i++ )
-        {
-            Record rec;
-            rec = retval.createFormat( i );
-            retval.maxformatid = retval.maxformatid >= ( (FormatRecord) rec ).getIndexCode() ? retval.maxformatid : ( (FormatRecord) rec ).getIndexCode();
-            formats.add( rec );
-            records.add( rec );
-        }
-        retval.formats = formats;
+	for (int i = 0; i <= 7; i++) {
+            Record    rec;         
+	    rec = retval.createFormat(i);
+	    retval.maxformatid = retval.maxformatid >= ((FormatRecord)rec).getIndexCode() ? retval.maxformatid : ((FormatRecord)rec).getIndexCode();
+	    formats.add(rec);
+	    records.add(rec);
+	}
+	retval.formats = formats;
 
-        for ( int k = 0; k < 21; k++ )
-        {
-            records.add( retval.createExtendedFormat( k ) );
+        for (int k = 0; k < 21; k++) {
+            records.add(retval.createExtendedFormat(k));
             retval.numxfs++;
         }
         retval.xfpos = records.size() - 1;
-        for ( int k = 0; k < 6; k++ )
-        {
-            records.add( retval.createStyle( k ) );
+        for (int k = 0; k < 6; k++) {
+            records.add(retval.createStyle(k));
         }
-        retval.palettepos = records.size();
-        records.add( retval.createUseSelFS() );
-        for ( int k = 0; k < 1; k++ )
-        {   // now just do 1
+        records.add(retval.createUseSelFS());
+        for (int k = 0; k < 1; k++) {   // now just do 1
             BoundSheetRecord bsr =
-                    (BoundSheetRecord) retval.createBoundSheet( k );
+            ( BoundSheetRecord ) retval.createBoundSheet(k);
 
-            records.add( bsr );
-            retval.boundsheets.add( bsr );
+            records.add(bsr);
+            retval.boundsheets.add(bsr);
             retval.bspos = records.size() - 1;
         }
-        records.add( retval.createCountry() );
-        retval.sst = (SSTRecord) retval.createSST();
-        records.add( retval.sst );
-        records.add( retval.createExtendedSST() );
+        records.add(retval.createCountry());
+        retval.sst = ( SSTRecord ) retval.createSST();
+        records.add(retval.sst);
+        records.add(retval.createExtendedSST());
 
-        records.add( retval.createEOF() );
+        // TODO
+        records.add(retval.createEOF());
         retval.records = records;
-        log.log( DEBUG, "exit create new workbook from scratch" );
+        log.log(DEBUG, "exit create new workbook from scratch");
         return retval;
     }
 
@@ -523,6 +514,7 @@ public class Workbook implements Model {
      * make the tabid record look like the current situation.
      *
      */
+
     private void fixTabIdRecord() {
         TabIdRecord tir = ( TabIdRecord ) records.get(tabpos);
         short[]     tia = new short[ boundsheets.size() ];
@@ -583,7 +575,6 @@ public class Workbook implements Model {
         ExtendedFormatRecord xf = createExtendedFormat();
 
         ++xfpos;
-        ++palettepos;
         ++bspos;
         records.add(xfpos, xf);
         numxfs++;
@@ -680,11 +671,8 @@ public class Workbook implements Model {
 
             // byte[] rec = (( byte [] ) bytes.get(k));
             // System.arraycopy(rec, 0, retval, pos, rec.length);
-            Record record = (( Record ) records.get(k));
-            // Let's skip RECALCID records, as they are only use for optimization
-	    if(record.getSid() != RecalcIdRecord.sid || ((RecalcIdRecord)record).isNeeded()) {
-                pos += record.serialize(pos, retval);   // rec.length;
-	    }
+            pos += (( Record ) records.get(k)).serialize(pos,
+            retval);   // rec.length;
         }
         log.log(DEBUG, "Exiting serialize workbook");
         return retval;
@@ -717,11 +705,8 @@ public class Workbook implements Model {
 
             // byte[] rec = (( byte [] ) bytes.get(k));
             // System.arraycopy(rec, 0, data, offset + pos, rec.length);
-            Record record = (( Record ) records.get(k));
-            // Let's skip RECALCID records, as they are only use for optimization
-            if(record.getSid() != RecalcIdRecord.sid || ((RecalcIdRecord)record).isNeeded()) {
-		pos += record.serialize(pos + offset, data);   // rec.length;
-            }
+            pos += (( Record ) records.get(k)).serialize(pos + offset,
+            data);   // rec.length;
         }
         log.log(DEBUG, "Exiting serialize workbook");
         return pos;
@@ -731,11 +716,7 @@ public class Workbook implements Model {
         int retval = 0;
 
         for (int k = 0; k < records.size(); k++) {
-            Record record = (( Record ) records.get(k));
-            // Let's skip RECALCID records, as they are only use for optimization
-            if(record.getSid() != RecalcIdRecord.sid || ((RecalcIdRecord)record).isNeeded()) {
-		retval += record.getRecordSize();
-            }
+            retval += (( Record ) records.get(k)).getRecordSize();
         }
         return retval;
     }
@@ -1573,16 +1554,6 @@ public class Workbook implements Model {
     }
 
     /**
-     * Creates a palette record initialized to the default palette
-     * @return a PaletteRecord instance populated with the default colors
-     * @see org.apache.poi.hssf.record.PaletteRecord
-     */
-    protected PaletteRecord createPalette()
-    {
-        return new PaletteRecord(PaletteRecord.sid);
-    }
-    
-    /**
      * Creates the UseSelFS object with the use natural language flag set to 0 (false)
      * @return record containing a UseSelFSRecord
      * @see org.apache.poi.hssf.record.UseSelFSRecord
@@ -1877,30 +1848,27 @@ public class Workbook implements Model {
      * @see org.apache.poi.hssf.record.FormatRecord
      * @see org.apache.poi.hssf.record.Record
      */
-    public short createFormat( String format )
-    {
-        ++xfpos;	//These are to ensure that positions are updated properly
-        ++palettepos;
-        ++bspos;
-        FormatRecord rec = new FormatRecord();
-        maxformatid = maxformatid >= (short) 0xa4 ? (short) ( maxformatid + 1 ) : (short) 0xa4; //Starting value from M$ empiracle study.
-        rec.setIndexCode( maxformatid );
-        rec.setFormatStringLength( (byte) format.length() );
-        rec.setFormatString( format );
+    public short createFormat(String format) {
+	FormatRecord rec = new FormatRecord();
+	maxformatid = maxformatid >= (short)0xa4 ? (short)(maxformatid + 1) : (short)0xa4; //Starting value from M$ empiracle study.
+	rec.setIndexCode(maxformatid);
+	rec.setFormatStringLength((byte)format.length());
+	rec.setFormatString(format);
 
-        int pos = 0;
-        while ( pos < records.size() && ( (Record) records.get( pos ) ).getSid() != FormatRecord.sid )
-            pos++;
-        pos += formats.size();
-        formats.add( rec );
-        records.add( pos, rec );
-        return maxformatid;
-    }
+	int pos = 0;
+	while (pos < records.size() && ((Record)records.get(pos)).getSid() != FormatRecord.sid) 
+	    pos++;
+	pos += formats.size();
+	formats.add(rec);
+	records.add(pos, rec);
+	return maxformatid;
+     }
 
 
     /**
      * Returns the first occurance of a record matching a particular sid.
      */
+
     public Record findFirstRecordBySid(short sid) {
         for (Iterator iterator = records.iterator(); iterator.hasNext(); ) {
             Record record = ( Record ) iterator.next();
@@ -1913,33 +1881,12 @@ public class Workbook implements Model {
     }
 
     /**
-     * Returns the index of a record matching a particular sid.
-     * @param sid   The sid of the record to match
-     * @return      The index of -1 if no match made.
-     */
-    public int findFirstRecordLocBySid(short sid) {
-        int index = 0;
-        for (Iterator iterator = records.iterator(); iterator.hasNext(); ) {
-            Record record = ( Record ) iterator.next();
-
-            if (record.getSid() == sid) {
-                return index;
-            }
-            index ++;
-        }
-        return -1;
-    }
-
-    /**
      * Returns the next occurance of a record matching a particular sid.
      */
     public Record findNextRecordBySid(short sid, int pos) {
         Iterator iterator = records.iterator();
-        for (;pos > 0 && iterator.hasNext(); iterator.next(),pos--)
-        {
-            // intentionally empty
-        }
-        while (iterator.hasNext()) {
+	for (;pos > 0 && iterator.hasNext(); iterator.next(),pos--);
+	while (iterator.hasNext()) {
             Record record = ( Record ) iterator.next();
 
             if (record.getSid() == sid) {
@@ -1952,47 +1899,5 @@ public class Workbook implements Model {
     public List getRecords()
     {
         return records;
-    }
-
-//    public void insertChartRecords( List chartRecords )
-//    {
-//        backuppos += chartRecords.size();
-//        fontpos += chartRecords.size();
-//        palettepos += chartRecords.size();
-//        bspos += chartRecords.size();
-//        xfpos += chartRecords.size();
-//
-//        records.addAll(protpos, chartRecords);
-//    }
-
-    /**
-    * Whether date windowing is based on 1/2/1904 or 1/1/1900.
-    * Some versions of Excel (Mac) can save workbooks using 1904 date windowing.
-    *
-    * @return true if using 1904 date windowing
-    */
-    public boolean isUsing1904DateWindowing() {
-        return uses1904datewindowing;
-    }
-    
-    /**
-     * Returns the custom palette in use for this workbook; if a custom palette record
-     * does not exist, then it is created.
-     */
-    public PaletteRecord getCustomPalette()
-    {
-        PaletteRecord palette;
-        Record rec = (Record) records.get(palettepos);
-        if (rec instanceof PaletteRecord)
-        {
-            palette = (PaletteRecord) rec;
-        }
-        else
-        {
-            palette = createPalette();
-            records.add(palettepos, palette);
-            ++bspos;
-        }
-        return palette;
     }
 }

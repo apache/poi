@@ -61,6 +61,7 @@ import java.util.Iterator;
 
 import org.apache.poi.hssf
     .record.*;       // normally I don't do this, buy we literally mean ALL
+import org.apache.poi.hssf.model.Model;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.util.*;
 import org.apache.poi.hssf.record
@@ -79,16 +80,17 @@ import org.apache.poi.hssf.record
  * <P>
  * @author  Andrew C. Oliver (acoliver at apache dot org)
  * @author  Glen Stampoultzis (glens at apache.org)
- * @author  Shawn Laubach (slaubach at apache dot org) Gridlines, Headers, Footers, and PrintSetup
+ * @author  Shawn Laubach (laubach at acm.org) Just Gridlines, Headers, Footers, and PrintSetup
  * @author Jason Height (jheight at chariot dot net dot au) Clone support
- * @author  Brian Sanders (kestrel at burdell dot org) Active Cell support
  *
  * @see org.apache.poi.hssf.model.Workbook
  * @see org.apache.poi.hssf.usermodel.HSSFSheet
  * @version 1.0-pre
  */
 
-public class Sheet implements Model
+public class Sheet
+    extends java.lang.Object 
+    implements Model
 {
     public static final short   LeftMargin = 0;
     public static final short   RightMargin = 1;
@@ -109,7 +111,6 @@ public class Sheet implements Model
     protected FooterRecord              footer           = null;
     protected PrintGridlinesRecord      printGridlines   = null;
     protected MergeCellsRecord          merged           = null;
-    protected SelectionRecord           selection        = null;
     protected int                       mergedloc        = 0;
     private static POILogger            log              = POILogFactory.getLogger(Sheet.class);
     private ArrayList                   columnSizes      = null;  // holds column info
@@ -196,7 +197,7 @@ public class Sheet implements Model
                 {
                     retval.columnSizes = new ArrayList();
                 }
-                retval.columnSizes.add(rec);
+                retval.columnSizes.add(( ColumnInfoRecord ) rec);
             }
             else if (rec.getSid() == DefaultColWidthRecord.sid)
             {
@@ -253,10 +254,6 @@ public class Sheet implements Model
             else if ( rec.getSid() == PrintSetupRecord.sid )
             {
                 retval.printSetup = (PrintSetupRecord) rec;
-            }
-            else if ( rec.getSid() == SelectionRecord.sid )
-            {
-                retval.selection = (SelectionRecord) rec;
             }
 
             if (rec != null)
@@ -382,9 +379,7 @@ public class Sheet implements Model
         records.add(retval.dims);
         records.add(retval.createWindowTwo());
         retval.setLoc(records.size() - 1);
-        retval.selection = 
-                (SelectionRecord) retval.createSelection();
-        records.add(retval.selection);
+        records.add(retval.createSelection());
         records.add(retval.createEOF());
         retval.records = records;
         log.log(log.DEBUG, "Sheet createsheet from scratch exit");
@@ -439,10 +434,9 @@ public class Sheet implements Model
     }
 
     public int getNumMergedRegions()
-	{
-	    return merged!=null ? merged.getNumAreas() : 0;
-	}
-
+    {
+        return merged.getNumAreas();
+    }
 
     /**
      * This is basically a kludge to deal with the now obsolete Label records.  If
@@ -1047,6 +1041,7 @@ public class Sheet implements Model
 
         setLoc(getDimsLoc());
         rows.removeRow(row);
+        cells.removeRow(row.getRowNumber());
 
         /*
          * for (int k = loc; k < records.size(); k++)
@@ -1116,6 +1111,10 @@ public class Sheet implements Model
          *     }
          *     return null;
          */
+    }
+
+    public CellValueRecordInterface getValueRecord(int row, short col) {
+       return cells.getCell(row, col);
     }
 
     /**
@@ -1223,6 +1222,9 @@ public class Sheet implements Model
     public RowRecord getRow(int rownum)
     {
         log.log(log.DEBUG, "getNextRow loc= " + loc);
+        if (rows == null) {
+            return null;
+        }
         return rows.getRow(rownum);
 
         /*
@@ -1245,6 +1247,15 @@ public class Sheet implements Model
          */
 
         // return null;
+    }
+
+
+    public Iterator rowRecordIterator() {
+        return rows.getIterator();
+    }
+
+    public Iterator rowCellIterator(int row) {
+        return this.cells.getRowCellIterator(row);
     }
 
     /**
@@ -1324,6 +1335,15 @@ public class Sheet implements Model
             offset += rec.serialize().length;
         }
     }
+
+    public int getFirstRow() {
+        return rows.getFirstRowNum();
+    }
+
+    public int getLastRow() {
+        return rows.getLastRowNum();
+    }
+
 
     /** not currently used */
 
@@ -1943,66 +1963,6 @@ public class Sheet implements Model
         retval.setNumRefs(( short ) 0x0);
         return retval;
     }
-    
-    /**
-     * Returns the active row
-     *
-     * @see org.apache.poi.hssf.record.SelectionRecord
-     * @return row the active row index
-     */
-    public int getActiveCellRow()
-    {
-        if (selection == null)
-        {
-            return 0;
-        }
-        return selection.getActiveCellRow();
-    }
-    
-    /**
-     * Sets the active row
-     *
-     * @param row the row index
-     * @see org.apache.poi.hssf.record.SelectionRecord
-     */
-    public void setActiveCellRow(int row)
-    {
-        //shouldn't have a sheet w/o a SelectionRecord, but best to guard anyway
-        if (selection != null)
-        {
-            selection.setActiveCellRow(row);
-        }
-    }
-    
-    /**
-     * Returns the active column
-     *
-     * @see org.apache.poi.hssf.record.SelectionRecord
-     * @return row the active column index
-     */
-    public short getActiveCellCol()
-    {
-        if (selection == null)
-        {
-            return (short) 0;
-        }
-        return selection.getActiveCellCol();
-    }
-    
-    /**
-     * Sets the active column
-     *
-     * @param col the column index
-     * @see org.apache.poi.hssf.record.SelectionRecord
-     */
-    public void setActiveCellCol(short col)
-    {
-        //shouldn't have a sheet w/o a SelectionRecord, but best to guard anyway
-        if (selection != null)
-        {
-            selection.setActiveCellCol(col);
-        }
-    }
 
     protected Record createMergedCells()
     {
@@ -2023,6 +1983,32 @@ public class Sheet implements Model
     {
         return new EOFRecord();
     }
+
+    public void setLastColForRow(int row, short col) {
+        this.getRow(row).setLastCol(col);
+    }
+
+    public void setFirstColForRow(int row, short col) {
+        this.getRow(row).setFirstCol(col);
+    }
+
+    public short getLastColForRow(int row) {
+        return this.getRow(row).getLastCol();
+    }
+
+
+    public short getFirstColForRow(int row) {
+        return this.getRow(row).getFirstCol();
+    }
+
+    public void setCellValue(int row, short col, double val) {
+        this.cells.setValue(row, col, val);
+    }
+
+    public void setCellStyle(int row, short col, short xf) {
+        this.cells.setStyle(row, col, xf);
+    }
+
 
     /**
      * get the location of the DimensionsRecord (which is the last record before the value section)
@@ -2056,6 +2042,7 @@ public class Sheet implements Model
         {
             retval += (( Record ) records.get(k)).getRecordSize();
         }
+
         return retval;
     }
 
@@ -2091,27 +2078,8 @@ public class Sheet implements Model
         return null;
     }
 
-    /**
-     * Finds the first occurance of a record matching a particular sid and
-     * returns it's position.
-     * @param sid   the sid to search for
-     * @return  the record position of the matching record or -1 if no match
-     *          is made.
-     */
-    public int findFirstRecordLocBySid( short sid )
-    {
-        int index = 0;
-        for (Iterator iterator = records.iterator(); iterator.hasNext(); )
-        {
-            Record record = ( Record ) iterator.next();
-
-            if (record.getSid() == sid)
-            {
-                return index;
-            }
-            index++;
-        }
-        return -1;
+    public int getPhysicalNumberOfRows() {
+        return rows.getPhysicalNumberOfRows();
     }
 
     /**
@@ -2129,7 +2097,7 @@ public class Sheet implements Model
      */
     public void setHeader (HeaderRecord newHeader)
     {
-    	header = newHeader;
+	header = newHeader;
     }
 
     /**
@@ -2138,7 +2106,7 @@ public class Sheet implements Model
      */
     public FooterRecord getFooter ()
     {
-	    return footer;
+	return footer;
     }
 
     /**
@@ -2147,7 +2115,7 @@ public class Sheet implements Model
      */
     public void setFooter (FooterRecord newFooter)
     {
-	    footer = newFooter;
+	footer = newFooter;
     }
 
     /**
@@ -2156,7 +2124,7 @@ public class Sheet implements Model
      */
     public PrintSetupRecord getPrintSetup ()
     {
-	    return printSetup;
+	return printSetup;
     }
 
     /**
@@ -2165,7 +2133,7 @@ public class Sheet implements Model
      */
     public void setPrintSetup (PrintSetupRecord newPrintSetup)
     {
-	    printSetup = newPrintSetup;
+	printSetup = newPrintSetup;
     }
 
     /**
@@ -2174,7 +2142,7 @@ public class Sheet implements Model
      */
     public PrintGridlinesRecord getPrintGridlines ()
     {
-	    return printGridlines;
+	return printGridlines;
     }
 
     /**
@@ -2183,7 +2151,7 @@ public class Sheet implements Model
      */
     public void setPrintGridlines (PrintGridlinesRecord newPrintGridlines)
     {
-	    printGridlines = newPrintGridlines;
+	printGridlines = newPrintGridlines;
     }
 
     /**
@@ -2191,9 +2159,11 @@ public class Sheet implements Model
      * @param sel True to select the sheet, false otherwise.
      */
     public void setSelected(boolean sel) {
-        WindowTwoRecord windowTwo = (WindowTwoRecord) findFirstRecordBySid(WindowTwoRecord.sid);
-        windowTwo.setSelected(sel);
+	WindowTwoRecord windowTwo = (WindowTwoRecord) findFirstRecordBySid(WindowTwoRecord.sid);
+	windowTwo.setSelected(sel);
     }
+
+
 
      /**
       * Gets the size of the margin in inches.
@@ -2201,33 +2171,31 @@ public class Sheet implements Model
       * @return the size of the margin
       */
      public double getMargin(short margin) {
-         Margin m;
-         switch ( margin )
-         {
-             case LeftMargin:
-                 m = (Margin) findFirstRecordBySid( LeftMarginRecord.sid );
-                 if ( m == null )
-                     return .75;
-                 break;
-             case RightMargin:
-                 m = (Margin) findFirstRecordBySid( RightMarginRecord.sid );
-                 if ( m == null )
-                     return .75;
-                 break;
-             case TopMargin:
-                 m = (Margin) findFirstRecordBySid( TopMarginRecord.sid );
-                 if ( m == null )
-                     return 1.0;
-                 break;
-             case BottomMargin:
-                 m = (Margin) findFirstRecordBySid( BottomMarginRecord.sid );
-                 if ( m == null )
-                     return 1.0;
-                 break;
-             default :
-                 throw new RuntimeException( "Unknown margin constant:  " + margin );
-         }
-         return m.getMargin();
+       Margin m;
+       switch (margin) {
+       case LeftMargin :
+           m = (Margin)findFirstRecordBySid(LeftMarginRecord.sid);
+           if (m == null)
+               return .75;
+           break;
+       case RightMargin :
+           m = (Margin)findFirstRecordBySid(RightMarginRecord.sid);
+           if (m == null)
+               return .75;
+           break;
+       case TopMargin :
+           m = (Margin)findFirstRecordBySid(TopMarginRecord.sid);
+           if (m == null)
+               return 1.0;
+           break;
+       case BottomMargin :
+           m = (Margin)findFirstRecordBySid(BottomMarginRecord.sid);
+           if (m == null)
+               return 1.0;
+           break;
+       default : throw new RuntimeException("Unknown margin constant:  " + margin);
+       }
+       return m.getMargin();
      }
 
      /**
@@ -2236,45 +2204,39 @@ public class Sheet implements Model
       * @param size the size of the margin
       */
      public void setMargin(short margin, double size) {
-         Margin m;
-         switch ( margin )
-         {
-             case LeftMargin:
-                 m = (Margin) findFirstRecordBySid( LeftMarginRecord.sid );
-                 if ( m == null )
-                 {
-                     m = new LeftMarginRecord();
-                     records.add( getDimsLoc() + 1, m );
-                 }
-                 break;
-             case RightMargin:
-                 m = (Margin) findFirstRecordBySid( RightMarginRecord.sid );
-                 if ( m == null )
-                 {
-                     m = new RightMarginRecord();
-                     records.add( getDimsLoc() + 1, m );
-                 }
-                 break;
-             case TopMargin:
-                 m = (Margin) findFirstRecordBySid( TopMarginRecord.sid );
-                 if ( m == null )
-                 {
-                     m = new TopMarginRecord();
-                     records.add( getDimsLoc() + 1, m );
-                 }
-                 break;
-             case BottomMargin:
-                 m = (Margin) findFirstRecordBySid( BottomMarginRecord.sid );
-                 if ( m == null )
-                 {
-                     m = new BottomMarginRecord();
-                     records.add( getDimsLoc() + 1, m );
-                 }
-                 break;
-             default :
-                 throw new RuntimeException( "Unknown margin constant:  " + margin );
-         }
-         m.setMargin( size );
+       Margin m;
+       switch (margin) {
+       case LeftMargin :
+           m = (Margin)findFirstRecordBySid(LeftMarginRecord.sid);
+           if (m == null) {
+               m = new LeftMarginRecord();
+               records.add(getDimsLoc() + 1, (Record)m);
+           }
+           break;
+       case RightMargin :
+           m = (Margin)findFirstRecordBySid(RightMarginRecord.sid);
+           if (m == null) {
+               m = new RightMarginRecord();
+               records.add(getDimsLoc() + 1, (Record)m);
+           }
+           break;
+       case TopMargin :
+           m = (Margin)findFirstRecordBySid(TopMarginRecord.sid);
+           if (m == null) {
+               m = new TopMarginRecord();
+               records.add(getDimsLoc() + 1, (Record)m);
+           }
+           break;
+       case BottomMargin :
+           m = (Margin)findFirstRecordBySid(BottomMarginRecord.sid);
+           if (m == null) {
+               m = new BottomMarginRecord();
+               records.add(getDimsLoc() + 1, (Record)m);
+           }
+           break;
+       default : throw new RuntimeException("Unknown margin constant:  " + margin);
+       }
+       m.setMargin(size);
      }
 
     public int getEofLoc()

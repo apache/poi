@@ -60,15 +60,10 @@
 package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.util.POILogFactory;
-import org.apache.poi.hssf.eventmodel.EventRecordFactory;
 import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.*;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.poifs.filesystem.Entry;
-import org.apache.poi.poifs.filesystem.DirectoryEntry;
-import org.apache.poi.poifs.filesystem.DocumentEntry;
-import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.util.POILogger;
 
 import java.io.ByteArrayInputStream;
@@ -77,7 +72,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Iterator;
 
 /**
  * High level representation of a workbook.  This is the first object most users
@@ -88,7 +82,7 @@ import java.util.Iterator;
  * @see org.apache.poi.hssf.usermodel.HSSFSheet
  * @author  Andrew C. Oliver (acoliver at apache dot org)
  * @author  Glen Stampoultzis (glens at apache.org)
- * @author  Shawn Laubach (slaubach at apache dot org)
+ * @author  Shawn Laubach (shawnlaubach at cox.net)
  * @version 2.0-pre
  */
 
@@ -123,18 +117,6 @@ public class HSSFWorkbook
      */
 
     private ArrayList names;
- 
-    /**
-     * holds whether or not to preserve other nodes in the POIFS.  Used
-     * for macros and embedded objects. 
-     */
-    private boolean   preserveNodes;
-
-    /**
-     * if you do preserve the nodes, you'll need to hold the whole POIFS in
-     * memory.
-     */
-    private POIFSFileSystem poifs;
     
     private static POILogger log = POILogFactory.getLogger(HSSFWorkbook.class);
 
@@ -150,40 +132,22 @@ public class HSSFWorkbook
         names  = new ArrayList(INITIAL_CAPACITY);
     }
 
-    public HSSFWorkbook(POIFSFileSystem fs) throws IOException {
-      this(fs,true);
-    }
-
     /**
      * given a POI POIFSFileSystem object, read in its Workbook and populate the high and
      * low level models.  If you're reading in a workbook...start here.
      *
      * @param fs the POI filesystem that contains the Workbook stream.
-     * @param preserveNodes whether to preseve other nodes, such as 
-     *        macros.  This takes more memory, so only say yes if you
-     *        need to.
      * @see org.apache.poi.poifs.filesystem.POIFSFileSystem
      * @exception IOException if the stream cannot be read
      */
 
-    public HSSFWorkbook(POIFSFileSystem fs, boolean preserveNodes)
+    public HSSFWorkbook(POIFSFileSystem fs)
             throws IOException
     {
-        this.preserveNodes = preserveNodes;
-     
-        if (preserveNodes) {
-           this.poifs = fs; 
-        }
-
         sheets = new ArrayList(INITIAL_CAPACITY);
         names  = new ArrayList(INITIAL_CAPACITY);
         
         InputStream stream = fs.createDocumentInputStream("Workbook");
-        
-        EventRecordFactory factory = new EventRecordFactory();
-       
-        
-        
         List records = RecordFactory.createRecords(stream);
 
         workbook = Workbook.createWorkbook(records);
@@ -211,27 +175,20 @@ public class HSSFWorkbook
         }
     }
 
-     public HSSFWorkbook(InputStream s) throws IOException {
-         this(s,true);
-     }
-
     /**
      * Companion to HSSFWorkbook(POIFSFileSystem), this constructs the POI filesystem around your
      * inputstream.
      *
      * @param s  the POI filesystem that contains the Workbook stream.
-     * @param preserveNodes whether to preseve other nodes, such as 
-     *        macros.  This takes more memory, so only say yes if you
-     *        need to.
      * @see org.apache.poi.poifs.filesystem.POIFSFileSystem
      * @see #HSSFWorkbook(POIFSFileSystem)
      * @exception IOException if the stream cannot be read
      */
 
-    public HSSFWorkbook(InputStream s, boolean preserveNodes)
+    public HSSFWorkbook(InputStream s)
             throws IOException
     {
-        this(new POIFSFileSystem(s), preserveNodes);
+        this((new POIFSFileSystem(s)));
     }
 
     /**
@@ -558,16 +515,9 @@ public class HSSFWorkbook
     {
         byte[] bytes = getBytes();
         POIFSFileSystem fs = new POIFSFileSystem();
-      
-        fs.createDocument(new ByteArrayInputStream(bytes), "Workbook");
 
-        if (preserveNodes) { 
-            List excepts = new ArrayList(1);
-            excepts.add("Workbook");
-            copyNodes(this.poifs,fs,excepts);
-        }
+        fs.createDocument(new ByteArrayInputStream(bytes), "Workbook");
         fs.writeFilesystem(stream);
-        //poifs.writeFilesystem(stream);
     }
 
     /**
@@ -598,12 +548,12 @@ public class HSSFWorkbook
             // sheetbytes.add((( HSSFSheet ) sheets.get(k)).getSheet().getSize());
             totalsize += ((HSSFSheet) sheets.get(k)).getSheet().getSize();
         }
-/*        if (totalsize < 4096)
+        if (totalsize < 4096)
         {
             totalsize = 4096;
-        }*/
-        byte[] retval = new byte[totalsize];
-        int pos = workbook.serialize(0, retval);
+        }
+        byte[] data = new byte[totalsize];
+        int pos = workbook.serialize(0, data);
 
         // System.arraycopy(wb, 0, retval, 0, wb.length);
         for (int k = 0; k < sheets.size(); k++)
@@ -612,13 +562,13 @@ public class HSSFWorkbook
             // byte[] sb = (byte[])sheetbytes.get(k);
             // System.arraycopy(sb, 0, retval, pos, sb.length);
             pos += ((HSSFSheet) sheets.get(k)).getSheet().serialize(pos,
-                    retval);   // sb.length;
+                    data);   // sb.length;
         }
-/*        for (int k = pos; k < totalsize; k++)
+        for (int k = pos; k < totalsize; k++)
         {
-            retval[k] = 0;
-        }*/
-        return retval;
+            data[k] = 0;
+        }
+        return data;
     }
 
     public int addSSTString(String string)
@@ -708,14 +658,14 @@ public class HSSFWorkbook
         workbook.removeName(index);        
     }
 
-    /**
+        /**
      * Creates an instance of HSSFDataFormat.
      * @return the HSSFDataFormat object
      * @see org.apache.poi.hssf.record.FormatRecord
      * @see org.apache.poi.hssf.record.Record
      */
     public HSSFDataFormat createDataFormat() {
-        return new HSSFDataFormat(workbook);
+	return new HSSFDataFormat(workbook);
     }
 	
     /** remove the named range by his name
@@ -727,89 +677,5 @@ public class HSSFWorkbook
         removeName(index);          
         
     }
-
-    public HSSFPalette getCustomPalette()
-    {
-        return new HSSFPalette(workbook.getCustomPalette());
-    }
     
-   /**
-    * Copies nodes from one POIFS to the other minus the excepts
-    * @param source is the source POIFS to copy from
-    * @param target is the target POIFS to copy to 
-    * @param excepts is a list of Strings specifying what nodes NOT to copy 
-    */
-   private void copyNodes(POIFSFileSystem source, POIFSFileSystem target, 
-                          List excepts) throws IOException {
-      //System.err.println("CopyNodes called");
-
-      DirectoryEntry root = source.getRoot();
-      DirectoryEntry newRoot = target.getRoot();
-
-      Iterator entries = root.getEntries();
-       
-      while (entries.hasNext()) {
-         Entry entry = (Entry)entries.next();
-         if (!isInList(entry.getName(), excepts)) {
-             copyNodeRecursively(entry,newRoot);
-         }
-      } 
-   }
-
-   private boolean isInList(String entry, List list) {
-       for (int k = 0; k < list.size(); k++) {
-          if (list.get(k).equals(entry)) {
-            return true;
-          }
-       }
-       return false;
-   }
-
-   private void copyNodeRecursively(Entry entry, DirectoryEntry target) 
-   throws IOException {
-       //System.err.println("copyNodeRecursively called with "+entry.getName()+
-       //                   ","+target.getName());
-       DirectoryEntry newTarget = null; 
-       if (entry.isDirectoryEntry()) {
-           newTarget = target.createDirectory(entry.getName());
-           Iterator entries = ((DirectoryEntry)entry).getEntries();
-
-           while (entries.hasNext()) {
-              copyNodeRecursively((Entry)entries.next(),newTarget);
-           } 
-       } else {
-         DocumentEntry dentry = (DocumentEntry)entry;
-         DocumentInputStream dstream = new DocumentInputStream(dentry);
-         target.createDocument(dentry.getName(),dstream);
-         dstream.close();
-       }
-   }
-
-    public void insertChartRecord()
-    {
-        int loc = workbook.findFirstRecordLocBySid(SSTRecord.sid);
-        byte[] data = {
-           (byte)0x0F, (byte)0x00, (byte)0x00, (byte)0xF0, (byte)0x52,
-           (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00,
-           (byte)0x06, (byte)0xF0, (byte)0x18, (byte)0x00, (byte)0x00,
-           (byte)0x00, (byte)0x01, (byte)0x08, (byte)0x00, (byte)0x00,
-           (byte)0x02, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x02,
-           (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x01, (byte)0x00,
-           (byte)0x00, (byte)0x00, (byte)0x01, (byte)0x00, (byte)0x00,
-           (byte)0x00, (byte)0x03, (byte)0x00, (byte)0x00, (byte)0x00,
-           (byte)0x33, (byte)0x00, (byte)0x0B, (byte)0xF0, (byte)0x12,
-           (byte)0x00, (byte)0x00, (byte)0x00, (byte)0xBF, (byte)0x00,
-           (byte)0x08, (byte)0x00, (byte)0x08, (byte)0x00, (byte)0x81,
-           (byte)0x01, (byte)0x09, (byte)0x00, (byte)0x00, (byte)0x08,
-           (byte)0xC0, (byte)0x01, (byte)0x40, (byte)0x00, (byte)0x00,
-           (byte)0x08, (byte)0x40, (byte)0x00, (byte)0x1E, (byte)0xF1,
-           (byte)0x10, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x0D,
-           (byte)0x00, (byte)0x00, (byte)0x08, (byte)0x0C, (byte)0x00,
-           (byte)0x00, (byte)0x08, (byte)0x17, (byte)0x00, (byte)0x00,
-           (byte)0x08, (byte)0xF7, (byte)0x00, (byte)0x00, (byte)0x10,
-        };
-        UnknownRecord r = new UnknownRecord((short)0x00EB,(short)0x005a, data);
-        workbook.getRecords().add(loc, r);
-    }
-
 }

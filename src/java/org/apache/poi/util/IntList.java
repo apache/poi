@@ -88,6 +88,7 @@ public class IntList
 {
     private int[]            _array;
     private int              _limit;
+    private int              fillval = 0;
     private static final int _default_size = 128;
 
     /**
@@ -97,8 +98,14 @@ public class IntList
     public IntList()
     {
         this(_default_size);
-    }
+    }    
 
+    public IntList(final int initialCapacity)
+    {
+        this(initialCapacity,0);
+    }
+    
+    
     /**
      * create a copy of an existing IntList
      *
@@ -118,12 +125,22 @@ public class IntList
      * @param initialCapacity the size for the internal array
      */
 
-    public IntList(final int initialCapacity)
+    public IntList(final int initialCapacity, int fillvalue)
     {
         _array = new int[ initialCapacity ];
+        if (fillval != 0) {
+            fillval = fillvalue;
+            fillArray(fillval, _array, 0);        
+        }
         _limit = 0;
     }
 
+    private void fillArray(int val, int[] array, int index) {
+      for (int k = index; k < array.length; k++) {
+        array[k] = val;   
+      }
+    }
+    
     /**
      * add the specfied value at the specified index
      *
@@ -519,7 +536,9 @@ public class IntList
         {
             if (o == _array[ j ])
             {
-                System.arraycopy(_array, j + 1, _array, j, _limit - j);
+                if (j+1 < _limit) {
+                    System.arraycopy(_array, j + 1, _array, j, _limit - j);
+                }
                 _limit--;
                 rval = true;
             }
@@ -670,7 +689,11 @@ public class IntList
         int   size      = (new_size == _array.length) ? new_size + 1
                                                       : new_size;
         int[] new_array = new int[ size ];
-
+        
+        if (fillval != 0) {
+          fillArray(fillval, new_array, _array.length);                
+        }
+        
         System.arraycopy(_array, 0, new_array, 0, _limit);
         _array = new_array;
     }

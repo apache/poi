@@ -145,7 +145,7 @@ public class FormulaRecord
         field_6_zero           = LittleEndian.getInt(data, 16 + offset);
         field_7_expression_len = LittleEndian.getShort(data, 20 + offset);
         field_8_parsed_expr    = getParsedExpressionTokens(data, size,
-                                 22 + offset);
+                                 offset);
         
         } catch (java.lang.UnsupportedOperationException uoe)  {
             field_8_parsed_expr = null;
@@ -164,7 +164,7 @@ public class FormulaRecord
                                             int offset)
     {
         Stack stack = new Stack();
-        int   pos   = offset;
+        int   pos   = 22 + offset;
 
         while (pos < size)
         {
@@ -329,7 +329,15 @@ public class FormulaRecord
 
     public List getParsedExpression()
     {
-        return field_8_parsed_expr;
+        return ( List ) field_8_parsed_expr;
+    }
+
+    /**
+     * sets the stack with a list
+     */
+    public void setParsedExpression(List ptgs) {
+        field_8_parsed_expr = new Stack();
+        field_8_parsed_expr.addAll(ptgs);
     }
 
     /**
@@ -545,23 +553,20 @@ public class FormulaRecord
                 .append("\n");
             buffer.append("    .expressionlength= ").append(getExpressionLength())
                 .append("\n");
-
-            if (field_8_parsed_expr != null) {
-                buffer.append("    .numptgsinarray  = ").append(field_8_parsed_expr.size())
-                    .append("\n");
+            buffer.append("    .numptgsinarray  = ").append(field_8_parsed_expr.size())
+                .append("\n");
             
             
-                for (int k = 0; k < field_8_parsed_expr.size(); k++ ) {
+            for (int k = 0; k < field_8_parsed_expr.size(); k++ ) {
 /*                buffer.append("formula ").append(k).append(" ")
-                  .append(((Ptg)field_8_parsed_expr.get(k)).toFormulaString());*/
-                    buffer.append("Formula ")
-                        .append(k)
-                        .append("=")
-                        .append(field_8_parsed_expr.get(k).toString())
-                        .append("\n")
-                        .append(((Ptg)field_8_parsed_expr.get(k)).toDebugString())
-                        .append("\n");
-                }
+               .append(((Ptg)field_8_parsed_expr.get(k)).toFormulaString());*/
+                buffer.append("Formula ")
+                .append(k)
+                .append("=")
+                .append(((Ptg)field_8_parsed_expr.get(k)).toString())
+                .append("\n")
+                .append(((Ptg)field_8_parsed_expr.get(k)).toDebugString())
+                .append("\n");                
             }
             
             
