@@ -54,15 +54,8 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.model.Workbook;
-import org.apache.poi.hssf.record.*;
-import org.apache.poi.hssf.util.Region;
-import org.apache.poi.util.POILogger;
-
-import java.util.Iterator;
-import java.util.TreeMap;
+import org.apache.poi.hssf.record.NameRecord;
 import org.apache.poi.hssf.util.RangeAddress;
 import org.apache.poi.hssf.util.SheetReferences;
 
@@ -70,7 +63,6 @@ import org.apache.poi.hssf.util.SheetReferences;
  * Title:        High Level Represantion of Named Range <P>
  * REFERENCE:  <P>
  * @author Libin Roman (Vista Portal LDT. Developer)
- * @version 1.0-pre
  */
 
 public class HSSFName {
@@ -80,7 +72,7 @@ public class HSSFName {
     /** Creates new HSSFName   - called by HSSFWorkbook to create a sheet from
      * scratch.
      *
-     * @see #org.apache.poi.hssf.usermodel.HSSFWorkbook.createName()
+     * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#createName()
      * @param name the Name Record
      * @param book - lowlevel Workbook object associated with the sheet.
      * @param book the Workbook */
@@ -88,14 +80,6 @@ public class HSSFName {
     protected HSSFName(Workbook book, NameRecord name) {
         this.book = book;
         this.name = name;
-    }
-    
-    /** 
-     * private default constructor prevents bogus initializationless 
-     * construction 
-     */
-    
-    private HSSFName() {
     }
     
     /** Get the sheets name which this named range is referenced to
