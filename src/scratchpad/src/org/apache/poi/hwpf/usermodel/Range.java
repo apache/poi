@@ -712,8 +712,7 @@ public class Range
     {
       throw new ArrayIndexOutOfBoundsException("The table's bounds fall outside of this Range");
     }
-
-    return new Table(r._parStart, tableEnd, r._doc.getRange(), 1);
+    return new Table(r._parStart, tableEnd, r._doc.getRange(), paragraph.getTableLevel());
   }
 
   /**
@@ -797,7 +796,7 @@ public class Range
   {
     int x = min;
     PropertyNode node = (PropertyNode)rpl.get(x);
-    while(node.getEnd() <= start)
+    while(node.getEnd() <= start && x < rpl.size()-1)
     {
       x++;
       node = (PropertyNode)rpl.get(x);
@@ -805,7 +804,7 @@ public class Range
 
     int y = x;
     node = (PropertyNode)rpl.get(y);
-    while(node.getEnd() < end)
+    while(node.getEnd() < end && y < rpl.size()-1)
     {
       y++;
       node = (PropertyNode)rpl.get(y);

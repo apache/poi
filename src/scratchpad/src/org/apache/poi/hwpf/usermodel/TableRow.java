@@ -51,7 +51,7 @@ public class TableRow
       Paragraph p = getParagraph(start);
       String s = p.text();
 
-      while (! ( (levelNum == 1 && s.charAt(s.length() - 1) == TABLE_CELL_MARK) ||
+      while (! ( (s.charAt(s.length() - 1) == TABLE_CELL_MARK) ||
                 p.isEmbeddedCellMark() && p.getTableLevel() == levelNum))
       {
         end++;

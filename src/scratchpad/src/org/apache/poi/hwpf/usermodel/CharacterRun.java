@@ -123,7 +123,7 @@ public class CharacterRun
     _props.setFRMarkDel(mark);
 
     byte newVal = (byte)(mark ? 1 : 0);
-    _chpx.addSprm(SPRM_FRMARKDEL, newVal);
+    _chpx.updateSprm(SPRM_FRMARKDEL, newVal);
 
   }
 
@@ -137,7 +137,7 @@ public class CharacterRun
     _props.setFBold(bold);
 
     byte newVal = (byte)(bold ? 1 : 0);
-    _chpx.addSprm(SPRM_FBOLD, newVal);
+    _chpx.updateSprm(SPRM_FBOLD, newVal);
 
   }
 
@@ -151,7 +151,7 @@ public class CharacterRun
     _props.setFItalic(italic);
 
     byte newVal = (byte)(italic ? 1 : 0);
-    _chpx.addSprm(SPRM_FITALIC, newVal);
+    _chpx.updateSprm(SPRM_FITALIC, newVal);
 
   }
 
@@ -165,7 +165,7 @@ public class CharacterRun
     _props.setFOutline(outlined);
 
     byte newVal = (byte)(outlined ? 1 : 0);
-    _chpx.addSprm(SPRM_FOUTLINE, newVal);
+    _chpx.updateSprm(SPRM_FOUTLINE, newVal);
 
   }
 
@@ -179,7 +179,7 @@ public class CharacterRun
     _props.setFFldVanish(fldVanish);
 
     byte newVal = (byte)(fldVanish ? 1 : 0);
-    _chpx.addSprm(SPRM_FFLDVANISH, newVal);
+    _chpx.updateSprm(SPRM_FFLDVANISH, newVal);
 
   }
 
@@ -193,7 +193,7 @@ public class CharacterRun
     _props.setFSmallCaps(smallCaps);
 
     byte newVal = (byte)(smallCaps ? 1 : 0);
-    _chpx.addSprm(SPRM_FSMALLCAPS, newVal);
+    _chpx.updateSprm(SPRM_FSMALLCAPS, newVal);
 
   }
 
@@ -207,7 +207,7 @@ public class CharacterRun
     _props.setFCaps(caps);
 
     byte newVal = (byte)(caps ? 1 : 0);
-    _chpx.addSprm(SPRM_FCAPS, newVal);
+    _chpx.updateSprm(SPRM_FCAPS, newVal);
 
   }
 
@@ -221,7 +221,7 @@ public class CharacterRun
     _props.setFVanish(vanish);
 
     byte newVal = (byte)(vanish ? 1 : 0);
-    _chpx.addSprm(SPRM_FVANISH, newVal);
+    _chpx.updateSprm(SPRM_FVANISH, newVal);
 
   }
 
@@ -235,7 +235,7 @@ public class CharacterRun
     _props.setFRMark(mark);
 
     byte newVal = (byte)(mark ? 1 : 0);
-    _chpx.addSprm(SPRM_FRMARK, newVal);
+    _chpx.updateSprm(SPRM_FRMARK, newVal);
 
   }
 
@@ -249,7 +249,7 @@ public class CharacterRun
     _props.setFStrike(strike);
 
     byte newVal = (byte)(strike ? 1 : 0);
-    _chpx.addSprm(SPRM_FSTRIKE, newVal);
+    _chpx.updateSprm(SPRM_FSTRIKE, newVal);
 
   }
 
@@ -263,7 +263,7 @@ public class CharacterRun
     _props.setFShadow(shadow);
 
     byte newVal = (byte)(shadow ? 1 : 0);
-    _chpx.addSprm(SPRM_FSHADOW, newVal);
+    _chpx.updateSprm(SPRM_FSHADOW, newVal);
 
   }
 
@@ -277,7 +277,7 @@ public class CharacterRun
     _props.setFEmboss(emboss);
 
     byte newVal = (byte)(emboss ? 1 : 0);
-    _chpx.addSprm(SPRM_FEMBOSS, newVal);
+    _chpx.updateSprm(SPRM_FEMBOSS, newVal);
 
   }
 
@@ -291,7 +291,7 @@ public class CharacterRun
     _props.setFImprint(imprint);
 
     byte newVal = (byte)(imprint ? 1 : 0);
-    _chpx.addSprm(SPRM_FIMPRINT, newVal);
+    _chpx.updateSprm(SPRM_FIMPRINT, newVal);
 
   }
 
@@ -305,7 +305,7 @@ public class CharacterRun
     _props.setFDStrike(dstrike);
 
     byte newVal = (byte)(dstrike ? 1 : 0);
-    _chpx.addSprm(SPRM_FDSTRIKE, newVal);
+    _chpx.updateSprm(SPRM_FDSTRIKE, newVal);
 
   }
 
@@ -313,7 +313,7 @@ public class CharacterRun
   {
     _props.setFtcAscii(ftcAscii);
 
-    _chpx.addSprm(SPRM_RGFTCASCII, (short)ftcAscii);
+    _chpx.updateSprm(SPRM_RGFTCASCII, (short)ftcAscii);
 
   }
 
@@ -321,7 +321,7 @@ public class CharacterRun
   {
     _props.setFtcFE(ftcFE);
 
-    _chpx.addSprm(SPRM_RGFTCFAREAST, (short)ftcFE);
+    _chpx.updateSprm(SPRM_RGFTCFAREAST, (short)ftcFE);
 
   }
 
@@ -329,7 +329,7 @@ public class CharacterRun
   {
     _props.setFtcOther(ftcOther);
 
-    _chpx.addSprm(SPRM_RGFTCNOTFAREAST, (short)ftcOther);
+    _chpx.updateSprm(SPRM_RGFTCNOTFAREAST, (short)ftcOther);
 
   }
 
@@ -342,7 +342,7 @@ public class CharacterRun
   {
     _props.setHps(halfPoints);
 
-    _chpx.addSprm(SPRM_HPS, (short)halfPoints);
+    _chpx.updateSprm(SPRM_HPS, (short)halfPoints);
 
   }
 
@@ -355,7 +355,7 @@ public class CharacterRun
   {
     _props.setDxaSpace(twips);
 
-    _chpx.addSprm(SPRM_DXASPACE, twips);
+    _chpx.updateSprm(SPRM_DXASPACE, twips);
 
   }
 
@@ -368,7 +368,7 @@ public class CharacterRun
   {
     _props.setDxaSpace(iss);
 
-    _chpx.addSprm(SPRM_DXASPACE, iss);
+    _chpx.updateSprm(SPRM_DXASPACE, iss);
 
   }
 
@@ -380,7 +380,7 @@ public class CharacterRun
   public void setUnderlineCode(int kul)
   {
     _props.setKul((byte)kul);
-    _chpx.addSprm(SPRM_KUL, (byte)kul);
+    _chpx.updateSprm(SPRM_KUL, (byte)kul);
   }
 
   public int getColor()
@@ -391,7 +391,7 @@ public class CharacterRun
   public void setColor(int color)
   {
     _props.setIco((byte)color);
-    _chpx.addSprm(SPRM_ICO, (byte)color);
+    _chpx.updateSprm(SPRM_ICO, (byte)color);
   }
 
   public int getVerticalOffset()
@@ -402,7 +402,7 @@ public class CharacterRun
   public void setVerticalOffset(int hpsPos)
   {
     _props.setHpsPos(hpsPos);
-    _chpx.addSprm(SPRM_HPSPOS, (byte)hpsPos);
+    _chpx.updateSprm(SPRM_HPSPOS, (byte)hpsPos);
   }
 
   public int getKerning()
@@ -413,7 +413,7 @@ public class CharacterRun
   public void setKerning(int kern)
   {
     _props.setHpsKern(kern);
-    _chpx.addSprm(SPRM_HPSKERN, (short)kern);
+    _chpx.updateSprm(SPRM_HPSKERN, (short)kern);
   }
 
   public boolean isHighlighted()
@@ -425,7 +425,7 @@ public class CharacterRun
   {
     _props.setFHighlight(true);
     _props.setIcoHighlight(color);
-    _chpx.addSprm(SPRM_HIGHLIGHT, color);
+    _chpx.updateSprm(SPRM_HIGHLIGHT, color);
   }
 
   public String getFontName()
@@ -433,6 +433,80 @@ public class CharacterRun
     return _doc.getFontTable().getMainFont(_props.getFtcAscii());
   }
 
+  public boolean isSpecialCharacter()
+  {
+    return _props.isFSpec();
+  }
+
+  public void setSpecialCharacter(boolean spec)
+  {
+    _props.setFSpec(spec);
+
+    byte newVal = (byte)(spec ? 1 : 0);
+    _chpx.updateSprm(SPRM_FSPEC, newVal);
+  }
+
+  public boolean isObj()
+  {
+    return _props.isFObj();
+  }
+
+  public void setObj(boolean obj)
+  {
+    _props.setFObj(obj);
+
+    byte newVal = (byte)(obj ? 1 : 0);
+    _chpx.updateSprm(SPRM_FOBJ, newVal);
+  }
+
+  public int getPicOffset()
+  {
+    return _props.getFcPic();
+  }
+
+  public void setPicOffset(int offset)
+  {
+    _props.setFcPic(offset);
+    _chpx.updateSprm(SPRM_PICLOCATION, offset);
+  }
+
+
+  public boolean isData()
+  {
+    return _props.isFData();
+  }
+
+  public void setData(boolean data)
+  {
+    _props.setFData(data);
+
+    byte newVal = (byte)(data ? 1 : 0);
+    _chpx.updateSprm(SPRM_FOBJ, newVal);
+  }
+
+  public boolean isOle2()
+  {
+    return _props.isFOle2();
+  }
+
+  public void setOle2(boolean ole)
+  {
+    _props.setFOle2(ole);
+
+    byte newVal = (byte)(ole ? 1 : 0);
+    _chpx.updateSprm(SPRM_FOBJ, newVal);
+  }
+
+  public int getObjOffset()
+  {
+    return _props.getFcObj();
+  }
+
+  public void setObjOffset(int obj)
+  {
+    _props.setFcObj(obj);
+    _chpx.updateSprm(SPRM_OBJLOCATION, obj);
+  }
 
   /**
   * Get the ico24 field for the CHP record.
