@@ -27,7 +27,7 @@
          XLS format; and <link href="http://jakarta.apache.org/lucene">Lucene</link> for which we'll soon have file 
          format interpretors.  When practical, we donate components directly to those projects for POI-enabling them.
       </p>
-      <s2 title="Why/when would I use POI">
+      <s2 title="Why/when would I use POI?">
         <p>
  		We'll tackle this on a component level. POI refers to the whole project.
         </p> 
@@ -70,32 +70,41 @@
 
     <s1 title="Components To Date">
         <s2 title="Overview">
-             A common misconception is that POI writes Excel files.  POI is the name of the project.  POI contains several
+	     <p>A common misconception is that POI writes Excel files.  POI is the name of the project.  POI contains several
              components, one of which, HSSF, writes Excel files.  The following are components of the entire POI project
-             and a brief summary of their purpose.
+             and a brief summary of their purpose.</p>
         </s2>
-        <s2 title="POIFS">
-             POIFS is the oldest and most stable part of the project.  It is our port of the OLE 2 Compound Document Format to
+        <s2 title="POIFS (POI Filesystem)">
+             <p>POIFS is the oldest and most stable part of the project.  It is our port of the OLE 2 Compound Document Format to
              pure Java.  It supports both read and write functionality.  All of our components ultimately rely on it by 
-             definition.  Please see <link href="./poifs/index.html">the POIFS project page</link> for more information.
+             definition.  Please see <link href="./poifs/index.html">the POIFS project page</link> for more information.</p>
         </s2>
-        <s2 title="HSSF">
-             HSSF is our port of the Microsoft Excel 97(-2002) file format (BIFF8) to pure Java.  It supports read and write 
-             capability.  Please see <link href="./hssf/index.html">the HSSF project page</link> for more information.
+        <s2 title="HSSF (Horrible Spreadsheet Format)">
+             <p>HSSF is our port of the Microsoft Excel 97(-2002) file format (BIFF8) to pure Java.  It supports read and write 
+             capability.  Please see <link href="./hssf/index.html">the HSSF project page</link> for more information.</p>
         </s2>
-        <s2 title="HDF">
-             HDF is our port of the Microsoft Word 97 file format to pure Java.  It supports read and write capability.
+        <s2 title="HDF (Horrible Document Format)">
+             <p>HDF is our port of the Microsoft Word 97 file format to pure Java.  It supports read and write capability.
              Please see <link href="./hdf/index.html">the HDF project page for more information</link>.  This component is 
-             in the early stages of design.  Jump in!
+             in the early stages of design.  Jump in!</p>
+        </s2>
+        <s2 title="HPSF (Horrible Property Set Format)">
+	<p>HPSF is our port of the OLE 2 property set format to pure
+	  Java. Property sets are mostly use to store a document's properties
+	  (title, author, date of last modification etc.), but they can be used
+	  for application-specific purposes as well. Currently HPSF supports
+	  read functionality only. Please see <link
+	    href="./hpsf/index.html">the HPSF project page</link> for more
+	  information.</p>
         </s2>
 
      </s1>
 
     <s1 title="What happened to the HSSF Serializer?">
-	The HSSF Serializer, which was part of our 1.0 release and last builds on 
+	<p>The HSSF Serializer, which was part of our 1.0 release and last builds on 
         <link href="http://www.sourceforge.net/projects/poi">Sourceforge</link>, has been donated to the Cocoon project.  We're
-        currently in the process of porting it over.
-    </s1> 
+        currently in the process of porting it over.</p>
+    </s1>
 
     <s1 title="Contributing ">
         <p>

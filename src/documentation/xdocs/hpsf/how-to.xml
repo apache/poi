@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.0//EN" "../dtd/document-v10.dtd"> 
+<document>
+  <header>
+    <title>HPSF HOW-TO</title>
+    <authors>
+      <person name="Rainer Klute" email="klute@rainer-klute.de"/>
+    </authors>
+  </header>
+  <body>
+    <s1 title="How To Use the HPSF APIs">
+      <p class="todo">TODO: This documentation is still to be written. For the
+	time being, please see the API documentation (javadocs) of the
+	<code>org.apache.poi.hpsf</code> package.</p>
+    </s1>
+  </body>
+</document>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.0//EN" "../dtd/document-v10.dtd">
+<document>
+  <header>
+    <title>HPSF (Horrible Property Set Format)</title>
+    <subtitle>Overview</subtitle>
+    <authors>     
+      <person name="Rainer Klute" email="klute@rainer-klute.de"/>
+    </authors>
+  </header>
+  <body>
+    <s1 title="Overview">
+      <p class="todo">TODO: This documentation is still to be written.</p>
+    </s1>
+  </body>
+</document>

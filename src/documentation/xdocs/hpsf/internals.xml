@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.0//EN" "../dtd/document-v10.dtd"> 
+<document>
+  <header>
+    <title>HPSF Internals</title>
+    <authors>
+      <person name="Rainer Klute" email="klute@rainer-klute.de"/>
+    </authors>
+  </header>
+  <body>
+    <s1 title="HPSF Internals">
+      <p class="todo">TODO: This documentation is still to be written. For the
+	time being, please see <link
+	  href="http://www.rainer-klute.de/~klute/Software/poibrowser/doc/HPSF-Description.html">http://www.rainer-klute.de/~klute/Software/poibrowser/doc/HPSF-Description.html</link>.</p>
+    </s1>
+  </body>
+</document>
