@@ -95,6 +95,7 @@ import java.util.Calendar;
  *
  * @author  Andrew C. Oliver (acoliver at apache dot org)
  * @author  Dan Sherman (dsherman at isisph.com)
+ * @author  Brian Sanders (kestrel at burdell dot org) Active Cell support
  * @version 1.0-pre
  */
 
@@ -972,5 +973,14 @@ public class HSSFCell
       else if (cellNum < 0) {
           throw new RuntimeException("You cannot reference columns with an index of less then 0.");
       }
+    }
+    
+    /**
+     * Sets this cell as the active cell for the worksheet
+     */
+    public void setAsActiveCell()
+    {
+        this.sheet.setActiveCellRow(this.row);
+        this.sheet.setActiveCellCol(this.cellNum);
     }
 }

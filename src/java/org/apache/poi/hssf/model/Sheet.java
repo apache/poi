@@ -81,6 +81,7 @@ import org.apache.poi.hssf.record
  * @author  Glen Stampoultzis (glens at apache.org)
  * @author  Shawn Laubach (slaubach at apache dot org) Gridlines, Headers, Footers, and PrintSetup
  * @author Jason Height (jheight at chariot dot net dot au) Clone support
+ * @author  Brian Sanders (kestrel at burdell dot org) Active Cell support
  *
  * @see org.apache.poi.hssf.model.Workbook
  * @see org.apache.poi.hssf.usermodel.HSSFSheet
@@ -108,6 +109,7 @@ public class Sheet implements Model
     protected FooterRecord              footer           = null;
     protected PrintGridlinesRecord      printGridlines   = null;
     protected MergeCellsRecord          merged           = null;
+    protected SelectionRecord           selection        = null;
     protected int                       mergedloc        = 0;
     private static POILogger            log              = POILogFactory.getLogger(Sheet.class);
     private ArrayList                   columnSizes      = null;  // holds column info
@@ -252,6 +254,10 @@ public class Sheet implements Model
             {
                 retval.printSetup = (PrintSetupRecord) rec;
             }
+            else if ( rec.getSid() == SelectionRecord.sid )
+            {
+                retval.selection = (SelectionRecord) rec;
+            }
 
             if (rec != null)
             {
@@ -376,7 +382,9 @@ public class Sheet implements Model
         records.add(retval.dims);
         records.add(retval.createWindowTwo());
         retval.setLoc(records.size() - 1);
-        records.add(retval.createSelection());
+        retval.selection = 
+                (SelectionRecord) retval.createSelection();
+        records.add(retval.selection);
         records.add(retval.createEOF());
         retval.records = records;
         log.log(log.DEBUG, "Sheet createsheet from scratch exit");
@@ -1934,6 +1942,66 @@ public class Sheet implements Model
         retval.setActiveCellRow(( short ) 0x0);
         retval.setNumRefs(( short ) 0x0);
         return retval;
+    }
+    
+    /**
+     * Returns the active row
+     *
+     * @see org.apache.poi.hssf.record.SelectionRecord
+     * @return row the active row index
+     */
+    public int getActiveCellRow()
+    {
+        if (selection == null)
+        {
+            return 0;
+        }
+        return selection.getActiveCellRow();
+    }
+    
+    /**
+     * Sets the active row
+     *
+     * @param row the row index
+     * @see org.apache.poi.hssf.record.SelectionRecord
+     */
+    public void setActiveCellRow(int row)
+    {
+        //shouldn't have a sheet w/o a SelectionRecord, but best to guard anyway
+        if (selection != null)
+        {
+            selection.setActiveCellRow(row);
+        }
+    }
+    
+    /**
+     * Returns the active column
+     *
+     * @see org.apache.poi.hssf.record.SelectionRecord
+     * @return row the active column index
+     */
+    public short getActiveCellCol()
+    {
+        if (selection == null)
+        {
+            return (short) 0;
+        }
+        return selection.getActiveCellCol();
+    }
+    
+    /**
+     * Sets the active column
+     *
+     * @param col the column index
+     * @see org.apache.poi.hssf.record.SelectionRecord
+     */
+    public void setActiveCellCol(short col)
+    {
+        //shouldn't have a sheet w/o a SelectionRecord, but best to guard anyway
+        if (selection != null)
+        {
+            selection.setActiveCellCol(col);
+        }
     }
 
     protected Record createMergedCells()
