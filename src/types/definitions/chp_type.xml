@@ -47,8 +47,8 @@
       <field type="int" size="4" name="lTagObj"/>
       <field type="int" size="2" name="ibstRMark"/>
       <field type="int" size="2" name="ibstRMarkDel"/>
-      <field type="short[]" size="4" name="dttmRMark"/>
-      <field type="short[]" size="4" name="dttmRMarkDel"/>
+      <field type="DateAndTime" size="4" name="dttmRMark"/>
+      <field type="DateAndTime" size="4" name="dttmRMarkDel"/>
       <field type="int" size="2" name="istd"/>
       <field type="int" size="2" name="baseIstd"/>
       <field type="int" size="2" name="ftcSym"/>
@@ -69,13 +69,13 @@
       </field>
       <field type="short" size="2" name="fPropMark"/>
       <field type="int" size="2" name="ibstPropRMark"/>
-      <field type="int" size="4" name="dttmPropRMark"/>
+      <field type="DateAndTime" size="4" name="dttmPropRMark"/>
       <field type="byte" size="1" name="sfxtText"/>
       <field type="byte" size="1" name="fDispFldRMark"/>
       <field type="int" size="2" name="ibstDispFldRMark"/>
-      <field type="int" size="4" name="dttmDispFldRMark"/>
+      <field type="DateAndTime" size="4" name="dttmDispFldRMark"/>
       <field type="byte[]" size="32" name="xstDispFldRMark"/>
-      <field type="int" size="2" name="shd"/>
-      <field type="short[]" size="4" name="brc"/>
+      <field type="ShadingDescriptor" size="2" name="shd"/>
+      <field type="BorderCode" size="4" name="brc"/>
     </fields>
 </record>

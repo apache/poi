@@ -123,6 +123,23 @@ public class SprmUtils
     return sprm.length;
   }
 
+  public static byte[] getGrpprl(List sprmList, int size)
+  {
+    // spit out the final grpprl
+    byte[] grpprl = new byte[size];
+    int listSize = sprmList.size() - 1;
+    int index = 0;
+    for (; listSize >= 0; listSize--)
+    {
+      byte[] sprm = (byte[])sprmList.remove(0);
+      System.arraycopy(sprm, 0, grpprl, index, sprm.length);
+      index += sprm.length;
+    }
+
+    return grpprl;
+
+  }
+
   public static int convertBrcToInt(short[] brc)
   {
     byte[] buf = new byte[4];

@@ -75,7 +75,7 @@ public class FileInformationBlock extends FIBAbstractType
     /** Creates a new instance of FileInformationBlock */
     public FileInformationBlock(byte[] mainDocument)
     {
-        fillFields(mainDocument, (short)0, (short)0);
+        fillFields(mainDocument, 0);
     }
 
     public void clearOffsetsSizes()

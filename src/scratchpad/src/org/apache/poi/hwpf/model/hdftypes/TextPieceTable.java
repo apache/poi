@@ -60,6 +60,7 @@ package org.apache.poi.hwpf.model.hdftypes;
 import java.io.UnsupportedEncodingException;
 import java.io.IOException;
 
+import java.util.List;
 import java.util.ArrayList;
 
 import org.apache.poi.hwpf.model.io.*;
@@ -67,6 +68,7 @@ import org.apache.poi.hwpf.model.io.*;
 public class TextPieceTable
 {
   ArrayList _textPieces = new ArrayList();
+  int _multiple;
 
   public TextPieceTable(byte[] documentStream, byte[] tableStream, int offset,
                         int size, int fcMin)
@@ -75,7 +77,7 @@ public class TextPieceTable
     // get our plex of PieceDescriptors
     PlexOfCps pieceTable = new PlexOfCps(tableStream, offset, size, PieceDescriptor.getSizeInBytes());
 
-    int multiple = 2;
+    _multiple = 2;
     int length = pieceTable.length();
     PieceDescriptor[] pieces = new PieceDescriptor[length];
 
@@ -88,7 +90,7 @@ public class TextPieceTable
 
       if (!pieces[x].isUnicode())
       {
-        multiple = 1;
+        _multiple = 1;
       }
     }
 
@@ -97,25 +99,25 @@ public class TextPieceTable
     {
       int start = pieces[x].getFilePosition();
       PropertyNode node = pieceTable.getProperty(x);
-      int nodeStart = node.getStart() - fcMin;
-      int nodeEnd = node.getEnd() - fcMin;
+      int nodeStart = node.getStart();
+      // multiple will be 2 if there is only one piece and its unicode. Some
+      // type of optimization.
+      int nodeEnd = ((node.getEnd() - nodeStart) * _multiple) + nodeStart;
       int textSize = nodeEnd - nodeStart;
 
       boolean unicode = pieces[x].isUnicode();
       String toStr = null;
-      if (unicode)
-      {
-        byte[] buf = new byte[textSize * multiple];
-        System.arraycopy(documentStream, start, buf, 0, textSize * multiple);
-        _textPieces.add(new TextPiece(nodeStart, nodeEnd, buf, pieces[x]));
-      }
-      else
-      {
-        byte[] buf = new byte[textSize];
-        System.arraycopy(documentStream, start, buf, 0, textSize);
-        _textPieces.add(new TextPiece(nodeStart, nodeEnd, buf, pieces[x]));
-      }
+
+      byte[] buf = new byte[textSize + (unicode ? textSize % 2 : 0)];
+      System.arraycopy(documentStream, start, buf, 0, textSize);
+      _textPieces.add(new TextPiece(nodeStart, nodeEnd, buf, pieces[x]));
+
     }
+  }
+
+  public List getTextPieces()
+  {
+    return _textPieces;
   }
 
   public byte[] writeTo(HWPFOutputStream docStream)
@@ -123,7 +125,7 @@ public class TextPieceTable
   {
 
     PlexOfCps textPlex = new PlexOfCps(PieceDescriptor.getSizeInBytes());
-    int fcMin = docStream.getOffset();
+    //int fcMin = docStream.getOffset();
 
     int size = _textPieces.size();
     for (int x = 0; x < size; x++)
@@ -137,8 +139,10 @@ public class TextPieceTable
       // write the text to the docstream and save the piece descriptor to the
       // plex which will be written later to the tableStream.
       docStream.write(next.getBuf());
-      textPlex.addProperty(new PropertyNode(next.getStart() + fcMin,
-                                            next.getEnd() + fcMin,
+
+      int nodeStart = next.getStart();
+      textPlex.addProperty(new PropertyNode(nodeStart,
+                                            (next.getEnd() - nodeStart)/_multiple + nodeStart,
                                             pd.toByteArray()));
 
     }

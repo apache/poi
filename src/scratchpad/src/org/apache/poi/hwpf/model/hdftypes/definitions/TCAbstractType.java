@@ -63,6 +63,7 @@ import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.hdf.model.hdftypes.HDFType;
+import org.apache.poi.hwpf.usermodel.*;
 
 /**
  * Table Cell Descriptor.
@@ -75,7 +76,7 @@ public abstract class TCAbstractType
     implements HDFType
 {
 
-    private  short field_1_rgf;
+    protected  short field_1_rgf;
         private static BitField  fFirstMerged = new BitField(0x0001);
         private static BitField  fMerged = new BitField(0x0002);
         private static BitField  fVertical = new BitField(0x0004);
@@ -84,16 +85,74 @@ public abstract class TCAbstractType
         private static BitField  fVertMerge = new BitField(0x0020);
         private static BitField  fVertRestart = new BitField(0x0040);
         private static BitField  vertAlign = new BitField(0x0180);
-    private  short field_2_unused;
-    private  short[] field_3_brcTop;
-    private  short[] field_4_brcLeft;
-    private  short[] field_5_brcBottom;
-    private  short[] field_6_brcRight;
+    protected  short field_2_unused;
+    protected  BorderCode field_3_brcTop;
+    protected  BorderCode field_4_brcLeft;
+    protected  BorderCode field_5_brcBottom;
+    protected  BorderCode field_6_brcRight;
 
 
     public TCAbstractType()
     {
 
+    }
+
+    protected void fillFields(byte [] data, int offset)
+    {
+        field_1_rgf                     = LittleEndian.getShort(data, 0x0 + offset);
+        field_2_unused                  = LittleEndian.getShort(data, 0x2 + offset);
+        field_3_brcTop                  = new BorderCode(data, 0x4 + offset);
+        field_4_brcLeft                 = new BorderCode(data, 0x8 + offset);
+        field_5_brcBottom               = new BorderCode(data, 0xc + offset);
+        field_6_brcRight                = new BorderCode(data, 0x10 + offset);
+
+    }
+
+    public void serialize(byte[] data, int offset)
+    {
+        LittleEndian.putShort(data, 0x0 + offset, (short)field_1_rgf);;
+        LittleEndian.putShort(data, 0x2 + offset, (short)field_2_unused);;
+        field_3_brcTop.serialize(data, 0x4 + offset);;
+        field_4_brcLeft.serialize(data, 0x8 + offset);;
+        field_5_brcBottom.serialize(data, 0xc + offset);;
+        field_6_brcRight.serialize(data, 0x10 + offset);;
+
+    }
+
+    public String toString()
+    {
+        StringBuffer buffer = new StringBuffer();
+
+        buffer.append("[TC]\n");
+
+        buffer.append("    .rgf                  = ");
+        buffer.append(" (").append(getRgf()).append(" )\n");
+        buffer.append("         .fFirstMerged             = ").append(isFFirstMerged()).append('\n');
+        buffer.append("         .fMerged                  = ").append(isFMerged()).append('\n');
+        buffer.append("         .fVertical                = ").append(isFVertical()).append('\n');
+        buffer.append("         .fBackward                = ").append(isFBackward()).append('\n');
+        buffer.append("         .fRotateFont              = ").append(isFRotateFont()).append('\n');
+        buffer.append("         .fVertMerge               = ").append(isFVertMerge()).append('\n');
+        buffer.append("         .fVertRestart             = ").append(isFVertRestart()).append('\n');
+        buffer.append("         .vertAlign                = ").append(getVertAlign()).append('\n');
+
+        buffer.append("    .unused               = ");
+        buffer.append(" (").append(getUnused()).append(" )\n");
+
+        buffer.append("    .brcTop               = ");
+        buffer.append(" (").append(getBrcTop()).append(" )\n");
+
+        buffer.append("    .brcLeft              = ");
+        buffer.append(" (").append(getBrcLeft()).append(" )\n");
+
+        buffer.append("    .brcBottom            = ");
+        buffer.append(" (").append(getBrcBottom()).append(" )\n");
+
+        buffer.append("    .brcRight             = ");
+        buffer.append(" (").append(getBrcRight()).append(" )\n");
+
+        buffer.append("[/TC]\n");
+        return buffer.toString();
     }
 
     /**
@@ -141,7 +200,7 @@ public abstract class TCAbstractType
     /**
      * Get the brcTop field for the TC record.
      */
-    public short[] getBrcTop()
+    public BorderCode getBrcTop()
     {
         return field_3_brcTop;
     }
@@ -149,7 +208,7 @@ public abstract class TCAbstractType
     /**
      * Set the brcTop field for the TC record.
      */
-    public void setBrcTop(short[] field_3_brcTop)
+    public void setBrcTop(BorderCode field_3_brcTop)
     {
         this.field_3_brcTop = field_3_brcTop;
     }
@@ -157,7 +216,7 @@ public abstract class TCAbstractType
     /**
      * Get the brcLeft field for the TC record.
      */
-    public short[] getBrcLeft()
+    public BorderCode getBrcLeft()
     {
         return field_4_brcLeft;
     }
@@ -165,7 +224,7 @@ public abstract class TCAbstractType
     /**
      * Set the brcLeft field for the TC record.
      */
-    public void setBrcLeft(short[] field_4_brcLeft)
+    public void setBrcLeft(BorderCode field_4_brcLeft)
     {
         this.field_4_brcLeft = field_4_brcLeft;
     }
@@ -173,7 +232,7 @@ public abstract class TCAbstractType
     /**
      * Get the brcBottom field for the TC record.
      */
-    public short[] getBrcBottom()
+    public BorderCode getBrcBottom()
     {
         return field_5_brcBottom;
     }
@@ -181,7 +240,7 @@ public abstract class TCAbstractType
     /**
      * Set the brcBottom field for the TC record.
      */
-    public void setBrcBottom(short[] field_5_brcBottom)
+    public void setBrcBottom(BorderCode field_5_brcBottom)
     {
         this.field_5_brcBottom = field_5_brcBottom;
     }
@@ -189,7 +248,7 @@ public abstract class TCAbstractType
     /**
      * Get the brcRight field for the TC record.
      */
-    public short[] getBrcRight()
+    public BorderCode getBrcRight()
     {
         return field_6_brcRight;
     }
@@ -197,7 +256,7 @@ public abstract class TCAbstractType
     /**
      * Set the brcRight field for the TC record.
      */
-    public void setBrcRight(short[] field_6_brcRight)
+    public void setBrcRight(BorderCode field_6_brcRight)
     {
         this.field_6_brcRight = field_6_brcRight;
     }

@@ -63,6 +63,7 @@ import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.hdf.model.hdftypes.HDFType;
+import org.apache.poi.hwpf.usermodel.*;
 
 /**
  * Section Properties.
@@ -75,65 +76,65 @@ public abstract class SEPAbstractType
     implements HDFType
 {
 
-    private  byte field_1_bkc;
-    private  boolean field_2_fTitlePage;
-    private  boolean field_3_fAutoPgn;
-    private  byte field_4_nfcPgn;
-    private  boolean field_5_fUnlocked;
-    private  byte field_6_cnsPgn;
-    private  boolean field_7_fPgnRestart;
-    private  boolean field_8_fEndNote;
-    private  byte field_9_lnc;
-    private  byte field_10_grpfIhdt;
-    private  int field_11_nLnnMod;
-    private  int field_12_dxaLnn;
-    private  int field_13_dxaPgn;
-    private  int field_14_dyaPgn;
-    private  boolean field_15_fLBetween;
-    private  byte field_16_vjc;
-    private  int field_17_dmBinFirst;
-    private  int field_18_dmBinOther;
-    private  int field_19_dmPaperReq;
-    private  short[] field_20_brcTop;
-    private  short[] field_21_brcLeft;
-    private  short[] field_22_brcBottom;
-    private  short[] field_23_brcRight;
-    private  boolean field_24_fPropMark;
-    private  int field_25_ibstPropRMark;
-    private  int field_26_dttmPropRMark;
-    private  int field_27_dxtCharSpace;
-    private  int field_28_dyaLinePitch;
-    private  int field_29_clm;
-    private  int field_30_unused2;
-    private  byte field_31_dmOrientPage;
-    private  byte field_32_iHeadingPgn;
-    private  int field_33_pgnStart;
-    private  int field_34_lnnMin;
-    private  int field_35_wTextFlow;
-    private  short field_36_unused3;
-    private  int field_37_pgbProp;
-    private  short field_38_unused4;
-    private  int field_39_xaPage;
-    private  int field_40_yaPage;
-    private  int field_41_xaPageNUp;
-    private  int field_42_yaPageNUp;
-    private  int field_43_dxaLeft;
-    private  int field_44_dxaRight;
-    private  int field_45_dyaTop;
-    private  int field_46_dyaBottom;
-    private  int field_47_dzaGutter;
-    private  int field_48_dyaHdrTop;
-    private  int field_49_dyaHdrBottom;
-    private  int field_50_ccolM1;
-    private  boolean field_51_fEvenlySpaced;
-    private  byte field_52_unused5;
-    private  int field_53_dxaColumns;
-    private  int[] field_54_rgdxaColumn;
-    private  int field_55_dxaColumnWidth;
-    private  byte field_56_dmOrientFirst;
-    private  byte field_57_fLayout;
-    private  short field_58_unused6;
-    private  byte[] field_59_olstAnm;
+    protected  byte field_1_bkc;
+    protected  boolean field_2_fTitlePage;
+    protected  boolean field_3_fAutoPgn;
+    protected  byte field_4_nfcPgn;
+    protected  boolean field_5_fUnlocked;
+    protected  byte field_6_cnsPgn;
+    protected  boolean field_7_fPgnRestart;
+    protected  boolean field_8_fEndNote;
+    protected  byte field_9_lnc;
+    protected  byte field_10_grpfIhdt;
+    protected  int field_11_nLnnMod;
+    protected  int field_12_dxaLnn;
+    protected  int field_13_dxaPgn;
+    protected  int field_14_dyaPgn;
+    protected  boolean field_15_fLBetween;
+    protected  byte field_16_vjc;
+    protected  int field_17_dmBinFirst;
+    protected  int field_18_dmBinOther;
+    protected  int field_19_dmPaperReq;
+    protected  BorderCode field_20_brcTop;
+    protected  BorderCode field_21_brcLeft;
+    protected  BorderCode field_22_brcBottom;
+    protected  BorderCode field_23_brcRight;
+    protected  boolean field_24_fPropMark;
+    protected  int field_25_ibstPropRMark;
+    protected  DateAndTime field_26_dttmPropRMark;
+    protected  int field_27_dxtCharSpace;
+    protected  int field_28_dyaLinePitch;
+    protected  int field_29_clm;
+    protected  int field_30_unused2;
+    protected  byte field_31_dmOrientPage;
+    protected  byte field_32_iHeadingPgn;
+    protected  int field_33_pgnStart;
+    protected  int field_34_lnnMin;
+    protected  int field_35_wTextFlow;
+    protected  short field_36_unused3;
+    protected  int field_37_pgbProp;
+    protected  short field_38_unused4;
+    protected  int field_39_xaPage;
+    protected  int field_40_yaPage;
+    protected  int field_41_xaPageNUp;
+    protected  int field_42_yaPageNUp;
+    protected  int field_43_dxaLeft;
+    protected  int field_44_dxaRight;
+    protected  int field_45_dyaTop;
+    protected  int field_46_dyaBottom;
+    protected  int field_47_dzaGutter;
+    protected  int field_48_dyaHdrTop;
+    protected  int field_49_dyaHdrBottom;
+    protected  int field_50_ccolM1;
+    protected  boolean field_51_fEvenlySpaced;
+    protected  byte field_52_unused5;
+    protected  int field_53_dxaColumns;
+    protected  int[] field_54_rgdxaColumn;
+    protected  int field_55_dxaColumnWidth;
+    protected  byte field_56_dmOrientFirst;
+    protected  byte field_57_fLayout;
+    protected  short field_58_unused6;
+    protected  byte[] field_59_olstAnm;
 
 
     public SEPAbstractType()
@@ -458,7 +459,7 @@ public abstract class SEPAbstractType
     /**
      * Get the brcTop field for the SEP record.
      */
-    public short[] getBrcTop()
+    public BorderCode getBrcTop()
     {
         return field_20_brcTop;
     }
@@ -466,7 +467,7 @@ public abstract class SEPAbstractType
     /**
      * Set the brcTop field for the SEP record.
      */
-    public void setBrcTop(short[] field_20_brcTop)
+    public void setBrcTop(BorderCode field_20_brcTop)
     {
         this.field_20_brcTop = field_20_brcTop;
     }
@@ -474,7 +475,7 @@ public abstract class SEPAbstractType
     /**
      * Get the brcLeft field for the SEP record.
      */
-    public short[] getBrcLeft()
+    public BorderCode getBrcLeft()
     {
         return field_21_brcLeft;
     }
@@ -482,7 +483,7 @@ public abstract class SEPAbstractType
     /**
      * Set the brcLeft field for the SEP record.
      */
-    public void setBrcLeft(short[] field_21_brcLeft)
+    public void setBrcLeft(BorderCode field_21_brcLeft)
     {
         this.field_21_brcLeft = field_21_brcLeft;
     }
@@ -490,7 +491,7 @@ public abstract class SEPAbstractType
     /**
      * Get the brcBottom field for the SEP record.
      */
-    public short[] getBrcBottom()
+    public BorderCode getBrcBottom()
     {
         return field_22_brcBottom;
     }
@@ -498,7 +499,7 @@ public abstract class SEPAbstractType
     /**
      * Set the brcBottom field for the SEP record.
      */
-    public void setBrcBottom(short[] field_22_brcBottom)
+    public void setBrcBottom(BorderCode field_22_brcBottom)
     {
         this.field_22_brcBottom = field_22_brcBottom;
     }
@@ -506,7 +507,7 @@ public abstract class SEPAbstractType
     /**
      * Get the brcRight field for the SEP record.
      */
-    public short[] getBrcRight()
+    public BorderCode getBrcRight()
     {
         return field_23_brcRight;
     }
@@ -514,7 +515,7 @@ public abstract class SEPAbstractType
     /**
      * Set the brcRight field for the SEP record.
      */
-    public void setBrcRight(short[] field_23_brcRight)
+    public void setBrcRight(BorderCode field_23_brcRight)
     {
         this.field_23_brcRight = field_23_brcRight;
     }
@@ -554,7 +555,7 @@ public abstract class SEPAbstractType
     /**
      * Get the dttmPropRMark field for the SEP record.
      */
-    public int getDttmPropRMark()
+    public DateAndTime getDttmPropRMark()
     {
         return field_26_dttmPropRMark;
     }
@@ -562,7 +563,7 @@ public abstract class SEPAbstractType
     /**
      * Set the dttmPropRMark field for the SEP record.
      */
-    public void setDttmPropRMark(int field_26_dttmPropRMark)
+    public void setDttmPropRMark(DateAndTime field_26_dttmPropRMark)
     {
         this.field_26_dttmPropRMark = field_26_dttmPropRMark;
     }

@@ -63,6 +63,7 @@ import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.hdf.model.hdftypes.HDFType;
+import org.apache.poi.hwpf.usermodel.*;
 
 /**
  * Document Properties.
@@ -75,19 +76,19 @@ public abstract class DOPAbstractType
     implements HDFType
 {
 
-    private  byte field_1_formatFlags;
+    protected  byte field_1_formatFlags;
         private static BitField  fFacingPages = new BitField(0x01);
         private static BitField  fWidowControl = new BitField(0x02);
         private static BitField  fPMHMainDoc = new BitField(0x04);
         private static BitField  grfSupression = new BitField(0x18);
         private static BitField  fpc = new BitField(0x60);
         private static BitField  unused1 = new BitField(0x80);
-    private  byte field_2_unused2;
-    private  short field_3_footnoteInfo;
+    protected  byte field_2_unused2;
+    protected  short field_3_footnoteInfo;
         private static BitField  rncFtn = new BitField(0x0003);
         private static BitField  nFtn = new BitField(0xfffc);
-    private  byte field_4_fOutlineDirtySave;
-    private  byte field_5_docinfo;
+    protected  byte field_4_fOutlineDirtySave;
+    protected  byte field_5_docinfo;
         private static BitField  fOnlyMacPics = new BitField(0x01);
         private static BitField  fOnlyWinPics = new BitField(0x02);
         private static BitField  fLabelDoc = new BitField(0x04);
@@ -96,7 +97,7 @@ public abstract class DOPAbstractType
         private static BitField  fFormNoFields = new BitField(0x20);
         private static BitField  fLinkStyles = new BitField(0x40);
         private static BitField  fRevMarking = new BitField(0x80);
-    private  byte field_6_docinfo1;
+    protected  byte field_6_docinfo1;
         private static BitField  fBackup = new BitField(0x01);
         private static BitField  fExactCWords = new BitField(0x02);
         private static BitField  fPagHidden = new BitField(0x04);
@@ -105,7 +106,7 @@ public abstract class DOPAbstractType
         private static BitField  fMirrorMargins = new BitField(0x20);
         private static BitField  unused3 = new BitField(0x40);
         private static BitField  fDfltTrueType = new BitField(0x80);
-    private  byte field_7_docinfo2;
+    protected  byte field_7_docinfo2;
         private static BitField  fPagSupressTopSpacing = new BitField(0x01);
         private static BitField  fProtEnabled = new BitField(0x02);
         private static BitField  fDispFormFldSel = new BitField(0x04);
@@ -114,7 +115,7 @@ public abstract class DOPAbstractType
         private static BitField  unused4 = new BitField(0x20);
         private static BitField  fLockRev = new BitField(0x40);
         private static BitField  fEmbedFonts = new BitField(0x80);
-    private  short field_8_docinfo3;
+    protected  short field_8_docinfo3;
         private static BitField  oldfNoTabForInd = new BitField(0x0001);
         private static BitField  oldfNoSpaceRaiseLower = new BitField(0x0002);
         private static BitField  oldfSuppressSpbfAfterPageBreak = new BitField(0x0004);
@@ -128,24 +129,24 @@ public abstract class DOPAbstractType
         private static BitField  oldfShowBreaksInFrames = new BitField(0x0400);
         private static BitField  oldfSwapBordersFacingPgs = new BitField(0x0800);
         private static BitField  unused5 = new BitField(0xf000);
-    private  int field_9_dxaTab;
-    private  int field_10_wSpare;
-    private  int field_11_dxaHotz;
-    private  int field_12_cConsexHypLim;
-    private  int field_13_wSpare2;
-    private  int field_14_dttmCreated;
-    private  int field_15_dttmRevised;
-    private  int field_16_dttmLastPrint;
-    private  int field_17_nRevision;
-    private  int field_18_tmEdited;
-    private  int field_19_cWords;
-    private  int field_20_cCh;
-    private  int field_21_cPg;
-    private  int field_22_cParas;
-    private  short field_23_Edn;
+    protected  int field_9_dxaTab;
+    protected  int field_10_wSpare;
+    protected  int field_11_dxaHotz;
+    protected  int field_12_cConsexHypLim;
+    protected  int field_13_wSpare2;
+    protected  int field_14_dttmCreated;
+    protected  int field_15_dttmRevised;
+    protected  int field_16_dttmLastPrint;
+    protected  int field_17_nRevision;
+    protected  int field_18_tmEdited;
+    protected  int field_19_cWords;
+    protected  int field_20_cCh;
+    protected  int field_21_cPg;
+    protected  int field_22_cParas;
+    protected  short field_23_Edn;
         private static BitField  rncEdn = new BitField(0x0003);
         private static BitField  nEdn = new BitField(0xfffc);
-    private  short field_24_Edn1;
+    protected  short field_24_Edn1;
         private static BitField  epc = new BitField(0x0003);
         private static BitField  nfcFtnRef1 = new BitField(0x003c);
         private static BitField  nfcEdnRef1 = new BitField(0x03c0);
@@ -153,20 +154,20 @@ public abstract class DOPAbstractType
         private static BitField  fSaveFormData = new BitField(0x0800);
         private static BitField  fShadeFormData = new BitField(0x1000);
         private static BitField  fWCFtnEdn = new BitField(0x8000);
-    private  int field_25_cLines;
-    private  int field_26_cWordsFtnEnd;
-    private  int field_27_cChFtnEdn;
-    private  short field_28_cPgFtnEdn;
-    private  int field_29_cParasFtnEdn;
-    private  int field_30_cLinesFtnEdn;
-    private  int field_31_lKeyProtDoc;
-    private  short field_32_view;
+    protected  int field_25_cLines;
+    protected  int field_26_cWordsFtnEnd;
+    protected  int field_27_cChFtnEdn;
+    protected  short field_28_cPgFtnEdn;
+    protected  int field_29_cParasFtnEdn;
+    protected  int field_30_cLinesFtnEdn;
+    protected  int field_31_lKeyProtDoc;
+    protected  short field_32_view;
         private static BitField  wvkSaved = new BitField(0x0007);
         private static BitField  wScaleSaved = new BitField(0x0ff8);
         private static BitField  zkSaved = new BitField(0x3000);
         private static BitField  fRotateFontW6 = new BitField(0x4000);
         private static BitField  iGutterPos = new BitField(0x8000);
-    private  int field_33_docinfo4;
+    protected  int field_33_docinfo4;
         private static BitField  fNoTabForInd = new BitField(0x00000001);
         private static BitField  fNoSpaceRaiseLower = new BitField(0x00000002);
         private static BitField  fSupressSpdfAfterPageBreak = new BitField(0x00000004);
@@ -184,10 +185,10 @@ public abstract class DOPAbstractType
         private static BitField  fPrintBodyBeforeHdr = new BitField(0x00040000);
         private static BitField  fNoLeading = new BitField(0x00080000);
         private static BitField  fMWSmallCaps = new BitField(0x00200000);
-    private  short field_34_adt;
-    private  byte[] field_35_doptypography;
-    private  byte[] field_36_dogrid;
-    private  short field_37_docinfo5;
+    protected  short field_34_adt;
+    protected  byte[] field_35_doptypography;
+    protected  byte[] field_36_dogrid;
+    protected  short field_37_docinfo5;
         private static BitField  lvl = new BitField(0x001e);
         private static BitField  fGramAllDone = new BitField(0x0020);
         private static BitField  fGramAllClean = new BitField(0x0040);
@@ -199,27 +200,27 @@ public abstract class DOPAbstractType
         private static BitField  fIncludeFooter = new BitField(0x2000);
         private static BitField  fForcePageSizePag = new BitField(0x4000);
         private static BitField  fMinFontSizePag = new BitField(0x8000);
-    private  short field_38_docinfo6;
+    protected  short field_38_docinfo6;
         private static BitField  fHaveVersions = new BitField(0x0001);
         private static BitField  fAutoVersions = new BitField(0x0002);
-    private  byte[] field_39_asumyi;
-    private  int field_40_cChWS;
-    private  int field_41_cChWSFtnEdn;
-    private  int field_42_grfDocEvents;
-    private  int field_43_virusinfo;
+    protected  byte[] field_39_asumyi;
+    protected  int field_40_cChWS;
+    protected  int field_41_cChWSFtnEdn;
+    protected  int field_42_grfDocEvents;
+    protected  int field_43_virusinfo;
         private static BitField  fVirusPrompted = new BitField(0x0001);
         private static BitField  fVirusLoadSafe = new BitField(0x0002);
         private static BitField  KeyVirusSession30 = new BitField(0xfffffffc);
-    private  byte[] field_44_Spare;
-    private  int field_45_reserved1;
-    private  int field_46_reserved2;
-    private  int field_47_cDBC;
-    private  int field_48_cDBCFtnEdn;
-    private  int field_49_reserved;
-    private  short field_50_nfcFtnRef;
-    private  short field_51_nfcEdnRef;
-    private  short field_52_hpsZoonFontPag;
-    private  short field_53_dywDispPag;
+    protected  byte[] field_44_Spare;
+    protected  int field_45_reserved1;
+    protected  int field_46_reserved2;
+    protected  int field_47_cDBC;
+    protected  int field_48_cDBCFtnEdn;
+    protected  int field_49_reserved;
+    protected  short field_50_nfcFtnRef;
+    protected  short field_51_nfcEdnRef;
+    protected  short field_52_hpsZoonFontPag;
+    protected  short field_53_dywDispPag;
 
 
     public DOPAbstractType()
@@ -227,7 +228,7 @@ public abstract class DOPAbstractType
 
     }
 
-    protected void fillFields(byte [] data, short size, int offset)
+    protected void fillFields(byte [] data, int offset)
     {
         field_1_formatFlags             = data[ 0x0 + offset ];
         field_2_unused2                 = data[ 0x1 + offset ];
@@ -321,16 +322,16 @@ public abstract class DOPAbstractType
         LittleEndian.putShort(data, 0x52 + offset, (short)field_32_view);;
         LittleEndian.putInt(data, 0x54 + offset, field_33_docinfo4);;
         LittleEndian.putShort(data, 0x58 + offset, (short)field_34_adt);;
-        ;
-        ;
+        System.arraycopy(field_35_doptypography, 0, data, 0x5a + offset, field_35_doptypography.length);;
+        System.arraycopy(field_36_dogrid, 0, data, 0x190 + offset, field_36_dogrid.length);;
         LittleEndian.putShort(data, 0x19a + offset, (short)field_37_docinfo5);;
         LittleEndian.putShort(data, 0x19c + offset, (short)field_38_docinfo6);;
-        ;
+        System.arraycopy(field_39_asumyi, 0, data, 0x19e + offset, field_39_asumyi.length);;
         LittleEndian.putInt(data, 0x1aa + offset, field_40_cChWS);;
         LittleEndian.putInt(data, 0x1ae + offset, field_41_cChWSFtnEdn);;
         LittleEndian.putInt(data, 0x1b2 + offset, field_42_grfDocEvents);;
         LittleEndian.putInt(data, 0x1b6 + offset, field_43_virusinfo);;
-        ;
+        System.arraycopy(field_44_Spare, 0, data, 0x1ba + offset, field_44_Spare.length);;
         LittleEndian.putInt(data, 0x1d8 + offset, field_45_reserved1);;
         LittleEndian.putInt(data, 0x1dc + offset, field_46_reserved2);;
         LittleEndian.putInt(data, 0x1e0 + offset, field_47_cDBC);;
@@ -350,8 +351,6 @@ public abstract class DOPAbstractType
         buffer.append("[DOP]\n");
 
         buffer.append("    .formatFlags          = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((byte)getFormatFlags()));
         buffer.append(" (").append(getFormatFlags()).append(" )\n");
         buffer.append("         .fFacingPages             = ").append(isFFacingPages()).append('\n');
         buffer.append("         .fWidowControl            = ").append(isFWidowControl()).append('\n');
@@ -361,25 +360,17 @@ public abstract class DOPAbstractType
         buffer.append("         .unused1                  = ").append(isUnused1()).append('\n');
 
         buffer.append("    .unused2              = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((byte)getUnused2()));
         buffer.append(" (").append(getUnused2()).append(" )\n");
 
         buffer.append("    .footnoteInfo         = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((short)getFootnoteInfo()));
         buffer.append(" (").append(getFootnoteInfo()).append(" )\n");
         buffer.append("         .rncFtn                   = ").append(getRncFtn()).append('\n');
         buffer.append("         .nFtn                     = ").append(getNFtn()).append('\n');
 
         buffer.append("    .fOutlineDirtySave    = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((byte)getFOutlineDirtySave()));
         buffer.append(" (").append(getFOutlineDirtySave()).append(" )\n");
 
         buffer.append("    .docinfo              = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((byte)getDocinfo()));
         buffer.append(" (").append(getDocinfo()).append(" )\n");
         buffer.append("         .fOnlyMacPics             = ").append(isFOnlyMacPics()).append('\n');
         buffer.append("         .fOnlyWinPics             = ").append(isFOnlyWinPics()).append('\n');
@@ -391,8 +382,6 @@ public abstract class DOPAbstractType
         buffer.append("         .fRevMarking              = ").append(isFRevMarking()).append('\n');
 
         buffer.append("    .docinfo1             = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((byte)getDocinfo1()));
         buffer.append(" (").append(getDocinfo1()).append(" )\n");
         buffer.append("         .fBackup                  = ").append(isFBackup()).append('\n');
         buffer.append("         .fExactCWords             = ").append(isFExactCWords()).append('\n');
@@ -404,8 +393,6 @@ public abstract class DOPAbstractType
         buffer.append("         .fDfltTrueType            = ").append(isFDfltTrueType()).append('\n');
 
         buffer.append("    .docinfo2             = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((byte)getDocinfo2()));
         buffer.append(" (").append(getDocinfo2()).append(" )\n");
         buffer.append("         .fPagSupressTopSpacing     = ").append(isFPagSupressTopSpacing()).append('\n');
         buffer.append("         .fProtEnabled             = ").append(isFProtEnabled()).append('\n');
@@ -417,8 +404,6 @@ public abstract class DOPAbstractType
         buffer.append("         .fEmbedFonts              = ").append(isFEmbedFonts()).append('\n');
 
         buffer.append("    .docinfo3             = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((short)getDocinfo3()));
         buffer.append(" (").append(getDocinfo3()).append(" )\n");
         buffer.append("         .oldfNoTabForInd          = ").append(isOldfNoTabForInd()).append('\n');
         buffer.append("         .oldfNoSpaceRaiseLower     = ").append(isOldfNoSpaceRaiseLower()).append('\n');
@@ -435,85 +420,53 @@ public abstract class DOPAbstractType
         buffer.append("         .unused5                  = ").append(getUnused5()).append('\n');
 
         buffer.append("    .dxaTab               = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getDxaTab()));
         buffer.append(" (").append(getDxaTab()).append(" )\n");
 
         buffer.append("    .wSpare               = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getWSpare()));
         buffer.append(" (").append(getWSpare()).append(" )\n");
 
         buffer.append("    .dxaHotz              = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getDxaHotz()));
         buffer.append(" (").append(getDxaHotz()).append(" )\n");
 
         buffer.append("    .cConsexHypLim        = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getCConsexHypLim()));
         buffer.append(" (").append(getCConsexHypLim()).append(" )\n");
 
         buffer.append("    .wSpare2              = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getWSpare2()));
         buffer.append(" (").append(getWSpare2()).append(" )\n");
 
         buffer.append("    .dttmCreated          = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getDttmCreated()));
         buffer.append(" (").append(getDttmCreated()).append(" )\n");
 
         buffer.append("    .dttmRevised          = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getDttmRevised()));
         buffer.append(" (").append(getDttmRevised()).append(" )\n");
 
         buffer.append("    .dttmLastPrint        = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getDttmLastPrint()));
         buffer.append(" (").append(getDttmLastPrint()).append(" )\n");
 
         buffer.append("    .nRevision            = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getNRevision()));
         buffer.append(" (").append(getNRevision()).append(" )\n");
 
         buffer.append("    .tmEdited             = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getTmEdited()));
         buffer.append(" (").append(getTmEdited()).append(" )\n");
 
         buffer.append("    .cWords               = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getCWords()));
         buffer.append(" (").append(getCWords()).append(" )\n");
 
         buffer.append("    .cCh                  = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getCCh()));
         buffer.append(" (").append(getCCh()).append(" )\n");
 
         buffer.append("    .cPg                  = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getCPg()));
         buffer.append(" (").append(getCPg()).append(" )\n");
 
         buffer.append("    .cParas               = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getCParas()));
         buffer.append(" (").append(getCParas()).append(" )\n");
 
         buffer.append("    .Edn                  = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((short)getEdn()));
         buffer.append(" (").append(getEdn()).append(" )\n");
         buffer.append("         .rncEdn                   = ").append(getRncEdn()).append('\n');
         buffer.append("         .nEdn                     = ").append(getNEdn()).append('\n');
 
         buffer.append("    .Edn1                 = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((short)getEdn1()));
         buffer.append(" (").append(getEdn1()).append(" )\n");
         buffer.append("         .epc                      = ").append(getEpc()).append('\n');
         buffer.append("         .nfcFtnRef1               = ").append(getNfcFtnRef1()).append('\n');
@@ -524,43 +477,27 @@ public abstract class DOPAbstractType
         buffer.append("         .fWCFtnEdn                = ").append(isFWCFtnEdn()).append('\n');
 
         buffer.append("    .cLines               = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getCLines()));
         buffer.append(" (").append(getCLines()).append(" )\n");
 
         buffer.append("    .cWordsFtnEnd         = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getCWordsFtnEnd()));
         buffer.append(" (").append(getCWordsFtnEnd()).append(" )\n");
 
         buffer.append("    .cChFtnEdn            = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getCChFtnEdn()));
         buffer.append(" (").append(getCChFtnEdn()).append(" )\n");
 
         buffer.append("    .cPgFtnEdn            = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((short)getCPgFtnEdn()));
         buffer.append(" (").append(getCPgFtnEdn()).append(" )\n");
 
         buffer.append("    .cParasFtnEdn         = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getCParasFtnEdn()));
         buffer.append(" (").append(getCParasFtnEdn()).append(" )\n");
 
         buffer.append("    .cLinesFtnEdn         = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getCLinesFtnEdn()));
         buffer.append(" (").append(getCLinesFtnEdn()).append(" )\n");
 
         buffer.append("    .lKeyProtDoc          = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getLKeyProtDoc()));
         buffer.append(" (").append(getLKeyProtDoc()).append(" )\n");
 
         buffer.append("    .view                 = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((short)getView()));
         buffer.append(" (").append(getView()).append(" )\n");
         buffer.append("         .wvkSaved                 = ").append(getWvkSaved()).append('\n');
         buffer.append("         .wScaleSaved              = ").append(getWScaleSaved()).append('\n');
@@ -569,8 +506,6 @@ public abstract class DOPAbstractType
         buffer.append("         .iGutterPos               = ").append(isIGutterPos()).append('\n');
 
         buffer.append("    .docinfo4             = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getDocinfo4()));
         buffer.append(" (").append(getDocinfo4()).append(" )\n");
         buffer.append("         .fNoTabForInd             = ").append(isFNoTabForInd()).append('\n');
         buffer.append("         .fNoSpaceRaiseLower       = ").append(isFNoSpaceRaiseLower()).append('\n');
@@ -591,23 +526,15 @@ public abstract class DOPAbstractType
         buffer.append("         .fMWSmallCaps             = ").append(isFMWSmallCaps()).append('\n');
 
         buffer.append("    .adt                  = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((short)getAdt()));
         buffer.append(" (").append(getAdt()).append(" )\n");
 
         buffer.append("    .doptypography        = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((byte[])getDoptypography()));
         buffer.append(" (").append(getDoptypography()).append(" )\n");
 
         buffer.append("    .dogrid               = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((byte[])getDogrid()));
         buffer.append(" (").append(getDogrid()).append(" )\n");
 
         buffer.append("    .docinfo5             = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((short)getDocinfo5()));
         buffer.append(" (").append(getDocinfo5()).append(" )\n");
         buffer.append("         .lvl                      = ").append(getLvl()).append('\n');
         buffer.append("         .fGramAllDone             = ").append(isFGramAllDone()).append('\n');
@@ -622,88 +549,56 @@ public abstract class DOPAbstractType
         buffer.append("         .fMinFontSizePag          = ").append(isFMinFontSizePag()).append('\n');
 
         buffer.append("    .docinfo6             = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((short)getDocinfo6()));
         buffer.append(" (").append(getDocinfo6()).append(" )\n");
         buffer.append("         .fHaveVersions            = ").append(isFHaveVersions()).append('\n');
         buffer.append("         .fAutoVersions            = ").append(isFAutoVersions()).append('\n');
 
         buffer.append("    .asumyi               = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((byte[])getAsumyi()));
         buffer.append(" (").append(getAsumyi()).append(" )\n");
 
         buffer.append("    .cChWS                = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getCChWS()));
         buffer.append(" (").append(getCChWS()).append(" )\n");
 
         buffer.append("    .cChWSFtnEdn          = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getCChWSFtnEdn()));
         buffer.append(" (").append(getCChWSFtnEdn()).append(" )\n");
 
         buffer.append("    .grfDocEvents         = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getGrfDocEvents()));
         buffer.append(" (").append(getGrfDocEvents()).append(" )\n");
 
         buffer.append("    .virusinfo            = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getVirusinfo()));
         buffer.append(" (").append(getVirusinfo()).append(" )\n");
         buffer.append("         .fVirusPrompted           = ").append(isFVirusPrompted()).append('\n');
         buffer.append("         .fVirusLoadSafe           = ").append(isFVirusLoadSafe()).append('\n');
         buffer.append("         .KeyVirusSession30        = ").append(getKeyVirusSession30()).append('\n');
 
         buffer.append("    .Spare                = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((byte[])getSpare()));
         buffer.append(" (").append(getSpare()).append(" )\n");
 
         buffer.append("    .reserved1            = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getReserved1()));
         buffer.append(" (").append(getReserved1()).append(" )\n");
 
         buffer.append("    .reserved2            = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getReserved2()));
         buffer.append(" (").append(getReserved2()).append(" )\n");
 
         buffer.append("    .cDBC                 = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getCDBC()));
         buffer.append(" (").append(getCDBC()).append(" )\n");
 
         buffer.append("    .cDBCFtnEdn           = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getCDBCFtnEdn()));
         buffer.append(" (").append(getCDBCFtnEdn()).append(" )\n");
 
         buffer.append("    .reserved             = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((int)getReserved()));
         buffer.append(" (").append(getReserved()).append(" )\n");
 
         buffer.append("    .nfcFtnRef            = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((short)getNfcFtnRef()));
         buffer.append(" (").append(getNfcFtnRef()).append(" )\n");
 
         buffer.append("    .nfcEdnRef            = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((short)getNfcEdnRef()));
         buffer.append(" (").append(getNfcEdnRef()).append(" )\n");
 
         buffer.append("    .hpsZoonFontPag       = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((short)getHpsZoonFontPag()));
         buffer.append(" (").append(getHpsZoonFontPag()).append(" )\n");
 
         buffer.append("    .dywDispPag           = ");
-        buffer.append("0x");
-        buffer.append(HexDump.toHex((short)getDywDispPag()));
         buffer.append(" (").append(getDywDispPag()).append(" )\n");
 
         buffer.append("[/DOP]\n");

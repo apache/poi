@@ -76,6 +76,10 @@ public class HDFFieldIterator extends FieldIterator
             result = "LittleEndian.getSimpleShortArray(data, 0x" + Integer.toHexString(offset) + " + offset," +  size + ")";
         else if (type.equals("byte[]"))
             result = "LittleEndian.getByteArray(data, 0x" + Integer.toHexString(offset) + " + offset," + size + ")";
+        else if (type.equals("BorderCode"))
+            result = "new BorderCode(data, 0x" + Integer.toHexString(offset) + " + offset)";
+        else if (type.equals("DateAndTime"))
+            result = "new DateAndTime(data, 0x" + Integer.toHexString(offset) + " + offset)";
         else if (size.equals("2"))
             result = "LittleEndian.getShort(data, 0x" + Integer.toHexString(offset) + " + offset)";
         else if (size.equals("4"))
@@ -97,23 +101,27 @@ public class HDFFieldIterator extends FieldIterator
 
     public String serialiseEncoder( int fieldNumber, String fieldName, String size, String type)
     {
-        String javaType = RecordUtil.getType(size, type, 0);
+        //String javaType = RecordUtil.getType(size, type, 0);
         String javaFieldName = RecordUtil.getFieldName(fieldNumber,fieldName,0);
 
         String result = "";
 
 
-        if (javaType.equals("short[]"))
+        if (type.equals("short[]"))
             result = "LittleEndian.putShortArray(data, 0x" + Integer.toHexString(offset) + " + offset, " + javaFieldName + ");";
-        else if (javaType.equals("byte[]"))
-            result = "LittleEndian.putByteArray(data, 0x" + Integer.toHexString(offset) + " + offset, " + javaFieldName + ");";
+        else if (type.equals("byte[]"))
+            result = "System.arraycopy(" + javaFieldName + ", 0, data, 0x" + Integer.toHexString(offset) + " + offset, " + javaFieldName + ".length);";
+        else if (type.equals("BorderCode"))
+            result = javaFieldName + ".serialize(data, 0x" + Integer.toHexString(offset) + " + offset);";
+        else if (type.equals("DateAndTime"))
+           result = javaFieldName + ".serialize(data, 0x" + Integer.toHexString(offset) + " + offset);";
         else if (size.equals("2"))
           result = "LittleEndian.putShort(data, 0x" + Integer.toHexString(offset) + " + offset, (short)" + javaFieldName + ");";
         else if (size.equals("4"))
           result = "LittleEndian.putInt(data, 0x" + Integer.toHexString(offset) + " + offset, " + javaFieldName + ");";
         else if (size.equals("1"))
             result = "data[ 0x" + Integer.toHexString(offset) + " + offset] = " + javaFieldName + ";";
-        else if (javaType.equals("double"))
+        else if (type.equals("double"))
             result = "LittleEndian.putDouble(data, 0x" + Integer.toHexString(offset) + " + offset, " + javaFieldName + ");";
 
         try
