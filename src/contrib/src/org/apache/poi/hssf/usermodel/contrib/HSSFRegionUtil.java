@@ -18,9 +18,6 @@
 
 package org.apache.poi.hssf.usermodel.contrib;
 
-import org.apache.log4j.Category;
-
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -37,11 +34,11 @@ import org.apache.commons.lang.exception.NestableException;
  *@since      July 29, 2002
  */
 
-public class HSSFRegionUtil {
-  private static Category log = Category.getInstance( HSSFRegionUtil.class.getName() );
+public class HSSFRegionUtil
+{
 
   /**  Constructor for the HSSFRegionUtil object */
-  public HSSFRegionUtil() { }
+  private HSSFRegionUtil() { }
 
   /**
    *  Sets the left border for a region of cells by manipulating the cell style
