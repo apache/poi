@@ -72,7 +72,7 @@ public class RecordUtil
         return fieldName.toString();
     }
 
-    private static StringBuffer pad(StringBuffer fieldName, int padTo)
+    protected static StringBuffer pad(StringBuffer fieldName, int padTo)
     {
         for (int i = fieldName.length(); i < padTo; i++)
             fieldName.append(' ');
