@@ -281,8 +281,7 @@ public class TestWrite extends TestCase
                     }
                     catch (Exception ex)
                     {
-                        ex.printStackTrace();
-                        throw new RuntimeException(ex.toString());
+                        fail(org.apache.poi.hpsf.Util.toString(ex));
                     }
                 }
     
@@ -383,8 +382,7 @@ public class TestWrite extends TestCase
             }
             catch (Exception ex)
             {
-                ex.printStackTrace();
-                throw new RuntimeException(ex.toString());
+                fail(org.apache.poi.hpsf.Util.toString(ex));
             }
         }
     }
