@@ -304,6 +304,8 @@ public class TestWorkbook
         assertEquals(1.25,cell.getNumericCellValue(), 1e-10);
 
 	assertEquals(format.getFormat(df), "0.0");
+
+	assertEquals(format, workbook.createDataFormat());
 	
         stream.close();
     }
