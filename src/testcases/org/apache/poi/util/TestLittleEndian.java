@@ -479,6 +479,12 @@ public class TestLittleEndian
         return result;
     }
 
+    public void testUnsignedShort()
+            throws Exception
+    {
+        assertEquals(0xffff, LittleEndian.getUShort(new byte[] { (byte)0xff, (byte)0xff }, 0));
+    }
+
     /**
      * main method to run the unit tests
      *

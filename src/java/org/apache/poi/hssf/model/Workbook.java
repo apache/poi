@@ -658,11 +658,11 @@ public class Workbook {
     
     public int serialize(int offset, byte [] data) {
         log.log(DEBUG, "Serializing Workbook with offsets");
-        
+
         // ArrayList bytes     = new ArrayList(records.size());
         //        int arraysize = getSize();   // 0;
         int pos       = 0;
-        
+
         //        for (int k = 0; k < records.size(); k++)
         //        {
         //            bytes.add((( Record ) records.get(k)).serialize());
