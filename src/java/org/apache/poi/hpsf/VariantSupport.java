@@ -285,6 +285,8 @@ public class VariantSupport extends Variant
                 ("Codepage number may not be " + codepage);
         switch (codepage)
         {
+            case Constants.CP_MACROMAN:
+                return "MacRoman";
             case Constants.CP_SJIS:
                 return "SJIS";
             case Constants.CP_UTF16:
