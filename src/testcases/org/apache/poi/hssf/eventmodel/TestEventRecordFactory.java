@@ -3,10 +3,13 @@ package org.apache.poi.hssf.eventmodel;
 import java.io.ByteArrayInputStream;
 import java.io.EOFException;
 import java.util.Iterator;
+import java.util.Arrays;
 
 import org.apache.poi.hssf.record.BOFRecord;
 import org.apache.poi.hssf.record.EOFRecord;
 import org.apache.poi.hssf.record.Record;
+import org.apache.poi.hssf.record.UnknownRecord;
+import org.apache.poi.hssf.record.ContinueRecord;
 
 import junit.framework.TestCase;
 
@@ -14,6 +17,7 @@ import junit.framework.TestCase;
  * enclosing_type describe the purpose here
  * 
  * @author Andrew C. Oliver acoliver@apache.org
+ * @author Csaba Nagy (ncsaba at yahoo dot com)
  */
 public class TestEventRecordFactory extends TestCase
 {
@@ -173,4 +177,59 @@ public class TestEventRecordFactory extends TestCase
       //  fail("not implemented");
     }
     
+
+    /**
+     * TEST NAME:  Test Creating ContinueRecords After Unknown Records From An InputStream <P>
+     * OBJECTIVE:  Test that the RecordFactory given an InputStream
+     *             constructs the expected records.<P>
+     * SUCCESS:    Record factory creates the expected records.<P>
+     * FAILURE:    The wrong records are created or contain the wrong values <P>
+     *
+     */
+     public void testContinuedUnknownRecord()
+     {
+        final byte[]   data    = new byte[]
+        {
+            0, -1, 0, 0, // an unknown record with 0 length
+            0x3C , 0, 3, 0, 1, 2, 3, // a continuation record with 3 bytes of data
+            0x3C , 0, 1, 0, 4 // one more continuation record with 1 byte of data
+        };
+
+        final int[] recCnt = { 0 };
+        final int[] offset = { 0 };
+        factory.registerListener(
+          new ERFListener() {
+              private String[] expectedRecordTypes = {
+                  UnknownRecord.class.getName(),
+                  ContinueRecord.class.getName(),
+                  ContinueRecord.class.getName()
+              };
+              public boolean processRecord(Record rec)
+              {
+                  // System.out.println(rec.toString());
+                  assertEquals(
+                    "Record type",
+                    expectedRecordTypes[recCnt[0]],
+                    rec.getClass().getName()
+                  );
+                  compareData(rec, "Record " + recCnt[0] + ": ");
+                  recCnt[0]++;
+                  return true;
+              }
+              private void compareData(Record record, String message) {
+                  byte[] recData = record.serialize();
+                  for (int i = 0; i < recData.length; i++) {
+                      assertEquals(message + " data byte " + i, data[offset[0]++], recData[i]);
+                  }
+              }
+          },
+          new short[] {-256, 0x3C}
+        );
+
+        factory.processRecords(new ByteArrayInputStream(data));
+        assertEquals("nr. of processed records", 3, recCnt[0]);
+        assertEquals("nr. of processed bytes", data.length, offset[0]);
+    }
+
+
 }

@@ -89,7 +89,6 @@ import org.apache.poi.hssf.record.FnGroupCountRecord;
 import org.apache.poi.hssf.record.FontRecord;
 import org.apache.poi.hssf.record.FooterRecord;
 import org.apache.poi.hssf.record.FormatRecord;
-import org.apache.poi.hssf.record.FormulaRecord;
 import org.apache.poi.hssf.record.GridsetRecord;
 import org.apache.poi.hssf.record.GutsRecord;
 import org.apache.poi.hssf.record.HCenterRecord;
@@ -151,6 +150,7 @@ import org.apache.poi.util.LittleEndian;
  * @author Andrew C. Oliver (acoliver@apache.org) - probably to blame for the bugs (so yank his chain on the list)
  * @author Marc Johnson (mjohnson at apache dot org) - methods taken from RecordFactory
  * @author Glen Stampoultzis (glens at apache.org) - methods taken from RecordFactory
+ * @author Csaba Nagy (ncsaba at yahoo dot com)
  */
 public class EventRecordFactory
 {
@@ -289,8 +289,6 @@ public class EventRecordFactory
      * @param in the InputStream from which the records will be
      *           obtained
      *
-     * @return an array of Records created from the InputStream
-     *
      * @exception RecordFormatException on error processing the
      *            InputStream
      */
@@ -337,7 +335,9 @@ public class EventRecordFactory
 
                         if (record != null)
                         {
-                            if (rectype == ContinueRecord.sid)
+                            if (rectype == ContinueRecord.sid &&
+                                ! (last_record instanceof ContinueRecord) && // include continuation records after
+                                ! (last_record instanceof UnknownRecord) )   // unknown records or previous continuation records
                             {
                                 if (last_record == null)
                                 {
