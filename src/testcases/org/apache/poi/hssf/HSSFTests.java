@@ -25,6 +25,7 @@ import org.apache.poi.hssf.record.TestFrameRecord;
 import org.apache.poi.hssf.record.TestLegendRecord;
 import org.apache.poi.hssf.record.TestLineFormatRecord;
 import org.apache.poi.hssf.record.TestLinkedDataRecord;
+import org.apache.poi.hssf.record.TestNameRecord;
 import org.apache.poi.hssf.record.TestNumberFormatIndexRecord;
 import org.apache.poi.hssf.record.TestObjectLinkRecord;
 import org.apache.poi.hssf.record.TestPaletteRecord;
@@ -154,6 +155,7 @@ public class HSSFTests
         
         suite.addTest(new TestSuite(TestFuncPtg.class));
 		  suite.addTest(new TestSuite(TestValueRecordsAggregate.class));
+		  suite.addTest(new TestSuite(TestNameRecord.class));
         
         //$JUnit-END$
         return suite;

@@ -55,16 +55,17 @@
 
 package org.apache.poi.hssf.record;
 
+import java.util.List;
+import java.util.Stack;
+
+import org.apache.poi.hssf.record.formula.Area3DPtg;
+import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.hssf.record.formula.Ref3DPtg;
+import org.apache.poi.hssf.util.RangeAddress;
+import org.apache.poi.hssf.util.SheetReferences;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
-import java.util.Stack;
-import org.apache.poi.hssf.record.formula.Ptg;
-import org.apache.poi.hssf.record.formula.Area3DPtg;
-import org.apache.poi.hssf.record.formula.Ref3DPtg;
-import java.util.List;
-import org.apache.poi.hssf.util.RangeAddress;
-import org.apache.poi.hssf.util.SheetReferences;
 
 /**
  * Title:        Name Record (aka Named Range) <P>
@@ -548,13 +549,13 @@ public class NameRecord extends Record {
             int start_of_custom_menu_text = start_of_name_definition + field_4_length_name_definition;
             StringUtil.putCompressedUnicode( getCustomMenuText(), data, start_of_custom_menu_text + offset );
 
-            int start_of_description_text = start_of_custom_menu_text + field_8_length_description_text;
+            int start_of_description_text = start_of_custom_menu_text + field_7_length_custom_menu;
             StringUtil.putCompressedUnicode( getDescriptionText(), data, start_of_description_text + offset );
 
-            int start_of_help_topic_text = start_of_description_text + field_9_length_help_topic_text;
+            int start_of_help_topic_text = start_of_description_text + field_8_length_description_text;
             StringUtil.putCompressedUnicode( getHelpTopicText(), data, start_of_help_topic_text + offset );
 
-            int start_of_status_bar_text = start_of_help_topic_text + field_10_length_status_bar_text;
+            int start_of_status_bar_text = start_of_help_topic_text + field_9_length_help_topic_text;
             StringUtil.putCompressedUnicode( getStatusBarText(), data, start_of_status_bar_text + offset );
 
             return getRecordSize();
@@ -767,15 +768,15 @@ public class NameRecord extends Record {
             field_14_custom_menu_text       = StringUtil.getFromCompressedUnicode(data, start_of_custom_menu_text + offset,
             LittleEndian.ubyteToInt(field_7_length_custom_menu));
     
-            int start_of_description_text   = start_of_custom_menu_text + field_8_length_description_text;
+            int start_of_description_text   = start_of_custom_menu_text + field_7_length_custom_menu;;
             field_15_description_text       = StringUtil.getFromCompressedUnicode(data, start_of_description_text + offset,
             LittleEndian.ubyteToInt(field_8_length_description_text));
     
-            int start_of_help_topic_text    = start_of_description_text + field_9_length_help_topic_text;
+            int start_of_help_topic_text    = start_of_description_text + field_8_length_description_text;
             field_16_help_topic_text        = StringUtil.getFromCompressedUnicode(data, start_of_help_topic_text + offset,
             LittleEndian.ubyteToInt(field_9_length_help_topic_text));
     
-            int start_of_status_bar_text       = start_of_help_topic_text + field_10_length_status_bar_text;
+            int start_of_status_bar_text       = start_of_help_topic_text + field_9_length_help_topic_text;
             field_17_status_bar_text        = StringUtil.getFromCompressedUnicode(data, start_of_status_bar_text +  offset,
             LittleEndian.ubyteToInt(field_10_length_status_bar_text));
         /*} */
