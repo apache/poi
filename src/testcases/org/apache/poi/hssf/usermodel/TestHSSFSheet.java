@@ -276,6 +276,25 @@ public class TestHSSFSheet
     	assertEquals("Left over region should be starting at row 1", 1, region.getRowFrom());
     	
     	sheet.removeMergedRegion(0);
+    	
+		assertEquals("there should be no merged regions left!", 0, sheet.getNumMergedRegions());
+		
+		//an, add, remove, get(0) would null pointer
+		sheet.addMergedRegion(region);
+		assertEquals("there should now be one merged region!", 1, sheet.getNumMergedRegions());
+		sheet.removeMergedRegion(0);
+		assertEquals("there should now be zero merged regions!", 0, sheet.getNumMergedRegions());
+		//add it again!
+		region.setRowTo(4);
+    	
+		sheet.addMergedRegion(region);
+		assertEquals("there should now be one merged region!", 1, sheet.getNumMergedRegions());
+		
+		//should exist now!
+		assertTrue("there isn't more than one merged region in there", 1 <= sheet.getNumMergedRegions());
+		region = sheet.getMergedRegionAt(0);
+		assertEquals("the merged row to doesnt match the one we put in ", 4, region.getRowTo());
+    	
     }
 
 	public static void main(java.lang.String[] args) {
