@@ -3,6 +3,12 @@
 <!DOCTYPE project [
   <!-- antipede -->    
   <!ENTITY import-antipede  SYSTEM "./tools/antipede/build.xtarget"> 
+
+  <!ELEMENT project  ANY>
+  <!ATTLIST project default CDATA #REQUIRED
+                    basedir CDATA #IMPLIED
+                    name CDATA #IMPLIED>  
+                    
 ]>
 <project default="interactive" basedir="." name="project build file">
 
@@ -124,16 +130,16 @@ printed.
     <property name="input.selection" value="compile"/>        
     <centipede-user-input name="input.selection">Please select a target </centipede-user-input>   
 
-    <pathconvert pathsep="," property="antipede.gif.url">
-      <path>
-        <filelist dir="./tools/antipede/resources/images" files="antipede.gif"/>
-      </path>
-    </pathconvert>
-   <splash imageurl="file:/${antipede.gif.url}" showduration="100"/>  
+    <antcall target="call-cent">
+      <param name="cent-name"   value="centipede"/> 
+      <param name="cent-target" value="splash"/> 
+    </antcall>
  
     <antcall target="${input.selection}"/>
     
   </target>
+
+
 
   <!-- =================================================================== -->
   <!-- Interactive scratchpad builds                                       -->
@@ -211,6 +217,20 @@ printed.
     
   </target>               
 
+  <!-- ================================== -->
+  <!--           Run build gui            -->
+  <!-- ================================== -->
+
+  <target  name="gui"   depends="-init"
+           description="Run build gui">
+           
+    <antcall target="call-cent">
+      <param name="cent-name"   value="antidote"/> 
+      <param name="cent-target" value="run"/> 
+    </antcall>
+    
+  </target>     
+  
   <!-- ================================== -->
   <!--             Build jars             -->
   <!-- ================================== -->
@@ -316,36 +336,16 @@ printed.
   </target>     
 
   <!-- ================================== -->
-  <!--       Generate UML                 -->
+  <!--       Generate UML -WIP-           -->
   <!-- ================================== -->
   
   <target  name="uml"   depends="-init"
            description="generate-uml">
-  <!--
-  <javadoc packagenames="org.apache.poi.*"
-           sourcepath="./src/java"
-           destdir="docs/metrics">
-
-     <doclet name="JP.co.esm.caddies.doclets.UMLDoclet"
-             path="./tools/antipede/lib/UMLDoclet.jar">
-        <param name="-d" value="docs/metrics"/>
-     </doclet>
-
-  </javadoc>
-    -->
     
-        <javadoc packagenames="${xgump.module.project.package}.*"
+    <javadoc packagenames="${xgump.module.project.package}.*"
              sourcepath="${xlayout.build.java.dir}"
              destdir="${xlayout.build.documentation.javadocs.dir}"
-             author="true"
-             version="true"
-             use="true"
-             failonerror="true"
-             noindex="true"
-             windowtitle="${package-name} ${package-version}  API"
-             doctitle="${package-name} ${package-version}  API"
-             bottom="Copyright &#169; ${YEAR} Apache ${package-name} project. All Rights Reserved."
-             stylesheetfile="${centipede.cent.dir}/resources/stylesheets/javadoc.css">
+             failonerror="true">
  
      <classpath>
        <path>
@@ -357,6 +357,7 @@ printed.
          </fileset>  
        </path> 
      </classpath>
+     
       <doclet name="JP.co.esm.caddies.doclets.UMLDoclet"
              path="./tools/antipede/lib/UMLDoclet.jar">
         <param name="-d" value="docs/metrics"/>
