@@ -65,10 +65,8 @@ public class TextPieceTable
 //      }
     }
 
-    _cpMin = pieces[0].getFilePosition() - fcMin;
-    // if a piece is unicode the actual offset may be bumped because of the
-    // doubling of the needed size.
-    int bump = 0;
+    int firstPieceFilePosition = pieces[0].getFilePosition();
+        _cpMin = firstPieceFilePosition - fcMin;
 
     // using the PieceDescriptors, build our list of TextPieces.
     for (int x = 0; x < pieces.length; x++)
@@ -92,12 +90,9 @@ public class TextPieceTable
 
       byte[] buf = new byte[textSize];
       System.arraycopy(documentStream, start, buf, 0, textSize);
-      _textPieces.add(new TextPiece(nodeStart + bump, nodeEnd + bump, buf, pieces[x]));
 
-      if (unicode)
-      {
-        bump += (node.getEnd() - nodeStart);
-      }
+      int startFilePosition = start - firstPieceFilePosition;
+      _textPieces.add(new TextPiece(startFilePosition, startFilePosition+textSize, buf, pieces[x], node.getStart()));
     }
   }
 

@@ -31,13 +31,15 @@ public class TextPiece extends PropertyNode implements Comparable
 
   private PieceDescriptor _pd;
 
+  private int _cpStart;
+
   /**
    * @param start Offset in main document stream.
    * @param length The total length of the text in bytes. Note: 1 character
    *        does not necessarily refer to 1 byte.
    * @param unicode true if this text is unicode.
    */
-  public TextPiece(int start, int end, byte[] text, PieceDescriptor pd)
+  public TextPiece(int start, int end, byte[] text, PieceDescriptor pd, int cpStart)
     throws UnsupportedEncodingException
   {
      /** start - end is length on file. This is double the expected when its
@@ -45,6 +47,7 @@ public class TextPiece extends PropertyNode implements Comparable
     super(start, end, new StringBuffer(new String(text, pd.isUnicode() ? "UTF-16LE" : "Cp1252")));
     _usesUnicode = pd.isUnicode();
     _pd = pd;
+    _cpStart = cpStart;
   }
   /**
    * @return If this text piece uses unicode
@@ -62,11 +65,6 @@ public class TextPiece extends PropertyNode implements Comparable
    public StringBuffer getStringBuffer()
    {
      return (StringBuffer)_buf;
-   }
-
-   public void setStringBuffer(StringBuffer buf)
-   {
-     _buf = buf;
    }
 
    public byte[] getRawBytes()
@@ -111,6 +109,12 @@ public class TextPiece extends PropertyNode implements Comparable
               tp._usesUnicode == _usesUnicode && _pd.equals(tp._pd);
      }
      return false;
+   }
+
+
+   public int getCP()
+   {
+     return _cpStart;
    }
 
 }

@@ -45,6 +45,7 @@ public class SectionTable
   {
     PlexOfCps sedPlex = new PlexOfCps(tableStream, offset, size, SED_SIZE);
     _text = tpt;
+
     int length = sedPlex.length();
 
     for (int x = 0; x < length; x++)
@@ -85,50 +86,51 @@ public class SectionTable
     }
   }
 
-  private int CPtoFC(int cp)
+  // goss version of CPtoFC - this takes into account non-contiguous textpieces
+  // that we have come across in real world documents. Tests against the example
+  // code in HWPFDocument show no variation to Ryan's version of the code in
+  // normal use, but this version works with our non-contiguous test case.
+  // So far unable to get this test case to be written out as well due to
+  // other issues. - piers
+   private int CPtoFC(int CP)
   {
-    int size = _text.size();
-    int x = 0;
-    int end = 0;
-    int fc = 0;
-    for (; x < size; x++)
-    {
-      TextPiece piece = (TextPiece)_text.get(x);
-      int currentStart = end;
-      end += ((piece.getEnd()- piece.getStart())/(piece.usesUnicode() ? 2 : 1));
-      if (cp <= end)
-      {
-        fc += ((cp - currentStart) * (piece.usesUnicode() ? 2 : 1));
-        break;
-      }
-      else
-      {
-        fc += (piece.getEnd() - piece.getStart());
-      }
-    }
-    return fc;
-  }
+      TextPiece TP = null;
 
-  private int FCtoCP(int fc)
-  {
-    int size = _text.size();
-    int cp = 0;
-    for (int x = 0; x < size; x++)
-    {
-      TextPiece piece = (TextPiece)_text.get(x);
+      for(int i=_text.size()-1; i>-1; i--)
+      {
+        TP = (TextPiece)_text.get(i);
 
-      if (fc <= piece.getEnd())
-      {
-        cp += ((fc - piece.getStart())/ (piece.usesUnicode() ? 2 : 1));
-        break;
+        if(CP >= TP.getCP()) break;
       }
-      else
-      {
-        cp += ((piece.getEnd() - piece.getStart())/ (piece.usesUnicode() ? 2 : 1));
-      }
+      int FC = TP.getPieceDescriptor().getFilePosition();
+      int offset = CP - TP.getCP();
+      if(TP.usesUnicode()) offset*=2;
+      FC = FC+offset-((TextPiece)_text.get(0)).getPieceDescriptor().getFilePosition();
+      return FC;
     }
-    return cp;
-  }
+
+    // Ryans code
+    private int FCtoCP(int fc)
+   {
+     int size = _text.size();
+     int cp = 0;
+     for (int x = 0; x < size; x++)
+     {
+       TextPiece piece = (TextPiece)_text.get(x);
+
+       if (fc <= piece.getEnd())
+       {
+         cp += ((fc - piece.getStart())/ (piece.usesUnicode() ? 2 : 1));
+         break;
+       }
+       else
+       {
+         cp += ((piece.getEnd() - piece.getStart())/ (piece.usesUnicode() ? 2 : 1));
+       }
+     }
+     return cp;
+   }
+
 
   public ArrayList getSections()
   {
@@ -163,12 +165,20 @@ public class SectionTable
       sed.setFc(offset);
 
       // add the section descriptor bytes to the PlexOfCps.
+
+
+      // original line -
+      //GenericPropertyNode property = new GenericPropertyNode(sepx.getStart(), sepx.getEnd(), sed.toByteArray());
+
+      // Line using Ryan's FCtoCP() conversion method -
+      // unable to observe any effect on our testcases when using this code - piers
       GenericPropertyNode property = new GenericPropertyNode(FCtoCP(sepx.getStart()), FCtoCP(sepx.getEnd()), sed.toByteArray());
+
+
       plex.addProperty(property);
 
       offset = docStream.getOffset();
     }
     tableStream.write(plex.toByteArray());
   }
-
 }

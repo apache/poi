@@ -192,6 +192,11 @@ public class ListTables
     return lvl;
   }
 
+  public ListData getListData(int listID)
+  {
+    return (ListData) _listMap.get(new Integer(listID));
+  }
+
   public boolean equals(Object obj)
   {
     if (obj == null)

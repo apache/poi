@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 
 package org.apache.poi.hwpf.sprm;
 
@@ -407,7 +407,7 @@ public class ParagraphSprmUncompressor
 
     for (int x = 0; x < delSize; x++)
     {
-      tabMap.remove(new Integer(LittleEndian.getInt(grpprl, offset)));
+      tabMap.remove(new Integer(LittleEndian.getShort(grpprl, offset)));
       offset += LittleEndian.SHORT_SIZE;
     }
 
