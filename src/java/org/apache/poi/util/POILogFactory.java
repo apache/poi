@@ -1,5 +1,6 @@
 
-/* ====================================================================
+/*
+ * ====================================================================
  * The Apache Software License, Version 1.1
  *
  * Copyright (c) 2002 The Apache Software Foundation.  All rights
@@ -52,7 +53,6 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-
 package org.apache.poi.util;
 
 import java.io.FileInputStream;
@@ -60,9 +60,10 @@ import java.io.IOException;
 
 import java.util.*;
 
-import org.apache.log4j.Category;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Hierarchy;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.apache.log4j.SimpleLayout;
 import org.apache.log4j.spi.RootCategory;
@@ -104,7 +105,8 @@ public class POILogFactory
             logfile = logpath + _fs + logfile;
         }
         _creator =
-            new Hierarchy(new RootCategory(Category.getRoot().getPriority()));
+            new Hierarchy(new RootCategory(Logger.getRootLogger()
+                .getLevel()));
         try
         {
             new FileInputStream(logfile).close();
@@ -112,10 +114,10 @@ public class POILogFactory
         }
         catch (IOException e)
         {
-            _creator.getRoot()
+            _creator.getRootLogger()
                 .addAppender(new ConsoleAppender(new SimpleLayout(),
                                                  ConsoleAppender.SYSTEM_OUT));
-            _creator.disableDebug();
+            _creator.getRootLogger().setLevel(Level.INFO);
         }
         _loggers = new HashMap();
     }
@@ -134,7 +136,7 @@ public class POILogFactory
 
         if (logger == null)
         {
-            logger = new POILogger(_creator.getInstance(theclass.getName()));
+            logger = new POILogger(_creator.getLogger(theclass.getName()));
             _loggers.put(theclass, logger);
         }
         return logger;
