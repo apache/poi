@@ -1,3 +1,4 @@
+<!-- Copyright (C) 2004 The Apache Software Foundation. All rights reserved. -->
 <record id="0x101A" name="PAP" package="org.apache.poi.hdf.model.hdftypes.definitions">
     <suffix>AbstractType</suffix>
     <extends>HDFType</extends>

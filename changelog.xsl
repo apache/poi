@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- Copyright (C) 2004 The Apache Software Foundation. All rights reserved. -->
 
 <xsl:stylesheet
     xmlns:xsl='http://www.w3.org/1999/XSL/Transform'
