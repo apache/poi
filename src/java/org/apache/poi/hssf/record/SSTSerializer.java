@@ -77,6 +77,14 @@ class SSTSerializer
     private int numUniqueStrings;
     private SSTRecordHeader sstRecordHeader;
 
+    /** Offsets from the beginning of the SST record (even across continuations) */
+    int[] bucketAbsoluteOffsets;
+    /** Offsets relative the start of the current SST or continue record */
+    int[] bucketRelativeOffsets;
+    int startOfSST, startOfRecord;
+    /** The default bucket size (this is used for ExternSST) */
+    final static int DEFAULT_BUCKET_SIZE = 8;
+
     public SSTSerializer( List recordLengths, BinaryTree strings, int numStrings, int numUniqueStrings )
     {
         this.recordLengths = recordLengths;
@@ -84,6 +92,9 @@ class SSTSerializer
         this.numStrings = numStrings;
         this.numUniqueStrings = numUniqueStrings;
         this.sstRecordHeader = new SSTRecordHeader( numStrings, numUniqueStrings );
+
+        this.bucketAbsoluteOffsets = new int[strings.size()/DEFAULT_BUCKET_SIZE+1];
+        this.bucketRelativeOffsets = new int[strings.size()/DEFAULT_BUCKET_SIZE+1];
     }
 
     /**
@@ -133,7 +144,6 @@ class SSTSerializer
 
     /**
      * This case is chosen when an SST record does not span over to a continue record.
-     *
      */
     private void serializeSingleSSTRecord( byte[] data, int offset, int record_length_index )
     {
@@ -144,6 +154,11 @@ class SSTSerializer
 
         for ( int k = 0; k < strings.size(); k++ )
         {
+            if (k % DEFAULT_BUCKET_SIZE == 0)
+            {
+                bucketAbsoluteOffsets[k / DEFAULT_BUCKET_SIZE] = pos;
+                bucketRelativeOffsets[k / DEFAULT_BUCKET_SIZE] = pos;
+            }
             System.arraycopy( getUnicodeString( k ).serialize(), 0, data, pos + offset, getUnicodeString( k ).getRecordSize() );
             pos += getUnicodeString( k ).getRecordSize();
         }
@@ -156,6 +171,8 @@ class SSTSerializer
      */
     private void serializeLargeRecord( int record_size, int record_length_index, byte[] buffer, int offset )
     {
+
+        startOfSST = offset;
 
         byte[] stringReminant = null;
         int stringIndex = 0;
@@ -170,6 +187,7 @@ class SSTSerializer
                     recordLength, numStrings, numUniqueStrings );
 
             // write the appropriate header
+            startOfRecord = offset + totalWritten;
             recordProcessor.writeRecordHeader( offset, totalWritten, recordLength, first_record );
             first_record = false;
 
@@ -188,6 +206,12 @@ class SSTSerializer
             for ( ; stringIndex < strings.size(); stringIndex++ )
             {
                 UnicodeString unistr = getUnicodeString( stringIndex );
+
+                if (stringIndex % DEFAULT_BUCKET_SIZE == 0)
+                {
+                    bucketAbsoluteOffsets[stringIndex / DEFAULT_BUCKET_SIZE] = offset + totalWritten + recordProcessor.getRecordOffset() - startOfSST;
+                    bucketRelativeOffsets[stringIndex / DEFAULT_BUCKET_SIZE] = offset + totalWritten + recordProcessor.getRecordOffset() - startOfRecord;
+                }
 
                 if ( unistr.getRecordSize() <= recordProcessor.getAvailable() )
                 {
@@ -234,5 +258,15 @@ class SSTSerializer
     public List getRecordLengths()
     {
         return recordLengths;
+    }
+
+    public int[] getBucketAbsoluteOffsets()
+    {
+        return bucketAbsoluteOffsets;
+    }
+
+    public int[] getBucketRelativeOffsets()
+    {
+        return bucketRelativeOffsets;
     }
 }
