@@ -79,7 +79,7 @@ import java.util.TreeMap;
  * @author  Andrew C. Oliver (acoliver at apache dot org)
  * @author  Glen Stampoultzis (glens at apache.org)
  * @author  Libin Roman (romal at vistaportal.com)
- * @author  Shawn Laubach (laubach at acm.org) (Just a little)
+ * @author  Shawn Laubach (slaubach at apache dot org) (Just a little)
  */
 
 public class HSSFSheet

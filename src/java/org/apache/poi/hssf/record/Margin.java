@@ -63,7 +63,7 @@ import org.apache.poi.util.*;
  * The margin interface is a parent used to define left, right, top and bottom margins.  This allows much of the code to be generic when it comes to handling margins.
  * NOTE: This source wass automatically generated.
 
- * @author Shawn Laubach (shawnlaubach at cox.net)
+ * @author Shawn Laubach (slaubach at apache dot org) 
  */
 public interface Margin
 {

@@ -79,7 +79,7 @@ import org.apache.poi.hssf.record
  * <P>
  * @author  Andrew C. Oliver (acoliver at apache dot org)
  * @author  Glen Stampoultzis (glens at apache.org)
- * @author  Shawn Laubach (laubach at acm.org) Just Gridlines, Headers, Footers, and PrintSetup
+ * @author  Shawn Laubach (slaubach at apache dot org) Gridlines, Headers, Footers, and PrintSetup
  * @author Jason Height (jheight at chariot dot net dot au) Clone support
  *
  * @see org.apache.poi.hssf.model.Workbook
