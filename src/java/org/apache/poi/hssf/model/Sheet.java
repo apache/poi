@@ -995,6 +995,10 @@ public class Sheet implements Model
             d.setFirstRow(row.getRowNumber());
         }
         //IndexRecord index = null;
+         //If the row exists remove it, so that any cells attached to the row are removed
+         RowRecord existingRow = rows.getRow(row.getRowNumber());
+         if (existingRow != null)
+           rows.removeRow(existingRow);
 
         rows.insertRow(row);
 
