@@ -2,33 +2,27 @@
 
 <project default="interactive" basedir="." name="project build file">
 
-<description>
-                   * ===================================== *
-                   |   Krysalis Centipede Build System     |
-                   * ===================================== *
-                                     by               
-                                             
-                   Nicola Ken Barozzi (nicolaken@apache.org)
-                   Marc Johnson (mjohnson@apache.org)       
-                   
-                   
-                   For a simple interactive build, simply 
-                   run the build script (build.bar or build.sh)
-</description>
+  <description>Jakarta POI buildfile</description>
  
-    <import file="${ant.home}/src/core/xbuild.xml"/>
-    <taskdef file="${ant.home}/src/core/tasks.properties"/>
+    <taskdef resource="centipede"/>
+    <centipede/>
     
     <importcent name="java" />
     <importcent name="junit" />
-        
-    <!-- commenting these out till the base build works on Gump
+    
+   <!-- These work locally, but still need to be set in Gump
+      
+    <importcent name="doxygen-gpl" />
+    <importcent name="pmd" />
+    <importcent name="statcvs-gpl" />
+    <importcent name="nounit-gpl" />
+    <importcent name="dir2xml" />
+    <importcent name="essmodel-gpl" />
     <importcent name="checkstyle" />
     <importcent name="forrest" />
     <importcent name="changelog" />
-    <importcent name="changelog" />    
-    -->
     
+    -->
             
   <!-- =================================================================== -->
   <!-- Basic build targets for the project                                 -->
