@@ -181,9 +181,9 @@ static class MyPOIFSReaderListener implements POIFSReaderListener
       title. The instance is created in a <code>try</code> block:</p>
 
      <source>si = (SummaryInformation)
-                 PropertySetFactory.create(e.getStream());</source>
+                 PropertySetFactory.create(event.getStream());</source>
 
-     <p>The expression <code>e.getStream()</code> returns the input stream
+     <p>The expression <code>event.getStream()</code> returns the input stream
       containing the bytes of the property set stream named
       <em>\005SummaryInformation</em>. This stream is passed into the
       <code>create</code> method of the factory class
