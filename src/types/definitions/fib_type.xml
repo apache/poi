@@ -14,7 +14,7 @@
         <field type="int" size="2" name="version"/>
         <field type="int" size="2" name="product version"/>
     <field type="int" size="2" name="language stamp"/>
-    <field type="int" size="2" name="unknown 1"/>
+    <field type="int" size="2" name="unknown 0"/>
     <field type="int" size="2" name="options">
             <bit number="0"  mask="0x0001" name="template"/>
             <bit number="1"  mask="0x0002" name="glossary"/>
@@ -216,7 +216,7 @@
 
     <field type="int" size="4" name="length Plcf Ann Bkark Last"/>
 
-    <field type="int" size="4" name="length Plcf Ann Bkark Last"/>
+    <field type="int" size="4" name="PlcfAtnbkl"/>
    
     <field type="int" size="4" name="fcPms"/>
     
