@@ -94,6 +94,7 @@ import java.util.Calendar;
  * NOTE: the alpha won't be implementing formulas
  *
  * @author  Andrew C. Oliver (acoliver at apache dot org)
+ * @author  Dan Sherman (dsherman at isisph.com)
  * @version 1.0-pre
  */
 
@@ -783,7 +784,12 @@ public class HSSFCell
             throw new NumberFormatException(
                 "You cannot get a date value from an error cell");
         }
-        return HSSFDateUtil.getJavaDate(cellValue);
+        if (book.isUsing1904DateWindowing()) {
+            return HSSFDateUtil.getJavaDate(cellValue,true);
+        }
+        else {
+            return HSSFDateUtil.getJavaDate(cellValue,false);
+        }
     }
 
     /**

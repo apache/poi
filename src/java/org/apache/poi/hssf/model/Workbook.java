@@ -89,6 +89,7 @@ import org.apache.poi.hssf.util.HSSFColor;
  * @author  Glen Stampoultzis (glens at apache.org)
  * @author  Sergei Kozello (sergeikozello at mail.ru)
  * @author  Luc Girardin (luc dot girardin at macrofocus dot com)
+ * @author  Dan Sherman (dsherman at isisph.com)
  * @see org.apache.poi.hssf.usermodel.HSSFWorkbook
  * @version 1.0-pre
  */
@@ -156,6 +157,8 @@ public class Workbook implements Model {
     0;   // holds the position of sup book
     private short              maxformatid  =
     -1;  // holds the max format id
+    private boolean            uses1904datewindowing  =
+    false;  // whether 1904 date windowing is being used
 
     private static POILogger   log         =
     POILogFactory.getLogger(Workbook.class);
@@ -249,6 +252,10 @@ public class Workbook implements Model {
 		    retval.formats.add(rec);
 		    retval.maxformatid = retval.maxformatid >= ((FormatRecord)rec).getIndexCode() ? retval.maxformatid : ((FormatRecord)rec).getIndexCode();
 		    break;
+                case DateWindow1904Record.sid :
+                    log.log(DEBUG, "found datewindow1904 record at " + k);
+                    retval.uses1904datewindowing = ((DateWindow1904Record)rec).getWindowing() == 1;
+                    break;
 
                 default :
             }
@@ -1911,5 +1918,15 @@ public class Workbook implements Model {
     public List getRecords()
     {
         return records;
+    }
+
+    /**
+    * Whether date windowing is based on 1/2/1904 or 1/1/1900.
+    * Some versions of Excel (Mac) can save workbooks using 1904 date windowing.
+    *
+    * @return true if using 1904 date windowing
+    */
+    public boolean isUsing1904DateWindowing() {
+        return uses1904datewindowing;
     }
 }
