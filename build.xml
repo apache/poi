@@ -6,7 +6,7 @@
         Glen Stampoultzis   glens at apache.org
 
 
-    This build was tested with and 1.5.3 although it will probably work with
+    This build was tested with ant 1.5.3 although it will probably work with
     other versions.  The following jar files should be installed
     into the ant lib directory:
 
@@ -83,7 +83,7 @@
     <property name="changelog.file" value="${build.site}/changelog.html"/>
     <property name="dist.dir" value="build/dist"/>
     <property name="jar.name" value="poi"/>
-    <property name="version.id" value="2.0-pre1"/>
+    <property name="version.id" value="2.0-pre2"/>
     <property name="halt.on.test.failure" value="true"/>
 
     <path id="main.classpath">
@@ -142,14 +142,17 @@
 
     <target name="check-jars">
         <condition property="jars.present">
+	    <or>
             <and>
                 <available file="${main.jar1.dir}"/>
                 <available file="${main.jar2.dir}"/>
                 <available file="${contrib.jar1.dir}"/>
                 <available file="${contrib.jar2.dir}"/>
-                <available file="${contrib.jar3.dir}"/>
-                <available file="${junit.jar1.dir}"/>
+              	<available file="${contrib.jar3.dir}"/>
+               	<available file="${junit.jar1.dir}"/>
             </and>
+			<isset property="disconnected"/>
+	    </or>
         </condition>
     </target>
 
@@ -401,6 +404,18 @@
         </condition>
     </target>
 
+    <target name="-cvschangelog" unless="disconnected">
+        <cvschangelog destfile="${changelog.file}" daysinpast="30"/>
+
+	<style in="${changelog.file}"
+            out="${build.site.src}/src/documentation/content/changelog.html"
+            style="changelog.xsl">
+            <param name="title" expression="POI Change Log"/>
+            <param name="module" expression="jakarta-poi"/>
+            <param name="cvsweb" expression="http://cvs.apache.org/viewcvs/"/>
+        </style>
+    </target>
+
     <target name="reports" depends="-check-reports" unless="reports.notRequired"
         description="Creates junit,jdepend and javadoc reports">
         <antcall target="test">
@@ -440,15 +455,7 @@
             out="${jdepend.report.out.dir}/index.html"
             style="jdepend.xsl"/>
 
-        <cvschangelog destfile="${changelog.file}" daysinpast="30"/>
-
-        <style in="${changelog.file}"
-            out="${build.site.src}/src/documentation/content/changelog.html"
-            style="changelog.xsl">
-            <param name="title" expression="POI Change Log"/>
-            <param name="module" expression="jakarta-poi"/>
-            <param name="cvsweb" expression="http://cvs.apache.org/viewcvs/"/>
-        </style>
+	<antcall target="-cvschangelog"/>
 
         <javadoc
             destdir="${apidocs.report.dir}"
@@ -562,9 +569,9 @@
 
         <tar destfile="${dist.dir}/${jar.name}-bin-${version.id}-${DSTAMP}.tar.gz" compression="gzip">
             <tarfileset dir="${build.site}" prefix="docs"/>
-            <tarfileset file="${dist.dir}/${jar.name}-${version.id}.jar"/>
-            <tarfileset file="${dist.dir}/${jar.name}-contrib-${version.id}.jar"/>
-            <tarfileset file="${dist.dir}/${jar.name}-scratchpad-${version.id}.jar"/>
+            <tarfileset file="${dist.dir}/${jar.name}-${version.id}-${DSTAMP}.jar"/>
+            <tarfileset file="${dist.dir}/${jar.name}-contrib-${version.id}-${DSTAMP}.jar"/>
+            <tarfileset file="${dist.dir}/${jar.name}-scratchpad-${version.id}-${DSTAMP}.jar"/>
             <tarfileset dir="legal" prefix="legal"/>
         </tar>
 
