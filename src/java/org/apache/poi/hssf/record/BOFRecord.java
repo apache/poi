@@ -174,7 +174,7 @@ public class BOFRecord
     /**
      * Version number - for BIFF8 should be 0x06
      * @see #VERSION
-     * @param short version to be set
+     * @param version to be set
      */
 
     public void setVersion(short version)
@@ -190,7 +190,7 @@ public class BOFRecord
      * @see #TYPE_CHART
      * @see #TYPE_EXCEL_4_MACRO
      * @see #TYPE_WORKSPACE_FILE
-     * @param short type to be set
+     * @param type to be set
      */
 
     public void setType(short type)
@@ -201,7 +201,7 @@ public class BOFRecord
     /**
      * build that wrote this file
      * @see #BUILD
-     * @param short build number to set
+     * @param build number to set
      */
 
     public void setBuild(short build)
@@ -212,7 +212,7 @@ public class BOFRecord
     /**
      * Year of the build that wrote this file
      * @see #BUILD_YEAR
-     * @param short build year to set
+     * @param build year to set
      */
 
     public void setBuildYear(short year)
@@ -223,7 +223,7 @@ public class BOFRecord
     /**
      * set the history bit mask (not very useful)
      * @see #HISTORY_MASK
-     * @param int bitmask to set for the history
+     * @param bitmask to set for the history
      */
 
     public void setHistoryBitMask(int bitmask)
@@ -235,7 +235,7 @@ public class BOFRecord
      * set the minimum version required to read this file
      *
      * @see #VERSION
-     * @param int version to set
+     * @param version to set
      */
 
     public void setRequiredVersion(int version)
