@@ -292,8 +292,8 @@ public class HSSFRow
      * get the hssfcell representing a given column (logical cell) 0-based.  If you
      * ask for a cell that is not defined....you get a null.
      *
-     * @param cellnum - 0 based column number
-     * @returns HSSFCell representing that column or null if undefined.
+     * @param cellnum  0 based column number
+     * @return HSSFCell representing that column or null if undefined.
      */
 
     public HSSFCell getCell(short cellnum)
@@ -441,7 +441,7 @@ public class HSSFRow
     }
 
     /**
-     * @returns cell iterator of the physically defined cells.  Note element 4 may
+     * @return cell iterator of the physically defined cells.  Note element 4 may
      * actually be row cell depending on how many are defined!
      */
 

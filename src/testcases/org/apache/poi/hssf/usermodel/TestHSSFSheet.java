@@ -58,6 +58,7 @@ import junit.framework.TestCase;
 import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.record.VCenterRecord;
 import org.apache.poi.hssf.record.WSBoolRecord;
+import org.apache.poi.hssf.record.RowRecord;
 import org.apache.poi.hssf.dev.BiffViewer;
 
 import java.io.File;
@@ -193,4 +194,5 @@ public class TestHSSFSheet
 
 
     }
+
 }
