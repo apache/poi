@@ -113,7 +113,7 @@ public interface CellValueRecordInterface
     /**
      * returns whether this cell is before the passed in cell
      *
-     * @param cellinterface another cell interface record to compare
+     * @param i  another cell interface record to compare
      * @return true if the cells is before, or false if not
      */
 
@@ -122,7 +122,7 @@ public interface CellValueRecordInterface
     /**
      * returns whether this cell is after the passed in cell
      *
-     * @param cellinterface record to compare
+     * @param i  record to compare
      * @return true if the cell is after, false if not
      */
 
@@ -131,7 +131,7 @@ public interface CellValueRecordInterface
     /**
      * returns whether this cell represents the same cell (NOT VALUE)
      *
-     * @param cellinterface record to compare
+     * @param i  record to compare
      * @return true if the cells are the same cell (positionally), false if not.
      */
 

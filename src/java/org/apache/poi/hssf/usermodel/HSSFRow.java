@@ -139,7 +139,7 @@ public class HSSFRow
      *
      * @param book low-level Workbook object containing the sheet that contains this row
      * @param sheet low-level Sheet object that contains this Row
-     * @param RowRecord - the low level api object this row should represent
+     * @param record the low level api object this row should represent
      * @see org.apache.poi.hssf.usermodel.HSSFSheet#createRow(short)
      */
 
@@ -252,7 +252,7 @@ public class HSSFRow
 
     /**
      * set the row number of this row.
-     * @param row number the row number (0-based)
+     * @param rowNum  the row number (0-based)
      */
 
     public void setRowNum(short rowNum)
@@ -414,7 +414,7 @@ public class HSSFRow
     /**
      * set the row's height or set to ff (-1) for undefined/default-height.  Set the height in "twips" or
      * 1/20th of a point.
-     * @param rowheight or 0xff for undefined (use sheet default)
+     * @param height  rowheight or 0xff for undefined (use sheet default)
      */
 
     public void setHeight(short height)
@@ -427,7 +427,7 @@ public class HSSFRow
 
     /**
      * set the row's height in points.
-     * @param rowheight
+     * @param height  row height in points
      */
 
     public void setHeightInPoints(float height)

@@ -149,7 +149,7 @@ public class HSSFSheet
 
         while (row != null)
         {
-            HSSFRow hrow = createRowFromRecord(row);
+            createRowFromRecord(row);
 
             row = sheet.getNextRow();
         }
@@ -183,7 +183,7 @@ public class HSSFSheet
     /**
      * Create a new row within the sheet and return the high level representation
      *
-     * @param row number
+     * @param rownum  row number
      * @return High level HSSFRow object representing a row in the sheet
      * @see org.apache.poi.hssf.usermodel.HSSFRow
      * @see #removeRow(HSSFRow)
@@ -200,7 +200,7 @@ public class HSSFSheet
     /**
      * Used internally to create a high level Row object from a low level row object.
      * USed when reading an existing file
-     * @param RowRecord low level record to represent as a high level Row and add to sheet
+     * @param row  low level record to represent as a high level Row and add to sheet
      * @return HSSFRow high level representation
      */
 
@@ -215,7 +215,7 @@ public class HSSFSheet
     /**
      * Remove a row from this sheet.  All cells contained in the row are removed as well
      *
-     * @param HSSFRow representing a row to remove.
+     * @param row   representing a row to remove.
      */
 
     public void removeRow(HSSFRow row)
@@ -303,7 +303,7 @@ public class HSSFSheet
     /**
      * Returns the logical row (not physical) 0-based.  If you ask for a row that is not
      * defined you get a null.  This is to say row 4 represents the fifth row on a sheet.
-     * @param row to get
+     * @param rownum  row to get
      * @return HSSFRow representing the rownumber or null if its not defined on the sheet
      */
 
@@ -345,10 +345,11 @@ public class HSSFSheet
     }
 
     /**
+     * Seems to be unused (gjs)
+     *
      * used internally to add cells from a high level row to the low level model
-     * @param HSSFRow the row object to represent in low level RowRecord.
+     * @param row  the row object to represent in low level RowRecord.
      */
-
     private void addCellsFromRow(HSSFRow row)
     {
         Iterator iter = row.cellIterator();
@@ -399,7 +400,7 @@ public class HSSFSheet
     /**
      * get the default row height for the sheet (if the rows do not define their own height) in
      * twips (1/20 of  a point)
-     * @param default row height
+     * @retun  default row height
      */
 
     public short getDefaultRowHeight()
@@ -410,7 +411,7 @@ public class HSSFSheet
     /**
      * get the default row height for the sheet (if the rows do not define their own height) in
      * points.
-     * @param default row height
+     * @return  default row height in points
      */
 
     public float getDefaultRowHeightInPoints()
@@ -421,7 +422,7 @@ public class HSSFSheet
     /**
      * set the default column width for the sheet (if the columns do not define their own width) in
      * characters
-     * @param default column width
+     * @param width default column width
      */
 
     public void setDefaultColumnWidth(short width)
@@ -432,7 +433,7 @@ public class HSSFSheet
     /**
      * set the default row height for the sheet (if the rows do not define their own height) in
      * twips (1/20 of  a point)
-     * @return default row height
+     * @param  height default row height
      */
 
     public void setDefaultRowHeight(short height)
@@ -443,7 +444,7 @@ public class HSSFSheet
     /**
      * set the default row height for the sheet (if the rows do not define their own height) in
      * points
-     * @return default row height
+     * @param height default row height
      */
 
     public void setDefaultRowHeightInPoints(float height)
@@ -463,7 +464,7 @@ public class HSSFSheet
 
     /**
      * set whether gridlines printed.
-     * @return false if not printed.
+     * @param value  false if not printed.
      */
 
     public void setGridsPrinted(boolean value)
@@ -564,7 +565,7 @@ public class HSSFSheet
 
     /**
      * whether alternate expression evaluation is on
-     * @param alternative expression evaluation or not
+     * @param b  alternative expression evaluation or not
      */
 
     public void setAlternativeExpression(boolean b)
@@ -577,7 +578,7 @@ public class HSSFSheet
 
     /**
      * whether alternative formula entry is on
-     * @param alternative formulas or not
+     * @param b  alternative formulas or not
      */
 
     public void setAlternativeFormula(boolean b)
@@ -590,7 +591,7 @@ public class HSSFSheet
 
     /**
      * show automatic page breaks or not
-     * @param whether to show auto page breaks
+     * @param b  whether to show auto page breaks
      */
 
     public void setAutobreaks(boolean b)
@@ -603,7 +604,7 @@ public class HSSFSheet
 
     /**
      * set whether sheet is a dialog sheet or not
-     * @param isDialog or not
+     * @param b  isDialog or not
      */
 
     public void setDialog(boolean b)
@@ -617,7 +618,7 @@ public class HSSFSheet
     /**
      * set whether to display the guts or not
      *
-     * @param guts or no guts (or glory)
+     * @param b  guts or no guts (or glory)
      */
 
     public void setDisplayGuts(boolean b)
@@ -630,7 +631,7 @@ public class HSSFSheet
 
     /**
      * fit to page option is on
-     * @param fit or not
+     * @param b  fit or not
      */
 
     public void setFitToPage(boolean b)
@@ -643,7 +644,7 @@ public class HSSFSheet
 
     /**
      * set if row summaries appear below detail in the outline
-     * @param below or not
+     * @param b  below or not
      */
 
     public void setRowSumsBelow(boolean b)
@@ -656,7 +657,7 @@ public class HSSFSheet
 
     /**
      * set if col summaries appear right of the detail in the outline
-     * @param right or not
+     * @param b  right or not
      */
 
     public void setRowSumsRight(boolean b)

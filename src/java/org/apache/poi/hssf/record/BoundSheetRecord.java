@@ -132,7 +132,7 @@ public class BoundSheetRecord
     /**
      * set the offset in bytes of the Beginning of File Marker within the HSSF Stream part of the POIFS file
      *
-     * @param offset in bytes
+     * @param pos  offset in bytes
      */
 
     public void setPositionOfBof(int pos)
@@ -154,7 +154,7 @@ public class BoundSheetRecord
     /**
      * Set the length of the sheetname in characters
      *
-     * @param number of characters in the sheet name
+     * @param len  number of characters in the sheet name
      * @see #setSheetname(String)
      */
 

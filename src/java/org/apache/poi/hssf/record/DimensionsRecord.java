@@ -156,7 +156,7 @@ public class DimensionsRecord
 
     /**
      * set the last col number for the sheet
-     * @param column - last column on the sheet
+     * @param col  last column on the sheet
      */
 
     public void setLastCol(short col)

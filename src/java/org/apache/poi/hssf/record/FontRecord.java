@@ -178,7 +178,7 @@ public class FontRecord
     /**
      * sets the height of the font in 1/20th point units
      *
-     * @param fontheight (in points/20)
+     * @param height  fontheight (in points/20)
      */
 
     public void setFontHeight(short height)
@@ -189,7 +189,7 @@ public class FontRecord
     /**
      * set the font attributes (see individual bit setters that reference this method)
      *
-     * @param attribute the bitmask to set
+     * @param attributes    the bitmask to set
      */
 
     public void setAttributes(short attributes)
@@ -275,7 +275,7 @@ public class FontRecord
     /**
      * set the type of super or subscript for the font
      *
-     * @param super or subscript option
+     * @param sss  super or subscript option
      * @see #SS_NONE
      * @see #SS_SUPER
      * @see #SS_SUB
@@ -289,7 +289,7 @@ public class FontRecord
     /**
      * set the type of underlining for the font
      *
-     * @param super or subscript option
+     * @param u  super or subscript option
      *
      * @see #U_NONE
      * @see #U_SINGLE
@@ -306,7 +306,7 @@ public class FontRecord
     /**
      * set the font family (TODO)
      *
-     * @param family
+     * @param f family
      */
 
     public void setFamily(byte f)
@@ -328,7 +328,7 @@ public class FontRecord
     /**
      * set the length of the fontname string
      *
-     * @param length of the font name
+     * @param len  length of the font name
      * @see #setFontName(String)
      */
 

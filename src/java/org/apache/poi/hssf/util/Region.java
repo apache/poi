@@ -146,7 +146,7 @@ public class Region
     /**
      * set the upper left hand corner column number
      *
-     * @param column number for the upper left hand corner
+     * @param colFrom  column number for the upper left hand corner
      */
 
     public void setColumnFrom(short colFrom)
@@ -157,7 +157,7 @@ public class Region
     /**
      * set the upper left hand corner row number
      *
-     * @param row number for the upper left hand corner
+     * @param rowFrom  row number for the upper left hand corner
      */
 
     public void setRowFrom(int rowFrom)
@@ -168,7 +168,7 @@ public class Region
     /**
      * set the lower right hand corner column number
      *
-     * @param column number for the lower right hand corner
+     * @param colTo  column number for the lower right hand corner
      */
 
     public void setColumnTo(short colTo)
@@ -179,7 +179,7 @@ public class Region
     /**
      * get the lower right hand corner row number
      *
-     * @param row number for the lower right hand corner
+     * @param rowTo  row number for the lower right hand corner
      */
 
     public void setRowTo(int rowTo)
@@ -217,7 +217,7 @@ public class Region
      * coordinants then a positive integer is returned.  Otherwise a negative
      * integer is returned.
      *
-     * @param region
+     * @param r  region
      * @see #compareTo(Object)
      */
 

@@ -209,11 +209,11 @@ public class ContinueRecord
     /**
      * Fill the fields. Only thing is, this record has no fields --
      *
-     * @param ignored_parm1
-     * @param ignored_parm2
+     * @param ignored_parm1 Ignored
+     * @param ignored_parm2 Ignored
      */
 
-    protected void fillFields(byte [] data, short ignored_parm2)
+    protected void fillFields(byte [] ignored_parm1, short ignored_parm2)
     {
 
         // throw new RecordFormatException("Are you crazy?  Don't fill a continue record");
@@ -259,11 +259,12 @@ public class ContinueRecord
     /**
      * Fill the fields. Only thing is, this record has no fields --
      *
-     * @param ignored_parm1
-     * @param ignored_parm2
+     * @param ignored_parm1 Ignored
+     * @param ignored_parm2 Ignored
+     * @param ignored_parm3 Ignored
      */
 
-    protected void fillFields(byte [] data, short size, int offset)
+    protected void fillFields(byte [] ignored_parm1, short ignored_parm2, int ignored_parm3)
     {
     }
 }

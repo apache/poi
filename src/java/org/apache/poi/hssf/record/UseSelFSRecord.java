@@ -121,7 +121,7 @@ public class UseSelFSRecord
     /**
      * turn the flag on or off
      *
-     * @param whether to use natural language formulas or not
+     * @param flag  whether to use natural language formulas or not
      * @see #TRUE
      * @see #FALSE
      */

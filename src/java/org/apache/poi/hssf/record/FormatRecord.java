@@ -127,7 +127,7 @@ public class FormatRecord
     /**
      * set the format index code (for built in formats)
      *
-     * @param the format index code
+     * @param index  the format index code
      * @see org.apache.poi.hssf.model.Workbook
      */
 
@@ -139,7 +139,7 @@ public class FormatRecord
     /**
      * set the format string length
      *
-     * @param the length of the format string
+     * @param len  the length of the format string
      * @see #setFormatString(String)
      */
 
@@ -151,7 +151,7 @@ public class FormatRecord
     /**
      * set the format string
      *
-     * @param the format string
+     * @param fs  the format string
      * @see #setFormatStringLength(byte)
      */
 

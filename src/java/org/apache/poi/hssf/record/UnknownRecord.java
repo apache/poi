@@ -82,9 +82,9 @@ public class UnknownRecord
     /**
      * construct an unknown record.  No fields are interperated and the record will
      * be serialized in its original form more or less
-     * @param id of the record -not validated, just stored for serialization
-     * @param size of the data
-     * @param the data
+     * @param id    id of the record -not validated, just stored for serialization
+     * @param size  size of the data
+     * @param data  the data
      */
 
     public UnknownRecord(short id, short size, byte [] data)

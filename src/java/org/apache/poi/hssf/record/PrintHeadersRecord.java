@@ -118,7 +118,7 @@ public class PrintHeadersRecord
 
     /**
      * set to print the headers - y/n
-     * @param printheaders or not
+     * @param p printheaders or not
      */
 
     public void setPrintHeaders(boolean p)

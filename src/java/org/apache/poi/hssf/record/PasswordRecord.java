@@ -118,7 +118,7 @@ public class PasswordRecord
     /**
      * set the password
      *
-     * @param short  representing the password
+     * @param password  representing the password
      */
 
     public void setPassword(short password)

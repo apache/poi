@@ -166,7 +166,7 @@ public class WSBoolRecord
 
     /**
      * show automatic page breaks or not
-     * @param whether to show auto page breaks
+     * @param ab  whether to show auto page breaks
      */
 
     public void setAutobreaks(boolean ab)
@@ -219,7 +219,7 @@ public class WSBoolRecord
 
     /**
      * fit to page option is on
-     * @param fit or not
+     * @param fit2page  fit or not
      */
 
     public void setFitToPage(boolean fit2page)
@@ -240,7 +240,7 @@ public class WSBoolRecord
 
     /**
      * whether alternate expression evaluation is on
-     * @param alternative expression evaluation or not
+     * @param altexp  alternative expression evaluation or not
      */
 
     public void setAlternateExpression(boolean altexp)
@@ -251,7 +251,7 @@ public class WSBoolRecord
 
     /**
      * whether alternative formula entry is on
-     * @param alternative formulas or not
+     * @param formula  alternative formulas or not
      */
 
     public void setAlternateFormula(boolean formula)

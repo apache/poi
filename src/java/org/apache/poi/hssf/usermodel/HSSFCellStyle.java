@@ -271,7 +271,7 @@ public class HSSFCellStyle
 
     /**
      * set the font for this style
-     * @param a font object created or retreived from the HSSFWorkbook object
+     * @param font  a font object created or retreived from the HSSFWorkbook object
      * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#createFont()
      * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#getFontAt(short)
      */
@@ -379,7 +379,7 @@ public class HSSFCellStyle
     /**
      * set whether this cell is to be part of a merged block of cells
      *
-     * @param merged or not
+     * @param merge  merged or not
      */
 
     public void setMergeCells(boolean merge)
@@ -389,7 +389,7 @@ public class HSSFCellStyle
 
     /**
      * set whether the text should be wrapped
-     * @param wrap text or not
+     * @param wrapped  wrap text or not
      */
 
     public void setWrapText(boolean wrapped)
@@ -410,7 +410,7 @@ public class HSSFCellStyle
 
     /**
      * set the type of vertical alignment for the cell
-     * @param align - the type of alignment
+     * @param align the type of alignment
      * @see #VERTICAL_TOP
      * @see #VERTICAL_CENTER
      * @see #VERTICAL_BOTTOM
@@ -424,7 +424,7 @@ public class HSSFCellStyle
 
     /**
      * get the type of vertical alignment for the cell
-     * @return align - the type of alignment
+     * @return align the type of alignment
      * @see #VERTICAL_TOP
      * @see #VERTICAL_CENTER
      * @see #VERTICAL_BOTTOM
@@ -755,7 +755,7 @@ public class HSSFCellStyle
     /**
      * setting to one fills the cell with the foreground color... No idea about
      * other values
-     * @param fill pattern (set to 1 to fill w/foreground color
+     * @param fp  fill pattern (set to 1 to fill w/foreground color
      */
 
     public void setFillPattern(short fp)
@@ -775,7 +775,7 @@ public class HSSFCellStyle
 
     /**
      * set the background fill color
-     * @param color
+     * @param bg  color
      */
 
     public void setFillBackgroundColor(short bg)
@@ -795,7 +795,7 @@ public class HSSFCellStyle
 
     /**
      * set the foreground fill color
-     * @param color
+     * @param bg  color
      */
 
     public void setFillForegroundColor(short bg)

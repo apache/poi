@@ -202,7 +202,7 @@ public class WindowTwoRecord
 
     /**
      * set whether the window should freeze panes
-     * @param freeze panes or not
+     * @param freezepanes  freeze panes or not
      */
 
     public void setFreezePanes(boolean freezepanes)
@@ -232,7 +232,7 @@ public class WindowTwoRecord
 
     /**
      * is this arabic?
-     * @param arabic or not
+     * @param isarabic  arabic or not
      */
 
     public void setArabic(boolean isarabic)
@@ -242,7 +242,7 @@ public class WindowTwoRecord
 
     /**
      * set whether the outline symbols are displaed
-     * @param symbols or not
+     * @param guts  symbols or not
      */
 
     public void setDisplayGuts(boolean guts)
@@ -262,7 +262,7 @@ public class WindowTwoRecord
 
     /**
      * sheet tab is selected
-     * @param selected or not
+     * @param sel  selected or not
      */
 
     public void setSelected(boolean sel)
@@ -272,7 +272,7 @@ public class WindowTwoRecord
 
     /**
      * is the sheet currently displayed in the window
-     * @param displayed or not
+     * @param p  displayed or not
      */
 
     public void setPaged(boolean p)
@@ -282,7 +282,7 @@ public class WindowTwoRecord
 
     /**
      * was the sheet saved in page break view
-     * @param pagebreaksaved or not
+     * @param p  pagebreaksaved or not
      */
 
     public void setSavedInPageBreakPreview(boolean p)
@@ -294,7 +294,7 @@ public class WindowTwoRecord
 
     /**
      * set the top row visible in the window
-     * @param toprow
+     * @param topRow  top row visible
      */
 
     public void setTopRow(short topRow)
@@ -304,7 +304,7 @@ public class WindowTwoRecord
 
     /**
      * set the leftmost column displayed in the window
-     * @param leftmost
+     * @param leftCol  leftmost column
      */
 
     public void setLeftCol(short leftCol)

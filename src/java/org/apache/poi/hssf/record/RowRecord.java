@@ -229,7 +229,7 @@ public class RowRecord
 
     /**
      * set whether or not to display this row with 0 height
-     * @param - z height is zero or not.
+     * @param z  height is zero or not.
      * @see #setOptionFlags(short)
      */
 
@@ -241,7 +241,7 @@ public class RowRecord
 
     /**
      * set whether the font and row height are not compatible
-     * @param - f -true if they aren't compatible (damn not logic)
+     * @param  f  true if they aren't compatible (damn not logic)
      * @see #setOptionFlags(short)
      */
 
@@ -253,7 +253,7 @@ public class RowRecord
 
     /**
      * set whether the row has been formatted (even if its got all blank cells)
-     * @param formatted or not
+     * @param f  formatted or not
      * @see #setOptionFlags(short)
      */
 

@@ -119,7 +119,7 @@ public class DefaultColWidthRecord
 
     /**
      * set the default column width
-     * @param defaultwidth for columns
+     * @param height defaultwidth for columns
      */
 
     public void setColWidth(short height)

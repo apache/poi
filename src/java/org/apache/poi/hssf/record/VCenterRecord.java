@@ -117,7 +117,7 @@ public class VCenterRecord
 
     /**
      * set whether to center vertically or not
-     * @param vcenter or not
+     * @param hc  vcenter or not
      */
 
     public void setVCenter(boolean hc)

@@ -79,7 +79,7 @@ public class SelectionRecord
     private short             field_3_col_active_cell;
     private short             field_4_ref_active_cell;
     private short             field_5_num_refs;
-    private ArrayList         field_6_refs;
+    private ArrayList         field_6_refs;     // not used yet
 
     public SelectionRecord()
     {

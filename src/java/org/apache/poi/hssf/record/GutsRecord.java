@@ -124,7 +124,7 @@ public class GutsRecord
     /**
      * set the size of the gutter that appears at the left of the rows
      *
-     * @param gutter size in screen units
+     * @param gut  gutter size in screen units
      */
 
     public void setLeftRowGutter(short gut)
@@ -135,7 +135,7 @@ public class GutsRecord
     /**
      * set the size of the gutter that appears at the above the columns
      *
-     * @param gutter size in screen units
+     * @param gut  gutter size in screen units
      */
 
     public void setTopColGutter(short gut)
@@ -146,7 +146,7 @@ public class GutsRecord
     /**
      * set the maximum outline level for the row gutter.
      *
-     * @param maximum outline level
+     * @param max  maximum outline level
      */
 
     public void setRowLevelMax(short max)
@@ -157,7 +157,7 @@ public class GutsRecord
     /**
      * set the maximum outline level for the col gutter.
      *
-     * @param maximum outline level
+     * @param max  maximum outline level
      */
 
     public void setColLevelMax(short max)
