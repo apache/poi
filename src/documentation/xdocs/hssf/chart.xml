@@ -43,7 +43,7 @@
     recordid = 0xec, size =200
     [UNKNOWN RECORD:ec]
         .id        = ec
-    [/UNKNWON RECORD]
+    [/UNKNOWN RECORD]
 
     ============================================
     rectype = 0x5d, recsize = 0x1a
@@ -54,7 +54,7 @@
     recordid = 0x5d, size =26
     [UNKNOWN RECORD:5d]
         .id        = 5d
-    [/UNKNWON RECORD]
+    [/UNKNOWN RECORD]
 
     ============================================
     rectype = 0x809, recsize = 0x10
@@ -151,7 +151,7 @@
     recordid = 0x33, size =2
     [UNKNOWN RECORD:33]
         .id        = 33
-    [/UNKNWON RECORD]
+    [/UNKNOWN RECORD]
 
     ============================================
     rectype = 0x1060, recsize = 0xa
@@ -446,7 +446,7 @@
     recordid = 0x105f, size =2
     [UNKNOWN RECORD]
         .id        = 105f
-    [/UNKNWON RECORD]
+    [/UNKNOWN RECORD]
 
     ============================================
     Offset 0xff8 (4088)
@@ -564,7 +564,7 @@
     recordid = 0x104f, size =20
     [UNKNOWN RECORD]
         .id        = 104f
-    [/UNKNWON RECORD]
+    [/UNKNOWN RECORD]
 
     ============================================
     Offset 0x1054 (4180)
@@ -671,7 +671,7 @@
     recordid = 0x104f, size =20
     [UNKNOWN RECORD]
         .id        = 104f
-    [/UNKNWON RECORD]
+    [/UNKNOWN RECORD]
 
     ============================================
     Offset 0x10b0 (4272)
@@ -757,7 +757,7 @@
     recordid = 0x104f, size =20
     [UNKNOWN RECORD]
         .id        = 104f
-    [/UNKNWON RECORD]
+    [/UNKNOWN RECORD]
 
     ============================================
     Offset 0x10fe (4350)
@@ -1114,7 +1114,7 @@
     recordid = 0x1022, size =10
     [UNKNOWN RECORD]
         .id        = 1022
-    [/UNKNWON RECORD]
+    [/UNKNOWN RECORD]
 
     ============================================
     Offset 0x1250 (4688)
@@ -1160,7 +1160,7 @@
     recordid = 0x104f, size =20
     [UNKNOWN RECORD]
         .id        = 104f
-    [/UNKNWON RECORD]
+    [/UNKNOWN RECORD]
 
     ============================================
     Offset 0x1284 (4740)
@@ -1219,7 +1219,7 @@
     recordid = 0x104f, size =20
     [UNKNOWN RECORD]
         .id        = 104f
-    [/UNKNWON RECORD]
+    [/UNKNOWN RECORD]
 
     ============================================
     Offset 0x12c4 (4804)
@@ -1490,7 +1490,7 @@
     recordid = 0xeb, size =90
     [UNKNOWN RECORD:eb]
         .id        = eb
-    [/UNKNWON RECORD]
+    [/UNKNOWN RECORD]
 
     ============================================
                 </source>
