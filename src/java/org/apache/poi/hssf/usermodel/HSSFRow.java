@@ -424,7 +424,7 @@ public class HSSFRow
         short cellnum = (short) (lastcell - 1);
         HSSFCell r = getCell(cellnum);
 
-        while (r == null)
+        while (r == null && cellnum >= 0)
         {
             r = getCell(--cellnum);
         }
