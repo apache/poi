@@ -62,6 +62,7 @@ import org.apache.poi.util.LittleEndian;
  * Description:  Row/column gutter sizes <P>
  * REFERENCE:  PG 320 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
  * @author Andrew C. Oliver (acoliver at apache dot org)
+ * @author Jason Height (jheight at chariot dot net dot au)
  * @version 2.0-pre
  */
 
@@ -245,5 +246,14 @@ public class GutsRecord
     public short getSid()
     {
         return this.sid;
+    }
+
+    public Object clone() {
+      GutsRecord rec = new GutsRecord();
+      rec.field_1_left_row_gutter = field_1_left_row_gutter;
+      rec.field_2_top_col_gutter = field_2_top_col_gutter;
+      rec.field_3_row_level_max = field_3_row_level_max;
+      rec.field_4_col_level_max = field_4_col_level_max;
+      return rec;
     }
 }

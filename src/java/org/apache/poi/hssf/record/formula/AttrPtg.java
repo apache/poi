@@ -72,6 +72,7 @@ import java.util.List;
  * This seems to be a Misc Stuff and Junk record.  One function it serves is
  * in SUM functions (i.e. SUM(A1:A3) causes an area PTG then an ATTR with the SUM option set)
  * @author  andy
+ * @author Jason Height (jheight at chariot dot net dot au)
  */
 
 public class AttrPtg
@@ -246,4 +247,11 @@ public class AttrPtg
     
  
     public byte getDefaultOperandClass() {return Ptg.CLASS_VALUE;}
+
+    public Object clone() {
+      AttrPtg ptg = new AttrPtg();
+      ptg.field_1_options = field_1_options;
+      ptg.field_2_data = field_2_data;
+      return ptg;
+    }
 }

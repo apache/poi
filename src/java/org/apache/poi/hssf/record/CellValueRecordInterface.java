@@ -66,6 +66,7 @@ package org.apache.poi.hssf.record;
  * them.
  *
  * @author Andrew C. Oliver (acoliver at apache dot org)
+ * @author Jason Height (jheight at chariot dot net dot au)
  *
  * @see org.apache.poi.hssf.model.Sheet
  * @see org.apache.poi.hssf.record.Record
@@ -138,4 +139,6 @@ public interface CellValueRecordInterface
      */
 
     public boolean isEqual(CellValueRecordInterface i);
+
+    public Object clone();
 }

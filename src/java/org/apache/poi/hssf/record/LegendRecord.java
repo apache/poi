@@ -234,6 +234,20 @@ public class LegendRecord
         return this.sid;
     }
 
+    public Object clone() {
+      LegendRecord rec = new LegendRecord();
+      
+      rec.field_1_xAxisUpperLeft = field_1_xAxisUpperLeft;
+      rec.field_2_yAxisUpperLeft = field_2_yAxisUpperLeft;
+      rec.field_3_xSize = field_3_xSize;
+      rec.field_4_ySize = field_4_ySize;
+      rec.field_5_type = field_5_type;
+      rec.field_6_spacing = field_6_spacing;
+      rec.field_7_options = field_7_options;
+
+      return rec;
+    }
+
 
     /**
      * Get the x axis upper left field for the Legend record.

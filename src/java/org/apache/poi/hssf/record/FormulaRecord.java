@@ -70,6 +70,7 @@ import org.apache.poi.hssf.record.formula.*;
  * Formula Record.
  * REFERENCE:  PG 317/444 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
  * @author Andrew C. Oliver (acoliver at apache dot org)
+ * @author Jason Height (jheight at chariot dot net dot au)
  * @version 2.0-pre
  */
 
@@ -568,4 +569,25 @@ public class FormulaRecord
         return buffer.toString();
     }
     
+    public Object clone() {
+      FormulaRecord rec = new FormulaRecord();
+      rec.field_1_row = field_1_row;
+      rec.field_2_column = field_2_column;
+      rec.field_3_xf = field_3_xf;
+      rec.field_4_value = field_4_value;
+      rec.field_5_options = field_5_options;
+      rec.field_6_zero = field_6_zero;
+      rec.field_7_expression_len = field_7_expression_len;
+      rec.field_8_parsed_expr = new Stack();
+      int size = 0;
+      if (field_8_parsed_expr != null)
+        size = field_8_parsed_expr.size();
+      for (int i=0; i< size; i++) {
+        Ptg ptg = (Ptg)((Ptg)field_8_parsed_expr.get(i)).clone();
+        rec.field_8_parsed_expr.set(i, ptg);
+      }
+      rec.all_data = all_data;
+      return rec;
+    }
+
 }

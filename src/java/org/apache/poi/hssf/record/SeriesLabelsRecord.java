@@ -177,6 +177,14 @@ public class SeriesLabelsRecord
         return this.sid;
     }
 
+    public Object clone() {
+      SeriesLabelsRecord rec = new SeriesLabelsRecord();
+      
+      rec.field_1_formatFlags = field_1_formatFlags;
+
+      return rec;
+    }
+
 
     /**
      * Get the format flags field for the SeriesLabels record.

@@ -69,6 +69,7 @@ import org.apache.poi.hssf.util.SheetReferences;
 /**
  * ReferencePtg - handles references (such as A1, A2, IA4)
  * @author  Andrew C. Oliver (acoliver@apache.org)
+ * @author Jason Height (jheight at chariot dot net dot au)
  */
 
 public class ReferencePtg extends Ptg
@@ -81,7 +82,9 @@ public class ReferencePtg extends Ptg
     private BitField         rowRelative = new BitField(0x8000);
     private BitField         colRelative = new BitField(0x4000);
 
-    
+    private ReferencePtg() {
+      //Required for clone methods
+    }
     
     /**
      * Takes in a String represnetation of a cell reference and fills out the 
@@ -186,4 +189,10 @@ public class ReferencePtg extends Ptg
         return Ptg.CLASS_REF;
     }
     
+    public Object clone() {
+      ReferencePtg ptg = new ReferencePtg();
+      ptg.field_1_row = field_1_row;
+      ptg.field_2_col = field_2_col;
+      return ptg;
+    }
 }

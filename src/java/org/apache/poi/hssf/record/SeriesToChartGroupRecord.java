@@ -165,6 +165,14 @@ public class SeriesToChartGroupRecord
         return this.sid;
     }
 
+    public Object clone() {
+      SeriesToChartGroupRecord rec = new SeriesToChartGroupRecord();
+      
+      rec.field_1_chartGroupIndex = field_1_chartGroupIndex;
+
+      return rec;
+    }
+
 
     /**
      * Get the chart group index field for the SeriesToChartGroup record.

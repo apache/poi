@@ -63,6 +63,7 @@ import org.apache.poi.util.LittleEndian;
  *               heights.
  * REFERENCE:  PG 301 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
  * @author Andrew C. Oliver (acoliver at apache dot org)
+ * @author Jason Height (jheight at chariot dot net dot au)
  * @version 2.0-pre
  */
 
@@ -189,5 +190,12 @@ public class DefaultRowHeightRecord
     public short getSid()
     {
         return this.sid;
+    }
+
+    public Object clone() {
+      DefaultRowHeightRecord rec = new DefaultRowHeightRecord();
+      rec.field_1_option_flags = field_1_option_flags;
+      rec.field_2_row_height = field_2_row_height;
+      return rec;
     }
 }

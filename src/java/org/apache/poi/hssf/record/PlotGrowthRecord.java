@@ -173,6 +173,15 @@ public class PlotGrowthRecord
         return this.sid;
     }
 
+    public Object clone() {
+      PlotGrowthRecord rec = new PlotGrowthRecord();
+      
+      rec.field_1_horizontalScale = field_1_horizontalScale;
+      rec.field_2_verticalScale = field_2_verticalScale;
+
+      return rec;
+    }
+
 
     /**
      * Get the horizontalScale field for the PlotGrowth record.

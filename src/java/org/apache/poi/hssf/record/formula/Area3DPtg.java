@@ -70,6 +70,7 @@ import org.apache.poi.util.BitField;
  * REFERENCE:  <P>
  * @author Libin Roman (Vista Portal LDT. Developer)
  * @author avik
+ * @author Jason Height (jheight at chariot dot net dot au)
  * @version 1.0-pre
  */
 
@@ -302,6 +303,16 @@ public class Area3DPtg extends Ptg
 
    public byte getDefaultOperandClass() {
        return Ptg.CLASS_REF;
+   }
+
+   public Object clone() {
+     Area3DPtg ptg = new Area3DPtg();
+     ptg.field_1_index_extern_sheet = field_1_index_extern_sheet;
+     ptg.field_2_first_row = field_2_first_row;
+     ptg.field_3_last_row = field_3_last_row;
+     ptg.field_4_first_column = field_4_first_column;
+     ptg.field_5_last_column = field_5_last_column;
+     return ptg;
    }
 
 }

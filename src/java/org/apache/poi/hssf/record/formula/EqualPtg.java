@@ -122,4 +122,9 @@ public class EqualPtg
         return buffer.toString();
     }       
 
+    public Object clone() {
+      return new EqualPtg();
+    }
+
+
 }

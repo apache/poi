@@ -63,6 +63,7 @@ import org.apache.poi.util.BitField;
  * Description:  Stores print setup options -- bogus for HSSF (and marked as such)<P>
  * REFERENCE:  PG 385 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
  * @author Andrew C. Oliver (acoliver at apache dot org)
+ * @author Jason Height (jheight at chariot dot net dot au)
  * @version 2.0-pre
  */
 
@@ -422,5 +423,21 @@ public class PrintSetupRecord
     public short getSid()
     {
         return this.sid;
+    }
+
+    public Object clone() {
+      PrintSetupRecord rec = new PrintSetupRecord();
+      rec.field_1_paper_size = field_1_paper_size;
+      rec.field_2_scale = field_2_scale;
+      rec.field_3_page_start = field_3_page_start;
+      rec.field_4_fit_width = field_4_fit_width;
+      rec.field_5_fit_height = field_5_fit_height;
+      rec.field_6_options = field_6_options;
+      rec.field_7_hresolution = field_7_hresolution;
+      rec.field_8_vresolution = field_8_vresolution;
+      rec.field_9_headermargin = field_9_headermargin;
+      rec.field_10_footermargin = field_10_footermargin;
+      rec.field_11_copies = field_11_copies;
+      return rec;
     }
 }

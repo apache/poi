@@ -65,6 +65,7 @@ import org.apache.poi.util.LittleEndian;
  *
  * @author Andrew C. Oliver (acoliver at apache dot org)
  * @author  Glen Stampoultzis (glens at apache.org)
+ * @author Jason Height (jheight at chariot dot net dot au)
  *
  * @version 2.0-pre
  */
@@ -175,5 +176,11 @@ public class GridsetRecord
     public short getSid()
     {
         return this.sid;
+    }
+
+    public Object clone() {
+      GridsetRecord rec = new GridsetRecord();
+      rec.field_1_gridset_flag = field_1_gridset_flag;
+      return rec;
     }
 }

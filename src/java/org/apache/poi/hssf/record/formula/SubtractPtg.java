@@ -66,6 +66,7 @@ import org.apache.poi.hssf.util.SheetReferences;
 /**
  *
  * @author  andy
+ * @author Jason Height (jheight at chariot dot net dot au)
  */
 
 public class SubtractPtg
@@ -117,5 +118,9 @@ public class SubtractPtg
         buffer.append("-");
         buffer.append(operands[ 1 ]);
         return buffer.toString();
+    }
+
+    public Object clone() {
+      return new SubtractPtg();
     }
 }

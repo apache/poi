@@ -189,6 +189,17 @@ public class ChartRecord
         return this.sid;
     }
 
+    public Object clone() {
+      ChartRecord rec = new ChartRecord();
+      
+      rec.field_1_x = field_1_x;
+      rec.field_2_y = field_2_y;
+      rec.field_3_width = field_3_width;
+      rec.field_4_height = field_4_height;
+
+      return rec;
+    }
+
 
     /**
      * Get the x field for the Chart record.

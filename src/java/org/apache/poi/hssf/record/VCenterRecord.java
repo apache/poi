@@ -62,6 +62,7 @@ import org.apache.poi.util.LittleEndian;
  * Description:  tells whether to center the sheet between vertical margins<P>
  * REFERENCE:  PG 420 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
  * @author Andrew C. Oliver (acoliver at apache dot org)
+ * @author Jason Height (jheight at chariot dot net dot au)
  * @version 2.0-pre
  */
 
@@ -169,5 +170,11 @@ public class VCenterRecord
     public short getSid()
     {
         return this.sid;
+    }
+
+    public Object clone() {
+      VCenterRecord rec = new VCenterRecord();
+      rec.field_1_vcenter = field_1_vcenter;
+      return rec;
     }
 }

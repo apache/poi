@@ -67,6 +67,7 @@ import java.util.List;
 /**
  *
  * @author  andy
+ * @author Jason Height (jheight at chariot dot net dot au)
  */
 
 public class RowRecordsAggregate
@@ -219,5 +220,16 @@ public class RowRecordsAggregate
         return records.values().iterator();
     }
     
+    /** Performs a deep clone of the record*/
+    public Object clone() {
+      RowRecordsAggregate rec = new RowRecordsAggregate();
+      for (Iterator rowIter = getIterator(); rowIter.hasNext();) {
+        //return the cloned Row Record & insert
+        RowRecord row = (RowRecord)((RowRecord)rowIter.next()).clone();
+        rec.insertRow(row);
+      }
+      return rec;
+    }
+
 }
 

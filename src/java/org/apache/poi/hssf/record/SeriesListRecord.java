@@ -163,6 +163,14 @@ public class SeriesListRecord
         return this.sid;
     }
 
+    public Object clone() {
+      SeriesListRecord rec = new SeriesListRecord();
+      
+      rec.field_1_seriesNumbers = field_1_seriesNumbers;
+
+      return rec;
+    }
+
 
     /**
      * Get the series numbers field for the SeriesList record.

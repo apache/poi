@@ -165,6 +165,14 @@ public class NumberFormatIndexRecord
         return this.sid;
     }
 
+    public Object clone() {
+      NumberFormatIndexRecord rec = new NumberFormatIndexRecord();
+      
+      rec.field_1_formatIndex = field_1_formatIndex;
+
+      return rec;
+    }
+
 
     /**
      * Get the format index field for the NumberFormatIndex record.

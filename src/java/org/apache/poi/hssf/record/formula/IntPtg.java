@@ -67,6 +67,7 @@ import org.apache.poi.hssf.util.SheetReferences;
  * Integer (short intger)
  * Stores a (java) short value in a formula
  * @author  Andrew C. Oliver (acoliver at apache dot org)
+ * @author Jason Height (jheight at chariot dot net dot au)
  */
 
 public class IntPtg
@@ -79,6 +80,10 @@ public class IntPtg
     private String val;
     private int strlen = 0;
   
+    private IntPtg() {
+      //Required for clone methods
+    }
+
     public IntPtg(byte [] data, int offset)
     {
         setValue(LittleEndian.getShort(data, offset + 1));
@@ -116,4 +121,10 @@ public class IntPtg
         return "" + getValue();
     }
  public byte getDefaultOperandClass() {return Ptg.CLASS_VALUE;}   
+
+   public Object clone() {
+     IntPtg ptg = new IntPtg();
+     ptg.field_1_value = field_1_value;
+     return ptg;
+   }
 }

@@ -216,6 +216,18 @@ public class LineFormatRecord
         return this.sid;
     }
 
+    public Object clone() {
+      LineFormatRecord rec = new LineFormatRecord();
+      
+      rec.field_1_lineColor = field_1_lineColor;
+      rec.field_2_linePattern = field_2_linePattern;
+      rec.field_3_weight = field_3_weight;
+      rec.field_4_format = field_4_format;
+      rec.field_5_colourPaletteIndex = field_5_colourPaletteIndex;
+
+      return rec;
+    }
+
 
     /**
      * Get the line color field for the LineFormat record.

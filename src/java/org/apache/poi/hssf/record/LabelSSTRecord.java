@@ -63,6 +63,7 @@ import org.apache.poi.util.LittleEndian;
  *               value.  <P>
  * REFERENCE:  PG 325 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
  * @author Andrew C. Oliver (acoliver at apache dot org)
+ * @author Jason Height (jheight at chariot dot net dot au)
  * @version 2.0-pre
  */
 
@@ -330,5 +331,14 @@ public class LabelSSTRecord
             return true;
         }
         return false;
+    }
+
+    public Object clone() {
+      LabelSSTRecord rec = new LabelSSTRecord();
+      rec.field_1_row = field_1_row;
+      rec.field_2_column = field_2_column;
+      rec.field_3_xf_index = field_3_xf_index;
+      rec.field_4_sst_index = field_4_sst_index;
+      return rec;
     }
 }

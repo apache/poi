@@ -68,6 +68,7 @@ import org.apache.poi.util.StringUtil;
  * use this (except to read), use LabelSST instead <P>
  * REFERENCE:  PG 325 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
  * @author Andrew C. Oliver (acoliver at apache dot org)
+ * @author Jason Height (jheight at chariot dot net dot au)
  * @version 2.0-pre
  * @see org.apache.poi.hssf.record.LabelSSTRecord
  */
@@ -313,5 +314,16 @@ public class LabelRecord
 
     public void setXFIndex(short xf)
     {
+    }
+
+    public Object clone() {
+      LabelRecord rec = new LabelRecord();
+      rec.field_1_row = field_1_row;
+      rec.field_2_column = field_2_column;
+      rec.field_3_xf_index = field_3_xf_index;
+      rec.field_4_string_len = field_4_string_len;
+      rec.field_5_unicode_flag = field_5_unicode_flag;
+      rec.field_6_value = field_6_value;
+      return rec;
     }
 }

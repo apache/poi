@@ -171,6 +171,14 @@ public class AreaRecord
         return this.sid;
     }
 
+    public Object clone() {
+      AreaRecord rec = new AreaRecord();
+      
+      rec.field_1_formatFlags = field_1_formatFlags;
+
+      return rec;
+    }
+
 
     /**
      * Get the format flags field for the Area record.

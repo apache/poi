@@ -165,6 +165,14 @@ public class SeriesIndexRecord
         return this.sid;
     }
 
+    public Object clone() {
+      SeriesIndexRecord rec = new SeriesIndexRecord();
+      
+      rec.field_1_index = field_1_index;
+
+      return rec;
+    }
+
 
     /**
      * Get the index field for the SeriesIndex record.

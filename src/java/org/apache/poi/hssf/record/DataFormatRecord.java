@@ -191,6 +191,17 @@ public class DataFormatRecord
         return this.sid;
     }
 
+    public Object clone() {
+      DataFormatRecord rec = new DataFormatRecord();
+      
+      rec.field_1_pointNumber = field_1_pointNumber;
+      rec.field_2_seriesIndex = field_2_seriesIndex;
+      rec.field_3_seriesNumber = field_3_seriesNumber;
+      rec.field_4_formatFlags = field_4_formatFlags;
+
+      return rec;
+    }
+
 
     /**
      * Get the point number field for the DataFormat record.

@@ -64,6 +64,7 @@ import org.apache.poi.util.LittleEndian;
  *              Used in sheets and workbooks.<P>
  * REFERENCE:  PG 289 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
  * @author Andrew C. Oliver
+ * @author Jason Height (jheight at chariot dot net dot au)
  * @version 2.0-pre
  */
 
@@ -357,5 +358,16 @@ public class BOFRecord
     public short getSid()
     {
         return this.sid;
+    }
+
+    public Object clone() {
+      BOFRecord rec = new BOFRecord();
+      rec.field_1_version = field_1_version;
+      rec.field_2_type = field_2_type;
+      rec.field_3_build = field_3_build;
+      rec.field_4_year = field_4_year;
+      rec.field_5_history = field_5_history;
+      rec.field_6_rversion = field_6_rversion;
+      return rec;
     }
 }

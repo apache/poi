@@ -67,6 +67,7 @@ import org.apache.poi.hssf.util.SheetReferences;
 /**
  *
  * @author  andy
+ * @author Jason Height (jheight at chariot dot net dot au)
  */
 
 public class PowerPtg
@@ -121,5 +122,9 @@ public class PowerPtg
         buffer.append(operands[ 1 ]);
         return buffer.toString();
     }       
+
+    public Object clone() {
+      return new PowerPtg();
+    }
 
 }

@@ -63,6 +63,7 @@ package org.apache.poi.hssf.record;
  * Company:
  * @author Andrew C. Oliver
  * @author Marc Johnson (mjohnson at apache dot org)
+ * @author Jason Height (jheight at chariot dot net dot au)
  * @version 2.0-pre
  */
 
@@ -241,4 +242,8 @@ public abstract class Record
      */
 
     public abstract short getSid();
+
+    public Object clone() {
+      throw new RuntimeException("The class "+getClass().getName()+" needs to define a clone method");
+    }
 }

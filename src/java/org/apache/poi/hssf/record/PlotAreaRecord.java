@@ -157,6 +157,13 @@ public class PlotAreaRecord
         return this.sid;
     }
 
+    public Object clone() {
+      PlotAreaRecord rec = new PlotAreaRecord();
+      
+
+      return rec;
+    }
+
 
 
 }  // END OF CLASS

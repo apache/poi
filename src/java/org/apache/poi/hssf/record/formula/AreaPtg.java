@@ -70,6 +70,7 @@ import org.apache.poi.hssf.util.SheetReferences;
 /**
  * Specifies a rectangular area of cells A1:A4 for instance.
  * @author  andy
+ * @author Jason Height (jheight at chariot dot net dot au)
  */
 
 public class AreaPtg
@@ -86,7 +87,9 @@ public class AreaPtg
     private BitField         colRelative = new BitField(0x4000);
     private BitField         column      = new BitField(0x3FFF);
 
-    
+    private AreaPtg() {
+      //Required for clone methods
+    }
    
     public AreaPtg(String arearef) {
         AreaReference ar = new AreaReference(arearef);
@@ -312,4 +315,13 @@ public class AreaPtg
         return Ptg.CLASS_REF;
     }
     
+    public Object clone() {
+      AreaPtg ptg = new AreaPtg();
+      ptg.field_1_first_row = field_1_first_row;
+      ptg.field_2_last_row = field_2_last_row;
+      ptg.field_3_first_column = field_3_first_column;
+      ptg.field_4_last_column = field_4_last_column;
+      return ptg;
+    }
+
 }

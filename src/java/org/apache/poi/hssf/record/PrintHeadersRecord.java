@@ -63,6 +63,7 @@ import org.apache.poi.util.LittleEndian;
  *               enjoy your spreadsheet in the physical form.<P>
  * REFERENCE:  PG 373 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
  * @author Andrew C. Oliver (acoliver at apache dot org)
+ * @author Jason Height (jheight at chariot dot net dot au)
  * @version 2.0-pre
  */
 
@@ -170,5 +171,11 @@ public class PrintHeadersRecord
     public short getSid()
     {
         return this.sid;
+    }
+
+    public Object clone() {
+      PrintHeadersRecord rec = new PrintHeadersRecord();
+      rec.field_1_print_headers = field_1_print_headers;
+      return rec;
     }
 }

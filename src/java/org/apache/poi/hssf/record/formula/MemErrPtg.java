@@ -66,6 +66,7 @@ import org.apache.poi.hssf.util.SheetReferences;
 /**
  *
  * @author  andy
+ * @author Jason Height (jheight at chariot dot net dot au)
  */
 
 public class MemErrPtg
@@ -122,4 +123,11 @@ public class MemErrPtg
         return "ERR#";
     }
     public byte getDefaultOperandClass() {return Ptg.CLASS_VALUE;}
+
+    public Object clone() {
+      MemErrPtg ptg = new MemErrPtg();
+      ptg.field_1_reserved = field_1_reserved;
+      ptg.field_2_subex_len = field_2_subex_len;
+      return ptg;
+    }
 }

@@ -60,6 +60,7 @@ import org.apache.poi.hssf.util.SheetReferences;
  * Missing Function Arguments
  *
  * Avik Sengupta <avik at apache.org>
+ * @author Jason Height (jheight at chariot dot net dot au)
  */
 public class MissingArgPtg
     extends  Ptg
@@ -97,6 +98,10 @@ public class MissingArgPtg
     
     public byte getDefaultOperandClass() {return Ptg.CLASS_VALUE;}
         
+    public Object clone() {
+      return new MissingArgPtg();
+    }
+
 }
 
 

@@ -63,6 +63,7 @@ import org.apache.poi.util.LittleEndian;
  *               of a sheet.<P>
  * REFERENCE:  PG 303 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
  * @author Andrew C. Oliver (acoliver at apache dot org)
+ * @author Jason Height (jheight at chariot dot net dot au)
  * @version 2.0-pre
  */
 
@@ -243,5 +244,15 @@ public class DimensionsRecord
     public short getSid()
     {
         return this.sid;
+    }
+
+    public Object clone() {
+      DimensionsRecord rec = new DimensionsRecord();
+      rec.field_1_first_row = field_1_first_row;
+      rec.field_2_last_row = field_2_last_row;
+      rec.field_3_first_col = field_3_first_col;
+      rec.field_4_last_col = field_4_last_col;
+      rec.field_5_zero = field_5_zero;
+      return rec;
     }
 }

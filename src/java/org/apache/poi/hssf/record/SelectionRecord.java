@@ -67,6 +67,7 @@ import org.apache.poi.util.LittleEndian;
  * TODO :  Implement reference subrecords
  * REFERENCE:  PG 291 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
  * @author Andrew C. Oliver (acoliver at apache dot org)
+ * @author Jason Height (jheight at chariot dot net dot au)
  * @version 2.0-pre
  */
 
@@ -278,5 +279,16 @@ public class SelectionRecord
     public short getSid()
     {
         return this.sid;
+    }
+
+    public Object clone() {
+      SelectionRecord rec = new SelectionRecord();
+      rec.field_1_pane = field_1_pane;
+      rec.field_2_row_active_cell = field_2_row_active_cell;
+      rec.field_3_col_active_cell = field_3_col_active_cell;
+      rec.field_4_ref_active_cell = field_4_ref_active_cell;
+      rec.field_5_num_refs = field_5_num_refs;
+      rec.field_6_refs = field_6_refs;
+      return rec;
     }
 }

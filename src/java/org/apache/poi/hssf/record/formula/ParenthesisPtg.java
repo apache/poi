@@ -66,6 +66,7 @@ import org.apache.poi.hssf.util.SheetReferences;
  *
  * Avik Sengupta <lists@aviksengupta.com>
  * Andrew C. Oliver (acoliver at apache dot org)
+ * @author Jason Height (jheight at chariot dot net dot au)
  */
 public class ParenthesisPtg
     extends OperationPtg
@@ -118,5 +119,9 @@ public class ParenthesisPtg
     
     public byte getDefaultOperandClass() {return Ptg.CLASS_VALUE;}
         
+    public Object clone() {
+      return new ParenthesisPtg();
+    }
+
 }
 

@@ -1,9 +1,18 @@
 package org.apache.poi.hssf.record.formula;
 import org.apache.poi.util.LittleEndian;
+
+/**
+ *
+ * @author Jason Height (jheight at chariot dot net dot au)
+ */
 public class FuncVarPtg extends AbstractFunctionPtg{
     
     public final static byte sid  = 0x22;
     
+    private FuncVarPtg() {
+      //Required for clone methods
+    }
+
  /**Creates new function pointer from a byte array 
      * usually called while reading an excel file. 
      */
@@ -38,5 +47,12 @@ public class FuncVarPtg extends AbstractFunctionPtg{
         return field_1_num_args;
     }
     
+    public Object clone() {
+      FuncVarPtg ptg = new FuncVarPtg();
+      ptg.field_1_num_args = field_1_num_args;
+      ptg.field_2_fnc_index = field_2_fnc_index;
+      return ptg;
+    }
+
     
 }

@@ -63,6 +63,7 @@ import org.apache.poi.util.LittleEndian;
  *               width set.<P>
  * REFERENCE:  PG 302 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
  * @author Andrew C. Oliver (acoliver at apache dot org)
+ * @author Jason Height (jheight at chariot dot net dot au)
  * @version 2.0-pre
  */
 
@@ -164,5 +165,11 @@ public class DefaultColWidthRecord
     public short getSid()
     {
         return this.sid;
+    }
+
+    public Object clone() {
+      DefaultColWidthRecord rec = new DefaultColWidthRecord();
+      rec.field_1_col_width = field_1_col_width;
+      return rec;
     }
 }

@@ -65,6 +65,7 @@ import org.apache.poi.util.LittleEndian;
  * NOT USED IN THIS RELEASE
  * REFERENCE:  PG 323 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
  * @author Andrew C. Oliver (acoliver at apache dot org)
+ * @author Jason Height (jheight at chariot dot net dot au)
  * @version 2.0-pre
  */
 
@@ -224,5 +225,16 @@ public class IndexRecord
     public short getSid()
     {
         return this.sid;
+    }
+
+    public Object clone() {
+      IndexRecord rec = new IndexRecord();
+      rec.field_1_zero = field_1_zero;
+      rec.field_2_first_row = field_2_first_row;
+      rec.field_3_last_row_add1 = field_3_last_row_add1;
+      rec.field_4_zero = field_4_zero;
+      rec.field_5_dbcells = new IntList();
+      rec.field_5_dbcells.addAll(field_5_dbcells);
+      return rec;
     }
 }
