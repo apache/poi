@@ -111,7 +111,7 @@ public class RecordFactory
                 FormulaRecord.class, BoolErrRecord.class, ExternSheetRecord.class,
                 NameRecord.class, LeftMarginRecord.class, RightMarginRecord.class,
                 TopMarginRecord.class, BottomMarginRecord.class,
-                PaletteRecord.class, StringRecord.class
+                PaletteRecord.class, StringRecord.class, RecalcIdRecord.class
             };
         } else {
             records = new Class[]
@@ -142,7 +142,7 @@ public class RecordFactory
                 BoolErrRecord.class, ExternSheetRecord.class, NameRecord.class,
                 LeftMarginRecord.class, RightMarginRecord.class,
                 TopMarginRecord.class, BottomMarginRecord.class,
-                PaletteRecord.class, StringRecord.class
+                PaletteRecord.class, StringRecord.class, RecalcIdRecord.class
             };
 
         }
