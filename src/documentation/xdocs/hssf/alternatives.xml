@@ -77,6 +77,15 @@
                     <td>-</td>
                     <td>There are a number of perl and C libraries, however none of them are consistent.</td>
                 </tr>
+                <tr>
+                    <td>VistaJDBC</td>
+                    <td><link href="http://www.vistaportal.com/products/vistajdbc.htm">http://www.vistaportal.com/products/vistajdbc.htm</link></td>
+                    <td>VistaJDBC driver works with both StarOffice and Excel spreadsheets and
+                        can access data using standard SQL statements without any API programming.
+                        VistaJDBC also implemented ability to choose by not just rows and columns but by
+                        specific cells, ranges of sells, etc.
+                    </td>
+                </tr>
             </table>
         </section>
     </body>
