@@ -215,7 +215,7 @@
           <arg value="src/java"/>
           <arg value="src/testcases"/>
           <classpath>
-              <path refid="classpath"/>
+              <path refid="scratchpad.classpath"/>
               <pathelement location="${build.dest}"/>
           </classpath>
       </java>

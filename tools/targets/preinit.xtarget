@@ -47,7 +47,7 @@
       <include name="*.jar"/>
     </fileset>
     <!-- FIXME : how to build a path that references a property set in 'init' target ? -->
-    <pathelement path="./build/${name}/classes"/>
+    <pathelement path="./build/${name}/scratchpad/classes"/>
   </path>
 
   <path id="examples.classpath">

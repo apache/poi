@@ -613,6 +613,10 @@ public class BiffViewer
                 retval = new ValueRangeRecord(rectype, size, data);
                 break;
 
+            case SeriesListRecord.sid :
+                retval = new ValueRangeRecord(rectype, size, data);
+                break;
+
             default :
                 retval = new UnknownRecord(rectype, size, data);
         }
