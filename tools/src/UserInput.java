@@ -57,8 +57,6 @@ import java.io.InputStreamReader;
 import java.io.BufferedReader;
 import java.io.IOException;
 
-import org.apache.tools.ant.taskdefs.Property;
-
 /**
  * Task to ask property values to the user. Uses current value as default.
  *
