@@ -832,8 +832,13 @@ public class HSSFCellStyle
      * <p>
      * For example:
      * <pre>
-     * cs.setFillPattern( (short) 1 );
-     * cs.setFillBackgroundColor(HSSFColor.RED.index);
+     * cs.setFillPattern(HSSFCellStyle.FINE_DOTS );
+     * cs.setFillBackgroundColor(HSSFCellStyle.RED);
+     * </pre>
+     * or, for the special case of SOLID_FILL:
+     * <pre>
+     * cs.setFillPattern(HSSFCellStyle.SOLID_FILL );
+     * cs.setFillForgroundColor(HSSFSeCellStyle.RED);
      * </pre>
      * You will need to set the fill style first.
      *
