@@ -85,9 +85,6 @@ public class PropertySetDescriptorRenderer extends DocumentDescriptorRenderer
                                                   final int row,
                                                   final boolean hasFocus)
     {
-
-        throw new RuntimeException("THIS FUNCTION BROKEN -- FIX IT");
-/*
         final PropertySetDescriptor d = (PropertySetDescriptor)
             ((DefaultMutableTreeNode) value).getUserObject();
         final PropertySet ps = d.getPropertySet();
@@ -110,9 +107,8 @@ public class PropertySetDescriptorRenderer extends DocumentDescriptorRenderer
 
         if (ps instanceof SummaryInformation)
         {
-*/
             /* Use the convenience methods. */
-/*            final SummaryInformation si = (SummaryInformation) ps;
+            final SummaryInformation si = (SummaryInformation) ps;
             text.append("\n");
             text.append("\nTitle:               " + si.getTitle());
             text.append("\nSubject:             " + si.getSubject());
@@ -136,7 +132,7 @@ public class PropertySetDescriptorRenderer extends DocumentDescriptorRenderer
 
         if (selected)
             Util.invert(text);
-        return p;*/
+        return p;
     }
 
 
@@ -164,12 +160,9 @@ public class PropertySetDescriptorRenderer extends DocumentDescriptorRenderer
      */
     protected String toString(final Section s, final String name)
     {
-
-        throw new RuntimeException("THIS FUNCTION BROKEN -- FIX IT");
-/*
         final StringBuffer b = new StringBuffer();
         b.append("\n" + name + " Format ID: ");
-        b.append(Integer.toHexString(s.getFormatID()));
+        b.append(Codec.hexEncode(s.getFormatID()));
         b.append("\n" + name + " Offset: " + s.getOffset());
         b.append("\n" + name + " Section size: " + s.getSize());
         b.append("\n" + name + " Property count: " + s.getPropertyCount());
@@ -195,7 +188,6 @@ public class PropertySetDescriptorRenderer extends DocumentDescriptorRenderer
                 b.append(value.toString());
         }
         return b.toString();
-*/
     }
 
 }

@@ -60,6 +60,7 @@ package org.apache.poi.contrib.poibrowser;
 
 import java.io.*;
 import java.util.*;
+import org.apache.poi.hpsf.ClassID;
 
 
 
@@ -137,6 +138,50 @@ public class Codec
         sb.append((char) hexval[(b & 0xF0) >> 4]);
         sb.append((char) hexval[(b & 0x0F) >> 0]);
         return sb.toString();
+    }
+
+
+
+    /**
+     * <p>Converts an int value (32-bit) into its hexadecimal
+     * notation.</p>
+     */
+    public static String hexEncode(final int i)
+    {
+        StringBuffer sb = new StringBuffer(8);
+        sb.append((char) hexval[(i & 0xF0000000) >> 28]);
+        sb.append((char) hexval[(i & 0x0F000000) >> 24]);
+        sb.append((char) hexval[(i & 0x00F00000) >> 20]);
+        sb.append((char) hexval[(i & 0x000F0000) >> 16]);
+        sb.append((char) hexval[(i & 0x0000F000) >> 12]);
+        sb.append((char) hexval[(i & 0x00000F00) >>  8]);
+        sb.append((char) hexval[(i & 0x000000F0) >>  4]);
+        sb.append((char) hexval[(i & 0x0000000F) >>  0]);
+        return sb.toString();
+    }
+
+
+
+    /**
+     * <p>Converts a long value (64-bit) into its hexadecimal
+     * notation.</p>
+     */
+    public static String hexEncode(final long l)
+    {
+        StringBuffer sb = new StringBuffer(16);
+        sb.append((l & 0xFFFFFFFF00000000L) >> 32);
+        sb.append((l & 0x00000000FFFFFFFFL) >>  0);
+        return sb.toString();
+    }
+
+
+
+    /**
+     * <p>Converts a class ID into its hexadecimal notation.</p>
+     */
+    public static String hexEncode(final ClassID classID)
+    {
+        return hexEncode(classID.getBytes());
     }
 
 

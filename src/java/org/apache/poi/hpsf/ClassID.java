@@ -59,83 +59,93 @@ import java.io.*;
 import org.apache.poi.util.LittleEndian;
 
 /**
- *  REWRITE ME
- *  <p>
- *  Represents a class ID (16 bytes). Unlike other little-endian type the {@link
- *  ClassID} is not just 16 bytes stored in the wrong order. Instead, it is a
- *  double word (4 bytes) followed by two words (2 bytes each) followed by 8
- *  bytes.</p>
+ *  <p>Represents a class ID (16 bytes). Unlike other little-endian
+ *  type the {@link ClassID} is not just 16 bytes stored in the wrong
+ *  order. Instead, it is a double word (4 bytes) followed by two
+ *  words (2 bytes each) followed by 8 bytes.</p>
  *
- *@author     Rainer Klute (klute@rainer-klute.de)
- *@created    May 10, 2002
- *@see        LittleEndian
- *@version    $Id$
- *@since      2002-02-09
+ * @author Rainer Klute (klute@rainer-klute.de)
+ * @version $Id$
+ * @since 2002-02-09
  */
-public class ClassID {
+public class ClassID
+{
 
     /**
-     *  <p>
-     *
-     *  Creates a {@link ClassID} and reads its value from a byte array.</p>
-     *
-     *@param  src     The byte array to read from.
-     *@param  offset  The offset of the first byte to read.
+     * <p>The bytes making out the class ID in correct order,
+     * i.e. big-endian.</p>
      */
-    public ClassID(final byte[] src, final int offset) {
- //       super(src, offset);
+    protected byte[] bytes;
+
+
+
+    /**
+     *  <p>Creates a {@link ClassID} and reads its value from a byte
+     *  array.</p>
+     *
+     * @param src The byte array to read from.
+     * @param offset The offset of the first byte to read.
+     */
+    public ClassID(final byte[] src, final int offset)
+    {
+        read(src, offset);
     }
 
 
 
     public final static int LENGTH = 16;
 
-    public int length() {
+    public int length()
+    {
         return LENGTH;
     }
 
-    public byte[] getBytes() {
-
-        throw new RuntimeException("This fucntion must be rewritten");
-    }
 
 
     /**
-     *  Description of the Method - REWRITE ME REWRITE ME REWRITE ME
-     *  ISNT += offset a bug?  -- doesn't the order of operations evaluate that
-     * last?
-     *
-     *@param  src     Description of the Parameter
-     *@param  offset  Description of the Parameter
-     *@return         Description of the Return Value
+     * <p>Gets the bytes making out the class ID. They are returned in
+     * correct order, i.e. big-endian.</p>
      */
-    public byte[] read(byte[] src, int offset) {
-        byte[] retval = new byte[24];
+    public byte[] getBytes()
+    {
+	return bytes;
+    }
 
-        //throw new RuntimeException("This fucntion must be rewritten");
 
-        //Number[] b = new Number[11];
 
-        //b[0] = new Integer(LittleEndian.getInt(src, offset));
-        //transfer the first Int from little to big endian
-        retval[0] = src[3];
-        retval[1] = src[2];
-        retval[2] = src[1];
-        retval[3] = src[0];
+    /**
+     * <p>Reads a class ID from a byte array by turning little-endian
+     * into big-endian.</p>
+     *
+     * @param src The byte array to read from
+     *
+     * @param offset The offset within the <var>src</var> byte array
+     *
+     * @return A byte array containing the class ID.
+     */
+    public byte[] read(final byte[] src, final int offset)
+    {
+        bytes = new byte[16];
 
-        //b[1] = new Short(LittleEndian.getInt(src, offset += LittleEndian.INT_SIZE));
-        //transfer the second short from little to big endian
-        retval[4] = src[5];
-        retval[5] = src[4];
+        /* Read double word. */
+        bytes[0] = src[3 + offset];
+        bytes[1] = src[2 + offset];
+        bytes[2] = src[1 + offset];
+        bytes[3] = src[0 + offset];
 
-        //b[2] = new Short(LittleEndian.getInt(src, offset += LittleEndian.SHORT_SIZE));
-        //transfer the third short from little to big endian
-        retval[6] = src[7];
-        retval[7] = src[6];
+        /* Read first word. */
+        bytes[4] = src[5 + offset];
+        bytes[5] = src[4 + offset];
 
-        System.arraycopy(src, 8, retval, 8, retval.length - 8);
+        /* Read second word. */
+        bytes[6] = src[7 + offset];
+        bytes[7] = src[6 + offset];
 
-        return retval;
+	/* Read 8 bytes. */
+	for (int i = 8; i < 16; i++)
+	    bytes[i] = src[i + offset];
+
+        return bytes;
     }
 
 }
