@@ -18,7 +18,7 @@
         <field type="byte" size="1" name="ilvl"/>
         <field type="byte" size="1" name="fNoLnn"/>
         <field type="int" size="2" name="ilfo"/>
-        <field type="byte" size="1" name="fSideBiSide"/>
+        <field type="byte" size="1" name="fSideBySide"/>
         <field type="byte" size="1" name="fNoAutoHyph"/>
         <field type="byte" size="1" name="fWidowControl"/>
         <field type="int" size="4" name="dxaRight"/>
@@ -26,6 +26,7 @@
         <field type="int" size="4" name="dxaLeft1"/>
         <field type="short[]" size="4" name="lspd"/>
         <field type="int" size="4" name="dyaBefore"/>
+        <field type="int" size="4" name="dyaAfter"/>
         <field type="byte[]" size="12" name="phe"/>
         <field type="byte" size="1" name="fCrLf"/>
         <field type="byte" size="1" name="fUsePgsuSettings"/>
@@ -35,9 +36,13 @@
         <field type="byte" size="1" name="fOverflowPunct"/>
         <field type="byte" size="1" name="fTopLinePunct"/>
         <field type="byte" size="1" name="fAutoSpaceDE"/>
-        <field type="byte" size="1" name="fAtuoSpaceDN"/>
+        <field type="byte" size="1" name="fAutoSpaceDN"/>
         <field type="int" size="2" name="wAlignFont"/>
-        <field type="byte" size="1" name="fVertical"/>
+        <field type="short" size="2" name="fontAlign">
+          <bit number="0" mask="0x0001" name="fVertical"/>
+          <bit number="1" mask="0x0002" name="fBackward"/>
+          <bit number="2" mask="0x0004" name="fRotateFont"/>
+        </field>
         <field type="byte" size="1" name="fBackward"/>
         <field type="byte" size="1" name="fRotateFont"/>
         <field type="byte" size="1" name="fInTable"/>
@@ -58,8 +63,8 @@
         <field type="int" size="4" name="dyaFromText"/>
         <field type="int" size="2" name="dyaHeight"/>
         <field type="byte" size="1" name="fMinHeight"/>
-        <field type="byte[]" size="2" name="shd"/>
-        <field type="byte[]" size="2" name="dcs"/>
+        <field type="short" size="2" name="shd"/>
+        <field type="short" size="2" name="dcs"/>
         <field type="byte" size="1" name="lvl"/>
         <field type="byte" size="1" name="fNumRMIns"/>
         <field type="byte[]" size="84" name="anld"/>

@@ -7,13 +7,18 @@
       <field type="int" size="2" name="jc"/>
       <field type="int" size="4" name="dxaGapHalf"/>
       <field type="int" size="4" name="dyaRowHeight"/>
-      <field type="byte" size="1" name="fCantSplit"/>
-      <field type="byte" size="1" name="fTableHeader"/>
+      <field type="boolean" size="0" name="fCantSplit"/>
+      <field type="boolean" size="0" name="fTableHeader"/>
       <field type="int" size="4" name="tlp"/>
-      <field type="int" size="2" name="itcMac"/>
+      <field type="short" size="2" name="itcMac"/>
       <field type="short[]" size="130" name="rgdxaCenter"/>
-      <field type="byte[]" size="0" name="rgtc"/>
+      <field type="TCAbstractType[]" size="0" name="rgtc"/>
       <field type="byte[]" size="0" name="rgshd"/>
-      <field type="byte[]" size="0" name="rgbrcTable"/>
+      <field type="short[]" size="4" name="brcBottom"/>
+      <field type="short[]" size="4" name="brcTop"/>
+      <field type="short[]" size="4" name="brcLeft"/>
+      <field type="short[]" size="4" name="brcRight"/>
+      <field type="short[]" size="4" name="brcVertical"/>
+      <field type="short[]" size="4" name="brcHorizontal"/>
     </fields>
 </record>

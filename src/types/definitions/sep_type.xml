@@ -5,29 +5,29 @@
     <author>S. Ryan Ackley</author>
     <fields>
       <field type="byte" size="1" name="bkc"/>
-      <field type="byte" size="1" name="fTitlePage"/>
-      <field type="byte" size="1" name="fAutoPgn"/>
+      <field type="boolean" size="0" name="fTitlePage"/>
+      <field type="boolean" size="0" name="fAutoPgn"/>
       <field type="byte" size="1" name="nfcPgn"/>
-      <field type="byte" size="1" name="fUnlocked"/>
+      <field type="boolean" size="0" name="fUnlocked"/>
       <field type="byte" size="1" name="cnsPgn"/>
-      <field type="byte" size="1" name="fPgnRestart"/>
-      <field type="byte" size="1" name="fEndNote"/>
+      <field type="boolean" size="0" name="fPgnRestart"/>
+      <field type="boolean" size="0" name="fEndNote"/>
       <field type="byte" size="1" name="lnc"/>
-      <field type="byte" size="1" name="unused1"/>
+      <field type="byte" size="1" name="grpfIhdt"/>
       <field type="int" size="2" name="nLnnMod"/>
       <field type="int" size="4" name="dxaLnn"/>
       <field type="int" size="2" name="dxaPgn"/>
       <field type="int" size="2" name="dyaPgn"/>
-      <field type="byte" size="1" name="fLBetween"/>
+      <field type="boolean" size="0" name="fLBetween"/>
       <field type="byte" size="1" name="vjc"/>
       <field type="int" size="2" name="dmBinFirst"/>
       <field type="int" size="2" name="dmBinOther"/>
       <field type="int" size="2" name="dmPaperReq"/>
-      <field type="int" size="4" name="brcTop"/>
-      <field type="int" size="4" name="brcLeft"/>
-      <field type="int" size="4" name="brcBottom"/>
-      <field type="int" size="4" name="brcRight"/>
-      <field type="int" size="2" name="fPropMark"/>
+      <field type="short[]" size="4" name="brcTop"/>
+      <field type="short[]" size="4" name="brcLeft"/>
+      <field type="short[]" size="4" name="brcBottom"/>
+      <field type="short[]" size="4" name="brcRight"/>
+      <field type="boolean" size="0" name="fPropMark"/>
       <field type="int" size="2" name="ibstPropRMark"/>
       <field type="int" size="4" name="dttmPropRMark"/>
       <field type="int" size="4" name="dxtCharSpace"/>
@@ -40,7 +40,7 @@
       <field type="int" size="2" name="lnnMin"/>
       <field type="int" size="2" name="wTextFlow"/>
       <field type="short" size="2" name="unused3"/>
-      <field type="int" size="2" name="pgbProb"/>
+      <field type="int" size="2" name="pgbProp"/>
       <field type="short" size="2" name="unused4"/>
       <field type="int" size="4" name="xaPage"/>
       <field type="int" size="4" name="yaPage"/>
@@ -54,7 +54,7 @@
       <field type="int" size="4" name="dyaHdrTop"/>
       <field type="int" size="4" name="dyaHdrBottom"/>
       <field type="int" size="2" name="ccolM1"/>
-      <field type="byte" size="1" name="fEvenlySpaced"/>
+      <field type="boolean" size="0" name="fEvenlySpaced"/>
       <field type="byte" size="1" name="unused5"/>
       <field type="int" size="4" name="dxaColumns"/>
       <field type="int[]" size="356" name="rgdxaColumn"/>
@@ -62,6 +62,6 @@
       <field type="byte" size="1" name="dmOrientFirst"/>
       <field type="byte" size="1" name="fLayout"/>
       <field type="short" size="2" name="unused6"/>
-      <field type="byte[]" size="212" name="olst"/>
+      <field type="byte[]" size="212" name="olstAnm"/>
     </fields>
 </record>
