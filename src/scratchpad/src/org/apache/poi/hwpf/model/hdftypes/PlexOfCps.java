@@ -73,6 +73,13 @@ public class PlexOfCps
   private int _sizeOfStruct;
   private ArrayList _props;
 
+
+  public PlexOfCps(int sizeOfStruct)
+  {
+    _props = new ArrayList();
+    _sizeOfStruct = sizeOfStruct;
+  }
+
   /**
    * Constructor
    *
@@ -97,7 +104,40 @@ public class PlexOfCps
     return (PropertyNode)_props.get(index);
   }
 
-  protected PropertyNode getProperty(int index, byte[] buf, int offset)
+  public void addProperty(PropertyNode node)
+  {
+    _props.add(node);
+  }
+
+  public byte[] toByteArray()
+  {
+    int size = _props.size();
+    int cpBufSize = ((size + 1) * LittleEndian.INT_SIZE);
+    int structBufSize =  + (_sizeOfStruct * size);
+    int bufSize = cpBufSize + structBufSize;
+
+    byte[] buf = new byte[bufSize];
+
+    PropertyNode node = null;
+    for (int x = 0; x < size; x++)
+    {
+      node = (PropertyNode)_props.get(x);
+
+      // put the starting offset of the property into the plcf.
+      LittleEndian.putInt(buf, (LittleEndian.INT_SIZE * x), node.getStart());
+
+      // put the struct into the plcf
+      System.arraycopy(node.getBuf(), 0, buf, cpBufSize + (x * _sizeOfStruct),
+                       _sizeOfStruct);
+    }
+    // put the ending offset of the last property into the plcf.
+    LittleEndian.putInt(buf, LittleEndian.INT_SIZE * size, node.getEnd());
+
+    return buf;
+
+  }
+
+  private PropertyNode getProperty(int index, byte[] buf, int offset)
   {
     int start = LittleEndian.getInt(buf, offset + getIntOffset(index));
     int end = LittleEndian.getInt(buf, offset + getIntOffset(index+1));
@@ -108,7 +148,7 @@ public class PlexOfCps
     return new PropertyNode(start, end, struct);
   }
 
-  protected int getIntOffset(int index)
+  private int getIntOffset(int index)
   {
     return index * 4;
   }
@@ -132,7 +172,7 @@ public class PlexOfCps
    * @return The offset, in bytes, from the beginning if this PlexOfCps to
    *         the data structure at index.
    */
-  protected int getStructOffset(int index)
+  private int getStructOffset(int index)
   {
     return (4 * (_count + 1)) + (_sizeOfStruct * index);
   }

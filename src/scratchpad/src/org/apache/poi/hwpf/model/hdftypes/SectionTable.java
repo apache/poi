@@ -57,12 +57,17 @@
 package org.apache.poi.hwpf.model.hdftypes;
 
 import java.util.ArrayList;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
+import org.apache.poi.util.LittleEndian;
+import org.apache.poi.hwpf.model.io.*;
 
 public class SectionTable
 {
   private static final int SED_SIZE = 12;
 
-  private ArrayList sections;
+  private ArrayList _sections;
 
   public SectionTable(byte[] documentStream, byte[] tableStream, int offset,
                       int size)
@@ -81,16 +86,54 @@ public class SectionTable
       // check for the optimization
       if (fileOffset == 0xffffffff)
       {
-        sections.add(new SEPX(node.getStart(), node.getEnd(), new byte[0]));
+        _sections.add(new SEPX(sed, node.getStart(), node.getEnd(), new byte[0]));
       }
       else
       {
-        // The first byte at the offset is the size of the grpprl.
-        byte[] buf = new byte[documentStream[fileOffset++]];
+        // The first short at the offset is the size of the grpprl.
+        int sepxSize = LittleEndian.getShort(documentStream, fileOffset);
+        byte[] buf = new byte[sepxSize];
+        fileOffset += LittleEndian.SHORT_SIZE;
         System.arraycopy(documentStream, fileOffset, buf, 0, buf.length);
-        sections.add(new SEPX(node.getStart(), node.getEnd(), buf));
+        _sections.add(new SEPX(sed, node.getStart(), node.getEnd(), buf));
       }
     }
+  }
+
+  public void writeTo(HWPFFileSystem sys)
+    throws IOException
+  {
+    HWPFOutputStream docStream = sys.getStream("WordDocument");
+    HWPFOutputStream tableStream = sys.getStream("1Table");
+
+    int offset = docStream.getOffset();
+    int len = _sections.size();
+    PlexOfCps plex = new PlexOfCps(SED_SIZE);
+
+    for (int x = 0; x < len; x++)
+    {
+      SEPX sepx = (SEPX)_sections.get(x);
+      byte[] grpprl = sepx.getGrpprl();
+
+      // write the sepx to the document stream. starts with a 2 byte size
+      // followed by the grpprl
+      byte[] shortBuf = new byte[2];
+      LittleEndian.putShort(shortBuf, (short)grpprl.length);
+
+      docStream.write(shortBuf);
+      docStream.write(grpprl);
+
+      // set the fc in the section descriptor
+      SectionDescriptor sed = sepx.getSectionDescriptor();
+      sed.setFc(offset);
+
+      // add the section descriptor bytes to the PlexOfCps.
+      PropertyNode property = new PropertyNode(sepx.getStart(), sepx.getEnd(), sed.toByteArray());
+      plex.addProperty(property);
+
+      offset = docStream.getOffset();
+    }
+    tableStream.write(plex.toByteArray());
   }
 
 }
