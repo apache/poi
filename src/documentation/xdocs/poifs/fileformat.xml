@@ -2,6 +2,7 @@
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "../dtd/document-v11.dtd"> 
 <document>
   <header>
+    <title>POIFS File System Internals</title>
     <authors>
       <person email="mjohnson@apache.org" name="Marc Johnson" id="MJ"/>
     </authors>
