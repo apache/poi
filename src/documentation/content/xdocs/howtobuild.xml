@@ -6,6 +6,7 @@
         <title>How To Build POI</title>
         <authors>
             <person email="glens@apache.org" name="Glen Stampoultzis" id="GS"/>
+            <person email="tetsuya@apache.org" name="Tetsuya Kitahata" id="TK"/>
         </authors>
     </header>
     <body>
@@ -49,7 +50,8 @@
             </table>
             <p>
                 Just pick the latest versions of these jars and place
-                them in ANT_HOME/lib
+                them in ANT_HOME/lib and make sure that optional.jar is
+                in ANT_HOME/lib .
             </p>
         </section>
         <section>
