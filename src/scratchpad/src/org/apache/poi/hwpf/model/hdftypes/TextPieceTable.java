@@ -63,7 +63,10 @@ import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
 
+import org.apache.poi.poifs.common.POIFSConstants;
+
 import org.apache.poi.hwpf.model.io.*;
+
 
 public class TextPieceTable
 {
@@ -154,6 +157,16 @@ public class TextPieceTable
     {
       TextPiece next = (TextPiece)_textPieces.get(x);
       PieceDescriptor pd = next.getPieceDescriptor();
+
+      int offset = docStream.getOffset();
+      int mod = (offset % POIFSConstants.BIG_BLOCK_SIZE);
+      if (mod != 0)
+      {
+        mod = POIFSConstants.BIG_BLOCK_SIZE - mod;
+        byte[] buf = new byte[mod];
+        docStream.write(buf);
+      }
+
 
       // set the text piece position to the current docStream offset.
       pd.setFilePosition(docStream.getOffset());
