@@ -21,4 +21,9 @@ public class ListEntry
     _overrideLevel = override.getOverrideLevel(pap.getIlvl());
     _level = tables.getLevel(override.getLsid(), pap.getIlvl());
   }
+
+  public int type()
+  {
+    return TYPE_LISTENTRY;
+  }
 }

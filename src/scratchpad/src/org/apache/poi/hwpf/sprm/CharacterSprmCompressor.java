@@ -313,6 +313,11 @@ public class CharacterSprmCompressor
     {
       size += SprmUtils.addSprm((short)0x2859, newCHP.getSfxtText(), null, sprmList);
     }
+    if (newCHP.getIco24() != oldCHP.getIco24())
+    {
+      if(newCHP.getIco24() != -1) // don't add a sprm if we're looking at an ico = Auto
+        size += SprmUtils.addSprm((short)0x6870, newCHP.getIco24(), null, sprmList);
+    }
 
     return SprmUtils.getGrpprl(sprmList, size);
   }
