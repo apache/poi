@@ -59,16 +59,24 @@
  */
 package org.apache.poi.hssf.usermodel;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.TreeMap;
+
 import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.model.Workbook;
-import org.apache.poi.hssf.record.*;
+import org.apache.poi.hssf.record.CellValueRecordInterface;
+import org.apache.poi.hssf.record.HCenterRecord;
+import org.apache.poi.hssf.record.Record;
+import org.apache.poi.hssf.record.RowRecord;
+import org.apache.poi.hssf.record.SCLRecord;
+import org.apache.poi.hssf.record.VCenterRecord;
+import org.apache.poi.hssf.record.WSBoolRecord;
+import org.apache.poi.hssf.record.WindowTwoRecord;
 import org.apache.poi.hssf.util.Region;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-
-import java.util.Iterator;
-import java.util.TreeMap;
-import java.util.List;
 
 /**
  * High level representation of a worksheet.
@@ -887,6 +895,50 @@ public class HSSFSheet
         getSheet().setSCLRecord(sclRecord);
     }
 
+	/**
+	 * Shifts the merged regions left or right depending on mode
+	 * <p>
+	 * TODO: MODE , this is only row specific
+	 * @param startRow
+	 * @param endRow
+	 * @param n
+	 * @param isRow
+	 */
+	protected void shiftMerged(int startRow, int endRow, int n, boolean isRow) {
+		List shiftedRegions = new ArrayList();
+		//move merged regions completely if they fall within the new region boundaries when they are shifted
+		for (int i = 0; i < this.getNumMergedRegions(); i++) {
+			 Region merged = this.getMergedRegionAt(i);
+        		
+			 boolean inStart = (merged.getRowFrom() >= startRow || merged.getRowTo() >= startRow);
+			 boolean inEnd =  (merged.getRowTo() <= endRow || merged.getRowFrom() <= endRow);
+        		
+			 //dont check if it's not within the shifted area
+			 if (! (inStart && inEnd)) continue;
+        		
+			 //only shift if the region outside the shifted rows is not merged too        		       		
+			 if (!merged.contains(startRow-1, (short)0) && !merged.contains(endRow+1, (short)0)){
+				 merged.setRowFrom(merged.getRowFrom()+n);					
+				 merged.setRowTo(merged.getRowTo()+n);
+				 //have to remove/add it back
+				 shiftedRegions.add(merged);
+				 this.removeMergedRegion(i);
+				 i = i -1; // we have to back up now since we removed one
+					
+			 }
+        		
+		}
+		
+		//readd so it doesn't get shifted again
+		Iterator iterator = shiftedRegions.iterator();
+		while (iterator.hasNext()) {
+			Region region = (Region)iterator.next();
+			
+			this.addMergedRegion(region);
+		}
+		
+	}
+
     /**
      * Shifts rows between startRow and endRow n number of rows.
      * If you use a negative number, it will shift rows up.
@@ -894,19 +946,25 @@ public class HSSFSheet
      *
      * Calls shiftRows(startRow, endRow, n, false, false);
      *
+     * <p>
+     * Additionally shifts merged regions that are completely defined in these
+     * rows (ie. merged 2 cells on a row to be shifted).
      * @param startRow the row to start shifting
      * @param endRow the row to end shifting
      * @param n the number of rows to shift
      */
     public void shiftRows( int startRow, int endRow, int n ) {
-	shiftRows(startRow, endRow, n, false, false);
+		shiftRows(startRow, endRow, n, false, false);
     }
 
     /**
      * Shifts rows between startRow and endRow n number of rows.
      * If you use a negative number, it will shift rows up.
      * Code ensures that rows don't wrap around
-     *
+     * 
+     * <p>
+     * Additionally shifts merged regions that are completely defined in these
+     * rows (ie. merged 2 cells on a row to be shifted).
      * @param startRow the row to start shifting
      * @param endRow the row to end shifting
      * @param n the number of rows to shift
@@ -928,6 +986,9 @@ public class HSSFSheet
             e = startRow;
             inc = -1;
         }
+
+			shiftMerged(startRow, endRow, n, true);        
+        
         for ( int rowNum = s; rowNum >= startRow && rowNum <= endRow && rowNum >= 0 && rowNum < 65536; rowNum += inc )
         {
             HSSFRow row = getRow( rowNum );
@@ -936,6 +997,9 @@ public class HSSFSheet
                 row2Replace = createRow( rowNum + n );
 	    
             HSSFCell cell;
+
+			
+
 
 	    // Removes the cells before over writting them.
             for ( short col = row2Replace.getFirstCellNum(); col <= row2Replace.getLastCellNum(); col++ )
