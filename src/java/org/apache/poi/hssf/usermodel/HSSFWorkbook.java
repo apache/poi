@@ -193,10 +193,6 @@ public class HSSFWorkbook
         
         InputStream stream = fs.createDocumentInputStream("Workbook");
         
-        EventRecordFactory factory = new EventRecordFactory();
-       
-        
-        
         List records = RecordFactory.createRecords(stream);
 
         workbook = Workbook.createWorkbook(records);
