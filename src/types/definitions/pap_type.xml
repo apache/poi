@@ -1,0 +1,74 @@
+<record id="0x101A" name="PAP" package="org.apache.poi.hdf.model.hdftypes.definitions">
+    <suffix>AbstractType</suffix>
+    <extends>HDFType</extends>
+    <description>Paragraph Properties.</description>
+    <author>S. Ryan Ackley</author>
+    <fields>
+        <field type="int" size="2" name="istd"/>
+        <field type="byte" size="1" name="jc"/>
+        <field type="byte" size="1" name="fKeep"/>
+        <field type="byte" size="1" name="fKeepFollow"/>
+        <field type="byte" size="1" name="fPageBreakBefore"/>
+        <field type="byte" size="1" name="fBrLnAbove"/>
+        <field type="byte" size="1" name="fBrLnBelow"/>
+        <field type="byte" size="1" name="pcVert"/>
+        <field type="byte" size="1" name="pcHorz"/>
+        <field type="byte" size="1" name="brcp"/>
+        <field type="byte" size="1" name="brcl"/>
+        <field type="byte" size="1" name="ilvl"/>
+        <field type="byte" size="1" name="fNoLnn"/>
+        <field type="int" size="2" name="ilfo"/>
+        <field type="byte" size="1" name="fSideBiSide"/>
+        <field type="byte" size="1" name="fNoAutoHyph"/>
+        <field type="byte" size="1" name="fWidowControl"/>
+        <field type="int" size="4" name="dxaRight"/>
+        <field type="int" size="4" name="dxaLeft"/>
+        <field type="int" size="4" name="dxaLeft1"/>
+        <field type="short[]" size="4" name="lspd"/>
+        <field type="int" size="4" name="dyaBefore"/>
+        <field type="byte[]" size="12" name="phe"/>
+        <field type="byte" size="1" name="fCrLf"/>
+        <field type="byte" size="1" name="fUsePgsuSettings"/>
+        <field type="byte" size="1" name="fAdjustRight"/>
+        <field type="byte" size="1" name="fKinsoku"/>
+        <field type="byte" size="1" name="fWordWrap"/>
+        <field type="byte" size="1" name="fOverflowPunct"/>
+        <field type="byte" size="1" name="fTopLinePunct"/>
+        <field type="byte" size="1" name="fAutoSpaceDE"/>
+        <field type="byte" size="1" name="fAtuoSpaceDN"/>
+        <field type="int" size="2" name="wAlignFont"/>
+        <field type="byte" size="1" name="fVertical"/>
+        <field type="byte" size="1" name="fBackward"/>
+        <field type="byte" size="1" name="fRotateFont"/>
+        <field type="byte" size="1" name="fInTable"/>
+        <field type="byte" size="1" name="fTtp"/>
+        <field type="byte" size="1" name="wr"/>
+        <field type="byte" size="1" name="fLocked"/>
+        <field type="byte[]" size="4" name="ptap"/>
+        <field type="int" size="4" name="dxaAbs"/>
+        <field type="int" size="4" name="dyaAbs"/>
+        <field type="int" size="4" name="dxaWidth"/>
+        <field type="short[]" size="4" name="brcTop"/>
+        <field type="short[]" size="4" name="brcLeft"/>
+        <field type="short[]" size="4" name="brcBottom"/>
+        <field type="short[]" size="4" name="brcRight"/>
+        <field type="short[]" size="4" name="brcBetween"/>
+        <field type="short[]" size="4" name="brcBar"/>
+        <field type="int" size="4" name="dxaFromText"/>
+        <field type="int" size="4" name="dyaFromText"/>
+        <field type="int" size="2" name="dyaHeight"/>
+        <field type="byte" size="1" name="fMinHeight"/>
+        <field type="byte[]" size="2" name="shd"/>
+        <field type="byte[]" size="2" name="dcs"/>
+        <field type="byte" size="1" name="lvl"/>
+        <field type="byte" size="1" name="fNumRMIns"/>
+        <field type="byte[]" size="84" name="anld"/>
+        <field type="int" size="1" name="fPropRMark"/>
+        <field type="int" size="2" name="ibstPropRMark"/>
+        <field type="byte[]" size="4" name="dttmPropRMark"/>
+        <field type="byte[]" size="128" name="numrm"/>
+        <field type="int" size="2" name="itbdMac"/>
+        <field type="byte[]" size="128" name="rgdxaTab"/>
+        <field type="byte[]" size="128" name="rgtbd"/>
+    </fields>
+</record>
