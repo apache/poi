@@ -58,10 +58,10 @@
   <project name="jakarta-poi">
   
      <version major="1"
-             minor="6"   
+             minor="6"
              fix  ="0"   
              tag="dev"/> 
-             
+
     <package>org.apache.poi</package>
 
     <ant target="gump" vm="1.2"/>

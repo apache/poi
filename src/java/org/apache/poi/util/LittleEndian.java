@@ -65,7 +65,6 @@ import java.util.Arrays;
  *
  *@author     Marc Johnson (mjohnson at apache dot org)
  *@author     Andrew Oliver (acoliver at apache dot org)
- *@created    May 10, 2002
  */
 
 public class LittleEndian
@@ -278,7 +277,6 @@ public class LittleEndian
      *@param  offset  a starting offset into the byte array
      *@param  value   the short (16-bit) value
      */
-
     public static void putShort(final byte[] data, final int offset,
             final short value) {
         putNumber(data, offset, value, SHORT_SIZE);
@@ -299,6 +297,20 @@ public class LittleEndian
         }
     }
 
+    /**
+     * put an unsigned short value into a byte array
+     *
+     * @param data the byte array
+     * @param offset a starting offset into the byte array
+     * @param value the short (16-bit) value
+     *
+     * @exception ArrayIndexOutOfBoundsException may be thrown
+     */
+    public static void putUShort(final byte[] data, final int offset,
+                                final int value)
+    {
+        putNumber(data, offset, value, SHORT_SIZE);
+    }
 
     /**
      *  put a short value into beginning of a byte array
@@ -394,7 +406,6 @@ public class LittleEndian
      *  Exception to handle buffer underruns
      *
      *@author     Marc Johnson (mjohnson at apache dot org)
-     *@created    May 10, 2002
      */
 
     public static class BufferUnderrunException
