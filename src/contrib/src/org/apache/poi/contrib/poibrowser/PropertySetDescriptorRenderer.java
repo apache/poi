@@ -85,6 +85,9 @@ public class PropertySetDescriptorRenderer extends DocumentDescriptorRenderer
                                                   final int row,
                                                   final boolean hasFocus)
     {
+
+        throw new RuntimeException("THIS FUNCTION BROKEN -- FIX IT");
+/*
         final PropertySetDescriptor d = (PropertySetDescriptor)
             ((DefaultMutableTreeNode) value).getUserObject();
         final PropertySet ps = d.getPropertySet();
@@ -94,21 +97,22 @@ public class PropertySetDescriptorRenderer extends DocumentDescriptorRenderer
         text.setFont(new Font("Monospaced", Font.PLAIN, 10));
         text.append(renderAsString(d));
         text.append("\nByte order: " +
-                    Codec.hexEncode(ps.getByteOrder().getBytes()));
+                    Codec.hexEncode(ps.getByteOrder()));
         text.append("\nFormat: " +
-                    Codec.hexEncode(ps.getFormat().getBytes()));
+                    Codec.hexEncode(ps.getFormat()));
         text.append("\nOS version: " +
-                    Codec.hexEncode(ps.getOSVersion().getBytes()));
+                    Codec.hexEncode(ps.getOSVersion()));
         text.append("\nClass ID: " +
-                    Codec.hexEncode(ps.getClassID().getBytes()));
+                    Codec.hexEncode(ps.getClassID()));
         text.append("\nSection count: " + ps.getSectionCount());
         text.append(sectionsToString(ps.getSections()));
         p.add(text);
 
         if (ps instanceof SummaryInformation)
         {
+*/
             /* Use the convenience methods. */
-            final SummaryInformation si = (SummaryInformation) ps;
+/*            final SummaryInformation si = (SummaryInformation) ps;
             text.append("\n");
             text.append("\nTitle:               " + si.getTitle());
             text.append("\nSubject:             " + si.getSubject());
@@ -132,7 +136,7 @@ public class PropertySetDescriptorRenderer extends DocumentDescriptorRenderer
 
         if (selected)
             Util.invert(text);
-        return p;
+        return p;*/
     }
 
 
@@ -160,9 +164,12 @@ public class PropertySetDescriptorRenderer extends DocumentDescriptorRenderer
      */
     protected String toString(final Section s, final String name)
     {
+
+        throw new RuntimeException("THIS FUNCTION BROKEN -- FIX IT");
+/*
         final StringBuffer b = new StringBuffer();
         b.append("\n" + name + " Format ID: ");
-        b.append(Codec.hexEncode(s.getFormatID().getBytes()));
+        b.append(Integer.toHexString(s.getFormatID()));
         b.append("\n" + name + " Offset: " + s.getOffset());
         b.append("\n" + name + " Section size: " + s.getSize());
         b.append("\n" + name + " Property count: " + s.getPropertyCount());
@@ -188,6 +195,7 @@ public class PropertySetDescriptorRenderer extends DocumentDescriptorRenderer
                 b.append(value.toString());
         }
         return b.toString();
+*/
     }
 
 }

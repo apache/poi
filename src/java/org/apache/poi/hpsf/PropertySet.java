@@ -56,7 +56,7 @@ package org.apache.poi.hpsf;
 
 import java.io.*;
 import java.util.*;
-import org.apache.poi.hpsf.littleendian.*;
+import org.apache.poi.util.LittleEndian;
 import org.apache.poi.hpsf.wellknown.*;
 import org.apache.poi.poifs.filesystem.*;
 
@@ -99,7 +99,7 @@ public class PropertySet {
     final static byte[] FORMAT_ASSERTION =
             new byte[]{(byte) 0x00, (byte) 0x00};
 
-    private Word byteOrder;
+    private int byteOrder;
 
 
     // Must equal BYTE_ORDER_ASSERTION
@@ -112,13 +112,13 @@ public class PropertySet {
      *
      *@return    The byteOrder value
      */
-    public Word getByteOrder() {
+    public int getByteOrder() {
         return byteOrder;
     }
 
 
 
-    private Word format;
+    private int format;
 
 
     // Must equal FORMAT_ASSERTION
@@ -131,13 +131,13 @@ public class PropertySet {
      *
      *@return    The format value
      */
-    public Word getFormat() {
+    public int getFormat() {
         return format;
     }
 
 
 
-    private DWord osVersion;
+    private long osVersion;
 
 
     /**
@@ -147,7 +147,7 @@ public class PropertySet {
      *
      *@return    The oSVersion value
      */
-    public DWord getOSVersion() {
+    public long getOSVersion() {
         return osVersion;
     }
 
@@ -169,7 +169,7 @@ public class PropertySet {
 
 
 
-    private int sectionCount;
+    private long sectionCount;
 
 
     /**
@@ -179,7 +179,7 @@ public class PropertySet {
      *
      *@return    The sectionCount value
      */
-    public int getSectionCount() {
+    public long getSectionCount() {
         return sectionCount;
     }
 
@@ -366,23 +366,27 @@ public class PropertySet {
          *  Read the header fields of the stream. They must always be
          *  there.
          */
-        final Word byteOrder = new Word(src, offset);
-        offset += Word.LENGTH;
-        if (!Util.equal(byteOrder.getBytes(), BYTE_ORDER_ASSERTION)) {
+        final int byteOrder = LittleEndian.getUShort(src, offset);
+        offset += LittleEndian.SHORT_SIZE;
+        byte[] temp = new byte[LittleEndian.SHORT_SIZE];
+        LittleEndian.putShort(temp,(short)byteOrder);
+        if (!Util.equal(temp, BYTE_ORDER_ASSERTION)) {
             return false;
         }
-        final Word format = new Word(src, offset);
-        offset += Word.LENGTH;
-        if (!Util.equal(format.getBytes(), FORMAT_ASSERTION)) {
+        final int format = LittleEndian.getUShort(src, offset);
+        offset += LittleEndian.SHORT_SIZE;
+        temp = new byte[LittleEndian.SHORT_SIZE];
+        LittleEndian.putShort(temp,(short)format);
+        if (!Util.equal(temp, FORMAT_ASSERTION)) {
             return false;
         }
-        final DWord osVersion = new DWord(src, offset);
-        offset += DWord.LENGTH;
+        final long osVersion = LittleEndian.getUInt(src, offset);
+        offset += LittleEndian.INT_SIZE;
         final ClassID classID = new ClassID(src, offset);
         offset += ClassID.LENGTH;
-        final DWord sectionCount = new DWord(src, offset);
-        offset += DWord.LENGTH;
-        if (sectionCount.intValue() < 1) {
+        final long sectionCount = LittleEndian.getUInt(src, offset);
+        offset += LittleEndian.INT_SIZE;
+        if (sectionCount < 1) {
             return false;
         }
         return true;
@@ -406,16 +410,16 @@ public class PropertySet {
         /*
          *  Read the stream's header fields.
          */
-        byteOrder = new Word(src, offset);
-        offset += Word.LENGTH;
-        format = new Word(src, offset);
-        offset += Word.LENGTH;
-        osVersion = new DWord(src, offset);
-        offset += DWord.LENGTH;
+        byteOrder = LittleEndian.getUShort(src, offset);
+        offset += LittleEndian.SHORT_SIZE;
+        format = LittleEndian.getUShort(src, offset);
+        offset += LittleEndian.SHORT_SIZE;
+        osVersion = LittleEndian.getUInt(src, offset);
+        offset += LittleEndian.INT_SIZE;
         classID = new ClassID(src, offset);
         offset += ClassID.LENGTH;
-        sectionCount = new DWord(src, offset).intValue();
-        offset += DWord.LENGTH;
+        sectionCount = LittleEndian.getUInt(src, offset);
+        offset += LittleEndian.INT_SIZE;
 
         /*
          *  Read the sections, which are following the header. They
@@ -438,7 +442,7 @@ public class PropertySet {
          */
         for (int i = 0; i < sectionCount; i++) {
             final Section s = new Section(src, offset);
-            offset += ClassID.LENGTH + DWord.LENGTH;
+            offset += ClassID.LENGTH + LittleEndian.INT_SIZE;
             sections.add(s);
         }
     }

@@ -82,7 +82,7 @@ public class ClassID {
      *@param  offset  The offset of the first byte to read.
      */
     public ClassID(final byte[] src, final int offset) {
-        super(src, offset);
+ //       super(src, offset);
     }
 
 
@@ -91,6 +91,11 @@ public class ClassID {
 
     public int length() {
         return LENGTH;
+    }
+
+    public byte[] getBytes() {
+
+        throw new RuntimeException("This fucntion must be rewritten");
     }
 
 
