@@ -107,8 +107,7 @@ public class TestReadWriteChart
                      HSSFDateUtil
                          .getJavaDate(firstCell.getNumericCellValue()));
         HSSFRow  row  = sheet.createRow(( short ) 15);
-        HSSFCell cell = row.createCell(( short ) 1,
-                                       HSSFCell.CELL_TYPE_NUMERIC);
+        HSSFCell cell = row.createCell(( short ) 1);
 
         cell.setCellValue(22);
         Sheet newSheet = workbook.getSheetAt(0).getSheet();
