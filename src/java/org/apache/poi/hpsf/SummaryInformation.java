@@ -66,6 +66,10 @@ import org.apache.poi.hpsf.wellknown.*;
  * <p>Convenience class representing a Summary Information stream in a
  * Microsoft Office document.</p>
  *
+ * <p>See <a
+ * href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/com/stgu_8910.asp">http://msdn.microsoft.com/library/default.asp?url=/library/en-us/com/stgu_8910.asp</a>
+ * for documentation from That Redmond Company.
+ *
  * @see DocumentSummaryInformation
  *
  * @author Rainer Klute (klute@rainer-klute.de)
