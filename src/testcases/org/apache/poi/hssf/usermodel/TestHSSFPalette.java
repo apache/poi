@@ -178,7 +178,21 @@ public class TestHSSFPalette extends TestCase
             c.compare(expectedColor, paletteColor);
         }
     }
-    
+
+    public void testAddColor() throws Exception
+    {
+        try
+        {
+            HSSFColor hssfColor = hssfPalette.addColor((byte)10,(byte)10,(byte)10);
+            fail();
+        }
+        catch ( RuntimeException e )
+        {
+            // Failing because by default there are no colours left in the palette.
+        }
+    }
+
+
     private static interface ColorComparator
     {
         void compare(HSSFColor expected, HSSFColor palette);

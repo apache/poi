@@ -95,6 +95,13 @@ public class UnknownRecord
         this.thedata = data;
     }
 
+    public UnknownRecord( short id, short size, byte[] data, int offset )
+    {
+        sid     = id;
+        thedata = new byte[size];
+        System.arraycopy(data, offset, thedata, 0, size);
+    }   
+
     /**
      * spit the record out AS IS.  no interperatation or identification
      */

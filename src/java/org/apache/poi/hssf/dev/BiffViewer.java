@@ -2,7 +2,7 @@
  *  ====================================================================
  *  The Apache Software License, Version 1.1
  *
- *  Copyright (c) 2003 The Apache Software Foundation.  All rights
+ *  Copyright (c) 2004 The Apache Software Foundation.  All rights
  *  reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -107,7 +107,7 @@ public class BiffViewer {
                     new POIFSFileSystem(new FileInputStream(filename));
             InputStream stream =
                     fs.createDocumentInputStream("Workbook");
-            Record[] records = createRecords(stream, dump);
+            createRecords(stream, dump);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -128,8 +128,10 @@ public class BiffViewer {
     public static Record[] createRecords(InputStream in, boolean dump)
              throws RecordFormatException {
         ArrayList records = new ArrayList();
-        Record last_record = null;
+        //Record last_record = null;
         int loc = 0;
+
+        RecordDetails activeRecord = null;
 
         try {
 //            long  offset  = 0;
@@ -137,8 +139,9 @@ public class BiffViewer {
 
             do {
                 rectype = LittleEndian.readShort(in);
-                System.out.println("============================================");
-                System.out.println("Offset 0x" + Integer.toHexString(loc) + " (" + loc + ")");
+                int startloc = loc;
+//                System.out.println("============================================");
+//                System.out.println("Offset 0x" + Integer.toHexString(loc) + " (" + loc + ")");
                 loc += 2;
                 if (rectype != 0) {
                     short recsize = LittleEndian.readShort(in);
@@ -147,36 +150,27 @@ public class BiffViewer {
                     byte[] data = new byte[(int) recsize];
 
                     in.read(data);
-                    if ((rectype == WSBoolRecord.sid) && (recsize == 0)) {
-                        System.out.println(loc);
-                    }
                     loc += recsize;
-//                    offset += 4 + recsize;
+                    Record record = createRecord(rectype, recsize, data );
+                    if (record.getSid() != ContinueRecord.sid)
+                    {
+                        records.add(record);
+                        if (activeRecord != null)
+                            activeRecord.dump();
+                        activeRecord = new RecordDetails(rectype, recsize, startloc, data, record);
+                    }
+                    else
+                    {
+                        activeRecord.getRecord().processContinueRecord(data);
+                    }
                     if (dump) {
-                        dump(rectype, recsize, data);
-                    }
-                    Record[] recs = createRecord(rectype, recsize,
-                            data);
-                    // handle MulRK records
-
-                    Record record = recs[0];
-
-                    if ((record instanceof UnknownRecord)
-                            && !dump) {
-                        // if we didn't already dump
-                        // just cause dump was on and we're hit an unknow
-                        dumpUnknownRecord(data);
-                    }
-                    if (record != null) {
-                        if (rectype == ContinueRecord.sid) {
-                            dumpContinueRecord(last_record, dump, data);
-                        } else {
-                            last_record = record;
-                            records.add(record);
-                        }
+                        dumpRaw(rectype, recsize, data);
                     }
                 }
             } while (rectype != 0);
+
+            activeRecord.dump();
+
         } catch (IOException e) {
             throw new RecordFormatException("Error reading bytes");
         }
@@ -186,15 +180,14 @@ public class BiffViewer {
         return retval;
     }
 
+    private static void dumpNormal(Record record, int startloc, short rectype, short recsize)
+    {
+        System.out.println("Offset 0x" + Integer.toHexString(startloc) + " (" + startloc + ")");
+        System.out.println( "recordid = 0x" + Integer.toHexString( rectype ) + ", size = " + recsize );
+        System.out.println( record.toString() );
+    }
 
-    /**
-     *  Description of the Method
-     *
-     *@param  last_record      Description of the Parameter
-     *@param  dump             Description of the Parameter
-     *@param  data             Description of the Parameter
-     *@exception  IOException  Description of the Exception
-     */
+
     private static void dumpContinueRecord(Record last_record, boolean dump, byte[] data) throws IOException {
         if (last_record == null) {
             throw new RecordFormatException(
@@ -226,12 +219,6 @@ public class BiffViewer {
     }
 
 
-    /**
-     *  Description of the Method
-     *
-     *@param  data             Description of the Parameter
-     *@exception  IOException  Description of the Exception
-     */
     private static void dumpUnknownRecord(byte[] data) throws IOException {
         // record hex dump it!
         System.out.println(
@@ -247,10 +234,11 @@ public class BiffViewer {
     }
 
 
-    private static void dump( short rectype, short recsize, byte[] data ) throws IOException
+    private static void dumpRaw( short rectype, short recsize, byte[] data ) throws IOException
     {
         //                        System.out
         //                            .println("fixing to recordize the following");
+        System.out.println("============================================");
         System.out.print( "rectype = 0x"
                 + Integer.toHexString( rectype ) );
         System.out.println( ", recsize = 0x"
@@ -275,13 +263,9 @@ public class BiffViewer {
      *  Essentially a duplicate of RecordFactory. Kept seperate as not to screw
      *  up non-debug operations.
      *
-     *@param  rectype  Description of the Parameter
-     *@param  size     Description of the Parameter
-     *@param  data     Description of the Parameter
-     *@return          Description of the Return Value
      */
 
-    private static Record[] createRecord( short rectype, short size,
+    private static Record createRecord( short rectype, short size,
                                           byte[] data )
     {
         Record retval = null;
@@ -428,6 +412,15 @@ public class BiffViewer {
                 break;
             case GridsetRecord.sid:
                 retval = new GridsetRecord( rectype, size, data );
+                break;
+            case DrawingGroupRecord.sid:
+                retval = new DrawingGroupRecord( rectype, size, data );
+                break;
+            case DrawingRecordForBiffViewer.sid:
+                retval = new DrawingRecordForBiffViewer( rectype, size, data );
+                break;
+            case DrawingSelectionRecord.sid:
+                retval = new DrawingSelectionRecord( rectype, size, data );
                 break;
             case GutsRecord.sid:
                 retval = new GutsRecord( rectype, size, data );
@@ -631,19 +624,24 @@ public class BiffViewer {
                 retval = new PaneRecord( rectype, size, data );
                 break;
             case SharedFormulaRecord.sid:
-            	 retval = new SharedFormulaRecord( rectype, size, data);
-            	 break;
+            	retval = new SharedFormulaRecord( rectype, size, data);
+            	break;
+            case ObjRecord.sid:
+                retval = new ObjRecord( rectype, size, data);
+                break;
+            case TextObjectRecord.sid:
+                retval = new TextObjectRecord( rectype, size, data);
+                break;
+            case HorizontalPageBreakRecord.sid:
+                retval = new HorizontalPageBreakRecord( rectype, size, data);
+                break;
+            case VerticalPageBreakRecord.sid:
+                retval = new VerticalPageBreakRecord( rectype, size, data);
+                break;
             default:
                 retval = new UnknownRecord( rectype, size, data );
         }
-        if ( realretval == null )
-        {
-            realretval = new Record[1];
-            realretval[0] = retval;
-            System.out.println( "recordid = 0x" + Integer.toHexString( rectype ) + ", size =" + size );
-            System.out.println( realretval[0].toString() );
-        }
-        return realretval;
+        return retval;
     }
 
 
@@ -674,6 +672,7 @@ public class BiffViewer {
 
     public static void main(String[] args) {
         try {
+            System.setProperty("poi.deserialize.escher", "true");
             BiffViewer viewer = new BiffViewer(args);
 
             if ((args.length > 1) && args[1].equals("on")) {
@@ -696,4 +695,50 @@ public class BiffViewer {
             e.printStackTrace();
         }
     }
+
+    static class RecordDetails
+    {
+        short rectype, recsize;
+        int startloc;
+        byte[] data;
+        Record record;
+
+        public RecordDetails( short rectype, short recsize, int startloc, byte[] data, Record record )
+        {
+            this.rectype = rectype;
+            this.recsize = recsize;
+            this.startloc = startloc;
+            this.data = data;
+            this.record = record;
+        }
+    
+        public short getRectype()
+        {
+            return rectype;
+        }
+
+        public short getRecsize()
+        {
+            return recsize;
+        }
+
+        public byte[] getData()
+        {
+            return data;
+        }
+
+        public Record getRecord()
+        {
+            return record;
+        }
+
+        public void dump() throws IOException
+        {
+            if (record instanceof UnknownRecord)
+                dumpUnknownRecord(data);
+            else
+                dumpNormal(record, startloc, rectype, recsize);
+        }
+    }
+
 }

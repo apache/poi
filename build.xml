@@ -135,10 +135,27 @@ Main targets:
         </echo>
     </target>
 
+    <target name="with.clover" if="clover.present">
+        <taskdef resource="clovertasks"/>
+        <clover-setup initString="mycoverage.db"/>
+    </target>
+
+    <target name="clover.html" depends="with.clover" if="clover.present">
+        <echo>Generating clover report</echo>
+       <clover-report>
+          <current outfile="build/tmp/site/build/site/clover_html">
+             <format type="html"/>
+          </current>
+       </clover-report>
+    </target>
+
     <target name="init" depends="check-jars,fetch-jars">
 
         <tstamp/>
 
+        <available resource="clovertasks" property="clover.present"/>
+        <antcall target="with.clover"/>
+        
         <mkdir dir="build"/>
         <mkdir dir="${main.output.dir}"/>
         <mkdir dir="${contrib.output.dir}"/>
@@ -253,7 +270,7 @@ Main targets:
         <pathelement location="${junit.jar1.dir}"/>
     </path>
     <target name="test-main" depends="compile-main,-test-main-check" unless="main.test.notRequired">
-        <junit printsummary="yes" showoutput="true" filtertrace="no" fork="no"
+        <junit printsummary="no" showoutput="true" fork="no"
             haltonfailure="${halt.on.test.failure}" failureproperty="main.test.failed">
             <classpath refid="test.classpath"/>
             <sysproperty key="HSSF.testdata.path" file="${main.src.test}/org/apache/poi/hssf/data"/>
@@ -312,7 +329,7 @@ Main targets:
     </target>
 
     <target name="test-scratchpad" depends="compile-scratchpad,-test-scratchpad-check" unless="scratchpad.test.notRequired">
-        <junit printsummary="yes" fork="no" haltonfailure="${halt.on.test.failure}" failureproperty="scratchpad.test.failed">
+        <junit printsummary="no" fork="no" haltonfailure="${halt.on.test.failure}" failureproperty="scratchpad.test.failed">
             <classpath>
                 <path refid="scratchpad.classpath"/>
                 <pathelement location="${main.output.dir}"/>
@@ -521,6 +538,7 @@ FORREST_HOME environment variable!</echo>
             <group title="Utils" packages="org.apache.poi.util*"/>
         </javadoc>
 
+        <antcall target="clover.html"/>
 
     </target>
 
@@ -560,6 +578,9 @@ FORREST_HOME environment variable!</echo>
       <group title="Record Generator" packages="org.apache.poi.record*"/>
       <group title="Utils" packages="org.apache.poi.util*"/>
     </javadoc>
+
+    <antcall target="clover.html"/>
+
   </target>
 
 

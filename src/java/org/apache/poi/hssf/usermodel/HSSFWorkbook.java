@@ -653,6 +653,40 @@ public class HSSFWorkbook
     }
 
     /**
+     * Finds a font that matches the one with the supplied attributes
+     */
+    public HSSFFont findFont(short boldWeight, short color, short fontHeight,
+                             String name, boolean italic, boolean strikeout,
+                             short typeOffset, byte underline)
+    {
+//        System.out.println( boldWeight + ", " + color + ", " + fontHeight + ", " + name + ", " + italic + ", " + strikeout + ", " + typeOffset + ", " + underline );
+        for (short i = 0; i < workbook.getNumberOfFontRecords(); i++)
+        {
+            if (i == 4)
+                continue;
+
+            FontRecord font = workbook.getFontRecordAt(i);
+            HSSFFont hssfFont = new HSSFFont(i, font);
+//            System.out.println( hssfFont.getBoldweight() + ", " + hssfFont.getColor() + ", " + hssfFont.getFontHeight() + ", " + hssfFont.getFontName() + ", " + hssfFont.getItalic() + ", " + hssfFont.getStrikeout() + ", " + hssfFont.getTypeOffset() + ", " + hssfFont.getUnderline() );
+            if (hssfFont.getBoldweight() == boldWeight
+                    && hssfFont.getColor() == color
+                    && hssfFont.getFontHeight() == fontHeight
+                    && hssfFont.getFontName().equals(name)
+                    && hssfFont.getItalic() == italic
+                    && hssfFont.getStrikeout() == strikeout
+                    && hssfFont.getTypeOffset() == typeOffset
+                    && hssfFont.getUnderline() == underline)
+            {
+//                System.out.println( "Found font" );
+                return hssfFont;
+            }
+        }
+
+//        System.out.println( "No font found" );
+        return null;
+    }
+
+    /**
      * get the number of fonts in the font table
      * @return number of fonts
      */

@@ -122,6 +122,8 @@ public class Sheet implements Model
     private Iterator                    rowRecIterator   = null;
     protected int                       eofLoc           = 0;
 	protected ProtectRecord             protect          = null;
+    protected PageBreakRecord 		    rowBreaks		 = null;
+    protected PageBreakRecord 			colBreaks		 = null;
 
     public static final byte PANE_LOWER_RIGHT = (byte)0;
     public static final byte PANE_UPPER_RIGHT = (byte)1;
@@ -155,7 +157,7 @@ public class Sheet implements Model
      */
     public static Sheet createSheet(List recs, int sheetnum, int offset)
     {
-        log.logFormatted(log.DEBUG,
+        log.logFormatted(POILogger.DEBUG,
                          "Sheet createSheet (existing file) with %",
                          new Integer(recs.size()));
         Sheet     retval             = new Sheet();
@@ -170,18 +172,18 @@ public class Sheet implements Model
 
             if (rec.getSid() == LabelRecord.sid)
             {
-                log.log(log.DEBUG, "Hit label record.");
+                log.log(POILogger.DEBUG, "Hit label record.");
                 retval.containsLabels = true;
             }
             else if (rec.getSid() == BOFRecord.sid)
             {
                 bofEofNestingLevel++;
-                log.log(log.DEBUG, "Hit BOF record. Nesting increased to " + bofEofNestingLevel);
+                log.log(POILogger.DEBUG, "Hit BOF record. Nesting increased to " + bofEofNestingLevel);
             }
             else if (rec.getSid() == EOFRecord.sid)
             {
                 --bofEofNestingLevel;
-                log.log(log.DEBUG, "Hit EOF record. Nesting decreased to " + bofEofNestingLevel);
+                log.log(POILogger.DEBUG, "Hit EOF record. Nesting decreased to " + bofEofNestingLevel);
                 if (bofEofNestingLevel == 0) {
                     records.add(rec);
                     retval.eofLoc = k;
@@ -296,6 +298,14 @@ public class Sheet implements Model
             {
                 rec = null;
             }
+			else if (rec.getSid() == PageBreakRecord.HORIZONTAL_SID)
+			{
+				retval.rowBreaks = (PageBreakRecord)rec;
+            }
+			else if (rec.getSid() == PageBreakRecord.VERTICAL_SID)
+			{
+				retval.colBreaks = (PageBreakRecord)rec;
+			}
 
 	    
             if (rec != null)
@@ -312,7 +322,7 @@ public class Sheet implements Model
         {
             retval.cells = new ValueRecordsAggregate();
         }
-        log.log(log.DEBUG, "sheet createSheet (existing file) exited");
+        log.log(POILogger.DEBUG, "sheet createSheet (existing file) exited");
         return retval;
     }
 
@@ -371,7 +381,7 @@ public class Sheet implements Model
 
     public static Sheet createSheet(List records, int sheetnum)
     {
-        log.log(log.DEBUG,
+        log.log(POILogger.DEBUG,
                 "Sheet createSheet (exisiting file) assumed offset 0");
         return createSheet(records, sheetnum, 0);
     }
@@ -386,7 +396,7 @@ public class Sheet implements Model
 
     public static Sheet createSheet()
     {
-        log.log(log.DEBUG, "Sheet createsheet from scratch called");
+        log.log(POILogger.DEBUG, "Sheet createsheet from scratch called");
         Sheet     retval  = new Sheet();
         ArrayList records = new ArrayList(30);
 
@@ -409,6 +419,10 @@ public class Sheet implements Model
                 (DefaultRowHeightRecord) retval.createDefaultRowHeight();
         records.add( retval.defaultrowheight );
         records.add( retval.createWSBool() );
+        retval.rowBreaks = new PageBreakRecord(PageBreakRecord.HORIZONTAL_SID);
+        records.add(retval.rowBreaks);
+        retval.colBreaks = new PageBreakRecord(PageBreakRecord.VERTICAL_SID);
+        records.add(retval.colBreaks);
         retval.header = (HeaderRecord) retval.createHeader();
         records.add( retval.header );
         retval.footer = (FooterRecord) retval.createFooter();
@@ -421,7 +435,7 @@ public class Sheet implements Model
                 (DefaultColWidthRecord) retval.createDefaultColWidth();
         records.add( retval.defaultcolwidth);
         retval.dims    = ( DimensionsRecord ) retval.createDimensions();
-        retval.dimsloc = 19;
+        retval.dimsloc = records.size()-1;
         records.add(retval.dims);
         records.add(retval.windowTwo = retval.createWindowTwo());
         retval.setLoc(records.size() - 1);
@@ -432,7 +446,7 @@ public class Sheet implements Model
 		records.add(retval.protect);
         records.add(retval.createEOF());
         retval.records = records;
-        log.log(log.DEBUG, "Sheet createsheet from scratch exit");
+        log.log(POILogger.DEBUG, "Sheet createsheet from scratch exit");
         return retval;
     }
 
@@ -576,7 +590,7 @@ public class Sheet implements Model
 
     public void convertLabelRecords(Workbook wb)
     {
-        log.log(log.DEBUG, "convertLabelRecords called");
+        log.log(POILogger.DEBUG, "convertLabelRecords called");
         if (containsLabels)
         {
             for (int k = 0; k < records.size(); k++)
@@ -600,7 +614,7 @@ public class Sheet implements Model
                 }
             }
         }
-        log.log(log.DEBUG, "convertLabelRecords exit");
+        log.log(POILogger.DEBUG, "convertLabelRecords exit");
     }
 
     /**
@@ -614,8 +628,8 @@ public class Sheet implements Model
     {
         checkCells();
         checkRows();
-        log.log(log.DEBUG, "Sheet.getNumRecords");
-        log.logFormatted(log.DEBUG, "returning % + % + % - 2 = %", new int[]
+        log.log(POILogger.DEBUG, "Sheet.getNumRecords");
+        log.logFormatted(POILogger.DEBUG, "returning % + % + % - 2 = %", new int[]
         {
             records.size(), cells.getPhysicalNumberOfCells(),
             rows.getPhysicalNumberOfRows(),
@@ -638,8 +652,8 @@ public class Sheet implements Model
     public void setDimensions(int firstrow, short firstcol, int lastrow,
                               short lastcol)
     {
-        log.log(log.DEBUG, "Sheet.setDimensions");
-        log.log(log.DEBUG,
+        log.log(POILogger.DEBUG, "Sheet.setDimensions");
+        log.log(POILogger.DEBUG,
                 (new StringBuffer("firstrow")).append(firstrow)
                     .append("firstcol").append(firstcol).append("lastrow")
                     .append(lastrow).append("lastcol").append(lastcol)
@@ -2560,4 +2574,192 @@ public class Sheet implements Model
 	{
 		return protect;
     }
+
+    public int aggregateDrawingRecords(DrawingManager drawingManager)
+    {
+        int loc = findFirstRecordLocBySid(DrawingRecord.sid);
+        boolean noDrawingRecordsFound = loc == -1;
+        if (noDrawingRecordsFound)
+        {
+            EscherAggregate aggregate = new EscherAggregate( drawingManager );
+            loc = findFirstRecordLocBySid(EscherAggregate.sid);
+            if (loc == -1)
+            {
+                loc = findFirstRecordLocBySid( WindowTwoRecord.sid );
+            }
+            else
+            {
+                getRecords().remove(loc);
+            }
+            getRecords().add( loc, aggregate );
+            return loc;
+        }
+        else
+        {
+            List records = getRecords();
+            EscherAggregate r = EscherAggregate.createAggregate( records, loc, drawingManager );
+            int startloc = loc;
+            while ( loc + 1 < records.size()
+                    && records.get( loc ) instanceof DrawingRecord
+                    && records.get( loc + 1 ) instanceof ObjRecord )
+            {
+                loc += 2;
+            }
+            int endloc = loc-1;
+            for(int i = 0; i < (endloc - startloc + 1); i++)
+                records.remove(startloc);
+            records.add(startloc, r);
+
+            return startloc;
+        }
+    }
+
+    /**
+     * Perform any work necessary before the sheet is about to be serialized.
+     * For instance the escher aggregates size needs to be calculated before
+     * serialization so that the dgg record (which occurs first) can be written.
+     */
+    public void preSerialize()
+    {
+        for ( Iterator iterator = getRecords().iterator(); iterator.hasNext(); )
+        {
+            Record r = (Record) iterator.next();
+            if (r instanceof EscherAggregate)
+                r.getRecordSize();   // Trigger flatterning of user model and corresponding update of dgg record.
+        }
+    }
+
+    /**
+     * Shifts all the page breaks in the range "count" number of rows/columns
+     * @param breaks The page record to be shifted
+     * @param start Starting "main" value to shift breaks
+     * @param stop Ending "main" value to shift breaks
+     * @param count number of units (rows/columns) to shift by
+     */
+    public void shiftBreaks(PageBreakRecord breaks, short start, short stop, int count) {
+
+    	if(rowBreaks == null)
+    		return;
+    	Iterator iterator = breaks.getBreaksIterator();
+    	List shiftedBreak = new ArrayList();
+    	while(iterator.hasNext())
+    	{
+    		PageBreakRecord.Break breakItem = (PageBreakRecord.Break)iterator.next();
+    		short breakLocation = breakItem.main;
+    		boolean inStart = (breakLocation >= start);
+    		boolean inEnd = (breakLocation <= stop);
+    		if(inStart && inEnd)
+    			shiftedBreak.add(breakItem);
+    	}
+
+    	iterator = shiftedBreak.iterator();
+    	while (iterator.hasNext()) {
+			PageBreakRecord.Break breakItem = (PageBreakRecord.Break)iterator.next();
+    		breaks.removeBreak(breakItem.main);
+    		breaks.addBreak((short)(breakItem.main+count), breakItem.subFrom, breakItem.subTo);
+    	}
+    }
+
+    /**
+     * Sets a page break at the indicated row
+     * @param row
+     */
+    public void setRowBreak(int row, short fromCol, short toCol) {
+    	rowBreaks.addBreak((short)row, fromCol, toCol);
+    }
+
+    /**
+     * Removes a page break at the indicated row
+     * @param row
+     */
+    public void removeRowBreak(int row) {
+    	rowBreaks.removeBreak((short)row);
+    }
+
+    /**
+     * Queries if the specified row has a page break
+     * @param row
+     * @return true if the specified row has a page break
+     */
+    public boolean isRowBroken(int row) {
+    	return rowBreaks.getBreak((short)row) != null;
+    }
+
+    /**
+     * Sets a page break at the indicated column
+     * @param row
+     */
+    public void setColumnBreak(short column, short fromRow, short toRow) {
+    	colBreaks.addBreak(column, fromRow, toRow);
+    }
+
+    /**
+     * Removes a page break at the indicated column
+     * @param row
+     */
+    public void removeColumnBreak(short column) {
+    	colBreaks.removeBreak(column);
+    }
+
+    /**
+     * Queries if the specified column has a page break
+     * @param row
+     * @return true if the specified column has a page break
+     */
+    public boolean isColumnBroken(short column) {
+    	return colBreaks.getBreak(column) != null;
+    }
+
+    /**
+     * Shifts the horizontal page breaks for the indicated count
+     * @param startingRow
+     * @param endingRow
+     * @param count
+     */
+    public void shiftRowBreaks(int startingRow, int endingRow, int count) {
+    	shiftBreaks(rowBreaks, (short)startingRow, (short)endingRow, (short)count);
+    }
+
+    /**
+     * Shifts the vertical page breaks for the indicated count
+     * @param startingCol
+     * @param endingCol
+     * @param count
+     */
+    public void shiftColumnBreaks(short startingCol, short endingCol, short count) {
+    	shiftBreaks(colBreaks, startingCol, endingCol, count);
+    }
+
+    /**
+     * Returns all the row page breaks
+     * @return
+     */
+    public Iterator getRowBreaks() {
+    	return rowBreaks.getBreaksIterator();
+    }
+
+    /**
+     * Returns the number of row page breaks
+     * @return
+     */
+    public int getNumRowBreaks(){
+    	return (int)rowBreaks.getNumBreaks();
+    }
+
+    /**
+     * Returns all the column page breaks
+     * @return
+     */
+    public Iterator getColumnBreaks(){
+    	return colBreaks.getBreaksIterator();
+    }
+
+    /**
+     * Returns the number of column page breaks
+     * @return
+     */
+    public int getNumColumnBreaks(){
+    	return (int)colBreaks.getNumBreaks();
+    }
+
 }
