@@ -179,7 +179,9 @@ public abstract class Ptg
             case arrayArea:
                 retval = new AreaPtg(data, offset);
                 break;
-            case MemErrPtg.sid :
+            case MemErrPtg.sid :        // 0x27       These 3 values 
+            case MemErrPtg.sid+0x20 :   // 0x47       documented in 
+            case MemErrPtg.sid+0x40 :   // 0x67       openOffice.org doc.
                 retval = new MemErrPtg(data, offset);
                 break;
 
@@ -231,7 +233,10 @@ public abstract class Ptg
                retval = new StringPtg(data, offset);
                break;
 
-            case NamePtg.sid :
+            case NamePtg.sid :            // 0x23     These 3 values
+            case NamePtg.sid+0x20 :       // 0x43     documented in
+            case NamePtg.sid+0x40 :       // 0x63     openOffice.org doc.
+
                 retval = new NamePtg(data, offset);
                 break;
 
@@ -239,11 +244,17 @@ public abstract class Ptg
                 retval = new ExpPtg(data, offset);
                 break;
 
-            case Area3DPtg.sid :
+            case Area3DPtg.sid :          // 0x3b     These 3 values 
+             case Area3DPtg.sid+0x20 :     // 0x5b     documented in 
+             case Area3DPtg.sid+0x40 :     // 0x7b     openOffice.org doc.
+
                 retval = new Area3DPtg(data, offset);
                 break;
 
-            case Ref3DPtg.sid:
+            case Ref3DPtg.sid:            // 0x3a     These 3 values 
+             case Ref3DPtg.sid+0x20:       // 0x5a     documented in 
+             case Ref3DPtg.sid+0x40:       // 0x7a     openOffice.org doc.
+
                 retval = new Ref3DPtg(data, offset);
                 break;
                 
