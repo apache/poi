@@ -231,7 +231,7 @@ public class TestWrite extends TestCase
                     catch (Exception ex)
                     {
                         ex.printStackTrace();
-                        throw new RuntimeException(ex);
+                        throw new RuntimeException(ex.toString());
                     }
                 }
 
@@ -259,7 +259,7 @@ public class TestWrite extends TestCase
             catch (Exception ex)
             {
                 ex.printStackTrace();
-                throw new RuntimeException(ex);
+                throw new RuntimeException(ex.toString());
             }
         }
     }
