@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<!DOCTYPE book PUBLIC "-//APACHE//DTD Cocoon Documentation Book V1.0//EN" "./dtd/book-cocoon-v10.dtd">
+<!DOCTYPE book PUBLIC "-//APACHE//DTD Cocoon Documentation Book V1.0//EN" "../../dtd/book-cocoon-v10.dtd">
 
-<book software="Poi"
-      title="Dokumentation für das POI Projekt"
-      copyright="@year@ Poi Project"
+<book software="POI"
+      title="Dokumentation des POI-Projekts"
+      copyright="@year@ POI Project"
       xmlns:xlink="http://www.w3.org/1999/xlink">
 
   <menu label="Gemeinschaft">
     <menu-item label="Neuigkeiten" href="../../news.html"/>
     <menu-item label="Änderungen" href="../../changes.html"/>
     <menu-item label="Aufgaben" href="../../todo.html"/>
-    <menu-item label="Sich beteiligen" href="../../getinvolved/index.html"/>
+    <menu-item label="Mitmachen" href="../../getinvolved/index.html"/>
     <menu-item label="Unsere Vision" href="../../plan/POI20Vision.html"/>
     <menu-item label="Geschichte und Zukunft" href="../../historyandfuture.html"/>
     <menu-item label="Wer wir sind" href="../../who.html"/>
@@ -40,14 +40,31 @@
   <menu label="Code">
     <menu-item label="Quellcode" href="http://jakarta.apache.org/poi/javadocs/javasrc/"/>
     <menu-item label="CVS" href="http://jakarta.apache.org/site/cvsindex.html"/>
-    <menu-item label="Die wichtigsten Bugs" href="http://nagoya.apache.org/bugzilla/buglist.cgi?votes=1&amp;product=POI&amp;order=bugs.votes"/>
-    <menu-item label="Bug Datenbank" href="http://nagoya.apache.org/bugzilla/buglist.cgi?product=POI"/>
+    <menu-item label="Die wichtigsten Fehler" href="http://nagoya.apache.org/bugzilla/buglist.cgi?votes=1&amp;product=POI&amp;order=bugs.votes"/>
+    <menu-item label="Fehlerdatenbank" href="http://nagoya.apache.org/bugzilla/buglist.cgi?product=POI"/>
     <menu-item label="Liste der Patches" href="http://nagoya.apache.org/bugzilla/buglist.cgi?product=POI&amp;short_desc=%5BPATCH%5D&amp;short_desc_type=allwordssubstr"/>
 
-    <menu-item label="Resultat der JUnit-Funktionstests" href="http://jakarta.apache.org/poi/tests/junit/"/>
-    <menu-item label="Resultat des Abhängigkeitstests" href="http://jakarta.apache.org/poi/metrics/jdepend/"/>
-    <menu-item label="Resultat des Stil-Tests" href="http://jakarta.apache.org/poi/metrics/checkstyle/"/>
+    <menu-item label="Ergebnis der JUnit-Funktionstests" href="http://jakarta.apache.org/poi/tests/junit/"/>
+    <menu-item label="Ergebnis des Abhängigkeitstests" href="http://jakarta.apache.org/poi/metrics/jdepend/"/>
+    <menu-item label="Ergebnis des Stiltests" href="http://jakarta.apache.org/poi/metrics/checkstyle/"/>
   </menu>
 
 </book>
 
+<!-- Keep this comment at the end of the file
+Local variables:
+mode: xml
+sgml-omittag:nil
+sgml-shorttag:nil
+sgml-namecase-general:nil
+sgml-general-insert-case:lower
+sgml-minimize-attributes:nil
+sgml-always-quote-attributes:t
+sgml-indent-step:2
+sgml-indent-data:t
+sgml-parent-document:nil
+sgml-exposed-tags:nil
+sgml-local-catalogs:nil
+sgml-local-ecat-files:nil
+End:
+-->
