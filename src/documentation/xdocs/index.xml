@@ -11,12 +11,8 @@
   </header>
   
   <body>
-    <section title="POI Survey">
-        <p>
-            How are you using HSSF?  <link href="http://www.coolsurveys.com/cgi-bin/Survey?POI">Vote now!</link>
-        </p>
-    </section>
     <section title="Logo Contest">
+        <!--
       <p>
         The POI committers have voted to
         <link href="http://jakarta.apache.org/ant">"innovate"</link> and hold a 
@@ -67,7 +63,17 @@
       <p>
         You can see the current submissions <link
         href="news/logocontest.html">here.</link>
-      </p>
+      </p>  -->
+        <p>
+            Entries for the POI logo contest are now finished.  Time to begin voting.  Remember, Andy really
+            likes Tiki gods, but Glen suggests voting for what you like.  :-)
+        </p>
+        <p>
+            <link href="http://jakarta.apache.org/poi/html/vote.html">Vote here now!!!</link>
+        </p>
+        <p>
+            <link href="http://vote.sparklit.com/web_poll.spark/640946">Click here</link> to see the current results.
+        </p>
     </section>
     <section title="Purpose">
       <p>
