@@ -136,7 +136,6 @@ public class RecordFactory
 
         try
         {
-            long  offset  = 0;
             short rectype = 0;
 
             do
@@ -148,7 +147,6 @@ public class RecordFactory
                     byte[] data    = new byte[ ( int ) recsize ];
 
                     in.read(data);
-                    offset += 4 + recsize;
                     Record[] recs = createRecord(rectype, recsize,
                                                  data);   // handle MulRK records
 
