@@ -636,7 +636,7 @@ public class BiffViewer
                 break;
                 
             case SheetPropertiesRecord.sid:
-                retval = new FormulaRecord(rectype, size, data);
+                retval = new SheetPropertiesRecord(rectype, size, data);
                 break;
 
 
