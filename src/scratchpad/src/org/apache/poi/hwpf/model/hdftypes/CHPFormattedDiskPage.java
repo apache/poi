@@ -53,6 +53,7 @@
  */
 package org.apache.poi.hwpf.model.hdftypes;
 
+import java.util.List;
 import java.util.ArrayList;
 
 import org.apache.poi.util.LittleEndian;
@@ -80,25 +81,40 @@ public class CHPFormattedDiskPage extends FormattedDiskPage
     private ArrayList _chpxList = new ArrayList();
     private ArrayList _overFlow;
 
+
+    public CHPFormattedDiskPage()
+    {
+    }
+
     /**
      * This constructs a CHPFormattedDiskPage from a raw fkp (512 byte array
      * read from a Word file).
      *
      * @param fkp The 512 byte array to read data from
      */
-    public CHPFormattedDiskPage(byte[] documentStream, int offset)
+    public CHPFormattedDiskPage(byte[] documentStream, int offset, int fcMin)
     {
       super(documentStream, offset);
 
       for (int x = 0; x < _crun; x++)
       {
-        _chpxList.add(new CHPX(getStart(x), getEnd(x), getGrpprl(x)));
+        _chpxList.add(new CHPX(getStart(x) - fcMin, getEnd(x) - fcMin, getGrpprl(x)));
       }
     }
 
     public CHPX getCHPX(int index)
     {
       return (CHPX)_chpxList.get(index);
+    }
+
+    public void fill(List filler)
+    {
+      _chpxList.addAll(filler);
+    }
+
+    public ArrayList getOverflow()
+    {
+      return _overFlow;
     }
 
     /**
@@ -117,15 +133,15 @@ public class CHPFormattedDiskPage extends FormattedDiskPage
             return new byte[0];
         }
 
-        int size = LittleEndian.getUnsignedByte(_fkp, chpxOffset);
+        int size = LittleEndian.getUnsignedByte(_fkp, _offset + chpxOffset);
 
         byte[] chpx = new byte[size];
 
-        System.arraycopy(_fkp, ++chpxOffset, chpx, 0, size);
+        System.arraycopy(_fkp, _offset + ++chpxOffset, chpx, 0, size);
         return chpx;
     }
 
-    protected byte[] toByteArray()
+    protected byte[] toByteArray(int fcMin)
     {
       byte[] buf = new byte[512];
       int size = _chpxList.size();
@@ -177,7 +193,7 @@ public class CHPFormattedDiskPage extends FormattedDiskPage
         chpx = (CHPX)_chpxList.get(x);
         byte[] grpprl = chpx.getGrpprl();
 
-        LittleEndian.putInt(buf, fcOffset, chpx.getStart());
+        LittleEndian.putInt(buf, fcOffset, chpx.getStart() + fcMin);
         buf[offsetOffset] = (byte)(grpprlOffset/2);
         System.arraycopy(grpprl, 0, buf, grpprlOffset, grpprl.length);
 
@@ -185,8 +201,8 @@ public class CHPFormattedDiskPage extends FormattedDiskPage
         offsetOffset += 1;
         fcOffset += FC_SIZE;
       }
-      // put the last papx's end in
-      LittleEndian.putInt(buf, fcOffset, chpx.getEnd());
+      // put the last chpx's end in
+      LittleEndian.putInt(buf, fcOffset, chpx.getEnd() + fcMin);
       return buf;
     }
 

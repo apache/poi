@@ -18,7 +18,7 @@
  *  distribution.
  *
  *  3. The end-user documentation included with the redistribution,
- *  if any, must include the following acknowledgment:
+  *  if any, must include the following acknowledgment:
  *  "This product includes software developed by the
  *  Apache Software Foundation (http://www.apache.org/)."
  *  Alternately, this acknowledgment may appear in the software itself,
@@ -58,20 +58,29 @@ package org.apache.poi.hwpf.model.hdftypes;
 
 
 import java.io.UnsupportedEncodingException;
+import java.io.IOException;
+
+import java.util.ArrayList;
+
+import org.apache.poi.hwpf.model.io.*;
 
 public class TextPieceTable
 {
-  StringBuffer _text = new StringBuffer();
+  ArrayList _textPieces = new ArrayList();
 
-  public TextPieceTable(byte[] documentStream, byte[] tableStream, int offset, int size)
+  public TextPieceTable(byte[] documentStream, byte[] tableStream, int offset,
+                        int size, int fcMin)
     throws UnsupportedEncodingException
   {
+    // get our plex of PieceDescriptors
     PlexOfCps pieceTable = new PlexOfCps(tableStream, offset, size, PieceDescriptor.getSizeInBytes());
 
     int multiple = 2;
     int length = pieceTable.length();
     PieceDescriptor[] pieces = new PieceDescriptor[length];
 
+    // iterate through piece descriptors raw bytes and create
+    // PieceDescriptor objects
     for (int x = 0; x < length; x++)
     {
       PropertyNode node = pieceTable.getProperty(x);
@@ -81,28 +90,62 @@ public class TextPieceTable
       {
         multiple = 1;
       }
-
     }
 
+    // using the PieceDescriptors, build our list of TextPieces.
     for (int x = 0; x < pieces.length; x++)
     {
       int start = pieces[x].getFilePosition();
       PropertyNode node = pieceTable.getProperty(x);
-      int textSize = node.getEnd() - node.getStart();
+      int nodeStart = node.getStart() - fcMin;
+      int nodeEnd = node.getEnd() - fcMin;
+      int textSize = nodeEnd - nodeStart;
 
       boolean unicode = pieces[x].isUnicode();
       String toStr = null;
       if (unicode)
       {
-        toStr = new String(documentStream, start, length * multiple, "UTF-16LE");
+        byte[] buf = new byte[textSize * multiple];
+        System.arraycopy(documentStream, start, buf, 0, textSize * multiple);
+        _textPieces.add(new TextPiece(nodeStart, nodeEnd, buf, pieces[x]));
       }
       else
       {
-        toStr = new String(documentStream, start, length, "ISO-8859-1");
+        byte[] buf = new byte[textSize];
+        System.arraycopy(documentStream, start, buf, 0, textSize);
+        _textPieces.add(new TextPiece(nodeStart, nodeEnd, buf, pieces[x]));
       }
-      _text.append(toStr);
+    }
+  }
+
+  public byte[] writeTo(HWPFOutputStream docStream)
+    throws IOException
+  {
+
+    PlexOfCps textPlex = new PlexOfCps(PieceDescriptor.getSizeInBytes());
+    int fcMin = docStream.getOffset();
+
+    int size = _textPieces.size();
+    for (int x = 0; x < size; x++)
+    {
+      TextPiece next = (TextPiece)_textPieces.get(x);
+      PieceDescriptor pd = next.getPieceDescriptor();
+
+      // set the text piece position to the current docStream offset.
+      pd.setFilePosition(docStream.getOffset());
+
+      // write the text to the docstream and save the piece descriptor to the
+      // plex which will be written later to the tableStream.
+      docStream.write(next.getBuf());
+      textPlex.addProperty(new PropertyNode(next.getStart() + fcMin,
+                                            next.getEnd() + fcMin,
+                                            pd.toByteArray()));
+
     }
 
+    return textPlex.toByteArray();
+
   }
+
 
 }

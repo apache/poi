@@ -64,8 +64,8 @@ package org.apache.poi.hwpf.model.hdftypes;
 public class PropertyNode implements Comparable
 {
   private byte[] _buf;
-  private int _fcStart;
-  private int _fcEnd;
+  private int _cpStart;
+  private int _cpEnd;
 
   /**
    * @param fcStart The start of the text for this property.
@@ -74,8 +74,8 @@ public class PropertyNode implements Comparable
    */
   public PropertyNode(int fcStart, int fcEnd, byte[] buf)
   {
-      _fcStart = fcStart;
-      _fcEnd = fcEnd;
+      _cpStart = fcStart;
+      _cpEnd = fcEnd;
       _buf = buf;
   }
   /**
@@ -83,14 +83,14 @@ public class PropertyNode implements Comparable
    */
   public int getStart()
   {
-      return _fcStart;
+      return _cpStart;
   }
   /**
    * @retrun The offset of the end of this property's text.
    */
   public int getEnd()
   {
-    return _fcEnd;
+    return _cpEnd;
   }
   /**
    * @return This property's property in copmpressed form.
@@ -104,12 +104,12 @@ public class PropertyNode implements Comparable
    */
   public int compareTo(Object o)
   {
-      int fcEnd = ((PropertyNode)o).getEnd();
-      if(_fcEnd == fcEnd)
+      int cpEnd = ((PropertyNode)o).getEnd();
+      if(_cpEnd == cpEnd)
       {
         return 0;
       }
-      else if(_fcEnd < fcEnd)
+      else if(_cpEnd < cpEnd)
       {
         return -1;
       }

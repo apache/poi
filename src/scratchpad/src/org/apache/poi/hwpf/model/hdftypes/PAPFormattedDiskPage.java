@@ -57,6 +57,7 @@ import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.util.LittleEndian;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Represents a PAP FKP. The style properties for paragraph and character runs
@@ -83,20 +84,36 @@ public class PAPFormattedDiskPage extends FormattedDiskPage
     private ArrayList _papxList = new ArrayList();
     private ArrayList _overFlow;
 
+
+    public PAPFormattedDiskPage()
+    {
+
+    }
+
     /**
      * Creates a PAPFormattedDiskPage from a 512 byte array
      *
      * @param fkp a 512 byte array.
      */
-    public PAPFormattedDiskPage(byte[] documentStream, int offset)
+    public PAPFormattedDiskPage(byte[] documentStream, int offset, int fcMin)
     {
       super(documentStream, offset);
 
       for (int x = 0; x < _crun; x++)
       {
-        _papxList.add(new PAPX(getStart(x), getEnd(x), getGrpprl(x), getParagraphHeight(x)));
+        _papxList.add(new PAPX(getStart(x) - fcMin, getEnd(x) - fcMin, getGrpprl(x), getParagraphHeight(x)));
       }
       _fkp = null;
+    }
+
+    public void fill(List filler)
+    {
+      _papxList.addAll(filler);
+    }
+
+    public ArrayList getOverflow()
+    {
+      return _overFlow;
     }
 
     public PAPX getPAPX(int index)
@@ -113,10 +130,10 @@ public class PAPFormattedDiskPage extends FormattedDiskPage
     protected byte[] getGrpprl(int index)
     {
         int papxOffset = 2 * LittleEndian.getUnsignedByte(_fkp, _offset + (((_crun + 1) * FC_SIZE) + (index * BX_SIZE)));
-        int size = 2 * LittleEndian.getUnsignedByte(_fkp, papxOffset);
+        int size = 2 * LittleEndian.getUnsignedByte(_fkp, _offset + papxOffset);
         if(size == 0)
         {
-            size = 2 * LittleEndian.getUnsignedByte(_fkp, ++papxOffset);
+            size = 2 * LittleEndian.getUnsignedByte(_fkp, _offset + ++papxOffset);
         }
         else
         {
@@ -124,11 +141,11 @@ public class PAPFormattedDiskPage extends FormattedDiskPage
         }
 
         byte[] papx = new byte[size];
-        System.arraycopy(_fkp, ++papxOffset, papx, 0, size);
+        System.arraycopy(_fkp, _offset + ++papxOffset, papx, 0, size);
         return papx;
     }
 
-    protected byte[] toByteArray()
+    protected byte[] toByteArray(int fcMin)
     {
       byte[] buf = new byte[512];
       int size = _papxList.size();
@@ -144,8 +161,9 @@ public class PAPFormattedDiskPage extends FormattedDiskPage
       {
         int grpprlLength = ((PAPX)_papxList.get(index)).getGrpprl().length;
 
-        // check to see if we have enough room for an FC, a BX, and the grpprl.
-        totalSize += (FC_SIZE + BX_SIZE + grpprlLength);
+        // check to see if we have enough room for an FC, a BX, and the grpprl
+        // and the 1 byte size of the grpprl.
+        totalSize += (FC_SIZE + BX_SIZE + grpprlLength + 1);
         // if size is uneven we will have to add one so the first grpprl falls
         // on a word boundary
         if (totalSize > 511 + (index % 2))
@@ -158,6 +176,10 @@ public class PAPFormattedDiskPage extends FormattedDiskPage
         if (grpprlLength % 2 > 0)
         {
           totalSize += 1;
+        }
+        else
+        {
+          totalSize += 2;
         }
       }
 
@@ -181,17 +203,29 @@ public class PAPFormattedDiskPage extends FormattedDiskPage
         byte[] phe = papx.getParagraphHeight().toByteArray();
         byte[] grpprl = papx.getGrpprl();
 
-        LittleEndian.putInt(buf, fcOffset, papx.getStart());
+        LittleEndian.putInt(buf, fcOffset, papx.getStart() + fcMin);
         buf[bxOffset] = (byte)(grpprlOffset/2);
         System.arraycopy(phe, 0, buf, bxOffset + 1, phe.length);
+
+        // refer to the section on PAPX in the spec. Places a size on the front
+        // of the PAPX. Has to do with how the grpprl stays on word
+        // boundaries.
+        if ((grpprl.length % 2) > 0)
+        {
+          buf[grpprlOffset++] = (byte)((grpprl.length + 1)/2);
+        }
+        else
+        {
+          buf[++grpprlOffset] = (byte)((grpprl.length)/2);
+          grpprlOffset++;
+        }
         System.arraycopy(grpprl, 0, buf, grpprlOffset, grpprl.length);
 
-        grpprlOffset += grpprl.length + (grpprl.length % 2);
         bxOffset += BX_SIZE;
         fcOffset += FC_SIZE;
       }
       // put the last papx's end in
-      LittleEndian.putInt(buf, fcOffset, papx.getEnd());
+      LittleEndian.putInt(buf, fcOffset, papx.getEnd() + fcMin);
       return buf;
     }
 

@@ -57,15 +57,20 @@
 package org.apache.poi.hwpf.model.hdftypes;
 
 import java.util.ArrayList;
+import java.io.OutputStream;
+import java.io.IOException;
 
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.hwpf.model.io.*;
+
 
 public class CHPBinTable
 {
-  ArrayList _textRuns;
+  ArrayList _textRuns = new ArrayList();
 
-  public CHPBinTable(byte[] documentStream, byte[] tableStream, int offset, int size)
+  public CHPBinTable(byte[] documentStream, byte[] tableStream, int offset,
+                     int size, int fcMin)
   {
     PlexOfCps binTable = new PlexOfCps(tableStream, offset, size, 4);
 
@@ -78,7 +83,7 @@ public class CHPBinTable
       int pageOffset = POIFSConstants.BIG_BLOCK_SIZE * pageNum;
 
       CHPFormattedDiskPage cfkp = new CHPFormattedDiskPage(documentStream,
-        pageOffset);
+        pageOffset, fcMin);
 
       int fkpSize = cfkp.size();
 
@@ -88,5 +93,64 @@ public class CHPBinTable
       }
     }
   }
+
+  public void writeTo(HWPFFileSystem sys, int fcMin)
+    throws IOException
+  {
+
+    HWPFOutputStream docStream = sys.getStream("WordDocument");
+    OutputStream tableStream = sys.getStream("1Table");
+
+    PlexOfCps binTable = new PlexOfCps(4);
+
+    // each FKP must start on a 512 byte page.
+    int docOffset = docStream.getOffset();
+    int mod = docOffset % POIFSConstants.BIG_BLOCK_SIZE;
+    if (mod != 0)
+    {
+      byte[] padding = new byte[POIFSConstants.BIG_BLOCK_SIZE - mod];
+      docStream.write(padding);
+    }
+
+    // get the page number for the first fkp
+    docOffset = docStream.getOffset();
+    int pageNum = docOffset/POIFSConstants.BIG_BLOCK_SIZE;
+
+    // get the ending fc
+    int endingFc = ((PropertyNode)_textRuns.get(_textRuns.size() - 1)).getEnd();
+    endingFc += fcMin;
+
+
+    ArrayList overflow = _textRuns;
+    byte[] intHolder = new byte[4];
+    do
+    {
+      PropertyNode startingProp = (PropertyNode)overflow.get(0);
+      int start = startingProp.getStart() + fcMin;
+
+      CHPFormattedDiskPage cfkp = new CHPFormattedDiskPage();
+      cfkp.fill(overflow);
+
+      byte[] bufFkp = cfkp.toByteArray(fcMin);
+      docStream.write(bufFkp);
+      overflow = cfkp.getOverflow();
+
+      int end = endingFc;
+      if (overflow != null)
+      {
+        end = ((PropertyNode)overflow.get(0)).getEnd();
+      }
+
+      LittleEndian.putInt(intHolder, pageNum++);
+      binTable.addProperty(new PropertyNode(start, end, intHolder));
+
+    }
+    while (overflow != null);
+    tableStream.write(binTable.toByteArray());
+  }
+
+
+
+
 
 }

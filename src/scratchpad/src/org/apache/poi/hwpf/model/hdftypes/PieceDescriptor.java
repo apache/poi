@@ -63,9 +63,9 @@ public class PieceDescriptor
 {
 
   short descriptor;
-   BitField fNoParaLast = new BitField(0x01);
-   BitField fPaphNil = new BitField(0x02);
-   BitField fCopied = new BitField(0x04);
+   private static BitField fNoParaLast = new BitField(0x01);
+   private static BitField fPaphNil = new BitField(0x02);
+   private static BitField fCopied = new BitField(0x04);
   int fc;
   short prm;
   boolean unicode;
@@ -96,6 +96,11 @@ public class PieceDescriptor
   public int getFilePosition()
   {
     return fc;
+  }
+
+  public void setFilePosition(int pos)
+  {
+    fc = pos;
   }
 
   public boolean isUnicode()
