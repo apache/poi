@@ -19,33 +19,23 @@
 
   <table>
    <tr>
-    <td><strong>Poi-general-user</strong></td>
-    <td><strong>Poi-devel</strong></td>
+    <td><strong>poi-user</strong></td>
+    <td><strong>poi-dev</strong></td>
     <td><strong>Regularly updated?</strong></td>
     <td><strong>Searchable?</strong></td>
     <td><strong>Speed</strong></td>
     <td><strong>Other features?</strong></td>
    </tr>
    <tr>
-    <td><link href="http://sourceforge.net/mailarchive/forum.php?forum_id=2802">
-    Sourceforge</link></td>
-    <td><link href="http://sourceforge.net/mailarchive/forum.php?forum_id=4380">
-    Sourceforge</link></td>
+    <td><link href="http://www.mail-archive.com/poi-user@jakarta.apache.org">
+    Apache</link></td>
+    <td><link href="http://www.mail-archive.com/poi-dev@jakarta.apache.org">
+    Apache</link></td>
     <td>Yes</td>
-    <td>Onsite, by subject/author/body</td>
-    <td>4/5</td>
-    <td>all Sourceforge features</td>
+    <td>?</td>
+    <td>?</td>
+    <td>?</td>
    </tr>
-   <tr>
-    <td><link href="http://www.geocrawler.com/redir-sf.php3?list=poi-general-user">
-    GeoCrawler</link></td>
-    <td><link href="http://www.geocrawler.com/redir-sf.php3?list=poi-devel">
-    GeoCrawler</link></td>
-    <td>?</td>
-    <td>?</td>
-    <td>?</td>
-    <td>?</td>
-   </tr>   
   </table>
  </s1>
 

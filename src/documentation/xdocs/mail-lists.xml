@@ -29,8 +29,8 @@
   </s1>
 
   <s1 title="Poi Users">
-   <p><link href="http://lists.sourceforge.net/lists/listinfo/poi-general-user">Subscribe</link>
-      <link href="http://lists.sourceforge.net/lists/listinfo/poi-general-user">Unsubscribe</link>
+   <p><link href="mailto://poi-user-subscribe@jakarta.apache.org">Subscribe</link>
+      <link href="mailto://poi-user-unsubscribe@jakarta.apache.org">Unsubscribe</link>
    </p>
 
    <p>The general list, for problems, bug reports, asking for advice on how
@@ -65,8 +65,8 @@
   </s1>
 
   <s1 title="Poi Dev">
-   <p><link href="http://lists.sourceforge.net/lists/listinfo/poi-devel">Subscribe</link>
-      <link href="http://lists.sourceforge.net/lists/listinfo/poi-devel">Unsubscribe</link>
+   <p><link href="mailto://poi-dev-subscribe@jakarta.apache.org">Subscribe</link>
+      <link href="mailto://poi-dev-unsubscribe@jakarta.apache.org">Unsubscribe</link>
    </p>
 
    <p>This list is for developers <strong>working on</strong> or wanting to work on
