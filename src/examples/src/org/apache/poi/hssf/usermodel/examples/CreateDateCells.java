@@ -85,7 +85,7 @@ public class CreateDateCells
         // we style the second cell as a date (and time).  It is important to create a new cell style from the workbook
         // otherwise you can end up modifying the built in style and effecting not only this cell but other cells.
         HSSFCellStyle cellStyle = wb.createCellStyle();
-        cellStyle.setDataFormat(HSSFDataFormat.getFormat("m/d/yy h:mm"));
+        cellStyle.setDataFormat(HSSFDataFormat.getBuiltinFormat("m/d/yy h:mm"));
         cell = row.createCell((short)1);
         cell.setCellValue(new Date());
         cell.setCellStyle(cellStyle);

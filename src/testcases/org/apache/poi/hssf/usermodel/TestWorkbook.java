@@ -234,6 +234,35 @@ public class TestWorkbook
     }
 
     /**
+     * TEST NAME:  Test Read Simple w/ Data Format<P>
+     * OBJECTIVE:  Test that HSSF can read a simple spreadsheet (SimpleWithDataFormat.xls).<P>
+     * SUCCESS:    HSSF reads the sheet.  Matches values in their particular positions and format is correct<P>
+     * FAILURE:    HSSF does not read a sheet or excepts.  HSSF cannot identify values
+     *             in the sheet in their known positions.<P>
+     *
+     */
+
+    public void testReadSimpleWithDataFormat()
+        throws IOException
+    {
+        String filename = System.getProperty("HSSF.testdata.path");
+
+        filename = filename + "/SimpleWithDataFormat.xls";
+        FileInputStream stream   = new FileInputStream(filename);
+        POIFSFileSystem fs       = new POIFSFileSystem(stream);
+        HSSFWorkbook    workbook = new HSSFWorkbook(fs);
+        HSSFSheet       sheet    = workbook.getSheetAt(0);
+        HSSFDataFormat  format   = workbook.createDataFormat();
+
+        assertEquals(1.25,
+                     sheet.getRow(( short ) 0).getCell(( short ) 0)
+                         .getNumericCellValue(), 1e-10);
+
+	assertEquals(format.getFormat("0.0"), 0xa4);
+        stream.close();
+    }
+
+    /**
      * TEST NAME:  Test Read Employee Simple <P>
      * OBJECTIVE:  Test that HSSF can read a simple spreadsheet (Employee.xls).<P>
      * SUCCESS:    HSSF reads the sheet.  Matches values in their particular positions.<P>

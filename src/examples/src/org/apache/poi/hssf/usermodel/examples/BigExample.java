@@ -109,7 +109,7 @@ public class BigExample
         //set cell stlye
         cs.setFont(f);
         //set the cell format see HSSFDataFromat for a full list
-        cs.setDataFormat(HSSFDataFormat.getFormat("($#,##0_);[Red]($#,##0)"));
+        cs.setDataFormat(HSSFDataFormat.getBuiltinFormat("($#,##0_);[Red]($#,##0)"));
 
         //set a thin border
         cs2.setBorderBottom(cs2.BORDER_THIN);

@@ -84,6 +84,7 @@ import org.apache.poi.hssf.util.HSSFColor;
  * Kit (Microsoft Press) and the documentation at http://sc.openoffice.org/excelfileformat.pdf
  * before even attempting to use this.
  *
+ * @author  Shawn Laubach (shawnlaubach at cox.net) (Data Formats)
  * @author  Andrew C. Oliver (acoliver at apache dot org)
  * @author  Glen Stampoultzis (glens at apache.org)
  * @author  Sergei Kozello (sergeikozello at mail.ru)
@@ -130,6 +131,8 @@ public class Workbook {
 
     protected ArrayList        boundsheets = new ArrayList();
 
+    protected ArrayList        formats = new ArrayList();
+
     protected ArrayList        names = new ArrayList();
 
     protected int              bspos       =
@@ -150,6 +153,8 @@ public class Workbook {
     0;   // holds the position of last name record
     private int                supbookpos   =
     0;   // holds the position of sup book
+    private short              maxformatid  =
+    -1;  // holds the max format id
 
     private static POILogger   log         =
     POILogFactory.getLogger(Workbook.class);
@@ -238,6 +243,11 @@ public class Workbook {
                     log.log(DEBUG, "found SupBook record at " + k);
                     retval.supbookpos = k;
                     break;
+	        case FormatRecord.sid :
+		    log.log(DEBUG, "found format record at " + k);
+		    retval.formats.add(rec);
+		    retval.maxformatid = retval.maxformatid >= ((FormatRecord)rec).getIndexCode() ? retval.maxformatid : ((FormatRecord)rec).getIndexCode();
+		    break;
 
                 default :
             }
@@ -263,6 +273,7 @@ public class Workbook {
         log.log(DEBUG, "creating new workbook from scratch");
         Workbook  retval  = new Workbook();
         ArrayList records = new ArrayList(30);
+        ArrayList formats = new ArrayList(8);
 
         records.add(retval.createBOF());
         records.add(retval.createInterfaceHdr());
@@ -293,14 +304,17 @@ public class Workbook {
         records.add(retval.createFont());
         retval.fontpos  = records.size() - 1;   // last font record postion
         retval.numfonts = 4;
-        records.add(retval.createFormat(0));
-        records.add(retval.createFormat(1));
-        records.add(retval.createFormat(2));
-        records.add(retval.createFormat(3));
-        records.add(retval.createFormat(4));
-        records.add(retval.createFormat(5));
-        records.add(retval.createFormat(6));
-        records.add(retval.createFormat(7));
+
+        // set up format records
+	for (int i = 0; i <= 7; i++) {
+            Record    rec;         
+	    rec = retval.createFormat(i);
+	    retval.maxformatid = retval.maxformatid >= ((FormatRecord)rec).getIndexCode() ? retval.maxformatid : ((FormatRecord)rec).getIndexCode();
+	    formats.add(rec);
+	    records.add(rec);
+	}
+	retval.formats = formats;
+
         for (int k = 0; k < 21; k++) {
             records.add(retval.createExtendedFormat(k));
             retval.numxfs++;
@@ -1796,6 +1810,51 @@ public class Workbook {
         return rec;
     }
 
+    /**
+     * Returns a format index that matches the passed in format.  It does not tie into HSSFDataFormat.
+     * @param format the format string
+     * @param createIfNotFound creates a new format if format not found
+     * @return the format id of a format that matches or -1 if none found and createIfNotFound
+     */
+    public short getFormat(String format, boolean createIfNotFound) {
+	Iterator iterator;
+	for (iterator = formats.iterator(); iterator.hasNext();) {
+	    FormatRecord r = (FormatRecord)iterator.next();
+	    if (r.getFormatString().equals(format)) {
+		return r.getIndexCode();
+	    }
+	}
+
+	if (createIfNotFound) {
+	    return createFormat(format);
+	}
+
+	return -1;
+    }
+
+    /**
+     * Creates a FormatRecord, inserts it, and returns the index code.
+     * @param format the format string
+     * @return the index code of the format record.
+     * @see org.apache.poi.hssf.record.FormatRecord
+     * @see org.apache.poi.hssf.record.Record
+     */
+    public short createFormat(String format) {
+	FormatRecord rec = new FormatRecord();
+	maxformatid = maxformatid >= (short)0xa4 ? (short)(maxformatid + 1) : (short)0xa4; //Starting value from M$ empiracle study.
+	rec.setIndexCode(maxformatid);
+	rec.setFormatStringLength((byte)format.length());
+	rec.setFormatString(format);
+
+	int pos = 0;
+	while (pos < records.size() && ((Record)records.get(pos)).getSid() != FormatRecord.sid) 
+	    pos++;
+	pos += formats.size();
+	formats.add(rec);
+	records.add(pos, rec);
+	return maxformatid;
+     }
+
 
     /**
      * Returns the first occurance of a record matching a particular sid.
@@ -1803,6 +1862,22 @@ public class Workbook {
 
     public Record findFirstRecordBySid(short sid) {
         for (Iterator iterator = records.iterator(); iterator.hasNext(); ) {
+            Record record = ( Record ) iterator.next();
+            
+            if (record.getSid() == sid) {
+                return record;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Returns the next occurance of a record matching a particular sid.
+     */
+    public Record findNextRecordBySid(short sid, int pos) {
+        Iterator iterator = records.iterator();
+	for (;pos > 0 && iterator.hasNext(); iterator.next(),pos--);
+	while (iterator.hasNext()) {
             Record record = ( Record ) iterator.next();
 
             if (record.getSid() == sid) {
