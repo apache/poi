@@ -337,6 +337,21 @@ printed.
   </target>     
 
   <!-- ================================== -->
+  <!--       Generates the XML javadocs   -->
+  <!-- ================================== -->
+  
+  <target  name="xjavadocs"   depends="-init"
+           description="Compile java source code">
+
+    <antcall target="call-cent">
+      <param name="cent-name"   value="centipede"/> 
+      <param name="cent-target" value="xjavadocs"/> 
+    </antcall>
+    
+  </target>     
+
+
+  <!-- ================================== -->
   <!--       Generate UML -WIP-           -->
   <!-- ================================== -->
   
@@ -345,11 +360,17 @@ printed.
     
     <javadoc packagenames="${xgump.module.project.package}.*"
              sourcepath="${xlayout.build.java.dir}"
-             destdir="${xlayout.build.documentation.javadocs.dir}"
+             destdir="${xlayout.build.documentation.metrics.dir}"
              failonerror="true">
- 
+<!-- 
      <classpath>
-       <path>
+       <path> 
+       <fileset dir="."> 
+        <patternset>
+         <include name="${cents.dir}/uml.${cent.dir.suffix}/*/*.jar"/>
+         <include name="${cents.dir}/uml.${cent.dir.suffix}/*/*.zip"/>
+        </patternset>
+       </fileset>         
           <fileset dir="${xlayout.library.dir}" casesensitive="yes"> 
            <patternset>
              <include name="*/*.jar"/>
@@ -358,12 +379,27 @@ printed.
          </fileset>  
        </path> 
      </classpath>
-     
-      <doclet name="JP.co.esm.caddies.doclets.UMLDoclet"
-             path="./tools/antipede/lib/UMLDoclet.jar">
-        <param name="-d" value="docs/metrics"/>
+     <bootclasspath>
+       <path> 
+       <fileset dir="." casesensitive="yes"> 
+        <patternset>
+         <include name="${cents.dir}/uml.${cent.dir.suffix}/*/*.jar"/>
+         <include name="${cents.dir}/uml.${cent.dir.suffix}/*/*.zip"/>
+        </patternset>
+       </fileset>         
+          <fileset dir="${xlayout.library.dir}" casesensitive="yes"> 
+           <patternset>
+             <include name="*/*.jar"/>
+             <include name="*/*.zip"/>
+           </patternset>
+         </fileset>  
+       </path> 
+     </bootclasspath>    
+-->
+    
+      <doclet name="JP.co.esm.caddies.doclets.UMLDoclet">
      </doclet>
-     
+
     </javadoc>
 
   </target>     

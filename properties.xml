@@ -32,8 +32,20 @@
          jakarta-site
          scarab-site
          xml-apache-site
-         cocoon-printer  -->       
-    <skin name="jakarta-site"/>
+         basic -->       
+    <skin name="jakarta-site">
+     <navlinks>
+      <link1 href="http://www.apache.org/">apache.org</link1>
+      <link2 href="http://jakarta.apache.org/">jakarta.apache.org</link2>
+      <link3 href="http://jakarta.apache.org/poi/">jakarta.apache.org/poi</link3>
+     </navlinks>
+     <logo>
+      <group src="images/group-logo.gif" href="http://jakarta.apache.org"/>
+      <project src="images/project-logo.gif" href="http://jakarta.apache.org/poi/"/>
+     </logo>
+    
+    </skin>
+    
   </forrest>    
   
 </properties>

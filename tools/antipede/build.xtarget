@@ -87,7 +87,31 @@
   <!--  Used only by the -init target   -->
   <!-- =================================--> 
   <target  name="-cent-unjar">
-    <unjar src="${current.cent.jar}" dest="${cents.dir}"/> 
+      
+    <basename property="current.cent.jar.name" file="${current.cent.jar}" suffix=".jar"/>
+    
+    <condition property="cent-unjar.not.required">
+      <and>
+        <uptodate targetfile="${current.cent.jar}">
+          <srcfiles dir= "." includes="${cents.dir}/*.${cent.dir.suffix}/${task.properties.name}"/>      
+        </uptodate>
+        <available type="dir" file="${cents.dir}/${current.cent.jar.name}"/>
+      </and>
+    </condition>
+ 
+   <antipede-if>
+     <equals arg1="cent-unjar.not.required" arg2="true" />
+     <then>
+      <echo message="${current.cent.jar} is uptodate with respect to ${current.cent.jar.name}." />
+      <echo message="No need to expand it." />
+     </then>
+    <else>
+      <echo message="Expanding ${current.cent.jar}..." />
+      <unjar src="${current.cent.jar}" dest="${cents.dir}"/> 
+      <echo message="... ${current.cent.jar} expanded in ${current.cent.jar.name}." />    
+    </else>     
+   </antipede-if>    
+
   </target>       
         
   <!-- ============================================= -->

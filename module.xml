@@ -42,6 +42,8 @@
     Why not?
   </why>
   
+  <vendor>Apache Software Foundation</vendor>
+
   <licence>This software is released under the Apache Public License 1.1. 
            For detailed legal and licensing issues, please read the LICENSE.* files
            in the /legal directory.
