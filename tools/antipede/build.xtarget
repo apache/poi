@@ -181,7 +181,7 @@
   <!-- =================================--> 
   <target  name="-cent-unjar-check">
       
-    <basename property="current.cent.jar.name" file="${current.cent.jar}" suffix=".jar"/>
+    <basename property="current.cent.jar.name" file="${current.cent.jar}" suffix=".cent.jar"/>
     
     <condition property="cent-unjar.not.required">
       <and>
