@@ -428,9 +428,9 @@ public class CharacterRun
     _chpx.addSprm(SPRM_HIGHLIGHT, color);
   }
 
-  public int getFontNameIndex()
+  public String getFontName()
   {
-    return _props.getFtcAscii();
+    return _doc.getFontTable().getMainFont(_props.getFtcAscii());
   }
 
 

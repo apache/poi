@@ -69,8 +69,7 @@ public class Word2Forrest
       {
         int cruns = p.numCharacterRuns ();
         CharacterRun run = p.getCharacterRun (0);
-        int ftcAscii = run.getFontNameIndex ();
-        String fontName = doc.getFontTable().getMainFont(ftcAscii);
+        String fontName = run.getFontName();
         if (fontName.startsWith ("Courier"))
         {
           if (!inCode)

@@ -19,6 +19,7 @@ package org.apache.poi.hwpf.model;
 import java.util.ArrayList;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.List;
 
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.hwpf.model.io.*;
@@ -31,16 +32,19 @@ public class SectionTable
   private static final int SED_SIZE = 12;
 
   private ArrayList _sections = new ArrayList();
+  private List _text;
 
   public SectionTable()
   {
   }
 
+
   public SectionTable(byte[] documentStream, byte[] tableStream, int offset,
-                      int size, int fcMin)
+                      int size, int fcMin,
+                      List tpt)
   {
     PlexOfCps sedPlex = new PlexOfCps(tableStream, offset, size, SED_SIZE);
-
+    _text = tpt;
     int length = sedPlex.length();
 
     for (int x = 0; x < length; x++)
@@ -53,7 +57,7 @@ public class SectionTable
       // check for the optimization
       if (fileOffset == 0xffffffff)
       {
-        _sections.add(new SEPX(sed, node.getStart(), node.getEnd(), new byte[0]));
+        _sections.add(new SEPX(sed, CPtoFC(node.getStart()), CPtoFC(node.getEnd()), new byte[0]));
       }
       else
       {
@@ -62,7 +66,7 @@ public class SectionTable
         byte[] buf = new byte[sepxSize];
         fileOffset += LittleEndian.SHORT_SIZE;
         System.arraycopy(documentStream, fileOffset, buf, 0, buf.length);
-        _sections.add(new SEPX(sed, node.getStart(), node.getEnd(), buf));
+        _sections.add(new SEPX(sed, CPtoFC(node.getStart()), CPtoFC(node.getEnd()), buf));
       }
     }
   }
@@ -81,6 +85,50 @@ public class SectionTable
     }
   }
 
+  private int CPtoFC(int cp)
+  {
+    int size = _text.size();
+    int x = 0;
+    int end = 0;
+    int fc = 0;
+    for (; x < size; x++)
+    {
+      TextPiece piece = (TextPiece)_text.get(x);
+      int currentStart = end;
+      end += ((piece.getEnd()- piece.getStart())/(piece.usesUnicode() ? 2 : 1));
+      if (cp <= end)
+      {
+        fc += ((cp - currentStart) * (piece.usesUnicode() ? 2 : 1));
+        break;
+      }
+      else
+      {
+        fc += (piece.getEnd() - piece.getStart());
+      }
+    }
+    return fc;
+  }
+
+  private int FCtoCP(int fc)
+  {
+    int size = _text.size();
+    int cp = 0;
+    for (int x = 0; x < size; x++)
+    {
+      TextPiece piece = (TextPiece)_text.get(x);
+
+      if (fc <= piece.getEnd())
+      {
+        cp += ((fc - piece.getStart())/ (piece.usesUnicode() ? 2 : 1));
+        break;
+      }
+      else
+      {
+        cp += ((piece.getEnd() - piece.getStart())/ (piece.usesUnicode() ? 2 : 1));
+      }
+    }
+    return cp;
+  }
 
   public ArrayList getSections()
   {
@@ -115,7 +163,7 @@ public class SectionTable
       sed.setFc(offset);
 
       // add the section descriptor bytes to the PlexOfCps.
-      GenericPropertyNode property = new GenericPropertyNode(sepx.getStart(), sepx.getEnd(), sed.toByteArray());
+      GenericPropertyNode property = new GenericPropertyNode(FCtoCP(sepx.getStart()), FCtoCP(sepx.getEnd()), sed.toByteArray());
       plex.addProperty(property);
 
       offset = docStream.getOffset();

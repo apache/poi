@@ -252,7 +252,7 @@ public class Range
       TextPiece piece = (TextPiece)_text.get(x);
       int start = _start > piece.getStart() ? _start - piece.getStart() : 0;
       int end = _end <= piece.getEnd() ? _end - piece.getStart() : piece.getEnd() - piece.getStart();
-      sb.append(piece.getStringBuffer().substring(start, end));
+      sb.append(piece.substring(start, end));
     }
     return sb.toString();
   }
@@ -312,9 +312,9 @@ public class Range
     int insertIndex = _start - tp.getStart();
     sb.insert(insertIndex, text);
     int adjustedLength = _doc.getTextTable().adjustForInsert(_textStart, text.length());
-    _doc.getCharacterTable().adjustForInsert(_textStart, adjustedLength);
-    _doc.getParagraphTable().adjustForInsert(_textStart, adjustedLength);
-    _doc.getSectionTable().adjustForInsert(_textStart, adjustedLength);
+    _doc.getCharacterTable().adjustForInsert(_charStart, adjustedLength);
+    _doc.getParagraphTable().adjustForInsert(_parStart, adjustedLength);
+    _doc.getSectionTable().adjustForInsert(_sectionStart, adjustedLength);
     adjustForInsert(text.length());
 
     return getCharacterRun(0);
@@ -329,11 +329,17 @@ public class Range
   public CharacterRun insertAfter(String text)
   {
     initAll();
+
     int listIndex = _textEnd - 1;
     TextPiece tp = (TextPiece)_text.get(listIndex);
     StringBuffer sb = (StringBuffer)tp.getStringBuffer();
 
     int insertIndex = _end - tp.getStart();
+
+    if (tp.getStringBuffer().charAt(_end - 1) == '\r')
+    {
+      insertIndex--;
+    }
     sb.insert(insertIndex, text);
     int adjustedLength = _doc.getTextTable().adjustForInsert(listIndex, text.length());
     _doc.getCharacterTable().adjustForInsert(_charEnd - 1, adjustedLength);
@@ -566,6 +572,31 @@ public class Range
 
     return (ListEntry)insertBefore(props, styleIndex);
   }
+
+  /**
+   * Inserts a list into the beginning of this range.
+   *
+   * @param props The properties of the list entry. All list entries are
+   *        paragraphs.
+   * @param listID The id of the list that contains the properties.
+   * @param level The indentation level of the list.
+   * @param styleIndex The base style's index in the stylesheet.
+   * @return The empty ListEntry that is now part of the document.
+   */
+  public ListEntry insertAfter(ParagraphProperties props, int listID, int level, int styleIndex)
+  {
+    ListTables lt = _doc.getListTables();
+    if (lt.getLevel(listID, level) == null)
+    {
+      throw new NoSuchElementException("The specified list and level do not exist");
+    }
+    int ilfo = lt.getOverrideIndexFromListID(listID);
+    props.setIlfo(ilfo);
+    props.setIlvl((byte)level);
+
+    return (ListEntry)insertAfter(props, styleIndex);
+  }
+
 
   /**
    * Gets the character run at index. The index is relative to this range.

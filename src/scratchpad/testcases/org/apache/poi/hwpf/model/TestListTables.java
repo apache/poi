@@ -22,19 +22,25 @@ public class TestListTables
     FileInformationBlock fib = _hWPFDocFixture._fib;
     byte[] tableStream = _hWPFDocFixture._tableStream;
 
-    ListTables listTables = new ListTables(tableStream, fib.getFcPlcfLst(), fib.getFcPlfLfo());
+    int listOffset = fib.getFcPlcfLst();
+    int lfoOffset = fib.getFcPlfLfo();
+    if (listOffset != 0 && fib.getLcbPlcfLst() != 0)
+    {
+      ListTables listTables = new ListTables (tableStream, fib.getFcPlcfLst (),
+                                              fib.getFcPlfLfo ());
+      HWPFFileSystem fileSys = new HWPFFileSystem ();
 
-    HWPFFileSystem fileSys = new HWPFFileSystem();
+      HWPFOutputStream tableOut = fileSys.getStream ("1Table");
 
-    HWPFOutputStream  tableOut = fileSys.getStream("1Table");
+      listTables.writeListDataTo (tableOut);
+      int offset = tableOut.getOffset ();
+      listTables.writeListOverridesTo (tableOut);
 
-    listTables.writeListDataTo(tableOut);
-    int offset = tableOut.getOffset();
-    listTables.writeListOverridesTo(tableOut);
+      ListTables newTables = new ListTables (tableOut.toByteArray (), 0, offset);
 
-    ListTables newTables = new ListTables(tableOut.toByteArray(), 0, offset);
+      assertEquals(listTables, newTables);
 
-    assertEquals(listTables, newTables);
+    }
   }
 
 }

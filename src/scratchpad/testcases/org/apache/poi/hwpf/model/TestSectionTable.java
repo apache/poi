@@ -80,10 +80,13 @@ public class TestSectionTable
     byte[] tableStream = _hWPFDocFixture._tableStream;
     int fcMin = fib.getFcMin();
 
+    ComplexFileTable cft = new ComplexFileTable(mainStream, tableStream, fib.getFcClx(), fcMin);
+    TextPieceTable tpt = cft.getTextPieceTable();
+
     SectionTable sectionTable = new SectionTable(mainStream, tableStream,
                                                  fib.getFcPlcfsed(),
                                                  fib.getLcbPlcfsed(),
-                                                 fcMin);
+                                                 fcMin, tpt.getTextPieces());
     HWPFFileSystem fileSys = new HWPFFileSystem();
 
     sectionTable.writeTo(fileSys, 0);
@@ -93,12 +96,25 @@ public class TestSectionTable
     byte[] newTableStream = tableOut.toByteArray();
     byte[] newMainStream = mainOut.toByteArray();
 
-    SectionTable newSectionTable = new SectionTable(newMainStream, newTableStream, 0, newTableStream.length, 0);
+    SectionTable newSectionTable = new SectionTable(newMainStream, newTableStream, 0, newTableStream.length, 0, tpt.getTextPieces());
 
     ArrayList oldSections = sectionTable.getSections();
     ArrayList newSections = newSectionTable.getSections();
 
     assertEquals(oldSections.size(), newSections.size());
+
+    //test for proper char offset conversions
+    PlexOfCps oldSedPlex = new PlexOfCps(tableStream, fib.getFcPlcfsed(),
+                                                      fib.getLcbPlcfsed(), 12);
+    PlexOfCps newSedPlex = new PlexOfCps(newTableStream, 0,
+                                         newTableStream.length, 12);
+    assertEquals(oldSedPlex.length(), newSedPlex.length());
+
+    for (int x = 0; x < oldSedPlex.length(); x++)
+    {
+      assertEquals(oldSedPlex.getProperty(x).getStart(), newSedPlex.getProperty(x).getStart());
+      assertEquals(oldSedPlex.getProperty(x).getEnd(), newSedPlex.getProperty(x).getEnd());
+    }
 
     int size = oldSections.size();
     for (int x = 0; x < size; x++)
