@@ -74,8 +74,8 @@
         </tr>        
         <tr>
           <td width="100%" align="right">
-            <a href="http://krysalis.org/"><img src="images/krysalis-compatible.png" alt="Krysalis Logo"/></a> 
-            <a href="http://xml.apache.org/cocoon/"><img src="images/built-with-cocoon.png" alt="Cocoon Logo"/></a> 
+            <a href="http://krysalis.org/"><img src="images/krysalis-compatible.jpg" alt="Krysalis Logo"/></a> 
+            <a href="http://xml.apache.org/cocoon/"><img src="images/built-with-cocoon.gif" alt="Cocoon Logo"/></a> 
           </td>
         </tr>
       </tbody>
