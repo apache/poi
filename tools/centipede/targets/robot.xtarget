@@ -73,3 +73,11 @@ tofile="${build.patchqueue}/patchqueue2text4dev.xsl"/>
            files="${build.patchqueue}/bugzillapatchqueue.txt"/> 
        
   </target>
+  
+  <!-- =================================================================== -->
+  <!-- Calls the targets needed for Gump                                   -->
+  <!-- =================================================================== -->  
+  <target name="jakarta-poi.gump" depends="all, testmodule">
+  </target>
+  
+  
