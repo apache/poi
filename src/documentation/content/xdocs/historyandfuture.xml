@@ -3,7 +3,7 @@
 
 <document>
   <header>
-    <title>Project History</title>
+    <title>Jakarta Poi - Project History</title>
     <authors>
       <person id="AO" name="Andrew C. Oliver" email="acoliver@apache.org"/>
     </authors>
@@ -12,10 +12,10 @@
   <body>
 
 
-    <section><title>Brief Project History</title>
+    <section><title>Jakarta Poi - Brief Project History</title>
 
         <p>The POI project was dreamed up back around April 2001, when
-        Andy Oliver landed a short term contract to do Java-based
+        Andrew Oliver landed a short term contract to do Java-based
         reporting to Excel. He'd done this project a few times before
         and knew right where to look for the tools he needed.
         Ironically, the API he used to use had skyrocketed from around
@@ -24,7 +24,7 @@
         recommended the client fork out the $10K.
         </p>
 
-        <p>Around June 2001, Andy started thinking how great it would
+        <p>Around June 2001, Andrew started thinking how great it would
         be to have an open source Java tool to do this and, while he
         had some spare time, he started on the project and learned
         about OLE 2 Compound Document Format. After hitting some real
@@ -32,19 +32,19 @@
         his local Java User's Group (JUG) and asked if anyone else
         would be interested. He lucked out and the most talented Java
         programmer he'd ever met, Marc Johnson, joined the project. He
-        ran rings around Andy at porting OLE 2 CDF and rewrote his
+        ran rings around Andrew at porting OLE 2 CDF and rewrote his
         skeletal code into a more sophisticated library. It took Marc
         a few iterations to get something they were happy with.
         </p>
 
-        <p>While Marc worked on that, Andy ported XLS to Java, based
+        <p>While Marc worked on that, Andrew ported XLS to Java, based
         on Marc's library. Several users wrote in asking to read XLS
         (not just write as had originally been planned) and one user
         had special requests for a different use for POIFS. Before
         long, the project scope had tripled.  POI 1.0 was released a
         month later than planned, but with far more features. Marc
         quickly wrote the serializer framework and HSSF Serializer in
-        record time and Andy banged out more documentation and worked
+        record time and Andrew banged out more documentation and worked
         on making people aware of the project
         </p>
 
@@ -52,12 +52,12 @@
           contact with Nicola -Ken- Barrozzi who gave them samples for
           the HSSF Serializer and help uncover its unfortunate bugs
           (which were promptly fixed).  More recently, Ken ported most
-          of the POI project documentation to XML from Andy's crappy
+          of the POI project documentation to XML from Andrew's crappy
           HTML docs he wrote with Star Office.
         </p>
 
         <p> Around the same time as the release, Glen Stampoultzis
-joined the project.  Glen was ticked off at Andy's flippant attitude
+joined the project.  Glen was ticked off at Andrew's flippant attitude
 towards adding graphing to HSSF.  Glen got so ticked off he decided to
 grab a hammer and do it himself.  Glen has already become an integral
 part of the POI development community; his contributions to HSSF have
@@ -65,10 +65,10 @@ already started making waves.
         </p>
 
         <p>Somewhere in there we decided to finally submit the project
-         to <link href="http://xml.apache.org/cocoon">The Apache
+         to <link href="http://cocoon.apache.org/">The Apache
          Cocoon Project</link>, only to discover the project had
          outgrown fitting nicely into just Cocoon long ago.
-         Furthermore, Andy started eyeing other projects he'd like to
+         Furthermore, Andrew started eyeing other projects he'd like to
          see POI functionality added to.  So it was decided to donate
          the Serializers and Generators to Cocoon, other POI
          integration components to other projects, and the POI APIs
@@ -79,7 +79,7 @@ already started making waves.
     </section>
 
     <section><title>What's next for POI</title>
-        <p>First we'll tackle this from a project standpoint: Well, we
+<!--        <p>First we'll tackle this from a project standpoint: Well, we
         made an offer to Microsoft and Actuate (tongue in cheek
         ... well mostly) that we'd quit the project and retire if
         they'd simply write us each a really large check. I've yet to
@@ -89,7 +89,7 @@ already started making waves.
         <p>Next, we've got some work to do here at Jakarta to finish
            integrating POI into the community.  Furthermore, we're
            still transitioning the Serializer to Cocoon.
-        </p>
+        </p>-->
         <p>HSSF, during the 2.0 cycle, will undergo a few
         optimizations. We'll also be adding new features like a full
         implementation of Formulas and custom text formats. We're
@@ -115,8 +115,8 @@ already started making waves.
         </p>
         <p>We're beginning to expand our scope yet again. If we could
         do all of this for XLS files, what about Doc files or PPT
-        files? We're thinking that our next component (HDF - Horrible
-        Document Format) should follow the same pattern. We're hoping
+        files? We're thinking that our next component (HWSF - Manipulates
+        Word Processor Format) should follow the same pattern. We're hoping
         that new blood will join the team and allow us to tackle this
         even faster (in part because POIFS is already finished). But
         maybe what we need most is you!  </p>
