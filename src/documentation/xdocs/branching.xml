@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "./dtd/document-v11.dtd">
+
+<document>
+
+    <header>
+        <title>Branching</title>
+        <authors>
+            <person id="GJS" name="Glen Stampoultzis" email="glens@apache.org"/>
+        </authors>
+    </header>
+
+    <body>
+        <section title="Branching Conventions">
+            <p>
+                Branches are tagged in the following way:
+            </p>
+            <ul>
+                <li>REL_1_5_BRANCH</li>
+                <li>REL_2_0_BRANCH</li>
+            </ul>
+            <p>
+                Merge points should be tagged as follows:
+            </p>
+            <ul>
+                <li>REL_1_5_BRANCH_MERGE1</li>
+                <li>REL_1_5_BRANCH_MERGE2</li>
+                <li>etc...</li>
+            </ul>
+            <p>
+                Releases should be tagged as:
+            </p>
+            <ul>
+                <li>REL_1_5</li>
+                <li>REL_1_5_1</li>
+                <li>REL_1_5_2</li>
+                <li>etc...</li>
+            </ul>
+
+        </section>
+        <section title="Branching Advise">
+            <p>
+              Don't forget which branch you are currently on.  This is critically
+              important.  Committing stuff to the wrong branch causes all sorts of
+              headaches.  Best to name your checkout after the branch you are on.
+            </p>
+        </section>
+        <section title="Who Manages Branching?">
+            <p>
+                All branching is currently managed by Glen Stampoultzis.  If you wish
+                to create your own branch please let him know.  Merging is also
+                handled by Glen.  Just pop him a mail if you feel it's necessary to
+                create a branch or perform a merge.
+            </p>
+            <p>
+                The reason to go through a single point for branching is that it can be
+                an easy thing to get wrong.  Having a single person managing branches
+                means there is less chance of getting getting our wires crossed with this
+                difficult area of CVS.
+            </p>
+        </section>
+        <section title="Currently Active Branches">
+            <p>
+                The following branches are currently active:
+            </p>
+            <table>
+                <tr>
+                    <th>
+                        <b>Branch</b>
+                    </th>
+                    <th>
+                        <b>Description</b>
+                    </th>
+                </tr>
+                <tr>
+                    <td>
+                        HEAD
+                    </td>
+                    <td>
+                    This is the trunk and is always active.  Currently it is being used to continue development
+                    of the 2.0 release.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        REL_1_5_BRANCH
+                    </td>
+                    <td>
+                        All bug fixes not specifically relevant to the 2.0 work should be placed in this branch.
+                        From here they will merged back to the trunk and the merge point marked.
+                    </td>
+                </tr>
+            </table>
+        </section>
+    </body>
+
+</document>

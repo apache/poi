@@ -52,85 +52,49 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.poi.hssf.usermodel;
+package org.apache.poi.hssf.usermodel.examples;
 
-import junit.framework.TestCase;
+import org.apache.poi.hssf.usermodel.*;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 
 /**
- * Test HSSFRow is okay.
+ * Demonstrates how to use newlines in cells.
  *
  * @author Glen Stampoultzis (glens at apache.org)
+ * @author Fauzia Lala <fauzia.lala at wcom.com>
  */
-public class TestHSSFRow
-        extends TestCase
+public class NewLinesInCells
 {
-    public TestHSSFRow(String s)
+    public static void main( String[] args ) throws IOException
     {
-        super(s);
-    }
 
-    public void testLastAndFirstColumns()
-            throws Exception
-    {
-        HSSFWorkbook workbook = new HSSFWorkbook();
-        HSSFSheet sheet = workbook.createSheet();
-        HSSFRow row = sheet.createRow((short) 0);
-        assertEquals(-1, row.getFirstCellNum());
-        assertEquals(-1, row.getLastCellNum());
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet s = wb.createSheet();
+        HSSFRow r = null;
+        HSSFCell c = null;
+        HSSFCellStyle cs = wb.createCellStyle();
+        HSSFFont f = wb.createFont();
+        HSSFFont f2 = wb.createFont();
 
-        row.createCell((short) 2);
-        assertEquals(2, row.getFirstCellNum());
-        assertEquals(2, row.getLastCellNum());
+        cs = wb.createCellStyle();
 
-        row.createCell((short) 1);
-        assertEquals(1, row.getFirstCellNum());
-        assertEquals(2, row.getLastCellNum());
+        cs.setFont( f2 );
+        //Word Wrap MUST be turned on
+        cs.setWrapText( true );
 
-    }
+        r = s.createRow( (short) 2 );
+        r.setHeight( (short) 0x349 );
+        c = r.createCell( (short) 2 );
+        c.setCellType( HSSFCell.CELL_TYPE_STRING );
+        c.setCellValue( "Use \n with word wrap on to create a new line" );
+        c.setCellStyle( cs );
+        s.setColumnWidth( (short) 2, (short) ( ( 50 * 8 ) / ( (double) 1 / 20 ) ) );
 
-    public void testRemoveCell()
-            throws Exception
-    {
-        HSSFWorkbook workbook = new HSSFWorkbook();
-        HSSFSheet sheet = workbook.createSheet();
-        HSSFRow row = sheet.createRow((short) 0);
-        assertEquals(-1, row.getLastCellNum());
-        assertEquals(-1, row.getFirstCellNum());
-        row.createCell((short) 1);
-        assertEquals(1, row.getLastCellNum());
-        assertEquals(1, row.getFirstCellNum());
-        row.createCell((short) 3);
-        assertEquals(3, row.getLastCellNum());
-        assertEquals(1, row.getFirstCellNum());
-        row.removeCell(row.getCell((short) 3));
-        assertEquals(1, row.getLastCellNum());
-        assertEquals(1, row.getFirstCellNum());
-        row.removeCell(row.getCell((short) 1));
-        assertEquals(-1, row.getLastCellNum());
-        assertEquals(-1, row.getFirstCellNum());
-
-        // check the row record actually writes it out as 0's
-        byte[] data = new byte[100];
-        row.getRowRecord().serialize(0, data);
-        assertEquals(0, data[6]);
-        assertEquals(0, data[8]);
-
-        File file = File.createTempFile("XXX", "XLS");
-        FileOutputStream stream = new FileOutputStream(file);
-        workbook.write(stream);
-        stream.close();
-        FileInputStream inputStream = new FileInputStream(file);
-        workbook = new HSSFWorkbook(inputStream);
-        sheet = workbook.getSheetAt(0);
-        stream.close();
-        file.delete();
-        assertEquals(-1, sheet.getRow((short) 0).getLastCellNum());
-        assertEquals(-1, sheet.getRow((short) 0).getFirstCellNum());
-
+        FileOutputStream fileOut = new FileOutputStream( "workbook.xls" );
+        wb.write( fileOut );
+        fileOut.close();
 
     }
 }
