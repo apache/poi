@@ -116,12 +116,11 @@ public class TestCellStyle
             // r.setRowNum(( short ) rownum);
             for (short cellnum = ( short ) 0; cellnum < 50; cellnum += 2)
             {
-                c = r.createCell(cellnum, HSSFCell.CELL_TYPE_NUMERIC);
+                c = r.createCell(cellnum);
                 c.setCellValue(rownum * 10000 + cellnum
                                + ((( double ) rownum / 1000)
                                   + (( double ) cellnum / 10000)));
-                c = r.createCell(( short ) (cellnum + 1),
-                                 HSSFCell.CELL_TYPE_STRING);
+                c = r.createCell(( short ) (cellnum + 1));
                 c.setCellValue("TEST");
                 c.setCellStyle(cs);
             }
@@ -204,13 +203,12 @@ public class TestCellStyle
             // r.setRowNum(( short ) rownum);
             for (short cellnum = ( short ) 0; cellnum < 50; cellnum += 2)
             {
-                c = r.createCell(cellnum, HSSFCell.CELL_TYPE_NUMERIC);
+                c = r.createCell(cellnum);
                 c.setCellValue(rownum * 10000 + cellnum
                                + ((( double ) rownum / 1000)
                                   + (( double ) cellnum / 10000)));
                 c.setCellStyle(cs);
-                c = r.createCell(( short ) (cellnum + 1),
-                                 HSSFCell.CELL_TYPE_STRING);
+                c = r.createCell(( short ) (cellnum + 1));
                 c.setCellValue("TEST");
                 c.setCellStyle(cs2);
             }
