@@ -75,6 +75,8 @@ import java.text.FieldPosition;
  */
 
 public class StringUtil {
+    
+    private final static String ENCODING="ISO-8859-1";
     /**
      *  Constructor for the StringUtil object
      */
@@ -105,6 +107,7 @@ public class StringUtil {
     public static String getFromUnicodeHigh(final byte[] string,
             final int offset, final int len)
              throws ArrayIndexOutOfBoundsException, IllegalArgumentException {
+
         if ((offset < 0) || (offset >= string.length)) {
             throw new ArrayIndexOutOfBoundsException("Illegal offset");
         }
@@ -330,5 +333,9 @@ public class StringUtil {
         }
         numberFormat.format(number, outputTo, new FieldPosition(0));
         return 1;
+    }
+    
+    public static String getPreferredEncoding() {
+        return ENCODING;   
     }
 }

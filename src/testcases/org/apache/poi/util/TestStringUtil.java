@@ -206,7 +206,7 @@ public class TestStringUtil
      * Test putCompressedUnicode
      */
 
-    public void testPutCompressedUnicode()
+    public void testPutCompressedUnicode() throws Exception
     {
         byte[] output          = new byte[ 100 ];
         byte[] expected_output =
@@ -215,7 +215,7 @@ public class TestStringUtil
             ( byte ) 'o', ( byte ) ' ', ( byte ) 'W', ( byte ) 'o',
             ( byte ) 'r', ( byte ) 'l', ( byte ) 'd', ( byte ) 0xAE
         };
-        String input           = new String(expected_output);
+        String input           = new String(expected_output,StringUtil.getPreferredEncoding());
 
         StringUtil.putCompressedUnicode(input, output, 0);
         for (int j = 0; j < expected_output.length; j++)
@@ -355,4 +355,12 @@ public class TestStringUtil
         System.out.println("Testing util.StringUtil functionality");
         junit.textui.TestRunner.run(TestStringUtil.class);
     }
+    /**
+     * @see junit.framework.TestCase#setUp()
+     */
+    protected void setUp() throws Exception {
+        super.setUp();
+       // System.setProperty()
+    }
+
 }

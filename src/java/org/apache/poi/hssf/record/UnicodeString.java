@@ -55,6 +55,8 @@
 
 package org.apache.poi.hssf.record;
 
+import java.io.UnsupportedEncodingException;
+
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
 
@@ -153,7 +155,12 @@ public class UnicodeString
         field_2_optionflags = data[ 2 ];
         if ((field_2_optionflags & 1) == 0)
         {
-            field_3_string = new String(data, 3, getCharCount());
+            try {
+                field_3_string = new String(data, 3, getCharCount(), 
+                                        StringUtil.getPreferredEncoding());
+            } catch (UnsupportedEncodingException e) {
+                throw new RuntimeException(e);
+            }
         }
         else
         {
