@@ -386,4 +386,12 @@ public class HSSFFont
     {
         return font.getUnderline();
     }
+
+    public String toString()
+    {
+        return "org.apache.poi.hssf.usermodel.HSSFFont{" +
+                 font +
+                "}";
+    }
+
 }

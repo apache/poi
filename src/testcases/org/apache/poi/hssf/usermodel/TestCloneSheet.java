@@ -56,8 +56,6 @@
 package org.apache.poi.hssf.usermodel;
 
 import junit.framework.TestCase;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.Region;
 
 /**
@@ -81,5 +79,24 @@ public class TestCloneSheet extends TestCase {
 		}
 		catch(Exception e){e.printStackTrace();fail(e.getMessage());}
 	}
+
+   /**
+    * Ensures that pagebreak cloning works properly
+    *
+    */
+   public void testPageBreakClones() {
+      HSSFWorkbook b = new HSSFWorkbook();
+      HSSFSheet s = b.createSheet("Test");
+      s.setRowBreak(3);
+      s.setColumnBreak((short)6);
+
+      HSSFSheet clone = b.cloneSheet(0);
+      assertTrue("Row 3 not broken", clone.isRowBroken(3));
+      assertTrue("Column 6 not broken", clone.isColumnBroken((short)6));
+
+      s.removeRowBreak(3);
+
+      assertTrue("Row 3 still should be broken", clone.isRowBroken(3));
+   }
 
 }

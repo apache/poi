@@ -110,7 +110,60 @@ public class HSSFPalette
         }
         return null;
     }
-    
+
+    /**
+     * Finds the closest matching color in the custom palette.  The
+     * method for finding the distance between the colors is fairly
+     * primative.
+     *
+     * @param red   The red component of the color to match.
+     * @param green The green component of the color to match.
+     * @param blue  The blue component of the color to match.
+     * @return  The closest color or null if there are no custom
+     *          colors currently defined.
+     */
+     public HSSFColor findSimilarColor(byte red, byte green, byte blue)
+     {
+        HSSFColor result = null;
+        int minColorDistance = Integer.MAX_VALUE;
+        byte[] b = palette.getColor(PaletteRecord.FIRST_COLOR_INDEX);
+        for (short i = (short) PaletteRecord.FIRST_COLOR_INDEX; b != null;
+            b = palette.getColor(++i))
+        {
+            int colorDistance = red - b[0] + green - b[1] + blue - b[2];
+            if (colorDistance < minColorDistance)
+            {
+                result = getColor(i);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Adds a new color into an empty color slot.
+     * @param red       The red component
+     * @param green     The green component
+     * @param blue      The blue component
+     *
+     * @return  The new custom color.
+     *
+     * @throws RuntimeException if there are more more free color indexes.
+     */
+    public HSSFColor addColor( byte red, byte green, byte blue )
+    {
+        byte[] b = palette.getColor(PaletteRecord.FIRST_COLOR_INDEX);
+        short i;
+        for (i = (short) PaletteRecord.FIRST_COLOR_INDEX; i < PaletteRecord.STANDARD_PALETTE_SIZE + PaletteRecord.FIRST_COLOR_INDEX; b = palette.getColor(++i))
+        {
+            if (b == null)
+            {
+                setColorAtIndex( i, red, green, blue );
+                return getColor(i);
+            }
+        }
+        throw new RuntimeException("Could not find free color index");
+    }
+
     /**
      * Sets the color at the given offset
      *

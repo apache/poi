@@ -40,6 +40,9 @@
                     <li><link href="#Splits">Create split and freeze panes.</link></li>
                     <li><link href="#Repeating">Repeating rows and columns.</link></li>
                     <li><link href="#HeaderFooter">Headers and Footers.</link></li>
+                    <li><link href="#DrawingShapes">Drawing Shapes.</link></li>
+                    <li><link href="#StylingShapes">Styling Shapes.</link></li>
+                    <li><link href="#Graphics2d">Shapes and Graphics2d.</link></li>
                 </ul>
             </section>
             <section><title>Features</title>
@@ -692,6 +695,212 @@
     fileOut.close();
                     </source>
                 </section>
+
+                <anchor id="DrawingShapes"/>
+                <section><title>Drawing Shapes</title>
+                    <p>
+                        POI supports drawing shapes using the Microsoft Office
+                        drawing tools.  Shapes on a sheet are organized in a
+                        hiearchy of groups and and shapes.  The top-most shape
+                        is the patriarch.  This is not visisble on the sheet
+                        at all.  To start drawing you need to call <code>createPatriarch</code>
+                        on the <code>HSSFSheet</code> class.  This has the
+                        effect erasing any other shape information stored
+                        in that sheet.  By default POI will leave shape
+                        records alone in the sheet unless you make a call to
+                        this method.
+                    </p>
+                    <p>
+                        To create a shape you have to go through the following
+                        steps:
+                    </p>
+                    <ol>
+                        <li>Create the patriarch.</li>
+                        <li>Create an anchor to position the shape on the sheet.</li>
+                        <li>Ask the patriarch to create the shape.</li>
+                        <li>Set the shape type (line, oval, rectangle etc...)</li>
+                        <li>Set any other style details converning the shape. (eg:
+                        line thickness, etc...)</li>
+                    </ol>
+                    <source>
+    HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
+    a = new HSSFClientAnchor( 0, 0, 1023, 255, (short) 1, 0, (short) 1, 0 );
+    HSSFSimpleShape shape1 = patriarch.createSimpleShape(a1);
+    shape1.setShapeType(HSSFSimpleShape.OBJECT_TYPE_LINE);
+                    </source>
+                    <p>
+                        Text boxes are created using a different call:
+                    </p>
+                    <source>
+    HSSFTextbox textbox1 = patriarch.createTextbox(
+            new HSSFClientAnchor(0,0,0,0,(short)1,1,(short)2,2));
+    textbox1.setString(new HSSFRichTextString("This is a test") );
+                    </source>
+                    <p>
+                        It's possible to use different fonts to style parts of
+                        the text in the textbox.  Here's how:
+                    </p>
+                    <source>
+    HSSFFont font = wb.createFont();
+    font.setItalic(true);
+    font.setUnderline(HSSFFont.U_DOUBLE);
+    HSSFRichTextString string = new HSSFRichTextString("Woo!!!");
+    string.applyFont(2,5,font);
+    textbox.setString(string );
+                    </source>
+                    <p>
+                        Just as can be done manually using Excel, it is possible
+                        to group shapes together.  This is done by calling
+                        <code>createGroup()</code> and then creating the shapes
+                        using those groups.
+                    </p>
+                    <p>
+                        It's also possible to create groups within groups.
+                    </p>
+                    <warning>Any group you create should contain at least two
+                        other shapes or subgroups.</warning>
+                    <p>
+                        Here's how to create a shape group:
+                    </p>
+                    <source>
+    // Create a shape group.
+    HSSFShapeGroup group = patriarch.createGroup(
+            new HSSFClientAnchor(0,0,900,200,(short)2,2,(short)2,2));
+
+    // Create a couple of lines in the group.
+    HSSFSimpleShape shape1 = group.createShape(new HSSFChildAnchor(3,3,500,500));
+    shape1.setShapeType(HSSFSimpleShape.OBJECT_TYPE_LINE);
+    ( (HSSFChildAnchor) shape1.getAnchor() ).setAnchor((short)3,3,500,500);
+    HSSFSimpleShape shape2 = group.createShape(new HSSFChildAnchor((short)1,200,400,600));
+    shape2.setShapeType(HSSFSimpleShape.OBJECT_TYPE_LINE);
+                    </source>
+                    <p>
+                        If you're being observant you'll noticed that the shapes
+                        that are added to the group use a new type of anchor:
+                        the <code>HSSFChildAnchor</code>.  What happens is that
+                        the created group has it's own coordinate space for
+                        shapes that are placed into it.  POI defaults this to
+                        (0,0,1023,255) but you are able to change it as desired.
+                        Here's how:
+                    </p>
+                    <source>
+    myGroup.setCoordinates(10,10,20,20); // top-left, bottom-right
+                    </source>
+                    <p>
+                        If you create a group within a group it's also going
+                        to have it's own coordinate space.
+                    </p>
+                </section>
+
+                <anchor id="StylingShapes"/>
+                <section><title>Styling Shapes</title>
+                    <p>
+                        By default shapes can look a little plain.  It's possible
+                        to apply different styles to the shapes however.  The
+                        sorts of things that can currently be done are:
+                    </p>
+                    <ul>
+                        <li>Change the fill color.</li>
+                        <li>Make a shape with no fill color.</li>
+                        <li>Change the thickness of the lines.</li>
+                        <li>Change the style of the lines. Eg: dashed, dotted.</li>
+                        <li>Change the line color.</li>
+                    </ul>
+                    <p>
+                        Here's an examples of how this is done:
+                    </p>
+                    <source>
+    HSSFSimpleShape s = patriarch.createSimpleShape(a);
+    s.setShapeType(HSSFSimpleShape.OBJECT_TYPE_OVAL);
+    s.setLineStyleColor(10,10,10);
+    s.setFillColor(90,10,200);
+    s.setLineWidth(HSSFShape.LINEWIDTH_ONE_PT * 3);
+    s.setLineStyle(HSSFShape.LINESTYLE_DOTSYS);
+                    </source>
+                </section>
+                <anchor id="Graphics2d"/>
+                <section><title>Shapes and Graphics2d</title>
+                    <p>
+                        While the native POI shape drawing commands are the
+                        recommended way to draw shapes in a shape it's sometimes
+                        desirable to use a standard API for compatibility with
+                        external libraries.  With this in mind we created some
+                        wrappers for <code>Graphics</code> and <code>Graphics2d</code>.
+                    </p>
+                    <warning>
+                        It's important to not however before continuing that
+                        <code>Graphics2d</code> is a poor match to the capabilities
+                        of the Microsoft Office drawing commands.  The older
+                        <code>Graphics</code> class offers a closer match but is
+                        still a square peg in a round hole.
+                    </warning>
+                    <p>
+                        All Graphics commands are issued into an <code>HSSFShapeGroup</code>.
+                        Here's how it's done:
+                    </p>
+                    <source>
+    a = new HSSFClientAnchor( 0, 0, 1023, 255, (short) 1, 0, (short) 1, 0 );
+    group = patriarch.createGroup( a );
+    group.setCoordinates( 0, 0, 80 * 4 , 12 * 23  );
+    float verticalPointsPerPixel = a.getAnchorHeightInPoints(sheet) / (float)Math.abs(group.getY2() - group.getY1());
+    g = new EscherGraphics( group, wb, Color.black, verticalPointsPerPixel );
+    g2d = new EscherGraphics2d( g );
+    drawChemicalStructure( g2d );
+                    </source>
+                    <p>
+                        The first thing we do is create the group and set it's coordinates
+                        to match what we plan to draw.  Next we calculate a reasonable
+                        fontSizeMultipler then create the EscherGraphics object.
+                        Since what we really want is a <code>Graphics2d</code>
+                        object we create an EscherGraphics2d object and pass in
+                        the graphics object we created.  Finally we call a routine
+                        that draws into the EscherGraphics2d object.
+                    </p>
+                    <p>
+                        The vertical points per pixel deserves some more explanation.
+                        One of the difficulties in converting Graphics calls
+                        into escher drawing calls is that Excel does not have
+                        the concept of absolute pixel positions.  It measures
+                        it's cell widths in 'characters' and the cell heights in points.
+                        Unfortunately it's not defined exactly what type of character it's
+                        measuring.  Presumably this is due to the fact that the Excel will be
+                        using different fonts on different platforms or even within the same
+                        platform.
+                    </p>
+                    <p>
+                        Because of this constraint we've had to implement the concept of a
+                        verticalPointsPerPixel.  This the amount the font should be scaled by when
+                        you issue commands such as drawString().  To calculate this value
+                        use the follow formula:
+                    </p>
+                    <source>
+    multipler = groupHeightInPoints / heightOfGroup
+                    </source>
+                    <p>
+                        The height of the group is calculated fairly simply by calculating the
+                        difference between the y coordinates of the bounding box of the shape.  The
+                        height of the group can be calculated by using a convenience called
+                        <code>HSSFClientAnchor.getAnchorHeightInPoints()</code>.
+                    </p>
+                    <p>
+                        Many of the functions supported by the graphics classes
+                        are not complete.  Here's some of the functions that are known
+                        to work.
+                    </p>
+                    <ul>
+                        <li>fillRect()</li>
+                        <li>fillOval()</li>
+                        <li>drawString()</li>
+                        <li>drawOval()</li>
+                        <li>drawLine()</li>
+                        <li>clearRect()</li>
+                    </ul>
+                    <p>
+                        Functions that are not supported will return and log a message
+                        using the POI logging infrastructure (disabled by default).
+                    </p>
+                </section>
+
             </section>
         </section>
     </body>

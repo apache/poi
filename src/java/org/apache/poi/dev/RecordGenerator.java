@@ -88,15 +88,6 @@ public class RecordGenerator {
     }
 
 
-    /**
-     *  Description of the Method
-     *
-     *@param  defintionsDir   Description of the Parameter
-     *@param  recordStyleDir  Description of the Parameter
-     *@param  destSrcPathDir  Description of the Parameter
-     *@param  testSrcPathDir  Description of the Parameter
-     *@exception  Exception   Description of the Exception
-     */
     private static void generateRecords(String defintionsDir, String recordStyleDir, String destSrcPathDir, String testSrcPathDir)
              throws Exception {
         File definitionsFile = new File(defintionsDir);

@@ -382,6 +382,54 @@ public class TestHSSFSheet
 	assertEquals(sheet.isDisplayFormulas(), true);
     }
 
+    /**
+     * Make sure the excel file loads work
+     *
+     */
+    public void testPageBreakFiles() throws Exception{
+        FileInputStream fis = null;
+        HSSFWorkbook wb     = null;
+
+        String filename = System.getProperty("HSSF.testdata.path");
+
+        filename = filename + "/SimpleWithPageBreaks.xls";
+        fis = new FileInputStream(filename);
+        wb = new HSSFWorkbook(fis);
+        fis.close();
+
+        HSSFSheet sheet = wb.getSheetAt(0);
+        assertNotNull(sheet);
+
+        assertEquals("1 row page break", 1, sheet.getRowBreaks().length);
+        assertEquals("1 column page break", 1, sheet.getColumnBreaks().length);
+
+        assertTrue("No row page break", sheet.isRowBroken(22));
+        assertTrue("No column page break", sheet.isColumnBroken((short)4));
+
+        sheet.setRowBreak(10);
+        sheet.setColumnBreak((short)13);
+
+        assertEquals("row breaks number", 2, sheet.getRowBreaks().length);
+        assertEquals("column breaks number", 2, sheet.getColumnBreaks().length);
+
+        File tempFile = File.createTempFile("display", "testPagebreaks.xls");
+        FileOutputStream stream = new FileOutputStream(tempFile);
+        wb.write(stream);
+        stream.close();
+
+        wb = new HSSFWorkbook(new FileInputStream(tempFile));
+        sheet = wb.getSheetAt(0);
+
+        assertTrue("No row page break", sheet.isRowBroken(22));
+        assertTrue("No column page break", sheet.isColumnBroken((short)4));
+
+
+        assertEquals("row breaks number", 2, sheet.getRowBreaks().length);
+        assertEquals("column breaks number", 2, sheet.getColumnBreaks().length);
+
+
+    }
+
 	public static void main(java.lang.String[] args) {
 		 junit.textui.TestRunner.run(TestHSSFSheet.class);
 	}    

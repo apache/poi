@@ -62,19 +62,15 @@ package org.apache.poi.hssf.usermodel;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.io.PrintWriter;
 
 import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.model.Workbook;
-import org.apache.poi.hssf.record.CellValueRecordInterface;
-import org.apache.poi.hssf.record.HCenterRecord;
-import org.apache.poi.hssf.record.RowRecord;
-import org.apache.poi.hssf.record.SCLRecord;
-import org.apache.poi.hssf.record.VCenterRecord;
-import org.apache.poi.hssf.record.WSBoolRecord;
-import org.apache.poi.hssf.record.WindowTwoRecord;
+import org.apache.poi.hssf.record.*;
 import org.apache.poi.hssf.util.Region;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.ddf.EscherRecord;
 
 /**
  * High level representation of a worksheet.
@@ -979,6 +975,9 @@ public class HSSFSheet
      * <p>
      * Additionally shifts merged regions that are completely defined in these
      * rows (ie. merged 2 cells on a row to be shifted).
+     * <p>
+     *  TODO Might want to add bounds checking here
+     *
      * @param startRow the row to start shifting
      * @param endRow the row to end shifting
      * @param n the number of rows to shift
@@ -1001,8 +1000,9 @@ public class HSSFSheet
             inc = -1;
         }
 
-			shiftMerged(startRow, endRow, n, true);        
-        
+			shiftMerged(startRow, endRow, n, true);
+            sheet.shiftRowBreaks(startRow, endRow, n);
+
         for ( int rowNum = s; rowNum >= startRow && rowNum <= endRow && rowNum >= 0 && rowNum < 65536; rowNum += inc )
         {
             HSSFRow row = getRow( rowNum );
@@ -1146,6 +1146,149 @@ public class HSSFSheet
     public boolean isDisplayRowColHeadings() {
 	return sheet.isDisplayRowColHeadings();
     }
+
+    /**
+     * Sets a page break at the indicated row
+     * @param row
+     */
+    public void setRowBreak(int row) {
+    	validateRow(row);
+    	sheet.setRowBreak(row, (short)0, (short)255);
+    }
+
+    /**
+     * Determines if there is a page break at the indicated row
+     * @param row
+     * @return
+     */
+    public boolean isRowBroken(int row) {
+    	return sheet.isRowBroken(row);
+    }
+
+    /**
+     * Removes the page break at the indicated row
+     * @param row
+     */
+    public void removeRowBreak(int row) {
+    	sheet.removeRowBreak(row);
+    }
+
+    /**
+     * Retrieves all the horizontal page breaks
+     * @return
+     */
+    public int[] getRowBreaks(){
+    	//we can probably cache this information, but this should be a sparsely used function
+    	int[] returnValue = new int[sheet.getNumRowBreaks()];
+    	Iterator iterator = sheet.getRowBreaks();
+    	int i = 0;
+    	while (iterator.hasNext()) {
+    		PageBreakRecord.Break breakItem = (PageBreakRecord.Break)iterator.next();
+    		returnValue[i++] = (int)breakItem.main;
+    	}
+    	return returnValue;
+    }
+
+    /**
+     * Retrieves all the vertical page breaks
+     * @return
+     */
+    public short[] getColumnBreaks(){
+    	//we can probably cache this information, but this should be a sparsely used function
+    	short[] returnValue = new short[sheet.getNumColumnBreaks()];
+    	Iterator iterator = sheet.getColumnBreaks();
+    	int i = 0;
+    	while (iterator.hasNext()) {
+    		PageBreakRecord.Break breakItem = (PageBreakRecord.Break)iterator.next();
+    		returnValue[i++] = breakItem.main;
+    	}
+    	return returnValue;
+    }
+
+
+    /**
+     * Sets a page break at the indicated column
+     * @param column
+     */
+    public void setColumnBreak(short column) {
+    	validateColumn(column);
+    	sheet.setColumnBreak(column, (short)0, (short)65535);
+    }
+
+    /**
+     * Determines if there is a page break at the indicated column
+     * @param column
+     * @return
+     */
+    public boolean isColumnBroken(short column) {
+    	return sheet.isColumnBroken(column);
+    }
+
+    /**
+     * Removes a page break at the indicated column
+     * @param column
+     */
+    public void removeColumnBreak(short column) {
+    	sheet.removeColumnBreak(column);
+    }
+
+    /**
+     * Runs a bounds check for row numbers
+     * @param row
+     */
+    protected void validateRow(int row) {
+    	if (row > 65535) throw new IllegalArgumentException("Maximum row number is 65535");
+    	if (row < 0) throw new IllegalArgumentException("Minumum row number is 0");
+    }
+
+    /**
+     * Runs a bounds check for column numbers
+     * @param column
+     */
+    protected void validateColumn(short column) {
+    	if (column > 255) throw new IllegalArgumentException("Maximum column number is 255");
+    	if (column < 0)	throw new IllegalArgumentException("Minimum column number is 0");
+    }
+
+    /**
+     * Aggregates the drawing records and dumps the escher record hierarchy
+     * to the standard output.
+     */
+    public void dumpDrawingRecords()
+    {
+        sheet.aggregateDrawingRecords(book.getDrawingManager());
+
+        EscherAggregate r = (EscherAggregate) getSheet().findFirstRecordBySid(EscherAggregate.sid);
+        List escherRecords = r.getEscherRecords();
+        for ( Iterator iterator = escherRecords.iterator(); iterator.hasNext(); )
+        {
+            EscherRecord escherRecord = (EscherRecord) iterator.next();
+            PrintWriter w = new PrintWriter(System.out);
+            escherRecord.display(w, 0);
+            w.close();
+        }
+    }
+
+    /**
+     * Creates the toplevel drawing patriarch.  This will have the effect of
+     * removing any existing drawings on this sheet.
+     *
+     * @return  The new patriarch.
+     */
+    public HSSFPatriarch createDrawingPatriarch()
+    {
+        // Create the drawing group if it doesn't already exist.
+        book.createDrawingGroup();
+
+        sheet.aggregateDrawingRecords(book.getDrawingManager());
+        EscherAggregate agg = (EscherAggregate) sheet.findFirstRecordBySid(EscherAggregate.sid);
+        HSSFPatriarch patriarch = new HSSFPatriarch(this);
+        agg.clear();     // Initially the behaviour will be to clear out any existing shapes in the sheet when
+                         // creating a new patriarch.
+        agg.setPatriarch(patriarch);
+        return patriarch;
+    }
+
 }
 
 class SheetRowIterator implements Iterator {
