@@ -24,10 +24,6 @@ import org.apache.poi.hpsf.wellknown.PropertyIDMap;
  * <p>Convenience class representing a Summary Information stream in a
  * Microsoft Office document.</p>
  *
- * <p>See <a
- * href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/com/stgu_8910.asp">http://msdn.microsoft.com/library/default.asp?url=/library/en-us/com/stgu_8910.asp</a>
- * for documentation from That Redmond Company.</p>
- *
  * @author Rainer Klute <a
  * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
  * @see DocumentSummaryInformation
@@ -266,12 +262,6 @@ public class SummaryInformation extends SpecialPropertySet
      *
      * <p><strong>Hint to developers:</strong> Drew Varner &lt;Drew.Varner -at-
      * sc.edu&gt; said that this is an image in WMF or Clipboard (BMP?) format.
-     * He also provided two links that might be helpful: <a
-     * href="http://www.csn.ul.ie/~caolan/publink/file/OLE2SummaryAgainst_file-3.27.patch"
-     * target="_blank">http://www.csn.ul.ie/~caolan/publink/file/OLE2SummaryAgainst_file-3.27.patch</a>
-     * and <a
-     * href="http://msdn.microsoft.com/library/en-us/dno97ta/html/msdn_docprop.asp"
-     * target="_blank">http://msdn.microsoft.com/library/en-us/dno97ta/html/msdn_docprop.asp</a>.
      * However, we won't do any conversion into any image type but instead just
      * return a byte array.</p>
      *
