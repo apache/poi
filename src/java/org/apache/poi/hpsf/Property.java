@@ -63,7 +63,10 @@
 package org.apache.poi.hpsf;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -180,12 +183,12 @@ public class Property
 
         try
         {
-            value = TypeReader.read(src, o, length, (int) type);
+            value = VariantSupport.read(src, o, length, (int) type);
         }
-        catch (Throwable t)
+        catch (UnsupportedVariantTypeException ex)
         {
-            t.printStackTrace();
-            value = "*** null ***";
+            logUnsupported(ex);
+            value = ex.getValue();
         }
     }
 
@@ -196,7 +199,7 @@ public class Property
      * be usable.</p>
      */
     protected Property()
-    {}
+    { }
 
 
 
@@ -281,14 +284,61 @@ public class Property
      */
     protected int getSize()
     {
+        int length = LittleEndian.INT_SIZE;
+        final int PADDING = 4; /* Pad to multiples of 4. */
+        if (type > Integer.MAX_VALUE)
+            throw new HPSFRuntimeException
+                ("Variant type " + type + " is greater than " +
+                Integer.MAX_VALUE + ".");
+        switch ((int) type)
+        {
+            case Variant.VT_LPSTR:
+            {
+                int l = ((String) value).length() + 1;
+                int r = l % PADDING;
+                if (r > 0)
+                    l += PADDING - r;
+                length += l;
+                break;
+            }
+            case Variant.VT_EMPTY:
+                break;
+            default:
+                throw new HPSFRuntimeException
+                    ("Writing is not yet implemented for variant type " +
+                     type + ". Please report this problem to the POI team!");
+        }
+        return length;
+    }
+
+
+
+    /**
+     * @see Object#equals(java.lang.Object)
+     */
+    public boolean equals(final Object o)
+    {
         throw new UnsupportedOperationException("FIXME: Not yet implemented.");
     }
 
 
 
-    public boolean equals(Object o)
+    /**
+     * <p>Keeps a list of those variant types for those an "unsupported" message
+     * has already been issued.</p>
+     */
+    protected static List unsupportedMessage;
+
+    private static void logUnsupported(final UnsupportedVariantTypeException ex)
     {
-        throw new UnsupportedOperationException("FIXME: Not yet implemented.");
+        if (unsupportedMessage == null)
+            unsupportedMessage = new LinkedList();
+        Long vt = new Long(ex.getVariantType());
+        if (!unsupportedMessage.contains(vt))
+        {
+            System.err.println(ex.getMessage());
+            unsupportedMessage.add(vt);
+        }
     }
 
 }

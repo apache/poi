@@ -51,27 +51,73 @@
  *  individuals on behalf of the Apache Software Foundation.  For more
  *  information on the Apache Software Foundation, please see
  *  <http://www.apache.org/>.
- *
- *  Portions of this software are based upon public domain software
- *  originally written at the National Center for Supercomputing Applications,
- *  University of Illinois, Urbana-Champaign.
- *
- *  Portions of this software are based upon public domain software
- *  originally written at the National Center for Supercomputing Applications,
- *  University of Illinois, Urbana-Champaign.
  */
 package org.apache.poi.hpsf;
 
+import org.apache.poi.util.HexDump;
 
 /**
- * <p>Reader for specific data types.</p>
+ * <p>This exception is thrown if HPSF encounters a variant type that isn't
+ * supported yet. Although a variant type is unsupported the value can still be
+ * retrieved using the {@link #getValue} method.</p>
+ * 
+ * <p>Obviously this class should disappear some day.</p>
  *
- * @author Rainer Klute (klute@rainer-klute.de)
- * @see Property
- * @see Variant
+ * @author Rainer Klute <a
+ * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
+ * @since 2003-08-05
  * @version $Id$
- * @since 2002-12-09
  */
-public class TypeReader
+public abstract class UnsupportedVariantTypeException extends HPSFException
 {
+
+    private Object value;
+
+    private long variantType;
+
+
+
+    /**
+     * <p>Constructor.</p>
+     * 
+     * @param variantType The unsupported variant type
+     * @param value The value who's variant type is not yet supported
+     */
+    public UnsupportedVariantTypeException(final long variantType,
+                                           final Object value)
+    {
+        super("HPSF does not yet support the variant type " + variantType + 
+              " (" + Variant.getVariantName(variantType) + ", " +
+              HexDump.toHex((int) variantType) + "). If you want support for " +
+              "this variant type in one of the next POI releases please " +
+              "submit a request for enhancement (RFE) to " +
+              "<http://nagoya.apache.org/bugzilla/>! Thank you!");
+        this.variantType = variantType;
+        this.value = value;
+    }
+
+
+
+    /**
+     * <p>Returns the offending variant type.</p>
+     *
+     * @return the offending variant type.
+     */
+    public long getVariantType()
+    {
+        return variantType;
+    }
+
+
+
+    /**
+     * <p>Return the value who's variant type is not yet supported.</p>
+     *
+     * @return the value who's variant type is not yet supported
+     */
+    public Object getValue()
+    {
+        return value;
+    }
+
 }

@@ -191,6 +191,12 @@ public class Util
         return new Date(ms_since_19700101);
     }
 
+    public static long dateToFileTime(final Date date)
+    {
+        long ms_since_19700101 = date.getTime();
+        long ms_since_16010101 = ms_since_19700101 + EPOCH_DIFF;
+        return ms_since_16010101 * (1000 * 10);
+    }
 
 
     /**
