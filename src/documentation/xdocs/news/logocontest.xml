@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.0//EN" "dtd/document-v10.dtd">
+
+<document>
+  <header>
+    <title></title>
+    <authors>
+      <person id="AO" name="Andrew C. Oliver" email="acoliver@apache.org"/>
+    </authors>
+  </header>
+  
+  <body>
+    <s1 title="POI logos">
+        <p>
+                Here are the current logo submissions.  Thanks to the artists!
+        </p>
+        <s2 title="Michael Mosmann">
+                <p>
+                <img src="images/logoMichaelMosmann.png"/>
+                </p>
+        </s2>
+        <s2 title="Loïc Lefèvre">
+                <p>
+                <img src="images/logoLoicLefevre.png"/>
+                </p>
+        </s2>
+        <s2 title="Glen Stampoutlzis">
+                <p>
+                <img src="images/logoGlenStampoutlzis.png"/>
+                </p>
+        </s2>
+    </s1>    
+  </body>
+  <footer>
+    <legal>
+      Copyright (c) @year@ The Apache Software Foundation All rights reserved.
+      $Revision$ $Date$
+    </legal>
+  </footer>
+</document>
