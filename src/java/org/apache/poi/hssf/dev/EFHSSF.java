@@ -66,6 +66,10 @@ import org.apache.poi.hssf.eventmodel.*;
 import org.apache.poi.hssf.eventusermodel.*;
 import org.apache.poi.hssf.usermodel.*;
 
+import org.apache.poi.hssf.eventusermodel.HSSFRequest;
+import org.apache.poi.hssf.eventusermodel.HSSFListener;
+import org.apache.poi.hssf.eventusermodel.HSSFEventFactory;
+
 /**
  * Event Factory version of HSSF test class.
  * @author  andy
