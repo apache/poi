@@ -251,7 +251,6 @@ public class ExtendedFormatRecord
      * @param data  data of the record (should not contain sid/len)
      * @param offset of the record's data
      */
-
     public ExtendedFormatRecord(short id, short size, byte [] data,
                                 int offset)
     {
@@ -1733,7 +1732,7 @@ public class ExtendedFormatRecord
     /**
      * get the background palette color index
      *
-     * @retyrb color palette index
+     * @return color palette index
      * @see #getFillPaletteOptions()
      */
 
