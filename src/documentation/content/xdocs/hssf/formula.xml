@@ -12,7 +12,7 @@
         <section><title>Introduction</title>
             <p>
                 This document describes the current state of formula support in POI. 
-                The information in this document applies to the 2.0-dev version of POI (i.e. CVS HEAD). 
+                The information in this document currently applies to the 2.0 version of POI. 
                 Since this area is a work in progress, this document will be updated with new features as and 
                 when they are added. 
             </p>
@@ -36,16 +36,14 @@
              <li>String, integer and floating point literals</li>
               <li>Area references</li>
               <li>Relative or absolute references</li>
-              <li>Arithmetic Operators</li>
-              <li>Sheet Functions</li>
+              <li>Arithmetic and logical operators</li>
+              <li>Sheet or Macro Functions (inlcuding logical functions)</li>
+              <li>Sheet References</li>
+              <li>Formual return values (number or string)</li>
         </ul>
         </section>
         <section><title>Partially supported</title>
             <ul>
-                <li>
-                   The formula parser now has the ability to parse formulas containing strings. However
-                   formulas that return a string value are not yet supported. 
-                   </li>
                 <li>Formula tokens in Excel are stored in one of three possible <em> classes </em>:
                     Reference, Value and Array. Based on the location of a token, its class can change
                     in complicated and undocumented ways. While we have support for most cases, we
@@ -60,9 +58,10 @@
         <section><title>Not yet supported</title>
             <ul>
                 <li>Array formulas</li>
-                <li>Formulas with logical operations (IF) </li>
-                    <li>Sheet References in formulas</li>
-                    <li>Everything else :) </li>
+                <li>Unary Operators</li>
+                <li>3D References</li>
+                <li>Error Values (cells containing #REF's or #VALUE's)</li>
+                <li>Everything else :) </li>
             </ul>
         </section>
 
