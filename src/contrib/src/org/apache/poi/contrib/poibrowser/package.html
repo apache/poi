@@ -32,6 +32,10 @@
     (operating system) filenames. An internal file (i.e. a "stream" or a
     "document") is shown with its name, its size and a hexadecimal dump of its
     first bytes.</p>
+  </div>
+
+  <div>
+   <h3>Property Set Streams</h3>
 
    <p>The POI Browser pays special attention to property set streams. For
     example, the <tt>\005SummaryInformation</tt> stream  contains information
@@ -39,6 +43,49 @@
     in a POI filesystem. If it encounters a property set stream, it displays
     not just its first bytes but analyses the whole stream and displays its
     contents in a more or less readable manner.</p>
+  </div>
+
+  <div>
+   <h3>Running POI Browser</h3>
+
+   <p>Running the POI Browser requires you to start a Java Virtual Machine
+    (JVM) and to set up a valid classpath so that the JVM can find all the Java
+    classes it needs. These are the main POI classes and the "contrib" POI
+    classes.</p>
+
+   <p>The following instructions assume that you have set up your Java
+    enviromnent variables properly, i.e. the variable JAVA_HOME contains the
+    name of your Java installation directory and the variable PATH includes the
+    <var>bin</var> subdirectory of the Java installation directory. At the time
+   of this writing the current POI version was 2.5.1-final dating from August
+    4th, 2004. The example statements reflect version numbering and
+    date. Change the commands accordingly if you are running the POI Browser of
+   a later or earlier than this!</p>
+
+   <div>
+    <h4>Running POI Browser on Unix</h4>
+
+    <p>Suppose you have unpacked the POI&nbsp;2.5.1 release in the
+     <var>/opt/local/poi</var> directory of your Unix box. Then the following
+     command starts the POI Browser and displays the structure of the files
+     <var>MyWord.doc</var>, <var>MyExcel.xls</var> and
+     <var>MyPowerpoint.ppt</var>:</p>
+ 
+   <pre>java -classpath /opt/local/poi/poi-2.5.1-final-20040804.jar:/opt/local/poi/poi-contrib-2.5.1-final-20040804.jar org.apache.poi.contrib.poibrowser.POIBrowser MyWord.doc MyExcel.xls MyPowerpoint.ppt</pre>
+   </div>
+
+   <div>
+    <h4>Running POI Browser on Windows</h4>
+
+    <p>Suppose you have unpacked the POI&nbsp;2.5.1 release in the
+     <var>C:\Programs\POI</var> directory of your Windows box. Then the following
+     command starts the POI Browser and displays the structure of the files
+     <var>MyWord.doc</var>, <var>MyExcel.xls</var> and
+     <var>MyPowerpoint.ppt</var>:</p>
+ 
+   <pre>java -classpath C:\Programs\POI\poi-2.5.1-final-20040804.jar;C:\Programs\POI\poi-contrib-2.5.1-final-20040804.jar org.apache.poi.contrib.poibrowser.POIBrowser MyWord.doc MyExcel.xls MyPowerpoint.ppt</pre>
+   </div>
+
   </div>
  </body>
 </html>

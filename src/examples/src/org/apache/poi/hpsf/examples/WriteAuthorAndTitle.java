@@ -34,6 +34,7 @@ import org.apache.poi.hpsf.MutableSection;
 import org.apache.poi.hpsf.NoPropertySetStreamException;
 import org.apache.poi.hpsf.PropertySet;
 import org.apache.poi.hpsf.PropertySetFactory;
+import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hpsf.Util;
 import org.apache.poi.hpsf.Variant;
 import org.apache.poi.hpsf.WritingNotSupportedException;
