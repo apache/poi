@@ -75,325 +75,68 @@ public abstract class CHPAbstractType
     implements HDFType
 {
 
-    private  short      field_1_formatFlags;
-    private BitField   fBold                                      = new BitField(0x0001);
-    private BitField   fItalic                                    = new BitField(0x0002);
-    private BitField   fRMarkDel                                  = new BitField(0x0004);
-    private BitField   fOutline                                   = new BitField(0x0008);
-    private BitField   fFldVanish                                 = new BitField(0x0010);
-    private BitField   fSmallCaps                                 = new BitField(0x0020);
-    private BitField   fCaps                                      = new BitField(0x0040);
-    private BitField   fVanish                                    = new BitField(0x0080);
-    private BitField   fRMark                                     = new BitField(0x0100);
-    private BitField   fSpec                                      = new BitField(0x0200);
-    private BitField   fStrike                                    = new BitField(0x0400);
-    private BitField   fObj                                       = new BitField(0x0800);
-    private BitField   fShadow                                    = new BitField(0x1000);
-    private BitField   fLowerCase                                 = new BitField(0x2000);
-    private BitField   fData                                      = new BitField(0x4000);
-    private BitField   fOle2                                      = new BitField(0x8000);
-    private  short      field_2_formatFlags1;
-    private BitField   fEmboss                                    = new BitField(0x0001);
-    private BitField   fImprint                                   = new BitField(0x0002);
-    private BitField   fDStrike                                   = new BitField(0x0004);
-    private BitField   fUsePgsuSettings                           = new BitField(0x0008);
-    private  short      field_3_ftcAscii;
-    private  short      field_4_ftcFE;
-    private  short      field_5_ftcOther;
-    private  short      field_6_hps;
-    private  int        field_7_dxaSpace;
-    private  byte       field_8_iss;
-    private  byte       field_9_kul;
-    private  byte       field_10_ico;
-    private  short      field_11_hpsPos;
-    private  short      field_12_lidDefault;
-    private  short      field_13_lidFE;
-    private  byte       field_14_idctHint;
-    private  short      field_15_wCharScale;
-    private  int        field_16_FC;
-    private  short      field_17_ibstRMark;
-    private  short      field_18_ibstRMarkDel;
-    private  short      field_19_istd;
-    private  short      field_20_ftcSym;
-    private  short      field_21_xchSym;
-    private  short      field_22_idslRMReason;
-    private  short      field_23_idslReasonDel;
-    private  byte       field_24_ysr;
-    private  byte       field_25_chYsr;
-    private  short      field_26_hpsKern;
-    private  byte       field_27_icoHighlight;
-    private  byte       field_28_fHighlight;
-    private  short      field_29_fPropMark;
-    private  short      field_30_ibstPropRMark;
-    private  int        field_31_dttmPropRMark;
-    private  byte       field_32_sfxtText;
-    private  byte       field_33_fDispFldRMark;
-    private  short      field_34_ibstDispFldRMark;
-    private  int        field_35_dttmDispFldRMark;
-    private  short      field_36_shd;
-    private  short      field_37_brc;
+    private  int field_1_format_flags;
+        private BitField  fBold = new BitField(0x0001);
+        private BitField  fItalic = new BitField(0x0002);
+        private BitField  fRMarkDel = new BitField(0x0004);
+        private BitField  fOutline = new BitField(0x0008);
+        private BitField  fFldVanish = new BitField(0x0010);
+        private BitField  fSmallCaps = new BitField(0x0020);
+        private BitField  fCaps = new BitField(0x0040);
+        private BitField  fVanish = new BitField(0x0080);
+        private BitField  fRMark = new BitField(0x0100);
+        private BitField  fSpec = new BitField(0x0200);
+        private BitField  fStrike = new BitField(0x0400);
+        private BitField  fObj = new BitField(0x0800);
+        private BitField  fShadow = new BitField(0x1000);
+        private BitField  fLowerCase = new BitField(0x2000);
+        private BitField  fData = new BitField(0x4000);
+        private BitField  fOle2 = new BitField(0x8000);
+    private  int field_2_format_flags1;
+        private BitField  fEmboss = new BitField(0x0001);
+        private BitField  fImprint = new BitField(0x0002);
+        private BitField  fDStrike = new BitField(0x0004);
+        private BitField  fUsePgsuSettings = new BitField(0x0008);
+    private  int field_3_ftcAscii;
+    private  int field_4_ftcFE;
+    private  int field_5_ftcOther;
+    private  int field_6_hps;
+    private  int field_7_dxaSpace;
+    private  int field_8_iss;
+    private  int field_9_kul;
+    private  int field_10_ico;
+    private  int field_11_hpsPos;
+    private  int field_12_lidDefault;
+    private  int field_13_lidFE;
+    private  int field_14_idctHint;
+    private  int field_15_wCharScale;
+    private  int field_16_FC;
+    private  int field_17_ibstRMark;
+    private  int field_18_ibstRMarkDel;
+    private  int field_19_istd;
+    private  int field_20_ftcSym;
+    private  int field_21_xchSym;
+    private  int field_22_idslRMReason;
+    private  int field_23_idslReasonDel;
+    private  int field_24_ysr;
+    private  int field_25_chYsr;
+    private  int field_26_hpsKern;
+    private  int field_27_icoHighlight;
+    private  int field_28_fHighlight;
+    private  int field_29_fPropMark;
+    private  int field_30_ibstPropRMark;
+    private  int field_31_dttmPropRMark;
+    private  int field_32_sfxtText;
+    private  int field_33_fDispFldRMark;
+    private  int field_34_ibstDispFldRMark;
+    private  int field_35_dttmDispFldRMark;
+    private  int field_36_shd;
+    private  int field_37_brc;
 
 
     public CHPAbstractType()
     {
 
-    }
-
-    protected void fillFields(byte [] data, short size, int offset)
-    {
-        field_1_formatFlags             = LittleEndian.getShort(data, 0x0 + offset);
-        field_2_formatFlags1            = LittleEndian.getShort(data, 0x2 + offset);
-        field_3_ftcAscii                = LittleEndian.getShort(data, 0x4 + offset);
-        field_4_ftcFE                   = LittleEndian.getShort(data, 0x6 + offset);
-        field_5_ftcOther                = LittleEndian.getShort(data, 0x8 + offset);
-        field_6_hps                     = LittleEndian.getShort(data, 0xa + offset);
-        field_7_dxaSpace                = LittleEndian.getInt(data, 0xc + offset);
-        field_8_iss                     = data[ 0x10 + offset ];
-        field_9_kul                     = data[ 0x11 + offset ];
-        field_10_ico                    = data[ 0x12 + offset ];
-        field_11_hpsPos                 = LittleEndian.getShort(data, 0x13 + offset);
-        field_12_lidDefault             = LittleEndian.getShort(data, 0x15 + offset);
-        field_13_lidFE                  = LittleEndian.getShort(data, 0x17 + offset);
-        field_14_idctHint               = data[ 0x19 + offset ];
-        field_15_wCharScale             = LittleEndian.getShort(data, 0x1a + offset);
-        field_16_FC                     = LittleEndian.getInt(data, 0x1c + offset);
-        field_17_ibstRMark              = LittleEndian.getShort(data, 0x20 + offset);
-        field_18_ibstRMarkDel           = LittleEndian.getShort(data, 0x22 + offset);
-        field_19_istd                   = LittleEndian.getShort(data, 0x24 + offset);
-        field_20_ftcSym                 = LittleEndian.getShort(data, 0x26 + offset);
-        field_21_xchSym                 = LittleEndian.getShort(data, 0x28 + offset);
-        field_22_idslRMReason           = LittleEndian.getShort(data, 0x2a + offset);
-        field_23_idslReasonDel          = LittleEndian.getShort(data, 0x2c + offset);
-        field_24_ysr                    = data[ 0x2e + offset ];
-        field_25_chYsr                  = data[ 0x2f + offset ];
-        field_26_hpsKern                = LittleEndian.getShort(data, 0x30 + offset);
-        field_27_icoHighlight           = data[ 0x32 + offset ];
-        field_28_fHighlight             = data[ 0x33 + offset ];
-        field_29_fPropMark              = LittleEndian.getShort(data, 0x34 + offset);
-        field_30_ibstPropRMark          = LittleEndian.getShort(data, 0x36 + offset);
-        field_31_dttmPropRMark          = LittleEndian.getInt(data, 0x38 + offset);
-        field_32_sfxtText               = data[ 0x3c + offset ];
-        field_33_fDispFldRMark          = data[ 0x3d + offset ];
-        field_34_ibstDispFldRMark       = LittleEndian.getShort(data, 0x3e + offset);
-        field_35_dttmDispFldRMark       = LittleEndian.getInt(data, 0x40 + offset);
-        field_36_shd                    = LittleEndian.getShort(data, 0x44 + offset);
-        field_37_brc                    = LittleEndian.getShort(data, 0x46 + offset);
-
-    }
-
-    public String toString()
-    {
-        StringBuffer buffer = new StringBuffer();
-
-        buffer.append("[CHP]\n");
-
-        buffer.append("    .formatFlags          = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getFormatFlags()))
-            .append(" (").append(getFormatFlags()).append(" )\n");
-        buffer.append("         .fBold                    = ").append(isFBold               ()).append('\n');
-        buffer.append("         .fItalic                  = ").append(isFItalic             ()).append('\n');
-        buffer.append("         .fRMarkDel                = ").append(isFRMarkDel           ()).append('\n');
-        buffer.append("         .fOutline                 = ").append(isFOutline            ()).append('\n');
-        buffer.append("         .fFldVanish               = ").append(isFFldVanish          ()).append('\n');
-        buffer.append("         .fSmallCaps               = ").append(isFSmallCaps          ()).append('\n');
-        buffer.append("         .fCaps                    = ").append(isFCaps               ()).append('\n');
-        buffer.append("         .fVanish                  = ").append(isFVanish             ()).append('\n');
-        buffer.append("         .fRMark                   = ").append(isFRMark              ()).append('\n');
-        buffer.append("         .fSpec                    = ").append(isFSpec               ()).append('\n');
-        buffer.append("         .fStrike                  = ").append(isFStrike             ()).append('\n');
-        buffer.append("         .fObj                     = ").append(isFObj                ()).append('\n');
-        buffer.append("         .fShadow                  = ").append(isFShadow             ()).append('\n');
-        buffer.append("         .fLowerCase               = ").append(isFLowerCase          ()).append('\n');
-        buffer.append("         .fData                    = ").append(isFData               ()).append('\n');
-        buffer.append("         .fOle2                    = ").append(isFOle2               ()).append('\n');
-
-        buffer.append("    .formatFlags1         = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getFormatFlags1()))
-            .append(" (").append(getFormatFlags1()).append(" )\n");
-        buffer.append("         .fEmboss                  = ").append(isFEmboss             ()).append('\n');
-        buffer.append("         .fImprint                 = ").append(isFImprint            ()).append('\n');
-        buffer.append("         .fDStrike                 = ").append(isFDStrike            ()).append('\n');
-        buffer.append("         .fUsePgsuSettings         = ").append(isFUsePgsuSettings    ()).append('\n');
-
-        buffer.append("    .ftcAscii             = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getFtcAscii()))
-            .append(" (").append(getFtcAscii()).append(" )\n");
-
-        buffer.append("    .ftcFE                = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getFtcFE()))
-            .append(" (").append(getFtcFE()).append(" )\n");
-
-        buffer.append("    .ftcOther             = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getFtcOther()))
-            .append(" (").append(getFtcOther()).append(" )\n");
-
-        buffer.append("    .hps                  = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getHps()))
-            .append(" (").append(getHps()).append(" )\n");
-
-        buffer.append("    .dxaSpace             = ")
-            .append("0x")
-            .append(HexDump.toHex((int)getDxaSpace()))
-            .append(" (").append(getDxaSpace()).append(" )\n");
-
-        buffer.append("    .iss                  = ")
-            .append("0x")
-            .append(HexDump.toHex((byte)getIss()))
-            .append(" (").append(getIss()).append(" )\n");
-
-        buffer.append("    .kul                  = ")
-            .append("0x")
-            .append(HexDump.toHex((byte)getKul()))
-            .append(" (").append(getKul()).append(" )\n");
-
-        buffer.append("    .ico                  = ")
-            .append("0x")
-            .append(HexDump.toHex((byte)getIco()))
-            .append(" (").append(getIco()).append(" )\n");
-
-        buffer.append("    .hpsPos               = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getHpsPos()))
-            .append(" (").append(getHpsPos()).append(" )\n");
-
-        buffer.append("    .lidDefault           = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getLidDefault()))
-            .append(" (").append(getLidDefault()).append(" )\n");
-
-        buffer.append("    .lidFE                = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getLidFE()))
-            .append(" (").append(getLidFE()).append(" )\n");
-
-        buffer.append("    .idctHint             = ")
-            .append("0x")
-            .append(HexDump.toHex((byte)getIdctHint()))
-            .append(" (").append(getIdctHint()).append(" )\n");
-
-        buffer.append("    .wCharScale           = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getWCharScale()))
-            .append(" (").append(getWCharScale()).append(" )\n");
-
-        buffer.append("    .FC                   = ")
-            .append("0x")
-            .append(HexDump.toHex((int)getFC()))
-            .append(" (").append(getFC()).append(" )\n");
-
-        buffer.append("    .ibstRMark            = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getIbstRMark()))
-            .append(" (").append(getIbstRMark()).append(" )\n");
-
-        buffer.append("    .ibstRMarkDel         = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getIbstRMarkDel()))
-            .append(" (").append(getIbstRMarkDel()).append(" )\n");
-
-        buffer.append("    .istd                 = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getIstd()))
-            .append(" (").append(getIstd()).append(" )\n");
-
-        buffer.append("    .ftcSym               = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getFtcSym()))
-            .append(" (").append(getFtcSym()).append(" )\n");
-
-        buffer.append("    .xchSym               = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getXchSym()))
-            .append(" (").append(getXchSym()).append(" )\n");
-
-        buffer.append("    .idslRMReason         = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getIdslRMReason()))
-            .append(" (").append(getIdslRMReason()).append(" )\n");
-
-        buffer.append("    .idslReasonDel        = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getIdslReasonDel()))
-            .append(" (").append(getIdslReasonDel()).append(" )\n");
-
-        buffer.append("    .ysr                  = ")
-            .append("0x")
-            .append(HexDump.toHex((byte)getYsr()))
-            .append(" (").append(getYsr()).append(" )\n");
-
-        buffer.append("    .chYsr                = ")
-            .append("0x")
-            .append(HexDump.toHex((byte)getChYsr()))
-            .append(" (").append(getChYsr()).append(" )\n");
-
-        buffer.append("    .hpsKern              = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getHpsKern()))
-            .append(" (").append(getHpsKern()).append(" )\n");
-
-        buffer.append("    .icoHighlight         = ")
-            .append("0x")
-            .append(HexDump.toHex((byte)getIcoHighlight()))
-            .append(" (").append(getIcoHighlight()).append(" )\n");
-
-        buffer.append("    .fHighlight           = ")
-            .append("0x")
-            .append(HexDump.toHex((byte)getFHighlight()))
-            .append(" (").append(getFHighlight()).append(" )\n");
-
-        buffer.append("    .fPropMark            = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getFPropMark()))
-            .append(" (").append(getFPropMark()).append(" )\n");
-
-        buffer.append("    .ibstPropRMark        = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getIbstPropRMark()))
-            .append(" (").append(getIbstPropRMark()).append(" )\n");
-
-        buffer.append("    .dttmPropRMark        = ")
-            .append("0x")
-            .append(HexDump.toHex((int)getDttmPropRMark()))
-            .append(" (").append(getDttmPropRMark()).append(" )\n");
-
-        buffer.append("    .sfxtText             = ")
-            .append("0x")
-            .append(HexDump.toHex((byte)getSfxtText()))
-            .append(" (").append(getSfxtText()).append(" )\n");
-
-        buffer.append("    .fDispFldRMark        = ")
-            .append("0x")
-            .append(HexDump.toHex((byte)getFDispFldRMark()))
-            .append(" (").append(getFDispFldRMark()).append(" )\n");
-
-        buffer.append("    .ibstDispFldRMark     = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getIbstDispFldRMark()))
-            .append(" (").append(getIbstDispFldRMark()).append(" )\n");
-
-        buffer.append("    .dttmDispFldRMark     = ")
-            .append("0x")
-            .append(HexDump.toHex((int)getDttmDispFldRMark()))
-            .append(" (").append(getDttmDispFldRMark()).append(" )\n");
-
-        buffer.append("    .shd                  = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getShd()))
-            .append(" (").append(getShd()).append(" )\n");
-
-        buffer.append("    .brc                  = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getBrc()))
-            .append(" (").append(getBrc()).append(" )\n");
-
-        buffer.append("[/CHP]\n");
-        return buffer.toString();
     }
 
     /**
@@ -407,41 +150,41 @@ public abstract class CHPAbstractType
 
 
     /**
-     * Get the format flags field for the CHP record.
+     * Get the format_flags field for the CHP record.
      */
-    public short getFormatFlags()
+    public int getFormat_flags()
     {
-        return field_1_formatFlags;
+        return field_1_format_flags;
     }
 
     /**
-     * Set the format flags field for the CHP record.
+     * Set the format_flags field for the CHP record.
      */
-    public void setFormatFlags(short field_1_formatFlags)
+    public void setFormat_flags(int field_1_format_flags)
     {
-        this.field_1_formatFlags = field_1_formatFlags;
+        this.field_1_format_flags = field_1_format_flags;
     }
 
     /**
-     * Get the format flags1 field for the CHP record.
+     * Get the format_flags1 field for the CHP record.
      */
-    public short getFormatFlags1()
+    public int getFormat_flags1()
     {
-        return field_2_formatFlags1;
+        return field_2_format_flags1;
     }
 
     /**
-     * Set the format flags1 field for the CHP record.
+     * Set the format_flags1 field for the CHP record.
      */
-    public void setFormatFlags1(short field_2_formatFlags1)
+    public void setFormat_flags1(int field_2_format_flags1)
     {
-        this.field_2_formatFlags1 = field_2_formatFlags1;
+        this.field_2_format_flags1 = field_2_format_flags1;
     }
 
     /**
      * Get the ftcAscii field for the CHP record.
      */
-    public short getFtcAscii()
+    public int getFtcAscii()
     {
         return field_3_ftcAscii;
     }
@@ -449,7 +192,7 @@ public abstract class CHPAbstractType
     /**
      * Set the ftcAscii field for the CHP record.
      */
-    public void setFtcAscii(short field_3_ftcAscii)
+    public void setFtcAscii(int field_3_ftcAscii)
     {
         this.field_3_ftcAscii = field_3_ftcAscii;
     }
@@ -457,7 +200,7 @@ public abstract class CHPAbstractType
     /**
      * Get the ftcFE field for the CHP record.
      */
-    public short getFtcFE()
+    public int getFtcFE()
     {
         return field_4_ftcFE;
     }
@@ -465,7 +208,7 @@ public abstract class CHPAbstractType
     /**
      * Set the ftcFE field for the CHP record.
      */
-    public void setFtcFE(short field_4_ftcFE)
+    public void setFtcFE(int field_4_ftcFE)
     {
         this.field_4_ftcFE = field_4_ftcFE;
     }
@@ -473,7 +216,7 @@ public abstract class CHPAbstractType
     /**
      * Get the ftcOther field for the CHP record.
      */
-    public short getFtcOther()
+    public int getFtcOther()
     {
         return field_5_ftcOther;
     }
@@ -481,7 +224,7 @@ public abstract class CHPAbstractType
     /**
      * Set the ftcOther field for the CHP record.
      */
-    public void setFtcOther(short field_5_ftcOther)
+    public void setFtcOther(int field_5_ftcOther)
     {
         this.field_5_ftcOther = field_5_ftcOther;
     }
@@ -489,7 +232,7 @@ public abstract class CHPAbstractType
     /**
      * Get the hps field for the CHP record.
      */
-    public short getHps()
+    public int getHps()
     {
         return field_6_hps;
     }
@@ -497,7 +240,7 @@ public abstract class CHPAbstractType
     /**
      * Set the hps field for the CHP record.
      */
-    public void setHps(short field_6_hps)
+    public void setHps(int field_6_hps)
     {
         this.field_6_hps = field_6_hps;
     }
@@ -521,7 +264,7 @@ public abstract class CHPAbstractType
     /**
      * Get the iss field for the CHP record.
      */
-    public byte getIss()
+    public int getIss()
     {
         return field_8_iss;
     }
@@ -529,7 +272,7 @@ public abstract class CHPAbstractType
     /**
      * Set the iss field for the CHP record.
      */
-    public void setIss(byte field_8_iss)
+    public void setIss(int field_8_iss)
     {
         this.field_8_iss = field_8_iss;
     }
@@ -537,7 +280,7 @@ public abstract class CHPAbstractType
     /**
      * Get the kul field for the CHP record.
      */
-    public byte getKul()
+    public int getKul()
     {
         return field_9_kul;
     }
@@ -545,7 +288,7 @@ public abstract class CHPAbstractType
     /**
      * Set the kul field for the CHP record.
      */
-    public void setKul(byte field_9_kul)
+    public void setKul(int field_9_kul)
     {
         this.field_9_kul = field_9_kul;
     }
@@ -553,7 +296,7 @@ public abstract class CHPAbstractType
     /**
      * Get the ico field for the CHP record.
      */
-    public byte getIco()
+    public int getIco()
     {
         return field_10_ico;
     }
@@ -561,7 +304,7 @@ public abstract class CHPAbstractType
     /**
      * Set the ico field for the CHP record.
      */
-    public void setIco(byte field_10_ico)
+    public void setIco(int field_10_ico)
     {
         this.field_10_ico = field_10_ico;
     }
@@ -569,7 +312,7 @@ public abstract class CHPAbstractType
     /**
      * Get the hpsPos field for the CHP record.
      */
-    public short getHpsPos()
+    public int getHpsPos()
     {
         return field_11_hpsPos;
     }
@@ -577,7 +320,7 @@ public abstract class CHPAbstractType
     /**
      * Set the hpsPos field for the CHP record.
      */
-    public void setHpsPos(short field_11_hpsPos)
+    public void setHpsPos(int field_11_hpsPos)
     {
         this.field_11_hpsPos = field_11_hpsPos;
     }
@@ -585,7 +328,7 @@ public abstract class CHPAbstractType
     /**
      * Get the lidDefault field for the CHP record.
      */
-    public short getLidDefault()
+    public int getLidDefault()
     {
         return field_12_lidDefault;
     }
@@ -593,7 +336,7 @@ public abstract class CHPAbstractType
     /**
      * Set the lidDefault field for the CHP record.
      */
-    public void setLidDefault(short field_12_lidDefault)
+    public void setLidDefault(int field_12_lidDefault)
     {
         this.field_12_lidDefault = field_12_lidDefault;
     }
@@ -601,7 +344,7 @@ public abstract class CHPAbstractType
     /**
      * Get the lidFE field for the CHP record.
      */
-    public short getLidFE()
+    public int getLidFE()
     {
         return field_13_lidFE;
     }
@@ -609,7 +352,7 @@ public abstract class CHPAbstractType
     /**
      * Set the lidFE field for the CHP record.
      */
-    public void setLidFE(short field_13_lidFE)
+    public void setLidFE(int field_13_lidFE)
     {
         this.field_13_lidFE = field_13_lidFE;
     }
@@ -617,7 +360,7 @@ public abstract class CHPAbstractType
     /**
      * Get the idctHint field for the CHP record.
      */
-    public byte getIdctHint()
+    public int getIdctHint()
     {
         return field_14_idctHint;
     }
@@ -625,7 +368,7 @@ public abstract class CHPAbstractType
     /**
      * Set the idctHint field for the CHP record.
      */
-    public void setIdctHint(byte field_14_idctHint)
+    public void setIdctHint(int field_14_idctHint)
     {
         this.field_14_idctHint = field_14_idctHint;
     }
@@ -633,7 +376,7 @@ public abstract class CHPAbstractType
     /**
      * Get the wCharScale field for the CHP record.
      */
-    public short getWCharScale()
+    public int getWCharScale()
     {
         return field_15_wCharScale;
     }
@@ -641,7 +384,7 @@ public abstract class CHPAbstractType
     /**
      * Set the wCharScale field for the CHP record.
      */
-    public void setWCharScale(short field_15_wCharScale)
+    public void setWCharScale(int field_15_wCharScale)
     {
         this.field_15_wCharScale = field_15_wCharScale;
     }
@@ -665,7 +408,7 @@ public abstract class CHPAbstractType
     /**
      * Get the ibstRMark field for the CHP record.
      */
-    public short getIbstRMark()
+    public int getIbstRMark()
     {
         return field_17_ibstRMark;
     }
@@ -673,7 +416,7 @@ public abstract class CHPAbstractType
     /**
      * Set the ibstRMark field for the CHP record.
      */
-    public void setIbstRMark(short field_17_ibstRMark)
+    public void setIbstRMark(int field_17_ibstRMark)
     {
         this.field_17_ibstRMark = field_17_ibstRMark;
     }
@@ -681,7 +424,7 @@ public abstract class CHPAbstractType
     /**
      * Get the ibstRMarkDel field for the CHP record.
      */
-    public short getIbstRMarkDel()
+    public int getIbstRMarkDel()
     {
         return field_18_ibstRMarkDel;
     }
@@ -689,7 +432,7 @@ public abstract class CHPAbstractType
     /**
      * Set the ibstRMarkDel field for the CHP record.
      */
-    public void setIbstRMarkDel(short field_18_ibstRMarkDel)
+    public void setIbstRMarkDel(int field_18_ibstRMarkDel)
     {
         this.field_18_ibstRMarkDel = field_18_ibstRMarkDel;
     }
@@ -697,7 +440,7 @@ public abstract class CHPAbstractType
     /**
      * Get the istd field for the CHP record.
      */
-    public short getIstd()
+    public int getIstd()
     {
         return field_19_istd;
     }
@@ -705,7 +448,7 @@ public abstract class CHPAbstractType
     /**
      * Set the istd field for the CHP record.
      */
-    public void setIstd(short field_19_istd)
+    public void setIstd(int field_19_istd)
     {
         this.field_19_istd = field_19_istd;
     }
@@ -713,7 +456,7 @@ public abstract class CHPAbstractType
     /**
      * Get the ftcSym field for the CHP record.
      */
-    public short getFtcSym()
+    public int getFtcSym()
     {
         return field_20_ftcSym;
     }
@@ -721,7 +464,7 @@ public abstract class CHPAbstractType
     /**
      * Set the ftcSym field for the CHP record.
      */
-    public void setFtcSym(short field_20_ftcSym)
+    public void setFtcSym(int field_20_ftcSym)
     {
         this.field_20_ftcSym = field_20_ftcSym;
     }
@@ -729,7 +472,7 @@ public abstract class CHPAbstractType
     /**
      * Get the xchSym field for the CHP record.
      */
-    public short getXchSym()
+    public int getXchSym()
     {
         return field_21_xchSym;
     }
@@ -737,7 +480,7 @@ public abstract class CHPAbstractType
     /**
      * Set the xchSym field for the CHP record.
      */
-    public void setXchSym(short field_21_xchSym)
+    public void setXchSym(int field_21_xchSym)
     {
         this.field_21_xchSym = field_21_xchSym;
     }
@@ -745,7 +488,7 @@ public abstract class CHPAbstractType
     /**
      * Get the idslRMReason field for the CHP record.
      */
-    public short getIdslRMReason()
+    public int getIdslRMReason()
     {
         return field_22_idslRMReason;
     }
@@ -753,7 +496,7 @@ public abstract class CHPAbstractType
     /**
      * Set the idslRMReason field for the CHP record.
      */
-    public void setIdslRMReason(short field_22_idslRMReason)
+    public void setIdslRMReason(int field_22_idslRMReason)
     {
         this.field_22_idslRMReason = field_22_idslRMReason;
     }
@@ -761,7 +504,7 @@ public abstract class CHPAbstractType
     /**
      * Get the idslReasonDel field for the CHP record.
      */
-    public short getIdslReasonDel()
+    public int getIdslReasonDel()
     {
         return field_23_idslReasonDel;
     }
@@ -769,7 +512,7 @@ public abstract class CHPAbstractType
     /**
      * Set the idslReasonDel field for the CHP record.
      */
-    public void setIdslReasonDel(short field_23_idslReasonDel)
+    public void setIdslReasonDel(int field_23_idslReasonDel)
     {
         this.field_23_idslReasonDel = field_23_idslReasonDel;
     }
@@ -777,7 +520,7 @@ public abstract class CHPAbstractType
     /**
      * Get the ysr field for the CHP record.
      */
-    public byte getYsr()
+    public int getYsr()
     {
         return field_24_ysr;
     }
@@ -785,7 +528,7 @@ public abstract class CHPAbstractType
     /**
      * Set the ysr field for the CHP record.
      */
-    public void setYsr(byte field_24_ysr)
+    public void setYsr(int field_24_ysr)
     {
         this.field_24_ysr = field_24_ysr;
     }
@@ -793,7 +536,7 @@ public abstract class CHPAbstractType
     /**
      * Get the chYsr field for the CHP record.
      */
-    public byte getChYsr()
+    public int getChYsr()
     {
         return field_25_chYsr;
     }
@@ -801,7 +544,7 @@ public abstract class CHPAbstractType
     /**
      * Set the chYsr field for the CHP record.
      */
-    public void setChYsr(byte field_25_chYsr)
+    public void setChYsr(int field_25_chYsr)
     {
         this.field_25_chYsr = field_25_chYsr;
     }
@@ -809,7 +552,7 @@ public abstract class CHPAbstractType
     /**
      * Get the hpsKern field for the CHP record.
      */
-    public short getHpsKern()
+    public int getHpsKern()
     {
         return field_26_hpsKern;
     }
@@ -817,7 +560,7 @@ public abstract class CHPAbstractType
     /**
      * Set the hpsKern field for the CHP record.
      */
-    public void setHpsKern(short field_26_hpsKern)
+    public void setHpsKern(int field_26_hpsKern)
     {
         this.field_26_hpsKern = field_26_hpsKern;
     }
@@ -825,7 +568,7 @@ public abstract class CHPAbstractType
     /**
      * Get the icoHighlight field for the CHP record.
      */
-    public byte getIcoHighlight()
+    public int getIcoHighlight()
     {
         return field_27_icoHighlight;
     }
@@ -833,7 +576,7 @@ public abstract class CHPAbstractType
     /**
      * Set the icoHighlight field for the CHP record.
      */
-    public void setIcoHighlight(byte field_27_icoHighlight)
+    public void setIcoHighlight(int field_27_icoHighlight)
     {
         this.field_27_icoHighlight = field_27_icoHighlight;
     }
@@ -841,7 +584,7 @@ public abstract class CHPAbstractType
     /**
      * Get the fHighlight field for the CHP record.
      */
-    public byte getFHighlight()
+    public int getFHighlight()
     {
         return field_28_fHighlight;
     }
@@ -849,7 +592,7 @@ public abstract class CHPAbstractType
     /**
      * Set the fHighlight field for the CHP record.
      */
-    public void setFHighlight(byte field_28_fHighlight)
+    public void setFHighlight(int field_28_fHighlight)
     {
         this.field_28_fHighlight = field_28_fHighlight;
     }
@@ -857,7 +600,7 @@ public abstract class CHPAbstractType
     /**
      * Get the fPropMark field for the CHP record.
      */
-    public short getFPropMark()
+    public int getFPropMark()
     {
         return field_29_fPropMark;
     }
@@ -865,7 +608,7 @@ public abstract class CHPAbstractType
     /**
      * Set the fPropMark field for the CHP record.
      */
-    public void setFPropMark(short field_29_fPropMark)
+    public void setFPropMark(int field_29_fPropMark)
     {
         this.field_29_fPropMark = field_29_fPropMark;
     }
@@ -873,7 +616,7 @@ public abstract class CHPAbstractType
     /**
      * Get the ibstPropRMark field for the CHP record.
      */
-    public short getIbstPropRMark()
+    public int getIbstPropRMark()
     {
         return field_30_ibstPropRMark;
     }
@@ -881,7 +624,7 @@ public abstract class CHPAbstractType
     /**
      * Set the ibstPropRMark field for the CHP record.
      */
-    public void setIbstPropRMark(short field_30_ibstPropRMark)
+    public void setIbstPropRMark(int field_30_ibstPropRMark)
     {
         this.field_30_ibstPropRMark = field_30_ibstPropRMark;
     }
@@ -905,7 +648,7 @@ public abstract class CHPAbstractType
     /**
      * Get the sfxtText field for the CHP record.
      */
-    public byte getSfxtText()
+    public int getSfxtText()
     {
         return field_32_sfxtText;
     }
@@ -913,7 +656,7 @@ public abstract class CHPAbstractType
     /**
      * Set the sfxtText field for the CHP record.
      */
-    public void setSfxtText(byte field_32_sfxtText)
+    public void setSfxtText(int field_32_sfxtText)
     {
         this.field_32_sfxtText = field_32_sfxtText;
     }
@@ -921,7 +664,7 @@ public abstract class CHPAbstractType
     /**
      * Get the fDispFldRMark field for the CHP record.
      */
-    public byte getFDispFldRMark()
+    public int getFDispFldRMark()
     {
         return field_33_fDispFldRMark;
     }
@@ -929,7 +672,7 @@ public abstract class CHPAbstractType
     /**
      * Set the fDispFldRMark field for the CHP record.
      */
-    public void setFDispFldRMark(byte field_33_fDispFldRMark)
+    public void setFDispFldRMark(int field_33_fDispFldRMark)
     {
         this.field_33_fDispFldRMark = field_33_fDispFldRMark;
     }
@@ -937,7 +680,7 @@ public abstract class CHPAbstractType
     /**
      * Get the ibstDispFldRMark field for the CHP record.
      */
-    public short getIbstDispFldRMark()
+    public int getIbstDispFldRMark()
     {
         return field_34_ibstDispFldRMark;
     }
@@ -945,7 +688,7 @@ public abstract class CHPAbstractType
     /**
      * Set the ibstDispFldRMark field for the CHP record.
      */
-    public void setIbstDispFldRMark(short field_34_ibstDispFldRMark)
+    public void setIbstDispFldRMark(int field_34_ibstDispFldRMark)
     {
         this.field_34_ibstDispFldRMark = field_34_ibstDispFldRMark;
     }
@@ -969,7 +712,7 @@ public abstract class CHPAbstractType
     /**
      * Get the shd field for the CHP record.
      */
-    public short getShd()
+    public int getShd()
     {
         return field_36_shd;
     }
@@ -977,7 +720,7 @@ public abstract class CHPAbstractType
     /**
      * Set the shd field for the CHP record.
      */
-    public void setShd(short field_36_shd)
+    public void setShd(int field_36_shd)
     {
         this.field_36_shd = field_36_shd;
     }
@@ -985,7 +728,7 @@ public abstract class CHPAbstractType
     /**
      * Get the brc field for the CHP record.
      */
-    public short getBrc()
+    public int getBrc()
     {
         return field_37_brc;
     }
@@ -993,7 +736,7 @@ public abstract class CHPAbstractType
     /**
      * Set the brc field for the CHP record.
      */
-    public void setBrc(short field_37_brc)
+    public void setBrc(int field_37_brc)
     {
         this.field_37_brc = field_37_brc;
     }
@@ -1004,7 +747,9 @@ public abstract class CHPAbstractType
      */
     public void setFBold(boolean value)
     {
-        field_1_formatFlags = fBold.setShortBoolean(field_1_formatFlags, value);
+        field_1_format_flags = (int)fBold.setBoolean(field_1_format_flags, value);
+
+        
     }
 
     /**
@@ -1013,7 +758,8 @@ public abstract class CHPAbstractType
      */
     public boolean isFBold()
     {
-        return fBold.isSet(field_1_formatFlags);
+        return fBold.isSet(field_1_format_flags);
+        
     }
 
     /**
@@ -1022,7 +768,9 @@ public abstract class CHPAbstractType
      */
     public void setFItalic(boolean value)
     {
-        field_1_formatFlags = fItalic.setShortBoolean(field_1_formatFlags, value);
+        field_1_format_flags = (int)fItalic.setBoolean(field_1_format_flags, value);
+
+        
     }
 
     /**
@@ -1031,7 +779,8 @@ public abstract class CHPAbstractType
      */
     public boolean isFItalic()
     {
-        return fItalic.isSet(field_1_formatFlags);
+        return fItalic.isSet(field_1_format_flags);
+        
     }
 
     /**
@@ -1040,7 +789,9 @@ public abstract class CHPAbstractType
      */
     public void setFRMarkDel(boolean value)
     {
-        field_1_formatFlags = fRMarkDel.setShortBoolean(field_1_formatFlags, value);
+        field_1_format_flags = (int)fRMarkDel.setBoolean(field_1_format_flags, value);
+
+        
     }
 
     /**
@@ -1049,7 +800,8 @@ public abstract class CHPAbstractType
      */
     public boolean isFRMarkDel()
     {
-        return fRMarkDel.isSet(field_1_formatFlags);
+        return fRMarkDel.isSet(field_1_format_flags);
+        
     }
 
     /**
@@ -1058,7 +810,9 @@ public abstract class CHPAbstractType
      */
     public void setFOutline(boolean value)
     {
-        field_1_formatFlags = fOutline.setShortBoolean(field_1_formatFlags, value);
+        field_1_format_flags = (int)fOutline.setBoolean(field_1_format_flags, value);
+
+        
     }
 
     /**
@@ -1067,7 +821,8 @@ public abstract class CHPAbstractType
      */
     public boolean isFOutline()
     {
-        return fOutline.isSet(field_1_formatFlags);
+        return fOutline.isSet(field_1_format_flags);
+        
     }
 
     /**
@@ -1076,7 +831,9 @@ public abstract class CHPAbstractType
      */
     public void setFFldVanish(boolean value)
     {
-        field_1_formatFlags = fFldVanish.setShortBoolean(field_1_formatFlags, value);
+        field_1_format_flags = (int)fFldVanish.setBoolean(field_1_format_flags, value);
+
+        
     }
 
     /**
@@ -1085,7 +842,8 @@ public abstract class CHPAbstractType
      */
     public boolean isFFldVanish()
     {
-        return fFldVanish.isSet(field_1_formatFlags);
+        return fFldVanish.isSet(field_1_format_flags);
+        
     }
 
     /**
@@ -1094,7 +852,9 @@ public abstract class CHPAbstractType
      */
     public void setFSmallCaps(boolean value)
     {
-        field_1_formatFlags = fSmallCaps.setShortBoolean(field_1_formatFlags, value);
+        field_1_format_flags = (int)fSmallCaps.setBoolean(field_1_format_flags, value);
+
+        
     }
 
     /**
@@ -1103,7 +863,8 @@ public abstract class CHPAbstractType
      */
     public boolean isFSmallCaps()
     {
-        return fSmallCaps.isSet(field_1_formatFlags);
+        return fSmallCaps.isSet(field_1_format_flags);
+        
     }
 
     /**
@@ -1112,7 +873,9 @@ public abstract class CHPAbstractType
      */
     public void setFCaps(boolean value)
     {
-        field_1_formatFlags = fCaps.setShortBoolean(field_1_formatFlags, value);
+        field_1_format_flags = (int)fCaps.setBoolean(field_1_format_flags, value);
+
+        
     }
 
     /**
@@ -1121,7 +884,8 @@ public abstract class CHPAbstractType
      */
     public boolean isFCaps()
     {
-        return fCaps.isSet(field_1_formatFlags);
+        return fCaps.isSet(field_1_format_flags);
+        
     }
 
     /**
@@ -1130,7 +894,9 @@ public abstract class CHPAbstractType
      */
     public void setFVanish(boolean value)
     {
-        field_1_formatFlags = fVanish.setShortBoolean(field_1_formatFlags, value);
+        field_1_format_flags = (int)fVanish.setBoolean(field_1_format_flags, value);
+
+        
     }
 
     /**
@@ -1139,7 +905,8 @@ public abstract class CHPAbstractType
      */
     public boolean isFVanish()
     {
-        return fVanish.isSet(field_1_formatFlags);
+        return fVanish.isSet(field_1_format_flags);
+        
     }
 
     /**
@@ -1148,7 +915,9 @@ public abstract class CHPAbstractType
      */
     public void setFRMark(boolean value)
     {
-        field_1_formatFlags = fRMark.setShortBoolean(field_1_formatFlags, value);
+        field_1_format_flags = (int)fRMark.setBoolean(field_1_format_flags, value);
+
+        
     }
 
     /**
@@ -1157,7 +926,8 @@ public abstract class CHPAbstractType
      */
     public boolean isFRMark()
     {
-        return fRMark.isSet(field_1_formatFlags);
+        return fRMark.isSet(field_1_format_flags);
+        
     }
 
     /**
@@ -1166,7 +936,9 @@ public abstract class CHPAbstractType
      */
     public void setFSpec(boolean value)
     {
-        field_1_formatFlags = fSpec.setShortBoolean(field_1_formatFlags, value);
+        field_1_format_flags = (int)fSpec.setBoolean(field_1_format_flags, value);
+
+        
     }
 
     /**
@@ -1175,7 +947,8 @@ public abstract class CHPAbstractType
      */
     public boolean isFSpec()
     {
-        return fSpec.isSet(field_1_formatFlags);
+        return fSpec.isSet(field_1_format_flags);
+        
     }
 
     /**
@@ -1184,7 +957,9 @@ public abstract class CHPAbstractType
      */
     public void setFStrike(boolean value)
     {
-        field_1_formatFlags = fStrike.setShortBoolean(field_1_formatFlags, value);
+        field_1_format_flags = (int)fStrike.setBoolean(field_1_format_flags, value);
+
+        
     }
 
     /**
@@ -1193,7 +968,8 @@ public abstract class CHPAbstractType
      */
     public boolean isFStrike()
     {
-        return fStrike.isSet(field_1_formatFlags);
+        return fStrike.isSet(field_1_format_flags);
+        
     }
 
     /**
@@ -1202,7 +978,9 @@ public abstract class CHPAbstractType
      */
     public void setFObj(boolean value)
     {
-        field_1_formatFlags = fObj.setShortBoolean(field_1_formatFlags, value);
+        field_1_format_flags = (int)fObj.setBoolean(field_1_format_flags, value);
+
+        
     }
 
     /**
@@ -1211,7 +989,8 @@ public abstract class CHPAbstractType
      */
     public boolean isFObj()
     {
-        return fObj.isSet(field_1_formatFlags);
+        return fObj.isSet(field_1_format_flags);
+        
     }
 
     /**
@@ -1220,7 +999,9 @@ public abstract class CHPAbstractType
      */
     public void setFShadow(boolean value)
     {
-        field_1_formatFlags = fShadow.setShortBoolean(field_1_formatFlags, value);
+        field_1_format_flags = (int)fShadow.setBoolean(field_1_format_flags, value);
+
+        
     }
 
     /**
@@ -1229,7 +1010,8 @@ public abstract class CHPAbstractType
      */
     public boolean isFShadow()
     {
-        return fShadow.isSet(field_1_formatFlags);
+        return fShadow.isSet(field_1_format_flags);
+        
     }
 
     /**
@@ -1238,7 +1020,9 @@ public abstract class CHPAbstractType
      */
     public void setFLowerCase(boolean value)
     {
-        field_1_formatFlags = fLowerCase.setShortBoolean(field_1_formatFlags, value);
+        field_1_format_flags = (int)fLowerCase.setBoolean(field_1_format_flags, value);
+
+        
     }
 
     /**
@@ -1247,7 +1031,8 @@ public abstract class CHPAbstractType
      */
     public boolean isFLowerCase()
     {
-        return fLowerCase.isSet(field_1_formatFlags);
+        return fLowerCase.isSet(field_1_format_flags);
+        
     }
 
     /**
@@ -1256,7 +1041,9 @@ public abstract class CHPAbstractType
      */
     public void setFData(boolean value)
     {
-        field_1_formatFlags = fData.setShortBoolean(field_1_formatFlags, value);
+        field_1_format_flags = (int)fData.setBoolean(field_1_format_flags, value);
+
+        
     }
 
     /**
@@ -1265,7 +1052,8 @@ public abstract class CHPAbstractType
      */
     public boolean isFData()
     {
-        return fData.isSet(field_1_formatFlags);
+        return fData.isSet(field_1_format_flags);
+        
     }
 
     /**
@@ -1274,7 +1062,9 @@ public abstract class CHPAbstractType
      */
     public void setFOle2(boolean value)
     {
-        field_1_formatFlags = fOle2.setShortBoolean(field_1_formatFlags, value);
+        field_1_format_flags = (int)fOle2.setBoolean(field_1_format_flags, value);
+
+        
     }
 
     /**
@@ -1283,7 +1073,8 @@ public abstract class CHPAbstractType
      */
     public boolean isFOle2()
     {
-        return fOle2.isSet(field_1_formatFlags);
+        return fOle2.isSet(field_1_format_flags);
+        
     }
 
     /**
@@ -1292,7 +1083,9 @@ public abstract class CHPAbstractType
      */
     public void setFEmboss(boolean value)
     {
-        field_2_formatFlags1 = fEmboss.setShortBoolean(field_2_formatFlags1, value);
+        field_2_format_flags1 = (int)fEmboss.setBoolean(field_2_format_flags1, value);
+
+        
     }
 
     /**
@@ -1301,7 +1094,8 @@ public abstract class CHPAbstractType
      */
     public boolean isFEmboss()
     {
-        return fEmboss.isSet(field_2_formatFlags1);
+        return fEmboss.isSet(field_2_format_flags1);
+        
     }
 
     /**
@@ -1310,7 +1104,9 @@ public abstract class CHPAbstractType
      */
     public void setFImprint(boolean value)
     {
-        field_2_formatFlags1 = fImprint.setShortBoolean(field_2_formatFlags1, value);
+        field_2_format_flags1 = (int)fImprint.setBoolean(field_2_format_flags1, value);
+
+        
     }
 
     /**
@@ -1319,7 +1115,8 @@ public abstract class CHPAbstractType
      */
     public boolean isFImprint()
     {
-        return fImprint.isSet(field_2_formatFlags1);
+        return fImprint.isSet(field_2_format_flags1);
+        
     }
 
     /**
@@ -1328,7 +1125,9 @@ public abstract class CHPAbstractType
      */
     public void setFDStrike(boolean value)
     {
-        field_2_formatFlags1 = fDStrike.setShortBoolean(field_2_formatFlags1, value);
+        field_2_format_flags1 = (int)fDStrike.setBoolean(field_2_format_flags1, value);
+
+        
     }
 
     /**
@@ -1337,7 +1136,8 @@ public abstract class CHPAbstractType
      */
     public boolean isFDStrike()
     {
-        return fDStrike.isSet(field_2_formatFlags1);
+        return fDStrike.isSet(field_2_format_flags1);
+        
     }
 
     /**
@@ -1346,7 +1146,9 @@ public abstract class CHPAbstractType
      */
     public void setFUsePgsuSettings(boolean value)
     {
-        field_2_formatFlags1 = fUsePgsuSettings.setShortBoolean(field_2_formatFlags1, value);
+        field_2_format_flags1 = (int)fUsePgsuSettings.setBoolean(field_2_format_flags1, value);
+
+        
     }
 
     /**
@@ -1355,7 +1157,8 @@ public abstract class CHPAbstractType
      */
     public boolean isFUsePgsuSettings()
     {
-        return fUsePgsuSettings.isSet(field_2_formatFlags1);
+        return fUsePgsuSettings.isSet(field_2_format_flags1);
+        
     }
 
 
