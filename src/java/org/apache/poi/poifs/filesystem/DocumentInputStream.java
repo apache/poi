@@ -236,7 +236,7 @@ public class DocumentInputStream
             _tiny_buffer = new byte[ 1 ];
         }
         _document.read(_tiny_buffer, _current_offset++);
-        return _tiny_buffer[ 0 ];
+        return ((int)_tiny_buffer[ 0 ]) & 0x000000FF;
     }
 
     /**
