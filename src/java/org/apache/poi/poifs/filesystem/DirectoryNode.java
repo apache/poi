@@ -59,6 +59,7 @@ import java.io.*;
 
 import java.util.*;
 
+import org.apache.poi.hpsf.ClassID;
 import org.apache.poi.poifs.dev.POIFSViewable;
 import org.apache.poi.poifs.property.DirectoryProperty;
 import org.apache.poi.poifs.property.DocumentProperty;
@@ -344,6 +345,26 @@ public class DirectoryNode
         _filesystem.addDirectory(property);
         _entries.put(name, rval);
         return rval;
+    }
+
+    /**
+     * Gets the storage clsid of the directory entry
+     *
+     * @return storage Class ID
+     */
+    public ClassID getStorageClsid()
+    {
+        return getProperty().getStorageClsid();
+    }
+
+    /**
+     * Sets the storage clsid for the directory entry
+     *
+     * @param clsidStorage storage Class ID
+     */
+    public void setStorageClsid(ClassID clsidStorage)
+    {
+        getProperty().setStorageClsid(clsidStorage);
     }
 
     /* **********  END  implementation of DirectoryEntry ********** */
