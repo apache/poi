@@ -31,7 +31,8 @@
                     <li><link href="#ReadWriteWorkbook">Reading and writing</link></li>
                     <li><link href="#NewLinesInCells">Use newlines in cells.</link></li>
                     <li><link href="#DataFormats">Create user defined data formats.</link></li>
-                    <li><link href="#PrintArea">Set print area for a sheet.</link></li>
+                    <li><link href="#PrintArea">Fit sheet to one page</link></li>
+                    <li><link href="#PrintArea2">Set print area for a sheet.</link></li>		    
                     <li><link href="#FooterPageNumbers">Set page numbers on the footer of a sheet.</link></li>
                     <li><link href="#ShiftRows">Shift rows.</link></li>
                     <li><link href="#SelectSheet">Set a sheet as selected.</link></li>
@@ -439,6 +440,22 @@
     fileOut.close();
                     </source>
                 </section>
+                <anchor id="PrintArea2"/>
+                <section title="Set Print Area">
+                    <source>
+    HSSFWorkbook wb = new HSSFWorkbook();
+    HSSFSheet sheet = wb.createSheet("Sheet1");
+    wb.setPrintArea(0, "Sheet1!$A$1:$C$2");
+    //sets the print area for the first sheet
+    
+
+    // Create various cells and rows for spreadsheet.
+
+    FileOutputStream fileOut = new FileOutputStream("workbook.xls");
+    wb.write(fileOut);
+    fileOut.close();
+                    </source>
+                </section>
 
                 <anchor id="FooterPageNumbers"/>
                 <section title="Set Page Numbers on Footer">
@@ -459,8 +476,8 @@
                     </source>
                 </section>                
                 
-                <anchor id="Convience Functions"/>
-                <section title="Using the Convience Functions">
+                <anchor id="Convenience Functions"/>
+                <section title="Using the Convenience Functions">
                     <p>
                         The convience functions live in contrib and provide
                         utility features such as setting borders around merged
