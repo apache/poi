@@ -15,6 +15,7 @@
     junit(3.8+)     http://www.ibiblio.org/maven/junit/jars/
     xerces          http://www.ibiblio.org/maven/xerces/jars/
     jdepend         http://www.ibiblio.org/maven/jdepend/jars/
+    xalan           http://www.ibiblio.org/maven/xalan/jars/
 
     The ant jar "optional.jar" should also be available otherwise the
     build will fail.
