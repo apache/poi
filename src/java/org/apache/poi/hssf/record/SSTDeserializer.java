@@ -1,12 +1,68 @@
+/* ====================================================================
+ * The Apache Software License, Version 1.1
+ *
+ * Copyright (c) 2002 The Apache Software Foundation.  All rights
+ * reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in
+ *    the documentation and/or other materials provided with the
+ *    distribution.
+ *
+ * 3. The end-user documentation included with the redistribution,
+ *    if any, must include the following acknowledgment:
+ *       "This product includes software developed by the
+ *        Apache Software Foundation (http://www.apache.org/)."
+ *    Alternately, this acknowledgment may appear in the software itself,
+ *    if and wherever such third-party acknowledgments normally appear.
+ *
+ * 4. The names "Apache" and "Apache Software Foundation" and
+ *    "Apache POI" must not be used to endorse or promote products
+ *    derived from this software without prior written permission. For
+ *    written permission, please contact apache@apache.org.
+ *
+ * 5. Products derived from this software may not be called "Apache",
+ *    "Apache POI", nor may "Apache" appear in their name, without
+ *    prior written permission of the Apache Software Foundation.
+ *
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
+ * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
+ * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+ * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
+ * ====================================================================
+ *
+ * This software consists of voluntary contributions made by many
+ * individuals on behalf of the Apache Software Foundation.  For more
+ * information on the Apache Software Foundation, please see
+ * <http://www.apache.org/>.
+ */
+
 package org.apache.poi.hssf.record;
 
+import org.apache.poi.util.BinaryTree;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
-import org.apache.poi.util.BinaryTree;
-import org.apache.poi.util.HexDump;
 
-import java.io.IOException;
-
+/**
+ * Handles the task of deserializing a SST string.  The two main entry points are
+ *
+ * @author Glen Stampoultzis (glens at apache.org)
+ */
 class SSTDeserializer
 {
 
@@ -15,22 +71,35 @@ class SSTDeserializer
     private int continuationExpectedChars;
     /** this is the string we were working on before hitting the end of the current record. This string is NOT finished. */
     private String unfinishedString;
-    /** this is the total length of the current string being handled */
-    private int totalLengthBytes;
-    /** this is the offset into a string field of the actual string data */
-    private int stringDataOffset;
     /** this is true if the string uses wide characters */
     private boolean wideChar;
+    /** this is true if the string is a rich text string */
+    private boolean richText;
+    /** this is true if the string is a far east string or some other wierd string */
+    private boolean extendedText;
+    /** Number of formatting runs in this rich text field */
+    private short runCount;
+    /** Number of characters in current string */
+    private int charCount;
+    private int extensionLength;
 
 
-    public SSTDeserializer(BinaryTree strings)
+    public SSTDeserializer( BinaryTree strings )
     {
         this.strings = strings;
-        setExpectedChars( 0 );
+        initVars();
+    }
+
+    private void initVars()
+    {
+        runCount = 0;
+        continuationExpectedChars = 0;
         unfinishedString = "";
-        totalLengthBytes = 0;
-        stringDataOffset = 0;
+//        bytesInCurrentSegment = 0;
+//        stringDataOffset = 0;
         wideChar = false;
+        richText = false;
+        extendedText = false;
     }
 
     /**
@@ -38,14 +107,14 @@ class SSTDeserializer
      * strings may span across multiple continuations. Read the SST record
      * carefully before beginning to hack.
      */
-    public void manufactureStrings( final byte[] data, final int index,
-                                     short size )
+    public void manufactureStrings( final byte[] data, final int initialOffset, short dataSize )
     {
-        int offset = index;
+        initVars();
 
-        while ( offset < size )
+        int offset = initialOffset;
+        while ( ( offset - initialOffset ) < dataSize )
         {
-            int remaining = size - offset;
+            int remaining = dataSize - offset + initialOffset;
 
             if ( ( remaining > 0 ) && ( remaining < LittleEndianConsts.SHORT_SIZE ) )
             {
@@ -53,90 +122,38 @@ class SSTDeserializer
             }
             if ( remaining == LittleEndianConsts.SHORT_SIZE )
             {
-                setExpectedChars( LittleEndian.getUShort( data, offset ) );
+                setContinuationExpectedChars( LittleEndian.getUShort( data, offset ) );
                 unfinishedString = "";
                 break;
             }
-            short charCount = LittleEndian.getShort( data, offset );
-
-            setupStringParameters( data, offset, charCount );
-            if ( remaining < totalLengthBytes )
+            charCount = LittleEndian.getUShort( data, offset );
+            readStringHeader( data, offset );
+            boolean stringContinuesOverContinuation = remaining < totalStringSize();
+            if ( stringContinuesOverContinuation )
             {
-                setExpectedChars( calculateCharCount( totalLengthBytes - remaining ) );
-                charCount -= getExpectedChars();
-                totalLengthBytes = remaining;
+                int remainingBytes = ( initialOffset + dataSize ) - offset - stringHeaderOverhead();
+                setContinuationExpectedChars( charCount - calculateCharCount( remainingBytes ) );
+                charCount -= getContinuationExpectedChars();
             }
             else
             {
-                setExpectedChars( 0 );
+                setContinuationExpectedChars( 0 );
             }
             processString( data, offset, charCount );
-            offset += totalLengthBytes;
-            if ( getExpectedChars() != 0 )
+            offset += totalStringSize();
+            if ( getContinuationExpectedChars() != 0 )
             {
                 break;
             }
         }
     }
 
-
-    /**
-     * Detemines the option types for the string (ie, compressed or uncompressed unicode, rich text string or
-     * plain string etc) and calculates the length and offset for the string.
-     *
-     * @param data
-     * @param index
-     * @param char_count
-     */
-    private void setupStringParameters( final byte[] data, final int index,
-                                        final int char_count )
-    {
-        byte optionFlag = data[index + LittleEndianConsts.SHORT_SIZE];
-
-        wideChar = ( optionFlag & 1 ) == 1;
-        boolean farEast = ( optionFlag & 4 ) == 4;
-        boolean richText = ( optionFlag & 8 ) == 8;
-
-        totalLengthBytes = SSTRecord.STRING_MINIMAL_OVERHEAD + calculateByteCount( char_count );
-        stringDataOffset = SSTRecord.STRING_MINIMAL_OVERHEAD;
-        if ( richText )
-        {
-            short run_count = LittleEndian.getShort( data, index + stringDataOffset );
-
-            stringDataOffset += LittleEndianConsts.SHORT_SIZE;
-            totalLengthBytes += LittleEndianConsts.SHORT_SIZE + ( LittleEndianConsts.INT_SIZE * run_count );
-        }
-        if ( farEast )
-        {
-            int extension_length = LittleEndian.getInt( data, index + stringDataOffset );
-
-            stringDataOffset += LittleEndianConsts.INT_SIZE;
-            totalLengthBytes += LittleEndianConsts.INT_SIZE + extension_length;
-        }
-    }
-
-
-    private void processString( final byte[] data, final int index,
-                                final short char_count )
-    {
-        byte[] stringDataBuffer = new byte[totalLengthBytes];
-        int length = SSTRecord.STRING_MINIMAL_OVERHEAD + calculateByteCount( char_count );
-        byte[] bstring = new byte[length];
-
-        System.arraycopy( data, index, stringDataBuffer, 0, stringDataBuffer.length );
-        int offset = 0;
-
-        LittleEndian.putShort( bstring, offset, char_count );
-        offset += LittleEndianConsts.SHORT_SIZE;
-        bstring[offset] = stringDataBuffer[offset];
-
-//        System.out.println( "offset = " + stringDataOffset );
-//        System.out.println( "length = " + (bstring.length - STRING_MINIMAL_OVERHEAD) );
-//        System.out.println( "src.length = " + str_data.length );
+//    private void dump( final byte[] data, int offset, int length )
+//    {
 //        try
 //        {
-//            System.out.println( "----------------------- DUMP -------------------------" );
-//            HexDump.dump( stringDataBuffer, (long)stringDataOffset, System.out, 1);
+//            System.out.println( "------------------- SST DUMP -------------------------" );
+//            HexDump.dump( (byte[]) data, offset, System.out, offset, length );
 //        }
 //        catch ( IOException e )
 //        {
@@ -147,56 +164,116 @@ class SSTDeserializer
 //        catch ( IllegalArgumentException e )
 //        {
 //        }
-        System.arraycopy( stringDataBuffer, stringDataOffset, bstring,
-                SSTRecord.STRING_MINIMAL_OVERHEAD,
-                bstring.length - SSTRecord.STRING_MINIMAL_OVERHEAD );
-        UnicodeString string = new UnicodeString( UnicodeString.sid,
-                (short) bstring.length,
-                bstring );
+//    }
 
-        if ( getExpectedChars() != 0 )
+    /**
+     * Detemines the option types for the string (ie, compressed or uncompressed unicode, rich text string or
+     * plain string etc) and calculates the length and offset for the string.
+     *
+     */
+    private void readStringHeader( final byte[] data, final int index )
+    {
+
+        byte optionFlag = data[index + LittleEndianConsts.SHORT_SIZE];
+
+        wideChar = ( optionFlag & 1 ) == 1;
+        extendedText = ( optionFlag & 4 ) == 4;
+        richText = ( optionFlag & 8 ) == 8;
+        runCount = 0;
+        if ( richText )
         {
-            unfinishedString = string.getString();
+            runCount = LittleEndian.getShort( data, index + SSTRecord.STRING_MINIMAL_OVERHEAD );
         }
-        else
+        extensionLength = 0;
+        if ( extendedText )
+        {
+            extensionLength = LittleEndian.getInt( data, index + SSTRecord.STRING_MINIMAL_OVERHEAD );
+        }
+
+    }
+
+
+    /**
+     * Reads a string or the first part of a string.
+     *
+     * @param characters the number of characters to write.
+     *
+     * @return the number of bytes written.
+     */
+    private int processString( final byte[] data, final int dataIndex, final int characters )
+    {
+
+        // length is the length we store it as.  not the length that is read.
+        int length = SSTRecord.STRING_MINIMAL_OVERHEAD + calculateByteCount( characters );
+        byte[] unicodeStringBuffer = new byte[length];
+
+        int offset = 0;
+
+        // Set the length in characters
+        LittleEndian.putUShort( unicodeStringBuffer, offset, characters );
+        offset += LittleEndianConsts.SHORT_SIZE;
+        // Set the option flags
+        unicodeStringBuffer[offset] = data[dataIndex + offset];
+        // Copy in the string data
+        int bytesRead = unicodeStringBuffer.length - SSTRecord.STRING_MINIMAL_OVERHEAD;
+        arraycopy( data, dataIndex + stringHeaderOverhead(), unicodeStringBuffer, SSTRecord.STRING_MINIMAL_OVERHEAD, bytesRead );
+        // Create the unicode string
+        UnicodeString string = new UnicodeString( UnicodeString.sid,
+                (short) unicodeStringBuffer.length,
+                unicodeStringBuffer );
+
+        if ( isStringFinished() )
         {
             Integer integer = new Integer( strings.size() );
             addToStringTable( strings, integer, string );
         }
+        else
+        {
+            unfinishedString = string.getString();
+        }
+
+        return bytesRead;
+    }
+
+    private boolean isStringFinished()
+    {
+        return getContinuationExpectedChars() == 0;
     }
 
     /**
      * Okay, we are doing some major cheating here. Because we can't handle rich text strings properly
-     * we end up getting duplicate strings.  To get around this I'm doing do things: 1. Converting rich
+     * we end up getting duplicate strings.  To get around this I'm doing two things: 1. Converting rich
      * text to normal text and 2. If there's a duplicate I'm adding a space onto the end.  Sneaky perhaps
      * but it gets the job done until we can handle this a little better.
      */
     static public void addToStringTable( BinaryTree strings, Integer integer, UnicodeString string )
     {
-        if (string.isRichText())
-            string.setOptionFlags( (byte)(string.getOptionFlags() & (~8) ) );
+
+        if ( string.isRichText() )
+            string.setOptionFlags( (byte) ( string.getOptionFlags() & ( ~8 ) ) );
+        if ( string.isExtendedText() )
+            string.setOptionFlags( (byte) ( string.getOptionFlags() & ( ~4 ) ) );
 
         boolean added = false;
-        while (added == false)
+        while ( added == false )
         {
             try
             {
                 strings.put( integer, string );
                 added = true;
             }
-            catch( Exception ignore )
+            catch ( Exception ignore )
             {
                 string.setString( string.getString() + " " );
             }
         }
-    }
 
+    }
 
 
     private int calculateCharCount( final int byte_count )
     {
-        return byte_count / ( wideChar ? LittleEndianConsts.SHORT_SIZE
-                : LittleEndianConsts.BYTE_SIZE );
+        return byte_count / ( wideChar ? LittleEndianConsts.SHORT_SIZE : LittleEndianConsts.BYTE_SIZE );
     }
 
     /**
@@ -219,81 +296,129 @@ class SSTDeserializer
      *
      * @param record the Continue record's byte data
      */
-
     public void processContinueRecord( final byte[] record )
     {
-        if ( getExpectedChars() == 0 )
+        if ( isStringFinished() )
         {
-            unfinishedString = "";
-            totalLengthBytes = 0;
-            stringDataOffset = 0;
-            wideChar = false;
+            initVars();
             manufactureStrings( record, 0, (short) record.length );
         }
         else
         {
-            int data_length = record.length - LittleEndianConsts.BYTE_SIZE;
+            // reset the wide bit because that can change across a continuation. the fact that it's
+            // actually rich text doesn't change across continuations even though the rich text
+            // may on longer be set in the "new" option flag.  confusing huh?
+            wideChar = ( record[0] & 1 ) == 1;
 
-            if ( calculateByteCount( getExpectedChars() ) > data_length )
+            if ( stringSpansContinuation( record.length - LittleEndianConsts.BYTE_SIZE ) )
             {
-
-                // create artificial data to create a UnicodeString
-                byte[] input =
-                        new byte[record.length + LittleEndianConsts.SHORT_SIZE];
-                short size = (short) ( ( ( record[0] & 1 ) == 1 )
-                        ? ( data_length / LittleEndianConsts.SHORT_SIZE )
-                        : ( data_length / LittleEndianConsts.BYTE_SIZE ) );
-
-                LittleEndian.putShort( input, (byte) 0, size );
-                System.arraycopy( record, 0, input, LittleEndianConsts.SHORT_SIZE, record.length );
-                UnicodeString ucs = new UnicodeString( UnicodeString.sid, (short) input.length, input );
-
-                unfinishedString = unfinishedString + ucs.getString();
-                setExpectedChars( getExpectedChars() - size );
+                processEntireContinuation( record );
             }
             else
             {
-                setupStringParameters( record, -LittleEndianConsts.SHORT_SIZE,
-                        getExpectedChars() );
-                byte[] str_data = new byte[totalLengthBytes];
-                int length = SSTRecord.STRING_MINIMAL_OVERHEAD
-                        + ( calculateByteCount( getExpectedChars() ) );
-                byte[] bstring = new byte[length];
-
-                // Copy data from the record into the string
-                // buffer. Copy skips the length of a short in the
-                // string buffer, to leave room for the string length.
-                System.arraycopy( record, 0, str_data,
-                        LittleEndianConsts.SHORT_SIZE,
-                        str_data.length
-                        - LittleEndianConsts.SHORT_SIZE );
-
-                // write the string length
-                LittleEndian.putShort( bstring, 0,
-                        (short) getExpectedChars() );
-
-                // write the options flag
-                bstring[LittleEndianConsts.SHORT_SIZE] =
-                        str_data[LittleEndianConsts.SHORT_SIZE];
-
-                // copy the bytes/words making up the string; skipping
-                // past all the overhead of the str_data array
-                System.arraycopy( str_data, stringDataOffset, bstring,
-                        SSTRecord.STRING_MINIMAL_OVERHEAD,
-                        bstring.length - SSTRecord.STRING_MINIMAL_OVERHEAD );
-
-                // use special constructor to create the final string
-                UnicodeString string =
-                        new UnicodeString( UnicodeString.sid,
-                                (short) bstring.length, bstring,
-                                unfinishedString );
-                Integer integer = new Integer( strings.size() );
-
-//                field_3_strings.put( integer, string );
-                addToStringTable( strings, integer, string );
-                manufactureStrings( record, totalLengthBytes - LittleEndianConsts.SHORT_SIZE, (short) record.length );
+                readStringRemainder( record );
             }
         }
+
+    }
+
+    /**
+     * Reads the remainder string and any subsequent strings from the continuation record.
+     *
+     * @param record  The entire continuation record data.
+     */
+    private void readStringRemainder( final byte[] record )
+    {
+        int stringRemainderSizeInBytes = calculateByteCount( getContinuationExpectedChars() );
+//        stringDataOffset = LittleEndianConsts.BYTE_SIZE;
+        byte[] unicodeStringData = new byte[SSTRecord.STRING_MINIMAL_OVERHEAD
+                + calculateByteCount( getContinuationExpectedChars() )];
+
+        // write the string length
+        LittleEndian.putShort( unicodeStringData, 0, (short) getContinuationExpectedChars() );
+
+        // write the options flag
+        unicodeStringData[LittleEndianConsts.SHORT_SIZE] = createOptionByte( wideChar, richText, extendedText );
+
+        // copy the bytes/words making up the string; skipping
+        // past all the overhead of the str_data array
+        arraycopy( record, LittleEndianConsts.BYTE_SIZE, unicodeStringData,
+                SSTRecord.STRING_MINIMAL_OVERHEAD,
+                unicodeStringData.length - SSTRecord.STRING_MINIMAL_OVERHEAD );
+
+        // use special constructor to create the final string
+        UnicodeString string = new UnicodeString( UnicodeString.sid,
+                (short) unicodeStringData.length, unicodeStringData,
+                unfinishedString );
+        Integer integer = new Integer( strings.size() );
+
+        addToStringTable( strings, integer, string );
+
+        int newOffset = offsetForContinuedRecord( stringRemainderSizeInBytes );
+        manufactureStrings( record, newOffset, (short) ( record.length - newOffset ) );
+    }
+
+    /**
+     * Calculates the size of the string in bytes based on the character width
+     */
+    private int stringSizeInBytes()
+    {
+        return calculateByteCount( charCount );
+    }
+
+    /**
+     * Calculates the size of the string in byes.  This figure includes all the over
+     * heads for the string.
+     */
+    private int totalStringSize()
+    {
+        return stringSizeInBytes()
+                + stringHeaderOverhead()
+                + LittleEndianConsts.INT_SIZE * runCount
+                + extensionLength;
+    }
+
+    private int stringHeaderOverhead()
+    {
+        return SSTRecord.STRING_MINIMAL_OVERHEAD
+                + ( richText ? LittleEndianConsts.SHORT_SIZE : 0 )
+                + ( extendedText ? LittleEndianConsts.INT_SIZE : 0 );
+    }
+
+    private int offsetForContinuedRecord( int stringRemainderSizeInBytes )
+    {
+        return stringRemainderSizeInBytes + LittleEndianConsts.BYTE_SIZE
+                + runCount * LittleEndianConsts.INT_SIZE + extensionLength;
+    }
+
+    private byte createOptionByte( boolean wideChar, boolean richText, boolean farEast )
+    {
+        return (byte) ( ( wideChar ? 1 : 0 ) + ( farEast ? 4 : 0 ) + ( richText ? 8 : 0 ) );
+    }
+
+    /**
+     * If the continued record is so long is spans into the next continue then
+     * simply suck the remaining string data into the existing <code>unfinishedString</code>.
+     *
+     * @param record    The data from the continuation record.
+     */
+    private void processEntireContinuation( final byte[] record )
+    {
+        // create artificial data to create a UnicodeString
+        int dataLengthInBytes = record.length - LittleEndianConsts.BYTE_SIZE;
+        byte[] unicodeStringData = new byte[record.length + LittleEndianConsts.SHORT_SIZE];
+
+        LittleEndian.putShort( unicodeStringData, (byte) 0, (short) calculateCharCount( dataLengthInBytes ) );
+        arraycopy( record, 0, unicodeStringData, LittleEndianConsts.SHORT_SIZE, record.length );
+        UnicodeString ucs = new UnicodeString( UnicodeString.sid, (short) unicodeStringData.length, unicodeStringData );
+
+        unfinishedString = unfinishedString + ucs.getString();
+        setContinuationExpectedChars( getContinuationExpectedChars() - calculateCharCount( dataLengthInBytes ) );
+    }
+
+    private boolean stringSpansContinuation( int continuationSizeInBytes )
+    {
+        return calculateByteCount( getContinuationExpectedChars() ) > continuationSizeInBytes;
     }
 
     /**
@@ -301,12 +426,12 @@ class SSTDeserializer
      *         sub-record in a subsequent continuation record
      */
 
-    int getExpectedChars()
+    int getContinuationExpectedChars()
     {
         return continuationExpectedChars;
     }
 
-    private void setExpectedChars( final int count )
+    private void setContinuationExpectedChars( final int count )
     {
         continuationExpectedChars = count;
     }
@@ -318,36 +443,115 @@ class SSTDeserializer
 
 
     /**
+     * Copies an array from the specified source array, beginning at the
+     * specified position, to the specified position of the destination array.
+     * A subsequence of array components are copied from the source
+     * array referenced by <code>src</code> to the destination array
+     * referenced by <code>dst</code>. The number of components copied is
+     * equal to the <code>length</code> argument. The components at
+     * positions <code>srcOffset</code> through
+     * <code>srcOffset+length-1</code> in the source array are copied into
+     * positions <code>dstOffset</code> through
+     * <code>dstOffset+length-1</code>, respectively, of the destination
+     * array.
+     * <p>
+     * If the <code>src</code> and <code>dst</code> arguments refer to the
+     * same array object, then the copying is performed as if the
+     * components at positions <code>srcOffset</code> through
+     * <code>srcOffset+length-1</code> were first copied to a temporary
+     * array with <code>length</code> components and then the contents of
+     * the temporary array were copied into positions
+     * <code>dstOffset</code> through <code>dstOffset+length-1</code> of the
+     * destination array.
+     * <p>
+     * If <code>dst</code> is <code>null</code>, then a
+     * <code>NullPointerException</code> is thrown.
+     * <p>
+     * If <code>src</code> is <code>null</code>, then a
+     * <code>NullPointerException</code> is thrown and the destination
+     * array is not modified.
+     * <p>
+     * Otherwise, if any of the following is true, an
+     * <code>ArrayStoreException</code> is thrown and the destination is
+     * not modified:
+     * <ul>
+     * <li>The <code>src</code> argument refers to an object that is not an
+     *     array.
+     * <li>The <code>dst</code> argument refers to an object that is not an
+     *     array.
+     * <li>The <code>src</code> argument and <code>dst</code> argument refer to
+     *     arrays whose component types are different primitive types.
+     * <li>The <code>src</code> argument refers to an array with a primitive
+     *     component type and the <code>dst</code> argument refers to an array
+     *     with a reference component type.
+     * <li>The <code>src</code> argument refers to an array with a reference
+     *     component type and the <code>dst</code> argument refers to an array
+     *     with a primitive component type.
+     * </ul>
+     * <p>
+     * Otherwise, if any of the following is true, an
+     * <code>IndexOutOfBoundsException</code> is
+     * thrown and the destination is not modified:
+     * <ul>
+     * <li>The <code>srcOffset</code> argument is negative.
+     * <li>The <code>dstOffset</code> argument is negative.
+     * <li>The <code>length</code> argument is negative.
+     * <li><code>srcOffset+length</code> is greater than
+     *     <code>src.length</code>, the length of the source array.
+     * <li><code>dstOffset+length</code> is greater than
+     *     <code>dst.length</code>, the length of the destination array.
+     * </ul>
+     * <p>
+     * Otherwise, if any actual component of the source array from
+     * position <code>srcOffset</code> through
+     * <code>srcOffset+length-1</code> cannot be converted to the component
+     * type of the destination array by assignment conversion, an
+     * <code>ArrayStoreException</code> is thrown. In this case, let
+     * <b><i>k</i></b> be the smallest nonnegative integer less than
+     * length such that <code>src[srcOffset+</code><i>k</i><code>]</code>
+     * cannot be converted to the component type of the destination
+     * array; when the exception is thrown, source array components from
+     * positions <code>srcOffset</code> through
+     * <code>srcOffset+</code><i>k</i><code>-1</code>
+     * will already have been copied to destination array positions
+     * <code>dstOffset</code> through
+     * <code>dstOffset+</code><i>k</I><code>-1</code> and no other
+     * positions of the destination array will have been modified.
+     * (Because of the restrictions already itemized, this
+     * paragraph effectively applies only to the situation where both
+     * arrays have component types that are reference types.)
+     *
+     * @param      src          the source array.
+     * @param      src_position start position in the source array.
+     * @param      dst          the destination array.
+     * @param      dst_position pos   start position in the destination data.
+     * @param      length       the number of array elements to be copied.
+     * @exception  IndexOutOfBoundsException  if copying would cause
+     *               access of data outside array bounds.
+     * @exception  ArrayStoreException  if an element in the <code>src</code>
+     *               array could not be stored into the <code>dest</code> array
+     *               because of a type mismatch.
+     * @exception  NullPointerException if either <code>src</code> or
+     *               <code>dst</code> is <code>null</code>.
+     */
+    private void arraycopy( byte[] src, int src_position,
+                            byte[] dst, int dst_position,
+                            int length )
+    {
+        System.arraycopy( src, src_position, dst, dst_position, length );
+    }
+
+    /**
      * @return the unfinished string
      */
-
     String getUnfinishedString()
     {
         return unfinishedString;
     }
 
     /**
-     * @return the total length of the current string
-     */
-
-    int getTotalLength()
-    {
-        return totalLengthBytes;
-    }
-
-    /**
-     * @return offset into current string data
-     */
-
-    int getStringDataOffset()
-    {
-        return stringDataOffset;
-    }
-
-    /**
      * @return true if current string uses wide characters
      */
-
     boolean isWideChar()
     {
         return wideChar;
