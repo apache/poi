@@ -39,12 +39,11 @@
     </li>
 
     <li>
-     The <link href="#sec4">fourth section</link> will tell you how to write
-     property set streams - once it is written. Writing is still quite
-     rudimentary in HPSF and you have to understand the <link
-      href="#sec3">third section</link> before you should think about writing
-     properties. Stick to the Javadoc API documentation to find out more about
-     writing property sets!
+     The <link href="#sec4">fourth section</link> tells you how to write
+     property set streams. Writing is still rudimentary in HPSF. You have to
+     understand the <link href="#sec3">third section</link> before you should
+     think about writing properties. Check the Javadoc API documentation to
+     find out about the details!
     </li>
    </ol>
 
@@ -347,7 +346,7 @@ else
 
       <li>Each section has a format ID. The format ID of the first section in a
        property set determines the property set's type. For example, the first
-       (and only) section of the SummaryInformation property set has a format
+       (and only) section of the summary information property set has a format
        ID of <code>F29F85E0-4FF9-1068-AB-91-08-00-2B-27-B3-D9</code>. You can
        get the format ID with <code>Section.getFormatID()</code>.</li>
 
@@ -854,18 +853,18 @@ No property set stream: "/1Table"</source>
 
     <note>This section describes how to write properties.</note>
 
-    <section><title>Overview</title>
+    <section><title>Overview of Writing Properties</title>
      <p>Writing properties is possible at a low level only at the moment. You
       have to deal with property IDs and variant types to write
-      properties. There are no convenient classes or convenient methods for
+      properties. There are no convenience classes or convenience methods for
       dealing with summary information and document summary information streams
-      yet. If you have not already done so, you should read <link
-       href="#sec3">section 3</link> to understand the following.</p>
+      yet. Therefore you should have read <link href="#sec3">section 3</link>
+      to understand what follows in this section.</p>
 
      <p>HPSF's writing capabilities come with the classes
-      <code>MutablePropertySet</code>, <code>MutableSection</code>, and
-      <code>MutableProperty</code> and some helper classes. The "mutable"
-      classes extend their superclasses <code>PropertySet</code>,
+      <code>MutablePropertySet</code>, <code>MutableSection</code>,
+      <code>MutableProperty</code>, and some helper classes. The "mutable"
+      classes extend their respective superclasses <code>PropertySet</code>,
       <code>Section</code>, and <code>Property</code> and provide "set" and
       "write" methods.</p>
 
@@ -876,16 +875,17 @@ No property set stream: "/1Table"</source>
       <li>Create a <code>MutablePropertySet</code> instance.</li>
 
       <li>Get hold of a <code>MutableSection</code>. You can either retrieve
-       the one that is always present in a new <code>MutablePropertySet</code>
-       or create a new <code>MutableSection</code> and add it to the
-       <code>MutablePropertySet</code>.
+       the one that is always present in a new <code>MutablePropertySet</code>,
+       or you have to create a new <code>MutableSection</code> and add it to
+       the <code>MutablePropertySet</code>.
       </li>
 
       <li>Set any <code>Section</code> fields as you like.</li>
 
       <li>Create as many <code>MutableProperty</code> objects as you need. Set
        each property's ID, type, and value. Add the
-       <code>MutableProperties</code> to the <code>MutableSection</code>.
+       <code>MutableProperty</code> objects to the
+       <code>MutableSection</code>.
       </li>
 
       <li>Create further <code>MutableSection</code>s if you need them.</li>
@@ -897,9 +897,189 @@ No property set stream: "/1Table"</source>
     </section>
 
     <section><title>Low-level Writing Functions In Details</title>
-     <fixme author="Rainer Klute">This section is still to be written.</fixme>
+     <p>Writing properties is introduced by an artificial but simple example: a
+      program creating a new document (aka POI file system) which contains only
+      a single document: a summary information property set stream. The latter 
+      will hold the document's title only. This is artificial in that it does
+      not contain any Word, Excel or other kind of useful application document
+      data. A document containing just a property set is without any practical
+      use. However, is makes the example very simple, and you will get quickly
+      used to writing properties.</p>
+
+     <p>Here's the source code of the sample application. You can also find it
+      in the "examples" section of the POI source code
+      distribution. Explanations are following below.</p>
+
+     <source>package org.apache.poi.hpsf.examples;
+
+import java.io.*;
+
+import org.apache.poi.hpsf.*;
+import org.apache.poi.hpsf.wellknown.*;
+import org.apache.poi.poifs.filesystem.*;
+
+public class WriteTitle
+{
+
+    public static void main(final String[] args)
+    throws WritingNotSupportedException, IOException
+    {
+        /* Check whether we have exactly one command-line argument. */
+        if (args.length != 1)
+        {
+            System.err.println("Usage: " + WriteTitle.class.getName() +
+                               "destinationPOIFS");
+            System.exit(1);
+        }
+
+        final String fileName = args[0];
+        final POIFSFileSystem poiFs = new POIFSFileSystem();
+
+        /* Create a mutable property set. Initially it contains a single section
+         * with no properties. */
+        final MutablePropertySet mps = new MutablePropertySet();
+
+        /* Retrieve the section the property set already contains. */
+        final MutableSection ms = (MutableSection) mps.getSections().get(0);
+
+        /* Turn the property set into a summary information property. This is
+         * done by setting the format ID of its first section to
+         * SectionIDMap.SUMMARY_INFORMATION_ID. */
+        ms.setFormatID(SectionIDMap.SUMMARY_INFORMATION_ID);
+
+        /* Create an empty property. */    
+        final MutableProperty p = new MutableProperty();
+
+        /* Fill the property with appropriate settings so that it specifies the
+         * document's title. */
+        p.setID(PropertyIDMap.PID_TITLE);
+        p.setType(Variant.VT_LPWSTR);
+        p.setValue("Sample title");
+
+        /* For writing the property set into a POI file system it has to be
+         * handed over to the POIFS.createDocument() method as an input stream
+         * which produces the bytes making out the property set stream. */
+        final InputStream is = mps.toInputStream();
+
+        /* Create the summary information property set in the POI file
+         * system. It is given the default name most (if not all) summary
+         * information property sets have. */
+        poiFs.createDocument(is, SummaryInformation.DEFAULT_STREAM_NAME);
+
+        /* Write the whole POI file system to a disk file. */
+        poiFs.writeFilesystem(new FileOutputStream(fileName));
+    }
+
+}</source>
+
+     <p>The application expects the name of the POI file system to be created
+      on the command line. It checks that there is exactly a single argument
+      and stores it in the <code>fileName</code> variable:</p>
+
+     <source>if (args.length != 1)
+{
+    System.err.println("Usage: " + WriteTitle.class.getName() +
+                       "destinationPOIFS");
+    System.exit(1);
+}
+final String fileName = args[0];</source>
+
+     <p>Let's create a property set now. We cannot use the
+      <code>PropertySet</code> class, because it is read-only: It does not have
+      a constructor creating an empty property set, and it does not have any
+      methods to modify its contents. Instead use the class
+      <code>MutablePropertySet</code>. It is a subclass of
+      <code>PropertySet</code>, and its no-args constructor established an
+      empty property set which we will fill later.</p>
+
+     <source>final MutablePropertySet mps = new MutablePropertySet();</source>
+
+     <p>By the way, the <code>MutablePropertySet</code> class has another
+      constructor taking a <code>PropertySet</code> as parameter. It creates a
+      mutable copy of its parameter.</p>
+
+     <p>The <code>MutablePropertySet</code> created by the no-args constructor
+      is not really empty: It contains a single section without any
+      properties. We can either retrieve that section and fill it with
+      properties, or we can replace it by another section. Of course we can
+      also add further sections to the property set. The sample application
+      decides to retrieve the section being already there:</p>
+
+     <source>final MutableSection ms = (MutableSection) mps.getSections().get(0);</source>
+
+     <p>The <code>getSections()</code> method returns the property set's
+      sections as a list, i.e. an instance of
+      <code>java.util.List</code>. Calling <code>get(0)</code> returns the
+      list's first (or zeroth if you prefer) element. It is a
+      <code>MutableSection</code>: a subclass of <code>Section</code> you can
+      modify.</p>
+
+     <p>Presently the <code>MutableSection</code> is still empty: It contains
+      no properties and does not have a format ID. As you have read in <link
+       href="#sec3">above</link> the format ID of the first section in a
+      property set determines the property set's type. If our property set
+      should become a summary information property set we have to set the
+      format ID of its first (and only) section to
+      <code>F29F85E0-4FF9-1068-AB-91-08-00-2B-27-B3-D9</code>. However, you
+      won't have to remember that ID if you want to write your own
+      summary information property sets: HPSF has it defined as the well-known
+      constant <code>Section.getFormatID()</code>. The sample application
+      writes it to the section with the <code>setFormatID(byte[])</code>
+      method.</p>
+
+     <source>ms.setFormatID(SectionIDMap.SUMMARY_INFORMATION_ID);</source>
+
+     <p>Now it is time to create a property. As you might expect there is a
+      subclass of <code>Property</code> called
+      <code>MutableProperty</code>.</p>
+
+     <source>final MutableProperty p = new MutableProperty();</source>
+
+     <p>A <code>MutableProperty</code> object must have an ID, a type, and a
+      value (see <link href="#sec3">above</link> for details). The class
+      provides methods to set these attributes:</p>
+
+     <source>p.setID(PropertyIDMap.PID_TITLE);
+p.setType(Variant.VT_LPWSTR);
+p.setValue("Sample title");</source>
+
+     <p>Now the sample property set is complete: We have a
+      <code>MutablePropertySet</code> containing a  <code>MutableSection</code>
+      containing a <code>MutableProperty</code>. Of course we could have added
+      more sections and properties but we wanted to keep things simple.</p>
+
+     <p>The property set has to be written to a POI file system. The following
+      statement creates it.</p>
+
+     <source>final POIFSFileSystem poiFs = new POIFSFileSystem();</source>
+
+     <p>In order to write the property set to a POI file system it must be
+      converted into a sequence of bytes. The <code>MutablePropertySet</code>
+      class has a method <code>toInputStream()</code>. This method returns an
+      <code>InputStream</code> containing the bytes making out the property set
+      stream.</p>
+
+     <source>final InputStream is = mps.toInputStream();</source>
+
+     <p>If you'd read from this input stream you'd receive all these
+      bytes. However, it is very likely that you never do that. Instead you'll
+      pass the input stream to the <code>createDocument()</code> method of a
+      <code>POIFSFileSystem</code> instance, like the one we created a few
+      lines ago. Besides an <code>InputStream</code> the
+      <code>createDocument()</code> method takes another parameter: the name of
+      the document to be created. For a summary information property set stream
+      the default name is available as
+      <code>SummaryInformation.DEFAULT_STREAM_NAME</code>:</p>
+
+     <source>poiFs.createDocument(is, SummaryInformation.DEFAULT_STREAM_NAME);</source>
+
+     <p>The last step is to write the POI file system to a disk file:</p>
+
+     <source>poiFs.writeFilesystem(new FileOutputStream(fileName));</source>
     </section>
    </section>
+
+
 
    <section><title>Further Reading</title>
     <p>There are still some aspects of HSPF left which are not covered by this
