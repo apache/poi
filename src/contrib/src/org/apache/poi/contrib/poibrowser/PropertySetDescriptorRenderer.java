@@ -94,9 +94,9 @@ public class PropertySetDescriptorRenderer extends DocumentDescriptorRenderer
         text.setFont(new Font("Monospaced", Font.PLAIN, 10));
         text.append(renderAsString(d));
         text.append("\nByte order: " +
-                    Codec.hexEncode(ps.getByteOrder()));
+                    Codec.hexEncode((short) ps.getByteOrder()));
         text.append("\nFormat: " +
-                    Codec.hexEncode(ps.getFormat()));
+                    Codec.hexEncode((short) ps.getFormat()));
         text.append("\nOS version: " +
                     Codec.hexEncode(ps.getOSVersion()));
         text.append("\nClass ID: " +

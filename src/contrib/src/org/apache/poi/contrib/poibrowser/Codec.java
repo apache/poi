@@ -143,6 +143,22 @@ public class Codec
 
 
     /**
+     * <p>Converts a short value (16-bit) into its hexadecimal
+     * notation.</p>
+     */
+    public static String hexEncode(final short s)
+    {
+        StringBuffer sb = new StringBuffer(4);
+        sb.append((char) hexval[(s & 0xF000) >> 12]);
+        sb.append((char) hexval[(s & 0x0F00) >>  8]);
+        sb.append((char) hexval[(s & 0x00F0) >>  4]);
+        sb.append((char) hexval[(s & 0x000F) >>  0]);
+        return sb.toString();
+    }
+
+
+
+    /**
      * <p>Converts an int value (32-bit) into its hexadecimal
      * notation.</p>
      */
@@ -169,8 +185,8 @@ public class Codec
     public static String hexEncode(final long l)
     {
         StringBuffer sb = new StringBuffer(16);
-        sb.append((l & 0xFFFFFFFF00000000L) >> 32);
-        sb.append((l & 0x00000000FFFFFFFFL) >>  0);
+        sb.append(hexEncode((int) (l & 0xFFFFFFFF00000000L) >> 32));
+        sb.append(hexEncode((int) (l & 0x00000000FFFFFFFFL) >>  0));
         return sb.toString();
     }
 
