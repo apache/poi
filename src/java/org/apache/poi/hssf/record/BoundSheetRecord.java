@@ -1,4 +1,3 @@
-
 /* ====================================================================
  * The Apache Software License, Version 1.1
  *
@@ -55,13 +54,8 @@
 
 package org.apache.poi.hssf.record;
 
-import java.io.*;
-import java.io.UnsupportedEncodingException;
-
-import org.apache.poi.util.BinaryTree;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
-import sun.awt.image.ByteInterleavedRaster;
 
 /**
  * Title:        Bound Sheet Record (aka BundleSheet) <P>
@@ -75,14 +69,14 @@ import sun.awt.image.ByteInterleavedRaster;
  */
 
 public class BoundSheetRecord
-    extends Record
+        extends Record
 {
     public final static short sid = 0x85;
-    private int               field_1_position_of_BOF;
-    private short             field_2_option_flags;
-    private byte              field_3_sheetname_length;
-    private byte              field_4_compressed_unicode_flag;   // not documented
-    private String            field_5_sheetname;
+    private int field_1_position_of_BOF;
+    private short field_2_option_flags;
+    private byte field_3_sheetname_length;
+    private byte field_4_compressed_unicode_flag;   // not documented
+    private String field_5_sheetname;
 
     public BoundSheetRecord()
     {
@@ -96,9 +90,9 @@ public class BoundSheetRecord
      * @param data  data of the record (should not contain sid/len)
      */
 
-    public BoundSheetRecord(short id, short size, byte [] data)
+    public BoundSheetRecord( short id, short size, byte[] data )
     {
-        super(id, size, data);
+        super( id, size, data );
     }
 
     /**
@@ -110,45 +104,47 @@ public class BoundSheetRecord
      * @param offset of the record's data
      */
 
-    public BoundSheetRecord(short id, short size, byte [] data, int offset)
+    public BoundSheetRecord( short id, short size, byte[] data, int offset )
     {
-        super(id, size, data, offset);
+        super( id, size, data, offset );
     }
 
-    protected void validateSid(short id)
+    protected void validateSid( short id )
     {
-        if (id != sid)
+        if ( id != sid )
         {
-            throw new RecordFormatException("NOT A Bound Sheet RECORD");
+            throw new RecordFormatException( "NOT A Bound Sheet RECORD" );
         }
     }
-    
+
     /**
      *  UTF8:
      *	sid + len + bof + flags + len(str) + unicode +   str
-	 *	 2  +  2  +  4  +   2   +    1     +    1    + len(str)
-	 * 
-	 * 	UNICODE:
+     *	 2  +  2  +  4  +   2   +    1     +    1    + len(str)
+     *
+     * 	UNICODE:
      *	sid + len + bof + flags + len(str) + unicode +   str
-	 *	 2  +  2  +  4  +   2   +    1     +    1    + 2 * len(str)
-	 * 
+     *	 2  +  2  +  4  +   2   +    1     +    1    + 2 * len(str)
+     *
      */
 
-    protected void fillFields(byte [] data, short size, int offset)
+    protected void fillFields( byte[] data, short size, int offset )
     {
-        field_1_position_of_BOF         = LittleEndian.getInt(data, 0 + offset);	// bof
-        field_2_option_flags            = LittleEndian.getShort(data, 4 + offset);	// flags
-        field_3_sheetname_length        = data[ 6 + offset ];						// len(str)
-        field_4_compressed_unicode_flag = data[ 7 + offset ];						// unicode
+        field_1_position_of_BOF = LittleEndian.getInt( data, 0 + offset );	// bof
+        field_2_option_flags = LittleEndian.getShort( data, 4 + offset );	// flags
+        field_3_sheetname_length = data[6 + offset];						// len(str)
+        field_4_compressed_unicode_flag = data[7 + offset];						// unicode
 
-		int nameLength = LittleEndian.ubyteToInt( field_3_sheetname_length );
-        if ( ( field_4_compressed_unicode_flag & 0x01 ) == 1 ) {
-			field_5_sheetname = StringUtil.getFromUnicodeHigh( data, 8 + offset, nameLength );
+        int nameLength = LittleEndian.ubyteToInt( field_3_sheetname_length );
+        if ( ( field_4_compressed_unicode_flag & 0x01 ) == 1 )
+        {
+            field_5_sheetname = StringUtil.getFromUnicodeHigh( data, 8 + offset, nameLength );
         }
-        else {
-			field_5_sheetname = new String( data, 8 + offset, nameLength );
+        else
+        {
+            field_5_sheetname = new String( data, 8 + offset, nameLength );
         }
-	}
+    }
 
     /**
      * set the offset in bytes of the Beginning of File Marker within the HSSF Stream part of the POIFS file
@@ -156,7 +152,7 @@ public class BoundSheetRecord
      * @param pos  offset in bytes
      */
 
-    public void setPositionOfBof(int pos)
+    public void setPositionOfBof( int pos )
     {
         field_1_position_of_BOF = pos;
     }
@@ -167,7 +163,7 @@ public class BoundSheetRecord
      * @param flags to set
      */
 
-    public void setOptionFlags(short flags)
+    public void setOptionFlags( short flags )
     {
         field_2_option_flags = flags;
     }
@@ -179,7 +175,7 @@ public class BoundSheetRecord
      * @see #setSheetname(String)
      */
 
-    public void setSheetnameLength(byte len)
+    public void setSheetnameLength( byte len )
     {
         field_3_sheetname_length = len;
     }
@@ -199,7 +195,7 @@ public class BoundSheetRecord
      * Set the sheetname for this sheet.  (this appears in the tabs at the bottom)
      * @param sheetname the name of the sheet
      */
-    
+
     public void setSheetname( String sheetname )
     {
         field_5_sheetname = sheetname;
@@ -236,21 +232,21 @@ public class BoundSheetRecord
 
     public byte getSheetnameLength()
     {
-		return field_3_sheetname_length;
+        return field_3_sheetname_length;
     }
 
     /**
      * get the length of the raw sheetname in characters
      * the length depends on the unicode flag
-     * 
+     *
      * @return number of characters in the raw sheet name
      */
 
     public byte getRawSheetnameLength()
     {
-		return (byte)( ( ( field_4_compressed_unicode_flag & 0x01 ) == 1 )
-						? 2 * field_3_sheetname_length
-						: field_3_sheetname_length );
+        return (byte) ( ( ( field_4_compressed_unicode_flag & 0x01 ) == 1 )
+                ? 2 * field_3_sheetname_length
+                : field_3_sheetname_length );
     }
 
     /**
@@ -278,40 +274,40 @@ public class BoundSheetRecord
     {
         StringBuffer buffer = new StringBuffer();
 
-        buffer.append("[BOUNDSHEET]\n");
-        buffer.append("    .bof             = ")
-            .append(Integer.toHexString(getPositionOfBof())).append("\n");
-        buffer.append("    .optionflags     = ")
-            .append(Integer.toHexString(getOptionFlags())).append("\n");
-        buffer.append("    .sheetname length= ")
-            .append(Integer.toHexString(getSheetnameLength())).append("\n");
-        buffer.append("    .unicodeflag     = ")
-            .append(Integer.toHexString(getCompressedUnicodeFlag()))
-            .append("\n");
-        buffer.append("    .sheetname       = ").append(getSheetname())
-            .append("\n");
-        buffer.append("[/BOUNDSHEET]\n");
+        buffer.append( "[BOUNDSHEET]\n" );
+        buffer.append( "    .bof             = " )
+                .append( Integer.toHexString( getPositionOfBof() ) ).append( "\n" );
+        buffer.append( "    .optionflags     = " )
+                .append( Integer.toHexString( getOptionFlags() ) ).append( "\n" );
+        buffer.append( "    .sheetname length= " )
+                .append( Integer.toHexString( getSheetnameLength() ) ).append( "\n" );
+        buffer.append( "    .unicodeflag     = " )
+                .append( Integer.toHexString( getCompressedUnicodeFlag() ) )
+                .append( "\n" );
+        buffer.append( "    .sheetname       = " ).append( getSheetname() )
+                .append( "\n" );
+        buffer.append( "[/BOUNDSHEET]\n" );
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte [] data)
+    public int serialize( int offset, byte[] data )
     {
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort( data, 2 + offset, (short)( 8 + getRawSheetnameLength() ) );
-        LittleEndian.putInt(data, 4 + offset, getPositionOfBof());
-        LittleEndian.putShort(data, 8 + offset, getOptionFlags());
-        data[ 10 + offset ] = (byte)( getSheetnameLength() );
-        data[ 11 + offset ] = getCompressedUnicodeFlag();
-        
+        LittleEndian.putShort( data, 0 + offset, sid );
+        LittleEndian.putShort( data, 2 + offset, (short) ( 8 + getRawSheetnameLength() ) );
+        LittleEndian.putInt( data, 4 + offset, getPositionOfBof() );
+        LittleEndian.putShort( data, 8 + offset, getOptionFlags() );
+        data[10 + offset] = (byte) ( getSheetnameLength() );
+        data[11 + offset] = getCompressedUnicodeFlag();
+
         if ( ( field_4_compressed_unicode_flag & 0x01 ) == 1 )
-	        StringUtil.putUncompressedUnicode( getSheetname(), data, 12 + offset );
-	    else
-	        StringUtil.putCompressedUnicode( getSheetname(), data, 12 + offset );
-		
+            StringUtil.putUncompressedUnicode( getSheetname(), data, 12 + offset );
+        else
+            StringUtil.putCompressedUnicode( getSheetname(), data, 12 + offset );
+
 
         return getRecordSize();
-        
-		/*
+
+        /*
 		byte[] fake = new byte[] {	(byte)0x85, 0x00, 			// sid
 		    							0x1a, 0x00, 			// length
 		    							0x3C, 0x09, 0x00, 0x00, // bof
@@ -319,25 +315,25 @@ public class BoundSheetRecord
 		    							0x09, 					// len( str )
 		    							0x01, 					// unicode
 		    							// <str>
-		    							0x21, 0x04, 0x42, 0x04, 0x40, 0x04, 0x30, 0x04, 0x3D, 
-		    							0x04, 0x38, 0x04, 0x47, 0x04, 0x3A, 0x04, 0x30, 0x04   
+		    							0x21, 0x04, 0x42, 0x04, 0x40, 0x04, 0x30, 0x04, 0x3D,
+		    							0x04, 0x38, 0x04, 0x47, 0x04, 0x3A, 0x04, 0x30, 0x04
 		    							// </str>
 		    						};
-		    						
+
 		    						sid + len + bof + flags + len(str) + unicode +   str
 		    						 2  +  2  +  4  +   2   +    1     +    1    + len(str)
-		
+
 		System.arraycopy( fake, 0, data, offset, fake.length );
-		
+
 		return fake.length;
 		*/
     }
 
     public int getRecordSize()
     {
-        // return 30;
+        // Includes sid length + size length
         return 12 + getRawSheetnameLength();
-	}
+    }
 
     public short getSid()
     {
