@@ -4,15 +4,15 @@ import org.apache.poi.util.BitField;
 import org.apache.poi.util.LittleEndian;
 
 
-//import org.apache.poi.hdf.model.hdftypes.definitions;
+import org.apache.poi.hdf.model.hdftypes.definitions.FIBAbstractType;
 
 /**
  *
  * @author  andy
  */
-public class FileInformationBlock //extends FIBAbstractType
+public class FileInformationBlock extends FIBAbstractType
 {
-
+/*
     private  short field_1_id;
     private  short field_2_version; // 101 = Word 6.0 +
     private  short field_3_product_version;
@@ -77,23 +77,23 @@ public class FileInformationBlock //extends FIBAbstractType
     private int field_31_last_byte;
 
     private int field_32_creator_build_date;
-    private int field_33_revisor_build_date;
+    private int field_33_revisor_build_date; */
     /** length of main document text stream*/
-    private int field_34_main_streamlen;
+//    private int field_34_main_streamlen;
     /**length of footnote subdocument text stream*/
-    private int field_35_footnote_streamlen;
+/*    private int field_35_footnote_streamlen;
     private int field_36_header_streamlen;
     private int field_37_macro_streamlen;
     private int field_38_annotation_streamlen;
     private int field_39_endnote_streamlen;
     private int field_40_textbox_streamlen;
-    private int field_41_headbox_streamlen;
+    private int field_41_headbox_streamlen; */
     /**offset in table stream of character property bin table*/
-    private int field_42_pointer_to_plc_list_chp; //rename me!
-    private int field_43_first_chp; //rename me
-    private int field_44_count_chps; //rename me
+//    private int field_42_pointer_to_plc_list_chp; //rename me!
+//    private int field_43_first_chp; //rename me
+//    private int field_44_count_chps; //rename me
     /**offset in table stream of paragraph property bin */
-    private int field_45_pointer_to_plc_list_pap; //rename me.
+ /*   private int field_45_pointer_to_plc_list_pap; //rename me.
     private int field_46_first_pap; //rename me
     private int field_47_count_paps; //rename me
     private int field_48_pointer_to_plc_list_lvc; //rename me
@@ -101,8 +101,9 @@ public class FileInformationBlock //extends FIBAbstractType
     private int field_50_count_lvc; //rename me
 
     private int field_51_unknown;
-    private int field_52_unknown;
-    //not sure about this array.
+    private int field_52_unknown; */
+    //not sure about this array. 
+/*
     private short field_53_fc_lcb_array_size;
     private int field_54_original_stylesheet_offset;
     private int field_55_original_stylesheet_size;
@@ -115,9 +116,9 @@ public class FileInformationBlock //extends FIBAbstractType
     private int field_62_annotation_ref_offset;
     private int field_63_annotation_ref_size;
     private int field_64_annotation_plc_offset;
-    private int field_65_annotation_plc_size;
+    private int field_65_annotation_plc_size; */
     /** offset in table stream of section descriptor SED PLC*/
-    private int field_66_section_plc_offset;
+/*    private int field_66_section_plc_offset;
     private int field_67_section_plc_size;
     private int field_68_unused;
     private int field_69_unused;
@@ -168,9 +169,9 @@ public class FileInformationBlock //extends FIBAbstractType
     private int field_114_DOP_offset;
     private int field_115_DOP_size;
     private int field_116_sttbfassoc_offset;
-    private int field_117_sttbfassoc_size;
+    private int field_117_sttbfassoc_size; */
     /**offset in table stream of beginning of information for complex files.
-     * Also, this is the beginning of the Text piece table*/
+     * Also, this is the beginning of the Text piece table*/ /*
     private int field_118_textPieceTable_offset;
     private int field_119_textPieceTable_size;
     private int field_199_list_format_offset;
@@ -181,12 +182,12 @@ public class FileInformationBlock //extends FIBAbstractType
 
 
 
-
-
-    /** Creates a new instance of FileInformationBlock */
+^/
+    /** Creates a new instance of FileInformationBlock */ 
     public FileInformationBlock(byte[] mainDocument)
     {
-        field_1_id = LittleEndian.getShort(mainDocument, 0);
+        fillFields(mainDocument, (short)0, (short)0);
+/*        field_1_id = LittleEndian.getShort(mainDocument, 0);
         field_2_version = LittleEndian.getShort(mainDocument, 0x2); // 101 = Word 6.0 +
         field_3_product_version = LittleEndian.getShort(mainDocument, 0x4);
         field_4_language_stamp = LittleEndian.getShort(mainDocument, 0x6);
@@ -219,10 +220,10 @@ public class FileInformationBlock //extends FIBAbstractType
         field_199_list_format_offset = LittleEndian.getInt(mainDocument, 0x2e2);
         field_200_list_format_size = LittleEndian.getInt(mainDocument, 0x2e6);
         field_201_list_format_override_offset = LittleEndian.getInt(mainDocument, 0x2ea);
-        field_202_list_format_override_size= LittleEndian.getInt(mainDocument, 0x2ee);
+        field_202_list_format_override_size= LittleEndian.getInt(mainDocument, 0x2ee);*/
 
     }
-
+/*
     public boolean useTable1()
     {
         return tabletype.setShort(field_6_options) > 0;
@@ -299,7 +300,7 @@ public class FileInformationBlock //extends FIBAbstractType
     {
         return field_202_list_format_override_size;
     }
-
+*/
 
 }
 
