@@ -69,7 +69,7 @@ import org.apache.poi.hwpf.sprm.SprmOperation;
  * @author Ryan Ackley
  */
 
-public class PAPX extends CachedPropertyNode
+public class PAPX extends PropertyNode
 {
 
   private ParagraphHeight _phe;
@@ -153,19 +153,17 @@ public class PAPX extends CachedPropertyNode
     }
   }
 
+  public SprmBuffer getSprmBuf()
+  {
+    return (SprmBuffer)_buf;
+  }
+
   public ParagraphProperties getParagraphProperties(StyleSheet ss)
   {
-
-    ParagraphProperties props = (ParagraphProperties)super.getCacheContents();
-    if (props == null)
-    {
-      short istd = getIstd();
-      ParagraphProperties baseStyle = ss.getParagraphStyle(istd);
-      props = ParagraphSprmUncompressor.uncompressPAP(baseStyle, getGrpprl(), 2);
-      super.fillCache(props);
-    }
+    short istd = getIstd();
+    ParagraphProperties baseStyle = ss.getParagraphStyle(istd);
+    ParagraphProperties props = ParagraphSprmUncompressor.uncompressPAP(baseStyle, getGrpprl(), 2);
     return props;
-
   }
 
   public boolean equals(Object o)

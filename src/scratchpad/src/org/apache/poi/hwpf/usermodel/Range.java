@@ -1,56 +1,20 @@
 /* ====================================================================
- * The Apache Software License, Version 1.1
- *
- * Copyright (c) 2003 The Apache Software Foundation.  All rights
- * reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in
- *    the documentation and/or other materials provided with the
- *    distribution.
- *
- * 3. The end-user documentation included with the redistribution,
- *    if any, must include the following acknowledgment:
- *       "This product includes software developed by the
- *        Apache Software Foundation (http://www.apache.org/)."
- *    Alternately, this acknowledgment may appear in the software itself,
- *    if and wherever such third-party acknowledgments normally appear.
- *
- * 4. The names "Apache" and "Apache Software Foundation" and
- *    "Apache POI" must not be used to endorse or promote products
- *    derived from this software without prior written permission. For
- *    written permission, please contact apache@apache.org.
- *
- * 5. Products derived from this software may not be called "Apache",
- *    "Apache POI", nor may "Apache" appear in their name, without
- *    prior written permission of the Apache Software Foundation.
- *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
- * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
- * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
- * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
- * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
- * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- * SUCH DAMAGE.
- * ====================================================================
- *
- * This software consists of voluntary contributions made by many
- * individuals on behalf of the Apache Software Foundation.  For more
- * information on the Apache Software Foundation, please see
- * <http://www.apache.org/>.
- */
+   Copyright 2002-2004   Apache Software Foundation
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+==================================================================== */
+
+
 
 package org.apache.poi.hwpf.usermodel;
 
@@ -202,7 +166,7 @@ public class Range
    *
    * @param start Starting character offset of the range.
    * @param end Ending character offset of the range.
-   * @param doc The parent this range belongs to.
+   * @param parent The parent this range belongs to.
    */
   protected Range(int start, int end, Range parent)
   {
@@ -516,6 +480,14 @@ public class Range
     return getParagraph(numParagraphs() - 1);
   }
 
+  /**
+   * Inserts a simple table into the beginning of this range. The number of
+   * columns is determined by the TableProperties passed into this function.
+   *
+   * @param props The table properties for the table.
+   * @param rows The number of rows.
+   * @return The empty Table that is now part of the document.
+   */
   public Table insertBefore(TableProperties props, int rows)
   {
     ParagraphProperties parProps = new ParagraphProperties();
@@ -538,8 +510,17 @@ public class Range
     return new Table(_start, _start + (rows * (columns + 1)), this, 0);
   }
 
+  /**
+   * Inserts a list into the beginning of this range.
+   *
+   * @param props The properties of the list entry. All list entries are
+   *        paragraphs.
+   * @param listID The id of the list that contains the properties.
+   * @param level The indentation level of the list.
+   * @param styleIndex The base style's index in the stylesheet.
+   * @return The empty ListEntry that is now part of the document.
+   */
   public ListEntry insertBefore(ParagraphProperties props, int listID, int level, int styleIndex)
-    //throws UnsupportedEncodingException
   {
     ListTables lt = _doc.getListTables();
     if (lt.getLevel(listID, level) == null)
@@ -554,6 +535,12 @@ public class Range
     return (ListEntry)insertBefore(props, styleIndex);
   }
 
+  /**
+   * Gets the character run at index. The index is relative to this range.
+   *
+   * @param index The index of the character run to get.
+   * @return The character run at the specified index in this range.
+   */
   public CharacterRun getCharacterRun(int index)
   {
     initCharacterRuns();
@@ -569,6 +556,12 @@ public class Range
     return chp;
   }
 
+  /**
+   * Gets the section at index. The index is relative to this range.
+   *
+   * @param index The index of the section to get.
+   * @return The section at the specified index in this range.
+   */
   public Section getSection(int index)
   {
     initSections();
@@ -576,6 +569,13 @@ public class Range
     Section sep = new Section(sepx, this);
     return sep;
   }
+
+  /**
+   * Gets the paragraph at index. The index is relative to this range.
+   *
+   * @param index The index of the paragraph to get.
+   * @return The paragraph at the specified index in this range.
+   */
 
   public Paragraph getParagraph(int index)
   {
@@ -596,11 +596,24 @@ public class Range
     return pap;
   }
 
+  /**
+   * This method is used to determine the type. Handy for switch statements
+   * compared to the instanceof operator.
+   *
+   * @return A TYPE constant.
+   */
   public int type()
   {
     return TYPE_UNDEFINED;
   }
 
+  /**
+   * Gets the table that starts with paragraph. In a Word file, a table consists
+   * of a group of paragraphs with certain flags set.
+   *
+   * @param paragraph The paragraph that is the first paragraph in the table.
+   * @return The table that starts with paragraph
+   */
   public Table getTable(Paragraph paragraph)
   {
     if (!paragraph.isInTable())
@@ -640,6 +653,9 @@ public class Range
     return new Table(r._parStart, tableEnd, r._doc.getRange(), 1);
   }
 
+  /**
+   * loads all of the list indexes.
+   */
   private void initAll()
   {
     initText();
@@ -648,7 +664,9 @@ public class Range
     initSections();
   }
 
-
+  /**
+   * inits the paragraph list indexes.
+   */
   private void initParagraphs()
   {
     if (!_parRangeFound)
@@ -660,6 +678,9 @@ public class Range
     }
   }
 
+  /**
+   * inits the character run list indexes.
+   */
   private void initCharacterRuns()
   {
     if (!_charRangeFound)
@@ -671,6 +692,9 @@ public class Range
     }
   }
 
+  /**
+   * inits the text piece list indexes.
+   */
   private void initText()
   {
     if (!_textRangeFound)
@@ -682,6 +706,9 @@ public class Range
     }
   }
 
+  /**
+   * inits the section list indexes.
+   */
   private void initSections()
   {
     if (!_sectionRangeFound)
@@ -693,6 +720,16 @@ public class Range
     }
   }
 
+  /**
+   * Used to find the list indexes of a particular property.
+   *
+   * @param rpl A list of property nodes.
+   * @param min A hint on where to start looking.
+   * @param start The starting character offset.
+   * @param end The ending character offset.
+   * @return An int array of length 2. The first int is the start index and the
+   *         second int is the end index.
+   */
   private int[] findRange(List rpl, int min, int start, int end)
   {
     int x = min;
@@ -713,6 +750,9 @@ public class Range
     return new int[]{x, y + 1};
   }
 
+  /**
+   * resets the list indexes.
+   */
   private void reset()
   {
     _textRangeFound = false;
@@ -721,6 +761,10 @@ public class Range
     _sectionRangeFound = false;
   }
 
+  /**
+   * adjust this range after an insert happens.
+   * @param length the length to adjust for
+   */
   private void adjustForInsert(int length)
   {
     _end += length;
