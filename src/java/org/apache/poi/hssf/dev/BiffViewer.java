@@ -654,7 +654,15 @@ public class BiffViewer
             case AxisLineFormatRecord.sid:
                 retval = new AxisLineFormatRecord(rectype, size, data);
                 break;
-
+                
+            case SupBookRecord.sid:
+                retval = new SupBookRecord(rectype, size, data);
+                break;
+                
+            case ExternSheetRecord.sid:
+                retval = new ExternSheetRecord(rectype, size, data);
+                break;
+                
 
             default :
                 retval = new UnknownRecord(rectype, size, data);
