@@ -112,7 +112,6 @@ $Id$
       <tr valign="top">
         <xsl:comment>================= start Menu ==================</xsl:comment>
         <td id="leftcol">
-         <A HREF="http://apachecon.com/2003/US/index.html"><img border="0" src="http://jakarta.apache.org/images/logos/ac2003-150.gif" alt="ApacheCon US 2003"/></A>
           <div id="navcolumn">
             <xsl:apply-templates select="div[@class='menuBar']"/>
           </div>
