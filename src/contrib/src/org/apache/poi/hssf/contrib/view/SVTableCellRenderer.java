@@ -131,13 +131,14 @@ public class SVTableCellRenderer extends JLabel
 	}
 
         HSSFCell c = getCell(row,column);
+
         if (c != null) {
+
           HSSFCellStyle s = c.getCellStyle();
           HSSFFont f = wb.getFontAt(s.getFontIndex());
           boolean isbold = f.getBoldweight() > HSSFFont.BOLDWEIGHT_NORMAL;
           boolean isitalics = f.getItalic();
-//          System.out.println("bold="+isbold);
-//          System.out.println("italics="+isitalics);
+
           int fontstyle = 0;
 
           if (isbold) fontstyle = Font.BOLD;
@@ -145,8 +146,6 @@ public class SVTableCellRenderer extends JLabel
 
           int fontheight = f.getFontHeightInPoints();
           if (fontheight == 9) fontheight = 10; //fix for stupid ol Windows
-
-//          System.out.println("fontsizeinpnts="+f.getFontHeightInPoints());
 
           Font font = new Font(f.getFontName(),fontstyle,fontheight);
           setFont(font);
@@ -169,31 +168,16 @@ public class SVTableCellRenderer extends JLabel
           awtcolor = new Color(rgb[0],rgb[1],rgb[2]);
           setForeground(awtcolor);
 
-          if (s.getBorderBottom() != HSSFCellStyle.BORDER_NONE ||
+/*          if (s.getBorderBottom() != HSSFCellStyle.BORDER_NONE ||
               s.getBorderTop()    != HSSFCellStyle.BORDER_NONE ||
               s.getBorderLeft()   != HSSFCellStyle.BORDER_NONE ||
               s.getBorderRight()  != HSSFCellStyle.BORDER_NONE) {
-              int borderTop = 0;
-              int borderRight = 0;
-              int borderBottom = 0;
-              int borderLeft = 0;
-
-              if(s.getBorderBottom() != HSSFCellStyle.BORDER_NONE) {
-                borderBottom = 2;
-              }
-
-              if(s.getBorderRight() != HSSFCellStyle.BORDER_NONE) {
-                borderRight = 2;
-              }
-
-              if(s.getBorderTop() != HSSFCellStyle.BORDER_NONE) {
-                borderTop = 2;
-              }
-
-              if(s.getBorderLeft() != HSSFCellStyle.BORDER_NONE) {
-                borderLeft = 2;
-              }
-
+*/
+              int borderTop = s.getBorderTop();
+              int borderRight = s.getBorderRight();
+              int borderBottom = s.getBorderBottom();
+              int borderLeft = s.getBorderLeft();
+              
               SVBorder border = new SVBorder(Color.black, Color.black,
                                            Color.black, Color.black,
                                            borderTop, borderRight,
@@ -204,8 +188,10 @@ public class SVTableCellRenderer extends JLabel
                                            s.getBorderLeft() != HSSFCellStyle.BORDER_NONE);
               setBorder(border);
               isBorderSet=true;
-           //need custom border that can have north,east,south,west settings
-          }
+
+//          }
+        } else {
+          setBackground(Color.white);
         }
 
 
