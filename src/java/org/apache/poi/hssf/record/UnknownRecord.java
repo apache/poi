@@ -152,7 +152,7 @@ public class UnknownRecord
         buffer.append("[UNKNOWN RECORD:" + Integer.toHexString(sid) + "]\n");
         buffer.append("    .id        = ").append(Integer.toHexString(sid))
             .append("\n");
-        buffer.append("[/UNKNWON RECORD]\n");
+        buffer.append("[/UNKNOWN RECORD]\n");
         return buffer.toString();
     }
 
