@@ -18,11 +18,15 @@
     <section><title>Purpose</title>
       <p>
       The POI project consists of APIs for manipulating various file formats
-      based upon Microsoft's OLE 2 Compound Document format using pure Java.
+      based upon Microsoft's OLE 2 Compound Document format using pure Java.  In short, you can
+      read and write MS Excel files using Java.  Soon, you'll be able to read and write 
+      Word files using Java.  POI is your Java Excel solution as well as your Word Excel solution.
+      However, we have a complete API for porting other OLE 2 Compound Document formats and welcome
+      others to participate.
       </p>
       <p>
       OLE 2 Compound Document Format based files include most Microsoft Office
-      files such as XLS and DOC.
+      files such as XLS and DOC as well as MFC serialization API based file formats.
       </p>
       <p>
          As a general policy we try to collaborate as much as possible with other projects to
@@ -46,7 +50,7 @@
 		we say that POIFS is the most complete and correct port of this file format to date!
         </p>
         <p>
-		You'd use HSSF if you needed to read or write an XLS (Excel) file using Java. You can also read and modify
+		You'd use HSSF if you needed to read or write an Excel file using Java (XLS). You can also read and modify
 		spreadsheets using this API, although right now writing is more mature.
         </p>
       </section>
