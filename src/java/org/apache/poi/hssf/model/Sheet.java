@@ -283,6 +283,10 @@ public class Sheet implements Model
 
     /**
      * Clones the low level records of this sheet and returns the new sheet instance.
+     * This method is implemented by adding methods for deep cloning to all records that
+     * can be added to a sheet. The <b>Record</b> object does not implement cloneable. 
+     * When adding a new record, implement a public clone method if and only if the record
+     * belongs to a sheet. 
      */
     public Sheet cloneSheet()
     {

@@ -173,4 +173,10 @@ public class ProtectRecord
     {
         return this.sid;
     }
+
+    public Object clone() {
+        ProtectRecord rec = new ProtectRecord();
+        rec.field_1_protect = field_1_protect;
+        return rec;
+    }
 }

@@ -178,7 +178,12 @@ public class LeftMarginRecord
         this.field_1_margin = field_1_margin;
     }
 
-
+    public Object clone() {
+        LeftMarginRecord rec = new LeftMarginRecord();
+        rec.field_1_margin = this.field_1_margin;
+        return rec;
+    }
+    
 }  // END OF CLASS
 
 
