@@ -147,7 +147,7 @@ public class FieldIterator
 
     public String calcSize( int fieldNumber, String fieldName, String size, String type)
     {
-        String result = fieldNumber == 1 ? "" : " + ";
+        String result = " + ";
         if ("var".equals(size))
         {
             String javaFieldName = RecordUtil.getFieldName(fieldNumber,fieldName,0);
