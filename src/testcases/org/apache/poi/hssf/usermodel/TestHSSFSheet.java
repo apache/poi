@@ -318,8 +318,49 @@ public class TestHSSFSheet
 		
 	}
 
+    /**
+     * Tests the display of gridlines, formulas, and rowcolheadings.
+     * @author Shawn Laubach (slaubach at apache dot org)
+     */
+    public void testDisplayOptions() throws Exception {
+	HSSFWorkbook wb = new HSSFWorkbook();
+	HSSFSheet sheet = wb.createSheet();
+	
+        File tempFile = File.createTempFile("display", "test.xls");
+        FileOutputStream stream = new FileOutputStream(tempFile);
+        wb.write(stream);
+        stream.close();
+
+        FileInputStream readStream = new FileInputStream(tempFile);
+        wb = new HSSFWorkbook(readStream);
+        sheet = wb.getSheetAt(0);
+	readStream.close();
+
+	assertEquals(sheet.isDisplayGridlines(), true);
+	assertEquals(sheet.isDisplayRowColHeadings(), true);
+	assertEquals(sheet.isDisplayFormulas(), false);
+
+	sheet.setDisplayGridlines(false);
+	sheet.setDisplayRowColHeadings(false);
+	sheet.setDisplayFormulas(true);
+
+        tempFile = File.createTempFile("display", "test.xls");
+        stream = new FileOutputStream(tempFile);
+        wb.write(stream);
+        stream.close();
+
+        readStream = new FileInputStream(tempFile);
+        wb = new HSSFWorkbook(readStream);
+        sheet = wb.getSheetAt(0);
+	readStream.close();
+
+
+	assertEquals(sheet.isDisplayGridlines(), false);
+	assertEquals(sheet.isDisplayRowColHeadings(), false);
+	assertEquals(sheet.isDisplayFormulas(), true);
+    }
+
 	public static void main(java.lang.String[] args) {
 		 junit.textui.TestRunner.run(TestHSSFSheet.class);
-	}
-    
+	}    
 }
