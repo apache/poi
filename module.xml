@@ -74,9 +74,8 @@
     <depend project="xml-xerces"/>
     <depend project="xml-xalan2"/>
     <depend project="xml-cocoon2"/>
-    <depend project="jtidy"/>
     <depend project="junit"/>
-    <depend project="IzPress"/>
+
     <!-- needed for POI -->
     <depend project="commons-logging"/>
     
