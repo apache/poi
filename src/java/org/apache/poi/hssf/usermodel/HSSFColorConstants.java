@@ -70,8 +70,10 @@ package org.apache.poi.hssf.usermodel;
 
 public interface HSSFColorConstants
 {
-    public final static short AUTOMATIC       = 0x7fff;
-    public final static short BLACK           = 0x0;    // 0 0 0
+//    public final static short AUTOMATIC       = 0x7fff;
+    public final static short AUTOMATIC       = 0x40;
+//    public final static short BLACK           = 0x0;    // 0 0 0
+    public final static short BLACK           = 0x8;    // 0 0 0
     public final static short BROWN           = 0x3c;   // 153, 51,  0
     public final static short OLIVE_GREEN     = 0x3b;   // 51, 51,  0
     public final static short DARK_GREEN      = 0x3a;   // 0, 51,  0
