@@ -80,17 +80,17 @@ public class FieldIterator
 
         String result = "";
         if (javaType.equals("short"))
-            result = "LittleEndian.getShort(data, " + offset + " + offset)";
+            result = "LittleEndian.getShort(data, 0x" + Integer.toHexString(offset) + " + offset)";
         else if (javaType.equals("short[]"))
-            result = "LittleEndian.getShortArray(data, " + offset + " + offset)";
+            result = "LittleEndian.getShortArray(data, 0x" + Integer.toHexString(offset) + " + offset)";
         else if (javaType.equals("int"))
-            result = "LittleEndian.getInt(data, " + offset + " + offset)";
+            result = "LittleEndian.getInt(data, 0x" + Integer.toHexString(offset) + " + offset)";
         else if (javaType.equals("byte"))
-            result = "data[ " + offset + " + offset ]";
+            result = "data[ 0x" + Integer.toHexString(offset) + " + offset ]";
         else if (javaType.equals("double"))
-            result = "LittleEndian.getDouble(data, " + offset + " + offset)";
+            result = "LittleEndian.getDouble(data, 0x" + Integer.toHexString(offset) + " + offset)";
         else if (javaType.equals("ExcelString"))
-            result = "ExcelStringUtil.decodeExcelString(data, " + offset + " + offset)";
+            result = "ExcelStringUtil.decodeExcelString(data, 0x" + Integer.toHexString(offset) + " + offset)";
 
         try
         {

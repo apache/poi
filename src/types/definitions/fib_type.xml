@@ -101,70 +101,95 @@
     <field type="int" size="4" name="stylesheet size"/>
     <field type="int" size="4" name="footnote ref offset"/>
     <field type="int" size="4" name="footnote ref size"/>
+    
+    <field type="int" size="4" name="plc offset"/>
+    <field type="int" size="4" name="plc size"/>
+    
+    <field type="int" size="4" name="annotation ref offset"/>
+    <field type="int" size="4" name="annotation ref size"/>
+
+    <field type="int" size="4" name="annotation plc offset"/>
+    <field type="int" size="4" name="annotation plc size"/>
+
+    <field type="int" size="4" name="section plc offset"/>
+    <field type="int" size="4" name="section plc size"/>
+
+    <field type="int" size="4" name="unused"/>
+    <field type="int" size="4" name="unused"/>
+
+    <field type="int" size="4" name="pheplc offset"/>
+    <field type="int" size="4" name="pheplc size"/>
+
+    <field type="int" size="4" name="glossaryST offset"/>
+    <field type="int" size="4" name="glossaryST size"/>
+
+    <field type="int" size="4" name="glossaryPLC offset"/>
+    <field type="int" size="4" name="glossaryPLC size"/>
+
+    <field type="int" size="4" name="headerPLC offset"/>
+    <field type="int" size="4" name="headerPLC size"/>
+
+    <field type="int" size="4" name="chp_bin_table_offset"/>
+    <field type="int" size="4" name="chp_bin_table_size"/>
+
+    <field type="int" size="4" name="pap_bin_table_offset"/>
+    <field type="int" size="4" name="pap_bin_table_size"/>
+
+    <field type="int" size="4" name="sea_bin_table_offset"/>
+    <field type="int" size="4" name="sea_bin_table_size"/>
+
+    <field type="int" size="4" name="fonts_bin_table_offset"/>
+    <field type="int" size="4" name="fonts_bin_table_size"/>
+    
+    <field type="int" size="4" name="main_fields_offset"/>
+    <field type="int" size="4" name="main_fields_size"/>
+
+    <field type="int" size="4" name="header_fields_offset"/>
+    <field type="int" size="4" name="header_fields_size"/>
+
+    <field type="int" size="4" name="footnote_fields_offset"/>
+    <field type="int" size="4" name="footnote_fields_size"/>
+
+    <field type="int" size="4" name="ann_fields_offset"/>
+    <field type="int" size="4" name="ann_fields_size"/>
+    
+    <field type="int" size="4" name="unused"/>
+    <field type="int" size="4" name="unused"/>
+
+    <field type="int" size="4" name="bookmark_names_offset"/>
+    <field type="int" size="4" name="bookmark_names_size"/>
+    <field type="int" size="4" name="bookmark_offsets_offset"/>
+    <field type="int" size="4" name="bookmark_offsets_size"/>
+
+    <field type="int" size="4" name="macros_offset"/>
+    <field type="int" size="4" name="macros_size"/>
+
+    <field type="int" size="4" name="unused"/>
+    <field type="int" size="4" name="unused"/>
+    <field type="int" size="4" name="unused"/>
+    <field type="int" size="4" name="unused"/>
+    
+    <field type="int" size="4" name="printer offset"/>
+    <field type="int" size="4" name="printer size"/>
+    <field type="int" size="4" name="printer portrait offset"/>
+    <field type="int" size="4" name="printer portrait size"/>
+    <field type="int" size="4" name="printer landscape offset"/>
+    <field type="int" size="4" name="printer landscape size"/>
+
+    <field type="int" size="4" name="wss offset"/>
+    <field type="int" size="4" name="wss size"/>
+    
+    <field type="int" size="4" name="DOP offset"/>
+    <field type="int" size="4" name="DOP size"/>
+
+    <field type="int" size="4" name="sttbfassoc_offset"/>
+    <field type="int" size="4" name="sttbfassoc_size"/>
+
+    <field type="int" size="4" name="textPieceTable offset"/>
+    <field type="int" size="4" name="textPieceTable size"/>
+    
    <!-- 
 
-
-    private int field_48_pointer_to_plc_list_lvc; //rename me
-    private int field_49_first_lvc; //rename me
-    private int field_50_count_lvc; //rename me
-
-    private int field_51_unknown;
-    private int field_52_unknown;
-    //not sure about this array.
-    private short field_53_fc_lcb_array_size;
-    private int field_54_original_stylesheet_offset;
-    private int field_55_original_stylesheet_size;
-    private int field_56_stylesheet_offset;
-    private int field_57_stylesheet_size;
-    private int field_58_footnote_ref_offset;
-    private int field_59_footnote_ref_size;
-    private int field_60_footnote_plc_offset;
-    private int field_61_footnote_plc_size;
-    private int field_62_annotation_ref_offset;
-    private int field_63_annotation_ref_size;
-    private int field_64_annotation_plc_offset;
-    private int field_65_annotation_plc_size;
-    /** offset in table stream of section descriptor SED PLC*/
-    private int field_66_section_plc_offset;
-    private int field_67_section_plc_size;
-    private int field_68_unused;
-    private int field_69_unused;
-    private int field_70_pheplc_offset;
-    private int field_71_pheplc_size;
-    private int field_72_glossaryST_offset;
-    private int field_73_glossaryST_size;
-    private int field_74_glossaryPLC_offset;
-    private int field_75_glossaryPLC_size;
-    private int field_76_headerPLC_offset;
-    private int field_77_headerPLC_size;
-    private int field_78_chp_bin_table_offset;
-    private int field_79_chp_bin_table_size;
-    private int field_80_pap_bin_table_offset;
-    private int field_81_pap_bin_table_size;
-    private int field_82_sea_plc_offset;
-    private int field_83_sea_plc_size;
-    private int field_84_fonts_offset;
-    private int field_85_fonts_size;
-    private int field_86_main_fields_offset;
-    private int field_87_main_fields_size;
-    private int field_88_header_fields_offset;
-    private int field_89_header_fields_size;
-    private int field_90_footnote_fields_offset;
-    private int field_91_footnote_fields_size;
-    private int field_92_ann_fields_offset;
-    private int field_93_ann_fields_size;
-    private int field_94_unused;
-    private int field_95_unused;
-    private int field_96_bookmark_names_offset;
-    private int field_97_bookmark_names_size;
-    private int field_98_bookmark_offsets_offset;
-    private int field_99_bookmark_offsets_size;
-    private int field_100_macros_offset;
-    private int field_101_macros_size;
-    private int field_102_unused;
-    private int field_103_unused;
-    private int field_104_unused;
-    private int field_105_unused;
     private int field_106_printer_offset;
     private int field_107_printer_size;
     private int field_108_printer_portrait_offset;
