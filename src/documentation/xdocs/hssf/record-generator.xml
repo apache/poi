@@ -61,6 +61,14 @@
     </record>
         ]]></source>
         <p>
+            Currently the type can be of type int, float or string.  The 'int' type covers bytes, shorts and
+            integers which is selected using a size of 1, 2 or 4.
+            An additional type called varword is used to represent a array of word values where the first short
+            is the length of the array.
+            The string type generation is only partially implemented.  If choosing string you must select a size
+            of 'var'.
+        </p>
+        <p>
             The Java records are regenerated each time the record generator is run, however the test stubs are
             only created if the test stub does not already exist.  What this means is that you may change
             test stubs but not the generated records.
@@ -68,12 +76,15 @@
     </s2>
     <s2 title="How it Works">
         <p>
-            TODO: Fill this out more
+            The record generation works by taking an XML file and styling it using XLST.  Given that
+            XSLT is a little limited in some ways it was necessary to add a little Java code to the mix.
+            This would probably have been better off done as javascript and may well be migrated in the
+            near future. Since the current Java code was written as a proof of concept it's a little
+            lacking in commenting and structure.  Since this is converted to Javascript this should no
+            longer be a problem.
         </p>
         <p>
             See record.xsl, record_test.xsl, FieldIterator.java, RecordUtil.java, RecordGenerator.java
-        </p>
-        <p>
         </p>
     </s2>
     <s2 title="Limitations">
