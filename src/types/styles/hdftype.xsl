@@ -100,6 +100,14 @@ public abstract class <xsl:value-of select="@name"/>AbstractType
 </xsl:for-each>
     }
 
+    public void serialize(byte[] data, int offset)
+    {
+<xsl:variable name="fieldIterator" select="field:new()"/>
+<xsl:for-each select="//fields/field">
+<xsl:text>        </xsl:text><xsl:value-of select="field:serialiseEncoder($fieldIterator,position(),@name,@size,@type)"/>;
+</xsl:for-each>
+    }
+
     public String toString()
     {
         StringBuffer buffer = new StringBuffer();
