@@ -131,7 +131,7 @@ public class UserInput
 
     /**
      * Sets the prompt text that will be presented to the user.
-     * @param prompt String
+     * @param question prompt string
      */
 
     public void addText(String question)
