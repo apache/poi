@@ -272,7 +272,6 @@ public class TestWorkbook
     {
 	File             file = File.createTempFile("testWriteDataFormat",
                                                     ".xls");
-	System.err.println(file);
         FileOutputStream out  = new FileOutputStream(file);
         HSSFWorkbook     wb   = new HSSFWorkbook();
         HSSFSheet        s    = wb.createSheet();
