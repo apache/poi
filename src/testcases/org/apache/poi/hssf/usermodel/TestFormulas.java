@@ -723,9 +723,9 @@ extends TestCase {
             c.setCellFormula("A$3+A$2");
             c=r.createCell( (short) 3);
             c.setCellFormula("$A$3+$A$2");
-             c=r.createCell( (short) 4);
+            c=r.createCell( (short) 4);
             c.setCellFormula("SUM($A$3,$A$2)");
-
+            
             wb.write(out);
             out.close();
             assertTrue("file exists",file.exists());
@@ -742,9 +742,39 @@ extends TestCase {
             assertTrue("A$3+A$2", ("A$3+A$2").equals(c.getCellFormula()));
              c = r.getCell((short)3);
             assertTrue("$A$3+$A$2", ("$A$3+$A$2").equals(c.getCellFormula()));
-            c = r.getCell((short)4);
+             c = r.getCell((short)4);
             assertTrue("SUM($A$3,$A$2)", ("SUM($A$3,$A$2)").equals(c.getCellFormula()));
             in.close();
+    }
+    
+    public void testRVAoperands() throws Exception {
+         File file = File.createTempFile("testFormulaRVA",".xls");
+            FileOutputStream out    = new FileOutputStream(file);
+            HSSFWorkbook     wb     = new HSSFWorkbook();
+            HSSFSheet        s      = wb.createSheet();
+            HSSFRow          r      = null;
+            HSSFCell         c      = null;
+
+
+            r = s.createRow((short) 0);
+
+            c = r.createCell((short) 0);
+            c.setCellFormula("A3+A2");
+            c=r.createCell( (short) 1);
+            c.setCellFormula("AVERAGE(A3,A2)");
+            c=r.createCell( (short) 2);
+            c.setCellFormula("ROW(A3)");
+            c=r.createCell( (short) 3);
+            c.setCellFormula("AVERAGE(A2:A3)");
+            c=r.createCell( (short) 4);
+            c.setCellFormula("POWER(A2,A3)");
+            
+            r = s.createRow((short) 1);c=r.createCell( (short) 0); c.setCellValue(2.0);
+             r = s.createRow((short) 2);c=r.createCell( (short) 0); c.setCellValue(3.0);
+            
+            wb.write(out);
+            out.close();
+            assertTrue("file exists",file.exists());
     }
     public static void main(String [] args) {
         System.out

@@ -76,7 +76,8 @@ import org.apache.poi.hssf.util.CellReference;
 public class ReferencePtg extends Ptg
 {
     private final static int SIZE = 5;
-    public final static byte sid  = 0x24;
+    //public final static byte sid  = 0x24;
+    public final static byte sid = 0x44;
     private short            field_1_row;
     private short            field_2_col;
     private BitField         rowRelative = new BitField(0x8000);
