@@ -1,24 +1,24 @@
 #!/bin/sh
 
-echo
-echo "POI Build System            "
-echo "----------------------------"
+chmod u+x ./tools/ant/bin/antRun
+chmod u+x ./tools/ant/bin/ant
 
-cp -f ./lib/optional/xalan*.jar ./tools/lib
-cp -f ./lib/optional/xerces*.jar ./tools/lib
-cp -f ./lib/optional/xml-api*.jar ./tools/lib
-cp -f ./lib/optional/jtidy*.jar ./tools/lib
 
-chmod u+x ./tools/bin/antRun
-chmod u+x ./tools/bin/ant
-
+OLD_ANT_HOME=$ANT_HOME
 unset ANT_HOME
 
 CP=$CLASSPATH
 export CP
 unset CLASSPATH
 
-$PWD/tools/bin/ant -logger org.apache.tools.ant.NoBannerLogger -emacs $@ 
+CLASSPATH="./tools/centipede/lib/xml-apis.jar:./tools/centipede/lib/xerces.jar:./tools/centipede/lib/xalan.jar:./tools/centipede/lib/junit.jar:./tools/centipede/lib/jIzPress.jar:./tools/centipede/lib/jtidy.jar"
+export CLASSPATH
+
+$PWD/./tools/ant/bin/ant -listener org.apache.tools.ant.XmlLogger $@ 
+
+unset CLASSPATH
 
 CLASSPATH=$CP
 export CLASSPATH
+ANT_HOME=OLD_ANT_HOME
+export ANT_HOME

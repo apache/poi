@@ -60,13 +60,7 @@ import java.io.IOException;
 
 import java.util.*;
 
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Hierarchy;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
-import org.apache.log4j.SimpleLayout;
-import org.apache.log4j.spi.RootCategory;
+import org.apache.commons.logging.*;
 
 /**
  * Provides logging without clients having to mess with
@@ -74,52 +68,23 @@ import org.apache.log4j.spi.RootCategory;
  *
  * @author Andrew C. Oliver (acoliver at apache dot org)
  * @author Marc Johnson (mjohnson at apache dot org)
+ * @author Nicola Ken Barozzi (nicolaken at apache.org)
  */
 
 public class POILogFactory
 {
-    private Hierarchy           _creator;
+    private static LogFactory   _creator = LogFactory.getFactory();
 
     // map of POILogger instances, with classes as keys
-    private Map                 _loggers;
-    private static final String _fs = System.getProperty("file.separator");
+    private static Map          _loggers = new HashMap();;
+
 
     /**
      * construct a POILogFactory.
-     *
-     * @param logFile the name of the file that contains the
-     *                properties governing the logs; should not be
-     *                null or empty
-     * @param logPathProperty the name of the system property that
-     *                        defines the path of logFile; can not be
-     *                        null or empty
      */
 
-    public POILogFactory(final String logFile, final String logPathProperty)
+    private POILogFactory()
     {
-        String logfile = logFile;
-        String logpath = System.getProperty(logPathProperty);
-
-        if ((logpath != null) && (logpath.trim().length() != 0))
-        {
-            logfile = logpath + _fs + logfile;
-        }
-        _creator =
-            new Hierarchy(new RootCategory(Logger.getRootLogger()
-                .getLevel()));
-        try
-        {
-            new FileInputStream(logfile).close();
-            new PropertyConfigurator().doConfigure(logfile, _creator);
-        }
-        catch (IOException e)
-        {
-            _creator.getRootLogger()
-                .addAppender(new ConsoleAppender(new SimpleLayout(),
-                                                 ConsoleAppender.SYSTEM_OUT));
-            _creator.getRootLogger().setLevel((Level)Level.INFO);
-        }
-        _loggers = new HashMap();
     }
 
     /**
@@ -130,16 +95,19 @@ public class POILogFactory
      * @return a POILogger for the specified class
      */
 
-    public POILogger getLogger(final Class theclass)
+    public static POILogger getLogger(final Class theclass)
     {
-        POILogger logger = ( POILogger ) _loggers.get(theclass);
+        POILogger logger = null;
 
-        if (logger == null)
+        if (_loggers.containsKey(theclass))
         {
-            logger = new POILogger(_creator.getLogger(theclass.getName()));
+            logger = ( POILogger ) _loggers.get(theclass);
+        }
+        else
+        {
+            logger = new POILogger(_creator.getInstance(theclass));
             _loggers.put(theclass, logger);
         }
         return logger;
     }
 }   // end public class POILogFactory
-

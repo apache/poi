@@ -14,20 +14,16 @@
   </xsl:template>
 
   <xsl:template match="menu">
-    <font color="#000000" size="+1"><xsl:value-of select="@label"/></font>
-    <font size="-1">
-      <ul>
+    <hr/>
+    <span class="s1"><xsl:value-of select="@label"/></span><br/>
         <xsl:apply-templates/>
-      </ul>
-    </font><br/>
   </xsl:template>
 
   <xsl:template match="menu-item">
     <xsl:if test="not(@type) or @type!='hidden'">
-      <li><a href="{@href}"><font size="-1"><xsl:value-of select="@label"/></font></a></li>
+      <a href="{@href}" class="s1"><xsl:value-of select="@label"/></a><br/>
     </xsl:if>
   </xsl:template>
 
   <xsl:template match="node()|@*" priority="-1"/>
 </xsl:stylesheet>
-

@@ -20,6 +20,10 @@
       </classpath>
     </javac>
     <junit printsummary="yes" haltonfailure="yes" fork="yes">
+      <sysproperty key="UTIL.testdata.path"
+                   value="${test.dir}/org/apache/poi/util/data"/>
+      <sysproperty key="HSSF.testdata.path"
+                   value="${test.dir}/org/apache/poi/hssf/data"/>
       <classpath>
         <pathelement location="${build.test}" />
         <pathelement location="${build.dest}" />
