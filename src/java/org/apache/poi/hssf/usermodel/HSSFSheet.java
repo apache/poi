@@ -78,6 +78,7 @@ import java.util.TreeMap;
  * @author  Andrew C. Oliver (acoliver at apache dot org)
  * @author  Glen Stampoultzis (glens at apache.org)
  * @author  Libin Roman (romal at vistaportal.com)
+ * @author  Shawn Laubach (laubach at acm.org) (Just a little)
  */
 
 public class HSSFSheet
@@ -738,5 +739,46 @@ public class HSSFSheet
     {
         return ((WSBoolRecord) sheet.findFirstRecordBySid(WSBoolRecord.sid))
                 .getRowSumsRight();
+    }
+
+    /**
+     * Returns whether gridlines are printed.
+     * @return Gridlines are printed
+     */
+    public boolean isPrintGridlines() {
+        return getSheet().getPrintGridlines().getPrintGridlines();
+    }
+    
+    /**
+     * Turns on or off the printing of gridlines.
+     * @param newPrintGridlines boolean to turn on or off the printing of
+     * gridlines
+     */
+    public void setPrintGridlines(boolean newPrintGridlines) {
+        getSheet().getPrintGridlines().setPrintGridlines(newPrintGridlines);
+    }
+    
+    /**
+     * Gets the print setup object.
+     * @return The user model for the print setup object.
+     */
+    public HSSFPrintSetup getPrintSetup() {
+	return new HSSFPrintSetup(getSheet().getPrintSetup());
+    }
+    
+    /**
+     * Gets the user model for the document header.
+     * @return The Document header.
+     */
+    public HSSFHeader getHeader() {
+	return new HSSFHeader(getSheet().getHeader());
+    }
+    
+    /**
+     * Gets the user model for the document footer.
+     * @return The Document footer.
+     */
+    public HSSFFooter getFooter() {
+        return new HSSFFooter(getSheet().getFooter());
     }
 }
