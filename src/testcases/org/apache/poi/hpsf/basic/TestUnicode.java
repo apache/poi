@@ -26,6 +26,7 @@ import java.io.IOException;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
+import org.apache.poi.hpsf.Constants;
 import org.apache.poi.hpsf.HPSFException;
 import org.apache.poi.hpsf.PropertySet;
 import org.apache.poi.hpsf.PropertySetFactory;
@@ -99,7 +100,7 @@ public class TestUnicode extends TestCase
         Assert.assertEquals(ps.getSectionCount(), 2);
         Section s = (Section) ps.getSections().get(1);
         Assert.assertEquals(s.getProperty(1),
-                            new Integer(1200));
+                            new Integer(Constants.CP_UTF16));
         Assert.assertEquals(s.getProperty(2),
                             new Long(4198897018L));
         Assert.assertEquals(s.getProperty(3),

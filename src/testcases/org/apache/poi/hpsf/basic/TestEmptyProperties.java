@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
@@ -116,9 +117,13 @@ public class TestEmptyProperties extends TestCase
      * NoPropertySetStreamException} will be thrown when trying to
      * create a {@link PropertySet}.</p>
      * 
-     * @exception IOException if an I/O exception occurs
+     * @exception IOException if an I/O exception occurs.
+     * 
+     * @exception UnsupportedEncodingException if a character encoding is not
+     * supported.
      */
-    public void testCreatePropertySets() throws IOException
+    public void testCreatePropertySets()
+    throws UnsupportedEncodingException, IOException
     { 
         Class[] expected = new Class[]
             {

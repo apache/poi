@@ -18,9 +18,16 @@
 
 package org.apache.poi.contrib.poibrowser;
 
-import java.io.*;
-import org.apache.poi.hpsf.*;
-import org.apache.poi.poifs.filesystem.*;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+
+import org.apache.poi.hpsf.MarkUnsupportedException;
+import org.apache.poi.hpsf.NoPropertySetStreamException;
+import org.apache.poi.hpsf.PropertySet;
+import org.apache.poi.hpsf.PropertySetFactory;
+import org.apache.poi.hpsf.UnexpectedPropertySetTypeException;
+import org.apache.poi.poifs.filesystem.DocumentInputStream;
+import org.apache.poi.poifs.filesystem.POIFSDocumentPath;
 
 /**
  * <p>Describes the most important (whatever that is) features of a
@@ -63,8 +70,9 @@ public class PropertySetDescriptor extends DocumentDescriptor
                                  final POIFSDocumentPath path,
                                  final DocumentInputStream stream,
                                  final int nrOfBytesToDump)
-        throws NoPropertySetStreamException, MarkUnsupportedException,
-        UnexpectedPropertySetTypeException, IOException
+        throws UnexpectedPropertySetTypeException, NoPropertySetStreamException,
+               MarkUnsupportedException, UnsupportedEncodingException,
+               IOException
     {
         super(name, path, stream, nrOfBytesToDump);
         propertySet = PropertySetFactory.create(stream);

@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Copyright 2002-2004   Apache Software Foundation
 
@@ -24,6 +23,7 @@ import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import junit.framework.Assert;
@@ -133,9 +133,13 @@ public class TestBasic extends TestCase
      * NoPropertySetStreamException} will be thrown when trying to
      * create a {@link PropertySet}.</p>
      * 
-     * @exception IOException if an I/O exception occurs
+     * @exception IOException if an I/O exception occurs.
+     * 
+     * @exception UnsupportedEncodingException if a character encoding is not
+     * supported.
      */
-    public void testCreatePropertySets() throws IOException
+    public void testCreatePropertySets()
+    throws UnsupportedEncodingException, IOException
     {
         Class[] expected = new Class[]
             {

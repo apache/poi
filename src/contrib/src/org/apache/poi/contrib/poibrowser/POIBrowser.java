@@ -18,11 +18,19 @@
 
 package org.apache.poi.contrib.poibrowser;
 
-import java.awt.event.*;
-import java.io.*;
-import javax.swing.*;
-import javax.swing.tree.*;
-import org.apache.poi.poifs.eventfilesystem.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.FileInputStream;
+import java.io.IOException;
+
+import javax.swing.JFrame;
+import javax.swing.JScrollPane;
+import javax.swing.JTree;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.MutableTreeNode;
+
+import org.apache.poi.poifs.eventfilesystem.POIFSReader;
 
 /**
  * <p>The main class of the POI Browser. It shows the structure of POI
