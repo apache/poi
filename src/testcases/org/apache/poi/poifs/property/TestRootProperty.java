@@ -217,11 +217,11 @@ public class TestRootProperty
             ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00, ( byte ) 0x00
         };
 
-        verifyReadingProperty(0, input, 0, "Root Entry");
+        verifyReadingProperty(0, input, 0, "Root Entry", "{00020820-0000-0000-C000-000000000046}");
     }
 
     private void verifyReadingProperty(int index, byte [] input, int offset,
-                                       String name)
+                                       String name, String sClsId)
         throws IOException
     {
         RootProperty          property = new RootProperty(index, input,
@@ -242,6 +242,7 @@ public class TestRootProperty
         assertEquals(index, property.getIndex());
         assertEquals(name, property.getName());
         assertTrue(!property.getChildren().hasNext());
+        assertEquals(property.getStorageClsid().toString(), sClsId);
     }
 
     /**
