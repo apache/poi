@@ -360,6 +360,13 @@ public class TestWrite extends TestCase
 
 
 
+    private static final int CODEPAGE_DEFAULT = -1;
+    private static final int CODEPAGE_UTF8 = 65001;
+    private static final int CODEPAGE_UTF16 = 1200;
+    private static final int CODEPAGE_1252 = 1252;
+
+
+
     /**
      * <p>Writes and reads back various variant types and checks whether the
      * stuff that has been read back equals the stuff that was written.</p>
@@ -367,7 +374,7 @@ public class TestWrite extends TestCase
     public void testVariantTypes()
     {
         Throwable t = null;
-        final int codepage = -1;
+        final int codepage = CODEPAGE_DEFAULT;
         try
         {
             check(Variant.VT_EMPTY, null, codepage);
@@ -423,7 +430,8 @@ public class TestWrite extends TestCase
     public void testCodepages()
     {
         Throwable t = null;
-        final int[] validCodepages = new int[] {-1, 1252, 1200, 65001};
+        final int[] validCodepages = new int[]
+            {CODEPAGE_DEFAULT, CODEPAGE_UTF8, CODEPAGE_UTF16, CODEPAGE_1252};
         for (int i = 0; i < validCodepages.length; i++)
         {
             int codepage = validCodepages[i];
@@ -517,7 +525,11 @@ public class TestWrite extends TestCase
                      "index " + diff + ".");
         }
         else
-            assertEquals(value, objRead);
+            if (value != null && !value.equals(objRead))
+                fail("Expected: \"" + value + "\" but was: \"" + objRead +
+                     "\". Codepage: " + codepage + ".");
+            else
+                assertEquals(value, objRead);
     }
 
 
