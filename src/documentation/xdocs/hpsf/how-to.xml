@@ -149,13 +149,13 @@ r.registerListener(new MyPOIFSReaderListener(),
      <source>
 static class MyPOIFSReaderListener implements POIFSReaderListener
 {
-    public void processPOIFSReaderEvent(POIFSReaderEvent e)
+    public void processPOIFSReaderEvent(POIFSReaderEvent event)
     {
         SummaryInformation si = null;
         try
         {
             si = (SummaryInformation)
-                 PropertySetFactory.create(e.getStream());
+                 PropertySetFactory.create(event.getStream());
         }
         catch (Exception ex)
         {
