@@ -437,6 +437,19 @@ public class Workbook implements Model {
         sheet.setSheetnameLength( (byte)sheetname.length() );
 		sheet.setCompressedUnicodeFlag( (byte)encoding );
     }
+    
+    	/**
+	 * sets the order of appearance for a given sheet.
+	 *
+	 * @param sheetname the name of the sheet to reorder
+	 * @param pos the position that we want to insert the sheet into (0 based)
+	 */
+    
+    public void setSheetOrder(String sheetname, int pos ) {
+	int sheetNumber = getSheetIndex(sheetname);
+	//remove the sheet that needs to be reordered and place it in the spot we want
+	boundsheets.add(pos, boundsheets.remove(sheetNumber));	
+    }
 
     /**
      * gets the name for a given sheet.
