@@ -57,9 +57,9 @@
     <!-- <menu-item label="El C&#243;digo" href="http://jakarta.apache.org/poi/javadocs/javasrc/"/> -->       
     <menu-item label="CVS" href="http://jakarta.apache.org/site/cvsindex.html"/>  
         <!-- <menu-item label="CVS Changelog" href="changelog.html"/> -->
-    <menu-item label="Fallos (Bugs) Más Votados" href="http://nagoya.apache.org/bugzilla/buglist.cgi?votes=1&amp;product=POI&amp;order=bugs.votes"/>  
-    <menu-item label="Base de Datos de Fallos" href="http://nagoya.apache.org/bugzilla/buglist.cgi?product=POI"/>  
-    <menu-item label="Parches" href="http://nagoya.apache.org/bugzilla/buglist.cgi?product=POI&amp;short_desc=%5BPATCH%5D&amp;short_desc_type=allwordssubstr"/>  
+    <menu-item label="Fallos (Bugs) Más Votados" href="http://issues.apache.org/bugzilla/buglist.cgi?votes=1&amp;product=POI&amp;order=bugs.votes"/>
+    <menu-item label="Base de Datos de Fallos" href="http://issues.apache.org/bugzilla/buglist.cgi?product=POI"/>
+    <menu-item label="Parches" href="http://issues.apache.org/bugzilla/buglist.cgi?product=POI&amp;short_desc=%5BPATCH%5D&amp;short_desc_type=allwordssubstr"/>  
 
     <menu-item label="Resultados de Pruebas Junit" href="ext:junit"/>  
     <menu-item label="Métricas de Dependencia" href="ext:jdepend"/> 

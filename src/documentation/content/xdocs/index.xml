@@ -14,10 +14,10 @@
   </header>
 
   <body>
-    <section><title>POI News</title>
-        <p>All POI news can now be found at the <link href="http://nagoya.apache.org/poi/news/">poi news weblog</link>.</p>
+<!--    <section><title>POI News</title>-->
+<!--        <p>All POI news can now be found at the <link href="http://nagoya.apache.org/poi/news/">poi news weblog</link>.</p>-->
 
-    </section>
+<!--    </section>-->
     <section><title>Purpose</title>
       <p>
       The POI project consists of APIs for manipulating various file formats

@@ -14,10 +14,6 @@
   </header>
 
   <body>
-   <section><title>Noticias POI</title>
-        <p>Todas las noticias sobre POI pueden encontrarse en el <link href="http://nagoya.apache.org/poi/news/">weblog de noticias poi</link>.</p>
-
-    </section>
     <section><title>Propósito</title>
       <p>
       El proyecto POI consiste en APIs para manipular varios formatos de ficheros
