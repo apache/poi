@@ -85,7 +85,7 @@ public class HSSFFont
      * Normal boldness (not bold)
      */
 
-    public final static short  BOLDWEIGHT_NORMAL   = 190;
+    public final static short  BOLDWEIGHT_NORMAL   = 0x190;
 
     /**
      * Bold boldness (bold)
