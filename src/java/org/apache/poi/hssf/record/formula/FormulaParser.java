@@ -247,16 +247,14 @@ public class FormulaParser {
             tokens.add(new FunctionPtg(name,(byte)numArgs));
         } else if (Look == ':') { // this is a AreaReference
             String first = name;
-            GetChar();
+            Match(':');
             String second = GetName();
-                tokens.add(new AreaPtg(first+":"+second));
-            //String second = ;
+            tokens.add(new AreaPtg(first+":"+second));
         } else {
             //this can be either a cell ref or a named range !!
-            
             boolean cellRef = true ; //we should probably do it with reg exp??
             if (cellRef) {
-                tokens.add(new ReferencePtg(name)); //TODO we need to pass in Name somewhere??
+                tokens.add(new ReferencePtg(name)); 
             }else {
                 //handle after named range is integrated!!
             }
@@ -270,7 +268,7 @@ public class FormulaParser {
             numArgs++; 
             Expression();
         }
-        while (Look == ',') {
+        while (Look == ',') { //TODO handle EmptyArgs
             Match(',');
             Expression();
             numArgs++;
@@ -289,10 +287,17 @@ public class FormulaParser {
         } else if (IsAlpha(Look)){
             Ident();
         }else{
-
-            IntPtg p = new IntPtg();
-            p.setValue(Short.parseShort(GetNum()));
-            tokens.add(p);
+            String number = GetNum();
+            if (Look=='.') { 
+                Match('.');
+                String decimalPart = null;
+                if (IsDigit(Look)) number = number +"."+ GetNum(); //this also takes care of someone entering "1234."
+                tokens.add(new NumberPtg(number));
+            } else {
+                //IntPtg p = new IntPtg(GetNum());   // removing since a ptg should be able to create itself from parser results. 
+                //p.setValue(Short.parseShort(GetNum()));
+                tokens.add(new IntPtg(number));  //TODO:what if the number is too big to be a short? ..add factory to return Int or Number!
+            }
         }
     }
 
@@ -489,6 +494,8 @@ end;
         
         wb.write(out);
         out.close();
+        
+        System.out.println(file.getCanonicalPath());
         } catch (java.io.IOException ioe) {
             ioe.printStackTrace();
         }

@@ -1,16 +1,9 @@
-/*
- * DummyFunctionPtg.java
- *
- * 
- */
-
-
 package org.apache.poi.hssf.record.formula;
 
 import java.util.List;
 /**
  * This class provides functions with variable arguments.  
- * @author  aviks
+ * @author  Avik Sengupta
  * @author Andrew C. Oliver (acoliver at apache dot org)
  * @version 
  */
