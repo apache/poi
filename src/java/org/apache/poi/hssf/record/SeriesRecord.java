@@ -53,42 +53,59 @@
  * <http://www.apache.org/>.
  */
 
+
 package org.apache.poi.hssf.record;
 
+
+
+import org.apache.poi.util.BitField;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.StringUtil;
+import org.apache.poi.util.HexDump;
 
 /**
- * The series record defines the (graphing) series within a chart.
- * This record is matched with a corresponding EndRecord.
- *
+ * The series record describes the overall data for a series.
+ * NOTE: This source is automatically generated please do not modify this file.  Either subclass or
+ *       remove the record in src/records/definitions.
+
  * @author Glen Stampoultzis (gstamp at iprimus dot com dot au)
  */
-
 public class SeriesRecord
     extends Record
 {
-    public static final short sid                = 0x1003;
-    public static final short AXIS_TYPE_DATE     = 0;
-    public static final short AXIS_TYPE_NUMERIC  = 1;
-    public static final short AXIS_TYPE_SEQUENCE = 3;
-    public static final short AXIS_TYPE_TEXT     = 4;
-    private short             field_1_xAxisType;
-    private short             field_2_yAxisType;
-    private short             field_3_countOfXValues;
-    private short             field_4_countOfYValues;
-    private short             field_5_bubbleType;            // type of data in "bubble size series"
-    private short             field_6_countOfBubbleSeries;   // count of bubble series values
+    public final static short      sid                             = 0x1003;
+    private  short      field_1_categoryDataType;
+    public final static short       CATEGORY_DATA_TYPE_DATES       = 0;
+    public final static short       CATEGORY_DATA_TYPE_NUMERIC     = 1;
+    public final static short       CATEGORY_DATA_TYPE_SEQUENCE    = 2;
+    public final static short       CATEGORY_DATA_TYPE_TEXT        = 3;
+    private  short      field_2_valuesDataType;
+    public final static short       VALUES_DATA_TYPE_DATES         = 0;
+    public final static short       VALUES_DATA_TYPE_NUMERIC       = 1;
+    public final static short       VALUES_DATA_TYPE_SEQUENCE      = 2;
+    public final static short       VALUES_DATA_TYPE_TEXT          = 3;
+    private  short      field_3_numCategories;
+    private  short      field_4_numValues;
+    private  short      field_5_bubbleSeriesType;
+    public final static short       BUBBLE_SERIES_TYPE_DATES       = 0;
+    public final static short       BUBBLE_SERIES_TYPE_NUMERIC     = 1;
+    public final static short       BUBBLE_SERIES_TYPE_SEQUENCE    = 2;
+    public final static short       BUBBLE_SERIES_TYPE_TEXT        = 3;
+    private  short      field_6_numBubbleValues;
+
 
     public SeriesRecord()
     {
+
     }
 
     /**
-     * Constructs a SeriesRecord record and sets its fields appropriately.
+     * Constructs a Series record and sets its fields appropriately.
      *
-     * @param short id must be 0x1003 or an exception will be throw upon validation
-     * @param short size the size of the data area of the record
-     * @param byte[] data of the record (should not contain sid/len)
+     * @param id    id must be 0x1003 or an exception
+     *              will be throw upon validation
+     * @param size  size the size of the data area of the record
+     * @param data  data of the record (should not contain sid/len)
      */
 
     public SeriesRecord(short id, short size, byte [] data)
@@ -97,11 +114,12 @@ public class SeriesRecord
     }
 
     /**
-     * Constructs a SeriesRecord record and sets its fields appropriately.
+     * Constructs a Series record and sets its fields appropriately.
      *
-     * @param short id must be 0x1003 or an exception will be throw upon validation
-     * @param short size the size of the data area of the record
-     * @param byte[] data of the record (should not contain sid/len)
+     * @param id    id must be 0x1003 or an exception
+     *              will be throw upon validation
+     * @param size  size the size of the data area of the record
+     * @param data  data of the record (should not contain sid/len)
      * @param offset of the record's data
      */
 
@@ -110,57 +128,91 @@ public class SeriesRecord
         super(id, size, data, offset);
     }
 
+    /**
+     * Checks the sid matches the expected side for this record
+     *
+     * @param id   the expected sid.
+     */
     protected void validateSid(short id)
     {
         if (id != sid)
         {
-            throw new RecordFormatException("NOT A SERIES RECORD");
+            throw new RecordFormatException("Not a Series record");
         }
     }
 
     protected void fillFields(byte [] data, short size, int offset)
     {
-        field_1_xAxisType           = LittleEndian.getShort(data, 0 + offset);
-        field_2_yAxisType           = LittleEndian.getShort(data, 2 + offset);
-        field_3_countOfXValues      = LittleEndian.getShort(data, 4 + offset);
-        field_4_countOfYValues      = LittleEndian.getShort(data, 6 + offset);
-        field_5_bubbleType          = LittleEndian.getShort(data, 8 + offset);
-        field_6_countOfBubbleSeries = LittleEndian.getShort(data,
-                10 + offset);
+        field_1_categoryDataType        = LittleEndian.getShort(data, 0 + offset);
+        field_2_valuesDataType          = LittleEndian.getShort(data, 2 + offset);
+        field_3_numCategories           = LittleEndian.getShort(data, 4 + offset);
+        field_4_numValues               = LittleEndian.getShort(data, 6 + offset);
+        field_5_bubbleSeriesType        = LittleEndian.getShort(data, 8 + offset);
+        field_6_numBubbleValues         = LittleEndian.getShort(data, 10 + offset);
+
     }
 
     public String toString()
     {
         StringBuffer buffer = new StringBuffer();
 
-        buffer.append("[SERIES]\n");
-        buffer.append("    .xAxisType       = ")
-            .append(Integer.toHexString(getXAxisType())).append("\n");
-        buffer.append("    .yAxisType       = ")
-            .append(Integer.toHexString(getYAxisType())).append("\n");
-        buffer.append("    .countOfXValues  = ").append(getCountOfXValues())
-            .append("\n");
-        buffer.append("    .countOfYValues  = ").append(getCountOfYValues())
-            .append("\n");
-        buffer.append("[/SERIES]\n");
+        buffer.append("[Series]\n");
+
+        buffer.append("    .categoryDataType     = ")
+            .append("0x")
+            .append(HexDump.toHex((short)getCategoryDataType()))
+            .append(" (").append(getCategoryDataType()).append(" )\n");
+
+        buffer.append("    .valuesDataType       = ")
+            .append("0x")
+            .append(HexDump.toHex((short)getValuesDataType()))
+            .append(" (").append(getValuesDataType()).append(" )\n");
+
+        buffer.append("    .numCategories        = ")
+            .append("0x")
+            .append(HexDump.toHex((short)getNumCategories()))
+            .append(" (").append(getNumCategories()).append(" )\n");
+
+        buffer.append("    .numValues            = ")
+            .append("0x")
+            .append(HexDump.toHex((short)getNumValues()))
+            .append(" (").append(getNumValues()).append(" )\n");
+
+        buffer.append("    .bubbleSeriesType     = ")
+            .append("0x")
+            .append(HexDump.toHex((short)getBubbleSeriesType()))
+            .append(" (").append(getBubbleSeriesType()).append(" )\n");
+
+        buffer.append("    .numBubbleValues      = ")
+            .append("0x")
+            .append(HexDump.toHex((short)getNumBubbleValues()))
+            .append(" (").append(getNumBubbleValues()).append(" )\n");
+
+        buffer.append("[/Series]\n");
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte [] data)
+    public int serialize(int offset, byte[] data)
     {
         LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset,
-                              (( short ) 12));   // 12 byte length
-        LittleEndian.putShort(data, 4 + offset, getXAxisType());
-        LittleEndian.putShort(data, 6 + offset, getYAxisType());
-        LittleEndian.putShort(data, 8 + offset, getCountOfXValues());
-        LittleEndian.putShort(data, 10 + offset, getCountOfYValues());
+        LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
+
+        LittleEndian.putShort(data, 4 + offset, field_1_categoryDataType);
+        LittleEndian.putShort(data, 6 + offset, field_2_valuesDataType);
+        LittleEndian.putShort(data, 8 + offset, field_3_numCategories);
+        LittleEndian.putShort(data, 10 + offset, field_4_numValues);
+        LittleEndian.putShort(data, 12 + offset, field_5_bubbleSeriesType);
+        LittleEndian.putShort(data, 14 + offset, field_6_numBubbleValues);
+
         return getRecordSize();
     }
 
+    /**
+     * Size of record (exluding 4 byte header)
+     */
     public int getRecordSize()
     {
-        return 12;
+        return 4 + 2 + 2 + 2 + 2 + 2 + 2;
     }
 
     public short getSid()
@@ -168,75 +220,145 @@ public class SeriesRecord
         return this.sid;
     }
 
-    /**
-     * @return one of AXIS_TYPE_XXX
-     */
 
-    public short getXAxisType()
+    /**
+     * Get the category data type field for the Series record.
+     *
+     * @return  One of 
+     *        CATEGORY_DATA_TYPE_DATES
+     *        CATEGORY_DATA_TYPE_NUMERIC
+     *        CATEGORY_DATA_TYPE_SEQUENCE
+     *        CATEGORY_DATA_TYPE_TEXT
+     */
+    public short getCategoryDataType()
     {
-        return field_1_xAxisType;
+        return field_1_categoryDataType;
     }
 
     /**
-     * @param xAxisType one of AXIS_TYPE_XXX
+     * Set the category data type field for the Series record.
+     *
+     * @param field_1_categoryDataType
+     *        One of 
+     *        CATEGORY_DATA_TYPE_DATES
+     *        CATEGORY_DATA_TYPE_NUMERIC
+     *        CATEGORY_DATA_TYPE_SEQUENCE
+     *        CATEGORY_DATA_TYPE_TEXT
      */
-
-    public void setXAxisType(short xAxisType)
+    public void setCategoryDataType(short field_1_categoryDataType)
     {
-        this.field_1_xAxisType = xAxisType;
+        this.field_1_categoryDataType = field_1_categoryDataType;
     }
 
     /**
-     * @return one of AXIS_TYPE_XXX
+     * Get the values data type field for the Series record.
+     *
+     * @return  One of 
+     *        VALUES_DATA_TYPE_DATES
+     *        VALUES_DATA_TYPE_NUMERIC
+     *        VALUES_DATA_TYPE_SEQUENCE
+     *        VALUES_DATA_TYPE_TEXT
      */
-
-    public short getYAxisType()
+    public short getValuesDataType()
     {
-        return field_2_yAxisType;
+        return field_2_valuesDataType;
     }
 
     /**
-     * @param xAxisType one of AXIS_TYPE_XXX
+     * Set the values data type field for the Series record.
+     *
+     * @param field_2_valuesDataType
+     *        One of 
+     *        VALUES_DATA_TYPE_DATES
+     *        VALUES_DATA_TYPE_NUMERIC
+     *        VALUES_DATA_TYPE_SEQUENCE
+     *        VALUES_DATA_TYPE_TEXT
      */
-
-    public void setYAxisType(short yAxisType)
+    public void setValuesDataType(short field_2_valuesDataType)
     {
-        this.field_2_yAxisType = yAxisType;
+        this.field_2_valuesDataType = field_2_valuesDataType;
     }
 
     /**
-     * @return number of x values in the series.
+     * Get the num categories field for the Series record.
      */
-
-    public short getCountOfXValues()
+    public short getNumCategories()
     {
-        return field_3_countOfXValues;
+        return field_3_numCategories;
     }
 
     /**
-     * Sets the number of x values in the series.
+     * Set the num categories field for the Series record.
      */
-
-    public void setCountOfXValues(short countOfXValues)
+    public void setNumCategories(short field_3_numCategories)
     {
-        this.field_3_countOfXValues = countOfXValues;
+        this.field_3_numCategories = field_3_numCategories;
     }
 
     /**
-     * @return number of y values in the series.
+     * Get the num values field for the Series record.
      */
-
-    public short getCountOfYValues()
+    public short getNumValues()
     {
-        return field_4_countOfYValues;
+        return field_4_numValues;
     }
 
     /**
-     * @param countOfYValues    sets the number of y values for the series.
+     * Set the num values field for the Series record.
      */
-
-    public void setCountOfYValues(short countOfYValues)
+    public void setNumValues(short field_4_numValues)
     {
-        this.field_4_countOfYValues = countOfYValues;
+        this.field_4_numValues = field_4_numValues;
     }
-}
+
+    /**
+     * Get the bubble series type field for the Series record.
+     *
+     * @return  One of 
+     *        BUBBLE_SERIES_TYPE_DATES
+     *        BUBBLE_SERIES_TYPE_NUMERIC
+     *        BUBBLE_SERIES_TYPE_SEQUENCE
+     *        BUBBLE_SERIES_TYPE_TEXT
+     */
+    public short getBubbleSeriesType()
+    {
+        return field_5_bubbleSeriesType;
+    }
+
+    /**
+     * Set the bubble series type field for the Series record.
+     *
+     * @param field_5_bubbleSeriesType
+     *        One of 
+     *        BUBBLE_SERIES_TYPE_DATES
+     *        BUBBLE_SERIES_TYPE_NUMERIC
+     *        BUBBLE_SERIES_TYPE_SEQUENCE
+     *        BUBBLE_SERIES_TYPE_TEXT
+     */
+    public void setBubbleSeriesType(short field_5_bubbleSeriesType)
+    {
+        this.field_5_bubbleSeriesType = field_5_bubbleSeriesType;
+    }
+
+    /**
+     * Get the num bubble values field for the Series record.
+     */
+    public short getNumBubbleValues()
+    {
+        return field_6_numBubbleValues;
+    }
+
+    /**
+     * Set the num bubble values field for the Series record.
+     */
+    public void setNumBubbleValues(short field_6_numBubbleValues)
+    {
+        this.field_6_numBubbleValues = field_6_numBubbleValues;
+    }
+
+
+}  // END OF CLASS
+
+
+
+

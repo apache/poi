@@ -316,6 +316,17 @@ public class TestHexDump
         }
     }
 
+    public void testToHex()
+            throws Exception
+    {
+        assertEquals( "000A", HexDump.toHex((short)0xA));
+        assertEquals( "0A", HexDump.toHex((byte)0xA));
+        assertEquals( "0000000A", HexDump.toHex((int)0xA));
+
+        assertEquals( "FFFF", HexDump.toHex((short)0xFFFF));
+
+    }
+
     private char toAscii(final int c)
     {
         char rval = '.';

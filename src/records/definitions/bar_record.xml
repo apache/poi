@@ -1,0 +1,14 @@
+<record id="0x1017" name="Bar" package="org.apache.poi.hssf.record">
+    <description>The bar record is used to define a bar chart.</description>
+    <author>Glen Stampoultzis (gstamp at iprimus dot com dot au)</author>
+    <fields>
+        <field type="int" size="2" name="bar space" description="space between bars"/>
+        <field type="int" size="2" name="category space" default="50" description="space between categories"/>
+        <field type="int" size="2" name="format flags">
+            <bit number="0" name="horizontal" description="true to display horizontal bar charts, false for vertical"/>
+            <bit number="1" name="stacked" description="stack displayed values"/>
+            <bit number="2" name="display as percentage" description="display chart values as a percentage"/>
+            <bit number="3" name="shadow" description="display a shadow for the chart"/>
+        </field>
+    </fields>
+</record>

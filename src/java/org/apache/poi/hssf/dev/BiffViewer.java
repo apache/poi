@@ -587,6 +587,14 @@ public class BiffViewer
                 retval = new MergeCellsRecord(rectype, size, data);
                 break;
 
+            case AreaRecord.sid :
+                retval = new AreaRecord(rectype, size, data);
+                break;
+
+            case DataFormatRecord.sid :
+                retval = new DataFormatRecord(rectype, size, data);
+                break;
+
             default :
                 retval = new UnknownRecord(rectype, size, data);
         }

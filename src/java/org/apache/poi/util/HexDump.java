@@ -59,9 +59,10 @@ import java.io.*;
 
 /**
  * dump data in hexadecimal format; derived from a HexDump utility I
- * wrote in June 2001
+ * wrote in June 2001.
  *
  * @author Marc Johnson
+ * @author Glen Stampoultzis  (glens at apache.org)
  */
 
 public class HexDump
@@ -89,7 +90,7 @@ public class HexDump
      *            null
      */
 
-    public static void dump(final byte [] data, final long offset,
+    public synchronized static void dump(final byte [] data, final long offset,
                             final OutputStream stream, final int index)
         throws IOException, ArrayIndexOutOfBoundsException,
                 IllegalArgumentException
@@ -180,5 +181,49 @@ public class HexDump
             _cbuffer.append(_hexcodes[ (value >> _shifts[ j + 6 ]) & 15 ]);
         }
         return _cbuffer;
+    }
+
+    /**
+     * Converts the parameter to a hex value.
+     *
+     * @param value     The value to convert
+     * @return          The result right padded with 0
+     */
+    public static String toHex(final short value)
+    {
+        return toHex(value, 4);
+    }
+
+    /**
+     * Converts the parameter to a hex value.
+     *
+     * @param value     The value to convert
+     * @return          The result right padded with 0
+     */
+    public static String toHex(final byte value)
+    {
+        return toHex(value, 2);
+    }
+
+    /**
+     * Converts the parameter to a hex value.
+     *
+     * @param value     The value to convert
+     * @return          The result right padded with 0
+     */
+    public static String toHex(final int value)
+    {
+        return toHex(value, 8);
+    }
+
+
+    private static String toHex(final long value, final int digits)
+    {
+        StringBuffer result = new StringBuffer(digits);
+        for (int j = 0; j < digits; j++)
+        {
+            result.append( _hexcodes[ (int) ((value >> _shifts[ j + (8 - digits) ]) & 15)]);
+        }
+        return result.toString();
     }
 }

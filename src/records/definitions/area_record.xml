@@ -1,0 +1,11 @@
+<record id="0x101A" name="Area" package="org.apache.poi.hssf.record">
+    <description>The area record is used to define a area chart.</description>
+    <author>Glen Stampoultzis (gstamp at iprimus dot com dot au)</author>
+    <fields>
+        <field type="int" size="2" name="format flags">
+            <bit number="0" name="stacked" description="series is stacked"/>
+            <bit number="1" name="display as percentage" description="results displayed as percentages"/>
+            <bit number="2" name="shadow" description="display a shadow for the chart"/>
+        </field>
+    </fields>
+</record>
