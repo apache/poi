@@ -181,6 +181,14 @@ extends TestCase {
     throws Exception {
         orderTest("1*2+3^4");
     }
+    
+    /**
+     * Tests that parenthesis are obeyed
+     */
+    public void testParenthesis() 
+    throws Exception {
+        orderTest("(1*3)+2+(1+2)*(3^4)^5");
+    }
 
     /**
      * tests order wrting out == order writing in for a given formula
@@ -279,7 +287,7 @@ extends TestCase {
         //get our minimum values
         r = s.getRow((short)0);
         c = r.getCell((short)1);
-        assertTrue("minval Formula is as expected",
+        assertTrue("minval Formula is as expected 1"+operator+"1 != "+c.getCellFormula(),
         ( ("1"+operator+"1").equals(c.getCellFormula())
         ));
         
