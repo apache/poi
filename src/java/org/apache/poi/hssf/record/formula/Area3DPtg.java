@@ -198,7 +198,7 @@ public class Area3DPtg extends Ptg
 
 	/**
 	 * sets the first row to relative or not
-	 * @param isRelative or not.
+	 * @param rel FIXME: Document this!
 	 */
 	public void setFirstRowRelative( boolean rel )
 	{
@@ -215,7 +215,7 @@ public class Area3DPtg extends Ptg
 
 	/**
 	 * set whether the last row is relative or not
-	 * @param last row relative
+	 * @param rel FIXME: Document this!
 	 */
 	public void setLastRowRelative( boolean rel )
 	{

@@ -207,7 +207,7 @@ public class HWPFDocument
 
   /**
    * Returns the character length of a document.
-   * @return
+   * @return the character length of a document
    */
   public int characterLength()
   {

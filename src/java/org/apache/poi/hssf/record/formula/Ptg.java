@@ -32,7 +32,7 @@ public abstract class Ptg
 {
 
         
-    /** convert infix order ptg list to rpn order ptg list
+    /* convert infix order ptg list to rpn order ptg list
      * @return List ptgs in RPN order
      * @param infixPtgs List of ptgs in infix order
      */

@@ -103,7 +103,7 @@ public class LessThanPtg
     
     /** 
      * Implementation of method from Ptg 
-     * @param refs the Sheet References
+     * @param book the Sheet References
      */
     public String toFormulaString(Workbook book)
     {

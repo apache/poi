@@ -109,13 +109,13 @@ public class EscherGraphics
         this.verticalPixelsPerPoint = 1 / verticalPointsPerPixel;
     }
 
-    /**
-     * Constructs an escher graphics object.
-     *
-     * @param escherGroup           The escher group to write the graphics calls into.
-     * @param workbook              The workbook we are using.
-     * @param forecolor             The default foreground color.
-     */
+//    /**
+//     * Constructs an escher graphics object.
+//     *
+//     * @param escherGroup           The escher group to write the graphics calls into.
+//     * @param workbook              The workbook we are using.
+//     * @param forecolor             The default foreground color.
+//     */
 //    public EscherGraphics( HSSFShapeGroup escherGroup, HSSFWorkbook workbook, Color forecolor)
 //    {
 //        this(escherGroup, workbook, forecolor, 1.0f);

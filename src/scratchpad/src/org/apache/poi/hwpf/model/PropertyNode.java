@@ -38,7 +38,7 @@ public abstract class PropertyNode implements Comparable, Cloneable
   /**
    * @param fcStart The start of the text for this property.
    * @param fcEnd The end of the text for this property.
-   * @param grpprl The property description in compressed form.
+   * @param buf FIXME: Old documentation is: "grpprl The property description in compressed form."
    */
   protected PropertyNode(int fcStart, int fcEnd, Object buf)
   {

@@ -242,7 +242,6 @@ public class HSSFWorkbook
      * Will throw IllegalArgumentException if the name is greater than 31 chars
      * or contains /\?*[]
      * @param sheet number (0 based)
-     * @param sheet name
      */
     public void setSheetName(int sheet, String name)
     {
@@ -875,7 +874,7 @@ public class HSSFWorkbook
 
 	/**
 	 * For the Convenience of Java Programmers maintaining pointers.
-	 * @see setPrintArea(int, String)
+	 * @see #setPrintArea(int, String)
 	 * @param sheetIndex Zero-based sheet index (0 = First Sheet)
 	 * @param startColumn Column to begin printarea
 	 * @param endColumn Column to end the printarea

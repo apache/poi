@@ -21,8 +21,6 @@ import java.io.IOException;
 
 import org.apache.poi.util.LittleEndian;
 
-import org.apache.poi.hwpf.model.io.HWPFOutputStream;
-
 public class FIBLongHandler
 {
   public static final int CBMAC = 0;
@@ -64,8 +62,8 @@ public class FIBLongHandler
 
   /**
    * Refers to a 32 bit windows "long" same as a Java int
-   * @param longCode
-   * @return
+   * @param longCode FIXME: Document this!
+   * @return FIXME: Document this!
    */
   public int getLong(int longCode)
   {

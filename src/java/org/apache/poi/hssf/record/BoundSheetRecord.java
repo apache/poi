@@ -158,7 +158,7 @@ public class BoundSheetRecord
     /**
      * Set the sheetname for this sheet.  (this appears in the tabs at the bottom)
      * @param sheetname the name of the sheet
-     * @thows IllegalArgumentException if sheet name will cause excel to crash. 
+     * @throws IllegalArgumentException if sheet name will cause excel to crash. 
      */
 
     public void setSheetname( String sheetname )

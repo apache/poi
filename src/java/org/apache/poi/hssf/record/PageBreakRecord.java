@@ -27,13 +27,15 @@ import java.util.Map;
 import org.apache.poi.util.LittleEndian;
 
 /**
- * Record that contains the functionality page breaks (horizontal and vertical)
- * <p>
- * The other two classes just specifically set the SIDS for record creation
- * @see HorizontalPageBreakRecord
- * @see VerticalPageBreakREcord
+ * <p>Record that contains the functionality page breaks (horizontal and vertical)</p>
  * 
- * REFERENCE:  Microsoft Excel SDK page 322 and 420
+ * <p>The other two classes just specifically set the SIDS for record creation.</p>
+ * 
+ * <p>REFERENCE:  Microsoft Excel SDK page 322 and 420</p>
+ * 
+ * @see HorizontalPageBreakRecord
+ * @see VerticalPageBreakRecord
+ * 
  * @author Danny Mui (dmui at apache dot org)
  */
 public class PageBreakRecord extends Record {
@@ -242,8 +244,8 @@ public class PageBreakRecord extends Record {
 
     /**
      * Retrieves the region at the row/column indicated
-     * @param main
-     * @return
+     * @param main FIXME: Document this!
+     * @return FIXME: Document this!
      */
     public Break getBreak(short main)
     {

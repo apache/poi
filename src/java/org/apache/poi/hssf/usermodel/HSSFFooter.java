@@ -93,7 +93,7 @@ public class HSSFFooter extends Object {
 
   /**
    * Sets the left string.
-   * @newLeft The string to set as the left side.
+   * @param newLeft The string to set as the left side.
    */
   public void setLeft(String newLeft) {
     left = newLeft;
@@ -110,7 +110,7 @@ public class HSSFFooter extends Object {
 
   /**
    * Sets the center string.
-   * @newLeft The string to set as the center.
+   * @param newCenter The string to set as the center.
    */
   public void setCenter(String newCenter) {
     center = newCenter;
@@ -127,7 +127,7 @@ public class HSSFFooter extends Object {
 
   /**
    * Sets the right string.
-   * @newLeft The string to set as the right side.
+   * @param newRight The string to set as the right side.
    */
   public void setRight(String newRight) {
     right = newRight;
