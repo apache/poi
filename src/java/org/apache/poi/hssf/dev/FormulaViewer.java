@@ -88,6 +88,7 @@ import org.apache.poi.hssf.usermodel.*;
 public class FormulaViewer
 {
     private String file;
+    private boolean list=false;
 
     /** Creates new FormulaViewer */
 
@@ -118,8 +119,65 @@ public class FormulaViewer
 
             if (record.getSid() == FormulaRecord.sid)
             {
-                parseFormulaRecord(( FormulaRecord ) record);
+               if (list) {
+                    listFormula((FormulaRecord) record);
+               }else {
+                    parseFormulaRecord(( FormulaRecord ) record);
+               }
             }
+        }
+    }
+    
+    private void listFormula(FormulaRecord record) {
+        String sep="~";
+        List tokens= record.getParsedExpression();
+        int numptgs = record.getNumberOfExpressionTokens();
+        Ptg token = null;
+        String name,numArg;
+        if (tokens != null) {
+            token = (Ptg) tokens.get(numptgs-1);
+            if (token instanceof FuncPtg) {
+                numArg = String.valueOf(numptgs-1);
+            } else { numArg = String.valueOf(-1);}
+            
+            StringBuffer buf = new StringBuffer();
+            
+            buf.append(name=((OperationPtg) token).toFormulaString());
+            buf.append(sep);
+            switch (token.getPtgClass()) {
+                case Ptg.CLASS_REF :
+                    buf.append("REF");
+                    break;
+                case Ptg.CLASS_VALUE :
+                    buf.append("VALUE");
+                    break;
+                case Ptg.CLASS_ARRAY :
+                    buf.append("ARRAY");
+                    break;
+            }
+            
+            buf.append(sep);
+            if (numptgs>1) {
+                token = (Ptg) tokens.get(numptgs-2);
+                switch (token.getPtgClass()) {
+                    case Ptg.CLASS_REF :
+                        buf.append("REF");
+                        break;
+                    case Ptg.CLASS_VALUE :
+                        buf.append("VALUE");
+                        break;
+                    case Ptg.CLASS_ARRAY :
+                        buf.append("ARRAY");
+                        break;
+                }
+            }else {
+                buf.append("VALUE");
+            }
+            buf.append(sep);
+            buf.append(numArg);
+            System.out.println(buf.toString());
+        } else  {
+            System.out.println("#NAME");
         }
     }
 
@@ -142,23 +200,36 @@ public class FormulaViewer
                            + record.getNumberOfExpressionTokens());
         System.out.println(", options = " + record.getOptions());
         System.out.println("RPN List = "+formulaString(record));
-        System.out.println("Formula text = "+ composeForumla(record));
+        System.out.println("Formula text = "+ composeFormula(record));
     }
 
     private String formulaString(FormulaRecord record) {
         StringBuffer formula = new StringBuffer("=");
         int          numptgs = record.getNumberOfExpressionTokens();
         List         tokens    = record.getParsedExpression();
+        Ptg token;
         StringBuffer buf = new StringBuffer();
            for (int i=0;i<numptgs;i++) {
-            buf.append( ( (Ptg)tokens.get(i)).toFormulaString());
+           token = (Ptg) tokens.get(i);
+            buf.append( token.toFormulaString());
+            switch (token.getPtgClass()) {
+                case Ptg.CLASS_REF :
+                    buf.append("(R)");
+                    break;
+                case Ptg.CLASS_VALUE :
+                    buf.append("(V)");
+                    break;
+                case Ptg.CLASS_ARRAY :
+                    buf.append("(A)");
+                    break;
+            }
             buf.append(' ');
         } 
         return buf.toString();
     }
     
     
-    private String composeForumla(FormulaRecord record)
+    private String composeFormula(FormulaRecord record)
     {
        return  FormulaParser.toFormulaString(record.getParsedExpression());
     }
@@ -175,6 +246,10 @@ public class FormulaViewer
     {
         this.file = file;
     }
+    
+    public void setList(boolean list) {
+        this.list=list;
+    }
 
     /**
      * Method main
@@ -187,12 +262,23 @@ public class FormulaViewer
 
     public static void main(String args[])
     {
-        if ((args == null) || (args.length != 1)
+        if ((args == null) || (args.length >2 )
                 || args[ 0 ].equals("--help"))
         {
             System.out.println(
                 "FormulaViewer .8 proof that the devil lies in the details (or just in BIFF8 files in general)");
             System.out.println("usage: Give me a big fat file name");
+        } else if (args[0].equals("--listFunctions")) { // undocumented attribute to research functions!~
+            try {
+                FormulaViewer viewer = new FormulaViewer();
+                viewer.setFile(args[1]);
+                viewer.setList(true);
+                viewer.run();
+            }
+            catch (Exception e) {
+                System.out.println("Whoops!");
+                e.printStackTrace();
+            }
         }
         else
         {

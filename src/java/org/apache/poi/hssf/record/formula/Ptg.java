@@ -133,14 +133,15 @@ public abstract class Ptg
 
         final byte valueRef = ReferencePtg.sid + 0x20;
         final byte arrayRef = ReferencePtg.sid + 0x40;
-        final byte valueFunc = FunctionPtg.sid + 0x20;
-        final byte arrayFunc = FunctionPtg.sid + 0x40;
+        final byte valueFunc = FuncPtg.sid + 0x20;
+        final byte arrayFunc = FuncPtg.sid + 0x40;
+        final byte valueFuncVar = FuncVarPtg.sid +0x20;
+        final byte arrayFuncVar = FuncVarPtg.sid+0x40;
         final byte valueArea = AreaPtg.sid + 0x20;
         final byte arrayArea = AreaPtg.sid + 0x40;
 
         switch (id)
         {
-
             case AddPtg.sid :
                 retval = new AddPtg(data, offset);
                 break;
@@ -200,15 +201,26 @@ public abstract class Ptg
                 retval = new ParenthesisPtg(data, offset);
                 break;
 
-            case FunctionPtg.sid :
-                retval = new FunctionPtg(data, offset);
+            case FuncPtg.sid :
+                retval = new FuncPtg(data, offset);
                 break;
                 
             case valueFunc :
-                retval = new FunctionPtg(data, offset);
+                retval = new FuncPtg(data, offset);
                 break;
             case arrayFunc :
-                retval = new FunctionPtg(data, offset);
+                retval = new FuncPtg(data, offset);
+                break;
+                
+            case FuncVarPtg.sid :
+                retval = new FuncVarPtg(data, offset);
+                break;
+                
+            case valueFuncVar :
+                retval = new FuncVarPtg(data, offset);
+                break;
+            case arrayFuncVar :
+                retval = new FuncVarPtg(data, offset);
                 break;
                 
             case NumberPtg.sid :
@@ -234,13 +246,16 @@ public abstract class Ptg
             case Ref3DPtg.sid:
                 retval = new Ref3DPtg(data, offset);
                 break;
+                
+            case MissingArgPtg.sid:
+                retval = new MissingArgPtg(data,offset);
+                break;
 
             default :
 
-                // retval = new UnknownPtg();
-                throw new RuntimeException("Unknown PTG = "
-                                           + Integer.toHexString(( int ) id)
-                                           + " (" + ( int ) id + ")");
+                 //retval = new UnknownPtg();
+                 throw new java.lang.UnsupportedOperationException(
+                        Integer.toHexString(( int ) id) + " (" + ( int ) id + ")");
         }
         
         if (id > 0x60) {
@@ -295,6 +310,10 @@ public abstract class Ptg
         ptgClass = thePtgClass;
     }
     
+    /** returns the class (REF/VALUE/ARRAY) for this Ptg */
+    public byte getPtgClass() {
+        return ptgClass;
+    }
     
     public abstract byte getDefaultOperandClass();
 

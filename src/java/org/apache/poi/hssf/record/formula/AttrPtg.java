@@ -97,7 +97,7 @@ public class AttrPtg
         field_2_data    = LittleEndian.getShort(data, offset + 1);
         System.out.println("OPTIONS = " + Integer.toHexString(getOptions()));
         System.out.println("OPTIONS & 0x10 = " + (getOptions() & 0x10));
-        System.out.println(toString());
+        //System.out.println(toString());
     }
 
     public void setOptions(byte options)
@@ -193,7 +193,7 @@ public class AttrPtg
 
     public String toFormulaString()
     {
-        return "SUM()";
+        return "ATTR";
     }
 
     public int getNumberOfOperands()
