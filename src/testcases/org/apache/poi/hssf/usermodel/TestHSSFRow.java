@@ -94,4 +94,21 @@ public class TestHSSFRow
         assertEquals(2, row.getFirstCellNum());
         assertEquals(5, row.getLastCellNum());
     }
+
+    public void testRemoveCell()
+    {
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        HSSFSheet sheet = workbook.createSheet();
+        HSSFRow row = sheet.createRow((short) 0);
+        assertEquals(-1, row.getLastCellNum());
+        row.createCell((short)1);
+        assertEquals(1, row.getLastCellNum());
+        row.createCell((short)3);
+        assertEquals(3, row.getLastCellNum());
+        row.removeCell(row.getCell((short)3));
+        assertEquals(1, row.getLastCellNum());
+        row.removeCell(row.getCell((short)1));
+        assertEquals(-1, row.getLastCellNum());
+
+    }
 }
