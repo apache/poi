@@ -1,7 +1,7 @@
 <xsl:stylesheet version="1.0"
    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-   xmlns:recutil="org.apache.poi.generator.RecordUtil"
-   xmlns:field="org.apache.poi.generator.FieldIterator"
+   xmlns:recutil="org.apache.poi.hdf.generator.HDFRecordUtil"
+   xmlns:field="org.apache.poi.hdf.generator.HDFFieldIterator"
    xmlns:java="java" >
 
 <xsl:template match="record">
@@ -80,7 +80,7 @@ public abstract class <xsl:value-of select="@name"/>AbstractType
     implements HDFType
 {
 
-<xsl:for-each select="//fields/field">    private  <xsl:value-of select="recutil:getType(@size,@type,10)"/><xsl:text> </xsl:text><xsl:value-of select="recutil:getFieldName(position(),@name,0)"/>;
+<xsl:for-each select="//fields/field">    private  <xsl:value-of select="@type"/><xsl:text> field_</xsl:text><xsl:value-of select="position()"/>_<xsl:value-of select="@name"/>;
 <xsl:apply-templates select="./bit|./const"/>
 </xsl:for-each>
 
@@ -91,7 +91,7 @@ public abstract class <xsl:value-of select="@name"/>AbstractType
 <xsl:value-of select="recutil:getFieldName(position(),@name,0)"/> = <xsl:value-of select="@default"/>;
 </xsl:if></xsl:for-each>
     }
-
+<xsl:if test='//@fromfile="true"'>
     protected void fillFields(byte [] data, short size, int offset)
     {
 <xsl:variable name="fieldIterator" select="field:new()"/>
@@ -109,7 +109,7 @@ public abstract class <xsl:value-of select="@name"/>AbstractType
         buffer.append("[/<xsl:value-of select="@name"/>]\n");
         return buffer.toString();
     }
-
+</xsl:if>
     /**
      * Size of record (exluding 4 byte header)
      */
@@ -156,9 +156,9 @@ public abstract class <xsl:value-of select="@name"/>AbstractType
 </xsl:for-each>
 </xsl:template>
 
-<xsl:template match = "bit" >    private BitField   <xsl:value-of select="recutil:getFieldName(@name,42)"/> = new BitField(<xsl:value-of select="@mask"/>);
+<xsl:template match = "bit" >    private BitField  <xsl:value-of select="@name"/> = new BitField(<xsl:value-of select="@mask"/>);
 </xsl:template>
-<xsl:template match = "const">    public final static <xsl:value-of select="recutil:getType(../@size,../@type,10)"/><xsl:text>  </xsl:text><xsl:value-of select="recutil:getConstName(../@name,@name,30)"/> = <xsl:value-of select="@value"/>;
+<xsl:template match = "const">    public final static <xsl:value-of select="@type"/><xsl:text>  </xsl:text><xsl:value-of select="@name"/> = <xsl:value-of select="@value"/>;
 </xsl:template>
 
 <xsl:template match = "const" mode="listconsts">
@@ -171,7 +171,7 @@ public abstract class <xsl:value-of select="@name"/>AbstractType
      *
      * @return  One of <xsl:apply-templates select="./const" mode="listconsts"/></xsl:if>
      */
-    public <xsl:value-of select="recutil:getType(@size,@type,0)"/> get<xsl:value-of select="recutil:getFieldName1stCap(@name,0)"/>()
+    public <xsl:value-of select="@type"/> get<xsl:value-of select="recutil:getFieldName1stCap(@name,0)"/>()
     {
         return <xsl:value-of select="recutil:getFieldName(position(),@name,0)"/>;
     }
@@ -182,17 +182,17 @@ public abstract class <xsl:value-of select="@name"/>AbstractType
      * @param <xsl:value-of select="recutil:getFieldName(position(),@name,0)"/>
      *        One of <xsl:apply-templates select="./const" mode="listconsts"/></xsl:if>
      */
-    public void set<xsl:value-of select="recutil:getFieldName1stCap(@name,0)"/>(<xsl:value-of select="recutil:getType(@size,@type,0)"/><xsl:text> </xsl:text><xsl:value-of select="recutil:getFieldName(position(),@name,0)"/>)
+    public void set<xsl:value-of select="recutil:getFieldName1stCap(@name,0)"/>(<xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="recutil:getFieldName(position(),@name,0)"/>)
     {
         this.<xsl:value-of select="recutil:getFieldName(position(),@name,0)"/> = <xsl:value-of select="recutil:getFieldName(position(),@name,0)"/>;
     }
 </xsl:template>
 
 <xsl:template match="field" mode="tostring">
-        buffer.append("    .<xsl:value-of select="recutil:getFieldName(@name,20)"/> = ")<xsl:choose><xsl:when test="@type != 'string' and @type != 'float' and @size != 'varword'">
-            .append("0x")
-            .append(HexDump.toHex((<xsl:value-of select="recutil:getType(@size,@type,00)"/>)get<xsl:value-of select="recutil:getFieldName1stCap(@name,0)"/>()))</xsl:when></xsl:choose>
-            .append(" (").append(get<xsl:value-of select="recutil:getFieldName1stCap(@name,0)"/>()).append(" )\n");
+        buffer.append("    .<xsl:value-of select="recutil:getFieldName(@name,20)"/> = ");<xsl:choose><xsl:when test="@type != 'string' and @type != 'float' and @size != 'varword'">
+        buffer.append("0x");
+        buffer.append(HexDump.toHex((<xsl:value-of select="@type"/>)get<xsl:value-of select="recutil:getFieldName1stCap(@name,0)"/>()));</xsl:when></xsl:choose>
+        buffer.append(" (").append(get<xsl:value-of select="recutil:getFieldName1stCap(@name,0)"/>()).append(" )\n");
 <xsl:apply-templates select="bit" mode="bittostring"/>
 </xsl:template>
 
