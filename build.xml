@@ -359,7 +359,7 @@ printed.
 
   
   <!-- ================================== -->
-  <!--       Generates the javadocs       -->
+  <!--       Generates the java docs      -->
   <!-- ================================== -->
   
   <target  name="javadocs"   depends="-init"
@@ -369,7 +369,12 @@ printed.
       <param name="cent-name"   value="centipede"/> 
       <param name="cent-target" value="javadocs"/> 
     </antcall>
-    
+
+    <antcall target="call-cent">
+      <param name="cent-name"   value="umldoclet"/> 
+      <param name="cent-target" value="doclet"/> 
+    </antcall>
+        
   </target>     
 
   <!-- ================================== -->
@@ -385,22 +390,6 @@ printed.
     </antcall>
     
   </target>     
-
-
-  <!-- ================================== -->
-  <!--       Generate UML -WIP-           -->
-  <!-- ================================== -->
-  
-  <target  name="uml"   depends="compile"
-           description="generate-uml">
-    
-    <antcall target="call-cent">
-      <param name="cent-name"   value="umldoclet"/> 
-      <param name="cent-target" value="doclet"/> 
-    </antcall>
-
-  </target>     
-
 
   <!-- ================================== -->
   <!--       Check style                  -->
