@@ -336,7 +336,7 @@ public class Range
 
     int insertIndex = _end - tp.getStart();
 
-    if (tp.getStringBuffer().charAt(_end - 1) == '\r')
+    if (tp.getStringBuffer().charAt(_end - 1) == '\r' && text.charAt(0) != '\u0007')
     {
       insertIndex--;
     }

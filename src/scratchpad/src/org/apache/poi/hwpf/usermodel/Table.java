@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hwpf.usermodel;
 
 import java.util.ArrayList;
@@ -36,12 +36,12 @@ public class Table
     while (rowEnd < numParagraphs)
     {
       Paragraph p = getParagraph(rowEnd);
-      rowEnd++;
       if (p.isTableRowEnd() && p.getTableLevel() == levelNum)
       {
         _rows.add(new TableRow(rowStart, rowEnd, this, levelNum));
         rowStart = rowEnd;
       }
+      rowEnd++;
     }
   }
 
