@@ -3,13 +3,13 @@
 
 <document>
     <header>
-        <title>Quick Guide to HSSF Features</title>
+        <title>Busy Developers' Guide to HSSF Features</title>
         <authors>
             <person email="glens@apache.org" name="Glen Stampoultzis" id="CO"/>
         </authors>
     </header>
     <body>
-        <s1 title="Quick Guide to Features">
+        <s1 title="Busy Developers' Guide to Features">
             <p>
                 Want to use HSSF read and write spreadsheets in a hurry?  This guide is for you.  If you're after
                 more in-depth coverage of the HSSF user-API please consult the <link href="how-to.html">HOWTO</link>
