@@ -69,6 +69,7 @@ import java.util.GregorianCalendar;
  *
  * @author  Michael Harhen
  * @author  Glen Stampoultzis (glens at apache.org)
+ * @author  Dan Sherman (dsherman at isisph.com)
  */
 
 public class HSSFDateUtil
@@ -115,33 +116,54 @@ public class HSSFDateUtil
 
     /**
      * Given a excel date, converts it into a Date.
+     * Assumes 1900 date windowing.
      *
      * @param  date the Excel Date
      *
      * @return Java representation of a date (null if error)
+     * @see #getJavaDate(double,boolean)
      */
 
     public static Date getJavaDate(double date)
     {
-        if (isValidExcelDate(date))
-        {
-            int               wholeDaysSince1900 = ( int ) Math.floor(date);
-            GregorianCalendar calendar           = new GregorianCalendar(1900,
-                                                       0, wholeDaysSince1900
-                                                       - 1);
-            int               millisecondsInDay  =
-                ( int ) ((date - Math.floor(date))
-                         * ( double ) DAY_MILLISECONDS + 0.5);
-
+        return getJavaDate(date,false);
+    }
+    
+    /**
+     *  Given an Excel date with either 1900 or 1904 date windowing,
+     *  converts it to a java.util.Date.
+     *
+     *  @param date  The Excel date.
+     *  @param use1904windowing  true if date uses 1904 windowing,
+     *   or false if using 1900 date windowing.
+     *  @return Java representation of the date, or null if date is not a valid Excel date
+     */
+    public static Date getJavaDate(double date, boolean use1904windowing) {
+        if (isValidExcelDate(date)) {
+            int startYear = 1900;
+            int dayAdjust = -1; // Excel thinks 2/29/1900 is a valid date, which it isn't
+            int wholeDays = (int)Math.floor(date);
+            if (use1904windowing) {
+                startYear = 1904;
+                dayAdjust = 1; // 1904 date windowing uses 1/2/1904 as the first day
+            }
+            else if (wholeDays < 61) {
+                // Date is prior to 3/1/1900, so adjust because Excel thinks 2/29/1900 exists
+                // If Excel date == 2/29/1900, will become 3/1/1900 in Java representation
+                dayAdjust = 0;
+            }
+            GregorianCalendar calendar = new GregorianCalendar(startYear,0,
+                                                     wholeDays + dayAdjust);
+            int millisecondsInDay = (int)((date - Math.floor(date)) * 
+                                          (double) DAY_MILLISECONDS + 0.5);
             calendar.set(GregorianCalendar.MILLISECOND, millisecondsInDay);
             return calendar.getTime();
         }
-        else
-        {
+        else {
             return null;
         }
     }
-    
+
     /**
      * given a format ID this will check whether the format represents
      * an internal date format or not. 
@@ -164,6 +186,18 @@ public class HSSFDateUtil
                 case 0x2d:
                 case 0x2e:
                 case 0x2f:
+                // Additional internal date formats found by inspection
+                // Using Excel v.X 10.1.0 (Mac)
+                case 0xa4:
+                case 0xa5:
+                case 0xa6:
+                case 0xa7:
+                case 0xa8:
+                case 0xa9:
+                case 0xaa:
+                case 0xab:
+                case 0xac:
+                case 0xad:
                     retval = true;
                     break;
                     
