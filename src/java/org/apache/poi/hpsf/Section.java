@@ -62,6 +62,8 @@ import org.apache.poi.hpsf.wellknown.*;
  * <p>Represents a section in a {@link PropertySet}.</p>
  *
  * @author Rainer Klute (klute@rainer-klute.de)
+ * @author Drew Varner (Drew.Varner allUpIn sc.edu)
+ *
  * @version $Id$
  * @since 2002-02-09
  */
@@ -227,6 +229,24 @@ public class Section
             return i.intValue();
         else
             return 0;
+    }
+
+
+
+    /**
+     * <p>Returns the value of the boolean property with the specified
+     * ID. If the property is not available, <code>false</code> is
+     * returned. A subsequent call to {@link #wasNull} will return
+     * <code>true</code> to let the caller distinguish that case from
+     * a real property value of <code>false</code>.</p>
+     */
+    protected boolean getPropertyBooleanValue(final int id)
+    {
+        final Boolean b = (Boolean) getProperty(id);
+        if (b != null)
+            return b.booleanValue();
+        else
+            return false;
     }
 
 
