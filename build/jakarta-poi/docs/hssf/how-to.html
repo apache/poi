@@ -44,11 +44,15 @@
 <br>
 <span class="s1">HSSF</span>
 <br>
+<a class="s1" href="quick-guide.html">Quick Guide</a>
+<br>
 <a class="s1" href="how-to.html">HOWTO</a>
 <br>
 <a class="s1" href="use-case.html">Use Case</a>
 <br>
 <a class="s1" href="diagrams.html">Pictorial Docs</a>
+<br>
+<a class="s1" href="alternatives.html">Alternatives</a>
 <br>
 <br>
 <span class="s1">Contributer's Guide</span>
@@ -100,47 +104,24 @@
 <div align="right">
 <table cellspacing="0" cellpadding="2" border="0" width="99%">
 <tr>
-<td bgcolor="#525D76"><font color="#ffffff" size="+0"><font face="Arial,sans-serif"><b>Recent revision history</b></font></font></td>
-</tr>
-<tr>
-<td>
-<br>
-      
-<ul>
-	      
-<li>12.30.2001 - revised for poi	1.0-final - minor revisions</li>
-        
-<li>01.03.2001 - revised for poi 1.1-devel</li>
-      
-</ul>
-    
-</td>
-</tr>
-</table>
-</div>
-<br>  
-
-    
-<div align="right">
-<table cellspacing="0" cellpadding="2" border="0" width="99%">
-<tr>
 <td bgcolor="#525D76"><font color="#ffffff" size="+0"><font face="Arial,sans-serif"><b>Capabilities</b></font></font></td>
 </tr>
 <tr>
 <td>
 <br>
     
-<p align="justify">This release of the how-to outlines functionality included in a
-	development build of HSSF.  Those looking for information on the
-	release edition should look in the poi-src for the release or at a
+<p align="justify">This release of the how-to outlines functionality for 1.5.
+    Those looking for information on the release edition should
+    look in the poi-src for the release or at a
 	previous edition in CVS tagged for that release.</p>
   
 <p align="justify">
 	This release allows numeric and string cell values to be written to
-	or read from an XLS file. Also in this release is row and column
-	sizing, cell styling (bold, italics, borders,etc), and support for
-	built-in data formats.  New to this release is an event-based API
-	for reading XLS files.  It differs greatly from the read/write API
+	or read from an XLS file as well as reading and writing dates. Also
+    in this release is row and column sizing, cell styling (bold,
+    italics, borders,etc), and support for built-in data formats.  New
+    to this release is an event-based API for reading XLS files.
+    It differs greatly from the read/write API
 	and is intended for intermediate developers who need a smaller
 	memory footprint.  It will also serve as the basis for the HSSF
 	Generator.</p>
@@ -215,10 +196,8 @@ org.apache.poi.hssf.usermodel.HSSFWorkbook.
 
 <p align="justify">Sheets are created by calling createSheet() from an existing
 instance of HSSFWorkbook, the created sheet is automatically added in
-sequence to the workbook. In this release there will always be at
-least three sheets generated regardless of whether you have three
-sheets. More than three sheets is probably not supported. Sheets do
-not in themselves have a sheet name (the tab at the bottom); you set
+sequence to the workbook. Sheets do not in themselves have a sheet
+name (the tab at the bottom); you set
 the name associated with a sheet by calling
 HSSFWorkbook.setSheetName(sheetindex,"SheetName").</p>
 
@@ -263,36 +242,38 @@ org.apache.poi.hssf.dev.HSSF test class):</p>
 <table cellspacing="2" cellpadding="2" border="1">
 <tr>
 <td>
-<pre>        // create a new file
-        FileOutputStream out    = new FileOutputStream("/home/me/myfile.xls");
+<pre>        short rownum;
+
+        // create a new file
+        FileOutputStream out = new FileOutputStream("workbook.xls");
         // create a new workbook
-        HSSFWorkbook     wb     = new HSSFWorkbook();
+        HSSFWorkbook wb = new HSSFWorkbook();
         // create a new sheet
-        HSSFSheet        s      = wb.createSheet();
+        HSSFSheet s = wb.createSheet();
         // declare a row object reference
-        HSSFRow          r      = null;
+        HSSFRow r = null;
         // declare a cell object reference
-        HSSFCell         c      = null;
+        HSSFCell c = null;
         // create 3 cell styles
-        HSSFCellStyle    cs     = wb.createCellStyle();
-        HSSFCellStyle    cs2    = wb.createCellStyle();
-        HSSFCellStyle    cs3    = wb.createCellStyle();
+        HSSFCellStyle cs = wb.createCellStyle();
+        HSSFCellStyle cs2 = wb.createCellStyle();
+        HSSFCellStyle cs3 = wb.createCellStyle();
         // create 2 fonts objects
-        HSSFFont         f      = wb.createFont();
-        HSSFFont         f2     = wb.createFont();
+        HSSFFont f = wb.createFont();
+        HSSFFont f2 = wb.createFont();
 
         //set font 1 to 12 point type
-        f.setFontHeightInPoints((short)12);
+        f.setFontHeightInPoints((short) 12);
         //make it red
-        f.setColor((short)0xA);
+        f.setColor((short) HSSFCellStyle.RED);
         // make it bold
         //arial is the default font
         f.setBoldweight(f.BOLDWEIGHT_BOLD);
 
         //set font 2 to 10 point type
-        f2.setFontHeightInPoints((short)10);
+        f2.setFontHeightInPoints((short) 10);
         //make it the color at palette index 0xf (white)
-        f2.setColor((short)0xf);
+        f2.setColor((short) HSSFCellStyle.WHITE);
         //make it bold
         f2.setBoldweight(f2.BOLDWEIGHT_BOLD);
 
@@ -304,53 +285,56 @@ org.apache.poi.hssf.dev.HSSF test class):</p>
         //set a thin border
         cs2.setBorderBottom(cs2.BORDER_THIN);
         //fill w fg fill color
-        cs2.setFillPattern((short)1);
+        cs2.setFillPattern((short) HSSFCellStyle.SOLID_FOREGROUND);
         // set foreground fill to red
-        cs2.setFillForegroundColor((short)0xA);
+        cs2.setFillForegroundColor((short) HSSFCellStyle.RED);
 
         // set the font
         cs2.setFont(f2);
 
         // set the sheet name to HSSF Test
-        wb.setSheetName(0,"HSSF Test");
+        wb.setSheetName(0, "HSSF Test");
         // create a sheet with 300 rows (0-299)
-        for (rownum = (short)0; rownum &lt; 300; rownum++)
+        for (rownum = (short) 0; rownum &lt; 300; rownum++)
         {
             // create a row
             r = s.createRow(rownum);
             // on every other row
-            if ( (rownum % 2) == 0) {
+            if ((rownum % 2) == 0)
+            {
                 // make the row height bigger  (in twips - 1/20 of a point)
-                r.setHeight((short)0x249);
+                r.setHeight((short) 0x249);
             }
 
             //r.setRowNum(( short ) rownum);
             // create 50 cells (0-49) (the += 2 becomes apparent later
-            for (short cellnum = (short)0; cellnum &lt; 50; cellnum += 2)
+            for (short cellnum = (short) 0; cellnum &lt; 50; cellnum += 2)
             {
                 // create a numeric cell
-                c = r.createCell(cellnum,HSSFCell.CELL_TYPE_NUMERIC);
+                c = r.createCell(cellnum);
                 // do some goofy math to demonstrate decimals
                 c.setCellValue(rownum * 10000 + cellnum
-                               + ((( double ) rownum / 1000)
-                                  + (( double ) cellnum / 10000)));
+                        + (((double) rownum / 1000)
+                        + ((double) cellnum / 10000)));
 
                 // on every other row
-                if ( (rownum % 2) == 0) {
+                if ((rownum % 2) == 0)
+                {
                     // set this cell to the first cell style we defined
                     c.setCellStyle(cs);
                 }
 
                 // create a string cell (see why += 2 in the
-                c = r.createCell((short)(cellnum+1),HSSFCell.CELL_TYPE_STRING);
+                c = r.createCell((short) (cellnum + 1));
 
                 // set the cell's string value to "TEST"
                 c.setCellValue("TEST");
                 // make this column a bit wider
-                s.setColumnWidth((short)(cellnum+1), (short)((50*8) / ((double)1/20)) );
+                s.setColumnWidth((short) (cellnum + 1), (short) ((50 * 8) / ((double) 1 / 20)));
 
                 // on every other row
-                if ( (rownum % 2) == 0) {
+                if ((rownum % 2) == 0)
+                {
                     // set this to the white on red cell style
                     // we defined above
                     c.setCellStyle(cs2);
@@ -371,9 +355,10 @@ org.apache.poi.hssf.dev.HSSF test class):</p>
         cs3.setBorderBottom(cs3.BORDER_THICK);
 
         //create 50 cells
-        for (short cellnum = (short)0; cellnum &lt; 50; cellnum++) {
+        for (short cellnum = (short) 0; cellnum &lt; 50; cellnum++)
+        {
             //create a blank type cell (no value)
-            c = r.createCell(cellnum,HSSFCell.CELL_TYPE_BLANK);
+            c = r.createCell(cellnum);
             // set it to the thick black border style
             c.setCellStyle(cs3);
         }
@@ -384,7 +369,7 @@ org.apache.poi.hssf.dev.HSSF test class):</p>
         // demonstrate adding/naming and deleting a sheet
         // create a sheet, set its title then delete it
         s = wb.createSheet();
-        wb.setSheetName(1,"DeletedSheet");
+        wb.setSheetName(1, "DeletedSheet");
         wb.removeSheetAt(1);
         //end deleted sheet
 
@@ -430,7 +415,7 @@ would if creating a new xls. When you are done modifying cells just
 call workbook.write(outputstream) just as you did above.</p>
 
 <p align="justify">An example of this can be seen in
-<a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/*checkout*/poi/poi/production/src/net/sourceforge/poi/hssf/dev/HSSF.java?rev=HEAD&content-type=text/plain">org.apache.poi.hssf.dev.HSSF</a>.</p>
+<a href="http://cvs.apache.org/viewcvs/~checkout~/jakarta-poi/src/java/org/apache/poi/hssf/dev/HSSF.java?rev=1.1">org.apache.poi.hssf.dev.HSSF</a>.</p>
          
 </td>
 </tr>
@@ -498,118 +483,95 @@ comments:</p>
 <tr>
 <td>
 <pre>
-//this non-public class implements the required interface
-// we construct it with a copy of its container class...this is cheap but effective
-class EFHSSFListener implements HSSFListener {
-    EFHSSF efhssf;
-    public EFHSSFListener(EFHSSF efhssf) {
-        this.efhssf = efhssf;
+/**
+ * This example shows how to use the event API for reading a file.
+ */
+public class EventExample
+        implements HSSFListener
+{
+    private SSTRecord sstrec;
+
+    /**
+     * This method listens for incoming records and handles them as required.
+     * @param record    The record that was found while reading.
+     */
+    public void processRecord(Record record)
+    {
+        switch (record.getSid())
+        {
+            // the BOFRecord can represent either the beginning of a sheet or the workbook
+            case BOFRecord.sid:
+                BOFRecord bof = (BOFRecord) record;
+                if (bof.getType() == bof.TYPE_WORKBOOK)
+                {
+                    System.out.println("Encountered workbook");
+                    // assigned to the class level member
+                } else if (bof.getType() == bof.TYPE_WORKSHEET)
+                {
+                    System.out.println("Encountered sheet reference");
+                }
+                break;
+            case BoundSheetRecord.sid:
+                BoundSheetRecord bsr = (BoundSheetRecord) record;
+                System.out.println("New sheet named: " + bsr.getSheetname());
+                break;
+            case RowRecord.sid:
+                RowRecord rowrec = (RowRecord) record;
+                System.out.println("Row found, first column at "
+                        + rowrec.getFirstCol() + " last column at " + rowrec.getLastCol());
+                break;
+            case NumberRecord.sid:
+                NumberRecord numrec = (NumberRecord) record;
+                System.out.println("Cell found with value " + numrec.getValue()
+                        + " at row " + numrec.getRow() + " and column " + numrec.getColumn());
+                break;
+                // SSTRecords store a array of unique strings used in Excel.
+            case SSTRecord.sid:
+                sstrec = (SSTRecord) record;
+                for (int k = 0; k &lt; sstrec.getNumUniqueStrings(); k++)
+                {
+                    System.out.println("String table value " + k + " = " + sstrec.getString(k));
+                }
+                break;
+            case LabelSSTRecord.sid:
+                LabelSSTRecord lrec = (LabelSSTRecord) record;
+                System.out.println("String cell found with value "
+                        + sstrec.getString(lrec.getSSTIndex()));
+                break;
+        }
     }
 
-    // we just use this as an adapter so we pass the record to the method in the container class
-    public void processRecord(Record record) {
-        efhssf.recordHandler(record);
-    }
-}
-
-     //here is an excerpt of the main line execution code from EFHSSF
-    public void run() throws IOException {
+    /**
+     * Read an excel file and spit out what we find.
+     *
+     * @param args      Expect one argument that is the file to read.
+     * @throws IOException  When there is an error processing the file.
+     */
+    public static void main(String[] args) throws IOException
+    {
         // create a new file input stream with the input file specified
         // at the command line
-        FileInputStream fin = new FileInputStream(infile);
+        FileInputStream fin = new FileInputStream(args[0]);
         // create a new org.apache.poi.poifs.filesystem.Filesystem
-        Filesystem poifs = new Filesystem(fin);
+        POIFSFileSystem poifs = new POIFSFileSystem(fin);
         // get the Workbook (excel part) stream in a InputStream
-        InputStream din  = poifs.createDocumentInputStream("Workbook");
+        InputStream din = poifs.createDocumentInputStream("Workbook");
         // construct out HSSFRequest object
         HSSFRequest req = new HSSFRequest();
         // lazy listen for ALL records with the listener shown above
-        req.addListenerForAllRecords(new EFHSSFListener(this));
+        req.addListenerForAllRecords(new EventExample());
         // create our event factory
         HSSFEventFactory factory = new HSSFEventFactory();
         // process our events based on the document input stream
-        factory.processEvents(req,din);
+        factory.processEvents(req, din);
         // once all the events are processed close our file input stream
         fin.close();
         // and our document input stream (don't want to leak these!)
         din.close();
-        // create a new output stream from filename specified at the command line
-        FileOutputStream fout = new FileOutputStream(outfile);
-        // write the HSSFWorkbook (class member) we created out to the file.
-        workbook.write(fout);
-        // close our file output stream
-        fout.close();
-        // print done.  Go enjoy your copy of the file.
         System.out.println("done.");
     }
-
-
-    //here is an excerpt of the recordHander called from our listener.
-    // the record handler in the container class is intent on just rewriting the file
-    public void recordHandler(Record record) {
-        HSSFRow row = null;
-        HSSFCell cell = null;
-        int sheetnum = -1;
-        switch (record.getSid()) {
-            // the BOFRecord can represent either the beginning of a sheet or the workbook
-            case BOFRecord.sid:
-                BOFRecord bof = (BOFRecord) record;
-                if (bof.getType() == bof.TYPE_WORKBOOK) {
-                    //if its the workbook then create a new HSSFWorkbook
-                    workbook = new HSSFWorkbook();
-                // assigned to the class level member
-                } else if (bof.getType() == bof.TYPE_WORKSHEET) {
-                    sheetnum++;
-                    // otherwise if its a sheet increment the sheetnum index
-                    cursheet = workbook.getSheetAt(sheetnum);
-                }
-            break;
-            // get the sheet at that index and assign it to method variable
-            // cursheet (the sheet was created when the BoundSheetRecord record occurred
-            case BoundSheetRecord.sid:
-                // when we find a boundsheet record create a new sheet in the workbook and
-                BoundSheetRecord bsr = (BoundSheetRecord) record;
-                // assign it the name specified in this record.
-                workbook.createSheet(bsr.getSheetname());
-            break;
-            // if this is a row record add the row to the current sheet
-            case RowRecord.sid:
-                RowRecord rowrec = (RowRecord) record;
-                // assign our row the rownumber specified in the Row Record
-                cursheet.createRow(rowrec.getRowNumber());
-            break;
-            // if this is a NumberRecord (RKRecord, MulRKRecord get converted to Number
-            // records) then get the row specified in the number record from the current
-            // sheet.  With this instance of HSSFRow create a new HSSFCell with the column
-            // number specified in the record and assign it type NUMERIC
-            case NumberRecord.sid:
-                NumberRecord numrec = (NumberRecord) record;
-                row = cursheet.getRow(numrec.getRow());
-                cell = row.createCell(numrec.getColumn(),HSSFCell.CELL_TYPE_NUMERIC);
-                // set the HSSFCell's value to the value stored in the NumberRecord
-                cell.setCellValue(numrec.getValue());
-            break;
-            // if this is the SSTRecord (occurs once in the workbook) then add all of its
-            // strings to our workbook.  We'll look them up later when we add LABELSST records.
-            case SSTRecord.sid:
-                SSTRecord sstrec = (SSTRecord) record;
-                for (int k = 0; k &lt; sstrec.getNumUniqueStrings(); k++) {
-                    workbook.addSSTString(sstrec.getString(k));
-                }
-            break;
-            // if this is a LabelSSTRecord then get the row specified in the LabelSSTRecord from
-            // the current sheet.  With this instance of HSSFRow create a new HSSFCell with the
-            // column nubmer specified in the record and set the type to type STRING.
-            case LabelSSTRecord.sid:
-                LabelSSTRecord lrec = (LabelSSTRecord) record;
-                row = cursheet.getRow(lrec.getRow());
-                cell = row.createCell(lrec.getColumn(),HSSFCell.CELL_TYPE_STRING);
-                //set the cells value to the string in our workbook object (added in the case
-                //above) at the index specified by the LabelSSTRecord.
-                cell.setCellValue(workbook.getSSTString(lrec.getSSTIndex()));
-            break;
-        }
-    }</pre>
+}
+</pre>
 </td>
 </tr>
 </table>
@@ -683,15 +645,19 @@ export CLASSPATH=$CLASSPATH:$HSSFDIR/hssf.jar:$HSSFDIR/poi-poifs.jar:$HSSFDIR/po
 
 </ul>
 
+<p align="justify"></p>
+
 <p align="justify">This should generate a test sheet in your home directory called <code>"myxls.xls"</code>.  </p>
 
 <ul>
 	
 <li>Type:
-	<code>java org.apache.poi.hssf.dev.HSSF ~/input.xls output.xls
+	<code>java org.apache.poi.hssf.dev.HSSF ~/input.xls output.xls</code>
+    
+<p align="justify">
 This is the read/write/modify test.  It reads in the spreadsheet, modifies a cell, and writes it back out.
 Failing this test is not necessarily a bad thing.  If HSSF tries to modify a non-existant sheet then this will
-most likely fail.  No big deal.  </code>
+most likely fail.  No big deal.  </p>
 </li>
 
 </ul>
@@ -711,44 +677,61 @@ most likely fail.  No big deal.  </code>
 <td>
 <br>
 
-<p align="justify">HSSF now has a logging facility (using log4j - thanks jakarta!)
+<p align="justify">HSSF now has a logging facility (using
+ <a href="http://jakarta.apache.org/commons/logging.html">commons logging</a>)
 that will record massive amounts of debugging information. Its mostly
 useful to us hssf-developing geeks, but might be useful in tracking
-down problems. By default we turn this off because it results in
-unnecessary performance degradation when fully turned on! Using it is
-simple. You need an hssflog.properties file (example listed below,
-those familiar with log4j can customize this as they wish). You can
-either put this in your home directory (or wherever the default
-directory is on windows which I suspect is c:\windows) or you can put
-it wherever you want and set the HSSF.log to the path ending in "/"
-(or "\\" on windows). If for any reason HSSF can't find it,
-you get no logging. If the log configuration dictates the logging be
-turned off, you get no logging.</p>
-
-<p align="justify">Here is an example hssflog.properties (actually its not an example
-its mine):
-<div align="center">
-<table cellspacing="2" cellpadding="2" border="1">
-<tr>
-<td>
-<pre># Set root category priority to DEBUG and its only appender to A1.
-log4j.rootCategory=DEBUG, A1
-  
-# A1 is set to be a ConsoleAppender. 
-log4j.appender.A1=org.apache.log4j.ConsoleAppender
-  
-# A1 uses PatternLayout.
-log4j.appender.A1.layout=org.apache.log4j.PatternLayout
-log4j.appender.A1.layout.ConversionPattern=%-4r [%t] %-5p %c %x - %m%n
-#uncomment below to change the level to WARN to disable debugging information.  This effectively turns off logging.
-#the default level is DEBUG (and changing it to DEBUG is the basically the same thing as leaving it commented out).
-#log4j.category.org.apache.poi=WARN</pre>
-</td>
-</tr>
-</table>
-</div>
+down problems.
 </p>
 
+<p align="justify">So Why use commons logging rather than log4j? Well the following discussion from
+the jakarta-general mailing list sums it up pretty well.  (Thanks Morgan)
+</p>
+
+<p align="justify">
+<em>Here's the problem, as I see it.</em>
+
+</p>
+
+<p align="justify">
+<em>Suppose Commons component A decides to adopt Log4J, Commons component B
+decides to adopt LogKit, and Commons component C adopts JDK1.4 logging.
+They will all minimally function with the right jars in the classpath.
+However you (the end-user) are left with maintaining configuration for 3
+different logging APIs, which is tedious at best.  When you take into
+account cool features like variable log levels, Log4J appenders and the
+like, you're pretty much guaranteed to swallow up useful configuration
+options because sophisticated configurations are too difficult to maintain
+over mutiple logging implementations.</em>
+
+</p>
+
+<p align="justify">
+
+<em>Contrarily, if all three Commons components use a logging facade, you can
+focus all your configuration efforts on one logging implementation.  Sure,
+there is a trade-off; you don't have access to all the features, and the
+interface between the facade and the implementation must be maintained.  But
+the benefits are not just political; they potentially make the end-users
+configuration much easier.</em>
+
+</p>
+
+<p align="justify">
+<em>Even if all Commons components used the same logging implementation (Log4J
+for example), other projects in Jakarta-land may choose otherwise.  If you
+add enough Jakarta projects to your environment, you eventually end up with
+the scenario described above.  It's a worthwhile effort to attempt a logging
+solution that plays well with the Jakarta community at large.  I think in
+many cases the Commons Logging component can fill that role.</em>
+
+</p>
+
+<p align="justify">
+Refer to the commons logging package level javadoc for more information concerning how to
+<a href="http://jakarta.apache.org/commons/logging/api/index.html">configure commons logging.</a>
+
+</p>
      
 </td>
 </tr>
@@ -800,7 +783,7 @@ matching "on" exactly.</p>
 
 <p align="justify">In the next release cycle we'll also have something called a
 FormulaViewer. The class is already there, but its not very useful
-yet. When it does something, I'll document it.</p>
+yet. When it does something, we'll document it.</p>
 
      
 </td>
@@ -839,299 +822,13 @@ As a general principal, HSSF's goal is to support HSSF-Serializer
 are you using HSSF/POIFS? How would you like to use it? What features
 are most important first? 
 </p>
-
-<p align="justify">This release is near feature freeze for the 1.0-beta. All
-priorities refer to things we'll be adding in the next release
-(probably 2.0). The 1.0-beta is scheduled for release in the mid to
-late December timeframe. While it's way to early to say when the
-2.0-beta will be released, my "gut" feeling is to aim for
-around March and have at least the first three items.</p>
-
-<p align="justify">Current list of priorities:</p>
-
-<ol>
-	
-<li>Helper class for fonts, etc.</li>
-	
-<li>Add Formulas.</li>
-	
-<li>Implement more record types (for other things ... not sure
-	what this will mean yet).</li>
-	
-<li>Add more dummy checks (for when API user's do things they
-	"can't" do)</li>
-	
-<li>Add support for embedded graphics and stuff like that.</li>
-	
-<li>Create new adapter object for handling MulBlank, MulRk, Rk
-	records.</li>
-
-</ol>
      
 </td>
 </tr>
 </table>
 </div>
 <br>
-                
-<div align="right">
-<table cellspacing="0" cellpadding="2" border="0" width="98%">
-<tr>
-<td bgcolor="#525D76"><font color="#ffffff" size="-1"><font face="Arial,sans-serif"><b>Changes</b></font></font></td>
-</tr>
-<tr>
-<td>
-<br>
-                                
-<div align="right">
-<table cellspacing="0" cellpadding="2" border="0" width="97%">
-<tr>
-<td bgcolor="#525D76"><font color="#ffffff" size="-2"><font face="Arial,sans-serif"><b>1.1.0</b></font></font></td>
-</tr>
-<tr>
-<td>
-<br>
 
-
-<ol>
-	
-<li>Created new event model</li>
-	
-<li>Optimizations made to HSSF including aggregate records for
-	values, rows, etc.</li>
-	
-<li>predictive sizing, offset based writing (instead of lots of
-	array copies)</li>
-	
-<li>minor re-factoring and bug fixes.</li>
-
-</ol>
-
-</td>
-</tr>
-</table>
-</div>
-<br>
-
-<div align="right">
-<table cellspacing="0" cellpadding="2" border="0" width="97%">
-<tr>
-<td bgcolor="#525D76"><font color="#ffffff" size="-2"><font face="Arial,sans-serif"><b>1.0.0</b></font></font></td>
-</tr>
-<tr>
-<td>
-<br>
-
-
-<ol>
-	
-<li>Minor documentation updates.</li>
-
-</ol>
-
-</td>
-</tr>
-</table>
-</div>
-<br>
-
-<div align="right">
-<table cellspacing="0" cellpadding="2" border="0" width="97%">
-<tr>
-<td bgcolor="#525D76"><font color="#ffffff" size="-2"><font face="Arial,sans-serif"><b>0.14.0</b></font></font></td>
-</tr>
-<tr>
-<td>
-<br>
-
-<ol>
-	
-<ol>
-		
-<li>Added DataFormat helper class and exposed set and get format
-		on HSSFCellStyle</li>
-		
-<li>Fixed column width apis (unit wise) and various javadoc on
-		the subject</li>
-		
-<li>Fix for Dimensions record (again)... (one of these days I'll
-		write a unit test for this ;-p).</li>
-		
-<li>Some optimization on sheet creation.</li>
-	
-</ol>
-
-</ol>
-
-</td>
-</tr>
-</table>
-</div>
-<br>
-
-<div align="right">
-<table cellspacing="0" cellpadding="2" border="0" width="97%">
-<tr>
-<td bgcolor="#525D76"><font color="#ffffff" size="-2"><font face="Arial,sans-serif"><b>0.13.0</b></font></font></td>
-</tr>
-<tr>
-<td>
-<br>
-
-<p align="justify">- NO WAY!</p>
-
-</td>
-</tr>
-</table>
-</div>
-<br>
-
-<div align="right">
-<table cellspacing="0" cellpadding="2" border="0" width="97%">
-<tr>
-<td bgcolor="#525D76"><font color="#ffffff" size="-2"><font face="Arial,sans-serif"><b>0.12.0</b></font></font></td>
-</tr>
-<tr>
-<td>
-<br>
-
-<ol>
-	
-<li>Added MulBlank, Blank, ColInfo</li>
-	
-<li>Added log4j facility and removed all sys.out type logging</li>
-	
-<li>Added support for adding font's, styles and corresponding
-	high level api for styling cells</li>
-	
-<li>added support for changing row height, cell width and default
-	row height/cell width.</li>
-	
-<li>Added fixes for internationalization (UTF-16 should work now
-	from HSSFCell.setStringValue, etc when the encoding is set)</li>
-	
-<li>added support for adding/removing and naming sheets.</li>
-
-</ol>
-
-</td>
-</tr>
-</table>
-</div>
-<br>
-
-<div align="right">
-<table cellspacing="0" cellpadding="2" border="0" width="97%">
-<tr>
-<td bgcolor="#525D76"><font color="#ffffff" size="-2"><font face="Arial,sans-serif"><b>0.11.0</b></font></font></td>
-</tr>
-<tr>
-<td>
-<br>
-
-<ol>
-	
-<li>Bugfix release. We were throwing an exception when reading
-	RKRecord objects.</li>
-
-</ol>
-
-</td>
-</tr>
-</table>
-</div>
-<br>
-
-<div align="right">
-<table cellspacing="0" cellpadding="2" border="0" width="97%">
-<tr>
-<td bgcolor="#525D76"><font color="#ffffff" size="-2"><font face="Arial,sans-serif"><b>0.10.0</b></font></font></td>
-</tr>
-<tr>
-<td>
-<br>
-
-<ol>
-	
-<li>Got continuation records to work (read/write)</li>
-	
-<li>Added various pre-support for formulas</li>
-	
-<li>Massive API reorganization, repackaging.</li>
-	
-<li>BiffViewer class added for validating HSSF &amp; POI and/or
-	HSSF Output.</li>
-	
-<li>Better API support for modification.</li>
-
-</ol>
-
-</td>
-</tr>
-</table>
-</div>
-<br>
-
-<div align="right">
-<table cellspacing="0" cellpadding="2" border="0" width="97%">
-<tr>
-<td bgcolor="#525D76"><font color="#ffffff" size="-2"><font face="Arial,sans-serif"><b>0.7 (and interim releases)</b></font></font></td>
-</tr>
-<tr>
-<td>
-<br>
-
-<ol>
-	
-<li>Added encoding flag to high and low level api to use utf-16
-	when needed (HSSFCell.setEncoding())</li>
-	
-<li>added read only support for Label records (which are
-	reinterpreted as LabelSST when written)</li>
-	
-<li>Broken continuation record implementation (oops)</li>
-	
-<li>BiffViewer class added for validating HSSF &amp; POI and/or
-	HSSF Output.</li>
-
-</ol>
-
-</td>
-</tr>
-</table>
-</div>
-<br>
-
-<div align="right">
-<table cellspacing="0" cellpadding="2" border="0" width="97%">
-<tr>
-<td bgcolor="#525D76"><font color="#ffffff" size="-2"><font face="Arial,sans-serif"><b>0.6 (release)</b></font></font></td>
-</tr>
-<tr>
-<td>
-<br>
-
-<ol>
-	
-<li>Support for read/write and modify.</li>
-	
-<li>Read only support for MulRK records (converted to Number when
-	writing) 
-	</li>
-
-</ol>
-
-</td>
-</tr>
-</table>
-</div>
-<br>
-
-</td>
-</tr>
-</table>
-</div>
-<br>
 
 </td>
 </tr>
