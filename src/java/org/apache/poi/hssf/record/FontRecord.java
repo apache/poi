@@ -169,7 +169,7 @@ public class FontRecord
             }
             else
             {   // is not compressed unicode
-                field_11_font_name = StringUtil.getFromUnicode(data, 15,
+                field_11_font_name = StringUtil.getFromUnicodeHigh(data, 16,
                         field_10_font_name_len);
             }
         }
