@@ -76,7 +76,7 @@ import org.apache.poi.util.HexDump;
 <xsl:apply-templates select="author"/>
  */
 public class <xsl:value-of select="@name"/>Type
-    extends HDFType
+    implements HDFType
 {
     public final static short      sid                             = <xsl:value-of select="@id"/>;
 <xsl:for-each select="//fields/field">    private  <xsl:value-of select="recutil:getType(@size,@type,10)"/><xsl:text> </xsl:text><xsl:value-of select="recutil:getFieldName(position(),@name,0)"/>;
