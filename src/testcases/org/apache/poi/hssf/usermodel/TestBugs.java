@@ -250,7 +250,7 @@ extends TestCase {
            
            HSSFWorkbook wb = new HSSFWorkbook() ;
            HSSFSheet sheet = wb.createSheet("ExcelTest") ;
-           
+         
            int col_cnt=0, rw_cnt=0 ;
            
            col_cnt = c;
@@ -306,10 +306,7 @@ extends TestCase {
         String filename = System.getProperty("HSSF.testdata.path");
         filename=filename+"/22742.xls";
         FileInputStream in = new FileInputStream(filename);
-        HSSFWorkbook wb = new HSSFWorkbook(in);
-        //HSSFSheet sheet = wb.getSheetAt(0);
-        //HSSFRow row = sheet.getRow(45);
-        this.assertTrue("Read workbook!" , true);
+        HSSFWorkbook wb = new HSSFWorkbook(in);        this.assertTrue("Read workbook!" , true);
 
     }
     /*Double byte strings */
@@ -319,8 +316,6 @@ extends TestCase {
         filename=filename+"/12561-1.xls";
         FileInputStream in = new FileInputStream(filename);
         HSSFWorkbook wb = new HSSFWorkbook(in);
-        //HSSFSheet sheet = wb.getSheetAt(0);
-        //HSSFRow row = sheet.getRow(45);
         this.assertTrue("Read workbook!" , true);
 
     }
@@ -331,8 +326,17 @@ extends TestCase {
         filename=filename+"/12561-2.xls";
         FileInputStream in = new FileInputStream(filename);
         HSSFWorkbook wb = new HSSFWorkbook(in);
-        //HSSFSheet sheet = wb.getSheetAt(0);
-        //HSSFRow row = sheet.getRow(45);
+        this.assertTrue("Read workbook!" , true);
+
+    }
+    
+    /** Reference to Name*/
+    public void test13224() throws java.io.IOException {
+
+        String filename = System.getProperty("HSSF.testdata.path");
+        filename=filename+"/13224.xls";
+        FileInputStream in = new FileInputStream(filename);
+        HSSFWorkbook wb = new HSSFWorkbook(in);
         this.assertTrue("Read workbook!" , true);
 
     }
