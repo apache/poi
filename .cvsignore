@@ -10,16 +10,3 @@ log*.*
 build
 .classpath
 .project
-bak
-classes
-legal
-lib
-ant.dtd
-build.xml
-changelog.xsl
-forrest.properties
-jdepend.xsl
-jsp.war
-KEYS
-Servlet.library
-stuff.jpx
