@@ -55,6 +55,7 @@
                 </ol>
         </section>
         <section title="Amendments (informal by extension and not by vote)">
+            <section title="License">
                 <p>
                         As opposed to the formerly used POI License which was
                         based on the Apache Public License, now that POI is part of 
@@ -62,6 +63,15 @@
                         Apache Software Foundation requires us to use the full
                         long version.
                 </p>
+            </section>       
+            <section title="2 cents">                 
+                 <p>
+                       Tip:  No laughing allow in conversations regarding coding
+                       standards.
+                       Any mail on coding standards will be treated very seriously,
+                       and sent here with a RTFM.
+                </p>
+            </section>                             
         </section>
         <section title="Dissent">
                 <p>
