@@ -106,7 +106,8 @@ public class RecordFactory
                 WindowTwoRecord.class, SelectionRecord.class, ContinueRecord.class,
                 LabelRecord.class, BlankRecord.class, ColumnInfoRecord.class,
                 MulRKRecord.class, MulBlankRecord.class, MergeCellsRecord.class,
-                FormulaRecord.class, BoolErrRecord.class, ExternSheetRecord.class
+                FormulaRecord.class, BoolErrRecord.class, ExternSheetRecord.class,
+		NameRecord.class
             };
         } else {
             records = new Class[]
@@ -134,7 +135,7 @@ public class RecordFactory
                 WindowTwoRecord.class, SelectionRecord.class, ContinueRecord.class,
                 LabelRecord.class, BlankRecord.class, ColumnInfoRecord.class,
                 MulRKRecord.class, MulBlankRecord.class, MergeCellsRecord.class,
-                BoolErrRecord.class, ExternSheetRecord.class
+                BoolErrRecord.class, ExternSheetRecord.class, NameRecord.class
             };
             
         }
