@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE faqs PUBLIC "-//APACHE//DTD FAQ V1.1//EN" "./dtd/faq-v11.dtd">
+
+<faqs title="Frequently Asked Questions">
+    <faq>
+        <question>
+          What is the HSSF "eventmodel"?
+        </question>
+        <answer>
+              The HSSF eventmodel package is a new API for reading XLS files more efficiently.  It does
+              require more knowledge on the part of the user, but reduces memory consumption by more than
+              tenfold.  It is based on the AWT event model in combination with SAX.  If you need read-only
+              access to a given XLS file, this is the best way to do it.
+        </answer>
+
+    </faq>
+    <faq>
+        <question>
+          Why can't read the document I created using Star Office 5.1?
+        </question>
+        <answer>
+              Star Office 5.1 writes some records using the older BIFF standard.  This causes some problems
+              with POI which supports only BIFF8.
+        </answer>
+    </faq>
+    <faq>
+        <question>
+            Why am I getting an exception each time I attempt to read my spreadsheet?
+        </question>
+        <answer>
+            It's possible your spreadsheet contains a feature that is not currently supported by HSSF.
+            For example - spreadsheets containing cells with rich text are not currently supported.
+        </answer>
+    </faq>
+    <faq>
+        <question>
+            Does HSSF support protected spreadsheets?
+        </question>
+        <answer>
+            Protecting a spreadsheet encripts it.  We wont touch encription because we're not legally educated
+            and don't understand the full implications of trying to implement this.  If you wish to have a go
+            at this feel free to add it as a plugin module.  We wont be hosting it here however.
+        </answer>
+    </faq>
+    <faq>
+        <question>
+            How do you tell if a field contains a date with HSSF?
+        </question>
+        <answer>
+            Excel stores dates as numbers therefore the only way to determine if a cell is
+            actually stored as a date is to look at the formatting. This solution from
+            Jason Hoffman:
+            <p>
+            Okay, here is a little code I used to determine if the cell was a number or
+            date, and then format appropriately.  I hope it helps.  I keep meaning to
+            submit a patch with the helper method below.... but just haven't had a
+            chance.
+            </p>
+            <source>
+/////// code snippet ////////////
+case HSSFCell.CELL_TYPE_NUMERIC:
+                  double d = cell.getNumericCellValue();
+                  // test if a date!
+                  if (isCellDateFormatted(cell)) {
+                    // format in form of M/D/YY
+                    cal.setTime(HSSFDateUtil.getJavaDate(d));
+                    cellText =
+                      (String.valueOf(cal.get(Calendar.YEAR))).substring(2);
+                    cellText = cal.get(Calendar.MONTH)+1 + "/" +
+                               cal.get(Calendar.DAY_OF_MONTH) + "/" +
+                               cellText;
+                  }
+/////// end code snippet ////////////
+
+// HELPER METHOD BELOW TO DETERMINE IF DATE
+
+// method to determine if the cell is a date, versus a number...
+public static boolean isCellDateFormatted(HSSFCell cell) {
+    boolean bDate = false;
+
+    double d = cell.getNumericCellValue();
+    if ( HSSFDateUtil.isValidExcelDate(d) ) {
+      HSSFCellStyle style = cell.getCellStyle();
+      int i = style.getDataFormat();
+      switch(i) {
+        // Internal Date Formats as described on page 427 in
+        // Microsoft Excel Dev's Kit...
+        case 0x0e:
+        case 0x0f:
+        case 0x10:
+        case 0x11:
+        case 0x12:
+        case 0x13:
+        case 0x14:
+        case 0x15:
+        case 0x16:
+        case 0x2d:
+        case 0x2e:
+        case 0x2f:
+         bDate = true;
+        break;
+
+        default:
+         bDate = false;
+        break;
+      }
+    }
+    return bDate;
+  }
+            </source>
+        </answer>
+    </faq>
+</faqs>
