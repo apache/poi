@@ -43,7 +43,7 @@
     <property name="main.output.test.dir" value="build/test-classes"/>
     <property name="main.lib" value="lib"/>
     <property name="main.reports.test" value="build/test-results"/>
-    <property name="main.jar1.dir" value="${main.lib}/commongs-logging-1.0.1.jar"/>
+    <property name="main.jar1.dir" value="${main.lib}/commons-logging-1.0.1.jar"/>
     <property name="main.jar1.url" value="${repository}/commons-logging/jars/commons-logging-1.0.1.jar"/>
     <property name="main.jar2.dir" value="${main.lib}/log4j-1.2.8.jar"/>
     <property name="main.jar2.url" value="${repository}/log4j/jars/log4j-1.2.8.jar"/>
@@ -163,10 +163,10 @@
     </target>
 
     <target name="compile-main" depends="init">
-        <javac srcdir="${main.src}" destdir="${main.output.dir}">
+        <javac srcdir="${main.src}" destdir="${main.output.dir}" debug="on">
             <classpath refid="main.classpath"/>
         </javac>
-        <javac srcdir="${main.src.test}" destdir="${main.output.test.dir}">
+        <javac srcdir="${main.src.test}" destdir="${main.output.test.dir}" debug="on">
             <classpath>
                 <path refid="main.classpath"/>
                 <pathelement location="${main.output.dir}"/>
@@ -176,10 +176,10 @@
     </target>
 
     <target name="compile-scratchpad" depends="init">
-        <javac srcdir="${scratchpad.src}" destdir="${scratchpad.output.dir}">
+        <javac srcdir="${scratchpad.src}" destdir="${scratchpad.output.dir}" debug="on">
             <classpath refid="scratchpad.classpath"/>
         </javac>
-        <javac srcdir="${scratchpad.src.test}" destdir="${scratchpad.output.test.dir}">
+        <javac srcdir="${scratchpad.src.test}" destdir="${scratchpad.output.test.dir}" debug="on">
             <classpath>
                 <path refid="scratchpad.classpath"/>
                 <pathelement location="${scratchpad.output.dir}"/>
@@ -189,10 +189,10 @@
     </target>
 
     <target name="compile-contrib" depends="init">
-        <javac srcdir="${contrib.src}" destdir="${contrib.output.dir}">
+        <javac srcdir="${contrib.src}" destdir="${contrib.output.dir}" debug="on">
             <classpath refid="contrib.classpath"/>
         </javac>
-        <javac srcdir="${contrib.src.test}" destdir="${contrib.output.test.dir}">
+        <javac srcdir="${contrib.src.test}" destdir="${contrib.output.test.dir}" debug="on">
             <classpath>
                 <path refid="contrib.classpath"/>
                 <pathelement location="${contrib.output.dir}"/>
