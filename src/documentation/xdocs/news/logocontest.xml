@@ -21,7 +21,8 @@
         </s2>
         <s2 title="Loïc Lefèvre">
                 <p>
-                <img src="images/logoLoicLefevre.png"/>
+                <img src="images/logoLoicLefevre.png"/>&nbsp;&nbsp;&nbsp;
+                <img src="images/logoLoicLefevre2.png"/>
                 </p>
         </s2>
         <s2 title="Glen Stampoultzis">
@@ -29,6 +30,12 @@
                 <img src="images/logoGlenStampoutlzis.png"/>
                 </p>
         </s2>
+        <s2 title="Marcus Gustafsson">
+                <p>
+                <img src="images/logoGustafsson1.png"/>&nbsp;&nbsp;&nbsp;
+                <img src="images/logoGustafsson2.png"/>
+                </p>
+        </s2>        
     </s1>    
   </body>
   <footer>
