@@ -70,8 +70,8 @@
      <tr>
       <th>Name</th>
       <th>Length</th>
-      <th>Example (Little Endian)</th>
       <th>Example (Big Endian)</th>
+      <th>Example (Little Endian)</th>
      </tr>
 
      <tr>
