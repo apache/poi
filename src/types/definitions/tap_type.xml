@@ -1,0 +1,19 @@
+<record id="0x101B" name="TAP" package="org.apache.poi.hdf.model.hdftypes.definitions">
+    <suffix>AbstractType</suffix>
+    <extends>HDFType</extends>
+    <description>Table Properties.</description>
+    <author>S. Ryan Ackley</author>
+    <fields>
+      <field type="int" size="2" name="jc"/>
+      <field type="int" size="4" name="dxaGapHalf"/>
+      <field type="int" size="4" name="dyaRowHeight"/>
+      <field type="byte" size="1" name="fCantSplit"/>
+      <field type="byte" size="1" name="fTableHeader"/>
+      <field type="int" size="4" name="tlp"/>
+      <field type="int" size="2" name="itcMac"/>
+      <field type="short[]" size="130" name="rgdxaCenter"/>
+      <field type="TableCell[]" name="rgtc"/>
+      <field type="ShadeDescriptor[]" name="rgshd"/>
+      <field type="BorderCode[]" name="rgbrcTable"/>
+    </fields>
+</record>
