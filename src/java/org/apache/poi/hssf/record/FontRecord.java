@@ -578,7 +578,9 @@ public class FontRecord
         data[ 17 + offset ] = (( byte ) 0);
         data[ 18 + offset ] = getFontNameLength();
         data[ 19 + offset ] = ( byte ) 1;
-        StringUtil.putUncompressedUnicode(getFontName(), data, 20 + offset);
+        if (getFontName() != null) {
+           StringUtil.putUncompressedUnicode(getFontName(), data, 20 + offset);
+        }
         return getRecordSize();
     }
 
