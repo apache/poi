@@ -2074,15 +2074,18 @@ public class Workbook implements Model {
     public PaletteRecord getCustomPalette()
     {
         PaletteRecord palette;
-        Record rec = records.get(records.getPalettepos());
-        if (rec instanceof PaletteRecord)
-        {
+      int palettePos = records.getPalettepos();
+      if (palettePos != -1) {
+        Record rec = records.get(palettePos);
+        if (rec instanceof PaletteRecord) {
             palette = (PaletteRecord) rec;
+        } else throw new RuntimeException("InternalError: Expected PaletteRecord but got a '"+rec+"'");
         }
         else
         {
             palette = createPalette();
-            records.add(records.getPalettepos(), palette);
+          //Add the palette record after the bof which is always the first record
+          records.add(1, palette);
         }
         return palette;
     }
