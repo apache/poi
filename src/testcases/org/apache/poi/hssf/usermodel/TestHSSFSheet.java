@@ -59,6 +59,8 @@ import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.record.HCenterRecord;
 import org.apache.poi.hssf.record.VCenterRecord;
 import org.apache.poi.hssf.record.WSBoolRecord;
+import org.apache.poi.hssf.record.SCLRecord;
+import org.apache.poi.hssf.record.WindowTwoRecord;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -69,7 +71,6 @@ import java.io.FileOutputStream;
  *
  *
  * @author Glen Stampoultzis (glens at apache.org)
- * @version %I%, %G%
  */
 
 public class TestHSSFSheet
@@ -317,5 +318,23 @@ public class TestHSSFSheet
         assertTrue( s.getRow( 2 ) == null || s.getRow( 2 ).getPhysicalNumberOfCells() == 0 );
         assertTrue( s.getRow( 3 ) == null || s.getRow( 3 ).getPhysicalNumberOfCells() == 0 );
         assertEquals( s.getRow( 4 ).getPhysicalNumberOfCells(), 5 );
+    }
+
+    public void testZoom()
+            throws Exception
+    {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet();
+        assertEquals(-1, sheet.getSheet().findFirstRecordLocBySid(SCLRecord.sid));
+        sheet.setZoom(3,4);
+        assertTrue(sheet.getSheet().findFirstRecordLocBySid(SCLRecord.sid) > 0);
+        SCLRecord sclRecord = (SCLRecord) sheet.getSheet().findFirstRecordBySid(SCLRecord.sid);
+        assertEquals(3, sclRecord.getNumerator());
+        assertEquals(4, sclRecord.getDenominator());
+
+        int sclLoc = sheet.getSheet().findFirstRecordLocBySid(SCLRecord.sid);
+        int window2Loc = sheet.getSheet().findFirstRecordLocBySid(WindowTwoRecord.sid);
+        assertTrue(sclLoc == window2Loc + 1);
+
     }
 }

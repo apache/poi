@@ -58,7 +58,6 @@ import junit.framework.Assert;
 import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.*;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 import java.util.List;
 
@@ -68,15 +67,27 @@ import java.util.List;
 public class SanityChecker
         extends Assert
 {
-    private class CheckRecord
+    static class CheckRecord
     {
         Class record;
-        char occurance;  // 1 = one time, M = many times
+        char occurance;  // 1 = one time, M = 1..many times, * = 0..many, 0 = optional
+        private boolean together;
 
-        public CheckRecord(Class record, char occurance)
+        public CheckRecord( Class record, char occurance )
+        {
+            this(record, occurance, true);
+        }
+
+        /**
+         * @param record        The record type to check
+         * @param occurance     The occurance 1 = occurs once, M = occurs many times
+         * @param together
+         */
+        public CheckRecord(Class record, char occurance, boolean together)
         {
             this.record = record;
             this.occurance = occurance;
+            this.together = together;
         }
 
         public Class getRecord()
@@ -87,6 +98,96 @@ public class SanityChecker
         public char getOccurance()
         {
             return occurance;
+        }
+
+        public boolean isRequired()
+        {
+            return occurance == '1' || occurance == 'M';
+        }
+
+        public boolean isOptional()
+        {
+            return occurance == '0' || occurance == '*';
+        }
+
+        public boolean isTogether()
+        {
+            return together;
+        }
+
+        public boolean isMany()
+        {
+            return occurance == '*' || occurance == 'M';
+        }
+
+        public int match( List records, int recordIdx )
+        {
+            int firstRecord = findFirstRecord(records, getRecord(), recordIdx);
+            if (isRequired())
+            {
+                return matchRequired( firstRecord, records, recordIdx );
+            }
+            else
+            {
+                return matchOptional( firstRecord, records, recordIdx );
+            }
+        }
+
+        private int matchOptional( int firstRecord, List records, int recordIdx )
+        {
+            if (firstRecord == -1)
+            {
+                return recordIdx;
+            }
+
+            return matchOneOrMany( records, firstRecord );
+//            return matchOneOrMany( records, recordIdx );
+        }
+
+        private int matchRequired( int firstRecord, List records, int recordIdx )
+        {
+            if (firstRecord == -1)
+            {
+                fail("Manditory record missing or out of order: " + record);
+            }
+
+            return matchOneOrMany( records, firstRecord );
+//            return matchOneOrMany( records, recordIdx );
+        }
+
+        private int matchOneOrMany( List records, int recordIdx )
+        {
+            if (isZeroOrOne())
+            {
+                // check no other records
+                if (findFirstRecord(records, getRecord(), recordIdx+1) != -1)
+                    fail("More than one record matched for " + getRecord().getName());
+            }
+            else if (isZeroToMany())
+            {
+                if (together)
+                {
+                    int nextIdx = findFirstRecord(records, record, recordIdx+1);
+                    while (nextIdx != -1)
+                    {
+                        if (nextIdx - 1 != recordIdx)
+                            fail("Records are not together " + record.getName());
+                        recordIdx = nextIdx;
+                        nextIdx = findFirstRecord(records, record, recordIdx+1);
+                    }
+                }
+            }
+            return recordIdx+1;
+        }
+
+        private boolean isZeroToMany()
+        {
+            return occurance == '*' || occurance == 'M';
+        }
+
+        private boolean isZeroOrOne()
+        {
+            return occurance == '0' || occurance == '1';
         }
     }
 
@@ -115,8 +216,11 @@ public class SanityChecker
         new CheckRecord(ExtendedFormatRecord.class, 'M'),
         new CheckRecord(StyleRecord.class, 'M'),
         new CheckRecord(UseSelFSRecord.class, '1'),
-        new CheckRecord(BoundSheetRecord.class, '1'),   // Is this right?
+        new CheckRecord(BoundSheetRecord.class, 'M'),
         new CheckRecord(CountryRecord.class, '1'),
+        new CheckRecord(SupBookRecord.class, '0'),
+        new CheckRecord(ExternSheetRecord.class, '0'),
+        new CheckRecord(NameRecord.class, '*'),
         new CheckRecord(SSTRecord.class, '1'),
         new CheckRecord(ExtSSTRecord.class, '1'),
         new CheckRecord(EOFRecord.class, '1'),
@@ -147,22 +251,24 @@ public class SanityChecker
         new CheckRecord(EOFRecord.class, '1')
     };
 
-    public void checkWorkbookRecords(Workbook workbook)
+    private void checkWorkbookRecords(Workbook workbook)
     {
         List records = workbook.getRecords();
         assertTrue(records.get(0) instanceof BOFRecord);
         assertTrue(records.get(records.size() - 1) instanceof EOFRecord);
 
         checkRecordOrder(records, workbookRecords);
+//        checkRecordsTogether(records, workbookRecords);
     }
 
-    public void checkSheetRecords(Sheet sheet)
+    private void checkSheetRecords(Sheet sheet)
     {
         List records = sheet.getRecords();
         assertTrue(records.get(0) instanceof BOFRecord);
         assertTrue(records.get(records.size() - 1) instanceof EOFRecord);
 
         checkRecordOrder(records, sheetRecords);
+//        checkRecordsTogether(records, sheetRecords);
     }
 
     public void checkHSSFWorkbook(HSSFWorkbook wb)
@@ -173,7 +279,63 @@ public class SanityChecker
 
     }
 
-    private void checkRecordOrder(List records, CheckRecord[] check)
+    /*
+    private void checkRecordsTogether(List records, CheckRecord[] check)
+    {
+        for ( int checkIdx = 0; checkIdx < check.length; checkIdx++ )
+        {
+            int recordIdx = findFirstRecord(records, check[checkIdx].getRecord());
+            boolean notFoundAndRecordRequired = (recordIdx == -1 && check[checkIdx].isRequired());
+            if (notFoundAndRecordRequired)
+            {
+                fail("Expected to find record of class " + check.getClass() + " but did not");
+            }
+            else if (recordIdx >= 0)
+            {
+                if (check[checkIdx].isMany())
+                {
+                    // Skip records that are together
+                    while (recordIdx < records.size() && check[checkIdx].getRecord().isInstance(records.get(recordIdx)))
+                        recordIdx++;
+                }
+
+                // Make sure record does not occur in remaining records (after the next)
+                recordIdx++;
+                for (int recordIdx2 = recordIdx; recordIdx2 < records.size(); recordIdx2++)
+                {
+                    if (check[checkIdx].getRecord().isInstance(records.get(recordIdx2)))
+                        fail("Record occurs scattered throughout record chain:\n" + records.get(recordIdx2));
+                }
+            }
+        }
+    } */
+
+    private static int findFirstRecord( List records, Class record, int startIndex )
+    {
+        for (int i = startIndex; i < records.size(); i++)
+        {
+            if (record.getName().equals(records.get(i).getClass().getName()))
+                return i;
+        }
+        return -1;
+    }
+
+//    private static int findFirstRecord( List records, Class record )
+//    {
+//        return findFirstRecord ( records, record, 0 );
+//    }
+
+    void checkRecordOrder(List records, CheckRecord[] check)
+    {
+        int recordIdx = 0;
+        for ( int checkIdx = 0; checkIdx < check.length; checkIdx++ )
+        {
+            recordIdx = check[checkIdx].match(records, recordIdx);
+        }
+    }
+
+    /*
+    void checkRecordOrder(List records, CheckRecord[] check)
     {
         int checkIndex = 0;
         for (int recordIndex = 0; recordIndex < records.size(); recordIndex++)
@@ -186,13 +348,30 @@ public class SanityChecker
                     // skip over duplicate records if multiples are allowed
                     while (recordIndex+1 < records.size() && check[checkIndex].getRecord().isInstance(records.get(recordIndex+1)))
                         recordIndex++;
+//                    lastGoodMatch = recordIndex;
                 }
+                else if (check[checkIndex].getOccurance() == '1')
+                {
+                    // Check next record to make sure there's not more than one
+                    if (recordIndex != records.size() - 1)
+                    {
+                        if (check[checkIndex].getRecord().isInstance(records.get(recordIndex+1)))
+                        {
+                            fail("More than one occurance of record found:\n" + records.get(recordIndex).toString());
+                        }
+                    }
+//                    lastGoodMatch = recordIndex;
+                }
+//                else if (check[checkIndex].getOccurance() == '0')
+//                {
+//
+//                }
                 checkIndex++;
             }
             if (checkIndex >= check.length)
                 return;
         }
         fail("Could not find required record: " + check[checkIndex]);
-    }
+    } */
 
 }

@@ -204,7 +204,7 @@ public class AreaPtg
     
     /**
      * sets the first row to relative or not
-     * @param isRelative or not.
+     * @param rel is relative or not.
      */
     public void setFirstRowRelative(boolean rel) {
         field_3_first_column=rowRelative.setShortBoolean(field_3_first_column,rel);

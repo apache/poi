@@ -627,6 +627,9 @@ public class BiffViewer {
             case NameRecord.sid:
                 retval = new NameRecord( rectype, size, data );
                 break;
+            case PaneRecord.sid:
+                retval = new PaneRecord( rectype, size, data );
+                break;
             default:
                 retval = new UnknownRecord( rectype, size, data );
         }

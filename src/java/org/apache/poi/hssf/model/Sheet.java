@@ -119,11 +119,15 @@ public class Sheet implements Model
     private Iterator                    rowRecIterator   = null;
     protected int                       eofLoc           = 0;
 
+    public static final byte PANE_LOWER_RIGHT = (byte)0;
+    public static final byte PANE_UPPER_RIGHT = (byte)1;
+    public static final byte PANE_LOWER_LEFT = (byte)2;
+    public static final byte PANE_UPPER_LEFT = (byte)3;
+
     /**
      * Creates new Sheet with no intialization --useless at this point
      * @see #createSheet(List,int,int)
      */
-
     public Sheet()
     {
     }
@@ -2092,6 +2096,28 @@ public class Sheet implements Model
     }
 
     /**
+     * Sets the SCL record or creates it in the correct place if it does not
+     * already exist.
+     *
+     * @param sclRecord     The record to set.
+     */
+    public void setSCLRecord(SCLRecord sclRecord)
+    {
+        int oldRecordLoc = findFirstRecordLocBySid(SCLRecord.sid);
+        if (oldRecordLoc == -1)
+        {
+            // Insert it after the window record
+            int windowRecordLoc = findFirstRecordLocBySid(WindowTwoRecord.sid);
+            records.add(windowRecordLoc+1, sclRecord);
+        }
+        else
+        {
+            records.set(oldRecordLoc, sclRecord);
+        }
+
+    }
+
+    /**
      * Finds the first occurance of a record matching a particular sid and
      * returns it's position.
      * @param sid   the sid to search for
@@ -2280,6 +2306,123 @@ public class Sheet implements Model
     public int getEofLoc()
     {
         return eofLoc;
+    }
+
+    /**
+     * Creates a split (freezepane).
+     * @param colSplit      Horizonatal position of split.
+     * @param rowSplit      Vertical position of split.
+     * @param topRow        Top row visible in bottom pane
+     * @param leftmostColumn   Left column visible in right pane.
+     */
+    public void createFreezePane(int colSplit, int rowSplit, int topRow, int leftmostColumn )
+    {
+        int loc = findFirstRecordLocBySid(WindowTwoRecord.sid);
+        PaneRecord pane = new PaneRecord();
+        pane.setX((short)colSplit);
+        pane.setY((short)rowSplit);
+        pane.setTopRow((short) topRow);
+        pane.setLeftColumn((short) leftmostColumn);
+        if (rowSplit == 0)
+        {
+            pane.setTopRow((short)0);
+            pane.setActivePane((short)1);
+        }
+        else if (colSplit == 0)
+        {
+            pane.setLeftColumn((short)64);
+            pane.setActivePane((short)2);
+        }
+        else
+        {
+            pane.setActivePane((short)0);
+        }
+        records.add(loc+1, pane);
+
+        WindowTwoRecord windowRecord = (WindowTwoRecord) records.get(loc);
+        windowRecord.setFreezePanes(true);
+        windowRecord.setFreezePanesNoSplit(true);
+
+        SelectionRecord sel = (SelectionRecord) findFirstRecordBySid(SelectionRecord.sid);
+//        SelectionRecord sel2 = (SelectionRecord) sel.clone();
+//        SelectionRecord sel3 = (SelectionRecord) sel.clone();
+//        SelectionRecord sel4 = (SelectionRecord) sel.clone();
+//        sel.setPane(PANE_LOWER_RIGHT);         // 0
+//        sel3.setPane(PANE_UPPER_RIGHT);        // 1
+        sel.setPane((byte)pane.getActivePane());         // 2
+//        sel2.setPane(PANE_UPPER_LEFT);         // 3
+//        sel4.setActiveCellCol((short)Math.max(sel3.getActiveCellCol(), colSplit));
+//        sel3.setActiveCellRow((short)Math.max(sel4.getActiveCellRow(), rowSplit));
+
+        int selLoc = findFirstRecordLocBySid(SelectionRecord.sid);
+//        sel.setActiveCellCol((short)15);
+//        sel.setActiveCellRow((short)15);
+//        sel2.setActiveCellCol((short)0);
+//        sel2.setActiveCellRow((short)0);
+
+//        records.add(selLoc+1,sel2);
+//        records.add(selLoc+2,sel3);
+//        records.add(selLoc+3,sel4);
+    }
+
+    /**
+     * Creates a split pane.
+     * @param xSplitPos      Horizonatal position of split (in 1/20th of a point).
+     * @param ySplitPos      Vertical position of split (in 1/20th of a point).
+     * @param topRow        Top row visible in bottom pane
+     * @param leftmostColumn   Left column visible in right pane.
+     * @param activePane    Active pane.  One of: PANE_LOWER_RIGHT,
+     *                      PANE_UPPER_RIGHT, PANE_LOWER_LEFT, PANE_UPPER_LEFT
+     * @see #PANE_LOWER_LEFT
+     * @see #PANE_LOWER_RIGHT
+     * @see #PANE_UPPER_LEFT
+     * @see #PANE_UPPER_RIGHT
+     */
+    public void createSplitPane(int xSplitPos, int ySplitPos, int topRow, int leftmostColumn, int activePane )
+    {
+        int loc = findFirstRecordLocBySid(WindowTwoRecord.sid);
+        PaneRecord r = new PaneRecord();
+        r.setX((short)xSplitPos);
+        r.setY((short)ySplitPos);
+        r.setTopRow((short) topRow);
+        r.setLeftColumn((short) leftmostColumn);
+        r.setActivePane((short) activePane);
+        records.add(loc+1, r);
+
+        WindowTwoRecord windowRecord = (WindowTwoRecord) records.get(loc);
+        windowRecord.setFreezePanes(false);
+        windowRecord.setFreezePanesNoSplit(false);
+
+        SelectionRecord sel = (SelectionRecord) findFirstRecordBySid(SelectionRecord.sid);
+//        SelectionRecord sel2 = (SelectionRecord) sel.clone();
+//        SelectionRecord sel3 = (SelectionRecord) sel.clone();
+//        SelectionRecord sel4 = (SelectionRecord) sel.clone();
+        sel.setPane(PANE_LOWER_RIGHT);         // 0
+//        sel3.setPane(PANE_UPPER_RIGHT);        // 1
+//        sel4.setPane(PANE_LOWER_LEFT);         // 2
+//        sel2.setPane(PANE_UPPER_LEFT);         // 3
+//        sel4.setActiveCellCol((short)Math.max(sel3.getActiveCellCol(), colSplit));
+//        sel3.setActiveCellRow((short)Math.max(sel4.getActiveCellRow(), rowSplit));
+
+        int selLoc = findFirstRecordLocBySid(SelectionRecord.sid);
+//        sel.setActiveCellCol((short)15);
+//        sel.setActiveCellRow((short)15);
+//        sel2.setActiveCellCol((short)0);
+//        sel2.setActiveCellRow((short)0);
+
+//        records.add(selLoc+1,sel2);
+//        records.add(selLoc+2,sel3);
+//        records.add(selLoc+3,sel4);
+    }
+
+    public SelectionRecord getSelection()
+    {
+        return selection;
+    }
+
+    public void setSelection( SelectionRecord selection )
+    {
+        this.selection = selection;
     }
 
 }

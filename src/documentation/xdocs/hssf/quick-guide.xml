@@ -35,6 +35,9 @@
                     <li><link href="#FooterPageNumbers">Set page numbers on the footer of a sheet.</link></li>
                     <li><link href="#ShiftRows">Shift rows.</link></li>
                     <li><link href="#SelectSheet">Set a sheet as selected.</link></li>
+                    <li><link href="#Zoom">Set the zoom magnification for a sheet.</link></li>
+                    <li><link href="#Splits">Create split and freeze panes.</link></li>
+                    <li><link href="#Repeating">Repeating rows and columns.</link></li>
                 </ul>
             </section>
             <section title="Features">
@@ -535,6 +538,119 @@
     fileOut.close();
                     </source>
                 </section>                
+
+                <anchor id="Zoom"/>
+                <section title="Set the zoom magnification">
+                    <p>
+                        The zoom is expressed as a fraction.  For example to
+                        express a zoom of 75% use 3 for the numerator and
+                        4 for the denominator.
+                    </p>
+                    <source>
+    HSSFWorkbook wb = new HSSFWorkbook();
+    HSSFSheet sheet1 = wb.createSheet("new sheet");
+    sheet1.setZoom(3,4);   // 75 percent magnification
+    FileOutputStream fileOut = new FileOutputStream("workbook.xls");
+    wb.write(fileOut);
+    fileOut.close();
+                    </source>
+                </section>
+
+                <anchor id="Splits"/>
+                <section title="Splits and freeze panes">
+                    <p>
+                        There are two types of panes you can create; freeze panes and split panes.
+                    </p>
+                    <p>
+                        A freeze pane is split by columns and rows.  You create
+                        a freeze pane using the following mechanism:
+                    </p>
+                    <p>
+                            sheet1.createFreezePane( 3, 2, 3, 2 );
+                    </p>
+                    <p>
+                        The first two parameters are the columns and rows you
+                        wish to split by.  The second two parameters indicate
+                        the cells that are visible in the bottom right quadrant.
+                    </p>
+                    <p>
+
+                        Split pains appear differently.  The split area is
+                        divided into four separate work area's.  The split
+                        occurs at the pixel level and the user is able to
+                        adjust the split by dragging it to a new position.
+                    </p>
+                    <p>
+
+                        Split panes are created with the following call:
+                    </p>
+                    <p>
+                            sheet2.createSplitPane( 2000, 2000, 0, 0, HSSFSheet.PANE_LOWER_LEFT );
+                    </p>
+                    <p>
+
+                        The first parameter is the x position of the split.
+                        This is in 1/20th of a point.  A point in this case
+                        seems to equate to a pixel.  The second parameter is
+                        the y position of the split.  Again in 1/20th of a point.
+                    </p>
+                    <p>
+                        The last parameter indicates which pane currently has
+                        the focus.  This will be one of HSSFSheet.PANE_LOWER_LEFT,
+                        PANE_LOWER_RIGHT, PANE_UPPER_RIGHT or PANE_UPPER_LEFT.
+                    </p>
+                    <source>
+    HSSFWorkbook wb = new HSSFWorkbook();
+    HSSFSheet sheet1 = wb.createSheet("new sheet");
+    HSSFSheet sheet2 = wb.createSheet("second sheet");
+    HSSFSheet sheet3 = wb.createSheet("third sheet");
+    HSSFSheet sheet4 = wb.createSheet("fourth sheet");
+
+    // Freeze just one row
+    sheet1.createFreezePane( 0, 1, 0, 1 );
+    // Freeze just one column
+    sheet2.createFreezePane( 1, 0, 1, 0 );
+    // Freeze the columns and rows (forget about scrolling position of the lower right quadrant).
+    sheet3.createFreezePane( 2, 2 );
+    // Create a split with the lower left side being the active quadrant
+    sheet4.createSplitPane( 2000, 2000, 0, 0, HSSFSheet.PANE_LOWER_LEFT );
+
+    FileOutputStream fileOut = new FileOutputStream("workbook.xls");
+    wb.write(fileOut);
+    fileOut.close();
+                    </source>
+                </section>
+
+                <anchor id="Repeating"/>
+                <section title="Repeating rows and columns">
+                    <p>
+                        It's possible to set up repeating rows and columns in
+                        your printouts by using the setRepeatingRowsAndColumns()
+                        function in the HSSFWorkbook class.
+                    </p>
+                    <p>
+                        This function Contains 5 parameters.
+                        The first parameter is the index to the sheet (0 = first sheet).
+                        The second and third parameters specify the range for the columns to repreat.
+                        To stop the columns from repeating pass in -1 as the start and end column.
+                        The fourth and fifth parameters specify the range for the rows to repeat.
+                        To stop the columns from repeating pass in -1 as the start and end rows.
+                    </p>
+                    <source>
+    HSSFWorkbook wb = new HSSFWorkbook();
+    HSSFSheet sheet1 = wb.createSheet("new sheet");
+    HSSFSheet sheet2 = wb.createSheet("second sheet");
+
+    // Set the columns to repeat from column 0 to 2 on the first sheet
+    wb.setRepeatingRowsAndColumns(0,0,2,-1,-1);
+    // Set the the repeating rows and columns on the second sheet.
+    wb.setRepeatingRowsAndColumns(1,4,5,1,2);
+
+    FileOutputStream fileOut = new FileOutputStream("workbook.xls");
+    wb.write(fileOut);
+    fileOut.close();
+                    </source>
+                </section>
             </section>
         </section>
     </body>

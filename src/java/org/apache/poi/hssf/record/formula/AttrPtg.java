@@ -98,9 +98,6 @@ public class AttrPtg
         offset++;   // adjust past id
         field_1_options = data[ offset + 0 ];
         field_2_data    = LittleEndian.getShort(data, offset + 1);
-        System.out.println("OPTIONS = " + Integer.toHexString(getOptions()));
-        System.out.println("OPTIONS & 0x10 = " + (getOptions() & 0x10));
-        //System.out.println(toString());
     }
 
     public void setOptions(byte options)

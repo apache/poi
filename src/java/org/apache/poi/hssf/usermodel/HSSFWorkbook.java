@@ -64,6 +64,9 @@ import org.apache.poi.hssf.eventmodel.EventRecordFactory;
 import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.*;
+import org.apache.poi.hssf.record.formula.MemFuncPtg;
+import org.apache.poi.hssf.record.formula.Area3DPtg;
+import org.apache.poi.hssf.record.formula.UnionPtg;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
@@ -78,6 +81,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Iterator;
+import java.util.Stack;
 
 /**
  * High level representation of a workbook.  This is the first object most users
@@ -462,6 +466,158 @@ public class HSSFWorkbook
     }
 
     /**
+     * Sets the repeating rows and columns for a sheet (as found in
+     * File->PageSetup->Sheet).  This is function is included in the workbook
+     * because it creates/modifies name records which are stored at the
+     * workbook level.
+     * <p>
+     * To set just repeating columns:
+     * <pre>
+     *  workbook.setRepeatingRowsAndColumns(0,0,1,-1-1);
+     * </pre>
+     * To set just repeating rows:
+     * <pre>
+     *  workbook.setRepeatingRowsAndColumns(0,-1,-1,0,4);
+     * </pre>
+     * To remove all repeating rows and columns for a sheet.
+     * <pre>
+     *  workbook.setRepeatingRowsAndColumns(0,-1,-1,-1,-1);
+     * </pre>
+     *
+     * @param sheetIndex    0 based index to sheet.
+     * @param startColumn   0 based start of repeating columns.
+     * @param endColumn     0 based end of repeating columns.
+     * @param startRow      0 based start of repeating rows.
+     * @param endRow        0 based end of repeating rows.
+     */
+    public void setRepeatingRowsAndColumns(int sheetIndex,
+                                           int startColumn, int endColumn,
+                                           int startRow, int endRow)
+    {
+        // Check arguments
+        if (startColumn == -1 && endColumn != -1) throw new IllegalArgumentException("Invalid column range specification");
+        if (startRow == -1 && endRow != -1) throw new IllegalArgumentException("Invalid row range specification");
+        if (startColumn < -1 || startColumn >= 0xFF) throw new IllegalArgumentException("Invalid column range specification");
+        if (endColumn < -1 || endColumn >= 0xFF) throw new IllegalArgumentException("Invalid column range specification");
+        if (startRow < -1 || startRow > 65535) throw new IllegalArgumentException("Invalid row range specification");
+        if (endRow < -1 || endRow > 65535) throw new IllegalArgumentException("Invalid row range specification");
+        if (startColumn > endColumn) throw new IllegalArgumentException("Invalid column range specification");
+        if (startRow > endRow) throw new IllegalArgumentException("Invalid row range specification");
+
+        HSSFSheet sheet = getSheetAt(sheetIndex);
+        short externSheetIndex = getWorkbook().checkExternSheet(sheetIndex);
+
+        boolean settingRowAndColumn =
+                startColumn != -1 && endColumn != -1 && startRow != -1 && endRow != -1;
+        boolean removingRange =
+                startColumn == -1 && endColumn == -1 && startRow == -1 && endRow == -1;
+
+        boolean isNewRecord = false;
+        NameRecord nameRecord;
+        nameRecord = findExistingRowColHeaderNameRecord(sheetIndex);
+        if (removingRange )
+        {
+            if (nameRecord != null)
+                workbook.removeName(findExistingRowColHeaderNameRecordIdx(sheetIndex));
+            return;
+        }
+        if ( nameRecord == null )
+        {
+            nameRecord = workbook.createName();
+            isNewRecord = true;
+        }
+        nameRecord.setOptionFlag((short)0x20);
+        nameRecord.setKeyboardShortcut((byte)0);
+        short definitionTextLength = settingRowAndColumn ? (short)0x001a : (short)0x000b;
+        nameRecord.setDefinitionTextLength(definitionTextLength);
+        nameRecord.setNameTextLength((byte)1);
+        nameRecord.setNameText(((char)7) + "");
+        nameRecord.setUnused((short)0);
+        nameRecord.setEqualsToIndexToSheet((short)(externSheetIndex+1));
+        nameRecord.setCustomMenuLength((byte)0);
+        nameRecord.setDescriptionTextLength((byte)0);
+        nameRecord.setHelpTopicLength((byte)0);
+        nameRecord.setStatusBarLength((byte)0);
+        Stack ptgs = new Stack();
+
+        if (settingRowAndColumn)
+        {
+            MemFuncPtg memFuncPtg = new MemFuncPtg();
+            memFuncPtg.setLenRefSubexpression(23);
+            ptgs.add(memFuncPtg);
+        }
+        if (startColumn >= 0)
+        {
+            Area3DPtg area3DPtg1 = new Area3DPtg();
+            area3DPtg1.setExternSheetIndex(externSheetIndex);
+            area3DPtg1.setFirstColumn((short)startColumn);
+            area3DPtg1.setLastColumn((short)endColumn);
+            area3DPtg1.setFirstRow((short)0);
+            area3DPtg1.setLastRow((short)0xFFFF);
+            ptgs.add(area3DPtg1);
+        }
+        if (startRow >= 0)
+        {
+            Area3DPtg area3DPtg2 = new Area3DPtg();
+            area3DPtg2.setExternSheetIndex(externSheetIndex);
+            area3DPtg2.setFirstColumn((short)0);
+            area3DPtg2.setLastColumn((short)0x00FF);
+            area3DPtg2.setFirstRow((short)startRow);
+            area3DPtg2.setLastRow((short)endRow);
+            ptgs.add(area3DPtg2);
+        }
+        if (settingRowAndColumn)
+        {
+            UnionPtg unionPtg = new UnionPtg();
+            ptgs.add(unionPtg);
+        }
+        nameRecord.setNameDefinition(ptgs);
+
+        if (isNewRecord)
+        {
+            HSSFName newName = new HSSFName(workbook, nameRecord);
+            names.add(newName);
+        }
+
+        HSSFPrintSetup printSetup = sheet.getPrintSetup();
+        printSetup.setValidSettings(false);
+
+        WindowTwoRecord w2 = (WindowTwoRecord) sheet.getSheet().findFirstRecordBySid(WindowTwoRecord.sid);
+        w2.setPaged(true);
+    }
+
+    private NameRecord findExistingRowColHeaderNameRecord( int sheetIndex )
+    {
+        int index = findExistingRowColHeaderNameRecordIdx(sheetIndex);
+        if (index == -1)
+            return null;
+        else
+            return (NameRecord)workbook.findNextRecordBySid(NameRecord.sid, index);
+    }
+
+    private int findExistingRowColHeaderNameRecordIdx( int sheetIndex )
+    {
+        int index = 0;
+        NameRecord r = null;
+        while ((r = (NameRecord) workbook.findNextRecordBySid(NameRecord.sid, index)) != null)
+        {
+            int nameRecordSheetIndex = workbook.getSheetIndexFromExternSheetIndex(r.getEqualsToIndexToSheet() - 1);
+            if (isRowColHeaderRecord( r ) && nameRecordSheetIndex == sheetIndex)
+            {
+                return index;
+            }
+            index++;
+        }
+
+        return -1;
+    }
+
+    private boolean isRowColHeaderRecord( NameRecord r )
+    {
+        return r.getOptionFlag() == 0x20 && ("" + ((char)7)).equals(r.getNameText());
+    }
+
+    /**
      * create a new Font and add it to the workbook's font table
      * @return new font object
      */
@@ -811,5 +967,7 @@ public class HSSFWorkbook
         UnknownRecord r = new UnknownRecord((short)0x00EB,(short)0x005a, data);
         workbook.getRecords().add(loc, r);
     }
+
+
 
 }
