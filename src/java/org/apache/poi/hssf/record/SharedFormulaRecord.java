@@ -33,7 +33,7 @@ import org.apache.poi.util.LittleEndian;
  */
 
 public class SharedFormulaRecord
-    extends Record 
+    extends Record
 {
 	 public final static short   sid = 0x4BC;
     private short  size    = 0;

@@ -1,19 +1,3 @@
-
-/* ====================================================================
-   Copyright 2002-2004   Apache Software Foundation
-
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
-==================================================================== */
         
 /* ====================================================================
    Copyright 2003-2004   Apache Software Foundation
@@ -40,6 +24,7 @@ import junit.framework.TestCase;
  *
  * @author Danny Mui (dmui at apache dot org)
  */
+
 public class TestFuncPtg extends TestCase
 {
 
@@ -47,6 +32,7 @@ public class TestFuncPtg extends TestCase
     {
         super( name );
     }
+
 
     public static void main( java.lang.String[] args )
     {
@@ -59,6 +45,7 @@ public class TestFuncPtg extends TestCase
      * <p/>
      * This ptg represents a LEN function extracted from excel
      */
+
     public void testLeftOvers()
     {
         byte[] fakeData = new byte[4];
@@ -67,6 +54,7 @@ public class TestFuncPtg extends TestCase
         fakeData[1] = (byte) 0x20;  //function index
         fakeData[2] = (byte) 0;
         fakeData[3] = (byte) 8;
+
         FuncPtg ptg = new FuncPtg( fakeData, 0 );
         assertEquals( "Len formula index is not 32(20H)", (int) 0x20, ptg.getFunctionIndex() );
         assertEquals( "Number of operands in the len formula", 1, ptg.getNumberOfOperands() );
@@ -76,7 +64,6 @@ public class TestFuncPtg extends TestCase
         //assertEquals("second leftover byte is not 8", (byte)8, ptg.leftOvers[1]);
 
     }
-
-
 }
+
 

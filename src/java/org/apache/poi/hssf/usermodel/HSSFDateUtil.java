@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Copyright 2002-2004   Apache Software Foundation
 
@@ -14,7 +13,8 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
+
 
 /*
  * DateUtil.java
@@ -33,6 +33,7 @@ import java.util.GregorianCalendar;
  * @author  Michael Harhen
  * @author  Glen Stampoultzis (glens at apache.org)
  * @author  Dan Sherman (dsherman at isisph.com)
+ * @author  Hack Kampbjorn (hak at 2mba.dk)
  */
 
 public class HSSFDateUtil
@@ -68,9 +69,19 @@ public class HSSFDateUtil
         }
         else
         {
+	    // Because of daylight time saving we cannot use
+	    //     date.getTime() - calStart.getTimeInMillis()
+	    // as the difference in milliseconds between 00:00 and 04:00
+	    // can be 3, 4 or 5 hours but Excel expects it to always
+	    // be 4 hours.
+	    // E.g. 2004-03-28 04:00 CEST - 2004-03-28 00:00 CET is 3 hours
+	    // and 2004-10-31 04:00 CET - 2004-10-31 00:00 CEST is 5 hours
+            double fraction = (((calStart.get(Calendar.HOUR_OF_DAY) * 60
+                                 + calStart.get(Calendar.MINUTE)
+                                ) * 60 + calStart.get(Calendar.SECOND)
+                               ) * 1000 + calStart.get(Calendar.MILLISECOND)
+                              ) / ( double ) DAY_MILLISECONDS;
             calStart = dayStart(calStart);
-            double fraction = (date.getTime() - calStart.getTime().getTime())
-                              / ( double ) DAY_MILLISECONDS;
 
             return fraction + ( double ) absoluteDay(calStart)
                    - CAL_1900_ABSOLUTE;
@@ -96,10 +107,20 @@ public class HSSFDateUtil
      *  Given an Excel date with either 1900 or 1904 date windowing,
      *  converts it to a java.util.Date.
      *
+     *  NOTE: If the default <code>TimeZone</code> in Java uses Daylight
+     *  Saving Time then the conversion back to an Excel date may not give
+     *  the same value, that is the comparison
+     *  <CODE>excelDate == getExcelDate(getJavaDate(excelDate,false))</CODE>
+     *  is not always true. For example if default timezone is
+     *  <code>Europe/Copenhagen</code>, on 2004-03-28 the minute after
+     *  01:59 CET is 03:00 CEST, if the excel date represents a time between
+     *  02:00 and 03:00 then it is converted to past 03:00 summer time
+     *
      *  @param date  The Excel date.
      *  @param use1904windowing  true if date uses 1904 windowing,
      *   or false if using 1900 date windowing.
      *  @return Java representation of the date, or null if date is not a valid Excel date
+     *  @see java.util.TimeZone
      */
     public static Date getJavaDate(double date, boolean use1904windowing) {
         if (isValidExcelDate(date)) {

@@ -17,15 +17,10 @@
         
 package org.apache.poi.hwpf;
 
-import junit.framework.*;
-import org.apache.poi.hwpf.*;
-import org.apache.poi.hwpf.model.io.*;
-
-import java.io.*;
-import java.util.*;
+import junit.framework.TestCase;
 
 
-public class HWPFTestCase
+public abstract class HWPFTestCase
   extends TestCase
 {
   protected HWPFDocFixture _hWPFDocFixture;

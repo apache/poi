@@ -148,6 +148,7 @@ public class BoolErrRecord
             throw new RuntimeException("Error Value can only be 0,7,15,23,29,36 or 42. It cannot be "+value);
         }
     }
+
     //public short getRow()
     public int getRow()
     {

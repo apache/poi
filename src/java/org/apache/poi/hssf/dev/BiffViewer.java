@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Copyright 2002-2004   Apache Software Foundation
 
@@ -14,7 +13,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 /*
  *  BiffViewer.java
  *
@@ -91,7 +90,7 @@ public class BiffViewer {
     public static Record[] createRecords(InputStream in, boolean dump)
              throws RecordFormatException {
         ArrayList records = new ArrayList();
-        //Record last_record = null;
+//        Record last_record = null;
         int loc = 0;
 
         RecordDetails activeRecord = null;
@@ -103,8 +102,6 @@ public class BiffViewer {
             do {
                 rectype = LittleEndian.readShort(in);
                 int startloc = loc;
-//                System.out.println("============================================");
-//                System.out.println("Offset 0x" + Integer.toHexString(loc) + " (" + loc + ")");
                 loc += 2;
                 if (rectype != 0) {
                     short recsize = LittleEndian.readShort(in);
@@ -148,8 +145,8 @@ public class BiffViewer {
         System.out.println("Offset 0x" + Integer.toHexString(startloc) + " (" + startloc + ")");
         System.out.println( "recordid = 0x" + Integer.toHexString( rectype ) + ", size = " + recsize );
         System.out.println( record.toString() );
-    }
 
+    }
 
     private static void dumpContinueRecord(Record last_record, boolean dump, byte[] data) throws IOException {
         if (last_record == null) {
@@ -227,14 +224,11 @@ public class BiffViewer {
      *  up non-debug operations.
      *
      */
-
     private static Record createRecord( short rectype, short size,
                                           byte[] data )
     {
         Record retval = null;
-        Record[] realretval = null;
 
-        // int irectype = rectype;
         switch ( rectype )
         {
 
@@ -587,14 +581,14 @@ public class BiffViewer {
                 retval = new PaneRecord( rectype, size, data );
                 break;
             case SharedFormulaRecord.sid:
-            	retval = new SharedFormulaRecord( rectype, size, data);
-            	break;
+            	 retval = new SharedFormulaRecord( rectype, size, data);
+            	 break;
             case ObjRecord.sid:
-                retval = new ObjRecord( rectype, size, data);
-                break;
+            	 retval = new ObjRecord( rectype, size, data);
+            	 break;
             case TextObjectRecord.sid:
-                retval = new TextObjectRecord( rectype, size, data);
-                break;
+            	 retval = new TextObjectRecord( rectype, size, data);
+            	 break;
             case HorizontalPageBreakRecord.sid:
                 retval = new HorizontalPageBreakRecord( rectype, size, data);
                 break;
@@ -674,7 +668,7 @@ public class BiffViewer {
             this.data = data;
             this.record = record;
         }
-    
+
         public short getRectype()
         {
             return rectype;
@@ -705,3 +699,4 @@ public class BiffViewer {
     }
 
 }
+

@@ -28,16 +28,14 @@ import org.apache.poi.util.LittleEndian;
  * Company:      SuperLink Software, Inc.<P>
  * @author Andrew C. Oliver (acoliver at apache dot org)
  * @author Jason Height (jheight at chariot dot net dot au)
- * @version 2.0-pre
+ * @author Glen Stampoultzis (glens at apache.org)
  */
 
 public class UnknownRecord
     extends Record
 {
-    private short  sid     = 0;
-    private short  size    = 0;
-    private byte[] thedata = null;
-    int            offset  = 0;
+    private short   sid     = 0;
+    private byte[]  thedata = null;
 
     public UnknownRecord()
     {
@@ -53,9 +51,8 @@ public class UnknownRecord
 
     public UnknownRecord(short id, short size, byte [] data)
     {
-        this.sid     = id;
-        this.size    = size;
-        this.thedata = data;
+        sid     = id;
+        thedata = data;
     }
 
     public UnknownRecord( short id, short size, byte[] data, int offset )
@@ -63,12 +60,11 @@ public class UnknownRecord
         sid     = id;
         thedata = new byte[size];
         System.arraycopy(data, offset, thedata, 0, size);
-    }   
+    }
 
     /**
-     * spit the record out AS IS.  no interperatation or identification
+     * spit the record out AS IS.  no interpretation or identification
      */
-
     public int serialize(int offset, byte [] data)
     {
         if (thedata == null)
@@ -98,7 +94,7 @@ public class UnknownRecord
     protected void fillFields(byte [] data, short sid)
     {
         this.sid     = sid;
-        this.thedata = data;
+        thedata = data;
     }
 
     /**
@@ -149,9 +145,7 @@ public class UnknownRecord
     /** Unlike the other Record.clone methods this is a shallow clone*/
     public Object clone() {
       UnknownRecord rec = new UnknownRecord();
-      rec.offset = offset;
       rec.sid = sid;
-      rec.size = size;
       rec.thedata = thedata;
       return rec;
     }

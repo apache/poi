@@ -18,9 +18,8 @@
 package org.apache.poi.util;
 
 import java.io.UnsupportedEncodingException;
-import java.text.NumberFormat;
 import java.text.FieldPosition;
-import java.util.Arrays;
+import java.text.NumberFormat;
 /** 
  *  Title: String Utility Description: Collection of string handling utilities 
  *  
@@ -45,16 +44,16 @@ public class StringUtil {
 	 *     
 	 * { 0x16, 0x00 } -0x16     
 	 *      
-	 *@param  string                              the byte array to be converted     
-	 *@param  offset                              the initial offset into the     
-	 *      byte array. it is assumed that string[ offset ] and string[ offset +     
-	 *     1 ] contain the first 16-bit unicode character     
-         *@param len the length of the final string     
-	 *@return                                     the converted string     
-	 *@exception  ArrayIndexOutOfBoundsException  if offset is out of bounds for     
+	 * @param  string  the byte array to be converted
+	 * @param  offset  the initial offset into the
+	 *                 byte array. it is assumed that string[ offset ] and string[ offset +
+	 *                 1 ] contain the first 16-bit unicode character
+     * @param len the length of the final string
+	 * @return                                     the converted string
+	 * @exception  ArrayIndexOutOfBoundsException  if offset is out of bounds for
 	 *      the byte array (i.e., is negative or is greater than or equal to     
 	 *      string.length)     
-	 *@exception  IllegalArgumentException        if len is too large (i.e.,     
+	 * @exception  IllegalArgumentException        if len is too large (i.e.,
 	 *      there is not enough data in string to create a String of that     
 	 *      length)     
 	 */

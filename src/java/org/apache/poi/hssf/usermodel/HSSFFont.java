@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Copyright 2002-2004   Apache Software Foundation
 
@@ -14,7 +13,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 
 /*
  * HSSFFont.java
@@ -128,7 +127,7 @@ public class HSSFFont
 
     /**
      * set the name for the font (i.e. Arial)
-     * @param name the name of the font to use
+     * @param name  String representing the name of the font to use
      * @see #FONT_ARIAL
      */
 
@@ -163,7 +162,7 @@ public class HSSFFont
     /**
      * set the font height in unit's of 1/20th of a point.  Maybe you might want to
      * use the setFontHeightInPoints which matches to the familiar 10, 12, 14 etc..
-     * @param height in 1/20ths of a point
+     * @param short - height in 1/20ths of a point
      * @see #setFontHeightInPoints(short)
      */
 
@@ -174,7 +173,7 @@ public class HSSFFont
 
     /**
      * set the font height
-     * @param height in the familiar unit of measure - points
+     * @param short - height in the familiar unit of measure - points
      * @see #setFontHeight(short)
      */
 
@@ -208,7 +207,7 @@ public class HSSFFont
 
     /**
      * set whether to use italics or not
-     * @param italic use italics or not
+     * @param italics or not
      */
 
     public void setItalic(boolean italic)
@@ -322,7 +321,7 @@ public class HSSFFont
 
     /**
      * set type of text underlining to use
-     * @param underline the underlining type to use
+     * @param underline type
      * @see #U_NONE
      * @see #U_SINGLE
      * @see #U_DOUBLE
@@ -356,5 +355,6 @@ public class HSSFFont
                  font +
                 "}";
     }
+
 
 }

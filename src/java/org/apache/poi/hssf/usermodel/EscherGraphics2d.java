@@ -1,6 +1,5 @@
-
 /* ====================================================================
-   Copyright 2002-2004   Apache Software Foundation
+   Copyright 2004   Apache Software Foundation
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -14,7 +13,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.util.POILogFactory;
@@ -168,6 +167,8 @@ public class EscherGraphics2d extends Graphics2D
     public boolean drawImage(Image image, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1,
             int sx2, int sy2, ImageObserver imageobserver)
     {
+        if (logger.check( POILogger.WARN ))
+            logger.log(POILogger.WARN,"drawImage() not supported");
         return drawImage(image, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2, null, imageobserver);
     }
     public boolean drawImage(Image image, int dx1, int dy1, int dx2, int dy2, Color bgColor, ImageObserver imageobserver)

@@ -82,7 +82,7 @@ public class BookBoolRecord
     /**
      * set the save ext links flag
      *
-     * @param flag (0/1 -off/on)
+     * @param short flag (0/1 -off/on)
      */
 
     public void setSaveLinkValues(short flag)

@@ -1,6 +1,5 @@
-
 /* ====================================================================
-   Copyright 2002-2004   Apache Software Foundation
+   Copyright 2003-2004   Apache Software Foundation
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -14,13 +13,8 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
-/*
- * AddPtg.java
- *
- * Created on October 29, 2001, 7:48 PM
- */
+
 package org.apache.poi.hssf.record.formula;
 
 import java.util.List;

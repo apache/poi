@@ -1,6 +1,5 @@
-
 /* ====================================================================
-   Copyright 2002-2004   Apache Software Foundation
+   Copyright 2003-2004   Apache Software Foundation
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -14,7 +13,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.hssf.record.PaletteRecord;
@@ -86,8 +85,8 @@ public class HSSFPalette
      * @return  The closest color or null if there are no custom
      *          colors currently defined.
      */
-     public HSSFColor findSimilarColor(byte red, byte green, byte blue)
-     {
+    public HSSFColor findSimilarColor(byte red, byte green, byte blue)
+    {
         HSSFColor result = null;
         int minColorDistance = Integer.MAX_VALUE;
         byte[] b = palette.getColor(PaletteRecord.FIRST_COLOR_INDEX);
@@ -101,6 +100,19 @@ public class HSSFPalette
             }
         }
         return result;
+    }
+
+    /**
+     * Sets the color at the given offset
+     *
+     * @param index the palette index, between 0x8 to 0x40 inclusive
+     * @param red the RGB red component, between 0 and 255 inclusive
+     * @param green the RGB green component, between 0 and 255 inclusive
+     * @param blue the RGB blue component, between 0 and 255 inclusive
+     */
+    public void setColorAtIndex(short index, byte red, byte green, byte blue)
+    {
+        palette.setColor(index, red, green, blue);
     }
 
     /**
@@ -128,19 +140,6 @@ public class HSSFPalette
         throw new RuntimeException("Could not find free color index");
     }
 
-    /**
-     * Sets the color at the given offset
-     *
-     * @param index the palette index, between 0x8 to 0x40 inclusive
-     * @param red the RGB red component, between 0 and 255 inclusive
-     * @param green the RGB green component, between 0 and 255 inclusive
-     * @param blue the RGB blue component, between 0 and 255 inclusive
-     */
-    public void setColorAtIndex(short index, byte red, byte green, byte blue)
-    {
-        palette.setColor(index, red, green, blue);
-    }
-    
     private static class CustomColor extends HSSFColor
     {
         private short byteOffset;

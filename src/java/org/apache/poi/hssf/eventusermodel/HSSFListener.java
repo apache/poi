@@ -14,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.eventusermodel;
 
@@ -25,8 +24,8 @@ import org.apache.poi.hssf.record.Record;
  * a listener supporting this interface and register it with the HSSFRequest (associating
  * it with Record SID's).
  *
- * @see org.apache.poi.hssf.eventusermodel.HSSFEventFactory
- * @see org.apache.poi.hssf.eventusermodel.HSSFRequest
+ * @see org.apache.poi.hssf.eventmodel.HSSFEventFactory
+ * @see org.apache.poi.hssf.eventmodel.HSSFRequest
  * @author  acoliver@apache.org
  */
 

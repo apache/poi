@@ -114,15 +114,14 @@ public class LabelRecord
         field_4_string_len   = LittleEndian.getShort(data, 6 + offset);
         field_5_unicode_flag = data[ 8 + offset ];
         if (field_4_string_len > 0) {
-          if (isUnCompressedUnicode())
-          {
-              field_6_value = StringUtil.getFromUnicodeLE(data, 9 + offset,
-                                                        field_4_string_len);
-          }
-          else
-          {
-              field_6_value = StringUtil.getFromCompressedUnicode(data, 9 + offset, getStringLength());
-          }
+          if (isUnCompressedUnicode()) {
+            field_6_value = StringUtil.getFromUnicodeLE(data, 9 + offset,
+                                                      field_4_string_len);
+        }
+          else {
+            field_6_value = StringUtil.getFromCompressedUnicode(data, 9 + offset,
+                getStringLength());
+        }
         } else field_6_value = null;
     }
 

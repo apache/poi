@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Copyright 2002-2004   Apache Software Foundation
 
@@ -14,13 +13,14 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 
 package org.apache.poi.hssf.model;
 
 import org.apache.poi.hssf.record.*;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.hssf.util.SheetReferences;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.ddf.*;
@@ -55,7 +55,8 @@ import java.util.Locale;
  * @version 1.0-pre
  */
 
-public class Workbook implements Model {
+public class Workbook implements Model
+{
     private static final int   DEBUG       = POILogger.DEBUG;
 
 //    public static Workbook currentBook = null;
@@ -97,7 +98,7 @@ public class Workbook implements Model {
     protected int              numfonts    = 0;   // hold the number of font records
     private short              maxformatid  = -1;  // holds the max format id
     private boolean            uses1904datewindowing  = false;  // whether 1904 date windowing is being used
-    private DrawingManager     drawingManager;
+    private DrawingManager drawingManager;
 
     private static POILogger   log = POILogFactory.getLogger(Workbook.class);
 
@@ -649,7 +650,7 @@ public class Workbook implements Model {
 
         if (log.check( POILogger.DEBUG ))
             log.log(DEBUG, "Returning SST for index=", new Integer(str),
-            " String= ", retval);
+                " String= ", retval);
         return retval;
     }
 
@@ -674,30 +675,20 @@ public class Workbook implements Model {
      *
      * @return byte array containing the HSSF-only portions of the POIFS file.
      */
-    // GJS: Not used by system
+     // GJS: Not used so why keep it.
 //    public byte [] serialize() {
 //        log.log(DEBUG, "Serializing Workbook!");
 //        byte[] retval    = null;
 //
-//        // ArrayList bytes     = new ArrayList(records.size());
+////         ArrayList bytes     = new ArrayList(records.size());
 //        int    arraysize = getSize();
 //        int    pos       = 0;
 //
-//        // for (int k = 0; k < records.size(); k++)
-//        // {
-//        // bytes.add((( Record ) records.get(k)).serialize());
-//        //        }
-//        // for (int k = 0; k < bytes.size(); k++)
-//        // {
-//        // arraysize += (( byte [] ) bytes.get(k)).length;
-//        // }
 //        retval = new byte[ arraysize ];
 //        for (int k = 0; k < records.size(); k++) {
 //
-//            // byte[] rec = (( byte [] ) bytes.get(k));
-//            // System.arraycopy(rec, 0, retval, pos, rec.length);
 //            Record record = records.get(k);
-//            // Let's skip RECALCID records, as they are only use for optimization
+////             Let's skip RECALCID records, as they are only use for optimization
 //	    if(record.getSid() != RecalcIdRecord.sid || ((RecalcIdRecord)record).isNeeded()) {
 //                pos += record.serialize(pos, retval);   // rec.length;
 //	    }
@@ -724,7 +715,7 @@ public class Workbook implements Model {
         int sstPos = 0;
         for ( int k = 0; k < records.size(); k++ )
         {
-  
+
             Record record = records.get( k );
             // Let's skip RECALCID records, as they are only use for optimization
             if ( record.getSid() != RecalcIdRecord.sid || ( (RecalcIdRecord) record ).isNeeded() )
@@ -766,7 +757,8 @@ public class Workbook implements Model {
             }
         }
         return retval;
-	}
+    }
+
     /**
      * creates the BOF record
      * @see org.apache.poi.hssf.record.BOFRecord
@@ -2063,24 +2055,24 @@ public class Workbook implements Model {
      */
     public PaletteRecord getCustomPalette()
     {
-        PaletteRecord palette;
+      PaletteRecord palette;
       int palettePos = records.getPalettepos();
       if (palettePos != -1) {
         Record rec = records.get(palettePos);
         if (rec instanceof PaletteRecord) {
-            palette = (PaletteRecord) rec;
+          palette = (PaletteRecord) rec;
         } else throw new RuntimeException("InternalError: Expected PaletteRecord but got a '"+rec+"'");
-        }
-        else
-        {
-            palette = createPalette();
+      }
+      else
+      {
+          palette = createPalette();
           //Add the palette record after the bof which is always the first record
           records.add(1, palette);
           records.setPalettepos(1);
-        }
-        return palette;
+      }
+      return palette;
     }
- 
+
     /**
      * Creates a drawing group record.  If it already exists then it's left
      * alone.
@@ -2131,6 +2123,6 @@ public class Workbook implements Model {
     {
         return drawingManager;
     }
-    
+
 }
 

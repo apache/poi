@@ -1,6 +1,5 @@
-
 /* ====================================================================
-   Copyright 2002-2004   Apache Software Foundation
+   Copyright 2003-2004   Apache Software Foundation
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -14,14 +13,12 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.NameRecord;
 import org.apache.poi.hssf.util.RangeAddress;
-import org.apache.poi.hssf.util.SheetReferences;
 
 /**
  * Title:        High Level Represantion of Named Range <P>
@@ -38,8 +35,8 @@ public class HSSFName {
      *
      * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#createName()
      * @param name the Name Record
-     * @param book lowlevel Workbook object associated with the sheet.
-     */
+     * @param book - lowlevel Workbook object associated with the sheet.
+     * @param book the Workbook */
     
     protected HSSFName(Workbook book, NameRecord name) {
         this.book = book;

@@ -58,7 +58,7 @@ public class TestEscherClientDataRecord extends TestCase
                 "  RecordId: 0xF011" + nl +
                 "  Options: 0x0002" + nl +
                 "  Extra Data:" + nl +
-                "" ;
+                "No Data" ;
         assertEquals( expected, createRecord().toString() );
     }
 

@@ -18,15 +18,10 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.Date;
-
 import junit.framework.TestCase;
+import org.apache.poi.hssf.util.Region;
+
+import java.io.*;
 
 
 
@@ -372,6 +367,37 @@ extends TestCase {
         System.out.println(cell.getStringCellValue());
     }
     
+    /**
+     * Merged regions were being removed from the parent in cloned sheets
+     * @throws Exception
+     */
+    public void test22720() throws Exception {
+       HSSFWorkbook workBook = new HSSFWorkbook();
+       workBook.createSheet("TEST");       
+       HSSFSheet template = workBook.getSheetAt(0);
+       
+       template.addMergedRegion(new Region(0, (short)0, 1, (short)2));
+       template.addMergedRegion(new Region(1, (short)0, 2, (short)2));
+       
+       HSSFSheet clone = workBook.cloneSheet(0);
+       int originalMerged = template.getNumMergedRegions();
+       assertEquals("2 merged regions", 2, originalMerged);
+
+//        remove merged regions from clone
+       for (int i=template.getNumMergedRegions()-1; i>=0; i--) {
+         clone.removeMergedRegion(i);
+       }
+
+      assertEquals("Original Sheet's Merged Regions were removed", originalMerged, template.getNumMergedRegions());
+//        check if template's merged regions are OK
+       if (template.getNumMergedRegions()>0) {
+          // fetch the first merged region...EXCEPTION OCCURS HERE
+          template.getMergedRegionAt(0);
+       }       
+       //make sure we dont exception
+       
+    }
+    
     /*Tests read and write of Unicode strings in formula results
      * bug and testcase submitted by Sompop Kumnoonsate
      * The file contains THAI unicode characters. 
@@ -427,6 +453,7 @@ extends TestCase {
 		assertEquals("Re-Written Formula String Cell value", d1.getStringCellValue(), rd2.getStringCellValue());
 
 	}
+
 }
 
 

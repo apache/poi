@@ -12,6 +12,18 @@
 
     <changes>
 
+        <release version="2.5.1-FINAL" date="29 Feburary 2004">
+            <action dev="POI-DEVELOPERS" type="add" context="All">Outlining support</action>
+            <action dev="POI-DEVELOPERS" type="fix" context="All">27574 - [PATCH] HSSFDateUtil.getExcelDate() is one hour off when DST changes</action>
+            <action dev="POI-DEVELOPERS" type="fix" context="All">26465 - [PATCH] wrong lastrow entry</action>
+            <action dev="POI-DEVELOPERS" type="fix" context="All">28203 - [PATCH] Unable to open read-write excel file including forms</action>
+        </release>
+ 
+        <release version="2.5-FINAL" date="29 Feburary 2004">
+            <action dev="POI-DEVELOPERS" type="add" context="All">Add support for the Escher file format</action>
+            <action dev="POI-DEVELOPERS" type="fix" context="All">27005 java.lang.IndexOutOfBoundsException during Workbook.cloneSheet()</action>
+        </release>
+
         <release version="2.0-FINAL" date="26 Janurary 2004">
             <action dev="POI-DEVELOPERS" type="update" context="All">No changes</action>
         </release>

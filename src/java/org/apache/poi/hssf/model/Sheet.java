@@ -14,20 +14,23 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 
 package org.apache.poi.hssf.model;
 
-import java.util.List;
+import org.apache.poi.hssf.record.*;
+import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
+import org.apache.poi.hssf.record.aggregates.RowRecordsAggregate;
+import org.apache.poi.hssf.record.aggregates.ValueRecordsAggregate;
+import org.apache.poi.hssf.record.aggregates.ColumnInfoRecordsAggregate;
+import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.util.IntList;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
+
 import java.util.ArrayList;
 import java.util.Iterator;
-
-import org.apache.poi.hssf
-    .record.*;       // normally I don't do this, buy we literally mean ALL
-import org.apache.poi.hssf.record.formula.Ptg;
-import org.apache.poi.util.*;
-import org.apache.poi.hssf.record
-    .aggregates.*;   // normally I don't do this, buy we literally mean ALL
+import java.util.List;
 
 /**
  * Low level model implementation of a Sheet (one workbook contains many sheets)
@@ -58,36 +61,38 @@ public class Sheet implements Model
     public static final short   TopMargin = 2;
     public static final short   BottomMargin = 3;
 
-    protected ArrayList                 records        = null;
-    int                                 preoffset      = 0;      // offset of the sheet in a new file
-    int                                 loc            = 0;
-    protected boolean                   containsLabels = false;
-    protected int                       dimsloc        = 0;
-    protected DimensionsRecord          dims;
-    protected DefaultColWidthRecord     defaultcolwidth  = null;
-    protected DefaultRowHeightRecord    defaultrowheight = null;
-    protected GridsetRecord             gridset          = null;
-    protected PrintSetupRecord          printSetup       = null;
-    protected HeaderRecord              header           = null;
-    protected FooterRecord              footer           = null;
-    protected PrintGridlinesRecord      printGridlines   = null;
-    protected WindowTwoRecord           windowTwo        = null;
-    protected MergeCellsRecord          merged           = null;
-    protected Margin                    margins[]        = null;
-    protected ArrayList                 mergedRecords    = new ArrayList();
-    protected int                       numMergedRegions = 0;
-    protected SelectionRecord           selection        = null;
     private static POILogger            log              = POILogFactory.getLogger(Sheet.class);
-    private ArrayList                   columnSizes      = null;  // holds column info
-    protected ValueRecordsAggregate     cells            = null;
-    protected RowRecordsAggregate       rows             = null;
-    private Iterator                    valueRecIterator = null;
-    private Iterator                    rowRecIterator   = null;
-    protected int                       eofLoc           = 0;
-	protected ProtectRecord             protect          = null;
-    protected PageBreakRecord 		    rowBreaks		 = null;
-    protected PageBreakRecord 			colBreaks		 = null;
 
+    protected ArrayList                  records           =     null;
+              int                        preoffset         =     0;            // offset of the sheet in a new file
+              int                        loc               =     0;
+    protected boolean                    containsLabels    =     false;
+    protected int                        dimsloc           =     0;
+    protected DimensionsRecord           dims;
+    protected DefaultColWidthRecord      defaultcolwidth   =     null;
+    protected DefaultRowHeightRecord     defaultrowheight  =     null;
+    protected GridsetRecord              gridset           =     null;
+    protected PrintSetupRecord           printSetup        =     null;
+    protected HeaderRecord               header            =     null;
+    protected FooterRecord               footer            =     null;
+    protected PrintGridlinesRecord       printGridlines    =     null;
+    protected WindowTwoRecord            windowTwo         =     null;
+    protected MergeCellsRecord           merged            =     null;
+    protected Margin[]                   margins           =     null;
+    protected List                       mergedRecords     =     new ArrayList();
+    protected int                        numMergedRegions  =     0;
+    protected SelectionRecord            selection         =     null;
+    protected ColumnInfoRecordsAggregate columns           =     null;
+    protected ValueRecordsAggregate      cells             =     null;
+    protected RowRecordsAggregate        rows              =     null;
+    private   Iterator                   valueRecIterator  =     null;
+    private   Iterator                   rowRecIterator    =     null;
+    protected int                        eofLoc            =     0;
+    protected ProtectRecord              protect           =     null;
+    protected PageBreakRecord            rowBreaks         =     null;
+    protected PageBreakRecord            colBreaks         =     null;
+
+	
     public static final byte PANE_LOWER_RIGHT = (byte)0;
     public static final byte PANE_UPPER_RIGHT = (byte)1;
     public static final byte PANE_LOWER_LEFT = (byte)2;
@@ -120,9 +125,10 @@ public class Sheet implements Model
      */
     public static Sheet createSheet(List recs, int sheetnum, int offset)
     {
-        log.logFormatted(POILogger.DEBUG,
-                         "Sheet createSheet (existing file) with %",
-                         new Integer(recs.size()));
+        if (log.check( POILogger.DEBUG ))
+            log.logFormatted(POILogger.DEBUG,
+                    "Sheet createSheet (existing file) with %",
+                    new Integer(recs.size()));
         Sheet     retval             = new Sheet();
         ArrayList records            = new ArrayList(recs.size() / 5);
         boolean   isfirstcell        = true;
@@ -158,6 +164,13 @@ public class Sheet implements Model
             }
             else if (rec.getSid() == DimensionsRecord.sid)
             {
+                // Make a columns aggregate if one hasn't ready been created.
+                if (retval.columns == null)
+                {
+                    retval.columns = new ColumnInfoRecordsAggregate();
+                    records.add(retval.columns);
+                }
+
                 retval.dims    = ( DimensionsRecord ) rec;
                 retval.dimsloc = records.size();
             }
@@ -169,11 +182,16 @@ public class Sheet implements Model
             }
             else if (rec.getSid() == ColumnInfoRecord.sid)
             {
-                if (retval.columnSizes == null)
+                ColumnInfoRecord col = (ColumnInfoRecord)rec;
+                if (retval.columns != null)
                 {
-                    retval.columnSizes = new ArrayList();
+                    rec = null; //only add the aggregate once
                 }
-                retval.columnSizes.add(rec);
+                else
+                {
+                    rec = retval.columns = new ColumnInfoRecordsAggregate();
+                }
+                retval.columns.insertColumn(col);
             }
             else if (rec.getSid() == DefaultColWidthRecord.sid)
             {
@@ -203,18 +221,16 @@ public class Sheet implements Model
             }
             else if ( rec.getSid() == RowRecord.sid )
             {
+                RowRecord row = (RowRecord)rec;
+                if (!isfirstrow) rec = null; //only add the aggregate once
+
                 if ( isfirstrow )
                 {
                     retval.rows = new RowRecordsAggregate();
-                    rec = retval.rows;
-                    retval.rows.construct( k, recs );
+                    rec = retval.rows;                    
                     isfirstrow = false;
                 }
-                else
-                {
-                    rec = null;
-                }
-
+                retval.rows.insertRow(row);
             }
             else if ( rec.getSid() == PrintGridlinesRecord.sid )
             {
@@ -232,62 +248,59 @@ public class Sheet implements Model
             {
                 retval.printSetup = (PrintSetupRecord) rec;
             }
-            else if ( rec.getSid() == ProtectRecord.sid )
+            else if ( rec.getSid() == LeftMarginRecord.sid)
             {
-                 retval.protect = (ProtectRecord) rec;
+                retval.getMargins()[LeftMargin] = (LeftMarginRecord) rec;
             }
-	    else if ( rec.getSid() == LeftMarginRecord.sid)
-	    {
-		retval.getMargins()[LeftMargin] = (LeftMarginRecord) rec;
-	    }
-	    else if ( rec.getSid() == RightMarginRecord.sid)
-	    {
-		retval.getMargins()[RightMargin] = (RightMarginRecord) rec;
-	    }
-	    else if ( rec.getSid() == TopMarginRecord.sid)
+            else if ( rec.getSid() == RightMarginRecord.sid)
             {
-		retval.getMargins()[TopMargin] = (TopMarginRecord) rec;
-	    }
-	    else if ( rec.getSid() == BottomMarginRecord.sid)
-            {
-		retval.getMargins()[BottomMargin] = (BottomMarginRecord) rec;
-	    }
-	    else if ( rec.getSid() == WindowTwoRecord.sid )
-	    {
-		retval.windowTwo = (WindowTwoRecord) rec;
-	    }
-            else if ( rec.getSid() == DBCellRecord.sid )
-            {
-                rec = null;
+                retval.getMargins()[RightMargin] = (RightMarginRecord) rec;
             }
-            else if ( rec.getSid() == IndexRecord.sid )
+            else if ( rec.getSid() == TopMarginRecord.sid)
             {
-                rec = null;
+                retval.getMargins()[TopMargin] = (TopMarginRecord) rec;
             }
-			else if (rec.getSid() == PageBreakRecord.HORIZONTAL_SID)
+            else if ( rec.getSid() == BottomMarginRecord.sid)
+            {
+                retval.getMargins()[BottomMargin] = (BottomMarginRecord) rec;
+            }
+            else if ( rec.getSid() == SelectionRecord.sid )
+            {
+                retval.selection = (SelectionRecord) rec;
+            }
+            else if ( rec.getSid() == WindowTwoRecord.sid )
+            {
+                retval.windowTwo = (WindowTwoRecord) rec;
+            }
+			else if ( rec.getSid() == ProtectRecord.sid )
 			{
-				retval.rowBreaks = (PageBreakRecord)rec;
-            }
-			else if (rec.getSid() == PageBreakRecord.VERTICAL_SID)
-			{
-				retval.colBreaks = (PageBreakRecord)rec;
+				retval.protect = (ProtectRecord) rec;
+			} 
+			else if (rec.getSid() == PageBreakRecord.HORIZONTAL_SID) 
+			{	
+				retval.rowBreaks = (PageBreakRecord)rec;				
 			}
-
-	    
+			else if (rec.getSid() == PageBreakRecord.VERTICAL_SID) 
+			{	
+				retval.colBreaks = (PageBreakRecord)rec;				
+			}
+            
             if (rec != null)
             {
                 records.add(rec);
             }
         }
         retval.records = records;
-        if (retval.rows == null)
-        {
-            retval.rows = new RowRecordsAggregate();
-        }
-        if (retval.cells == null)
-        {
-            retval.cells = new ValueRecordsAggregate();
-        }
+//        if (retval.rows == null)
+//        {
+//            retval.rows = new RowRecordsAggregate();
+//        }
+        retval.checkCells();
+        retval.checkRows();
+//        if (retval.cells == null)
+//        {
+//            retval.cells = new ValueRecordsAggregate();
+//        }
         if (log.check( POILogger.DEBUG ))
             log.log(POILogger.DEBUG, "sheet createSheet (existing file) exited");
         return retval;
@@ -350,7 +363,7 @@ public class Sheet implements Model
     {
         if (log.check( POILogger.DEBUG ))
             log.log(POILogger.DEBUG,
-                "Sheet createSheet (exisiting file) assumed offset 0");
+                    "Sheet createSheet (exisiting file) assumed offset 0");
         return createSheet(records, sheetnum, 0);
     }
 
@@ -388,12 +401,14 @@ public class Sheet implements Model
                 (DefaultRowHeightRecord) retval.createDefaultRowHeight();
         records.add( retval.defaultrowheight );
         records.add( retval.createWSBool() );
+
         retval.rowBreaks = new PageBreakRecord(PageBreakRecord.HORIZONTAL_SID);
         records.add(retval.rowBreaks);
         retval.colBreaks = new PageBreakRecord(PageBreakRecord.VERTICAL_SID);
         records.add(retval.colBreaks);
+        
         retval.header = (HeaderRecord) retval.createHeader();
-        records.add( retval.header );
+        records.add( retval.header );        
         retval.footer = (FooterRecord) retval.createFooter();
         records.add( retval.footer );
         records.add( retval.createHCenter() );
@@ -403,6 +418,9 @@ public class Sheet implements Model
         retval.defaultcolwidth =
                 (DefaultColWidthRecord) retval.createDefaultColWidth();
         records.add( retval.defaultcolwidth);
+        ColumnInfoRecordsAggregate columns = new ColumnInfoRecordsAggregate();
+        records.add( columns );
+        retval.columns = columns;
         retval.dims    = ( DimensionsRecord ) retval.createDimensions();
         records.add(retval.dims);
         retval.dimsloc = records.size()-1;
@@ -414,6 +432,8 @@ public class Sheet implements Model
 		retval.protect = (ProtectRecord) retval.createProtect();
 		records.add(retval.protect);
         records.add(retval.createEOF());
+
+
         retval.records = records;
         if (log.check( POILogger.DEBUG ))
             log.log(POILogger.DEBUG, "Sheet createsheet from scratch exit");
@@ -445,61 +465,61 @@ public class Sheet implements Model
         if (merged == null || merged.getNumAreas() == 1027)
         {
             merged = ( MergeCellsRecord ) createMergedCells();
-            mergedRecords.add(merged);
+            mergedRecords.add(merged);            
             records.add(records.size() - 1, merged);
         }
         merged.addArea(rowFrom, colFrom, rowTo, colTo);
         return numMergedRegions++; 
     }
 
-	public void removeMergedRegion(int index)
-	{
-		//safety checks
-		if (index >= numMergedRegions || mergedRecords.size() == 0)
-		   return;
+    public void removeMergedRegion(int index)
+    {
+        //safety checks
+        if (index >= numMergedRegions || mergedRecords.size() == 0)
+           return;
             
-		int pos = 0;
-		int startNumRegions = 0;
+        int pos = 0;
+        int startNumRegions = 0;
         
-		//optimisation for current record
-		if (numMergedRegions - index < merged.getNumAreas())
-		{
-			pos = mergedRecords.size() - 1;
-			startNumRegions = numMergedRegions - merged.getNumAreas(); 
-		}
-		else
-		{
-			for (int n = 0; n < mergedRecords.size(); n++)
-			{
-				MergeCellsRecord record = (MergeCellsRecord) mergedRecords.get(n);
-				if (startNumRegions + record.getNumAreas() > index)
-				{
-					pos = n;
-					break;
-				}
-				startNumRegions += record.getNumAreas(); 
-			}
-		}
+        //optimisation for current record
+        if (numMergedRegions - index < merged.getNumAreas())
+        {
+            pos = mergedRecords.size() - 1;
+            startNumRegions = numMergedRegions - merged.getNumAreas(); 
+        }
+        else
+        {
+            for (int n = 0; n < mergedRecords.size(); n++)
+            {
+                MergeCellsRecord record = (MergeCellsRecord) mergedRecords.get(n);
+                if (startNumRegions + record.getNumAreas() > index)
+                {
+                    pos = n;
+                    break;
+                }
+                startNumRegions += record.getNumAreas(); 
+            }
+        }
 
-		MergeCellsRecord rec = (MergeCellsRecord) mergedRecords.get(pos);
-		rec.removeAreaAt(index - startNumRegions);
-		numMergedRegions--;
-		if (rec.getNumAreas() == 0)
-		{
+        MergeCellsRecord rec = (MergeCellsRecord) mergedRecords.get(pos);
+        rec.removeAreaAt(index - startNumRegions);
+        numMergedRegions--;
+        if (rec.getNumAreas() == 0)
+        {
 			mergedRecords.remove(pos);
 			//get rid of the record from the sheet
 			records.remove(merged);            
-			if (merged == rec) {
-				//pull up the LAST record for operations when we finally
-				//support continue records for mergedRegions
-				if (mergedRecords.size() > 0) {
-					merged = (MergeCellsRecord) mergedRecords.get(mergedRecords.size() - 1);
-				} else {
-					merged = null;
-				}
-			}
-		}
-	}
+            if (merged == rec) {
+            	//pull up the LAST record for operations when we finally
+            	//support continue records for mergedRegions
+            	if (mergedRecords.size() > 0) {
+            		merged = (MergeCellsRecord) mergedRecords.get(mergedRecords.size() - 1);
+            	} else {
+            		merged = null;
+            	}
+            }
+        }
+    }
 
     public MergeCellsRecord.MergedRegion getMergedRegionAt(int index)
     {
@@ -536,11 +556,6 @@ public class Sheet implements Model
     {
         return numMergedRegions;
     }
-
-    public CellValueRecordInterface getValueRecord (int row, short col) {
-       return cells.getCell(row, col);
-    }
-
 
     /**
      * This is basically a kludge to deal with the now obsolete Label records.  If
@@ -641,9 +656,7 @@ public class Sheet implements Model
         dims.setLastCol(lastcol);
         dims.setLastRow(lastrow);
         if (log.check( POILogger.DEBUG ))
-        {
             log.log(POILogger.DEBUG, "Sheet.setDimensions exiting");
-        }
     }
 
     /**
@@ -710,6 +723,51 @@ public class Sheet implements Model
      * Serializes all records in the sheet into one big byte array.  Use this to write
      * the sheet out.
      *
+     * @return byte[] array containing the binary representation of the records in this sheet
+     *
+     */
+
+    public byte [] serialize()
+    {
+        if (log.check( POILogger.DEBUG ))
+            log.log(POILogger.DEBUG, "Sheet.serialize");
+
+        // addDBCellRecords();
+        byte[] retval    = null;
+
+        // ArrayList bytes     = new ArrayList(4096);
+        int    arraysize = getSize();
+        int    pos       = 0;
+
+        // for (int k = 0; k < records.size(); k++)
+        // {
+        // bytes.add((( Record ) records.get(k)).serialize());
+        //
+        // }
+        // for (int k = 0; k < bytes.size(); k++)
+        // {
+        // arraysize += (( byte [] ) bytes.get(k)).length;
+        // POILogger.DEBUG((new StringBuffer("arraysize=")).append(arraysize)
+        // .toString());
+        // }
+        retval = new byte[ arraysize ];
+        for (int k = 0; k < records.size(); k++)
+        {
+
+            // byte[] rec = (( byte [] ) bytes.get(k));
+            // System.arraycopy(rec, 0, retval, pos, rec.length);
+            pos += (( Record ) records.get(k)).serialize(pos,
+                    retval);   // rec.length;
+        }
+        if (log.check( POILogger.DEBUG ))
+            log.log(POILogger.DEBUG, "Sheet.serialize returning " + retval);
+        return retval;
+    }
+
+    /**
+     * Serializes all records in the sheet into one big byte array.  Use this to write
+     * the sheet out.
+     *
      * @param offset to begin write at
      * @param data   array containing the binary representation of the records in this sheet
      *
@@ -718,72 +776,48 @@ public class Sheet implements Model
     public int serialize(int offset, byte [] data)
     {
         if (log.check( POILogger.DEBUG ))
-            log.log(log.DEBUG, "Sheet.serialize using offsets");
+            log.log(POILogger.DEBUG, "Sheet.serialize using offsets");
 
-        int pos = offset;
-        boolean haveSerializedIndex = false;
+        // addDBCellRecords();
+        // ArrayList bytes     = new ArrayList(4096);
+        // int arraysize = getSize();   // 0;
+        int pos       = 0;
+
+        // for (int k = 0; k < records.size(); k++)
+        // {
+        // bytes.add((( Record ) records.get(k)).serialize());
+        //
+        // }
+        // for (int k = 0; k < bytes.size(); k++)
+        // {
+        // arraysize += (( byte [] ) bytes.get(k)).length;
+        // POILogger.DEBUG((new StringBuffer("arraysize=")).append(arraysize)
+        // .toString());
+        // }
         for (int k = 0; k < records.size(); k++)
         {
+//             byte[] rec = (( byte [] ) bytes.get(k));
+            // System.arraycopy(rec, 0, data, offset + pos, rec.length);
             Record record = (( Record ) records.get(k));
-            int startPos = pos;
-            //Once the rows have been found in the list of records, start
-            //writing out the blocked row information. This includes the DBCell references
-            if (record instanceof RowRecordsAggregate) {
-              pos += ((RowRecordsAggregate)record).serialize(pos, data, cells);   // rec.length;
-            } else if (record instanceof ValueRecordsAggregate) {
-              //Do nothing here. The records were serialized during the RowRecordAggregate block serialization
-            } else {
-              pos += record.serialize(pos, data );   // rec.length;
-            }
 
-            //If the BOF record was just serialized then add the IndexRecord
-            if (record.getSid() == BOFRecord.sid) {
-              //Can there be more than one BOF for a sheet? If not then we can
-              //remove this guard. So be safe it is left here.
-              if (!haveSerializedIndex) {
-                haveSerializedIndex = true;
-                pos += serializeIndexRecord(k, pos, data);
-              }
-            }
+            //// uncomment to test record sizes ////
+//            System.out.println( record.getClass().getName() );
+//            byte[] data2 = new byte[record.getRecordSize()];
+//            record.serialize(0, data2 );   // rec.length;
+//            if (LittleEndian.getUShort(data2, 2) != record.getRecordSize() - 4
+//                    && record instanceof RowRecordsAggregate == false
+//                    && record instanceof ValueRecordsAggregate == false
+//                    && record instanceof EscherAggregate == false)
+//            {
+//                throw new RuntimeException("Blah!!!  Size off by " + ( LittleEndian.getUShort(data2, 2) - record.getRecordSize() - 4) + " records.");
+//            }
+
+            pos += record.serialize(pos + offset, data );   // rec.length;
+
         }
         if (log.check( POILogger.DEBUG ))
-            log.log(log.DEBUG, "Sheet.serialize returning ");
-        return pos-offset;
-    }
-
-    private int serializeIndexRecord(final int BOFRecordIndex, final int offset, byte[] data) {
-      IndexRecord index = new IndexRecord();
-      index.setFirstRow(rows.getFirstRowNum());
-      index.setLastRowAdd1(rows.getLastRowNum()+1);
-      //Calculate the size of the records from the end of the BOF
-      //and up to the RowRecordsAggregate...
-      int sheetRecSize = 0;
-      for (int j = BOFRecordIndex+1; j < records.size(); j++)
-      {
-        Record tmpRec = (( Record ) records.get(j));
-        if (tmpRec instanceof RowRecordsAggregate)
-          break;
-        sheetRecSize+= tmpRec.getRecordSize();
-      }
-      //Add the references to the DBCells in the IndexRecord (one for each block)
-      int blockCount = rows.getRowBlockCount();
-      //Calculate the size of this IndexRecord
-      int indexRecSize = index.getRecordSizeForBlockCount(blockCount);
-
-      int rowBlockOffset = 0;
-      int cellBlockOffset = 0;
-      int dbCellOffset = 0;
-      for (int block=0;block<blockCount;block++) {
-        rowBlockOffset += rows.getRowBlockSize(block);
-        cellBlockOffset += cells.getRowCellBlockSize(rows.getStartRowNumberForBlock(block),
-                                                     rows.getEndRowNumberForBlock(block));
-        //Note: The offsets are relative to the Workbook BOF. Assume that this is
-        //0 for now.....
-        index.addDbcell(offset + indexRecSize + sheetRecSize + dbCellOffset + rowBlockOffset + cellBlockOffset);
-        //Add space required to write the dbcell record(s) (whose references were just added).
-        dbCellOffset += (8 + (rows.getRowCountForBlock(block) * 2));
-      }
-      return index.serialize(offset, data);
+            log.log(POILogger.DEBUG, "Sheet.serialize returning ");
+        return pos;
     }
 
     /**
@@ -796,17 +830,7 @@ public class Sheet implements Model
 
     public RowRecord createRow(int row)
     {
-        if (log.check( POILogger.DEBUG ))
-            log.log(log.DEBUG, "create row number " + row);
-        RowRecord rowrec = new RowRecord();
-
-        //rowrec.setRowNumber(( short ) row);
-        rowrec.setRowNumber(row);
-        rowrec.setHeight(( short ) 0xff);
-        rowrec.setOptimize(( short ) 0x0);
-        rowrec.setOptionFlags(( short ) 0x0);
-        rowrec.setXFIndex(( short ) 0x0);
-        return rowrec;
+        return RowRecordsAggregate.createRow( row );
     }
 
     /**
@@ -822,7 +846,7 @@ public class Sheet implements Model
     //public LabelSSTRecord createLabelSST(short row, short col, int index)
     public LabelSSTRecord createLabelSST(int row, short col, int index)
     {
-        log.logFormatted(log.DEBUG, "create labelsst row,col,index %,%,%",
+        log.logFormatted(POILogger.DEBUG, "create labelsst row,col,index %,%,%",
                          new int[]
         {
             row, col, index
@@ -849,7 +873,7 @@ public class Sheet implements Model
     //public NumberRecord createNumber(short row, short col, double value)
     public NumberRecord createNumber(int row, short col, double value)
     {
-        log.logFormatted(log.DEBUG, "create number row,col,value %,%,%",
+        log.logFormatted(POILogger.DEBUG, "create number row,col,value %,%,%",
                          new double[]
         {
             row, col, value
@@ -874,8 +898,8 @@ public class Sheet implements Model
     //public BlankRecord createBlank(short row, short col)
     public BlankRecord createBlank(int row, short col)
     {
-        //log.logFormatted(log.DEBUG, "create blank row,col %,%", new short[]
-        log.logFormatted(log.DEBUG, "create blank row,col %,%", new int[]
+        //log.logFormatted(POILogger.DEBUG, "create blank row,col %,%", new short[]
+        log.logFormatted(POILogger.DEBUG, "create blank row,col %,%", new int[]
         {
             row, col
         });
@@ -901,7 +925,7 @@ public class Sheet implements Model
     //public FormulaRecord createFormula(short row, short col, String formula)
     public FormulaRecord createFormula(int row, short col, String formula)
     {
-        log.logFormatted(log.DEBUG, "create formula row,col,formula %,%,%",
+        log.logFormatted(POILogger.DEBUG, "create formula row,col,formula %,%,%",
                          //new short[]
                          new int[]
         {
@@ -945,7 +969,7 @@ public class Sheet implements Model
     public void addValueRecord(int row, CellValueRecordInterface col)
     {
         checkCells();
-        log.logFormatted(log.DEBUG, "add value record  row,loc %,%", new int[]
+        log.logFormatted(POILogger.DEBUG, "add value record  row,loc %,%", new int[]
         {
             row, loc
         });
@@ -999,11 +1023,8 @@ public class Sheet implements Model
     public void removeValueRecord(int row, CellValueRecordInterface col)
     {
         checkCells();
-        log.logFormatted(log.DEBUG, "remove value record row,dimsloc %,%",
-                         new int[]
-        {
-            row, dimsloc
-        });
+        log.logFormatted(POILogger.DEBUG, "remove value record row,dimsloc %,%",
+                         new int[]{row, dimsloc} );
         loc = dimsloc;
         cells.removeCell(col);
 
@@ -1044,7 +1065,7 @@ public class Sheet implements Model
         checkCells();
         setLoc(dimsloc);
         if (log.check( POILogger.DEBUG ))
-            log.log(log.DEBUG, "replaceValueRecord ");
+            log.log(POILogger.DEBUG, "replaceValueRecord ");
         cells.insertCell(newval);
 
         /*
@@ -1081,10 +1102,10 @@ public class Sheet implements Model
     {
         checkRows();
         if (log.check( POILogger.DEBUG ))
-            log.log(log.DEBUG, "addRow ");
+            log.log(POILogger.DEBUG, "addRow ");
         DimensionsRecord d = ( DimensionsRecord ) records.get(getDimsLoc());
 
-        if (row.getRowNumber() > d.getLastRow())
+        if (row.getRowNumber() >= d.getLastRow())
         {
             d.setLastRow(row.getRowNumber() + 1);
         }
@@ -1136,7 +1157,7 @@ public class Sheet implements Model
          * }
          */
         if (log.check( POILogger.DEBUG ))
-            log.log(log.DEBUG, "exit addRow");
+            log.log(POILogger.DEBUG, "exit addRow");
     }
 
     /**
@@ -1154,7 +1175,6 @@ public class Sheet implements Model
 
         setLoc(getDimsLoc());
         rows.removeRow(row);
-        cells.removeRow(row.getRowNumber());
 
         /*
          * for (int k = loc; k < records.size(); k++)
@@ -1198,7 +1218,7 @@ public class Sheet implements Model
     public CellValueRecordInterface getNextValueRecord()
     {
         if (log.check( POILogger.DEBUG ))
-            log.log(log.DEBUG, "getNextValue loc= " + loc);
+            log.log(POILogger.DEBUG, "getNextValue loc= " + loc);
         if (valueRecIterator == null)
         {
             valueRecIterator = cells.getIterator();
@@ -1245,7 +1265,7 @@ public class Sheet implements Model
 
 /*    public Record getNextRowOrValue()
     {
-        log.debug((new StringBuffer("getNextRow loc= ")).append(loc)
+        POILogger.DEBUG((new StringBuffer("getNextRow loc= ")).append(loc)
             .toString());
         if (this.getLoc() < records.size())
         {
@@ -1286,7 +1306,7 @@ public class Sheet implements Model
     public RowRecord getNextRow()
     {
         if (log.check( POILogger.DEBUG ))
-            log.log(log.DEBUG, "getNextRow loc= " + loc);
+            log.log(POILogger.DEBUG, "getNextRow loc= " + loc);
         if (rowRecIterator == null)
         {
             rowRecIterator = rows.getIterator();
@@ -1333,10 +1353,7 @@ public class Sheet implements Model
     public RowRecord getRow(int rownum)
     {
         if (log.check( POILogger.DEBUG ))
-            log.log(log.DEBUG, "getNextRow loc= " + loc);
-        if (rows == null) {
-            return null;
-        }
+            log.log(POILogger.DEBUG, "getNextRow loc= " + loc);
         return rows.getRow(rownum);
 
         /*
@@ -1361,21 +1378,116 @@ public class Sheet implements Model
         // return null;
     }
 
+    /**
+     * Not currently used method to calculate and add dbcell records
+     *
+     */
 
-    public Iterator rowRecordIterator() {
-        return rows.getIterator();
+    public void addDBCellRecords()
+    {
+        int         offset        = 0;
+        int         recnum        = 0;
+        int         rownum        = 0;
+        //int         lastrow       = 0;
+        //long        lastrowoffset = 0;
+        IndexRecord index         = null;
+
+        // ArrayList rowOffsets = new ArrayList();
+        IntList     rowOffsets    = new IntList();
+
+        for (recnum = 0; recnum < records.size(); recnum++)
+        {
+            Record rec = ( Record ) records.get(recnum);
+
+            if (rec.getSid() == IndexRecord.sid)
+            {
+                index = ( IndexRecord ) rec;
+            }
+            if (rec.getSid() != RowRecord.sid)
+            {
+                offset += rec.serialize().length;
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        // First Row Record
+        for (; recnum < records.size(); recnum++)
+        {
+            Record rec = ( Record ) records.get(recnum);
+
+            if (rec.getSid() == RowRecord.sid)
+            {
+                rownum++;
+                rowOffsets.add(offset);
+                if ((rownum % 32) == 0)
+                {
+
+                    // if this is the last rec in a  dbcell block
+                    // find the next row or last value record
+                    for (int rn = recnum; rn < records.size(); rn++)
+                    {
+                        rec = ( Record ) records.get(rn);
+                        if ((!rec.isInValueSection())
+                                || (rec.getSid() == RowRecord.sid))
+                        {
+
+                            // here is the next row or last value record
+                            records.add(rn,
+                                        createDBCell(offset, rowOffsets,
+                                                     index));
+                            recnum = rn;
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                }
+            }
+            if (!rec.isInValueSection())
+            {
+                records.add(recnum, createDBCell(offset, rowOffsets, index));
+                break;
+            }
+            offset += rec.serialize().length;
+        }
     }
 
-    public Iterator rowCellIterator(int row) {
-        return this.cells.getRowCellIterator(row);
+    /** not currently used */
+
+    private DBCellRecord createDBCell(int offset, IntList rowoffsets,
+                                      IndexRecord index)
+    {
+        DBCellRecord rec = new DBCellRecord();
+
+        rec.setRowOffset(offset - rowoffsets.get(0));
+
+        // test hack
+        rec.addCellOffset(( short ) 0x0);
+
+        // end test hack
+        addDbCellToIndex(offset, index);
+        return rec;
     }
 
-    public int getFirstRow() {
-        return rows.getFirstRowNum();
-    }
+    /** not currently used */
 
-    public int getLastRow() {
-        return rows.getLastRowNum();
+    private void addDbCellToIndex(int offset, IndexRecord index)
+    {
+        int numdbcells = index.getNumDbcells() + 1;
+
+        index.addDbcell(offset + preoffset);
+
+        // stupid but whenever we add an offset that causes everything to be shifted down 4
+        for (int k = 0; k < numdbcells; k++)
+        {
+            int dbval = index.getDbcellAt(k);
+
+            index.setDbcell(k, dbval + 4);
+        }
     }
 
     /**
@@ -1457,7 +1569,7 @@ public class Sheet implements Model
     {
         RefModeRecord retval = new RefModeRecord();
 
-        retval.setMode(retval.USE_A1_MODE);
+        retval.setMode(RefModeRecord.USE_A1_MODE);
         return retval;
     }
 
@@ -1713,12 +1825,7 @@ public class Sheet implements Model
 
     protected Record createColInfo()
     {
-        ColumnInfoRecord retval = new ColumnInfoRecord();
-
-        retval.setColumnWidth(( short ) 0x8);
-        retval.setOptions(( short ) 6);
-        retval.setXFIndex(( short ) 0x0f);
-        return retval;
+        return ColumnInfoRecordsAggregate.createColInfo();
     }
 
     /**
@@ -1793,14 +1900,13 @@ public class Sheet implements Model
     {
         short            retval = 0;
         ColumnInfoRecord ci     = null;
-        int              k      = 0;
 
-        if (columnSizes != null)
+        if (columns != null)
         {
-            for (k = 0; k < columnSizes.size(); k++)
+            for ( Iterator iterator = columns.getIterator(); iterator.hasNext(); )
             {
-                ci = ( ColumnInfoRecord ) columnSizes.get(k);
-                if ((column >= ci.getFirstColumn())
+                ci = ( ColumnInfoRecord ) iterator.next();
+                if ((ci.getFirstColumn() <= column)
                         && (column <= ci.getLastColumn()))
                 {
                     break;
@@ -1824,104 +1930,46 @@ public class Sheet implements Model
      * @param column - the column number
      * @param width (in units of 1/20th of a character width)
      */
-
     public void setColumnWidth(short column, short width)
     {
-        ColumnInfoRecord ci = null;
-        int              k  = 0;
+        setColumn( column, new Short(width), null, null, null);
+    }
 
-        if (columnSizes == null)
+    public void setColumn(short column, Short width, Integer level, Boolean hidden, Boolean collapsed)
+    {
+        if (columns == null)
+            columns = new ColumnInfoRecordsAggregate();
+
+        columns.setColumn( column, width, level, hidden, collapsed );
+    }
+
+    /**
+     * Creates an outline group for the specified columns.
+     * @param fromColumn    group from this column (inclusive)
+     * @param toColumn      group to this column (inclusive)
+     * @param indent        if true the group will be indented by one level,
+     *                      if false indenting will be removed by one level.
+     */
+    public void groupColumnRange(short fromColumn, short toColumn, boolean indent)
+    {
+
+        // Set the level for each column
+        columns.groupColumnRange( fromColumn, toColumn, indent);
+
+        // Determine the maximum overall level
+        int maxLevel = 0;
+        for ( Iterator iterator = columns.getIterator(); iterator.hasNext(); )
         {
-            columnSizes = new ArrayList();
+            ColumnInfoRecord columnInfoRecord = (ColumnInfoRecord) iterator.next();
+            maxLevel = Math.max(columnInfoRecord.getOutlineLevel(), maxLevel);
         }
-        //int cioffset = getDimsLoc() - columnSizes.size();
 
-        for (k = 0; k < columnSizes.size(); k++)
-        {
-            ci = ( ColumnInfoRecord ) columnSizes.get(k);
-            if ((ci.getFirstColumn() >= column)
-                    && (column <= ci.getLastColumn()))
-            {
-                break;
-            }
-            ci = null;
-        }
-        if (ci != null)
-        {
-            if (ci.getColumnWidth() == width)
-            {
-
-                // do nothing...the cell's width is equal to what we're setting it to.
-            }
-            else if ((ci.getFirstColumn() == column)
-                     && (ci.getLastColumn() == column))
-            {                               // if its only for this cell then
-                ci.setColumnWidth(width);   // who cares, just change the width
-            }
-            else if ((ci.getFirstColumn() == column)
-                     || (ci.getLastColumn() == column))
-            {
-
-                // okay so the width is different but the first or last column == the column we'return setting
-                // we'll just divide the info and create a new one
-                if (ci.getFirstColumn() == column)
-                {
-                    ci.setFirstColumn(( short ) (column + 1));
-                }
-                else
-                {
-                    ci.setLastColumn(( short ) (column - 1));
-                }
-                ColumnInfoRecord nci = ( ColumnInfoRecord ) createColInfo();
-
-                nci.setFirstColumn(column);
-                nci.setLastColumn(column);
-                nci.setOptions(ci.getOptions());
-                nci.setXFIndex(ci.getXFIndex());
-                nci.setColumnWidth(width);
-                columnSizes.add(k, nci);
-                records.add((1 + getDimsLoc() - columnSizes.size()) + k, nci);
-                dimsloc++;
-            }
-            else{
-                //split to 3 records
-                short lastcolumn = ci.getLastColumn();
-                ci.setLastColumn(( short ) (column - 1));
-
-                ColumnInfoRecord nci = ( ColumnInfoRecord ) createColInfo();
-                nci.setFirstColumn(column);
-                nci.setLastColumn(column);
-                nci.setOptions(ci.getOptions());
-                nci.setXFIndex(ci.getXFIndex());
-                nci.setColumnWidth(width);
-                columnSizes.add(k, nci);
-                records.add((1 + getDimsLoc() - columnSizes.size()) + k, nci);
-                dimsloc++;
-
-                nci = ( ColumnInfoRecord ) createColInfo();
-                nci.setFirstColumn((short)(column+1));
-                nci.setLastColumn(lastcolumn);
-                nci.setOptions(ci.getOptions());
-                nci.setXFIndex(ci.getXFIndex());
-                nci.setColumnWidth(ci.getColumnWidth());
-                columnSizes.add(k, nci);
-                records.add((1 + getDimsLoc() - columnSizes.size()) + k, nci);
-                dimsloc++;
-            }
-        }
+        GutsRecord guts = (GutsRecord) findFirstRecordBySid( GutsRecord.sid );
+        guts.setColLevelMax( (short) ( maxLevel+1 ) );
+        if (maxLevel == 0)
+            guts.setTopColGutter( (short)0 );
         else
-        {
-
-            // okay so there ISN'T a column info record that cover's this column so lets create one!
-            ColumnInfoRecord nci = ( ColumnInfoRecord ) createColInfo();
-
-            nci.setFirstColumn(column);
-            nci.setLastColumn(column);
-            nci.setColumnWidth(width);
-            columnSizes.add(k, nci);
-            records.add((1 + getDimsLoc() - columnSizes.size()) + k, nci);
-            dimsloc++;
-        }
+            guts.setTopColGutter( (short) ( 29 + (12 * (maxLevel-1)) ) );
     }
 
     /**
@@ -2051,7 +2099,6 @@ public class Sheet implements Model
     protected Record createMergedCells()
     {
         MergeCellsRecord retval = new MergeCellsRecord();
-
         retval.setNumAreas(( short ) 0);
         return retval;
     }
@@ -2068,32 +2115,6 @@ public class Sheet implements Model
         return new EOFRecord();
     }
 
-    public void setLastColForRow(int row, short col) {
-        this.getRow(row).setLastCol(col);
-    }
-
-    public void setFirstColForRow(int row, short col) {
-        this.getRow(row).setFirstCol(col);
-    }
-
-    public short getLastColForRow(int row) {
-        return this.getRow(row).getLastCol();
-    }
-
-
-    public short getFirstColForRow(int row) {
-        return this.getRow(row).getFirstCol();
-    }
-
-    public void setCellValue(int row, short col, double val) {
-        this.cells.setValue(row, col, val);
-    }  
-
-    public void setCellStyle(int row, short col, short xf) {
-        this.cells.setStyle(row, col, xf);
-    }
-
-
     /**
      * get the location of the DimensionsRecord (which is the last record before the value section)
      * @return location in the array of records of the DimensionsRecord
@@ -2102,7 +2123,7 @@ public class Sheet implements Model
     public int getDimsLoc()
     {
         if (log.check( POILogger.DEBUG ))
-            log.log(log.DEBUG, "getDimsLoc dimsloc= " + dimsloc);
+            log.log(POILogger.DEBUG, "getDimsLoc dimsloc= " + dimsloc);
         return dimsloc;
     }
 
@@ -2127,22 +2148,6 @@ public class Sheet implements Model
         {
             retval += (( Record ) records.get(k)).getRecordSize();
         }
-        //Add space for the IndexRecord
-        final int blocks = rows.getRowBlockCount();
-        retval += IndexRecord.getRecordSizeForBlockCount(blocks);
-
-        //Add space for the DBCell records
-        //Once DBCell per block.
-        //8 bytes per DBCell (non variable section)
-        //2 bytes per row reference
-        int startRetVal = retval;
-        retval += (8 * blocks);
-        for (Iterator itr = rows.getIterator(); itr.hasNext();) {
-          RowRecord row = (RowRecord)itr.next();
-          if (cells.rowHasCells(row.getRowNumber()))
-            retval += 2;
-        }
-
         return retval;
     }
 
@@ -2177,11 +2182,6 @@ public class Sheet implements Model
         }
         return null;
     }
-
-    public int getPhysicalNumberOfRows() {
-        return rows.getPhysicalNumberOfRows();
-    }
-
 
     /**
      * Sets the SCL record or creates it in the correct place if it does not
@@ -2407,25 +2407,8 @@ public class Sheet implements Model
         windowTwo.setFreezePanesNoSplit(true);
 
         SelectionRecord sel = (SelectionRecord) findFirstRecordBySid(SelectionRecord.sid);
-//        SelectionRecord sel2 = (SelectionRecord) sel.clone();
-//        SelectionRecord sel3 = (SelectionRecord) sel.clone();
-//        SelectionRecord sel4 = (SelectionRecord) sel.clone();
-//        sel.setPane(PANE_LOWER_RIGHT);         // 0
-//        sel3.setPane(PANE_UPPER_RIGHT);        // 1
-        sel.setPane((byte)pane.getActivePane());         // 2
-//        sel2.setPane(PANE_UPPER_LEFT);         // 3
-//        sel4.setActiveCellCol((short)Math.max(sel3.getActiveCellCol(), colSplit));
-//        sel3.setActiveCellRow((short)Math.max(sel4.getActiveCellRow(), rowSplit));
+        sel.setPane((byte)pane.getActivePane());
 
-        int selLoc = findFirstRecordLocBySid(SelectionRecord.sid);
-//        sel.setActiveCellCol((short)15);
-//        sel.setActiveCellRow((short)15);
-//        sel2.setActiveCellCol((short)0);
-//        sel2.setActiveCellRow((short)0);
-
-//        records.add(selLoc+1,sel2);
-//        records.add(selLoc+2,sel3);
-//        records.add(selLoc+3,sel4);
     }
 
     /**
@@ -2456,25 +2439,8 @@ public class Sheet implements Model
         windowTwo.setFreezePanesNoSplit(false);
 
         SelectionRecord sel = (SelectionRecord) findFirstRecordBySid(SelectionRecord.sid);
-//        SelectionRecord sel2 = (SelectionRecord) sel.clone();
-//        SelectionRecord sel3 = (SelectionRecord) sel.clone();
-//        SelectionRecord sel4 = (SelectionRecord) sel.clone();
-        sel.setPane(PANE_LOWER_RIGHT);         // 0
-//        sel3.setPane(PANE_UPPER_RIGHT);        // 1
-//        sel4.setPane(PANE_LOWER_LEFT);         // 2
-//        sel2.setPane(PANE_UPPER_LEFT);         // 3
-//        sel4.setActiveCellCol((short)Math.max(sel3.getActiveCellCol(), colSplit));
-//        sel3.setActiveCellRow((short)Math.max(sel4.getActiveCellRow(), rowSplit));
+        sel.setPane(PANE_LOWER_RIGHT);
 
-        int selLoc = findFirstRecordLocBySid(SelectionRecord.sid);
-//        sel.setActiveCellCol((short)15);
-//        sel.setActiveCellRow((short)15);
-//        sel2.setActiveCellCol((short)0);
-//        sel2.setActiveCellRow((short)0);
-
-//        records.add(selLoc+1,sel2);
-//        records.add(selLoc+2,sel3);
-//        records.add(selLoc+3,sel4);
     }
 
     public SelectionRecord getSelection()
@@ -2485,6 +2451,28 @@ public class Sheet implements Model
     public void setSelection( SelectionRecord selection )
     {
         this.selection = selection;
+    }
+
+    /**
+     * creates a Protect record with protect set to false.
+     * @see org.apache.poi.hssf.record.ProtectRecord
+     * @see org.apache.poi.hssf.record.Record
+     * @return a ProtectRecord
+     */
+    protected Record createProtect()
+    {
+        if (log.check( POILogger.DEBUG ))
+            log.log(POILogger.DEBUG, "create protect record with protection disabled");
+        ProtectRecord retval = new ProtectRecord();
+
+        retval.setProtect(false);
+        // by default even when we support encryption we won't
+        return retval;
+    }
+
+    public ProtectRecord getProtect()
+    {
+        return protect;
     }
 
     /**
@@ -2532,7 +2520,7 @@ public class Sheet implements Model
      * @return whether RowColHeadings are displayed
      */
     public boolean isDisplayRowColHeadings() {
-	return windowTwo.getDisplayRowColHeadings();
+	    return windowTwo.getDisplayRowColHeadings();
     }
 
     /**
@@ -2543,30 +2531,7 @@ public class Sheet implements Model
     protected Margin[] getMargins() {
         if (margins == null)
             margins = new Margin[4];
-	return margins;
-    }
-
-	/**
-	 * creates a Protect record with protect set to false.
-	 * @see org.apache.poi.hssf.record.ProtectRecord
-	 * @see org.apache.poi.hssf.record.Record
-	 * @return a ProtectRecord
-	 */
-
-	protected Record createProtect()
-	{
-        if (log.check( POILogger.DEBUG ))
-    		log.log(log.DEBUG, "create protect record with protection disabled");
-		ProtectRecord retval = new ProtectRecord();
-
-		retval.setProtect(false);
-		// by default even when we support encryption we won't
-		return retval; // want to default to be protected
-	}
-	
-	public ProtectRecord getProtect()
-	{
-		return protect;
+    	return margins;
     }
 
     public int aggregateDrawingRecords(DrawingManager drawingManager)
@@ -2628,15 +2593,15 @@ public class Sheet implements Model
      * @param breaks The page record to be shifted
      * @param start Starting "main" value to shift breaks
      * @param stop Ending "main" value to shift breaks
-     * @param count number of units (rows/columns) to shift by
+     * @param count number of units (rows/columns) to shift by 
      */
     public void shiftBreaks(PageBreakRecord breaks, short start, short stop, int count) {
-
+   	
     	if(rowBreaks == null)
     		return;
     	Iterator iterator = breaks.getBreaksIterator();
     	List shiftedBreak = new ArrayList();
-    	while(iterator.hasNext())
+    	while(iterator.hasNext()) 
     	{
     		PageBreakRecord.Break breakItem = (PageBreakRecord.Break)iterator.next();
     		short breakLocation = breakItem.main;
@@ -2645,20 +2610,20 @@ public class Sheet implements Model
     		if(inStart && inEnd)
     			shiftedBreak.add(breakItem);
     	}
-
+    	
     	iterator = shiftedBreak.iterator();
-    	while (iterator.hasNext()) {
+    	while (iterator.hasNext()) {    		
 			PageBreakRecord.Break breakItem = (PageBreakRecord.Break)iterator.next();
     		breaks.removeBreak(breakItem.main);
     		breaks.addBreak((short)(breakItem.main+count), breakItem.subFrom, breakItem.subTo);
     	}
     }
-
+    
     /**
      * Sets a page break at the indicated row
      * @param row
      */
-    public void setRowBreak(int row, short fromCol, short toCol) {
+    public void setRowBreak(int row, short fromCol, short toCol) {    	
     	rowBreaks.addBreak((short)row, fromCol, toCol);
     }
 
@@ -2681,15 +2646,15 @@ public class Sheet implements Model
 
     /**
      * Sets a page break at the indicated column
-     * @param row
+     *
      */
-    public void setColumnBreak(short column, short fromRow, short toRow) {
+    public void setColumnBreak(short column, short fromRow, short toRow) {    	
     	colBreaks.addBreak(column, fromRow, toRow);
     }
 
     /**
      * Removes a page break at the indicated column
-     * @param row
+     *
      */
     public void removeColumnBreak(short column) {
     	colBreaks.removeBreak(column);
@@ -2697,13 +2662,13 @@ public class Sheet implements Model
 
     /**
      * Queries if the specified column has a page break
-     * @param row
+     *
      * @return true if the specified column has a page break
      */
     public boolean isColumnBroken(short column) {
     	return colBreaks.getBreak(column) != null;
     }
-
+    
     /**
      * Shifts the horizontal page breaks for the indicated count
      * @param startingRow
@@ -2723,7 +2688,7 @@ public class Sheet implements Model
     public void shiftColumnBreaks(short startingCol, short endingCol, short count) {
     	shiftBreaks(colBreaks, startingCol, endingCol, count);
     }
-
+    
     /**
      * Returns all the row page breaks
      * @return
@@ -2731,7 +2696,7 @@ public class Sheet implements Model
     public Iterator getRowBreaks() {
     	return rowBreaks.getBreaksIterator();
     }
-
+    
     /**
      * Returns the number of row page breaks
      * @return
@@ -2739,7 +2704,7 @@ public class Sheet implements Model
     public int getNumRowBreaks(){
     	return (int)rowBreaks.getNumBreaks();
     }
-
+    
     /**
      * Returns all the column page breaks
      * @return
@@ -2747,7 +2712,7 @@ public class Sheet implements Model
     public Iterator getColumnBreaks(){
     	return colBreaks.getBreaksIterator();
     }
-
+    
     /**
      * Returns the number of column page breaks
      * @return
@@ -2755,5 +2720,360 @@ public class Sheet implements Model
     public int getNumColumnBreaks(){
     	return (int)colBreaks.getNumBreaks();
     }
+
+    public void setColumnGroupCollapsed( short columnNumber, boolean collapsed )
+    {
+        if (collapsed)
+        {
+            columns.collapseColumn( columnNumber );
+        }
+        else
+        {
+            columns.expandColumn( columnNumber );
+        }
+    }
+
+//    private void collapseColumn( short columnNumber )
+//    {
+//        int idx = findColumnIdx( columnNumber, 0 );
+//        if (idx == -1)
+//            return;
+//
+//        // Find the start of the group.
+//        ColumnInfoRecord columnInfo = (ColumnInfoRecord) columnSizes.get( findStartOfColumnOutlineGroup( idx ) );
+//
+//        // Hide all the columns until the end of the group
+//        columnInfo = writeHidden( columnInfo, idx, true );
+//
+//        // Write collapse field
+//        setColumn( (short) ( columnInfo.getLastColumn() + 1 ), null, null, null, Boolean.TRUE);
+//    }
+
+//    private void expandColumn( short columnNumber )
+//    {
+//        int idx = findColumnIdx( columnNumber, 0 );
+//        if (idx == -1)
+//            return;
+//
+//        // If it is already exapanded do nothing.
+//        if (!isColumnGroupCollapsed(idx))
+//            return;
+//
+//        // Find the start of the group.
+//        int startIdx = findStartOfColumnOutlineGroup( idx );
+//        ColumnInfoRecord columnInfo = getColInfo( startIdx );
+//
+//        // Find the end of the group.
+//        int endIdx = findEndOfColumnOutlineGroup( idx );
+//        ColumnInfoRecord endColumnInfo = getColInfo( endIdx );
+//
+//        // expand:
+//        // colapsed bit must be unset
+//        // hidden bit gets unset _if_ surrounding groups are expanded you can determine
+//        //   this by looking at the hidden bit of the enclosing group.  You will have
+//        //   to look at the start and the end of the current group to determine which
+//        //   is the enclosing group
+//        // hidden bit only is altered for this outline level.  ie.  don't uncollapse contained groups
+//        if (!isColumnGroupHiddenByParent( idx ))
+//        {
+//            for (int i = startIdx; i <= endIdx; i++)
+//            {
+//                if (columnInfo.getOutlineLevel() == getColInfo(i).getOutlineLevel())
+//                    getColInfo(i).setHidden( false );
+//            }
+//        }
+//
+//        // Write collapse field
+//        setColumn( (short) ( columnInfo.getLastColumn() + 1 ), null, null, null, Boolean.FALSE);
+//    }
+
+//    private boolean isColumnGroupCollapsed( int idx )
+//    {
+//        int endOfOutlineGroupIdx = findEndOfColumnOutlineGroup( idx );
+//        if (endOfOutlineGroupIdx >= columnSizes.size())
+//            return false;
+//        if (getColInfo(endOfOutlineGroupIdx).getLastColumn() + 1 != getColInfo(endOfOutlineGroupIdx + 1).getFirstColumn())
+//            return false;
+//        else
+//            return getColInfo(endOfOutlineGroupIdx+1).getCollapsed();
+//    }
+
+//    private boolean isColumnGroupHiddenByParent( int idx )
+//    {
+//        // Look out outline details of end
+//        int endLevel;
+//        boolean endHidden;
+//        int endOfOutlineGroupIdx = findEndOfColumnOutlineGroup( idx );
+//        if (endOfOutlineGroupIdx >= columnSizes.size())
+//        {
+//            endLevel = 0;
+//            endHidden = false;
+//        }
+//        else if (getColInfo(endOfOutlineGroupIdx).getLastColumn() + 1 != getColInfo(endOfOutlineGroupIdx + 1).getFirstColumn())
+//        {
+//            endLevel = 0;
+//            endHidden = false;
+//        }
+//        else
+//        {
+//            endLevel = getColInfo( endOfOutlineGroupIdx + 1).getOutlineLevel();
+//            endHidden = getColInfo( endOfOutlineGroupIdx + 1).getHidden();
+//        }
+//
+//        // Look out outline details of start
+//        int startLevel;
+//        boolean startHidden;
+//        int startOfOutlineGroupIdx = findStartOfColumnOutlineGroup( idx );
+//        if (startOfOutlineGroupIdx <= 0)
+//        {
+//            startLevel = 0;
+//            startHidden = false;
+//        }
+//        else if (getColInfo(startOfOutlineGroupIdx).getFirstColumn() - 1 != getColInfo(startOfOutlineGroupIdx - 1).getLastColumn())
+//        {
+//            startLevel = 0;
+//            startHidden = false;
+//        }
+//        else
+//        {
+//            startLevel = getColInfo( startOfOutlineGroupIdx - 1).getOutlineLevel();
+//            startHidden = getColInfo( startOfOutlineGroupIdx - 1 ).getHidden();
+//        }
+//
+//        if (endLevel > startLevel)
+//        {
+//            return endHidden;
+//        }
+//        else
+//        {
+//            return startHidden;
+//        }
+//    }
+
+//    private ColumnInfoRecord getColInfo(int idx)
+//    {
+//        return columns.getColInfo( idx );
+//    }
+
+//    private int findStartOfColumnOutlineGroup(int idx)
+//    {
+//        // Find the start of the group.
+//        ColumnInfoRecord columnInfo = (ColumnInfoRecord) columnSizes.get( idx );
+//        int level = columnInfo.getOutlineLevel();
+//        while (idx != 0)
+//        {
+//            ColumnInfoRecord prevColumnInfo = (ColumnInfoRecord) columnSizes.get( idx - 1 );
+//            if (columnInfo.getFirstColumn() - 1 == prevColumnInfo.getLastColumn())
+//            {
+//                if (prevColumnInfo.getOutlineLevel() < level)
+//                {
+//                    break;
+//                }
+//                idx--;
+//                columnInfo = prevColumnInfo;
+//            }
+//            else
+//            {
+//                break;
+//            }
+//        }
+//
+//        return idx;
+//    }
+
+//    private int findEndOfColumnOutlineGroup(int idx)
+//    {
+//        // Find the end of the group.
+//        ColumnInfoRecord columnInfo = (ColumnInfoRecord) columnSizes.get( idx );
+//        int level = columnInfo.getOutlineLevel();
+//        while (idx < columnSizes.size() - 1)
+//        {
+//            ColumnInfoRecord nextColumnInfo = (ColumnInfoRecord) columnSizes.get( idx + 1 );
+//            if (columnInfo.getLastColumn() + 1 == nextColumnInfo.getFirstColumn())
+//            {
+//                if (nextColumnInfo.getOutlineLevel() < level)
+//                {
+//                    break;
+//                }
+//                idx++;
+//                columnInfo = nextColumnInfo;
+//            }
+//            else
+//            {
+//                break;
+//            }
+//        }
+//
+//        return idx;
+//    }
+
+    public void groupRowRange(int fromRow, int toRow, boolean indent)
+    {
+        checkRows();
+        for (int rowNum = fromRow; rowNum <= toRow; rowNum++)
+        {
+            RowRecord row = getRow( rowNum );
+            if (row == null)
+            {
+                row = createRow( rowNum );
+                addRow( row );
+            }
+            int level = row.getOutlineLevel();
+            if (indent) level++; else level--;
+            level = Math.max(0, level);
+            level = Math.min(7, level);
+            row.setOutlineLevel((short) ( level ));
+        }
+
+        recalcRowGutter();
+    }
+
+    private void recalcRowGutter()
+    {
+        int maxLevel = 0;
+        Iterator iterator = rows.getIterator();
+        while ( iterator.hasNext() )
+        {
+            RowRecord rowRecord = (RowRecord) iterator.next();
+            maxLevel = Math.max(rowRecord.getOutlineLevel(), maxLevel);
+        }
+
+        GutsRecord guts = (GutsRecord) findFirstRecordBySid( GutsRecord.sid );
+        guts.setRowLevelMax( (short) ( maxLevel + 1 ) );
+        guts.setLeftRowGutter( (short) ( 29 + (12 * (maxLevel)) ) );
+    }
+
+    public void setRowGroupCollapsed( int row, boolean collapse )
+    {
+        if (collapse)
+        {
+            rows.collapseRow( row );
+        }
+        else
+        {
+            rows.expandRow( row );
+        }
+    }
+
+
+//    private void collapseRow( int rowNumber )
+//    {
+//
+//        // Find the start of the group.
+//        int startRow = rows.findStartOfRowOutlineGroup( rowNumber );
+//        RowRecord rowRecord = (RowRecord) rows.getRow( startRow );
+//
+//        // Hide all the columns until the end of the group
+//        int lastRow = rows.writeHidden( rowRecord, startRow, true );
+//
+//        // Write collapse field
+//        if (getRow(lastRow + 1) != null)
+//        {
+//            getRow(lastRow + 1).setColapsed( true );
+//        }
+//        else
+//        {
+//            RowRecord row = createRow( lastRow + 1);
+//            row.setColapsed( true );
+//            rows.insertRow( row );
+//        }
+//    }
+
+//    private int findStartOfRowOutlineGroup(int row)
+//    {
+//        // Find the start of the group.
+//        RowRecord rowRecord = rows.getRow( row );
+//        int level = rowRecord.getOutlineLevel();
+//        int currentRow = row;
+//        while (rows.getRow( currentRow ) != null)
+//        {
+//            rowRecord = rows.getRow( currentRow );
+//            if (rowRecord.getOutlineLevel() < level)
+//                return currentRow + 1;
+//            currentRow--;
+//        }
+//
+//        return currentRow + 1;
+//    }
+
+//    private int writeHidden( RowRecord rowRecord, int row, boolean hidden )
+//    {
+//        int level = rowRecord.getOutlineLevel();
+//        while (rowRecord != null && rows.getRow(row).getOutlineLevel() >= level)
+//        {
+//            rowRecord.setZeroHeight( hidden );
+//            row++;
+//            rowRecord = rows.getRow( row );
+//        }
+//        return row - 1;
+//    }
+
+//    private int findEndOfRowOutlineGroup( int row )
+//    {
+//        int level = getRow( row ).getOutlineLevel();
+//        int currentRow;
+//        for (currentRow = row; currentRow < rows.getLastRowNum(); currentRow++)
+//        {
+//            if (getRow(currentRow) == null || getRow(currentRow).getOutlineLevel() < level)
+//            {
+//                break;
+//            }
+//        }
+//
+//        return currentRow-1;
+//    }
+
+//    private boolean isRowGroupCollapsed( int row )
+//    {
+//        int collapseRow = rows.findEndOfRowOutlineGroup( row ) + 1;
+//
+//        if (getRow(collapseRow) == null)
+//            return false;
+//        else
+//            return getRow( collapseRow ).getColapsed();
+//    }
+
+
+//    private boolean isRowGroupHiddenByParent( int row )
+//    {
+//        // Look out outline details of end
+//        int endLevel;
+//        boolean endHidden;
+//        int endOfOutlineGroupIdx = rows.findEndOfRowOutlineGroup( row );
+//        if (getRow( endOfOutlineGroupIdx + 1 ) == null)
+//        {
+//            endLevel = 0;
+//            endHidden = false;
+//        }
+//        else
+//        {
+//            endLevel = getRow( endOfOutlineGroupIdx + 1).getOutlineLevel();
+//            endHidden = getRow( endOfOutlineGroupIdx + 1).getZeroHeight();
+//        }
+//
+//        // Look out outline details of start
+//        int startLevel;
+//        boolean startHidden;
+//        int startOfOutlineGroupIdx = rows.findStartOfRowOutlineGroup( row );
+//        if (startOfOutlineGroupIdx - 1 < 0 || getRow(startOfOutlineGroupIdx - 1) == null)
+//        {
+//            startLevel = 0;
+//            startHidden = false;
+//        }
+//        else
+//        {
+//            startLevel = getRow( startOfOutlineGroupIdx - 1).getOutlineLevel();
+//            startHidden = getRow( startOfOutlineGroupIdx - 1 ).getZeroHeight();
+//        }
+//
+//        if (endLevel > startLevel)
+//        {
+//            return endHidden;
+//        }
+//        else
+//        {
+//            return startHidden;
+//        }
+//    }
 
 }

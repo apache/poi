@@ -1,6 +1,5 @@
-
 /* ====================================================================
-   Copyright 2002-2004   Apache Software Foundation
+   Copyright 2003-2004   Apache Software Foundation
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -14,13 +13,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
-/*
- * Ptg.java
- *
- * Created on October 28, 2001, 6:30 PM
- */
 package org.apache.poi.hssf.record.formula;
 
 import java.util.List;
@@ -38,16 +31,16 @@ import org.apache.poi.hssf.model.Workbook;
 public abstract class Ptg
 {
 
+        
+    /** convert infix order ptg list to rpn order ptg list
+     * @return List ptgs in RPN order
+     * @param infixPtgs List of ptgs in infix order
+     */
     
     /* DO NOT REMOVE
      *we keep this method in case we wish to change the way we parse
      *It needs a getPrecedence in OperationsPtg
     
-    /** convert infix order ptg list to rpn order ptg list
-     * @return List ptgs in RPN order
-     * @param infixPtgs List of ptgs in infix order
-     */
-    /*
     public static List ptgsToRpn(List infixPtgs) {
         java.util.Stack operands = new java.util.Stack();
         java.util.List retval = new java.util.Stack();

@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Copyright 2002-2004   Apache Software Foundation
 
@@ -14,7 +13,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 /*
  * HSSFRow.java
@@ -27,7 +25,6 @@ import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.CellValueRecordInterface;
 import org.apache.poi.hssf.record.RowRecord;
-import org.apache.poi.hssf.record.aggregates.ValueRecordsAggregate;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -49,7 +46,7 @@ public class HSSFRow
     public final static int INITIAL_CAPACITY = 5;
     //private short rowNum;
     private int rowNum;
-    //private ValueRecordsAggregate cells;
+    private HashMap cells;
 //    private short firstcell = -1;
 //    private short lastcell = -1;
 
@@ -57,7 +54,7 @@ public class HSSFRow
      * reference to low level representation
      */
 
-    //private RowRecord row;
+    private RowRecord row;
 
     /**
      * reference to containing low level Workbook
@@ -81,23 +78,24 @@ public class HSSFRow
      * @param book low-level Workbook object containing the sheet that contains this row
      * @param sheet low-level Sheet object that contains this Row
      * @param rowNum the row number of this row (0 based)
-     * @see org.apache.poi.hssf.usermodel.HSSFSheet#createRow(int)
+     * @see org.apache.poi.hssf.usermodel.HSSFSheet#createRow(short)
      */
 
     //protected HSSFRow(Workbook book, Sheet sheet, short rowNum)
     protected HSSFRow(Workbook book, Sheet sheet, int rowNum)
     {
         this.rowNum = rowNum;
-        //cells = new HashMap(10);   // new ArrayList(INITIAL_CAPACITY);
+        cells = new HashMap(10);   // new ArrayList(INITIAL_CAPACITY);
         this.book = book;
         this.sheet = sheet;
-        //row = new RowRecord();
-        //row.setHeight((short) 0xff);
-        //row.setLastCol((short) -1);
-        //row.setFirstCol((short) -1);
+        row = new RowRecord();
+        row.setOptionFlags( (short)0x100 );   // seems necessary for outlining to work.  
+        row.setHeight((short) 0xff);
+        row.setLastCol((short) -1);
+        row.setFirstCol((short) -1);
 
         // row.setRowNumber(rowNum);
-        //setRowNum(rowNum);
+        setRowNum(rowNum);
     }
 
     /**
@@ -107,16 +105,16 @@ public class HSSFRow
      * @param book low-level Workbook object containing the sheet that contains this row
      * @param sheet low-level Sheet object that contains this Row
      * @param record the low level api object this row should represent
-     * @see org.apache.poi.hssf.usermodel.HSSFSheet#createRow(int)
+     * @see org.apache.poi.hssf.usermodel.HSSFSheet#createRow(short)
      */
 
     protected HSSFRow(Workbook book, Sheet sheet, RowRecord record)
     {
         //this.rowNum = rowNum;
-        //cells = new HashMap();   // ArrayList(INITIAL_CAPACITY);
+        cells = new HashMap();   // ArrayList(INITIAL_CAPACITY);
         this.book = book;
         this.sheet = sheet;
-        //row = record;
+        row = record;
 
         // row.setHeight(record.getHeight());
         // row.setRowNumber(rowNum);
@@ -140,8 +138,8 @@ public class HSSFRow
     {
         HSSFCell cell = new HSSFCell(book, sheet, getRowNum(), column);
 
-        //addCell(cell);
-        //sheet.addValueRecord(getRowNum(), cell.getCellValueRecord());
+        addCell(cell);
+        sheet.addValueRecord(getRowNum(), cell.getCellValueRecord());
         return cell;
     }
 
@@ -176,15 +174,15 @@ public class HSSFRow
         CellValueRecordInterface cval = cell.getCellValueRecord();
 
         sheet.removeValueRecord(getRowNum(), cval);
-        //cells.remove(new Integer(cell.getCellNum()));
+        cells.remove(new Integer(cell.getCellNum()));
 
-        if (cell.getCellNum() == getLastCol(rowNum))
+        if (cell.getCellNum() == row.getLastCol())
         {
-            sheet.getRow(rowNum).setLastCol(findLastCell(sheet.getRow(rowNum).getLastCol()));
+            row.setLastCol(findLastCell(row.getLastCol()));
         }
-        if (cell.getCellNum() == getFirstCol(rowNum))
+        if (cell.getCellNum() == row.getFirstCol())
         {
-            setFirstCol(findFirstCell(getFirstCol(rowNum)));
+            row.setFirstCol(findFirstCell(row.getFirstCol()));
         }
     }
 
@@ -201,7 +199,7 @@ public class HSSFRow
 
         addCell(hcell);
 
-         sheet.addValueRecord(getRowNum(),cell);
+        // sheet.addValueRecord(getRowNum(),cell.getCellValueRecord());
         return hcell;
     }
 
@@ -214,10 +212,10 @@ public class HSSFRow
     public void setRowNum(int rowNum)
     {
         this.rowNum = rowNum;
-        //if (row != null)
-        //{
-        //    row.setRowNumber(rowNum);   // used only for KEY comparison (HSSFRow)
-        //}
+        if (row != null)
+        {
+            row.setRowNumber(rowNum);   // used only for KEY comparison (HSSFRow)
+        }
     }
 
     /**
@@ -237,43 +235,25 @@ public class HSSFRow
 
     private void addCell(HSSFCell cell)
     {
-        if (getFirstCol(rowNum) == -1)
+        if (row.getFirstCol() == -1)
         {
-            setFirstCol(cell.getCellNum());
+            row.setFirstCol(cell.getCellNum());
         }
-        if (getLastCol(rowNum) == -1)
+        if (row.getLastCol() == -1)
         {
-            setLastCol(cell.getCellNum());
+            row.setLastCol(cell.getCellNum());
         }
-        //cells.put(new Integer(cell.getCellNum()), cell);
-        sheet.addValueRecord(this.rowNum, cell.getCellValueRecord());
+        cells.put(new Integer(cell.getCellNum()), cell);
 
-        if (cell.getCellNum() < getFirstCol(rowNum))
+        if (cell.getCellNum() < row.getFirstCol())
         {
-            setFirstCol(cell.getCellNum());
+            row.setFirstCol(cell.getCellNum());
         }
-        if (cell.getCellNum() > getLastCol(rowNum))
+        if (cell.getCellNum() > row.getLastCol())
         {
-            setLastCol(cell.getCellNum());
+            row.setLastCol(cell.getCellNum());
         }
     }
-
-    private void setLastCol(short cell) {
-        sheet.setLastColForRow(rowNum, cell);
-    }
-
-    private void setFirstCol(short cell) {
-        sheet.setFirstColForRow(rowNum, cell);
-    }
-
-    private short getLastCol(int row) {
-        return sheet.getLastColForRow(row);
-    }
-
-    private short getFirstCol(int row) {
-        return sheet.getFirstColForRow(row);
-    }
-
 
     /**
      * get the hssfcell representing a given column (logical cell) 0-based.  If you
@@ -285,11 +265,6 @@ public class HSSFRow
 
     public HSSFCell getCell(short cellnum)
     {
-        HSSFCell retval = null;
-        CellValueRecordInterface cval = sheet.getValueRecord(rowNum, cellnum);
-        if (cval != null) {
-            retval = new HSSFCell(book, sheet, rowNum, cval);
-        }
 
 /*        for (int k = 0; k < cells.size(); k++)
         {
@@ -300,7 +275,7 @@ public class HSSFRow
                 return cell;
             }
         }*/
-        return retval;
+        return (HSSFCell) cells.get(new Integer(cellnum));
     }
 
     /**
@@ -313,7 +288,7 @@ public class HSSFRow
         if (getPhysicalNumberOfCells() == 0)
             return -1;
         else
-            return getFirstCol(rowNum);
+            return row.getFirstCol();
     }
 
     /**
@@ -326,7 +301,7 @@ public class HSSFRow
         if (getPhysicalNumberOfCells() == 0)
             return -1;
         else
-            return getLastCol(rowNum);
+            return row.getLastCol();
     }
 
 
@@ -338,13 +313,11 @@ public class HSSFRow
 
     public int getPhysicalNumberOfCells()
     {
-       // sheet.get
-//        if (cells == null)
-//        {
-//            return 0;   // shouldn't be possible but it is due to missing API support for BLANK/MULBLANK
-//        }
-//        return cells.size();
-        return sheet.getPhysicalNumberOfRows();
+        if (cells == null)
+        {
+            return 0;   // shouldn't be possible but it is due to missing API support for BLANK/MULBLANK
+        }
+        return cells.size();
     }
 
     /**
@@ -357,8 +330,8 @@ public class HSSFRow
     {
 
         // row.setOptionFlags(
-        sheet.getRow(rowNum).setBadFontHeight(true);
-        sheet.getRow(rowNum).setHeight(height);
+        row.setBadFontHeight(true);
+        row.setHeight(height);
     }
 
     /**
@@ -370,8 +343,8 @@ public class HSSFRow
     {
 
         // row.setOptionFlags(
-        sheet.getRow(rowNum).setBadFontHeight(true);
-        sheet.getRow(rowNum).setHeight((short) (height * 20));
+        row.setBadFontHeight(true);
+        row.setHeight((short) (height * 20));
     }
 
     /**
@@ -381,7 +354,7 @@ public class HSSFRow
 
     public short getHeight()
     {
-        return sheet.getRow(rowNum).getHeight();
+        return row.getHeight();
     }
 
     /**
@@ -391,7 +364,7 @@ public class HSSFRow
 
     public float getHeightInPoints()
     {
-        return (sheet.getRow(rowNum).getHeight() / 20);
+        return (row.getHeight() / 20);
     }
 
     /**
@@ -403,7 +376,7 @@ public class HSSFRow
 
     protected RowRecord getRowRecord()
     {
-        return sheet.getRow(rowNum);
+        return row;
     }
 
     /**
@@ -447,7 +420,7 @@ public class HSSFRow
 
     public Iterator cellIterator()
     {
-        return new RowCellIterator(this.book,  this.sheet, this.rowNum);
+        return cells.values().iterator();
     }
 
     public int compareTo(Object obj)
@@ -483,37 +456,4 @@ public class HSSFRow
         }
         return false;
     }
-}
-
-
-class RowCellIterator implements Iterator {
-    Iterator cells;
-    Workbook book;
-    Sheet sheet;
-    int row;
-
-    public RowCellIterator(Workbook book, Sheet sheet, int row) {
-        this.sheet = sheet;
-        this.book  = book;
-        this.row = row;
-        cells = this.sheet.rowCellIterator(row);
-    }
-
-    public boolean hasNext() {
-        return cells.hasNext();
-    }
-
-    public Object next() {
-        HSSFCell retval = null;
-        if (cells.hasNext()) {
-            retval = new HSSFCell(book, sheet, row, ((CellValueRecordInterface)cells.next()));
-        }
-        return retval;
-    }
-
-    public void remove() {
-        cells.remove();
-    }
-
-
 }

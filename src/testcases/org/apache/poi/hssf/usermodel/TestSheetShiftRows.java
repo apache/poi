@@ -133,11 +133,11 @@ public class TestSheetShiftRows extends TestCase {
      * @author Toshiaki Kamoshida (kamoshida.toshiaki at future dot co dot jp)
      */
     public void testShiftRow(){
-	HSSFWorkbook b = new HSSFWorkbook();
-	HSSFSheet s    = b.createSheet();
-	s.createRow(0).createCell((short)0).setCellValue("TEST1");
-	s.createRow(3).createCell((short)0).setCellValue("TEST2");
-	s.shiftRows(0,4,1);
+   	HSSFWorkbook b = new HSSFWorkbook();
+   	HSSFSheet s    = b.createSheet();
+   	s.createRow(0).createCell((short)0).setCellValue("TEST1");
+   	s.createRow(3).createCell((short)0).setCellValue("TEST2");
+   	s.shiftRows(0,4,1);
     }
 
     /**
@@ -146,28 +146,27 @@ public class TestSheetShiftRows extends TestCase {
      * @author Toshiaki Kamoshida (kamoshida.toshiaki at future dot co dot jp)
      */
     public void testShiftRow0(){
-	HSSFWorkbook b = new HSSFWorkbook();
-	HSSFSheet s    = b.createSheet();
-	s.createRow(0).createCell((short)0).setCellValue("TEST1");
-	s.createRow(3).createCell((short)0).setCellValue("TEST2");
-	s.shiftRows(0,4,1);
+   	HSSFWorkbook b = new HSSFWorkbook();
+   	HSSFSheet s    = b.createSheet();
+   	s.createRow(0).createCell((short)0).setCellValue("TEST1");
+   	s.createRow(3).createCell((short)0).setCellValue("TEST2");
+   	s.shiftRows(0,4,1);
     }
-
+    
     /**
      * When shifting rows, the page breaks should go with it
      *
      */
-    public void testShiftRowBreaks()
-    {
+    public void testShiftRowBreaks(){
       HSSFWorkbook b = new HSSFWorkbook();
       HSSFSheet s    = b.createSheet();
       HSSFRow row = s.createRow(4);
       row.createCell((short)0).setCellValue("test");
       s.setRowBreak(4);
-
+      
       s.shiftRows(4, 4, 2);
       assertTrue("Row number 6 should have a pagebreak", s.isRowBroken(6));
+      
     }
-
 }
 

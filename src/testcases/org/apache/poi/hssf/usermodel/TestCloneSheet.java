@@ -18,8 +18,14 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+
 import junit.framework.TestCase;
+
 import org.apache.poi.hssf.util.Region;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
  * Test the ability to clone a sheet. 
@@ -38,7 +44,10 @@ public class TestCloneSheet extends TestCase {
 			HSSFWorkbook b = new HSSFWorkbook();
 			HSSFSheet s = b.createSheet("Test");
 			s.addMergedRegion(new Region((short)0,(short)0,(short)1,(short)1));
-			b.cloneSheet(0);
+			HSSFSheet clonedSheet = b.cloneSheet(0);
+			
+			assertEquals("One merged area", 1, clonedSheet.getNumMergedRegions());
+
 		}
 		catch(Exception e){e.printStackTrace();fail(e.getMessage());}
 	}
@@ -52,14 +61,14 @@ public class TestCloneSheet extends TestCase {
       HSSFSheet s = b.createSheet("Test");
       s.setRowBreak(3);
       s.setColumnBreak((short)6);
-
+      
       HSSFSheet clone = b.cloneSheet(0);
       assertTrue("Row 3 not broken", clone.isRowBroken(3));
       assertTrue("Column 6 not broken", clone.isColumnBroken((short)6));
-
+      
       s.removeRowBreak(3);
-
+      
       assertTrue("Row 3 still should be broken", clone.isRowBroken(3));
    }
-
+   
 }

@@ -1,6 +1,5 @@
-
 /* ====================================================================
-   Copyright 2002-2004   Apache Software Foundation
+   Copyright 2003-2004   Apache Software Foundation
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -14,20 +13,21 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hssf.model;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Iterator;
+import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.apache.poi.hssf.record.*;
-import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
-import org.apache.poi.hssf.record.aggregates.ValueRecordsAggregate;
-import org.apache.poi.hssf.record.formula.ExpPtg;
+import org.apache.poi.hssf.record.ColumnInfoRecord;
+import org.apache.poi.hssf.record.MergeCellsRecord;
+import org.apache.poi.hssf.record.PageBreakRecord;
+import org.apache.poi.hssf.record.RowRecord;
+import org.apache.poi.hssf.record.StringRecord;
 
 /**
  * @author Tony Poppleton
@@ -190,82 +190,7 @@ public class SheetTest extends TestCase
 		assertNotNull("Row [2] was skipped", sheet.getRow(2));
 		
 	}
-
-	/**
-	 * Make sure that a sheet with the sharedformula works when cloned, it used to not fail
-	 *
-	 */
-	public void testSharedFormulaClone() {
-		Sheet sheet;
-		List records = new ArrayList();
-		
-		FormulaRecord formula = new FormulaRecord();
-		byte[] array = {(byte)0,(byte)0,(byte)0,(byte)0,(byte)0};
-		ExpPtg expPtg = new ExpPtg(array, 0);
-		//an empty expptg will not be cloned
-		
-		formula.setExpressionLength((short)5);
-		formula.pushExpressionToken(expPtg);
-		
-		records.add(new RowRecord());
-		records.add(formula);	
-		records.add(new SharedFormulaRecord());
-		
-		
-		sheet = Sheet.createSheet(records, 0);
-		
-		sheet.cloneSheet();
-		
-	}
-
-
-	/**
-	 * FormulaRecordAggregates within blanks/values cause values afterwards to not be aggregated.
-	 * This usually occurs during clones 
-	 *
-	 */
-	public void testValueAggregateWithSharedFormulas() {
-		Sheet sheet;
-		List records = new ArrayList();
-		
-		FormulaRecord formula = new FormulaRecord();
-		StringRecord stringRecord = new StringRecord();
-		FormulaRecordAggregate formulaAggregate = new FormulaRecordAggregate(formula, stringRecord);
-		
-		formula.setExpressionLength((short)5);
-		formula.pushExpressionToken(new ExpPtg());
-		BlankRecord blank = new BlankRecord();
-		blank.setColumn((short)0);
-		blank.setRow(1);
-		
-		records.add(new BOFRecord());
-		records.add(new RowRecord());
-		
-		blank.setColumn((short)0);
-		blank.setRow(1);
-		
-		records.add(blank);
-		records.add(new LabelSSTRecord());
-		records.add(formula);	
-		records.add(new SharedFormulaRecord());
-		records.add(formulaAggregate);
-		
-		blank = new BlankRecord();		
-		blank.setColumn((short)0);
-		blank.setRow(2);
-
-		
-		records.add(blank);
-		records.add(new EOFRecord());
-		
-		sheet = Sheet.createSheet(records, 0);
-		ValueRecordsAggregate valueAggregate = sheet.cells;
-		
-		assertEquals("Aggregated cells not correct, the blank record following sharedformula is not here", 3, valueAggregate.getPhysicalNumberOfCells());		
-		
-		
-	}
-
+	
 	/**
 	 * Make sure page break functionality works (in memory)
 	 *
@@ -273,31 +198,31 @@ public class SheetTest extends TestCase
 	public void testRowPageBreaks(){
 		short colFrom = 0;
 		short colTo = 255;
-
+		
 		Sheet sheet = Sheet.createSheet();
 		sheet.setRowBreak(0, colFrom, colTo);
+		
+		assertTrue("no row break at 0", sheet.isRowBroken(0));
+		assertEquals("1 row break available", 1, sheet.getNumRowBreaks());
+		
+		sheet.setRowBreak(0, colFrom, colTo);		
+		sheet.setRowBreak(0, colFrom, colTo);		
 
 		assertTrue("no row break at 0", sheet.isRowBroken(0));
 		assertEquals("1 row break available", 1, sheet.getNumRowBreaks());
-
-		sheet.setRowBreak(0, colFrom, colTo);
-		sheet.setRowBreak(0, colFrom, colTo);
-
-		assertTrue("no row break at 0", sheet.isRowBroken(0));
-		assertEquals("1 row break available", 1, sheet.getNumRowBreaks());
-
+		
 		sheet.setRowBreak(10, colFrom, colTo);
 		sheet.setRowBreak(11, colFrom, colTo);
 
 		assertTrue("no row break at 10", sheet.isRowBroken(10));
 		assertTrue("no row break at 11", sheet.isRowBroken(11));
 		assertEquals("3 row break available", 3, sheet.getNumRowBreaks());
-
-
+		
+		
 		boolean is10 = false;
 		boolean is0 = false;
 		boolean is11 = false;
-
+		
 		Iterator iterator = sheet.getRowBreaks();
 		while (iterator.hasNext()) {
 			PageBreakRecord.Break breakItem = (PageBreakRecord.Break)iterator.next();
@@ -307,23 +232,23 @@ public class SheetTest extends TestCase
 			if (main == 10) is10= true;
 			if (main == 11) is11 = true;
 		}
-
-		assertTrue("one of the breaks didnt make it", is0 && is10 && is11);
-
+		
+		assertTrue("one of the breaks didnt make it", is0 && is10 && is11); 
+		
 		sheet.removeRowBreak(11);
 		assertFalse("row should be removed", sheet.isRowBroken(11));
-
+		
 		sheet.removeRowBreak(0);
 		assertFalse("row should be removed", sheet.isRowBroken(0));
-
+		
 		sheet.removeRowBreak(10);
 		assertFalse("row should be removed", sheet.isRowBroken(10));
-
+		
 		assertEquals("no more breaks", 0, sheet.getNumRowBreaks());
-
-
+		
+		
 	}
-
+	
 	/**
 	 * Make sure column pag breaks works properly (in-memory)
 	 *
@@ -331,32 +256,32 @@ public class SheetTest extends TestCase
 	public void testColPageBreaks(){
 		short rowFrom = 0;
 		short rowTo = (short)65535;
-
+		
 		Sheet sheet = Sheet.createSheet();
-		sheet.setColumnBreak((short)0, rowFrom, rowTo);
-
+		sheet.setColumnBreak((short)0, rowFrom, rowTo); 
+		
 		assertTrue("no col break at 0", sheet.isColumnBroken((short)0));
-		assertEquals("1 col break available", 1, sheet.getNumColumnBreaks());
-
+		assertEquals("1 col break available", 1, sheet.getNumColumnBreaks());		
+		
 		sheet.setColumnBreak((short)0, rowFrom, rowTo);
-
+		
 		assertTrue("no col break at 0", sheet.isColumnBroken((short)0));
-		assertEquals("1 col break available", 1, sheet.getNumColumnBreaks());
-
+		assertEquals("1 col break available", 1, sheet.getNumColumnBreaks());		
+		
 		sheet.setColumnBreak((short)1, rowFrom, rowTo);
 		sheet.setColumnBreak((short)10, rowFrom, rowTo);
 		sheet.setColumnBreak((short)15, rowFrom, rowTo);
-
+		
 		assertTrue("no col break at 1", sheet.isColumnBroken((short)1));
 		assertTrue("no col break at 10", sheet.isColumnBroken((short)10));
 		assertTrue("no col break at 15", sheet.isColumnBroken((short)15));
-		assertEquals("4 col break available", 4, sheet.getNumColumnBreaks());
+		assertEquals("4 col break available", 4, sheet.getNumColumnBreaks());		
 
 		boolean is10 = false;
 		boolean is0 = false;
 		boolean is1 = false;
 		boolean is15 = false;
-
+		
 		Iterator iterator = sheet.getColumnBreaks();
 		while (iterator.hasNext()) {
 			PageBreakRecord.Break breakItem = (PageBreakRecord.Break)iterator.next();
@@ -367,25 +292,25 @@ public class SheetTest extends TestCase
 			if (main == 10) is10= true;
 			if (main == 15) is15 = true;
 		}
-
-		assertTrue("one of the breaks didnt make it", is0 && is1 && is10 && is15);
-
+		
+		assertTrue("one of the breaks didnt make it", is0 && is1 && is10 && is15); 
+		
 		sheet.removeColumnBreak((short)15);
 		assertFalse("column break should not be there", sheet.isColumnBroken((short)15));
 
 		sheet.removeColumnBreak((short)0);
 		assertFalse("column break should not be there", sheet.isColumnBroken((short)0));
-
+		
 		sheet.removeColumnBreak((short)1);
 		assertFalse("column break should not be there", sheet.isColumnBroken((short)1));
-
+		
 		sheet.removeColumnBreak((short)10);
 		assertFalse("column break should not be there", sheet.isColumnBroken((short)10));
-
+		
 		assertEquals("no more breaks", 0, sheet.getNumColumnBreaks());
 	}
 
-
 }
+
 
 
