@@ -663,6 +663,14 @@ public class BiffViewer
                 retval = new ExternSheetRecord(rectype, size, data);
                 break;
                 
+            case SCLRecord.sid:
+                retval = new SCLRecord(rectype, size, data);
+                break;
+            
+            case SeriesToChartGroupRecord.sid:
+                retval = new SeriesToChartGroupRecord(rectype, size, data);
+                break;
+                
 
             default :
                 retval = new UnknownRecord(rectype, size, data);
