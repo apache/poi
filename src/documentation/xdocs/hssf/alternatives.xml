@@ -6,7 +6,8 @@
         <title>HSSF</title>
         <subtitle>Alternatives to HSSF</subtitle>
         <authors>
-            <person name="Glen Stampoultzis" email="glens@apache.org"/>
+            <person name="Andrew Oliver" email="acoliver at apache.org"/>
+            <person name="Glen Stampoultzis" email="glens at apache.org"/>
         </authors>
     </header>
 
