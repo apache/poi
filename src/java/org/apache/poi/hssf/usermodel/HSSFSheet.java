@@ -62,13 +62,11 @@ package org.apache.poi.hssf.usermodel;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.TreeMap;
 
 import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.CellValueRecordInterface;
 import org.apache.poi.hssf.record.HCenterRecord;
-import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RowRecord;
 import org.apache.poi.hssf.record.SCLRecord;
 import org.apache.poi.hssf.record.VCenterRecord;
@@ -115,7 +113,9 @@ public class HSSFSheet
      */
 
     private Sheet sheet;
-    private TreeMap rows;
+   // private TreeMap rows;
+//    private RowRecordsAggregate rows;
+//    private ValueRecordsAggregate vra;
     private Workbook book;
     private int firstrow;
     private int lastrow;
@@ -132,7 +132,7 @@ public class HSSFSheet
     protected HSSFSheet(Workbook book)
     {
         sheet = Sheet.createSheet();
-        rows = new TreeMap();   // new ArrayList(INITIAL_CAPACITY);
+        //rows = new TreeMap();   // new ArrayList(INITIAL_CAPACITY);
         this.book = book;
     }
 
@@ -148,7 +148,7 @@ public class HSSFSheet
     protected HSSFSheet(Workbook book, Sheet sheet)
     {
         this.sheet = sheet;
-        rows = new TreeMap();
+        //rows = new TreeMap();
         this.book = book;
         setPropertiesFromSheet(sheet);
     }
@@ -164,7 +164,7 @@ public class HSSFSheet
 
     private void setPropertiesFromSheet(Sheet sheet)
     {
-        int sloc = sheet.getLoc();
+/*        int sloc = sheet.getLoc();
         RowRecord row = sheet.getNextRow();
 
         while (row != null)
@@ -173,7 +173,9 @@ public class HSSFSheet
 
             row = sheet.getNextRow();
         }
-        sheet.setLoc(sloc);
+        sheet.setLoc(sloc);*/
+
+        /*
         CellValueRecordInterface cval = sheet.getNextValueRecord();
         long timestart = System.currentTimeMillis();
 
@@ -204,8 +206,9 @@ public class HSSFSheet
                 cval = null;
             }
         }
-        log.log(DEBUG, "total sheet cell creation took ",
-                new Long(System.currentTimeMillis() - timestart));
+        */
+//        log.log(DEBUG, "total sheet cell creation took ",
+//                new Long(System.currentTimeMillis() - timestart));
     }
 
     /**
@@ -233,13 +236,13 @@ public class HSSFSheet
      * @return HSSFRow high level representation
      */
 
-    private HSSFRow createRowFromRecord(RowRecord row)
+/*    private HSSFRow createRowFromRecord(RowRecord row)
     {
         HSSFRow hrow = new HSSFRow(book, sheet, row);
 
         addRow(hrow, false);
         return hrow;
-    }
+    }*/
 
     /**
      * Remove a row from this sheet.  All cells contained in the row are removed as well
@@ -250,35 +253,35 @@ public class HSSFSheet
     public void removeRow(HSSFRow row)
     {
         sheet.setLoc(sheet.getDimsLoc());
-        if (rows.size() > 0)
-        {
-            rows.remove(row);
-            if (row.getRowNum() == getLastRowNum())
-            {
-                lastrow = findLastRow(lastrow);
-            }
-            if (row.getRowNum() == getFirstRowNum())
-            {
-                firstrow = findFirstRow(firstrow);
-            }
-            Iterator iter = row.cellIterator();
+//        if (rows.size() > 0)
+//        {
+//            rows.remove(row);
+        //    if (row.getRowNum() == getLastRowNum())
+        //    {
+        //        lastrow = findLastRow(lastrow);
+         //   }
+         //   if (row.getRowNum() == getFirstRowNum())
+         //   {
+         //       firstrow = findFirstRow(firstrow);
+         //   }
+            //Iterator iter = row.cellIterator();
 
-            while (iter.hasNext())
+/*            while (iter.hasNext())
             {
                 HSSFCell cell = (HSSFCell) iter.next();
 
                 sheet.removeValueRecord(row.getRowNum(),
                         cell.getCellValueRecord());
-            }
+            }*/
             sheet.removeRow(row.getRowRecord());
-        }
+        //}
     }
 
     /**
      * used internally to refresh the "last row" when the last row is removed.
      */
 
-    private int findLastRow(int lastrow)
+/*    private int findLastRow(int lastrow)
     {
         int rownum = lastrow - 1;
         HSSFRow r = getRow(rownum);
@@ -288,13 +291,13 @@ public class HSSFSheet
             r = getRow(--rownum);
         }
         return rownum;
-    }
+    }*/
 
     /**
      * used internally to refresh the "first row" when the first row is removed.
      */
 
-    private int findFirstRow(int firstrow)
+    /*private int findFirstRow(int firstrow)
     {
         int rownum = firstrow + 1;
         HSSFRow r = getRow(rownum);
@@ -308,7 +311,7 @@ public class HSSFSheet
             return -1;
 
         return rownum;
-    }
+    } */
 
     /**
      * add a row to the sheet
@@ -318,19 +321,22 @@ public class HSSFSheet
 
     private void addRow(HSSFRow row, boolean addLow)
     {
-        rows.put(row, row);
-        if (addLow)
-        {
-            sheet.addRow(row.getRowRecord());
+        //rows.put(row, row);
+        if (addLow) {
+            RowRecord rec = sheet.getRow(row.getRowNum());
+            if (rec == null) {
+                rec = new RowRecord();
+                sheet.addRow(sheet.createRow(row.getRowNum()));
+            }
         }
-        if (row.getRowNum() > getLastRowNum())
+/*        if (row.getRowNum() > getLastRowNum())
         {
             lastrow = row.getRowNum();
         }
         if (row.getRowNum() < getFirstRowNum())
         {
             firstrow = row.getRowNum();
-        }
+        }*/
     }
 
     /**
@@ -342,11 +348,9 @@ public class HSSFSheet
 
     public HSSFRow getRow(int rownum)
     {
-        HSSFRow row = new HSSFRow();
+        HSSFRow retval = new HSSFRow(book, sheet, this.sheet.getRow(rownum));
 
-        //row.setRowNum((short) rownum);
-        row.setRowNum( rownum);
-        return (HSSFRow) rows.get(row);
+        return retval;
     }
 
     /**
@@ -355,7 +359,7 @@ public class HSSFSheet
 
     public int getPhysicalNumberOfRows()
     {
-        return rows.size();
+        return sheet.getPhysicalNumberOfRows();
     }
 
     /**
@@ -365,7 +369,7 @@ public class HSSFSheet
 
     public int getFirstRowNum()
     {
-        return firstrow;
+        return sheet.getFirstRow();
     }
 
     /**
@@ -375,7 +379,7 @@ public class HSSFSheet
 
     public int getLastRowNum()
     {
-        return lastrow;
+        return sheet.getLastRow();
     }
 
     /**
@@ -592,7 +596,7 @@ public class HSSFSheet
 
     public Iterator rowIterator()
     {
-        return rows.values().iterator();
+        return new SheetRowIterator(this, this.book);
     }
 
     /**
@@ -813,66 +817,60 @@ public class HSSFSheet
      * @param newPrintGridlines boolean to turn on or off the printing of
      * gridlines
      */
-    public void setPrintGridlines( boolean newPrintGridlines )
-    {
-        getSheet().getPrintGridlines().setPrintGridlines( newPrintGridlines );
+    public void setPrintGridlines(boolean newPrintGridlines) {
+        getSheet().getPrintGridlines().setPrintGridlines(newPrintGridlines);
     }
 
     /**
      * Gets the print setup object.
      * @return The user model for the print setup object.
      */
-    public HSSFPrintSetup getPrintSetup()
-    {
-        return new HSSFPrintSetup( getSheet().getPrintSetup() );
+    public HSSFPrintSetup getPrintSetup() {
+	return new HSSFPrintSetup(getSheet().getPrintSetup());
     }
 
     /**
      * Gets the user model for the document header.
      * @return The Document header.
      */
-    public HSSFHeader getHeader()
-    {
-        return new HSSFHeader( getSheet().getHeader() );
+    public HSSFHeader getHeader() {
+	return new HSSFHeader(getSheet().getHeader());
     }
 
     /**
      * Gets the user model for the document footer.
      * @return The Document footer.
      */
-    public HSSFFooter getFooter()
-    {
-        return new HSSFFooter( getSheet().getFooter() );
-    }
+    public HSSFFooter getFooter() {
+        return new HSSFFooter(getSheet().getFooter());
+     }
 
-    /**
-     * Sets whether sheet is selected.
-     * @param sel Whether to select the sheet or deselect the sheet.
-     */
-    public void setSelected( boolean sel )
-    {
-        getSheet().setSelected( sel );
-    }
+     /**
+      * Sets whether sheet is selected.
+      * @param sel Whether to select the sheet or deselect the sheet.
+      */
+     public void setSelected(boolean sel) {
+       getSheet().setSelected(sel);
+     }
 
-    /**
-     * Gets the size of the margin in inches.
-     * @param margin which margin to get
-     * @return the size of the margin
-     */
-    public double getMargin( short margin )
-    {
-        return getSheet().getMargin( margin );
-    }
+     /**
+      * Gets the size of the margin in inches.
+      * @param margin which margin to get
+      * @return the size of the margin
+      */
+     public double getMargin(short margin) {
+       return getSheet().getMargin(margin);
+     }
 
-    /**
-     * Sets the size of the margin in inches.
-     * @param margin which margin to get
-     * @param size the size of the margin
-     */
-    public void setMargin( short margin, double size )
-    {
-        getSheet().setMargin( margin, size );
-    }
+     /**
+      * Sets the size of the margin in inches.
+      * @param margin which margin to get
+      * @param size the size of the margin
+      */
+     public void setMargin(short margin, double size) {
+       getSheet().setMargin(margin, size);
+      }
+
 
     /**
      * Sets the zoom magnication for the sheet.  The zoom is expressed as a
@@ -903,7 +901,7 @@ public class HSSFSheet
 	 * @param endRow
 	 * @param n
 	 * @param isRow
-	 */
+	 */ 
 	protected void shiftMerged(int startRow, int endRow, int n, boolean isRow) {
 		List shiftedRegions = new ArrayList();
 		//move merged regions completely if they fall within the new region boundaries when they are shifted
@@ -1083,6 +1081,36 @@ public class HSSFSheet
     public void createSplitPane(int xSplitPos, int ySplitPos, int leftmostColumn, int topRow, int activePane )
     {
         getSheet().createSplitPane( xSplitPos, ySplitPos, topRow, leftmostColumn, activePane );
+    }
+
+
+}
+
+class SheetRowIterator implements Iterator {
+    Iterator rows;
+    Workbook book;
+    Sheet sheet;
+
+    public SheetRowIterator(HSSFSheet sheet, Workbook book) {
+        this.sheet = sheet.getSheet();
+        this.book  = book;
+        rows = this.sheet.rowRecordIterator();
+    }
+
+    public boolean hasNext() {
+        return rows.hasNext();
+    }
+
+    public Object next() {
+        HSSFRow retval = null;
+        if (rows.hasNext()) {
+            retval = new HSSFRow(book, sheet, (RowRecord)rows.next());
+        }
+        return retval;
+    }
+
+    public void remove() {
+        rows.remove();
     }
 
 

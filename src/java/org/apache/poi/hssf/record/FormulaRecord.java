@@ -343,6 +343,14 @@ public class FormulaRecord
     }
 
     /**
+     * sets the stack with a list
+     */
+    public void setParsedExpression(List ptgs) {
+        field_8_parsed_expr = new Stack();
+        field_8_parsed_expr.addAll(ptgs);
+    }
+
+    /**
      * called by constructor, should throw runtime exception in the event of a
      * record passed with a differing ID.
      *

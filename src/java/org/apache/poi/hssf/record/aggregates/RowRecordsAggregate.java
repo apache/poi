@@ -2,7 +2,7 @@
 /* ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 2003 The Apache Software Foundation.  All rights
+ * Copyright (c) 2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -75,10 +75,12 @@ public class RowRecordsAggregate
 {
     int     firstrow = -1;
     int     lastrow  = -1;
+    boolean firstdirty = false;
+    boolean lastdirty  = false;
     Map records  = null;
     int     size     = 0;
 
-    /** Creates a new instance of ValueRecordsAggregate */
+    /** Creates a new instance of RowRecordsAggregate */
 
     public RowRecordsAggregate()
     {
@@ -107,6 +109,12 @@ public class RowRecordsAggregate
         size -= row.getRecordSize();
 
         // Integer integer = new Integer(row.getRowNumber());
+        if (lastrow == row.getRowNumber()) {
+            lastdirty = true;
+        }
+        if (firstrow == row.getRowNumber()) {
+            firstdirty = true;
+        }
         records.remove(row);
     }
 
@@ -127,16 +135,19 @@ public class RowRecordsAggregate
 
     public int getFirstRowNum()
     {
+        if (firstdirty) {
+            firstrow = findFirstRow();
+        }
         return firstrow;
     }
 
     public int getLastRowNum()
     {
+        if (lastdirty) {
+            lastrow = findLastRow();
+        }
         return lastrow;
     }
-
-	/*
-	 * No need to go through all the records as we're just collecting RowRecords 
 
     public int construct(int offset, List records)
     {
@@ -157,7 +168,7 @@ public class RowRecordsAggregate
         }
         return k;
     }
-	*/
+
     /**
      * called by the class that is responsible for writing this sucker.
      * Subclasses should implement this so that their data is passed back in a
@@ -222,7 +233,43 @@ public class RowRecordsAggregate
     {
         return records.values().iterator();
     }
-    
+
+    /**
+     * used internally to refresh the "last row" when the last row is removed.
+     */
+    private int findLastRow()
+    {
+        int rownum = lastrow-1;
+        RowRecord r = getRow(rownum);
+
+        while (r == null && rownum >= 0)
+        {
+            r = this.getRow(--rownum);
+        }
+        return rownum;
+    }
+
+    /**
+     * used internally to refresh the "first row" when the first row is removed.
+     */
+
+    private int findFirstRow()
+    {
+        int rownum = firstrow+1;
+        RowRecord r = getRow(rownum);
+
+        while (r == null && rownum <= getLastRowNum())
+        {
+            r = getRow(++rownum);
+        }
+
+        if (rownum > getLastRowNum())
+            return -1;
+
+        return rownum;
+    }
+
+
     /** Performs a deep clone of the record*/
     public Object clone() {
       RowRecordsAggregate rec = new RowRecordsAggregate();

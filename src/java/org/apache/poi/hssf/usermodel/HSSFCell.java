@@ -163,7 +163,7 @@ public class HSSFCell
     private Sheet                    sheet;
     //private short                    row;
     private int                    row;
-    private CellValueRecordInterface record;
+//    private CellValueRecordInterface record;
 
     /**
      * Creates new Cell - Should only be called by HSSFRow.  This creates a cell
@@ -196,13 +196,25 @@ public class HSSFCell
         this.book    = book;
         this.sheet   = sheet;
 
+        BlankRecord rec = new BlankRecord();
+        rec.setRow(row);
+        rec.setColumn(cellNum);
+
+        rec.setXFIndex((short)0xf);
+
+        cellType = HSSFCell.CELL_TYPE_BLANK;
+        sheet.addValueRecord(row,(CellValueRecordInterface)rec);
+
+
+
         // Relying on the fact that by default the cellType is set to 0 which
         // is different to CELL_TYPE_BLANK hence the following method call correctly
         // creates a new blank cell.
-        setCellType(CELL_TYPE_BLANK, false);
-        ExtendedFormatRecord xf = book.getExFormatAt(0xf);
+        //setCellType(CELL_TYPE_BLANK, false);
 
-        setCellStyle(new HSSFCellStyle(( short ) 0xf, xf));
+        //ExtendedFormatRecord xf = book.getExFormatAt(0xf);
+        //setCellStyle(new HSSFCellStyle(( short ) 0xf, xf));
+
     }
 
     /**
@@ -236,7 +248,7 @@ public class HSSFCell
         errorValue   = ( byte ) 0;
         this.book    = book;
         this.sheet   = sheet;
-        switch (type)
+/*        switch (type)
         {
 
             case CELL_TYPE_NUMERIC :
@@ -285,7 +297,7 @@ public class HSSFCell
         }
         ExtendedFormatRecord xf = book.getExFormatAt(0xf);
 
-        setCellStyle(new HSSFCellStyle(( short ) 0xf, xf));
+        setCellStyle(new HSSFCellStyle(( short ) 0xf, xf));   */
     }
 
     /**
@@ -302,7 +314,7 @@ public class HSSFCell
                        CellValueRecordInterface cval)
     {
         cellNum     = cval.getColumn();
-        record      = cval;
+        //record      = cval;
         this.row    = row;
         cellType    = determineType(cval);
         cellStyle   = null;
@@ -394,8 +406,14 @@ public class HSSFCell
 
     public void setCellNum(short num)
     {
+        CellValueRecordInterface cval = sheet.getValueRecord(row, cellNum);
+        if (cval != null) {
+            sheet.removeValueRecord(this.row, cval);
+        }
         cellNum = num;
-        record.setColumn(num);
+        sheet.addValueRecord(row, cval);
+        //record.setColumn(num);
+
     }
 
     /**
@@ -457,16 +475,16 @@ public class HSSFCell
                 }
                 else
                 {
-                    frec = ( FormulaRecordAggregate ) record;
+                    frec = (FormulaRecordAggregate)sheet.getValueRecord(row, cellNum);
                 }
                 frec.setColumn(getCellNum());
                 if (setValue)
                 {
                     frec.getFormulaRecord().setValue(getNumericCellValue());
                 }
-                frec.setXFIndex(( short ) cellStyle.getIndex());
+//                frec.setXFIndex(( short ) cellStyle.getIndex());
                 frec.setRow(row);
-                record = frec;
+                sheet.replaceValueRecord(frec);
                 break;
 
             case CELL_TYPE_NUMERIC :
@@ -478,16 +496,16 @@ public class HSSFCell
                 }
                 else
                 {
-                    nrec = ( NumberRecord ) record;
+                    nrec = ( NumberRecord ) sheet.getValueRecord(row, cellNum);
                 }
                 nrec.setColumn(getCellNum());
                 if (setValue)
                 {
                     nrec.setValue(getNumericCellValue());
                 }
-                nrec.setXFIndex(( short ) cellStyle.getIndex());
+                nrec.setXFIndex(sheet.getValueRecord(row,cellNum).getXFIndex());
                 nrec.setRow(row);
-                record = nrec;
+                sheet.replaceValueRecord(nrec);
                 break;
 
             case CELL_TYPE_STRING :
@@ -499,11 +517,11 @@ public class HSSFCell
                 }
                 else
                 {
-                    lrec = ( LabelSSTRecord ) record;
+                    lrec = ( LabelSSTRecord ) sheet.getValueRecord(row, cellNum);
                 }
                 lrec.setColumn(getCellNum());
                 lrec.setRow(row);
-                lrec.setXFIndex(( short ) cellStyle.getIndex());
+                lrec.setXFIndex(sheet.getValueRecord(row,cellNum).getXFIndex());
                 if (setValue)
                 {
                     if ((getStringCellValue() != null)
@@ -523,7 +541,7 @@ public class HSSFCell
                         lrec.setSSTIndex(sst);
                     }
                 }
-                record = lrec;
+                sheet.replaceValueRecord(lrec);
                 break;
 
             case CELL_TYPE_BLANK :
@@ -535,21 +553,21 @@ public class HSSFCell
                 }
                 else
                 {
-                    brec = ( BlankRecord ) record;
+                    brec = ( BlankRecord ) sheet.getValueRecord(row, cellNum);
                 }
                 brec.setColumn(getCellNum());
 
                 // During construction the cellStyle may be null for a Blank cell.
                 if (cellStyle != null)
                 {
-                    brec.setXFIndex(( short ) cellStyle.getIndex());
+                    brec.setXFIndex(sheet.getValueRecord(row,cellNum).getXFIndex());
                 }
                 else
                 {
                     brec.setXFIndex(( short ) 0);
                 }
                 brec.setRow(row);
-                record = brec;
+                sheet.replaceValueRecord(brec);
                 break;
 
             case CELL_TYPE_BOOLEAN :
@@ -561,7 +579,7 @@ public class HSSFCell
                 }
                 else
                 {
-                    boolRec = ( BoolErrRecord ) record;
+                    boolRec = ( BoolErrRecord ) sheet.getValueRecord(row, cellNum);
                 }
                 boolRec.setColumn(getCellNum());
                 if (setValue)
@@ -570,7 +588,7 @@ public class HSSFCell
                 }
                 boolRec.setXFIndex(( short ) cellStyle.getIndex());
                 boolRec.setRow(row);
-                record = boolRec;
+                sheet.replaceValueRecord(boolRec);
                 break;
 
             case CELL_TYPE_ERROR :
@@ -582,7 +600,7 @@ public class HSSFCell
                 }
                 else
                 {
-                    errRec = ( BoolErrRecord ) record;
+                    errRec = ( BoolErrRecord ) sheet.getValueRecord(row, cellNum);
                 }
                 errRec.setColumn(getCellNum());
                 if (setValue)
@@ -591,16 +609,17 @@ public class HSSFCell
                 }
                 errRec.setXFIndex(( short ) cellStyle.getIndex());
                 errRec.setRow(row);
-                record = errRec;
+                sheet.replaceValueRecord(errRec);
                 break;
         }
         if (cellType != this.cellType)
         {
             int loc = sheet.getLoc();
 
-            sheet.replaceValueRecord(record);
+            //sheet.replaceValueRecord(record);
             sheet.setLoc(loc);
         }
+        //sheet.setCellType(this.row, this.cellNum);
         this.cellType = cellType;
     }
 
@@ -631,7 +650,7 @@ public class HSSFCell
         {
             setCellType(CELL_TYPE_NUMERIC, false);
         }
-        (( NumberRecord ) record).setValue(value);
+        sheet.setCellValue(row, cellNum, value);
         cellValue = value;
     }
 
@@ -693,7 +712,7 @@ public class HSSFCell
             {
                 index = book.addSSTString(value, true);
             }
-            (( LabelSSTRecord ) record).setSSTIndex(index);
+            sheet.setCellValue(row, cellNum, index);
             stringValue = value;
         }
     }
@@ -704,12 +723,12 @@ public class HSSFCell
             setCellType(CELL_TYPE_BLANK,false);
         } else {
             setCellType(CELL_TYPE_FORMULA,false);
-            FormulaRecordAggregate rec = (FormulaRecordAggregate) record;
+            FormulaRecordAggregate rec = new FormulaRecordAggregate(new FormulaRecord(), null);
             rec.getFormulaRecord().setOptions(( short ) 2);
             rec.getFormulaRecord().setValue(0);
-            
-            //only set to default if there is no extended format index already set
-            if (rec.getXFIndex() == (short)0) rec.setXFIndex(( short ) 0x0f);
+            rec.setRow(row);
+            rec.setColumn(cellNum);
+            rec.setXFIndex(( short ) 0x0f);
             FormulaParser fp = new FormulaParser(formula+";",book);
             fp.parse();
             Ptg[] ptg  = fp.getRPNPtg();
@@ -720,6 +739,9 @@ public class HSSFCell
                 rec.getFormulaRecord().pushExpressionToken(ptg[ k ]);
             }
             rec.getFormulaRecord().setExpressionLength(( short ) size);
+
+            sheet.replaceValueRecord(rec);
+            //sheet.setCellFormula(row, cellNum, options, value
             //Workbook.currentBook = null;
         }
     }
@@ -727,7 +749,8 @@ public class HSSFCell
     public String getCellFormula() {
         //Workbook.currentBook=book;
         SheetReferences refs = book.getSheetReferences();
-        String retval = FormulaParser.toFormulaString(refs, ((FormulaRecordAggregate)record).getFormulaRecord().getParsedExpression());
+        String retval = FormulaParser.toFormulaString(refs,
+                ((FormulaRecordAggregate)sheet.getValueRecord(row,cellNum)).getFormulaRecord().getParsedExpression());
         //Workbook.currentBook=null;
         return retval;
     }
@@ -834,12 +857,12 @@ public class HSSFCell
 
     public void setCellValue(boolean value)
     {
-        if ((cellType != CELL_TYPE_BOOLEAN ) && ( cellType != CELL_TYPE_FORMULA))
+        /*if ((cellType != CELL_TYPE_BOOLEAN ) && ( cellType != CELL_TYPE_FORMULA))
         {
             setCellType(CELL_TYPE_BOOLEAN, false);
         }
         (( BoolErrRecord ) record).setValue(value);
-        booleanValue = value;
+        booleanValue = value;                      */
     }
 
     /**
@@ -853,11 +876,11 @@ public class HSSFCell
 
     public void setCellErrorValue(byte value)
     {
-        if ((cellType != CELL_TYPE_ERROR) && (cellType != CELL_TYPE_FORMULA))
+        /*if ((cellType != CELL_TYPE_ERROR) && (cellType != CELL_TYPE_FORMULA))
         {
             setCellType(CELL_TYPE_ERROR, false);
         }
-        (( BoolErrRecord ) record).setValue(value);
+        (( BoolErrRecord ) record).setValue(value);*/
         errorValue = value;
     }
 
@@ -911,7 +934,8 @@ public class HSSFCell
     public void setCellStyle(HSSFCellStyle style)
     {
         cellStyle = style;
-        record.setXFIndex(style.getIndex());
+
+        sheet.setCellStyle(row, cellNum, style.getIndex());
     }
 
     /**
@@ -961,7 +985,7 @@ public class HSSFCell
 
     protected CellValueRecordInterface getCellValueRecord()
     {
-        return record;
+        return sheet.getValueRecord(row, cellNum);
     }
 
     /**
@@ -976,6 +1000,7 @@ public class HSSFCell
           throw new RuntimeException("You cannot reference columns with an index of less then 0.");
       }
     }
+
     
     /**
      * Sets this cell as the active cell for the worksheet
@@ -985,4 +1010,5 @@ public class HSSFCell
         this.sheet.setActiveCellRow(this.row);
         this.sheet.setActiveCellCol(this.cellNum);
     }
+
 }
