@@ -90,10 +90,6 @@ public class Codec
 
     /**
      * <p>Converts a string into its hexadecimal notation.</p>
-     *
-     * <p><strong>FIXME:</strong> If this method is called frequently,
-     * it should directly implement the algorithm in the called method
-     * in order to avoid creating a string instance.</p>
      */
     public static String hexEncode(final String s)
     {

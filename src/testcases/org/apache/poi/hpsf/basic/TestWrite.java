@@ -65,6 +65,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -402,7 +403,6 @@ public class TestWrite extends TestCase
     {
         Throwable t = null;
         final int codepage = -1;
-        /* FIXME (2): Add tests for various codepages! */
         try
         {
             check(Variant.VT_EMPTY, null, codepage);
@@ -414,8 +414,8 @@ public class TestWrite extends TestCase
             check(Variant.VT_CF, new byte[]{0, 1, 2, 3}, codepage);
             check(Variant.VT_CF, new byte[]{0, 1, 2, 3, 4}, codepage);
             check(Variant.VT_CF, new byte[]{0, 1, 2, 3, 4, 5}, codepage);
-            check(Variant.VT_CF, new byte[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10}, 
-                  codepage);
+            check(Variant.VT_CF, new byte[]{0, 1, 2, 3, 4, 5, 6}, codepage);
+            check(Variant.VT_CF, new byte[]{0, 1, 2, 3, 4, 5, 6, 7}, codepage);
             check(Variant.VT_I2, new Integer(27), codepage);
             check(Variant.VT_I4, new Long(28), codepage);
             check(Variant.VT_FILETIME, new Date(), codepage);
@@ -445,21 +445,80 @@ public class TestWrite extends TestCase
             t = ex;
         }
         if (t != null)
+            fail(org.apache.poi.hpsf.Util.toString(t));
+    }
+
+
+
+    /**
+     * <p>Writes and reads back strings using several different codepages and
+     * checks whether the stuff that has been read back equals the stuff that
+     * was written.</p>
+     */
+    public void testCodepages()
+    {
+        Throwable t = null;
+        final int[] validCodepages = new int[] {-1, 1252, 1200, 65001};
+        for (int i = 0; i < validCodepages.length; i++)
         {
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
-            t.printStackTrace(pw);
-            pw.close();
+            int codepage = validCodepages[i];
             try
             {
-                sw.close();
+                check(Variant.VT_LPSTR, "", codepage);
+                check(Variant.VT_LPSTR, "ה", codepage);
+                check(Variant.VT_LPSTR, "הצ", codepage);
+                check(Variant.VT_LPSTR, "הצü", codepage);
+                check(Variant.VT_LPSTR, "הצüִ", codepage);
+                check(Variant.VT_LPSTR, "הצüִײ", codepage);
+                check(Variant.VT_LPSTR, "הצüִײÜ", codepage);
+                check(Variant.VT_LPSTR, "הצüִײÜß", codepage);
+                check(Variant.VT_LPSTR, "\u79D1\u5B78", codepage);
             }
-            catch (IOException ex2)
+            catch (Exception ex)
             {
-                t.printStackTrace();
+                t = ex;
             }
-            fail(sw.toString());
+            catch (Error ex)
+            {
+                t = ex;
+            }
+            if (t != null)
+                fail(org.apache.poi.hpsf.Util.toString(t));
         }
+
+        final int[] invalidCodepages = new int[] {0, 1, 2, 4711, 815};
+        for (int i = 0; i < invalidCodepages.length; i++)
+        {
+            int codepage = invalidCodepages[i];
+            try
+            {
+                check(Variant.VT_LPSTR, "", codepage);
+                check(Variant.VT_LPSTR, "ה", codepage);
+                check(Variant.VT_LPSTR, "הצ", codepage);
+                check(Variant.VT_LPSTR, "הצü", codepage);
+                check(Variant.VT_LPSTR, "הצüִ", codepage);
+                check(Variant.VT_LPSTR, "הצüִײ", codepage);
+                check(Variant.VT_LPSTR, "הצüִײÜ", codepage);
+                check(Variant.VT_LPSTR, "הצüִײÜß", codepage);
+                fail("UnsupportedEncodingException for codepage " + codepage +
+                     " expected.");
+            }
+            catch (UnsupportedEncodingException ex)
+            {
+                /* This is the expected behaviour. */
+            }
+            catch (Exception ex)
+            {
+                t = ex;
+            }
+            catch (Error ex)
+            {
+                t = ex;
+            }
+            if (t != null)
+                fail(org.apache.poi.hpsf.Util.toString(t));
+        }
+
     }
 
 
@@ -482,11 +541,9 @@ public class TestWrite extends TestCase
         final byte[] b = out.toByteArray();
         final Object objRead =
             VariantSupport.read(b, 0, b.length + LittleEndian.INT_SIZE,
-                                variantType, -1);
+                                variantType, codepage);
         if (objRead instanceof byte[])
         {
-//            final int diff = diff(org.apache.poi.hpsf.Util.pad4
-//                ((byte[]) value), (byte[]) objRead);
             final int diff = diff((byte[]) value, (byte[]) objRead);
             if (diff >= 0)
                 fail("Byte arrays are different. First different byte is at " +

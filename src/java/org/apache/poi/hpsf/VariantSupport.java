@@ -230,7 +230,6 @@ public class VariantSupport extends Variant
                 final int first = o1 + LittleEndian.INT_SIZE;
                 long last = first + LittleEndian.getUInt(src, o1) - 1;
                 o1 += LittleEndian.INT_SIZE;
-                final int rawLength = (int) (last - first + 1);
                 while (src[(int) last] == 0 && first <= last)
                     last--;
                 final int l = (int) (last - first + 1);
@@ -454,13 +453,6 @@ public class VariantSupport extends Variant
             }
         }
 
-        /* Add 0x00 characters to write a multiple of four bytes: */
-        // FIXME (1) Try this!
-//        while (length % 4 != 0)
-//        {
-//            out.write(0);
-//            length++;
-//        }
         return length;
     }
 

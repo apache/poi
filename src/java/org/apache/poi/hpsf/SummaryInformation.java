@@ -310,12 +310,12 @@ public class SummaryInformation extends SpecialPropertySet
      * WMF or Clipboard (BMP?) format. He also provided two links that
      * might be helpful: <a
      * href="http://www.csn.ul.ie/~caolan/publink/file/OLE2SummaryAgainst_file-3.27.patch"
-     * target="_blank">http://www.csn.ul.ie/~caolan/publink/file/OLE2SummaryAgainst_file-3.27.patch
-     * </a> and <a
+     * target="_blank">http://www.csn.ul.ie/~caolan/publink/file/OLE2SummaryAgainst_file-3.27.patch</a>
+     * and <a
      * href="http://msdn.microsoft.com/library/en-us/dno97ta/html/msdn_docprop.asp"
-     * target="_blank">http://msdn.microsoft.com/library/en-us/dno97ta/html/msdn_docprop.asp
-     * </a>. However, we won't do any conversion into any image type
-     * but instead just return a byte array.</p>
+     * target="_blank">http://msdn.microsoft.com/library/en-us/dno97ta/html/msdn_docprop.asp</a>.
+     * However, we won't do any conversion into any image type but instead just
+     * return a byte array.</p>
      *
      * @return The thumbnail or <code>null</code>
      */
