@@ -79,7 +79,7 @@ public class SprmUtils
 
   public static int addSprm(short instruction, int param, byte[] varParam, List list)
   {
-    int type = instruction & 0xe000;
+    int type = (instruction & 0xe000) >> 13;
 
     byte[] sprm = null;
     switch(type)
