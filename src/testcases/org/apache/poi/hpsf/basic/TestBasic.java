@@ -55,10 +55,16 @@
 package org.apache.poi.hpsf.basic;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
@@ -66,11 +72,14 @@ import junit.framework.TestCase;
 import org.apache.poi.hpsf.DocumentSummaryInformation;
 import org.apache.poi.hpsf.HPSFException;
 import org.apache.poi.hpsf.MarkUnsupportedException;
+import org.apache.poi.hpsf.MutablePropertySet;
 import org.apache.poi.hpsf.NoPropertySetStreamException;
 import org.apache.poi.hpsf.PropertySet;
 import org.apache.poi.hpsf.PropertySetFactory;
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hpsf.UnexpectedPropertySetTypeException;
+import org.apache.poi.poifs.filesystem.DocumentEntry;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 
 
@@ -224,7 +233,52 @@ public class TestBasic extends TestCase
 
 
     /**
+     * <p>This test methods reads all property set streams from all POI
+     * filesystems in the "data" directory.</p>
+     */
+    public void testReadAllFiles()
+    {
+        final File dataDir =
+            new File(System.getProperty("HPSF.testdata.path"));
+        final File[] fileList = dataDir.listFiles(new FileFilter()
+            {
+                public boolean accept(final File f)
+                {
+                    return f.isFile();
+                }
+            });
+        try
+        {
+            for (int i = 0; i < fileList.length; i++)
+            {
+                File f = fileList[i];
+                System.out.println("Reading file " + f);
+                /* Read the POI filesystem's property set streams: */
+                final POIFile[] psf1 = Util.readPropertySets(f);
+
+                for (int j = 0; j < psf1.length; j++)
+                {
+                    final InputStream in =
+                        new ByteArrayInputStream(psf1[j].getBytes());
+                    final PropertySet psIn = PropertySetFactory.create(in);
+                }
+            }
+        }
+        catch (Throwable t)
+        {
+            final String s = Util.toString(t);
+            System.err.println(s);
+        }
+    }
+
+
+
+    /**
      * <p>Runs the test cases stand-alone.</p>
+     * 
+     * @param args Command-line arguments (ignored)
+     * 
+     * @exception Throwable if any sort of exception or error occurs
      */
     public static void main(final String[] args) throws Throwable
     {

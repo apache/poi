@@ -62,6 +62,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -69,11 +71,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
-import org.apache.poi.hpsf.MarkUnsupportedException;
-import org.apache.poi.hpsf.NoPropertySetStreamException;
 import org.apache.poi.hpsf.PropertySet;
-import org.apache.poi.hpsf.PropertySetFactory;
-import org.apache.poi.hpsf.UnexpectedPropertySetTypeException;
 import org.apache.poi.poifs.eventfilesystem.POIFSReader;
 import org.apache.poi.poifs.eventfilesystem.POIFSReaderEvent;
 import org.apache.poi.poifs.eventfilesystem.POIFSReaderListener;
@@ -186,7 +184,8 @@ public class Util
                     f.setName(event.getName());
                     f.setPath(event.getPath());
                     final InputStream in = event.getStream();
-                    final ByteArrayOutputStream out = new ByteArrayOutputStream();
+                    final ByteArrayOutputStream out =
+                        new ByteArrayOutputStream();
                     Util.copy(in, out);
                     out.close();
                     f.setBytes(out.toByteArray());
@@ -298,6 +297,38 @@ public class Util
         }
         System.out.println("Current directory: " +
                            System.getProperty("user.dir"));
+    }
+
+
+
+    /**
+     * <p>Returns a textual representation of a {@link Throwable}, including a
+     * stacktrace.</p>
+     * 
+     * @param t The {@link Throwable}
+     * 
+     * @return a string containing the output of a call to
+     * <code>t.printStacktrace()</code>.
+     */
+    public static String toString(final Throwable t)
+    {
+        final StringWriter sw = new StringWriter();
+        final PrintWriter pw = new PrintWriter(sw);
+        t.printStackTrace(pw);
+        pw.close();
+        try
+        {
+            sw.close();
+            return sw.toString();
+        }
+        catch (IOException e)
+        {
+            final StringBuffer b = new StringBuffer(t.getMessage());
+            b.append("\n");
+            b.append("Could not create a stacktrace. Reason: ");
+            b.append(e.getMessage());
+            return b.toString();
+        }
     }
 
 }
