@@ -86,8 +86,14 @@
     <work nested="build/classes"/>
     <work nested="build/testcases"/>
     
+    <!-- Build home  -->        
     <home nested="build"/>
-
+    
+    <!-- Source dirs with type  -->        
+    <code type="java/plain" dir="src/java"/>
+    <test type="test/junit" dir="src/test"/>
+    <documentation type="xml/forrest" dir="src/documentation"/>
+        
     <!-- POI jars - the result of the build  -->        
     <jar name="jakarta-poi.jar"            id="poi"/>
     <jar name="jakarta-poi-scratchpad.jar" id="scratchpad"/>
