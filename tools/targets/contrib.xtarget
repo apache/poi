@@ -14,7 +14,7 @@
     <echo message=" These are CONTRIB BUILDS. They are not guaranteed to work."/>
     <echo message=" You have been warned. "/>
     <echo message=" "/>
-    <echo message=" poibrowser - POIBrowser 0.05 GUI POI Viewer"/>
+    <echo message=" poibrowser - POIBrowser 0.10 GUI POI Viewer"/>
     <echo message=" -"/>
     <echo message=" -"/>
     <echo message=" -"/>
