@@ -18,15 +18,14 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import junit.framework.TestCase;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.util.TempFile;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-
-import junit.framework.TestCase;
-
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.util.TempFile;
 
 
 /**
@@ -128,7 +127,7 @@ public class TestNamedRange
     /**
      * Reads an excel file already containing a named range.
      * <p>
-	 * Addresses Bug <a href="http://nagoya.apache.org/bugzilla/show_bug.cgi?id=9632" target="_bug">#9632</a>
+	 * Addresses Bug <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=9632" target="_bug">#9632</a>
      */   
 	public void testNamedRead() throws IOException
 	{        
@@ -169,7 +168,7 @@ public class TestNamedRange
     /**
      * Reads an excel file already containing a named range and updates it
      * <p>
-     * Addresses Bug <a href="http://nagoya.apache.org/bugzilla/show_bug.cgi?id=16411" target="_bug">#16411</a>
+     * Addresses Bug <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=16411" target="_bug">#16411</a>
      */
     public void testNamedReadModify() throws IOException
     {
@@ -256,7 +255,7 @@ public class TestNamedRange
 	/**
 	 * Test case provided by czhang@cambian.com (Chun Zhang)
 	 * <p>
-	 * Addresses Bug <a href="http://nagoya.apache.org/bugzilla/show_bug.cgi?id=13775" target="_bug">#13775</a>
+	 * Addresses Bug <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=13775" target="_bug">#13775</a>
 	 * @throws IOException
 	 */
 	public void testMultiNamedRange() 
