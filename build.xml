@@ -250,7 +250,7 @@ printed.
   <!--         Build distributions        -->
   <!-- ================================== -->
 
-  <target  name="dist"
+  <target  name="dist" depends="-init"
            description="Make distributions">
            
     <echo>**********************************************</echo>
