@@ -70,50 +70,6 @@ $Id$
               </div>
             </td>
             <xsl:comment>================= end Project Logo ==================</xsl:comment>
-            <xsl:comment>================= start Search ==================</xsl:comment>
-            <td class="search" align="right" rowspan="2" valign="top">
-              <xsl:if test="not($config/disable-search) or
-                $config/disable-search='false' and $config/searchsite-domain and
-                $config/searchsite-name">
-                <form method="get" action="http://www.google.com/search" target="_blank">
-                  <table cellpadding="0" cellspacing="0" border="0" summary="search">
-                    <tr>
-                      <td colspan="3" bgcolor="#a5b6c6"><img class="spacer" src="{$spacer}" alt="" width="1" height="10" /></td>
-                    </tr>
-                    <tr>
-                      <td colspan="3"><img class="spacer" src="{$spacer}" alt="" width="1" height="8" /></td>
-                    </tr>
-                    <tr>
-                      <td><img class="spacer" src="{$spacer}" alt="" width="1" height="1" /></td>
-                      <td nowrap="nowrap">
-                        <input type="hidden" name="sitesearch" value="{$config/searchsite-domain}"/>
-                        <input type="text" id="query" name="q" size="10"/>
-                        <img class="spacer" src="{$spacer}" alt="" width="5" height="1" />
-                        <input type="submit" value="Search" name="Search"/>
-                        <br />
-                          Search <xsl:value-of select="$config/searchsite-name"/>
-                          <!-- setting search options off for the moment -->
-                          <!--
-                          <input type="radio" name="web" value="web"/>web site&#160;&#160;<input type="radio" name="mail" value="mail"/>mail lists
-                          -->
-                      </td>
-                      <td><img class="spacer" src="{$spacer}" alt="" width="1" height="1" /></td>
-                    </tr>
-
-                    <tr>
-                      <td colspan="3"><img class="spacer" src="{$spacer}" alt="" width="1" height="7" /></td>
-                    </tr>
-
-                    <tr>
-                      <td class="bottom-left-thick"></td>
-                      <td bgcolor="#a5b6c6"><img class="spacer" src="{$spacer}" alt="" width="1" height="1" /></td>
-                      <td class="bottom-right-thick"></td>
-                    </tr>
-                  </table>
-                </form>
-              </xsl:if>
-            </td>
-            <xsl:comment>================= end Search ==================</xsl:comment>
           </tr>
          </tbody>          
         </table>
@@ -156,9 +112,44 @@ $Id$
       <tr valign="top">
         <xsl:comment>================= start Menu ==================</xsl:comment>
         <td id="leftcol">
+         <A HREF="http://apachecon.com/2003/US/index.html"><img border="0" src="http://jakarta.apache.org/images/logos/ac2003-150.gif" alt="ApacheCon US 2003"/></A>
           <div id="navcolumn">
             <xsl:apply-templates select="div[@class='menuBar']"/>
           </div>
+              <xsl:if test="not($config/disable-search) or
+                $config/disable-search='false' and $config/searchsite-domain and
+                $config/searchsite-name">
+                <form method="get" action="http://www.google.com/search" target="_blank">
+                  <table cellpadding="0" cellspacing="0" border="0" summary="search">
+                    <tr>
+                      <td><img class="spacer" src="{$spacer}" alt="" width="1" height="1" /></td>
+                      <td nowrap="nowrap">
+                        <input type="hidden" name="sitesearch" value="{$config/searchsite-domain}"/>
+                        <input type="text" id="query" name="q" size="10"/>
+                        <img class="spacer" src="{$spacer}" alt="" width="5" height="1" />
+                        <input type="submit" value="GO" name="Search"/>
+                        <br />
+                          Search <xsl:value-of select="$config/searchsite-name"/>
+                          <!-- setting search options off for the moment -->
+                          <!--
+                          <input type="radio" name="web" value="web"/>web site&#160;&#160;<input type="radio" name="mail" value="mail"/>mail lists
+                          -->
+                      </td>
+                      <td><img class="spacer" src="{$spacer}" alt="" width="1" height="1" /></td>
+                    </tr>
+
+                    <tr>
+                      <td colspan="3"><img class="spacer" src="{$spacer}" alt="" width="1" height="7" /></td>
+                    </tr>
+
+                    <tr>
+                      <td class="bottom-left-thick"></td>
+                      <td bgcolor="#a5b6c6"><img class="spacer" src="{$spacer}" alt="" width="1" height="1" /></td>
+                      <td class="bottom-right-thick"></td>
+                    </tr>
+                  </table>
+                </form>
+              </xsl:if>
         </td>
         <xsl:comment>================= end Menu ==================</xsl:comment>
 
