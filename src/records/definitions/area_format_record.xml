@@ -1,0 +1,17 @@
+<record id="0x100a" name="AreaFormat" package="org.apache.poi.hssf.record">
+    <suffix>Record</suffix>
+    <extends>Record</extends>
+    <description>The area format record is used to define the colours and patterns for an area.</description>
+    <author>Glen Stampoultzis (glens at apache.org)</author>
+    <fields>
+        <field type="int" size="4" name="foreground color" description="foreground color in RGB"/>
+        <field type="int" size="4" name="background color" description="background color in RGB"/>
+        <field type="int" size="2" name="pattern" description="fill pattern"/>
+        <field type="int" size="2" name="format flags">
+            <bit number="0" name="automatic" description="automatic formatting"/>
+            <bit number="1" name="invert" description="swap foreground and background colours when data is negative"/>
+        </field>
+        <field type="int" size="2" name="forecolor index" description="index to foreground color"/>
+        <field type="int" size="2" name="backcolor index" description="index to background color"/>
+    </fields>
+</record>

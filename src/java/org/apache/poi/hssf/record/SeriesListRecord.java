@@ -126,7 +126,7 @@ public class SeriesListRecord
 
     protected void fillFields(byte [] data, short size, int offset)
     {
-        field_1_seriesNumbers           = LittleEndian.getShortArray(data, 0 + offset);
+        field_1_seriesNumbers           = LittleEndian.getShortArray(data, 0x0 + offset);
 
     }
 

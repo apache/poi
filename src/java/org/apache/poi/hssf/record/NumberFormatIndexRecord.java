@@ -126,7 +126,7 @@ public class NumberFormatIndexRecord
 
     protected void fillFields(byte [] data, short size, int offset)
     {
-        field_1_formatIndex             = LittleEndian.getShort(data, 0 + offset);
+        field_1_formatIndex             = LittleEndian.getShort(data, 0x0 + offset);
 
     }
 

@@ -140,12 +140,12 @@ public class ValueRangeRecord
 
     protected void fillFields(byte [] data, short size, int offset)
     {
-        field_1_minimumAxisValue        = LittleEndian.getDouble(data, 0 + offset);
-        field_2_maximumAxisValue        = LittleEndian.getDouble(data, 8 + offset);
-        field_3_majorIncrement          = LittleEndian.getDouble(data, 16 + offset);
-        field_4_minorIncrement          = LittleEndian.getDouble(data, 24 + offset);
-        field_5_categoryAxisCross       = LittleEndian.getDouble(data, 32 + offset);
-        field_6_options                 = LittleEndian.getShort(data, 40 + offset);
+        field_1_minimumAxisValue        = LittleEndian.getDouble(data, 0x0 + offset);
+        field_2_maximumAxisValue        = LittleEndian.getDouble(data, 0x8 + offset);
+        field_3_majorIncrement          = LittleEndian.getDouble(data, 0x10 + offset);
+        field_4_minorIncrement          = LittleEndian.getDouble(data, 0x18 + offset);
+        field_5_categoryAxisCross       = LittleEndian.getDouble(data, 0x20 + offset);
+        field_6_options                 = LittleEndian.getShort(data, 0x28 + offset);
 
     }
 

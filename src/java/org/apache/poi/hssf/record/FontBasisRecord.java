@@ -130,11 +130,11 @@ public class FontBasisRecord
 
     protected void fillFields(byte [] data, short size, int offset)
     {
-        field_1_xBasis                  = LittleEndian.getShort(data, 0 + offset);
-        field_2_yBasis                  = LittleEndian.getShort(data, 2 + offset);
-        field_3_heightBasis             = LittleEndian.getShort(data, 4 + offset);
-        field_4_scale                   = LittleEndian.getShort(data, 6 + offset);
-        field_5_indexToFontTable        = LittleEndian.getShort(data, 8 + offset);
+        field_1_xBasis                  = LittleEndian.getShort(data, 0x0 + offset);
+        field_2_yBasis                  = LittleEndian.getShort(data, 0x2 + offset);
+        field_3_heightBasis             = LittleEndian.getShort(data, 0x4 + offset);
+        field_4_scale                   = LittleEndian.getShort(data, 0x6 + offset);
+        field_5_indexToFontTable        = LittleEndian.getShort(data, 0x8 + offset);
 
     }
 

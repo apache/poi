@@ -133,11 +133,11 @@ public class AxisRecord
 
     protected void fillFields(byte [] data, short size, int offset)
     {
-        field_1_axisType                = LittleEndian.getShort(data, 0 + offset);
-        field_2_reserved1               = LittleEndian.getInt(data, 2 + offset);
-        field_3_reserved2               = LittleEndian.getInt(data, 6 + offset);
-        field_4_reserved3               = LittleEndian.getInt(data, 10 + offset);
-        field_5_reserved4               = LittleEndian.getInt(data, 14 + offset);
+        field_1_axisType                = LittleEndian.getShort(data, 0x0 + offset);
+        field_2_reserved1               = LittleEndian.getInt(data, 0x2 + offset);
+        field_3_reserved2               = LittleEndian.getInt(data, 0x6 + offset);
+        field_4_reserved3               = LittleEndian.getInt(data, 0xa + offset);
+        field_5_reserved4               = LittleEndian.getInt(data, 0xe + offset);
 
     }
 

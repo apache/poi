@@ -130,7 +130,7 @@ public class DatRecord
 
     protected void fillFields(byte [] data, short size, int offset)
     {
-        field_1_options                 = LittleEndian.getShort(data, 0 + offset);
+        field_1_options                 = LittleEndian.getShort(data, 0x0 + offset);
 
     }
 

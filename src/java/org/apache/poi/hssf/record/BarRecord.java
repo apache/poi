@@ -133,9 +133,9 @@ public class BarRecord
 
     protected void fillFields(byte [] data, short size, int offset)
     {
-        field_1_barSpace                = LittleEndian.getShort(data, 0 + offset);
-        field_2_categorySpace           = LittleEndian.getShort(data, 2 + offset);
-        field_3_formatFlags             = LittleEndian.getShort(data, 4 + offset);
+        field_1_barSpace                = LittleEndian.getShort(data, 0x0 + offset);
+        field_2_categorySpace           = LittleEndian.getShort(data, 0x2 + offset);
+        field_3_formatFlags             = LittleEndian.getShort(data, 0x4 + offset);
 
     }
 

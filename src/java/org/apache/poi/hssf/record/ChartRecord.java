@@ -129,10 +129,10 @@ public class ChartRecord
 
     protected void fillFields(byte [] data, short size, int offset)
     {
-        field_1_x                       = LittleEndian.getInt(data, 0 + offset);
-        field_2_y                       = LittleEndian.getInt(data, 4 + offset);
-        field_3_width                   = LittleEndian.getInt(data, 8 + offset);
-        field_4_height                  = LittleEndian.getInt(data, 12 + offset);
+        field_1_x                       = LittleEndian.getInt(data, 0x0 + offset);
+        field_2_y                       = LittleEndian.getInt(data, 0x4 + offset);
+        field_3_width                   = LittleEndian.getInt(data, 0x8 + offset);
+        field_4_height                  = LittleEndian.getInt(data, 0xc + offset);
 
     }
 

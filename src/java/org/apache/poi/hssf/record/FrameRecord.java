@@ -131,8 +131,8 @@ public class FrameRecord
 
     protected void fillFields(byte [] data, short size, int offset)
     {
-        field_1_borderType              = LittleEndian.getShort(data, 0 + offset);
-        field_2_options                 = LittleEndian.getShort(data, 2 + offset);
+        field_1_borderType              = LittleEndian.getShort(data, 0x0 + offset);
+        field_2_options                 = LittleEndian.getShort(data, 0x2 + offset);
 
     }
 
