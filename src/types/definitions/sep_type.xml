@@ -1,0 +1,67 @@
+<record id="0x101B" name="SEP" package="org.apache.poi.hdf.model.hdftypes.definitions">
+    <suffix>AbstractType</suffix>
+    <extends>HDFType</extends>
+    <description>Section Properties.</description>
+    <author>S. Ryan Ackley</author>
+    <fields>
+      <field type="byte" size="1" name="bkc"/>
+      <field type="byte" size="1" name="fTitlePage"/>
+      <field type="byte" size="1" name="fAutoPgn"/>
+      <field type="byte" size="1" name="nfcPgn"/>
+      <field type="byte" size="1" name="fUnlocked"/>
+      <field type="byte" size="1" name="cnsPgn"/>
+      <field type="byte" size="1" name="fPgnRestart"/>
+      <field type="byte" size="1" name="fEndNote"/>
+      <field type="byte" size="1" name="lnc"/>
+      <field type="byte" size="1" name="unused1"/>
+      <field type="int" size="2" name="nLnnMod"/>
+      <field type="int" size="4" name="dxaLnn"/>
+      <field type="int" size="2" name="dxaPgn"/>
+      <field type="int" size="2" name="dyaPgn"/>
+      <field type="byte" size="1" name="fLBetween"/>
+      <field type="byte" size="1" name="vjc"/>
+      <field type="int" size="2" name="dmBinFirst"/>
+      <field type="int" size="2" name="dmBinOther"/>
+      <field type="int" size="2" name="dmPaperReq"/>
+      <field type="int" size="4" name="brcTop"/>
+      <field type="int" size="4" name="brcLeft"/>
+      <field type="int" size="4" name="brcBottom"/>
+      <field type="int" size="4" name="brcRight"/>
+      <field type="int" size="2" name="fPropMark"/>
+      <field type="int" size="2" name="ibstPropRMark"/>
+      <field type="int" size="4" name="dttmPropRMark"/>
+      <field type="int" size="4" name="dxtCharSpace"/>
+      <field type="int" size="4" name="dyaLinePitch"/>
+      <field type="int" size="2" name="clm"/>
+      <field type="int" size="2" name="unused2"/>
+      <field type="byte" size="1" name="dmOrientPage"/>
+      <field type="byte" size="1" name="iHeadingPgn"/>
+      <field type="int" size="2" name="pgnStart"/>
+      <field type="int" size="2" name="lnnMin"/>
+      <field type="int" size="2" name="wTextFlow"/>
+      <field type="short" size="2" name="unused3"/>
+      <field type="int" size="2" name="pgbProb"/>
+      <field type="short" size="2" name="unused4"/>
+      <field type="int" size="4" name="xaPage"/>
+      <field type="int" size="4" name="yaPage"/>
+      <field type="int" size="4" name="xaPageNUp"/>
+      <field type="int" size="4" name="yaPageNUp"/>
+      <field type="int" size="4" name="dxaLeft"/>
+      <field type="int" size="4" name="dxaRight"/>
+      <field type="int" size="4" name="dyaTop"/>
+      <field type="int" size="4" name="dyaBottom"/>
+      <field type="int" size="4" name="dzaGutter"/>
+      <field type="int" size="4" name="dyaHdrTop"/>
+      <field type="int" size="4" name="dyaHdrBottom"/>
+      <field type="int" size="2" name="ccolM1"/>
+      <field type="byte" size="1" name="fEvenlySpaced"/>
+      <field type="byte" size="1" name="unused5"/>
+      <field type="int" size="4" name="dxaColumns"/>
+      <field type="int[]" size="356" name="rgdxaColumn"/>
+      <field type="int" size="4" name="dxaColumnWidth"/>
+      <field type="byte" size="1" name="dmOrientFirst"/>
+      <field type="byte" size="1" name="fLayout"/>
+      <field type="short" size="2" name="unused6"/>
+      <field type="byte[]" size="212" name="olst"/>
+    </fields>
+</record>
