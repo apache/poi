@@ -348,7 +348,7 @@ public class VariantSupport extends Variant
             case Variant.VT_LPWSTR:
             {
                 final int nrOfChars = ((String) value).length() + 1; 
-                TypeWriter.writeUIntToStream(out, nrOfChars);
+                length += TypeWriter.writeUIntToStream(out, nrOfChars);
                 char[] s = Util.pad4((String) value);
                 for (int i = 0; i < s.length; i++)
                 {
@@ -358,8 +358,8 @@ public class VariantSupport extends Variant
                     final byte lowb = (byte) low;
                     out.write(lowb);
                     out.write(highb);
+                    length += 2;
                 }
-                length = nrOfChars * 2;
                 out.write(0x00);
                 out.write(0x00);
                 length += 2;
@@ -386,8 +386,7 @@ public class VariantSupport extends Variant
             }
             case Variant.VT_I4:
             {
-                TypeWriter.writeToStream(out, ((Long) value).intValue());
-                length = LittleEndianConsts.INT_SIZE;
+                length += TypeWriter.writeToStream(out, ((Long) value).intValue());
                 break;
             }
             case Variant.VT_FILETIME:
