@@ -167,7 +167,7 @@ public abstract class <xsl:value-of select="@name"/>AbstractType
 </xsl:for-each>
 </xsl:template>
 
-<xsl:template match = "bit" >        private BitField  <xsl:value-of select="@name"/> = new BitField(<xsl:value-of select="@mask"/>);
+<xsl:template match = "bit" >        private static BitField  <xsl:value-of select="@name"/> = new BitField(<xsl:value-of select="@mask"/>);
 </xsl:template>
 <xsl:template match = "const">        public final static <xsl:value-of select="@type"/><xsl:text>  </xsl:text><xsl:value-of select="@name"/> = <xsl:value-of select="@value"/>;
 </xsl:template>
