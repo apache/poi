@@ -173,7 +173,7 @@ public class HSSFCellStyle
      * dot border
      */
 
-    public final static short    BORDER_DOTTED              = 0x4;
+    public final static short    BORDER_HAIR              = 0x4;
 
     /**
      * Thick border
@@ -191,7 +191,7 @@ public class HSSFCellStyle
      * hair-line border
      */
 
-    public final static short    BORDER_HAIR                = 0x7;
+    public final static short    BORDER_DOTTED                = 0x7;
 
     /**
      * Medium dashed border
