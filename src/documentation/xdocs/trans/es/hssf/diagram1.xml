@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "../dtd/document-v11.dtd">
+
+<document>
+ <header>
+  <title>HSSF</title>
+  <subtitle>Overview</subtitle>
+  <authors>
+   <person name="Andrew C. Oliver" email="acoliver@apache.org"/>     
+   <person name="Nicola Ken Barozzi" email="barozzi@nicolaken.com"/>     
+  </authors>
+ </header>
+
+ <body>
+ <section title="Usermodel Class Diagram by Matthew Young">
+           <img src="images/usermodel.gif"/>
+  </section>
+ </body>
+</document>
