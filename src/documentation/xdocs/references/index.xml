@@ -26,5 +26,12 @@
            </section>
             -->
         </section>
+        <section title="Products/Projects using POI">
+            <p> Publically available products/projects using POI include:
+            </p>
+            <ul>
+              <li><link href="http://jtimetracker.sourceforge.net/">JTimeTracker</link></li>
+            </ul> 
+        </section>
     </body>
 </document>

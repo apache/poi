@@ -8,6 +8,7 @@
 
   <menu label="Community">
     <menu-item label="News" href="news.html"/>    
+    <menu-item label="Mirrors" href="mirrors.html"/>    
     <menu-item label="Changes" href="changes.html"/> 
     <menu-item label="To do" href="todo.html"/> 
     <menu-item label="Get Involved" href="getinvolved/index.html"/>
