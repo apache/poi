@@ -29,11 +29,15 @@
   </build>           
   <forrest>
     <!-- available skins:
+
+         basic
          jakarta-site
+         avalon-site
          scarab-site
          xml-apache-site
-         basic -->       
-    <skin name="jakarta-site">
+         forrest-site  (Work In Progress)
+ -->       
+    <skin name="avalon-site">
      <navlinks>
       <link1 href="http://www.apache.org/">apache.org</link1>
       <link2 href="http://jakarta.apache.org/">jakarta.apache.org</link2>
