@@ -63,6 +63,7 @@ package org.apache.poi.hssf.record;
 import java.util.ArrayList;
 
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.hssf.util.RKUtil;
 
 /**
  * Used to store multiple RK numbers on a row.  1 MulRk = Multiple Cell values.
@@ -166,47 +167,7 @@ public class MulRKRecord
 
     public double getRKNumberAt(int coffset)
     {
-        return decodeNumber((( RkRec ) field_3_rks.get(coffset)).rk);
-    }
-
-    /**
-     * Do the dirty work of decoding; made a private static method to
-     * facilitate testing the algorithm
-     */
-
-    private static double decodeNumber(int number)
-    {
-        long raw_number = number;
-
-        // mask off the two low-order bits, 'cause they're not part of
-        // the number
-        raw_number &= -3;
-        double rvalue = 0;
-
-        if ((number & 0x02) == 0x02)
-        {
-
-            // ok, it's just a plain ol' int; we can handle this
-            // trivially by right-shifting and casting
-            rvalue = ( double ) (raw_number >> 2);
-        }
-        else
-        {
-
-            // also trivial, but not as obvious ... left shift the
-            // bits high and use that clever static method in Double
-            // to convert the resulting bit image to a double
-            rvalue = Double.longBitsToDouble(raw_number << 32);
-        }
-        if ((number & 0x01) == 0x01)
-        {
-
-            // low-order bit says divide by 100, and so we do. Why?
-            // 'cause that's what the algorithm says. Can't fight city
-            // hall, especially if it's the city of Redmond
-            rvalue /= 100;
-        }
-        return rvalue;
+        return RKUtil.decodeNumber((( RkRec ) field_3_rks.get(coffset)).rk);
     }
 
     /**
