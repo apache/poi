@@ -719,16 +719,16 @@ public class HSSFCell
             //Workbook.currentBook = null;
         }
     }
-    
+
     public String getCellFormula() {
         //Workbook.currentBook=book;
         SheetReferences refs = book.getSheetReferences();
         String retval = FormulaParser.toFormulaString(refs, ((FormulaRecordAggregate)record).getFormulaRecord().getParsedExpression());
         //Workbook.currentBook=null;
-        return retval;   
+        return retval;
     }
-    
-    
+
+
     /**
      * get the value of the cell as a number.  For strings we throw an exception.
      * For blank cells we return a 0.
@@ -954,7 +954,7 @@ public class HSSFCell
     {
         return record;
     }
- 
+
     /**
      * @throws RuntimeException if the bounds are exceeded.
      */
@@ -962,6 +962,9 @@ public class HSSFCell
       if (cellNum > 255) {
           throw new RuntimeException("You cannot have more than 255 columns "+
                     "in a given row (IV).  Because Excel can't handle it");
-      }  
+      }
+      else if (cellNum < 0) {
+          throw new RuntimeException("You cannot reference columns with an index of less then 0.");
+      }
     }
 }
