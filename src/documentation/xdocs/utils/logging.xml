@@ -7,6 +7,7 @@
   <subtitle>Overview</subtitle>
   <authors>
    <person name="Nicola Ken Barozzi" email="nicolaken@apache.org"/>     
+   <person name="Andrew C. Oliver" email="acoliver@apache.org"/>     
   </authors>
  </header>
 
@@ -15,7 +16,11 @@
 
   <p>
     Logging in POI is used only as a debugging mechanism, not a normal runtime
-    logging system.
+    logging system.  Logging is ONLY for autopsie type debugging, and should 
+    NEVER be enabled on a production system.  Enabling logging will reduce 
+    performance by at least a factor of 100.  If you are not developing 
+    POI or trying to debug why POI isn't reading a file correctly, then DO 
+    NOT enable logging.  You've been warned. 
   </p>
 
   <p>
