@@ -11,7 +11,7 @@
         <person id="NKB" name="Nicola Ken Barozzi" email="barozzi@nicolaken.com"/>
         <person id="POI-DEVELOPERS" name="Poi Developers"    email="poi-dev@jakarta.apache.org"/>
     </devs>
-    <release version="1.6-dev" date="Unrelease">
+    <release version="1.6-dev" date="Unreleased">
         <action dev="NKB" type="update">Removed runtime dependency on commonds logging.</action>
         <action dev="POI-DEVELOPERS" type="update">Formula support</action>
     </release>
