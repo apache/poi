@@ -17,7 +17,6 @@
     <menu-item label="Download" href="http://sourceforge.net/project/showfiles.php?group_id=32701"/>
     <menu-item label="Design" href="plan/POI10Vision.html"/>
     <menu-item label="Who we are" href="who.html"/>    
-    <menu-item label="FAQ File" href="faq.html"/>
     <menu-item label="Changes" href="changes.html"/>
     <menu-item label="Todo" href="todo.html"/>    
   </menu>

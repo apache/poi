@@ -8,7 +8,8 @@
    <person name="Robin Green" email="greenrd@hotmail.com"/>
    <person name="Stefano Mazzocchi" email="stefano@apache.org"/> 
    <person name="Nicola Ken Barozzi" email="barozzi@nicolaken.com"/> 
-   <person name="Marc Johnson" email="mjohnson@apache.org"/> 
+   <person name="Marc Johnson" email="mjohnson@apache.org"/>
+   <person name="Andrew C. Oliver" email="acoliver@apache.org"/>
    </authors>
  </header>
 
@@ -33,19 +34,18 @@
   </p>
 
   <p>You can get your local working copy of the
-   <link href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/POI">latest and
+   <link href="http://jakarta.apache.org/site/cvsindex.html">latest and
    greatest code</link> (which you find in the jakarta-poi module in
-   the CVS code repository.
-   Review the <link href="todo.html">todo</link> list and choose a task
-   (or perhaps you have noticed something that needs patching). Make the
-   changes, do the testing, generate a patch, and post to the dev
-   mailing list. (Do not worry - the process is easy and explained below.)
+   the CVS code repository.   Review the <link href="todo.html">todo</link> list and choose a task
+   (or perhaps you have noticed something that needs patching). Make the changes, do the testing, 
+   generate a patch, and post to the dev mailing list. (Do not worry - the process is easy and
+   explained below.)
   </p>
 
   <p>
    Document writers are usually the most wanted people so if
    you like to help but you're not familiar with the innermost technical details, don't worry:
-   we have work for you!
+   we have work for you!  And we'll be very available to you for any questions!
   </p>
 
  </s1>
@@ -68,7 +68,7 @@
     with this, please join the <code>general POI mailing list</code>
     , install and try out POI
     and read some of the <link href="mail-lists.html">mail archives</link>.
-    You should have a strong "fluency" in XML technologies, Java and a basic understanding of
+    You should have a strong "fluency" in Java and a basic understanding of
     the POI architecture - don't just say "it should have XYZ" without reading anything first -
     because chances are, someone's already thought of that feature!)</li>
    <li>Packaging easy-to-install packages (such as RPMs) for the myriad of possible configurations out
@@ -226,7 +226,10 @@
     <code>build docs</code> process to find them. Do not expect POI
     or the build system to detect the validation errors for you - they can
     do it, but that is not their purpose. (Anyway, nsgmls validation error
-    messages are more informative.)
+    messages are more informative.).  Andy wishes it to be known he uses 
+    <link href="http://www.sourceforge.net/projects/jedit">jEdit</link>.  For
+    his XML editing.  (That is when he's not hacking it in 'vi' the true editor
+    and light of the text editing world!).
    </li>
    <li>
     Remember that most people are participating in development on a
