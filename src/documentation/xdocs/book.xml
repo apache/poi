@@ -16,6 +16,10 @@
     <menu-item label="Who we are" href="who.html"/> 
     <menu-item label="Resolutions" href="resolutions/index.html"/>    
   </menu>
+  
+  <menu label="Marketing">
+    <menu-item label="Case Studies" href="casestudies.html"/>
+  </menu>
 
   <menu label="Project">
     <menu-item label="Overview" href="overview.html"/>

@@ -11,59 +11,16 @@
   </header>
 
   <body>
+   <section title="News">
+    <section title="Translations">
+        <p> 
+            The POI documentation translation project has begun.  The first 
+            to start is the <link href="trans/es/index.html">Spanish 
+            (espaniol)</link> translation.  Others are welcome.  Please feel 
+            free to participate!
+        </p>
+    </section>
     <section title="Logo Contest">
-        <!--
-      <p>
-        The POI committers have voted to
-        <link href="http://jakarta.apache.org/ant">"innovate"</link> and hold a
-        logo contest.  The big P at the top of the page is just a placeholder.
-        So the rules are pretty much this:
-      </p>
-      <ul>
-        <li>
-                <link href="http://burnallgifs.org/">Only PNG submissions</link>
-                be accepted (we can convert them as needed).
-        </li>
-        <li>
-                Submissions must be sent to the <link
-                href="http://jakarta.apache.org/site/mail.html">POI
-                User's mailing list</link> via an http link.  If you do not
-                have an available webserver contact Andy (acoliver at apache dot
-                org) and ask him to post it for you (and he will if it doesn't
-                suck royally).  Large binary attachments annoyingly posted to
-                the list will be rebuked. :-)
-        </li>
-        <li>
-                Image authors must be willing to work with us on any font and
-                sizing issues, etc.
-        </li>
-        <li>
-                All submissions become property of the Apache Software
-                Foundation to do whatever it wants with them (thanks!).
-        </li>
-        <li>
-                A non-binding poll will be taken and everyone can vote.
-        </li>
-        <li>
-                Based on the poll results and the fact that Andy won't vote for
-                anything that isn't some kind of tiki god or hawaiian theme
-                (maybe a poi pounder would be acceptable), the committers will
-                vote on the new POI logo.
-        </li>
-        <li>
-                Logos should be submitted in two flavors: one for the top of the
-                page and another for posting on other sites that note projects
-                that use POI technology.
-        </li>
-        <li>
-                The winner will get credit posted somewhere on the POI site and
-                have their logo used wherever POI is proudly served.
-        </li>
-      </ul>
-      <p>
-        You can see the current submissions <link
-        href="news/logocontest.html">here.</link>
-      </p>  -->
         <p>
             Entries for the POI logo contest are now finished.  Time to begin voting.  Remember, Andy really
             likes Tiki gods, but Glen suggests voting for what you like.  :-)
@@ -74,6 +31,7 @@
         <p>
             <link href="http://vote.sparklit.com/poll.spark/640946">Click here</link> to see the current results.
         </p>
+     </section>
     </section>
     <section title="Purpose">
       <p>
