@@ -55,7 +55,6 @@
 package org.apache.poi.hssf.usermodel.examples;
 
 import org.apache.poi.hssf.usermodel.*;
-import org.apache.poi.hssf.util.HSSFColor;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -68,7 +67,7 @@ import java.io.IOException;
 public class FrillsAndFills
 {
     public static void main(String[] args)
-        throws IOException
+            throws IOException
     {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet("new sheet");
