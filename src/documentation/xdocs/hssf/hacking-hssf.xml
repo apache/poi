@@ -53,10 +53,12 @@
             </p>
         </section>
         <section title="Important Notice">
-            <p>One thing to note:  ensure any participants in this process have never
+            <p>One thing to note:  If you are making a large code contribution we need to ensure
+            any participants in this process have never
             signed a "Non Disclosure Agreement" with Microsoft, and have not
             received any information covered by such an agreement.  If they have
-            they'll not be able to participate in the POI project.</p>
+            they'll not be able to participate in the POI project.  For large contributions we
+            may ask you to sign an agreement.</p>
         </section>
         <section title="What Can I Work On?">
             <p>Check our <link href="../todo.html">todo list</link> or simply look for missing functionality.  Start small
