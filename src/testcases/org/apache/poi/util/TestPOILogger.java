@@ -1,6 +1,5 @@
 
-/*
- * ====================================================================
+/* ====================================================================
  * The Apache Software License, Version 1.1
  *
  * Copyright (c) 2002 The Apache Software Foundation.  All rights
@@ -53,75 +52,80 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
+
 package org.apache.poi.util;
 
+import junit.framework.TestCase;
+
+import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
-
-import java.util.*;
-
-import org.apache.commons.logging.*;
 
 /**
- * Provides logging without clients having to mess with
- * configuration/initialization.
+ * Tests the log class.
  *
- * @author Andrew C. Oliver (acoliver at apache dot org)
+ * @author Glen Stampoultzis (glens at apache.org)
  * @author Marc Johnson (mjohnson at apache dot org)
- * @author Nicola Ken Barozzi (nicolaken at apache.org)
+ * @author Nicola Ken Barozzi (nicolaken at apache.org) 
  */
 
-public class POILogFactory
+public class TestPOILogger
+    extends TestCase
 {
-    private static LogFactory   _creator = LogFactory.getFactory();
-
-    // map of POILogger instances, with classes as keys
-    private static Map          _loggers = new HashMap();;
-
-
     /**
-     * construct a POILogFactory.
+     * Constructor TestPOILogger
+     *
+     *
+     * @param s
+     *
      */
 
-    private POILogFactory()
+    public TestPOILogger(String s)
     {
+        super(s);
     }
 
     /**
-     * Get a logger, based on a class name
+     * Method setUp
      *
-     * @param theclass the class whose name defines the log
      *
-     * @return a POILogger for the specified class
+     * @exception Exception
+     *
      */
 
-    public static POILogger getLogger(final Class theclass)
+    protected void setUp()
+        throws Exception
     {
-        return getLogger(theclass.getName());
+        super.setUp();
     }
-    
+
     /**
-     * Get a logger, based on a String
+     * Test different types of log output.
      *
-     * @param cat the String that defines the log
-     *
-     * @return a POILogger for the specified class
+     * @exception Exception
      */
 
-    public static POILogger getLogger(final String cat)
+    public void testVariousLogTypes()
+        throws Exception
     {
-        POILogger logger = null;
-
-        if (_loggers.containsKey(cat))
-        {
-            logger = ( POILogger ) _loggers.get(cat);
-        }
-        else
-        {
-            logger = new POILogger(_creator.getInstance(cat));
-            _loggers.put(cat, logger);
-        }
-        return logger;
-    }
+        //NKB Testing only that logging classes use gives no exception
+        //    Since logging can be disabled, no checking of logging
+        //    output is done.
         
-}   // end public class POILogFactory
+        POILogger     log = POILogFactory.getLogger("foo");
+
+        log.log(POILogger.WARN, "Test = ", new Integer(1));
+        log.logFormatted(POILogger.ERROR, "Test param 1 = %, param 2 = %",
+                         "2", new Integer(3));
+        log.logFormatted(POILogger.ERROR, "Test param 1 = %, param 2 = %",
+                         new int[]
+        {
+            4, 5
+        });
+        log.logFormatted(POILogger.ERROR,
+                         "Test param 1 = %1.1, param 2 = %0.1", new double[]
+        {
+            4, 5.23
+        });
+
+    }
+}
