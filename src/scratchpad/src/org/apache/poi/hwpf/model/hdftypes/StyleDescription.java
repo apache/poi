@@ -57,6 +57,7 @@
 package org.apache.poi.hwpf.model.hdftypes;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
 
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.BitField;
@@ -157,8 +158,8 @@ public class StyleDescription implements HDFType
               if(x == 0)
               {
                   _istd = LittleEndian.getShort(std, varOffset);
-                  varOffset += LittleEndian.SHORT_SIZE;
-                  int grrprlSize = upxSize - 2;
+                  //varOffset += LittleEndian.SHORT_SIZE;
+                  int grrprlSize = upxSize;
                   _papx = new byte[grrprlSize];
                   System.arraycopy(std, varOffset, _papx, 0, grrprlSize);
                   varOffset += grrprlSize;
@@ -224,7 +225,7 @@ public class StyleDescription implements HDFType
     //only worry about papx and chpx for upxs
     if(_styleTypeCode.getValue(_infoShort2) == PARAGRAPH_STYLE)
     {
-      size += _papx.length + 4 + (_papx.length % 2);
+      size += _papx.length + 2 + (_papx.length % 2);
       if (_chpx != null)
       {
         size += _chpx.length + 2;
@@ -263,9 +264,7 @@ public class StyleDescription implements HDFType
     //only worry about papx and chpx for upxs
     if(_styleTypeCode.getValue(_infoShort2) == PARAGRAPH_STYLE)
     {
-      LittleEndian.putShort(buf, offset, (short)(_papx.length + 2));
-      offset += LittleEndian.SHORT_SIZE;
-      LittleEndian.putShort(buf, offset, (short)_istd);
+      LittleEndian.putShort(buf, offset, (short)(_papx.length));
       offset += LittleEndian.SHORT_SIZE;
       System.arraycopy(_papx, 0, buf, offset, _papx.length);
       offset += _papx.length + (_papx.length % 2);
@@ -297,28 +296,18 @@ public class StyleDescription implements HDFType
         sd._infoShort4 == _infoShort4 &&
         _name.equals(sd._name))
     {
-      if (_chpx != null && _chpx.length == sd._chpx.length)
+
+      if (!Arrays.equals(_chpx, sd._chpx))
       {
-        for (int x = 0; x < _chpx.length; x++)
-        {
-          if (_chpx[x] != sd._chpx[x])
-          {
-            return false;
-          }
-        }
-        return true;
+        return false;
       }
-      if (_papx != null && _papx.length == sd._papx.length)
+
+      if (!Arrays.equals(_papx, sd._papx))
       {
-        for (int x = 0; x < _papx.length; x++)
-        {
-          if (_papx[x] != sd._papx[x])
-          {
-            return false;
-          }
-        }
-        return true;
+        return false;
       }
+
+      return true;
     }
     return false;
   }
