@@ -318,10 +318,10 @@
 
        <td>DWord</td>
        <td>Property type ("variant")</td>
-       <td>This is the property's data type, e.g. an integer value,  a byte
+       <td>This is the property's data type, e.g. an integer value, a byte
 	 string or a Unicode string. See the
-	 <link href="#property_types"><em>Property Types</em></link> chapter for
-	 details!</td>
+	 <link href="#property_types"><em>Property Types</em></link> chapter
+         for details!</td>
       </tr>
 
       <tr>
