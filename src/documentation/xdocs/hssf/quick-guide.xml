@@ -33,6 +33,7 @@
                     <li><link href="#PrintArea">Set print area for a sheet.</link></li>
                     <li><link href="#FooterPageNumbers">Set page numbers on the footer of a sheet.</link></li>
                     <li><link href="#ShiftRows">Shift rows.</link></li>
+                    <li><link href="#SelectSheet">Set a sheet as selected.</link></li>
                 </ul>
             </section>
             <section title="Features">
@@ -458,6 +459,21 @@
 
     // Shift rows 6 - 11 on the spreadsheet to the top (rows 0 - 5)
     sheet.shiftRows(5, 10, -5);
+
+    FileOutputStream fileOut = new FileOutputStream("workbook.xls");
+    wb.write(fileOut);
+    fileOut.close();
+                    </source>
+                </section>                
+
+                <anchor id="SelectSheet"/>
+                <section title="Set a sheet as selected">
+                    <source>
+    HSSFWorkbook wb = new HSSFWorkbook();
+    HSSFSheet sheet = wb.createSheet("row sheet");
+    sheet.setSelected(true);
+
+    // Create various cells and rows for spreadsheet.
 
     FileOutputStream fileOut = new FileOutputStream("workbook.xls");
     wb.write(fileOut);
