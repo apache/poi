@@ -97,6 +97,10 @@ public class AreaPtg
         setFirstColumn((short)xyxy[1]);
         setLastRow((short)xyxy[2]);
         setLastColumn((short)xyxy[3]);
+        setFirstColRelative(true);
+        setLastColRelative(true);
+        setFirstRowRelative(true);
+        setLastRowRelative(true);
         
     }
 
