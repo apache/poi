@@ -33,10 +33,9 @@
      </li>
 
     <li>
-      <p>The <link href="#sec3">third section</link> tells how to read
+     <p>The <link href="#sec3">third section</link> tells how to read
       non-standard properties. Non-standard properties are application-specific
-      name/value/type triples. <em>This section is still to be written. Look up
-      the API documentation for the time being!</em></p>
+      triples consisting of an ID, a type, and a value.</p>
      </li>
    </ol>
 
@@ -303,54 +302,60 @@ else
    <section title="Reading Non-Standard Properties">
 
     <note>This section tells how to read non-standard properties. Non-standard
-     properties are application-specific name/type/value triples.</note>
+     properties are application-specific ID/type/value triples.</note>
 
-    <p>Now comes the really hardcode stuff. As mentioned above,
-     <code>SummaryInformation</code> and
-     <code>DocumentSummaryInformation</code> are just special cases of the
-     general concept of a property set. The general concept says that a
-     property set consists of <strong>properties</strong>. Each property is an
-     entity that has a <strong>name</strong>, a <strong>type</strong>, and a
-     <strong>value</strong>.</p>
+    <section title="Overview">
+     <p>Now comes the real hardcode stuff. As mentioned above,
+      <code>SummaryInformation</code> and
+      <code>DocumentSummaryInformation</code> are just special cases of the
+      general concept of a property set. This concept says that a
+      <strong>property set</strong> consists of properties and that each
+      <strong>property</strong> is an entity with an <strong>ID</strong>, a
+      <strong>type</strong>, and a <strong>value</strong>.</p>
 
-    <p>Okay, that was still rather easy. However, to make things more
-     complicated, Microsoft in its infinite wisdom decided that a property set
-     shalt be broken into <strong>sections</strong>. Each section holds a bunch
-     of properties. But since that's still not complicated enough: A section
-     can optionally have a dictionary that maps property IDs to property
-     names - we'll explain later what that means.</p>
+     <p>Okay, that was still rather easy. However, to make things more
+      complicated, Microsoft in its infinite wisdom decided that a property set
+      shalt be broken into one or more <strong>sections</strong>. Each section
+      holds a bunch of properties. But since that's still not complicated
+      enough, a section may have an optional <strong>dictionary</strong> that
+      maps property IDs to <strong>property names</strong> - we'll explain
+      later what that means.</p>
 
-    <p>So the procedure to get to the properties is as follows:</p>
+     <p>The procedure to get to the properties is the following:</p>
 
-    <ol>
-     <li>Use the <code>PropertySetFactory</code> to create a
-      <code>PropertySet</code> from an input stream. You can try this with any
-      input stream: You'll either <code>PropertySet</code> instance or an
-      exception is thrown.</li>
+     <ol>
+      <li>Use the <strong><code>PropertySetFactory</code></strong> class to
+       create a <code>PropertySet</code> object from a property set stream. If
+       you don't know whether an input stream is a property set stream, just
+       try to call <code>PropertySetFactory.create(java.io.InputStream)</code>:
+       You'll either get a <code>PropertySet</code> instance returned or an
+       exception is thrown.</li>
 
-     <li>Call the <code>PropertySet</code>'s method <code>getSections()</code>
-      to get a list of sections contained in the property set. Each section is
-      an instance of the <code>Section</code> class.</li>
+      <li>Call the <code>PropertySet</code>'s method <code>getSections()</code>
+       to get the sections contained in the property set. Each section is
+       an instance of the <code>Section</code> class.</li>
 
-     <li>Each section has a format ID. The format ID of the first section in a
-      property set determines the property set's type. For example, the first
-      (and only) section of the SummaryInformation property set has a format ID
-      of <code>F29F85E0-4FF9-1068-AB-91-08-00-2B-27-B3-D9</code>. You can
-      get the format ID with <code>Section.getFormatID()</code>.</li>
+      <li>Each section has a format ID. The format ID of the first section in a
+       property set determines the property set's type. For example, the first
+       (and only) section of the SummaryInformation property set has a format
+       ID of <code>F29F85E0-4FF9-1068-AB-91-08-00-2B-27-B3-D9</code>. You can
+       get the format ID with <code>Section.getFormatID()</code>.</li>
 
-     <li>The properties contained in a <code>Section</code> can be retrieved
-      with <code>Section.getProperties()</code>. The result is an array of
-      <code>Property</code> instances.</li>
+      <li>The properties contained in a <code>Section</code> can be retrieved
+       with <code>Section.getProperties()</code>. The result is an array of
+       <code>Property</code> instances.</li>
 
-     <li>A property has a name, a type, and a value. The <code>Property</code>
-      class has methods to retrieve them.</li>
-    </ol>
+      <li>A property has a name, a type, and a value. The <code>Property</code>
+       class has methods to retrieve them.</li>
+     </ol>
+    </section>
 
-    <p>Let's have a look at a sample Java application that dumps all property
-     set streams contained in a POI file system. The full source code of this
-     program can be found as <em>ReadCustomPropertySets.java</em> in the
-     <em>examples</em> area of the POI source code tree. Here are the key
-     sections:</p>
+    <section title="A Sample Application">
+     <p>Let's have a look at a sample Java application that dumps all property
+      set streams contained in a POI file system. The full source code of this
+      program can be found as <em>ReadCustomPropertySets.java</em> in the
+      <em>examples</em> area of the POI source code tree. Here are the key
+      sections:</p>
 
     <source>import java.io.*;
 import java.util.*;
@@ -381,8 +386,10 @@ import org.apache.poi.util.HexDump;</source>
     <p>The <code>POIFSReader</code> is set up in a way that the listener
      <code>MyPOIFSReaderListener</code> is called on every file in the POI file
     system.</p>
+    </section>
 
-    <p>The listener class tries to create a <code>PropertySet</code> from each
+    <section title="The Property Set">
+     <p>The listener class tries to create a <code>PropertySet</code> from each
      stream using the <code>PropertySetFactory.create()</code> method:</p>
 
     <source>static class MyPOIFSReaderListener implements POIFSReaderListener
@@ -420,8 +427,10 @@ import org.apache.poi.util.HexDump;</source>
      other types of exceptions cause the program to terminate by throwing a
      runtime exception. If all went well, we can print the name of the property
      set stream.</p>
+    </section>
 
-    <p>The next step is to print the number of sections followed by the
+    <section title="The Sections">
+     <p>The next step is to print the number of sections followed by the
      sections themselves:</p>
 
     <source>/* Print the number of sections: */
@@ -439,18 +448,18 @@ for (Iterator i = sections.iterator(); i.hasNext();)
     // See below for the complete loop body.
 }</source>
 
-    <p>The <code>PropertySet</code>'s method <code>getSectionCount()</code>
-     returns the number of sections.</p>
+     <p>The <code>PropertySet</code>'s method <code>getSectionCount()</code>
+      returns the number of sections.</p>
 
-    <p>To retrieve the sections, use the <code>getSections()</code>
-     method. This method returns a <code>java.util.List</code> containing
-     instances of the <code>Section</code> class in their proper order.</p>
+     <p>To retrieve the sections, use the <code>getSections()</code>
+      method. This method returns a <code>java.util.List</code> containing
+      instances of the <code>Section</code> class in their proper order.</p>
 
-    <p>The sample code shows a loop that retrieves the <code>Section</code>
-     objects one by one and prints some information about each one. Here is the
-     complete body of the loop:</p>
+     <p>The sample code shows a loop that retrieves the <code>Section</code>
+      objects one by one and prints some information about each one. Here is
+      the complete body of the loop:</p>
 
-    <source>/* Print a single section: */
+     <source>/* Print a single section: */
 Section sec = (Section) i.next();
 out("   Section " + nr++ + ":");
 String s = hex(sec.getFormatID().getBytes());
@@ -473,49 +482,53 @@ for (int i2 = 0; i2 &lt; properties.length; i2++)
     out("      Property ID: " + id + ", type: " + type +
         ", value: " + value);
 }</source>
+    </section>
 
-    <p>The first method called on the <code>Section</code> instance is
-     <code>getFormatID()</code>. As explained above, the format ID of the first
-     section in a property set determines the type of the property set. Its
-     type is <code>ClassID</code> which is essentially a sequence of 16
-     bytes. A real application using its own type of a custom property set
-     should have defined a unique format ID and, when reading a property set
-     stream, should check the format ID is equal to that unique format ID. The
-     sample program just prints the format ID it finds in a section:</p>
+    <section title="The Section's Format ID">
+     <p>The first method called on the <code>Section</code> instance is
+      <code>getFormatID()</code>. As explained above, the format ID of the
+      first section in a property set determines the type of the property
+      set. Its type is <code>ClassID</code> which is essentially a sequence of
+      16 bytes. A real application using its own type of a custom property set
+      should have defined a unique format ID and, when reading a property set
+      stream, should check the format ID is equal to that unique format ID. The
+      sample program just prints the format ID it finds in a section:</p>
 
-    <source>String s = hex(sec.getFormatID().getBytes());
+     <source>String s = hex(sec.getFormatID().getBytes());
 s = s.substring(0, s.length() - 1);
 out("      Format ID: " + s);</source>
 
-    <p>As you can see, the <code>getFormatID()</code> method returns a
-     <code>ClassID</code> object. An array containing the bytes can be
-     retrieved with <code>ClassID.getBytes()</code>. In order to get a nicely
-     formatted printout, the sample program uses the <code>hex()</code> helper
-     method which in turn uses the POI utility class <code>HexDump</code> in
-     the <code>org.apache.poi.util</code> package. Another helper method is
-     <code>out()</code> which just saves typing
-     <code>System.out.println()</code>.</p>
+     <p>As you can see, the <code>getFormatID()</code> method returns a
+      <code>ClassID</code> object. An array containing the bytes can be
+      retrieved with <code>ClassID.getBytes()</code>. In order to get a nicely
+      formatted printout, the sample program uses the <code>hex()</code> helper
+      method which in turn uses the POI utility class <code>HexDump</code> in
+      the <code>org.apache.poi.util</code> package. Another helper method is
+      <code>out()</code> which just saves typing
+      <code>System.out.println()</code>.</p>
+    </section>
 
-    <p>Before getting the properties, it is possible to find out how many
-     properties are available in the section via the
-     <code>Section.getPropertyCount()</code>. The sample application uses this
-     method to print the number of properties to the standard output:</p>
+    <section title="The Properties">
+     <p>Before getting the properties, it is possible to find out how many
+      properties are available in the section via the
+      <code>Section.getPropertyCount()</code>. The sample application uses this
+      method to print the number of properties to the standard output:</p>
 
-    <source>int propertyCount = sec.getPropertyCount();
+     <source>int propertyCount = sec.getPropertyCount();
 out("      No. of properties: " + propertyCount);</source>
 
-    <p>Now its time to get to the properties themselves. You can retrieve a
-     section's properties with the method
-     <code>Section.getProperties()</code>:</p>
+     <p>Now its time to get to the properties themselves. You can retrieve a
+      section's properties with the method
+      <code>Section.getProperties()</code>:</p>
 
-    <source>Property[] properties = sec.getProperties();</source>
+     <source>Property[] properties = sec.getProperties();</source>
 
-    <p>As you can see the result is an array of <code>Property</code>
-     objects. This class has three methods to retrieve a property's ID, its
-     type, and its value. The following code snippet shows how to call
-     them:</p>
+     <p>As you can see the result is an array of <code>Property</code>
+      objects. This class has three methods to retrieve a property's ID, its
+      type, and its value. The following code snippet shows how to call
+      them:</p>
 
-    <source>for (int i2 = 0; i2 &lt; properties.length; i2++)
+     <source>for (int i2 = 0; i2 &lt; properties.length; i2++)
 {
     /* Print a single property: */
     Property p = properties[i2];
@@ -525,15 +538,17 @@ out("      No. of properties: " + propertyCount);</source>
     out("      Property ID: " + id + ", type: " + type +
         ", value: " + value);
 }</source>
+    </section>
 
-    <p>The output of the sample program might look like the following. It shows
-     the summary information and the document summary information property sets
-     of a Microsoft Word document. However, unlike the first and second section
-     of this HOW-TO the application does not have any code which is specific to
-     the <code>SummaryInformation</code> and
-     <code>DocumentSummaryInformation</code> classes.</p>
+    <section title="Sample Output">
+     <p>The output of the sample program might look like the following. It
+      shows the summary information and the document summary information
+      property sets of a Microsoft Word document. However, unlike the first and
+      second section of this HOW-TO the application does not have any code
+      which is specific to the <code>SummaryInformation</code> and
+      <code>DocumentSummaryInformation</code> classes.</p>
 
-    <source>Property set stream "/SummaryInformation":
+     <source>Property set stream "/SummaryInformation":
    No. of sections: 1
    Section 0:
       Format ID: 00000000 F2 9F 85 E0 4F F9 10 68 AB 91 08 00 2B 27 B3 D9 ....O..h....+'..
@@ -588,29 +603,247 @@ No property set stream: "/WordDocument"
 No property set stream: "/CompObj"
 No property set stream: "/1Table"</source>
 
-    <p>There are some interestion items to note:</p>
+     <p>There are some interestion items to note:</p>
 
-    <ul>
-     <li>The first property set (summary information) consists of a single
+     <ul>
+      <li>The first property set (summary information) consists of a single
        section, the second property set (document summary information) consists
        of two sections.</li>
 
-     <li>Each section type (identified by its format ID) has its own domain of
-      property ID. For example, in the second property set the properties with
-      ID 2 have different meanings in the two section. By the way, the format
-      IDs of these sections are <strong>not</strong> equal, but you have to
-      look hard to find the difference.</li>
+      <li>Each section type (identified by its format ID) has its own domain of
+       property ID. For example, in the second property set the properties with
+       ID 2 have different meanings in the two section. By the way, the format
+       IDs of these sections are <strong>not</strong> equal, but you have to
+       look hard to find the difference.</li>
 
-     <li>The properties are not in any particular order in the section,
-      although they slightly tend to be sorted by their IDs.</li>
-    </ul>
+      <li>The properties are not in any particular order in the section,
+       although they slightly tend to be sorted by their IDs.</li>
+     </ul>
+    </section>
 
-    <note>[To be continued.]</note>
+    <section title="Property IDs">
+     <p>Properties in the same section are distinguished by their IDs. This is
+      similar to variables in a programming language like Java, which are
+      distinguished by their names. But unlike variable names, property IDs are
+      simple integral numbers. There is another similarity, however. Just like
+      a Java variable has a certain scope (e.g. a member variables in a class),
+      a property ID also has its scope of validity: the section.</p>
 
-    <note>A last note: There are still some aspects of HSPF left which are not
-     documented in this HOW-TO. You should dig into the Javadoc API
-     documentation to learn further details. Since you struggled through this
-     document up to this point, you are well prepared.</note>
+     <p>Two property IDs in sections with different section format IDs
+      don't have the same meaning even though their IDs might be equal. For
+      example, ID 4 in the first (and only) section of a summary
+      information property set denotes the document's author, while ID 4 in the
+      first section of the document summary information property set means the
+      document's byte count. The sample output above does not show a property
+      with an ID of 4 in the first section of the document summary information
+      property set. That means that the document does not have a byte
+      count. However, there is a property with an ID of 4 in the
+      <em>second</em> section: This is a user-defined property ID - we'll get
+      to that topic in a minute.</p>
+
+     <p>So, how can you find out what the meaning of a certain property ID in
+      the summary information and the document summary information property set
+      is? The standard property sets as such don't have any hints about the
+      <strong>meanings of their property IDs</strong>. For example, the summary
+      information property set does not tell you that the property ID 4 stands
+      for the document's author. This is external knowledge. Microsoft defined
+      standard meanings for some of the property IDs in the summary information
+      and the document summary information property sets. As a help to the Java
+      and POI programmer, the class <code>PropertyIDMap</code> in the
+      <code>org.apache.poi.hpsf.wellknown</code> package defines constants
+      for the "well-known" property IDs. For example, there is the
+      definition</p>
+
+     <source>public final static int PID_AUTHOR = 4;</source>
+
+     <p>These definitions allow you to use symbolic names instead of
+      numbers.</p>
+
+     <p>In order to provide support for the other way, too, - i.e. to map
+      property IDs to property names - the class <code>PropertyIDMap</code>
+      defines two static methods:
+      <code>getSummaryInformationProperties()</code> and
+      <code>getDocumentSummaryInformationProperties()</code>. Both return
+      <code>java.util.Map</code> objects which map property IDs to
+      strings. Such a string gives a hint about the property's meaning. For
+      example,
+      <code>PropertyIDMap.getSummaryInformationProperties().get(4)</code>
+      returns the string "PID_AUTHOR". An application could use this string as
+      a key to a localized string which is displayed to the user, e.g. "Author"
+      in English or "Verfasser" in German. HPSF might provide such
+      language-dependend ("localized") mappings in a later release.</p>
+
+     <p>Usually you won't have to deal with those two maps. Instead you should
+      call the <code>Section.getPIDString(int)</code> method. It returns the
+      string associated with the specified property ID in the context of the
+      <code>Section</code> object.</p>
+
+     <p>Above you learned that property IDs have a meaning in the scope of a
+      section only. However, there are two exceptions to the rule: The property
+      IDs 0 and 1 have a fixed meaning in <strong>all</strong> sections:</p>
+
+     <table>
+      <tr>
+       <th>Property ID</th>
+       <th>Meaning</th>
+      </tr>
+
+      <tr>
+       <td>0</td>
+       <td>The property's value is a <strong>dictionary</strong>, i.e. a
+	mapping from property IDs to strings.</td>
+      </tr>
+
+      <tr>
+       <td>1</td>
+       <td>The property's value is the number of a <strong>codepage</strong>,
+	i.e. a mapping from character codes to characters. All strings in the
+	section containing this property must be interpreted using this
+	codepage. Typical property values are 1252 (8-bit "western" characters)
+	or 1200 (16-bit Unicode characters).</td>
+      </tr>
+     </table>
+    </section>
+
+    <section title="Property types">
+     <p>A property is nothing without its value. It is stored in a property set
+      stream as a sequence of bytes. You must know the property's
+      <strong>type</strong> in order to properly interpret those bytes and
+      reasonably handle the value. A property's type is one of the so-called
+      Microsoft-defined <strong>"variant types"</strong>. When you call
+      <code>Property.getType()</code> you'll get a <code>long</code> value
+      which denoting the property's variant type. The class
+      <code>Variant</code> in the <code>org.apache.poi.hpsf</code> package
+      holds most of those <code>long</code> values as named constants. For
+      example, the constant <code>VT_I4 = 3</code> means a signed integer value
+      of four bytes. Examples of other types are <code>VT_LPSTR = 30</code>
+      meaning a null-terminated string of 8-bit characters, <code>VT_LPWSTR =
+       31</code> which means a null-terminated Unicode string, or <code>VT_BOOL
+       = 11</code> denoting a boolean value.</p>
+
+     <p>In most cases you won't need a property's type because HPSF does all
+      the work for you.</p>
+    </section>
+
+    <section title="Property values">
+     <p>When an application wants to retrieve a property's value and calls
+      <code>Property.getValue()</code>, HPSF has to interpret the bytes making
+      out the value according to the property's type. The type determines how
+      many bytes the value consists of and what
+      to do with them. For example, if the type is <code>VT_I4</code>, HPSF
+      knows that the value is four bytes long and that these bytes
+      comprise a signed integer value in the little-endian format. This is
+      quite different from e.g. a type of <code>VT_LPWSTR</code>. In this case
+      HPSF has to scan the value bytes for a Unicode null character and collect
+      everything from the beginning to that null character as a Unicode
+      string.</p>
+
+     <p>The good new is that HPSF does another job for you, too: It maps the
+      variant type to an adequate Java type.</p>
+
+     <table>
+      <tr>
+       <th>Variant type:</th>
+       <th>Java type:</th>
+      </tr>
+
+      <tr>
+       <td>VT_I2</td>
+       <td>java.lang.Integer</td>
+      </tr>
+
+      <tr>
+       <td>VT_I4</td>
+       <td>java.lang.Long</td>
+      </tr>
+
+      <tr>
+       <td>VT_FILETIME</td>
+       <td>java.util.Date</td>
+      </tr>
+
+      <tr>
+       <td>VT_LPSTR</td>
+       <td>String</td>
+      </tr>
+
+      <tr>
+       <td>VT_LPWSTR</td>
+       <td>String</td>
+      </tr>
+
+      <tr>
+       <td>VT_CF</td>
+       <td>byte[]</td>
+      </tr>
+
+      <tr>
+       <td>VT_BOOL</td>
+       <td>java.lang.Boolean</td>
+      </tr>
+
+     </table>
+
+     <p>The bad news is that there are still a couple of variant types HPSF
+      does not yet support. If it encounters one of these types it
+      returns the property's value as a byte array and leaves it to be
+      interpreted by the application.</p>
+
+     <p>An application retrieves a property's value by calling the
+      <code>Property.getValue()</code> method. This method's return type is the
+      abstract <code>Object</code> class. The <code>getValue()</code> method
+      looks up the property's variant type, reads the property's value bytes,
+      creates an instance of an adequate Java type, assigns it the property's
+      value and returns it. Primitive types like <code>int</code> or
+      <code>long</code> will be returned as the corresponding class,
+      e.g. <code>Integer</code> or <code>Long</code>.</p>
+    </section>
+
+
+    <section title="Dictionaries">
+     <p>The property with ID 0 has a very special meaning: It is a
+      <strong>dictionary</strong> mapping property IDs to property names. We
+      have seen already that the meanings of standard properties in the 
+      summary information and the document summary information property sets
+      have been defined by Microsoft. The advantage is that the labels of
+      properties like "Author" or "Title" don't have to be stored in the
+      property set. However, a user can define custom fields in, say, Microsoft
+      Word. For each field the user has to specify a name, a type, and a
+      value.</p>
+
+     <p>The names of the custom-defined fields (i.e. the property names) are
+      stored in the document summary information second section's
+      <strong>dictionary</strong>. The dictionary is a map which associates
+      property IDs with property names.</p>
+
+     <p>The method <code>Section.getPIDString(int)</code> not only returns with
+      the well-known property names of the summary information and document
+      summary information property sets, but with self-defined properties,
+      too. It should also work with self-defined properties in self-defined
+      sections.</p>
+    </section>
+
+    <section title="Codepage support">
+     <fixme author="Rainer Klute">Improve codepage support!</fixme>
+
+     <p>The property with ID 1 holds the number of the codepage which was used
+      to encode the strings in this section. The present HPSF codepage support
+      is still very limited: When reading property value strings, HPSF
+      distinguishes between 16-bit characters and 8-bit characters. 16-bit
+      characters should be Unicode characters and thus be okay. 8-bit
+      characters are interpreted according to the platform's default character
+      set. This is fine as long as the document being read has been written on
+      a platform with the same default character set. However, if you receive a
+      document from another region of the world and want to process it with
+      HPSF you are in trouble - unless the creator used Unicode, of course.</p>
+    </section>
+
+    <section title="Further Reading">
+     <p>There are still some aspects of HSPF left which are not covered by this
+      HOW-TO. You should dig into the Javadoc API documentation to learn
+      further details. Since you've struggled through this document up to this
+      point, you are well prepared.</p>
+    </section>
    </section>
   </section>
  </body>

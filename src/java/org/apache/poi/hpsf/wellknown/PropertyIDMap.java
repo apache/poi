@@ -79,7 +79,8 @@ public class PropertyIDMap extends HashMap
 {
 
     /*
-     * The following definitions are for the Summary Information.
+     * The following definitions are for property IDs in the first
+     * (and only) section of the Summary Information property set.
      */
     public final static int PID_TITLE = 2;
     public final static int PID_SUBJECT = 3;
@@ -103,7 +104,8 @@ public class PropertyIDMap extends HashMap
 
 
     /*
-     * The following definitions are for the Document Summary Information.
+     * The following definitions are for property IDs in the first
+     * section of the Document Summary Information property set.
      */
 
     /** 
