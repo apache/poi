@@ -77,44 +77,10 @@ public abstract class Ptg
     {
     }
     
-    public static Ptg[] parse(String formula, int offset) {
-        List ptgs = new ArrayList();
-        
-        while (offset < formula.length()) {
-            Ptg ptg = getNextToken(formula,offset);
-            offset += ptg.getStringLength();
-            ptgs.add(ptg);
-        }
-        
-        Ptg[] retval = new Ptg[ptgs.size()];
-        retval = (Ptg[])ptgs.toArray(retval);
-        return retval;
-    }
     
-    public static String ptgsToString(Ptg[] ptgs) {
-        StringBuffer res = new StringBuffer();
-        for (int k =0; k < ptgs.length; k++) {
-            Ptg ptg = ptgs[k];
-            res.append(ptg.toFormulaString());
-        }
-        return res.toString();
-    }
     
-    public static Ptg getNextToken(String formula, int offset) {
-        //later use array of reflected methods like RecordFactory
-        Ptg retval = null;
-        
-        if (AddPtg.isNextStringToken(formula,offset)) {
-            retval = new AddPtg(formula,offset);
-        } else if (IntPtg.isNextStringToken(formula,offset)) {
-            retval = new IntPtg(formula,offset);
-        } else {
-            throw new RuntimeException("didn't parse "+formula+" at " +offset);
-        }
-        return retval;
-    }
-    
-/*    private static List ptgsToList(Class [] ptgs)
+    /*
+    private static List ptgsToList(Class [] ptgs)
     {
         List         result = new ArrayList();
         Constructor constructor;
@@ -143,7 +109,7 @@ public abstract class Ptg
     }*/
     
 
-    /*public static Ptg createPtg(byte [] data, int offset)
+    public static Ptg createPtg(byte [] data, int offset)
     {
         byte id     = data[ offset + 0 ];
         Ptg  retval = null;
@@ -193,9 +159,9 @@ public abstract class Ptg
                 retval = new ValueReferencePtg(data, offset);
                 break;
 
-            case ParenthesisPtg.sid :
-                retval = new ParenthesisPtg(data, offset);
-                break;
+    //        case ParenthesisPtg.sid :
+      //          retval = new ParenthesisPtg(data, offset);
+        //        break;
 
             case ValueVariableFunctionPtg.sid :
                 retval = new ValueVariableFunctionPtg(data, offset);
@@ -217,7 +183,7 @@ public abstract class Ptg
                                            + " (" + ( int ) id + ")");
         }
         return retval;
-    }*/
+    }
 
     public abstract int getSize();
 
@@ -249,10 +215,5 @@ public abstract class Ptg
         return 0;
     }
     
-    public static void main(String[] args) {
-        if (args != null && args[0] != null) {
-            System.out.println("Parsed Formula="+ ptgsToString(parse(args[0],0)));
-        }
-    }
     
 }
