@@ -1,0 +1,689 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.0//EN" "../dtd/document-v10.dtd"> 
+<document>
+  <header>
+    <authors>
+      <person email="mjohnson@apache.org" name="Marc Johnson" id="MJ"/>
+    </authors>
+  </header>
+  <body>
+    <s1 title="POIFS Use Cases">
+      <s2 title="Use Case 1: Read existing file system">
+        <table>
+	  <tr>
+	    <td><B>Primary Actor:</B></td>
+	    <td>POIFS client</td>
+	  </tr>
+	  <tr>
+	    <td><B>Scope:</B></td>
+	    <td>POIFS</td>
+	  </tr>
+	  <tr>
+	    <td><B>Level:</B></td>
+	    <td>Summary</td>
+	  </tr>
+	  <tr>
+	    <td><B>Stakeholders and Interests:</B></td>
+	    <td>
+	      <ul>
+	        <li>POIFS client- wants to read content of file
+	            system</li>
+		<li>POIFS - understands POIFS file system</li>
+	      </ul>
+	    </td>
+	  </tr>
+	  <tr>
+	    <td><B>Precondition:</B></td>
+	    <td>None</td>
+	  </tr>
+	  <tr>
+	    <td><B>Minimal Guarantee:</B></td>
+	    <td>None</td>
+	  </tr>
+	  <tr>
+	    <td><B>Main Success Guarantee:</B></td>
+	    <td>
+	      <ol>
+	      	<li>POIFS client requests POIFS to read a POIFS file
+	      	    system, providing an <code>InputStream</code>
+	      	    containing POIFS file system in question.</li>
+	      	<li>POIFS reads from the <code>InputStream</code> in
+	      	    512 byte blocks</li>
+		<li>POIFS verifies that the first block begins with
+		    the well known signature
+		    (<code>0xE11AB1A1E011CFD0</code>)</li>
+		<li>POIFS reads the Block Allocation Table from the
+		    first block and, if necessary, from the XBAT
+		    blocks.</li>
+		<li>POIFS obtains the start block of the Property
+		    Table and reads the Property Table (use case 9,
+		    read file)</li>
+		<li>POIFS reads the individual entries in the Property
+		    Table</li>
+		<li>POIFS obtains the start block of the Small Block
+		    Allocation Table and reads the Small Block
+		    Allocation Table (use case 9, read file)</li>
+		<li>POIFS obtains the start block of the Small Block
+		    store from the first entry in the Property Table
+		    and reads the Small Block Array (use case 9, read
+		    file)</li>
+	      </ol>
+	    </td>
+	  </tr>
+	  <tr>
+	    <td><B>Extensions:</B></td>
+	    <td>
+	      <ul>
+	        <li>2a. If the last block read is not a 512 byte
+	            block, the <code>InputStream</code> is not that of
+	            a POIFS file system, and POIFS throws an
+	            appropriate exception.</li>
+		<li>3a. If the signature is incorrect, the
+		    <code>InputStream</code> is not that of a POIFS
+		    file system, and POIFS throws an appropriate
+		    exception.</li>
+	      </ul>
+	    </td>
+	  </tr>
+	</table>
+      </s2>
+      <s2 title="Use Case 2: Write file system">
+        <table>
+	  <tr>
+	    <td><B>Primary Actor:</B></td>
+	    <td>POIFS client</td>
+	  </tr>
+	  <tr>
+	    <td><B>Scope:</B></td>
+	    <td>POIFS</td>
+	  </tr>
+	  <tr>
+	    <td><B>Level:</B></td>
+	    <td>Summary</td>
+	  </tr>
+	  <tr>
+	    <td><B>Stakeholders and Interests:</B></td>
+	    <td>
+	      <ul>
+		<li>POIFS client- wants to write file system out.</li>
+		<li>POIFS - knows how to write file system out.</li>
+	      </ul>
+	    </td>
+	  </tr>
+	  <tr>
+	    <td><B>Precondition:</B></td>
+	    <td>
+	      <ul>
+	        <li>File system has been read (use case 1, read
+	            existing file system) and subsequently modified
+	            (use case 4, replace file in file system; use case
+	            5, delete file from file system; or use case 6,
+	            write new file to file system; in any
+	            combination)</li>
+	      </ul>
+	      <p>or</p>
+	      <ul>
+	        <li>File system has been created (use case 3, create
+	            new file system)</li>
+	      </ul>
+	    </td>
+	  </tr>
+	  <tr>
+	    <td><B>Minimal Guarantee:</B></td>
+	    <td>None</td>
+	  </tr>
+	  <tr>
+	    <td><B>Main Success Guarantee:</B></td>
+	    <td>
+	      <ol>
+	        <li>POIFS client provides an <code>OutputStream</code>
+	            to write the file system to.</li>
+		<li>POIFS gets the sizes of the Property Table and
+		    each file in the file system.</li>
+		<li>If any files in the file system requires storage
+		    in a Small Block Array, POIFS creates a Small
+		    Block Array of sufficient size to hold all of the
+		    small files.</li>
+		<li>POIFS calculates the number of big blocks needed
+		    to hold all of the large files, the Property
+		    Table, and, if necessary, the Small Block Array
+		    and the Small Block Allocation Table.</li>
+		<li>POIFS creates a set of big blocks sufficient to
+		    store the Block Allocation Table</li>
+		<li>POIFS creates and writes the header block</li>
+		<li>POIFS writes out the XBAT blocks, if needed.</li>
+		<li>POIFS writes out the Small Block Array, if
+		    needed</li>
+		<li>POIFS writes out the Small Block Allocation Table,
+		    if needed</li>
+		<li>POIFS writes out the Property Table</li>
+		<li>POIFS writes out the large files, if needed</li>
+		<li>POIFS closes the <code>OutputStream</code>.</li>
+	      </ol>
+	    </td>
+	  </tr>
+	  <tr>
+	    <td><B>Extensions:</B></td>
+	    <td>
+	      <ul>
+	        <li>6a. Exceptions writing to the
+	            <code>OutputStream</code> will be propagated back
+	            to the POIFS client.</li>
+		<li>7a. Exceptions writing to the
+	 	    <code>OutputStream</code> will be propagated back
+	 	    to the POIFS client.</li>
+		<li>8a. Exceptions writing to the
+		    <code>OutputStream</code> will be propagated back
+		    to the POIFS client.</li>
+		<li>9a. Exceptions writing to the
+		    <code>OutputStream</code> will be propagated back
+		    to the POIFS client.</li>
+		<li>10a. Exceptions writing to the
+		    <code>OutputStream</code> will be propagated back
+		    to the POIFS client.</li>
+		<li>11a. Exceptions writing to the
+		    <code>OutputStream</code> will be propagated back
+		    to the POIFS client.</li>
+		<li>12a. Exceptions closing the
+		    <code>OutputStream</code> will be propagated back
+		    to the POIFS client.</li>
+	      </ul>
+	    </td>
+	  </tr>
+	</table>
+      </s2>
+      <s2 title="Use Case 3: Create new file system">
+        <table>
+	  <tr>
+	    <td><B>Primary Actor:</B></td>
+	    <td>POIFS client</td>
+	  </tr>
+	  <tr>
+	    <td><B>Scope:</B></td>
+	    <td>POIFS</td>
+	  </tr>
+	  <tr>
+	    <td><B>Level:</B></td>
+	    <td>Summary</td>
+	  </tr>
+	  <tr>
+	    <td><B>Stakeholders and Interests:</B></td>
+	    <td>
+	      <ul>
+	        <li>POIFS client- wants to create a new file
+	            system</li>
+		<li>POIFS - knows how to create a new file system</li>
+	      </ul>
+	    </td>
+	  </tr>
+	  <tr>
+	    <td><B>Precondition:</B></td>
+	    <td>None</td>
+	  </tr>
+	  <tr>
+	    <td><B>Minimal Guarantee:</B></td>
+	    <td>None</td>
+	  </tr>
+	  <tr>
+	    <td><B>Main Success Guarantee:</B></td>
+	    <td>
+	      <ol>
+	      	<li>POIFS creates an empty Property Table.</li>
+	      </ol>
+	    </td>
+	  </tr>
+	  <tr>
+	    <td><B>Extensions:</B></td>
+	    <td>None</td>
+	  </tr>
+	</table>
+      </s2>
+      <s2 title="Use Case 4: Replace file in file system">
+        <table>
+	  <tr>
+	    <td><B>Primary Actor:</B></td>
+	    <td>POIFS client</td>
+	  </tr>
+	  <tr>
+	    <td><B>Scope:</B></td>
+	    <td>POIFS</td>
+	  </tr>
+	  <tr>
+	    <td><B>Level:</B></td>
+	    <td>Summary</td>
+	  </tr>
+	  <tr>
+	    <td><B>Stakeholders and Interests:</B></td>
+	    <td>
+	      <ul>
+	        <li>POIFS client- wants to replace an existing file in
+	            the file system</li>
+		<li>POIFS - knows how to manage the file system</li>
+	      </ul>
+	    </td>
+	  </tr>
+	  <tr>
+	    <td><B>Precondition:</B></td>
+	    <td>
+	      <p>Either</p>
+	      <ul>
+	        <li>The file system has been read (use case 1, read
+	            existing file system) and a file has been
+	            extracted from the file system (use case 7, read
+	            existing file from file system)</li>
+	      </ul>
+	      <p>or</p>
+	      <ul>
+	        <li>The file system has been created (use case 3,
+	            create new file system) and a file has been
+	            written to the file system (use case 6, write new
+	            file to file system)</li>
+	      </ul>
+	    </td>
+	  </tr>
+	  <tr>
+	    <td><B>Minimal Guarantee:</B></td>
+	    <td>None</td>
+	  </tr>
+	  <tr>
+	    <td><B>Main Success Guarantee:</B></td>
+	    <td>
+	      <ol>
+	        <li>POIFS discards storage of the existing file.</li>
+  	        <li>POIFS updates the existing file's entry in the
+	            Property Table</li>
+	        <li>POIFS stores the new file's data</li>
+	      </ol>
+	    </td>
+	  </tr>
+	  <tr>
+	    <td><B>Extensions:</B></td>
+	    <td>
+	      <ul>
+	        <li>1a. POIFS throws an exception if the file does not
+	            exist.</li>
+	      </ul>
+	    </td>
+	  </tr>
+	</table>
+      </s2>
+      <s2 title="Use Case 5: Delete file from file system">
+        <table>
+	  <tr>
+	    <td><B>Primary Actor:</B></td>
+	    <td>POIFS client</td>
+	  </tr>
+	  <tr>
+	    <td><B>Scope:</B></td>
+	    <td>POIFS</td>
+	  </tr>
+	  <tr>
+	    <td><B>Level:</B></td>
+	    <td>Summary</td>
+	  </tr>
+	  <tr>
+	    <td><B>Stakeholders and Interests:</B></td>
+	    <td>
+	      <ul>
+	        <li>POIFS client- wants to remove a file from a file
+	            system</li>
+		<li>POIFS - knows how to manage the file system</li>
+	      </ul>
+	    </td>
+	  </tr>
+	  <tr>
+	    <td><B>Precondition:</B></td>
+	    <td>
+	      <p>Either</p>
+	      <ul>
+	        <li>The file system has been read (use case 1, read
+	            existing file system) and a file has been
+	            extracted from the file system (use case 7, read
+	            existing file from file system)</li>
+	      </ul>
+	      <p>or</p>
+	      <ul>
+	        <li>The file system has been created (use case 3,
+	            create new file system) and a file has been
+	            written to the file system (use case 6, write new
+	            file to file system)</li>
+	      </ul>
+	    </td>
+	  </tr>
+	  <tr>
+	    <td><B>Minimal Guarantee:</B></td>
+	    <td>None</td>
+	  </tr>
+	  <tr>
+	    <td><B>Main Success Guarantee:</B></td>
+	    <td>
+	      <ol>
+	      	<li>POIFS discards the specified file's storage.</li>
+	      	<li>POIFS discards the file's Property Table
+	      	    entry.</li>
+	      </ol>
+	    </td>
+	  </tr>
+	  <tr>
+	    <td><B>Extensions:</B></td>
+	    <td>
+	      <ul>
+	        <li>1a. POIFS throws an exception if the file does not
+	            exist.</li>
+	      </ul>
+	    </td>
+	  </tr>
+	</table>
+      </s2>
+      <s2 title="Use Case 6: Write new file to file system">
+        <table>
+	  <tr>
+	    <td><B>Primary Actor:</B></td>
+	    <td>POIFS client</td>
+	  </tr>
+	  <tr>
+	    <td><B>Scope:</B></td>
+	    <td>POIFS</td>
+	  </tr>
+	  <tr>
+	    <td><B>Level:</B></td>
+	    <td>Summary</td>
+	  </tr>
+	  <tr>
+	    <td><B>Stakeholders and Interests:</B></td>
+	    <td>
+	      <ul>
+	        <li>POIFS client- wants to add a new file to the file
+	            system</li>
+		<li>POIFS - knows how to manage the file system</li>
+	      </ul>
+	    </td>
+	  </tr>
+	  <tr>
+	    <td><B>Precondition:</B></td>
+	    <td>The specified file does not yet exist in the file
+	        system</td>
+	  </tr>
+	  <tr>
+	    <td><B>Minimal Guarantee:</B></td>
+	    <td>None</td>
+	  </tr>
+	  <tr>
+	    <td><B>Main Success Guarantee:</B></td>
+	    <td>
+	      <ol>
+	        <li>The POIFS client provides a file name</li>
+	        <li>POIFS creates a new Property Table entry for the
+	            new file</li>
+	        <li>POIFS provides the POIFS client with an
+	            <code>OutputStream</code> to write to.</li>
+	        <li>The POIFS client writes data to the provided
+	            <code>OutputStream</code>.</li>
+	        <li>The POIFS client closes the provided
+	            <code>OutputStream</code></li>
+	        <li>POIFS updates the Property Table entry with the
+	            new file's size</li>
+	      </ol>
+	    </td>
+	  </tr>
+	  <tr>
+	    <td><B>Extensions:</B></td>
+	    <td>
+	      <ul>
+	        <li>1a. POIFS throws an exception if a file with the
+	            specified name already exists in the file
+	            system.</li>
+		<li>1b. POIFS throws an exception if the file name is
+		    too long. The limit on file name length is 31
+		    characters.</li>
+	      </ul>
+	    </td>
+	  </tr>
+	</table>
+      </s2>
+      <s2 title="Use Case 7: Read existing file from file system">
+        <table>
+	  <tr>
+	    <td><B>Primary Actor:</B></td>
+	    <td>POIFS client</td>
+	  </tr>
+	  <tr>
+	    <td><B>Scope:</B></td>
+	    <td>POIFS</td>
+	  </tr>
+	  <tr>
+	    <td><B>Level:</B></td>
+	    <td>Summary</td>
+	  </tr>
+	  <tr>
+	    <td><B>Stakeholders and Interests:</B></td>
+	    <td>
+	      <ul>
+	        <li>POIFS client- wants to read a file from the file
+	            system</li>
+		<li>POIFS - knows how to manage the file system</li>
+	      </ul>
+	    </td>
+	  </tr>
+	  <tr>
+	    <td><B>Precondition:</B></td>
+	    <td>
+	      <ul>
+	        <li>The file system has been read (use case 1, read
+	            existing file system) or has been created and
+	            written to (use case 3, create new file system;
+	            use case 6, write new file to file system).</li>
+		<li>The specified file exists in the file system.</li>
+	      </ul>
+	    </td>
+	  </tr>
+	  <tr>
+	    <td><B>Minimal Guarantee:</B></td>
+	    <td>None</td>
+	  </tr>
+	  <tr>
+	    <td><B>Main Success Guarantee:</B></td>
+	    <td>
+	      <ol>
+	        <li>The POIFS client provides the name of a file to be
+	            read</li>
+		<li>POIFS provides an <code>InputStream</code> to read
+		    from.</li>
+		<li>The POIFS client reads from the
+		    <code>InputStream</code>.</li>
+		<li>The POIFS client closes the
+		    <code>InputStream</code>.</li>
+	      </ol>
+	    </td>
+	  </tr>
+	  <tr>
+	    <td><B>Extensions:</B></td>
+	    <td>1a. POIFS throws an exception if no file with the
+	        specified name exists.</td>
+	  </tr>
+	</table>
+      </s2>
+      <s2 title="Use Case 8: Read file system directory">
+        <table>
+	  <tr>
+	    <td><B>Primary Actor:</B></td>
+	    <td>POIFS client</td>
+	  </tr>
+	  <tr>
+	    <td><B>Scope:</B></td>
+	    <td>POIFS</td>
+	  </tr>
+	  <tr>
+	    <td><B>Level:</B></td>
+	    <td>Summary</td>
+	  </tr>
+	  <tr>
+	    <td><B>Stakeholders and Interests:</B></td>
+	    <td>
+	      <ul>
+	        <li>POIFS client- wants to know what files exist in
+	            the file system</li>
+		<li>POIFS - knows how to manage the file system</li>
+	      </ul>
+	    </td>
+	  </tr>
+	  <tr>
+	    <td><B>Precondition:</B></td>
+	    <td>The file system has been read (use case 1, read
+	        existing file system) or created (use case 3, create
+	        new file system)</td>
+	  </tr>
+	  <tr>
+	    <td><B>Minimal Guarantee:</B></td>
+	    <td>None</td>
+	  </tr>
+	  <tr>
+	    <td><B>Main Success Guarantee:</B></td>
+	    <td>
+	      <ol>
+	        <li>The POIFS client requests the file system
+	            directory.</li>
+		<li>POIFS returns an <code>Iterator</code>. The
+		    <code>Iterator</code> will not include the root
+		    entry in the Property Table, and may be an
+		    <code>Iterator</code> over an empty
+		    <code>Collection</code>.</li>
+	      </ol>
+	    </td>
+	  </tr>
+	  <tr>
+	    <td><B>Extensions:</B></td>
+	    <td>None</td>
+	  </tr>
+	</table>
+      </s2>
+      <s2 title="Use Case 9: Read file">
+        <table>
+	  <tr>
+	    <td><B>Primary Actor:</B></td>
+	    <td>POIFS</td>
+	  </tr>
+	  <tr>
+	    <td><B>Scope:</B></td>
+	    <td>POIFS</td>
+	  </tr>
+	  <tr>
+	    <td><B>Level:</B></td>
+	    <td>Summary</td>
+	  </tr>
+	  <tr>
+	    <td><B>Stakeholders and Interests:</B></td>
+	    <td>
+	      <ul>
+	        <li>POIFS - POIFS needs to read a file, or something
+	            resembling a file (i.e., the Property Table, the
+	            Small Block Array, or the Small Block Allocation
+	            Table)</li>
+	      </ul>
+	    </td>
+	  </tr>
+	  <tr>
+	    <td><B>Precondition:</B></td>
+	    <td>None</td>
+	  </tr>
+	  <tr>
+	    <td><B>Minimal Guarantee:</B></td>
+	    <td>None</td>
+	  </tr>
+	  <tr>
+	    <td><B>Main Success Guarantee:</B></td>
+	    <td>
+	      <ol>
+	        <li>POIFS begins with a start block, a file size, and
+	            a flag indicating whether to use the Big Block
+	            Allocation Table or the Small Block Allocation
+	            Table</li>
+		<li>POIFS returns an <code>InputStream</code>.</li>
+		<li>Reads from the <code>InputStream</code> are
+		    performed by walking the specified Block
+		    Allocation Table and reading the blocks
+		    indicated.</li>
+		<li>POIFS closes the <code>InputStream</code> when
+		    finished reading the file, or its client wants to
+		    close the <code>InputStream</code>.</li>
+	      </ol>
+	    </td>
+	  </tr>
+	  <tr>
+	    <td><B>Extensions:</B></td>
+	    <td>3a. An exception will be thrown if the specified Block
+	        Allocation Table is corrupt, as evidenced by an index
+	        pointing to a non-existent block, or by a chain
+	        extending past the known size of the file.</td>
+	  </tr>
+	</table>
+      </s2>
+      <s2 title="Use Case 10: Rename existing file in the file system">
+        <table>
+	  <tr>
+	    <td><B>Primary Actor:</B></td>
+	    <td>POIFS client</td>
+	  </tr>
+	  <tr>
+	    <td><B>Scope:</B></td>
+	    <td>POIFS</td>
+	  </tr>
+	  <tr>
+	    <td><B>Level:</B></td>
+	    <td>Summary</td>
+	  </tr>
+	  <tr>
+	    <td><B>Stakeholders and Interests:</B></td>
+	    <td>
+	      <ul>
+	        <li>POIFS client- wants to rename an existing file in
+	            the file system.</li>
+		<li>POIFS - knows how to manage the file system.</li>
+	      </ul>
+	    </td>
+	  </tr>
+	  <tr>
+	    <td><B>Precondition:</B></td>
+	    <td>
+	      <ul>
+	        <li>The file system is has been read (use case 1, read
+	            existing file system) or has been created and
+	            written to (use case 3, create new file system;
+	            use case 6, write new file to file system.</li>
+		<li>The specified file exists in the file system.</li>
+		<li>The new name for the file does not duplicate
+		    another file in the file system.</li>
+	      </ul>
+	    </td>
+	  </tr>
+	  <tr>
+	    <td><B>Minimal Guarantee:</B></td>
+	    <td>None</td>
+	  </tr>
+	  <tr>
+	    <td><B>Main Success Guarantee:</B></td>
+	    <td>
+	      <ol>
+	        <li>POIFS updates the Property Table entry for the
+	            specified file with its new name.</li>
+	      </ol>
+	    </td>
+	  </tr>
+	  <tr>
+	    <td><B>Extensions:</B></td>
+	    <td>
+	      <ul>
+	        <li>1a. If the old file name is not in the file
+	            system, POIFS throws an exception.</li>
+		<li>1b. If the new file name already exists in the
+		    file system, POIFS throws an exception.</li>
+		<li>1c. If the new file name is too long (the limit is
+		    31 characters), POIFS throws an exception.</li>
+	      </ul>
+	    </td>
+	  </tr>
+	</table>
+      </s2>
+    </s1>
+  </body>
+</document>
