@@ -54,6 +54,16 @@ public class TestFormulaParser extends TestCase {
         assertTrue("two tokens expected, got "+ptgs.length,ptgs.length == 2);
     }
     
+    public void testFormulaWithString() {
+        Ptg[] ptgs;
+        FormulaParser fp;
+        fp = new FormulaParser("\"hello\" & \"world\" ;");
+        fp.parse();
+        ptgs = fp.getRPNPtg();
+        assertTrue("three token expected, got " + ptgs.length, ptgs.length == 3);
+    }
+
+    
      public static void main(String [] args) {
         System.out.println("Testing org.apache.poi.hssf.record.formula.FormulaParser");
         junit.textui.TestRunner.run(TestFormulaParser.class);
