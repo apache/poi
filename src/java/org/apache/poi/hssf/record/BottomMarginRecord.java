@@ -56,7 +56,6 @@
 package org.apache.poi.hssf.record;
 
 
-
 import org.apache.poi.util.*;
 
 /**
@@ -64,6 +63,7 @@ import org.apache.poi.util.*;
  * NOTE: This source was automatically generated.
  * @author Shawn Laubach (slaubach at apache dot org)
  */
+
 public class BottomMarginRecord
 	 extends Record implements Margin
 {

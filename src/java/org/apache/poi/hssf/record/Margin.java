@@ -56,6 +56,7 @@
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.*;
+
 /**
  * The margin interface is a parent used to define left, right, top and bottom margins.  This allows much of the code to be generic when it comes to handling margins.
  * NOTE: This source wass automatically generated.
@@ -63,12 +64,17 @@ import org.apache.poi.util.*;
  */
 
 public interface Margin{
+
     /**
      * Get the margin field for the Margin.
      */
+
     public double getMargin();
+
     /**
      * Set the margin field for the Margin.
      */
+
     public void setMargin(double field_1_margin);
+
 }

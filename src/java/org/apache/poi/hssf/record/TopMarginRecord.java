@@ -64,6 +64,7 @@ import org.apache.poi.util.*;
  * NOTE: This source was automatically generated.
  * @author Shawn Laubach (slaubach at apache dot org)
  */
+
 public class TopMarginRecord
     extends Record implements Margin
 {
@@ -89,6 +90,7 @@ public class TopMarginRecord
     {
         super(id, size, data);
     }
+
     /**
      * Constructs a TopMargin record and sets its fields appropriately.
      *
@@ -98,15 +100,18 @@ public class TopMarginRecord
      * @param data  data of the record (should not contain sid/len)
      * @param offset of the record's data
      */
+
     public TopMarginRecord(short id, short size, byte [] data, int offset)
     {
         super(id, size, data, offset);
     }
+
     /**
      * Checks the sid matches the expected side for this record
      *
      * @param id   the expected sid.
      */
+
     protected void validateSid(short id)
     {
         if (id != sid)
@@ -114,10 +119,12 @@ public class TopMarginRecord
             throw new RecordFormatException("Not a TopMargin record");
         }
     }
+
     protected void fillFields(byte [] data, short size, int offset)
     {
         field_1_margin                  = LittleEndian.getDouble(data, 0x0 + offset);
     }
+
     public String toString()
     {
         StringBuffer buffer = new StringBuffer();
@@ -127,6 +134,7 @@ public class TopMarginRecord
         buffer.append("[/TopMargin]\n");
         return buffer.toString();
     }
+
     public int serialize(int offset, byte[] data)
     {
         LittleEndian.putShort(data, 0 + offset, sid);
@@ -134,34 +142,43 @@ public class TopMarginRecord
         LittleEndian.putDouble(data, 4 + offset, field_1_margin);
         return getRecordSize();
     }
+
     /**
      * Size of record (exluding 4 byte header)
      */
+
     public int getRecordSize()
     {
         return 4  + 8;
     }
+
     public short getSid()
     {
         return this.sid;
     }
+
     /**
      * Get the margin field for the TopMargin record.
      */
+
     public double getMargin()
     {
         return field_1_margin;
     }
+
     /**
      * Set the margin field for the TopMargin record.
      */
+
     public void setMargin(double field_1_margin)
     {
         this.field_1_margin = field_1_margin;
     }
+
     public Object clone() {
         TopMarginRecord rec = new TopMarginRecord();
         rec.field_1_margin = this.field_1_margin;
         return rec;
     }
+
 }
