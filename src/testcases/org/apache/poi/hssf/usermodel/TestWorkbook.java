@@ -73,6 +73,8 @@ import org.apache.poi.hssf.record.aggregates.ValueRecordsAggregate;
  * Class to test Workbook functionality
  *
  * @author Andrew C. Oliver
+ * @author Greg Merrill
+ * @author Siggi Cherem
  */
 
 public class TestWorkbook
@@ -88,6 +90,7 @@ public class TestWorkbook
     private static final String LAST_NAME_VALUE      = "Bush";
     private static final String FIRST_NAME_VALUE     = "George";
     private static final String SSN_VALUE            = "555555555";
+    private SanityChecker sanityChecker = new SanityChecker();
 
     /**
      * Constructor TestWorkbook
@@ -108,7 +111,6 @@ public class TestWorkbook
      * FAILURE:    HSSF does not create a sheet or excepts.  Filesize does not match the known good.
      *             HSSFSheet last row or first row is incorrect.             <P>
      *
-     * @author Andrew C. Oliver
      */
 
     public void testWriteSheetSimple()
@@ -139,8 +141,9 @@ public class TestWorkbook
         }
         wb.write(out);
         out.close();
+        sanityChecker.checkHSSFWorkbook(wb);
         assertEquals("FILE LENGTH == 87040", 87040,
-                     file.length());   // changed because of new sheet behavior
+                     file.length());                            // remove me
         assertEquals("LAST ROW == 99", 99, s.getLastRowNum());
         assertEquals("FIRST ROW == 0", 0, s.getFirstRowNum());
 
@@ -156,7 +159,6 @@ public class TestWorkbook
      * FAILURE:    HSSF does not create a sheet or excepts.  Filesize does not match the known good.
      *             HSSFSheet last row or first row is incorrect.             <P>
      *
-     * @author Andrew C. Oliver
      */
 
     public void testWriteModifySheetSimple()
@@ -198,11 +200,9 @@ public class TestWorkbook
         wb.write(out);
         out.close();
 
-        // System.out.println(file.length());
-        // assertEquals("FILE LENGTH == 87552",file.length(), 87552);
-        // System.out.println(s.getLastRowNum());
+        sanityChecker.checkHSSFWorkbook(wb);
         assertEquals("FILE LENGTH == 45568", 45568,
-                     file.length());   // changed due to new sheet behavior (<3)
+                     file.length());   // remove
         assertEquals("LAST ROW == 74", 74, s.getLastRowNum());
         assertEquals("FIRST ROW == 25", 25, s.getFirstRowNum());
     }
@@ -214,8 +214,6 @@ public class TestWorkbook
      * FAILURE:    HSSF does not read a sheet or excepts.  HSSF cannot identify values
      *             in the sheet in their known positions.<P>
      *
-     * @author Greg Merrill
-     * @author Andrew C. Oliver
      */
 
     public void testReadSimple()
@@ -242,8 +240,6 @@ public class TestWorkbook
      * FAILURE:    HSSF does not read a sheet or excepts.  HSSF cannot identify values
      *             in the sheet in their known positions.<P>
      *
-     * @author Greg Merrill
-     * @author Andrew C. Oliver
      */
 
     public void testReadEmployeeSimple()
@@ -283,8 +279,6 @@ public class TestWorkbook
      *             HSSF does not re-read the sheet or excepts.  Upon re-reading the sheet the value
      *             is incorrect or has not been replaced. <P>
      *
-     * @author Andrew C. Oliver
-     * @author Greg Merrill
      */
 
     public void testModifySimple()
@@ -328,8 +322,6 @@ public class TestWorkbook
      *             is incorrect or has not been replaced or the incorrect cell has its value replaced
      *             or is incorrect. <P>
      *
-     * @author Andrew C. Oliver
-     * @author Greg Merrill
      */
 
     public void testModifySimpleWithSkip()
@@ -381,8 +373,6 @@ public class TestWorkbook
      *             HSSF does not re-read the sheet or excepts.  Upon re-reading the sheet the value
      *             is incorrect or has not been replaced. <P>
      *
-     * @author Andrew C. Oliver
-     * @author Greg Merrill
      */
 
     public void testModifySimpleWithStyling()
@@ -433,8 +423,6 @@ public class TestWorkbook
      *             HSSF does not re-read the sheet or excepts.  Upon re-reading the sheet the value
      *             is incorrect or has not been replaced. <P>
      *
-     * @author Andrew C. Oliver
-     * @author Greg Merrill
      */
 
     public void testModifyEmployee()
@@ -487,8 +475,6 @@ public class TestWorkbook
      * SUCCESS:    HSSF reads a sheet.  HSSF returns that the cell is a numeric type cell.    <P>
      * FAILURE:    HSSF does not read a sheet or excepts.  HSSF incorrectly indentifies the cell<P>
      *
-     * @author Siggi Cherem
-     * @author Andrew C. Oliver (acoliver at apache dot org)
      */
 
     public void testReadSheetWithRK()
@@ -519,7 +505,6 @@ public class TestWorkbook
      * FAILURE:    HSSF does not create a sheet or excepts.  Filesize does not match the known good.
      *             HSSFSheet last row or first row is incorrect.             <P>
      *
-     * @author Andrew C. Oliver
      */
 
     public void testWriteModifySheetMerged()
@@ -555,6 +540,7 @@ public class TestWorkbook
                                      ( short ) 15));
         wb.write(out);
         out.close();
+        sanityChecker.checkHSSFWorkbook(wb);
         in = new FileInputStream(file);
         wb = new HSSFWorkbook(new POIFSFileSystem(in));
         s  = wb.getSheetAt(0);
@@ -582,7 +568,7 @@ public class TestWorkbook
         throws Exception
     {
         HSSFWorkbook wb       = new HSSFWorkbook();
-        HSSFSheet    s        = wb.createSheet();
+        wb.createSheet();
         Workbook     workbook = wb.getWorkbook();
         BackupRecord record   = workbook.getBackupRecord();
 
@@ -629,12 +615,12 @@ public class TestWorkbook
     {
         String filename = System.getProperty("HSSF.testdata.path");
 
-        // assume andy is running this in the debugger
+        // assume this is relative to basedir
         if (filename == null)
         {
             System.setProperty(
                 "HSSF.testdata.path",
-                "/home/andy/npoi3/poi/production/testcases/net/sourceforge/poi/hssf/data");
+                "src/testcases/org/apache/poi/hssf/data");
         }
         System.out
             .println("Testing org.apache.poi.hssf.usermodel.HSSFWorkbook");
