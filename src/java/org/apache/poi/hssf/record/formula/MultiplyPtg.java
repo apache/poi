@@ -139,23 +139,5 @@ public class MultiplyPtg
         buffer.append("*");
         buffer.append(operands[ 1 ]);
         return buffer.toString();
-    }
-    
-            
-    public static boolean isNextStringToken(String formula, int pos) {
-        boolean retval = false;
-        while (pos < formula.length() && Character.isWhitespace(formula.charAt(pos))) {
-            pos++;
-        }
-        
-        if (pos < formula.length()) {
-            if (formula.charAt(pos) == MULTIPLY.toCharArray()[0]) {
-                retval = true;
-            }
-        }
-        return retval;
-    }
-    
-    
-
+    }                  
 }
