@@ -91,7 +91,6 @@ public class TestCellStyle
      * FAILURE:    HSSF does not create a sheet or excepts.  Filesize does not match the known good.
      *             HSSFSheet last row or first row is incorrect.             <P>
      *
-     * @author Andrew C. Oliver
      */
 
     public void testWriteSheetFont()
@@ -145,7 +144,6 @@ public class TestCellStyle
      * FAILURE:    HSSF does not create a sheet or excepts.  Filesize does not match the known good.
      *             HSSFSheet last row or first row is incorrect.             <P>
      *
-     * @author Andrew C. Oliver
      */
 
     public void testWriteSheetStyle()
