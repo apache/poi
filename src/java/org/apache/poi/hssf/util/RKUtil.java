@@ -87,7 +87,7 @@ public class RKUtil
         if ((number & 0x02) == 0x02)
         {
             // ok, it's just a plain ol' int; we can handle this
-            // trivially by right-shifting and casting
+            // trivially by casting
             rvalue = ( double ) (raw_number);
         }
         else
@@ -106,6 +106,7 @@ public class RKUtil
             // hall, especially if it's the city of Redmond
             rvalue /= 100;
         }
+
         return rvalue;
     }
 
