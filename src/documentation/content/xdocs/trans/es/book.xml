@@ -6,19 +6,6 @@
       copyright="@year@ Poi Project"
       xmlns:xlink="http://www.w3.org/1999/xlink">
 
-  <menu label="Comunidad">
-    <menu-item label="Noticias" href="news.html"/>    
-    <menu-item label="Espejos" href="../../mirrors.html"/>    
-    <menu-item label="Cambios" href="changes.html"/> 
-    <menu-item label="Tareas" href="todo.html"/> 
-    <menu-item label="Contribuya" href="../../getinvolved/index.html"/>
-    <menu-item label="Listas de Correo" href="http://jakarta.apache.org/site/mail.html"/>
-    <menu-item label="Visión" href="../../plan/POI20Vision.html"/>
-    <menu-item label="Historia y Futuro" href="historyandfuture.html"/>
-    <menu-item label="Quiénes Somos" href="who.html"/> 
-    <menu-item label="Resoluciones" href="../../resolutions/index.html"/>    
-  </menu>
-  
   <menu label="Marketing">
     <menu-item label="Casos" href="casestudies.html"/>
   </menu>
@@ -31,6 +18,19 @@
     <menu-item label="HPSF" href="../../hpsf/index.html"/>
     <menu-item label="POI-Utils" href="../../utils/index.html"/>  
     <menu-item label="Descargas" href="http://jakarta.apache.org/builds/jakarta-poi/"/> 
+  </menu>
+
+  <menu label="Comunidad">
+    <menu-item label="Noticias" href="news.html"/>    
+    <menu-item label="Espejos" href="../../mirrors.html"/>    
+    <menu-item label="Cambios" href="changes.html"/> 
+    <menu-item label="Tareas" href="todo.html"/> 
+    <menu-item label="Contribuya" href="../../getinvolved/index.html"/>
+    <menu-item label="Listas de Correo" href="http://jakarta.apache.org/site/mail.html"/>
+    <menu-item label="Visión" href="../../plan/POI20Vision.html"/>
+    <menu-item label="Historia y Futuro" href="historyandfuture.html"/>
+    <menu-item label="Quiénes Somos" href="who.html"/> 
+    <menu-item label="Resoluciones" href="../../resolutions/index.html"/>    
   </menu>
   
   <menu label="Documentación">
@@ -45,6 +45,7 @@
     <menu-item label="Alemán" href="../de/index.html"/>
     <menu-item label="Español" href="index.html"/>
     <menu-item label="Japonés" href="http://jakarta.terra-intl.com/poi/"/>
+    <menu-item label="Coreano" href="http://jakarta.apache-korea.org/poi/"/>
   </menu>
   
   <menu label="Código">
