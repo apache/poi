@@ -1,0 +1,7 @@
+<record id="0x1026" name="FontIndex" package="org.apache.poi.hssf.record">
+    <description>The font index record indexes into the font table for the text record.</description>
+    <author>Glen Stampoultzis (glens at apache.org)</author>
+    <fields>
+        <field type="int" size="2" name="font index" description="index to the font table"/>
+    </fields>
+</record>
