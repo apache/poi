@@ -280,7 +280,7 @@ public class HDFObjectFactory
         //initCharacterProperties();
         //initParagraphProperties();
     }
-    private void initCharacterProperties(int charOffset, PlexOfCps charPlcf, int end)
+    private void initCharacterProperties(int charOffset, PlexOfCps charPlcf, int start, int end)
     {
         //Initialize paragraph property stuff
         //int currentCharPage = _charParsingState.getCurrentPage();
@@ -301,7 +301,8 @@ public class HDFObjectFactory
             charStart = fkp.getStart(currentChpxIndex);
             charEnd = fkp.getEnd(currentChpxIndex);
             byte[] chpx = fkp.getGrpprl(currentChpxIndex);
-            _listener.characterRun(new ChpxNode(charStart, charEnd, chpx));
+            _listener.characterRun(new ChpxNode(Math.max(charStart, start),  Math.min(charEnd, end), chpx));
+
             if (charEnd < end)
             {
               currentChpxIndex++;
@@ -324,7 +325,7 @@ public class HDFObjectFactory
         }
         while(currentPageIndex < charPlcfLen);
     }
-    private void initParagraphProperties(int parOffset, PlexOfCps parPlcf, int charOffset, PlexOfCps charPlcf, int end)
+    private void initParagraphProperties(int parOffset, PlexOfCps parPlcf, int charOffset, PlexOfCps charPlcf, int start, int end)
     {
         //Initialize paragraph property stuff
         //int currentParPage = _parParsingState.getCurrentPage();
@@ -341,8 +342,8 @@ public class HDFObjectFactory
             int parStart = fkp.getStart(currentPapxIndex);
             int parEnd = fkp.getEnd(currentPapxIndex);
             byte[] papx = fkp.getGrpprl(currentPapxIndex);
-            _listener.paragraph(new PapxNode(parStart, parEnd, papx));
-            initCharacterProperties(charOffset, charPlcf, end);
+            _listener.paragraph(new PapxNode(Math.max(parStart, start), Math.min(parEnd, end), papx));
+            initCharacterProperties(charOffset, charPlcf, Math.max(start, parStart), Math.min(parEnd, end));
             if (parEnd < end)
             {
               currentPapxIndex++;
@@ -523,6 +524,8 @@ public class HDFObjectFactory
     private void initSectionProperties()
     {
 
+      int ccpText = _fib.getCcpText();
+      int ccpFtn = _fib.getCcpFtn();
 
       //sections
       int fcMin = _fib.getFcMin();
@@ -548,21 +551,50 @@ public class HDFObjectFactory
       PlexOfCps plcfsed = new PlexOfCps(plcfsedSize, 12);
       int arraySize = plcfsed.length();
 
+      int start = fcMin;
+      int end = fcMin + ccpText;
+      int x = 0;
+      int sectionEnd = 0;
 
-      for(int x = 0; x < arraySize; x++)
+      //do the main body sections
+      while (x < arraySize)
       {
           int sectionStart = LittleEndian.getInt(_tableBuffer, plcfsedFC + plcfsed.getIntOffset(x)) + fcMin;
-          int sectionEnd = LittleEndian.getInt(_tableBuffer, plcfsedFC + plcfsed.getIntOffset(x + 1)) + fcMin;
+          sectionEnd = LittleEndian.getInt(_tableBuffer, plcfsedFC + plcfsed.getIntOffset(x + 1)) + fcMin;
           int sepxStart = LittleEndian.getInt(_tableBuffer, plcfsedFC + plcfsed.getStructOffset(x) + 2);
           int sepxSize = LittleEndian.getShort(_mainDocument, sepxStart);
 
           byte[] sepx = new byte[sepxSize];
           System.arraycopy(_mainDocument, sepxStart + 2, sepx, 0, sepxSize);
           SepxNode node = new SepxNode(x + 1, sectionStart, sectionEnd, sepx);
-          _listener.section(node);
+          _listener.bodySection(node);
+          initParagraphProperties(parOffset, parPlcf, charOffset, charPlcf, sectionStart, Math.min(end, sectionEnd));
 
-          initParagraphProperties(parOffset, parPlcf, charOffset, charPlcf, sectionEnd);
+          if (sectionEnd > end)
+          {
+            break;
+          }
+          else
+          {
+            x++;
+          }
       }
+      //do the header sections
+      for (; x < arraySize; x++)// && sectionEnd <= end; x++)
+      {
+          int sectionStart = LittleEndian.getInt(_tableBuffer, plcfsedFC + plcfsed.getIntOffset(x)) + fcMin;
+          sectionEnd = LittleEndian.getInt(_tableBuffer, plcfsedFC + plcfsed.getIntOffset(x + 1)) + fcMin;
+          int sepxStart = LittleEndian.getInt(_tableBuffer, plcfsedFC + plcfsed.getStructOffset(x) + 2);
+          int sepxSize = LittleEndian.getShort(_mainDocument, sepxStart);
+
+          byte[] sepx = new byte[sepxSize];
+          System.arraycopy(_mainDocument, sepxStart + 2, sepx, 0, sepxSize);
+          SepxNode node = new SepxNode(x + 1, sectionStart, sectionEnd, sepx);
+          _listener.hdrSection(node);
+          initParagraphProperties(parOffset, parPlcf, charOffset, charPlcf, Math.max(sectionStart, end), sectionEnd);
+
+      }
+      _listener.endSections();
     }
     /**
      * Initializes the DocumentProperties object unique to this document.

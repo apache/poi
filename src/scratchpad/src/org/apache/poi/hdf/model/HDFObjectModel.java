@@ -16,6 +16,9 @@ import org.apache.poi.hdf.model.hdftypes.StyleSheet;
 public class HDFObjectModel implements HDFLowLevelParsingListener
 {
 
+    /** "WordDocument" from the POIFS */
+    private byte[] _mainDocument;
+
     /** The DOP*/
     private DocumentProperties _dop;
     /**the StyleSheet*/
@@ -24,6 +27,9 @@ public class HDFObjectModel implements HDFLowLevelParsingListener
     private ListTables _listTables;
     /** Font info */
     private FontTable _fonts;
+
+    /** text offset in main stream */
+    int _fcMin;
 
     /** text pieces */
     BTreeSet _text = new BTreeSet();
@@ -37,14 +43,31 @@ public class HDFObjectModel implements HDFLowLevelParsingListener
     public HDFObjectModel()
     {
     }
-
+    public void mainDocument(byte[] mainDocument)
+    {
+      _mainDocument = mainDocument;
+    }
+    public void tableStream(byte[] tableStream)
+    {
+    }
+    public void miscellaneous(int fcMin, int ccpText, int ccpFtn, int fcPlcfhdd, int lcbPlcfhdd)
+    {
+      _fcMin = fcMin;
+    }
     public void document(DocumentProperties dop)
     {
       _dop = dop;
     }
-    public void section(SepxNode sepx)
+    public void bodySection(SepxNode sepx)
     {
       _sections.add(sepx);
+    }
+    public void hdrSection(SepxNode sepx)
+    {
+      _sections.add(sepx);
+    }
+    public void endSections()
+    {
     }
     public void paragraph(PapxNode papx)
     {
