@@ -19,12 +19,18 @@
   <!-- Indentify Classpath                                                 -->
   <!-- =================================================================== -->
   <path id="centipede.classpath">
+    <fileset dir="./lib/endorsed">
+      <include name="*.jar"/>
+    </fileset>    
     <fileset dir="./tools/centipede/lib">
       <include name="*.jar"/>
     </fileset>
   </path>
     
   <path id="classpath">
+    <fileset dir="./lib/endorsed">
+      <include name="*.jar"/>
+    </fileset>  
     <fileset dir="./lib/core">
       <include name="*.jar"/>
     </fileset>
@@ -34,11 +40,17 @@
   </path>
 
   <path id="examples.classpath">
+    <fileset dir="./lib/endorsed">
+      <include name="*.jar"/>
+    </fileset>    
     <!-- FIXME : how to build a path that references a property set in 'init' target ? -->
     <pathelement path="./build/jakarta-poi/classes"/>
   </path>
 
   <path id="scratchpad.classpath">
+    <fileset dir="./lib/endorsed">
+      <include name="*.jar"/>
+    </fileset>    
     <fileset dir="./lib/core">
       <include name="*.jar"/>
     </fileset>
@@ -53,6 +65,9 @@
   </path>
 
   <path id="contrib.classpath">
+    <fileset dir="./lib/endorsed">
+      <include name="*.jar"/>
+    </fileset>    
     <fileset dir="./lib/core">
       <include name="*.jar"/>
     </fileset>

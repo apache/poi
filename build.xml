@@ -32,14 +32,14 @@
 <!-- =================================================================== -->
 
 <!-- ==================  Krysalis Centipede targets ===================  --> 
-<!ENTITY preinit-target SYSTEM "./tools/centipede/targets/preinit.xtarget"> 
-<!ENTITY init-target    SYSTEM "./tools/centipede/targets/init.xtarget"> 
-<!ENTITY compile-target SYSTEM "./tools/centipede/targets/compile.xtarget"> 
-<!ENTITY util-target    SYSTEM "./tools/centipede/targets/util.xtarget"> 
-<!ENTITY dev-target     SYSTEM "./tools/centipede/targets/dev.xtarget"> 
-<!ENTITY test-target    SYSTEM "./tools/centipede/targets/test.xtarget"> 
-<!ENTITY robot-target   SYSTEM "./tools/centipede/targets/robot.xtarget"> 
-<!ENTITY docs-target    SYSTEM "./tools/centipede/targets/docs.xtarget"> 
+<!ENTITY preinit-target       SYSTEM "./tools/centipede/targets/preinit.xtarget"> 
+<!ENTITY init-target          SYSTEM "./tools/centipede/targets/init.xtarget"> 
+<!ENTITY compile-target       SYSTEM "./tools/centipede/targets/compile.xtarget"> 
+<!ENTITY util-target          SYSTEM "./tools/centipede/targets/util.xtarget"> 
+<!ENTITY dev-target           SYSTEM "./tools/centipede/targets/dev.xtarget"> 
+<!ENTITY test-target          SYSTEM "./tools/centipede/targets/test.xtarget"> 
+<!ENTITY robot-target         SYSTEM "./tools/centipede/targets/robot.xtarget"> 
+<!ENTITY docs-target          SYSTEM "./tools/centipede/targets/docs.xtarget"> 
 <!-- =================================================================== -->
 ]>
 
@@ -181,7 +181,7 @@ or
   <!-- =================================================================== -->
   <!-- Documentation targets   -->  &docs-target;  
   <!-- =================================================================== -->
-  
+    
 </project>
 
 <!-- End of file -->
