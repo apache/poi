@@ -59,9 +59,31 @@ import org.apache.poi.hssf.record.PrintSetupRecord;
 /**
  * Used to modify the print setup.
  * <P>
+ * Paper size constants have been added for the ones I have access
+ * to.  They follow as:<br>
+ *  public final short LETTER_PAPERSIZE 	  = 1;<br>
+ *  public final short LEGAL_PAPERSIZE 		  = 5;<br>
+ *  public final short EXECUTIVE_PAPERSIZE 	  = 7;<br>
+ *  public final short A4_PAPERSIZE 	  	  = 9;<br>
+ *  public final short A5_PAPERSIZE 		  = 11;<br>
+ *  public final short ENVELOPE_10_PAPERSIZE 	  = 20;<br>
+ *  public final short ENVELOPE_DL_PAPERSIZE 	  = 27;<br>
+ *  public final short ENVELOPE_CS_PAPERSIZE 	  = 28;<br>
+ *  public final short ENVELOPE_MONARCH_PAPERSIZE = 37;<br>
+ * <P>
  * @author Shawn Laubach (slaubach at apache dot org)
  */
 public class HSSFPrintSetup extends Object {
+
+    public final short LETTER_PAPERSIZE 	  = 1;
+    public final short LEGAL_PAPERSIZE 		  = 5;
+    public final short EXECUTIVE_PAPERSIZE 	  = 7;
+    public final short A4_PAPERSIZE 	  	  = 9;
+    public final short A5_PAPERSIZE 		  = 11;
+    public final short ENVELOPE_10_PAPERSIZE 	  = 20;
+    public final short ENVELOPE_DL_PAPERSIZE 	  = 27;
+    public final short ENVELOPE_CS_PAPERSIZE 	  = 28;
+    public final short ENVELOPE_MONARCH_PAPERSIZE = 37;
 
     PrintSetupRecord printSetupRecord;
 
