@@ -13,9 +13,7 @@
 
     TO BE COMPLETED:
 
-    * Fix logo's in site build.
-    * Add gump build
-    * Add jar target
+    NONE
  -->
 <project name="POI Build" default="compile" basedir=".">
 
@@ -300,20 +298,28 @@
         </uptodate>
     </target>
 
+    <target name="-check-forrest-installed" unless="env.FORREST_HOME">
+        <echo>
+            Please install apache forrest and set the
+            FORREST_HOME environment variable.
+        </echo>
+        <fail/>
+    </target>
+
     <!--    <target name="check-docs">-->
     <!--        <uptodate property="main.docs.notRequired" targetfile="${build.site}/index.html" >-->
     <!--            <srcfiles dir= "${build.site.src}"/>-->
     <!--        </uptodate>-->
     <!--    </target>-->
 
-    <target name="docs" depends="init,-check-docs" unless="main.docs.notRequired"
+    <target name="docs" depends="init,-check-forrest-installed,-check-docs" unless="main.docs.notRequired"
         description="Builds the POI website">
 
         <mkdir dir="${build.site.src}/src/documentation/content/apidocs"/>
         <copy todir="${build.site.src}/src/documentation/content/apidocs">
             <fileset dir="${apidocs.report.dir}"/>
         </copy>
-        <copy tofile="${build.site.src}/src/documentation/content/jdepend.ehtml" file="${jdepend.report.dir}/index.html"/>
+        <copy tofile="${build.site.src}/src/documentation/content/jdepend.ehtml" file="${jdepend.report.dir}/index.html" failonerror="false"/>
         <mkdir dir="${build.site.src}/src/documentation/content/junit"/>
         <copy todir="${build.site.src}/src/documentation/content/junit">
             <fileset dir="${junit.report.dir}"/>

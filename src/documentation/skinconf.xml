@@ -57,13 +57,13 @@ be used to configure the chosen Forrest skin.
        skin: forrest-site renders it at the top -->
   <project-name>POI</project-name>
   <project-url>http://jakarta.apache.org/poi/</project-url>
-  <project-logo>images/project-logo.gif</project-logo>
+  <project-logo>resources/images/project-logo.gif</project-logo>
 
   <!-- optional group logo
        skin: forrest-site renders it at the top-left corner -->
   <group-name>Jakarta</group-name>
   <group-url>http://jakarta.apache.org</group-url>
-  <group-logo>images/group-logo.gif</group-logo>
+  <group-logo>resources/images/group-logo.gif</group-logo>
 
   <!-- optional host logo (e.g. sourceforge logo)
        skin: forrest-site renders it at the bottom-left corner -->
