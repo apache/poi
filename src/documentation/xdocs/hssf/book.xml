@@ -12,6 +12,7 @@
   <menu label="HSSF">
     <menu-item label="HOWTO" href="how-to.html"/>
     <menu-item label="Use Case" href="use-case.html"/>
+    <menu-item label="Record Generator" href="record-generator.html"/>
   </menu>
 
 </book>
