@@ -401,11 +401,16 @@ public class Section
      */
     protected int getPropertyIntValue(final long id)
     {
-        final Long i = (Long) getProperty(id);
-        if (i != null)
-            return i.intValue();
-        else
+        final Long i;
+        final Object o = getProperty(id);
+        if (o == null)
             return 0;
+        if (!(o instanceof Long))
+            throw new HPSFRuntimeException
+                ("This property is not an integer type, but " +
+                 o.getClass().getName() + ".");
+        i = (Long) o;
+        return i.intValue();
     }
 
 

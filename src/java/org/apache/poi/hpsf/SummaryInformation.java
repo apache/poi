@@ -204,13 +204,19 @@ public class SummaryInformation extends SpecialPropertySet
 
 
     /**
-     * <p>Returns the stream's edit time (or <code>null</code>).</p>
+     * <p>Returns the total time spent in editing the document
+     * (or <code>0</code>).</p>
      *
-     * @return The edit time or <code>null</code>
+     * @return The total time spent in editing the document or 0 if the {@link
+     * SummaryInformation} does not contain this information.
      */
-    public Date getEditTime()
+    public long getEditTime()
     {
-        return (Date) getProperty(PropertyIDMap.PID_EDITTIME);
+        final Date d = (Date) getProperty(PropertyIDMap.PID_EDITTIME);
+        if (d == null)
+            return 0;
+        else
+            return Util.dateToFileTime(d);
     }
 
 
@@ -258,7 +264,8 @@ public class SummaryInformation extends SpecialPropertySet
      * <p>Returns the stream's page count or 0 if the {@link
      * SummaryInformation} does not contain a page count.</p>
      *
-     * @return The page count or <code>null</code>
+     * @return The page count or 0 if the {@link SummaryInformation} does not
+     * contain a page count.
      */
     public int getPageCount()
     {

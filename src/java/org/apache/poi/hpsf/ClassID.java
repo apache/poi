@@ -236,7 +236,7 @@ public class ClassID
      */
     public int hashCode()
     {
-        throw new UnsupportedOperationException("FIXME: Not yet implemented.");
+        return new String(bytes).hashCode();
     }
 
 }

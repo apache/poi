@@ -9,7 +9,7 @@
   <div>
    <p>Processes streams in the Horrible Property Set Format (HPSF) in POI
     filesystems. Microsoft Office documents, i.e. POI filesystems, usually
-    contain meta data like author, title, last editing date etc. These items
+    contain meta data like author, title, last saving time etc. These items
     are called <strong>properties</strong> and stored in
     <strong>property set streams</strong> along with the document itself. These
     streams are commonly named <tt>\005SummaryInformation</tt> and
@@ -71,31 +71,44 @@
     the hassle of first finding out what the title's property ID is and then
     using this ID to get the property's value.</p>
 
+   <p>Writing properties can be done with the classes
+    {@link org.apache.poi.hpsf.MutablePropertySet}, {@link
+    org.apache.poi.hpsf.MutableSection}, and {@link
+    org.apache.poi.hpsf.MutableProperty}.</p>
+
+   <div>
+    <h2>History</h2>
+
+    <dl>
+     <dt>2003-09-11:</dt>
+
+     <dd>
+      <p>{@link org.apache.poi.hpsf.PropertySetFactory#create(InputStream)} no
+       longer throws an
+       {@link org.apache.poi.hpsf.UnexpectedPropertySetTypeException}.</p></dd>
+    </dl>
+   </div>
+
+
    <div>
     <h2>To Do</h2>
 
-    <p>The following is still left to be implemented:</p>
+    <p>The following is still left to be implemented. Sponsering could foster
+     these issues considerably.</p>
 
     <ul>
 
      <li>
-      <p>Property dictionaries</p>
+      <p>Convenience methods for setting summary information and document
+       summary information properties</p>
      </li>
 
      <li>
-      <p>Writing property sets</p>
+      <p>Better codepage support</p>
      </li>
 
      <li>
-      <p>Codepage support</p>
-     </li>
-
-     <li>
-      <p>Property type Unicode string</p>
-     </li>
-
-     <li>
-      <p>Further property types</p>
+      <p>Support for more property (variant) types</p>
      </li>
 
     </ul>
