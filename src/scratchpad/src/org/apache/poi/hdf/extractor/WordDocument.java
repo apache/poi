@@ -126,7 +126,7 @@ public class WordDocument
   int _ccpFtn;
 
   /** The name of the file to write to */
-  String _outName
+  private static String _outName;
 
   /** OLE stuff*/
   private InputStream istream;
