@@ -431,9 +431,10 @@ public class Sheet implements Model
     }
 
     public int getNumMergedRegions()
-    {
-        return merged.getNumAreas();
-    }
+	{
+	    return merged!=null ? merged.getNumAreas() : 0;
+	}
+
 
     /**
      * This is basically a kludge to deal with the now obsolete Label records.  If
