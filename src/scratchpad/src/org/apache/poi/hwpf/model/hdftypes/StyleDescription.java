@@ -72,6 +72,8 @@ public class StyleDescription implements HDFType
   private static int PARAGRAPH_STYLE = 1;
   private static int CHARACTER_STYLE = 2;
 
+  private int _istd;
+  private int _baseLength;
   private short _infoShort;
     private static BitField _sti = new BitField(0xfff);
     private static BitField _fScratch = new BitField(0x1000);
@@ -81,10 +83,11 @@ public class StyleDescription implements HDFType
   private short _infoShort2;
     private static BitField _styleTypeCode = new BitField(0xf);
     private static BitField _baseStyle = new BitField(0xfff0);
+  private short _infoShort3;
     private static BitField _numUPX = new BitField(0xf);
     private static BitField _nextStyle = new BitField(0xfff0);
   private short _bchUpe;
-  private short _infoShort3;
+  private short _infoShort4;
     private static BitField _fAutoRedef = new BitField(0x1);
     private static BitField _fHidden = new BitField(0x2);
 
@@ -101,14 +104,17 @@ public class StyleDescription implements HDFType
   }
   public StyleDescription(byte[] std, int baseLength, int offset, boolean word9)
   {
-      int nameStart = offset + baseLength;
+     _baseLength = baseLength;
+     int nameStart = offset + baseLength;
       _infoShort = LittleEndian.getShort(std, offset);
       offset += LittleEndian.SHORT_SIZE;
       _infoShort2 = LittleEndian.getShort(std, offset);
       offset += LittleEndian.SHORT_SIZE;
+      _infoShort3 = LittleEndian.getShort(std, offset);
+      offset += LittleEndian.SHORT_SIZE;
       _bchUpe = LittleEndian.getShort(std, offset);
       offset += LittleEndian.SHORT_SIZE;
-      _infoShort3 = LittleEndian.getShort(std, offset);
+      _infoShort4 = LittleEndian.getShort(std, offset);
       offset += LittleEndian.SHORT_SIZE;
 
       //first byte(s) of variable length section of std is the length of the
@@ -135,13 +141,13 @@ public class StyleDescription implements HDFType
         // ignore
       }
 
-      //2 bytes for length, length then null terminator.
-      int grupxStart = multiplier + ((nameLength + 1) * multiplier) + nameStart;
+      //length then null terminator.
+      int grupxStart = ((nameLength + 1) * multiplier) + nameStart;
 
       // the spec only refers to two possible upxs but it mentions
       // that more may be added in the future
       int add = 0;
-      int numUPX = _numUPX.getValue(_infoShort2);
+      int numUPX = _numUPX.getValue(_infoShort3);
       for(int x = 0; x < numUPX; x++)
       {
           int upxSize = LittleEndian.getShort(std, grupxStart + add);
@@ -149,8 +155,10 @@ public class StyleDescription implements HDFType
           {
               if(x == 0)
               {
+                  _istd = LittleEndian.getShort(std, grupxStart + add + 2);
+                  int grrprlSize = upxSize - 2;
                   _papx = new byte[upxSize];
-                  System.arraycopy(std, grupxStart + add + 2, _papx, 0, upxSize);
+                  System.arraycopy(std, grupxStart + add + 4, _papx, 0, grrprlSize);
               }
               else if(x == 1)
               {
@@ -204,15 +212,19 @@ public class StyleDescription implements HDFType
 //  }
   public byte[] toByteArray()
   {
-    // size equals 8 bytes for known variables plus 2 bytes for name length plus
-    // name length * 2 plus 2 bytes for null plus upx's preceded by length
-    int size = 8 + 2 + ((_name.length() + 1) * 2);
+    // size equals _baseLength bytes for known variables plus 2 bytes for name
+    // length plus name length * 2 plus 2 bytes for null plus upx's preceded by
+    // length
+    int size = _baseLength + 2 + ((_name.length() + 1) * 2);
 
     //only worry about papx and chpx for upxs
     if(_styleTypeCode.getValue(_infoShort2) == PARAGRAPH_STYLE)
     {
-      size += _papx.length + 2 + (_papx.length % 2);
-      size += _chpx.length + 2;
+      size += _papx.length + 4 + (_papx.length % 2);
+      if (_chpx != null)
+      {
+        size += _chpx.length + 2;
+      }
     }
     else if (_styleTypeCode.getValue(_infoShort2) == CHARACTER_STYLE)
     {
@@ -226,9 +238,11 @@ public class StyleDescription implements HDFType
     offset += LittleEndian.SHORT_SIZE;
     LittleEndian.putShort(buf, offset, _infoShort2);
     offset += LittleEndian.SHORT_SIZE;
+    LittleEndian.putShort(buf, offset, _infoShort3);
+    offset += LittleEndian.SHORT_SIZE;
     LittleEndian.putShort(buf, offset, _bchUpe);
     offset += LittleEndian.SHORT_SIZE;
-    LittleEndian.putShort(buf, offset, _infoShort3);
+    LittleEndian.putShort(buf, offset, _infoShort4);
     offset += LittleEndian.SHORT_SIZE;
 
     char[] letters = _name.toCharArray();
@@ -247,13 +261,18 @@ public class StyleDescription implements HDFType
     {
       LittleEndian.putShort(buf, offset, (short)_papx.length);
       offset += LittleEndian.SHORT_SIZE;
+      LittleEndian.putShort(buf, offset, (short)_istd);
+      offset += LittleEndian.SHORT_SIZE;
       System.arraycopy(_papx, 0, buf, offset, _papx.length);
       offset += _papx.length + (_papx.length % 2);
 
-      LittleEndian.putShort(buf, offset, (short)_chpx.length);
-      offset += LittleEndian.SHORT_SIZE;
-      System.arraycopy(_chpx, 0, buf, offset, _chpx.length);
-      offset += _chpx.length;
+      if (_chpx != null)
+      {
+        LittleEndian.putShort(buf, offset, (short) _chpx.length);
+        offset += LittleEndian.SHORT_SIZE;
+        System.arraycopy(_chpx, 0, buf, offset, _chpx.length);
+        offset += _chpx.length;
+      }
     }
     else if (_styleTypeCode.getValue(_infoShort2) == CHARACTER_STYLE)
     {
@@ -264,5 +283,39 @@ public class StyleDescription implements HDFType
     }
 
     return buf;
+  }
+
+  public boolean equals(Object o)
+  {
+    StyleDescription sd = (StyleDescription)o;
+    if (sd._infoShort == _infoShort && sd._infoShort2 == _infoShort2 &&
+        sd._infoShort3 == _infoShort3 && sd._bchUpe == _bchUpe &&
+        sd._infoShort4 == _infoShort4 &&
+        _name.equals(sd._name))
+    {
+      if (_chpx != null && _chpx.length == sd._chpx.length)
+      {
+        for (int x = 0; x < _chpx.length; x++)
+        {
+          if (_chpx[x] != sd._chpx[x])
+          {
+            return false;
+          }
+        }
+        return true;
+      }
+      if (_papx != null && _papx.length == sd._papx.length)
+      {
+        for (int x = 0; x < _papx.length; x++)
+        {
+          if (_papx[x] != sd._papx[x])
+          {
+            return false;
+          }
+        }
+        return true;
+      }
+    }
+    return false;
   }
 }

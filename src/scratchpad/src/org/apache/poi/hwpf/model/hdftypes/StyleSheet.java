@@ -101,44 +101,44 @@ public class StyleSheet implements HDFType
    *        info. Found by using FileInformationBlock.getFcStshf() and
    *        FileInformationBLock.getLcbStshf()
    */
-  public StyleSheet(byte[] styleSheet, int offset)
+  public StyleSheet(byte[] tableStream, int offset)
   {
-      _stshiLength = LittleEndian.getShort(styleSheet, offset);
+      _stshiLength = LittleEndian.getShort(tableStream, offset);
       offset += LittleEndian.SHORT_SIZE;
-      int stdCount = LittleEndian.getShort(styleSheet, offset);
+      int stdCount = LittleEndian.getShort(tableStream, offset);
       offset += LittleEndian.SHORT_SIZE;
-      _baseLength = LittleEndian.getShort(styleSheet, offset);
+      _baseLength = LittleEndian.getShort(tableStream, offset);
       offset += LittleEndian.SHORT_SIZE;
-      _flags = LittleEndian.getShort(styleSheet, offset);
+      _flags = LittleEndian.getShort(tableStream, offset);
       offset += LittleEndian.SHORT_SIZE;
-      _maxIndex = LittleEndian.getShort(styleSheet, offset);
+      _maxIndex = LittleEndian.getShort(tableStream, offset);
       offset += LittleEndian.SHORT_SIZE;
-      _maxFixedIndex = LittleEndian.getShort(styleSheet, offset);
+      _maxFixedIndex = LittleEndian.getShort(tableStream, offset);
       offset += LittleEndian.SHORT_SIZE;
-      _stylenameVersion = LittleEndian.getShort(styleSheet, offset);
+      _stylenameVersion = LittleEndian.getShort(tableStream, offset);
       offset += LittleEndian.SHORT_SIZE;
 
       _rgftc = new int[3];
-      _rgftc[0] = LittleEndian.getShort(styleSheet, offset);
+      _rgftc[0] = LittleEndian.getShort(tableStream, offset);
       offset += LittleEndian.SHORT_SIZE;
-      _rgftc[1] = LittleEndian.getShort(styleSheet, offset);
+      _rgftc[1] = LittleEndian.getShort(tableStream, offset);
       offset += LittleEndian.SHORT_SIZE;
-      _rgftc[2] = LittleEndian.getShort(styleSheet, offset);
+      _rgftc[2] = LittleEndian.getShort(tableStream, offset);
+      offset += LittleEndian.SHORT_SIZE;
 
-      offset = (2 + _stshiLength);
+      //offset = (2 + _stshiLength);
       _styleDescriptions = new StyleDescription[stdCount];
       for(int x = 0; x < stdCount; x++)
       {
 
-          int stdSize = LittleEndian.getShort(styleSheet, offset);
+          int stdSize = LittleEndian.getShort(tableStream, offset);
+          //get past the size
+          offset += 2;
           if(stdSize > 0)
           {
-              byte[] std = new byte[stdSize];
+              //byte[] std = new byte[stdSize];
 
-              //get past the size
-              offset += 2;
-
-              StyleDescription aStyle = new StyleDescription(styleSheet,
+              StyleDescription aStyle = new StyleDescription(tableStream,
                 _baseLength, offset, true);
 
               _styleDescriptions[x] = aStyle;
@@ -157,11 +157,12 @@ public class StyleSheet implements HDFType
       }
   }
 
-  public void write(HWPFOutputStream out)
+  public void writeTo(HWPFOutputStream out)
     throws IOException
   {
     int offset = 0;
-    byte[] buf = new byte[_stshiLength];
+    // add two bytes so we can prepend the styelsheet w/ its size
+    byte[] buf = new byte[_stshiLength + 2];
     LittleEndian.putShort(buf, offset, (short)_stshiLength);
     offset += LittleEndian.SHORT_SIZE;
     LittleEndian.putShort(buf, offset, (short)_styleDescriptions.length);
@@ -192,7 +193,7 @@ public class StyleSheet implements HDFType
       {
           byte[] std = _styleDescriptions[x].toByteArray();
 
-          LittleEndian.putShort(sizeHolder, (short)std.length);
+          LittleEndian.putShort(sizeHolder, (short)(std.length));
           out.write(sizeHolder);
           out.write(std);
       }
@@ -203,7 +204,35 @@ public class StyleSheet implements HDFType
         out.write(sizeHolder);
       }
     }
+  }
+  public boolean equals(Object o)
+  {
+    StyleSheet ss = (StyleSheet)o;
 
+    if (ss._baseLength == _baseLength && ss._flags == _flags &&
+        ss._maxFixedIndex ==_maxFixedIndex && ss._maxIndex == _maxIndex &&
+        ss._rgftc[0] == _rgftc[0] && ss._rgftc[1] == _rgftc[1] &&
+        ss._rgftc[2] == _rgftc[2] && ss._stshiLength == _stshiLength &&
+        ss._stylenameVersion == _stylenameVersion)
+    {
+      if (ss._styleDescriptions.length == _styleDescriptions.length)
+      {
+        for (int x = 0; x < _styleDescriptions.length; x++)
+        {
+          // check for null
+          if (ss._styleDescriptions[x] != _styleDescriptions[x])
+          {
+            // check for equality
+            if (!ss._styleDescriptions[x].equals(_styleDescriptions[x]))
+            {
+              return false;
+            }
+          }
+        }
+        return true;
+      }
+    }
+    return false;
   }
   /**
    * Creates a PartagraphProperties object from a papx stored in the
