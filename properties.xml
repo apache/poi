@@ -3,17 +3,6 @@
 <!-- Build properties - these override any property specified in the build -->
 <properties>
 
-<!-- Properties for core Ant tasks-->
-   <ant>
-      <XmlLogger>
-         <stylesheet
-          uri="./tools/antipede/resources/stylesheets/log.xsl" />
-      </XmlLogger>
-   </ant>
-
-   <XmlLogger
-    file="log.xml" />
-
    <!-- Properties of the build -->
    <build>
       <!-- What to tell the compiler -->

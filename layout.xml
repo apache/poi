@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <?xml-stylesheet type="text/xsl" href="tools/antipede/resources/stylesheets/layout.xsl"?>
 <layout dir=".">
-   <legal dir="./legal"/>     
+  <legal dir="./legal"/>     
   <library dir="./lib">
    <endorsed dir="./lib/endorsed"/>
    <core dir="./lib/core"/>
@@ -40,7 +40,7 @@
    <classes dir="./build/classes"/>
    <test dir="./build/testcases"/>
    <work dir="./build/work"/>
-   <documentation dir="./build/documentation">
+   <documentation dir="./build/docs">
      <javadocs dir="./build/docs/javadocs"/>
      <test dir="./build/docs/test"/>
      <metrics dir="./build/docs/metrics"/>

@@ -1,5 +1,7 @@
 <?xml version="1.0"?>
 <?xml-stylesheet type="text/xsl" href="./tools/antipede/resources/stylesheets/layout.xsl"?>
+
+<!--<!DOCTYPE project SYSTEM "./tools/antipede/build.dtd" >-->
 <!DOCTYPE project [
   <!-- antipede -->    
   <!ENTITY import-antipede  SYSTEM "./tools/antipede/build.xtarget"> 
@@ -351,7 +353,7 @@
            description="Make big full test">
            
     <antcall target="gump"/>
-    <antcall target="quickdist"/>
+    <antcall target="dist"/>
     
   </target>       
                       
