@@ -159,7 +159,8 @@ public class StyleSheet implements HDFType
       {
           byte[] std = _styleDescriptions[x].toByteArray();
 
-          LittleEndian.putShort(sizeHolder, (short)(std.length));
+          // adjust the size so it is always on a word boundary
+          LittleEndian.putShort(sizeHolder, (short)((std.length) + (std.length % 2)));
           out.write(sizeHolder);
           out.write(std);
 

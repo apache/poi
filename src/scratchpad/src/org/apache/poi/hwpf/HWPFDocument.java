@@ -89,6 +89,11 @@ public class HWPFDocument
   /** Hold list tables */
   protected ListTables _lt;
 
+  protected HWPFDocument()
+  {
+
+  }
+
   /**
    * This constructor loads a Word document from an InputStream.
    *
@@ -181,11 +186,21 @@ public class HWPFDocument
     return _ss;
   }
 
+  public FileInformationBlock getFileInformationBlock()
+  {
+    return _fib;
+  }
+
+  public DocumentProperties getDocProperties()
+  {
+    return _dop;
+  }
+
   public Range getRange()
   {
     // hack to get the ending cp of the document, Have to revisit this.
-    java.util.List paragraphs = _pbt.getParagraphs();
-    PAPX p = (PAPX)paragraphs.get(paragraphs.size() - 1);
+    java.util.List text = _tpt.getTextPieces();
+    PropertyNode p = (PropertyNode)text.get(text.size() - 1);
 
     return new Range(0, p.getEnd(), this);
   }
@@ -226,7 +241,7 @@ public class HWPFDocument
     HWPFFileSystem docSys = new HWPFFileSystem();
     HWPFOutputStream mainStream = docSys.getStream("WordDocument");
     HWPFOutputStream tableStream = docSys.getStream("1Table");
-    HWPFOutputStream dataStream = docSys.getStream("Data");
+    //HWPFOutputStream dataStream = docSys.getStream("Data");
     int tableOffset = 0;
 
     // FileInformationBlock fib = (FileInformationBlock)_fib.clone();
@@ -332,6 +347,10 @@ public class HWPFDocument
     }
 
     byte[] dataBuf = _dataStream;
+    if (dataBuf == null)
+    {
+      dataBuf = new byte[4096];
+    }
     if (dataBuf.length < 4096)
     {
       byte[] tempBuf = new byte[4096];

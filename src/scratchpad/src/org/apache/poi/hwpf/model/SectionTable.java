@@ -31,8 +31,8 @@ public class SectionTable
 {
   private static final int SED_SIZE = 12;
 
-  private ArrayList _sections = new ArrayList();
-  private List _text;
+  protected ArrayList _sections = new ArrayList();
+  protected List _text;
 
   public SectionTable()
   {

@@ -33,7 +33,7 @@ import org.apache.poi.hwpf.model.io.*;
  */
 public class TextPieceTable
 {
-  ArrayList _textPieces = new ArrayList();
+  protected ArrayList _textPieces = new ArrayList();
   //int _multiple;
   int _cpMin;
 
