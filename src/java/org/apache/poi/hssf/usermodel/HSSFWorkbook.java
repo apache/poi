@@ -1,4 +1,3 @@
-
 /* ====================================================================
  * The Apache Software License, Version 1.1
  *
@@ -60,20 +59,19 @@
  */
 package org.apache.poi.hssf.usermodel;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-
-import java.util.ArrayList;
-import java.util.List;
-
+import org.apache.poi.hssf.HSSFLog;
+import org.apache.poi.hssf.model.Sheet;
+import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.record.*;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.hssf.HSSFLog;
-import org.apache.poi.hssf.model.Workbook;
-import org.apache.poi.hssf.model.Sheet;
-import org.apache.poi.hssf.record.*;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * High level representation of a workbook.  This is the first object most users
@@ -88,9 +86,9 @@ import org.apache.poi.hssf.record.*;
  */
 
 public class HSSFWorkbook
-    extends java.lang.Object
+        extends java.lang.Object
 {
-    private static final int DEBUG            = POILogger.DEBUG;
+    private static final int DEBUG = POILogger.DEBUG;
 
     /**
      * used for compile-time performance/memory optimization.  This determines the
@@ -99,19 +97,19 @@ public class HSSFWorkbook
      * since you're never allowed to have more or less than three sheets!
      */
 
-    public final static int  INITIAL_CAPACITY = 3;
+    public final static int INITIAL_CAPACITY = 3;
 
     /**
      * this is the reference to the low level Workbook object
      */
 
-    private Workbook         workbook;
+    private Workbook workbook;
 
     /**
      * this holds the HSSFSheet objects attached to this workbook
      */
 
-    private ArrayList        sheets;
+    private ArrayList sheets;
     private static POILogger log = HSSFLog.getPOILogger(HSSFWorkbook.class);
 
     /**
@@ -122,7 +120,7 @@ public class HSSFWorkbook
     public HSSFWorkbook()
     {
         workbook = Workbook.createWorkbook();
-        sheets   = new ArrayList(INITIAL_CAPACITY);
+        sheets = new ArrayList(INITIAL_CAPACITY);
     }
 
     /**
@@ -135,16 +133,16 @@ public class HSSFWorkbook
      */
 
     public HSSFWorkbook(POIFSFileSystem fs)
-        throws IOException
+            throws IOException
     {
         sheets = new ArrayList(INITIAL_CAPACITY);
-        InputStream stream  = fs.createDocumentInputStream("Workbook");
-        List        records = RecordFactory.createRecords(stream);
+        InputStream stream = fs.createDocumentInputStream("Workbook");
+        List records = RecordFactory.createRecords(stream);
 
         workbook = Workbook.createWorkbook(records);
         setPropertiesFromWorkbook(workbook);
         int numRecords = workbook.getNumRecords();
-        int sheetnum   = 0;
+        int sheetnum = 0;
 
         while (numRecords < records.size())
         {
@@ -152,7 +150,7 @@ public class HSSFWorkbook
 
             numRecords += sheet.getNumRecords();
             sheet.convertLabelRecords(
-                workbook);   // convert all LabelRecord records to LabelSSTRecord
+                    workbook);   // convert all LabelRecord records to LabelSSTRecord
             HSSFSheet hsheet = new HSSFSheet(workbook, sheet);
 
             sheets.add(hsheet);
@@ -165,14 +163,14 @@ public class HSSFWorkbook
      * Companion to HSSFWorkbook(POIFSFileSystem), this constructs the POI filesystem around your
      * inputstream.
      *
-     * @param fs the POI filesystem that contains the Workbook stream.
+     * @param s  the POI filesystem that contains the Workbook stream.
      * @see org.apache.poi.poifs.filesystem.POIFSFileSystem
      * @see #HSSFWorkbook(POIFSFileSystem)
      * @exception IOException if the stream cannot be read
      */
 
     public HSSFWorkbook(InputStream s)
-        throws IOException
+            throws IOException
     {
         this((new POIFSFileSystem(s)));
     }
@@ -220,7 +218,7 @@ public class HSSFWorkbook
 
     /**
      * get the sheet's index
-     * @param sheet name
+     * @param name  sheet name
      * @return sheet index or -1 if it was not found.
      */
 
@@ -251,13 +249,16 @@ public class HSSFWorkbook
     public HSSFSheet createSheet()
     {
 
-//        if (getNumberOfSheets() == 3) 
+//        if (getNumberOfSheets() == 3)
 //            throw new RuntimeException("You cannot have more than three sheets in HSSF 1.0");
         HSSFSheet sheet = new HSSFSheet(workbook);
 
         sheets.add(sheet);
         workbook.setSheetName(sheets.size() - 1,
-                              "Sheet" + (sheets.size() - 1));
+                "Sheet" + (sheets.size() - 1));
+        WindowTwoRecord windowTwo = (WindowTwoRecord) sheet.getSheet().findFirstRecordBySid(WindowTwoRecord.sid);
+        windowTwo.setSelected(sheets.size() == 1);
+        windowTwo.setPaged(sheets.size() == 1);
         return sheet;
     }
 
@@ -265,19 +266,22 @@ public class HSSFWorkbook
      * create an HSSFSheet for this HSSFWorkbook, adds it to the sheets and returns
      * the high level representation.  Use this to create new sheets.
      *
-     * @param Sheetname to set for the sheet.
+     * @param sheetname     sheetname to set for the sheet.
      * @return HSSFSheet representing the new sheet.
      */
 
     public HSSFSheet createSheet(String sheetname)
     {
 
-//        if (getNumberOfSheets() == 3) 
+//        if (getNumberOfSheets() == 3)
 //            throw new RuntimeException("You cannot have more than three sheets in HSSF 1.0");
         HSSFSheet sheet = new HSSFSheet(workbook);
 
         sheets.add(sheet);
         workbook.setSheetName(sheets.size() - 1, sheetname);
+        WindowTwoRecord windowTwo = (WindowTwoRecord) sheet.getSheet().findFirstRecordBySid(WindowTwoRecord.sid);
+        windowTwo.setSelected(sheets.size() == 1);
+        windowTwo.setPaged(sheets.size() == 1);
         return sheet;
     }
 
@@ -299,7 +303,7 @@ public class HSSFWorkbook
 
     public HSSFSheet getSheetAt(int index)
     {
-        return ( HSSFSheet ) sheets.get(index);
+        return (HSSFSheet) sheets.get(index);
     }
 
     /**
@@ -318,7 +322,7 @@ public class HSSFWorkbook
 
             if (sheetname.equals(name))
             {
-                retval = ( HSSFSheet ) sheets.get(k);
+                retval = (HSSFSheet) sheets.get(k);
             }
         }
         return retval;
@@ -345,8 +349,8 @@ public class HSSFWorkbook
     {
         BackupRecord backupRecord = workbook.getBackupRecord();
 
-        backupRecord.setBackup(backupValue ? ( short ) 1
-                                           : ( short ) 0);
+        backupRecord.setBackup(backupValue ? (short) 1
+                : (short) 0);
     }
 
     /**
@@ -360,7 +364,7 @@ public class HSSFWorkbook
         BackupRecord backupRecord = workbook.getBackupRecord();
 
         return (backupRecord.getBackup() == 0) ? false
-                                               : true;
+                : true;
     }
 
     /**
@@ -370,8 +374,8 @@ public class HSSFWorkbook
 
     public HSSFFont createFont()
     {
-        FontRecord font      = workbook.createNewFont();
-        short      fontindex = ( short ) (getNumberOfFonts() - 1);
+        FontRecord font = workbook.createNewFont();
+        short fontindex = (short) (getNumberOfFonts() - 1);
 
         if (fontindex > 3)
         {
@@ -389,19 +393,19 @@ public class HSSFWorkbook
 
     public short getNumberOfFonts()
     {
-        return ( short ) workbook.getNumberOfFontRecords();
+        return (short) workbook.getNumberOfFontRecords();
     }
 
     /**
      * get the font at the given index number
-     * @param index number
+     * @param idx  index number
      * @return HSSFFont at the index
      */
 
     public HSSFFont getFontAt(short idx)
     {
-        FontRecord font   = workbook.getFontRecordAt(idx);
-        HSSFFont   retval = new HSSFFont(idx, font);
+        FontRecord font = workbook.getFontRecordAt(idx);
+        HSSFFont retval = new HSSFFont(idx, font);
 
         return retval;
     }
@@ -413,9 +417,9 @@ public class HSSFWorkbook
 
     public HSSFCellStyle createCellStyle()
     {
-        ExtendedFormatRecord xfr   = workbook.createCellXF();
-        short                index = ( short ) (getNumCellStyles() - 1);
-        HSSFCellStyle        style = new HSSFCellStyle(index, xfr);
+        ExtendedFormatRecord xfr = workbook.createCellXF();
+        short index = (short) (getNumCellStyles() - 1);
+        HSSFCellStyle style = new HSSFCellStyle(index, xfr);
 
         return style;
     }
@@ -427,19 +431,19 @@ public class HSSFWorkbook
 
     public short getNumCellStyles()
     {
-        return ( short ) workbook.getNumExFormats();
+        return (short) workbook.getNumExFormats();
     }
 
     /**
      * get the cell style object at the given index
-     * @param index within the set of styles
+     * @param idx  index within the set of styles
      * @return HSSFCellStyle object at the index
      */
 
     public HSSFCellStyle getCellStyleAt(short idx)
     {
-        ExtendedFormatRecord xfr   = workbook.getExFormatAt(idx);
-        HSSFCellStyle        style = new HSSFCellStyle(idx, xfr);
+        ExtendedFormatRecord xfr = workbook.getExFormatAt(idx);
+        HSSFCellStyle style = new HSSFCellStyle(idx, xfr);
 
         return style;
     }
@@ -456,10 +460,10 @@ public class HSSFWorkbook
      */
 
     public void write(OutputStream stream)
-        throws IOException
+            throws IOException
     {
-        byte[]          bytes = getBytes();
-        POIFSFileSystem fs    = new POIFSFileSystem();
+        byte[] bytes = getBytes();
+        POIFSFileSystem fs = new POIFSFileSystem();
 
         fs.createDocument(new ByteArrayInputStream(bytes), "Workbook");
         fs.writeFilesystem(stream);
@@ -477,14 +481,13 @@ public class HSSFWorkbook
      * @see org.apache.poi.hssf.model.Sheet
      */
 
-    public byte [] getBytes()
+    public byte[] getBytes()
     {
         log.log(DEBUG, "HSSFWorkbook.getBytes()");
-        int wbsize    = workbook.getSize();
+        int wbsize = workbook.getSize();
 
         // log.debug("REMOVEME: old sizing method "+workbook.serialize().length);
         // ArrayList sheetbytes = new ArrayList(sheets.size());
-        int sheetsize = 0;
         int totalsize = wbsize;
 
         for (int k = 0; k < sheets.size(); k++)
@@ -492,14 +495,14 @@ public class HSSFWorkbook
             workbook.setSheetBof(k, totalsize);
 
             // sheetbytes.add((( HSSFSheet ) sheets.get(k)).getSheet().getSize());
-            totalsize += (( HSSFSheet ) sheets.get(k)).getSheet().getSize();
+            totalsize += ((HSSFSheet) sheets.get(k)).getSheet().getSize();
         }
         if (totalsize < 4096)
         {
             totalsize = 4096;
         }
-        byte[] retval = new byte[ totalsize ];
-        int    pos    = workbook.serialize(0, retval);
+        byte[] retval = new byte[totalsize];
+        int pos = workbook.serialize(0, retval);
 
         // System.arraycopy(wb, 0, retval, 0, wb.length);
         for (int k = 0; k < sheets.size(); k++)
@@ -507,12 +510,12 @@ public class HSSFWorkbook
 
             // byte[] sb = (byte[])sheetbytes.get(k);
             // System.arraycopy(sb, 0, retval, pos, sb.length);
-            pos += (( HSSFSheet ) sheets.get(k)).getSheet().serialize(pos,
+            pos += ((HSSFSheet) sheets.get(k)).getSheet().serialize(pos,
                     retval);   // sb.length;
         }
         for (int k = pos; k < totalsize; k++)
         {
-            retval[ k ] = 0;
+            retval[k] = 0;
         }
         return retval;
     }
