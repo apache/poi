@@ -21,8 +21,7 @@ public abstract class AbstractFunctionPtg extends OperationPtg {
     
     protected byte field_1_num_args;
     protected short field_2_fnc_index;
-    
-    
+ 
     public String toString() {
         StringBuffer buffer = new StringBuffer();
         buffer
@@ -45,7 +44,11 @@ public abstract class AbstractFunctionPtg extends OperationPtg {
     }
     
     public String getName() {
+       if(field_2_fnc_index != 1) {
         return lookupName(field_2_fnc_index);
+       } else {
+        return "Funky case of formula recombinating";
+       }
     }
     
     public String toFormulaString(SheetReferences refs) {
@@ -54,15 +57,21 @@ public abstract class AbstractFunctionPtg extends OperationPtg {
     
     public String toFormulaString(String[] operands) {
         StringBuffer buf = new StringBuffer();
-        buf.append(getName()+"(");
-        if (operands.length >0) {
-            for (int i=0;i<operands.length;i++) {
-                buf.append(operands[i]);
-                buf.append(',');
-            }
-            buf.deleteCharAt(buf.length()-1);
-        }
+        if (field_2_fnc_index != 1) {
+          buf.append(getName()+"(");
+          if (operands.length >0) {
+              for (int i=0;i<operands.length;i++) {
+                  buf.append(operands[i]);
+                  buf.append(',');
+              }
+              buf.deleteCharAt(buf.length()-1);
+          }
         buf.append(")");
+        } else {
+         throw new RuntimeException("FUNKY CASE OF FORMULA RECOMBINATION NOT "+
+         "YET IMPLEMENTED");
+         
+        }
         return buf.toString();
     }
     

@@ -142,6 +142,10 @@ public class AttrPtg
         field_1_options=sum.setByteBoolean(field_1_options,bsum);
     }
 
+    public void setOptimizedIf(boolean bif) {
+        field_1_options=optiIf.setByteBoolean(field_1_options,bif);
+    }
+
     // lets hope no one uses this anymore
     public boolean isBaxcel()
     {
@@ -196,8 +200,9 @@ public class AttrPtg
     public String toFormulaString(String[] operands) {
         if(space.isSet(field_1_options)) {
             return operands[ 0 ];
-        }
-        else {
+        } else if (optiIf.isSet(field_1_options)) {
+            return toFormulaString((SheetReferences)null) + "(" + operands[ 0 ]             +")"; 
+        } else {
             return toFormulaString((SheetReferences)null) + "(" + operands[ 0 ] + ")";
         }
     }

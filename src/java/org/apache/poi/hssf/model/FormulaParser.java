@@ -307,15 +307,15 @@ public class FormulaParser {
     
     private Ptg getFunction(String name,byte numArgs) {
         Ptg retval = null;
-        retval = new FuncVarPtg(name,numArgs);
-       /** if (numArgs == 1 && name.equals("SUM")) {
+        //retval = new FuncVarPtg(name,numArgs);
+       if (name.equals("IF")) {
             AttrPtg ptg = new AttrPtg();
-            ptg.setData((short)1); //sums don't care but this is what excel does.
-            ptg.setSum(true);
+            ptg.setData((short)6); //sums don't care but this is what excel does.
+            ptg.setOptimizedIf(true);
             retval = ptg;
         } else {
             retval = new FuncVarPtg(name,numArgs);
-        }*/
+        }
         
         return retval; 
     }
@@ -394,12 +394,13 @@ public class FormulaParser {
     /** Parse and Translate a Math Term */
     private void  Term(){
         Factor();
-        while (Look == '*' || Look == '/' || Look == '^' || Look == '&') {
+        while (Look == '*' || Look == '/' || Look == '^' || Look == '&' || Look == '=' ) {
             ///TODO do we need to do anything here??
             if (Look == '*') Multiply();
             if (Look == '/') Divide();
             if (Look == '^') Power();
             if (Look == '&') Concat();
+            if (Look == '=') Equal();
         }
     }
     
@@ -410,14 +411,19 @@ public class FormulaParser {
         tokens.add(new AddPtg());
     }
     
-    /** Recognize and Translate an Add */
+    /** Recognize and Translate a Concatination */
     private void Concat() {
         Match('&');
         Term();
         tokens.add(new ConcatPtg());
     }
     
-    
+    /** Recognize and Translate a test for Equality  */
+    private void Equal() {
+        Match('=');
+        Term();
+        tokens.add(new EqualPtg());
+    }
     
     /** Recognize and Translate a Subtract */
     private void Subtract() {
