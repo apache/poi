@@ -465,8 +465,8 @@ public int getShort (byte[] rec)
 	      <td>-2</td>
 	    </tr>
             <tr>
-	      <td>UK11</td>
-	      <td>Unknown Constant</td>
+	      <td>SBAT_Block_Count</td>
+	      <td>Number of big blocks holding the SBAT</td>
 	      <td>0x0040</td>
 	      <td>Integer</td>
 	      <td>1</td>

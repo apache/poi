@@ -113,6 +113,17 @@ public class SmallBlockTableWriter
     }
 
     /**
+     * Get the number of SBAT blocks
+     *
+     * @return number of SBAT big blocks
+     */
+    
+    public int getSBATBlockCount()
+    {
+	return (_big_block_count + 15) / 16;
+    }
+
+    /**
      * Get the SBAT
      *
      * @return the Small Block Allocation Table

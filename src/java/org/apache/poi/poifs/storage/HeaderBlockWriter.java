@@ -88,6 +88,9 @@ public class HeaderBlockWriter
     // block allocation table's first big block)
     private IntegerField      _sbat_start;
 
+    // number of big blocks holding the small block allocation table
+    private IntegerField      _sbat_block_count;
+
     // big block index for extension to the big block allocation table
     private IntegerField      _xbat_start;
     private IntegerField      _xbat_count;
@@ -121,7 +124,8 @@ public class HeaderBlockWriter
         new IntegerField(0x38, 0x1000, _data);
         _sbat_start = new IntegerField(_sbat_start_offset,
                                        POIFSConstants.END_OF_CHAIN, _data);
-        new IntegerField(0x40, 1, _data);
+        _sbat_block_count = new IntegerField(_sbat_block_count_offset, 0,
+					     _data);
         _xbat_start = new IntegerField(_xbat_start_offset,
                                        POIFSConstants.END_OF_CHAIN, _data);
         _xbat_count = new IntegerField(_xbat_count_offset, 0, _data);
@@ -198,6 +202,17 @@ public class HeaderBlockWriter
     public void setSBATStart(final int startBlock)
     {
         _sbat_start.set(startBlock, _data);
+    }
+
+    /**
+     * Set count of SBAT blocks
+     *
+     * @param count the number of SBAT blocks
+     */
+
+    public void setSBATBlockCount(final int count)
+    {
+	_sbat_block_count.set(count, _data);
     }
 
     /**
