@@ -164,7 +164,6 @@ public class HSSFEventFactory
 	 * @see org.apache.poi.poifs.filesystem.POIFSFileSystem#createDocumentInputStream(String)
 	 * @param req       an Instance of HSSFRequest which has your registered listeners
 	 * @param in        a DocumentInputStream obtained from POIFS's POIFSFileSystem object
-	 * @param in        a DocumentInputStream obtained from POIFS's POIFSFileSystem object
 	 * @return 			numeric user-specified result code.
 	 */
 

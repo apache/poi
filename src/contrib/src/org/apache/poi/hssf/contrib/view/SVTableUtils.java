@@ -65,7 +65,7 @@ import org.apache.poi.hssf.util.*;
  * SVTableCell Editor and Renderer helper functions.
  *
  * @author     Jason Height
- * @created    16 July 2002
+ * @since      16 July 2002
  */
 public class SVTableUtils {
   private final static Hashtable colors = HSSFColor.getIndexHash();

@@ -65,7 +65,7 @@ import java.util.Arrays;
  *@author     Andrew C. Oliver 
  *@author     Sergei Kozello (sergeikozello at mail.ru) 
  *@author     Toshiaki Kamoshida (kamoshida.toshiaki at future dot co dot jp) 
- *@created    May 10, 2002 
+ *@since      May 10, 2002 
  *@version    1.0 
  */
 public class StringUtil {
@@ -94,7 +94,7 @@ public class StringUtil {
 	 *@exception  IllegalArgumentException        if len is too large (i.e.,     
 	 *      there is not enough data in string to create a String of that     
 	 *      length)     
-	 *@len                                        the length of the final string     
+	 *@param len the length of the final string     
 	 */
 	public static String getFromUnicodeLE(
 		final byte[] string,
@@ -146,7 +146,7 @@ public class StringUtil {
 	 *@exception  IllegalArgumentException        if len is too large (i.e.,     
 	 *      there is not enough data in string to create a String of that     
 	 *      length)     
-	 *@len                                        the length of the final string     
+	 *@param len the length of the final string     
 	 */
 	public static String getFromUnicodeBE(
 		final byte[] string,

@@ -65,7 +65,7 @@ import java.io.File;
  *  Description of the Class
  *
  *@author     andy
- *@created    May 10, 2002
+ *@since      May 10, 2002
  */
 public class RecordGenerator {
     /**

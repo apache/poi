@@ -85,7 +85,7 @@ public class PropertyNode implements Comparable
       return _fcStart;
   }
   /**
-   * @retrun The offset of the end of this property's text.
+   * @return The offset of the end of this property's text.
    */
   public int getEnd()
   {

@@ -861,7 +861,7 @@ public class HSSFWorkbook
 	
 	/**
 	 * For the Convenience of Java Programmers maintaining pointers.
-	 * @see setPrintArea(int, String)
+	 * @see #setPrintArea(int, String)
 	 * @param sheetIndex Zero-based sheet index (0 = First Sheet)
 	 * @param startColumn Column to begin printarea
 	 * @param endColumn Column to end the printarea
