@@ -56,6 +56,7 @@ public class SVBorder extends AbstractBorder {
      paintNormalBorders(g, x, y, width, height); 
      paintDottedBorders(g, x, y, width, height); 
      paintDashedBorders(g, x, y, width, height);
+     paintDoubleBorders(g, x, y, width, height);
     
 
 
@@ -278,6 +279,56 @@ public class SVBorder extends AbstractBorder {
                 g.drawLine(x+k,yc,x+k,yc+dashlength);
            }
         }
+      }
+   }
+
+
+   private void paintDoubleBorders(Graphics g, int x, int y, int width, 
+                                  int height) {
+      if (northBorder && 
+             northBorderType == HSSFCellStyle.BORDER_DOUBLE) {
+
+      	g.setColor(northColor); 
+
+           g.drawLine(x,y,width,y);
+           g.drawLine(x+3,y+2,width-3,y+2);
+      }
+
+      if (eastBorder && 
+              eastBorderType == HSSFCellStyle.BORDER_DOUBLE
+         ) {
+
+        int thickness = getThickness(eastBorderType);
+        thickness++; //need for dotted borders to show up east
+
+      	g.setColor(eastColor); 
+
+        g.drawLine(width-1,y,width-1,height);
+        g.drawLine(width-3,y+3,width-3,height-3);
+      }
+
+      if (southBorder && 
+              southBorderType == HSSFCellStyle.BORDER_DOUBLE
+         ) {
+
+      	g.setColor(southColor); 
+
+
+        g.drawLine(x,height - 1,width,height - 1);
+        g.drawLine(x+3,height - 3,width-3,height - 3);
+      }
+
+      if (westBorder && 
+            westBorderType == HSSFCellStyle.BORDER_DOUBLE
+         ) {
+
+        int thickness = getThickness(westBorderType);
+//        thickness++;
+
+      	g.setColor(westColor); 
+
+           g.drawLine(x,y,x,height);
+           g.drawLine(x+2,y+2,x+2,height-3);
       }
    }
 
