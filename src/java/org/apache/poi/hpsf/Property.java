@@ -75,15 +75,16 @@ import org.apache.poi.util.LittleEndian;
  * <p>The property's <strong>type</strong> determines how its
  * <strong>value </strong> is interpreted. For example, if the type is
  * {@link Variant#VT_LPSTR} (byte string), the value consists of a
- * {@link DWord} telling how many bytes the string contains. The bytes
- * follow immediately, including any null bytes that terminate the
+ * DWord telling how many bytes the string contains. The bytes follow
+ * immediately, including any null bytes that terminate the
  * string. The type {@link Variant#VT_I4} denotes a four-byte integer
  * value, {@link Variant#VT_FILETIME} some date and time (of a
  * file).</p>
  *
- * <p><strong>FIXME:</strong> Reading of other types than those
- * mentioned above and the dictionary property is not yet
- * implemented.</p>
+ * <p><strong>FIXME:</strong> Reading of other types than {@link
+ * Variant#VT_I4}, {@link Variant#VT_FILETIME}, {@link
+ * Variant#VT_LPSTR}, {@link Variant#VT_CF}, {@link Variant#VT_BOOL},
+ * and reading the dictionary property is not yet implemented.</p>
  *
  * @author Rainer Klute (klute@rainer-klute.de)
  * @author Drew Varner (Drew.Varner InAndAround sc.edu)
