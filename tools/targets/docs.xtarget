@@ -181,12 +181,8 @@
   <!-- =================================================================== -->
   <target name="site" depends="docs, javadocs"
       description="Generates the web site (for site maintainers only)">
-    <mkdir dir="${site}"/>
-    <copy todir="${site}" filtering="off">
-      <fileset dir="${build.docs}">
-      </fileset>
-    </copy>
-    <copy todir="${site}/apidocs" filtering="off">
+    <mkdir dir="${build.docs}/apidocs"/>
+    <copy todir="${build.docs}/apidocs" filtering="off">
       <fileset dir="${build.javadocs}"/>
     </copy>
   </target>
