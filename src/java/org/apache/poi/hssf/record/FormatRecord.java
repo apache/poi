@@ -128,7 +128,7 @@ public class FormatRecord
                                               
       if ( field_3_unicode_flag  ) {
           // unicode
-          field_4_formatstring = StringUtil.getFromUnicodeHigh( data, 5 + offset, field_3_unicode_len );
+          field_4_formatstring = StringUtil.getFromUnicodeLE( data, 5 + offset, field_3_unicode_len );
       }
       else {
           // not unicode
@@ -264,7 +264,7 @@ public class FormatRecord
 
       if ( field_3_unicode_flag ) {
           // unicode
-          StringUtil.putUncompressedUnicode( getFormatString(), data, 9 + offset );
+          StringUtil.putUnicodeLE( getFormatString(), data, 9 + offset );
       }
       else {
           // not unicode

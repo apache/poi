@@ -152,7 +152,7 @@ public class LabelRecord
         field_5_unicode_flag = data[ 8 + offset ];
         if (isUnCompressedUnicode())
         {
-            field_6_value = StringUtil.getFromUnicode(data, 8 + offset,
+            field_6_value = StringUtil.getFromUnicodeBE(data, 8 + offset,
                                                       field_4_string_len);
         }
         else

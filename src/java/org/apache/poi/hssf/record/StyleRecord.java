@@ -143,7 +143,7 @@ public class StyleRecord
             field_3_string_options = data[4+offset];
             
             if (fHighByte.isSet(field_3_string_options)) {
-                field_4_name= StringUtil.getFromUnicode(data,offset+5,field_2_name_length);
+                field_4_name= StringUtil.getFromUnicodeBE(data,offset+5,field_2_name_length);
             }else {
                 field_4_name=StringUtil.getFromCompressedUnicode(data,offset+5,field_2_name_length);
             }

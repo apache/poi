@@ -130,7 +130,7 @@ public class StringRecord
         field_2_unicode_flag            = data[ 2 + offset ];
         if (isUnCompressedUnicode())
         {
-            field_3_string = StringUtil.getFromUnicode(data, 3 + offset, field_1_string_length );
+            field_3_string = StringUtil.getFromUnicodeBE(data, 3 + offset, field_1_string_length );
         }
         else
         {
@@ -182,7 +182,7 @@ public class StringRecord
         data[6 + offset] = field_2_unicode_flag;
         if (isUnCompressedUnicode())
         {
-            StringUtil.putUncompressedUnicode(field_3_string, data, 7 + offset);
+            StringUtil.putUnicodeLE(field_3_string, data, 7 + offset);
         }
         else
         {

@@ -133,7 +133,7 @@ public class SeriesTextRecord
         field_1_id                     = LittleEndian.getShort(data, pos + 0x0 + offset);
         field_2_textLength             = data[ pos + 0x2 + offset ];
         field_3_undocumented           = data[ pos + 0x3 + offset ];
-        field_4_text                   = StringUtil.getFromUnicodeHigh(data, pos + 0x4 + offset, ((field_2_textLength *2)/2));
+        field_4_text                   = StringUtil.getFromUnicodeLE(data, pos + 0x4 + offset, ((field_2_textLength *2)/2));
 
     }
 
@@ -172,7 +172,7 @@ public class SeriesTextRecord
         LittleEndian.putShort(data, 4 + offset + pos, field_1_id);
         data[ 6 + offset + pos ] = field_2_textLength;
         data[ 7 + offset + pos ] = field_3_undocumented;
-        StringUtil.putUncompressedUnicodeHigh(field_4_text, data, 8 + offset + pos);
+        StringUtil.putUnicodeLE(field_4_text, data, 8 + offset + pos);
 
         return getRecordSize();
     }
