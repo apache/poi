@@ -14,7 +14,7 @@
   <s1 title="The Word 97 File Format in semi-plain English">
 
    <p>The purpose of this document is to give a brief high level overview of the
-      Word 97 document format. This document does not go into in-depth technical
+      HDF document format. This document does not go into in-depth technical
       detail and is only meant as a supplement to the Microsoft Word 97 Binary
       File Format written by Microsoft.</p>
    <p>The OLE file format is not discussed in this document. It is assumed that
