@@ -407,6 +407,62 @@ extends TestCase {
         HSSFCell cell = row.getCell((short)0);
         System.out.println(cell.getStringCellValue());
     }
+    
+    /*Tests read and write of Unicode strings in formula results
+     * bug and testcase submitted by Sompop Kumnoonsate
+     * The file contains THAI unicode characters. 
+     */
+	public void testUnicodeStringFormulaRead() throws Exception {
+		
+		String filename = System.getProperty("HSSF.testdata.path");
+		filename=filename+"/25695.xls";
+		FileInputStream in = new FileInputStream(filename);
+		HSSFWorkbook w;
+		w = new HSSFWorkbook(in);
+		in.close();
+
+		HSSFCell a1 = w.getSheetAt(0).getRow(0).getCell((short) 0);
+		HSSFCell a2 = w.getSheetAt(0).getRow(0).getCell((short) 1);
+		HSSFCell b1 = w.getSheetAt(0).getRow(1).getCell((short) 0);
+		HSSFCell b2 = w.getSheetAt(0).getRow(1).getCell((short) 1);
+		HSSFCell c1 = w.getSheetAt(0).getRow(2).getCell((short) 0);
+		HSSFCell c2 = w.getSheetAt(0).getRow(2).getCell((short) 1);
+		HSSFCell d1 = w.getSheetAt(0).getRow(3).getCell((short) 0);
+		HSSFCell d2 = w.getSheetAt(0).getRow(3).getCell((short) 1);
+
+		assertEquals("String Cell value", a1.getStringCellValue(), a2.getStringCellValue());
+		assertEquals("String Cell value", b1.getStringCellValue(), b2.getStringCellValue());
+		assertEquals("String Cell value", c1.getStringCellValue(), c2.getStringCellValue());
+		assertEquals("String Cell value", d1.getStringCellValue(), d2.getStringCellValue());
+
+		File xls = File.createTempFile("testFormulaUnicode", ".xls");
+		FileOutputStream out = new FileOutputStream(xls);
+		w.write(out);
+		out.close();
+		in = new FileInputStream(xls);
+
+		HSSFWorkbook rw = new HSSFWorkbook(in);
+		in.close();
+
+		HSSFCell ra1 = rw.getSheetAt(0).getRow(0).getCell((short) 0);
+		HSSFCell ra2 = rw.getSheetAt(0).getRow(0).getCell((short) 1);
+		HSSFCell rb1 = rw.getSheetAt(0).getRow(1).getCell((short) 0);
+		HSSFCell rb2 = rw.getSheetAt(0).getRow(1).getCell((short) 1);
+		HSSFCell rc1 = rw.getSheetAt(0).getRow(2).getCell((short) 0);
+		HSSFCell rc2 = rw.getSheetAt(0).getRow(2).getCell((short) 1);
+		HSSFCell rd1 = rw.getSheetAt(0).getRow(3).getCell((short) 0);
+		HSSFCell rd2 = rw.getSheetAt(0).getRow(3).getCell((short) 1);
+
+		assertEquals("Re-Written String Cell value", a1.getStringCellValue(), ra1.getStringCellValue());
+		assertEquals("Re-Written String Cell value", b1.getStringCellValue(), rb1.getStringCellValue());
+		assertEquals("Re-Written String Cell value", c1.getStringCellValue(), rc1.getStringCellValue());
+		assertEquals("Re-Written String Cell value", d1.getStringCellValue(), rd1.getStringCellValue());
+		assertEquals("Re-Written Formula String Cell value", a1.getStringCellValue(), ra2.getStringCellValue());
+		assertEquals("Re-Written Formula String Cell value", b1.getStringCellValue(), rb2.getStringCellValue());
+		assertEquals("Re-Written Formula String Cell value", c1.getStringCellValue(), rc2.getStringCellValue());
+		assertEquals("Re-Written Formula String Cell value", d1.getStringCellValue(), rd2.getStringCellValue());
+
+	}
 }
 
 
