@@ -77,8 +77,12 @@ public class FormulaRecord
     extends Record
     implements CellValueRecordInterface, Comparable
 {
+    
+    public static final boolean EXPERIMENTAL_FORMULA_SUPPORT_ENABLED=false;
+    
     public static final short sid =
         0x06;   // docs say 406...because of a bug Microsoft support site article #Q184647)
+    
     private short             field_1_row;
     private short             field_2_column;
     private short             field_3_xf;
@@ -87,6 +91,9 @@ public class FormulaRecord
     private int               field_6_zero;
     private short             field_7_expression_len;
     private Stack             field_8_parsed_expr;
+    
+    private byte[]            all_data; //if formula support is not enabled then
+                                        //we'll just store/reserialize
 
     /** Creates new FormulaRecord */
 
@@ -126,6 +133,7 @@ public class FormulaRecord
 
     protected void fillFields(byte [] data, short size, int offset)
     {
+        if (EXPERIMENTAL_FORMULA_SUPPORT_ENABLED) {
         field_1_row            = LittleEndian.getShort(data, 0 + offset);
         field_2_column         = LittleEndian.getShort(data, 2 + offset);
         field_3_xf             = LittleEndian.getShort(data, 4 + offset);
@@ -133,9 +141,16 @@ public class FormulaRecord
         field_5_options        = LittleEndian.getShort(data, 14 + offset);
         field_6_zero           = LittleEndian.getInt(data, 16 + offset);
         field_7_expression_len = LittleEndian.getShort(data, 20 + offset);
+        field_8_parsed_expr    = getParsedExpressionTokens(data, size,
+                                 offset);
+        
+        } else {
+            all_data = new byte[size+4];
+            LittleEndian.putShort(all_data,0,sid);
+            LittleEndian.putShort(all_data,2,size);
+            System.arraycopy(data,offset,all_data,4,size);
+        }
 
-        // field_8_parsed_expr    = getParsedExpressionTokens(data, size,
-        // offset);
     }
 
     private Stack getParsedExpressionTokens(byte [] data, short size,
@@ -332,6 +347,7 @@ public class FormulaRecord
 
     public int serialize(int offset, byte [] data)
     {
+        if (EXPERIMENTAL_FORMULA_SUPPORT_ENABLED) {
         int ptgSize = getTotalPtgSize();
 
         LittleEndian.putShort(data, 0 + offset, sid);
@@ -343,6 +359,9 @@ public class FormulaRecord
         LittleEndian.putShort(data, 18 + offset, getOptions());
         LittleEndian.putInt(data, 20 + offset, field_6_zero);
         LittleEndian.putShort(data, 24 + offset, getExpressionLength());
+        } else {
+            System.arraycopy(all_data,0,data,offset,all_data.length);
+        }
 
         // serializePtgs(data, 26+offset);
         return getRecordSize();
@@ -350,7 +369,14 @@ public class FormulaRecord
 
     public int getRecordSize()
     {
-        return 0;
+        int retval =0;
+        
+        if (EXPERIMENTAL_FORMULA_SUPPORT_ENABLED) {
+            retval = getTotalPtgSize() + 28;
+        } else {
+            retval =all_data.length;
+        }
+        return retval;
 
         // return getTotalPtgSize() + 28;
     }

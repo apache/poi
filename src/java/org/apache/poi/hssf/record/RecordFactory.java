@@ -77,33 +77,68 @@ import org.apache.poi.util.LittleEndian;
 public class RecordFactory
 {
     private static int           NUM_RECORDS = 10000;
-    private static final Class[] records     = new Class[]
-    {
-        BOFRecord.class, InterfaceHdrRecord.class, MMSRecord.class,
-        InterfaceEndRecord.class, WriteAccessRecord.class,
-        CodepageRecord.class, DSFRecord.class, TabIdRecord.class,
-        FnGroupCountRecord.class, WindowProtectRecord.class,
-        ProtectRecord.class, PasswordRecord.class, ProtectionRev4Record.class,
-        PasswordRev4Record.class, WindowOneRecord.class, BackupRecord.class,
-        HideObjRecord.class, DateWindow1904Record.class,
-        PrecisionRecord.class, RefreshAllRecord.class, BookBoolRecord.class,
-        FontRecord.class, FormatRecord.class, ExtendedFormatRecord.class,
-        StyleRecord.class, UseSelFSRecord.class, BoundSheetRecord.class,
-        CountryRecord.class, SSTRecord.class, ExtSSTRecord.class,
-        EOFRecord.class, IndexRecord.class, CalcModeRecord.class,
-        CalcCountRecord.class, RefModeRecord.class, IterationRecord.class,
-        DeltaRecord.class, SaveRecalcRecord.class, PrintHeadersRecord.class,
-        PrintGridlinesRecord.class, GridsetRecord.class, GutsRecord.class,
-        DefaultRowHeightRecord.class, WSBoolRecord.class, HeaderRecord.class,
-        FooterRecord.class, HCenterRecord.class, VCenterRecord.class,
-        PrintSetupRecord.class, DefaultColWidthRecord.class,
-        DimensionsRecord.class, RowRecord.class, LabelSSTRecord.class,
-        RKRecord.class, NumberRecord.class, DBCellRecord.class,
-        WindowTwoRecord.class, SelectionRecord.class, ContinueRecord.class,
-        LabelRecord.class, BlankRecord.class, ColumnInfoRecord.class,
-        MulRKRecord.class, MulBlankRecord.class, MergeCellsRecord.class,
-        FormulaRecord.class, BoolErrRecord.class
-    };
+    private static final Class[] records;
+    
+    static {
+        if (FormulaRecord.EXPERIMENTAL_FORMULA_SUPPORT_ENABLED) {
+            records = new Class[]
+            {
+                BOFRecord.class, InterfaceHdrRecord.class, MMSRecord.class,
+                InterfaceEndRecord.class, WriteAccessRecord.class,
+                CodepageRecord.class, DSFRecord.class, TabIdRecord.class,
+                FnGroupCountRecord.class, WindowProtectRecord.class,
+                ProtectRecord.class, PasswordRecord.class, ProtectionRev4Record.class,
+                PasswordRev4Record.class, WindowOneRecord.class, BackupRecord.class,
+                HideObjRecord.class, DateWindow1904Record.class,
+                PrecisionRecord.class, RefreshAllRecord.class, BookBoolRecord.class,
+                FontRecord.class, FormatRecord.class, ExtendedFormatRecord.class,
+                StyleRecord.class, UseSelFSRecord.class, BoundSheetRecord.class,
+                CountryRecord.class, SSTRecord.class, ExtSSTRecord.class,
+                EOFRecord.class, IndexRecord.class, CalcModeRecord.class,
+                CalcCountRecord.class, RefModeRecord.class, IterationRecord.class,
+                DeltaRecord.class, SaveRecalcRecord.class, PrintHeadersRecord.class,
+                PrintGridlinesRecord.class, GridsetRecord.class, GutsRecord.class,
+                DefaultRowHeightRecord.class, WSBoolRecord.class, HeaderRecord.class,
+                FooterRecord.class, HCenterRecord.class, VCenterRecord.class,
+                PrintSetupRecord.class, DefaultColWidthRecord.class,
+                DimensionsRecord.class, RowRecord.class, LabelSSTRecord.class,
+                RKRecord.class, NumberRecord.class, DBCellRecord.class,
+                WindowTwoRecord.class, SelectionRecord.class, ContinueRecord.class,
+                LabelRecord.class, BlankRecord.class, ColumnInfoRecord.class,
+                MulRKRecord.class, MulBlankRecord.class, MergeCellsRecord.class,
+                FormulaRecord.class, BoolErrRecord.class
+            };
+        } else {
+            records = new Class[]
+            {
+                BOFRecord.class, InterfaceHdrRecord.class, MMSRecord.class,
+                InterfaceEndRecord.class, WriteAccessRecord.class,
+                CodepageRecord.class, DSFRecord.class, TabIdRecord.class,
+                FnGroupCountRecord.class, WindowProtectRecord.class,
+                ProtectRecord.class, PasswordRecord.class, ProtectionRev4Record.class,
+                PasswordRev4Record.class, WindowOneRecord.class, BackupRecord.class,
+                HideObjRecord.class, DateWindow1904Record.class,
+                PrecisionRecord.class, RefreshAllRecord.class, BookBoolRecord.class,
+                FontRecord.class, FormatRecord.class, ExtendedFormatRecord.class,
+                StyleRecord.class, UseSelFSRecord.class, BoundSheetRecord.class,
+                CountryRecord.class, SSTRecord.class, ExtSSTRecord.class,
+                EOFRecord.class, IndexRecord.class, CalcModeRecord.class,
+                CalcCountRecord.class, RefModeRecord.class, IterationRecord.class,
+                DeltaRecord.class, SaveRecalcRecord.class, PrintHeadersRecord.class,
+                PrintGridlinesRecord.class, GridsetRecord.class, GutsRecord.class,
+                DefaultRowHeightRecord.class, WSBoolRecord.class, HeaderRecord.class,
+                FooterRecord.class, HCenterRecord.class, VCenterRecord.class,
+                PrintSetupRecord.class, DefaultColWidthRecord.class,
+                DimensionsRecord.class, RowRecord.class, LabelSSTRecord.class,
+                RKRecord.class, NumberRecord.class, DBCellRecord.class,
+                WindowTwoRecord.class, SelectionRecord.class, ContinueRecord.class,
+                LabelRecord.class, BlankRecord.class, ColumnInfoRecord.class,
+                MulRKRecord.class, MulBlankRecord.class, MergeCellsRecord.class,
+                BoolErrRecord.class
+            };
+            
+        }
+    }
     private static Map           recordsMap  = recordsToMap(records);
 
     /**

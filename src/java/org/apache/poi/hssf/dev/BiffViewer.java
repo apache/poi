@@ -630,6 +630,11 @@ public class BiffViewer
             case LinkedDataRecord.sid:
                 retval = new LinkedDataRecord(rectype, size, data);
                 break;
+                
+            case FormulaRecord.sid:
+                retval = new FormulaRecord(rectype, size, data);
+                break;
+                
 
             default :
                 retval = new UnknownRecord(rectype, size, data);
