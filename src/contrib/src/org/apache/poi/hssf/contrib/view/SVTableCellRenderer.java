@@ -87,50 +87,29 @@ import org.apache.poi.hssf.util.HSSFColor.WHITE;
 public class SVTableCellRenderer extends JLabel
     implements TableCellRenderer, Serializable
 {
-
     protected static Border noFocusBorder = new EmptyBorder(1, 1, 1, 1);
-
-    private Color unselFG;
-    private Color unselBG;
     private HSSFWorkbook wb = null;
-    private HSSFSheet    st = null;
     private Hashtable colors = HSSFColor.getIndexHash();
 
-    public SVTableCellRenderer(HSSFWorkbook wb, HSSFSheet st) {
+    public SVTableCellRenderer(HSSFWorkbook wb) {
 	super();
 	setOpaque(true);
         setBorder(noFocusBorder);
         this.wb = wb;
-        this.st = st;
-    }
-
-    public void setForeground(Color c) {
-        super.setForeground(c);
-        unselFG = c;
-    }
-
-    public void setBackground(Color c) {
-        super.setBackground(c);
-        unselBG = c;
-    }
-
-    public void updateUI() {
-        super.updateUI();
-	setForeground(null);
-	setBackground(null);
     }
 
     public Component getTableCellRendererComponent(JTable table, Object value,
                           boolean isSelected, boolean hasFocus, int row, int column) {
-
 	boolean isBorderSet = false;
 
 	if (isSelected) {
-	   super.setForeground(table.getSelectionForeground());
-	   super.setBackground(table.getSelectionBackground());
+	   setForeground(table.getSelectionForeground());
+	   setBackground(table.getSelectionBackground());
 	}
 
-        HSSFCell c = getCell(row,column);
+        //If the JTables default cell renderer has been setup correctly the
+        //value will be the HSSFCell that we are trying to render
+        HSSFCell c = (HSSFCell)value;
 
         if (c != null) {
 
@@ -139,7 +118,7 @@ public class SVTableCellRenderer extends JLabel
           boolean isbold = f.getBoldweight() > HSSFFont.BOLDWEIGHT_NORMAL;
           boolean isitalics = f.getItalic();
 
-          int fontstyle = 0;
+          int fontstyle = Font.PLAIN;
 
           if (isbold) fontstyle = Font.BOLD;
           if (isitalics) fontstyle = fontstyle | Font.ITALIC;
@@ -150,7 +129,6 @@ public class SVTableCellRenderer extends JLabel
           Font font = new Font(f.getFontName(),fontstyle,fontheight);
           setFont(font);
           
-
           HSSFColor clr = null;
           if (s.getFillPattern() == HSSFCellStyle.SOLID_FOREGROUND) {
             clr = (HSSFColor)colors.get(new Integer(s.getFillForegroundColor()));
@@ -178,6 +156,8 @@ public class SVTableCellRenderer extends JLabel
               int borderBottom = s.getBorderBottom();
               int borderLeft = s.getBorderLeft();
               
+              //OUCH! This could causing rendering performance problems.
+              //Need to somehow create once and store
               SVBorder border = new SVBorder(Color.black, Color.black,
                                            Color.black, Color.black,
                                            borderTop, borderRight,
@@ -189,25 +169,7 @@ public class SVTableCellRenderer extends JLabel
               setBorder(border);
               isBorderSet=true;
 
-//          }
-        } else {
-          setBackground(Color.white);
-        }
-
-
-	if (hasFocus) {
-            if (!isBorderSet) {
-	        setBorder( UIManager.getBorder("Table.focusCellHighlightBorder") );
-            }
-	    if (table.isCellEditable(row, column)) {
-	        super.setForeground( UIManager.getColor("Table.focusCellForeground") );
-	        super.setBackground( UIManager.getColor("Table.focusCellBackground") );
-	    }
-	} else if (!isBorderSet) {
-	    setBorder(noFocusBorder);
-	}
-
-        if (c != null) {
+              //Set the value that is rendered for the cell
           switch (c.getCellType()) {
             case HSSFCell.CELL_TYPE_BLANK:
               setValue("");
@@ -229,10 +191,43 @@ public class SVTableCellRenderer extends JLabel
             default:
               setValue("?");
           }
+              //Set the text alignment of the cell
+              switch (s.getAlignment()) {
+                case HSSFCellStyle.ALIGN_GENERAL:
+                case HSSFCellStyle.ALIGN_LEFT:
+                case HSSFCellStyle.ALIGN_JUSTIFY:
+                case HSSFCellStyle.ALIGN_FILL:
+                  setHorizontalAlignment(SwingConstants.LEFT);
+                  break;
+                case HSSFCellStyle.ALIGN_CENTER:
+                case HSSFCellStyle.ALIGN_CENTER_SELECTION:
+                  setHorizontalAlignment(SwingConstants.CENTER);
+                  break;
+                case HSSFCellStyle.ALIGN_RIGHT:
+                  setHorizontalAlignment(SwingConstants.RIGHT);
+                  break;
+                default:
+                  setHorizontalAlignment(SwingConstants.LEFT);
+                  break;
+              }
+//          }
        } else {
            setValue("");
+          setBackground(Color.white);
        }
 
+
+	if (hasFocus) {
+            if (!isBorderSet) {
+	        setBorder( UIManager.getBorder("Table.focusCellHighlightBorder") );
+            }
+	    if (table.isCellEditable(row, column)) {
+	        setForeground( UIManager.getColor("Table.focusCellForeground") );
+	        setBackground( UIManager.getColor("Table.focusCellBackground") );
+	    }
+	} else if (!isBorderSet) {
+	    setBorder(noFocusBorder);
+	}
 
 	// ---- begin optimization to avoid painting background ----
 	Color back = getBackground();
@@ -261,24 +256,11 @@ public class SVTableCellRenderer extends JLabel
 
     public void firePropertyChange(String propertyName, boolean oldValue, boolean newValue) { }
 
-
     /**
      * Sets the string to either the value or "" if the value is null.
      *
      */
     protected void setValue(Object value) {
 	setText((value == null) ? "" : value.toString());
-    }
-
-    /**
-     * Get a cell at a given row  (warning: slow)
-     *
-     */
-    private HSSFCell getCell(int row, int col) {
-      HSSFRow r = st.getRow(row);
-      HSSFCell c = null;
-      if ( r != null)
-       c = r.getCell((short)col);
-      return c;
     }
 }

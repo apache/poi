@@ -78,13 +78,11 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
  *
  * @author Andrew C. Oliver
  */
-public class SViewer extends Applet {
+public class SViewer extends JApplet {
+  private SViewerPanel panel;
   boolean isStandalone = false;
   String filename = null;
-  BorderLayout borderLayout = new BorderLayout();
-  JScrollPane mainScrollPane = new JScrollPane();
-  JTable mainTable = new JTable();
-  URLConnection uc = null;
+
   /**Get a parameter value*/
   public String getParameter(String key, String def) {
     return isStandalone ? System.getProperty(key, def) :
@@ -94,6 +92,7 @@ public class SViewer extends Applet {
   /**Construct the applet*/
   public SViewer() {
   }
+
   /**Initialize the applet*/
   public void init() {
     try {
@@ -103,6 +102,7 @@ public class SViewer extends Applet {
       e.printStackTrace();
     }
   }
+
   /**Component initialization*/
   private void jbInit() throws Exception {
     InputStream i = null;
@@ -121,16 +121,9 @@ public class SViewer extends Applet {
     } else {
       wb = constructWorkbook(filename);
     }
-
-    HSSFSheet    st = wb.getSheetAt(0);
-    SVTableModel tm = constructTableModel(wb,st);
-    mainTable.setModel(tm);
-    SVTableCellRenderer rnd = new SVTableCellRenderer(wb, st);
-    mainTable.setDefaultRenderer(HSSFCell.class,rnd);
-
-    this.setLayout(borderLayout);
-    this.add(mainScrollPane, BorderLayout.CENTER);
-    mainScrollPane.getViewport().add(mainTable, null);
+    panel = new SViewerPanel(wb);
+    getContentPane().setLayout(new BorderLayout());
+    getContentPane().add(panel, BorderLayout.CENTER);
   }
 
   private HSSFWorkbook constructWorkbook(String filename) {
@@ -159,18 +152,6 @@ public class SViewer extends Applet {
     return wb;
   }
 
-
-  private SVTableModel constructTableModel(HSSFWorkbook wb, HSSFSheet st) {
-    SVTableModel retval = null;
-
-    try {
-      retval = new SVTableModel(st);
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-    return retval;
-  }
-
   /**Start the applet*/
   public void start() {
   }
@@ -197,9 +178,7 @@ public class SViewer extends Applet {
   InputStream is = null;
   try {
     URL url = new URL(urlstring);
-    uc = url.openConnection();
-    uc.connect();
-    is = uc.getInputStream();
+    is = url.openStream();
   } catch (Exception e) {
     e.printStackTrace();
   }
