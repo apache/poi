@@ -1,0 +1,9 @@
+<record id="0x1046" name="AxisUsed" package="org.apache.poi.hssf.record">
+    <suffix>Record</suffix>
+    <extends>Record</extends>
+    <description>The number of axes used on a chart.</description>
+    <author>Glen Stampoultzis (glens at apache.org)</author>
+    <fields>
+        <field type="int" size="2" name="num axis"/>
+    </fields>
+</record>
