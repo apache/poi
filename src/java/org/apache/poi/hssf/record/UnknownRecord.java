@@ -90,9 +90,9 @@ public class UnknownRecord
 
     public UnknownRecord(short id, short size, byte [] data)
     {
-        sid     = id;
-        size    = size;
-        thedata = data;
+        this.sid     = id;
+        this.size    = size;
+        this.thedata = data;
     }
 
     /**
@@ -127,8 +127,8 @@ public class UnknownRecord
 
     protected void fillFields(byte [] data, short sid)
     {
-        sid     = sid;
-        thedata = data;
+        this.sid     = sid;
+        this.thedata = data;
     }
 
     /**

@@ -55,19 +55,13 @@
 
 package org.apache.poi.hssf.dev;
 
-import java.io.InputStream;
-import java.io.IOException;
-import java.io.ByteArrayInputStream;
+import org.apache.poi.hssf.usermodel.*;
+import org.apache.poi.hssf.util.Region;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-
-import java.util.Random;
-
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.hssf.record.*;
-import org.apache.poi.hssf.model.*;
-import org.apache.poi.hssf.usermodel.*;
-import org.apache.poi.hssf.util.*;
+import java.io.IOException;
 
 /**
  * File for HSSF testing/examples
@@ -81,11 +75,9 @@ import org.apache.poi.hssf.util.*;
 
 public class HSSF
 {
-    private String         filename     = null;
-
     // private POIFSFileSystem     fs           = null;
-    private InputStream    stream       = null;
-    private Record[]       records      = null;
+//    private InputStream    stream       = null;
+//    private Record[]       records      = null;
     protected HSSFWorkbook hssfworkbook = null;
 
     /**
@@ -102,7 +94,6 @@ public class HSSF
     public HSSF(String filename)
         throws IOException
     {
-        this.filename = filename;
         POIFSFileSystem fs =
             new POIFSFileSystem(new FileInputStream(filename));
 
@@ -140,13 +131,13 @@ public class HSSF
 
         f.setFontHeightInPoints(( short ) 12);
         f.setColor(( short ) 0xA);
-        f.setBoldweight(f.BOLDWEIGHT_BOLD);
+        f.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
         f2.setFontHeightInPoints(( short ) 10);
         f2.setColor(( short ) 0xf);
-        f2.setBoldweight(f2.BOLDWEIGHT_BOLD);
+        f2.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
         cs.setFont(f);
         cs.setDataFormat(HSSFDataFormat.getBuiltinFormat("($#,##0_);[Red]($#,##0)"));
-        cs2.setBorderBottom(cs2.BORDER_THIN);
+        cs2.setBorderBottom(HSSFCellStyle.BORDER_THIN);
         cs2.setFillPattern(( short ) 1);   // fill w fg
         cs2.setFillForegroundColor(( short ) 0xA);
         cs2.setFont(f2);
@@ -162,7 +153,7 @@ public class HSSF
             // r.setRowNum(( short ) rownum);
             for (short cellnum = ( short ) 0; cellnum < 50; cellnum += 2)
             {
-                c = r.createCell(cellnum, HSSFCell.CELL_TYPE_NUMERIC);
+                c = r.createCell(cellnum);
                 c.setCellValue(rownum * 10000 + cellnum
                                + ((( double ) rownum / 1000)
                                   + (( double ) cellnum / 10000)));
@@ -170,8 +161,7 @@ public class HSSF
                 {
                     c.setCellStyle(cs);
                 }
-                c = r.createCell(( short ) (cellnum + 1),
-                                 HSSFCell.CELL_TYPE_STRING);
+                c = r.createCell(( short ) (cellnum + 1));
                 c.setCellValue("TEST");
                 s.setColumnWidth(( short ) (cellnum + 1),
                                  ( short ) ((50 * 8) / (( double ) 1 / 20)));
@@ -186,10 +176,11 @@ public class HSSF
         rownum++;
         rownum++;
         r = s.createRow(rownum);
-        cs3.setBorderBottom(cs3.BORDER_THICK);
+        cs3.setBorderBottom(HSSFCellStyle.BORDER_THICK);
         for (short cellnum = ( short ) 0; cellnum < 50; cellnum++)
         {
-            c = r.createCell(cellnum, HSSFCell.CELL_TYPE_BLANK);
+            c = r.createCell(cellnum);
+//            c = r.createCell(cellnum, HSSFCell.CELL_TYPE_BLANK);
 
             // c.setCellValue(0);
             c.setCellStyle(cs3);
@@ -208,30 +199,6 @@ public class HSSF
         // end deleted sheet
         wb.write(out);
         out.close();
-    }
-
-    /**
-     * Constructor HSSF - takes in file - attempts to read it then reconstruct it
-     *
-     *
-     * @param infile
-     * @param outfile
-     * @param write
-     *
-     * @exception IOException
-     *
-     */
-
-    public HSSF(String infile, String outfile, boolean write)
-        throws IOException
-    {
-        this.filename = filename;
-        POIFSFileSystem fs =
-            new POIFSFileSystem(new FileInputStream(filename));
-
-        hssfworkbook = new HSSFWorkbook(fs);
-
-        // HSSFWorkbook book = hssfstream.getWorkbook();
     }
 
     /**
@@ -326,7 +293,7 @@ public class HSSF
                 try
                 {
                     long time = System.currentTimeMillis();
-                    HSSF hssf = new HSSF(args[ 0 ], true);
+                    new HSSF(args[ 0 ], true);
 
                     System.out
                         .println("" + (System.currentTimeMillis() - time)
