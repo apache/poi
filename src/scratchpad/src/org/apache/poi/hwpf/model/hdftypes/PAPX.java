@@ -82,5 +82,13 @@ public class PAPX extends PropertyNode
     return super.getBuf();
   }
 
+  public boolean equals(Object o)
+  {
+    if (super.equals(o))
+    {
+      return _phe.equals(((PAPX)o)._phe);
+    }
+    return false;
+  }
 
 }

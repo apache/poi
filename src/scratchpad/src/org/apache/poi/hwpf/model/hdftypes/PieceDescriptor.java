@@ -135,4 +135,10 @@ public class PieceDescriptor
     return 8;
   }
 
+  public boolean equals(Object o)
+  {
+    PieceDescriptor pd = (PieceDescriptor)o;
+
+    return descriptor == pd.descriptor && prm == pd.prm && unicode == pd.unicode;
+  }
 }

@@ -92,4 +92,14 @@ public class TextPiece extends PropertyNode implements Comparable
    {
      return _pd;
    }
+
+   public boolean equals(Object o)
+   {
+     if (super.equals(o))
+     {
+       TextPiece tp = (TextPiece)o;
+       return tp._usesUnicode == _usesUnicode && _pd.equals(tp._pd);
+     }
+     return false;
+   }
 }

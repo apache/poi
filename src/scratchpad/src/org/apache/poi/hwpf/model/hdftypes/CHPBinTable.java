@@ -94,6 +94,11 @@ public class CHPBinTable
     }
   }
 
+  public ArrayList getTextRuns()
+  {
+    return _textRuns;
+  }
+
   public void writeTo(HWPFFileSystem sys, int fcMin)
     throws IOException
   {
@@ -122,7 +127,6 @@ public class CHPBinTable
 
 
     ArrayList overflow = _textRuns;
-    byte[] intHolder = new byte[4];
     do
     {
       PropertyNode startingProp = (PropertyNode)overflow.get(0);
@@ -138,9 +142,10 @@ public class CHPBinTable
       int end = endingFc;
       if (overflow != null)
       {
-        end = ((PropertyNode)overflow.get(0)).getEnd();
+        end = ((PropertyNode)overflow.get(0)).getStart();
       }
 
+      byte[] intHolder = new byte[4];
       LittleEndian.putInt(intHolder, pageNum++);
       binTable.addProperty(new PropertyNode(start, end, intHolder));
 

@@ -105,4 +105,11 @@ public class ParagraphHeight
     return buf;
   }
 
+  public boolean equals(Object o)
+  {
+    ParagraphHeight ph = (ParagraphHeight)o;
+
+    return infoField == ph.infoField && reserved == ph.reserved &&
+           dxaCol == ph.dxaCol && dymLineOrHeight == ph.dymLineOrHeight;
+  }
 }
