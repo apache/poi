@@ -66,10 +66,10 @@
     
     <!-- define the tasks found in cents -->
     <taskdef file="${temp.dir}/${task.properties.name}">
-     <classpath>
-       <fileset dir="${tools.dir}" casesensitive="yes"> 
-         <include name="**/*.jar"/>
-       </fileset> 
+     <classpath>      
+      <fileset dir="tools">
+        <include name="**/*.jar"/>
+      </fileset>
      </classpath>
     </taskdef>
     

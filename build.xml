@@ -271,6 +271,21 @@ printed.
     </antcall>
    
   </target>     
+
+  <!-- ================================== -->
+  <!--      Generate project metrics      -->
+  <!-- ================================== -->
+  
+  <target  name="metrics"   depends="-init"
+           description="Generate project metrics">
+
+    <antcall target="call-cent">
+      <param name="cent-name"   value="jdepend"/>
+      <param name="cent-target" value="jdepend-html"/> 
+    </antcall>
+ 
+ </target>     
+
   
   <!-- ================================== -->
   <!--    Generates the documentation     -->
@@ -298,6 +313,57 @@ printed.
       <param name="cent-target" value="javadocs"/> 
     </antcall>
     
+  </target>     
+
+  <!-- ================================== -->
+  <!--       Generate UML                 -->
+  <!-- ================================== -->
+  
+  <target  name="uml"   depends="-init"
+           description="generate-uml">
+  <!--
+  <javadoc packagenames="org.apache.poi.*"
+           sourcepath="./src/java"
+           destdir="docs/metrics">
+
+     <doclet name="JP.co.esm.caddies.doclets.UMLDoclet"
+             path="./tools/antipede/lib/UMLDoclet.jar">
+        <param name="-d" value="docs/metrics"/>
+     </doclet>
+
+  </javadoc>
+    -->
+    
+        <javadoc packagenames="${xgump.module.project.package}.*"
+             sourcepath="${xlayout.build.java.dir}"
+             destdir="${xlayout.build.documentation.javadocs.dir}"
+             author="true"
+             version="true"
+             use="true"
+             failonerror="true"
+             noindex="true"
+             windowtitle="${package-name} ${package-version}  API"
+             doctitle="${package-name} ${package-version}  API"
+             bottom="Copyright &#169; ${YEAR} Apache ${package-name} project. All Rights Reserved."
+             stylesheetfile="${centipede.cent.dir}/resources/stylesheets/javadoc.css">
+ 
+     <classpath>
+       <path>
+          <fileset dir="${xlayout.library.dir}" casesensitive="yes"> 
+           <patternset>
+             <include name="*/*.jar"/>
+             <include name="*/*.zip"/>
+           </patternset>
+         </fileset>  
+       </path> 
+     </classpath>
+      <doclet name="JP.co.esm.caddies.doclets.UMLDoclet"
+             path="./tools/antipede/lib/UMLDoclet.jar">
+        <param name="-d" value="docs/metrics"/>
+     </doclet>
+     
+    </javadoc>
+
   </target>     
 
   <!-- ================================== -->
@@ -329,7 +395,7 @@ printed.
   <!-- ================================== -->
   
   <target  name="testmodule"   
-           depends="clean, compile, test, jar, docs, javadocs"
+           depends="clean, compile, test, jar, docs"
            description="Testing that all major targets work; useful before a commit"/>
            
            
@@ -338,7 +404,7 @@ printed.
   <!-- ================================== -->
   
   <target  name="gump"   
-           depends="clean, compile, test, jar, docs, javadocs"
+           depends="clean, compile, test, jar, docs, javadocs, metrics"
            description="Target used by Gump"/>
            
 
