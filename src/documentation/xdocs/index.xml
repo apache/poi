@@ -155,8 +155,9 @@
 
     <section title="What happened to the HSSF Serializer?">
 	<p>The HSSF Serializer, which was part of our 1.0 release and last builds on 
-        <link href="http://www.sourceforge.net/projects/poi">Sourceforge</link>, has been donated to the Cocoon project.  We're
-        currently in the process of porting it over.</p>
+        <link href="http://www.sourceforge.net/projects/poi">Sourceforge</link>, has been donated to the 
+        <link href="http://xml.apache.org/cocoon/">Cocoon</link> project, and is available starting from version
+        2.0.2.</p>
     </section>
 
     <section title="Contributing ">
