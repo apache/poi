@@ -1,0 +1,100 @@
+<?xml version="1.0"?>
+
+<!--
+Skin configuration file. This file contains details of your project, which will
+be used to configure the chosen Forrest skin.
+-->
+
+<!DOCTYPE skinconfig [
+
+  <!ENTITY % links.att 'name CDATA #REQUIRED'>
+  <!ENTITY % link.att 'name CDATA #REQUIRED href CDATA #REQUIRED'>
+  <!ELEMENT skinconfig (disable-search?, disable-compliance-links?, searchsite-domain?, searchsite-name?,
+  project-name, project-url, project-logo, group-name?, group-url?, group-logo?,
+  host-url?, host-logo?, year?, vendor?, trail?, credits?)*>
+  <!ELEMENT credits (credit*)>
+  <!ELEMENT credit (name, url, image?, width?, height?)>
+  <!-- id uniquely identifies the tool, and role indicates its function -->
+  <!ATTLIST credit id   CDATA #IMPLIED
+                   role CDATA #IMPLIED>
+  <!ELEMENT disable-search (#PCDATA)>
+  <!ELEMENT disable-compliance-links (#PCDATA)>
+  <!ELEMENT searchsite-domain (#PCDATA)>
+  <!ELEMENT searchsite-name (#PCDATA)>  
+  <!ELEMENT project-name (#PCDATA)>
+  <!ELEMENT project-url (#PCDATA)>
+  <!ELEMENT project-logo (#PCDATA)>
+  <!ELEMENT group-name (#PCDATA)>
+  <!ELEMENT group-url (#PCDATA)>
+  <!ELEMENT group-logo (#PCDATA)>
+  <!ELEMENT host-url (#PCDATA)>
+  <!ELEMENT host-logo (#PCDATA)>
+  <!ELEMENT year (#PCDATA)>
+  <!ELEMENT vendor (#PCDATA)>
+  <!ELEMENT trail (link1, link2, link3)>
+  <!ELEMENT link1 EMPTY>
+  <!-- Seems we can't use param entity refs until this is DTDified -->
+  <!ATTLIST link1 name CDATA #REQUIRED href CDATA #IMPLIED>
+  <!ELEMENT link2 EMPTY>
+  <!ATTLIST link2 name CDATA #REQUIRED href CDATA #IMPLIED>
+  <!ELEMENT link3 EMPTY>
+  <!ATTLIST link3 name CDATA #REQUIRED href CDATA #IMPLIED>
+  <!ELEMENT name (#PCDATA)>
+  <!ELEMENT url (#PCDATA)>
+  <!ELEMENT image (#PCDATA)>
+  <!ELEMENT width (#PCDATA)>
+  <!ELEMENT height (#PCDATA)>
+  ]>
+
+<skinconfig>
+  <!-- Do we want to disable the Google search box? -->
+  <disable-search>false</disable-search>
+  <disable-compliance-links>false</disable-compliance-links>
+  <searchsite-domain>jakarta.apache.org</searchsite-domain>
+  <searchsite-name>jakarta</searchsite-name>
+
+  <!-- mandatory project logo
+       skin: forrest-site renders it at the top -->
+  <project-name>POI</project-name>
+  <project-url>http://jakarta.apache.org/poi/</project-url>
+  <project-logo>images/project-logo.gif</project-logo>
+
+  <!-- optional group logo
+       skin: forrest-site renders it at the top-left corner -->
+  <group-name>Jakarta</group-name>
+  <group-url>http://jakarta.apache.org</group-url>
+  <group-logo>images/group-logo.gif</group-logo>
+
+  <!-- optional host logo (e.g. sourceforge logo)
+       skin: forrest-site renders it at the bottom-left corner -->
+  <host-url></host-url>
+  <host-logo></host-logo>
+
+  <!-- The following are used to construct a copyright statement -->
+  <year>2003</year>
+  <vendor>The Apache Software Foundation.</vendor>
+
+  <!-- Some skins use this to form a 'breadcrumb trail' of links. If you don't
+  want these, set the attributes to blank. The DTD purposefully requires them.
+  -->
+  <trail>
+    <link1 name="apache" href="http://www.apache.org/"/>
+    <link2 name="jakarta" href="http://jakarta.apache.org/"/>
+    <link3 name="poi" href="http://jakarta.apache.org/poi/"/>
+  </trail>
+
+  <!-- Credits are typically rendered as a set of small clickable images in the
+  page footer -->
+  <credits>
+    <credit>
+      <name>Built with Apache Forrest</name>
+      <url>http://xml.apache.org/forrest/</url>
+      <image>images/built-with-forrest-button.png</image>
+      <width>88</width>
+      <height>31</height>
+    </credit>
+    <!-- A credit with @role='pdf' will have its name and url displayed in the
+    PDF page's footer. -->
+  </credits>
+
+</skinconfig>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "../dtd/document-v11.dtd">
+
+<document>
+ <header>
+  <title>HSSF</title>
+  <subtitle>Vista General</subtitle>
+  <authors>
+   <person name="Andrew C. Oliver" email="acoliver@apache.org"/>     
+   <person name="Nicola Ken Barozzi" email="barozzi@nicolaken.com"/>     
+  </authors>
+ </header>
+
+ <body>
+ <section><title>Vista General</title>
+        <p>
+        		Se espera usar esta sección para diagramas (UML/etc) que ayudan a 
+        		explicar HSSF.
+        </p>
+        <ul>
+               <li>
+                      <link href="diagram1.html">Diagrama de Clases del UserModel</link> -                
+                      por Matthew Young (myoung at westernasset dot com)
+               </li>
+        </ul>
+        <p>
+        		Tiene más?  Agrega un nuevo &quot;bug&quot; al archivo de bugs con la
+        		palabra [DOCUMENTATION] antes de la descripción y un link al file en algun webserver.  Si no tiene su propio webserver, mandaselo por email a  (acoliver at apache dot org) siempre y cuando el tamaño del archivo es menor a 5 Mb.  Diagramas deben estar en algun formato compatible, por lo menos, con Linux y Windows.  Se prefieren diagramas que se pueden cambiar o modificar pero entendemos que hay pocos programas para crear UML que están a buen precio.  Y no, no TIENEN que ser UML... solo tienen que ser utiles.
+        </p>
+  </section>
+ </body>
+</document>

@@ -1,8 +1,9 @@
-*.properties
 dist
+scripts
 *.el
 *.ipr
 *.iws
+*.iml
 build.number
 log*.*
 *.log

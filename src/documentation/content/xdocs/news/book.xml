@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!DOCTYPE book PUBLIC "-//APACHE//DTD Cocoon Documentation Book V1.0//EN" "../dtd/book-cocoon-v10.dtd">
+
+<book software="Poi Project" 
+      title="Poi Project News Pages" 
+      copyright="@year@ Poi Project">
+
+  <menu label="Navigation">
+    <menu-item label="Main" href="../index.html"/>
+  </menu>
+
+  <menu label="News">
+    <menu-item label="Logo Submissions" href="logocontest.html"/>
+  </menu>
+
+
+</book>
+
+

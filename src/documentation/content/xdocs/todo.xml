@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE todo PUBLIC "-//APACHE//DTD Todo V1.1//EN" "./dtd/todo-v11.dtd">
+
+<todo><title>Things To Do for Poi</title>
+
+    <devs>
+        <!-- in strict alphabetical order -->
+        <person id="AO"  name="Andrew C. Oliver"   email="acoliver2@users.sourceforge.net"/>
+        <person id="GS"  name="Glen Stampoultzis"  email="gstamp@iprimus.com.au"/>
+        <person id="MJ"  name="Marc Johnson"       email="mjohnson at apache dot org"/>
+        <person id="NKB" name="Nicola Ken Barozzi" email="barozzi@nicolaken.com"/>
+        <person id="open" name="Poi Developers"    email="poi-dev@jakarta.apache.org"/>
+    </devs>
+
+    <actions priority="high">
+        <action context="code" dev="NKB">
+          Finish HDF
+        </action>
+        <action context="code" dev="GS">
+          Finish Charts
+        </action>
+        <action context="code" dev="open">
+          Finish Formulas.
+        </action>
+    </actions>
+
+    <actions priority="medium">
+        <action context="code" dev="open">
+          Expose functionality in low level records in higher level API
+        </action>
+        <action context="code" dev="open">
+          Implement more record types.
+        </action>
+        <action context="code" dev="open">
+          Add more dummy checks (for when API user's do things they
+          &quot;can't&quot; do).  This will involve exploring the various
+          upper limits on the things Excel can handle.
+        </action>
+        <action context="code" dev="open">
+              Add support for embedded graphics and other objects.
+        </action>
+        <action context="code" dev="open">
+          Create new adapter object for handling MulBlank, MulRk, Rk
+          records.
+        </action>
+        <action context="code" dev="open">
+          Add a way to copy sheets.
+        </action>
+    </actions>
+
+</todo>
