@@ -297,6 +297,15 @@ public class TestFormulaParser extends TestCase {
         assertEquals("FOO", tname.toFormulaString(w));
     }
 
+    public void testEmbeddedSlash() {
+        FormulaParser fp = new FormulaParser("HYPERLINK(\"http://www.jakarta.org\",\"Jakarta\");",null);
+        fp.parse();
+        Ptg[] ptg = fp.getRPNPtg();
+        for (int i=0;i<ptg.length;i++) {System.out.println(ptg[i]);}
+        assertTrue("first ptg is string",ptg[0] instanceof StringPtg);
+        assertTrue("second ptg is string",ptg[1] instanceof StringPtg);
+
+    }
      public static void main(String [] args) {
         System.out.println("Testing org.apache.poi.hssf.record.formula.FormulaParser");
         junit.textui.TestRunner.run(TestFormulaParser.class);
