@@ -136,7 +136,15 @@ public class ValueRecordsAggregate
      *  that are attached to the rows in the range specified.
      */
     public int getRowCellBlockSize(int startRow, int endRow) {
-      Iterator cellRec = new VRAIterator(this, startRow, endRow);;
+      //Make sure that the row has cells
+      while (!rowHasCells(startRow) && (startRow <= endRow))
+        startRow++;
+      if (startRow > endRow) {
+        //Couldnt find any cells between the row range provided.
+        return 0;
+      }
+
+      Iterator cellRec = new VRAIterator(this, startRow, endRow);
       int size = 0;
       while (cellRec.hasNext()) {
         CellValueRecordInterface cell = (CellValueRecordInterface)cellRec.next();
@@ -149,6 +157,8 @@ public class ValueRecordsAggregate
 
     /** Returns true if the row has cells attached to it */
     public boolean rowHasCells(int row) {
+      if (row >= celltype.size())
+        return false;
       IntList ctRow = (IntList) celltype.get(row);
       return ((ctRow != null) && (ctRow.size() > 0));
     }
@@ -553,7 +563,9 @@ class VRAIterator implements Iterator {
         this.row = startRow;
         this.rowlimit = endRow;
         this.popindex = vra.populatedRows.indexOf(row);
-        if (vra.getPhysicalNumberOfCells() > 0) {
+        if (this.popindex == -1) {
+          hasNext = false;
+        } else if (vra.getPhysicalNumberOfCells() > 0) {
             next = findNextCell(null);
             hasNext = (next != null);
         }
