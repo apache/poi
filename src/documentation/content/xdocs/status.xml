@@ -12,6 +12,10 @@
 
     <changes>
 
+        <release version="unreleased" date="???">
+            <action dev="POI-DEVELOPERS" type="fix" context="All">Bugzilla Bug 29976 [PATCH] HSSF hyperlink formula size problem</action>
+        </release>
+ 
         <release version="2.5.1-FINAL" date="29 Feburary 2004">
             <action dev="POI-DEVELOPERS" type="add" context="All">Outlining support</action>
             <action dev="POI-DEVELOPERS" type="fix" context="All">27574 - [PATCH] HSSFDateUtil.getExcelDate() is one hour off when DST changes</action>

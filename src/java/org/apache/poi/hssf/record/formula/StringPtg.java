@@ -25,6 +25,7 @@ import org.apache.poi.util.StringUtil;
  * Stores a String value in a formula value stored in the format <length 2 bytes>char[]
  * @author  Werner Froidevaux
  * @author Jason Height (jheight at chariot dot net dot au)
+ * @author Bernard Chesnoy
  */
 
 public class StringPtg
@@ -34,7 +35,7 @@ public class StringPtg
     public final static byte sid  = 0x17;
     //NOTE: OO doc says 16bit lenght, but BiffViewer says 8
     // Book says something totally different, so dont look there!
-    byte field_1_length;
+    int field_1_length;
     byte field_2_options;
     BitField fHighByte = new BitField(0x01);
     private String            field_3_string;
@@ -47,14 +48,14 @@ public class StringPtg
     public StringPtg(byte [] data, int offset)
     {
         offset++;
-        field_1_length = data[offset];
+        field_1_length = data[offset] & 0xFF;
         field_2_options = data[offset+1];
         if (fHighByte.isSet(field_2_options)) {
-            field_3_string= StringUtil.getFromUnicodeBE(data,offset+2,field_1_length);
+            field_3_string= StringUtil.getFromUnicodeLE(data,offset+2,field_1_length);
         }else {
             field_3_string=StringUtil.getFromCompressedUnicode(data,offset+2,field_1_length);
         }
-				 
+
         //setValue(new String(data, offset+3, data[offset+1] + 256*data[offset+2]));
     }
 
@@ -70,7 +71,7 @@ public class StringPtg
         this.field_2_options=0;
         this.fHighByte.setBoolean(field_2_options, false);
         this.field_3_string=value;
-        this.field_1_length=(byte)value.length(); //for the moment, we support only ASCII strings in formulas we create
+        this.field_1_length=value.length(); //for the moment, we support only ASCII strings in formulas we create
     }
 
     /*
@@ -88,7 +89,7 @@ public class StringPtg
     public void writeBytes(byte [] array, int offset)
     {
         array[ offset + 0 ] = sid;
-        array[ offset + 1 ] = field_1_length;
+        array[ offset + 1 ] = (byte)field_1_length;
         array[ offset + 2 ] = field_2_options;
         if (fHighByte.isSet(field_2_options)) {
             StringUtil.putUnicodeLE(getValue(),array,offset+3);
@@ -101,7 +102,7 @@ public class StringPtg
     {
         if (fHighByte.isSet(field_2_options)) {
             return 2*field_1_length+3;
-        }else {
+        } else {
             return field_1_length+3;
         }
     }
@@ -123,3 +124,4 @@ public class StringPtg
    }
 
 }
+
