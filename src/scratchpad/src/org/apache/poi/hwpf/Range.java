@@ -77,6 +77,7 @@ import org.apache.poi.hwpf.model.hdftypes.TextPieceTable;
 import org.apache.poi.hwpf.model.hdftypes.TextPiece;
 
 import org.apache.poi.hwpf.sprm.CharacterSprmUncompressor;
+import org.apache.poi.hwpf.sprm.CharacterSprmCompressor;
 import org.apache.poi.hwpf.sprm.SectionSprmUncompressor;
 import org.apache.poi.hwpf.sprm.ParagraphSprmUncompressor;
 
@@ -194,7 +195,7 @@ public class Range
     _doc.getCharacterTable().adjustForInsert(_textStart, adjustedLength);
     _doc.getParagraphTable().adjustForInsert(_textStart, adjustedLength);
     _doc.getSectionTable().adjustForInsert(_textStart, adjustedLength);
-    return null;
+    return getCharacterRange(0);
   }
 
   public CharacterRange insertAfter(String text)
@@ -203,8 +204,19 @@ public class Range
   }
 
   public CharacterRange insertBefore(String text, CharacterRun cr)
+    throws UnsupportedEncodingException
   {
-    return null;
+    initAll();
+    PAPX papx = (PAPX)_paragraphs.get(_parStart);
+    short istd = papx.getIstd();
+
+    StyleSheet ss = _doc.getStyleSheet();
+    CharacterRun baseStyle = ss.getCharacterStyle(istd);
+
+    byte[] grpprl = CharacterSprmCompressor.compressCharacterProperty(cr, baseStyle);
+    _doc.getCharacterTable().insert(_charStart, _start, grpprl);
+
+    return insertBefore(text);
   }
 
   public CharacterRange insertAfter(String text, CharacterRun cr)
@@ -234,7 +246,7 @@ public class Range
                               chpx.getEnd());
       List paragraphList = _paragraphs.subList(point[0], point[1]);
       PAPX papx = (PAPX)paragraphList.get(0);
-      short istd = LittleEndian.getShort(papx.getBuf());
+      short istd = papx.getIstd();
 
       StyleSheet sd = _doc.getStyleSheet();
       CharacterRun baseStyle = sd.getCharacterStyle(istd);
@@ -260,7 +272,7 @@ public class Range
   public Paragraph getParagraph(int index)
   {
     initParagraphs();
-    PAPX papx = (PAPX)_sections.get(index + _parStart);
+    PAPX papx = (PAPX)_paragraphs.get(index + _parStart);
     Paragraph pap = (Paragraph)papx.getCacheContents();
     if (pap == null)
     {

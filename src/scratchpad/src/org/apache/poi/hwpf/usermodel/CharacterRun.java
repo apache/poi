@@ -113,8 +113,6 @@ public class CharacterRun
   public final static short SPRM_FELID = 0x486E;
   public final static short SPRM_IDCTHINT = 0x286F;
 
-
-  StyleDescription _baseStyle;
   SprmBuffer _chpx;
 
   public CharacterRun()
@@ -141,11 +139,11 @@ public class CharacterRun
 
   public void markDeleted(boolean mark)
   {
-    if (mark != isFRMarkDel() && mark != _baseStyle.getCHP().isFRMarkDel())
+    super.setFRMarkDel(mark);
+    if (_chpx != null && mark != isFRMarkDel())
     {
       byte newVal = (byte)(mark ? 1 : 0);
       _chpx.addSprm(SPRM_FRMARKDEL, newVal);
-      super.setFRMarkDel(mark);
     }
   }
 
@@ -156,11 +154,11 @@ public class CharacterRun
 
   public void setBold(boolean bold)
   {
-    if (bold != isFBold() && bold != _baseStyle.getCHP().isFBold())
+    super.setFBold(bold);
+    if (_chpx != null && bold != isFBold())
     {
       byte newVal = (byte)(bold ? 1 : 0);
       _chpx.addSprm(SPRM_FBOLD, newVal);
-      super.setFBold(bold);
     }
   }
 
@@ -171,11 +169,11 @@ public class CharacterRun
 
   public void setItalic(boolean italic)
   {
-    if (italic != isFItalic() && italic != _baseStyle.getCHP().isFItalic())
+    super.setFItalic(italic);
+    if (_chpx != null && italic != isFItalic())
     {
       byte newVal = (byte)(italic ? 1 : 0);
       _chpx.addSprm(SPRM_FITALIC, newVal);
-      super.setFItalic(italic);
     }
   }
 
@@ -186,11 +184,11 @@ public class CharacterRun
 
   public void setOutline(boolean outlined)
   {
-    if (outlined != isFOutline() && outlined != _baseStyle.getCHP().isFOutline())
+    super.setFOutline(outlined);
+    if (_chpx != null && outlined != isFOutline())
     {
       byte newVal = (byte)(outlined ? 1 : 0);
       _chpx.addSprm(SPRM_FOUTLINE, newVal);
-      super.setFOutline(outlined);
     }
 
   }
@@ -202,11 +200,11 @@ public class CharacterRun
 
   public void setFldVanish(boolean fldVanish)
   {
-    if (fldVanish != isFFldVanish() && fldVanish != _baseStyle.getCHP().isFFldVanish())
+    super.setFFldVanish(fldVanish);
+    if (_chpx != null && fldVanish != isFFldVanish())
     {
       byte newVal = (byte)(fldVanish ? 1 : 0);
       _chpx.addSprm(SPRM_FFLDVANISH, newVal);
-      super.setFFldVanish(fldVanish);
     }
 
   }
@@ -217,11 +215,11 @@ public class CharacterRun
 
   public void setSmallCaps(boolean smallCaps)
   {
-    if (smallCaps != isFSmallCaps() && smallCaps != _baseStyle.getCHP().isFSmallCaps())
+    super.setFSmallCaps(smallCaps);
+    if (_chpx != null && smallCaps != isFSmallCaps())
     {
       byte newVal = (byte)(smallCaps ? 1 : 0);
       _chpx.addSprm(SPRM_FSMALLCAPS, newVal);
-      super.setFSmallCaps(smallCaps);
     }
   }
   public boolean isCapitalized()
@@ -231,11 +229,11 @@ public class CharacterRun
 
   public void setCapitalized(boolean caps)
   {
-    if (caps != isFCaps() && caps != _baseStyle.getCHP().isFCaps())
+    super.setFCaps(caps);
+    if (_chpx != null && caps != isFCaps())
     {
       byte newVal = (byte)(caps ? 1 : 0);
       _chpx.addSprm(SPRM_FCAPS, newVal);
-      super.setFCaps(caps);
     }
   }
 
@@ -246,11 +244,11 @@ public class CharacterRun
 
   public void setVanished(boolean vanish)
   {
-    if (vanish != isFVanish() && vanish != _baseStyle.getCHP().isFVanish())
+    super.setFVanish(vanish);
+    if (_chpx != null && vanish != isFVanish())
     {
       byte newVal = (byte)(vanish ? 1 : 0);
       _chpx.addSprm(SPRM_FVANISH, newVal);
-      super.setFVanish(vanish);
     }
 
   }
@@ -261,11 +259,11 @@ public class CharacterRun
 
   public void markInserted(boolean mark)
   {
-    if (mark != isFRMark() && mark != _baseStyle.getCHP().isFRMark())
+    super.setFRMark(mark);
+    if (_chpx != null && mark != isFRMark())
     {
       byte newVal = (byte)(mark ? 1 : 0);
       _chpx.addSprm(SPRM_FRMARK, newVal);
-      super.setFRMark(mark);
     }
   }
 
@@ -276,11 +274,11 @@ public class CharacterRun
 
   public void strikeThrough(boolean strike)
   {
-    if (strike != isFStrike() && strike != _baseStyle.getCHP().isFStrike())
+    super.setFStrike(strike);
+    if (_chpx != null && strike != isFStrike())
     {
       byte newVal = (byte)(strike ? 1 : 0);
       _chpx.addSprm(SPRM_FSTRIKE, newVal);
-      super.setFStrike(strike);
     }
 
   }
@@ -291,11 +289,11 @@ public class CharacterRun
 
   public void setShadow(boolean shadow)
   {
-    if (shadow != isFShadow() && shadow != _baseStyle.getCHP().isFShadow())
+    super.setFShadow(shadow);
+    if (_chpx != null && shadow != isFShadow())
     {
       byte newVal = (byte)(shadow ? 1 : 0);
       _chpx.addSprm(SPRM_FSHADOW, newVal);
-      super.setFShadow(shadow);
     }
 
   }
@@ -307,11 +305,112 @@ public class CharacterRun
 
   public void setEmbossed(boolean emboss)
   {
-    if (emboss != isFEmboss() && emboss != _baseStyle.getCHP().isFEmboss())
+    super.setFEmboss(emboss);
+    if (_chpx != null && emboss != isFEmboss())
     {
       byte newVal = (byte)(emboss ? 1 : 0);
       _chpx.addSprm(SPRM_FEMBOSS, newVal);
-      super.setFEmboss(emboss);
+    }
+
+  }
+
+  public boolean isImprinted()
+  {
+    return isFImprint();
+  }
+
+  public void setImprinted(boolean imprint)
+  {
+    super.setFImprint(imprint);
+    if (_chpx != null && imprint != isFImprint())
+    {
+      byte newVal = (byte)(imprint ? 1 : 0);
+      _chpx.addSprm(SPRM_FIMPRINT, newVal);
+    }
+
+  }
+
+  public boolean isDoubleStrikeThrough()
+  {
+    return isFDStrike();
+  }
+
+  public void setDoubleStrikethrough(boolean dstrike)
+  {
+    super.setFDStrike(dstrike);
+    if (_chpx != null && dstrike != isFDStrike())
+    {
+      byte newVal = (byte)(dstrike ? 1 : 0);
+      _chpx.addSprm(SPRM_FDSTRIKE, newVal);
+    }
+  }
+
+  public void setFtcAscii(int ftcAscii)
+  {
+    super.setFtcAscii(ftcAscii);
+    if (_chpx != null && ftcAscii != getFtcAscii())
+    {
+      _chpx.addSprm(SPRM_RGFTCASCII, (short)ftcAscii);
+    }
+  }
+
+  public void setFtcFE(int ftcFE)
+  {
+    super.setFtcFE(ftcFE);
+    if (_chpx != null && ftcFE != getFtcFE())
+    {
+      _chpx.addSprm(SPRM_RGFTCFAREAST, (short)ftcFE);
+    }
+  }
+
+  public void setFtcOther(int ftcOther)
+  {
+    super.setFtcOther(ftcOther);
+    if (_chpx != null && ftcOther != getFtcOther())
+    {
+      _chpx.addSprm(SPRM_RGFTCNOTFAREAST, (short)ftcOther);
+    }
+  }
+
+  public int getFontSize()
+  {
+    return getHps();
+  }
+
+  public void setFontSize(int halfPoints)
+  {
+    super.setHps(halfPoints);
+    if (_chpx != null && halfPoints != getHps())
+    {
+      _chpx.addSprm(SPRM_HPS, (short)halfPoints);
+    }
+  }
+
+  public int getCharacterSpacing()
+  {
+    return getDxaSpace();
+  }
+
+  public void setCharacterSpacing(int twips)
+  {
+     super.setDxaSpace(twips);
+    if (_chpx != null && twips != getDxaSpace())
+    {
+      _chpx.addSprm(SPRM_DXASPACE, twips);
+    }
+  }
+
+  public short getSubSuperScriptIndex()
+  {
+    return getIss();
+  }
+
+  public void setSubSuperScriptIndex(short iss)
+  {
+    super.setDxaSpace(iss);
+    if (_chpx != null && iss != getIss())
+    {
+      _chpx.addSprm(SPRM_DXASPACE, iss);
     }
 
   }

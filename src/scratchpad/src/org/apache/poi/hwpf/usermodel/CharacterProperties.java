@@ -113,8 +113,6 @@ public class CharacterProperties
   public final static short SPRM_FELID = 0x486E;
   public final static short SPRM_IDCTHINT = 0x286F;
 
-
-  StyleDescription _baseStyle;
   SprmBuffer _chpx;
 
   public CharacterProperties()
@@ -141,7 +139,7 @@ public class CharacterProperties
 
   public void markDeleted(boolean mark)
   {
-    if (mark != isFRMarkDel())
+    if (_chpx != null && mark != isFRMarkDel())
     {
       byte newVal = (byte)(mark ? 1 : 0);
       _chpx.addSprm(SPRM_FRMARKDEL, newVal);
@@ -156,7 +154,7 @@ public class CharacterProperties
 
   public void setBold(boolean bold)
   {
-    if (bold != isFBold())
+    if (_chpx != null && bold != isFBold())
     {
       byte newVal = (byte)(bold ? 1 : 0);
       _chpx.addSprm(SPRM_FBOLD, newVal);
@@ -171,7 +169,7 @@ public class CharacterProperties
 
   public void setItalic(boolean italic)
   {
-    if (italic != isFItalic())
+    if (_chpx != null && italic != isFItalic())
     {
       byte newVal = (byte)(italic ? 1 : 0);
       _chpx.addSprm(SPRM_FITALIC, newVal);
@@ -186,7 +184,7 @@ public class CharacterProperties
 
   public void setOutline(boolean outlined)
   {
-    if (outlined != isFOutline())
+    if (_chpx != null && outlined != isFOutline())
     {
       byte newVal = (byte)(outlined ? 1 : 0);
       _chpx.addSprm(SPRM_FOUTLINE, newVal);
@@ -202,7 +200,7 @@ public class CharacterProperties
 
   public void setFldVanish(boolean fldVanish)
   {
-    if (fldVanish != isFFldVanish())
+    if (_chpx != null && fldVanish != isFFldVanish())
     {
       byte newVal = (byte)(fldVanish ? 1 : 0);
       _chpx.addSprm(SPRM_FFLDVANISH, newVal);
@@ -217,7 +215,7 @@ public class CharacterProperties
 
   public void setSmallCaps(boolean smallCaps)
   {
-    if (smallCaps != isFSmallCaps())
+    if (_chpx != null && smallCaps != isFSmallCaps())
     {
       byte newVal = (byte)(smallCaps ? 1 : 0);
       _chpx.addSprm(SPRM_FSMALLCAPS, newVal);
@@ -231,7 +229,7 @@ public class CharacterProperties
 
   public void setCapitalized(boolean caps)
   {
-    if (caps != isFCaps())
+    if (_chpx != null && caps != isFCaps())
     {
       byte newVal = (byte)(caps ? 1 : 0);
       _chpx.addSprm(SPRM_FCAPS, newVal);
@@ -246,7 +244,7 @@ public class CharacterProperties
 
   public void setVanished(boolean vanish)
   {
-    if (vanish != isFVanish())
+    if (_chpx != null && vanish != isFVanish())
     {
       byte newVal = (byte)(vanish ? 1 : 0);
       _chpx.addSprm(SPRM_FVANISH, newVal);
@@ -261,7 +259,7 @@ public class CharacterProperties
 
   public void markInserted(boolean mark)
   {
-    if (mark != isFRMark())
+    if (_chpx != null && mark != isFRMark())
     {
       byte newVal = (byte)(mark ? 1 : 0);
       _chpx.addSprm(SPRM_FRMARK, newVal);
@@ -276,7 +274,7 @@ public class CharacterProperties
 
   public void strikeThrough(boolean strike)
   {
-    if (strike != isFStrike())
+    if (_chpx != null && strike != isFStrike())
     {
       byte newVal = (byte)(strike ? 1 : 0);
       _chpx.addSprm(SPRM_FSTRIKE, newVal);
@@ -291,7 +289,7 @@ public class CharacterProperties
 
   public void setShadow(boolean shadow)
   {
-    if (shadow != isFShadow())
+    if (_chpx != null && shadow != isFShadow())
     {
       byte newVal = (byte)(shadow ? 1 : 0);
       _chpx.addSprm(SPRM_FSHADOW, newVal);
@@ -307,7 +305,7 @@ public class CharacterProperties
 
   public void setEmbossed(boolean emboss)
   {
-    if (emboss != isFEmboss())
+    if (_chpx != null && emboss != isFEmboss())
     {
       byte newVal = (byte)(emboss ? 1 : 0);
       _chpx.addSprm(SPRM_FEMBOSS, newVal);
@@ -323,11 +321,11 @@ public class CharacterProperties
 
   public void setImprinted(boolean imprint)
   {
-    if (imprint != isFImprint())
+    super.setFImprint(imprint);
+    if (_chpx != null && imprint != isFImprint())
     {
       byte newVal = (byte)(imprint ? 1 : 0);
       _chpx.addSprm(SPRM_FIMPRINT, newVal);
-      super.setFImprint(imprint);
     }
 
   }
@@ -339,39 +337,39 @@ public class CharacterProperties
 
   public void setDoubleStrikethrough(boolean dstrike)
   {
-    if (dstrike != isFDStrike())
+    super.setFDStrike(dstrike);
+    if (_chpx != null && dstrike != isFDStrike())
     {
       byte newVal = (byte)(dstrike ? 1 : 0);
       _chpx.addSprm(SPRM_FDSTRIKE, newVal);
-      super.setFDStrike(dstrike);
     }
   }
 
   public void setFtcAscii(int ftcAscii)
   {
-    if (ftcAscii != getFtcAscii())
+    super.setFtcAscii(ftcAscii);
+    if (_chpx != null && ftcAscii != getFtcAscii())
     {
       _chpx.addSprm(SPRM_RGFTCASCII, (short)ftcAscii);
     }
-    super.setFtcAscii(ftcAscii);
   }
 
   public void setFtcFE(int ftcFE)
   {
-    if (ftcFE != getFtcFE())
+    super.setFtcFE(ftcFE);
+    if (_chpx != null && ftcFE != getFtcFE())
     {
       _chpx.addSprm(SPRM_RGFTCFAREAST, (short)ftcFE);
     }
-    super.setFtcFE(ftcFE);
   }
 
   public void setFtcOther(int ftcOther)
   {
-    if (ftcOther != getFtcOther())
+    super.setFtcOther(ftcOther);
+    if (_chpx != null && ftcOther != getFtcOther())
     {
       _chpx.addSprm(SPRM_RGFTCNOTFAREAST, (short)ftcOther);
     }
-    super.setFtcOther(ftcOther);
   }
 
   public int getFontSize()
@@ -381,10 +379,10 @@ public class CharacterProperties
 
   public void setFontSize(int halfPoints)
   {
-    if (halfPoints != getHps())
+    super.setHps(halfPoints);
+    if (_chpx != null && halfPoints != getHps())
     {
       _chpx.addSprm(SPRM_HPS, (short)halfPoints);
-      super.setHps(halfPoints);
     }
   }
 
@@ -395,10 +393,10 @@ public class CharacterProperties
 
   public void setCharacterSpacing(int twips)
   {
-    if (twips != getDxaSpace())
+     super.setDxaSpace(twips);
+    if (_chpx != null && twips != getDxaSpace())
     {
       _chpx.addSprm(SPRM_DXASPACE, twips);
-      super.setDxaSpace(twips);
     }
   }
 
@@ -409,10 +407,10 @@ public class CharacterProperties
 
   public void setSubSuperScriptIndex(short iss)
   {
-    if (iss != getIss())
+    super.setDxaSpace(iss);
+    if (_chpx != null && iss != getIss())
     {
       _chpx.addSprm(SPRM_DXASPACE, iss);
-      super.setDxaSpace(iss);
     }
 
   }

@@ -147,6 +147,24 @@ public class CHPBinTable
     }
   }
 
+  public void insert(int listIndex, int cpStart, byte[] grpprl)
+  {
+    CHPX insertChpx = new CHPX(cpStart, cpStart, grpprl);
+    CHPX chpx = (CHPX)_textRuns.get(listIndex);
+    if (chpx.getStart() < cpStart)
+    {
+      CHPX clone = new CHPX(cpStart, chpx.getEnd(), chpx.getGrpprl());
+      chpx.setEnd(cpStart);
+
+      _textRuns.add(listIndex + 1, insertChpx);
+      _textRuns.add(listIndex + 2, clone);
+    }
+    else
+    {
+      _textRuns.add(listIndex, insertChpx);
+    }
+  }
+
   public void adjustForInsert(int listIndex, int length)
   {
     int size = _textRuns.size();
