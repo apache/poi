@@ -63,7 +63,6 @@ import java.util.*;
 import java.lang.reflect.Constructor;
 
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.HexDump;
 
 /**
  * Title:  Record Factory<P>
@@ -103,7 +102,7 @@ public class RecordFactory
         WindowTwoRecord.class, SelectionRecord.class, ContinueRecord.class,
         LabelRecord.class, BlankRecord.class, ColumnInfoRecord.class,
         MulRKRecord.class, MulBlankRecord.class, MergeCellsRecord.class,
-        FormulaRecord.class
+        FormulaRecord.class, BoolErrRecord.class
     };
     private static Map           recordsMap  = recordsToMap(records);
 
@@ -221,8 +220,9 @@ public class RecordFactory
         }
         catch (Exception introspectionException)
         {
+            introspectionException.printStackTrace();
             throw new RecordFormatException(
-                "Unable to construct record instance");
+                "Unable to construct record instance, the following exception occured: " + introspectionException.getMessage());
         }
         if (retval instanceof RKRecord)
         {

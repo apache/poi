@@ -1,4 +1,3 @@
-
 /* ====================================================================
  * The Apache Software License, Version 1.1
  *
@@ -56,14 +55,13 @@
 package org.apache.poi.hssf.usermodel;
 
 import junit.framework.TestCase;
-
-import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.record.VCenterRecord;
 import org.apache.poi.hssf.record.WSBoolRecord;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 
 /**
  * Tests HSSFSheet.  This test case is very incomplete at the moment.
@@ -74,7 +72,7 @@ import java.io.FileWriter;
  */
 
 public class TestHSSFSheet
-    extends TestCase
+        extends TestCase
 {
     public TestHSSFSheet(String s)
     {
@@ -86,11 +84,11 @@ public class TestHSSFSheet
      */
 
     public void testBackupRecord()
-        throws Exception
+            throws Exception
     {
-        HSSFWorkbook wb    = new HSSFWorkbook();
-        HSSFSheet    s     = wb.createSheet();
-        Sheet        sheet = s.getSheet();
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet s = wb.createSheet();
+        Sheet sheet = s.getSheet();
 
         assertEquals(true, sheet.getGridsetRecord().getGridset());
         s.setGridsPrinted(true);
@@ -102,13 +100,13 @@ public class TestHSSFSheet
      */
 
     public void testVerticallyCenter()
-        throws Exception
+            throws Exception
     {
-        HSSFWorkbook  wb     = new HSSFWorkbook();
-        HSSFSheet     s      = wb.createSheet();
-        Sheet         sheet  = s.getSheet();
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet s = wb.createSheet();
+        Sheet sheet = s.getSheet();
         VCenterRecord record =
-            ( VCenterRecord ) sheet.findFirstRecordBySid(VCenterRecord.sid);
+                (VCenterRecord) sheet.findFirstRecordBySid(VCenterRecord.sid);
 
         assertEquals(false, record.getVCenter());
         s.setVerticallyCenter(true);
@@ -123,11 +121,11 @@ public class TestHSSFSheet
 
     public void testWSBool()
     {
-        HSSFWorkbook wb     = new HSSFWorkbook();
-        HSSFSheet    s      = wb.createSheet();
-        Sheet        sheet  = s.getSheet();
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet s = wb.createSheet();
+        Sheet sheet = s.getSheet();
         WSBoolRecord record =
-            ( WSBoolRecord ) sheet.findFirstRecordBySid(WSBoolRecord.sid);
+                (WSBoolRecord) sheet.findFirstRecordBySid(WSBoolRecord.sid);
 
         // Check defaults
         assertEquals(true, record.getAlternateExpression());
@@ -166,5 +164,31 @@ public class TestHSSFSheet
         assertEquals(false, s.getFitToPage());
         assertEquals(true, s.getRowSumsBelow());
         assertEquals(true, s.getRowSumsRight());
+    }
+
+    public void testReadBooleans()
+            throws Exception
+    {
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        HSSFSheet sheet = workbook.createSheet("Test boolean");
+        HSSFRow row = sheet.createRow((short) 2);
+        HSSFCell cell = row.createCell((short) 9);
+        cell.setCellValue(true);
+        cell = row.createCell((short) 11);
+        cell.setCellValue(true);
+        File tempFile = File.createTempFile("bool", "test.xls");
+        FileOutputStream stream = new FileOutputStream(tempFile);
+        workbook.write(stream);
+        stream.close();
+
+        FileInputStream readStream = new FileInputStream(tempFile);
+        workbook = new HSSFWorkbook(readStream);
+        sheet = workbook.getSheetAt(0);
+        row = sheet.getRow(2);
+        stream.close();
+        tempFile.delete();
+        assertEquals(2, row.getPhysicalNumberOfCells());
+
+
     }
 }
