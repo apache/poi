@@ -680,9 +680,9 @@ public class Workbook implements Model {
             // System.arraycopy(rec, 0, retval, pos, rec.length);
             Record record = (( Record ) records.get(k));
             // Let's skip RECALCID records, as they are only use for optimization
-            if(record.getSid() != RecalcIdRecord.sid || ((RecalcIdRecord)record).isNeeded()) {
-               pos += record.serialize(pos, retval);   // rec.length;
-            }
+	    if(record.getSid() != RecalcIdRecord.sid || ((RecalcIdRecord)record).isNeeded()) {
+                pos += record.serialize(pos, retval);   // rec.length;
+	    }
         }
         log.log(DEBUG, "Exiting serialize workbook");
         return retval;
@@ -718,7 +718,7 @@ public class Workbook implements Model {
             Record record = (( Record ) records.get(k));
             // Let's skip RECALCID records, as they are only use for optimization
             if(record.getSid() != RecalcIdRecord.sid || ((RecalcIdRecord)record).isNeeded()) {
-               pos += record.serialize(pos + offset, data);   // rec.length;
+		pos += record.serialize(pos + offset, data);   // rec.length;
             }
         }
         log.log(DEBUG, "Exiting serialize workbook");
@@ -732,7 +732,7 @@ public class Workbook implements Model {
             Record record = (( Record ) records.get(k));
             // Let's skip RECALCID records, as they are only use for optimization
             if(record.getSid() != RecalcIdRecord.sid || ((RecalcIdRecord)record).isNeeded()) {
-               retval += record.getRecordSize();
+		retval += record.getRecordSize();
             }
         }
         return retval;
