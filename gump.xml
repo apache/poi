@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<module name="jakarta-poi">
+    <description>POI</description>
+    <url href="http://jakarta.apache.org/poi/">
+    </url>
+    <cvs module="jakarta-poi" repository="jakarta">
+    </cvs>
+    <project name="jakarta-poi">
+        <ant buildfile="build.xml" target="dist">
+        </ant>
+        <package>org.apache.poi</package>
+        <depend project="commons-logging"/>
+        <depend project="commons-beanutils"/>
+        <depend project="commons-collections"/>
+        <depend project="commons-lang"/>
+        <depend project="junit"/>
+        <depend project="xml-xerces"/>
+        <work nested="build/classes"/>
+        <work nested="build/contrib-classes"/>
+        <work nested="build/scratchpad-classes"/>
+        <home nested="build/dist"/>
+        <jar name="build/dist/poi-1.10.0-dev-@@DATE@@.jar"/>
+        <jar name="build/dist/poi-contrib-1.10.0-dev-@@DATE@@.jar"/>
+        <jar name="build/dist/poi-scratchpad-1.10.0-dev-@@DATE@@.jar"/>
+        <javadoc module="jakarta-poi" nested="build/tmp/site/build/site/apidocs"/>
+
+        <nag to="poi-dev@jakarta.apache.org"
+            from="&quot;Gump :-(&quot; &lt;gump@jakarta.apache.org&gt;"/>
+    </project>
+</module>

@@ -48,7 +48,7 @@
   </menu>
   
   <menu label="Code">
-    <menu-item label="Source Code" href="http://jakarta.apache.org/poi/javadocs/javasrc/"/>       
+<!--    <menu-item label="Source Code" href="http://jakarta.apache.org/poi/javadocs/javasrc/"/>       -->
     <menu-item label="CVS" href="http://jakarta.apache.org/site/cvsindex.html"/>  
     <menu-item label="Top Voted Bugs" href="http://nagoya.apache.org/bugzilla/buglist.cgi?votes=1&amp;product=POI&amp;order=bugs.votes"/>  
     <menu-item label="Bug Database" href="http://nagoya.apache.org/bugzilla/buglist.cgi?product=POI"/>  
