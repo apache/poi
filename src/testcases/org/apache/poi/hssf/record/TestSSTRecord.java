@@ -99,14 +99,14 @@ public class TestSSTRecord
     public void testProcessContinueRecord()
             throws IOException
     {
-        byte[] testdata = HexRead.readTestData( _test_file_path + File.separator + "BigSSTRecord" );
+        byte[] testdata = HexRead.readData( _test_file_path + File.separator + "BigSSTRecord" );
         byte[] input = new byte[testdata.length - 4];
 
         System.arraycopy( testdata, 4, input, 0, input.length );
         SSTRecord record =
                 new SSTRecord( LittleEndian.getShort( testdata, 0 ),
                         LittleEndian.getShort( testdata, 2 ), input );
-        byte[] continueRecord = HexRead.readTestData( _test_file_path + File.separator + "BigSSTRecordCR" );
+        byte[] continueRecord = HexRead.readData( _test_file_path + File.separator + "BigSSTRecordCR" );
 
         input = new byte[continueRecord.length - 4];
         System.arraycopy( continueRecord, 4, input, 0, input.length );
@@ -142,42 +142,42 @@ public class TestSSTRecord
         assertEquals( record, testRecord );
 
         // testing based on new bug report
-        testdata = HexRead.readTestData( _test_file_path + File.separator + "BigSSTRecord2" );
+        testdata = HexRead.readData( _test_file_path + File.separator + "BigSSTRecord2" );
         input = new byte[testdata.length - 4];
         System.arraycopy( testdata, 4, input, 0, input.length );
         record = new SSTRecord( LittleEndian.getShort( testdata, 0 ),
                 LittleEndian.getShort( testdata, 2 ), input );
-        byte[] continueRecord1 = HexRead.readTestData( _test_file_path + File.separator + "BigSSTRecord2CR1" );
+        byte[] continueRecord1 = HexRead.readData( _test_file_path + File.separator + "BigSSTRecord2CR1" );
 
         input = new byte[continueRecord1.length - 4];
         System.arraycopy( continueRecord1, 4, input, 0, input.length );
         record.processContinueRecord( input );
-        byte[] continueRecord2 = HexRead.readTestData( _test_file_path + File.separator + "BigSSTRecord2CR2" );
+        byte[] continueRecord2 = HexRead.readData( _test_file_path + File.separator + "BigSSTRecord2CR2" );
 
         input = new byte[continueRecord2.length - 4];
         System.arraycopy( continueRecord2, 4, input, 0, input.length );
         record.processContinueRecord( input );
-        byte[] continueRecord3 = HexRead.readTestData( _test_file_path + File.separator + "BigSSTRecord2CR3" );
+        byte[] continueRecord3 = HexRead.readData( _test_file_path + File.separator + "BigSSTRecord2CR3" );
 
         input = new byte[continueRecord3.length - 4];
         System.arraycopy( continueRecord3, 4, input, 0, input.length );
         record.processContinueRecord( input );
-        byte[] continueRecord4 = HexRead.readTestData( _test_file_path + File.separator + "BigSSTRecord2CR4" );
+        byte[] continueRecord4 = HexRead.readData( _test_file_path + File.separator + "BigSSTRecord2CR4" );
 
         input = new byte[continueRecord4.length - 4];
         System.arraycopy( continueRecord4, 4, input, 0, input.length );
         record.processContinueRecord( input );
-        byte[] continueRecord5 = HexRead.readTestData( _test_file_path + File.separator + "BigSSTRecord2CR5" );
+        byte[] continueRecord5 = HexRead.readData( _test_file_path + File.separator + "BigSSTRecord2CR5" );
 
         input = new byte[continueRecord5.length - 4];
         System.arraycopy( continueRecord5, 4, input, 0, input.length );
         record.processContinueRecord( input );
-        byte[] continueRecord6 = HexRead.readTestData( _test_file_path + File.separator + "BigSSTRecord2CR6" );
+        byte[] continueRecord6 = HexRead.readData( _test_file_path + File.separator + "BigSSTRecord2CR6" );
 
         input = new byte[continueRecord6.length - 4];
         System.arraycopy( continueRecord6, 4, input, 0, input.length );
         record.processContinueRecord( input );
-        byte[] continueRecord7 = HexRead.readTestData( _test_file_path + File.separator + "BigSSTRecord2CR7" );
+        byte[] continueRecord7 = HexRead.readData( _test_file_path + File.separator + "BigSSTRecord2CR7" );
 
         input = new byte[continueRecord7.length - 4];
         System.arraycopy( continueRecord7, 4, input, 0, input.length );
@@ -420,7 +420,7 @@ public class TestSSTRecord
     public void testReaderConstructor()
             throws IOException
     {
-        byte[] testdata = HexRead.readTestData( _test_file_path + File.separator + "BigSSTRecord" );
+        byte[] testdata = HexRead.readData( _test_file_path + File.separator + "BigSSTRecord" );
         byte[] input = new byte[testdata.length - 4];
 
         System.arraycopy( testdata, 4, input, 0, input.length );
@@ -527,14 +527,12 @@ public class TestSSTRecord
     public void testSpanRichTextToPlainText()
             throws Exception
     {
-        byte[] bytes = HexRead.readTestData( _test_file_path + File.separator + "richtextdata.txt" );
+        byte[] bytes = HexRead.readData( _test_file_path + File.separator + "richtextdata.txt", "header" );
         BinaryTree strings = new BinaryTree();
         SSTDeserializer deserializer = new SSTDeserializer( strings );
         deserializer.manufactureStrings( bytes, 0, (short) 45 );
-        byte[] continueBytes = new byte[bytes.length - 45];
-        System.arraycopy( bytes, 45, continueBytes, 0, bytes.length - 45 );
+        byte[] continueBytes = HexRead.readData( _test_file_path + File.separator + "richtextdata.txt", "continue1" );
         deserializer.processContinueRecord( continueBytes );
-//        System.out.println( "strings.getKeyForValue(new Integer(0)) = " + strings.get( new Integer( 0 ) ) );
 
         assertEquals( "At a dinner party orAt At At ", strings.get( new Integer( 0 ) ) + "" );
     }
@@ -542,12 +540,11 @@ public class TestSSTRecord
     public void testContinuationWithNoOverlap()
             throws Exception
     {
-        byte[] bytes = HexRead.readTestData( _test_file_path + File.separator + "evencontinuation.txt" );
+        byte[] bytes = HexRead.readData( _test_file_path + File.separator + "evencontinuation.txt", "header" );
         BinaryTree strings = new BinaryTree();
         SSTDeserializer deserializer = new SSTDeserializer( strings );
         deserializer.manufactureStrings( bytes, 0, (short) 43 );
-        byte[] continueBytes = new byte[bytes.length - 43];
-        System.arraycopy( bytes, 43, continueBytes, 0, bytes.length - 43 );
+        byte[] continueBytes = HexRead.readData( _test_file_path + File.separator + "evencontinuation.txt", "continue1" );
         deserializer.processContinueRecord( continueBytes );
 
         assertEquals( "At a dinner party or", strings.get( new Integer( 0 ) ) + "" );
@@ -558,13 +555,13 @@ public class TestSSTRecord
     public void testStringAcross2Continuations()
             throws Exception
     {
-        byte[] bytes = HexRead.readTestData( _test_file_path + File.separator + "stringacross2continuations.txt" );
+        byte[] bytes = HexRead.readData( _test_file_path + File.separator + "stringacross2continuations.txt", "header" );
         BinaryTree strings = new BinaryTree();
         SSTDeserializer deserializer = new SSTDeserializer( strings );
         deserializer.manufactureStrings( bytes, 0, (short) 43 );
-        bytes = HexRead.readTestData( _test_file_path + File.separator + "stringacross2continuationsCR1.txt" );
+        bytes = HexRead.readData( _test_file_path + File.separator + "stringacross2continuations.txt", "continue1" );
         deserializer.processContinueRecord( bytes );
-        bytes = HexRead.readTestData( _test_file_path + File.separator + "stringacross2continuationsCR2.txt" );
+        bytes = HexRead.readData( _test_file_path + File.separator + "stringacross2continuations.txt", "continue2" );
         deserializer.processContinueRecord( bytes );
 
         assertEquals( "At a dinner party or", strings.get( new Integer( 0 ) ) + "" );
