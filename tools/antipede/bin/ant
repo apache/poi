@@ -85,12 +85,12 @@ if [ -n "$CLASSPATH" ] ; then
 fi
 
 # add in the dependency .jar files
-DIRLIBS=${ANT_HOME}/lib/*.jar
-for i in ${DIRLIBS}
+DIRLIBS="${ANT_HOME}"/lib
+for i in "${DIRLIBS}"/*.jar
 do
     # if the directory is empty, then it will return the input string
     # this is stupid, so case for it
-    if [ "$i" != "${DIRLIBS}" ] ; then
+    if [ "$i" != "${DIRLIBS}/*.jar" ] ; then
       if [ -z "$LOCALCLASSPATH" ] ; then
         LOCALCLASSPATH=$i
       else
@@ -128,11 +128,10 @@ fi
 
 # supply JIKESPATH to Ant as jikes.class.path
 if [ -n "$JIKESPATH" ] ; then
-  if [ -n "$ANT_OPTS" ] ; then
-    ANT_OPTS="$ANT_OPTS -Djikes.class.path=$JIKESPATH"
-  else
-    ANT_OPTS=-Djikes.class.path=$JIKESPATH
+  if $cygwin ; then
+    JIKESPATH=`cygpath --path --windows "$JIKESPATH"`
   fi
+  ANT_OPTS="$ANT_OPTS -Djikes.class.path=$JIKESPATH"
 fi
 
 # For Cygwin, switch paths to Windows format before running java
