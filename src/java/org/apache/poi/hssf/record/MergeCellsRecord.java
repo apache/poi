@@ -326,7 +326,8 @@ public class MergeCellsRecord
     public Object clone() {
         MergeCellsRecord rec = new MergeCellsRecord();
         rec.field_1_num_areas = field_1_num_areas;
-        rec.field_2_regions = field_2_regions;
+        rec.field_2_regions = new ArrayList();
+        rec.field_2_regions.addAll(field_2_regions);
         return rec;
     }
 }
