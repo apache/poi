@@ -216,7 +216,6 @@ extends TestCase {
         fis = new FileInputStream(temp);
         book = new HSSFWorkbook(fis);
         fis.close();
-        temp.delete();
         umSheet = book.getSheetAt(0);
         s = umSheet.getSheet();
         

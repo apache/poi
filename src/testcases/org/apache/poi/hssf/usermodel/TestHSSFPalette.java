@@ -109,7 +109,6 @@ public class TestHSSFPalette extends TestCase
         fis = new FileInputStream(temp);
         book = new HSSFWorkbook(fis);
         fis.close();
-        temp.delete();
         
         palette = book.getCustomPalette();
         HSSFColor color = palette.getColor(HSSFColor.CORAL.index);  //unmodified
