@@ -96,6 +96,20 @@ public class ClassID
 
 
     /**
+     * <p>Sets the bytes making out the class ID.</p>
+     *
+     * @param bytes The bytes making out the class ID in big-endian format. They
+     * are copied without their order being changed.
+     */
+    public void setBytes(final byte[] bytes)
+    {
+        for (int i = 0; i < this.bytes.length; i++)
+            this.bytes[i] = bytes[i];
+    }
+
+
+
+    /**
      * <p>Reads the class ID's value from a byte array by turning
      * little-endian into big-endian.</p>
      *
@@ -134,7 +148,7 @@ public class ClassID
 
     /**
      * <p>Writes the class ID to a byte array in the
-     * little-endian.</p>
+     * little-endian format.</p>
      *
      * @param dst The byte array to write to.
      *

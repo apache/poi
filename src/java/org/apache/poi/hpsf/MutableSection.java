@@ -127,7 +127,13 @@ public class MutableSection extends Section
      */
     public void setFormatID(final byte[] formatID)
     {
-        setFormatID(new ClassID(formatID, 0));
+        ClassID fid = getFormatID();
+        if (fid == null)
+        {
+            fid = new ClassID();
+            setFormatID(fid);
+        }
+        fid.setBytes(formatID);
     }
 
 
