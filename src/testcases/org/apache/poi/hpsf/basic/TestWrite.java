@@ -66,12 +66,14 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Date;
-import java.util.Iterator;
+import java.util.HashMap;
+import java.util.Map;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
 import org.apache.poi.hpsf.HPSFRuntimeException;
+import org.apache.poi.hpsf.IllegalPropertySetDataException;
 import org.apache.poi.hpsf.MutableProperty;
 import org.apache.poi.hpsf.MutablePropertySet;
 import org.apache.poi.hpsf.MutableSection;
@@ -570,7 +572,7 @@ public class TestWrite extends TestCase
                 final InputStream in =
                     new ByteArrayInputStream(psf1[i].getBytes());
                 final PropertySet psIn = PropertySetFactory.create(in);
-                final MutablePropertySet psOut = copy(psIn);
+                final MutablePropertySet psOut = new MutablePropertySet(psIn);
                 final ByteArrayOutputStream psStream =
                     new ByteArrayOutputStream();
                 psOut.write(psStream);
@@ -602,73 +604,132 @@ public class TestWrite extends TestCase
         }
         catch (Exception ex)
         {
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
-            Throwable t = ex;
-            while (t != null)
-            {
-                t.printStackTrace(pw);
-                if (t instanceof HPSFRuntimeException)
-                    t = ((HPSFRuntimeException) t).getReason();
-                else
-                    t = null;
-                if (t != null)
-                    pw.println("Caused by:");
-            }
-            pw.close();
-            try
-            {
-                sw.close();
-            }
-            catch (IOException ex2)
-            {
-                ex.printStackTrace();
-            }
-            String msg = sw.toString();
-            fail(msg);
+            handle(ex);
         }
     }
 
 
 
     /**
-     * <p>Creates a copy of a {@link PropertySet}.</p>
-     *
-     * @param ps the property set to copy
-     * @return the copy
+     * <p>Tests writing and reading back a proper dictionary.</p>
      */
-    private MutablePropertySet copy(final PropertySet ps)
+    public void testDictionary()
     {
-        MutablePropertySet copy = new MutablePropertySet();
-        copy.setByteOrder(ps.getByteOrder());
-        copy.setClassID(ps.getClassID());
-        copy.setFormat(ps.getFormat());
-        copy.setOSVersion(ps.getOSVersion());
-        copy.clearSections();
-
-        /* Copy the sections. */
-        for (final Iterator i1 = ps.getSections().iterator(); i1.hasNext();)
+        try
         {
-            final Section s1 = (Section) i1.next();
-            final MutableSection s2 = new MutableSection();
-            s2.setFormatID(s1.getFormatID());
+            final File copy = File.createTempFile("Test-HPSF", "ole2");
+            copy.deleteOnExit();
 
-            /* Copy the properties. */
-            final Property[] pa = s1.getProperties();
-            for (int i2 = 0; i2 < pa.length; i2++)
-            {
-                final Property p1 = pa[i2];
-                final MutableProperty p2 = new MutableProperty();
-                p2.setID(p1.getID());
-                p2.setType(p1.getType());
-                p2.setValue(p1.getValue());
-                s2.setProperty(p2);
-            }
-            copy.addSection(s2);
+            /* Write: */
+            final OutputStream out = new FileOutputStream(copy);
+            final POIFSFileSystem poiFs = new POIFSFileSystem();
+            final MutablePropertySet ps1 = new MutablePropertySet();
+            final MutableSection s = (MutableSection) ps1.getSections().get(0);
+            final Map m = new HashMap(3, 1.0f);
+            m.put(new Long(1), "String 1");
+            m.put(new Long(2), "String 2");
+            m.put(new Long(3), "String 3");
+            s.setDictionary(m);
+            s.setFormatID(SectionIDMap.DOCUMENT_SUMMARY_INFORMATION_ID);
+            int codepage = Property.CP_UNICODE;
+            s.setProperty(PropertyIDMap.PID_CODEPAGE, Variant.VT_I2,
+                          new Integer(codepage));
+            poiFs.createDocument(ps1.toInputStream(), "Test");
+            poiFs.writeFilesystem(out);
+            out.close();
+
+            /* Read back: */
+            final POIFile[] psf = Util.readPropertySets(copy);
+            Assert.assertEquals(1, psf.length);
+            final byte[] bytes = psf[0].getBytes();
+            final InputStream in = new ByteArrayInputStream(bytes);
+            final PropertySet ps2 = PropertySetFactory.create(in);
+
+            /* Compare the property set stream with the corresponding one
+             * from the origin file and check whether they are equal. */
+            assertEquals(ps1, ps2);
         }
-        return copy;
+        catch (Exception ex)
+        {
+            handle(ex);
+        }
     }
 
+
+
+    /**
+     * <p>Tests writing and reading back a proper dictionary with an invalid
+     * codepage. (HPSF writes Unicode dictionaries only.)</p>
+     */
+    public void testDictionaryWithInvalidCodepage()
+    {
+        try
+        {
+            final File copy = File.createTempFile("Test-HPSF", "ole2");
+            copy.deleteOnExit();
+
+            /* Write: */
+            final OutputStream out = new FileOutputStream(copy);
+            final POIFSFileSystem poiFs = new POIFSFileSystem();
+            final MutablePropertySet ps1 = new MutablePropertySet();
+            final MutableSection s = (MutableSection) ps1.getSections().get(0);
+            final Map m = new HashMap(3, 1.0f);
+            m.put(new Long(1), "String 1");
+            m.put(new Long(2), "String 2");
+            m.put(new Long(3), "String 3");
+            s.setDictionary(m);
+            s.setFormatID(SectionIDMap.DOCUMENT_SUMMARY_INFORMATION_ID);
+            int codepage = 12345;
+            s.setProperty(PropertyIDMap.PID_CODEPAGE, Variant.VT_I2,
+                          new Integer(codepage));
+            poiFs.createDocument(ps1.toInputStream(), "Test");
+            poiFs.writeFilesystem(out);
+            out.close();
+            fail("This testcase did not detect the invalid codepage value.");
+        }
+        catch (IllegalPropertySetDataException ex)
+        {
+            assertTrue(true);
+        }
+        catch (Exception ex)
+        {
+            handle(ex);
+        }
+    }
+
+
+
+    /**
+     * <p>Handles unexpected exceptions in testcases.</p>
+     *
+     * @param ex The exception that has been thrown.
+     */
+    private void handle(final Exception ex)
+    {
+        final StringWriter sw = new StringWriter();
+        final PrintWriter pw = new PrintWriter(sw);
+        Throwable t = ex;
+        while (t != null)
+        {
+            t.printStackTrace(pw);
+            if (t instanceof HPSFRuntimeException)
+                t = ((HPSFRuntimeException) t).getReason();
+            else
+                t = null;
+            if (t != null)
+                pw.println("Caused by:");
+        }
+        pw.close();
+        try
+        {
+            sw.close();
+        }
+        catch (IOException ex2)
+        {
+            ex.printStackTrace();
+        }
+        fail(sw.toString());
+    }
 
 
     /**

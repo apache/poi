@@ -66,7 +66,7 @@ package org.apache.poi.hpsf;
  * @version $Id$
  * @since 2002-05-26
  */
-public class  IllegalPropertySetDataException extends HPSFRuntimeException
+public class IllegalPropertySetDataException extends HPSFRuntimeException
 {
 
     /**

@@ -93,8 +93,7 @@ public class Section
      * section. For example, if the format ID of the first {@link
      * Section} contains the bytes specified by
      * <code>org.apache.poi.hpsf.wellknown.SectionIDMap.SUMMARY_INFORMATION_ID</code>
-     * the section (and thus the property set) is a
-     * SummaryInformation.</p>
+     * the section (and thus the property set) is a SummaryInformation.</p>
      *
      * @return The format ID
      */
@@ -552,6 +551,23 @@ public class Section
         b.append(']');
         b.append(']');
         return b.toString();
+    }
+
+
+
+    /**
+     * <p>Gets the section's dictionary. A dictionary allows an application to
+     * use human-readable property names instead of numeric property IDs. It
+     * contains mappings from property IDs to their associated string
+     * values. The dictionary is stored as the property with ID 0. The codepage
+     * for the strings in the dictionary is defined by property with ID 1.</p>
+     *
+     * @return the dictionary or <code>null</code> if the section does not have
+     * a dictionary.
+     */
+    public Map getDictionary()
+    {
+        return dictionary;
     }
 
 }

@@ -60,7 +60,9 @@ import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.poi.hpsf.wellknown.PropertyIDMap;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -129,7 +131,7 @@ public class MutableSection extends Section
         for (int i = 0; i < pa.length; i++)
             mpa[i] = new MutableProperty(pa[i]);
         setProperties(mpa);
-        dictionary = s.dictionary;
+        setDictionary(s.getDictionary());
     }
 
 
@@ -247,13 +249,27 @@ public class MutableSection extends Section
     public void setProperty(final Property p)
     {
         final long id = p.getID();
+        removeProperty(id);
+        preprops.add(p);
+        dirty = true;
+        propertyCount = preprops.size();
+    }
+
+
+
+    /**
+     * <p>Removes a property.</p>
+     *
+     * @param id The ID of the property to be removed
+     */
+    public void removeProperty(final long id)
+    {
         for (final Iterator i = preprops.iterator(); i.hasNext();)
             if (((Property) i.next()).getID() == id)
             {
                 i.remove();
                 break;
             }
-        preprops.add(p);
         dirty = true;
         propertyCount = preprops.size();
     }
@@ -291,6 +307,10 @@ public class MutableSection extends Section
             {
                 size = calcSize();
                 dirty = false;
+            }
+            catch (HPSFRuntimeException ex)
+            {
+                throw ex;
             }
             catch (Exception ex)
             {
@@ -365,19 +385,55 @@ public class MutableSection extends Section
         position += 2 * LittleEndian.INT_SIZE +
                     getPropertyCount() * 2 * LittleEndian.INT_SIZE;
 
+        /* Writing the section's dictionary it tricky. If there is a dictionary
+         * (property 0) the codepage property (property 1) has to be set, too.
+         * Since HPSF supports Unicode only, the codepage must be 1200. */
+        if (getProperty(PropertyIDMap.PID_DICTIONARY) != null)
+        {
+            final Object p1 = getProperty(PropertyIDMap.PID_CODEPAGE);
+            if (p1 != null)
+            {
+                if (!(p1 instanceof Integer))
+                    throw new IllegalPropertySetDataException
+                        ("The codepage property (ID = 1) must be an " +
+                         "Integer object.");
+                else if (((Integer) p1).intValue() != Property.CP_UNICODE)
+                    throw new IllegalPropertySetDataException
+                        ("The codepage property (ID = 1) must be " +
+                         "1200 (Unicode).");
+            }
+            else
+                throw new IllegalPropertySetDataException
+                    ("The codepage property (ID = 1) must be set.");
+        }
+
         /* Write the properties and the property list into their respective
          * streams: */
         for (final Iterator i = preprops.iterator(); i.hasNext();)
         {
             final MutableProperty p = (MutableProperty) i.next();
+            final long id = p.getID();
             
             /* Write the property list entry. */
             TypeWriter.writeUIntToStream(propertyListStream, p.getID());
             TypeWriter.writeUIntToStream(propertyListStream, position);
-            
-            /* Write the property and update the position to the next
-             * property. */
-            position += p.write(propertyStream);
+
+            /* If the property ID is not equal 0 we write the property and all
+             * is fine. However, if it equals 0 we have to write the section's
+             * dictionary which does not have a type but just a value. */
+            if (id != 0)
+                /* Write the property and update the position to the next
+                 * property. */
+                position += p.write(propertyStream);
+            else
+            {
+                final Integer codepage =
+                    (Integer) getProperty(PropertyIDMap.PID_CODEPAGE);
+                if (codepage == null)
+                    throw new IllegalPropertySetDataException
+                        ("Codepage (property 1) is undefined.");
+                position += writeDictionary(propertyStream, dictionary);
+            }
         }
         propertyStream.close();
         propertyListStream.close();
@@ -406,6 +462,52 @@ public class MutableSection extends Section
 
 
     /**
+     * <p>Writes the section's dictionary.</p>
+     *
+     * @param out The output stream to write to.
+     * @param dictionary The dictionary.
+     * @return The number of bytes written
+     * @exception IOException if an I/O exception occurs.
+     */
+    private static int writeDictionary(final OutputStream out,
+                                       final Map dictionary)
+        throws IOException
+    {
+        int length = 0;
+        length += TypeWriter.writeUIntToStream(out, dictionary.size());
+        for (final Iterator i = dictionary.keySet().iterator(); i.hasNext();)
+        {
+            final Long key = (Long) i.next();
+            final String value = (String) dictionary.get(key);
+            int sLength = value.length() + 1;
+            if (sLength % 2 == 1)
+                sLength++;
+            length += TypeWriter.writeUIntToStream(out, key.longValue());
+            length += TypeWriter.writeUIntToStream(out, sLength);
+            final char[] ca = value.toCharArray();
+            for (int j = 0; j < ca.length; j++)
+            {
+                int high = (ca[j] & 0x0ff00) >> 8;
+                int low  = (ca[j] & 0x000ff);
+                out.write(low);
+                out.write(high);
+                length += 2;
+                sLength--;
+            }
+            while (sLength > 0)
+            {
+                out.write(0x00);
+                out.write(0x00);
+                length += 2;
+                sLength--;
+            }
+        }
+        return length;
+    }
+
+
+
+    /**
      * <p>Overwrites the super class' method to cope with a redundancy:
      * the property count is maintained in a separate member variable, but
      * shouldn't.</p>
@@ -426,7 +528,77 @@ public class MutableSection extends Section
      */
     public Property[] getProperties()
     {
-        return (Property[]) preprops.toArray(new Property[0]);
+        properties = (Property[]) preprops.toArray(new Property[0]);
+        return properties;
+    }
+
+
+
+    /**
+     * <p>Gets a property.</p>
+     * 
+     * <p><strong>FIXME (2):</strong> This method ensures that properties and
+     * preprops are in sync. Cleanup this awful stuff!</p>
+     * 
+     * @param id The ID of the property to get
+     * @return The property or <code>null</code> if there is no such property
+     */
+    public Object getProperty(final long id)
+    {
+        getProperties();
+        return super.getProperty(id);
+    }
+
+
+
+    /**
+     * <p>Sets the section's dictionary. All keys in the dictionary must be
+     * {@see java.lang.Long} instances, all values must be
+     * {@see java.lang.String}s. This method overwrites the properties with IDs
+     * 0 and 1 since they are reserved for the dictionary and the dictionary's
+     * codepage. Setting these properties explicitly might have surprising
+     * effects. An application should never do this but always use this
+     * method.</p>
+     *
+     * @param dictionary The dictionary
+     * 
+     * @exception IllegalPropertySetDataException if the dictionary's key and
+     * value types are not correct.
+     * 
+     * @see Section#getDictionary()
+     */
+    public void setDictionary(final Map dictionary)
+        throws IllegalPropertySetDataException
+    {
+        if (dictionary != null)
+        {
+            for (final Iterator i = dictionary.keySet().iterator();
+                 i.hasNext();)
+                if (!(i.next() instanceof Long))
+                    throw new IllegalPropertySetDataException
+                        ("Dictionary keys must be of type Long.");
+            for (final Iterator i = dictionary.values().iterator();
+                 i.hasNext();)
+                if (!(i.next() instanceof String))
+                    throw new IllegalPropertySetDataException
+                        ("Dictionary values must be of type String.");
+            this.dictionary = dictionary;
+
+            /* Set the dictionary property (ID 0). Please note that the second
+             * parameter in the method call below is unused because dictionaries
+             * don't have a type. */
+            setProperty(PropertyIDMap.PID_DICTIONARY, -1, dictionary);
+
+            /* Set the codepage property (ID 1) for the strings used in the 
+             * dictionary. HPSF always writes Unicode strings to the
+             * dictionary. */
+            setProperty(PropertyIDMap.PID_CODEPAGE, Variant.VT_I2,
+                        new Integer(Property.CP_UNICODE));
+        }
+        else
+            /* Setting the dictionary to null means to remove property 0.
+             * However, it does not mean to remove property 1 (codepage). */
+            removeProperty(PropertyIDMap.PID_DICTIONARY);
     }
 
 }

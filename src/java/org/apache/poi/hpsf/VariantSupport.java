@@ -252,7 +252,7 @@ public class VariantSupport extends Variant
                     final int i1 = o1 + (i * 2);
                     final int i2 = i1 + 1;
                     final int high = src[i2] << 8;
-                    final int low = src[i1] & 0xff;
+                    final int low = src[i1] & 0x00ff;
                     final char c = (char) (high | low);
                     b.append(c);
                 }
@@ -352,8 +352,8 @@ public class VariantSupport extends Variant
                 char[] s = Util.pad4((String) value);
                 for (int i = 0; i < s.length; i++)
                 {
-                    final int high = (int) ((s[i] & 0xff00) >> 8);
-                    final int low = (int) (s[i] & 0x00ff);
+                    final int high = (int) ((s[i] & 0x0000ff00) >> 8);
+                    final int low = (int) (s[i] & 0x000000ff);
                     final byte highb = (byte) high;
                     final byte lowb = (byte) low;
                     out.write(lowb);
@@ -386,13 +386,14 @@ public class VariantSupport extends Variant
             }
             case Variant.VT_I4:
             {
-                length += TypeWriter.writeToStream(out, ((Long) value).intValue());
+                length += TypeWriter.writeToStream(out, 
+                          ((Long) value).intValue());
                 break;
             }
             case Variant.VT_FILETIME:
             {
                 long filetime = Util.dateToFileTime((Date) value);
-                int high = (int) ((filetime >> 32) & 0xFFFFFFFFL);
+                int high = (int) ((filetime >> 32) & 0x00000000FFFFFFFFL);
                 int low = (int) (filetime & 0x00000000FFFFFFFFL);
                 length += TypeWriter.writeUIntToStream
                     (out, 0x0000000FFFFFFFFL & low);

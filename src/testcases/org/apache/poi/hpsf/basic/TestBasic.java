@@ -65,7 +65,6 @@ import java.util.List;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
-import org.apache.poi.hpsf.ClassID;
 import org.apache.poi.hpsf.DocumentSummaryInformation;
 import org.apache.poi.hpsf.HPSFException;
 import org.apache.poi.hpsf.MarkUnsupportedException;
@@ -288,7 +287,7 @@ public class TestBasic extends TestCase
                 {
                     final InputStream in =
                         new ByteArrayInputStream(psf1[j].getBytes());
-                    final PropertySet psIn = PropertySetFactory.create(in);
+                    PropertySetFactory.create(in);
                 }
             }
         }
