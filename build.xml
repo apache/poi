@@ -34,21 +34,42 @@
   <!-- Interactive build                                                   -->
   <!-- =================================================================== -->
   <target name="interactive" description="Interactive Build" depends="-init">          
+    <echo> 
+    --------------------------------------------------------------
 
+          ${xgump.module.project.name} ${xgump.module.project.version.major}.${xgump.module.project.version.minor}   [${YEAR}]
 
-    <antcall target="call-cent">
-      <param name="cent-name"   value="centipede"/> 
-      <param name="cent-target" value="menu"/> 
-      <param name="definition"  value="targets/"/> 
-    </antcall>
+    --------------------------------------------------------------
+     Using ${ant.version}
+     Build file ${ant.file}
+    --------------------------------------------------------------   
+     These are the most common build targets.   
+     You can also invoke them directly; see build.xml for more info. 
+     Builds will be in /build directory, distributions in /dist.        
+        
+     all -------------- creates the jars and the site      
+     compile ---------- compiles the source code      
+     test ------------- performs the jUnit tests       
+     jar -------------- create the jar files
+     docs ------------- generates the html docs - clean not needed        
+     javadocs --------- generates the API documentation   
+     site ------------- generates the html site (docs+reports)    
+     clean ------------ cleans the build directory    
+     dist ------------- creates src and bin distributions    
+     scratchpad ------- build-run scratchpad code       
+     contrib ---------- build-run contributed code    
+     generate-records - generate excel records    
+     generate-types --- generate word types    
+
+    </echo>
+    <property name="input.selection" value="all"/>        
+    <centipede-user-input name="input.selection">Please select a target </centipede-user-input>   
     
     <antcall target="call-cent">
       <param name="cent-name"   value="centipede"/> 
       <param name="cent-target" value="splash"/> 
     </antcall>
  
-     <echo message="IS::::::::${input.selection}::::"/> 
-     
     <antcall target="${input.selection}"/>
     
   </target>
