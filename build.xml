@@ -340,14 +340,8 @@
   <!-- ================================== -->
   
   <target  name="gump"   
-           depends="testmodule"
-           description="Target used by Gump">
-           
-      <antcall target="testtargets"/>
-      <antcall target="testmodule"/>
-      <antcall target="all"/>
-      
-  </target>
+           depends="-init, compile, test, jar, metrics, javadocs"
+           description="Target used by Gump"/>
 
   <!-- ================================== -->
   <!--        Generate all                -->
