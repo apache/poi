@@ -119,7 +119,7 @@ public class HDFObjectFactory
     private void initTableStream() throws IOException
     {
         String tablename = null;
-        if(_fib.useTable1())
+        if(_fib.isTabletype())
         {
             tablename="1Table";
         }
@@ -143,7 +143,7 @@ public class HDFObjectFactory
      */
     private void initTextPieces() throws IOException
     {
-        int pos = _fib.getComplexOffset();
+        int pos = _fib.getTextPieceTableOffset();
 
         //skips through the prms before we reach the piece table. These contain data
         //for actual fast saved files
@@ -207,8 +207,8 @@ public class HDFObjectFactory
      */
     private void initCharacterProperties()
     {
-        int charOffset = _fib.getChpBinTableOffset();
-        int charPlcSize = _fib.getChpBinTableSize();
+        int charOffset = _fib.getChp_bin_table_offset();
+        int charPlcSize = _fib.getChp_bin_table_size();
 
         int arraySize = (charPlcSize - 4)/8;
 
@@ -256,8 +256,8 @@ public class HDFObjectFactory
     private void initParagraphProperties()
     {
         //find paragraphs
-        int parOffset = _fib.getPapBinTableOffset();
-        int parPlcSize = _fib.getPapBinTableSize();
+        int parOffset = _fib.getPap_bin_table_offset();
+        int parPlcSize = _fib.getPap_bin_table_size();
 
         int arraySize = (parPlcSize - 4)/8;
         //first we must go through the bin table and find the fkps
@@ -301,9 +301,9 @@ public class HDFObjectFactory
     private void initSectionProperties()
     {
       //find sections
-      int fcMin = _fib.getFirstCharOffset();
-      int plcfsedFC = _fib.getSectionDescriptorOffset();
-      int plcfsedSize = _fib.getSectionDescriptorSize();
+      int fcMin = _fib.getOffsetFirstChar();
+      int plcfsedFC = _fib.getSectionPlcOffset();
+      int plcfsedSize = _fib.getSectionPlcSize();
       byte[] plcfsed = new byte[plcfsedSize];
       System.arraycopy(_tableBuffer, plcfsedFC, plcfsed, 0, plcfsedSize);
 
@@ -339,8 +339,8 @@ public class HDFObjectFactory
      */
     private void createStyleSheet()
     {
-      int stshIndex = _fib.getStshOffset();
-      int stshSize = _fib.getStshSize();
+      int stshIndex = _fib.getStylesheetOffset();
+      int stshSize = _fib.getStylesheetSize();
       byte[] stsh = new byte[stshSize];
       System.arraycopy(_tableBuffer, stshIndex, stsh, 0, stshSize);
 
@@ -351,13 +351,13 @@ public class HDFObjectFactory
      */
     private void createListTables()
     {
-        int lfoOffset = _fib.getLFOOffset();
-        int lfoSize = _fib.getLFOSize();
+        int lfoOffset = _fib.getFcPlfLfo();
+        int lfoSize = _fib.getLcbPlfLfo();
         byte[] plflfo = new byte[lfoSize];
 
         System.arraycopy(_tableBuffer, lfoOffset, plflfo, 0, lfoSize);
 
-        int lstOffset = _fib.getLSTOffset();
+        int lstOffset = _fib.getFcPlcfLst();
         int lstSize = lstOffset;
         //not sure if this is a mistake or what. I vaguely remember a trick like
         //this
@@ -375,8 +375,8 @@ public class HDFObjectFactory
      */
     private void createFontTable()
     {
-        int fontTableIndex = _fib.getFontsOffset();
-        int fontTableSize = _fib.getFontsSize();
+        int fontTableIndex = _fib.getFonts_bin_table_offset();
+        int fontTableSize = _fib.getFonts_bin_table_size();
         byte[] fontTable = new byte[fontTableSize];
         System.arraycopy(_tableBuffer, fontTableIndex, fontTable, 0, fontTableSize);
         _fonts = new FontTable(fontTable);
