@@ -93,7 +93,6 @@ public class RecordGenerator
                 )
                )
             {
-                System.out.println(file.getAbsolutePath());
                 // Get record name and package
                 DocumentBuilderFactory factory =
                         DocumentBuilderFactory.newInstance();
@@ -101,10 +100,7 @@ public class RecordGenerator
                 Document document = builder.parse(file);
                 Element record = document.getDocumentElement();
                 String extendstg = record.getElementsByTagName("extends").item(0).getFirstChild().getNodeValue();
-                System.out.println("extends" + record.getElementsByTagName("extends").getLength());
-                System.out.println("extends" + record.getElementsByTagName("extends").item(0).toString());
                 String suffix = record.getElementsByTagName("suffix").item(0).getFirstChild().getNodeValue();
-                System.out.println("suffix" + record.getElementsByTagName("suffix").getLength());
                 String recordName = record.getAttributes().getNamedItem("name").getNodeValue();
                 String packageName = record.getAttributes().getNamedItem("package").getNodeValue();
                 packageName = packageName.replace('.','/');
@@ -117,8 +113,9 @@ public class RecordGenerator
                 String args[] = new String [] { "-in", file.getAbsolutePath(), "-xsl", recordStyleDir + "/" + extendstg.toLowerCase() + ".xsl",
                                                 "-out", destinationFilepath,
                                                 "-TEXT"};
+
                 org.apache.xalan.xslt.Process.main( args );
-                System.out.println("Generated record: " + destinationFilepath);
+                System.out.println("Generated "+suffix+": " + destinationFilepath);
 
                 // Generate test (if not already generated)
                 destinationPath = testSrcPathDir + "/" + packageName ;
