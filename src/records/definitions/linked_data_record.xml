@@ -7,7 +7,7 @@
         <field type="int" size="1" name="link type" description="What type of link is this?">
             <const name="title or text" value="0" description="links a series title or text"/>
             <const name="values" value="1" description="links to series values"/>
-            <const name="categories" value="1" description="links to categories"/>
+            <const name="categories" value="2" description="links to categories"/>
         </field>
         <field type="int" size="1" name="reference type">
             <const name="default categories" value="0" description="use default categories"/>

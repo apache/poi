@@ -149,7 +149,7 @@ public class ProtectRecord
         StringBuffer buffer = new StringBuffer();
 
         buffer.append("[PROTECT]\n");
-        buffer.append("    .rowheight      = ")
+        buffer.append("    .protected      = ")
             .append(Integer.toHexString(getProtect())).append("\n");
         buffer.append("[/PROTECT]\n");
         return buffer.toString();

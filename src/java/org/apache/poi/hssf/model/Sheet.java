@@ -194,7 +194,7 @@ public class Sheet implements Model
                 {
                     retval.columnSizes = new ArrayList();
                 }
-                retval.columnSizes.add(( ColumnInfoRecord ) rec);
+                retval.columnSizes.add(rec);
             }
             else if (rec.getSid() == DefaultColWidthRecord.sid)
             {
@@ -2024,6 +2024,29 @@ public class Sheet implements Model
     }
 
     /**
+     * Finds the first occurance of a record matching a particular sid and
+     * returns it's position.
+     * @param sid   the sid to search for
+     * @return  the record position of the matching record or -1 if no match
+     *          is made.
+     */
+    public int findFirstRecordLocBySid( short sid )
+    {
+        int index = 0;
+        for (Iterator iterator = records.iterator(); iterator.hasNext(); )
+        {
+            Record record = ( Record ) iterator.next();
+
+            if (record.getSid() == sid)
+            {
+                return index;
+            }
+            index++;
+        }
+        return -1;
+    }
+
+    /**
      * Returns the HeaderRecord.
      * @return HeaderRecord for the sheet.
      */
@@ -2149,28 +2172,28 @@ public class Sheet implements Model
            m = (Margin)findFirstRecordBySid(LeftMarginRecord.sid);
            if (m == null) {
                m = new LeftMarginRecord();
-               records.add(getDimsLoc() + 1, (Record)m);
+               records.add(getDimsLoc() + 1, m);
            }
            break;
        case RightMargin :
            m = (Margin)findFirstRecordBySid(RightMarginRecord.sid);
            if (m == null) {
                m = new RightMarginRecord();
-               records.add(getDimsLoc() + 1, (Record)m);
+               records.add(getDimsLoc() + 1, m);
            }
            break;
        case TopMargin :
            m = (Margin)findFirstRecordBySid(TopMarginRecord.sid);
            if (m == null) {
                m = new TopMarginRecord();
-               records.add(getDimsLoc() + 1, (Record)m);
+               records.add(getDimsLoc() + 1, m);
            }
            break;
        case BottomMargin :
            m = (Margin)findFirstRecordBySid(BottomMarginRecord.sid);
            if (m == null) {
                m = new BottomMarginRecord();
-               records.add(getDimsLoc() + 1, (Record)m);
+               records.add(getDimsLoc() + 1, m);
            }
            break;
        default : throw new RuntimeException("Unknown margin constant:  " + margin);

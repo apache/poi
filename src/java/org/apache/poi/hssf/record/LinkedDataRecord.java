@@ -74,7 +74,7 @@ public class LinkedDataRecord
     private  byte       field_1_linkType;
     public final static byte        LINK_TYPE_TITLE_OR_TEXT        = 0;
     public final static byte        LINK_TYPE_VALUES               = 1;
-    public final static byte        LINK_TYPE_CATEGORIES           = 1;
+    public final static byte        LINK_TYPE_CATEGORIES           = 2;
     private  byte       field_2_referenceType;
     public final static byte        REFERENCE_TYPE_DEFAULT_CATEGORIES = 0;
     public final static byte        REFERENCE_TYPE_DIRECT          = 1;

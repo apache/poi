@@ -61,7 +61,6 @@ package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.hssf.eventmodel.EventRecordFactory;
-import org.apache.poi.hssf.eventmodel.ModelFactory;
 import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.*;
@@ -754,7 +753,7 @@ public class HSSFWorkbook
 
    private boolean isInList(String entry, List list) {
        for (int k = 0; k < list.size(); k++) {
-          if (((String)list.get(k)).equals(entry)) {
+          if (list.get(k).equals(entry)) {
             return true;
           }
        }
@@ -780,5 +779,32 @@ public class HSSFWorkbook
          dstream.close();
        }
    }
+
+    public void insertChartRecord()
+    {
+        int loc = workbook.findFirstRecordLocBySid(SSTRecord.sid);
+        byte[] data = {
+           (byte)0x0F, (byte)0x00, (byte)0x00, (byte)0xF0, (byte)0x52,
+           (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00,
+           (byte)0x06, (byte)0xF0, (byte)0x18, (byte)0x00, (byte)0x00,
+           (byte)0x00, (byte)0x01, (byte)0x08, (byte)0x00, (byte)0x00,
+           (byte)0x02, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x02,
+           (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x01, (byte)0x00,
+           (byte)0x00, (byte)0x00, (byte)0x01, (byte)0x00, (byte)0x00,
+           (byte)0x00, (byte)0x03, (byte)0x00, (byte)0x00, (byte)0x00,
+           (byte)0x33, (byte)0x00, (byte)0x0B, (byte)0xF0, (byte)0x12,
+           (byte)0x00, (byte)0x00, (byte)0x00, (byte)0xBF, (byte)0x00,
+           (byte)0x08, (byte)0x00, (byte)0x08, (byte)0x00, (byte)0x81,
+           (byte)0x01, (byte)0x09, (byte)0x00, (byte)0x00, (byte)0x08,
+           (byte)0xC0, (byte)0x01, (byte)0x40, (byte)0x00, (byte)0x00,
+           (byte)0x08, (byte)0x40, (byte)0x00, (byte)0x1E, (byte)0xF1,
+           (byte)0x10, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x0D,
+           (byte)0x00, (byte)0x00, (byte)0x08, (byte)0x0C, (byte)0x00,
+           (byte)0x00, (byte)0x08, (byte)0x17, (byte)0x00, (byte)0x00,
+           (byte)0x08, (byte)0xF7, (byte)0x00, (byte)0x00, (byte)0x10,
+        };
+        UnknownRecord r = new UnknownRecord((short)0x00EB,(short)0x005a, data);
+        workbook.getRecords().add(loc, r);
+    }
 
 }

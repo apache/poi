@@ -12,8 +12,8 @@
         <section title="Introduction">
             <p>
                 This document is intended as a work in progress for describing
-                our current understanding of how the chart records are
-                are written to produce a valid chart.
+                our current understanding of how the chart records are are
+                written to produce a valid chart.
             </p>
         </section>
         <section title="Bar chart">
@@ -1286,6 +1286,60 @@
     recordid = 0x1034, size =0
     [END]
     [/END]
+
+    ============================================
+    rectype = 0x200, recsize = 0xe
+    -BEGIN DUMP---------------------------------
+    00000000 00 00 00 00 1F 00 00 00 00 00 01 00 00 00       ..............
+    -END DUMP-----------------------------------
+    recordid = 0x200, size =14
+    [DIMENSIONS]
+        .firstrow       = 0
+        .lastrow        = 1f
+        .firstcol       = 0
+        .lastcol        = 1
+        .zero           = 0
+    [/DIMENSIONS]
+
+    ============================================
+    rectype = 0x1065, recsize = 0x2
+    -BEGIN DUMP---------------------------------
+    00000000 02 00                                           ..
+    -END DUMP-----------------------------------
+    recordid = 0x1065, size =2
+    [SINDEX]
+        .index                = 0x0002 (2 )
+    [/SINDEX]
+
+    ============================================
+    rectype = 0x1065, recsize = 0x2
+    -BEGIN DUMP---------------------------------
+    00000000 01 00                                           ..
+    -END DUMP-----------------------------------
+    recordid = 0x1065, size =2
+    [SINDEX]
+        .index                = 0x0001 (1 )
+    [/SINDEX]
+
+    ============================================
+    rectype = 0x1065, recsize = 0x2
+    -BEGIN DUMP---------------------------------
+    00000000 03 00                                           ..
+    -END DUMP-----------------------------------
+    recordid = 0x1065, size =2
+    [SINDEX]
+        .index                = 0x0003 (3 )
+    [/SINDEX]
+
+    ============================================
+    rectype = 0xa, recsize = 0x0
+    -BEGIN DUMP---------------------------------
+    **NO RECORD DATA**
+    -END DUMP-----------------------------------
+    recordid = 0xa, size =0
+    [EOF]
+    [/EOF]
+
 
             </source>
             <p>
