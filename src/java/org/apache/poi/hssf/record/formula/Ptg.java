@@ -363,6 +363,14 @@ public abstract class Ptg
         return retval;
     }
     
+    /** Overridden toString method to ensure object hash is not printed.
+     * This helps get rid of gratuitous diffs when comparing two dumps
+     * Subclasses may output more relevant information by overriding this method
+     **/
+    public String toString(){
+        return this.getClass().toString();
+    }
+    
     public static final byte CLASS_REF = 0x00;
     public static final byte CLASS_VALUE = 0x20;
     public static final byte CLASS_ARRAY = 0x40;
