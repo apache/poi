@@ -71,7 +71,7 @@ import org.apache.commons.lang.exception.NestableException;
  *  Various utility functions that make working with a region of cells easier.
  *
  *@author     Eric Pugh epugh@upstate.com
- *@created    July 29, 2002
+ *@since      July 29, 2002
  */
 
 public class HSSFRegionUtil {

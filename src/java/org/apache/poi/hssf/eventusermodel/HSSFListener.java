@@ -62,8 +62,8 @@ import org.apache.poi.hssf.record.Record;
  * a listener supporting this interface and register it with the HSSFRequest (associating
  * it with Record SID's).
  *
- * @see org.apache.poi.hssf.eventmodel.HSSFEventFactory
- * @see org.apache.poi.hssf.eventmodel.HSSFRequest
+ * @see org.apache.poi.hssf.eventusermodel.HSSFEventFactory
+ * @see org.apache.poi.hssf.eventusermodel.HSSFRequest
  * @author  acoliver@apache.org
  */
 

@@ -71,7 +71,7 @@ import org.apache.poi.hssf.util.HSSFColor;
  * nearly completely consists of overridden methods.
  *
  * @author     Jason Height
- * @created    16 July 2002
+ * @since      16 July 2002
  */
 public class SVTableCellEditor extends AbstractCellEditor implements TableCellEditor, ActionListener {
   private static final Color black = getAWTColor(new HSSFColor.BLACK());

@@ -64,7 +64,7 @@ import java.text.*;
  * excel but then again it is a lossy formating mode anyway
  *
  * @author     Jason Height
- * @created    15 July 2002
+ * @since      15 July 2002
  */
 public class SVFractionalFormat extends Format {
   private short ONE_DIGIT = 1;
