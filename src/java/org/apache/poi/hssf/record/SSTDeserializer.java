@@ -187,7 +187,8 @@ class SSTDeserializer
         extensionLength = 0;
         if ( extendedText )
         {
-            extensionLength = LittleEndian.getInt( data, index + SSTRecord.STRING_MINIMAL_OVERHEAD );
+            extensionLength = LittleEndian.getInt( data, index + SSTRecord.STRING_MINIMAL_OVERHEAD
+                    + (richText ? LittleEndianConsts.SHORT_SIZE : 0) );
         }
 
     }
