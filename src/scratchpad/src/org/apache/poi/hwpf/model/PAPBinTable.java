@@ -65,6 +65,11 @@ import org.apache.poi.hwpf.sprm.SprmBuffer;
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.util.LittleEndian;
 
+/**
+ * This class represents the bin table of Word document but it also serves as a
+ * holder for all of the paragraphs of document that have been loaded into
+ * memory.
+ */
 public class PAPBinTable
 {
   ArrayList _paragraphs = new ArrayList();

@@ -64,7 +64,7 @@ public class Section
 
   public Section(SEPX sepx, Range parent)
   {
-    super(sepx.getStart(), sepx.getEnd(), parent);
+    super(Math.max(parent._start, sepx.getStart()), Math.min(parent._end, sepx.getEnd()), parent);
     _props = sepx.getSectionProperties();
   }
 

@@ -92,6 +92,15 @@ import java.util.NoSuchElementException;
 import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
 
+/**
+ * This class is the central class of the HWPF object model. All properties
+ * that apply to a range of characters in a Word document extend this class.
+ *
+ * It is possible to insert text and/or properties at the beginning or end of a
+ * range.
+ *
+ * @author Ryan Ackley
+ */
 public class Range
 {
 
@@ -103,32 +112,79 @@ public class Range
   public static final int TYPE_TABLE = 5;
   public static final int TYPE_UNDEFINED = 6;
 
+  /** Needed so inserts and deletes will ripple up through containing Ranges */
   private WeakReference _parent;
+
+  /** The starting character offset of this range.*/
   protected int _start;
+
+  /** The ending character offset of this range.*/
   protected int _end;
+
+  /** The document this range blongs to.*/
   protected HWPFDocument _doc;
+
+  /** Have we loaded the section indexes yet*/
   boolean _sectionRangeFound;
+
+  /** All sections that belong to the document this Range belongs to.*/
   protected List _sections;
-  int _sectionStart;
-  int _sectionEnd;
-  boolean _parRangeFound;
+
+  /** The start index in the sections list for this Range*/
+  protected int _sectionStart;
+
+  /** The end index in the sections list for this Range.*/
+  protected int _sectionEnd;
+
+  /** Have we loaded the paragraph indexes yet.*/
+  protected boolean _parRangeFound;
+
+  /** All paragraphs that belong to the document this Range belongs to.*/
   protected List _paragraphs;
+
+  /** The start index in the paragraphs list for this Range*/
   protected int _parStart;
+
+  /** The end index in the paragraphs list for this Range.*/
   protected int _parEnd;
-  boolean _charRangeFound;
+
+  /** Have we loaded the characterRun indexes yet.*/
+  protected boolean _charRangeFound;
+
+  /** All CharacterRuns that belong to the document this Range belongs to.*/
   protected List _characters;
-  int _charStart;
-  int _charEnd;
-  boolean _textRangeFound;
+
+  /** The start index in the characterRuns list for this Range*/
+  protected int _charStart;
+
+  /** The end index in the characterRuns list for this Range. */
+  protected int _charEnd;
+
+  /** Have we loaded the Text indexes yet*/
+  protected boolean _textRangeFound;
+
+  /** All text pieces that belong to the document this Range belongs to.*/
   protected List _text;
-  int _textStart;
-  int _textEnd;
+
+  /** The start index in the text list for this Range.*/
+  protected int _textStart;
+
+  /** The end index in the text list for this Range.*/
+  protected int _textEnd;
 
 //  protected Range()
 //  {
 //
 //  }
 
+  /**
+   * Used to construct a Range from a document. This is generally used to
+   * create a Range that spans the whole document.
+   *
+   * @param start Starting character offset of the range.
+   * @param end Ending character offset of the range.
+   * @param doc The HWPFDocument the range is based on.
+   */
   public Range(int start, int end, HWPFDocument doc)
   {
     _start = start;
@@ -141,6 +197,13 @@ public class Range
     _parent = new WeakReference(null);
   }
 
+  /**
+   * Used to create Ranges that are children of other Ranges.
+   *
+   * @param start Starting character offset of the range.
+   * @param end Ending character offset of the range.
+   * @param doc The parent this range belongs to.
+   */
   protected Range(int start, int end, Range parent)
   {
     _start = start;
@@ -153,6 +216,15 @@ public class Range
     _parent = new WeakReference(parent);
   }
 
+  /**
+   * Constructor used to build a Range from indexes in one of its internal
+   * lists.
+   *
+   * @param startIdx The starting index in the list.
+   * @param endIdx The ending index in the list.
+   * @param idxType The list type.
+   * @param parent The parent Range this range belongs to.
+   */
   protected Range(int startIdx, int endIdx, int idxType, Range parent)
   {
     _doc = parent._doc;
@@ -195,6 +267,11 @@ public class Range
     }
   }
 
+  /**
+   * Gets the text that this Range contains.
+   *
+   * @return The text for this range.
+   */
   public String text()
   {
     initText();
@@ -211,11 +288,24 @@ public class Range
     return sb.toString();
   }
 
+  /**
+   * Used to get the number of sections in a range. If this range is smaller
+   * than a section, it will return 1 for its containing section.
+   *
+   * @return The number of sections in this range.
+   */
   public int numSections()
   {
     initSections();
     return _sectionEnd - _sectionStart;
   }
+
+  /**
+   * Used to get the number of paragraphs in a range. If this range is smaller
+   * than a paragraph, it will return 1 for its containing paragraph.
+   *
+   * @return The number of paragraphs in this range.
+   */
 
   public int numParagraphs()
   {
@@ -223,12 +313,23 @@ public class Range
     return _parEnd - _parStart;
   }
 
+  /**
+   *
+   * @return The number of characterRuns in this range.
+   */
+
   public int numCharacterRuns()
   {
     initCharacterRuns();
     return _charEnd - _charStart;
   }
 
+  /**
+   * Inserts text into the front of this range.
+   *
+   * @param text The text to insert
+   * @return The character run that text was inserted into.
+   */
   public CharacterRun insertBefore(String text)
     //throws UnsupportedEncodingException
   {
@@ -250,6 +351,12 @@ public class Range
     return getCharacterRun(0);
   }
 
+  /**
+   * Inserts text onto the end of this range
+   *
+   * @param text The text to insert
+   * @return The character run the text was inserted into.
+   */
   public CharacterRun insertAfter(String text)
   {
     initAll();
@@ -269,6 +376,15 @@ public class Range
 
   }
 
+  /**
+   * Inserts text into the front of this range and it gives that text the
+   * CharacterProperties specified in props.
+   *
+   * @param text The text to insert.
+   * @param props The CharacterProperties to give the text.
+   * @return A new CharacterRun that has the given text and properties and is n
+   *         ow a part of the document.
+   */
   public CharacterRun insertBefore(String text, CharacterProperties props)
     //throws UnsupportedEncodingException
   {
@@ -285,6 +401,15 @@ public class Range
     return insertBefore(text);
   }
 
+  /**
+   * Inserts text onto the end of this range and gives that text the
+   * CharacterProperties specified in props.
+   *
+   * @param text The text to insert.
+   * @param props The CharacterProperties to give the text.
+   * @return A new CharacterRun that has the given text and properties and is n
+   *         ow a part of the document.
+   */
   public CharacterRun insertAfter(String text, CharacterProperties props)
     //throws UnsupportedEncodingException
   {
@@ -301,13 +426,31 @@ public class Range
     return insertAfter(text);
   }
 
-
+  /**
+   * Inserts and empty paragraph into the front of this range.
+   *
+   * @param props The properties that the new paragraph will have.
+   * @param styleIndex The index into the stylesheet for the new paragraph.
+   * @return The newly inserted paragraph.
+   */
   public Paragraph insertBefore(ParagraphProperties props, int styleIndex)
     //throws UnsupportedEncodingException
   {
    return this.insertBefore(props, styleIndex, "\r");
   }
 
+  /**
+   * Inserts a paragraph into the front of this range. The paragraph will
+   * contain one character run that has the default properties for the
+   * paragraph's style.
+   *
+   * It is necessary for the text to end with the character '\r'
+   *
+   * @param props The paragraph's properties.
+   * @param styleIndex The index of the paragraph's style in the style sheet.
+   * @param text The text to insert.
+   * @return A newly inserted paragraph.
+   */
   protected Paragraph insertBefore(ParagraphProperties props, int styleIndex, String text)
     //throws UnsupportedEncodingException
   {
@@ -327,6 +470,13 @@ public class Range
     return getParagraph(0);
   }
 
+  /**
+   * Inserts and empty paragraph into the end of this range.
+   *
+   * @param props The properties that the new paragraph will have.
+   * @param styleIndex The index into the stylesheet for the new paragraph.
+   * @return The newly inserted paragraph.
+   */
 
   public Paragraph insertAfter(ParagraphProperties props, int styleIndex)
     //throws UnsupportedEncodingException
@@ -334,6 +484,18 @@ public class Range
     return this.insertAfter(props, styleIndex, "\r");
   }
 
+  /**
+  * Inserts a paragraph into the end of this range. The paragraph will
+  * contain one character run that has the default properties for the
+  * paragraph's style.
+  *
+  * It is necessary for the text to end with the character '\r'
+  *
+  * @param props The paragraph's properties.
+  * @param styleIndex The index of the paragraph's style in the style sheet.
+  * @param text The text to insert.
+  * @return A newly inserted paragraph.
+  */
   protected Paragraph insertAfter(ParagraphProperties props, int styleIndex, String text)
     //throws UnsupportedEncodingException
   {
@@ -353,8 +515,6 @@ public class Range
     insertAfter(text, baseChp);
     return getParagraph(numParagraphs() - 1);
   }
-
-
 
   public Table insertBefore(TableProperties props, int rows)
   {

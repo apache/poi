@@ -140,7 +140,7 @@ public class Paragraph
 
   protected Paragraph(PAPX papx, Range parent)
   {
-    super(papx.getStart(), papx.getEnd(), parent);
+    super(Math.max(parent._start, papx.getStart()), Math.min(parent._end, papx.getEnd()), parent);
     _props = papx.getParagraphProperties(_doc.getStyleSheet());
     _papx = papx.getSprmBuf();
     _istd = papx.getIstd();
