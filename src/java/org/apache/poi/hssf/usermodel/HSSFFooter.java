@@ -1,4 +1,3 @@
-
 /* ====================================================================
  * The Apache Software License, Version 1.1
  *
@@ -67,6 +66,9 @@ import org.apache.poi.hssf.record.FooterRecord;
  * that return the characters used to represent these.  One can also change the
  * fonts by using similar methods.
  * <P>
+ * To get an instance of HSSFFooter for a HSSFSheet is to call <a
+ * href="HSSFSheet.html#getFooter()">getFooter()</a> on the sheet.
+ * <p>
  * @author Shawn Laubach (slaubach at apache dot org)
  */
 public class HSSFFooter extends Object {
