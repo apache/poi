@@ -6,8 +6,11 @@ prj.el
 emacs-jprj.el
 docs
 todo
-p1.log
-p2.log
+hdf.log
+hpsf.log
+hssf.log
+poifs.log
+util.log
 poi.ipr
 release-bin
 POILogger.log
