@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Copyright 2002-2004   Apache Software Foundation
 
@@ -22,7 +21,7 @@ import java.io.OutputStream;
 
 /**
  * <p>Adds writing capability to the {@link Property} class.</p>
- * 
+ *
  * <p>Please be aware that this class' functionality will be merged into the
  * {@link Property} class at a later time, so the API will change.</p>
  *
@@ -46,7 +45,7 @@ public class MutableProperty extends Property
     /**
      * <p>Creates a <code>MutableProperty</code> as a copy of an existing
      * <code>Property</code>.</p>
-     * 
+     *
      * @param p The property to copy.
      */
     public MutableProperty(final Property p)
@@ -95,11 +94,11 @@ public class MutableProperty extends Property
 
     /**
      * <p>Writes the property to an output stream.</p>
-     * 
+     *
      * @param out The output stream to write to.
      * @param codepage The codepage to use for writing non-wide strings
      * @return the number of bytes written to the stream
-     * 
+     *
      * @exception IOException if an I/O error occurs
      * @exception WritingNotSupportedException if a variant type is to be
      * written that is not yet supported

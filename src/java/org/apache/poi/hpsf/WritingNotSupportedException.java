@@ -36,7 +36,7 @@ public class WritingNotSupportedException
     /**
      * <p>Constructor</p>
      * 
-     * @param variantType The unsupported varian type.
+     * @param variantType The unsupported variant type.
      * @param value The value.
      */
     public WritingNotSupportedException(final long variantType,

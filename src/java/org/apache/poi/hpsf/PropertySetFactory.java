@@ -19,6 +19,7 @@ package org.apache.poi.hpsf;
 
 import java.io.InputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.rmi.UnexpectedException;
 
 /**
@@ -48,10 +49,12 @@ public class PropertySetFactory
      * @throws MarkUnsupportedException if the stream does not support
      * the <code>mark</code> operation.
      * @throws IOException if some I/O problem occurs.
+     * @exception UnsupportedEncodingException if the specified codepage is not
+     * supported.
      */
     public static PropertySet create(final InputStream stream)
         throws NoPropertySetStreamException, MarkUnsupportedException,
-               IOException
+               UnsupportedEncodingException, IOException
     {
         final PropertySet ps = new PropertySet(stream);
         try

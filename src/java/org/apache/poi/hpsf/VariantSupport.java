@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Copyright 2002-2004   Apache Software Foundation
 
@@ -14,7 +13,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hpsf;
 
 import java.io.IOException;
@@ -41,7 +40,7 @@ import org.apache.poi.util.LittleEndianConsts;
  * <li><p>Reading reads from a byte array while writing writes to an byte array
  * output stream.</p></li>
  *
- * <ul>
+ * </ul>
  *
  * @author Rainer Klute <a
  * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
@@ -126,19 +125,26 @@ public class VariantSupport extends Variant
      * @exception ReadingNotSupportedException if a property is to be written
      * who's variant type HPSF does not yet support
      * @exception UnsupportedEncodingException if the specified codepage is not
-     * supported
+     * supported.
      *
      * @see Variant
      */
     public static Object read(final byte[] src, final int offset,
                               final int length, final long type,
                               final int codepage)
-        throws ReadingNotSupportedException, UnsupportedEncodingException
+    throws ReadingNotSupportedException, UnsupportedEncodingException
     {
         Object value;
         int o1 = offset;
         int l1 = length - LittleEndian.INT_SIZE;
-        switch ((int) type)
+        long lType = type;
+
+        /* Instead of trying to read 8-bit characters from a Unicode string,
+         * read 16-bit characters. */
+        if (codepage == Constants.CP_UNICODE && type == Variant.VT_LPSTR)
+            lType = Variant.VT_LPWSTR;
+
+        switch ((int) lType)
         {
             case Variant.VT_EMPTY:
             {
@@ -279,11 +285,11 @@ public class VariantSupport extends Variant
                 ("Codepage number may not be " + codepage);
         switch (codepage)
         {
-            case 932:
+            case Constants.CP_SJIS:
                 return "SJIS";
-            case 1200:
+            case Constants.CP_UTF16:
                 return "UTF-16";
-            case 65001:
+            case Constants.CP_UTF8:
                 return "UTF-8";
             default:
                 return "cp" + codepage;
@@ -294,6 +300,11 @@ public class VariantSupport extends Variant
     /**
      * <p>Writes a variant value to an output stream. This method ensures that
      * always a multiple of 4 bytes is written.</p>
+     *
+     * <p>If the codepage is UTF-16, which is encouraged, strings
+     * <strong>must</strong> always be written as {@link Variant#VT_LPWSTR}
+     * strings, not as {@link Variant#VT_LPSTR} strings. This method ensure this
+     * by converting strings appropriately, if needed.</p>
      *
      * @param out The stream to write the value to.
      * @param type The variant's type.
@@ -309,8 +320,14 @@ public class VariantSupport extends Variant
                             final Object value, final int codepage)
         throws IOException, WritingNotSupportedException
     {
+        long lType = type;
+
+        /* Ensure that wide strings are written if the codepage is Unicode. */
+        if (codepage == Constants.CP_UNICODE && type == Variant.VT_LPSTR)
+            lType = Variant.VT_LPWSTR;
+
         int length = 0;
-        switch ((int) type)
+        switch ((int) lType)
         {
             case Variant.VT_BOOL:
             {
@@ -402,10 +419,10 @@ public class VariantSupport extends Variant
                     out.write(b);
                     length = b.length;
                     writeUnsupportedTypeMessage
-                        (new WritingNotSupportedException(type, value));
+                        (new WritingNotSupportedException(lType, value));
                 }
                 else
-                    throw new WritingNotSupportedException(type, value);
+                    throw new WritingNotSupportedException(lType, value);
                 break;
             }
         }

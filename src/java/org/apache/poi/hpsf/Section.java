@@ -105,22 +105,13 @@ public class Section
 
 
     /**
-     * FIXME (2): Get rid of this! The property count is implicitly available as
-     * the length of the "properties" array.
-     * 
-     * @see #getPropertyCount
-     */
-    protected int propertyCount;
-
-
-    /**
      * <p>Returns the number of properties in this section.</p>
      *
      * @return The number of properties in this section.
      */
     public int getPropertyCount()
     {
-        return propertyCount;
+        return properties.length;
     }
 
 
@@ -188,7 +179,7 @@ public class Section
         /*
          * Read the number of properties.
          */
-        propertyCount = (int) LittleEndian.getUInt(src, o1);
+        final int propertyCount = (int) LittleEndian.getUInt(src, o1);
         o1 += LittleEndian.INT_SIZE;
 
         /*

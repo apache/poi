@@ -56,9 +56,6 @@ import org.apache.poi.util.LittleEndian;
 public class Property
 {
 
-    /** <p>Codepage 1200 denotes Unicode.</p> */
-    public static final int CP_UNICODE = 1200;
-
     /** <p>The property's ID.</p> */
     protected long id;
 
@@ -118,9 +115,8 @@ public class Property
      * @param length The property's type/value pair's length in bytes.
      * @param codepage The section's and thus the property's
      * codepage. It is needed only when reading string values.
-     * 
      * @exception UnsupportedEncodingException if the specified codepage is not
-     * supported
+     * supported.
      */
     public Property(final long id, final byte[] src, final long offset,
                     final int length, final int codepage)
@@ -210,7 +206,7 @@ public class Property
              * character set is Unicode or not. */
             StringBuffer b = new StringBuffer((int) sLength);
             for (int j = 0; j < sLength; j++)
-                if (codepage == CP_UNICODE)
+                if (codepage == Constants.CP_UNICODE)
                 {
                     final int i1 = o + (j * 2);
                     final int i2 = i1 + 1;
@@ -222,7 +218,7 @@ public class Property
             /* Strip 0x00 characters from the end of the string: */
             while (b.length() > 0 && b.charAt(b.length() - 1) == 0x00)
                 b.setLength(b.length() - 1);
-            if (codepage == CP_UNICODE)
+            if (codepage == Constants.CP_UNICODE)
             {
                 if (sLength % 2 == 1)
                     sLength++;
