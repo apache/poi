@@ -82,8 +82,6 @@ class SSTSerializer
     /** Offsets relative the start of the current SST or continue record */
     int[] bucketRelativeOffsets;
     int startOfSST, startOfRecord;
-    /** The default bucket size (this is used for ExternSST) */
-    final static int DEFAULT_BUCKET_SIZE = 8;
 
     public SSTSerializer( List recordLengths, BinaryTree strings, int numStrings, int numUniqueStrings )
     {
@@ -93,9 +91,7 @@ class SSTSerializer
         this.numUniqueStrings = numUniqueStrings;
         this.sstRecordHeader = new SSTRecordHeader( numStrings, numUniqueStrings );
 
-        int infoRecs = (strings.size() / SSTSerializer.DEFAULT_BUCKET_SIZE);
-        if ((strings.size() % SSTSerializer.DEFAULT_BUCKET_SIZE) != 0)
-          infoRecs ++;
+        int infoRecs = ExtSSTRecord.getNumberOfInfoRecsForStrings(strings.size());
         this.bucketAbsoluteOffsets = new int[infoRecs];
         this.bucketRelativeOffsets = new int[infoRecs];
     }
@@ -157,10 +153,14 @@ class SSTSerializer
 
         for ( int k = 0; k < strings.size(); k++ )
         {
-            if (k % DEFAULT_BUCKET_SIZE == 0)
+            if (k % ExtSSTRecord.DEFAULT_BUCKET_SIZE == 0)
             {
-                bucketAbsoluteOffsets[k / DEFAULT_BUCKET_SIZE] = pos;
-                bucketRelativeOffsets[k / DEFAULT_BUCKET_SIZE] = pos;
+              int index = k/ExtSSTRecord.DEFAULT_BUCKET_SIZE;
+              if (index < ExtSSTRecord.MAX_BUCKETS) {
+                //Excel only indexes the first 128 buckets.
+                bucketAbsoluteOffsets[index] = pos;
+                bucketRelativeOffsets[index] = pos;
+              }
             }
             System.arraycopy( getUnicodeString( k ).serialize(), 0, data, pos + offset, getUnicodeString( k ).getRecordSize() );
             pos += getUnicodeString( k ).getRecordSize();
@@ -210,10 +210,15 @@ class SSTSerializer
             {
                 UnicodeString unistr = getUnicodeString( stringIndex );
 
-                if (stringIndex % DEFAULT_BUCKET_SIZE == 0)
+                if (stringIndex % ExtSSTRecord.DEFAULT_BUCKET_SIZE == 0)
                 {
-                    bucketAbsoluteOffsets[stringIndex / DEFAULT_BUCKET_SIZE] = offset + totalWritten + recordProcessor.getRecordOffset() - startOfSST;
-                    bucketRelativeOffsets[stringIndex / DEFAULT_BUCKET_SIZE] = offset + totalWritten + recordProcessor.getRecordOffset() - startOfRecord;
+                  int index = stringIndex / ExtSSTRecord.DEFAULT_BUCKET_SIZE;
+                  if (index < ExtSSTRecord.MAX_BUCKETS) {
+                    bucketAbsoluteOffsets[index] = offset + totalWritten +
+                        recordProcessor.getRecordOffset() - startOfSST;
+                    bucketRelativeOffsets[index] = offset + totalWritten +
+                        recordProcessor.getRecordOffset() - startOfRecord;
+                  }
                 }
 
                 if ( unistr.getRecordSize() <= recordProcessor.getAvailable() )
