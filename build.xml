@@ -295,6 +295,7 @@
             <sysproperty key="HSSF.testdata.path" value="${scratchpad.src.test}/org/apache/poi/hssf/data"/>
             <sysproperty key="HPSF.testdata.path" value="${scratchpad.src.test}/org/apache/poi/hpsf/data"/>
             <sysproperty key="HDF.testdata.path" value="${scratchpad.src.test}/org/apache/poi/hdf/data"/>
+            <sysproperty key="HWPF.testdata.path" value="${scratchpad.src.test}/org/apache/poi/hwpf/data"/>
             <formatter type="xml"/>
             <batchtest todir="${scratchpad.reports.test}">
                 <fileset dir="${scratchpad.src.test}">
