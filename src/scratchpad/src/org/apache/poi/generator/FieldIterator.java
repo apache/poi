@@ -85,6 +85,8 @@ public class FieldIterator
             result = "LittleEndian.getInt(data, " + offset + " + offset)";
         else if (javaType.equals("byte"))
             result = "data[ " + offset + " + offset ]";
+        else if (javaType.equals("double"))
+            result = "LittleEndian.getDouble(data, " + offset + " + offset)";
         else if (javaType.equals("ExcelString"))
             result = "ExcelStringUtil.decodeExcelString(data, " + offset + " + offset)";
 
@@ -111,6 +113,8 @@ public class FieldIterator
             result = "LittleEndian.putInt(data, " + (offset+4) + " + offset, " + javaFieldName + ");";
         else if (javaType.equals("byte"))
             result = "data[ " + (offset+4) + " + offset ] = " + javaFieldName + ";";
+        else if (javaType.equals("double"))
+            result = "LittleEndian.putDouble(data, " + (offset+4) + " + offset, " + javaFieldName + ");";
         else if (javaType.equals("ExcelString"))
             result = "StringUtil.putUncompressedUnicode(getFontName(), data, 20 + offset);";
 

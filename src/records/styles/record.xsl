@@ -246,7 +246,7 @@ public class <xsl:value-of select="@name"/>Record
 </xsl:template>
 
 <xsl:template match="field" mode="tostring">
-        buffer.append("    .<xsl:value-of select="recutil:getFieldName(@name,20)"/> = ")<xsl:if test="@type != 'string'">
+        buffer.append("    .<xsl:value-of select="recutil:getFieldName(@name,20)"/> = ")<xsl:if test="@type != 'string' and @type != 'float'">
             .append("0x")
             .append(HexDump.toHex((<xsl:value-of select="recutil:getType(@size,@type,00)"/>)get<xsl:value-of select="recutil:getFieldName1stCap(@name,0)"/>()))</xsl:if>
             .append(" (").append(get<xsl:value-of select="recutil:getFieldName1stCap(@name,0)"/>()).append(" )\n");

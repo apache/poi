@@ -122,13 +122,15 @@ public class RecordUtil
 
     public static String getType(String size, String type, int padTo)
     {
-        boolean numeric = type.equals("bits") || type.equals("int");
-        if (numeric && "1".equals(size))
+        boolean wholeNumber = type.equals("bits") || type.equals("int");
+        if (wholeNumber && "1".equals(size))
             return pad(new StringBuffer("byte"), padTo).toString();
-        else if (numeric && "2".equals(size))
+        else if (wholeNumber && "2".equals(size))
             return pad(new StringBuffer("short"), padTo).toString();
-        else if (numeric && "4".equals(size))
+        else if (wholeNumber && "4".equals(size))
             return pad(new StringBuffer("int"), padTo).toString();
+        else if (type.equals("float") && "8".equals(size))
+            return pad(new StringBuffer("double"), padTo).toString();
         else if (type.equals("string"))
             return pad(new StringBuffer("ExcelString"), padTo).toString();
 

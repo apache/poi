@@ -224,7 +224,7 @@ public class SeriesRecord
     /**
      * Get the category data type field for the Series record.
      *
-     * @return  One of
+     * @return  One of 
      *        CATEGORY_DATA_TYPE_DATES
      *        CATEGORY_DATA_TYPE_NUMERIC
      *        CATEGORY_DATA_TYPE_SEQUENCE
@@ -239,7 +239,7 @@ public class SeriesRecord
      * Set the category data type field for the Series record.
      *
      * @param field_1_categoryDataType
-     *        One of
+     *        One of 
      *        CATEGORY_DATA_TYPE_DATES
      *        CATEGORY_DATA_TYPE_NUMERIC
      *        CATEGORY_DATA_TYPE_SEQUENCE
@@ -253,7 +253,7 @@ public class SeriesRecord
     /**
      * Get the values data type field for the Series record.
      *
-     * @return  One of
+     * @return  One of 
      *        VALUES_DATA_TYPE_DATES
      *        VALUES_DATA_TYPE_NUMERIC
      *        VALUES_DATA_TYPE_SEQUENCE
@@ -268,7 +268,7 @@ public class SeriesRecord
      * Set the values data type field for the Series record.
      *
      * @param field_2_valuesDataType
-     *        One of
+     *        One of 
      *        VALUES_DATA_TYPE_DATES
      *        VALUES_DATA_TYPE_NUMERIC
      *        VALUES_DATA_TYPE_SEQUENCE
@@ -314,7 +314,7 @@ public class SeriesRecord
     /**
      * Get the bubble series type field for the Series record.
      *
-     * @return  One of
+     * @return  One of 
      *        BUBBLE_SERIES_TYPE_DATES
      *        BUBBLE_SERIES_TYPE_NUMERIC
      *        BUBBLE_SERIES_TYPE_SEQUENCE
@@ -329,7 +329,7 @@ public class SeriesRecord
      * Set the bubble series type field for the Series record.
      *
      * @param field_5_bubbleSeriesType
-     *        One of
+     *        One of 
      *        BUBBLE_SERIES_TYPE_DATES
      *        BUBBLE_SERIES_TYPE_NUMERIC
      *        BUBBLE_SERIES_TYPE_SEQUENCE
