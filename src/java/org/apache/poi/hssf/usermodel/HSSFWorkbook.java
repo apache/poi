@@ -256,10 +256,22 @@ public class HSSFWorkbook
 
         // none currently
     }
-
+    
+    /**
+     * sets the order of appearance for a given sheet.
+     *
+     * @param sheetname the name of the sheet to reorder
+     * @param pos the position that we want to insert the sheet into (0 based)
+     */
+    
+    public void setSheetOrder(String sheetname, int pos ) {
+        workbook.setSheetOrder(sheetname, pos);
+    }
+    
     public final static byte ENCODING_COMPRESSED_UNICODE = 0;
     public final static byte ENCODING_UTF_16             = 1;
     
+     
     /**
      * set the sheet name.
      * @param sheet number (0 based)
