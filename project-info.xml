@@ -3,11 +3,9 @@
  name="Jakarta POI">
    <info
     module="jakarta-poi"
-    packages="org.apache.poi.*"
     version="1.5"
     tag="dev"
-    year="2001-2002"
-    web="http://jakarta.apache.org/poi/" />
+    year="2001-2002"/>
 
    <description>
       <short>The POI project consists of APIs for manipulating various file formats based upon Microsoft's OLE 2 Compound Document format using pure Java.</short>
@@ -23,12 +21,55 @@
       <licence>For legal and licensing issues, please read the LICENSE.* files in the /legal directory.</licence>
    </description>
 
+<module name="jakarta-poi">
+
+  <url href="http://jakarta.apache.org/poi/"/>
+  <description>
+    Ports of file formats based on Microsoft's OLE 2 Compound Document 
+    Format (tm) to pure Java (tm). 
+  </description>
+
+  <cvs repository="jakarta"/>
+  
+  <project name="jakarta-poi">
+  
+    <package>org.apache.poi</package>
+
+    <ant target="gump"/>
+    
+    <script name="build"/>
+    
+    <depend project="jakarta-ant"/>
+    <depend project="xml-xerces"/>
+    <depend project="xml-xalan2"/>
+    <depend project="jtidy"/>
+    <depend project="junit"/>
+    <depend project="commons-logging"/>
+    
+    <option project="jakarta-log4j"/>
+      
+    <work nested="build/jakarta-poi/classes"/>
+
+    <home nested="build/poi"/>
+    
+    <jar name="jakarta-poi.jar"            id="poi"/>
+    <jar name="jakarta-poi-scratchpad.jar" id="scratchpad"/>
+    <jar name="jakarta-poi-contrib.jar"    id="contrib"/>
+    <jar name="jakarta-poi-examples.jar"   id="examples"/>
+    
+    <javadoc parent="build/jakarta-poi/docs/apidocs"/>
+
+  </project>
+
+</module>
+
    <developers>
        <!-- in strict alphabetical order -->
-      <person name="Andrew C. Oliver"  email="acoliver at apache dot org" id="ACO" />
-      <person name="Glen Stampoultzis" email="glens at apache.org"        id="GS" />
-      <person name="Marc Johnson"      email="mjohnson at apache dot org" id="MJ" />
-      <person name="Rainer Klute"      email="rainer.klute@epost.de"      id="RK" />
+      <person name="Andrew C. Oliver"   email="acoliver@apache.org"   id="ACO" />
+      <person name="Glen Stampoultzis"  email="glens@apache.org"      id="GS" />
+      <person name="Marc Johnson"       email="mjohnson@apache.org"   id="MJ" />
+      <person name="Nicola Ken Barozzi" email="nicolaken@apache.org"  id="NKB" />
+      <person name="Rainer Klute"       email="rainer.klute@epost.de" id="RK" />
    </developers>
 
    <todo>
