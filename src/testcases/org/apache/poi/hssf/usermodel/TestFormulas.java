@@ -744,7 +744,7 @@ extends TestCase {
     }
     
     public void testSheetFunctions()
-        throws java.io.IOException
+        throws IOException
     {
         String filename = System.getProperty("HSSF.testdata.path");
 
@@ -818,7 +818,7 @@ extends TestCase {
     }
     
     public void testStringFormulas()
-        throws java.io.IOException
+        throws IOException
     {
         String readFilename = System.getProperty("HSSF.testdata.path");
 
@@ -852,7 +852,7 @@ extends TestCase {
     
     
     public void testLogicalFormulas()
-        throws java.io.IOException
+        throws IOException
     {
 
             File file = File.createTempFile("testLogicalFormula",".xls");
@@ -880,7 +880,7 @@ extends TestCase {
     }
     
     public void testDateFormulas()
-        throws java.io.IOException
+        throws IOException
     {
         String readFilename = System.getProperty("HSSF.testdata.path");
 
@@ -918,7 +918,7 @@ extends TestCase {
 
     
     public void testIfFormulas()
-        throws java.io.IOException
+        throws IOException
     {
         String readFilename = System.getProperty("HSSF.testdata.path");
 
@@ -1008,7 +1008,7 @@ extends TestCase {
     }
 
 	public void testSumIf()
-		throws java.io.IOException
+		throws IOException
 	{
 		String readFilename = System.getProperty("HSSF.testdata.path");		
 		String function ="SUMIF(A1:A5,\">4000\",B1:B5)";
@@ -1059,6 +1059,66 @@ extends TestCase {
 		assertTrue("sumif file doesnt exists", (file.exists()));
 		assertTrue("sumif == 0 bytes", file.length() > 0);
 	}
+    
+    public void testSquareMacro() throws IOException {
+        File dir = new File(System.getProperty("HSSF.testdata.path"));
+        File xls = new File(dir, "SquareMacro.xls");
+        FileInputStream in = new FileInputStream(xls);
+        HSSFWorkbook w;
+        try {
+            w = new HSSFWorkbook(in);
+        } finally {
+            in.close();
+        }
+        HSSFSheet s0 = w.getSheetAt(0);
+        HSSFRow[] r = {s0.getRow(0), s0.getRow(1)};
+
+        HSSFCell a1 = r[0].getCell((short) 0);
+        assertEquals("square(1)", a1.getCellFormula());
+        assertEquals(1d, a1.getNumericCellValue(), 1e-9);
+
+        HSSFCell a2 = r[1].getCell((short) 0);
+        assertEquals("square(2)", a2.getCellFormula());
+        assertEquals(4d, a2.getNumericCellValue(), 1e-9);
+
+        HSSFCell b1 = r[0].getCell((short) 1);
+        assertEquals("IF(TRUE,square(1))", b1.getCellFormula());
+        assertEquals(1d, b1.getNumericCellValue(), 1e-9);
+
+        HSSFCell b2 = r[1].getCell((short) 1);
+        assertEquals("IF(TRUE,square(2))", b2.getCellFormula());
+        assertEquals(4d, b2.getNumericCellValue(), 1e-9);
+
+        HSSFCell c1 = r[0].getCell((short) 2);
+        assertEquals("square(square(1))", c1.getCellFormula());
+        assertEquals(1d, c1.getNumericCellValue(), 1e-9);
+
+        HSSFCell c2 = r[1].getCell((short) 2);
+        assertEquals("square(square(2))", c2.getCellFormula());
+        assertEquals(16d, c2.getNumericCellValue(), 1e-9);
+
+        HSSFCell d1 = r[0].getCell((short) 3);
+        assertEquals("square(one())", d1.getCellFormula());
+        assertEquals(1d, d1.getNumericCellValue(), 1e-9);
+
+        HSSFCell d2 = r[1].getCell((short) 3);
+        assertEquals("square(two())", d2.getCellFormula());
+        assertEquals(4d, d2.getNumericCellValue(), 1e-9);
+    }
+
+    public void testStringFormulaRead() throws IOException {
+        File dir = new File(System.getProperty("HSSF.testdata.path"));
+        File xls = new File(dir, "StringFormulas.xls");
+        FileInputStream in = new FileInputStream(xls);
+        HSSFWorkbook w;
+        try {
+            w = new HSSFWorkbook(in);
+        } finally {
+            in.close();
+        }
+        HSSFCell c = w.getSheetAt(0).getRow(0).getCell((short)0);
+        assertEquals("String Cell value","XYZ",c.getStringCellValue());
+    }
     
     public static void main(String [] args) {
         System.out

@@ -478,7 +478,7 @@
     recordid = 0x1034, size =0
     [END]
     [/END]
-
+                <!--  break -->
     ============================================
     Offset 0x1006 (4102)
     rectype = 0x1044, recsize = 0x4
@@ -801,6 +801,7 @@
              .crossesFarRight          = false
              .reversed                 = false
     [/CATSERRANGE]
+                <!--  break -->
 
     ============================================
     Offset 0x1124 (4388)
@@ -1220,7 +1221,7 @@
     [UNKNOWN RECORD]
         .id        = 104f
     [/UNKNOWN RECORD]
-
+                <!--  break -->
     ============================================
     Offset 0x12c4 (4804)
     rectype = 0x1051, recsize = 0x8

@@ -147,6 +147,14 @@ public class HSSFWorkbook
      * memory.
      */
     private POIFSFileSystem poifs;
+
+    /**
+     * Used to keep track of the data formatter so that all
+     * createDataFormatter calls return the same one for a given
+     * book.  This ensures that updates from one places is visible
+     * someplace else.
+     */
+    private HSSFDataFormat formatter;
     
     private static POILogger log = POILogFactory.getLogger(HSSFWorkbook.class);
 
@@ -273,7 +281,9 @@ public class HSSFWorkbook
     
      
     /**
-     * set the sheet name.
+     * set the sheet name. 
+     * Will throw IllegalArgumentException if the name is greater than 31 chars
+     * or contains /\?*[]
      * @param sheet number (0 based)
      * @param sheet name
      */
@@ -374,7 +384,11 @@ public class HSSFWorkbook
         windowTwo.setPaged(sheets.size() == 1);
 
         sheets.add(clonedSheet);
-        workbook.setSheetName(sheets.size()-1, srcName+"[1]");
+        if (srcName.length()<28) {
+            workbook.setSheetName(sheets.size()-1, srcName+"(2)");
+        }else {
+            workbook.setSheetName(sheets.size()-1,srcName.substring(0,28)+"(2)");
+        }
         return clonedSheet;
       }
       return null;
@@ -890,7 +904,7 @@ public class HSSFWorkbook
 		if (name == null) return null;
 		//adding one here because 0 indicates a global named region; doesnt make sense for print areas
    
-		return name.getAreaReference(workbook.getSheetReferences());
+		return name.getAreaReference(workbook);
 	}    
     
     /**
@@ -945,13 +959,15 @@ public class HSSFWorkbook
     }
 
     /**
-     * Creates an instance of HSSFDataFormat.
+     * Returns the instance of HSSFDataFormat for this workbook.
      * @return the HSSFDataFormat object
      * @see org.apache.poi.hssf.record.FormatRecord
      * @see org.apache.poi.hssf.record.Record
      */
     public HSSFDataFormat createDataFormat() {
-        return new HSSFDataFormat(workbook);
+	if (formatter == null)
+	    formatter = new HSSFDataFormat(workbook);
+	return formatter;
     }
 	
     /** remove the named range by his name

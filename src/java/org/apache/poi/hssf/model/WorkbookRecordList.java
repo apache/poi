@@ -74,7 +74,7 @@ public class WorkbookRecordList
     private int  namepos     = 0;   // holds the position of last name record
     private int  supbookpos  = 0;   // holds the position of sup book
     private int  externsheetPos = 0;// holds the position of the extern sheet
-    private int  palettepos  = 0;   // hold the position of the palette, if applicable
+    private int  palettepos  = -1;   // hold the position of the palette, if applicable
 
 
     public void setRecords( List records )
@@ -103,7 +103,7 @@ public class WorkbookRecordList
         if (getBackuppos() >= pos) setBackuppos( backuppos + 1 );
         if (getNamepos() >= pos) setNamepos(namepos+1);
         if (getSupbookpos() >= pos) setSupbookpos(supbookpos+1);
-        if (getPalettepos() >= pos) setPalettepos( palettepos + 1 );
+        if ((getPalettepos() != -1) && (getPalettepos() >= pos)) setPalettepos( palettepos + 1 );
         if (getExternsheetPos() >= pos) setExternsheetPos(getExternsheetPos() + 1);
     }
 
@@ -128,7 +128,7 @@ public class WorkbookRecordList
         if (getBackuppos() >= pos) setBackuppos( backuppos - 1 );
         if (getNamepos() >= pos) setNamepos(getNamepos()-1);
         if (getSupbookpos() >= pos) setSupbookpos(getSupbookpos()-1);
-        if (getPalettepos() >= pos) setPalettepos( palettepos - 1 );
+        if ((getPalettepos() != -1) && (getPalettepos() >= pos)) setPalettepos( palettepos - 1 );
         if (getExternsheetPos() >= pos) setExternsheetPos( getExternsheetPos() -1);
     }
 

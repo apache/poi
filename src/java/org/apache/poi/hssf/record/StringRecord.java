@@ -138,6 +138,11 @@ public class StringRecord
         }
     }
 
+    public boolean isInValueSection()
+    {
+        return true;
+    }
+
     private int getStringLength()
     {
         return field_1_string_length;

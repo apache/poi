@@ -9,22 +9,29 @@ be used to configure the chosen Forrest skin.
 
   <!ENTITY % links.att 'name CDATA #REQUIRED'>
   <!ENTITY % link.att 'name CDATA #REQUIRED href CDATA #REQUIRED'>
-  <!ELEMENT skinconfig (disable-search?, disable-compliance-links?, searchsite-domain?, searchsite-name?,
-  project-name, project-url, project-logo, group-name?, group-url?, group-logo?,
-  host-url?, host-logo?, year?, vendor?, trail?, credits?)*>
+  <!ELEMENT skinconfig (disable-search?, disable-print-link?, disable-pdf-link?,
+  disable-xml-link?, disable-compliance-links?, obfuscate-mail-links?, searchsite-domain?, searchsite-name?,
+  project-name, project-description?, project-url, project-logo, group-name?, group-description?, group-url?, group-logo?,
+  host-url?, host-logo?, year?, vendor?, trail?, toc?, credits?)*>
   <!ELEMENT credits (credit*)>
   <!ELEMENT credit (name, url, image?, width?, height?)>
   <!-- id uniquely identifies the tool, and role indicates its function -->
   <!ATTLIST credit id   CDATA #IMPLIED
                    role CDATA #IMPLIED>
   <!ELEMENT disable-search (#PCDATA)>
+  <!ELEMENT disable-print-link (#PCDATA)>
+  <!ELEMENT disable-pdf-link (#PCDATA)>
+  <!ELEMENT disable-xml-link (#PCDATA)>
   <!ELEMENT disable-compliance-links (#PCDATA)>
+  <!ELEMENT obfuscate-mail-links (#PCDATA)>
   <!ELEMENT searchsite-domain (#PCDATA)>
-  <!ELEMENT searchsite-name (#PCDATA)>  
+  <!ELEMENT searchsite-name (#PCDATA)>
   <!ELEMENT project-name (#PCDATA)>
+  <!ELEMENT project-description (#PCDATA)>
   <!ELEMENT project-url (#PCDATA)>
   <!ELEMENT project-logo (#PCDATA)>
   <!ELEMENT group-name (#PCDATA)>
+  <!ELEMENT group-description (#PCDATA)>
   <!ELEMENT group-url (#PCDATA)>
   <!ELEMENT group-logo (#PCDATA)>
   <!ELEMENT host-url (#PCDATA)>
@@ -44,12 +51,15 @@ be used to configure the chosen Forrest skin.
   <!ELEMENT image (#PCDATA)>
   <!ELEMENT width (#PCDATA)>
   <!ELEMENT height (#PCDATA)>
+  <!ELEMENT toc EMPTY>
+  <!ATTLIST toc level CDATA #IMPLIED>
   ]>
 
 <skinconfig>
   <!-- Do we want to disable the Google search box? -->
   <disable-search>false</disable-search>
   <disable-compliance-links>false</disable-compliance-links>
+  <disable-xml-link>true</disable-xml-link>
   <searchsite-domain>jakarta.apache.org</searchsite-domain>
   <searchsite-name>jakarta</searchsite-name>
 

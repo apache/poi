@@ -326,6 +326,7 @@ public class HSSFCell
 
             case CELL_TYPE_FORMULA :
                 cellValue = (( FormulaRecordAggregate ) cval).getFormulaRecord().getValue();
+                stringValue=((FormulaRecordAggregate) cval).getStringValue();
                 break;
 
             case CELL_TYPE_BOOLEAN :
@@ -726,8 +727,7 @@ public class HSSFCell
 
     public String getCellFormula() {
         //Workbook.currentBook=book;
-        SheetReferences refs = book.getSheetReferences();
-        String retval = FormulaParser.toFormulaString(refs, ((FormulaRecordAggregate)record).getFormulaRecord().getParsedExpression());
+        String retval = FormulaParser.toFormulaString(book, ((FormulaRecordAggregate)record).getFormulaRecord().getParsedExpression());
         //Workbook.currentBook=null;
         return retval;
     }
@@ -798,6 +798,7 @@ public class HSSFCell
     /**
      * get the value of the cell as a string - for numeric cells we throw an exception.
      * For blank cells we return an empty string.
+     * For formulaCells that are not string Formulas, we return empty String
      */
 
     public String getStringCellValue()
@@ -820,6 +821,10 @@ public class HSSFCell
         {
             throw new NumberFormatException(
                 "You cannot get a string value from an error cell");
+        }
+        if (cellType == CELL_TYPE_FORMULA) 
+        {
+            if (stringValue==null) return "";
         }
         return stringValue;
     }

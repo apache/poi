@@ -9,7 +9,7 @@
     <menu label="Community">
         <menu-item label="News" href="news.html"/>
         <menu-item label="Mirrors" href="mirrors.html"/>
-        <menu-item label="Changes" href="changes.html"/>
+        <menu-item label="Changes" href="site:changes"/>
         <menu-item label="To Do" href="todo.html"/>
         <menu-item label="Get Involved" href="getinvolved/index.html"/>
         <menu-item label="Mailing Lists" href="http://jakarta.apache.org/site/mail.html"/>

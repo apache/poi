@@ -60,6 +60,7 @@ import java.io.*;
 import java.util.*;
 
 import org.apache.poi.poifs.common.POIFSConstants;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.IntegerField;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
@@ -104,7 +105,7 @@ public class HeaderBlockReader
         throws IOException
     {
         _data = new byte[ POIFSConstants.BIG_BLOCK_SIZE ];
-        int byte_count = stream.read(_data);
+        int byte_count = IOUtils.readFully(stream, _data);
 
         if (byte_count != POIFSConstants.BIG_BLOCK_SIZE)
         {

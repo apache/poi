@@ -59,6 +59,8 @@ import java.io.*;
 
 import java.util.*;
 
+import org.apache.poi.hpsf.ClassID;
+
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.dev.POIFSViewable;
 import org.apache.poi.util.ByteField;
@@ -87,6 +89,8 @@ public abstract class Property
     static final private int    _previous_property_offset = 0x44;
     static final private int    _next_property_offset     = 0x48;
     static final private int    _child_property_offset    = 0x4C;
+    static final private int    _storage_clsid_offset     = 0x50;
+    static final private int    _user_flags_offset        = 0x60;
     static final private int    _seconds_1_offset         = 0x64;
     static final private int    _days_1_offset            = 0x68;
     static final private int    _seconds_2_offset         = 0x6C;
@@ -107,6 +111,8 @@ public abstract class Property
     private IntegerField        _previous_property;
     private IntegerField        _next_property;
     private IntegerField        _child_property;
+    private ClassID             _storage_clsid;
+    private IntegerField        _user_flags;
     private IntegerField        _seconds_1;
     private IntegerField        _days_1;
     private IntegerField        _seconds_2;
@@ -136,6 +142,8 @@ public abstract class Property
                                               _NO_INDEX, _raw_data);
         _child_property    = new IntegerField(_child_property_offset,
                                               _NO_INDEX, _raw_data);
+        _storage_clsid     = new ClassID(_raw_data,_storage_clsid_offset);
+        _user_flags        = new IntegerField(_user_flags_offset, 0, _raw_data);
         _seconds_1         = new IntegerField(_seconds_1_offset, 0,
                                               _raw_data);
         _days_1            = new IntegerField(_days_1_offset, 0, _raw_data);
@@ -173,6 +181,8 @@ public abstract class Property
                                               _raw_data);
         _child_property    = new IntegerField(_child_property_offset,
                                               _raw_data);
+        _storage_clsid     = new ClassID(_raw_data,_storage_clsid_offset);
+        _user_flags        = new IntegerField(_user_flags_offset, 0, _raw_data);
         _seconds_1         = new IntegerField(_seconds_1_offset, _raw_data);
         _days_1            = new IntegerField(_days_1_offset, _raw_data);
         _seconds_2         = new IntegerField(_seconds_2_offset, _raw_data);
@@ -296,11 +306,20 @@ public abstract class Property
     abstract public boolean isDirectory();
 
     /**
+     * Sets the storage clsid, which is the Class ID of a COM object which
+     *   reads and writes this stream
+     * @return storage Class ID for this property stream
+     */
+    public ClassID getStorageClsid()
+    {
+        return _storage_clsid;
+    }
+
+    /**
      * Set the name; silently truncates the name if it's too long.
      *
      * @param name the new name
      */
-
     protected final void setName(final String name)
     {
         char[] char_array = name.toCharArray();
@@ -327,6 +346,20 @@ public abstract class Property
                             * LittleEndianConsts.SHORT_SIZE), _raw_data);
     }
 
+    /**
+     * Sets the storage class ID for this property stream. This is the Class ID
+     *   of the COM object which can read and write this property stream
+     * @param clsidStorage Storage Class ID
+     */
+    public void setStorageClsid( ClassID clsidStorage)
+    {
+        _storage_clsid = clsidStorage;
+        if( clsidStorage == null) {
+            Arrays.fill( _raw_data, _storage_clsid_offset, _storage_clsid_offset + ClassID.LENGTH, (byte) 0);
+        } else {
+            clsidStorage.write( _raw_data, _storage_clsid_offset);
+        }
+    }
     /**
      * Set the property type. Makes no attempt to validate the value.
      *

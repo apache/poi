@@ -61,7 +61,8 @@
 package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.hssf.util.SheetReferences;
+import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.record.NameRecord;
 
 /**
  *
@@ -73,10 +74,10 @@ public class NamePtg
     extends Ptg
 {
     public final static short sid  = 0x23;
-    private final static int  SIZE = 7;
-    private short             field_1_ixti;   // unknown function
-    private short             field_2_label_index;
-    private short             field_3_zero;   // reserved must be 0
+    private final static int  SIZE = 5;
+    private short             field_1_label_index;
+    private short             field_2_zero;   // reserved must be 0
+    boolean xtra=false;
 
 
     private NamePtg() {
@@ -85,9 +86,22 @@ public class NamePtg
 
     /** Creates new NamePtg */
 
-    public NamePtg(String name)
+    public NamePtg(String name, Workbook book)
     {
-        //TODO
+        final short n = (short) (book.getNumNames() + 1);
+        NameRecord rec;
+        for (short i = 1; i < n; i++) {
+            rec = book.getNameRecord(i - 1);
+            if (name.equals(rec.getNameText())) {
+                field_1_label_index = i;
+                return;
+            }
+        }
+        rec = new NameRecord();
+        rec.setNameText(name);
+        rec.setNameTextLength((byte) name.length());
+        book.addName(rec);
+        field_1_label_index = n;
     }
 
     /** Creates new NamePtg */
@@ -95,13 +109,17 @@ public class NamePtg
     public NamePtg(byte [] data, int offset)
     {
         offset++;
-        field_1_ixti        = LittleEndian.getShort(data, offset);
-        field_2_label_index = LittleEndian.getShort(data, offset + 2);
-        field_3_zero        = LittleEndian.getShort(data, offset + 4);
+        //field_1_ixti        = LittleEndian.getShort(data, offset);
+        field_1_label_index = LittleEndian.getShort(data, offset );
+        field_2_zero        = LittleEndian.getShort(data, offset + 2);
+        //if (data[offset+6]==0) xtra=true;
     }
 
     public void writeBytes(byte [] array, int offset)
     {
+        array[offset+0]= (byte) (sid + ptgClass);
+        LittleEndian.putShort(array,offset+1,field_1_label_index);
+        LittleEndian.putShort(array,offset+3, field_2_zero);
     }
 
     public int getSize()
@@ -109,18 +127,18 @@ public class NamePtg
         return SIZE;
     }
 
-    public String toFormulaString(SheetReferences refs)
+    public String toFormulaString(Workbook book)
     {
-        return "NO IDEA - NAME";
+        NameRecord rec = book.getNameRecord(field_1_label_index - 1);
+        return rec.getNameText();
     }
     
-    public byte getDefaultOperandClass() {return Ptg.CLASS_VALUE;}
+    public byte getDefaultOperandClass() {return Ptg.CLASS_REF;}
 
     public Object clone() {
       NamePtg ptg = new NamePtg();
-      ptg.field_1_ixti = field_1_ixti;
-      ptg.field_2_label_index = field_2_label_index;
-      ptg.field_3_zero = field_3_zero;
+      ptg.field_1_label_index = field_1_label_index;
+      ptg.field_2_zero = field_2_zero;
       return ptg;
     }
 }

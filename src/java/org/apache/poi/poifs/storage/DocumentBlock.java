@@ -62,6 +62,7 @@ import java.io.OutputStream;
 import java.util.Arrays;
 
 import org.apache.poi.poifs.common.POIFSConstants;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.IntegerField;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
@@ -106,7 +107,7 @@ public class DocumentBlock
         throws IOException
     {
         this();
-        int count = stream.read(_data);
+        int count = IOUtils.readFully(stream, _data);
 
         _bytes_read = (count == -1) ? 0
                                     : count;

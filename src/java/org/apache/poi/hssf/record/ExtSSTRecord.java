@@ -61,13 +61,13 @@ import java.util.ArrayList;
 
 /**
  * Title:        Extended Static String Table<P>
- * Description:  I really don't understand this thing... its supposed to be "a hash
- *               table for optimizing external copy operations"  --
- *<P>
- *               This sounds like a job for Marc "BitMaster" Johnson aka the
- *               "Hawaiian Master Chef".<P>
+ * Description: This record is used for a quick lookup into the SST record. This
+ *              record breaks the SST table into a set of buckets. The offsets
+ *              to these buckets within the SST record are kept as well as the
+ *              position relative to the start of the SST record.
  * REFERENCE:  PG 313 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
  * @author Andrew C. Oliver (acoliver at apache dot org)
+ * @author Jason Height (jheight at apache dot org)
  * @version 2.0-pre
  * @see org.apache.poi.hssf.record.ExtSSTInfoSubRecord
  */
@@ -75,9 +75,14 @@ import java.util.ArrayList;
 public class ExtSSTRecord
     extends Record
 {
+    public static final int DEFAULT_BUCKET_SIZE = 8;
+    //Cant seem to find this documented but from the biffviewer it is clear that
+    //Excel only records the indexes for the first 128 buckets.
+    public static final int MAX_BUCKETS = 128;
     public final static short sid = 0xff;
-    private short             field_1_strings_per_bucket;
+    private short             field_1_strings_per_bucket = DEFAULT_BUCKET_SIZE;
     private ArrayList         field_2_sst_info;
+
 
     public ExtSSTRecord()
     {
@@ -119,12 +124,11 @@ public class ExtSSTRecord
         }
     }
 
-    // this probably doesn't work but we don't really care at this point
     protected void fillFields(byte [] data, short size, int offset)
     {
         field_2_sst_info           = new ArrayList();
         field_1_strings_per_bucket = LittleEndian.getShort(data, 0 + offset);
-        for (int k = 2; k < ((data.length - offset) - size); k += 8)
+        for (int k = 2; k < (size-offset); k += 8)
         {
             byte[] tempdata = new byte[ 8 + offset ];
 
@@ -189,26 +193,55 @@ public class ExtSSTRecord
     public int serialize(int offset, byte [] data)
     {
         LittleEndian.putShort(data, 0 + offset, sid);
-
-//    LittleEndian.putShort(data,2,(short)(2 + (getNumInfoRecords() *8)));
-        LittleEndian.putShort(data, 2 + offset, ( short ) (2 + (0x3fa - 2)));
-        int pos = 4;
+        LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
+        LittleEndian.putShort(data, 4 + offset, field_1_strings_per_bucket);
+        int pos = 6;
 
         for (int k = 0; k < getNumInfoRecords(); k++)
         {
-            System.arraycopy(getInfoRecordAt(k).serialize(), 0, data,
-                             pos + offset, 8);
+            ExtSSTInfoSubRecord rec = getInfoRecordAt(k);
+            pos += rec.serialize(pos + offset, data);
         }
-        return getRecordSize();
+        return pos;
     }
 
+    /** Returns the size of this record */
     public int getRecordSize()
     {
-        return 6 + 0x3fa - 2;
+        return 6 + 8*getNumInfoRecords();
+    }
+
+    public static final int getNumberOfInfoRecsForStrings(int numStrings) {
+      int infoRecs = (numStrings / DEFAULT_BUCKET_SIZE);
+      if ((numStrings % DEFAULT_BUCKET_SIZE) != 0)
+        infoRecs ++;
+      //Excel seems to max out after 128 info records.
+      //This isnt really documented anywhere...
+      if (infoRecs > MAX_BUCKETS)
+        infoRecs = MAX_BUCKETS;
+      return infoRecs;
+    }
+
+    /** Given a number of strings (in the sst), returns the size of the extsst record*/
+    public static final int getRecordSizeForStrings(int numStrings) {
+      return 4 + 2 + (getNumberOfInfoRecsForStrings(numStrings) * 8);
     }
 
     public short getSid()
     {
-        return this.sid;
+        return sid;
     }
+
+    public void setBucketOffsets( int[] bucketAbsoluteOffsets, int[] bucketRelativeOffsets )
+    {
+        this.field_2_sst_info = new ArrayList(bucketAbsoluteOffsets.length);
+        for ( int i = 0; i < bucketAbsoluteOffsets.length; i++ )
+        {
+            ExtSSTInfoSubRecord r = new ExtSSTInfoSubRecord();
+            r.setBucketRecordOffset((short)bucketRelativeOffsets[i]);
+            r.setStreamPos(bucketAbsoluteOffsets[i]);
+            field_2_sst_info.add(r);
+        }
+    }
+
 }

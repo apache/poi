@@ -56,6 +56,7 @@
 package org.apache.poi.poifs.storage;
 
 import org.apache.poi.poifs.common.POIFSConstants;
+import org.apache.poi.util.IOUtils;
 
 import java.io.*;
 
@@ -84,7 +85,7 @@ public class RawDataBlock
         throws IOException
     {
         _data = new byte[ POIFSConstants.BIG_BLOCK_SIZE ];
-        int count = stream.read(_data);
+        int count = IOUtils.readFully(stream, _data);
 
         if (count == -1)
         {
