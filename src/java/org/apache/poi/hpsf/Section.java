@@ -105,7 +105,7 @@ public class Section {
      *
      *@return    The offset value
      */
-    public int getOffset() {
+    public long getOffset() {
         return offset;
     }
 

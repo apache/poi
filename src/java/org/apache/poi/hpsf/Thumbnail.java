@@ -54,7 +54,7 @@
  */
 package org.apache.poi.hpsf;
 
-import org.apache.poi.hpsf.littleendian.DWord;
+import org.apache.poi.util.LittleEndian;
 /**
  *  <p>
  *
@@ -282,9 +282,9 @@ public class Thumbnail {
      *
      *@return    a flag indicating the Clipboard Format Tag
      */
-    public int getClipboardFormatTag() {
-        DWord clipboardFormatTag = new DWord(getThumbnail(), OFFSET_CFTAG);
-        return clipboardFormatTag.intValue();
+    public long getClipboardFormatTag() {
+        long clipboardFormatTag = LittleEndian.getUInt(getThumbnail(), OFFSET_CFTAG);
+        return clipboardFormatTag;
     }
 
 
@@ -309,14 +309,14 @@ public class Thumbnail {
      *@return                 a flag indicating the Clipboard Format
      *@throws  HPSFException  if the Thumbnail isn't CFTAG_WINDOWS
      */
-    public int getClipboardFormat() throws HPSFException {
+    public long getClipboardFormat() throws HPSFException {
         if (!(getClipboardFormatTag() == CFTAG_WINDOWS)) {
             throw new HPSFException("Clipboard Format Tag of Thumbnail must " +
                     "be CFTAG_WINDOWS.");
         }
 
-        DWord clipboardFormat = new DWord(getThumbnail(), OFFSET_CF);
-        return clipboardFormat.intValue();
+        long clipboardFormat = LittleEndian.getUInt(getThumbnail(), OFFSET_CF);
+        return clipboardFormat;
     }
 
 

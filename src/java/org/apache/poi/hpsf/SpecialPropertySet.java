@@ -55,7 +55,7 @@
 package org.apache.poi.hpsf;
 
 import java.util.*;
-import org.apache.poi.hpsf.littleendian.*;
+import org.apache.poi.util.LittleEndian;
 
 /**
  *  <p>
@@ -110,7 +110,7 @@ public abstract class SpecialPropertySet extends PropertySet {
      *
      *@return    The byteOrder value
      */
-    public Word getByteOrder() {
+    public int getByteOrder() {
         return delegate.getByteOrder();
     }
 
@@ -121,7 +121,7 @@ public abstract class SpecialPropertySet extends PropertySet {
      *
      *@return    The format value
      */
-    public Word getFormat() {
+    public int getFormat() {
         return delegate.getFormat();
     }
 
@@ -132,7 +132,7 @@ public abstract class SpecialPropertySet extends PropertySet {
      *
      *@return    The oSVersion value
      */
-    public DWord getOSVersion() {
+    public long getOSVersion() {
         return delegate.getOSVersion();
     }
 
@@ -154,7 +154,7 @@ public abstract class SpecialPropertySet extends PropertySet {
      *
      *@return    The sectionCount value
      */
-    public int getSectionCount() {
+    public long getSectionCount() {
         return delegate.getSectionCount();
     }
 
