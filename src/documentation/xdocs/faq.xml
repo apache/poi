@@ -7,12 +7,10 @@
           What is the HSSF "eventmodel"?
         </question>
         <answer>
-            <p>
               The HSSF eventmodel package is a new API for reading XLS files more efficiently.  It does
               require more knowledge on the part of the user, but reduces memory consumption by more than
               tenfold.  It is based on the AWT event model in combination with SAX.  If you need read-only
               access to a given XLS file, this is the best way to do it.
-            </p>
         </answer>
 
     </faq>
@@ -21,10 +19,8 @@
           Why can't read the document I created using Star Office 5.1?
         </question>
         <answer>
-            <p>
               Star Office 5.1 writes some records using the older BIFF standard.  This causes some problems
               with POI which supports only BIFF8.
-            </p>
         </answer>
     </faq>
     <faq>
@@ -32,10 +28,18 @@
             Why am I getting an exception each time I attempt to read my spreadsheet?
         </question>
         <answer>
-           <p>
             It's possible your spreadsheet contains a feature that is not currently supported by HSSF.
             For example - spreadsheets containing cells with rich text are not currently supported.
-            </p>
+        </answer>
+    </faq>
+    <faq>
+        <question>
+            Does HSSF support protected spreadsheets?
+        </question>
+        <answer>
+            Protecting a spreadsheet encripts it.  We wont touch encription because we're not legally educated
+            and don't understand the full implications of trying to implement this.  If you wish to have a go
+            at this feel free to add it as a plugin module.  We wont be hosting it here however.
         </answer>
     </faq>
 </faqs>
