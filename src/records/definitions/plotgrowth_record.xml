@@ -1,0 +1,8 @@
+<record id="0x1064" name="PlotGrowth" package="org.apache.poi.hssf.record">
+    <description>The plot growth record specifies the scaling factors used when a font is scaled.</description>
+    <author>Glen Stampoultzis (gstamp at iprimus dot com dot au)</author>
+    <fields>
+        <field type="int" size="4" name="horizontalScale"/>
+        <field type="int" size="4" name="verticalScale"/>
+    </fields>
+</record>
