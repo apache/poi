@@ -1,3 +1,5 @@
+
+
 /* ====================================================================
  * The Apache Software License, Version 1.1
  *
@@ -52,22 +54,24 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.poi.hwpf.usermodel;
 
-import org.apache.poi.hwpf.*;
+package org.apache.poi.hwpf.model;
 
-import java.util.List;
+import org.apache.poi.util.LittleEndian;
+import org.apache.poi.hwpf.model.types.DOPAbstractType;
 
-public class CharacterRange extends Range
+/**
+ * Comment me
+ *
+ * @author Ryan Ackley
+ */
+
+public class DocumentProperties extends DOPAbstractType
 {
-  public CharacterRange(int start, int end, HWPFDocument doc)
-  {
-    super(start, end, doc);
-  }
-  public CharacterRange(int start, int end, Range parent)
-  {
-    super(start, end, parent);
-  }
 
 
+  public DocumentProperties(byte[] tableStream, int offset)
+  {
+    super.fillFields(tableStream, offset);
+  }
 }

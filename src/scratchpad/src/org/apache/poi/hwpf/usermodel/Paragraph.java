@@ -54,13 +54,17 @@
 
 package org.apache.poi.hwpf.usermodel;
 
-import org.apache.poi.hwpf.model.hdftypes.definitions.PAPAbstractType;
-import org.apache.poi.hwpf.model.hdftypes.StyleDescription;
+import org.apache.poi.hwpf.model.types.PAPAbstractType;
+import org.apache.poi.hwpf.model.StyleDescription;
+import org.apache.poi.hwpf.model.StyleSheet;
+import org.apache.poi.hwpf.model.PAPX;
 
 import org.apache.poi.hwpf.sprm.SprmBuffer;
+import org.apache.poi.hwpf.sprm.ParagraphSprmCompressor;
+import org.apache.poi.hwpf.sprm.TableSprmCompressor;
 
 public class Paragraph
-  extends PAPAbstractType
+  extends Range
     implements Cloneable
 {
   public final static short SPRM_JC = 0x2403;
@@ -121,41 +125,379 @@ public class Paragraph
   public final static short SPRM_FADJUSTRIGHT = 0x2448;
 
 
-  private StyleDescription _baseStyle;
-  private SprmBuffer _papx;
+  private short _istd;
+  private ParagraphProperties _props;
+  protected SprmBuffer _papx;
 
-  public Paragraph()
+  protected Paragraph(int startIdx, int endIdx, Table parent)
   {
-    field_21_lspd = new LineSpacingDescriptor();
-    field_24_phe = new byte[12];
-    field_46_brcTop = new BorderCode();
-    field_47_brcLeft = new BorderCode();
-    field_48_brcBottom = new BorderCode();
-    field_49_brcRight = new BorderCode();
-    field_50_brcBetween = new BorderCode();
-    field_51_brcBar = new BorderCode();
-    field_60_anld = new byte[84];
-    this.field_17_fWidowControl = 1;
-    this.field_21_lspd.setMultiLinespace((short)1);
-    this.field_21_lspd.setDyaLine((short)240);
-    this.field_12_ilvl = (byte)9;
+    super(startIdx, endIdx, Range.PARAGRAPH_INDEX, parent);
+    PAPX papx = (PAPX)_paragraphs.get(_parEnd - 1);
+    _props = papx.getParagraphProperties(_doc.getStyleSheet());
+    _papx = papx.getSprmBuf();
+  }
 
+  public Paragraph(int start, int end, ParagraphProperties pap, SprmBuffer papx, Range parent)
+  {
+    super(start, end, parent);
+    _props = pap;
+    _papx = papx;
+  }
+
+  public boolean isInTable()
+  {
+    return _props.getFInTable() != 0;
+  }
+
+  public boolean isTableRowEnd()
+  {
+    return _props.getFTtp() != 0 || _props.getFTtpEmbedded() != 0;
+  }
+
+  public int getTableLevel()
+  {
+    return _props.getTableLevel();
+  }
+
+  public boolean isEmbeddedCellMark()
+  {
+    return _props.getEmbeddedCellMark() != 0;
+  }
+
+  public int getJustification()
+  {
+    return _props.getJc();
+  }
+
+  public void setJustification(byte jc)
+  {
+    _props.setJc(jc);
+    _papx.addSprm(SPRM_JC, jc);
+  }
+
+  public boolean keepOnPage()
+  {
+    return _props.getFKeep() != 0;
+  }
+
+  public void setKeepOnPage(boolean fKeep)
+  {
+    byte keep = (byte)(fKeep ? 1 : 0);
+    _props.setFKeep(keep);
+    _papx.addSprm(SPRM_FKEEP, keep);
+  }
+
+  public boolean keepWithNext()
+  {
+    return _props.getFKeepFollow() != 0;
+  }
+
+  public void setKeepWithNext(boolean fKeepFollow)
+  {
+    byte keepFollow = (byte)(fKeepFollow ? 1 : 0);
+    _props.setFKeepFollow(keepFollow);
+    _papx.addSprm(SPRM_FKEEPFOLLOW, keepFollow);
+  }
+
+  public boolean pageBreakBefore()
+  {
+    return _props.getFPageBreakBefore() != 0;
+  }
+
+  public void setPageBreakBefore(boolean fPageBreak)
+  {
+    byte pageBreak = (byte)(fPageBreak ? 1 : 0);
+    _props.setFPageBreakBefore(pageBreak);
+    _papx.addSprm(SPRM_FPAGEBREAKBEFORE, pageBreak);
+  }
+
+  public boolean isLineNotNumbered()
+  {
+    return _props.getFNoLnn() != 0;
+  }
+
+  public void setLineNotNumbered(boolean fNoLnn)
+  {
+    byte noLnn = (byte)(fNoLnn ? 1 : 0);
+    _props.setFNoLnn(noLnn);
+    _papx.addSprm(SPRM_FNOLINENUMB, noLnn);
+  }
+
+  public boolean isSideBySide()
+  {
+    return _props.getFSideBySide() != 0;
+  }
+
+  public void setSideBySide(boolean fSideBySide)
+  {
+    byte sideBySide = (byte)(fSideBySide ? 1 : 0);
+    _props.setFSideBySide(sideBySide);
+    _papx.addSprm(SPRM_FSIDEBYSIDE, sideBySide);
+  }
+
+  public boolean isAutoHyphenated()
+  {
+    return _props.getFNoAutoHyph() == 0;
+  }
+
+  public void setAutoHyphenated(boolean autoHyph)
+  {
+    byte auto = (byte)(!autoHyph ? 1 : 0);
+    _props.setFNoAutoHyph(auto);
+    _papx.addSprm(SPRM_FNOAUTOHYPH, auto);
+  }
+
+  public boolean isWidowControlled()
+  {
+    return _props.getFWidowControl() != 0;
+  }
+
+  public void setWidowControl(boolean widowControl)
+  {
+    byte widow = (byte)(widowControl ? 1 : 0);
+    _props.setFWidowControl(widow);
+    _papx.addSprm(SPRM_FWIDOWCONTROL, widow);
+  }
+
+  public int getIndentFromRight()
+  {
+    return _props.getDxaRight();
+  }
+
+  public void setIndentFromRight(int dxaRight)
+  {
+    _props.setDxaRight(dxaRight);
+    _papx.addSprm(SPRM_DXARIGHT, (short)dxaRight);
+  }
+
+  public int getIndentFromLeft()
+  {
+    return _props.getDxaLeft();
+  }
+
+  public void setIndentFromLeft(int dxaLeft)
+  {
+    _props.setDxaLeft(dxaLeft);
+    _papx.addSprm(SPRM_DXALEFT, (short)dxaLeft);
+  }
+
+  public int getFirstLineIndent()
+  {
+    return _props.getDxaLeft1();
+  }
+
+  public void setFirstLineIndent(int first)
+  {
+    _props.setDxaLeft1(first);
+    _papx.addSprm(SPRM_DXALEFT1, (short)first);
+  }
+
+  public LineSpacingDescriptor getLineSpacing()
+  {
+    return _props.getLspd();
+  }
+
+  public void setLineSpacing(LineSpacingDescriptor lspd)
+  {
+    _props.setLspd(lspd);
+    _papx.addSprm(SPRM_DYALINE, lspd.toInt());
+  }
+
+  public int getSpacingBefore()
+  {
+    return _props.getDyaBefore();
+  }
+
+  public void setSpacingBefore(int before)
+  {
+    _props.setDyaBefore(before);
+    _papx.addSprm(SPRM_DYABEFORE, (short)before);
+  }
+
+  public int getSpacingAfter()
+  {
+    return _props.getDyaAfter();
+  }
+
+  public void setSpacingAfter(int after)
+  {
+    _props.setDyaAfter(after);
+    _papx.addSprm(SPRM_DYAAFTER, (short)after);
+  }
+
+  public boolean isKinsoku()
+  {
+    return _props.getFKinsoku() != 0;
+  }
+
+  public void setKinsoku(boolean kinsoku)
+  {
+    byte kin = (byte)(kinsoku ? 1 : 0);
+    _props.setFKinsoku(kin);
+    _papx.addSprm(SPRM_FKINSOKU, kin);
+  }
+
+  public boolean isWordWrapped()
+  {
+    return _props.getFWordWrap() != 0;
+  }
+
+  public void setWordWrapped(boolean wrap)
+  {
+    byte wordWrap = (byte)(wrap ? 1 : 0);
+    _props.setFWordWrap(wordWrap);
+    _papx.addSprm(SPRM_FWORDWRAP, wordWrap);
+  }
+
+  public int getFontAlignment()
+  {
+    return _props.getWAlignFont();
+  }
+
+  public void setFontAlignment(int align)
+  {
+    _props.setWAlignFont(align);
+    _papx.addSprm(SPRM_WALIGNFONT, (short)align);
+  }
+
+  public boolean isVertical()
+  {
+    return _props.isFVertical();
+  }
+
+  public void setVertical(boolean vertical)
+  {
+    _props.setFVertical(vertical);
+    _papx.addSprm(SPRM_FRAMETEXTFLOW, getFrameTextFlow());
+  }
+
+  public boolean isBackward()
+  {
+    return _props.isFBackward();
+  }
+
+  public void setBackward(boolean bward)
+  {
+    _props.setFBackward(bward);
+    _papx.addSprm(SPRM_FRAMETEXTFLOW, getFrameTextFlow());
+  }
+
+  public BorderCode getTopBorder()
+  {
+    return _props.getBrcTop();
+  }
+
+  public void setTopBorder(BorderCode top)
+  {
+    _props.setBrcTop(top);
+    _papx.addSprm(SPRM_BRCTOP, top.toInt());
+  }
+
+  public BorderCode getLeftBorder()
+  {
+    return _props.getBrcLeft();
+  }
+
+  public void setLeftBorder(BorderCode left)
+  {
+    _props.setBrcLeft(left);
+    _papx.addSprm(SPRM_BRCLEFT, left.toInt());
+  }
+
+  public BorderCode getBottomBorder()
+  {
+    return _props.getBrcBottom();
+  }
+
+  public void setBottomBorder(BorderCode bottom)
+  {
+    _props.setBrcBottom(bottom);
+    _papx.addSprm(SPRM_BRCBOTTOM, bottom.toInt());
+  }
+
+  public BorderCode getRightBorder()
+  {
+    return _props.getBrcRight();
+  }
+
+  public void setRightBorder(BorderCode right)
+  {
+    _props.setBrcRight(right);
+    _papx.addSprm(SPRM_BRCRIGHT, right.toInt());
+  }
+
+  public BorderCode getBarBorder()
+  {
+    return _props.getBrcBar();
+  }
+
+  public void setBarBorder(BorderCode bar)
+  {
+    _props.setBrcBar(bar);
+    _papx.addSprm(SPRM_BRCBAR, bar.toInt());
+  }
+
+  public ShadingDescriptor getShading()
+  {
+    return _props.getShd();
+  }
+
+  public void setShading(ShadingDescriptor shd)
+  {
+    _props.setShd(shd);
+    _papx.addSprm(SPRM_SHD, shd.toShort());
+  }
+
+  public DropCapSpecifier getDropCap()
+  {
+    return _props.getDcs();
+  }
+
+  public void setDropCap(DropCapSpecifier dcs)
+  {
+    _props.setDcs(dcs);
+    _papx.addSprm(SPRM_DCS, dcs.toShort());
+  }
+
+  void setTableRowEnd(TableProperties props)
+  {
+    setTableRowEnd((byte)1);
+    byte[] grpprl = TableSprmCompressor.compressTableProperty(props);
+    _papx.append(grpprl);
+  }
+
+  private void setTableRowEnd(byte val)
+  {
+    _props.setFTtp(val);
+    _papx.addSprm(SPRM_FTTP, val);
   }
 
   public Object clone()
     throws CloneNotSupportedException
   {
-    Paragraph pp = (Paragraph)super.clone();
-    pp.field_21_lspd = (LineSpacingDescriptor)field_21_lspd.clone();
-    pp.field_24_phe = (byte[])field_24_phe.clone();
-    pp.field_46_brcTop = (BorderCode)field_46_brcTop.clone();
-    pp.field_47_brcLeft = (BorderCode)field_47_brcLeft.clone();
-    pp.field_48_brcBottom = (BorderCode)field_48_brcBottom.clone();
-    pp.field_49_brcRight = (BorderCode)field_49_brcRight.clone();
-    pp.field_50_brcBetween = (BorderCode)field_50_brcBetween.clone();
-    pp.field_51_brcBar = (BorderCode)field_51_brcBar.clone();
-    pp.field_60_anld = (byte[])field_60_anld.clone();
-    return pp;
+    Paragraph p = (Paragraph)super.clone();
+    p._props = (ParagraphProperties)_props.clone();
+    //p._baseStyle = _baseStyle;
+    p._papx = new SprmBuffer();
+    return p;
+  }
+
+  private short getFrameTextFlow()
+  {
+    short retVal = 0;
+    if (_props.isFVertical())
+    {
+      retVal |= 1;
+    }
+    if (_props.isFBackward())
+    {
+      retVal |= 2;
+    }
+    if (_props.isFRotateFont())
+    {
+      retVal |= 4;
+    }
+    return retVal;
   }
 
 }

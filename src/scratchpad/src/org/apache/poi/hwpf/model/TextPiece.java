@@ -52,64 +52,79 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.poi.hwpf.usermodel;
+package org.apache.poi.hwpf.model;
 
-import org.apache.poi.hwpf.model.types.SEPAbstractType;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.AccessibleObject;
-import java.lang.reflect.Array;
+import java.io.UnsupportedEncodingException;
+/**
+ * Lightweight representation of a text piece.
+ *
+ * @author Ryan Ackley
+ */
 
-public class SectionProperties
-  extends SEPAbstractType
+public class TextPiece extends PropertyNode implements Comparable
 {
-  public SectionProperties()
-  {
-    field_20_brcTop = new BorderCode();
-    field_21_brcLeft = new BorderCode();
-    field_22_brcBottom = new BorderCode();
-    field_23_brcRight = new BorderCode();
-    field_26_dttmPropRMark = new DateAndTime();
-  }
+  private boolean _usesUnicode;
+  private int _length;
+  private PieceDescriptor _pd;
 
-  public Object clone()
-    throws CloneNotSupportedException
+  /**
+   * @param start Offset in main document stream.
+   * @param length The total length of the text in bytes. Note: 1 character
+   *        does not necessarily refer to 1 byte.
+   * @param unicode true if this text is unicode.
+   */
+  public TextPiece(int start, int end, byte[] text, PieceDescriptor pd)
+    throws UnsupportedEncodingException
   {
-    SectionProperties copy = (SectionProperties)super.clone();
-    copy.field_20_brcTop = (BorderCode)field_20_brcTop.clone();
-    copy.field_21_brcLeft = (BorderCode)field_21_brcLeft.clone();
-    copy.field_22_brcBottom = (BorderCode)field_22_brcBottom.clone();
-    copy.field_23_brcRight = (BorderCode)field_23_brcRight.clone();
-    copy.field_26_dttmPropRMark = (DateAndTime)field_26_dttmPropRMark.clone();
-
-    return copy;
+      super(start, end, new StringBuffer(new String(text, pd.isUnicode() ? "UTF-16LE" : "Cp1252")));
+      _usesUnicode = pd.isUnicode();
+      _length = end - start;
+      _pd = pd;
   }
+  /**
+   * @return If this text piece uses unicode
+   */
+   public boolean usesUnicode()
+   {
+      return _usesUnicode;
+   }
 
-  public boolean equals(Object obj)
-  {
-    Field[] fields = SectionProperties.class.getSuperclass().getDeclaredFields();
-    AccessibleObject.setAccessible(fields, true);
-    try
-    {
-      for (int x = 0; x < fields.length; x++)
-      {
-        Object obj1 = fields[x].get(this);
-        Object obj2 = fields[x].get(obj);
-        if (obj1 == null && obj2 == null)
-        {
-          continue;
-        }
-        if (!obj1.equals(obj2))
-        {
-          return false;
-        }
-      }
-      return true;
-    }
-    catch (Exception e)
-    {
-      return false;
-    }
-  }
+   public PieceDescriptor getPieceDescriptor()
+   {
+     return _pd;
+   }
+
+   public StringBuffer getStringBuffer()
+   {
+     return (StringBuffer)_buf;
+   }
+
+   public byte[] getRawBytes()
+   {
+     try
+     {
+       return ((StringBuffer)_buf).toString().getBytes(_usesUnicode ?
+           "UTF-16LE" : "Cp1252");
+     }
+     catch (UnsupportedEncodingException ignore)
+     {
+       // shouldn't ever happen considering we wouldn't have been able to
+       // create the StringBuffer w/o getting this exception
+       return ((StringBuffer)_buf).toString().getBytes();
+     }
+
+   }
+
+   public boolean equals(Object o)
+   {
+     if (limitsAreEqual(o))
+     {
+       TextPiece tp = (TextPiece)o;
+       return getStringBuffer().toString().equals(tp.getStringBuffer().toString()) &&
+              tp._usesUnicode == _usesUnicode && _pd.equals(tp._pd);
+     }
+     return false;
+   }
 
 }

@@ -54,31 +54,27 @@
 
 package org.apache.poi.hwpf.usermodel;
 
-import org.apache.poi.hwpf.model.hdftypes.definitions.SEPAbstractType;
+import org.apache.poi.hwpf.model.SEPX;
 
 public class Section
-  extends SEPAbstractType
+  extends Range
 {
-  public Section()
+
+  private SectionProperties _props;
+
+  public Section(SEPX sepx, Range parent)
   {
-    field_20_brcTop = new BorderCode();
-    field_21_brcLeft = new BorderCode();
-    field_22_brcBottom = new BorderCode();
-    field_23_brcRight = new BorderCode();
-    field_26_dttmPropRMark = new DateAndTime();
+    super(sepx.getStart(), sepx.getEnd(), parent);
+    _props = sepx.getSectionProperties();
   }
 
   public Object clone()
-    throws CloneNotSupportedException
-  {
-    Section copy = (Section)super.clone();
-    copy.field_20_brcTop = (BorderCode)field_20_brcTop.clone();
-    copy.field_21_brcLeft = (BorderCode)field_21_brcLeft.clone();
-    copy.field_22_brcBottom = (BorderCode)field_22_brcBottom.clone();
-    copy.field_23_brcRight = (BorderCode)field_23_brcRight.clone();
-    copy.field_26_dttmPropRMark = (DateAndTime)field_26_dttmPropRMark.clone();
+     throws CloneNotSupportedException
+   {
+     Section s = (Section)super.clone();
+     s._props = (SectionProperties)_props.clone();
+     return s;
+   }
 
-    return copy;
-  }
 
 }

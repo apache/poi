@@ -54,13 +54,17 @@
 
 package org.apache.poi.hwpf.usermodel;
 
-import org.apache.poi.hwpf.model.hdftypes.definitions.CHPAbstractType;
-import org.apache.poi.hwpf.model.hdftypes.StyleDescription;
+import org.apache.poi.hwpf.model.types.CHPAbstractType;
+import org.apache.poi.hwpf.model.StyleDescription;
+import org.apache.poi.hwpf.model.CHPX;
+import org.apache.poi.hwpf.model.StyleSheet;
 
 import org.apache.poi.hwpf.sprm.SprmBuffer;
+import org.apache.poi.hwpf.sprm.CharacterSprmCompressor;
 
 public class CharacterRun
-  extends CHPAbstractType implements Cloneable
+  extends Range
+  implements Cloneable
 {
   public final static short SPRM_FRMARKDEL = (short)0x0800;
   public final static short SPRM_FRMARK = 0x0801;
@@ -114,321 +118,350 @@ public class CharacterRun
   public final static short SPRM_IDCTHINT = 0x286F;
 
   SprmBuffer _chpx;
+  CharacterProperties _props;
 
-  public CharacterRun()
+  CharacterRun(CHPX chpx, StyleSheet ss, short istd, Range parent)
   {
-    field_17_fcPic = -1;
-    field_22_dttmRMark = new DateAndTime();
-    field_23_dttmRMarkDel = new DateAndTime();
-    field_36_dttmPropRMark = new DateAndTime();
-    field_40_dttmDispFldRMark = new DateAndTime();
-    field_41_xstDispFldRMark = new byte[36];
-    field_42_shd = new ShadingDescriptor();
-    field_43_brc = new BorderCode();
-    field_7_hps = 20;
-    field_24_istd = 10;
-    field_16_wCharScale = 100;
-    field_13_lidDefault = 0x0400;
-    field_14_lidFE = 0x0400;
+    super(chpx.getStart(), chpx.getEnd(), parent);
+    _props = chpx.getCharacterProperties(ss, istd);
+    _chpx = chpx.getSprmBuf();
   }
+
+//  SprmBuffer initProperties(CharacterProperties baseStyle)
+//  {
+//    byte[] grpprl = CharacterSprmCompressor.compressCharacterProperty(_props, baseStyle);
+//    _chpx = new SprmBuffer(grpprl);
+//    return _chpx;
+//  }
 
   public boolean isMarkedDeleted()
   {
-    return isFRMarkDel();
+    return _props.isFRMarkDel();
   }
 
   public void markDeleted(boolean mark)
   {
-    super.setFRMarkDel(mark);
-    if (_chpx != null && mark != isFRMarkDel())
-    {
-      byte newVal = (byte)(mark ? 1 : 0);
-      _chpx.addSprm(SPRM_FRMARKDEL, newVal);
-    }
+    _props.setFRMarkDel(mark);
+
+    byte newVal = (byte)(mark ? 1 : 0);
+    _chpx.addSprm(SPRM_FRMARKDEL, newVal);
+
   }
 
   public boolean isBold()
   {
-    return isFBold();
+    return _props.isFBold();
   }
 
   public void setBold(boolean bold)
   {
-    super.setFBold(bold);
-    if (_chpx != null && bold != isFBold())
-    {
-      byte newVal = (byte)(bold ? 1 : 0);
-      _chpx.addSprm(SPRM_FBOLD, newVal);
-    }
+    _props.setFBold(bold);
+
+    byte newVal = (byte)(bold ? 1 : 0);
+    _chpx.addSprm(SPRM_FBOLD, newVal);
+
   }
 
   public boolean isItalic()
   {
-    return isFItalic();
+    return _props.isFItalic();
   }
 
   public void setItalic(boolean italic)
   {
-    super.setFItalic(italic);
-    if (_chpx != null && italic != isFItalic())
-    {
-      byte newVal = (byte)(italic ? 1 : 0);
-      _chpx.addSprm(SPRM_FITALIC, newVal);
-    }
+    _props.setFItalic(italic);
+
+    byte newVal = (byte)(italic ? 1 : 0);
+    _chpx.addSprm(SPRM_FITALIC, newVal);
+
   }
 
   public boolean isOutlined()
   {
-    return isFOutline();
+    return _props.isFOutline();
   }
 
   public void setOutline(boolean outlined)
   {
-    super.setFOutline(outlined);
-    if (_chpx != null && outlined != isFOutline())
-    {
-      byte newVal = (byte)(outlined ? 1 : 0);
-      _chpx.addSprm(SPRM_FOUTLINE, newVal);
-    }
+    _props.setFOutline(outlined);
+
+    byte newVal = (byte)(outlined ? 1 : 0);
+    _chpx.addSprm(SPRM_FOUTLINE, newVal);
 
   }
 
   public boolean isFldVanished()
   {
-    return isFFldVanish();
+    return _props.isFFldVanish();
   }
 
   public void setFldVanish(boolean fldVanish)
   {
-    super.setFFldVanish(fldVanish);
-    if (_chpx != null && fldVanish != isFFldVanish())
-    {
-      byte newVal = (byte)(fldVanish ? 1 : 0);
-      _chpx.addSprm(SPRM_FFLDVANISH, newVal);
-    }
+    _props.setFFldVanish(fldVanish);
+
+    byte newVal = (byte)(fldVanish ? 1 : 0);
+    _chpx.addSprm(SPRM_FFLDVANISH, newVal);
 
   }
+
   public boolean isSmallCaps()
   {
-    return isFSmallCaps();
+    return _props.isFSmallCaps();
   }
 
   public void setSmallCaps(boolean smallCaps)
   {
-    super.setFSmallCaps(smallCaps);
-    if (_chpx != null && smallCaps != isFSmallCaps())
-    {
-      byte newVal = (byte)(smallCaps ? 1 : 0);
-      _chpx.addSprm(SPRM_FSMALLCAPS, newVal);
-    }
+    _props.setFSmallCaps(smallCaps);
+
+    byte newVal = (byte)(smallCaps ? 1 : 0);
+    _chpx.addSprm(SPRM_FSMALLCAPS, newVal);
+
   }
+
   public boolean isCapitalized()
   {
-    return isFCaps();
+    return _props.isFCaps();
   }
 
   public void setCapitalized(boolean caps)
   {
-    super.setFCaps(caps);
-    if (_chpx != null && caps != isFCaps())
-    {
-      byte newVal = (byte)(caps ? 1 : 0);
-      _chpx.addSprm(SPRM_FCAPS, newVal);
-    }
+    _props.setFCaps(caps);
+
+    byte newVal = (byte)(caps ? 1 : 0);
+    _chpx.addSprm(SPRM_FCAPS, newVal);
+
   }
 
   public boolean isVanished()
   {
-    return isFVanish();
+    return _props.isFVanish();
   }
 
   public void setVanished(boolean vanish)
   {
-    super.setFVanish(vanish);
-    if (_chpx != null && vanish != isFVanish())
-    {
-      byte newVal = (byte)(vanish ? 1 : 0);
-      _chpx.addSprm(SPRM_FVANISH, newVal);
-    }
+    _props.setFVanish(vanish);
+
+    byte newVal = (byte)(vanish ? 1 : 0);
+    _chpx.addSprm(SPRM_FVANISH, newVal);
 
   }
+
   public boolean isMarkedInserted()
   {
-    return isFRMark();
+    return _props.isFRMark();
   }
 
   public void markInserted(boolean mark)
   {
-    super.setFRMark(mark);
-    if (_chpx != null && mark != isFRMark())
-    {
-      byte newVal = (byte)(mark ? 1 : 0);
-      _chpx.addSprm(SPRM_FRMARK, newVal);
-    }
+    _props.setFRMark(mark);
+
+    byte newVal = (byte)(mark ? 1 : 0);
+    _chpx.addSprm(SPRM_FRMARK, newVal);
+
   }
 
   public boolean isStrikeThrough()
   {
-    return isFStrike();
+    return _props.isFStrike();
   }
 
   public void strikeThrough(boolean strike)
   {
-    super.setFStrike(strike);
-    if (_chpx != null && strike != isFStrike())
-    {
-      byte newVal = (byte)(strike ? 1 : 0);
-      _chpx.addSprm(SPRM_FSTRIKE, newVal);
-    }
+    _props.setFStrike(strike);
+
+    byte newVal = (byte)(strike ? 1 : 0);
+    _chpx.addSprm(SPRM_FSTRIKE, newVal);
 
   }
+
   public boolean isShadowed()
   {
-    return isFShadow();
+    return _props.isFShadow();
   }
 
   public void setShadow(boolean shadow)
   {
-    super.setFShadow(shadow);
-    if (_chpx != null && shadow != isFShadow())
-    {
-      byte newVal = (byte)(shadow ? 1 : 0);
-      _chpx.addSprm(SPRM_FSHADOW, newVal);
-    }
+    _props.setFShadow(shadow);
+
+    byte newVal = (byte)(shadow ? 1 : 0);
+    _chpx.addSprm(SPRM_FSHADOW, newVal);
 
   }
 
   public boolean isEmbossed()
   {
-    return isFEmboss();
+    return _props.isFEmboss();
   }
 
   public void setEmbossed(boolean emboss)
   {
-    super.setFEmboss(emboss);
-    if (_chpx != null && emboss != isFEmboss())
-    {
-      byte newVal = (byte)(emboss ? 1 : 0);
-      _chpx.addSprm(SPRM_FEMBOSS, newVal);
-    }
+    _props.setFEmboss(emboss);
+
+    byte newVal = (byte)(emboss ? 1 : 0);
+    _chpx.addSprm(SPRM_FEMBOSS, newVal);
 
   }
 
   public boolean isImprinted()
   {
-    return isFImprint();
+    return _props.isFImprint();
   }
 
   public void setImprinted(boolean imprint)
   {
-    super.setFImprint(imprint);
-    if (_chpx != null && imprint != isFImprint())
-    {
-      byte newVal = (byte)(imprint ? 1 : 0);
-      _chpx.addSprm(SPRM_FIMPRINT, newVal);
-    }
+    _props.setFImprint(imprint);
+
+    byte newVal = (byte)(imprint ? 1 : 0);
+    _chpx.addSprm(SPRM_FIMPRINT, newVal);
 
   }
 
   public boolean isDoubleStrikeThrough()
   {
-    return isFDStrike();
+    return _props.isFDStrike();
   }
 
   public void setDoubleStrikethrough(boolean dstrike)
   {
-    super.setFDStrike(dstrike);
-    if (_chpx != null && dstrike != isFDStrike())
-    {
-      byte newVal = (byte)(dstrike ? 1 : 0);
-      _chpx.addSprm(SPRM_FDSTRIKE, newVal);
-    }
+    _props.setFDStrike(dstrike);
+
+    byte newVal = (byte)(dstrike ? 1 : 0);
+    _chpx.addSprm(SPRM_FDSTRIKE, newVal);
+
   }
 
   public void setFtcAscii(int ftcAscii)
   {
-    super.setFtcAscii(ftcAscii);
-    if (_chpx != null && ftcAscii != getFtcAscii())
-    {
-      _chpx.addSprm(SPRM_RGFTCASCII, (short)ftcAscii);
-    }
+    _props.setFtcAscii(ftcAscii);
+
+    _chpx.addSprm(SPRM_RGFTCASCII, (short)ftcAscii);
+
   }
 
   public void setFtcFE(int ftcFE)
   {
-    super.setFtcFE(ftcFE);
-    if (_chpx != null && ftcFE != getFtcFE())
-    {
-      _chpx.addSprm(SPRM_RGFTCFAREAST, (short)ftcFE);
-    }
+    _props.setFtcFE(ftcFE);
+
+    _chpx.addSprm(SPRM_RGFTCFAREAST, (short)ftcFE);
+
   }
 
   public void setFtcOther(int ftcOther)
   {
-    super.setFtcOther(ftcOther);
-    if (_chpx != null && ftcOther != getFtcOther())
-    {
-      _chpx.addSprm(SPRM_RGFTCNOTFAREAST, (short)ftcOther);
-    }
+    _props.setFtcOther(ftcOther);
+
+    _chpx.addSprm(SPRM_RGFTCNOTFAREAST, (short)ftcOther);
+
   }
 
   public int getFontSize()
   {
-    return getHps();
+    return _props.getHps();
   }
 
   public void setFontSize(int halfPoints)
   {
-    super.setHps(halfPoints);
-    if (_chpx != null && halfPoints != getHps())
-    {
-      _chpx.addSprm(SPRM_HPS, (short)halfPoints);
-    }
+    _props.setHps(halfPoints);
+
+    _chpx.addSprm(SPRM_HPS, (short)halfPoints);
+
   }
 
   public int getCharacterSpacing()
   {
-    return getDxaSpace();
+    return _props.getDxaSpace();
   }
 
   public void setCharacterSpacing(int twips)
   {
-     super.setDxaSpace(twips);
-    if (_chpx != null && twips != getDxaSpace())
-    {
-      _chpx.addSprm(SPRM_DXASPACE, twips);
-    }
+    _props.setDxaSpace(twips);
+
+    _chpx.addSprm(SPRM_DXASPACE, twips);
+
   }
 
   public short getSubSuperScriptIndex()
   {
-    return getIss();
+    return _props.getIss();
   }
 
   public void setSubSuperScriptIndex(short iss)
   {
-    super.setDxaSpace(iss);
-    if (_chpx != null && iss != getIss())
-    {
-      _chpx.addSprm(SPRM_DXASPACE, iss);
-    }
+    _props.setDxaSpace(iss);
+
+    _chpx.addSprm(SPRM_DXASPACE, iss);
 
   }
 
+  public int getUnderlineCode()
+  {
+    return _props.getKul();
+  }
+
+  public void setUnderlineCode(int kul)
+  {
+    _props.setKul((byte)kul);
+    _chpx.addSprm(SPRM_KUL, (byte)kul);
+  }
+
+  public int getColor()
+  {
+    return _props.getIco();
+  }
+
+  public void setColor(int color)
+  {
+    _props.setIco((byte)color);
+    _chpx.addSprm(SPRM_ICO, (byte)color);
+  }
+
+  public int getVerticalOffset()
+  {
+    return _props.getHpsPos();
+  }
+
+  public void setVerticalOffset(int hpsPos)
+  {
+    _props.setHpsPos(hpsPos);
+    _chpx.addSprm(SPRM_HPSPOS, (byte)hpsPos);
+  }
+
+  public int getKerning()
+  {
+    return _props.getHpsKern();
+  }
+
+  public void setKerning(int kern)
+  {
+    _props.setHpsKern(kern);
+    _chpx.addSprm(SPRM_HPSKERN, (short)kern);
+  }
+
+  public boolean isHighlighted()
+  {
+    return _props.isFHighlight();
+  }
+
+  public void setHighlighted(byte color)
+  {
+    _props.setFHighlight(true);
+    _props.setIcoHighlight(color);
+    _chpx.addSprm(SPRM_HIGHLIGHT, color);
+  }
 
   public Object clone()
     throws CloneNotSupportedException
   {
     CharacterRun cp = (CharacterRun)super.clone();
-    cp.field_22_dttmRMark = (DateAndTime)field_22_dttmRMark.clone();
-    cp.field_23_dttmRMarkDel = (DateAndTime)field_23_dttmRMarkDel.clone();
-    cp.field_36_dttmPropRMark = (DateAndTime)field_36_dttmPropRMark.clone();
-    cp.field_40_dttmDispFldRMark = (DateAndTime)field_40_dttmDispFldRMark.clone();
-    cp.field_41_xstDispFldRMark = (byte[])field_41_xstDispFldRMark.clone();
-    cp.field_42_shd = (ShadingDescriptor)field_42_shd.clone();
+    cp._props.setDttmRMark((DateAndTime)_props.getDttmRMark().clone());
+    cp._props.setDttmRMarkDel((DateAndTime)_props.getDttmRMarkDel().clone());
+    cp._props.setDttmPropRMark((DateAndTime)_props.getDttmPropRMark().clone());
+    cp._props.setDttmDispFldRMark((DateAndTime)_props.getDttmDispFldRMark().
+                                  clone());
+    cp._props.setXstDispFldRMark((byte[])_props.getXstDispFldRMark().clone());
+    cp._props.setShd((ShadingDescriptor)_props.getShd().clone());
 
     return cp;
   }
-
 
 }

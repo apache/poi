@@ -52,64 +52,97 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.poi.hwpf.usermodel;
+package org.apache.poi.hwpf.model;
 
-import org.apache.poi.hwpf.model.types.SEPAbstractType;
+import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.BitField;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.AccessibleObject;
-import java.lang.reflect.Array;
+import java.util.Arrays;
 
-public class SectionProperties
-  extends SEPAbstractType
+public class ListFormatOverrideLevel
 {
-  public SectionProperties()
+  private static final int BASE_SIZE = 8;
+
+  int _iStartAt;
+  byte _info;
+   private static BitField _ilvl = new BitField(0xf);
+   private static BitField _fStartAt = new BitField(0x10);
+   private static BitField _fFormatting = new BitField(0x20);
+  byte[] _reserved = new byte[3];
+  ListLevel _lvl;
+
+  public ListFormatOverrideLevel(byte[] buf, int offset)
   {
-    field_20_brcTop = new BorderCode();
-    field_21_brcLeft = new BorderCode();
-    field_22_brcBottom = new BorderCode();
-    field_23_brcRight = new BorderCode();
-    field_26_dttmPropRMark = new DateAndTime();
+    while(buf[offset] == -1)
+    {
+      offset++;
+    }
+    _iStartAt = LittleEndian.getInt(buf, offset);
+    offset += LittleEndian.INT_SIZE;
+    _info = buf[offset++];
+    System.arraycopy(buf, offset, _reserved, 0, _reserved.length);
+    offset += _reserved.length;
+
+    if (_fFormatting.getValue(_info) > 0)
+    {
+      _lvl = new ListLevel(buf, offset);
+    }
   }
 
-  public Object clone()
-    throws CloneNotSupportedException
+  public ListLevel getLevel()
   {
-    SectionProperties copy = (SectionProperties)super.clone();
-    copy.field_20_brcTop = (BorderCode)field_20_brcTop.clone();
-    copy.field_21_brcLeft = (BorderCode)field_21_brcLeft.clone();
-    copy.field_22_brcBottom = (BorderCode)field_22_brcBottom.clone();
-    copy.field_23_brcRight = (BorderCode)field_23_brcRight.clone();
-    copy.field_26_dttmPropRMark = (DateAndTime)field_26_dttmPropRMark.clone();
+    return _lvl;
+  }
 
-    return copy;
+  public int getLevelNum()
+  {
+    return _ilvl.getValue(_info);
+  }
+
+  public boolean isFormatting()
+  {
+    return _fFormatting.getValue(_info) != 0;
+  }
+
+  public boolean isStartAt()
+  {
+    return _fStartAt.getValue(_info) != 0;
+  }
+
+  public int getSizeInBytes()
+  {
+    return (_lvl == null ? BASE_SIZE : BASE_SIZE + _lvl.getSizeInBytes());
   }
 
   public boolean equals(Object obj)
   {
-    Field[] fields = SectionProperties.class.getSuperclass().getDeclaredFields();
-    AccessibleObject.setAccessible(fields, true);
-    try
-    {
-      for (int x = 0; x < fields.length; x++)
-      {
-        Object obj1 = fields[x].get(this);
-        Object obj2 = fields[x].get(obj);
-        if (obj1 == null && obj2 == null)
-        {
-          continue;
-        }
-        if (!obj1.equals(obj2))
-        {
-          return false;
-        }
-      }
-      return true;
-    }
-    catch (Exception e)
+    if (obj == null)
     {
       return false;
     }
+
+    ListFormatOverrideLevel lfolvl = (ListFormatOverrideLevel)obj;
+    return lfolvl._iStartAt == _iStartAt && lfolvl._info == _info &&
+      lfolvl._lvl.equals(_lvl) && Arrays.equals(lfolvl._reserved, _reserved);
   }
 
+  public byte[] toByteArray()
+  {
+    byte[] buf = new byte[getSizeInBytes()];
+
+    int offset = 0;
+    LittleEndian.putInt(buf, _iStartAt);
+    offset += LittleEndian.INT_SIZE;
+    buf[offset++] = _info;
+    System.arraycopy(_reserved, 0, buf, offset, 3);
+    offset += 3;
+
+    if (_lvl != null)
+    {
+      byte[] levelBuf = _lvl.toByteArray();
+      System.arraycopy(levelBuf, 0, buf, offset, levelBuf.length);
+    }
+
+    return buf;
+  }
 }

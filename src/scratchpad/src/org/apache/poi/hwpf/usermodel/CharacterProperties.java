@@ -54,8 +54,8 @@
 
 package org.apache.poi.hwpf.usermodel;
 
-import org.apache.poi.hwpf.model.hdftypes.definitions.CHPAbstractType;
-import org.apache.poi.hwpf.model.hdftypes.StyleDescription;
+import org.apache.poi.hwpf.model.types.CHPAbstractType;
+import org.apache.poi.hwpf.model.StyleDescription;
 
 import org.apache.poi.hwpf.sprm.SprmBuffer;
 
@@ -113,7 +113,6 @@ public class CharacterProperties
   public final static short SPRM_FELID = 0x486E;
   public final static short SPRM_IDCTHINT = 0x286F;
 
-  SprmBuffer _chpx;
 
   public CharacterProperties()
   {
@@ -139,12 +138,7 @@ public class CharacterProperties
 
   public void markDeleted(boolean mark)
   {
-    if (_chpx != null && mark != isFRMarkDel())
-    {
-      byte newVal = (byte)(mark ? 1 : 0);
-      _chpx.addSprm(SPRM_FRMARKDEL, newVal);
-      super.setFRMarkDel(mark);
-    }
+    super.setFRMarkDel(mark);
   }
 
   public boolean isBold()
@@ -154,12 +148,7 @@ public class CharacterProperties
 
   public void setBold(boolean bold)
   {
-    if (_chpx != null && bold != isFBold())
-    {
-      byte newVal = (byte)(bold ? 1 : 0);
-      _chpx.addSprm(SPRM_FBOLD, newVal);
-      super.setFBold(bold);
-    }
+    super.setFBold(bold);
   }
 
   public boolean isItalic()
@@ -169,12 +158,7 @@ public class CharacterProperties
 
   public void setItalic(boolean italic)
   {
-    if (_chpx != null && italic != isFItalic())
-    {
-      byte newVal = (byte)(italic ? 1 : 0);
-      _chpx.addSprm(SPRM_FITALIC, newVal);
-      super.setFItalic(italic);
-    }
+    super.setFItalic(italic);
   }
 
   public boolean isOutlined()
@@ -184,13 +168,7 @@ public class CharacterProperties
 
   public void setOutline(boolean outlined)
   {
-    if (_chpx != null && outlined != isFOutline())
-    {
-      byte newVal = (byte)(outlined ? 1 : 0);
-      _chpx.addSprm(SPRM_FOUTLINE, newVal);
-      super.setFOutline(outlined);
-    }
-
+    super.setFOutline(outlined);
   }
 
   public boolean isFldVanished()
@@ -200,14 +178,9 @@ public class CharacterProperties
 
   public void setFldVanish(boolean fldVanish)
   {
-    if (_chpx != null && fldVanish != isFFldVanish())
-    {
-      byte newVal = (byte)(fldVanish ? 1 : 0);
-      _chpx.addSprm(SPRM_FFLDVANISH, newVal);
-      super.setFFldVanish(fldVanish);
-    }
-
+    super.setFFldVanish(fldVanish);
   }
+
   public boolean isSmallCaps()
   {
     return isFSmallCaps();
@@ -215,13 +188,9 @@ public class CharacterProperties
 
   public void setSmallCaps(boolean smallCaps)
   {
-    if (_chpx != null && smallCaps != isFSmallCaps())
-    {
-      byte newVal = (byte)(smallCaps ? 1 : 0);
-      _chpx.addSprm(SPRM_FSMALLCAPS, newVal);
-      super.setFSmallCaps(smallCaps);
-    }
+    super.setFSmallCaps(smallCaps);
   }
+
   public boolean isCapitalized()
   {
     return isFCaps();
@@ -229,12 +198,7 @@ public class CharacterProperties
 
   public void setCapitalized(boolean caps)
   {
-    if (_chpx != null && caps != isFCaps())
-    {
-      byte newVal = (byte)(caps ? 1 : 0);
-      _chpx.addSprm(SPRM_FCAPS, newVal);
-      super.setFCaps(caps);
-    }
+    super.setFCaps(caps);
   }
 
   public boolean isVanished()
@@ -244,12 +208,7 @@ public class CharacterProperties
 
   public void setVanished(boolean vanish)
   {
-    if (_chpx != null && vanish != isFVanish())
-    {
-      byte newVal = (byte)(vanish ? 1 : 0);
-      _chpx.addSprm(SPRM_FVANISH, newVal);
-      super.setFVanish(vanish);
-    }
+    super.setFVanish(vanish);
 
   }
   public boolean isMarkedInserted()
@@ -259,12 +218,7 @@ public class CharacterProperties
 
   public void markInserted(boolean mark)
   {
-    if (_chpx != null && mark != isFRMark())
-    {
-      byte newVal = (byte)(mark ? 1 : 0);
-      _chpx.addSprm(SPRM_FRMARK, newVal);
-      super.setFRMark(mark);
-    }
+    super.setFRMark(mark);
   }
 
   public boolean isStrikeThrough()
@@ -274,14 +228,9 @@ public class CharacterProperties
 
   public void strikeThrough(boolean strike)
   {
-    if (_chpx != null && strike != isFStrike())
-    {
-      byte newVal = (byte)(strike ? 1 : 0);
-      _chpx.addSprm(SPRM_FSTRIKE, newVal);
-      super.setFStrike(strike);
-    }
-
+    super.setFStrike(strike);
   }
+
   public boolean isShadowed()
   {
     return isFShadow();
@@ -289,12 +238,7 @@ public class CharacterProperties
 
   public void setShadow(boolean shadow)
   {
-    if (_chpx != null && shadow != isFShadow())
-    {
-      byte newVal = (byte)(shadow ? 1 : 0);
-      _chpx.addSprm(SPRM_FSHADOW, newVal);
-      super.setFShadow(shadow);
-    }
+    super.setFShadow(shadow);
 
   }
 
@@ -305,13 +249,7 @@ public class CharacterProperties
 
   public void setEmbossed(boolean emboss)
   {
-    if (_chpx != null && emboss != isFEmboss())
-    {
-      byte newVal = (byte)(emboss ? 1 : 0);
-      _chpx.addSprm(SPRM_FEMBOSS, newVal);
-      super.setFEmboss(emboss);
-    }
-
+    super.setFEmboss(emboss);
   }
 
   public boolean isImprinted()
@@ -322,12 +260,6 @@ public class CharacterProperties
   public void setImprinted(boolean imprint)
   {
     super.setFImprint(imprint);
-    if (_chpx != null && imprint != isFImprint())
-    {
-      byte newVal = (byte)(imprint ? 1 : 0);
-      _chpx.addSprm(SPRM_FIMPRINT, newVal);
-    }
-
   }
 
   public boolean isDoubleStrikeThrough()
@@ -338,38 +270,6 @@ public class CharacterProperties
   public void setDoubleStrikethrough(boolean dstrike)
   {
     super.setFDStrike(dstrike);
-    if (_chpx != null && dstrike != isFDStrike())
-    {
-      byte newVal = (byte)(dstrike ? 1 : 0);
-      _chpx.addSprm(SPRM_FDSTRIKE, newVal);
-    }
-  }
-
-  public void setFtcAscii(int ftcAscii)
-  {
-    super.setFtcAscii(ftcAscii);
-    if (_chpx != null && ftcAscii != getFtcAscii())
-    {
-      _chpx.addSprm(SPRM_RGFTCASCII, (short)ftcAscii);
-    }
-  }
-
-  public void setFtcFE(int ftcFE)
-  {
-    super.setFtcFE(ftcFE);
-    if (_chpx != null && ftcFE != getFtcFE())
-    {
-      _chpx.addSprm(SPRM_RGFTCFAREAST, (short)ftcFE);
-    }
-  }
-
-  public void setFtcOther(int ftcOther)
-  {
-    super.setFtcOther(ftcOther);
-    if (_chpx != null && ftcOther != getFtcOther())
-    {
-      _chpx.addSprm(SPRM_RGFTCNOTFAREAST, (short)ftcOther);
-    }
   }
 
   public int getFontSize()
@@ -380,10 +280,6 @@ public class CharacterProperties
   public void setFontSize(int halfPoints)
   {
     super.setHps(halfPoints);
-    if (_chpx != null && halfPoints != getHps())
-    {
-      _chpx.addSprm(SPRM_HPS, (short)halfPoints);
-    }
   }
 
   public int getCharacterSpacing()
@@ -393,11 +289,7 @@ public class CharacterProperties
 
   public void setCharacterSpacing(int twips)
   {
-     super.setDxaSpace(twips);
-    if (_chpx != null && twips != getDxaSpace())
-    {
-      _chpx.addSprm(SPRM_DXASPACE, twips);
-    }
+    super.setDxaSpace(twips);
   }
 
   public short getSubSuperScriptIndex()
@@ -408,11 +300,56 @@ public class CharacterProperties
   public void setSubSuperScriptIndex(short iss)
   {
     super.setDxaSpace(iss);
-    if (_chpx != null && iss != getIss())
-    {
-      _chpx.addSprm(SPRM_DXASPACE, iss);
-    }
+  }
 
+  public int getUnderlineCode()
+  {
+    return super.getKul();
+  }
+
+  public void setUnderlineCode(int kul)
+  {
+    super.setKul((byte)kul);
+  }
+
+  public int getColor()
+  {
+    return super.getIco();
+  }
+
+  public void setColor(int color)
+  {
+    super.setIco((byte)color);
+  }
+
+  public int getVerticalOffset()
+  {
+    return super.getHpsPos();
+  }
+
+  public void setVerticalOffset(int hpsPos)
+  {
+    super.setHpsPos(hpsPos);
+  }
+
+  public int getKerning()
+  {
+    return super.getHpsKern();
+  }
+
+  public void setKerning(int kern)
+  {
+    super.setHpsKern(kern);
+  }
+
+  public boolean isHighlighted()
+  {
+    return super.isFHighlight();
+  }
+
+  public void setHighlighted(byte color)
+  {
+    super.setIcoHighlight(color);
   }
 
 

@@ -51,65 +51,108 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
+package org.apache.poi.hwpf.model;
 
-package org.apache.poi.hwpf.usermodel;
+import java.io.ByteArrayOutputStream;
+import java.util.Arrays;
 
-import org.apache.poi.hwpf.model.types.SEPAbstractType;
+import org.apache.poi.hwpf.sprm.SprmBuffer;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.AccessibleObject;
-import java.lang.reflect.Array;
-
-public class SectionProperties
-  extends SEPAbstractType
+/**
+ * Represents a lightweight node in the Trees used to store content
+ * properties.
+ *
+ * @author Ryan Ackley
+ */
+public abstract class PropertyNode implements Comparable
 {
-  public SectionProperties()
+  protected Object _buf;
+  private int _cpStart;
+  private int _cpEnd;
+
+
+  /**
+   * @param fcStart The start of the text for this property.
+   * @param fcEnd The end of the text for this property.
+   * @param grpprl The property description in compressed form.
+   */
+  protected PropertyNode(int fcStart, int fcEnd, Object buf)
   {
-    field_20_brcTop = new BorderCode();
-    field_21_brcLeft = new BorderCode();
-    field_22_brcBottom = new BorderCode();
-    field_23_brcRight = new BorderCode();
-    field_26_dttmPropRMark = new DateAndTime();
+      _cpStart = fcStart;
+      _cpEnd = fcEnd;
+      _buf = buf;
+
   }
 
-  public Object clone()
-    throws CloneNotSupportedException
+  /**
+   * @return The offset of this property's text.
+   */
+  public int getStart()
   {
-    SectionProperties copy = (SectionProperties)super.clone();
-    copy.field_20_brcTop = (BorderCode)field_20_brcTop.clone();
-    copy.field_21_brcLeft = (BorderCode)field_21_brcLeft.clone();
-    copy.field_22_brcBottom = (BorderCode)field_22_brcBottom.clone();
-    copy.field_23_brcRight = (BorderCode)field_23_brcRight.clone();
-    copy.field_26_dttmPropRMark = (DateAndTime)field_26_dttmPropRMark.clone();
-
-    return copy;
+      return _cpStart;
   }
 
-  public boolean equals(Object obj)
+  void setStart(int start)
   {
-    Field[] fields = SectionProperties.class.getSuperclass().getDeclaredFields();
-    AccessibleObject.setAccessible(fields, true);
-    try
+    _cpStart = start;
+  }
+
+  /**
+   * @return The offset of the end of this property's text.
+   */
+  public int getEnd()
+  {
+    return _cpEnd;
+  }
+
+  void setEnd(int end)
+  {
+    _cpEnd = end;
+  }
+
+
+  protected boolean limitsAreEqual(Object o)
+  {
+    return ((PropertyNode)o).getStart() == _cpStart &&
+           ((PropertyNode)o).getEnd() == _cpEnd;
+
+  }
+
+  public boolean equals(Object o)
+  {
+    if (limitsAreEqual(o))
     {
-      for (int x = 0; x < fields.length; x++)
+      Object testBuf = ((PropertyNode)o)._buf;
+      if (testBuf instanceof byte[] && _buf instanceof byte[])
       {
-        Object obj1 = fields[x].get(this);
-        Object obj2 = fields[x].get(obj);
-        if (obj1 == null && obj2 == null)
-        {
-          continue;
-        }
-        if (!obj1.equals(obj2))
-        {
-          return false;
-        }
+        return Arrays.equals((byte[])testBuf, (byte[])_buf);
       }
-      return true;
+      return _buf.equals(testBuf);
     }
-    catch (Exception e)
-    {
-      return false;
-    }
+    return false;
   }
+  /**
+   * Used for sorting in collections.
+   */
+  public int compareTo(Object o)
+  {
+      int cpEnd = ((PropertyNode)o).getEnd();
+      if(_cpEnd == cpEnd)
+      {
+        return 0;
+      }
+      else if(_cpEnd < cpEnd)
+      {
+        return -1;
+      }
+      else
+      {
+        return 1;
+      }
+  }
+
+
+
+
 
 }

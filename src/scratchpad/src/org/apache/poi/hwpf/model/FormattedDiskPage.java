@@ -52,64 +52,77 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.poi.hwpf.usermodel;
+package org.apache.poi.hwpf.model;
 
-import org.apache.poi.hwpf.model.types.SEPAbstractType;
+import org.apache.poi.util.LittleEndian;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.AccessibleObject;
-import java.lang.reflect.Array;
-
-public class SectionProperties
-  extends SEPAbstractType
+/**
+ * Represents an FKP data structure. This data structure is used to store the
+ * grpprls of the paragraph and character properties of the document. A grpprl
+ * is a list of sprms(decompression operations) to perform on a parent style.
+ *
+ * The style properties for paragraph and character runs
+ * are stored in fkps. There are PAP fkps for paragraph properties and CHP fkps
+ * for character run properties. The first part of the fkp for both CHP and PAP
+ * fkps consists of an array of 4 byte int offsets in the main stream for that
+ * Paragraph's or Character run's text. The ending offset is the next
+ * value in the array. For example, if an fkp has X number of Paragraph's
+ * stored in it then there are (x + 1) 4 byte ints in the beginning array. The
+ * number X is determined by the last byte in a 512 byte fkp.
+ *
+ * CHP and PAP fkps also store the compressed styles(grpprl) that correspond to
+ * the offsets on the front of the fkp. The offset of the grpprls is determined
+ * differently for CHP fkps and PAP fkps.
+ *
+ * @author Ryan Ackley
+ */
+public abstract class FormattedDiskPage
 {
-  public SectionProperties()
-  {
-    field_20_brcTop = new BorderCode();
-    field_21_brcLeft = new BorderCode();
-    field_22_brcBottom = new BorderCode();
-    field_23_brcRight = new BorderCode();
-    field_26_dttmPropRMark = new DateAndTime();
-  }
+    protected byte[] _fkp;
+    protected int _crun;
+    protected int _offset;
 
-  public Object clone()
-    throws CloneNotSupportedException
-  {
-    SectionProperties copy = (SectionProperties)super.clone();
-    copy.field_20_brcTop = (BorderCode)field_20_brcTop.clone();
-    copy.field_21_brcLeft = (BorderCode)field_21_brcLeft.clone();
-    copy.field_22_brcBottom = (BorderCode)field_22_brcBottom.clone();
-    copy.field_23_brcRight = (BorderCode)field_23_brcRight.clone();
-    copy.field_26_dttmPropRMark = (DateAndTime)field_26_dttmPropRMark.clone();
 
-    return copy;
-  }
-
-  public boolean equals(Object obj)
-  {
-    Field[] fields = SectionProperties.class.getSuperclass().getDeclaredFields();
-    AccessibleObject.setAccessible(fields, true);
-    try
+    public FormattedDiskPage()
     {
-      for (int x = 0; x < fields.length; x++)
-      {
-        Object obj1 = fields[x].get(this);
-        Object obj2 = fields[x].get(obj);
-        if (obj1 == null && obj2 == null)
-        {
-          continue;
-        }
-        if (!obj1.equals(obj2))
-        {
-          return false;
-        }
-      }
-      return true;
-    }
-    catch (Exception e)
-    {
-      return false;
-    }
-  }
 
+    }
+
+    /**
+     * Uses a 512-byte array to create a FKP
+     */
+    public FormattedDiskPage(byte[] documentStream, int offset)
+    {
+        _crun = LittleEndian.getUnsignedByte(documentStream, offset + 511);
+        _fkp = documentStream;
+        _offset = offset;
+    }
+    /**
+     * Used to get a text offset corresponding to a grpprl in this fkp.
+     * @param index The index of the property in this FKP
+     * @return an int representing an offset in the "WordDocument" stream
+     */
+    protected int getStart(int index)
+    {
+        return LittleEndian.getInt(_fkp, _offset + (index * 4));
+    }
+    /**
+     * Used to get the end of the text corresponding to a grpprl in this fkp.
+     * @param index The index of the property in this fkp.
+     * @return an int representing an offset in the "WordDocument" stream
+     */
+    protected int getEnd(int index)
+    {
+        return LittleEndian.getInt(_fkp, _offset + ((index + 1) * 4));
+    }
+    /**
+     * Used to get the total number of grrprl's stored int this FKP
+     * @return The number of grpprls in this FKP
+     */
+    public int size()
+    {
+        return _crun;
+    }
+
+    protected abstract byte[] getGrpprl(int index);
 }

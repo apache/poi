@@ -70,11 +70,18 @@ public class SprmOperation
   final static private BitField TYPE_BITFIELD = new BitField(0x1c00);
   final static private BitField SIZECODE_BITFIELD = new BitField(0xe000);
 
+  final static private short LONG_SPRM_TABLE = (short)0xd608;
+  final static private short LONG_SPRM_PARAGRAPH = (short)0xc615;
+
+  final static public int PAP_TYPE = 1;
+  final static public int TAP_TYPE = 5;
+
   private int _type;
   private int _operation;
   private int _gOffset;
   private byte[] _grpprl;
   private int _sizeCode;
+  private int _size;
 
   public SprmOperation(byte[] grpprl, int offset)
   {
@@ -87,6 +94,7 @@ public class SprmOperation
     _operation = OP_BITFIELD.getValue(sprmStart);
     _type = TYPE_BITFIELD.getValue(sprmStart);
     _sizeCode = SIZECODE_BITFIELD.getValue(sprmStart);
+    _size = initSize(sprmStart);
   }
 
   public int getType()
@@ -136,6 +144,15 @@ public class SprmOperation
 
   public int size()
   {
+    return _size;
+  }
+
+  public byte[] getGrpprl()
+  {
+    return _grpprl;
+  }
+  private int initSize(short sprm)
+  {
     switch (_sizeCode)
     {
       case 0:
@@ -148,17 +165,20 @@ public class SprmOperation
       case 3:
         return 6;
       case 6:
-        return _grpprl[_gOffset] + 3;
+        if (sprm == LONG_SPRM_TABLE || sprm == LONG_SPRM_PARAGRAPH)
+        {
+          int retVal = (0x0000ffff & LittleEndian.getShort(_grpprl, _gOffset)) + 3;
+          _gOffset += 2;
+          return retVal;
+        }
+        else
+        {
+          return (0x000000ff & _grpprl[_gOffset++]) + 3;
+        }
       case 7:
         return 5;
       default:
         throw new IllegalArgumentException("SPRM contains an invalid size code");
     }
-
-  }
-
-  public byte[] getGrpprl()
-  {
-    return _grpprl;
   }
 }

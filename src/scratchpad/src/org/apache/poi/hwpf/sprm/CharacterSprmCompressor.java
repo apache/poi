@@ -58,7 +58,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Arrays;
 
-import org.apache.poi.hwpf.usermodel.CharacterRun;
+import org.apache.poi.hwpf.usermodel.CharacterProperties;
 import org.apache.poi.util.LittleEndian;
 
 public class CharacterSprmCompressor
@@ -66,7 +66,7 @@ public class CharacterSprmCompressor
   public CharacterSprmCompressor()
   {
   }
-  public static byte[] compressCharacterProperty(CharacterRun newCHP, CharacterRun oldCHP)
+  public static byte[] compressCharacterProperty(CharacterProperties newCHP, CharacterProperties oldCHP)
   {
     ArrayList sprmList = new ArrayList();
     int size = 0;

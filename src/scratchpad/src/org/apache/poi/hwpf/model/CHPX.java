@@ -52,21 +52,49 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.poi.hwpf.usermodel;
 
-import org.apache.poi.hwpf.*;
+package org.apache.poi.hwpf.model;
 
-import java.util.List;
+import org.apache.poi.hwpf.usermodel.CharacterProperties;
+import org.apache.poi.hwpf.sprm.SprmBuffer;
+import org.apache.poi.hwpf.sprm.CharacterSprmUncompressor;
 
-public class SectionRange extends Range
+/**
+ * Comment me
+ *
+ * @author Ryan Ackley
+ */
+
+public class CHPX extends CachedPropertyNode
 {
-  public SectionRange(int start, int end, HWPFDocument doc)
+
+  public CHPX(int fcStart, int fcEnd, byte[] grpprl)
   {
-    super(start, end, doc);
+    super(fcStart, fcEnd, new SprmBuffer(grpprl));
   }
-  public SectionRange(int start, int end, Range parent)
+
+  public CHPX(int fcStart, int fcEnd, SprmBuffer buf)
   {
-   super(start, end, parent);
+    super(fcStart, fcEnd, buf);
   }
+
+
+  public byte[] getGrpprl()
+  {
+    return ((SprmBuffer)_buf).toByteArray();
+  }
+
+  public CharacterProperties getCharacterProperties(StyleSheet ss, short istd)
+  {
+    CharacterProperties props = (CharacterProperties)super.getCacheContents();
+    if (props == null)
+    {
+      CharacterProperties baseStyle = ss.getCharacterStyle(istd);
+      props = CharacterSprmUncompressor.uncompressCHP(baseStyle, getGrpprl(), 0);
+      super.fillCache(props);
+    }
+    return props;
+  }
+
 
 }

@@ -83,6 +83,13 @@ public class LineSpacingDescriptor
     _fMultiLinespace = fMultiLinespace;
   }
 
+  public int toInt()
+  {
+    byte[] intHolder = new byte[4];
+    serialize(intHolder, 0);
+    return LittleEndian.getInt(intHolder);
+  }
+
   public void serialize(byte[] buf, int offset)
   {
     LittleEndian.putShort(buf, offset, _dyaLine);

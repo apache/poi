@@ -5,7 +5,7 @@ import java.io.FileInputStream;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 
-import org.apache.poi.hwpf.model.hdftypes.*;
+import org.apache.poi.hwpf.model.*;
 import java.io.File;
 
 
@@ -30,7 +30,7 @@ public class HWPFDocFixture
         filename = "c:";
       }
 
-      filename = filename + "/test.doc";
+      filename = filename + "/test99.doc";
 
 
       POIFSFileSystem filesystem = new POIFSFileSystem(new FileInputStream(

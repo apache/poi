@@ -56,17 +56,30 @@ package org.apache.poi.hwpf.sprm;
 
 import org.apache.poi.util.LittleEndian;
 
+import java.util.Arrays;
+
 public class SprmBuffer
+  implements Cloneable
 {
   byte[] _buf;
   int _offset;
+  boolean _istd;
 
-  public SprmBuffer(byte[] buf)
+  public SprmBuffer(byte[] buf, boolean istd)
   {
     _offset = buf.length;
     _buf = buf;
+    _istd = istd;
   }
-
+  public SprmBuffer(byte[] buf)
+  {
+    this(buf, false);
+  }
+  public SprmBuffer()
+  {
+    _buf = new byte[4];
+    _offset = 0;
+  }
   public void addSprm(short opcode, byte operand)
   {
     int addition = LittleEndian.SHORT_SIZE + LittleEndian.BYTE_SIZE;
@@ -108,6 +121,27 @@ public class SprmBuffer
     return _buf;
   }
 
+  public boolean equals(Object obj)
+  {
+    SprmBuffer sprmBuf = (SprmBuffer)obj;
+    return (Arrays.equals(_buf, sprmBuf._buf));
+  }
+
+  public void append(byte[] grpprl)
+  {
+    ensureCapacity(grpprl.length);
+    System.arraycopy(grpprl, 0, _buf, _offset, grpprl.length);
+  }
+
+  public Object clone()
+    throws CloneNotSupportedException
+  {
+    SprmBuffer retVal = (SprmBuffer)super.clone();
+    retVal._buf = new byte[_buf.length];
+    System.arraycopy(_buf, 0, retVal._buf, 0, _buf.length);
+    return retVal;
+  }
+
   private void ensureCapacity(int addition)
   {
     if (_offset + addition >= _buf.length)
@@ -115,7 +149,7 @@ public class SprmBuffer
       // add 6 more than they need for use the next iteration
       byte[] newBuf = new byte[_offset + addition + 6];
       System.arraycopy(_buf, 0, newBuf, 0, _buf.length);
+      _buf = newBuf;
     }
   }
-
 }
