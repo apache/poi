@@ -68,6 +68,7 @@ import org.apache.poi.util.BitField;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
 import org.apache.poi.util.HexDump;
+import org.apache.poi.hdf.model.hdftypes.HDFType;
 
 /**
  * <xsl:value-of select="/record/description"/>
@@ -89,48 +90,6 @@ public class <xsl:value-of select="@name"/>Type
 <xsl:text>        </xsl:text>
 <xsl:value-of select="recutil:getFieldName(position(),@name,0)"/> = <xsl:value-of select="@default"/>;
 </xsl:if></xsl:for-each>
-    }
-
-    /**
-     * Constructs a <xsl:value-of select="@name"/> record and sets its fields appropriately.
-     *
-     * @param id    id must be <xsl:value-of select="@id"/> or an exception
-     *              will be throw upon validation
-     * @param size  size the size of the data area of the record
-     * @param data  data of the record (should not contain sid/len)
-     */
-
-    public <xsl:value-of select="@name"/>Type(short id, short size, byte [] data)
-    {
-        super(id, size, data);
-    }
-
-    /**
-     * Constructs a <xsl:value-of select="@name"/> record and sets its fields appropriately.
-     *
-     * @param id    id must be <xsl:value-of select="@id"/> or an exception
-     *              will be throw upon validation
-     * @param size  size the size of the data area of the record
-     * @param data  data of the record (should not contain sid/len)
-     * @param offset of the record's data
-     */
-
-    public <xsl:value-of select="@name"/>Type(short id, short size, byte [] data, int offset)
-    {
-        super(id, size, data, offset);
-    }
-
-    /**
-     * Checks the sid matches the expected side for this record
-     *
-     * @param id   the expected sid.
-     */
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
-            throw new HDFTypeFormatException(&quot;Not a <xsl:value-of select="@name"/> record&quot;);
-        }
     }
 
     protected void fillFields(byte [] data, short size, int offset)
