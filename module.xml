@@ -5,19 +5,6 @@
 
   <url href="http://jakarta.apache.org/poi/"/>
   
-  <info>
-    <link id="status" href="status.xml">
-      Status </link>
-    <link id="properties" href="properties.xml">
-      properties </link>
-    <link id="layout" href="layout.xml">
-      layout </link>
-    <link id="build" href="build.xml">
-      Build </link>
-    <link id="log" href="log.xml">
-      log </link>            
-  </info>
-  
   <cvs repository="jakarta"/> 
 
   <mailing-lists> 

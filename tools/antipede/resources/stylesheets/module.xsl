@@ -15,10 +15,6 @@
  			        <xsl:value-of select="module/url/@href" />
 			       </xsl:attribute><xsl:value-of select="module/url/@href" /></a>  
 			 <br/>cvs repository: <xsl:value-of select="module/cvs/@repository" />
-			 <xsl:for-each select = "module/info/link">
-			 <br/><xsl:value-of select="@id" />: <a><xsl:attribute  name = "href" ><xsl:value-of select="@href" /></xsl:attribute>
-			    <xsl:value-of select="." /></a>	
-			 </xsl:for-each>
 			 <xsl:for-each select = "module/mailing-lists/mailing-list">
 			 <br/><xsl:value-of select="@user" />&#160;mailing list:&#160; 
 			      <a><xsl:attribute  name = "href" >mailto:<xsl:value-of select="@mail" /></xsl:attribute>

@@ -93,22 +93,110 @@ printed.
   <!-- Basic build targets for the project                                 -->
   <!-- =================================================================== -->
 
-  <!-- ================================== -->
-  <!--             Interactive            -->
-  <!-- ================================== -->
+  <!-- =================================================================== -->
+  <!-- Interactive build                                            -->
+  <!-- =================================================================== -->
+  <target name="interactive" description="Interactive Build" depends="-init">          
+    <echo message="--------------------------------------------------------------"/>
+    <echo message=" "/>    
+    <echo message="          ${xgump.module.project.name} ${xgump.module.project.version.major}.${xgump.module.project.version.minor}   [${YEAR}] "/>
+    <echo message=" "/>    
+    <echo message="--------------------------------------------------------------"/>
+    <echo message="Building with ${ant.version}"/>  
+    <echo message="using build file ${ant.file}"/>  
+    <echo message="--------------------------------------------------------------"/>   
+    <echo message=" These are the most common build targets."/>      
+    <echo message=" You can also invoke them directly; see build.xml for more info. "/> 
+    <echo message=" Builds will be in /build directory, distributions in /dist."/>        
+    <echo message="  "/>    
+    <echo message=" compile ---------- compiles the source code "/>     
+    <echo message=" docs ------------- generates the html docs"/>        
+    <echo message=" cleandocs -------- cleans the build docs directory"/>    
+    <echo message=" javadocs --------- generates the API documentation"/>     
+    <echo message=" test ------------- performs the jUnit tests"/>       
+    <echo message=" clean ------------ cleans the build directory"/>    
+    <echo message=" dist ------------- creates src and bin distributions"/>    
+    <echo message=" scratchpad ------- build-run scratchpad code"/>       
+    <echo message=" contrib ---------- build-run contributed code"/>    
+    <echo message=" generate-records - generate excel records"/>    
+    <echo message=" generate-types --- generate word types"/>    
 
-  <target  name="interactive"   depends="-init"
-           description="Interactive target">
+    <property name="input.selection" value="compile"/>        
+    <centipede-user-input name="input.selection">Please select a target </centipede-user-input>   
 
-    <splash/>
-       
-    <antcall target="call-cent">
-      <param name="cent-name"   value="centipede"/> 
-      <param name="cent-target" value="compile"/> 
-    </antcall>
+    <pathconvert pathsep="," property="antipede.gif.url">
+      <path>
+        <filelist dir="./tools/antipede/resources/images" files="antipede.gif"/>
+      </path>
+    </pathconvert>
+   <splash imageurl="file:/${antipede.gif.url}" showduration="100"/>  
+ 
+    <antcall target="${input.selection}"/>
+    
+  </target>
 
-  </target>    
-  
+  <!-- =================================================================== -->
+  <!-- Interactive scratchpad builds                                       -->
+  <!-- =================================================================== -->
+  <target name="scratchpad" depends="-init" description="Interactive Scratchpad Build">
+    <echo message="--------------------------------------------------------------"/>
+    <echo message=" "/>    
+    <echo message="          ${xgump.module.project.name} ${xgump.module.project.version.major}.${xgump.module.project.version.minor} SCRATCHPAD "/>
+    <echo message=" "/>    
+    <echo message="--------------------------------------------------------------"/>  
+    <echo message="Building with ${ant.version}"/>  
+    <echo message="using build file ${ant.file}"/>  
+    <echo message="--------------------------------------------------------------"/>   
+    <echo message=" "/>        
+    <echo message=" These are SCRATCHPAD BUILDS. They are not guaranteed to work."/>
+    <echo message=" You have been warned. "/>
+    <echo message=" "/>
+    <echo message=" -"/>
+    <echo message=" -"/>
+    <echo message=" -"/>
+    <echo message=" -"/>
+    <echo message=" -"/>
+    <echo message=" -"/>
+    <echo message=" "/>
+
+    <property name="input.selection" value=""/>
+    <centipede-user-input name="input.selection">Please select a target </centipede-user-input>
+
+    <ant antfile="${xlayout.source.scratchpad.targets.dir}/${input.selection}/xbuild.xml"/>
+
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Interactive contrib builds                                       -->
+  <!-- =================================================================== -->
+  <target name="contrib" depends="-init" description="Interactive Contributors' Build">
+    <echo message="--------------------------------------------------------------"/>
+    <echo message=" "/>    
+    <echo message="          ${xgump.module.project.name} ${xgump.module.project.version.major}.${xgump.module.project.version.minor}  CONTRIB"/>
+    <echo message=" "/>    
+    <echo message="--------------------------------------------------------------"/>
+    <echo message="Building with ${ant.version}"/>  
+    <echo message="using build file ${ant.file}"/>  
+    <echo message="--------------------------------------------------------------"/>   
+    <echo message=" "/>        
+    <echo message=" These are CONTRIB BUILDS. They are not guaranteed to work."/>
+    <echo message=" You have been warned. "/>
+    <echo message=" "/>
+    <echo message=" poibrowser - POIBrowser 0.10 GUI POI Viewer"/>
+    <echo message=" -"/>
+    <echo message=" -"/>
+    <echo message=" -"/>
+    <echo message=" -"/>
+    <echo message=" -"/>
+    <echo message=" "/>
+    <property name="input.selection" value="poibrowser"/>
+    <centipede-user-input name="input.selection">Please select a target </centipede-user-input>
+
+    <ant antfile="${xlayout.source.contributions.targets.dir}/${input.selection}/xbuild.xml"/>
+    
+  </target>
+
+
   <!-- ================================== -->
   <!--              Compile               -->
   <!-- ================================== -->
@@ -213,11 +301,35 @@ printed.
   </target>     
 
   <!-- ================================== -->
+  <!--       Generate records                -->
+  <!-- ================================== -->
+  
+  <target  name="generate-records"   depends="-init"
+           description="generate-records">
+
+    <ant antfile="${xlayout.source.targets.dir}/record-generation/xbuild.xml"
+            target="generate-records"/>
+    
+  </target>     
+
+  <!-- ================================== -->
+  <!--       Generate types                -->
+  <!-- ================================== -->
+  
+  <target  name="generate-types"   depends="-init"
+           description="generate-types">
+
+    <ant antfile="${xlayout.source.targets.dir}/record-generation/xbuild.xml"
+            target="generate-types"/>
+    
+  </target>     
+
+  <!-- ================================== -->
   <!--       Test the main module stuff   -->
   <!-- ================================== -->
   
-  <target  name="test-module"   
-           depends="clean, compile, test, jar, docs"
+  <target  name="testmodule"   
+           depends="clean, compile, test, jar, docs, javadocs"
            description="Testing that all major targets work; useful before a commit"/>
            
            

@@ -2,6 +2,21 @@
 <?xml-stylesheet type="text/xsl" href="tools/antipede/resources/stylesheets/status.xsl"?>
 <status>
 
+  <descriptors>
+    <descriptor id="status" href="status.xml">
+      Status </descriptor>
+    <descriptor id="module" href="module.xml">
+      Module </descriptor>
+    <descriptor id="properties" href="properties.xml">
+      Properties </descriptor>
+    <descriptor id="layout" href="layout.xml">
+      Layout </descriptor>
+    <descriptor id="build" href="build.xml">
+      Build </descriptor>
+    <descriptor id="log" href="log.xml">
+      Log </descriptor>            
+  </descriptors>
+
   <developers>
     <!-- in strict alphabetical order -->
     <person name="Andrew C. Oliver"   id="acoliver"  email="acoliver@apache.org"/>
