@@ -45,7 +45,7 @@
         <menu-item label="Guidelines" href="trans/guidelines.html"/>
         <menu-item label="German" href="trans/de/index.html"/>
         <menu-item label="Spanish" href="trans/es/index.html"/>
-        <menu-item label="Japanese" href="http://www.terra-intl.com/jakarta/poi/"/>
+        <menu-item label="Japanese" href="http://jakarta.terra-intl.com/poi/"/>
     </menu>
 
     <menu label="Code">
