@@ -89,7 +89,7 @@
     <property name="changelog.file" value="${build.site}/changelog.html"/>
     <property name="dist.dir" value="build/dist"/>
     <property name="jar.name" value="poi"/>
-    <property name="version.id" value="2.0-final"/>
+    <property name="version.id" value="2.5-final"/>
     <property name="halt.on.test.failure" value="true"/>
 
     <path id="main.classpath">
