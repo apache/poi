@@ -707,7 +707,9 @@ public class HSSFCell
             FormulaRecordAggregate rec = (FormulaRecordAggregate) record;
             rec.getFormulaRecord().setOptions(( short ) 2);
             rec.getFormulaRecord().setValue(0);
-            rec.setXFIndex(( short ) 0x0f);
+            
+            //only set to default if there is no extended format index already set
+            if (rec.getXFIndex() == (short)0) rec.setXFIndex(( short ) 0x0f);
             FormulaParser fp = new FormulaParser(formula+";",book);
             fp.parse();
             Ptg[] ptg  = fp.getRPNPtg();
