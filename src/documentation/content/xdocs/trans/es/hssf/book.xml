@@ -6,7 +6,7 @@
     copyright="El Proyecto de POI de @year@"
     xmlns:xlink="http://www.w3.org/1999/xlink">
 
-        <menu label="Jakarta Poi">
+        <menu label="Jakarta POI">
             <menu-item label="Página Principal" href="../index.html"/>
         </menu>
 

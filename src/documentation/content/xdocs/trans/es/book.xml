@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE book PUBLIC "-//APACHE//DTD Cocoon Documentation Book V1.0//EN" "../../dtd/book-cocoon-v10.dtd">
 
-<book software="Poi" 
-      title="Documentación del Proyecto Poi" 
+<book software="POI" 
+      title="Documentación del Proyecto POI" 
       copyright="@year@ POI Project"
       xmlns:xlink="http://www.w3.org/1999/xlink">
 
