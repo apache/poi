@@ -64,7 +64,7 @@ import org.apache.poi.util.StringUtil;
  *
  * REFERENCE:  PG 317 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
  * @author Andrew C. Oliver (acoliver at apache dot org)
- * @author Shawn M. Laubach (shawnlaubach at cox dot net)  
+ * @author Shawn M. Laubach (slaubach at apache dot org)  
  * @version 2.0-pre
  */
 

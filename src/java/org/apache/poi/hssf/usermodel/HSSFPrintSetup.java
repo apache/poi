@@ -59,7 +59,7 @@ import org.apache.poi.hssf.record.PrintSetupRecord;
 /**
  * Used to modify the print setup.
  * <P>
- * @author Shawn Laubach (laubach@acm.org)
+ * @author Shawn Laubach (slaubach at apache dot org)
  */
 public class HSSFPrintSetup extends Object {
 

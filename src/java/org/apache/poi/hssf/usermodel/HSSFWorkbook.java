@@ -87,7 +87,7 @@ import java.util.Iterator;
  * @see org.apache.poi.hssf.usermodel.HSSFSheet
  * @author  Andrew C. Oliver (acoliver at apache dot org)
  * @author  Glen Stampoultzis (glens at apache.org)
- * @author  Shawn Laubach (shawnlaubach at cox.net)
+ * @author  Shawn Laubach (slaubach at apache dot org)
  * @version 2.0-pre
  */
 

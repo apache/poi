@@ -66,7 +66,7 @@ import org.apache.poi.hssf.record.HeaderRecord;
  * that return the characters used to represent these.  One can also change the
  * fonts by using similar methods.
  * <P>
- * @author Shawn Laubach (laubach@acm.org)
+ * @author Shawn Laubach (slaubach at apache dot org)
  */
 public class HSSFHeader extends Object {
 

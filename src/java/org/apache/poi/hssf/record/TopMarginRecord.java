@@ -63,7 +63,7 @@ import org.apache.poi.util.*;
 /**
  * Record for the top margin.
  * NOTE: This source was automatically generated.
- * @author Shawn Laubach (shawnlaubach at cox.net)
+ * @author Shawn Laubach (slaubach at apache dot org)
  */
 public class TopMarginRecord
     extends Record implements Margin

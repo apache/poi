@@ -84,7 +84,7 @@ import org.apache.poi.hssf.util.HSSFColor;
  * Kit (Microsoft Press) and the documentation at http://sc.openoffice.org/excelfileformat.pdf
  * before even attempting to use this.
  *
- * @author  Shawn Laubach (shawnlaubach at cox.net) (Data Formats)
+ * @author  Shawn Laubach (slaubach at apache dot org) (Data Formats)
  * @author  Andrew C. Oliver (acoliver at apache dot org)
  * @author  Glen Stampoultzis (glens at apache.org)
  * @author  Sergei Kozello (sergeikozello at mail.ru)
