@@ -91,6 +91,26 @@ extends TestCase {
           assertTrue("File Should Exist", file.exists());
             
     }
+          
+                 public void test13796()
+        throws java.io.IOException
+    {
+         String readFilename = System.getProperty("HSSF.testdata.path");
+          FileInputStream in = new FileInputStream(readFilename+File.separator+"13796.xls");
+          HSSFWorkbook wb = new HSSFWorkbook(in);
+          HSSFSheet s = wb.getSheetAt(0);
+          HSSFRow r = s.createRow(0);
+          HSSFCell c = r.createCell((short)0);
+          c.setCellValue(10);
+          File file = File.createTempFile("test13796",".xls");
+          FileOutputStream out    = new FileOutputStream(file);
+          wb.write(out);
+          assertTrue("No exception thrown", true); 
+          assertTrue("File Should Exist", file.exists());
+            
+    }
+          
+          
     
 }
     
