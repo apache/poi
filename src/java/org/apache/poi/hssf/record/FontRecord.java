@@ -208,7 +208,7 @@ public class FontRecord
 
     public void setItalic(boolean italics)
     {
-        italic.setShortBoolean(field_2_attributes, italics);
+        field_2_attributes = italic.setShortBoolean(field_2_attributes, italics);
     }
 
     /**
@@ -220,7 +220,7 @@ public class FontRecord
 
     public void setStrikeout(boolean strike)
     {
-        strikeout.setShortBoolean(field_2_attributes, strike);
+        field_2_attributes = strikeout.setShortBoolean(field_2_attributes, strike);
     }
 
     /**
@@ -233,7 +233,7 @@ public class FontRecord
 
     public void setMacoutline(boolean mac)
     {
-        macoutline.setShortBoolean(field_2_attributes, mac);
+        field_2_attributes = macoutline.setShortBoolean(field_2_attributes, mac);
     }
 
     /**
@@ -246,7 +246,7 @@ public class FontRecord
 
     public void setMacshadow(boolean mac)
     {
-        macshadow.setShortBoolean(field_2_attributes, mac);
+        field_2_attributes = macshadow.setShortBoolean(field_2_attributes, mac);
     }
 
     /**

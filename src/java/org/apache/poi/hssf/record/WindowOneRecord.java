@@ -208,7 +208,7 @@ public class WindowOneRecord
 
     public void setHidden(boolean ishidden)
     {
-        hidden.setShortBoolean(field_5_options, ishidden);
+        field_5_options = hidden.setShortBoolean(field_5_options, ishidden);
     }
 
     /**
@@ -218,7 +218,7 @@ public class WindowOneRecord
 
     public void setIconic(boolean isiconic)
     {
-        iconic.setShortBoolean(field_5_options, isiconic);
+        field_5_options = iconic.setShortBoolean(field_5_options, isiconic);
     }
 
     /**
@@ -228,7 +228,7 @@ public class WindowOneRecord
 
     public void setDisplayHorizonalScrollbar(boolean scroll)
     {
-        hscroll.setShortBoolean(field_5_options, scroll);
+        field_5_options = hscroll.setShortBoolean(field_5_options, scroll);
     }
 
     /**
@@ -238,7 +238,7 @@ public class WindowOneRecord
 
     public void setDisplayVerticalScrollbar(boolean scroll)
     {
-        vscroll.setShortBoolean(field_5_options, scroll);
+        field_5_options = vscroll.setShortBoolean(field_5_options, scroll);
     }
 
     /**
@@ -248,7 +248,7 @@ public class WindowOneRecord
 
     public void setDisplayTabs(boolean disptabs)
     {
-        tabs.setShortBoolean(field_5_options, disptabs);
+        field_5_options = tabs.setShortBoolean(field_5_options, disptabs);
     }
 
     // end bitfields
