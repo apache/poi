@@ -87,7 +87,6 @@ public class RKRecord
     private short             field_2_col;
     private short             field_3_xf_index;
     private int               field_4_rk_number;
-    private double            rkNumber;
 
     public RKRecord()
     {
