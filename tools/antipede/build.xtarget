@@ -177,4 +177,20 @@
          inheritAll="true" 
          dir="."
          target="${cent-target}" />       
-  </target>                
+  </target>            
+  
+  
+    <!-- ================================== -->
+  <!--   Create a cent.jar package        -->
+  <!--   using an already deployed cent   -->
+  <!-- ================================== -->
+  
+  <target  name="jar-cent"   depends="-init"
+           description="Compile java source code">
+
+    <antcall target="call-cent">
+      <param name="cent-name"   value="centipede"/> 
+      <param name="cent-target" value="jar-cent"/> 
+    </antcall>
+    
+  </target>         
