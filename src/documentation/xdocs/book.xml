@@ -7,51 +7,38 @@
       xmlns:xlink="http://www.w3.org/1999/xlink">
 
   <menu label="Community">
-    <menu-item label="Index" href="index.html"/>
+    <menu-item label="News" href="news.html"/>    
+    <menu-item label="Changes" href="changes.html"/> 
+    <menu-item label="To do" href="todo.html"/> 
+    <menu-item label="Vision" href="plan/POI20Vision.html"/>
     <menu-item label="History and Future" href="historyandfuture.html"/>
-    <menu-item label="1.0 Vision" href="plan/POI10Vision.html"/>
-    <menu-item label="2.0 Vision" href="plan/POI20Vision.html"/>
     <menu-item label="Who we are" href="who.html"/> 
-    <menu-item label="Download" href="http://jakarta.apache.org/builds/jakarta-poi/"/>       
+    <menu-item label="Resolutions" href="resolutions/index.html"/>    
   </menu>
 
-  <menu label="Sub-Projects">
+  <menu label="Project">
     <menu-item label="Overview" href="overview.html"/>
     <menu-item label="POIFS" href="poifs/index.html"/>
     <menu-item label="HSSF" href="hssf/index.html"/>
     <menu-item label="HDF" href="hdf/index.html"/>
     <menu-item label="HPSF" href="hpsf/index.html"/>
     <menu-item label="POI-Utils" href="utils/index.html"/>  
+    <menu-item label="Download" href="http://jakarta.apache.org/builds/jakarta-poi/"/> 
   </menu>
   
   <menu label="Docs">
     <menu-item label="Javadocs" href="http://jakarta.apache.org/poi/javadocs/"/>  
-    <menu-item label="Source" href="http://jakarta.apache.org/poi/javadocs/javasrc/"/>      
-    <menu-item label="Changes" href="changes.html"/>
     <menu-item label="FAQ" href="faq.html"/>
+    <menu-item label="References" href="references/index.html"/>  
   </menu>
   
   <menu label="Code">
+    <menu-item label="Source Code" href="http://jakarta.apache.org/poi/javadocs/javasrc/"/>       
+    <menu-item label="CVS" href="http://jakarta.apache.org/site/cvsindex.html"/>  
+    <menu-item label="Bug Database" href="http://nagoya.apache.org/bugzilla/buglist.cgi?product=POI"/>  
     <menu-item label="Junit Test Results" href="http://jakarta.apache.org/poi/tests/junit/"/>  
     <menu-item label="Dependency Metrics" href="http://jakarta.apache.org/poi/metrics/jdepend/"/> 
-    <menu-item label="Checkstyle" href="http://jakarta.apache.org/poi/metrics/checkstyle/"/> 
-  </menu>
-     
-  <menu label="References">
-    <menu-item label="In The News" href="inthenews.html"/>  
-    <menu-item label="Live Sites" href="livesites.html"/>
-    <menu-item label="XLS spec [PDF]" href="http://sc.openoffice.org/excelfileformat.pdf"/>
-    <menu-item label="Apache Cocoon" href="http://xml.apache.org/cocoon/"/>
-    <menu-item label="Resolutions" href="resolutions/index.html"/>
-  </menu>
-
-  <menu label="Get Involved">
-    <menu-item label="Contributing" href="contrib.html"/>
-    <menu-item label="Branching" href="branching.html"/>
-    <menu-item label="Bug Database" href="http://nagoya.apache.org/bugzilla/buglist.cgi?product=POI"/>
-    <menu-item label="Patches" href="http://nagoya.apache.org/bugzilla/buglist.cgi?product=POI&amp;short_desc=%5BPATCH%5D&amp;short_desc_type=allwordssubstr"/>
-    <menu-item label="CVS" href="http://jakarta.apache.org/site/cvsindex.html"/>
-    <menu-item label="Mail Lists" href="http://jakarta.apache.org/site/mail.html"/>
+    <menu-item label="Checkstyle Metrics" href="http://jakarta.apache.org/poi/metrics/checkstyle/"/> 
   </menu>
 
 </book>
