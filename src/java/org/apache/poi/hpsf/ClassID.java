@@ -55,9 +55,6 @@
  */
 package org.apache.poi.hpsf;
 
-import java.io.*;
-import org.apache.poi.util.LittleEndian;
-
 /**
  *  <p>Represents a class ID (16 bytes). Unlike other little-endian
  *  type the {@link ClassID} is not just 16 bytes stored in the wrong
@@ -98,15 +95,21 @@ public class ClassID
      */
     public ClassID()
     {
-	bytes = new byte[LENGTH];
-	for (int i = 0; i < LENGTH; i++)
-	    bytes[i] = 0x00;
+        bytes = new byte[LENGTH];
+        for (int i = 0; i < LENGTH; i++)
+            bytes[i] = 0x00;
     }
 
 
 
-    public final static int LENGTH = 16;
+    /** <p>The number of bytes occupied by this object in the byte
+     * stream.</p> */
+    public static final int LENGTH = 16;
 
+    /**
+     * @return The number of bytes occupied by this object in the byte
+     * stream.
+     */
     public int length()
     {
         return LENGTH;
@@ -117,10 +120,12 @@ public class ClassID
     /**
      * <p>Gets the bytes making out the class ID. They are returned in
      * correct order, i.e. big-endian.</p>
+     * 
+     * @return the bytes making out the class ID.
      */
     public byte[] getBytes()
     {
-	return bytes;
+        return bytes;
     }
 
 
@@ -153,9 +158,9 @@ public class ClassID
         bytes[6] = src[7 + offset];
         bytes[7] = src[6 + offset];
 
-	/* Read 8 bytes. */
-	for (int i = 8; i < 16; i++)
-	    bytes[i] = src[i + offset];
+        /* Read 8 bytes. */
+        for (int i = 8; i < 16; i++)
+            bytes[i] = src[i + offset];
 
         return bytes;
     }
@@ -170,30 +175,34 @@ public class ClassID
      *
      * @param offset The offset within the <var>dst</var> byte array.
      *
-     * @throws ArrayIndexOutOfBoundsException if there is not enough
-     * room for the class ID in the byte array. There must be at least
-     * 16 bytes in the byte array after the <var>offset</var>
-     * position.
+     * @exception ArrayStoreException if there is not enough room for the class 
+     * ID 16 bytes in the byte array after the <var>offset</var> position.
      */
     public void write(final byte[] dst, final int offset)
+    throws ArrayStoreException
     {
+        /* Check array size: */
+        if (dst.length < 16)
+            throw new ArrayStoreException
+                ("Destination byte[] must have room for at least 16 bytes, " +
+                 "but has a length of only " + dst.length + ".");
         /* Write double word. */
-	dst[0 + offset] = bytes[3];
-	dst[1 + offset] = bytes[2];
-	dst[2 + offset] = bytes[1];
-	dst[3 + offset] = bytes[0];
+        dst[0 + offset] = bytes[3];
+        dst[1 + offset] = bytes[2];
+        dst[2 + offset] = bytes[1];
+        dst[3 + offset] = bytes[0];
 
         /* Write first word. */
-	dst[4 + offset] = bytes[5];
-	dst[5 + offset] = bytes[4];
+        dst[4 + offset] = bytes[5];
+        dst[5 + offset] = bytes[4];
 
         /* Write second word. */
-	dst[6 + offset] = bytes[7];
-	dst[7 + offset] = bytes[6];
+        dst[6 + offset] = bytes[7];
+        dst[7 + offset] = bytes[6];
 
-	/* Write 8 bytes. */
-	for (int i = 8; i < 16; i++)
-	    dst[i + offset] = bytes[i];
+        /* Write 8 bytes. */
+        for (int i = 8; i < 16; i++)
+            dst[i + offset] = bytes[i];
     }
 
 }

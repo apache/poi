@@ -54,7 +54,7 @@
  */
 package org.apache.poi.hpsf.wellknown;
 
-import java.util.*;
+import java.util.HashMap;
 
 /**
  * <p>This is a dictionary which maps property ID values to property
@@ -66,10 +66,10 @@ import java.util.*;
  * should treat them as unmodifiable, copy them and modifiy the
  * copies.</p>
  *
- * <p><strong>FIXME:</strong> Make the singletons
- * unmodifiable. However, since this requires to use a {@link HashMap}
- * delegate instead of extending {@link HashMap} and thus requires a
- * lot of stupid typing. I won't do that for the time being.</p>
+ * <p><strong>FIXME:</strong> Make the singletons unmodifiable. However, 
+ * since this requires to use a {@link HashMap} delegate instead of
+ * extending {@link HashMap} and thus requires a lot of stupid typing. I won't
+ * do that for the time being.</p>
  *
  * @author Rainer Klute (klute@rainer-klute.de)
  * @version $Id$
@@ -82,24 +82,67 @@ public class PropertyIDMap extends HashMap
      * The following definitions are for property IDs in the first
      * (and only) section of the Summary Information property set.
      */
-    public final static int PID_TITLE = 2;
-    public final static int PID_SUBJECT = 3;
-    public final static int PID_AUTHOR = 4;
-    public final static int PID_KEYWORDS = 5;
-    public final static int PID_COMMENTS = 6;
-    public final static int PID_TEMPLATE = 7;
-    public final static int PID_LASTAUTHOR = 8;
-    public final static int PID_REVNUMBER = 9;
-    public final static int PID_EDITTIME = 10;
-    public final static int PID_LASTPRINTED = 11;
-    public final static int PID_CREATE_DTM = 12;
-    public final static int PID_LASTSAVE_DTM = 13;
-    public final static int PID_PAGECOUNT = 14;
-    public final static int PID_WORDCOUNT = 15;
-    public final static int PID_CHARCOUNT = 16;
-    public final static int PID_THUMBNAIL = 17;
-    public final static int PID_APPNAME = 18;
-    public final static int PID_SECURITY = 19;
+
+    /** <p>ID of the property that denotes the document's title</p> */
+    public static final int PID_TITLE = 2;
+
+    /** <p>ID of the property that denotes the document's subject</p> */
+    public static final int PID_SUBJECT = 3;
+
+    /** <p>ID of the property that denotes the document's author</p> */
+    public static final int PID_AUTHOR = 4;
+
+    /** <p>ID of the property that denotes the document's keywords</p> */
+    public static final int PID_KEYWORDS = 5;
+
+    /** <p>ID of the property that denotes the document's comments</p> */
+    public static final int PID_COMMENTS = 6;
+
+    /** <p>ID of the property that denotes the document's template</p> */
+    public static final int PID_TEMPLATE = 7;
+
+    /** <p>ID of the property that denotes the document's last author</p> */
+    public static final int PID_LASTAUTHOR = 8;
+
+    /** <p>ID of the property that denotes the document's revision number</p> */
+    public static final int PID_REVNUMBER = 9;
+
+    /** <p>ID of the property that denotes the document's edit time</p> */
+    public static final int PID_EDITTIME = 10;
+
+    /** <p>ID of the property that denotes the date and time the document was
+     * last printed</p> */
+    public static final int PID_LASTPRINTED = 11;
+
+    /** <p>ID of the property that denotes the date and time the document was
+     * created.</p> */
+    public static final int PID_CREATE_DTM = 12;
+
+    /** <p>ID of the property that denotes the date and time the document was
+     * saved</p> */
+    public static final int PID_LASTSAVE_DTM = 13;
+
+    /** <p>ID of the property that denotes the number of pages in the
+     * document</p> */
+    public static final int PID_PAGECOUNT = 14;
+
+    /** <p>ID of the property that denotes the number of words in the
+     * document</p> */
+    public static final int PID_WORDCOUNT = 15;
+
+    /** <p>ID of the property that denotes the number of characters in the
+     * document</p> */
+    public static final int PID_CHARCOUNT = 16;
+
+    /** <p>ID of the property that denotes the document's thumbnail</p> */
+    public static final int PID_THUMBNAIL = 17;
+
+    /** <p>ID of the property that denotes the application that created the
+     * document</p> */
+    public static final int PID_APPNAME = 18;
+
+    /** <p>ID of the property that denotes... FIXME</p> */
+    public static final int PID_SECURITY = 19;
 
 
 
@@ -111,66 +154,66 @@ public class PropertyIDMap extends HashMap
     /** 
      * <p>The entry is a dictionary.</p>
      */
-    public final static int PID_DICTIONARY = 0;
+    public static final int PID_DICTIONARY = 0;
 
     /**
      * <p>The entry denotes a code page.</p>
      */
-    public final static int PID_CODEPAGE = 1;
+    public static final int PID_CODEPAGE = 1;
 
     /** 
      * <p>The entry is a string denoting the category the file belongs
      * to, e.g. review, memo, etc. This is useful to find documents of
      * same type.</p>
      */
-    public final static int PID_CATEGORY = 2;
+    public static final int PID_CATEGORY = 2;
 
     /** 
      * <p>Target format for power point presentation, e.g. 35mm,
      * printer, video etc.</p>
      */
-    public final static int PID_PRESFORMAT = 3;
+    public static final int PID_PRESFORMAT = 3;
 
     /** 
      * <p>Number of bytes.</p>
      */
-    public final static int PID_BYTECOUNT = 4;
+    public static final int PID_BYTECOUNT = 4;
 
     /** 
      * <p>Number of lines.</p>
      */
-    public final static int PID_LINECOUNT = 5;
+    public static final int PID_LINECOUNT = 5;
 
     /** 
      * <p>Number of paragraphs.</p>
      */
-    public final static int PID_PARCOUNT = 6;
+    public static final int PID_PARCOUNT = 6;
 
     /** 
      * <p>Number of slides in a power point presentation.</p>
      */
-    public final static int PID_SLIDECOUNT = 7;
+    public static final int PID_SLIDECOUNT = 7;
 
     /** 
      * <p>Number of slides with notes.</p>
      */
-    public final static int PID_NOTECOUNT = 8;
+    public static final int PID_NOTECOUNT = 8;
 
     /** 
      * <p>Number of hidden slides.</p>
      */
-    public final static int PID_HIDDENCOUNT = 9;
+    public static final int PID_HIDDENCOUNT = 9;
 
     /** 
      * <p>Number of multimedia clips, e.g. sound or video.</p>
      */
-    public final static int PID_MMCLIPCOUNT = 10;
+    public static final int PID_MMCLIPCOUNT = 10;
 
     /** 
      * <p>This entry is set to -1 when scaling of the thumbnail is
      * desired. Otherwise the thumbnail should be cropped.</p>
      */
-    public final static int PID_SCALE = 11;
+    public static final int PID_SCALE = 11;
 
     /** 
      * <p>This entry denotes an internally used property. It is a
@@ -179,30 +222,30 @@ public class PropertyIDMap extends HashMap
      * number tells how many document parts are under that
      * heading.</p>
      */
-    public final static int PID_HEADINGPAIR = 12;
+    public static final int PID_HEADINGPAIR = 12;
 
     /** 
      * <p>This entry contains the names of document parts (word: names
      * of the documents in the master document, excel: sheet names,
      * power point: slide titles, binder: document names).</p>
      */
-    public final static int PID_DOCPARTS = 13;
+    public static final int PID_DOCPARTS = 13;
 
     /** 
      * <p>This entry contains the name of the project manager.</p>
      */
-    public final static int PID_MANAGER = 14;
+    public static final int PID_MANAGER = 14;
 
     /** 
      * <p>This entry contains the company name.</p>
      */
-    public final static int PID_COMPANY = 15;
+    public static final int PID_COMPANY = 15;
 
     /** 
      * <p>If this entry is -1 the links are dirty and should be
      * re-evaluated.</p>
      */
-    public final static int PID_LINKSDIRTY = 16;
+    public static final int PID_LINKSDIRTY = 16;
 
 
 
@@ -224,8 +267,12 @@ public class PropertyIDMap extends HashMap
 
     /**
      * <p>Creates a {@link PropertyIDMap}.</p>
+     * 
+     * @param initialCapacity The initial capacity as defined for
+     * {@link HashMap}
+     * @param loadFactor The load factor as defined for {@link HashMap}
      */
-    public PropertyIDMap(int initialCapacity, float loadFactor)
+    public PropertyIDMap(final int initialCapacity, final float loadFactor)
     {
         super(initialCapacity, loadFactor);
     }
@@ -238,12 +285,12 @@ public class PropertyIDMap extends HashMap
      *
      * @param id The ID.
      * @param idString The ID string.
-     * @return As specified by the {@link Map} interface, this method
+     * @return As specified by the {@link java.util.Map} interface, this method
      * returns the previous value associated with the specified
      * <var>id</var>, or <code>null</code> if there was no mapping for
      * key.
      */
-    public Object put(int id, String idString)
+    public Object put(final int id, final String idString)
     {
         return put(new Integer(id), idString);
     }
@@ -257,7 +304,7 @@ public class PropertyIDMap extends HashMap
      * @param id The ID.
      * @return The ID string associated with <var>id</var>.
      */
-    public Object get(int id)
+    public Object get(final int id)
     {
         return get(new Integer(id));
     }
@@ -265,12 +312,12 @@ public class PropertyIDMap extends HashMap
 
 
     /**
-     * <p>Returns the Summary Information properties singleton.</p>
+     * @return the Summary Information properties singleton
      */
     public static PropertyIDMap getSummaryInformationProperties()
     {
         if (summaryInformationProperties == null)
-	{
+        {
             PropertyIDMap m = new PropertyIDMap(18, (float) 1.0);
             m.put(PID_TITLE, "PID_TITLE");
             m.put(PID_SUBJECT, "PID_SUBJECT");
@@ -306,7 +353,7 @@ public class PropertyIDMap extends HashMap
     public static PropertyIDMap getDocumentSummaryInformationProperties()
     {
         if (documentSummaryInformationProperties == null)
-	{
+        {
             PropertyIDMap m = new PropertyIDMap(17, (float) 1.0);
             m.put(PID_DICTIONARY, "PID_DICTIONARY");
             m.put(PID_CODEPAGE, "PID_CODEPAGE");
@@ -334,8 +381,10 @@ public class PropertyIDMap extends HashMap
 
     /**
      * <p>For the most basic testing.</p>
+     *
+     * @param args The command-line arguments
      */
-    public static void main(String args[])
+    public static void main(final String[] args)
     {
         PropertyIDMap s1 = getSummaryInformationProperties();
         PropertyIDMap s2 = getDocumentSummaryInformationProperties();

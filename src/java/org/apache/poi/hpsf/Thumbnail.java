@@ -208,7 +208,7 @@ public class Thumbnail
      *
      * @param thumbnailData The thumbnail data
      */
-    public Thumbnail(byte[] thumbnailData)
+    public Thumbnail(final byte[] thumbnailData)
     {
         this.thumbnailData = thumbnailData;
     }
@@ -236,7 +236,7 @@ public class Thumbnail
      * @param thumbnail The new thumbnail value
      * @see SummaryInformation#getThumbnail()
      */
-    public void setThumbnail(byte[] thumbnail)
+    public void setThumbnail(final byte[] thumbnail)
     {
         this.thumbnailData = thumbnail;
     }
@@ -260,7 +260,7 @@ public class Thumbnail
     public long getClipboardFormatTag()
     {
         long clipboardFormatTag = LittleEndian.getUInt(getThumbnail(),
-						       OFFSET_CFTAG);
+                                                       OFFSET_CFTAG);
         return clipboardFormatTag;
     }
 
@@ -289,7 +289,7 @@ public class Thumbnail
     {
         if (!(getClipboardFormatTag() == CFTAG_WINDOWS))
             throw new HPSFException("Clipboard Format Tag of Thumbnail must " +
-				    "be CFTAG_WINDOWS.");
+                                    "be CFTAG_WINDOWS.");
 
         return LittleEndian.getUInt(getThumbnail(), OFFSET_CF);
     }
@@ -316,20 +316,20 @@ public class Thumbnail
     {
         if (!(getClipboardFormatTag() == CFTAG_WINDOWS))
             throw new HPSFException("Clipboard Format Tag of Thumbnail must " +
-				    "be CFTAG_WINDOWS.");
+                                    "be CFTAG_WINDOWS.");
         if (!(getClipboardFormat() == CF_METAFILEPICT))
             throw new HPSFException("Clipboard Format of Thumbnail must " +
-				    "be CF_METAFILEPICT.");
+                                    "be CF_METAFILEPICT.");
         else
-	{
+        {
             byte[] thumbnail = getThumbnail();
             int wmfImageLength = thumbnail.length - OFFSET_WMFDATA;
             byte[] wmfImage = new byte[wmfImageLength];
             System.arraycopy(thumbnail,
-			     OFFSET_WMFDATA,
-			     wmfImage,
-			     0,
-			     wmfImageLength);
+                             OFFSET_WMFDATA,
+                             wmfImage,
+                             0,
+                             wmfImageLength);
             return wmfImage;
         }
     }

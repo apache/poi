@@ -54,9 +54,7 @@
  */
 package org.apache.poi.hpsf;
 
-import java.io.*;
-import java.util.*;
-import org.apache.poi.hpsf.wellknown.*;
+import org.apache.poi.hpsf.wellknown.PropertyIDMap;
 
 /**
  * <p>Convenience class representing a DocumentSummary Information stream in a
@@ -90,12 +88,12 @@ public class DocumentSummaryInformation extends SpecialPropertySet
      * does not contain a document summary information stream.
      */
     public DocumentSummaryInformation(final PropertySet ps)
-	throws UnexpectedPropertySetTypeException
+        throws UnexpectedPropertySetTypeException
     {
         super(ps);
         if (!isDocumentSummaryInformation())
             throw new UnexpectedPropertySetTypeException
-		("Not a " + getClass().getName());
+                ("Not a " + getClass().getName());
     }
 
 

@@ -54,7 +54,7 @@
  */
 package org.apache.poi.hpsf;
 
-import java.util.*;
+import java.util.Date;
 
 /**
  * <p>Provides various static utility methods.</p>
@@ -90,10 +90,10 @@ public class Util
     {
         if (a.length != b.length)
             return false;
-	for (int i = 0; i < a.length; i++)
+        for (int i = 0; i < a.length; i++)
             if (a[i] != b[i])
                 return false;
-	return true;
+        return true;
     }
 
 
@@ -108,8 +108,8 @@ public class Util
      * @param dstOffset Offset in the destination byte array.
      */
     public static void copy(final byte[] src, final int srcOffset,
-			    final int length, final byte[] dst,
-			    final int dstOffset)
+                            final int length, final byte[] dst,
+                            final int dstOffset)
     {
         for (int i = 0; i < length; i++)
             dst[dstOffset + i] = src[srcOffset + i];
@@ -130,7 +130,7 @@ public class Util
         int capacity = 0;
         for (int i = 0; i < byteArrays.length; i++)
             capacity += byteArrays[i].length;
-	final byte[] result = new byte[capacity];
+        final byte[] result = new byte[capacity];
         int r = 0;
         for (int i = 0; i < byteArrays.length; i++)
             for (int j = 0; j < byteArrays[i].length; j++)
@@ -150,7 +150,7 @@ public class Util
      * @return The new byte array. Its length is number of copied bytes.
      */
     public static byte[] copy(final byte[] src, final int offset,
-			      final int length)
+                              final int length)
     {
         final byte[] result = new byte[length];
         copy(src, offset, length, result, 0);
@@ -167,7 +167,7 @@ public class Util
      * did you notice that you can tell from the epochs which
      * operating system is the modern one? :-))</p>
      */
-    public final static long EPOCH_DIFF = 11644473600000L;
+    public static final long EPOCH_DIFF = 11644473600000L;
 
 
     /**

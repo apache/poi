@@ -58,9 +58,8 @@
  */
 package org.apache.poi.hpsf;
 
-import java.io.*;
-import java.util.*;
-import org.apache.poi.hpsf.wellknown.*;
+import java.util.Date;
+import org.apache.poi.hpsf.wellknown.PropertyIDMap;
 
 /**
  * <p>Convenience class representing a Summary Information stream in a
@@ -96,12 +95,12 @@ public class SummaryInformation extends SpecialPropertySet
      * does not contain a summary information stream.
      */
     public SummaryInformation(final PropertySet ps)
-	throws UnexpectedPropertySetTypeException
+        throws UnexpectedPropertySetTypeException
     {
         super(ps);
         if (!isSummaryInformation())
             throw new UnexpectedPropertySetTypeException
-		("Not a " + getClass().getName());
+                ("Not a " + getClass().getName());
     }
 
 

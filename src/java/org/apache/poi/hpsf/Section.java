@@ -54,9 +54,10 @@
  */
 package org.apache.poi.hpsf;
 
-import java.util.*;
+import java.util.Map;
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.hpsf.wellknown.*;
+import org.apache.poi.hpsf.wellknown.PropertyIDMap;
+import org.apache.poi.hpsf.wellknown.SectionIDMap;
 
 /**
  * <p>Represents a section in a {@link PropertySet}.</p>
@@ -75,6 +76,9 @@ public class Section
      */
     protected Map dictionary;
 
+    /**
+     * <p>The section's format ID, {@link #getFormatID}.</p>
+     */
     protected ClassID formatID;
 
 
@@ -95,6 +99,9 @@ public class Section
 
 
 
+    /**
+     * @see #getOffset
+     */
     protected long offset;
 
 
@@ -110,6 +117,9 @@ public class Section
 
 
 
+    /**
+     * @see #getSize
+     */
     protected int size;
 
 
@@ -125,6 +135,9 @@ public class Section
 
 
 
+    /**
+     * @see #getPropertyCount
+     */
     protected int propertyCount;
 
 
@@ -140,6 +153,9 @@ public class Section
 
 
 
+    /**
+     * @see #getProperties
+     */
     protected Property[] properties;
 
 
@@ -159,7 +175,7 @@ public class Section
      * <p>Creates an empty and uninitialized {@link Section}.
      */
     protected Section()
-    {}
+    { }
 
 
 
@@ -170,32 +186,34 @@ public class Section
      * @param offset The position in the stream that points to the
      * section's format ID.
      */
-    public Section(final byte[] src, int offset)
+    public Section(final byte[] src, final int offset)
     {
+        int o1 = offset;
+
         /*
          * Read the format ID.
          */
-        formatID = new ClassID(src, offset);
-        offset += ClassID.LENGTH;
+        formatID = new ClassID(src, o1);
+        o1 += ClassID.LENGTH;
 
         /*
          * Read the offset from the stream's start and positions to
          * the section header.
          */
-        this.offset = LittleEndian.getUInt(src, offset);
-        offset = (int)this.offset;
+        this.offset = LittleEndian.getUInt(src, o1);
+        o1 = (int) this.offset;
 
         /*
          * Read the section length.
          */
-        size = (int)LittleEndian.getUInt(src, offset);
-        offset += LittleEndian.INT_SIZE;
+        size = (int) LittleEndian.getUInt(src, o1);
+        o1 += LittleEndian.INT_SIZE;
 
         /*
          * Read the number of properties.
          */
-        propertyCount = (int)LittleEndian.getUInt(src, offset);
-        offset += LittleEndian.INT_SIZE;
+        propertyCount = (int) LittleEndian.getUInt(src, o1);
+        o1 += LittleEndian.INT_SIZE;
 
         /*
          * Read the properties. The offset is positioned at the first
@@ -207,20 +225,19 @@ public class Section
          * other words: Before we can read any strings we have to know
          * whether they are in Unicode or not. Unfortunately property
          * 1 is not guaranteed to be the first in a section.
-	 *
-	 * The algorithm below reads the properties in two passes: The
-	 * first one looks for property ID 1 and extracts the codepage
-	 * number. The seconds pass reads the other properties.
+         *
+         * The algorithm below reads the properties in two passes: The
+         * first one looks for property ID 1 and extracts the codepage
+         * number. The seconds pass reads the other properties.
          */
         properties = new Property[propertyCount];
-	Property propertyOne;
 
- 	/* Pass 1: Look for the codepage. */
- 	int codepage = -1;
-	int pass1Offset = offset;
+        /* Pass 1: Look for the codepage. */
+        int codepage = -1;
+        int pass1Offset = o1;
         for (int i = 0; i < properties.length; i++)
-	{
-	    /* Read the property ID. */
+        {
+            /* Read the property ID. */
             final int id = (int) LittleEndian.getUInt(src, pass1Offset);
             pass1Offset += LittleEndian.INT_SIZE;
 
@@ -229,44 +246,44 @@ public class Section
             pass1Offset += LittleEndian.INT_SIZE;
 
             /* Calculate the length of the property. */
-            int length;
-            if (i == properties.length - 1)
-                length = (int) (src.length - this.offset - sOffset);
-            else
-                length = (int)
-                    LittleEndian.getUInt(src, pass1Offset +
-					 LittleEndian.INT_SIZE) - sOffset;
+//            int length;
+//            if (i == properties.length - 1)
+//                length = (int) (src.length - this.offset - sOffset);
+//            else
+//                length = (int)
+//                    LittleEndian.getUInt(src, pass1Offset +
+//                                         LittleEndian.INT_SIZE) - sOffset;
 
-	    if (id == PropertyIDMap.PID_CODEPAGE)
-	    {
-		/* Read the codepage if the property ID is 1. */
+            if (id == PropertyIDMap.PID_CODEPAGE)
+            {
+                /* Read the codepage if the property ID is 1. */
 
-		/* Read the property's value type. It must be
-		 * VT_I2. */
-		int o = (int) (this.offset + sOffset);
-		final long type = LittleEndian.getUInt(src, o);
-		o += LittleEndian.INT_SIZE;
+                /* Read the property's value type. It must be
+                 * VT_I2. */
+                int o = (int) (this.offset + sOffset);
+                final long type = LittleEndian.getUInt(src, o);
+                o += LittleEndian.INT_SIZE;
 
-		if (type != Variant.VT_I2)
-		    throw new HPSFRuntimeException
-			("Value type of property ID 1 is not VT_I2 but " +
-			 type + ".");
+                if (type != Variant.VT_I2)
+                    throw new HPSFRuntimeException
+                        ("Value type of property ID 1 is not VT_I2 but " +
+                         type + ".");
 
                 /* Read the codepage number. */
                 codepage = LittleEndian.getUShort(src, o);
-	    }
-	}
+            }
+        }
 
-	/* Pass 2: Read all properties, including 1. */
+        /* Pass 2: Read all properties, including 1. */
         for (int i = 0; i < properties.length; i++)
-	{
-	    /* Read the property ID. */
-            final int id = (int) LittleEndian.getUInt(src, offset);
-            offset += LittleEndian.INT_SIZE;
+        {
+            /* Read the property ID. */
+            final int id = (int) LittleEndian.getUInt(src, o1);
+            o1 += LittleEndian.INT_SIZE;
 
             /* Offset from the section. */
-            final int sOffset = (int) LittleEndian.getUInt(src, offset);
-            offset += LittleEndian.INT_SIZE;
+            final int sOffset = (int) LittleEndian.getUInt(src, o1);
+            o1 += LittleEndian.INT_SIZE;
 
             /* Calculate the length of the property. */
             int length;
@@ -274,12 +291,12 @@ public class Section
                 length = (int) (src.length - this.offset - sOffset);
             else
                 length = (int)
-                    LittleEndian.getUInt(src, offset + LittleEndian.INT_SIZE) -
+                    LittleEndian.getUInt(src, o1 + LittleEndian.INT_SIZE) -
                     sOffset;
 
             /* Create it. */
             properties[i] = new Property(id, src, this.offset + sOffset,
-					 length, codepage);
+                                         length, codepage);
         }
 
         /*
@@ -325,9 +342,7 @@ public class Section
      */
     protected int getPropertyIntValue(final int id)
     {
-        /* FIXME: Find out why the following is a Long instead of an
-         * Integer! */
-        final Long i = (Long) getProperty(id);
+        final Integer i = (Integer) getProperty(id);
         if (i != null)
             return i.intValue();
         else
@@ -358,6 +373,11 @@ public class Section
 
 
 
+    /**
+     * <p>This member is <code>true</code> if the last call to {@link
+     * #getPropertyIntValue} or {@link #getProperty} tried to access a
+     * property that was not available, else <code>false</code>.</p>
+     */
     private boolean wasNull;
 
 

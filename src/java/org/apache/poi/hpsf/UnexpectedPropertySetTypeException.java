@@ -69,26 +69,50 @@ package org.apache.poi.hpsf;
 public class UnexpectedPropertySetTypeException extends HPSFException
 {
 
+    /**
+     * <p>Creates an {@link UnexpectedPropertySetTypeException}.</p>
+     */
     public UnexpectedPropertySetTypeException()
     {
         super();
     }
 
 
+    /**
+     * <p>Creates an {@link UnexpectedPropertySetTypeException} with a message
+     * string.</p>
+     *
+     * @param msg The message string.
+     */
     public UnexpectedPropertySetTypeException(final String msg)
     {
         super(msg);
     }
 
 
+    /**
+     * <p>Creates a new {@link UnexpectedPropertySetTypeException} with a
+     * reason.</p>
+     *
+     * @param reason The reason, i.e. a throwable that indirectly
+     * caused this exception.
+     */
     public UnexpectedPropertySetTypeException(final Throwable reason)
     {
         super(reason);
     }
 
 
+    /**
+     * <p>Creates an {@link UnexpectedPropertySetTypeException} with a message
+     * string and a reason.</p>
+     *
+     * @param msg The message string.
+     * @param reason The reason, i.e. a throwable that indirectly
+     * caused this exception.
+     */
     public UnexpectedPropertySetTypeException(final String msg,
-					      final Throwable reason)
+                                              final Throwable reason)
     {
         super(msg, reason);
     }

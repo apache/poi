@@ -54,10 +54,11 @@
  */
 package org.apache.poi.hpsf;
 
-import java.io.*;
-import java.util.*;
-import org.apache.poi.hpsf.wellknown.*;
-import org.apache.poi.poifs.filesystem.*;
+import java.io.InputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import org.apache.poi.hpsf.wellknown.SectionIDMap;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -99,8 +100,8 @@ public class PropertySet
     /**
      * <p>The "byteOrder" field must equal this value.</p>
      */
-    final static byte[] BYTE_ORDER_ASSERTION =
-	new byte[]{(byte) 0xFE, (byte) 0xFF};
+    static final byte[] BYTE_ORDER_ASSERTION =
+        new byte[] {(byte) 0xFE, (byte) 0xFF};
 
     /**
      * <p>Specifies this {@link PropertySet}'s byte order. See the
@@ -124,8 +125,8 @@ public class PropertySet
     /**
      * <p>The "format" field must equal this value.</p>
      */
-    final static byte[] FORMAT_ASSERTION =
-	new byte[]{(byte) 0x00, (byte) 0x00};
+    static final byte[] FORMAT_ASSERTION =
+        new byte[]{(byte) 0x00, (byte) 0x00};
 
     /**
      * <p>Specifies this {@link PropertySet}'s format. See the HPFS
@@ -154,21 +155,31 @@ public class PropertySet
     protected int osVersion;
 
 
-    public final static int OS_WIN16     = 0x0000;
-    public final static int OS_MACINTOSH = 0x0001;
-    public final static int OS_WIN32     = 0x0002;
+    /**
+     * <p>If the OS version field holds this value the property set stream was
+     * created on a 16-bit Windows system.</p>
+     */
+    public static final int OS_WIN16     = 0x0000;
+
+    /**
+     * <p>If the OS version field holds this value the property set stream was
+     * created on a Macintosh system.</p>
+     */
+    public static final int OS_MACINTOSH = 0x0001;
+
+    /**
+     * <p>If the OS version field holds this value the property set stream was
+     * created on a 32-bit Windows system.</p>
+     */
+    public static final int OS_WIN32     = 0x0002;
 
     /**
      * <p>Returns the property set stream's low-level "OS version"
      * field.</p>
      *
-     * <p><strong>FIXME:</strong> Return an <code>int</code> instead
-     * of a <code>long</code> in the next major version, i.e. when
-     * incompatible changes are allowed.</p>
-     *
      * @return The property set stream's low-level "OS version" field.
      */
-    public long getOSVersion()
+    public int getOSVersion()
     {
         return osVersion;
     }
@@ -204,13 +215,9 @@ public class PropertySet
      * <p>Returns the number of {@link Section}s in the property
      * set.</p>
      *
-     * <p><strong>FIXME:</strong> Return an <code>int</code> instead
-     * of a <code>long</code> in the next major version, i.e. when
-     * incompatible changes are allowed.</p>
-     *
      * @return The number of {@link Section}s in the property set.
      */
-    public long getSectionCount()
+    public int getSectionCount()
     {
         return sectionCount;
     }
@@ -244,7 +251,7 @@ public class PropertySet
      * writing functionality is implemented.</p>
      */
     protected PropertySet()
-    {}
+    { }
 
 
 
@@ -265,19 +272,21 @@ public class PropertySet
      * the {@link InputStream#markSupported} method.
      * @throws IOException if the {@link InputStream} cannot not be
      * accessed as needed.
+     * @exception NoPropertySetStreamException if the input stream does not
+     * contain a property set
      */
     public PropertySet(final InputStream stream)
-	throws NoPropertySetStreamException, MarkUnsupportedException,
-	       IOException
+        throws NoPropertySetStreamException, MarkUnsupportedException,
+               IOException
     {
         if (isPropertySetStream(stream))
-	{
+        {
             final int avail = stream.available();
             final byte[] buffer = new byte[avail];
             stream.read(buffer, 0, buffer.length);
             init(buffer, 0, buffer.length);
         }
-	else
+        else
             throw new NoPropertySetStreamException();
     }
 
@@ -297,11 +306,11 @@ public class PropertySet
      * property set stream.
      */
     public PropertySet(final byte[] stream, final int offset, final int length)
-	throws NoPropertySetStreamException
+        throws NoPropertySetStreamException
     {
         if (isPropertySetStream(stream, offset, length))
             init(stream, offset, length);
-	else
+        else
             throw new NoPropertySetStreamException();
     }
 
@@ -337,9 +346,10 @@ public class PropertySet
      * stream, else <code>false</code>.
      * @throws MarkUnsupportedException if the {@link InputStream}
      * does not support the {@link InputStream#mark} method.
+     * @exception IOException if an I/O error occurs
      */
     public static boolean isPropertySetStream(final InputStream stream)
-	throws MarkUnsupportedException, IOException
+        throws MarkUnsupportedException, IOException
     {
         /*
          * Read at most this many bytes.
@@ -353,17 +363,17 @@ public class PropertySet
          */
         if (!stream.markSupported())
             throw new MarkUnsupportedException(stream.getClass().getName());
-	stream.mark(BUFFER_SIZE);
+        stream.mark(BUFFER_SIZE);
 
         /*
          * Read a couple of bytes from the stream.
          */
         final byte[] buffer = new byte[BUFFER_SIZE];
         final int bytes =
-	    stream.read(buffer, 0,
-			Math.min(buffer.length, stream.available()));
+            stream.read(buffer, 0,
+                        Math.min(buffer.length, stream.available()));
         final boolean isPropertySetStream =
-	    isPropertySetStream(buffer, 0, bytes);
+            isPropertySetStream(buffer, 0, bytes);
         stream.reset();
         return isPropertySetStream;
     }
@@ -381,34 +391,38 @@ public class PropertySet
      * @return <code>true</code> if the byte array is a property set
      * stream, <code>false</code> if not.
      */
-    public static boolean isPropertySetStream(final byte[] src, int offset,
-					      final int length)
+    public static boolean isPropertySetStream(final byte[] src,
+                                              final int offset,
+                                              final int length)
     {
+        /* FIXME: Ensure that at most "length" bytes are read. */
+
         /*
          * Read the header fields of the stream. They must always be
          * there.
          */
-        final int byteOrder = LittleEndian.getUShort(src, offset);
-        offset += LittleEndian.SHORT_SIZE;
+        int o = offset;
+        final int byteOrder = LittleEndian.getUShort(src, o);
+        o += LittleEndian.SHORT_SIZE;
         byte[] temp = new byte[LittleEndian.SHORT_SIZE];
-        LittleEndian.putShort(temp,(short)byteOrder);
+        LittleEndian.putShort(temp, (short) byteOrder);
         if (!Util.equal(temp, BYTE_ORDER_ASSERTION))
             return false;
-	final int format = LittleEndian.getUShort(src, offset);
-        offset += LittleEndian.SHORT_SIZE;
+        final int format = LittleEndian.getUShort(src, o);
+        o += LittleEndian.SHORT_SIZE;
         temp = new byte[LittleEndian.SHORT_SIZE];
-        LittleEndian.putShort(temp,(short)format);
+        LittleEndian.putShort(temp, (short) format);
         if (!Util.equal(temp, FORMAT_ASSERTION))
             return false;
-	final long osVersion = LittleEndian.getUInt(src, offset);
-        offset += LittleEndian.INT_SIZE;
-        final ClassID classID = new ClassID(src, offset);
-        offset += ClassID.LENGTH;
-        final long sectionCount = LittleEndian.getUInt(src, offset);
-        offset += LittleEndian.INT_SIZE;
+        // final long osVersion = LittleEndian.getUInt(src, offset);
+        o += LittleEndian.INT_SIZE;
+        // final ClassID classID = new ClassID(src, offset);
+        o += ClassID.LENGTH;
+        final long sectionCount = LittleEndian.getUInt(src, o);
+        o += LittleEndian.INT_SIZE;
         if (sectionCount < 1)
             return false;
-	return true;
+        return true;
     }
 
 
@@ -424,24 +438,27 @@ public class PropertySet
      * from the beginning of <var>src</src>
      * @param length Length of the property set stream.
      */
-    private void init(final byte[] src, int offset, final int length)
+    private void init(final byte[] src, final int offset, final int length)
     {
+        /* FIXME: Ensure that at most "length" bytes are read. */
+        
         /*
          * Read the stream's header fields.
          */
-        byteOrder = LittleEndian.getUShort(src, offset);
-        offset += LittleEndian.SHORT_SIZE;
-        format = LittleEndian.getUShort(src, offset);
-        offset += LittleEndian.SHORT_SIZE;
-        osVersion = (int) LittleEndian.getUInt(src, offset);
-        offset += LittleEndian.INT_SIZE;
-        classID = new ClassID(src, offset);
-        offset += ClassID.LENGTH;
-        sectionCount = LittleEndian.getInt(src, offset);
-        offset += LittleEndian.INT_SIZE;
-	if (sectionCount <= 0)
-	    throw new HPSFRuntimeException("Section count " + sectionCount +
-					   " must be greater than 0.");
+        int o = offset;
+        byteOrder = LittleEndian.getUShort(src, o);
+        o += LittleEndian.SHORT_SIZE;
+        format = LittleEndian.getUShort(src, o);
+        o += LittleEndian.SHORT_SIZE;
+        osVersion = (int) LittleEndian.getUInt(src, o);
+        o += LittleEndian.INT_SIZE;
+        classID = new ClassID(src, o);
+        o += ClassID.LENGTH;
+        sectionCount = LittleEndian.getInt(src, o);
+        o += LittleEndian.INT_SIZE;
+        if (sectionCount <= 0)
+            throw new HPSFRuntimeException("Section count " + sectionCount +
+                                           " must be greater than 0.");
 
         /*
          * Read the sections, which are following the header. They
@@ -463,9 +480,9 @@ public class PropertySet
          * "offset" accordingly.
          */
         for (int i = 0; i < sectionCount; i++)
-	{
-            final Section s = new Section(src, offset);
-            offset += ClassID.LENGTH + LittleEndian.INT_SIZE;
+        {
+            final Section s = new Section(src, o);
+            o += ClassID.LENGTH + LittleEndian.INT_SIZE;
             sections.add(s);
         }
     }
@@ -482,7 +499,7 @@ public class PropertySet
     public boolean isSummaryInformation()
     {
         return Util.equal(((Section) sections.get(0)).getFormatID().getBytes(),
-			  SectionIDMap.SUMMARY_INFORMATION_ID);
+                          SectionIDMap.SUMMARY_INFORMATION_ID);
     }
 
 
@@ -497,7 +514,7 @@ public class PropertySet
     public boolean isDocumentSummaryInformation()
     {
         return Util.equal(((Section) sections.get(0)).getFormatID().getBytes(),
-			  SectionIDMap.DOCUMENT_SUMMARY_INFORMATION_ID);
+                          SectionIDMap.DOCUMENT_SUMMARY_INFORMATION_ID);
     }
 
 
@@ -517,7 +534,7 @@ public class PropertySet
      * more or less than one {@link Section}.
      */
     public Property[] getProperties()
-	throws NoSingleSectionException
+        throws NoSingleSectionException
     {
         return getSingleSection().getProperties();
     }
@@ -556,7 +573,7 @@ public class PropertySet
      * more or less than one {@link Section}.
      */
     protected boolean getPropertyBooleanValue(final int id)
-	throws NoSingleSectionException
+        throws NoSingleSectionException
     {
         return getSingleSection().getPropertyBooleanValue(id);
     }
@@ -576,7 +593,7 @@ public class PropertySet
      * more or less than one {@link Section}.
      */
     protected int getPropertyIntValue(final int id)
-	throws NoSingleSectionException
+        throws NoSingleSectionException
     {
         return getSingleSection().getPropertyIntValue(id);
     }
@@ -609,16 +626,14 @@ public class PropertySet
      * <p>If the {@link PropertySet} has only a single section this
      * method returns it.</p>
      *
-     *@return The singleSection value
-     *@throws NoSingleSectionException if the {@link PropertySet} has
-     *more or less than exactly one {@link Section}.
+     * @return The singleSection value
      */
     public Section getSingleSection()
     {
         if (sectionCount != 1)
-	    throw new NoSingleSectionException
-		("Property set contains " + sectionCount + " sections.");
-	return ((Section) sections.get(0));
+            throw new NoSingleSectionException
+                ("Property set contains " + sectionCount + " sections.");
+        return ((Section) sections.get(0));
     }
 
 }

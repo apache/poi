@@ -54,8 +54,7 @@
  */
 package org.apache.poi.hpsf;
 
-import java.util.*;
-import org.apache.poi.util.LittleEndian;
+import java.util.List;
 
 /**
  * <p>Abstract superclass for the convenience classes {@link
@@ -90,17 +89,30 @@ import org.apache.poi.util.LittleEndian;
 public abstract class SpecialPropertySet extends PropertySet
 {
 
+    /**
+     * <p>The "real" property set <code>SpecialPropertySet</code>
+     * delegates to.</p>
+     */
     private PropertySet delegate;
 
 
 
-    public SpecialPropertySet(PropertySet ps)
+    /**
+     * <p>Creates a <code>SpecialPropertySet</code>.
+     *
+     * @param ps The property set encapsulated by the
+     * <code>SpecialPropertySet</code>
+     */
+    public SpecialPropertySet(final PropertySet ps)
     {
         delegate = ps;
     }
 
 
 
+    /**
+     * @see PropertySet#getByteOrder
+     */
     public int getByteOrder()
     {
         return delegate.getByteOrder();
@@ -108,6 +120,9 @@ public abstract class SpecialPropertySet extends PropertySet
 
 
 
+    /**
+     * @see PropertySet#getFormat
+     */
     public int getFormat()
     {
         return delegate.getFormat();
@@ -115,20 +130,19 @@ public abstract class SpecialPropertySet extends PropertySet
 
 
 
-    /*
-     * This is intentionally no javadoc comment.
-     *
-     * FIXME: Return an <code>int</code> instead of a
-     * <code>long</code> in the next major version, i.e. when
-     * incompatible changes are allowed.
+    /**
+     * @see PropertySet#getOSVersion
      */
-    public long getOSVersion()
+    public int getOSVersion()
     {
         return delegate.getOSVersion();
     }
 
 
 
+    /**
+     * @see PropertySet#getClassID
+     */
     public ClassID getClassID()
     {
         return delegate.getClassID();
@@ -136,20 +150,19 @@ public abstract class SpecialPropertySet extends PropertySet
 
 
 
-    /*
-     * This is intentionally no javadoc comment.
-     *
-     * FIXME: Return an <code>int</code> instead of a
-     * <code>long</code> in the next major version, i.e. when
-     * incompatible changes are allowed.
+    /**
+     * @see PropertySet#getSectionCount
      */
-    public long getSectionCount()
+    public int getSectionCount()
     {
         return delegate.getSectionCount();
     }
 
 
 
+    /**
+     * @see PropertySet#getSections
+     */
     public List getSections()
     {
         return delegate.getSections();
@@ -157,6 +170,9 @@ public abstract class SpecialPropertySet extends PropertySet
 
 
 
+    /**
+     * @see PropertySet#isSummaryInformation
+     */
     public boolean isSummaryInformation()
     {
         return delegate.isSummaryInformation();
@@ -164,6 +180,9 @@ public abstract class SpecialPropertySet extends PropertySet
 
 
 
+    /**
+     * @see PropertySet#isDocumentSummaryInformation
+     */
     public boolean isDocumentSummaryInformation()
     {
         return delegate.isDocumentSummaryInformation();
@@ -171,6 +190,9 @@ public abstract class SpecialPropertySet extends PropertySet
 
 
 
+    /**
+     * @see PropertySet#getSingleSection
+     */
     public Section getSingleSection()
     {
         return delegate.getSingleSection();

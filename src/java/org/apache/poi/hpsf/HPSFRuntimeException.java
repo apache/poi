@@ -66,6 +66,8 @@ package org.apache.poi.hpsf;
 public class HPSFRuntimeException extends RuntimeException
 {
 
+    /** <p>The underlying reason for this exception - may be
+     * <code>null</code>.</p> */
     private Throwable reason;
 
 

@@ -69,6 +69,9 @@ package org.apache.poi.hpsf;
 public class  IllegalPropertySetDataException extends HPSFRuntimeException
 {
 
+    /**
+     * <p>Constructor</p>
+     */
     public IllegalPropertySetDataException()
     {
         super();
@@ -76,6 +79,11 @@ public class  IllegalPropertySetDataException extends HPSFRuntimeException
 
 
 
+    /**
+     * <p>Constructor</p>
+     * 
+     * @param msg The exception's message string
+     */
     public IllegalPropertySetDataException(final String msg)
     {
         super(msg);
@@ -83,6 +91,11 @@ public class  IllegalPropertySetDataException extends HPSFRuntimeException
 
 
 
+    /**
+     * <p>Constructor</p>
+     * 
+     * @param reason This exception's underlying reason
+     */
     public IllegalPropertySetDataException(final Throwable reason)
     {
         super(reason);
@@ -90,10 +103,16 @@ public class  IllegalPropertySetDataException extends HPSFRuntimeException
 
 
 
+    /**
+     * <p>Constructor</p>
+     * 
+     * @param msg The exception's message string
+     * @param reason This exception's underlying reason
+     */
     public IllegalPropertySetDataException(final String msg,
                                            final Throwable reason)
     {
-        super(msg,reason);
+        super(msg, reason);
     }
 
 }

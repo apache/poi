@@ -62,7 +62,8 @@
  */
 package org.apache.poi.hpsf;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -95,9 +96,10 @@ import org.apache.poi.util.LittleEndian;
 public class Property
 {
 
-    /* Codepage 1200 denotes Unicode. */
-    private static int CP_UNICODE = 1200;
+    /** <p>Codepage 1200 denotes Unicode.</p> */
+    private static final int CP_UNICODE = 1200;
 
+    /** <p>The property's ID.</p> */
     private int id;
 
 
@@ -113,6 +115,7 @@ public class Property
 
 
 
+    /** <p>The property's type.</p> */
     private long type;
 
 
@@ -128,6 +131,7 @@ public class Property
 
 
 
+    /** <p>The property's value.</p> */
     private Object value;
 
 
@@ -156,7 +160,7 @@ public class Property
      * codepage. It is needed only when reading string values.
      */
     public Property(final int id, final byte[] src, final long offset,
-		    int length, int codepage)
+                    final int length, final int codepage)
     {
         this.id = id;
 
@@ -165,7 +169,7 @@ public class Property
          * property IDs and property names.
          */
         if (id == 0)
-	{
+        {
             value = readDictionary(src, offset, length, codepage);
             return;
         }
@@ -174,15 +178,15 @@ public class Property
         type = LittleEndian.getUInt(src, o);
         o += LittleEndian.INT_SIZE;
 
-	try
-	{
-	    value = TypeReader.read(src, o, length, (int) type);
-	}
-	catch (Throwable t)
-	{
-	    t.printStackTrace();
-	    value = "*** null ***";
-	}
+        try
+        {
+            value = TypeReader.read(src, o, length, (int) type);
+        }
+        catch (Throwable t)
+        {
+            t.printStackTrace();
+            value = "*** null ***";
+        }
     }
 
 
@@ -199,13 +203,13 @@ public class Property
      * @return The dictonary
      */
     protected Map readDictionary(final byte[] src, final long offset,
-				 final int length, final int codepage)
+                                 final int length, final int codepage)
     {
-	/* Check whether "offset" points into the "src" array". */
-	if (offset < 0 || offset > src.length)
-	    throw new HPSFRuntimeException
-		("Illegal offset " + offset + " while HPSF stream contains " +
-		 length + " bytes.");
+        /* Check whether "offset" points into the "src" array". */
+        if (offset < 0 || offset > src.length)
+            throw new HPSFRuntimeException
+                ("Illegal offset " + offset + " while HPSF stream contains " +
+                 length + " bytes.");
         int o = (int) offset;
 
         /*
@@ -216,7 +220,7 @@ public class Property
 
         final Map m = new HashMap((int) nrEntries, (float) 1.0);
         for (int i = 0; i < nrEntries; i++)
-	{
+        {
             /* The key. */
             final Long id = new Long(LittleEndian.getUInt(src, o));
             o += LittleEndian.INT_SIZE;
@@ -231,31 +235,44 @@ public class Property
 
             /* Read the bytes or characters depending on whether the
              * character set is Unicode or not. */
-	    StringBuffer b = new StringBuffer((int) sLength);
-	    for (int j = 0; j < sLength; j++)
-		if (codepage == CP_UNICODE)
-		{
-		    final int i1 = o + (j * 2);
-		    final int i2 = i1 + 1;
-		    b.append((char) ((src[i2] << 8) + src[i1]));
-		}
-		else
-		    b.append((char) src[o + j]);
+            StringBuffer b = new StringBuffer((int) sLength);
+            for (int j = 0; j < sLength; j++)
+                if (codepage == CP_UNICODE)
+                {
+                    final int i1 = o + (j * 2);
+                    final int i2 = i1 + 1;
+                    b.append((char) ((src[i2] << 8) + src[i1]));
+                }
+                else
+                    b.append((char) src[o + j]);
 
-	    /* Strip 0x00 characters from the end of the string: */
-	    while (b.charAt(b.length() - 1) == 0x00)
-		b.setLength(b.length() - 1);
-	    if (codepage == CP_UNICODE)
-	    {
-		if (sLength % 2 == 1)
-		    sLength++;
-		o += (sLength + sLength);
-	    }
-	    else
-		o += sLength;
+            /* Strip 0x00 characters from the end of the string: */
+            while (b.charAt(b.length() - 1) == 0x00)
+                b.setLength(b.length() - 1);
+            if (codepage == CP_UNICODE)
+            {
+                if (sLength % 2 == 1)
+                    sLength++;
+                o += (sLength + sLength);
+            }
+            else
+                o += sLength;
             m.put(id, b.toString());
         }
         return m;
+    }
+
+
+
+    /**
+     * <p>Returns the property's size in bytes. This is always a multiple of
+     * 4.</p>
+     *
+     * @return the property's size in bytes
+     */
+    protected int getSize()
+    {
+        throw new UnsupportedOperationException("FIXME: Not yet implemented.");
     }
 
 }
