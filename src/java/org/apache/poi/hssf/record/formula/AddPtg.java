@@ -78,7 +78,7 @@ public class AddPtg
 
     /** Creates new AddPtg */
 
-    public AddPtg()
+    protected AddPtg()
     {
     }
 
@@ -88,10 +88,7 @@ public class AddPtg
         // doesn't need anything
     }
     
-    protected AddPtg(String formula, int offset) {
-        
-    }
-
+   
     public void writeBytes(byte [] array, int offset)
     {
         array[ offset + 0 ] = sid;
@@ -111,32 +108,19 @@ public class AddPtg
     {
         return 2;
     }
-
+    
+    /** Implementation of method from Ptg */
     public String toFormulaString()
     {
         return "+";
     }
        
-    public String toFormulaString(Ptg [] operands)
-    {
-        StringBuffer buffer = new StringBuffer();
-
-        buffer.append(operands[ 0 ].toFormulaString());
-        buffer.append("+");
-        buffer.append(operands[ 1 ].toFormulaString());
-        return buffer.toString();
-    }
-           
-    public int getStringLength() {
-        return 1;
-    }
-
-    
+   /** implementation of method from OperationsPtg*/  
     public String toFormulaString(String[] operands) {
         StringBuffer buffer = new StringBuffer();
 
         buffer.append(operands[ 0 ]);
-        buffer.append("+");
+        buffer.append(toFormulaString());
         buffer.append(operands[ 1 ]);
         return buffer.toString();
     }

@@ -87,12 +87,9 @@ public class AttrPtg
     private BitField          baxcel       = new BitField(0x20);
     private BitField          space        = new BitField(0x40);
 
-    /** Creates new AttrPtg */
-
-    public AttrPtg()
-    {
+    public AttrPtg() {
     }
-
+    
     public AttrPtg(byte [] data, int offset)
     {
         offset++;   // adjust past id
@@ -199,11 +196,6 @@ public class AttrPtg
         return "SUM()";
     }
 
-    public String toFormulaString(Ptg [] operands)
-    {
-        return "SUM(" + operands[ 0 ].toFormulaString() + ")";
-    }
-
     public int getNumberOfOperands()
     {
         return 1;
@@ -218,8 +210,6 @@ public class AttrPtg
         return "SUM(" + operands[ 0 ] + ")";
     }    
     
-    public int getPrecedence() {
-        return 1;
-    }    
+ 
     
 }

@@ -82,6 +82,7 @@ import org.apache.poi.hssf.usermodel.*;
  * FormulaViewer - finds formulas in a BIFF8 file and attempts to read them/display
  * data from them. Only works if Formulas are enabled in "RecordFactory"
  * @author  andy
+ * @author Avik
  */
 
 public class FormulaViewer
@@ -132,40 +133,34 @@ public class FormulaViewer
 
     public void parseFormulaRecord(FormulaRecord record)
     {
-        System.out.println("In ParseFormula Record");
-        System.out.println("row   = " + record.getRow());
-        System.out.println("col   = " + record.getColumn());
+        System.out.println("==============================");
+        System.out.print("row = " + record.getRow());
+        System.out.println(", col = " + record.getColumn());
         System.out.println("value = " + record.getValue());
-        System.out.println("xf    = " + record.getXFIndex());
-        System.out.println("number of ptgs = "
+        System.out.print("xf = " + record.getXFIndex());
+        System.out.print(", number of ptgs = "
                            + record.getNumberOfExpressionTokens());
-        System.out.println("options = " + record.getOptions());
-        System.out.println(composeForumla(record));
+        System.out.println(", options = " + record.getOptions());
+        System.out.println("RPN List = "+formulaString(record));
+        System.out.println("Formula text = "+ composeForumla(record));
     }
 
-    public String composeForumla(FormulaRecord record)
-    {
+    private String formulaString(FormulaRecord record) {
         StringBuffer formula = new StringBuffer("=");
         int          numptgs = record.getNumberOfExpressionTokens();
-        List         ptgs    = record.getParsedExpression();
-
-        for (int ptgnum = numptgs - 1; ptgnum > (-1); ptgnum--)
-        {
-            Ptg          ptg      = ( Ptg ) ptgs.get(ptgnum);
-            OperationPtg optg     = ( OperationPtg ) ptg;
-            int          numops   = optg.getNumberOfOperands();
-            Ptg[]        ops      = new Ptg[ numops ];
-            int          opoffset = 1;
-
-            for (int opnum = ops.length - 1; opnum > -1; opnum--)
-            {
-                ops[ opnum ] = ( Ptg ) ptgs.get(ptgnum - opoffset);
-                opoffset++;
-            }
-            formula.append(optg.toFormulaString(ops));
-            ptgnum -= ops.length;
-        }
-        return formula.toString();
+        List         tokens    = record.getParsedExpression();
+        StringBuffer buf = new StringBuffer();
+           for (int i=0;i<numptgs;i++) {
+            buf.append( ( (Ptg)tokens.get(i)).toFormulaString());
+            buf.append(' ');
+        } 
+        return buf.toString();
+    }
+    
+    
+    private String composeForumla(FormulaRecord record)
+    {
+       return  FormulaParser.toFormulaString(record.getParsedExpression());
     }
 
     /**

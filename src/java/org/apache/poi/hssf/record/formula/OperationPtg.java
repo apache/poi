@@ -75,11 +75,17 @@ public abstract class OperationPtg extends Ptg
 
     public abstract int getType();
     
+    /**
+     *  returns a string representation of the operations
+     *  the length of the input array should equal the number returned by 
+     *  @see getNumberOfOperands
+     *  
+     */
     public abstract String toFormulaString(String[] operands);
     
+    /**
+     * The number of operands expected by the operations
+     */
     public abstract int getNumberOfOperands();
-    
-
-    public abstract String toFormulaString(Ptg [] operands);
     
 }

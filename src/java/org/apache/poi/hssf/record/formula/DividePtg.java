@@ -75,7 +75,7 @@ public class DividePtg
 
     /** Creates new AddPtg */
 
-    public DividePtg()
+    protected DividePtg()
     {
     }
 
@@ -110,25 +110,11 @@ public class DividePtg
         return "/";
     }
 
-    public String toFormulaString(Ptg [] operands)
-    {
-        StringBuffer buffer = new StringBuffer();
-
-        buffer.append(operands[ 0 ].toFormulaString());
-        buffer.append("/");
-        buffer.append(operands[ 1 ].toFormulaString());
-        return buffer.toString();
-    }
-   
-    public int getStringLength() {
-        return 1;
-    }
-    
-    public String toFormulaString(String[] operands) {
+     public String toFormulaString(String[] operands) {
         StringBuffer buffer = new StringBuffer();
 
         buffer.append(operands[ 0 ]);
-        buffer.append("/");
+        buffer.append(toFormulaString());
         buffer.append(operands[ 1 ]);
         return buffer.toString();
     }      

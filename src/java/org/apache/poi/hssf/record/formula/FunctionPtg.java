@@ -16,12 +16,10 @@ public class FunctionPtg extends OperationPtg {
     private byte field_1_num_args;
     private short field_2_fnc_index;
     
-    //private String name;
-    //private int numOperands;
-    /** Creates new DummyFunctionPtg */
-    public FunctionPtg() {
-    }
-    
+        
+    /**Creates new function pointer from a byte array 
+     * usually called while reading an excel file. 
+     */
     public FunctionPtg(byte[] data, int offset) {
         offset++;
         field_1_num_args = data[ offset + 0 ];
@@ -29,8 +27,10 @@ public class FunctionPtg extends OperationPtg {
         
     }
     
-    
-    public FunctionPtg(String pName, byte pNumOperands) {
+    /**
+     * Create a function ptg from a string tokenised by the parser
+     */
+    protected FunctionPtg(String pName, byte pNumOperands) {
         field_1_num_args = pNumOperands;
         field_2_fnc_index = lookupIndex(pName);
         
@@ -64,20 +64,10 @@ public class FunctionPtg extends OperationPtg {
     }
     
     public String toFormulaString() {
-        return getName()+getNumberOfOperands();
+        return getName();
     }
     
-    public String toFormulaString(Ptg[] operands) {
-        StringBuffer buf = new StringBuffer();
-        buf.append(getName()+"(");
-        for (int i=0;i<operands.length;i++) {
-            buf.append(operands[i].toFormulaString()).append(',');
-        }
-        buf.append(")");
-        return buf.toString();
-    }
-    
-     public String toFormulaString(String[] operands) {
+    public String toFormulaString(String[] operands) {
         StringBuffer buf = new StringBuffer();
         buf.append(getName()+"(");
         if (operands.length >0) {

@@ -73,7 +73,7 @@ public class ExpPtg
 
     /** Creates new ExpPtg */
 
-    public ExpPtg()
+    protected ExpPtg()
     {
     }
 

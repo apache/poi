@@ -57,8 +57,9 @@ package org.apache.poi.hssf.record.formula;
 import org.apache.poi.util.LittleEndian;
 
 /**
- * Integer (short intger)
- * Stores a (java) short value in a formula
+ * Number
+ * Stores a floating point value in a formula
+ * value stored in a 8 byte field using IEEE notation
  * @author  Avik Sengupta
  */
 
@@ -69,25 +70,29 @@ public class NumberPtg
     public final static byte sid  = 0x1f;
     private double            field_1_value;
 
-    /** Creates new NumberPtg */
-
-    public NumberPtg()
-    {
-    }
-
+        
+    /** Create a NumberPtg from a byte array read from disk */
     public NumberPtg(byte [] data, int offset)
     {
         setValue(LittleEndian.getDouble(data, offset + 1));
     }
     
+    /** Create a NumberPtg from a string representation of  the number
+     *  Number format is not checked, it is expected to be validated in the parser
+     *   that calls this method. 
+     *  @param value : String representation of a floating point number
+     */
     protected NumberPtg(String value) {
         setValue(Double.parseDouble(value));
     }
+    
+    
     public void setValue(double value)
     {
         field_1_value = value;
     }
-
+    
+    
     public double getValue()
     {
         return field_1_value;
@@ -108,11 +113,6 @@ public class NumberPtg
     {
         return "" + getValue();
     }
-    
-    
-    //TODO: do we really need this method??    
-    public int getStringLength() {
-        return 1;
-    }    
+       
 }
 

@@ -78,8 +78,9 @@ public class NamePtg
 
     /** Creates new NamePtg */
 
-    public NamePtg()
+    protected NamePtg(String name)
     {
+        //TODO
     }
 
     /** Creates new NamePtg */
