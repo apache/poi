@@ -1,8 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="ISO-8859-1"?>
 
 <!DOCTYPE todo PUBLIC "-//APACHE//DTD Todo V1.1//EN" "./dtd/todo-v11.dtd">
 
-<todo title="Things To Do for Poi">
+<todo title="Tareas Pendientes para Poi">
 
     <devs>
         <!-- in strict alphabetical order -->
@@ -15,42 +15,46 @@
 
     <actions priority="high">
         <action context="code" assigned-to="NKB">
-          Finish HDF
+          Terminar HDF
         </action>
         <action context="code" assigned-to="NKB">
-          Finish Charts
+          Terminar Gráficas (Charts)
         </action>
         <action context="code">
-          Finish Formulas.
+          Terminar Fórmulas.
         </action>
     </actions>
 
     <actions priority="medium">
         <action context="code">
-          Expose functionality in low level records in higher level API
+          Exponer funcionalidad de registros a bajo nivel en API de más alto nivel
         </action>
         <action context="code">
-          Implement more record types (for other things ... not sure
-          what this will mean yet).
+          Implementar más tipos de registros (para otras cosas ... no estoy
+          seguro de lo que significará esto).
         </action>
         <action context="code">
-          Implement more record types (for other things ... not sure
-          what this will mean yet).
+          Implementar más tipos de registros (para otras cosas ... no estoy
+          seguro de lo que significará esto).
         </action>
         <action context="code">
-          Add more dummy checks (for when API user's do things they
-          &quot;can't&quot; do)
+          Añadir más comprobaciones evidentes (para cuando los usuarios del API
+          hagan cosas que &quot;no pueden&quot; hacer)
         </action>
         <action context="code">
-              Add support for embedded graphics and stuff like that.
+          Añadir soporte para gráficos embebidos y cosas similares.
         </action>
         <action context="code">
-          Create new adapter object for handling MulBlank, MulRk, Rk
-          records.
+          Crear un nuevo objeto adaptador para manejar registros MulBlank, MulRk, Rk.
         </action>
         <action context="code">
-          Add a way to copy sheets.
+          Añadir alguna manera de copiar hojas.
         </action>
     </actions>
 
 </todo>
+
+<!--
+      Copyright (c) @year@ The Apache Software Foundation All rights reserved.
+      $Revision$ $Date$
+-->
