@@ -115,7 +115,7 @@ public class WriteAccessRecord
 
     protected void fillFields(byte [] data, short size, int offset)
     {
-        field_1_username = new String(data, 3 + offset, data.length - 4);
+        field_1_username = StringUtil.getFromCompressedUnicode(data, 3 + offset, data.length - 4);
     }
 
     /**

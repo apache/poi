@@ -132,7 +132,7 @@ public class FormatRecord
       }
       else {
           // not unicode
-          field_4_formatstring = new String(data, 5 + offset, field_3_unicode_len );
+          field_4_formatstring = StringUtil.getFromCompressedUnicode(data, 5 + offset, field_3_unicode_len );
       }
     }
 

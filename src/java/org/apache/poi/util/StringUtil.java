@@ -197,6 +197,26 @@ public class StringUtil {
     }
 
 
+      /**
+      * read compressed unicode(8bit)
+      * 
+      * @author Toshiaki Kamoshida(kamoshida.toshiaki at future dot co dot jp)
+      * 
+      * @param string byte array to read
+      * @param offset offset to read byte array
+      * @param len    length to read byte array
+      * @return String generated String instance by reading byte array
+      */
+     public static String getFromCompressedUnicode(final byte[] string,
+            final int offset, final int len){
+         try{
+             return new String(string,offset,len,"ISO-8859-1");
+         }
+         catch(UnsupportedEncodingException e){
+             throw new InternalError();/* unreachable */
+         }
+     }
+
     /**
      *  write compressed unicode
      *

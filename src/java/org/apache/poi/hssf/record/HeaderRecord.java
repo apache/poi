@@ -119,7 +119,7 @@ public class HeaderRecord
         if (size > 0)
         {
             field_1_header_len = data[ 0 + offset ];
-            field_2_header     = new String(data, 3 + offset, // [Shawn] Changed 1 to 3 for offset of string
+            field_2_header     = StringUtil.getFromCompressedUnicode(data, 3 + offset, // [Shawn] Changed 1 to 3 for offset of string
                                             LittleEndian.ubyteToInt(field_1_header_len));
         }
     }

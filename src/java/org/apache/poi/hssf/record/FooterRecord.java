@@ -119,7 +119,7 @@ public class FooterRecord
         if (size > 0)
         {
             field_1_footer_len = data[ 0 + offset ];
-            field_2_footer     = new String(data, 3 + offset, // [Shawn] Changed 1 to 3 for offset of string
+            field_2_footer     = StringUtil.getFromCompressedUnicode(data, 3 + offset, // [Shawn] Changed 1 to 3 for offset of string
                                             LittleEndian.ubyteToInt( field_1_footer_len) );
         }
     }
