@@ -109,12 +109,14 @@ public class HexDump
             throws IOException, ArrayIndexOutOfBoundsException,
                     IllegalArgumentException
     {
-        if ((index < 0) || (index >= data.length))
+        if ((index < 0) || (data.length != 0 && index >= data.length))
         {
             throw new ArrayIndexOutOfBoundsException(
                 "illegal index: " + index + " into array of length "
                 + data.length);
         }
+        if (data.length == 0)
+            return; // nothing more to do.
         if (stream == null)
         {
             throw new IllegalArgumentException("cannot write to nullstream");
