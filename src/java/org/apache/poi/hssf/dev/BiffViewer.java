@@ -626,6 +626,18 @@ public class BiffViewer
                 retval = new FontIndexRecord(rectype, size, data);
                 break;
 
+            case LineFormatRecord.sid :
+                retval = new LineFormatRecord(rectype, size, data);
+                break;
+
+            case AreaFormatRecord.sid :
+                retval = new AreaFormatRecord(rectype, size, data);
+                break;
+
+            case LinkedDataRecord.sid :
+                retval = new LinkedDataRecord(rectype, size, data);
+                break;
+
             default :
                 retval = new UnknownRecord(rectype, size, data);
         }
