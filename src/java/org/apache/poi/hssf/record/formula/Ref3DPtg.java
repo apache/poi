@@ -61,6 +61,7 @@ import org.apache.poi.util.LittleEndian;
 import org.apache.poi.hssf.util.RangeAddress;
 import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.hssf.util.SheetReferences;
+import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.util.BitField;
 import org.apache.poi.hssf.model.Workbook;
 
@@ -193,8 +194,9 @@ public class Ref3DPtg extends Ptg {
 
     }
 
-    public String toFormulaString(SheetReferences refs) {
+    public String toFormulaString(Workbook book) {
         StringBuffer retval = new StringBuffer();
+        SheetReferences refs = book == null ? null : book.getSheetReferences();
         if (refs != null) {
             retval.append(refs.getSheetName((int)this.field_1_index_extern_sheet));
             retval.append('!');

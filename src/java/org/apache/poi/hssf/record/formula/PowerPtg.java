@@ -62,7 +62,7 @@ package org.apache.poi.hssf.record.formula;
 
 import java.util.List;
 
-import org.apache.poi.hssf.util.SheetReferences;
+import org.apache.poi.hssf.model.Workbook;
 
 /**
  *
@@ -108,7 +108,7 @@ public class PowerPtg
         return 2;
     }
 
-    public String toFormulaString(SheetReferences refs)
+    public String toFormulaString(Workbook book)
     {
         return "^";
     }
@@ -118,7 +118,7 @@ public class PowerPtg
 
         
         buffer.append(operands[ 0 ]);
-        buffer.append(toFormulaString((SheetReferences)null));
+        buffer.append(toFormulaString((Workbook)null));
         buffer.append(operands[ 1 ]);
         return buffer.toString();
     }       

@@ -748,8 +748,7 @@ public class HSSFCell
 
     public String getCellFormula() {
         //Workbook.currentBook=book;
-        SheetReferences refs = book.getSheetReferences();
-        String retval = FormulaParser.toFormulaString(refs,
+        String retval = FormulaParser.toFormulaString(book,
                 ((FormulaRecordAggregate)sheet.getValueRecord(row,cellNum)).getFormulaRecord().getParsedExpression());
         //Workbook.currentBook=null;
         return retval;

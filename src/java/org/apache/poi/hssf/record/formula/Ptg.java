@@ -63,7 +63,7 @@ package org.apache.poi.hssf.record.formula;
 import java.util.List;
 import java.util.ArrayList;
 
-import org.apache.poi.hssf.util.SheetReferences;
+import org.apache.poi.hssf.model.Workbook;
 
 /**
  *
@@ -347,7 +347,7 @@ public abstract class Ptg
     /**
      * return a string representation of this token alone
      */
-    public abstract String toFormulaString(SheetReferences refs);
+    public abstract String toFormulaString(Workbook book);
     /**
      * dump a debug representation (hexdump) to a string
      */

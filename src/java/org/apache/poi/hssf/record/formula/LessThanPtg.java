@@ -63,7 +63,7 @@ package org.apache.poi.hssf.record.formula;
 import java.util.List;
 
 //POI
-import org.apache.poi.hssf.util.SheetReferences;
+import org.apache.poi.hssf.model.Workbook;
 
 /**
  * Less than operator PTG "<". The SID is taken from the 
@@ -142,7 +142,7 @@ public class LessThanPtg
      * Implementation of method from Ptg 
      * @param refs the Sheet References
      */
-    public String toFormulaString(SheetReferences refs)
+    public String toFormulaString(Workbook book)
     {
         return this.LESSTHAN;
     }
@@ -180,6 +180,3 @@ public class LessThanPtg
     }
 
 }
-
-
-

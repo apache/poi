@@ -56,7 +56,6 @@ package org.apache.poi.hssf.model;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.record.formula.*;
-import org.apache.poi.hssf.util.SheetReferences;
 
 /**
  * Test the low level formula parser functionality. High level tests are to 
@@ -145,7 +144,7 @@ public class TestFormulaParser extends TestCase {
         assertEquals(true, flag.getValue());
         assertEquals("Y", y.getValue());
         assertEquals("N", n.getValue());
-        assertEquals("IF", funif.toFormulaString(new SheetReferences()));
+        assertEquals("IF", funif.toFormulaString((Workbook) null));
         assertTrue("Goto ptg exists", goto1.isGoto());
     }
 
@@ -285,6 +284,19 @@ public class TestFormulaParser extends TestCase {
 		
 	}
 	    
+    public void testMacroFunction() {
+        Workbook w = new Workbook();
+        FormulaParser fp = new FormulaParser("FOO()", w);
+        fp.parse();
+        Ptg[] ptg = fp.getRPNPtg();
+
+        AbstractFunctionPtg tfunc = (AbstractFunctionPtg) ptg[0];
+        assertEquals("externalflag", tfunc.getName());
+
+        NamePtg tname = (NamePtg) ptg[1];
+        assertEquals("FOO", tname.toFormulaString(w));
+    }
+
      public static void main(String [] args) {
         System.out.println("Testing org.apache.poi.hssf.record.formula.FormulaParser");
         junit.textui.TestRunner.run(TestFormulaParser.class);

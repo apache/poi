@@ -60,7 +60,7 @@
  */
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.hssf.util.SheetReferences;
+import org.apache.poi.hssf.model.Workbook;
 
 /**
  *
@@ -102,7 +102,7 @@ public class ExpPtg
         return SIZE;
     }
 
-    public String toFormulaString(SheetReferences refs)
+    public String toFormulaString(Workbook book)
     {
         return "NO IDEA SHARED FORMULA EXP PTG";
     }
