@@ -25,11 +25,22 @@
 <li>
 <a href="../index.html"><font size="-1">Main</font></a>
 </li>
+</ul>
+</font>
+<br>
+<font size="+1" color="#000000">HPSF</font><font size="-1">
+<ul>
+<li>
+<a href="index.html"><font size="-1">Overview</font></a>
+</li>
 <li>
 <a href="how-to.html"><font size="-1">How To</font></a>
 </li>
 <li>
 <a href="internals.html"><font size="-1">Internals</font></a>
+</li>
+<li>
+<a href="todo.html"><font size="-1">To Do</font></a>
 </li>
 </ul>
 </font>
@@ -62,9 +73,27 @@
 <tr>
 <td>
 <br>
-      
-<p align="justify">TODO: This documentation is still to be written.</p>
-    
+   
+<p align="justify">Microsoft applications like "Word" or "Excel" offer the user to
+    describe his document by properties like "title", "category" and so
+    on. The application adds further information by itself: last
+    author, creation date etc. Internally these properties are stored in
+    so-called <em>property set streams</em>. A property set stream is a
+    separate document within a <a href="../poifs/index.html">POI
+     filesystem</a>. HPSF is POI's pure-Java implementation to read (and in
+    future to write) property set streams.</p>
+
+   
+<p align="justify">Once the <a href="how-to.html">HPSF HOWTO</a> is ready, it will
+    describe what a Java application should do to read a property set using
+    HPSF and retrieve the information it needs. Currently this is explained
+    in the javadocs of the <code>org.apache.poi.hpsf</code> package only.</p>
+
+   
+<p align="justify">HPSF supports OLE2 property set streams in general, not only the special
+    case of document properties mentioned above. The <a href="internals.html">HPSF description</a> describes the internal
+    structure of  property set streams.</p>
+  
 </td>
 </tr>
 </table>

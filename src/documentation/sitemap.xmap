@@ -112,6 +112,7 @@
        <map:part src="cocoon:/doclist/xdocs/poifs/book.xml"/>
        <map:part src="cocoon:/doclist/xdocs/hdf/book.xml"/>
        <map:part src="cocoon:/doclist/xdocs/hssf/book.xml"/>
+       <map:part src="cocoon:/doclist/xdocs/hpsf/book.xml"/>
        <map:part src="cocoon:/doclist/xdocs/utils/book.xml"/>     
      </map:aggregate>
      <map:transform src="stylesheets/doclist2document.xsl"/>

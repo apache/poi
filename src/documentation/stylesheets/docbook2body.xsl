@@ -424,6 +424,13 @@
     <xsl:apply-templates/>
   </xsl:template>
 
+  <xsl:template match="entry[@role='th']">
+    <td align="center" bgcolor="#006CB8" valign="top"
+        style="font-weight: bold">
+      <font color="#ffffff" size="-1"><xsl:apply-templates/></font>
+    </td>
+  </xsl:template>
+
   <xsl:template match="entry">
     <td align="left" bgcolor="#a0ddf0" valign="top">
       <font color="#000000" size="-1"><xsl:apply-templates/></font>
