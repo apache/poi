@@ -214,7 +214,7 @@ public class Codec
      *
      * @return The bytes
      *
-     * @throw IllegalArgumentException if the string does not contain
+     * @throws IllegalArgumentException if the string does not contain
      * a valid representation of a byte sequence.
      */
     public static byte[] hexDecode(final String s)

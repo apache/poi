@@ -96,7 +96,7 @@ public class PropertySetDescriptor extends DocumentDescriptor
      *
      * @param stream The stream.
      *
-     * @param nrOfBytes The maximum number of bytes to display in a
+     * @param nrOfBytesToDump The maximum number of bytes to display in a
      * dump starting at the beginning of the stream.
      */
     public PropertySetDescriptor(final String name,
