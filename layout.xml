@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="tools/antipede/resources/stylesheets/layout.xsl"?>
+<layout dir=".">
+  <library dir="./lib">
+   <endorsed dir="./lib/endorsed"/>
+   <core dir="./lib/core"/>
+   <optional dir="./lib/optional"/>
+  </library>
+  <source dir="./src">
+   <java dir="./src/java"/>
+   <test dir="./src/testcases"/>
+   <documentation dir="./src/documentation">
+     <content dir="./src/documentation/xdocs">
+      <xdocs dir="./src/documentation/xdocs"/>
+     </content>  
+     <resources dir="./src/documentation/images">
+      <images dir="./src/documentation/images"/>
+     </resources>  
+   </documentation>
+   <scratchpad dir="./src/scratchpad">
+     <java dir="./src/scratchpad/src"/>
+     <library dir="./src/scratchpad/lib"/>
+   </scratchpad>  
+   <contributions dir="./src/contrib">
+     <java dir="./src/contrib/src"/>
+     <library dir="./src/contrib/lib"/>
+   </contributions>      
+   <examples dir="./src/examples">
+     <java dir="./src/examples/src"/>
+     <library dir="./src/examples/lib"/>
+   </examples>           
+  </source>   
+  <build dir="./build">
+   <java dir="./build/java"/>
+   <classes dir="./build/classes"/>
+   <test dir="./build/testcases"/>
+   <documentation dir="./build/documentation">
+     <javadocs dir="./build/docs/javadocs"/>
+     <test dir="./build/docs/test"/>
+   </documentation>
+   <work dir="./build/work"/>   
+   <scratchpad dir="./build/scratchpad">
+     <java dir="./build/scratchpad/java"/>
+     <classes dir="./build/classes"/>          
+     <library dir="./build/scratchpad/lib"/>     
+   </scratchpad>  
+   <contributions dir="./build/contrib">
+     <java dir="./build/contrib/java"/>
+     <classes dir="./build/classes"/>
+     <library dir="./build/contrib/lib"/>
+   </contributions>      
+   <examples dir="./build/examples">
+     <java dir="./build/examples/java"/>
+     <classes dir="./build/classes"/>
+     <library dir="./build/examples/lib"/>
+   </examples>           
+  </build>   
+  <distributions dir="./dist">
+   <source dir="./dist/src"/>
+   <bin dir="./dist/bin"/>
+  </distributions>   
+</layout>
