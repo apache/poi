@@ -291,8 +291,9 @@ public class Area3DPtg extends Ptg
 
 	}
 
-	public String toFormulaString( SheetReferences refs )
+	public String toFormulaString(Workbook book)
 	{
+		SheetReferences refs = book == null ? null : book.getSheetReferences();
 		StringBuffer retval = new StringBuffer();
 		if ( refs != null )
 		{
@@ -352,4 +353,3 @@ public class Area3DPtg extends Ptg
 
 
 }
-

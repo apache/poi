@@ -56,7 +56,7 @@ package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.BitField;
-import org.apache.poi.hssf.util.SheetReferences;
+import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.util.StringUtil;
 
 /**
@@ -145,7 +145,7 @@ public class StringPtg
         }
     }
 
-    public String toFormulaString(SheetReferences refs)
+    public String toFormulaString(Workbook book)
     {
         return "\""+getValue()+"\"";
     }
@@ -162,4 +162,3 @@ public class StringPtg
    }
 
 }
-

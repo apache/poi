@@ -60,7 +60,7 @@
 package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.hssf.util.SheetReferences;
+import org.apache.poi.hssf.model.Workbook;
 
 /**
  * Boolean (boolean)
@@ -114,7 +114,7 @@ public class BoolPtg
         return SIZE;
     }
 
-    public String toFormulaString(SheetReferences refs)
+    public String toFormulaString(Workbook book)
     {
         return field_1_value ? "TRUE" : "FALSE";
     }

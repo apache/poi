@@ -54,7 +54,7 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.hssf.util.SheetReferences;
+import org.apache.poi.hssf.model.Workbook;
 
 /**
  * Missing Function Arguments
@@ -91,7 +91,7 @@ public class MissingArgPtg
     }
 
    
-    public String toFormulaString(SheetReferences refs)
+    public String toFormulaString(Workbook book)
     {
         return " ";
     }
@@ -103,5 +103,3 @@ public class MissingArgPtg
     }
 
 }
-
-
