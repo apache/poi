@@ -30,7 +30,7 @@
         <menu-item label="HDF" href="hdf/index.html"/>
         <menu-item label="HPSF" href="hpsf/index.html"/>
         <menu-item label="POI-Utils" href="utils/index.html"/>
-        <menu-item label="Download" href="http://jakarta.apache.org/builds/jakarta-poi/"/>
+        <menu-item label="Download" href="ext:download"/>
     </menu>
 
     <menu label="Docs">
