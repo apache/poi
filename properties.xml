@@ -20,6 +20,27 @@
        vm="1.2" />
    </build>
 
+	<forrest>
+		<cent>
+			<project skin="forrest-site"/>
+			<project content-dir="src/documentation"/>
+			<project xdocs-dir="src/documentation/xdocs"/>
+			<project images-dir="src/documentation/images"/>			
+		</cent>
+	</forrest>
+	<java>
+		<cent>
+			<javadoc overview="src/java/overview.html" />
+   <!--    <javadocs group="POIFS org.apache.poi.poifs*,HSSF org.apache.poi.hssf*,HPSF org.apache.poi.hpsf*,">
+                <altenative views="uml">
+                  <uml prefix="uml-" suffix="" extension="html"/>
+                </altenative>
+              </javadocs>
+              -->
+		</cent>
+	</java>
+	
+   <!-- deprecated properties -->	 
    <centipede>
       <tools>
          <cents repository="http://krysalis.org/jars/">
