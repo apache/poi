@@ -96,4 +96,7 @@ public class ExpPtg
     {
         return "NO IDEA SHARED FORMULA EXP PTG";
     }
+    
+    public byte getDefaultOperandClass() {return Ptg.CLASS_VALUE;}
+    
 }

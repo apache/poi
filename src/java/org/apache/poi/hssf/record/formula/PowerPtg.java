@@ -109,9 +109,7 @@ public class PowerPtg
     {
         return "^";
     }
-    
-          
-    
+ 
     public String toFormulaString(String[] operands) {
          StringBuffer buffer = new StringBuffer();
 

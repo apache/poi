@@ -106,4 +106,6 @@ public class NamePtg
     {
         return "NO IDEA - NAME";
     }
+    
+    public byte getDefaultOperandClass() {return Ptg.CLASS_VALUE;}
 }

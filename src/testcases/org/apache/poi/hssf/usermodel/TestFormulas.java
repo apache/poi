@@ -768,6 +768,8 @@ extends TestCase {
             c.setCellFormula("AVERAGE(A2:A3)");
             c=r.createCell( (short) 4);
             c.setCellFormula("POWER(A2,A3)");
+            c=r.createCell( (short) 5);
+            c.setCellFormula("SIN(A2)");
             
             r = s.createRow((short) 1);c=r.createCell( (short) 0); c.setCellValue(2.0);
              r = s.createRow((short) 2);c=r.createCell( (short) 0); c.setCellValue(3.0);

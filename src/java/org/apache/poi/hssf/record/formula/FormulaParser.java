@@ -79,6 +79,12 @@ import java.io.File;
  */
 public class FormulaParser {
     
+    public static int FORMULA_TYPE_CELL = 0;
+    public static int FORMULA_TYPE_SHARED = 1;
+    public static int FORMULA_TYPE_ARRAY =2;
+    public static int FORMULA_TYPE_CONDFOMRAT = 3;
+    public static int FORMULA_TYPE_NAMEDRANGE = 4;
+    
     private String formulaString;
     private int pointer=0;
     
@@ -193,18 +199,16 @@ public class FormulaParser {
     
     /** Get an Identifier */
     private String GetName() {
-        String Token;
-        Token = "";
+        StringBuffer Token = new StringBuffer();
         if (!IsAlpha(Look)) {
             Expected("Name");
         }
         while (IsAlNum(Look)) {
-            Token = Token + Character.toUpperCase(Look);
+            Token = Token.append(Character.toUpperCase(Look));
             GetChar();
         }
-        
         SkipWhite();
-        return Token;
+        return Token.toString();
     }
     
     
@@ -304,7 +308,10 @@ public class FormulaParser {
             return;
         } else if (IsAlpha(Look)){
             Ident();
-        }else{
+        } else if(Look == '"') {
+           StringLiteral();
+        } else {
+             
             String number = GetNum();
             if (Look=='.') { 
                 Match('.');
@@ -316,7 +323,13 @@ public class FormulaParser {
             }
         }
     }
-
+    
+    private void StringLiteral() {
+        Match('"');
+        String name= GetName();
+        Match('"');
+        tokens.add(new StringPtg(name));
+    }
     
     /** Recognize and Translate a Multiply */
     private void Multiply(){
@@ -429,13 +442,89 @@ end;
      * a result of the parsing
      */
     public Ptg[] getRPNPtg() {
-       synchronized (tokens) {
-            if (tokens == null) throw new IllegalStateException("Please parse a string before trying to access the parse result");
-            Ptg[] retval = new Ptg[tokens.size()];
-            return (Ptg[]) tokens.toArray(retval);
-       }
+     return getRPNPtg(FORMULA_TYPE_CELL);
     }
-  
+    
+    public Ptg[] getRPNPtg(int formulaType) {
+        Node node = createTree();
+        setRootLevelRVA(node, formulaType);
+        setParameterRVA(node,formulaType);
+        return (Ptg[]) tokens.toArray(new Ptg[0]);
+    }
+    
+    private void setRootLevelRVA(Node n, int formulaType) {
+        //Pg 16, excelfileformat.pdf @ openoffice.org
+        Ptg p = (Ptg) n.getValue();
+            if (formulaType == this.FORMULA_TYPE_NAMEDRANGE) {
+                if (p.getDefaultOperandClass() == Ptg.CLASS_REF) {
+                    setClass(n,Ptg.CLASS_REF);
+                } else {
+                    setClass(n,Ptg.CLASS_ARRAY);
+                }
+            } else {
+                setClass(n,Ptg.CLASS_VALUE);
+            }
+        
+    }
+    
+    private void setParameterRVA(Node n, int formulaType) {
+        Ptg p = (Ptg) n.getValue();
+        if (p instanceof FunctionPtg) {
+            int numOperands = n.getNumChildren();
+            for (int i =0;i<n.getNumChildren();i++) {
+                setParameterRVA(n.getChild(i),((FunctionPtg)p).getParameterClass(i),formulaType);
+                if (n.getChild(i).getValue() instanceof FunctionPtg) {
+                    setParameterRVA(n.getChild(i),formulaType);
+                }
+            }  
+        } else {
+            for (int i =0;i<n.getNumChildren();i++) {
+                setParameterRVA(n.getChild(i),formulaType);
+            }
+        } 
+    }
+    private void setParameterRVA(Node n, int expectedClass,int formulaType) {
+        Ptg p = (Ptg) n.getValue();
+        if (expectedClass == Ptg.CLASS_REF) { //pg 15, table 1 
+            if (p.getDefaultOperandClass() == Ptg.CLASS_REF ) {
+                setClass(n, Ptg.CLASS_REF);
+            }
+            if (p.getDefaultOperandClass() == Ptg.CLASS_VALUE) {
+                if (formulaType==FORMULA_TYPE_CELL || formulaType == FORMULA_TYPE_SHARED) {
+                    setClass(n,Ptg.CLASS_VALUE);
+                } else {
+                    setClass(n,Ptg.CLASS_ARRAY);
+                }
+            }
+            if (p.getDefaultOperandClass() == Ptg.CLASS_ARRAY ) {
+                setClass(n, Ptg.CLASS_ARRAY);
+            }
+        } else if (expectedClass == Ptg.CLASS_VALUE) { //pg 15, table 2
+            if (formulaType == FORMULA_TYPE_NAMEDRANGE) {
+                setClass(n,Ptg.CLASS_ARRAY) ;
+            } else {
+                setClass(n,Ptg.CLASS_VALUE);
+            }
+        } else { //Array class, pg 16. 
+            if (p.getDefaultOperandClass() == Ptg.CLASS_VALUE &&
+                 (formulaType==FORMULA_TYPE_CELL || formulaType == FORMULA_TYPE_SHARED)) {
+                 setClass(n,Ptg.CLASS_VALUE);
+            } else {
+                setClass(n,Ptg.CLASS_ARRAY);
+            }
+        }
+    }
+    
+     private void setClass(Node n, byte theClass) {
+        Ptg p = (Ptg) n.getValue();
+        if (p instanceof FunctionPtg || !(p instanceof OperationPtg)) {
+            p.setClass(theClass);
+        } else {
+            for (int i =0;i<n.getNumChildren();i++) {
+                setClass(n.getChild(i),theClass);
+            }
+        }
+     }
     /**
      * Convience method which takes in a list then passes it to the other toFormulaString
      * signature
@@ -459,6 +548,7 @@ end;
         String[] operands;
         for (int i=0;i<numPtgs;i++) {
             if (ptgs[i] instanceof OperationPtg) {
+
                 // Excel allows to have AttrPtg at position 0 (such as Blanks) which
                 // do not have any operands. Skip them.
                 if(i > 0) {
@@ -478,6 +568,31 @@ end;
         }
         return (String) stack.pop(); //TODO: catch stack underflow and throw parse exception. 
     }
+    
+    private Node createTree() {
+        java.util.Stack stack = new java.util.Stack();
+        int numPtgs = tokens.size();
+        OperationPtg o;
+        int numOperands;
+        Node[] operands;
+        for (int i=0;i<numPtgs;i++) {
+            if (tokens.get(i) instanceof OperationPtg) {
+                
+                o = (OperationPtg) tokens.get(i);
+                numOperands = o.getNumberOfOperands();
+                operands = new Node[numOperands];
+                for (int j=0;j<numOperands;j++) {
+                    operands[numOperands-j-1] = (Node) stack.pop(); 
+                }
+                Node result = new Node(o);
+                result.setChildren(operands);
+                stack.push(result);
+            } else {
+                stack.push(new Node((Ptg)tokens.get(i)));
+            }
+        }
+        return (Node) stack.pop();
+    }
    
     /** toString on the parser instance returns the RPN ordered list of tokens
      *   Useful for testing
@@ -491,5 +606,17 @@ end;
         return buf.toString();
     }
     
+}    
+    class Node {
+        private Ptg value=null;
+        private Node[] children=new Node[0];
+        private int numChild=0;
+        public Node(Ptg val) {
+            value = val; 
+        }
+        public void setChildren(Node[] child) {children = child;numChild=child.length;}
+        public int getNumChildren() {return numChild;}
+        public Node getChild(int number) {return children[number];}
+        public Ptg getValue() {return value;}
+    }
     
-} 

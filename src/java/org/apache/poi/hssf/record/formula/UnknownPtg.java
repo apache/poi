@@ -95,4 +95,7 @@ public class UnknownPtg
     {
         return "UNKNOWN";
     }
+    public byte getDefaultOperandClass() {return Ptg.CLASS_VALUE;}
+
+    
 }

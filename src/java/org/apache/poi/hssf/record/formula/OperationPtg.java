@@ -88,4 +88,6 @@ public abstract class OperationPtg extends Ptg
      */
     public abstract int getNumberOfOperands();
     
+    public byte getDefaultOperandClass() {return Ptg.CLASS_VALUE;}
+    
 }

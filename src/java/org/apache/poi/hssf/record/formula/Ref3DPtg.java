@@ -1,4 +1,5 @@
 
+
 /* ====================================================================
  * The Apache Software License, Version 1.1
  *
@@ -72,22 +73,22 @@ public class Ref3DPtg extends Ptg {
     private short             field_1_index_extern_sheet;
     private short             field_2_row;
     private short             field_3_column;
-    
+
     /** Creates new AreaPtg */
-    
+
     public Ref3DPtg() {
     }
-    
+
     public Ref3DPtg(byte[] data, int offset) {
         offset++;
         field_1_index_extern_sheet = LittleEndian.getShort(data, 0 + offset);
         field_2_row          = LittleEndian.getShort(data, 2 + offset);
         field_3_column        = LittleEndian.getShort(data, 4 + offset);
     }
-    
+
     public String toString() {
         StringBuffer buffer = new StringBuffer();
-        
+
         buffer.append("Ref3dPrg\n");
         buffer.append("Index to Extern Sheet = " + getExternSheetIndex()).append("\n");
         buffer.append("Row = " + getRow()).append("\n");
@@ -97,81 +98,83 @@ public class Ref3DPtg extends Ptg {
         buffer.append("ColRel   = " + isColRelative()).append("\n");
         return buffer.toString();
     }
-    
+
     public void writeBytes(byte [] array, int offset) {
         array[ 0 + offset ] = sid;
         LittleEndian.putShort(array, 1 + offset , getExternSheetIndex());
         LittleEndian.putShort(array, 3 + offset , getRow());
-        LittleEndian.putShort(array, 5 + offset , getColumnRaw());               
+        LittleEndian.putShort(array, 5 + offset , getColumnRaw());
     }
-    
+
     public int getSize() {
         return SIZE;
     }
-    
+
     public short getExternSheetIndex(){
         return field_1_index_extern_sheet;
     }
-    
+
     public void setExternSheetIndex(short index){
         field_1_index_extern_sheet = index;
     }
-    
+
     public short getRow() {
         return field_2_row;
     }
-    
+
     public void setRow(short row) {
         field_2_row = row;
     }
-    
+
     public short getColumn() {
         return ( short ) (field_3_column & 0xFF);
     }
-    
+
     public short getColumnRaw() {
         return field_3_column;
     }
-    
+
     public boolean isColRowRelative() {
         return (((getColumnRaw()) & 0x8000) == 0x8000);
     }
-    
+
     public boolean isColRelative() {
         return (((getColumnRaw()) & 0x4000) == 0x4000);
     }
-    
+
     public void setColumn(short column) {
         field_3_column &= 0xFF00;
         field_3_column |= column & 0xFF;
     }
-    
+
     public void setColumnRaw(short column) {
         field_3_column = column;
     }
-    
+
     public String getArea(){
         RangeAddress ra = new RangeAddress("");
-        
+
         String result = (ra.numTo26Sys(getColumn()) + (getRow() + 1));
-        
+
         return result;
     }
 
     public void setArea(String ref){
         RangeAddress ra = new RangeAddress(ref);
-        
+
         String from = ra.getFromCell();
-        
+
         setColumn((short) (ra.getXPosition(from) -1));
         setRow((short) (ra.getYPosition(from) -1));
-                        
+
     }
 
     public String toFormulaString() {
         String result = getArea();
-        
+
         return result;
     }
-    
+
+   public byte getDefaultOperandClass() {return Ptg.CLASS_VALUE;}
+
 }

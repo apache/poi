@@ -211,5 +211,5 @@ public class AttrPtg
     }    
     
  
-    
+    public byte getDefaultOperandClass() {return Ptg.CLASS_VALUE;}
 }

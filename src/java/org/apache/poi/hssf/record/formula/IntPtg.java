@@ -114,5 +114,5 @@ public class IntPtg
     {
         return "" + getValue();
     }
-    
+ public byte getDefaultOperandClass() {return Ptg.CLASS_VALUE;}   
 }

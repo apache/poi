@@ -70,7 +70,7 @@ public class Area3DPtg extends Ptg
 {
     public final static short sid  = 0x3b;
     private final static int  SIZE = 11; // 10 + 1 for Ptg
-    private short             field_1_index_extern_sheet;  
+    private short             field_1_index_extern_sheet;
     private short             field_2_first_row;
     private short             field_3_last_row;
     private short             field_4_first_column;
@@ -116,20 +116,20 @@ public class Area3DPtg extends Ptg
         array[ 0 + offset ] = sid;
         LittleEndian.putShort(array, 1 + offset , getExternSheetIndex());
         LittleEndian.putShort(array, 3 + offset , getFirstRow());
-        LittleEndian.putShort(array, 5 + offset , getLastRow());               
-        LittleEndian.putShort(array, 7 + offset , getFirstColumnRaw());               
-        LittleEndian.putShort(array, 9 + offset , getLastColumnRaw());               
+        LittleEndian.putShort(array, 5 + offset , getLastRow());
+        LittleEndian.putShort(array, 7 + offset , getFirstColumnRaw());
+        LittleEndian.putShort(array, 9 + offset , getLastColumnRaw());
     }
 
     public int getSize()
     {
         return SIZE;
     }
-    
+
     public short getExternSheetIndex(){
         return field_1_index_extern_sheet;
     }
-    
+
     public void setExternSheetIndex(short index){
         field_1_index_extern_sheet = index;
     }
@@ -177,17 +177,17 @@ public class Area3DPtg extends Ptg
     public void setFirstColumn(short column)
     {
         field_4_first_column &= 0xFF00;
-        field_4_first_column |= column & 0xFF; 
+        field_4_first_column |= column & 0xFF;
     }
 
     public void setFirstColumnRaw(short column)
     {
-        field_4_first_column = column;   
+        field_4_first_column = column;
     }
 
     public short getLastColumn()
     {
-        return ( short ) (field_5_last_column & 0xFF);   
+        return ( short ) (field_5_last_column & 0xFF);
     }
 
     public short getLastColumnRaw()
@@ -208,32 +208,32 @@ public class Area3DPtg extends Ptg
     public void setLastColumn(short column)
     {
         field_5_last_column &= 0xFF00;
-        field_5_last_column |= column & 0xFF; 
+        field_5_last_column |= column & 0xFF;
     }
 
     public void setLastColumnRaw(short column)
     {
         field_5_last_column = column;
     }
-    
+
     public String getArea(){
-        RangeAddress ra = new RangeAddress( getFirstColumn(),getFirstRow() + 1, getLastColumn(), getLastRow() + 1);   
+        RangeAddress ra = new RangeAddress( getFirstColumn(),getFirstRow() + 1, getLastColumn(), getLastRow() + 1);
         String result = ra.getAddress();
-        
+
         return result;
     }
-    
+
     public void setArea(String ref){
         RangeAddress ra = new RangeAddress(ref);
-        
+
         String from = ra.getFromCell();
         String to   = ra.getToCell();
-        
+
         setFirstColumn((short) (ra.getXPosition(from) -1));
         setFirstRow((short) (ra.getYPosition(from) -1));
         setLastColumn((short) (ra.getXPosition(to) -1));
         setLastRow((short) (ra.getYPosition(to) -1));
-                        
+
     }
 
     public String toFormulaString()
@@ -243,5 +243,8 @@ public class Area3DPtg extends Ptg
         return result;
     }
 
-    
+   public byte getDefaultOperandClass() {
+       return Ptg.CLASS_VALUE;
+   }
+
 }
