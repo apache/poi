@@ -30,6 +30,8 @@
                     <li><link href="#ReadWriteWorkbook">Reading and writing</link></li>
                     <li><link href="#NewLinesInCells">Use newlines in cells.</link></li>
                     <li><link href="#DataFormats">Create user defined data formats.</link></li>
+                    <li><link href="#PrintArea">Set print area for a sheet.</link></li>
+                    <li><link href="#FooterPageNumbers">Set page numbers on the footer of a sheet.</link></li>
                 </ul>
             </section>
             <section title="Features">
@@ -356,6 +358,45 @@
     fileOut.close();
                     </source>
                 </section>
+                <anchor id="PrintArea"/>
+                <section title="Set Print Area to One Page">
+                    <source>
+    HSSFWorkbook wb = new HSSFWorkbook();
+    HSSFSheet sheet = wb.createSheet("format sheet");
+    HSSFPrintSetup ps = sheet.getPrintSetup()
+    
+    sheet.setAutobreaks(true)
+    
+    ps.setFitHeight((short)1);
+    ps.setFitWidth((short)1);
+
+
+    // Create various cells and rows for spreadsheet.
+
+    FileOutputStream fileOut = new FileOutputStream("workbook.xls");
+    wb.write(fileOut);
+    fileOut.close();
+                    </source>
+                </section>
+                <anchor id="FooterPageNumbers"/>
+                <section title="Set Page Numbers on Footer">
+                    <source>
+    HSSFWorkbook wb = new HSSFWorkbook();
+    HSSFSheet sheet = wb.createSheet("format sheet");
+    HSSFFooter footer = sheet.getFooter()
+    
+    footer.setRight( "Page " + HSSFFooter.page() + " of " + HSSFFooter.numPages() );
+    
+
+
+    // Create various cells and rows for spreadsheet.
+
+    FileOutputStream fileOut = new FileOutputStream("workbook.xls");
+    wb.write(fileOut);
+    fileOut.close();
+                    </source>
+                </section>                
+                
 
             </section>
         </section>
