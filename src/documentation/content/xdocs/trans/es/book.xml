@@ -27,7 +27,7 @@
   <menu label="Comunidad">
     <menu-item label="Noticias" href="news.html"/>    
     <menu-item label="Espejos [EN]" href="../../mirrors.html"/>    
-    <menu-item label="Cambios" href="changes.html"/>
+    <menu-item label="Cambios [EN]" href="../../changes.html"/>
     <menu-item label="Tareas" href="todo.html"/> 
     <menu-item label="Contribuya [EN]" href="../../getinvolved/index.html"/>
     <menu-item label="Listas de Correo" href="http://jakarta.apache.org/site/mail2.html#poi"/>
