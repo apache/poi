@@ -275,9 +275,11 @@ public class Property
 
 
     /**
-     * <p>Compares two properties. Please beware that a property with ID == 0 is
-     * a special case: It does not have a type, and its value is the section's
-     * dictionary.</p>
+     * <p>Compares two properties.</p>
+     * 
+     * <p>Please beware that a property with ID == 0 is a special case: It does not have a type, and its value is the section's
+     * dictionary. Another special case are strings: Two properties may have
+     * the different types Variant.VT_LPSTR and Variant.VT_LPWSTR;</p>
      * 
      * @see Object#equals(java.lang.Object)
      */
@@ -288,7 +290,7 @@ public class Property
         final Property p = (Property) o;
         final Object pValue = p.getValue();
         final long pId = p.getID();
-        if (id != pId || (id != 0 && type != p.getType()))
+        if (id != pId || (id != 0 && !typesAreEqual(type, p.getType())))
             return false;
         if (value == null && pValue == null)
             return true;
@@ -306,6 +308,18 @@ public class Property
             return Util.equal((byte[]) value, (byte[]) pValue);
 
         return value.equals(pValue);
+    }
+
+
+
+    private boolean typesAreEqual(final long t1, final long t2)
+    {
+        if (t1 == t2 ||
+            (t1 == Variant.VT_LPSTR && t2 == Variant.VT_LPWSTR) ||
+            (t2 == Variant.VT_LPSTR && t1 == Variant.VT_LPWSTR))
+            return true;
+        else
+            return false;
     }
 
 
