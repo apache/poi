@@ -73,13 +73,18 @@
 
     <depend project="xml-xerces"/>
     <depend project="xml-xalan2"/>   
-    <depend project="jakarta-ant" inherit="all"/>
+    <depend project="jakarta-ant"/>
     <depend project="jakarta-ant-embed-optional"/>  
     <depend property="jxpath.jar" project="commons-jxpath"/>     
 
     <depend project="ant-contrib"/>
     <depend project="krysalis-ant-tasks"/>
-    <depend project="krysalis-ruper" inherit="all"/>
+    
+    <depend project="krysalis-ruper"/>
+    <depend project="commons-vfs"/>
+    <depend project="commons-cli"/>
+    <depend project="jakarta-regexp"/>
+        
     
     <depend project="commons-jjar"/>
 
