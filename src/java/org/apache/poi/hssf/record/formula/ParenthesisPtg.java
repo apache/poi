@@ -26,7 +26,7 @@ import org.apache.poi.hssf.model.Workbook;
  * precedence reasons, Parenthesis tokens ARE written to ensure that user entered
  * parenthesis are displayed as-is on reading back
  *
- * Avik Sengupta <lists@aviksengupta.com>
+ * Avik Sengupta &lt;lists@aviksengupta.com&gt;
  * Andrew C. Oliver (acoliver at apache dot org)
  * @author Jason Height (jheight at chariot dot net dot au)
  */

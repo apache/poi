@@ -21,7 +21,7 @@ import org.apache.poi.hssf.model.Workbook;
 /**
  * Missing Function Arguments
  *
- * Avik Sengupta <avik at apache.org>
+ * Avik Sengupta &lt;avik at apache.org&gt;
  * @author Jason Height (jheight at chariot dot net dot au)
  */
 public class MissingArgPtg
