@@ -56,7 +56,6 @@ package org.apache.poi.hssf.usermodel.examples;
 
 import org.apache.poi.hssf.usermodel.*;
 
-import java.util.Date;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
