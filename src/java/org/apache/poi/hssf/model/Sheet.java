@@ -24,7 +24,6 @@ import org.apache.poi.hssf.record.aggregates.RowRecordsAggregate;
 import org.apache.poi.hssf.record.aggregates.ValueRecordsAggregate;
 import org.apache.poi.hssf.record.aggregates.ColumnInfoRecordsAggregate;
 import org.apache.poi.hssf.record.formula.Ptg;
-import org.apache.poi.util.IntList;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -2588,7 +2587,7 @@ public class Sheet implements Model
     
     /**
      * Returns all the row page breaks
-     * @return
+     * @return all the row page breaks
      */
     public Iterator getRowBreaks() {
     	return rowBreaks.getBreaksIterator();
@@ -2596,7 +2595,7 @@ public class Sheet implements Model
     
     /**
      * Returns the number of row page breaks
-     * @return
+     * @return the number of row page breaks
      */
     public int getNumRowBreaks(){
     	return (int)rowBreaks.getNumBreaks();
@@ -2604,7 +2603,7 @@ public class Sheet implements Model
     
     /**
      * Returns all the column page breaks
-     * @return
+     * @return all the column page breaks
      */
     public Iterator getColumnBreaks(){
     	return colBreaks.getBreaksIterator();
@@ -2612,7 +2611,7 @@ public class Sheet implements Model
     
     /**
      * Returns the number of column page breaks
-     * @return
+     * @return the number of column page breaks
      */
     public int getNumColumnBreaks(){
     	return (int)colBreaks.getNumBreaks();

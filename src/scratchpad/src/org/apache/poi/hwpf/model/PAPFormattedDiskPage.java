@@ -58,8 +58,6 @@ public class PAPFormattedDiskPage extends FormattedDiskPage
 
     /**
      * Creates a PAPFormattedDiskPage from a 512 byte array
-     *
-     * @param fkp a 512 byte array.
      */
     public PAPFormattedDiskPage(byte[] documentStream, byte[] dataStream, int offset, int fcMin)
     {

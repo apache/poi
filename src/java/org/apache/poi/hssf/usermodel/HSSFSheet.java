@@ -1115,7 +1115,7 @@ public class HSSFSheet
     
     /**
      * Sets a page break at the indicated row
-     * @param row
+     * @param row FIXME: Document this!
      */
     public void setRowBreak(int row) {
     	validateRow(row);
@@ -1124,8 +1124,8 @@ public class HSSFSheet
 
     /**
      * Determines if there is a page break at the indicated row
-     * @param row
-     * @return
+     * @param row FIXME: Document this!
+     * @return FIXME: Document this!
      */
     public boolean isRowBroken(int row) {
     	return sheet.isRowBroken(row);
@@ -1141,7 +1141,7 @@ public class HSSFSheet
     
     /**
      * Retrieves all the horizontal page breaks
-     * @return
+     * @return all the horizontal page breaks
      */
     public int[] getRowBreaks(){
     	//we can probably cache this information, but this should be a sparsely used function 
@@ -1157,7 +1157,7 @@ public class HSSFSheet
 
     /**
      * Retrieves all the vertical page breaks
-     * @return
+     * @return all the vertical page breaks
      */
     public short[] getColumnBreaks(){
     	//we can probably cache this information, but this should be a sparsely used function 
@@ -1183,8 +1183,8 @@ public class HSSFSheet
 
     /**
      * Determines if there is a page break at the indicated column
-     * @param column
-     * @return
+     * @param column FIXME: Document this!
+     * @return FIXME: Document this!
      */
     public boolean isColumnBroken(short column) {
     	return sheet.isColumnBroken(column);

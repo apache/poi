@@ -168,7 +168,7 @@ public class PaletteRecord
      * If the given index is greater than the current last color index,
      * then black is inserted at every index required to make the palette continuous.
      *
-     * @param i the index to set; if this index is less than 0x8 or greater than
+     * @param byteIndex the index to set; if this index is less than 0x8 or greater than
      * 0x40, then no modification is made
      */
     public void setColor(short byteIndex, byte red, byte green, byte blue)

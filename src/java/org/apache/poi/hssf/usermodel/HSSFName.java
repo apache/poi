@@ -35,8 +35,8 @@ public class HSSFName {
      *
      * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#createName()
      * @param name the Name Record
-     * @param book - lowlevel Workbook object associated with the sheet.
-     * @param book the Workbook */
+     * @param book lowlevel Workbook object associated with the sheet.
+     */
     
     protected HSSFName(Workbook book, NameRecord name) {
         this.book = book;

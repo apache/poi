@@ -152,7 +152,8 @@ public class Region
     /**
      * Answers: "is the row/column inside this range?"
      *
-     * @returns boolean - true if the cell is in the range and false if it is not
+     * @return <code>true</code> if the cell is in the range and
+     * <code>false</code> if it is not
      */
 
     public boolean contains(int row, short col)
@@ -208,7 +209,7 @@ public class Region
     }
 
     /**
-     * @returns the area contained by this region (number of cells)
+     * @return the area contained by this region (number of cells)
      */
 
     public int getArea()

@@ -226,7 +226,6 @@ public class POIFSDocumentPath
      * <p>Returns the path's parent or <code>null</code> if this path
      * is the root path.</p>
      *
-     * @author Rainer Klute (klute@rainer-klute.de)
      * @since 2002-01-24
      * @return path of parent, or null if this path is the root path
      */
@@ -250,10 +249,9 @@ public class POIFSDocumentPath
      * <p>Returns a string representation of the path. Components are
      * separated by the platform-specific file separator.</p>
      *
-     * @author Rainer Klute (klute@rainer-klute.de)
-     * @since 2002-01-24
-     *
      * @return string representation
+     *
+     * @since 2002-01-24
      */
 
     public String toString()
