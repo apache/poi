@@ -62,7 +62,7 @@ import org.apache.poi.util.BitField;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
 import org.apache.poi.util.HexDump;
-import org.apache.poi.hwpf.model.hdftypes.HDFType;
+import org.apache.poi.hdf.model.hdftypes.HDFType;
 
 /**
  * Paragraph Properties.
@@ -110,9 +110,9 @@ public abstract class PAPAbstractType
     private  byte field_33_fAutoSpaceDN;
     private  int field_34_wAlignFont;
     private  short field_35_fontAlign;
-        private BitField  fVertical = new BitField(0x0001);
-        private BitField  fBackward = new BitField(0x0002);
-        private BitField  fRotateFont = new BitField(0x0004);
+        private static BitField  fVertical = new BitField(0x0001);
+        private static BitField  fBackward = new BitField(0x0002);
+        private static BitField  fRotateFont = new BitField(0x0004);
     private  byte field_36_fBackward;
     private  byte field_37_fRotateFont;
     private  byte field_38_fInTable;
@@ -1236,65 +1236,65 @@ public abstract class PAPAbstractType
 
     /**
      * Sets the fVertical field value.
-     *
+     * 
      */
     public void setFVertical(boolean value)
     {
         field_35_fontAlign = (short)fVertical.setBoolean(field_35_fontAlign, value);
 
-
+        
     }
 
     /**
-     *
+     * 
      * @return  the fVertical field value.
      */
     public boolean isFVertical()
     {
         return fVertical.isSet(field_35_fontAlign);
-
+        
     }
 
     /**
      * Sets the fBackward field value.
-     *
+     * 
      */
     public void setFBackward(boolean value)
     {
         field_35_fontAlign = (short)fBackward.setBoolean(field_35_fontAlign, value);
 
-
+        
     }
 
     /**
-     *
+     * 
      * @return  the fBackward field value.
      */
     public boolean isFBackward()
     {
         return fBackward.isSet(field_35_fontAlign);
-
+        
     }
 
     /**
      * Sets the fRotateFont field value.
-     *
+     * 
      */
     public void setFRotateFont(boolean value)
     {
         field_35_fontAlign = (short)fRotateFont.setBoolean(field_35_fontAlign, value);
 
-
+        
     }
 
     /**
-     *
+     * 
      * @return  the fRotateFont field value.
      */
     public boolean isFRotateFont()
     {
         return fRotateFont.isSet(field_35_fontAlign);
-
+        
     }
 
 

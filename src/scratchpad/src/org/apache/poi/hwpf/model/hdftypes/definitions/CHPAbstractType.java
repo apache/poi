@@ -62,7 +62,7 @@ import org.apache.poi.util.BitField;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
 import org.apache.poi.util.HexDump;
-import org.apache.poi.hwpf.model.hdftypes.HDFType;
+import org.apache.poi.hdf.model.hdftypes.HDFType;
 
 /**
  * Character Properties.
@@ -77,27 +77,27 @@ public abstract class CHPAbstractType
 
     private  short field_1_chse;
     private  int field_2_format_flags;
-        private BitField  fBold = new BitField(0x0001);
-        private BitField  fItalic = new BitField(0x0002);
-        private BitField  fRMarkDel = new BitField(0x0004);
-        private BitField  fOutline = new BitField(0x0008);
-        private BitField  fFldVanish = new BitField(0x0010);
-        private BitField  fSmallCaps = new BitField(0x0020);
-        private BitField  fCaps = new BitField(0x0040);
-        private BitField  fVanish = new BitField(0x0080);
-        private BitField  fRMark = new BitField(0x0100);
-        private BitField  fSpec = new BitField(0x0200);
-        private BitField  fStrike = new BitField(0x0400);
-        private BitField  fObj = new BitField(0x0800);
-        private BitField  fShadow = new BitField(0x1000);
-        private BitField  fLowerCase = new BitField(0x2000);
-        private BitField  fData = new BitField(0x4000);
-        private BitField  fOle2 = new BitField(0x8000);
+        private static BitField  fBold = new BitField(0x0001);
+        private static BitField  fItalic = new BitField(0x0002);
+        private static BitField  fRMarkDel = new BitField(0x0004);
+        private static BitField  fOutline = new BitField(0x0008);
+        private static BitField  fFldVanish = new BitField(0x0010);
+        private static BitField  fSmallCaps = new BitField(0x0020);
+        private static BitField  fCaps = new BitField(0x0040);
+        private static BitField  fVanish = new BitField(0x0080);
+        private static BitField  fRMark = new BitField(0x0100);
+        private static BitField  fSpec = new BitField(0x0200);
+        private static BitField  fStrike = new BitField(0x0400);
+        private static BitField  fObj = new BitField(0x0800);
+        private static BitField  fShadow = new BitField(0x1000);
+        private static BitField  fLowerCase = new BitField(0x2000);
+        private static BitField  fData = new BitField(0x4000);
+        private static BitField  fOle2 = new BitField(0x8000);
     private  int field_3_format_flags1;
-        private BitField  fEmboss = new BitField(0x0001);
-        private BitField  fImprint = new BitField(0x0002);
-        private BitField  fDStrike = new BitField(0x0004);
-        private BitField  fUsePgsuSettings = new BitField(0x0008);
+        private static BitField  fEmboss = new BitField(0x0001);
+        private static BitField  fImprint = new BitField(0x0002);
+        private static BitField  fDStrike = new BitField(0x0004);
+        private static BitField  fUsePgsuSettings = new BitField(0x0008);
     private  int field_4_ftcAscii;
     private  int field_5_ftcFE;
     private  int field_6_ftcOther;
@@ -128,13 +128,13 @@ public abstract class CHPAbstractType
     private  byte field_31_chYsr;
     private  int field_32_hpsKern;
     private  short field_33_Highlight;
-        private BitField  icoHighlight = new BitField(0x001f);
-        private BitField  fHighlight = new BitField(0x0020);
-        private BitField  kcd = new BitField(0x01c0);
-        private BitField  fNavHighlight = new BitField(0x0200);
-        private BitField  fChsDiff = new BitField(0x0400);
-        private BitField  fMacChs = new BitField(0x0800);
-        private BitField  fFtcAsciSym = new BitField(0x1000);
+        private static BitField  icoHighlight = new BitField(0x001f);
+        private static BitField  fHighlight = new BitField(0x0020);
+        private static BitField  kcd = new BitField(0x01c0);
+        private static BitField  fNavHighlight = new BitField(0x0200);
+        private static BitField  fChsDiff = new BitField(0x0400);
+        private static BitField  fMacChs = new BitField(0x0800);
+        private static BitField  fFtcAsciSym = new BitField(0x1000);
     private  short field_34_fPropMark;
     private  int field_35_ibstPropRMark;
     private  int field_36_dttmPropRMark;
@@ -852,569 +852,569 @@ public abstract class CHPAbstractType
 
     /**
      * Sets the fBold field value.
-     *
+     * 
      */
     public void setFBold(boolean value)
     {
         field_2_format_flags = (int)fBold.setBoolean(field_2_format_flags, value);
 
-
+        
     }
 
     /**
-     *
+     * 
      * @return  the fBold field value.
      */
     public boolean isFBold()
     {
         return fBold.isSet(field_2_format_flags);
-
+        
     }
 
     /**
      * Sets the fItalic field value.
-     *
+     * 
      */
     public void setFItalic(boolean value)
     {
         field_2_format_flags = (int)fItalic.setBoolean(field_2_format_flags, value);
 
-
+        
     }
 
     /**
-     *
+     * 
      * @return  the fItalic field value.
      */
     public boolean isFItalic()
     {
         return fItalic.isSet(field_2_format_flags);
-
+        
     }
 
     /**
      * Sets the fRMarkDel field value.
-     *
+     * 
      */
     public void setFRMarkDel(boolean value)
     {
         field_2_format_flags = (int)fRMarkDel.setBoolean(field_2_format_flags, value);
 
-
+        
     }
 
     /**
-     *
+     * 
      * @return  the fRMarkDel field value.
      */
     public boolean isFRMarkDel()
     {
         return fRMarkDel.isSet(field_2_format_flags);
-
+        
     }
 
     /**
      * Sets the fOutline field value.
-     *
+     * 
      */
     public void setFOutline(boolean value)
     {
         field_2_format_flags = (int)fOutline.setBoolean(field_2_format_flags, value);
 
-
+        
     }
 
     /**
-     *
+     * 
      * @return  the fOutline field value.
      */
     public boolean isFOutline()
     {
         return fOutline.isSet(field_2_format_flags);
-
+        
     }
 
     /**
      * Sets the fFldVanish field value.
-     *
+     * 
      */
     public void setFFldVanish(boolean value)
     {
         field_2_format_flags = (int)fFldVanish.setBoolean(field_2_format_flags, value);
 
-
+        
     }
 
     /**
-     *
+     * 
      * @return  the fFldVanish field value.
      */
     public boolean isFFldVanish()
     {
         return fFldVanish.isSet(field_2_format_flags);
-
+        
     }
 
     /**
      * Sets the fSmallCaps field value.
-     *
+     * 
      */
     public void setFSmallCaps(boolean value)
     {
         field_2_format_flags = (int)fSmallCaps.setBoolean(field_2_format_flags, value);
 
-
+        
     }
 
     /**
-     *
+     * 
      * @return  the fSmallCaps field value.
      */
     public boolean isFSmallCaps()
     {
         return fSmallCaps.isSet(field_2_format_flags);
-
+        
     }
 
     /**
      * Sets the fCaps field value.
-     *
+     * 
      */
     public void setFCaps(boolean value)
     {
         field_2_format_flags = (int)fCaps.setBoolean(field_2_format_flags, value);
 
-
+        
     }
 
     /**
-     *
+     * 
      * @return  the fCaps field value.
      */
     public boolean isFCaps()
     {
         return fCaps.isSet(field_2_format_flags);
-
+        
     }
 
     /**
      * Sets the fVanish field value.
-     *
+     * 
      */
     public void setFVanish(boolean value)
     {
         field_2_format_flags = (int)fVanish.setBoolean(field_2_format_flags, value);
 
-
+        
     }
 
     /**
-     *
+     * 
      * @return  the fVanish field value.
      */
     public boolean isFVanish()
     {
         return fVanish.isSet(field_2_format_flags);
-
+        
     }
 
     /**
      * Sets the fRMark field value.
-     *
+     * 
      */
     public void setFRMark(boolean value)
     {
         field_2_format_flags = (int)fRMark.setBoolean(field_2_format_flags, value);
 
-
+        
     }
 
     /**
-     *
+     * 
      * @return  the fRMark field value.
      */
     public boolean isFRMark()
     {
         return fRMark.isSet(field_2_format_flags);
-
+        
     }
 
     /**
      * Sets the fSpec field value.
-     *
+     * 
      */
     public void setFSpec(boolean value)
     {
         field_2_format_flags = (int)fSpec.setBoolean(field_2_format_flags, value);
 
-
+        
     }
 
     /**
-     *
+     * 
      * @return  the fSpec field value.
      */
     public boolean isFSpec()
     {
         return fSpec.isSet(field_2_format_flags);
-
+        
     }
 
     /**
      * Sets the fStrike field value.
-     *
+     * 
      */
     public void setFStrike(boolean value)
     {
         field_2_format_flags = (int)fStrike.setBoolean(field_2_format_flags, value);
 
-
+        
     }
 
     /**
-     *
+     * 
      * @return  the fStrike field value.
      */
     public boolean isFStrike()
     {
         return fStrike.isSet(field_2_format_flags);
-
+        
     }
 
     /**
      * Sets the fObj field value.
-     *
+     * 
      */
     public void setFObj(boolean value)
     {
         field_2_format_flags = (int)fObj.setBoolean(field_2_format_flags, value);
 
-
+        
     }
 
     /**
-     *
+     * 
      * @return  the fObj field value.
      */
     public boolean isFObj()
     {
         return fObj.isSet(field_2_format_flags);
-
+        
     }
 
     /**
      * Sets the fShadow field value.
-     *
+     * 
      */
     public void setFShadow(boolean value)
     {
         field_2_format_flags = (int)fShadow.setBoolean(field_2_format_flags, value);
 
-
+        
     }
 
     /**
-     *
+     * 
      * @return  the fShadow field value.
      */
     public boolean isFShadow()
     {
         return fShadow.isSet(field_2_format_flags);
-
+        
     }
 
     /**
      * Sets the fLowerCase field value.
-     *
+     * 
      */
     public void setFLowerCase(boolean value)
     {
         field_2_format_flags = (int)fLowerCase.setBoolean(field_2_format_flags, value);
 
-
+        
     }
 
     /**
-     *
+     * 
      * @return  the fLowerCase field value.
      */
     public boolean isFLowerCase()
     {
         return fLowerCase.isSet(field_2_format_flags);
-
+        
     }
 
     /**
      * Sets the fData field value.
-     *
+     * 
      */
     public void setFData(boolean value)
     {
         field_2_format_flags = (int)fData.setBoolean(field_2_format_flags, value);
 
-
+        
     }
 
     /**
-     *
+     * 
      * @return  the fData field value.
      */
     public boolean isFData()
     {
         return fData.isSet(field_2_format_flags);
-
+        
     }
 
     /**
      * Sets the fOle2 field value.
-     *
+     * 
      */
     public void setFOle2(boolean value)
     {
         field_2_format_flags = (int)fOle2.setBoolean(field_2_format_flags, value);
 
-
+        
     }
 
     /**
-     *
+     * 
      * @return  the fOle2 field value.
      */
     public boolean isFOle2()
     {
         return fOle2.isSet(field_2_format_flags);
-
+        
     }
 
     /**
      * Sets the fEmboss field value.
-     *
+     * 
      */
     public void setFEmboss(boolean value)
     {
         field_3_format_flags1 = (int)fEmboss.setBoolean(field_3_format_flags1, value);
 
-
+        
     }
 
     /**
-     *
+     * 
      * @return  the fEmboss field value.
      */
     public boolean isFEmboss()
     {
         return fEmboss.isSet(field_3_format_flags1);
-
+        
     }
 
     /**
      * Sets the fImprint field value.
-     *
+     * 
      */
     public void setFImprint(boolean value)
     {
         field_3_format_flags1 = (int)fImprint.setBoolean(field_3_format_flags1, value);
 
-
+        
     }
 
     /**
-     *
+     * 
      * @return  the fImprint field value.
      */
     public boolean isFImprint()
     {
         return fImprint.isSet(field_3_format_flags1);
-
+        
     }
 
     /**
      * Sets the fDStrike field value.
-     *
+     * 
      */
     public void setFDStrike(boolean value)
     {
         field_3_format_flags1 = (int)fDStrike.setBoolean(field_3_format_flags1, value);
 
-
+        
     }
 
     /**
-     *
+     * 
      * @return  the fDStrike field value.
      */
     public boolean isFDStrike()
     {
         return fDStrike.isSet(field_3_format_flags1);
-
+        
     }
 
     /**
      * Sets the fUsePgsuSettings field value.
-     *
+     * 
      */
     public void setFUsePgsuSettings(boolean value)
     {
         field_3_format_flags1 = (int)fUsePgsuSettings.setBoolean(field_3_format_flags1, value);
 
-
+        
     }
 
     /**
-     *
+     * 
      * @return  the fUsePgsuSettings field value.
      */
     public boolean isFUsePgsuSettings()
     {
         return fUsePgsuSettings.isSet(field_3_format_flags1);
-
+        
     }
 
     /**
      * Sets the icoHighlight field value.
-     *
+     * 
      */
     public void setIcoHighlight(byte value)
     {
         field_33_Highlight = (short)icoHighlight.setValue(field_33_Highlight, value);
 
-
+        
     }
 
     /**
-     *
+     * 
      * @return  the icoHighlight field value.
      */
     public byte getIcoHighlight()
     {
         return ( byte )icoHighlight.getValue(field_33_Highlight);
-
+        
     }
 
     /**
      * Sets the fHighlight field value.
-     *
+     * 
      */
     public void setFHighlight(boolean value)
     {
         field_33_Highlight = (short)fHighlight.setBoolean(field_33_Highlight, value);
 
-
+        
     }
 
     /**
-     *
+     * 
      * @return  the fHighlight field value.
      */
     public boolean isFHighlight()
     {
         return fHighlight.isSet(field_33_Highlight);
-
+        
     }
 
     /**
      * Sets the kcd field value.
-     *
+     * 
      */
     public void setKcd(byte value)
     {
         field_33_Highlight = (short)kcd.setValue(field_33_Highlight, value);
 
-
+        
     }
 
     /**
-     *
+     * 
      * @return  the kcd field value.
      */
     public byte getKcd()
     {
         return ( byte )kcd.getValue(field_33_Highlight);
-
+        
     }
 
     /**
      * Sets the fNavHighlight field value.
-     *
+     * 
      */
     public void setFNavHighlight(boolean value)
     {
         field_33_Highlight = (short)fNavHighlight.setBoolean(field_33_Highlight, value);
 
-
+        
     }
 
     /**
-     *
+     * 
      * @return  the fNavHighlight field value.
      */
     public boolean isFNavHighlight()
     {
         return fNavHighlight.isSet(field_33_Highlight);
-
+        
     }
 
     /**
      * Sets the fChsDiff field value.
-     *
+     * 
      */
     public void setFChsDiff(boolean value)
     {
         field_33_Highlight = (short)fChsDiff.setBoolean(field_33_Highlight, value);
 
-
+        
     }
 
     /**
-     *
+     * 
      * @return  the fChsDiff field value.
      */
     public boolean isFChsDiff()
     {
         return fChsDiff.isSet(field_33_Highlight);
-
+        
     }
 
     /**
      * Sets the fMacChs field value.
-     *
+     * 
      */
     public void setFMacChs(boolean value)
     {
         field_33_Highlight = (short)fMacChs.setBoolean(field_33_Highlight, value);
 
-
+        
     }
 
     /**
-     *
+     * 
      * @return  the fMacChs field value.
      */
     public boolean isFMacChs()
     {
         return fMacChs.isSet(field_33_Highlight);
-
+        
     }
 
     /**
      * Sets the fFtcAsciSym field value.
-     *
+     * 
      */
     public void setFFtcAsciSym(boolean value)
     {
         field_33_Highlight = (short)fFtcAsciSym.setBoolean(field_33_Highlight, value);
 
-
+        
     }
 
     /**
-     *
+     * 
      * @return  the fFtcAsciSym field value.
      */
     public boolean isFFtcAsciSym()
     {
         return fFtcAsciSym.isSet(field_33_Highlight);
-
+        
     }
 
 
