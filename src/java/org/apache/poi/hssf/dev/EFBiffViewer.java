@@ -64,6 +64,10 @@ import org.apache.poi.hssf.eventmodel.*;
 import org.apache.poi.hssf.eventusermodel.*;
 import org.apache.poi.hssf.record.Record;
 
+import org.apache.poi.hssf.eventusermodel.HSSFRequest;
+import org.apache.poi.hssf.eventusermodel.HSSFListener;
+import org.apache.poi.hssf.eventusermodel.HSSFEventFactory;
+
 /**
  *
  * @author  andy
