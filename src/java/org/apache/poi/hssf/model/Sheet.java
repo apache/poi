@@ -1856,7 +1856,7 @@ public class Sheet implements Model
             for (k = 0; k < columnSizes.size(); k++)
             {
                 ci = ( ColumnInfoRecord ) columnSizes.get(k);
-                if ((ci.getFirstColumn() >= column)
+                if ((ci.getFirstColumn() <= column)
                         && (column <= ci.getLastColumn()))
                 {
                     break;
@@ -1895,7 +1895,7 @@ public class Sheet implements Model
         for (k = 0; k < columnSizes.size(); k++)
         {
             ci = ( ColumnInfoRecord ) columnSizes.get(k);
-            if ((ci.getFirstColumn() >= column)
+            if ((ci.getFirstColumn() <= column)
                     && (column <= ci.getLastColumn()))
             {
                 break;
@@ -1935,6 +1935,31 @@ public class Sheet implements Model
                 nci.setOptions(ci.getOptions());
                 nci.setXFIndex(ci.getXFIndex());
                 nci.setColumnWidth(width);
+                columnSizes.add(k, nci);
+                records.add((1 + getDimsLoc() - columnSizes.size()) + k, nci);
+                dimsloc++;
+            }
+            else{
+                //split to 3 records
+                short lastcolumn = ci.getLastColumn();
+                ci.setLastColumn(( short ) (column - 1));
+
+                ColumnInfoRecord nci = ( ColumnInfoRecord ) createColInfo();
+                nci.setFirstColumn(column);
+                nci.setLastColumn(column);
+                nci.setOptions(ci.getOptions());
+                nci.setXFIndex(ci.getXFIndex());
+                nci.setColumnWidth(width);
+                columnSizes.add(k, nci);
+                records.add((1 + getDimsLoc() - columnSizes.size()) + k, nci);
+                dimsloc++;
+
+                nci = ( ColumnInfoRecord ) createColInfo();
+                nci.setFirstColumn((short)(column+1));
+                nci.setLastColumn(lastcolumn);
+                nci.setOptions(ci.getOptions());
+                nci.setXFIndex(ci.getXFIndex());
+                nci.setColumnWidth(ci.getColumnWidth());
                 columnSizes.add(k, nci);
                 records.add((1 + getDimsLoc() - columnSizes.size()) + k, nci);
                 dimsloc++;
