@@ -213,6 +213,24 @@ public class FIBType
     private  int        field_117_sttbfassoc_size;
     private  int        field_118_textPieceTableOffset;
     private  int        field_119_textPieceTableSize;
+    private  int        field_120_unused;
+    private  int        field_121_unused;
+    private  int        field_122_offsetAutosaveSource;
+    private  int        field_123_countAutosaveSource;
+    private  int        field_124_offsetGrpXstAtnOwners;
+    private  int        field_125_countGrpXstAtnOwners;
+    private  int        field_126_offsetSttbfAtnbkmk;
+    private  int        field_127_lengthSttbfAtnbkmk;
+    private  int        field_128_unused;
+    private  int        field_129_unused;
+    private  int        field_130_unused;
+    private  int        field_131_unused;
+    private  int        field_132_offsetPlcspaMom;
+    private  int        field_133_lengthPlcspaMom;
+    private  int        field_134_offsetPlcspaHdr;
+    private  int        field_135_lengthPlcspaHdr;
+    private  int        field_136_lengthPlcfBookmarkFirst;
+    private  int        field_137_offsetPlcfBookmarkFirst;
 
 
     public FIBType()
@@ -341,6 +359,24 @@ public class FIBType
         field_117_sttbfassoc_size       = LittleEndian.getInt(data, 0x196 + offset);
         field_118_textPieceTableOffset  = LittleEndian.getInt(data, 0x19a + offset);
         field_119_textPieceTableSize    = LittleEndian.getInt(data, 0x19e + offset);
+        field_120_unused                = LittleEndian.getInt(data, 0x1a2 + offset);
+        field_121_unused                = LittleEndian.getInt(data, 0x1a6 + offset);
+        field_122_offsetAutosaveSource  = LittleEndian.getInt(data, 0x1aa + offset);
+        field_123_countAutosaveSource   = LittleEndian.getInt(data, 0x1ae + offset);
+        field_124_offsetGrpXstAtnOwners  = LittleEndian.getInt(data, 0x1b2 + offset);
+        field_125_countGrpXstAtnOwners  = LittleEndian.getInt(data, 0x1b6 + offset);
+        field_126_offsetSttbfAtnbkmk    = LittleEndian.getInt(data, 0x1ba + offset);
+        field_127_lengthSttbfAtnbkmk    = LittleEndian.getInt(data, 0x1be + offset);
+        field_128_unused                = LittleEndian.getInt(data, 0x1c2 + offset);
+        field_129_unused                = LittleEndian.getInt(data, 0x1c6 + offset);
+        field_130_unused                = LittleEndian.getInt(data, 0x1ca + offset);
+        field_131_unused                = LittleEndian.getInt(data, 0x1ce + offset);
+        field_132_offsetPlcspaMom       = LittleEndian.getInt(data, 0x1d2 + offset);
+        field_133_lengthPlcspaMom       = LittleEndian.getInt(data, 0x1d6 + offset);
+        field_134_offsetPlcspaHdr       = LittleEndian.getInt(data, 0x1da + offset);
+        field_135_lengthPlcspaHdr       = LittleEndian.getInt(data, 0x1de + offset);
+        field_136_lengthPlcfBookmarkFirst  = LittleEndian.getInt(data, 0x1e2 + offset);
+        field_137_offsetPlcfBookmarkFirst  = LittleEndian.getInt(data, 0x1e6 + offset);
 
     }
 
@@ -964,6 +1000,96 @@ public class FIBType
             .append(HexDump.toHex((int)getTextPieceTableSize()))
             .append(" (").append(getTextPieceTableSize()).append(" )\n");
 
+        buffer.append("    .unused               = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getUnused()))
+            .append(" (").append(getUnused()).append(" )\n");
+
+        buffer.append("    .unused               = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getUnused()))
+            .append(" (").append(getUnused()).append(" )\n");
+
+        buffer.append("    .offsetAutosaveSource = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getOffsetAutosaveSource()))
+            .append(" (").append(getOffsetAutosaveSource()).append(" )\n");
+
+        buffer.append("    .countAutosaveSource  = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getCountAutosaveSource()))
+            .append(" (").append(getCountAutosaveSource()).append(" )\n");
+
+        buffer.append("    .offsetGrpXstAtnOwners = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getOffsetGrpXstAtnOwners()))
+            .append(" (").append(getOffsetGrpXstAtnOwners()).append(" )\n");
+
+        buffer.append("    .countGrpXstAtnOwners = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getCountGrpXstAtnOwners()))
+            .append(" (").append(getCountGrpXstAtnOwners()).append(" )\n");
+
+        buffer.append("    .offsetSttbfAtnbkmk   = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getOffsetSttbfAtnbkmk()))
+            .append(" (").append(getOffsetSttbfAtnbkmk()).append(" )\n");
+
+        buffer.append("    .lengthSttbfAtnbkmk   = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getLengthSttbfAtnbkmk()))
+            .append(" (").append(getLengthSttbfAtnbkmk()).append(" )\n");
+
+        buffer.append("    .unused               = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getUnused()))
+            .append(" (").append(getUnused()).append(" )\n");
+
+        buffer.append("    .unused               = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getUnused()))
+            .append(" (").append(getUnused()).append(" )\n");
+
+        buffer.append("    .unused               = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getUnused()))
+            .append(" (").append(getUnused()).append(" )\n");
+
+        buffer.append("    .unused               = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getUnused()))
+            .append(" (").append(getUnused()).append(" )\n");
+
+        buffer.append("    .offsetPlcspaMom      = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getOffsetPlcspaMom()))
+            .append(" (").append(getOffsetPlcspaMom()).append(" )\n");
+
+        buffer.append("    .lengthPlcspaMom      = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getLengthPlcspaMom()))
+            .append(" (").append(getLengthPlcspaMom()).append(" )\n");
+
+        buffer.append("    .offsetPlcspaHdr      = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getOffsetPlcspaHdr()))
+            .append(" (").append(getOffsetPlcspaHdr()).append(" )\n");
+
+        buffer.append("    .lengthPlcspaHdr      = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getLengthPlcspaHdr()))
+            .append(" (").append(getLengthPlcspaHdr()).append(" )\n");
+
+        buffer.append("    .lengthPlcfBookmarkFirst = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getLengthPlcfBookmarkFirst()))
+            .append(" (").append(getLengthPlcfBookmarkFirst()).append(" )\n");
+
+        buffer.append("    .offsetPlcfBookmarkFirst = ")
+            .append("0x")
+            .append(HexDump.toHex((int)getOffsetPlcfBookmarkFirst()))
+            .append(" (").append(getOffsetPlcfBookmarkFirst()).append(" )\n");
+
         buffer.append("[/FIB]\n");
         return buffer.toString();
     }
@@ -973,7 +1099,7 @@ public class FIBType
      */
     public int getSize()
     {
-        return 4 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 4 + 4 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 2 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4;
+        return 4 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 4 + 4 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 2 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4;
     }
 
 
@@ -2880,6 +3006,294 @@ public class FIBType
     public void setTextPieceTableSize(int field_119_textPieceTableSize)
     {
         this.field_119_textPieceTableSize = field_119_textPieceTableSize;
+    }
+
+    /**
+     * Get the unused field for the FIB record.
+     */
+    public int getUnused()
+    {
+        return field_120_unused;
+    }
+
+    /**
+     * Set the unused field for the FIB record.
+     */
+    public void setUnused(int field_120_unused)
+    {
+        this.field_120_unused = field_120_unused;
+    }
+
+    /**
+     * Get the unused field for the FIB record.
+     */
+    public int getUnused()
+    {
+        return field_121_unused;
+    }
+
+    /**
+     * Set the unused field for the FIB record.
+     */
+    public void setUnused(int field_121_unused)
+    {
+        this.field_121_unused = field_121_unused;
+    }
+
+    /**
+     * Get the offset AutosaveSource field for the FIB record.
+     */
+    public int getOffsetAutosaveSource()
+    {
+        return field_122_offsetAutosaveSource;
+    }
+
+    /**
+     * Set the offset AutosaveSource field for the FIB record.
+     */
+    public void setOffsetAutosaveSource(int field_122_offsetAutosaveSource)
+    {
+        this.field_122_offsetAutosaveSource = field_122_offsetAutosaveSource;
+    }
+
+    /**
+     * Get the count AutosaveSource field for the FIB record.
+     */
+    public int getCountAutosaveSource()
+    {
+        return field_123_countAutosaveSource;
+    }
+
+    /**
+     * Set the count AutosaveSource field for the FIB record.
+     */
+    public void setCountAutosaveSource(int field_123_countAutosaveSource)
+    {
+        this.field_123_countAutosaveSource = field_123_countAutosaveSource;
+    }
+
+    /**
+     * Get the offset GrpXstAtnOwners field for the FIB record.
+     */
+    public int getOffsetGrpXstAtnOwners()
+    {
+        return field_124_offsetGrpXstAtnOwners;
+    }
+
+    /**
+     * Set the offset GrpXstAtnOwners field for the FIB record.
+     */
+    public void setOffsetGrpXstAtnOwners(int field_124_offsetGrpXstAtnOwners)
+    {
+        this.field_124_offsetGrpXstAtnOwners = field_124_offsetGrpXstAtnOwners;
+    }
+
+    /**
+     * Get the count GrpXstAtnOwners field for the FIB record.
+     */
+    public int getCountGrpXstAtnOwners()
+    {
+        return field_125_countGrpXstAtnOwners;
+    }
+
+    /**
+     * Set the count GrpXstAtnOwners field for the FIB record.
+     */
+    public void setCountGrpXstAtnOwners(int field_125_countGrpXstAtnOwners)
+    {
+        this.field_125_countGrpXstAtnOwners = field_125_countGrpXstAtnOwners;
+    }
+
+    /**
+     * Get the offset SttbfAtnbkmk field for the FIB record.
+     */
+    public int getOffsetSttbfAtnbkmk()
+    {
+        return field_126_offsetSttbfAtnbkmk;
+    }
+
+    /**
+     * Set the offset SttbfAtnbkmk field for the FIB record.
+     */
+    public void setOffsetSttbfAtnbkmk(int field_126_offsetSttbfAtnbkmk)
+    {
+        this.field_126_offsetSttbfAtnbkmk = field_126_offsetSttbfAtnbkmk;
+    }
+
+    /**
+     * Get the length SttbfAtnbkmk field for the FIB record.
+     */
+    public int getLengthSttbfAtnbkmk()
+    {
+        return field_127_lengthSttbfAtnbkmk;
+    }
+
+    /**
+     * Set the length SttbfAtnbkmk field for the FIB record.
+     */
+    public void setLengthSttbfAtnbkmk(int field_127_lengthSttbfAtnbkmk)
+    {
+        this.field_127_lengthSttbfAtnbkmk = field_127_lengthSttbfAtnbkmk;
+    }
+
+    /**
+     * Get the unused field for the FIB record.
+     */
+    public int getUnused()
+    {
+        return field_128_unused;
+    }
+
+    /**
+     * Set the unused field for the FIB record.
+     */
+    public void setUnused(int field_128_unused)
+    {
+        this.field_128_unused = field_128_unused;
+    }
+
+    /**
+     * Get the unused field for the FIB record.
+     */
+    public int getUnused()
+    {
+        return field_129_unused;
+    }
+
+    /**
+     * Set the unused field for the FIB record.
+     */
+    public void setUnused(int field_129_unused)
+    {
+        this.field_129_unused = field_129_unused;
+    }
+
+    /**
+     * Get the unused field for the FIB record.
+     */
+    public int getUnused()
+    {
+        return field_130_unused;
+    }
+
+    /**
+     * Set the unused field for the FIB record.
+     */
+    public void setUnused(int field_130_unused)
+    {
+        this.field_130_unused = field_130_unused;
+    }
+
+    /**
+     * Get the unused field for the FIB record.
+     */
+    public int getUnused()
+    {
+        return field_131_unused;
+    }
+
+    /**
+     * Set the unused field for the FIB record.
+     */
+    public void setUnused(int field_131_unused)
+    {
+        this.field_131_unused = field_131_unused;
+    }
+
+    /**
+     * Get the offset PlcspaMom field for the FIB record.
+     */
+    public int getOffsetPlcspaMom()
+    {
+        return field_132_offsetPlcspaMom;
+    }
+
+    /**
+     * Set the offset PlcspaMom field for the FIB record.
+     */
+    public void setOffsetPlcspaMom(int field_132_offsetPlcspaMom)
+    {
+        this.field_132_offsetPlcspaMom = field_132_offsetPlcspaMom;
+    }
+
+    /**
+     * Get the length PlcspaMom field for the FIB record.
+     */
+    public int getLengthPlcspaMom()
+    {
+        return field_133_lengthPlcspaMom;
+    }
+
+    /**
+     * Set the length PlcspaMom field for the FIB record.
+     */
+    public void setLengthPlcspaMom(int field_133_lengthPlcspaMom)
+    {
+        this.field_133_lengthPlcspaMom = field_133_lengthPlcspaMom;
+    }
+
+    /**
+     * Get the offset PlcspaHdr field for the FIB record.
+     */
+    public int getOffsetPlcspaHdr()
+    {
+        return field_134_offsetPlcspaHdr;
+    }
+
+    /**
+     * Set the offset PlcspaHdr field for the FIB record.
+     */
+    public void setOffsetPlcspaHdr(int field_134_offsetPlcspaHdr)
+    {
+        this.field_134_offsetPlcspaHdr = field_134_offsetPlcspaHdr;
+    }
+
+    /**
+     * Get the length PlcspaHdr field for the FIB record.
+     */
+    public int getLengthPlcspaHdr()
+    {
+        return field_135_lengthPlcspaHdr;
+    }
+
+    /**
+     * Set the length PlcspaHdr field for the FIB record.
+     */
+    public void setLengthPlcspaHdr(int field_135_lengthPlcspaHdr)
+    {
+        this.field_135_lengthPlcspaHdr = field_135_lengthPlcspaHdr;
+    }
+
+    /**
+     * Get the length Plcf Bookmark First field for the FIB record.
+     */
+    public int getLengthPlcfBookmarkFirst()
+    {
+        return field_136_lengthPlcfBookmarkFirst;
+    }
+
+    /**
+     * Set the length Plcf Bookmark First field for the FIB record.
+     */
+    public void setLengthPlcfBookmarkFirst(int field_136_lengthPlcfBookmarkFirst)
+    {
+        this.field_136_lengthPlcfBookmarkFirst = field_136_lengthPlcfBookmarkFirst;
+    }
+
+    /**
+     * Get the offset Plcf Bookmark First field for the FIB record.
+     */
+    public int getOffsetPlcfBookmarkFirst()
+    {
+        return field_137_offsetPlcfBookmarkFirst;
+    }
+
+    /**
+     * Set the offset Plcf Bookmark First field for the FIB record.
+     */
+    public void setOffsetPlcfBookmarkFirst(int field_137_offsetPlcfBookmarkFirst)
+    {
+        this.field_137_offsetPlcfBookmarkFirst = field_137_offsetPlcfBookmarkFirst;
     }
 
     /**

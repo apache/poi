@@ -188,6 +188,37 @@
     <field type="int" size="4" name="textPieceTable offset"/>
     <field type="int" size="4" name="textPieceTable size"/>
     
+    <field type="int" size="4" name="unused"/>
+    <field type="int" size="4" name="unused"/>
+    
+    <field type="int" size="4" name="offset AutosaveSource"/>
+    <field type="int" size="4" name="count AutosaveSource"/>
+    
+    <field type="int" size="4" name="offset GrpXstAtnOwners"/>
+    <field type="int" size="4" name="count GrpXstAtnOwners"/>
+    
+    <field type="int" size="4" name="offset SttbfAtnbkmk"/>
+    <field type="int" size="4" name="length SttbfAtnbkmk"/>
+
+    <field type="int" size="4" name="unused"/>
+    <field type="int" size="4" name="unused"/>
+    <field type="int" size="4" name="unused"/>
+    <field type="int" size="4" name="unused"/>
+
+    <field type="int" size="4" name="offset PlcspaMom"/>
+    <field type="int" size="4" name="length PlcspaMom"/>
+
+    <field type="int" size="4" name="offset PlcspaHdr"/>
+    <field type="int" size="4" name="length PlcspaHdr"/>
+
+    <field type="int" size="4" name="length Plcf Ann Bkmrk First"/>
+    <field type="int" size="4" name="offset Plcf Ann Bkmrk First"/>
+
+    <field type="int" size="4" name="length Plcf Ann Bkark Last"/>
+
+    <field type="int" size="4" name="length Plcf Ann Bkark Last"/>
+
+    
    <!-- 
 
     private int field_106_printer_offset;
