@@ -849,14 +849,17 @@ No property set stream: "/1Table"</source>
       receive a document from another region of the world and the codepage is
       undefined, you are in trouble.</p>
 
-     <p>HPSF's codepage support is as good as the character encoding support of
-      the Java Virtual Machine (JVM) the application runs on. If HPSF
-      encounters a codepage number it assumes that the JVM has a character
+     <p>HPSF's codepage support is only as good as the character encoding
+      support of the Java Virtual Machine (JVM) the application runs on. If
+      HPSF encounters a codepage number it assumes that the JVM has a character
       encoding with a corresponding name. For example, if the codepage is 1252,
       HPSF uses the character encoding "cp1252" to read or write strings. If
       the JVM does not have that character encoding installed or if the
       codepage number is illegal, an UnsupportedEncodingException will be
-      thrown.</p>
+      thrown. This works quite well with Java 2 Standard Edition (J2SE)
+      versions since 1.4. However, under J2SE 1.3 or lower you are out of
+      luck. You should install a newer J2SE version to process codepages with
+      HPSF.</p>
 
      <p>There are some exceptions to the rule saying that a character
       encoding's name is derived from the codepage number by prepending the
