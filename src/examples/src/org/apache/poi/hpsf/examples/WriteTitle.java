@@ -85,6 +85,9 @@ public class WriteTitle
         p.setType(Variant.VT_LPWSTR);
         p.setValue("Sample title");
 
+        /* Place the property into the section. */
+        ms.setProperty(p);
+
         /* Create the POI file system the property set is to be written to. */
         final POIFSFileSystem poiFs = new POIFSFileSystem();
 
