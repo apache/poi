@@ -88,6 +88,8 @@ import org.apache.poi.util.POILogFactory;
 public class Workbook {
     private static final int   DEBUG       = POILogger.DEBUG;
     
+    public static ThreadLocal currentBook = new ThreadLocal();
+    
     /**
      * constant used to set the "codepage" wherever "codepage" is set in records
      * (which is duplciated in more than one record)

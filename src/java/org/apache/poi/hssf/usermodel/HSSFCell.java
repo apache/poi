@@ -692,10 +692,10 @@ public class HSSFCell
     }
 
     public void setCellFormula(String formula) {
+        Workbook.currentBook.set(book);
         if (formula==null) {
             setCellType(CELL_TYPE_BLANK,false);
         } else {
-            
             setCellType(CELL_TYPE_FORMULA,false);
             FormulaRecord rec = (FormulaRecord) record;
             rec.setOptions(( short ) 2);
@@ -711,17 +711,14 @@ public class HSSFCell
                 rec.pushExpressionToken(ptg[ k ]);
             }
             rec.setExpressionLength(( short ) size);
-            //return rec;
-            
+            Workbook.currentBook.set(null);
         }
     }
     
     public String getCellFormula() {
-        String retval=null;
-        
-        retval = 
-              FormulaParser.toFormulaString(((FormulaRecord)record).getParsedExpression());
-        
+        Workbook.currentBook.set(book);
+        String retval = FormulaParser.toFormulaString(((FormulaRecord)record).getParsedExpression());
+        Workbook.currentBook.set(null);
         return retval;   
     }
     
