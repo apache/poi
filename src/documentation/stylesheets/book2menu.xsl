@@ -14,7 +14,7 @@
   </xsl:template>
 
   <xsl:template match="menu">
-    <hr/>
+    <br/>
     <span class="s1"><xsl:value-of select="@label"/></span><br/>
         <xsl:apply-templates/>
   </xsl:template>
