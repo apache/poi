@@ -56,6 +56,7 @@
 package org.apache.poi.util;
 
 import java.io.*;
+import java.text.DecimalFormat;
 
 /**
  * dump data in hexadecimal format; derived from a HexDump utility I
@@ -78,7 +79,7 @@ public class HexDump
     };
     private static final int          _shifts[]   =
     {
-        28, 24, 20, 16, 12, 8, 4, 0
+        60, 56, 52, 48, 44, 40, 36, 32, 28, 24, 20, 16, 12, 8, 4, 0
     };
 
 
@@ -307,20 +308,27 @@ public class HexDump
      */
     public static String toHex(final byte[] value, final int bytesPerLine)
     {
+        final int digits =
+            (int) Math.round(Math.log(value.length) / Math.log(10) + 0.5);
+        final StringBuffer formatString = new StringBuffer();
+        for (int i = 0; i < digits; i++)
+            formatString.append('0');
+        formatString.append(": ");
+        final DecimalFormat format = new DecimalFormat(formatString.toString());
         StringBuffer retVal = new StringBuffer();
-        retVal.append('[');
+        retVal.append(format.format(0));
         int i = -1;
         for(int x = 0; x < value.length; x++)
         {
             if (++i == bytesPerLine)
             {
-                retVal.append("\n ");
+                retVal.append('\n');
+                retVal.append(format.format(x));
                 i = 0;
             }
             retVal.append(toHex(value[x]));
             retVal.append(", ");
         }
-        retVal.append(']');
         return retVal.toString();
     }
 
@@ -357,13 +365,24 @@ public class HexDump
         return toHex(value, 8);
     }
 
+    /**
+     * Converts the parameter to a hex value.
+     *
+     * @param value     The value to convert
+     * @return          The result right padded with 0
+     */
+    public static String toHex(final long value)
+    {
+        return toHex(value, 16);
+    }
+
 
     private static String toHex(final long value, final int digits)
     {
         StringBuffer result = new StringBuffer(digits);
         for (int j = 0; j < digits; j++)
         {
-            result.append( _hexcodes[ (int) ((value >> _shifts[ j + (8 - digits) ]) & 15)]);
+            result.append( _hexcodes[ (int) ((value >> _shifts[ j + (16 - digits) ]) & 15)]);
         }
         return result.toString();
     }
