@@ -196,19 +196,17 @@ public class WordDocument
       if(unicode)
       {
         add = 2;
+        char ch;
+        for(int y = start; y < end; y += add)
+        {
+	  ch = (char)Utils.convertBytesToShort(_header, y);
+	  out.write(ch);
+        }
       }
-      char ch;
-      for(int y = start; y < end; y += add)
+      else
       {
-        if(unicode)
-        {
-          ch = (char)Utils.convertBytesToShort(_header, y);
-        }
-        else
-        {
-          ch = (char)_header[y];
-        }
-        out.write(ch);
+	String sText = new String(_header, start, end-start);
+	out.write(sText);
       }
     }
   }
@@ -221,10 +219,13 @@ public class WordDocument
    */
   public WordDocument(String fileName) throws IOException
   {
-
-
+  	this(new FileInputStream(fileName));
+  }
+  
+  public WordDocument(InputStream inputStream) throws IOException
+  {
         //do Ole stuff
-        istream = new FileInputStream(fileName);
+        istream = inputStream;
         filesystem = new POIFSFileSystem(istream);
 
         //get important stuff from the Header block and parse all the
