@@ -147,6 +147,72 @@ public class TestReferenceUtil
         
     }
     
+    /**
+     * checks that area reference conversion works
+     */
+    public void testGetXYXYFromAreaRef(){
+        String ref = null;
+        
+        ref = "A1:B1";
+        
+        assertEquals("fromRef A1 row = 0",
+                     ReferenceUtil.getXYXYFromAreaRef(ref)[0],
+                     0);
+        
+        assertEquals("fromRef A1 col = 0",
+                     ReferenceUtil.getXYXYFromAreaRef(ref)[1],
+                     0);
+        
+        assertEquals("fromRef A1 col = 0",
+                     ReferenceUtil.getXYXYFromAreaRef(ref)[2],
+                     0);
+
+        
+        assertEquals("fromRef A1 col = 0",
+                     ReferenceUtil.getXYXYFromAreaRef(ref)[3],
+                     1);
+        
+        
+        ref = "A1:Z11";
+
+        assertEquals("fromRef A1 row = 0",
+                     ReferenceUtil.getXYXYFromAreaRef(ref)[0],
+                     0);
+        
+        assertEquals("fromRef A1 col = 0",
+                     ReferenceUtil.getXYXYFromAreaRef(ref)[1],
+                     0);
+        
+        
+        assertEquals("fromRef Z11 row = 10",
+                     ReferenceUtil.getXYXYFromAreaRef(ref)[2],
+                     10);
+        
+        assertEquals("fromRef Z11 col = 25",
+                     ReferenceUtil.getXYXYFromAreaRef(ref)[3],
+                     25);
+        
+        ref = "Z11:IV256";
+
+        assertEquals("fromRef Z11 row = 10",
+                     ReferenceUtil.getXYXYFromAreaRef(ref)[0],
+                     10);
+        
+        assertEquals("fromRef Z11 col = 25",
+                     ReferenceUtil.getXYXYFromAreaRef(ref)[1],
+                     25);
+        
+        
+        assertEquals("fromRef IV256 row = 255",
+                     ReferenceUtil.getXYXYFromAreaRef(ref)[2],
+                     255);
+        
+        assertEquals("fromRef IV256 col = 255",
+                     ReferenceUtil.getXYXYFromAreaRef(ref)[3],
+                     255);
+        
+    }
+    
     public static void main(String [] args) {
         System.out
         .println("Testing org.apache.poi.hssf.util.ReferenceUtil");
