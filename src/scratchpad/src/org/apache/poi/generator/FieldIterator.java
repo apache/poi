@@ -62,7 +62,7 @@ package org.apache.poi.generator;
  */
 public class FieldIterator
 {
-    int offset;
+    protected int offset;
 
     public FieldIterator()
     {
