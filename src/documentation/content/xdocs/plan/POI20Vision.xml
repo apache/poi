@@ -65,7 +65,7 @@
                 </li>
         </ul>  
         <p>By the completion of this release cycle the POI project will also
-        include the HSSF Generator and the HDF library.
+        include the HSSF Generator and the HWPF library.
         </p>
         <ul>
 	        <li>The HSSF Generator will be responsible for using HSSF to read
@@ -73,7 +73,7 @@
 	        Generator will support the applicable interfaces specified by the
 	        Apache Cocoon 2 project.
                 </li>
-	        <li>The HDF library will provide a set of high level interfaces
+	        <li>The HWPF library will provide a set of high level interfaces
 	        for reading and writing Microsoft Word 97 file format using pure
 	        Java.</li>
         </ul>
@@ -108,7 +108,7 @@
                         as the HSSF Serializer.
                 </li>
 	        <li>
-                        Create a new library (HDF) for reading and writing 
+                        Create a new library (HWPF) for reading and writing 
                         Microsoft Word DOC format.
                 </li>
 	        <li>
@@ -146,7 +146,7 @@
                 </li>
                 <li>
                         Our intended audience for the
-                        POIFS library is ourselves as we are developing the HSSF and HDF
+                        POIFS library is ourselves as we are developing the HSSF and HWPF
                         libraries and anyone wishing to provide other libraries for
                         reading/writing other file formats utilizing the OLE 2 Compound
                         Document Format in Java.
@@ -157,8 +157,8 @@
                         XML in a non-proprietary environment.
                 </li>
                 <li>
-                        Our intended audience for the HDF
-                        library is ourselves, as we will be developing a HDF Serializer in a
+                        Our intended audience for the HWPF
+                        library is ourselves, as we will be developing a HWPF Serializer in a
                         later release, and anyone wishing to add .DOC file processing and
                         creation to their projects.
                 </li>
@@ -342,7 +342,7 @@
                         with the HSSF and POIFS APIs.
                 </li>
 		<li>
-                        The HDF API requires a Java 2
+                        The HWPF API requires a Java 2
                         implementation and the POIFS API.
                 </li>
 		<li>
@@ -418,7 +418,7 @@
 		</li>
 	</ul>
 	<p>
-                The HDF API will include:
+                The HWPF API will include:
 	</p>
 	<ul>
 		<li>
@@ -460,7 +460,7 @@
 		<li>POIFS API</li>
 	</ul>
 	<p>
-		The minimum system requirements for the the HDF API are:
+		The minimum system requirements for the the HWPF API are:
 	</p>
 	<ul>
 		<li>64 Mbytes memory</li>
@@ -537,12 +537,12 @@
 		for the low level HSSF APIs.	
 	</p>
    </section>
-   <section><title>6.5 HDF API</title>
+   <section><title>6.5 HWPF API</title>
 	<p>
-                The HDF API will be documented by
-                javadoc. A walkthrough of using the high level HDF API shall be
+                The HWPF API will be documented by
+                javadoc. A walkthrough of using the high level HWPF API shall be
                 provided. No documentation outside of the Javadoc shall be provided
-                for the low level HDF APIs.        
+                for the low level HWPF APIs.        
 	</p>
    </section>   
    <section><title>6.6 HSSF Serializer</title>

@@ -36,9 +36,9 @@
         </p>
       </section>
 
-      <section><title>HDF</title>
+      <section><title>HWPF</title>
         <p>
-          <link href="hdf/index.html">HDF</link>  is the set of APIs                   
+          <link href="hwpf/index.html">HWPF</link>  is the set of APIs                   
           for reading and writing Microsoft Word 97(-XP) spreadsheet using (only) Java.
         </p>
       </section>

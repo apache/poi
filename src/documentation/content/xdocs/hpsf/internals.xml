@@ -32,7 +32,7 @@
      <strong>property set stream</strong>.</p>
 
     <p>This document describes the internal structure of a property set stream,
-     i.e. the <strong>Horrible Property Set Format (HDF)</strong>.  It does not
+     i.e. the <strong>Horrible Property Set Format (HWPF)</strong>.  It does not
      describe how a Microsoft Office document is organized internally and how
      to retrieve a stream from it. See the <link
       href="../poifs/index.html">POIFS documentation</link> for that kind of

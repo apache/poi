@@ -38,9 +38,9 @@
         </p>
       </section>
 
-      <section><title>HDF</title>
+      <section><title>HWPF</title>
         <p>
-          <link href="../../hdf/index.html">HDF</link> es el conjunto de APIs para la lectura y
+          <link href="../../hwpf/index.html">HWPF</link> es el conjunto de APIs para la lectura y
 	  escritura de documentos Word 97(-XP) de Microsoft utilizando (únicamente) Java.
         </p>
       </section>

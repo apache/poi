@@ -14,7 +14,7 @@
 
         <actions priority="high">
             <action context="code" dev="NKB">
-                Finish HDF
+                Finish HWPF
             </action>
             <action context="code" dev="GS">
                 Finish Charts

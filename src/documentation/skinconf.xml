@@ -9,7 +9,8 @@ be used to configure the chosen Forrest skin.
 
   <!ENTITY % links.att 'name CDATA #REQUIRED'>
   <!ENTITY % link.att 'name CDATA #REQUIRED href CDATA #REQUIRED'>
-  <!ELEMENT skinconfig (disable-search?, disable-compliance-links?, searchsite-domain?, searchsite-name?,
+  <!ELEMENT skinconfig (disable-search?, disable-print-link?, disable-pdf-link?,
+  disable-xml-link?, disable-compliance-links?, searchsite-domain?, searchsite-name?,
   project-name, project-url, project-logo, group-name?, group-url?, group-logo?,
   host-url?, host-logo?, year?, vendor?, trail?, credits?)*>
   <!ELEMENT credits (credit*)>
@@ -18,7 +19,10 @@ be used to configure the chosen Forrest skin.
   <!ATTLIST credit id   CDATA #IMPLIED
                    role CDATA #IMPLIED>
   <!ELEMENT disable-search (#PCDATA)>
-  <!ELEMENT disable-compliance-links (#PCDATA)>
+  <!ELEMENT disable-print-link (#PCDATA)>
+  <!ELEMENT disable-pdf-link (#PCDATA)>
+  <!ELEMENT disable-xml-link (#PCDATA)>    
+  <!ELEMENT disable-compliance-links (#PCDATA)>   
   <!ELEMENT searchsite-domain (#PCDATA)>
   <!ELEMENT searchsite-name (#PCDATA)>  
   <!ELEMENT project-name (#PCDATA)>
@@ -49,7 +53,15 @@ be used to configure the chosen Forrest skin.
 <skinconfig>
   <!-- Do we want to disable the Google search box? -->
   <disable-search>false</disable-search>
+  <!-- Do we want to disable the print link? -->
+  <disable-print-link>false</disable-print-link>  
+  <!-- Do we want to disable the PDF link? -->
+  <disable-pdf-link>false</disable-pdf-link>
+  <!-- Do we want to disable the xml source link? -->
+  <disable-xml-link>true</disable-xml-link>
+  <!-- Do we want to disable w3c compliance links? -->
   <disable-compliance-links>false</disable-compliance-links>
+
   <searchsite-domain>jakarta.apache.org</searchsite-domain>
   <searchsite-name>jakarta</searchsite-name>
 
@@ -71,7 +83,7 @@ be used to configure the chosen Forrest skin.
   <host-logo></host-logo>
 
   <!-- The following are used to construct a copyright statement -->
-  <year>2003</year>
+  <year>2002-2003</year>
   <vendor>The Apache Software Foundation.</vendor>
 
   <!-- Some skins use this to form a 'breadcrumb trail' of links. If you don't
@@ -80,7 +92,7 @@ be used to configure the chosen Forrest skin.
   <trail>
     <link1 name="Apache" href="http://www.apache.org/"/>
     <link2 name="Jakarta" href="http://jakarta.apache.org/"/>
-    <link3 name="POI" href="http://jakarta.apache.org/poi/"/>
+<!--    <link3 name="POI" href="http://jakarta.apache.org/poi/"/>-->
   </trail>
 
   <!-- Credits are typically rendered as a set of small clickable images in the

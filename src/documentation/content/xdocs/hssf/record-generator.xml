@@ -170,8 +170,8 @@
             RecordUtil.java, RecordGenerator.java
         </p>
         <p>
-            There is a corresponding &quot;type&quot; generator for HDF.
-            See the HDF documentation for details.
+            There is a corresponding &quot;type&quot; generator for HWPF.
+            See the HWPF documentation for details.
         </p>
     </section>
     <section><title>Limitations</title>

@@ -139,12 +139,12 @@
           <link href="../../hssf/index.html">HSSF-Seite</link>.
         </p>
       </section>
-      <section><title>HDF (Horrible Document Format)</title>
+      <section><title>HWPF (Horrible Document Format)</title>
         <p>
-          HDF ist unsere Portierung des Microsoft Word 97 Datei-Formats
+          HWPF ist unsere Portierung des Microsoft Word 97 Datei-Formats
           in reinem Java. Es unterstützt Lesen und Schreiben. Mehr
           Informationen gibt es auf der
-          <link href="../../hdf/index.html">HDF-Seite</link>.
+          <link href="../../hwpf/index.html">HWPF-Seite</link>.
           Diese Komponente ist noch nicht sehr weit fortgeschritten. Wir suchen
           Entwickler, die mitmachen.
         </p>

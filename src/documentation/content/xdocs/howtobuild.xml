@@ -129,7 +129,7 @@
                 <tr>
                     <td>generate-types</td>
                     <td>Generate types from the XML type definitions (this is
-                        for HDF).</td>
+                        for HWPF).</td>
                 </tr>
                 <tr>
                     <td>jar</td>
