@@ -824,6 +824,40 @@ extends TestCase {
             out.close();
             assertTrue("file exists",file.exists());
     }
+    
+    public void testStringFormulas()
+        throws java.io.IOException
+    {
+        String readFilename = System.getProperty("HSSF.testdata.path");
+
+            File file = File.createTempFile("testStringFormula",".xls");
+            FileOutputStream out    = new FileOutputStream(file);
+            HSSFWorkbook     wb     = new HSSFWorkbook();
+            HSSFSheet        s      = wb.createSheet("A");
+            HSSFRow          r      = null;
+            HSSFCell         c      = null;
+            r = s.createRow((short)0);
+            c=r.createCell((short)1); c.setCellFormula("UPPER(\"abc\")");
+            c=r.createCell((short)2); c.setCellFormula("LOWER(\"ABC\")");
+            c=r.createCell((short)3); c.setCellFormula("CONCATENATE(\" my \",\" name \")");
+            
+            wb.write(out);
+            out.close();
+            
+             assertTrue("file exists",file.exists());
+            
+            FileInputStream in = new FileInputStream(readFilename+File.separator+"StringFormulas.xls");
+            wb = new HSSFWorkbook(in);
+            s = wb.getSheetAt(0);
+            r = s.getRow(0);
+            c = r.getCell((short)0);
+            assertTrue("expected: UPPER(\"xyz\") got "+c.getCellFormula(), ("UPPER(\"xyz\")").equals(c.getCellFormula()));
+            //c = r.getCell((short)1);
+            //assertTrue("expected: A!A1+A!B1 got: "+c.getCellFormula(), ("A!A1+A!B1").equals(c.getCellFormula()));
+            in.close(); 
+    }
+    
+    
     public static void main(String [] args) {
         System.out
         .println("Testing org.apache.poi.hssf.usermodel.TestFormulas");

@@ -210,7 +210,6 @@ public class FormulaParser {
         }
     }
     
-    
     /** Get an Identifier */
     private String GetName() {
         StringBuffer Token = new StringBuffer();
@@ -222,6 +221,20 @@ public class FormulaParser {
             GetChar();
         }
         SkipWhite();
+        return Token.toString();
+    }
+    
+    /**Get an Identifier AS IS, without stripping white spaces or 
+       converting to uppercase; used for literals */
+    private String GetNameAsIs() {
+        StringBuffer Token = new StringBuffer();
+        if (!IsAlpha(Look)) {
+            Expected("Name");
+        }
+        while (IsAlNum(Look) || IsWhite(Look)) {
+            Token = Token.append(Look);
+            GetChar();
+        }
         return Token.toString();
     }
     
@@ -355,7 +368,7 @@ public class FormulaParser {
     
     private void StringLiteral() {
         Match('"');
-        String name= GetName();
+        String name= GetNameAsIs();
         Match('"');
         tokens.add(new StringPtg(name));
     }
