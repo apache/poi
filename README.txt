@@ -14,7 +14,7 @@
   ------------
 
   The home page for the POI project can be found in the POI 
-  Project web site (http://poi.sourceforge.net/). There you also find 
+  Project web site (http://jakarta.apache.org/poi/). There you also find 
   information on how to download the latest release as well as all the other 
   information you might need regarding this project.
 
@@ -45,6 +45,6 @@
   Thanks for using POI.
 
                                            The POI Project
-                                           http://poi.sourceforgef.net/
+                                           http://jakarta.apache.org/poi/
 
   
