@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Copyright 2002-2004   Apache Software Foundation
 
@@ -26,6 +25,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -98,9 +98,12 @@ public class CopyCompare
      * create a property set from a POI document stream that is not a property
      * set stream.
      * @exception IOException if any I/O exception occurs.
+     * @exception UnsupportedEncodingException if a character encoding is not
+     * supported.
      */
     public static void main(final String[] args)
-    throws MarkUnsupportedException, NoPropertySetStreamException, IOException
+    throws NoPropertySetStreamException, MarkUnsupportedException,
+           UnsupportedEncodingException, IOException
     {
         String originalFileName = null;
         String copyFileName = null;
@@ -174,7 +177,8 @@ public class CopyCompare
     private static boolean equal(final DirectoryEntry d1,
                                  final DirectoryEntry d2,
                                  final StringBuffer msg)
-    throws MarkUnsupportedException, NoPropertySetStreamException, IOException
+    throws NoPropertySetStreamException, MarkUnsupportedException,
+           UnsupportedEncodingException, IOException
     {
         boolean equal = true;
         /* Iterate over d1 and compare each entry with its counterpart in d2. */
@@ -251,7 +255,8 @@ public class CopyCompare
      */
     private static boolean equal(final DocumentEntry d1, final DocumentEntry d2,
                                  final StringBuffer msg)
-    throws MarkUnsupportedException, NoPropertySetStreamException, IOException
+    throws NoPropertySetStreamException, MarkUnsupportedException,
+           UnsupportedEncodingException, IOException
     {
         boolean equal = true;
         final DocumentInputStream dis1 = new DocumentInputStream(d1);
