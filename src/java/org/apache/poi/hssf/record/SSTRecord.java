@@ -58,7 +58,6 @@ import org.apache.poi.util.BinaryTree;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -259,7 +258,8 @@ public class SSTRecord
             rval = field_3_strings.size();
             field_2_num_unique_strings++;
             integer = new Integer( rval );
-            field_3_strings.put( integer, ucs );
+            addToStringTable( integer, ucs );
+//            field_3_strings.put( integer, ucs );
         }
         return rval;
     }
@@ -324,11 +324,10 @@ public class SSTRecord
 
     public String getString( final int id )
     {
-        return ( (UnicodeString) field_3_strings.get( new Integer( id ) ) )
-                .getString();
+        return ( (UnicodeString) field_3_strings.get( new Integer( id ) ) ).getString();
     }
 
-    public boolean getString16bit( final int id )
+    public boolean isString16bit( final int id )
     {
         UnicodeString unicodeString = ( (UnicodeString) field_3_strings.get( new Integer( id ) ) );
         return ( ( unicodeString.getOptionFlags() & 0x01 ) == 1 );
@@ -456,7 +455,8 @@ public class SSTRecord
                                 _unfinished_string );
                 Integer integer = new Integer( field_3_strings.size() );
 
-                field_3_strings.put( integer, string );
+//                field_3_strings.put( integer, string );
+                addToStringTable( integer, string );
                 manufactureStrings( record,
                         _total_length_bytes
                         - LittleEndianConsts
@@ -725,35 +725,27 @@ public class SSTRecord
     private void setupStringParameters( final byte[] data, final int index,
                                         final int char_count )
     {
-        byte flag = data[index + LittleEndianConsts.SHORT_SIZE];
+        byte optionFlag = data[index + LittleEndianConsts.SHORT_SIZE];
 
-        _wide_char = ( flag & 1 ) == 1;
-        boolean extended = ( flag & 4 ) == 4;
-        boolean formatted_run = ( flag & 8 ) == 8;
+        _wide_char = ( optionFlag & 1 ) == 1;
+        boolean extended = ( optionFlag & 4 ) == 4;
+        boolean rich_text = ( optionFlag & 8 ) == 8;
 
-        _total_length_bytes = STRING_MINIMAL_OVERHEAD
-                + calculateByteCount( char_count );
+        _total_length_bytes = STRING_MINIMAL_OVERHEAD + calculateByteCount( char_count );
         _string_data_offset = STRING_MINIMAL_OVERHEAD;
-        if ( formatted_run )
+        if ( rich_text )
         {
-            short run_count = LittleEndian.getShort( data,
-                    index
-                    + _string_data_offset );
+            short run_count = LittleEndian.getShort( data, index + _string_data_offset );
 
             _string_data_offset += LittleEndianConsts.SHORT_SIZE;
-            _total_length_bytes += LittleEndianConsts.SHORT_SIZE
-                    + ( LittleEndianConsts.INT_SIZE
-                    * run_count );
+            _total_length_bytes += LittleEndianConsts.SHORT_SIZE + ( LittleEndianConsts.INT_SIZE * run_count );
         }
         if ( extended )
         {
-            int extension_length = LittleEndian.getInt( data,
-                    index
-                    + _string_data_offset );
+            int extension_length = LittleEndian.getInt( data, index + _string_data_offset );
 
             _string_data_offset += LittleEndianConsts.INT_SIZE;
-            _total_length_bytes += LittleEndianConsts.INT_SIZE
-                    + extension_length;
+            _total_length_bytes += LittleEndianConsts.INT_SIZE + extension_length;
         }
     }
 
@@ -771,6 +763,7 @@ public class SSTRecord
         LittleEndian.putShort( bstring, offset, char_count );
         offset += LittleEndianConsts.SHORT_SIZE;
         bstring[offset] = str_data[offset];
+        System.out.println( "_string_data_offset = " + _string_data_offset );
         System.arraycopy( str_data, _string_data_offset, bstring,
                 STRING_MINIMAL_OVERHEAD,
                 bstring.length - STRING_MINIMAL_OVERHEAD );
@@ -785,27 +778,32 @@ public class SSTRecord
         else
         {
             Integer integer = new Integer( field_3_strings.size() );
+            addToStringTable( integer, string );
+        }
+    }
 
-            // This retry loop is a nasty hack that lets us get around the issue of duplicate
-            // strings in the SST record.  There should never be duplicates but because we don't
-            // handle rich text records correctly this may occur.  Also some Excel alternatives
-            // do not seem correctly add strings to this table.
-            //
-            // The hack bit is that we add spaces to the end of the string until don't get an
-            // illegal argument exception when adding.  One day we will have to deal with this
-            // more gracefully.
-            boolean added = false;
-            while ( !added )
+    /**
+     * Okay, we are doing some major cheating here. Because we can't handle rich text strings properly
+     * we end up getting duplicate strings.  To get around this I'm doing do things: 1. Converting rich
+     * text to normal text and 2. If there's a duplicate I'm adding a space onto the end.  Sneaky perhaps
+     * but it gets the job done until we can handle this a little better.
+     */
+    private void addToStringTable( Integer integer, UnicodeString string )
+    {
+        if (string.isRichText())
+            string.setOptionFlags( (byte)(string.getOptionFlags() & (~8) ) );
+
+        boolean added = false;
+        while (added == false)
+        {
+            try
             {
-                try
-                {
-                    field_3_strings.put( integer, string );
-                    added = true;
-                }
-                catch ( IllegalArgumentException duplicateValue )
-                {
-                    string.setString( string.getString() + " " );
-                }
+                field_3_strings.put( integer, string );
+                added = true;
+            }
+            catch( Exception ignore )
+            {
+                string.setString( string.getString() + " " );
             }
         }
     }
