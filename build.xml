@@ -118,13 +118,13 @@ printed.
         
      all -------------- creates the jars and the site      
      compile ---------- compiles the source code      
+     test ------------- performs the jUnit tests       
      jar -------------- create the jar files
      docs ------------- generates the html docs - clean not needed        
+     javadocs --------- generates the API documentation   
      site ------------- generates the html site (docs+reports)    
-     javadocs --------- generates the API documentation     
-     test ------------- performs the jUnit tests       
      clean ------------ cleans the build directory    
-     quickdist -------- creates src and bin distributions    
+     dist ------------- creates src and bin distributions    
      scratchpad ------- build-run scratchpad code       
      contrib ---------- build-run contributed code    
      generate-records - generate excel records    
@@ -253,13 +253,13 @@ printed.
     
   </target>     
 
-  <!-- ================================== -->
-  <!--         Build distributions        -->
-  <!-- ================================== -->
+  <!-- ====================================== -->
+  <!--  dist target wo single build checks    -->
+  <!-- ====================================== -->
 
-  <target  name="dist" depends="-init"
-           description="Make distributions">
-           
+  <target  name="dist"   depends="-init, clean, test, jar, site"
+           description="Build distribution packages wo single build checks">
+
     <echo>**********************************************</echo>
     <echo>*</echo>
     <echo>*  Build all distributions:</echo> 
@@ -273,25 +273,8 @@ printed.
     <echo>*</echo>        
     <echo>***********************************************</echo>
     <echo/>
-
-    <antcall target="gump"/>
     
-    <antcall target="quickdist"/>
-    
-  </target>     
 
-  <!-- ====================================== -->
-  <!--  dist target wo single build checks    -->
-  <!-- ====================================== -->
-
-  <target  name="quickdist"   depends="-init"
-           description="Build distribution packages wo single build checks">
-
-    <antcall target="call-cent">
-      <param name="cent-name"   value="junit"/> 
-      <param name="cent-target" value="test"/> 
-    </antcall>
-    
     <antcall target="call-cent">
       <param name="cent-name"   value="centipede"/> 
       <param name="cent-target" value="dist"/> 
@@ -299,6 +282,7 @@ printed.
     
   </target>    
   
+    
   <!-- ================================== -->
   <!--         Clean build dir            -->
   <!-- ================================== -->
@@ -317,14 +301,10 @@ printed.
   <!--         Run Junit tests            -->
   <!-- ================================== -->
   
-  <target  name="test"   depends="-init"
+  <target  name="test"   depends="-init, compile"
            description="Compile java source code">
 
-    <antcall target="call-cent">
-      <param name="cent-name"   value="centipede"/> 
-      <param name="cent-target" value="compile"/> 
-    </antcall>
-
+ 
     <antcall target="call-cent">
       <param name="cent-name"   value="junit"/> 
       <param name="cent-target" value="test"/> 
@@ -341,14 +321,9 @@ printed.
   <!--      Generate project metrics      -->
   <!-- ================================== -->
   
-  <target  name="metrics"   depends="-init"
+  <target  name="metrics"   depends="-init, compile"
            description="Generate project metrics">
 
-    <antcall target="call-cent">
-      <param name="cent-name"   value="centipede"/> 
-      <param name="cent-target" value="compile"/> 
-    </antcall>
-    
     <antcall target="call-cent">
       <param name="cent-name"   value="jdepend"/>
       <param name="cent-target" value="jdepend-html"/> 
@@ -376,15 +351,12 @@ printed.
   <!-- ================================== -->
   
   <target  name="site"
-           description="Makes all the site doco">
+           description="Makes all the site doco"
+           depends="docs, 
+                    test,
+                    javadocs,  
+                    metrics"/>
 
-      <antcall target="docs"/>
-      <antcall target="compile"/>
-      <antcall target="javadocs"/>
-      <antcall target="test"/>
-      <antcall target="metrics"/>
-             
-  </target>     
   
   <!-- ================================== -->
   <!--       Generates the javadocs       -->
@@ -497,6 +469,18 @@ printed.
       <antcall target="javadocs"/>
 
   </target>
+
+  <!-- ================================== -->
+  <!--         Test 4 distribution        -->
+  <!-- ================================== -->
+
+  <target  name="testall" depends="-init"
+           description="Make big full test">
+           
+    <antcall target="gump"/>
+    <antcall target="quickdist"/>
+    
+  </target>       
                       
   <!-- ================================== -->
   <!--        Target used by Gump         -->
@@ -506,11 +490,8 @@ printed.
            depends="testmodule"
            description="Target used by Gump">
            
-      <antcall target="clean"/>
       <antcall target="testtargets"/>
-      <antcall target="clean"/>
       <antcall target="testmodule"/>
-      <antcall target="clean"/>
       <antcall target="all"/>
       
   </target>
