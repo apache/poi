@@ -133,7 +133,15 @@
     <!-- Project jars POI *build* strictly depends on -->
     <!-- needed for build -->
 
-    <depend project="jakarta-ant-embed"  inherit="all"/>
+    <!--<depend project="jakarta-ant-embed"  inherit="all"/>-->
+    <depend project="jakarta-ant"/>
+    <depend project="krysalis-centipede-ant-sax2-patched"/>    
+    <depend project="xml-xerces"/>
+    <depend project="xml-xalan2"/>   
+    <depend id="api" project="commons-logging" 
+              property="commons-logging.jar"/>
+    <depend property="jxpath.jar" project="commons-jxpath"/> 
+   
     <depend project="jakarta-ant-embed-optional"/>    
     <depend project="krysalis-ant-tasks"/>
     <depend project="ant-contrib"/>
