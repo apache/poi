@@ -16,12 +16,6 @@
 
    <ol>
     <li>
-     <p>Complete writing the HPSF documentation.</p>
-    </li>
-    <li>
-     <p>Write up some junit tests.</p>
-    </li>
-    <li>
      <p>Add writing capability for property sets.</p>
     </li>
     <li>
