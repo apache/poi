@@ -235,9 +235,9 @@ public class Sheet implements Model
             }
             else if ( rec.getSid() == RowRecord.sid )
             {
-            	 RowRecord row = (RowRecord)rec;
-            	 if (!isfirstrow) rec = null; //only add the aggregate once
-            	 
+                RowRecord row = (RowRecord)rec;
+                if (!isfirstrow) rec = null; //only add the aggregate once
+
                 if ( isfirstrow )
                 {
                     retval.rows = new RowRecordsAggregate();
@@ -297,14 +297,16 @@ public class Sheet implements Model
             }
         }
         retval.records = records;
-        if (retval.rows == null)
-        {
-            retval.rows = new RowRecordsAggregate();
-        }
-        if (retval.cells == null)
-        {
-            retval.cells = new ValueRecordsAggregate();
-        }
+//        if (retval.rows == null)
+//        {
+//            retval.rows = new RowRecordsAggregate();
+//        }
+        retval.checkCells();
+        retval.checkRows();
+//        if (retval.cells == null)
+//        {
+//            retval.cells = new ValueRecordsAggregate();
+//        }
         log.log(log.DEBUG, "sheet createSheet (existing file) exited");
         return retval;
     }
@@ -1002,10 +1004,7 @@ public class Sheet implements Model
     {
         checkCells();
         log.logFormatted(log.DEBUG, "remove value record row,dimsloc %,%",
-                         new int[]
-        {
-            row, dimsloc
-        });
+                         new int[]{row, dimsloc} );
         loc = dimsloc;
         cells.removeCell(col);
 
