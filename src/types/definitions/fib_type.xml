@@ -15,7 +15,7 @@
         <field type="int" size="2" name="product version"/>
     <field type="int" size="2" name="language stamp"/>
     <field type="int" size="2" name="unknown 1"/>
-    <field type="short" size="2" name="options">
+    <field type="int" size="2" name="options">
             <bit number="0"  mask="0x0001" name="template"/>
             <bit number="1"  mask="0x0002" name="glossary"/>
             <bit number="2"  mask="0x0004" name="quicksave"/>
@@ -29,70 +29,81 @@
             <bit number="10" mask="0x2000" name="loadOverride"/>
             <bit number="11" mask="0x4000" name="farEast"/>            
             <bit number="12" mask="0x8000" name="crypto"/>            
-    </field>            
+    </field>
+    <field type="int" size="2" name="minversion"/>
+    <field type="int" size="2" name="encrypted key"/>
+    <field type="int" size="2" name="environment"/>
+    <field type="int" size="2" name="history">
+            <bit number="0"  mask="0x0001" name="history mac"/>
+            <bit number="1"  mask="0x0002" name="empty special"/>
+            <bit number="2"  mask="0x0004" name="load override hist"/>
+            <bit number="3"  mask="0x0008" name="feature undo"/>                       
+            <bit number="4"  mask="0x0010" name="v97 saved"/>
+            <bit number="5"  mask="0x00FE" name="spare"/>            
+    </field>
+    <field type="int" size="2" name="default charset"/>
+    <field type="int" size="2" name="default extcharset"/>
+    <field type="int" size="4" name="offset first char"/>
+    <field type="int" size="4" name="offset last char"/>
+    <field type="int" size="2" name="count shorts"/>
+    
+    <field type="int" size="2" name="creator id or beg shorts"/>
+    <field type="int" size="2" name="revisor id"/>
+    <field type="int" size="2" name="creator private"/>
+    <field type="int" size="2" name="revisor private"/>
+
+    <field type="int" size="2" name="unused"/>
+    <field type="int" size="2" name="unused"/>
+    <field type="int" size="2" name="unused"/>
+    <field type="int" size="2" name="unused"/>
+    <field type="int" size="2" name="unused"/>
+    <field type="int" size="2" name="unused"/>
+    <field type="int" size="2" name="unused"/>
+    <field type="int" size="2" name="unused"/>
+    <field type="int" size="2" name="unused"/>
+
+    <field type="int" size="2" name="fareastid"/>
+    <field type="int" size="2" name="countints"/>
+    
+    <field type="int" size="4" name="last byte or beg ints"/>
+    
+    <field type="int" size="4" name="creator build date"/>
+    <field type="int" size="4" name="revisor build date"/>
+    
+    <field type="int" size="4" name="main streamlen"/>
+    <field type="int" size="4" name="footnote streamlen"/>
+    <field type="int" size="4" name="header streamlen"/>
+    <field type="int" size="4" name="macro streamlen"/>
+    <field type="int" size="4" name="annotation streamlen"/>
+    <field type="int" size="4" name="endnote streamlen"/>
+    <field type="int" size="4" name="textbox streamlen"/>
+    <field type="int" size="4" name="headbox streamlen"/>
+    
+    <field type="int" size="4" name="ptr to plc list chp" description="rename me!"/>
+    <field type="int" size="4" name="first chp"/>
+    <field type="int" size="4" name="count chps"/>
+    
+    <field type="int" size="4" name="ptr to plc list pap" description="rename me!"/>
+    <field type="int" size="4" name="first pap"/>
+    <field type="int" size="4" name="count paps"/>
+
+    <field type="int" size="4" name="ptr to plc list lvc" description="rename me!"/>
+    <field type="int" size="4" name="first lvc"/>
+    <field type="int" size="4" name="count lvc"/>
+
+    <field type="int" size="4" name="unknown"/>
+    <field type="int" size="4" name="unknown"/>
+    
+    <field type="int" size="2" name="lcb array size"/>
+    <field type="int" size="4" name="original stylesheet offset"/>
+    <field type="int" size="4" name="original stylesheet size"/>
+    <field type="int" size="4" name="stylesheet offset"/>
+    <field type="int" size="4" name="stylesheet size"/>
+    <field type="int" size="4" name="footnote ref offset"/>
+    <field type="int" size="4" name="footnote ref size"/>
    <!-- 
-    private short field_7_minversion;
-    private short field_8_encrypted_key;
-    private short field_9_environment; // 0 or 1 - windows or mac
-    private short field_10_history;
 
-        private static final BitField history_mac   = new BitField(0x01);
-        private static final BitField empty_special = new BitField(0x02);
-        private static final BitField load_override = new BitField(0x04);
-        private static final BitField future_undo   = new BitField(0x08);
-        private static final BitField w97_saved     = new BitField(0x10);
-        private static final BitField spare         = new BitField(0xfe);
 
-    private short field_11_default_charset;
-    private short field_12_default_extcharset;
-    private int  field_13_offset_first_char;
-    private int  field_14_offset_last_char;
-    private short field_15_count_shorts;
-
-    private short field_16_beg_shorts; //why same offset?
-
-    private short field_16_creator_id;
-    private short field_17_revisor_id;
-    private short field_18_creator_private;
-    private short field_19_revisor_private;
-
-    private short field_20_unused;
-    private short field_21_unused;
-    private short field_22_unused;
-    private short field_23_unused;
-    private short field_24_unused;
-    private short field_25_unused;
-    private short field_26_unused;
-    private short field_27_unused;
-    private short field_28_unused;
-
-    private short field_29_fareastid;
-    private short field_30_count_ints;
-
-    private int field_31_beg_ints; //why same offset?
-
-    private int field_31_last_byte;
-
-    private int field_32_creator_build_date;
-    private int field_33_revisor_build_date;
-    /** length of main document text stream*/
-    private int field_34_main_streamlen;
-    /**length of footnote subdocument text stream*/
-    private int field_35_footnote_streamlen;
-    private int field_36_header_streamlen;
-    private int field_37_macro_streamlen;
-    private int field_38_annotation_streamlen;
-    private int field_39_endnote_streamlen;
-    private int field_40_textbox_streamlen;
-    private int field_41_headbox_streamlen;
-    /**offset in table stream of character property bin table*/
-    private int field_42_pointer_to_plc_list_chp; //rename me!
-    private int field_43_first_chp; //rename me
-    private int field_44_count_chps; //rename me
-    /**offset in table stream of paragraph property bin */
-    private int field_45_pointer_to_plc_list_pap; //rename me.
-    private int field_46_first_pap; //rename me
-    private int field_47_count_paps; //rename me
     private int field_48_pointer_to_plc_list_lvc; //rename me
     private int field_49_first_lvc; //rename me
     private int field_50_count_lvc; //rename me
