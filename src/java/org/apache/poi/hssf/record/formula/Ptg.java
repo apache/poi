@@ -71,16 +71,16 @@ import java.util.ArrayList;
 public abstract class Ptg
 {
 
-    /** Creates new Ptg */
-    
-    public Ptg()
-    {
-    }
-    
+        
     /** convert infix order ptg list to rpn order ptg list
      * @return List ptgs in RPN order
      * @param infixPtgs List of ptgs in infix order
      */
+    
+    /* DO NOI REMOVE
+     *we keep this method in case we wish to change the way we parse
+     *It needs a getPrecedence in OperationsPtg
+    
     public static List ptgsToRpn(List infixPtgs) {
         java.util.Stack operands = new java.util.Stack();
         java.util.List retval = new java.util.Stack();
@@ -123,7 +123,7 @@ public abstract class Ptg
         }
         return retval;
     }
-    
+    */
 
     
     
@@ -243,6 +243,13 @@ public abstract class Ptg
                 retval = new FunctionPtg(data, offset);
                 break;
   */              
+                
+             case NumberPtg.sid :
+                retval = new NumberPtg(data, offset);
+             break;
+
+
+                
 
             case NamePtg.sid :
                 retval = new NamePtg(data, offset);
@@ -284,18 +291,7 @@ public abstract class Ptg
     public abstract void writeBytes(byte [] array, int offset);
 
     public abstract String toFormulaString();
-    
-    /**
-     * Ptg's should override this
-     */
-//    public boolean isNextStringToken(String formula, int pos) {
-//        return false;
-//    }
-    
-    public int getPrecedence() {
-        return 100;
-    }
-    
+       
     public int getStringLength() {
         return 0;
     }
