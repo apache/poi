@@ -469,12 +469,20 @@ public class Sheet implements Model
         numMergedRegions--;
         if (rec.getNumAreas() == 0)
         {
+				mergedRecords.remove(pos);            
+            if (merged == rec) {
+            	//pull up the LAST record for operations when we finally
+            	//support continue records for mergedRegions
+            	if (mergedRecords.size() > 0) {
+            		merged = (MergeCellsRecord) mergedRecords.get(mergedRecords.size() - 1);
+            	} else {
+            		merged = null;
+            	}
+            }
             
-            if (merged == rec)
-            	merged = (MergeCellsRecord) mergedRecords.get(mergedRecords.size() - 1);
             int removePos = ((Integer) mergedLocs.get(pos)).intValue();
             records.remove(removePos);
-				mergedRecords.remove(pos);
+
             mergedLocs.remove(pos);
             
             //if we're not tracking merged records, kill the pointer to reset the state
