@@ -83,9 +83,9 @@ public class DimensionsRecord
     /**
      * Constructs a Dimensions record and sets its fields appropriately.
      *
-     * @param short id must be 0x200 or an exception will be throw upon validation
-     * @param short size the size of the data area of the record
-     * @param byte[] data of the record (should not contain sid/len)
+     * @param id     id must be 0x200 or an exception will be throw upon validation
+     * @param size  the size of the data area of the record
+     * @param data  data of the record (should not contain sid/len)
      */
 
     public DimensionsRecord(short id, short size, byte [] data)
@@ -96,9 +96,9 @@ public class DimensionsRecord
     /**
      * Constructs a Dimensions record and sets its fields appropriately.
      *
-     * @param short id must be 0x200 or an exception will be throw upon validation
-     * @param short size the size of the data area of the record
-     * @param byte[] data of the record (should not contain sid/len)
+     * @param id     id must be 0x200 or an exception will be throw upon validation
+     * @param size  the size of the data area of the record
+     * @param data  data of the record (should not contain sid/len)
      * @param offset of the record's data
      */
 
@@ -146,7 +146,7 @@ public class DimensionsRecord
 
     /**
      * set the first column number for the sheet
-     * @param column - first column on the sheet
+     * @param col  first column on the sheet
      */
 
     public void setFirstCol(short col)

@@ -88,9 +88,9 @@ public class BlankRecord
     /**
      * Constructs a BlankRecord and sets its fields appropriately
      *
-     * @param short id must be 0x201 or an exception will be throw upon validation
-     * @param short size the size of the data area of the record
-     * @param byte[] data of the record (should not contain sid/len)
+     * @param id     id must be 0x201 or an exception will be throw upon validation
+     * @param size  the size of the data area of the record
+     * @param data  data of the record (should not contain sid/len)
      */
 
     public BlankRecord(short id, short size, byte [] data)
@@ -101,9 +101,9 @@ public class BlankRecord
     /**
      * Constructs a BlankRecord and sets its fields appropriately
      *
-     * @param short id must be 0x201 or an exception will be throw upon validation
-     * @param short size the size of the data area of the record
-     * @param byte[] data of the record (should not contain sid/len)
+     * @param id     id must be 0x201 or an exception will be throw upon validation
+     * @param size  the size of the data area of the record
+     * @param data  data of the record (should not contain sid/len)
      * @param offset of the record's data
      */
 

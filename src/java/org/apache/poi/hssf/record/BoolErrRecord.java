@@ -89,9 +89,9 @@ public class BoolErrRecord
     /**
      * Constructs a BoolErr record and sets its fields appropriately.
      *
-     * @param short id must be 0x205 or an exception will be throw upon validation
-     * @param short size the size of the data area of the record
-     * @param byte[] data of the record (should not contain sid/len)
+     * @param id     id must be 0x205 or an exception will be throw upon validation
+     * @param size  the size of the data area of the record
+     * @param data  data of the record (should not contain sid/len)
      */
 
     public BoolErrRecord(short id, short size, byte [] data)
@@ -102,9 +102,9 @@ public class BoolErrRecord
     /**
      * Constructs a BoolErr record and sets its fields appropriately.
      *
-     * @param short id must be 0x205 or an exception will be throw upon validation
-     * @param short size the size of the data area of the record
-     * @param byte[] data of the record (should not contain sid/len)
+     * @param id     id must be 0x205 or an exception will be throw upon validation
+     * @param size  the size of the data area of the record
+     * @param data  data of the record (should not contain sid/len)
      * @param offset of the record
      */
 
@@ -143,7 +143,7 @@ public class BoolErrRecord
     /**
      * set the index to the ExtendedFormat
      * @see org.apache.poi.hssf.record.ExtendedFormatRecord
-     * @param index to the XF record
+     * @param xf    index to the XF record
      */
 
     public void setXFIndex(short xf)
@@ -154,7 +154,7 @@ public class BoolErrRecord
     /**
      * set the boolean value for the cell
      *
-     * @param boolean representing the boolean value
+     * @param value   representing the boolean value
      */
 
     public void setValue(boolean value)
@@ -167,7 +167,7 @@ public class BoolErrRecord
     /**
      * set the error value for the cell
      *
-     * @param error representing the error value
+     * @param value     error representing the error value
      */
 
     public void setValue(byte value)
