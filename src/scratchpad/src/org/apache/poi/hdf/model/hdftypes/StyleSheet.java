@@ -678,7 +678,7 @@ public class StyleSheet implements HDFType
    *
    * @return An object that should be casted to the appropriate property.
    */
-  static Object uncompressProperty(byte[] grpprl, Object parent, StyleSheet styleSheet)
+  public static Object uncompressProperty(byte[] grpprl, Object parent, StyleSheet styleSheet)
   {
     return uncompressProperty(grpprl, parent, styleSheet, true);
   }
@@ -694,7 +694,7 @@ public class StyleSheet implements HDFType
    *
    * @return An object that should be casted to the appropriate property.
    */
-  static Object uncompressProperty(byte[] grpprl, Object parent, StyleSheet styleSheet, boolean doIstd)
+  public static Object uncompressProperty(byte[] grpprl, Object parent, StyleSheet styleSheet, boolean doIstd)
   {
       Object newProperty = null;
       int offset = 0;
