@@ -253,9 +253,57 @@ public class TestWorkbook
                      sheet.getRow(( short ) 0).getCell(( short ) 0);
 
         assertEquals(1.25,cell.getNumericCellValue(), 1e-10);
-                         
 
 	assertEquals(format.getFormat(cell.getCellStyle().getDataFormat()), "0.0");
+        stream.close();
+    }
+
+/**
+     * TEST NAME:  Test Read/Write Simple w/ Data Format<P>
+     * OBJECTIVE:  Test that HSSF can write a sheet with custom data formats and then read it and get the proper formats.<P>
+     * SUCCESS:    HSSF reads the sheet.  Matches values in their particular positions and format is correct<P>
+     * FAILURE:    HSSF does not read a sheet or excepts.  HSSF cannot identify values
+     *             in the sheet in their known positions.<P>
+     *
+     */
+
+    public void testWriteDataFormat()
+        throws IOException
+    {
+	File             file = File.createTempFile("testWriteDataFormat",
+                                                    ".xls");
+	System.err.println(file);
+        FileOutputStream out  = new FileOutputStream(file);
+        HSSFWorkbook     wb   = new HSSFWorkbook();
+        HSSFSheet        s    = wb.createSheet();
+        HSSFRow          r    = null;
+        HSSFCell         c    = null;
+	HSSFDataFormat format = wb.createDataFormat();
+	HSSFCellStyle    cs   = wb.createCellStyle();
+	
+	short df = format.getFormat("0.0");
+	cs.setDataFormat(df);
+	
+	r = s.createRow((short)0);
+	c = r.createCell((short)0);
+	c.setCellStyle(cs);
+	c.setCellValue(1.25);
+
+        wb.write(out);
+        out.close();
+
+        FileInputStream stream   = new FileInputStream(file);
+        POIFSFileSystem fs       = new POIFSFileSystem(stream);
+        HSSFWorkbook    workbook = new HSSFWorkbook(fs);
+        HSSFSheet       sheet    = workbook.getSheetAt(0);
+	HSSFCell	cell	 = 
+                     sheet.getRow(( short ) 0).getCell(( short ) 0);
+	format = workbook.createDataFormat();
+
+        assertEquals(1.25,cell.getNumericCellValue(), 1e-10);
+
+	assertEquals(format.getFormat(df), "0.0");
+	
         stream.close();
     }
 
