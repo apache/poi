@@ -1,7 +1,7 @@
 /* ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 2002 The Apache Software Foundation.  All rights
+ * Copyright (c) 2002, 2003 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -59,29 +59,37 @@
  */
 package org.apache.poi.hssf.usermodel;
 
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.hssf.eventmodel.EventRecordFactory;
-import org.apache.poi.hssf.model.Sheet;
-import org.apache.poi.hssf.model.Workbook;
-import org.apache.poi.hssf.record.*;
-import org.apache.poi.hssf.record.formula.MemFuncPtg;
-import org.apache.poi.hssf.record.formula.Area3DPtg;
-import org.apache.poi.hssf.record.formula.UnionPtg;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.poifs.filesystem.Entry;
-import org.apache.poi.poifs.filesystem.DirectoryEntry;
-import org.apache.poi.poifs.filesystem.DocumentEntry;
-import org.apache.poi.poifs.filesystem.DocumentInputStream;
-import org.apache.poi.util.POILogger;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Stack;
+
+import org.apache.poi.hssf.eventmodel.EventRecordFactory;
+import org.apache.poi.hssf.model.Sheet;
+import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.record.BackupRecord;
+import org.apache.poi.hssf.record.ExtendedFormatRecord;
+import org.apache.poi.hssf.record.FontRecord;
+import org.apache.poi.hssf.record.NameRecord;
+import org.apache.poi.hssf.record.RecordFactory;
+import org.apache.poi.hssf.record.SSTRecord;
+import org.apache.poi.hssf.record.UnknownRecord;
+import org.apache.poi.hssf.record.WindowTwoRecord;
+import org.apache.poi.hssf.record.formula.Area3DPtg;
+import org.apache.poi.hssf.record.formula.MemFuncPtg;
+import org.apache.poi.hssf.record.formula.UnionPtg;
+import org.apache.poi.hssf.util.CellReference;
+import org.apache.poi.poifs.filesystem.DirectoryEntry;
+import org.apache.poi.poifs.filesystem.DocumentEntry;
+import org.apache.poi.poifs.filesystem.DocumentInputStream;
+import org.apache.poi.poifs.filesystem.Entry;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * High level representation of a workbook.  This is the first object most users
@@ -816,7 +824,7 @@ public class HSSFWorkbook
 	/**
 	 * Sets the printarea for the sheet provided
 	 * <p>
-	 * i.e. Reference = Sheet2!$A$1:$B$2
+	 * i.e. Reference = $A$1:$B$2
 	 * @param sheetIndex Zero-based sheet index (0 Represents the first sheet to keep consistent with java)
 	 * @param reference Valid name Reference for the Print Area 
 	 */
@@ -829,15 +837,38 @@ public class HSSFWorkbook
 			name = workbook.createBuiltInName(NameRecord.BUILTIN_PRINT_AREA, sheetIndex+1);
        //adding one here because 0 indicates a global named region; doesnt make sense for print areas
        
-       HSSFName nameWrapper = new HSSFName(workbook, name);
-       //the external name does some housekeeping, refactor to lower level?
+	    short externSheetIndex = getWorkbook().checkExternSheet(sheetIndex);
+		name.setExternSheetNumber(externSheetIndex);       
+		name.setAreaReference(reference);
        
-		nameWrapper.setReference(reference);
+		
 	}
 	
+	/**
+	 * For the Convenience of Java Programmers maintaining pointers.
+	 * @see setPrintArea(int, String)
+	 * @param sheetIndex Zero-based sheet index (0 = First Sheet)
+	 * @param startColumn Column to begin printarea
+	 * @param endColumn Column to end the printarea
+	 * @param startRow Row to begin the printarea
+	 * @param endRow Row to end the printarea
+	 */
+	public void setPrintArea(int sheetIndex, int startColumn, int endColumn,
+							  int startRow, int endRow) {
+							  	
+		//using absolute references because they dont get copied and pasted anyway							  	
+		CellReference cell = new CellReference(startRow, startColumn, true, true);
+		String reference = cell.toString();
+		
+		cell = new CellReference(endRow, endColumn, true, true);
+		reference = reference+":"+cell.toString();
+		
+		setPrintArea(sheetIndex, reference);							  	
+	}
+							  
 	    
 	/**
-	 * Retrieves the reference for the printarea of the specified sheet
+	 * Retrieves the reference for the printarea of the specified sheet, the sheet name is appended to the reference even if it was not specified.
 	 * @param sheetIndex Zero-based sheet index (0 Represents the first sheet to keep consistent with java) 
 	 * @return String Null if no print area has been defined
 	 */	    
@@ -850,6 +881,13 @@ public class HSSFWorkbook
 		return name.getAreaReference(workbook.getSheetReferences());
 	}    
     
+    /**
+     * Delete the printarea for the sheet specified
+     * @param sheetIndex Zero-based sheet index (0 = First Sheet)
+     */
+    public void removePrintArea(int sheetIndex) {
+    	getWorkbook().removeBuiltinRecord(NameRecord.BUILTIN_PRINT_AREA, sheetIndex+1); 
+    }
     
     /** creates a new named range and add it to the model
      * @return named range high level

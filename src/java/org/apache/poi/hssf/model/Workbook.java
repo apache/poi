@@ -339,7 +339,7 @@ public class Workbook implements Model {
 	/**Retrieves the Builtin NameRecord that matches the name and index
 	 * There shouldn't be too many names to make the sequential search too slow
 	 * @param name byte representation of the builtin name to match
-	 * @param sheetIndex zero-based sheet reference
+	 * @param sheetIndex Index to match
 	 * @return null if no builtin NameRecord matches
 	 */
 	public NameRecord getSpecificBuiltinRecord(byte name, int sheetIndex)
@@ -356,6 +356,21 @@ public class Workbook implements Model {
 	    
 	    return null;
 	    
+	}
+
+	/**
+	 * Removes the specified Builtin NameRecord that matches the name and index
+	 * @param name byte representation of the builtin to match
+	 * @param sheetIndex zero-based sheet reference
+	 */
+	public void removeBuiltinRecord(byte name, int sheetIndex) {
+		//the name array is smaller so searching through it should be faster than
+		//using the findFirstXXXX methods
+		NameRecord record = getSpecificBuiltinRecord(name, sheetIndex);
+		if (record != null) {
+			names.remove(record);
+		}
+		
 	}
 
     public int getNumRecords() {
