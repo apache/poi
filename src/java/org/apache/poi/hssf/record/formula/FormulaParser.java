@@ -390,6 +390,18 @@ end;
             return (Ptg[]) tokens.toArray(retval);
        }
     }
+  
+    /**
+     * Convience method which takes in a list then passes it to the other toFormulaString
+     * signature
+     */
+    public static String toFormulaString(List lptgs) {
+        String retval = null;
+        Ptg[] ptgs = new Ptg[lptgs.size()];
+        ptgs = (Ptg[])lptgs.toArray(ptgs);
+        retval = toFormulaString(ptgs);
+        return retval;
+    }
     
     /** Static method to convert an array of Ptgs in RPN order 
      *  to a human readable string format in infix mode
