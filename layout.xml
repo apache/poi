@@ -38,12 +38,12 @@
    <java dir="./build/java"/>
    <classes dir="./build/classes"/>
    <test dir="./build/testcases"/>
+   <work dir="./build/work"/>
    <documentation dir="./build/documentation">
      <javadocs dir="./build/docs/javadocs"/>
      <test dir="./build/docs/test"/>
      <metrics dir="./build/docs/metrics"/>
    </documentation>
-   <work dir="./build/work"/>   
    <scratchpad dir="./build/scratchpad">
      <java dir="./build/scratchpad/java"/>
      <classes dir="./build/scratchpad/classes"/>          
