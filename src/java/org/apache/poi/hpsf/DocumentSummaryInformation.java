@@ -195,11 +195,12 @@ public class DocumentSummaryInformation extends SpecialPropertySet
      * <strong>when this method is implemented. Please note that the
      * return type is likely to change!</strong>
      */
-    public byte[] getScale()
+    public boolean getScale()
     {
         if (true)
             throw new UnsupportedOperationException("FIXME");
-        return (byte[]) getProperty(PropertyIDMap.PID_SCALE);
+	// return (byte[]) getProperty(PropertyIDMap.PID_SCALE);
+	return false;
     }
 
 
