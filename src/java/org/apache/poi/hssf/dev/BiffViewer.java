@@ -600,6 +600,9 @@ public class BiffViewer {
             case ObjectLinkRecord.sid:
                 retval = new ObjectLinkRecord(rectype, size, data);
                 break;
+            case PlotAreaRecord.sid:
+                retval = new PlotAreaRecord(rectype, size, data);
+                break;
                 
                 
             default:
