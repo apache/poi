@@ -205,4 +205,27 @@ public class ClassID
             dst[i + offset] = bytes[i];
     }
 
+
+
+    /**
+     * <p>Checks whether this <code>ClassID</code> is equal to another
+     * object.</p>
+     *
+     * @param o the object to compare this <code>PropertySet</code> with
+     * @return <code>true</code> if the objects are equal, else
+     * <code>false</code>.</p>
+     */
+    public boolean equals(final Object o)
+    {
+        if (o == null || !(o instanceof ClassID))
+            return false;
+        final ClassID cid = (ClassID) o;
+        if (bytes.length != cid.bytes.length)
+            return false;
+        for (int i = 0; i < bytes.length; i++)
+            if (bytes[i] != cid.bytes[i])
+                return false;
+        return true;
+    }
+
 }
