@@ -46,8 +46,6 @@ import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.util.HexDump;
-import org.apache.poi.ddf.*;
 
 /**
  * High level representation of a workbook.  This is the first object most users
@@ -759,7 +757,8 @@ public class HSSFWorkbook
 
     public byte[] getBytes()
     {
-        log.log(DEBUG, "HSSFWorkbook.getBytes()");
+        if (log.check( POILogger.DEBUG ))
+            log.log(DEBUG, "HSSFWorkbook.getBytes()");
 
         // before getting the workbook size we must tell the sheets that
         // serialization is about to occur.

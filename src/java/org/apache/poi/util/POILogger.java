@@ -42,7 +42,6 @@ public abstract class POILogger
      * package scope so it cannot be instantiated outside of the util
      * package. You need a POILogger? Go to the POILogFactory for one
      *
-     * @param log the object that does the real work of logging
      */
     POILogger()
     {}
@@ -55,7 +54,6 @@ public abstract class POILogger
      * Check if a logger is enabled to log at the specified level
      *
      * @param level One of DEBUG, INFO, WARN, ERROR, FATAL
-     * @param obj1 The logger to check.
      */
     abstract public boolean check(final int level);
 

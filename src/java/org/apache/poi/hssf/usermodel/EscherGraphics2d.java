@@ -141,7 +141,8 @@ public class EscherGraphics2d extends Graphics2D
 
     public void draw(Shape shape)
     {
-        logger.log(POILogger.WARN,"copyArea not supported");
+        if (logger.check( POILogger.WARN ))
+            logger.log(POILogger.WARN,"copyArea not supported");
     }
 
     public void drawArc(int x, int y, int width, int height,
@@ -158,19 +159,22 @@ public class EscherGraphics2d extends Graphics2D
     public boolean drawImage(Image image, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1,
             int sx2, int sy2, Color bgColor, ImageObserver imageobserver)
     {
-        logger.log(POILogger.WARN,"drawImage() not supported");
+        if (logger.check( POILogger.WARN ))
+            logger.log(POILogger.WARN,"drawImage() not supported");
         return true;
     }
 
     public boolean drawImage(Image image, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1,
             int sx2, int sy2, ImageObserver imageobserver)
     {
-        logger.log(POILogger.WARN,"drawImage() not supported");
+        if (logger.check( POILogger.WARN ))
+            logger.log(POILogger.WARN,"drawImage() not supported");
         return drawImage(image, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2, null, imageobserver);
     }
     public boolean drawImage(Image image, int dx1, int dy1, int dx2, int dy2, Color bgColor, ImageObserver imageobserver)
     {
-        logger.log(POILogger.WARN,"drawImage() not supported");
+        if (logger.check( POILogger.WARN ))
+            logger.log(POILogger.WARN,"drawImage() not supported");
         return true;
     }
 
@@ -285,7 +289,8 @@ public class EscherGraphics2d extends Graphics2D
 
     public void fill(Shape shape)
     {
-        logger.log(POILogger.WARN,"fill(Shape) not supported");
+        if (logger.check( POILogger.WARN ))
+            logger.log(POILogger.WARN,"fill(Shape) not supported");
     }
 
     public void fillArc(int i, int j, int k, int l, int i1, int j1)

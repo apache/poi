@@ -89,6 +89,7 @@ public class HSSFRow
         this.book = book;
         this.sheet = sheet;
         row = new RowRecord();
+        row.setOptionFlags( (short)0x100 );   // seems necessary for outlining to work.  
         row.setHeight((short) 0xff);
         row.setLastCol((short) -1);
         row.setFirstCol((short) -1);
