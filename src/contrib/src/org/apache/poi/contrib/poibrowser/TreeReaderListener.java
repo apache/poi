@@ -265,13 +265,4 @@ public class TreeReaderListener implements POIFSReaderListener
         }
     }
 
-
-    private String s(final Object o)
-    {
-        if (o == null)
-            return "null";
-        else
-            return o.getClass().getName() + '@' + o.hashCode();
-    }
-
 }
