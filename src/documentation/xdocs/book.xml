@@ -6,10 +6,6 @@
       copyright="@year@ Poi Project"
       xmlns:xlink="http://www.w3.org/1999/xlink">
 
-  <menu label="Main">
-    <menu-item label="Jakarta" href="http://jakarta.apache.org"/>
-  </menu>
-
   <menu label="About">
     <menu-item label="Index" href="index.html"/>
     <menu-item label="History" href="historyandfuture.html"/>
@@ -33,7 +29,6 @@
   <menu label="References">
     <menu-item label="In The News" href="inthenews.html"/>  
     <menu-item label="Live Sites" href="livesites.html"/>
-    <menu-item label="Building" href="building.xml"/>
     <menu-item label="XLS spec [PDF]" href="http://sc.openoffice.org/excelfileformat.pdf"/>
     <menu-item label="Apache Cocoon" href="http://xml.apache.org/cocoon/"/>
     <menu-item label="Resolutions" href="resolutions/index.html"/>

@@ -1,20 +1,5 @@
 <?xml version="1.0"?>
 <!DOCTYPE project [
-<!ENTITY preinit-target SYSTEM "./tools/targets/preinit.xtarget"> 
-<!ENTITY init-target SYSTEM "./tools/targets/init.xtarget"> 
-<!ENTITY compile-target SYSTEM "./tools/targets/compile.xtarget"> 
-<!ENTITY interactive-target SYSTEM "./tools/targets/interactive.xtarget"> 
-<!ENTITY scratchpad-target SYSTEM "./tools/targets/scratchpad.xtarget"> 
-<!ENTITY contrib-target SYSTEM "./tools/targets/contrib.xtarget"> 
-<!ENTITY util-target SYSTEM "./tools/targets/util.xtarget"> 
-<!ENTITY dev-target SYSTEM "./tools/targets/dev.xtarget"> 
-<!ENTITY test-target SYSTEM "./tools/targets/test.xtarget"> 
-<!ENTITY robot-target SYSTEM "./tools/targets/robot.xtarget"> 
-<!ENTITY docs-target SYSTEM "./tools/targets/docs.xtarget"> 
-]>
-
-<project default="interactive" basedir="." name="krysalis">
-
 <!-- ===========================================================================
 
 
@@ -24,7 +9,7 @@
                                      by               
                                              
                    Nicola Ken Barozzi <barozzi@nicolaken.com>
-		           Marc Johnson <mjohnson at apache dot org>       
+                   Marc Johnson <mjohnson at apache dot org>       
                      
                    extends the Apache Cocoon Build System 
                        (http://xml.apache.org/cocoon/)
@@ -32,6 +17,34 @@
                    Stefano Mazzocchi <stefano@apache.org>
                    Carsten Ziegeler <cziegeler@apache.org>
                    
+-->    
+<!-- =================  Main project targets and info =================  -->
+<!ENTITY project-target     SYSTEM "./src/targets/project.xtarget"> 
+<!ENTITY interactive-target SYSTEM "./src/targets/interactive.xtarget"> 
+<!-- =================================================================== -->
+
+<!-- ======================  Scratchpad targets =======================  -->
+<!ENTITY scratchpad-target SYSTEM "./src/scratchpad/targets/scratchpad.xtarget"> 
+<!-- =================================================================== -->
+
+<!-- ========================  Contrib targets ========================  --> 
+<!ENTITY contrib-target SYSTEM "./src/contrib/targets/contrib.xtarget">
+<!-- =================================================================== -->
+
+<!-- ==================  Krysalis Centipede targets ===================  --> 
+<!ENTITY preinit-target SYSTEM "./tools/centipede/targets/preinit.xtarget"> 
+<!ENTITY init-target    SYSTEM "./tools/centipede/targets/init.xtarget"> 
+<!ENTITY compile-target SYSTEM "./tools/centipede/targets/compile.xtarget"> 
+<!ENTITY util-target    SYSTEM "./tools/centipede/targets/util.xtarget"> 
+<!ENTITY dev-target     SYSTEM "./tools/centipede/targets/dev.xtarget"> 
+<!ENTITY test-target    SYSTEM "./tools/centipede/targets/test.xtarget"> 
+<!ENTITY robot-target   SYSTEM "./tools/centipede/targets/robot.xtarget"> 
+<!ENTITY docs-target    SYSTEM "./tools/centipede/targets/docs.xtarget"> 
+<!-- =================================================================== -->
+]>
+
+<project default="interactive" basedir="." name="krysalis">
+<!--
 
 Installing the build tools
 ==========================
@@ -141,10 +154,13 @@ or
 
  
   <!-- =================================================================== -->
-  <!-- external reference are relative to to tools/targets/*.xtarget       -->
-  <!-- =================================================================== -->
+  <!-- external reference are relative to to **/*.xtarget;                 -->
+  <!-- see entity decalrations at the start of this file                   -->
+  <!-- =================================================================== -->  
   <!-- Pre Initialization      -->  &preinit-target;  
   <!-- =================================================================== -->  
+  <!-- Project targets         -->  &project-target;    
+  <!-- =================================================================== -->
   <!-- Initialization targets  -->  &init-target;  
   <!-- =================================================================== -->
   <!-- Compile targets         -->  &compile-target;  

@@ -59,7 +59,7 @@
  */
 package org.apache.poi.hssf.usermodel;
 
-import org.apache.poi.hssf.HSSFLog;
+import org.apache.poi.util.POILogFactory;
 import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.*;
@@ -110,7 +110,7 @@ public class HSSFWorkbook
      */
 
     private ArrayList sheets;
-    private static POILogger log = HSSFLog.getPOILogger(HSSFWorkbook.class);
+    private static POILogger log = POILogFactory.getLogger(HSSFWorkbook.class);
 
     /**
      * Creates new HSSFWorkbook from scratch (start here!)

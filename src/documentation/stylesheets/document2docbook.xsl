@@ -144,7 +144,11 @@
     <table>
       <tgroup>
         <xsl:attribute name="cols"><xsl:value-of select="count(tr/td)"/></xsl:attribute>
-        <xsl:apply-templates select="th"/>
+        <xsl:if test="th">
+          <thead>
+            <xsl:apply-templates select="th"/>
+          </thead>
+        </xsl:if>
         <tbody>
           <xsl:apply-templates select="tr"/>
         </tbody>
@@ -152,13 +156,7 @@
     </table>
   </xsl:template>
 
-  <xsl:template match="th">
-          <entry role="th">
-      <xsl:apply-templates/>
-          </entry>
-  </xsl:template>
-
-  <xsl:template match="tr">
+  <xsl:template match="th|tr">
     <row>
       <xsl:apply-templates/>
     </row>
@@ -176,3 +174,4 @@
     </xsl:copy>
   </xsl:template>
 </xsl:stylesheet>
+

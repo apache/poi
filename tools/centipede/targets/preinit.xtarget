@@ -33,6 +33,11 @@
     </fileset>
   </path>
 
+  <path id="examples.classpath">
+    <!-- FIXME : how to build a path that references a property set in 'init' target ? -->
+    <pathelement path="./build/jakarta-poi/classes"/>
+  </path>
+
   <path id="scratchpad.classpath">
     <fileset dir="./lib/core">
       <include name="*.jar"/>
@@ -61,3 +66,4 @@
     <pathelement path="./build/jakarta-poi/classes"/>
   </path>
   
+

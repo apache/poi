@@ -55,8 +55,7 @@
  */
 package org.apache.poi.util;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
 
 import java.util.*;
 
@@ -68,16 +67,17 @@ import java.util.*;
  *
  * @author Marc Johnson (mjohnson at apache dot org)
  * @author Glen Stampoultzis (glens at apache.org)
+ * @author Nicola Ken Barozzi (nicolaken at apache.org)
  */
 
 public class POILogger
 {
-    private Logger          log   = null;
-    public static final int DEBUG = Level.DEBUG_INT;
-    public static final int INFO  = Level.INFO_INT;
-    public static final int WARN  = Level.WARN_INT;
-    public static final int ERROR = Level.ERROR_INT;
-    public static final int FATAL = Level.FATAL_INT;
+    private Log             log   = null;
+    public static final int DEBUG = 1;
+    public static final int INFO  = 3;
+    public static final int WARN  = 5;
+    public static final int ERROR = 7;
+    public static final int FATAL = 9;
 
     /**
      * package scope so it cannot be instantiated outside of the util
@@ -86,7 +86,7 @@ public class POILogger
      * @param log the object that does the real work of logging
      */
 
-    POILogger(final Logger log)
+    POILogger(final Log log)
     {
         this.log = log;
     }
@@ -94,50 +94,139 @@ public class POILogger
     /**
      * Log a message
      *
-     * @param logLevel One of DEBUG, INFO, WARN, ERROR, FATAL
-     * @param obj1 The object to log. This is converted to a string.
+     * @param level One of DEBUG, INFO, WARN, ERROR, FATAL
+     * @param obj1 The object to log.
      */
 
-    public void log(final int logLevel, final Object obj1)
+    public void log(final int level, final Object obj1)
     {
-        log.log(Level.toLevel(logLevel), obj1);
+        if(level==FATAL)
+        {
+          if(log.isFatalEnabled())
+          {
+            log.fatal(obj1);
+          }
+        }
+        else if(level==ERROR)
+        {
+          if(log.isErrorEnabled())
+          {
+            log.error(obj1);
+          }
+        }
+        else if(level==WARN)
+        {
+          if(log.isWarnEnabled())
+          {
+            log.warn(obj1);
+          }
+        }
+        else if(level==INFO)
+        {
+          if(log.isInfoEnabled())
+          {
+            log.info(obj1);
+          }
+        }
+        else if(level==DEBUG)
+        {
+          if(log.isDebugEnabled())
+          {
+            log.debug(obj1);
+          }
+        }
+        else
+        {
+          if(log.isTraceEnabled())
+          {
+            log.trace(obj1);
+          }
+        }
+
+    }
+
+    /**
+     * Check if a logger is enabled to log at the specified level
+     *
+     * @param level One of DEBUG, INFO, WARN, ERROR, FATAL
+     * @param obj1 The logger to check.
+     */
+
+    public boolean check(final Log log, final int level)
+    {
+        if(level==FATAL)
+        {
+          if(log.isFatalEnabled())
+          {
+            return true;
+          }
+        }
+        else if(level==ERROR)
+        {
+          if(log.isErrorEnabled())
+          {
+            return true;
+          }
+        }
+        else if(level==WARN)
+        {
+          if(log.isWarnEnabled())
+          {
+            return true;
+          }
+        }
+        else if(level==INFO)
+        {
+          if(log.isInfoEnabled())
+          {
+            return true;
+          }
+        }
+        else if(level==DEBUG)
+        {
+          if(log.isDebugEnabled())
+          {
+            return true;
+          }
+        }
+
+        return false;
+
     }
 
     /**
      * Log a message. Lazily appends Object parameters together.
      *
-     * @param logLevel One of DEBUG, INFO, WARN, ERROR, FATAL
+     * @param level One of DEBUG, INFO, WARN, ERROR, FATAL
      * @param obj1 first object to place in the message
      * @param obj2 second object to place in the message
      */
 
-    public void log(final int logLevel, final Object obj1, final Object obj2)
+    public void log(final int level, final Object obj1, final Object obj2)
     {
-        Level level = Level.toLevel(logLevel);
-
-        if (log.isEnabledFor(level))
+        if (check(log, level))
         {
-            log.log(level, new StringBuffer(32).append(obj1).append(obj2));
+            log(level, new StringBuffer(32).append(obj1).append(obj2));
         }
     }
 
     /**
      * Log a message. Lazily appends Object parameters together.
      *
-     * @param logLevel One of DEBUG, INFO, WARN, ERROR, FATAL
+     * @param level One of DEBUG, INFO, WARN, ERROR, FATAL
      * @param obj1 first Object to place in the message
      * @param obj2 second Object to place in the message
      * @param obj3 third Object to place in the message
      */
 
-    public void log(final int logLevel, final Object obj1, final Object obj2,
+    public void log(final int level, final Object obj1, final Object obj2,
                     final Object obj3)
     {
-        Level level = Level.toLevel(logLevel);
+        
 
-        if (log.isEnabledFor(level))
+        if (check(log, level))
         {
-            log.log(level,
+            log(level,
                     new StringBuffer(48).append(obj1).append(obj2)
                         .append(obj3));
         }
@@ -146,21 +235,21 @@ public class POILogger
     /**
      * Log a message. Lazily appends Object parameters together.
      *
-     * @param logLevel One of DEBUG, INFO, WARN, ERROR, FATAL
+     * @param level One of DEBUG, INFO, WARN, ERROR, FATAL
      * @param obj1 first Object to place in the message
      * @param obj2 second Object to place in the message
      * @param obj3 third Object to place in the message
      * @param obj4 fourth Object to place in the message
      */
 
-    public void log(final int logLevel, final Object obj1, final Object obj2,
+    public void log(final int level, final Object obj1, final Object obj2,
                     final Object obj3, final Object obj4)
     {
-        Level level = Level.toLevel(logLevel);
+        
 
-        if (log.isEnabledFor(level))
+        if (check(log, level))
         {
-            log.log(level,
+            log(level,
                     new StringBuffer(64).append(obj1).append(obj2)
                         .append(obj3).append(obj4));
         }
@@ -169,7 +258,7 @@ public class POILogger
     /**
      * Log a message. Lazily appends Object parameters together.
      *
-     * @param logLevel One of DEBUG, INFO, WARN, ERROR, FATAL
+     * @param level One of DEBUG, INFO, WARN, ERROR, FATAL
      * @param obj1 first Object to place in the message
      * @param obj2 second Object to place in the message
      * @param obj3 third Object to place in the message
@@ -177,14 +266,14 @@ public class POILogger
      * @param obj5 fifth Object to place in the message
      */
 
-    public void log(final int logLevel, final Object obj1, final Object obj2,
+    public void log(final int level, final Object obj1, final Object obj2,
                     final Object obj3, final Object obj4, final Object obj5)
     {
-        Level level = Level.toLevel(logLevel);
+        
 
-        if (log.isEnabledFor(level))
+        if (check(log, level))
         {
-            log.log(level,
+            log(level,
                     new StringBuffer(80).append(obj1).append(obj2)
                         .append(obj3).append(obj4).append(obj5));
         }
@@ -193,7 +282,7 @@ public class POILogger
     /**
      * Log a message. Lazily appends Object parameters together.
      *
-     * @param logLevel One of DEBUG, INFO, WARN, ERROR, FATAL
+     * @param level One of DEBUG, INFO, WARN, ERROR, FATAL
      * @param obj1 first Object to place in the message
      * @param obj2 second Object to place in the message
      * @param obj3 third Object to place in the message
@@ -202,15 +291,15 @@ public class POILogger
      * @param obj6 sixth Object to place in the message
      */
 
-    public void log(final int logLevel, final Object obj1, final Object obj2,
+    public void log(final int level, final Object obj1, final Object obj2,
                     final Object obj3, final Object obj4, final Object obj5,
                     final Object obj6)
     {
-        Level level = Level.toLevel(logLevel);
+        
 
-        if (log.isEnabledFor(level))
+        if (check(log, level))
         {
-            log.log(Level.toLevel(logLevel),
+            log(level ,
                     new StringBuffer(96).append(obj1).append(obj2)
                         .append(obj3).append(obj4).append(obj5).append(obj6));
         }
@@ -219,7 +308,7 @@ public class POILogger
     /**
      * Log a message. Lazily appends Object parameters together.
      *
-     * @param logLevel One of DEBUG, INFO, WARN, ERROR, FATAL
+     * @param level One of DEBUG, INFO, WARN, ERROR, FATAL
      * @param obj1 first Object to place in the message
      * @param obj2 second Object to place in the message
      * @param obj3 third Object to place in the message
@@ -229,15 +318,15 @@ public class POILogger
      * @param obj7 seventh Object to place in the message
      */
 
-    public void log(final int logLevel, final Object obj1, final Object obj2,
+    public void log(final int level, final Object obj1, final Object obj2,
                     final Object obj3, final Object obj4, final Object obj5,
                     final Object obj6, final Object obj7)
     {
-        Level level = Level.toLevel(logLevel);
+        
 
-        if (log.isEnabledFor(level))
+        if (check(log, level))
         {
-            log.log(level,
+            log(level,
                     new StringBuffer(112).append(obj1).append(obj2)
                         .append(obj3).append(obj4).append(obj5).append(obj6)
                         .append(obj7));
@@ -247,7 +336,7 @@ public class POILogger
     /**
      * Log a message. Lazily appends Object parameters together.
      *
-     * @param logLevel One of DEBUG, INFO, WARN, ERROR, FATAL
+     * @param level One of DEBUG, INFO, WARN, ERROR, FATAL
      * @param obj1 first Object to place in the message
      * @param obj2 second Object to place in the message
      * @param obj3 third Object to place in the message
@@ -258,15 +347,15 @@ public class POILogger
      * @param obj8 eighth Object to place in the message
      */
 
-    public void log(final int logLevel, final Object obj1, final Object obj2,
+    public void log(final int level, final Object obj1, final Object obj2,
                     final Object obj3, final Object obj4, final Object obj5,
                     final Object obj6, final Object obj7, final Object obj8)
     {
-        Level level = Level.toLevel(logLevel);
+        
 
-        if (log.isEnabledFor(level))
+        if (check(log, level))
         {
-            log.log(level,
+            log(level,
                     new StringBuffer(128).append(obj1).append(obj2)
                         .append(obj3).append(obj4).append(obj5).append(obj6)
                         .append(obj7).append(obj8));
@@ -276,34 +365,34 @@ public class POILogger
     /**
      * Log a message
      *
-     * @param logLevel One of DEBUG, INFO, WARN, ERROR, FATAL
+     * @param level One of DEBUG, INFO, WARN, ERROR, FATAL
      * @param obj1 The object to log.  This is converted to a string.
      * @param exception An exception to be logged
      */
 
-    public void log(final int logLevel, final Object obj1,
+    public void log(final int level, final Object obj1,
                     final Throwable exception)
     {
-        log.log(Level.toLevel(logLevel), obj1, exception);
+        log(level , obj1, exception);
     }
 
     /**
      * Log a message. Lazily appends Object parameters together.
      *
-     * @param logLevel One of DEBUG, INFO, WARN, ERROR, FATAL
+     * @param level One of DEBUG, INFO, WARN, ERROR, FATAL
      * @param obj1 first Object to place in the message
      * @param obj2 second Object to place in the message
      * @param exception An exception to be logged
      */
 
-    public void log(final int logLevel, final Object obj1, final Object obj2,
+    public void log(final int level, final Object obj1, final Object obj2,
                     final Throwable exception)
     {
-        Level level = Level.toLevel(logLevel);
+        
 
-        if (log.isEnabledFor(level))
+        if (check(log, level))
         {
-            log.log(level, new StringBuffer(32).append(obj1).append(obj2),
+            log(level, new StringBuffer(32).append(obj1).append(obj2),
                     exception);
         }
     }
@@ -311,21 +400,21 @@ public class POILogger
     /**
      * Log a message. Lazily appends Object parameters together.
      *
-     * @param logLevel One of DEBUG, INFO, WARN, ERROR, FATAL
+     * @param level One of DEBUG, INFO, WARN, ERROR, FATAL
      * @param obj1 first Object to place in the message
      * @param obj2 second Object to place in the message
      * @param obj3 third object to place in the message
      * @param exception An error message to be logged
      */
 
-    public void log(final int logLevel, final Object obj1, final Object obj2,
+    public void log(final int level, final Object obj1, final Object obj2,
                     final Object obj3, final Throwable exception)
     {
-        Level level = Level.toLevel(logLevel);
+        
 
-        if (log.isEnabledFor(level))
+        if (check(log, level))
         {
-            log.log(level, new StringBuffer(48).append(obj1).append(obj2)
+            log(level, new StringBuffer(48).append(obj1).append(obj2)
                 .append(obj3), exception);
         }
     }
@@ -333,7 +422,7 @@ public class POILogger
     /**
      * Log a message. Lazily appends Object parameters together.
      *
-     * @param logLevel One of DEBUG, INFO, WARN, ERROR, FATAL
+     * @param level One of DEBUG, INFO, WARN, ERROR, FATAL
      * @param obj1 first Object to place in the message
      * @param obj2 second Object to place in the message
      * @param obj3 third object to place in the message
@@ -341,15 +430,15 @@ public class POILogger
      * @param exception An exception to be logged
      */
 
-    public void log(final int logLevel, final Object obj1, final Object obj2,
+    public void log(final int level, final Object obj1, final Object obj2,
                     final Object obj3, final Object obj4,
                     final Throwable exception)
     {
-        Level level = Level.toLevel(logLevel);
+        
 
-        if (log.isEnabledFor(level))
+        if (check(log, level))
         {
-            log.log(level, new StringBuffer(64).append(obj1).append(obj2)
+            log(level, new StringBuffer(64).append(obj1).append(obj2)
                 .append(obj3).append(obj4), exception);
         }
     }
@@ -357,7 +446,7 @@ public class POILogger
     /**
      * Log a message. Lazily appends Object parameters together.
      *
-     * @param logLevel One of DEBUG, INFO, WARN, ERROR, FATAL
+     * @param level One of DEBUG, INFO, WARN, ERROR, FATAL
      * @param obj1 first Object to place in the message
      * @param obj2 second Object to place in the message
      * @param obj3 third object to place in the message
@@ -366,15 +455,15 @@ public class POILogger
      * @param exception An exception to be logged
      */
 
-    public void log(final int logLevel, final Object obj1, final Object obj2,
+    public void log(final int level, final Object obj1, final Object obj2,
                     final Object obj3, final Object obj4, final Object obj5,
                     final Throwable exception)
     {
-        Level level = Level.toLevel(logLevel);
+        
 
-        if (log.isEnabledFor(level))
+        if (check(log, level))
         {
-            log.log(level, new StringBuffer(80).append(obj1).append(obj2)
+            log(level, new StringBuffer(80).append(obj1).append(obj2)
                 .append(obj3).append(obj4).append(obj5), exception);
         }
     }
@@ -382,7 +471,7 @@ public class POILogger
     /**
      * Log a message. Lazily appends Object parameters together.
      *
-     * @param logLevel One of DEBUG, INFO, WARN, ERROR, FATAL
+     * @param level One of DEBUG, INFO, WARN, ERROR, FATAL
      * @param obj1 first Object to place in the message
      * @param obj2 second Object to place in the message
      * @param obj3 third object to place in the message
@@ -392,15 +481,15 @@ public class POILogger
      * @param exception An exception to be logged
      */
 
-    public void log(final int logLevel, final Object obj1, final Object obj2,
+    public void log(final int level, final Object obj1, final Object obj2,
                     final Object obj3, final Object obj4, final Object obj5,
                     final Object obj6, final Throwable exception)
     {
-        Level level = Level.toLevel(logLevel);
+        
 
-        if (log.isEnabledFor(level))
+        if (check(log, level))
         {
-            log.log(Level.toLevel(logLevel), new StringBuffer(96).append(obj1)
+            log(level , new StringBuffer(96).append(obj1)
                 .append(obj2).append(obj3).append(obj4).append(obj5)
                 .append(obj6), exception);
         }
@@ -409,7 +498,7 @@ public class POILogger
     /**
      * Log a message. Lazily appends Object parameters together.
      *
-     * @param logLevel One of DEBUG, INFO, WARN, ERROR, FATAL
+     * @param level One of DEBUG, INFO, WARN, ERROR, FATAL
      * @param obj1 first Object to place in the message
      * @param obj2 second Object to place in the message
      * @param obj3 third object to place in the message
@@ -420,16 +509,16 @@ public class POILogger
      * @param exception An exception to be logged
      */
 
-    public void log(final int logLevel, final Object obj1, final Object obj2,
+    public void log(final int level, final Object obj1, final Object obj2,
                     final Object obj3, final Object obj4, final Object obj5,
                     final Object obj6, final Object obj7,
                     final Throwable exception)
     {
-        Level level = Level.toLevel(logLevel);
+        
 
-        if (log.isEnabledFor(level))
+        if (check(log, level))
         {
-            log.log(level, new StringBuffer(112).append(obj1).append(obj2)
+            log(level, new StringBuffer(112).append(obj1).append(obj2)
                 .append(obj3).append(obj4).append(obj5).append(obj6)
                 .append(obj7), exception);
         }
@@ -438,7 +527,7 @@ public class POILogger
     /**
      * Log a message. Lazily appends Object parameters together.
      *
-     * @param logLevel One of DEBUG, INFO, WARN, ERROR, FATAL
+     * @param level One of DEBUG, INFO, WARN, ERROR, FATAL
      * @param obj1 first Object to place in the message
      * @param obj2 second Object to place in the message
      * @param obj3 third object to place in the message
@@ -450,16 +539,16 @@ public class POILogger
      * @param exception An exception to be logged
      */
 
-    public void log(final int logLevel, final Object obj1, final Object obj2,
+    public void log(final int level, final Object obj1, final Object obj2,
                     final Object obj3, final Object obj4, final Object obj5,
                     final Object obj6, final Object obj7, final Object obj8,
                     final Throwable exception)
     {
-        Level level = Level.toLevel(logLevel);
+        
 
-        if (log.isEnabledFor(level))
+        if (check(log, level))
         {
-            log.log(level, new StringBuffer(128).append(obj1).append(obj2)
+            log(level, new StringBuffer(128).append(obj1).append(obj2)
                 .append(obj3).append(obj4).append(obj5).append(obj6)
                 .append(obj7).append(obj8), exception);
         }
@@ -485,15 +574,15 @@ public class POILogger
      * If the last parameter (after flattening) is a Throwable it is
      * logged specially.
      *
-     * @param logLevel One of DEBUG, INFO, WARN, ERROR, FATAL
+     * @param level One of DEBUG, INFO, WARN, ERROR, FATAL
      * @param message The message to log.
      * @param obj1 The first object to match against.
      */
 
-    public void logFormatted(final int logLevel, final String message,
+    public void logFormatted(final int level, final String message,
                              final Object obj1)
     {
-        commonLogFormatted(logLevel, message, new Object[]
+        commonLogFormatted(level, message, new Object[]
         {
             obj1
         });
@@ -519,16 +608,16 @@ public class POILogger
      * If the last parameter (after flattening) is a Throwable it is
      * logged specially.
      *
-     * @param logLevel One of DEBUG, INFO, WARN, ERROR, FATAL
+     * @param level One of DEBUG, INFO, WARN, ERROR, FATAL
      * @param message The message to log.
      * @param obj1 The first object to match against.
      * @param obj2 The second object to match against.
      */
 
-    public void logFormatted(final int logLevel, final String message,
+    public void logFormatted(final int level, final String message,
                              final Object obj1, final Object obj2)
     {
-        commonLogFormatted(logLevel, message, new Object[]
+        commonLogFormatted(level, message, new Object[]
         {
             obj1, obj2
         });
@@ -554,18 +643,18 @@ public class POILogger
      * If the last parameter (after flattening) is a Throwable it is
      * logged specially.
      *
-     * @param logLevel One of DEBUG, INFO, WARN, ERROR, FATAL
+     * @param level One of DEBUG, INFO, WARN, ERROR, FATAL
      * @param message The message to log.
      * @param obj1 The first object to match against.
      * @param obj2 The second object to match against.
      * @param obj3 The third object to match against.
      */
 
-    public void logFormatted(final int logLevel, final String message,
+    public void logFormatted(final int level, final String message,
                              final Object obj1, final Object obj2,
                              final Object obj3)
     {
-        commonLogFormatted(logLevel, message, new Object[]
+        commonLogFormatted(level, message, new Object[]
         {
             obj1, obj2, obj3
         });
@@ -591,7 +680,7 @@ public class POILogger
      * If the last parameter (after flattening) is a Throwable it is
      * logged specially.
      *
-     * @param logLevel One of DEBUG, INFO, WARN, ERROR, FATAL
+     * @param level One of DEBUG, INFO, WARN, ERROR, FATAL
      * @param message The message to log.
      * @param obj1 The first object to match against.
      * @param obj2 The second object to match against.
@@ -599,33 +688,33 @@ public class POILogger
      * @param obj4 The forth object to match against.
      */
 
-    public void logFormatted(final int logLevel, final String message,
+    public void logFormatted(final int level, final String message,
                              final Object obj1, final Object obj2,
                              final Object obj3, final Object obj4)
     {
-        commonLogFormatted(logLevel, message, new Object[]
+        commonLogFormatted(level, message, new Object[]
         {
             obj1, obj2, obj3, obj4
         });
     }
 
-    private void commonLogFormatted(final int logLevel, final String message,
+    private void commonLogFormatted(final int level, final String message,
                                     final Object [] unflatParams)
     {
-        Level level = Level.toLevel(logLevel);
+        
 
-        if (log.isEnabledFor(level))
+        if (check(log, level))
         {
             Object[] params = flattenArrays(unflatParams);
 
             if (params[ params.length - 1 ] instanceof Throwable)
             {
-                log(logLevel, StringUtil.format(message, params),
+                log(level, StringUtil.format(message, params),
                     ( Throwable ) params[ params.length - 1 ]);
             }
             else
             {
-                log(logLevel, StringUtil.format(message, params));
+                log(level, StringUtil.format(message, params));
             }
         }
     }

@@ -63,7 +63,7 @@ import java.util.Iterator;
 
 import org.apache.poi.hssf.record.*;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.hssf.HSSFLog;
+import org.apache.poi.util.POILogFactory;
 
 /**
  * Workbook
@@ -130,7 +130,7 @@ public class Workbook
     private int                backuppos   =
         0;   // holds the position of the backup record.
     private static POILogger   log         =
-        HSSFLog.getPOILogger(Workbook.class);
+        POILogFactory.getLogger(Workbook.class);
 
     /**
      * Creates new Workbook with no intitialization --useless right now

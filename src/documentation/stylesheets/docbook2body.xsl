@@ -6,16 +6,31 @@
   <xsl:template match="book">
     <body>
       <title><xsl:value-of select="title"/></title>
-      <center>
-        <table width="80%">
-          <tr>
-            <td bgcolor="#F3DD61">
-              <br/><center><b><xsl:value-of select="title"/><xsl:if test="subtitle"><xsl:text>: </xsl:text><xsl:value-of select="subtitle"/></xsl:if></b></center>
-              <br/>
-            </td>
-          </tr>
-        </table>
-      </center><br/>
+            <table class="centered" align="center" width="100%">
+              <tbody>
+                <tr>
+                  <td align="center">
+                    <table class="title" cellspacing="0" cellpadding="1" border="0">
+                      <tbody>
+                        <tr>
+                          <td bgcolor="#525d76">
+                            <table class="centered" cellspacing="0" cellpadding="2" border="0" width="100%">
+                              <tbody>
+                                <tr>
+                                  <td bgcolor="#f3dd61">
+                                    <span class="title"><xsl:value-of select="title"/><xsl:if test="subtitle"><xsl:text>: </xsl:text><xsl:value-of select="subtitle"/></xsl:if></span>
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
       <xsl:apply-templates select="dedication"/>
       <xsl:apply-templates select="bookinfo"/>
     </body>
@@ -25,15 +40,31 @@
     <body>
     <xsl:if test="normalize-space(title)!=''">
       <title><xsl:value-of select="title"/></title>
-      <center>
-        <table width="80%">
-          <tr>
-            <td bgcolor="#F3DD61">
-              <font size="+1" face="Arial,sans-serif"><center><b><xsl:value-of select="title"/></b></center></font>
-            </td>
-          </tr>
-        </table>
-      </center>
+            <table class="centered" align="center" width="100%">
+              <tbody>
+                <tr>
+                  <td align="center">
+                    <table class="title" cellspacing="0" cellpadding="1" border="0">
+                      <tbody>
+                        <tr>
+                          <td bgcolor="#525d76">
+                            <table class="centered" cellspacing="0" cellpadding="2" border="0" width="100%">
+                              <tbody>
+                                <tr>
+                                  <td bgcolor="#f3dd61">
+                                    <span class="title"><xsl:value-of select="title"/></span>
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
       </xsl:if>
       
       <xsl:if test="subtitle">
@@ -58,7 +89,7 @@
 
       
         <xsl:apply-templates select="para"/>
-      <br/>
+
 
       <xsl:apply-templates select="section">
         <xsl:with-param name="level" select="1"/>
@@ -422,13 +453,6 @@
 
   <xsl:template match="tbody|tfoot">
     <xsl:apply-templates/>
-  </xsl:template>
-
-  <xsl:template match="entry[@role='th']">
-    <td align="center" bgcolor="#006CB8" valign="top"
-        style="font-weight: bold">
-      <font color="#ffffff" size="-1"><xsl:apply-templates/></font>
-    </td>
   </xsl:template>
 
   <xsl:template match="entry">

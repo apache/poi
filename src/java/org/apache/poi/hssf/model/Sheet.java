@@ -61,7 +61,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import org.apache.poi.hssf.HSSFLog;
+import org.apache.poi.util.POILogFactory;
 import org.apache.poi.hssf
     .record.*;       // normally I don't do this, buy we literally mean ALL
 import org.apache.poi.hssf.record.formula.FormulaUtil;
@@ -106,7 +106,7 @@ public class Sheet
     protected MergeCellsRecord       merged           = null;
     protected int                    mergedloc        = 0;
     private static POILogger         log              =
-        HSSFLog.getPOILogger(Sheet.class);
+        POILogFactory.getLogger(Sheet.class);
     private ArrayList                columnSizes      =
         null;   // holds column info
     protected ValueRecordsAggregate  cells            = null;
