@@ -59,7 +59,8 @@ import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RowRecord;
 import org.apache.poi.hssf.record.UnknownRecord;
 
-import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -73,14 +74,15 @@ public class RowRecordsAggregate
 {
     int     firstrow = -1;
     int     lastrow  = -1;
-    HashMap records  = null;
+    Map records  = null;
     int     size     = 0;
 
     /** Creates a new instance of ValueRecordsAggregate */
 
     public RowRecordsAggregate()
     {
-        records = new HashMap();
+        records = new TreeMap();
+
     }
 
     public void insertRow(RowRecord row)
@@ -216,4 +218,6 @@ public class RowRecordsAggregate
     {
         return records.values().iterator();
     }
+    
 }
+
