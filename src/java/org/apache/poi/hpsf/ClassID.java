@@ -55,9 +55,7 @@
  */
 package org.apache.poi.hpsf;
 
-import java.io.*;
 import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndian;
 
 /**
  *  <p>Represents a class ID (16 bytes). Unlike other little-endian
