@@ -38,6 +38,7 @@
                     <li><link href="#Zoom">Set the zoom magnification for a sheet.</link></li>
                     <li><link href="#Splits">Create split and freeze panes.</link></li>
                     <li><link href="#Repeating">Repeating rows and columns.</link></li>
+                    <li><link href="#HeaderFooter">Headers and Footers.</link></li>
                 </ul>
             </section>
             <section title="Features">
@@ -645,6 +646,26 @@
     wb.setRepeatingRowsAndColumns(0,0,2,-1,-1);
     // Set the the repeating rows and columns on the second sheet.
     wb.setRepeatingRowsAndColumns(1,4,5,1,2);
+
+    FileOutputStream fileOut = new FileOutputStream("workbook.xls");
+    wb.write(fileOut);
+    fileOut.close();
+                    </source>
+                </section>
+                <anchor id="HeaderFooter"/>
+                <section title="Headers and Footers">
+                    <p>
+                        Example is for headers but applies directly to footers.
+                    </p>
+                    <source>
+    HSSFWorkbook wb = new HSSFWorkbook();
+    HSSFSheet sheet = wb.createSheet("new sheet");
+
+    HSSFHeader header = sheet.getHeader();
+    header.setCenter("Center Header");
+    header.setLeft("Left Header");
+    header.setRight(HSSFHeader.font("Stencil-Normal", "Italic") + 
+                    HSSFHeader.fontSize((short) 16) + "Right w/ Stencil-Normal Italic font and size 16");
 
     FileOutputStream fileOut = new FileOutputStream("workbook.xls");
     wb.write(fileOut);
