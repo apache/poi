@@ -53,7 +53,8 @@
  */
 
 package org.apache.poi.hpsf.basic;
-import org.apache.poi.poifs.filesystem.*;
+
+import org.apache.poi.poifs.filesystem.POIFSDocumentPath;
 
 
 
@@ -73,32 +74,32 @@ public class POIFile
 
     public void setName(final String name)
     {
-	this.name = name;
+        this.name = name;
     }
 
     public String getName()
     {
-	return name;
+        return name;
     }
 
     public void setPath(final POIFSDocumentPath path)
     {
-	this.path = path;
+        this.path = path;
     }
 
     public POIFSDocumentPath getPath()
     {
-	return path;
+        return path;
     }
 
     public void setBytes(final byte[] bytes)
     {
-	this.bytes = bytes;
+        this.bytes = bytes;
     }
 
     public byte[] getBytes()
     {
-	return bytes;
+        return bytes;
     }
 
 }

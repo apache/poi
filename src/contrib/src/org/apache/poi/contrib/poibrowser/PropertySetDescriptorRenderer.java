@@ -58,13 +58,21 @@
 
 package org.apache.poi.contrib.poibrowser;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Font;
 import java.util.Iterator;
 import java.util.List;
-import javax.swing.*;
-import javax.swing.tree.*;
-import org.apache.poi.hpsf.*;
-import org.apache.poi.hpsf.wellknown.*;
+
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+import javax.swing.JTree;
+import javax.swing.tree.DefaultMutableTreeNode;
+
+import org.apache.poi.hpsf.Property;
+import org.apache.poi.hpsf.PropertySet;
+import org.apache.poi.hpsf.Section;
+import org.apache.poi.hpsf.SummaryInformation;
 
 /**
  * <p>Renders a {@link PropertySetDescriptor} by more or less dumping
@@ -148,7 +156,8 @@ public class PropertySetDescriptorRenderer extends DocumentDescriptorRenderer
         for (Iterator i = sections.iterator(); i.hasNext();)
         {
             Section s = (Section) i.next();
-            b.append(toString(s, "Section " + count++));
+            String d = toString(s, "Section " + count++);
+            b.append(d);
         }
         return b.toString();
     }
@@ -184,8 +193,10 @@ public class PropertySetDescriptorRenderer extends DocumentDescriptorRenderer
                 b.append(' ');
                 b.append("0x" + Codec.hexEncode(b2, 4, b2.length - 4));
             }
-            else
+            else if (value != null)
                 b.append(value.toString());
+            else
+                b.append("null");
         }
         return b.toString();
     }
