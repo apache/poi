@@ -444,7 +444,7 @@ public class ParagraphSprmUncompressor
     for (int x = 0; x < delSize; x++)
     {
       tabMap.remove(new Integer(LittleEndian.getInt(grpprl, offset)));
-      offset += LittleEndian.INT_SIZE;;
+      offset += LittleEndian.SHORT_SIZE;
     }
 
     int addSize = grpprl[offset++];

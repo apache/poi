@@ -73,10 +73,6 @@ public class ListFormatOverrideLevel
 
   public ListFormatOverrideLevel(byte[] buf, int offset)
   {
-    while(buf[offset] == -1)
-    {
-      offset++;
-    }
     _iStartAt = LittleEndian.getInt(buf, offset);
     offset += LittleEndian.INT_SIZE;
     _info = buf[offset++];

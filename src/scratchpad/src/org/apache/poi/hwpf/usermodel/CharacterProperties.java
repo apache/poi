@@ -268,7 +268,7 @@ public class CharacterProperties
     return isFDStrike();
   }
 
-  public void setDoubleStrikethrough(boolean dstrike)
+  public void setDoubleStrikeThrough(boolean dstrike)
   {
     super.setFDStrike(dstrike);
   }

@@ -69,6 +69,11 @@ public class ComplexFileTable
 
   TextPieceTable _tpt;
 
+  public ComplexFileTable()
+  {
+    _tpt = new TextPieceTable();
+  }
+
   public ComplexFileTable(byte[] documentStream, byte[] tableStream, int offset, int fcMin) throws IOException
   {
     //skips through the prms before we reach the piece table. These contain data
@@ -110,7 +115,6 @@ public class ComplexFileTable
     LittleEndian.putInt(numHolder, table.length);
     tableStream.write(numHolder);
     tableStream.write(table);
-
   }
 
 }

@@ -48,12 +48,10 @@ import org.apache.poi.hwpf.usermodel.*;
  * @author Ryan Ackley
  */
 public class HWPFDocument
+//  implements Cloneable
 {
-  /** OLE stuff*/
-  private POIFSFileSystem _filesystem;
-
   /** The FIB*/
-  private FileInformationBlock _fib;
+  protected FileInformationBlock _fib;
 
   /** main document stream buffer*/
   private byte[] _mainStream;
@@ -62,34 +60,34 @@ public class HWPFDocument
   private byte[] _tableStream;
 
   /** data stream buffer*/
-  private byte[] _dataStream;
+  protected byte[] _dataStream;
 
   /** Document wide Properties*/
-  private DocumentProperties _dop;
+  protected DocumentProperties _dop;
 
-  /** Contains text of the document wrapped in a obfuscated Wod data structure*/
-  private ComplexFileTable _cft;
+  /** Contains text of the document wrapped in a obfuscated Word data
+  * structure*/
+  protected ComplexFileTable _cft;
 
-  private TextPieceTable _tpt;
+  protected TextPieceTable _tpt;
 
   /** Contains formatting properties for text*/
-  private CHPBinTable _cbt;
+  protected CHPBinTable _cbt;
 
   /** Contains formatting properties for paragraphs*/
-  private PAPBinTable _pbt;
+  protected PAPBinTable _pbt;
 
   /** Contains formatting properties for sections.*/
-  private SectionTable _st;
+  protected SectionTable _st;
 
   /** Holds styles for this document.*/
-  private StyleSheet _ss;
+  protected StyleSheet _ss;
 
   /** Holds fonts for this document.*/
-  private FontTable _ft;
+  protected FontTable _ft;
 
   /** Hold list tables */
-  private ListTables _lt;
-
+  protected ListTables _lt;
 
   /**
    * This constructor loads a Word document from an InputStream.
@@ -101,13 +99,13 @@ public class HWPFDocument
   public HWPFDocument(InputStream istream) throws IOException
   {
     //do Ole stuff
-    _filesystem = new POIFSFileSystem(istream);
+    POIFSFileSystem filesystem = new POIFSFileSystem(istream);
 
     // read in the main stream.
     DocumentEntry documentProps =
-       (DocumentEntry)_filesystem.getRoot().getEntry("WordDocument");
+       (DocumentEntry)filesystem.getRoot().getEntry("WordDocument");
     _mainStream = new byte[documentProps.getSize()];
-    _filesystem.createDocumentInputStream("WordDocument").read(_mainStream);
+    filesystem.createDocumentInputStream("WordDocument").read(_mainStream);
 
     // use the fib to determine the name of the table stream.
     _fib = new FileInformationBlock(_mainStream);
@@ -120,9 +118,9 @@ public class HWPFDocument
 
     // read in the table stream.
     DocumentEntry tableProps =
-      (DocumentEntry)_filesystem.getRoot().getEntry(name);
+      (DocumentEntry)filesystem.getRoot().getEntry(name);
     _tableStream = new byte[tableProps.getSize()];
-    _filesystem.createDocumentInputStream(name).read(_tableStream);
+    filesystem.createDocumentInputStream(name).read(_tableStream);
 
     _fib.fillVariableFields(_mainStream, _tableStream);
 
@@ -130,9 +128,9 @@ public class HWPFDocument
     try
     {
       DocumentEntry dataProps =
-          (DocumentEntry) _filesystem.getRoot().getEntry("Data");
+          (DocumentEntry) filesystem.getRoot().getEntry("Data");
       _dataStream = new byte[dataProps.getSize()];
-      _filesystem.createDocumentInputStream("Data").read(_dataStream);
+      filesystem.createDocumentInputStream("Data").read(_dataStream);
     }
     catch(java.io.FileNotFoundException e)
     {
@@ -431,4 +429,17 @@ public class HWPFDocument
       t.printStackTrace();
     }
   }
+
+//  public Object clone()
+//    throws CloneNotSupportedException
+//  {
+//    _tpt;
+//
+//    _cbt;
+//
+//    _pbt;
+//
+//    _st;
+//
+//  }
 }

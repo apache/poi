@@ -112,6 +112,10 @@ public class ListTables
       int num = lfo.numOverrides();
       for (int y = 0; y < num; y++)
       {
+        while(tableStream[lfolvlOffset] == -1)
+        {
+          lfolvlOffset++;
+        }
         ListFormatOverrideLevel lfolvl = new ListFormatOverrideLevel(tableStream, lfolvlOffset);
         lfo.setOverride(y, lfolvl);
         lfolvlOffset += lfolvl.getSizeInBytes();
