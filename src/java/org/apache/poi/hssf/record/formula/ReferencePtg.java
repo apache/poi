@@ -63,7 +63,7 @@ package org.apache.poi.hssf.record.formula;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.BitField;
 
-import org.apache.poi.hssf.util.ReferenceUtil;
+import org.apache.poi.hssf.util.CellReference;
 
 /**
  * ValueReferencePtg - handles references (such as A1, A2, IA4) - Should also
@@ -89,11 +89,11 @@ public class ReferencePtg extends Ptg
      * numeric fields.
      */
     protected ReferencePtg(String cellref) {
-        int[] xy = ReferenceUtil.getXYFromReference(cellref);
-        setRow((short)xy[0]);
-        setColumn((short)xy[1]);
-        setColRelative(true);
-        setRowRelative(true);
+        CellReference c= new CellReference(cellref);
+        setRow((short) c.getRow());
+        setColumn((short) c.getCol());
+        setColRelative(!c.isColAbsolute());
+        setRowRelative(!c.isRowAbsolute());
     }
 
     /** Creates new ValueReferencePtg */
@@ -179,6 +179,7 @@ public class ReferencePtg extends Ptg
 
     public String toFormulaString()
     {
-        return ReferenceUtil.getReferenceFromXY(getRow(),getColumn());
+        //TODO -- should we store a cellreference instance in this ptg?? but .. memory is an issue, i believe!
+        return (new CellReference(getRow(),getColumn(),!isRowRelative(),!isColRelative())).toString();
     }
 }
