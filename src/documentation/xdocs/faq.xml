@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE faqs PUBLIC "-//APACHE//DTD FAQ V1.1//EN" "dtd/faq-v11.dtd">
+<!DOCTYPE faqs PUBLIC "-//APACHE//DTD FAQ V1.1//EN" "./dtd/faq-v11.dtd">
 
 <faqs title="Frequently Asked Questions">
     <faq>
