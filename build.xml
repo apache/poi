@@ -176,8 +176,9 @@
   <!-- ====================================== -->
   <!--  dist target wo single build checks    -->
   <!-- ====================================== -->
-
-  <target  name="dist"   depends="-init, clean, jar, test, site"
+<!-- REALLY DIRTY HACK, ANDY REMOVED CLEAN TARGET, RE-ADD WHEN CENTIPEDE BUG -->
+<!-- is fixed!!!!!!!! -->
+  <target  name="dist"   depends="-init, jar, test, site"
            description="Build distribution packages wo single build checks">
 
     <antcall target="call-cent">
