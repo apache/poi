@@ -110,6 +110,18 @@ extends TestCase {
             
     }
                  
+     public void test23094() throws Exception {
+         File file = File.createTempFile("test23094",".xls");
+         FileOutputStream out    = new FileOutputStream(file);
+         HSSFWorkbook     wb     = new HSSFWorkbook();
+         HSSFSheet        s      = wb.createSheet();
+         HSSFRow r = s.createRow(0);
+         r.createCell((short)0).setCellFormula("HYPERLINK( \"http://jakarta.apache.org\", \"Jakarta\" )");
+         assertTrue("No Exception expected",true);
+         wb.write(out);
+         out.close();
+     }
+                 
           
           
     
