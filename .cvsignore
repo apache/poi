@@ -2,6 +2,7 @@
 dist
 *.el
 *.ipr
+*.iws
 build.number
 log*.*
 *.log
