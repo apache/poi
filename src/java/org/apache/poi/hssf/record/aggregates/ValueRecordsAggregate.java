@@ -86,12 +86,12 @@ public class ValueRecordsAggregate
     private final static int DEFAULT_ROWS=10000;
     private final static int DEFAULT_COLS=256;
 
-    List celltype = null;
-    List xfs      = null;
-    List numericcells = null;
-    List formulaptgs = null;
-    List stringvals = null;
-    IntList populatedRows = null;
+    List celltype = null;  //array of HSSFCEll.CELL_TYPE_XXX tells us which arrays to use
+    List xfs      = null;  // array of style types.  Index of XF record
+    List numericcells = null; // numeric and Shared string indicies.  
+    List formulaptgs = null; // array of arrays of PTGS
+    List stringvals = null;  // array of actual string/formula string vals
+    IntList populatedRows = null;  //indicies of populated rows
     int physCells; //physical number of cells
 
     public CellValueRecordInterface getCell(int row, short col) {
