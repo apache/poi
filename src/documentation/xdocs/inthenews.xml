@@ -99,15 +99,7 @@
                 
         </ul>
     </s1>
-    <s1 title="xxxxxxx (French)">
-        <p>
-            Growing up in Florida, one does not use very much French on a day
-            to day basis, and while I know how to say French in French I have
-            absolutely no idea how to spell it.  So if you are so inclined and
-            have the requisite extended characters on your keyboard, please
-            email acoliver at apache dot org the proper spelling for French in
-            French.
-        </p>
+    <s1 title="Francais (French)">
         <ul>
 		<li>
 			<link href="http://linuxfr.org/section/D%E9veloppeur,0,1,8,0.html">
@@ -116,15 +108,7 @@
                 </li>
         </ul>
     </s1>
-    <s1 title="Japanese">
-        <p>
-                If anyone knows how to spell Japanese in a way that Japanese
-                speakers (who don't recognize the English -- I hope to one day
-                have the site translated into other lanugages -- volunteers?)
-                can recognize it without making everyone download new
-                charactersets just to view the page please step up and send in a 
-                patch to the poi-dev list!
-        </p>
+    <s1 title="Nihongo (Japanese)">
         <ul>
                 <li>
                         <link
