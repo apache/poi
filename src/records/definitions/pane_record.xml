@@ -1,0 +1,18 @@
+<record id="0x41" name="Pane" excel-record-id="PANE" package="org.apache.poi.hssf.record">
+    <suffix>Record</suffix>
+    <extends>Record</extends>
+    <description>Describes the frozen and unfozen panes.</description>
+    <author>Glen Stampoultzis (glens at apache.org)</author>
+    <fields>
+        <field type="int" size="2" name="x" description="horizontal position in 1/20th of a point (or number of columns visible if frozen pane)"/>
+        <field type="int" size="2" name="y" description="vertical position in 1/20th of a point (or number of rows visible if frozen pane)"/>
+        <field type="int" size="2" name="top row" description="top row visible in bottom pane"/>
+        <field type="int" size="2" name="left column" description="left column visible in the right pane"/>
+        <field type="int" size="2" name="active pane" description="which pane is active">
+            <const name="lower right" value="0"/>
+            <const name="upper right" value="1"/>
+            <const name="lower left" value="2"/>
+            <const name="uper left" value="3"/>
+        </field>
+    </fields>
+</record>

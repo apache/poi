@@ -72,6 +72,7 @@ import org.apache.poi.hssf.util.SheetReferences;
  * REFERENCE:  <P>
  * @author Libin Roman (Vista Portal LDT. Developer)
  * @author  Sergei Kozello (sergeikozello at mail.ru)
+ * @author Glen Stampoultzis (glens at apache.org)
  * @version 1.0-pre
  */
 
@@ -83,7 +84,7 @@ public class NameRecord extends Record {
     private byte              field_2_keyboard_shortcut;
     private byte              field_3_length_name_text;
     private short             field_4_length_name_definition;
-    private short             field_5_index_to_sheet;
+    private short             field_5_index_to_sheet;     // unused: see field_6
     private short             field_6_equals_to_index_to_sheet;
     private byte              field_7_length_custom_menu;
     private byte              field_8_length_description_text;
@@ -98,6 +99,7 @@ public class NameRecord extends Record {
     private String            field_15_description_text;
     private String            field_16_help_topic_text;
     private String            field_17_status_bar_text;
+
 
     /** Creates new NameRecord */
     public NameRecord() {
@@ -161,16 +163,27 @@ public class NameRecord extends Record {
         field_4_length_name_definition = length;
     }
 
-    /** sets the index number to the extern sheet (thats is what writen in ducomentetion
-     *  but as i saw , its work direrent)
+    /** sets the index number to the extern sheet (thats is what writen in documentation
+     *  but as i saw , it works differently)
      * @param index extern sheet index
      */
-    public void setIndexToSheet(short index){
+    public void setUnused(short index){
         field_5_index_to_sheet = index;
 
         // field_6_equals_to_index_to_sheet is equal to field_5_index_to_sheet
-        field_6_equals_to_index_to_sheet = index;
+//        field_6_equals_to_index_to_sheet = index;
     }
+
+    public short getEqualsToIndexToSheet()
+    {
+        return field_6_equals_to_index_to_sheet;
+    }
+
+    public void setEqualsToIndexToSheet(short value)
+    {
+        field_6_equals_to_index_to_sheet = value;
+    }
+
 
     /** sets the custom menu length
      * @param length custom menu length
@@ -277,7 +290,7 @@ public class NameRecord extends Record {
     /** gets the index to extern sheet
      * @return index to extern sheet
      */
-    public short getIndexToSheet(){
+    public short getUnused(){
         return field_5_index_to_sheet;
     }
 
@@ -326,8 +339,12 @@ public class NameRecord extends Record {
     /** gets the definition, reference (Formula)
      * @return definition -- can be null if we cant parse ptgs
      */
-    protected List getNameDefinition() {
+    public List getNameDefinition() {
         return field_13_name_definition;
+    }
+
+    public void setNameDefinition(Stack nameDefinition) {
+        field_13_name_definition = nameDefinition;
     }
 
     /** get the custom menu text
@@ -379,57 +396,64 @@ public class NameRecord extends Record {
      * @param data byte array containing instance data
      * @return number of bytes written
      */
-    public int serialize(int offset, byte[] data) {
-        LittleEndian.putShort(data, 0 + offset, sid);
+    public int serialize( int offset, byte[] data )
+    {
+        LittleEndian.putShort( data, 0 + offset, sid );
         // size defined below
-        LittleEndian.putShort(data, 4 + offset, getOptionFlag());
+        LittleEndian.putShort( data, 4 + offset, getOptionFlag() );
         data[6 + offset] = getKeyboardShortcut();
         data[7 + offset] = getNameTextLength();
-        LittleEndian.putShort(data, 8 + offset, getDefinitionTextLength());
-        LittleEndian.putShort(data, 10 + offset, getIndexToSheet());
-        LittleEndian.putShort(data, 12 + offset, getIndexToSheet());
-        data [14 + offset] =  getCustomMenuLength();
-        data [15 + offset] =  getDescriptionTextLength();
-        data [16 + offset] =  getHelpTopicLength();
-        data [17 + offset] =  getStatusBarLength();
-        data [18 + offset] =  getCompressedUnicodeFlag();
-        
-      if ( ( field_1_option_flag & (short)0x20 ) != 0 ) {
-          LittleEndian.putShort(data, 2 + offset, (short)( 16 + field_13_raw_name_definition.length ));
-          
-            data [19 + offset] =  field_12_builtIn_name;
+        LittleEndian.putShort( data, 8 + offset, getDefinitionTextLength() );
+        LittleEndian.putShort( data, 10 + offset, getUnused() );
+        LittleEndian.putShort( data, 12 + offset, getEqualsToIndexToSheet() );
+        data[14 + offset] = getCustomMenuLength();
+        data[15 + offset] = getDescriptionTextLength();
+        data[16 + offset] = getHelpTopicLength();
+        data[17 + offset] = getStatusBarLength();
+        data[18 + offset] = getCompressedUnicodeFlag();
+
+        /* temp: gjs
+        if ( ( field_1_option_flag & (short) 0x20 ) != 0 )
+        {
+            LittleEndian.putShort( data, 2 + offset, (short) ( 16 + field_13_raw_name_definition.length ) );
+
+            data[19 + offset] = field_12_builtIn_name;
             System.arraycopy( field_13_raw_name_definition, 0, data, 20 + offset, field_13_raw_name_definition.length );
-            
+
             return 20 + field_13_raw_name_definition.length;
-      }
-      else {
-          LittleEndian.putShort(data, 2 + offset, (short)( 15 + getTextsLength()));
-          
-          
-            StringUtil.putCompressedUnicode(getNameText(), data , 19 + offset);
-    
-            int start_of_name_definition    = 19  + field_3_length_name_text;
-            if (this.field_13_name_definition != null) {
-                serializePtgs(data, start_of_name_definition + offset);
-            } else {
-                System.arraycopy(field_13_raw_name_definition,0,data
-                ,start_of_name_definition + offset,field_13_raw_name_definition.length);
+        }
+        else
+        {     */
+            LittleEndian.putShort( data, 2 + offset, (short) ( 15 + getTextsLength() ) );
+
+
+            StringUtil.putCompressedUnicode( getNameText(), data, 19 + offset );
+
+            int start_of_name_definition = 19 + field_3_length_name_text;
+            if ( this.field_13_name_definition != null )
+            {
+                serializePtgs( data, start_of_name_definition + offset );
             }
-    
-            int start_of_custom_menu_text   = start_of_name_definition + field_4_length_name_definition;
-            StringUtil.putCompressedUnicode(getCustomMenuText(), data , start_of_custom_menu_text + offset);
-    
-            int start_of_description_text   = start_of_custom_menu_text + field_8_length_description_text;
-            StringUtil.putCompressedUnicode(getDescriptionText(), data , start_of_description_text + offset);
-    
-            int start_of_help_topic_text    = start_of_description_text + field_9_length_help_topic_text;
-            StringUtil.putCompressedUnicode(getHelpTopicText(), data , start_of_help_topic_text + offset);
-    
-            int start_of_status_bar_text       = start_of_help_topic_text + field_10_length_status_bar_text;
-            StringUtil.putCompressedUnicode(getStatusBarText(), data , start_of_status_bar_text + offset);
-            
-          return getRecordSize();
-      }
+            else
+            {
+                System.arraycopy( field_13_raw_name_definition, 0, data
+                        , start_of_name_definition + offset, field_13_raw_name_definition.length );
+            }
+
+            int start_of_custom_menu_text = start_of_name_definition + field_4_length_name_definition;
+            StringUtil.putCompressedUnicode( getCustomMenuText(), data, start_of_custom_menu_text + offset );
+
+            int start_of_description_text = start_of_custom_menu_text + field_8_length_description_text;
+            StringUtil.putCompressedUnicode( getDescriptionText(), data, start_of_description_text + offset );
+
+            int start_of_help_topic_text = start_of_description_text + field_9_length_help_topic_text;
+            StringUtil.putCompressedUnicode( getHelpTopicText(), data, start_of_help_topic_text + offset );
+
+            int start_of_status_bar_text = start_of_help_topic_text + field_10_length_status_bar_text;
+            StringUtil.putCompressedUnicode( getStatusBarText(), data, start_of_status_bar_text + offset );
+
+            return getRecordSize();
+        /* } */
     }
 
     private void serializePtgs(byte [] data, int offset) {
@@ -594,28 +618,30 @@ public class NameRecord extends Record {
         field_9_length_help_topic_text  = data [12 + offset];
         field_10_length_status_bar_text = data [13 + offset];
 
-        
+
+        /*
+        temp: gjs
         if ( ( field_1_option_flag & (short)0x20 ) != 0 ) {
             // DEBUG
             // System.out.println( "Built-in name" );
-            
+
             field_11_compressed_unicode_flag = data[ 14 + offset ];
             field_12_builtIn_name = data[ 15 + offset ];
 
             if ( (field_12_builtIn_name & (short)0x07) != 0 ) {
                 field_12_name_text = "Print_Titles";
-                
+
                 // DEBUG
                 // System.out.println( field_12_name_text );
-                
+
                 field_13_raw_name_definition = new byte[ field_4_length_name_definition ];
                 System.arraycopy( data, 16 + offset, field_13_raw_name_definition, 0, field_13_raw_name_definition.length );
-                
+
                 // DEBUG
                 // System.out.println( HexDump.toHex( field_13_raw_name_definition ) );
             }
         }
-        else {
+        else { */
     
             field_11_compressed_unicode_flag= data [14 + offset];
             field_12_name_text = new String(data, 15 + offset,
@@ -640,11 +666,11 @@ public class NameRecord extends Record {
             int start_of_status_bar_text       = start_of_help_topic_text + field_10_length_status_bar_text;
             field_17_status_bar_text        = new String(data, start_of_status_bar_text +  offset,
             LittleEndian.ubyteToInt(field_10_length_status_bar_text));
-        }
+        /*} */
     }
 
     private Stack getParsedExpressionTokens(byte [] data, short size,
-    int offset, int start_of_expression) {
+        int offset, int start_of_expression) {
         Stack stack = new Stack();
         int   pos           = start_of_expression + offset;
         int   sizeCounter   = 0;
@@ -739,7 +765,7 @@ public class NameRecord extends Record {
             .append("\n");
         buffer.append("    .size of the formula data = ").append( field_4_length_name_definition )
             .append("\n");
-        buffer.append("    .unused                 = ").append( field_5_index_to_sheet )
+        buffer.append("    .unused                   = ").append( field_5_index_to_sheet )
             .append("\n");
         buffer.append("    .( 0 = Global name, otherwise index to sheet (one-based) ) = ").append( field_6_equals_to_index_to_sheet )
             .append("\n");

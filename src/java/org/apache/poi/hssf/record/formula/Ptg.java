@@ -214,6 +214,14 @@ public abstract class Ptg
                 retval = new ParenthesisPtg(data, offset);
                 break;
 
+            case MemFuncPtg.sid :
+                retval = new MemFuncPtg(data, offset);
+                break;
+
+            case UnionPtg.sid :
+                retval = new UnionPtg(data, offset);
+                break;
+
             case FuncPtg.sid :
                 retval = new FuncPtg(data, offset);
                 break;
@@ -224,7 +232,7 @@ public abstract class Ptg
             case arrayFunc :
                 retval = new FuncPtg(data, offset);
                 break;
-                
+
             case FuncVarPtg.sid :
                 retval = new FuncVarPtg(data, offset);
                 break;

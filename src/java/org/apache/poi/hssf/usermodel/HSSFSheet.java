@@ -88,6 +88,12 @@ public class HSSFSheet
     public static final short TopMargin = Sheet.TopMargin;
     public static final short BottomMargin = Sheet.BottomMargin;
 
+    public static final byte PANE_LOWER_RIGHT = (byte)0;
+    public static final byte PANE_UPPER_RIGHT = (byte)1;
+    public static final byte PANE_LOWER_LEFT = (byte)2;
+    public static final byte PANE_UPPER_LEFT = (byte)3;
+
+
     /**
      * Used for compile-time optimization.  This is the initial size for the collection of
      * rows.  It is currently set to 20.  If you generate larger sheets you may benefit
@@ -537,9 +543,9 @@ public class HSSFSheet
 
         return record.getHCenter();
     }
-    
-    
-    
+
+
+
     /**
      * removes a merged region of cells (hence letting them free)
      * @param index of the region to unmerge
@@ -861,6 +867,27 @@ public class HSSFSheet
     }
 
     /**
+     * Sets the zoom magnication for the sheet.  The zoom is expressed as a
+     * fraction.  For example to express a zoom of 75% use 3 for the numerator
+     * and 4 for the denominator.
+     *
+     * @param numerator     The numerator for the zoom magnification.
+     * @param denominator   The denominator for the zoom magnification.
+     */
+    public void setZoom( int numerator, int denominator)
+    {
+        if (numerator < 1 || numerator > 65535)
+            throw new IllegalArgumentException("Numerator must be greater than 1 and less than 65536");
+        if (denominator < 1 || denominator > 65535)
+            throw new IllegalArgumentException("Denominator must be greater than 1 and less than 65536");
+
+        SCLRecord sclRecord = new SCLRecord();
+        sclRecord.setNumerator((short)numerator);
+        sclRecord.setDenominator((short)denominator);
+        getSheet().setSCLRecord(sclRecord);
+    }
+
+    /**
      * Shifts rows between startRow and endRow n number of rows.
      * If you use a negative number, it will shift rows up.
      * Code ensures that rows don't wrap around
@@ -920,4 +947,50 @@ public class HSSFSheet
         int window2Loc = sheet.findFirstRecordLocBySid( WindowTwoRecord.sid );
         sheet.getRecords().addAll( window2Loc, records );
     }
+
+    /**
+     * Creates a split (freezepane).
+     * @param colSplit      Horizonatal position of split.
+     * @param rowSplit      Vertical position of split.
+     * @param topRow        Top row visible in bottom pane
+     * @param leftmostColumn   Left column visible in right pane.
+     */
+    public void createFreezePane(int colSplit, int rowSplit, int leftmostColumn, int topRow )
+    {
+        if (colSplit < 0 || colSplit > 255) throw new IllegalArgumentException("Column must be between 0 and 255");
+        if (rowSplit < 0 || rowSplit > 65535) throw new IllegalArgumentException("Row must be between 0 and 65535");
+        if (leftmostColumn < colSplit) throw new IllegalArgumentException("leftmostColumn parameter must not be less than colSplit parameter");
+        if (topRow < rowSplit) throw new IllegalArgumentException("topRow parameter must not be less than leftmostColumn parameter");
+        getSheet().createFreezePane( colSplit, rowSplit, topRow, leftmostColumn );
+    }
+
+    /**
+     * Creates a split (freezepane).
+     * @param colSplit      Horizonatal position of split.
+     * @param rowSplit      Vertical position of split.
+     */
+    public void createFreezePane( int colSplit, int rowSplit )
+    {
+        createFreezePane( colSplit, rowSplit, colSplit, rowSplit );
+    }
+
+    /**
+     * Creates a split pane.
+     * @param xSplitPos      Horizonatal position of split (in 1/20th of a point).
+     * @param ySplitPos      Vertical position of split (in 1/20th of a point).
+     * @param topRow        Top row visible in bottom pane
+     * @param leftmostColumn   Left column visible in right pane.
+     * @param activePane    Active pane.  One of: PANE_LOWER_RIGHT,
+     *                      PANE_UPPER_RIGHT, PANE_LOWER_LEFT, PANE_UPPER_LEFT
+     * @see #PANE_LOWER_LEFT
+     * @see #PANE_LOWER_RIGHT
+     * @see #PANE_UPPER_LEFT
+     * @see #PANE_UPPER_RIGHT
+     */
+    public void createSplitPane(int xSplitPos, int ySplitPos, int leftmostColumn, int topRow, int activePane )
+    {
+        getSheet().createSplitPane( xSplitPos, ySplitPos, topRow, leftmostColumn, activePane );
+    }
+
+
 }

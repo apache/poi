@@ -89,7 +89,11 @@ public class TestNamedRange
         sheetName = namedRange1.getSheetName();
         //Getting its reference
         String referece = namedRange1.getReference();
-                               
+
+        // sanity check
+        SanityChecker c = new SanityChecker();
+        c.checkHSSFWorkbook(wb);
+
         File             file = File.createTempFile("testNamedRange",
                                         ".xls");
 

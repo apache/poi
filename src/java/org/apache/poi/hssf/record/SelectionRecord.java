@@ -64,11 +64,11 @@ import org.apache.poi.util.LittleEndian;
  * Description:  shows the user's selection on the sheet
  *               for write set num refs to 0<P>
  *
- * TODO :  Implement reference subrecords
+ * TODO :  Fully implement reference subrecords.
  * REFERENCE:  PG 291 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
  * @author Andrew C. Oliver (acoliver at apache dot org)
  * @author Jason Height (jheight at chariot dot net dot au)
- * @version 2.0-pre
+ * @author Glen Stampoultzis (glens at apache.org)
  */
 
 public class SelectionRecord
@@ -264,10 +264,10 @@ public class SelectionRecord
         LittleEndian.putShort(data, 7 + offset, getActiveCellCol());
         LittleEndian.putShort(data, 9 + offset, getActiveCellRef());
         LittleEndian.putShort(data, 11 + offset, ( short ) 1);
-        LittleEndian.putShort(data, 13 + offset, ( short ) 0);
-        LittleEndian.putShort(data, 15 + offset, ( short ) 0);
-        data[ 17 + offset ] = 0;
-        data[ 18 + offset ] = 0;
+        LittleEndian.putShort(data, 13 + offset, ( short ) getActiveCellRow());
+        LittleEndian.putShort(data, 15 + offset, ( short ) getActiveCellRow());
+        data[ 17 + offset ] = (byte)getActiveCellCol();
+        data[ 18 + offset ] = (byte)getActiveCellCol();
         return getRecordSize();
     }
 

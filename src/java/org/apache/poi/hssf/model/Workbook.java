@@ -79,9 +79,6 @@ import java.util.Locale;
  * Kit (Microsoft Press) and the documentation at http://sc.openoffice.org/excelfileformat.pdf
  * before even attempting to use this.
  *
- * @todo    Need a good way of keeping track of bookmarks in a list. Currently
- *          we are manually incrementing multiple indexes whenever new records
- *          are added.  This mechanism makes it very easy to introduce bugs.
  *
  * @author  Shawn Laubach (slaubach at apache dot org) (Data Formats)
  * @author  Andrew C. Oliver (acoliver at apache dot org)
@@ -109,45 +106,31 @@ public class Workbook implements Model {
     /**
      * this contains the Worksheet record objects
      */
-
-    protected ArrayList        records     = null;
+    protected WorkbookRecordList        records     = new WorkbookRecordList();
 
     /**
      * this contains a reference to the SSTRecord so that new stings can be added
      * to it.
      */
-
     protected SSTRecord        sst         = null;
 
     /**
      * Holds the Extern Sheet with references to bound sheets
      */
-
     protected ExternSheetRecord externSheet= null;
 
     /**
      * holds the "boundsheet" records (aka bundlesheet) so that they can have their
      * reference to their "BOF" marker
      */
-
-
     protected ArrayList        boundsheets = new ArrayList();
 
     protected ArrayList        formats = new ArrayList();
 
     protected ArrayList        names = new ArrayList();
 
-    protected int              protpos     = 0;   // holds the position of the protect record.
-    protected int              bspos       = 0;   // holds the position of the last bound sheet.
-    protected int              tabpos      = 0;   // holds the position of the tabid record
-    protected int              fontpos     = 0;   // hold the position of the last font record
-    protected int              numfonts    = 0;   // hold the number of font records
-    protected int              xfpos       = 0;   // hold the position of the last extended font record
     protected int              numxfs      = 0;   // hold the number of extended format records
-    private int                backuppos   = 0;   // holds the position of the backup record.
-    private int                namepos   = 0;   // holds the position of last name record
-    private int                supbookpos   = 0;   // holds the position of sup book
-    private int                palettepos  = 0;   // hold the position of the palette, if applicable
+    protected int              numfonts    = 0;   // hold the number of font records
     private short              maxformatid  = -1;  // holds the max format id
     private boolean            uses1904datewindowing  = false;  // whether 1904 date windowing is being used
 
@@ -157,7 +140,6 @@ public class Workbook implements Model {
      * Creates new Workbook with no intitialization --useless right now
      * @see #createWorkbook(List)
      */
-
     public Workbook() {
     }
 
@@ -173,7 +155,6 @@ public class Workbook implements Model {
      * @param recs an array of Record objects
      * @return Workbook object
      */
-
     public static Workbook createWorkbook(List recs) {
         log.log(DEBUG, "Workbook (readfile) created with reclen=",
         new Integer(recs.size()));
@@ -193,7 +174,7 @@ public class Workbook implements Model {
                 case BoundSheetRecord.sid :
                     log.log(DEBUG, "found boundsheet record at " + k);
                     retval.boundsheets.add(rec);
-                    retval.bspos = k;
+                    retval.records.setBspos( k );
                     break;
 
                 case SSTRecord.sid :
@@ -203,29 +184,29 @@ public class Workbook implements Model {
 
                 case FontRecord.sid :
                     log.log(DEBUG, "found font record at " + k);
-                    retval.fontpos = k;
+                    retval.records.setFontpos( k );
                     retval.numfonts++;
                     break;
 
                 case ExtendedFormatRecord.sid :
                     log.log(DEBUG, "found XF record at " + k);
-                    retval.xfpos = k;
+                    retval.records.setXfpos( k );
                     retval.numxfs++;
                     break;
 
                 case TabIdRecord.sid :
                     log.log(DEBUG, "found tabid record at " + k);
-                    retval.tabpos = k;
+                    retval.records.setTabpos( k );
                     break;
 
                 case ProtectRecord.sid :
                     log.log(DEBUG, "found protect record at " + k);
-                    retval.protpos = k;
+                    retval.records.setProtpos( k );
                     break;
 
                 case BackupRecord.sid :
                     log.log(DEBUG, "found backup record at " + k);
-                    retval.backuppos = k;
+                    retval.records.setBackuppos( k );
                     break;
                 case ExternSheetRecord.sid :
                     log.log(DEBUG, "found extern sheet record at " + k);
@@ -234,18 +215,16 @@ public class Workbook implements Model {
                 case NameRecord.sid :
                     log.log(DEBUG, "found name record at " + k);
                     retval.names.add(rec);
-                    retval.namepos = k;
+//                    retval.records.namepos = k;
                     break;
-                case 0x1AE :
-                    //Havent Implement the sup book , because we dont need extern ranges
-                    //for now
+                case SupBookRecord.sid :
                     log.log(DEBUG, "found SupBook record at " + k);
-                    retval.supbookpos = k;
+//                    retval.records.supbookpos = k;
                     break;
 	        case FormatRecord.sid :
-		    log.log(DEBUG, "found format record at " + k);
-		    retval.formats.add(rec);
-		    retval.maxformatid = retval.maxformatid >= ((FormatRecord)rec).getIndexCode() ? retval.maxformatid : ((FormatRecord)rec).getIndexCode();
+                log.log(DEBUG, "found format record at " + k);
+                retval.formats.add(rec);
+                retval.maxformatid = retval.maxformatid >= ((FormatRecord)rec).getIndexCode() ? retval.maxformatid : ((FormatRecord)rec).getIndexCode();
 		    break;
                 case DateWindow1904Record.sid :
                     log.log(DEBUG, "found datewindow1904 record at " + k);
@@ -253,18 +232,18 @@ public class Workbook implements Model {
                     break;
                 case PaletteRecord.sid:
                     log.log(DEBUG, "found palette record at " + k);
-                    retval.palettepos = k;
+                    retval.records.setPalettepos( k );
                 default :
             }
             records.add(rec);
         }
         //What if we dont have any ranges and supbooks
-        if (retval.supbookpos == 0) {
-            retval.supbookpos = retval.bspos + 1;
-            retval.namepos    = retval.supbookpos + 1;
-        }
+//        if (retval.records.supbookpos == 0) {
+//            retval.records.supbookpos = retval.records.bspos + 1;
+//            retval.records.namepos    = retval.records.supbookpos + 1;
+//        }
 
-        retval.records = records;
+        retval.records.setRecords(records);
         log.log(DEBUG, "exit create workbook from existing file function");
         return retval;
     }
@@ -288,17 +267,17 @@ public class Workbook implements Model {
         records.add( retval.createCodepage() );
         records.add( retval.createDSF() );
         records.add( retval.createTabId() );
-        retval.tabpos = records.size() - 1;
+        retval.records.setTabpos( records.size() - 1 );
         records.add( retval.createFnGroupCount() );
         records.add( retval.createWindowProtect() );
         records.add( retval.createProtect() );
-        retval.protpos = records.size() - 1;
+        retval.records.setProtpos( records.size() - 1 );
         records.add( retval.createPassword() );
         records.add( retval.createProtectionRev4() );
         records.add( retval.createPasswordRev4() );
         records.add( retval.createWindowOne() );
         records.add( retval.createBackup() );
-        retval.backuppos = records.size() - 1;
+        retval.records.setBackuppos( records.size() - 1 );
         records.add( retval.createHideObj() );
         records.add( retval.createDateWindow1904() );
         records.add( retval.createPrecision() );
@@ -308,7 +287,7 @@ public class Workbook implements Model {
         records.add( retval.createFont() );
         records.add( retval.createFont() );
         records.add( retval.createFont() );
-        retval.fontpos = records.size() - 1;   // last font record postion
+        retval.records.setFontpos( records.size() - 1 );   // last font record postion
         retval.numfonts = 4;
 
         // set up format records
@@ -327,12 +306,12 @@ public class Workbook implements Model {
             records.add( retval.createExtendedFormat( k ) );
             retval.numxfs++;
         }
-        retval.xfpos = records.size() - 1;
+        retval.records.setXfpos( records.size() - 1 );
         for ( int k = 0; k < 6; k++ )
         {
             records.add( retval.createStyle( k ) );
         }
-        retval.palettepos = records.size();
+        retval.records.setPalettepos( records.size() );
         records.add( retval.createUseSelFS() );
         for ( int k = 0; k < 1; k++ )
         {   // now just do 1
@@ -341,15 +320,17 @@ public class Workbook implements Model {
 
             records.add( bsr );
             retval.boundsheets.add( bsr );
-            retval.bspos = records.size() - 1;
+            retval.records.setBspos( records.size() - 1 );
         }
+//        retval.records.supbookpos = retval.records.bspos + 1;
+//        retval.records.namepos = retval.records.supbookpos + 2;
         records.add( retval.createCountry() );
         retval.sst = (SSTRecord) retval.createSST();
         records.add( retval.sst );
         records.add( retval.createExtendedSST() );
 
         records.add( retval.createEOF() );
-        retval.records = records;
+        retval.records.setRecords(records);
         log.log( DEBUG, "exit create new workbook from scratch" );
         return retval;
     }
@@ -379,7 +360,7 @@ public class Workbook implements Model {
             + " font records, you asked for " + idx);
         }
         FontRecord retval =
-        ( FontRecord ) records.get((fontpos - (numfonts - 1)) + index);
+        ( FontRecord ) records.get((records.getFontpos() - (numfonts - 1)) + index);
 
         return retval;
     }
@@ -395,10 +376,8 @@ public class Workbook implements Model {
     public FontRecord createNewFont() {
         FontRecord rec = ( FontRecord ) createFont();
 
-        ++fontpos;
-        ++bspos;
-        ++xfpos;
-        records.add(fontpos, rec);
+        records.add(records.getFontpos()+1, rec);
+        records.setFontpos( records.getFontpos() + 1 );
         numfonts++;
         return rec;
     }
@@ -433,7 +412,7 @@ public class Workbook implements Model {
      */
 
     public BackupRecord getBackupRecord() {
-        return ( BackupRecord ) records.get(backuppos);
+        return ( BackupRecord ) records.get(records.getBackuppos());
     }
 
 
@@ -446,7 +425,7 @@ public class Workbook implements Model {
      * @param sheetname the name for the sheet
      */
 
-    // for compartibility
+    // for compatibility
     public void setSheetName(int sheetnum, String sheetname ) {
         setSheetName( sheetnum, sheetname, (byte)0 );
     }
@@ -501,10 +480,10 @@ public class Workbook implements Model {
             if ((boundsheets.size() + 1) <= sheetnum) {
                 throw new RuntimeException("Sheet number out of bounds!");
             }
-            BoundSheetRecord bsr =
-            ( BoundSheetRecord ) createBoundSheet(sheetnum);
+            BoundSheetRecord bsr = (BoundSheetRecord ) createBoundSheet(sheetnum);
 
-            records.add(++bspos, bsr);
+            records.add(records.getBspos()+1, bsr);
+            records.setBspos( records.getBspos() + 1 );
             boundsheets.add(bsr);
             fixTabIdRecord();
         }
@@ -512,8 +491,8 @@ public class Workbook implements Model {
 
     public void removeSheet(int sheetnum) {
         if (boundsheets.size() > sheetnum) {
-            records.remove(bspos - (boundsheets.size() - 1) + sheetnum);
-            bspos--;
+            records.remove(records.getBspos() - (boundsheets.size() - 1) + sheetnum);
+//            records.bspos--;
             boundsheets.remove(sheetnum);
             fixTabIdRecord();
         }
@@ -524,7 +503,7 @@ public class Workbook implements Model {
      *
      */
     private void fixTabIdRecord() {
-        TabIdRecord tir = ( TabIdRecord ) records.get(tabpos);
+        TabIdRecord tir = ( TabIdRecord ) records.get(records.getTabpos());
         short[]     tia = new short[ boundsheets.size() ];
 
         for (short k = 0; k < tia.length; k++) {
@@ -551,7 +530,7 @@ public class Workbook implements Model {
      */
 
     public int getNumExFormats() {
-        log.log(DEBUG, "getXF=", new Integer(boundsheets.size()));
+        log.log(DEBUG, "getXF=", new Integer(numxfs));
         return numxfs;
     }
 
@@ -563,7 +542,7 @@ public class Workbook implements Model {
      */
 
     public ExtendedFormatRecord getExFormatAt(int index) {
-        int xfptr = xfpos - (numxfs - 1);
+        int xfptr = records.getXfpos() - (numxfs - 1);
 
         xfptr += index;
         ExtendedFormatRecord retval =
@@ -582,10 +561,8 @@ public class Workbook implements Model {
     public ExtendedFormatRecord createCellXF() {
         ExtendedFormatRecord xf = createExtendedFormat();
 
-        ++xfpos;
-        ++palettepos;
-        ++bspos;
-        records.add(xfpos, xf);
+        records.add(records.getXfpos()+1, xf);
+        records.setXfpos( records.getXfpos() + 1 );
         numxfs++;
         return xf;
     }
@@ -680,7 +657,7 @@ public class Workbook implements Model {
 
             // byte[] rec = (( byte [] ) bytes.get(k));
             // System.arraycopy(rec, 0, retval, pos, rec.length);
-            Record record = (( Record ) records.get(k));
+            Record record = records.get(k);
             // Let's skip RECALCID records, as they are only use for optimization
 	    if(record.getSid() != RecalcIdRecord.sid || ((RecalcIdRecord)record).isNeeded()) {
                 pos += record.serialize(pos, retval);   // rec.length;
@@ -717,7 +694,7 @@ public class Workbook implements Model {
 
             // byte[] rec = (( byte [] ) bytes.get(k));
             // System.arraycopy(rec, 0, data, offset + pos, rec.length);
-            Record record = (( Record ) records.get(k));
+            Record record = records.get(k);
             // Let's skip RECALCID records, as they are only use for optimization
             if(record.getSid() != RecalcIdRecord.sid || ((RecalcIdRecord)record).isNeeded()) {
 		pos += record.serialize(pos + offset, data);   // rec.length;
@@ -731,7 +708,7 @@ public class Workbook implements Model {
         int retval = 0;
 
         for (int k = 0; k < records.size(); k++) {
-            Record record = (( Record ) records.get(k));
+            Record record = records.get(k);
             // Let's skip RECALCID records, as they are only use for optimization
             if(record.getSid() != RecalcIdRecord.sid || ((RecalcIdRecord)record).isNeeded()) {
 		retval += record.getRecordSize();
@@ -1712,7 +1689,7 @@ public class Workbook implements Model {
        return refs;
     }
 
-    /** fins the sheet name by his extern sheet index
+    /** finds the sheet name by his extern sheet index
      * @param num extern sheet index
      * @return sheet name
      */
@@ -1723,6 +1700,19 @@ public class Workbook implements Model {
         result = getSheetName(indexToSheet);
 
         return result;
+    }
+
+    /**
+     * Finds the sheet index for a particular external sheet number.
+     * @param externSheetNumber     The external sheet number to convert
+     * @return  The index to the sheet found.
+     */
+    public int getSheetIndexFromExternSheetIndex(int externSheetNumber)
+    {
+        if (externSheetNumber >= externSheet.getNumOfREFStructures())
+            return -1;
+        else
+            return externSheet.getREFRecordAt(externSheetNumber).getIndexToFirstSupBook();
     }
 
     /** returns the extern sheet number for specific sheet number ,
@@ -1803,7 +1793,27 @@ public class Workbook implements Model {
 
         NameRecord name = new NameRecord();
 
-        records.add(++namepos, name);
+        // Not the most efficient way but the other way was causing too many bugs
+        int idx = findFirstRecordLocBySid(ExternSheetRecord.sid);
+        if (idx == -1) idx = findFirstRecordLocBySid(SupBookRecord.sid);
+        if (idx == -1) idx = findFirstRecordLocBySid(CountryRecord.sid);
+
+        records.add(idx+names.size()+1, name);
+        names.add(name);
+
+        return name;
+    }
+
+    /** creates new name
+     * @return new name record
+     */
+    public NameRecord addName(NameRecord name)
+    {
+        // Not the most efficient way but the other way was causing too many bugs
+        int idx = findFirstRecordLocBySid(ExternSheetRecord.sid);
+        if (idx == -1) idx = findFirstRecordLocBySid(SupBookRecord.sid);
+        if (idx == -1) idx = findFirstRecordLocBySid(CountryRecord.sid);
+        records.add(idx+names.size()+1, name);
         names.add(name);
 
         return name;
@@ -1814,8 +1824,8 @@ public class Workbook implements Model {
      */
     public void removeName(int namenum){
         if (names.size() > namenum) {
-            records.remove(namepos - (names.size() - 1) + namenum);
-            namepos--;
+            int idx = findFirstRecordLocBySid(NameRecord.sid);
+            records.remove(idx + namenum);
             names.remove(namenum);
         }
 
@@ -1825,9 +1835,12 @@ public class Workbook implements Model {
      * @return the new extern sheet record
      */
     protected ExternSheetRecord createExternSheet(){
-        ExternSheetRecord rec = new ExternSheetRecord();
+        ExternSheetRecord externSheet = new ExternSheetRecord();
 
-        records.add(supbookpos + 1 , rec);
+        int idx = findFirstRecordLocBySid(CountryRecord.sid);
+
+        records.add(idx+1, externSheet);
+//        records.add(records.supbookpos + 1 , rec);
 
         //We also adds the supBook for internal reference
         SupBookRecord supbook = new SupBookRecord();
@@ -1835,9 +1848,10 @@ public class Workbook implements Model {
         supbook.setNumberOfSheets((short)getNumSheets());
         //supbook.setFlag();
 
-        records.add(supbookpos + 1 , supbook);
+        records.add(idx+1, supbook);
+//        records.add(records.supbookpos + 1 , supbook);
 
-        return rec;
+        return externSheet;
     }
 
     /**
@@ -1879,9 +1893,9 @@ public class Workbook implements Model {
      */
     public short createFormat( String format )
     {
-        ++xfpos;	//These are to ensure that positions are updated properly
-        ++palettepos;
-        ++bspos;
+//        ++xfpos;	//These are to ensure that positions are updated properly
+//        ++palettepos;
+//        ++bspos;
         FormatRecord rec = new FormatRecord();
         maxformatid = maxformatid >= (short) 0xa4 ? (short) ( maxformatid + 1 ) : (short) 0xa4; //Starting value from M$ empiracle study.
         rec.setIndexCode( maxformatid );
@@ -1889,7 +1903,7 @@ public class Workbook implements Model {
         rec.setFormatString( format );
 
         int pos = 0;
-        while ( pos < records.size() && ( (Record) records.get( pos ) ).getSid() != FormatRecord.sid )
+        while ( pos < records.size() && records.get( pos ).getSid() != FormatRecord.sid )
             pos++;
         pos += formats.size();
         formats.add( rec );
@@ -1934,16 +1948,13 @@ public class Workbook implements Model {
      * Returns the next occurance of a record matching a particular sid.
      */
     public Record findNextRecordBySid(short sid, int pos) {
-        Iterator iterator = records.iterator();
-        for (;pos > 0 && iterator.hasNext(); iterator.next(),pos--)
-        {
-            // intentionally empty
-        }
-        while (iterator.hasNext()) {
+        int matches = 0;
+        for (Iterator iterator = records.iterator(); iterator.hasNext(); ) {
             Record record = ( Record ) iterator.next();
 
             if (record.getSid() == sid) {
-                return record;
+                if (matches++ == pos)
+                    return record;
             }
         }
         return null;
@@ -1951,7 +1962,7 @@ public class Workbook implements Model {
 
     public List getRecords()
     {
-        return records;
+        return records.getRecords();
     }
 
 //    public void insertChartRecords( List chartRecords )
@@ -1982,7 +1993,7 @@ public class Workbook implements Model {
     public PaletteRecord getCustomPalette()
     {
         PaletteRecord palette;
-        Record rec = (Record) records.get(palettepos);
+        Record rec = records.get(records.getPalettepos());
         if (rec instanceof PaletteRecord)
         {
             palette = (PaletteRecord) rec;
@@ -1990,8 +2001,7 @@ public class Workbook implements Model {
         else
         {
             palette = createPalette();
-            records.add(palettepos, palette);
-            ++bspos;
+            records.add(records.getPalettepos(), palette);
         }
         return palette;
     }
