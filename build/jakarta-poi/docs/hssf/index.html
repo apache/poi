@@ -1,0 +1,132 @@
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>HSSF</title>
+</head>
+<body bgcolor="#ffffff" marginheight="4" marginwidth="4" leftmargin="4" topmargin="4" alink="#023264" vlink="#023264" link="#525D76" text="#000000">
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top"><a href="http://jakarta.apache.org/index.html"><img src="images/jakarta-logo.gif" border="0" vspace="0" hspace="0"></a></td><td bgcolor="#ffffff" align="left" valign="top" width="100%"><img src="images/header.gif" align="right" border="0" vspace="0" hspace="0"></td>
+</tr>
+<tr>
+<td colspan="2" height="2" width="100%">
+<hr size="1" noshade="">
+</td>
+</tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td valign="top" width="1%"></td><td nowrap="1" valign="top" width="14%">
+<br>
+<font face="arial,helvetica,sanserif">
+<br>
+<font size="+1" color="#000000">Navigation</font><font size="-1">
+<ul>
+<li>
+<a href="../index.html"><font size="-1">Main</font></a>
+</li>
+</ul>
+</font>
+<br>
+<font size="+1" color="#000000">HSSF</font><font size="-1">
+<ul>
+<li>
+<a href="how-to.html"><font size="-1">HOWTO</font></a>
+</li>
+<li>
+<a href="use-case.html"><font size="-1">Use Case</font></a>
+</li>
+</ul>
+</font>
+<br>
+<br>
+</font></td><td align="left" valign="top" width="*">
+<title>HSSF</title>
+<center>
+<table width="80%">
+<tr>
+<td bgcolor="#F3DD61"><font face="Arial,sans-serif" size="+1">
+<center>
+<b>HSSF</b>
+</center>
+</font></td>
+</tr>
+</table>
+</center>
+<font size="-2" color="#000000">
+<p>
+<a href="mailto:"></a>
+</p>
+</font>
+<br>
+<div align="right">
+<table cellspacing="0" cellpadding="2" border="0" width="100%">
+<tr>
+<td bgcolor="#525D76"><font color="#ffffff" size="+1"><font face="Arial,sans-serif"><b>Overview</b></font></font></td>
+</tr>
+<tr>
+<td>
+<br>
+
+  
+<p align="justify">HSSF is the POI Project's pure Java implementation of the Excel '97(-2002) file format.</p>
+  
+<p align="justify">HSSF provides a way to read spreadsheets create, modify, read and write XLS spreadsheets
+     It provides: 
+  </p>
+  
+<ul>
+        
+<li>low level structures for those with special needs</li>
+        
+<li>an eventmodel api for efficient read-only access</li>
+        
+<li>a full usermodel api for creating, reading and modifying XLS files</li>
+  
+</ul>
+  
+<p align="justify">
+        Truth be told there is probably a better way to generate your spreadsheet
+        generation (yet you'll still be using HSSF indirectly).  At the time of
+        this writing we're in the process of moving the HSSF Serializer over to 
+        the <a href="http://xml.apache.org/cocoon">Apache Cocoon
+        Project</a>.  With Cocoon you can serialize any XML datasource (of
+        which might be a ESQL page outputting in SQL for instance) by simply 
+        applying the stylesheet and designating the serializer.
+  </p>
+  
+<p align="justify">
+        If you're merely reading spreadsheet data, then use the eventmodel api
+        in the org.apache.poi.hssf.eventmodel package.
+  </p>
+  
+<p align="justify">
+        If you're modifying spreadsheet data then use the usermodel api.  You
+        can also generate spreadsheets this way, but using Cocoon (which will do
+        it this way indirectly) is the best way...we promise.
+  </p>
+
+  
+</td>
+</tr>
+</table>
+</div>
+<br>
+</td>
+</tr>
+</table>
+<br>
+<table cellpadding="0" cellspacing="0" border="0" width="100%">
+<tr>
+<td>
+<hr size="1" noshade="">
+</td>
+</tr>
+<tr>
+<td align="center"><font color="#525D76" size="-1" face="arial,helvetica,sanserif"><i>
+              Copyright &copy;2002 Apache Software Foundation
+            </i></font></td><td width="5%" align="right"><img src="images/cocoon2-small.jpg" align="right" border="0" vspace="0" hspace="0"></td>
+</tr>
+</table>
+</body>
+</html>
