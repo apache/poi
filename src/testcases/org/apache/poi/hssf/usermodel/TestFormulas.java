@@ -100,11 +100,11 @@ extends TestCase {
         
         //get our minimum values
         r = s.createRow((short)1);
-        c = r.createCell((short)1);        
+        c = r.createCell((short)1);
         c.setCellFormula(1 + "+" + 1);
         
         wb.write(out);
-        out.close();        
+        out.close();
         
         FileInputStream in = new FileInputStream(file);
         wb = new HSSFWorkbook(in);
@@ -136,7 +136,7 @@ extends TestCase {
     
     /**
      * Subtract various integers
-     */    
+     */
     public void testSubtractIntegers()
     throws Exception {
         binomialOperator("-");
@@ -144,7 +144,7 @@ extends TestCase {
     
     /**
      * Subtract various integers
-     */    
+     */
     public void testDivideIntegers()
     throws Exception {
         binomialOperator("/");
@@ -153,14 +153,19 @@ extends TestCase {
     /**
      * Exponentialize various integers;
      */
-    public void testExponentIntegers() 
+    public void testExponentIntegers()
     throws Exception {
         binomialOperator("^");
     }
     
     
-    
-    private void binomialOperator(String operator) 
+
+    /**
+     * All multi-binomial operator tests use this to create a worksheet with a
+     * huge set of x operator y formulas.  Next we call binomialVerify and verify
+     * that they are all how we expect.
+     */
+    private void binomialOperator(String operator)
     throws Exception {
         short            rownum = 0;
         File file = File.createTempFile("testFormula",".xls");
@@ -200,7 +205,11 @@ extends TestCase {
         binomialVerify(operator,file);
     }
     
-    private void binomialVerify(String operator, File file) 
+    /**
+     * Opens the sheet we wrote out by binomialOperator and makes sure the formulas
+     * all match what we expect (x operator y)
+     */
+    private void binomialVerify(String operator, File file)
     throws Exception {
         short            rownum = 0;
         
@@ -214,8 +223,8 @@ extends TestCase {
         r = s.getRow((short)0);
         c = r.getCell((short)1);
         assertTrue("minval Formula is as expected",
-                            ( ("1"+operator+"1").equals(c.getCellFormula())
-                            ));
+        ( ("1"+operator+"1").equals(c.getCellFormula())
+        ));
         
         for (short x = 1; x < Short.MAX_VALUE && x > 0; x=(short)(x*2)) {
             r = s.getRow((short) x);
@@ -224,31 +233,29 @@ extends TestCase {
                 //System.out.println("y="+y);
                 c = r.getCell((short) y);
 
-                assertTrue("loop Formula is as expected",(
-                           (""+x+operator+y).equals(
-                                                 c.getCellFormula()
-                                                   )
-                                                           ) 
-                          );
-
+                assertTrue("loop Formula is as expected "+x+operator+y+"!="+c.getCellFormula(),(
+                (""+x+operator+y).equals(c.getCellFormula())
+                                                         )
+                );
+                
                 
             }
         }
-
+        
         //test our maximum values
         r = s.getRow((short)0);
         c = r.getCell((short)0);
+        
+        
         assertTrue("maxval Formula is as expected",(
-                (""+Short.MAX_VALUE+operator+Short.MAX_VALUE).equals(
-                                                                c.getCellFormula()
-                                                                  )
-                                                   ) 
-                  );
-                        
+        (""+Short.MAX_VALUE+operator+Short.MAX_VALUE).equals(c.getCellFormula())
+                                                   )
+        );
+        
         in.close();
-        assertTrue("file exists",file.exists());               
+        assertTrue("file exists",file.exists());
     }
-
+    
     
     
     public static void main(String [] args) {
