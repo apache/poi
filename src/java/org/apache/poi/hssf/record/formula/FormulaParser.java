@@ -62,6 +62,8 @@ import java.util.Stack;
 
 import org.apache.poi.hssf.usermodel.*;
 import java.io.FileOutputStream;
+import java.io.File;
+
 
 /**
  * EXPERIMENTAL 
@@ -438,7 +440,8 @@ end;
         System.out.println("Converted Text form is : "+fp.toFormulaString(fp.getRPNPtg()));
         try {
         short            rownum = 0;
-        FileOutputStream out    = new FileOutputStream("test.xls");
+        File file = File.createTempFile("testFormula",".xls");
+        FileOutputStream out    = new FileOutputStream(file);
         HSSFWorkbook     wb     = new HSSFWorkbook();
         HSSFSheet        s      = wb.createSheet();
         HSSFRow          r      = null;

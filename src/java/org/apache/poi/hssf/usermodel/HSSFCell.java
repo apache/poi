@@ -701,7 +701,7 @@ public class HSSFCell
             fp.parse();
             Ptg[] ptg  = fp.getRPNPtg();
             int   size = 0;
-            System.out.println("got Ptgs " + ptg.length);
+            //System.out.println("got Ptgs " + ptg.length);
             for (int k = 0; k < ptg.length; k++) {
                 size += ptg[ k ].getSize();
                 rec.pushExpressionToken(ptg[ k ]);
