@@ -140,12 +140,7 @@ public class AddPtg
         buffer.append(operands[ 1 ].toFormulaString());
         return buffer.toString();
     }
-    
-    
-    public int getPrecedence() {
-        return 5;
-    }
-    
+           
     public int getStringLength() {
         return 1;
     }

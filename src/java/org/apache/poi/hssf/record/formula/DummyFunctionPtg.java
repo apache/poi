@@ -26,11 +26,7 @@ public class DummyFunctionPtg extends OperationPtg {
         name=pName;
         numOperands = pNumOperands;
     }
-
-    public int getPrecedence() {
-        return 1;
-    }
-    
+   
     public int getType() {
         return -1;
     }

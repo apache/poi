@@ -110,10 +110,6 @@ public class PowerPtg
         return "^";
     }
     
-    public int getPrecedence() {
-        return 3;
-    }
-
     public String toFormulaString(Ptg [] operands)
     {
         StringBuffer buffer = new StringBuffer();

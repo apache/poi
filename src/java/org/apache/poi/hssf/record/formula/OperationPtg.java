@@ -77,8 +77,6 @@ public abstract class OperationPtg extends Ptg
     
     public abstract String toFormulaString(String[] operands);
     
-    public abstract int getPrecedence();
-
     public abstract int getNumberOfOperands();
     
     /**
