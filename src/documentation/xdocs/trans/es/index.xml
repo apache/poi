@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "./dtd/document-v11.dtd">
+
+<document>
+  <header>
+    <title>Welcome to POI</title>
+    <authors>
+      <person id="AO" name="Andrew C. Oliver" email="acoliver@apache.org"/>
+      <person id="GJS" name="Glen Stampoultzis" email="glens@apache.org"/>
+    </authors>
+  </header>
+
+  <body>
+    <section title="Logo Contest">
+        <!--
+      <p>
+        The POI committers have voted to
+        <link href="http://jakarta.apache.org/ant">"innovate"</link> and hold a
+        logo contest.  The big P at the top of the page is just a placeholder.
+        So the rules are pretty much this:
+      </p>
+      <ul>
+        <li>
+                <link href="http://burnallgifs.org/">Only PNG submissions</link>
+                be accepted (we can convert them as needed).
+        </li>
+        <li>
+                Submissions must be sent to the <link
+                href="http://jakarta.apache.org/site/mail.html">POI
+                User's mailing list</link> via an http link.  If you do not
+                have an available webserver contact Andy (acoliver at apache dot
+                org) and ask him to post it for you (and he will if it doesn't
+                suck royally).  Large binary attachments annoyingly posted to
+                the list will be rebuked. :-)
+        </li>
+        <li>
+                Image authors must be willing to work with us on any font and
+                sizing issues, etc.
+        </li>
+        <li>
+                All submissions become property of the Apache Software
+                Foundation to do whatever it wants with them (thanks!).
+        </li>
+        <li>
+                A non-binding poll will be taken and everyone can vote.
+        </li>
+        <li>
+                Based on the poll results and the fact that Andy won't vote for
+                anything that isn't some kind of tiki god or hawaiian theme
+                (maybe a poi pounder would be acceptable), the committers will
+                vote on the new POI logo.
+        </li>
+        <li>
+                Logos should be submitted in two flavors: one for the top of the
+                page and another for posting on other sites that note projects
+                that use POI technology.
+        </li>
+        <li>
+                The winner will get credit posted somewhere on the POI site and
+                have their logo used wherever POI is proudly served.
+        </li>
+      </ul>
+      <p>
+        You can see the current submissions <link
+        href="news/logocontest.html">here.</link>
+      </p>  -->
+        <p>
+            Entries for the POI logo contest are now finished.  Time to begin voting.  Remember, Andy really
+            likes Tiki gods, but Glen suggests voting for what you like.  :-)
+        </p>
+        <p>
+            <link href="http://vote.sparklit.com/web_poll.spark/640946">Vote here now!!!</link>
+        </p>
+        <p>
+            <link href="http://vote.sparklit.com/poll.spark/640946">Click here</link> to see the current results.
+        </p>
+    </section>
+    <section title="Purpose">
+      <p>
+      The POI project consists of APIs for manipulating various file formats
+      based upon Microsoft's OLE 2 Compound Document format using pure Java.
+      </p>
+      <p>
+      OLE 2 Compound Document Format based files include most Microsoft Office
+      files such as XLS and DOC.
+      </p>
+      <p>
+         As a general policy we try to collaborate as much as possible with other projects to
+         provide this functionality.  Examples include: <link href="http://xml.apache.org/cocoon">Cocoon</link> for
+         which you'll soon find generators and serializers for our projects;
+         <link href="http://www.openoffice.org">Open Office.org</link> with whom we collaborate in documenting the
+         XLS format; and <link href="http://jakarta.apache.org/lucene">Lucene</link> for which we'll soon have file
+         format interpretors.  When practical, we donate components directly to those projects for POI-enabling them.
+      </p>
+      <section title="Why/when would I use POI?">
+        <p>
+ 		We'll tackle this on a component level. POI refers to the whole project.
+        </p>
+        <p>
+		So why should you use POIFS or HSSF?
+        </p>
+        <p>
+		You'd use POIFS if you had a document written in OLE 2 Compound Document Format, probably written using
+		MFC, that you needed to read in Java. Alternatively, you'd use POI to write OLE 2 Compound Document Format
+		if you needed to inter-operate with software running on the Windows platform. We are not just bragging when
+		we say that POIFS is the most complete and correct port of this file format to date!
+        </p>
+        <p>
+		You'd use HSSF if you needed to read or write an XLS (Excel) file using Java. You can also read and modify
+		spreadsheets using this API, although right now writing is more mature.
+        </p>
+      </section>
+
+      <section title="What does POI stand for?">
+        <p>
+		POI stands for Poor Obfuscation Implementation. Why would we name our project such a derogatory name? Well,
+		Microsoft's OLE 2 Compound Document Format is a poorly conceived thing. It is essentially an archive structured
+		much like the old DOS FAT filesystem. Redmond chose, instead of using tar, gzip, zip or arc, to invent their own
+		archive format that does not provide any standard encryption or compression, is not very appendable and is prone
+		to fragmentation.
+        </p>
+      <p>
+		Poi is also a Hawaiian delicacy that <link href="http://www.m-w.com">Merriam Webster's dictionary</link> defines as:
+		"A Hawaiian food of taro root cooked, pounded, and kneaded to a paste and often allowed to ferment." This seemed
+		strangely descriptive of the file format.
+        </p>
+      <p>
+		So if you like acronyms, then POI is an acronym.  If you hate them, then we just used the name of the food for our
+		project.  If you wish to signify your love or hate for acronyms, use POI or Poi to refer to the project respectively.
+      </p>
+      </section>
+
+    </section>
+
+
+    <section title="Components To Date">
+        <section title="Overview">
+	     <p>A common misconception is that POI writes Excel files.  POI is the name of the project.  POI contains several
+             components, one of which, HSSF, writes Excel files.  The following are components of the entire POI project
+             and a brief summary of their purpose.</p>
+        </section>
+        <section title="POIFS (POI Filesystem)">
+             <p>POIFS is the oldest and most stable part of the project.  It is our port of the OLE 2 Compound Document Format to
+             pure Java.  It supports both read and write functionality.  All of our components ultimately rely on it by
+             definition.  Please see <link href="../../poifs/index.html">the POIFS project page</link> for more information.</p>
+        </section>
+        <section title="HSSF (Horrible Spreadsheet Format)">
+             <p>HSSF is our port of the Microsoft Excel 97(-2002) file format (BIFF8) to pure Java.  It supports read and write
+             capability.  Please see <link href="../../hssf/index.html">the HSSF project page</link> for more information.</p>
+        </section>
+        <section title="HDF (Horrible Document Format)">
+             <p>HDF is our port of the Microsoft Word 97 file format to pure Java.  It supports read and write capability.
+             Please see <link href="../../hdf/index.html">the HDF project page for more information</link>.  This component is
+             in the early stages of design.  Jump in!</p>
+        </section>
+        <section title="HPSF (Horrible Property Set Format)">
+	<p>HPSF is our port of the OLE 2 property set format to pure
+	  Java. Property sets are mostly use to store a document's properties
+	  (title, author, date of last modification etc.), but they can be used
+	  for application-specific purposes as well. Currently HPSF supports
+	  read functionality only. Please see <link
+	    href="../../hpsf/index.html">the HPSF project page</link> for more
+	  information.</p>
+        </section>
+
+     </section>
+
+    <section title="What happened to the HSSF Serializer?">
+	<p>The HSSF Serializer, which was part of our 1.0 release and last builds on
+        <link href="http://www.sourceforge.net/projects/poi">Sourceforge</link>, has been donated to the
+        <link href="http://xml.apache.org/cocoon/">Cocoon</link> project, and is available starting from version
+        2.0.2.</p>
+    </section>
+
+    <section title="Contributing ">
+        <p>
+		So you'd like to contribute to the project? Great! We need enthusiastic, hard-working, talented folks to help
+		us on the project in several areas. The first is bug reports and feature requests! The second is documentation -
+		we'll be at your every beck and call if you've got a critique or you'd like to contribute or otherwise improve
+		the documentation. We could especially use some help documenting the HSSF file format! Last, but not least, we
+		could use some binary crunching Java coders to chew through the convolution that characterizes Microsoft's file
+		formats and help us port new ones to a superior Java platform!
+        </p>
+        <p>So if you're motivated, ready, and have the time, join the mail lists and we'll be happy to help you get started on the
+           project!
+        </p>
+
+
+    </section>
+  </body>
+  <footer>
+    <legal>
+      Copyright (c) @year@ The Apache Software Foundation All rights reserved.
+      $Revision$ $Date$
+    </legal>
+  </footer>
+</document>
