@@ -125,4 +125,18 @@
             <!-- Thanks to Avik for the answer -->
         </answer>
     </faq>
+    <faq>
+        <question>
+            I want to set a cell format (Data format of a cell) of a excel sheet as###,###,###.#### or ###,###,###.0000.    Is it possible using POI ?
+        </question>
+        <answer>
+            HSSF does not yet support custom data formats, however, it should be a
+            reasonably easy facillity to add and we'll gladly accept contributions
+            in this area.
+
+            These are the built in formats that it does support:
+
+            <link href="http://jakarta.apache.org/poi/javadocs/javasrc/org/apache/poi/hssf/usermodel/HSSFDataFormat_java.html#HSSFDataFormat">http://jakarta.apache.org/poi/javadocs/javasrc/org/apache/poi/hssf/usermodel/HSSFDataFormat_java.html#HSSFDataFormat</a>
+        </answer>
+    </faq>
 </faqs>
