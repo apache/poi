@@ -1,0 +1,16 @@
+<record id="0x1020" name="CategorySeriesAxis" package="org.apache.poi.hssf.record">
+    <suffix>Record</suffix>
+    <extends>Record</extends>
+    <description>This record refers to a category or series axis and is used to specify label/tickmark frequency.</description>
+    <author>Glen Stampoultzis (glens at apache.org)</author>
+    <fields>
+        <field type="int" size="2" name="crossing point" description="axis or category crossing point for 2d charts"/>
+        <field type="int" size="2" name="label frequency" description="label frequency"/>
+        <field type="int" size="2" name="tick mark frequency" description="tick mark frequency"/>
+        <field type="int" size="2" name="options" description="various options">
+            <bit number="0" name="value axis crossing" description="set true to indicate axis crosses between categories and false to cross axis midway"/>
+            <bit number="1" name="crosses far right" description="axis crosses at the far right"/>
+            <bit number="2" name="reversed" description="categories are displayed in reverse order"/>
+        </field>
+    </fields>
+</record>
