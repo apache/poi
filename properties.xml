@@ -48,13 +48,13 @@
                 name="avalon-site">
                   <navlinks>
                      <link1
-                      href="http://www.apache.org/">apache.org</link1>
+                      href="http://www.apache.org/">apache</link1>
 
                      <link2
-                      href="http://jakarta.apache.org/">jakarta.apache.org</link2>
+                      href="http://jakarta.apache.org/">jakarta</link2>
 
                      <link3
-                      href="http://jakarta.apache.org/poi/">jakarta.apache.org/poi</link3>
+                      href="http://jakarta.apache.org/poi/">POI</link3>
                   </navlinks>
 
                   <logo>
