@@ -469,11 +469,12 @@ public class Sheet implements Model
         numMergedRegions--;
         if (rec.getNumAreas() == 0)
         {
-            mergedRecords.remove(pos);
+            
             if (merged == rec)
             	merged = (MergeCellsRecord) mergedRecords.get(mergedRecords.size() - 1);
             int removePos = ((Integer) mergedLocs.get(pos)).intValue();
             records.remove(removePos);
+				mergedRecords.remove(pos);
             mergedLocs.remove(pos);
         }
     }
