@@ -1,0 +1,23 @@
+<record id="0x101B" name="TC" package="org.apache.poi.hdf.model.hdftypes.definitions">
+    <suffix>AbstractType</suffix>
+    <extends>HDFType</extends>
+    <description>Table Cell Descriptor.</description>
+    <author>S. Ryan Ackley</author>
+    <fields>
+      <field type="short" size="2" name="rgf">
+        <bit number="0" mask="0x0001" name="fFirstMerged"/>
+        <bit number="1" mask="0x0002" name="fMerged"/>
+        <bit number="2" mask="0x0004" name="fVertical"/>
+        <bit number="3" mask="0x0008" name="fBackward"/>
+        <bit number="4" mask="0x0010" name="fRotateFont"/>
+        <bit number="5" mask="0x0020" name="fVertMerge"/>
+        <bit number="6" mask="0x0040" name="fVertRestart"/>
+        <bit number="7" mask="0x0180" name="vertAlign"/>
+      </field>
+      <field type="short" size="2" name="unused"/>
+      <field type="byte[]" size="4" name="brcTop"/>
+      <field type="byte[]" size="4" name="brcLeft"/>
+      <field type="byte[]" size="4" name="brcBottom"/>
+      <field type="byte[]" size="4" name="brcRight"/>
+    </fields>
+</record>
