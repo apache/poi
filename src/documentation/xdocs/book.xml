@@ -39,7 +39,7 @@
     <menu-item label="References" href="references/index.html"/>  
   </menu>
   
-  <menu label="Tranlsations">
+  <menu label="Translations">
     <menu-item label="Index" href="trans/index.html"/>
     <menu-item label="Guidelines" href="trans/guidelines.html"/>
     <menu-item label="German" href="trans/de/index.html"/>
