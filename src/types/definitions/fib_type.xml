@@ -1,3 +1,4 @@
+<!-- Copyright (C) 2004 The Apache Software Foundation. All rights reserved. -->
 <record fromfile="true" name="FIB" package="org.apache.poi.hdf.model.hdftypes.definitions">
     <suffix>AbstractType</suffix>
     <extends>HDFType</extends>

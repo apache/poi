@@ -1,3 +1,4 @@
+<!-- Copyright (C) 2004 The Apache Software Foundation. All rights reserved. -->
 <record id="0x00" name="End" excel-record-id="ftEnd"
     package="org.apache.poi.hssf.record">
     <suffix>SubRecord</suffix>
