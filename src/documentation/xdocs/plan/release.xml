@@ -12,7 +12,7 @@
  </header>
 
  <body>
- <s1 title="Preparation for release of Poi">
+ <section title="Preparation for release of Poi">
    <p>Todo</p>
 <!-- NKB todo
   <p>The 2.0 final release is scheduled for the end of November 2001.
@@ -57,7 +57,7 @@ until last.
   components have suitable licensing requirements.
 ]]></source>
 -->
- </s1>
+ </section>
 
  </body>
 </document>

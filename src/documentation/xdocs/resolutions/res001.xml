@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "../dtd/document-v10.dtd">
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "../dtd/document-v11.dtd">
 
 <document>
  <header>
@@ -11,8 +11,8 @@
  </header>
 
  <body>
- <s1 title="Resolution 001 - Minimal Coding Standards">
-        <s2 title="Majority Position">
+ <section title="Resolution 001 - Minimal Coding Standards">
+        <section title="Majority Position">
                 <p>
                         As the POI project has grown the "styles" used have become more
                         varied, some see this as a bad thing, but in reality it
@@ -53,8 +53,8 @@
                         circumstances for doing so would be nice.
                         </li>
                 </ol>
-        </s2>
-        <s2 title="Amendments (informal by extension and not by vote)">
+        </section>
+        <section title="Amendments (informal by extension and not by vote)">
                 <p>
                         As opposed to the formerly used POI License which was
                         based on the Apache Public License, now that POI is part of 
@@ -62,20 +62,20 @@
                         Apache Software Foundation requires us to use the full
                         long version.
                 </p>
-        </s2>
-        <s2 title="Dissent">
+        </section>
+        <section title="Dissent">
                 <p>
                         The motion was passed unanimously with no negative or 
                         positive votes.
                 </p>
-        </s2>
-        <s2 title="Comments">
+        </section>
+        <section title="Comments">
                 <p>
                         Andy didn't feel like going through his mail and sucking
                         out the comments..  If there is anything you feel should
                         be added here do it yourself ;-).
                 </p>
-        </s2>
-  </s1>
+        </section>
+  </section>
  </body>
 </document>

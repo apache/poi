@@ -10,7 +10,7 @@
   </header>
   
   <body>
-    <s1 title="POI in the news">
+    <section title="POI in the news">
         <p>
                 These are articles/etc. posted about POI around the web.  If you
                 see POI in the news or mentioned at least somewhat prominently
@@ -21,8 +21,8 @@
                 defamation as well as favorable, technical and factual.  Really
                 stupid things won't be mentioned (sorry).
         </p>                        
-    </s1>
-    <s1 title="English">
+    </section>
+    <section title="English">
         <ul>
                 <li>
                        <link href="http://www.need-a-cake.com/categories/cocoonWeblog/2002/03/07.html">
@@ -78,8 +78,8 @@
                 </li>
                 
         </ul>
-    </s1>
-    <s1 title="Deutsch (German)">
+    </section>
+    <section title="Deutsch (German)">
         <ul>
                 <li>
                         <link
@@ -88,8 +88,8 @@
                         </link> - entwickler.com
                 </li>
         </ul>
-    </s1>
-    <s1 title="Español (Spanish)">
+    </section>
+    <section title="Español (Spanish)">
         <ul>
                 <li>
                         <link href="http://www.javahispano.com/noticias/todas.jsp">
@@ -98,8 +98,8 @@
                 </li>
                 
         </ul>
-    </s1>
-    <s1 title="Francais (French)">
+    </section>
+    <section title="Francais (French)">
         <ul>
 		<li>
 			<link href="http://linuxfr.org/section/D%E9veloppeur,0,1,8,0.html">
@@ -107,8 +107,8 @@
                         </link> - Da Linux French Page
                 </li>
         </ul>
-    </s1>
-    <s1 title="Nihongo (Japanese)">
+    </section>
+    <section title="Nihongo (Japanese)">
         <ul>
                 <li>
                         <link
@@ -118,13 +118,13 @@
                 </li>
         </ul>
         
-    </s1>
-    <s1 title="No freaking idea">
+    </section>
+    <section title="No freaking idea">
         <p>
                 If you can read one of these languages, send mail to the list
                 telling us what language it is and we'll categorize it!
         </p>
-    </s1>
+    </section>
   </body>
   <footer>
     <legal>

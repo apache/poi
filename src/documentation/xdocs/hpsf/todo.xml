@@ -10,7 +10,7 @@
   </authors>
  </header>
  <body>
-  <s1 title="To Do">
+  <section title="To Do">
 
    <p>The following functionalities should be added to HPFS:</p>
 
@@ -37,7 +37,7 @@
       yet supported (other than byte arrays).</p>
     </li>
    </ol>
-  </s1>
+  </section>
  </body>
 </document>
 

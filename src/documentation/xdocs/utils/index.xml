@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "../dtd/document-v10.dtd">
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "./dtd/document-v11.dtd">
 
 <document>
  <header>
@@ -11,7 +11,7 @@
  </header>
 
  <body>
- <s1 title="Overview">
+ <section title="Overview">
 
   <p>The POI Utils are classes we're looking to donate elsewhere and include.  
      These are usually classes that while are required for our mission, 
@@ -29,6 +29,6 @@
      find an alternative later, just keep pounding out that poi!"
   </p>
 
-  </s1>
+  </section>
  </body>
 </document>

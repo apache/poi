@@ -32,9 +32,10 @@
             Why am I getting an exception each time I attempt to read my spreadsheet?
         </question>
         <answer>
+           <p>
             It's possible your spreadsheet contains a feature that is not currently supported by HSSF.
             For example - spreadsheets containing cells with rich text are not currently supported.
+            </p>
         </answer>
     </faq>
-
 </faqs>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
-"../dtd/document-v10.dtd">
+"../dtd/document-v11.dtd">
 <!-- $Id$ -->
 
 <document>
@@ -11,7 +11,7 @@
   </authors>
  </header>
  <body>
-  <s1 title="How To Use the HPSF APIs">
+  <section title="How To Use the HPSF APIs">
 
    <p>This HOW-TO is organized in three section. You should read them
     sequentially because the later sections build upon the earlier ones.</p>
@@ -40,7 +40,7 @@
    </ol>
 
    <anchor id="sec1" />
-   <s2 title="Reading Standard Properties">
+   <section title="Reading Standard Properties">
 
     <note>This section explains how to read
       the most important standard properties of a Microsoft Office
@@ -83,7 +83,7 @@
     <p>Sounds easy, doesn't it? Here are the steps in detail.</p>
 
 
-    <s3 title="Open the document \005SummaryInformation in the root of the
+    <section title="Open the document \005SummaryInformation in the root of the
        POI filesystem">
 
      <p>An application that wants to open a document in a POI filesystem
@@ -215,11 +215,11 @@ static class MyPOIFSReaderListener implements POIFSReaderListener
       <em>\005SummaryInformation</em> stream. In this case the applications
       won't throw an exception but simply does not call the
       <code>processPOIFSReaderEvent</code> method. You have been warned!</p>
-    </s3>
-   </s2>
+    </section>
+   </section>
 
    <anchor id="sec2"/>
-   <s2 title="Additional Standard Properties, Exceptions And Embedded Objects">
+   <section title="Additional Standard Properties, Exceptions And Embedded Objects">
 
     <note>This section focusses on reading additional standard properties. It
      also talks about exceptions that may be thrown when dealing with HPSF and
@@ -292,17 +292,17 @@ static class MyPOIFSReaderListener implements POIFSReaderListener
      contrib section tries to open each and every document in a POI filesystem
      as a property set stream. If this operation was successful it displays the
      properties.</p>
-   </s2>
+   </section>
 
    <anchor id="sec3"/>
-   <s2 title="Reading Non-Standard Properties">
+   <section title="Reading Non-Standard Properties">
 
     <note>This section tells how to read
      non-standard properties. Non-standard properties are application-specific
      name/value/type triples.</note>
 
     <fixme author="Rainer Klute">Write this section!</fixme>
-   </s2>
-  </s1>
+   </section>
+  </section>
  </body>
 </document>

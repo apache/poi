@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "../dtd/document-v10.dtd">
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "../dtd/document-v11.dtd">
 
 <document>
   <header>
@@ -10,9 +10,9 @@
    </authors>
   </header>
   <body>
-    <s1 title="How to Use the Record Generator">
+    <section title="How to Use the Record Generator">
 
-    <s2 title="History">
+    <section title="History">
         <p>
         The record generator was born from frustration with translating
         the Excel records to Java classes.  Doing this manually is a time
@@ -23,9 +23,9 @@
         record looked like and do all the boring stuff.  Thus the
         record generator was born.
         </p>
-    </s2>
+    </section>
 
-    <s2 title="Capabilities">
+    <section title="Capabilities">
     <p>
         The record generator takes XML as input and produced the following
         output:
@@ -35,8 +35,8 @@
                 for ensuring the record operates as designed.</li>
         </ul>
     </p>
-    </s2>
-    <s2 title="Usage">
+    </section>
+    <section title="Usage">
         <p>
             The record generator is invoked as an Ant target (generate-records).  It goes
             through looking for all files in src/records/defintitions ending with _record.xml.
@@ -78,8 +78,8 @@
             not already exist.  What this means is that you may change test 
             stubs but not the generated records.
         </p>
-    </s2>
-    <s2 title="How it Works">
+    </section>
+    <section title="How it Works">
         <p>
             The record generation works by taking an XML file and styling it 
             using XLST.  Given that XSLT is a little limited in some ways it was 
@@ -89,8 +89,8 @@
             See record.xsl, record_test.xsl, FieldIterator.java, 
             RecordUtil.java, RecordGenerator.java
         </p>
-    </s2>
-    <s2 title="Limitations">
+    </section>
+    <section title="Limitations">
         <p>
             The record generator does not handle all possible record types and 
             is not ment to.  Sometimes it's going to make more sense to generate
@@ -108,7 +108,7 @@
             the XSL file itself.  The Java code for the record generation is
             currently quite messy with minimal comments.  
         </p>
-    </s2>
-</s1>
+    </section>
+</section>
 </body>
 </document>

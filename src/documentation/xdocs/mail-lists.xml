@@ -10,7 +10,7 @@
   </authors>
  </header>
 
- <body><s1 title="Important Notice">
+ <body><section title="Important Notice">
    <p><strong>IMPORTANT: Before posting a question or problem to any mailing list,
     </strong>please first look at the following resources in this order:</p>
    <ol>
@@ -26,9 +26,9 @@
     work smarter.
     See tips for <link href="contrib.html#tips">Contributing</link>
    </p>
-  </s1>
+  </section>
 
-  <s1 title="Poi Users">
+  <section title="Poi Users">
    <p><link href="mailto://poi-user-subscribe@jakarta.apache.org">Subscribe</link>
       <link href="mailto://poi-user-unsubscribe@jakarta.apache.org">Unsubscribe</link>
    </p>
@@ -62,9 +62,9 @@
     busy list and we do not appreciate getting the exact same message posted impatiently
     several times a day/week! Doing so is only likely to make your question answered more
     slowly, or not at all, not faster.</p>
-  </s1>
+  </section>
 
-  <s1 title="Poi Dev">
+  <section title="Poi Dev">
    <p><link href="mailto://poi-dev-subscribe@jakarta.apache.org">Subscribe</link>
       <link href="mailto://poi-dev-unsubscribe@jakarta.apache.org">Unsubscribe</link>
    </p>
@@ -78,9 +78,9 @@
     isn't Poi working on my machine?" - 
     please ask those sorts of questions on users list (after reading the
     FAQ first, of course).</p>
-  </s1>
+  </section>
 
-  <s1 title="Related Mailing Lists">
+  <section title="Related Mailing Lists">
 
    <p>(See also <link href="http://dmoz.org/Computers/Data_Formats/Markup_Languages/XML/">
     ODP XML links</link> for related websites.)</p>
@@ -92,6 +92,6 @@
      <link href="mailto:tomcat-user-subscribe@jakarta.apache.org">tomcat-user</link> (note it is "user"
      and not "users").</li>
    </ul>
-  </s1>
+  </section>
  </body>
 </document>
