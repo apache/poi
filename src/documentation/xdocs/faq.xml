@@ -187,6 +187,7 @@
                 c.setCellValue( "\u0422\u0435\u0441\u0442\u043E\u0432\u0430\u044F" );
 
             </source>
+            Make sure you make the call to setEncoding() before calling setCellValue(), otherwise what you pass in won't be interpreted properly.
         </answer>
     </faq>
 </faqs>
