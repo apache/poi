@@ -36,6 +36,7 @@
     <menu-item label="Building" href="building.xml"/>
     <menu-item label="XLS spec [PDF]" href="http://sc.openoffice.org/excelfileformat.pdf"/>
     <menu-item label="Apache Cocoon" href="http://xml.apache.org/cocoon/"/>
+    <menu-item label="Resolutions" href="resolutions/index.html"/>
   </menu>
 
   <menu label="Get Involved">
