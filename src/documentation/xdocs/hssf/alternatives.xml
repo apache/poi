@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.0//EN" "../dtd/document-v10.dtd">
+
+<document>
+    <header>
+        <title>HSSF</title>
+        <subtitle>Alternatives to HSSF</subtitle>
+        <authors>
+            <person name="Glen Stampoultzis" email="glens@apache.org"/>
+        </authors>
+    </header>
+
+    <body>
+        <s1 title="Alternatives">
+            <p>
+                Maybe it's unwise to advertise your competitors but we believe
+                competition is good and we have the best support reading and
+                write Excel workbooks currently available.
+            </p>
+            <table>
+                <tr>
+                    <td><b>Product</b></td>
+                    <td><b>URL</b></td>
+                    <td><b>Description</b></td>
+                </tr>
+                <tr>
+                    <td>Formula One</td>
+                    <td>
+                        <link href="http://www.tidestone.com/">www.tidestone.com</link>
+                    </td>
+                    <td>An alternative to this project is to
+                    buy the $10,000 Formula 1 library
+                    and accept its crude api and limitations.</td>
+                </tr>
+                <tr>
+                    <td>Visual Basic</td>
+                    <td>
+                        <link href="http://www.microsoft.com/">www.microsoft.com</link>
+                    </td>
+                    <td>Give up XML and write Visual Basic code on a Microsoft Windows based
+                    Environment or output in Microsoft's beta and primarily undocumented
+                    XML for office format.</td>
+                </tr>
+                <tr>
+                    <td>JExcel</td>
+                    <td>http://stareyes.homeip.net:8888</td>
+                    <td>Frequently unavailable.  Little currently known about it's capabilities.</td>
+                </tr>
+                <tr>
+                    <td>JWorkbook</td>
+                    <td>http://www.object-refinery.com/jworkbook/index.html</td>
+                    <td>This effort supports Gnumeric and Excel, however the Excel part is done using POI anyway.</td>
+                </tr>
+                <tr>
+                    <td>xlReader</td>
+                    <td><link href="http://www.sourceforge.net/projects/xlrd">http://www.sourceforge.net/projects/xlrd</link></td>
+                    <td>Provides decent support for reading Excel.</td>
+                </tr>
+                <tr>
+                    <td>Excel ODBC Driver</td>
+                    <td><link href="http://www.nwlink.com/~leewal/content/exceljavasample.htm">http://www.nwlink.com/~leewal/content/exceljavasample.htm</link></td>
+                    <td>ODBC offers a somewhat wierd method for using Excel.</td>
+                </tr>
+                <tr>
+                    <td>ExtenXLS</td>
+                    <td><link href="http://www.extentech.com/products/ExtenXLS/docs/intro3.jsp">http://www.extentech.com/products/ExtenXLS/docs/intro3.jsp</link></td>
+                    <td>Commercial library for reading, modifying and writing Excel spreadsheets.  Not cheap but
+                    certainly a lot more affordable than Formula 1.  No idea as to it's quality.</td>
+                </tr>
+                <tr>
+                    <td>J-Integra Java-Excel Bridge</td>
+                    <td><link href="http://www.intrinsyc.com/products/bridging/jintegra.asp">http://www.intrinsyc.com/products/bridging/jintegra.asp</link></td>
+                    <td>Uses DCOM to an Excel instance on a windows machine.</td>
+                </tr>
+                <tr>
+                    <td>Perl &amp; C</td>
+                    <td>-</td>
+                    <td>There are a number of perl and C libraries, however none of them are consistent.</td>
+                </tr>
+            </table>
+        </s1>
+    </body>
+</document>

@@ -6,6 +6,7 @@
    <title>The New Halloween Document</title>
    <authors>
     <person email="acoliver2@users.sourceforge.net" name="Andrew C. Oliver" id="AO"/>
+    <person email="glens@apache.org" name="Glen Stampoultzis" id="GJS"/>
    </authors>
   </header>
   <body>
