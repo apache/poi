@@ -179,7 +179,7 @@ public class SeriesTextRecord
      */
     public int getRecordSize()
     {
-        return 4 + 2 + 1 + 1 + (field_2_textLength *2);
+        return 4  + 2 + 1 + 1 + (field_2_textLength *2);
     }
 
     public short getSid()
