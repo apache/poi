@@ -127,8 +127,8 @@ public class PlotGrowthRecord
 
     protected void fillFields(byte [] data, short size, int offset)
     {
-        field_1_horizontalScale         = LittleEndian.getInt(data, 0 + offset);
-        field_2_verticalScale           = LittleEndian.getInt(data, 4 + offset);
+        field_1_horizontalScale         = LittleEndian.getInt(data, 0x0 + offset);
+        field_2_verticalScale           = LittleEndian.getInt(data, 0x4 + offset);
 
     }
 

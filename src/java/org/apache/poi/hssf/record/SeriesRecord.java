@@ -143,12 +143,12 @@ public class SeriesRecord
 
     protected void fillFields(byte [] data, short size, int offset)
     {
-        field_1_categoryDataType        = LittleEndian.getShort(data, 0 + offset);
-        field_2_valuesDataType          = LittleEndian.getShort(data, 2 + offset);
-        field_3_numCategories           = LittleEndian.getShort(data, 4 + offset);
-        field_4_numValues               = LittleEndian.getShort(data, 6 + offset);
-        field_5_bubbleSeriesType        = LittleEndian.getShort(data, 8 + offset);
-        field_6_numBubbleValues         = LittleEndian.getShort(data, 10 + offset);
+        field_1_categoryDataType        = LittleEndian.getShort(data, 0x0 + offset);
+        field_2_valuesDataType          = LittleEndian.getShort(data, 0x2 + offset);
+        field_3_numCategories           = LittleEndian.getShort(data, 0x4 + offset);
+        field_4_numValues               = LittleEndian.getShort(data, 0x6 + offset);
+        field_5_bubbleSeriesType        = LittleEndian.getShort(data, 0x8 + offset);
+        field_6_numBubbleValues         = LittleEndian.getShort(data, 0xa + offset);
 
     }
 

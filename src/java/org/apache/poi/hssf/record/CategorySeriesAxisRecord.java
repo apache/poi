@@ -132,10 +132,10 @@ public class CategorySeriesAxisRecord
 
     protected void fillFields(byte [] data, short size, int offset)
     {
-        field_1_crossingPoint           = LittleEndian.getShort(data, 0 + offset);
-        field_2_labelFrequency          = LittleEndian.getShort(data, 2 + offset);
-        field_3_tickMarkFrequency       = LittleEndian.getShort(data, 4 + offset);
-        field_4_options                 = LittleEndian.getShort(data, 6 + offset);
+        field_1_crossingPoint           = LittleEndian.getShort(data, 0x0 + offset);
+        field_2_labelFrequency          = LittleEndian.getShort(data, 0x2 + offset);
+        field_3_tickMarkFrequency       = LittleEndian.getShort(data, 0x4 + offset);
+        field_4_options                 = LittleEndian.getShort(data, 0x6 + offset);
 
     }
 

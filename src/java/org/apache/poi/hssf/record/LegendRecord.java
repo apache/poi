@@ -147,13 +147,13 @@ public class LegendRecord
 
     protected void fillFields(byte [] data, short size, int offset)
     {
-        field_1_xPosition               = LittleEndian.getInt(data, 0 + offset);
-        field_2_yPosition               = LittleEndian.getInt(data, 4 + offset);
-        field_3_xSize                   = LittleEndian.getInt(data, 8 + offset);
-        field_4_ySize                   = LittleEndian.getInt(data, 12 + offset);
-        field_5_type                    = data[ 16 + offset ];
-        field_6_spacing                 = data[ 17 + offset ];
-        field_7_options                 = LittleEndian.getShort(data, 18 + offset);
+        field_1_xPosition               = LittleEndian.getInt(data, 0x0 + offset);
+        field_2_yPosition               = LittleEndian.getInt(data, 0x4 + offset);
+        field_3_xSize                   = LittleEndian.getInt(data, 0x8 + offset);
+        field_4_ySize                   = LittleEndian.getInt(data, 0xc + offset);
+        field_5_type                    = data[ 0x10 + offset ];
+        field_6_spacing                 = data[ 0x11 + offset ];
+        field_7_options                 = LittleEndian.getShort(data, 0x12 + offset);
 
     }
 

@@ -130,10 +130,10 @@ public class DataFormatRecord
 
     protected void fillFields(byte [] data, short size, int offset)
     {
-        field_1_pointNumber             = LittleEndian.getShort(data, 0 + offset);
-        field_2_seriesIndex             = LittleEndian.getShort(data, 2 + offset);
-        field_3_seriesNumber            = LittleEndian.getShort(data, 4 + offset);
-        field_4_formatFlags             = LittleEndian.getShort(data, 6 + offset);
+        field_1_pointNumber             = LittleEndian.getShort(data, 0x0 + offset);
+        field_2_seriesIndex             = LittleEndian.getShort(data, 0x2 + offset);
+        field_3_seriesNumber            = LittleEndian.getShort(data, 0x4 + offset);
+        field_4_formatFlags             = LittleEndian.getShort(data, 0x6 + offset);
 
     }
 
