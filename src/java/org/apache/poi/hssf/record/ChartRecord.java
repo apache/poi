@@ -94,6 +94,7 @@ public class ChartRecord
     public ChartRecord(short id, short size, byte [] data)
     {
         super(id, size, data);
+    
     }
 
     /**
@@ -109,6 +110,7 @@ public class ChartRecord
     public ChartRecord(short id, short size, byte [] data, int offset)
     {
         super(id, size, data, offset);
+    
     }
 
     /**
@@ -126,10 +128,12 @@ public class ChartRecord
 
     protected void fillFields(byte [] data, short size, int offset)
     {
-        field_1_x                       = LittleEndian.getInt(data, 0x0 + offset);
-        field_2_y                       = LittleEndian.getInt(data, 0x4 + offset);
-        field_3_width                   = LittleEndian.getInt(data, 0x8 + offset);
-        field_4_height                  = LittleEndian.getInt(data, 0xc + offset);
+
+        int pos = 0;
+        field_1_x                      = LittleEndian.getInt(data, pos + 0x0 + offset);
+        field_2_y                      = LittleEndian.getInt(data, pos + 0x4 + offset);
+        field_3_width                  = LittleEndian.getInt(data, pos + 0x8 + offset);
+        field_4_height                 = LittleEndian.getInt(data, pos + 0xc + offset);
 
     }
 
@@ -137,41 +141,39 @@ public class ChartRecord
     {
         StringBuffer buffer = new StringBuffer();
 
-        buffer.append("[Chart]\n");
-
+        buffer.append("[CHART]\n");
         buffer.append("    .x                    = ")
-            .append("0x")
-            .append(HexDump.toHex((int)getX()))
-            .append(" (").append(getX()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getX ()))
+            .append(" (").append( getX() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .y                    = ")
-            .append("0x")
-            .append(HexDump.toHex((int)getY()))
-            .append(" (").append(getY()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getY ()))
+            .append(" (").append( getY() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .width                = ")
-            .append("0x")
-            .append(HexDump.toHex((int)getWidth()))
-            .append(" (").append(getWidth()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getWidth ()))
+            .append(" (").append( getWidth() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .height               = ")
-            .append("0x")
-            .append(HexDump.toHex((int)getHeight()))
-            .append(" (").append(getHeight()).append(" )\n");
+            .append("0x").append(HexDump.toHex(  getHeight ()))
+            .append(" (").append( getHeight() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
 
-        buffer.append("[/Chart]\n");
+        buffer.append("[/CHART]\n");
         return buffer.toString();
     }
 
     public int serialize(int offset, byte[] data)
     {
+        int pos = 0;
+
         LittleEndian.putShort(data, 0 + offset, sid);
         LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
 
-        LittleEndian.putInt(data, 4 + offset, field_1_x);
-        LittleEndian.putInt(data, 8 + offset, field_2_y);
-        LittleEndian.putInt(data, 12 + offset, field_3_width);
-        LittleEndian.putInt(data, 16 + offset, field_4_height);
+        LittleEndian.putInt(data, 4 + offset + pos, field_1_x);
+        LittleEndian.putInt(data, 8 + offset + pos, field_2_y);
+        LittleEndian.putInt(data, 12 + offset + pos, field_3_width);
+        LittleEndian.putInt(data, 16 + offset + pos, field_4_height);
 
         return getRecordSize();
     }
@@ -181,7 +183,7 @@ public class ChartRecord
      */
     public int getRecordSize()
     {
-        return 4 + 4 + 4 + 4 + 4;
+        return 4  + 4 + 4 + 4 + 4;
     }
 
     public short getSid()
@@ -190,15 +192,16 @@ public class ChartRecord
     }
 
     public Object clone() {
-      ChartRecord rec = new ChartRecord();
-      
-      rec.field_1_x = field_1_x;
-      rec.field_2_y = field_2_y;
-      rec.field_3_width = field_3_width;
-      rec.field_4_height = field_4_height;
-
-      return rec;
+        ChartRecord rec = new ChartRecord();
+    
+        rec.field_1_x = field_1_x;
+        rec.field_2_y = field_2_y;
+        rec.field_3_width = field_3_width;
+        rec.field_4_height = field_4_height;
+        return rec;
     }
+
+
 
 
     /**

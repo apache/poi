@@ -64,6 +64,8 @@ import java.util.StringTokenizer;
  */
 public class RecordUtil
 {
+    private static final String CR = "\n";
+
     public static String getFieldName(int position, String name, int padTo)
     {
         StringBuffer fieldName = new StringBuffer("field_" + position + "_");
@@ -97,6 +99,36 @@ public class RecordUtil
         pad(fieldName, padTo);
 
         return fieldName.toString();
+    }
+
+    public static String clone(String name, String type, int pos) {
+        StringBuffer fieldName = new StringBuffer();
+        toIdentifier(name, fieldName);
+
+        String javaFieldName = getFieldName(pos, name, 0);
+
+        if (type.startsWith("custom:"))
+        {
+            String javaType = type.substring(7);
+            return "rec." + javaFieldName + " = ((" + javaType + ")" + javaFieldName + ".clone());";
+        }
+        else
+        {
+            return "rec." + javaFieldName + " = " + javaFieldName;
+        }
+    }
+
+    public static String initializeText(String size, String type)
+    {
+        if (type.startsWith("custom:"))
+        {
+            String javaType = type.substring( 7 );
+            return " = new " + javaType + "()";
+        }
+        else
+        {
+            return "";
+        }
     }
 
     private static void toIdentifier(String name, StringBuffer fieldName)
@@ -139,7 +171,12 @@ public class RecordUtil
             return pad(new StringBuffer("String"), padTo).toString();
         else if (type.equals("hbstring"))
             return pad(new StringBuffer("String"), padTo).toString();
-        
+        else if (type.startsWith("custom:"))
+        {
+            int pos = type.lastIndexOf('.');
+            return pad(new StringBuffer(type.substring(pos+1)), padTo)
+                    .toString();
+        }
 
         return "short";   // if we don't know, default to short
     }
@@ -201,5 +238,37 @@ public class RecordUtil
         }
         return retval.toString();
     }
-    
+
+    public static String getToString(String fieldName, String type, String size) {
+        StringBuffer result = new StringBuffer();
+        result.append("        buffer.append(\"    .");
+        result.append(getFieldName(fieldName, 20));
+        result.append(" = \")" + CR);
+        if (type.equals("string") == false
+                && type.equals("hbstring") == false
+                && type.equals("float") == false
+//                && type.equals("varword") == false
+                && size.equals("varword") == false
+                && type.startsWith("custom:") == false)
+        {
+            result.append("            .append(\"0x\")");
+            result.append(".append(HexDump.toHex( ");
+//            result.append(getType(size, type, 0));
+            result.append(" get");
+            result.append(getFieldName1stCap(fieldName, 0));
+            result.append(" ()))" + CR);
+        }
+        result.append("            .append(\" (\").append( get");
+        result.append(getFieldName1stCap(fieldName,0));
+        result.append("() ).append(\" )\");");
+        return result.toString();
+    }
+
+    public static String getRecordId(String recordName, String excelName)
+    {
+        if (excelName == null || excelName.equals(""))
+            return recordName;
+        else
+            return excelName;
+    }
 }

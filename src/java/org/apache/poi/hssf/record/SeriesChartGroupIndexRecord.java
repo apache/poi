@@ -91,6 +91,7 @@ public class SeriesChartGroupIndexRecord
     public SeriesChartGroupIndexRecord(short id, short size, byte [] data)
     {
         super(id, size, data);
+    
     }
 
     /**
@@ -106,6 +107,7 @@ public class SeriesChartGroupIndexRecord
     public SeriesChartGroupIndexRecord(short id, short size, byte [] data, int offset)
     {
         super(id, size, data, offset);
+    
     }
 
     /**
@@ -123,7 +125,9 @@ public class SeriesChartGroupIndexRecord
 
     protected void fillFields(byte [] data, short size, int offset)
     {
-        field_1_chartGroupIndex         = LittleEndian.getShort(data, 0x0 + offset);
+
+        int pos = 0;
+        field_1_chartGroupIndex        = LittleEndian.getShort(data, pos + 0x0 + offset);
 
     }
 
@@ -131,23 +135,24 @@ public class SeriesChartGroupIndexRecord
     {
         StringBuffer buffer = new StringBuffer();
 
-        buffer.append("[SeriesChartGroupIndex]\n");
-
+        buffer.append("[SERTOCRT]\n");
         buffer.append("    .chartGroupIndex      = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getChartGroupIndex()))
-            .append(" (").append(getChartGroupIndex()).append(" )\n");
+            .append("0x").append(HexDump.toHex(  getChartGroupIndex ()))
+            .append(" (").append( getChartGroupIndex() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
 
-        buffer.append("[/SeriesChartGroupIndex]\n");
+        buffer.append("[/SERTOCRT]\n");
         return buffer.toString();
     }
 
     public int serialize(int offset, byte[] data)
     {
+        int pos = 0;
+
         LittleEndian.putShort(data, 0 + offset, sid);
         LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
 
-        LittleEndian.putShort(data, 4 + offset, field_1_chartGroupIndex);
+        LittleEndian.putShort(data, 4 + offset + pos, field_1_chartGroupIndex);
 
         return getRecordSize();
     }
@@ -157,7 +162,7 @@ public class SeriesChartGroupIndexRecord
      */
     public int getRecordSize()
     {
-        return 4 + 2;
+        return 4  + 2;
     }
 
     public short getSid()
@@ -166,12 +171,13 @@ public class SeriesChartGroupIndexRecord
     }
 
     public Object clone() {
-      SeriesChartGroupIndexRecord rec = new SeriesChartGroupIndexRecord();
-      
-      rec.field_1_chartGroupIndex = field_1_chartGroupIndex;
-
-      return rec;
+        SeriesChartGroupIndexRecord rec = new SeriesChartGroupIndexRecord();
+    
+        rec.field_1_chartGroupIndex = field_1_chartGroupIndex;
+        return rec;
     }
+
+
 
 
     /**

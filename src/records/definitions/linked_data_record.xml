@@ -1,4 +1,4 @@
-<record id="0x1051" name="LinkedData" package="org.apache.poi.hssf.record">
+<record id="0x1051" name="LinkedData" excel-record-id="AI" package="org.apache.poi.hssf.record">
     <suffix>Record</suffix>
     <extends>Record</extends>
     <description>Describes a linked data record.  This record referes to the series data or text.</description>
@@ -20,6 +20,7 @@
             <bit number="0" name="custom number format" description="true if this object has a custom number format"/>
         </field>
         <field type="int" size="2" name="index number fmt record"/>
-        <field type="int" size="2" name="formula of link" description="not supported"/>
+        <field type="custom:org.apache.poi.hssf.record.LinkedDataFormulaField"
+            size="var" name="formula of link" description="formula"/>
     </fields>
 </record>

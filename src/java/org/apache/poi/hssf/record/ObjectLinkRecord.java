@@ -98,6 +98,7 @@ public class ObjectLinkRecord
     public ObjectLinkRecord(short id, short size, byte [] data)
     {
         super(id, size, data);
+    
     }
 
     /**
@@ -113,6 +114,7 @@ public class ObjectLinkRecord
     public ObjectLinkRecord(short id, short size, byte [] data, int offset)
     {
         super(id, size, data, offset);
+    
     }
 
     /**
@@ -130,9 +132,11 @@ public class ObjectLinkRecord
 
     protected void fillFields(byte [] data, short size, int offset)
     {
-        field_1_anchorId                = LittleEndian.getShort(data, 0x0 + offset);
-        field_2_link1                   = LittleEndian.getShort(data, 0x2 + offset);
-        field_3_link2                   = LittleEndian.getShort(data, 0x4 + offset);
+
+        int pos = 0;
+        field_1_anchorId               = LittleEndian.getShort(data, pos + 0x0 + offset);
+        field_2_link1                  = LittleEndian.getShort(data, pos + 0x2 + offset);
+        field_3_link2                  = LittleEndian.getShort(data, pos + 0x4 + offset);
 
     }
 
@@ -140,35 +144,34 @@ public class ObjectLinkRecord
     {
         StringBuffer buffer = new StringBuffer();
 
-        buffer.append("[ObjectLink]\n");
-
+        buffer.append("[OBJECTLINK]\n");
         buffer.append("    .anchorId             = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getAnchorId()))
-            .append(" (").append(getAnchorId()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getAnchorId ()))
+            .append(" (").append( getAnchorId() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .link1                = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getLink1()))
-            .append(" (").append(getLink1()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getLink1 ()))
+            .append(" (").append( getLink1() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .link2                = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getLink2()))
-            .append(" (").append(getLink2()).append(" )\n");
+            .append("0x").append(HexDump.toHex(  getLink2 ()))
+            .append(" (").append( getLink2() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
 
-        buffer.append("[/ObjectLink]\n");
+        buffer.append("[/OBJECTLINK]\n");
         return buffer.toString();
     }
 
     public int serialize(int offset, byte[] data)
     {
+        int pos = 0;
+
         LittleEndian.putShort(data, 0 + offset, sid);
         LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
 
-        LittleEndian.putShort(data, 4 + offset, field_1_anchorId);
-        LittleEndian.putShort(data, 6 + offset, field_2_link1);
-        LittleEndian.putShort(data, 8 + offset, field_3_link2);
+        LittleEndian.putShort(data, 4 + offset + pos, field_1_anchorId);
+        LittleEndian.putShort(data, 6 + offset + pos, field_2_link1);
+        LittleEndian.putShort(data, 8 + offset + pos, field_3_link2);
 
         return getRecordSize();
     }
@@ -187,14 +190,15 @@ public class ObjectLinkRecord
     }
 
     public Object clone() {
-      ObjectLinkRecord rec = new ObjectLinkRecord();
-      
-      rec.field_1_anchorId = field_1_anchorId;
-      rec.field_2_link1 = field_2_link1;
-      rec.field_3_link2 = field_3_link2;
-
-      return rec;
+        ObjectLinkRecord rec = new ObjectLinkRecord();
+    
+        rec.field_1_anchorId = field_1_anchorId;
+        rec.field_2_link1 = field_2_link1;
+        rec.field_3_link2 = field_3_link2;
+        return rec;
     }
+
+
 
 
     /**

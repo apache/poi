@@ -1,4 +1,5 @@
-<record id="0x1027" name="ObjectLink" package="org.apache.poi.hssf.record">
+<record id="0x1027" name="ObjectLink" excel-record-id="OBJECTLINK"
+    package="org.apache.poi.hssf.record">
     <suffix>Record</suffix>
     <extends>Record</extends>
     <description>Links text to an object on the chart or identifies it as the title.</description>

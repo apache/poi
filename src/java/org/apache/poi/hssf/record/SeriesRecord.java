@@ -108,6 +108,7 @@ public class SeriesRecord
     public SeriesRecord(short id, short size, byte [] data)
     {
         super(id, size, data);
+    
     }
 
     /**
@@ -123,6 +124,7 @@ public class SeriesRecord
     public SeriesRecord(short id, short size, byte [] data, int offset)
     {
         super(id, size, data, offset);
+    
     }
 
     /**
@@ -140,12 +142,14 @@ public class SeriesRecord
 
     protected void fillFields(byte [] data, short size, int offset)
     {
-        field_1_categoryDataType        = LittleEndian.getShort(data, 0x0 + offset);
-        field_2_valuesDataType          = LittleEndian.getShort(data, 0x2 + offset);
-        field_3_numCategories           = LittleEndian.getShort(data, 0x4 + offset);
-        field_4_numValues               = LittleEndian.getShort(data, 0x6 + offset);
-        field_5_bubbleSeriesType        = LittleEndian.getShort(data, 0x8 + offset);
-        field_6_numBubbleValues         = LittleEndian.getShort(data, 0xa + offset);
+
+        int pos = 0;
+        field_1_categoryDataType       = LittleEndian.getShort(data, pos + 0x0 + offset);
+        field_2_valuesDataType         = LittleEndian.getShort(data, pos + 0x2 + offset);
+        field_3_numCategories          = LittleEndian.getShort(data, pos + 0x4 + offset);
+        field_4_numValues              = LittleEndian.getShort(data, pos + 0x6 + offset);
+        field_5_bubbleSeriesType       = LittleEndian.getShort(data, pos + 0x8 + offset);
+        field_6_numBubbleValues        = LittleEndian.getShort(data, pos + 0xa + offset);
 
     }
 
@@ -153,53 +157,49 @@ public class SeriesRecord
     {
         StringBuffer buffer = new StringBuffer();
 
-        buffer.append("[Series]\n");
-
+        buffer.append("[SERIES]\n");
         buffer.append("    .categoryDataType     = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getCategoryDataType()))
-            .append(" (").append(getCategoryDataType()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getCategoryDataType ()))
+            .append(" (").append( getCategoryDataType() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .valuesDataType       = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getValuesDataType()))
-            .append(" (").append(getValuesDataType()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getValuesDataType ()))
+            .append(" (").append( getValuesDataType() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .numCategories        = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getNumCategories()))
-            .append(" (").append(getNumCategories()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getNumCategories ()))
+            .append(" (").append( getNumCategories() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .numValues            = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getNumValues()))
-            .append(" (").append(getNumValues()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getNumValues ()))
+            .append(" (").append( getNumValues() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .bubbleSeriesType     = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getBubbleSeriesType()))
-            .append(" (").append(getBubbleSeriesType()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getBubbleSeriesType ()))
+            .append(" (").append( getBubbleSeriesType() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .numBubbleValues      = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getNumBubbleValues()))
-            .append(" (").append(getNumBubbleValues()).append(" )\n");
+            .append("0x").append(HexDump.toHex(  getNumBubbleValues ()))
+            .append(" (").append( getNumBubbleValues() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
 
-        buffer.append("[/Series]\n");
+        buffer.append("[/SERIES]\n");
         return buffer.toString();
     }
 
     public int serialize(int offset, byte[] data)
     {
+        int pos = 0;
+
         LittleEndian.putShort(data, 0 + offset, sid);
         LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
 
-        LittleEndian.putShort(data, 4 + offset, field_1_categoryDataType);
-        LittleEndian.putShort(data, 6 + offset, field_2_valuesDataType);
-        LittleEndian.putShort(data, 8 + offset, field_3_numCategories);
-        LittleEndian.putShort(data, 10 + offset, field_4_numValues);
-        LittleEndian.putShort(data, 12 + offset, field_5_bubbleSeriesType);
-        LittleEndian.putShort(data, 14 + offset, field_6_numBubbleValues);
+        LittleEndian.putShort(data, 4 + offset + pos, field_1_categoryDataType);
+        LittleEndian.putShort(data, 6 + offset + pos, field_2_valuesDataType);
+        LittleEndian.putShort(data, 8 + offset + pos, field_3_numCategories);
+        LittleEndian.putShort(data, 10 + offset + pos, field_4_numValues);
+        LittleEndian.putShort(data, 12 + offset + pos, field_5_bubbleSeriesType);
+        LittleEndian.putShort(data, 14 + offset + pos, field_6_numBubbleValues);
 
         return getRecordSize();
     }
@@ -209,7 +209,7 @@ public class SeriesRecord
      */
     public int getRecordSize()
     {
-        return 4 + 2 + 2 + 2 + 2 + 2 + 2;
+        return 4  + 2 + 2 + 2 + 2 + 2 + 2;
     }
 
     public short getSid()
@@ -218,17 +218,18 @@ public class SeriesRecord
     }
 
     public Object clone() {
-      SeriesRecord rec = new SeriesRecord();
-      
-      rec.field_1_categoryDataType = field_1_categoryDataType;
-      rec.field_2_valuesDataType = field_2_valuesDataType;
-      rec.field_3_numCategories = field_3_numCategories;
-      rec.field_4_numValues = field_4_numValues;
-      rec.field_5_bubbleSeriesType = field_5_bubbleSeriesType;
-      rec.field_6_numBubbleValues = field_6_numBubbleValues;
-
-      return rec;
+        SeriesRecord rec = new SeriesRecord();
+    
+        rec.field_1_categoryDataType = field_1_categoryDataType;
+        rec.field_2_valuesDataType = field_2_valuesDataType;
+        rec.field_3_numCategories = field_3_numCategories;
+        rec.field_4_numValues = field_4_numValues;
+        rec.field_5_bubbleSeriesType = field_5_bubbleSeriesType;
+        rec.field_6_numBubbleValues = field_6_numBubbleValues;
+        return rec;
     }
+
+
 
 
     /**

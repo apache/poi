@@ -91,6 +91,7 @@ public class SeriesIndexRecord
     public SeriesIndexRecord(short id, short size, byte [] data)
     {
         super(id, size, data);
+    
     }
 
     /**
@@ -106,6 +107,7 @@ public class SeriesIndexRecord
     public SeriesIndexRecord(short id, short size, byte [] data, int offset)
     {
         super(id, size, data, offset);
+    
     }
 
     /**
@@ -123,7 +125,9 @@ public class SeriesIndexRecord
 
     protected void fillFields(byte [] data, short size, int offset)
     {
-        field_1_index                   = LittleEndian.getShort(data, 0x0 + offset);
+
+        int pos = 0;
+        field_1_index                  = LittleEndian.getShort(data, pos + 0x0 + offset);
 
     }
 
@@ -131,23 +135,24 @@ public class SeriesIndexRecord
     {
         StringBuffer buffer = new StringBuffer();
 
-        buffer.append("[SeriesIndex]\n");
-
+        buffer.append("[SINDEX]\n");
         buffer.append("    .index                = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getIndex()))
-            .append(" (").append(getIndex()).append(" )\n");
+            .append("0x").append(HexDump.toHex(  getIndex ()))
+            .append(" (").append( getIndex() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
 
-        buffer.append("[/SeriesIndex]\n");
+        buffer.append("[/SINDEX]\n");
         return buffer.toString();
     }
 
     public int serialize(int offset, byte[] data)
     {
+        int pos = 0;
+
         LittleEndian.putShort(data, 0 + offset, sid);
         LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
 
-        LittleEndian.putShort(data, 4 + offset, field_1_index);
+        LittleEndian.putShort(data, 4 + offset + pos, field_1_index);
 
         return getRecordSize();
     }
@@ -166,12 +171,13 @@ public class SeriesIndexRecord
     }
 
     public Object clone() {
-      SeriesIndexRecord rec = new SeriesIndexRecord();
-      
-      rec.field_1_index = field_1_index;
-
-      return rec;
+        SeriesIndexRecord rec = new SeriesIndexRecord();
+    
+        rec.field_1_index = field_1_index;
+        return rec;
     }
+
+
 
 
     /**

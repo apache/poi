@@ -91,6 +91,7 @@ public class SeriesListRecord
     public SeriesListRecord(short id, short size, byte [] data)
     {
         super(id, size, data);
+    
     }
 
     /**
@@ -106,6 +107,7 @@ public class SeriesListRecord
     public SeriesListRecord(short id, short size, byte [] data, int offset)
     {
         super(id, size, data, offset);
+    
     }
 
     /**
@@ -123,7 +125,9 @@ public class SeriesListRecord
 
     protected void fillFields(byte [] data, short size, int offset)
     {
-        field_1_seriesNumbers           = LittleEndian.getShortArray(data, 0x0 + offset);
+
+        int pos = 0;
+        field_1_seriesNumbers          = LittleEndian.getShortArray(data, pos + 0x0 + offset);
 
     }
 
@@ -131,21 +135,23 @@ public class SeriesListRecord
     {
         StringBuffer buffer = new StringBuffer();
 
-        buffer.append("[SeriesList]\n");
-
+        buffer.append("[SERIESLIST]\n");
         buffer.append("    .seriesNumbers        = ")
-            .append(" (").append(getSeriesNumbers()).append(" )\n");
+            .append(" (").append( getSeriesNumbers() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
 
-        buffer.append("[/SeriesList]\n");
+        buffer.append("[/SERIESLIST]\n");
         return buffer.toString();
     }
 
     public int serialize(int offset, byte[] data)
     {
+        int pos = 0;
+
         LittleEndian.putShort(data, 0 + offset, sid);
         LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
 
-        LittleEndian.putShortArray(data, 4 + offset, field_1_seriesNumbers);
+        LittleEndian.putShortArray(data, 4 + offset + pos, field_1_seriesNumbers);
 
         return getRecordSize();
     }
@@ -155,7 +161,7 @@ public class SeriesListRecord
      */
     public int getRecordSize()
     {
-        return 4 + field_1_seriesNumbers.length * 2 + 2;
+        return 4  + field_1_seriesNumbers.length * 2 + 2;
     }
 
     public short getSid()
@@ -164,12 +170,13 @@ public class SeriesListRecord
     }
 
     public Object clone() {
-      SeriesListRecord rec = new SeriesListRecord();
-      
-      rec.field_1_seriesNumbers = field_1_seriesNumbers;
-
-      return rec;
+        SeriesListRecord rec = new SeriesListRecord();
+    
+        rec.field_1_seriesNumbers = field_1_seriesNumbers;
+        return rec;
     }
+
+
 
 
     /**

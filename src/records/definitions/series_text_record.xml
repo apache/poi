@@ -1,4 +1,5 @@
-<record id="0x100d" name="SeriesText" package="org.apache.poi.hssf.record">
+<record id="0x100d" name="SeriesText" excel-record-id="SERIESTEXT"
+    package="org.apache.poi.hssf.record">
     <suffix>Record</suffix>
     <extends>Record</extends>
     <description>Defines a series name</description>

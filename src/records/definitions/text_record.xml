@@ -1,4 +1,4 @@
-<record id="0x1025" name="Text" package="org.apache.poi.hssf.record">
+<record id="0x1025" name="Text" excel-record-id="TEXT" package="org.apache.poi.hssf.record">
     <suffix>Record</suffix>
     <extends>Record</extends>
     <description>The text record is used to define text stored on a chart.</description>

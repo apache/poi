@@ -64,16 +64,92 @@ import junit.framework.TestCase;
  * class works correctly.  Test data taken directly from a real
  * Excel file.
  *
-
  * @author Glen Stampoultzis (glens at apache.org)
  */
 public class TestLinkedDataRecord
         extends TestCase
 {
-    byte[] data = new byte[] {
-        (byte)0x00,
-        (byte)0x01,
-        (byte)0x00,(byte)0x00,
+
+/*
+    Records that would appear in a simple bar chart
+
+    The first record links to the series title (linkType = 0).   It's
+    reference type is 1 which means that it links directly to data entered
+    into the forumula bar.  There seems to be no reference to any data
+    however.  The formulaOfLink field contains two 0 bytes.
+
+============================================
+Offset 0xf9c (3996)
+rectype = 0x1051, recsize = 0x8
+-BEGIN DUMP---------------------------------
+00000000 00 01 00 00 00 00 00 00                         ........
+-END DUMP-----------------------------------
+recordid = 0x1051, size =8
+[AI]
+.linkType             = 0x00 (0 )
+.referenceType        = 0x01 (1 )
+.options              = 0x0000 (0 )
+    .customNumberFormat       = false
+.indexNumberFmtRecord = 0x0000 (0 )
+.formulaOfLink        =  (org.apache.poi.hssf.record.LinkedDataFormulaField@95fd19 )
+[/AI]
+
+============================================
+Offset 0xfa8 (4008)
+rectype = 0x1051, recsize = 0x13
+-BEGIN DUMP---------------------------------
+00000000 01 02 00 00 00 00 0B 00 3B 00 00 00 00 1E 00 01 ........;.......
+00000010 00 01 00                                        ...
+-END DUMP-----------------------------------
+recordid = 0x1051, size =19
+[AI]
+.linkType             = 0x01 (1 )
+.referenceType        = 0x02 (2 )
+.options              = 0x0000 (0 )
+    .customNumberFormat       = false
+.indexNumberFmtRecord = 0x0000 (0 )
+.formulaOfLink        =  (org.apache.poi.hssf.record.LinkedDataFormulaField@11b9fb1 )
+[/AI]
+
+============================================
+Offset 0xfbf (4031)
+rectype = 0x1051, recsize = 0x13
+-BEGIN DUMP---------------------------------
+00000000 02 02 00 00 69 01 0B 00 3B 00 00 00 00 1F 00 00 ....i...;.......
+00000010 00 00 00                                        ...
+-END DUMP-----------------------------------
+recordid = 0x1051, size =19
+[AI]
+.linkType             = 0x02 (2 )
+.referenceType        = 0x02 (2 )
+.options              = 0x0000 (0 )
+    .customNumberFormat       = false
+.indexNumberFmtRecord = 0x0169 (361 )
+.formulaOfLink        =  (org.apache.poi.hssf.record.LinkedDataFormulaField@913fe2 )
+[/AI]
+
+============================================
+Offset 0xfd6 (4054)
+rectype = 0x1051, recsize = 0x8
+-BEGIN DUMP---------------------------------
+00000000 03 01 00 00 00 00 00 00                         ........
+-END DUMP-----------------------------------
+recordid = 0x1051, size =8
+[AI]
+.linkType             = 0x03 (3 )
+.referenceType        = 0x01 (1 )
+.options              = 0x0000 (0 )
+    .customNumberFormat       = false
+.indexNumberFmtRecord = 0x0000 (0 )
+.formulaOfLink        =  (org.apache.poi.hssf.record.LinkedDataFormulaField@1f934ad )
+[/AI]
+
+*/
+
+    byte[] data = new byte[]{
+        (byte) 0x00,
+        (byte) 0x01,
+        (byte) 0x00, (byte) 0x00,
         (byte)0x00,(byte)0x00,
         (byte)0x00,(byte)0x00          // not supported
     };

@@ -1,4 +1,4 @@
-<record id="0x31" name="Font" package="org.apache.poi.hssf.records">
+<record id="0x31" name="Font"  excel-record-id="FONT" package="org.apache.poi.hssf.records">
     <suffix>Record</suffix>
     <extends>Record</extends>
     <description>Describes a font record.  In Excel a font belongs in the font table.</description>

@@ -100,6 +100,7 @@ public class SheetPropertiesRecord
     public SheetPropertiesRecord(short id, short size, byte [] data)
     {
         super(id, size, data);
+    
     }
 
     /**
@@ -115,6 +116,7 @@ public class SheetPropertiesRecord
     public SheetPropertiesRecord(short id, short size, byte [] data, int offset)
     {
         super(id, size, data, offset);
+    
     }
 
     /**
@@ -132,8 +134,10 @@ public class SheetPropertiesRecord
 
     protected void fillFields(byte [] data, short size, int offset)
     {
-        field_1_flags                   = LittleEndian.getShort(data, 0x0 + offset);
-        field_2_empty                   = data[ 0x2 + offset ];
+
+        int pos = 0;
+        field_1_flags                  = LittleEndian.getShort(data, pos + 0x0 + offset);
+        field_2_empty                  = data[ pos + 0x2 + offset ];
 
     }
 
@@ -141,34 +145,34 @@ public class SheetPropertiesRecord
     {
         StringBuffer buffer = new StringBuffer();
 
-        buffer.append("[SheetProperties]\n");
-
+        buffer.append("[SHTPROPS]\n");
         buffer.append("    .flags                = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getFlags()))
-            .append(" (").append(getFlags()).append(" )\n");
-        buffer.append("         .chartTypeManuallyFormatted     = ").append(isChartTypeManuallyFormatted()).append('\n');
-        buffer.append("         .plotVisibleOnly          = ").append(isPlotVisibleOnly     ()).append('\n');
-        buffer.append("         .doNotSizeWithWindow      = ").append(isDoNotSizeWithWindow ()).append('\n');
-        buffer.append("         .defaultPlotDimensions     = ").append(isDefaultPlotDimensions()).append('\n');
-        buffer.append("         .autoPlotArea             = ").append(isAutoPlotArea        ()).append('\n');
-
+            .append("0x").append(HexDump.toHex(  getFlags ()))
+            .append(" (").append( getFlags() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
+        buffer.append("         .chartTypeManuallyFormatted     = ").append(isChartTypeManuallyFormatted()).append('\n'); 
+        buffer.append("         .plotVisibleOnly          = ").append(isPlotVisibleOnly()).append('\n'); 
+        buffer.append("         .doNotSizeWithWindow      = ").append(isDoNotSizeWithWindow()).append('\n'); 
+        buffer.append("         .defaultPlotDimensions     = ").append(isDefaultPlotDimensions()).append('\n'); 
+        buffer.append("         .autoPlotArea             = ").append(isAutoPlotArea()).append('\n'); 
         buffer.append("    .empty                = ")
-            .append("0x")
-            .append(HexDump.toHex((byte)getEmpty()))
-            .append(" (").append(getEmpty()).append(" )\n");
+            .append("0x").append(HexDump.toHex(  getEmpty ()))
+            .append(" (").append( getEmpty() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
 
-        buffer.append("[/SheetProperties]\n");
+        buffer.append("[/SHTPROPS]\n");
         return buffer.toString();
     }
 
     public int serialize(int offset, byte[] data)
     {
+        int pos = 0;
+
         LittleEndian.putShort(data, 0 + offset, sid);
         LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
 
-        LittleEndian.putShort(data, 4 + offset, field_1_flags);
-        data[ 6 + offset ] = field_2_empty;
+        LittleEndian.putShort(data, 4 + offset + pos, field_1_flags);
+        data[ 6 + offset + pos ] = field_2_empty;
 
         return getRecordSize();
     }
@@ -178,7 +182,7 @@ public class SheetPropertiesRecord
      */
     public int getRecordSize()
     {
-        return 4 + 2 + 1;
+        return 4  + 2 + 1;
     }
 
     public short getSid()
@@ -187,13 +191,14 @@ public class SheetPropertiesRecord
     }
 
     public Object clone() {
-      SheetPropertiesRecord rec = new SheetPropertiesRecord();
-      
-      rec.field_1_flags = field_1_flags;
-      rec.field_2_empty = field_2_empty;
-
-      return rec;
+        SheetPropertiesRecord rec = new SheetPropertiesRecord();
+    
+        rec.field_1_flags = field_1_flags;
+        rec.field_2_empty = field_2_empty;
+        return rec;
     }
+
+
 
 
     /**

@@ -141,6 +141,7 @@ public class TextRecord
     public TextRecord(short id, short size, byte [] data)
     {
         super(id, size, data);
+    
     }
 
     /**
@@ -156,6 +157,7 @@ public class TextRecord
     public TextRecord(short id, short size, byte [] data, int offset)
     {
         super(id, size, data, offset);
+    
     }
 
     /**
@@ -173,18 +175,20 @@ public class TextRecord
 
     protected void fillFields(byte [] data, short size, int offset)
     {
-        field_1_horizontalAlignment     = data[ 0x0 + offset ];
-        field_2_verticalAlignment       = data[ 0x1 + offset ];
-        field_3_displayMode             = LittleEndian.getShort(data, 0x2 + offset);
-        field_4_rgbColor                = LittleEndian.getInt(data, 0x4 + offset);
-        field_5_x                       = LittleEndian.getInt(data, 0x8 + offset);
-        field_6_y                       = LittleEndian.getInt(data, 0xc + offset);
-        field_7_width                   = LittleEndian.getInt(data, 0x10 + offset);
-        field_8_height                  = LittleEndian.getInt(data, 0x14 + offset);
-        field_9_options1                = LittleEndian.getShort(data, 0x18 + offset);
-        field_10_indexOfColorValue      = LittleEndian.getShort(data, 0x1a + offset);
-        field_11_options2               = LittleEndian.getShort(data, 0x1c + offset);
-        field_12_textRotation           = LittleEndian.getShort(data, 0x1e + offset);
+
+        int pos = 0;
+        field_1_horizontalAlignment    = data[ pos + 0x0 + offset ];
+        field_2_verticalAlignment      = data[ pos + 0x1 + offset ];
+        field_3_displayMode            = LittleEndian.getShort(data, pos + 0x2 + offset);
+        field_4_rgbColor               = LittleEndian.getInt(data, pos + 0x4 + offset);
+        field_5_x                      = LittleEndian.getInt(data, pos + 0x8 + offset);
+        field_6_y                      = LittleEndian.getInt(data, pos + 0xc + offset);
+        field_7_width                  = LittleEndian.getInt(data, pos + 0x10 + offset);
+        field_8_height                 = LittleEndian.getInt(data, pos + 0x14 + offset);
+        field_9_options1               = LittleEndian.getShort(data, pos + 0x18 + offset);
+        field_10_indexOfColorValue     = LittleEndian.getShort(data, pos + 0x1a + offset);
+        field_11_options2              = LittleEndian.getShort(data, pos + 0x1c + offset);
+        field_12_textRotation          = LittleEndian.getShort(data, pos + 0x1e + offset);
 
     }
 
@@ -192,103 +196,93 @@ public class TextRecord
     {
         StringBuffer buffer = new StringBuffer();
 
-        buffer.append("[Text]\n");
-
+        buffer.append("[TEXT]\n");
         buffer.append("    .horizontalAlignment  = ")
-            .append("0x")
-            .append(HexDump.toHex((byte)getHorizontalAlignment()))
-            .append(" (").append(getHorizontalAlignment()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getHorizontalAlignment ()))
+            .append(" (").append( getHorizontalAlignment() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .verticalAlignment    = ")
-            .append("0x")
-            .append(HexDump.toHex((byte)getVerticalAlignment()))
-            .append(" (").append(getVerticalAlignment()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getVerticalAlignment ()))
+            .append(" (").append( getVerticalAlignment() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .displayMode          = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getDisplayMode()))
-            .append(" (").append(getDisplayMode()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getDisplayMode ()))
+            .append(" (").append( getDisplayMode() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .rgbColor             = ")
-            .append("0x")
-            .append(HexDump.toHex((int)getRgbColor()))
-            .append(" (").append(getRgbColor()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getRgbColor ()))
+            .append(" (").append( getRgbColor() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .x                    = ")
-            .append("0x")
-            .append(HexDump.toHex((int)getX()))
-            .append(" (").append(getX()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getX ()))
+            .append(" (").append( getX() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .y                    = ")
-            .append("0x")
-            .append(HexDump.toHex((int)getY()))
-            .append(" (").append(getY()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getY ()))
+            .append(" (").append( getY() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .width                = ")
-            .append("0x")
-            .append(HexDump.toHex((int)getWidth()))
-            .append(" (").append(getWidth()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getWidth ()))
+            .append(" (").append( getWidth() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .height               = ")
-            .append("0x")
-            .append(HexDump.toHex((int)getHeight()))
-            .append(" (").append(getHeight()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getHeight ()))
+            .append(" (").append( getHeight() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .options1             = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getOptions1()))
-            .append(" (").append(getOptions1()).append(" )\n");
-        buffer.append("         .autoColor                = ").append(isAutoColor           ()).append('\n');
-        buffer.append("         .showKey                  = ").append(isShowKey             ()).append('\n');
-        buffer.append("         .showValue                = ").append(isShowValue           ()).append('\n');
-        buffer.append("         .vertical                 = ").append(isVertical            ()).append('\n');
-        buffer.append("         .autoGeneratedText        = ").append(isAutoGeneratedText   ()).append('\n');
-        buffer.append("         .generated                = ").append(isGenerated           ()).append('\n');
-        buffer.append("         .autoLabelDeleted         = ").append(isAutoLabelDeleted    ()).append('\n');
-        buffer.append("         .autoBackground           = ").append(isAutoBackground      ()).append('\n');
-        buffer.append("         .rotation                 = ").append(getRotation            ()).append('\n');
-        buffer.append("         .showCategoryLabelAsPercentage     = ").append(isShowCategoryLabelAsPercentage()).append('\n');
-        buffer.append("         .showValueAsPercentage     = ").append(isShowValueAsPercentage()).append('\n');
-        buffer.append("         .showBubbleSizes          = ").append(isShowBubbleSizes     ()).append('\n');
-        buffer.append("         .showLabel                = ").append(isShowLabel           ()).append('\n');
-
+            .append("0x").append(HexDump.toHex(  getOptions1 ()))
+            .append(" (").append( getOptions1() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
+        buffer.append("         .autoColor                = ").append(isAutoColor()).append('\n'); 
+        buffer.append("         .showKey                  = ").append(isShowKey()).append('\n'); 
+        buffer.append("         .showValue                = ").append(isShowValue()).append('\n'); 
+        buffer.append("         .vertical                 = ").append(isVertical()).append('\n'); 
+        buffer.append("         .autoGeneratedText        = ").append(isAutoGeneratedText()).append('\n'); 
+        buffer.append("         .generated                = ").append(isGenerated()).append('\n'); 
+        buffer.append("         .autoLabelDeleted         = ").append(isAutoLabelDeleted()).append('\n'); 
+        buffer.append("         .autoBackground           = ").append(isAutoBackground()).append('\n'); 
+            buffer.append("         .rotation                 = ").append(getRotation()).append('\n'); 
+        buffer.append("         .showCategoryLabelAsPercentage     = ").append(isShowCategoryLabelAsPercentage()).append('\n'); 
+        buffer.append("         .showValueAsPercentage     = ").append(isShowValueAsPercentage()).append('\n'); 
+        buffer.append("         .showBubbleSizes          = ").append(isShowBubbleSizes()).append('\n'); 
+        buffer.append("         .showLabel                = ").append(isShowLabel()).append('\n'); 
         buffer.append("    .indexOfColorValue    = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getIndexOfColorValue()))
-            .append(" (").append(getIndexOfColorValue()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getIndexOfColorValue ()))
+            .append(" (").append( getIndexOfColorValue() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .options2             = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getOptions2()))
-            .append(" (").append(getOptions2()).append(" )\n");
-        buffer.append("         .dataLabelPlacement       = ").append(getDataLabelPlacement  ()).append('\n');
-
+            .append("0x").append(HexDump.toHex(  getOptions2 ()))
+            .append(" (").append( getOptions2() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
+            buffer.append("         .dataLabelPlacement       = ").append(getDataLabelPlacement()).append('\n'); 
         buffer.append("    .textRotation         = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getTextRotation()))
-            .append(" (").append(getTextRotation()).append(" )\n");
+            .append("0x").append(HexDump.toHex(  getTextRotation ()))
+            .append(" (").append( getTextRotation() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
 
-        buffer.append("[/Text]\n");
+        buffer.append("[/TEXT]\n");
         return buffer.toString();
     }
 
     public int serialize(int offset, byte[] data)
     {
+        int pos = 0;
+
         LittleEndian.putShort(data, 0 + offset, sid);
         LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
 
-        data[ 4 + offset ] = field_1_horizontalAlignment;
-        data[ 5 + offset ] = field_2_verticalAlignment;
-        LittleEndian.putShort(data, 6 + offset, field_3_displayMode);
-        LittleEndian.putInt(data, 8 + offset, field_4_rgbColor);
-        LittleEndian.putInt(data, 12 + offset, field_5_x);
-        LittleEndian.putInt(data, 16 + offset, field_6_y);
-        LittleEndian.putInt(data, 20 + offset, field_7_width);
-        LittleEndian.putInt(data, 24 + offset, field_8_height);
-        LittleEndian.putShort(data, 28 + offset, field_9_options1);
-        LittleEndian.putShort(data, 30 + offset, field_10_indexOfColorValue);
-        LittleEndian.putShort(data, 32 + offset, field_11_options2);
-        LittleEndian.putShort(data, 34 + offset, field_12_textRotation);
+        data[ 4 + offset + pos ] = field_1_horizontalAlignment;
+        data[ 5 + offset + pos ] = field_2_verticalAlignment;
+        LittleEndian.putShort(data, 6 + offset + pos, field_3_displayMode);
+        LittleEndian.putInt(data, 8 + offset + pos, field_4_rgbColor);
+        LittleEndian.putInt(data, 12 + offset + pos, field_5_x);
+        LittleEndian.putInt(data, 16 + offset + pos, field_6_y);
+        LittleEndian.putInt(data, 20 + offset + pos, field_7_width);
+        LittleEndian.putInt(data, 24 + offset + pos, field_8_height);
+        LittleEndian.putShort(data, 28 + offset + pos, field_9_options1);
+        LittleEndian.putShort(data, 30 + offset + pos, field_10_indexOfColorValue);
+        LittleEndian.putShort(data, 32 + offset + pos, field_11_options2);
+        LittleEndian.putShort(data, 34 + offset + pos, field_12_textRotation);
 
         return getRecordSize();
     }
@@ -298,7 +292,7 @@ public class TextRecord
      */
     public int getRecordSize()
     {
-        return 4 + 1 + 1 + 2 + 4 + 4 + 4 + 4 + 4 + 2 + 2 + 2 + 2;
+        return 4  + 1 + 1 + 2 + 4 + 4 + 4 + 4 + 4 + 2 + 2 + 2 + 2;
     }
 
     public short getSid()
@@ -307,23 +301,24 @@ public class TextRecord
     }
 
     public Object clone() {
-      TextRecord rec = new TextRecord();
-      
-      rec.field_1_horizontalAlignment = field_1_horizontalAlignment;
-      rec.field_2_verticalAlignment = field_2_verticalAlignment;
-      rec.field_3_displayMode = field_3_displayMode;
-      rec.field_4_rgbColor = field_4_rgbColor;
-      rec.field_5_x = field_5_x;
-      rec.field_6_y = field_6_y;
-      rec.field_7_width = field_7_width;
-      rec.field_8_height = field_8_height;
-      rec.field_9_options1 = field_9_options1;
-      rec.field_10_indexOfColorValue = field_10_indexOfColorValue;
-      rec.field_11_options2 = field_11_options2;
-      rec.field_12_textRotation = field_12_textRotation;
-
-      return rec;
+        TextRecord rec = new TextRecord();
+    
+        rec.field_1_horizontalAlignment = field_1_horizontalAlignment;
+        rec.field_2_verticalAlignment = field_2_verticalAlignment;
+        rec.field_3_displayMode = field_3_displayMode;
+        rec.field_4_rgbColor = field_4_rgbColor;
+        rec.field_5_x = field_5_x;
+        rec.field_6_y = field_6_y;
+        rec.field_7_width = field_7_width;
+        rec.field_8_height = field_8_height;
+        rec.field_9_options1 = field_9_options1;
+        rec.field_10_indexOfColorValue = field_10_indexOfColorValue;
+        rec.field_11_options2 = field_11_options2;
+        rec.field_12_textRotation = field_12_textRotation;
+        return rec;
     }
+
+
 
 
     /**

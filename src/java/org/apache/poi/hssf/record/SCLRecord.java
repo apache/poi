@@ -92,6 +92,7 @@ public class SCLRecord
     public SCLRecord(short id, short size, byte [] data)
     {
         super(id, size, data);
+    
     }
 
     /**
@@ -107,6 +108,7 @@ public class SCLRecord
     public SCLRecord(short id, short size, byte [] data, int offset)
     {
         super(id, size, data, offset);
+    
     }
 
     /**
@@ -124,8 +126,10 @@ public class SCLRecord
 
     protected void fillFields(byte [] data, short size, int offset)
     {
-        field_1_numerator               = LittleEndian.getShort(data, 0x0 + offset);
-        field_2_denominator             = LittleEndian.getShort(data, 0x2 + offset);
+
+        int pos = 0;
+        field_1_numerator              = LittleEndian.getShort(data, pos + 0x0 + offset);
+        field_2_denominator            = LittleEndian.getShort(data, pos + 0x2 + offset);
 
     }
 
@@ -134,16 +138,14 @@ public class SCLRecord
         StringBuffer buffer = new StringBuffer();
 
         buffer.append("[SCL]\n");
-
         buffer.append("    .numerator            = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getNumerator()))
-            .append(" (").append(getNumerator()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getNumerator ()))
+            .append(" (").append( getNumerator() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .denominator          = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getDenominator()))
-            .append(" (").append(getDenominator()).append(" )\n");
+            .append("0x").append(HexDump.toHex(  getDenominator ()))
+            .append(" (").append( getDenominator() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
 
         buffer.append("[/SCL]\n");
         return buffer.toString();
@@ -151,11 +153,13 @@ public class SCLRecord
 
     public int serialize(int offset, byte[] data)
     {
+        int pos = 0;
+
         LittleEndian.putShort(data, 0 + offset, sid);
         LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
 
-        LittleEndian.putShort(data, 4 + offset, field_1_numerator);
-        LittleEndian.putShort(data, 6 + offset, field_2_denominator);
+        LittleEndian.putShort(data, 4 + offset + pos, field_1_numerator);
+        LittleEndian.putShort(data, 6 + offset + pos, field_2_denominator);
 
         return getRecordSize();
     }
@@ -165,7 +169,7 @@ public class SCLRecord
      */
     public int getRecordSize()
     {
-        return 4 + 2 + 2;
+        return 4  + 2 + 2;
     }
 
     public short getSid()
@@ -174,13 +178,14 @@ public class SCLRecord
     }
 
     public Object clone() {
-      SCLRecord rec = new SCLRecord();
-      
-      rec.field_1_numerator = field_1_numerator;
-      rec.field_2_denominator = field_2_denominator;
-
-      return rec;
+        SCLRecord rec = new SCLRecord();
+    
+        rec.field_1_numerator = field_1_numerator;
+        rec.field_2_denominator = field_2_denominator;
+        return rec;
     }
+
+
 
 
     /**

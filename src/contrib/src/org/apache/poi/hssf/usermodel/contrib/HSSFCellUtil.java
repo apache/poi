@@ -164,6 +164,8 @@ public class HSSFCellUtil
      *@param  workbook               The workbook that is being worked with.
      *@param  align  the column alignment to use.
      *@exception  NestableException  Thrown if an error happens.
+     *
+     * @see HSSFCellStyle for alignment options
      */
     public static void setAlignment( HSSFCell cell, HSSFWorkbook workbook, short align ) throws NestableException
     {
@@ -198,7 +200,6 @@ public class HSSFCellUtil
      *@param  cell                   The cell that needs it's style changes
      *@exception  NestableException  Thrown if an error happens.
      */
-
     public static void setCellStyleProperty( HSSFCell cell, HSSFWorkbook workbook, String propertyName, Object propertyValue )
             throws NestableException
     {

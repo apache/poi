@@ -95,6 +95,7 @@ public class AxisLineFormatRecord
     public AxisLineFormatRecord(short id, short size, byte [] data)
     {
         super(id, size, data);
+    
     }
 
     /**
@@ -110,6 +111,7 @@ public class AxisLineFormatRecord
     public AxisLineFormatRecord(short id, short size, byte [] data, int offset)
     {
         super(id, size, data, offset);
+    
     }
 
     /**
@@ -127,7 +129,9 @@ public class AxisLineFormatRecord
 
     protected void fillFields(byte [] data, short size, int offset)
     {
-        field_1_axisType                = LittleEndian.getShort(data, 0x0 + offset);
+
+        int pos = 0;
+        field_1_axisType               = LittleEndian.getShort(data, pos + 0x0 + offset);
 
     }
 
@@ -135,23 +139,24 @@ public class AxisLineFormatRecord
     {
         StringBuffer buffer = new StringBuffer();
 
-        buffer.append("[AxisLineFormat]\n");
-
+        buffer.append("[AXISLINEFORMAT]\n");
         buffer.append("    .axisType             = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getAxisType()))
-            .append(" (").append(getAxisType()).append(" )\n");
+            .append("0x").append(HexDump.toHex(  getAxisType ()))
+            .append(" (").append( getAxisType() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
 
-        buffer.append("[/AxisLineFormat]\n");
+        buffer.append("[/AXISLINEFORMAT]\n");
         return buffer.toString();
     }
 
     public int serialize(int offset, byte[] data)
     {
+        int pos = 0;
+
         LittleEndian.putShort(data, 0 + offset, sid);
         LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
 
-        LittleEndian.putShort(data, 4 + offset, field_1_axisType);
+        LittleEndian.putShort(data, 4 + offset + pos, field_1_axisType);
 
         return getRecordSize();
     }
@@ -161,7 +166,7 @@ public class AxisLineFormatRecord
      */
     public int getRecordSize()
     {
-        return 4 + 2;
+        return 4  + 2;
     }
 
     public short getSid()
@@ -170,12 +175,13 @@ public class AxisLineFormatRecord
     }
 
     public Object clone() {
-      AxisLineFormatRecord rec = new AxisLineFormatRecord();
-      
-      rec.field_1_axisType = field_1_axisType;
-
-      return rec;
+        AxisLineFormatRecord rec = new AxisLineFormatRecord();
+    
+        rec.field_1_axisType = field_1_axisType;
+        return rec;
     }
+
+
 
 
     /**

@@ -98,6 +98,7 @@ public class AxisRecord
     public AxisRecord(short id, short size, byte [] data)
     {
         super(id, size, data);
+    
     }
 
     /**
@@ -113,6 +114,7 @@ public class AxisRecord
     public AxisRecord(short id, short size, byte [] data, int offset)
     {
         super(id, size, data, offset);
+    
     }
 
     /**
@@ -130,11 +132,13 @@ public class AxisRecord
 
     protected void fillFields(byte [] data, short size, int offset)
     {
-        field_1_axisType                = LittleEndian.getShort(data, 0x0 + offset);
-        field_2_reserved1               = LittleEndian.getInt(data, 0x2 + offset);
-        field_3_reserved2               = LittleEndian.getInt(data, 0x6 + offset);
-        field_4_reserved3               = LittleEndian.getInt(data, 0xa + offset);
-        field_5_reserved4               = LittleEndian.getInt(data, 0xe + offset);
+
+        int pos = 0;
+        field_1_axisType               = LittleEndian.getShort(data, pos + 0x0 + offset);
+        field_2_reserved1              = LittleEndian.getInt(data, pos + 0x2 + offset);
+        field_3_reserved2              = LittleEndian.getInt(data, pos + 0x6 + offset);
+        field_4_reserved3              = LittleEndian.getInt(data, pos + 0xa + offset);
+        field_5_reserved4              = LittleEndian.getInt(data, pos + 0xe + offset);
 
     }
 
@@ -142,47 +146,44 @@ public class AxisRecord
     {
         StringBuffer buffer = new StringBuffer();
 
-        buffer.append("[Axis]\n");
-
+        buffer.append("[AXIS]\n");
         buffer.append("    .axisType             = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getAxisType()))
-            .append(" (").append(getAxisType()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getAxisType ()))
+            .append(" (").append( getAxisType() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .reserved1            = ")
-            .append("0x")
-            .append(HexDump.toHex((int)getReserved1()))
-            .append(" (").append(getReserved1()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getReserved1 ()))
+            .append(" (").append( getReserved1() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .reserved2            = ")
-            .append("0x")
-            .append(HexDump.toHex((int)getReserved2()))
-            .append(" (").append(getReserved2()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getReserved2 ()))
+            .append(" (").append( getReserved2() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .reserved3            = ")
-            .append("0x")
-            .append(HexDump.toHex((int)getReserved3()))
-            .append(" (").append(getReserved3()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getReserved3 ()))
+            .append(" (").append( getReserved3() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .reserved4            = ")
-            .append("0x")
-            .append(HexDump.toHex((int)getReserved4()))
-            .append(" (").append(getReserved4()).append(" )\n");
+            .append("0x").append(HexDump.toHex(  getReserved4 ()))
+            .append(" (").append( getReserved4() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
 
-        buffer.append("[/Axis]\n");
+        buffer.append("[/AXIS]\n");
         return buffer.toString();
     }
 
     public int serialize(int offset, byte[] data)
     {
+        int pos = 0;
+
         LittleEndian.putShort(data, 0 + offset, sid);
         LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
 
-        LittleEndian.putShort(data, 4 + offset, field_1_axisType);
-        LittleEndian.putInt(data, 6 + offset, field_2_reserved1);
-        LittleEndian.putInt(data, 10 + offset, field_3_reserved2);
-        LittleEndian.putInt(data, 14 + offset, field_4_reserved3);
-        LittleEndian.putInt(data, 18 + offset, field_5_reserved4);
+        LittleEndian.putShort(data, 4 + offset + pos, field_1_axisType);
+        LittleEndian.putInt(data, 6 + offset + pos, field_2_reserved1);
+        LittleEndian.putInt(data, 10 + offset + pos, field_3_reserved2);
+        LittleEndian.putInt(data, 14 + offset + pos, field_4_reserved3);
+        LittleEndian.putInt(data, 18 + offset + pos, field_5_reserved4);
 
         return getRecordSize();
     }
@@ -192,7 +193,7 @@ public class AxisRecord
      */
     public int getRecordSize()
     {
-        return 4 + 2 + 4 + 4 + 4 + 4;
+        return 4  + 2 + 4 + 4 + 4 + 4;
     }
 
     public short getSid()
@@ -201,16 +202,17 @@ public class AxisRecord
     }
 
     public Object clone() {
-      AxisRecord rec = new AxisRecord();
-      
-      rec.field_1_axisType = field_1_axisType;
-      rec.field_2_reserved1 = field_2_reserved1;
-      rec.field_3_reserved2 = field_3_reserved2;
-      rec.field_4_reserved3 = field_4_reserved3;
-      rec.field_5_reserved4 = field_5_reserved4;
-
-      return rec;
+        AxisRecord rec = new AxisRecord();
+    
+        rec.field_1_axisType = field_1_axisType;
+        rec.field_2_reserved1 = field_2_reserved1;
+        rec.field_3_reserved2 = field_3_reserved2;
+        rec.field_4_reserved3 = field_4_reserved3;
+        rec.field_5_reserved4 = field_5_reserved4;
+        return rec;
     }
+
+
 
 
     /**

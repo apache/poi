@@ -104,6 +104,7 @@ public class TickRecord
     public TickRecord(short id, short size, byte [] data)
     {
         super(id, size, data);
+    
     }
 
     /**
@@ -119,6 +120,7 @@ public class TickRecord
     public TickRecord(short id, short size, byte [] data, int offset)
     {
         super(id, size, data, offset);
+    
     }
 
     /**
@@ -136,16 +138,18 @@ public class TickRecord
 
     protected void fillFields(byte [] data, short size, int offset)
     {
-        field_1_majorTickType           = data[ 0x0 + offset ];
-        field_2_minorTickType           = data[ 0x1 + offset ];
-        field_3_labelPosition           = data[ 0x2 + offset ];
-        field_4_background              = data[ 0x3 + offset ];
-        field_5_labelColorRgb           = LittleEndian.getInt(data, 0x4 + offset);
-        field_6_zero1                   = LittleEndian.getShort(data, 0x8 + offset);
-        field_7_zero2                   = LittleEndian.getShort(data, 0x10 + offset);
-        field_8_options                 = LittleEndian.getShort(data, 0x18 + offset);
-        field_9_tickColor               = LittleEndian.getShort(data, 0x1a + offset);
-        field_10_zero3                  = LittleEndian.getShort(data, 0x1c + offset);
+
+        int pos = 0;
+        field_1_majorTickType          = data[ pos + 0x0 + offset ];
+        field_2_minorTickType          = data[ pos + 0x1 + offset ];
+        field_3_labelPosition          = data[ pos + 0x2 + offset ];
+        field_4_background             = data[ pos + 0x3 + offset ];
+        field_5_labelColorRgb          = LittleEndian.getInt(data, pos + 0x4 + offset);
+        field_6_zero1                  = LittleEndian.getShort(data, pos + 0x8 + offset);
+        field_7_zero2                  = LittleEndian.getShort(data, pos + 0x10 + offset);
+        field_8_options                = LittleEndian.getShort(data, pos + 0x18 + offset);
+        field_9_tickColor              = LittleEndian.getShort(data, pos + 0x1a + offset);
+        field_10_zero3                 = LittleEndian.getShort(data, pos + 0x1c + offset);
 
     }
 
@@ -153,81 +157,73 @@ public class TickRecord
     {
         StringBuffer buffer = new StringBuffer();
 
-        buffer.append("[Tick]\n");
-
+        buffer.append("[TICK]\n");
         buffer.append("    .majorTickType        = ")
-            .append("0x")
-            .append(HexDump.toHex((byte)getMajorTickType()))
-            .append(" (").append(getMajorTickType()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getMajorTickType ()))
+            .append(" (").append( getMajorTickType() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .minorTickType        = ")
-            .append("0x")
-            .append(HexDump.toHex((byte)getMinorTickType()))
-            .append(" (").append(getMinorTickType()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getMinorTickType ()))
+            .append(" (").append( getMinorTickType() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .labelPosition        = ")
-            .append("0x")
-            .append(HexDump.toHex((byte)getLabelPosition()))
-            .append(" (").append(getLabelPosition()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getLabelPosition ()))
+            .append(" (").append( getLabelPosition() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .background           = ")
-            .append("0x")
-            .append(HexDump.toHex((byte)getBackground()))
-            .append(" (").append(getBackground()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getBackground ()))
+            .append(" (").append( getBackground() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .labelColorRgb        = ")
-            .append("0x")
-            .append(HexDump.toHex((int)getLabelColorRgb()))
-            .append(" (").append(getLabelColorRgb()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getLabelColorRgb ()))
+            .append(" (").append( getLabelColorRgb() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .zero1                = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getZero1()))
-            .append(" (").append(getZero1()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getZero1 ()))
+            .append(" (").append( getZero1() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .zero2                = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getZero2()))
-            .append(" (").append(getZero2()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getZero2 ()))
+            .append(" (").append( getZero2() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .options              = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getOptions()))
-            .append(" (").append(getOptions()).append(" )\n");
-        buffer.append("         .autoTextColor            = ").append(isAutoTextColor       ()).append('\n');
-        buffer.append("         .autoTextBackground       = ").append(isAutoTextBackground  ()).append('\n');
-        buffer.append("         .rotation                 = ").append(getRotation            ()).append('\n');
-        buffer.append("         .autorotate               = ").append(isAutorotate          ()).append('\n');
-
+            .append("0x").append(HexDump.toHex(  getOptions ()))
+            .append(" (").append( getOptions() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
+        buffer.append("         .autoTextColor            = ").append(isAutoTextColor()).append('\n'); 
+        buffer.append("         .autoTextBackground       = ").append(isAutoTextBackground()).append('\n'); 
+            buffer.append("         .rotation                 = ").append(getRotation()).append('\n'); 
+        buffer.append("         .autorotate               = ").append(isAutorotate()).append('\n'); 
         buffer.append("    .tickColor            = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getTickColor()))
-            .append(" (").append(getTickColor()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getTickColor ()))
+            .append(" (").append( getTickColor() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .zero3                = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getZero3()))
-            .append(" (").append(getZero3()).append(" )\n");
+            .append("0x").append(HexDump.toHex(  getZero3 ()))
+            .append(" (").append( getZero3() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
 
-        buffer.append("[/Tick]\n");
+        buffer.append("[/TICK]\n");
         return buffer.toString();
     }
 
     public int serialize(int offset, byte[] data)
     {
+        int pos = 0;
+
         LittleEndian.putShort(data, 0 + offset, sid);
         LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
 
-        data[ 4 + offset ] = field_1_majorTickType;
-        data[ 5 + offset ] = field_2_minorTickType;
-        data[ 6 + offset ] = field_3_labelPosition;
-        data[ 7 + offset ] = field_4_background;
-        LittleEndian.putInt(data, 8 + offset, field_5_labelColorRgb);
-        LittleEndian.putShort(data, 12 + offset, field_6_zero1);
-        LittleEndian.putShort(data, 20 + offset, field_7_zero2);
-        LittleEndian.putShort(data, 28 + offset, field_8_options);
-        LittleEndian.putShort(data, 30 + offset, field_9_tickColor);
-        LittleEndian.putShort(data, 32 + offset, field_10_zero3);
+        data[ 4 + offset + pos ] = field_1_majorTickType;
+        data[ 5 + offset + pos ] = field_2_minorTickType;
+        data[ 6 + offset + pos ] = field_3_labelPosition;
+        data[ 7 + offset + pos ] = field_4_background;
+        LittleEndian.putInt(data, 8 + offset + pos, field_5_labelColorRgb);
+        LittleEndian.putShort(data, 12 + offset + pos, field_6_zero1);
+        LittleEndian.putShort(data, 20 + offset + pos, field_7_zero2);
+        LittleEndian.putShort(data, 28 + offset + pos, field_8_options);
+        LittleEndian.putShort(data, 30 + offset + pos, field_9_tickColor);
+        LittleEndian.putShort(data, 32 + offset + pos, field_10_zero3);
 
         return getRecordSize();
     }
@@ -237,7 +233,7 @@ public class TickRecord
      */
     public int getRecordSize()
     {
-        return 4 + 1 + 1 + 1 + 1 + 4 + 8 + 8 + 2 + 2 + 2;
+        return 4  + 1 + 1 + 1 + 1 + 4 + 8 + 8 + 2 + 2 + 2;
     }
 
     public short getSid()
@@ -246,21 +242,22 @@ public class TickRecord
     }
 
     public Object clone() {
-      TickRecord rec = new TickRecord();
-      
-      rec.field_1_majorTickType = field_1_majorTickType;
-      rec.field_2_minorTickType = field_2_minorTickType;
-      rec.field_3_labelPosition = field_3_labelPosition;
-      rec.field_4_background = field_4_background;
-      rec.field_5_labelColorRgb = field_5_labelColorRgb;
-      rec.field_6_zero1 = field_6_zero1;
-      rec.field_7_zero2 = field_7_zero2;
-      rec.field_8_options = field_8_options;
-      rec.field_9_tickColor = field_9_tickColor;
-      rec.field_10_zero3 = field_10_zero3;
-
-      return rec;
+        TickRecord rec = new TickRecord();
+    
+        rec.field_1_majorTickType = field_1_majorTickType;
+        rec.field_2_minorTickType = field_2_minorTickType;
+        rec.field_3_labelPosition = field_3_labelPosition;
+        rec.field_4_background = field_4_background;
+        rec.field_5_labelColorRgb = field_5_labelColorRgb;
+        rec.field_6_zero1 = field_6_zero1;
+        rec.field_7_zero2 = field_7_zero2;
+        rec.field_8_options = field_8_options;
+        rec.field_9_tickColor = field_9_tickColor;
+        rec.field_10_zero3 = field_10_zero3;
+        return rec;
     }
+
+
 
 
     /**

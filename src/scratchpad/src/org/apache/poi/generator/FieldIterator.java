@@ -56,7 +56,7 @@
 package org.apache.poi.generator;
 
 /**
- * For iterating through our fields.  Todo: Change this to javascript in the style sheet.
+ * For iterating through our fields.
  *
  * @author Glen Stampoultzis (glens at apache.org)
  */
@@ -74,31 +74,31 @@ public class FieldIterator
         offset = 0;
     }
 
-    /** 
+    /**
      * This utility function returns a fill method entry for a given field
      *
      * @param size - how big of an "int" or the name of the size field for a string
      * @param type - int or string
-     */    
+     */
     public String fillDecoder(String size, String type)
     {
         String javaType = RecordUtil.getType(size, type, 0);
 
         String result = "";
         if (javaType.equals("short"))
-            result = "LittleEndian.getShort(data, 0x" + Integer.toHexString(offset) + " + offset)";
+            result = "LittleEndian.getShort(data, pos + 0x" + Integer.toHexString(offset) + " + offset)";
         else if (javaType.equals("short[]"))
-            result = "LittleEndian.getShortArray(data, 0x" + Integer.toHexString(offset) + " + offset)";
+            result = "LittleEndian.getShortArray(data, pos + 0x" + Integer.toHexString(offset) + " + offset)";
         else if (javaType.equals("int"))
-            result = "LittleEndian.getInt(data, 0x" + Integer.toHexString(offset) + " + offset)";
+            result = "LittleEndian.getInt(data, pos + 0x" + Integer.toHexString(offset) + " + offset)";
         else if (javaType.equals("byte"))
-            result = "data[ 0x" + Integer.toHexString(offset) + " + offset ]";
+            result = "data[ pos + 0x" + Integer.toHexString(offset) + " + offset ]";
         else if (javaType.equals("double"))
-            result = "LittleEndian.getDouble(data, 0x" + Integer.toHexString(offset) + " + offset)";
+            result = "LittleEndian.getDouble(data, pos + 0x" + Integer.toHexString(offset) + " + offset)";
         else if (javaType.equals("String") && !type.equals("hbstring"))
-            result = "StringUtil.getFromUnicode(data, 0x" + Integer.toHexString(offset) + " + offset,("+ size + "-1)/2)";
+            result = "StringUtil.getFromUnicode(data, pos + 0x" + Integer.toHexString(offset) + " + offset,("+ size + "-1)/2)";
         else if (javaType.equals("String") && type.equals("hbstring"))
-            result = "StringUtil.getFromUnicodeHigh(data, 0x" + Integer.toHexString(offset) + " + offset, ("+ size+"/2))";
+            result = "StringUtil.getFromUnicodeHigh(data, pos + 0x" + Integer.toHexString(offset) + " + offset, ("+ size+"/2))";
 
         try
         {
@@ -109,7 +109,31 @@ public class FieldIterator
         }
         return result;
     }
-    
+
+    public String fillDecoder2(int position, String name, String size, String type)
+    {
+        if (type.startsWith("custom:"))
+        {
+            StringBuffer result = new StringBuffer();
+            result.append( RecordUtil.getFieldName( position, name, 0 ) );
+            result.append( " = new " );
+            String javaType = type.substring( 7 );
+            result.append(javaType);
+            result.append( "();\n");
+            result.append( "        pos += " );
+            result.append(RecordUtil.getFieldName(position, name, 0))
+                    .append(".fillField(data,size,pos + ")
+                    .append(offset)
+                    .append(")");
+            return result.toString();
+        }
+        else
+        {
+            return RecordUtil.getFieldName(position, name, 30) +
+                    " = " + fillDecoder(size, type);
+        }
+    }
+
 
     //position(),@name,@size,@type
     public String serialiseEncoder( int fieldNumber, String fieldName, String size, String type)
@@ -118,21 +142,23 @@ public class FieldIterator
         String javaFieldName = RecordUtil.getFieldName(fieldNumber,fieldName,0);
 
         String result = "";
-        if (javaType.equals("short"))
-            result = "LittleEndian.putShort(data, " + (offset+4) + " + offset, " + javaFieldName + ");";
+        if (type.startsWith("custom:"))
+            result = "pos += " + javaFieldName + ".serializeField( pos + offset, data );";
+        else if (javaType.equals("short"))
+            result = "LittleEndian.putShort(data, " + (offset+4) + " + offset + pos, " + javaFieldName + ");";
         else if (javaType.equals("short[]"))
-            result = "LittleEndian.putShortArray(data, " + (offset+4) + " + offset, " + javaFieldName + ");";
+            result = "LittleEndian.putShortArray(data, " + (offset+4) + " + offset + pos, " + javaFieldName + ");";
         else if (javaType.equals("int"))
-            result = "LittleEndian.putInt(data, " + (offset+4) + " + offset, " + javaFieldName + ");";
+            result = "LittleEndian.putInt(data, " + (offset+4) + " + offset + pos, " + javaFieldName + ");";
         else if (javaType.equals("byte"))
-            result = "data[ " + (offset+4) + " + offset ] = " + javaFieldName + ";";
+            result = "data[ " + (offset+4) + " + offset + pos ] = " + javaFieldName + ";";
         else if (javaType.equals("double"))
-            result = "LittleEndian.putDouble(data, " + (offset+4) + " + offset, " + javaFieldName + ");";
+            result = "LittleEndian.putDouble(data, " + (offset+4) + " + offset + pos, " + javaFieldName + ");";
         else if (javaType.equals("String") && !type.equals("hbstring"))
-            result = "StringUtil.putUncompressedUnicode("+ javaFieldName +", data, offset+4);";
+            result = "StringUtil.putUncompressedUnicode("+ javaFieldName +", data, offset + pos + 4);";
         else if (javaType.equals("String") && type.equals("hbstring"))
-            result = "StringUtil.putUncompressedUnicodeHigh("+ javaFieldName +", data, "+(offset+4)+" + offset);";
-        
+            result = "StringUtil.putUncompressedUnicodeHigh("+ javaFieldName +", data, "+(offset+4)+" + offset + pos);";
+
 
         try
         {
@@ -148,7 +174,12 @@ public class FieldIterator
     public String calcSize( int fieldNumber, String fieldName, String size, String type)
     {
         String result = " + ";
-        if ("var".equals(size))
+        if (type.startsWith("custom:"))
+        {
+            String javaFieldName = RecordUtil.getFieldName(fieldNumber, fieldName, 0);
+            return result + javaFieldName + ".getSize()";
+        }
+        else if ("var".equals(size))
         {
             String javaFieldName = RecordUtil.getFieldName(fieldNumber,fieldName,0);
             return result + " ("+javaFieldName + ".length() *2)";
@@ -157,12 +188,12 @@ public class FieldIterator
         {
             String javaFieldName = RecordUtil.getFieldName(fieldNumber,fieldName,0);
             return result + javaFieldName + ".length * 2 + 2";
-        } else 
+        } else
         {
             return result + size;
         }
     }
-    
+
 
 }
 

@@ -82,7 +82,6 @@ public class BarRecord
 
     public BarRecord()
     {
-        field_2_categorySpace = 50;
 
     }
 
@@ -98,6 +97,7 @@ public class BarRecord
     public BarRecord(short id, short size, byte [] data)
     {
         super(id, size, data);
+    
     }
 
     /**
@@ -113,6 +113,7 @@ public class BarRecord
     public BarRecord(short id, short size, byte [] data, int offset)
     {
         super(id, size, data, offset);
+    
     }
 
     /**
@@ -130,9 +131,11 @@ public class BarRecord
 
     protected void fillFields(byte [] data, short size, int offset)
     {
-        field_1_barSpace                = LittleEndian.getShort(data, 0x0 + offset);
-        field_2_categorySpace           = LittleEndian.getShort(data, 0x2 + offset);
-        field_3_formatFlags             = LittleEndian.getShort(data, 0x4 + offset);
+
+        int pos = 0;
+        field_1_barSpace               = LittleEndian.getShort(data, pos + 0x0 + offset);
+        field_2_categorySpace          = LittleEndian.getShort(data, pos + 0x2 + offset);
+        field_3_formatFlags            = LittleEndian.getShort(data, pos + 0x4 + offset);
 
     }
 
@@ -140,39 +143,38 @@ public class BarRecord
     {
         StringBuffer buffer = new StringBuffer();
 
-        buffer.append("[Bar]\n");
-
+        buffer.append("[BAR]\n");
         buffer.append("    .barSpace             = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getBarSpace()))
-            .append(" (").append(getBarSpace()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getBarSpace ()))
+            .append(" (").append( getBarSpace() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .categorySpace        = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getCategorySpace()))
-            .append(" (").append(getCategorySpace()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getCategorySpace ()))
+            .append(" (").append( getCategorySpace() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .formatFlags          = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getFormatFlags()))
-            .append(" (").append(getFormatFlags()).append(" )\n");
-        buffer.append("         .horizontal               = ").append(isHorizontal          ()).append('\n');
-        buffer.append("         .stacked                  = ").append(isStacked             ()).append('\n');
-        buffer.append("         .displayAsPercentage      = ").append(isDisplayAsPercentage ()).append('\n');
-        buffer.append("         .shadow                   = ").append(isShadow              ()).append('\n');
+            .append("0x").append(HexDump.toHex(  getFormatFlags ()))
+            .append(" (").append( getFormatFlags() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
+        buffer.append("         .horizontal               = ").append(isHorizontal()).append('\n'); 
+        buffer.append("         .stacked                  = ").append(isStacked()).append('\n'); 
+        buffer.append("         .displayAsPercentage      = ").append(isDisplayAsPercentage()).append('\n'); 
+        buffer.append("         .shadow                   = ").append(isShadow()).append('\n'); 
 
-        buffer.append("[/Bar]\n");
+        buffer.append("[/BAR]\n");
         return buffer.toString();
     }
 
     public int serialize(int offset, byte[] data)
     {
+        int pos = 0;
+
         LittleEndian.putShort(data, 0 + offset, sid);
         LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
 
-        LittleEndian.putShort(data, 4 + offset, field_1_barSpace);
-        LittleEndian.putShort(data, 6 + offset, field_2_categorySpace);
-        LittleEndian.putShort(data, 8 + offset, field_3_formatFlags);
+        LittleEndian.putShort(data, 4 + offset + pos, field_1_barSpace);
+        LittleEndian.putShort(data, 6 + offset + pos, field_2_categorySpace);
+        LittleEndian.putShort(data, 8 + offset + pos, field_3_formatFlags);
 
         return getRecordSize();
     }
@@ -182,7 +184,7 @@ public class BarRecord
      */
     public int getRecordSize()
     {
-        return 4 + 2 + 2 + 2;
+        return 4  + 2 + 2 + 2;
     }
 
     public short getSid()
@@ -191,14 +193,15 @@ public class BarRecord
     }
 
     public Object clone() {
-      BarRecord rec = new BarRecord();
-      
-      rec.field_1_barSpace = field_1_barSpace;
-      rec.field_2_categorySpace = field_2_categorySpace;
-      rec.field_3_formatFlags = field_3_formatFlags;
-
-      return rec;
+        BarRecord rec = new BarRecord();
+    
+        rec.field_1_barSpace = field_1_barSpace;
+        rec.field_2_categorySpace = field_2_categorySpace;
+        rec.field_3_formatFlags = field_3_formatFlags;
+        return rec;
     }
+
+
 
 
     /**

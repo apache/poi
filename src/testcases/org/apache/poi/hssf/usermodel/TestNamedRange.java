@@ -62,8 +62,6 @@ public class TestNamedRange
         POIFSFileSystem fs  = null;
         HSSFWorkbook wb     = null;
         
-        System.out.println("testTestCase");
-        
         String filename = System.getProperty("HSSF.testdata.path");
 
         filename = filename + "/Simple.xls";

@@ -98,6 +98,7 @@ public class AreaFormatRecord
     public AreaFormatRecord(short id, short size, byte [] data)
     {
         super(id, size, data);
+    
     }
 
     /**
@@ -113,6 +114,7 @@ public class AreaFormatRecord
     public AreaFormatRecord(short id, short size, byte [] data, int offset)
     {
         super(id, size, data, offset);
+    
     }
 
     /**
@@ -130,12 +132,14 @@ public class AreaFormatRecord
 
     protected void fillFields(byte [] data, short size, int offset)
     {
-        field_1_foregroundColor         = LittleEndian.getInt(data, 0x0 + offset);
-        field_2_backgroundColor         = LittleEndian.getInt(data, 0x4 + offset);
-        field_3_pattern                 = LittleEndian.getShort(data, 0x8 + offset);
-        field_4_formatFlags             = LittleEndian.getShort(data, 0xa + offset);
-        field_5_forecolorIndex          = LittleEndian.getShort(data, 0xc + offset);
-        field_6_backcolorIndex          = LittleEndian.getShort(data, 0xe + offset);
+
+        int pos = 0;
+        field_1_foregroundColor        = LittleEndian.getInt(data, pos + 0x0 + offset);
+        field_2_backgroundColor        = LittleEndian.getInt(data, pos + 0x4 + offset);
+        field_3_pattern                = LittleEndian.getShort(data, pos + 0x8 + offset);
+        field_4_formatFlags            = LittleEndian.getShort(data, pos + 0xa + offset);
+        field_5_forecolorIndex         = LittleEndian.getShort(data, pos + 0xc + offset);
+        field_6_backcolorIndex         = LittleEndian.getShort(data, pos + 0xe + offset);
 
     }
 
@@ -143,55 +147,51 @@ public class AreaFormatRecord
     {
         StringBuffer buffer = new StringBuffer();
 
-        buffer.append("[AreaFormat]\n");
-
+        buffer.append("[AREAFORMAT]\n");
         buffer.append("    .foregroundColor      = ")
-            .append("0x")
-            .append(HexDump.toHex((int)getForegroundColor()))
-            .append(" (").append(getForegroundColor()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getForegroundColor ()))
+            .append(" (").append( getForegroundColor() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .backgroundColor      = ")
-            .append("0x")
-            .append(HexDump.toHex((int)getBackgroundColor()))
-            .append(" (").append(getBackgroundColor()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getBackgroundColor ()))
+            .append(" (").append( getBackgroundColor() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .pattern              = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getPattern()))
-            .append(" (").append(getPattern()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getPattern ()))
+            .append(" (").append( getPattern() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .formatFlags          = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getFormatFlags()))
-            .append(" (").append(getFormatFlags()).append(" )\n");
-        buffer.append("         .automatic                = ").append(isAutomatic           ()).append('\n');
-        buffer.append("         .invert                   = ").append(isInvert              ()).append('\n');
-
+            .append("0x").append(HexDump.toHex(  getFormatFlags ()))
+            .append(" (").append( getFormatFlags() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
+        buffer.append("         .automatic                = ").append(isAutomatic()).append('\n'); 
+        buffer.append("         .invert                   = ").append(isInvert()).append('\n'); 
         buffer.append("    .forecolorIndex       = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getForecolorIndex()))
-            .append(" (").append(getForecolorIndex()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getForecolorIndex ()))
+            .append(" (").append( getForecolorIndex() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .backcolorIndex       = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getBackcolorIndex()))
-            .append(" (").append(getBackcolorIndex()).append(" )\n");
+            .append("0x").append(HexDump.toHex(  getBackcolorIndex ()))
+            .append(" (").append( getBackcolorIndex() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
 
-        buffer.append("[/AreaFormat]\n");
+        buffer.append("[/AREAFORMAT]\n");
         return buffer.toString();
     }
 
     public int serialize(int offset, byte[] data)
     {
+        int pos = 0;
+
         LittleEndian.putShort(data, 0 + offset, sid);
         LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
 
-        LittleEndian.putInt(data, 4 + offset, field_1_foregroundColor);
-        LittleEndian.putInt(data, 8 + offset, field_2_backgroundColor);
-        LittleEndian.putShort(data, 12 + offset, field_3_pattern);
-        LittleEndian.putShort(data, 14 + offset, field_4_formatFlags);
-        LittleEndian.putShort(data, 16 + offset, field_5_forecolorIndex);
-        LittleEndian.putShort(data, 18 + offset, field_6_backcolorIndex);
+        LittleEndian.putInt(data, 4 + offset + pos, field_1_foregroundColor);
+        LittleEndian.putInt(data, 8 + offset + pos, field_2_backgroundColor);
+        LittleEndian.putShort(data, 12 + offset + pos, field_3_pattern);
+        LittleEndian.putShort(data, 14 + offset + pos, field_4_formatFlags);
+        LittleEndian.putShort(data, 16 + offset + pos, field_5_forecolorIndex);
+        LittleEndian.putShort(data, 18 + offset + pos, field_6_backcolorIndex);
 
         return getRecordSize();
     }
@@ -201,7 +201,7 @@ public class AreaFormatRecord
      */
     public int getRecordSize()
     {
-        return 4 + 4 + 4 + 2 + 2 + 2 + 2;
+        return 4  + 4 + 4 + 2 + 2 + 2 + 2;
     }
 
     public short getSid()
@@ -210,17 +210,18 @@ public class AreaFormatRecord
     }
 
     public Object clone() {
-      AreaFormatRecord rec = new AreaFormatRecord();
-      
-      rec.field_1_foregroundColor = field_1_foregroundColor;
-      rec.field_2_backgroundColor = field_2_backgroundColor;
-      rec.field_3_pattern = field_3_pattern;
-      rec.field_4_formatFlags = field_4_formatFlags;
-      rec.field_5_forecolorIndex = field_5_forecolorIndex;
-      rec.field_6_backcolorIndex = field_6_backcolorIndex;
-
-      return rec;
+        AreaFormatRecord rec = new AreaFormatRecord();
+    
+        rec.field_1_foregroundColor = field_1_foregroundColor;
+        rec.field_2_backgroundColor = field_2_backgroundColor;
+        rec.field_3_pattern = field_3_pattern;
+        rec.field_4_formatFlags = field_4_formatFlags;
+        rec.field_5_forecolorIndex = field_5_forecolorIndex;
+        rec.field_6_backcolorIndex = field_6_backcolorIndex;
+        return rec;
     }
+
+
 
 
     /**

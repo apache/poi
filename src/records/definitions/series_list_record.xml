@@ -1,4 +1,5 @@
-<record id="0x1016" name="SeriesList" package="org.apache.poi.hssf.record">
+<record id="0x1016" name="SeriesList" excel-record-id="SERIESLIST"
+    package="org.apache.poi.hssf.record">
     <suffix>Record</suffix>
     <extends>Record</extends>
     <description>The series list record defines the series displayed as an overlay to the main chart record.</description>

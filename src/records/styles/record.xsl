@@ -76,7 +76,7 @@ public class <xsl:value-of select="@name"/>Record
     extends Record
 {
     public final static short      sid                             = <xsl:value-of select="@id"/>;
-<xsl:for-each select="//fields/field">    private  <xsl:value-of select="recutil:getType(@size,@type,10)"/><xsl:text> </xsl:text><xsl:value-of select="recutil:getFieldName(position(),@name,0)"/>;
+<xsl:for-each select="//fields/field">    private  <xsl:value-of select="recutil:getType(@size,@type,10)"/><xsl:text> </xsl:text><xsl:value-of select="recutil:getFieldName(position(),@name,0)"/><xsl:value-of select="recutil:initializeText(@size,@type)"/>;
 <xsl:apply-templates select="./bit|./const|./bit/const"/>
 </xsl:for-each>
 
@@ -100,6 +100,14 @@ public class <xsl:value-of select="@name"/>Record
     public <xsl:value-of select="@name"/>Record(short id, short size, byte [] data)
     {
         super(id, size, data);
+    <xsl:for-each select="//fields/field">
+    <xsl:if test="@default">
+        <xsl:text>        </xsl:text>
+        <xsl:value-of select="recutil:getFieldName(position(),@name,0)"/> =
+        <xsl:value-of select="@default"/>;
+
+    </xsl:if>
+    </xsl:for-each>
     }
 
     /**
@@ -115,6 +123,14 @@ public class <xsl:value-of select="@name"/>Record
     public <xsl:value-of select="@name"/>Record(short id, short size, byte [] data, int offset)
     {
         super(id, size, data, offset);
+    <xsl:for-each select="//fields/field">
+    <xsl:if test="@default">
+        <xsl:text>        </xsl:text>
+        <xsl:value-of select="recutil:getFieldName(position(),@name,0)"/> =
+        <xsl:value-of select="@default"/>;
+
+    </xsl:if>
+    </xsl:for-each>
     }
 
     /**
@@ -132,9 +148,13 @@ public class <xsl:value-of select="@name"/>Record
 
     protected void fillFields(byte [] data, short size, int offset)
     {
-<xsl:variable name="fieldIterator" select="field:new()"/>
+
+<xsl:text>        int pos = 0;
+</xsl:text>
+
+ <xsl:variable name="fieldIterator" select="field:new()"/>
 <xsl:for-each select="//fields/field">
-<xsl:text>        </xsl:text><xsl:value-of select="recutil:getFieldName(position(),@name,30)"/>  = <xsl:value-of select="field:fillDecoder($fieldIterator,@size,@type)"/>;
+    <xsl:text>        </xsl:text><xsl:value-of select="field:fillDecoder2($fieldIterator,position(),@name,@size,@type)"/>;
 </xsl:for-each>
     }
 
@@ -142,14 +162,16 @@ public class <xsl:value-of select="@name"/>Record
     {
         StringBuffer buffer = new StringBuffer();
 
-        buffer.append("[<xsl:value-of select="@name"/>]\n");
+        buffer.append("[<xsl:value-of select="recutil:getRecordId(@name,@excel-record-id)"/>]\n");
 <xsl:apply-templates select="//field" mode="tostring"/>
-        buffer.append("[/<xsl:value-of select="@name"/>]\n");
+        buffer.append("[/<xsl:value-of select="recutil:getRecordId(@name,@excel-record-id)"/>]\n");
         return buffer.toString();
     }
 
     public int serialize(int offset, byte[] data)
     {
+        int pos = 0;
+
         LittleEndian.putShort(data, 0 + offset, sid);
         LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
 <xsl:variable name="fieldIterator" select="field:new()"/>
@@ -178,11 +200,12 @@ public class <xsl:value-of select="@name"/>Record
     }
 
     public Object clone() {
-      <xsl:value-of select="@name"/>Record rec = new <xsl:value-of select="@name"/>Record();
-
-<xsl:for-each select="//fields/field"><xsl:text>      rec.</xsl:text><xsl:value-of select="recutil:getFieldName(position(),@name,0)"/><xsl:text> = </xsl:text><xsl:value-of select="recutil:getFieldName(position(),@name,0)"/><xsl:text>;
-</xsl:text></xsl:for-each>
-      return rec;
+        <xsl:value-of select="@name"/>Record rec = new <xsl:value-of select="@name"/>Record();
+    <xsl:for-each select="//fields/field">
+        <xsl:text>
+        </xsl:text><xsl:value-of select="recutil:clone(@name,@type,position())"/><xsl:text>;</xsl:text>
+    </xsl:for-each>
+        return rec;
     }
 
 
@@ -276,19 +299,29 @@ public class <xsl:value-of select="@name"/>Record
 </xsl:template>
 
 <xsl:template match="field" mode="tostring">
-        buffer.append("    .<xsl:value-of select="recutil:getFieldName(@name,20)"/> = ")<xsl:choose><xsl:when test="@type != 'string' and @type != 'hbstring' and @type != 'float' and @size != 'varword'">
-            .append("0x")
-            .append(HexDump.toHex((<xsl:value-of select="recutil:getType(@size,@type,00)"/>)get<xsl:value-of select="recutil:getFieldName1stCap(@name,0)"/>()))</xsl:when></xsl:choose>
-            .append(" (").append(get<xsl:value-of select="recutil:getFieldName1stCap(@name,0)"/>()).append(" )\n");
-<xsl:apply-templates select="bit" mode="bittostring"/>
+    <xsl:value-of select="recutil:getToString(@name,@type,@size)"/>
+    <xsl:text>
+        buffer.append(System.getProperty("line.separator")); </xsl:text>
+    <xsl:apply-templates select="bit" mode="bittostring"/>
+    <xsl:text>&#10;</xsl:text>
 </xsl:template>
 
-<xsl:template match="bit" mode="bittostring">
-<xsl:if test="not (@mask)">        buffer.append("         .<xsl:value-of select="recutil:getFieldName(@name,20)"/>     = ").append(is<xsl:value-of select="recutil:getFieldName1stCap(@name,20)"/>()).append('\n');
-</xsl:if>
-<xsl:if test="@mask">        buffer.append("         .<xsl:value-of select="recutil:getFieldName(@name,20)"/>     = ").append(get<xsl:value-of select="recutil:getFieldName1stCap(@name,20)"/>()).append('\n');
-</xsl:if>
-</xsl:template>
+    <xsl:template match="bit" mode="bittostring">
+        <xsl:if test="not (@mask)">
+            <xsl:text>&#10;        buffer.append("         .</xsl:text>
+            <xsl:value-of select="recutil:getFieldName(@name,20)"/>
+            <xsl:text>     = ").append(is</xsl:text>
+            <xsl:value-of select="recutil:getFieldName1stCap(@name,0)"/>
+            <xsl:text>()).append('\n'); </xsl:text>
+        </xsl:if>
+        <xsl:if test="@mask">
+        <xsl:text>&#10;            buffer.append("         .</xsl:text>
+            <xsl:value-of select="recutil:getFieldName(@name,20)"/>
+            <xsl:text>     = ").append(get</xsl:text>
+            <xsl:value-of select="recutil:getFieldName1stCap(@name,0)"/>
+            <xsl:text>()).append('\n'); </xsl:text>
+        </xsl:if>
+    </xsl:template>
 
 <xsl:template match="author">
  * @author <xsl:value-of select="."/>

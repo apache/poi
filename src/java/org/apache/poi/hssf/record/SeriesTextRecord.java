@@ -94,6 +94,7 @@ public class SeriesTextRecord
     public SeriesTextRecord(short id, short size, byte [] data)
     {
         super(id, size, data);
+    
     }
 
     /**
@@ -109,6 +110,7 @@ public class SeriesTextRecord
     public SeriesTextRecord(short id, short size, byte [] data, int offset)
     {
         super(id, size, data, offset);
+    
     }
 
     /**
@@ -126,10 +128,12 @@ public class SeriesTextRecord
 
     protected void fillFields(byte [] data, short size, int offset)
     {
-        field_1_id                      = LittleEndian.getShort(data, 0x0 + offset);
-        field_2_textLength              = data[ 0x2 + offset ];
-        field_3_undocumented            = data[ 0x3 + offset ];
-        field_4_text                    = StringUtil.getFromUnicodeHigh(data, 0x4 + offset, ((field_2_textLength *2)/2));
+
+        int pos = 0;
+        field_1_id                     = LittleEndian.getShort(data, pos + 0x0 + offset);
+        field_2_textLength             = data[ pos + 0x2 + offset ];
+        field_3_undocumented           = data[ pos + 0x3 + offset ];
+        field_4_text                   = StringUtil.getFromUnicodeHigh(data, pos + 0x4 + offset, ((field_2_textLength *2)/2));
 
     }
 
@@ -137,39 +141,38 @@ public class SeriesTextRecord
     {
         StringBuffer buffer = new StringBuffer();
 
-        buffer.append("[SeriesText]\n");
-
+        buffer.append("[SERIESTEXT]\n");
         buffer.append("    .id                   = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getId()))
-            .append(" (").append(getId()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getId ()))
+            .append(" (").append( getId() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .textLength           = ")
-            .append("0x")
-            .append(HexDump.toHex((byte)getTextLength()))
-            .append(" (").append(getTextLength()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getTextLength ()))
+            .append(" (").append( getTextLength() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .undocumented         = ")
-            .append("0x")
-            .append(HexDump.toHex((byte)getUndocumented()))
-            .append(" (").append(getUndocumented()).append(" )\n");
-
+            .append("0x").append(HexDump.toHex(  getUndocumented ()))
+            .append(" (").append( getUndocumented() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .text                 = ")
-            .append(" (").append(getText()).append(" )\n");
+            .append(" (").append( getText() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
 
-        buffer.append("[/SeriesText]\n");
+        buffer.append("[/SERIESTEXT]\n");
         return buffer.toString();
     }
 
     public int serialize(int offset, byte[] data)
     {
+        int pos = 0;
+
         LittleEndian.putShort(data, 0 + offset, sid);
         LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
 
-        LittleEndian.putShort(data, 4 + offset, field_1_id);
-        data[ 6 + offset ] = field_2_textLength;
-        data[ 7 + offset ] = field_3_undocumented;
-        StringUtil.putUncompressedUnicodeHigh(field_4_text, data, 8 + offset);
+        LittleEndian.putShort(data, 4 + offset + pos, field_1_id);
+        data[ 6 + offset + pos ] = field_2_textLength;
+        data[ 7 + offset + pos ] = field_3_undocumented;
+        StringUtil.putUncompressedUnicodeHigh(field_4_text, data, 8 + offset + pos);
 
         return getRecordSize();
     }
@@ -188,15 +191,16 @@ public class SeriesTextRecord
     }
 
     public Object clone() {
-      SeriesTextRecord rec = new SeriesTextRecord();
-      
-      rec.field_1_id = field_1_id;
-      rec.field_2_textLength = field_2_textLength;
-      rec.field_3_undocumented = field_3_undocumented;
-      rec.field_4_text = field_4_text;
-
-      return rec;
+        SeriesTextRecord rec = new SeriesTextRecord();
+    
+        rec.field_1_id = field_1_id;
+        rec.field_2_textLength = field_2_textLength;
+        rec.field_3_undocumented = field_3_undocumented;
+        rec.field_4_text = field_4_text;
+        return rec;
     }
+
+
 
 
     /**

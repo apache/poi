@@ -105,6 +105,7 @@ public class ValueRangeRecord
     public ValueRangeRecord(short id, short size, byte [] data)
     {
         super(id, size, data);
+    
     }
 
     /**
@@ -120,6 +121,7 @@ public class ValueRangeRecord
     public ValueRangeRecord(short id, short size, byte [] data, int offset)
     {
         super(id, size, data, offset);
+    
     }
 
     /**
@@ -137,12 +139,14 @@ public class ValueRangeRecord
 
     protected void fillFields(byte [] data, short size, int offset)
     {
-        field_1_minimumAxisValue        = LittleEndian.getDouble(data, 0x0 + offset);
-        field_2_maximumAxisValue        = LittleEndian.getDouble(data, 0x8 + offset);
-        field_3_majorIncrement          = LittleEndian.getDouble(data, 0x10 + offset);
-        field_4_minorIncrement          = LittleEndian.getDouble(data, 0x18 + offset);
-        field_5_categoryAxisCross       = LittleEndian.getDouble(data, 0x20 + offset);
-        field_6_options                 = LittleEndian.getShort(data, 0x28 + offset);
+
+        int pos = 0;
+        field_1_minimumAxisValue       = LittleEndian.getDouble(data, pos + 0x0 + offset);
+        field_2_maximumAxisValue       = LittleEndian.getDouble(data, pos + 0x8 + offset);
+        field_3_majorIncrement         = LittleEndian.getDouble(data, pos + 0x10 + offset);
+        field_4_minorIncrement         = LittleEndian.getDouble(data, pos + 0x18 + offset);
+        field_5_categoryAxisCross      = LittleEndian.getDouble(data, pos + 0x20 + offset);
+        field_6_options                = LittleEndian.getShort(data, pos + 0x28 + offset);
 
     }
 
@@ -150,52 +154,53 @@ public class ValueRangeRecord
     {
         StringBuffer buffer = new StringBuffer();
 
-        buffer.append("[ValueRange]\n");
-
+        buffer.append("[VALUERANGE]\n");
         buffer.append("    .minimumAxisValue     = ")
-            .append(" (").append(getMinimumAxisValue()).append(" )\n");
-
+            .append(" (").append( getMinimumAxisValue() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .maximumAxisValue     = ")
-            .append(" (").append(getMaximumAxisValue()).append(" )\n");
-
+            .append(" (").append( getMaximumAxisValue() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .majorIncrement       = ")
-            .append(" (").append(getMajorIncrement()).append(" )\n");
-
+            .append(" (").append( getMajorIncrement() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .minorIncrement       = ")
-            .append(" (").append(getMinorIncrement()).append(" )\n");
-
+            .append(" (").append( getMinorIncrement() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .categoryAxisCross    = ")
-            .append(" (").append(getCategoryAxisCross()).append(" )\n");
-
+            .append(" (").append( getCategoryAxisCross() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
         buffer.append("    .options              = ")
-            .append("0x")
-            .append(HexDump.toHex((short)getOptions()))
-            .append(" (").append(getOptions()).append(" )\n");
-        buffer.append("         .automaticMinimum         = ").append(isAutomaticMinimum    ()).append('\n');
-        buffer.append("         .automaticMaximum         = ").append(isAutomaticMaximum    ()).append('\n');
-        buffer.append("         .automaticMajor           = ").append(isAutomaticMajor      ()).append('\n');
-        buffer.append("         .automaticMinor           = ").append(isAutomaticMinor      ()).append('\n');
-        buffer.append("         .automaticCategoryCrossing     = ").append(isAutomaticCategoryCrossing()).append('\n');
-        buffer.append("         .logarithmicScale         = ").append(isLogarithmicScale    ()).append('\n');
-        buffer.append("         .valuesInReverse          = ").append(isValuesInReverse     ()).append('\n');
-        buffer.append("         .crossCategoryAxisAtMaximum     = ").append(isCrossCategoryAxisAtMaximum()).append('\n');
-        buffer.append("         .reserved                 = ").append(isReserved            ()).append('\n');
+            .append("0x").append(HexDump.toHex(  getOptions ()))
+            .append(" (").append( getOptions() ).append(" )");
+        buffer.append(System.getProperty("line.separator")); 
+        buffer.append("         .automaticMinimum         = ").append(isAutomaticMinimum()).append('\n'); 
+        buffer.append("         .automaticMaximum         = ").append(isAutomaticMaximum()).append('\n'); 
+        buffer.append("         .automaticMajor           = ").append(isAutomaticMajor()).append('\n'); 
+        buffer.append("         .automaticMinor           = ").append(isAutomaticMinor()).append('\n'); 
+        buffer.append("         .automaticCategoryCrossing     = ").append(isAutomaticCategoryCrossing()).append('\n'); 
+        buffer.append("         .logarithmicScale         = ").append(isLogarithmicScale()).append('\n'); 
+        buffer.append("         .valuesInReverse          = ").append(isValuesInReverse()).append('\n'); 
+        buffer.append("         .crossCategoryAxisAtMaximum     = ").append(isCrossCategoryAxisAtMaximum()).append('\n'); 
+        buffer.append("         .reserved                 = ").append(isReserved()).append('\n'); 
 
-        buffer.append("[/ValueRange]\n");
+        buffer.append("[/VALUERANGE]\n");
         return buffer.toString();
     }
 
     public int serialize(int offset, byte[] data)
     {
+        int pos = 0;
+
         LittleEndian.putShort(data, 0 + offset, sid);
         LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
 
-        LittleEndian.putDouble(data, 4 + offset, field_1_minimumAxisValue);
-        LittleEndian.putDouble(data, 12 + offset, field_2_maximumAxisValue);
-        LittleEndian.putDouble(data, 20 + offset, field_3_majorIncrement);
-        LittleEndian.putDouble(data, 28 + offset, field_4_minorIncrement);
-        LittleEndian.putDouble(data, 36 + offset, field_5_categoryAxisCross);
-        LittleEndian.putShort(data, 44 + offset, field_6_options);
+        LittleEndian.putDouble(data, 4 + offset + pos, field_1_minimumAxisValue);
+        LittleEndian.putDouble(data, 12 + offset + pos, field_2_maximumAxisValue);
+        LittleEndian.putDouble(data, 20 + offset + pos, field_3_majorIncrement);
+        LittleEndian.putDouble(data, 28 + offset + pos, field_4_minorIncrement);
+        LittleEndian.putDouble(data, 36 + offset + pos, field_5_categoryAxisCross);
+        LittleEndian.putShort(data, 44 + offset + pos, field_6_options);
 
         return getRecordSize();
     }
@@ -205,13 +210,27 @@ public class ValueRangeRecord
      */
     public int getRecordSize()
     {
-        return 4 + 8 + 8 + 8 + 8 + 8 + 2;
+        return 4  + 8 + 8 + 8 + 8 + 8 + 2;
     }
 
     public short getSid()
     {
         return this.sid;
     }
+
+    public Object clone() {
+        ValueRangeRecord rec = new ValueRangeRecord();
+    
+        rec.field_1_minimumAxisValue = field_1_minimumAxisValue;
+        rec.field_2_maximumAxisValue = field_2_maximumAxisValue;
+        rec.field_3_majorIncrement = field_3_majorIncrement;
+        rec.field_4_minorIncrement = field_4_minorIncrement;
+        rec.field_5_categoryAxisCross = field_5_categoryAxisCross;
+        rec.field_6_options = field_6_options;
+        return rec;
+    }
+
+
 
 
     /**
