@@ -20,12 +20,10 @@ package org.apache.poi.hssf.record.aggregates;
 
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RowRecord;
-import org.apache.poi.hssf.record.UnknownRecord;
 
+import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  *
@@ -46,7 +44,6 @@ public class RowRecordsAggregate
     public RowRecordsAggregate()
     {
         records = new TreeMap();
-
     }
 
     public void insertRow(RowRecord row)
@@ -121,6 +118,7 @@ public class RowRecordsAggregate
         return k;
     }
 	*/
+
     /**
      * called by the class that is responsible for writing this sucker.
      * Subclasses should implement this so that their data is passed back in a
@@ -186,15 +184,198 @@ public class RowRecordsAggregate
         return records.values().iterator();
     }
     
-    /** Performs a deep clone of the record*/
-    public Object clone() {
-      RowRecordsAggregate rec = new RowRecordsAggregate();
-      for (Iterator rowIter = getIterator(); rowIter.hasNext();) {
-        //return the cloned Row Record & insert
-        RowRecord row = (RowRecord)((RowRecord)rowIter.next()).clone();
-        rec.insertRow(row);
-      }
-      return rec;
+    /**
+     * Performs a deep clone of the record
+     */
+    public Object clone()
+    {
+        RowRecordsAggregate rec = new RowRecordsAggregate();
+        for ( Iterator rowIter = getIterator(); rowIter.hasNext(); )
+        {
+            //return the cloned Row Record & insert
+            RowRecord row = (RowRecord) ( (RowRecord) rowIter.next() ).clone();
+            rec.insertRow( row );
+        }
+        return rec;
+    }
+
+
+    public int findStartOfRowOutlineGroup(int row)
+    {
+        // Find the start of the group.
+        RowRecord rowRecord = this.getRow( row );
+        int level = rowRecord.getOutlineLevel();
+        int currentRow = row;
+        while (this.getRow( currentRow ) != null)
+        {
+            rowRecord = this.getRow( currentRow );
+            if (rowRecord.getOutlineLevel() < level)
+                return currentRow + 1;
+            currentRow--;
+        }
+
+        return currentRow + 1;
+    }
+
+    public int findEndOfRowOutlineGroup( int row )
+    {
+        int level = getRow( row ).getOutlineLevel();
+        int currentRow;
+        for (currentRow = row; currentRow < this.getLastRowNum(); currentRow++)
+        {
+            if (getRow(currentRow) == null || getRow(currentRow).getOutlineLevel() < level)
+            {
+                break;
+            }
+        }
+
+        return currentRow-1;
+    }
+
+    public int writeHidden( RowRecord rowRecord, int row, boolean hidden )
+    {
+        int level = rowRecord.getOutlineLevel();
+        while (rowRecord != null && this.getRow(row).getOutlineLevel() >= level)
+        {
+            rowRecord.setZeroHeight( hidden );
+            row++;
+            rowRecord = this.getRow( row );
+        }
+        return row - 1;
+    }
+
+    public void collapseRow( int rowNumber )
+    {
+
+        // Find the start of the group.
+        int startRow = findStartOfRowOutlineGroup( rowNumber );
+        RowRecord rowRecord = (RowRecord) getRow( startRow );
+
+        // Hide all the columns until the end of the group
+        int lastRow = writeHidden( rowRecord, startRow, true );
+
+        // Write collapse field
+        if (getRow(lastRow + 1) != null)
+        {
+            getRow(lastRow + 1).setColapsed( true );
+        }
+        else
+        {
+            RowRecord row = createRow( lastRow + 1);
+            row.setColapsed( true );
+            insertRow( row );
+        }
+    }
+
+    /**
+     * Create a row record.
+     *
+     * @param row number
+     * @return RowRecord created for the passed in row number
+     * @see org.apache.poi.hssf.record.RowRecord
+     */
+    public static RowRecord createRow(int row)
+    {
+        RowRecord rowrec = new RowRecord();
+
+        //rowrec.setRowNumber(( short ) row);
+        rowrec.setRowNumber(row);
+        rowrec.setHeight(( short ) 0xff);
+        rowrec.setOptimize(( short ) 0x0);
+        rowrec.setOptionFlags(( short ) 0x100);  // seems necessary for outlining
+        rowrec.setXFIndex(( short ) 0xf);
+        return rowrec;
+    }
+
+    public boolean isRowGroupCollapsed( int row )
+    {
+        int collapseRow = findEndOfRowOutlineGroup( row ) + 1;
+
+        if (getRow(collapseRow) == null)
+            return false;
+        else
+            return getRow( collapseRow ).getColapsed();
+    }
+
+    public void expandRow( int rowNumber )
+    {
+        int idx = rowNumber;
+        if (idx == -1)
+            return;
+
+        // If it is already expanded do nothing.
+        if (!isRowGroupCollapsed(idx))
+            return;
+
+        // Find the start of the group.
+        int startIdx = findStartOfRowOutlineGroup( idx );
+        RowRecord row = getRow( startIdx );
+
+        // Find the end of the group.
+        int endIdx = findEndOfRowOutlineGroup( idx );
+
+        // expand:
+        // colapsed bit must be unset
+        // hidden bit gets unset _if_ surrounding groups are expanded you can determine
+        //   this by looking at the hidden bit of the enclosing group.  You will have
+        //   to look at the start and the end of the current group to determine which
+        //   is the enclosing group
+        // hidden bit only is altered for this outline level.  ie.  don't uncollapse contained groups
+        if ( !isRowGroupHiddenByParent( idx ) )
+        {
+            for ( int i = startIdx; i <= endIdx; i++ )
+            {
+                if ( row.getOutlineLevel() == getRow( i ).getOutlineLevel() )
+                    getRow( i ).setZeroHeight( false );
+                else if (!isRowGroupCollapsed(i))
+                    getRow( i ).setZeroHeight( false );
+            }
+        }
+
+        // Write collapse field
+        getRow( endIdx + 1 ).setColapsed( false );
+    }
+
+    public boolean isRowGroupHiddenByParent( int row )
+    {
+        // Look out outline details of end
+        int endLevel;
+        boolean endHidden;
+        int endOfOutlineGroupIdx = findEndOfRowOutlineGroup( row );
+        if (getRow( endOfOutlineGroupIdx + 1 ) == null)
+        {
+            endLevel = 0;
+            endHidden = false;
+        }
+        else
+        {
+            endLevel = getRow( endOfOutlineGroupIdx + 1).getOutlineLevel();
+            endHidden = getRow( endOfOutlineGroupIdx + 1).getZeroHeight();
+        }
+
+        // Look out outline details of start
+        int startLevel;
+        boolean startHidden;
+        int startOfOutlineGroupIdx = findStartOfRowOutlineGroup( row );
+        if (startOfOutlineGroupIdx - 1 < 0 || getRow(startOfOutlineGroupIdx - 1) == null)
+        {
+            startLevel = 0;
+            startHidden = false;
+        }
+        else
+        {
+            startLevel = getRow( startOfOutlineGroupIdx - 1).getOutlineLevel();
+            startHidden = getRow( startOfOutlineGroupIdx - 1 ).getZeroHeight();
+        }
+
+        if (endLevel > startLevel)
+        {
+            return endHidden;
+        }
+        else
+        {
+            return startHidden;
+        }
     }
 
 }

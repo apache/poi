@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Copyright (C) 2004 The Apache Software Foundation. All rights reserved. -->
-<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "../dtd/document-v11.dtd">
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "document-v11.dtd">
 
 <document>
     <header>
         <title>Busy Developers' Guide to HSSF Features</title>
         <authors>
-            <person email="glens@apache.org" name="Glen Stampoultzis" id="CO"/>
+            <person email="glens@apache.org" name="Glen Stampoultzis" id="GS"/>
         </authors>
     </header>
     <body>
@@ -44,6 +44,7 @@
                     <li><link href="#DrawingShapes">Drawing Shapes.</link></li>
                     <li><link href="#StylingShapes">Styling Shapes.</link></li>
                     <li><link href="#Graphics2d">Shapes and Graphics2d.</link></li>
+                    <li><link href="#Outlining">Outlining.</link></li>
                 </ul>
             </section>
             <section><title>Features</title>
@@ -900,6 +901,42 @@
                     <p>
                         Functions that are not supported will return and log a message
                         using the POI logging infrastructure (disabled by default).
+                    </p>
+                </section>
+                <anchor id="Outlining"/>
+                <section>
+                    <title>Outlining</title>
+                    <p>
+                        Outlines are great for grouping sections of information
+                        together and can be added easily to columns and rows
+                        using the POI API.  Here's how:
+                    </p>
+                    <source>
+    HSSFWorkbook wb = new HSSFWorkbook();
+    HSSFSheet sheet1 = wb.createSheet("new sheet");
+
+    sheet1.groupRow( 5, 14 );
+    sheet1.groupRow( 7, 14 );
+    sheet1.groupRow( 16, 19 );
+
+    sheet1.groupColumn( (short)4, (short)7 );
+    sheet1.groupColumn( (short)9, (short)12 );
+    sheet1.groupColumn( (short)10, (short)11 );
+
+    FileOutputStream fileOut = new FileOutputStream(filename);
+    wb.write(fileOut);
+    fileOut.close();
+                    </source>
+                    <p>
+                        To collapse (or expand) an outline use the following calls:
+                    </p>
+                    <source>
+    sheet1.setRowGroupCollapsed( 7, true );
+    sheet1.setColumnGroupCollapsed( (short)4, true );
+                    </source>
+                    <p>
+                        The row/column you choose should contain an already
+                        created group.  It can be anywhere within the group.
                     </p>
                 </section>
             </section>

@@ -134,7 +134,8 @@ public class HSSFSheet
         CellValueRecordInterface cval = sheet.getNextValueRecord();
         long timestart = System.currentTimeMillis();
 
-        log.log(DEBUG, "Time at start of cell creating in HSSF sheet = ",
+        if (log.check( POILogger.DEBUG ))
+            log.log(DEBUG, "Time at start of cell creating in HSSF sheet = ",
                 new Long(timestart));
         HSSFRow lastrow = null;
 
@@ -150,10 +151,12 @@ public class HSSFSheet
             if ( hrow != null )
             {
                 lastrow = hrow;
-                log.log( DEBUG, "record id = " + Integer.toHexString( ( (Record) cval ).getSid() ) );
+                if (log.check( POILogger.DEBUG ))
+                    log.log( DEBUG, "record id = " + Integer.toHexString( ( (Record) cval ).getSid() ) );
                 hrow.createCellFromRecord( cval );
                 cval = sheet.getNextValueRecord();
-                log.log( DEBUG, "record took ",
+                if (log.check( POILogger.DEBUG ))
+                    log.log( DEBUG, "record took ",
                         new Long( System.currentTimeMillis() - cellstart ) );
             }
             else
@@ -161,7 +164,8 @@ public class HSSFSheet
                 cval = null;
             }
         }
-        log.log(DEBUG, "total sheet cell creation took ",
+        if (log.check( POILogger.DEBUG ))
+            log.log(DEBUG, "total sheet cell creation took ",
                 new Long(System.currentTimeMillis() - timestart));
     }
 
@@ -173,8 +177,6 @@ public class HSSFSheet
      * @see org.apache.poi.hssf.usermodel.HSSFRow
      * @see #removeRow(HSSFRow)
      */
-
-    //public HSSFRow createRow(short rownum)
     public HSSFRow createRow(int rownum)
     {
         HSSFRow row = new HSSFRow(book, sheet, rownum);
@@ -1251,6 +1253,47 @@ public class HSSFSheet
         return patriarch;
     }
 
+    /**
+     * Expands or collapses a column group.
+     *
+     * @param columnNumber      One of the columns in the group.
+     * @param collapsed         true = collapse group, false = expand group.
+     */
+    public void setColumnGroupCollapsed( short columnNumber, boolean collapsed )
+    {
+        sheet.setColumnGroupCollapsed( columnNumber, collapsed );
+    }
+
+    /**
+     * Create an outline for the provided column range.
+     *
+     * @param fromColumn        beginning of the column range.
+     * @param toColumn          end of the column range.
+     */
+    public void groupColumn(short fromColumn, short toColumn)
+    {
+        sheet.groupColumnRange( fromColumn, toColumn, true );
+    }
+
+    public void ungroupColumn( short fromColumn, short toColumn )
+    {
+        sheet.groupColumnRange( fromColumn, toColumn, false );
+    }
+
+    public void groupRow(int fromRow, int toRow)
+    {
+        sheet.groupRowRange( fromRow, toRow, true );
+    }
+
+    public void ungroupRow(int fromRow, int toRow)
+    {
+        sheet.groupRowRange( fromRow, toRow, false );
+    }
+
+    public void setRowGroupCollapsed( int row, boolean collapse )
+    {
+        sheet.setRowGroupCollapsed( row, collapse );
+    }
 
 
 }
