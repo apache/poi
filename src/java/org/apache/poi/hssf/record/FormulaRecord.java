@@ -351,7 +351,7 @@ public class FormulaRecord
         int ptgSize = getTotalPtgSize();
 
         LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset, ( short ) (24 + ptgSize));
+        LittleEndian.putShort(data, 2 + offset, ( short ) (22 + ptgSize));
         LittleEndian.putShort(data, 4 + offset, getRow());
         LittleEndian.putShort(data, 6 + offset, getColumn());
         LittleEndian.putShort(data, 8 + offset, getXFIndex());
@@ -371,7 +371,7 @@ public class FormulaRecord
         int retval =0;
         
         if (EXPERIMENTAL_FORMULA_SUPPORT_ENABLED) {
-            retval = getTotalPtgSize() + 28;
+            retval = getTotalPtgSize() + 26;
         } else {
             retval =all_data.length;
         }

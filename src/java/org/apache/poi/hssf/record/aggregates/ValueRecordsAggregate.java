@@ -78,7 +78,7 @@ public class ValueRecordsAggregate
     int                       firstcell = -1;
     int                       lastcell  = -1;
     TreeMap                   records   = null;
-    int                       size      = 0;
+//    int                       size      = 0;
 
     /** Creates a new instance of ValueRecordsAggregate */
 
@@ -89,7 +89,7 @@ public class ValueRecordsAggregate
 
     public void insertCell(CellValueRecordInterface cell)
     {
-        if (records.get(cell) == null)
+/*        if (records.get(cell) == null)
         {
             size += (( Record ) cell).getRecordSize();
         }
@@ -97,7 +97,7 @@ public class ValueRecordsAggregate
         {
             size += (( Record ) cell).getRecordSize()
                     - (( Record ) records.get(cell)).getRecordSize();
-        }
+        }*/
 
         // XYLocator xy = new XYLocator(cell.getRow(), cell.getColumn());
         records.put(cell, cell);
@@ -113,7 +113,7 @@ public class ValueRecordsAggregate
 
     public void removeCell(CellValueRecordInterface cell)
     {
-        size -= (( Record ) cell).getRecordSize();
+  //      size -= (( Record ) cell).getRecordSize();
 
         // XYLocator xy = new XYLocator(cell.getRow(), cell.getColumn());
         records.remove(cell);
@@ -209,9 +209,17 @@ public class ValueRecordsAggregate
         return sid;
     }
 
-    public int getRecordSize()
-    {
+    public int getRecordSize() {
+    
+        int size = 0;
+        Iterator irecs = records.values().iterator();
+        
+        while (irecs.hasNext()) {
+                size += (( Record ) irecs.next()).getRecordSize();
+        }
+
         return size;
+//        return size;
     }
 
     public Iterator getIterator()
