@@ -662,15 +662,15 @@ public class Range
     r.initAll();
     int tableEnd = r._parEnd;
 
-    if (r._parStart != 0 && ((Paragraph)r._paragraphs.get(r._parStart - 1)).isInTable())
+    if (r._parStart != 0 && getParagraph(r._parStart - 1).isInTable())
     {
       throw new IllegalArgumentException("This paragraph is not the first one in the table");
     }
 
-    int limit = r._paragraphs.size();
+    int limit = _paragraphs.size();
     for (; tableEnd < limit; tableEnd++)
     {
-      if (!((Paragraph)r._paragraphs.get(tableEnd)).isInTable())
+       if (!getParagraph(tableEnd).isInTable())
       {
         break;
       }

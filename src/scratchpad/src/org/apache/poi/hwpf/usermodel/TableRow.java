@@ -1,6 +1,5 @@
 package org.apache.poi.hwpf.usermodel;
 
-
 import org.apache.poi.hwpf.sprm.TableSprmUncompressor;
 import org.apache.poi.hwpf.sprm.SprmBuffer;
 
@@ -16,8 +15,8 @@ public class TableRow
   private final static short SPRM_DYAROWHEIGHT = (short)0x9407;
 
   int _levelNum;
-  TableProperties _tprops;
-  TableCell[] _cells;
+  private TableProperties _tprops;
+  private TableCell[] _cells;
 
   public TableRow(int startIdx, int endIdx, Table parent, int levelNum)
   {
@@ -28,17 +27,26 @@ public class TableRow
     _cells = new TableCell[_tprops.getItcMac()];
 
     int start = 0;
-    int cellIndex = 0;
-    for (int x = 0; x < numParagraphs(); x++)
+    int end = 0;
+
+    for (int cellIndex = 0; cellIndex < _cells.length; cellIndex++)
     {
-      Paragraph p = getParagraph(x);
+      Paragraph p = getParagraph(start);
       String s = p.text();
 
-      if ((levelNum == 1 && s.charAt(s.length()-1) == TABLE_CELL_MARK) ||
-          p.isEmbeddedCellMark() && p.getTableLevel() == levelNum)
+      while (! ( (levelNum == 1 && s.charAt(s.length() - 1) == TABLE_CELL_MARK) ||
+                p.isEmbeddedCellMark() && p.getTableLevel() == levelNum))
       {
-        _cells[cellIndex] = new TableCell(start, x+1, this, levelNum, _tprops.getRgtc()[cellIndex]);
+        end++;
+        p = getParagraph(end);
+        s = p.text();
       }
+      _cells[cellIndex] = new TableCell(start, end, this, levelNum,
+                                        _tprops.getRgtc()[cellIndex],
+                                        _tprops.getRgdxaCenter()[cellIndex],
+                                        _tprops.getRgdxaCenter()[cellIndex+1]-_tprops.getRgdxaCenter()[cellIndex]);
+      end++;
+      start = end;
     }
   }
 
@@ -97,4 +105,13 @@ public class TableRow
     _papx.updateSprm(SPRM_FTABLEHEADER, (byte)(tableHeader ? 1 : 0));
   }
 
+  public int numCells()
+  {
+    return _cells.length;
+  }
+
+  public TableCell getCell(int index)
+  {
+    return _cells[index];
+  }
 }
