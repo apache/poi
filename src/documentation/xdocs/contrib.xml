@@ -8,6 +8,7 @@
    <person name="Robin Green" email="greenrd@hotmail.com"/>
    <person name="Stefano Mazzocchi" email="stefano@apache.org"/> 
    <person name="Nicola Ken Barozzi" email="barozzi@nicolaken.com"/> 
+   <person name="Marc Johnson" email="mjohnson@apache.org"/> 
    </authors>
  </header>
 
@@ -20,22 +21,22 @@
    volunteer project released under a very open license.
    This means there are many ways to contribute to the project - either
    with direct participation (coding, documenting, answering questions,
-   proposing ideas, reporting bugs, suggesting bug-fixes, etc..) or by resource
+   proposing ideas, reporting bugs, suggesting bug fixes, etc. ...) or by resource
    donations (money, time, publicity, hardware, software, conference
-   presentations, speeches, etc...).
+   presentations, speeches, etc. ...).
   </p>
   <p>
-   To begin with, we suggest you to subscribe to the
+   To begin with, we suggest you subscribe to the
    <link href="mail-lists.html">POI mailing lists</link>
    (follow the link for information on how to subscribe and to access the mail
-   list archives). Listen-in for a while, to hear how others make contibutions.
+   list archives). Listen in for a while, to hear how others make contributions.
   </p>
 
   <p>You can get your local working copy of the
    <link href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/POI">latest and
-   greatest code</link> (which you find in the POI module in
+   greatest code</link> (which you find in the jakarta-poi module in
    the CVS code repository.
-   Review the <link href="todo.html">todo</link> list, choose a task
+   Review the <link href="todo.html">todo</link> list and choose a task
    (or perhaps you have noticed something that needs patching). Make the
    changes, do the testing, generate a patch, and post to the dev
    mailing list. (Do not worry - the process is easy and explained below.)
@@ -60,11 +61,11 @@
     having too many questioners and not enough experts to respond to all the questions.</li>
    <li>Testing POI (especially its less-frequently-used features) on various configurations
     and reporting back.</li>
-   <li>Debugging - producing reproduceable test cases and/or finding causes of bugs. Some known bugs are informally listed on
+   <li>Debugging - producing reproducible test cases and/or finding causes of bugs. Some known bugs are informally listed on
     <link href="todo.html">To Do</link>, and some are recorded in Bugzilla
     (see <link href="#procedure">explanation below</link>).</li>
-   <li>Specifying/analysing/designing new features - and beyond. (If you wish to get involved
-    with this, please join <code>general POI mailing list</code>
+   <li>Specifying/analyzing/designing new features - and beyond. (If you wish to get involved
+    with this, please join the <code>general POI mailing list</code>
     , install and try out POI
     and read some of the <link href="mail-lists.html">mail archives</link>.
     You should have a strong "fluency" in XML technologies, Java and a basic understanding of
@@ -86,8 +87,8 @@
  <s1 title="CVS Usage Precis">
   <p>An overview of how to use CVS to participate in POI development.
    Do not be afraid - you cannot accidently destroy the actual code repository,
-   because you are working with a local copy as an anonymous user. Therefore,
-   you do not have the system permissions to change anything. You can only 
+   because you are working with a local copy as an anonymous user.
+   You do not have the system permissions to change anything. You can only 
    update your local repository and compare your revisions with the real
    repository.
   </p>
@@ -134,7 +135,7 @@
    is appropriate for a certain situation and how to go about it without
    confusion. This section explains when to use the 
    <code>developer</code> <link href="mail-lists.html">mailing list</link>
-   the bug database.
+   and the bug database.
   </p>
 
   <p>
@@ -155,9 +156,9 @@
    Experienced developers use Bugzilla directly, as they are very sure
    when they have found a bug and when not. However, less experienced users
    should first discuss it on the user or developer mailing list (as
-   appropriate). Impatient people always enter everything into Bugzilla
-   without caring if it is a bug of POI or their own
-   installation/configuration mistake - please do not do this.
+   appropriate). Impatient people frequently enter everything into Bugzilla
+   without caring if it is a bug in POI or their own
+   installation/configuration mistake - please, do not do this.
   </p>
 
   <p>
@@ -168,8 +169,8 @@
   </p>
 
   <p>
-   Perhaps you do not get any answer on your first reply, so just post
-   it again until you get one. (But please not every hour - allow a few
+   If you do not get any answer on your first attempt, post
+   your issue again until you get a reply. (But, please, not every hour - allow a few
    days for the list to deal with it.) Do not be impatient - remember that
    the whole world is busy, not just you. Bear in mind that other countries
    will have holidays at different times to your country and that they are
@@ -193,27 +194,27 @@
    </li>
    <li>
     Use sensible and concise email subject headings. Search engines, and
-    humans trying to browse a voluminous list, will respond favourably to a
+    humans trying to browse a voluminous list, will respond favorably to a
     descriptive title.
    </li>
-   <li>Start new threads with new Subject for new topics, rather than
+   <li>Start new threads with new Subjects for new topics, rather than
     re-using the previous Subject line.
    </li>
-   <li>Keep each topic focussed. If some new topic arises then start a new
+   <li>Keep each topic focussed. If some new topic arises, start a new
     discussion. This leaves the original topic to continue un-cluttered.
    </li>
    <li>Whenever you decide to start a new topic, then start with a fresh
     new email message window. Do not use the &quot;Reply to&quot; button,
-    because threaded mail-readers get confused (they utilise the 
-    <code>In-reply-to</code> header). If so, then your new topic will get
+    because threaded mail-readers get confused (they use the 
+    <code>In-reply-to</code> header). Otherwise, your new topic will get
     lost in the previous thread and go un-answered.
    </li>
    <li>
     Prepend your email subject line with a marker when that is appropriate,
     e.g. <code>[Patch]</code>, <code>[Proposal]</code>, 
-    <code>[RT]</code> (Random Thought which quickly blossom into research
+    <code>[RT]</code> (Random Thought, these quickly blossom into research
     topics :-), <code>[STATUS]</code> (development status of a certain
-    facility).
+    feature).
    </li>
    <li>
     When making changes to XML documentation, or any XML document for that
@@ -262,7 +263,7 @@
     If an issue starts to get bogged down in list discussion, then it may
     be appropriate to go into private off-list discussion with a few interested
     other people. Spare the list from the gory details. Report a summary back
-    to the list to finalise the thread.
+    to the list to finalize the thread.
    </li>
    <li>
     Become familiar with the mailing lists. As you browse and search, you will

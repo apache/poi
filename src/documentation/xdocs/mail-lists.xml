@@ -50,11 +50,13 @@
     XSL tutorial at Zvon.org</link>) or try the 
     <link href="http://www.mulberrytech.com/xsl/">Mulberrytech XSL list</link>.</p>
 
-   <p><strong>IMPORTANT:</strong> If you are posting about a problem you are having
-    (as most people do), it will aid in finding a speedy resolution if you provide
-    full configuration details (especially the <strong>version number</strong>,
-    but also your operating system, JDK version, and servlet engine), and full details
-    of any errors encountered (including full error messages and stack traces).</p>
+   <p><strong>IMPORTANT:</strong> If you are posting about a problem
+    you are having (as most people do), it will aid in finding a
+    speedy resolution if you provide full configuration details
+    (especially the <strong>version number</strong>, but also your
+    operating system, JDK version, etc.), and full details of any
+    errors encountered (including full error messages and stack
+    traces).</p>
 
    <p>Please also have some consideration for the other users on the list - this is a
     busy list and we do not appreciate getting the exact same message posted impatiently

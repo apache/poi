@@ -24,7 +24,7 @@
     We ask that you please do not send us emails privately asking for support. 
     We are non-paid volunteers who help out with the project and we do not 
     necessarily have the time or energy to help people on an individual basis. 
-    Instead, we have setup mailing lists which often contain hundreds of 
+    Instead, we have set up mailing lists which often contain hundreds of 
     individuals who will help answer detailed requests for help. The benefit of 
     using mailing lists over private communication is that it is a shared 
     resource where others can also learn from common mistakes and as a 
@@ -41,7 +41,7 @@
   <s2 title="Committers">
     <ul>
       <li><link href="http://trilug.org/~acoliver">Andrew C. Oliver</link> (acoliver at apache dot org)</li>
-      <li>Marc Johnson (mjohnson at apache dot org)</li>
+      <li><link href="http://www.marcj.com">Marc Johnson</link> (mjohnson at apache dot org)</li>
     </ul>
   </s2>
   <s2 title="Developers">
