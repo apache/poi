@@ -261,6 +261,18 @@ public class SummaryInformation extends SpecialPropertySet
      * <p>Returns the stream's thumbnail (or <code>null</code>)
      * <strong>when this method is implemented. Please note that the
      * return type is likely to change!</strong>
+     *
+     * <p><strong>FIXME / Hint to developers:</strong> Drew Varner
+     * &lt;glzpzz@mailbox.sc.edu&gt; said that this is an image in WMF
+     * or Clipboard (BMP?) format. He also provided two links that
+     * might be helpful: <a
+     * href="http://www.csn.ul.ie/~caolan/publink/file/OLE2SummaryAgainst_file-3.27.patch"
+     * target="_blank">http://www.csn.ul.ie/~caolan/publink/file/OLE2SummaryAgainst_file-3.27.patch</a>
+     * and <a
+     * href="http://msdn.microsoft.com/library/en-us/dno97ta/html/msdn_docprop.asp"
+     * target="_blank">http://msdn.microsoft.com/library/en-us/dno97ta/html/msdn_docprop.asp</a>.
+     * However, we won't do any conversion into any image type but
+     * instead just return a byte array.</p>
      */
     public byte[] getThumbnail()
     {
