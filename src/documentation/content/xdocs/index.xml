@@ -95,8 +95,8 @@
         </section>
         <section><title>HWPF</title>
                 <p>HWPF is our port of the Microsoft Word 97 file format to pure Java.  It supports read and write capability.
-                Please see <link href="./hwpf/index.html">the HWPF project page for more information</link>.  This component is
-                in the early stages of development.It can already read and write simple files.  Jump in!</p>
+                Please see <link href="http://jakarta.apache.org/poi/hwpf/index.html">the HWPF project page for more information</link>.  This component is
+                in the early stages of development.It can already read and write simple files.  Jump in!. (Please note that the HWPF codebase is NOT included in the 2.0 releases. Please use CVS to access this code.) </p>
            </section>
         <section><title>HPSF (Horrible Property Set Format)</title>
 	<p>HPSF is our port of the OLE 2 property set format to pure
