@@ -139,9 +139,9 @@ public class ProtectRecord
      * @return whether to protect the sheet or not
      */
 
-    public short getProtect()
+    public boolean getProtect()
     {
-        return field_1_protect;
+        return (field_1_protect == 1);
     }
 
     public String toString()
@@ -149,8 +149,8 @@ public class ProtectRecord
         StringBuffer buffer = new StringBuffer();
 
         buffer.append("[PROTECT]\n");
-        buffer.append("    .protected      = ")
-            .append(Integer.toHexString(getProtect())).append("\n");
+	    buffer.append("    .protect         = ").append(getProtect())
+            .append("\n");
         buffer.append("[/PROTECT]\n");
         return buffer.toString();
     }
@@ -160,7 +160,7 @@ public class ProtectRecord
         LittleEndian.putShort(data, 0 + offset, sid);
         LittleEndian.putShort(data, 2 + offset,
                               (( short ) 0x02));   // 2 bytes (6 total)
-        LittleEndian.putShort(data, 4 + offset, getProtect());
+        LittleEndian.putShort(data, 4 + offset, field_1_protect);
         return getRecordSize();
     }
 
