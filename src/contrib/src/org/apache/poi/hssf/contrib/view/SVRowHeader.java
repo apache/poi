@@ -1,4 +1,3 @@
-
 /* ====================================================================
  * The Apache Software License, Version 1.1
  *
@@ -56,68 +55,72 @@
 
 package org.apache.poi.hssf.contrib.view;
 
-import java.util.Iterator;
+import java.awt.*;
+import java.awt.event.*;
+import java.io.*;
+import javax.swing.*;
 import javax.swing.table.*;
+import javax.swing.event.*;
 
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.*;
 
 /**
- * Sucky Viewer Table Model - The model for the Sucky Viewer just overrides things.
- * @author Andrew C. Oliver
+ * This class presents the row header to the table.
+ *
+ *
+ * @author Jason Height
  */
+public class SVRowHeader extends JList {
+  /** This model simply returns an integer number up to the number of rows
+   *  that are present in the sheet.
+   *
+   */
+  private class SVRowHeaderModel extends AbstractListModel {
+    private HSSFSheet sheet;
 
-public class SVTableModel extends AbstractTableModel {
-  private HSSFSheet st = null;
-  int maxcol = 0;
+    public SVRowHeaderModel(HSSFSheet sheet) {
+      this.sheet = sheet;
+    }
 
-  public SVTableModel(HSSFSheet st, int maxcol) {
-    this.st = st;
-    this.maxcol=maxcol;
-  }
-
-  public SVTableModel(HSSFSheet st) {
-    this.st = st;
-    Iterator i = st.rowIterator();
-
-    while (i.hasNext()) {
-      HSSFRow row = (HSSFRow)i.next();
-      if (maxcol < (row.getLastCellNum()+1)) {
-         this.maxcol = row.getLastCellNum();
-      }
+    public int getSize() { return sheet.getPhysicalNumberOfRows(); }
+    public Object getElementAt(int index) {
+      return Integer.toString(index+1);
     }
   }
 
+  /** Renderes the row number*/
+  private class RowHeaderRenderer extends JLabel implements ListCellRenderer {
+    private HSSFSheet sheet;
+    private int extraHeight;
 
-  public int getColumnCount() {
-    return this.maxcol+1;
-  }
-  public Object getValueAt(int row, int col) {
-    HSSFRow r = st.getRow(row);
-    HSSFCell c = null;
-    if (r != null) {
-      c = r.getCell((short)col);
+    RowHeaderRenderer(HSSFSheet sheet, JTable table, int extraHeight) {
+      this.sheet = sheet;
+      this.extraHeight = extraHeight;
+      JTableHeader header = table.getTableHeader();
+      setOpaque(true);
+      setBorder(UIManager.getBorder("TableHeader.cellBorder"));
+      setHorizontalAlignment(CENTER);
+      setForeground(header.getForeground());
+      setBackground(header.getBackground());
+      setFont(header.getFont());
     }
-    return c;
-  }
-  public int getRowCount() {
-    return st.getLastRowNum() + 1;
-  }
 
-  public Class getColumnClass(int c) {
-	return HSSFCell.class;
-  }
-
-  public boolean isCellEditable(int rowIndex, int columnIndex) {
-    return true;
+    public Component getListCellRendererComponent( JList list,
+           Object value, int index, boolean isSelected, boolean cellHasFocus) {
+      Dimension d = getPreferredSize();
+      int rowHeight = (int)sheet.getRow(index).getHeightInPoints();
+      d.height = rowHeight+extraHeight;
+      setPreferredSize(d);
+      setText((value == null) ? "" : value.toString());
+      return this;
+    }
   }
 
-  public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-    if (aValue != null)
-      System.out.println("SVTableModel.setValueAt. value type = "+aValue.getClass().getName());
-    else System.out.println("SVTableModel.setValueAt. value type = null");
+  public SVRowHeader(HSSFSheet sheet, JTable table, int extraHeight) {
+    ListModel lm = new SVRowHeaderModel(sheet);
+    this.setModel(lm);
+
+    setFixedCellWidth(50);
+    setCellRenderer(new RowHeaderRenderer(sheet, table, extraHeight));
   }
-
-
 }
