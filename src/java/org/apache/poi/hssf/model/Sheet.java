@@ -1710,7 +1710,7 @@ public class Sheet
             {
                 ci = ( ColumnInfoRecord ) columnSizes.get(k);
                 if ((ci.getFirstColumn() >= column)
-                        && (ci.getLastColumn() <= column))
+                        && (column <= ci.getLastColumn()))
                 {
                     break;
                 }
@@ -1749,7 +1749,7 @@ public class Sheet
         {
             ci = ( ColumnInfoRecord ) columnSizes.get(k);
             if ((ci.getFirstColumn() >= column)
-                    && (ci.getLastColumn() <= column))
+                    && (column <= ci.getLastColumn()))
             {
                 break;
             }
