@@ -1,0 +1,10 @@
+<record id="0xa0" name="SCL" package="org.apache.poi.hssf.record">
+    <suffix>Record</suffix>
+    <extends>Record</extends>
+    <description>Specifies the window's zoom magnification.  If this record isn't present then the windows zoom is 100%. see p384 Excel Dev Kit</description>
+    <author>Andrew C. Oliver (acoliver at apache.org)</author>
+    <fields>
+        <field type="int" size="2" name="numerator" description="numerator of the fraction"/>
+        <field type="int" size="2" name="denominator" description="denominator of the fraction"/>
+    </fields>
+</record>
