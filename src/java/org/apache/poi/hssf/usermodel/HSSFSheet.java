@@ -892,6 +892,22 @@ public class HSSFSheet
         sclRecord.setDenominator((short)denominator);
         getSheet().setSCLRecord(sclRecord);
     }
+    
+	/**
+	 * Answer whether protection is enabled or disabled
+	 * @return true => protection enabled; false => protection disabled
+	 */
+	public boolean getProtect() {
+		return getSheet().getProtect().getProtect();		
+	}
+
+	/**
+	 * Sets the protection on enabled or disabled
+	 * @param protect true => protection enabled; false => protection disabled
+	 */
+	public void setProtect(boolean protect) {
+		getSheet().getProtect().setProtect(protect);		
+	}
 
 	/**
 	 * Shifts the merged regions left or right depending on mode
@@ -914,7 +930,7 @@ public class HSSFSheet
 			 //dont check if it's not within the shifted area
 			 if (! (inStart && inEnd)) continue;
         		
-			 //only shift if the region outside the shifted rows is not merged too        		       		
+			 //only shift if the region outside the shifted rows is not merged too        	           		
 			 if (!merged.contains(startRow-1, (short)0) && !merged.contains(endRow+1, (short)0)){
 				 merged.setRowFrom(merged.getRowFrom()+n);					
 				 merged.setRowTo(merged.getRowTo()+n);

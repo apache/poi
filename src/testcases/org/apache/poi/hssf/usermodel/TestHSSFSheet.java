@@ -62,6 +62,7 @@ import junit.framework.TestCase;
 
 import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.record.HCenterRecord;
+import org.apache.poi.hssf.record.ProtectRecord;
 import org.apache.poi.hssf.record.SCLRecord;
 import org.apache.poi.hssf.record.VCenterRecord;
 import org.apache.poi.hssf.record.WSBoolRecord;
@@ -238,6 +239,27 @@ public class TestHSSFSheet
         cell.setCellValue("Difference Check");
         assertEquals(cloned.getRow((short)0).getCell((short)0).getStringCellValue(), "clone_test");
     }
+    
+	/**
+	 * Test that the ProtectRecord is included when creating or cloning a sheet
+	 */
+	public void testProtect() {
+		HSSFWorkbook workbook = new HSSFWorkbook();
+		HSSFSheet hssfSheet = workbook.createSheet();
+		Sheet sheet = hssfSheet.getSheet();
+		ProtectRecord protect = sheet.getProtect();
+   	
+		assertFalse(protect.getProtect());
+
+		// This will tell us that cloneSheet, and by extension,
+		// the list forms of createSheet leave us with an accessible
+		// ProtectRecord.
+		hssfSheet.setProtect(true);
+		Sheet cloned = sheet.cloneSheet();
+		assertNotNull(cloned.getProtect());
+		assertTrue(hssfSheet.getProtect());
+	}
+
 
     public void testZoom()
             throws Exception
