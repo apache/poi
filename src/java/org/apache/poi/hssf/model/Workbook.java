@@ -1750,7 +1750,7 @@ public class Workbook {
         SupBookRecord supbook = new SupBookRecord();
         
         supbook.setNumberOfSheets((short)getNumSheets());
-        supbook.setFlag();
+        //supbook.setFlag();
         
         records.add(supbookpos + 1 , supbook);
         
