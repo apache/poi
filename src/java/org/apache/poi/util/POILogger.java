@@ -1,5 +1,6 @@
 
-/* ====================================================================
+/*
+ * ====================================================================
  * The Apache Software License, Version 1.1
  *
  * Copyright (c) 2002 The Apache Software Foundation.  All rights
@@ -52,11 +53,10 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-
 package org.apache.poi.util;
 
-import org.apache.log4j.Category;
-import org.apache.log4j.Priority;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 import java.util.*;
 
@@ -72,12 +72,12 @@ import java.util.*;
 
 public class POILogger
 {
-    private Category        log   = null;
-    public static final int DEBUG = Priority.DEBUG_INT;
-    public static final int INFO  = Priority.INFO_INT;
-    public static final int WARN  = Priority.WARN_INT;
-    public static final int ERROR = Priority.ERROR_INT;
-    public static final int FATAL = Priority.FATAL_INT;
+    private Logger          log   = null;
+    public static final int DEBUG = Level.DEBUG_INT;
+    public static final int INFO  = Level.INFO_INT;
+    public static final int WARN  = Level.WARN_INT;
+    public static final int ERROR = Level.ERROR_INT;
+    public static final int FATAL = Level.FATAL_INT;
 
     /**
      * package scope so it cannot be instantiated outside of the util
@@ -86,7 +86,7 @@ public class POILogger
      * @param log the object that does the real work of logging
      */
 
-    POILogger(final Category log)
+    POILogger(final Logger log)
     {
         this.log = log;
     }
@@ -100,7 +100,7 @@ public class POILogger
 
     public void log(final int logLevel, final Object obj1)
     {
-        log.log(Priority.toPriority(logLevel), obj1);
+        log.log(Level.toLevel(logLevel), obj1);
     }
 
     /**
@@ -113,11 +113,11 @@ public class POILogger
 
     public void log(final int logLevel, final Object obj1, final Object obj2)
     {
-        Priority priority = Priority.toPriority(logLevel);
+        Level level = Level.toLevel(logLevel);
 
-        if (log.isEnabledFor(priority))
+        if (log.isEnabledFor(level))
         {
-            log.log(priority, new StringBuffer(32).append(obj1).append(obj2));
+            log.log(level, new StringBuffer(32).append(obj1).append(obj2));
         }
     }
 
@@ -133,11 +133,11 @@ public class POILogger
     public void log(final int logLevel, final Object obj1, final Object obj2,
                     final Object obj3)
     {
-        Priority priority = Priority.toPriority(logLevel);
+        Level level = Level.toLevel(logLevel);
 
-        if (log.isEnabledFor(priority))
+        if (log.isEnabledFor(level))
         {
-            log.log(priority,
+            log.log(level,
                     new StringBuffer(48).append(obj1).append(obj2)
                         .append(obj3));
         }
@@ -156,11 +156,11 @@ public class POILogger
     public void log(final int logLevel, final Object obj1, final Object obj2,
                     final Object obj3, final Object obj4)
     {
-        Priority priority = Priority.toPriority(logLevel);
+        Level level = Level.toLevel(logLevel);
 
-        if (log.isEnabledFor(priority))
+        if (log.isEnabledFor(level))
         {
-            log.log(priority,
+            log.log(level,
                     new StringBuffer(64).append(obj1).append(obj2)
                         .append(obj3).append(obj4));
         }
@@ -180,11 +180,11 @@ public class POILogger
     public void log(final int logLevel, final Object obj1, final Object obj2,
                     final Object obj3, final Object obj4, final Object obj5)
     {
-        Priority priority = Priority.toPriority(logLevel);
+        Level level = Level.toLevel(logLevel);
 
-        if (log.isEnabledFor(priority))
+        if (log.isEnabledFor(level))
         {
-            log.log(priority,
+            log.log(level,
                     new StringBuffer(80).append(obj1).append(obj2)
                         .append(obj3).append(obj4).append(obj5));
         }
@@ -206,11 +206,11 @@ public class POILogger
                     final Object obj3, final Object obj4, final Object obj5,
                     final Object obj6)
     {
-        Priority priority = Priority.toPriority(logLevel);
+        Level level = Level.toLevel(logLevel);
 
-        if (log.isEnabledFor(priority))
+        if (log.isEnabledFor(level))
         {
-            log.log(Priority.toPriority(logLevel),
+            log.log(Level.toLevel(logLevel),
                     new StringBuffer(96).append(obj1).append(obj2)
                         .append(obj3).append(obj4).append(obj5).append(obj6));
         }
@@ -233,11 +233,11 @@ public class POILogger
                     final Object obj3, final Object obj4, final Object obj5,
                     final Object obj6, final Object obj7)
     {
-        Priority priority = Priority.toPriority(logLevel);
+        Level level = Level.toLevel(logLevel);
 
-        if (log.isEnabledFor(priority))
+        if (log.isEnabledFor(level))
         {
-            log.log(priority,
+            log.log(level,
                     new StringBuffer(112).append(obj1).append(obj2)
                         .append(obj3).append(obj4).append(obj5).append(obj6)
                         .append(obj7));
@@ -262,11 +262,11 @@ public class POILogger
                     final Object obj3, final Object obj4, final Object obj5,
                     final Object obj6, final Object obj7, final Object obj8)
     {
-        Priority priority = Priority.toPriority(logLevel);
+        Level level = Level.toLevel(logLevel);
 
-        if (log.isEnabledFor(priority))
+        if (log.isEnabledFor(level))
         {
-            log.log(priority,
+            log.log(level,
                     new StringBuffer(128).append(obj1).append(obj2)
                         .append(obj3).append(obj4).append(obj5).append(obj6)
                         .append(obj7).append(obj8));
@@ -284,7 +284,7 @@ public class POILogger
     public void log(final int logLevel, final Object obj1,
                     final Throwable exception)
     {
-        log.log(Priority.toPriority(logLevel), obj1, exception);
+        log.log(Level.toLevel(logLevel), obj1, exception);
     }
 
     /**
@@ -299,11 +299,11 @@ public class POILogger
     public void log(final int logLevel, final Object obj1, final Object obj2,
                     final Throwable exception)
     {
-        Priority priority = Priority.toPriority(logLevel);
+        Level level = Level.toLevel(logLevel);
 
-        if (log.isEnabledFor(priority))
+        if (log.isEnabledFor(level))
         {
-            log.log(priority, new StringBuffer(32).append(obj1).append(obj2),
+            log.log(level, new StringBuffer(32).append(obj1).append(obj2),
                     exception);
         }
     }
@@ -321,11 +321,11 @@ public class POILogger
     public void log(final int logLevel, final Object obj1, final Object obj2,
                     final Object obj3, final Throwable exception)
     {
-        Priority priority = Priority.toPriority(logLevel);
+        Level level = Level.toLevel(logLevel);
 
-        if (log.isEnabledFor(priority))
+        if (log.isEnabledFor(level))
         {
-            log.log(priority, new StringBuffer(48).append(obj1).append(obj2)
+            log.log(level, new StringBuffer(48).append(obj1).append(obj2)
                 .append(obj3), exception);
         }
     }
@@ -345,11 +345,11 @@ public class POILogger
                     final Object obj3, final Object obj4,
                     final Throwable exception)
     {
-        Priority priority = Priority.toPriority(logLevel);
+        Level level = Level.toLevel(logLevel);
 
-        if (log.isEnabledFor(priority))
+        if (log.isEnabledFor(level))
         {
-            log.log(priority, new StringBuffer(64).append(obj1).append(obj2)
+            log.log(level, new StringBuffer(64).append(obj1).append(obj2)
                 .append(obj3).append(obj4), exception);
         }
     }
@@ -370,11 +370,11 @@ public class POILogger
                     final Object obj3, final Object obj4, final Object obj5,
                     final Throwable exception)
     {
-        Priority priority = Priority.toPriority(logLevel);
+        Level level = Level.toLevel(logLevel);
 
-        if (log.isEnabledFor(priority))
+        if (log.isEnabledFor(level))
         {
-            log.log(priority, new StringBuffer(80).append(obj1).append(obj2)
+            log.log(level, new StringBuffer(80).append(obj1).append(obj2)
                 .append(obj3).append(obj4).append(obj5), exception);
         }
     }
@@ -396,13 +396,13 @@ public class POILogger
                     final Object obj3, final Object obj4, final Object obj5,
                     final Object obj6, final Throwable exception)
     {
-        Priority priority = Priority.toPriority(logLevel);
+        Level level = Level.toLevel(logLevel);
 
-        if (log.isEnabledFor(priority))
+        if (log.isEnabledFor(level))
         {
-            log.log(Priority.toPriority(logLevel), new StringBuffer(96)
-                .append(obj1).append(obj2).append(obj3).append(obj4)
-                .append(obj5).append(obj6), exception);
+            log.log(Level.toLevel(logLevel), new StringBuffer(96).append(obj1)
+                .append(obj2).append(obj3).append(obj4).append(obj5)
+                .append(obj6), exception);
         }
     }
 
@@ -425,11 +425,11 @@ public class POILogger
                     final Object obj6, final Object obj7,
                     final Throwable exception)
     {
-        Priority priority = Priority.toPriority(logLevel);
+        Level level = Level.toLevel(logLevel);
 
-        if (log.isEnabledFor(priority))
+        if (log.isEnabledFor(level))
         {
-            log.log(priority, new StringBuffer(112).append(obj1).append(obj2)
+            log.log(level, new StringBuffer(112).append(obj1).append(obj2)
                 .append(obj3).append(obj4).append(obj5).append(obj6)
                 .append(obj7), exception);
         }
@@ -455,11 +455,11 @@ public class POILogger
                     final Object obj6, final Object obj7, final Object obj8,
                     final Throwable exception)
     {
-        Priority priority = Priority.toPriority(logLevel);
+        Level level = Level.toLevel(logLevel);
 
-        if (log.isEnabledFor(priority))
+        if (log.isEnabledFor(level))
         {
-            log.log(priority, new StringBuffer(128).append(obj1).append(obj2)
+            log.log(level, new StringBuffer(128).append(obj1).append(obj2)
                 .append(obj3).append(obj4).append(obj5).append(obj6)
                 .append(obj7).append(obj8), exception);
         }
@@ -612,9 +612,9 @@ public class POILogger
     private void commonLogFormatted(final int logLevel, final String message,
                                     final Object [] unflatParams)
     {
-        Priority priority = Priority.toPriority(logLevel);
+        Level level = Level.toLevel(logLevel);
 
-        if (log.isEnabledFor(priority))
+        if (log.isEnabledFor(level))
         {
             Object[] params = flattenArrays(unflatParams);
 
