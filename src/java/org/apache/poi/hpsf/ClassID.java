@@ -92,6 +92,18 @@ public class ClassID
     }
 
 
+    /**
+     *  <p>Creates a {@link ClassID} and initializes its value with
+     *  0x00 bytes.</p>
+     */
+    public ClassID()
+    {
+	bytes = new byte[LENGTH];
+	for (int i = 0; i < LENGTH; i++)
+	    bytes[i] = 0x00;
+    }
+
+
 
     public final static int LENGTH = 16;
 
@@ -114,8 +126,8 @@ public class ClassID
 
 
     /**
-     * <p>Reads a class ID from a byte array by turning little-endian
-     * into big-endian.</p>
+     * <p>Reads the class ID's value from a byte array by turning
+     * little-endian into big-endian.</p>
      *
      * @param src The byte array to read from
      *
@@ -146,6 +158,42 @@ public class ClassID
 	    bytes[i] = src[i + offset];
 
         return bytes;
+    }
+
+
+
+    /**
+     * <p>Writes the class ID to a byte array in the
+     * little-endian.</p>
+     *
+     * @param dst The byte array to write to.
+     *
+     * @param offset The offset within the <var>dst</var> byte array.
+     *
+     * @throws ArrayIndexOutOfBoundsException if there is not enough
+     * room for the class ID in the byte array. There must be at least
+     * 16 bytes in the byte array after the <var>offset</var>
+     * position.
+     */
+    public void write(final byte[] dst, final int offset)
+    {
+        /* Write double word. */
+	dst[0 + offset] = bytes[3];
+	dst[1 + offset] = bytes[2];
+	dst[2 + offset] = bytes[1];
+	dst[3 + offset] = bytes[0];
+
+        /* Write first word. */
+	dst[4 + offset] = bytes[5];
+	dst[5 + offset] = bytes[4];
+
+        /* Write second word. */
+	dst[6 + offset] = bytes[7];
+	dst[7 + offset] = bytes[6];
+
+	/* Write 8 bytes. */
+	for (int i = 8; i < 16; i++)
+	    dst[i + offset] = bytes[i];
     }
 
 }

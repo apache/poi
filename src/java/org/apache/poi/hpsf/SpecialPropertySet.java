@@ -115,6 +115,13 @@ public abstract class SpecialPropertySet extends PropertySet
 
 
 
+    /*
+     * This is intentionally no javadoc comment.
+     *
+     * FIXME: Return an <code>int</code> instead of a
+     * <code>long</code> in the next major version, i.e. when
+     * incompatible changes are allowed.
+     */
     public long getOSVersion()
     {
         return delegate.getOSVersion();
@@ -129,6 +136,13 @@ public abstract class SpecialPropertySet extends PropertySet
 
 
 
+    /*
+     * This is intentionally no javadoc comment.
+     *
+     * FIXME: Return an <code>int</code> instead of a
+     * <code>long</code> in the next major version, i.e. when
+     * incompatible changes are allowed.
+     */
     public long getSectionCount()
     {
         return delegate.getSectionCount();
