@@ -457,6 +457,7 @@ public class FormulaParser {
         if (look != ')')  {
             numArgs++; 
             Expression();
+			   addArgumentPointer();
         }
         while (look == ','  || look == ';') { //TODO handle EmptyArgs
             if(look == ',') {
@@ -466,6 +467,7 @@ public class FormulaParser {
               Match(';');
             }
             Expression();
+			   addArgumentPointer();
             numArgs++;
         }
         return numArgs;
@@ -478,7 +480,6 @@ public class FormulaParser {
             Expression();
             Match(')');
             tokens.add(new ParenthesisPtg());
-            return;
         } else if (IsAlpha(look)){
             Ident();
         } else if(look == '"') {
@@ -499,9 +500,23 @@ public class FormulaParser {
     
     private void StringLiteral() {
         Match('"');
-        String name= GetNameAsIs();
-        Match('"');
-        tokens.add(new StringPtg(name));
+		  StringBuffer Token = new StringBuffer();
+	 	  for(;;) {
+		  	     if(look == '"') {
+		        GetChar();
+		        SkipWhite(); //potential white space here since it doesnt matter up to the operator
+		        if(look == '"')
+		            Token.append("\"");
+		        else
+		            break;
+		    } else if(look == 0) {
+		        break;
+		    } else {
+		        Token.append(look);
+		        GetChar();
+		    }
+		}
+		tokens.add(new StringPtg(Token.toString()));        
     }
     
     /** Recognize and Translate a Multiply */
@@ -525,16 +540,13 @@ public class FormulaParser {
     /** Parse and Translate a Math Term */
     private void  Term(){
         Factor();
-        while (look == '*' || look == '/' || look == '^' || look == '&' || 
-               look == '=' || look == '>' || look == '<' ) {
+		 while (look == '*' || look == '/' || look == '^' || look == '&') {
+        
             ///TODO do we need to do anything here??
             if (look == '*') Multiply();
-            if (look == '/') Divide();
-            if (look == '^') Power();
-            if (look == '&') Concat();
-            if (look == '=') Equal();
-            if (look == '>') GreaterThan();
-            if (look == '<') LessThan();
+            else if (look == '/') Divide();
+            else if (look == '^') Power();
+            else if (look == '&') Concat();
         }
     }
     
@@ -555,7 +567,7 @@ public class FormulaParser {
     /** Recognize and Translate a test for Equality  */
     private void Equal() {
         Match('=');
-        Term();
+        Expression();
         tokens.add(new EqualPtg());
     }
     
@@ -581,31 +593,80 @@ public class FormulaParser {
             Term();
         }
         while (IsAddop(look)) {
-            if ( look == '+' )  Add();
-            if (look == '-') Subtract();
-            if (look == '*') Multiply();
-            if (look == '/') Divide();
-            if (look == '>') GreaterThan();
-            if (look == '<') LessThan();
+            if (look == '+' )  Add();
+            else if (look == '-') Subtract();
         }
-        addArgumentPointer();
+        
+		/*
+		 * This isn't quite right since it would allow multiple comparison operators.
+		 */
+		
+		  if(look == '=' || look == '>' || look == '<') {
+		  		if (look == '=') Equal();
+		      else if (look == '>') GreaterThan();
+		      else if (look == '<') LessThan();
+		      return;
+		  }        
+        
         
     }
     
     /** Recognize and Translate a Greater Than  */
     private void GreaterThan() {
-        Match('>');
-        Term();
-        tokens.add(new GreaterThanPtg());
+		Match('>');
+		if(look == '=')
+		    GreaterEqual();
+		else {
+		    Expression();
+		    tokens.add(new GreaterThanPtg());
+		}
     }
     
     /** Recognize and Translate a Less Than  */
     private void LessThan() {
-        Match('<');
-        Term();
-        tokens.add(new LessThanPtg());
-    }   
-    
+		Match('<');
+		if(look == '=')
+		    LessEqual();
+		else if(look == '>')
+		    NotEqual();
+		else {
+		    Expression();
+		    tokens.add(new LessThanPtg());
+		}
+
+	}  
+   
+   /**
+    * Recognize and translate Greater than or Equal
+    *
+    */ 
+	private void GreaterEqual() {
+	    Match('=');
+	    Expression();
+	    tokens.add(new GreaterEqualPtg());
+	}    
+
+	/**
+	 * Recognize and translate Less than or Equal
+	 *
+	 */ 
+
+	private void LessEqual() {
+	    Match('=');
+	    Expression();
+	    tokens.add(new LessEqualPtg());
+	}
+	
+	/**
+	 * Recognize and not Equal
+	 *
+	 */ 
+
+	private void NotEqual() {
+	    Match('>');
+	    Expression();
+	    tokens.add(new NotEqualPtg());
+	}    
     
     //{--------------------------------------------------------------}
     //{ Parse and Translate an Assignment Statement }

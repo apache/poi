@@ -251,16 +251,39 @@ public class TestFormulaParser extends TestCase {
 					
 	}
         
-        public void testSimpleLogical() {
-            FormulaParser fp=new FormulaParser("IF(A1<A2,B1,B2)",null);
-            fp.parse();
-            Ptg[] ptgs = fp.getRPNPtg();
-            assertTrue("Ptg array should not be null", ptgs !=null);
-            assertEquals("Ptg array length", 9, ptgs.length);
-            assertEquals("3rd Ptg is less than",LessThanPtg.class,ptgs[2].getClass());
+	public void testSimpleLogical() {
+		FormulaParser fp=new FormulaParser("IF(A1<A2,B1,B2)",null);
+		fp.parse();
+      Ptg[] ptgs = fp.getRPNPtg();
+      assertTrue("Ptg array should not be null", ptgs !=null);
+      assertEquals("Ptg array length", 9, ptgs.length);
+      assertEquals("3rd Ptg is less than",LessThanPtg.class,ptgs[2].getClass());
             
            
-        }
+	}
+	 
+	public void testParenIf() {
+		FormulaParser fp=new FormulaParser("IF((A1+A2)<=3,\"yes\",\"no\")",null);
+		fp.parse();
+		Ptg[] ptgs = fp.getRPNPtg();
+		assertTrue("Ptg array should not be null", ptgs !=null);
+		assertEquals("Ptg array length", 12, ptgs.length);
+		assertEquals("6th Ptg is less than equal",LessEqualPtg.class,ptgs[5].getClass());
+		assertEquals("11th Ptg is not a goto (Attr) ptg",AttrPtg.class,ptgs[10].getClass());
+	}
+	
+	public void testEmbeddedIf() {
+		FormulaParser fp=new FormulaParser("IF(3>=1,\"*\",IF(4<>1,\"first\",\"second\"))",null);
+		fp.parse();
+		Ptg[] ptgs = fp.getRPNPtg();
+		assertTrue("Ptg array should not be null", ptgs !=null);
+		assertEquals("Ptg array length", 17, ptgs.length);
+		
+		assertEquals("6th Ptg is not a goto (Attr) ptg",AttrPtg.class,ptgs[5].getClass());
+		assertEquals("9th Ptg is not a not equal ptg",NotEqualPtg.class,ptgs[8].getClass());
+		assertEquals("15th Ptg is not the inner IF variable function ptg",FuncVarPtg.class,ptgs[14].getClass());
+		
+	}
 	    
      public static void main(String [] args) {
         System.out.println("Testing org.apache.poi.hssf.record.formula.FormulaParser");

@@ -184,7 +184,19 @@ public abstract class Ptg
             case LessThanPtg.sid:
                 retval = new LessThanPtg(data, offset);
                 break;
-                
+
+			   case LessEqualPtg.sid:
+			       retval = new LessEqualPtg(data, offset);
+			       break;
+			                
+			   case GreaterEqualPtg.sid:
+			       retval = new GreaterEqualPtg(data, offset);
+			       break;
+			       
+			   case NotEqualPtg.sid:
+          		 retval = new NotEqualPtg(data, offset);
+         		 break;
+			       
             case ConcatPtg.sid :
                 retval = new ConcatPtg(data, offset);
                 break;
