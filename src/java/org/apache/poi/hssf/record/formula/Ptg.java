@@ -266,6 +266,13 @@ public abstract class Ptg
 
                 retval = new NamePtg(data, offset);
                 break;
+                
+            case NameXPtg.sid :            // 0x39
+            case NameXPtg.sid+0x20 :       // 0x45
+            case NameXPtg.sid+0x40 :       // 0x79
+
+                retval = new NameXPtg(data, offset);
+                break;
 
             case ExpPtg.sid :
                 retval = new ExpPtg(data, offset);
