@@ -1,33 +1,49 @@
 <record id="0x1015" name="Legend" package="org.apache.poi.hssf.record">
     <suffix>Record</suffix>
     <extends>Record</extends>
-    <description>The legend record specifies the location of legend on a chart and it's overall size.</description>
-    <author>Glen Stampoultzis (glens at apache.org)</author>
+    <description>Defines a legend for a chart.</description>
+    <author>Andrew C. Oliver (acoliver at apache.org)</author>
     <fields>
-        <field type="int" size="4" name="x position"/>
-        <field type="int" size="4" name="y position"/>
-        <field type="int" size="4" name="x size"/>
-        <field type="int" size="4" name="y size"/>
-        <field type="int" size="1" name="type">
-            <const name="bottom" value="0"/>
-            <const name="corner" value="1"/>?
-            <const name="top" value="2"/>
-            <const name="right" value="3"/>
-            <const name="left" value="4"/>
-            <const name="not docked" value="7"/>
+        <field type="int" size="4" name="x axis upper left" description="x axis of the upper left hand corner">
+            <testresult value="0xe76"/>
         </field>
-        <field type="int" size="1" name="spacing">
-            <const name="close" value="0"/>
-            <const name="medium" value="1"/>
-            <const name="open" value="2"/>
+        <field type="int" size="4" name="y axis upper left" description="y axis of the upper left hand corner">
+            <testresult  value="0x786"/>
         </field>
-        <field type="int" size="2" name="options">
-            <bit number="0" name="auto position" description="set to true if legend is docked"/>
-            <bit number="1" name="auto series" description="automatic series distribution"/>
-            <bit number="2" name="auto pos x" description="x positioning is done automatically"/>
-            <bit number="3" name="auto pos y" description="y positioning is done automatically"/>
-            <bit number="4" name="vert" description="if true legend is vertical (otherwise it's horizonal)"/>
-            <bit number="5" name="contains data table" description="true if the chart contains the data table"/>
+        <field type="int" size="4" name="x size" description="width along the x axis">
+            <testresult  value="0x119"/>
+        </field>
+        <field type="int" size="4" name="y size" description="height along the y axis">
+            <testresult  value="0x8b"/>
+        </field>
+        <field type="int" size="1" name="type" description="type of legend (mostly position)">
+	    <const name="bottom" value="0"/>
+	    <const name="corner" value="1"/>
+	    <const name="top" value="2"/>
+	    <const name="right" value="3"/>
+	    <const name="left" value="4"/>
+	    <const name="undocked" value="7"/>
+            <testresult  value="0x3"/>
+        </field>
+        <field type="int" size="1" name="spacing" description="how close the parts of the legend are together">
+	    <const name="close" value="0"/>
+	    <const name="medium" value="1"/>
+	    <const name="open" value="2"/>
+            <testresult  value="0x1"/>
+        </field>
+        <field type="int" size="2" name="options" description="various bit settings">
+            <bit number="0" name="auto position" description="automatic positioning (1=docked)"/>
+            <bit number="1" name="auto series" description="excel 5 only (true)"/>
+            <bit mask="0x4" name="auto x positioning" description="position of legend on the x axis is automatic"/>
+            <bit mask="0x8" name="auto y positioning" description="position of legend on the y axis is automatic"/>
+            <bit mask="0x10" name="vertical" description="vertical or horizontal legend (1 or 0 respectively).  Always 0 if not automatic."/>
+            <bit mask="0x20" name="data table" description="1 if chart contains data table"/>
+ <!-- rest is always 0 -->
+            <testresult  value="0x1f"/>
         </field>
     </fields>
+    <testdata>
+	76 0E 00 00 86 07 00 00 19 01 00 00 8B 00 00 00 03 01 1F 00
+     </testdata>
+    <testsize>10</testsize>
 </record>
