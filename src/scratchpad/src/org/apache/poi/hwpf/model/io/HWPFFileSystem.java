@@ -15,7 +15,7 @@ import java.util.HashMap;
 
 public class HWPFFileSystem
 {
-  HashMap _streams;
+  HashMap _streams = new HashMap();
 
   public HWPFFileSystem()
   {
