@@ -58,8 +58,10 @@ package org.apache.poi.hssf.model;
 import org.apache.poi.hssf.record.*;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.hssf.util.SheetReferences;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.ddf.*;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -91,7 +93,8 @@ import java.util.Locale;
  * @version 1.0-pre
  */
 
-public class Workbook implements Model {
+public class Workbook implements Model
+{
     private static final int   DEBUG       = POILogger.DEBUG;
 
 //    public static Workbook currentBook = null;
@@ -133,6 +136,7 @@ public class Workbook implements Model {
     protected int              numfonts    = 0;   // hold the number of font records
     private short              maxformatid  = -1;  // holds the max format id
     private boolean            uses1904datewindowing  = false;  // whether 1904 date windowing is being used
+    private DrawingManager drawingManager;
 
     private static POILogger   log = POILogFactory.getLogger(Workbook.class);
 
@@ -2080,7 +2084,57 @@ public class Workbook implements Model {
       }
       return palette;
     }
- 
-    
+
+    /**
+     * Creates a drawing group record.  If it already exists then it's left
+     * alone.
+     */
+    public void createDrawingGroup()
+    {
+        int dggLoc = findFirstRecordLocBySid(EscherContainerRecord.DGG_CONTAINER);
+        if (dggLoc == -1)
+        {
+            EscherContainerRecord dggContainer = new EscherContainerRecord();
+            EscherDggRecord dgg = new EscherDggRecord();
+            EscherOptRecord opt = new EscherOptRecord();
+            EscherSplitMenuColorsRecord splitMenuColors = new EscherSplitMenuColorsRecord();
+
+            dggContainer.setRecordId((short) 0xF000);
+            dggContainer.setOptions((short) 0x000F);
+            dgg.setRecordId(EscherDggRecord.RECORD_ID);
+            dgg.setOptions((short)0x0000);
+            dgg.setShapeIdMax(1024);
+            dgg.setNumShapesSaved(0);
+            dgg.setDrawingsSaved(0);
+            dgg.setFileIdClusters(new EscherDggRecord.FileIdCluster[] {} );
+            drawingManager = new DrawingManager(dgg);
+            opt.setRecordId((short) 0xF00B);
+            opt.setOptions((short) 0x0033);
+            opt.addEscherProperty( new EscherBoolProperty(EscherProperties.TEXT__SIZE_TEXT_TO_FIT_SHAPE, 524296) );
+            opt.addEscherProperty( new EscherRGBProperty(EscherProperties.FILL__FILLCOLOR, 134217737) );
+            opt.addEscherProperty( new EscherRGBProperty(EscherProperties.LINESTYLE__COLOR, 134217792) );
+            splitMenuColors.setRecordId((short) 0xF11E);
+            splitMenuColors.setOptions((short) 0x0040);
+            splitMenuColors.setColor1(0x0800000D);
+            splitMenuColors.setColor2(0x0800000C);
+            splitMenuColors.setColor3(0x08000017);
+            splitMenuColors.setColor4(0x100000F7);
+
+            dggContainer.addChildRecord(dgg);
+            dggContainer.addChildRecord(opt);
+            dggContainer.addChildRecord(splitMenuColors);
+
+            DrawingGroupRecord drawingGroup = new DrawingGroupRecord();
+            drawingGroup.addEscherRecord(dggContainer);
+            int loc = findFirstRecordLocBySid(CountryRecord.sid);
+            getRecords().add(loc+1, drawingGroup);
+        }
+    }
+
+    public DrawingManager getDrawingManager()
+    {
+        return drawingManager;
+    }
+
 }
 
