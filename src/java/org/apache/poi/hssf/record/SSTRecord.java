@@ -482,7 +482,7 @@ public class SSTRecord
         field_2_num_unique_strings = LittleEndian.getInt( data, 4 + offset );
         field_3_strings = new BinaryTree();
         deserializer = new SSTDeserializer(field_3_strings);
-        deserializer.manufactureStrings( data, 8 + offset, (short)(size - 8) );
+        deserializer.manufactureStrings( data, 8 + offset);
     }
 
 

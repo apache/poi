@@ -88,7 +88,7 @@ public class TestSSTDeserializer
         byte[] bytes = HexRead.readData( _test_file_path + File.separator + "richtextdata.txt", "header" );
         BinaryTree strings = new BinaryTree();
         SSTDeserializer deserializer = new SSTDeserializer( strings );
-        deserializer.manufactureStrings( bytes, 0, (short)bytes.length );
+        deserializer.manufactureStrings( bytes, 0);
         byte[] continueBytes = HexRead.readData( _test_file_path + File.separator + "richtextdata.txt", "continue1" );
         deserializer.processContinueRecord( continueBytes );
 
@@ -101,7 +101,7 @@ public class TestSSTDeserializer
         byte[] bytes = HexRead.readData( _test_file_path + File.separator + "evencontinuation.txt", "header" );
         BinaryTree strings = new BinaryTree();
         SSTDeserializer deserializer = new SSTDeserializer( strings );
-        deserializer.manufactureStrings( bytes, 0, (short)bytes.length );
+        deserializer.manufactureStrings( bytes, 0);
         byte[] continueBytes = HexRead.readData( _test_file_path + File.separator + "evencontinuation.txt", "continue1" );
         deserializer.processContinueRecord( continueBytes );
 
@@ -119,7 +119,7 @@ public class TestSSTDeserializer
         byte[] bytes = HexRead.readData( _test_file_path + File.separator + "stringacross2continuations.txt", "header" );
         BinaryTree strings = new BinaryTree();
         SSTDeserializer deserializer = new SSTDeserializer( strings );
-        deserializer.manufactureStrings( bytes, 0, (short)bytes.length );
+        deserializer.manufactureStrings( bytes, 0);
         bytes = HexRead.readData( _test_file_path + File.separator + "stringacross2continuations.txt", "continue1" );
         deserializer.processContinueRecord( bytes );
         bytes = HexRead.readData( _test_file_path + File.separator + "stringacross2continuations.txt", "continue2" );
@@ -136,7 +136,7 @@ public class TestSSTDeserializer
         byte[] bytes = HexRead.readData( _test_file_path + File.separator + "extendedtextstrings.txt", "rich-header" );
         BinaryTree strings = new BinaryTree();
         SSTDeserializer deserializer = new SSTDeserializer( strings );
-        deserializer.manufactureStrings( bytes, 0, (short)bytes.length );
+        deserializer.manufactureStrings( bytes, 0);
         byte[] continueBytes = HexRead.readData( _test_file_path + File.separator + "extendedtextstrings.txt", "rich-continue1" );
         deserializer.processContinueRecord( continueBytes );
 
@@ -146,7 +146,7 @@ public class TestSSTDeserializer
         bytes = HexRead.readData( _test_file_path + File.separator + "extendedtextstrings.txt", "norich-header" );
         strings = new BinaryTree();
         deserializer = new SSTDeserializer( strings );
-        deserializer.manufactureStrings( bytes, 0, (short)bytes.length );
+        deserializer.manufactureStrings( bytes, 0);
         continueBytes = HexRead.readData( _test_file_path + File.separator + "extendedtextstrings.txt", "norich-continue1" );
         deserializer.processContinueRecord( continueBytes );
 
