@@ -1,3 +1,6 @@
+Release Checklist
+-----------------
+
 - build distributions
 - sign distributions
 - Generate announcements and HEADER.html
