@@ -61,7 +61,8 @@
 package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.hssf.util.SheetReferences;
+import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.record.NameRecord;
 
 /**
  *
@@ -85,9 +86,22 @@ public class NamePtg
 
     /** Creates new NamePtg */
 
-    public NamePtg(String name)
+    public NamePtg(String name, Workbook book)
     {
-        //TODO
+        final short n = (short) (book.getNumNames() + 1);
+        NameRecord rec;
+        for (short i = 1; i < n; i++) {
+            rec = book.getNameRecord(i - 1);
+            if (name.equals(rec.getNameText())) {
+                field_1_label_index = i;
+                return;
+            }
+        }
+        rec = new NameRecord();
+        rec.setNameText(name);
+        rec.setNameTextLength((byte) name.length());
+        book.addName(rec);
+        field_1_label_index = n;
     }
 
     /** Creates new NamePtg */
@@ -113,12 +127,13 @@ public class NamePtg
         return SIZE;
     }
 
-    public String toFormulaString(SheetReferences refs)
+    public String toFormulaString(Workbook book)
     {
-        return "NAMED RANGE";
+        NameRecord rec = book.getNameRecord(field_1_label_index - 1);
+        return rec.getNameText();
     }
     
-    public byte getDefaultOperandClass() {return Ptg.CLASS_VALUE;}
+    public byte getDefaultOperandClass() {return Ptg.CLASS_REF;}
 
     public Object clone() {
       NamePtg ptg = new NamePtg();

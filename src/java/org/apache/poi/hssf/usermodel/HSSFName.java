@@ -123,8 +123,7 @@ public class HSSFName {
 
     public String getReference() {
         String result;
-        SheetReferences refs = book.getSheetReferences();
-        result = name.getAreaReference(refs);
+        result = name.getAreaReference(book);
 
         return result;
     }
@@ -167,4 +166,3 @@ public class HSSFName {
     }
 
 }
-

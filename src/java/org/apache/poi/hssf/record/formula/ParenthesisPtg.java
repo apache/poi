@@ -57,7 +57,7 @@ package org.apache.poi.hssf.record.formula;
 
 import java.util.List;
 
-import org.apache.poi.hssf.util.SheetReferences;
+import org.apache.poi.hssf.model.Workbook;
 
 /**
  * While formula tokens are stored in RPN order and thus do not need parenthesis for 
@@ -107,7 +107,7 @@ public class ParenthesisPtg
         return 1;
     }
 
-    public String toFormulaString(SheetReferences refs)
+    public String toFormulaString(Workbook book)
     {
         return "()";
     }
@@ -124,4 +124,3 @@ public class ParenthesisPtg
     }
 
 }
-
