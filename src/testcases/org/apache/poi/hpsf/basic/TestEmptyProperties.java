@@ -122,10 +122,6 @@ public class TestEmptyProperties extends TestCase
             {
                 o = ex;
             }
-            catch (UnexpectedPropertySetTypeException ex)
-            {
-                o = ex;
-            }
             catch (MarkUnsupportedException ex)
             {
                 o = ex;
@@ -159,7 +155,7 @@ public class TestEmptyProperties extends TestCase
         assertNotNull(s.getTemplate());
         assertNotNull(s.getLastAuthor());
         assertNotNull(s.getRevNumber());
-        assertNull(s.getEditTime());
+        assertEquals(s.getEditTime(), 0);
         assertNull(s.getLastPrinted());
         assertNull(s.getCreateDateTime());
         assertNull(s.getLastSaveDateTime());
