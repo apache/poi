@@ -158,4 +158,35 @@
             We will probably enhance HSSF in the future to make this process easier.
         </answer>
     </faq>
+    <faq>
+        <question>
+            I tried to set cell values and Excel sheet name on my native language, 
+            but I failed to do it. :(
+        </question>
+        <answer>
+            By default HSSF uses cell values and sheet names as compressed unicode, 
+            so to support localization you should use Unicode. 
+            To do it you should set it manually:
+            <source>
+
+                //
+                // for sheet name
+                //
+                HSSFWorkbook wb = new HSSFWorkbook();
+                HSSFSheet s = wb.createSheet();
+                wb.setSheetName( 0, "SomeUnicodeName", HSSFWorkbook.ENCODING_UTF_16 );
+
+
+                //
+                // for cell value
+                //
+                HSSFRow r = s.createRow( 0 );
+                HSSFCell c = r.createCell( (short)0 );
+                c.setCellType( HSSFCell.CELL_TYPE_STRING );
+                c.setEncoding( HSSFCell.ENCODING_UTF_16 );
+                c.setCellValue( "\u0422\u0435\u0441\u0442\u043E\u0432\u0430\u044F" );
+
+            </source>
+        </answer>
+    </faq>
 </faqs>

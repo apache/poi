@@ -62,8 +62,14 @@ import java.text.FieldPosition;
 
 /**
  *  Title: String Utility Description: Collection of string handling utilities
+ * 
+ * Now it is quite confusing: the method pairs, in which
+ * one of them write data and other read written data are:
+ * putUncompressedUnicodeHigh and getFromUnicode
+ * putUncompressedUnicode     and getFromUnicodeHigh
  *
  *@author     Andrew C. Oliver
+ *@author     Sergei Kozello (sergeikozello at mail.ru)
  *@created    May 10, 2002
  *@version    1.0
  */
@@ -79,6 +85,8 @@ public class StringUtil {
      *  given a byte array of 16-bit unicode characters, compress to 8-bit and
      *  return a string
      *
+     * { 0x16, 0x00 } -> 0x16
+     * 
      *@param  string                              the byte array to be converted
      *@param  offset                              the initial offset into the
      *      byte array. it is assumed that string[ offset ] and string[ offset +
@@ -103,22 +111,37 @@ public class StringUtil {
         if ((len < 0) || (((string.length - offset) / 2) < len)) {
             throw new IllegalArgumentException("Illegal length");
         }
-        byte[] bstring = new byte[len];
-        int index = offset;
-        // start with high bits.
-
-        for (int k = 0; k < len; k++) {
-            bstring[k] = string[index];
-            index += 2;
+        
+        char[] chars = new char[ len ];
+        for ( int i = 0; i < chars.length; i++ ) {
+            chars[i] = (char)( string[ offset + ( 2*i ) ] + 
+                             ( string[ offset + ( 2*i+1 ) ] << 8 ) );
         }
-        return new String(bstring);
+
+        return new String( chars );
     }
     
     
+    /**
+     *  given a byte array of 16-bit unicode characters, compress to 8-bit and
+     *  return a string
+     * 
+     * { 0x16, 0x00 } -> 0x16
+     *
+     *@param  string  the byte array to be converted
+     *@return         the converted string
+     */
+
+    public static String getFromUnicodeHigh( final byte[] string ) {
+        return getFromUnicodeHigh( string, 0, string.length / 2 );
+    }
+
 
     /**
      *  given a byte array of 16-bit unicode characters, compress to 8-bit and
      *  return a string
+     * 
+     * { 0x00, 0x16 } -> 0x16
      *
      *@param  string                              the byte array to be converted
      *@param  offset                              the initial offset into the
@@ -144,21 +167,23 @@ public class StringUtil {
         if ((len < 0) || (((string.length - offset) / 2) < len)) {
             throw new IllegalArgumentException("Illegal length");
         }
-        byte[] bstring = new byte[len];
-        int index = offset + 1;
-        // start with low bits.
 
-        for (int k = 0; k < len; k++) {
-            bstring[k] = string[index];
-            index += 2;
+        
+        char[] chars = new char[ len ];
+        for ( int i = 0; i < chars.length; i++ ) {
+            chars[i] = (char)( ( string[ offset + ( 2*i ) ] << 8 ) +
+            					string[ offset + ( 2*i+1 ) ] );
         }
-        return new String(bstring);
+        
+        return new String( chars );
     }
 
 
     /**
      *  given a byte array of 16-bit unicode characters, compress to 8-bit and
      *  return a string
+     * 
+     * { 0x00, 0x16 } -> 0x16
      *
      *@param  string  the byte array to be converted
      *@return         the converted string
