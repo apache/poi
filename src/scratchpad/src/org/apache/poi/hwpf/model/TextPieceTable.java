@@ -18,15 +18,13 @@
 package org.apache.poi.hwpf.model;
 
 
-import java.io.UnsupportedEncodingException;
-import java.io.IOException;
-
-import java.util.List;
-import java.util.ArrayList;
-
+import org.apache.poi.hwpf.model.io.HWPFOutputStream;
 import org.apache.poi.poifs.common.POIFSConstants;
 
-import org.apache.poi.hwpf.model.io.*;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Ryan Ackley
@@ -66,7 +64,7 @@ public class TextPieceTable
     }
 
     int firstPieceFilePosition = pieces[0].getFilePosition();
-        _cpMin = firstPieceFilePosition - fcMin;
+    _cpMin = firstPieceFilePosition - fcMin;
 
     // using the PieceDescriptors, build our list of TextPieces.
     for (int x = 0; x < pieces.length; x++)
