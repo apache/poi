@@ -1,7 +1,7 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE changes PUBLIC "-//APACHE//DTD Changes V1.1//EN" "./dtd/changes-v11.dtd">
 
-<changes title="History of Changes">
+<changes title="Historial de Cambios">
 
     <devs>
         <!-- in strict alphabetical order -->
@@ -11,73 +11,85 @@
         <person id="NKB" name="Nicola Ken Barozzi" email="barozzi@nicolaken.com"/>
         <person id="POI-DEVELOPERS" name="Poi Developers"    email="poi-dev@jakarta.apache.org"/>
     </devs>
-    <release version="1.5" date="Coming Soon">
-        <action dev="NKB" type="update">New project build.</action>
-        <action dev="NKB" type="update">New project documentation system based on Cocoon.</action>
-        <action dev="POI-DEVELOPERS" type="update">Package rename</action>
-        <action dev="POI-DEVELOPERS" type="fix">Various bug fixes</action>
-        <action dev="POI-DEVELOPERS" type="add">Early stages of HSF development (not ready for development)</action>
-        <action dev="POI-DEVELOPERS" type="add">Initial low level record support for charting (not complete)</action>
+    <release version="1.7-dev" date="En proceso">
+        <action dev="NKB" type="update">Se quita la dependencia en tiempo de ejecución del registro
+	(logging) de "commons".</action>
+        <action dev="POI-DEVELOPERS" type="update">Soporte para fórmulas</action>
     </release>
-    <release version="1.1.0" date="Release date not recorded">
-        <action dev="POI-DEVELOPERS">Created new event model</action>
-        <action dev="POI-DEVELOPERS">Optimizations made to HSSF including aggregate records for
-        values, rows, etc.</action>
-        <action dev="POI-DEVELOPERS">predictive sizing, offset based writing (instead of lots of
-        array copies)</action>
-        <action dev="POI-DEVELOPERS">minor re-factoring and bug fixes.</action>
+    <release version="1.5.1" date="16 Junio 2002">
+        <action dev="GJS" type="update">Se quita la dependencia del registro de "commons". Ahora hay que definir la propiedad del sistema poi.loggin para permitir
+	que los registros (logs) vayan a la salida estándar.</action>
+        <action dev="GJS" type="fix">Se arregla la gestión de la cadena SST para que las hojas de cálculo con texto rico (rich text) o texto
+	extendido se lean correctamente.</action>
     </release>
-    <release version="1.0.0" date="Release date not recorded">
-        <action dev="POI-DEVELOPERS">Minor documentation updates.</action>
+    <release version="1.5" date="06 Mayo 2002">
+        <action dev="NKB" type="update">Nueva versión (build) del proyecto.</action>
+        <action dev="NKB" type="update">Nuevo sistema de documentación del proyecto basada en  Cocoon.</action>
+        <action dev="POI-DEVELOPERS" type="update">Cambio de nombre del paquete</action>
+        <action dev="POI-DEVELOPERS" type="fix">Varios errores (bugs) corregidos</action>
+        <action dev="POI-DEVELOPERS" type="add">Etapas preliminares del desarrollo de HFS (no esta listo para el desarrollo)</action>
+        <action dev="POI-DEVELOPERS" type="add">Soporte inicial de registros de bajo nivel para gráficas (no está completo)</action>
     </release>
-    <release version="0.14.0" date="Release date not recorded">
-        <action dev="POI-DEVELOPERS">Added DataFormat helper class and exposed set and get format
-        on HSSFCellStyle</action>
-        <action dev="POI-DEVELOPERS">Fixed column width apis (unit wise) and various javadoc on
-        the subject</action>
-        <action dev="POI-DEVELOPERS">Fix for Dimensions record (again)... (one of these days I'll
-        write a unit test for this ;-p).</action>
-        <action dev="POI-DEVELOPERS">Some optimization on sheet creation.</action>
+    <release version="1.1.0" date="Fecha de distribución no registrada">
+        <action dev="POI-DEVELOPERS">Se crea un nuevo modelo de eventos</action>
+        <action dev="POI-DEVELOPERS">Se optimiza HSSF, incluyendo registros (records) para
+	valores, filas, etc.</action>
+        <action dev="POI-DEVELOPERS">predicción de tamaño, escritura basada en desplazamiento (en lugar de
+	multitud de copias de arrays)</action>
+        <action dev="POI-DEVELOPERS">un poco de re-factoring (¿re-factorización? mejor no) y corrección de errores.</action>
     </release>
-    <release version="0.13.0" date="Release date not recorded">
+    <release version="1.0.0" date="Fecha de distribución no registrada">
+        <action dev="POI-DEVELOPERS">Actualizaciones menores a la documentación.</action>
+    </release>
+    <release version="0.14.0" date="Fecha de distribución no registrada">
+        <action dev="POI-DEVELOPERS">Se añade la clase de ayuda DataFormat y se expone el formato set y get en
+	HSSFCellStyle</action>
+        <action dev="POI-DEVELOPERS">Correcciones a las apis de anchura de columna (en cuanto a las unidades) y
+	varios comentarios javadoc al respecto</action>
+        <action dev="POI-DEVELOPERS">Corrección para el registro de "Dimensions" (de nuevo)... (uno de estos días
+	escribiré una prueba unitaria (unit test) para esto ;-p).</action>
+        <action dev="POI-DEVELOPERS">Alguna optimización en la creación de páginas.</action>
+    </release>
+    <release version="0.13.0" date="Fecha de distribución no registrada">
 
     </release>
-    <release version="0.12.0" date="Release date not recorded">
-        <action dev="POI-DEVELOPERS">Added MulBlank, Blank, ColInfo</action>
-        <action dev="POI-DEVELOPERS">Added log4j facility and removed all sys.out type logging</action>
-        <action dev="POI-DEVELOPERS">Added support for adding font's, styles and corresponding
-        high level api for styling cells</action>
-        <action dev="POI-DEVELOPERS">added support for changing row height, cell width and default
-        row height/cell width.</action>
-        <action dev="POI-DEVELOPERS">Added fixes for internationalization (UTF-16 should work now
-        from HSSFCell.setStringValue, etc when the encoding is set)</action>
-        <action dev="POI-DEVELOPERS">added support for adding/removing and naming sheets.</action>
+    <release version="0.12.0" date="Fecha de distribución no registrada">
+        <action dev="POI-DEVELOPERS">Se añaden MulBlank, Blank, ColInfo</action>
+        <action dev="POI-DEVELOPERS">Se añade facilidad log4j y se quitan las anotaciones (logs) del tipo sys.out</action>
+        <action dev="POI-DEVELOPERS">Se añade soporte para la adición de fuentes, estilos y el api de alto
+	nivel correspondiente para dar estilo a las celdas</action>
+        <action dev="POI-DEVELOPERS">Se añade soporte para cambiar el alto de una fila, el ancho de una celda, y
+	sus valores por defecto.</action>
+        <action dev="POI-DEVELOPERS">Correcciones para internacionalización (UTF-16 debería funcionar ahora
+	desde HSSFCell.setStringValue, etc cuando se define la codificación)</action>
+        <action dev="POI-DEVELOPERS">Soporte para la adición / eliminación y cambio de nombre de hojas.</action>
     </release>
-    <release version="0.11.0" date="Release date not recorded">
-        <action dev="POI-DEVELOPERS">Bugfix release. We were throwing an exception when reading
-        RKRecord objects.</action>
+    <release version="0.11.0" date="Fecha de distribución no registrada">
+        <action dev="POI-DEVELOPERS">Distribución de corrección de errores.
+	Lanzamos una excepción cuando leemos objetos de tipo RKRecord.</action>
     </release>
-    <release version="0.10.0" date="Release date not recorded">
-        <action dev="POI-DEVELOPERS">Got continuation records to work (read/write)</action>
-        <action dev="POI-DEVELOPERS">Added various pre-support for formulas</action>
-        <action dev="POI-DEVELOPERS">Massive API reorganization, repackaging.</action>
-        <action dev="POI-DEVELOPERS">BiffViewer class added for validating HSSF &amp; POI and/or
-        HSSF Output.</action>
-        <action dev="POI-DEVELOPERS">Better API support for modification.</action>
+    <release version="0.10.0" date="Fecha de distribución no registrada">
+        <action dev="POI-DEVELOPERS">Registros de continuación ya funcionan (lectura/escritura)</action>
+        <action dev="POI-DEVELOPERS">Se añade soporte previo para fórmulas</action>
+        <action dev="POI-DEVELOPERS">Reorganización del API masiva, re-enpaquetado.</action>
+        <action dev="POI-DEVELOPERS">Se añade la clase BiffViewer para validar HSSF &amp; POI y/o la
+	salida de HSSF.</action>
+        <action dev="POI-DEVELOPERS">Se mejora el soporte a la modificación del API.</action>
     </release>
-    <release version="0.7 (and interim releases)" date="Release date not recorded">
-        <action dev="POI-DEVELOPERS">Added encoding flag to high and low level api to use utf-16
-        when needed (HSSFCell.setEncoding())</action>
-        <action dev="POI-DEVELOPERS">added read only support for Label records (which are
-        reinterpreted as LabelSST when written)</action>
-        <action dev="POI-DEVELOPERS">Broken continuation record implementation (oops)</action>
-        <action dev="POI-DEVELOPERS">BiffViewer class added for validating HSSF &amp; POI and/or
-        HSSF Output.</action>
+    <release version="0.7 (y distribuciones internas)" date="Fecha de distribución no registrada">
+        <action dev="POI-DEVELOPERS">Se añade una bandera de codificación para que las apis de alto
+	y bajo nivel utilicen utf-16 cuando sea necesario (HSSFCell.setEncoding())</action>
+        <action dev="POI-DEVELOPERS">Se añade soporte de sólo lectura a registros de Etiqueta
+	(que son reinterpretados como LabelSST cuando se escriben)</action>
+        <action dev="POI-DEVELOPERS">Se rompe la implementación del registro de continuación (oops)</action>
+        <action dev="POI-DEVELOPERS">Se añade la clase BiffViewer
+	para validar HSSF &amp; POI y/o la
+	salida de HSSF.</action>
     </release>
-    <release version="0.6 (release)" date="Release date not recorded">
-        <action dev="POI-DEVELOPERS">Support for read/write and modify.</action>
-        <action dev="POI-DEVELOPERS">Read only support for MulRK records (converted to Number when
-        writing)
+    <release version="0.6 (distribución/release)" date="Fecha de distribución no registrada">
+        <action dev="POI-DEVELOPERS">Soporte para lectura/escritura y modificación.</action>
+        <action dev="POI-DEVELOPERS">Soporte de sólo lectura para registros de tipo MulRK
+	(convertidos a Number cuando se escriben)
         </action>
     </release>
 

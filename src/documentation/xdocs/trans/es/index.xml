@@ -11,6 +11,14 @@
   </header>
 
   <body>
+    <section title="Traducciones">
+        <p> 
+            El proyecto de traducción de la documentación de POI ha comenzado.
+	    Los primeros en empezar han sido las traducciones al <link href="index.html">Español 
+            </link> y al <link href="http://www.terra-intl.com/jakarta/poi/">Japonés</link>.
+	    Otras serán bienvenidas. ¡Podéis participar si queréis!
+        </p>
+    </section>
     <section title="Concurso de Logotipo">
         <p>
             Se ha terminado el plazo de entrega para el concurso de logotipo de POI. Ahora hay que votar. Recuerda,
@@ -148,5 +156,6 @@
     </legal>
   </footer>
 </document>
+
 
 
