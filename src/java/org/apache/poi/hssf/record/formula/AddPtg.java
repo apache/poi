@@ -63,8 +63,9 @@ package org.apache.poi.hssf.record.formula;
 import java.util.List;
 
 /**
- *
- * @author  andy
+ * Addition operator PTG the "+" binomial operator.  If you need more 
+ * explanation than that then well...We really can't help you here.
+ * @author  Andrew C. Oliver (acoliver@apache.org)
  */
 
 public class AddPtg
