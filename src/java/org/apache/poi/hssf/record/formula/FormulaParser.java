@@ -269,6 +269,9 @@ public class FormulaParser {
             ptg.setData((short)1); //sums don't care but this is what excel does.
             ptg.setSum(true);
             retval = ptg;
+        } else {
+            FunctionPtg ptg = new FunctionPtg(name,numArgs);
+            retval = ptg;
         }
         
         return retval;

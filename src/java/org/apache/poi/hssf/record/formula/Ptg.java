@@ -235,14 +235,14 @@ public abstract class Ptg
                 retval = new FunctionPtg(data, offset);
                 break;
                 
-/*            case valueFunc :
+            case valueFunc :
                 retval = new FunctionPtg(data, offset);
                 break;
                 
             case arrayFunc :
                 retval = new FunctionPtg(data, offset);
                 break;
-  */              
+                
                 
              case NumberPtg.sid :
                 retval = new NumberPtg(data, offset);
@@ -299,7 +299,7 @@ public abstract class Ptg
     /**
      * dump a debug representation (hexdump) to a strnig
      */
-    public void toDebugString() {
+    public String toDebugString() {
         byte[] ba = new byte[getSize()];
         String retval=null;
         writeBytes(ba,0);        
@@ -308,6 +308,7 @@ public abstract class Ptg
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return retval;
     }
     
     
