@@ -1,71 +1,69 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
-<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "../../dtd/document-v11.dtd">
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "./dtd/document-v11.dtd">
 
 <document>
   <header>
-    <title>Descripción General</title>
+    <title>Overview</title>
     <authors>
-      <person id="AO" name="Andrew C. Oliver" email="acoliver2@users.sourceforge.net"/>
-      <person id="AMB" name="Agustín Martín Barbero" email="-"/>
+      <person id="AO" name="Andrew C. Oliver" email="acoliver@apache.org"/>
     </authors>
   </header>
   
   <body>
-    <section><title>¿Qué es?</title>
-      <p>El proyecto POI es el proyecto principal para el desarrollo de adaptaciones (ports)
-        en Java puro de los formatos de fichero basados en el Formato de Documento Compuesto OLE 2
-	de Microsoft. El Formato de Documento Compuesto OLE 2 lo utilizan los Documentos Office de
-	Microsoft, así como por los programas que utilizan conjuntos de propiedades MFC para serializar
-	sus objetos de tipo documento.
+    <section><title>What is it?</title>
+      <p>The POI project is the master project for developing pure
+        Java ports of file formats based on Microsoft's OLE 2 Compound
+        Document Format.  OLE 2 Compound Document Format is used by
+        Microsoft Office Documents, as well as by programs using MFC
+        property sets to serialize their document objects.
       </p>
     </section>
-    <section><title>Sub-Proyectos</title>
+    <section><title>Sub-Projects</title>
       <p>
-        Los siguientes son adaptaciones, paquetes o componentes contenidos en el proyecto POI.
+        There following are ports, packages or components contained in the POI project.
       </p>
       <section><title>POIFS</title>
         <p>
-          <link href="../../poifs/index.html">POIFS</link> es el conjunto de APIs
-	  (Interfaces de Aplicación) para la lectura y escritura del Formato de Documento Compuesto OLE 2
-	  utilizando (únicamente) Java.
+          <link href="poifs/index.html">POIFS</link> is the set of APIs 
+          for reading and writing OLE 2 Compound Document Formats using (only) Java.
         </p> 
       </section>
       
       <section><title>HSSF</title>
         <p>
-          <link href="../../hssf/index.html">HSSF</link> es el conjunto de APIs para la lectura y
-	  escritura de hojas de cálculo de Microsoft Excel 97(-XP) utilizando (únicamente) Java.
+          <link href="hssf/index.html">HSSF</link> is the set of APIs 
+ 	  for reading and writing Microsoft Excel 97(-XP) spreadsheet using (only) Java.
         </p>
       </section>
 
-      <section><title>HDF</title>
+      <section><title>HWPF</title>
         <p>
-          <link href="../../hdf/index.html">HDF</link> es el conjunto de APIs para la lectura y
-	  escritura de documentos Word 97(-XP) de Microsoft utilizando (únicamente) Java.
+          <link href="hwpf/index.html">HWPF</link>  is the set of APIs                   
+          for reading and writing Microsoft Word 97(-XP) spreadsheet using (only) Java.
         </p>
       </section>
 
       <section><title>HPSF</title>
         <p>
-          <link href="../../hpsf/index.html">HPSF</link> es el conjunto de APIs para la lectura
-	  de conjuntos de propiedades utilizando (únicamente) Java.
+          <link href="hpsf/index.html">HPSF</link> is the set of APIs 
+          for reading property sets using (only) Java.
         </p> 
       </section>
 
-      <section><title>Utilidades-POI (POI-Utils)</title>
+      <section><title>POI-Utils</title>
         <p>
-          <link href="../../utils/index.html">POI-Utils</link> son artefactos de propósito
-	  general surgidos en el desarrollo de POI que no han sido implementados en ningún otro sitio.
-	  Siempre buscamos donarlos y mantenerlos como parte de una biblioteca general utilizada en
-	  algún otro proyecto. Estas son cosas que necesitamos para completar nuestra misión pero que
-	  generalmente estan fuera de ella.
+          <link href="utils/index.html">POI-Utils</link> are general purpose artifacts
+	  from POI development that have not yet been implemented elsewhere.  We're 
+          always looking to donate these and maintain them as part of a general library
+          used in another project.  These are things we need to complete our mission but
+          are generally outside of it.  
         </p>
       </section>
     </section>
   </body>
   <footer>
     <legal>
-      Copyright (c) @year@ The Poi Project All rights reserved.
+      Copyright (c) @year@ The POI Project All rights reserved.
       $Revision$ $Date$
     </legal>
   </footer>
