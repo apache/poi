@@ -75,6 +75,7 @@ import java.util.GregorianCalendar;
 
 /**
  * @author Andrew C. Oliver (acoliver at apache dot org)
+ * @author Avik Sengupta
  */
 
 public class TestFormulas
@@ -475,6 +476,44 @@ extends TestCase {
         in.close();
         assertTrue("file exists",file.exists());
     }
+
+    /**
+     * Tests creating a file with floating point in a formula.
+     *
+     */
+    public void testFloat()
+        throws Exception {
+            String operator = "+";
+            short            rownum = 0;
+            File file = File.createTempFile("testFormulaFloat",".xls");
+            FileOutputStream out    = new FileOutputStream(file);
+            HSSFWorkbook     wb     = new HSSFWorkbook();
+            HSSFSheet        s      = wb.createSheet();
+            HSSFRow          r      = null;
+            HSSFCell         c      = null;
+
+                for (short x = 1; x < Short.MAX_VALUE && x > 0; x=(short)(x*2)) {
+                r = s.createRow((short) x);
+
+                for (short y = 1; y < 256 && y > 0; y++) {
+
+                    c = r.createCell((short) y);
+                    c.setCellFormula("" + (100*x)+"."+y + operator + (10000*y) + 
+                                     "."+x);
+    
+
+                }
+            }
+
+            wb.write(out);
+            out.close();
+            assertTrue("file exists",file.exists());
+
+
+        }
+
+
+    
     
     
     
