@@ -1,7 +1,23 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<!DOCTYPE faqs PUBLIC "-//APACHE//DTD FAQ V1.1//EN" "./dtd/faq-v11.dtd">
+<!DOCTYPE faqs PUBLIC "-//APACHE//DTD FAQ V1.1//EN" "../../dtd/faq-v11.dtd">
 
 <faqs title="Preguntas Más Frecuentes (FAQ)">
+    <faq>
+        <question>
+          ¿Por qué la lectura de una hoja de cálculo simple lleva tanto tiempo?
+        </question>
+        <answer>
+          <p>
+          Probablemente hayas habilitado el registro (logging). Dicho registro es
+          una herramienta útil para la búsqueda de errores (debug). Tenerlo habilitado
+          reducirá el rendimiento en un factor de al menos 100. El registro es útil para
+          comprender por qué POI no puede leer algún fichero o para el propio desarrollo
+          de POI.
+          Los errores importantes se lanzan como excepciones, lo cual significa que
+          probablemente no necesites el registro (log).
+          </p>
+        </answer>
+    </faq>
     <faq>
         <question>
           ¿Qué es el "eventmodel" (modelo de evento) de HSSF?

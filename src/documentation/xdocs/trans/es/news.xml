@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "./dtd/document-v11.dtd">
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "../../dtd/document-v11.dtd">
 
 <document>
   <header>
     <title></title>
     <authors>
       <person id="AO" name="Andrew C. Oliver" email="acoliver@apache.org"/>
+      <person id="AMB" name="Agustín Martín Barbero" email="-"/>
     </authors>
   </header>
   
@@ -24,6 +25,15 @@
     </section>
     <section title="Inglés">
         <ul>
+                <li>   
+                      <link href="http://archive.midrange.com/web400/200204/msg00023.html">Discusión sobre el uso de POI en AS/400s</link>
+                </li>
+                <li>
+                      <link href="http://www.somelist.com/mails/23819.html">Discusión de cuando casi tuvimos POI como el filtro para KOffice si asuntos de política y licencias no lo hubieran condenado al fracaso</link> 
+                </li>
+                <li>
+                       <link href="http://www.oreillynet.com/pub/wlg/1552?page=last&amp;x-showcontent=text">Discusión Java en O'Reilly Network incluyendo discusión sobre POI</link> - O'Reilly.net
+                </li>
                 <li>   
                        <link href="http://www.rollerweblogger.org/page/roller/20020715">Poor Obfuscation Implementation (Implementación Pobre de Ofuscación).</link> - Blog de David M. Johnson
                 </li>
@@ -137,6 +147,9 @@
 			Excel/OLE accessibles   
                         </link> - Da Linux French Page
                 </li>
+                <li>
+                        <link href="http://www.sogid.com/javalist/f2002/traiter_word_java.html">Discusión sobre POI en francés</link>
+                </li>
         </ul>
     </section>
     <section title="Nihongo (Japonés)">
@@ -150,8 +163,27 @@
                         What's new with java?
                         </link> - gimlay.org
                 </li>
+                <li><link href="http://taka-2.com/jclass/POI/">Java?Excel?????</link> - appears to show how to use Japanese with POI</li>
+                <li><link href="http://www.tech-arts.co.jp/macosx/webobjects-jp/htdocs/3200/3218.html">Various discussion in Japanese including on POI</link></li>
+                <li><link href="http://muimi.com/j/jakarta/">Japanese resources on Jakarta projects including POI</link></li>
+                <li><link href="http://www.fk.urban.ne.jp/home/kishida/">Kishida's site</link> various information, includes a snip about POI and Japanese.</li>
         </ul>
-        
+    </section>
+    <section title="No sé cómo decir Ruso en Ruso (Ruso)">
+        <ul>
+          <li>
+             <link href="http://www.nestor.minsk.by/kg/kg02/21/kg22108.html">
+             Probably a translation of the Javalobby announcement of 1.5-final
+             </link> Java-???????
+          </li>
+        </ul>
+    </section>
+    <section title="No sé cómo de cir Coreano en Coreano (Coreano)">
+        <ul>
+           <li>
+             <link href="http://www.javabrain.co.kr/AnswerView?questionId=1189&amp;categoryId=8">Various discussion in Korean about Excel output/APIs including POI</link>
+           </li>
+        </ul>
     </section>
     <section title="Ni idea">
         <p>

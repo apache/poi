@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "./dtd/document-v11.dtd">
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "../../dtd/document-v11.dtd">
 
 <document>
   <header>
@@ -7,6 +7,7 @@
     <authors>
       <person id="AO" name="Andrew C. Oliver" email="acoliver@apache.org"/>
       <person id="GJS" name="Glen Stampoultzis" email="glens@apache.org"/>
+      <person id="AMB" name="Agustín Martín Barbero" email="-"/>
     </authors>
   </header>
 
@@ -16,7 +17,8 @@
         <p> 
             El proyecto de traducción de la documentación de POI ha comenzado.
 	    Los primeros en empezar han sido las traducciones al <link href="index.html">Español 
-            </link> y al <link href="http://www.terra-intl.com/jakarta/poi/">Japonés</link>.
+            </link>, al <link href="http://www.terra-intl.com/jakarta/poi/">Japonés</link> y al
+            <link href="../de/index.html">Alemán</link>.
 	    Otras serán bienvenidas. ¡Podéis participar si queréis!
         </p>
     </section>
