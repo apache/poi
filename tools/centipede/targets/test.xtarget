@@ -46,6 +46,6 @@
   <!-- =================================================================== -->
   <!-- Testing that all major targets work; useful before a commit         -->
   <!-- =================================================================== -->
-  <target name="testmodule" depends="clean, test, docs" 
+  <target name="testmodule" depends="clean, test, site" 
           description="Testing that all major targets work; useful before a commit  ">
   </target>
