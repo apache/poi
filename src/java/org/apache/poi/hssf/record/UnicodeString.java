@@ -1,4 +1,3 @@
-
 /* ====================================================================
  * The Apache Software License, Version 1.1
  *
@@ -56,7 +55,6 @@
 package org.apache.poi.hssf.record;
 
 import java.io.UnsupportedEncodingException;
-
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
 
@@ -85,8 +83,8 @@ public class UnicodeString
 
     public UnicodeString()
     {
-    }
 
+    }
 
     public int hashCode()
     {
@@ -95,6 +93,7 @@ public class UnicodeString
             stringHash = field_3_string.hashCode();
         return field_1_charCount + stringHash;
     }
+
 
     /**
      * Our handling of equals is inconsistent with compareTo.  The trouble is because we don't truely understand
@@ -122,7 +121,6 @@ public class UnicodeString
      * @param size - size of the data
      * @param data - the bytes of the string/fields
      */
-
     public UnicodeString(short id, short size, byte [] data)
     {
         super(id, size, data);
@@ -131,7 +129,6 @@ public class UnicodeString
     /**
      * construct a unicode string from a string fragment + data
      */
-
     public UnicodeString(short id, short size, byte [] data, String prefix)
     {
         this(id, size, data);
@@ -142,10 +139,8 @@ public class UnicodeString
     /**
      * NO OP
      */
-
     protected void validateSid(short id)
     {
-
         // included only for interface compliance
     }
 
@@ -156,10 +151,13 @@ public class UnicodeString
         if ((field_2_optionflags & 1) == 0)
         {
             try {
-                field_3_string = new String(data, 3, getCharCount(), 
+                field_3_string = new String(data, 3, getCharCount(),
                                         StringUtil.getPreferredEncoding());
             } catch (UnsupportedEncodingException e) {
-                throw new RuntimeException(e);
+                //commented out by glen.  this is a 1.4 construct and we
+                //are supposed to compile on 1.3.
+                //throw new RuntimeException(e);
+                throw new RuntimeException(e.toString());
             }
         }
         else
@@ -178,11 +176,9 @@ public class UnicodeString
     /**
      * get the number of characters in the string
      *
-     *
      * @return number of characters
      *
      */
-
     public short getCharCount()
     {
         return field_1_charCount;
@@ -192,7 +188,6 @@ public class UnicodeString
      * set the number of characters in the string
      * @param cc - number of characters
      */
-
     public void setCharCount(short cc)
     {
         field_1_charCount = cc;
@@ -204,7 +199,6 @@ public class UnicodeString
      * @see #setString(String)
      * @see #getString()
      */
-
     public void setCharCount()
     {
         field_1_charCount = ( short ) field_3_string.length();
@@ -217,7 +211,6 @@ public class UnicodeString
      * @return optionflags bitmask
      *
      */
-
     public byte getOptionFlags()
     {
         return field_2_optionflags;
@@ -230,7 +223,6 @@ public class UnicodeString
      * @param of  optionflags bitmask
      *
      */
-
     public void setOptionFlags(byte of)
     {
         field_2_optionflags = of;
@@ -243,7 +235,6 @@ public class UnicodeString
      * @return String
      *
      */
-
     public String getString()
     {
         return field_3_string;
@@ -253,7 +244,6 @@ public class UnicodeString
      * set the actual string this contains
      * @param string  the text
      */
-
     public void setString(String string)
     {
         field_3_string = string;
@@ -268,7 +258,6 @@ public class UnicodeString
      * @see #getDebugInfo()
      * @return String value of the record
      */
-
     public String toString()
     {
         return getString();
@@ -281,7 +270,6 @@ public class UnicodeString
      * @return String of output for biffviewer etc.
      *
      */
-
     public String getDebugInfo()
     {
         StringBuffer buffer = new StringBuffer();
@@ -294,6 +282,7 @@ public class UnicodeString
         buffer.append("    .string          = ").append(getString())
             .append("\n");
         buffer.append("[/UNICODESTRING]\n");
+
         return buffer.toString();
     }
 
@@ -309,15 +298,12 @@ public class UnicodeString
         // byte[] retval = new byte[ 3 + (getString().length() * charsize)];
         LittleEndian.putShort(data, 0 + offset, getCharCount());
         data[ 2 + offset ] = getOptionFlags();
-
 //        System.out.println("Unicode: We've got "+retval[2]+" for our option flag");
         try {
-            String unicodeString = new
-String(getString().getBytes("Unicode"),"Unicode");
+            String unicodeString = new String(getString().getBytes("Unicode"),"Unicode");
             if (getOptionFlags() == 0)
             {
-                StringUtil.putCompressedUnicode(unicodeString, data, 0x3 +
-offset);
+                StringUtil.putCompressedUnicode(unicodeString, data, 0x3 + offset);
             }
             else
             {
@@ -337,7 +323,9 @@ offset);
                                                   0x3 + offset);
             }
         }
+
         return getRecordSize();
+
     }
 
     private boolean isUncompressedUnicode()
@@ -364,9 +352,9 @@ offset);
      * @param size size of data
      * @param offset of the records data (provided a big array of the file)
      */
-
     protected void fillFields(byte [] data, short size, int offset)
     {
+
     }
 
     public int compareTo(Object obj)
@@ -404,3 +392,4 @@ offset);
     }
 
 }
+
