@@ -41,6 +41,7 @@
             <junit/>
             <jdepend/>
             <checkstyle/>
+            <javasrc/>
             <umldoclet/>
             <forrest>
               <!-- available skins:
