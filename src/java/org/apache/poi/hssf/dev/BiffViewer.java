@@ -606,6 +606,9 @@ public class BiffViewer {
             case SeriesIndexRecord.sid:
                 retval = new SeriesIndexRecord(rectype, size, data);
                 break;
+            case LegendRecord.sid:
+                retval = new LegendRecord(rectype, size, data);
+                break;
                 
                 
             default:
