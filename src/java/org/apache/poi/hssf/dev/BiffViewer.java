@@ -60,21 +60,15 @@
  */
 package org.apache.poi.hssf.dev;
 
-import java.io.InputStream;
-import java.io.IOException;
-import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-
-//import java.io.*;
-import java.util.ArrayList;
-
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.HexDump;
 import org.apache.poi.hssf.record.*;
-import org.apache.poi.hssf.model.*;
-import org.apache.poi.hssf.usermodel.*;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.util.HexDump;
+import org.apache.poi.util.LittleEndian;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
 
 /**
  * Utillity for reading in BIFF8 records and displaying data from them.
