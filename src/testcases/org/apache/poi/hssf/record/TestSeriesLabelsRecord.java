@@ -1,10 +1,4 @@
-<xsl:stylesheet version="1.0"
-   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-   xmlns:recutil="org.apache.poi.generator.RecordUtil"
-   xmlns:field="org.apache.poi.generator.FieldIterator"
-   xmlns:java="java" >
 
-<xsl:template match="record">
 /* ====================================================================
  * The Apache Software License, Version 1.1
  *
@@ -25,18 +19,18 @@
  *
  * 3. The end-user documentation included with the redistribution,
  *    if any, must include the following acknowledgment:
- *       &quot;This product includes software developed by the
- *        Apache Software Foundation (http://www.apache.org/).&quot;
+ *       "This product includes software developed by the
+ *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself,
  *    if and wherever such third-party acknowledgments normally appear.
  *
- * 4. The names &quot;Apache&quot; and &quot;Apache Software Foundation&quot; and
- *    &quot;Apache POI&quot; must not be used to endorse or promote products
+ * 4. The names "Apache" and "Apache Software Foundation" and
+ *    "Apache POI" must not be used to endorse or promote products
  *    derived from this software without prior written permission. For
  *    written permission, please contact apache@apache.org.
  *
- * 5. Products derived from this software may not be called &quot;Apache&quot;,
- *    &quot;Apache POI&quot;, nor may &quot;Apache&quot; appear in their name, without
+ * 5. Products derived from this software may not be called "Apache",
+ *    "Apache POI", nor may "Apache" appear in their name, without
  *    prior written permission of the Apache Software Foundation.
  *
  * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
@@ -56,30 +50,31 @@
  * This software consists of voluntary contributions made by many
  * individuals on behalf of the Apache Software Foundation.  For more
  * information on the Apache Software Foundation, please see
- * &lt;http://www.apache.org/&gt;.
+ * <http://www.apache.org/>.
  */
 
-<xsl:if test="@package">
-package <xsl:value-of select="@package"/>;
-</xsl:if>
+
+package org.apache.poi.hssf.record;
+
 
 import junit.framework.TestCase;
 
 /**
- * Tests the serialization and deserialization of the <xsl:value-of select="@name"/>Record
+ * Tests the serialization and deserialization of the SeriesLabelsRecord
  * class works correctly.  Test data taken directly from a real
  * Excel file.
  *
-<xsl:apply-templates select="author"/>
+
+ * @author Glen Stampoultzis (glens at apache.org)
  */
-public class Test<xsl:value-of select="@name"/>Record
+public class TestSeriesLabelsRecord
         extends TestCase
 {
     byte[] data = new byte[] {
-        // PASTE DATA HERE
+        (byte)0x03,(byte)0x00
     };
 
-    public Test<xsl:value-of select="@name"/>Record(String name)
+    public TestSeriesLabelsRecord(String name)
     {
         super(name);
     }
@@ -87,49 +82,35 @@ public class Test<xsl:value-of select="@name"/>Record
     public void testLoad()
             throws Exception
     {
-        fail("Not implemented");
-        /*
-        <xsl:value-of select="@name"/>Record record = new <xsl:value-of select="@name"/>Record((short)<xsl:value-of select="@id"/>, (short)data.length, data);
-<xsl:for-each select="//fields/field">        assertEquals( XXX, record.get<xsl:value-of select="recutil:getFieldName1stCap(@name,0)"/>());
-<xsl:apply-templates select="./bit" mode="get"/>
-</xsl:for-each>
+        SeriesLabelsRecord record = new SeriesLabelsRecord((short)0x100c, (short)data.length, data);
+        assertEquals( 3, record.getFormatFlags());
+        assertEquals( true, record.isShowActual() );
+        assertEquals( true, record.isShowPercent() );
+        assertEquals( false, record.isLabelAsPercentage() );
+        assertEquals( false, record.isSmoothedLine() );
+        assertEquals( false, record.isShowLabel() );
+        assertEquals( false, record.isShowBubbleSizes() );
 
-        assertEquals( XXX, record.getRecordSize() );
 
-        record.validateSid((short)<xsl:value-of select="@id"/>);
-        */
+        assertEquals( 2+4, record.getRecordSize() );
+
+        record.validateSid((short)0x100c);
     }
 
     public void testStore()
     {
-        fail("Not implemented");
-        /*
-        <xsl:value-of select="@name"/>Record record = new <xsl:value-of select="@name"/>Record();
-<xsl:for-each select="//fields/field">        record.set<xsl:value-of select="recutil:getFieldName1stCap(@name,0)"/>( XXXX );
-<xsl:apply-templates select="./bit" mode="set"/>
-</xsl:for-each>
+        SeriesLabelsRecord record = new SeriesLabelsRecord();
+        record.setShowActual( true );
+        record.setShowPercent( true );
+        record.setLabelAsPercentage( false );
+        record.setSmoothedLine( false );
+        record.setShowLabel( false );
+        record.setShowBubbleSizes( false );
+
 
         byte [] recordBytes = record.serialize();
         assertEquals(recordBytes.length - 4, data.length);
-        for (int i = 0; i &lt; data.length; i++)
+        for (int i = 0; i < data.length; i++)
             assertEquals("At offset " + i, data[i], recordBytes[i+4]);
-        */
     }
 }
-</xsl:template>
-
-<xsl:template match="author">
- * @author <xsl:value-of select="."/>
-</xsl:template>
-
-<xsl:template match="bit" mode="get">
-<xsl:text>        </xsl:text>assertEquals( XXX, record.is<xsl:value-of select="recutil:getFieldName1stCap(@name,0)"/>() );<xsl:text>
-</xsl:text>
-</xsl:template>
-
-<xsl:template match="bit" mode="set">
-<xsl:text>        </xsl:text>record.set<xsl:value-of select="recutil:getFieldName1stCap(@name,0)"/>( XXX );<xsl:text>
-</xsl:text>
-</xsl:template>
-
-</xsl:stylesheet>

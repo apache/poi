@@ -1,0 +1,16 @@
+<record id="0x100c" name="SeriesLabels" package="org.apache.poi.hssf.record">
+    <suffix>Record</suffix>
+    <extends>Record</extends>
+    <description>The series label record defines the type of label associated with the data format record.</description>
+    <author>Glen Stampoultzis (glens at apache.org)</author>
+    <fields>
+        <field type="int" size="2" name="format flags">
+            <bit number="0" name="show actual" description="show actual value of the data point"/>
+            <bit number="1" name="show percent" description="show value as percentage of total (pie charts only)"/>
+            <bit number="2" name="label as percentage" description="show category label/value as percentage (pie charts only)"/>
+            <bit number="3" name="smoothed line" description="show smooth line"/>
+            <bit number="4" name="show label" description="display category label"/>
+            <bit number="5" name="show bubble sizes" description="??"/>
+        </field>
+    </fields>
+</record>
