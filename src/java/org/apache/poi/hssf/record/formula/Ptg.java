@@ -153,6 +153,10 @@ public abstract class Ptg
                 retval = new SubtractPtg(data, offset);
                 break;
 
+            case BoolPtg.sid:
+               retval = new BoolPtg(data, offset);
+               break;
+
             case IntPtg.sid :
                 retval = new IntPtg(data, offset);
                 break;
