@@ -88,37 +88,20 @@ import org.apache.poi.util.LittleEndian;
  * that represent the data.
  * @author  andy
  */
-public class HDFObjectFactory implements HDFLowLevelParsingListener
+public class HDFObjectFactory
 {
 
     /** OLE stuff*/
     private POIFSFileSystem _filesystem;
     /** The FIB*/
     private FileInformationBlock _fib;
-    /** The DOP*/
-    private DocumentProperties _dop;
-    /**the StyleSheet*/
-    private StyleSheet _styleSheet;
-    /**list info */
-    private ListTables _listTables;
-    /** Font info */
-    private FontTable _fonts;
+
     /** Used to set up the object model*/
     private HDFLowLevelParsingListener _listener;
-
+    /** parsing state for characters */
     private ParsingState _charParsingState;
-
+    /** parsing state for paragraphs */
     private ParsingState _parParsingState;
-
-    /** text pieces */
-    //BTreeSet _text = new BTreeSet();
-    BTreeSet _text = new BTreeSet();
-    /** document sections */
-    BTreeSet _sections = new BTreeSet();
-    /** document paragraphs */
-    BTreeSet _paragraphs = new BTreeSet();
-    /** document character runs */
-    BTreeSet _characterRuns = new BTreeSet();
 
     /** main document stream buffer*/
     byte[] _mainDocument;
@@ -147,7 +130,7 @@ public class HDFObjectFactory implements HDFLowLevelParsingListener
     {
         if (l == null)
         {
-            _listener = this;
+            _listener = new HDFObjectModel();
         }
         else
         {
@@ -205,26 +188,7 @@ public class HDFObjectFactory implements HDFLowLevelParsingListener
         return results;
     }
 
-    public void document(DocumentProperties dop)
-    {
-      _dop = dop;
-    }
-    public void section(SepxNode sepx)
-    {
-      _sections.add(sepx);
-    }
-    public void paragraph(PapxNode papx)
-    {
-      _paragraphs.add(papx);
-    }
-    public void characterRun(ChpxNode chpx)
-    {
-      _characterRuns.add(chpx);
-    }
-    public void text(TextPiece t)
-    {
-      _text.add(t);
-    }
+
     /**
      * Initializes the table stream
      *
@@ -314,19 +278,58 @@ public class HDFObjectFactory implements HDFLowLevelParsingListener
         initDocumentProperties();
         initSectionProperties();
         //initCharacterProperties();
-        initParagraphProperties();
+        //initParagraphProperties();
     }
-    private void initCharacterProperties(int charOffset, PlexOfCps charPlcf, int start, int end)
+    private void initCharacterProperties(int charOffset, PlexOfCps charPlcf, int end)
     {
+        //Initialize paragraph property stuff
+        //int currentCharPage = _charParsingState.getCurrentPage();
+        int charPlcfLen = charPlcf.length();
+        int currentPageIndex = _charParsingState.getCurrentPageIndex();
+        FormattedDiskPage fkp = _charParsingState.getFkp();
+        int currentChpxIndex = _charParsingState.getCurrentPropIndex();
+        int currentArraySize = fkp.size();
+
+        //get the character runs for this paragraph
+        int charStart = 0;
+        int charEnd = 0;
+        //add the character runs
+        do
+        {
+          if (currentChpxIndex < currentArraySize)
+          {
+            charStart = fkp.getStart(currentChpxIndex);
+            charEnd = fkp.getEnd(currentChpxIndex);
+            byte[] chpx = fkp.getGrpprl(currentChpxIndex);
+            _listener.characterRun(new ChpxNode(charStart, charEnd, chpx));
+            if (charEnd < end)
+            {
+              currentChpxIndex++;
+            }
+            else
+            {
+              _charParsingState.setState(currentPageIndex, fkp, currentChpxIndex);
+              break;
+            }
+          }
+          else
+          {
+            int currentCharPage = LittleEndian.getInt(_tableBuffer, charOffset + charPlcf.getStructOffset(++currentPageIndex));
+            byte[] byteFkp = new byte[512];
+            System.arraycopy(_mainDocument, (currentCharPage * 512), byteFkp, 0, 512);
+            fkp = new CHPFormattedDiskPage(byteFkp);
+            currentChpxIndex = 0;
+            currentArraySize = fkp.size();
+          }
+        }
+        while(currentPageIndex < charPlcfLen);
     }
-    private void initParagraphProperties(int parOffset, PlexOfCps parPlcf, int end)
+    private void initParagraphProperties(int parOffset, PlexOfCps parPlcf, int charOffset, PlexOfCps charPlcf, int end)
     {
-        //Initialize character property stuff
-        int currentParPage = _parParsingState.getCurrentPage();
+        //Initialize paragraph property stuff
+        //int currentParPage = _parParsingState.getCurrentPage();
         int parPlcfLen = parPlcf.length();
         int currentPageIndex = _parParsingState.getCurrentPageIndex();
-        //byte[] fkp = new byte[512];
-        //System.arraycopy(_mainDocument, (currentCharPage * 512), fkp, 0, 512);
         FormattedDiskPage fkp = _parParsingState.getFkp();
         int currentPapxIndex = _parParsingState.getCurrentPropIndex();
         int currentArraySize = fkp.size();
@@ -339,6 +342,7 @@ public class HDFObjectFactory implements HDFLowLevelParsingListener
             int parEnd = fkp.getEnd(currentPapxIndex);
             byte[] papx = fkp.getGrpprl(currentPapxIndex);
             _listener.paragraph(new PapxNode(parStart, parEnd, papx));
+            initCharacterProperties(charOffset, charPlcf, end);
             if (parEnd < end)
             {
               currentPapxIndex++;
@@ -346,21 +350,21 @@ public class HDFObjectFactory implements HDFLowLevelParsingListener
             else
             {
               //save the state
-              _parParsingState.setState(currentParPage, currentPageIndex, fkp, currentPapxIndex);
+              _parParsingState.setState(currentPageIndex, fkp, currentPapxIndex);
               break;
             }
           }
           else
           {
-            currentParPage = LittleEndian.getInt(_tableBuffer, parOffset + parPlcf.getStructOffset(++currentPageIndex));
+            int currentParPage = LittleEndian.getInt(_tableBuffer, parOffset + parPlcf.getStructOffset(++currentPageIndex));
             byte byteFkp[] = new byte[512];
-            System.arraycopy(_mainDocument, (currentParPage * 512), fkp, 0, 512);
+            System.arraycopy(_mainDocument, (currentParPage * 512), byteFkp, 0, 512);
             fkp = new PAPFormattedDiskPage(byteFkp);
             currentPapxIndex = 0;
             currentArraySize = fkp.size();
           }
         }
-        while(currentParPage <= parPlcfLen + 1);
+        while(currentPageIndex < parPlcfLen);
     }
     /**
      * initializes the CharacterProperties BTree
@@ -499,6 +503,20 @@ public class HDFObjectFactory implements HDFLowLevelParsingListener
         }
 
     }
+    private void initParsingStates(int parOffset, PlexOfCps parPlcf, int charOffset, PlexOfCps charPlcf)
+    {
+        int currentCharPage = LittleEndian.getInt(_tableBuffer, charOffset + charPlcf.getStructOffset(0));
+        byte[] fkp = new byte[512];
+        System.arraycopy(_mainDocument, (currentCharPage * 512), fkp, 0, 512);
+        CHPFormattedDiskPage cfkp = new CHPFormattedDiskPage(fkp);
+        _charParsingState = new ParsingState(currentCharPage, cfkp);
+
+        int currentParPage = LittleEndian.getInt(_tableBuffer, parOffset + parPlcf.getStructOffset(0));
+        fkp = new byte[512];
+        System.arraycopy(_mainDocument, (currentParPage * 512), fkp, 0, 512);
+        PAPFormattedDiskPage pfkp = new PAPFormattedDiskPage(fkp);
+        _parParsingState = new ParsingState(currentParPage, pfkp);
+    }
     /**
      * initializes the SectionProperties BTree
      */
@@ -522,6 +540,8 @@ public class HDFObjectFactory implements HDFLowLevelParsingListener
       PlexOfCps charPlcf = new PlexOfCps(charPlcSize, 4);
       PlexOfCps parPlcf = new PlexOfCps(parPlcSize, 4);
 
+      initParsingStates(parOffset, parPlcf, charOffset, charPlcf);
+
       //byte[] plcfsed = new byte[plcfsedSize];
       //System.arraycopy(_tableBuffer, plcfsedFC, plcfsed, 0, plcfsedSize);
 
@@ -531,15 +551,17 @@ public class HDFObjectFactory implements HDFLowLevelParsingListener
 
       for(int x = 0; x < arraySize; x++)
       {
-          int sectionStart = LittleEndian.getInt(_tableBuffer, plcfsed.getIntOffset(x)) + fcMin;
-          int sectionEnd = LittleEndian.getInt(_tableBuffer, plcfsed.getIntOffset(x + 1)) + fcMin;
-          int sepxStart = LittleEndian.getInt(_tableBuffer, plcfsed.getStructOffset(x));
+          int sectionStart = LittleEndian.getInt(_tableBuffer, plcfsedFC + plcfsed.getIntOffset(x)) + fcMin;
+          int sectionEnd = LittleEndian.getInt(_tableBuffer, plcfsedFC + plcfsed.getIntOffset(x + 1)) + fcMin;
+          int sepxStart = LittleEndian.getInt(_tableBuffer, plcfsedFC + plcfsed.getStructOffset(x) + 2);
           int sepxSize = LittleEndian.getShort(_mainDocument, sepxStart);
 
           byte[] sepx = new byte[sepxSize];
           System.arraycopy(_mainDocument, sepxStart + 2, sepx, 0, sepxSize);
           SepxNode node = new SepxNode(x + 1, sectionStart, sectionEnd, sepx);
-          _sections.add(node);
+          _listener.section(node);
+
+          initParagraphProperties(parOffset, parPlcf, charOffset, charPlcf, sectionEnd);
       }
     }
     /**
@@ -564,7 +586,7 @@ public class HDFObjectFactory implements HDFLowLevelParsingListener
       byte[] stsh = new byte[stshSize];
       System.arraycopy(_tableBuffer, stshIndex, stsh, 0, stshSize);
 
-      _styleSheet = new StyleSheet(stsh);
+      _listener.styleSheet(new StyleSheet(stsh));
     }
     /**
      * Initializes the list tables for this document
@@ -587,7 +609,7 @@ public class HDFObjectFactory implements HDFLowLevelParsingListener
           lstSize = lfoOffset - lstOffset;
           byte[] plcflst = new byte[lstSize];
           System.arraycopy(_tableBuffer, lstOffset, plcflst, 0, lstSize);
-          _listTables = new ListTables(plcflst, plflfo);
+          _listener.lists(new ListTables(plcflst, plflfo));
         }
     }
     /**
@@ -599,7 +621,7 @@ public class HDFObjectFactory implements HDFLowLevelParsingListener
         int fontTableSize = _fib.getLcbSttbfffn();
         byte[] fontTable = new byte[fontTableSize];
         System.arraycopy(_tableBuffer, fontTableIndex, fontTable, 0, fontTableSize);
-        _fonts = new FontTable(fontTable);
+        _listener.fonts(new FontTable(fontTable));
     }
 
 }
