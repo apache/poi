@@ -133,8 +133,8 @@ public class SVFractionalFormat extends Format {
     if (f < 0) {
       sign = -1;
     }
-    double Precision = 0.0001;
-    double AllowedError = 0.001;
+    double Precision = 0.00001;
+    double AllowedError = Precision;
     double d = Math.abs(f);
     d -= Whole;
     double Frac = d;
@@ -187,8 +187,7 @@ public class SVFractionalFormat extends Format {
       Whole++;
       Num = 0;
       Den = 0;
-    } else
-        if (Den == 0) {
+    } else if (Den == 0) {
       Num = 0;
     }
     if (sign < 0) {
@@ -198,12 +197,19 @@ public class SVFractionalFormat extends Format {
         Whole = -Whole;
       }
     }
-    return new StringBuffer().append(Whole).append(" ").append(Num).append("/").append(Num).toString();
+    return new StringBuffer().append(Whole).append(" ").append(Num).append("/").append(Den).toString();
   }
 
+  /** This method formats the double in the units specified.
+   *  The usints could be any number but in this current implementation it is
+   *  halves (2), quaters (4), eigths (8) etc
+   */
   private String formatUnit(double f, int units) {
-    //JMH TBD
-    return null;
+    long Whole = (long)f;
+    f -= Whole;
+    long Num = Math.round(f * units);
+
+    return new StringBuffer().append(Whole).append(" ").append(Num).append("/").append(units).toString();
   }
 
   public final String format(double val) {
