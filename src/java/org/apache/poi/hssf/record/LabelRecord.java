@@ -153,7 +153,7 @@ public class LabelRecord
         if (field_4_string_len > 0) {
           if (isUnCompressedUnicode())
           {
-              field_6_value = StringUtil.getFromUnicodeBE(data, 9 + offset,
+              field_6_value = StringUtil.getFromUnicodeLE(data, 9 + offset,
                                                         field_4_string_len);
           }
           else
