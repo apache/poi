@@ -534,8 +534,9 @@ public class FormulaRecord
             
             
             for (int k = 0; k < field_8_parsed_expr.size(); k++ ) {
-                buffer.append("formula ").append(k).append(" ")
-                .append(((Ptg)field_8_parsed_expr.get(k)).toFormulaString());
+/*                buffer.append("formula ").append(k).append(" ")
+               .append(((Ptg)field_8_parsed_expr.get(k)).toFormulaString());*/
+                ((Ptg)field_8_parsed_expr.get(k)).toDebugString();
             }
             
             

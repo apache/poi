@@ -138,6 +138,10 @@ public class AttrPtg
     {
         return sum.isSet(getOptions());
     }
+    
+    public void setSum(boolean bsum) {
+        field_1_options=sum.setByteBoolean(field_1_options,bsum);
+    }
 
     // lets hope no one uses this anymore
     public boolean isBaxcel()
@@ -180,6 +184,9 @@ public class AttrPtg
 
     public void writeBytes(byte [] array, int offset)
     {
+        array[offset]=sid;
+        array[offset+1]=field_1_options;
+        LittleEndian.putShort(array,offset+2,field_2_data);                
     }
 
     public int getSize()
@@ -206,10 +213,7 @@ public class AttrPtg
     {
         return -1;
     }
-    
-    public void manipulate(List source, List results, int pos) {
-    }
-    
+        
     public String toFormulaString(String[] operands) {
         return "SUM(" + operands[ 0 ] + ")";
     }    

@@ -244,7 +244,7 @@ public class FormulaParser {
             int numArgs = Arguments(); 
             Match(')');
             //this is the end of the function
-            tokens.add(new FunctionPtg(name,(byte)numArgs));
+            tokens.add(function(name,(byte)numArgs));
         } else if (Look == ':') { // this is a AreaReference
             String first = name;
             Match(':');
@@ -259,6 +259,19 @@ public class FormulaParser {
                 //handle after named range is integrated!!
             }
         }
+    }
+    
+    private Ptg function(String name,byte numArgs) {
+        Ptg retval = null;
+        
+        if (numArgs == 1 && name.equals("SUM")) {
+            AttrPtg ptg = new AttrPtg();
+            ptg.setData((short)1); //sums don't care but this is what excel does.
+            ptg.setSum(true);
+            retval = ptg;
+        }
+        
+        return retval;
     }
     
     /** get arguments to a function */
