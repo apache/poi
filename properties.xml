@@ -24,9 +24,11 @@
       <tools>
          <cents repository="http://krysalis.org/jars/">
             <!-- not currently used by POI
-                 <antidote/>
-                 <xmldoclet/> -->            
-            <centipede/>
+                 <antidote/>   
+                 <xmldoclet/>    -->      
+            <centipede>
+              <javadocs group="POIFS org.apache.poi.poifs*,HSSF org.apache.poi.hssf*,HPSF org.apache.poi.hpsf*,"/>
+            </centipede>
             <junit/>
             <jdepend/>
             <checkstyle/>

@@ -42,7 +42,7 @@
    <work dir="./build/work"/>
    <documentation dir="./build/docs">
      <javadocs dir="./build/docs/javadocs"/>
-     <test dir="./build/docs/test"/>
+     <test dir="./build/docs/tests"/>
      <metrics dir="./build/docs/metrics"/>
    </documentation>
    <scratchpad dir="./build/scratchpad">

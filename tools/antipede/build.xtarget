@@ -1,9 +1,12 @@
-  <target name="-init">
+  <target name="-init" unless="${antipede.init.already.called}">
    <tstamp>
      <format property="YEAR" pattern="yyyy" locale="en"/>
    </tstamp>
    
    <buildnumber/>
+
+   <property name="antipede.init.already.called" value="true"/>
+   
    <echo>
     --------------------------------------------------------------
 
@@ -24,7 +27,7 @@
     -->
     <property name="tools.jar" value="${java.home}/../lib/tools.jar"/>
     <available file="${tools.jar}" property="tools.jar.present"/>
-    <fail unless="tools.jar.present" message="tools.jar not found. Probably JDK not installed."/>    
+    <fail unless="tools.jar.present" message="tools.jar not found. Probably you are using the JRE and the JDK is not installed. Please download the JDK from the Java Sun website www.javasoft.com ."/>    
 
 
     <!-- fixed centipede dirs -->
@@ -190,7 +193,16 @@
          target="${cent-target}" />       
   </target>            
   
-  
+  <!-- ============================================= -->
+  <!-- Simple utility target to call a cent target   -->
+  <!-- ==============================================-->
+  <target name="cent-target" depends="-init">
+     <ant antfile="tools/cents/${cent-name}.cent/xbuild.xml"
+         inheritall="true" 
+         dir="."
+         target="${cent-target}" />       
+  </target>     
+    
   <!-- ================================== -->
   <!--   Create a cent.jar package        -->
   <!--   using an already deployed cent   -->
