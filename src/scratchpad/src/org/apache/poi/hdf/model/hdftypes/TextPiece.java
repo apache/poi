@@ -66,7 +66,6 @@ public class TextPiece extends PropertyNode implements Comparable
 {
   private boolean _usesUnicode;
   private int _length;
-  private PieceDescriptor _pd;
 
   /**
    * @param start Offset in main document stream.
@@ -74,11 +73,12 @@ public class TextPiece extends PropertyNode implements Comparable
    *        does not necessarily refer to 1 byte.
    * @param unicode true if this text is unicode.
    */
-  public TextPiece(int start, int end, byte[] text, PieceDescriptor pd)
+  public TextPiece(int start, int length, boolean unicode)
   {
-      super(start, end, text);
-      _usesUnicode = pd.isUnicode();
-      _length = end - start;
+      super(start, start + length, null);
+      _usesUnicode = unicode;
+      _length = length;
+
   }
   /**
    * @return If this text piece uses unicode
@@ -87,9 +87,5 @@ public class TextPiece extends PropertyNode implements Comparable
    {
       return _usesUnicode;
    }
-
-   public PieceDescriptor getPieceDescriptor()
-   {
-     return _pd;
-   }
 }
+
