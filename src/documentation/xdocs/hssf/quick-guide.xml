@@ -298,7 +298,7 @@
     fileOut.close();
                     </source>
                 </section>
-                <anchor id="UseNewLinesInCells"/>
+                <anchor id="NewLinesInCells"/>
                 <section title="Using newlines in cells">
                     <source>
     HSSFWorkbook wb = new HSSFWorkbook();
@@ -378,6 +378,7 @@
     fileOut.close();
                     </source>
                 </section>
+
                 <anchor id="FooterPageNumbers"/>
                 <section title="Set Page Numbers on Footer">
                     <source>
@@ -397,7 +398,54 @@
                     </source>
                 </section>                
                 
+                <anchor id="Convience Functions"/>
+                <section title="Using the Convience Functions">
+                    <p>
+                        The convience functions live in contrib and provide
+                        utility features such as setting borders around merged
+                        regions and changing style attributes without explicitly
+                        creating new styles.
+                    </p>
+                    <source>
+    HSSFWorkbook wb = new HSSFWorkbook();
+    HSSFSheet sheet1 = wb.createSheet( "new sheet" );
 
+    // Create a merged region
+    HSSFRow row = sheet1.createRow( (short) 1 );
+    HSSFRow row2 = sheet1.createRow( (short) 2 );
+    HSSFCell cell = row.createCell( (short) 1 );
+    cell.setCellValue( "This is a test of merging" );
+    Region region = new Region( 1, (short) 1, 4, (short) 4 );
+    sheet1.addMergedRegion( region );
+
+    // Set the border and border colors.
+    final short borderMediumDashed = HSSFCellStyle.BORDER_MEDIUM_DASHED;
+    HSSFRegionUtil.setBorderBottom( borderMediumDashed,
+        region, sheet1, wb );
+    HSSFRegionUtil.setBorderTop( borderMediumDashed,
+        region, sheet1, wb );
+    HSSFRegionUtil.setBorderLeft( borderMediumDashed,
+        region, sheet1, wb );
+    HSSFRegionUtil.setBorderRight( borderMediumDashed,
+        region, sheet1, wb );
+    HSSFRegionUtil.setBottomBorderColor(HSSFColor.AQUA.index, region, sheet1, wb);
+    HSSFRegionUtil.setTopBorderColor(HSSFColor.AQUA.index, region, sheet1, wb);
+    HSSFRegionUtil.setLeftBorderColor(HSSFColor.AQUA.index, region, sheet1, wb);
+    HSSFRegionUtil.setRightBorderColor(HSSFColor.AQUA.index, region, sheet1, wb);
+
+    // Shows some usages of HSSFCellUtil
+    HSSFCellStyle style = wb.createCellStyle();
+    style.setIndention((short)4);
+    HSSFCellUtil.createCell(row, 8, "This is the value of the cell", style);
+    HSSFCell cell2 = HSSFCellUtil.createCell( row2, 8, "This is the value of the cell");
+    HSSFCellUtil.setAlignment(cell2, wb, HSSFCellStyle.ALIGN_CENTER);
+
+    // Write out the workbook
+    FileOutputStream fileOut = new FileOutputStream( "workbook.xls" );
+    wb.write( fileOut );
+    fileOut.close();
+                    </source>
+                </section>
             </section>
         </section>
     </body>
