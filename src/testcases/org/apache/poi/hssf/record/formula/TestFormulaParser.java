@@ -20,13 +20,13 @@ public class TestFormulaParser extends TestCase {
     }
     
     public void testSimpleFormula() {
-        FormulaParser fp = new FormulaParser("2+2;");
+        FormulaParser fp = new FormulaParser("2+2;",null);
         fp.parse();
         Ptg[] ptgs = fp.getRPNPtg();
         assertTrue("three tokens expected, got "+ptgs.length,ptgs.length == 3);
     }
     public void testFormulaWithSpace1() {
-        FormulaParser fp = new FormulaParser(" 2 + 2 ;");
+        FormulaParser fp = new FormulaParser(" 2 + 2 ;",null);
         fp.parse();
         Ptg[] ptgs = fp.getRPNPtg();
         assertTrue("three tokens expected, got "+ptgs.length,ptgs.length == 3);
@@ -39,7 +39,7 @@ public class TestFormulaParser extends TestCase {
     public void testFormulaWithSpace2() {
         Ptg[] ptgs;
         FormulaParser fp;
-        fp = new FormulaParser("2+ sum( 3 , 4) ;");
+        fp = new FormulaParser("2+ sum( 3 , 4) ;",null);
         fp.parse();
         ptgs = fp.getRPNPtg();
         assertTrue("five tokens expected, got "+ptgs.length,ptgs.length == 5);
@@ -48,7 +48,7 @@ public class TestFormulaParser extends TestCase {
      public void testFormulaWithSpaceNRef() {
         Ptg[] ptgs;
         FormulaParser fp;
-        fp = new FormulaParser("sum( A2:A3 );");
+        fp = new FormulaParser("sum( A2:A3 );",null);
         fp.parse();
         ptgs = fp.getRPNPtg();
         assertTrue("two tokens expected, got "+ptgs.length,ptgs.length == 2);
@@ -57,7 +57,7 @@ public class TestFormulaParser extends TestCase {
     public void testFormulaWithString() {
         Ptg[] ptgs;
         FormulaParser fp;
-        fp = new FormulaParser("\"hello\" & \"world\" ;");
+        fp = new FormulaParser("\"hello\" & \"world\" ;",null);
         fp.parse();
         ptgs = fp.getRPNPtg();
         assertTrue("three token expected, got " + ptgs.length, ptgs.length == 3);

@@ -57,6 +57,7 @@ package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.hssf.util.RangeAddress;
+import org.apache.poi.hssf.util.AreaReference;
 
 /**
  * Title:        Area 3D Ptg - 3D referecnce (Sheet + Area)<P>
@@ -77,11 +78,22 @@ public class Area3DPtg extends Ptg
     private short             field_5_last_column;
 
     /** Creates new AreaPtg */
-
-    public Area3DPtg()
-    {
+    public Area3DPtg() {}
+   
+   protected Area3DPtg(String arearef, short externIdx) {
+        AreaReference ar = new AreaReference(arearef);
+        
+        setFirstRow((short)ar.getCells()[0].getRow());
+        setFirstColumn((short)ar.getCells()[0].getCol());
+        setLastRow((short)ar.getCells()[1].getRow());
+        setLastColumn((short)ar.getCells()[1].getCol());
+        //setFirstColRelative(!ar.getCells()[0].isColAbsolute());
+        //setLastColRelative(!ar.getCells()[1].isColAbsolute());
+        //setFirstRowRelative(!ar.getCells()[0].isRowAbsolute());
+        //setLastRowRelative(!ar.getCells()[1].isRowAbsolute());
+        setExternSheetIndex(externIdx);
+        
     }
-
     public Area3DPtg(byte[] data, int offset)
     {
         offset++;
@@ -113,7 +125,7 @@ public class Area3DPtg extends Ptg
 
     public void writeBytes(byte [] array, int offset)
     {
-        array[ 0 + offset ] = sid;
+        array[ 0 + offset ] = (byte) (sid + ptgClass);
         LittleEndian.putShort(array, 1 + offset , getExternSheetIndex());
         LittleEndian.putShort(array, 3 + offset , getFirstRow());
         LittleEndian.putShort(array, 5 + offset , getLastRow());

@@ -751,6 +751,42 @@ extends TestCase {
             in.close();
     }
     
+    public void testSheetFunctions()
+        throws java.io.IOException
+    {
+        String filename = System.getProperty("HSSF.testdata.path");
+
+    File file = File.createTempFile("testSheetFormula",".xls");
+            FileOutputStream out    = new FileOutputStream(file);
+            HSSFWorkbook     wb     = new HSSFWorkbook();
+            HSSFSheet        s      = wb.createSheet("A");
+            HSSFRow          r      = null;
+            HSSFCell         c      = null;
+            r = s.createRow((short)0);
+            c = r.createCell((short)0);c.setCellValue(1);
+            c = r.createCell((short)1);c.setCellValue(2);
+            
+            s      = wb.createSheet("B");
+            r = s.createRow((short)0);
+            c=r.createCell((short)0); c.setCellFormula("AVERAGE(A!A1:B1)");
+            c=r.createCell((short)1); c.setCellFormula("A!A1+A!B1");
+            c=r.createCell((short)2); c.setCellFormula("C!A1+C!B1");
+            wb.write(out);
+            out.close();
+            
+             assertTrue("file exists",file.exists());
+            
+            FileInputStream in = new FileInputStream(file);
+            wb = new HSSFWorkbook(in);
+            s = wb.getSheet("B");
+            r = s.getRow(0);
+            c = r.getCell((short)0);
+            //assertTrue("expected: AVERAGE(A!A1:B1) got: "+c.getCellFormula(), ("AVERAGE(A!A1:B1)").equals(c.getCellFormula()));
+            c = r.getCell((short)1);
+            //assertTrue("expected: A!A1+A!B1 got: "+c.getCellFormula(), ("A!A1+A!B1").equals(c.getCellFormula()));
+            in.close();
+    }
+    
     public void testRVAoperands() throws Exception {
          File file = File.createTempFile("testFormulaRVA",".xls");
             FileOutputStream out    = new FileOutputStream(file);

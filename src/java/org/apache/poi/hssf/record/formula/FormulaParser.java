@@ -63,6 +63,8 @@ import java.util.Stack;
 import java.io.FileOutputStream;
 import java.io.File;
 
+import org.apache.poi.hssf.model.Workbook;
+
 
 /**
  * This class parses a formula string into a List of tokens in RPN order.
@@ -97,6 +99,8 @@ public class FormulaParser {
     private static char CR = '\n';
     
    private char Look;              // Lookahead Character 
+   
+   private Workbook book;
     
     
     /** create the parser with the string that is to be parsed
@@ -106,9 +110,10 @@ public class FormulaParser {
      *  The parse and getPRNPtg are internally synchronized for safety, thus
      *  while it is safe to use in a multithreaded environment, you will get long lock waits.  
      */
-    public FormulaParser(String formula){
+    public FormulaParser(String formula, Workbook book){
         formulaString = formula;
         pointer=0;
+        this.book = book;
     }
     
 
@@ -130,7 +135,7 @@ public class FormulaParser {
     private void Abort(String s) {
         Error(s);
         //System.exit(1);  //throw exception??
-        throw new RuntimeException("Cannot Parse, sorry");
+        throw new RuntimeException("Cannot Parse, sorry : "+s);
     }
     
     
@@ -235,34 +240,50 @@ public class FormulaParser {
         System.out.println();;
     }
     
-    /** Parse and Translate a Identifier */
+    /** Parse and Translate a String Identifier */
     private void Ident() {
         String name;
         name = GetName();
         if (Look == '('){
-            //This is a function 
-            Match('(');
-            int numArgs = Arguments(); 
-            Match(')');
-            //this is the end of the function
-            tokens.add(function(name,(byte)numArgs));
+            //This is a function
+            function(name);
         } else if (Look == ':') { // this is a AreaReference
             String first = name;
             Match(':');
             String second = GetName();
             tokens.add(new AreaPtg(first+":"+second));
+        } else if (Look == '!') {
+            Match('!');
+            String sheetName = name;
+            String first = GetName();
+            short externIdx = book.checkExternSheet(book.getSheetIndex(sheetName));
+            if (Look == ':') {
+                Match(':');
+                String second=GetName();
+                
+                tokens.add(new Area3DPtg(first+":"+second,externIdx));
+            } else {
+                tokens.add(new Ref3DPtg(first,externIdx));
+            }
         } else {
             //this can be either a cell ref or a named range !!
             boolean cellRef = true ; //we should probably do it with reg exp??
             if (cellRef) {
-                tokens.add(new ReferencePtg(name)); 
+                tokens.add(new ReferencePtg(name));
             }else {
                 //handle after named range is integrated!!
             }
         }
     }
     
-    private Ptg function(String name,byte numArgs) {
+    private void function(String name) {
+        Match('(');
+        int numArgs = Arguments();
+        Match(')');
+        tokens.add(getFunction(name,(byte)numArgs));
+    }
+    
+    private Ptg getFunction(String name,byte numArgs) {
         Ptg retval = null;
         retval = new FuncVarPtg(name,numArgs);
        /** if (numArgs == 1 && name.equals("SUM")) {

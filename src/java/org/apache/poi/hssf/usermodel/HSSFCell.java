@@ -701,7 +701,7 @@ public class HSSFCell
             rec.setOptions(( short ) 2);
             rec.setValue(0);
             rec.setXFIndex(( short ) 0x0f);
-            FormulaParser fp = new FormulaParser(formula+";");
+            FormulaParser fp = new FormulaParser(formula+";",book);
             fp.parse();
             Ptg[] ptg  = fp.getRPNPtg();
             int   size = 0;
