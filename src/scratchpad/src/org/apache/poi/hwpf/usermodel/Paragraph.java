@@ -18,13 +18,8 @@
 
 package org.apache.poi.hwpf.usermodel;
 
-import org.apache.poi.hwpf.model.types.PAPAbstractType;
-import org.apache.poi.hwpf.model.StyleDescription;
-import org.apache.poi.hwpf.model.StyleSheet;
 import org.apache.poi.hwpf.model.PAPX;
-
 import org.apache.poi.hwpf.sprm.SprmBuffer;
-import org.apache.poi.hwpf.sprm.ParagraphSprmCompressor;
 import org.apache.poi.hwpf.sprm.TableSprmCompressor;
 
 public class Paragraph
@@ -434,6 +429,18 @@ public class Paragraph
     _props.setDcs(dcs);
     _papx.updateSprm(SPRM_DCS, dcs.toShort());
   }
+
+  public int getIlfo()
+  {
+    return _props.getIlfo();
+  }
+
+  public int getIlvl()
+  {
+    return _props.getIlvl();
+  }
+
+
 
   void setTableRowEnd(TableProperties props)
   {
