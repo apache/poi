@@ -233,25 +233,7 @@ public class ClassID
         return true;
     }
 
-    /**
-     * Returns a human readable representation of the Class ID
-     *   in standard format <code>"{xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx}"</code>
-     * @return String representation of the Class ID represented
-     *   by this object.
-     */
-    public String toString()
-    {
-        StringBuffer sbClassId = new StringBuffer( 38);
-        sbClassId.append( '{');
-        for( int i=0; i < 16; i++) {
-            sbClassId.append( HexDump.toHex( bytes[ i]));
-            if( i == 3 || i == 5 || i == 7 || i == 9) {
-                sbClassId.append( '-');
-            }
-        }
-        sbClassId.append( '}');
-        return sbClassId.toString();
-    }
+
 
     /**
      * @see Object#hashCode()
@@ -259,6 +241,28 @@ public class ClassID
     public int hashCode()
     {
         return new String(bytes).hashCode();
+    }
+
+
+
+    /**
+     * <p>Returns a human-readable representation of the Class ID in standard 
+     * format <code>"{xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx}"</code>.</p>
+     * 
+     * @return String representation of the Class ID represented by this object.
+     */
+    public String toString()
+    {
+        StringBuffer sbClassId = new StringBuffer(38);
+        sbClassId.append('{');
+        for (int i = 0; i < 16; i++)
+        {
+            sbClassId.append(HexDump.toHex(bytes[i]));
+            if (i == 3 || i == 5 || i == 7 || i == 9)
+                sbClassId.append('-');
+        }
+        sbClassId.append('}');
+        return sbClassId.toString();
     }
 
 }
