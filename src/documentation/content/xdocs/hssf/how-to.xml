@@ -420,7 +420,7 @@ most likely fail.  No big deal.  </li>
 </ul>
      </section>
     <section><title>Logging facility</title>
-        <p>POI can dynamically select it's logging implementation. POI trys to
+        <p>POI can dynamically select it's logging implementation. POI tries to
         create a logger using the System property named "org.apache.poi.util.POILogger".
         Out of the box this can be set to one of three values:
         </p>
