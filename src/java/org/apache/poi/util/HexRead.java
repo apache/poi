@@ -54,10 +54,7 @@
 
 package org.apache.poi.util;
 
-import java.io.IOException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
+import java.io.*;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -205,6 +202,11 @@ public class HexRead
             rval[j] = polished[j].byteValue();
         }
         return rval;
+    }
+
+    static public byte[] readFromString(String data) throws IOException
+    {
+        return readData(new ByteArrayInputStream( data.getBytes() ), -1);
     }
 
     static private void readToEOL( InputStream stream ) throws IOException
