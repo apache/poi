@@ -166,9 +166,6 @@ public class TestLittleEndian
         assertEquals(_doubles[ 1 ], LittleEndian.getDouble( _double_array, LittleEndian.DOUBLE_SIZE), 0.000001);
         assertTrue(Double.isNaN(LittleEndian.getDouble(_nan_double_array)));
 
-        // does not work.  apparently nan does not always equal nan!
-        //assertEquals(_doubles[ 2 ], LittleEndian.getDouble(_nan_double_array), 0.000001);
-
         double nan = LittleEndian.getDouble(_nan_double_array);
         byte[] data = new byte[8];
         LittleEndian.putDouble(data, nan);
