@@ -206,41 +206,90 @@ extends TestCase {
      *
      */
     public void testFloat()
-        throws Exception {
-            String operator = "+";
-            short            rownum = 0;
-            File file = File.createTempFile("testFormulaFloat",".xls");
-            FileOutputStream out    = new FileOutputStream(file);
-            HSSFWorkbook     wb     = new HSSFWorkbook();
-            HSSFSheet        s      = wb.createSheet();
-            HSSFRow          r      = null;
-            HSSFCell         c      = null;
-
-                for (short x = 1; x < Short.MAX_VALUE && x > 0; x=(short)(x*2)) {
-                r = s.createRow((short) x);
-
-                for (short y = 1; y < 256 && y > 0; y++) {
-
-                    c = r.createCell((short) y);
-                    c.setCellFormula("" + (100*x)+"."+y + operator + (10000*y) + 
-                                     "."+x);
+    throws Exception {
+        floatTest("*");
+        floatTest("/");
+    }
     
-
-                }
+    private void floatTest(String operator)
+    throws Exception {
+        short            rownum = 0;
+        File file = File.createTempFile("testFormulaFloat",".xls");
+        FileOutputStream out    = new FileOutputStream(file);
+        HSSFWorkbook     wb     = new HSSFWorkbook();
+        HSSFSheet        s      = wb.createSheet();
+        HSSFRow          r      = null;
+        HSSFCell         c      = null;
+        
+        //get our minimum values
+        
+        r = s.createRow((short)0);
+        c = r.createCell((short)1);
+        c.setCellFormula(""+Float.MIN_VALUE + operator + Float.MIN_VALUE);
+ 
+       for (short x = 1; x < Short.MAX_VALUE && x > 0; x=(short)(x*2) ) {
+            r = s.createRow((short) x);
+            
+            for (short y = 1; y < 256 && y > 0; y= (short) (y +2)) {
+                
+                c = r.createCell((short) y);
+                c.setCellFormula("" + x+"."+y + operator + y +"."+x);
+                
+                
             }
-
-            wb.write(out);
-            out.close();
-            assertTrue("file exists",file.exists());
-
-
         }
+        if (s.getLastRowNum() < Short.MAX_VALUE) {
+            r = s.createRow((short)0);
+            c = r.createCell((short)0);
+            c.setCellFormula("" + Float.MAX_VALUE + operator + Float.MAX_VALUE);
+        }
+        wb.write(out);
+        out.close();
+        assertTrue("file exists",file.exists());
+        out=null;wb=null;  //otherwise we get out of memory error!
+        floatVerify(operator,file);
+        
+    }
+        
+            private void floatVerify(String operator, File file)
+    throws Exception {
+        short            rownum = 0;
+        
+        FileInputStream  in     = new FileInputStream(file);
+        HSSFWorkbook     wb     = new HSSFWorkbook(in);
+        HSSFSheet        s      = wb.getSheetAt(0);
+        HSSFRow          r      = null;
+        HSSFCell         c      = null;
+        
+        // dont know how to check correct result .. for the moment, we just verify that the file can be read. 
+        
+        for (short x = 1; x < Short.MAX_VALUE && x > 0; x=(short)(x*2)) {
+            r = s.getRow((short) x);
+
+            for (short y = 1; y < 256 && y > 0; y=(short)(y+2)) {
+
+                c = r.getCell((short) y);
+                assertTrue("got a formula",c.getCellFormula()!=null);
+                
+                assertTrue("loop Formula is as expected "+x+"."+y+operator+y+"."+x+"!="+c.getCellFormula(),(
+                (""+x+"."+y+operator+y+"."+x).equals(c.getCellFormula()) ));
+ 
+            }
+        }
+        
+       in.close();
+       assertTrue("file exists",file.exists());
+    }
     
     public void testAreaSum() 
     throws Exception {
         areaFunctionTest("SUM");
     }
     
+    public void testAreaAverage() 
+    throws Exception {
+        areaFunctionTest("AVERAGE");
+    }
     
     private void operationRefTest(String operator) 
     throws Exception {
