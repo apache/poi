@@ -277,6 +277,11 @@ public class TestHexDump
 
             // as expected
         }
+
+        // verify proper behaviour with empty byte array
+        ByteArrayOutputStream os = new ByteArrayOutputStream( );
+        HexDump.dump( new byte[0], 0, os, 0 );
+        assertEquals( "No Data", os.toString() );
     }
 
     public void testToHex()
