@@ -54,7 +54,7 @@
 
 package org.apache.poi.hwpf.sprm;
 
-import org.apache.poi.hwpf.usermodel.CharacterProperties;
+import org.apache.poi.hwpf.usermodel.CharacterRun;
 import org.apache.poi.hwpf.usermodel.DateAndTime;
 import org.apache.poi.hwpf.usermodel.BorderCode;
 import org.apache.poi.hwpf.usermodel.ShadingDescriptor;
@@ -67,14 +67,14 @@ public class CharacterSprmUncompressor
   {
   }
 
-  public static CharacterProperties uncompressCHP(CharacterProperties parent,
+  public static CharacterRun uncompressCHP(CharacterRun parent,
                                                   byte[] grpprl,
                                                   int offset)
   {
-    CharacterProperties newProperties = null;
+    CharacterRun newProperties = null;
     try
     {
-      newProperties = (CharacterProperties) parent.clone();
+      newProperties = (CharacterRun) parent.clone();
     }
     catch (CloneNotSupportedException cnse)
     {
@@ -105,8 +105,8 @@ public class CharacterSprmUncompressor
    * @param offset The offset in the grpprl of the next sprm
    * @param styleSheet The StyleSheet for this document.
    */
-  static void unCompressCHPOperation (CharacterProperties oldCHP,
-                                      CharacterProperties newCHP,
+  static void unCompressCHPOperation (CharacterRun oldCHP,
+                                      CharacterRun newCHP,
                                       SprmOperation sprm)
   {
 
@@ -264,7 +264,7 @@ public class CharacterSprmUncompressor
         {
           // preserve the fSpec setting from the original CHP
           boolean fSpec = newCHP.isFSpec ();
-          newCHP = (CharacterProperties) oldCHP.clone ();
+          newCHP = (CharacterRun) oldCHP.clone ();
           newCHP.setFSpec (fSpec);
 
         }

@@ -60,9 +60,9 @@ import org.apache.poi.util.LittleEndian;
 import org.apache.poi.hwpf.usermodel.SectionRange;
 import org.apache.poi.hwpf.usermodel.CharacterRange;
 import org.apache.poi.hwpf.usermodel.ParagraphRange;
-import org.apache.poi.hwpf.usermodel.CharacterProperties;
-import org.apache.poi.hwpf.usermodel.ParagraphProperties;
-import org.apache.poi.hwpf.usermodel.SectionProperties;
+import org.apache.poi.hwpf.usermodel.CharacterRun;
+import org.apache.poi.hwpf.usermodel.Paragraph;
+import org.apache.poi.hwpf.usermodel.Section;
 
 import org.apache.poi.hwpf.model.hdftypes.PropertyNode;
 import org.apache.poi.hwpf.model.hdftypes.StyleSheet;
@@ -91,14 +91,22 @@ public class Range
   private int _start;
   private int _end;
   private HWPFDocument _doc;
-  private List _parentSections;
-  private List _parentParagraphs;
-  private List _parentCharacters;
-  private List _parentText;
+  boolean _sectionRangeFound;
   private List _sections;
+  int _sectionStart;
+  int _sectionEnd;
+  boolean _parRangeFound;
   private List _paragraphs;
+  int _parStart;
+  int _parEnd;
+  boolean _charRangeFound;
   private List _characters;
+  int _charStart;
+  int _charEnd;
+  boolean _textRangeFound;
   private List _text;
+  int _textStart;
+  int _textEnd;
 
 
   protected Range(int start, int end, HWPFDocument doc)
@@ -106,10 +114,10 @@ public class Range
     _start = start;
     _end = end;
     _doc = doc;
-    _parentSections = _doc.getSectionTable().getSections();
-    _parentParagraphs = _doc.getParagraphTable().getParagraphs();
-    _parentCharacters = _doc.getCharacterTable().getTextRuns();
-    _parentText = _doc.getTextTable().getTextPieces();
+    _sections = _doc.getSectionTable().getSections();
+    _paragraphs = _doc.getParagraphTable().getParagraphs();
+    _characters = _doc.getCharacterTable().getTextRuns();
+    _text = _doc.getTextTable().getTextPieces();
   }
 
   protected Range(int start, int end, Range parent)
@@ -117,18 +125,21 @@ public class Range
     _start = start;
     _end = end;
     _doc = parent._doc;
-    _parentSections = parent._parentSections;
-    _parentParagraphs = parent._parentParagraphs;
-    _parentCharacters = parent._parentCharacters;
-    _parentText = parent._parentText;
+    _sections = parent._sections;
+    _paragraphs = parent._paragraphs;
+    _characters = parent._characters;
+    _text = parent._text;
   }
 
   public String text()
     throws UnsupportedEncodingException
   {
-    if (_text == null)
+    if (!_textRangeFound)
     {
-      _text = initRangedList(_parentText, _start, _end);
+      int[] point = findRange(_text, _textStart, _start, _end);
+      _textStart = point[0];
+      _textEnd = point[1];
+      _textRangeFound = true;
     }
 
     StringBuffer sb = new StringBuffer();
@@ -149,71 +160,97 @@ public class Range
 
   public int numSections()
   {
-    if (_sections == null)
-    {
-      _sections = initRangedList(_parentSections, _start, _end);
-    }
+    initSections();
     return _sections.size();
   }
 
   public int numParagraphs()
   {
-    if (_paragraphs == null)
-    {
-      _paragraphs = initRangedList(_parentParagraphs, _start, _end);
-    }
+    initParagraphs();
     return _paragraphs.size();
   }
 
   public int numCharacterRuns()
   {
-    if (_characters == null)
-    {
-      _characters = initRangedList(_parentCharacters, _start, _end);
-    }
+    initCharacterRuns();
     return _characters.size();
   }
 
-  public CharacterProperties getCharacterRun(int index)
+  public CharacterRange insertBefore(String text)
   {
-    CHPX chpx = (CHPX)_characters.get(index);
-    CharacterProperties chp = (CharacterProperties)chpx.getCacheContents();
+    return null;
+  }
+
+  public CharacterRange insertAfter(String text)
+  {
+    return null;
+  }
+
+  public CharacterRange insertBefore(String text, CharacterRun cr)
+  {
+    return null;
+  }
+
+  public CharacterRange insertAfter(String text, CharacterRun cr)
+  {
+    return null;
+  }
+
+  public ParagraphRange insertBefore(Paragraph paragraph)
+  {
+    return null;
+  }
+
+  public ParagraphRange insertAfter(Paragraph paragraph)
+  {
+    return null;
+  }
+
+
+  public CharacterRun getCharacterRun(int index)
+  {
+    initCharacterRuns();
+    CHPX chpx = (CHPX)_characters.get(index + _charStart);
+    CharacterRun chp = (CharacterRun)chpx.getCacheContents();
     if (chp == null)
     {
-      List paragraphList = initRangedList(_paragraphs, chpx.getStart(),
-                                          chpx.getEnd());
+      int[] point = findRange(_paragraphs, _parStart, chpx.getStart(),
+                              chpx.getEnd());
+      List paragraphList = _paragraphs.subList(point[0], point[1]);
       PAPX papx = (PAPX)paragraphList.get(0);
       short istd = LittleEndian.getShort(papx.getBuf());
 
       StyleSheet sd = _doc.getStyleSheet();
-      CharacterProperties baseStyle = sd.getCharacterStyle(istd);
+      CharacterRun baseStyle = sd.getCharacterStyle(istd);
       chp = CharacterSprmUncompressor.uncompressCHP(baseStyle, chpx.getBuf(), 0);
       chpx.fillCache(chp);
     }
     return chp;
   }
 
-  public SectionProperties getSection(int index)
+  public Section getSection(int index)
   {
-    SEPX sepx = (SEPX)_sections.get(index);
-    SectionProperties sep = (SectionProperties)sepx.getCacheContents();
+    initSections();
+    SEPX sepx = (SEPX)_sections.get(index + _sectionStart);
+    Section sep = (Section)sepx.getCacheContents();
     if (sep == null)
     {
-      sep = SectionSprmUncompressor.uncompressSEP(new SectionProperties(), sepx.getBuf(), 0);
+      sep = SectionSprmUncompressor.uncompressSEP(new Section(), sepx.getBuf(), 0);
       sepx.fillCache(sep);
     }
     return sep;
   }
 
-  public ParagraphProperties getParagraph(int index)
+  public Paragraph getParagraph(int index)
   {
-    PAPX papx = (PAPX)_sections.get(index);
-    ParagraphProperties pap = (ParagraphProperties)papx.getCacheContents();
+    initParagraphs();
+    PAPX papx = (PAPX)_sections.get(index + _parStart);
+    Paragraph pap = (Paragraph)papx.getCacheContents();
     if (pap == null)
     {
       short istd = LittleEndian.getShort(papx.getBuf());
       StyleSheet sd = _doc.getStyleSheet();
-      ParagraphProperties baseStyle = sd.getParagraphStyle(istd);
+      Paragraph baseStyle = sd.getParagraphStyle(istd);
       pap = ParagraphSprmUncompressor.uncompressPAP(baseStyle, papx.getBuf(), 2);
       papx.fillCache(pap);
     }
@@ -222,37 +259,26 @@ public class Range
 
   public SectionRange getSectionRange(int index)
   {
-    if (_sections == null)
-    {
-      _sections = initRangedList(_doc.getSectionTable().getSections(), _start, _end);
-    }
-    PropertyNode node = (PropertyNode)_sections.get(index);
+    initSections();
+    PropertyNode node = (PropertyNode)_sections.get(index + _sectionStart);
     return new SectionRange(Math.max(_start, node.getStart()),
                             Math.min(_end, node.getEnd()), this);
   }
 
   public ParagraphRange getParagraphRange(int index)
   {
-    if (_paragraphs == null)
-    {
-      _paragraphs = initRangedList(_doc.getParagraphTable().getParagraphs(), _start, _end);
-    }
-    PropertyNode node = (PropertyNode)_paragraphs.get(index);
+    initParagraphs();
+    PropertyNode node = (PropertyNode)_paragraphs.get(index + _parStart);
     return new ParagraphRange(Math.max(_start, node.getStart()),
                             Math.min(_end, node.getEnd()),this);
-
   }
 
   public CharacterRange getCharacterRange(int index)
   {
-    if (_characters == null)
-    {
-      _characters = initRangedList(_doc.getCharacterTable().getTextRuns(), _start, _end);
-    }
-    PropertyNode node = (PropertyNode)_characters.get(index);
+    initCharacterRuns();
+    PropertyNode node = (PropertyNode)_characters.get(index + _charStart);
     return new CharacterRange(Math.max(_start, node.getStart()),
                             Math.min(_end, node.getEnd()), this);
-
   }
 
   public SectionRange sections()
@@ -269,9 +295,42 @@ public class Range
     return new CharacterRange(_start, _end, _doc);
   }
 
-  private List initRangedList(List rpl, int start, int end)
+  private void initParagraphs()
   {
-    int x = 0;
+    if (!_parRangeFound)
+    {
+      int[] point = findRange(_paragraphs, _parStart, _start, _end);
+      _parStart = point[0];
+      _parEnd = point[1];
+      _parRangeFound = true;
+    }
+  }
+
+  private void initCharacterRuns()
+  {
+    if (!_charRangeFound)
+    {
+      int[] point = findRange(_characters, _charStart, _start, _end);
+      _charStart = point[0];
+      _charEnd = point[1];
+      _charRangeFound = true;
+    }
+  }
+
+  private void initSections()
+  {
+    if (!_sectionRangeFound)
+    {
+      int[] point = findRange(_sections, _sectionStart, _start, _end);
+      _sectionStart = point[0];
+      _sectionEnd = point[1];
+      _sectionRangeFound = true;
+    }
+  }
+
+  private int[] findRange(List rpl, int min, int start, int end)
+  {
+    int x = min;
     PropertyNode node = (PropertyNode)rpl.get(x);
     while(node.getStart() < start)
     {
@@ -286,6 +345,6 @@ public class Range
       y++;
       node = (PropertyNode)rpl.get(y);
     }
-    return rpl.subList(x, y + 1);
+    return new int[]{x, y + 1};
   }
 }

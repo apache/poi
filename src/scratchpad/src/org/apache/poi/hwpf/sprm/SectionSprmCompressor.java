@@ -58,18 +58,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.apache.poi.hwpf.model.hdftypes.definitions.SEPAbstractType;
-import org.apache.poi.hwpf.usermodel.SectionProperties;
+import org.apache.poi.hwpf.usermodel.Section;
 import org.apache.poi.util.LittleEndian;
 
 
 public class SectionSprmCompressor
 {
-  private final static SectionProperties DEFAULT_SEP = new SectionProperties();
+  private final static Section DEFAULT_SEP = new Section();
   public SectionSprmCompressor()
   {
   }
-  public static byte[] compressSectionProperty(SectionProperties newSEP,
-                                               SectionProperties oldSEP)
+  public static byte[] compressSectionProperty(Section newSEP,
+                                               Section oldSEP)
   {
     int size = 0;
     ArrayList sprmList = new ArrayList();
@@ -220,31 +220,31 @@ public class SectionSprmCompressor
     }
     if (newSEP.getFPropMark() != DEFAULT_SEP.getFPropMark() ||
         newSEP.getIbstPropRMark() != DEFAULT_SEP.getIbstPropRMark() ||
-        newSEP.getDttmPropRMark() != DEFAULT_SEP.getDttmPropRMark())
+        !newSEP.getDttmPropRMark().equals(DEFAULT_SEP.getDttmPropRMark()))
     {
       byte[] buf = new byte[7];
       buf[0] = (byte)(newSEP.getFPropMark() ? 1 : 0);
       int offset = LittleEndian.BYTE_SIZE;
       LittleEndian.putShort(buf, (short)newSEP.getIbstPropRMark());
       offset += LittleEndian.SHORT_SIZE;
-      LittleEndian.putInt(buf, newSEP.getDttmPropRMark());
+      newSEP.getDttmPropRMark().serialize(buf, offset);
       size += SprmUtils.addSprm((short)0xD227, -1, buf, sprmList);
     }
-    if (!Arrays.equals(newSEP.getBrcTop(), DEFAULT_SEP.getBrcTop()))
+    if (!newSEP.getBrcTop().equals( DEFAULT_SEP.getBrcTop()))
     {
-      size += SprmUtils.addSprm((short)0x702B, SprmUtils.convertBrcToInt(newSEP.getBrcTop()), null, sprmList);
+      size += SprmUtils.addSprm((short)0x702B, newSEP.getBrcTop().toInt(), null, sprmList);
     }
-    if (!Arrays.equals(newSEP.getBrcLeft(), DEFAULT_SEP.getBrcLeft()))
+    if (!newSEP.getBrcLeft().equals(DEFAULT_SEP.getBrcLeft()))
     {
-      size += SprmUtils.addSprm((short)0x702C, SprmUtils.convertBrcToInt(newSEP.getBrcLeft()), null, sprmList);
+      size += SprmUtils.addSprm((short)0x702C, newSEP.getBrcLeft().toInt(), null, sprmList);
     }
-    if (!Arrays.equals(newSEP.getBrcBottom(), DEFAULT_SEP.getBrcBottom()))
+    if (!newSEP.getBrcBottom().equals(DEFAULT_SEP.getBrcBottom()))
     {
-      size += SprmUtils.addSprm((short)0x702D, SprmUtils.convertBrcToInt(newSEP.getBrcBottom()), null, sprmList);
+      size += SprmUtils.addSprm((short)0x702D, newSEP.getBrcBottom().toInt(), null, sprmList);
     }
-    if (!Arrays.equals(newSEP.getBrcRight(), DEFAULT_SEP.getBrcRight()))
+    if (!newSEP.getBrcRight().equals(DEFAULT_SEP.getBrcRight()))
     {
-      size += SprmUtils.addSprm((short)0x702E, SprmUtils.convertBrcToInt(newSEP.getBrcRight()), null, sprmList);
+      size += SprmUtils.addSprm((short)0x702E, newSEP.getBrcRight().toInt(), null, sprmList);
     }
     if (newSEP.getPgbProp() != DEFAULT_SEP.getPgbProp())
     {

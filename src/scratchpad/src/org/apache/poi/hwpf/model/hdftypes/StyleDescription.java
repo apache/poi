@@ -59,8 +59,8 @@ package org.apache.poi.hwpf.model.hdftypes;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 
-import org.apache.poi.hwpf.usermodel.CharacterProperties;
-import org.apache.poi.hwpf.usermodel.ParagraphProperties;
+import org.apache.poi.hwpf.usermodel.CharacterRun;
+import org.apache.poi.hwpf.usermodel.Paragraph;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.BitField;
 /**
@@ -96,8 +96,8 @@ public class StyleDescription implements HDFType
 
   UPX[] _upxs;
   String _name;
-  ParagraphProperties _pap;
-  CharacterProperties _chp;
+  Paragraph _pap;
+  CharacterRun _chp;
 
   public StyleDescription()
   {
@@ -203,19 +203,19 @@ public class StyleDescription implements HDFType
         return null;
     }
   }
-  public ParagraphProperties getPAP()
+  public Paragraph getPAP()
   {
       return _pap;
   }
-  public CharacterProperties getCHP()
+  public CharacterRun getCHP()
   {
       return _chp;
   }
-  void setPAP(ParagraphProperties pap)
+  void setPAP(Paragraph pap)
   {
       _pap = pap;
   }
-  void setCHP(CharacterProperties chp)
+  void setCHP(CharacterRun chp)
   {
       _chp = chp;
   }

@@ -62,8 +62,8 @@ import java.io.IOException;
 
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.hwpf.model.io.HWPFOutputStream;
-import org.apache.poi.hwpf.usermodel.CharacterProperties;
-import org.apache.poi.hwpf.usermodel.ParagraphProperties;
+import org.apache.poi.hwpf.usermodel.CharacterRun;
+import org.apache.poi.hwpf.usermodel.Paragraph;
 import org.apache.poi.hwpf.sprm.ParagraphSprmUncompressor;
 import org.apache.poi.hwpf.sprm.CharacterSprmUncompressor;
 
@@ -248,12 +248,12 @@ public class StyleSheet implements HDFType
   private void createPap(int istd)
   {
       StyleDescription sd = _styleDescriptions[istd];
-      ParagraphProperties pap = sd.getPAP();
+      Paragraph pap = sd.getPAP();
       byte[] papx = sd.getPAPX();
       int baseIndex = sd.getBaseStyle();
       if(pap == null && papx != null)
       {
-          ParagraphProperties parentPAP = new ParagraphProperties();
+          Paragraph parentPAP = new Paragraph();
           if(baseIndex != NIL_STYLE)
           {
 
@@ -266,7 +266,7 @@ public class StyleSheet implements HDFType
 
           }
 
-          pap = (ParagraphProperties)ParagraphSprmUncompressor.uncompressPAP(parentPAP, papx, 2);
+          pap = (Paragraph)ParagraphSprmUncompressor.uncompressPAP(parentPAP, papx, 2);
           sd.setPAP(pap);
       }
   }
@@ -283,12 +283,12 @@ public class StyleSheet implements HDFType
   private void createChp(int istd)
   {
       StyleDescription sd = _styleDescriptions[istd];
-      CharacterProperties chp = sd.getCHP();
+      CharacterRun chp = sd.getCHP();
       byte[] chpx = sd.getCHPX();
       int baseIndex = sd.getBaseStyle();
       if(chp == null && chpx != null)
       {
-          CharacterProperties parentCHP = new CharacterProperties();
+          CharacterRun parentCHP = new CharacterRun();
           if(baseIndex != NIL_STYLE)
           {
 
@@ -301,7 +301,7 @@ public class StyleSheet implements HDFType
 
           }
 
-          chp = (CharacterProperties)CharacterSprmUncompressor.uncompressCHP(parentCHP, chpx, 0);
+          chp = (CharacterRun)CharacterSprmUncompressor.uncompressCHP(parentCHP, chpx, 0);
           sd.setCHP(chp);
       }
   }
@@ -316,12 +316,12 @@ public class StyleSheet implements HDFType
       return _styleDescriptions[x];
   }
 
-  public CharacterProperties getCharacterStyle(int x)
+  public CharacterRun getCharacterStyle(int x)
   {
     return (_styleDescriptions[x] != null ? _styleDescriptions[x].getCHP() : null);
   }
 
-  public ParagraphProperties getParagraphStyle(int x)
+  public Paragraph getParagraphStyle(int x)
   {
     return (_styleDescriptions[x] != null ? _styleDescriptions[x].getPAP() : null);
   }

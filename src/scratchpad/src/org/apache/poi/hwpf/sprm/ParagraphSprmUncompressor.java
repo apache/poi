@@ -54,7 +54,7 @@
 
 package org.apache.poi.hwpf.sprm;
 
-import org.apache.poi.hwpf.usermodel.ParagraphProperties;
+import org.apache.poi.hwpf.usermodel.Paragraph;
 import org.apache.poi.hwpf.usermodel.BorderCode;
 import org.apache.poi.hwpf.usermodel.DateAndTime;
 import org.apache.poi.hwpf.usermodel.LineSpacingDescriptor;
@@ -73,14 +73,14 @@ public class ParagraphSprmUncompressor
   {
   }
 
-  public static ParagraphProperties uncompressPAP(ParagraphProperties parent,
+  public static Paragraph uncompressPAP(Paragraph parent,
                                                   byte[] grpprl,
                                                   int offset)
   {
-    ParagraphProperties newProperties = null;
+    Paragraph newProperties = null;
     try
     {
-      newProperties = (ParagraphProperties) parent.clone();
+      newProperties = (Paragraph) parent.clone();
     }
     catch (CloneNotSupportedException cnse)
     {
@@ -109,7 +109,7 @@ public class ParagraphSprmUncompressor
    * @param offset The current offset in the papx.
    * @param spra A part of the sprm that defined this operation.
    */
-  static void unCompressPAPOperation (ParagraphProperties newPAP, SprmOperation sprm)
+  static void unCompressPAPOperation (Paragraph newPAP, SprmOperation sprm)
   {
     switch (sprm.getOperation())
     {
@@ -410,7 +410,7 @@ public class ParagraphSprmUncompressor
     }
   }
 
-  private static void handleTabs(ParagraphProperties pap, SprmOperation sprm)
+  private static void handleTabs(Paragraph pap, SprmOperation sprm)
   {
     byte[] grpprl = sprm.getGrpprl();
     int offset = sprm.getGrpprlOffset();

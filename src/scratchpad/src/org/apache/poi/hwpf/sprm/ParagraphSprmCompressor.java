@@ -60,7 +60,7 @@ import java.util.Arrays;
 
 import org.apache.poi.util.LittleEndian;
 
-import org.apache.poi.hwpf.usermodel.ParagraphProperties;
+import org.apache.poi.hwpf.usermodel.Paragraph;
 
 public class ParagraphSprmCompressor
 {
@@ -68,8 +68,8 @@ public class ParagraphSprmCompressor
   {
   }
 
-  public static byte[] compressParagraphProperty(ParagraphProperties newPAP,
-                                                 ParagraphProperties oldPAP)
+  public static byte[] compressParagraphProperty(Paragraph newPAP,
+                                                 Paragraph oldPAP)
   {
     ArrayList sprmList = new ArrayList();
     int size = 0;
@@ -126,22 +126,23 @@ public class ParagraphSprmCompressor
         !Arrays.equals(newPAP.getRgdxaTab(), oldPAP.getRgdxaTab()) ||
         !Arrays.equals(newPAP.getRgtbd(), oldPAP.getRgtbd()))
     {
-      byte[] oldTabArray = oldPAP.getRgdxaTab();
-      byte[] newTabArray = newPAP.getRgdxaTab();
-      byte[] newTabDescriptors = newPAP.getRgtbd();
-      byte[] varParam = new byte[2 + oldTabArray.length + newTabArray.length +
-                                 newTabDescriptors.length];
-      varParam[0] = (byte)(oldTabArray.length/2);
-      int offset = 1;
-      System.arraycopy(oldTabArray, 0, varParam, offset, oldTabArray.length);
-      offset += oldTabArray.length;
-      varParam[offset] = (byte)(newTabArray.length/2);
-      offset += 1;
-      System.arraycopy(newTabArray, 0, varParam, offset, newTabArray.length);
-      offset += newTabArray.length;
-      System.arraycopy(newTabDescriptors, 0, varParam, offset, newTabDescriptors.length);
-
-      size += SprmUtils.addSprm((short)0xC60D, 0, varParam, sprmList);
+      /** @todo revisit this */
+//      byte[] oldTabArray = oldPAP.getRgdxaTab();
+//      byte[] newTabArray = newPAP.getRgdxaTab();
+//      byte[] newTabDescriptors = newPAP.getRgtbd();
+//      byte[] varParam = new byte[2 + oldTabArray.length + newTabArray.length +
+//                                 newTabDescriptors.length];
+//      varParam[0] = (byte)(oldTabArray.length/2);
+//      int offset = 1;
+//      System.arraycopy(oldTabArray, 0, varParam, offset, oldTabArray.length);
+//      offset += oldTabArray.length;
+//      varParam[offset] = (byte)(newTabArray.length/2);
+//      offset += 1;
+//      System.arraycopy(newTabArray, 0, varParam, offset, newTabArray.length);
+//      offset += newTabArray.length;
+//      System.arraycopy(newTabDescriptors, 0, varParam, offset, newTabDescriptors.length);
+//
+//      size += SprmUtils.addSprm((short)0xC60D, 0, varParam, sprmList);
     }
     if (newPAP.getDxaRight() != oldPAP.getDxaRight())
     {
@@ -155,12 +156,10 @@ public class ParagraphSprmCompressor
     {
       size += SprmUtils.addSprm((short)0x8411, newPAP.getDxaLeft1(), null, sprmList);
     }
-    if (!Arrays.equals(newPAP.getLspd(), oldPAP.getLspd()))
+    if (!newPAP.getLspd().equals(oldPAP.getLspd()))
     {
-      short[] lspd = newPAP.getLspd();
       byte[] buf = new byte[4];
-      LittleEndian.putShort(buf, 0, lspd[0]);
-      LittleEndian.putShort(buf, 2, lspd[1]);
+      newPAP.getLspd().serialize(buf, 0);
 
       size += SprmUtils.addSprm((short)0x6412, LittleEndian.getInt(buf), null, sprmList);
     }
@@ -255,29 +254,29 @@ public class ParagraphSprmCompressor
     {
       size += SprmUtils.addSprm((short)0x841A, newPAP.getDxaWidth(), null, sprmList);
     }
-    if (!Arrays.equals(newPAP.getBrcTop(), oldPAP.getBrcTop()))
+    if (!newPAP.getBrcTop().equals(oldPAP.getBrcTop()))
     {
-      int brc = SprmUtils.convertBrcToInt(newPAP.getBrcTop());
+      int brc = newPAP.getBrcTop().toInt();
       size += SprmUtils.addSprm((short)0x6424, brc, null, sprmList);
     }
-    if (!Arrays.equals(newPAP.getBrcLeft(), oldPAP.getBrcLeft()))
+    if (!newPAP.getBrcLeft().equals(oldPAP.getBrcLeft()))
     {
-      int brc = SprmUtils.convertBrcToInt(newPAP.getBrcLeft());
+      int brc = newPAP.getBrcLeft().toInt();
       size += SprmUtils.addSprm((short)0x6425, brc, null, sprmList);
     }
-    if (!Arrays.equals(newPAP.getBrcBottom(), oldPAP.getBrcBottom()))
+    if (!newPAP.getBrcBottom().equals(oldPAP.getBrcBottom()))
     {
-      int brc = SprmUtils.convertBrcToInt(newPAP.getBrcBottom());
+      int brc = newPAP.getBrcBottom().toInt();
       size += SprmUtils.addSprm((short)0x6426, brc, null, sprmList);
     }
-    if (!Arrays.equals(newPAP.getBrcRight(), oldPAP.getBrcRight()))
+    if (!newPAP.getBrcRight().equals(oldPAP.getBrcRight()))
     {
-      int brc = SprmUtils.convertBrcToInt(newPAP.getBrcRight());
+      int brc = newPAP.getBrcRight().toInt();
       size += SprmUtils.addSprm((short)0x6427, brc, null, sprmList);
     }
-    if (!Arrays.equals(newPAP.getBrcBar(), oldPAP.getBrcBar()))
+    if (newPAP.getBrcBar().equals(oldPAP.getBrcBar()))
     {
-      int brc = SprmUtils.convertBrcToInt(newPAP.getBrcBar());
+      int brc = newPAP.getBrcBar().toInt();
       size += SprmUtils.addSprm((short)0x6428, brc, null, sprmList);
     }
     if (newPAP.getDxaFromText() != oldPAP.getDxaFromText())
@@ -316,12 +315,12 @@ public class ParagraphSprmCompressor
     }
     if (newPAP.getFPropRMark() != oldPAP.getFPropRMark() ||
         newPAP.getIbstPropRMark() != oldPAP.getIbstPropRMark() ||
-        !Arrays.equals(newPAP.getDttmPropRMark(), oldPAP.getDttmPropRMark()))
+        !newPAP.getDttmPropRMark().equals(oldPAP.getDttmPropRMark()))
     {
       byte[] buf = new byte[7];
       buf[0] = (byte)newPAP.getFPropRMark();
       LittleEndian.putShort(buf, 1, (short)newPAP.getIbstPropRMark());
-      System.arraycopy(newPAP.getDttmPropRMark(), 0, buf, 3, 4);
+      newPAP.getDttmPropRMark().serialize(buf, 3);
       size += SprmUtils.addSprm((short)0xC63F, 0, buf, sprmList);
     }
     if (!Arrays.equals(newPAP.getNumrm(), oldPAP.getNumrm()))

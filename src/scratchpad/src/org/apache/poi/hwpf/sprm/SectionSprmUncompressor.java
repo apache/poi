@@ -54,7 +54,7 @@
 
 package org.apache.poi.hwpf.sprm;
 
-import org.apache.poi.hwpf.usermodel.SectionProperties;
+import org.apache.poi.hwpf.usermodel.Section;
 import org.apache.poi.hwpf.usermodel.BorderCode;
 
 public class SectionSprmUncompressor extends SprmUncompressor
@@ -62,14 +62,14 @@ public class SectionSprmUncompressor extends SprmUncompressor
   public SectionSprmUncompressor()
   {
   }
-  public static SectionProperties uncompressSEP(SectionProperties parent,
+  public static Section uncompressSEP(Section parent,
                                                   byte[] grpprl,
                                                   int offset)
   {
-    SectionProperties newProperties = null;
+    Section newProperties = null;
     try
     {
-      newProperties = (SectionProperties) parent.clone();
+      newProperties = (Section) parent.clone();
     }
     catch (CloneNotSupportedException cnse)
     {
@@ -95,7 +95,7 @@ public class SectionSprmUncompressor extends SprmUncompressor
    * @param param The operation's parameter.
    * @param varParam The operation variable length parameter.
    */
-  static void unCompressSEPOperation (SectionProperties newSEP, SprmOperation sprm)
+  static void unCompressSEPOperation (Section newSEP, SprmOperation sprm)
   {
     switch (sprm.getOperation())
     {
