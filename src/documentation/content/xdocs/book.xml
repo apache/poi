@@ -52,7 +52,6 @@
         <menu-item label="Guidelines" href="trans/guidelines.html"/>
         <menu-item label="German (DE)" href="trans/de/index.html"/>
         <menu-item label="Spanish (ES)" href="trans/es/index.html"/>
-	<menu-item label="French (FR)" href="trans/fr/index.html"/>
         <menu-item label="Japanese (Web)" href="http://jakarta.terra-intl.com/poi/"/>
         <menu-item label="Korean (Web)" href="http://jakarta.apache-korea.org/poi/"/>
     </menu>
