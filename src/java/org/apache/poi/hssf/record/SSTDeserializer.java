@@ -425,10 +425,14 @@ class SSTDeserializer
         int charsRead = calculateCharCount( dataLengthInBytes );
         LittleEndian.putShort( unicodeStringData, (byte) 0, (short) charsRead );
         arraycopy( record, 0, unicodeStringData, LittleEndianConsts.SHORT_SIZE, record.length );
-        UnicodeString ucs = new UnicodeString( UnicodeString.sid, (short) unicodeStringData.length, unicodeStringData );
+        UnicodeString ucs = new UnicodeString( UnicodeString.sid, (short) unicodeStringData.length, unicodeStringData, unfinishedString);
 
-        unfinishedString = unfinishedString + ucs.getString();
-        setContinuationCharsRead( charsRead );
+        unfinishedString = ucs.getString();
+        setContinuationCharsRead( getContinuationCharsRead() + charsRead );
+        if (getContinuationCharsRead() == charCount) {
+          Integer integer = new Integer( strings.size() );
+          addToStringTable( strings, integer, ucs );
+        }
     }
 
     private boolean stringSpansContinuation( int continuationSizeInBytes )
