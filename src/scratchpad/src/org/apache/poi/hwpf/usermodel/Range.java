@@ -63,6 +63,10 @@ import java.lang.ref.WeakReference;
  * It is possible to insert text and/or properties at the beginning or end of a
  * range.
  *
+ * Ranges are only valid if there hasn't been an insert in a prior Range since
+ * the Range's creation. Once an element (text, paragraph, etc.) has been
+ * inserted into a Range, subsequent Ranges become unstable.
+ *
  * @author Ryan Ackley
  */
 public class Range
@@ -160,6 +164,7 @@ public class Range
     _text = _doc.getTextTable().getTextPieces();
     _parent = new WeakReference(null);
   }
+
 
   /**
    * Used to create Ranges that are children of other Ranges.
@@ -480,6 +485,33 @@ public class Range
     return getParagraph(numParagraphs() - 1);
   }
 
+  public void delete()
+  {
+    initAll();
+
+    int numSections = _sections.size();
+    int numRuns = _characters.size();
+    int numParagraphs = _paragraphs.size();
+
+    for (int x = _charStart; x < numRuns; x++)
+    {
+      CHPX chpx = (CHPX)_characters.get(x);
+      chpx.adjustForDelete(_start, _end - _start);
+    }
+
+    for (int x = _parStart; x < numParagraphs; x++)
+    {
+      PAPX papx = (PAPX)_paragraphs.get(x);
+      papx.adjustForDelete(_start, _end - _start);
+    }
+
+    for (int x = _sectionStart; x < numSections; x++)
+    {
+      SEPX sepx = (SEPX)_sections.get(x);
+      sepx.adjustForDelete(_start, _end - _start);
+    }
+  }
+
   /**
    * Inserts a simple table into the beginning of this range. The number of
    * columns is determined by the TableProperties passed into this function.
@@ -546,7 +578,7 @@ public class Range
     initCharacterRuns();
     CHPX chpx = (CHPX)_characters.get(index + _charStart);
 
-    int[] point = findRange(_paragraphs, _parStart, chpx.getStart(),
+    int[] point = findRange(_paragraphs, _parStart, Math.max(chpx.getStart(), _start),
                               chpx.getEnd());
     PAPX papx = (PAPX)_paragraphs.get(point[0]);
     short istd = papx.getIstd();

@@ -272,15 +272,15 @@ public class PAPFormattedDiskPage extends FormattedDiskPage
             int maxHugeGrpprlSize = LittleEndian.getUShort(_dataStream,
                 hugeGrpprlOffset);
 
-            if (maxHugeGrpprlSize < grpprl.length)
+            if (maxHugeGrpprlSize < grpprl.length-2) // grpprl.length-2 because we don't store the istd
               throw new UnsupportedOperationException(
                   "This Paragraph's dataStream storage is too small.");
           }
 
           // store grpprl at hugeGrpprlOffset
           System.arraycopy(grpprl, 2, _dataStream, hugeGrpprlOffset + 2,
-                           grpprl.length);
-          LittleEndian.putUShort(_dataStream, hugeGrpprlOffset, grpprl.length);
+                           grpprl.length - 2); // grpprl.length-2 because we don't store the istd
+          LittleEndian.putUShort(_dataStream, hugeGrpprlOffset, grpprl.length - 2);
 
           // grpprl = grpprl containing only a sprmPHugePapx2
           int istd = LittleEndian.getUShort(grpprl, 0);

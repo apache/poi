@@ -626,7 +626,7 @@ public class CharacterSprmUncompressor
     {
       return true;
     }
-    else if ((x & 0x80) == 0x80)
+    else if ((x & 0x81) == 0x80)
     {
       return oldVal;
     }

@@ -204,6 +204,8 @@ public class TextPieceTable
     int size = _textPieces.size();
 
     TextPiece tp = (TextPiece)_textPieces.get(listIndex);
+
+    //The text piece stores the length on file.
     length = length * (tp.usesUnicode() ? 2 : 1);
     tp.setEnd(tp.getEnd() + length);
     for (int x = listIndex + 1; x < size; x++)

@@ -159,7 +159,7 @@ public class FontTable
 
 	  for(int i = 0; i < _fontNames.length; i++)
 	  {
-		tableStream.write(_fontNames[i].toByteArray());
+		  tableStream.write(_fontNames[i].toByteArray());
 	  }
 
   }

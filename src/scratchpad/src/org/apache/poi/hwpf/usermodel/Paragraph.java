@@ -184,7 +184,7 @@ public class Paragraph
   public void setJustification(byte jc)
   {
     _props.setJc(jc);
-    _papx.addSprm(SPRM_JC, jc);
+    _papx.updateSprm(SPRM_JC, jc);
   }
 
   public boolean keepOnPage()
@@ -196,7 +196,7 @@ public class Paragraph
   {
     byte keep = (byte)(fKeep ? 1 : 0);
     _props.setFKeep(keep);
-    _papx.addSprm(SPRM_FKEEP, keep);
+    _papx.updateSprm(SPRM_FKEEP, keep);
   }
 
   public boolean keepWithNext()
@@ -208,7 +208,7 @@ public class Paragraph
   {
     byte keepFollow = (byte)(fKeepFollow ? 1 : 0);
     _props.setFKeepFollow(keepFollow);
-    _papx.addSprm(SPRM_FKEEPFOLLOW, keepFollow);
+    _papx.updateSprm(SPRM_FKEEPFOLLOW, keepFollow);
   }
 
   public boolean pageBreakBefore()
@@ -220,7 +220,7 @@ public class Paragraph
   {
     byte pageBreak = (byte)(fPageBreak ? 1 : 0);
     _props.setFPageBreakBefore(pageBreak);
-    _papx.addSprm(SPRM_FPAGEBREAKBEFORE, pageBreak);
+    _papx.updateSprm(SPRM_FPAGEBREAKBEFORE, pageBreak);
   }
 
   public boolean isLineNotNumbered()
@@ -232,7 +232,7 @@ public class Paragraph
   {
     byte noLnn = (byte)(fNoLnn ? 1 : 0);
     _props.setFNoLnn(noLnn);
-    _papx.addSprm(SPRM_FNOLINENUMB, noLnn);
+    _papx.updateSprm(SPRM_FNOLINENUMB, noLnn);
   }
 
   public boolean isSideBySide()
@@ -244,7 +244,7 @@ public class Paragraph
   {
     byte sideBySide = (byte)(fSideBySide ? 1 : 0);
     _props.setFSideBySide(sideBySide);
-    _papx.addSprm(SPRM_FSIDEBYSIDE, sideBySide);
+    _papx.updateSprm(SPRM_FSIDEBYSIDE, sideBySide);
   }
 
   public boolean isAutoHyphenated()
@@ -256,7 +256,7 @@ public class Paragraph
   {
     byte auto = (byte)(!autoHyph ? 1 : 0);
     _props.setFNoAutoHyph(auto);
-    _papx.addSprm(SPRM_FNOAUTOHYPH, auto);
+    _papx.updateSprm(SPRM_FNOAUTOHYPH, auto);
   }
 
   public boolean isWidowControlled()
@@ -268,7 +268,7 @@ public class Paragraph
   {
     byte widow = (byte)(widowControl ? 1 : 0);
     _props.setFWidowControl(widow);
-    _papx.addSprm(SPRM_FWIDOWCONTROL, widow);
+    _papx.updateSprm(SPRM_FWIDOWCONTROL, widow);
   }
 
   public int getIndentFromRight()
@@ -279,7 +279,7 @@ public class Paragraph
   public void setIndentFromRight(int dxaRight)
   {
     _props.setDxaRight(dxaRight);
-    _papx.addSprm(SPRM_DXARIGHT, (short)dxaRight);
+    _papx.updateSprm(SPRM_DXARIGHT, (short)dxaRight);
   }
 
   public int getIndentFromLeft()
@@ -290,7 +290,7 @@ public class Paragraph
   public void setIndentFromLeft(int dxaLeft)
   {
     _props.setDxaLeft(dxaLeft);
-    _papx.addSprm(SPRM_DXALEFT, (short)dxaLeft);
+    _papx.updateSprm(SPRM_DXALEFT, (short)dxaLeft);
   }
 
   public int getFirstLineIndent()
@@ -301,7 +301,7 @@ public class Paragraph
   public void setFirstLineIndent(int first)
   {
     _props.setDxaLeft1(first);
-    _papx.addSprm(SPRM_DXALEFT1, (short)first);
+    _papx.updateSprm(SPRM_DXALEFT1, (short)first);
   }
 
   public LineSpacingDescriptor getLineSpacing()
@@ -312,7 +312,7 @@ public class Paragraph
   public void setLineSpacing(LineSpacingDescriptor lspd)
   {
     _props.setLspd(lspd);
-    _papx.addSprm(SPRM_DYALINE, lspd.toInt());
+    _papx.updateSprm(SPRM_DYALINE, lspd.toInt());
   }
 
   public int getSpacingBefore()
@@ -323,7 +323,7 @@ public class Paragraph
   public void setSpacingBefore(int before)
   {
     _props.setDyaBefore(before);
-    _papx.addSprm(SPRM_DYABEFORE, (short)before);
+    _papx.updateSprm(SPRM_DYABEFORE, (short)before);
   }
 
   public int getSpacingAfter()
@@ -334,7 +334,7 @@ public class Paragraph
   public void setSpacingAfter(int after)
   {
     _props.setDyaAfter(after);
-    _papx.addSprm(SPRM_DYAAFTER, (short)after);
+    _papx.updateSprm(SPRM_DYAAFTER, (short)after);
   }
 
   public boolean isKinsoku()
@@ -346,7 +346,7 @@ public class Paragraph
   {
     byte kin = (byte)(kinsoku ? 1 : 0);
     _props.setFKinsoku(kin);
-    _papx.addSprm(SPRM_FKINSOKU, kin);
+    _papx.updateSprm(SPRM_FKINSOKU, kin);
   }
 
   public boolean isWordWrapped()
@@ -358,7 +358,7 @@ public class Paragraph
   {
     byte wordWrap = (byte)(wrap ? 1 : 0);
     _props.setFWordWrap(wordWrap);
-    _papx.addSprm(SPRM_FWORDWRAP, wordWrap);
+    _papx.updateSprm(SPRM_FWORDWRAP, wordWrap);
   }
 
   public int getFontAlignment()
@@ -369,7 +369,7 @@ public class Paragraph
   public void setFontAlignment(int align)
   {
     _props.setWAlignFont(align);
-    _papx.addSprm(SPRM_WALIGNFONT, (short)align);
+    _papx.updateSprm(SPRM_WALIGNFONT, (short)align);
   }
 
   public boolean isVertical()
@@ -380,7 +380,7 @@ public class Paragraph
   public void setVertical(boolean vertical)
   {
     _props.setFVertical(vertical);
-    _papx.addSprm(SPRM_FRAMETEXTFLOW, getFrameTextFlow());
+    _papx.updateSprm(SPRM_FRAMETEXTFLOW, getFrameTextFlow());
   }
 
   public boolean isBackward()
@@ -391,7 +391,7 @@ public class Paragraph
   public void setBackward(boolean bward)
   {
     _props.setFBackward(bward);
-    _papx.addSprm(SPRM_FRAMETEXTFLOW, getFrameTextFlow());
+    _papx.updateSprm(SPRM_FRAMETEXTFLOW, getFrameTextFlow());
   }
 
   public BorderCode getTopBorder()
@@ -402,7 +402,7 @@ public class Paragraph
   public void setTopBorder(BorderCode top)
   {
     _props.setBrcTop(top);
-    _papx.addSprm(SPRM_BRCTOP, top.toInt());
+    _papx.updateSprm(SPRM_BRCTOP, top.toInt());
   }
 
   public BorderCode getLeftBorder()
@@ -413,7 +413,7 @@ public class Paragraph
   public void setLeftBorder(BorderCode left)
   {
     _props.setBrcLeft(left);
-    _papx.addSprm(SPRM_BRCLEFT, left.toInt());
+    _papx.updateSprm(SPRM_BRCLEFT, left.toInt());
   }
 
   public BorderCode getBottomBorder()
@@ -424,7 +424,7 @@ public class Paragraph
   public void setBottomBorder(BorderCode bottom)
   {
     _props.setBrcBottom(bottom);
-    _papx.addSprm(SPRM_BRCBOTTOM, bottom.toInt());
+    _papx.updateSprm(SPRM_BRCBOTTOM, bottom.toInt());
   }
 
   public BorderCode getRightBorder()
@@ -435,7 +435,7 @@ public class Paragraph
   public void setRightBorder(BorderCode right)
   {
     _props.setBrcRight(right);
-    _papx.addSprm(SPRM_BRCRIGHT, right.toInt());
+    _papx.updateSprm(SPRM_BRCRIGHT, right.toInt());
   }
 
   public BorderCode getBarBorder()
@@ -446,7 +446,7 @@ public class Paragraph
   public void setBarBorder(BorderCode bar)
   {
     _props.setBrcBar(bar);
-    _papx.addSprm(SPRM_BRCBAR, bar.toInt());
+    _papx.updateSprm(SPRM_BRCBAR, bar.toInt());
   }
 
   public ShadingDescriptor getShading()
@@ -457,7 +457,7 @@ public class Paragraph
   public void setShading(ShadingDescriptor shd)
   {
     _props.setShd(shd);
-    _papx.addSprm(SPRM_SHD, shd.toShort());
+    _papx.updateSprm(SPRM_SHD, shd.toShort());
   }
 
   public DropCapSpecifier getDropCap()
@@ -468,7 +468,7 @@ public class Paragraph
   public void setDropCap(DropCapSpecifier dcs)
   {
     _props.setDcs(dcs);
-    _papx.addSprm(SPRM_DCS, dcs.toShort());
+    _papx.updateSprm(SPRM_DCS, dcs.toShort());
   }
 
   void setTableRowEnd(TableProperties props)
@@ -481,7 +481,7 @@ public class Paragraph
   private void setTableRowEnd(byte val)
   {
     _props.setFTtp(val);
-    _papx.addSprm(SPRM_FTTP, val);
+    _papx.updateSprm(SPRM_FTTP, val);
   }
 
   public Object clone()

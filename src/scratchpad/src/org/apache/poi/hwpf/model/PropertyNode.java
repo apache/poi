@@ -110,6 +110,29 @@ public abstract class PropertyNode implements Comparable
     _cpEnd = end;
   }
 
+  /**
+   * Adjust for a deletion that can span multiple PropertyNodes.
+   * @param start
+   * @param length
+   */
+  public void adjustForDelete(int start, int length)
+  {
+    int end = start + length;
+
+    if (_cpEnd > start)
+    {
+      if (_cpStart < end)
+      {
+        _cpEnd = end >= _cpEnd ? start : _cpEnd - length;
+        _cpStart = Math.min(start, _cpStart);
+      }
+      else
+      {
+        _cpEnd -= length;
+        _cpStart -= length;
+      }
+    }
+  }
 
   protected boolean limitsAreEqual(Object o)
   {
