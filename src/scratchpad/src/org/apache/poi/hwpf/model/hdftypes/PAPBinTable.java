@@ -93,6 +93,60 @@ public class PAPBinTable
     }
   }
 
+  public void adjustForDelete(int listIndex, int offset, int length)
+  {
+    int size = _paragraphs.size();
+    int endMark = offset + length;
+    int endIndex = listIndex;
+
+    PAPX papx = (PAPX)_paragraphs.get(endIndex);
+    while (papx.getEnd() < endMark)
+    {
+      papx = (PAPX)_paragraphs.get(++endIndex);
+    }
+    if (listIndex == endIndex)
+    {
+      papx = (PAPX)_paragraphs.get(endIndex);
+      papx.setEnd((papx.getEnd() - endMark) + offset);
+    }
+    else
+    {
+      papx = (PAPX)_paragraphs.get(listIndex);
+      papx.setEnd(offset);
+      for (int x = listIndex + 1; x < endIndex; x++)
+      {
+        papx = (PAPX)_paragraphs.get(x);
+        papx.setStart(offset);
+        papx.setEnd(offset);
+      }
+      papx = (PAPX)_paragraphs.get(endIndex);
+      papx.setEnd((papx.getEnd() - endMark) + offset);
+    }
+
+    for (int x = endIndex + 1; x < size; x++)
+    {
+      papx = (PAPX)_paragraphs.get(x);
+      papx.setStart(papx.getStart() - length);
+      papx.setEnd(papx.getEnd() - length);
+    }
+  }
+
+
+  public void adjustForInsert(int listIndex, int length)
+  {
+    int size = _paragraphs.size();
+    PAPX papx = (PAPX)_paragraphs.get(listIndex);
+    papx.setEnd(papx.getEnd() + length);
+
+    for (int x = listIndex + 1; x < size; x++)
+    {
+      papx = (PAPX)_paragraphs.get(x);
+      papx.setStart(papx.getStart() + length);
+      papx.setEnd(papx.getEnd() + length);
+    }
+  }
+
+
   public ArrayList getParagraphs()
   {
     return _paragraphs;

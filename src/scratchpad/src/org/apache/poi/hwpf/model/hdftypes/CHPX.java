@@ -55,6 +55,7 @@
 
 package org.apache.poi.hwpf.model.hdftypes;
 
+import org.apache.poi.hwpf.sprm.SprmBuffer;
 
 /**
  * Comment me
@@ -67,12 +68,18 @@ public class CHPX extends PropertyNode
 
   public CHPX(int fcStart, int fcEnd, byte[] grpprl)
   {
-    super(fcStart, fcEnd, grpprl);
+    super(fcStart, fcEnd, new SprmBuffer(grpprl));
   }
 
   public byte[] getGrpprl()
   {
-    return super.getBuf();
+    return ((SprmBuffer)_buf).toByteArray();
   }
+
+  public byte[] getBuf()
+  {
+    return getGrpprl();
+  }
+
 
 }

@@ -55,6 +55,10 @@
 
 package org.apache.poi.hwpf.model.hdftypes;
 
+
+import org.apache.poi.hwpf.usermodel.Paragraph;
+import org.apache.poi.hwpf.sprm.SprmBuffer;
+
 /**
  * Comment me
  *
@@ -68,7 +72,7 @@ public class PAPX extends PropertyNode
 
   public PAPX(int fcStart, int fcEnd, byte[] papx, ParagraphHeight phe)
   {
-    super(fcStart, fcEnd, papx);
+    super(fcStart, fcEnd, new SprmBuffer(papx));
     _phe = phe;
   }
 
@@ -79,7 +83,12 @@ public class PAPX extends PropertyNode
 
   public byte[] getGrpprl()
   {
-    return super.getBuf();
+    return ((SprmBuffer)_buf).toByteArray();
+  }
+
+  public byte[] getBuf()
+  {
+    return getGrpprl();
   }
 
   public boolean equals(Object o)

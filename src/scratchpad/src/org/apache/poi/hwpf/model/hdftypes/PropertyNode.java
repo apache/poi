@@ -66,21 +66,21 @@ import org.apache.poi.hwpf.sprm.SprmBuffer;
  */
 public class PropertyNode implements Comparable
 {
-  private SprmBuffer _buf;
+  protected Object _buf;
   private int _cpStart;
   private int _cpEnd;
-  private SoftReference _propCache;
+  protected SoftReference _propCache;
 
   /**
    * @param fcStart The start of the text for this property.
    * @param fcEnd The end of the text for this property.
    * @param grpprl The property description in compressed form.
    */
-  public PropertyNode(int fcStart, int fcEnd, byte[] buf)
+  public PropertyNode(int fcStart, int fcEnd, Object buf)
   {
       _cpStart = fcStart;
       _cpEnd = fcEnd;
-      _buf = new SprmBuffer(buf);
+      _buf = buf;
 
   }
   /**
@@ -90,6 +90,12 @@ public class PropertyNode implements Comparable
   {
       return _cpStart;
   }
+
+  void setStart(int start)
+  {
+    _cpStart = start;
+  }
+
   /**
    * @retrun The offset of the end of this property's text.
    */
@@ -97,17 +103,23 @@ public class PropertyNode implements Comparable
   {
     return _cpEnd;
   }
+
+  void setEnd(int end)
+  {
+    _cpEnd = end;
+  }
+
   /**
    * @return This property's property in copmpressed form.
    */
   public byte[] getBuf()
   {
-    return _buf.toByteArray();
+    return ((byte[])_buf);
   }
 
   public boolean equals(Object o)
   {
-    byte[] buf = _buf.toByteArray();
+    byte[] buf = getBuf();
     if (((PropertyNode)o).getStart() == _cpStart &&
         ((PropertyNode)o).getEnd() == _cpEnd)
     {
