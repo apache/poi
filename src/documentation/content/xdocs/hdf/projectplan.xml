@@ -1,0 +1,941 @@
+<?xml version="1.0"?>
+<!-- edited with XMLSPY v5 rel. 4 U (http://www.xmlspy.com) by Ryan Ackley (Myself) -->
+<!DOCTYPE book PUBLIC "-//APACHE//DTD Cocoon Documentation Book V1.0//EN" "../dtd/book-cocoon-v10.dtd">
+<document>
+	<head>
+		<style>
+p
+{
+	margin-top: 0px;
+	margin-bottom: 1px
+}
+
+table
+{
+	border-collapse: collapse;
+	border-spacing: 0pt;
+	border-color: black;
+	empty-cells: show;
+	font-family: "Times New Roman", serif;
+	font-size: 12pt;
+	font-weight: normal;
+	font-style: normal
+}
+
+td
+{
+	border-color: black
+}
+
+td.table1column1
+{
+	padding-left: 0.0933333in;
+	padding-right: 0.0933333in
+}
+
+td.table1column2
+{
+	padding-left: 0.0933333in;
+	padding-right: 0.0933333in
+}
+
+td.table1column3
+{
+	padding-left: 0.0933333in;
+	padding-right: 0.0933333in
+}
+
+td.table2column1
+{
+	border: 0.01in solid
+}
+
+td.table2column2
+{
+	border: 0.01in solid
+}
+
+td.table2column3
+{
+	border: 0.01in solid
+}
+
+td.table3column1
+{
+	border: 0.01in solid
+}
+
+td.table3column2
+{
+	border: 0.01in solid
+}
+
+td.table3column3
+{
+	border: 0.01in solid
+}
+
+td.table4column1
+{
+	border: 0.01in solid
+}
+
+td.table4column2
+{
+	border: 0.01in solid
+}
+
+td.table4column3
+{
+	border: 0.01in solid
+}
+
+td.table5column1
+{
+	border: 0.01in solid
+}
+
+td.table5column2
+{
+	border: 0.01in solid
+}
+
+td.table5column3
+{
+	border: 0.01in solid
+}
+
+body
+{
+	font-family: "Times New Roman", serif;
+	font-size: 12pt;
+	font-weight: normal;
+	font-style: normal
+}
+</style>
+	</head>
+	<body>
+		<p style="text-align: center">
+			<span style="font-size: 12pt">
+				<span style="font-family: 'Times New Roman', serif"/>
+			</span>
+			<span style="font-family: 'Times New Roman', serif">
+				<span style="font-size: 20pt">
+					<span style="font-weight: bold">HWPF Milestones</span>
+				</span>
+				<span style="font-size: 12pt"/>
+			</span>
+		</p>
+		<br/>
+		<div style="margin-left: 0in">
+			<table width="624px" cellpadding="6" cellspacing="0">
+				<tr>
+					<td class="table1column1" width="33%" style="padding-top: 0.01in; padding-bottom: 0.01in; border-left: 0.01in solid; border-right: 0.01in solid; border-top: 0.01in solid; border-bottom: 0.01in solid" valign="top">
+						<p style="margin-bottom: 0.0333333in; margin-top: 0.0691667in">
+							<span style="font-family: 'Times New Roman', serif">
+								<span style="font-size: 12pt">
+									<span style="font-weight: bold">Milestones</span>
+								</span>
+							</span>
+						</p>
+					</td>
+					<td class="table1column2" width="33%" style="padding-top: 0.01in; padding-bottom: 0.01in; border-left: 0.01in solid; border-right: 0.01in solid; border-top: 0.01in solid; border-bottom: 0.01in solid" valign="top">
+						<p style="margin-bottom: 0.0333333in; margin-top: 0.0691667in">
+							<span style="font-family: 'Times New Roman', serif">
+								<span style="font-size: 12pt">
+									<span style="font-weight: bold">Target Date</span>
+								</span>
+							</span>
+						</p>
+					</td>
+					<td class="table1column3" width="34%" style="padding-top: 0.01in; padding-bottom: 0.01in; border-left: 0.01in solid; border-right: 0.01in solid; border-top: 0.01in solid; border-bottom: 0.01in solid" valign="top">
+						<p style="margin-bottom: 0.0333333in; margin-top: 0.0691667in">
+							<span style="font-family: 'Times New Roman', serif">
+								<span style="font-size: 12pt">
+									<span style="font-weight: bold">Owner</span>
+								</span>
+							</span>
+						</p>
+					</td>
+				</tr>
+				<tr>
+					<td class="table1column1" width="33%" style="padding-top: 0.01in; padding-bottom: 0.01in; border-left: 0.01in solid; border-right: 0.01in solid; border-top: 0.01in solid; border-bottom: 0.01in solid" valign="top">
+						<p style="border-left: none; border-right: none; border-top: none; border-bottom: none; margin-bottom: 0.0333333in; margin-top: 0.0691667in">
+							<span style="font-family: 'Times New Roman', serif">
+								<span style="font-size: 12pt">Read in a Word document
+with minimum formatting
+(no lists, tables, footnotes,
+endnotes, headers, footers)
+and write it back out with the
+result viewable in Word
+97/2000</span>
+							</span>
+						</p>
+					</td>
+					<td class="table1column2" width="33%" style="padding-top: 0.01in; padding-bottom: 0.01in; border-left: 0.01in solid; border-right: 0.01in solid; border-top: 0.01in solid; border-bottom: 0.01in solid" valign="top">
+						<p style="text-align: center; border-left: none; border-right: none; border-top: none; border-bottom: none; margin-bottom: 0.0333333in; margin-top: 0.0691667in">
+							<span style="font-family: 'Times New Roman', serif">
+								<span style="font-size: 12pt">07/11/2003</span>
+							</span>
+						</p>
+					</td>
+					<td class="table1column3" width="34%" style="padding-top: 0.01in; padding-bottom: 0.01in; border-left: 0.01in solid; border-right: 0.01in solid; border-top: 0.01in solid; border-bottom: 0.01in solid" valign="top">
+						<p style="text-align: center; border-left: none; border-right: none; border-top: none; border-bottom: none; margin-bottom: 0.0333333in; margin-top: 0.0691667in">
+							<span style="font-family: 'Times New Roman', serif">
+								<span style="font-size: 12pt">Ryan</span>
+							</span>
+						</p>
+					</td>
+				</tr>
+				<tr>
+					<td class="table1column1" width="33%" style="padding-top: 0.01in; padding-bottom: 0.01in; border-left: 0.01in solid; border-right: 0.01in solid; border-top: 0.01in solid; border-bottom: 0.01in solid" valign="top">
+						<p style="border-left: none; border-right: none; border-top: none; border-bottom: none; margin-bottom: 0.0333333in; margin-top: 0.0691667in">
+							<span style="font-family: 'Times New Roman', serif">
+								<span style="font-size: 12pt">Develop user friendly API so
+it is fun and easy to read and
+write word documents with
+java.</span>
+							</span>
+						</p>
+					</td>
+					<td class="table1column2" width="33%" style="padding-top: 0.01in; padding-bottom: 0.01in; border-left: 0.01in solid; border-right: 0.01in solid; border-top: 0.01in solid; border-bottom: 0.01in solid" valign="top">
+						<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">&#160;</p>
+						<p style="text-align: center; border-left: none; border-right: none; border-top: none; border-bottom: none; margin-bottom: 0.0333333in">
+							<span style="font-family: 'Times New Roman', serif">
+								<span style="font-size: 12pt"/>
+							</span>
+							<span style="font-family: 'Times New Roman', serif">
+								<span style="font-size: 12pt">8/15/2003</span>
+							</span>
+						</p>
+					</td>
+					<td class="table1column3" width="34%" style="padding-top: 0.01in; padding-bottom: 0.01in; border-left: 0.01in solid; border-right: 0.01in solid; border-top: 0.01in solid; border-bottom: 0.01in solid" valign="top">
+						<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">&#160;</p>
+						<p style="text-align: center; border-left: none; border-right: none; border-top: none; border-bottom: none; margin-bottom: 0.0333333in">
+							<span style="font-family: 'Times New Roman', serif">
+								<span style="font-size: 12pt"/>
+							</span>
+							<span style="font-family: 'Times New Roman', serif">
+								<span style="font-size: 12pt">Praveen/Ryan</span>
+							</span>
+						</p>
+					</td>
+				</tr>
+				<tr>
+					<td class="table1column1" width="33%" style="padding-top: 0.01in; padding-bottom: 0.01in; border-left: 0.01in solid; border-right: 0.01in solid; border-top: 0.01in solid; border-bottom: 0.01in solid" valign="top">
+						<p style="border-left: none; border-right: none; border-top: none; border-bottom: none; margin-bottom: 0.0333333in; margin-top: 0.0691667in">
+							<span style="font-family: 'Times New Roman', serif">
+								<span style="font-size: 12pt">Add support for Lists and
+Tables</span>
+							</span>
+						</p>
+					</td>
+					<td class="table1column2" width="33%" style="padding-top: 0.01in; padding-bottom: 0.01in; border-left: 0.01in solid; border-right: 0.01in solid; border-top: 0.01in solid; border-bottom: 0.01in solid" valign="top">
+						<p style="text-align: center; border-left: none; border-right: none; border-top: none; border-bottom: none; margin-bottom: 0.0333333in; margin-top: 0.0691667in">
+							<span style="font-family: 'Times New Roman', serif">
+								<span style="font-size: 12pt">8/15/2003</span>
+							</span>
+						</p>
+					</td>
+					<td class="table1column3" width="34%" style="padding-top: 0.01in; padding-bottom: 0.01in; border-left: 0.01in solid; border-right: 0.01in solid; border-top: 0.01in solid; border-bottom: 0.01in solid" valign="top">
+						<p style="border-left: none; border-right: none; border-top: none; border-bottom: none; margin-bottom: 0.0333333in; margin-top: 0.0691667in">
+							<span style="font-family: 'Times New Roman', serif">
+								<span style="font-size: 12pt">&#160;</span>
+							</span>
+						</p>
+					</td>
+				</tr>
+				<tr>
+					<td class="table1column1" width="33%" style="padding-top: 0.01in; padding-bottom: 0.01in; border-left: 0.01in solid; border-right: 0.01in solid; border-top: 0.01in solid; border-bottom: 0.01in solid" valign="top">
+						<p style="border-left: none; border-right: none; border-top: none; border-bottom: none; margin-bottom: 0.0333333in; margin-top: 0.0691667in">
+							<span style="font-family: 'Times New Roman', serif">
+								<span style="font-size: 12pt">HWPF 1.0-alpha release with
+documentation and examples</span>
+							</span>
+						</p>
+					</td>
+					<td class="table1column2" width="33%" style="padding-top: 0.01in; padding-bottom: 0.01in; border-left: 0.01in solid; border-right: 0.01in solid; border-top: 0.01in solid; border-bottom: 0.01in solid" valign="top">
+						<p style="text-align: center; border-left: none; border-right: none; border-top: none; border-bottom: none; margin-bottom: 0.0333333in; margin-top: 0.0691667in">
+							<span style="font-family: 'Times New Roman', serif">
+								<span style="font-size: 12pt">8/18/2003</span>
+							</span>
+						</p>
+					</td>
+					<td class="table1column3" width="34%" style="padding-top: 0.01in; padding-bottom: 0.01in; border-left: 0.01in solid; border-right: 0.01in solid; border-top: 0.01in solid; border-bottom: 0.01in solid" valign="top">
+						<p style="text-align: center; border-left: none; border-right: none; border-top: none; border-bottom: none; margin-bottom: 0.0333333in; margin-top: 0.0691667in">
+							<span style="font-family: 'Times New Roman', serif">
+								<span style="font-size: 12pt">Praveen/Ryan</span>
+							</span>
+						</p>
+					</td>
+				</tr>
+				<tr>
+					<td class="table1column1" width="33%" style="padding-top: 0.01in; padding-bottom: 0.01in; border-left: 0.01in solid; border-right: 0.01in solid; border-top: 0.01in solid; border-bottom: 0.01in solid" valign="top">
+						<p style="border-left: none; border-right: none; border-top: none; border-bottom: none; margin-bottom: 0.0333333in; margin-top: 0.0691667in">
+							<span style="font-family: 'Times New Roman', serif">
+								<span style="font-size: 12pt">Add support for Headers,
+Footers, endnotes, and
+footnotes </span>
+							</span>
+						</p>
+					</td>
+					<td class="table1column2" width="33%" style="padding-top: 0.01in; padding-bottom: 0.01in; border-left: 0.01in solid; border-right: 0.01in solid; border-top: 0.01in solid; border-bottom: 0.01in solid" valign="top">
+						<p style="text-align: center; border-left: none; border-right: none; border-top: none; border-bottom: none; margin-bottom: 0.0333333in; margin-top: 0.0691667in">
+							<span style="font-family: 'Times New Roman', serif">
+								<span style="font-size: 12pt">8/31/2003</span>
+							</span>
+						</p>
+					</td>
+					<td class="table1column3" width="34%" style="padding-top: 0.01in; padding-bottom: 0.01in; border-left: 0.01in solid; border-right: 0.01in solid; border-top: 0.01in solid; border-bottom: 0.01in solid" valign="top">
+						<p style="text-align: center; border-left: none; border-right: none; border-top: none; border-bottom: none; margin-bottom: 0.0333333in; margin-top: 0.0691667in">
+							<span style="font-family: 'Times New Roman', serif">
+								<span style="font-size: 12pt">?</span>
+							</span>
+						</p>
+					</td>
+				</tr>
+				<tr>
+					<td class="table1column1" width="33%" style="height: 0.6875in; padding-top: 0.01in; padding-bottom: 0.01in; border-left: 0.01in solid; border-right: 0.01in solid; border-top: 0.01in solid; border-bottom: 0.01in solid" valign="top">
+						<p style="border-left: none; border-right: none; border-top: none; border-bottom: none; margin-bottom: 0.0333333in; margin-top: 0.0691667in">
+							<span style="font-family: 'Times New Roman', serif">
+								<span style="font-size: 12pt">Add support for forms and
+mail merge</span>
+							</span>
+						</p>
+					</td>
+					<td class="table1column2" width="33%" style="padding-top: 0.01in; padding-bottom: 0.01in; height: 0.6875in; border-left: 0.01in solid; border-right: 0.01in solid; border-top: 0.01in solid; border-bottom: 0.01in solid" valign="top">
+						<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">&#160;</p>
+						<p style="border-left: none; border-right: none; border-top: none; border-bottom: none; margin-bottom: 0.0333333in">
+							<span style="font-family: 'Times New Roman', serif">
+								<span style="font-size: 12pt"/>
+							</span>
+							<span style="font-family: 'Times New Roman', serif">
+								<span style="font-size: 12pt">
+									<span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;</span>
+									<span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;</span>September/October 2003</span>
+							</span>
+						</p>
+					</td>
+					<td class="table1column3" width="34%" style="padding-top: 0.01in; padding-bottom: 0.01in; height: 0.6875in; border-left: 0.01in solid; border-right: 0.01in solid; border-top: 0.01in solid; border-bottom: 0.01in solid" valign="top">
+						<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">&#160;</p>
+						<p style="text-align: center; border-left: none; border-right: none; border-top: none; border-bottom: none; margin-bottom: 0.0333333in">
+							<span style="font-family: 'Times New Roman', serif">
+								<span style="font-size: 12pt"/>
+							</span>
+							<span style="font-family: 'Times New Roman', serif">
+								<span style="font-size: 12pt">?</span>
+							</span>
+						</p>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">&#160;</p>
+		<p style="text-align: center; border-left: none; border-right: none; border-top: none; border-bottom: none">
+			<span style="font-family: 'Times New Roman', serif">
+				<span style="font-size: 12pt">
+					<span style="font-weight: bold">HWPF Task Lists</span>
+				</span>
+			</span>
+		</p>
+		<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">&#160;</p>
+		<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">
+			<span style="font-family: 'Times New Roman', serif">
+				<span style="font-size: 12pt">
+					<span style="font-weight: bold">Milestone: </span>
+					<span>&#160;&#160;&#160;&#160;&#160;</span>Read in a Word document with minimum formatting (no lists, tables, footnotes,
+endnotes, headers, footers) and write it back out with the result viewable in Word 97/2000</span>
+			</span>
+		</p>
+		<table width="100%" cellpadding="6" cellspacing="0">
+			<tr>
+				<td class="table2column1" width="33%" align="center" valign="top">
+					<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">
+						<span style="font-family: 'Times New Roman', serif">
+							<span style="font-size: 12pt">
+								<span style="font-weight: bold">Task</span>
+							</span>
+						</span>
+					</p>
+				</td>
+				<td class="table2column2" width="33%" align="center" valign="top">
+					<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">
+						<span style="font-family: 'Times New Roman', serif">
+							<span style="font-size: 12pt">
+								<span style="font-weight: bold">Target</span>
+								<span style="font-weight: bold">Date</span>
+							</span>
+						</span>
+					</p>
+				</td>
+				<td class="table2column3" width="34%" align="center" valign="top">
+					<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">
+						<span style="font-family: 'Times New Roman', serif">
+							<span style="font-size: 12pt">
+								<span style="font-weight: bold">Owner</span>
+							</span>
+						</span>
+					</p>
+				</td>
+			</tr>
+			<tr>
+				<td class="table2column1" width="33%" align="center" valign="top">
+					<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">
+						<span style="font-family: 'Times New Roman', serif">
+							<span style="font-size: 12pt">Create classes to read and
+write low level data
+structures with test cases</span>
+						</span>
+					</p>
+				</td>
+				<td class="table2column2" width="33%" align="center" valign="top">
+					<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">&#160;</p>
+					<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">
+						<span style="font-family: 'Times New Roman', serif">
+							<span style="font-size: 12pt"/>
+						</span>
+						<span style="font-family: 'Times New Roman', serif">
+							<span style="font-size: 12pt">7/10/2003</span>
+						</span>
+					</p>
+				</td>
+				<td class="table2column3" width="34%" align="center" valign="top">
+					<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">&#160;</p>
+					<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">
+						<span style="font-family: 'Times New Roman', serif">
+							<span style="font-size: 12pt"/>
+						</span>
+						<span style="font-family: 'Times New Roman', serif">
+							<span style="font-size: 12pt">Ryan</span>
+						</span>
+					</p>
+				</td>
+			</tr>
+			<tr>
+				<td class="table2column1" width="33%" align="center" valign="top">
+					<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">
+						<span style="font-family: 'Times New Roman', serif">
+							<span style="font-size: 12pt">Create classes to read and
+write FontTable and Font
+names with test case</span>
+						</span>
+					</p>
+				</td>
+				<td class="table2column2" width="33%" align="center" valign="top">
+					<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">&#160;</p>
+					<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">
+						<span style="font-family: 'Times New Roman', serif">
+							<span style="font-size: 12pt"/>
+						</span>
+						<span style="font-family: 'Times New Roman', serif">
+							<span style="font-size: 12pt">7/10/2003</span>
+						</span>
+					</p>
+				</td>
+				<td class="table2column3" width="34%" align="center" valign="top">
+					<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">&#160;</p>
+					<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">
+						<span style="font-family: 'Times New Roman', serif">
+							<span style="font-size: 12pt"/>
+						</span>
+						<span style="font-family: 'Times New Roman', serif">
+							<span style="font-size: 12pt">Praveen</span>
+						</span>
+					</p>
+				</td>
+			</tr>
+			<tr>
+				<td class="table2column1" width="33%" align="center" valign="top">
+					<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">
+						<span style="font-family: 'Times New Roman', serif">
+							<span style="font-size: 12pt">Final test</span>
+						</span>
+					</p>
+				</td>
+				<td class="table2column2" width="33%" align="center" valign="top">
+					<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">
+						<span style="font-family: 'Times New Roman', serif">
+							<span style="font-size: 12pt">7/11/2003</span>
+						</span>
+					</p>
+				</td>
+				<td class="table2column3" width="34%" align="center" valign="top">
+					<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">
+						<span style="font-family: 'Times New Roman', serif">
+							<span style="font-size: 12pt">Ryan</span>
+						</span>
+					</p>
+				</td>
+			</tr>
+		</table>
+		<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">&#160;</p>
+		<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">&#160;</p>
+		<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">&#160;</p>
+		<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">
+			<span style="font-family: 'Times New Roman', serif">
+				<span style="font-size: 12pt">
+					<span style="font-weight: bold">Milestone: </span>Develop user friendly API so it is fun and easy to read and write word documents
+with java.</span>
+			</span>
+		</p>
+		<table width="100%" cellpadding="6" cellspacing="0">
+			<tr>
+				<td class="table3column1" width="33%" align="center" valign="top">
+					<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">
+						<span style="font-family: 'Times New Roman', serif">
+							<span style="font-size: 12pt">
+								<span style="font-weight: bold">Task</span>
+							</span>
+						</span>
+					</p>
+				</td>
+				<td class="table3column2" width="33%" align="center" valign="top">
+					<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">
+						<span style="font-family: 'Times New Roman', serif">
+							<span style="font-size: 12pt">
+								<span style="font-weight: bold">Target Date</span>
+							</span>
+						</span>
+					</p>
+				</td>
+				<td class="table3column3" width="34%" align="center" valign="top">
+					<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">
+						<span style="font-family: 'Times New Roman', serif">
+							<span style="font-size: 12pt">
+								<span style="font-weight: bold">Owner</span>
+							</span>
+						</span>
+					</p>
+				</td>
+			</tr>
+			<tr>
+				<td class="table3column1" width="33%" align="center" valign="top">
+					<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">
+						<span style="font-family: 'Times New Roman', serif">
+							<span style="font-size: 12pt">Develop a way for SPRMS to
+be compressed and
+uncompressed</span>
+						</span>
+					</p>
+				</td>
+				<td class="table3column2" width="33%" align="center" valign="top">
+					<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">
+						<span style="font-family: 'Times New Roman', serif">
+							<span style="font-size: 12pt">&#160;</span>
+						</span>
+					</p>
+				</td>
+				<td class="table3column3" width="34%" align="center" valign="top">
+					<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">
+						<span style="font-family: 'Times New Roman', serif">
+							<span style="font-size: 12pt">&#160;</span>
+						</span>
+					</p>
+				</td>
+			</tr>
+			<tr>
+				<td class="table3column1" width="33%" align="center" valign="top">
+					<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">
+						<span style="font-family: 'Times New Roman', serif">
+							<span style="font-size: 12pt">Override CHPAbstractType
+with a concrete class that
+exposes attributes with
+human readable names</span>
+						</span>
+					</p>
+				</td>
+				<td class="table3column2" width="33%" align="center" valign="top">
+					<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">
+						<span style="font-family: 'Times New Roman', serif">
+							<span style="font-size: 12pt">&#160;</span>
+						</span>
+					</p>
+				</td>
+				<td class="table3column3" width="34%" align="center" valign="top">
+					<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">
+						<span style="font-family: 'Times New Roman', serif">
+							<span style="font-size: 12pt">&#160;</span>
+						</span>
+					</p>
+				</td>
+			</tr>
+			<tr>
+				<td class="table3column1" width="33%" align="center" valign="top">
+					<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">
+						<span style="font-family: 'Times New Roman', serif">
+							<span style="font-size: 12pt">Override PAPAbstractType
+with a concrete class that
+exposes attributes with
+human readable names</span>
+						</span>
+					</p>
+				</td>
+				<td class="table3column2" width="33%" align="center" valign="top">
+					<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">
+						<span style="font-family: 'Times New Roman', serif">
+							<span style="font-size: 12pt">&#160;</span>
+						</span>
+					</p>
+				</td>
+				<td class="table3column3" width="34%" align="center" valign="top">
+					<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">
+						<span style="font-family: 'Times New Roman', serif">
+							<span style="font-size: 12pt">&#160;</span>
+						</span>
+					</p>
+				</td>
+			</tr>
+			<tr>
+				<td class="table3column1" width="33%" align="center" valign="top">
+					<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">
+						<span style="font-family: 'Times New Roman', serif">
+							<span style="font-size: 12pt">Override SEPAbstractType
+with a concrete class that
+exposes attributes with
+human readable names</span>
+						</span>
+					</p>
+				</td>
+				<td class="table3column2" width="33%" align="center" valign="top">
+					<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">
+						<span style="font-family: 'Times New Roman', serif">
+							<span style="font-size: 12pt">&#160;</span>
+						</span>
+					</p>
+				</td>
+				<td class="table3column3" width="34%" align="center" valign="top">
+					<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">
+						<span style="font-family: 'Times New Roman', serif">
+							<span style="font-size: 12pt">&#160;</span>
+						</span>
+					</p>
+				</td>
+			</tr>
+			<tr>
+				<td class="table3column1" width="33%" align="center" valign="top">
+					<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">
+						<span style="font-family: 'Times New Roman', serif">
+							<span style="font-size: 12pt">Override DOPAbstractType
+with a concrete class that
+exposes attributes with
+human readable names</span>
+						</span>
+					</p>
+				</td>
+				<td class="table3column2" width="33%" align="center" valign="top">
+					<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">
+						<span style="font-family: 'Times New Roman', serif">
+							<span style="font-size: 12pt">&#160;</span>
+						</span>
+					</p>
+				</td>
+				<td class="table3column3" width="34%" align="center" valign="top">
+					<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">
+						<span style="font-family: 'Times New Roman', serif">
+							<span style="font-size: 12pt">&#160;</span>
+						</span>
+					</p>
+				</td>
+			</tr>
+			<tr>
+				<td class="table3column1" width="33%" align="center" valign="top">
+					<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">
+						<span style="font-family: 'Times New Roman', serif">
+							<span style="font-size: 12pt">Override TAPAbstractType
+with a concrete class that
+exposes attributes with
+human readable names</span>
+						</span>
+					</p>
+				</td>
+				<td class="table3column2" width="33%" align="center" valign="top">
+					<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">
+						<span style="font-family: 'Times New Roman', serif">
+							<span style="font-size: 12pt">&#160;</span>
+						</span>
+					</p>
+				</td>
+				<td class="table3column3" width="34%" align="center" valign="top">
+					<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">
+						<span style="font-family: 'Times New Roman', serif">
+							<span style="font-size: 12pt">&#160;</span>
+						</span>
+					</p>
+				</td>
+			</tr>
+			<tr>
+				<td class="table3column1" width="33%" align="center" valign="top">
+					<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">
+						<span style="font-family: 'Times New Roman', serif">
+							<span style="font-size: 12pt">Override TCAbstractType
+with a concrete class that
+exposes attributes with
+human readable names</span>
+						</span>
+					</p>
+				</td>
+				<td class="table3column2" width="33%" align="center" valign="top">
+					<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">
+						<span style="font-family: 'Times New Roman', serif">
+							<span style="font-size: 12pt">&#160;</span>
+						</span>
+					</p>
+				</td>
+				<td class="table3column3" width="34%" align="center" valign="top">
+					<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">
+						<span style="font-family: 'Times New Roman', serif">
+							<span style="font-size: 12pt">&#160;</span>
+						</span>
+					</p>
+				</td>
+			</tr>
+			<tr>
+				<td class="table3column1" width="33%" align="center" valign="top">
+					<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">
+						<span style="font-family: 'Times New Roman', serif">
+							<span style="font-size: 12pt">Develop a VerifyIntegrity
+class for testing so it is easy
+to determine if a Word
+Document is well-formed.</span>
+						</span>
+					</p>
+				</td>
+				<td class="table3column2" width="33%" align="center" valign="top">
+					<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">
+						<span style="font-family: 'Times New Roman', serif">
+							<span style="font-size: 12pt">&#160;</span>
+						</span>
+					</p>
+				</td>
+				<td class="table3column3" width="34%" align="center" valign="top">
+					<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">
+						<span style="font-family: 'Times New Roman', serif">
+							<span style="font-size: 12pt">&#160;</span>
+						</span>
+					</p>
+				</td>
+			</tr>
+			<tr>
+				<td class="table3column1" width="33%" align="center" valign="top">
+					<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">
+						<span style="font-family: 'Times New Roman', serif">
+							<span style="font-size: 12pt">Develop general intuitive
+API to tie everything together</span>
+						</span>
+					</p>
+				</td>
+				<td class="table3column2" width="33%" align="center" valign="top">
+					<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">
+						<span style="font-family: 'Times New Roman', serif">
+							<span style="font-size: 12pt">&#160;</span>
+						</span>
+					</p>
+				</td>
+				<td class="table3column3" width="34%" align="center" valign="top">
+					<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">
+						<span style="font-family: 'Times New Roman', serif">
+							<span style="font-size: 12pt">&#160;</span>
+						</span>
+					</p>
+				</td>
+			</tr>
+		</table>
+		<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">&#160;</p>
+		<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">
+			<span style="font-family: 'Times New Roman', serif">
+				<span style="font-size: 12pt">
+					<span style="font-weight: bold">Milestone: </span>Add support for lists and tables</span>
+			</span>
+		</p>
+		<table width="100%" cellpadding="6" cellspacing="0">
+			<tr>
+				<td class="table4column1" width="33%" align="center" valign="top">
+					<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">
+						<span style="font-family: 'Times New Roman', serif">
+							<span style="font-size: 12pt">
+								<span style="font-weight: bold">Task</span>
+							</span>
+						</span>
+					</p>
+				</td>
+				<td class="table4column2" width="33%" align="center" valign="top">
+					<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">
+						<span style="font-family: 'Times New Roman', serif">
+							<span style="font-size: 12pt">
+								<span style="font-weight: bold">Target Date</span>
+							</span>
+						</span>
+					</p>
+				</td>
+				<td class="table4column3" width="34%" align="center" valign="top">
+					<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">
+						<span style="font-family: 'Times New Roman', serif">
+							<span style="font-size: 12pt">
+								<span style="font-weight: bold">Owner</span>
+							</span>
+						</span>
+					</p>
+				</td>
+			</tr>
+			<tr>
+				<td class="table4column1" width="33%" align="center" valign="top">
+					<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">
+						<span style="font-family: 'Times New Roman', serif">
+							<span style="font-size: 12pt">Add data structures for
+reading and writing list data
+with test cases.</span>
+						</span>
+					</p>
+				</td>
+				<td class="table4column2" width="33%" align="center" valign="top">
+					<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">
+						<span style="font-family: 'Times New Roman', serif">
+							<span style="font-size: 12pt">&#160;</span>
+						</span>
+					</p>
+				</td>
+				<td class="table4column3" width="34%" align="center" valign="top">
+					<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">
+						<span style="font-family: 'Times New Roman', serif">
+							<span style="font-size: 12pt">&#160;</span>
+						</span>
+					</p>
+				</td>
+			</tr>
+			<tr>
+				<td class="table4column1" width="33%" align="center" valign="top">
+					<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">
+						<span style="font-family: 'Times New Roman', serif">
+							<span style="font-size: 12pt">Add data structures for
+reading and writing tables
+with test cases.</span>
+						</span>
+					</p>
+				</td>
+				<td class="table4column2" width="33%" align="center" valign="top">
+					<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">
+						<span style="font-family: 'Times New Roman', serif">
+							<span style="font-size: 12pt">&#160;</span>
+						</span>
+					</p>
+				</td>
+				<td class="table4column3" width="34%" align="center" valign="top">
+					<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">
+						<span style="font-family: 'Times New Roman', serif">
+							<span style="font-size: 12pt">&#160;</span>
+						</span>
+					</p>
+				</td>
+			</tr>
+		</table>
+		<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">&#160;</p>
+		<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">
+			<span style="font-family: 'Times New Roman', serif">
+				<span style="font-size: 12pt">
+					<span style="font-weight: bold">Milestone: </span>HWPF 1.0-alpha release with documentation and examples</span>
+			</span>
+		</p>
+		<table width="100%" cellpadding="6" cellspacing="0">
+			<tr>
+				<td class="table5column1" width="33%" align="center" valign="top">
+					<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">
+						<span style="font-family: 'Times New Roman', serif">
+							<span style="font-size: 12pt">
+								<span style="font-weight: bold">Task</span>
+							</span>
+						</span>
+					</p>
+				</td>
+				<td class="table5column2" width="33%" align="center" valign="top">
+					<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">
+						<span style="font-family: 'Times New Roman', serif">
+							<span style="font-size: 12pt">
+								<span style="font-weight: bold">Target Date</span>
+							</span>
+						</span>
+					</p>
+				</td>
+				<td class="table5column3" width="34%" align="center" valign="top">
+					<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">
+						<span style="font-family: 'Times New Roman', serif">
+							<span style="font-size: 12pt">
+								<span style="font-weight: bold">Owner</span>
+							</span>
+						</span>
+					</p>
+				</td>
+			</tr>
+			<tr>
+				<td class="table5column1" width="33%" align="center" valign="top">
+					<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">
+						<span style="font-family: 'Times New Roman', serif">
+							<span style="font-size: 12pt">Document the user model
+API</span>
+						</span>
+					</p>
+				</td>
+				<td class="table5column2" width="33%" align="center" valign="top">
+					<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">
+						<span style="font-family: 'Times New Roman', serif">
+							<span style="font-size: 12pt">&#160;</span>
+						</span>
+					</p>
+				</td>
+				<td class="table5column3" width="34%" align="center" valign="top">
+					<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">
+						<span style="font-family: 'Times New Roman', serif">
+							<span style="font-size: 12pt">&#160;</span>
+						</span>
+					</p>
+				</td>
+			</tr>
+			<tr>
+				<td class="table5column1" width="33%" align="center" valign="top">
+					<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">
+						<span style="font-family: 'Times New Roman', serif">
+							<span style="font-size: 12pt">Document the low level
+classes</span>
+						</span>
+					</p>
+				</td>
+				<td class="table5column2" width="33%" align="center" valign="top">
+					<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">
+						<span style="font-family: 'Times New Roman', serif">
+							<span style="font-size: 12pt">&#160;</span>
+						</span>
+					</p>
+				</td>
+				<td class="table5column3" width="34%" align="center" valign="top">
+					<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">
+						<span style="font-family: 'Times New Roman', serif">
+							<span style="font-size: 12pt">&#160;</span>
+						</span>
+					</p>
+				</td>
+			</tr>
+			<tr>
+				<td class="table5column1" width="33%" align="center" valign="top">
+					<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">
+						<span style="font-family: 'Times New Roman', serif">
+							<span style="font-size: 12pt">Come up with detailed How-To&#8217;s</span>
+						</span>
+					</p>
+				</td>
+				<td class="table5column2" width="33%" align="center" valign="top">
+					<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">
+						<span style="font-family: 'Times New Roman', serif">
+							<span style="font-size: 12pt">&#160;</span>
+						</span>
+					</p>
+				</td>
+				<td class="table5column3" width="34%" align="center" valign="top">
+					<p style="border-left: none; border-right: none; border-top: none; border-bottom: none">
+						<span style="font-family: 'Times New Roman', serif">
+							<span style="font-size: 12pt">&#160;</span>
+						</span>
+					</p>
+				</td>
+			</tr>
+		</table>
+	</body>
+</document>
