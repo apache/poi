@@ -70,6 +70,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -82,6 +83,7 @@ import java.util.List;
  * @see org.apache.poi.hssf.usermodel.HSSFSheet
  * @author  Andrew C. Oliver (acoliver at apache dot org)
  * @author  Glen Stampoultzis (glens at apache.org)
+ * @author  Sergei Kozello (sergeikozello at mail.ru)
  * @version 2.0-pre
  */
 
@@ -200,7 +202,11 @@ public class HSSFWorkbook
 
         // none currently
     }
-
+    
+    
+	public final static byte ENCODING_COMPRESSED_UNICODE	= 0;
+	public final static byte ENCODING_UTF_16 			= 1;
+	
     /**
      * set the sheet name.
      * @param sheet number (0 based)
@@ -209,13 +215,29 @@ public class HSSFWorkbook
 
     public void setSheetName(int sheet, String name)
     {
+        workbook.setSheetName( sheet, name, ENCODING_COMPRESSED_UNICODE );
+    }
+
+    public void setSheetName( int sheet, String name, short encoding )
+    {
         if (sheet > (sheets.size() - 1))
         {
             throw new RuntimeException("Sheet out of bounds");
         }
-        workbook.setSheetName(sheet, name);
+        
+        switch ( encoding ) {
+        case ENCODING_COMPRESSED_UNICODE:
+        case ENCODING_UTF_16:
+            break;
+            
+        default:
+        	// TODO java.io.UnsupportedEncodingException
+			throw new RuntimeException( "Unsupported encoding" );
+        }
+        
+        workbook.setSheetName( sheet, name, encoding );
     }
-
+    
     /**
      * get the sheet name
      * @param sheet Number

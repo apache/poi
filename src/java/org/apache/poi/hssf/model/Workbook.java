@@ -60,6 +60,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Iterator;
+import java.util.Locale;
 
 
 import org.apache.poi.util.POILogger;
@@ -85,6 +86,7 @@ import org.apache.poi.hssf.util.HSSFColor;
  *
  * @author  Andrew C. Oliver (acoliver at apache dot org)
  * @author  Glen Stampoultzis (glens at apache.org)
+ * @author  Sergei Kozello (sergeikozello at mail.ru)
  * @see org.apache.poi.hssf.usermodel.HSSFWorkbook
  * @version 1.0-pre
  */
@@ -410,6 +412,7 @@ public class Workbook {
         return ( BackupRecord ) records.get(backuppos);
     }
     
+    
     /**
      * sets the name for a given sheet.  If the boundsheet record doesn't exist and
      * its only one more than we have, go ahead and create it.  If its > 1 more than
@@ -419,12 +422,18 @@ public class Workbook {
      * @param sheetname the name for the sheet
      */
     
-    public void setSheetName(int sheetnum, String sheetname) {
+    // for compartibility
+    public void setSheetName(int sheetnum, String sheetname ) {
+        setSheetName( sheetnum, sheetname, (byte)0 );
+    }
+    
+    public void setSheetName(int sheetnum, String sheetname, short encoding ) {
         checkSheets(sheetnum);
-        (( BoundSheetRecord ) boundsheets.get(sheetnum))
-        .setSheetname(sheetname);
-        (( BoundSheetRecord ) boundsheets.get(sheetnum))
-        .setSheetnameLength(( byte ) sheetname.length());
+        
+        BoundSheetRecord sheet = (BoundSheetRecord)boundsheets.get( sheetnum );
+        sheet.setSheetname(sheetname);
+        sheet.setSheetnameLength( (byte)sheetname.length() );
+		sheet.setCompressedUnicodeFlag( (byte)encoding );
     }
     
     /**
@@ -1586,7 +1595,8 @@ public class Workbook {
     }
     
     /**
-     * Creates the Country record with the default and current country set to 1
+     * Creates the Country record with the default country set to 1
+     * and current country set to 7 in case of russian locale ("ru_RU") and 1 otherwise
      * @return record containing a CountryRecord
      * @see org.apache.poi.hssf.record.CountryRecord
      * @see org.apache.poi.hssf.record.Record
@@ -1596,7 +1606,15 @@ public class Workbook {
         CountryRecord retval = new CountryRecord();
         
         retval.setDefaultCountry(( short ) 1);
-        retval.setCurrentCountry(( short ) 1);
+        
+        // from Russia with love ;)
+        if ( Locale.getDefault().toString().equals( "ru_RU" ) ) {
+	        retval.setCurrentCountry(( short ) 7);
+        }
+        else {
+	        retval.setCurrentCountry(( short ) 1);
+        }
+        
         return retval;
     }
     

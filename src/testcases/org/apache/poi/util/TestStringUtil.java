@@ -64,6 +64,7 @@ import java.text.NumberFormat;
  *
  * @author  Marc Johnson (mjohnson at apache dot org
  * @author  Glen Stampoultzis (glens at apache.org)
+ * @author  Sergei Kozello (sergeikozello at mail.ru)
  */
 
 public class TestStringUtil
@@ -97,6 +98,48 @@ public class TestStringUtil
         }
         assertEquals("abcdefghijklmnop",
                      StringUtil.getFromUnicode(test_data));
+    }
+
+    /**
+     * test simple form of getFromUnicode with symbols with code below and more 127
+     */
+
+    public void testGetFromUnicodeSymbolsWithCodesMoreThan127()
+    {
+        byte[] test_data = new byte[] { 	0x04, 0x22,
+            								0x04, 0x35,
+            								0x04, 0x41,
+            								0x04, 0x42,
+            								0x00, 0x20,
+            								0x00, 0x74,
+            								0x00, 0x65,
+            								0x00, 0x73,
+            								0x00, 0x74,
+            								};
+
+        assertEquals("\u0422\u0435\u0441\u0442 test",
+                     StringUtil.getFromUnicode(test_data));
+    }
+
+    /**
+     * test getFromUnicodeHigh for symbols with code below and more 127
+     */
+
+    public void testGetFromUnicodeHighSymbolsWithCodesMoreThan127()
+    {
+        byte[] test_data = new byte[] { 	0x22, 0x04,
+            								0x35, 0x04,
+            								0x41, 0x04,
+            								0x42, 0x04,
+            								0x20, 0x00,
+            								0x74, 0x00,
+            								0x65, 0x00,
+            								0x73, 0x00,
+            								0x74, 0x00,
+            								};
+
+        assertEquals("\u0422\u0435\u0441\u0442 test",
+                     StringUtil.getFromUnicodeHigh( test_data ) );
     }
 
     /**

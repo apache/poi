@@ -55,8 +55,13 @@
 
 package org.apache.poi.hssf.record;
 
+import java.io.*;
+import java.io.UnsupportedEncodingException;
+
+import org.apache.poi.util.BinaryTree;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
+import sun.awt.image.ByteInterleavedRaster;
 
 /**
  * Title:        Bound Sheet Record (aka BundleSheet) <P>
@@ -65,6 +70,7 @@ import org.apache.poi.util.StringUtil;
  *               file. <P>
  * REFERENCE:  PG 291 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
  * @author Andrew C. Oliver (acoliver at apache dot org)
+ * @author Sergei Kozello (sergeikozello at mail.ru)
  * @version 2.0-pre
  */
 
@@ -116,18 +122,33 @@ public class BoundSheetRecord
             throw new RecordFormatException("NOT A Bound Sheet RECORD");
         }
     }
+    
+    /**
+     *  UTF8:
+     *	sid + len + bof + flags + len(str) + unicode +   str
+	 *	 2  +  2  +  4  +   2   +    1     +    1    + len(str)
+	 * 
+	 * 	UNICODE:
+     *	sid + len + bof + flags + len(str) + unicode +   str
+	 *	 2  +  2  +  4  +   2   +    1     +    1    + 2 * len(str)
+	 * 
+     */
 
     protected void fillFields(byte [] data, short size, int offset)
     {
-        field_1_position_of_BOF         = LittleEndian.getInt(data,
-                0 + offset);
-        field_2_option_flags            = LittleEndian.getShort(data,
-                4 + offset);
-        field_3_sheetname_length        = data[ 6 + offset ];
-        field_4_compressed_unicode_flag = data[ 7 + offset ];
-        field_5_sheetname               = new String(data, 8 + offset,
-                LittleEndian.ubyteToInt( field_3_sheetname_length));
-    }
+        field_1_position_of_BOF         = LittleEndian.getInt(data, 0 + offset);	// bof
+        field_2_option_flags            = LittleEndian.getShort(data, 4 + offset);	// flags
+        field_3_sheetname_length        = data[ 6 + offset ];						// len(str)
+        field_4_compressed_unicode_flag = data[ 7 + offset ];						// unicode
+
+		int nameLength = LittleEndian.ubyteToInt( field_3_sheetname_length );
+        if ( ( field_4_compressed_unicode_flag & 0x01 ) == 1 ) {
+			field_5_sheetname = StringUtil.getFromUnicodeHigh( data, 8 + offset, nameLength );
+        }
+        else {
+			field_5_sheetname = new String( data, 8 + offset, nameLength );
+        }
+	}
 
     /**
      * set the offset in bytes of the Beginning of File Marker within the HSSF Stream part of the POIFS file
@@ -169,7 +190,7 @@ public class BoundSheetRecord
      * @param flag (0/1) 0- compressed, 1 - uncompressed (16-bit)
      */
 
-    public void setCompressedUnicodeFlag(byte flag)
+    public void setCompressedUnicodeFlag( byte flag )
     {
         field_4_compressed_unicode_flag = flag;
     }
@@ -178,8 +199,8 @@ public class BoundSheetRecord
      * Set the sheetname for this sheet.  (this appears in the tabs at the bottom)
      * @param sheetname the name of the sheet
      */
-
-    public void setSheetname(String sheetname)
+    
+    public void setSheetname( String sheetname )
     {
         field_5_sheetname = sheetname;
     }
@@ -215,7 +236,21 @@ public class BoundSheetRecord
 
     public byte getSheetnameLength()
     {
-        return field_3_sheetname_length;
+		return field_3_sheetname_length;
+    }
+
+    /**
+     * get the length of the raw sheetname in characters
+     * the length depends on the unicode flag
+     * 
+     * @return number of characters in the raw sheet name
+     */
+
+    public byte getRawSheetnameLength()
+    {
+		return (byte)( ( ( field_4_compressed_unicode_flag & 0x01 ) == 1 )
+						? 2 * field_3_sheetname_length
+						: field_3_sheetname_length );
     }
 
     /**
@@ -262,22 +297,47 @@ public class BoundSheetRecord
     public int serialize(int offset, byte [] data)
     {
         LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset,
-                              ( short ) (0x08 + getSheetnameLength()));
+        LittleEndian.putShort( data, 2 + offset, (short)( 8 + getRawSheetnameLength() ) );
         LittleEndian.putInt(data, 4 + offset, getPositionOfBof());
         LittleEndian.putShort(data, 8 + offset, getOptionFlags());
-        data[ 10 + offset ] = getSheetnameLength();
+        data[ 10 + offset ] = (byte)( getSheetnameLength() );
         data[ 11 + offset ] = getCompressedUnicodeFlag();
+        
+        if ( ( field_4_compressed_unicode_flag & 0x01 ) == 1 )
+	        StringUtil.putUncompressedUnicode( getSheetname(), data, 12 + offset );
+	    else
+	        StringUtil.putCompressedUnicode( getSheetname(), data, 12 + offset );
+		
 
-        // we assume compressed unicode (bein the dern americans we are ;-p)
-        StringUtil.putCompressedUnicode(getSheetname(), data, 12 + offset);
         return getRecordSize();
+        
+		/*
+		byte[] fake = new byte[] {	(byte)0x85, 0x00, 			// sid
+		    							0x1a, 0x00, 			// length
+		    							0x3C, 0x09, 0x00, 0x00, // bof
+		    							0x00, 0x00, 			// flags
+		    							0x09, 					// len( str )
+		    							0x01, 					// unicode
+		    							// <str>
+		    							0x21, 0x04, 0x42, 0x04, 0x40, 0x04, 0x30, 0x04, 0x3D, 
+		    							0x04, 0x38, 0x04, 0x47, 0x04, 0x3A, 0x04, 0x30, 0x04   
+		    							// </str>
+		    						};
+		    						
+		    						sid + len + bof + flags + len(str) + unicode +   str
+		    						 2  +  2  +  4  +   2   +    1     +    1    + len(str)
+		
+		System.arraycopy( fake, 0, data, offset, fake.length );
+		
+		return fake.length;
+		*/
     }
 
     public int getRecordSize()
     {
-        return 12 + getSheetnameLength();
-    }
+        // return 30;
+        return 12 + getRawSheetnameLength();
+	}
 
     public short getSid()
     {
