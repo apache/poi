@@ -118,7 +118,7 @@ public class FooterRecord
         {
             field_1_footer_len = data[ 0 + offset ];
             field_2_footer     = new String(data, 1 + offset,
-                                            ( int ) field_1_footer_len);
+                                            LittleEndian.ubyteToInt( field_1_footer_len) );
         }
     }
 
