@@ -60,6 +60,8 @@
  */
 package org.apache.poi.hssf.record.formula;
 
+import org.apache.poi.hssf.util.SheetReferences;
+
 /**
  *
  * @author  andy
@@ -91,7 +93,7 @@ public class UnknownPtg
         return size;
     }
 
-    public String toFormulaString()
+    public String toFormulaString(SheetReferences refs)
     {
         return "UNKNOWN";
     }

@@ -61,6 +61,7 @@
 package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.hssf.util.SheetReferences;
 
 /**
  *
@@ -78,7 +79,7 @@ public class NamePtg
 
     /** Creates new NamePtg */
 
-    protected NamePtg(String name)
+    public NamePtg(String name)
     {
         //TODO
     }
@@ -102,7 +103,7 @@ public class NamePtg
         return SIZE;
     }
 
-    public String toFormulaString()
+    public String toFormulaString(SheetReferences refs)
     {
         return "NO IDEA - NAME";
     }

@@ -61,11 +61,12 @@
 package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.hssf.util.SheetReferences;
 
 /**
  * Integer (short intger)
  * Stores a (java) short value in a formula
- * @author  andy
+ * @author  Andrew C. Oliver (acoliver at apache dot org)
  */
 
 public class IntPtg
@@ -85,7 +86,7 @@ public class IntPtg
     
     
     // IntPtg should be able to create itself, shouldnt have to call setValue
-    protected IntPtg(String formulaToken) {
+    public IntPtg(String formulaToken) {
         setValue(Short.parseShort(formulaToken));
     }
 
@@ -110,7 +111,7 @@ public class IntPtg
         return SIZE;
     }
 
-    public String toFormulaString()
+    public String toFormulaString(SheetReferences refs)
     {
         return "" + getValue();
     }

@@ -61,9 +61,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Iterator;
 
-import org.apache.poi.hssf.record.*;
+
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.POILogFactory;
+
+import org.apache.poi.hssf.record.*;
+import org.apache.poi.hssf.util.SheetReferences;
 
 /**
  * Workbook
@@ -88,7 +91,7 @@ import org.apache.poi.util.POILogFactory;
 public class Workbook {
     private static final int   DEBUG       = POILogger.DEBUG;
     
-    public static Workbook currentBook = null;
+//    public static Workbook currentBook = null;
     
     /**
      * constant used to set the "codepage" wherever "codepage" is set in records
@@ -111,7 +114,7 @@ public class Workbook {
     protected SSTRecord        sst         = null;
     
     /**
-     * Holds the Extern Sheet with referenced to bound sheets
+     * Holds the Extern Sheet with references to bound sheets
      */
     
     protected ExternSheetRecord externSheet= null;
@@ -1629,6 +1632,18 @@ public class Workbook {
     
     protected Record createEOF() {
         return new EOFRecord();
+    }
+
+    public SheetReferences getSheetReferences() {
+       SheetReferences refs = new SheetReferences();
+
+       if (externSheet != null) {
+          for (int k = 0; k < externSheet.getNumOfREFStructures(); k++) {
+              String sheetName = findSheetNameFromExternSheet((short)k);
+              refs.addSheetReference(sheetName, k);
+          }
+       }
+       return refs;
     }
     
     /** fins the sheet name by his extern sheet index

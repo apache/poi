@@ -56,6 +56,8 @@ package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.util.LittleEndian;
 
+import org.apache.poi.hssf.util.SheetReferences;
+
 /**
  * Number
  * Stores a String value in a formula value stored in the format <length 2 bytes>char[]
@@ -81,7 +83,7 @@ public class StringPtg
      *   that calls this method.
      *  @param value : String representation of a floating point number
      */
-    protected StringPtg(String value) {
+    public StringPtg(String value) {
         setValue(value);
     }
 
@@ -110,7 +112,7 @@ public class StringPtg
         return field_1_value.length() + 3;
     }
 
-    public String toFormulaString()
+    public String toFormulaString(SheetReferences refs)
     {
         return getValue();
     }

@@ -64,6 +64,7 @@ import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.BitField;
 
 import org.apache.poi.hssf.util.CellReference;
+import org.apache.poi.hssf.util.SheetReferences;
 
 /**
  * ReferencePtg - handles references (such as A1, A2, IA4)
@@ -86,7 +87,7 @@ public class ReferencePtg extends Ptg
      * Takes in a String represnetation of a cell reference and fills out the 
      * numeric fields.
      */
-    protected ReferencePtg(String cellref) {
+    public ReferencePtg(String cellref) {
         CellReference c= new CellReference(cellref);
         setRow((short) c.getRow());
         setColumn((short) c.getCol());
@@ -175,7 +176,7 @@ public class ReferencePtg extends Ptg
         return SIZE;
     }
 
-    public String toFormulaString()
+    public String toFormulaString(SheetReferences refs)
     {
         //TODO -- should we store a cellreference instance in this ptg?? but .. memory is an issue, i believe!
         return (new CellReference(getRow(),getColumn(),!isRowRelative(),!isColRelative())).toString();

@@ -135,35 +135,38 @@ public class ExternSheetRecord extends Record {
         }
     }
     
-    /** sets the number of the REF structors , that is in Excel file
+    /** 
+     * sets the number of the REF structors , that is in Excel file
      * @param numStruct number of REF structs
      */
     public void setNumOfREFStructures(short numStruct) {
         field_1_number_of_REF_sturcutres = numStruct;
     }
     
-    /** return the number of the REF structors , that is in Excel file
+    /**  
+     * return the number of the REF structors , that is in Excel file
      * @return number of REF structs
      */
     public short getNumOfREFStructures() {
         return field_1_number_of_REF_sturcutres;
     }
     
-    /** adds REF struct (ExternSheetSubRecord)
+    /** 
+     * adds REF struct (ExternSheetSubRecord)
      * @param rec REF struct
      */
     public void addREFRecord(ExternSheetSubRecord rec) {
         field_2_REF_structures.add(rec);
     }
     
-    /** returns the number of REF Record , which is in model
+    /** returns the number of REF Records, which is in model
      * @return number of REF records
      */
-    public int getNumOfREFRecord() {
+    public int getNumOfREFRecords() {
         return field_2_REF_structures.size();
     }
     
-    /** return the REF record (ExternSheetSubRecord)
+    /** returns the REF record (ExternSheetSubRecord)
      * @param elem index to place
      * @return REF record
      */
@@ -178,7 +181,7 @@ public class ExternSheetRecord extends Record {
         
         buffer.append("[EXTERNSHEET]\n");
         buffer.append("   numOfRefs     = ").append(getNumOfREFStructures()).append("\n");
-        for (int k=0; k < this.getNumOfREFRecord(); k++) {
+        for (int k=0; k < this.getNumOfREFRecords(); k++) {
             buffer.append("refrec         #").append(k).append('\n');
             buffer.append(getREFRecordAt(k).toString());
             buffer.append("----refrec     #").append(k).append('\n');
@@ -200,13 +203,13 @@ public class ExternSheetRecord extends Record {
      */
     public int serialize(int offset, byte [] data) {
         LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset,(short)(2 + (getNumOfREFRecord() *6)));
+        LittleEndian.putShort(data, 2 + offset,(short)(2 + (getNumOfREFRecords() *6)));
         
         LittleEndian.putShort(data, 4 + offset, getNumOfREFStructures());
         
         int pos = 6 ;
         
-        for (int k = 0; k < getNumOfREFRecord(); k++) {
+        for (int k = 0; k < getNumOfREFRecords(); k++) {
             ExternSheetSubRecord record = getREFRecordAt(k);
             System.arraycopy(record.serialize(), 0, data, pos + offset, 6);
             
@@ -216,7 +219,7 @@ public class ExternSheetRecord extends Record {
     }
     
     public int getRecordSize() {
-        return 4 + 2 + getNumOfREFRecord() * 6;
+        return 4 + 2 + getNumOfREFRecords() * 6;
     }
     
     /**

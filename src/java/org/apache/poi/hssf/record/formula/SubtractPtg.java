@@ -61,6 +61,7 @@
 package org.apache.poi.hssf.record.formula;
 
 import java.util.List;
+import org.apache.poi.hssf.util.SheetReferences;
 
 /**
  *
@@ -73,7 +74,7 @@ public class SubtractPtg
     public final static int  SIZE = 1;
     public final static byte sid  = 0x04;
 
-    protected SubtractPtg()
+    public SubtractPtg()
     {
     }
 
@@ -103,7 +104,7 @@ public class SubtractPtg
         return 2;
     }
 
-    public String toFormulaString()
+    public String toFormulaString(SheetReferences refs)
     {
         return "-";
     }

@@ -63,6 +63,8 @@ package org.apache.poi.hssf.record.formula;
 import java.util.List;
 import java.util.ArrayList;
 
+import org.apache.poi.hssf.util.SheetReferences;
+
 /**
  *
  * @author  andy
@@ -295,7 +297,7 @@ public abstract class Ptg
     /**
      * return a string representation of this token alone
      */
-    public abstract String toFormulaString();
+    public abstract String toFormulaString(SheetReferences refs);
     /**
      * dump a debug representation (hexdump) to a strnig
      */

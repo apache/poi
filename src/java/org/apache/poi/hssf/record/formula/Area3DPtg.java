@@ -59,6 +59,7 @@ import org.apache.poi.util.LittleEndian;
 import org.apache.poi.hssf.util.RangeAddress;
 import org.apache.poi.hssf.util.AreaReference;
 import org.apache.poi.hssf.util.CellReference;
+import org.apache.poi.hssf.util.SheetReferences;
 
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.util.BitField;
@@ -88,7 +89,7 @@ public class Area3DPtg extends Ptg
     /** Creates new AreaPtg */
     public Area3DPtg() {}
    
-   protected Area3DPtg(String arearef, short externIdx) {
+   public Area3DPtg(String arearef, short externIdx) {
         AreaReference ar = new AreaReference(arearef);
         
         setFirstRow((short)ar.getCells()[0].getRow());
@@ -286,12 +287,11 @@ public class Area3DPtg extends Ptg
 
     }
 
-    public String toFormulaString()
+    public String toFormulaString(SheetReferences refs)
     {
         StringBuffer retval = new StringBuffer();
-        Object book = Workbook.currentBook;
-        if (book != null) {
-            retval.append(((Workbook) book).findSheetNameFromExternSheet(this.field_1_index_extern_sheet));
+        if (refs != null) {
+            retval.append(refs.getSheetName(this.field_1_index_extern_sheet));
             retval.append('!');
         }
         retval.append((new CellReference(getFirstRow(),getFirstColumn(),!isFirstRowRelative(),!isFirstColRelative())).toString()); 

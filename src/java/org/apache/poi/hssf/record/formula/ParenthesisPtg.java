@@ -57,6 +57,8 @@ package org.apache.poi.hssf.record.formula;
 
 import java.util.List;
 
+import org.apache.poi.hssf.util.SheetReferences;
+
 /**
  * While formula tokens are stored in RPN order and thus do not need parenthesis for 
  * precedence reasons, Parenthesis tokens ARE written to ensure that user entered
@@ -72,7 +74,7 @@ public class ParenthesisPtg
     private final static int SIZE = 1;
     public final static byte sid  = 0x15;
    
-    protected ParenthesisPtg()
+    public ParenthesisPtg()
     {
     }
 
@@ -104,7 +106,7 @@ public class ParenthesisPtg
         return 1;
     }
 
-    public String toFormulaString()
+    public String toFormulaString(SheetReferences refs)
     {
         return "()";
     }

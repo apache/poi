@@ -62,9 +62,11 @@ package org.apache.poi.hssf.record.formula;
 
 import java.util.List;
 
+import org.apache.poi.hssf.util.SheetReferences;
+
 /**
- *
- * @author  andy
+ * This PTG implements the standard binomial divide "/"
+ * @author  Andrew C. Oliver acoliver at apache dot org
  */
 
 public class DividePtg
@@ -75,7 +77,7 @@ public class DividePtg
 
     /** Creates new AddPtg */
 
-    protected DividePtg()
+    public DividePtg()
     {
     }
 
@@ -105,7 +107,7 @@ public class DividePtg
         return 2;
     }
 
-    public String toFormulaString()
+    public String toFormulaString(SheetReferences refs)
     {
         return "/";
     }
@@ -114,7 +116,7 @@ public class DividePtg
         StringBuffer buffer = new StringBuffer();
 
         buffer.append(operands[ 0 ]);
-        buffer.append(toFormulaString());
+        buffer.append(toFormulaString((SheetReferences)null));
         buffer.append(operands[ 1 ]);
         return buffer.toString();
     }      

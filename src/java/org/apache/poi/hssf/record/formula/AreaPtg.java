@@ -65,6 +65,7 @@ import org.apache.poi.util.BitField;
 
 import org.apache.poi.hssf.util.AreaReference;
 import org.apache.poi.hssf.util.CellReference;
+import org.apache.poi.hssf.util.SheetReferences;
 
 /**
  * Specifies a rectangular area of cells A1:A4 for instance.
@@ -87,7 +88,7 @@ public class AreaPtg
 
     
    
-    protected AreaPtg(String arearef) {
+    public AreaPtg(String arearef) {
         AreaReference ar = new AreaReference(arearef);
         setFirstRow((short)ar.getCells()[0].getRow());
         setFirstColumn((short)ar.getCells()[0].getCol());
@@ -301,7 +302,7 @@ public class AreaPtg
         field_4_last_column = column;
     }
 
-    public String toFormulaString()
+    public String toFormulaString(SheetReferences refs)
     {
          return (new CellReference(getFirstRow(),getFirstColumn(),!isFirstRowRelative(),!isFirstColRelative())).toString() + ":" +
                 (new CellReference(getLastRow(),getLastColumn(),!isLastRowRelative(),!isLastColRelative())).toString();

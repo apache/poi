@@ -61,6 +61,7 @@
 package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.hssf.util.SheetReferences;
 
 /**
  *
@@ -116,7 +117,7 @@ public class MemErrPtg
         return SIZE;
     }
 
-    public String toFormulaString()
+    public String toFormulaString(SheetReferences refs)
     {
         return "ERR#";
     }

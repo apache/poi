@@ -62,6 +62,7 @@ package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.model.Sheet;
+import org.apache.poi.hssf.model.FormulaParser;
 import org.apache.poi.hssf.record.CellValueRecordInterface;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.FormulaRecord;
@@ -71,8 +72,9 @@ import org.apache.poi.hssf.record.BlankRecord;
 import org.apache.poi.hssf.record.BoolErrRecord;
 import org.apache.poi.hssf.record.ExtendedFormatRecord;
 import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.hssf.util.SheetReferences;
 
-import org.apache.poi.hssf.record.formula.FormulaParser;
+//import org.apache.poi.hssf.record.formula.FormulaParser;
 
 import java.util.Date;
 import java.util.Calendar;
@@ -693,7 +695,7 @@ public class HSSFCell
     }
 
     public void setCellFormula(String formula) {
-        Workbook.currentBook=book;
+        //Workbook.currentBook=book;
         if (formula==null) {
             setCellType(CELL_TYPE_BLANK,false);
         } else {
@@ -712,14 +714,15 @@ public class HSSFCell
                 rec.pushExpressionToken(ptg[ k ]);
             }
             rec.setExpressionLength(( short ) size);
-            Workbook.currentBook = null;
+            //Workbook.currentBook = null;
         }
     }
     
     public String getCellFormula() {
-        Workbook.currentBook=book;
-        String retval = FormulaParser.toFormulaString(((FormulaRecord)record).getParsedExpression());
-        Workbook.currentBook=null;
+        //Workbook.currentBook=book;
+        SheetReferences refs = book.getSheetReferences();
+        String retval = FormulaParser.toFormulaString(refs, ((FormulaRecord)record).getParsedExpression());
+        //Workbook.currentBook=null;
         return retval;   
     }
     

@@ -16,7 +16,7 @@ public class FuncVarPtg extends AbstractFunctionPtg{
     /**
      * Create a function ptg from a string tokenised by the parser
      */
-    protected FuncVarPtg(String pName, byte pNumOperands) {
+    public FuncVarPtg(String pName, byte pNumOperands) {
         field_1_num_args = pNumOperands;
         field_2_fnc_index = lookupIndex(pName);
         try{

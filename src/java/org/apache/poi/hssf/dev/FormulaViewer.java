@@ -77,6 +77,7 @@ import org.apache.poi.hssf.record.*;
 import org.apache.poi.hssf.record.formula.*;
 import org.apache.poi.hssf.model.*;
 import org.apache.poi.hssf.usermodel.*;
+import org.apache.poi.hssf.util.SheetReferences;
 
 /**
  * FormulaViewer - finds formulas in a BIFF8 file and attempts to read them/display
@@ -143,7 +144,7 @@ public class FormulaViewer
             StringBuffer buf = new StringBuffer();
             
             if (token instanceof ExpPtg) return;
-            buf.append(name=((OperationPtg) token).toFormulaString());
+            buf.append(name=((OperationPtg) token).toFormulaString((SheetReferences)null));
             buf.append(sep);
             switch (token.getPtgClass()) {
                 case Ptg.CLASS_REF :
@@ -212,7 +213,7 @@ public class FormulaViewer
         StringBuffer buf = new StringBuffer();
            for (int i=0;i<numptgs;i++) {
            token = (Ptg) tokens.get(i);
-            buf.append( token.toFormulaString());
+            buf.append( token.toFormulaString((SheetReferences)null));
             switch (token.getPtgClass()) {
                 case Ptg.CLASS_REF :
                     buf.append("(R)");
@@ -232,7 +233,7 @@ public class FormulaViewer
     
     private String composeFormula(FormulaRecord record)
     {
-       return  FormulaParser.toFormulaString(record.getParsedExpression());
+       return  FormulaParser.toFormulaString((SheetReferences)null,record.getParsedExpression());
     }
 
     /**

@@ -62,6 +62,8 @@ package org.apache.poi.hssf.record.formula;
 
 import java.util.List;
 
+import org.apache.poi.hssf.util.SheetReferences;
+
 /**
  *
  * @author  andy
@@ -81,7 +83,7 @@ public class ConcatPtg
         // doesn't need anything
     }
     
-    protected ConcatPtg() {
+    public ConcatPtg() {
         
     }
 
@@ -105,7 +107,7 @@ public class ConcatPtg
         return 2;
     }
 
-    public String toFormulaString()
+    public String toFormulaString(SheetReferences refs)
     {
         return CONCAT;
     }    

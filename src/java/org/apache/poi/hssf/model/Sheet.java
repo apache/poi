@@ -64,7 +64,6 @@ import java.util.Iterator;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.hssf
     .record.*;       // normally I don't do this, buy we literally mean ALL
-import org.apache.poi.hssf.record.formula.FormulaParser;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.util.IntList;
 import org.apache.poi.util.POILogger;
