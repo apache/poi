@@ -327,7 +327,7 @@ public class NameRecord extends Record {
      * @return definition -- can be null if we cant parse ptgs
      */
     protected List getNameDefinition() {
-        return ( List ) field_13_name_definition;
+        return field_13_name_definition;
     }
 
     /** get the custom menu text
@@ -523,10 +523,10 @@ public class NameRecord extends Record {
         String result = "";
 
         if (ptg.getClass() == Area3DPtg.class){
-            result = ((Area3DPtg) ptg).toFormulaString(refs);
+            result = ptg.toFormulaString(refs);
 
         } else if (ptg.getClass() == Ref3DPtg.class){
-            result = ((Ref3DPtg) ptg).toFormulaString(refs);
+            result = ptg.toFormulaString(refs);
         }
 
         return result;
@@ -562,12 +562,12 @@ public class NameRecord extends Record {
             ptg = new Area3DPtg();
             ((Area3DPtg) ptg).setExternSheetIndex(externSheetIndex);
             ((Area3DPtg) ptg).setArea(ref);
-            this.setDefinitionTextLength((short)((Area3DPtg) ptg).getSize());
+            this.setDefinitionTextLength((short)ptg.getSize());
         } else {
             ptg = new Ref3DPtg();
             ((Ref3DPtg) ptg).setExternSheetIndex(externSheetIndex);
             ((Ref3DPtg) ptg).setArea(ref);
-            this.setDefinitionTextLength((short)((Ref3DPtg) ptg).getSize());
+            this.setDefinitionTextLength((short)ptg.getSize());
         }
 
         field_13_name_definition.push(ptg);
