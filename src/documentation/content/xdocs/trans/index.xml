@@ -32,8 +32,8 @@
             <td><link href="de/index.html">link</link></td></tr>
         <tr><td>es</td><td>Spanish</td><td>Index page, some auxiliary pages translated</td><td>On</td>
             <td><link href="es/index.html">link</link></td></tr>
-        <tr><td>jp</td><td>Japanese</td><td>Complete XML translation, a few releases old</td><td>Off</td>
-            <td><link href="http://www.terra-intl.com/jakarta/poi/">link</link></td></tr>
+        <tr><td>jp</td><td>Japanese</td><td>Complete XML translation</td><td>Off</td>
+            <td><link href="http://jakarta.terra-intl.com/poi/">link</link></td></tr>
       </table>
    </section>
   </body>
