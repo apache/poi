@@ -214,7 +214,8 @@ public class HSSFRow
         if (cell.getCellNum() == row.getLastCol())
         {
             row.setLastCol( findLastCell(row.getLastCol()) );
-        } else if (cell.getCellNum() == row.getFirstCol())
+        }
+        if (cell.getCellNum() == row.getFirstCol())
         {
             row.setFirstCol( findFirstCell(row.getFirstCol()) );
         }
@@ -330,16 +331,6 @@ public class HSSFRow
         return row.getLastCol();
     }
 
-    /**
-     * gets a list of cells in the row.
-     * @retun List - shallow copy of cells - best you don't modify them
-     */
-
-//    public List getCells()
-//    {   // shallow copy, modifying cells changes things
-    // modifying the array changes nothing!
-//        return ( ArrayList ) cells.clone();
-//    }
 
     /**
      * gets the number of defined cells (NOT number of cells in the actual row!).
@@ -440,10 +431,12 @@ public class HSSFRow
         short cellnum = (short) (firstcell + 1);
         HSSFCell r = getCell(cellnum);
 
-        while (r == null)
+        while (r == null && cellnum <= getLastCellNum())
         {
             r = getCell(++cellnum);
         }
+        if (cellnum > getLastCellNum())
+            return -1;
         return cellnum;
     }
 
