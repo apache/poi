@@ -75,6 +75,7 @@ import org.apache.poi.hpsf.HPSFRuntimeException;
 import org.apache.poi.hpsf.MutableProperty;
 import org.apache.poi.hpsf.MutablePropertySet;
 import org.apache.poi.hpsf.MutableSection;
+import org.apache.poi.hpsf.NoFormatIDException;
 import org.apache.poi.hpsf.Property;
 import org.apache.poi.hpsf.PropertySet;
 import org.apache.poi.hpsf.PropertySetFactory;
@@ -83,6 +84,7 @@ import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hpsf.UnsupportedVariantTypeException;
 import org.apache.poi.hpsf.Variant;
 import org.apache.poi.hpsf.VariantSupport;
+import org.apache.poi.hpsf.WritingNotSupportedException;
 import org.apache.poi.hpsf.wellknown.PropertyIDMap;
 import org.apache.poi.hpsf.wellknown.SectionIDMap;
 import org.apache.poi.poifs.eventfilesystem.POIFSReader;
@@ -146,6 +148,55 @@ public class TestWrite extends TestCase
      * @exception UnsupportedVariantTypeException if HPSF does not yet support
      * a variant type to be written
      */
+    public void testNoFormatID()
+        throws IOException, UnsupportedVariantTypeException
+    {
+        final File dataDir =
+            new File(System.getProperty("HPSF.testdata.path"));
+        final File filename = new File(dataDir, POI_FS);
+        filename.deleteOnExit();
+
+        /* Create a mutable property set with a section that does not have the
+         * formatID set: */
+        final OutputStream out = new FileOutputStream(filename);
+        final POIFSFileSystem poiFs = new POIFSFileSystem();
+        final MutablePropertySet ps = new MutablePropertySet();
+        ps.clearSections();
+        ps.addSection(new MutableSection());
+
+        /* Write it to a POIFS and the latter to disk: */
+        try
+        {
+            final ByteArrayOutputStream psStream = new ByteArrayOutputStream();
+            ps.write(psStream);
+            psStream.close();
+            final byte[] streamData = psStream.toByteArray();
+            poiFs.createDocument(new ByteArrayInputStream(streamData),
+                                 SummaryInformation.DEFAULT_STREAM_NAME);
+            poiFs.writeFilesystem(out);
+            out.close();
+            Assert.fail("Should have thrown a NoFormatIDException.");
+        }
+        catch (Exception ex)
+        {
+            Assert.assertTrue(ex instanceof NoFormatIDException);
+        }
+        finally
+        {
+            out.close();
+        }
+    }
+
+
+
+    /**
+     * <p>Writes an empty property set to a POIFS and reads it back
+     * in.</p>
+     * 
+     * @exception IOException if an I/O exception occurs
+     * @exception UnsupportedVariantTypeException if HPSF does not yet support
+     * a variant type to be written
+     */
     public void testWriteEmptyPropertySet()
         throws IOException, UnsupportedVariantTypeException
     {
@@ -180,8 +231,8 @@ public class TestWrite extends TestCase
 
 
     /**
-     * <p>Writes a simple property set with a SummaryInformation and a
-     * DocumentSummaryInformation stream to a POIFS and reads it back in.</p>
+     * <p>Writes a simple property set with a SummaryInformation section to a
+     * POIFS and reads it back in.</p>
      * 
      * @exception IOException if an I/O exception occurs
      * @exception UnsupportedVariantTypeException if HPSF does not yet support
@@ -198,24 +249,24 @@ public class TestWrite extends TestCase
         filename.deleteOnExit();
         final OutputStream out = new FileOutputStream(filename);
         final POIFSFileSystem poiFs = new POIFSFileSystem();
-
+    
         final MutablePropertySet ps = new MutablePropertySet();
         final MutableSection si = new MutableSection();
         si.setFormatID(SectionIDMap.SUMMARY_INFORMATION_ID);
         ps.getSections().set(0, si);
-
+    
         final MutableProperty p = new MutableProperty();
         p.setID(PropertyIDMap.PID_AUTHOR);
         p.setType(Variant.VT_LPWSTR);
         p.setValue(AUTHOR);
         si.setProperty(p);
         si.setProperty(PropertyIDMap.PID_TITLE, Variant.VT_LPSTR, TITLE);
-
+    
         poiFs.createDocument(ps.toInputStream(),
                              SummaryInformation.DEFAULT_STREAM_NAME);
         poiFs.writeFilesystem(out);
         out.close();
-
+    
         /* Read the POIFS: */
         final PropertySet[] psa = new PropertySet[1];
         final POIFSReader r = new POIFSReader();
@@ -234,7 +285,7 @@ public class TestWrite extends TestCase
                         throw new RuntimeException(ex.toString());
                     }
                 }
-
+    
             },
             SummaryInformation.DEFAULT_STREAM_NAME);
         r.read(new FileInputStream(filename));
@@ -244,6 +295,80 @@ public class TestWrite extends TestCase
         Object p2 = s.getProperty(PropertyIDMap.PID_TITLE);
         Assert.assertEquals(AUTHOR, p1);
         Assert.assertEquals(TITLE, p2);
+    }
+
+
+
+    /**
+     * <p>Writes a simple property set with two sections to a POIFS and reads it
+     * back in.</p>
+     * 
+     * @exception IOException if an I/O exception occurs
+     * @exception WritingNotSupportedException if HPSF does not yet support
+     * a variant type to be written
+     */
+    public void testWriteTwoSections()
+        throws WritingNotSupportedException, IOException
+    {
+        final String STREAM_NAME = "PropertySetStream";
+        final String SECTION1 = "Section 1";
+        final String SECTION2 = "Section 2";
+
+        final File dataDir =
+            new File(System.getProperty("HPSF.testdata.path"));
+        final File filename = new File(dataDir, POI_FS);
+        filename.deleteOnExit();
+        final OutputStream out = new FileOutputStream(filename);
+
+        final POIFSFileSystem poiFs = new POIFSFileSystem();
+        final MutablePropertySet ps = new MutablePropertySet();
+        ps.clearSections();
+
+        final byte[] formatID =
+            new byte[]{0, 1,  2,  3,  4,  5,  6,  7,
+                       8, 9, 10, 11, 12, 13, 14, 15};
+        final MutableSection s1 = new MutableSection();
+        s1.setFormatID(formatID);
+        s1.setProperty(2, SECTION1);
+        ps.addSection(s1);
+
+        final MutableSection s2 = new MutableSection();
+        s2.setFormatID(formatID);
+        s2.setProperty(2, SECTION2);
+        ps.addSection(s2);
+
+        poiFs.createDocument(ps.toInputStream(), STREAM_NAME);
+        poiFs.writeFilesystem(out);
+        out.close();
+
+        /* Read the POIFS: */
+        final PropertySet[] psa = new PropertySet[1];
+        final POIFSReader r = new POIFSReader();
+        r.registerListener(new POIFSReaderListener()
+            {
+                public void processPOIFSReaderEvent
+                    (final POIFSReaderEvent event)
+                {
+                    try
+                    {
+                        psa[0] = PropertySetFactory.create(event.getStream());
+                    }
+                    catch (Exception ex)
+                    {
+                        ex.printStackTrace();
+                        throw new RuntimeException(ex);
+                    }
+                }
+            },
+            STREAM_NAME);
+        r.read(new FileInputStream(filename));
+        Assert.assertNotNull(psa[0]);
+        Section s = (Section) (psa[0].getSections().get(0));
+        Object p = s.getProperty(2);
+        Assert.assertEquals(SECTION1, p);
+        s = (Section) (psa[0].getSections().get(1));
+        p = s.getProperty(2);
+        Assert.assertEquals(SECTION2, p);
     }
 
 

@@ -27,6 +27,20 @@ public class MutableProperty extends Property
 
 
     /**
+     * <p>Creates a <code>MutableProperty</code> as a copy of an existing
+     * <code>Property</code>.</p>
+     * 
+     * @param p The property to copy.
+     */
+    public MutableProperty(final Property p)
+    {
+        setID(p.getID());
+        setType(p.getType());
+        setValue(p.getValue());
+    }
+
+
+    /**
      * <p>Sets the property's ID.</p>
      *
      * @param id the ID

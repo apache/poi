@@ -290,9 +290,9 @@ public class PropertyIDMap extends HashMap
      * <var>id</var>, or <code>null</code> if there was no mapping for
      * key.
      */
-    public Object put(final int id, final String idString)
+    public Object put(final long id, final String idString)
     {
-        return put(new Integer(id), idString);
+        return put(new Long(id), idString);
     }
 
 
