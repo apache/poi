@@ -79,14 +79,7 @@ public abstract class OperationPtg extends Ptg
     
     public abstract int getNumberOfOperands();
     
-    /**
-     * manipulate the list, moving the arguments for this function to the source list
-     * followed by the operator.
-     */
-    public abstract void manipulate(List source, List results, int pos);
 
     public abstract String toFormulaString(Ptg [] operands);
     
-    protected void standardBinaryManipulation(List source,List results, int pos) {
-    }
 }
