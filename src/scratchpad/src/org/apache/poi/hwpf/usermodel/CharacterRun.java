@@ -18,13 +18,9 @@
 
 package org.apache.poi.hwpf.usermodel;
 
-import org.apache.poi.hwpf.model.types.CHPAbstractType;
-import org.apache.poi.hwpf.model.StyleDescription;
 import org.apache.poi.hwpf.model.CHPX;
 import org.apache.poi.hwpf.model.StyleSheet;
-
 import org.apache.poi.hwpf.sprm.SprmBuffer;
-import org.apache.poi.hwpf.sprm.CharacterSprmCompressor;
 
 /**
  * This class represents a run of text that share common properties.

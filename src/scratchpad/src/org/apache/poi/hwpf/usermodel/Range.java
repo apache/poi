@@ -252,7 +252,13 @@ public class Range
       TextPiece piece = (TextPiece)_text.get(x);
       int start = _start > piece.getStart() ? _start - piece.getStart() : 0;
       int end = _end <= piece.getEnd() ? _end - piece.getStart() : piece.getEnd() - piece.getStart();
-      sb.append(piece.substring(start, end));
+
+      if(piece.usesUnicode()) // convert the byte pointers to char pointers
+      {
+        start/=2;
+        end/=2;
+      }
+      sb.append(piece.getStringBuffer().substring(start, end));
     }
     return sb.toString();
   }
@@ -693,7 +699,8 @@ public class Range
     r.initAll();
     int tableEnd = r._parEnd;
 
-    if (r._parStart != 0 && getParagraph(r._parStart - 1).isInTable())
+    if (r._parStart != 0 && getParagraph(r._parStart - 1).isInTable()
+        && getParagraph(r._parStart - 1)._sectionEnd >= r._sectionStart)
     {
       throw new IllegalArgumentException("This paragraph is not the first one in the table");
     }

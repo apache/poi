@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 
 package org.apache.poi.hwpf.usermodel;
 
@@ -431,16 +431,14 @@ public class Paragraph
   }
 
   public int getIlfo()
-  {
-    return _props.getIlfo();
-  }
+   {
+     return _props.getIlfo();
+   }
 
-  public int getIlvl()
-  {
-    return _props.getIlvl();
-  }
-
-
+   public int getIlvl()
+   {
+     return _props.getIlvl();
+   }
 
   void setTableRowEnd(TableProperties props)
   {

@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 
 package org.apache.poi.hwpf.model;
 
@@ -106,10 +106,10 @@ public class ListLevel
 
     _grpprlPapx = new byte[_cbGrpprlPapx];
     _grpprlChpx = new byte[_cbGrpprlChpx];
-    System.arraycopy(buf, offset, _grpprlChpx, 0, _cbGrpprlChpx);
-    offset += _cbGrpprlChpx;
     System.arraycopy(buf, offset, _grpprlPapx, 0, _cbGrpprlPapx);
     offset += _cbGrpprlPapx;
+    System.arraycopy(buf, offset, _grpprlChpx, 0, _cbGrpprlChpx);
+    offset += _cbGrpprlChpx;
 
     int numberTextLength = LittleEndian.getShort(buf, offset);
     _numberText = new char[numberTextLength];
@@ -168,6 +168,10 @@ public class ListLevel
     _grpprlPapx = grpprl;
   }
 
+  public byte[] getLevelProperties()
+  {
+    return _grpprlPapx;
+  }
 
   public boolean equals(Object obj)
   {

@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 
 package org.apache.poi.hwpf.sprm;
 
@@ -133,12 +133,26 @@ public class TableSprmUncompressor
         newTAP.setRgdxaCenter (rgdxaCenter);
         newTAP.setRgtc (rgtc);
 
+        // get the rgdxaCenters
         for (int x = 0; x < itcMac; x++)
         {
           rgdxaCenter[x] = LittleEndian.getShort (grpprl, offset + (1 + (x * 2)));
-          rgtc[x] = TableCellDescriptor.convertBytesToTC (grpprl,
-            offset + (1 + ((itcMac + 1) * 2) + (x * 20)));
         }
+
+        // only try to get the TC entries if they exist...
+        int endOfSprm = offset+sprm.size()-6; // -2 bytes for sprm - 2 for size short - 2 to correct offsets being 0 based
+        int startOfTCs = offset + (1 + (itcMac + 1) * 2);
+
+        boolean hasTCs = startOfTCs < endOfSprm;
+
+        for (int x = 0; x < itcMac; x++)
+        {
+          if(hasTCs) rgtc[x] = TableCellDescriptor.convertBytesToTC(grpprl,
+              offset + (1 + ( (itcMac + 1) * 2) + (x * 20)));
+          else
+            rgtc[x] = new TableCellDescriptor();
+        }
+
         rgdxaCenter[itcMac] = LittleEndian.getShort (grpprl, offset + (1 + (itcMac * 2)));
         break;
       }

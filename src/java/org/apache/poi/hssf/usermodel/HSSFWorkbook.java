@@ -22,15 +22,6 @@
  */
 package org.apache.poi.hssf.usermodel;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Stack;
-
 import org.apache.poi.hssf.eventmodel.EventRecordFactory;
 import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.model.Workbook;
@@ -39,13 +30,18 @@ import org.apache.poi.hssf.record.formula.Area3DPtg;
 import org.apache.poi.hssf.record.formula.MemFuncPtg;
 import org.apache.poi.hssf.record.formula.UnionPtg;
 import org.apache.poi.hssf.util.CellReference;
-import org.apache.poi.poifs.filesystem.DirectoryEntry;
-import org.apache.poi.poifs.filesystem.DocumentEntry;
-import org.apache.poi.poifs.filesystem.DocumentInputStream;
-import org.apache.poi.poifs.filesystem.Entry;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.poifs.filesystem.*;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Stack;
 
 /**
  * High level representation of a workbook.  This is the first object most users
@@ -84,7 +80,7 @@ public class HSSFWorkbook
      * this holds the HSSFSheet objects attached to this workbook
      */
 
-    private ArrayList sheets;
+    protected ArrayList sheets;
 
     /**
      * this holds the HSSFName objects attached to this workbook
@@ -121,9 +117,14 @@ public class HSSFWorkbook
 
     public HSSFWorkbook()
     {
-        workbook = Workbook.createWorkbook();
-        sheets = new ArrayList(INITIAL_CAPACITY);
-        names  = new ArrayList(INITIAL_CAPACITY);
+        this(Workbook.createWorkbook());
+    }
+
+    protected HSSFWorkbook( Workbook book )
+    {
+        workbook = book;
+        sheets = new ArrayList( INITIAL_CAPACITY );
+        names = new ArrayList( INITIAL_CAPACITY );
     }
 
     public HSSFWorkbook(POIFSFileSystem fs) throws IOException {
