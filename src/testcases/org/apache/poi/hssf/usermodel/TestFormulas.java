@@ -291,6 +291,16 @@ extends TestCase {
         areaFunctionTest("AVERAGE");
     }
     
+    public void testRefArraySum() 
+    throws Exception {
+        refArrayFunctionTest("SUM");
+    }
+    
+    public void testAreaArraySum() 
+    throws Exception {
+        refAreaArrayFunctionTest("SUM");
+    }
+
     
     
     private void operationRefTest(String operator) 
@@ -608,6 +618,85 @@ extends TestCase {
                       );
             in.close();
     }
+    
+    /**
+     * Writes a function then tests to see if its correct
+     *
+     */
+    public void refArrayFunctionTest(String function) 
+    throws Exception {
+            
+            short            rownum = 0;
+            File file = File.createTempFile("testFormulaArrayFunction"+function,".xls");
+            FileOutputStream out    = new FileOutputStream(file);
+            HSSFWorkbook     wb     = new HSSFWorkbook();
+            HSSFSheet        s      = wb.createSheet();
+            HSSFRow          r      = null;
+            HSSFCell         c      = null;
+
+
+            r = s.createRow((short) 0);
+
+            c = r.createCell((short) 0);
+            c.setCellFormula(function+"(A2,A3)");
+
+
+            wb.write(out);
+            out.close();
+            assertTrue("file exists",file.exists());
+            
+            FileInputStream in = new FileInputStream(file);
+            wb = new HSSFWorkbook(in);
+            s = wb.getSheetAt(0);
+            r = s.getRow(0);
+            c = r.getCell((short)0);
+            
+            assertTrue("function ="+function+"(A2,A3)",
+                        ( (function+"(A2,A3)").equals((function+"(A2,A3)")) )
+                      );
+            in.close();
+    }
+    
+    
+    /**
+     * Writes a function then tests to see if its correct
+     *
+     */
+    public void refAreaArrayFunctionTest(String function) 
+    throws Exception {
+            
+            short            rownum = 0;
+            File file = File.createTempFile("testFormulaAreaArrayFunction"+function,".xls");
+            FileOutputStream out    = new FileOutputStream(file);
+            HSSFWorkbook     wb     = new HSSFWorkbook();
+            HSSFSheet        s      = wb.createSheet();
+            HSSFRow          r      = null;
+            HSSFCell         c      = null;
+
+
+            r = s.createRow((short) 0);
+
+            c = r.createCell((short) 0);
+            c.setCellFormula(function+"(A2:A4,B2:B4)");
+
+
+            wb.write(out);
+            out.close();
+            assertTrue("file exists",file.exists());
+            
+            FileInputStream in = new FileInputStream(file);
+            wb = new HSSFWorkbook(in);
+            s = wb.getSheetAt(0);
+            r = s.getRow(0);
+            c = r.getCell((short)0);
+            
+            assertTrue("function ="+function+"(A2:A4,B2:B4)",
+                        ( (function+"(A2:A4,B2:B4)").equals((function+"(A2:A4,B2:B4)")) )
+                      );
+            in.close();
+    }
+    
+    
     
     
     public static void main(String [] args) {
