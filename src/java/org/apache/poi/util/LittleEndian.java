@@ -95,17 +95,25 @@ public class LittleEndian
     }
 
     /**
+     * get a short array from a byte array.
+     */
+    public static short[] getSimpleShortArray(final byte[] data, final int offset, final int size)
+    {
+        short[] results = new short[size];
+        for (int i = 0; i < size; i++)
+        {
+            results[i] = getShort(data, offset + 2 + (i * 2));
+        }
+        return results;
+    }
+    /**
      * get a short array from a byte array.  The short array is assumed
      * to start with a word describing the length of the array.
      */
     public static short[] getShortArray(final byte[] data, final int offset)
     {
         int size = (short) getNumber(data, offset, SHORT_SIZE);
-        short[] results = new short[size];
-        for (int i = 0; i < size; i++)
-        {
-            results[i] = getShort(data, offset + 2 + (i * 2));
-        }
+        short[] results = getSimpleShortArray(data, offset, size);
         return results;
     }
 
@@ -565,6 +573,23 @@ public class LittleEndian
     public static int getUnsignedByte(final byte[] data)
     {
         return getUnsignedByte(data, 0);
+    }
+    /**
+     * Copy a portion of a byte array
+     *
+     * @param data the original byte array
+     * @param offset Where to start copying from.
+     * @param size Number of bytes to copy.
+     *
+     * @throws IndexOutOfBoundsException - if copying would cause access of data
+     *                                     outside array bounds.
+     */
+    public static byte[] getByteArray(final byte[] data, int offset, int size)
+    {
+        byte[] copy = new byte[size];
+        System.arraycopy(data, offset, copy, 0, size);
+
+        return copy;
     }
 
 }

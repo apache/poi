@@ -187,6 +187,24 @@ public class HexDump
      * Converts the parameter to a hex value.
      *
      * @param value     The value to convert
+     * @return          A String representing the array of bytes
+     */
+    public static String toHex(final byte[] value)
+    {
+        StringBuffer retVal = new StringBuffer();
+        retVal.append('[');
+        for(int x = 0; x < value.length; x++)
+        {
+            retVal.append(toHex(value[x]));
+            retVal.append(", ");
+        }
+        retVal.append(']');
+        return retVal.toString();
+    }
+    /**
+     * Converts the parameter to a hex value.
+     *
+     * @param value     The value to convert
      * @return          The result right padded with 0
      */
     public static String toHex(final short value)
