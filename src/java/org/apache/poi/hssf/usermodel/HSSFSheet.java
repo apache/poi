@@ -61,18 +61,14 @@ package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.model.Workbook;
-import org.apache.poi.hssf.record.CellValueRecordInterface;
-import org.apache.poi.hssf.record.Record;
-import org.apache.poi.hssf.record.RowRecord;
-import org.apache.poi.hssf.record.VCenterRecord;
-import org.apache.poi.hssf.record.WindowTwoRecord;
-import org.apache.poi.hssf.record.WSBoolRecord;
+import org.apache.poi.hssf.record.*;
 import org.apache.poi.hssf.util.Region;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
 import java.util.Iterator;
 import java.util.TreeMap;
+import java.util.List;
 
 /**
  * High level representation of a worksheet.
@@ -875,5 +871,11 @@ public class HSSFSheet
 	}
 	if (endRow == lastrow || endRow + n > lastrow) lastrow = Math.min(endRow + n, 65535);
 	if (startRow == firstrow || startRow + n < firstrow) firstrow = Math.max(startRow + n, 0);
+    }
+
+    protected void insertChartRecords( List records )
+    {
+        int window2Loc = sheet.findFirstRecordLocBySid(WindowTwoRecord.sid);
+        sheet.getRecords().addAll(window2Loc, records );
     }
 }

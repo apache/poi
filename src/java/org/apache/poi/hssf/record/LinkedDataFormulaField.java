@@ -104,6 +104,13 @@ public class LinkedDataFormulaField
         }
     }
 
+    public String toString()
+    {
+        StringBuffer b = new StringBuffer();
+        toString( b );
+        return b.toString();
+    }
+
     public int serializeField( int offset, byte[] data )
     {
         int size = getSize();

@@ -149,7 +149,7 @@ public class UnknownRecord
     {
         StringBuffer buffer = new StringBuffer();
 
-        buffer.append("[UNKNOWN RECORD]\n");
+        buffer.append("[UNKNOWN RECORD:" + Integer.toHexString(sid) + "]\n");
         buffer.append("    .id        = ").append(Integer.toHexString(sid))
             .append("\n");
         buffer.append("[/UNKNWON RECORD]\n");
