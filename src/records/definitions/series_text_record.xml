@@ -10,10 +10,10 @@
         <field type="int" size="1" name="text length">
             <testresult  value="0x0C"/>
         </field>
-        <field type="int" size="2" name="undocumented">
-	    <testresult  value="0x5601"/>
+        <field type="int" size="1" name="undocumented" description="probably highbyte flag to tell whether string is little or big endian">
+            <testresult  value="0x01"/>
         </field>
-        <field type="string" size="(field_2_textLength * 2)" name="text">
+        <field type="hbstring" size="(field_2_textLength *2)" name="text">
             <testresult value="Value Number"/>
         </field>
     </fields>
