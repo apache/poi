@@ -356,8 +356,7 @@ public class MutableSection extends Section
                     getPropertyCount() * 2 * LittleEndian.INT_SIZE;
 
         /* Writing the section's dictionary it tricky. If there is a dictionary
-         * (property 0) the codepage property (property 1) has to be set, too.
-         * Since HPSF supports Unicode only, the codepage must be 1200. */
+         * (property 0) the codepage property (property 1) must be set, too. */
         int codepage = -1;
         if (getProperty(PropertyIDMap.PID_DICTIONARY) != null)
         {
@@ -370,9 +369,11 @@ public class MutableSection extends Section
                          "Integer object.");
             }
             else
-                throw new IllegalPropertySetDataException
-                    ("The codepage property (ID = 1) must be set if the " +
-                     "section contains a dictionary.");
+                /* Warning: The codepage property is not set although a
+                 * dictionary is present. In order to cope with this problem we
+                 * add the codepage property and set it to Unicode. */
+                setProperty(PropertyIDMap.PID_CODEPAGE, (long) Variant.VT_I2,
+                            new Integer(Constants.CP_UNICODE));
             codepage = getCodepage();
         }
 
@@ -594,11 +595,14 @@ public class MutableSection extends Section
              * don't have a type. */
             setProperty(PropertyIDMap.PID_DICTIONARY, -1, dictionary);
 
-            /* Set the codepage property (ID 1) for the strings used in the 
-             * dictionary. HPSF always writes Unicode strings to the
-             * dictionary. */
-            setProperty(PropertyIDMap.PID_CODEPAGE, Variant.VT_I2,
-                        new Integer(Constants.CP_UNICODE));
+            /* If the codepage property (ID 1) for the strings (keys and
+             * values) used in the dictionary is not yet defined, set it to
+             * Unicode. */
+            final Integer codepage =
+                (Integer) getProperty(PropertyIDMap.PID_CODEPAGE);
+            if (codepage == null)
+                setProperty(PropertyIDMap.PID_CODEPAGE, Variant.VT_I2,
+                            new Integer(Constants.CP_UNICODE));
         }
         else
             /* Setting the dictionary to null means to remove property 0.

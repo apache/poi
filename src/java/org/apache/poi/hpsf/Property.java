@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Copyright 2002-2004   Apache Software Foundation
 
@@ -44,6 +43,10 @@ import org.apache.poi.util.LittleEndian;
  * over time but largely depends on your feedback so that the POI team knows
  * which variant types are really needed. So please feel free to submit error
  * reports or patches for the types you need.</p>
+ * 
+ * <p>Microsoft documentation: <a
+ * href="http://msdn.microsoft.com/library/en-us/stg/stg/property_set_display_name_dictionary.asp?frame=true">
+ * Property Set Display Name Dictionary</a>.
  *
  * @author Rainer Klute <a
  * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
@@ -162,17 +165,19 @@ public class Property
 
     /**
      * <p>Reads a dictionary.</p>
-     *
-     * @param src The byte array containing the bytes making out the
-     * dictionary.
-     * @param offset At this offset within <var>src</var> the
-     * dictionary starts.
+     * 
+     * @param src The byte array containing the bytes making out the dictionary.
+     * @param offset At this offset within <var>src </var> the dictionary
+     *        starts.
      * @param length The dictionary contains at most this many bytes.
      * @param codepage The codepage of the string values.
      * @return The dictonary
+     * @throws UnsupportedEncodingException if the dictionary's codepage is not
+     *         (yet) supported.
      */
     protected Map readDictionary(final byte[] src, final long offset,
                                  final int length, final int codepage)
+    throws UnsupportedEncodingException
     {
         /* Check whether "offset" points into the "src" array". */
         if (offset < 0 || offset > src.length)
@@ -195,25 +200,45 @@ public class Property
             o += LittleEndian.INT_SIZE;
 
             /* The value (a string). The length is the either the
-             * number of characters if the character set is Unicode or
-             * else the number of bytes. The length includes
-             * terminating 0x00 bytes which we have to strip off to
-             * create a Java string. */
+             * number of (two-byte) characters if the character set is Unicode
+             * or the number of bytes if the character set is not Unicode.
+             * The length includes terminating 0x00 bytes which we have to strip
+             * off to create a Java string. */
             long sLength = LittleEndian.getUInt(src, o);
             o += LittleEndian.INT_SIZE;
 
-            /* Read the bytes or characters depending on whether the
-             * character set is Unicode or not. */
-            StringBuffer b = new StringBuffer((int) sLength);
-            for (int j = 0; j < sLength; j++)
-                if (codepage == Constants.CP_UNICODE)
+            /* Read the string. */
+            final StringBuffer b = new StringBuffer();
+            switch (codepage)
+            {
+                case -1:
                 {
-                    final int i1 = o + (j * 2);
-                    final int i2 = i1 + 1;
-                    b.append((char) ((src[i2] << 8) + src[i1]));
+                    /* Without a codepage the length is equal to the number of
+                     * bytes. */
+                    b.append(new String(src, o, (int) sLength));
+                    break;
                 }
-                else
-                    b.append((char) src[o + j]);
+                case Constants.CP_UNICODE:
+                {
+                    /* The length is the number of characters, i.e. the number
+                     * of bytes is twice the number of the characters. */
+                    for (int j = 0; j < sLength; j++)
+                    {
+                        final int i1 = o + (j * 2);
+                        final int i2 = i1 + 1;
+                        b.append((char) ((src[i2] << 8) + src[i1]));
+                    }
+                    break;
+                }
+                default:
+                {
+                    /* For encodings other than Unicode the length is the number
+                     * of bytes. */
+                    b.append(new String(src, o, (int) sLength,
+                             VariantSupport.codepageToEncoding(codepage)));
+                    break;
+                }
+            }
 
             /* Strip 0x00 characters from the end of the string: */
             while (b.length() > 0 && b.charAt(b.length() - 1) == 0x00)
