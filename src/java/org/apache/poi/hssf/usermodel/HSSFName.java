@@ -64,6 +64,7 @@ import org.apache.poi.util.POILogger;
 import java.util.Iterator;
 import java.util.TreeMap;
 import org.apache.poi.hssf.util.RangeAddress;
+import org.apache.poi.hssf.util.SheetReferences;
 
 /**
  * Title:        High Level Represantion of Named Range <P>
@@ -137,10 +138,9 @@ public class HSSFName {
      */    
 
     public String getReference() {
-        Workbook.currentBook=book;
         String result;
-        result = name.getAreaReference();
-        Workbook.currentBook=null;
+        SheetReferences refs = book.getSheetReferences();
+        result = name.getAreaReference(refs);
 
         return result;
     }

@@ -63,6 +63,7 @@ import org.apache.poi.hssf.record.formula.Area3DPtg;
 import org.apache.poi.hssf.record.formula.Ref3DPtg;
 import java.util.List;
 import org.apache.poi.hssf.util.RangeAddress;
+import org.apache.poi.hssf.util.SheetReferences;
 
 /**
  * Title:        Name Record (aka Named Range) <P>
@@ -501,16 +502,16 @@ public class NameRecord extends Record {
     /** gets the reference , the area only (range)
      * @return area reference
      */
-    public String getAreaReference(){
+    public String getAreaReference(SheetReferences refs){
         if (field_13_name_definition == null) return "#REF!";
         Ptg ptg = (Ptg) field_13_name_definition.peek();
         String result = "";
 
         if (ptg.getClass() == Area3DPtg.class){
-            result = ((Area3DPtg) ptg).toFormulaString();
+            result = ((Area3DPtg) ptg).toFormulaString(refs);
 
         } else if (ptg.getClass() == Ref3DPtg.class){
-            result = ((Ref3DPtg) ptg).toFormulaString();
+            result = ((Ref3DPtg) ptg).toFormulaString(refs);
         }
 
         return result;

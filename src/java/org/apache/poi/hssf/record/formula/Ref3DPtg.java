@@ -57,8 +57,10 @@
 package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.util.LittleEndian;
+
 import org.apache.poi.hssf.util.RangeAddress;
 import org.apache.poi.hssf.util.CellReference;
+import org.apache.poi.hssf.util.SheetReferences;
 import org.apache.poi.util.BitField;
 import org.apache.poi.hssf.model.Workbook;
 
@@ -89,7 +91,7 @@ public class Ref3DPtg extends Ptg {
         field_3_column        = LittleEndian.getShort(data, 4 + offset);
     }
     
-    protected Ref3DPtg(String cellref, short externIdx ) {
+    public Ref3DPtg(String cellref, short externIdx ) {
         CellReference c= new CellReference(cellref);
         setRow((short) c.getRow());
         setColumn((short) c.getCol());
@@ -190,11 +192,10 @@ public class Ref3DPtg extends Ptg {
 
     }
 
-    public String toFormulaString() {
+    public String toFormulaString(SheetReferences refs) {
         StringBuffer retval = new StringBuffer();
-        Object book = Workbook.currentBook;
-        if (book != null) {
-            retval.append(((Workbook) book).findSheetNameFromExternSheet(this.field_1_index_extern_sheet));
+        if (refs != null) {
+            retval.append(refs.getSheetName((int)this.field_1_index_extern_sheet));
             retval.append('!');
         }
         retval.append((new CellReference(getRow(),getColumn(),!isRowRelative(),!isColRelative())).toString()); 

@@ -60,6 +60,8 @@
  */
 package org.apache.poi.hssf.record.formula;
 
+import org.apache.poi.hssf.util.SheetReferences;
+
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.BitField;
 
@@ -196,7 +198,7 @@ public class AttrPtg
             return operands[ 0 ];
         }
         else {
-            return toFormulaString() + "(" + operands[ 0 ] + ")";
+            return toFormulaString((SheetReferences)null) + "(" + operands[ 0 ] + ")";
         }
     }
   
@@ -211,7 +213,7 @@ public class AttrPtg
         return -1;
     }
         
-   public String toFormulaString() {
+   public String toFormulaString(SheetReferences refs) {
       if(semiVolatile.isSet(field_1_options)) {
         return "ATTR(semiVolatile)";
       }

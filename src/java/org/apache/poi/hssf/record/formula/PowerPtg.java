@@ -62,6 +62,8 @@ package org.apache.poi.hssf.record.formula;
 
 import java.util.List;
 
+import org.apache.poi.hssf.util.SheetReferences;
+
 /**
  *
  * @author  andy
@@ -75,7 +77,7 @@ public class PowerPtg
 
     /** Creates new AddPtg */
 
-   protected PowerPtg()
+   public PowerPtg()
     {
     }
 
@@ -105,7 +107,7 @@ public class PowerPtg
         return 2;
     }
 
-    public String toFormulaString()
+    public String toFormulaString(SheetReferences refs)
     {
         return "^";
     }
@@ -115,7 +117,7 @@ public class PowerPtg
 
         
         buffer.append(operands[ 0 ]);
-        buffer.append(toFormulaString());
+        buffer.append(toFormulaString((SheetReferences)null));
         buffer.append(operands[ 1 ]);
         return buffer.toString();
     }       

@@ -1,6 +1,8 @@
 package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.util.BinaryTree;
+import org.apache.poi.hssf.util.SheetReferences;
+
 /**
  * This class provides the base functionality for Excel sheet functions 
  * There are two kinds of function Ptgs - tFunc and tFuncVar
@@ -46,7 +48,7 @@ public abstract class AbstractFunctionPtg extends OperationPtg {
         return lookupName(field_2_fnc_index);
     }
     
-    public String toFormulaString() {
+    public String toFormulaString(SheetReferences refs) {
         return getName();
     }
     
@@ -802,7 +804,7 @@ public abstract class AbstractFunctionPtg extends OperationPtg {
         return returnClass;
     }
     
-    protected byte getParameterClass(int index) {
+    public byte getParameterClass(int index) {
         try {
             return paramClass[index];
         } catch (ArrayIndexOutOfBoundsException aioobe) {

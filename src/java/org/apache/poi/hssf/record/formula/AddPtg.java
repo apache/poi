@@ -62,6 +62,8 @@ package org.apache.poi.hssf.record.formula;
 
 import java.util.List;
 
+import org.apache.poi.hssf.util.SheetReferences;
+
 /**
  * Addition operator PTG the "+" binomial operator.  If you need more 
  * explanation than that then well...We really can't help you here.
@@ -78,7 +80,7 @@ public class AddPtg
 
     /** Creates new AddPtg */
 
-    protected AddPtg()
+    public AddPtg()
     {
     }
 
@@ -110,7 +112,7 @@ public class AddPtg
     }
     
     /** Implementation of method from Ptg */
-    public String toFormulaString()
+    public String toFormulaString(SheetReferences refs)
     {
         return "+";
     }
@@ -120,7 +122,7 @@ public class AddPtg
         StringBuffer buffer = new StringBuffer();
 
         buffer.append(operands[ 0 ]);
-        buffer.append(toFormulaString());
+        buffer.append(ADD);
         buffer.append(operands[ 1 ]);
         return buffer.toString();
     }
