@@ -13,7 +13,7 @@
  <body>
   <section><title>How To Use the HPSF APIs</title>
 
-   <p>This HOW-TO is organized in three sections. You should read them
+   <p>This HOW-TO is organized in four sections. You should read them
     sequentially because the later sections build upon the earlier ones.</p>
 
    <ol>
@@ -34,9 +34,18 @@
 
     <li>
      The <link href="#sec3">third section</link> tells how to read
-      non-standard properties. Non-standard properties are application-specific
-      triples consisting of an ID, a type, and a value.
-     </li>
+     non-standard properties. Non-standard properties are application-specific
+     triples consisting of an ID, a type, and a value.
+    </li>
+
+    <li>
+     The <link href="#sec4">fourth section</link> will tell you how to write
+     property set streams - once it is written. Writing is still quite
+     rudimentary in HPSF and you have to understand the <link
+      href="#sec3">third section</link> before you should think about writing
+     properties. Stick to the Javadoc API documentation to find out more about
+     writing property sets!
+    </li>
    </ol>
 
 
