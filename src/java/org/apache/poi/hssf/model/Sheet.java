@@ -86,6 +86,7 @@ import org.apache.poi.hssf.record
  * @author  Glen Stampoultzis (glens at apache.org)
  * @see org.apache.poi.hssf.model.Workbook
  * @see org.apache.poi.hssf.usermodel.HSSFSheet
+ * @author  Shawn Laubach (laubach at acm.org) Just Gridlines, Headers, Footers, and PrintSetup
  * @version 1.0-pre
  */
 
@@ -103,6 +104,10 @@ public class Sheet
     protected DefaultColWidthRecord  defaultcolwidth  = null;
     protected DefaultRowHeightRecord defaultrowheight = null;
     protected GridsetRecord          gridset          = null;
+    protected PrintSetupRecord printSetup             = null;
+    protected HeaderRecord header                     = null;
+    protected FooterRecord footer                     = null;
+    protected PrintGridlinesRecord printGridlines     = null;
     protected MergeCellsRecord       merged           = null;
     protected int                    mergedloc        = 0;
     private static POILogger         log              =
@@ -225,6 +230,23 @@ public class Sheet
                     rec = null;
                 }
             }
+	    else if (rec.getSid () == PrintGridlinesRecord.sid)
+		{
+		    retval.printGridlines = (PrintGridlinesRecord) rec;
+		}
+	    else if (rec.getSid () == HeaderRecord.sid)
+		{
+		    retval.header = (HeaderRecord) rec;
+		}
+	    else if (rec.getSid () == FooterRecord.sid)
+		{
+		    retval.footer = (FooterRecord) rec;
+		}
+	    else if (rec.getSid () == PrintSetupRecord.sid)
+		{
+		    retval.printSetup = (PrintSetupRecord) rec;
+		}
+
             if (rec != null)
             {
                 records.add(rec);
@@ -275,7 +297,8 @@ public class Sheet
         records.add(retval.createDelta());
         records.add(retval.createSaveRecalc());
         records.add(retval.createPrintHeaders());
-        records.add(retval.createPrintGridlines());
+	retval.printGridlines = (PrintGridlinesRecord) retval.createPrintGridlines ();
+	records.add (retval.printGridlines);
         retval.gridset = ( GridsetRecord ) retval.createGridset();
         records.add(retval.gridset);
         records.add(retval.createGuts());
@@ -283,11 +306,14 @@ public class Sheet
             ( DefaultRowHeightRecord ) retval.createDefaultRowHeight();
         records.add(retval.defaultrowheight);
         records.add(retval.createWSBool());
-        records.add(retval.createHeader());
-        records.add(retval.createFooter());
+	retval.header = (HeaderRecord) retval.createHeader ();
+	records.add (retval.header);
+	retval.footer = (FooterRecord) retval.createFooter ();
+	records.add (retval.footer);
         records.add(retval.createHCenter());
         records.add(retval.createVCenter());
-        records.add(retval.createPrintSetup());
+	retval.printSetup = (PrintSetupRecord) retval.createPrintSetup ();
+	records.add (retval.printSetup);
         retval.defaultcolwidth =
             ( DefaultColWidthRecord ) retval.createDefaultColWidth();
         records.add(retval.defaultcolwidth);
@@ -1919,4 +1945,77 @@ public class Sheet
         }
         return null;
     }
+
+    /**
+     * Returns the HeaderRecord.
+     * @return HeaderRecord for the sheet.
+     */
+    public HeaderRecord getHeader ()
+    {
+	return header;
+    }
+    
+    /**
+     * Sets the HeaderRecord.
+     * @param newHeader The new HeaderRecord for the sheet.
+     */
+    public void setHeader (HeaderRecord newHeader)
+    {
+	header = newHeader;
+    }
+    
+    /**
+     * Returns the FooterRecord.
+     * @return FooterRecord for the sheet.
+     */
+    public FooterRecord getFooter ()
+    {
+	return footer;
+    }
+    
+    /**
+     * Sets the FooterRecord.
+     * @param newFooter The new FooterRecord for the sheet.
+     */
+    public void setFooter (FooterRecord newFooter)
+    {
+	footer = newFooter;
+    }
+    
+    /**
+     * Returns the PrintSetupRecord.
+     * @return PrintSetupRecord for the sheet.
+     */
+    public PrintSetupRecord getPrintSetup ()
+    {
+	return printSetup;
+    }
+
+    /**
+     * Sets the PrintSetupRecord.
+     * @param newPrintSetup The new PrintSetupRecord for the sheet.
+     */
+    public void setPrintSetup (PrintSetupRecord newPrintSetup)
+    {
+	printSetup = newPrintSetup;
+    }
+    
+    /**
+     * Returns the PrintGridlinesRecord.
+     * @return PrintGridlinesRecord for the sheet.
+     */
+    public PrintGridlinesRecord getPrintGridlines ()
+    {
+	return printGridlines;
+    }
+    
+    /**
+     * Sets the PrintGridlinesRecord.
+     * @param newPrintGridlines The new PrintGridlinesRecord for the sheet.
+     */
+    public void setPrintGridlines (PrintGridlinesRecord newPrintGridlines)
+    {
+	printGridlines = newPrintGridlines;
+    }
+
 }
