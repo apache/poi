@@ -3,6 +3,8 @@
 
 <project default="poibrowser" basedir="../../" name="POIBrowser build">
 
+  <property name="build.root" value="build"/>
+
   <!-- =================================================================== -->
   <!-- GUI Run Target                                                      -->
   <!-- =================================================================== -->
@@ -14,8 +16,8 @@
     <java classname="org.apache.poi.contrib.poibrowser.POIBrowser" fork="true">
          <arg value="${contrib.input.selection}"/>
          <classpath>
-           <pathelement location="build/jakarta-poi/classes"/>
-           <pathelement location="build/jakarta-poi/contrib/classes"/>
+           <pathelement location="${build.root}/jakarta-poi/classes"/>
+           <pathelement location="${build.root}/jakarta-poi/contrib/classes"/>
          </classpath>   
     </java>       
   </target>
