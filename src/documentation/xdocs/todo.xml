@@ -49,6 +49,9 @@
 	Create new adapter object for handling MulBlank, MulRk, Rk
 	records.
   </action>
+  <action context="code">
+	Add a way to copy sheets.
+  </action>
  </actions>
 
 </todo>
