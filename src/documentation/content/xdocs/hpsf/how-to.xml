@@ -1036,7 +1036,7 @@ final String fileName = args[0];</source>
      <p>The <code>MutableSection</code> the sample application retrieved from
       the <code>MutablePropertySet</code> is still empty. It contains no
       properties and does not have a format ID. As you have read <link
-       href="#sec3"> above the format ID of the first section in a property set
+       href="#sec3">above</link> the format ID of the first section in a property set
        determines the property set's type. Since our property set should become
        a SummaryInformation property set we have to set the format ID of its
        first (and only) section to
