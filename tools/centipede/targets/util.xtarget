@@ -1,0 +1,22 @@
+  <!-- =================================================================== -->
+  <!-- Print out warnings for optional components                          -->
+  <!-- =================================================================== -->
+  <target name="optional-warnings"          
+      description="Outputs warnings if some optional jars are missing from the environment">
+  </target>
+  
+  <!-- =================================================================== -->
+  <!-- Try other builds that could go into this core build                 -->
+  <!-- =================================================================== -->
+  <target name="try" 
+          depends="init" 
+          description="Builds to try before including in main build">
+    <ant target="${try.target}" antfile="./tools/targets/try.xml"/>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Fix line endings in src                                             -->
+  <!-- =================================================================== -->
+  <target name="fixsrclf" depends="init" description="Fix lf in src directory (internal use only!)">
+          <fixcrlf srcdir="${java.dir}" includes="**/*.java"       eol="lf"/>
+  </target>

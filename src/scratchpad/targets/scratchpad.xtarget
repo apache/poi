@@ -1,0 +1,30 @@
+  <!-- =================================================================== -->
+  <!-- Interactive scratchpad builds                                       -->
+  <!-- =================================================================== -->
+  <target name="scratchpad" depends="init" description="Interactive Scratchpad Build">
+    <echo message="--------------------------------------------------------------"/>
+    <echo message=" "/>    
+    <echo message="          ${fullname} ${version} SCRATCHPAD "/>
+    <echo message=" "/>    
+    <echo message="--------------------------------------------------------------"/>  
+    <echo message="Building with ${ant.version}"/>  
+    <echo message="using build file ${ant.file}"/>  
+    <echo message="--------------------------------------------------------------"/>   
+    <echo message=" "/>        
+    <echo message=" These are SCRATCHPAD BUILDS. They are not guaranteed to work."/>
+    <echo message=" You have been warned. "/>
+    <echo message=" "/>
+    <echo message=" --------------"/>
+    <echo message=" --------------"/>
+    <echo message=" --------------"/>
+    <echo message=" --------------"/>
+    <echo message=" --------------"/>
+    <echo message=" --------------"/>
+    <echo message=" "/>
+
+    <property name="input.selection" value=""/>
+    <user-input name="input.selection">Please select a target </user-input>
+
+    <ant antfile="src/scratchpad/targets/${input.selection}.xml"/>
+
+  </target>

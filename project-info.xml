@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<project
+ name="Jakarta POI">
+   <info
+    module="jakarta-poi"
+    packages="org.apache.poi.*"
+    version="1.5"
+    tag="dev"
+    year="2001-2002"
+    web="http://jakarta.apache.org/poi/" />
+
+   <description>
+      <short>The POI project consists of APIs for manipulating various file formats based upon Microsoft's OLE 2 Compound Document format using pure Java.</short>
+
+      <detailed>A common misconception is that POI writes Excel files. POI is the name of the project. POI contains several components, one of which, HSSF, writes Excel files. The following are components of the entire POI project.POIFS is the oldest and most stable part of the project. It is our port of the OLE 2 Compound Document Format to pure Java. It supports both read and write functionality. All of our components ultimately rely on it by definition. HSSF is our port of the Microsoft Excel 97(-2002) file format (BIFF8) to pure Java. It supports read and write capability. HDF is our port of the Microsoft Word 97 file format to pure Java. It supports read and write capability. This component is in the early stages of design. Jump in! </detailed>
+
+      <where>The home page for the POI project can be found on the web site (http://jakarta.apache.org/poi/). There you also find information on how to download the latest release as well as all the other information you might need regarding this project.</where>
+
+      <requirements>The for installing it you need a Java 1.2 or later compatible virtual machine for your operating system.</requirements>
+
+      <howto>The documentation available as of the date of this release is included in the "docs/" directory. The documentation sources are in the "src/documentation" directory. Look for the most updated documentation on the web site.</howto>
+
+      <licence>For legal and licensing issues, please read the LICENSE.* files in the /legal directory.</licence>
+   </description>
+
+   <developers>
+       <!-- in strict alphabetical order -->
+      <person name="Andrew C. Oliver"  email="acoliver at apache dot org" id="ACO" />
+      <person name="Glen Stampoultzis" email="glens at apache.org"        id="GS" />
+      <person name="Marc Johnson"      email="mjohnson at apache dot org" id="MJ" />
+      <person name="Rainer Klute"      email="rainer.klute@epost.de"      id="RK" />
+   </developers>
+
+   <todo>
+      <actions priority="medium">
+         <action context="code" assigned-to="NKB">
+
+         </action>
+      </actions>
+   </todo>
+
+   <credits>
+      <credit>This product includes software developed by the Krysalis Project (http://www.krysalis.org/).</credit>
+   </credits>
+</project>
+
