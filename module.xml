@@ -66,7 +66,7 @@
 
     <ant target="gump" vm="1.2">
       <property name="ant.home" reference="home" project="krysalis-centipede"/>
-      <property name="cents.dir" path="tools/cents" project="krysalis-centipede"/>
+      <property name="cents.dir" path="tools/cents" project="jakarta-poi"/>
       <property name="cent.dir.suffix" value=".cent"/>  
     </ant>
     
