@@ -66,6 +66,9 @@ import org.apache.poi.hssf.record.HeaderRecord;
  * that return the characters used to represent these.  One can also change the
  * fonts by using similar methods.
  * <P>
+ * To get an instance of HSSFHeader for a HSSFSheet is to call <a
+ * href="HSSFSheet.html#getHeader()">getHeader()</a> on the sheet.
+ * <p>
  * @author Shawn Laubach (slaubach at apache dot org)
  */
 public class HSSFHeader extends Object {
