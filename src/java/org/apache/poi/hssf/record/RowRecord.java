@@ -71,7 +71,8 @@ public class RowRecord
     implements Comparable
 {
     public final static short sid = 0x208;
-    private short             field_1_row_number;
+    //private short             field_1_row_number;
+    private int             field_1_row_number;
     private short             field_2_first_col;
     private short             field_3_last_col;   // plus 1
     private short             field_4_height;
@@ -130,7 +131,8 @@ public class RowRecord
 
     protected void fillFields(byte [] data, short size, int offset)
     {
-        field_1_row_number   = LittleEndian.getShort(data, 0 + offset);
+        //field_1_row_number   = LittleEndian.getShort(data, 0 + offset);
+        field_1_row_number   = LittleEndian.getUShort(data, 0 + offset);
         field_2_first_col    = LittleEndian.getShort(data, 2 + offset);
         field_3_last_col     = LittleEndian.getShort(data, 4 + offset);
         field_4_height       = LittleEndian.getShort(data, 6 + offset);
@@ -145,7 +147,8 @@ public class RowRecord
      * @param row - the row number
      */
 
-    public void setRowNumber(short row)
+    //public void setRowNumber(short row)
+    public void setRowNumber(int row)
     {
         field_1_row_number = row;
     }
@@ -281,7 +284,8 @@ public class RowRecord
      * @return row - the row number
      */
 
-    public short getRowNumber()
+    //public short getRowNumber()
+    public int getRowNumber()
     {
         return field_1_row_number;
     }
@@ -451,7 +455,8 @@ public class RowRecord
     {
         LittleEndian.putShort(data, 0 + offset, sid);
         LittleEndian.putShort(data, 2 + offset, ( short ) 16);
-        LittleEndian.putShort(data, 4 + offset, getRowNumber());
+        //LittleEndian.putShort(data, 4 + offset, getRowNumber());
+        LittleEndian.putShort(data, 4 + offset, ( short ) getRowNumber());
         LittleEndian.putShort(data, 6 + offset, getFirstCol() == -1 ? (short)0 : getFirstCol());
         LittleEndian.putShort(data, 8 + offset, getLastCol() == -1 ? (short)0 : getLastCol());
         LittleEndian.putShort(data, 10 + offset, getHeight());

@@ -189,7 +189,8 @@ public class HSSFSheet
      * @see #removeRow(HSSFRow)
      */
 
-    public HSSFRow createRow(short rownum)
+    //public HSSFRow createRow(short rownum)
+    public HSSFRow createRow(int rownum)
     {
         HSSFRow row = new HSSFRow(book, sheet, rownum);
 
@@ -315,7 +316,8 @@ public class HSSFSheet
     {
         HSSFRow row = new HSSFRow();
 
-        row.setRowNum((short) rownum);
+        //row.setRowNum((short) rownum);
+        row.setRowNum( rownum);
         return (HSSFRow) rows.get(row);
     }
 
@@ -464,9 +466,11 @@ public class HSSFSheet
 
     public int addMergedRegion(Region region)
     {
-        return sheet.addMergedRegion((short) region.getRowFrom(),
+        //return sheet.addMergedRegion((short) region.getRowFrom(),
+        return sheet.addMergedRegion( region.getRowFrom(),
                 region.getColumnFrom(),
-                (short) region.getRowTo(),
+                //(short) region.getRowTo(),
+                region.getRowTo(),
                 region.getColumnTo());
     }
 

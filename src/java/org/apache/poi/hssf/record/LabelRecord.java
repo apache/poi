@@ -77,7 +77,8 @@ public class LabelRecord
     implements CellValueRecordInterface
 {
     public final static short sid = 0x204;
-    private short             field_1_row;
+    //private short             field_1_row;
+    private int             field_1_row;
     private short             field_2_column;
     private short             field_3_xf_index;
     private short             field_4_string_len;
@@ -142,7 +143,8 @@ public class LabelRecord
 
     protected void fillFields(byte [] data, short size, int offset)
     {
-        field_1_row          = LittleEndian.getShort(data, 0 + offset);
+        //field_1_row          = LittleEndian.getShort(data, 0 + offset);
+        field_1_row          = LittleEndian.getUShort(data, 0 + offset);
         field_2_column       = LittleEndian.getShort(data, 2 + offset);
         field_3_xf_index     = LittleEndian.getShort(data, 4 + offset);
         field_4_string_len   = LittleEndian.getShort(data, 6 + offset);
@@ -171,7 +173,8 @@ public class LabelRecord
         field_3_xf_index = index;
       }
   */
-    public short getRow()
+    //public short getRow()
+    public int getRow()
     {
         return field_1_row;
     }
@@ -299,7 +302,8 @@ public class LabelRecord
      * NO-OP!
      */
 
-    public void setRow(short row)
+    //public void setRow(short row)
+    public void setRow(int row)
     {
     }
 

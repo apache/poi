@@ -83,7 +83,8 @@ public class FormulaRecord
     public static final short sid =
         0x06;   // docs say 406...because of a bug Microsoft support site article #Q184647)
     
-    private short             field_1_row;
+    //private short             field_1_row;
+    private int             field_1_row;
     private short             field_2_column;
     private short             field_3_xf;
     private double            field_4_value;
@@ -134,7 +135,8 @@ public class FormulaRecord
     protected void fillFields(byte [] data, short size, int offset)
     {
         if (EXPERIMENTAL_FORMULA_SUPPORT_ENABLED) {
-        field_1_row            = LittleEndian.getShort(data, 0 + offset);
+        //field_1_row            = LittleEndian.getShort(data, 0 + offset);
+        field_1_row            = LittleEndian.getUShort(data, 0 + offset);
         field_2_column         = LittleEndian.getShort(data, 2 + offset);
         field_3_xf             = LittleEndian.getShort(data, 4 + offset);
         field_4_value          = LittleEndian.getDouble(data, 6 + offset);
@@ -169,7 +171,8 @@ public class FormulaRecord
         return stack;
     }
 
-    public void setRow(short row)
+    //public void setRow(short row)
+    public void setRow(int row)
     {
         field_1_row = row;
     }
@@ -216,7 +219,8 @@ public class FormulaRecord
         field_7_expression_len = len;
     }
 
-    public short getRow()
+    //public short getRow()
+    public int getRow()
     {
         return field_1_row;
     }
@@ -352,7 +356,8 @@ public class FormulaRecord
 
         LittleEndian.putShort(data, 0 + offset, sid);
         LittleEndian.putShort(data, 2 + offset, ( short ) (22 + ptgSize));
-        LittleEndian.putShort(data, 4 + offset, getRow());
+        //LittleEndian.putShort(data, 4 + offset, getRow());
+        LittleEndian.putShort(data, 4 + offset, ( short ) getRow());
         LittleEndian.putShort(data, 6 + offset, getColumn());
         LittleEndian.putShort(data, 8 + offset, getXFIndex());
         LittleEndian.putDouble(data, 10 + offset, getValue());

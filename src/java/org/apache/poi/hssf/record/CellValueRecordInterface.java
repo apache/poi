@@ -81,7 +81,8 @@ public interface CellValueRecordInterface
      * @return the row
      */
 
-    public short getRow();
+    //public short getRow();
+    public int getRow();
 
     /**
      * get the column this cell defines within the row
@@ -96,7 +97,8 @@ public interface CellValueRecordInterface
      * @param row the row this cell occurs within
      */
 
-    public void setRow(short row);
+    //public void setRow(short row);
+    public void setRow(int row);
 
     /**
      * set the column this cell defines within the row

@@ -77,7 +77,8 @@ public class MulRKRecord
     extends Record
 {
     public final static short sid = 0xbd;
-    private short             field_1_row;
+    //private short             field_1_row;
+    private int             field_1_row;
     private short             field_2_first_col;
     private ArrayList         field_3_rks;
     private short             field_4_last_col;
@@ -115,7 +116,8 @@ public class MulRKRecord
         super(id, size, data, offset);
     }
 
-    public short getRow()
+    //public short getRow()
+    public int getRow()
     {
         return field_1_row;
     }
@@ -180,7 +182,8 @@ public class MulRKRecord
 
     protected void fillFields(byte [] data, short size, int offset)
     {
-        field_1_row       = LittleEndian.getShort(data, 0 + offset);
+        //field_1_row       = LittleEndian.getShort(data, 0 + offset);
+        field_1_row       = LittleEndian.getUShort(data, 0 + offset);
         field_2_first_col = LittleEndian.getShort(data, 2 + offset);
         field_3_rks       = parseRKs(data, 4, offset, size);
         field_4_last_col  = LittleEndian.getShort(data,

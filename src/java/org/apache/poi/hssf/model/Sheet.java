@@ -347,7 +347,8 @@ public class Sheet
         }
     }
 
-    public int addMergedRegion(short rowFrom, short colFrom, short rowTo,
+    //public int addMergedRegion(short rowFrom, short colFrom, short rowTo,
+    public int addMergedRegion(int rowFrom, short colFrom, int rowTo,
                                short colTo)
     {
         if (merged == null)
@@ -456,7 +457,8 @@ public class Sheet
      * @see org.apache.poi.hssf.record.DimensionsRecord
      */
 
-    public void setDimensions(short firstrow, short firstcol, short lastrow,
+    //public void setDimensions(short firstrow, short firstcol, short lastrow,
+    public void setDimensions(int firstrow, short firstcol, int lastrow,
                               short lastcol)
     {
         log.log(log.DEBUG, "Sheet.setDimensions");
@@ -627,7 +629,8 @@ public class Sheet
         log.log(log.DEBUG, "create row number " + row);
         RowRecord rowrec = new RowRecord();
 
-        rowrec.setRowNumber(( short ) row);
+        //rowrec.setRowNumber(( short ) row);
+        rowrec.setRowNumber(row);
         rowrec.setHeight(( short ) 0xff);
         rowrec.setOptimize(( short ) 0x0);
         rowrec.setOptionFlags(( short ) 0x0);
@@ -645,7 +648,8 @@ public class Sheet
      * @see org.apache.poi.hssf.record.SSTRecord
      */
 
-    public LabelSSTRecord createLabelSST(short row, short col, int index)
+    //public LabelSSTRecord createLabelSST(short row, short col, int index)
+    public LabelSSTRecord createLabelSST(int row, short col, int index)
     {
         log.logFormatted(log.DEBUG, "create labelsst row,col,index %,%,%",
                          new int[]
@@ -671,7 +675,8 @@ public class Sheet
      * @return NumberRecord for that row, col containing that value as added to the sheet
      */
 
-    public NumberRecord createNumber(short row, short col, double value)
+    //public NumberRecord createNumber(short row, short col, double value)
+    public NumberRecord createNumber(int row, short col, double value)
     {
         log.logFormatted(log.DEBUG, "create number row,col,value %,%,%",
                          new double[]
@@ -680,7 +685,8 @@ public class Sheet
         });
         NumberRecord rec = new NumberRecord();
 
-        rec.setRow(( short ) row);
+        //rec.setRow(( short ) row);
+        rec.setRow(row);
         rec.setColumn(col);
         rec.setValue(value);
         rec.setXFIndex(( short ) 0x0f);
@@ -694,15 +700,18 @@ public class Sheet
      * @param col - the column the BlankRecord is a member of
      */
 
-    public BlankRecord createBlank(short row, short col)
+    //public BlankRecord createBlank(short row, short col)
+    public BlankRecord createBlank(int row, short col)
     {
-        log.logFormatted(log.DEBUG, "create blank row,col %,%", new short[]
+        //log.logFormatted(log.DEBUG, "create blank row,col %,%", new short[]
+        log.logFormatted(log.DEBUG, "create blank row,col %,%", new int[]
         {
             row, col
         });
         BlankRecord rec = new BlankRecord();
 
-        rec.setRow(( short ) row);
+        //rec.setRow(( short ) row);
+        rec.setRow(row);
         rec.setColumn(col);
         rec.setXFIndex(( short ) 0x0f);
         return rec;
@@ -718,10 +727,12 @@ public class Sheet
      * @return bogus/useless formula record
      */
 
-    public FormulaRecord createFormula(short row, short col, String formula)
+    //public FormulaRecord createFormula(short row, short col, String formula)
+    public FormulaRecord createFormula(int row, short col, String formula)
     {
         log.logFormatted(log.DEBUG, "create formula row,col,formula %,%,%",
-                         new short[]
+                         //new short[]
+                         new int[]
         {
             row, col
         }, formula);
@@ -759,7 +770,8 @@ public class Sheet
      * @param col the cell value record itself.
      */
 
-    public void addValueRecord(short row, CellValueRecordInterface col)
+    //public void addValueRecord(short row, CellValueRecordInterface col)
+    public void addValueRecord(int row, CellValueRecordInterface col)
     {
         checkCells();
         log.logFormatted(log.DEBUG, "add value record  row,loc %,%", new int[]
@@ -812,7 +824,8 @@ public class Sheet
      * @see org.apache.poi.hssf.record.CellValueRecordInterface
      */
 
-    public void removeValueRecord(short row, CellValueRecordInterface col)
+    //public void removeValueRecord(short row, CellValueRecordInterface col)
+    public void removeValueRecord(int row, CellValueRecordInterface col)
     {
         checkCells();
         log.logFormatted(log.DEBUG, "remove value record row,dimsloc %,%",
@@ -1135,7 +1148,8 @@ public class Sheet
      *
      */
 
-    public RowRecord getRow(short rownum)
+    //public RowRecord getRow(short rownum)
+    public RowRecord getRow(int rownum)
     {
         log.log(log.DEBUG, "getNextRow loc= " + loc);
         return rows.getRow(rownum);

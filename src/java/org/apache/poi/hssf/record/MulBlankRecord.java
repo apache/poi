@@ -78,7 +78,8 @@ public class MulBlankRecord
     extends Record
 {
     public final static short sid = 0xbe;
-    private short             field_1_row;
+    //private short             field_1_row;
+    private int             field_1_row;
     private short             field_2_first_col;
     private short[]           field_3_xfs;
     private short             field_4_last_col;
@@ -122,7 +123,8 @@ public class MulBlankRecord
      * @return row number
      */
 
-    public short getRow()
+    //public short getRow()
+    public int getRow()
     {
         return field_1_row;
     }
@@ -178,7 +180,8 @@ public class MulBlankRecord
 
     protected void fillFields(byte [] data, short size, int offset)
     {
-        field_1_row       = LittleEndian.getShort(data, 0 + offset);
+        //field_1_row       = LittleEndian.getShort(data, 0 + offset);
+        field_1_row       = LittleEndian.getUShort(data, 0 + offset);
         field_2_first_col = LittleEndian.getShort(data, 2 + offset);
         field_3_xfs       = parseXFs(data, 4, offset, size);
         field_4_last_col  = LittleEndian.getShort(data,

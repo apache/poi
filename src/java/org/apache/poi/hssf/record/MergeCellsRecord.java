@@ -163,7 +163,8 @@ public class MergeCellsRecord
      * @return new index of said area (don't depend on it if you add/remove)
      */
 
-    public int addArea(short rowfrom, short colfrom, short rowto, short colto)
+    //public int addArea(short rowfrom, short colfrom, short rowto, short colto)
+    public int addArea(int rowfrom, short colfrom, int rowto, short colto)
     {
         if (field_2_regions == null)
         {
@@ -224,9 +225,11 @@ public class MergeCellsRecord
         {
             MergedRegion region = getAreaAt(k);
 
-            LittleEndian.putShort(data, offset + pos, region.row_from);
+            //LittleEndian.putShort(data, offset + pos, region.row_from);
+            LittleEndian.putShort(data, offset + pos, ( short ) region.row_from);
             pos += 2;
-            LittleEndian.putShort(data, offset + pos, region.row_to);
+            //LittleEndian.putShort(data, offset + pos, region.row_to);
+            LittleEndian.putShort(data, offset + pos, ( short ) region.row_to);
             pos += 2;
             LittleEndian.putShort(data, offset + pos, region.col_from);
             pos += 2;
@@ -283,7 +286,8 @@ public class MergeCellsRecord
          * create a merged region all in one stroke.
          */
 
-        public MergedRegion(short row_from, short row_to, short col_from,
+        //public MergedRegion(short row_from, short row_to, short col_from,
+        public MergedRegion(int row_from, int row_to, short col_from,
                             short col_to)
         {
             this.row_from = row_from;
@@ -296,13 +300,15 @@ public class MergeCellsRecord
          * upper lefthand corner row
          */
 
-        public short row_from;
+        //public short row_from;
+        public int row_from;
 
         /**
          * lower right hand corner row
          */
 
-        public short row_to;
+        //public short row_to;
+        public int row_to;
 
         /**
          * upper right hand corner col

@@ -101,6 +101,48 @@ public class TestLittleEndian
         assertEquals(expected[ 1 ], LittleEndian.getShort(testdata, 1));
     }
 
+    public void testGetUShort()
+    {
+        byte[] testdata = new byte[ LittleEndian.SHORT_SIZE + 1 ];
+
+        testdata[ 0 ] = 0x01;
+        testdata[ 1 ] = ( byte ) 0xFF;
+        testdata[ 2 ] = 0x02;
+
+        byte[] testdata2 = new byte[ LittleEndian.SHORT_SIZE + 1 ];
+        
+        testdata2[ 0 ] = 0x0D;
+        testdata2[ 1 ] = ( byte )0x93;
+        testdata2[ 2 ] = ( byte )0xFF;
+
+        int expected[] = new int[ 4 ];
+
+        expected[ 0 ] = 0xFF01;
+        expected[ 1 ] = 0x02FF;
+        expected[ 2 ] = 0x930D;
+        expected[ 3 ] = 0xFF93;
+        assertEquals(expected[ 0 ], LittleEndian.getUShort(testdata));
+        assertEquals(expected[ 1 ], LittleEndian.getUShort(testdata, 1));
+        assertEquals(expected[ 2 ], LittleEndian.getUShort(testdata2));
+        assertEquals(expected[ 3 ], LittleEndian.getUShort(testdata2, 1));
+
+        byte[] testdata3 = new byte[ LittleEndian.SHORT_SIZE + 1 ];
+        LittleEndian.putShort(testdata3, 0, ( short ) expected[2] );
+        LittleEndian.putShort(testdata3, 1, ( short ) expected[3] );
+        assertEquals(testdata3[ 0 ], 0x0D);
+        assertEquals(testdata3[ 1 ], (byte)0x93);
+        assertEquals(testdata3[ 2 ], (byte)0xFF);
+        assertEquals(expected[ 2 ], LittleEndian.getUShort(testdata3));
+        assertEquals(expected[ 3 ], LittleEndian.getUShort(testdata3, 1));
+        //System.out.println("TD[1][0]: "+LittleEndian.getUShort(testdata)+" expecting 65281");
+        //System.out.println("TD[1][1]: "+LittleEndian.getUShort(testdata, 1)+" expecting 767");
+        //System.out.println("TD[2][0]: "+LittleEndian.getUShort(testdata2)+" expecting 37645");
+        //System.out.println("TD[2][1]: "+LittleEndian.getUShort(testdata2, 1)+" expecting 65427");
+        //System.out.println("TD[3][0]: "+LittleEndian.getUShort(testdata3)+" expecting 37645");
+        //System.out.println("TD[3][1]: "+LittleEndian.getUShort(testdata3, 1)+" expecting 65427");
+        
+    }
+
     private static final byte[]   _double_array =
     {
         56, 50, -113, -4, -63, -64, -13, 63, 76, -32, -42, -35, 60, -43, 3, 64
