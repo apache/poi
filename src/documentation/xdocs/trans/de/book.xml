@@ -7,42 +7,34 @@
       xmlns:xlink="http://www.w3.org/1999/xlink">
 
   <menu label="Community">
-    <menu-item label="News" href="news.html"/>    
-    <menu-item label="Changes" href="changes.html"/> 
-    <menu-item label="To do" href="todo.html"/> 
-    <menu-item label="Get Involved" href="getinvolved/index.html"/>
-    <menu-item label="Vision" href="plan/POI20Vision.html"/>
-    <menu-item label="History and Future" href="historyandfuture.html"/>
-    <menu-item label="Who we are" href="who.html"/> 
-    <menu-item label="Resolutions" href="resolutions/index.html"/>    
+    <menu-item label="News" href="../../news.html"/>    
+    <menu-item label="Changes" href="../../changes.html"/> 
+    <menu-item label="To do" href="../../todo.html"/> 
+    <menu-item label="Get Involved" href="../../getinvolved/index.html"/>
+    <menu-item label="Vision" href="../../plan/POI20Vision.html"/>
+    <menu-item label="History and Future" href="../../historyandfuture.html"/>
+    <menu-item label="Who we are" href="../../who.html"/> 
+    <menu-item label="Resolutions" href="../../resolutions/index.html"/>    
   </menu>
   
   <menu label="Marketing">
-    <menu-item label="Case Studies" href="casestudies.html"/>
+    <menu-item label="Case Studies" href="../../casestudies.html"/>
   </menu>
 
   <menu label="Project">
-    <menu-item label="Overview" href="overview.html"/>
-    <menu-item label="POIFS" href="poifs/index.html"/>
-    <menu-item label="HSSF" href="hssf/index.html"/>
-    <menu-item label="HDF" href="hdf/index.html"/>
-    <menu-item label="HPSF" href="hpsf/index.html"/>
-    <menu-item label="POI-Utils" href="utils/index.html"/>  
+    <menu-item label="Overview" href="../../overview.html"/>
+    <menu-item label="POIFS" href="../../poifs/index.html"/>
+    <menu-item label="HSSF" href="../../hssf/index.html"/>
+    <menu-item label="HDF" href="../../hdf/index.html"/>
+    <menu-item label="HPSF" href="../../hpsf/index.html"/>
+    <menu-item label="POI-Utils" href="../../utils/index.html"/>  
     <menu-item label="Download" href="http://jakarta.apache.org/builds/jakarta-poi/"/> 
   </menu>
   
   <menu label="Docs">
     <menu-item label="Javadocs" href="http://jakarta.apache.org/poi/javadocs/"/>  
-    <menu-item label="FAQ" href="faq.html"/>
-    <menu-item label="References" href="references/index.html"/>  
-  </menu>
-  
-  <menu label="Tranlsations">
-    <menu-item label="Index" href="trans/index.html"/>
-    <menu-item label="Guidelines" href="trans/guidelines.html"/>
-    <menu-item label="German" href="trans/de/index.html"/>
-    <menu-item label="Spanish" href="trans/es/index.html"/>
-    <menu-item label="Japanese" href="http://www.terra-intl.com/jakarta/poi/"/>
+    <menu-item label="FAQ" href="../../faq.html"/>
+    <menu-item label="References" href="../../references/index.html"/>  
   </menu>
   
   <menu label="Code">

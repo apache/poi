@@ -15,9 +15,8 @@
     <section title="Translations">
         <p> 
             The POI documentation translation project has begun.  The first ones 
-            to start are the <link href="trans/es/index.html">Spanish 
-            (espaniol)</link> and <link href="http://www.terra-intl.com/jakarta/poi/">Japanese</link>, and 
-            <link href="trans/de/index.html">German</link>
+            to start are the <link href="../es/index.html">Spanish 
+            (espaniol)</link> and <link href="http://www.terra-intl.com/jakarta/poi/">Japanese</link>
             translations.  Others are welcome.  Please feel 
             free to participate!
         </p>
@@ -98,15 +97,15 @@
         <section title="POIFS (POI Filesystem)">
              <p>POIFS is the oldest and most stable part of the project.  It is our port of the OLE 2 Compound Document Format to
              pure Java.  It supports both read and write functionality.  All of our components ultimately rely on it by
-             definition.  Please see <link href="./poifs/index.html">the POIFS project page</link> for more information.</p>
+             definition.  Please see <link href="../../poifs/index.html">the POIFS project page</link> for more information.</p>
         </section>
         <section title="HSSF (Horrible Spreadsheet Format)">
              <p>HSSF is our port of the Microsoft Excel 97(-2002) file format (BIFF8) to pure Java.  It supports read and write
-             capability.  Please see <link href="./hssf/index.html">the HSSF project page</link> for more information.</p>
+             capability.  Please see <link href="../../hssf/index.html">the HSSF project page</link> for more information.</p>
         </section>
         <section title="HDF (Horrible Document Format)">
              <p>HDF is our port of the Microsoft Word 97 file format to pure Java.  It supports read and write capability.
-             Please see <link href="./hdf/index.html">the HDF project page for more information</link>.  This component is
+             Please see <link href="../../hdf/index.html">the HDF project page for more information</link>.  This component is
              in the early stages of design.  Jump in!</p>
         </section>
         <section title="HPSF (Horrible Property Set Format)">
@@ -115,7 +114,7 @@
 	  (title, author, date of last modification etc.), but they can be used
 	  for application-specific purposes as well. Currently HPSF supports
 	  read functionality only. Please see <link
-	    href="./hpsf/index.html">the HPSF project page</link> for more
+	    href="../../hpsf/index.html">the HPSF project page</link> for more
 	  information.</p>
         </section>
 
