@@ -49,7 +49,7 @@ public class ListLevel
   private short _reserved;
   private byte[] _grpprlPapx;
   private byte[] _grpprlChpx;
-  private char[] _numberText;
+  private char[] _numberText=null;
 
   public ListLevel(int startAt, int numberFormatCode, int alignment,
                    byte[] numberProperties, byte[] entryProperties,
@@ -111,13 +111,18 @@ public class ListLevel
     System.arraycopy(buf, offset, _grpprlChpx, 0, _cbGrpprlChpx);
     offset += _cbGrpprlChpx;
 
-    int numberTextLength = LittleEndian.getShort(buf, offset);
-    _numberText = new char[numberTextLength];
-    offset += LittleEndian.SHORT_SIZE;
-    for (int x = 0; x < numberTextLength; x++)
+    int numberTextLength = LittleEndian.getShort(buf, offset); 
+    /* sometimes numberTextLength<0 */
+    /* by derjohng */
+    if (numberTextLength>0)
     {
-      _numberText[x] = (char)LittleEndian.getShort(buf, offset);
-      offset += LittleEndian.SHORT_SIZE;
+        _numberText = new char[numberTextLength];
+        offset += LittleEndian.SHORT_SIZE;
+        for (int x = 0; x < numberTextLength; x++)
+        {
+          _numberText[x] = (char)LittleEndian.getShort(buf, offset);
+          offset += LittleEndian.SHORT_SIZE;
+        }
     }
 
   }
@@ -230,7 +235,12 @@ public class ListLevel
   }
   public int getSizeInBytes()
   {
-    return 28 + _cbGrpprlChpx + _cbGrpprlPapx + (_numberText.length * LittleEndian.SHORT_SIZE) + 2;
+      if (_numberText!=null)
+      {
+            return 28 + _cbGrpprlChpx + _cbGrpprlPapx + (_numberText.length * LittleEndian.SHORT_SIZE) + 2;
+      } else {
+          return 28 + _cbGrpprlChpx + _cbGrpprlPapx  + 2;
+      }
   }
 
 }
