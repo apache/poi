@@ -698,7 +698,48 @@ extends TestCase {
     
     
     
-    
+    public void testAbsRefs() throws Exception {
+            File file = File.createTempFile("testFormulaAbsRef",".xls");
+            FileOutputStream out    = new FileOutputStream(file);
+            HSSFWorkbook     wb     = new HSSFWorkbook();
+            HSSFSheet        s      = wb.createSheet();
+            HSSFRow          r      = null;
+            HSSFCell         c      = null;
+
+
+            r = s.createRow((short) 0);
+
+            c = r.createCell((short) 0);
+            c.setCellFormula("A3+A2");
+            c=r.createCell( (short) 1);
+            c.setCellFormula("$A3+$A2");
+            c=r.createCell( (short) 2);
+            c.setCellFormula("A$3+A$2");
+            c=r.createCell( (short) 3);
+            c.setCellFormula("$A$3+$A$2");
+             c=r.createCell( (short) 4);
+            c.setCellFormula("SUM($A$3,$A$2)");
+
+            wb.write(out);
+            out.close();
+            assertTrue("file exists",file.exists());
+            
+            FileInputStream in = new FileInputStream(file);
+            wb = new HSSFWorkbook(in);
+            s = wb.getSheetAt(0);
+            r = s.getRow(0);
+            c = r.getCell((short)0);
+            assertTrue("A3+A2", ("A3+A2").equals(c.getCellFormula()));
+             c = r.getCell((short)1);
+            assertTrue("$A3+$A2", ("$A3+$A2").equals(c.getCellFormula()));
+             c = r.getCell((short)2);
+            assertTrue("A$3+A$2", ("A$3+A$2").equals(c.getCellFormula()));
+             c = r.getCell((short)3);
+            assertTrue("$A$3+$A$2", ("$A$3+$A$2").equals(c.getCellFormula()));
+            c = r.getCell((short)4);
+            assertTrue("SUM($A$3,$A$2)", ("SUM($A$3,$A$2)").equals(c.getCellFormula()));
+            in.close();
+    }
     public static void main(String [] args) {
         System.out
         .println("Testing org.apache.poi.hssf.usermodel.TestFormulas");
