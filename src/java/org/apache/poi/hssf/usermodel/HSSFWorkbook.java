@@ -270,7 +270,9 @@ public class HSSFWorkbook
     
      
     /**
-     * set the sheet name.
+     * set the sheet name. 
+     * Will throw IllegalArgumentException if the name is greater than 31 chars
+     * or contains /\?*[]
      * @param sheet number (0 based)
      * @param sheet name
      */
@@ -371,7 +373,11 @@ public class HSSFWorkbook
         windowTwo.setPaged(sheets.size() == 1);
 
         sheets.add(clonedSheet);
-        workbook.setSheetName(sheets.size()-1, srcName+"[1]");
+        if (srcName.length()<28) {
+            workbook.setSheetName(sheets.size()-1, srcName+"(2)");
+        }else {
+            workbook.setSheetName(sheets.size()-1,srcName.substring(0,28)+"(2)");
+        }
         return clonedSheet;
       }
       return null;
