@@ -253,15 +253,15 @@ public class DocumentSummaryInformation extends SpecialPropertySet
 
 
     /**
-     * <p>Returns the stream's links dirty (or <code>null</code>)
-     * <strong>when this method is implemented. Please note that the
-     * return type is likely to change!</strong>
+     * <p>Returns the stream's links dirty information <strong>when
+     * this method is implemented.</strong>
      */
-    public byte[] getLinksDirty()
+    public boolean getLinksDirty()
     {
         if (true)
             throw new UnsupportedOperationException("FIXME");
-        return (byte[]) getProperty(PropertyIDMap.PID_LINKSDIRTY);
+        // return (byte[]) getProperty(PropertyIDMap.PID_LINKSDIRTY);
+        return false;
     }
 
 }
