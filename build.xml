@@ -275,7 +275,7 @@
            description="Compile java source code">
 
     <antcall target="call-cent">
-      <param name="cent-name"   value="centipede"/> 
+      <param name="cent-name"   value="umldoclet"/> 
       <param name="cent-target" value="javadocs"/> 
     </antcall>
 

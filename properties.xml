@@ -27,7 +27,11 @@
                  <antidote/>   
                  <xmldoclet/>    -->      
             <centipede>
-              <javadocs group="POIFS org.apache.poi.poifs*,HSSF org.apache.poi.hssf*,HPSF org.apache.poi.hpsf*,"/>
+              <javadocs group="POIFS org.apache.poi.poifs*,HSSF org.apache.poi.hssf*,HPSF org.apache.poi.hpsf*,">
+                <altenative views="uml">
+                  <uml prefix="uml-" suffix="" extension="html"/>
+                </altenative>
+              </javadocs>
             </centipede>
             <junit/>
             <jdepend/>
