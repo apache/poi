@@ -545,20 +545,23 @@ public class FormulaRecord
                 .append("\n");
             buffer.append("    .expressionlength= ").append(getExpressionLength())
                 .append("\n");
-            buffer.append("    .numptgsinarray  = ").append(field_8_parsed_expr.size())
-                .append("\n");
+
+            if (field_8_parsed_expr != null) {
+                buffer.append("    .numptgsinarray  = ").append(field_8_parsed_expr.size())
+                    .append("\n");
             
             
-            for (int k = 0; k < field_8_parsed_expr.size(); k++ ) {
+                for (int k = 0; k < field_8_parsed_expr.size(); k++ ) {
 /*                buffer.append("formula ").append(k).append(" ")
-               .append(((Ptg)field_8_parsed_expr.get(k)).toFormulaString());*/
-                buffer.append("Formula ")
-                .append(k)
-                .append("=")
-                .append(field_8_parsed_expr.get(k).toString())
-                .append("\n")
-                .append(((Ptg)field_8_parsed_expr.get(k)).toDebugString())
-                .append("\n");                
+                  .append(((Ptg)field_8_parsed_expr.get(k)).toFormulaString());*/
+                    buffer.append("Formula ")
+                        .append(k)
+                        .append("=")
+                        .append(field_8_parsed_expr.get(k).toString())
+                        .append("\n")
+                        .append(((Ptg)field_8_parsed_expr.get(k)).toDebugString())
+                        .append("\n");
+                }
             }
             
             
