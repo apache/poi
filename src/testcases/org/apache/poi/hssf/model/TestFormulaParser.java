@@ -306,6 +306,15 @@ public class TestFormulaParser extends TestCase {
         assertTrue("second ptg is string",ptg[1] instanceof StringPtg);
 
     }
+
+    public void testConcatenate(){
+         FormulaParser fp = new FormulaParser("CONCATENATE(\"first\",\"second\")",null);
+         fp.parse();
+         Ptg[] ptg = fp.getRPNPtg();
+        assertTrue("first ptg is string",ptg[0] instanceof StringPtg);
+        assertTrue("second ptg is string",ptg[1] instanceof StringPtg);
+    }
+    
      public static void main(String [] args) {
         System.out.println("Testing org.apache.poi.hssf.record.formula.FormulaParser");
         junit.textui.TestRunner.run(TestFormulaParser.class);
