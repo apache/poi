@@ -162,7 +162,7 @@ public class MulBlankRecord
 
     /**
      * returns the xf index for column (coffset = column - field_2_first_col)
-     * @param the column (coffset = column - field_2_first_col)
+     * @param coffset  the column (coffset = column - field_2_first_col)
      * @return the XF index for the column
      */
 
