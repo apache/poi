@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE changes PUBLIC "-//APACHE//DTD Changes V1.1//EN" "../../dtd/changes-v11.dtd">
 
-<changes><title>Historial de Cambios</title>
+<changes><title>Jakarta POI - Historial de Cambios</title>
 
     <devs>
         <!-- in strict alphabetical order -->
         <person id="AO"  name="Andrew C. Oliver"   email="acoliver2@users.sourceforge.net"/>
-        <person id="GJS"  name="Glen Stampoultzis" email="poi-user@jakarta.apache.org"/>
+        <person id="GJS"  name="Glen Stampoultzis" email="glens@apache.org"/>
         <person id="MJ"  name="Marc Johnson"       email="mjohnson@apache.org"/>
         <person id="NKB" name="Nicola Ken Barozzi" email="barozzi@nicolaken.com"/>
         <person id="POI-DEVELOPERS" name="POI Developers"    email="poi-dev@jakarta.apache.org"/>

@@ -3,9 +3,9 @@
 
 <document>
     <header>
-        <title>Busy Developers' Guide to HSSF Features</title>
+        <title>Jakarta POI - Busy Developers' Guide to HSSF Features</title>
         <authors>
-            <person email="poi-user@jakarta.apache.org" name="Glen Stampoultzis" id="CO"/>
+            <person email="glens@apache.org" name="Glen Stampoultzis" id="CO"/>
         </authors>
     </header>
     <body>

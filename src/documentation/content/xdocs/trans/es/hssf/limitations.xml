@@ -3,9 +3,9 @@
 
 <document>
     <header>
-        <title>Limitations</title>
+        <title>Jakarta POI - Limitations</title>
         <authors>
-            <person email="poi-user@jakarta.apache.org" name="Glen Stampoultzis" id="GJS"/>
+            <person email="glens@apache.org" name="Glen Stampoultzis" id="GJS"/>
         </authors>
     </header>
     <body>
@@ -19,12 +19,9 @@
             <ul>
                 <li>
                     Charts<br/><br/>
-                    You can not currently create charts.  Some work has been in an attempt
-                    to create charts from scratch however this is incomplete and currently
-                    not being actively developed.  It is possible to create a
-                    chart in Excel, modify the chart data values
-                    using HSSF and write a new spreadsheet out.  This is
-                    possible because POI attempts to keep existing records
+                    You can not currently create charts.  This is planned for the 2.0 release.  You can
+                    however create a chart in Excel, modify the chart data values using HSSF and write
+                    a new spreadsheet out.  This is possible because POI attempts to keep existing records
                     intact as far as possible.<br/><br/>
                 </li>
                 <li>
