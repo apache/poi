@@ -137,6 +137,11 @@ public class TypeReader
                  * Read a byte string. In Java it is represented as a
                  * String object. The 0x00 bytes at the end must be
                  * stripped.
+		 *
+		 * FIXME: Reading an 8-bit string should pay attention
+		 * to the codepage. Currently the byte making out the
+		 * property's value are interpreted according to the
+		 * platform's default character set.
                  */
                 final int first = offset + LittleEndian.INT_SIZE;
                 long last = first + LittleEndian.getUInt(src, offset) - 1;

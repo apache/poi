@@ -16,22 +16,25 @@
 
    <ol>
     <li>
-     <p>Add writing capability for property sets.</p>
+     <p>Add writing capability for property sets. Presently property sets can
+      be read only.</p>
     </li>
     <li>
-     <p>Add codepage support.</p>
-    </li>
-    <li>
-     <p>Add Unicode support.</p>
+     <p>Add codepage support: Presently the bytes making out the string in a
+      property's value are interpreted using the platform's default character
+      set.</p>
     </li>
     <li>
      <p>Add resource bundles to
       <code>org.apache.poi.hpsf.wellknown</code> to ease
-      localizations.</p>
+      localizations. This would be useful for mapping standard property IDs to
+      localized strings. Example: The property ID 4 could be mapped to "Author"
+      in English or "Verfasser" in German.</p>
     </li>
     <li>
      <p>Implement reading functionality for those property types that are not
-      yet supported (other than byte arrays).</p>
+      yet supported. HPSF should return proper Java types instead of just byte
+      arrays.</p>
     </li>
     <li>
      <p>Add WMF to <code>java.awt.Image</code> example code in <link
