@@ -62,7 +62,7 @@ COPYRIGHT:
 <!-- Common entities -->
 <!-- =============================================================== -->
 
-<!ENTITY % types "add|remove|update|fix">
+<!ENTITY % types "add|remove|update|fix|unknown">
 
 <!-- =============================================================== -->
 <!-- Document Type Definition -->

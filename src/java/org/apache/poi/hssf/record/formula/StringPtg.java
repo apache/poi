@@ -89,7 +89,7 @@ public class StringPtg
         field_1_length = data[offset];
         field_2_options = data[offset+1];
         if (fHighByte.isSet(field_2_options)) {
-            field_3_string= StringUtil.getFromUnicode(data,offset+2,field_1_length);
+            field_3_string= StringUtil.getFromUnicodeBE(data,offset+2,field_1_length);
         }else {
             field_3_string=StringUtil.getFromCompressedUnicode(data,offset+2,field_1_length);
         }
@@ -130,7 +130,7 @@ public class StringPtg
         array[ offset + 1 ] = field_1_length;
         array[ offset + 2 ] = field_2_options;
         if (fHighByte.isSet(field_2_options)) {
-            StringUtil.putUncompressedUnicode(getValue(),array,offset+3);
+            StringUtil.putUnicodeLE(getValue(),array,offset+3);
         }else {
             StringUtil.putCompressedUnicode(getValue(),array,offset+3);
         }

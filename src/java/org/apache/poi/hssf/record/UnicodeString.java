@@ -328,7 +328,7 @@ offset);
             }
             else
             {
-                StringUtil.putUncompressedUnicode(unicodeString, data,
+                StringUtil.putUnicodeLE(unicodeString, data,
                                                     0x3 + offset);
             }
         }
@@ -340,7 +340,7 @@ offset);
             }
             else
             {
-                StringUtil.putUncompressedUnicode(getString(), data,
+                StringUtil.putUnicodeLE(getString(), data,
                                                   0x3 + offset);
             }
         }

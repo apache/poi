@@ -138,7 +138,7 @@ public class BoundSheetRecord
         int nameLength = LittleEndian.ubyteToInt( field_3_sheetname_length );
         if ( ( field_4_compressed_unicode_flag & 0x01 ) == 1 )
         {
-            field_5_sheetname = StringUtil.getFromUnicodeHigh( data, 8 + offset, nameLength );
+            field_5_sheetname = StringUtil.getFromUnicodeLE( data, 8 + offset, nameLength );
         }
         else
         {
@@ -300,7 +300,7 @@ public class BoundSheetRecord
         data[11 + offset] = getCompressedUnicodeFlag();
 
         if ( ( field_4_compressed_unicode_flag & 0x01 ) == 1 )
-            StringUtil.putUncompressedUnicode( getSheetname(), data, 12 + offset );
+            StringUtil.putUnicodeLE( getSheetname(), data, 12 + offset );
         else
             StringUtil.putCompressedUnicode( getSheetname(), data, 12 + offset );
 

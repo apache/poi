@@ -92,7 +92,7 @@ public class TestStringUtil
         }
 
         assertEquals( "abcdefghijklmnop",
-                StringUtil.getFromUnicode( test_data ) );
+                StringUtil.getFromUnicodeBE( test_data ) );
     }
 
     /**
@@ -112,7 +112,7 @@ public class TestStringUtil
         };
 
         assertEquals( "\u0422\u0435\u0441\u0442 test",
-                StringUtil.getFromUnicode( test_data ) );
+                StringUtil.getFromUnicodeBE( test_data ) );
     }
 
     /**
@@ -133,7 +133,7 @@ public class TestStringUtil
 
 
         assertEquals( "\u0422\u0435\u0441\u0442 test",
-                StringUtil.getFromUnicodeHigh( test_data ) );
+                StringUtil.getFromUnicodeLE( test_data ) );
     }
 
     /**
@@ -149,12 +149,12 @@ public class TestStringUtil
             test_data[index++] = (byte) ( 'a' + k );
         }
         assertEquals( "abcdefghijklmno",
-                StringUtil.getFromUnicode( test_data, 0, 15 ) );
+                StringUtil.getFromUnicodeBE( test_data, 0, 15 ) );
         assertEquals( "bcdefghijklmnop",
-                StringUtil.getFromUnicode( test_data, 2, 15 ) );
+                StringUtil.getFromUnicodeBE( test_data, 2, 15 ) );
         try
         {
-            StringUtil.getFromUnicode( test_data, -1, 16 );
+            StringUtil.getFromUnicodeBE( test_data, -1, 16 );
             fail( "Should have caught ArrayIndexOutOfBoundsException" );
         }
         catch ( ArrayIndexOutOfBoundsException ignored )
@@ -164,7 +164,7 @@ public class TestStringUtil
 
         try
         {
-            StringUtil.getFromUnicode( test_data, 32, 16 );
+            StringUtil.getFromUnicodeBE( test_data, 32, 16 );
             fail( "Should have caught ArrayIndexOutOfBoundsException" );
         }
         catch ( ArrayIndexOutOfBoundsException ignored )
@@ -174,7 +174,7 @@ public class TestStringUtil
 
         try
         {
-            StringUtil.getFromUnicode( test_data, 1, 16 );
+            StringUtil.getFromUnicodeBE( test_data, 1, 16 );
             fail( "Should have caught IllegalArgumentException" );
         }
         catch ( IllegalArgumentException ignored )
@@ -184,7 +184,7 @@ public class TestStringUtil
 
         try
         {
-            StringUtil.getFromUnicode( test_data, 1, -1 );
+            StringUtil.getFromUnicodeBE( test_data, 1, -1 );
             fail( "Should have caught IllegalArgumentException" );
         }
         catch ( IllegalArgumentException ignored )
@@ -248,13 +248,13 @@ public class TestStringUtil
                     (byte) 'd', (byte) 0
                 };
 
-        StringUtil.putUncompressedUnicode( input, output, 0 );
+        StringUtil.putUnicodeLE( input, output, 0 );
         for ( int j = 0; j < expected_output.length; j++ )
         {
             assertEquals( "testing offset " + j, expected_output[j],
                     output[j] );
         }
-        StringUtil.putUncompressedUnicode( input, output,
+        StringUtil.putUnicodeLE( input, output,
                 100 - expected_output.length );
         for ( int j = 0; j < expected_output.length; j++ )
         {
@@ -263,7 +263,7 @@ public class TestStringUtil
         }
         try
         {
-            StringUtil.putUncompressedUnicode( input, output,
+            StringUtil.putUnicodeLE( input, output,
                     101 - expected_output.length );
             fail( "Should have caught ArrayIndexOutOfBoundsException" );
         }
