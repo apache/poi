@@ -65,24 +65,43 @@ package org.apache.poi.hpsf;
 public class MarkUnsupportedException extends HPSFException
 {
 
+    /**
+     * <p>Constructor</p>
+     */
     public MarkUnsupportedException()
     {
         super();
     }
 
 
+    /**
+     * <p>Constructor</p>
+     * 
+     * @param msg The exception's message string
+     */
     public MarkUnsupportedException(final String msg)
     {
         super(msg);
     }
 
 
+    /**
+     * <p>Constructor</p>
+     * 
+     * @param reason This exception's underlying reason
+     */
     public MarkUnsupportedException(final Throwable reason)
     {
         super(reason);
     }
 
 
+   /**
+    * <p>Constructor</p>
+    * 
+    * @param msg The exception's message string
+    * @param reason This exception's underlying reason
+    */
     public MarkUnsupportedException(final String msg, final Throwable reason)
     {
         super(msg, reason);

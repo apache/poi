@@ -66,12 +66,16 @@ package org.apache.poi.hpsf;
 public class HPSFException extends Exception
 {
 
+    /**
+     * <p>The underlying reason for this exception - may be
+     * <code>null</code>.</p>
+     * */
     private Throwable reason;
 
 
 
     /**
-     * <p>Creates a new {@link HPSFException}.</p>
+     * <p>Creates an {@link HPSFException}.</p>
      */
     public HPSFException()
     {
@@ -81,8 +85,7 @@ public class HPSFException extends Exception
 
 
     /**
-     * <p>Creates a new {@link HPSFException} with a message
-     * string.</p>
+     * <p>Creates an {@link HPSFException} with a message string.</p>
      *
      * @param msg The message string.
      */
@@ -108,8 +111,8 @@ public class HPSFException extends Exception
 
 
     /**
-     * <p>Creates a new {@link HPSFException} with a message string
-     * and a reason.</p>
+     * <p>Creates an {@link HPSFException} with a message string and a
+     * reason.</p>
      *
      * @param msg The message string.
      * @param reason The reason, i.e. a throwable that indirectly

@@ -54,7 +54,8 @@
  */
 package org.apache.poi.hpsf;
 
-import java.io.*;
+import java.io.InputStream;
+import java.io.IOException;
 
 /**
  * <p>Factory class to create instances of {@link SummaryInformation},
@@ -86,8 +87,8 @@ public class PropertySetFactory
      * @throws IOException if some I/O problem occurs.
      */
     public static PropertySet create(final InputStream stream)
-	throws NoPropertySetStreamException, MarkUnsupportedException,
-	       UnexpectedPropertySetTypeException, IOException
+        throws NoPropertySetStreamException, MarkUnsupportedException,
+               UnexpectedPropertySetTypeException, IOException
     {
         final PropertySet ps = new PropertySet(stream);
         if (ps.isSummaryInformation())

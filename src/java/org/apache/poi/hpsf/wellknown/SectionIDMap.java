@@ -54,7 +54,7 @@
  */
 package org.apache.poi.hpsf.wellknown;
 
-import java.util.*;
+import java.util.HashMap;
 
 /**
  * <p>Maps section format IDs to {@link PropertyIDMap}s. It is
@@ -67,7 +67,7 @@ import java.util.*;
  * is well-known and you can query the {@link PropertyIDMap} for PID
  * strings. If you get back <code>null</code> you are on your own.</p>
  *
- * <p>This {@link Map} expects the byte arrays of section format IDs
+ * <p>This {@link java.util.Map} expects the byte arrays of section format IDs
  * as keys. A key maps to a {@link PropertyIDMap} describing the
  * property IDs in sections with the specified section format ID.</p>
  *
@@ -81,12 +81,12 @@ public class SectionIDMap extends HashMap
     /**
      * <p>The SummaryInformation's section's format ID.</p>
      */
-    public final static byte[] SUMMARY_INFORMATION_ID = new byte[]
+    public static final byte[] SUMMARY_INFORMATION_ID = new byte[]
     {
-	(byte) 0xF2, (byte) 0x9F, (byte) 0x85, (byte) 0xE0,
-	(byte) 0x4F, (byte) 0xF9, (byte) 0x10, (byte) 0x68,
-	(byte) 0xAB, (byte) 0x91, (byte) 0x08, (byte) 0x00,
-	(byte) 0x2B, (byte) 0x27, (byte) 0xB3, (byte) 0xD9
+        (byte) 0xF2, (byte) 0x9F, (byte) 0x85, (byte) 0xE0,
+        (byte) 0x4F, (byte) 0xF9, (byte) 0x10, (byte) 0x68,
+        (byte) 0xAB, (byte) 0x91, (byte) 0x08, (byte) 0x00,
+        (byte) 0x2B, (byte) 0x27, (byte) 0xB3, (byte) 0xD9
     };
 
     /**
@@ -94,16 +94,23 @@ public class SectionIDMap extends HashMap
      * ID. The second section has a different format ID which is not
      * well-known.</p>
      */
-    public final static byte[] DOCUMENT_SUMMARY_INFORMATION_ID = new byte[]
+    public static final byte[] DOCUMENT_SUMMARY_INFORMATION_ID = new byte[]
     {
-	(byte) 0xD5, (byte) 0xCD, (byte) 0xD5, (byte) 0x02,
-	(byte) 0x2E, (byte) 0x9C, (byte) 0x10, (byte) 0x1B,
-	(byte) 0x93, (byte) 0x97, (byte) 0x08, (byte) 0x00,
-	(byte) 0x2B, (byte) 0x2C, (byte) 0xF9, (byte) 0xAE
+        (byte) 0xD5, (byte) 0xCD, (byte) 0xD5, (byte) 0x02,
+        (byte) 0x2E, (byte) 0x9C, (byte) 0x10, (byte) 0x1B,
+        (byte) 0x93, (byte) 0x97, (byte) 0x08, (byte) 0x00,
+        (byte) 0x2B, (byte) 0x2C, (byte) 0xF9, (byte) 0xAE
     };
 
-    public final static String UNDEFINED = "[undefined]";
+    /**
+     * <p>A property without a known name is described by this string.</p> 
+     */
+    public static final String UNDEFINED = "[undefined]";
 
+    /**
+     * <p>The default section ID map. It maps section format IDs to
+     * {@link PropertyIDMap}s.</p>
+     */
     private static SectionIDMap defaultMap;
 
 
@@ -117,12 +124,12 @@ public class SectionIDMap extends HashMap
     public static SectionIDMap getInstance()
     {
         if (defaultMap == null)
-	{
+        {
             final SectionIDMap m = new SectionIDMap();
             m.put(SUMMARY_INFORMATION_ID,
-		  PropertyIDMap.getSummaryInformationProperties());
+                  PropertyIDMap.getSummaryInformationProperties());
             m.put(DOCUMENT_SUMMARY_INFORMATION_ID,
-		  PropertyIDMap.getDocumentSummaryInformationProperties());
+                  PropertyIDMap.getDocumentSummaryInformationProperties());
             defaultMap = m;
         }
         return defaultMap;
@@ -144,14 +151,14 @@ public class SectionIDMap extends HashMap
      * string "[undefined]" is returned.
      */
     public static String getPIDString(final byte[] sectionFormatID,
-				      final int pid)
+                                      final int pid)
     {
         final PropertyIDMap m =
-	    (PropertyIDMap) getInstance().get(sectionFormatID);
+            (PropertyIDMap) getInstance().get(sectionFormatID);
         if (m == null)
             return UNDEFINED;
         else
-	{
+        {
             final String s = (String) m.get(pid);
             if (s == null)
                 return UNDEFINED;
@@ -164,6 +171,9 @@ public class SectionIDMap extends HashMap
     /**
      * <p>Returns the {@link PropertyIDMap} for a given section format
      * ID.</p>
+     * 
+     * @param sectionFormatID the section format ID
+     * @return the property ID map
      */
     public PropertyIDMap get(final byte[] sectionFormatID)
     {
@@ -178,6 +188,7 @@ public class SectionIDMap extends HashMap
      *
      * @param sectionFormatID A section format ID as a <tt>byte[]</tt> .
      * @deprecated Use {@link #get(byte[])} instead!
+     * @return the property ID map
      */
     public Object get(final Object sectionFormatID)
     {
@@ -189,9 +200,13 @@ public class SectionIDMap extends HashMap
     /**
      * <p>Associates a section format ID with a {@link
      * PropertyIDMap}.</p>
+     * 
+     * @param sectionFormatID the section format ID
+     * @param propertyIDMap the property ID map
+     * @return as defined by {@link java.util.Map#put}
      */
     public Object put(final byte[] sectionFormatID,
-		      final PropertyIDMap propertyIDMap)
+                      final PropertyIDMap propertyIDMap)
     {
         return super.put(new String(sectionFormatID), propertyIDMap);
     }
@@ -200,6 +215,14 @@ public class SectionIDMap extends HashMap
 
     /**
      * @deprecated Use {@link #put(byte[], PropertyIDMap)} instead!
+     * @link #put(byte[], PropertyIDMap)
+     * 
+     * @param key This parameter remains undocumented since the method is
+     * deprecated.
+     * @param value This parameter remains undocumented since the method is
+     * deprecated.
+     * @return The return value remains undocumented since the method is
+     * deprecated.
      */
     public Object put(final Object key, final Object value)
     {
