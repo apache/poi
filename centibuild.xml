@@ -1,0 +1,238 @@
+<?xml version="1.0"?>
+
+<project default="interactive" basedir="." name="project build file">
+
+<description>
+                   * ===================================== *
+                   |   Krysalis Centipede Build System     |
+                   * ===================================== *
+                                     by               
+                                             
+                   Nicola Ken Barozzi (nicolaken@apache.org)
+                   Marc Johnson (mjohnson@apache.org)       
+                   
+                   
+                   For a simple interactive build, simply 
+                   run the build script (build.bar or build.sh)
+</description>
+ 
+    <import file="${ant.home}/src/core/xbuild.xml"/>
+    <taskdef file="${ant.home}/src/core/tasks.properties"/>
+    <importcent name="java" />
+    <importcent name="checkstyle" />
+    <importcent name="forrest" />
+            
+  <!-- =================================================================== -->
+  <!-- Basic build targets for the project                                 -->
+  <!-- =================================================================== -->
+
+  <!-- =================================================================== -->
+  <!-- Interactive build                                                   -->
+  <!-- =================================================================== -->
+  <target name="interactive" description="Interactive Build">          
+    <echo> 
+    --------------------------------------------------------------
+
+          ${xgump.module.project.name} ${xgump.module.project.version.major}.${xgump.module.project.version.minor}   [${YEAR}]
+
+    --------------------------------------------------------------
+     Using ${ant.version}
+     Build file ${ant.file}
+    --------------------------------------------------------------   
+     These are the most common build targets.   
+     You can also invoke them directly; see build.xml for more info. 
+     Builds will be in /build directory, distributions in /dist.        
+        
+     all -------------- creates the jars and the site      
+     compile ---------- compiles the source code      
+     test ------------- performs the jUnit tests       
+     jar -------------- create the jar files
+     docs ------------- generates the html docs - clean not needed        
+     javadocs --------- generates the API documentation   
+     site ------------- generates the html site (docs+reports)    
+     clean ------------ cleans the build directory    
+     dist ------------- creates src and bin distributions    
+     scratchpad ------- build-run scratchpad code       
+     contrib ---------- build-run contributed code    
+     generate-records - generate excel records    
+     generate-types --- generate word types    
+     poibrowser  - POIBrowser 0.10 GUI POI Viewer
+     sheetviewer - SheetViewer 0.20 GUI Applet/Application Viewer for XLS files     
+
+    </echo>
+    
+    <input message="Please select a target "
+           addproperty="input.selection"/>
+    
+    <condition property="do.abort">
+      <equals arg1="" arg2="input.selection" />
+    </condition>
+    
+    <fail if="do.abort">Build aborted by user.</fail>
+
+    <antrun target="splash"/>
+    <antrun target="${input.selection}"/>
+    
+  </target>
+
+
+
+  <!-- ================================== -->
+  <!--       Generate records                -->
+  <!-- ================================== -->
+  
+  <target  name="generate-records"
+           description="generate-records">
+
+    <ant antfile="${xlayout.source.targets.dir}/record-generation/xbuild.xml"
+            target="generate-records"/>
+    
+  </target>     
+
+  <!-- ================================== -->
+  <!--       Generate types                -->
+  <!-- ================================== -->
+  
+  <target  name="generate-types"
+           description="generate-types">
+
+    <ant antfile="${xlayout.source.targets.dir}/record-generation/xbuild.xml"
+            target="generate-types"/>
+    
+  </target>     
+
+
+  <!-- ================================== -->
+  <!--         Test 4 distribution        -->
+  <!-- ================================== -->
+
+  <target  name="testall"
+           description="Make big full test">
+           
+    <antcall target="gump"/>
+    <antcall target="dist"/>
+    
+  </target>       
+                      
+  <!-- ================================== -->
+  <!--        Target used by Gump         -->
+  <!-- ================================== -->
+  
+  <target  name="gump"   
+           depends="compile, package"
+           description="Target used by Gump"/>
+
+  <!-- ================================== -->
+  <!--        Generate all                -->
+  <!-- ================================== -->
+  
+  <target  name="all"   
+           depends="package"
+           description="Generate all"/>
+                      
+    
+    <!-- ================================== -->
+    <!-- POI specific extensions to the the build file -->
+    <!-- ================================== -->
+    
+    
+      <patternset id="teststhatfail">
+      </patternset>
+  
+   <!-- ================================== -->
+   <!-- run tests one at a time -->
+   <!-- ================================== -->
+    
+    <target name="single-test" if="testcase" depends="compile-tests"
+      description="--> runs the single unit test defined in the testcase property">
+  
+  
+    <junit2 printsummary="no" haltonfailure="${junit.test.haltonfailure}" fork="yes">
+          <formatter type="xml" />
+	  <formatter type="plain" usefile="no"/>
+	  <sysproperty key="UTIL.testdata.path"
+	                   value="${xlayout.source.test.dir}/org/apache/poi/util/data"/>
+	  <sysproperty key="HSSF.testdata.path"
+                   value="${xlayout.source.test.dir}/org/apache/poi/hssf/data"/>
+	  <sysproperty key="HPSF.testdata.path"
+                   value="${xlayout.source.test.dir}/org/apache/poi/hpsf/data"/>
+        <classpath>
+        	<path>
+		         <fileset dir="." casesensitive="yes"> 
+		          <patternset>
+		           <include name="${cents.dir}/*.${cent.dir.suffix}/${cent.lib.dir.name}/*.jar"/>
+		           <include name="${cents.dir}/*.${cent.dir.suffix}/${cent.lib.dir.name}/*.zip"/>
+		          </patternset>
+		         </fileset>         
+		            <fileset dir="${xlayout.library.dir}" casesensitive="yes"> 
+		             <patternset>
+		               <include name="*/*.jar"/>
+		               <include name="*/*.zip"/>
+		             </patternset>
+		           </fileset>  
+		            <fileset dir="${xlayout.source.scratchpad.library.dir}" casesensitive="yes"> 
+		             <patternset>
+		               <include name="*.jar"/>
+		               <include name="*.zip"/>
+		             </patternset>
+		           </fileset>           
+		            <fileset dir="${xlayout.source.examples.library.dir}" casesensitive="yes"> 
+		             <patternset>
+		               <include name="*.jar"/>
+		               <include name="*.zip"/>
+		             </patternset>
+		           </fileset>           
+		         </path> 
+        <pathelement path="${xlayout.build.classes.dir}" />      
+        	 <pathelement location="${xlayout.build.test.dir}" />
+       		 <pathelement location="${xlayout.build.classes.dir}" />
+       	 </classpath>
+        <test name="${testcase}" />
+      </junit2>
+    </target>
+    
+    <target name="compile-tests" depends="compile">
+
+    <mkdir dir="${xlayout.build.test.dir}"/>
+  
+        <!-- Compile tests -->
+        <javac srcdir="${xlayout.source.test.dir}"
+                destdir="${xlayout.build.test.dir}"
+                debug=      "${build.compiler.debug}"
+                optimize=   "${build.compiler.optimize}"
+                deprecation="${build.compiler.deprecation}"
+                target=     "${build.compiler.vm}"
+                nowarn=     "false">
+         <classpath>
+         <path>
+	          <fileset dir="." casesensitive="yes"> 
+	           <patternset>
+	            <include name="${cents.dir}/*.${cent.dir.suffix}/${cent.lib.dir.name}/*.jar"/>
+	            <include name="${cents.dir}/*.${cent.dir.suffix}/${cent.lib.dir.name}/*.zip"/>
+	           </patternset>
+	          </fileset>         
+	             <fileset dir="${xlayout.library.dir}" casesensitive="yes"> 
+	              <patternset>
+	                <include name="*/*.jar"/>
+	                <include name="*/*.zip"/>
+	              </patternset>
+	            </fileset>  
+	             <fileset dir="${xlayout.source.scratchpad.library.dir}" casesensitive="yes"> 
+	              <patternset>
+	                <include name="*.jar"/>
+	                <include name="*.zip"/>
+	              </patternset>
+	            </fileset>           
+	             <fileset dir="${xlayout.source.examples.library.dir}" casesensitive="yes"> 
+	              <patternset>
+	                <include name="*.jar"/>
+	                <include name="*.zip"/>
+	              </patternset>
+	            </fileset>           
+	          </path> 
+        <pathelement path="${xlayout.build.classes.dir}" />      
+        </classpath>
+      </javac>
+    </target>
+      
+</project>
