@@ -117,7 +117,7 @@ public class HeaderRecord
         if (size > 0)
         {
             field_1_header_len = data[ 0 + offset ];
-            field_2_header     = new String(data, 1 + offset,
+            field_2_header     = new String(data, 3 + offset, // [Shawn] Changed 1 to 3 for offset of string
                                             LittleEndian.ubyteToInt(field_1_header_len));
         }
     }
@@ -153,9 +153,9 @@ public class HeaderRecord
      * @see #getHeader()
      */
 
-    public byte getHeaderLength()
+    public short getHeaderLength()
     {
-        return field_1_header_len;
+        return (short)(0xFF & field_1_header_len); // [Shawn] Fixed needing unsigned byte
     }
 
     /**
@@ -189,15 +189,16 @@ public class HeaderRecord
 
         if (getHeaderLength() != 0)
         {
-            len++;
+            len+=3; // [Shawn] Fixed for two null bytes in the length
         }
         LittleEndian.putShort(data, 0 + offset, sid);
         LittleEndian.putShort(data, 2 + offset,
                               ( short ) ((len - 4) + getHeaderLength()));
+
         if (getHeaderLength() > 0)
         {
-            data[ 4 + offset ] = getHeaderLength();
-            StringUtil.putCompressedUnicode(getHeader(), data, 5 + offset);
+            data[ 4 + offset ] = (byte)getHeaderLength();
+            StringUtil.putCompressedUnicode(getHeader(), data, 7 + offset); // [Shawn] Place the string in the correct offset
         }
         return getRecordSize();
     }
@@ -208,7 +209,7 @@ public class HeaderRecord
 
         if (getHeaderLength() != 0)
         {
-            retval++;
+            retval+=3; // [Shawn] Fixed for two null bytes in the length
         }
         retval += getHeaderLength();
         return retval;
