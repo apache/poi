@@ -71,7 +71,7 @@ public class TestSCLRecord
         extends TestCase
 {
     byte[] data = new byte[] {
-      (short)0x3,(short)0x0,(short)0x4,(short)0x0
+      (byte)0x3,(byte)0x0,(byte)0x4,(byte)0x0
     };
 
     public TestSCLRecord(String name)

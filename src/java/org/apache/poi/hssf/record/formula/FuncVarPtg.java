@@ -2,7 +2,7 @@ package org.apache.poi.hssf.record.formula;
 import org.apache.poi.util.LittleEndian;
 public class FuncVarPtg extends AbstractFunctionPtg{
     
-    public final static short sid  = 0x22;
+    public final static byte sid  = 0x22;
     
  /**Creates new function pointer from a byte array 
      * usually called while reading an excel file. 

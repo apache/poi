@@ -68,7 +68,7 @@ import org.apache.poi.hssf.util.RangeAddress;
 
 public class Area3DPtg extends Ptg
 {
-    public final static short sid  = 0x3b;
+    public final static byte sid  = 0x3b;
     private final static int  SIZE = 11; // 10 + 1 for Ptg
     private short             field_1_index_extern_sheet;
     private short             field_2_first_row;

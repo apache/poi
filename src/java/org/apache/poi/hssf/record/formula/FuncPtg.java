@@ -3,7 +3,7 @@ import org.apache.poi.util.LittleEndian;
 
 public class FuncPtg extends AbstractFunctionPtg{
     
-    public final static short sid  = 0x21;
+    public final static byte sid  = 0x21;
     private int numParams=0;
     /**Creates new function pointer from a byte array 
      * usually called while reading an excel file. 
@@ -20,7 +20,7 @@ public class FuncPtg extends AbstractFunctionPtg{
     }
     
      public void writeBytes(byte[] array, int offset) {
-        array[offset+0]=(byte) (sid + ptgClass);
+        array[offset+0]= (byte) (sid + ptgClass);
         //array[offset+1]=field_1_num_args;
         LittleEndian.putShort(array,offset+1,field_2_fnc_index);
     }
