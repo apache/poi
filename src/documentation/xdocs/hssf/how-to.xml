@@ -446,7 +446,7 @@ down problems.
 <p>So Why use commons logging rather than log4j? Well the following discussion from
 the jakarta-general mailing list sums it up pretty well.  (Thanks Morgan)
 </p>
-<p>Here's the problem, as I see it.
+<p><em>Here's the problem, as I see it.</em>
 </p>
 <p><em>Suppose Commons component A decides to adopt Log4J, Commons component B
 decides to adopt LogKit, and Commons component C adopts JDK1.4 logging.
