@@ -27,7 +27,7 @@ public class ReferenceUtil {
            int[] retval = new int[2];
            String[] parts = seperateRowColumns(reference);           
            retval[1] = convertColStringToNum(parts[0]);
-           retval[0] = Integer.parseInt(parts[1]);
+           retval[0] = Integer.parseInt(parts[1])-1;
            return retval;
     }
     
