@@ -1,4 +1,3 @@
-
 /* ====================================================================
  * The Apache Software License, Version 1.1
  *
@@ -79,7 +78,7 @@ import java.util.ArrayList;
 
 public class BiffViewer
 {
-    String          filename;
+    String filename;
     private boolean dump;
 
     /**
@@ -88,13 +87,12 @@ public class BiffViewer
      * @param args
      */
 
-    public BiffViewer(String [] args)
+    public BiffViewer(String[] args)
     {
         if (args.length > 0)
         {
-            filename = args[ 0 ];
-        }
-        else
+            filename = args[0];
+        } else
         {
             System.out.println("BIFFVIEWER REQUIRES A FILENAME***");
         }
@@ -110,13 +108,12 @@ public class BiffViewer
     {
         try
         {
-            POIFSFileSystem fs      =
-                new POIFSFileSystem(new FileInputStream(filename));
-            InputStream     stream  =
-                fs.createDocumentInputStream("Workbook");
-            Record[]        records = createRecords(stream, dump);
-        }
-        catch (Exception e)
+            POIFSFileSystem fs =
+                    new POIFSFileSystem(new FileInputStream(filename));
+            InputStream stream =
+                    fs.createDocumentInputStream("Workbook");
+            Record[] records = createRecords(stream, dump);
+        } catch (Exception e)
         {
             e.printStackTrace();
         }
@@ -135,12 +132,12 @@ public class BiffViewer
      *            InputStream
      */
 
-    public static Record [] createRecords(InputStream in, boolean dump)
-        throws RecordFormatException
+    public static Record[] createRecords(InputStream in, boolean dump)
+            throws RecordFormatException
     {
-        ArrayList records     = new ArrayList();
-        Record    last_record = null;
-        int       loc         = 0;
+        ArrayList records = new ArrayList();
+        Record last_record = null;
+        int loc = 0;
 
         try
         {
@@ -151,135 +148,131 @@ public class BiffViewer
             {
                 rectype = LittleEndian.readShort(in);
                 System.out.println("============================================");
-                System.out.println("you are at offset " + loc);
-                loc     += 2;
+                System.out.println("Offset 0x" + Integer.toHexString(loc) + " (" + loc + ")");
+                loc += 2;
                 if (rectype != 0)
                 {
                     short recsize = LittleEndian.readShort(in);
 
                     loc += 2;
-                    byte[] data = new byte[ ( int ) recsize ];
+                    byte[] data = new byte[(int) recsize];
 
                     in.read(data);
                     if ((rectype == WSBoolRecord.sid) && (recsize == 0))
                     {
                         System.out.println(loc);
                     }
-                    loc    += recsize;
+                    loc += recsize;
 //                    offset += 4 + recsize;
                     if (dump)
                     {
-//                        System.out
-//                            .println("fixing to recordize the following");
-                        System.out.println("rectype = 0x"
-                                           + Integer.toHexString(rectype));
-                        System.out.println("recsize = 0x"
-                                           + Integer.toHexString(recsize));
-                        System.out.println(
-                            "--------------------------------------------");
-                        if (data.length > 0)
-                        {
-                            HexDump.dump(data, 0, System.out, 0);
-                        }
-                        else
-                        {
-                            System.out.print("**NO RECORD DATA**");
-                        }
-                        System.out.println();
-                        System.out.println(
-                            "-END----------------------------------------");
+                        dump(rectype, recsize, data);
                     }
                     Record[] recs = createRecord(rectype, recsize,
-                                                 data);   // handle MulRK records
+                            data);   // handle MulRK records
 
-                    if (recs.length > 1)
-                    {
-                        for (int k = 0; k < recs.length; k++)
-                        {
-                            records.add(
-                                recs[ k ]);               // these will be number records
-                            last_record =
-                                recs[ k ];                // do to keep the algorythm homogenous...you can't
-                        }                                 // actually continue a number record anyhow.
+                    Record record = recs[0];
+
+                    if ((record instanceof UnknownRecord)
+                            && !dump)                 // if we didn't already dump
+                    {                                 // just cause dump was on and we're hit an unknow
+                        dumpUnknownRecord(data);
                     }
-                    else
+                    if (record != null)
                     {
-                        Record record = recs[ 0 ];
-
-                        if ((record instanceof UnknownRecord)
-                                && !dump)                 // if we didn't already dump
-                        {                                 // just cause dump was on and we're hit an unknow
-
-                            // record hex dump it!
-                            System.out.println(
-                                "-----UNKNOWN----------------------------------");
-                            if (data.length > 0)
-                            {
-                                HexDump.dump(data, 0, System.out, 0);
-                            }
-                            else
-                            {
-                                System.out.print("**NO RECORD DATA**");
-                            }
-                            System.out.println();
-                            System.out.println(
-                                "-----UNKNOWN----------------------------------");
-                        }
-                        if (record != null)
+                        if (rectype == ContinueRecord.sid)
                         {
-                            if (rectype == ContinueRecord.sid)
-                            {
-                                if (last_record == null)
-                                {
-                                    throw new RecordFormatException(
-                                        "First record is a ContinueRecord??");
-                                }
-                                if (dump)
-                                {
-                                    System.out.println(
-                                        "-----PRECONTINUED LAST RECORD WOULD SERIALIZE LIKE:");
-                                    byte[] lr = last_record.serialize();
-
-                                    if (lr != null)
-                                    {
-                                        HexDump.dump(last_record.serialize(),
-                                                     0, System.out, 0);
-                                    }
-                                    System.out.println();
-                                    System.out.println(
-                                        "-----PRECONTINUED----------------------------------");
-                                }
-                                last_record.processContinueRecord(data);
-                                if (dump)
-                                {
-                                    System.out.println(
-                                        "-----CONTINUED LAST RECORD WOULD SERIALIZE LIKE:");
-                                    HexDump.dump(last_record.serialize(), 0,
-                                                 System.out, 0);
-                                    System.out.println();
-                                    System.out.println(
-                                        "-----CONTINUED----------------------------------");
-                                }
-                            }
-                            else
-                            {
-                                last_record = record;
-                                records.add(record);
-                            }
+                            dumpContinueRecord(last_record, dump, data);
+                        } else
+                        {
+                            last_record = record;
+                            records.add(record);
                         }
                     }
                 }
-            }
-            while (rectype != 0);
-        }
-        catch (IOException e)
+            } while (rectype != 0);
+        } catch (IOException e)
         {
             throw new RecordFormatException("Error reading bytes");
         }
-        Record[] retval = new Record[ records.size() ];
+        Record[] retval = new Record[records.size()];
 
-        retval = ( Record [] ) records.toArray(retval);
+        retval = (Record[]) records.toArray(retval);
         return retval;
+    }
+
+    private static void dumpContinueRecord(Record last_record, boolean dump, byte[] data) throws IOException
+    {
+        if (last_record == null)
+        {
+            throw new RecordFormatException(
+                    "First record is a ContinueRecord??");
+        }
+        if (dump)
+        {
+            System.out.println(
+                    "-----PRECONTINUED LAST RECORD WOULD SERIALIZE LIKE:");
+            byte[] lr = last_record.serialize();
+
+            if (lr != null)
+            {
+                HexDump.dump(last_record.serialize(),
+                        0, System.out, 0);
+            }
+            System.out.println();
+            System.out.println(
+                    "-----PRECONTINUED----------------------------------");
+        }
+        last_record.processContinueRecord(data);
+        if (dump)
+        {
+            System.out.println(
+                    "-----CONTINUED LAST RECORD WOULD SERIALIZE LIKE:");
+            HexDump.dump(last_record.serialize(), 0,
+                    System.out, 0);
+            System.out.println();
+            System.out.println(
+                    "-----CONTINUED----------------------------------");
+        }
+    }
+
+    private static void dumpUnknownRecord(byte[] data) throws IOException
+    {
+        // record hex dump it!
+        System.out.println(
+                "-----UNKNOWN----------------------------------");
+        if (data.length > 0)
+        {
+            HexDump.dump(data, 0, System.out, 0);
+        } else
+        {
+            System.out.print("**NO RECORD DATA**");
+        }
+        System.out.println();
+        System.out.println(
+                "-----UNKNOWN----------------------------------");
+    }
+
+    private static void dump(short rectype, short recsize, byte[] data) throws IOException
+    {
+//                        System.out
+//                            .println("fixing to recordize the following");
+        System.out.print("rectype = 0x"
+                + Integer.toHexString(rectype));
+        System.out.println(", recsize = 0x"
+                + Integer.toHexString(recsize));
+        System.out.println(
+                "-BEGIN DUMP---------------------------------");
+        if (data.length > 0)
+        {
+            HexDump.dump(data, 0, System.out, 0);
+        } else
+        {
+            System.out.println("**NO RECORD DATA**");
+        }
+//        System.out.println();
+        System.out.println(
+                "-END DUMP-----------------------------------");
     }
 
     /**
@@ -288,353 +281,353 @@ public class BiffViewer
      *
      */
 
-    private static Record [] createRecord(short rectype, short size,
-                                          byte [] data)
+    private static Record[] createRecord(short rectype, short size,
+                                         byte[] data)
     {
-        Record   retval     = null;
+        Record retval = null;
         Record[] realretval = null;
 
         // int irectype = rectype;
         switch (rectype)
         {
 
-            case ChartRecord.sid :
+            case ChartRecord.sid:
                 retval = new ChartRecord(rectype, size, data);
                 break;
 
-            case ChartFormatRecord.sid :
+            case ChartFormatRecord.sid:
                 retval = new ChartFormatRecord(rectype, size, data);
                 break;
 
-            case SeriesRecord.sid :
+            case SeriesRecord.sid:
                 retval = new SeriesRecord(rectype, size, data);
                 break;
 
-            case BeginRecord.sid :
+            case BeginRecord.sid:
                 retval = new BeginRecord(rectype, size, data);
                 break;
 
-            case EndRecord.sid :
+            case EndRecord.sid:
                 retval = new EndRecord(rectype, size, data);
                 break;
 
-            case BOFRecord.sid :
+            case BOFRecord.sid:
                 retval = new BOFRecord(rectype, size, data);
                 break;
 
-            case InterfaceHdrRecord.sid :
+            case InterfaceHdrRecord.sid:
                 retval = new InterfaceHdrRecord(rectype, size, data);
                 break;
 
-            case MMSRecord.sid :
+            case MMSRecord.sid:
                 retval = new MMSRecord(rectype, size, data);
                 break;
 
-            case InterfaceEndRecord.sid :
+            case InterfaceEndRecord.sid:
                 retval = new InterfaceEndRecord(rectype, size, data);
                 break;
 
-            case WriteAccessRecord.sid :
+            case WriteAccessRecord.sid:
                 retval = new WriteAccessRecord(rectype, size, data);
                 break;
 
-            case CodepageRecord.sid :
+            case CodepageRecord.sid:
                 retval = new CodepageRecord(rectype, size, data);
                 break;
 
-            case DSFRecord.sid :
+            case DSFRecord.sid:
                 retval = new DSFRecord(rectype, size, data);
                 break;
 
-            case TabIdRecord.sid :
+            case TabIdRecord.sid:
                 retval = new TabIdRecord(rectype, size, data);
                 break;
 
-            case FnGroupCountRecord.sid :
+            case FnGroupCountRecord.sid:
                 retval = new FnGroupCountRecord(rectype, size, data);
                 break;
 
-            case WindowProtectRecord.sid :
+            case WindowProtectRecord.sid:
                 retval = new WindowProtectRecord(rectype, size, data);
                 break;
 
-            case ProtectRecord.sid :
+            case ProtectRecord.sid:
                 retval = new ProtectRecord(rectype, size, data);
                 break;
 
-            case PasswordRecord.sid :
+            case PasswordRecord.sid:
                 retval = new PasswordRecord(rectype, size, data);
                 break;
 
-            case ProtectionRev4Record.sid :
+            case ProtectionRev4Record.sid:
                 retval = new ProtectionRev4Record(rectype, size, data);
                 break;
 
-            case PasswordRev4Record.sid :
+            case PasswordRev4Record.sid:
                 retval = new PasswordRev4Record(rectype, size, data);
                 break;
 
-            case WindowOneRecord.sid :
+            case WindowOneRecord.sid:
                 retval = new WindowOneRecord(rectype, size, data);
                 break;
 
-            case BackupRecord.sid :
+            case BackupRecord.sid:
                 retval = new BackupRecord(rectype, size, data);
                 break;
 
-            case HideObjRecord.sid :
+            case HideObjRecord.sid:
                 retval = new HideObjRecord(rectype, size, data);
                 break;
 
-            case DateWindow1904Record.sid :
+            case DateWindow1904Record.sid:
                 retval = new DateWindow1904Record(rectype, size, data);
                 break;
 
-            case PrecisionRecord.sid :
+            case PrecisionRecord.sid:
                 retval = new PrecisionRecord(rectype, size, data);
                 break;
 
-            case RefreshAllRecord.sid :
+            case RefreshAllRecord.sid:
                 retval = new RefreshAllRecord(rectype, size, data);
                 break;
 
-            case BookBoolRecord.sid :
+            case BookBoolRecord.sid:
                 retval = new BookBoolRecord(rectype, size, data);
                 break;
 
-            case FontRecord.sid :
+            case FontRecord.sid:
                 retval = new FontRecord(rectype, size, data);
                 break;
 
-            case FormatRecord.sid :
+            case FormatRecord.sid:
                 retval = new FormatRecord(rectype, size, data);
                 break;
 
-            case ExtendedFormatRecord.sid :
+            case ExtendedFormatRecord.sid:
                 retval = new ExtendedFormatRecord(rectype, size, data);
                 break;
 
-            case StyleRecord.sid :
+            case StyleRecord.sid:
                 retval = new StyleRecord(rectype, size, data);
                 break;
 
-            case UseSelFSRecord.sid :
+            case UseSelFSRecord.sid:
                 retval = new UseSelFSRecord(rectype, size, data);
                 break;
 
-            case BoundSheetRecord.sid :
+            case BoundSheetRecord.sid:
                 retval = new BoundSheetRecord(rectype, size, data);
                 break;
 
-            case CountryRecord.sid :
+            case CountryRecord.sid:
                 retval = new CountryRecord(rectype, size, data);
                 break;
 
-            case SSTRecord.sid :
+            case SSTRecord.sid:
                 retval = new SSTRecord(rectype, size, data);
                 break;
 
-            case ExtSSTRecord.sid :
+            case ExtSSTRecord.sid:
                 retval = new ExtSSTRecord(rectype, size, data);
                 break;
 
-            case EOFRecord.sid :
+            case EOFRecord.sid:
                 retval = new EOFRecord(rectype, size, data);
                 break;
 
-            case IndexRecord.sid :
+            case IndexRecord.sid:
                 retval = new IndexRecord(rectype, size, data);
                 break;
 
-            case CalcModeRecord.sid :
+            case CalcModeRecord.sid:
                 retval = new CalcModeRecord(rectype, size, data);
                 break;
 
-            case CalcCountRecord.sid :
+            case CalcCountRecord.sid:
                 retval = new CalcCountRecord(rectype, size, data);
                 break;
 
-            case RefModeRecord.sid :
+            case RefModeRecord.sid:
                 retval = new RefModeRecord(rectype, size, data);
                 break;
 
-            case IterationRecord.sid :
+            case IterationRecord.sid:
                 retval = new IterationRecord(rectype, size, data);
                 break;
 
-            case DeltaRecord.sid :
+            case DeltaRecord.sid:
                 retval = new DeltaRecord(rectype, size, data);
                 break;
 
-            case SaveRecalcRecord.sid :
+            case SaveRecalcRecord.sid:
                 retval = new SaveRecalcRecord(rectype, size, data);
                 break;
 
-            case PrintHeadersRecord.sid :
+            case PrintHeadersRecord.sid:
                 retval = new PrintHeadersRecord(rectype, size, data);
                 break;
 
-            case PrintGridlinesRecord.sid :
+            case PrintGridlinesRecord.sid:
                 retval = new PrintGridlinesRecord(rectype, size, data);
                 break;
 
-            case GridsetRecord.sid :
+            case GridsetRecord.sid:
                 retval = new GridsetRecord(rectype, size, data);
                 break;
 
-            case GutsRecord.sid :
+            case GutsRecord.sid:
                 retval = new GutsRecord(rectype, size, data);
                 break;
 
-            case DefaultRowHeightRecord.sid :
+            case DefaultRowHeightRecord.sid:
                 retval = new DefaultRowHeightRecord(rectype, size, data);
                 break;
 
-            case WSBoolRecord.sid :
+            case WSBoolRecord.sid:
                 retval = new WSBoolRecord(rectype, size, data);
                 break;
 
-            case HeaderRecord.sid :
+            case HeaderRecord.sid:
                 retval = new HeaderRecord(rectype, size, data);
                 break;
 
-            case FooterRecord.sid :
+            case FooterRecord.sid:
                 retval = new FooterRecord(rectype, size, data);
                 break;
 
-            case HCenterRecord.sid :
+            case HCenterRecord.sid:
                 retval = new HCenterRecord(rectype, size, data);
                 break;
 
-            case VCenterRecord.sid :
+            case VCenterRecord.sid:
                 retval = new VCenterRecord(rectype, size, data);
                 break;
 
-            case PrintSetupRecord.sid :
+            case PrintSetupRecord.sid:
                 retval = new PrintSetupRecord(rectype, size, data);
                 break;
 
-            case DefaultColWidthRecord.sid :
+            case DefaultColWidthRecord.sid:
                 retval = new DefaultColWidthRecord(rectype, size, data);
                 break;
 
-            case DimensionsRecord.sid :
+            case DimensionsRecord.sid:
                 retval = new DimensionsRecord(rectype, size, data);
                 break;
 
-            case RowRecord.sid :
+            case RowRecord.sid:
                 retval = new RowRecord(rectype, size, data);
                 break;
 
-            case LabelSSTRecord.sid :
+            case LabelSSTRecord.sid:
                 retval = new LabelSSTRecord(rectype, size, data);
                 break;
 
-            case RKRecord.sid :
+            case RKRecord.sid:
                 retval = new RKRecord(rectype, size, data);
                 break;
 
-            case NumberRecord.sid :
+            case NumberRecord.sid:
                 retval = new NumberRecord(rectype, size, data);
                 break;
 
-            case DBCellRecord.sid :
+            case DBCellRecord.sid:
                 retval = new DBCellRecord(rectype, size, data);
                 break;
 
-            case WindowTwoRecord.sid :
+            case WindowTwoRecord.sid:
                 retval = new WindowTwoRecord(rectype, size, data);
                 break;
 
-            case SelectionRecord.sid :
+            case SelectionRecord.sid:
                 retval = new SelectionRecord(rectype, size, data);
                 break;
 
-            case ContinueRecord.sid :
+            case ContinueRecord.sid:
                 retval = new ContinueRecord(rectype, size, data);
                 break;
 
-            case LabelRecord.sid :
+            case LabelRecord.sid:
                 retval = new LabelRecord(rectype, size, data);
                 break;
 
-            case MulRKRecord.sid :
+            case MulRKRecord.sid:
                 retval = new MulRKRecord(rectype, size, data);
                 break;
 
-            case MulBlankRecord.sid :
+            case MulBlankRecord.sid:
                 retval = new MulBlankRecord(rectype, size, data);
                 break;
 
-            case BlankRecord.sid :
+            case BlankRecord.sid:
                 retval = new BlankRecord(rectype, size, data);
                 break;
 
-            case BoolErrRecord.sid :
+            case BoolErrRecord.sid:
                 retval = new BoolErrRecord(rectype, size, data);
                 break;
 
-            case ColumnInfoRecord.sid :
+            case ColumnInfoRecord.sid:
                 retval = new ColumnInfoRecord(rectype, size, data);
                 break;
 
-            case MergeCellsRecord.sid :
+            case MergeCellsRecord.sid:
                 retval = new MergeCellsRecord(rectype, size, data);
                 break;
 
-            case AreaRecord.sid :
+            case AreaRecord.sid:
                 retval = new AreaRecord(rectype, size, data);
                 break;
 
-            case DataFormatRecord.sid :
+            case DataFormatRecord.sid:
                 retval = new DataFormatRecord(rectype, size, data);
                 break;
 
-            case BarRecord.sid :
+            case BarRecord.sid:
                 retval = new BarRecord(rectype, size, data);
                 break;
 
-            case DatRecord.sid :
+            case DatRecord.sid:
                 retval = new DatRecord(rectype, size, data);
                 break;
 
-            case PlotGrowthRecord.sid :
+            case PlotGrowthRecord.sid:
                 retval = new PlotGrowthRecord(rectype, size, data);
                 break;
 
-            case UnitsRecord.sid :
+            case UnitsRecord.sid:
                 retval = new UnitsRecord(rectype, size, data);
                 break;
 
-            case FrameRecord.sid :
+            case FrameRecord.sid:
                 retval = new FrameRecord(rectype, size, data);
                 break;
 
-            case ValueRangeRecord.sid :
+            case ValueRangeRecord.sid:
                 retval = new ValueRangeRecord(rectype, size, data);
                 break;
 
-            case SeriesListRecord.sid :
+            case SeriesListRecord.sid:
                 retval = new SeriesListRecord(rectype, size, data);
                 break;
 
-            case FontBasisRecord.sid :
+            case FontBasisRecord.sid:
                 retval = new FontBasisRecord(rectype, size, data);
                 break;
 
-            case FontIndexRecord.sid :
+            case FontIndexRecord.sid:
                 retval = new FontIndexRecord(rectype, size, data);
                 break;
 
-            case LineFormatRecord.sid :
+            case LineFormatRecord.sid:
                 retval = new LineFormatRecord(rectype, size, data);
                 break;
 
-            case AreaFormatRecord.sid :
+            case AreaFormatRecord.sid:
                 retval = new AreaFormatRecord(rectype, size, data);
                 break;
 
-            case LinkedDataRecord.sid :
+            case LinkedDataRecord.sid:
                 retval = new LinkedDataRecord(rectype, size, data);
                 break;
 
@@ -643,10 +636,10 @@ public class BiffViewer
         }
         if (realretval == null)
         {
-            realretval      = new Record[ 1 ];
-            realretval[ 0 ] = retval;
+            realretval = new Record[1];
+            realretval[0] = retval;
             System.out.println("recordid = 0x" + Integer.toHexString(rectype) + ", size =" + size);
-            System.out.println(realretval[ 0 ].toString());
+            System.out.println(realretval[0].toString());
         }
         return realretval;
     }
@@ -678,34 +671,32 @@ public class BiffViewer
      *
      */
 
-    public static void main(String [] args)
+    public static void main(String[] args)
     {
         try
         {
             BiffViewer viewer = new BiffViewer(args);
 
-            if ((args.length > 1) && args[ 1 ].equals("on"))
+            if ((args.length > 1) && args[1].equals("on"))
             {
                 viewer.setDump(true);
             }
-            if ((args.length > 1) && args[ 1 ].equals("bfd"))
+            if ((args.length > 1) && args[1].equals("bfd"))
             {
-                POIFSFileSystem fs     =
-                    new POIFSFileSystem(new FileInputStream(args[ 0 ]));
-                InputStream     stream =
-                    fs.createDocumentInputStream("Workbook");
-                int             size   = stream.available();
-                byte[]          data   = new byte[ size ];
+                POIFSFileSystem fs =
+                        new POIFSFileSystem(new FileInputStream(args[0]));
+                InputStream stream =
+                        fs.createDocumentInputStream("Workbook");
+                int size = stream.available();
+                byte[] data = new byte[size];
 
                 stream.read(data);
                 HexDump.dump(data, 0, System.out, 0);
-            }
-            else
+            } else
             {
                 viewer.run();
             }
-        }
-        catch (Exception e)
+        } catch (Exception e)
         {
             e.printStackTrace();
         }
