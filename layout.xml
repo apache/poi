@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <?xml-stylesheet type="text/xsl" href="tools/antipede/resources/stylesheets/layout.xsl"?>
 <layout dir=".">
+   <legal dir="./legal"/>     
   <library dir="./lib">
    <endorsed dir="./lib/endorsed"/>
    <core dir="./lib/core"/>
@@ -62,6 +63,12 @@
   </build>   
   <distributions dir="./dist">
    <source dir="./dist/src"/>
-   <bin dir="./dist/bin"/>
+   <bin dir="./dist/bin">
+     <library dir="./dist/bin/lib"/>
+     <documentation dir="./dist/bin/docs"/>
+     <info dir="./dist/bin"/>
+     <build dir="./dist/bin/build"/>
+     <legal dir="./dist/bin/legal"/>     
+   </bin>
   </distributions>   
 </layout>
