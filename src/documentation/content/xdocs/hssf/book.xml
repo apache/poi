@@ -5,7 +5,7 @@
     title="HSSF"
     copyright="@year@ POI Project">
 
-    <menu label="Jakarta Poi">
+    <menu label="Jakarta POI">
         <menu-item label="Top" href="../index.html"/>
     </menu>
 
