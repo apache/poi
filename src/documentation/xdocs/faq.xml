@@ -4,25 +4,26 @@
 <faqs title="Frequently Asked Questions">
 <faq>
   <question>
-    Why does nothing happen?
+    What is the HSSF "eventmodel"? 
+  </question>
+  <question>
+    When will all the documentation be ported to the new site?
   </question>
   <answer>
     <p>
-      You might want to check a few things:
+      The HSSF eventmodel package is a new API for reading XLS files more efficiently.  It does 
+      require more knowledge on the part of the user, but reduces memory consumption by more than
+      tenfold.  It is based on the AWT event model in combination with SAX.  If you need read-only
+      access to a given XLS file, this is the best way to do it.  
     </p>
-    <ul>
-      <li>
-        one
-      </li>
-      <li>
-        two
-      </li>
-      <li>
-        three
-      </li>
-    </ul>
-    <note>This is a note.</note>
+<!--    <note>This is a note.</note>-->
   </answer>
+  <answer>
+    <p>
+      Soon, very soon.
+    </p>
+  </answer>
+
 </faq>
 
 </faqs>
