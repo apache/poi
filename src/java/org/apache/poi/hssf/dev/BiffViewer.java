@@ -614,22 +614,22 @@ public class BiffViewer {
 
 
     /**
-     *  Method main with 1 argument just run straight biffview against given
-     *  file<P>
+     * Method main with 1 argument just run straight biffview against given
+     * file<P>
      *
-     *  with 2 arguments where the second argument is "on" - run biffviewer<P>
+     * with 2 arguments where the second argument is "on" - run biffviewer<P>
      *
-     *  with hex dumps of records <P>
+     * with hex dumps of records <P>
      *
-     *  with 2 arguments where the second argument is "bfd" just run a big fat
-     *  hex dump of the file...don't worry about biffviewing it at all
+     * with 2 arguments where the second argument is "bfd" just run a big fat
+     * hex dump of the file...don't worry about biffviewing it at all
+     * <p>
+     * Define the system property <code>poi.deserialize.escher</code> to turn on
+     * deserialization of escher records.
      *
-     *@param  args
      */
-
     public static void main(String[] args) {
         try {
-            System.setProperty("poi.deserialize.escher", "true");
             BiffViewer viewer = new BiffViewer(args);
 
             if ((args.length > 1) && args[1].equals("on")) {
