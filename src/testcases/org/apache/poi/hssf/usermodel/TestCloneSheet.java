@@ -79,7 +79,7 @@ public class TestCloneSheet extends TestCase {
 			s.addMergedRegion(new Region((short)0,(short)0,(short)1,(short)1));
 			b.cloneSheet(0);
 		}
-		catch(Exception e){fail(e.getMessage());}
+		catch(Exception e){e.printStackTrace();fail(e.getMessage());}
 	}
 
 }
