@@ -14,6 +14,7 @@
          <arg value="${contrib.input.selection}"/>
      <classpath>
        <pathelement path="${xlayout.build.contributions.classes.dir}"/>
+       <pathelement path="${xlayout.build.classes.dir}"/>
        <path>
           <fileset dir="${xlayout.library.dir}" casesensitive="yes"> 
            <patternset>
