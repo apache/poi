@@ -37,7 +37,7 @@
             Does HSSF support protected spreadsheets?
         </question>
         <answer>
-            Protecting a spreadsheet encripts it.  We wont touch encription because we're not legally educated
+            Protecting a spreadsheet encrypts it.  We wont touch encryption because we're not legally educated
             and don't understand the full implications of trying to implement this.  If you wish to have a go
             at this feel free to add it as a plugin module.  We wont be hosting it here however.
         </answer>
@@ -48,20 +48,15 @@
         </question>
         <answer>
             Excel stores dates as numbers therefore the only way to determine if a cell is
-            actually stored as a date is to look at the formatting. This solution from
-            Jason Hoffman:
-            <p>
-            Okay, here is a little code I used to determine if the cell was a number or
-            date, and then format appropriately.  I hope it helps.  I keep meaning to
-            submit a patch with the helper method below.... but just haven't had a
-            chance.
-            </p>
+            actually stored as a date is to look at the formatting. There is a helper method
+            in HSSFDateUtil (since after 1.6.0-dev) that checks for this. 
+            Thanks to Jason Hoffman for providing the solution.
             <source>
-/////// code snippet ////////////
-case HSSFCell.CELL_TYPE_NUMERIC:
+
+            case HSSFCell.CELL_TYPE_NUMERIC:
                   double d = cell.getNumericCellValue();
                   // test if a date!
-                  if (isCellDateFormatted(cell)) {
+                  if (HSSFDateUtil.isCellDateFormatted(cell)) {
                     // format in form of M/D/YY
                     cal.setTime(HSSFDateUtil.getJavaDate(d));
                     cellText =
@@ -70,45 +65,13 @@ case HSSFCell.CELL_TYPE_NUMERIC:
                                cal.get(Calendar.DAY_OF_MONTH) + "/" +
                                cellText;
                   }
-/////// end code snippet ////////////
 
-// HELPER METHOD BELOW TO DETERMINE IF DATE
 
-// method to determine if the cell is a date, versus a number...
-public static boolean isCellDateFormatted(HSSFCell cell) {
-    boolean bDate = false;
 
-    double d = cell.getNumericCellValue();
-    if ( HSSFDateUtil.isValidExcelDate(d) ) {
-      HSSFCellStyle style = cell.getCellStyle();
-      int i = style.getDataFormat();
-      switch(i) {
-        // Internal Date Formats as described on page 427 in
-        // Microsoft Excel Dev's Kit...
-        case 0x0e:
-        case 0x0f:
-        case 0x10:
-        case 0x11:
-        case 0x12:
-        case 0x13:
-        case 0x14:
-        case 0x15:
-        case 0x16:
-        case 0x2d:
-        case 0x2e:
-        case 0x2f:
-         bDate = true;
-        break;
-
-        default:
-         bDate = false;
-        break;
-      }
-    }
-    return bDate;
-  }
             </source>
         </answer>
+    </faq>
+    <faq>
         <question>
             I'm trying to stream an XLS file from a servlet and I'm having some trouble.  What's the problem?
         </question>
@@ -125,8 +88,9 @@ public static boolean isCellDateFormatted(HSSFCell cell) {
             The problem in most versions of IE is that it does not use the mime type on
             the HTTP response to determine the file type; rather it uses the file extension
             on the request. Thus you might want to add a <strong>.xls</strong> to your request
-            string. For example http://yourserver.com/myServelet.xls?param1=xx. Sometimes
-            a request like http://yourserver.com/myServelet?param1=xx&amp;dummy=file.xls is also
+            string. For example <em>http://yourserver.com/myServelet.xls?param1=xx</em>. This is
+            easily accomplished through URL mapping in any servlet container. Sometimes
+            a request like <em>http://yourserver.com/myServelet?param1=xx&amp;dummy=file.xls</em> is also
             known to work. 
             </p>
             <p>
@@ -137,7 +101,7 @@ public static boolean isCellDateFormatted(HSSFCell cell) {
             request as mentioned above.)
             </p>
             <p>
-            Note also that sometimes when you request a document that is opened with an 
+            Note also that when you request a document that is opened with an 
             external handler, IE sometimes makes two requests to the webserver. So if your
             generating process is heavy, it makes sense to write out to a temporary file, so that multiple
             requests happen for a static file. 
