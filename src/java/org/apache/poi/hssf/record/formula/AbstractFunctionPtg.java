@@ -442,85 +442,359 @@ public abstract class AbstractFunctionPtg extends OperationPtg {
     
     private static Object[][]  produceFunctionData() {
         Object [][] functionData = new Object[368][3];
+                                 //return Class                       // Param Class                               //Num Params 
+        functionData[0][0]=new Byte(Ptg.CLASS_VALUE);functionData[0][1]=new byte[] {Ptg.CLASS_REF};functionData[0][2]=new Integer(-1);
+        functionData[2][0]=new Byte(Ptg.CLASS_VALUE);functionData[2][1]=new byte[] {Ptg.CLASS_VALUE};functionData[2][2]=new Integer(1);
+        functionData[3][0]=new Byte(Ptg.CLASS_VALUE);functionData[3][1]=new byte[] {Ptg.CLASS_VALUE};functionData[3][2]=new Integer(1);
+        functionData[4][0]=new Byte(Ptg.CLASS_VALUE);functionData[4][1]=new byte[] {Ptg.CLASS_REF};functionData[4][2]=new Integer(-1);
+        functionData[5][0]=new Byte(Ptg.CLASS_VALUE);functionData[5][1]=new byte[] {Ptg.CLASS_REF};functionData[5][2]=new Integer(-1);
+        functionData[6][0]=new Byte(Ptg.CLASS_VALUE);functionData[6][1]=new byte[] {Ptg.CLASS_REF};functionData[6][2]=new Integer(-1);
+        functionData[7][0]=new Byte(Ptg.CLASS_VALUE);functionData[7][1]=new byte[] {Ptg.CLASS_REF};functionData[7][2]=new Integer(-1);
+        functionData[8][0]=new Byte(Ptg.CLASS_VALUE);functionData[8][1]=new byte[] {Ptg.CLASS_REF};functionData[8][2]=new Integer(-1);
+        functionData[9][0]=new Byte(Ptg.CLASS_VALUE);functionData[9][1]=new byte[] {Ptg.CLASS_REF};functionData[9][2]=new Integer(-1);
+        functionData[10][0]=new Byte(Ptg.CLASS_VALUE);functionData[10][1]=new byte[] {Ptg.CLASS_VALUE};functionData[10][2]=new Integer(0);
+        functionData[11][0]=new Byte(Ptg.CLASS_VALUE);functionData[11][1]=new byte[] {Ptg.CLASS_REF};functionData[11][2]=new Integer(-1);
+        functionData[12][0]=new Byte(Ptg.CLASS_VALUE);functionData[12][1]=new byte[] {Ptg.CLASS_REF};functionData[12][2]=new Integer(-1);
+        functionData[13][0]=new Byte(Ptg.CLASS_VALUE);functionData[13][1]=new byte[] {Ptg.CLASS_VALUE};functionData[13][2]=new Integer(-1);
+        functionData[14][0]=new Byte(Ptg.CLASS_VALUE);functionData[14][1]=new byte[] {Ptg.CLASS_VALUE};functionData[14][2]=new Integer(-1);
+        functionData[15][0]=new Byte(Ptg.CLASS_VALUE);functionData[15][1]=new byte[] {Ptg.CLASS_VALUE};functionData[15][2]=new Integer(1);
+        functionData[16][0]=new Byte(Ptg.CLASS_VALUE);functionData[16][1]=new byte[] {Ptg.CLASS_VALUE};functionData[16][2]=new Integer(1);
+        functionData[17][0]=new Byte(Ptg.CLASS_VALUE);functionData[17][1]=new byte[] {Ptg.CLASS_VALUE};functionData[17][2]=new Integer(1);
+        functionData[18][0]=new Byte(Ptg.CLASS_VALUE);functionData[18][1]=new byte[] {Ptg.CLASS_VALUE};functionData[18][2]=new Integer(1);
+        functionData[19][0]=new Byte(Ptg.CLASS_VALUE);functionData[19][1]=new byte[] {Ptg.CLASS_VALUE};functionData[19][2]=new Integer(0);
+        functionData[20][0]=new Byte(Ptg.CLASS_VALUE);functionData[20][1]=new byte[] {Ptg.CLASS_VALUE};functionData[20][2]=new Integer(1);
+        functionData[21][0]=new Byte(Ptg.CLASS_VALUE);functionData[21][1]=new byte[] {Ptg.CLASS_VALUE};functionData[21][2]=new Integer(1);
+        functionData[22][0]=new Byte(Ptg.CLASS_VALUE);functionData[22][1]=new byte[] {Ptg.CLASS_VALUE};functionData[22][2]=new Integer(1);
+        functionData[23][0]=new Byte(Ptg.CLASS_VALUE);functionData[23][1]=new byte[] {Ptg.CLASS_VALUE};functionData[23][2]=new Integer(1);
+        functionData[24][0]=new Byte(Ptg.CLASS_VALUE);functionData[24][1]=new byte[] {Ptg.CLASS_VALUE};functionData[24][2]=new Integer(1);
+        functionData[25][0]=new Byte(Ptg.CLASS_VALUE);functionData[25][1]=new byte[] {Ptg.CLASS_VALUE};functionData[25][2]=new Integer(1);
+        functionData[26][0]=new Byte(Ptg.CLASS_VALUE);functionData[26][1]=new byte[] {Ptg.CLASS_VALUE};functionData[26][2]=new Integer(1);
+        functionData[27][0]=new Byte(Ptg.CLASS_VALUE);functionData[27][1]=new byte[] {Ptg.CLASS_VALUE};functionData[27][2]=new Integer(2);
+        functionData[28][0]=new Byte(Ptg.CLASS_VALUE);functionData[28][1]=new byte[] {Ptg.CLASS_REF};functionData[28][2]=new Integer(-1);
+        functionData[29][0]=new Byte(Ptg.CLASS_VALUE);functionData[29][1]=new byte[] {Ptg.CLASS_REF};functionData[29][2]=new Integer(-1);
+        functionData[30][0]=new Byte(Ptg.CLASS_VALUE);functionData[30][1]=new byte[] {Ptg.CLASS_VALUE};functionData[30][2]=new Integer(2);
+        functionData[31][0]=new Byte(Ptg.CLASS_VALUE);functionData[31][1]=new byte[] {Ptg.CLASS_VALUE};functionData[31][2]=new Integer(3);
+        functionData[32][0]=new Byte(Ptg.CLASS_VALUE);functionData[32][1]=new byte[] {Ptg.CLASS_VALUE};functionData[32][2]=new Integer(1);
+        functionData[33][0]=new Byte(Ptg.CLASS_VALUE);functionData[33][1]=new byte[] {Ptg.CLASS_VALUE};functionData[33][2]=new Integer(1);
+        functionData[34][0]=new Byte(Ptg.CLASS_VALUE);functionData[34][1]=new byte[] {Ptg.CLASS_VALUE};functionData[34][2]=new Integer(1);
+        functionData[35][0]=new Byte(Ptg.CLASS_VALUE);functionData[35][1]=new byte[] {Ptg.CLASS_VALUE};functionData[35][2]=new Integer(1);
+        functionData[36][0]=new Byte(Ptg.CLASS_VALUE);functionData[36][1]=new byte[] {Ptg.CLASS_REF};functionData[36][2]=new Integer(-1);
+        functionData[37][0]=new Byte(Ptg.CLASS_VALUE);functionData[37][1]=new byte[] {Ptg.CLASS_REF};functionData[37][2]=new Integer(-1);
+        functionData[38][0]=new Byte(Ptg.CLASS_VALUE);functionData[38][1]=new byte[] {Ptg.CLASS_VALUE};functionData[38][2]=new Integer(1);
+        functionData[39][0]=new Byte(Ptg.CLASS_VALUE);functionData[39][1]=new byte[] {Ptg.CLASS_VALUE};functionData[39][2]=new Integer(2);
+        functionData[40][0]=new Byte(Ptg.CLASS_VALUE);functionData[40][1]=new byte[] {Ptg.CLASS_REF};functionData[40][2]=new Integer(3);
+        functionData[41][0]=new Byte(Ptg.CLASS_VALUE);functionData[41][1]=new byte[] {Ptg.CLASS_REF};functionData[41][2]=new Integer(3);
+        functionData[42][0]=new Byte(Ptg.CLASS_VALUE);functionData[42][1]=new byte[] {Ptg.CLASS_REF};functionData[42][2]=new Integer(3);
+        functionData[43][0]=new Byte(Ptg.CLASS_VALUE);functionData[43][1]=new byte[] {Ptg.CLASS_REF};functionData[43][2]=new Integer(3);
+        functionData[44][0]=new Byte(Ptg.CLASS_VALUE);functionData[44][1]=new byte[] {Ptg.CLASS_REF};functionData[44][2]=new Integer(3);
+        functionData[45][0]=new Byte(Ptg.CLASS_VALUE);functionData[45][1]=new byte[] {Ptg.CLASS_REF};functionData[45][2]=new Integer(3);
+        functionData[46][0]=new Byte(Ptg.CLASS_VALUE);functionData[46][1]=new byte[] {Ptg.CLASS_REF};functionData[46][2]=new Integer(-1);
+        functionData[47][0]=new Byte(Ptg.CLASS_VALUE);functionData[47][1]=new byte[] {Ptg.CLASS_REF};functionData[47][2]=new Integer(3);
+        functionData[48][0]=new Byte(Ptg.CLASS_VALUE);functionData[48][1]=new byte[] {Ptg.CLASS_VALUE};functionData[48][2]=new Integer(2);
+        functionData[49][0]=new Byte(Ptg.CLASS_VALUE);functionData[49][1]=new byte[] {Ptg.CLASS_REF};functionData[49][2]=new Integer(-1);
+        functionData[50][0]=new Byte(Ptg.CLASS_VALUE);functionData[50][1]=new byte[] {Ptg.CLASS_REF};functionData[50][2]=new Integer(-1);
+        functionData[51][0]=new Byte(Ptg.CLASS_VALUE);functionData[51][1]=new byte[] {Ptg.CLASS_REF};functionData[51][2]=new Integer(-1);
+        functionData[52][0]=new Byte(Ptg.CLASS_VALUE);functionData[52][1]=new byte[] {Ptg.CLASS_REF};functionData[52][2]=new Integer(-1);
         
-functionData[0][0]=new Byte(Ptg.CLASS_VALUE);functionData[0][1]=new byte[] {Ptg.CLASS_REF};functionData[0][2]=new Integer(-1);
-functionData[2][0]=new Byte(Ptg.CLASS_VALUE);functionData[2][1]=new byte[] {Ptg.CLASS_VALUE};functionData[2][2]=new Integer(1);
-functionData[3][0]=new Byte(Ptg.CLASS_VALUE);functionData[3][1]=new byte[] {Ptg.CLASS_VALUE};functionData[3][2]=new Integer(1);
-functionData[4][0]=new Byte(Ptg.CLASS_VALUE);functionData[4][1]=new byte[] {Ptg.CLASS_REF};functionData[4][2]=new Integer(-1);
-functionData[5][0]=new Byte(Ptg.CLASS_VALUE);functionData[5][1]=new byte[] {Ptg.CLASS_REF};functionData[5][2]=new Integer(-1);
-functionData[6][0]=new Byte(Ptg.CLASS_VALUE);functionData[6][1]=new byte[] {Ptg.CLASS_REF};functionData[6][2]=new Integer(-1);
-functionData[7][0]=new Byte(Ptg.CLASS_VALUE);functionData[7][1]=new byte[] {Ptg.CLASS_REF};functionData[7][2]=new Integer(-1);
-functionData[8][0]=new Byte(Ptg.CLASS_VALUE);functionData[8][1]=new byte[] {Ptg.CLASS_REF};functionData[8][2]=new Integer(-1);
-functionData[9][0]=new Byte(Ptg.CLASS_VALUE);functionData[9][1]=new byte[] {Ptg.CLASS_REF};functionData[9][2]=new Integer(-1);
-functionData[10][0]=new Byte(Ptg.CLASS_VALUE);functionData[10][1]=new byte[] {Ptg.CLASS_VALUE};functionData[10][2]=new Integer(0);
-functionData[11][0]=new Byte(Ptg.CLASS_VALUE);functionData[11][1]=new byte[] {Ptg.CLASS_REF};functionData[11][2]=new Integer(-1);
-functionData[12][0]=new Byte(Ptg.CLASS_VALUE);functionData[12][1]=new byte[] {Ptg.CLASS_REF};functionData[12][2]=new Integer(-1);
-functionData[13][0]=new Byte(Ptg.CLASS_VALUE);functionData[13][1]=new byte[] {Ptg.CLASS_VALUE};functionData[13][2]=new Integer(-1);
-functionData[14][0]=new Byte(Ptg.CLASS_VALUE);functionData[14][1]=new byte[] {Ptg.CLASS_VALUE};functionData[14][2]=new Integer(-1);
-functionData[15][0]=new Byte(Ptg.CLASS_VALUE);functionData[15][1]=new byte[] {Ptg.CLASS_VALUE};functionData[15][2]=new Integer(1);
-functionData[16][0]=new Byte(Ptg.CLASS_VALUE);functionData[16][1]=new byte[] {Ptg.CLASS_VALUE};functionData[16][2]=new Integer(1);
-functionData[17][0]=new Byte(Ptg.CLASS_VALUE);functionData[17][1]=new byte[] {Ptg.CLASS_VALUE};functionData[17][2]=new Integer(1);
-functionData[18][0]=new Byte(Ptg.CLASS_VALUE);functionData[18][1]=new byte[] {Ptg.CLASS_VALUE};functionData[18][2]=new Integer(1);
-functionData[19][0]=new Byte(Ptg.CLASS_VALUE);functionData[19][1]=new byte[] {Ptg.CLASS_VALUE};functionData[19][2]=new Integer(0);
-functionData[20][0]=new Byte(Ptg.CLASS_VALUE);functionData[20][1]=new byte[] {Ptg.CLASS_VALUE};functionData[20][2]=new Integer(1);
-functionData[21][0]=new Byte(Ptg.CLASS_VALUE);functionData[21][1]=new byte[] {Ptg.CLASS_VALUE};functionData[21][2]=new Integer(1);
-functionData[22][0]=new Byte(Ptg.CLASS_VALUE);functionData[22][1]=new byte[] {Ptg.CLASS_VALUE};functionData[22][2]=new Integer(1);
-functionData[23][0]=new Byte(Ptg.CLASS_VALUE);functionData[23][1]=new byte[] {Ptg.CLASS_VALUE};functionData[23][2]=new Integer(1);
-functionData[24][0]=new Byte(Ptg.CLASS_VALUE);functionData[24][1]=new byte[] {Ptg.CLASS_VALUE};functionData[24][2]=new Integer(1);
-functionData[25][0]=new Byte(Ptg.CLASS_VALUE);functionData[25][1]=new byte[] {Ptg.CLASS_VALUE};functionData[25][2]=new Integer(1);
-functionData[26][0]=new Byte(Ptg.CLASS_VALUE);functionData[26][1]=new byte[] {Ptg.CLASS_VALUE};functionData[26][2]=new Integer(1);
-functionData[27][0]=new Byte(Ptg.CLASS_VALUE);functionData[27][1]=new byte[] {Ptg.CLASS_VALUE};functionData[27][2]=new Integer(2);
-functionData[28][0]=new Byte(Ptg.CLASS_VALUE);functionData[28][1]=new byte[] {Ptg.CLASS_REF};functionData[28][2]=new Integer(-1);
-functionData[29][0]=new Byte(Ptg.CLASS_VALUE);functionData[29][1]=new byte[] {Ptg.CLASS_REF};functionData[29][2]=new Integer(-1);
-functionData[30][0]=new Byte(Ptg.CLASS_VALUE);functionData[30][1]=new byte[] {Ptg.CLASS_VALUE};functionData[30][2]=new Integer(2);
-functionData[31][0]=new Byte(Ptg.CLASS_VALUE);functionData[31][1]=new byte[] {Ptg.CLASS_VALUE};functionData[31][2]=new Integer(3);
-functionData[32][0]=new Byte(Ptg.CLASS_VALUE);functionData[32][1]=new byte[] {Ptg.CLASS_VALUE};functionData[32][2]=new Integer(1);
-functionData[33][0]=new Byte(Ptg.CLASS_VALUE);functionData[33][1]=new byte[] {Ptg.CLASS_VALUE};functionData[33][2]=new Integer(1);
-functionData[34][0]=new Byte(Ptg.CLASS_VALUE);functionData[34][1]=new byte[] {Ptg.CLASS_VALUE};functionData[34][2]=new Integer(1);
-functionData[35][0]=new Byte(Ptg.CLASS_VALUE);functionData[35][1]=new byte[] {Ptg.CLASS_VALUE};functionData[35][2]=new Integer(1);
-functionData[36][0]=new Byte(Ptg.CLASS_VALUE);functionData[36][1]=new byte[] {Ptg.CLASS_REF};functionData[36][2]=new Integer(-1);
-functionData[37][0]=new Byte(Ptg.CLASS_VALUE);functionData[37][1]=new byte[] {Ptg.CLASS_REF};functionData[37][2]=new Integer(-1);
-functionData[38][0]=new Byte(Ptg.CLASS_VALUE);functionData[38][1]=new byte[] {Ptg.CLASS_VALUE};functionData[38][2]=new Integer(1);
-functionData[39][0]=new Byte(Ptg.CLASS_VALUE);functionData[39][1]=new byte[] {Ptg.CLASS_VALUE};functionData[39][2]=new Integer(2);
-functionData[40][0]=new Byte(Ptg.CLASS_VALUE);functionData[40][1]=new byte[] {Ptg.CLASS_REF};functionData[40][2]=new Integer(3);
-functionData[41][0]=new Byte(Ptg.CLASS_VALUE);functionData[41][1]=new byte[] {Ptg.CLASS_REF};functionData[41][2]=new Integer(3);
-functionData[42][0]=new Byte(Ptg.CLASS_VALUE);functionData[42][1]=new byte[] {Ptg.CLASS_REF};functionData[42][2]=new Integer(3);
-functionData[43][0]=new Byte(Ptg.CLASS_VALUE);functionData[43][1]=new byte[] {Ptg.CLASS_REF};functionData[43][2]=new Integer(3);
-functionData[44][0]=new Byte(Ptg.CLASS_VALUE);functionData[44][1]=new byte[] {Ptg.CLASS_REF};functionData[44][2]=new Integer(3);
-functionData[45][0]=new Byte(Ptg.CLASS_VALUE);functionData[45][1]=new byte[] {Ptg.CLASS_REF};functionData[45][2]=new Integer(3);
-functionData[46][0]=new Byte(Ptg.CLASS_VALUE);functionData[46][1]=new byte[] {Ptg.CLASS_REF};functionData[46][2]=new Integer(-1);
-functionData[47][0]=new Byte(Ptg.CLASS_VALUE);functionData[47][1]=new byte[] {Ptg.CLASS_REF};functionData[47][2]=new Integer(3);
-functionData[48][0]=new Byte(Ptg.CLASS_VALUE);functionData[48][1]=new byte[] {Ptg.CLASS_VALUE};functionData[48][2]=new Integer(2);
-functionData[49][0]=new Byte(Ptg.CLASS_VALUE);functionData[49][1]=new byte[] {Ptg.CLASS_REF};functionData[49][2]=new Integer(-1);
-functionData[50][0]=new Byte(Ptg.CLASS_VALUE);functionData[50][1]=new byte[] {Ptg.CLASS_REF};functionData[50][2]=new Integer(-1);
-functionData[51][0]=new Byte(Ptg.CLASS_VALUE);functionData[51][1]=new byte[] {Ptg.CLASS_REF};functionData[51][2]=new Integer(-1);
-functionData[52][0]=new Byte(Ptg.CLASS_VALUE);functionData[52][1]=new byte[] {Ptg.CLASS_REF};functionData[52][2]=new Integer(-1);
-functionData[53][0]=new Byte(Ptg.CLASS_VALUE);functionData[53][1]=new byte[] {Ptg.CLASS_VALUE};functionData[53][2]=new Integer(-1);
-functionData[54][0]=new Byte(Ptg.CLASS_VALUE);functionData[54][1]=new byte[] {Ptg.CLASS_VALUE};functionData[54][2]=new Integer(-1);
-functionData[56][0]=new Byte(Ptg.CLASS_VALUE);functionData[56][1]=new byte[] {Ptg.CLASS_VALUE};functionData[56][2]=new Integer(-1);
-functionData[57][0]=new Byte(Ptg.CLASS_VALUE);functionData[57][1]=new byte[] {Ptg.CLASS_VALUE};functionData[57][2]=new Integer(-1);
-functionData[58][0]=new Byte(Ptg.CLASS_VALUE);functionData[58][1]=new byte[] {Ptg.CLASS_VALUE};functionData[58][2]=new Integer(-1);
-functionData[59][0]=new Byte(Ptg.CLASS_VALUE);functionData[59][1]=new byte[] {Ptg.CLASS_VALUE};functionData[59][2]=new Integer(-1);
-functionData[60][0]=new Byte(Ptg.CLASS_VALUE);functionData[60][1]=new byte[] {Ptg.CLASS_VALUE};functionData[60][2]=new Integer(-1);
-functionData[61][0]=new Byte(Ptg.CLASS_VALUE);functionData[61][1]=new byte[] {Ptg.CLASS_VALUE};functionData[61][2]=new Integer(3);
-functionData[62][0]=new Byte(Ptg.CLASS_VALUE);functionData[62][1]=new byte[] {Ptg.CLASS_REF};functionData[62][2]=new Integer(-1);
-functionData[63][0]=new Byte(Ptg.CLASS_VALUE);functionData[63][1]=new byte[] {Ptg.CLASS_REF};functionData[63][2]=new Integer(1);
-functionData[64][0]=new Byte(Ptg.CLASS_VALUE);functionData[64][1]=new byte[] {Ptg.CLASS_REF};functionData[64][2]=new Integer(-1);
-functionData[65][0]=new Byte(Ptg.CLASS_VALUE);functionData[65][1]=new byte[] {Ptg.CLASS_VALUE};functionData[65][2]=new Integer(3);
-functionData[66][0]=new Byte(Ptg.CLASS_VALUE);functionData[66][1]=new byte[] {Ptg.CLASS_VALUE};functionData[66][2]=new Integer(3);
-functionData[67][0]=new Byte(Ptg.CLASS_VALUE);functionData[67][1]=new byte[] {Ptg.CLASS_VALUE};functionData[67][2]=new Integer(1);
-functionData[68][0]=new Byte(Ptg.CLASS_VALUE);functionData[68][1]=new byte[] {Ptg.CLASS_VALUE};functionData[68][2]=new Integer(1);
-functionData[69][0]=new Byte(Ptg.CLASS_VALUE);functionData[69][1]=new byte[] {Ptg.CLASS_VALUE};functionData[69][2]=new Integer(1);
-functionData[70][0]=new Byte(Ptg.CLASS_VALUE);functionData[70][1]=new byte[] {Ptg.CLASS_VALUE};functionData[70][2]=new Integer(-1);
-functionData[71][0]=new Byte(Ptg.CLASS_VALUE);functionData[71][1]=new byte[] {Ptg.CLASS_VALUE};functionData[71][2]=new Integer(1);
-functionData[72][0]=new Byte(Ptg.CLASS_VALUE);functionData[72][1]=new byte[] {Ptg.CLASS_VALUE};functionData[72][2]=new Integer(1);
-functionData[73][0]=new Byte(Ptg.CLASS_VALUE);functionData[73][1]=new byte[] {Ptg.CLASS_VALUE};functionData[73][2]=new Integer(1);
-functionData[74][0]=new Byte(Ptg.CLASS_VALUE);functionData[74][1]=new byte[] {Ptg.CLASS_REF};functionData[74][2]=new Integer(1);
-functionData[75][0]=new Byte(Ptg.CLASS_VALUE);functionData[75][1]=new byte[] {Ptg.CLASS_REF};functionData[75][2]=new Integer(1);
-functionData[76][0]=new Byte(Ptg.CLASS_VALUE);functionData[76][1]=new byte[] {Ptg.CLASS_REF};functionData[76][2]=new Integer(1);
-functionData[77][0]=new Byte(Ptg.CLASS_VALUE);functionData[77][1]=new byte[] {Ptg.CLASS_REF};functionData[77][2]=new Integer(1);
-functionData[78][0]=new Byte(Ptg.CLASS_VALUE);functionData[78][1]=new byte[] {Ptg.CLASS_VALUE};functionData[78][2]=new Integer(-1);
-
+        
+        functionData[56][0]=new Byte(Ptg.CLASS_VALUE);functionData[56][1]=new byte[] {Ptg.CLASS_VALUE};functionData[56][2]=new Integer(-1);
+        functionData[57][0]=new Byte(Ptg.CLASS_VALUE);functionData[57][1]=new byte[] {Ptg.CLASS_VALUE};functionData[57][2]=new Integer(-1);
+        functionData[58][0]=new Byte(Ptg.CLASS_VALUE);functionData[58][1]=new byte[] {Ptg.CLASS_VALUE};functionData[58][2]=new Integer(-1);
+        functionData[59][0]=new Byte(Ptg.CLASS_VALUE);functionData[59][1]=new byte[] {Ptg.CLASS_VALUE};functionData[59][2]=new Integer(-1);
+        functionData[60][0]=new Byte(Ptg.CLASS_VALUE);functionData[60][1]=new byte[] {Ptg.CLASS_VALUE};functionData[60][2]=new Integer(-1);
+        functionData[61][0]=new Byte(Ptg.CLASS_VALUE);functionData[61][1]=new byte[] {Ptg.CLASS_VALUE};functionData[61][2]=new Integer(3);
+        functionData[62][0]=new Byte(Ptg.CLASS_VALUE);functionData[62][1]=new byte[] {Ptg.CLASS_REF};functionData[62][2]=new Integer(-1);
+        functionData[63][0]=new Byte(Ptg.CLASS_VALUE);functionData[63][1]=new byte[] {Ptg.CLASS_REF};functionData[63][2]=new Integer(1);
+        functionData[64][0]=new Byte(Ptg.CLASS_VALUE);functionData[64][1]=new byte[] {Ptg.CLASS_REF};functionData[64][2]=new Integer(-1);
+        functionData[65][0]=new Byte(Ptg.CLASS_VALUE);functionData[65][1]=new byte[] {Ptg.CLASS_VALUE};functionData[65][2]=new Integer(3);
+        functionData[66][0]=new Byte(Ptg.CLASS_VALUE);functionData[66][1]=new byte[] {Ptg.CLASS_VALUE};functionData[66][2]=new Integer(3);
+        functionData[67][0]=new Byte(Ptg.CLASS_VALUE);functionData[67][1]=new byte[] {Ptg.CLASS_VALUE};functionData[67][2]=new Integer(1);
+        functionData[68][0]=new Byte(Ptg.CLASS_VALUE);functionData[68][1]=new byte[] {Ptg.CLASS_VALUE};functionData[68][2]=new Integer(1);
+        functionData[69][0]=new Byte(Ptg.CLASS_VALUE);functionData[69][1]=new byte[] {Ptg.CLASS_VALUE};functionData[69][2]=new Integer(1);
+        functionData[70][0]=new Byte(Ptg.CLASS_VALUE);functionData[70][1]=new byte[] {Ptg.CLASS_VALUE};functionData[70][2]=new Integer(-1);
+        functionData[71][0]=new Byte(Ptg.CLASS_VALUE);functionData[71][1]=new byte[] {Ptg.CLASS_VALUE};functionData[71][2]=new Integer(1);
+        functionData[72][0]=new Byte(Ptg.CLASS_VALUE);functionData[72][1]=new byte[] {Ptg.CLASS_VALUE};functionData[72][2]=new Integer(1);
+        functionData[73][0]=new Byte(Ptg.CLASS_VALUE);functionData[73][1]=new byte[] {Ptg.CLASS_VALUE};functionData[73][2]=new Integer(1);
+        functionData[74][0]=new Byte(Ptg.CLASS_VALUE);functionData[74][1]=new byte[] {Ptg.CLASS_REF};functionData[74][2]=new Integer(1);
+        functionData[75][0]=new Byte(Ptg.CLASS_VALUE);functionData[75][1]=new byte[] {Ptg.CLASS_REF};functionData[75][2]=new Integer(1);
+        functionData[76][0]=new Byte(Ptg.CLASS_VALUE);functionData[76][1]=new byte[] {Ptg.CLASS_REF};functionData[76][2]=new Integer(1);
+        functionData[77][0]=new Byte(Ptg.CLASS_VALUE);functionData[77][1]=new byte[] {Ptg.CLASS_REF};functionData[77][2]=new Integer(1);
+        functionData[78][0]=new Byte(Ptg.CLASS_VALUE);functionData[78][1]=new byte[] {Ptg.CLASS_VALUE};functionData[78][2]=new Integer(-1);
+        
+        
+        
+        functionData[82][0]=new Byte(Ptg.CLASS_VALUE);functionData[82][1]=new byte[] {Ptg.CLASS_VALUE};functionData[82][2]=new Integer(-1);
+        functionData[83][0]=new Byte(Ptg.CLASS_VALUE);functionData[83][1]=new byte[] {Ptg.CLASS_VALUE};functionData[83][2]=new Integer(1);
+        
+        
+        functionData[86][0]=new Byte(Ptg.CLASS_VALUE);functionData[86][1]=new byte[] {Ptg.CLASS_VALUE};functionData[86][2]=new Integer(1);
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        functionData[97][0]=new Byte(Ptg.CLASS_VALUE);functionData[97][1]=new byte[] {Ptg.CLASS_VALUE};functionData[97][2]=new Integer(2);
+        functionData[98][0]=new Byte(Ptg.CLASS_VALUE);functionData[98][1]=new byte[] {Ptg.CLASS_VALUE};functionData[98][2]=new Integer(1);
+        functionData[99][0]=new Byte(Ptg.CLASS_VALUE);functionData[99][1]=new byte[] {Ptg.CLASS_VALUE};functionData[99][2]=new Integer(1);
+        
+        functionData[101][0]=new Byte(Ptg.CLASS_VALUE);functionData[101][1]=new byte[] {Ptg.CLASS_REF};functionData[101][2]=new Integer(-1);
+        functionData[102][0]=new Byte(Ptg.CLASS_VALUE);functionData[102][1]=new byte[] {Ptg.CLASS_REF};functionData[102][2]=new Integer(-1);
+        
+        
+        functionData[105][0]=new Byte(Ptg.CLASS_VALUE);functionData[105][1]=new byte[] {Ptg.CLASS_REF};functionData[105][2]=new Integer(1);
+        
+        
+        
+        functionData[109][0]=new Byte(Ptg.CLASS_VALUE);functionData[109][1]=new byte[] {Ptg.CLASS_VALUE};functionData[109][2]=new Integer(-1);
+        
+        functionData[111][0]=new Byte(Ptg.CLASS_VALUE);functionData[111][1]=new byte[] {Ptg.CLASS_VALUE};functionData[111][2]=new Integer(1);
+        functionData[112][0]=new Byte(Ptg.CLASS_VALUE);functionData[112][1]=new byte[] {Ptg.CLASS_VALUE};functionData[112][2]=new Integer(1);
+        functionData[113][0]=new Byte(Ptg.CLASS_VALUE);functionData[113][1]=new byte[] {Ptg.CLASS_VALUE};functionData[113][2]=new Integer(1);
+        functionData[114][0]=new Byte(Ptg.CLASS_VALUE);functionData[114][1]=new byte[] {Ptg.CLASS_VALUE};functionData[114][2]=new Integer(1);
+        functionData[115][0]=new Byte(Ptg.CLASS_VALUE);functionData[115][1]=new byte[] {Ptg.CLASS_VALUE};functionData[115][2]=new Integer(-1);
+        functionData[116][0]=new Byte(Ptg.CLASS_VALUE);functionData[116][1]=new byte[] {Ptg.CLASS_VALUE};functionData[116][2]=new Integer(-1);
+        functionData[117][0]=new Byte(Ptg.CLASS_VALUE);functionData[117][1]=new byte[] {Ptg.CLASS_VALUE};functionData[117][2]=new Integer(2);
+        functionData[118][0]=new Byte(Ptg.CLASS_VALUE);functionData[118][1]=new byte[] {Ptg.CLASS_VALUE};functionData[118][2]=new Integer(1);
+        functionData[119][0]=new Byte(Ptg.CLASS_VALUE);functionData[119][1]=new byte[] {Ptg.CLASS_VALUE};functionData[119][2]=new Integer(4);
+        functionData[120][0]=new Byte(Ptg.CLASS_VALUE);functionData[120][1]=new byte[] {Ptg.CLASS_VALUE};functionData[120][2]=new Integer(-1);
+        functionData[121][0]=new Byte(Ptg.CLASS_VALUE);functionData[121][1]=new byte[] {Ptg.CLASS_VALUE};functionData[121][2]=new Integer(1);
+        
+        
+        functionData[124][0]=new Byte(Ptg.CLASS_VALUE);functionData[124][1]=new byte[] {Ptg.CLASS_VALUE};functionData[124][2]=new Integer(-1);
+        functionData[125][0]=new Byte(Ptg.CLASS_VALUE);functionData[125][1]=new byte[] {Ptg.CLASS_VALUE};functionData[125][2]=new Integer(-1);
+        functionData[126][0]=new Byte(Ptg.CLASS_VALUE);functionData[126][1]=new byte[] {Ptg.CLASS_VALUE};functionData[126][2]=new Integer(1);
+        functionData[127][0]=new Byte(Ptg.CLASS_VALUE);functionData[127][1]=new byte[] {Ptg.CLASS_VALUE};functionData[127][2]=new Integer(1);
+        functionData[128][0]=new Byte(Ptg.CLASS_VALUE);functionData[128][1]=new byte[] {Ptg.CLASS_VALUE};functionData[128][2]=new Integer(1);
+        functionData[129][0]=new Byte(Ptg.CLASS_VALUE);functionData[129][1]=new byte[] {Ptg.CLASS_VALUE};functionData[129][2]=new Integer(1);
+        functionData[130][0]=new Byte(Ptg.CLASS_VALUE);functionData[130][1]=new byte[] {Ptg.CLASS_REF};functionData[130][2]=new Integer(1);
+        functionData[131][0]=new Byte(Ptg.CLASS_VALUE);functionData[131][1]=new byte[] {Ptg.CLASS_REF};functionData[131][2]=new Integer(1);
+        
+        
+        
+        
+        
+        
+        
+        
+        functionData[140][0]=new Byte(Ptg.CLASS_VALUE);functionData[140][1]=new byte[] {Ptg.CLASS_VALUE};functionData[140][2]=new Integer(1);
+        functionData[141][0]=new Byte(Ptg.CLASS_VALUE);functionData[141][1]=new byte[] {Ptg.CLASS_VALUE};functionData[141][2]=new Integer(1);
+        functionData[142][0]=new Byte(Ptg.CLASS_VALUE);functionData[142][1]=new byte[] {Ptg.CLASS_VALUE};functionData[142][2]=new Integer(3);
+        
+        
+        
+        
+        
+        functionData[148][0]=new Byte(Ptg.CLASS_VALUE);functionData[148][1]=new byte[] {Ptg.CLASS_VALUE};functionData[148][2]=new Integer(-1);
+        
+        functionData[150][0]=new Byte(Ptg.CLASS_VALUE);functionData[150][1]=new byte[] {Ptg.CLASS_VALUE};functionData[150][2]=new Integer(-1);
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        functionData[162][0]=new Byte(Ptg.CLASS_VALUE);functionData[162][1]=new byte[] {Ptg.CLASS_VALUE};functionData[162][2]=new Integer(1);
+        functionData[163][0]=new Byte(Ptg.CLASS_VALUE);functionData[163][1]=new byte[] {Ptg.CLASS_ARRAY};functionData[163][2]=new Integer(1);
+        functionData[164][0]=new Byte(Ptg.CLASS_VALUE);functionData[164][1]=new byte[] {Ptg.CLASS_ARRAY};functionData[164][2]=new Integer(1);
+        functionData[165][0]=new Byte(Ptg.CLASS_VALUE);functionData[165][1]=new byte[] {Ptg.CLASS_ARRAY};functionData[165][2]=new Integer(2);
+        functionData[166][0]=new Byte(Ptg.CLASS_VALUE);functionData[166][1]=new byte[] {Ptg.CLASS_VALUE};functionData[166][2]=new Integer(-1);
+        functionData[167][0]=new Byte(Ptg.CLASS_VALUE);functionData[167][1]=new byte[] {Ptg.CLASS_VALUE};functionData[167][2]=new Integer(-1);
+        functionData[168][0]=new Byte(Ptg.CLASS_VALUE);functionData[168][1]=new byte[] {Ptg.CLASS_REF};functionData[168][2]=new Integer(-1);
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        functionData[183][0]=new Byte(Ptg.CLASS_VALUE);functionData[183][1]=new byte[] {Ptg.CLASS_REF};functionData[183][2]=new Integer(-1);
+        functionData[184][0]=new Byte(Ptg.CLASS_VALUE);functionData[184][1]=new byte[] {Ptg.CLASS_VALUE};functionData[184][2]=new Integer(1);
+        
+        
+        
+        
+        functionData[189][0]=new Byte(Ptg.CLASS_VALUE);functionData[189][1]=new byte[] {Ptg.CLASS_REF};functionData[189][2]=new Integer(3);
+        functionData[190][0]=new Byte(Ptg.CLASS_VALUE);functionData[190][1]=new byte[] {Ptg.CLASS_VALUE};functionData[190][2]=new Integer(1);
+        
+        
+        functionData[193][0]=new Byte(Ptg.CLASS_VALUE);functionData[193][1]=new byte[] {Ptg.CLASS_REF};functionData[193][2]=new Integer(-1);
+        functionData[194][0]=new Byte(Ptg.CLASS_VALUE);functionData[194][1]=new byte[] {Ptg.CLASS_REF};functionData[194][2]=new Integer(-1);
+        functionData[195][0]=new Byte(Ptg.CLASS_VALUE);functionData[195][1]=new byte[] {Ptg.CLASS_REF};functionData[195][2]=new Integer(3);
+        functionData[196][0]=new Byte(Ptg.CLASS_VALUE);functionData[196][1]=new byte[] {Ptg.CLASS_REF};functionData[196][2]=new Integer(3);
+        functionData[197][0]=new Byte(Ptg.CLASS_VALUE);functionData[197][1]=new byte[] {Ptg.CLASS_VALUE};functionData[197][2]=new Integer(-1);
+        functionData[198][0]=new Byte(Ptg.CLASS_VALUE);functionData[198][1]=new byte[] {Ptg.CLASS_VALUE};functionData[198][2]=new Integer(1);
+        functionData[199][0]=new Byte(Ptg.CLASS_VALUE);functionData[199][1]=new byte[] {Ptg.CLASS_REF};functionData[199][2]=new Integer(3);
+        
+        
+        functionData[204][0]=new Byte(Ptg.CLASS_VALUE);functionData[204][1]=new byte[] {Ptg.CLASS_VALUE};functionData[204][2]=new Integer(-1);
+        functionData[205][0]=new Byte(Ptg.CLASS_VALUE);functionData[205][1]=new byte[] {Ptg.CLASS_VALUE};functionData[205][2]=new Integer(-1);
+        functionData[206][0]=new Byte(Ptg.CLASS_VALUE);functionData[206][1]=new byte[] {Ptg.CLASS_VALUE};functionData[206][2]=new Integer(-1);
+        functionData[207][0]=new Byte(Ptg.CLASS_VALUE);functionData[207][1]=new byte[] {Ptg.CLASS_VALUE};functionData[207][2]=new Integer(3);
+        functionData[208][0]=new Byte(Ptg.CLASS_VALUE);functionData[208][1]=new byte[] {Ptg.CLASS_VALUE};functionData[208][2]=new Integer(1);
+        functionData[209][0]=new Byte(Ptg.CLASS_VALUE);functionData[209][1]=new byte[] {Ptg.CLASS_VALUE};functionData[209][2]=new Integer(2);
+        functionData[210][0]=new Byte(Ptg.CLASS_VALUE);functionData[210][1]=new byte[] {Ptg.CLASS_VALUE};functionData[210][2]=new Integer(2);
+        functionData[211][0]=new Byte(Ptg.CLASS_VALUE);functionData[211][1]=new byte[] {Ptg.CLASS_VALUE};functionData[211][2]=new Integer(1);
+        functionData[212][0]=new Byte(Ptg.CLASS_VALUE);functionData[212][1]=new byte[] {Ptg.CLASS_VALUE};functionData[212][2]=new Integer(1);
+        functionData[213][0]=new Byte(Ptg.CLASS_VALUE);functionData[213][1]=new byte[] {Ptg.CLASS_REF};functionData[213][2]=new Integer(-1);
+        functionData[214][0]=new Byte(Ptg.CLASS_VALUE);functionData[214][1]=new byte[] {Ptg.CLASS_VALUE};functionData[214][2]=new Integer(-1);
+        
+        
+        
+        
+        functionData[221][0]=new Byte(Ptg.CLASS_VALUE);functionData[221][1]=new byte[] {Ptg.CLASS_REF};functionData[221][2]=new Integer(1);
+        functionData[222][0]=new Byte(Ptg.CLASS_VALUE);functionData[222][1]=new byte[] {Ptg.CLASS_VALUE};functionData[222][2]=new Integer(-1);
+        functionData[227][0]=new Byte(Ptg.CLASS_VALUE);functionData[227][1]=new byte[] {Ptg.CLASS_REF};functionData[227][2]=new Integer(-1);
+        functionData[228][0]=new Byte(Ptg.CLASS_VALUE);functionData[228][1]=new byte[] {Ptg.CLASS_ARRAY};functionData[228][2]=new Integer(-1);
+        functionData[229][0]=new Byte(Ptg.CLASS_VALUE);functionData[229][1]=new byte[] {Ptg.CLASS_VALUE};functionData[229][2]=new Integer(1);
+        functionData[230][0]=new Byte(Ptg.CLASS_VALUE);functionData[230][1]=new byte[] {Ptg.CLASS_VALUE};functionData[230][2]=new Integer(1);
+        functionData[231][0]=new Byte(Ptg.CLASS_VALUE);functionData[231][1]=new byte[] {Ptg.CLASS_VALUE};functionData[231][2]=new Integer(1);
+        functionData[232][0]=new Byte(Ptg.CLASS_VALUE);functionData[232][1]=new byte[] {Ptg.CLASS_VALUE};functionData[232][2]=new Integer(1);
+        functionData[233][0]=new Byte(Ptg.CLASS_VALUE);functionData[233][1]=new byte[] {Ptg.CLASS_VALUE};functionData[233][2]=new Integer(1);
+        functionData[234][0]=new Byte(Ptg.CLASS_VALUE);functionData[234][1]=new byte[] {Ptg.CLASS_VALUE};functionData[234][2]=new Integer(1);
+        functionData[235][0]=new Byte(Ptg.CLASS_VALUE);functionData[235][1]=new byte[] {Ptg.CLASS_REF};functionData[235][2]=new Integer(3);
+        
+        
+        
+        
+        
+        
+        
+        
+        functionData[244][0]=new Byte(Ptg.CLASS_VALUE);functionData[244][1]=new byte[] {Ptg.CLASS_VALUE};functionData[244][2]=new Integer(2);
+        
+        
+        
+        
+        
+        functionData[252][0]=new Byte(Ptg.CLASS_VALUE);functionData[252][1]=new byte[] {Ptg.CLASS_REF};functionData[252][2]=new Integer(2);
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        functionData[269][0]=new Byte(Ptg.CLASS_VALUE);functionData[269][1]=new byte[] {Ptg.CLASS_REF};functionData[269][2]=new Integer(-1);
+        functionData[270][0]=new Byte(Ptg.CLASS_VALUE);functionData[270][1]=new byte[] {Ptg.CLASS_VALUE};functionData[270][2]=new Integer(-1);
+        functionData[271][0]=new Byte(Ptg.CLASS_VALUE);functionData[271][1]=new byte[] {Ptg.CLASS_VALUE};functionData[271][2]=new Integer(1);
+        functionData[272][0]=new Byte(Ptg.CLASS_VALUE);functionData[272][1]=new byte[] {Ptg.CLASS_VALUE};functionData[272][2]=new Integer(-1);
+        functionData[273][0]=new Byte(Ptg.CLASS_VALUE);functionData[273][1]=new byte[] {Ptg.CLASS_VALUE};functionData[273][2]=new Integer(4);
+        functionData[274][0]=new Byte(Ptg.CLASS_VALUE);functionData[274][1]=new byte[] {Ptg.CLASS_VALUE};functionData[274][2]=new Integer(2);
+        functionData[275][0]=new Byte(Ptg.CLASS_VALUE);functionData[275][1]=new byte[] {Ptg.CLASS_VALUE};functionData[275][2]=new Integer(2);
+        functionData[276][0]=new Byte(Ptg.CLASS_VALUE);functionData[276][1]=new byte[] {Ptg.CLASS_VALUE};functionData[276][2]=new Integer(2);
+        functionData[277][0]=new Byte(Ptg.CLASS_VALUE);functionData[277][1]=new byte[] {Ptg.CLASS_VALUE};functionData[277][2]=new Integer(3);
+        functionData[278][0]=new Byte(Ptg.CLASS_VALUE);functionData[278][1]=new byte[] {Ptg.CLASS_VALUE};functionData[278][2]=new Integer(3);
+        functionData[279][0]=new Byte(Ptg.CLASS_VALUE);functionData[279][1]=new byte[] {Ptg.CLASS_VALUE};functionData[279][2]=new Integer(1);
+        functionData[280][0]=new Byte(Ptg.CLASS_VALUE);functionData[280][1]=new byte[] {Ptg.CLASS_VALUE};functionData[280][2]=new Integer(3);
+        functionData[281][0]=new Byte(Ptg.CLASS_VALUE);functionData[281][1]=new byte[] {Ptg.CLASS_VALUE};functionData[281][2]=new Integer(3);
+        functionData[282][0]=new Byte(Ptg.CLASS_VALUE);functionData[282][1]=new byte[] {Ptg.CLASS_VALUE};functionData[282][2]=new Integer(3);
+        functionData[283][0]=new Byte(Ptg.CLASS_VALUE);functionData[283][1]=new byte[] {Ptg.CLASS_VALUE};functionData[283][2]=new Integer(1);
+        functionData[284][0]=new Byte(Ptg.CLASS_VALUE);functionData[284][1]=new byte[] {Ptg.CLASS_VALUE};functionData[284][2]=new Integer(1);
+        functionData[285][0]=new Byte(Ptg.CLASS_VALUE);functionData[285][1]=new byte[] {Ptg.CLASS_VALUE};functionData[285][2]=new Integer(2);
+        functionData[286][0]=new Byte(Ptg.CLASS_VALUE);functionData[286][1]=new byte[] {Ptg.CLASS_VALUE};functionData[286][2]=new Integer(4);
+        functionData[287][0]=new Byte(Ptg.CLASS_VALUE);functionData[287][1]=new byte[] {Ptg.CLASS_VALUE};functionData[287][2]=new Integer(3);
+        functionData[288][0]=new Byte(Ptg.CLASS_VALUE);functionData[288][1]=new byte[] {Ptg.CLASS_VALUE};functionData[288][2]=new Integer(2);
+        functionData[289][0]=new Byte(Ptg.CLASS_VALUE);functionData[289][1]=new byte[] {Ptg.CLASS_VALUE};functionData[289][2]=new Integer(4);
+        functionData[290][0]=new Byte(Ptg.CLASS_VALUE);functionData[290][1]=new byte[] {Ptg.CLASS_VALUE};functionData[290][2]=new Integer(3);
+        functionData[291][0]=new Byte(Ptg.CLASS_VALUE);functionData[291][1]=new byte[] {Ptg.CLASS_VALUE};functionData[291][2]=new Integer(3);
+        functionData[292][0]=new Byte(Ptg.CLASS_VALUE);functionData[292][1]=new byte[] {Ptg.CLASS_VALUE};functionData[292][2]=new Integer(3);
+        functionData[293][0]=new Byte(Ptg.CLASS_VALUE);functionData[293][1]=new byte[] {Ptg.CLASS_VALUE};functionData[293][2]=new Integer(4);
+        functionData[294][0]=new Byte(Ptg.CLASS_VALUE);functionData[294][1]=new byte[] {Ptg.CLASS_VALUE};functionData[294][2]=new Integer(1);
+        functionData[295][0]=new Byte(Ptg.CLASS_VALUE);functionData[295][1]=new byte[] {Ptg.CLASS_VALUE};functionData[295][2]=new Integer(3);
+        functionData[296][0]=new Byte(Ptg.CLASS_VALUE);functionData[296][1]=new byte[] {Ptg.CLASS_VALUE};functionData[296][2]=new Integer(1);
+        functionData[297][0]=new Byte(Ptg.CLASS_VALUE);functionData[297][1]=new byte[] {Ptg.CLASS_VALUE};functionData[297][2]=new Integer(3);
+        functionData[298][0]=new Byte(Ptg.CLASS_VALUE);functionData[298][1]=new byte[] {Ptg.CLASS_VALUE};functionData[298][2]=new Integer(1);
+        functionData[299][0]=new Byte(Ptg.CLASS_VALUE);functionData[299][1]=new byte[] {Ptg.CLASS_VALUE};functionData[299][2]=new Integer(2);
+        functionData[300][0]=new Byte(Ptg.CLASS_VALUE);functionData[300][1]=new byte[] {Ptg.CLASS_VALUE};functionData[300][2]=new Integer(3);
+        functionData[301][0]=new Byte(Ptg.CLASS_VALUE);functionData[301][1]=new byte[] {Ptg.CLASS_VALUE};functionData[301][2]=new Integer(3);
+        functionData[302][0]=new Byte(Ptg.CLASS_VALUE);functionData[302][1]=new byte[] {Ptg.CLASS_VALUE};functionData[302][2]=new Integer(4);
+        functionData[303][0]=new Byte(Ptg.CLASS_VALUE);functionData[303][1]=new byte[] {Ptg.CLASS_ARRAY};functionData[303][2]=new Integer(2);
+        functionData[304][0]=new Byte(Ptg.CLASS_VALUE);functionData[304][1]=new byte[] {Ptg.CLASS_ARRAY};functionData[304][2]=new Integer(2);
+        functionData[305][0]=new Byte(Ptg.CLASS_VALUE);functionData[305][1]=new byte[] {Ptg.CLASS_ARRAY};functionData[305][2]=new Integer(2);
+        functionData[306][0]=new Byte(Ptg.CLASS_VALUE);functionData[306][1]=new byte[] {Ptg.CLASS_ARRAY};functionData[306][2]=new Integer(2);
+        functionData[307][0]=new Byte(Ptg.CLASS_VALUE);functionData[307][1]=new byte[] {Ptg.CLASS_ARRAY};functionData[307][2]=new Integer(2);
+        functionData[308][0]=new Byte(Ptg.CLASS_VALUE);functionData[308][1]=new byte[] {Ptg.CLASS_ARRAY};functionData[308][2]=new Integer(2);
+        functionData[309][0]=new Byte(Ptg.CLASS_VALUE);functionData[309][1]=new byte[] {Ptg.CLASS_ARRAY};functionData[309][2]=new Integer(3);
+        functionData[310][0]=new Byte(Ptg.CLASS_VALUE);functionData[310][1]=new byte[] {Ptg.CLASS_ARRAY};functionData[310][2]=new Integer(2);
+        functionData[311][0]=new Byte(Ptg.CLASS_VALUE);functionData[311][1]=new byte[] {Ptg.CLASS_ARRAY};functionData[311][2]=new Integer(2);
+        functionData[312][0]=new Byte(Ptg.CLASS_VALUE);functionData[312][1]=new byte[] {Ptg.CLASS_ARRAY};functionData[312][2]=new Integer(2);
+        functionData[313][0]=new Byte(Ptg.CLASS_VALUE);functionData[313][1]=new byte[] {Ptg.CLASS_ARRAY};functionData[313][2]=new Integer(2);
+        functionData[314][0]=new Byte(Ptg.CLASS_VALUE);functionData[314][1]=new byte[] {Ptg.CLASS_ARRAY};functionData[314][2]=new Integer(2);
+        functionData[315][0]=new Byte(Ptg.CLASS_VALUE);functionData[315][1]=new byte[] {Ptg.CLASS_ARRAY};functionData[315][2]=new Integer(2);
+        functionData[316][0]=new Byte(Ptg.CLASS_VALUE);functionData[316][1]=new byte[] {Ptg.CLASS_VALUE};functionData[316][2]=new Integer(4);
+        functionData[317][0]=new Byte(Ptg.CLASS_VALUE);functionData[317][1]=new byte[] {Ptg.CLASS_VALUE};functionData[317][2]=new Integer(-1);
+        functionData[318][0]=new Byte(Ptg.CLASS_VALUE);functionData[318][1]=new byte[] {Ptg.CLASS_REF};functionData[318][2]=new Integer(-1);
+        functionData[319][0]=new Byte(Ptg.CLASS_VALUE);functionData[319][1]=new byte[] {Ptg.CLASS_REF};functionData[319][2]=new Integer(-1);
+        functionData[320][0]=new Byte(Ptg.CLASS_VALUE);functionData[320][1]=new byte[] {Ptg.CLASS_REF};functionData[320][2]=new Integer(-1);
+        functionData[321][0]=new Byte(Ptg.CLASS_VALUE);functionData[321][1]=new byte[] {Ptg.CLASS_REF};functionData[321][2]=new Integer(-1);
+        functionData[322][0]=new Byte(Ptg.CLASS_VALUE);functionData[322][1]=new byte[] {Ptg.CLASS_REF};functionData[322][2]=new Integer(-1);
+        functionData[323][0]=new Byte(Ptg.CLASS_VALUE);functionData[323][1]=new byte[] {Ptg.CLASS_REF};functionData[323][2]=new Integer(-1);
+        functionData[324][0]=new Byte(Ptg.CLASS_VALUE);functionData[324][1]=new byte[] {Ptg.CLASS_VALUE};functionData[324][2]=new Integer(-1);
+        functionData[325][0]=new Byte(Ptg.CLASS_VALUE);functionData[325][1]=new byte[] {Ptg.CLASS_VALUE};functionData[325][2]=new Integer(2);
+        functionData[326][0]=new Byte(Ptg.CLASS_VALUE);functionData[326][1]=new byte[] {Ptg.CLASS_VALUE};functionData[326][2]=new Integer(2);
+        functionData[327][0]=new Byte(Ptg.CLASS_VALUE);functionData[327][1]=new byte[] {Ptg.CLASS_VALUE};functionData[327][2]=new Integer(2);
+        functionData[328][0]=new Byte(Ptg.CLASS_VALUE);functionData[328][1]=new byte[] {Ptg.CLASS_VALUE};functionData[328][2]=new Integer(2);
+        functionData[329][0]=new Byte(Ptg.CLASS_VALUE);functionData[329][1]=new byte[] {Ptg.CLASS_VALUE};functionData[329][2]=new Integer(-1);
+        functionData[330][0]=new Byte(Ptg.CLASS_VALUE);functionData[330][1]=new byte[] {Ptg.CLASS_ARRAY};functionData[330][2]=new Integer(-1);
+        functionData[331][0]=new Byte(Ptg.CLASS_VALUE);functionData[331][1]=new byte[] {Ptg.CLASS_VALUE};functionData[331][2]=new Integer(2);
+        functionData[332][0]=new Byte(Ptg.CLASS_VALUE);functionData[332][1]=new byte[] {Ptg.CLASS_VALUE};functionData[332][2]=new Integer(2);
+        
+        
+        functionData[336][0]=new Byte(Ptg.CLASS_VALUE);functionData[336][1]=new byte[] {Ptg.CLASS_VALUE};functionData[336][2]=new Integer(-1);
+        functionData[337][0]=new Byte(Ptg.CLASS_VALUE);functionData[337][1]=new byte[] {Ptg.CLASS_VALUE};functionData[337][2]=new Integer(2);
+        
+        
+        
+        
+        functionData[342][0]=new Byte(Ptg.CLASS_VALUE);functionData[342][1]=new byte[] {Ptg.CLASS_VALUE};functionData[342][2]=new Integer(1);
+        functionData[343][0]=new Byte(Ptg.CLASS_VALUE);functionData[343][1]=new byte[] {Ptg.CLASS_VALUE};functionData[343][2]=new Integer(1);
+        functionData[344][0]=new Byte(Ptg.CLASS_VALUE);functionData[344][1]=new byte[] {Ptg.CLASS_REF};functionData[344][2]=new Integer(-1);
+        functionData[345][0]=new Byte(Ptg.CLASS_VALUE);functionData[345][1]=new byte[] {Ptg.CLASS_VALUE};functionData[345][2]=new Integer(-1);
+        functionData[346][0]=new Byte(Ptg.CLASS_VALUE);functionData[346][1]=new byte[] {Ptg.CLASS_VALUE};functionData[346][2]=new Integer(2);
+        functionData[347][0]=new Byte(Ptg.CLASS_VALUE);functionData[347][1]=new byte[] {Ptg.CLASS_REF};functionData[347][2]=new Integer(1);
+        
+        
+        functionData[350][0]=new Byte(Ptg.CLASS_VALUE);functionData[350][1]=new byte[] {Ptg.CLASS_VALUE};functionData[350][2]=new Integer(4);
+        
+        functionData[352][0]=new Byte(Ptg.CLASS_VALUE);functionData[352][1]=new byte[] {Ptg.CLASS_VALUE};functionData[352][2]=new Integer(1);
+        
+        functionData[354][0]=new Byte(Ptg.CLASS_VALUE);functionData[354][1]=new byte[] {Ptg.CLASS_VALUE};functionData[354][2]=new Integer(-1);
+        
+        
+        
+        functionData[358][0]=new Byte(Ptg.CLASS_VALUE);functionData[358][1]=new byte[] {Ptg.CLASS_VALUE};functionData[358][2]=new Integer(2);
+        functionData[359][0]=new Byte(Ptg.CLASS_VALUE);functionData[359][1]=new byte[] {Ptg.CLASS_VALUE};functionData[359][2]=new Integer(-1);
+        functionData[360][0]=new Byte(Ptg.CLASS_VALUE);functionData[360][1]=new byte[] {Ptg.CLASS_REF};functionData[360][2]=new Integer(1);
+        functionData[361][0]=new Byte(Ptg.CLASS_VALUE);functionData[361][1]=new byte[] {Ptg.CLASS_REF};functionData[361][2]=new Integer(-1);
+        functionData[362][0]=new Byte(Ptg.CLASS_VALUE);functionData[362][1]=new byte[] {Ptg.CLASS_REF};functionData[362][2]=new Integer(-1);
+        functionData[363][0]=new Byte(Ptg.CLASS_VALUE);functionData[363][1]=new byte[] {Ptg.CLASS_REF};functionData[363][2]=new Integer(-1);
+        functionData[364][0]=new Byte(Ptg.CLASS_VALUE);functionData[364][1]=new byte[] {Ptg.CLASS_REF};functionData[364][2]=new Integer(-1);
+        functionData[365][0]=new Byte(Ptg.CLASS_VALUE);functionData[365][1]=new byte[] {Ptg.CLASS_REF};functionData[365][2]=new Integer(-1);
+        functionData[366][0]=new Byte(Ptg.CLASS_VALUE);functionData[366][1]=new byte[] {Ptg.CLASS_REF};functionData[366][2]=new Integer(-1);
+        functionData[367][0]=new Byte(Ptg.CLASS_VALUE);functionData[367][1]=new byte[] {Ptg.CLASS_REF};functionData[367][2]=new Integer(-1);
+        
+        
         return functionData;
     }
 
