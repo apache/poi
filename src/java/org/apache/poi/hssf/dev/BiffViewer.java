@@ -595,6 +595,26 @@ public class BiffViewer
                 retval = new DataFormatRecord(rectype, size, data);
                 break;
 
+            case BarRecord.sid :
+                retval = new BarRecord(rectype, size, data);
+                break;
+
+            case DatRecord.sid :
+                retval = new DatRecord(rectype, size, data);
+                break;
+
+            case PlotGrowthRecord.sid :
+                retval = new PlotGrowthRecord(rectype, size, data);
+                break;
+
+            case UnitsRecord.sid :
+                retval = new UnitsRecord(rectype, size, data);
+                break;
+
+            case FrameRecord.sid :
+                retval = new FrameRecord(rectype, size, data);
+                break;
+
             default :
                 retval = new UnknownRecord(rectype, size, data);
         }
