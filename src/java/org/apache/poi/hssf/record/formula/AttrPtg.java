@@ -203,6 +203,8 @@ public class AttrPtg
             return operands[ 0 ];
         } else if (optiIf.isSet(field_1_options)) {
             return toFormulaString((SheetReferences)null) + "(" + operands[ 0 ]             +")"; 
+        } else if (optGoto.isSet(field_1_options)) {
+            return toFormulaString((SheetReferences)null) + operands[0];   //goto isn't a real formula element should not show up
         } else {
             return toFormulaString((SheetReferences)null) + "(" + operands[ 0 ] + ")";
         }
@@ -230,7 +232,7 @@ public class AttrPtg
         return "CHOOSE";
       }
       if(optGoto.isSet(field_1_options)) {
-        return "GOTO";
+        return "";
       }
       if(sum.isSet(field_1_options)) {
         return "SUM";

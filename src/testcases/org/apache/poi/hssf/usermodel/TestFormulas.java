@@ -878,14 +878,24 @@ extends TestCase {
             wb.write(out);
             out.close();
             
-             assertTrue("file exists",file.exists());
+            assertTrue("file exists",file.exists());
             
-            FileInputStream in = new FileInputStream(readFilename+File.separator+"IfFormulaTest.xls");
+            FileInputStream in = new FileInputStream(file);
+            wb = new HSSFWorkbook(in);
+            s = wb.getSheetAt(0);
+            r = s.getRow(0);
+            c = r.getCell((short)4);
+            
+            assertTrue("expected: IF(A1=D1,\"A1\",\"B1\") got "+c.getCellFormula(), ("IF(A1=D1,\"A1\",\"B1\")").equals(c.getCellFormula()));            
+            in.close();
+            
+            
+            in = new FileInputStream(readFilename+File.separator+"IfFormulaTest.xls");
             wb = new HSSFWorkbook(in);
             s = wb.getSheetAt(0);
             r = s.getRow(3);
             c = r.getCell((short)0);
-            assertTrue("expected: IF(A3=A1,\"A1\",\"B1\") got "+c.getCellFormula(), ("IF(A3=A1,\"A1\",\"B1\")").equals(c.getCellFormula()));
+            assertTrue("expected: IF(A3=A1,\"A1\",\"A2\") got "+c.getCellFormula(), ("IF(A3=A1,\"A1\",\"A2\")").equals(c.getCellFormula()));
             //c = r.getCell((short)1);
             //assertTrue("expected: A!A1+A!B1 got: "+c.getCellFormula(), ("A!A1+A!B1").equals(c.getCellFormula()));
             in.close(); 
