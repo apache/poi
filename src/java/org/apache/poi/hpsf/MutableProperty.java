@@ -80,19 +80,20 @@ public class MutableProperty extends Property
      * <p>Writes the property to an output stream.</p>
      * 
      * @param out The output stream to write to.
+     * @param codepage The codepage to use for writing non-wide strings
      * @return the number of bytes written to the stream
      * 
      * @exception IOException if an I/O error occurs
      * @exception WritingNotSupportedException if a variant type is to be
      * written that is not yet supported
      */
-    public int write(final OutputStream out)
+    public int write(final OutputStream out, final int codepage)
         throws IOException, WritingNotSupportedException
     {
         int length = 0;
         long variantType = getType();
         length += TypeWriter.writeUIntToStream(out, variantType);
-        length += VariantSupport.write(out, variantType, getValue());
+        length += VariantSupport.write(out, variantType, getValue(), codepage);
         return length;
     }
 

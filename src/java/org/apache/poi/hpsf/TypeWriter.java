@@ -185,7 +185,8 @@ public class TypeWriter
      * @exception IOException if an I/O error occurs
      */
     public static void writeToStream(final OutputStream out,
-                                     final Property[] properties)
+                                     final Property[] properties,
+                                     final int codepage)
         throws IOException, UnsupportedVariantTypeException
     {
         /* If there are no properties don't write anything. */
@@ -207,7 +208,7 @@ public class TypeWriter
             final Property p = (Property) properties[i];
             long type = p.getType();
             writeUIntToStream(out, type);
-            VariantSupport.write(out, (int) type, p.getValue());
+            VariantSupport.write(out, (int) type, p.getValue(), codepage);
         }
     }
 

@@ -708,8 +708,9 @@ No property set stream: "/1Table"</source>
        <td>The property's value is the number of a <strong>codepage</strong>,
         i.e. a mapping from character codes to characters. All strings in the
         section containing this property must be interpreted using this
-        codepage. Typical property values are 1252 (8-bit "western" characters)
-        or 1200 (16-bit Unicode characters).</td>
+        codepage. Typical property values are 1252 (8-bit "western" characters,
+	ISO-8859-1), 1200 (16-bit Unicode characters, UFT-16), or 65001 (8-bit
+	Unicode characters, UFT-8).</td>
       </tr>
      </table>
     </section>
@@ -833,18 +834,34 @@ No property set stream: "/1Table"</source>
     </section>
 
     <section><title>Codepage support</title>
-     <fixme author="Rainer Klute">Improve codepage support!</fixme>
 
      <p>The property with ID 1 holds the number of the codepage which was used
-      to encode the strings in this section. The present HPSF codepage support
-      is still very limited: When reading property value strings, HPSF
-      distinguishes between 16-bit characters and 8-bit characters. 16-bit
-      characters should be Unicode characters and thus be okay. 8-bit
-      characters are interpreted according to the platform's default character
-      set. This is fine as long as the document being read has been written on
-      a platform with the same default character set. However, if you receive a
-      document from another region of the world and want to process it with
-      HPSF you are in trouble - unless the creator used Unicode, of course.</p>
+      to encode the strings in this section. If this property is not available
+      in a section, the platform's default character encoding will be
+      used. This works fine as long as the document being read has been written
+      on a platform with the same default character encoding. However, if you
+      receive a document from another region of the world and the codepage is
+      undefined, you are in trouble.</p>
+
+     <p>HPSF's codepage support is as good as the character encoding support of
+      the Java Virtual Machine (JVM) the application runs on. If HPSF
+      encounters a codepage number it assumes that the JVM has a character
+      encoding with a corresponding name. For example, if the codepage is 1252,
+      HPSF uses the character encoding "cp1252" to read or write strings. If
+      the JVM does not have that character encoding installed or if the
+      codepage number is illegal, an UnsupportedEncodingException will be
+      thrown.</p>
+
+     <p>There are two exceptions to the rule that a character encoding's name
+      is derived from the codepage number by prepending the string "cp" to
+      it:</p>
+
+     <dl>
+      <dt>Codepage 1200</dt>
+      <dd>is mapped to the character encoding "UTF-16".</dd>
+      <dt>Codepage 65001</dt>
+      <dd>is mapped to the character encoding "UTF-8".</dd>
+     </dl>
     </section>
    </section>
 

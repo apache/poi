@@ -62,9 +62,11 @@
  */
 package org.apache.poi.hpsf;
 
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -161,9 +163,13 @@ public class Property
      * @param length The property's type/value pair's length in bytes.
      * @param codepage The section's and thus the property's
      * codepage. It is needed only when reading string values.
+     * 
+     * @exception UnsupportedEncodingException if the specified codepage is not
+     * supported
      */
     public Property(final long id, final byte[] src, final long offset,
                     final int length, final int codepage)
+    throws UnsupportedEncodingException
     {
         this.id = id;
 
@@ -183,7 +189,7 @@ public class Property
 
         try
         {
-            value = VariantSupport.read(src, o, length, (int) type);
+            value = VariantSupport.read(src, o, length, (int) type, codepage);
         }
         catch (UnsupportedVariantTypeException ex)
         {
@@ -382,8 +388,27 @@ public class Property
         b.append(getID());
         b.append(", type: ");
         b.append(getType());
+        final Object value = getValue();
         b.append(", value: ");
-        b.append(getValue());
+        b.append(value.toString());
+        if (value instanceof String)
+        {
+            final String s = (String) value;
+            final int l = s.length();
+            final byte[] bytes = new byte[l * 2];
+            for (int i = 0; i < l; i++)
+            {
+                final char c = s.charAt(i);
+                final byte high = (byte) ((c & 0x00ff00) >> 8);
+                final byte low  = (byte) ((c & 0x0000ff) >> 0);
+                bytes[i * 2]     = high;
+                bytes[i * 2 + 1] = low;
+            }
+            final String hex = HexDump.dump(bytes, 0L, 0);
+            b.append(" [");
+            b.append(hex);
+            b.append("]");
+        }
         b.append(']');
         return b.toString();
     }

@@ -420,16 +420,16 @@ public class MutableSection extends Section
 
             /* If the property ID is not equal 0 we write the property and all
              * is fine. However, if it equals 0 we have to write the section's
-             * dictionary which does not have a type but just a value. */
+             * dictionary which has an implicit type only and an explicit
+             * value. */
             if (id != 0)
                 /* Write the property and update the position to the next
                  * property. */
-                position += p.write(propertyStream);
+                position += p.write(propertyStream, getCodepage());
             else
             {
-                final Integer codepage =
-                    (Integer) getProperty(PropertyIDMap.PID_CODEPAGE);
-                if (codepage == null)
+                final int codepage = getCodepage();
+                if (codepage == -1)
                     throw new IllegalPropertySetDataException
                         ("Codepage (property 1) is undefined.");
                 position += writeDictionary(propertyStream, dictionary);

@@ -21,25 +21,20 @@
      information streams.
     </li>
     <li>
-     Add codepage support: Presently the bytes making out the string in a
-      property's value are interpreted using the platform's default character
-      set.
-    </li>
-    <li>
-      Add resource bundles to
-      <code>org.apache.poi.hpsf.wellknown</code> to ease
-      localizations. This would be useful for mapping standard property IDs to
-      localized strings. Example: The property ID 4 could be mapped to "Author"
-      in English or "Verfasser" in German.
+     Add resource bundles to
+     <code>org.apache.poi.hpsf.wellknown</code> to ease
+     localizations. This would be useful for mapping standard property IDs to
+     localized strings. Example: The property ID 4 could be mapped to "Author"
+     in English or "Verfasser" in German.
     </li>
     <li>
      Implement reading functionality for those property types that are not
-      yet supported. HPSF should return proper Java types instead of just byte
-      arrays.
+     yet supported. HPSF should return proper Java types instead of just byte
+     arrays.
     </li>
     <li>
-     Add WMF to <code>java.awt.Image</code> example code in <link
-     href="thumbnails.html">Thumbnail HOW TO</link>.
+     Add WMF to <code>java.awt.Image</code> example code in the <link
+      href="thumbnails.html">Thumbnail HOW-TO</link>.
     </li>
    </ol>
   </section>
