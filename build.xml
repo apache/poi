@@ -16,6 +16,9 @@
     xerces          http://www.ibiblio.org/maven/xerces/jars/
     jdepend         http://www.ibiblio.org/maven/jdepend/jars/
 
+    The ant jar "optional.jar" should also be available otherwise the
+    build will fail.
+
     To build the documentation you will need to install forrest and set
     the FORREST_HOME environment variable.
 
@@ -79,7 +82,7 @@
     <property name="changelog.file" value="${build.site}/changelog.html"/>
     <property name="dist.dir" value="build/dist"/>
     <property name="jar.name" value="poi"/>
-    <property name="version.id" value="1.10.0-dev"/>
+    <property name="version.id" value="2.0-pre1"/>
     <property name="halt.on.test.failure" value="true"/>
 
     <path id="main.classpath">
@@ -525,9 +528,10 @@
 
         <zip destfile="${dist.dir}/${jar.name}-bin-${version.id}-${DSTAMP}.zip">
             <zipfileset dir="${build.site}" prefix="docs"/>
-            <zipfileset file="${dist.dir}/${jar.name}-${version.id}.jar"/>
-            <zipfileset file="${dist.dir}/${jar.name}-contrib-${version.id}.jar"/>
-            <zipfileset file="${dist.dir}/${jar.name}-scratchpad-${version.id}.jar"/>
+            <zipfileset file="${dist.dir}/${jar.name}-${version.id}-${DSTAMP}.jar"/>
+            <zipfileset file="${dist.dir}/${jar.name}-contrib-${version.id}-${DSTAMP}.jar"/>
+            <zipfileset file="${dist.dir}/${jar.name}-scratchpad-${version.id}-${DSTAMP}.jar"/>
+            <zipfileset dir="legal" prefix="legal"/>
         </zip>
 
         <zip destfile="${dist.dir}/${jar.name}-src-${version.id}-${DSTAMP}.zip">
@@ -546,6 +550,7 @@
             <tarfileset file="${dist.dir}/${jar.name}-${version.id}.jar"/>
             <tarfileset file="${dist.dir}/${jar.name}-contrib-${version.id}.jar"/>
             <tarfileset file="${dist.dir}/${jar.name}-scratchpad-${version.id}.jar"/>
+            <tarfileset dir="legal" prefix="legal"/>
         </tar>
 
         <tar destfile="${dist.dir}/${jar.name}-src-${version.id}-${DSTAMP}.tar.gz" compression="gzip">
