@@ -405,23 +405,19 @@ menu.showCaption();
 
 //Add submenus
 menu.addItem("STATUS","window.open('status.xml')");
-menu.addItem("BUILD","toggle");
 menu.addItem("DOCS","toggle");
 menu.addItem("MODULE","toggle");
 
 
-menu.subMenus[1].addItem("build.xml","window.open('build.xml')");
-//menu.subMenus[1].addItem("log.xml","window.open('log.xml')");
+menu.subMenus[1].addItem("site","window.open('http://jakarta.apache.org/poi/')");
+menu.subMenus[1].addItem("local","window.open('./build/docs/index.html')");
+menu.subMenus[1].addItem("local javadocs","window.open('./build/docs/javadocs/index.html')");
+menu.subMenus[1].addItem("test results","window.open('./build/docs/test/index.html')");
+menu.subMenus[1].addItem("code metrics","window.open('./build/docs/metrics/jdepend-report.html')");
 
-
-menu.subMenus[2].addItem("site","window.open('http://jakarta.apache.org/poi/')");
-menu.subMenus[2].addItem("local","window.open('./build/docs/index.html')");
-menu.subMenus[2].addItem("local javadocs","window.open('./build/docs/javadocs/index.html')");
-menu.subMenus[2].addItem("test results","window.open('./build/docs/test/index.html')");
-menu.subMenus[2].addItem("code metrics","window.open('./build/docs/metrics/jdepend-report.html')");
-
-menu.subMenus[3].addItem("module.xml","window.open('module.xml')");
-menu.subMenus[3].addItem("layout.xml","window.open('layout.xml')");
+menu.subMenus[2].addItem("module.xml","window.open('module.xml')");
+menu.subMenus[2].addItem("layout.xml","window.open('layout.xml')");
+menu.subMenus[2].addItem("build.xml","window.open('build.xml')");
 
 /*
 c = menu.subMenus[4].addItem("Cool Sites","toggle");
