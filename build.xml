@@ -390,6 +390,8 @@
 	                   value="${xlayout.source.test.dir}/org/apache/poi/util/data"/>
 	  <sysproperty key="HSSF.testdata.path"
                    value="${xlayout.source.test.dir}/org/apache/poi/hssf/data"/>
+	  <sysproperty key="HPSF.testdata.path"
+                   value="${xlayout.source.test.dir}/org/apache/poi/hpsf/data"/>
         <classpath>
         	<path>
 		         <fileset dir="." casesensitive="yes"> 

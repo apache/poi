@@ -1,4 +1,3 @@
-
 /* ====================================================================
  * The Apache Software License, Version 1.1
  *
@@ -53,19 +52,53 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.poi.poifs.property;
+package org.apache.poi.hpsf.basic;
+import org.apache.poi.poifs.filesystem.*;
+
+
 
 /**
- * Interface PropertyConstants
+ * <p>A POI file just for testing.</p>
+ *
+ * @author Rainer Klute (klute@rainer-klute.de)
+ * @since 2002-07-20
+ * @version $Id$
  */
-
-public interface PropertyConstants
+public class POIFile
 {
-    public static final int  PROPERTY_TYPE_OFFSET = 0x42;
 
-    // the property types
-    public static final byte DIRECTORY_TYPE       = 1;
-    public static final byte DOCUMENT_TYPE        = 2;
-    public static final byte ROOT_TYPE            = 5;
-}   // end public interface PropertyConstants
+    private String name;
+    private POIFSDocumentPath path;
+    private byte[] bytes;
 
+    public void setName(final String name)
+    {
+	this.name = name;
+    }
+
+    public String getName()
+    {
+	return name;
+    }
+
+    public void setPath(final POIFSDocumentPath path)
+    {
+	this.path = path;
+    }
+
+    public POIFSDocumentPath getPath()
+    {
+	return path;
+    }
+
+    public void setBytes(final byte[] bytes)
+    {
+	this.bytes = bytes;
+    }
+
+    public byte[] getBytes()
+    {
+	return bytes;
+    }
+
+}
