@@ -95,9 +95,6 @@
       <em>examples</em> section of the POI source tree as
       <em>ReadTitle.java</em>.</p>
 
-     <fixme>I just found out that <em>ReadTitle.java</em> is no longer there! I
-      shall look it up in the CVS and try to restore it.</fixme>
-
      <source>
 import java.io.*;
 import org.apache.poi.hpsf.*;
@@ -317,18 +314,139 @@ else
      <strong>value</strong>.</p>
 
     <p>Okay, that was still rather easy. However, to make things more
-     complicated Microsoft in its infinite wisdom decided that a property set
+     complicated, Microsoft in its infinite wisdom decided that a property set
      shalt be broken into <strong>sections</strong>. Each section holds a bunch
-     of properties. But since that's still not complicated enough: a section
+     of properties. But since that's still not complicated enough: A section
      can optionally have a dictionary that maps property IDs to property
      names - we'll explain later what that means.</p>
 
-    <note>[To be continued.]</note>
+    <p>So the procedure to get to the properties is as follows:</p>
 
-    <fixme>Let's consider a Java application that wants to read a stream
-     containing a general property set. It is modelled by the class
-     <code>PropertySet</code> in the <code>org.apache.poi.hpsf</code>
-     package.</fixme>
+    <ol>
+     <li>Use the <code>PropertySetFactory</code> to create a
+      <code>PropertySet</code> from an input stream. You can try this with any
+      input stream: You'll either <code>PropertySet</code> instance or an
+      exception is thrown.</li>
+
+     <li>Call the <code>PropertySet</code>'s method <code>getSections()</code>
+      to get a list of sections contained in the property set. Each section is
+      an instance of the <code>Section</code> class.</li>
+
+     <li>Each section has a format ID. The format ID of the first section in a
+      property set determines the property set's type. For example, the first
+      (and only) section of the SummaryInformation property set has a format ID
+      of <code>F29F85E0-4FF9-1068-AB-91-08-00-2B-27-B3-D9</code>. You can
+      get the format ID with <code>Section.getFormatID()</code>.</li>
+
+     <li>The properties contained in a <code>Section</code> can be retrieved
+      with <code>Section.getProperties()</code>. The result is an array of
+      <code>Property</code> instances.</li>
+
+     <li>A property has a name, a type, and a value. The <code>Property</code>
+      class has methods to retrieve them.</li>
+    </ol>
+
+    <p>Let's have a look at a sample Java application that dumps all property
+     set streams contained in a POI file system. The full source code of this
+     program can be found as <em>ReadCustomPropertySets.java</em> in the
+     <em>examples</em> area of the POI source code tree. Here are the key
+     sections:</p>
+
+    <source>import java.io.*;
+import java.util.*;
+import org.apache.poi.hpsf.*;
+import org.apache.poi.poifs.eventfilesystem.*;
+import org.apache.poi.util.HexDump;</source>
+
+    <p>The most important package the application needs is
+     <code>org.apache.poi.hpsf.*</code>. This package contains the HPSF
+     classes. Most classes named below are from the HPSF package. Of course we
+     also need the POIFS event file system's classes and <code>java.io.*</code>
+     since we are dealing with POI I/O. From the <code>java.util</code> package
+     we use the <code>List</code> and <code>Iterator</code> class. The class
+     <code>org.apache.poi.util.HexDump</code> provides a methods to dump byte
+     arrays as nicely formatted strings.</p>
+
+    <source>public static void main(String[] args)
+    throws IOException
+{
+    final String filename = args[0];
+    POIFSReader r = new POIFSReader();
+
+    /* Register a listener for *all* documents. */
+    r.registerListener(new MyPOIFSReaderListener());
+    r.read(new FileInputStream(filename));
+}</source>
+
+    <p>The <code>POIFSReader</code> is set up in a way that the listener
+     <code>MyPOIFSReaderListener</code> is called on every file in the POI file
+    system.</p>
+
+    <p>The listener class tries to create a <code>PropertySet</code> from each
+     stream using the <code>PropertySetFactory.create()</code> method:</p>
+
+    <source>static class MyPOIFSReaderListener implements POIFSReaderListener
+{
+    public void processPOIFSReaderEvent(POIFSReaderEvent event)
+    {
+        PropertySet ps = null;
+        try
+        {
+            ps = PropertySetFactory.create(event.getStream());
+        }
+        catch (NoPropertySetStreamException ex)
+        {
+            out("No property set stream: \"" + event.getPath() +
+                event.getName() + "\"");
+            return;
+        }
+        catch (Exception ex)
+        {
+            throw new RuntimeException
+                ("Property set stream \"" +
+                 event.getPath() + event.getName() + "\": " + ex);
+        }
+
+        /* Print the name of the property set stream: */
+        out("Property set stream \"" + event.getPath() +
+            event.getName() + "\":");</source>
+
+    <p>Creating the <code>PropertySet</code> is done in a <code>try</code>
+     block, because not each stream in the POI file system contains a property
+     set. If it is some other file, the
+     <code>PropertySetFactory.create()</code> throws a
+     <code>NoPropertySetStreamException</code>, which is caught and
+     logged. Then the program continues with the next stream. However, all
+     other types of exceptions cause the program to terminate by throwing a
+     runtime exception. If all went well, we can print the name of the property
+     set stream.</p>
+
+    <p>The next step is to print the number of sections followed by the
+     sections themselves:</p>
+
+    <source>/* Print the number of sections: */
+final long sectionCount = ps.getSectionCount();
+out("   No. of sections: " + sectionCount);
+
+/* Print the list of sections: */
+List sections = ps.getSections();
+int nr = 0;
+for (Iterator i = sections.iterator(); i.hasNext();)
+{
+    /* Print a single section: */
+    Section sec = (Section) i.next();
+
+    // ...
+}</source>
+
+    <p>The <code>PropertySet</code>'s method <code>getSectionCount()</code>
+     returns the number of sections.</p>
+
+    <p>To retrieve the sections, use the <code>getSections()</code>
+     method. This method returns a <code>java.util.List</code> containing
+     instances of the <code>Section</code> class in their proper order.</p>
+
+    <note>[To be continued.]</note>
    </section>
   </section>
  </body>
