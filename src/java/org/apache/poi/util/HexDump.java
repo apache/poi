@@ -118,7 +118,9 @@ public class HexDump
             {
                 chars_read = 16;
             }
-            buffer.append(dump(display_offset)).append(' ');
+            buffer.append(
+                        dump(display_offset)
+                         ).append(' ');
             for (int k = 0; k < 16; k++)
             {
                 if (k < chars_read)
@@ -253,7 +255,7 @@ public class HexDump
         28, 24, 20, 16, 12, 8, 4, 0
     };
 
-    private static StringBuffer dump(final long value)
+    private static String dump(final long value)
     {
         _lbuffer.setLength(0);
         for (int j = 0; j < 8; j++)
@@ -261,17 +263,17 @@ public class HexDump
             _lbuffer
                 .append(_hexcodes[ (( int ) (value >> _shifts[ j ])) & 15 ]);
         }
-        return _lbuffer;
+        return _lbuffer.toString();
     }
 
-    private static StringBuffer dump(final byte value)
+    private static String dump(final byte value)
     {
         _cbuffer.setLength(0);
         for (int j = 0; j < 2; j++)
         {
             _cbuffer.append(_hexcodes[ (value >> _shifts[ j + 6 ]) & 15 ]);
         }
-        return _cbuffer;
+        return _cbuffer.toString();
     }
 
     /**
