@@ -118,7 +118,7 @@ public class HeaderRecord
         {
             field_1_header_len = data[ 0 + offset ];
             field_2_header     = new String(data, 1 + offset,
-                                            ( int ) field_1_header_len);
+                                            LittleEndian.ubyteToInt(field_1_header_len));
         }
     }
 

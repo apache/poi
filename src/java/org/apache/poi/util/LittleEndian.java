@@ -498,4 +498,12 @@ public class LittleEndian
             v         >>= 8;
         }
     }
+
+    /**
+     * Convert an 'unsigned' byte to an integer.  ie, don't carry across the sign.
+     */
+    public static int ubyteToInt(byte b)
+    {
+        return ((b & 0x80) == 0 ? (int)b : (int)(b & (byte)0x7f) + 0x80 );
+    }
 }
