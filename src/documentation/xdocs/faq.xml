@@ -4,6 +4,19 @@
 <faqs title="Frequently Asked Questions">
     <faq>
         <question>
+          Why is reading a simple sheet taking so long?
+        </question>
+        <answer>
+          You've probably enabled logging.  Logging is intended only for 
+          autopsie style debugging.  Having it enabled will reduce performance
+          by a factor of at least 100.  Logging is helpful for understanding 
+          why POI can't read some file or developing POI itself.  Important
+          errors are thrown as exceptions, which means you probably don't need
+          logging.
+        </answer>
+    </faq>
+    <faq>
+        <question>
           What is the HSSF "eventmodel"?
         </question>
         <answer>
