@@ -536,7 +536,7 @@ public abstract class AbstractFunctionPtg extends OperationPtg {
         functionData[25][0]=new Byte(Ptg.CLASS_VALUE);functionData[25][1]=new byte[] {Ptg.CLASS_VALUE};functionData[25][2]=new Integer(1);
         functionData[26][0]=new Byte(Ptg.CLASS_VALUE);functionData[26][1]=new byte[] {Ptg.CLASS_VALUE};functionData[26][2]=new Integer(1);
         functionData[27][0]=new Byte(Ptg.CLASS_VALUE);functionData[27][1]=new byte[] {Ptg.CLASS_VALUE};functionData[27][2]=new Integer(2);
-        functionData[28][0]=new Byte(Ptg.CLASS_VALUE);functionData[28][1]=new byte[] {Ptg.CLASS_REF};functionData[28][2]=new Integer(-1);
+        functionData[28][0]=new Byte(Ptg.CLASS_VALUE);functionData[28][1]=new byte[] {Ptg.CLASS_VALUE, Ptg.CLASS_REF};functionData[28][2]=new Integer(-1);
         functionData[29][0]=new Byte(Ptg.CLASS_VALUE);functionData[29][1]=new byte[] {Ptg.CLASS_REF};functionData[29][2]=new Integer(-1);
         functionData[30][0]=new Byte(Ptg.CLASS_VALUE);functionData[30][1]=new byte[] {Ptg.CLASS_VALUE};functionData[30][2]=new Integer(2);
         functionData[31][0]=new Byte(Ptg.CLASS_VALUE);functionData[31][1]=new byte[] {Ptg.CLASS_VALUE};functionData[31][2]=new Integer(3);
@@ -571,7 +571,7 @@ public abstract class AbstractFunctionPtg extends OperationPtg {
         functionData[61][0]=new Byte(Ptg.CLASS_VALUE);functionData[61][1]=new byte[] {Ptg.CLASS_VALUE};functionData[61][2]=new Integer(3);
         functionData[62][0]=new Byte(Ptg.CLASS_VALUE);functionData[62][1]=new byte[] {Ptg.CLASS_REF};functionData[62][2]=new Integer(-1);
         functionData[63][0]=new Byte(Ptg.CLASS_VALUE);functionData[63][1]=new byte[] {Ptg.CLASS_REF};functionData[63][2]=new Integer(1);
-        functionData[64][0]=new Byte(Ptg.CLASS_VALUE);functionData[64][1]=new byte[] {Ptg.CLASS_REF};functionData[64][2]=new Integer(-1);
+        functionData[64][0]=new Byte(Ptg.CLASS_VALUE);functionData[64][1]=new byte[] {Ptg.CLASS_VALUE, Ptg.CLASS_REF};functionData[64][2]=new Integer(-1);
         functionData[65][0]=new Byte(Ptg.CLASS_VALUE);functionData[65][1]=new byte[] {Ptg.CLASS_VALUE};functionData[65][2]=new Integer(3);
         functionData[66][0]=new Byte(Ptg.CLASS_VALUE);functionData[66][1]=new byte[] {Ptg.CLASS_VALUE};functionData[66][2]=new Integer(3);
         functionData[67][0]=new Byte(Ptg.CLASS_VALUE);functionData[67][1]=new byte[] {Ptg.CLASS_VALUE};functionData[67][2]=new Integer(1);
