@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Copyright 2002-2004   Apache Software Foundation
 
@@ -38,6 +37,7 @@ import java.util.Map;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
+import org.apache.poi.hpsf.ClassID;
 import org.apache.poi.hpsf.Constants;
 import org.apache.poi.hpsf.HPSFRuntimeException;
 import org.apache.poi.hpsf.IllegalPropertySetDataException;
@@ -259,6 +259,8 @@ public class TestWrite extends TestCase
             SummaryInformation.DEFAULT_STREAM_NAME);
         r.read(new FileInputStream(filename));
         Assert.assertNotNull(psa[0]);
+        Assert.assertTrue(psa[0].isSummaryInformation());
+
         final Section s = (Section) (psa[0].getSections().get(0));
         Object p1 = s.getProperty(PropertyIDMap.PID_AUTHOR);
         Object p2 = s.getProperty(PropertyIDMap.PID_TITLE);
@@ -293,9 +295,9 @@ public class TestWrite extends TestCase
         final MutablePropertySet ps = new MutablePropertySet();
         ps.clearSections();
 
-        final byte[] formatID =
-            new byte[]{0, 1,  2,  3,  4,  5,  6,  7,
-                       8, 9, 10, 11, 12, 13, 14, 15};
+        final ClassID formatID = new ClassID();
+        formatID.setBytes(new byte[]{0, 1,  2,  3,  4,  5,  6,  7,
+                                     8, 9, 10, 11, 12, 13, 14, 15});
         final MutableSection s1 = new MutableSection();
         s1.setFormatID(formatID);
         s1.setProperty(2, SECTION1);
@@ -336,6 +338,7 @@ public class TestWrite extends TestCase
         r.read(new FileInputStream(filename));
         Assert.assertNotNull(psa[0]);
         Section s = (Section) (psa[0].getSections().get(0));
+        assertEquals(s.getFormatID(), formatID);
         Object p = s.getProperty(2);
         Assert.assertEquals(SECTION1, p);
         s = (Section) (psa[0].getSections().get(1));
@@ -529,6 +532,7 @@ public class TestWrite extends TestCase
             byte[] bytes = out.toByteArray();
 
             PropertySet psr = new PropertySet(bytes);
+            assertTrue(psr.isSummaryInformation());
             Section sr = (Section) psr.getSections().get(0);
             String title = (String) sr.getProperty(PropertyIDMap.PID_TITLE);
             assertEquals(TITLE, title);
@@ -709,7 +713,7 @@ public class TestWrite extends TestCase
             
                 /* Compare the property set stream with the corresponding one
                  * from the origin file and check whether they are equal. */
-                assertEquals("Equality for file "+f.getName(),ps1, ps2);
+                assertEquals("Equality for file " + f.getName(), ps1, ps2);
             }
         }
         catch (Exception ex)
@@ -754,6 +758,10 @@ public class TestWrite extends TestCase
             final byte[] bytes = psf[0].getBytes();
             final InputStream in = new ByteArrayInputStream(bytes);
             final PropertySet ps2 = PropertySetFactory.create(in);
+
+            /* Check if the result is a DocumentSummaryInformation stream, as
+             * specified. */
+            assertTrue(ps2.isDocumentSummaryInformation());
 
             /* Compare the property set stream with the corresponding one
              * from the origin file and check whether they are equal. */
