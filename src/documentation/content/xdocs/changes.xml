@@ -13,6 +13,26 @@
         <person id="NKB" name="Nicola Ken Barozzi" email="barozzi@nicolaken.com"/>
         <person id="POI-DEVELOPERS" name="Poi Developers" email="poi-dev@jakarta.apache.org"/>
     </devs>
+    <release version="2.0-pre1" date="unreleased">
+        <action dev="POI-DEVELOPERS" type="add">Patch applied for deep cloning of worksheets was provided</action>
+        <action dev="POI-DEVELOPERS" type="add">Patch applied to allow sheet reordering</action>
+        <action dev="POI-DEVELOPERS" type="add">Added additional print area setting methods using row/column numbers</action>
+        <action dev="POI-DEVELOPERS" type="fix">HDF:  Negative Array size fix</action>
+        <action dev="POI-DEVELOPERS" type="update">Added argument pointers to support the IF formula</action>
+        <action dev="POI-DEVELOPERS" type="update">Formulas: Added special character support for string literals, specifically for SUMIF formula support and addresses a bug as well</action>
+        <action dev="POI-DEVELOPERS" type="fix">BlockingInputStream committed to help ensure reads</action>
+        <action dev="POI-DEVELOPERS" type="fix">Fixed problem with NaN values differing from the investigated value from file reads in FormulaRecords</action>
+        <action dev="POI-DEVELOPERS" type="fix">Patch for getColumnWidth in HSSF</action>
+        <action dev="POI-DEVELOPERS" type="add">Patch for dealing with mult-level numbered lists in HDF</action>
+        <action dev="POI-DEVELOPERS" type="fix">Due to named reference work, several named-ranged bugs were closed</action>
+        <action dev="POI-DEVELOPERS" type="fix">Patch applied to prevent sheet corruption after a template modification</action>
+        <action dev="POI-DEVELOPERS" type="update">Shared Formulas now Supported</action>
+        <action dev="POI-DEVELOPERS" type="update">Added GreaterEqual, LessEqual and NotEqual to Formula Parser</action>
+        <action dev="POI-DEVELOPERS" type="update">Added GreaterThan and LessThan functionality to formulas</action>
+        <action dev="POI-DEVELOPERS" type="fix">Patches for i10n</action>
+        <action dev="POI-DEVELOPERS" type="update">POI Build System Updated</action>
+        <action dev="POI-DEVELOPERS" type="fix">font names can now be null</action>
+    </release>
     <release version="1.10-dev" date="19 Feb 2003">
         <action dev="POI-DEVELOPERS" type="add">Support for zoom level</action>
         <action dev="POI-DEVELOPERS" type="add">Freeze and split pane support</action>
