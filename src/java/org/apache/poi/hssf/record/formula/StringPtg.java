@@ -69,29 +69,29 @@ public class StringPtg
     public final static byte sid  = 0x17;
     private String            field_1_value;
 
-        
+
     /** Create a StringPtg from a byte array read from disk */
     public StringPtg(byte [] data, int offset)
     {
         setValue(new String(data, offset+3, data[offset+1] + 256*data[offset+2]));
     }
-    
+
     /** Create a StringPtg from a string representation of  the number
      *  Number format is not checked, it is expected to be validated in the parser
-     *   that calls this method. 
+     *   that calls this method.
      *  @param value : String representation of a floating point number
      */
     protected StringPtg(String value) {
         setValue(value);
     }
-    
-    
+
+
     public void setValue(String value)
     {
         field_1_value = value;
     }
-    
-    
+
+
     public String getValue()
     {
         return field_1_value;
@@ -114,6 +114,9 @@ public class StringPtg
     {
         return getValue();
     }
-       
+    public byte getDefaultOperandClass() {
+       return Ptg.CLASS_VALUE;
+   }
+
 }
 

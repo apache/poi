@@ -66,6 +66,7 @@ import java.util.ArrayList;
 /**
  *
  * @author  andy
+ * @author avik
  */
 
 public abstract class Ptg
@@ -124,54 +125,18 @@ public abstract class Ptg
         return retval;
     }
     */
-
-    
-    
-    /*
-    private static List ptgsToList(Class [] ptgs)
-    {
-        List         result = new ArrayList();
-        Constructor constructor;
-
-        for (int i = 0; i < ptgs.length; i++)
-        {
-            Class ptg = null;
- 
-            ptg = ptgs[ i ];
-            try
-            {
-                
-                constructor = ptg.getConstructor(new Class[]
-                {
-                    byte [].class, int.class
-                });
-            }
-            catch (Exception illegalArgumentException)
-            {
-                throw new RuntimeException(
-                    "Now that didn't work nicely at all (couldn't do that there list of ptgs)");
-            }
-            result.add(constructor);
-        }
-        return result;
-    }*/
-
     
     public static Ptg createPtg(byte [] data, int offset)
     {
         byte id     = data[ offset + 0 ];
         Ptg  retval = null;
-        
-        final int refRef = ReferencePtg.sid - 0x20;  
-        final int arrayRef = ReferencePtg.sid + 0x20;  
-                                                        
-        
-        final int valueFunc = FunctionPtg.sid + 0x20;  
-        final int arrayFunc = FunctionPtg.sid + 0x40; 
-                                                        
-        
-        final int refArea = AreaPtg.sid-0x20;
-        final int arrayArea = AreaPtg.sid+0x20;
+
+        final byte valueRef = ReferencePtg.sid + 0x20;
+        final byte arrayRef = ReferencePtg.sid + 0x40;
+        final byte valueFunc = FunctionPtg.sid + 0x20;
+        final byte arrayFunc = FunctionPtg.sid + 0x40;
+        final byte valueArea = AreaPtg.sid + 0x20;
+        final byte arrayArea = AreaPtg.sid + 0x40;
 
         switch (id)
         {
@@ -207,7 +172,12 @@ public abstract class Ptg
             case AreaPtg.sid :
                 retval = new AreaPtg(data, offset);
                 break;
-
+            case valueArea:
+                retval = new AreaPtg(data, offset);
+                break;
+            case arrayArea:
+                retval = new AreaPtg(data, offset);
+                break;
             case MemErrPtg.sid :
                 retval = new MemErrPtg(data, offset);
                 break;
@@ -215,18 +185,16 @@ public abstract class Ptg
             case AttrPtg.sid :
                 retval = new AttrPtg(data, offset);
                 break;
-
+                
             case ReferencePtg.sid :
                 retval = new ReferencePtg(data, offset);
-                break;
-                
-            case refRef :
+                break;   
+            case valueRef :
                 retval = new ReferencePtg(data, offset);
-                break;
-
+                break;   
             case arrayRef :
                 retval = new ReferencePtg(data, offset);
-                break;                
+                break;   
 
             case ParenthesisPtg.sid :
                 retval = new ParenthesisPtg(data, offset);
@@ -239,7 +207,6 @@ public abstract class Ptg
             case valueFunc :
                 retval = new FunctionPtg(data, offset);
                 break;
-                
             case arrayFunc :
                 retval = new FunctionPtg(data, offset);
                 break;
@@ -275,7 +242,15 @@ public abstract class Ptg
                                            + Integer.toHexString(( int ) id)
                                            + " (" + ( int ) id + ")");
         }
-        return retval;
+        
+        if (id > 0x60) {
+            retval.setClass(CLASS_ARRAY);
+        } else if (id > 0x40) {
+            retval.setClass(CLASS_VALUE);
+        } else 
+            retval.setClass(CLASS_REF);
+       return retval;
+        
     }
 
     public abstract int getSize();
@@ -309,6 +284,20 @@ public abstract class Ptg
         }
         return retval;
     }
+    
+    public static final byte CLASS_REF = 0x00;
+    public static final byte CLASS_VALUE = 0x20;
+    public static final byte CLASS_ARRAY = 0x40;
+    
+    protected byte ptgClass = CLASS_REF; //base ptg
+    
+    public void setClass(byte thePtgClass) {
+        ptgClass = thePtgClass;
+    }
+    
+    
+    public abstract byte getDefaultOperandClass();
+
     
     
 }

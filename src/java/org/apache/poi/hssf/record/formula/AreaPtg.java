@@ -131,7 +131,7 @@ public class AreaPtg
     }
 
     public void writeBytes(byte [] array, int offset) {
-        array[offset] = sid;
+        array[offset] = (byte) (sid + ptgClass);
         LittleEndian.putShort(array,offset+1,field_1_first_row);
         LittleEndian.putShort(array,offset+3,field_2_last_row);
         LittleEndian.putShort(array,offset+5,field_3_first_column);
@@ -309,4 +309,8 @@ public class AreaPtg
                 (new CellReference(getLastRow(),getLastColumn(),!isLastRowRelative(),!isLastColRelative())).toString();
     }
 
+    public byte getDefaultOperandClass() {
+        return Ptg.CLASS_REF;
+    }
+    
 }

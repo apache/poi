@@ -66,18 +66,15 @@ import org.apache.poi.util.BitField;
 import org.apache.poi.hssf.util.CellReference;
 
 /**
- * ValueReferencePtg - handles references (such as A1, A2, IA4) - Should also
- * be made to handle relative versus absolute references but I don't know enough
- * about using them in excel to know if its correct.  Seems inverted to me.  
- * FIXME = correct abs vs relative references
+ * ReferencePtg - handles references (such as A1, A2, IA4)
  * @author  Andrew C. Oliver (acoliver@apache.org)
  */
 
 public class ReferencePtg extends Ptg
 {
     private final static int SIZE = 5;
-    //public final static byte sid  = 0x24;
-    public final static byte sid = 0x44;
+    public final static byte sid  = 0x24;
+    //public final static byte sid = 0x44;
     private short            field_1_row;
     private short            field_2_col;
     private BitField         rowRelative = new BitField(0x8000);
@@ -120,7 +117,7 @@ public class ReferencePtg extends Ptg
 
     public void writeBytes(byte [] array, int offset)
     {
-        array[offset] = sid;
+        array[offset] = (byte) (sid + ptgClass);
         LittleEndian.putShort(array,offset+1,field_1_row);
         LittleEndian.putShort(array,offset+3,field_2_col);
     }
@@ -183,4 +180,9 @@ public class ReferencePtg extends Ptg
         //TODO -- should we store a cellreference instance in this ptg?? but .. memory is an issue, i believe!
         return (new CellReference(getRow(),getColumn(),!isRowRelative(),!isColRelative())).toString();
     }
+    
+    public byte getDefaultOperandClass() {
+        return Ptg.CLASS_REF;
+    }
+    
 }

@@ -9,15 +9,15 @@ import org.apache.poi.util.BinaryTree;
  * This class provides functions with variable arguments.  
  * @author  Avik Sengupta
  * @author Andrew C. Oliver (acoliver at apache dot org)
- * @version 
  */
 public class FunctionPtg extends OperationPtg {
     public final static short sid  = 0x22;
     private final static int  SIZE = 4;    
     
     private static BinaryTree map = produceHash(); 
-    
-    static { map=produceHash();}
+    private static Object[][] functionData = produceFunctionData();
+    private byte returnClass;
+    private byte[] paramClass;
     
     private byte field_1_num_args;
     private short field_2_fnc_index;
@@ -30,7 +30,6 @@ public class FunctionPtg extends OperationPtg {
         offset++;
         field_1_num_args = data[ offset + 0 ];
         field_2_fnc_index  = LittleEndian.getShort(data,offset + 1 );
-        
     }
     
     /**
@@ -39,7 +38,13 @@ public class FunctionPtg extends OperationPtg {
     protected FunctionPtg(String pName, byte pNumOperands) {
         field_1_num_args = pNumOperands;
         field_2_fnc_index = lookupIndex(pName);
-        
+        try{
+            returnClass = ( (Byte) functionData[field_2_fnc_index][0]).byteValue();
+            paramClass = (byte[]) functionData[field_2_fnc_index][1];
+        } catch (NullPointerException npe ) {
+            returnClass = Ptg.CLASS_VALUE;
+            paramClass = new byte[] {Ptg.CLASS_VALUE};
+        }
     }
     
     public String toString() {
@@ -89,7 +94,7 @@ public class FunctionPtg extends OperationPtg {
     
     
     public void writeBytes(byte[] array, int offset) {
-        array[offset+0]=sid;
+        array[offset+0]=(byte) (sid + ptgClass);
         array[offset+1]=field_1_num_args;
         LittleEndian.putShort(array,offset+2,field_2_fnc_index);
     }
@@ -99,11 +104,11 @@ public class FunctionPtg extends OperationPtg {
     }
     
     private String lookupName(short index) {
-        return ((String)map.get(new Integer(index))); //for now always return "SUM"
+        return ((String)map.get(new Integer(index))); 
     }
     
     private short lookupIndex(String name) {
-        return (short)((Integer)map.getKeyForValue(name)).intValue(); //for now just return SUM everytime...
+        return (short)((Integer)map.getKeyForValue(name)).intValue();
     }
     
     /**
@@ -464,5 +469,51 @@ public class FunctionPtg extends OperationPtg {
         dmap.put(new Integer(367),"VARA");
 
         return dmap;
+    }
+    
+    private static Object[][]  produceFunctionData() {
+        Object [][] functionData = new Object[368][2];
+        
+functionData[0][0]=new Byte(Ptg.CLASS_VALUE);functionData[0][1]=new byte[] {Ptg.CLASS_VALUE};
+functionData[2][0]=new Byte(Ptg.CLASS_VALUE);functionData[2][1]=new byte[] {Ptg.CLASS_VALUE};
+functionData[3][0]=new Byte(Ptg.CLASS_VALUE);functionData[3][1]=new byte[] {Ptg.CLASS_VALUE};
+functionData[4][0]=new Byte(Ptg.CLASS_VALUE);functionData[4][1]=new byte[] {Ptg.CLASS_VALUE};
+functionData[5][0]=new Byte(Ptg.CLASS_VALUE);functionData[5][1]=new byte[] {Ptg.CLASS_VALUE};
+functionData[6][0]=new Byte(Ptg.CLASS_VALUE);functionData[6][1]=new byte[] {Ptg.CLASS_VALUE};
+functionData[7][0]=new Byte(Ptg.CLASS_VALUE);functionData[7][1]=new byte[] {Ptg.CLASS_VALUE};
+functionData[8][0]=new Byte(Ptg.CLASS_VALUE);functionData[8][1]=new byte[] {Ptg.CLASS_REF};
+functionData[9][0]=new Byte(Ptg.CLASS_VALUE);functionData[9][1]=new byte[] {Ptg.CLASS_REF};
+functionData[10][0]=new Byte(Ptg.CLASS_VALUE);functionData[10][1]=new byte[] {Ptg.CLASS_VALUE};
+functionData[11][0]=new Byte(Ptg.CLASS_VALUE);functionData[11][1]=new byte[] {Ptg.CLASS_VALUE};
+functionData[12][0]=new Byte(Ptg.CLASS_VALUE);functionData[12][1]=new byte[] {Ptg.CLASS_VALUE};
+functionData[13][0]=new Byte(Ptg.CLASS_VALUE);functionData[13][1]=new byte[] {Ptg.CLASS_VALUE};
+functionData[14][0]=new Byte(Ptg.CLASS_VALUE);functionData[14][1]=new byte[] {Ptg.CLASS_VALUE};
+functionData[15][0]=new Byte(Ptg.CLASS_VALUE);functionData[15][1]=new byte[] {Ptg.CLASS_VALUE};
+functionData[16][0]=new Byte(Ptg.CLASS_VALUE);functionData[16][1]=new byte[] {Ptg.CLASS_VALUE};
+functionData[17][0]=new Byte(Ptg.CLASS_VALUE);functionData[17][1]=new byte[] {Ptg.CLASS_VALUE};
+functionData[18][0]=new Byte(Ptg.CLASS_VALUE);functionData[18][1]=new byte[] {Ptg.CLASS_VALUE};
+functionData[19][0]=new Byte(Ptg.CLASS_VALUE);functionData[19][1]=new byte[] {Ptg.CLASS_VALUE};
+functionData[20][0]=new Byte(Ptg.CLASS_VALUE);functionData[20][1]=new byte[] {Ptg.CLASS_VALUE};
+functionData[21][0]=new Byte(Ptg.CLASS_VALUE);functionData[21][1]=new byte[] {Ptg.CLASS_VALUE};
+functionData[22][0]=new Byte(Ptg.CLASS_VALUE);functionData[22][1]=new byte[] {Ptg.CLASS_VALUE};
+functionData[23][0]=new Byte(Ptg.CLASS_VALUE);functionData[23][1]=new byte[] {Ptg.CLASS_VALUE};
+functionData[24][0]=new Byte(Ptg.CLASS_VALUE);functionData[24][1]=new byte[] {Ptg.CLASS_VALUE};
+functionData[25][0]=new Byte(Ptg.CLASS_VALUE);functionData[25][1]=new byte[] {Ptg.CLASS_VALUE};
+functionData[26][0]=new Byte(Ptg.CLASS_VALUE);functionData[26][1]=new byte[] {Ptg.CLASS_VALUE};
+functionData[27][0]=new Byte(Ptg.CLASS_VALUE);functionData[27][1]=new byte[] {Ptg.CLASS_VALUE};
+       
+        return functionData;
+    }
+
+    public byte getDefaultOperandClass() {
+        return returnClass;
+    }
+    
+    protected byte getParameterClass(int index) {
+        try {
+            return paramClass[index];
+        } catch (ArrayIndexOutOfBoundsException aioobe) {
+            return paramClass[paramClass.length - 1];
+        }
     }
 }

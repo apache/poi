@@ -124,5 +124,7 @@ public class AddPtg
         buffer.append(operands[ 1 ]);
         return buffer.toString();
     }
+    
+    public byte getDefaultOperandClass() {return Ptg.CLASS_VALUE;}
            
 }

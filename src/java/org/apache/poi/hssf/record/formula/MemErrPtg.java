@@ -120,4 +120,5 @@ public class MemErrPtg
     {
         return "ERR#";
     }
+    public byte getDefaultOperandClass() {return Ptg.CLASS_VALUE;}
 }

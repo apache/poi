@@ -112,7 +112,9 @@ public class ParenthesisPtg
           
     public String toFormulaString(String[] operands) {
         return "("+operands[0]+")";
-    }    
+    }  
+    
+    public byte getDefaultOperandClass() {return Ptg.CLASS_VALUE;}
         
 }
 
