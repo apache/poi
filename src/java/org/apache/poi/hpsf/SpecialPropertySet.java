@@ -84,7 +84,6 @@ import org.apache.poi.util.LittleEndian;
  *  the convenience classes came only late to my mind.</p>
  *
  *@author     Rainer Klute (klute@rainer-klute.de)
- *@created    May 10, 2002
  *@version    $Id$
  *@since      2002-02-09
  */

@@ -62,7 +62,6 @@ import org.apache.poi.util.LittleEndian;
  *  VT_CF}) format.</p>
  *
  *@author     Drew Varner (Drew.Varner inOrAround sc.edu)
- *@created    May 10, 2002
  *@see        SummaryInformation#getThumbnail()
  *@version    $Id$
  *@since      2002-04-29

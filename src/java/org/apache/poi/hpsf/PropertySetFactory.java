@@ -63,7 +63,6 @@ import java.io.*;
  *  DocumentSummaryInformation} and {@link PropertySet}.</p>
  *
  *@author     Rainer Klute (klute@rainer-klute.de)
- *@created    May 10, 2002
  *@version    $Id$
  *@since      2002-02-09
  */
