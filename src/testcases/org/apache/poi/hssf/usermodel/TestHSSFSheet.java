@@ -56,6 +56,7 @@ package org.apache.poi.hssf.usermodel;
 
 import junit.framework.TestCase;
 import org.apache.poi.hssf.model.Sheet;
+import org.apache.poi.hssf.record.HCenterRecord;
 import org.apache.poi.hssf.record.VCenterRecord;
 import org.apache.poi.hssf.record.WSBoolRecord;
 
@@ -115,6 +116,26 @@ public class TestHSSFSheet
         // wb.write(new FileOutputStream("c:\\test.xls"));
     }
 
+    /**
+     * Test horizontally centered output.
+     */
+
+    public void testHorizontallyCenter()
+            throws Exception
+    {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet s = wb.createSheet();
+        Sheet sheet = s.getSheet();
+        HCenterRecord record =
+                (HCenterRecord) sheet.findFirstRecordBySid(HCenterRecord.sid);
+
+        assertEquals(false, record.getHCenter());
+        s.setHorizontallyCenter(true);
+        assertEquals(true, record.getHCenter());
+
+    }    
+    
+    
     /**
      * Test WSBboolRecord fields get set in the user model.
      */
