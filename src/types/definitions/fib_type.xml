@@ -52,15 +52,15 @@
     <field type="int" size="2" name="creator private"/>
     <field type="int" size="2" name="revisor private"/>
 
-    <field type="int" size="2" name="unused"/>
-    <field type="int" size="2" name="unused"/>
-    <field type="int" size="2" name="unused"/>
-    <field type="int" size="2" name="unused"/>
-    <field type="int" size="2" name="unused"/>
-    <field type="int" size="2" name="unused"/>
-    <field type="int" size="2" name="unused"/>
-    <field type="int" size="2" name="unused"/>
-    <field type="int" size="2" name="unused"/>
+    <field type="int" size="2" name="unused1"/>
+    <field type="int" size="2" name="unused2"/>
+    <field type="int" size="2" name="unused3"/>
+    <field type="int" size="2" name="unused4"/>
+    <field type="int" size="2" name="unused5"/>
+    <field type="int" size="2" name="unused6"/>
+    <field type="int" size="2" name="unused7"/>
+    <field type="int" size="2" name="unused8"/>
+    <field type="int" size="2" name="unused9"/>
 
     <field type="int" size="2" name="fareastid"/>
     <field type="int" size="2" name="countints"/>
@@ -91,8 +91,8 @@
     <field type="int" size="4" name="first lvc"/>
     <field type="int" size="4" name="count lvc"/>
 
-    <field type="int" size="4" name="unknown"/>
-    <field type="int" size="4" name="unknown"/>
+    <field type="int" size="4" name="unknown1"/>
+    <field type="int" size="4" name="unknown2"/>
     
     <field type="int" size="2" name="lcb array size"/>
     <field type="int" size="4" name="original stylesheet offset"/>
@@ -114,8 +114,8 @@
     <field type="int" size="4" name="section plc offset"/>
     <field type="int" size="4" name="section plc size"/>
 
-    <field type="int" size="4" name="unused"/>
-    <field type="int" size="4" name="unused"/>
+    <field type="int" size="4" name="unusedA"/>
+    <field type="int" size="4" name="unusedB"/>
 
     <field type="int" size="4" name="pheplc offset"/>
     <field type="int" size="4" name="pheplc size"/>
@@ -153,8 +153,8 @@
     <field type="int" size="4" name="ann_fields_offset"/>
     <field type="int" size="4" name="ann_fields_size"/>
     
-    <field type="int" size="4" name="unused"/>
-    <field type="int" size="4" name="unused"/>
+    <field type="int" size="4" name="unusedC"/>
+    <field type="int" size="4" name="unusedD"/>
 
     <field type="int" size="4" name="bookmark_names_offset"/>
     <field type="int" size="4" name="bookmark_names_size"/>
@@ -164,10 +164,10 @@
     <field type="int" size="4" name="macros_offset"/>
     <field type="int" size="4" name="macros_size"/>
 
-    <field type="int" size="4" name="unused"/>
-    <field type="int" size="4" name="unused"/>
-    <field type="int" size="4" name="unused"/>
-    <field type="int" size="4" name="unused"/>
+    <field type="int" size="4" name="unusedE"/>
+    <field type="int" size="4" name="unusedF"/>
+    <field type="int" size="4" name="unused10"/>
+    <field type="int" size="4" name="unused11"/>
     
     <field type="int" size="4" name="printer offset"/>
     <field type="int" size="4" name="printer size"/>
@@ -188,8 +188,8 @@
     <field type="int" size="4" name="textPieceTable offset"/>
     <field type="int" size="4" name="textPieceTable size"/>
     
-    <field type="int" size="4" name="unused"/>
-    <field type="int" size="4" name="unused"/>
+    <field type="int" size="4" name="unused12"/>
+    <field type="int" size="4" name="unused13"/>
     
     <field type="int" size="4" name="offset AutosaveSource"/>
     <field type="int" size="4" name="count AutosaveSource"/>
@@ -200,10 +200,10 @@
     <field type="int" size="4" name="offset SttbfAtnbkmk"/>
     <field type="int" size="4" name="length SttbfAtnbkmk"/>
 
-    <field type="int" size="4" name="unused"/>
-    <field type="int" size="4" name="unused"/>
-    <field type="int" size="4" name="unused"/>
-    <field type="int" size="4" name="unused"/>
+    <field type="int" size="4" name="unused14"/>
+    <field type="int" size="4" name="unused15"/>
+    <field type="int" size="4" name="unused16"/>
+    <field type="int" size="4" name="unused17"/>
 
     <field type="int" size="4" name="offset PlcspaMom"/>
     <field type="int" size="4" name="length PlcspaMom"/>
@@ -217,31 +217,121 @@
     <field type="int" size="4" name="length Plcf Ann Bkark Last"/>
 
     <field type="int" size="4" name="length Plcf Ann Bkark Last"/>
-
+   
+    <field type="int" size="4" name="fcPms"/>
     
-   <!-- 
+    <field type="int" size="4" name="lcbPms"/>
+    <field type="int" size="4" name="fcFormFldSttbs"/>
 
-    private int field_106_printer_offset;
-    private int field_107_printer_size;
-    private int field_108_printer_portrait_offset;
-    private int field_109_printer_portrait_size;
-    private int field_110_printer_landscape_offset;
-    private int field_111_printer_landscape_size;
-    private int field_112_wss_offset;
-    private int field_113_wss_size;
-    private int field_114_DOP_offset;
-    private int field_115_DOP_size;
-    private int field_116_sttbfassoc_offset;
-    private int field_117_sttbfassoc_size;
-    /**offset in table stream of beginning of information for complex files.
-     * Also, this is the beginning of the Text piece table*/
-    private int field_118_textPieceTable_offset;
-    private int field_119_textPieceTable_size;
-    private int field_199_list_format_offset;
-    private int field_200_list_format_size;
-    private int field_201_list_format_override_offset;
-    private int field_202_list_format_override_size;
--->    
+    <field type="int" size="4" name="lcbFormFldSttbs"/>
+    <field type="int" size="4" name="fcPlcfendRef"/>
+    <field type="int" size="4" name="lcbPlcfendRef"/>
+    <field type="int" size="4" name="fcPlcfendTxt"/>
+
+    <field type="int" size="4" name="lcbPlcfendTxt"/>
+    <field type="int" size="4" name="fcPlcffldEdn"/>
+    <field type="int" size="4" name="lcbPlcffldEdn"/>
+    
+    <field type="int" size="4" name="fcPlcfpgdEdn"/>
+    <field type="int" size="4" name="lcbPlcfpgdEdn"/>
+    <field type="int" size="4" name="fcDggInfo"/>
+    <field type="int" size="4" name="lcbDggInfo"/>
+    <field type="int" size="4" name="fcSttbfRMark"/>
+
+    <field type="int" size="4" name="lcbSttbfRMark"/>
+    <field type="int" size="4" name="fcSttbCaption"/>
+    <field type="int" size="4" name="lcbSttbCaption"/>
+    <field type="int" size="4" name="fcSttbAutoCaption"/>
+    <field type="int" size="4" name="lcbSttbAutoCaption"/>
+    <field type="int" size="4" name="fcPlcfwkb"/>
+    <field type="int" size="4" name="lcbPlcfwkb"/>
+    <field type="int" size="4" name="fcPlcfsplfcPlcfspl"/>
+    <field type="int" size="4" name="lcbPlcfspl"/>
+
+    <field type="int" size="4" name="fcPlcftxbxTxt"/>
+    <field type="int" size="4" name="lcbPlcftxbxTxt"/>
+    <field type="int" size="4" name="fcPlcffldTxbx"/>
+    <field type="int" size="4" name="lcbPlcffldTxbx"/>
+    <field type="int" size="4" name="fcPlcfhdrtxbxTxt"/>
+    <field type="int" size="4" name="lcbPlcfhdrtxbxTxt"/>
+    <field type="int" size="4" name="fcPlcffldHdrTxbx"/>
+    <field type="int" size="4" name="lcbPlcffldHdrTxbx"/>
+    <field type="int" size="4" name="fcStwUser"/>
+    <field type="int" size="4" name="lcbStwUser"/>    
+
+    <field type="int" size="4" name="fcSttbttmbd"/>
+    <field type="int" size="4" name="cbSttbttmbd"/>
+    <field type="int" size="4" name="fcUnused"/>
+    <field type="int" size="4" name="lcbUnused"/>
+    <field type="int" size="4" name="rgpgdbkd"/>
+    <field type="int" size="4" name="fcPgdMother"/>
+    <field type="int" size="4" name="lcbPgdMother"/>
+    <field type="int" size="4" name="fcBkdMother"/>
+    <field type="int" size="4" name="lcbBkdMother"/>
+    <field type="int" size="4" name="fcPgdFtn"/>
+
+    <field type="int" size="4" name="lcbPgdFtn"/>
+    <field type="int" size="4" name="fcBkdFtn"/>
+    <field type="int" size="4" name="lcbBkdFtn"/>
+    <field type="int" size="4" name="fcPgdEdn"/>
+    <field type="int" size="4" name="lcbPgdEdn"/>
+    <field type="int" size="4" name="fcBkdEdn"/>
+    <field type="int" size="4" name="lcbBkdEdn"/>
+    <field type="int" size="4" name="fcSttbfIntlFld"/>
+    <field type="int" size="4" name="lcbSttbfIntlFld"/>
+    <field type="int" size="4" name="fcRouteSlip"/>
+    <field type="int" size="4" name="lcbRouteSlip"/>
+    
+    <field type="int" size="4" name="fcSttbSavedBy"/>
+    <field type="int" size="4" name="lcbSttbSavedBy"/>
+    <field type="int" size="4" name="fcSttbFnm"/>
+    <field type="int" size="4" name="lcbSttbFnm"/>
+    <field type="int" size="4" name="fcPlcfLst"/>
+    <field type="int" size="4" name="lcbPlcfLst"/>
+    <field type="int" size="4" name="fcPlfLfo"/>
+    <field type="int" size="4" name="lcbPlfLfo"/>
+    <field type="int" size="4" name="fcPlcftxbxBkd"/>
+    <field type="int" size="4" name="lcbPlcftxbxBkd"/>
+
+    <field type="int" size="4" name="fcPlcftxbxHdrBkd"/>
+    <field type="int" size="4" name="lcbPlcftxbxHdrBkd"/>
+    <field type="int" size="4" name="fcDocUndo"/>
+    <field type="int" size="4" name="lcbDocUndo"/>
+    <field type="int" size="4" name="fcRgbuse"/>
+    <field type="int" size="4" name="lcbRgbuse"/>
+    <field type="int" size="4" name="fcUsp"/>
+    <field type="int" size="4" name="lcbUsp"/>
+    <field type="int" size="4" name="fcUskf"/>
+    <field type="int" size="4" name="lcbUskf"/>
+    <field type="int" size="4" name="fcPlcupcRgbuse"/>
+    <field type="int" size="4" name="lcbPlcupcRgbuse"/>
+    <field type="int" size="4" name="fcPlcupcUsp"/>
+
+    <field type="int" size="4" name="lcbPlcupcUsp"/>
+    <field type="int" size="4" name="fcSttbGlsyStyle"/>
+    <field type="int" size="4" name="lcbSttbGlsyStyle"/>
+    <field type="int" size="4" name="fcPlgosl"/>
+    <field type="int" size="4" name="lcbPlgosl"/>
+    <field type="int" size="4" name="fcPlcocx"/>
+    <field type="int" size="4" name="lcbPlcocx"/>
+    <field type="int" size="4" name="fcPlcfbteLvc"/>
+    <field type="int" size="4" name="lcbPlcfbteLvc"/>
+    <field type="int" size="4" name="ftModified"/>
+    <field type="int" size="4" name="dwLowDateTime"/>
+    <field type="int" size="4" name="dwHighDateTime"/>
+    <field type="int" size="4" name="fcPlcflvc"/>
+    <field type="int" size="4" name="lcbPlcflvc"/>
+    <field type="int" size="4" name="fcPlcasumy"/>
+    <field type="int" size="4" name="lcbPlcasumy"/>
+    <field type="int" size="4" name="fcPlcfgram"/>
+
+    <field type="int" size="4" name="lcbPlcfgram"/>
+    <field type="int" size="4" name="fcSttbListNames"/>
+    <field type="int" size="4" name="lcbSttbListNames"/>
+    <field type="int" size="4" name="fcSttbfUssr"/>
+    <field type="int" size="4" name="lcbSttbfUssr"/>
+
+
     </fields>
     
 </record>

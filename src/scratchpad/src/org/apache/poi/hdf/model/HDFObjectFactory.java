@@ -17,7 +17,6 @@ import java.util.TreeSet;
 
 
 import org.apache.poi.hdf.model.hdftypes.*;
-//import org.apache.poi.hdf.model.util.*;
 
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSDocument;
