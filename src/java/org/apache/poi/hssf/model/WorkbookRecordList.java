@@ -74,7 +74,7 @@ public class WorkbookRecordList
     private int  namepos     = 0;   // holds the position of last name record
     private int  supbookpos  = 0;   // holds the position of sup book
     private int  externsheetPos = 0;// holds the position of the extern sheet
-    private int  palettepos  = 0;   // hold the position of the palette, if applicable
+    private int  palettepos  = -1;   // hold the position of the palette, if applicable
 
 
     public void setRecords( List records )
