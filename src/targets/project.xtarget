@@ -5,7 +5,7 @@
   <target name="generate-records" depends="prepare"
      description="Generates the record source code">
 
-      <java classname="org.apache.poi.hssf.util.RecordGenerator" fork="yes">
+      <java classname="org.apache.poi.dev.RecordGenerator" fork="yes">
           <arg value="src/records/definitions"/>
           <arg value="src/records/styles"/>
           <arg value="src/java"/>
