@@ -217,7 +217,7 @@ public class HSSFEventFactory
 					{
 						in.read(data);
 					}
-                                        System.out.println("creating "+sid);
+                                        //System.out.println("creating "+sid);
 					Record[] recs = RecordFactory.createRecord(sid, size,
 															   data);
 
