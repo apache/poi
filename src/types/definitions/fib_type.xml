@@ -1,0 +1,180 @@
+<record id="0x101A" name="FIB" package="org.apache.poi.hdf.model.hdftypes.definitions">
+    <suffix>AbstractType</suffix>
+    <extends>HDFType</extends>
+    <description>File information Block.</description>
+    <author>Andrew C. Oliver</author>
+    <fields>
+<!--        <field type="int" size="2" name="format flags">
+            <bit number="0" name="stacked" description="series is stacked"/>
+            <bit number="1" name="display as percentage" description="results displayed as percentages"/>
+            <bit number="2" name="shadow" description="display a shadow for the chart"/>
+        </field>
+        -->
+        <field type="int" size="2" name="id"/>
+        <field type="int" size="2" name="version"/>
+        <field type="int" size="2" name="product version"/>
+    <field type="int" size="2" name="language stamp"/>
+    <field type="int" size="2" name="unknown 1"/>
+    <field type="short" size="2" name="options">
+            <bit number="0"  mask="0x0001" name="template"/>
+            <bit number="1"  mask="0x0002" name="glossary"/>
+            <bit number="2"  mask="0x0004" name="quicksave"/>
+            <bit number="3"  mask="0x0008" name="haspictr"/>                       
+            <bit number="4"  mask="0x00F0" name="nquicksaves"/>
+            <bit number="5"  mask="0x0100" name="encrypted"/>            
+            <bit number="6"  mask="0x0200" name="tabletype"/>
+            <bit number="7"  mask="0x0400" name="readonly"/>
+            <bit number="8"  mask="0x0800" name="writeReservation"/>
+            <bit number="9"  mask="0x1000" name="extendedCharacter"/>
+            <bit number="10" mask="0x2000" name="loadOverride"/>
+            <bit number="11" mask="0x4000" name="farEast"/>            
+            <bit number="12" mask="0x8000" name="crypto"/>            
+    </field>            
+   <!-- 
+    private short field_7_minversion;
+    private short field_8_encrypted_key;
+    private short field_9_environment; // 0 or 1 - windows or mac
+    private short field_10_history;
+
+        private static final BitField history_mac   = new BitField(0x01);
+        private static final BitField empty_special = new BitField(0x02);
+        private static final BitField load_override = new BitField(0x04);
+        private static final BitField future_undo   = new BitField(0x08);
+        private static final BitField w97_saved     = new BitField(0x10);
+        private static final BitField spare         = new BitField(0xfe);
+
+    private short field_11_default_charset;
+    private short field_12_default_extcharset;
+    private int  field_13_offset_first_char;
+    private int  field_14_offset_last_char;
+    private short field_15_count_shorts;
+
+    private short field_16_beg_shorts; //why same offset?
+
+    private short field_16_creator_id;
+    private short field_17_revisor_id;
+    private short field_18_creator_private;
+    private short field_19_revisor_private;
+
+    private short field_20_unused;
+    private short field_21_unused;
+    private short field_22_unused;
+    private short field_23_unused;
+    private short field_24_unused;
+    private short field_25_unused;
+    private short field_26_unused;
+    private short field_27_unused;
+    private short field_28_unused;
+
+    private short field_29_fareastid;
+    private short field_30_count_ints;
+
+    private int field_31_beg_ints; //why same offset?
+
+    private int field_31_last_byte;
+
+    private int field_32_creator_build_date;
+    private int field_33_revisor_build_date;
+    /** length of main document text stream*/
+    private int field_34_main_streamlen;
+    /**length of footnote subdocument text stream*/
+    private int field_35_footnote_streamlen;
+    private int field_36_header_streamlen;
+    private int field_37_macro_streamlen;
+    private int field_38_annotation_streamlen;
+    private int field_39_endnote_streamlen;
+    private int field_40_textbox_streamlen;
+    private int field_41_headbox_streamlen;
+    /**offset in table stream of character property bin table*/
+    private int field_42_pointer_to_plc_list_chp; //rename me!
+    private int field_43_first_chp; //rename me
+    private int field_44_count_chps; //rename me
+    /**offset in table stream of paragraph property bin */
+    private int field_45_pointer_to_plc_list_pap; //rename me.
+    private int field_46_first_pap; //rename me
+    private int field_47_count_paps; //rename me
+    private int field_48_pointer_to_plc_list_lvc; //rename me
+    private int field_49_first_lvc; //rename me
+    private int field_50_count_lvc; //rename me
+
+    private int field_51_unknown;
+    private int field_52_unknown;
+    //not sure about this array.
+    private short field_53_fc_lcb_array_size;
+    private int field_54_original_stylesheet_offset;
+    private int field_55_original_stylesheet_size;
+    private int field_56_stylesheet_offset;
+    private int field_57_stylesheet_size;
+    private int field_58_footnote_ref_offset;
+    private int field_59_footnote_ref_size;
+    private int field_60_footnote_plc_offset;
+    private int field_61_footnote_plc_size;
+    private int field_62_annotation_ref_offset;
+    private int field_63_annotation_ref_size;
+    private int field_64_annotation_plc_offset;
+    private int field_65_annotation_plc_size;
+    /** offset in table stream of section descriptor SED PLC*/
+    private int field_66_section_plc_offset;
+    private int field_67_section_plc_size;
+    private int field_68_unused;
+    private int field_69_unused;
+    private int field_70_pheplc_offset;
+    private int field_71_pheplc_size;
+    private int field_72_glossaryST_offset;
+    private int field_73_glossaryST_size;
+    private int field_74_glossaryPLC_offset;
+    private int field_75_glossaryPLC_size;
+    private int field_76_headerPLC_offset;
+    private int field_77_headerPLC_size;
+    private int field_78_chp_bin_table_offset;
+    private int field_79_chp_bin_table_size;
+    private int field_80_pap_bin_table_offset;
+    private int field_81_pap_bin_table_size;
+    private int field_82_sea_plc_offset;
+    private int field_83_sea_plc_size;
+    private int field_84_fonts_offset;
+    private int field_85_fonts_size;
+    private int field_86_main_fields_offset;
+    private int field_87_main_fields_size;
+    private int field_88_header_fields_offset;
+    private int field_89_header_fields_size;
+    private int field_90_footnote_fields_offset;
+    private int field_91_footnote_fields_size;
+    private int field_92_ann_fields_offset;
+    private int field_93_ann_fields_size;
+    private int field_94_unused;
+    private int field_95_unused;
+    private int field_96_bookmark_names_offset;
+    private int field_97_bookmark_names_size;
+    private int field_98_bookmark_offsets_offset;
+    private int field_99_bookmark_offsets_size;
+    private int field_100_macros_offset;
+    private int field_101_macros_size;
+    private int field_102_unused;
+    private int field_103_unused;
+    private int field_104_unused;
+    private int field_105_unused;
+    private int field_106_printer_offset;
+    private int field_107_printer_size;
+    private int field_108_printer_portrait_offset;
+    private int field_109_printer_portrait_size;
+    private int field_110_printer_landscape_offset;
+    private int field_111_printer_landscape_size;
+    private int field_112_wss_offset;
+    private int field_113_wss_size;
+    private int field_114_DOP_offset;
+    private int field_115_DOP_size;
+    private int field_116_sttbfassoc_offset;
+    private int field_117_sttbfassoc_size;
+    /**offset in table stream of beginning of information for complex files.
+     * Also, this is the beginning of the Text piece table*/
+    private int field_118_textPieceTable_offset;
+    private int field_119_textPieceTable_size;
+    private int field_199_list_format_offset;
+    private int field_200_list_format_size;
+    private int field_201_list_format_override_offset;
+    private int field_202_list_format_override_size;
+-->    
+    </fields>
+    
+</record>
