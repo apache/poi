@@ -65,7 +65,7 @@ import org.apache.poi.util.LittleEndian;
  * This is currently based on BIFF4 but will up updated to take into
  * account changed required by BIFF8.
  *
- * @author Glen Stampoultzis (gstamp at iprimus dot com dot au)
+ * @author Glen Stampoultzis (glens at apache.org)
  */
 
 public class ChartRecord

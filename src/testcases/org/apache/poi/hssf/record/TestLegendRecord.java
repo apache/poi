@@ -61,7 +61,7 @@ import junit.framework.TestCase;
  * class works correctly.  Test data taken directly from a real
  * Excel file.
  *
- * @author Glen Stampoultzis (gstamp at iprimus dot com dot au)
+ * @author Glen Stampoultzis (glens at apache.org)
  */
 public class TestLegendRecord
         extends TestCase

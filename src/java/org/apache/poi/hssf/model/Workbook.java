@@ -80,7 +80,7 @@ import org.apache.poi.hssf.HSSFLog;
  * before even attempting to use this.
  *
  * @author  Andrew C. Oliver (acoliver at apache dot org)
- * @author  Glen Stampoultzis (gstamp at iprimus dot com dot au)
+ * @author  Glen Stampoultzis (glens at apache.org)
  * @see org.apache.poi.hssf.usermodel.HSSFWorkbook
  * @version 1.0-pre
  */

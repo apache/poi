@@ -63,7 +63,7 @@ import java.io.FileInputStream;
 /**
  * Tests the log class.
  *
- * @author Glen Stampoultzis (gstamp at iprimus dot com dot au)
+ * @author Glen Stampoultzis (glens at apache.org)
  * @author Marc Johnson (mjohnson at apache dot org)
  */
 

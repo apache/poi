@@ -73,7 +73,7 @@ import java.util.TreeMap;
 /**
  * High level representation of a worksheet.
  * @author  Andrew C. Oliver (acoliver at apache dot org)
- * @author  Glen Stampoultzis (gstamp at iprimus dot com dot au)
+ * @author  Glen Stampoultzis (glens at apache.org)
  * @version 1.0-pre
  */
 

@@ -68,7 +68,7 @@ import org.apache.poi.util.HexDump;
  * NOTE: This source is automatically generated please do not modify this file.  Either subclass or
  *       remove the record in src/records/definitions.
 
- * @author Glen Stampoultzis (gstamp at iprimus dot com dot au)
+ * @author Glen Stampoultzis (glens at apache.org)
  */
 public class BarRecord
     extends Record

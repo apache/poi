@@ -64,7 +64,7 @@ import org.apache.poi.util.LittleEndian;
  * REFERENCE:  PG 320 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
  *
  * @author Andrew C. Oliver (acoliver at apache dot org)
- * @author  Glen Stampoultzis (gstamp at iprimus dot com dot au)
+ * @author  Glen Stampoultzis (glens at apache.org)
  *
  * @version 2.0-pre
  */

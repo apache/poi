@@ -79,7 +79,7 @@ import org.apache.poi.hssf.usermodel.*;
 /**
  * Utillity for reading in BIFF8 records and displaying data from them.
  * @author  Andrew C. Oliver (acoliver at apache dot org)
- * @author Glen Stampoultzis (gstamp at iprimus dot com dot au)
+ * @author Glen Stampoultzis (glens at apache.org)
  * @see #main
  */
 

@@ -67,7 +67,7 @@ import java.util.*;
  * message.<p>
  *
  * @author Marc Johnson (mjohnson at apache dot org)
- * @author Glen Stampoultzis (gstamp at iprimus dot com dot au)
+ * @author Glen Stampoultzis (glens at apache.org)
  */
 
 public class POILogger

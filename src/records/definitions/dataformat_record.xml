@@ -1,6 +1,6 @@
 <record id="0x1006" name="DataFormat" package="org.apache.poi.hssf.record">
     <description>The data format record is used to index into a series.</description>
-    <author>Glen Stampoultzis (gstamp at iprimus dot com dot au)</author>
+    <author>Glen Stampoultzis (glens at apache.org)</author>
     <fields>
         <field type="int" size="2" name="point number" description="0xFFFF for entire series"/>
         <field type="int" size="2" name="series index" description="relative index"/>

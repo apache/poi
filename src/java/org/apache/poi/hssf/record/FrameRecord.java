@@ -68,7 +68,7 @@ import org.apache.poi.util.HexDump;
  * NOTE: This source is automatically generated please do not modify this file.  Either subclass or
  *       remove the record in src/records/definitions.
 
- * @author Glen Stampoultzis (gstamp at iprimus dot com dot au)
+ * @author Glen Stampoultzis (glens at apache.org)
  */
 public class FrameRecord
     extends Record
@@ -186,7 +186,7 @@ public class FrameRecord
     /**
      * Get the border type field for the Frame record.
      *
-     * @return  One of 
+     * @return  One of
      *        BORDER_TYPE_REGULAR
      *        BORDER_TYPE_SHADOW
      */
@@ -199,7 +199,7 @@ public class FrameRecord
      * Set the border type field for the Frame record.
      *
      * @param field_1_borderType
-     *        One of 
+     *        One of
      *        BORDER_TYPE_REGULAR
      *        BORDER_TYPE_SHADOW
      */
