@@ -9,8 +9,7 @@ be used to configure the chosen Forrest skin.
 
   <!ENTITY % links.att 'name CDATA #REQUIRED'>
   <!ENTITY % link.att 'name CDATA #REQUIRED href CDATA #REQUIRED'>
-  <!ELEMENT skinconfig (disable-search?, disable-print-link?, disable-pdf-link?,
-  disable-xml-link?, disable-compliance-links?, searchsite-domain?, searchsite-name?,
+  <!ELEMENT skinconfig (disable-search?, disable-compliance-links?, searchsite-domain?, searchsite-name?,
   project-name, project-url, project-logo, group-name?, group-url?, group-logo?,
   host-url?, host-logo?, year?, vendor?, trail?, credits?)*>
   <!ELEMENT credits (credit*)>
@@ -19,9 +18,6 @@ be used to configure the chosen Forrest skin.
   <!ATTLIST credit id   CDATA #IMPLIED
                    role CDATA #IMPLIED>
   <!ELEMENT disable-search (#PCDATA)>
-  <!ELEMENT disable-print-link (#PCDATA)>
-  <!ELEMENT disable-pdf-link (#PCDATA)>
-  <!ELEMENT disable-xml-link (#PCDATA)>    
   <!ELEMENT disable-compliance-links (#PCDATA)>   
   <!ELEMENT searchsite-domain (#PCDATA)>
   <!ELEMENT searchsite-name (#PCDATA)>  
@@ -53,12 +49,6 @@ be used to configure the chosen Forrest skin.
 <skinconfig>
   <!-- Do we want to disable the Google search box? -->
   <disable-search>false</disable-search>
-  <!-- Do we want to disable the print link? -->
-  <disable-print-link>false</disable-print-link>  
-  <!-- Do we want to disable the PDF link? -->
-  <disable-pdf-link>false</disable-pdf-link>
-  <!-- Do we want to disable the xml source link? -->
-  <disable-xml-link>true</disable-xml-link>
   <!-- Do we want to disable w3c compliance links? -->
   <disable-compliance-links>false</disable-compliance-links>
 
