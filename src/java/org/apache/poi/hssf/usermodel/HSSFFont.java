@@ -73,7 +73,6 @@ import org.apache.poi.hssf.record.FontRecord;
  */
 
 public class HSSFFont
-    implements HSSFColorConstants
 {
 
     /**
