@@ -1141,9 +1141,9 @@
     </li>
 
     <li>
-     <p>What is a <code>FILETIME</code>? The answer can be found for example
-      under <link href="http://www.vbapi.com/ref/f/filetime.html">http://www.vbapi.com/ref/f/filetime.html</link>
-      or
+     <p>What is a <code>FILETIME</code>? The answer can be found
+     under <link
+      href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/sysinfo/base/filetime_str.asp"></link>, <link href="http://www.vbapi.com/ref/f/filetime.html">http://www.vbapi.com/ref/f/filetime.html</link> or
       <link href="http://www.cs.rpi.edu/courses/fall01/os/FILETIME.html">http://www.cs.rpi.edu/courses/fall01/os/FILETIME.html</link>.
       In short: <em>The FILETIME structure holds a date and time associated
       with a file. The structure identifies a 64-bit integer specifying the

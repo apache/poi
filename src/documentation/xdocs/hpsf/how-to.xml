@@ -764,12 +764,12 @@ No property set stream: "/1Table"</source>
 
       <tr>
        <td>VT_LPSTR</td>
-       <td>String</td>
+       <td>java.lang.String</td>
       </tr>
 
       <tr>
        <td>VT_LPWSTR</td>
-       <td>String</td>
+       <td>java.lang.String</td>
       </tr>
 
       <tr>
