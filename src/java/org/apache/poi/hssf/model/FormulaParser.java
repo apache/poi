@@ -61,27 +61,9 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.poi.hssf.record.formula.AbstractFunctionPtg;
-import org.apache.poi.hssf.record.formula.AddPtg;
-import org.apache.poi.hssf.record.formula.Area3DPtg;
-import org.apache.poi.hssf.record.formula.AreaPtg;
-import org.apache.poi.hssf.record.formula.AttrPtg;
-import org.apache.poi.hssf.record.formula.BoolPtg;
-import org.apache.poi.hssf.record.formula.ConcatPtg;
-import org.apache.poi.hssf.record.formula.DividePtg;
-import org.apache.poi.hssf.record.formula.EqualPtg;
-import org.apache.poi.hssf.record.formula.FuncVarPtg;
-import org.apache.poi.hssf.record.formula.IntPtg;
-import org.apache.poi.hssf.record.formula.MultiplyPtg;
-import org.apache.poi.hssf.record.formula.NumberPtg;
-import org.apache.poi.hssf.record.formula.OperationPtg;
-import org.apache.poi.hssf.record.formula.ParenthesisPtg;
-import org.apache.poi.hssf.record.formula.PowerPtg;
-import org.apache.poi.hssf.record.formula.Ptg;
-import org.apache.poi.hssf.record.formula.Ref3DPtg;
-import org.apache.poi.hssf.record.formula.ReferencePtg;
-import org.apache.poi.hssf.record.formula.StringPtg;
-import org.apache.poi.hssf.record.formula.SubtractPtg;
+//import PTG's .. since we need everything, import *
+import org.apache.poi.hssf.record.formula.*;
+
 import org.apache.poi.hssf.util.SheetReferences;
 
 
@@ -98,6 +80,7 @@ import org.apache.poi.hssf.util.SheetReferences;
  *  @author Avik Sengupta <avik AT Avik Sengupta DOT com>
  *  @author Andrew C. oliver (acoliver at apache dot org)
  *  @author Eric Ladner (eladner at goldinc dot com)
+ *  @author Cameron Riley (criley at ekmail.com)
  */
 public class FormulaParser {
     
@@ -154,7 +137,7 @@ public class FormulaParser {
 	    return;
 	}
         look=formulaString.charAt(pointer++);
-        //System.out.println("Got char: "+Look);
+        //System.out.println("Got char: "+ look);
     }
     
 
@@ -380,18 +363,17 @@ public class FormulaParser {
     }
     
     private int getPtgSize(int start, int end) {
-		int count = 0;
-    	int index = start;
-		Iterator ptgIterator = tokens.listIterator(index);
-		while (ptgIterator.hasNext() && index <= end) {
-			Ptg ptg = (Ptg)ptgIterator.next();
-			count+=ptg.getSize();
-			index++;
-		}
-    	
-		return count;
+        int count = 0;
+        int index = start;
+        Iterator ptgIterator = tokens.listIterator(index);
+        while (ptgIterator.hasNext() && index <= end) {
+            Ptg ptg = (Ptg)ptgIterator.next();
+            count+=ptg.getSize();
+            index++;
+        }
+        
+        return count;
     }
-    
     /**
      * Generates the variable function ptg for the formula.
      * <p>
@@ -403,19 +385,19 @@ public class FormulaParser {
     private Ptg getFunction(String name,byte numArgs) {
         Ptg retval = null;
         
-       if (name.equals("IF")) {			
-			retval = new FuncVarPtg(AbstractFunctionPtg.ATTR_NAME, numArgs);
-			
-			//simulated pop, no bounds checking because this list better be populated by function()       	
-			List argumentPointers = (List)this.functionTokens.get(0);
-
-			
+        if (name.equals("IF")) {
+            retval = new FuncVarPtg(AbstractFunctionPtg.ATTR_NAME, numArgs);
+            
+            //simulated pop, no bounds checking because this list better be populated by function()
+            List argumentPointers = (List)this.functionTokens.get(0);
+            
+            
             AttrPtg ifPtg = new AttrPtg();
-			ifPtg.setData((short)7); //mirroring excel output
-			ifPtg.setOptimizedIf(true);
-		
+            ifPtg.setData((short)7); //mirroring excel output
+            ifPtg.setOptimizedIf(true);
+            
             if (argumentPointers.size() != 2  && argumentPointers.size() != 3) {
-            	throw new IllegalArgumentException("["+argumentPointers.size()+"] Arguments Found - An IF formula requires 2 or 3 arguments. IF(CONDITION, TRUE_VALUE, FALSE_VALUE [OPTIONAL]");            	
+                throw new IllegalArgumentException("["+argumentPointers.size()+"] Arguments Found - An IF formula requires 2 or 3 arguments. IF(CONDITION, TRUE_VALUE, FALSE_VALUE [OPTIONAL]");
             }
             
             //Biffview of an IF formula record indicates the attr ptg goes after the condition ptgs and are
@@ -423,50 +405,50 @@ public class FormulaParser {
             //The beginning first argument pointer is the last ptg of the condition
             int ifIndex = tokens.indexOf(argumentPointers.get(0))+1;
             tokens.add(ifIndex, ifPtg);
-             
+            
             //we now need a goto ptgAttr to skip to the end of the formula after a true condition
             //the true condition is should be inserted after the last ptg in the first argument
-			 
-			int gotoIndex = tokens.indexOf(argumentPointers.get(1))+1;
-			
-			AttrPtg goto1Ptg = new AttrPtg();
-			goto1Ptg.setGoto(true);
-			
-						
-			tokens.add(gotoIndex, goto1Ptg);
+            
+            int gotoIndex = tokens.indexOf(argumentPointers.get(1))+1;
+            
+            AttrPtg goto1Ptg = new AttrPtg();
+            goto1Ptg.setGoto(true);
+            
+            
+            tokens.add(gotoIndex, goto1Ptg);
             
             
             if (numArgs > 2) { //only add false jump if there is a false condition
-            
-	            //second goto to skip past the function ptg
-	            AttrPtg goto2Ptg = new AttrPtg();
-	            goto2Ptg.setGoto(true);            
-	            goto2Ptg.setData((short)(retval.getSize()-1));
-				//Page 472 of the Microsoft Excel Developer's kit states that:
-				//The b(or w) field specifies the number byes (or words to skip, minus 1
-	            
-	            tokens.add(goto2Ptg); //this goes after all the arguments are defined
+                
+                //second goto to skip past the function ptg
+                AttrPtg goto2Ptg = new AttrPtg();
+                goto2Ptg.setGoto(true);
+                goto2Ptg.setData((short)(retval.getSize()-1));
+                //Page 472 of the Microsoft Excel Developer's kit states that:
+                //The b(or w) field specifies the number byes (or words to skip, minus 1
+                
+                tokens.add(goto2Ptg); //this goes after all the arguments are defined
             }
             
             //data portion of the if ptg points to the false subexpression (Page 472 of MS Excel Developer's kit)
             //count the number of bytes after the ifPtg to the False Subexpression
             //doesn't specify -1 in the documentation
-			ifPtg.setData((short)(getPtgSize(ifIndex+1, gotoIndex)));            
+            ifPtg.setData((short)(getPtgSize(ifIndex+1, gotoIndex)));
             
             //count all the additional (goto) ptgs but dont count itself
-			int ptgCount = this.getPtgSize(gotoIndex)-goto1Ptg.getSize()+retval.getSize();
-			if (ptgCount > (int)Short.MAX_VALUE) {
-				throw new RuntimeException("Ptg Size exceeds short when being specified for a goto ptg in an if");
-			}
-			
-			goto1Ptg.setData((short)(ptgCount-1));
-			
+            int ptgCount = this.getPtgSize(gotoIndex)-goto1Ptg.getSize()+retval.getSize();
+            if (ptgCount > (int)Short.MAX_VALUE) {
+                throw new RuntimeException("Ptg Size exceeds short when being specified for a goto ptg in an if");
+            }
+            
+            goto1Ptg.setData((short)(ptgCount-1));
+            
         } else {
-        	
-			retval = new FuncVarPtg(name,numArgs);
+            
+            retval = new FuncVarPtg(name,numArgs);
         }
-		
-        return retval; 
+        
+        return retval;
     }
     
     /** get arguments to a function */
@@ -543,13 +525,16 @@ public class FormulaParser {
     /** Parse and Translate a Math Term */
     private void  Term(){
         Factor();
-        while (look == '*' || look == '/' || look == '^' || look == '&' || look == '=' ) {
+        while (look == '*' || look == '/' || look == '^' || look == '&' || 
+               look == '=' || look == '>' || look == '<' ) {
             ///TODO do we need to do anything here??
             if (look == '*') Multiply();
             if (look == '/') Divide();
             if (look == '^') Power();
             if (look == '&') Concat();
             if (look == '=') Equal();
+            if (look == '>') GreaterThan();
+            if (look == '<') LessThan();
         }
     }
     
@@ -579,8 +564,8 @@ public class FormulaParser {
         Match('-');
         Term();
         tokens.add(new SubtractPtg());
-    }
-    
+    }    
+
     private void Power() {
         Match('^');
         Term();
@@ -600,10 +585,26 @@ public class FormulaParser {
             if (look == '-') Subtract();
             if (look == '*') Multiply();
             if (look == '/') Divide();
+            if (look == '>') GreaterThan();
+            if (look == '<') LessThan();
         }
         addArgumentPointer();
         
     }
+    
+    /** Recognize and Translate a Greater Than  */
+    private void GreaterThan() {
+        Match('>');
+        Term();
+        tokens.add(new GreaterThanPtg());
+    }
+    
+    /** Recognize and Translate a Less Than  */
+    private void LessThan() {
+        Match('<');
+        Term();
+        tokens.add(new LessThanPtg());
+    }   
     
     
     //{--------------------------------------------------------------}
@@ -826,7 +827,8 @@ end;
      *   Useful for testing
      */
     public String toString() {
-        SheetReferences refs = book.getSheetReferences();
+        SheetReferences refs = null;
+        if (book!=null)  book.getSheetReferences();
         StringBuffer buf = new StringBuffer();
            for (int i=0;i<tokens.size();i++) {
             buf.append( ( (Ptg)tokens.get(i)).toFormulaString(refs));

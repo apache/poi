@@ -177,6 +177,14 @@ public abstract class Ptg
                 retval = new EqualPtg(data, offset);
                 break;
                 
+            case GreaterThanPtg.sid:
+                retval = new GreaterThanPtg(data, offset);
+                break;
+                
+            case LessThanPtg.sid:
+                retval = new LessThanPtg(data, offset);
+                break;
+                
             case ConcatPtg.sid :
                 retval = new ConcatPtg(data, offset);
                 break;

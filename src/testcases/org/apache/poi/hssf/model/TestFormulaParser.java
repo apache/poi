@@ -249,7 +249,18 @@ public class TestFormulaParser extends TestCase {
 		//the PTG order isn't 100% correct but it still works - dmui
 		
 					
-	}	 
+	}
+        
+        public void testSimpleLogical() {
+            FormulaParser fp=new FormulaParser("IF(A1<A2,B1,B2)",null);
+            fp.parse();
+            Ptg[] ptgs = fp.getRPNPtg();
+            assertTrue("Ptg array should not be null", ptgs !=null);
+            assertEquals("Ptg array length", 9, ptgs.length);
+            assertEquals("3rd Ptg is less than",LessThanPtg.class,ptgs[2].getClass());
+            
+           
+        }
 	    
      public static void main(String [] args) {
         System.out.println("Testing org.apache.poi.hssf.record.formula.FormulaParser");

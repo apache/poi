@@ -849,6 +849,36 @@ extends TestCase {
             in.close(); 
     }
     
+    
+    
+    public void testLogicalFormulas()
+        throws java.io.IOException
+    {
+
+            File file = File.createTempFile("testLogicalFormula",".xls");
+            FileOutputStream out    = new FileOutputStream(file);
+            HSSFWorkbook     wb     = new HSSFWorkbook();
+            HSSFSheet        s      = wb.createSheet("A");
+            HSSFRow          r      = null;
+            HSSFCell         c      = null;
+            r = s.createRow((short)0);
+            c=r.createCell((short)1); c.setCellFormula("IF(A1<A2,B1,B2)");
+
+            
+            wb.write(out);
+            out.close();
+            
+             assertTrue("file exists",file.exists());
+            
+            FileInputStream in = new FileInputStream(file);
+            wb = new HSSFWorkbook(in);
+            s = wb.getSheetAt(0);
+            r = s.getRow(0);
+            c = r.getCell((short)1);
+            assertEquals("Formula in cell 1 ","IF(A1<A2,B1,B2)",c.getCellFormula());
+            in.close(); 
+    }
+    
     public void testDateFormulas()
         throws java.io.IOException
     {
