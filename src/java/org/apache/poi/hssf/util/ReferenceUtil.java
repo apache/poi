@@ -20,8 +20,8 @@ public class ReferenceUtil {
      * takes in a cell reference string A1 for instance and returns an integer
      * array with the first element being the row number and the second being 
      * the column number, all in 0-based base 10 format.
-     *
-     * @return xyarray row and column number
+     * @param reference a cell reference such as A1 or AA1 or IV1
+     * @return xyarray int array containing row and column number
      */
     public static int[] getXYFromReference(String reference) {
            int[] retval = new int[2];
@@ -29,6 +29,36 @@ public class ReferenceUtil {
            retval[1] = convertColStringToNum(parts[0]);
            retval[0] = Integer.parseInt(parts[1])-1;
            return retval;
+    }
+    
+    /**
+     * takes in a row and column and returns a string cellref
+     * @param row the 0 based row such as 0 
+     * @param col the 0 based col number such as 1 
+     * @return cellreference string such as B1
+     */
+    public static String getReferenceFromXY(int row, int col) {
+        String retval = convertNumToColString(col) + ""+(row+1);
+        return retval;
+    }
+    
+    /**
+     * takes in a 0-based base-10 column and returns a ALPHA-26 representation
+     */
+    private static String convertNumToColString(int col) {
+        String retval = null;
+        int mod = col % 26;
+        int div = col / 26;
+        char small=(char)(mod + 65);
+        char big = (char)(div + 64);
+                
+        if (div == 0) {
+            retval = ""+small;
+        } else {
+            retval = ""+big+""+small;
+        }
+        
+        return retval;
     }
     
     /**
@@ -74,5 +104,5 @@ public class ReferenceUtil {
         retval[1] = reference.substring(loc);        
         return retval;
     }
-    
+        
 }
