@@ -122,6 +122,7 @@ public class Sheet implements Model
     private Iterator                    valueRecIterator = null;
     private Iterator                    rowRecIterator   = null;
     protected int                       eofLoc           = 0;
+	protected ProtectRecord             protect          = null;
 
     public static final byte PANE_LOWER_RIGHT = (byte)0;
     public static final byte PANE_UPPER_RIGHT = (byte)1;
@@ -287,6 +288,10 @@ public class Sheet implements Model
             {
                 retval.windowTwo = (WindowTwoRecord) rec;
             }
+			else if ( rec.getSid() == ProtectRecord.sid )
+			{
+				retval.protect = (ProtectRecord) rec;
+			}
 
             if (rec != null)
             {
@@ -418,6 +423,8 @@ public class Sheet implements Model
         retval.selection = 
                 (SelectionRecord) retval.createSelection();
         records.add(retval.selection);
+		retval.protect = (ProtectRecord) retval.createProtect();
+		records.add(retval.protect);
         records.add(retval.createEOF());
         retval.records = records;
         log.log(log.DEBUG, "Sheet createsheet from scratch exit");
@@ -2524,6 +2531,27 @@ public class Sheet implements Model
     {
         this.selection = selection;
     }
+       /**
+        * creates a Protect record with protect set to false.
+        * @see org.apache.poi.hssf.record.ProtectRecord
+        * @see org.apache.poi.hssf.record.Record
+        * @return a ProtectRecord
+        */
+
+       protected Record createProtect()
+       {
+               log.log(log.DEBUG, "create protect record with protection disabled");
+               ProtectRecord retval = new ProtectRecord();
+
+               retval.setProtect(false);
+               // by default even when we support encryption we won't
+               return retval;
+       }
+
+       public ProtectRecord getProtect()
+       {
+               return protect;
+     }
 
     /**
      * Sets whether the gridlines are shown in a viewer.
