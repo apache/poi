@@ -166,6 +166,10 @@ public abstract class Ptg
         final int arrayRef = ReferencePtg.sid + 0x40; // excel doesn't really care which one you 
                                                       // write.  
         
+        final int valueFunc = FunctionPtg.sid + 0x20;  //note this only matters for READ
+        final int arrayFunc = FunctionPtg.sid + 0x40; // excel doesn't really care which one you 
+                                                      // write.  
+
         
         switch (id)
         {
@@ -227,9 +231,18 @@ public abstract class Ptg
                 retval = new ParenthesisPtg(data, offset);
                 break;
 
-            case ValueVariableFunctionPtg.sid :
-                retval = new ValueVariableFunctionPtg(data, offset);
+            case FunctionPtg.sid :
+                retval = new FunctionPtg(data, offset);
                 break;
+                
+/*            case valueFunc :
+                retval = new FunctionPtg(data, offset);
+                break;
+                
+            case arrayFunc :
+                retval = new FunctionPtg(data, offset);
+                break;
+  */              
 
             case NamePtg.sid :
                 retval = new NamePtg(data, offset);

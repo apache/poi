@@ -16,7 +16,7 @@ import java.util.List;
  */
 public class FunctionPtg extends OperationPtg {
     public final static short sid  = 0x22;
-    private final static int  SIZE = 2;    
+    private final static int  SIZE = 3;    
     
     private byte field_1_num_args;
     private byte field_2_fnc_index;
@@ -26,6 +26,14 @@ public class FunctionPtg extends OperationPtg {
     /** Creates new DummyFunctionPtg */
     public FunctionPtg() {
     }
+    
+    public FunctionPtg(byte[] data, int offset) {
+        offset++;
+        field_1_num_args = data[ offset + 0 ];
+        field_2_fnc_index  = data[offset + 1 ];
+        
+    }
+    
     
     public FunctionPtg(String pName, byte pNumOperands) {
         field_1_num_args = pNumOperands;
@@ -79,8 +87,9 @@ public class FunctionPtg extends OperationPtg {
     
     
     public void writeBytes(byte[] array, int offset) {
-        array[offset]=field_1_num_args;
-        array[offset]=field_2_fnc_index;
+        array[offset+0]=sid;
+        array[offset+1]=field_1_num_args;
+        array[offset+2]=field_2_fnc_index;
     }
     
     public int getSize() {

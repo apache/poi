@@ -58,6 +58,8 @@ package org.apache.poi.hssf.util;
 /**
  * Title:        Range Address <P>
  * Description:  provides connectivity utilities for ranges<P>
+ *
+ *
  * REFERENCE:  <P>
  * @author IgOr KaTz && EuGeNe BuMaGiN (Tal Moshaiov) (VistaPortal LDT.)
  * @version 1.0

@@ -365,6 +365,9 @@ public class FormulaRecord
         }
         return getRecordSize();
     }
+    
+    
+    
 
     public int getRecordSize()
     {
@@ -504,4 +507,43 @@ public class FormulaRecord
         }
         return false;
     }
+    
+    
+    public String toString()
+    {
+        StringBuffer buffer = new StringBuffer();
+        if (EXPERIMENTAL_FORMULA_SUPPORT_ENABLED) {
+            buffer.append("[FORMULA]\n");
+            buffer.append("    .row       = ")
+                .append(Integer.toHexString(getRow())).append("\n");
+            buffer.append("    .column    = ")
+                .append(Integer.toHexString(getColumn()))
+                .append("\n");
+            buffer.append("    .xf              = ")
+                .append(Integer.toHexString(getXFIndex())).append("\n");
+            buffer.append("    .value           = ").append(getValue())
+                .append("\n");
+            buffer.append("    .options         = ").append(getOptions())
+                .append("\n");
+            buffer.append("    .zero            = ").append(field_6_zero)
+                .append("\n");
+            buffer.append("    .expressionlength= ").append(getExpressionLength())
+                .append("\n");
+            buffer.append("    .numptgsinarray  = ").append(field_8_parsed_expr.size())
+                .append("\n");
+            
+            
+            for (int k = 0; k < field_8_parsed_expr.size(); k++ ) {
+                buffer.append("formula ").append(k).append(" ")
+                .append(((Ptg)field_8_parsed_expr.get(k)).toFormulaString());
+            }
+            
+            
+            buffer.append("[/FORMULA]\n");
+        } else {
+            buffer.append(super.toString());
+        }
+        return buffer.toString();
+    }
+    
 }
