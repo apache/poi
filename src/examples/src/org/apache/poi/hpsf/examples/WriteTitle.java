@@ -72,7 +72,8 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  * <p>This class is a simple sample application showing how to create a property
  * set and write it to disk.</p>
  *
- * @author Rainer Klute (klute@rainer-klute.de)
+ * @author Rainer Klute <a
+ * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
  * @version $Id$
  * @since 2003-09-12
  */

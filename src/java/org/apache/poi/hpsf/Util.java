@@ -263,13 +263,17 @@ public class Util
     {
         for (int i1 = 0; i1 < o1.length; i1++)
         {
+            final Object obj1 = o1[i1];
             boolean matchFound = false;
             for (int i2 = 0; !matchFound && i2 < o1.length; i2++)
-                if (o1[i1].equals(o2[i2]))
+            {
+                final Object obj2 = o2[i2];
+                if (obj1.equals(obj2))
                 {
                     matchFound = true;
                     o2[i2] = null;
                 }
+            }
             if (!matchFound)
                 return false;
         }

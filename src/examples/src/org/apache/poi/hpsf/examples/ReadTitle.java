@@ -70,7 +70,8 @@ import org.apache.poi.poifs.eventfilesystem.POIFSReaderListener;
  *
  * <p>Explanations can be found in the HPSF HOW-TO.</p>
  *
- * @author Rainer Klute (klute@rainer-klute.de)
+ * @author Rainer Klute <a
+ * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
  * @version $Id$
  * @since 2003-02-01
  */
