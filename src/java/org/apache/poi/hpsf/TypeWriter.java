@@ -169,8 +169,22 @@ public class TypeWriter
 
 
 
-
-
-
+    /**
+     * <p>Writes a double value value to an output stream.</p>
+     *
+     * @param out The stream to write to.
+     * @param n The value to write.
+     * @exception IOException if an I/O error occurs
+     * @return The number of bytes written to the output stream. 
+     */
+    public static int writeToStream(final OutputStream out, final double n)
+        throws IOException
+    {
+        final int l = LittleEndian.DOUBLE_SIZE;
+        final byte[] buffer = new byte[l];
+        LittleEndian.putDouble(buffer, 0, n);
+        out.write(buffer, 0, l);
+        return l;
+    }
 
 }
