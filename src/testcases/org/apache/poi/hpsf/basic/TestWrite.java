@@ -411,6 +411,7 @@ public class TestWrite extends TestCase
             check(Variant.VT_CF, new byte[]{0, 1, 2, 3, 4, 5, 6, 7}, codepage);
             check(Variant.VT_I2, new Integer(27), codepage);
             check(Variant.VT_I4, new Long(28), codepage);
+            check(Variant.VT_R8, new Double(29.0), codepage);
             check(Variant.VT_FILETIME, new Date(), codepage);
 
             check(Variant.VT_LPSTR,

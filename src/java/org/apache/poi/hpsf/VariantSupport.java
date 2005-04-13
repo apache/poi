@@ -169,6 +169,15 @@ public class VariantSupport extends Variant
                 value = new Long(LittleEndian.getUInt(src, o1));
                 break;
             }
+            case Variant.VT_R8:
+            {
+                /*
+                 * Read an eight-byte double value. In Java it is represented as
+                 * a Double object.
+                 */
+                value = new Double(LittleEndian.getDouble(src, o1));
+                break;
+            }
             case Variant.VT_FILETIME:
             {
                 /*
@@ -392,6 +401,12 @@ public class VariantSupport extends Variant
             {
                 length += TypeWriter.writeToStream(out, 
                           ((Long) value).intValue());
+                break;
+            }
+            case Variant.VT_R8:
+            {
+                length += TypeWriter.writeToStream(out, 
+                          ((Double) value).doubleValue());
                 break;
             }
             case Variant.VT_FILETIME:
