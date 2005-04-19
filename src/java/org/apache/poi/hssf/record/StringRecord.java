@@ -93,7 +93,7 @@ public class StringRecord
         field_2_unicode_flag            = data[ 2 + offset ];
         if (isUnCompressedUnicode())
         {
-            field_3_string = StringUtil.getFromUnicodeBE(data, 3 + offset, field_1_string_length );
+            field_3_string = StringUtil.getFromUnicodeLE(data, 3 + offset, field_1_string_length );
         }
         else
         {
