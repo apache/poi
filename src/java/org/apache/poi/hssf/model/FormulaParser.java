@@ -484,12 +484,28 @@ public class FormulaParser {
                 if (IsDigit(look)) number = number +"."+ GetNum(); //this also takes care of someone entering "1234."
                 tokens.add(new NumberPtg(number));
             } else {
-                tokens.add(new IntPtg(number));  //TODO:what if the number is too big to be a short? ..add factory to return Int or Number!
+                tokens.add(getNumberPtgFromString(number));  //TODO:what if the number is too big to be a short? ..add factory to return Int or Number!
             }
         }
     }
     
-    private void StringLiteral() 
+	 /** Get a PTG for an integer from its string representation. 
+	  * return Int or Number Ptg based on size of input
+	 * @param number
+	 * @return
+	 */
+	private Ptg getNumberPtgFromString(String number) {
+		try {
+			return new IntPtg(number);
+		} catch (NumberFormatException e) {
+			System.out.println("Caught NFE, returning Number Ptg");
+			return new NumberPtg(number);
+		}
+
+	}
+
+
+	private void StringLiteral() 
 	{
 		// Can't use match here 'cuz it consumes whitespace
 		// which we need to preserve inside the string.
