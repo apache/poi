@@ -365,7 +365,7 @@ public class HSSFWorkbook
 
     public HSSFSheet createSheet(String sheetname)
     {
-        if (workbook.doesContainsSheetName( sheetname, -1 ))
+        if (workbook.doesContainsSheetName( sheetname, sheets.size() ))
             throw new IllegalArgumentException( "The workbook already contains a sheet of this name" );
 
         HSSFSheet sheet = new HSSFSheet(workbook);

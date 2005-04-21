@@ -23,7 +23,7 @@ public class TestHSSFWorkbook extends TestCase
             throws Exception
     {
         HSSFWorkbook b = new HSSFWorkbook( );
-        b.createSheet();
+        b.createSheet("Sheet1");
         b.createSheet();
         b.createSheet("name1");
         try
@@ -56,6 +56,12 @@ public class TestHSSFWorkbook extends TestCase
         b.setSheetName( 3,  "name2", HSSFWorkbook.ENCODING_UTF_16 );
         b.setSheetName( 3,  "name2", HSSFWorkbook.ENCODING_UTF_16 );
         b.setSheetName( 3,  "name2" );
+        
+        HSSFWorkbook c = new HSSFWorkbook( );
+        c.createSheet("Sheet1");
+        c.createSheet("Sheet2");
+        c.createSheet("Sheet3");
+        c.createSheet("Sheet4");
 
     }
 }
