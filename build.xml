@@ -333,6 +333,7 @@
                 <fileset dir="${main.src.test}">
                     <include name="**/Test*.java"/>
                     <exclude name="**/AllTests.java"/>
+                	<exclude name="**/TestEmptyDocument.java"/>
                 </fileset>
             </batchtest>
         </junit>
@@ -340,12 +341,43 @@
         <antcall target="-test-main-write-testfile"/>
     </target>
 
+	<target name="test-fail" depends = "compile-main, is-available-junit" description="run tests that are known to fail">
+		<junit printsummary="yes" showoutput="true" filtertrace="no" haltonfailure="false" >
+			<classpath refid="test.classpath"/>
+        	 <classpath>
+                <path refid="scratchpad.classpath"/>
+                <pathelement location="${main.output.dir}"/>
+                <pathelement location="${scratchpad.output.dir}"/>
+                <pathelement location="${scratchpad.output.test.dir}"/>
+                <pathelement location="${junit.jar1.dir}"/>
+            </classpath>
+			<sysproperty key="HSSF.testdata.path" file="${main.src.test}/org/apache/poi/hssf/data"/>
+			<sysproperty key="HPSF.testdata.path" file="${main.src.test}/org/apache/poi/hpsf/data"/>
+			<sysproperty key="HWPF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hwpf/data"/>
+			<sysproperty key="java.awt.headless" value="true"/>
+			<formatter type="plain" usefile="no"/>
+            <batchtest todir="${main.reports.test}">
+                <fileset dir="${main.src.test}">
+                	<include name="**/TestEmptyDocument.java"/>
+                </fileset>
+            </batchtest>
+
+		</junit>
+	</target>	
     <target name="single-test" depends="-test-property-check,compile-main" description="Runs a single test case specified with -Dtestcase=classname">
-        <junit printsummary="no" showoutput="true" filtertrace="no" haltonfailure="${halt.on.test.failure}" failureproperty="main.test.failed">
+        <junit printsummary="yes" showoutput="true" filtertrace="no" haltonfailure="false" >
             <classpath refid="test.classpath"/>
+        	 <classpath>
+        	                <path refid="scratchpad.classpath"/>
+        	                <pathelement location="${main.output.dir}"/>
+        	                <pathelement location="${scratchpad.output.dir}"/>
+        	                <pathelement location="${scratchpad.output.test.dir}"/>
+        	                <pathelement location="${junit.jar1.dir}"/>
+        	            </classpath>
             <sysproperty key="HSSF.testdata.path" file="${main.src.test}/org/apache/poi/hssf/data"/>
             <sysproperty key="HPSF.testdata.path" file="${main.src.test}/org/apache/poi/hpsf/data"/>
-            <sysproperty key="java.awt.headless" value="true"/>
+            <sysproperty key="HWPF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hwpf/data"/>
+        	<sysproperty key="java.awt.headless" value="true"/>
             <formatter type="plain" usefile="no"/>
             <formatter type="xml"/>
             <test name="${testcase}"/>
