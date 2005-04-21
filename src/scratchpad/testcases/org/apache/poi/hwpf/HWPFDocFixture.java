@@ -47,7 +47,7 @@ public class HWPFDocFixture
         filename = "c:";
       }
 
-      filename = filename + "/blankplus.doc";
+      filename = filename + "/test.doc";
 
 
       POIFSFileSystem filesystem = new POIFSFileSystem(new FileInputStream(
