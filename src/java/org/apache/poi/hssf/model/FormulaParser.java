@@ -498,7 +498,6 @@ public class FormulaParser {
 		try {
 			return new IntPtg(number);
 		} catch (NumberFormatException e) {
-			System.out.println("Caught NFE, returning Number Ptg");
 			return new NumberPtg(number);
 		}
 
