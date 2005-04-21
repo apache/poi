@@ -23,6 +23,7 @@ import org.apache.poi.hssf.record.formula.AbstractFunctionPtg;
 import org.apache.poi.hssf.record.formula.AddPtg;
 import org.apache.poi.hssf.record.formula.AttrPtg;
 import org.apache.poi.hssf.record.formula.BoolPtg;
+import org.apache.poi.hssf.record.formula.DividePtg;
 import org.apache.poi.hssf.record.formula.EqualPtg;
 import org.apache.poi.hssf.record.formula.FuncVarPtg;
 import org.apache.poi.hssf.record.formula.IntPtg;
@@ -30,6 +31,7 @@ import org.apache.poi.hssf.record.formula.LessEqualPtg;
 import org.apache.poi.hssf.record.formula.LessThanPtg;
 import org.apache.poi.hssf.record.formula.NamePtg;
 import org.apache.poi.hssf.record.formula.NotEqualPtg;
+import org.apache.poi.hssf.record.formula.NumberPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.record.formula.ReferencePtg;
 import org.apache.poi.hssf.record.formula.StringPtg;
@@ -351,6 +353,29 @@ public class TestFormulaParser extends TestCase {
     
 		assertTrue("got 3 ptg", ptg.length == 3);
 		assertTrue("ptg0 has Value class", ptg[0].getPtgClass() == Ptg.CLASS_VALUE);
+	}
+	
+	/** bug 33160*/
+	public void testLargeInt() {
+		FormulaParser fp = new FormulaParser("40", null);
+		fp.parse();
+		Ptg[] ptg=fp.getRPNPtg();
+		assertTrue("ptg is Int, is "+ptg[0].getClass(),ptg[0] instanceof IntPtg);
+		
+		fp = new FormulaParser("40000", null);
+		fp.parse();
+		ptg=fp.getRPNPtg();
+		assertTrue("ptg should be  Number, is "+ptg[0].getClass(), ptg[0] instanceof NumberPtg);
+	}
+	/** bug 33160, testcase by Amol Deshmukh*/
+	public void testSimpleLongFormula() {
+		        FormulaParser fp = new FormulaParser("40000/2", null);
+		        fp.parse();
+		        Ptg[] ptgs = fp.getRPNPtg();
+		        assertTrue("three tokens expected, got "+ptgs.length,ptgs.length == 3);
+		        assertTrue("NumberPtg",(ptgs[0] instanceof NumberPtg));
+		        assertTrue("IntPtg",(ptgs[1] instanceof IntPtg));
+		        assertTrue("DividePtg",(ptgs[2] instanceof DividePtg));
 	}
 
      public static void main(String [] args) {
