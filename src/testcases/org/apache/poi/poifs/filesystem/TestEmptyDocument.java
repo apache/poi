@@ -86,7 +86,6 @@ public class TestEmptyDocument extends TestCase {
   public void testSingleEmptyDocument() throws IOException {
     POIFSFileSystem fs = new POIFSFileSystem();
     DirectoryEntry dir = fs.getRoot();
-    dir = fs.getRoot();
     dir.createDocument("Foo", new ByteArrayInputStream(new byte[] { }));
     
     ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -97,7 +96,6 @@ public class TestEmptyDocument extends TestCase {
   public void testSingleEmptyDocumentEvent() throws IOException {
     POIFSFileSystem fs = new POIFSFileSystem();
     DirectoryEntry dir = fs.getRoot();
-    dir = fs.getRoot();
     dir.createDocument("Foo", 0, new POIFSWriterListener() {
       public void processPOIFSWriterEvent(POIFSWriterEvent event) {
       	System.out.println("written");
@@ -112,7 +110,6 @@ public class TestEmptyDocument extends TestCase {
   public void testEmptyDocumentWithFriend() throws IOException {
     POIFSFileSystem fs = new POIFSFileSystem();
     DirectoryEntry dir = fs.getRoot();
-    dir = fs.getRoot();
     dir.createDocument("Bar", new ByteArrayInputStream(new byte[] { 0 }));
     dir.createDocument("Foo", new ByteArrayInputStream(new byte[] { }));
     
@@ -124,7 +121,6 @@ public class TestEmptyDocument extends TestCase {
   public void testEmptyDocumentEventWithFriend() throws IOException {
     POIFSFileSystem fs = new POIFSFileSystem();
     DirectoryEntry dir = fs.getRoot();
-    dir = fs.getRoot();
     dir.createDocument("Bar", 1, new POIFSWriterListener() {
       public void processPOIFSWriterEvent(POIFSWriterEvent event) {
         try {
