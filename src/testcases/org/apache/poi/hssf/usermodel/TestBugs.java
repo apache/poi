@@ -133,7 +133,6 @@ extends TestCase {
     /** test rewriting a file with large number of unique strings
      *open resulting file in Excel to check results!*/
     public void test15375() {
-        
         try {
             String filename = System.getProperty("HSSF.testdata.path");
             filename=filename+"/15375.xls";
@@ -177,8 +176,6 @@ extends TestCase {
      *open resulting file in Excel to check results!*/
     
     public void test15375_2() throws Exception{
-        
-        
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet();
         
@@ -263,7 +260,7 @@ extends TestCase {
         
     }
     
-    /*Double byte strings */
+    /**Double byte strings */
     public void test22742() throws java.io.IOException {
         String filename = System.getProperty("HSSF.testdata.path");
         filename=filename+"/22742.xls";
@@ -420,7 +417,20 @@ extends TestCase {
 		HSSFCell c2 = w.getSheetAt(0).getRow(2).getCell((short) 1);
 		HSSFCell d1 = w.getSheetAt(0).getRow(3).getCell((short) 0);
 		HSSFCell d2 = w.getSheetAt(0).getRow(3).getCell((short) 1);
-
+		
+ /*     // THAI code page
+        System.out.println("a1="+unicodeString(a1.getStringCellValue()));
+        System.out.println("a2="+unicodeString(a2.getStringCellValue()));
+        // US code page
+        System.out.println("b1="+unicodeString(b1.getStringCellValue()));
+        System.out.println("b2="+unicodeString(b2.getStringCellValue()));
+        // THAI+US
+        System.out.println("c1="+unicodeString(c1.getStringCellValue()));
+        System.out.println("c2="+unicodeString(c2.getStringCellValue()));
+        // US+THAI
+        System.out.println("d1="+unicodeString(d1.getStringCellValue()));
+        System.out.println("d2="+unicodeString(d2.getStringCellValue()));
+*/
 		assertEquals("String Cell value", a1.getStringCellValue(), a2.getStringCellValue());
 		assertEquals("String Cell value", b1.getStringCellValue(), b2.getStringCellValue());
 		assertEquals("String Cell value", c1.getStringCellValue(), c2.getStringCellValue());
@@ -454,6 +464,32 @@ extends TestCase {
 		assertEquals("Re-Written Formula String Cell value", d1.getStringCellValue(), rd2.getStringCellValue());
 
 	}
+	
+	private static String unicodeString(String ss) {
+        char s[] = ss.toCharArray();
+        java.lang.StringBuffer sb=new java.lang.StringBuffer();
+        for (int x=0;x<s.length;x++) {
+            sb.append("\\u").append(Integer.toHexString(s[x]));
+        }
+        return sb.toString();
+    }
+	
+	/** Error in opening wb*/
+	public void test32822() throws Exception{
+    	String readFilename = System.getProperty("HSSF.testdata.path");
+        FileInputStream in = new FileInputStream(readFilename+File.separator+"32822.xls");
+        HSSFWorkbook wb = new HSSFWorkbook(in);
+        assertTrue("No Exceptions while reading file", true);
+    }
+	/**fail to read wb with chart */
+	public void test15573() throws java.io.IOException {
+        String filename = System.getProperty("HSSF.testdata.path");
+        filename=filename+"/15573.xls";
+        FileInputStream in = new FileInputStream(filename);
+        HSSFWorkbook wb = new HSSFWorkbook(in);
+        assertTrue("No Exceptions while reading file", true);
+        
+    }
 
 }
 
