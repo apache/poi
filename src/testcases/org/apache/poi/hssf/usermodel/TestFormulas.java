@@ -1084,6 +1084,16 @@ extends TestCase {
         assertEquals("String Cell value","XYZ",c.getStringCellValue());
     }
     
+    /** test for bug 34021*/
+    public void testComplexSheetRefs () throws IOException {
+    	HSSFWorkbook sb = new HSSFWorkbook();
+    	 HSSFSheet s1 = sb.createSheet("Sheet a.1");
+    	 HSSFSheet s2 = sb.createSheet("Sheet.A");
+    	 s2.createRow(1).createCell((short) 2).setCellFormula("'Sheet a.1'!A1");
+    	 s1.createRow(1).createCell((short) 2).setCellFormula("'Sheet.A'!A1");
+    	 File file = TempFile.createTempFile("testComplexSheetRefs",".xls");
+    	 sb.write(new FileOutputStream(file));
+    }
     public static void main(String [] args) {
         System.out
         .println("Testing org.apache.poi.hssf.usermodel.TestFormulas");
