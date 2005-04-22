@@ -252,5 +252,45 @@ public class HSSFHeader
     {
         return "&A";
     }
+
+    /**
+     * Returns the string representing the start underline
+     *
+     * @return The special string for start underline
+     */
+    public static String startUnderline()
+    {
+        return "&U";
+    }
+
+    /**
+     * Returns the string representing the end underline
+     *
+     * @return The special string for end underline
+     */
+    public static String endUnderline()
+    {
+        return "&U";
+    }
+
+    /**
+     * Returns the string representing the start double underline
+     *
+     * @return The special string for start double underline
+     */
+    public static String startDoubleUnderline()
+    {
+        return "&E";
+    }
+
+    /**
+     * Returns the string representing the end double underline
+     *
+     * @return The special string for end double underline
+     */
+    public static String endDoubleUnderline()
+    {
+        return "&E";
+    }
 }
 

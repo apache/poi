@@ -33,184 +33,224 @@ import org.apache.poi.hssf.record.FooterRecord;
  */
 public class HSSFFooter extends Object {
 
-  FooterRecord footerRecord;
-  String left;
-  String center;
-  String right;
+    FooterRecord footerRecord;
+    String left;
+    String center;
+    String right;
 
-  /**
-   * Constructor.  Creates a new footer interface from a footer record
-   * @param footerRecord Footer record to create the footer with
-   */
-  protected HSSFFooter(FooterRecord footerRecord) {
-    this.footerRecord = footerRecord;
-    String foot = footerRecord.getFooter();
-    while (foot != null && foot.length() > 1) {
-	int pos = foot.length();
-	switch (foot.substring(1, 2).charAt(0)) {
-	case 'L' :
- 	    if (foot.indexOf("&C") >= 0) {
-		pos = Math.min(pos, foot.indexOf("&C"));
-	    } 
-	    if (foot.indexOf("&R") >= 0) {
-		pos = Math.min(pos, foot.indexOf("&R"));
-	    } 
-	    left = foot.substring(2, pos);
-	    foot = foot.substring(pos);
-	    break;
-	case 'C' : 
-	    if (foot.indexOf("&L") >= 0) {
-		pos = Math.min(pos, foot.indexOf("&L"));
-	    } 
-	    if (foot.indexOf("&R") >= 0) {
-		pos = Math.min(pos, foot.indexOf("&R"));
-	    } 
-	    center = foot.substring(2, pos);
-	    foot = foot.substring(pos);
-	    break;
-	case 'R' : 
- 	    if (foot.indexOf("&C") >= 0) {
-		pos = Math.min(pos, foot.indexOf("&C"));
-	    } 
-	    if (foot.indexOf("&L") >= 0) {
-		pos = Math.min(pos, foot.indexOf("&L"));
-	    } 
-	    right = foot.substring(2, pos);
-	    foot = foot.substring(pos);
-	    break;
-	default : foot = null;
+    /**
+     * Constructor.  Creates a new footer interface from a footer record
+     * @param footerRecord Footer record to create the footer with
+     */
+    protected HSSFFooter(FooterRecord footerRecord) {
+	this.footerRecord = footerRecord;
+	String foot = footerRecord.getFooter();
+	while (foot != null && foot.length() > 1) {
+	    int pos = foot.length();
+	    switch (foot.substring(1, 2).charAt(0)) {
+	    case 'L' :
+		if (foot.indexOf("&C") >= 0) {
+		    pos = Math.min(pos, foot.indexOf("&C"));
+		} 
+		if (foot.indexOf("&R") >= 0) {
+		    pos = Math.min(pos, foot.indexOf("&R"));
+		} 
+		left = foot.substring(2, pos);
+		foot = foot.substring(pos);
+		break;
+	    case 'C' : 
+		if (foot.indexOf("&L") >= 0) {
+		    pos = Math.min(pos, foot.indexOf("&L"));
+		} 
+		if (foot.indexOf("&R") >= 0) {
+		    pos = Math.min(pos, foot.indexOf("&R"));
+		} 
+		center = foot.substring(2, pos);
+		foot = foot.substring(pos);
+		break;
+	    case 'R' : 
+		if (foot.indexOf("&C") >= 0) {
+		    pos = Math.min(pos, foot.indexOf("&C"));
+		} 
+		if (foot.indexOf("&L") >= 0) {
+		    pos = Math.min(pos, foot.indexOf("&L"));
+		} 
+		right = foot.substring(2, pos);
+		foot = foot.substring(pos);
+		break;
+	    default : foot = null;
+	    }
 	}
     }
-  }
 
-  /**
-   * Get the left side of the footer.
-   * @return The string representing the left side.
-   */
-  public String getLeft() {
-    return left;
-  }
+    /**
+     * Get the left side of the footer.
+     * @return The string representing the left side.
+     */
+    public String getLeft() {
+	return left;
+    }
 
-  /**
-   * Sets the left string.
-   * @param newLeft The string to set as the left side.
-   */
-  public void setLeft(String newLeft) {
-    left = newLeft;
-    createFooterString();
-  }
+    /**
+     * Sets the left string.
+     * @param newLeft The string to set as the left side.
+     */
+    public void setLeft(String newLeft) {
+	left = newLeft;
+	createFooterString();
+    }
 
-  /**
-   * Get the center of the footer.
-   * @return The string representing the center.
-   */
-  public String getCenter() {
-    return center;
-  }
+    /**
+     * Get the center of the footer.
+     * @return The string representing the center.
+     */
+    public String getCenter() {
+	return center;
+    }
 
-  /**
-   * Sets the center string.
-   * @param newCenter The string to set as the center.
-   */
-  public void setCenter(String newCenter) {
-    center = newCenter;
-    createFooterString();
-  }
+    /**
+     * Sets the center string.
+     * @param newCenter The string to set as the center.
+     */
+    public void setCenter(String newCenter) {
+	center = newCenter;
+	createFooterString();
+    }
 
-  /**
-   * Get the right side of the footer.
-   * @return The string representing the right side.
-   */
-  public String getRight() {
-    return right;
-  }
+    /**
+     * Get the right side of the footer.
+     * @return The string representing the right side.
+     */
+    public String getRight() {
+	return right;
+    }
 
-  /**
-   * Sets the right string.
-   * @param newRight The string to set as the right side.
-   */
-  public void setRight(String newRight) {
-    right = newRight;
-    createFooterString();
-  }
+    /**
+     * Sets the right string.
+     * @param newRight The string to set as the right side.
+     */
+    public void setRight(String newRight) {
+	right = newRight;
+	createFooterString();
+    }
 
-  /**
-   * Creates the complete footer string based on the left, center, and middle
-   * strings.
-   */
-  private void createFooterString() {
-    footerRecord.setFooter(
-    "&C" + (center == null ? "" : center) +
-    "&L" + (left == null ? "" : left) +
-    "&R" + (right == null ? "" : right));
-    footerRecord.setFooterLength((byte)footerRecord.getFooter().length());
-  }
+    /**
+     * Creates the complete footer string based on the left, center, and middle
+     * strings.
+     */
+    private void createFooterString() {
+	footerRecord.setFooter(
+			       "&C" + (center == null ? "" : center) +
+			       "&L" + (left == null ? "" : left) +
+			       "&R" + (right == null ? "" : right));
+	footerRecord.setFooterLength((byte)footerRecord.getFooter().length());
+    }
 
-  /**
-   * Returns the string that represents the change in font size.
-   * @param size the new font size
-   * @return The special string to represent a new font size
-   */
-  public static String fontSize(short size) {
-    return "&" + size;
-  }
+    /**
+     * Returns the string that represents the change in font size.
+     * @param size the new font size
+     * @return The special string to represent a new font size
+     */
+    public static String fontSize(short size) {
+	return "&" + size;
+    }
 
-  /**
-   * Returns the string that represents the change in font.
-   * @param font the new font
-   * @param style the fonts style
-   * @return The special string to represent a new font size
-   */
-  public static String font(String font, String style) {
-    return "&\"" + font + "," + style + "\"";
-  }
+    /**
+     * Returns the string that represents the change in font.
+     * @param font the new font
+     * @param style the fonts style
+     * @return The special string to represent a new font size
+     */
+    public static String font(String font, String style) {
+	return "&\"" + font + "," + style + "\"";
+    }
 
-  /**
-   * Returns the string representing the current page number
-   * @return The special string for page number
-   */
-  public static String page() {
-    return "&P";
-  }
+    /**
+     * Returns the string representing the current page number
+     * @return The special string for page number
+     */
+    public static String page() {
+	return "&P";
+    }
 
-  /**
-   * Returns the string representing the number of pages.
-   * @return The special string for the number of pages
-   */
-  public static String numPages() {
-    return "&N";
-  }
+    /**
+     * Returns the string representing the number of pages.
+     * @return The special string for the number of pages
+     */
+    public static String numPages() {
+	return "&N";
+    }
 
-  /**
-   * Returns the string representing the current date
-   * @return The special string for the date
-   */
-  public static String date() {
-    return "&D";
-  }
+    /**
+     * Returns the string representing the current date
+     * @return The special string for the date
+     */
+    public static String date() {
+	return "&D";
+    }
 
-  /**
-   * Returns the string representing the current time
-   * @return The special string for the time
-   */
-  public static String time() {
-    return "&T";
-  }
+    /**
+     * Returns the string representing the current time
+     * @return The special string for the time
+     */
+    public static String time() {
+	return "&T";
+    }
 
-  /**
-   * Returns the string representing the current file name
-   * @return The special string for the file name
-   */
-  public static String file() {
-    return "&F";
-  }
+    /**
+     * Returns the string representing the current file name
+     * @return The special string for the file name
+     */
+    public static String file() {
+	return "&F";
+    }
 
-  /**
-   * Returns the string representing the current tab (sheet) name
-   * @return The special string for tab name
-   */
-  public static String tab() {
-    return "&A";
-  }
+    /**
+     * Returns the string representing the current tab (sheet) name
+     * @return The special string for tab name
+     */
+    public static String tab() {
+	return "&A";
+    }
+
+    /**
+     * Returns the string representing the start underline
+     *
+     * @return The special string for start underline
+     */
+    public static String startUnderline()
+    {
+        return "&U";
+    }
+
+    /**
+     * Returns the string representing the end underline
+     *
+     * @return The special string for end underline
+     */
+    public static String endUnderline()
+    {
+        return "&U";
+    }
+
+    /**
+     * Returns the string representing the start double underline
+     *
+     * @return The special string for start double underline
+     */
+    public static String startDoubleUnderline()
+    {
+        return "&E";
+    }
+
+    /**
+     * Returns the string representing the end double underline
+     *
+     * @return The special string for end double underline
+     */
+    public static String endDoubleUnderline()
+    {
+        return "&E";
+    }
 }
 
