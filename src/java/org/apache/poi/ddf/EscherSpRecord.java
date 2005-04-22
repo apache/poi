@@ -154,7 +154,10 @@ public class EscherSpRecord
         result.append( ( flags & FLAG_BACKGROUND ) != 0 ? "|BACKGROUND" : "" );
         result.append( ( flags & FLAG_HASSHAPETYPE ) != 0 ? "|HASSHAPETYPE" : "" );
 
-        result.deleteCharAt(0);
+        //need to check, else blows up on some records - bug 34435
+        if(result.length() > 0) {
+            result.deleteCharAt(0);
+        }
         return result.toString();
     }
 
