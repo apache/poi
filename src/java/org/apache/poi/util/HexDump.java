@@ -393,4 +393,13 @@ public class HexDump
         byte[] data = buf.toByteArray();
         dump(data, 0, out, start, data.length);
     }
+
+    public static void main(String[] args) throws Exception {
+        File file = new File(args[0]);
+        InputStream in = new BufferedInputStream(new FileInputStream(file)); 
+        byte[] b = new byte[(int)file.length()];
+        in.read(b);
+        System.out.println(HexDump.dump(b, 0, 0));
+        in.close();
+    }
 }
