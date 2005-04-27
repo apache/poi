@@ -521,6 +521,18 @@ public class CharacterRun
   }
 
   /**
+   * clone the CharacterProperties object associated with this
+   * characterRun so that you can apply it to another CharacterRun
+   */
+  public CharacterProperties cloneProperties() {
+    try {
+       return (CharacterProperties)_props.clone();
+    } catch(java.lang.CloneNotSupportedException e) {
+       throw new RuntimeException(e);
+    } 
+  }
+
+  /**
    * Used to create a deep copy of this object.
    *
    * @return A deep copy.
