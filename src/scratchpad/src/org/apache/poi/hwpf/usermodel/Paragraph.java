@@ -453,6 +453,19 @@ public class Paragraph
     _papx.updateSprm(SPRM_FTTP, val);
   }
 
+  /**
+   * clone the ParagraphProperties object associated with this Paragraph so
+   * that you can apply the same properties to another paragraph.
+   * 
+   */
+  public ParagraphProperties cloneProperties() {
+    try {
+       return (ParagraphProperties)_props.clone();
+    } catch (Exception e) {
+       throw new RuntimeException(e);
+    }
+  }
+
   public Object clone()
     throws CloneNotSupportedException
   {
