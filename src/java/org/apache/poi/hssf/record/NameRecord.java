@@ -617,7 +617,7 @@ public class NameRecord extends Record {
      * @return extern sheet index
      */
     public short getExternSheetNumber(){
-        if (field_13_name_definition == null) return 0;
+        if (field_13_name_definition == null || field_13_name_definition.isEmpty()) return 0;
         Ptg ptg = (Ptg) field_13_name_definition.peek();
         short result = 0;
 
@@ -664,7 +664,7 @@ public class NameRecord extends Record {
      * @return area reference
      */
     public String getAreaReference(Workbook book){
-        if (field_13_name_definition == null) return "#REF!";
+        if (field_13_name_definition == null || field_13_name_definition.isEmpty()) return "#REF!";
         Ptg ptg = (Ptg) field_13_name_definition.peek();
         String result = "";
 
