@@ -491,6 +491,22 @@ extends TestCase {
         assertTrue("No Exceptions while reading file", true);
         
     }
+	
+	/**names and macros */
+	public void test27852() throws java.io.IOException {
+        String filename = System.getProperty("HSSF.testdata.path");
+        filename=filename+"/27852.xls";
+        FileInputStream in = new FileInputStream(filename);
+        HSSFWorkbook wb = new HSSFWorkbook(in);
+        assertTrue("No Exceptions while reading file", true);
+        for(int i = 0 ; i < wb.getNumberOfNames() ; i++)
+        {
+          HSSFName name = wb.getNameAt(i);
+          name.getNameName();
+          name.getReference();
+        }
+        assertTrue("No Exceptions till here!", true);
+    }
 
 }
 
