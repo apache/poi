@@ -36,7 +36,8 @@ public class FooterRecord
 {
     public final static short sid = 0x15;
     private byte              field_1_footer_len;
-    private String            field_2_footer;
+    private byte              field_2_unicode_flag;
+    private String            field_3_footer;
 
     public FooterRecord()
     {
@@ -82,9 +83,44 @@ public class FooterRecord
         if (size > 0)
         {
             field_1_footer_len = data[ 0 + offset ];
-            field_2_footer     = StringUtil.getFromCompressedUnicode(data, 3 + offset, // [Shawn] Changed 1 to 3 for offset of string
-                                            LittleEndian.ubyteToInt( field_1_footer_len) );
+            field_2_unicode_flag = data[ 2 + offset ];
+                         if(isMultibyte())
+                         {
+                             field_3_footer = StringUtil.getFromUnicodeLE(
+                                     data,3 + offset,LittleEndian.ubyteToInt(field_1_footer_len));
+                         }
+                         else
+                         {
+                             field_3_footer     = new String(data, 3 + offset, // [Shawn] Changed 1 to 3 for offset of string
+                                                        LittleEndian.ubyteToInt( field_1_footer_len) );
+                         }
         }
+    }
+
+    /**
+     * see the unicode flag
+     *
+     * @return boolean flag
+     *  true:footer string has at least one multibyte character
+     */
+     public boolean isMultibyte() {
+         return ((field_2_unicode_flag & 0xFF) == 1);
+    }
+
+    /**
+     * check the parameter has multibyte character
+     *
+     * @param value  string to check
+     * @return  boolean result
+     *  true:string has at least one multibyte character
+     */
+    private static boolean hasMultibyte(String value){
+        if( value == null )return false;
+        for(int i = 0 ; i < value.length() ; i++ ){
+            char c = value.charAt(i);
+            if(c > 0xFF )return true;
+        }
+        return false;
     }
 
     /**
@@ -108,7 +144,9 @@ public class FooterRecord
 
     public void setFooter(String footer)
     {
-        field_2_footer = footer;
+        field_3_footer = footer;
+        field_2_unicode_flag = 
+            (byte) (hasMultibyte(field_3_footer) ? 1 : 0);
     }
 
     /**
@@ -132,7 +170,7 @@ public class FooterRecord
 
     public String getFooter()
     {
-        return field_2_footer;
+        return field_3_footer;
     }
 
     public String toString()
@@ -156,13 +194,23 @@ public class FooterRecord
         {
             len+=3; // [Shawn] Fixed for two null bytes in the length
         }
+        short bytelen = (short)(isMultibyte() ?
+            getFooterLength()*2 : getFooterLength() );
         LittleEndian.putShort(data, 0 + offset, sid);
         LittleEndian.putShort(data, 2 + offset,
-                              ( short ) ((len - 4) + getFooterLength()));
+                              ( short ) ((len - 4) + bytelen ));
         if (getFooterLength() > 0)
         {
             data[ 4 + offset ] = (byte)getFooterLength();
-            StringUtil.putCompressedUnicode(getFooter(), data, 7 + offset); // [Shawn] Place the string in the correct offset
+            data[ 6 + offset ] = field_2_unicode_flag;
+            if(isMultibyte())
+            {
+                StringUtil.putUnicodeLE(getFooter(), data, 7 + offset);
+            }
+            else
+            {
+                StringUtil.putCompressedUnicode(getFooter(), data, 7 + offset); // [Shawn] Place the string in the correct offset
+            }
         }
         return getRecordSize();
     }
@@ -175,7 +223,8 @@ public class FooterRecord
         {
             retval+=3; // [Shawn] Fixed for two null bytes in the length
         }
-        return retval + getFooterLength();
+        return (isMultibyte() ? 
+            (retval + getFooterLength()*2) : (retval + getFooterLength()));
     }
 
     public short getSid()
@@ -186,7 +235,8 @@ public class FooterRecord
     public Object clone() {
       FooterRecord rec = new FooterRecord();
       rec.field_1_footer_len = field_1_footer_len;
-      rec.field_2_footer = field_2_footer;
+      rec.field_2_unicode_flag = field_2_unicode_flag;
+      rec.field_3_footer = field_3_footer;
       return rec;
     }
 }
