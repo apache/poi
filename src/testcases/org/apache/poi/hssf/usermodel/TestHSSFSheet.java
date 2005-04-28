@@ -396,6 +396,20 @@ public class TestHSSFSheet
         
     }
     
+    public void testDBCSName () throws Exception {
+    	FileInputStream fis = null;
+        HSSFWorkbook wb     = null;
+        
+        String filename = System.getProperty("HSSF.testdata.path");
+
+        filename = filename + "/DBCSSheetName.xls";
+        fis = new FileInputStream(filename);
+        wb = new HSSFWorkbook(fis);
+        HSSFSheet s= wb.getSheetAt(1);
+        assertEquals ("DBCS Sheet Name 2", wb.getSheetName(1),"\u090f\u0915" );
+        assertEquals("DBCS Sheet Name 1", wb.getSheetName(0),"\u091c\u093e");
+    }
+	
 	public static void main(java.lang.String[] args) {
 		 junit.textui.TestRunner.run(TestHSSFSheet.class);
 	}    
