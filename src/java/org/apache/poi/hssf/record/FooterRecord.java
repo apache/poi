@@ -107,21 +107,6 @@ public class FooterRecord
          return ((field_2_unicode_flag & 0xFF) == 1);
     }
 
-    /**
-     * check the parameter has multibyte character
-     *
-     * @param value  string to check
-     * @return  boolean result
-     *  true:string has at least one multibyte character
-     */
-    private static boolean hasMultibyte(String value){
-        if( value == null )return false;
-        for(int i = 0 ; i < value.length() ; i++ ){
-            char c = value.charAt(i);
-            if(c > 0xFF )return true;
-        }
-        return false;
-    }
 
     /**
      * set the length of the footer string
@@ -146,7 +131,7 @@ public class FooterRecord
     {
         field_3_footer = footer;
         field_2_unicode_flag = 
-            (byte) (hasMultibyte(field_3_footer) ? 1 : 0);
+            (byte) (StringUtil.hasMultibyte(field_3_footer) ? 1 : 0);
     }
 
     /**

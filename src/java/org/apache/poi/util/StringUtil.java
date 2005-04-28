@@ -303,4 +303,32 @@ public class StringUtil {
 	public static String getPreferredEncoding() {
 		return ENCODING;
 	}
+
+	/**
+	 * check the parameter has multibyte character
+	 *
+	 * @param value  string to check
+	 * @return  boolean result
+	 *  true:string has at least one multibyte character
+	 */
+	public static boolean hasMultibyte(String value){
+	    if( value == null )return false;
+	    for(int i = 0 ; i < value.length() ; i++ ){
+	        char c = value.charAt(i);
+	        if(c > 0xFF )return true;
+	    }
+	    return false;
+	}
+	
+	/**
+	   * @param format
+	   * @return true if format is Unicode.
+	   */
+	  public static boolean isUnicodeFormat(final String format) {
+	    try {
+	      return !format.equals(new String(format.getBytes("ISO-8859-1"), "ISO-8859-1"));
+	    } catch (UnsupportedEncodingException e) {
+	      return true;
+	    }
+	  }
 }
