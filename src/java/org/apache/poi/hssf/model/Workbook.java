@@ -23,11 +23,13 @@ import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.hssf.util.SheetReferences;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.io.UnsupportedEncodingException;
 
 /**
  * Low level model implementation of a Workbook.  Provides creational methods
@@ -1989,6 +1991,7 @@ public class Workbook implements Model
         maxformatid = maxformatid >= (short) 0xa4 ? (short) ( maxformatid + 1 ) : (short) 0xa4; //Starting value from M$ empiracle study.
         rec.setIndexCode( maxformatid );
         rec.setFormatStringLength( (byte) format.length() );
+        rec.setUnicodeFlag(StringUtil.isUnicodeFormat(format));
         rec.setFormatString( format );
 
         int pos = 0;
@@ -2000,6 +2003,7 @@ public class Workbook implements Model
         return maxformatid;
     }
 
+  
 
     /**
      * Returns the first occurance of a record matching a particular sid.
