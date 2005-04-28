@@ -36,7 +36,8 @@ public class HeaderRecord
 {
     public final static short sid = 0x14;
     private byte              field_1_header_len;
-    private String            field_2_header;
+    private byte              field_2_unicode_flag;
+    private String            field_3_header;
 
     public HeaderRecord()
     {
@@ -82,9 +83,44 @@ public class HeaderRecord
         if (size > 0)
         {
             field_1_header_len = data[ 0 + offset ];
-            field_2_header     = StringUtil.getFromCompressedUnicode(data, 3 + offset, // [Shawn] Changed 1 to 3 for offset of string
-                                            LittleEndian.ubyteToInt(field_1_header_len));
+            field_2_unicode_flag = data[ 2 + offset ];
+                         if(isMultibyte())
+                         {
+                             field_3_header = StringUtil.getFromUnicodeLE(
+                                     data,3 + offset,LittleEndian.ubyteToInt(field_1_header_len));
+                         }
+                         else
+                         {
+                             field_3_header     = new String(data, 3 + offset, // [Shawn] Changed 1 to 3 for offset of string
+                                                         LittleEndian.ubyteToInt( field_1_header_len) );
+                         }
         }
+    }
+
+    /**
+     * see the unicode flag
+     *
+     * @return boolean flag
+     *  true:footer string has at least one multibyte character
+     */
+     public boolean isMultibyte() {
+         return ((field_2_unicode_flag & 0xFF) == 1);
+    }
+
+    /**
+     * check the parameter has multibyte character
+     *
+     * @param value  string to check
+     * @return  boolean result
+     *  true:string has at least one multibyte character
+     */
+    private static boolean hasMultibyte(String value){
+        if( value == null )return false;
+        for(int i = 0 ; i < value.length() ; i++ ){
+            char c = value.charAt(i);
+            if(c > 0xFF )return true;
+        }
+        return false;
     }
 
     /**
@@ -108,7 +144,9 @@ public class HeaderRecord
 
     public void setHeader(String header)
     {
-        field_2_header = header;
+        field_3_header = header;
+        field_2_unicode_flag = 
+            (byte) (hasMultibyte(field_3_header) ? 1 : 0);
     }
 
     /**
@@ -132,7 +170,7 @@ public class HeaderRecord
 
     public String getHeader()
     {
-        return field_2_header;
+        return field_3_header;
     }
 
     public String toString()
@@ -156,14 +194,24 @@ public class HeaderRecord
         {
             len+=3; // [Shawn] Fixed for two null bytes in the length
         }
+        short bytelen = (short)(isMultibyte() ?
+            getHeaderLength()*2 : getHeaderLength() );
         LittleEndian.putShort(data, 0 + offset, sid);
         LittleEndian.putShort(data, 2 + offset,
-                              ( short ) ((len - 4) + getHeaderLength()));
+                              ( short ) ((len - 4) + bytelen));
 
         if (getHeaderLength() > 0)
         {
             data[ 4 + offset ] = (byte)getHeaderLength();
-            StringUtil.putCompressedUnicode(getHeader(), data, 7 + offset); // [Shawn] Place the string in the correct offset
+            data[ 6 + offset ] = field_2_unicode_flag;
+            if(isMultibyte())
+            {
+                StringUtil.putUnicodeLE(getHeader(), data, 7 + offset);
+            }
+            else
+            {
+                StringUtil.putCompressedUnicode(getHeader(), data, 7 + offset); // [Shawn] Place the string in the correct offset
+            }
         }
         return getRecordSize();
     }
@@ -176,8 +224,8 @@ public class HeaderRecord
         {
             retval+=3; // [Shawn] Fixed for two null bytes in the length
         }
-        retval += getHeaderLength();
-        return retval;
+       return (isMultibyte() ? 
+            (retval + getHeaderLength()*2) : (retval + getHeaderLength()));
     }
 
     public short getSid()
@@ -188,7 +236,8 @@ public class HeaderRecord
     public Object clone() {
       HeaderRecord rec = new HeaderRecord();
       rec.field_1_header_len = field_1_header_len;
-      rec.field_2_header = field_2_header;
+      rec.field_2_unicode_flag = field_2_unicode_flag;
+      rec.field_3_header = field_3_header;
       return rec;
     }
 }
