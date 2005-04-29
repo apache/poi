@@ -14,6 +14,9 @@ public class Constants
     /** <p>Codepage for SJIS</p> */
     public static final int CP_SJIS = 932;
 
+    /** <p>Codepage for MS949</p> */
+    public static final int CP_MS949 = 949;
+
     /** <p>Codepage for UTF-16</p> */
     public static final int CP_UTF16 = 1200;
 
