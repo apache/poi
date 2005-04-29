@@ -294,6 +294,12 @@ public class VariantSupport extends Variant
                 ("Codepage number may not be " + codepage);
         switch (codepage)
         {
+            case Constants.CP_UTF16:
+                return "UTF-16";
+            case Constants.CP_UTF8:
+                return "UTF-8";
+            case Constants.CP_MS949:
+                return "ms949";
             case Constants.CP_MAC_ROMAN:
                 return "MacRoman";
             case Constants.CP_MAC_JAPAN:
@@ -328,10 +334,6 @@ public class VariantSupport extends Variant
                 return "MacCroatian";
             case Constants.CP_SJIS:
                 return "SJIS";
-            case Constants.CP_UTF16:
-                return "UTF-16";
-            case Constants.CP_UTF8:
-                return "UTF-8";
             default:
                 return "cp" + codepage;
         }
