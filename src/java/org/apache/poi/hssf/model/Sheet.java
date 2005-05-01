@@ -19,17 +19,17 @@
 package org.apache.poi.hssf.model;
 
 import org.apache.poi.hssf.record.*;
+import org.apache.poi.hssf.record.aggregates.ColumnInfoRecordsAggregate;
 import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
 import org.apache.poi.hssf.record.aggregates.RowRecordsAggregate;
 import org.apache.poi.hssf.record.aggregates.ValueRecordsAggregate;
-import org.apache.poi.hssf.record.aggregates.ColumnInfoRecordsAggregate;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
+import java.util.List;   // normally I don't do this, buy we literally mean ALL
 
 /**
  * Low level model implementation of a Sheet (one workbook contains many sheets)
@@ -768,6 +768,26 @@ public class Sheet implements Model
               }
             }
 
+            //// uncomment to test record sizes ////
+//            System.out.println( record.getClass().getName() );
+//            byte[] data2 = new byte[record.getRecordSize()];
+//            record.serialize(0, data2 );   // rec.length;
+//            if (LittleEndian.getUShort(data2, 2) != record.getRecordSize() - 4
+//                    && record instanceof RowRecordsAggregate == false
+//                    && record instanceof ValueRecordsAggregate == false
+//                    && record instanceof EscherAggregate == false)
+//            {
+//                throw new RuntimeException("Blah!!!  Size off by " + ( LittleEndian.getUShort(data2, 2) - record.getRecordSize() - 4) + " records.");
+//            }
+
+//asd:            int len = record.serialize(pos + offset, data );
+
+            /////  DEBUG BEGIN /////
+//asd:            if (len != record.getRecordSize())
+//asd:                throw new IllegalStateException("Record size does not match serialized bytes.  Serialized size = " + len + " but getRecordSize() returns " + record.getRecordSize() + ". Record object is " + record.getClass());
+            /////  DEBUG END /////
+
+//asd:            pos += len;   // rec.length;
 
         }
         if (log.check( POILogger.DEBUG ))
@@ -2023,9 +2043,9 @@ public class Sheet implements Model
     {
         int retval = 0;
 
-        for (int k = 0; k < records.size(); k++)
+        for ( int k = 0; k < records.size(); k++ )
         {
-            retval += (( Record ) records.get(k)).getRecordSize();
+            retval += ( (Record) records.get( k ) ).getRecordSize();
         }
         //Add space for the IndexRecord
         if (rows != null) {
@@ -2430,7 +2450,7 @@ public class Sheet implements Model
     	return margins;
     }
 
-    public int aggregateDrawingRecords(DrawingManager drawingManager)
+    public int aggregateDrawingRecords(DrawingManager2 drawingManager)
     {
         int loc = findFirstRecordLocBySid(DrawingRecord.sid);
         boolean noDrawingRecordsFound = loc == -1;

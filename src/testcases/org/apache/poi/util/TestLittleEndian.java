@@ -18,11 +18,12 @@
 
 package org.apache.poi.util;
 
+import junit.framework.TestCase;
 import org.apache.poi.util.LittleEndian.BufferUnderrunException;
 
-import java.io.*;
-
-import junit.framework.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Class to test LittleEndian functionality
@@ -39,7 +40,6 @@ public class TestLittleEndian
      *
      * @param name
      */
-
     public TestLittleEndian(String name)
     {
         super(name);

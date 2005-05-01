@@ -34,7 +34,7 @@ public abstract class AbstractShape
      */
     public static AbstractShape createShape( HSSFShape hssfShape, int shapeId )
     {
-        AbstractShape shape = null;
+        AbstractShape shape;
         if (hssfShape instanceof HSSFTextbox)
         {
             shape = new TextboxShape( (HSSFTextbox)hssfShape, shapeId );
@@ -48,6 +48,9 @@ public abstract class AbstractShape
             HSSFSimpleShape simpleShape = (HSSFSimpleShape) hssfShape;
             switch ( simpleShape.getShapeType() )
             {
+                case HSSFSimpleShape.OBJECT_TYPE_PICTURE:
+                    shape = new PictureShape( simpleShape, shapeId );
+                    break;
                 case HSSFSimpleShape.OBJECT_TYPE_LINE:
                     shape = new LineShape( simpleShape, shapeId );
                     break;

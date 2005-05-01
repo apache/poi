@@ -14,7 +14,7 @@ import java.util.List;
 public class ColumnInfoRecordsAggregate
     extends Record
 {
-    int     size     = 0;
+//    int     size     = 0;
     List records = null;
 
     public ColumnInfoRecordsAggregate()
@@ -40,6 +40,9 @@ public class ColumnInfoRecordsAggregate
 
     public int getRecordSize()
     {
+        int size = 0;
+        for ( Iterator iterator = records.iterator(); iterator.hasNext(); )
+            size += ( (ColumnInfoRecord) iterator.next() ).getRecordSize();
         return size;
     }
 
@@ -68,7 +71,6 @@ public class ColumnInfoRecordsAggregate
      */
     public void insertColumn( ColumnInfoRecord col )
     {
-        size += col.getRecordSize();
         records.add( col );
     }
 
@@ -78,7 +80,6 @@ public class ColumnInfoRecordsAggregate
      */
     public void insertColumn( int idx, ColumnInfoRecord col )
     {
-        size += col.getRecordSize();
         records.add( idx, col );
     }
 

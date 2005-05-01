@@ -29,7 +29,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.io.UnsupportedEncodingException;
 
 /**
  * Low level model implementation of a Workbook.  Provides creational methods
@@ -99,7 +98,8 @@ public class Workbook implements Model
     protected int              numfonts    = 0;   // hold the number of font records
     private short              maxformatid  = -1;  // holds the max format id
     private boolean            uses1904datewindowing  = false;  // whether 1904 date windowing is being used
-    private DrawingManager drawingManager;
+    private DrawingManager2    drawingManager;
+    private List               escherBSERecords = new ArrayList();  // EscherBSERecord
 
     private static POILogger   log = POILogFactory.getLogger(Workbook.class);
 
@@ -748,7 +748,12 @@ public class Workbook implements Model
                 {
                     record = sst.createExtSSTRecord(sstPos + offset);
                 }
-                pos += record.serialize( pos + offset, data );   // rec.length;
+                int len = record.serialize( pos + offset, data );
+                /////  DEBUG BEGIN /////
+//                if (len != record.getRecordSize())
+//                    throw new IllegalStateException("Record size does not match serialized bytes.  Serialized size = " + len + " but getRecordSize() returns " + record.getRecordSize());
+                /////  DEBUG END /////
+                pos += len;   // rec.length;
             }
         }
         if (log.check( POILogger.DEBUG ))
@@ -2104,13 +2109,12 @@ public class Workbook implements Model
     }
 
     /**
-     * Creates a drawing group record.  If it already exists then it's left
-     * alone.
+     * Creates a drawing group record.  If it already exists then it's modified.
      */
     public void createDrawingGroup()
     {
-        int dggLoc = findFirstRecordLocBySid(EscherContainerRecord.DGG_CONTAINER);
-        if (dggLoc == -1)
+
+        if (drawingManager == null)
         {
             EscherContainerRecord dggContainer = new EscherContainerRecord();
             EscherDggRecord dgg = new EscherDggRecord();
@@ -2125,11 +2129,23 @@ public class Workbook implements Model
             dgg.setNumShapesSaved(0);
             dgg.setDrawingsSaved(0);
             dgg.setFileIdClusters(new EscherDggRecord.FileIdCluster[] {} );
-            drawingManager = new DrawingManager(dgg);
+            drawingManager = new DrawingManager2(dgg);
+            EscherContainerRecord bstoreContainer = null;
+            if (escherBSERecords.size() > 0)
+            {
+                bstoreContainer = new EscherContainerRecord();
+                bstoreContainer.setRecordId( EscherContainerRecord.BSTORE_CONTAINER );
+                bstoreContainer.setOptions( (short) ( (escherBSERecords.size() << 4) | 0xF ) );
+                for ( Iterator iterator = escherBSERecords.iterator(); iterator.hasNext(); )
+                {
+                    EscherRecord escherRecord = (EscherRecord) iterator.next();
+                    bstoreContainer.addChildRecord( escherRecord );
+                }
+            }
             opt.setRecordId((short) 0xF00B);
             opt.setOptions((short) 0x0033);
             opt.addEscherProperty( new EscherBoolProperty(EscherProperties.TEXT__SIZE_TEXT_TO_FIT_SHAPE, 524296) );
-            opt.addEscherProperty( new EscherRGBProperty(EscherProperties.FILL__FILLCOLOR, 134217737) );
+            opt.addEscherProperty( new EscherRGBProperty(EscherProperties.FILL__FILLCOLOR, 0x08000041) );
             opt.addEscherProperty( new EscherRGBProperty(EscherProperties.LINESTYLE__COLOR, 134217792) );
             splitMenuColors.setRecordId((short) 0xF11E);
             splitMenuColors.setOptions((short) 0x0040);
@@ -2139,17 +2155,61 @@ public class Workbook implements Model
             splitMenuColors.setColor4(0x100000F7);
 
             dggContainer.addChildRecord(dgg);
+            if (bstoreContainer != null)
+                dggContainer.addChildRecord( bstoreContainer );
             dggContainer.addChildRecord(opt);
             dggContainer.addChildRecord(splitMenuColors);
 
-            DrawingGroupRecord drawingGroup = new DrawingGroupRecord();
-            drawingGroup.addEscherRecord(dggContainer);
-            int loc = findFirstRecordLocBySid(CountryRecord.sid);
-            getRecords().add(loc+1, drawingGroup);
+            int dgLoc = findFirstRecordLocBySid(DrawingGroupRecord.sid);
+            if (dgLoc == -1)
+            {
+                DrawingGroupRecord drawingGroup = new DrawingGroupRecord();
+                drawingGroup.addEscherRecord(dggContainer);
+                int loc = findFirstRecordLocBySid(CountryRecord.sid);
+
+                getRecords().add(loc+1, drawingGroup);
+            }
+            else
+            {
+                DrawingGroupRecord drawingGroup = new DrawingGroupRecord();
+                drawingGroup.addEscherRecord(dggContainer);
+                getRecords().set(dgLoc, drawingGroup);
+            }
+
         }
+
     }
 
-    public DrawingManager getDrawingManager()
+    public int addBSERecord(EscherBSERecord e)
+    {
+        createDrawingGroup();
+
+        // maybe we don't need that as an instance variable anymore
+        escherBSERecords.add( e );
+
+        int dgLoc = findFirstRecordLocBySid(DrawingGroupRecord.sid);
+        DrawingGroupRecord drawingGroup = (DrawingGroupRecord) getRecords().get( dgLoc );
+
+        EscherContainerRecord dggContainer = (EscherContainerRecord) drawingGroup.getEscherRecord( 0 );
+        EscherContainerRecord bstoreContainer;
+        if (dggContainer.getChild( 1 ).getRecordId() == EscherContainerRecord.BSTORE_CONTAINER )
+        {
+            bstoreContainer = (EscherContainerRecord) dggContainer.getChild( 1 );
+        }
+        else
+        {
+            bstoreContainer = new EscherContainerRecord();
+            bstoreContainer.setRecordId( EscherContainerRecord.BSTORE_CONTAINER );
+            dggContainer.getChildRecords().add( 1, bstoreContainer );
+        }
+        bstoreContainer.setOptions( (short) ( (escherBSERecords.size() << 4) | 0xF ) );
+
+        bstoreContainer.addChildRecord( e );
+
+        return escherBSERecords.size();
+    }
+
+    public DrawingManager2 getDrawingManager()
     {
         return drawingManager;
     }

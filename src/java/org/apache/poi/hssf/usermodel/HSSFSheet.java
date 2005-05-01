@@ -1220,19 +1220,22 @@ public class HSSFSheet
      * Aggregates the drawing records and dumps the escher record hierarchy
      * to the standard output.
      */
-    public void dumpDrawingRecords()
+    public void dumpDrawingRecords(boolean fat)
     {
         sheet.aggregateDrawingRecords(book.getDrawingManager());
 
         EscherAggregate r = (EscherAggregate) getSheet().findFirstRecordBySid(EscherAggregate.sid);
         List escherRecords = r.getEscherRecords();
+        PrintWriter w = new PrintWriter(System.out);
         for ( Iterator iterator = escherRecords.iterator(); iterator.hasNext(); )
         {
             EscherRecord escherRecord = (EscherRecord) iterator.next();
-            PrintWriter w = new PrintWriter(System.out);
-            escherRecord.display(w, 0);
-            w.close();
+            if (fat)
+                System.out.println(escherRecord.toString());
+            else
+                escherRecord.display(w, 0);
         }
+        w.flush();
     }
 
     /**

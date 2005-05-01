@@ -256,10 +256,10 @@
         <copy todir="${main.output.dir}">
             <fileset dir="${main.resource1.dir}"/>
         </copy>
-        <javac srcdir="${main.src}" destdir="${main.output.dir}" debug="on">
+        <javac srcdir="${main.src}" destdir="${main.output.dir}" debug="on" fork="yes" includeAntRuntime="no" failonerror="true">
             <classpath refid="main.classpath"/>
         </javac>
-        <javac srcdir="${main.src.test}" destdir="${main.output.test.dir}" debug="on">
+        <javac srcdir="${main.src.test}" destdir="${main.output.test.dir}" debug="on" fork="yes" includeAntRuntime="no" failonerror="true">
             <classpath>
                 <path refid="main.classpath"/>
                 <pathelement location="${main.output.dir}"/>
@@ -269,10 +269,10 @@
     </target>
 
     <target name="compile-scratchpad" depends="init">
-        <javac srcdir="${scratchpad.src}" destdir="${scratchpad.output.dir}" debug="on">
+        <javac srcdir="${scratchpad.src}" destdir="${scratchpad.output.dir}" debug="on" fork="yes" includeAntRuntime="no" failonerror="true">
             <classpath refid="scratchpad.classpath"/>
         </javac>
-        <javac srcdir="${scratchpad.src.test}" destdir="${scratchpad.output.test.dir}" debug="on">
+        <javac srcdir="${scratchpad.src.test}" destdir="${scratchpad.output.test.dir}" debug="on" fork="yes" includeAntRuntime="no" failonerror="true">
             <classpath>
                 <path refid="scratchpad.classpath"/>
                 <pathelement location="${scratchpad.output.dir}"/>
@@ -282,10 +282,10 @@
     </target>
 
     <target name="compile-contrib" depends="init">
-        <javac srcdir="${contrib.src}" destdir="${contrib.output.dir}" debug="on">
+        <javac srcdir="${contrib.src}" destdir="${contrib.output.dir}" debug="on" fork="yes" includeAntRuntime="no" failonerror="true">
             <classpath refid="contrib.classpath"/>
         </javac>
-        <javac srcdir="${contrib.src.test}" destdir="${contrib.output.test.dir}" debug="on">
+        <javac srcdir="${contrib.src.test}" destdir="${contrib.output.test.dir}" debug="on" fork="yes" includeAntRuntime="no" failonerror="true">
             <classpath>
                 <path refid="contrib.classpath"/>
                 <pathelement location="${contrib.output.dir}"/>

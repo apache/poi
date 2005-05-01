@@ -20,7 +20,7 @@ import org.apache.poi.ddf.*;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.hssf.model.AbstractShape;
 import org.apache.poi.hssf.model.TextboxShape;
-import org.apache.poi.hssf.model.DrawingManager;
+import org.apache.poi.hssf.model.DrawingManager2;
 import org.apache.poi.hssf.model.ConvertAnchor;
 
 import java.util.*;
@@ -256,10 +256,10 @@ public class EscherAggregate extends AbstractEscherHolderRecord
 
     /** Maps shape container objects to their OBJ records */
     private Map shapeToObj = new HashMap();
-    private DrawingManager drawingManager;
+    private DrawingManager2 drawingManager;
     private short drawingGroupId;
 
-    public EscherAggregate( DrawingManager drawingManager )
+    public EscherAggregate( DrawingManager2 drawingManager )
     {
         this.drawingManager = drawingManager;
     }
@@ -305,7 +305,7 @@ public class EscherAggregate extends AbstractEscherHolderRecord
     /**
      * Collapses the drawing records into an aggregate.
      */
-    public static EscherAggregate createAggregate( List records, int locFirstDrawingRecord, DrawingManager drawingManager )
+    public static EscherAggregate createAggregate( List records, int locFirstDrawingRecord, DrawingManager2 drawingManager )
     {
         // Keep track of any shape records created so we can match them back to the object id's.
         // Textbox objects are also treated as shape objects.
@@ -571,6 +571,9 @@ public class EscherAggregate extends AbstractEscherHolderRecord
                 escherParent.addChildRecord( shapeModel.getSpContainer() );
             }
         }
+//        drawingManager.newCluster( (short)1 );
+//        drawingManager.newCluster( (short)2 );
+
     }
 
     private void convertGroup( HSSFShapeGroup shape, EscherContainerRecord escherParent, Map shapeToObj )
@@ -678,7 +681,7 @@ public class EscherAggregate extends AbstractEscherHolderRecord
         spContainer1.setRecordId( EscherContainerRecord.SP_CONTAINER );
         spContainer1.setOptions( (short) 0x000F );
         spgr.setRecordId( EscherSpgrRecord.RECORD_ID );
-        spgr.setOptions( (short) 0x0001 );    // don't know what the 1 is for.
+        spgr.setOptions( (short) 0x0001 );    // version
         spgr.setRectX1( patriarch.getX1() );
         spgr.setRectY1( patriarch.getY1() );
         spgr.setRectX2( patriarch.getX2() );

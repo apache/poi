@@ -17,15 +17,15 @@
         
 package org.apache.poi.ddf;
 
-import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.HexDump;
+import org.apache.poi.util.LittleEndian;
 
 import java.io.ByteArrayOutputStream;
-import java.io.PrintWriter;
 
 /**
  * The BSE record is related closely to the <code>EscherBlipRecord</code> and stores
- * extra information about the blip.
+ * extra information about the blip.  A blip record is actually stored inside
+ * the BSE record even though the BSE record isn't actually a container record.
  *
  * @author Glen Stampoultzis
  * @see EscherBlipRecord
@@ -56,6 +56,7 @@ public class EscherBSERecord
     private byte field_9_name;
     private byte field_10_unused2;
     private byte field_11_unused3;
+    private EscherBlipRecord field_12_blipRecord;
 
     private byte[] remainingData;
 
@@ -85,9 +86,28 @@ public class EscherBSERecord
         field_10_unused2 = data[pos + 34];
         field_11_unused3 = data[pos + 35];
         bytesRemaining -= 36;
+        int bytesRead = 0;
+        if (bytesRemaining > 0)
+        {
+            field_12_blipRecord = (EscherBlipRecord) recordFactory.createRecord( data, pos + 36 );
+            bytesRead = field_12_blipRecord.fillFields( data, pos + 36, recordFactory );
+        }
+        pos += 36 + bytesRead;
+        bytesRemaining -= bytesRead;
+//        if (field_1_blipTypeWin32 == BT_PNG)
+//        {
+//            byte[] uid = new byte[16];
+//            System.arraycopy( data, pos + 36, uid, 0, 16 );
+//            byte[] puid = new byte[16];
+//            System.arraycopy( data, pos + 52, puid, 0, 16 );
+//            byte tag = data[pos+68];
+//            System.out.println( HexDump.dump( data, 0, 0 ) );
+//            byte[] pngBytes = EscherBlipRecord.decompress( data, pos+69, bytesRemaining);
+//        }
+
         remainingData = new byte[bytesRemaining];
-        System.arraycopy( data, pos + 36, remainingData, 0, bytesRemaining );
-        return bytesRemaining + 8 + 36;
+        System.arraycopy( data, pos, remainingData, 0, bytesRemaining );
+        return bytesRemaining + 8 + 36 + (field_12_blipRecord == null ? 0 : field_12_blipRecord.getRecordSize()) ;
 
     }
 
@@ -104,9 +124,14 @@ public class EscherBSERecord
     {
         listener.beforeRecordSerialize( offset, getRecordId(), this );
 
+        if (remainingData == null)
+            remainingData = new byte[0];
+
         LittleEndian.putShort( data, offset, getOptions() );
         LittleEndian.putShort( data, offset + 2, getRecordId() );
-        int remainingBytes = remainingData.length + 36;
+        if (remainingData == null) remainingData = new byte[0];
+        int blipSize = field_12_blipRecord == null ? 0 : field_12_blipRecord.getRecordSize();
+        int remainingBytes = remainingData.length + 36 + blipSize;
         LittleEndian.putInt( data, offset + 4, remainingBytes );
 
         data[offset + 8] = field_1_blipTypeWin32;
@@ -121,8 +146,15 @@ public class EscherBSERecord
         data[offset + 41] = field_9_name;
         data[offset + 42] = field_10_unused2;
         data[offset + 43] = field_11_unused3;
-        System.arraycopy( remainingData, 0, data, offset + 44, remainingData.length );
-        int pos = offset + 8 + 36 + remainingData.length;
+        int bytesWritten = 0;
+        if (field_12_blipRecord != null)
+        {
+            bytesWritten = field_12_blipRecord.serialize( offset + 44, data, new NullEscherSerializationListener() );
+        }
+        if (remainingData == null)
+            remainingData = new byte[0];
+        System.arraycopy( remainingData, 0, data, offset + 44 + bytesWritten, remainingData.length );
+        int pos = offset + 8 + 36 + remainingData.length + bytesWritten;
 
         listener.afterRecordSerialize(pos, getRecordId(), pos - offset, this);
         return pos - offset;
@@ -135,7 +167,7 @@ public class EscherBSERecord
      */
     public int getRecordSize()
     {
-        return 8 + 1 + 1 + 16 + 2 + 4 + 4 + 4 + 1 + 1 + 1 + 1 + remainingData.length;
+        return 8 + 1 + 1 + 16 + 2 + 4 + 4 + 4 + 1 + 1 + 1 + 1 + field_12_blipRecord.getRecordSize() + (remainingData == null ? 0 : remainingData.length);
     }
 
     /**
@@ -312,6 +344,16 @@ public class EscherBSERecord
         this.field_11_unused3 = unused3;
     }
 
+    public EscherBlipRecord getBlipRecord()
+    {
+        return field_12_blipRecord;
+    }
+
+    public void setBlipRecord( EscherBlipRecord field_12_blipRecord )
+    {
+        this.field_12_blipRecord = field_12_blipRecord;
+    }
+
     /**
      * Any remaining data in this record.
      */
@@ -360,9 +402,8 @@ public class EscherBSERecord
                 "  Name: " + field_9_name + nl +
                 "  Unused2: " + field_10_unused2 + nl +
                 "  Unused3: " + field_11_unused3 + nl +
+                "  blipRecord: " + field_12_blipRecord + nl +
                 "  Extra Data:" + nl + extraData;
-
-
     }
 
     /**

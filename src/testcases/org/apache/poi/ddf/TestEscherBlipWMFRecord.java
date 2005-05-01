@@ -21,7 +21,7 @@ import junit.framework.TestCase;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.HexRead;
 
-public class TestEscherBlipRecord extends TestCase
+public class TestEscherBlipWMFRecord extends TestCase
 {
     private String dataStr;
     private byte[] data;
@@ -37,7 +37,7 @@ public class TestEscherBlipRecord extends TestCase
 
     public void testSerialize() throws Exception
     {
-        EscherBlipRecord r = new EscherBlipRecord();
+        EscherBlipWMFRecord r = new EscherBlipWMFRecord();
         r.setBoundaryLeft(1);
         r.setBoundaryHeight(2);
         r.setBoundaryTop(3);
@@ -52,7 +52,7 @@ public class TestEscherBlipRecord extends TestCase
                                        (byte)0x01, (byte)0x01, (byte)0x01, (byte)0x01,  });
         r.setWidth(10);
         r.setHeight(11);
-        r.setRecordId(EscherBlipRecord.RECORD_ID_START);
+        r.setRecordId(EscherBlipWMFRecord.RECORD_ID_START);
         r.setOptions((short)5420);
         r.setData(new byte[] { (byte)0x01, (byte)0x02 } );
 
@@ -79,10 +79,10 @@ public class TestEscherBlipRecord extends TestCase
 
     public void testFillFields() throws Exception
     {
-        EscherBlipRecord r = new EscherBlipRecord();
+        EscherBlipWMFRecord r = new EscherBlipWMFRecord();
         r.fillFields( data, 0, new DefaultEscherRecordFactory());
 
-        assertEquals( EscherBlipRecord.RECORD_ID_START, r.getRecordId() );
+        assertEquals( EscherBlipWMFRecord.RECORD_ID_START, r.getRecordId() );
         assertEquals( 1, r.getBoundaryLeft() );
         assertEquals( 2, r.getBoundaryHeight() );
         assertEquals( 3, r.getBoundaryTop() );
@@ -100,12 +100,12 @@ public class TestEscherBlipRecord extends TestCase
 
     public void testToString() throws Exception
     {
-        EscherBlipRecord r = new EscherBlipRecord();
+        EscherBlipWMFRecord r = new EscherBlipWMFRecord();
         r.fillFields( data, 0, new DefaultEscherRecordFactory() );
 
         String nl = System.getProperty("line.separator");
 
-        assertEquals( "org.apache.poi.ddf.EscherBlipRecord:" + nl +
+        assertEquals( "org.apache.poi.ddf.EscherBlipWMFRecord:" + nl +
                 "  RecordId: 0xF018" + nl +
                 "  Options: 0x152C" + nl +
                 "  Secondary UID: [01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, ]" + nl +

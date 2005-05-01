@@ -18,11 +18,10 @@
 package org.apache.poi.ddf;
 
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.hssf.record.RecordFormatException;
 
-import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * Generates a property given a reference into the byte array storing that property.
@@ -43,7 +42,7 @@ public class EscherPropertyFactory
         List results = new ArrayList();
 
         int pos = offset;
-        int complexBytes = 0;
+
 //        while ( bytesRemaining >= 6 )
         for (int i = 0; i < numProperties; i++)
         {
@@ -54,21 +53,18 @@ public class EscherPropertyFactory
             short propNumber = (short) ( propId & (short) 0x3FFF );
             boolean isComplex = ( propId & (short) 0x8000 ) != 0;
             boolean isBlipId = ( propId & (short) 0x4000 ) != 0;
-            if ( isComplex )
-                complexBytes = propData;
-            else
-                complexBytes = 0;
+
             byte propertyType = EscherProperties.getPropertyType( (short) propNumber );
             if ( propertyType == EscherPropertyMetaData.TYPE_BOOLEAN )
-                results.add( new EscherBoolProperty( propNumber, propData ) );
+                results.add( new EscherBoolProperty( propId, propData ) );
             else if ( propertyType == EscherPropertyMetaData.TYPE_RGB )
-                results.add( new EscherRGBProperty( propNumber, propData ) );
+                results.add( new EscherRGBProperty( propId, propData ) );
             else if ( propertyType == EscherPropertyMetaData.TYPE_SHAPEPATH )
-                results.add( new EscherShapePathProperty( propNumber, propData ) );
+                results.add( new EscherShapePathProperty( propId, propData ) );
             else
             {
                 if ( !isComplex )
-                    results.add( new EscherSimpleProperty( propNumber, propData ) );
+                    results.add( new EscherSimpleProperty( propId, propData ) );
                 else
                 {
                     if ( propertyType == EscherPropertyMetaData.TYPE_ARRAY)

@@ -19,9 +19,7 @@ package org.apache.poi.hssf.usermodel.examples;
 
 import org.apache.poi.hssf.usermodel.*;
 
-import java.io.IOException;
-import java.io.FileOutputStream;
-import java.io.FileNotFoundException;
+import java.io.*;
 
 /**
  * Demonstrates how to use the office drawing capabilities of POI.
@@ -39,12 +37,14 @@ public class OfficeDrawing
         HSSFSheet sheet2 = wb.createSheet("second sheet");
         HSSFSheet sheet3 = wb.createSheet("third sheet");
         HSSFSheet sheet4 = wb.createSheet("fourth sheet");
+        HSSFSheet sheet5 = wb.createSheet("fifth sheet");
 
         // Draw stuff in them
         drawSheet1( sheet1 );
         drawSheet2( sheet2 );
         drawSheet3( sheet3 );
         drawSheet4( sheet4, wb );
+        drawSheet5( sheet5, wb );
 
         // Write the file out.
         FileOutputStream fileOut = new FileOutputStream("workbook.xls");
@@ -141,6 +141,53 @@ public class OfficeDrawing
         textbox3.setFillColor(0x08000030);
         textbox3.setLineStyle(HSSFSimpleShape.LINESTYLE_NONE);  // no line around the textbox.
         textbox3.setNoFill(true);    // make it transparent
+    }
+
+    private static void drawSheet5( HSSFSheet sheet5, HSSFWorkbook wb ) throws IOException
+    {
+
+        // Create the drawing patriarch.  This is the top level container for
+        // all shapes. This will clear out any existing shapes for that sheet.
+        HSSFPatriarch patriarch = sheet5.createDrawingPatriarch();
+
+        HSSFClientAnchor anchor;
+        anchor = new HSSFClientAnchor(0,0,0,255,(short)2,2,(short)4,7);
+        anchor.setAnchorType( 2 );
+        patriarch.createPicture(anchor, loadPicture( "src/resources/logos/logoKarmokar4.png", wb ));
+
+        anchor = new HSSFClientAnchor(0,0,0,255,(short)4,2,(short)5,7);
+        anchor.setAnchorType( 2 );
+        patriarch.createPicture(anchor, loadPicture( "src/resources/logos/logoKarmokar4edited.png", wb ));
+
+        anchor = new HSSFClientAnchor(0,0,1023,255,(short)6,2,(short)8,7);
+        anchor.setAnchorType( 2 );
+        HSSFPicture picture = patriarch.createPicture(anchor, loadPicture( "src/resources/logos/logoKarmokar4s.png", wb ));
+        picture.setLineStyle( picture.LINESTYLE_DASHDOTGEL );
+
+    }
+
+    private static int loadPicture( String path, HSSFWorkbook wb ) throws IOException
+    {
+        int pictureIndex;
+        FileInputStream fis = null;
+        ByteArrayOutputStream bos = null;
+        try
+        {
+            fis = new FileInputStream( path);
+            bos = new ByteArrayOutputStream( );
+            int c;
+            while ( (c = fis.read()) != -1)
+                bos.write( c );
+            pictureIndex = wb.addPicture( bos.toByteArray(), HSSFWorkbook.PICTURE_TYPE_PNG );
+        }
+        finally
+        {
+            if (fis != null)
+                fis.close();
+            if (bos != null)
+                bos.close();
+        }
+        return pictureIndex;
     }
 
     private static void drawOval( HSSFPatriarch patriarch )

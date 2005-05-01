@@ -88,7 +88,7 @@ public abstract class AbstractEscherHolderRecord
     {
         if (id != getSid())
         {
-            throw new RecordFormatException("Not a Bar record");
+            throw new RecordFormatException("Not an escher record");
         }
     }
 
@@ -102,15 +102,20 @@ public abstract class AbstractEscherHolderRecord
         }
         else
         {
-            EscherRecordFactory recordFactory = new DefaultEscherRecordFactory();
-            int pos = offset;
-            while ( pos < offset + size )
-            {
-                EscherRecord r = recordFactory.createRecord(data, pos);
-                int bytesRead = r.fillFields(data, pos, recordFactory );
-                escherRecords.add(r);
-                pos += bytesRead;
-            }
+            convertToEscherRecords( offset, size, data );
+        }
+    }
+
+    private void convertToEscherRecords( int offset, int size, byte[] data )
+    {
+        EscherRecordFactory recordFactory = new DefaultEscherRecordFactory();
+        int pos = offset;
+        while ( pos < offset + size )
+        {
+            EscherRecord r = recordFactory.createRecord(data, pos);
+            int bytesRead = r.fillFields(data, pos, recordFactory );
+            escherRecords.add(r);
+            pos += bytesRead;
         }
     }
 
@@ -120,6 +125,8 @@ public abstract class AbstractEscherHolderRecord
 
         final String nl = System.getProperty("line.separator");
         buffer.append('[' + getRecordName() + ']' + nl);
+        if (escherRecords.size() == 0)
+            buffer.append("No Escher Records Decoded" + nl);
         for ( Iterator iterator = escherRecords.iterator(); iterator.hasNext(); )
         {
             EscherRecord r = (EscherRecord) iterator.next();
@@ -138,10 +145,16 @@ public abstract class AbstractEscherHolderRecord
         LittleEndian.putShort( data, 2 + offset, (short) ( getRecordSize() - 4 ) );
         if ( escherRecords.size() == 0 && rawData != null )
         {
-            System.arraycopy( rawData, 0, data, offset + 4, rawData.length );
+            LittleEndian.putShort(data, 0 + offset, getSid());
+            LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
+            System.arraycopy( rawData, 0, data, 4 + offset, rawData.length);
+            return rawData.length + 4;
         }
         else
         {
+            LittleEndian.putShort(data, 0 + offset, getSid());
+            LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
+
             int pos = offset + 4;
             for ( Iterator iterator = escherRecords.iterator(); iterator.hasNext(); )
             {
@@ -255,6 +268,45 @@ public abstract class AbstractEscherHolderRecord
         return (EscherRecord) escherRecords.get(index);
     }
 
+    /**
+     * Big drawing group records are split but it's easier to deal with them
+     * as a whole group so we need to join them together.
+     */
+    public void join( AbstractEscherHolderRecord record )
+    {
+        int length = this.rawData.length + record.getRawData().length;
+        byte[] data = new byte[length];
+        System.arraycopy( rawData, 0, data, 0, rawData.length );
+        System.arraycopy( record.getRawData(), 0, data, rawData.length, record.getRawData().length );
+        rawData = data;
+    }
+
+    public void processContinueRecord( byte[] record )
+    {
+        int length = this.rawData.length + record.length;
+        byte[] data = new byte[length];
+        System.arraycopy( rawData, 0, data, 0, rawData.length );
+        System.arraycopy( record, 0, data, rawData.length, record.length );
+        rawData = data;
+    }
+
+    public byte[] getRawData()
+    {
+        return rawData;
+    }
+
+    public void setRawData( byte[] rawData )
+    {
+        this.rawData = rawData;
+    }
+
+    /**
+     * Convert raw data to escher records.
+     */
+    public void decode()
+    {
+        convertToEscherRecords(0, rawData.length, rawData );
+    }
 
 }  // END OF CLASS
 

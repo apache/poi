@@ -26,7 +26,7 @@ package org.apache.poi.ddf;
  */
 abstract public class EscherProperty
 {
-    private short  id;
+    protected short  id;
 
     /**
      * The id is distinct from the actual property number.  The id includes the property number the blip id
