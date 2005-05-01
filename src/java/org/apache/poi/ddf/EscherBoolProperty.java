@@ -32,12 +32,12 @@ public class EscherBoolProperty
     /**
      * Create an instance of an escher boolean property.
      *
-     * @param propertyNumber The property number
+     * @param propertyNumber The property number (or id)
      * @param value      The 32 bit value of this bool property
      */
     public EscherBoolProperty( short propertyNumber, int value )
     {
-        super( propertyNumber, false, false, value );
+        super(propertyNumber, value);
     }
 
     /**

@@ -148,6 +148,7 @@ public class RecordFactory
         {
             short rectype = 0;
 
+            DrawingRecord lastDrawingRecord = new DrawingRecord( );
             do
             {
                 rectype = LittleEndian.readShort(in);
@@ -176,7 +177,13 @@ public class RecordFactory
 
                         if (record != null)
                         {
-                            if (rectype == ContinueRecord.sid &&
+                            if (rectype == DrawingGroupRecord.sid
+                                && last_record instanceof DrawingGroupRecord)
+                            {
+                                DrawingGroupRecord lastDGRecord = (DrawingGroupRecord) last_record;
+                                lastDGRecord.join((AbstractEscherHolderRecord) record);
+                            }
+                            else if (rectype == ContinueRecord.sid &&
                                 ! (last_record instanceof ContinueRecord) && // include continuation records after
                                 ! (last_record instanceof UnknownRecord) )   // unknown records or previous continuation records
                             {
@@ -185,11 +192,18 @@ public class RecordFactory
                                     throw new RecordFormatException(
                                         "First record is a ContinueRecord??");
                                 }
-                                last_record.processContinueRecord(data);
+
+                                // Drawing records have a very strange continue behaviour.  There can actually be OBJ records mixed between the continues.
+                                if (last_record instanceof ObjRecord)
+                                    lastDrawingRecord.processContinueRecord( data );
+                                else
+                                    last_record.processContinueRecord(data);
                             }
                             else
                             {
                                 last_record = record;
+                                if (record instanceof DrawingRecord)
+                                    lastDrawingRecord = (DrawingRecord) record;
                                 records.add(record);
                             }
                         }

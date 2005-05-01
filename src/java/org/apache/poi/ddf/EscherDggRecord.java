@@ -17,11 +17,10 @@
         
 package org.apache.poi.ddf;
 
+import org.apache.poi.hssf.record.RecordFormatException;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.hssf.record.RecordFormatException;
 
-import java.lang.reflect.Array;
 import java.util.*;
 
 /**
@@ -83,8 +82,8 @@ public class EscherDggRecord
         int field_2_numIdClusters  =  LittleEndian.getInt( data, pos + size );size+=4;
         field_3_numShapesSaved =  LittleEndian.getInt( data, pos + size );size+=4;
         field_4_drawingsSaved  =  LittleEndian.getInt( data, pos + size );size+=4;
-        field_5_fileIdClusters = new FileIdCluster[field_2_numIdClusters-1];
-        for (int i = 0; i < field_2_numIdClusters-1; i++)
+        field_5_fileIdClusters = new FileIdCluster[(bytesRemaining-size) / 8];  // Can't rely on field_2_numIdClusters
+        for (int i = 0; i < field_5_fileIdClusters.length; i++)
         {
             field_5_fileIdClusters[i] = new FileIdCluster(LittleEndian.getInt( data, pos + size ), LittleEndian.getInt( data, pos + size + 4 ));
             size += 8;
@@ -114,6 +113,7 @@ public class EscherDggRecord
         LittleEndian.putShort( data, pos, getRecordId() );    pos += 2;
         int remainingBytes = getRecordSize() - 8;
         LittleEndian.putInt( data, pos, remainingBytes );              pos += 4;
+
         LittleEndian.putInt( data, pos, field_1_shapeIdMax );          pos += 4;
         LittleEndian.putInt( data, pos, getNumIdClusters() );          pos += 4;
         LittleEndian.putInt( data, pos, field_3_numShapesSaved );      pos += 4;
@@ -200,6 +200,9 @@ public class EscherDggRecord
         this.field_1_shapeIdMax = field_1_shapeIdMax;
     }
 
+    /**
+     * Number of id clusters + 1
+     */ 
     public int getNumIdClusters()
     {
         return field_5_fileIdClusters.length + 1;

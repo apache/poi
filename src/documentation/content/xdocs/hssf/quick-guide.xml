@@ -31,20 +31,21 @@
                     <li><link href="#CustomColors">Custom colors</link></li>
                     <li><link href="#ReadWriteWorkbook">Reading and writing</link></li>
                     <li><link href="#NewLinesInCells">Use newlines in cells.</link></li>
-                    <li><link href="#DataFormats">Create user defined data formats.</link></li>
+                    <li><link href="#DataFormats">Create user defined data formats</link></li>
                     <li><link href="#FitTo">Fit Sheet to One Page</link></li>
-                    <li><link href="#PrintArea2">Set print area for a sheet.</link></li>		    
-                    <li><link href="#FooterPageNumbers">Set page numbers on the footer of a sheet.</link></li>
-                    <li><link href="#ShiftRows">Shift rows.</link></li>
-                    <li><link href="#SelectSheet">Set a sheet as selected.</link></li>
-                    <li><link href="#Zoom">Set the zoom magnification for a sheet.</link></li>
-                    <li><link href="#Splits">Create split and freeze panes.</link></li>
-                    <li><link href="#Repeating">Repeating rows and columns.</link></li>
-                    <li><link href="#HeaderFooter">Headers and Footers.</link></li>
-                    <li><link href="#DrawingShapes">Drawing Shapes.</link></li>
-                    <li><link href="#StylingShapes">Styling Shapes.</link></li>
-                    <li><link href="#Graphics2d">Shapes and Graphics2d.</link></li>
-                    <li><link href="#Outlining">Outlining.</link></li>
+                    <li><link href="#PrintArea2">Set print area for a sheet</link></li>
+                    <li><link href="#FooterPageNumbers">Set page numbers on the footer of a sheet</link></li>
+                    <li><link href="#ShiftRows">Shift rows</link></li>
+                    <li><link href="#SelectSheet">Set a sheet as selected</link></li>
+                    <li><link href="#Zoom">Set the zoom magnification for a sheet</link></li>
+                    <li><link href="#Splits">Create split and freeze panes</link></li>
+                    <li><link href="#Repeating">Repeating rows and columns</link></li>
+                    <li><link href="#HeaderFooter">Headers and Footers</link></li>
+                    <li><link href="#DrawingShapes">Drawing Shapes</link></li>
+                    <li><link href="#StylingShapes">Styling Shapes</link></li>
+                    <li><link href="#Graphics2d">Shapes and Graphics2d</link></li>
+                    <li><link href="#Outlining">Outlining</link></li>
+                    <li><link href="#Images">Images</link></li>
                 </ul>
             </section>
             <section><title>Features</title>
@@ -939,6 +940,35 @@
                     </p>
                 </section>
             </section>
+        </section>
+        <anchor id="Images"/>
+        <section>
+            <title>Images</title>
+            <p>
+                Images are part of the drawing support.  To add an image just
+                call <code>createPicture()</code> on the drawing patriarch.
+                At the time of writing the following types are supported:
+            </p>
+            <ul>
+                <li>PNG</li>
+                <li>JPG</li>
+                <li>DIB</li>
+            </ul>
+            <p>
+                It is not currently possible to read existing images and it
+                should be noted that any existing drawings may be erased
+                once you add a image to a sheet.
+            </p>
+            <source>
+    // Create the drawing patriarch.  This is the top level container for
+    // all shapes. This will clear out any existing shapes for that sheet.
+    HSSFPatriarch patriarch = sheet5.createDrawingPatriarch();
+
+    HSSFClientAnchor anchor;
+    anchor = new HSSFClientAnchor(0,0,0,255,(short)2,2,(short)4,7);
+    anchor.setAnchorType( 2 );
+    patriarch.createPicture(anchor, loadPicture( "src/resources/logos/logoKarmokar4.png", wb ));
+            </source>
         </section>
     </body>
 </document>

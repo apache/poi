@@ -228,7 +228,7 @@ public class RowRecordsAggregate
 
     /**
      * called by the constructor, should set class level fields.  Should throw
-     * runtime exception for bad/icomplete data.
+     * runtime exception for bad/incomplete data.
      *
      * @param data raw data
      * @param size size of data

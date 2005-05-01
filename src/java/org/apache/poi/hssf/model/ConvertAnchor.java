@@ -37,7 +37,7 @@ public class ConvertAnchor
             EscherClientAnchorRecord anchor = new EscherClientAnchorRecord();
             anchor.setRecordId( EscherClientAnchorRecord.RECORD_ID );
             anchor.setOptions( (short) 0x0000 );
-            anchor.setFlag( (short) 0 );
+            anchor.setFlag( (short) a.getAnchorType() );
             anchor.setCol1( (short) Math.min(a.getCol1(), a.getCol2()) );
             anchor.setDx1( (short) Math.min(a.getDx1(), a.getDx2()) );
             anchor.setRow1( (short) Math.min(a.getRow1(), a.getRow2()) );

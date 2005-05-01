@@ -68,6 +68,14 @@ public class DrawingRecord extends Record
         recordData = data;
     }
 
+    public void processContinueRecord( byte[] record )
+    {
+        byte[] newBuffer = new byte[ recordData.length + record.length ];
+        System.arraycopy( recordData, 0, newBuffer, 0, recordData.length );
+        System.arraycopy( record, 0, newBuffer, recordData.length, record.length);
+        recordData = newBuffer;
+    }
+
     public int serialize( int offset, byte[] data )
     {
         if (recordData == null)

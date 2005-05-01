@@ -112,6 +112,23 @@ public class BiffViewer {
                     in.read(data);
                     loc += recsize;
                     Record record = createRecord(rectype, recsize, data );
+//                    if (record.getSid() == DrawingGroupRecord.sid)
+//                    {
+//                        if (activeRecord.getRecord().getSid() == DrawingGroupRecord.sid)
+//                        {
+//                            DrawingGroupRecord dg = (DrawingGroupRecord) activeRecord.getRecord();
+//                            System.out.println( "Joined" );
+//                            dg.join( (AbstractEscherHolderRecord) record );
+//                        }
+//                        else
+//                        {
+//                            records.add(record);
+//                            if (activeRecord != null)
+//                                activeRecord.dump();
+//                            activeRecord = new RecordDetails(rectype, recsize, startloc, data, record);
+//                        }
+//                    }
+//                    else
                     if (record.getSid() != ContinueRecord.sid)
                     {
                         records.add(record);
@@ -177,7 +194,6 @@ public class BiffViewer {
                     "-----CONTINUED----------------------------------");
         }
     }
-
 
     private static void dumpUnknownRecord(byte[] data) throws IOException {
         // record hex dump it!
@@ -630,29 +646,40 @@ public class BiffViewer {
      */
     public static void main(String[] args) {
         try {
-            BiffViewer viewer = new BiffViewer(args);
+        	System.setProperty("poi.deserialize.escher", "true");
 
-            if ((args.length > 1) && args[1].equals("on")) {
-                viewer.setDump(true);
+            if (args.length == 0)
+            {
+                System.out.println( "Biff viewer needs a filename" );
             }
-            if ((args.length > 1) && args[1].equals("bfd")) {
-                POIFSFileSystem fs =
-                        new POIFSFileSystem(new FileInputStream(args[0]));
-                InputStream stream =
-                        fs.createDocumentInputStream("Workbook");
-                int size = stream.available();
-                byte[] data = new byte[size];
+            else
+            {
+                BiffViewer viewer = new BiffViewer(args);
+                if ((args.length > 1) && args[1].equals("on")) {
+                    viewer.setDump(true);
+                }
+                if ((args.length > 1) && args[1].equals("bfd")) {
+                    POIFSFileSystem fs =
+                            new POIFSFileSystem(new FileInputStream(args[0]));
+                    InputStream stream =
+                            fs.createDocumentInputStream("Workbook");
+                    int size = stream.available();
+                    byte[] data = new byte[size];
 
-                stream.read(data);
-                HexDump.dump(data, 0, System.out, 0);
-            } else {
-                viewer.run();
+                    stream.read(data);
+                    HexDump.dump(data, 0, System.out, 0);
+                } else {
+                    viewer.run();
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    /**
+     * This record supports dumping of completed continue records.
+     */
     static class RecordDetails
     {
         short rectype, recsize;

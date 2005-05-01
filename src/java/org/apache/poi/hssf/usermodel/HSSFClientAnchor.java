@@ -16,8 +16,7 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import org.apache.poi.ddf.EscherClientAnchorRecord;
-import org.apache.poi.ddf.EscherRecord;
+
 
 
 /**
@@ -33,6 +32,7 @@ public class HSSFClientAnchor
     int row1;
     short col2;
     int row2;
+    int anchorType;
 
     /**
      * Creates a new client anchor and defaults all the anchor positions to 0.
@@ -211,6 +211,26 @@ public class HSSFClientAnchor
             return dy1 > dy2;
         else
             return row1 > row2;
+    }
+
+    /**
+     * Gets the anchor type
+     * <p>
+     * 0 = Move and size with Cells, 2 = Move but don't size with cells, 3 = Don't move or size with cells.
+     */
+    public int getAnchorType()
+    {
+        return anchorType;
+    }
+
+    /**
+     * Sets the anchor type
+     * <p>
+     * 0 = Move and size with Cells, 2 = Move but don't size with cells, 3 = Don't move or size with cells.
+     */
+    public void setAnchorType( int anchorType )
+    {
+        this.anchorType = anchorType;
     }
 
     private void checkRange( int value, int minRange, int maxRange, String varName )

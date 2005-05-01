@@ -78,6 +78,23 @@ public class HSSFPatriarch
     }
 
     /**
+     * Creates a picture.
+     *
+     * @param anchor    the client anchor describes how this group is attached
+     *                  to the sheet.
+     * @return  the newly created shape.
+     */
+    public HSSFPicture createPicture(HSSFClientAnchor anchor, int pictureIndex)
+    {
+        HSSFPicture shape = new HSSFPicture(null, anchor);
+        shape.setPictureIndex( pictureIndex );
+        shape.anchor = anchor;
+        shapes.add(shape);
+        return shape;
+    }
+
+
+    /**
      * Creates a polygon
      *
      * @param anchor    the client anchor describes how this group is attached

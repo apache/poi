@@ -24,7 +24,7 @@ public class TestEscherBoolProperty extends TestCase
     public void testToString() throws Exception
     {
         EscherBoolProperty p = new EscherBoolProperty((short)1, 1);
-        assertEquals("propNum: 1, propName: unknown, complex: false, blipId: false, value: 1 (0x00000001)", p.toString());
+        assertEquals("propNum: 1, RAW: 0x0001, propName: unknown, complex: false, blipId: false, value: 1 (0x00000001)", p.toString());
     }
 
 }

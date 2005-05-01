@@ -22,6 +22,9 @@
  */
 package org.apache.poi.hssf.usermodel;
 
+import org.apache.poi.ddf.EscherBSERecord;
+import org.apache.poi.ddf.EscherBitmapBlip;
+import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.hssf.eventmodel.EventRecordFactory;
 import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.model.Workbook;
@@ -38,6 +41,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -57,7 +61,6 @@ import java.util.Stack;
  */
 
 public class HSSFWorkbook
-        extends java.lang.Object
 {
     private static final int DEBUG = POILogger.DEBUG;
 
@@ -108,13 +111,31 @@ public class HSSFWorkbook
      */
     private HSSFDataFormat formatter;
 
+
+    /// NOT YET SUPPORTED:
+    /** Extended windows meta file */
+    //public static final int PICTURE_TYPE_EMF = 2;
+    /** Windows Meta File */
+    //public static final int PICTURE_TYPE_WMF = 3;
+    /** Mac PICT format */
+    //public static final int PICTURE_TYPE_PICT = 4;
+
+    /** JPEG format */
+    public static final int PICTURE_TYPE_JPEG = 5;
+    /** PNG format */
+    public static final int PICTURE_TYPE_PNG = 6;
+    /** Device independant bitmap */
+    public static final int PICTURE_TYPE_DIB = 7;
+
+
     private static POILogger log = POILogFactory.getLogger(HSSFWorkbook.class);
+
+
 
     /**
      * Creates new HSSFWorkbook from scratch (start here!)
      *
      */
-
     public HSSFWorkbook()
     {
         this(Workbook.createWorkbook());
@@ -158,8 +179,6 @@ public class HSSFWorkbook
         InputStream stream = fs.createDocumentInputStream("Workbook");
 
         EventRecordFactory factory = new EventRecordFactory();
-
-
 
         List records = RecordFactory.createRecords(stream);
 
@@ -796,8 +815,9 @@ public class HSSFWorkbook
 
             // byte[] sb = (byte[])sheetbytes.get(k);
             // System.arraycopy(sb, 0, retval, pos, sb.length);
-            pos += ((HSSFSheet) sheets.get(k)).getSheet().serialize(pos,
-                    retval);   // sb.length;
+            int len = ((HSSFSheet) sheets.get(k)).getSheet().serialize(pos,
+                                retval);
+            pos += len;   // sb.length;
         }
 /*        for (int k = pos; k < totalsize; k++)
         {
@@ -1067,6 +1087,68 @@ public class HSSFWorkbook
         workbook.getRecords().add(loc, r);
     }
 
+    /**
+     * Spits out a list of all the drawing records in the workbook.
+     */
+    public void dumpDrawingGroupRecords(boolean fat)
+    {
+        DrawingGroupRecord r = (DrawingGroupRecord) workbook.findFirstRecordBySid( DrawingGroupRecord.sid );
+        r.decode();
+        List escherRecords = r.getEscherRecords();
+        PrintWriter w = new PrintWriter(System.out);
+        for ( Iterator iterator = escherRecords.iterator(); iterator.hasNext(); )
+        {
+            EscherRecord escherRecord = (EscherRecord) iterator.next();
+            if (fat)
+                System.out.println(escherRecord.toString());
+            else
+                escherRecord.display(w, 0);
+        }
+        w.flush();
+    }
 
+    /**
+     * Adds a picture to the workbook.
+     *
+     * @param pictureData       The bytes of the picture
+     * @param format            The format of the picture.  One of <code>PICTURE_TYPE_*</code>
+     *
+     * @return the index to this picture (1 based).
+     */
+    public int addPicture(byte[] pictureData, int format)
+    {
+        byte[] uid = newUID();
+        EscherBitmapBlip blipRecord = new EscherBitmapBlip();
+        blipRecord.setRecordId( (short) ( EscherBitmapBlip.RECORD_ID_START + format ) );
+        if (format == HSSFWorkbook.PICTURE_TYPE_PNG)
+            blipRecord.setOptions( (short) 0x6E00 );  // MSOBI
+        else if (format == HSSFWorkbook.PICTURE_TYPE_JPEG)
+            blipRecord.setOptions( (short) 0x46A0 );  // MSOBI
+        else if (format == HSSFWorkbook.PICTURE_TYPE_DIB)
+            blipRecord.setOptions( (short) 0x7A8 );  // MSOBI
 
+        blipRecord.setUID( uid );
+        blipRecord.setMarker( (byte) 0xFF );
+        blipRecord.setPictureData( pictureData );
+
+        EscherBSERecord r = new EscherBSERecord();
+        r.setRecordId( EscherBSERecord.RECORD_ID );
+        r.setOptions( (short) ( 0x0002 | ( format << 4 ) ) );
+        r.setBlipTypeMacOS( (byte) format );
+        r.setBlipTypeWin32( (byte) format );
+        r.setUid( uid );
+        r.setTag( (short) 0xFF );
+        r.setSize( pictureData.length + 25 );
+        r.setRef( 1 );
+        r.setOffset( 0 );
+        r.setBlipRecord( blipRecord );
+
+        return workbook.addBSERecord( r );
+    }
+
+    private byte[] newUID()
+    {
+        byte[] bytes = new byte[16];
+        return bytes;
+    }
 }

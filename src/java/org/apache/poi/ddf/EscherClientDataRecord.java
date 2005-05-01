@@ -119,7 +119,7 @@ public class EscherClientDataRecord
         }
         catch ( Exception e )
         {
-            extraData = "error";
+            extraData = "error\n";
         }
         return getClass().getName() + ":" + nl +
                 "  RecordId: 0x" + HexDump.toHex(RECORD_ID) + nl +

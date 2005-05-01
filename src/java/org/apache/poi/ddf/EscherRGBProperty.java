@@ -28,7 +28,7 @@ public class EscherRGBProperty
 
     public EscherRGBProperty( short propertyNumber, int rgbColor )
     {
-        super( propertyNumber, false, false, rgbColor );
+        super( propertyNumber, rgbColor );
     }
 
     public int getRgbColor()

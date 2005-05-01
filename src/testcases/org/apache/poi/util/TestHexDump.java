@@ -23,6 +23,7 @@ import junit.framework.*;
 import java.io.*;
 
 /**
+ * @author Glen Stampoultzis (glens at apache.org)
  * @author Marc Johnson (mjohnson at apache dot org)
  */
 
@@ -281,7 +282,8 @@ public class TestHexDump
         // verify proper behaviour with empty byte array
         ByteArrayOutputStream os = new ByteArrayOutputStream( );
         HexDump.dump( new byte[0], 0, os, 0 );
-        assertEquals( "No Data", os.toString() );
+        assertEquals( "No Data" + System.getProperty( "line.separator"), os.toString() );
+
     }
 
     public void testToHex()
@@ -289,7 +291,7 @@ public class TestHexDump
     {
         assertEquals( "000A", HexDump.toHex((short)0xA));
         assertEquals( "0A", HexDump.toHex((byte)0xA));
-        assertEquals( "0000000A", HexDump.toHex((int)0xA));
+        assertEquals( "0000000A", HexDump.toHex(0xA));
 
         assertEquals( "FFFF", HexDump.toHex((short)0xFFFF));
 

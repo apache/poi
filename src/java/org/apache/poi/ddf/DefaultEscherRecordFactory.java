@@ -66,7 +66,17 @@ public class DefaultEscherRecordFactory
         }
         else if ( header.getRecordId() >= EscherBlipRecord.RECORD_ID_START && header.getRecordId() <= EscherBlipRecord.RECORD_ID_END )
         {
-            EscherBlipRecord r = new EscherBlipRecord();
+            EscherBlipRecord r;
+            if (header.getRecordId() == EscherBitmapBlip.RECORD_ID_DIB ||
+                    header.getRecordId() == EscherBitmapBlip.RECORD_ID_JPEG ||
+                    header.getRecordId() == EscherBitmapBlip.RECORD_ID_PNG)
+            {
+                r = new EscherBitmapBlip();
+            }
+            else
+            {
+                r = new EscherBlipRecord();
+            }
             r.setRecordId( header.getRecordId() );
             r.setOptions( header.getOptions() );
             return r;

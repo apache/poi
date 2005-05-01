@@ -173,6 +173,14 @@ public class ObjRecord
         return subrecords.add( o );
     }
 
+    // made public to satisfy biffviewer
+
+    /* protected */
+    public void processContinueRecord( byte[] record )
+    {
+        super.processContinueRecord( record );
+    }
+
     public Object clone()
     {
         ObjRecord rec = new ObjRecord();

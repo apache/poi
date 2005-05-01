@@ -111,6 +111,7 @@ public class EscherSimpleProperty extends EscherProperty
     public String toString()
     {
         return "propNum: " + getPropertyNumber()
+                + ", RAW: 0x" + HexDump.toHex( getId() )
                 + ", propName: " + EscherProperties.getPropertyName( getPropertyNumber() )
                 + ", complex: " + isComplex()
                 + ", blipId: " + isBlipId()

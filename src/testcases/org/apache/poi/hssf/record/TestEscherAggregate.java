@@ -17,14 +17,13 @@
 package org.apache.poi.hssf.record;
 
 import junit.framework.TestCase;
-import org.apache.poi.util.HexRead;
-import org.apache.poi.util.HexDump;
-import org.apache.poi.ddf.EscherContainerRecord;
-import org.apache.poi.ddf.EscherSpRecord;
 import org.apache.poi.ddf.EscherClientDataRecord;
+import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherDggRecord;
-import org.apache.poi.hssf.model.DrawingManager;
-import org.apache.poi.hssf.model.Sheet;
+import org.apache.poi.ddf.EscherSpRecord;
+import org.apache.poi.hssf.model.DrawingManager2;
+import org.apache.poi.util.HexDump;
+import org.apache.poi.util.HexRead;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -82,7 +81,7 @@ public class TestEscherAggregate extends TestCase
         records.add( d2 );
         records.add( r2 );
 
-        DrawingManager drawingManager = new DrawingManager(new EscherDggRecord() );
+        DrawingManager2 drawingManager = new DrawingManager2(new EscherDggRecord() );
         EscherAggregate aggregate = EscherAggregate.createAggregate( records, 0, drawingManager );
 
         assertEquals( 1, aggregate.getEscherRecords().size() );

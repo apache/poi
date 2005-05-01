@@ -150,7 +150,7 @@ public class TestEscherOptRecord extends TestCase
                 "  recordId: 0x" + HexDump.toHex(EscherOptRecord.RECORD_ID) + nl +
                 "  numchildren: 0" + nl +
                 "  properties:" + nl +
-                "    propNum: 1, propName: unknown, complex: false, blipId: false, value: 1 (0x00000001)" + nl;
+                "    propNum: 1, RAW: 0x0001, propName: unknown, complex: false, blipId: false, value: 1 (0x00000001)" + nl;
         assertEquals( expected, r.toString());
     }
 

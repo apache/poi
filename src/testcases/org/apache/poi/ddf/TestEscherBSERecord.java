@@ -98,8 +98,9 @@ public class TestEscherBSERecord extends TestCase
                 "  Name: 5" + nl +
                 "  Unused2: 6" + nl +
                 "  Unused3: 7" + nl +
+				"  blipRecord: null" + nl +
                 "  Extra Data:" + nl +
-                "No Data", record.toString() );
+                "No Data" + nl, record.toString() );
     }
 
 }

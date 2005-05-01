@@ -23,6 +23,9 @@ import org.apache.poi.util.HexDump;
 
 public class TestDrawingGroupRecord extends TestCase
 {
+    static final int MAX_RECORD_SIZE = 8228;
+    private static final int MAX_DATA_SIZE = MAX_RECORD_SIZE - 4;
+
     public void testGetRecordSize()
             throws Exception
     {
@@ -48,5 +51,93 @@ public class TestDrawingGroupRecord extends TestCase
         assertEquals(28, size);
 
         assertEquals(24, dggContainer.getRecordSize());
+
+
+        r = new DrawingGroupRecord( );
+        r.setRawData( new byte[MAX_DATA_SIZE] );
+        assertEquals( MAX_RECORD_SIZE, r.getRecordSize() );
+        r.setRawData( new byte[MAX_DATA_SIZE+1] );
+        assertEquals( MAX_RECORD_SIZE + 5, r.getRecordSize() );
+        r.setRawData( new byte[MAX_DATA_SIZE*2] );
+        assertEquals( MAX_RECORD_SIZE * 2, r.getRecordSize() );
+        r.setRawData( new byte[MAX_DATA_SIZE*2 + 1] );
+        assertEquals( MAX_RECORD_SIZE * 2 + 5, r.getRecordSize() );
     }
+
+    public void testSerialize() throws Exception
+    {
+        // Check under max record size
+        DrawingGroupRecord r = new DrawingGroupRecord();
+        byte[] rawData = new byte[100];
+        rawData[0] = 100;
+        rawData[99] = (byte) 200;
+        r.setRawData( rawData );
+        byte[] buffer = new byte[r.getRecordSize()];
+        int size = r.serialize( 0, buffer );
+        assertEquals( 104, size );
+        assertEquals("[EB, 00, 64, 00, 64, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, C8, ]", HexDump.toHex(buffer));
+
+        // check at max record size
+        rawData = new byte[MAX_DATA_SIZE];
+        r.setRawData( rawData );
+        buffer = new byte[r.getRecordSize()];
+        size = r.serialize( 0, buffer );
+        assertEquals( MAX_RECORD_SIZE, size );
+
+        // check over max record size
+        rawData = new byte[MAX_DATA_SIZE+1];
+        rawData[rawData.length-1] = (byte) 255;
+        r.setRawData( rawData );
+        buffer = new byte[r.getRecordSize()];
+        size = r.serialize( 0, buffer );
+        assertEquals( MAX_RECORD_SIZE + 5, size );
+        assertEquals( "[EB, 00, 20, 20, ]", HexDump.toHex(cut(buffer, 0, 4) ));
+        assertEquals( "[00, EB, 00, 01, 00, FF, ]", HexDump.toHex(cut(buffer, MAX_RECORD_SIZE - 1, MAX_RECORD_SIZE + 5) ));
+
+        // check continue record
+        rawData = new byte[MAX_DATA_SIZE * 2 + 1];
+        rawData[rawData.length-1] = (byte) 255;
+        r.setRawData( rawData );
+        buffer = new byte[r.getRecordSize()];
+        size = r.serialize( 0, buffer );
+        assertEquals( MAX_RECORD_SIZE * 2 + 5, size );
+        assertEquals( MAX_RECORD_SIZE * 2 + 5, r.getRecordSize() );
+        assertEquals( "[EB, 00, 20, 20, ]", HexDump.toHex(cut(buffer, 0, 4) ));
+        assertEquals( "[EB, 00, 20, 20, ]", HexDump.toHex(cut(buffer, MAX_RECORD_SIZE, MAX_RECORD_SIZE + 4) ));
+        assertEquals( "[3C, 00, 01, 00, FF, ]", HexDump.toHex(cut(buffer, MAX_RECORD_SIZE * 2, MAX_RECORD_SIZE * 2 + 5) ));
+
+        // check continue record
+        rawData = new byte[664532];
+        r.setRawData( rawData );
+        buffer = new byte[r.getRecordSize()];
+        size = r.serialize( 0, buffer );
+        assertEquals( 664856, size );
+        assertEquals( 664856, r.getRecordSize() );
+    }
+
+    private byte[] cut( byte[] data, int fromInclusive, int toExclusive )
+    {
+        int length = toExclusive - fromInclusive;
+        byte[] result = new byte[length];
+        System.arraycopy( data, fromInclusive, result, 0, length);
+        return result;
+    }
+
+    public void testGrossSizeFromDataSize() throws Exception
+    {
+        for (int i = 0; i < MAX_RECORD_SIZE * 4; i += 11)
+        {
+            System.out.print( "data size = " + i + ", gross size = " + DrawingGroupRecord.grossSizeFromDataSize( i ) );
+            System.out.println( "  Diff: " + (DrawingGroupRecord.grossSizeFromDataSize( i ) - i) );
+        }
+
+        assertEquals( 4, DrawingGroupRecord.grossSizeFromDataSize( 0 ) );
+        assertEquals( 5, DrawingGroupRecord.grossSizeFromDataSize( 1 ) );
+        assertEquals( MAX_RECORD_SIZE, DrawingGroupRecord.grossSizeFromDataSize( MAX_DATA_SIZE ) );
+        assertEquals( MAX_RECORD_SIZE + 5, DrawingGroupRecord.grossSizeFromDataSize( MAX_DATA_SIZE + 1 ) );
+        assertEquals( MAX_RECORD_SIZE * 2, DrawingGroupRecord.grossSizeFromDataSize( MAX_DATA_SIZE * 2 ) );
+        assertEquals( MAX_RECORD_SIZE * 2 + 5, DrawingGroupRecord.grossSizeFromDataSize( MAX_DATA_SIZE * 2 + 1 ) );
+    }
+
+
 }
