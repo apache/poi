@@ -322,11 +322,11 @@ public class StringUtil {
 	
 	/**
 	   * @param format
-	   * @return true if format is Unicode.
+	   * @return true if string needs Unicode to be represented.
 	   */
-	  public static boolean isUnicodeFormat(final String format) {
+	  public static boolean isUnicodeString(final String value) {
 	    try {
-	      return !format.equals(new String(format.getBytes("ISO-8859-1"), "ISO-8859-1"));
+	      return !value.equals(new String(value.getBytes("ISO-8859-1"), "ISO-8859-1"));
 	    } catch (UnsupportedEncodingException e) {
 	      return true;
 	    }

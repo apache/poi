@@ -1996,7 +1996,6 @@ public class Workbook implements Model
         maxformatid = maxformatid >= (short) 0xa4 ? (short) ( maxformatid + 1 ) : (short) 0xa4; //Starting value from M$ empiracle study.
         rec.setIndexCode( maxformatid );
         rec.setFormatStringLength( (byte) format.length() );
-        rec.setUnicodeFlag(StringUtil.isUnicodeFormat(format));
         rec.setFormatString( format );
 
         int pos = 0;
