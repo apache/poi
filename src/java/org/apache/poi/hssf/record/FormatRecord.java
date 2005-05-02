@@ -36,7 +36,7 @@ public class FormatRecord
 {
     public final static short sid = 0x41e;
     private short             field_1_index_code;
-    private short             field_2_formatstring_len;
+
     private short             field_3_unicode_len;      // unicode string length
     private boolean          field_3_unicode_flag;     // it is not undocumented - it is unicode flag
     private String            field_4_formatstring;
@@ -85,7 +85,7 @@ public class FormatRecord
         field_1_index_code       = LittleEndian.getShort(data, 0 + offset);
         // field_2_formatstring_len = data[ 2 + offset ];
         field_3_unicode_len      = LittleEndian.getShort( data, 2 + offset );
-	field_2_formatstring_len = field_3_unicode_len;
+
         field_3_unicode_flag     = ( data[ 4 + offset ] & (byte)0x01 ) != 0;
                                               
                                               
@@ -120,7 +120,7 @@ public class FormatRecord
     
     public void setFormatStringLength(byte len)
     {
-        field_2_formatstring_len = len;
+
 	field_3_unicode_len = len;
     }
 
@@ -144,6 +144,7 @@ public class FormatRecord
     public void setFormatString(String fs)
     {
         field_4_formatstring = fs;
+        setUnicodeFlag(StringUtil.isUnicodeString(fs));
     }
 
     /**
@@ -165,10 +166,10 @@ public class FormatRecord
      * @see #getFormatString()
      */
 
-    public short getFormatStringLength()
+   /* public short getFormatStringLength()
     {
         return field_3_unicode_flag ? field_3_unicode_len : field_2_formatstring_len;
-    }
+    }*/
 
     /**
      * get whether the string is unicode
