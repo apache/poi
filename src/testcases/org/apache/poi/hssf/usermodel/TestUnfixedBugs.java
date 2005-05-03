@@ -59,13 +59,4 @@ public class TestUnfixedBugs extends TestCase {
        assertTrue("Read book fine!" , true);
    }
 	 
-	 /* possible the same as 34575, AIOOB in ObjRecord*/
-	 public void test33082() throws java.io.IOException {
-	       String filename = System.getProperty("HSSF.testdata.path");
-	       filename=filename+"/33082.xls";
-	       FileInputStream in = new FileInputStream(filename);
-	       HSSFWorkbook wb = new HSSFWorkbook(in);
-	       assertTrue("Read book fine!" , true);
-	   }
-
 }
