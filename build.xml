@@ -334,6 +334,7 @@
                     <include name="**/Test*.java"/>
                     <exclude name="**/AllTests.java"/>
                 	<exclude name="**/TestEmptyDocument.java"/>
+                	<exclude name="**/TestUnfixedBugs.java"/>
                 </fileset>
             </batchtest>
         </junit>
@@ -359,6 +360,7 @@
             <batchtest todir="${main.reports.test}">
                 <fileset dir="${main.src.test}">
                 	<include name="**/TestEmptyDocument.java"/>
+                	<exclude name="**/TestUnfixedBugs.java"/>
                 </fileset>
             </batchtest>
 
