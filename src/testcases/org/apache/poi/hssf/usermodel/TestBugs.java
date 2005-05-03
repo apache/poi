@@ -507,6 +507,14 @@ extends TestCase {
         }
         assertTrue("No Exceptions till here!", true);
     }
+	
+	public void test33082() throws java.io.IOException {
+	       String filename = System.getProperty("HSSF.testdata.path");
+	       filename=filename+"/33082.xls";
+	       FileInputStream in = new FileInputStream(filename);
+	       HSSFWorkbook wb = new HSSFWorkbook(in);
+	       assertTrue("Read book fine!" , true);
+	}
 
 }
 
