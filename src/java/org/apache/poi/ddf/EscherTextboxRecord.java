@@ -17,18 +17,18 @@
         
 package org.apache.poi.ddf;
 
+import org.apache.poi.hssf.record.RecordFormatException;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.hssf.record.RecordFormatException;
-
-import java.util.Iterator;
-import java.util.List;
-import java.util.ArrayList;
 
 /**
- * Supports text boxes
+ * Holds data from the parent application. Most commonly used to store
+ *  text in the format of the parent application, rather than in 
+ *  Escher format. We don't attempt to understand the contents, since
+ *  they will be in the parent's format, not Escher format.
  *
  * @author Glen Stampoultzis (glens at apache.org)
+ * @author Nick Burch  (nick at torchbox dot com)
  */
 public class EscherTextboxRecord extends EscherRecord
 {
@@ -55,29 +55,12 @@ public class EscherTextboxRecord extends EscherRecord
     public int fillFields( byte[] data, int offset, EscherRecordFactory recordFactory )
     {
         int bytesRemaining = readHeader( data, offset );
-        if ( isContainerRecord() )
-        {
-            int bytesWritten = 0;
-            thedata = new byte[0];
-            offset += 8;
-            bytesWritten += 8;
-            while ( bytesRemaining > 0 )
-            {
-                EscherRecord child = recordFactory.createRecord( data, offset );
-                int childBytesWritten = child.fillFields( data, offset, recordFactory );
-                bytesWritten += childBytesWritten;
-                offset += childBytesWritten;
-                bytesRemaining -= childBytesWritten;
-                getChildRecords().add( child );
-            }
-            return bytesWritten;
-        }
-        else
-        {
-            thedata = new byte[bytesRemaining];
-            System.arraycopy( data, offset + 8, thedata, 0, bytesRemaining );
-            return bytesRemaining + 8;
-        }
+
+        // Save the data, ready for the calling code to do something
+        //  useful with it
+        thedata = new byte[bytesRemaining];
+        System.arraycopy( data, offset + 8, thedata, 0, bytesRemaining );
+        return bytesRemaining + 8;
     }
 
     /**
@@ -93,19 +76,9 @@ public class EscherTextboxRecord extends EscherRecord
         LittleEndian.putShort(data, offset, getOptions());
         LittleEndian.putShort(data, offset+2, getRecordId());
         int remainingBytes = thedata.length;
-        for ( Iterator iterator = getChildRecords().iterator(); iterator.hasNext(); )
-        {
-            EscherRecord r = (EscherRecord) iterator.next();
-            remainingBytes += r.getRecordSize();
-        }
         LittleEndian.putInt(data, offset+4, remainingBytes);
         System.arraycopy(thedata, 0, data, offset+8, thedata.length);
         int pos = offset+8+thedata.length;
-        for ( Iterator iterator = getChildRecords().iterator(); iterator.hasNext(); )
-        {
-            EscherRecord r = (EscherRecord) iterator.next();
-            pos += r.serialize(pos, data, listener );
-        }
 
         listener.afterRecordSerialize( pos, getRecordId(), pos - offset, this );
         int size = pos - offset;
@@ -116,12 +89,29 @@ public class EscherTextboxRecord extends EscherRecord
 
     /**
      * Returns any extra data associated with this record.  In practice excel
-     * does not seem to put anything here.
+     * does not seem to put anything here, but with PowerPoint this will
+     * contain the bytes that make up a TextHeaderAtom followed by a
+     * TextBytesAtom/TextCharsAtom
      */
     public byte[] getData()
     {
         return thedata;
     }
+
+    /**
+     * Sets the extra data (in the parent application's format) to be
+     * contained by the record. Used when the parent application changes
+     * the contents.
+     */
+    public void setData(byte[] b, int start, int length)
+    {
+        thedata = new byte[length];
+        System.arraycopy(b,start,thedata,0,length);
+    }
+    public void setData(byte[] b) {
+        setData(b,0,b.length);
+    }
+
 
     /**
      * Returns the number of bytes that are required to serialize this record.
