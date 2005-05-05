@@ -35,7 +35,6 @@ import java.util.*;
  * @author Marc Johnson (mjohnson at apache dot org)
  * @author Glen Stampoultzis (glens at apache.org)
  * @author Csaba Nagy (ncsaba at yahoo dot com)
- * @version 1.0-pre
  */
 
 public class RecordFactory
@@ -146,7 +145,7 @@ public class RecordFactory
 
         try
         {
-            short rectype = 0;
+            short rectype;
 
             DrawingRecord lastDrawingRecord = new DrawingRecord( );
             do
@@ -225,7 +224,7 @@ public class RecordFactory
     public static Record [] createRecord(short rectype, short size,
                                          byte [] data)
     {
-        Record   retval     = null;
+        Record   retval;
         Record[] realretval = null;
 
         try
@@ -327,8 +326,8 @@ public class RecordFactory
 
         for (int i = 0; i < records.length; i++)
         {
-            Class record = null;
-            short sid    = 0;
+            Class record;
+            short sid;
 
             record = records[ i ];
             try
