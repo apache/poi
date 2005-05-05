@@ -27,6 +27,8 @@ import java.util.Map;
  * Generates escher records when provided the byte array containing those records.
  *
  * @author Glen Stampoultzis
+ * @author Nick Burch   (nick at torchbox . com)
+ *
  * @see EscherRecordFactory
  */
 public class DefaultEscherRecordFactory
@@ -57,8 +59,13 @@ public class DefaultEscherRecordFactory
     public EscherRecord createRecord( byte[] data, int offset )
     {
         EscherRecord.EscherRecordHeader header = EscherRecord.EscherRecordHeader.readHeader( data, offset );
-        if ( ( header.getOptions() & (short) 0x000F ) == (short) 0x000F )
-        {
+
+		// Options of 0x000F means container record
+		// However, EscherTextboxRecord are containers of records for the
+		//  host application, not of other Escher records, so treat them
+		//  differently
+        if ( ( header.getOptions() & (short) 0x000F ) == (short) 0x000F
+             && header.getRecordId() != EscherTextboxRecord.RECORD_ID ) {
             EscherContainerRecord r = new EscherContainerRecord();
             r.setRecordId( header.getRecordId() );
             r.setOptions( header.getOptions() );
