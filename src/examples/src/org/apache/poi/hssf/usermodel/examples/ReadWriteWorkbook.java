@@ -58,7 +58,7 @@ public class ReadWriteWorkbook
             cell.setCellValue("a test");
 
             // Write the output to a file
-            fileOut = new FileOutputStream("workbook.xls");
+            fileOut = new FileOutputStream("workbookout.xls");
             wb.write(fileOut);
         }
         finally
