@@ -57,6 +57,7 @@ public class OfficeDrawing
         // Create a row and size one of the cells reasonably large.
         HSSFRow row = sheet1.createRow(2);
         row.setHeight((short) 2800);
+        row.createCell( (short)1 );
         sheet1.setColumnWidth((short) 2, (short) 9000);
 
         // Create the drawing patriarch.  This is the top level container for
@@ -78,6 +79,7 @@ public class OfficeDrawing
     {
         // Create a row and size one of the cells reasonably large.
         HSSFRow row = sheet2.createRow(2);
+        row.createCell( (short)1 );
         row.setHeightInPoints(240);
         sheet2.setColumnWidth((short) 2, (short) 9000);
 
@@ -94,6 +96,7 @@ public class OfficeDrawing
         // Create a row and size one of the cells reasonably large
         HSSFRow row = sheet3.createRow(2);
         row.setHeightInPoints(140);
+        row.createCell( (short)1 );
         sheet3.setColumnWidth((short) 2, (short) 9000);
 
         // Create the drawing patriarch.  This is the top level container for
