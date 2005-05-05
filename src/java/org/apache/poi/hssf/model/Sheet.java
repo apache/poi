@@ -748,7 +748,6 @@ public class Sheet implements Model
         {
             Record record = (( Record ) records.get(k));
             
-            int startPos = pos;
             //Once the rows have been found in the list of records, start
             //writing out the blocked row information. This includes the DBCell references
             if (record instanceof RowRecordsAggregate) {
@@ -762,7 +761,7 @@ public class Sheet implements Model
             if (record.getSid() == BOFRecord.sid) {
               //Can there be more than one BOF for a sheet? If not then we can
               //remove this guard. So be safe it is left here.
-              if ((rows != null) && (!haveSerializedIndex)) {
+              if (rows != null && !haveSerializedIndex) {
                 haveSerializedIndex = true;
                 pos += serializeIndexRecord(k, pos, data);
               }
@@ -2049,20 +2048,19 @@ public class Sheet implements Model
         }
         //Add space for the IndexRecord
         if (rows != null) {
-        final int blocks = rows.getRowBlockCount();
-        retval += IndexRecord.getRecordSizeForBlockCount(blocks);
+            final int blocks = rows.getRowBlockCount();
+            retval += IndexRecord.getRecordSizeForBlockCount(blocks);
 
-        //Add space for the DBCell records
-        //Once DBCell per block.
-        //8 bytes per DBCell (non variable section)
-        //2 bytes per row reference
-        int startRetVal = retval;
-        retval += (8 * blocks);
-        for (Iterator itr = rows.getIterator(); itr.hasNext();) {
-          RowRecord row = (RowRecord)itr.next();
-          if (cells.rowHasCells(row.getRowNumber()))
-            retval += 2;
-        }
+            //Add space for the DBCell records
+            //Once DBCell per block.
+            //8 bytes per DBCell (non variable section)
+            //2 bytes per row reference
+            retval += (8 * blocks);
+            for (Iterator itr = rows.getIterator(); itr.hasNext();) {
+                RowRecord row = (RowRecord)itr.next();
+                if (cells != null && cells.rowHasCells(row.getRowNumber()))
+                    retval += 2;
+            }
         }
         return retval;
     }
