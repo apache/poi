@@ -287,8 +287,7 @@ public class ColumnInfoRecord
         LittleEndian.putShort(data, 8 + offset, getColumnWidth());
         LittleEndian.putShort(data, 10 + offset, getXFIndex());
         LittleEndian.putShort(data, 12 + offset, getOptions());
-        LittleEndian.putShort(data, 14 + offset,
-                              ( short ) 0x0);   // retval[14] = 0;
+        LittleEndian.putShort(data, 14 + offset, field_6_reserved);   
         return getRecordSize();
     }
 
