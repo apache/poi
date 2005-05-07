@@ -409,7 +409,34 @@ public class TestHSSFSheet
         assertEquals ("DBCS Sheet Name 2", wb.getSheetName(1),"\u090f\u0915" );
         assertEquals("DBCS Sheet Name 1", wb.getSheetName(0),"\u091c\u093e");
     }
-	
+    
+    /**
+     * Testing newly added method that exposes the WINDOW2.toprow
+     * parameter to allow setting the toprow in the visible view
+     * of the sheet when it is first opened.
+     */
+    public void testTopRow() throws Exception
+    {
+        FileInputStream fis = null;
+        HSSFWorkbook wb     = null;
+        
+        String filename = System.getProperty("HSSF.testdata.path");
+
+        filename = filename + "/SimpleWithPageBreaks.xls";
+        fis = new FileInputStream(filename);
+        wb = new HSSFWorkbook(fis);
+        fis.close();
+        
+        HSSFSheet sheet = wb.getSheetAt(0);
+        assertNotNull(sheet);
+        
+        short toprow = (short) 100;
+        short leftcol = (short) 50;
+        sheet.showInPane(toprow,leftcol);
+        assertEquals("HSSFSheet.getTopRow()", toprow, sheet.getTopRow());
+        assertEquals("HSSFSheet.getLeftCol()", leftcol, sheet.getLeftCol());
+    }
+    
 	public static void main(java.lang.String[] args) {
 		 junit.textui.TestRunner.run(TestHSSFSheet.class);
 	}    
