@@ -871,6 +871,37 @@ public class HSSFSheet
         sclRecord.setDenominator((short)denominator);
         getSheet().setSCLRecord(sclRecord);
     }
+    
+    /**
+     * The top row in the visible view when the sheet is 
+     * first viewed after opening it in a viewer 
+     * @return short indicating the rownum (0 based) of the top row
+     */
+    public short getTopRow() 
+    {
+    	return sheet.getTopRow();
+    }
+    
+    /**
+     * The left col in the visible view when the sheet is 
+     * first viewed after opening it in a viewer 
+     * @return short indicating the rownum (0 based) of the top row
+     */
+    public short getLeftCol() 
+    {
+    	return sheet.getLeftCol();
+    }
+    
+    /**
+     * Sets desktop window pane display area, when the 
+     * file is first opened in a viewer.
+     * @param the top row to show in desktop window pane
+     * @param the left column to show in desktop window pane
+     */
+    public void showInPane(short toprow, short leftcol){
+        this.sheet.setTopRow((short)toprow);
+        this.sheet.setLeftCol((short)leftcol);
+        }
 
 	/**
 	 * Shifts the merged regions left or right depending on mode

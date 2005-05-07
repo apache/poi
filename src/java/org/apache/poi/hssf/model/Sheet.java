@@ -1934,6 +1934,37 @@ public class Sheet implements Model
         return retval;
     }
     
+    public short getTopRow() 
+    {
+    	return (windowTwo==null) ? (short) 0 : windowTwo.getTopRow();
+    }
+    
+    public void setTopRow(short topRow) 
+    {
+    	if (windowTwo!=null) 
+    	{
+    		windowTwo.setTopRow(topRow);
+    	}
+    }
+   
+    /**
+     * Sets the left column to show in desktop window pane.
+     * @param the left column to show in desktop window pane
+     */
+        public void setLeftCol(short leftCol){
+        	if (windowTwo!=null) 
+        	{   
+        	windowTwo.setLeftCol(leftCol);
+        	}
+        }
+        
+        public short getLeftCol() 
+        {
+        	return (windowTwo==null) ? (short) 0 : windowTwo.getLeftCol();
+        }
+        
+        
+    
     /**
      * Returns the active row
      *
