@@ -232,7 +232,12 @@ public class HSSFDataFormat
             while ( i.hasNext() )
             {
                 ind = i.nextIndex();
-                formats.add( ind, i.next() );
+		if ( formats.size() < ind + 1 )
+		{
+		    formats.setSize( ind + 1 );
+		}
+		
+                formats.set( ind, i.next() );
             }
             movedBuiltins = true;
         }
@@ -247,7 +252,7 @@ public class HSSFDataFormat
         ind = workbook.getFormat( format, true );
         if ( formats.size() <= ind )
             formats.setSize( ind + 1 );
-        formats.add( ind, format );
+        formats.set( ind, format );
 
         return (short) ind;
     }
