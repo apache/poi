@@ -86,3 +86,38 @@ body, th, td {
 
 .logoImage {
 }
+
+.frame {
+  border: solid black 1px;
+  margin: 1em 3em;
+}
+
+.frame .label {
+  background: #369;
+  color: white;
+  font-weight: bold;
+  padding: 5px 10px;
+}
+.frame .content {
+  padding: 5px 10px;
+  background: #F0F0FF;
+  color: black;
+  line-height: 120%;
+  font-size: 90%;
+}
+.warning .label {
+  background: #C00;
+  color: white;
+}
+.warning .content {
+  background: #FFF0F0;
+  color: black;
+}
+.fixme .label {
+  background: #C6C600;
+}
+
+.codefrag {
+  font-family: "Courier New", Courier, monospace;
+  font-size: 110%;
+}
