@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (C) 2005 The Apache Software Foundation. All rights reserved. -->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "../dtd/document-v11.dtd">
+
+<document>
+    <header>
+        <title>Formula Evaluation</title>
+        <authors>
+			<person email="amoweb@yahoo.com" name="Amol Deshmukh" id="AD"/>
+        </authors>
+    </header>
+    <body>
+		<section><title>Introduction</title>
+			<p>The POI formula evaluation code enables you to calculate the result of 
+				formulas in Excels sheets read-in, or created in POI. This document explains
+				how to use the API to evaluate your formulas. 
+			</p>
+			<warning> This code currently lives in Bugzilla as 
+				<link href="http://issues.apache.org/bugzilla/show_bug.cgi?id=34828"> 
+				bug 34828 </link>. It is expected to land in POI CVS in the scratchpad 
+				area soon.
+			</warning>
+		</section>
+		<section><title>Status</title>
+			<p>	The code currently provides implementations for all the arithmatic operators.
+				It also provides implementations for about 30 built in 
+				functions in Excel. The framework however makes is easy to add 
+			 	implementation of new functions. See the <link href="eval-devguide.html"> Formula
+				evaluation development guide</link> for details. </p>
+			<p> Note that user-defined functions are not supported, and is not likely to done
+				any time soon... at least, not till there is a VB implementation in Java!
+			</p>
+		</section>
+		<section><title>User API How-TO</title>
+			<p>The following code demonstrates how to use the HSSFFormulaEvaluator 
+				in the context of other POI excel reading code.
+			</p>
+			<p>There are two ways in which you can use the HSSFFormulaEvalutator API.</p>
+			<section><title>Using HSSFFormulaEvaluator.<strong>evaluate</strong>(HSSFCell cell)</title>
+				<source>
+FileInputStream fis = new FileInputStream("c:/temp/test.xls");
+HSSFWorkbook wb = new HSSFWorkbook(fis);
+HSSFSheet sheet = wb.getSheetAt(0);
+HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(sheet, wb);
+
+// suppose your formula is in B3
+CellReference cellReference = new CellReference("B3"); 
+HSSFRow row = sheet.getRow(cellReference.getRow());
+HSSFCell cell = row.getCell(cellReference.getCol()); 
+String formulaString = c.getCellFormula();
+HSSFFormulaEvaluator.CellValue cellValue = 
+        evaluator.evaluate(formulaString);
+
+switch (cellValue.getCellType()) {
+	case HSSFCell.CELL_TYPE_BOOLEAN:
+    	System.out.println(cellValue.getBooleanCellValue());
+    	break;
+	case HSSFCell.CELL_TYPE_NUMERIC:
+    	System.out.println(cellValue.getNumberCellValue());
+    	break;
+	case HSSFCell.CELL_TYPE_STRING:
+    	System.out.println(cellValue.getStringCellValue());
+    	break;
+	case HSSFCell.CELL_TYPE_BLANK:
+    	break;
+	case HSSFCell.CELL_TYPE_ERROR:
+    	break;
+
+	// CELL_TYPE_FORMULA will never happen
+	case HSSFCell.CELL_TYPE_FORMULA: 
+    	break;
+}				
+				</source>
+				<p>Thus using the retrieved value (of type 
+					HSSFFormulaEvaluator.CellValue - a nested class) returned 
+					by HSSFFormulaEvaluator is similar to using a HSSFCell object 
+					containing the value of the formula evaluation. CellValue is 
+					a simple value object and does not maintain reference 
+					to the original cell.
+				</p>
+				
+			</section>
+			<section><title>Using HSSFFormulaEvaluator.<strong>evaluateInCell</strong>(HSSFCell cell)
+				</title>
+				<source>
+FileInputStream fis = new FileInputStream("c:/temp/test.xls");
+HSSFWorkbook wb = new HSSFWorkbook(fis);
+HSSFSheet sheet = wb.getSheetAt(0);
+HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(sheet, wb);
+
+// suppose your formula is in B3
+CellReference cellReference = new CellReference("B3"); 
+HSSFRow row = sheet.getRow(cellReference.getRow());
+HSSFCell cell = row.getCell(cellReference.getCol()); 
+String formulaString = c.getCellFormula();
+
+if (cell!=null) {
+	switch (<strong>evaluator.evaluateInCell</strong>(cell).getCellType()) {
+		case HSSFCell.CELL_TYPE_BOOLEAN:
+		    System.out.println(cell.getBooleanCellValue());
+		    break;
+		case HSSFCell.CELL_TYPE_NUMERIC:
+		    System.out.println(cell.getNumberCellValue());
+		    break;
+		case HSSFCell.CELL_TYPE_STRING:
+		    System.out.println(cell.getStringCellValue());
+		    break;
+		case HSSFCell.CELL_TYPE_BLANK:
+		    break;
+		case HSSFCell.CELL_TYPE_ERROR:
+		    System.out.println(cell.getErrorCellValue());
+		    break;
+		
+		// CELL_TYPE_FORMULA will never occur
+		case HSSFCell.CELL_TYPE_FORMULA: 
+		    break;
+	}
+}
+					</source>
+
+				</section>
+		</section>
+		
+		<section><title></title>
+			
+		</section>
+		
+		<section><title>Performance Notes</title>
+			<ul>
+				<li>Generally you should have to create only one HSSFFormulaEvaluator 
+					instance per sheet, but there really is no overhead in creating 
+					multiple HSSFFormulaEvaluators per sheet other than that of the 
+					HSSFFormulaEvaluator object creation. 
+				</li>
+				<li>Also note that HSSFFormulaEvaluator maintains a reference to 
+					the sheet and workbook, so ensure that the evaluator instance 
+					is available for garbage collection when you are done with it 
+					(in other words don't maintain long lived reference to 
+					HSSFFormulaEvaluator if you don't really need to - unless 
+					all references to the sheet and workbook are removed, these 
+					don't get garbage collected and continue to occupy potentially 
+					large amounts of memory). 
+				</li>	
+				<li>CellValue instances however do not maintain reference to the 
+					HSSFCell or the sheet or workbook, so these can be long-lived 
+					objects without any adverse effect on performance.
+				</li>
+			</ul>
+		</section>
+	</body>
+</document>

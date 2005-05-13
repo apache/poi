@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (C) 2005 The Apache Software Foundation. All rights reserved. -->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "../dtd/document-v11.dtd">
+
+<document>
+    <header>
+        <title>Developing Formula Evaluation</title>
+        <authors>
+			<person email="amoweb@yahoo.com" name="Amol Deshmukh" id="AD"/>
+        </authors>
+    </header>
+    <body>
+	<section><title>Introduction</title>
+		<p>This document is for developers wishing to contribute to the 
+			FormulaEvaluator API functionality.</p>
+		<p>Currently, contribution is desired for implementing the standard MS 
+			excel functions. Place holder classes for these have been created, 
+			contributors only need to insert implementation for the 
+			individual "evaluate()" methods that do the actual evaluation.</p>
+	</section>
+	<section><title>Overview of FormulaEvaluator </title>
+		<p>Briefly, a formula string (along with the sheet and workbook that 
+			form the context in which the formula is evaluated) is first parsed 
+			into RPN tokens using the FormulaParser class in POI-HSSF main. 
+			(If you dont know what RPN tokens are, now is a good time to 
+			read <link href="http://www-stone.ch.cam.ac.uk/documentation/rrf/rpn.html">
+			this</link>.) 
+		</p>
+		<section><title> The big picture</title>
+			<p>RPN tokens are mapped to Eval classes. (Class hierarchy for the Evals 
+				is best understood if you view the class diagram in a class diagram 
+				viewer.) Depending on the type of RPN token (also called as Ptgs 
+				henceforth since that is what the FormulaParser calls the classes) a 
+				specific type of Eval wrapper is constructed to wrap the RPN token and 
+				is pushed on the stack.... UNLESS the Ptg is an OperationPtg. If it is an 
+				OperationPtg, an OperationEval instance is created for the specific 
+				type of OperationPtg. And depending on how many operands it takes, 
+				that many Evals are popped of the stack and passed in an array to 
+				the OperationEval instance's evaluate method which returns an Eval 
+				of subtype ValueEval.Thus an operation in the formula is evaluated. </p>
+				<note> An Eval is of subinterface ValueEval or OperationEval. 
+				Operands are always ValueEvals, Operations are always OperationEvals.</note> 
+				<p><code>OperationEval.evaluate(Eval[])</code> returns an Eval which is supposed 
+				to be of type ValueEval (actually since ValueEval is an interface, 
+				the return value is instance of one of the implementations of 
+				ValueEval). The valueEval resulting from evaluate() is pushed on the 
+				stack and the next RPN token is evaluated.... this continues till 
+				eventually there are no more RPN tokens at which point, if the formula 
+				string was correctly parsed, there should be just one Eval on the 
+				stack - which contains the result of evaluating the formula.</p>
+			<p>Ofcourse I glossed over the details of how AreaPtg and ReferencePtg 
+				are handled a little differently, but the code should be self 
+				explanatory for that. Very briefly, the cells included in AreaPtg and 
+				RefPtg are examined and their values are populated in individual 
+				ValueEval objects which are set into the AreaEval and RefEval (ok, 
+				since AreaEval and RefEval are interfaces, the implementations of 
+				AreaEval and RefEval - but you'll figure all that out from the code)</p>
+			<p>OperationEvals for the standard operators have been implemented and 
+				basic testing has been done </p>
+		</section>
+		<section><title> FunctionEval and FuncVarEval</title>
+			<p>FunctionEval is an abstract super class of FuncVarEval. The reason for this is that in the FormulaParser Ptg classes, there are two Ptgs, FuncPtg and FuncVarPtg. In my tests, I did not see FuncPtg being used so there is no corresponding FuncEval right now. But in case the need arises for a FuncVal class, FuncEval and FuncVarEval need to be isolated with a common interface/abstract class, hence FunctionEval.</p>
+			<p>FunctionEval also contains the mapping of which function class maps to which function index. This mapping has been done for all the functions, so all you really have to do is implement the evaluate method in the function class that has not already been implemented. The Function indexes are defined in AbstractFunctionPtg class in POI main.</p>
+		</section>
+	</section>
+	<section><title>Walkthrough of an "evaluate()" implementation.</title>
+		<p>So here is the fun part - lets walk through the implementation of the excel 
+			function... <strong>AVERAGE()</strong> </p>
+		<section><title>The Code</title>
+		<source>
+public Eval evaluate(Eval[] operands) {
+    double d = 0;
+    int count = 0;
+    ValueEval retval = null;
+    for (int i = 0, iSize = operands.length; i &lt; iSize; i++) {
+        if (operands[i] == null) continue;
+        if (operands[i] instanceof AreaEval) {
+            AreaEval ap = (AreaEval) operands[i];
+            Object[] values = ap.getValues();
+            for (int j = 0, jSize = values.length; j &lt; jSize; j++) {
+                if (values[j] == null) continue;
+                if (values[j] instanceof NumberEval) {
+                //inside areas, ignore bools
+                    d += ((NumberEval) values[j]).getNumberValue();
+                    count++;
+                }
+                else if (values[j] instanceof RefEval) {
+                    RefEval re = (RefEval) values[j];
+                    ValueEval ve = re.getInnerValueEval();
+                    if (ve != null &amp;&amp; ve instanceof NumberEval) {
+                        d += ((NumberEval) ve).getNumberValue();
+                        count++;
+                    }
+                }
+            }
+        }
+        else if (operands[i] instanceof NumericValueEval) { 
+            // for direct operands evaluate bools
+            NumericValueEval np = (NumericValueEval) operands[i];
+            d += np.getNumberValue();
+            count++;
+        }
+        else if (operands[i] instanceof RefEval) {
+            RefEval re = (RefEval) operands[i];
+            ValueEval ve = re.getInnerValueEval();
+            if (ve instanceof NumberEval) { 
+                //if it is a reference, ignore bools
+                NumberEval ne = (NumberEval) ve;
+                d += ne.getNumberValue();
+                count++;
+            }
+        }
+    }
+
+    if (retval == null) {
+        retval = (Double.isNaN(d)) ? 
+          (ValueEval) ErrorEval.ERROR_503 : new NumberEval(d/count);
+    }
+    return retval;
+}
+	</source>
+		</section>
+		<section><title>Implementation Details</title>
+		<ul>
+			<li>The implementation of the AVERAGE function lives in package 
+				o.a.p.hssf.record.formula.functions named  Average.java. 
+				(Every excel function has a corresponding java source file 
+				in the above package) </li>
+			<li>If you open the file for a function thats not yet implemented, you will see one un-implemented method: 
+				<code>public Eval evaluate(Eval[] operands) {}</code> </li>
+			<li>Since the excel Average() function can take 1 or more operands, we iterate over all operands that are passed in the evaluate method:
+				<code>for (int i=0, iSize=operands.length; i&lt;iSize; i++) {...}</code></li>
+			<li>inside the loop, you will do the following
+				<ol>
+					<li>Do a null check: <code>if (operands[i] == null) continue;</code></li>
+					<li>Figure out the actual subtype of ValueEval that the operands 
+						implements. The possible types that you will encounter in an 
+						evaluate() are: NumberEval, BoolEval, StringEval, ErrorEval, 
+						AreaEval, RefEval, BlankEval.</li>
+					<li>Implement the function. See the next section for some
+						caveats on implementing the Excel semantics. </li>
+				</ol>
+			</li>
+			<li>Finally before returning the NumberEval wrapping the double value that 
+				you computed, do one final check to see if the double is a NaN, 
+				if it is return ErrorEval.ERROR_503 (see the javadoc in ErrorEval.java 
+				for description of error codes - it is html so you might as well 
+				generate the javadocs)</li>
+			
+		</ul>
+		</section>
+		<section><title>Modelling Excel Semantics</title>
+			<p>Strings are ignored. Booleans are ignored!!! (damn Oo.o!  I was almost misled here - nevermind). Actually here's the info on Bools: 
+				if you have formula: "=TRUE+1", it evaluates to 2. 
+				So also, when you use TRUE like this: "=SUM(1,TRUE)", you see the result is: 2. 
+				So TRUE means 1 when doing numeric calculations, right? 
+				Wrong!
+				Because when you use TRUE in referenced cells with arithmetic functions, it evaluates to blank - meaning it is not evaluated - as if it was string or a blank cell. 
+				eg. "=SUM(1,A1)" when A1 is TRUE evaluates to 1.
+				So you have to do this kind of check for every possible data type as a function argument for any function before you understand the behaviour of the function. The operands can be entered in excel as comma separated or as a region specified like: A2:D4. Regions are treated as a single token by the parser hence we have AreaEval which stores the ValueEval at each cell in a region in a 1D array. So in our function if the operand is of type AreaEval we need to get the array of ValueEvals in the region of the AreaEval and iterate over each of them as if each of them were individual operands to the AVERAGE function. 
+				</p>
+			<p>Thus, since sometimes, Excel treats 
+						Booleans as the numbers 0 and 1 (for F and T respectively). 
+						Hence BoolEval and NumberEval both implement a common interface: 
+						NumericValueEval (since numbers and bools are also valid string 
+						values, they also implement StringValueEval interface which is 
+						also implemented by StringEval).</p>
+			<p>
+			The ValueEval inside an AreaEval can be one of: 
+				NumberEval, BoolEval, StringEval, ErrorEval, BlankEval. 
+			So you must handle each of these cases. 
+			Similarly, RefEvals have a property: innerValueEval that returns the ValueEval at the referenced cell. The ValueEval inside a RefEval can be one of: NumberEval, BoolEval, StringEval, ErrorEval, BlankEval. So you must handle each of these cases  - see how excel treats each one of them.
+			</p>				
+
+		</section>
+	</section>
+	<section><title>Testing Framework</title>
+	<fixme author="AD">TODO! FormulaEval comes with a testing framework, where you add 
+		formula's and their expected values to an Excel sheet, and the test code
+		automatically validates them. Since this is still in flux, the docs
+		will be put online once the system is stable </fixme>	
+	</section>
+	</body>
+</document>
