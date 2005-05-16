@@ -895,8 +895,8 @@ public class HSSFSheet
     /**
      * Sets desktop window pane display area, when the 
      * file is first opened in a viewer.
-     * @param the top row to show in desktop window pane
-     * @param the left column to show in desktop window pane
+     * @param toprow the top row to show in desktop window pane
+     * @param leftcol the left column to show in desktop window pane
      */
     public void showInPane(short toprow, short leftcol){
         this.sheet.setTopRow((short)toprow);

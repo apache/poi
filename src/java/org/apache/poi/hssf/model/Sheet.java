@@ -1949,7 +1949,7 @@ public class Sheet implements Model
    
     /**
      * Sets the left column to show in desktop window pane.
-     * @param the left column to show in desktop window pane
+     * @param leftCol the left column to show in desktop window pane
      */
         public void setLeftCol(short leftCol){
         	if (windowTwo!=null) 
