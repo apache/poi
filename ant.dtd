@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!ENTITY % boolean "(true|false|on|off|yes|no)">
-<!ENTITY % tasks "propertyfile | ccmkdir | importtypelib | vsscheckin | sql | cvspass | p4reopen | csc | dirname | wlrun | p4label | p4revert | replaceregexp | get | jjtree | sleep | jarlib-display | dependset | zip | patch | jspc | style | test | tstamp | unwar | vsshistory | icontract | cvschangelog | p4submit | ccmcheckin | p4change | bzip2 | sync | p4delete | vssadd | javadoc | p4integrate | translate | signjar | cclock | chown | vajload | jarlib-available | rexec | WsdlToDotnet | buildnumber | jpcovmerge | ejbjar | war | stlist | rename | sequential | serverdeploy | property | subant | move | ildasm | copydir | cccheckin | ccunlock | wljspc | fixcrlf | telnet | sosget | pathconvert | record | p4sync | exec | ccmklabel | p4edit | manifest | maudit | antlr | netrexxc | ftp | jpcovreport | execon | ccmcheckout | ant | xmlvalidate | xslt | p4resolve | iplanet-ejbc | ccmcheckintask | gzip | native2ascii | ccrmtype | starteam | ear | input | presetdef | rmic | checksum | mail | loadfile | vsscheckout | stylebook | soscheckin | mimemail | stlabel | gunzip | concat | cab | touch | parallel | splash | antcall | ccmkbl | cccheckout | typedef | p4have | filter | xmlproperty | import | jdepend | copy | jsharpc | symlink | antstructure | script | ccmcreatetask | rpm | delete | replace | mmetrics | attrib | waitfor | untar | loadproperties | available | echoproperties | junit | stcheckin | chgrp | vajexport | stcheckout | bunzip2 | whichresource | copyfile | p4labelsync | vsscreate | macrodef | unjar | ejbc | vbc | wsdltodotnet | mkdir | cvs | condition | tempfile | junitreport | ccmkattr | taskdef | echo | ccupdate | java | vsslabel | renameext | basename | javadoc2 | tar | vsscp | vajimport | p4fstat | setproxy | p4counter | wlstop | ilasm | soscheckout | apply | ccuncheckout | jarlib-resolve | jlink | cvstagdiff | javacc | chmod | pvcs | jarlib-manifest | jar | ccmklbtype | sound | scriptdef | defaultexcludes | mparse | blgenclient | uptodate | jjdoc | genkey | javah | ccmkelem | ccmreconfigure | fail | unzip | javac | p4add | jpcoverage | soslabel | depend | vssget | deltree | ddcreator">
+<!ENTITY % tasks "propertyfile | ccmkdir | importtypelib | vsscheckin | sql | cvspass | p4reopen | csc | dirname | wlrun | p4label | p4revert | replaceregexp | get | jjtree | sleep | jarlib-display | dependset | zip | patch | jspc | style | test | tstamp | unwar | vsshistory | icontract | cvschangelog | p4submit | ccmcheckin | p4change | bzip2 | sync | p4delete | vssadd | javadoc | p4integrate | translate | signjar | cclock | chown | vajload | jarlib-available | rexec | WsdlToDotnet | buildnumber | jpcovmerge | ejbjar | war | stlist | rename | sequential | serverdeploy | property | subant | move | ildasm | copydir | cccheckin | ccunlock | wljspc | fixcrlf | telnet | sosget | pathconvert | record | p4sync | exec | ccmklabel | p4edit | manifest | maudit | antlr | netrexxc | ftp | jpcovreport | execon | ccmcheckout | ant | xmlvalidate | xslt | p4resolve | iplanet-ejbc | ccmcheckintask | gzip | native2ascii | ccrmtype | starteam | ear | input | presetdef | rmic | checksum | mail | loadfile | vsscheckout | stylebook | soscheckin | mimemail | stlabel | gunzip | concat | cab | touch | parallel | splash | antcall | ccmkbl | cccheckout | typedef | p4have | filter | xmlproperty | import | copy | jsharpc | symlink | antstructure | script | ccmcreatetask | rpm | delete | replace | mmetrics | attrib | waitfor | untar | loadproperties | available | echoproperties | junit | stcheckin | chgrp | vajexport | stcheckout | bunzip2 | whichresource | copyfile | p4labelsync | vsscreate | macrodef | ejbc | unjar | vbc | wsdltodotnet | mkdir | cvs | condition | tempfile | junitreport | ccmkattr | taskdef | echo | ccupdate | java | vsslabel | renameext | basename | javadoc2 | tar | vsscp | vajimport | p4fstat | setproxy | p4counter | wlstop | ilasm | soscheckout | apply | ccuncheckout | jarlib-resolve | jlink | cvstagdiff | javacc | chmod | pvcs | jarlib-manifest | jar | ccmklbtype | sound | scriptdef | defaultexcludes | mparse | blgenclient | uptodate | jjdoc | genkey | javah | ccmkelem | ccmreconfigure | fail | unzip | javac | p4add | jpcoverage | soslabel | depend | vssget | deltree | ddcreator">
 <!ENTITY % types "patternset | assertions | propertyset | filterset | libfileset | mergemapper | identitymapper | filterreader | unpackagemapper | scriptfilter | concatfilter | extension | fileset | dirset | globmapper | filelist | filterchain | path | compositemapper | classfileset | regexpmapper | selector | xmlcatalog | flattenmapper | description | chainedmapper | packagemapper | mapper | zipfileset | substitution | extensionSet | redirector | regexp">
 
 <!ELEMENT project (target | %tasks; | %types;)*>
@@ -3556,38 +3556,6 @@
           file CDATA #IMPLIED
           description CDATA #IMPLIED>
 
-<!ELEMENT jdepend (exclude | classpath | sourcespath | classespath)*>
-<!ATTLIST jdepend
-          id ID #IMPLIED
-          haltonerror %boolean; #IMPLIED
-          fork %boolean; #IMPLIED
-          classpath CDATA #IMPLIED
-          jvm CDATA #IMPLIED
-          dir CDATA #IMPLIED
-          outputfile CDATA #IMPLIED
-          includeruntime %boolean; #IMPLIED
-          timeout CDATA #IMPLIED
-          classpathref IDREF #IMPLIED
-          taskname CDATA #IMPLIED
-          format (xml | text) #IMPLIED
-          description CDATA #IMPLIED>
-
-<!ELEMENT sourcespath (fileset | dirset | extdirs | existing | filelist | pathelement | path)*>
-<!ATTLIST sourcespath
-          id ID #IMPLIED
-          location CDATA #IMPLIED
-          refid IDREF #IMPLIED
-          description CDATA #IMPLIED
-          path CDATA #IMPLIED>
-
-<!ELEMENT classespath (fileset | dirset | extdirs | existing | filelist | pathelement | path)*>
-<!ATTLIST classespath
-          id ID #IMPLIED
-          location CDATA #IMPLIED
-          refid IDREF #IMPLIED
-          description CDATA #IMPLIED
-          path CDATA #IMPLIED>
-
 <!ELEMENT copy (filterchain | fileset | filterset | mapper)*>
 <!ATTLIST copy
           id ID #IMPLIED
@@ -4139,16 +4107,6 @@
           optional %boolean; #IMPLIED
           description CDATA #IMPLIED>
 
-<!ELEMENT unjar (fileset | patternset)*>
-<!ATTLIST unjar
-          id ID #IMPLIED
-          taskname CDATA #IMPLIED
-          dest CDATA #IMPLIED
-          overwrite %boolean; #IMPLIED
-          description CDATA #IMPLIED
-          encoding CDATA #IMPLIED
-          src CDATA #IMPLIED>
-
 <!ELEMENT ejbc (patternset | exclude | include | custom | present | none | not | type | modified | or | contains | depend | different | size | majority | containsregexp | filename | selector | includesfile | date | excludesfile | depth | and)*>
 <!ATTLIST ejbc
           id ID #IMPLIED
@@ -4167,6 +4125,16 @@
           excludes CDATA #IMPLIED
           descriptors CDATA #IMPLIED
           includes CDATA #IMPLIED>
+
+<!ELEMENT unjar (fileset | patternset)*>
+<!ATTLIST unjar
+          id ID #IMPLIED
+          taskname CDATA #IMPLIED
+          dest CDATA #IMPLIED
+          overwrite %boolean; #IMPLIED
+          description CDATA #IMPLIED
+          encoding CDATA #IMPLIED
+          src CDATA #IMPLIED>
 
 <!ELEMENT vbc (patternset | exclude | include | custom | present | none | resource | define | not | type | modified | reference | src | or | contains | depend | different | size | majority | containsregexp | filename | selector | includesfile | date | excludesfile | depth | and)*>
 <!ATTLIST vbc

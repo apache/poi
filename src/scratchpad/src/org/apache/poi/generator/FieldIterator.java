@@ -32,12 +32,6 @@ public class FieldIterator
     {
     }
 
-    public void init(org.apache.xalan.extensions.XSLProcessorContext context,
-                     org.apache.xalan.templates.ElemExtensionCall extElem)
-    {
-        offset = 0;
-    }
-
     /**
      * This utility function returns a fill method entry for a given field
      *

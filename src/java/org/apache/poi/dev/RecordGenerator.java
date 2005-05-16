@@ -17,12 +17,24 @@
         
 package org.apache.poi.dev;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.Reader;
+import java.util.Properties;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import java.io.File;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Result;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  *  Description of the Class
@@ -79,11 +91,7 @@ public class RecordGenerator {
                 File destinationPathFile = new File(destinationPath);
                 destinationPathFile.mkdirs();
                 String destinationFilepath = destinationPath + "/" + recordName + suffix + ".java";
-                String args[] = new String[]{"-in", file.getAbsolutePath(), "-xsl", recordStyleDir + "/" + extendstg.toLowerCase() + ".xsl",
-                        "-out", destinationFilepath,
-                        "-TEXT"};
-
-                org.apache.xalan.xslt.Process.main(args);
+                transform(file, new File(destinationFilepath), new File(recordStyleDir + "/" + extendstg.toLowerCase() + ".xsl"));
                 System.out.println("Generated " + suffix + ": " + destinationFilepath);
 
                 // Generate test (if not already generated)
@@ -93,11 +101,7 @@ public class RecordGenerator {
                 destinationFilepath = destinationPath + "/Test" + recordName + suffix + ".java";
                 if (new File(destinationFilepath).exists() == false) {
                     String temp = (recordStyleDir + "/" + extendstg.toLowerCase() + "_test.xsl");
-                    args = new String[]{"-in", file.getAbsolutePath(), "-xsl",
-                            temp,
-                            "-out", destinationFilepath,
-                            "-TEXT"};
-                    org.apache.xalan.xslt.Process.main(args);
+                    transform(file, new File(destinationFilepath), new File(temp));
                     System.out.println("Generated test: " + destinationFilepath);
                 } else {
                     System.out.println("Skipped test generation: " + destinationFilepath);
@@ -105,4 +109,40 @@ public class RecordGenerator {
             }
         }
     }
+
+    
+    
+    /**
+     * <p>Executes an XSL transformation. This process transforms an XML input
+     * file into a text output file controlled by an XSLT specification.</p>
+     * 
+     * @param in the XML input file
+     * @param out the text output file
+     * @param xslt the XSLT specification, i.e. an XSL style sheet
+     * @throws FileNotFoundException 
+     * @throws TransformerException 
+     */
+    private static void transform(final File in, final File out, final File xslt)
+    throws FileNotFoundException, TransformerException
+    {
+        final Reader r = new FileReader(xslt);
+        final StreamSource ss = new StreamSource(r);
+        final TransformerFactory tf = TransformerFactory.newInstance();
+        final Transformer t;
+        try
+        {
+            t = tf.newTransformer(ss);
+        }
+        catch (TransformerException ex)
+        {
+            System.err.println("Error compiling XSL style sheet " + xslt);
+            throw ex;
+        }
+        final Properties p = new Properties();
+        p.setProperty(OutputKeys.METHOD, "text");
+        t.setOutputProperties(p);
+        final Result result = new StreamResult(out);
+        t.transform(new StreamSource(in), result);        
+    }
+
 }
