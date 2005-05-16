@@ -185,7 +185,6 @@ public class FormatRecord
      * get the format string
      *
      * @return the format string
-     * @see #getFormatStringLength()
      */
 
     public String getFormatString()
