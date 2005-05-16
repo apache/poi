@@ -39,8 +39,9 @@ public class StringUtil {
 	}
 
 	/**     
-	 *  given a byte array of 16-bit unicode characters, compress to 8-bit and     
-	 *  return a string     
+	 *  Given a byte array of 16-bit unicode characters in Little Endian
+	 *  format (most important byte last), return a Java String representation
+	 *  of it. 
 	 *     
 	 * { 0x16, 0x00 } -0x16     
 	 *      
@@ -77,8 +78,9 @@ public class StringUtil {
 	}
 
 	/**     
-	 *  given a byte array of 16-bit unicode characters, compress to 8-bit and     
-	 *  return a string     
+	 *  Given a byte array of 16-bit unicode characters in little endian
+	 *  format (most important byte last), return a Java String representation
+	 *  of it. 
 	 *      
 	 * { 0x16, 0x00 } -0x16     
 	 *     
@@ -90,8 +92,9 @@ public class StringUtil {
 	}
 
 	/**     
-	 *  given a byte array of 16-bit unicode characters, compress to 8-bit and     
-	 *  return a string     
+	 *  Given a byte array of 16-bit unicode characters in big endian
+	 *  format (most important byte first), return a Java String representation
+	 *  of it. 
 	 *      
 	 * { 0x00, 0x16 } -0x16     
 	 *     
@@ -127,8 +130,9 @@ public class StringUtil {
 	}
 
 	/**     
-	 *  given a byte array of 16-bit unicode characters, compress to 8-bit and     
-	 *  return a string     
+	 *  Given a byte array of 16-bit unicode characters in big endian
+	 *  format (most important byte first), return a Java String representation
+	 *  of it.
 	 *      
 	 * { 0x00, 0x16 } -0x16     
 	 *     
@@ -140,7 +144,9 @@ public class StringUtil {
 	}
 
 	/**      
-	 * read compressed unicode(8bit)      
+	 * Read 8 bit data (in ISO-8859-1 codepage) into a (unicode) Java
+	 * String and return.
+	 * (In Excel terms, read compressed 8 bit unicode as a string)
 	 *       
 	 * @param string byte array to read      
 	 * @param offset offset to read byte array      
@@ -158,8 +164,10 @@ public class StringUtil {
 		}
 	}
 
-	/**     
-	 *  write compressed unicode     
+	/**      
+	 * Takes a unicode (java) string, and returns it as 8 bit data (in ISO-8859-1 
+	 * codepage).
+	 * (In Excel terms, write compressed 8 bit unicode)
 	 *     
 	 *@param  input   the String containing the data to be written     
 	 *@param  output  the byte array to which the data is to be written     
@@ -179,10 +187,12 @@ public class StringUtil {
 	}
 
 	/**     
-	 *  Write uncompressed unicode     
+	 * Takes a unicode string, and returns it as little endian (most 
+	 * important byte last) bytes in the supplied byte array.
+	 * (In Excel terms, write uncompressed unicode)
 	 *     
 	 *@param  input   the String containing the unicode data to be written     
-	 *@param  output  the byte array to hold the uncompressed unicode     
+	 *@param  output  the byte array to hold the uncompressed unicode, should be twice the length of the String
 	 *@param  offset  the offset to start writing into the byte array     
 	 */
 	public static void putUnicodeLE(
@@ -198,10 +208,12 @@ public class StringUtil {
 	}
 
 	/**     
-	 *  Write uncompressed unicode     
+	 * Takes a unicode string, and returns it as big endian (most 
+	 * important byte first) bytes in the supplied byte array.
+	 * (In Excel terms, write uncompressed unicode)
 	 *     
 	 *@param  input   the String containing the unicode data to be written     
-	 *@param  output  the byte array to hold the uncompressed unicode     
+	 *@param  output  the byte array to hold the uncompressed unicode, should be twice the length of the String
 	 *@param  offset  the offset to start writing into the byte array     
 	 */
 	public static void putUnicodeBE(
@@ -217,11 +229,12 @@ public class StringUtil {
 	}
 
 	/**     
-	 *  Description of the Method     
-	 *     
-	 *@param  message  Description of the Parameter     
-	 *@param  params   Description of the Parameter     
-	 *@return          Description of the Return Value     
+	 *  Apply printf() like formatting to a string.      
+	 *  Primarily used for logging.    
+	 *@param  message  the string with embedded formatting info 
+	 *                 eg. "This is a test %2.2"     
+	 *@param  params   array of values to format into the string     
+	 *@return          The formatted string     
 	 */
 	public static String format(String message, Object[] params) {
 		int currentParamNumber = 0;
@@ -256,14 +269,7 @@ public class StringUtil {
 		return formattedMessage.toString();
 	}
 
-	/**     
-	 *  Description of the Method     
-	 *     
-	 *@param  number      Description of the Parameter     
-	 *@param  formatting  Description of the Parameter     
-	 *@param  outputTo    Description of the Parameter     
-	 *@return             Description of the Return Value     
-	 */
+
 	private static int matchOptionalFormatting(
 		Number number,
 		String formatting,
@@ -298,7 +304,7 @@ public class StringUtil {
 	}
 
 	/**     
-	 * @return the encoding we want to use (ISO-8859-1)     
+	 * @return the encoding we want to use, currently hardcoded to ISO-8859-1     
 	 */
 	public static String getPreferredEncoding() {
 		return ENCODING;
@@ -321,9 +327,10 @@ public class StringUtil {
 	}
 	
 	/**
-	   * @param format
-	   * @return true if string needs Unicode to be represented.
-	   */
+	 * Checks to see if a given String needs to be represented as Unicode
+	 * @param value 
+	 * @return true if string needs Unicode to be represented.
+	 */
 	  public static boolean isUnicodeString(final String value) {
 	    try {
 	      return !value.equals(new String(value.getBytes("ISO-8859-1"), "ISO-8859-1"));
