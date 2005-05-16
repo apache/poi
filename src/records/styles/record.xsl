@@ -115,9 +115,9 @@ public class <xsl:value-of select="@name"/>Record
 <xsl:text>        int pos = 0;
 </xsl:text>
 
- <xsl:variable name="fieldIterator" select="field:new()"/>
+ <xsl:variable name="fieldIterator1" select="field:new()"/>
 <xsl:for-each select="//fields/field">
-    <xsl:text>        </xsl:text><xsl:value-of select="field:fillDecoder2($fieldIterator,position(),@name,@size,@type)"/>;
+    <xsl:text>        </xsl:text><xsl:value-of select="field:fillDecoder2($fieldIterator1,position(),@name,@size,@type)"/>;
 </xsl:for-each>
     }
 
@@ -137,9 +137,9 @@ public class <xsl:value-of select="@name"/>Record
 
         LittleEndian.putShort(data, 0 + offset, sid);
         LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
-<xsl:variable name="fieldIterator" select="field:new()"/>
+<xsl:variable name="fieldIterator2" select="field:new()"/>
 <xsl:for-each select="//fields/field"><xsl:text>
-        </xsl:text><xsl:value-of select="field:serialiseEncoder($fieldIterator,position(),@name,@size,@type)"/>
+        </xsl:text><xsl:value-of select="field:serialiseEncoder($fieldIterator2,position(),@name,@size,@type)"/>
 </xsl:for-each>
 
         return getRecordSize();
@@ -150,10 +150,10 @@ public class <xsl:value-of select="@name"/>Record
      */
     public int getRecordSize()
     {
-<xsl:variable name="fieldIterator" select="field:new()"/>
+<xsl:variable name="fieldIterator3" select="field:new()"/>
 <xsl:text>        return 4 </xsl:text>
 <xsl:for-each select="//fields/field">
-    <xsl:value-of select="field:calcSize($fieldIterator,position(),@name,@size,@type)"/>
+    <xsl:value-of select="field:calcSize($fieldIterator3,position(),@name,@size,@type)"/>
 </xsl:for-each>;
     }
 

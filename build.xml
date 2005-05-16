@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<!-- Copyright (C) 2004 The Apache Software Foundation. All rights reserved. -->
+<!-- Copyright 2005 The Apache Software Foundation. Aöll rights reserved. -->
 <!DOCTYPE project PUBLIC "-//Ant//Project 1.5//EN" "ant.dtd">
 
 <!--
@@ -252,56 +252,65 @@
     compile-contrib, compile-examples"
     description="Compiles the POI main classes, scratchpad, contrib, and examples"/>
 
-    <target name="compile-main" depends="init">
-        <copy todir="${main.output.dir}">
-            <fileset dir="${main.resource1.dir}"/>
-        </copy>
-        <javac srcdir="${main.src}" destdir="${main.output.dir}" debug="on" fork="yes" includeAntRuntime="no" failonerror="true">
-            <classpath refid="main.classpath"/>
-        </javac>
-        <javac srcdir="${main.src.test}" destdir="${main.output.test.dir}" debug="on" fork="yes" includeAntRuntime="no" failonerror="true">
-            <classpath>
-                <path refid="main.classpath"/>
-                <pathelement location="${main.output.dir}"/>
-                <pathelement location="${junit.jar1.dir}"/>
-            </classpath>
-        </javac>
-    </target>
+  <target name="compile-main" depends="fail-unless-xslt-is-available">
+    <copy todir="${main.output.dir}">
+      <fileset dir="${main.resource1.dir}"/>
+    </copy>
+    <javac srcdir="${main.src}" destdir="${main.output.dir}" debug="on"
+      fork="yes" includeAntRuntime="no" failonerror="true">
+      <classpath refid="main.classpath"/>
+    </javac>
+    <javac srcdir="${main.src.test}" destdir="${main.output.test.dir}"
+      debug="on" fork="yes" includeAntRuntime="no" failonerror="true">
+      <classpath>
+        <path refid="main.classpath"/>
+        <pathelement location="${main.output.dir}"/>
+        <pathelement location="${junit.jar1.dir}"/>
+      </classpath>
+    </javac>
+  </target>
 
-    <target name="compile-scratchpad" depends="init">
-        <javac srcdir="${scratchpad.src}" destdir="${scratchpad.output.dir}" debug="on" fork="yes" includeAntRuntime="no" failonerror="true">
-            <classpath refid="scratchpad.classpath"/>
-        </javac>
-        <javac srcdir="${scratchpad.src.test}" destdir="${scratchpad.output.test.dir}" debug="on" fork="yes" includeAntRuntime="no" failonerror="true">
-            <classpath>
-                <path refid="scratchpad.classpath"/>
-                <pathelement location="${scratchpad.output.dir}"/>
-                <pathelement location="${junit.jar1.dir}"/>
-            </classpath>
-        </javac>
-    </target>
+  <target name="compile-scratchpad" depends="init">
+    <javac srcdir="${scratchpad.src}" destdir="${scratchpad.output.dir}"
+      debug="on" fork="yes" includeAntRuntime="no" failonerror="true">
+      <classpath refid="scratchpad.classpath"/>
+    </javac>
+    <javac srcdir="${scratchpad.src.test}"
+      destdir="${scratchpad.output.test.dir}" debug="on" fork="yes"
+      includeAntRuntime="no" failonerror="true">
+      <classpath>
+        <path refid="scratchpad.classpath"/>
+        <pathelement location="${scratchpad.output.dir}"/>
+        <pathelement location="${junit.jar1.dir}"/>
+      </classpath>
+    </javac>
+  </target>
 
-    <target name="compile-contrib" depends="init">
-        <javac srcdir="${contrib.src}" destdir="${contrib.output.dir}" debug="on" fork="yes" includeAntRuntime="no" failonerror="true">
-            <classpath refid="contrib.classpath"/>
-        </javac>
-        <javac srcdir="${contrib.src.test}" destdir="${contrib.output.test.dir}" debug="on" fork="yes" includeAntRuntime="no" failonerror="true">
-            <classpath>
-                <path refid="contrib.classpath"/>
-                <pathelement location="${contrib.output.dir}"/>
-                <pathelement location="${junit.jar1.dir}"/>
-            </classpath>
-        </javac>
-    </target>
+  <target name="compile-contrib" depends="init">
+    <javac srcdir="${contrib.src}" destdir="${contrib.output.dir}"
+      debug="on" fork="yes" includeAntRuntime="no" failonerror="true">
+      <classpath refid="contrib.classpath"/>
+    </javac>
+    <javac srcdir="${contrib.src.test}"
+      destdir="${contrib.output.test.dir}" debug="on" fork="yes"
+      includeAntRuntime="no" failonerror="true">
+      <classpath>
+        <path refid="contrib.classpath"/>
+        <pathelement location="${contrib.output.dir}"/>
+        <pathelement location="${junit.jar1.dir}"/>
+      </classpath>
+    </javac>
+  </target>
 
   <target name="compile-examples" depends="init">
-    <javac srcdir="${examples.src}" destdir="${examples.output.dir}" debug="on">
+    <javac srcdir="${examples.src}" destdir="${examples.output.dir}"
+      debug="on">
       <classpath refid="examples.classpath"/>
     </javac>
   </target>
 
-    <target name="test" depends="test-main,test-scratchpad,test-contrib"
-        description="Tests main, contrib and scratchpad"/>
+  <target name="test" depends="test-main,test-scratchpad,test-contrib"
+    description="Tests main, contrib and scratchpad"/>
 
     <target name="-test-main-check">
         <uptodate property="main.test.notRequired" targetfile="${main.testokfile}">
@@ -317,69 +326,77 @@
         <pathelement location="${junit.jar1.dir}"/>
     </path>
 
-    <target
-      name="test-main"
-      depends="compile-main, -test-main-check, is-available-junit"
-      unless="main.test.notRequired">
-        <junit printsummary="no" showoutput="true" fork="no"
-            haltonfailure="${halt.on.test.failure}" failureproperty="main.test.failed">
-            <classpath refid="test.classpath"/>
-            <sysproperty key="HSSF.testdata.path" file="${main.src.test}/org/apache/poi/hssf/data"/>
-            <sysproperty key="HPSF.testdata.path" file="${main.src.test}/org/apache/poi/hpsf/data"/>
-            <sysproperty key="java.awt.headless" value="true"/>
-            <formatter type="plain"/>
-            <formatter type="xml"/>
-            <batchtest todir="${main.reports.test}">
-                <fileset dir="${main.src.test}">
-                    <include name="**/Test*.java"/>
-                    <exclude name="**/AllTests.java"/>
-                	<exclude name="**/TestEmptyDocument.java"/>
-                	<exclude name="**/TestUnfixedBugs.java"/>
-                </fileset>
-            </batchtest>
-        </junit>
-        <delete file="${main.testokfile}"/>
-        <antcall target="-test-main-write-testfile"/>
-    </target>
+  <target name="test-main" unless="main.test.notRequired"
+    depends="compile-main, -test-main-check, fail-unless-junit-is-available">
+    <junit fork="no" printsummary="no" haltonfailure="${halt.on.test.failure}"
+      failureproperty="main.test.failed" showoutput="true">
+      <classpath refid="test.classpath"/>
+      <sysproperty key="HSSF.testdata.path"
+        file="${main.src.test}/org/apache/poi/hssf/data"/> 
+      <sysproperty key="HPSF.testdata.path"
+        file="${main.src.test}/org/apache/poi/hpsf/data"/> 
+      <sysproperty key="java.awt.headless" value="true"/>
+      <formatter type="plain"/>
+      <formatter type="xml"/>
+      <batchtest todir="${main.reports.test}">
+        <fileset dir="${main.src.test}">
+          <include name="**/Test*.java"/>
+          <exclude name="**/AllTests.java"/>
+          <exclude name="**/TestEmptyDocument.java"/>
+          <exclude name="**/TestUnfixedBugs.java"/>
+        </fileset>
+      </batchtest>
+    </junit>
+    <delete file="${main.testokfile}"/>
+    <antcall target="-test-main-write-testfile"/>
+  </target>
 
-	<target name="test-fail" depends = "compile-main, is-available-junit" description="run tests that are known to fail">
-		<junit printsummary="yes" showoutput="true" filtertrace="no" haltonfailure="false" >
-			<classpath refid="test.classpath"/>
-        	 <classpath>
-                <path refid="scratchpad.classpath"/>
-                <pathelement location="${main.output.dir}"/>
-                <pathelement location="${scratchpad.output.dir}"/>
-                <pathelement location="${scratchpad.output.test.dir}"/>
-                <pathelement location="${junit.jar1.dir}"/>
-            </classpath>
-			<sysproperty key="HSSF.testdata.path" file="${main.src.test}/org/apache/poi/hssf/data"/>
-			<sysproperty key="HPSF.testdata.path" file="${main.src.test}/org/apache/poi/hpsf/data"/>
-			<sysproperty key="HWPF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hwpf/data"/>
-			<sysproperty key="java.awt.headless" value="true"/>
-			<formatter type="plain" usefile="no"/>
-            <batchtest todir="${main.reports.test}">
-                <fileset dir="${main.src.test}">
-                	<include name="**/TestEmptyDocument.java"/>
-                	<include name="**/TestUnfixedBugs.java"/>
-                </fileset>
-            </batchtest>
+  <target name="test-fail" depends="compile-main,
+    fail-unless-junit-is-available"
+    description="run tests that are known to fail">
+    <junit printsummary="yes" showoutput="true" filtertrace="no"
+      haltonfailure="false">
+      <classpath refid="test.classpath"/>
+      <classpath>
+        <path refid="scratchpad.classpath"/>
+        <pathelement location="${main.output.dir}"/>
+        <pathelement location="${scratchpad.output.dir}"/>
+        <pathelement location="${scratchpad.output.test.dir}"/>
+        <pathelement location="${junit.jar1.dir}"/>
+      </classpath>
+      <sysproperty key="HSSF.testdata.path"
+        file="${main.src.test}/org/apache/poi/hssf/data"/>
+      <sysproperty key="HPSF.testdata.path"
+        file="${main.src.test}/org/apache/poi/hpsf/data"/>
+      <sysproperty key="HWPF.testdata.path"
+        file="${scratchpad.src.test}/org/apache/poi/hwpf/data"/>
+      <sysproperty key="java.awt.headless" value="true"/>
+      <formatter type="plain" usefile="no"/>
+      <batchtest todir="${main.reports.test}">
+        <fileset dir="${main.src.test}">
+          <include name="**/TestEmptyDocument.java"/>
+          <include name="**/TestUnfixedBugs.java"/>
+        </fileset>
+      </batchtest>
+    </junit>
+  </target>        
 
-		</junit>
-	</target>	
+
+
     <target name="single-test" depends="-test-property-check,compile-main" description="Runs a single test case specified with -Dtestcase=classname">
         <junit printsummary="yes" showoutput="true" filtertrace="no" haltonfailure="false" >
             <classpath refid="test.classpath"/>
-        	 <classpath>
-        	                <path refid="scratchpad.classpath"/>
-        	                <pathelement location="${main.output.dir}"/>
-        	                <pathelement location="${scratchpad.output.dir}"/>
-        	                <pathelement location="${scratchpad.output.test.dir}"/>
-        	                <pathelement location="${junit.jar1.dir}"/>
-        	            </classpath>
+                 <classpath>
+                                <path refid="scratchpad.classpath"/>
+                                <pathelement location="${main.output.dir}"/>
+                                <pathelement location="${scratchpad.output.dir}"/>
+                                <pathelement location="${scratchpad.output.test.dir}"/>
+                                <pathelement location="${junit.jar1.dir}"/>
+                            </classpath>
             <sysproperty key="HSSF.testdata.path" file="${main.src.test}/org/apache/poi/hssf/data"/>
             <sysproperty key="HPSF.testdata.path" file="${main.src.test}/org/apache/poi/hpsf/data"/>
             <sysproperty key="HWPF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hwpf/data"/>
-        	<sysproperty key="java.awt.headless" value="true"/>
+                <sysproperty key="java.awt.headless" value="true"/>
             <formatter type="plain" usefile="no"/>
             <formatter type="xml"/>
             <test name="${testcase}"/>
@@ -547,7 +564,8 @@ FORREST_HOME environment variable!</echo>
 
 
   <!-- Generates a log of the latest changes in the CVS repository. -->
-  <target name="cvschangelog" unless="disconnected" depends="is-available-xslt"
+  <target name="cvschangelog" unless="disconnected"
+    depends="fail-unless-xslt-is-available"
     description="Generates a CVS change log report">
     <antcall target="cvs-rsh-warning"/>
     <cvschangelog destfile="${changelog.file}" daysinpast="30"/>
@@ -573,9 +591,9 @@ FORREST_HOME environment variable!</echo>
 
   <!-- Creates reports and API documentation -->
   <target name="reports" unless="reports.notRequired" depends="-check-reports,
-    is-available-xslt, is-available-junit, is-available-jdepend,
-    test-ignore-failures, junitreport, jdepend, cvschangelog, javadocs,
-    clover.html"
+    fail-unless-xslt-is-available, fail-unless-junit-is-available,
+    fail-unless-jdepend-is-available, test-ignore-failures, junitreport,
+    jdepend, cvschangelog, javadocs, clover.html"
     description="Creates various reports and the API documentation">
   </target>
 
@@ -591,7 +609,8 @@ FORREST_HOME environment variable!</echo>
 
 
   <!-- Produces a report of the JUnit test results -->
-  <target name="junitreport" depends="is-available-xslt, test-ignore-failures"
+  <target name="junitreport"
+    depends="fail-unless-xslt-is-available, test-ignore-failures"
     description="Produces a report of the JUnit test results">
     <junitreport todir="${junit.report.dir}">
       <fileset dir="${main.reports.test}">
@@ -610,21 +629,18 @@ FORREST_HOME environment variable!</echo>
 
 
   <!-- Generates the API documentation. -->
-  <target name="javadocs" depends="init"
+  <target name="javadocs" depends="init, warn-unless-junit-is-available,
+    warn-unless-xslt-is-available"
     description="Generates the API documentation">
-    <javadoc
-      destdir="${apidocs.report.dir}"
-      author="true"
-      version="true"
-      use="true"
-      verbose="false"
-      windowtitle="POI API Documentation">
+    <javadoc verbose="false" author="true" destdir="${apidocs.report.dir}"
+      windowtitle="POI API Documentation" use="true" version="true">
 
       <packageset dir="${main.src}" defaultexcludes="yes">
         <include name="org/apache/poi/**"/>
       </packageset>
       <packageset dir="${scratchpad.src}" defaultexcludes="yes">
         <include name="org/apache/poi/**"/>
+        <exclude name="org/apache/poi/hdf/**"/>
       </packageset>
       <packageset dir="${contrib.src}" defaultexcludes="yes">
         <include name="org/apache/poi/**"/>
@@ -633,11 +649,12 @@ FORREST_HOME environment variable!</echo>
         <include name="org/apache/poi/**"/>
       </packageset>
 
-      <classpath>
+      <classpath id="javadoc.classpath">
         <path refid="main.classpath"/>
         <path refid="scratchpad.classpath"/>
         <path refid="contrib.classpath"/>
         <path refid="examples.classpath"/>
+        <path path="${env.CLASSPATH}"/>
       </classpath>
 
       <doctitle><![CDATA[<h1>POI API Documentation</h1>]]></doctitle>
@@ -645,13 +662,30 @@ FORREST_HOME environment variable!</echo>
         <![CDATA[<i>Copyright ${tstamp.year} The Apache Software Foundation or
         its licensors, as applicable.</i>]]>
       </bottom>
-      <group title="HDF" packages="org.apache.poi.hdf*"/>
-      <group title="HPSF" packages="org.apache.poi.hpsf*"/>
-      <group title="HSSF" packages="org.apache.poi.hssf*"/>
-      <group title="HWPF" packages="org.apache.poi.hwpf*"/>
-      <group title="POIFS" packages="org.apache.poi.poifs*"/>
-      <group title="Record Generator" packages="org.apache.poi.record*"/>
-      <group title="Utils" packages="org.apache.poi.util*"/>
+      <group>
+        <title>DDF - Dreadful Drawing Format</title>
+        <package name="org.apache.poi.ddf*"/>
+      </group>
+      <group>
+        <title>HPSF - Horrible Property Set Format</title>
+        <package name="org.apache.poi.hpsf*"/>
+      </group>
+      <group>
+        <title>HSSF - Horrible Spreadsheet Format</title>
+        <package name="org.apache.poi.hssf*"/>
+      </group>
+      <group>
+        <title>HWPF - Horrible Word Processor Format</title>
+        <package name="org.apache.poi.hwpf*"/>
+      </group>
+      <group>
+        <title>POIFS - POI File System</title>
+        <package name="org.apache.poi.poifs*"/>
+      </group>
+      <group>
+        <title>Utilities</title>
+        <package name="org.apache.poi.util*"/>
+      </group>
       <group>
         <title>Examples</title>
         <package name="org.apache.poi.hpsf.examples*"/>
@@ -660,53 +694,48 @@ FORREST_HOME environment variable!</echo>
     </javadoc>
 
     <antcall target="clover.html"/>
-
   </target>
 
 
 
-    <!-- ================================== -->
-    <!--       Generate records                -->
-    <!-- ================================== -->
+  <!-- ================================== -->
+  <!--       Generate records                -->
+  <!-- ================================== -->
 
-    <target name="generate-records" depends="init"
-        description="Generates HSSF records">
-        <java classname="org.apache.poi.dev.RecordGenerator" fork="yes">
-            <arg location="src/records/definitions"/>
-            <arg location="src/records/styles"/>
-            <arg location="src/java"/>
-            <arg location="src/testcases"/>
-            <classpath>
-                <path refid="scratchpad.classpath">
-                </path>
-                <pathelement location="${main.output.dir}"/>
-                <pathelement location="${scratchpad.output.dir}"/>
-            </classpath>
-        </java>
+  <target name="generate-records" depends="init"
+    description="Generates HSSF records"> 
+    <java classname="org.apache.poi.dev.RecordGenerator" fork="yes">
+      <arg file="src/records/definitions"/>
+      <arg file="src/records/styles"/>
+      <arg file="src/java"/>
+      <arg file="src/testcases"/>
+      <classpath>
+        <path refid="scratchpad.classpath"/>
+        <pathelement location="${main.output.dir}"/>
+        <pathelement location="${scratchpad.output.dir}"/>
+      </classpath>
+    </java>  
+  </target>
 
-    </target>
+  <!-- ================================== -->
+  <!--       Generate types               -->
+  <!-- ================================== -->
 
-    <!-- ================================== -->
-    <!--       Generate types                -->
-    <!-- ================================== -->
-
-    <target name="generate-types" depends="init"
-        description="Generates word types">
-
-        <java classname="org.apache.poi.dev.RecordGenerator" fork="yes">
-            <arg location="src/types/definitions"/>
-            <arg location="src/types/styles"/>
-            <arg location="src/scratchpad/src"/>
-            <arg location="src/scratchpad/testcases"/>
-            <classpath>
-                <path refid="scratchpad.classpath">
-                </path>
-                <pathelement location="${main.output.dir}"/>
-                <pathelement location="${scratchpad.output.dir}"/>
-            </classpath>
-        </java>
-
-    </target>
+  <target name="generate-types" depends="init"
+    description="Generates word types">
+    <java classname="org.apache.poi.dev.RecordGenerator" fork="yes">
+      <arg file="src/types/definitions"/>
+      <arg file="src/types/styles"/>
+      <arg file="src/scratchpad/src"/>
+      <arg file="src/scratchpad/testcases"/>
+      <classpath>
+        <path refid="scratchpad.classpath">
+        </path>
+        <pathelement location="${main.output.dir}"/>
+        <pathelement location="${scratchpad.output.dir}"/>
+      </classpath>
+    </java>
+  </target>
 
 
 
@@ -758,60 +787,62 @@ FORREST_HOME environment variable!</echo>
         </jar>
     </target>
 
-    <target name="dist" depends="compile,site,jar" description="Creates the entire distribution into build/dist">
+  <target name="dist" depends="fail-unless-tools-are-available, compile, site, jar"
+    description="Creates the entire distribution into build/dist">
 
-        <zip destfile="${dist.dir}/${jar.name}-bin-${version.id}-${DSTAMP}.zip">
-            <zipfileset dir="${build.site}" prefix="docs"/>
-            <zipfileset file="${dist.dir}/${jar.name}-${version.id}-${DSTAMP}.jar"/>
-            <zipfileset file="${dist.dir}/${jar.name}-contrib-${version.id}-${DSTAMP}.jar"/>
-            <zipfileset file="${dist.dir}/${jar.name}-scratchpad-${version.id}-${DSTAMP}.jar"/>
-            <zipfileset dir="legal" prefix="legal"/>
-        </zip>
+    <zip destfile="${dist.dir}/${jar.name}-bin-${version.id}-${DSTAMP}.zip">
+      <zipfileset dir="${build.site}" prefix="docs"/>
+      <zipfileset file="${dist.dir}/${jar.name}-${version.id}-${DSTAMP}.jar"/>
+      <zipfileset file="${dist.dir}/${jar.name}-contrib-${version.id}-${DSTAMP}.jar"/>
+      <zipfileset file="${dist.dir}/${jar.name}-scratchpad-${version.id}-${DSTAMP}.jar"/>
+      <zipfileset dir="legal" prefix="legal"/>
+    </zip>
 
-        <zip destfile="${dist.dir}/${jar.name}-src-${version.id}-${DSTAMP}.zip">
-            <zipfileset dir="${build.site}" prefix="docs"/>
-            <zipfileset dir=".">
-                <exclude name="build/**"/>
-                <exclude name="scripts/**"/>
-                <exclude name="*.ipr"/>
-                <exclude name="*.iml"/>
-                <exclude name="*.iws"/>
-            </zipfileset>
-        </zip>
+    <zip destfile="${dist.dir}/${jar.name}-src-${version.id}-${DSTAMP}.zip">
+      <zipfileset dir="${build.site}" prefix="docs"/>
+      <zipfileset dir=".">
+        <exclude name="build/**"/>
+        <exclude name="scripts/**"/>
+        <exclude name="*.ipr"/>
+        <exclude name="*.iml"/>
+        <exclude name="*.iws"/>
+      </zipfileset>
+    </zip>
 
-        <tar destfile="${dist.dir}/${jar.name}-bin-${version.id}-${DSTAMP}.tar.gz" compression="gzip">
-            <tarfileset dir="${build.site}" prefix="docs"/>
-            <tarfileset file="${dist.dir}/${jar.name}-${version.id}-${DSTAMP}.jar"/>
-            <tarfileset file="${dist.dir}/${jar.name}-contrib-${version.id}-${DSTAMP}.jar"/>
-            <tarfileset file="${dist.dir}/${jar.name}-scratchpad-${version.id}-${DSTAMP}.jar"/>
-            <tarfileset dir="legal" prefix="legal"/>
-        </tar>
+    <tar destfile="${dist.dir}/${jar.name}-bin-${version.id}-${DSTAMP}.tar.gz"
+      compression="gzip">
+      <tarfileset dir="${build.site}" prefix="docs"/>
+      <tarfileset file="${dist.dir}/${jar.name}-${version.id}-${DSTAMP}.jar"/>
+      <tarfileset file="${dist.dir}/${jar.name}-contrib-${version.id}-${DSTAMP}.jar"/>
+      <tarfileset file="${dist.dir}/${jar.name}-scratchpad-${version.id}-${DSTAMP}.jar"/>
+      <tarfileset dir="legal" prefix="legal"/>
+    </tar>
 
-        <tar destfile="${dist.dir}/${jar.name}-src-${version.id}-${DSTAMP}.tar.gz" compression="gzip">
-            <tarfileset dir="${build.site}" prefix="docs"/>
-            <tarfileset dir=".">
-                <exclude name="build/**"/>
-                <exclude name="scripts/**"/>
-                <exclude name="*.ipr"/>
-                <exclude name="*.iml"/>
-                <exclude name="*.iws"/>
-            </tarfileset>
-        </tar>
+    <tar destfile="${dist.dir}/${jar.name}-src-${version.id}-${DSTAMP}.tar.gz"
+      compression="gzip">
+      <tarfileset dir="${build.site}" prefix="docs"/>
+      <tarfileset dir=".">
+        <exclude name="build/**"/>
+        <exclude name="scripts/**"/>
+        <exclude name="*.ipr"/>
+        <exclude name="*.iml"/>
+        <exclude name="*.iws"/>
+      </tarfileset>
+    </tar>
 
-        <echo>Distribution located in build/dist</echo>
+    <echo>Distribution located in build/dist</echo>
+  </target>
 
-    </target>
+  <target name="clean-compile" depends="clean, compile"/>
 
-    <target name="clean-compile" depends="clean,compile"/>
+  <target name="clean-dist" depends="clean, dist"
+    description="Cleans the build directory then creates a distribution"/>
 
-    <target name="clean-dist" depends="clean,dist"
-      description="Cleans the build directory then creates a distribution"/>
-
-    <target name="gump" depends="test,jar"/>
-
+  <target name="gump" depends="test, jar"/>
 
 
-  <!-- Generates the ANT document type definition (DTD) -->
+
+  <!-- Generates the Ant document type definition (DTD) -->
   <target name="dtd"
     description="Generates the Ant document type definition (DTD)">
     <antstructure output="ant.dtd"/>
@@ -819,17 +850,16 @@ FORREST_HOME environment variable!</echo>
 
 
 
-  <!-- Still experimental targets: -->
 
   <!-- Abort the build if JUnit is missing. -->
-  <target name="is-available-junit" depends="init">
+  <target name="fail-unless-junit-is-available" depends="init">
     <condition property="isAvailable.junit">
       <available classname="junit.framework.TestCase"/>
     </condition>
-    <antcall target="check-junit"/>
+    <antcall target="fail-junit"/>
   </target>
 
-  <target name="check-junit" unless="isAvailable.junit">
+  <target name="fail-junit" unless="isAvailable.junit">
     <echo>
       JUnit is not available. You must download JUnit from
       &lt;http://www.junit.org/&gt; and include the JAR file in your
@@ -838,17 +868,34 @@ FORREST_HOME environment variable!</echo>
     <fail message="JUnit is not available."/>
   </target>
 
+  <!-- Warn if JUnit is missing. -->
+  <target name="warn-unless-junit-is-available" depends="init">
+    <condition property="isAvailable.junit">
+      <available classname="junit.framework.TestCase"/>
+    </condition>
+    <antcall target="warn-junit"/>
+  </target>
+
+  <target name="warn-junit" unless="isAvailable.junit">
+    <echo>
+      WARNING: Since JUnit is not available you might encounter failures
+      subsequently. In order to avoid this you should download JUnit from
+      &lt;http://www.junit.org/&gt; and include the JAR file in your
+      classpath.
+    </echo> 
+  </target>
+
 
 
   <!-- Abort the build if JDepend is missing. -->
-  <target name="is-available-jdepend" depends="init">
+  <target name="fail-unless-jdepend-is-available" depends="init">
     <condition property="isAvailable.jdepend">
       <available classname="jdepend.framework.JDepend"/>
     </condition>
-    <antcall target="check-jdepend"/>
+    <antcall target="fail-jdepend"/>
   </target>
 
-  <target name="check-jdepend" unless="isAvailable.jdepend">
+  <target name="fail-jdepend" unless="isAvailable.jdepend">
     <echo>
       JDepend is not available. You must download JDepend from
       &lt;http://www.clarkware.com/software/JDepend.html&gt; and include the
@@ -859,34 +906,51 @@ FORREST_HOME environment variable!</echo>
 
 
 
-  <!-- Abort the build if the Xalan XSLT processor is missing. The
-       "junitreport" task seems to explicitly require Xalan instead of being
-       able to cope with any XSLT processor. -->
-  <target name="is-available-xslt" depends="init">
+  <!-- Abort the build if an XSLT processor is missing. -->
+  <target name="fail-unless-xslt-is-available" depends="init">
     <condition property="isAvailable.xslt">
-      <and>
-        <available
-          classname="javax.xml.transform.TransformerFactory"/>
-        <available
-          classname="org.apache.xalan.processor.TransformerFactoryImpl"/> 
-      </and>
+      <available classname="javax.xml.transform.TransformerFactory"/>
     </condition>
-    <antcall target="check-xslt"/>
+    <antcall target="fail-xslt"/>
   </target>
 
-  <target name="check-xslt" unless="isAvailable.xslt">
+  <target name="fail-xslt" unless="isAvailable.xslt">
     <echo>
-      The Xalan XSLT processor is not available. You must download Xalan from
+      An XSLT processor is missing. You must download e.g. Xalan from
       &lt;http://xml.apache.org/xalan-j/&gt; and include the JAR file in your
       classpath.
     </echo> 
-    <fail message="The Xalan XSLT processor is not available."/>
+    <fail message="An XSLT processor is not available."/>
   </target>
+
+  <!-- Warn if an XSLT processor is missing. -->
+  <target name="warn-unless-xslt-is-available" depends="init">
+    <condition property="isAvailable.xslt">
+      <available classname="javax.xml.transform.TransformerFactory"/>
+    </condition>
+    <antcall target="warn-xslt"/>
+  </target>
+
+  <target name="warn-xslt" unless="isAvailable.xslt">
+    <echo>
+      WARNING: Since an XSLT processor is not available you might encounter
+      failures subsequently. In order to avoid this you should download
+      e.g. Xalan from &lt;http://xml.apache.org/xalan-j/&gt; and include the
+      JAR file in your classpath.
+    </echo> 
+  </target>
+
+
+
+  <!-- Aborts the build if any of the required tools are missing. -->
+  <target name="fail-unless-tools-are-available"
+    depends="fail-unless-junit-is-available, fail-unless-junit-is-available,
+    fail-unless-jdepend-is-available"/>
 
 
 
   <!-- Runs jdepend to produce a report about package dependencies -->
-  <target name="jdepend" depends="is-available-jdepend"
+  <target name="jdepend" depends="fail-unless-jdepend-is-available"
     description="Runs jdepend to produce a report about package dependencies">
     <jdepend outputfile="${jdepend.report.dir}/jdepend.xml" format="xml">
       <classespath>
