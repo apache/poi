@@ -115,7 +115,7 @@ public class FormulaParser {
     private void Abort(String s) {
         Error(s);
         //System.exit(1);  //throw exception??
-        throw new RuntimeException("Cannot Parse, sorry : "+s);
+        throw new RuntimeException("Cannot Parse, sorry : "+s + " [Formula String was: '"+formulaString+"']");
     }
     
     
@@ -466,6 +466,11 @@ public class FormulaParser {
     		Factor();
     		tokens.add(new UnaryMinusPtg());
     	}
+        else if (look == '+') {
+            Match('+');
+            Factor();
+            tokens.add(new UnaryPlusPtg());
+        }
         else if (look == '(' ) {
             Match('(');
             Expression();

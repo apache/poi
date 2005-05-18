@@ -36,6 +36,7 @@ import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.record.formula.ReferencePtg;
 import org.apache.poi.hssf.record.formula.StringPtg;
 import org.apache.poi.hssf.record.formula.UnaryMinusPtg;
+import org.apache.poi.hssf.record.formula.UnaryPlusPtg;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -323,7 +324,17 @@ public class TestFormulaParser extends TestCase {
 		Ptg[] ptg = fp.getRPNPtg();
 		assertTrue("got 2 ptgs", ptg.length == 2);
 		assertTrue("first ptg is reference",ptg[0] instanceof ReferencePtg);
-		assertTrue("second ptg is string",ptg[1] instanceof UnaryMinusPtg);
+		assertTrue("second ptg is Minus",ptg[1] instanceof UnaryMinusPtg);
+     }
+    
+    public void testUnaryPlus()
+    {
+		FormulaParser fp = new FormulaParser("+A1", null);
+		fp.parse();
+		Ptg[] ptg = fp.getRPNPtg();
+		assertTrue("got 2 ptgs", ptg.length == 2);
+		assertTrue("first ptg is reference",ptg[0] instanceof ReferencePtg);
+		assertTrue("second ptg is Plus",ptg[1] instanceof UnaryPlusPtg);
      }
     
 	public void testLeadingSpaceInString()
