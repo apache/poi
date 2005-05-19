@@ -815,7 +815,7 @@ public class NameRecord extends Record {
             }
         } catch (java.lang.UnsupportedOperationException uoe) {
             System.err.println("[WARNING] Unknown Ptg "
-                    + uoe.getMessage() );
+                    + uoe.getMessage() + "for named range: "+ field_12_name_text);
             field_13_raw_name_definition=new byte[size];
             System.arraycopy(data,offset,field_13_raw_name_definition,0,size);
             return null;
