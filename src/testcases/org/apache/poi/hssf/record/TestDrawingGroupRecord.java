@@ -127,8 +127,8 @@ public class TestDrawingGroupRecord extends TestCase
     {
         for (int i = 0; i < MAX_RECORD_SIZE * 4; i += 11)
         {
-            System.out.print( "data size = " + i + ", gross size = " + DrawingGroupRecord.grossSizeFromDataSize( i ) );
-            System.out.println( "  Diff: " + (DrawingGroupRecord.grossSizeFromDataSize( i ) - i) );
+            //System.out.print( "data size = " + i + ", gross size = " + DrawingGroupRecord.grossSizeFromDataSize( i ) );
+            //System.out.println( "  Diff: " + (DrawingGroupRecord.grossSizeFromDataSize( i ) - i) );
         }
 
         assertEquals( 4, DrawingGroupRecord.grossSizeFromDataSize( 0 ) );
