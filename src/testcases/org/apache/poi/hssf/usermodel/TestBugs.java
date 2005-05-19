@@ -515,6 +515,15 @@ extends TestCase {
 	       HSSFWorkbook wb = new HSSFWorkbook(in);
 	       assertTrue("Read book fine!" , true);
 	}
+	
+	/*NullPointerException on reading file*/
+	public void test34775() throws java.io.IOException {
+	       String filename = System.getProperty("HSSF.testdata.path");
+	       filename=filename+"/34775.xls";
+	       FileInputStream in = new FileInputStream(filename);
+	       HSSFWorkbook wb = new HSSFWorkbook(in);
+	       assertTrue("Read book fine!" , true);
+	}
 
 }
 
