@@ -23,6 +23,8 @@ import java.util.Stack;
 
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.formula.Area3DPtg;
+import org.apache.poi.hssf.record.formula.DeletedArea3DPtg;
+import org.apache.poi.hssf.record.formula.DeletedRef3DPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.record.formula.Ref3DPtg;
 import org.apache.poi.hssf.util.RangeAddress;
@@ -664,7 +666,7 @@ public class NameRecord extends Record {
      * @return area reference
      */
     public String getAreaReference(Workbook book){
-        if (field_13_name_definition == null || field_13_name_definition.isEmpty()) return "#REF!";
+        if (field_13_name_definition == null || field_13_name_definition.isEmpty()) return "Error";
         Ptg ptg = (Ptg) field_13_name_definition.peek();
         String result = "";
 
@@ -673,7 +675,8 @@ public class NameRecord extends Record {
 
         } else if (ptg.getClass() == Ref3DPtg.class){
             result = ptg.toFormulaString(book);
-        }
+        } else if (ptg.getClass() == DeletedArea3DPtg.class || ptg.getClass() == DeletedRef3DPtg.class) {
+        	result = "#REF!"   ;     }
 
         return result;
     }
