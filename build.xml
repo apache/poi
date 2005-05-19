@@ -164,6 +164,8 @@
 
       -Ddisconnected="true": Do not execute any targets that require an online
           connection to the Internet.
+      -Dtestcase=org.apache.poi.xxx.xxx : for the single-test target, specify
+	      the test to run
 
       WARNING: This list is not exhaustive.
     </echo>
@@ -328,7 +330,7 @@
 
   <target name="test-main" unless="main.test.notRequired"
     depends="compile-main, -test-main-check, fail-unless-junit-is-available">
-    <junit fork="no" printsummary="no" haltonfailure="${halt.on.test.failure}"
+    <junit fork="no" printsummary="yes" haltonfailure="${halt.on.test.failure}"
       failureproperty="main.test.failed" showoutput="true">
       <classpath refid="test.classpath"/>
       <sysproperty key="HSSF.testdata.path"
@@ -387,7 +389,7 @@
         <junit printsummary="yes" showoutput="true" filtertrace="no" haltonfailure="false" >
             <classpath refid="test.classpath"/>
                  <classpath>
-                                <path refid="scratchpad.classpath"/>
+                                <path refid="test.classpath"/>
                                 <pathelement location="${main.output.dir}"/>
                                 <pathelement location="${scratchpad.output.dir}"/>
                                 <pathelement location="${scratchpad.output.test.dir}"/>
@@ -434,7 +436,7 @@
     </target>
 
     <target name="test-scratchpad" depends="compile-scratchpad,-test-scratchpad-check" unless="scratchpad.test.notRequired">
-        <junit printsummary="no" fork="no" haltonfailure="${halt.on.test.failure}" failureproperty="scratchpad.test.failed">
+        <junit printsummary="yes" fork="no" haltonfailure="${halt.on.test.failure}" failureproperty="scratchpad.test.failed">
             <classpath>
                 <path refid="scratchpad.classpath"/>
                 <pathelement location="${main.output.dir}"/>
@@ -464,6 +466,27 @@
         <echo file="${scratchpad.testokfile}" append="false" message="testok"/>
     </target>
 
+	<target name="single-scratchpad-test" depends="compile-scratchpad,-test-property-check" description="Runs a single test case specified with -Dtestcase=classname">
+	        <junit printsummary="yes" showoutput="true" filtertrace="no" haltonfailure="false" >
+	            <classpath refid="test.classpath"/>
+	                 <classpath>
+	                                <path refid="scratchpad.classpath"/>
+	                                <pathelement location="${main.output.dir}"/>
+	                                <pathelement location="${scratchpad.output.dir}"/>
+	                                <pathelement location="${scratchpad.output.test.dir}"/>
+	                                <pathelement location="${junit.jar1.dir}"/>
+	                            </classpath>
+	            <sysproperty key="HSSF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hssf/data"/>
+	            <sysproperty key="HPSF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hpsf/data"/>
+	            <sysproperty key="HWPF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hwpf/data"/>
+	            <sysproperty key="java.awt.headless" value="true"/>
+	                <sysproperty key="java.awt.headless" value="true"/>
+	            <formatter type="plain" usefile="no"/>
+	            <formatter type="xml"/>
+	            <test name="${testcase}"/>
+	        </junit>
+	    </target>
+	
     <target name="-test-contrib-check">
         <uptodate property="contrib.test.notRequired" targetfile="${contrib.testokfile}">
             <srcfiles dir="${contrib.src}"/>
