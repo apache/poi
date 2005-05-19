@@ -1094,6 +1094,32 @@ extends TestCase {
     	 File file = TempFile.createTempFile("testComplexSheetRefs",".xls");
     	 sb.write(new FileOutputStream(file));
     }
+    
+	/*Unknown Ptg 3C*/
+	public void test27272_1() throws Exception {
+		String readFilename = System.getProperty("HSSF.testdata.path");	
+		File inFile = new File(readFilename+"/27272_1.xls");
+		FileInputStream in = new FileInputStream(inFile);
+		HSSFWorkbook wb = new HSSFWorkbook(in);
+		wb.getSheetAt(0);
+		assertEquals("Reference for named range ", "#REF!",wb.getNameAt(0).getReference());
+		File outF = File.createTempFile("bug27272_1",".xls");
+		wb.write(new FileOutputStream(outF));
+		System.out.println("Open "+outF.getAbsolutePath()+" in Excel");
+	}
+	/*Unknown Ptg 3D*/
+	public void test27272_2() throws Exception {
+		String readFilename = System.getProperty("HSSF.testdata.path");	
+		File inFile = new File(readFilename+"/27272_2.xls");
+		FileInputStream in = new FileInputStream(inFile);
+		HSSFWorkbook wb = new HSSFWorkbook(in);
+		assertEquals("Reference for named range ", "#REF!",wb.getNameAt(0).getReference());
+		File outF = File.createTempFile("bug27272_2",".xls");
+		wb.write(new FileOutputStream(outF));
+		System.out.println("Open "+outF.getAbsolutePath()+" in Excel");
+	}
+    
+    
     public static void main(String [] args) {
         System.out
         .println("Testing org.apache.poi.hssf.usermodel.TestFormulas");

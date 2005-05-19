@@ -260,6 +260,20 @@ public abstract class Ptg
                 retval = new Ref3DPtg(data, offset);
                 break;
                 
+            case DeletedArea3DPtg.sid :      // 0x3c     
+            case DeletedArea3DPtg.sid+0x20 : // 0x5c     
+            case DeletedArea3DPtg.sid+0x40 : // 0x7c     
+
+                retval = new DeletedArea3DPtg(data, offset);
+                break;
+
+            case DeletedRef3DPtg.sid:      // 0x3d      
+            case DeletedRef3DPtg.sid+0x20: // 0x5d     
+            case DeletedRef3DPtg.sid+0x40: // 0x7d     
+
+                retval = new DeletedRef3DPtg(data, offset);
+                break;
+                
             case MissingArgPtg.sid:
                 retval = new MissingArgPtg(data,offset);
                 break;
