@@ -23,7 +23,7 @@
 		</section>
 		<section><title>Status</title>
 			<p>	The code currently provides implementations for all the arithmatic operators.
-				It also provides implementations for about 30 built in 
+				It also provides implementations for approx. 20 built in 
 				functions in Excel. The framework however makes is easy to add 
 			 	implementation of new functions. See the <link href="eval-devguide.html"> Formula
 				evaluation development guide</link> for details. </p>
@@ -47,19 +47,17 @@ HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(sheet, wb);
 CellReference cellReference = new CellReference("B3"); 
 HSSFRow row = sheet.getRow(cellReference.getRow());
 HSSFCell cell = row.getCell(cellReference.getCol()); 
-String formulaString = c.getCellFormula();
-HSSFFormulaEvaluator.CellValue cellValue = 
-        evaluator.evaluate(formulaString);
+HSSFFormulaEvaluator.CellValue cellValue = evaluator.evaluate(cell);
 
 switch (cellValue.getCellType()) {
 	case HSSFCell.CELL_TYPE_BOOLEAN:
-    	System.out.println(cellValue.getBooleanCellValue());
+    	System.out.println(cellValue.getBooleanValue());
     	break;
 	case HSSFCell.CELL_TYPE_NUMERIC:
-    	System.out.println(cellValue.getNumberCellValue());
+    	System.out.println(cellValue.getNumberValue());
     	break;
 	case HSSFCell.CELL_TYPE_STRING:
-    	System.out.println(cellValue.getStringCellValue());
+    	System.out.println(cellValue.getStringValue());
     	break;
 	case HSSFCell.CELL_TYPE_BLANK:
     	break;
@@ -83,7 +81,7 @@ switch (cellValue.getCellType()) {
 			<section><title>Using HSSFFormulaEvaluator.<strong>evaluateInCell</strong>(HSSFCell cell)
 				</title>
 				<source>
-FileInputStream fis = new FileInputStream("c:/temp/test.xls");
+FileInputStream fis = new FileInputStream("/somepath/test.xls");
 HSSFWorkbook wb = new HSSFWorkbook(fis);
 HSSFSheet sheet = wb.getSheetAt(0);
 HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(sheet, wb);
@@ -92,7 +90,7 @@ HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(sheet, wb);
 CellReference cellReference = new CellReference("B3"); 
 HSSFRow row = sheet.getRow(cellReference.getRow());
 HSSFCell cell = row.getCell(cellReference.getCol()); 
-String formulaString = c.getCellFormula();
+
 
 if (cell!=null) {
 	switch (<strong>evaluator.evaluateInCell</strong>(cell).getCellType()) {
@@ -119,10 +117,6 @@ if (cell!=null) {
 					</source>
 
 				</section>
-		</section>
-		
-		<section><title></title>
-			
 		</section>
 		
 		<section><title>Performance Notes</title>
