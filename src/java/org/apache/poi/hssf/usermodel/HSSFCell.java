@@ -30,6 +30,9 @@ import org.apache.poi.hssf.record.*;
 import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
 import org.apache.poi.hssf.record.formula.Ptg;
 
+import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -38,13 +41,12 @@ import java.util.Date;
  * Cells can be numeric, formula-based or string-based (text).  The cell type
  * specifies this.  String cells cannot conatin numbers and numeric cells cannot
  * contain strings (at least according to our model).  Client apps should do the
- * conversions themselves.  Formula cells are treated like string cells, simply
- * containing a formula string.  They'll be rendered differently.
+ * conversions themselves.  Formula cells have the formula string, as well as 
+ * the formula result, which can be numeric or string. 
  * <p>
  * Cells should have their number (0 based) before being added to a row.  Only
  * cells that have values should be added.
  * <p>
- * NOTE: the alpha won't be implementing formulas
  *
  * @author  Andrew C. Oliver (acoliver at apache dot org)
  * @author  Dan Sherman (dsherman at isisph.com)
@@ -941,5 +943,42 @@ public class HSSFCell
     {
         this.sheet.setActiveCellRow(this.row);
         this.sheet.setActiveCellCol(this.cellNum);
+    }
+    
+    /**
+     * Returns a string representation of the cell
+     * 
+     * This method returns a simple representation, 
+     * anthing more complex should be in user code, with
+     * knowledge of the semantics of the sheet being processed. 
+     * 
+     * Formula cells return the formula string, 
+     * rather than the formula result. 
+     * Dates are displayed in dd-MMM-yyyy format
+     * Errors are displayed as #ERR&lt;errIdx&gt;
+     */
+    public String toString() {
+    	switch     (getCellType()) {
+    		case CELL_TYPE_BLANK:
+    			return "";
+    		case CELL_TYPE_BOOLEAN:
+    			return getBooleanCellValue()?"TRUE":"FALSE";
+    		case CELL_TYPE_ERROR:
+    			return "#ERR"+getErrorCellValue();
+    		case CELL_TYPE_FORMULA:
+    			return getCellFormula();
+    		case CELL_TYPE_NUMERIC:
+    			//TODO apply the dataformat for this cell
+    			if (HSSFDateUtil.isCellDateFormatted(this)) {
+    				DateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
+    				return sdf.format(getDateCellValue());
+    			}else {
+    				return  getNumericCellValue() + "";
+    			}
+    		case CELL_TYPE_STRING:
+    			return getStringCellValue();
+    		default:
+    			return "Unknown Cell Type: " + getCellType();
+    	}
     }
 }
