@@ -814,6 +814,7 @@ FORREST_HOME environment variable!</echo>
     description="Creates the entire distribution into build/dist">
 
     <zip destfile="${dist.dir}/${jar.name}-bin-${version.id}-${DSTAMP}.zip">
+      <zipfileset dir="legal/"/>
       <zipfileset dir="${build.site}" prefix="docs"/>
       <zipfileset file="${dist.dir}/${jar.name}-${version.id}-${DSTAMP}.jar"/>
       <zipfileset file="${dist.dir}/${jar.name}-contrib-${version.id}-${DSTAMP}.jar"/>
@@ -822,6 +823,7 @@ FORREST_HOME environment variable!</echo>
     </zip>
 
     <zip destfile="${dist.dir}/${jar.name}-src-${version.id}-${DSTAMP}.zip">
+      <zipfileset dir="legal/"/>    
       <zipfileset dir="${build.site}" prefix="docs"/>
       <zipfileset dir=".">
         <exclude name="build/**"/>
@@ -834,6 +836,7 @@ FORREST_HOME environment variable!</echo>
 
     <tar destfile="${dist.dir}/${jar.name}-bin-${version.id}-${DSTAMP}.tar.gz"
       compression="gzip">
+      <tarfileset dir="legal/"/>
       <tarfileset dir="${build.site}" prefix="docs"/>
       <tarfileset file="${dist.dir}/${jar.name}-${version.id}-${DSTAMP}.jar"/>
       <tarfileset file="${dist.dir}/${jar.name}-contrib-${version.id}-${DSTAMP}.jar"/>
@@ -843,6 +846,7 @@ FORREST_HOME environment variable!</echo>
 
     <tar destfile="${dist.dir}/${jar.name}-src-${version.id}-${DSTAMP}.tar.gz"
       compression="gzip">
+      <tarfileset dir="legal/"/>
       <tarfileset dir="${build.site}" prefix="docs"/>
       <tarfileset dir=".">
         <exclude name="build/**"/>
