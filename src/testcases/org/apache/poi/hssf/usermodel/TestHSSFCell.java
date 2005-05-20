@@ -244,6 +244,42 @@ extends TestCase {
             in.close();
     }    
     
+    /*tests the toString() method of HSSFCell*/
+    public void testToString() throws Exception {
+    	HSSFWorkbook wb = new HSSFWorkbook();
+    	HSSFSheet s = wb.createSheet("Sheet1");
+    	HSSFRow r = s.createRow(0);
+    	HSSFCell c;
+    	c=r.createCell((short) 0); c.setCellValue(true);
+    	assertEquals("Boolean", "TRUE", c.toString());
+    	c=r.createCell((short) 1); c.setCellValue(1.5);
+    	assertEquals("Numeric", "1.5", c.toString());
+    	c=r.createCell((short)(2)); c.setCellValue("Astring");
+    	assertEquals("String", "Astring", c.toString());
+    	c=r.createCell((short) 3); c.setCellErrorValue((byte) 7);
+    	assertEquals("Error", "#ERR7", c.toString());
+    	c=r.createCell((short)4); c.setCellFormula("A1+B1");
+    	assertEquals("Formula", "A1+B1", c.toString());
+    	
+    	//Write out the file, read it in, and then check cell values
+    	File f = File.createTempFile("testCellToString",".xls");
+    	wb.write(new FileOutputStream(f));
+    	wb = new HSSFWorkbook(new FileInputStream(f));
+    	assertTrue("File exists and can be read", f.canRead());
+    	
+    	s = wb.getSheetAt(0);r=s.getRow(0);
+    	c=r.getCell((short) 0);
+    	assertEquals("Boolean", "TRUE", c.toString());
+    	c=r.getCell((short) 1); 
+    	assertEquals("Numeric", "1.5", c.toString());
+    	c=r.getCell((short)(2)); 
+    	assertEquals("String", "Astring", c.toString());
+    	c=r.getCell((short) 3); 
+    	assertEquals("Error", "#ERR7", c.toString());
+    	c=r.getCell((short)4); 
+    	assertEquals("Formula", "A1+B1", c.toString());
+    }
+    
     public static void main(String [] args) {
         System.out
         .println("Testing org.apache.poi.hssf.usermodel.TestHSSFCell");
