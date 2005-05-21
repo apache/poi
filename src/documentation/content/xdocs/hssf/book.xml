@@ -19,7 +19,6 @@
 		<menu-item label="Eval Dev Guide" href="eval-devguide.html" />
         <menu-item label="Use Case" href="use-case.html"/>
         <menu-item label="Pictorial Docs" href="diagrams.html"/>
-        <menu-item label="Alternatives" href="alternatives.html"/>
         <menu-item label="Limitations" href="limitations.html"/>
     </menu>
 

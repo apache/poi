@@ -17,7 +17,6 @@
             <menu-item label="Apoyo Con Fórmulas" href="formula.html" />
             <menu-item label="Use Case" href="use-case.html"/>
             <menu-item label="Diagramas" href="diagrams.html"/>
-            <menu-item label="Alternativas" href="alternatives.html"/>
             <menu-item label="Limitaciones" href="limitations.html"/>
         </menu>
 
