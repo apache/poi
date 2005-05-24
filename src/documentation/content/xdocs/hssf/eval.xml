@@ -15,11 +15,10 @@
 				formulas in Excels sheets read-in, or created in POI. This document explains
 				how to use the API to evaluate your formulas. 
 			</p>
-			<warning> This code currently lives in Bugzilla as 
-				<link href="http://issues.apache.org/bugzilla/show_bug.cgi?id=34828"> 
-				bug 34828 </link>. It is expected to land in POI CVS in the scratchpad 
-				area soon.
-			</warning>
+			<note> This code currently lives the scratchpad area of the POI CVS repository. 
+				Ensure that you have the scratchpad jar or the scratchpad build area in your
+				classpath before experimenting with this code.
+			</note>
 		</section>
 		<section><title>Status</title>
 			<p>	The code currently provides implementations for all the arithmatic operators.
