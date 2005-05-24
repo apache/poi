@@ -221,6 +221,10 @@ public class HSSFCellStyle
     public final static short     SQUARES             = 15 ;
     /**  Diamonds */
     public final static short     DIAMONDS            = 16 ;
+    /**  Less Dots */
+    public final static short     LESS_DOTS           = 17 ;
+    /**  Least Dots */
+    public final static short     LEAST_DOTS          = 18 ;
 
 
     /** Creates new HSSFCellStyle why would you want to do this?? */
