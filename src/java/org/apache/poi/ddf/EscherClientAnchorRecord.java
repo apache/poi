@@ -47,6 +47,7 @@ public class EscherClientAnchorRecord
     private short field_8_row2;
     private short field_9_dy2;
     private byte[] remainingData;
+    private boolean shortRecord = false;
 
     /**
      * This method deserializes the record from a byte array.
@@ -61,15 +62,22 @@ public class EscherClientAnchorRecord
         int bytesRemaining = readHeader( data, offset );
         int pos            = offset + 8;
         int size           = 0;
+
+        // Always find 4 two byte entries. Sometimes find 9
         field_1_flag   =  LittleEndian.getShort( data, pos + size );     size += 2;
         field_2_col1   =  LittleEndian.getShort( data, pos + size );     size += 2;
         field_3_dx1    =  LittleEndian.getShort( data, pos + size );     size += 2;
         field_4_row1   =  LittleEndian.getShort( data, pos + size );     size += 2;
-        field_5_dy1    =  LittleEndian.getShort( data, pos + size );     size += 2;
-        field_6_col2   =  LittleEndian.getShort( data, pos + size );     size += 2;
-        field_7_dx2    =  LittleEndian.getShort( data, pos + size );     size += 2;
-        field_8_row2   =  LittleEndian.getShort( data, pos + size );     size += 2;
-        field_9_dy2    =  LittleEndian.getShort( data, pos + size );     size += 2;
+        if(bytesRemaining >= 18) {
+		    field_5_dy1    =  LittleEndian.getShort( data, pos + size );     size += 2;
+		    field_6_col2   =  LittleEndian.getShort( data, pos + size );     size += 2;
+		    field_7_dx2    =  LittleEndian.getShort( data, pos + size );     size += 2;
+		    field_8_row2   =  LittleEndian.getShort( data, pos + size );     size += 2;
+		    field_9_dy2    =  LittleEndian.getShort( data, pos + size );     size += 2;
+			shortRecord = false;
+        } else {
+			shortRecord = true;
+		}
         bytesRemaining -= size;
         remainingData  =  new byte[bytesRemaining];
         System.arraycopy( data, pos + size, remainingData, 0, bytesRemaining );
@@ -92,19 +100,21 @@ public class EscherClientAnchorRecord
         if (remainingData == null) remainingData = new byte[0];
         LittleEndian.putShort( data, offset, getOptions() );
         LittleEndian.putShort( data, offset + 2, getRecordId() );
-        int remainingBytes = remainingData.length + 18;
+        int remainingBytes = remainingData.length + (shortRecord ? 8 : 18);
         LittleEndian.putInt( data, offset + 4, remainingBytes );
         LittleEndian.putShort( data, offset + 8, field_1_flag );
         LittleEndian.putShort( data, offset + 10, field_2_col1 );
         LittleEndian.putShort( data, offset + 12, field_3_dx1 );
         LittleEndian.putShort( data, offset + 14, field_4_row1 );
-        LittleEndian.putShort( data, offset + 16, field_5_dy1 );
-        LittleEndian.putShort( data, offset + 18, field_6_col2 );
-        LittleEndian.putShort( data, offset + 20, field_7_dx2 );
-        LittleEndian.putShort( data, offset + 22, field_8_row2 );
-        LittleEndian.putShort( data, offset + 24, field_9_dy2 );
-        System.arraycopy( remainingData, 0, data, offset + 26, remainingData.length );
-        int pos = offset + 8 + 18 + remainingData.length;
+        if(!shortRecord) {
+            LittleEndian.putShort( data, offset + 16, field_5_dy1 );
+            LittleEndian.putShort( data, offset + 18, field_6_col2 );
+            LittleEndian.putShort( data, offset + 20, field_7_dx2 );
+            LittleEndian.putShort( data, offset + 22, field_8_row2 );
+            LittleEndian.putShort( data, offset + 24, field_9_dy2 );
+        }
+        System.arraycopy( remainingData, 0, data, offset + (shortRecord ? 16 : 26), remainingData.length );
+        int pos = offset + 8 + (shortRecord ? 8 : 18) + remainingData.length;
 
         listener.afterRecordSerialize( pos, getRecordId(), pos - offset, this );
         return pos - offset;
@@ -117,7 +127,7 @@ public class EscherClientAnchorRecord
      */
     public int getRecordSize()
     {
-        return 8 + 18 + (remainingData == null ? 0 : remainingData.length);
+        return 8 + (shortRecord ? 8 : 18) + (remainingData == null ? 0 : remainingData.length);
     }
 
     /**
@@ -249,6 +259,7 @@ public class EscherClientAnchorRecord
      */
     public void setDy1( short field_5_dy1 )
     {
+        shortRecord = false;
         this.field_5_dy1 = field_5_dy1;
     }
 
@@ -265,6 +276,7 @@ public class EscherClientAnchorRecord
      */
     public void setCol2( short field_6_col2 )
     {
+        shortRecord = false;
         this.field_6_col2 = field_6_col2;
     }
 
@@ -281,6 +293,7 @@ public class EscherClientAnchorRecord
      */
     public void setDx2( short field_7_dx2 )
     {
+        shortRecord = false;
         this.field_7_dx2 = field_7_dx2;
     }
 
@@ -297,6 +310,7 @@ public class EscherClientAnchorRecord
      */
     public void setRow2( short field_8_row2 )
     {
+        shortRecord = false;
         this.field_8_row2 = field_8_row2;
     }
 
@@ -313,6 +327,7 @@ public class EscherClientAnchorRecord
      */
     public void setDy2( short field_9_dy2 )
     {
+        shortRecord = false;
         this.field_9_dy2 = field_9_dy2;
     }
 
