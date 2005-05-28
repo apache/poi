@@ -21,7 +21,8 @@
         <menu-item label="HSSF" href="hssf/index.html"/>
         <menu-item label="HWPF" href="hwpf/index.html"/>
         <menu-item label="HPSF" href="hpsf/index.html"/>
-	<menu-item label="POI-Ruby" href="poi-ruby.html"/>
+        <menu-item label="HSLF" href="hslf/index.html"/>
+		<menu-item label="POI-Ruby" href="poi-ruby.html"/>
         <menu-item label="POI-Utils" href="utils/index.html"/>
         <menu-item label="Download" href="ext:download"/>
     </menu>

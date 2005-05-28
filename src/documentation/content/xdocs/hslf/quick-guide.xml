@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (C) 2004 The Apache Software Foundation. All rights reserved. -->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "../dtd/document-v11.dtd">
+
+<document>
+    <header>
+        <title>POI-HSLF - A Quick Guide</title>
+        <subtitle>Overview</subtitle>
+        <authors>
+            <person name="Nick Burch" email="nick at torchbox dot com"/>
+        </authors>
+    </header>
+
+    <body>
+        <section><title>Basic Text Extraction</title>
+        <p>For basic text extraction, make use of 
+<code>org.apache.poi.extractor.PowerPointExtractor</code>. It accepts a file or an input
+stream. The <code>getText()</code> method can be used to get the text from the slides,
+from the notes, or from both.
+		</p>
+		</section>
+		
+		<section><title>Specific Text Extraction</title>
+		<p>To get specific bits of text, first create a <code>org.apache.poi.usermodel.SlideShow</code>
+(from a <code>org.apache.poi.HSLFSlideShow</code>, which accepts a file or an input
+stream). Use <code>getSlides()</code> and <code>getNotes()</code> to get the slides and notes.
+These can be queried to get their page ID (though they should be returned
+in the right order). You can also call <code>getTextRuns()</code> on these, to get their
+blocks of text. From the <code>TextRun</code>, you can extract the text, and check
+what type of text it is (eg Body, Title)
+		</p>
+		</section>
+		
+		<section><title>Changing Text</title>
+		<p>It is possible to change the text via <code>TextRun.setText(String)</code>. However, if
+the length of the text is changed, things will break because PowerPoint has
+internal file references in byte offsets, which are not yet all updated when
+the size changes.
+		</p>
+		</section>
+		
+		<section><title>Guide to key classes</title>
+		<ul>
+		<li><code>org.apache.poi.hslf.HSLFSlideShow</code>
+  Handles reading in and writing out files. Generates a tree of the records
+  in the file
+  		</li>
+  		<li><code>org.apache.poi.hslf.usermode.SlideShow</code>
+  Builds up model entries from the records, and presents a user facing
+  view of the file
+  		</li>
+  		<li><code>org.apache.poi.hslf.extractor.PowerPointExtractor</code>
+  Uses the model code to allow extraction of text from files
+		</li>
+		</ul>
+		</section>
+	</body>
+</document>
