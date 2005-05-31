@@ -234,5 +234,4 @@ public class FormulaRecordAggregate
         if(stringRecord==null) return null;
         return stringRecord.getString();
    }
-
 }
