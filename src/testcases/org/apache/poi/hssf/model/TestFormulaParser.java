@@ -388,6 +388,21 @@ public class TestFormulaParser extends TestCase {
 		        assertTrue("IntPtg",(ptgs[1] instanceof IntPtg));
 		        assertTrue("DividePtg",(ptgs[2] instanceof DividePtg));
 	}
+	
+	/** bug 35027, underscore in sheet name*/
+	public void testUnderscore() {
+		HSSFWorkbook wb = new HSSFWorkbook();
+    	
+    	wb.createSheet("Cash_Flow");;
+    	
+    	HSSFSheet sheet = wb.createSheet("Test");
+    	HSSFRow row = sheet.createRow(0);
+    	HSSFCell cell;
+    	
+    	cell = row.createCell((short)0);
+    	cell.setCellFormula("Cash_Flow!A1");
+		
+	}
 
      public static void main(String [] args) {
         System.out.println("Testing org.apache.poi.hssf.record.formula.FormulaParser");

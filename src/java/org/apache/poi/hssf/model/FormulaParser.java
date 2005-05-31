@@ -129,7 +129,7 @@ public class FormulaParser {
  
     /** Recognize an Alpha Character */
     private boolean IsAlpha(char c) {
-        return Character.isLetter(c) || c == '$';
+        return Character.isLetter(c) || c == '$' || c=='_';
     }
     
     
