@@ -340,9 +340,20 @@ public class Sheet implements Model
           ValueRecordsAggregate vrAgg = (ValueRecordsAggregate)rec;
           for (Iterator cellIter = vrAgg.getIterator();cellIter.hasNext();) {
             Record valRec = (Record)cellIter.next();
-            clonedRecords.add(valRec);
+            
+            if (valRec instanceof FormulaRecordAggregate) {
+                FormulaRecordAggregate fmAgg = (FormulaRecordAggregate)valRec;
+                Record fmAggRec = fmAgg.getFormulaRecord();
+                if (fmAggRec != null)
+                  clonedRecords.add(fmAggRec);
+                fmAggRec =   fmAgg.getStringRecord();
+                if (fmAggRec != null)
+                  clonedRecords.add(fmAggRec);
+              } else {
+                clonedRecords.add(valRec);
+              }
           }
-        } else if (rec instanceof FormulaRecordAggregate) {
+        } else if (rec instanceof FormulaRecordAggregate) {  //Is this required now??
           FormulaRecordAggregate fmAgg = (FormulaRecordAggregate)rec;
           Record fmAggRec = fmAgg.getFormulaRecord();
           if (fmAggRec != null)
