@@ -58,5 +58,22 @@ public class TestUnfixedBugs extends TestCase {
        HSSFWorkbook wb = new HSSFWorkbook(in);
        assertTrue("Read book fine!" , true);
    }
-	 
+	
+	 /* cell with formula becomes null on cloning a sheet*/
+	 public void test35084() {
+    	
+    	HSSFWorkbook wb = new HSSFWorkbook();
+    	HSSFSheet s =wb.createSheet("Sheet1");
+    	HSSFRow r = s.createRow(0);
+    	r.createCell((short)0).setCellValue(1);
+    	r.createCell((short)1).setCellFormula("A1*2");
+    	HSSFSheet s1 = wb.cloneSheet(0);
+    	r=s1.getRow(0);
+    	assertEquals("double" ,r.getCell((short)0).getNumericCellValue(),(double)1,0); //sanity check, pass
+    	assertNotNull(r.getCell((short)1)); //Fails
+    	assertEquals("formula", r.getCell((short)1).getCellFormula(), "A1*2"); //Fails
+    	
+    	
+    	
+    }
 }
