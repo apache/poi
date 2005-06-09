@@ -126,7 +126,9 @@ public class PowerPointExtractor
   }
 
   /**
-   * Fetches text from the slideshow, be it slide text or note text
+   * Fetches text from the slideshow, be it slide text or note text.
+   * Because the final block of text in a TextRun normally have their
+   *  last \n stripped, we add it back
    * @param getSlideText fetch slide text
    * @param getNoteText fetch note text
    */
@@ -139,10 +141,12 @@ public class PowerPointExtractor
 			TextRun[] runs = slide.getTextRuns();
 			for(int j=0; j<runs.length; j++) {
 				TextRun run = runs[j];
-				String text = run.getText();
-				ret.append(text);
-				if(! text.endsWith("\n")) {
-					ret.append("\n");
+				if(run != null) {
+					String text = run.getText();
+					ret.append(text);
+					if(! text.endsWith("\n")) {
+						ret.append("\n");
+					}
 				}
 			}
 		}
