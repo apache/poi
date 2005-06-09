@@ -269,7 +269,7 @@ public class HSLFSlideShow
 		_records[i].writeOut(baos);
 	}
 	// Update our cached copy of the bytes that make up the PPT stream
-	_docstream = baos.toByteArray()
+	_docstream = baos.toByteArray();
 
 	// Write the PPT stream into the POIFS layer
 	ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
