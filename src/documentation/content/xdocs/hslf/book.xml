@@ -13,6 +13,7 @@
     <menu label="HSLF">
         <menu-item label="Overview" href="index.html"/>
         <menu-item label="Quick Guide" href="quick-guide.html"/>
+        <menu-item label="PPT File Format" href="ppt-file-format.html"/>
 	</menu>
 	
 </book>
