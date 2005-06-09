@@ -17,32 +17,20 @@ import org.apache.poi.hssf.record.formula.eval.ValueEvalToNumericXlator;
  * Log: LOG(number,[base])
  */
 public class Log extends NumericFunction {
-    
-    private static final ValueEvalToNumericXlator NUM_XLATOR = 
-        new ValueEvalToNumericXlator((short)
-                ( ValueEvalToNumericXlator.BOOL_IS_PARSED 
-                | ValueEvalToNumericXlator.EVALUATED_REF_BOOL_IS_PARSED
-                | ValueEvalToNumericXlator.EVALUATED_REF_STRING_IS_PARSED
-                | ValueEvalToNumericXlator.REF_BOOL_IS_PARSED
-                | ValueEvalToNumericXlator.STRING_IS_PARSED
-                ));
-    
-    private static final double DEFAULT_BASE = 10;
 
-    protected ValueEvalToNumericXlator getXlator() {
-        return NUM_XLATOR;
-    }
+    private static final double DEFAULT_BASE = 10;
 
     public Eval evaluate(Eval[] operands, int srcRow, short srcCol) {
         double d = 0;
         double base = DEFAULT_BASE;
         double num = 0;
         ValueEval retval = null;
-        
+
         switch (operands.length) {
         default:
+            retval = ErrorEval.VALUE_INVALID;
             break;
-        case 2: // second arg is base 
+        case 2: // second arg is base
             ValueEval ve = singleOperandEvaluate(operands[1], srcRow, srcCol);
             if (ve instanceof NumericValueEval) {
                 NumericValueEval ne = (NumericValueEval) ve;
@@ -54,7 +42,7 @@ public class Log extends NumericFunction {
             else {
                 retval = ErrorEval.NUM_ERROR;
             }
-            
+
         case 1: // first arg is number
             if (retval == null) {
                 ValueEval vev = singleOperandEvaluate(operands[0], srcRow, srcCol);
@@ -70,9 +58,9 @@ public class Log extends NumericFunction {
                 }
             }
         }
-        
+
         if (retval == null) {
-            d = (base == E) 
+            d = (base == E)
                 ? Math.log(num)
                 : Math.log(num) / Math.log(base);
             retval = (Double.isNaN(d) || Double.isInfinite(d)) ? (ValueEval) ErrorEval.VALUE_INVALID : new NumberEval(d);

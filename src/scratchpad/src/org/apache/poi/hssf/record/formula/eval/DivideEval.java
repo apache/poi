@@ -22,6 +22,7 @@ public class DivideEval extends NumericOperationEval {
                 | ValueEvalToNumericXlator.EVALUATED_REF_STRING_IS_PARSED
                 | ValueEvalToNumericXlator.REF_BOOL_IS_PARSED
                 | ValueEvalToNumericXlator.STRING_IS_PARSED
+                | ValueEvalToNumericXlator.REF_STRING_IS_PARSED
                 ));
 
     public DivideEval(Ptg ptg) {

@@ -10,25 +10,33 @@ package org.apache.poi.hssf.record.formula.eval;
  */
 public class ValueEvalToNumericXlator {
 
-    public static final short STRING_IS_PARSED = 0x0001;
-    public static final short BOOL_IS_PARSED = 0x0002;
+    public static final int STRING_IS_PARSED = 0x0001;
+    public static final int BOOL_IS_PARSED = 0x0002;
+    public static final int BLANK_IS_PARSED = 0x0004; // => blanks are not ignored, converted to 0
     
-    public static final short REF_STRING_IS_PARSED = 0x0004;
-    public static final short REF_BOOL_IS_PARSED = 0x0008;
+    public static final int REF_STRING_IS_PARSED = 0x0008;
+    public static final int REF_BOOL_IS_PARSED = 0x0010;
+    public static final int REF_BLANK_IS_PARSED = 0x0020;
     
-    public static final short EVALUATED_REF_STRING_IS_PARSED = 0x0010;
-    public static final short EVALUATED_REF_BOOL_IS_PARSED = 0x0020;
+    public static final int EVALUATED_REF_STRING_IS_PARSED = 0x0040;
+    public static final int EVALUATED_REF_BOOL_IS_PARSED = 0x0080;
+    public static final int EVALUATED_REF_BLANK_IS_PARSED = 0x0100;
     
-    public static final short STRING_TO_BOOL_IS_PARSED = 0x0040;
-    public static final short REF_STRING_TO_BOOL_IS_PARSED = 0x0080;
+    public static final int STRING_TO_BOOL_IS_PARSED = 0x0200;
+    public static final int REF_STRING_TO_BOOL_IS_PARSED = 0x0400;
     
-    public static final short STRING_IS_INVALID_VALUE = 0x0100;
-    public static final short REF_STRING_IS_INVALID_VALUE = 0x200;
+    public static final int STRING_IS_INVALID_VALUE = 0x0800;
+    public static final int REF_STRING_IS_INVALID_VALUE = 0x1000;
     
-    private final short flags;
+//    public static final int BOOL_IS_BLANK = 0x2000;
+//    public static final int REF_BOOL_IS_BLANK = 0x4000;
+//    public static final int STRING_IS_BLANK = 0x8000;
+//    public static final int REF_STRING_IS_BLANK = 0x10000;
+    
+    private final int flags;
     
     
-    public ValueEvalToNumericXlator(short flags) {
+    public ValueEvalToNumericXlator(int flags) {
         this.flags = flags;
     }
     
@@ -52,23 +60,20 @@ public class ValueEvalToNumericXlator {
         }
         
         // booleval
-        else if (((flags | BOOL_IS_PARSED) > 0) && eval instanceof BoolEval) {
-            retval = (NumericValueEval) eval;
+        else if (eval instanceof BoolEval) {
+            retval = ((flags & BOOL_IS_PARSED) > 0)
+                ? (NumericValueEval) eval
+                : xlateBlankEval(BLANK_IS_PARSED);
         } 
         
         // stringeval 
         else if (eval instanceof StringEval) {
-            retval = handleStringEval((StringEval) eval);
+            retval = xlateStringEval((StringEval) eval); // TODO: recursive call needed
         }
         
         // refeval
         else if (eval instanceof RefEval) {
-            retval = handleRefEval((RefEval) eval);
-        }
-        
-        //blankeval
-        else if (eval instanceof BlankEval) {
-            retval = eval;
+            retval = xlateRefEval((RefEval) eval);
         }
         
         // erroreval
@@ -76,11 +81,29 @@ public class ValueEvalToNumericXlator {
             retval = eval;
         }
         
+        else if (eval instanceof BlankEval) {
+            retval = xlateBlankEval(BLANK_IS_PARSED);
+        }
+        
         // probably AreaEval? then not acceptable.
         else {
             throw new RuntimeException("Invalid ValueEval type passed for conversion: " + eval.getClass());
         }
+        
         return retval;
+    }
+    
+    /**
+     * no args are required since BlankEval has only one 
+     * instance. If flag is set, a zero
+     * valued numbereval is returned, else BlankEval.INSTANCE
+     * is returned.
+     * @return
+     */
+    private ValueEval xlateBlankEval(int flag) {
+        return ((flags & flag) > 0)
+                ? (ValueEval) NumberEval.ZERO
+                : BlankEval.INSTANCE;
     }
     
     /**
@@ -88,28 +111,25 @@ public class ValueEvalToNumericXlator {
      * @param eval
      * @return
      */
-    private ValueEval handleRefEval(RefEval reval) {
+    private ValueEval xlateRefEval(RefEval reval) {
         ValueEval retval = null;
         ValueEval eval = (ValueEval) reval.getInnerValueEval();
         
         // most common case - least worries :)
         if (eval instanceof NumberEval) {
-            retval = (NumberEval) eval; // the cast is correct :)
+            retval = (NumberEval) eval;
         }
         
         // booleval
-        else if (((flags | REF_BOOL_IS_PARSED) > 0) && eval instanceof BoolEval) {
-            retval = (NumericValueEval) eval;
+        else if (eval instanceof BoolEval) {
+            retval = ((flags & REF_BOOL_IS_PARSED) > 0)
+                    ? (ValueEval) eval
+                    : BlankEval.INSTANCE;
         } 
         
         // stringeval 
         else if (eval instanceof StringEval) {
-            retval = handleRefStringEval((StringEval) eval);
-        }
-        
-        //blankeval
-        else if (eval instanceof BlankEval) {
-            retval = eval;
+            retval = xlateRefStringEval((StringEval) eval);
         }
         
         // erroreval
@@ -117,10 +137,24 @@ public class ValueEvalToNumericXlator {
             retval = eval;
         }
         
-        // probably AreaEval or another RefEval? then not acceptable.
-        else {
+        // refeval
+        else if (eval instanceof RefEval) {
+            RefEval re = (RefEval) eval;
+            retval = xlateRefEval(re);
+        }
+        
+        else if (eval instanceof BlankEval) {
+            retval = xlateBlankEval(reval.isEvaluated() ? EVALUATED_REF_BLANK_IS_PARSED : REF_BLANK_IS_PARSED);
+        }
+        
+        // probably AreaEval ? then not acceptable.
+        else { 
             throw new RuntimeException("Invalid ValueEval type passed for conversion: " + eval.getClass());
         }
+
+        
+        
+
         return retval;
     }
     
@@ -129,20 +163,29 @@ public class ValueEvalToNumericXlator {
      * @param eval
      * @return
      */
-    private ValueEval handleStringEval(StringEval eval) {
+    private ValueEval xlateStringEval(StringEval eval) {
         ValueEval retval = null;
-        if ((flags | STRING_IS_PARSED) > 0) {
-            StringEval sve = (StringEval) eval;
-            String s = sve.getStringValue();
+        if ((flags & STRING_IS_PARSED) > 0) {
+            String s = eval.getStringValue();
             try { 
                 double d = Double.parseDouble(s);
                 retval = new NumberEval(d);
             } 
-            catch (Exception e) { retval = ErrorEval.VALUE_INVALID; }
+            catch (Exception e) {
+                if ((flags & STRING_TO_BOOL_IS_PARSED) > 0) {
+                    try { 
+                        boolean b = Boolean.getBoolean(s);
+                        retval = b ? BoolEval.TRUE : BoolEval.FALSE;
+                    } 
+                    catch (Exception e2) { retval = ErrorEval.VALUE_INVALID; }
+                }
+                else {
+                    retval = ErrorEval.VALUE_INVALID;
+                }
+            }
         }
-        else if ((flags | STRING_TO_BOOL_IS_PARSED) > 0) {
-            StringEval sve = (StringEval) eval;
-            String s = sve.getStringValue();
+        else if ((flags & STRING_TO_BOOL_IS_PARSED) > 0) {
+            String s = eval.getStringValue();
             try { 
                 boolean b = Boolean.getBoolean(s);
                 retval = b ? BoolEval.TRUE : BoolEval.FALSE;
@@ -151,13 +194,13 @@ public class ValueEvalToNumericXlator {
         }
         
         // strings are errors?
-        else if ((flags | STRING_IS_INVALID_VALUE) > 0) {
+        else if ((flags & STRING_IS_INVALID_VALUE) > 0) {
             retval = ErrorEval.VALUE_INVALID;
         }
         
         // ignore strings
         else {
-            retval = BlankEval.INSTANCE;
+            retval = xlateBlankEval(BLANK_IS_PARSED);
         }
         return retval;
     }
@@ -167,18 +210,29 @@ public class ValueEvalToNumericXlator {
      * @param eval
      * @return
      */
-    private ValueEval handleRefStringEval(StringEval eval) {
+    private ValueEval xlateRefStringEval(StringEval eval) {
         ValueEval retval = null;
-        if ((flags | REF_STRING_IS_PARSED) > 0) {
+        if ((flags & REF_STRING_IS_PARSED) > 0) {
             StringEval sve = (StringEval) eval;
             String s = sve.getStringValue();
             try { 
                 double d = Double.parseDouble(s);
                 retval = new NumberEval(d);
             } 
-            catch (Exception e) { retval = ErrorEval.VALUE_INVALID; }
+            catch (Exception e) { 
+                if ((flags & REF_STRING_TO_BOOL_IS_PARSED) > 0) {
+                    try { 
+                        boolean b = Boolean.getBoolean(s);
+                        retval = b ? BoolEval.TRUE : BoolEval.FALSE;
+                    } 
+                    catch (Exception e2) { retval = ErrorEval.VALUE_INVALID; }
+                }
+                else {
+                    retval = ErrorEval.VALUE_INVALID;
+                }
+            }
         }
-        else if ((flags | REF_STRING_TO_BOOL_IS_PARSED) > 0) {
+        else if ((flags & REF_STRING_TO_BOOL_IS_PARSED) > 0) {
             StringEval sve = (StringEval) eval;
             String s = sve.getStringValue();
             try { 
@@ -189,11 +243,11 @@ public class ValueEvalToNumericXlator {
         }
         
         // strings are errors?
-        else if ((flags | REF_STRING_IS_INVALID_VALUE) > 0) {
+        else if ((flags & REF_STRING_IS_INVALID_VALUE) > 0) {
             retval = ErrorEval.VALUE_INVALID;
         }
         
-        // ignore strings
+        // strings are blanks
         else {
             retval = BlankEval.INSTANCE;
         }

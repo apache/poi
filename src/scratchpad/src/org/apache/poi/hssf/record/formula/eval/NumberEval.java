@@ -13,6 +13,8 @@ import org.apache.poi.hssf.record.formula.Ptg;
  *  
  */
 public class NumberEval implements NumericValueEval, StringValueEval {
+    
+    public static final NumberEval ZERO = new NumberEval(0);
 
     private double value;
     private String stringValue;

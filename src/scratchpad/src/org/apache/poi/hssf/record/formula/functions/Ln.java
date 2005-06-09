@@ -14,29 +14,17 @@ import org.apache.poi.hssf.record.formula.eval.ValueEvalToNumericXlator;
 
 /**
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
- *  
+ *
  */
 public class Ln extends NumericFunction {
-    
-    private static final ValueEvalToNumericXlator NUM_XLATOR = 
-        new ValueEvalToNumericXlator((short)
-                ( ValueEvalToNumericXlator.BOOL_IS_PARSED 
-                | ValueEvalToNumericXlator.EVALUATED_REF_BOOL_IS_PARSED
-                | ValueEvalToNumericXlator.EVALUATED_REF_STRING_IS_PARSED
-                | ValueEvalToNumericXlator.REF_BOOL_IS_PARSED
-                | ValueEvalToNumericXlator.STRING_IS_PARSED
-                ));
-
-    protected ValueEvalToNumericXlator getXlator() {
-        return NUM_XLATOR;
-    }
 
     public Eval evaluate(Eval[] operands, int srcRow, short srcCol) {
         double d = 0;
         ValueEval retval = null;
-        
+
         switch (operands.length) {
         default:
+            retval = ErrorEval.VALUE_INVALID;
             break;
         case 1:
             ValueEval ve = singleOperandEvaluate(operands[0], srcRow, srcCol);
@@ -51,7 +39,7 @@ public class Ln extends NumericFunction {
                 retval = ErrorEval.NUM_ERROR;
             }
         }
-        
+
         if (retval == null) {
             d = Math.log(d);
             retval = (Double.isNaN(d) || Double.isInfinite(d)) ? (ValueEval) ErrorEval.VALUE_INVALID : new NumberEval(d);

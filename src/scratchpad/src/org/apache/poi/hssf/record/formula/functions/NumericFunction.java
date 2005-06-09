@@ -18,8 +18,32 @@ public abstract class NumericFunction implements Function {
     
     protected static final double E = Math.E;
     protected static final double PI = Math.PI;
+    
+    private static final ValueEvalToNumericXlator DEFAULT_NUM_XLATOR =
+        new ValueEvalToNumericXlator((short) (
+                  ValueEvalToNumericXlator.BOOL_IS_PARSED  
+                | ValueEvalToNumericXlator.REF_BOOL_IS_PARSED  
+                | ValueEvalToNumericXlator.EVALUATED_REF_BOOL_IS_PARSED  
+                | ValueEvalToNumericXlator.STRING_IS_PARSED  
+                | ValueEvalToNumericXlator.REF_STRING_IS_PARSED  
+                | ValueEvalToNumericXlator.EVALUATED_REF_STRING_IS_PARSED  
+              //| ValueEvalToNumericXlator.STRING_TO_BOOL_IS_PARSED  
+              //| ValueEvalToNumericXlator.REF_STRING_TO_BOOL_IS_PARSED  
+              //| ValueEvalToNumericXlator.STRING_IS_INVALID_VALUE  
+              //| ValueEvalToNumericXlator.REF_STRING_IS_INVALID_VALUE  
+                ));
+    
+    private static final int DEFAULT_MAX_NUM_OPERANDS = 30;
 
-    protected abstract ValueEvalToNumericXlator getXlator();
+    /**
+     * this is the default impl of the factory(ish) method getXlator.
+     * Subclasses can override this method
+     * if they desire to return a different ValueEvalToNumericXlator instance
+     * than the default.
+     */
+    protected ValueEvalToNumericXlator getXlator() {
+        return DEFAULT_NUM_XLATOR;
+    }
     
     protected ValueEval singleOperandEvaluate(Eval eval, int srcRow, short srcCol) {
         ValueEval retval;

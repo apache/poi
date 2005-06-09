@@ -10,33 +10,20 @@ import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.NumericValueEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
-import org.apache.poi.hssf.record.formula.eval.ValueEvalToNumericXlator;
 
 /**
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
- *  
+ *
  */
 public class Int extends NumericFunction {
-    
-    private static final ValueEvalToNumericXlator NUM_XLATOR = 
-        new ValueEvalToNumericXlator((short)
-                ( ValueEvalToNumericXlator.BOOL_IS_PARSED 
-                | ValueEvalToNumericXlator.EVALUATED_REF_BOOL_IS_PARSED
-                | ValueEvalToNumericXlator.EVALUATED_REF_STRING_IS_PARSED
-                | ValueEvalToNumericXlator.REF_BOOL_IS_PARSED
-                | ValueEvalToNumericXlator.STRING_IS_PARSED
-                ));
-
-    protected ValueEvalToNumericXlator getXlator() {
-        return NUM_XLATOR;
-    }
 
     public Eval evaluate(Eval[] operands, int srcRow, short srcCol) {
         double d = 0;
         ValueEval retval = null;
-        
+
         switch (operands.length) {
         default:
+            retval = ErrorEval.VALUE_INVALID;
             break;
         case 1:
             ValueEval ve = singleOperandEvaluate(operands[0], srcRow, srcCol);
@@ -51,12 +38,14 @@ public class Int extends NumericFunction {
                 retval = ErrorEval.NUM_ERROR;
             }
         }
-        
+
         if (retval == null) {
             if (d < 0) {
                 d = Math.round(d-0.5);
             }
-            retval = (Double.isNaN(d)) ? (ValueEval) ErrorEval.VALUE_INVALID : new NumberEval((long) d);
+            retval = (Double.isNaN(d))
+                    ? (ValueEval) ErrorEval.NUM_ERROR
+                    : new NumberEval((long) d);
         }
         return retval;
     }

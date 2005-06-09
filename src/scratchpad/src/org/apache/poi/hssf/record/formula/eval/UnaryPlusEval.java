@@ -18,7 +18,7 @@ public class UnaryPlusEval implements OperationEval /*extends NumericOperationEv
     /* 
      * COMMENT FOR COMMENTED CODE IN THIS FILE
      * 
-     * The loser who programmed this in excel didnt care to
+     * In excel the programmer seems to not have cared to
      * think about how strings were handled in other numeric
      * operations when he/she was implementing this operation :P
      * 
@@ -27,10 +27,8 @@ public class UnaryPlusEval implements OperationEval /*extends NumericOperationEv
      * Q. If the formula -"hello" evaluates to #VALUE! in excel, what should
      * the formula +"hello" evaluate to?
      * 
-     * A. +"hello" evaluates to "hello"
+     * A. +"hello" evaluates to "hello" (what the...?)
      * 
-     * DO NOT remove the commented code (In memory of the excel
-     * programmer who implemented the UnaryPlus operation :)
      */
 
     
