@@ -22,7 +22,14 @@ package org.apache.poi.hslf.dev;
 import org.apache.poi.hslf.*;
 import org.apache.poi.hslf.record.*;
 
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.poifs.filesystem.POIFSDocument;
+import org.apache.poi.poifs.filesystem.DocumentEntry;
+import org.apache.poi.poifs.filesystem.DocumentInputStream;
+import org.apache.poi.util.LittleEndian;
+
 import java.io.*;
+import java.util.Hashtable;
 
 /**
  * Uses record level code to locate UserEditAtom records, and other
@@ -30,13 +37,18 @@ import java.io.*;
  *  illuminate quite what all the offsets mean
  */
 public class UserEditAndPersistListing {
+	private static byte[] fileContents;
+
 	public static void main(String[] args) throws Exception {
 		if(args.length < 1) {
 			System.err.println("Need to give a filename");
 			System.exit(1);
 		}
 
+
+		// Create the slideshow object, for normal working with
 		HSLFSlideShow ss = new HSLFSlideShow(args[0]);
+		fileContents = ss.getUnderlyingBytes();
 		System.out.println("");
 
 		// Find any persist ones first
@@ -52,6 +64,26 @@ public class UserEditAndPersistListing {
 			if(r.getRecordType() == 6002l) {
 				// PersistPtrIncrementalBlock
 				System.out.println("Found PersistPtrIncrementalBlock at " + pos + " (" + Integer.toHexString(pos) + ")");
+				PersistPtrHolder pph = (PersistPtrHolder)r;
+
+				// Check the sheet offsets
+				int[] sheetIDs = pph.getKnownSlideIDs();
+				Hashtable sheetOffsets = pph.getSlideLocationsLookup();
+				for(int j=0; j<sheetIDs.length; j++) {
+					Integer id = new Integer(sheetIDs[j]);
+					Integer offset = (Integer)sheetOffsets.get(id);
+
+					System.out.println("  Knows about sheet " + id);
+					System.out.println("    That sheet lives at " + offset);
+
+					Record atPos = findRecordAtPos(offset.intValue());
+					System.out.println("    The record at that pos is of type " + atPos.getRecordType());
+					System.out.println("    The record at that pos has class " + atPos.getClass().getName());
+
+					if(! (atPos instanceof PositionDependentRecord)) {
+						System.out.println("    ** The record class isn't position aware! **");
+					}
+				}
 			}
 
 			// Increase the position by the on disk size
@@ -91,5 +123,16 @@ public class UserEditAndPersistListing {
 		System.out.println("  Thinks the CurrentEditOffset is " + cua.getCurrentEditOffset());
 		
 		System.out.println("");
+	}
+
+
+	// Finds the record at a given position
+	public static Record findRecordAtPos(int pos) {
+		long type = LittleEndian.getUShort(fileContents, pos+2);
+		long rlen = LittleEndian.getUInt(fileContents, pos+4);
+
+		Record r = Record.createRecordForType(type,fileContents,pos,(int)rlen+8);
+		
+		return r;
 	}
 }
