@@ -21,6 +21,7 @@ package org.apache.poi.hslf.record;
 import org.apache.poi.util.LittleEndian;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Hashtable;
 
 /**
  * A UserEdit Atom (type 4085). Holds information which bits of the file
@@ -75,9 +76,6 @@ public class UserEditAtom extends PositionDependentRecordAtom
 		// Sanity Checking
 		if(len < 34) { len = 34; }
 
-		// Store where we currently live on disk
-		myLastOnDiskOffset = start;
-
 		// Get the header
 		_header = new byte[8];
 		System.arraycopy(source,start,_header,0,8);
@@ -117,6 +115,28 @@ public class UserEditAtom extends PositionDependentRecordAtom
 	 * We are of type 4085
 	 */
 	public long getRecordType() { return _type; }
+
+	/**
+	 * At write-out time, update the references to PersistPtrs and
+	 *  other UserEditAtoms to point to their new positions
+	 */
+	public void updateOtherRecordReferences(Hashtable oldToNewReferencesLookup) {
+		// Look up the new positions of our preceding UserEditAtomOffset
+		if(lastUserEditAtomOffset != 0) {
+			Integer newLocation = (Integer)oldToNewReferencesLookup.get(new Integer(lastUserEditAtomOffset));
+			if(newLocation == null) {
+				throw new RuntimeException("Couldn't find the new location of the UserEditAtom that used to be at " + lastUserEditAtomOffset);
+			}
+			lastUserEditAtomOffset = newLocation.intValue();
+		}
+
+		// Ditto for our PersistPtr
+		Integer newLocation = (Integer)oldToNewReferencesLookup.get(new Integer(persistPointersOffset));
+		if(newLocation == null) {
+			throw new RuntimeException("Couldn't find the new location of the PersistPtr that used to be at " + persistPointersOffset);
+		}
+		persistPointersOffset = newLocation.intValue();
+	}
 
 	/**
 	 * Write the contents of the record back, so it can be written

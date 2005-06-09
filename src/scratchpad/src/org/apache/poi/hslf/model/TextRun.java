@@ -99,7 +99,7 @@ public class TextRun
 	public void setText(String s) {
 		// If size changed, warn
 		if(s.length() != getText().length()) {
-			System.err.println("Warning: Your powerpoint file is probably no longer readable by powerpoint, as the text run has changed size!");
+			System.err.println("Warning: Your powerpoint file may no longer readable by powerpoint, as the text run has changed size!");
 		}
 
 		if(_isUnicode) {
