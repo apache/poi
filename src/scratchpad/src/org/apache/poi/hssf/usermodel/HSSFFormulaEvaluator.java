@@ -280,7 +280,6 @@ public class HSSFFormulaEvaluator {
     protected static ValueEval internalEvaluate(HSSFCell srcCell, HSSFRow srcRow, HSSFSheet sheet, HSSFWorkbook workbook) {
         int srcRowNum = srcRow.getRowNum();
         short srcColNum = srcCell.getCellNum();
-        
         FormulaParser parser = new FormulaParser(srcCell.getCellFormula(), workbook.getWorkbook());
         parser.parse();
         Ptg[] ptgs = parser.getRPNPtg();
@@ -314,9 +313,6 @@ public class HSSFFormulaEvaluator {
                 // storing the ops in reverse order since they are popping
                 for (int j = numops - 1; j >= 0; j--) {
                     Eval p = (Eval) stack.pop();
-                    if (p instanceof ErrorEval) { // fast fail
-                        return (ErrorEval) p;
-                    }
                     ops[j] = p;
                 }
                 Eval opresult = operation.evaluate(ops, srcRowNum, srcColNum);
@@ -482,7 +478,7 @@ public class HSSFFormulaEvaluator {
                 retval = new StringEval(cell.getStringCellValue());
                 break;
             case HSSFCell.CELL_TYPE_FORMULA:
-                retval = (ValueEval) internalEvaluate(cell, row, sheet, workbook);
+                retval = internalEvaluate(cell, row, sheet, workbook);
                 break;
             case HSSFCell.CELL_TYPE_BOOLEAN:
                 retval = cell.getBooleanCellValue() ? BoolEval.TRUE : BoolEval.FALSE;

@@ -21,6 +21,7 @@ public class TestEverything extends TestSuite {
         	s = "D"+Integer.toString(i).trim();
         	suite.addTest(new GenericFormulaTestCase(s));
         }
+//        suite.addTest(new GenericFormulaTestCase("D1164"));
         return suite;
     }
 }

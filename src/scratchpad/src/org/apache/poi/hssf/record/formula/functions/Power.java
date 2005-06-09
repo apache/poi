@@ -10,27 +10,13 @@ import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.NumericValueEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
-import org.apache.poi.hssf.record.formula.eval.ValueEvalToNumericXlator;
 
 /**
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
  *  
  */
 public class Power extends NumericFunction {
-    
-    private static final ValueEvalToNumericXlator NUM_XLATOR = 
-        new ValueEvalToNumericXlator((short)
-                ( ValueEvalToNumericXlator.BOOL_IS_PARSED 
-                | ValueEvalToNumericXlator.EVALUATED_REF_BOOL_IS_PARSED
-                | ValueEvalToNumericXlator.EVALUATED_REF_STRING_IS_PARSED
-                | ValueEvalToNumericXlator.REF_BOOL_IS_PARSED
-                | ValueEvalToNumericXlator.STRING_IS_PARSED
-                ));
-
-    protected ValueEvalToNumericXlator getXlator() {
-        return NUM_XLATOR;
-    }
-
+   
     public Eval evaluate(Eval[] operands, int srcRow, short srcCol) {
         double d0 = 0;
         double d1 = 0;

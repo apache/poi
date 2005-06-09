@@ -13,6 +13,8 @@ import org.apache.poi.hssf.record.formula.StringPtg;
  */
 public class StringEval implements StringValueEval {
 
+    public static final StringEval EMPTY_INSTANCE = new StringEval("");
+    
     private String value;
 
     public StringEval(Ptg ptg) {

@@ -38,7 +38,7 @@ public abstract class RelationalOperationEval implements OperationEval {
         
         switch (operands.length) {
         default:
-            retval.ee = ErrorEval.ERROR_520;
+            retval.ee = ErrorEval.VALUE_INVALID;
             break;
         case 2:
             internalDoEvaluate(operands, srcRow, srcCol, retval, 0);
