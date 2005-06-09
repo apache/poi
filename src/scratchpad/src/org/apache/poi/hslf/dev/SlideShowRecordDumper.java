@@ -47,7 +47,7 @@ public class SlideShowRecordDumper
   public static void main(String args[]) throws IOException
   {
 	if(args.length == 0) {
-		System.err.println("Useage: SlideShowDumper <filename>");
+		System.err.println("Useage: SlideShowRecordDumper <filename>");
 		return;
 	}
 
