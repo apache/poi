@@ -24,59 +24,39 @@ import java.io.OutputStream;
 import java.io.ByteArrayOutputStream;
 
 /**
- * Master container for Slides. There is one of these for every slide,
- *  and they have certain specific children
+ * If we come across a record we know has children of (potential)
+ *  interest, but where the record itself is boring, but where other
+ *  records may care about where this one lives, we create one
+ *  of these. It allows us to get at the children, and track where on
+ *  disk this is, but not much else.
+ * Anything done using this should quite quickly be transitioned to its
+ *  own proper record class!
  *
  * @author Nick Burch
  */
 
-public class Slide extends PositionDependentRecordContainer
+public class DummyPositionSensitiveRecordWithChildren extends PositionDependentRecordContainer
 {
 	private Record[] _children;
 	private byte[] _header;
-	private static long _type = 1006l;
-
-	// Links to our more interesting children
-	private SlideAtom slideAtom;
-	private PPDrawing ppDrawing;
-
-	/**
-	 * Returns the SlideAtom of this Slide
-	 */
-	public SlideAtom getSlideAtom() { return slideAtom; }
-
-	/**
-	 * Returns the PPDrawing of this Slide, which has all the 
-	 *  interesting data in it
-	 */
-	public PPDrawing getPPDrawing() { return ppDrawing; }
-
+	private long _type;
 
 	/** 
-	 * Set things up, and find our more interesting children
+	 * Create a new holder for a boring record with children, but with
+	 *  position dependent characteristics
 	 */
-	protected Slide(byte[] source, int start, int len) {
-		// Grab the header
+	protected DummyPositionSensitiveRecordWithChildren(byte[] source, int start, int len) {
+		// Just grab the header, not the whole contents
 		_header = new byte[8];
 		System.arraycopy(source,start,_header,0,8);
+		_type = LittleEndian.getUShort(_header,2);
 
 		// Find our children
 		_children = Record.findChildRecords(source,start+8,len-8);
-
-		// Find the interesting ones in there
-		for(int i=0; i<_children.length; i++) {
-			if(_children[i] instanceof SlideAtom) {
-				slideAtom = (SlideAtom)_children[i];
-			}
-			if(_children[i] instanceof PPDrawing) {
-				ppDrawing = (PPDrawing)_children[i];
-			}
-		}
 	}
 
-
 	/**
-	 * We are of type 1006
+	 * Return the value we were given at creation
 	 */
 	public long getRecordType() { return _type; }
 

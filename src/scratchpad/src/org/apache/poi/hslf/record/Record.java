@@ -122,71 +122,98 @@ public abstract class Record
 	 *  (not including the size of the header), this code assumes you're
 	 *  passing in corrected lengths
 	 */
-	protected static Record createRecordForType(long type, byte[] b, int start, int len) {
+	public static Record createRecordForType(long type, byte[] b, int start, int len) {
+		Record toReturn = null;
+
 		// Default is to use UnknownRecordPlaceholder
 		// When you create classes for new Records, add them here
 		switch((int)type) {
 			// Document
 			case 1000:
-				return new DummyRecordWithChildren(b,start,len);
+				toReturn = new DummyPositionSensitiveRecordWithChildren(b,start,len);
+				break;
 				
 			// "Slide"
 			case 1006:
-				return new Slide(b,start,len);
+				toReturn = new Slide(b,start,len);
+				break;
 
 			// "SlideAtom"
 			case 1007:
-				return new SlideAtom(b,start,len);
+				toReturn = new SlideAtom(b,start,len);
+				break;
 
 			// "Notes"
 			case 1008:
-				return new Notes(b,start,len);
+				toReturn = new Notes(b,start,len);
+				break;
 				
 			// "NotesAtom" (Details on Notes sheets)
 			case 1009:
-				return new NotesAtom(b,start,len);
+				toReturn = new NotesAtom(b,start,len);
+				break;
 				
 			// "SlidePersistAtom" (Details on text for a sheet)
 			case 1011:
-				return new SlidePersistAtom(b,start,len);
+				toReturn = new SlidePersistAtom(b,start,len);
+				break;
 				
 			// MainMaster (MetaSheet lives inside the PPDrawing inside this)
 			case 1016:
-				return new DummyRecordWithChildren(b,start,len);
+				toReturn = new DummyPositionSensitiveRecordWithChildren(b,start,len);
+				break;
 
 			// PPDrawing (MetaSheet lives inside this)
 			case 1036:
-				return new PPDrawing(b,start,len);
+				toReturn = new PPDrawing(b,start,len);
+				break;
 
 			// TextHeaderAtom (Holds details on following text)
 			case 3999:
-				return new TextHeaderAtom(b,start,len);
+				toReturn = new TextHeaderAtom(b,start,len);
+				break;
 				
 			// TextCharsAtom (Text in Unicode format)
 			case 4000:
-				return new TextCharsAtom(b,start,len);
+				toReturn = new TextCharsAtom(b,start,len);
+				break;
 				
 			// TextByteAtom (Text in ascii format)
 			case 4008:
-				return new TextBytesAtom(b,start,len);
+				toReturn = new TextBytesAtom(b,start,len);
+				break;
 				
 			// SlideListWithText (Many Sheets live inside here)
 			case 4080:
-				return new SlideListWithText(b,start,len);
+				toReturn = new SlideListWithText(b,start,len);
+				break;
 
 			// UserEditAtom (Holds pointers, last viewed etc)
 			case 4085:
-				return new UserEditAtom(b,start,len);
+				toReturn = new UserEditAtom(b,start,len);
+				break;
 
 			// PersistPtrFullBlock (Don't know what it holds, but do care about where it lives)
 			case 6001:
-				return new PersistPtrHolder(b,start,len);
+				toReturn = new PersistPtrHolder(b,start,len);
+				break;
 			// PersistPtrIncrementalBlock (Don't know what it holds, but do care about where it lives)
 			case 6002:
-				return new PersistPtrHolder(b,start,len);
+				toReturn = new PersistPtrHolder(b,start,len);
+				break;
 				
 			default:
-				return new UnknownRecordPlaceholder(b,start,len);
+				toReturn = new UnknownRecordPlaceholder(b,start,len);
+				break;
 		}
+
+		// If it's a position aware record, tell it where it is
+		if(toReturn instanceof PositionDependentRecord) {
+			PositionDependentRecord pdr = (PositionDependentRecord)toReturn;
+			pdr.setLastOnDiskOffset(start);
+		}
+
+		// Return the record
+		return toReturn;
 	}
 }

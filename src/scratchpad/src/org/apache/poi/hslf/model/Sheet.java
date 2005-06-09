@@ -77,14 +77,21 @@ public abstract class Sheet
 			} else if(records[i+1] instanceof TextBytesAtom) {
 				TextBytesAtom tba = (TextBytesAtom)records[i+1];
 				trun = new TextRun(tha,tba);
+			} else if(records[i+1].getRecordType() == 4001l) {
+				// StyleTextPropAtom - Safe to ignore
 			} else if(records[i+1].getRecordType() == 4010l) {
-				// Safe to ignore
+				// TextSpecInfoAtom - Safe to ignore
 			} else {
 				System.err.println("Found a TextHeaderAtom not followed by a TextBytesAtom or TextCharsAtom: Followed by " + records[i+1].getRecordType());
 				continue;
 			}
-			found.add(trun);
-			i++;
+
+			if(trun != null) {
+				found.add(trun);
+				i++;
+			} else {
+				// Not a valid one, so skip on to next and look again
+			}
 		}
 	}
   }

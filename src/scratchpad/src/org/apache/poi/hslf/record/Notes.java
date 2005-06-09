@@ -30,7 +30,7 @@ import java.io.ByteArrayOutputStream;
  * @author Nick Burch
  */
 
-public class Notes extends RecordContainer
+public class Notes extends PositionDependentRecordContainer
 {
 	private Record[] _children;
 	private byte[] _header;

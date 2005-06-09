@@ -20,34 +20,33 @@ package org.apache.poi.hslf.record;
 import java.util.Hashtable;
 
 /**
- * A special (and dangerous) kind of Record Atom that cares about where
- *  it lives on the disk, or who has other Atoms that care about where
- *  this is on the disk.
+ * Records which either care about where they are on disk, or have other
+ *  records who care about where they are, will implement this interface.
+ * Normally, they'll subclass PositionDependentRecordAtom or
+ *  PositionDependentRecordContainer, which will do the work of providing
+ *  the setting and updating interfaces for them.
+ * This is a special (and dangerous) kind of Record. When created, they
+ *  need to be pinged with their current location. When written out, they
+ *  need to be given their new location, and offered the list of records
+ *  which have changed their location.
  *
  * @author Nick Burch
  */
 
-public abstract class PositionDependentRecordAtom extends RecordAtom implements PositionDependentRecord
+public interface PositionDependentRecord
 {
-	/** Our location on the disk, as of the last write out */
-	protected int myLastOnDiskOffset;
-
 	/** Fetch our location on the disk, as of the last write out */
-	public int getLastOnDiskOffset() { return myLastOnDiskOffset; }
+	public int getLastOnDiskOffset();
 
 	/** 
 	 * Update the Record's idea of where on disk it lives, after a write out.
 	 * Use with care...
 	 */
-	public void setLastOnDiskOffset(int offset) { 
-		myLastOnDiskOffset = offset;
-	}
+	public void setLastOnDiskOffset(int offset);
 
 	/**
 	 * Offer the record the list of records that have changed their 
 	 *  location as part of the writeout.
-	 * Allows records to update their internal pointers to other records
-	 *  locations
 	 */
-	public abstract void updateOtherRecordReferences(Hashtable oldToNewReferencesLookup);
+	public void updateOtherRecordReferences(Hashtable oldToNewReferencesLookup);
 }
