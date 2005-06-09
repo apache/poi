@@ -243,57 +243,50 @@ public class HSLFSlideShow
 		writePropertySet("\005DocumentSummaryInformation",dsInf,outFS);
 	}
 
-	// Need to take special care of PersistPtrHolder and UserEditAtoms
-	// Store where they used to be, and where they are now
-	Hashtable persistPtrHolderPos = new Hashtable();
-	Hashtable userEditAtomsPos = new Hashtable();
-	int lastUserEditAtomPos = -1;
+
+	// For position dependent records, hold where they were and now are
+	// As we go along, update, and hand over, to any Position Dependent
+	//  records we happen across
+	Hashtable oldToNewPositions = new Hashtable();
 
 	// Write ourselves out
 	ByteArrayOutputStream baos = new ByteArrayOutputStream();
 	for(int i=0; i<_records.length; i++) {
-		// If it's a special record, record where it was and now is
-		if(_records[i] instanceof PersistPtrHolder) {
-			// Update position
-			PersistPtrHolder pph = (PersistPtrHolder)_records[i];
-			int oldPos = pph.getLastOnDiskOffset();
+		// For now, we're only handling PositionDependentRecord's that
+		//  happen at the top level.
+		// In future, we'll need the handle them everywhere, but that's
+		//  a bit trickier
+		if(_records[i] instanceof PositionDependentRecord) {
+			PositionDependentRecord pdr = (PositionDependentRecord)_records[i];
+			int oldPos = pdr.getLastOnDiskOffset();
 			int newPos = baos.size();
-			pph.setLastOnDiskOffet(newPos);
-			persistPtrHolderPos.put(new Integer(oldPos),new Integer(newPos));
-		}
-		if(_records[i] instanceof UserEditAtom) {
-			// Update position
-			UserEditAtom uea = (UserEditAtom)_records[i];
-			int oldPos = uea.getLastOnDiskOffset();
-			int newPos = baos.size();
-			lastUserEditAtomPos = newPos;
-			uea.setLastOnDiskOffet(newPos);
-			userEditAtomsPos.put(new Integer(oldPos),new Integer(newPos));
-
-			// Update internal positions
-			if(uea.getLastUserEditAtomOffset() != 0) {
-				Integer ueNewPos = (Integer)userEditAtomsPos.get( new Integer( uea.getLastUserEditAtomOffset() ) );
-				uea.setLastUserEditAtomOffset(ueNewPos.intValue());
-			}
-			if(uea.getPersistPointersOffset() != 0) {
-				Integer ppNewPos = (Integer)persistPtrHolderPos.get( new Integer( uea.getPersistPointersOffset() ) );
-				uea.setPersistPointersOffset(ppNewPos.intValue());
-			}
+			pdr.setLastOnDiskOffset(newPos);
+			oldToNewPositions.put(new Integer(oldPos),new Integer(newPos));
+			pdr.updateOtherRecordReferences(oldToNewPositions);
 		}
 
 		// Finally, write out
 		_records[i].writeOut(baos);
 	}
+	// Update our cached copy of the bytes that make up the PPT stream
+	_docstream = baos.toByteArray()
+
+	// Write the PPT stream into the POIFS layer
 	ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
 	outFS.createDocument(bais,"PowerPoint Document");
 
+
 	// Update and write out the Current User atom
-	if(lastUserEditAtomPos != -1) {
-		currentUser.setCurrentEditOffset(lastUserEditAtomPos);
+	int oldLastUserEditAtomPos = (int)currentUser.getCurrentEditOffset();
+	Integer newLastUserEditAtomPos = (Integer)oldToNewPositions.get(new Integer(oldLastUserEditAtomPos));
+	if(newLastUserEditAtomPos == null) {
+		throw new RuntimeException("Couldn't find the new location of the UserEditAtom that used to be at " + oldLastUserEditAtomPos);
 	}
+	currentUser.setCurrentEditOffset(newLastUserEditAtomPos.intValue());
 	currentUser.writeToFS(outFS);
 
-	// Send the POIFSFileSystem object out
+
+	// Send the POIFSFileSystem object out to the underlying stream
 	outFS.writeFilesystem(out);
    }
 
