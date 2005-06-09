@@ -15,8 +15,9 @@
         <section><title>Basic Text Extraction</title>
         <p>For basic text extraction, make use of 
 <code>org.apache.poi.extractor.PowerPointExtractor</code>. It accepts a file or an input
-stream. The <code>getText()</code> method can be used to get the text from the slides,
-from the notes, or from both.
+stream. The <code>getText()</code> method can be used to get the text from the slides, and the <code>getNotes()</code> method can be used to get the text
+from the notes. Finally, <code>getText(true,true)</code> will get the text
+from both.
 		</p>
 		</section>
 		
@@ -31,19 +32,45 @@ what type of text it is (eg Body, Title)
 		</p>
 		</section>
 		
+        <section><title>Poor Quality Text Extraction</title>
+        <p>If speed is the most important thing for you, you don't care
+		about getting duplicate blocks of text, you don't care about 
+		getting text from master sheets, and you don't care about getting
+		old text, then 
+		<code>org.apache.poi.extractor.QuickButCruddyTextExtractor</code>
+		might be of use.</p>
+		<p>QuickButCruddyTextExtractor doesn't use the normal record 
+		parsing code, instead it uses a tree structure blind search 
+		method to get all text holding records. You will get all the text,
+		including lots of text you normally wouldn't ever want. However,
+		you will get it back very very fast!</p>
+		<p>There are two ways of getting the text back. 
+		<code>getTextAsString()</code> will return a single string with all
+		the text in it. <code>getTextAsVector()</code> will return a 
+		vector of strings, one for each text record found in the file.
+		</p>
+		</section>
+
 		<section><title>Changing Text</title>
-		<p>It is possible to change the text via <code>TextRun.setText(String)</code>. However, if
-the length of the text is changed, things will break because PowerPoint has
-internal file references in byte offsets, which are not yet all updated when
-the size changes.
+		<p>It is possible to change the text via 
+		<code>TextRun.setText(String)</code>. However, if the length of 
+		the text is changed, things will break because PowerPoint has
+		internal file references in byte offsets. We currently update all
+		of these byte references that we know about when writing out, but
+		there are a few more still to be found.
 		</p>
 		</section>
 		
 		<section><title>Guide to key classes</title>
 		<ul>
 		<li><code>org.apache.poi.hslf.HSLFSlideShow</code>
-  Handles reading in and writing out files. Generates a tree of the records
-  in the file
+		Handles reading in and writing out files. Calls 
+		<code>org.apache.poi.hslf.record.record</code> to build a tree
+		of all the records in the file, which it allows access to.
+  		</li>
+		<li><code>org.apache.poi.hslf.record.record</code>
+		Base class of all records. Also provides the main record generation
+		code, which will build up a tree of records for a file.
   		</li>
   		<li><code>org.apache.poi.hslf.usermode.SlideShow</code>
   Builds up model entries from the records, and presents a user facing
