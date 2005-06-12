@@ -133,6 +133,11 @@ public abstract class Record
 				toReturn = new DummyPositionSensitiveRecordWithChildren(b,start,len);
 				break;
 				
+			// DocumentAtom
+			case 1001:
+				toReturn = new DocumentAtom(b,start,len);
+				break;
+				
 			// "Slide"
 			case 1006:
 				toReturn = new Slide(b,start,len);
