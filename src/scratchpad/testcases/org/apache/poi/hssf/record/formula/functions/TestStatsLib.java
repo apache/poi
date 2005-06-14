@@ -1,0 +1,246 @@
+/*
+ * Created on May 30, 2005
+ *
+ */
+package org.apache.poi.hssf.record.formula.functions;
+
+
+/**
+ * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
+ *
+ */
+public class TestStatsLib extends AbstractNumericTestCase {
+
+    public void testDevsq() {
+        double[] v = null;
+        double d, x = 0;
+        
+        v = new double[] {1,2,3,4,5,6,7,8,9,10};
+        d = StatsLib.devsq(v);
+        x = 82.5;
+        assertEquals("devsq ", x, d);
+        
+        v = new double[] {1,1,1,1,1,1,1,1,1,1};
+        d = StatsLib.devsq(v);
+        x = 0;
+        assertEquals("devsq ", x, d);
+        
+        v = new double[] {0,0,0,0,0,0,0,0,0,0};
+        d = StatsLib.devsq(v);
+        x = 0;
+        assertEquals("devsq ", x, d);
+        
+        v = new double[] {1,2,1,2,1,2,1,2,1,2};
+        d = StatsLib.devsq(v);
+        x = 2.5;
+        assertEquals("devsq ", x, d);
+        
+        v = new double[] {123.12,33.3333,2d/3d,5.37828,0.999};
+        d = StatsLib.devsq(v);
+        x = 10953.7416965767;
+        assertEquals("devsq ", x, d);
+        
+        v = new double[] {-1,-2,-3,-4,-5,-6,-7,-8,-9,-10};
+        d = StatsLib.devsq(v);
+        x = 82.5;
+        assertEquals("devsq ", x, d);
+    }
+
+    public void testKthLargest() {
+        double[] v = null;
+        double d, x = 0;
+        
+        v = new double[] {1,2,3,4,5,6,7,8,9,10};
+        d = StatsLib.kthLargest(v, 3);
+        x = 8;
+        assertEquals("kthLargest ", x, d);
+        
+        v = new double[] {1,1,1,1,1,1,1,1,1,1};
+        d = StatsLib.kthLargest(v, 3);
+        x = 1;
+        assertEquals("kthLargest ", x, d);
+        
+        v = new double[] {0,0,0,0,0,0,0,0,0,0};
+        d = StatsLib.kthLargest(v, 3);
+        x = 0;
+        assertEquals("kthLargest ", x, d);
+        
+        v = new double[] {1,2,1,2,1,2,1,2,1,2};
+        d = StatsLib.kthLargest(v, 3);
+        x = 2;
+        assertEquals("kthLargest ", x, d);
+        
+        v = new double[] {123.12,33.3333,2d/3d,5.37828,0.999};
+        d = StatsLib.kthLargest(v, 3);
+        x = 5.37828;
+        assertEquals("kthLargest ", x, d);
+        
+        v = new double[] {-1,-2,-3,-4,-5,-6,-7,-8,-9,-10};
+        d = StatsLib.kthLargest(v, 3);
+        x = -3;
+        assertEquals("kthLargest ", x, d);
+    }
+
+    public void testKthSmallest() {
+    }
+
+    public void testAvedev() {
+        double[] v = null;
+        double d, x = 0;
+        
+        v = new double[] {1,2,3,4,5,6,7,8,9,10};
+        d = StatsLib.avedev(v);
+        x = 2.5;
+        assertEquals("avedev ", x, d);
+        
+        v = new double[] {1,1,1,1,1,1,1,1,1,1};
+        d = StatsLib.avedev(v);
+        x = 0;
+        assertEquals("avedev ", x, d);
+        
+        v = new double[] {0,0,0,0,0,0,0,0,0,0};
+        d = StatsLib.avedev(v);
+        x = 0;
+        assertEquals("avedev ", x, d);
+        
+        v = new double[] {1,2,1,2,1,2,1,2,1,2};
+        d = StatsLib.avedev(v);
+        x = 0.5;
+        assertEquals("avedev ", x, d);
+        
+        v = new double[] {123.12,33.3333,2d/3d,5.37828,0.999};
+        d = StatsLib.avedev(v);
+        x = 36.42176053333;
+        assertEquals("avedev ", x, d);
+        
+        v = new double[] {-1,-2,-3,-4,-5,-6,-7,-8,-9,-10};
+        d = StatsLib.avedev(v);
+        x = 2.5;
+        assertEquals("avedev ", x, d);
+    }
+
+    public void testMedian() {
+        double[] v = null;
+        double d, x = 0;
+        
+        v = new double[] {1,2,3,4,5,6,7,8,9,10};
+        d = StatsLib.median(v);
+        x = 5.5;
+        assertEquals("median ", x, d);
+        
+        v = new double[] {1,1,1,1,1,1,1,1,1,1};
+        d = StatsLib.median(v);
+        x = 1;
+        assertEquals("median ", x, d);
+        
+        v = new double[] {0,0,0,0,0,0,0,0,0,0};
+        d = StatsLib.median(v);
+        x = 0;
+        assertEquals("median ", x, d);
+        
+        v = new double[] {1,2,1,2,1,2,1,2,1,2};
+        d = StatsLib.median(v);
+        x = 1.5;
+        assertEquals("median ", x, d);
+        
+        v = new double[] {123.12,33.3333,2d/3d,5.37828,0.999};
+        d = StatsLib.median(v);
+        x = 5.37828;
+        assertEquals("median ", x, d);
+        
+        v = new double[] {-1,-2,-3,-4,-5,-6,-7,-8,-9,-10};
+        d = StatsLib.median(v);
+        x = -5.5;
+        assertEquals("median ", x, d);
+        
+        v = new double[] {-2,-3,-4,-5,-6,-7,-8,-9,-10};
+        d = StatsLib.median(v);
+        x = -6;
+        assertEquals("median ", x, d);
+        
+        v = new double[] {1,2,3,4,5,6,7,8,9};
+        d = StatsLib.median(v);
+        x = 5;
+        assertEquals("median ", x, d);
+    }
+
+    public void testMode() {
+        double[] v = null;
+        double d, x = 0;
+        
+        v = new double[] {1,2,3,4,5,6,7,8,9,10};
+        d = StatsLib.mode(v);
+        x = Double.NaN;
+        assertEquals("mode ", x, d);
+        
+        v = new double[] {1,1,1,1,1,1,1,1,1,1};
+        d = StatsLib.mode(v);
+        x = 1;
+        assertEquals("mode ", x, d);
+        
+        v = new double[] {0,0,0,0,0,0,0,0,0,0};
+        d = StatsLib.mode(v);
+        x = 0;
+        assertEquals("mode ", x, d);
+        
+        v = new double[] {1,2,1,2,1,2,1,2,1,2};
+        d = StatsLib.mode(v);
+        x = 1;
+        assertEquals("mode ", x, d);
+        
+        v = new double[] {123.12,33.3333,2d/3d,5.37828,0.999};
+        d = StatsLib.mode(v);
+        x = Double.NaN;
+        assertEquals("mode ", x, d);
+        
+        v = new double[] {-1,-2,-3,-4,-5,-6,-7,-8,-9,-10};
+        d = StatsLib.mode(v);
+        x = Double.NaN;
+        assertEquals("mode ", x, d);
+        
+        v = new double[] {1,2,3,4,1,1,1,1,0,0,0,0,0};
+        d = StatsLib.mode(v);
+        x = 1;
+        assertEquals("mode ", x, d);
+        
+        v = new double[] {0,1,2,3,4,1,1,1,0,0,0,0,1};
+        d = StatsLib.mode(v);
+        x = 0;
+        assertEquals("mode ", x, d);
+    }
+
+    public void testStddev() {
+        double[] v = null;
+        double d, x = 0;
+        
+        v = new double[] {1,2,3,4,5,6,7,8,9,10};
+        d = StatsLib.stdev(v);
+        x = 3.02765035410;
+        assertEquals("stdev ", x, d);
+        
+        v = new double[] {1,1,1,1,1,1,1,1,1,1};
+        d = StatsLib.stdev(v);
+        x = 0;
+        assertEquals("stdev ", x, d);
+        
+        v = new double[] {0,0,0,0,0,0,0,0,0,0};
+        d = StatsLib.stdev(v);
+        x = 0;
+        assertEquals("stdev ", x, d);
+        
+        v = new double[] {1,2,1,2,1,2,1,2,1,2};
+        d = StatsLib.stdev(v);
+        x = 0.52704627669;
+        assertEquals("stdev ", x, d);
+        
+        v = new double[] {123.12,33.3333,2d/3d,5.37828,0.999};
+        d = StatsLib.stdev(v);
+        x = 52.33006233652;
+        assertEquals("stdev ", x, d);
+        
+        v = new double[] {-1,-2,-3,-4,-5,-6,-7,-8,-9,-10};
+        d = StatsLib.stdev(v);
+        x = 3.02765035410;
+        assertEquals("stdev ", x, d);
+    }
+}
