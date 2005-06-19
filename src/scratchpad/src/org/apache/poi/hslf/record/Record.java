@@ -173,6 +173,11 @@ public abstract class Record
 				toReturn = new PPDrawing(b,start,len);
 				break;
 
+			// ColorSchemeAtom (Holds the colours that make up a colour scheme)
+			case 2032:
+				toReturn = new ColorSchemeAtom(b,start,len);
+				break;
+
 			// TextHeaderAtom (Holds details on following text)
 			case 3999:
 				toReturn = new TextHeaderAtom(b,start,len);
