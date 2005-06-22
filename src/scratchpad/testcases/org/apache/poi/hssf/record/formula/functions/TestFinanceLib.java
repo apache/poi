@@ -16,6 +16,11 @@ public class TestFinanceLib extends AbstractNumericTestCase {
         int n;
         boolean t = false;
         
+        r = 0; n = 3; y = 2; p = 7; t = true;
+        f = FinanceLib.fv(r, n, y, p, t);
+        x = -13;
+        assertEquals("fv ", x, f);
+        
         r = 1; n = 10; y = 100; p = 10000; t = false;
         f = FinanceLib.fv(r, n, y, p, t);
         x = -10342300;
@@ -75,6 +80,11 @@ public class TestFinanceLib extends AbstractNumericTestCase {
         double f, r, y, p, x;
         int n;
         boolean t = false;
+
+        r = 0; n = 3; p = 2; f = 7; t = true;
+        y = FinanceLib.pmt(r, n, p, f, t);
+        x = -3;
+        assertEquals("pmt ", x, y);    
         
         // cross check with pv
         r = 1; n = 10; p = -109.66796875; f = 10000; t = false;
@@ -103,7 +113,12 @@ public class TestFinanceLib extends AbstractNumericTestCase {
         double f, r, y, p, x;
         int n;
         boolean t = false;
-        
+
+        r = 0; n = 3; y = 2; f = 7; t = true;
+        f = FinanceLib.pv(r, n, y, f, t);
+        x = -13;
+        assertEquals("pv ", x, f);
+
         r = 1; n = 10; y = 100; f = 10000; t = false;
         p = FinanceLib.pv(r, n, y, f, t);
         x = -109.66796875;
@@ -138,9 +153,13 @@ public class TestFinanceLib extends AbstractNumericTestCase {
     }
     
     public void testNper() {
-        double f, r, y, p, x;
-        int n;
+        double f, r, y, p, x, n;
         boolean t = false;
+        
+        r = 0; y = 7; p = 2; f = 3; t = false;
+        n = FinanceLib.nper(r, y, p, f, t);
+        x = -0.71428571429; // can you believe it? excel returns nper as a fraction!??
+        assertEquals("nper ", x, n);    
         
         // cross check with pv
         r = 1; y = 100; p = -109.66796875; f = 10000; t = false;
