@@ -8,6 +8,6 @@ package org.apache.poi.hssf.record.formula.functions;
  * @author 
  *
  */
-public class Find extends DefaultFunctionImpl {
+public class Find extends NotImplementedFunction {
 
 }

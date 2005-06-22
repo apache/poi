@@ -8,6 +8,6 @@ package org.apache.poi.hssf.record.formula.functions;
  * @author 
  *
  */
-public class Daverage extends DefaultFunctionImpl {
+public class Daverage extends NotImplementedFunction {
 
 }

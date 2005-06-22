@@ -8,6 +8,6 @@ package org.apache.poi.hssf.record.formula.functions;
  * @author 
  *
  */
-public class Month extends DefaultFunctionImpl {
+public class Month extends NotImplementedFunction {
 
 }

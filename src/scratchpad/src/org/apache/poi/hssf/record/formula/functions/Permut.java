@@ -8,6 +8,6 @@ package org.apache.poi.hssf.record.formula.functions;
  * @author 
  *
  */
-public class Permut extends DefaultFunctionImpl {
+public class Permut extends NotImplementedFunction {
 
 }

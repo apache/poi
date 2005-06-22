@@ -8,6 +8,6 @@ package org.apache.poi.hssf.record.formula.functions;
  * @author 
  *
  */
-public class Rate extends DefaultFunctionImpl {
+public class Rate extends NotImplementedFunction {
 
 }

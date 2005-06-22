@@ -8,6 +8,6 @@ package org.apache.poi.hssf.record.formula.functions;
  * @author 
  *
  */
-public class Lasterror extends DefaultFunctionImpl {
+public class Lasterror extends NotImplementedFunction {
 
 }

@@ -8,6 +8,6 @@ package org.apache.poi.hssf.record.formula.functions;
  * @author 
  *
  */
-public class Dvarp extends DefaultFunctionImpl {
+public class Dvarp extends NotImplementedFunction {
 
 }

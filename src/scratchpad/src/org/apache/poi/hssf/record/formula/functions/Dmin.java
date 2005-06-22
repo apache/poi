@@ -8,6 +8,6 @@ package org.apache.poi.hssf.record.formula.functions;
  * @author 
  *
  */
-public class Dmin extends DefaultFunctionImpl {
+public class Dmin extends NotImplementedFunction {
 
 }

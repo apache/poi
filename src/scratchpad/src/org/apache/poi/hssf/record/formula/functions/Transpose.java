@@ -8,6 +8,6 @@ package org.apache.poi.hssf.record.formula.functions;
  * @author 
  *
  */
-public class Transpose extends DefaultFunctionImpl {
+public class Transpose extends NotImplementedFunction {
 
 }

@@ -8,6 +8,6 @@ package org.apache.poi.hssf.record.formula.functions;
  * @author 
  *
  */
-public class Varpa extends DefaultFunctionImpl {
+public class Varpa extends NotImplementedFunction {
 
 }

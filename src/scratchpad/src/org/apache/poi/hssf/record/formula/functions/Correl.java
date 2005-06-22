@@ -8,6 +8,6 @@ package org.apache.poi.hssf.record.formula.functions;
  * @author 
  *
  */
-public class Correl extends DefaultFunctionImpl {
+public class Correl extends NotImplementedFunction {
 
 }

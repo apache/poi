@@ -11,7 +11,7 @@ import java.util.Arrays;
  *
  * Library for common statistics functions
  */
-public class StatsLib {
+public final class StatsLib {
 
     private StatsLib() {}
 

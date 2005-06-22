@@ -8,6 +8,6 @@ package org.apache.poi.hssf.record.formula.functions;
  * @author 
  *
  */
-public class Skew extends DefaultFunctionImpl {
+public class Skew extends NotImplementedFunction {
 
 }

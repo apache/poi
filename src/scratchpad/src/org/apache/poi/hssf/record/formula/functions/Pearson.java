@@ -8,6 +8,6 @@ package org.apache.poi.hssf.record.formula.functions;
  * @author 
  *
  */
-public class Pearson extends DefaultFunctionImpl {
+public class Pearson extends NotImplementedFunction {
 
 }

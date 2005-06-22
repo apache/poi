@@ -8,6 +8,6 @@ package org.apache.poi.hssf.record.formula.functions;
  * @author 
  *
  */
-public class Fdist extends DefaultFunctionImpl {
+public class Fdist extends NotImplementedFunction {
 
 }

@@ -8,6 +8,6 @@ package org.apache.poi.hssf.record.formula.functions;
  * @author 
  *
  */
-public class Confidence extends DefaultFunctionImpl {
+public class Confidence extends NotImplementedFunction {
 
 }

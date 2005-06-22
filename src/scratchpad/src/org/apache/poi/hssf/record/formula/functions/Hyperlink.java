@@ -8,6 +8,6 @@ package org.apache.poi.hssf.record.formula.functions;
  * @author 
  *
  */
-public class Hyperlink extends DefaultFunctionImpl {
+public class Hyperlink extends NotImplementedFunction {
 
 }

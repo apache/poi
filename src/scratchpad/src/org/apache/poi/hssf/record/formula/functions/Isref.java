@@ -8,6 +8,6 @@ package org.apache.poi.hssf.record.formula.functions;
  * @author 
  *
  */
-public class Isref extends DefaultFunctionImpl {
+public class Isref extends NotImplementedFunction {
 
 }

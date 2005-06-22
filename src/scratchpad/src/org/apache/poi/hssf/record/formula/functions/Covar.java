@@ -8,6 +8,6 @@ package org.apache.poi.hssf.record.formula.functions;
  * @author 
  *
  */
-public class Covar extends DefaultFunctionImpl {
+public class Covar extends NotImplementedFunction {
 
 }

@@ -8,6 +8,6 @@ package org.apache.poi.hssf.record.formula.functions;
  * @author 
  *
  */
-public class Dcount extends DefaultFunctionImpl {
+public class Dcount extends NotImplementedFunction {
 
 }

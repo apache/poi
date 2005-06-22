@@ -8,6 +8,6 @@ package org.apache.poi.hssf.record.formula.functions;
  * @author 
  *
  */
-public class Trend extends DefaultFunctionImpl {
+public class Trend extends NotImplementedFunction {
 
 }

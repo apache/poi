@@ -8,6 +8,6 @@ package org.apache.poi.hssf.record.formula.functions;
  * @author 
  *
  */
-public class Leftb extends DefaultFunctionImpl {
+public class Leftb extends NotImplementedFunction {
 
 }

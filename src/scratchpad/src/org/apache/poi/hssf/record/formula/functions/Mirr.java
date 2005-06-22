@@ -8,6 +8,6 @@ package org.apache.poi.hssf.record.formula.functions;
  * @author 
  *
  */
-public class Mirr extends DefaultFunctionImpl {
+public class Mirr extends NotImplementedFunction {
 
 }

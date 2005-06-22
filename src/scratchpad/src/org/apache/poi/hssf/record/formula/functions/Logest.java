@@ -8,6 +8,6 @@ package org.apache.poi.hssf.record.formula.functions;
  * @author 
  *
  */
-public class Logest extends DefaultFunctionImpl {
+public class Logest extends NotImplementedFunction {
 
 }

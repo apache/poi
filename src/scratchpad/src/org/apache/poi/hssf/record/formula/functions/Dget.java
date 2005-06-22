@@ -8,6 +8,6 @@ package org.apache.poi.hssf.record.formula.functions;
  * @author 
  *
  */
-public class Dget extends DefaultFunctionImpl {
+public class Dget extends NotImplementedFunction {
 
 }

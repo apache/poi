@@ -8,6 +8,6 @@ package org.apache.poi.hssf.record.formula.functions;
  * @author 
  *
  */
-public class Dstdevp extends DefaultFunctionImpl {
+public class Dstdevp extends NotImplementedFunction {
 
 }

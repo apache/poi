@@ -8,6 +8,6 @@ package org.apache.poi.hssf.record.formula.functions;
  * @author 
  *
  */
-public class Vlookup extends DefaultFunctionImpl {
+public class Vlookup extends NotImplementedFunction {
 
 }

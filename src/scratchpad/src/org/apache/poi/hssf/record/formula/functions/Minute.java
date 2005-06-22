@@ -8,6 +8,6 @@ package org.apache.poi.hssf.record.formula.functions;
  * @author 
  *
  */
-public class Minute extends DefaultFunctionImpl {
+public class Minute extends NotImplementedFunction {
 
 }

@@ -8,6 +8,6 @@ package org.apache.poi.hssf.record.formula.functions;
  * @author 
  *
  */
-public class Percentrank extends DefaultFunctionImpl {
+public class Percentrank extends NotImplementedFunction {
 
 }

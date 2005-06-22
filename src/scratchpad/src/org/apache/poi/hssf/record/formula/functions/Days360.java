@@ -8,6 +8,6 @@ package org.apache.poi.hssf.record.formula.functions;
  * @author 
  *
  */
-public class Days360 extends DefaultFunctionImpl {
+public class Days360 extends NotImplementedFunction {
 
 }

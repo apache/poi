@@ -8,6 +8,6 @@ package org.apache.poi.hssf.record.formula.functions;
  * @author 
  *
  */
-public class Gammainv extends DefaultFunctionImpl {
+public class Gammainv extends NotImplementedFunction {
 
 }

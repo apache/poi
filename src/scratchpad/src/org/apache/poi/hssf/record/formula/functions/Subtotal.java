@@ -8,6 +8,6 @@ package org.apache.poi.hssf.record.formula.functions;
  * @author 
  *
  */
-public class Subtotal extends DefaultFunctionImpl {
+public class Subtotal extends NotImplementedFunction {
 
 }

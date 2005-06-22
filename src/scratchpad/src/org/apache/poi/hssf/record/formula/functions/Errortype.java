@@ -8,6 +8,6 @@ package org.apache.poi.hssf.record.formula.functions;
  * @author 
  *
  */
-public class Errortype extends DefaultFunctionImpl {
+public class Errortype extends NotImplementedFunction {
 
 }
