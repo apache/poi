@@ -8,6 +8,6 @@ package org.apache.poi.hssf.record.formula.functions;
  * @author 
  *
  */
-public class Dsum extends DefaultFunctionImpl {
+public class Dsum extends NotImplementedFunction {
 
 }

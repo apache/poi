@@ -8,6 +8,6 @@ package org.apache.poi.hssf.record.formula.functions;
  * @author 
  *
  */
-public class Loginv extends DefaultFunctionImpl {
+public class Loginv extends NotImplementedFunction {
 
 }

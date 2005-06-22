@@ -8,6 +8,6 @@ package org.apache.poi.hssf.record.formula.functions;
  * @author 
  *
  */
-public class Ipmt extends DefaultFunctionImpl {
+public class Ipmt extends NotImplementedFunction {
 
 }

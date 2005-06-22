@@ -8,6 +8,6 @@ package org.apache.poi.hssf.record.formula.functions;
  * @author 
  *
  */
-public class Isnontext extends DefaultFunctionImpl {
+public class Isnontext extends NotImplementedFunction {
 
 }

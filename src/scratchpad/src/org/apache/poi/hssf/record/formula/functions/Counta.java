@@ -8,6 +8,6 @@ package org.apache.poi.hssf.record.formula.functions;
  * @author 
  *
  */
-public class Counta extends DefaultFunctionImpl {
+public class Counta extends NotImplementedFunction {
 
 }

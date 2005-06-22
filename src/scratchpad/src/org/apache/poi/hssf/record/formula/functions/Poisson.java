@@ -8,6 +8,6 @@ package org.apache.poi.hssf.record.formula.functions;
  * @author 
  *
  */
-public class Poisson extends DefaultFunctionImpl {
+public class Poisson extends NotImplementedFunction {
 
 }

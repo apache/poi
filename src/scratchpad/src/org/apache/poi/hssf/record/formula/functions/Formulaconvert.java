@@ -8,6 +8,6 @@ package org.apache.poi.hssf.record.formula.functions;
  * @author 
  *
  */
-public class Formulaconvert extends DefaultFunctionImpl {
+public class Formulaconvert extends NotImplementedFunction {
 
 }

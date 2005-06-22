@@ -8,6 +8,6 @@ package org.apache.poi.hssf.record.formula.functions;
  * @author 
  *
  */
-public class Linest extends DefaultFunctionImpl {
+public class Linest extends NotImplementedFunction {
 
 }

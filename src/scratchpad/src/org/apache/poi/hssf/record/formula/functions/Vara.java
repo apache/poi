@@ -8,6 +8,6 @@ package org.apache.poi.hssf.record.formula.functions;
  * @author 
  *
  */
-public class Vara extends DefaultFunctionImpl {
+public class Vara extends NotImplementedFunction {
 
 }

@@ -8,6 +8,6 @@ package org.apache.poi.hssf.record.formula.functions;
  * @author 
  *
  */
-public class Harmean extends DefaultFunctionImpl {
+public class Harmean extends NotImplementedFunction {
 
 }

@@ -8,6 +8,6 @@ package org.apache.poi.hssf.record.formula.functions;
  * @author 
  *
  */
-public class Gammadist extends DefaultFunctionImpl {
+public class Gammadist extends NotImplementedFunction {
 
 }

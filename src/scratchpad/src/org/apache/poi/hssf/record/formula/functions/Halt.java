@@ -8,6 +8,6 @@ package org.apache.poi.hssf.record.formula.functions;
  * @author 
  *
  */
-public class Halt extends DefaultFunctionImpl {
+public class Halt extends NotImplementedFunction {
 
 }

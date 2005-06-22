@@ -8,6 +8,6 @@ package org.apache.poi.hssf.record.formula.functions;
  * @author 
  *
  */
-public class Rank extends DefaultFunctionImpl {
+public class Rank extends NotImplementedFunction {
 
 }

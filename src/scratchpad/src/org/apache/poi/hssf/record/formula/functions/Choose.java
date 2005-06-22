@@ -8,6 +8,6 @@ package org.apache.poi.hssf.record.formula.functions;
  * @author 
  *
  */
-public class Choose extends DefaultFunctionImpl {
+public class Choose extends NotImplementedFunction {
 
 }

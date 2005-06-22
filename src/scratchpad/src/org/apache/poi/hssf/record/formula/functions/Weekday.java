@@ -8,6 +8,6 @@ package org.apache.poi.hssf.record.formula.functions;
  * @author 
  *
  */
-public class Weekday extends DefaultFunctionImpl {
+public class Weekday extends NotImplementedFunction {
 
 }

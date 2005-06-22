@@ -8,6 +8,6 @@ package org.apache.poi.hssf.record.formula.functions;
  * @author 
  *
  */
-public class Roman extends DefaultFunctionImpl {
+public class Roman extends NotImplementedFunction {
 
 }

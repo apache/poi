@@ -9,5 +9,5 @@ package org.apache.poi.hssf.record.formula.functions;
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt; 
  *
  */
-public class Averagea extends DefaultFunctionImpl {
+public class Averagea extends NotImplementedFunction {
 }

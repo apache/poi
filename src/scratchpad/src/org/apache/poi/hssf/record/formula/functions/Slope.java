@@ -8,6 +8,6 @@ package org.apache.poi.hssf.record.formula.functions;
  * @author 
  *
  */
-public class Slope extends DefaultFunctionImpl {
+public class Slope extends NotImplementedFunction {
 
 }

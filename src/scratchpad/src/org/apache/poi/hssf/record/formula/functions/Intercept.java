@@ -8,6 +8,6 @@ package org.apache.poi.hssf.record.formula.functions;
  * @author 
  *
  */
-public class Intercept extends DefaultFunctionImpl {
+public class Intercept extends NotImplementedFunction {
 
 }

@@ -8,6 +8,6 @@ package org.apache.poi.hssf.record.formula.functions;
  * @author 
  *
  */
-public class Ztest extends DefaultFunctionImpl {
+public class Ztest extends NotImplementedFunction {
 
 }

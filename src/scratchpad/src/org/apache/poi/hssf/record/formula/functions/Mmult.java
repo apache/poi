@@ -8,6 +8,6 @@ package org.apache.poi.hssf.record.formula.functions;
  * @author 
  *
  */
-public class Mmult extends DefaultFunctionImpl {
+public class Mmult extends NotImplementedFunction {
 
 }

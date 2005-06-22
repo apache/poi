@@ -8,6 +8,6 @@ package org.apache.poi.hssf.record.formula.functions;
  * @author 
  *
  */
-public class Clean extends DefaultFunctionImpl {
+public class Clean extends NotImplementedFunction {
 
 }

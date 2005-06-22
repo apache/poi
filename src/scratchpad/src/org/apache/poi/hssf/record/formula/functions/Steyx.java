@@ -8,6 +8,6 @@ package org.apache.poi.hssf.record.formula.functions;
  * @author 
  *
  */
-public class Steyx extends DefaultFunctionImpl {
+public class Steyx extends NotImplementedFunction {
 
 }

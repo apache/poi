@@ -8,6 +8,6 @@ package org.apache.poi.hssf.record.formula.functions;
  * @author 
  *
  */
-public class Standardize extends DefaultFunctionImpl {
+public class Standardize extends NotImplementedFunction {
 
 }

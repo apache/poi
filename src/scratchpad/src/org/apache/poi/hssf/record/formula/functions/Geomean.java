@@ -8,6 +8,6 @@ package org.apache.poi.hssf.record.formula.functions;
  * @author 
  *
  */
-public class Geomean extends DefaultFunctionImpl {
+public class Geomean extends NotImplementedFunction {
 
 }

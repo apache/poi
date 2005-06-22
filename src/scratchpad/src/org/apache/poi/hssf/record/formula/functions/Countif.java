@@ -8,6 +8,6 @@ package org.apache.poi.hssf.record.formula.functions;
  * @author 
  *
  */
-public class Countif extends DefaultFunctionImpl {
+public class Countif extends NotImplementedFunction {
 
 }

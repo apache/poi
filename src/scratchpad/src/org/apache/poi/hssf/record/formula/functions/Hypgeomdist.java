@@ -8,6 +8,6 @@ package org.apache.poi.hssf.record.formula.functions;
  * @author 
  *
  */
-public class Hypgeomdist extends DefaultFunctionImpl {
+public class Hypgeomdist extends NotImplementedFunction {
 
 }

@@ -8,6 +8,6 @@ package org.apache.poi.hssf.record.formula.functions;
  * @author 
  *
  */
-public class Substitute extends DefaultFunctionImpl {
+public class Substitute extends NotImplementedFunction {
 
 }

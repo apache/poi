@@ -8,6 +8,6 @@ package org.apache.poi.hssf.record.formula.functions;
  * @author 
  *
  */
-public class Fisherinv extends DefaultFunctionImpl {
+public class Fisherinv extends NotImplementedFunction {
 
 }

@@ -8,6 +8,6 @@ package org.apache.poi.hssf.record.formula.functions;
  * @author 
  *
  */
-public class Norminv extends DefaultFunctionImpl {
+public class Norminv extends NotImplementedFunction {
 
 }

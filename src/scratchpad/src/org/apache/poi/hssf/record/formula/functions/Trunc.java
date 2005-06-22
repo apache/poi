@@ -8,6 +8,6 @@ package org.apache.poi.hssf.record.formula.functions;
  * @author 
  *
  */
-public class Trunc extends DefaultFunctionImpl {
+public class Trunc extends NotImplementedFunction {
 
 }
