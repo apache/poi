@@ -24,9 +24,26 @@ package org.apache.poi.hssf.record.formula.functions;
  * <ol>
  * <li>GNU Emacs Calc 2.02 Manual: http://theory.uwinnipeg.ca/gnu/calc/calc_203.html</li>
  * <li>Yahoo Financial Glossary: http://biz.yahoo.com/f/g/nn.html#y</li>
+ * <li>MS Excel function reference: http://office.microsoft.com/en-us/assistance/CH062528251033.aspx</li>
  * </ol>
+ * <h3>Implementation Notes:</h3>
+ * Symbols used in the formulae that follow:<br/>
+ * <ul>
+ * <li>p: present value</li>
+ * <li>f: future value</li>
+ * <li>n: number of periods</li>
+ * <li>y: payment (in each period)</li>
+ * <li>r: rate</li>
+ * <li>^: the power operator (NOT the java bitwise XOR operator!)</li>
+ * </ul>
+ * [From MS Excel function reference] Following are some of the key formulas
+ * that are used in this implementation:
+ * <pre>
+ * p(1+r)^n + y(1+rt)((1+r)^n-1)/r + f=0   ...{when r!=0}
+ * ny + p + f=0                            ...{when r=0}
+ * </pre>
  */
-public class FinanceLib {
+public final class FinanceLib {
     
     // constants for default values
     
@@ -46,11 +63,18 @@ public class FinanceLib {
      * @param t type (true=pmt at end of period, false=pmt at begining of period)
      * @return
      */
-    public static double fv(double r, int n, double y, double p, boolean t) {
-        double r1 = r + 1;
-        return ((1-Math.pow(r1, n)) * (t ? r1 : 1) * y ) / r  
-                  - 
-               p*Math.pow(r1, n);
+    public static double fv(double r, double n, double y, double p, boolean t) {
+        double retval = 0;
+        if (r == 0) {
+            retval = -1*(p+(n*y));
+        }
+        else {
+            double r1 = r + 1;
+            retval =((1-Math.pow(r1, n)) * (t ? r1 : 1) * y ) / r  
+                      - 
+                   p*Math.pow(r1, n);
+        }
+        return retval;
     }
     
     /**
@@ -65,11 +89,18 @@ public class FinanceLib {
      * @param t
      * @return
      */
-    public static double pv(double r, int n, double y, double f, boolean t) {
-        double r1 = r + 1;
-        return (( ( 1 - Math.pow(r1, n) ) / r ) * (t ? r1 : 1)  * y - f)
-                  /
-               Math.pow(r1, n);
+    public static double pv(double r, double n, double y, double f, boolean t) {
+        double retval = 0;
+        if (r == 0) {
+            retval = -1*((n*y)+f);
+        }
+        else {
+            double r1 = r + 1;
+            retval =(( ( 1 - Math.pow(r1, n) ) / r ) * (t ? r1 : 1)  * y - f)
+                     /
+                    Math.pow(r1, n);
+        }
+        return retval;
     }
     
     /**
@@ -102,13 +133,20 @@ public class FinanceLib {
      * @param t
      * @return
      */
-    public static double pmt(double r, int n, double p, double f, boolean t) {
+    public static double pmt(double r, double n, double p, double f, boolean t) {
+        double retval = 0;
+        if (r == 0) {
+            retval = -1*(f+p)/n;
+        }
+        else {
         double r1 = r + 1;
-        return ( f + p * Math.pow(r1, n) ) * r 
+        retval = ( f + p * Math.pow(r1, n) ) * r 
                   / 
                ((t ? r1 : 1) * (1 - Math.pow(r1, n)));
+        }
+        return retval;
     }
-    
+
     /**
      * 
      * @param r
@@ -118,15 +156,23 @@ public class FinanceLib {
      * @param t
      * @return
      */
-    public static int nper(double r, double y, double p, double f, boolean t) {
-        double r1 = r + 1;
-        double ryr = (t ? r1 : 1) * y / r;
-        double a1 = ((ryr-f) < 0) ? Math.log(f-ryr) : Math.log(ryr-f);
-        double a2 = ((ryr-f) < 0) ? Math.log(-p-ryr) : Math.log(p+ryr);
-        double a3 = Math.log(r1);
-        double dval = ( a1 - a2 ) / a3;
-        
-        return (int) Math.round(dval);
+    public static double nper(double r, double y, double p, double f, boolean t) {
+        double retval = 0;
+        if (r == 0) {
+            retval = -1 * (f + p) / y;
+        } else {
+            double r1 = r + 1;
+            double ryr = (t ? r1 : 1) * y / r;
+            double a1 = ((ryr - f) < 0)
+                    ? Math.log(f - ryr)
+                    : Math.log(ryr - f);
+            double a2 = ((ryr - f) < 0)
+                    ? Math.log(-p - ryr)
+                    : Math.log(p + ryr);
+            double a3 = Math.log(r1);
+            retval = (a1 - a2) / a3;
+        }
+        return retval;
     }
     
 
