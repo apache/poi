@@ -15,7 +15,7 @@ import org.apache.poi.hssf.record.formula.eval.ValueEval;
  * @author 
  *
  */
-public class Column extends DefaultFunctionImpl {
+public class Column implements Function {
     public Eval evaluate(Eval[] evals, int srcCellRow, short srcCellCol) {
         ValueEval retval = null;
         int cnum = -1;
