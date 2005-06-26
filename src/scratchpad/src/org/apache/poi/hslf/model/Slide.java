@@ -38,20 +38,21 @@ public class Slide extends Sheet
 
   private int _sheetNo;
   private org.apache.poi.hslf.record.Slide _slide;
-  private SlideAtomsSet[] _atomSet;
+  private SlideAtomsSet _atomSet;
   private TextRun[] _runs;
   private TextRun[] _otherRuns; // Any from the PPDrawing, shouldn't really be any though
-  private Notes _notes;
+  private Notes _notes; // usermodel needs to set this
 
   /**
-   * Constructs a Slide from the Slide record, and the SlideAtomsSets
-   *  for ones not embeded in the PPDrawing.
+   * Constructs a Slide from the Slide record, and the SlideAtomsSet
+   *  containing the text.
    * Initialises TextRuns, to provide easier access to the text
    *
    * @param slide the Slide record we're based on
+   * @param notes the Notes sheet attached to us
    * @param atomSet the SlideAtomsSet to get the text from
    */
-  public Slide(org.apache.poi.hslf.record.Slide slide, Notes notes, SlideAtomsSet[] atomSet) {
+  public Slide(org.apache.poi.hslf.record.Slide slide, Notes notes, SlideAtomsSet atomSet) {
 	_slide = slide;
 	_notes = notes;
 	_atomSet = atomSet;
@@ -63,38 +64,40 @@ public class Slide extends Sheet
 	// Grab the TextRuns from the PPDrawing
 	_otherRuns = findTextRuns(_slide.getPPDrawing());
 
-
-	// Ensure we've only got only copy of each SlideAtomSet
-	// When in doubt, prefere the later one
-	Hashtable seenSets = new Hashtable();
-	Vector useSets = new Vector();
-	for(int i=0; i<_atomSet.length; i++) {
-		SlideAtomsSet set = _atomSet[i];
-		int id = set.getSlidePersistAtom().getRefID();
-		Integer idI = new Integer(id);
-		if(seenSets.containsKey(idI)) {
-			// Replace old one
-			Integer replacePos = (Integer)seenSets.get(idI);
-			useSets.set(replacePos.intValue(),set);
-		} else {
-			// Use for now
-			useSets.add(set);
-			seenSets.put(idI,new Integer(useSets.size()-1));
-		}
-	}
-
 	// For the text coming in from the SlideAtomsSet:
 	// Build up TextRuns from pairs of TextHeaderAtom and
 	//  one of TextBytesAtom or TextCharsAtom
-	Vector runSets = new Vector();
-	for(int i=0; i<useSets.size(); i++) {
-		SlideAtomsSet set = (SlideAtomsSet)useSets.get(i);
-		findTextRuns(set.getSlideRecords(),runSets);
+	Vector textRuns = new Vector();
+	if(_atomSet != null) {
+		findTextRuns(_atomSet.getSlideRecords(),textRuns);
+	} else {
+		// No text on the slide, must just be pictures
 	}
+
 	// Build an array, more useful than a vector
-	_runs = new TextRun[runSets.size()];
+	_runs = new TextRun[textRuns.size()];
 	for(int i=0; i<_runs.length; i++) {
-		_runs[i] = (TextRun)runSets.get(i);
+		_runs[i] = (TextRun)textRuns.get(i);
+	}
+  }
+
+
+  /**
+   * Sets the Notes that are associated with this. Updates the
+   *  references in the records to point to the new ID
+   */
+  public void setNotes(Notes notes) {
+	_notes = notes;
+
+	// Update the Slide Atom's ID of where to point to
+	SlideAtom sa = _slide.getSlideAtom();
+
+	if(notes == null) {
+		// Set to 0
+		sa.setNotesID(0);
+	} else {
+		// Set to the value from the notes' sheet id
+		sa.setNotesID(notes.getSheetNumber());
 	}
   }
 
@@ -110,6 +113,11 @@ public class Slide extends Sheet
    * Returns the sheet number
    */
   public int getSheetNumber() { return _sheetNo; }
+
+  /**
+   * Returns the underlying slide record
+   */
+  public org.apache.poi.hslf.record.Slide getSlideRecord() { return _slide; }
 
   /**
    * Returns the Notes Sheet for this slide, or null if there isn't one
