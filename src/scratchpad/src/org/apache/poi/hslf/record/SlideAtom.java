@@ -54,6 +54,9 @@ public class SlideAtom extends RecordAtom
 	/** Get the embeded SSlideLayoutAtom */
 	public SSlideLayoutAtom getSSlideLayoutAtom() { return layoutAtom; }
 
+	/** Change the ID of the notes for this slide. 0 if it no longer has one */
+	public void setNotesID(int id) { notesID = id; }
+
 	public boolean getFollowMasterObjects()    { return followMasterObjects; }
 	public boolean getFollowMasterScheme()     { return followMasterScheme; }
 	public boolean getFollowMasterBackground() { return followMasterBackground; }
