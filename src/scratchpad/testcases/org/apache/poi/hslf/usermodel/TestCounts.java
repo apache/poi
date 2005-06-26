@@ -42,8 +42,8 @@ public class TestCounts extends TestCase {
 
     public void testSheetsCount() throws Exception {
 		Slide[] slides = ss.getSlides();
-		// Two sheets, plus some crap related to the master sheet
-		assertEquals(3, slides.length);
+		// Two sheets - master sheet is seperate
+		assertEquals(2, slides.length);
 	}
 
     public void testNotesCount() throws Exception {
