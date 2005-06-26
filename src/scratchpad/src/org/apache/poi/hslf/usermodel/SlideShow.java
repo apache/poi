@@ -30,6 +30,8 @@ import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.SlideAtom;
 import org.apache.poi.hslf.record.SlideListWithText;
 import org.apache.poi.hslf.record.SlideListWithText.*;
+import org.apache.poi.hslf.record.PersistPtrHolder;
+import org.apache.poi.hslf.record.PositionDependentRecord;
 
 /**
  * This class is a friendly wrapper on top of the more scary HSLFSlideShow.
@@ -49,6 +51,10 @@ public class SlideShow
 
   // Low level contents, as taken from HSLFSlideShow
   private Record[] _records;
+
+  // Pointers to the most recent versions of the core records
+  //  (Document, Notes, Slide etc)
+  private Record[] _mostRecentCoreRecords;
 
   // Friendly objects for people to deal with
   private Slide[] _slides;
@@ -90,7 +96,93 @@ public class SlideShow
 	_records = _hslfSlideShow.getRecords();
 	byte[] _docstream = _hslfSlideShow.getUnderlyingBytes();
 
+	// Find the versions of the core records we'll want to use
+	findMostRecentCoreRecords();
 
+	// Build up the model level Slides and Notes
+	buildSlidesAndNotes();
+  }
+
+  /**
+   * Use the PersistPtrHolder entries to figure out what is
+   *  the "most recent" version of all the core records
+   *  (Document, Notes, Slide etc), and save a record of them.
+   * Do this by walking from the oldest PersistPtr to the newest,
+   *  overwriting any references found along the way with newer ones
+   */
+  private void findMostRecentCoreRecords() {
+	// To start with, find the most recent in the byte offset domain
+	Hashtable mostRecentByBytes = new Hashtable();
+	for(int i=0; i<_records.length; i++) {
+		if(_records[i] instanceof PersistPtrHolder) {
+			PersistPtrHolder pph = (PersistPtrHolder)_records[i];
+
+			// If we've already seen any of the "slide" IDs for this 
+			//  PersistPtr, remove their old positions
+			int[] ids = pph.getKnownSlideIDs();
+			for(int j=0; j<ids.length; j++) {
+				Integer id = new Integer(ids[j]);
+				if( mostRecentByBytes.containsKey(id)) {
+					mostRecentByBytes.remove(id);
+				}	
+			}
+
+			// Now, update the byte level locations with their latest values
+			Hashtable thisSetOfLocations = pph.getSlideLocationsLookup();
+			for(int j=0; j<ids.length; j++) {
+				Integer id = new Integer(ids[j]);
+				mostRecentByBytes.put(id, thisSetOfLocations.get(id));
+			}
+		}
+	}
+
+	// We now know how many unique special records we have, so init
+	//  the array
+	_mostRecentCoreRecords = new Record[mostRecentByBytes.size()];
+
+	// Also, work out where we're going to put them in the array
+	Hashtable slideIDtoRecordLookup = new Hashtable();
+	int[] allIDs = new int[_mostRecentCoreRecords.length];
+	Enumeration ids = mostRecentByBytes.keys();
+	for(int i=0; i<allIDs.length; i++) {
+		Integer id = (Integer)ids.nextElement();
+		allIDs[i] = id.intValue();
+	}
+	Arrays.sort(allIDs);
+	for(int i=0; i<allIDs.length; i++) {
+		slideIDtoRecordLookup.put(new Integer(allIDs[i]), new Integer(i));
+	}
+
+	// Now convert the byte offsets back into record offsets
+	for(int i=0; i<_records.length; i++) {
+		if(_records[i] instanceof PositionDependentRecord) {
+			PositionDependentRecord pdr = (PositionDependentRecord)_records[i];
+			Integer recordAt = new Integer(pdr.getLastOnDiskOffset());
+
+			// Is it one we care about?
+			for(int j=0; j<allIDs.length; j++) {
+				Integer thisID = new Integer(allIDs[j]);
+				Integer thatRecordAt = (Integer)mostRecentByBytes.get(thisID);
+
+				if(thatRecordAt.equals(recordAt)) {
+					// Bingo. Now, where do we store it?
+					Integer storeAtI = 
+						(Integer)slideIDtoRecordLookup.get(thisID);
+					int storeAt = storeAtI.intValue();
+					
+					// Finally, save the record
+					_mostRecentCoreRecords[storeAt] = _records[i];
+				}
+			}
+		}
+	}
+  }
+
+  /**
+   * Build up model level Slide and Notes objects, from the underlying
+   *  records.
+   */
+  private void buildSlidesAndNotes() {
 	// For holding the Slide Records
 	Vector slidesV = new Vector(10);
 	// For holding the Notes Records
@@ -262,6 +354,12 @@ public class SlideShow
 
 
   // Accesser methods follow
+
+  /**
+   * Returns an array of the most recent version of all the interesting
+   *  records
+   */
+  public Record[] getMostRecentCoreRecords() { return _mostRecentCoreRecords; }
 
   /**
    * Returns an array of all the normal Slides found in the slideshow
