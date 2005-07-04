@@ -6,6 +6,7 @@
         <person id="AO" name="Andrew C. Oliver" email="acoliver2@users.sourceforge.net"/>
         <person id="GS" name="Glen Stampoultzis" email="gstamp@iprimus.com.au"/>
         <person id="MJ" name="Marc Johnson" email="mjohnson at apache dot org"/>
+		<person id="NB" name="Nick Burch" email="nick@torchbox.com"/>
         <person id="NKB" name="Nicola Ken Barozzi" email="barozzi@nicolaken.com"/>
         <person id="open" name="Poi Developers" email="poi-dev@jakarta.apache.org"/>
     </developers>
@@ -15,6 +16,7 @@
         <release version="3.0-alpha1" date="4 July 2005">
             <action dev="POI-DEVELOPERS" type="fix" context="All">Bugzilla Bug 29976 [PATCH] HSSF hyperlink formula size problem</action>
 	    <action dev="POI-DEVELOPERS" type="add" context="All">Image writing support</action>
+	    <action dev="NB" type="add" context="All">HSLF - Initial PowerPoint Support. Includes: Support for text extraction across the whole file; Support for getting individual slides, and their notes, and extracting text from those; Initial support for changing (but not adding) text</action>
         </release>
  
         <release version="2.5.1-FINAL" date="29 Feburary 2004">
