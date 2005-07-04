@@ -111,7 +111,7 @@
     <property name="changelog.file" location="${build.site}/changelog.html"/>
     <property name="dist.dir" location="build/dist"/>
     <property name="jar.name" value="poi"/>
-    <property name="version.id" value="2.1"/>
+    <property name="version.id" value="3.0-alpha1"/>
     <property name="halt.on.test.failure" value="true"/>
 
     <path id="main.classpath">
