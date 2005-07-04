@@ -12,12 +12,14 @@
         <person id="GJS" name="Glen Stampoultzis" email="poi-user@jakarta.apache.org"/>
         <person id="MJ" name="Marc Johnson" email="mjohnson@apache.org"/>
         <person id="NKB" name="Nicola Ken Barozzi" email="barozzi@nicolaken.com"/>
+        <person id="NB" name="Nick Burch" email="nick@torchbox.com"/>
         <person id="POI-DEVELOPERS" name="POI Developers" email="poi-dev@jakarta.apache.org"/>
         <person id="RK" name="Rainer Klute" email="klute@apache.org"/>
     </devs>
         <release version="3.0-alpha1" date="4 July 2005">
             <action dev="POI-DEVELOPERS" type="fix">Bugzilla Bug 29976 [PATCH] HSSF hyperlink formula size problem</action>
             <action dev="POI-DEVELOPERS" type="add">Image writing support</action>
+            <action dev="NB" type="add">HSLF - Initial PowerPoint support</action>
         </release>
 
         <release version="2.5.1-FINAL" date="29 Feburary 2004">
