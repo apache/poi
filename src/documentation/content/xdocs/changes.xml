@@ -15,29 +15,113 @@
         <person id="POI-DEVELOPERS" name="POI Developers" email="poi-dev@jakarta.apache.org"/>
         <person id="RK" name="Rainer Klute" email="klute@apache.org"/>
     </devs>
-    <release version="2.0-pre3" date="unreleased">
-        <action dev="RK" type="add">HPSF: Much better codepage support</action>
-    </release>
-    <release version="2.0-pre1" date="unreleased">
-        <action dev="POI-DEVELOPERS" type="add">Patch applied for deep cloning of worksheets was provided</action>
-        <action dev="POI-DEVELOPERS" type="add">Patch applied to allow sheet reordering</action>
-        <action dev="POI-DEVELOPERS" type="add">Added additional print area setting methods using row/column numbers</action>
-        <action dev="POI-DEVELOPERS" type="fix">HWPF:  Negative Array size fix</action>
-        <action dev="POI-DEVELOPERS" type="update">Added argument pointers to support the IF formula</action>
-        <action dev="POI-DEVELOPERS" type="update">Formulas: Added special character support for string literals, specifically for SUMIF formula support and addresses a bug as well</action>
-        <action dev="POI-DEVELOPERS" type="fix">BlockingInputStream committed to help ensure reads</action>
-        <action dev="POI-DEVELOPERS" type="fix">Fixed problem with NaN values differing from the investigated value from file reads in FormulaRecords</action>
-        <action dev="POI-DEVELOPERS" type="fix">Patch for getColumnWidth in HSSF</action>
-        <action dev="POI-DEVELOPERS" type="add">Patch for dealing with mult-level numbered lists in HWPF</action>
-        <action dev="POI-DEVELOPERS" type="fix">Due to named reference work, several named-ranged bugs were closed</action>
-        <action dev="POI-DEVELOPERS" type="fix">Patch applied to prevent sheet corruption after a template modification</action>
-        <action dev="POI-DEVELOPERS" type="update">Shared Formulas now Supported</action>
-        <action dev="POI-DEVELOPERS" type="update">Added GreaterEqual, LessEqual and NotEqual to Formula Parser</action>
-        <action dev="POI-DEVELOPERS" type="update">Added GreaterThan and LessThan functionality to formulas</action>
-        <action dev="POI-DEVELOPERS" type="fix">Patches for i10n</action>
-        <action dev="POI-DEVELOPERS" type="update">POI Build System Updated</action>
-        <action dev="POI-DEVELOPERS" type="fix">font names can now be null</action>
-    </release>
+        <release version="3.0-alpha1" date="4 July 2005">
+            <action dev="POI-DEVELOPERS" type="fix" context="All">Bugzilla Bug 29976 [PATCH] HSSF hyperlink formula size problem</action>
+            <action dev="POI-DEVELOPERS" type="add" context="All">Image writing support</action>
+        </release>
+
+        <release version="2.5.1-FINAL" date="29 Feburary 2004">
+            <action dev="POI-DEVELOPERS" type="add" context="All">Outlining support</action>
+            <action dev="POI-DEVELOPERS" type="fix" context="All">27574 - [PATCH] HSSFDateUtil.getExcelDate() is one hour off when DST changes</action>
+            <action dev="POI-DEVELOPERS" type="fix" context="All">26465 - [PATCH] wrong lastrow entry</action>
+            <action dev="POI-DEVELOPERS" type="fix" context="All">28203 - [PATCH] Unable to open read-write excel file including forms</action>
+        </release>
+
+        <release version="2.5-FINAL" date="29 Feburary 2004">
+            <action dev="POI-DEVELOPERS" type="add" context="All">Add support for the Escher file format</action>
+            <action dev="POI-DEVELOPERS" type="fix" context="All">27005 java.lang.IndexOutOfBoundsException during Workbook.cloneSheet()</action>
+        </release>
+
+        <release version="2.0-FINAL" date="26 Janurary 2004">
+            <action dev="POI-DEVELOPERS" type="update" context="All">No changes</action>
+        </release>
+
+        <release version="2.0-RC2" date="11 Janurary 2004">
+            <action dev="POI-DEVELOPERS" type="fix" context="All">Bug 25695 - HSSFCell.getStringCellValue() on cell which has string formula will return swap bye unicode characters.</action>
+            <action dev="POI-DEVELOPERS" type="fix" context="All">Updated website for upcoming release</action>
+            <action dev="POI-DEVELOPERS" type="fix" context="All">Formula Parser fixes with tests, by Peter M Murray Bug 25457</action>
+            <action dev="POI-DEVELOPERS" type="fix" context="All">Fixed cloning merge regions</action>
+            <action dev="POI-DEVELOPERS" type="fix" context="All">The cloned reference for merged cells did not create a new collection, so deletes cascaded to the original.</action>
+            <action dev="POI-DEVELOPERS" type="fix" context="All">Fix to 24519 call to getCustomPalette() from a newly created workbook now works</action>
+            <action dev="POI-DEVELOPERS" type="fix" context="All">Fix supplied for bug 24397 where some compilation got ambiguous classes.  Explicitly imports the classes.  Patch supplied by Jean-Pierre Paris.</action>
+        </release>
+        <release verion="2.0-RC1" date="2 November 2003">
+            <action dev="POI-DEVELOPERS" type="fix" context="All">12561 (Min)   HSSFWorkbook throws Exceptions</action>
+            <action dev="POI-DEVELOPERS" type="fix" context="All">12730 (Nor)   values dont get copied to another sheet.</action>
+            <action dev="POI-DEVELOPERS" type="fix" context="All">13224 (Maj)   Exception thrown when cell has =Names call</action>
+            <action dev="POI-DEVELOPERS" type="fix" context="All">13796 (Nor)   Error Reading Formula Record (optimized if, external link)</action>
+            <action dev="POI-DEVELOPERS" type="fix" context="All">13921 (Nor)   Sheet name cannot exceed 31 characters and cannot contain :</action>
+            <action dev="POI-DEVELOPERS" type="fix" context="All">14330 (Nor)   Error reading FormulaRecord</action>
+            <action dev="POI-DEVELOPERS" type="fix" context="All">14460 (Nor)   Name in Formula - ArrayOutOfBoundsException</action>
+            <action dev="POI-DEVELOPERS" type="fix" context="All">15228 (Cri)   [Urgent] ArrayIndexoutofbounds Exception. POI - Version 1.8</action>
+            <action dev="POI-DEVELOPERS" type="fix" context="All">16488 (Maj)   Unable to open written spreadsheet in Excel, but can in Open</action>
+            <action dev="POI-DEVELOPERS" type="fix" context="All">16559 (Nor)   testCustomPalette.xls crashes Excel 97</action>
+            <action dev="POI-DEVELOPERS" type="fix" context="All">16560 (Nor)   testBoolErr.xls crashes Excel '97</action>
+            <action dev="POI-DEVELOPERS" type="fix" context="All">17374 (Min)   HSSFFont - BOLDWEIGHT_NORMAL</action>
+            <action dev="POI-DEVELOPERS" type="fix" context="All">18800 (Maj)   The sheet made by HSSFWorkbook#cloneSheet() doesn't work cor</action>
+            <action dev="POI-DEVELOPERS" type="fix" context="All">18846 (Min)   [PATCH][RFE]Refactor the transformation between byte array a</action>
+            <action dev="POI-DEVELOPERS" type="fix" context="All">19599 (Min)   java.lang.IllegalArgumentException</action>
+            <action dev="POI-DEVELOPERS" type="fix" context="All">19961 (Nor)   [PATCH] Sheet.getColumnWidth() returns wrong value</action>
+            <action dev="POI-DEVELOPERS" type="fix" context="All">21066 (Blo)   Can not modify a blank spreadsheet</action>
+            <action dev="POI-DEVELOPERS" type="fix" context="All">21444 (Enh)   [PATCH] Macro functions</action>
+            <action dev="POI-DEVELOPERS" type="fix" context="All">21447 (Nor)   [RFE]String Formula Cells</action>
+            <action dev="POI-DEVELOPERS" type="fix" context="All">21674 (Enh)   [PATCH] Documentation changes for @(Greater|Less|Not)EqualPt</action>
+            <action dev="POI-DEVELOPERS" type="fix" context="All">21863 (Enh)   [PATCH] build.xml fixes</action>
+            <action dev="POI-DEVELOPERS" type="fix" context="All">22195 (Nor)   [RFE] [PATCH] Support for Storage Class ID</action>
+            <action dev="POI-DEVELOPERS" type="fix" context="All">22742 (Cri)   Failed to create HSSFWorkbook!</action>
+            <action dev="POI-DEVELOPERS" type="fix" context="All">22922 (Cri)   HSSFSheet.shiftRows() throws java.lang.IndexOutOfBoundsExcep</action>
+            <action dev="POI-DEVELOPERS" type="fix" context="All">22963 (Nor)   org.apache.poi.hpsf.SummaryInformation.getEditTime() should</action>
+            <action dev="POI-DEVELOPERS" type="fix" context="All">24149 (Maj)   Error passing inputstream to POIFSFileSystem</action>
+            <action dev="POI-DEVELOPERS" type="fix" context="All">21722 (Nor)   [PATCH] Add a ProtectRecord to Sheets and give control over</action>
+            <action dev="POI-DEVELOPERS" type="fix" context="All">9576  (Nor)   [PATCH] DBCELL, INDEX EXTSST (was Acess 97 import)</action>
+            <action dev="POI-DEVELOPERS" type="fix" context="All">13478 (Blo)   [PATCH] [RFE] POIFS, RawDataBlock: Missing workaround for lo</action>
+            <action dev="POI-DEVELOPERS" type="fix" context="All">14824 (Nor)   Unable to modify empty sheets</action>
+            <action dev="POI-DEVELOPERS" type="fix" context="All">12843 (Cri)   [PATCH] Make POI handle chinese better</action>
+            <action dev="POI-DEVELOPERS" type="fix" context="All">15353 (Nor)   [RFE] creating a cell with a hyperlink</action>
+            <action dev="POI-DEVELOPERS" type="fix" context="All">15375 (Blo)   Post 1.5.1 POI causes spreadsheet to become unopenable.</action>
+        </release>
+
+        <release version="2.0-pre3" date="29 July 2003">
+            <action dev="POI-DEVELOPERS" type="add" context="All">HPSF is now able to read properties which are given in the property set stream but which don't have a value ("variant" type VT_EMPTY). The getXXX() methods of the PropertySet class return null if their return type is a reference (like a string) or 0 if the return type is numeric. Details about the return types and about how to distinguish between a property value of zero and a property value that is not present can be found in the API documentation.</action>
+            <action dev="POI-DEVELOPERS" type="fix" context="All">Gridlines can now be turned on and off</action>
+            <action dev="POI-DEVELOPERS" type="fix" context="All">NamePTG refactoring/fixes</action>
+            <action dev="POI-DEVELOPERS" type="fix" context="All">minor fixes to ExternSheet and formula strings</action>
+            <action dev="POI-DEVELOPERS" type="fix" context="All">Sheet comparisons now ignore case</action>
+        </release>
+
+        <release version="2.0-pre2" date="6 July 2003">
+            <action dev="POI-DEVELOPERS" type="fix" context="All" >A nasty concurrency problem has been fixed. Any users working in a multithreaded environment should seriously consider upgrading to this release.</action>
+            <action dev="POI-DEVELOPERS" type="update" context="All">The EXTSST record has been implemented. This record is used by excel for optimized reading of strings.</action>
+            <action dev="POI-DEVELOPERS" type="update" context="All">When rows are shifted, the merged regions now move with them. If a row contains 2 merged cells, the resulting shifted row should have those cells merged as well.</action>
+            <action dev="POI-DEVELOPERS" type="fix" context="All">There were some issues when removing merged
+                    regions (specifically, removing all of them and then adding some more) and have been resolved.</action>
+            <action dev="POI-DEVELOPERS" type="fix" context="All">When a sheet contained shared formulas (when a formula is
+                    dragged across greater than 6 cells), the clone would fail. We now support cloning of
+                    sheets that contain this Excel optimization. </action>
+            <action dev="POI-DEVELOPERS" type="add" context="All">Support added for reading formulas with UnaryPlus and UnaryMinus operators.</action>
+        </release>
+
+        <release version="2.0-pre1" date="17 May 2003">
+            <action dev="POI-DEVELOPERS" type="add" context="All">Patch applied for deep cloning of worksheets was provided</action>
+            <action dev="POI-DEVELOPERS" type="add" context="All">Patch applied to allow sheet reordering</action>
+            <action dev="POI-DEVELOPERS" type="add" context="All">Added additional print area setting methods using row/column numbers</action>
+            <action dev="POI-DEVELOPERS" type="fix" context="All">HDF:  Negative Array size fix</action>
+            <action dev="POI-DEVELOPERS" type="update" context="All">Added argument pointers to support the IF formula</action>
+            <action dev="POI-DEVELOPERS" type="update" context="All">Formulas: Added special character support for string literals, specifically for SUMIF formula support and addresses a bug as well</action>
+            <action dev="POI-DEVELOPERS" type="fix" context="All">BlockingInputStream committed to help ensure reads</action>
+            <action dev="POI-DEVELOPERS" type="fix" context="All">Fixed problem with NaN values differing from the investigated value from file reads in FormulaRecords</action>
+            <action dev="POI-DEVELOPERS" type="fix" context="All">Patch for getColumnWidth in HSSF</action>
+            <action dev="POI-DEVELOPERS" type="add" context="All">Patch for dealing with mult-level numbered lists in HDF</action>
+            <action dev="POI-DEVELOPERS" type="fix" context="All">Due to named reference work, several named-ranged bugs were closed</action>
+            <action dev="POI-DEVELOPERS" type="fix" context="All">Patch applied to prevent sheet corruption after a template modification</action>
+            <action dev="POI-DEVELOPERS" type="update" context="All">Shared Formulas now Supported</action>
+            <action dev="POI-DEVELOPERS" type="update" context="All">Added GreaterEqual, LessEqual and NotEqual to Formula Parser</action>
+            <action dev="POI-DEVELOPERS" type="update" context="All">Added GreaterThan and LessThan functionality to formulas</action>
+            <action dev="POI-DEVELOPERS" type="fix" context="All">Patches for i10n</action>
+            <action dev="POI-DEVELOPERS" type="update" context="All">POI Build System Updated</action>
+            <action dev="POI-DEVELOPERS" type="fix" context="All">font names can now be null</action>
+        </release>
+
     <release version="1.10-dev" date="19 Feb 2003">
         <action dev="POI-DEVELOPERS" type="add">Support for zoom level</action>
         <action dev="POI-DEVELOPERS" type="add">Freeze and split pane support</action>

@@ -12,9 +12,9 @@
 
     <changes>
 
-        <release version="unreleased" date="???">
+        <release version="3.0-alpha1" date="4 July 2005">
             <action dev="POI-DEVELOPERS" type="fix" context="All">Bugzilla Bug 29976 [PATCH] HSSF hyperlink formula size problem</action>
-			<action dev="POI-DEVELOPERS" type="add" context="All">Image writing support</action>
+	    <action dev="POI-DEVELOPERS" type="add" context="All">Image writing support</action>
         </release>
  
         <release version="2.5.1-FINAL" date="29 Feburary 2004">
