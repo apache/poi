@@ -92,15 +92,17 @@ public class ObjRecord
     {
         subrecords = new ArrayList();
         int pos = offset;
-        while (pos - offset < size)
+        while (pos - offset <= size-2) // atleast one "short" must be present
         {
             short subRecordSid = LittleEndian.getShort(data, pos);
-            short subRecordSize = LittleEndian.getShort(data, pos + 2);
+            short subRecordSize = -1; // set default to "< 0"
+            if (pos-offset <= size-4) { // see if size info is present, else default to -1
+                subRecordSize = LittleEndian.getShort(data, pos + 2);
+            }
             Record subRecord = SubRecord.createSubRecord(subRecordSid, subRecordSize, data, pos + 4);
             subrecords.add(subRecord);
             pos += subRecord.getRecordSize();
         }
-
     }
 
     public String toString()
