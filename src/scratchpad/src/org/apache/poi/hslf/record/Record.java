@@ -125,97 +125,37 @@ public abstract class Record
 	public static Record createRecordForType(long type, byte[] b, int start, int len) {
 		Record toReturn = null;
 
-		// Default is to use UnknownRecordPlaceholder
-		// When you create classes for new Records, add them here
-		switch((int)type) {
-			// Document
-			case 1000:
-				toReturn = new DummyPositionSensitiveRecordWithChildren(b,start,len);
-				break;
-				
-			// DocumentAtom
-			case 1001:
-				toReturn = new DocumentAtom(b,start,len);
-				break;
-				
-			// "Slide"
-			case 1006:
-				toReturn = new Slide(b,start,len);
-				break;
+		// We use the RecordTypes class to provide us with the right
+		//  class to use for a given type
+		// A spot of reflection gets us the (byte[],int,int) constructor
+		// From there, we instanciate the class
+		// Any special record handling occurs once we have the class
+		Class c = null;
+		try {
+			c = RecordTypes.recordHandlingClass((int)type);
+			if(c == null) { 
+				// How odd. RecordTypes normally subsitutes in
+				//  a default handler class if it has heard of the record
+				//  type but there's no support for it. Explicitly request
+				//  that now
+				c = RecordTypes.recordHandlingClass( RecordTypes.Unknown.typeID );
+			}
 
-			// "SlideAtom"
-			case 1007:
-				toReturn = new SlideAtom(b,start,len);
-				break;
-
-			// "Notes"
-			case 1008:
-				toReturn = new Notes(b,start,len);
-				break;
-				
-			// "NotesAtom" (Details on Notes sheets)
-			case 1009:
-				toReturn = new NotesAtom(b,start,len);
-				break;
-				
-			// "SlidePersistAtom" (Details on text for a sheet)
-			case 1011:
-				toReturn = new SlidePersistAtom(b,start,len);
-				break;
-				
-			// MainMaster (MetaSheet lives inside the PPDrawing inside this)
-			case 1016:
-				toReturn = new DummyPositionSensitiveRecordWithChildren(b,start,len);
-				break;
-
-			// PPDrawing (MetaSheet lives inside this)
-			case 1036:
-				toReturn = new PPDrawing(b,start,len);
-				break;
-
-			// ColorSchemeAtom (Holds the colours that make up a colour scheme)
-			case 2032:
-				toReturn = new ColorSchemeAtom(b,start,len);
-				break;
-
-			// TextHeaderAtom (Holds details on following text)
-			case 3999:
-				toReturn = new TextHeaderAtom(b,start,len);
-				break;
-				
-			// TextCharsAtom (Text in Unicode format)
-			case 4000:
-				toReturn = new TextCharsAtom(b,start,len);
-				break;
-				
-			// TextByteAtom (Text in ascii format)
-			case 4008:
-				toReturn = new TextBytesAtom(b,start,len);
-				break;
-				
-			// SlideListWithText (Many Sheets live inside here)
-			case 4080:
-				toReturn = new SlideListWithText(b,start,len);
-				break;
-
-			// UserEditAtom (Holds pointers, last viewed etc)
-			case 4085:
-				toReturn = new UserEditAtom(b,start,len);
-				break;
-
-			// PersistPtrFullBlock (Don't know what it holds, but do care about where it lives)
-			case 6001:
-				toReturn = new PersistPtrHolder(b,start,len);
-				break;
-			// PersistPtrIncrementalBlock (Don't know what it holds, but do care about where it lives)
-			case 6002:
-				toReturn = new PersistPtrHolder(b,start,len);
-				break;
-				
-			default:
-				toReturn = new UnknownRecordPlaceholder(b,start,len);
-				break;
+			// Grab the right constructor
+			java.lang.reflect.Constructor con = c.getDeclaredConstructor(new Class[] { byte[].class, Integer.TYPE, Integer.TYPE });
+			// Instantiate
+			toReturn = (Record)(con.newInstance(new Object[] { b, new Integer(start), new Integer(len) }));
+		} catch(InstantiationException ie) {
+			throw new RuntimeException("Couldn't instantiate the class for type with id " + type + " on class " + c + " : " + ie);
+		} catch(java.lang.reflect.InvocationTargetException ite) {
+			throw new RuntimeException("Couldn't instantiate the class for type with id " + type + " on class " + c + " : " + ite);
+		} catch(IllegalAccessException iae) {
+			throw new RuntimeException("Couldn't access the constructor for type with id " + type + " on class " + c + " : " + iae);
+		} catch(NoSuchMethodException nsme) {
+			throw new RuntimeException("Couldn't access the constructor for type with id " + type + " on class " + c + " : " + nsme);
 		}
+
+		// Handling for special kinds of records follow
 
 		// If it's a position aware record, tell it where it is
 		if(toReturn instanceof PositionDependentRecord) {
@@ -223,7 +163,7 @@ public abstract class Record
 			pdr.setLastOnDiskOffset(start);
 		}
 
-		// Return the record
+		// Return the created record
 		return toReturn;
 	}
 }
