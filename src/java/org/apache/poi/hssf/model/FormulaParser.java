@@ -39,7 +39,7 @@ import org.apache.poi.hssf.record.formula.*;
  * <factor> ::= <number> | (<expression>) | <cellRef> | <function>
  * <function> ::= <functionName> ([expression [, expression]*])
  *
- *  @author Avik Sengupta <avik AT Avik Sengupta DOT com>
+ *  @author Avik Sengupta <avik at apache dot org>
  *  @author Andrew C. oliver (acoliver at apache dot org)
  *  @author Eric Ladner (eladner at goldinc dot com)
  *  @author Cameron Riley (criley at ekmail.com)
