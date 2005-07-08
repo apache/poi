@@ -37,18 +37,6 @@ public class TestUnfixedBugs extends TestCase {
 
 	}
 	
-	   /* 15556 is fixed, but this doesnt work due to bug 34575
-	    * ArrayIndexOutOfBound in ObjRecord */ 
-	   public void test15556() throws java.io.IOException {
-        String filename = System.getProperty("HSSF.testdata.path");
-        filename=filename+"/15556.xls";
-        FileInputStream in = new FileInputStream(filename);
-        HSSFWorkbook wb = new HSSFWorkbook(in);
-        HSSFSheet sheet = wb.getSheetAt(0);
-        HSSFRow row = sheet.getRow(45);
-        assertTrue("Read row fine!" , true);
-        
-    }
 	 
 	 /* ArrayIndexOutOfBound in BOFRecord */  
 	 public void test28772() throws java.io.IOException {

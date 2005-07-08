@@ -248,7 +248,6 @@ extends TestCase {
     }
     
     /**Double byte strings*/
-    /* 15556 is fixed, but this doesnt work due to bug 34575    	
     public void test15556() throws java.io.IOException {
         
         String filename = System.getProperty("HSSF.testdata.path");
@@ -260,7 +259,6 @@ extends TestCase {
         this.assertTrue("Read row fine!" , true);
         
     }
-    */
     /**Double byte strings */
     public void test22742() throws java.io.IOException {
         String filename = System.getProperty("HSSF.testdata.path");
