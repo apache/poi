@@ -167,9 +167,7 @@ public class RangeAddress {
   }
   
   public boolean hasRange (){
-    if(m_cellFrom == null || m_cellTo == null)
-      return false;
-    return true;
+      return (m_cellFrom != null && m_cellTo != null && !m_cellFrom.equals(m_cellTo));
   }
   
   public boolean hasCell (){
