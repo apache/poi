@@ -298,7 +298,7 @@ public void walkTree(int depth, int startPos, int maxLen) {
 	// Print the record's details
 	if(record instanceof EscherContainerRecord) {
 		EscherContainerRecord ecr = (EscherContainerRecord)record;
-		System.out.println(ind + ecr.toString(false));
+		System.out.println(ind + ecr.toString());
 		walkEscherDDF((indent+3), pos + 8, (int)atomLen );
 	} else {
 		System.out.println(ind + record.toString());
