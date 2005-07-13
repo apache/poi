@@ -100,19 +100,24 @@
   <property name="examples.jar3.url" value="${repository}/commons-lang/jars/commons-lang-1.0-b1.jar"/>
   <property name="examples.testokfile" location="build/examples-testokfile.txt"/>
 
-    <property name="junit.jar1.dir" location="${main.lib}/junit-3.8.1.jar"/>
-    <property name="junit.jar1.url" value="${repository}/junit/jars/junit-3.8.1.jar"/>
-    <property name="build.site" location="build/tmp/site/build/site"/>
-    <property name="build.site.src" location="build/tmp/site"/>
-    <property name="junit.report.dir" location="${build.site}/junit"/>
-    <property name="jdepend.report.dir" location="${build.site}/jdepend"/>
-    <property name="jdepend.report.out.dir" location="${build.site.src}/src/documentation/content/jdepend"/>
-    <property name="apidocs.report.dir" location="${build.site}/apidocs"/>
-    <property name="changelog.file" location="${build.site}/changelog.html"/>
-    <property name="dist.dir" location="build/dist"/>
-    <property name="jar.name" value="poi"/>
-    <property name="version.id" value="3.0-alpha1"/>
-    <property name="halt.on.test.failure" value="true"/>
+  <property name="junit.jar1.dir" location="${main.lib}/junit-3.8.1.jar"/>
+  <property name="junit.jar1.url" value="${repository}/junit/jars/junit-3.8.1.jar"/>
+  <property name="build.site" location="build/tmp/site/build/site"/>
+  <property name="build.site.src" location="build/tmp/site"/>
+  <property name="junit.report.dir" location="${build.site}/junit"/>
+  <property name="jdepend.report.dir" location="${build.site}/jdepend"/>
+  <property name="jdepend.report.out.dir" location="${build.site.src}/src/documentation/content/jdepend"/>
+  <property name="apidocs.report.dir" location="${build.site}/apidocs"/>
+  <property name="changelog.file" location="${build.site}/changelog.html"/>
+  <property name="dist.dir" location="build/dist"/>
+  <property name="jar.name" value="poi"/>
+  <property name="version.id" value="3.0-alpha1"/>
+  <property name="halt.on.test.failure" value="true"/>
+  <property name="jdk.version.source" value="1.3"
+    description="JDK version of source code"/>
+  <property name="jdk.version.class" value="1.3"
+    description="JDK version of generated class files"/>  
+ 
 
     <path id="main.classpath">
         <pathelement location="${main.jar1.dir}"/>
@@ -258,12 +263,14 @@
     <copy todir="${main.output.dir}">
       <fileset dir="${main.resource1.dir}"/>
     </copy>
-    <javac srcdir="${main.src}" destdir="${main.output.dir}" debug="on"
-      fork="yes" includeAntRuntime="no" failonerror="true">
+    <javac target="${jdk.version.class}" source="${jdk.version.source}"
+      failonerror="true" destdir="${main.output.dir}" debug="on" fork="yes"
+      srcdir="${main.src}">
       <classpath refid="main.classpath"/>
     </javac>
-    <javac srcdir="${main.src.test}" destdir="${main.output.test.dir}"
-      debug="on" fork="yes" includeAntRuntime="no" failonerror="true">
+    <javac target="${jdk.version.class}" source="${jdk.version.source}"
+      failonerror="true" destdir="${main.output.test.dir}" debug="on"
+      fork="yes" srcdir="${main.src.test}">
       <classpath>
         <path refid="main.classpath"/>
         <pathelement location="${main.output.dir}"/>
@@ -273,13 +280,14 @@
   </target>
 
   <target name="compile-scratchpad" depends="init">
-    <javac srcdir="${scratchpad.src}" destdir="${scratchpad.output.dir}"
-      debug="on" fork="yes" includeAntRuntime="no" failonerror="true">
+    <javac target="${jdk.version.class}" source="${jdk.version.source}"
+      failonerror="true" destdir="${scratchpad.output.dir}" debug="on"
+      fork="yes" srcdir="${scratchpad.src}">
       <classpath refid="scratchpad.classpath"/>
     </javac>
-    <javac srcdir="${scratchpad.src.test}"
-      destdir="${scratchpad.output.test.dir}" debug="on" fork="yes"
-      includeAntRuntime="no" failonerror="true">
+    <javac target="${jdk.version.class}" source="${jdk.version.source}"
+      failonerror="true" destdir="${scratchpad.output.test.dir}" debug="on"
+      fork="yes" srcdir="${scratchpad.src.test}">
       <classpath>
         <path refid="scratchpad.classpath"/>
         <pathelement location="${scratchpad.output.dir}"/>
@@ -289,13 +297,14 @@
   </target>
 
   <target name="compile-contrib" depends="init">
-    <javac srcdir="${contrib.src}" destdir="${contrib.output.dir}"
-      debug="on" fork="yes" includeAntRuntime="no" failonerror="true">
+    <javac target="${jdk.version.class}" source="${jdk.version.source}"
+      failonerror="true" destdir="${contrib.output.dir}" debug="on" fork="yes"
+      srcdir="${contrib.src}">
       <classpath refid="contrib.classpath"/>
     </javac>
-    <javac srcdir="${contrib.src.test}"
-      destdir="${contrib.output.test.dir}" debug="on" fork="yes"
-      includeAntRuntime="no" failonerror="true">
+    <javac target="${jdk.version.class}" source="${jdk.version.source}"
+      failonerror="true" destdir="${contrib.output.test.dir}" debug="on"
+      fork="yes" srcdir="${contrib.src.test}">
       <classpath>
         <path refid="contrib.classpath"/>
         <pathelement location="${contrib.output.dir}"/>
@@ -305,8 +314,8 @@
   </target>
 
   <target name="compile-examples" depends="init">
-    <javac srcdir="${examples.src}" destdir="${examples.output.dir}"
-      debug="on">
+    <javac target="${jdk.version.class}" source="${jdk.version.source}"
+      destdir="${examples.output.dir}" debug="on" srcdir="${examples.src}">
       <classpath refid="examples.classpath"/>
     </javac>
   </target>
