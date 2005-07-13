@@ -19,6 +19,9 @@
 package org.apache.poi.hssf.usermodel;
 
 import junit.framework.TestCase;
+
+import org.apache.poi.hssf.util.AreaReference;
+import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.TempFile;
 
@@ -33,6 +36,7 @@ import java.io.IOException;
  * @author ROMANL
  * @author Andrew C. Oliver (acoliver at apache dot org)
  * @author Danny Mui (danny at muibros.com)
+ * @author Amol S. Deshmukh &lt; amol at ap ache dot org &gt; 
  */
 public class TestNamedRange
     extends TestCase {
@@ -507,6 +511,78 @@ public class TestNamedRange
     	workbook.removePrintArea(0);
     	assertNull("PrintArea was not removed", workbook.getPrintArea(0)); 
     }
+    
+    /**
+     * Verifies correct functioning for "single cell named range" (aka "named cell")
+     */
+    public void testNamedCell_1() {
         
+        // setup for this testcase
+        String sheetName = "Test Named Cell";
+        String cellName = "A name for a named cell";
+        String cellValue = "TEST Value";
+        HSSFWorkbook wb = new HSSFWorkbook();        
+        HSSFSheet sheet = wb.createSheet(sheetName);
+        sheet.createRow(0).createCell((short) 0).setCellValue(cellValue);
+         
+        // create named range for a single cell using areareference
+        HSSFName namedCell = wb.createName();
+        namedCell.setNameName(cellName);
+        String reference = sheetName+"!A1:A1";
+        namedCell.setReference(reference);
+        
+        // retrieve the newly created named range
+        int namedCellIdx = wb.getNameIndex(cellName);
+        HSSFName aNamedCell = wb.getNameAt(namedCellIdx);
+        assertNotNull(aNamedCell);
+        
+        // retrieve the cell at the named range and test its contents
+        AreaReference aref = new AreaReference(aNamedCell.getReference());
+        CellReference[] crefs = aref.getCells();
+        assertNotNull(crefs);
+        assertEquals("Should be exactly 1 cell in the named cell :'" +cellName+"'", 1, crefs.length);
+        for (int i=0, iSize=crefs.length; i<iSize; i++) {
+            CellReference cref = crefs[i];
+            assertNotNull(cref);
+            HSSFSheet s = wb.getSheet(cref.getSheetName());
+            HSSFRow r = sheet.getRow(cref.getRow());
+            HSSFCell c = r.getCell(cref.getCol());
+            String contents = c.getStringCellValue();
+            assertEquals("Contents of cell retrieved by its named reference", contents, cellValue);
+        }
+    }
+
+    /**
+     * Verifies correct functioning for "single cell named range" (aka "named cell")
+     */
+    public void testNamedCell_2() {
+        
+        // setup for this testcase
+        String sname = "TestSheet", cname = "TestName", cvalue = "TestVal";
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet(sname);
+        sheet.createRow(0).createCell((short) 0).setCellValue(cvalue);
+         
+        // create named range for a single cell using cellreference
+        HSSFName namedCell = wb.createName();
+        namedCell.setNameName(cname);
+        String reference = sname+"!A1";
+        namedCell.setReference(reference);
+        
+        // retrieve the newly created named range
+        int namedCellIdx = wb.getNameIndex(cname);
+        HSSFName aNamedCell = wb.getNameAt(namedCellIdx);
+        assertNotNull(aNamedCell);
+        
+        // retrieve the cell at the named range and test its contents
+        CellReference cref = new CellReference(aNamedCell.getReference());
+        assertNotNull(cref);
+        HSSFSheet s = wb.getSheet(cref.getSheetName());
+        HSSFRow r = sheet.getRow(cref.getRow());
+        HSSFCell c = r.getCell(cref.getCol());
+        String contents = c.getStringCellValue();
+        assertEquals("Contents of cell retrieved by its named reference", contents, cvalue);
+    }
+
 }
 
