@@ -46,6 +46,7 @@
                     <li><link href="#Graphics2d">Shapes and Graphics2d</link></li>
                     <li><link href="#Outlining">Outlining</link></li>
                     <li><link href="#Images">Images</link></li>
+                    <li><link href="#NamedRanges">Named Ranges and Named Cells</link></li>
                 </ul>
             </section>
             <section><title>Features</title>
@@ -970,5 +971,69 @@
     patriarch.createPicture(anchor, loadPicture( "src/resources/logos/logoKarmokar4.png", wb ));
             </source>
         </section>
+        <anchor id="NamedRanges"/>
+        <section>
+            <title>Named Ranges and Named Cells</title>
+            <p>
+                Named Range is a way to refer to a group of cells by a name. Named Cell is a 
+                degenerate case of Named Range in that the 'group of cells' contains exactly one
+                cell. You can create as well as refer to cells in a workbook by their named range.
+                When working with Named Ranges, the classes: org.apache.poi.hssf.util.CellReference and 
+                &amp; org.apache.poi.hssf.util.AreaReference are used.
+            </p>
+            <p>
+            Creating Named Range / Named Cell
+            </p>
+            <source>
+    // setup code
+    String sname = "TestSheet", cname = "TestName", cvalue = "TestVal";
+    HSSFWorkbook wb = new HSSFWorkbook();
+    HSSFSheet sheet = wb.createSheet(sname);
+    sheet.createRow(0).createCell((short) 0).setCellValue(cvalue);
+     
+    // 1. create named range for a single cell using areareference
+    HSSFName namedCell = wb.createName();
+    namedCell.setNameName(cname);
+    String reference = sname+"!A1:A1"; // area reference
+    namedCell.setReference(reference);
+    
+    // 2. create named range for a single cell using cellreference
+    HSSFName namedCell = wb.createName();
+    namedCell.setNameName(cname);
+    String reference = sname+"!A1"; // cell reference
+    namedCell.setReference(reference);
+    
+    // 3. create named range for an area using AreaReference
+    HSSFName namedCell = wb.createName();
+    namedCell.setNameName(cname);
+    String reference = sname+"!A1:C5"; // area reference
+    namedCell.setReference(reference);
+    
+            </source>
+            <p>
+            Reading from Named Range / Named Cell
+            </p>
+            <source>
+    // setup code
+    String cname = "TestName";
+    HSSFWorkbook wb = getMyWorkbook(); // retrieve workbook
+
+    // retrieve the named range
+    int namedCellIdx = wb.getNameIndex(cellName);
+    HSSFName aNamedCell = wb.getNameAt(namedCellIdx);
+    
+    // retrieve the cell at the named range and test its contents
+    AreaReference aref = new AreaReference(aNamedCell.getReference());
+    CellReference[] crefs = aref.getCells();
+    for (int i=0; i&lt;crefs.length; i++) {
+        HSSFSheet s = wb.getSheet(crefs[i].getSheetName());
+        HSSFRow r = sheet.getRow(crefs[i].getRow());
+        HSSFCell c = r.getCell(crefs[i].getCol());
+        // extract the cell contents based on cell type etc.
+    }
+            </source>
+            
+        </section>
+        
     </body>
 </document>
