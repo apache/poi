@@ -822,7 +822,7 @@ public class Sheet implements Model
       //Add the references to the DBCells in the IndexRecord (one for each block)
       int blockCount = rows.getRowBlockCount();
       //Calculate the size of this IndexRecord
-      int indexRecSize = index.getRecordSizeForBlockCount(blockCount);
+      int indexRecSize = IndexRecord.getRecordSizeForBlockCount(blockCount);
 
       int rowBlockOffset = 0;
       int cellBlockOffset = 0;
@@ -1831,6 +1831,37 @@ public class Sheet implements Model
         {
             retval = defaultcolwidth.getColWidth();
         }
+        return retval;
+    }
+    
+    /**
+     * get the index to the ExtendedFormatRecord "associated" with 
+     * the column at specified 0-based index. (In this case, an 
+     * ExtendedFormatRecord index is actually associated with a 
+     * ColumnInfoRecord which spans 1 or more columns)
+     * <br/>
+     * Returns the index to the default ExtendedFormatRecord (0xF)
+     * if no ColumnInfoRecord exists that includes the column
+     * index specified. 
+     * @param column
+     * @return index of ExtendedFormatRecord associated with
+     * ColumnInfoRecord that includes the column index or the
+     * index of the default ExtendedFormatRecord (0xF)
+     */
+    public short getXFIndexForColAt(short column) {
+        short retval = 0;
+        ColumnInfoRecord ci = null;
+        if (columns != null) {
+            for (Iterator iterator = columns.getIterator(); iterator.hasNext();) {
+                ci = (ColumnInfoRecord) iterator.next();
+                if ((ci.getFirstColumn() <= column)
+                        && (column <= ci.getLastColumn())) {
+                    break;
+                }
+                ci = null;
+            }
+        }
+        retval = (ci != null) ? ci.getXFIndex() : 0xF;
         return retval;
     }
 
