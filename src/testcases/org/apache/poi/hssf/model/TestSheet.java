@@ -280,5 +280,77 @@ public class TestSheet extends TestCase
         assertEquals("no more breaks", 0, sheet.getNumColumnBreaks());
     }
 
+    /**
+     * test newly added method Sheet.getXFIndexForColAt(..)
+     * works as designed.
+     */
+    public void testXFIndexForColumn() {
+        try{
+            final short TEST_IDX = 10;
+            final short DEFAULT_IDX = 0xF; // 15
+            short xfindex = Short.MIN_VALUE;
+            Sheet sheet = Sheet.createSheet();
+            
+            // without ColumnInfoRecord
+            xfindex = sheet.getXFIndexForColAt((short) 0);
+            assertEquals(DEFAULT_IDX, xfindex);
+            xfindex = sheet.getXFIndexForColAt((short) 1);
+            assertEquals(DEFAULT_IDX, xfindex);
+            
+            ColumnInfoRecord nci = ( ColumnInfoRecord ) sheet.createColInfo();
+            sheet.columns.insertColumn(nci);
+            
+            // single column ColumnInfoRecord
+            nci.setFirstColumn((short) 2);
+            nci.setLastColumn((short) 2);
+            nci.setXFIndex(TEST_IDX);            
+            xfindex = sheet.getXFIndexForColAt((short) 0);
+            assertEquals(DEFAULT_IDX, xfindex);
+            xfindex = sheet.getXFIndexForColAt((short) 1);
+            assertEquals(DEFAULT_IDX, xfindex);
+            xfindex = sheet.getXFIndexForColAt((short) 2);
+            assertEquals(TEST_IDX, xfindex);
+            xfindex = sheet.getXFIndexForColAt((short) 3);
+            assertEquals(DEFAULT_IDX, xfindex);
+
+            // ten column ColumnInfoRecord
+            nci.setFirstColumn((short) 2);
+            nci.setLastColumn((short) 11);
+            nci.setXFIndex(TEST_IDX);            
+            xfindex = sheet.getXFIndexForColAt((short) 1);
+            assertEquals(DEFAULT_IDX, xfindex);
+            xfindex = sheet.getXFIndexForColAt((short) 2);
+            assertEquals(TEST_IDX, xfindex);
+            xfindex = sheet.getXFIndexForColAt((short) 6);
+            assertEquals(TEST_IDX, xfindex);
+            xfindex = sheet.getXFIndexForColAt((short) 11);
+            assertEquals(TEST_IDX, xfindex);
+            xfindex = sheet.getXFIndexForColAt((short) 12);
+            assertEquals(DEFAULT_IDX, xfindex);
+
+            // single column ColumnInfoRecord starting at index 0
+            nci.setFirstColumn((short) 0);
+            nci.setLastColumn((short) 0);
+            nci.setXFIndex(TEST_IDX);            
+            xfindex = sheet.getXFIndexForColAt((short) 0);
+            assertEquals(TEST_IDX, xfindex);
+            xfindex = sheet.getXFIndexForColAt((short) 1);
+            assertEquals(DEFAULT_IDX, xfindex);
+
+            // ten column ColumnInfoRecord starting at index 0
+            nci.setFirstColumn((short) 0);
+            nci.setLastColumn((short) 9);
+            nci.setXFIndex(TEST_IDX);            
+            xfindex = sheet.getXFIndexForColAt((short) 0);
+            assertEquals(TEST_IDX, xfindex);
+            xfindex = sheet.getXFIndexForColAt((short) 7);
+            assertEquals(TEST_IDX, xfindex);
+            xfindex = sheet.getXFIndexForColAt((short) 9);
+            assertEquals(TEST_IDX, xfindex);
+            xfindex = sheet.getXFIndexForColAt((short) 10);
+            assertEquals(DEFAULT_IDX, xfindex);
+        }
+        catch(Exception e){e.printStackTrace();fail(e.getMessage());}
+    }
 
 }
