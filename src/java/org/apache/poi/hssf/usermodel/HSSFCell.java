@@ -31,7 +31,6 @@ import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
 import org.apache.poi.hssf.record.formula.Ptg;
 
 import java.text.DateFormat;
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -155,9 +154,10 @@ public class HSSFCell
         // is different to CELL_TYPE_BLANK hence the following method call correctly
         // creates a new blank cell.
         setCellType(CELL_TYPE_BLANK, false);
-        ExtendedFormatRecord xf = book.getExFormatAt(0xf);
-
-        setCellStyle(new HSSFCellStyle(( short ) 0xf, xf));
+        
+        short xfindex = sheet.getXFIndexForColAt(col);
+        ExtendedFormatRecord xf = book.getExFormatAt(xfindex);
+        setCellStyle(new HSSFCellStyle(xfindex, xf));
     }
 
     /**
@@ -238,7 +238,9 @@ public class HSSFCell
                 (( BoolErrRecord ) record).setValue(( byte ) 0);
                 break;
         }
-        ExtendedFormatRecord xf = book.getExFormatAt(0xf);
+
+        int xfindex = sheet.getXFIndexForColAt(col);
+        ExtendedFormatRecord xf = book.getExFormatAt(xfindex);
 
         setCellStyle(new HSSFCellStyle(( short ) 0xf, xf));
     }
