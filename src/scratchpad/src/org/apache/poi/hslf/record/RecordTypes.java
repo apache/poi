@@ -82,7 +82,7 @@ public class RecordTypes {
     public static final Type OutlineTextRefAtom = new Type(3998,null);
     public static final Type TextHeaderAtom = new Type(3999,TextHeaderAtom.class);
     public static final Type TextCharsAtom = new Type(4000,TextCharsAtom.class);
-    public static final Type StyleTextPropAtom = new Type(4001,null);
+    public static final Type StyleTextPropAtom = new Type(4001,StyleTextPropAtom.class);
     public static final Type BaseTextPropAtom = new Type(4002,null);
     public static final Type TxMasterStyleAtom = new Type(4003,null);
     public static final Type TxCFStyleAtom = new Type(4004,null);
