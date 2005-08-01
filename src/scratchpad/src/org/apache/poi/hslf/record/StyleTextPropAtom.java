@@ -25,9 +25,10 @@ import java.io.ByteArrayOutputStream;
 import java.util.Vector;
 
 /**
- * A StyleTextPropAtom (type 4001). Holds character properties (font type,
- *  font size, colour, bold, italic etc) and paragraph properties
- *  (alignment, line spacing etc) for a block of text
+ * A StyleTextPropAtom (type 4001). Holds basic character properties 
+ *  (bold, italic, underline, possibly more?) and paragraph properties
+ *  (alignment, line spacing etc) for the block of text (TextBytesAtom
+ *  or TextCharsAtom) that this record follows
  *
  * @author Nick Burch
  */
@@ -53,6 +54,15 @@ public class StyleTextPropAtom extends RecordAtom
 	/** Get the individual character stylings for this paragraph */
 	public CharacterStyle[] getCharacterStyles() {
 		return charStyles;
+	}
+
+	/** 
+	 * Set the number of characters covered by these text styles.
+	 * This must equal the number of characters in the Text record
+	 *  that precedes this record, or things won't behave properly
+	 */
+	public void setParagraphStyleCharactersCoveredLength(int len) {
+		paraStyleLen = (short)len;
 	}
 
 
@@ -110,6 +120,25 @@ public class StyleTextPropAtom extends RecordAtom
 		System.arraycopy(source,start+8+10+cpos,reserved,0,reserved.length);
 	}
 
+	/** 
+	 * A new set of text style properties for some text without any
+	 */
+	public StyleTextPropAtom() {
+		_header = new byte[8];
+		reserved = new byte[0];
+		charStyles = new CharacterStyle[0];
+
+		// Set our type
+		LittleEndian.putInt(_header,2,(short)_type);
+		// Our initial size is 10
+		LittleEndian.putInt(_header,4,10);
+
+		// Blank paragraph style
+		paraStyleLen = 0;
+		paraStyle1 = 0;
+		paraStyle2 = 0;
+	}
+
 	/**
 	 * We are of type 4001
 	 */
@@ -159,6 +188,13 @@ public class StyleTextPropAtom extends RecordAtom
 		private int style2;
 		private short style3;
 
+		// style1 0x00010000
+		private static final int BOLD_STYLE = 65536;
+		// style1 0x00020000
+		private static final int ITALIC_STYLE = 131072;
+		// style1 0x00040000
+		private static final int UNDERLINED_STYLE = 262144;
+
 		/** Create a new Character Style from on-disk data */
 		protected CharacterStyle(short len, int s1, int s2, short s3) {
 			styleLen = len;
@@ -183,30 +219,73 @@ public class StyleTextPropAtom extends RecordAtom
 			}
 		}
 
-		/** Return the number of characters covered by these properties */
+
+		/** 
+		 * Return the number of characters covered by these properties. 
+		 * If it's the last CharacterStyle of a StyleTextPropAtom, it 
+		 *  will normally be 0, indicating it applies to all the remaining
+		 *  text.
+		 */
 		public int getCharactersCoveredLength() {
 			return styleLen;
 		}
 
+		/** 
+		 * Set the number of characters covered by these properties.
+		 * If this is the last CharacterStyle of a StyleTextPropAtom, then
+		 *  a value of 0 should be used
+		 */
+		public void setCharactersCoveredLength(int len) {
+			styleLen = (short)len;
+		}
+
+
 		/** Checks to see if the text is bold */
 		public boolean isBold() {
-			// style1 0x00010000
-			if ((style1 & 65536) == 65536) { return true; }
+			if ((style1 & BOLD_STYLE) == BOLD_STYLE) { return true; }
 			return false;
 		}
 
 		/** Checks to see if the text is italic */
 		public boolean isItalic() {
-			// style1 0x00020000
-			if ((style1 & 131072) == 131072) { return true; }
+			if ((style1 & ITALIC_STYLE) == ITALIC_STYLE) { return true; }
 			return false;
 		}
 
 		/** Checks to see if the text is underlined */
 		public boolean isUnderlined() {
-			// style1 0x00040000
-			if ((style1 & 262144) == 262144) { return true; }
+			if ((style1 & UNDERLINED_STYLE) == UNDERLINED_STYLE) { return true; }
 			return false;
+		}
+
+		/** Sets the text to be bold/not bold */
+		public void setBold(boolean bold) {
+			if(bold == isBold()) { return; }
+			if(bold) {
+				style1 += BOLD_STYLE;
+			} else {
+				style1 -= BOLD_STYLE;
+			}
+		}
+
+		/** Sets the text to be italic/not italic */
+		public void setItalic(boolean italic) {
+			if(italic == isItalic()) { return; }
+			if(italic) {
+				style1 += ITALIC_STYLE;
+			} else {
+				style1 -= ITALIC_STYLE;
+			}
+		}
+
+		/** Sets the text to be underlined/not underlined */
+		public void setUnderlined(boolean underlined) {
+			if(underlined == isUnderlined()) { return; }
+			if(underlined) {
+				style1 += UNDERLINED_STYLE;
+			} else {
+				style1 -= UNDERLINED_STYLE;
+			}
 		}
 	}
 }
