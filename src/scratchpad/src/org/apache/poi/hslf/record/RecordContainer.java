@@ -40,6 +40,17 @@ public abstract class RecordContainer extends Record
 	public boolean isAnAtom() { return false; }
 
 	/**
+	 * Add a new child record onto a record's list of children, and 
+	 *  return the new list.
+	 */
+	public Record[] appendChildRecord(Record newChild, Record[] children) {
+		Record[] r = new Record[children.length + 1];
+		System.arraycopy(children,0,r,0,children.length);
+		r[r.length-1] = newChild;
+		return r;
+	}
+
+	/**
 	 * Write out our header, and our children.
 	 * @param headerA the first byte of the header
 	 * @param headerB the second byte of the header
