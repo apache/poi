@@ -67,7 +67,7 @@ public class RecordTypes {
     public static final Type NamedShowSlides = new Type(1042,null);
     public static final Type SheetProperties = new Type(1044,null);
     public static final Type List = new Type(2000,null);
-    public static final Type FontCollection = new Type(2005,null);
+    public static final Type FontCollection = new Type(2005,FontCollection.class);
     public static final Type BookmarkCollection = new Type(2019,null);
     public static final Type SoundCollAtom = new Type(2021,null);
     public static final Type Sound = new Type(2022,null);
@@ -93,7 +93,7 @@ public class RecordTypes {
     public static final Type TxSIStyleAtom = new Type(4009,null);
     public static final Type TextSpecInfoAtom = new Type(4010,null);
     public static final Type DefaultRulerAtom = new Type(4011,null);
-    public static final Type FontEntityAtom = new Type(4023,null);
+    public static final Type FontEntityAtom = new Type(4023,FontEntityAtom.class);
     public static final Type FontEmbeddedData = new Type(4024,null);
     public static final Type CString = new Type(4026,null);
     public static final Type MetaFile = new Type(4033,null);

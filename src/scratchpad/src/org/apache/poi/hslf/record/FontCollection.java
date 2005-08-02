@@ -1,0 +1,92 @@
+/* ====================================================================
+   Copyright 2002-2004   Apache Software Foundation
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+==================================================================== */
+        
+
+package org.apache.poi.hslf.record;
+
+import org.apache.poi.util.LittleEndian;
+import java.io.*;
+import java.util.*;
+
+/**
+ * <code>FontCollection</code> ia a container that holds information
+ * about all the fonts in the presentation.
+ *
+ * @author Yegor Kozlov
+ */
+
+public class FontCollection extends RecordContainer {
+    private List fonts;
+	private Record[] _children;
+	private byte[] _header;
+
+	protected FontCollection(byte[] source, int start, int len) {
+		// Grab the header
+		_header = new byte[8];
+		System.arraycopy(source,start,_header,0,8);
+
+		_children = Record.findChildRecords(source,start+8,len-8);
+        // Save font names into <code>List</code>
+        fonts = new ArrayList();
+        for (int i = 0; i < _children.length; i++){
+            FontEntityAtom atom = (FontEntityAtom)_children[i];
+            fonts.add(atom.getFontName());
+        }
+
+	}
+
+	public long getRecordType() {
+        return RecordTypes.FontCollection.typeID;
+    }
+
+	public Record[] getChildRecords() {
+        return _children;
+    }
+
+	/**
+	 * Write the contents of the record back, so it can be written
+	 *  to disk
+	 */
+	public void writeOut(OutputStream out) throws IOException {
+		writeOut(_header[0],_header[1],getRecordType(),_children,out);
+	}
+
+    /**
+     * Add font with the specified name to the font collection.
+     * If the font is already present return its index.
+     * @param name of the font
+     * @return zero based index of the font in the collection
+     */
+    public int addFont(String name) {
+        for (int i = 0; i < fonts.size(); i++) {
+            if(fonts.get(i).equals(name)){
+                //if the font is already present return its index
+                return i;
+            }
+        }
+
+        FontEntityAtom fnt = new FontEntityAtom();
+        fnt.setFontIndex(fonts.size() << 4);
+        fnt.setFontName(name);
+        fonts.add(name);
+
+        // append new child to the end
+		_children = appendChildRecord(fnt,_children);
+
+        return fonts.size()-1; //the added font is the last in the list
+    }
+
+}
