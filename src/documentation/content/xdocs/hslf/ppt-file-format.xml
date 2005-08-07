@@ -177,5 +177,100 @@ BE15 0000        5566           Sheet (1+4)=5 starts at offset 5566
 4418 0000        6212           Sheet (9+0)=9 starts at offset 9212
 </source>
 		</section>
+
+		<section><title>Paragraph and Text Styling</title>
+		<p>
+			There are quite a number of records that affect the styling
+			of text, and a smaller number that are responsible for the
+			styling of paragraphs.
+		</p>
+		<p>
+			By default, a given set of text will inherit paragraph and text
+			stylings from the appropriate master sheet. If anything differs
+			from the master sheet, then appropriate styling records will
+			follow the text record.
+		</p>
+		<p>
+			<em>(We don't currently know enough about master sheet styling
+			to write about it)</em>
+		</p>
+		<p>
+			Normally, powerpoint will have one text record (TextBytesAtom
+			or TextCharsAtom) for every paragraph, with a preceeding 
+			TextHeaderAtom to describe what sort of paragraph it is.
+			If any of the stylings differ from the master's, then a 
+			StyleTextPropAtom will follow the text record. This contains
+			the paragraph style information, and the styling information
+			for each section of the text which has a different style.
+			(More on StyleTextPropAtom later)
+		</p>
+		<p>
+			For every font used, a FontEntityAtom must exist for that font.
+			The FontEntityAtoms live inside a FontCollection record, and 
+			there's one	of those inside Environment record inside the
+			Document record. <em>(More on Fonts to be discovered)</em>
+		</p>
+		</section>
+
+		<section><title>StyleTextPropAtom</title>
+		<p>
+			If the text or paragraph stylings for a given text record
+			differ from those of the appropriate master, then there will
+			be one of these records.
+		</p>
+		<p>
+			Firstly, this contains the number of characters it applies to,
+			stored in a 2 byte little endian number.
+			Normally, this will be the same as the number of characters
+			in the text record. Then there are two values which encode
+			paragraph properties (alignment, text spacing etc), both 4
+			byte little endian numbers.
+		</p>
+		<p>
+			Following this is one block of information for each subsequent
+			bit of text with a different styling. (If your text was
+			10 characters in blue, then 10 in red, you would have two blocks).
+			Firstly is the number of characters it applies to, or 0 if it
+			applies to all remaining text. (This is a 2 byte little endian
+			number). Then there is a number (4 byte little endian) that
+			encodes if the text is bold/italic/underlined. If that number
+			was non zero, it is followed by another 4 byte number, that
+			encodes further text styling information. If it was zero,
+			then it's followed by a 2 byte number.
+		</p>
+		<p>
+			In the character styling block, the first number after the
+			character count indicated the bold/italic/underlined status
+			of the text. If you binary AND it with 0x00010000 (65536) and
+			get that value back, it is in bold. If you binary AND it with
+			0x00020000 (131072) and get that value back, it is in italic.
+			If you binary AND it with 0x00040000 (262144) and get that
+			value back, it is underlined.
+		</p>
+<source>
+hex on disk      decimal        description
+-----------      -------        -----------
+0000             0              No options
+A10F             4001           Record type is 4001
+2E00 0000        46             Length of data is 46 bytes
+5300             83             The paragraph stylings apply to 83 characters
+0000 0000        0              Paragraph stylings 1 - as per the master
+0000 0000        0              Paragraph stylings 2 - as per the master
+
+1E00             30             These character properties apply to 30 characters
+0000 0100        65536          Bold
+0000 0100        65536          ??
+1C00             28             These character properties apply to 28 characters
+0000 0200        131072         Italic
+0400 0200        131076         ??
+0000             0              These character properties apply to the remaining characters
+0005 1900        1639680        Bold
+0000 0000        0              ??
+
+0400             4              ??
+FF33             13311          ??
+00FE             65024          ??
+</source>
+		</section>
 	</body>
 </document>
