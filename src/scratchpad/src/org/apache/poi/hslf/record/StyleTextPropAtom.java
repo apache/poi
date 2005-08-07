@@ -92,7 +92,11 @@ public class StyleTextPropAtom extends RecordAtom
 		// While we have the data, grab the character styles
 		Vector cp = new Vector();
 		int cpos = 0;
-		while(cpos <= len-8-10-8) { // Min size is 8, then 8+10 in
+		int oldCpos = 0;
+		boolean overshot = false;
+
+		// Min size is 8, everything starts 8+10 in to the record
+		while((cpos <= len-8-10-8) && !overshot) { 
 			CharacterStyle cs;
 			
 			short clen = LittleEndian.getShort(source,start+8+10+cpos);
@@ -108,14 +112,25 @@ public class StyleTextPropAtom extends RecordAtom
 				cpos += 4;
 				cs = new CharacterStyle(clen,s1,s2,(short)0);
 			}
-			cp.add(cs);
+
+			// Only add if it won't push us past the end of the record
+			if(cpos <= (len-8-10)) {
+				cp.add(cs);
+				oldCpos = cpos;
+			} else {
+				// Long CharacterStyle, but only enough data for a short one!
+				// Rewind back to the end of the last CharacterStyle
+				cpos = oldCpos;
+				overshot = true;
+			}
 		}
 		charStyles = new CharacterStyle[cp.size()];
 		for(int i=0; i<charStyles.length; i++) {
 			charStyles[i] = (CharacterStyle)cp.get(i);
 		}
 
-		// Chuck anything that doesn't fit somewhere for safe keeping
+		// Chuck anything that doesn't make a complete CharacterStyle 
+		// somewhere for safe keeping
 		reserved = new byte[len-8-10-cpos];
 		System.arraycopy(source,start+8+10+cpos,reserved,0,reserved.length);
 	}
