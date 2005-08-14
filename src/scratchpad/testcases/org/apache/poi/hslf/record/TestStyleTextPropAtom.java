@@ -113,6 +113,44 @@ public class TestStyleTextPropAtom extends TestCase {
 		assertEquals(25, b_ch_3.getCharactersCovered());
 	}
 
+
+	public void testCharacterPropOrdering() throws Exception {
+		StyleTextPropAtom stpb = new StyleTextPropAtom(data_b,0,data_b.length);
+		stpb.setParentTextSize(data_b_text_len);
+
+		LinkedList b_ch_l = stpb.getCharacterStyles();
+		TextPropCollection b_ch_2 = (TextPropCollection)b_ch_l.get(1);
+		LinkedList b_ch2_tp = b_ch_2.getTextPropList();
+
+		// First item should be a CharFlagsTextProp
+		TextProp tp = (TextProp)b_ch2_tp.get(0);
+		assertEquals(true, b_ch2_tp.get(0) instanceof CharFlagsTextProp);
+	}
+
+
+	public void testCharacterProps() throws Exception {
+		StyleTextPropAtom stpb = new StyleTextPropAtom(data_b,0,data_b.length);
+		stpb.setParentTextSize(data_b_text_len);
+
+		LinkedList b_ch_l = stpb.getCharacterStyles();
+		TextPropCollection b_ch_1 = (TextPropCollection)b_ch_l.get(0);
+		TextPropCollection b_ch_2 = (TextPropCollection)b_ch_l.get(1);
+		TextPropCollection b_ch_3 = (TextPropCollection)b_ch_l.get(2);
+
+		// 1st is bold
+		CharFlagsTextProp cf_1_1 = (CharFlagsTextProp)b_ch_1.getTextPropList().get(0);
+		//assertEquals(true,cf_1_1.getSubValue(CharFlagsTextProp.BOLD_IDX));
+
+		// 2nd is italic
+		CharFlagsTextProp cf_2_1 = (CharFlagsTextProp)b_ch_2.getTextPropList().get(0);
+		//assertEquals(true,cf_1_1.getSubValue(CharFlagsTextProp.ITALIC_IDX));
+
+		// 3rd is normal
+		//CharFlagsTextProp cf_3_1 = (CharFlagsTextProp)b_ch_3.getTextPropList().get(0);
+		
+	}
+
+
 	public void testWrite() throws Exception {
 		StyleTextPropAtom stpa = new StyleTextPropAtom(data_a,0,data_a.length);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
