@@ -23,6 +23,7 @@ import org.apache.poi.hslf.record.StyleTextPropAtom.*;
 
 import junit.framework.TestCase;
 import java.io.ByteArrayOutputStream;
+import java.util.LinkedList;
 
 /**
  * Tests that StyleTextPropAtom works properly
@@ -38,6 +39,7 @@ public class TestStyleTextPropAtom extends TestCase {
 	  0x04, 00, 00, 00, 00, 0x05, 0x10, 00,
       00, 00, 00, 00, 0x04, 00, 0xFF-256, 0x33, 00, 0xFE-256
 	};
+	private int data_a_text_len = 54;
 
 	private byte[] data_b = new byte[] { 0, 0, 0xA1-256, 0x0F, 0x2E, 0, 0, 0, 
 	  0x53, 0, 0, 0, 0, 0, 0, 0,
@@ -47,6 +49,7 @@ public class TestStyleTextPropAtom extends TestCase {
 	  0, 05, 0x19, 0, 0, 0, 0, 0,
 	  04, 0, 0xFF-256, 0x33, 0, 0xFE-256
 	};
+	private int data_b_text_len = 83;
 
     public void testRecordType() throws Exception {
 		StyleTextPropAtom stpa = new StyleTextPropAtom(data_a,0,data_a.length);
@@ -55,82 +58,77 @@ public class TestStyleTextPropAtom extends TestCase {
 		assertEquals(4001l, stpb.getRecordType());
 	}
 
-	public void testCharacterGroups() throws Exception {
+
+	public void testCharacterStyleCounts() throws Exception {
 		StyleTextPropAtom stpa = new StyleTextPropAtom(data_a,0,data_a.length);
 		StyleTextPropAtom stpb = new StyleTextPropAtom(data_b,0,data_b.length);
 
-		assertEquals(3, stpa.getCharacterStyles().length);
-		assertEquals(3, stpb.getCharacterStyles().length);
+		// Set for the appropriate text sizes
+		stpa.setParentTextSize(data_a_text_len);
+		stpb.setParentTextSize(data_b_text_len);
+
+		// In both cases, we should only have 1 paragraph styling
+		assertEquals(1, stpa.getParagraphStyles().size());
+		assertEquals(1, stpb.getParagraphStyles().size());
 	}
 
-	public void testCharacterLengths() throws Exception {
+	public void testParagraphStyleCounts() throws Exception {
 		StyleTextPropAtom stpa = new StyleTextPropAtom(data_a,0,data_a.length);
 		StyleTextPropAtom stpb = new StyleTextPropAtom(data_b,0,data_b.length);
 
-		// 54 chars, 21 + 17 (+ 16)
-		assertEquals(54, stpa.getParagraphStyleCharactersCoveredLength() );
-		CharacterStyle[] csa = stpa.getCharacterStyles();
-		assertEquals(21, csa[0].getCharactersCoveredLength() );
-		assertEquals(17, csa[1].getCharactersCoveredLength() );
-		assertEquals(0, csa[2].getCharactersCoveredLength() );
+		// Set for the appropriate text sizes
+		stpa.setParentTextSize(data_a_text_len);
+		stpb.setParentTextSize(data_b_text_len);
 
-		// 83 chars, 30 + 28 (+ 25)
-		assertEquals(83, stpb.getParagraphStyleCharactersCoveredLength() );
-		CharacterStyle[] csb = stpb.getCharacterStyles();
-		assertEquals(30, csb[0].getCharactersCoveredLength() );
-		assertEquals(28, csb[1].getCharactersCoveredLength() );
-		assertEquals(0, csb[2].getCharactersCoveredLength() );
+		// In both cases, we should have three different character stylings
+		assertEquals(3, stpa.getCharacterStyles().size());
+		assertEquals(3, stpb.getCharacterStyles().size());
 	}
 
-	public void testCharacterProps() throws Exception {
+
+	public void testCharacterStyleLengths() throws Exception {
 		StyleTextPropAtom stpa = new StyleTextPropAtom(data_a,0,data_a.length);
 		StyleTextPropAtom stpb = new StyleTextPropAtom(data_b,0,data_b.length);
 
-		// Set A has no styles
-		CharacterStyle[] csa = stpa.getCharacterStyles();
-		for(int i=0; i<csa.length; i++) {
-			assertEquals(false, csa[i].isBold() );
-			assertEquals(false, csa[i].isItalic() );
-			assertEquals(false, csa[i].isUnderlined() );
-		}
+		// Set for the appropriate text sizes
+		stpa.setParentTextSize(data_a_text_len);
+		stpb.setParentTextSize(data_b_text_len);
 
-		// Set B - 1st bold, 2nd italic
-		CharacterStyle[] csb = stpb.getCharacterStyles();
-		assertEquals(true, csb[0].isBold() );
-		assertEquals(true, csb[1].isItalic() );
-	}
+		// 54 chars, 21 + 17 + 16
+		LinkedList a_ch_l = stpa.getCharacterStyles();
+		TextPropCollection a_ch_1 = (TextPropCollection)a_ch_l.get(0);
+		TextPropCollection a_ch_2 = (TextPropCollection)a_ch_l.get(1);
+		TextPropCollection a_ch_3 = (TextPropCollection)a_ch_l.get(2);
+		assertEquals(21, a_ch_1.getCharactersCovered());
+		assertEquals(17, a_ch_2.getCharactersCovered());
+		assertEquals(16, a_ch_3.getCharactersCovered());
 
-	public void testChangeCharacterProps() throws Exception {
-		// Change from A to B
-		StyleTextPropAtom stpa = new StyleTextPropAtom(data_a,0,data_a.length);
-		CharacterStyle[] csa = stpa.getCharacterStyles();
-
-		// Update paragraph length
-		stpa.setParagraphStyleCharactersCoveredLength(83);
-
-		// Update each of the Character Styles
-		// First is 30 long and bold
-		csa[0].setCharactersCoveredLength(30);
-		csa[0].setBold(true);
-		// Second is 28 long and italic
-		csa[1].setCharactersCoveredLength(28);
-		csa[1].setItalic(true);
-
-		// Ensure now matches data from B
-		// Disabled, as it currently doesn't, as we don't know about
-		//  everything that needs updating, esp the S2 values
-//		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//		stpa.writeOut(baos);
-//		byte[] b = baos.toByteArray();
-//
-//		assertEquals(data_b.length, b.length);
-//		for(int i=0; i<data_b.length; i++) {
-//			assertEquals(data_b[i],b[i]);
-//		}
+		// 83 chars, 30 + 28 + 25
+		LinkedList b_ch_l = stpb.getCharacterStyles();
+		TextPropCollection b_ch_1 = (TextPropCollection)b_ch_l.get(0);
+		TextPropCollection b_ch_2 = (TextPropCollection)b_ch_l.get(1);
+		TextPropCollection b_ch_3 = (TextPropCollection)b_ch_l.get(2);
+		assertEquals(30, b_ch_1.getCharactersCovered());
+		assertEquals(28, b_ch_2.getCharactersCovered());
+		assertEquals(25, b_ch_3.getCharactersCovered());
 	}
 
 	public void testWrite() throws Exception {
 		StyleTextPropAtom stpa = new StyleTextPropAtom(data_a,0,data_a.length);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		stpa.writeOut(baos);
+		byte[] b = baos.toByteArray();
+
+		assertEquals(data_a.length, b.length);
+		for(int i=0; i<data_a.length; i++) {
+			assertEquals(data_a[i],b[i]);
+		}
+	}
+
+	public void testLoadWrite() throws Exception {
+		StyleTextPropAtom stpa = new StyleTextPropAtom(data_a,0,data_a.length);
+		stpa.setParentTextSize(data_a_text_len);
+
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		stpa.writeOut(baos);
 		byte[] b = baos.toByteArray();
