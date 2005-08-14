@@ -22,13 +22,21 @@ import org.apache.poi.util.LittleEndian;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.ByteArrayOutputStream;
+import java.util.LinkedList;
 import java.util.Vector;
 
 /**
  * A StyleTextPropAtom (type 4001). Holds basic character properties 
  *  (bold, italic, underline, possibly more?) and paragraph properties
  *  (alignment, line spacing etc) for the block of text (TextBytesAtom
- *  or TextCharsAtom) that this record follows
+ *  or TextCharsAtom) that this record follows.
+ * You will find two lists within this class.
+ *  1 - Paragraph style list (paragraphStyles)
+ *  2 - Character style list (charStyles)
+ * Both are lists of TextPropCollections. These define how many characters
+ *  the style applies to, and what style elements make up the style (another
+ *  list, this time of TextProps). Each TextProp has a value, which somehow
+ *  encapsulates a property of the style
  *
  * @author Nick Burch
  */
@@ -39,33 +47,74 @@ public class StyleTextPropAtom extends RecordAtom
 	private static long _type = 4001l;
 	private byte[] reserved;
 
-	private short paraStyleLen;
-	private int paraStyle1;
-	private int paraStyle2;
-
-	private CharacterStyle[] charStyles;
-
-	
-	/** Get the number of characters covered by these text styles */
-	public int getParagraphStyleCharactersCoveredLength() {
-		return paraStyleLen;
-	}
-
-	/** Get the individual character stylings for this paragraph */
-	public CharacterStyle[] getCharacterStyles() {
-		return charStyles;
-	}
+	private byte[] rawContents; // Holds the contents between write-outs
 
 	/** 
-	 * Set the number of characters covered by these text styles.
-	 * This must equal the number of characters in the Text record
-	 *  that precedes this record, or things won't behave properly
+	 * Only set to true once setParentTextSize(int) is called.
+	 * Until then, no stylings will have been decoded
 	 */
-	public void setParagraphStyleCharactersCoveredLength(int len) {
-		paraStyleLen = (short)len;
-	}
+	private boolean initialised = false;
 
+	/** 
+	 * The list of all the different paragraph stylings we code for.
+	 * Each entry is a TextPropCollection, which tells you how many
+	 *  Characters the paragraph covers, and also contains the TextProps
+	 *  that actually define the styling of the paragraph.
+	 */
+	private LinkedList paragraphStyles;
+	public LinkedList getParagraphStyles() { return paragraphStyles; }
+	/** 
+	 * The list of all the different character stylings we code for.
+	 * Each entry is a TextPropCollection, which tells you how many
+	 *  Characters the character styling covers, and also contains the 
+	 *  TextProps that actually define the styling of the characters.
+	 */
+	private LinkedList charStyles;
+	public LinkedList getCharacterStyles() { return charStyles; }
 
+	/** All the different kinds of paragraph properties we might handle */
+	public TextProp[] paragraphTextPropTypes = new TextProp[] {
+				new BitMaskTextProp(2,  0xF, new String[] {
+					"bullet", "bullet.hardfont", 
+					"bullet.hardcolor", "bullet.hardsize"}
+				),
+				new TextProp(2, 0x10, "bullet.font"),
+				new TextProp(4, 0x20, "bullet.color"),
+				new TextProp(2, 0x40, "bullet.size"),
+				new TextProp(2, 0x80, "bullet.char"),
+				new TextProp(2, 0x100, "para_unknown_1"),
+				new TextProp(2, 0x200, "para_unknown_2"),
+				new TextProp(2, 0x400, "para_unknown_3"),
+				new TextProp(2, 0x800, "alignment"),
+				new TextProp(2, 0x1000, "linespacing"),
+				new TextProp(2, 0x2000, "spacebefore"),
+				new TextProp(2, 0x4000, "spaceafter"),
+				new TextProp(2, 0x8000, "para_unknown_4"),
+				new TextProp(2, 0x10000, "para_unknown_5"),
+				new TextProp(2, 0xA0000, "para_unknown_6")
+	};
+	/** All the different kinds of character properties we might handle */
+	public TextProp[] characterTextPropTypes = new TextProp[] {
+				new CharFlagsTextProp(),
+				new TextProp(2, 0x10000, "font.index"),
+				new TextProp(2, 0x20000, "font.size"),
+				new TextProp(4, 0x40000, "font.color"),
+				new TextProp(2, 0x80000, "offset"),
+				new TextProp(2, 0x100000, "char_unknown_1"),
+				new TextProp(2, 0x200000, "asian_or_complex"),
+				new TextProp(2, 0x400000, "char_unknown_2"),
+				new TextProp(2, 0x800000, "symbol"),
+				new TextProp(2, 0x1000000, "char_unknown_3"),
+				new TextProp(2, 0x2000000, "char_unknown_4"),
+				new TextProp(2, 0x4000000, "char_unknown_5"),
+				new TextProp(2, 0x8000000, "char_unknown_6"),
+				new TextProp(2, 0x10000000, "char_unknown_7"),
+				new TextProp(2, 0x20000000, "char_unknown_8"),
+				new TextProp(2, 0x40000000, "char_unknown_9"),
+				new TextProp(2, 0x80000000, "char_unknown_10"),
+	};
+
+	
 	/* *************** record code follows ********************** */
 
 	/** 
@@ -84,75 +133,45 @@ public class StyleTextPropAtom extends RecordAtom
 		_header = new byte[8];
 		System.arraycopy(source,start,_header,0,8);
 
-		// Grab the paragraph style stuff
-		paraStyleLen = (short)LittleEndian.getShort(source,start+8+0);
-		paraStyle1 = (int)LittleEndian.getInt(source,start+8+2);
-		paraStyle2 = (int)LittleEndian.getInt(source,start+8+6);
+		// Save the contents of the atom, until we're asked to go and
+		//  decode them (via a call to setParentTextSize(int)
+		rawContents = new byte[len-8];
+		System.arraycopy(source,start+8,rawContents,0,rawContents.length);
+		reserved = new byte[0];
 
-		// While we have the data, grab the character styles
-		Vector cp = new Vector();
-		int cpos = 0;
-		int oldCpos = 0;
-		boolean overshot = false;
-
-		// Min size is 8, everything starts 8+10 in to the record
-		while((cpos <= len-8-10-8) && !overshot) { 
-			CharacterStyle cs;
-			
-			short clen = LittleEndian.getShort(source,start+8+10+cpos);
-			cpos += 2;
-			int s1 = (int)LittleEndian.getInt(source,start+8+10+cpos);
-			cpos += 4;
-			if(s1 == 0) {
-				short s3 = LittleEndian.getShort(source,start+8+10+cpos);
-				cpos += 2;
-				cs = new CharacterStyle(clen,s1,0,s3);
-			} else {
-				int s2 = (int)LittleEndian.getInt(source,start+8+10+cpos);
-				cpos += 4;
-				cs = new CharacterStyle(clen,s1,s2,(short)0);
-			}
-
-			// Only add if it won't push us past the end of the record
-			if(cpos <= (len-8-10)) {
-				cp.add(cs);
-				oldCpos = cpos;
-			} else {
-				// Long CharacterStyle, but only enough data for a short one!
-				// Rewind back to the end of the last CharacterStyle
-				cpos = oldCpos;
-				overshot = true;
-			}
-		}
-		charStyles = new CharacterStyle[cp.size()];
-		for(int i=0; i<charStyles.length; i++) {
-			charStyles[i] = (CharacterStyle)cp.get(i);
-		}
-
-		// Chuck anything that doesn't make a complete CharacterStyle 
-		// somewhere for safe keeping
-		reserved = new byte[len-8-10-cpos];
-		System.arraycopy(source,start+8+10+cpos,reserved,0,reserved.length);
+		// Set empty linked lists, ready for when they call setParentTextSize
+		paragraphStyles = new LinkedList();
+		charStyles = new LinkedList();
 	}
 
+
 	/** 
-	 * A new set of text style properties for some text without any
+	 * A new set of text style properties for some text without any.
 	 */
-	public StyleTextPropAtom() {
+	public StyleTextPropAtom(int parentTextSize) {
 		_header = new byte[8];
+		rawContents = new byte[0];
 		reserved = new byte[0];
-		charStyles = new CharacterStyle[0];
 
 		// Set our type
 		LittleEndian.putInt(_header,2,(short)_type);
 		// Our initial size is 10
 		LittleEndian.putInt(_header,4,10);
 
-		// Blank paragraph style
-		paraStyleLen = 0;
-		paraStyle1 = 0;
-		paraStyle2 = 0;
+		// Set empty paragraph and character styles
+		paragraphStyles = new LinkedList();
+		charStyles = new LinkedList();
+
+		TextPropCollection defaultParagraphTextProps = new TextPropCollection(parentTextSize);
+		paragraphStyles.add(defaultParagraphTextProps);
+
+		TextPropCollection defaultCharacterTextProps = new TextPropCollection(parentTextSize);
+		charStyles.add(defaultCharacterTextProps);
+
+		// Set us as now initialised
+		initialised = true;
 	}
+
 
 	/**
 	 * We are of type 4001
@@ -165,29 +184,19 @@ public class StyleTextPropAtom extends RecordAtom
 	 *  to disk
 	 */
 	public void writeOut(OutputStream out) throws IOException {
-		// Grab the size of the character styles
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		for(int i=0; i<charStyles.length; i++) {
-			charStyles[i].writeOut(baos);
-		}
+		// First thing to do is update the raw bytes of the contents, based
+		//  on the properties
+		updateRawContents();
 
-		// Figure out the new size
-		//    Para->10 + Chars + Reserved
-		int newSize = 10 + baos.size() + reserved.length;
-		// Update the size (header bytes 5-8)
+		// Now ensure that the header size is correct
+		int newSize = rawContents.length + reserved.length;
 		LittleEndian.putInt(_header,4,newSize);
-	
 
 		// Write out the (new) header
 		out.write(_header);
 
-		// Write out the paragraph bits
-		writeLittleEndian(paraStyleLen,out);
-		writeLittleEndian(paraStyle1,out);
-		writeLittleEndian(paraStyle2,out);
-
-		// Write out the character bits
-		out.write(baos.toByteArray());
+		// Write out the styles
+		out.write(rawContents);
 
 		// Write out any extra bits
 		out.write(reserved);
@@ -195,112 +204,311 @@ public class StyleTextPropAtom extends RecordAtom
 
 
 	/**
-	 * Class to handle character styles
+	 * Tell us how much text the parent TextCharsAtom or TextBytesAtom
+	 *  contains, so we can go ahead and initialise ourselves.
 	 */
-	public static class CharacterStyle {
-		private short styleLen;
-		private int style1;
-		private int style2;
-		private short style3;
+	public void setParentTextSize(int size) {
+		int pos = 0;
+		int textHandled = 0;
 
-		// style1 0x00010000
-		private static final int BOLD_STYLE = 65536;
-		// style1 0x00020000
-		private static final int ITALIC_STYLE = 131072;
-		// style1 0x00040000
-		private static final int UNDERLINED_STYLE = 262144;
+		// While we have text in need of paragraph stylings, go ahead and
+		// grok the contents as paragraph formatting data
+		while(pos < rawContents.length && textHandled < size) {
+			// First up, fetch the number of characters this applies to
+			int textLen = LittleEndian.getInt(rawContents,pos);
+			textHandled += textLen;
+			pos += 4;
 
-		/** Create a new Character Style from on-disk data */
-		protected CharacterStyle(short len, int s1, int s2, short s3) {
-			styleLen = len;
-			style1 = s1;
-			style2 = s2;
-			style3 = s3;
+			// Fetch the 2 byte value that is safe to ignore as 0
+			short paraIgn = LittleEndian.getShort(rawContents,pos);
+			pos += 2;
+
+			// Grab the 4 byte value that tells us what properties follow
+			int paraFlags = LittleEndian.getInt(rawContents,pos);
+			pos += 4;
+
+			// Now make sense of those properties
+			TextPropCollection thisCollection = new TextPropCollection(textLen, paraIgn);
+			int plSize = thisCollection.buildTextPropList(
+					paraFlags, paragraphTextPropTypes, rawContents, pos);
+			pos += plSize;
+
+			// Save this properties set
+			paragraphStyles.add(thisCollection);
+System.err.println("Paragraph covers " + textLen + " of " + size + " characters, pos now " + pos);
 		}
 
-		/** Create a new Character Style for text without one */
-		protected CharacterStyle() {
-			new CharacterStyle((short)0,0,0,(short)0);
+		// Now do the character stylings
+		textHandled = 0;
+		while(pos < rawContents.length && textHandled < size) {
+			// First up, fetch the number of characters this applies to
+			int textLen = LittleEndian.getInt(rawContents,pos);
+			textHandled += textLen;
+			pos += 4;
+
+			// There is no 2 byte value
+			short no_val = -1;
+
+			// Grab the 4 byte value that tells us what properties follow
+			int charFlags = LittleEndian.getInt(rawContents,pos);
+			pos += 4;
+
+			// Now make sense of those properties
+			TextPropCollection thisCollection = new TextPropCollection(textLen, no_val);
+			int chSize = thisCollection.buildTextPropList(
+					charFlags, characterTextPropTypes, rawContents, pos);
+			pos += chSize;
+
+			// Save this properties set
+			charStyles.add(thisCollection);
+System.err.println("Char Style covers " + textLen + " of " + size + " characters (done " + textHandled + "), pos now " + pos);
 		}
 
-		/** Write the character style out */
-		protected void writeOut(OutputStream out) throws IOException {
-			writeLittleEndian(styleLen,out);
-			writeLittleEndian(style1,out);
-			if(style1 == 0) {
-				writeLittleEndian(style3,out);
-			} else {
-				writeLittleEndian(style2,out);
+		// Handle anything left over
+		if(pos < rawContents.length) {
+			reserved = new byte[rawContents.length-pos];
+			System.arraycopy(rawContents,pos,reserved,0,reserved.length);
+		}
+
+		initialised = true;
+	}
+
+
+	/**
+	 * Updates the cache of the raw contents. Serialised the styles out.
+	 */
+	private void updateRawContents() throws IOException {
+		if(!initialised) {
+			// We haven't groked the styles since creation, so just stick
+			// with what we found
+			return;
+		}
+
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+		// First up, we need to serialise the paragraph properties
+		for(int i=0; i<paragraphStyles.size(); i++) {
+			TextPropCollection tpc = (TextPropCollection)paragraphStyles.get(i);
+			tpc.writeOut(baos);
+		}
+
+		// Now, we do the character ones
+		for(int i=0; i<charStyles.size(); i++) {
+			TextPropCollection tpc = (TextPropCollection)charStyles.get(i);
+			tpc.writeOut(baos);
+		}
+
+		rawContents	= baos.toByteArray();
+	}
+
+
+/* ************************************************************************ */
+
+
+	/**
+	 * For a given run of characters, holds the properties (which could
+	 *  be paragraph properties or character properties).
+	 * Used to hold the number of characters affected, the list of active
+	 *  properties, and the random reserved field if required.
+	 */
+	public static class TextPropCollection {
+		private int charactersCovered;
+		private short reservedField;
+		private LinkedList textPropList;
+
+		/** Fetch the number of characters this styling applies to */
+		public int getCharactersCovered() { return charactersCovered; }
+		/** Fetch the TextProps that define this styling */
+		public LinkedList getTextPropList() { return textPropList; }
+
+		/**
+		 * Create a new collection of text properties (be they paragraph
+		 *  or character) which will be groked via a subsequent call to
+		 *  buildTextPropList().
+		 */
+		public TextPropCollection(int charactersCovered, short reservedField) {
+			this.charactersCovered = charactersCovered;
+			this.reservedField = reservedField;
+			textPropList = new LinkedList();
+		}
+
+		/**
+		 * For an existing set of text properties, build the list of 
+		 *  properties coded for in a given run of properties.
+		 * @return the number of bytes that were used encoding the properties list
+		 */
+		public int buildTextPropList(int containsField, TextProp[] potentialProperties, byte[] data, int dataOffset) {
+			int bytesPassed = 0;
+
+			// For each possible entry, see if we match the mask
+			// If we do, decode that, save it, and shuffle on
+			for(int i=0; i<potentialProperties.length; i++) {
+				if((containsField & potentialProperties[i].getMask()) != 0) {
+					// Bingo, contained
+					TextProp prop = (TextProp)potentialProperties[i].clone();
+					int val = 0;
+					if(prop.getSize() == 2) {
+						val = LittleEndian.getShort(data,dataOffset+bytesPassed);
+					} else {
+						val = LittleEndian.getInt(data,dataOffset+bytesPassed);
+					}
+					prop.setValue(val);
+					bytesPassed += prop.getSize();
+					textPropList.add(prop);
+				}
+			}
+
+			// Return how many bytes were used
+			return bytesPassed;
+		}
+
+		/**
+		 * Create a new collection of text properties (be they paragraph
+		 *  or character) for a run of text without any
+		 */
+		public TextPropCollection(int textSize) {
+			charactersCovered = textSize;
+			reservedField = -1;
+			textPropList = new LinkedList();
+		}
+
+		/**
+		 * Writes out to disk the header, and then all the properties
+		 */
+		private void writeOut(OutputStream o) throws IOException {
+			// First goes the number of characters we affect
+			writeLittleEndian(charactersCovered,o);
+
+			// Then we have the reserved field if required
+			if(reservedField > -1) {
+				writeLittleEndian(reservedField,o);
+			}
+
+			// The the mask field
+			int mask = 0;
+			for(int i=0; i<textPropList.size(); i++) {
+				TextProp textProp = (TextProp)textPropList.get(i);
+				mask += textProp.getMask();
+			}
+			writeLittleEndian(mask,o);
+
+			// Then the contents of all the properties
+			for(int i=0; i<textPropList.size(); i++) {
+				TextProp textProp = (TextProp)textPropList.get(i);
+				int val = textProp.getValue();
+				if(textProp.getSize() == 2) {
+					writeLittleEndian((short)val,o);
+				} else {
+					writeLittleEndian(val,o);
+				}
 			}
 		}
+	}
 
+
+/* ************************************************************************ */
+
+
+	/** 
+	 * Definition of a property of some text, or its paragraph. Defines 
+	 * how to find out if it's present (via the mask on the paragraph or 
+	 * character "contains" header field), how long the value of it is, 
+	 * and how to get and set the value.
+	 */
+	public static class TextProp implements Cloneable {
+		private int sizeOfDataBlock; // Number of bytes the data part uses
+		private String propName;
+		private int dataValue;
+		private int maskInHeader;
 
 		/** 
-		 * Return the number of characters covered by these properties. 
-		 * If it's the last CharacterStyle of a StyleTextPropAtom, it 
-		 *  will normally be 0, indicating it applies to all the remaining
-		 *  text.
+		 * Generate the definition of a given type of text property.
 		 */
-		public int getCharactersCoveredLength() {
-			return styleLen;
+		private TextProp(int sizeOfDataBlock, int maskInHeader, String propName) {
+			this.sizeOfDataBlock = sizeOfDataBlock;
+			this.maskInHeader = maskInHeader;
+			this.propName = propName;
 		}
 
-		/** 
-		 * Set the number of characters covered by these properties.
-		 * If this is the last CharacterStyle of a StyleTextPropAtom, then
-		 *  a value of 0 should be used
+		/**
+		 * Name of the text property
 		 */
-		public void setCharactersCoveredLength(int len) {
-			styleLen = (short)len;
-		}
+		public String getName() { return propName; }
 
+		/**
+		 * Size of the data section of the text property (2 or 4 bytes)
+		 */
+		public int getSize() { return sizeOfDataBlock; }
 
-		/** Checks to see if the text is bold */
-		public boolean isBold() {
-			if ((style1 & BOLD_STYLE) == BOLD_STYLE) { return true; }
-			return false;
-		}
+		/**
+		 * Mask in the paragraph or character "contains" header field
+		 *  that indicates that this text property is present.
+		 */
+		public int getMask() { return maskInHeader; }
 
-		/** Checks to see if the text is italic */
-		public boolean isItalic() {
-			if ((style1 & ITALIC_STYLE) == ITALIC_STYLE) { return true; }
-			return false;
-		}
+		/**
+		 * Fetch the value of the text property (meaning is specific to
+		 *  each different kind of text property)
+		 */
+		public int getValue() { return dataValue; }
 
-		/** Checks to see if the text is underlined */
-		public boolean isUnderlined() {
-			if ((style1 & UNDERLINED_STYLE) == UNDERLINED_STYLE) { return true; }
-			return false;
-		}
+		/**
+		 * Set the value of the text property.
+		 */
+		public void setValue(int val) { dataValue = val; }
 
-		/** Sets the text to be bold/not bold */
-		public void setBold(boolean bold) {
-			if(bold == isBold()) { return; }
-			if(bold) {
-				style1 += BOLD_STYLE;
-			} else {
-				style1 -= BOLD_STYLE;
+		/**
+		 * Clone, eg when you want to actually make use of one of these.
+		 */
+		public Object clone(){
+			try {
+				return super.clone();
+			} catch(CloneNotSupportedException e) {
+				throw new InternalError(e.getMessage());
 			}
 		}
+	}
 
-		/** Sets the text to be italic/not italic */
-		public void setItalic(boolean italic) {
-			if(italic == isItalic()) { return; }
-			if(italic) {
-				style1 += ITALIC_STYLE;
-			} else {
-				style1 -= ITALIC_STYLE;
-			}
+
+	/** 
+	 * Definition of a special kind of property of some text, or its 
+	 *  paragraph. For these properties, a flag in the "contains" header 
+	 *  field tells you the data property family will exist. The value
+	 *  of the property is itself a mask, encoding several different
+	 *  (but related) properties
+	 */
+	public static class BitMaskTextProp extends TextProp {
+		private String[] subPropNames;
+
+		private BitMaskTextProp(int sizeOfDataBlock, int maskInHeader, String[] subPropNames) {
+			super(sizeOfDataBlock,maskInHeader,"bitmask");
+			this.subPropNames = subPropNames;
 		}
+	}
 
-		/** Sets the text to be underlined/not underlined */
-		public void setUnderlined(boolean underlined) {
-			if(underlined == isUnderlined()) { return; }
-			if(underlined) {
-				style1 += UNDERLINED_STYLE;
-			} else {
-				style1 -= UNDERLINED_STYLE;
-			}
+
+	/** 
+	 * Definition for the common character text property bitset, which
+	 *  handles bold/italic/underline etc.
+	 */
+	public static class CharFlagsTextProp extends BitMaskTextProp {
+		private CharFlagsTextProp() {
+			super(2,0xffff, new String[] {
+					"bold",          // 0x0001
+					"italic",        // 0x0002
+					"underline",     // 0x0004
+					"char_unknown_1",// 0x0008
+					"shadow",        // 0x0010
+					"char_unknown_2",// 0x0020
+					"char_unknown_3",// 0x0040
+					"char_unknown_4",// 0x0080
+					"strikethrough", // 0x0100
+					"relief",        // 0x0200
+					"reset_numbering",    // 0x0400
+					"enable_numbering_1", // 0x0800
+					"enable_numbering_2", // 0x1000
+				}
+			);
 		}
 	}
 }
