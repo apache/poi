@@ -235,7 +235,6 @@ public class StyleTextPropAtom extends RecordAtom
 
 			// Save this properties set
 			paragraphStyles.add(thisCollection);
-System.err.println("Paragraph covers " + textLen + " of " + size + " characters, pos now " + pos);
 		}
 
 		// Now do the character stylings
@@ -261,7 +260,6 @@ System.err.println("Paragraph covers " + textLen + " of " + size + " characters,
 
 			// Save this properties set
 			charStyles.add(thisCollection);
-System.err.println("Char Style covers " + textLen + " of " + size + " characters (done " + textHandled + "), pos now " + pos);
 		}
 
 		// Handle anything left over
@@ -416,10 +414,10 @@ System.err.println("Char Style covers " + textLen + " of " + size + " characters
 	 * and how to get and set the value.
 	 */
 	public static class TextProp implements Cloneable {
-		private int sizeOfDataBlock; // Number of bytes the data part uses
-		private String propName;
-		private int dataValue;
-		private int maskInHeader;
+		protected int sizeOfDataBlock; // Number of bytes the data part uses
+		protected String propName;
+		protected int dataValue;
+		protected int maskInHeader;
 
 		/** 
 		 * Generate the definition of a given type of text property.
@@ -479,10 +477,55 @@ System.err.println("Char Style covers " + textLen + " of " + size + " characters
 	 */
 	public static class BitMaskTextProp extends TextProp {
 		private String[] subPropNames;
+		private int[] subPropMasks;
+		private boolean[] subPropMatches;
+
+		/** Fetch the list of the names of the sub properties */
+		public String[] getSubPropNames() { return subPropNames; }
+		/** Fetch the list of if the sub properties match or not */
+		public boolean[] getSubPropMatches() { return subPropMatches; }
 
 		private BitMaskTextProp(int sizeOfDataBlock, int maskInHeader, String[] subPropNames) {
 			super(sizeOfDataBlock,maskInHeader,"bitmask");
 			this.subPropNames = subPropNames;
+			subPropMasks = new int[subPropNames.length];
+			subPropMatches = new boolean[subPropNames.length];
+		}
+
+		/**
+		 * Set the value of the text property, and recompute the sub
+		 *  properties based on it
+		 */
+		public void setValue(int val) { 
+			dataValue = val;
+
+			// Figure out the values of the sub properties
+			for(int i=0; i< subPropMatches.length; i++) {
+				subPropMasks[i] = (1 << i);
+				subPropMatches[i] = false;
+				if((dataValue & subPropMasks[i]) != 0) {
+					subPropMatches[i] = true;
+				}
+			}
+		}
+
+		/**
+		 * Fetch the true/false status of the subproperty with the given index
+		 */
+		public boolean getSubValue(int idx) {
+			return subPropMatches[idx];
+		}
+
+		/**
+		 * Set the true/false status of the subproperty with the given index
+		 */
+		public void setSubValue(boolean value, int idx) {
+			if(subPropMatches[idx] == value) { return; }
+			if(value) {
+				dataValue += subPropMasks[idx];
+			} else {
+				dataValue -= subPropMasks[idx];
+			}
 		}
 	}
 
@@ -492,6 +535,16 @@ System.err.println("Char Style covers " + textLen + " of " + size + " characters
 	 *  handles bold/italic/underline etc.
 	 */
 	public static class CharFlagsTextProp extends BitMaskTextProp {
+		public static final int BOLD_IDX = 0;
+		public static final int ITALIC_IDX = 1;
+		public static final int UNDERLINE_IDX = 2;
+		public static final int SHADOW_IDX = 4;
+		public static final int STRIKETHROUGH_IDX = 8;
+		public static final int RELIEF_IDX = 9;
+		public static final int RESET_NUMBERING_IDX = 10;
+		public static final int ENABLE_NUMBERING_1_IDX = 11;
+		public static final int ENABLE_NUMBERING_2_IDX = 12;
+
 		private CharFlagsTextProp() {
 			super(2,0xffff, new String[] {
 					"bold",          // 0x0001
