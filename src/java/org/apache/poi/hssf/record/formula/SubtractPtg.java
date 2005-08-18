@@ -18,6 +18,7 @@ package org.apache.poi.hssf.record.formula;
 
 import java.util.List;
 import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.record.RecordInputStream;
 
 /**
  *
@@ -35,7 +36,7 @@ public class SubtractPtg
     {
     }
 
-    public SubtractPtg(byte [] data, int offset)
+    public SubtractPtg(RecordInputStream in)
     {
 
         // doesn't need anything

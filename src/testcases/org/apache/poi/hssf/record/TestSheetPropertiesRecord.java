@@ -47,7 +47,7 @@ public class TestSheetPropertiesRecord
     public void testLoad()
             throws Exception
     {
-        SheetPropertiesRecord record = new SheetPropertiesRecord((short)0x1044, (short)data.length, data);
+        SheetPropertiesRecord record = new SheetPropertiesRecord(new TestcaseRecordInputStream((short)0x1044, (short)data.length, data));
         assertEquals( 10, record.getFlags());
         assertEquals( false, record.isChartTypeManuallyFormatted() );
         assertEquals( true, record.isPlotVisibleOnly() );

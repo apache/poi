@@ -46,7 +46,7 @@ public class TestUnitsRecord
             throws Exception
     {
 
-        UnitsRecord record = new UnitsRecord((short)0x1001, (short)data.length, data);
+        UnitsRecord record = new UnitsRecord(new TestcaseRecordInputStream((short)0x1001, (short)data.length, data));
         assertEquals( 0, record.getUnits());
 
 

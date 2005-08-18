@@ -83,6 +83,7 @@ import org.apache.poi.hssf.record.ProtectionRev4Record;
 import org.apache.poi.hssf.record.RKRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RecordFormatException;
+import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.RefModeRecord;
 import org.apache.poi.hssf.record.RefreshAllRecord;
 import org.apache.poi.hssf.record.RightMarginRecord;
@@ -262,22 +263,11 @@ public class EventRecordFactory
     {
         Record    last_record = null;
 
-        try
-        {
-            short rectype = 0;
+        RecordInputStream recStream = new RecordInputStream(in);
 
-            do
-            {
-                rectype = LittleEndian.readShort(in);
-                if (rectype != 0)
-                {
-                    short  recsize = LittleEndian.readShort(in);
-                    byte[] data    = new byte[ ( int ) recsize ];
-
-                    in.read(data);
-                    Record[] recs = createRecord(rectype, recsize,
-                                                 data);   // handle MulRK records
-
+        while (recStream.hasNextRecord()) {
+          recStream.nextRecord();
+          Record[] recs = createRecord(recStream);   // handle MulRK records
                     if (recs.length > 1)
                     {
                         for (int k = 0; k < recs.length; k++)
@@ -288,8 +278,6 @@ public class EventRecordFactory
                                  break;   
                                 }
                             }
-                         //   records.add(
-                         //       recs[ k ]);               // these will be number records
                             last_record =
                                 recs[ k ];                // do to keep the algorythm homogenous...you can't
                         }                                 // actually continue a number record anyhow.
@@ -300,19 +288,6 @@ public class EventRecordFactory
 
                         if (record != null)
                         {
-                            if (rectype == ContinueRecord.sid &&
-                                ! (last_record instanceof ContinueRecord) && // include continuation records after
-                                ! (last_record instanceof UnknownRecord) )   // unknown records or previous continuation records
-                            {
-                                if (last_record == null)
-                                {
-                                    throw new RecordFormatException(
-                                        "First record is a ContinueRecord??");
-                                }
-                                last_record.processContinueRecord(data);
-                            }
-                            else
-                            {
                                 if (last_record != null) {
                                     if (throwRecordEvent(last_record) == false && abortable == true) {
                                         last_record = null;
@@ -321,35 +296,21 @@ public class EventRecordFactory
                                 }
                                 
                                 last_record = record;
-                                
-                                //records.add(record);
                             }
                         }
                     }
-                }
-            }
-            while (rectype != 0);
+
             
             if (last_record != null) {
                throwRecordEvent(last_record);               
             }
         }
-        catch (IOException e)
-        {
-            throw new RecordFormatException("Error reading bytes");
-        }
-
-        // Record[] retval = new Record[ records.size() ];
-        // retval = ( Record [] ) records.toArray(retval);
-     
-    }
 
     /**
      * create a record, if there are MUL records than multiple records
      * are returned digested into the non-mul form.
      */
-    public static Record [] createRecord(short rectype, short size,
-                                         byte [] data)
+    public static Record [] createRecord(RecordInputStream in)
     {
         Record   retval     = null;
         Record[] realretval = null;
@@ -357,18 +318,18 @@ public class EventRecordFactory
         try
         {
             Constructor constructor =
-                ( Constructor ) recordsMap.get(new Short(rectype));
+                ( Constructor ) recordsMap.get(new Short(in.getSid()));
 
             if (constructor != null)
             {
                 retval = ( Record ) constructor.newInstance(new Object[]
                 {
-                    new Short(rectype), new Short(size), data
+                    in
                 });
             }
             else
             {
-                retval = new UnknownRecord(rectype, size, data);
+                retval = new UnknownRecord(in);
             }
         }
         catch (Exception introspectionException)
@@ -470,7 +431,7 @@ public class EventRecordFactory
                 sid         = record.getField("sid").getShort(null);
                 constructor = record.getConstructor(new Class[]
                 {
-                    short.class, short.class, byte [].class
+                    RecordInputStream.class
                 });
             }
             catch (Exception illegalArgumentException)

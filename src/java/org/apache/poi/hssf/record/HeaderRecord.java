@@ -36,8 +36,9 @@ public class HeaderRecord
 {
     public final static short sid = 0x14;
     private byte              field_1_header_len;
-    private byte              field_2_unicode_flag;
-    private String            field_3_header;
+    private byte              field_2_reserved;
+    private byte              field_3_unicode_flag;
+    private String            field_4_header;
 
     public HeaderRecord()
     {
@@ -51,23 +52,9 @@ public class HeaderRecord
      * @param data  data of the record (should not contain sid/len)
      */
 
-    public HeaderRecord(short id, short size, byte [] data)
+    public HeaderRecord(RecordInputStream in)
     {
-        super(id, size, data);
-    }
-
-    /**
-     * Constructs an Header record and sets its fields appropriately.
-     *
-     * @param id     id must be 0x14 or an exception will be throw upon validation
-     * @param size  the size of the data area of the record
-     * @param data  data of the record (should not contain sid/len)
-     * @param offset of the record's data
-     */
-
-    public HeaderRecord(short id, short size, byte [] data, int offset)
-    {
-        super(id, size, data, offset);
+        super(in);
     }
 
     protected void validateSid(short id)
@@ -78,21 +65,22 @@ public class HeaderRecord
         }
     }
 
-    protected void fillFields(byte [] data, short size, int offset)
+    protected void fillFields(RecordInputStream in)
     {
-        if (size > 0)
+        if (in.remaining() > 0)
         {
-            field_1_header_len = data[ 0 + offset ];
-            field_2_unicode_flag = data[ 2 + offset ];
+            field_1_header_len = in.readByte();
+            /** These two fields are a bit odd. They are not documented*/
+            field_2_reserved = in.readByte();
+            field_3_unicode_flag = in.readByte();						// unicode
+
                          if(isMultibyte())
                          {
-                             field_3_header = StringUtil.getFromUnicodeLE(
-                                     data,3 + offset,LittleEndian.ubyteToInt(field_1_header_len));
+                field_4_header = in.readUnicodeLEString(LittleEndian.ubyteToInt( field_1_header_len));
                          }
                          else
                          {
-                             field_3_header     = new String(data, 3 + offset, // [Shawn] Changed 1 to 3 for offset of string
-                                                         LittleEndian.ubyteToInt( field_1_header_len) );
+                field_4_header = in.readCompressedUnicode(LittleEndian.ubyteToInt( field_1_header_len));
                          }
         }
     }
@@ -104,7 +92,7 @@ public class HeaderRecord
      *  true:footer string has at least one multibyte character
      */
      public boolean isMultibyte() {
-         return ((field_2_unicode_flag & 0xFF) == 1);
+         return ((field_3_unicode_flag & 0xFF) == 1);
     }
 
     /**
@@ -128,9 +116,9 @@ public class HeaderRecord
 
     public void setHeader(String header)
     {
-        field_3_header = header;
-        field_2_unicode_flag = 
-            (byte) (StringUtil.hasMultibyte(field_3_header) ? 1 : 0);
+        field_4_header = header;
+        field_3_unicode_flag = 
+            (byte) (StringUtil.hasMultibyte(field_4_header) ? 1 : 0);
     }
 
     /**
@@ -154,7 +142,7 @@ public class HeaderRecord
 
     public String getHeader()
     {
-        return field_3_header;
+        return field_4_header;
     }
 
     public String toString()
@@ -187,7 +175,7 @@ public class HeaderRecord
         if (getHeaderLength() > 0)
         {
             data[ 4 + offset ] = (byte)getHeaderLength();
-            data[ 6 + offset ] = field_2_unicode_flag;
+            data[ 6 + offset ] = field_3_unicode_flag;
             if(isMultibyte())
             {
                 StringUtil.putUnicodeLE(getHeader(), data, 7 + offset);
@@ -220,8 +208,9 @@ public class HeaderRecord
     public Object clone() {
       HeaderRecord rec = new HeaderRecord();
       rec.field_1_header_len = field_1_header_len;
-      rec.field_2_unicode_flag = field_2_unicode_flag;
-      rec.field_3_header = field_3_header;
+      rec.field_2_reserved = field_2_reserved;
+      rec.field_3_unicode_flag = field_3_unicode_flag;
+      rec.field_4_header = field_4_header;
       return rec;
     }
 }

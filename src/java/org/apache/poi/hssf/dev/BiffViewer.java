@@ -90,64 +90,27 @@ public class BiffViewer {
     public static Record[] createRecords(InputStream in, boolean dump)
              throws RecordFormatException {
         ArrayList records = new ArrayList();
-//        Record last_record = null;
-        int loc = 0;
-
         RecordDetails activeRecord = null;
 
         try {
-//            long  offset  = 0;
-            short rectype = 0;
-
-            do {
-                rectype = LittleEndian.readShort(in);
-                int startloc = loc;
-                loc += 2;
-                if (rectype != 0) {
-                    short recsize = LittleEndian.readShort(in);
-
-                    loc += 2;
-                    byte[] data = new byte[(int) recsize];
-
-                    in.read(data);
-                    loc += recsize;
-                    Record record = createRecord(rectype, recsize, data );
-//                    if (record.getSid() == DrawingGroupRecord.sid)
-//                    {
-//                        if (activeRecord.getRecord().getSid() == DrawingGroupRecord.sid)
-//                        {
-//                            DrawingGroupRecord dg = (DrawingGroupRecord) activeRecord.getRecord();
-//                            System.out.println( "Joined" );
-//                            dg.join( (AbstractEscherHolderRecord) record );
-//                        }
-//                        else
-//                        {
-//                            records.add(record);
-//                            if (activeRecord != null)
-//                                activeRecord.dump();
-//                            activeRecord = new RecordDetails(rectype, recsize, startloc, data, record);
-//                        }
-//                    }
-//                    else
+          BiffviewRecordInputStream recStream = new BiffviewRecordInputStream(in);
+          while (recStream.hasNextRecord()) {
+            recStream.nextRecord();
+            if (recStream.getSid() != 0) {
+              Record record = createRecord (recStream);
                     if (record.getSid() != ContinueRecord.sid)
                     {
                         records.add(record);
                         if (activeRecord != null)
                             activeRecord.dump();
-                        activeRecord = new RecordDetails(rectype, recsize, startloc, data, record);
-                    }
-                    else
-                    {
-                        activeRecord.getRecord().processContinueRecord(data);
+                  activeRecord = new RecordDetails(recStream.getSid(), recStream.getLength(), (int)recStream.getPos(), record);
                     }
                     if (dump) {
-                        dumpRaw(rectype, recsize, data);
+                recStream.dumpBytes();
+              }
                     }
                 }
-            } while (rectype != 0);
-
             activeRecord.dump();
-
         } catch (IOException e) {
             throw new RecordFormatException("Error reading bytes");
         }
@@ -165,454 +128,383 @@ public class BiffViewer {
 
     }
 
-    private static void dumpContinueRecord(Record last_record, boolean dump, byte[] data) throws IOException {
-        if (last_record == null) {
-            throw new RecordFormatException(
-                    "First record is a ContinueRecord??");
-        }
-        if (dump) {
-            System.out.println(
-                    "-----PRECONTINUED LAST RECORD WOULD SERIALIZE LIKE:");
-            byte[] lr = last_record.serialize();
-
-            if (lr != null) {
-                HexDump.dump(last_record.serialize(),
-                        0, System.out, 0);
-            }
-            System.out.println();
-            System.out.println(
-                    "-----PRECONTINUED----------------------------------");
-        }
-        last_record.processContinueRecord(data);
-        if (dump) {
-            System.out.println(
-                    "-----CONTINUED LAST RECORD WOULD SERIALIZE LIKE:");
-            HexDump.dump(last_record.serialize(), 0,
-                    System.out, 0);
-            System.out.println();
-            System.out.println(
-                    "-----CONTINUED----------------------------------");
-        }
-    }
-
-    private static void dumpUnknownRecord(byte[] data) throws IOException {
-        // record hex dump it!
-        System.out.println(
-                "-----UNKNOWN----------------------------------");
-        if (data.length > 0) {
-            HexDump.dump(data, 0, System.out, 0);
-        } else {
-            System.out.print("**NO RECORD DATA**");
-        }
-        System.out.println();
-        System.out.println(
-                "-----UNKNOWN----------------------------------");
-    }
-
-
-    private static void dumpRaw( short rectype, short recsize, byte[] data ) throws IOException
-    {
-        //                        System.out
-        //                            .println("fixing to recordize the following");
-        System.out.println("============================================");
-        System.out.print( "rectype = 0x"
-                + Integer.toHexString( rectype ) );
-        System.out.println( ", recsize = 0x"
-                + Integer.toHexString( recsize ) );
-        System.out.println(
-                "-BEGIN DUMP---------------------------------" );
-        if ( data.length > 0 )
-        {
-            HexDump.dump( data, 0, System.out, 0 );
-        }
-        else
-        {
-            System.out.println( "**NO RECORD DATA**" );
-        }
-        //        System.out.println();
-        System.out.println(
-                "-END DUMP-----------------------------------" );
-    }
-
-
     /**
      *  Essentially a duplicate of RecordFactory. Kept seperate as not to screw
      *  up non-debug operations.
      *
      */
-    private static Record createRecord( short rectype, short size,
-                                          byte[] data )
+    private static Record createRecord( RecordInputStream in )
     {
         Record retval = null;
 
-        switch ( rectype )
+        switch ( in.getSid() )
         {
 
             case ChartRecord.sid:
-                retval = new ChartRecord( rectype, size, data );
+                retval = new ChartRecord( in );
                 break;
             case ChartFormatRecord.sid:
-                retval = new ChartFormatRecord( rectype, size, data );
+                retval = new ChartFormatRecord( in );
                 break;
             case SeriesRecord.sid:
-                retval = new SeriesRecord( rectype, size, data );
+                retval = new SeriesRecord( in );
                 break;
             case BeginRecord.sid:
-                retval = new BeginRecord( rectype, size, data );
+                retval = new BeginRecord( in );
                 break;
             case EndRecord.sid:
-                retval = new EndRecord( rectype, size, data );
+                retval = new EndRecord( in );
                 break;
             case BOFRecord.sid:
-                retval = new BOFRecord( rectype, size, data );
+                retval = new BOFRecord( in );
                 break;
             case InterfaceHdrRecord.sid:
-                retval = new InterfaceHdrRecord( rectype, size, data );
+                retval = new InterfaceHdrRecord( in );
                 break;
             case MMSRecord.sid:
-                retval = new MMSRecord( rectype, size, data );
+                retval = new MMSRecord( in );
                 break;
             case InterfaceEndRecord.sid:
-                retval = new InterfaceEndRecord( rectype, size, data );
+                retval = new InterfaceEndRecord( in );
                 break;
             case WriteAccessRecord.sid:
-                retval = new WriteAccessRecord( rectype, size, data );
+                retval = new WriteAccessRecord( in );
                 break;
             case CodepageRecord.sid:
-                retval = new CodepageRecord( rectype, size, data );
+                retval = new CodepageRecord( in );
                 break;
             case DSFRecord.sid:
-                retval = new DSFRecord( rectype, size, data );
+                retval = new DSFRecord( in );
                 break;
             case TabIdRecord.sid:
-                retval = new TabIdRecord( rectype, size, data );
+                retval = new TabIdRecord( in );
                 break;
             case FnGroupCountRecord.sid:
-                retval = new FnGroupCountRecord( rectype, size, data );
+                retval = new FnGroupCountRecord( in );
                 break;
             case WindowProtectRecord.sid:
-                retval = new WindowProtectRecord( rectype, size, data );
+                retval = new WindowProtectRecord( in );
                 break;
             case ProtectRecord.sid:
-                retval = new ProtectRecord( rectype, size, data );
+                retval = new ProtectRecord( in );
                 break;
             case PasswordRecord.sid:
-                retval = new PasswordRecord( rectype, size, data );
+                retval = new PasswordRecord( in );
                 break;
             case ProtectionRev4Record.sid:
-                retval = new ProtectionRev4Record( rectype, size, data );
+                retval = new ProtectionRev4Record( in );
                 break;
             case PasswordRev4Record.sid:
-                retval = new PasswordRev4Record( rectype, size, data );
+                retval = new PasswordRev4Record( in );
                 break;
             case WindowOneRecord.sid:
-                retval = new WindowOneRecord( rectype, size, data );
+                retval = new WindowOneRecord( in );
                 break;
             case BackupRecord.sid:
-                retval = new BackupRecord( rectype, size, data );
+                retval = new BackupRecord( in );
                 break;
             case HideObjRecord.sid:
-                retval = new HideObjRecord( rectype, size, data );
+                retval = new HideObjRecord( in );
                 break;
             case DateWindow1904Record.sid:
-                retval = new DateWindow1904Record( rectype, size, data );
+                retval = new DateWindow1904Record( in );
                 break;
             case PrecisionRecord.sid:
-                retval = new PrecisionRecord( rectype, size, data );
+                retval = new PrecisionRecord( in );
                 break;
             case RefreshAllRecord.sid:
-                retval = new RefreshAllRecord( rectype, size, data );
+                retval = new RefreshAllRecord( in );
                 break;
             case BookBoolRecord.sid:
-                retval = new BookBoolRecord( rectype, size, data );
+                retval = new BookBoolRecord( in );
                 break;
             case FontRecord.sid:
-                retval = new FontRecord( rectype, size, data );
+                retval = new FontRecord( in );
                 break;
             case FormatRecord.sid:
-                retval = new FormatRecord( rectype, size, data );
+                retval = new FormatRecord( in );
                 break;
             case ExtendedFormatRecord.sid:
-                retval = new ExtendedFormatRecord( rectype, size, data );
+                retval = new ExtendedFormatRecord( in );
                 break;
             case StyleRecord.sid:
-                retval = new StyleRecord( rectype, size, data );
+                retval = new StyleRecord( in );
                 break;
             case UseSelFSRecord.sid:
-                retval = new UseSelFSRecord( rectype, size, data );
+                retval = new UseSelFSRecord( in );
                 break;
             case BoundSheetRecord.sid:
-                retval = new BoundSheetRecord( rectype, size, data );
+                retval = new BoundSheetRecord( in );
                 break;
             case CountryRecord.sid:
-                retval = new CountryRecord( rectype, size, data );
+                retval = new CountryRecord( in );
                 break;
             case SSTRecord.sid:
-                retval = new SSTRecord( rectype, size, data );
+                retval = new SSTRecord( in );
                 break;
             case ExtSSTRecord.sid:
-                retval = new ExtSSTRecord( rectype, size, data );
+                retval = new ExtSSTRecord( in );
                 break;
             case EOFRecord.sid:
-                retval = new EOFRecord( rectype, size, data );
+                retval = new EOFRecord( in );
                 break;
             case IndexRecord.sid:
-                retval = new IndexRecord( rectype, size, data );
+                retval = new IndexRecord( in );
                 break;
             case CalcModeRecord.sid:
-                retval = new CalcModeRecord( rectype, size, data );
+                retval = new CalcModeRecord( in );
                 break;
             case CalcCountRecord.sid:
-                retval = new CalcCountRecord( rectype, size, data );
+                retval = new CalcCountRecord( in );
                 break;
             case RefModeRecord.sid:
-                retval = new RefModeRecord( rectype, size, data );
+                retval = new RefModeRecord( in );
                 break;
             case IterationRecord.sid:
-                retval = new IterationRecord( rectype, size, data );
+                retval = new IterationRecord( in );
                 break;
             case DeltaRecord.sid:
-                retval = new DeltaRecord( rectype, size, data );
+                retval = new DeltaRecord( in );
                 break;
             case SaveRecalcRecord.sid:
-                retval = new SaveRecalcRecord( rectype, size, data );
+                retval = new SaveRecalcRecord( in );
                 break;
             case PrintHeadersRecord.sid:
-                retval = new PrintHeadersRecord( rectype, size, data );
+                retval = new PrintHeadersRecord( in );
                 break;
             case PrintGridlinesRecord.sid:
-                retval = new PrintGridlinesRecord( rectype, size, data );
+                retval = new PrintGridlinesRecord( in );
                 break;
             case GridsetRecord.sid:
-                retval = new GridsetRecord( rectype, size, data );
+                retval = new GridsetRecord( in );
                 break;
             case DrawingGroupRecord.sid:
-                retval = new DrawingGroupRecord( rectype, size, data );
+                retval = new DrawingGroupRecord( in );
                 break;
             case DrawingRecordForBiffViewer.sid:
-                retval = new DrawingRecordForBiffViewer( rectype, size, data );
+                retval = new DrawingRecordForBiffViewer( in );
                 break;
             case DrawingSelectionRecord.sid:
-                retval = new DrawingSelectionRecord( rectype, size, data );
+                retval = new DrawingSelectionRecord( in );
                 break;
             case GutsRecord.sid:
-                retval = new GutsRecord( rectype, size, data );
+                retval = new GutsRecord( in );
                 break;
             case DefaultRowHeightRecord.sid:
-                retval = new DefaultRowHeightRecord( rectype, size, data );
+                retval = new DefaultRowHeightRecord( in );
                 break;
             case WSBoolRecord.sid:
-                retval = new WSBoolRecord( rectype, size, data );
+                retval = new WSBoolRecord( in );
                 break;
             case HeaderRecord.sid:
-                retval = new HeaderRecord( rectype, size, data );
+                retval = new HeaderRecord( in );
                 break;
             case FooterRecord.sid:
-                retval = new FooterRecord( rectype, size, data );
+                retval = new FooterRecord( in );
                 break;
             case HCenterRecord.sid:
-                retval = new HCenterRecord( rectype, size, data );
+                retval = new HCenterRecord( in );
                 break;
             case VCenterRecord.sid:
-                retval = new VCenterRecord( rectype, size, data );
+                retval = new VCenterRecord( in );
                 break;
             case PrintSetupRecord.sid:
-                retval = new PrintSetupRecord( rectype, size, data );
+                retval = new PrintSetupRecord( in );
                 break;
             case DefaultColWidthRecord.sid:
-                retval = new DefaultColWidthRecord( rectype, size, data );
+                retval = new DefaultColWidthRecord( in );
                 break;
             case DimensionsRecord.sid:
-                retval = new DimensionsRecord( rectype, size, data );
+                retval = new DimensionsRecord( in );
                 break;
             case RowRecord.sid:
-                retval = new RowRecord( rectype, size, data );
+                retval = new RowRecord( in );
                 break;
             case LabelSSTRecord.sid:
-                retval = new LabelSSTRecord( rectype, size, data );
+                retval = new LabelSSTRecord( in );
                 break;
             case RKRecord.sid:
-                retval = new RKRecord( rectype, size, data );
+                retval = new RKRecord( in );
                 break;
             case NumberRecord.sid:
-                retval = new NumberRecord( rectype, size, data );
+                retval = new NumberRecord( in );
                 break;
             case DBCellRecord.sid:
-                retval = new DBCellRecord( rectype, size, data );
+                retval = new DBCellRecord( in );
                 break;
             case WindowTwoRecord.sid:
-                retval = new WindowTwoRecord( rectype, size, data );
+                retval = new WindowTwoRecord( in );
                 break;
             case SelectionRecord.sid:
-                retval = new SelectionRecord( rectype, size, data );
+                retval = new SelectionRecord( in );
                 break;
             case ContinueRecord.sid:
-                retval = new ContinueRecord( rectype, size, data );
+                retval = new ContinueRecord( in );
                 break;
             case LabelRecord.sid:
-                retval = new LabelRecord( rectype, size, data );
+                retval = new LabelRecord( in );
                 break;
             case MulRKRecord.sid:
-                retval = new MulRKRecord( rectype, size, data );
+                retval = new MulRKRecord( in );
                 break;
             case MulBlankRecord.sid:
-                retval = new MulBlankRecord( rectype, size, data );
+                retval = new MulBlankRecord( in );
                 break;
             case BlankRecord.sid:
-                retval = new BlankRecord( rectype, size, data );
+                retval = new BlankRecord( in );
                 break;
             case BoolErrRecord.sid:
-                retval = new BoolErrRecord( rectype, size, data );
+                retval = new BoolErrRecord( in );
                 break;
             case ColumnInfoRecord.sid:
-                retval = new ColumnInfoRecord( rectype, size, data );
+                retval = new ColumnInfoRecord( in );
                 break;
             case MergeCellsRecord.sid:
-                retval = new MergeCellsRecord( rectype, size, data );
+                retval = new MergeCellsRecord( in );
                 break;
             case AreaRecord.sid:
-                retval = new AreaRecord( rectype, size, data );
+                retval = new AreaRecord( in );
                 break;
             case DataFormatRecord.sid:
-                retval = new DataFormatRecord( rectype, size, data );
+                retval = new DataFormatRecord( in );
                 break;
             case BarRecord.sid:
-                retval = new BarRecord( rectype, size, data );
+                retval = new BarRecord( in );
                 break;
             case DatRecord.sid:
-                retval = new DatRecord( rectype, size, data );
+                retval = new DatRecord( in );
                 break;
             case PlotGrowthRecord.sid:
-                retval = new PlotGrowthRecord( rectype, size, data );
+                retval = new PlotGrowthRecord( in );
                 break;
             case UnitsRecord.sid:
-                retval = new UnitsRecord( rectype, size, data );
+                retval = new UnitsRecord( in );
                 break;
             case FrameRecord.sid:
-                retval = new FrameRecord( rectype, size, data );
+                retval = new FrameRecord( in );
                 break;
             case ValueRangeRecord.sid:
-                retval = new ValueRangeRecord( rectype, size, data );
+                retval = new ValueRangeRecord( in );
                 break;
             case SeriesListRecord.sid:
-                retval = new SeriesListRecord( rectype, size, data );
+                retval = new SeriesListRecord( in );
                 break;
             case FontBasisRecord.sid:
-                retval = new FontBasisRecord( rectype, size, data );
+                retval = new FontBasisRecord( in );
                 break;
             case FontIndexRecord.sid:
-                retval = new FontIndexRecord( rectype, size, data );
+                retval = new FontIndexRecord( in );
                 break;
             case LineFormatRecord.sid:
-                retval = new LineFormatRecord( rectype, size, data );
+                retval = new LineFormatRecord( in );
                 break;
             case AreaFormatRecord.sid:
-                retval = new AreaFormatRecord( rectype, size, data );
+                retval = new AreaFormatRecord( in );
                 break;
             case LinkedDataRecord.sid:
-                retval = new LinkedDataRecord( rectype, size, data );
+                retval = new LinkedDataRecord( in );
                 break;
             case FormulaRecord.sid:
-                retval = new FormulaRecord( rectype, size, data );
+                retval = new FormulaRecord( in );
                 break;
             case SheetPropertiesRecord.sid:
-                retval = new SheetPropertiesRecord( rectype, size, data );
+                retval = new SheetPropertiesRecord( in );
                 break;
             case DefaultDataLabelTextPropertiesRecord.sid:
-                retval = new DefaultDataLabelTextPropertiesRecord( rectype, size, data );
+                retval = new DefaultDataLabelTextPropertiesRecord( in );
                 break;
             case TextRecord.sid:
-                retval = new TextRecord( rectype, size, data );
+                retval = new TextRecord( in );
                 break;
             case AxisParentRecord.sid:
-                retval = new AxisParentRecord( rectype, size, data );
+                retval = new AxisParentRecord( in );
                 break;
             case AxisLineFormatRecord.sid:
-                retval = new AxisLineFormatRecord( rectype, size, data );
+                retval = new AxisLineFormatRecord( in );
                 break;
             case SupBookRecord.sid:
-                retval = new SupBookRecord( rectype, size, data );
+                retval = new SupBookRecord( in );
                 break;
             case ExternSheetRecord.sid:
-                retval = new ExternSheetRecord( rectype, size, data );
+                retval = new ExternSheetRecord( in );
                 break;
             case SCLRecord.sid:
-                retval = new SCLRecord( rectype, size, data );
+                retval = new SCLRecord( in );
                 break;
             case SeriesToChartGroupRecord.sid:
-                retval = new SeriesToChartGroupRecord( rectype, size, data );
+                retval = new SeriesToChartGroupRecord( in );
                 break;
             case AxisUsedRecord.sid:
-                retval = new AxisUsedRecord( rectype, size, data );
+                retval = new AxisUsedRecord( in );
                 break;
             case AxisRecord.sid:
-                retval = new AxisRecord( rectype, size, data );
+                retval = new AxisRecord( in );
                 break;
             case CategorySeriesAxisRecord.sid:
-                retval = new CategorySeriesAxisRecord( rectype, size, data );
+                retval = new CategorySeriesAxisRecord( in );
                 break;
             case AxisOptionsRecord.sid:
-                retval = new AxisOptionsRecord( rectype, size, data );
+                retval = new AxisOptionsRecord( in );
                 break;
             case TickRecord.sid:
-                retval = new TickRecord( rectype, size, data );
+                retval = new TickRecord( in );
                 break;
             case SeriesTextRecord.sid:
-                retval = new SeriesTextRecord( rectype, size, data );
+                retval = new SeriesTextRecord( in );
                 break;
             case ObjectLinkRecord.sid:
-                retval = new ObjectLinkRecord( rectype, size, data );
+                retval = new ObjectLinkRecord( in );
                 break;
             case PlotAreaRecord.sid:
-                retval = new PlotAreaRecord( rectype, size, data );
+                retval = new PlotAreaRecord( in );
                 break;
             case SeriesIndexRecord.sid:
-                retval = new SeriesIndexRecord( rectype, size, data );
+                retval = new SeriesIndexRecord( in );
                 break;
             case LegendRecord.sid:
-                retval = new LegendRecord( rectype, size, data );
+                retval = new LegendRecord( in );
                 break;
             case LeftMarginRecord.sid:
-                retval = new LeftMarginRecord( rectype, size, data );
+                retval = new LeftMarginRecord( in );
                 break;
             case RightMarginRecord.sid:
-                retval = new RightMarginRecord( rectype, size, data );
+                retval = new RightMarginRecord( in );
                 break;
             case TopMarginRecord.sid:
-                retval = new TopMarginRecord( rectype, size, data );
+                retval = new TopMarginRecord( in );
                 break;
             case BottomMarginRecord.sid:
-                retval = new BottomMarginRecord( rectype, size, data );
+                retval = new BottomMarginRecord( in );
                 break;
             case PaletteRecord.sid:
-                retval = new PaletteRecord( rectype, size, data );
+                retval = new PaletteRecord( in );
                 break;
             case StringRecord.sid:
-                retval = new StringRecord( rectype, size, data );
+                retval = new StringRecord( in );
                 break;
             case NameRecord.sid:
-                retval = new NameRecord( rectype, size, data );
+                retval = new NameRecord( in );
                 break;
             case PaneRecord.sid:
-                retval = new PaneRecord( rectype, size, data );
+                retval = new PaneRecord( in );
                 break;
             case SharedFormulaRecord.sid:
-            	 retval = new SharedFormulaRecord( rectype, size, data);
+            	 retval = new SharedFormulaRecord( in);
             	 break;
             case ObjRecord.sid:
-            	 retval = new ObjRecord( rectype, size, data);
+            	 retval = new ObjRecord( in);
             	 break;
             case TextObjectRecord.sid:
-            	 retval = new TextObjectRecord( rectype, size, data);
+            	 retval = new TextObjectRecord( in);
             	 break;
             case HorizontalPageBreakRecord.sid:
-                retval = new HorizontalPageBreakRecord( rectype, size, data);
+                retval = new HorizontalPageBreakRecord( in);
                 break;
             case VerticalPageBreakRecord.sid:
-                retval = new VerticalPageBreakRecord( rectype, size, data);
+                retval = new VerticalPageBreakRecord( in);
                 break;
             default:
-                retval = new UnknownRecord( rectype, size, data );
+                retval = new UnknownRecord( in );
         }
         return retval;
     }
@@ -684,15 +576,13 @@ public class BiffViewer {
     {
         short rectype, recsize;
         int startloc;
-        byte[] data;
         Record record;
 
-        public RecordDetails( short rectype, short recsize, int startloc, byte[] data, Record record )
+        public RecordDetails( short rectype, short recsize, int startloc, Record record )
         {
             this.rectype = rectype;
             this.recsize = recsize;
             this.startloc = startloc;
-            this.data = data;
             this.record = record;
         }
 
@@ -706,11 +596,6 @@ public class BiffViewer {
             return recsize;
         }
 
-        public byte[] getData()
-        {
-            return data;
-        }
-
         public Record getRecord()
         {
             return record;
@@ -718,11 +603,17 @@ public class BiffViewer {
 
         public void dump() throws IOException
         {
-            if (record instanceof UnknownRecord)
-                dumpUnknownRecord(data);
-            else
                 dumpNormal(record, startloc, rectype, recsize);
         }
+    }
+
+    static class BiffviewRecordInputStream extends RecordInputStream {
+      public BiffviewRecordInputStream(InputStream in) {
+        super(in);
+      }
+      public void dumpBytes() {
+        HexDump.dump(this.data, 0, this.currentLength);
+      }
     }
 
 }

@@ -50,7 +50,7 @@ public class TestSupBookRecord
             throws Exception
     {
 
-        SupBookRecord record = new SupBookRecord((short)0x01AE, (short)data.length, data);      
+        SupBookRecord record = new SupBookRecord(new TestcaseRecordInputStream((short)0x01AE, (short)data.length, data));      
         assertEquals( 0x401, record.getFlag());             //expected flag
         assertEquals( 0x4, record.getNumberOfSheets() );    //expected # of sheets
 

@@ -46,6 +46,20 @@ public class SelectionRecord
     private short             field_5_num_refs;
     private ArrayList         field_6_refs;     // not used yet
 
+    public class Reference {
+      private short field_1_first_row;
+      private short field_2_last_row;
+      private byte field_3_first_column;
+      private byte field_3_last_column;
+      
+      public Reference(RecordInputStream in) {
+        field_1_first_row = in.readShort();
+        field_2_last_row = in.readShort();
+        field_3_first_column = in.readByte();
+        field_3_last_column = in.readByte();
+      }
+    }
+
     public SelectionRecord()
     {
     }
@@ -58,23 +72,9 @@ public class SelectionRecord
      * @param data  data of the record (should not contain sid/len)
      */
 
-    public SelectionRecord(short id, short size, byte [] data)
+    public SelectionRecord(RecordInputStream in)
     {
-        super(id, size, data);
-    }
-
-    /**
-     * Constructs a Selection record and sets its fields appropriately.
-     *
-     * @param id     id must be 0x1d or an exception will be throw upon validation
-     * @param size  the size of the data area of the record
-     * @param data  data of the record (should not contain sid/len)
-     * @param offset of the record's data
-     */
-
-    public SelectionRecord(short id, short size, byte [] data, int offset)
-    {
-        super(id, size, data, offset);
+        super(in);
     }
 
     protected void validateSid(short id)
@@ -85,14 +85,19 @@ public class SelectionRecord
         }
     }
 
-    protected void fillFields(byte [] data, short size, int offset)
+    protected void fillFields(RecordInputStream in)
     {
-        field_1_pane            = data[ 0 + offset ];
+        field_1_pane            = in.readByte();
         //field_2_row_active_cell = LittleEndian.getShort(data, 1 + offset);
-        field_2_row_active_cell = LittleEndian.getUShort(data, 1 + offset);
-        field_3_col_active_cell = LittleEndian.getShort(data, 3 + offset);
-        field_4_ref_active_cell = LittleEndian.getShort(data, 5 + offset);
-        field_5_num_refs        = LittleEndian.getShort(data, 7 + offset);
+        field_2_row_active_cell = in.readUShort();
+        field_3_col_active_cell = in.readShort();
+        field_4_ref_active_cell = in.readShort();
+        field_5_num_refs        = in.readShort();
+        
+        field_6_refs = new ArrayList(field_5_num_refs);
+        for (int i=0; i<field_5_num_refs; i++) {
+          field_6_refs.add(new Reference(in));
+        }
     }
 
     /**

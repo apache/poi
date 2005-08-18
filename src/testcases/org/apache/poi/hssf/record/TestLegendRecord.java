@@ -45,7 +45,7 @@ public class TestLegendRecord
     public void testLoad()
             throws Exception
     {
-        LegendRecord record = new LegendRecord((short)0x1015, (short)data.length, data);
+        LegendRecord record = new LegendRecord(new TestcaseRecordInputStream((short)0x1015, (short)data.length, data));
         
 
         assertEquals( (int)0xe76, record.getXAxisUpperLeft());

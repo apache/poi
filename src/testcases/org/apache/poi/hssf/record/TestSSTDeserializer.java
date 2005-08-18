@@ -19,7 +19,8 @@
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.HexRead;
-import org.apache.poi.util.BinaryTree;
+import org.apache.poi.util.IntMapper;
+import org.apache.poi.hssf.record.TestcaseRecordInputStream;
 
 import java.io.File;
 
@@ -46,32 +47,43 @@ public class TestSSTDeserializer
         _test_file_path = System.getProperty( _test_file_path_property );
     }
 
+    private byte[] joinArray(byte[] array1, byte[] array2) {
+      byte[] bigArray = new byte[array1.length+array2.length];
+      System.arraycopy(array1, 0, bigArray, 0, array1.length);
+      System.arraycopy(array2, 0, bigArray, array1.length, array2.length);
+      return bigArray;    
+    }
+
     public void testSpanRichTextToPlainText()
             throws Exception
     {
-        byte[] bytes = HexRead.readData( _test_file_path + File.separator + "richtextdata.txt", "header" );
-        BinaryTree strings = new BinaryTree();
-        SSTDeserializer deserializer = new SSTDeserializer( strings );
-        deserializer.manufactureStrings( bytes, 0);
+      byte[] header = HexRead.readData( _test_file_path + File.separator + "richtextdata.txt", "header" );
         byte[] continueBytes = HexRead.readData( _test_file_path + File.separator + "richtextdata.txt", "continue1" );
-        deserializer.processContinueRecord( continueBytes );
+      continueBytes = TestcaseRecordInputStream.mergeDataAndSid(ContinueRecord.sid, (short)continueBytes.length, continueBytes);
+      TestcaseRecordInputStream in = new TestcaseRecordInputStream((short)0, (short)header.length, joinArray(header, continueBytes));
+      
 
-        assertEquals( "At a dinner party orAt At At ", strings.get( new Integer( 0 ) ) + "" );
+        IntMapper strings = new IntMapper();
+        SSTDeserializer deserializer = new SSTDeserializer( strings );
+        deserializer.manufactureStrings(1, in );
+
+        assertEquals( "At a dinner party orAt At At ", strings.get( 0 ) + "" );
     }
 
     public void testContinuationWithNoOverlap()
             throws Exception
     {
-        byte[] bytes = HexRead.readData( _test_file_path + File.separator + "evencontinuation.txt", "header" );
-        BinaryTree strings = new BinaryTree();
-        SSTDeserializer deserializer = new SSTDeserializer( strings );
-        deserializer.manufactureStrings( bytes, 0);
+        byte[] header = HexRead.readData( _test_file_path + File.separator + "evencontinuation.txt", "header" );
         byte[] continueBytes = HexRead.readData( _test_file_path + File.separator + "evencontinuation.txt", "continue1" );
-        deserializer.processContinueRecord( continueBytes );
+        continueBytes = TestcaseRecordInputStream.mergeDataAndSid(ContinueRecord.sid, (short)continueBytes.length, continueBytes);
+        TestcaseRecordInputStream in = new TestcaseRecordInputStream((short)0, (short)header.length, joinArray(header, continueBytes));
 
-        assertEquals( "At a dinner party or", strings.get( new Integer( 0 ) ) + "" );
-        assertEquals( "At a dinner party", strings.get( new Integer( 1 ) ) + "" );
+        IntMapper strings = new IntMapper();
+        SSTDeserializer deserializer = new SSTDeserializer( strings );
+        deserializer.manufactureStrings( 2, in);
 
+        assertEquals( "At a dinner party or", strings.get( 0 ) + "" );
+        assertEquals( "At a dinner party", strings.get( 1 ) + "" );
     }
 
     /**
@@ -80,41 +92,49 @@ public class TestSSTDeserializer
     public void testStringAcross2Continuations()
             throws Exception
     {
-        byte[] bytes = HexRead.readData( _test_file_path + File.separator + "stringacross2continuations.txt", "header" );
-        BinaryTree strings = new BinaryTree();
+        byte[] header = HexRead.readData( _test_file_path + File.separator + "stringacross2continuations.txt", "header" );
+        byte[] continue1 = HexRead.readData( _test_file_path + File.separator + "stringacross2continuations.txt", "continue1" );
+        continue1 = TestcaseRecordInputStream.mergeDataAndSid(ContinueRecord.sid, (short)continue1.length, continue1);
+        byte[] continue2 = HexRead.readData( _test_file_path + File.separator + "stringacross2continuations.txt", "continue2" );
+        continue2 = TestcaseRecordInputStream.mergeDataAndSid(ContinueRecord.sid, (short)continue2.length, continue2);
+        
+        byte[] bytes = joinArray(header, continue1);
+        bytes = joinArray(bytes, continue2);
+        TestcaseRecordInputStream in = new TestcaseRecordInputStream((short)0, (short)header.length, bytes);
+
+        IntMapper strings = new IntMapper();
         SSTDeserializer deserializer = new SSTDeserializer( strings );
-        deserializer.manufactureStrings( bytes, 0);
-        bytes = HexRead.readData( _test_file_path + File.separator + "stringacross2continuations.txt", "continue1" );
-        deserializer.processContinueRecord( bytes );
-        bytes = HexRead.readData( _test_file_path + File.separator + "stringacross2continuations.txt", "continue2" );
-        deserializer.processContinueRecord( bytes );
+        deserializer.manufactureStrings( 2, in);
 
-        assertEquals( "At a dinner party or", strings.get( new Integer( 0 ) ) + "" );
-        assertEquals( "At a dinner partyAt a dinner party", strings.get( new Integer( 1 ) ) + "" );
-
+        assertEquals( "At a dinner party or", strings.get(  0 ) + "" );
+        assertEquals( "At a dinner partyAt a dinner party", strings.get( 1 ) + "" );
     }
 
     public void testExtendedStrings()
             throws Exception
     {
-        byte[] bytes = HexRead.readData( _test_file_path + File.separator + "extendedtextstrings.txt", "rich-header" );
-        BinaryTree strings = new BinaryTree();
-        SSTDeserializer deserializer = new SSTDeserializer( strings );
-        deserializer.manufactureStrings( bytes, 0);
+        byte[] header = HexRead.readData( _test_file_path + File.separator + "extendedtextstrings.txt", "rich-header" );
         byte[] continueBytes = HexRead.readData( _test_file_path + File.separator + "extendedtextstrings.txt", "rich-continue1" );
-        deserializer.processContinueRecord( continueBytes );
+        continueBytes = TestcaseRecordInputStream.mergeDataAndSid(ContinueRecord.sid, (short)continueBytes.length, continueBytes);
+        TestcaseRecordInputStream in = new TestcaseRecordInputStream((short)0, (short)header.length, joinArray(header, continueBytes));
+        
+        IntMapper strings = new IntMapper();
+        SSTDeserializer deserializer = new SSTDeserializer( strings );
+        deserializer.manufactureStrings( 1, in);
 
-        assertEquals( "At a dinner party orAt At At ", strings.get( new Integer( 0 ) ) + "" );
+        assertEquals( "At a dinner party orAt At At ", strings.get( 0  ) + "" );
 
 
-        bytes = HexRead.readData( _test_file_path + File.separator + "extendedtextstrings.txt", "norich-header" );
-        strings = new BinaryTree();
-        deserializer = new SSTDeserializer( strings );
-        deserializer.manufactureStrings( bytes, 0);
+        header = HexRead.readData( _test_file_path + File.separator + "extendedtextstrings.txt", "norich-header" );
         continueBytes = HexRead.readData( _test_file_path + File.separator + "extendedtextstrings.txt", "norich-continue1" );
-        deserializer.processContinueRecord( continueBytes );
+        continueBytes = TestcaseRecordInputStream.mergeDataAndSid(ContinueRecord.sid, (short)continueBytes.length, continueBytes);
+        in = new TestcaseRecordInputStream((short)0, (short)header.length, joinArray(header, continueBytes));
+        
+        strings = new IntMapper();
+        deserializer = new SSTDeserializer( strings );
+        deserializer.manufactureStrings( 1, in);
 
-        assertEquals( "At a dinner party orAt At At ", strings.get( new Integer( 0 ) ) + "" );
+        assertEquals( "At a dinner party orAt At At ", strings.get( 0 ) + "" );
 
     }
 

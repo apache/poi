@@ -47,7 +47,7 @@ public class TestFrameRecord
             throws Exception
     {
 
-        FrameRecord record = new FrameRecord((short)0x1032, (short)data.length, data);
+        FrameRecord record = new FrameRecord(new TestcaseRecordInputStream((short)0x1032, (short)data.length, data));
         assertEquals( FrameRecord.BORDER_TYPE_REGULAR, record.getBorderType());
         assertEquals( 2, record.getOptions());
         assertEquals( false, record.isAutoSize() );

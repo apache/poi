@@ -225,7 +225,7 @@ public class HSSFChart
             (byte) 0x87, (byte) 0x03, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
         };
 
-        return new UnknownRecord( (short) 0x005D, (short) 0x001a, data );
+        return new UnknownRecord( (short) 0x005D, data );
     }
 
     private UnknownRecord createMSDrawingObjectRecord()
@@ -249,7 +249,7 @@ public class HSSFChart
             (byte)0x00, (byte)0x00, (byte)0x11, (byte)0xF0, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00
         };
 
-        return new UnknownRecord((short)0x00EC, (short)0x00C8, data);
+        return new UnknownRecord((short)0x00EC, data);
     }
 
     private void createAxisRecords( List records )

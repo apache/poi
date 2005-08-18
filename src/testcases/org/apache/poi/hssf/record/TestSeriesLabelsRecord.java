@@ -45,7 +45,7 @@ public class TestSeriesLabelsRecord
     public void testLoad()
             throws Exception
     {
-        SeriesLabelsRecord record = new SeriesLabelsRecord((short)0x100c, (short)data.length, data);
+        SeriesLabelsRecord record = new SeriesLabelsRecord(new TestcaseRecordInputStream((short)0x100c, (short)data.length, data));
         assertEquals( 3, record.getFormatFlags());
         assertEquals( true, record.isShowActual() );
         assertEquals( true, record.isShowPercent() );

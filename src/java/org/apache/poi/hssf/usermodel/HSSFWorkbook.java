@@ -826,14 +826,20 @@ public class HSSFWorkbook
         return retval;
     }
 
+    /** @deprecated Do not call this method from your applications. Use the methods
+     *  available in the HSSFRow to add string HSSFCells
+     */
     public int addSSTString(String string)
     {
-        return workbook.addSSTString(string);
+        return workbook.addSSTString(new UnicodeString(string));
     }
 
+    /** @deprecated Do not call this method from your applications. Use the methods
+     *  available in the HSSFRow to get string HSSFCells
+     */
     public String getSSTString(int index)
     {
-        return workbook.getSSTString(index);
+        return workbook.getSSTString(index).getString();
     }
 
     Workbook getWorkbook()
@@ -1083,7 +1089,7 @@ public class HSSFWorkbook
            (byte)0x00, (byte)0x08, (byte)0x17, (byte)0x00, (byte)0x00,
            (byte)0x08, (byte)0xF7, (byte)0x00, (byte)0x00, (byte)0x10,
         };
-        UnknownRecord r = new UnknownRecord((short)0x00EB,(short)0x005a, data);
+        UnknownRecord r = new UnknownRecord((short)0x00EB, data);
         workbook.getRecords().add(loc, r);
     }
 

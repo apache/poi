@@ -17,7 +17,6 @@
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
-import org.apache.poi.util.StringUtil;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.HexDump;
 import java.io.UnsupportedEncodingException;
@@ -26,21 +25,31 @@ public class TextObjectRecord
         extends TextObjectBaseRecord
 {
     HSSFRichTextString str = new HSSFRichTextString( "" );
-    int continueRecordCount = 0;    // how many times has continue record been called?
 
     public TextObjectRecord()
     {
     }
 
-    public TextObjectRecord( short id, short size, byte[] data )
+    public TextObjectRecord( RecordInputStream in )
     {
-        super( id, size, data );
+        super( in );
     }
 
-    public TextObjectRecord( short id, short size, byte[] data, int offset )
+    protected void fillFields(RecordInputStream in)
     {
-        super( id, size, data, offset );
+      super.fillFields(in);
+      if (in.isContinueNext() && in.remaining() == 0) {
+        //1st Continue
+        in.nextRecord();
+        processRawString(in);
+        if (in.isContinueNext() && in.remaining() == 0) {
+          in.nextRecord();
+          processFontRuns(in);
+        } else throw new RecordFormatException("Expected Continue Record to hold font runs for TextObjectRecord");
+      } else
+        throw new RecordFormatException("Expected Continue record to hold string data for TextObjectRecord");
     }
+
 
     public int getRecordSize()
     {
@@ -54,6 +63,8 @@ public class TextObjectRecord
         return super.getRecordSize() + continue1Size + continue2Size;
     }
 
+
+
     public int serialize( int offset, byte[] data )
     {
         // Temporarily blank out str so that record size is calculated without the continue records.
@@ -63,7 +74,7 @@ public class TextObjectRecord
         str = temp;
 
         int pos = offset + bytesWritten1;
-        if ( str.toString().equals( "" ) == false )
+        if ( str.getString().equals( "" ) == false )
         {
             ContinueRecord c1 = createContinue1();
             ContinueRecord c2 = createContinue2();
@@ -89,7 +100,7 @@ public class TextObjectRecord
         try
         {
             c1Data[0] = 1;
-            System.arraycopy( str.toString().getBytes( "UTF-16LE" ), 0, c1Data, 1, str.length() * 2 );
+            System.arraycopy( str.getString().getBytes( "UTF-16LE" ), 0, c1Data, 1, str.length() * 2 );
         }
         catch ( UnsupportedEncodingException e )
         {
@@ -123,53 +134,30 @@ public class TextObjectRecord
         return c2;
     }
 
-    public void processContinueRecord( byte[] data )
+    private void processFontRuns( RecordInputStream in )
     {
-        if ( continueRecordCount == 0 )
-            processRawString( data );
-        else
-            processFontRuns( data );
-        continueRecordCount++;
-    }
-
-    private void processFontRuns( byte[] data )
-    {
-        int pos = 0;
-        do
+        while (in.remaining() > 0)
         {
-            short index = LittleEndian.getShort( data, pos );
-            pos += 2;
-            short iFont = LittleEndian.getShort( data, pos );
-            pos += 2;
-            pos += 4;  // skip reserved.
+            short index = in.readShort();
+            short iFont = in.readShort();
+            in.readInt();  // skip reserved.
 
-            if ( index >= str.length() )
-                break;
             str.applyFont( index, str.length(), iFont );
         }
-        while ( true );
     }
 
-    private void processRawString( byte[] data )
+    private void processRawString( RecordInputStream in )
     {
         String s;
-        int pos = 0;
-        byte compressByte = data[pos++];
+        byte compressByte = in.readByte();
         boolean isCompressed = compressByte == 0;
-        try
-        {
             if ( isCompressed )
             {
-                s = new String( data, pos, getTextLength(), StringUtil.getPreferredEncoding() );
+            s = in.readCompressedUnicode(getTextLength());
             }
             else
             {
-                s = new String( data, pos, getTextLength() * 2, "UTF-16LE" );
-            }
-        }
-        catch ( UnsupportedEncodingException e )
-        {
-            throw new RuntimeException( e.getMessage() );
+            s = in.readUnicodeLEString(getTextLength());
         }
         str = new HSSFRichTextString( s );
     }

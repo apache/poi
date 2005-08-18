@@ -25,6 +25,7 @@ package org.apache.poi.hssf.record.formula;
 import java.util.List;
 
 import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.record.RecordInputStream;
 
 /**
  * Addition operator PTG the "+" binomial operator.  If you need more 
@@ -47,7 +48,7 @@ public class AddPtg
     {
     }
 
-    public AddPtg(byte [] data, int offset)
+    public AddPtg(RecordInputStream in)
     {
 
         // doesn't need anything

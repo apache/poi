@@ -48,7 +48,7 @@ public class TestBarRecord
             throws Exception
     {
 
-        BarRecord record = new BarRecord((short)0x1017, (short)data.length, data);
+        BarRecord record = new BarRecord(new TestcaseRecordInputStream((short)0x1017, (short)data.length, data));
         assertEquals( 0, record.getBarSpace());
         assertEquals( 0x96, record.getCategorySpace());
         assertEquals( 0, record.getFormatFlags());

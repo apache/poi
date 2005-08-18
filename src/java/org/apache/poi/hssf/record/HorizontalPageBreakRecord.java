@@ -47,18 +47,8 @@ public class HorizontalPageBreakRecord extends PageBreakRecord {
 	 * @param size
 	 * @param data
 	 */
-	public HorizontalPageBreakRecord(short id, short size, byte[] data) {
-		super(id, size, data);
-	}
-
-	/**
-	 * @param id
-	 * @param size
-	 * @param data
-	 * @param offset
-	 */
-	public HorizontalPageBreakRecord(short id, short size, byte[] data, int offset) {
-		super(id, size, data, offset);
+	public HorizontalPageBreakRecord(RecordInputStream in) {
+		super(in);
 	}
 
 	/* (non-Javadoc)

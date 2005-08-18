@@ -109,7 +109,7 @@ public class HSSFCell
     private int                      cellType;
     private HSSFCellStyle            cellStyle;
     private double                   cellValue;
-    private String                   stringValue;
+    private HSSFRichTextString       stringValue;
     private boolean                  booleanValue;
     private byte                     errorValue;
     private short                    encoding = ENCODING_COMPRESSED_UNICODE;
@@ -274,8 +274,7 @@ public class HSSFCell
                 break;
 
             case CELL_TYPE_STRING :
-                stringValue =
-                    book.getSSTString( ( (LabelSSTRecord ) cval).getSSTIndex());
+                stringValue = new HSSFRichTextString(book, (LabelSSTRecord ) cval);
                 break;
 
             case CELL_TYPE_BLANK :
@@ -283,7 +282,7 @@ public class HSSFCell
 
             case CELL_TYPE_FORMULA :
                 cellValue = (( FormulaRecordAggregate ) cval).getFormulaRecord().getValue();
-                stringValue=((FormulaRecordAggregate) cval).getStringValue();
+                stringValue=new HSSFRichTextString(((FormulaRecordAggregate) cval).getStringValue());
                 break;
 
             case CELL_TYPE_BOOLEAN :
@@ -470,12 +469,15 @@ public class HSSFCell
 
                         if (encoding == ENCODING_COMPRESSED_UNICODE)
                         {
-                            sst = book.addSSTString(getStringCellValue());
+                            UnicodeString str = getRichStringCellValue().getUnicodeString();
+                            str.setCompressedUnicode();
+                            sst = book.addSSTString(str);
                         }
                         if (encoding == ENCODING_UTF_16)
                         {
-                            sst = book.addSSTString(getStringCellValue(),
-                                                    true);
+                            UnicodeString str = getRichStringCellValue().getUnicodeString();
+                            str.setUncompressedUnicode();
+                            sst = book.addSSTString(str);
                         }
                         lrec.setSSTIndex(sst);
                     }
@@ -626,9 +628,26 @@ public class HSSFCell
      * string, for String cells we'll set its value.  For other types we will
      * change the cell to a string cell and set its value.
      * If value is null then we will change the cell to a Blank cell.
+     * @deprecated Use setCellValue(HSSFRichTextString) instead.
      */
 
     public void setCellValue(String value)
+    {
+      HSSFRichTextString str = new HSSFRichTextString(value);
+      setCellValue(str);
+    }
+
+    /**
+     * set a string value for the cell. Please note that if you are using
+     * full 16 bit unicode you should call <code>setEncoding()</code> first.
+     *
+     * @param value  value to set the cell to.  For formulas we'll set the formula
+     * string, for String cells we'll set its value.  For other types we will
+     * change the cell to a string cell and set its value.
+     * If value is null then we will change the cell to a Blank cell.
+     */
+
+    public void setCellValue(HSSFRichTextString value)
     {
         if (value == null)
         {
@@ -644,14 +663,19 @@ public class HSSFCell
 
             if (encoding == ENCODING_COMPRESSED_UNICODE)
             {
-                index = book.addSSTString(value);
+                UnicodeString str = value.getUnicodeString();
+                str.setCompressedUnicode();
+                index = book.addSSTString(str);
             }
             if (encoding == ENCODING_UTF_16)
             {
-                index = book.addSSTString(value, true);
+                UnicodeString str = value.getUnicodeString();
+                str.setUncompressedUnicode();
+                index = book.addSSTString(str);
             }
             (( LabelSSTRecord ) record).setSSTIndex(index);
             stringValue = value;
+            stringValue.setWorkbookReferences(book, (( LabelSSTRecord ) record));
         }
     }
 
@@ -755,13 +779,26 @@ public class HSSFCell
      * get the value of the cell as a string - for numeric cells we throw an exception.
      * For blank cells we return an empty string.
      * For formulaCells that are not string Formulas, we return empty String
+     * @deprecated Use the HSSFRichTextString return
      */
 
     public String getStringCellValue()
     {
+      HSSFRichTextString str = getRichStringCellValue();
+      return str.getString();
+    }
+
+    /**
+     * get the value of the cell as a string - for numeric cells we throw an exception.
+     * For blank cells we return an empty string.
+     * For formulaCells that are not string Formulas, we return empty String
+     */
+
+    public HSSFRichTextString getRichStringCellValue()
+    {
         if (cellType == CELL_TYPE_BLANK)
         {
-            return "";
+            return new HSSFRichTextString("");
         }
         if (cellType == CELL_TYPE_NUMERIC)
         {
@@ -780,7 +817,7 @@ public class HSSFCell
         }
         if (cellType == CELL_TYPE_FORMULA) 
         {
-            if (stringValue==null) return "";
+            if (stringValue==null) return new HSSFRichTextString("");
         }
         return stringValue;
     }

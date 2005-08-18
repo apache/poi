@@ -23,6 +23,7 @@ import org.apache.poi.util.BitField;
 import org.apache.poi.hssf.util.AreaReference;
 import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.record.RecordInputStream;
 
 /**
  * Specifies a rectangular area of cells A1:A4 for instance.
@@ -61,13 +62,12 @@ public class AreaPtg
         
     }
 
-    public AreaPtg(byte [] data, int offset)
+    public AreaPtg(RecordInputStream in)
     {
-        offset++;
-        field_1_first_row    = LittleEndian.getShort(data, 0 + offset);
-        field_2_last_row     = LittleEndian.getShort(data, 2 + offset);
-        field_3_first_column = LittleEndian.getShort(data, 4 + offset);
-        field_4_last_column  = LittleEndian.getShort(data, 6 + offset);
+        field_1_first_row    = in.readShort();
+        field_2_last_row     = in.readShort();
+        field_3_first_column = in.readShort();
+        field_4_last_column  = in.readShort();
         //System.out.println(toString());
     }
 

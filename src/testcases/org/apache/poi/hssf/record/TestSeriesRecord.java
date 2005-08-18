@@ -50,7 +50,7 @@ public class TestSeriesRecord
             throws Exception
     {
 
-        SeriesRecord record = new SeriesRecord((short)0x1003, (short)data.length, data);
+        SeriesRecord record = new SeriesRecord(new TestcaseRecordInputStream((short)0x1003, (short)data.length, data));
         assertEquals( SeriesRecord.CATEGORY_DATA_TYPE_NUMERIC, record.getCategoryDataType());
         assertEquals( SeriesRecord.VALUES_DATA_TYPE_NUMERIC, record.getValuesDataType());
         assertEquals( 27, record.getNumCategories());

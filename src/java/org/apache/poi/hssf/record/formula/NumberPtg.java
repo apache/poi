@@ -18,6 +18,8 @@ package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.record.RecordInputStream;
+
 /**
  * Number
  * Stores a floating point value in a formula
@@ -38,9 +40,9 @@ public class NumberPtg
     }
         
     /** Create a NumberPtg from a byte array read from disk */
-    public NumberPtg(byte [] data, int offset)
+    public NumberPtg(RecordInputStream in)
     {
-        setValue(LittleEndian.getDouble(data, offset + 1));
+        setValue(in.readDouble());
     }
     
     /** Create a NumberPtg from a string representation of  the number

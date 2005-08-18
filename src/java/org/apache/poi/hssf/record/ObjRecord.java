@@ -23,6 +23,7 @@ package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.*;
 
+import java.io.ByteArrayInputStream;
 import java.util.List;
 import java.util.Iterator;
 import java.util.ArrayList;
@@ -56,23 +57,9 @@ public class ObjRecord
      * @param data  data of the record (should not contain sid/len)
      */
 
-    public ObjRecord(short id, short size, byte [] data)
+    public ObjRecord(RecordInputStream in)
     {
-        super(id, size, data);
-    }
-
-    /**
-     * Constructs a obj record and sets its fields appropriately.
-     *
-     * @param id    id must be 0x5D or an exception
-     *              will be throw upon validation
-     * @param size  size the size of the data area of the record
-     * @param data  data of the record (should not contain sid/len)
-     * @param offset of the record's data
-     */
-    public ObjRecord(short id, short size, byte[] data, int offset)
-    {
-        super(id, size, data, offset);
+        super(in);
     }
 
     /**
@@ -88,9 +75,20 @@ public class ObjRecord
         }
     }
 
-    protected void fillFields(byte [] data, short size, int offset)
+    protected void fillFields(RecordInputStream in)
     {
         subrecords = new ArrayList();
+        //Check if this can be continued, if so then the
+        //following wont work properly
+        byte[] subRecordData = in.readRemainder();
+        RecordInputStream subRecStream = new RecordInputStream(new ByteArrayInputStream(subRecordData));
+        while(subRecStream.hasNextRecord()) {
+          subRecStream.nextRecord();
+          Record subRecord = SubRecord.createSubRecord(subRecStream);
+          subrecords.add(subRecord);
+        }
+        /* JMH the size present/not present in the code below
+           needs to be considered in the RecordInputStream??
         int pos = offset;
         while (pos - offset <= size-2) // atleast one "short" must be present
         {
@@ -102,7 +100,7 @@ public class ObjRecord
             Record subRecord = SubRecord.createSubRecord(subRecordSid, subRecordSize, data, pos + 4);
             subrecords.add(subRecord);
             pos += subRecord.getRecordSize();
-        }
+        }*/
     }
 
     public String toString()
@@ -173,14 +171,6 @@ public class ObjRecord
     public boolean addSubRecord(Object o)
     {
         return subrecords.add( o );
-    }
-
-    // made public to satisfy biffviewer
-
-    /* protected */
-    public void processContinueRecord( byte[] record )
-    {
-        super.processContinueRecord( record );
     }
 
     public Object clone()

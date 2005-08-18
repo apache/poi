@@ -53,23 +53,9 @@ public class FormatRecord
      * @param data  data of the record (should not contain sid/len)
      */
 
-    public FormatRecord(short id, short size, byte [] data)
+    public FormatRecord(RecordInputStream in)
     {
-        super(id, size, data);
-    }
-
-    /**
-     * Constructs a Format record and sets its fields appropriately.
-     *
-     * @param id     id must be 0x41e or an exception will be throw upon validation
-     * @param size  the size of the data area of the record
-     * @param data  data of the record (should not contain sid/len)
-     * @param offset of the record's data
-     */
-
-    public FormatRecord(short id, short size, byte [] data, int offset)
-    {
-        super(id, size, data, offset);
+        super(in);
     }
 
     protected void validateSid(short id)
@@ -80,22 +66,19 @@ public class FormatRecord
         }
     }
 
-    protected void fillFields(byte [] data, short size, int offset)
+    protected void fillFields(RecordInputStream in)
     {
-        field_1_index_code       = LittleEndian.getShort(data, 0 + offset);
-        // field_2_formatstring_len = data[ 2 + offset ];
-        field_3_unicode_len      = LittleEndian.getShort( data, 2 + offset );
-
-        field_3_unicode_flag     = ( data[ 4 + offset ] & (byte)0x01 ) != 0;
-                                              
+        field_1_index_code       = in.readShort();
+        field_3_unicode_len      = in.readShort();
+        field_3_unicode_flag     = ( in.readByte() & (byte)0x01 ) != 0;
                                               
       if ( field_3_unicode_flag  ) {
           // unicode
-          field_4_formatstring = StringUtil.getFromUnicodeLE( data, 5 + offset, field_3_unicode_len );
+          field_4_formatstring = in.readUnicodeLEString( field_3_unicode_len );
       }
       else {
           // not unicode
-          field_4_formatstring = StringUtil.getFromCompressedUnicode(data, 5 + offset, field_3_unicode_len );
+          field_4_formatstring = in.readCompressedUnicode( field_3_unicode_len );
       }
     }
 

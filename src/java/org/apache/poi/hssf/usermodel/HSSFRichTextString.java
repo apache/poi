@@ -16,24 +16,27 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import java.util.Map;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.record.LabelSSTRecord;
+import org.apache.poi.hssf.record.UnicodeString;
 
+import java.util.Iterator;
 /**
  * Rich text unicode string.  These strings can have fonts applied to
  * arbitary parts of the string.
  *
  * @author Glen Stampoultzis (glens at apache.org)
+ * @author Jason Height (jheight at apache.org)
  */
 public class HSSFRichTextString
         implements Comparable
 {
     /** Place holder for indicating that NO_FONT has been applied here */
-    public static final short NO_FONT = -1;
+    public static final short NO_FONT = 0;
 
-    String string;
-    SortedMap formattingRuns = new TreeMap();
+    private UnicodeString string;
+    private Workbook book;
+    private LabelSSTRecord record;
 
     public HSSFRichTextString()
     {
@@ -42,9 +45,42 @@ public class HSSFRichTextString
 
     public HSSFRichTextString( String string )
     {
-        this.string = string;
-        this.formattingRuns.put(new Integer(0), new Short(NO_FONT));
+        if (string == null)
+          string = "";
+        this.string = new UnicodeString(string);
     }
+
+    HSSFRichTextString(Workbook book, LabelSSTRecord record) {
+      setWorkbookReferences(book, record);
+      
+      this.string = book.getSSTString(record.getSSTIndex());
+    }
+    
+    /** This must be called to setup the internal work book references whenever
+     * a RichTextString is added to a cell
+     */    
+    void setWorkbookReferences(Workbook book, LabelSSTRecord record) {
+      this.book = book;
+      this.record = record;      
+    }
+    
+    /** Called whenever the unicode string is modified. When it is modified
+     *  we need to create a new SST index, so that other LabelSSTRecords will not
+     *  be affected by changes tat we make to this string.
+     */
+    private UnicodeString cloneStringIfRequired() {
+      if (book == null)
+        return string;
+      UnicodeString s = (UnicodeString)string.clone();
+      return s;
+    }
+
+    private void addToSSTIfRequired() {
+      if (book != null) {
+        record.setSSTIndex(book.addSSTString(string));
+      }
+    }
+
 
     /**
      * Applies a font to the specified characters of a string.
@@ -62,18 +98,30 @@ public class HSSFRichTextString
         if (startIndex == endIndex)
             return;
 
-        Integer from = new Integer(startIndex);
-        Integer to = new Integer(endIndex);
-        short fontAtIndex = NO_FONT;
-        if (endIndex != length())
-            fontAtIndex = getFontAtIndex(endIndex);
-        formattingRuns.subMap(from, to).clear();
-        formattingRuns.put(from, new Short(fontIndex));
-        if (endIndex != length())
-        {
-            if (fontIndex != fontAtIndex)
-                formattingRuns.put(to, new Short(fontAtIndex));
+        //Need to check what the font is currently, so we can reapply it after
+        //the range is completed
+        short currentFont = NO_FONT;
+        if (endIndex != length()) {
+          currentFont = this.getFontAtIndex(startIndex);
         }
+
+        //Need to clear the current formatting between the startIndex and endIndex
+        string = cloneStringIfRequired();
+        Iterator formatting = string.formatIterator();
+        if (formatting != null) {
+          while (formatting.hasNext()) {
+            UnicodeString.FormatRun r = (UnicodeString.FormatRun)formatting.next();
+            if ((r.getCharacterPos() >= startIndex) && (r.getCharacterPos() < endIndex))
+              formatting.remove();
+          }
+        }
+
+
+        string.addFormatRun(new UnicodeString.FormatRun((short)startIndex, fontIndex));
+        if (endIndex != length())
+          string.addFormatRun(new UnicodeString.FormatRun((short)endIndex, currentFont));
+          
+        addToSSTIfRequired();
     }
 
     /**
@@ -94,7 +142,16 @@ public class HSSFRichTextString
      */
     public void applyFont(HSSFFont font)
     {
-        applyFont(0, string.length(), font);
+        applyFont(0, string.getCharCount(), font);
+    }
+
+    /**
+     * Removes any formatting that may have been applied to the string.
+     */
+    public void clearFormatting() {
+      string = cloneStringIfRequired();
+      string.clearFormatting();
+      addToSSTIfRequired();
     }
 
     /**
@@ -102,7 +159,11 @@ public class HSSFRichTextString
      */
     public String getString()
     {
-        return string;
+        return string.getString();
+    }
+
+    UnicodeString getUnicodeString() {
+      return cloneStringIfRequired();
     }
 
     /**
@@ -110,7 +171,7 @@ public class HSSFRichTextString
      */
     public int length()
     {
-        return string.length();
+        return string.getCharCount();
     }
 
     /**
@@ -123,14 +184,17 @@ public class HSSFRichTextString
      */
     public short getFontAtIndex( int index )
     {
-        if (index < 0 || index >= string.length())
-            throw new ArrayIndexOutOfBoundsException("Font index " + index + " out of bounds of string");
-        Integer key = new Integer(index + 1);
-        SortedMap head = formattingRuns.headMap(key);
-        if (head.isEmpty())
-            throw new IllegalStateException("Should not reach here.  No font found.");
-        else
-            return ((Short) head.get(head.lastKey())).shortValue();
+      int size = string.getFormatRunCount();
+      UnicodeString.FormatRun currentRun = null;
+      for (int i=0;i<size;i++) {
+        UnicodeString.FormatRun r = string.getFormatRun(i);
+        if (r.getCharacterPos() > index)
+          break;
+        else currentRun = r;
+      }
+      if (currentRun == null)
+        return NO_FONT;
+      else return currentRun.getFontIndex();
     }
 
     /**
@@ -141,7 +205,7 @@ public class HSSFRichTextString
      */
     public int numFormattingRuns()
     {
-        return formattingRuns.size();
+        return string.getFormatRunCount();
     }
 
     /**
@@ -151,8 +215,8 @@ public class HSSFRichTextString
      */
     public int getIndexOfFormattingRun(int index)
     {
-        Map.Entry[] runs = (Map.Entry[]) formattingRuns.entrySet().toArray(new Map.Entry[formattingRuns.size()] );
-        return ((Integer)runs[index].getKey()).intValue();
+        UnicodeString.FormatRun r = string.getFormatRun(index);
+        return r.getCharacterPos();
     }
 
     /**
@@ -163,8 +227,8 @@ public class HSSFRichTextString
      */
     public short getFontOfFormattingRun(int index)
     {
-        Map.Entry[] runs = (Map.Entry[]) formattingRuns.entrySet().toArray(new Map.Entry[formattingRuns.size()] );
-        return ((Short)(runs[index].getValue())).shortValue();
+      UnicodeString.FormatRun r = string.getFormatRun(index);
+      return r.getFontIndex();
     }
 
     /**
@@ -172,7 +236,8 @@ public class HSSFRichTextString
      */
     public int compareTo( Object o )
     {
-        return 0; // todo
+       HSSFRichTextString r = (HSSFRichTextString)o;
+       return string.compareTo(r.string);
     }
 
     /**
@@ -180,7 +245,7 @@ public class HSSFRichTextString
      */
     public String toString()
     {
-        return string;
+        return string.toString();
     }
 
     /**
@@ -190,6 +255,6 @@ public class HSSFRichTextString
      */
     public void applyFont( short fontIndex )
     {
-        applyFont(0, string.length(), fontIndex);
+        applyFont(0, string.getCharCount(), fontIndex);
     }
 }

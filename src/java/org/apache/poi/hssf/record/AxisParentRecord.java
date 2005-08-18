@@ -1,6 +1,6 @@
 
 /* ====================================================================
-   Copyright 2002-2004   Apache Software Foundation
+   Copyright 2003-2004   Apache Software Foundation
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
    limitations under the License.
 ==================================================================== */
         
-
 
 package org.apache.poi.hssf.record;
 
@@ -57,25 +56,9 @@ public class AxisParentRecord
      * @param data  data of the record (should not contain sid/len)
      */
 
-    public AxisParentRecord(short id, short size, byte [] data)
+    public AxisParentRecord(RecordInputStream in)
     {
-        super(id, size, data);
-    
-    }
-
-    /**
-     * Constructs a AxisParent record and sets its fields appropriately.
-     *
-     * @param id    id must be 0x1041 or an exception
-     *              will be throw upon validation
-     * @param size  size the size of the data area of the record
-     * @param data  data of the record (should not contain sid/len)
-     * @param offset of the record's data
-     */
-
-    public AxisParentRecord(short id, short size, byte [] data, int offset)
-    {
-        super(id, size, data, offset);
+        super(in);
     
     }
 
@@ -92,15 +75,15 @@ public class AxisParentRecord
         }
     }
 
-    protected void fillFields(byte [] data, short size, int offset)
+    protected void fillFields(RecordInputStream in)
     {
 
         int pos = 0;
-        field_1_axisType               = LittleEndian.getShort(data, pos + 0x0 + offset);
-        field_2_x                      = LittleEndian.getInt(data, pos + 0x2 + offset);
-        field_3_y                      = LittleEndian.getInt(data, pos + 0x6 + offset);
-        field_4_width                  = LittleEndian.getInt(data, pos + 0xa + offset);
-        field_5_height                 = LittleEndian.getInt(data, pos + 0xe + offset);
+        field_1_axisType               = in.readShort();
+        field_2_x                      = in.readInt();
+        field_3_y                      = in.readInt();
+        field_4_width                  = in.readInt();
+        field_5_height                 = in.readInt();
 
     }
 

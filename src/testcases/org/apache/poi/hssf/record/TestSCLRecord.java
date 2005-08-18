@@ -45,7 +45,7 @@ public class TestSCLRecord
     public void testLoad()
             throws Exception
     {
-        SCLRecord record = new SCLRecord((short)0xa0, (short)data.length, data);
+        SCLRecord record = new SCLRecord(new TestcaseRecordInputStream((short)0xa0, (short)data.length, data));
         assertEquals( 3, record.getNumerator());
         assertEquals( 4, record.getDenominator());
 

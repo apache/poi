@@ -61,7 +61,7 @@ public class TestRecordFactory
             0, 6, 5, 0, -2, 28, -51, 7, -55, 64, 0, 0, 6, 1, 0, 0
         };
         short    size    = 16;
-        Record[] record  = RecordFactory.createRecord(recType, size, data);
+        Record[] record  = RecordFactory.createRecord(new TestcaseRecordInputStream(recType, size, data));
 
         assertEquals(BOFRecord.class.getName(),
                      record[ 0 ].getClass().getName());
@@ -81,7 +81,7 @@ public class TestRecordFactory
         {
             0, 0
         };
-        record  = RecordFactory.createRecord(recType, size, data);
+        record  = RecordFactory.createRecord(new TestcaseRecordInputStream(recType, size, data));
         assertEquals(MMSRecord.class.getName(),
                      record[ 0 ].getClass().getName());
         MMSRecord mmsRecord = ( MMSRecord ) record[ 0 ];
@@ -110,7 +110,7 @@ public class TestRecordFactory
             0, 0, 0, 0, 21, 0, 0, 0, 0, 0
         };
         short    size    = 10;
-        Record[] record  = RecordFactory.createRecord(recType, size, data);
+        Record[] record  = RecordFactory.createRecord(new TestcaseRecordInputStream(recType, size, data));
 
         assertEquals(NumberRecord.class.getName(),
                      record[ 0 ].getClass().getName());

@@ -44,7 +44,7 @@ public class TestEndSubRecord
     public void testLoad()
             throws Exception
     {
-        EndSubRecord record = new EndSubRecord((short)0x00, (short)data.length, data);
+        EndSubRecord record = new EndSubRecord(new TestcaseRecordInputStream((short)0x00, (short)data.length, data));
         
 
 

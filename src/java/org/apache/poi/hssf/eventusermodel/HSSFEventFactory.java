@@ -24,6 +24,7 @@ import org.apache.poi.util.LittleEndian;
 import org.apache.poi.hssf.eventusermodel.HSSFUserException;
 import org.apache.poi.hssf.record.RecordFormatException;
 import org.apache.poi.hssf.record.Record;
+import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.RecordFactory;
 import org.apache.poi.hssf.record.ContinueRecord;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
@@ -98,7 +99,7 @@ public class HSSFEventFactory
 	{
 		try
 		{
-			genericProcessEvents(req, in);
+			genericProcessEvents(req, new RecordInputStream(in));
 		}
 		catch (HSSFUserException hue)
 		{/*If an HSSFUserException user exception is thrown, ignore it.*/ }
@@ -117,7 +118,7 @@ public class HSSFEventFactory
     public short abortableProcessEvents(HSSFRequest req, InputStream in)
         throws IOException, HSSFUserException
     {
-		return genericProcessEvents(req, in);
+		return genericProcessEvents(req, new RecordInputStream(in));
     }
 
      /**
@@ -129,23 +130,22 @@ public class HSSFEventFactory
 	 * @return 			numeric user-specified result code.
 	 */
 
-	protected short genericProcessEvents(HSSFRequest req, InputStream in)
+	protected short genericProcessEvents(HSSFRequest req, RecordInputStream in)
 		throws IOException, HSSFUserException
 	{
 		short userCode = 0;
 
 		short sid = 0;
 		process:
-		try
 		{
-			byte[] sidbytes  = new byte[ 2 ];
-			int    bytesread = in.read(sidbytes);
+                  
 			Record rec       = null;
 
-			while (bytesread > 0)
+			while (in.hasNextRecord())
 			{
+                          in.nextRecord();
 
-				sid = LittleEndian.getShort(sidbytes);
+				sid = in.getSid();;
                 
                 //
                 // for some reasons we have to make the workbook to be at least 4096 bytes
@@ -171,16 +171,8 @@ public class HSSFEventFactory
 				}
 				if (sid != ContinueRecord.sid)
 				{
-					short  size = LittleEndian.readShort(in);
-					byte[] data = new byte[ size ];
-
-					if (data.length > 0)
-					{
-						in.read(data);
-					}
                                         //System.out.println("creating "+sid);
-					Record[] recs = RecordFactory.createRecord(sid, size,
-															   data);
+					Record[] recs = RecordFactory.createRecord(in);
 
 					if (recs.length > 1)
 					{                                // we know that the multiple
@@ -199,17 +191,9 @@ public class HSSFEventFactory
 					// records, it will go here too.
 				}
 				else
-				{                                    // we do have a continue record
-					short  size = LittleEndian.readShort(in);
-					byte[] data = new byte[ size ];
-
-					if (data.length > 0)
 					{
-						in.read(data);
-					}
-					rec.processContinueRecord(data);
+                                  throw new RecordFormatException("Records should handle ContinueRecord internally. Should not see this exception");
 				}
-				bytesread = in.read(sidbytes);       // read next record sid
 			}
 			if (rec != null)
 			{
@@ -217,11 +201,7 @@ public class HSSFEventFactory
 				if (userCode != 0) break process;
 			}
 		}
-		catch (IOException e)
-		{
-			throw new RecordFormatException("Error reading bytes" +
-                        "while processing record sid="+sid);
-		}
+		
 		return userCode;
 
 		// Record[] retval = new Record[ records.size() ];

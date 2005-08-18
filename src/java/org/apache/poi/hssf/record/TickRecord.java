@@ -1,6 +1,6 @@
 
 /* ====================================================================
-   Copyright 2002-2004   Apache Software Foundation
+   Copyright 2003-2004   Apache Software Foundation
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
    limitations under the License.
 ==================================================================== */
         
-
 
 package org.apache.poi.hssf.record;
 
@@ -39,15 +38,17 @@ public class TickRecord
     private  byte       field_3_labelPosition;
     private  byte       field_4_background;
     private  int        field_5_labelColorRgb;
-    private  short field_6_zero1;
-    private  short field_7_zero2;
-    private  short      field_8_options;
+    private  int        field_6_zero1;
+    private  int        field_7_zero2;
+    private  int        field_8_zero3;
+    private  int        field_9_zero4;
+    private  short      field_10_options;
     private  BitField   autoTextColor                               = new BitField(0x1);
     private  BitField   autoTextBackground                          = new BitField(0x2);
     private BitField   rotation                                   = new BitField(0x1c);
     private  BitField   autorotate                                  = new BitField(0x20);
-    private  short      field_9_tickColor;
-    private  short      field_10_zero3;
+    private  short      field_11_tickColor;
+    private  short      field_12_zero5;
 
 
     public TickRecord()
@@ -64,25 +65,9 @@ public class TickRecord
      * @param data  data of the record (should not contain sid/len)
      */
 
-    public TickRecord(short id, short size, byte [] data)
+    public TickRecord(RecordInputStream in)
     {
-        super(id, size, data);
-    
-    }
-
-    /**
-     * Constructs a Tick record and sets its fields appropriately.
-     *
-     * @param id    id must be 0x101e or an exception
-     *              will be throw upon validation
-     * @param size  size the size of the data area of the record
-     * @param data  data of the record (should not contain sid/len)
-     * @param offset of the record's data
-     */
-
-    public TickRecord(short id, short size, byte [] data, int offset)
-    {
-        super(id, size, data, offset);
+        super(in);
     
     }
 
@@ -99,21 +84,22 @@ public class TickRecord
         }
     }
 
-    protected void fillFields(byte [] data, short size, int offset)
+    protected void fillFields(RecordInputStream in)
     {
 
-        int pos = 0;
-        field_1_majorTickType          = data[ pos + 0x0 + offset ];
-        field_2_minorTickType          = data[ pos + 0x1 + offset ];
-        field_3_labelPosition          = data[ pos + 0x2 + offset ];
-        field_4_background             = data[ pos + 0x3 + offset ];
-        field_5_labelColorRgb          = LittleEndian.getInt(data, pos + 0x4 + offset);
-        field_6_zero1                  = LittleEndian.getShort(data, pos + 0x8 + offset);
-        field_7_zero2                  = LittleEndian.getShort(data, pos + 0x10 + offset);
-        field_8_options                = LittleEndian.getShort(data, pos + 0x18 + offset);
-        field_9_tickColor              = LittleEndian.getShort(data, pos + 0x1a + offset);
-        field_10_zero3                 = LittleEndian.getShort(data, pos + 0x1c + offset);
-
+        field_1_majorTickType          = in.readByte();
+        field_2_minorTickType          = in.readByte();
+        field_3_labelPosition          = in.readByte();
+        field_4_background             = in.readByte();
+        field_5_labelColorRgb          = in.readInt();
+        field_6_zero1                  = in.readInt();
+        field_7_zero2                  = in.readInt();
+        field_8_zero3                  = in.readInt();
+        field_9_zero4                  = in.readInt();
+        
+        field_10_options                = in.readShort();
+        field_11_tickColor              = in.readShort();
+        field_12_zero5                 = in.readShort();
     }
 
     public String toString()
@@ -182,11 +168,13 @@ public class TickRecord
         data[ 6 + offset + pos ] = field_3_labelPosition;
         data[ 7 + offset + pos ] = field_4_background;
         LittleEndian.putInt(data, 8 + offset + pos, field_5_labelColorRgb);
-        LittleEndian.putShort(data, 12 + offset + pos, field_6_zero1);
-        LittleEndian.putShort(data, 20 + offset + pos, field_7_zero2);
-        LittleEndian.putShort(data, 28 + offset + pos, field_8_options);
-        LittleEndian.putShort(data, 30 + offset + pos, field_9_tickColor);
-        LittleEndian.putShort(data, 32 + offset + pos, field_10_zero3);
+        LittleEndian.putInt(data, 12 + offset + pos, field_6_zero1);
+        LittleEndian.putInt(data, 16 + offset + pos, field_7_zero2);
+        LittleEndian.putInt(data, 20 + offset + pos, field_8_zero3);
+        LittleEndian.putInt(data, 24 + offset + pos, field_9_zero4);        
+        LittleEndian.putShort(data, 28 + offset + pos, field_10_options);
+        LittleEndian.putShort(data, 30 + offset + pos, field_11_tickColor);
+        LittleEndian.putShort(data, 32 + offset + pos, field_12_zero5);
 
         return getRecordSize();
     }
@@ -214,9 +202,11 @@ public class TickRecord
         rec.field_5_labelColorRgb = field_5_labelColorRgb;
         rec.field_6_zero1 = field_6_zero1;
         rec.field_7_zero2 = field_7_zero2;
-        rec.field_8_options = field_8_options;
-        rec.field_9_tickColor = field_9_tickColor;
-        rec.field_10_zero3 = field_10_zero3;
+        rec.field_8_zero3 = field_8_zero3;
+        rec.field_9_zero4 = field_9_zero4;
+        rec.field_10_options = field_10_options;
+        rec.field_11_tickColor = field_11_tickColor;
+        rec.field_12_zero5 = field_12_zero5;
         return rec;
     }
 
@@ -306,7 +296,7 @@ public class TickRecord
     /**
      * Get the zero 1 field for the Tick record.
      */
-    public short getZero1()
+    public int getZero1()
     {
         return field_6_zero1;
     }
@@ -314,7 +304,7 @@ public class TickRecord
     /**
      * Set the zero 1 field for the Tick record.
      */
-    public void setZero1(short field_6_zero1)
+    public void setZero1(int field_6_zero1)
     {
         this.field_6_zero1 = field_6_zero1;
     }
@@ -322,7 +312,7 @@ public class TickRecord
     /**
      * Get the zero 2 field for the Tick record.
      */
-    public short getZero2()
+    public int getZero2()
     {
         return field_7_zero2;
     }
@@ -330,7 +320,7 @@ public class TickRecord
     /**
      * Set the zero 2 field for the Tick record.
      */
-    public void setZero2(short field_7_zero2)
+    public void setZero2(int field_7_zero2)
     {
         this.field_7_zero2 = field_7_zero2;
     }
@@ -340,15 +330,15 @@ public class TickRecord
      */
     public short getOptions()
     {
-        return field_8_options;
+        return field_10_options;
     }
 
     /**
      * Set the options field for the Tick record.
      */
-    public void setOptions(short field_8_options)
+    public void setOptions(short field_10_options)
     {
-        this.field_8_options = field_8_options;
+        this.field_10_options = field_10_options;
     }
 
     /**
@@ -356,15 +346,15 @@ public class TickRecord
      */
     public short getTickColor()
     {
-        return field_9_tickColor;
+        return field_11_tickColor;
     }
 
     /**
      * Set the tick color field for the Tick record.
      */
-    public void setTickColor(short field_9_tickColor)
+    public void setTickColor(short field_11_tickColor)
     {
-        this.field_9_tickColor = field_9_tickColor;
+        this.field_11_tickColor = field_11_tickColor;
     }
 
     /**
@@ -372,15 +362,15 @@ public class TickRecord
      */
     public short getZero3()
     {
-        return field_10_zero3;
+        return field_12_zero5;
     }
 
     /**
      * Set the zero 3 field for the Tick record.
      */
-    public void setZero3(short field_10_zero3)
+    public void setZero3(short field_12_zero3)
     {
-        this.field_10_zero3 = field_10_zero3;
+        this.field_12_zero5 = field_12_zero5;
     }
 
     /**
@@ -389,7 +379,7 @@ public class TickRecord
      */
     public void setAutoTextColor(boolean value)
     {
-        field_8_options = autoTextColor.setShortBoolean(field_8_options, value);
+        field_10_options = autoTextColor.setShortBoolean(field_10_options, value);
     }
 
     /**
@@ -398,7 +388,7 @@ public class TickRecord
      */
     public boolean isAutoTextColor()
     {
-        return autoTextColor.isSet(field_8_options);
+        return autoTextColor.isSet(field_10_options);
     }
 
     /**
@@ -407,7 +397,7 @@ public class TickRecord
      */
     public void setAutoTextBackground(boolean value)
     {
-        field_8_options = autoTextBackground.setShortBoolean(field_8_options, value);
+        field_10_options = autoTextBackground.setShortBoolean(field_10_options, value);
     }
 
     /**
@@ -416,7 +406,7 @@ public class TickRecord
      */
     public boolean isAutoTextBackground()
     {
-        return autoTextBackground.isSet(field_8_options);
+        return autoTextBackground.isSet(field_10_options);
     }
 
     /**
@@ -425,7 +415,7 @@ public class TickRecord
      */
     public void setRotation(short value)
     {
-        field_8_options = rotation.setShortValue(field_8_options, value);
+        field_10_options = rotation.setShortValue(field_10_options, value);
     }
 
     /**
@@ -434,7 +424,7 @@ public class TickRecord
      */
     public short getRotation()
     {
-        return rotation.getShortValue(field_8_options);
+        return rotation.getShortValue(field_10_options);
     }
 
     /**
@@ -443,7 +433,7 @@ public class TickRecord
      */
     public void setAutorotate(boolean value)
     {
-        field_8_options = autorotate.setShortBoolean(field_8_options, value);
+        field_10_options = autorotate.setShortBoolean(field_10_options, value);
     }
 
     /**
@@ -452,7 +442,7 @@ public class TickRecord
      */
     public boolean isAutorotate()
     {
-        return autorotate.isSet(field_8_options);
+        return autorotate.isSet(field_10_options);
     }
 
 

@@ -17,6 +17,7 @@
 
 package org.apache.poi.hssf.record.formula;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.hssf.record.RecordInputStream;
 
 /**
  *
@@ -34,10 +35,9 @@ public class FuncVarPtg extends AbstractFunctionPtg{
  /**Creates new function pointer from a byte array 
      * usually called while reading an excel file. 
      */
-    public FuncVarPtg(byte[] data, int offset) {
-        offset++;
-        field_1_num_args = data[ offset + 0 ];
-        field_2_fnc_index  = LittleEndian.getShort(data,offset + 1 );
+    public FuncVarPtg(RecordInputStream in) {
+        field_1_num_args = in.readByte();
+        field_2_fnc_index  = in.readShort();
     }
     
     /**

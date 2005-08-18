@@ -17,6 +17,7 @@ package org.apache.poi.hssf.record.formula;
 
 import java.util.List;
 import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.record.RecordInputStream;
 
 /**
  * Implements the standard mathmatical multiplication - *
@@ -38,7 +39,7 @@ public class MultiplyPtg
     {
     }
 
-    public MultiplyPtg(byte [] data, int offset)
+    public MultiplyPtg(RecordInputStream in)
     {
 
         // doesn't need anything

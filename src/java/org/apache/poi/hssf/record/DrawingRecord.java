@@ -27,14 +27,9 @@ public class DrawingRecord extends Record
     {
     }
 
-    public DrawingRecord( short id, short size, byte[] data )
+    public DrawingRecord( RecordInputStream in )
     {
-        super( id, size, data );
-    }
-
-    public DrawingRecord( short id, short size, byte[] data, int offset )
-    {
-        super( id, size, data, offset );
+        super( in );
     }
 
     /**
@@ -50,22 +45,9 @@ public class DrawingRecord extends Record
         }
     }
 
-    protected void fillFields( byte[] data, short size, int offset )
+    protected void fillFields( RecordInputStream in )
     {
-        if (offset == 0 && size == data.length)
-        {
-            recordData = data;
-        }
-        else
-        {
-            recordData = new byte[size];
-            System.arraycopy(data, offset, recordData, 0, size);
-        }
-    }
-
-    protected void fillFields( byte[] data, short size )
-    {
-        recordData = data;
+      recordData = in.readRemainder();
     }
 
     public void processContinueRecord( byte[] record )

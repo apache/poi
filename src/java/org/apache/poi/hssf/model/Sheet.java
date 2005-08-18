@@ -609,7 +609,7 @@ public class Sheet implements Model
                     records.remove(k);
                     LabelSSTRecord newrec   = new LabelSSTRecord();
                     int            stringid =
-                        wb.addSSTString(oldrec.getValue());
+                        wb.addSSTString(new UnicodeString(oldrec.getValue()));
 
                     newrec.setRow(oldrec.getRow());
                     newrec.setColumn(oldrec.getColumn());

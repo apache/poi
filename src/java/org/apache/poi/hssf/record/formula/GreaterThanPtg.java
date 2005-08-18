@@ -25,6 +25,7 @@ package org.apache.poi.hssf.record.formula;
 import java.util.List;
 
 import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.record.RecordInputStream;
 
 /**
  * Greater than operator PTG ">"
@@ -50,7 +51,7 @@ public class GreaterThanPtg
      * @param data the byte array to have the PTG added to
      * @param offset the offset to the PTG to.
      */
-    public GreaterThanPtg(byte [] data, int offset)
+    public GreaterThanPtg(RecordInputStream in)
     {
         //deliberately empty
     }

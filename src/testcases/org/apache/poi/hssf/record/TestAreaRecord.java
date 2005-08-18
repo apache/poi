@@ -46,7 +46,7 @@ public class TestAreaRecord
             throws Exception
     {
 
-        AreaRecord record = new AreaRecord((short)0x101A, (short)data.length, data);
+        AreaRecord record = new AreaRecord(new TestcaseRecordInputStream((short)0x101A, (short)data.length, data));
         assertEquals( 2, record.getFormatFlags());
         assertEquals( false, record.isStacked() );
         assertEquals( true, record.isDisplayAsPercentage() );

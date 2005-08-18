@@ -49,23 +49,9 @@ public class WriteAccessRecord
      * @param data  data of the record (should not contain sid/len)
      */
 
-    public WriteAccessRecord(short id, short size, byte [] data)
+    public WriteAccessRecord(RecordInputStream in)
     {
-        super(id, size, data);
-    }
-
-    /**
-     * Constructs a WriteAccess record and sets its fields appropriately.
-     *
-     * @param id     id must be 0x5c or an exception will be throw upon validation
-     * @param size  the size of the data area of the record
-     * @param data  data of the record (should not contain sid/len)
-     * @param offset of the record data
-     */
-
-    public WriteAccessRecord(short id, short size, byte [] data, int offset)
-    {
-        super(id, size, data, offset);
+        super(in);
     }
 
     protected void validateSid(short id)
@@ -76,9 +62,17 @@ public class WriteAccessRecord
         }
     }
 
-    protected void fillFields(byte [] data, short size, int offset)
+    protected void fillFields(RecordInputStream in)
     {
-        field_1_username = StringUtil.getFromCompressedUnicode(data, 3 + offset, data.length - 4);
+        byte[] data = in.readRemainder();
+        //The string is always 112 characters (padded with spaces), therefore
+        //this record can not be continued.
+
+        //What a wierd record, it is not really a unicode string because the
+        //header doesnt provide a correct size indication.???
+        //But the header is present, so we need to skip over it.
+        //Odd, Odd, Odd ;-)
+        field_1_username = StringUtil.getFromCompressedUnicode(data, 3, data.length - 3);
     }
 
     /**
@@ -126,19 +120,16 @@ public class WriteAccessRecord
                 " ");   // (70 = fixed lenght -3 = the overhead bits of unicode string)
         }
         username = temp.toString();
-        UnicodeString str = new UnicodeString();
-
-        str.setString(username);
+        UnicodeString str = new UnicodeString(username);
         str.setOptionFlags(( byte ) 0x0);
-        str.setCharCount(( short ) 0x4);
-        byte[] stringbytes = str.serialize();
 
         LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset,
-                              ( short ) (stringbytes
-                                  .length));   // 112 bytes (115 total)
-        System.arraycopy(stringbytes, 0, data, 4 + offset,
-                         stringbytes.length);
+        LittleEndian.putShort(data, 2 + offset, (short)112);   // 112 bytes (115 total)
+        UnicodeString.UnicodeRecordStats stats = new UnicodeString.UnicodeRecordStats();
+        stats.recordSize += 4;
+        stats.remainingSize-= 4;
+        str.serialize(stats, 4 + offset, data);
+
         return getRecordSize();
     }
 

@@ -46,7 +46,7 @@ public class TestFontIndexRecord
             throws Exception
     {
 
-        FontIndexRecord record = new FontIndexRecord((short)0x1026, (short)data.length, data);
+        FontIndexRecord record = new FontIndexRecord(new TestcaseRecordInputStream((short)0x1026, (short)data.length, data));
         assertEquals( 5, record.getFontIndex());
 
 

@@ -1,6 +1,6 @@
 
 /* ====================================================================
-   Copyright 2002-2004   Apache Software Foundation
+   Copyright 2003-2004   Apache Software Foundation
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
    limitations under the License.
 ==================================================================== */
         
-
 
 package org.apache.poi.hssf.record;
 
@@ -72,25 +71,9 @@ public class LegendRecord
      * @param data  data of the record (should not contain sid/len)
      */
 
-    public LegendRecord(short id, short size, byte [] data)
+    public LegendRecord(RecordInputStream in)
     {
-        super(id, size, data);
-    
-    }
-
-    /**
-     * Constructs a Legend record and sets its fields appropriately.
-     *
-     * @param id    id must be 0x1015 or an exception
-     *              will be throw upon validation
-     * @param size  size the size of the data area of the record
-     * @param data  data of the record (should not contain sid/len)
-     * @param offset of the record's data
-     */
-
-    public LegendRecord(short id, short size, byte [] data, int offset)
-    {
-        super(id, size, data, offset);
+        super(in);
     
     }
 
@@ -107,17 +90,17 @@ public class LegendRecord
         }
     }
 
-    protected void fillFields(byte [] data, short size, int offset)
+    protected void fillFields(RecordInputStream in)
     {
 
         int pos = 0;
-        field_1_xAxisUpperLeft         = LittleEndian.getInt(data, pos + 0x0 + offset);
-        field_2_yAxisUpperLeft         = LittleEndian.getInt(data, pos + 0x4 + offset);
-        field_3_xSize                  = LittleEndian.getInt(data, pos + 0x8 + offset);
-        field_4_ySize                  = LittleEndian.getInt(data, pos + 0xc + offset);
-        field_5_type                   = data[ pos + 0x10 + offset ];
-        field_6_spacing                = data[ pos + 0x11 + offset ];
-        field_7_options                = LittleEndian.getShort(data, pos + 0x12 + offset);
+        field_1_xAxisUpperLeft         = in.readInt();
+        field_2_yAxisUpperLeft         = in.readInt();
+        field_3_xSize                  = in.readInt();
+        field_4_ySize                  = in.readInt();
+        field_5_type                   = in.readByte();
+        field_6_spacing                = in.readByte();
+        field_7_options                = in.readShort();
 
     }
 

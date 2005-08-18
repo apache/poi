@@ -60,23 +60,9 @@ public class MulRKRecord
      * @param data  data of the record (should not contain sid/len)
      */
 
-    public MulRKRecord(short id, short size, byte [] data)
+    public MulRKRecord(RecordInputStream in)
     {
-        super(id, size, data);
-    }
-
-    /**
-     * Constructs a MulRK record and sets its fields appropriately.
-     *
-     * @param id     id must be 0xbd or an exception will be throw upon validation
-     * @param size  the size of the data area of the record
-     * @param data  data of the record (should not contain sid/len)
-     * @param offset of data
-     */
-
-    public MulRKRecord(short id, short size, byte [] data, int offset)
-    {
-        super(id, size, data, offset);
+        super(in);
     }
 
     //public short getRow()
@@ -143,30 +129,23 @@ public class MulRKRecord
      * @param size size of data
      */
 
-    protected void fillFields(byte [] data, short size, int offset)
+    protected void fillFields(RecordInputStream in)
     {
         //field_1_row       = LittleEndian.getShort(data, 0 + offset);
-        field_1_row       = LittleEndian.getUShort(data, 0 + offset);
-        field_2_first_col = LittleEndian.getShort(data, 2 + offset);
-        field_3_rks       = parseRKs(data, 4, offset, size);
-        field_4_last_col  = LittleEndian.getShort(data,
-                                                  (field_3_rks.size() * 6)
-                                                  + 4 + offset);
+        field_1_row       = in.readUShort();
+        field_2_first_col = in.readShort();
+        field_3_rks       = parseRKs(in);
+        field_4_last_col  = in.readShort();
     }
 
-    private ArrayList parseRKs(byte [] data, int offset, int recoffset,
-                               short size)
+    private ArrayList parseRKs(RecordInputStream in)
     {
         ArrayList retval = new ArrayList();
-
-        for (; offset < size - 2; )
-        {
+        while ((in.remaining()-2) > 0) {
             RkRec rec = new RkRec();
 
-            rec.xf = LittleEndian.getShort(data, offset + recoffset);
-            offset += 2;
-            rec.rk = LittleEndian.getInt(data, offset + recoffset);
-            offset += 4;
+            rec.xf = in.readShort();
+            rec.rk = in.readInt();
             retval.add(rec);
         }
         return retval;

@@ -51,7 +51,7 @@ public class TestAxisRecord
             throws Exception
     {
 
-        AxisRecord record = new AxisRecord((short)0x101d, (short)data.length, data);
+        AxisRecord record = new AxisRecord(new TestcaseRecordInputStream((short)0x101d, (short)data.length, data));
         assertEquals( AxisRecord.AXIS_TYPE_CATEGORY_OR_X_AXIS, record.getAxisType());
         assertEquals( 0, record.getReserved1());
         assertEquals( 0, record.getReserved2());

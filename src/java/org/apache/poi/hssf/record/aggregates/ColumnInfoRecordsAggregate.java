@@ -2,6 +2,7 @@ package org.apache.poi.hssf.record.aggregates;
 
 import org.apache.poi.hssf.record.ColumnInfoRecord;
 import org.apache.poi.hssf.record.Record;
+import org.apache.poi.hssf.record.RecordInputStream;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -23,7 +24,7 @@ public class ColumnInfoRecordsAggregate
     }
 
     /** You never fill an aggregate */
-    protected void fillFields(byte [] data, short size, int offset)
+    protected void fillFields(RecordInputStream in)
     {
     }
 

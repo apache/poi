@@ -24,14 +24,9 @@ public class DrawingSelectionRecord extends AbstractEscherHolderRecord
     {
     }
 
-    public DrawingSelectionRecord( short id, short size, byte[] data )
+    public DrawingSelectionRecord( RecordInputStream in )
     {
-        super( id, size, data );
-    }
-
-    public DrawingSelectionRecord( short id, short size, byte[] data, int offset )
-    {
-        super( id, size, data, offset );
+        super( in );
     }
 
     protected String getRecordName()

@@ -1,6 +1,6 @@
 
 /* ====================================================================
-   Copyright 2002-2004   Apache Software Foundation
+   Copyright 2003-2004   Apache Software Foundation
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
    limitations under the License.
 ==================================================================== */
         
-
 
 package org.apache.poi.hssf.record;
 
@@ -50,25 +49,9 @@ public class PlotAreaRecord
      * @param data  data of the record (should not contain sid/len)
      */
 
-    public PlotAreaRecord(short id, short size, byte [] data)
+    public PlotAreaRecord(RecordInputStream in)
     {
-        super(id, size, data);
-    
-    }
-
-    /**
-     * Constructs a PlotArea record and sets its fields appropriately.
-     *
-     * @param id    id must be 0x1035 or an exception
-     *              will be throw upon validation
-     * @param size  size the size of the data area of the record
-     * @param data  data of the record (should not contain sid/len)
-     * @param offset of the record's data
-     */
-
-    public PlotAreaRecord(short id, short size, byte [] data, int offset)
-    {
-        super(id, size, data, offset);
+        super(in);
     
     }
 
@@ -85,7 +68,7 @@ public class PlotAreaRecord
         }
     }
 
-    protected void fillFields(byte [] data, short size, int offset)
+    protected void fillFields(RecordInputStream in)
     {
 
         int pos = 0;

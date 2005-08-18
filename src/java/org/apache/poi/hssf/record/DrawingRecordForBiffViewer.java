@@ -29,14 +29,9 @@ public class DrawingRecordForBiffViewer
     {
     }
 
-    public DrawingRecordForBiffViewer( short id, short size, byte[] data )
+    public DrawingRecordForBiffViewer( RecordInputStream in)
     {
-        super( id, size, data );
-    }
-
-    public DrawingRecordForBiffViewer( short id, short size, byte[] data, int offset )
-    {
-        super( id, size, data, offset );
+        super(in);
     }
 
     protected String getRecordName()

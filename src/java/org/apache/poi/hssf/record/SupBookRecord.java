@@ -48,22 +48,9 @@ public class SupBookRecord extends Record
      * @param size  the size of the data area of the record
      * @param data  data of the record (should not contain sid/len)
      */
-    public SupBookRecord(short id, short size, byte[] data)
+    public SupBookRecord(RecordInputStream in)
     {
-        super(id, size, data);
-    }
-
-    /**
-     * Constructs a Extern Sheet record and sets its fields appropriately.
-     *
-     * @param id     id must be 0x1ae or an exception will be throw upon validation
-     * @param size  the size of the data area of the record
-     * @param data  data of the record (should not contain sid/len)
-     * @param offset of the record's data
-     */
-    public SupBookRecord(short id, short size, byte[] data, int offset)
-    {
-        super(id, size, data, offset);
+        super(in);
     }
 
     protected void validateSid(short id)
@@ -82,13 +69,13 @@ public class SupBookRecord extends Record
      * @param size size of data
      * @param offset of the record's data (provided a big array of the file)
      */
-    protected void fillFields(byte [] data, short size, int offset)
+    protected void fillFields(RecordInputStream in)
     {
         //For now We use it only for one case
         //When we need to add an named range when no named ranges was
         //before it
-        field_1_number_of_sheets = LittleEndian.getShort(data,offset+0);
-        field_2_flag = LittleEndian.getShort(data,offset+2);
+        field_1_number_of_sheets = in.readShort();
+        field_2_flag = in.readShort();
     }
 
 

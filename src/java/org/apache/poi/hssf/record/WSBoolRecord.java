@@ -77,22 +77,9 @@ public class WSBoolRecord
      * @param data  data of the record (should not contain sid/len)
      */
 
-    public WSBoolRecord(short id, short size, byte [] data)
+    public WSBoolRecord(RecordInputStream in)
     {
-        super(id, size, data);
-    }
-
-    /**
-     * Constructs a WSBool record and sets its fields appropriately.
-     *
-     * @param id     id must be 0x81 or an exception will be throw upon validation
-     * @param size  the size of the data area of the record
-     * @param data  data of the record (should not contain sid/len)
-     */
-
-    public WSBoolRecord(short id, short size, byte [] data, int offset)
-    {
-        super(id, size, data, offset);
+        super(in);
     }
 
     protected void validateSid(short id)
@@ -103,12 +90,13 @@ public class WSBoolRecord
         }
     }
 
-    protected void fillFields(byte [] data, short size, int offset)
+    protected void fillFields(RecordInputStream in)
     {
+       byte data[] = in.readRemainder();
         field_1_wsbool =
-            data[ 1 + offset ];   // backwards because theoretically this is one short field
+            data[ 1 ];   // backwards because theoretically this is one short field
         field_2_wsbool =
-            data[ 0 + offset ];   // but it was easier to implement it this way to avoid confusion
+            data[ 0 ];   // but it was easier to implement it this way to avoid confusion
     }                             // because the dev kit shows the masks for it as 2 byte fields
 
     // why?  Why ask why?  But don't drink bud dry as its a really

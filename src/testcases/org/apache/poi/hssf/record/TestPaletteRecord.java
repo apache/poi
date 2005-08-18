@@ -39,7 +39,7 @@ public class TestPaletteRecord extends TestCase
      */
     public void testDefaultPalette()
     {
-        PaletteRecord palette = new PaletteRecord(PaletteRecord.sid);
+        PaletteRecord palette = new PaletteRecord();
         
         //make sure all the HSSFColor constants match
         Map colors = HSSFColor.getIndexHash();

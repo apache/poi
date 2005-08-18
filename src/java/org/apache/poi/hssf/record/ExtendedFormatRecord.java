@@ -201,23 +201,9 @@ public class ExtendedFormatRecord
      * @param data  data of the record (should not contain sid/len)
      */
 
-    public ExtendedFormatRecord(short id, short size, byte [] data)
+    public ExtendedFormatRecord(RecordInputStream in)
     {
-        super(id, size, data);
-    }
-
-    /**
-     * Constructs an ExtendedFormat record and sets its fields appropriately.
-     *
-     * @param id     id must be 0xE0 or an exception will be throw upon validation
-     * @param size  the size of the data area of the record
-     * @param data  data of the record (should not contain sid/len)
-     * @param offset of the record's data
-     */
-    public ExtendedFormatRecord(short id, short size, byte [] data,
-                                int offset)
-    {
-        super(id, size, data, offset);
+        super(in);
     }
 
     protected void validateSid(short id)
@@ -228,25 +214,17 @@ public class ExtendedFormatRecord
         }
     }
 
-    protected void fillFields(byte [] data, short size, int offset)
+    protected void fillFields(RecordInputStream in)
     {
-        field_1_font_index           = LittleEndian.getShort(data,
-                0 + offset);
-        field_2_format_index         = LittleEndian.getShort(data,
-                2 + offset);
-        field_3_cell_options         = LittleEndian.getShort(data,
-                4 + offset);
-        field_4_alignment_options    = LittleEndian.getShort(data,
-                6 + offset);
-        field_5_indention_options    = LittleEndian.getShort(data,
-                8 + offset);
-        field_6_border_options       = LittleEndian.getShort(data,
-                10 + offset);
-        field_7_palette_options      = LittleEndian.getShort(data,
-                12 + offset);
-        field_8_adtl_palette_options = LittleEndian.getInt(data, 14 + offset);
-        field_9_fill_palette_options = LittleEndian.getShort(data,
-                18 + offset);
+        field_1_font_index           = in.readShort();
+        field_2_format_index         = in.readShort();
+        field_3_cell_options         = in.readShort();
+        field_4_alignment_options    = in.readShort();
+        field_5_indention_options    = in.readShort();
+        field_6_border_options       = in.readShort();
+        field_7_palette_options      = in.readShort();
+        field_8_adtl_palette_options = in.readInt();
+        field_9_fill_palette_options = in.readShort();
     }
 
     /**

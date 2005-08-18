@@ -10,8 +10,10 @@
         <field type="int" size="1" name="label position" decription="label position relative to the axis line 0=invisible, 1=low end,2=high end, 3=next to axis"/>
         <field type="int" size="1" name="background" description="1=transparent, 2=opaque"/>
         <field type="int" size="4" name="label color rgb" description="an RGB value of the label text where highbyte=0"/>
-        <field type="int" size="8" name="zero 1" description="must be 0"/>
-        <field type="int" size="8" name="zero 2" description="must be 0"/>
+        <field type="int" size="4" name="zero 1" description="must be 0"/>
+        <field type="int" size="4" name="zero 2" description="must be 0"/>
+        <field type="int" size="4" name="zero 3" description="must be 0"/>
+        <field type="int" size="4" name="zero 4" description="must be 0"/>        
         <field type="int" size="2" name="options">
             <bit number="0" name="auto text color" description="use the quote unquote automatic color for text"/>
             <bit number="1" name="auto text background" description="use the quote unquote automatic color for text background"/>
@@ -19,6 +21,6 @@
             <bit number="5" name="autorotate" description="automatically rotate the text"/>
         </field>
         <field type="int" size="2" name="tick color" description="HSSFColor for tick label"/>
-        <field type="int" size="2" name="zero 3" description="must be 0"/>
+        <field type="int" size="2" name="zero 5" description="must be 0"/>
     </fields>
 </record>

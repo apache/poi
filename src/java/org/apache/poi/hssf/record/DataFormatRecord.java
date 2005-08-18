@@ -1,6 +1,6 @@
 
 /* ====================================================================
-   Copyright 2002-2004   Apache Software Foundation
+   Copyright 2003-2004   Apache Software Foundation
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
    limitations under the License.
 ==================================================================== */
         
-
 
 package org.apache.poi.hssf.record;
 
@@ -55,25 +54,9 @@ public class DataFormatRecord
      * @param data  data of the record (should not contain sid/len)
      */
 
-    public DataFormatRecord(short id, short size, byte [] data)
+    public DataFormatRecord(RecordInputStream in)
     {
-        super(id, size, data);
-    
-    }
-
-    /**
-     * Constructs a DataFormat record and sets its fields appropriately.
-     *
-     * @param id    id must be 0x1006 or an exception
-     *              will be throw upon validation
-     * @param size  size the size of the data area of the record
-     * @param data  data of the record (should not contain sid/len)
-     * @param offset of the record's data
-     */
-
-    public DataFormatRecord(short id, short size, byte [] data, int offset)
-    {
-        super(id, size, data, offset);
+        super(in);
     
     }
 
@@ -90,14 +73,14 @@ public class DataFormatRecord
         }
     }
 
-    protected void fillFields(byte [] data, short size, int offset)
+    protected void fillFields(RecordInputStream in)
     {
 
         int pos = 0;
-        field_1_pointNumber            = LittleEndian.getShort(data, pos + 0x0 + offset);
-        field_2_seriesIndex            = LittleEndian.getShort(data, pos + 0x2 + offset);
-        field_3_seriesNumber           = LittleEndian.getShort(data, pos + 0x4 + offset);
-        field_4_formatFlags            = LittleEndian.getShort(data, pos + 0x6 + offset);
+        field_1_pointNumber            = in.readShort();
+        field_2_seriesIndex            = in.readShort();
+        field_3_seriesNumber           = in.readShort();
+        field_4_formatFlags            = in.readShort();
 
     }
 

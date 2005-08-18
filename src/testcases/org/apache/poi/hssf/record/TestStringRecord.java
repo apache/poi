@@ -48,7 +48,7 @@ public class TestStringRecord
             throws Exception
     {
 
-        StringRecord record = new StringRecord((short)0x207, (short)data.length, data);
+        StringRecord record = new StringRecord(new TestcaseRecordInputStream((short)0x207, (short)data.length, data));
         assertEquals( "Fahrzeugtyp", record.getString());
 
         assertEquals( 18, record.getRecordSize() );

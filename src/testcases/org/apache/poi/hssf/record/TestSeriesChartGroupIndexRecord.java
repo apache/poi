@@ -44,7 +44,7 @@ public class TestSeriesChartGroupIndexRecord
     public void testLoad()
             throws Exception
     {
-        SeriesChartGroupIndexRecord record = new SeriesChartGroupIndexRecord((short)0x1045, (short)data.length, data);
+        SeriesChartGroupIndexRecord record = new SeriesChartGroupIndexRecord(new TestcaseRecordInputStream((short)0x1045, (short)data.length, data));
         assertEquals( 0, record.getChartGroupIndex());
 
 

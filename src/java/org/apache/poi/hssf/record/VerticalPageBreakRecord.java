@@ -47,18 +47,8 @@ public class VerticalPageBreakRecord extends PageBreakRecord {
 	 * @param size
 	 * @param data
 	 */
-	public VerticalPageBreakRecord(short id, short size, byte[] data) {
-		super(id, size, data);
-	}
-
-	/**
-	 * @param id
-	 * @param size
-	 * @param data
-	 * @param offset
-	 */
-	public VerticalPageBreakRecord(short id, short size, byte[] data, int offset) {
-		super(id, size, data, offset);
+	public VerticalPageBreakRecord(RecordInputStream in) {
+		super(in);
 	}
 
 	/* (non-Javadoc)

@@ -168,7 +168,7 @@ recordid = 0x1051, size =8
             throws Exception
     {
 
-        LinkedDataRecord record = new LinkedDataRecord((short)0x1051, (short)data.length, data);
+        LinkedDataRecord record = new LinkedDataRecord(new TestcaseRecordInputStream((short)0x1051, (short)data.length, data));
         assertEquals( LinkedDataRecord.LINK_TYPE_VALUES, record.getLinkType());
         assertEquals( LinkedDataRecord.REFERENCE_TYPE_WORKSHEET, record.getReferenceType());
         assertEquals( 0, record.getOptions());

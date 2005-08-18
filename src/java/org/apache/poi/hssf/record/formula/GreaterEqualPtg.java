@@ -19,6 +19,7 @@
 package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.record.RecordInputStream;
 
 
 /**
@@ -39,7 +40,7 @@ public class GreaterEqualPtg
     {
     }
 
-    public GreaterEqualPtg(byte [] data, int offset)
+    public GreaterEqualPtg(RecordInputStream in)
     {
 
         // doesn't need anything

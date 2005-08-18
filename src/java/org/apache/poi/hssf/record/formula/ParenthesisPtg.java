@@ -20,6 +20,7 @@ package org.apache.poi.hssf.record.formula;
 import java.util.List;
 
 import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.record.RecordInputStream;
 
 /**
  * While formula tokens are stored in RPN order and thus do not need parenthesis for 
@@ -41,7 +42,7 @@ public class ParenthesisPtg
     {
     }
 
-    public ParenthesisPtg(byte [] data, int offset)
+    public ParenthesisPtg(RecordInputStream in)
     {
 
         // doesn't need anything

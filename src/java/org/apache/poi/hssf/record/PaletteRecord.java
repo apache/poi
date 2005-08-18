@@ -44,14 +44,7 @@ public class PaletteRecord
 
     public PaletteRecord()
     {
-    }
-    
-    /**
-     * Constructs a custom palette with the default set of colors
-     */
-    public PaletteRecord(short id)
-    {
-        super(id, STANDARD_PALETTE_SIZE, getDefaultData());
+      createDefaultPalette();
     }
 
     /**
@@ -62,23 +55,9 @@ public class PaletteRecord
      * @param data  data of the record (should not contain sid/len)
      */
 
-    public PaletteRecord(short id, short size, byte [] data)
+    public PaletteRecord(RecordInputStream in)
     {
-        super(id, size, data);
-    }
-
-    /**
-     * Constructs a PaletteRecord record and sets its fields appropriately.
-     *
-     * @param id     id must be 0x0A or an exception will be throw upon validation
-     * @param size  the size of the data area of the record
-     * @param data  data of the record (should not contain sid/len)
-     * @param offset of the record's data
-     */
-
-    public PaletteRecord(short id, short size, byte [] data, int offset)
-    {
-        super(id, size, data, offset);
+        super(in);
     }
 
     protected void validateSid(short id)
@@ -89,17 +68,19 @@ public class PaletteRecord
         }
     }
 
-    protected void fillFields(byte [] data, short size, int offset)
+    protected void fillFields(RecordInputStream in)
     {
-       field_1_numcolors = LittleEndian.getShort(data,offset+0); 
+       field_1_numcolors = in.readShort();
        field_2_colors    = new ArrayList(field_1_numcolors);
        for (int k = 0; k < field_1_numcolors; k++) {
            field_2_colors.add(new PColor(
-                                         data[2+ offset+(k * 4) +0],
-                                         data[2+ offset+(k * 4) +1],
-                                         data[2+ offset+(k * 4) +2]
+                                         in.readByte(),
+                                         in.readByte(),
+                                         in.readByte()
                                         )
                               );
+           //Read unused byte.
+           in.readByte();
        } 
     }
 
@@ -187,15 +168,16 @@ public class PaletteRecord
     }
     
     /**
-     * Returns the default palette as PaletteRecord binary data
+     * Creates the default palette as PaletteRecord binary data
      *
      * @see org.apache.poi.hssf.model.Workbook#createPalette
      */
-    public static byte[] getDefaultData()
+    private void createDefaultPalette()
     {
-        return new byte[]
+      field_1_numcolors = STANDARD_PALETTE_SIZE;
+      field_2_colors    = new ArrayList(field_1_numcolors);
+      byte[] palette = new byte[]
         {
-            STANDARD_PALETTE_SIZE, (byte) 0,
             (byte) 0, (byte) 0, (byte) 0, (byte) 0, //color 0...
             (byte) 255, (byte) 255, (byte) 255, (byte) 0,
             (byte) 255, (byte) 0, (byte) 0, (byte) 0,
@@ -253,6 +235,16 @@ public class PaletteRecord
             (byte) 51, (byte) 51, (byte) 153, (byte) 0,
             (byte) 51, (byte) 51, (byte) 51, (byte) 0
         };
+      
+      for (int k = 0; k < field_1_numcolors; k++) {
+          field_2_colors.add(new PColor(
+                                        palette[k*4],
+                                        palette[k*4+1],
+                                        palette[k*4+2]
+                                       )
+                             );
+      }
+      
     }
 }
 

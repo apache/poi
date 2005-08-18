@@ -18,6 +18,7 @@
 package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.record.RecordInputStream;
 
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.BitField;
@@ -50,11 +51,10 @@ public class AttrPtg
     public AttrPtg() {
     }
     
-    public AttrPtg(byte [] data, int offset)
+    public AttrPtg(RecordInputStream in)
     {
-        offset++;   // adjust past id
-        field_1_options = data[ offset + 0 ];
-        field_2_data    = LittleEndian.getShort(data, offset + 1);
+        field_1_options = in.readByte();
+        field_2_data    = in.readShort();
     }
 
     public void setOptions(byte options)

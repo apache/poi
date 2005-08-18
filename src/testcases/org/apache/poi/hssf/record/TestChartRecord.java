@@ -49,7 +49,7 @@ public class TestChartRecord
             throws Exception
     {
 
-        ChartRecord record = new ChartRecord((short)0x1002, (short)data.length, data);
+        ChartRecord record = new ChartRecord(new TestcaseRecordInputStream((short)0x1002, (short)data.length, data));
         assertEquals( 0, record.getX());
         assertEquals( 0, record.getY());
         assertEquals( 30474216, record.getWidth());

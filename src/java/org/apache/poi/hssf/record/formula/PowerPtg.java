@@ -19,6 +19,7 @@ package org.apache.poi.hssf.record.formula;
 import java.util.List;
 
 import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.record.RecordInputStream;
 
 /**
  *
@@ -38,7 +39,7 @@ public class PowerPtg
     {
     }
 
-    public PowerPtg(byte [] data, int offset)
+    public PowerPtg(RecordInputStream in)
     {
 
         // doesn't need anything

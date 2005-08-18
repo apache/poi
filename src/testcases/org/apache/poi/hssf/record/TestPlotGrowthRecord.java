@@ -46,7 +46,7 @@ public class TestPlotGrowthRecord
             throws Exception
     {
 
-        PlotGrowthRecord record = new PlotGrowthRecord((short)0x1064, (short)data.length, data);
+        PlotGrowthRecord record = new PlotGrowthRecord(new TestcaseRecordInputStream((short)0x1064, (short)data.length, data));
         assertEquals( 65536, record.getHorizontalScale());
         assertEquals( 65536, record.getVerticalScale());
 

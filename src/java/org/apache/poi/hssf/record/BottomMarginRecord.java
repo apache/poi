@@ -46,23 +46,9 @@ public class BottomMarginRecord
      * @param size size the size of the data area of the record
      * @param data data of the record (should not contain sid/len)
      */
-    public BottomMarginRecord( short id, short size, byte[] data )
+    public BottomMarginRecord( RecordInputStream in )
     {
-        super( id, size, data );
-    }
-
-    /**
-     * Constructs a BottomMargin record and sets its fields appropriately.
-     *
-     * @param id     id must be 0x29 or an exception
-     *               will be throw upon validation
-     * @param size   size the size of the data area of the record
-     * @param data   data of the record (should not contain sid/len)
-     * @param offset of the record's data
-     */
-    public BottomMarginRecord( short id, short size, byte[] data, int offset )
-    {
-        super( id, size, data, offset );
+        super( in );
     }
 
     /**
@@ -78,9 +64,9 @@ public class BottomMarginRecord
         }
     }
 
-    protected void fillFields( byte[] data, short size, int offset )
+    protected void fillFields( RecordInputStream in )
     {
-        field_1_margin = LittleEndian.getDouble( data, 0x0 + offset );
+        field_1_margin = in.readDouble();
     }
 
     public String toString()

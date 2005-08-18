@@ -27,6 +27,7 @@ import java.util.List;
 
 //POI
 import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.record.RecordInputStream;
 
 /**
  * Less than operator PTG "<". The SID is taken from the 
@@ -59,7 +60,7 @@ public class LessThanPtg
      * @param data the byte array to have the PTG added to
      * @param offset the offset to the PTG to.
      */
-    public LessThanPtg(byte [] data, int offset)
+    public LessThanPtg(RecordInputStream in)
     {
         //deliberately empty
     }

@@ -54,23 +54,9 @@ public class ContinueRecord
      * @param data raw data
      */
 
-    public ContinueRecord(short id, short size, byte [] data)
+    public ContinueRecord(RecordInputStream in)
     {
-        super(id, size, data);
-    }
-
-    /**
-     * Main constructor -- kinda dummy because we don't validate or fill fields
-     *
-     * @param id record id
-     * @param size record size
-     * @param data raw data
-     * @param offset of the record's data
-     */
-
-    public ContinueRecord(short id, short size, byte [] data, int offset)
-    {
-        super(id, size, data, offset);
+        super(in);
     }
 
     /**
@@ -113,74 +99,6 @@ public class ContinueRecord
     public byte [] getData()
     {
         return field_1_data;
-    }
-
-    /**
-     * Use to serialize records that are too big for their britches (>8228..why 8228 and
-     * not 8192 aka 8k?  Those folks in washington don't ususally make sense...
-     * or at least to anyone outside fo marketing...
-     * @deprecated handle this within the record...this didn't actualyl work out
-     */
-
-    public static byte [] processContinue(byte [] data)
-    {   // could do this recursively but that seems hard to debug
-
-        // how many continue records do we need
-        // System.out.println("In ProcessContinue");
-        int       records   = (data.length / 8214);   // we've a 1 offset but we're also off by one due to rounding...so it balances out
-        int       offset    = 8214;
-
-        // System.out.println("we have "+records+" continue records to process");
-        ArrayList crs       = new ArrayList(records);
-        int       totalsize = 8214;
-        byte[]    retval    = null;
-
-        for (int cr = 0; cr < records; cr++)
-        {
-            ContinueRecord contrec   = new ContinueRecord();
-            int            arraysize = Math.min((8214 - 4), (data.length - offset));
-            byte[]         crdata    = new byte[ arraysize ];
-
-            System.arraycopy(data, offset, crdata, 0, arraysize);
-
-            // System.out.println("arraycopy(data,"+offset+",crdata,"+0+","+arraysize+");");
-            offset += crdata.length;
-            contrec.setData(crdata);
-            crs.add(contrec.serialize());
-        }
-        for (int cr = 0; cr < records; cr++)
-        {
-            totalsize += (( byte [] ) crs.get(cr)).length;
-        }
-
-        // System.out.println("totalsize="+totalsize);
-        retval = new byte[ totalsize ];
-        offset = 8214;
-        System.arraycopy(data, 0, retval, 0, 8214);
-        for (int cr = 0; cr < records; cr++)
-        {
-            byte[] src = ( byte [] ) crs.get(cr);
-
-            System.arraycopy(src, 0, retval, offset, src.length);
-
-            // System.out.println("arraycopy(src,"+0+",retval,"+offset+","+src.length+");");
-            offset += src.length;
-        }
-        return retval;
-    }
-
-    /**
-     * Fill the fields. Only thing is, this record has no fields --
-     *
-     * @param ignored_parm1 Ignored
-     * @param ignored_parm2 Ignored
-     */
-
-    protected void fillFields(byte [] ignored_parm1, short ignored_parm2)
-    {
-        this.field_1_data = ignored_parm1;
-        // throw new RecordFormatException("Are you crazy?  Don't fill a continue record");
-        // do nothing
     }
 
     /**
@@ -227,8 +145,9 @@ public class ContinueRecord
      * @param ignored_parm3 Ignored
      */
 
-    protected void fillFields(byte [] ignored_parm1, short ignored_parm2, int ignored_parm3)
+    protected void fillFields(RecordInputStream in)
     {
+      field_1_data = in.readRemainder();
     }
 
     /**

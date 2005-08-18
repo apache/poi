@@ -19,6 +19,7 @@ package org.apache.poi.hssf.record.formula;
 import java.util.List;
 
 import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.record.RecordInputStream;
 
 /**
  * Unary Plus operator
@@ -39,7 +40,7 @@ public class UnaryPlusPtg extends OperationPtg
     {
     }
 
-    public UnaryPlusPtg(byte[] data, int offset)
+    public UnaryPlusPtg(RecordInputStream in)
     {
 
         // doesn't need anything

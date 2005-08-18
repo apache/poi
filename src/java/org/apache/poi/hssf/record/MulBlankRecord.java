@@ -62,23 +62,9 @@ public class MulBlankRecord
      * @param data  data of the record (should not contain sid/len)
      */
 
-    public MulBlankRecord(short id, short size, byte [] data)
+    public MulBlankRecord(RecordInputStream in)
     {
-        super(id, size, data);
-    }
-
-    /**
-     * Constructs a MulBlank record and sets its fields appropriately.
-     *
-     * @param id     id must be 0xbe or an exception will be throw upon validation
-     * @param size  the size of the data area of the record
-     * @param data  data of the record (should not contain sid/len)
-     * @param offset of the record's data
-     */
-
-    public MulBlankRecord(short id, short size, byte [] data, int offset)
-    {
-        super(id, size, data, offset);
+        super(in);
     }
 
     /**
@@ -142,31 +128,22 @@ public class MulBlankRecord
      * @param size size of data
      */
 
-    protected void fillFields(byte [] data, short size, int offset)
+    protected void fillFields(RecordInputStream in)
     {
         //field_1_row       = LittleEndian.getShort(data, 0 + offset);
-        field_1_row       = LittleEndian.getUShort(data, 0 + offset);
-        field_2_first_col = LittleEndian.getShort(data, 2 + offset);
-        field_3_xfs       = parseXFs(data, 4, offset, size);
-        field_4_last_col  = LittleEndian.getShort(data,
-                                                  (field_3_xfs.length * 2)
-                                                  + 4 + offset);
+        field_1_row       = in.readUShort();
+        field_2_first_col = in.readShort();
+        field_3_xfs       = parseXFs(in);
+        field_4_last_col  = in.readShort();
     }
 
-    private short [] parseXFs(byte [] data, int offset, int recoffset,
-                              short size)
+    private short [] parseXFs(RecordInputStream in)
     {
-        short[] retval = new short[ ((size - offset) - 2) / 2 ];
-        int     idx    = 0;
+        short[] retval = new short[ (in.remaining() - 2) / 2 ];
 
-        for (; offset < size - 2; )
+        for (int idx = 0; idx < retval.length;idx++)
         {
-            short xf = 0;
-
-            xf            = LittleEndian.getShort(data, offset + recoffset);
-            offset        += 2;
-            retval[ idx ] = xf;
-            idx++;
+          retval[idx] = in.readShort();
         }
         return retval;
     }

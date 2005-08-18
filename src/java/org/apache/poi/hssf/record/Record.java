@@ -49,24 +49,10 @@ public abstract class Record
      * @param data raw data
      */
 
-    public Record(short id, short size, byte [] data)
+    public Record(RecordInputStream in)
     {
-        validateSid(id);
-        fillFields(data, size);
-    }
-
-    /**
-     * Constructor Record
-     *
-     * @param id record id
-     * @param size record size
-     * @param data raw data
-     */
-
-    public Record(short id, short size, byte [] data, int offset)
-    {
-        validateSid(id);
-        fillFields(data, size, offset);
+        validateSid(in.getSid());
+        fillFields(in);
     }
 
     /**
@@ -83,23 +69,11 @@ public abstract class Record
      * runtime exception for bad/icomplete data.
      *
      * @param data raw data
-     */
-
-    protected void fillFields(byte [] data, short size)
-    {
-        fillFields(data, size, 0);
-    }
-
-    /**
-     * called by the constructor, should set class level fields.  Should throw
-     * runtime exception for bad/icomplete data.
-     *
-     * @param data raw data
      * @param size size of data
      * @param offset of the record's data (provided a big array of the file)
      */
 
-    protected abstract void fillFields(byte [] data, short size, int offset);
+    protected abstract void fillFields(RecordInputStream in);
 
     /**
      * called by the class that is responsible for writing this sucker.
@@ -166,22 +140,6 @@ public abstract class Record
     public String toString()
     {
         return super.toString();
-    }
-
-    /**
-     * Process a continuation record; default handling is to ignore
-     * it -- TODO add logging
-     *
-     * @param record the continuation record's data
-     */
-
-    // made public to satisfy biffviewer
-
-    /* protected */
-    public void processContinueRecord(byte [] record)
-    {
-
-        // System.out.println("Got a continue record ... NOW what??");
     }
 
     /**

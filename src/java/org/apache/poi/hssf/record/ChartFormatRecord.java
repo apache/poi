@@ -54,23 +54,9 @@ public class ChartFormatRecord
      * @param data  data of the record (should not contain sid/len)
      */
 
-    public ChartFormatRecord(short id, short size, byte [] data)
+    public ChartFormatRecord(RecordInputStream in)
     {
-        super(id, size, data);
-    }
-
-    /**
-     * Constructs a ChartFormatRecord record and sets its fields appropriately.
-     *
-     * @param id    id must equal the sid or an exception will be throw upon validation
-     * @param size  the size of the data area of the record
-     * @param data  data of the record (should not contain sid/len)
-     * @param offset of the record's data
-     */
-
-    public ChartFormatRecord(short id, short size, byte [] data, int offset)
-    {
-        super(id, size, data, offset);
+        super(in);
     }
 
     protected void validateSid(short id)
@@ -81,13 +67,13 @@ public class ChartFormatRecord
         }
     }
 
-    protected void fillFields(byte [] data, short size, int offset)
+    protected void fillFields(RecordInputStream in)
     {
-        field1_x_position = LittleEndian.getInt(data, 0 + offset);
-        field2_y_position = LittleEndian.getInt(data, 4 + offset);
-        field3_width      = LittleEndian.getInt(data, 8 + offset);
-        field4_height     = LittleEndian.getInt(data, 12 + offset);
-        field5_grbit      = LittleEndian.getShort(data, 16 + offset);
+        field1_x_position = in.readInt();
+        field2_y_position = in.readInt();
+        field3_width      = in.readInt();
+        field4_height     = in.readInt();
+        field5_grbit      = in.readShort();
     }
 
     public String toString()

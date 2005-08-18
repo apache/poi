@@ -50,23 +50,9 @@ public class GutsRecord
      * @param data  data of the record (should not contain sid/len)
      */
 
-    public GutsRecord(short id, short size, byte [] data)
+    public GutsRecord(RecordInputStream in)
     {
-        super(id, size, data);
-    }
-
-    /**
-     * Constructs a Guts record and sets its fields appropriately.
-     *
-     * @param id     id must be 0x80 or an exception will be throw upon validation
-     * @param size  the size of the data area of the record
-     * @param data  data of the record (should not contain sid/len)
-     * @param offset of the record's data
-     */
-
-    public GutsRecord(short id, short size, byte [] data, int offset)
-    {
-        super(id, size, data, offset);
+        super(in);
     }
 
     protected void validateSid(short id)
@@ -77,12 +63,12 @@ public class GutsRecord
         }
     }
 
-    protected void fillFields(byte [] data, short size, int offset)
+    protected void fillFields(RecordInputStream in)
     {
-        field_1_left_row_gutter = LittleEndian.getShort(data, 0 + offset);
-        field_2_top_col_gutter  = LittleEndian.getShort(data, 2 + offset);
-        field_3_row_level_max   = LittleEndian.getShort(data, 4 + offset);
-        field_4_col_level_max   = LittleEndian.getShort(data, 6 + offset);
+        field_1_left_row_gutter = in.readShort();
+        field_2_top_col_gutter  = in.readShort();
+        field_3_row_level_max   = in.readShort();
+        field_4_col_level_max   = in.readShort();
     }
 
     /**

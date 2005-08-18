@@ -34,8 +34,14 @@ import org.apache.poi.util.LittleEndian;
  * <p>REFERENCE:  Microsoft Excel SDK page 322 and 420</p>
  * 
  * @see HorizontalPageBreakRecord
+<<<<<<< PageBreakRecord.java
+ * @see VerticalPageBreakREcord
+ *
+ * REFERENCE:  Microsoft Excel SDK page 322 and 420
+=======
  * @see VerticalPageBreakRecord
  * 
+>>>>>>> 1.5
  * @author Danny Mui (dmui at apache dot org)
  */
 public class PageBreakRecord extends Record {
@@ -82,27 +88,19 @@ public class PageBreakRecord extends Record {
        this.sid = sid;
     }
 
-    public PageBreakRecord(short id, short size, byte data[])
+    public PageBreakRecord(RecordInputStream in)
     {
-        super(id, size, data);
-        this.sid = id;
+        super(in);
+        this.sid = in.getSid();
     }
 
-    public PageBreakRecord(short id, short size, byte data[], int offset)
+    protected void fillFields(RecordInputStream in)
     {
-        super(id, size, data, offset);
-        this.sid = id;
-    }
-
-    protected void fillFields(byte data[], short size, int offset)
-    {
-    	  short loadedBreaks = LittleEndian.getShort(data, 0 + offset); 
+        short loadedBreaks = in.readShort();
         setNumBreaks(loadedBreaks);
-        int pos = 2;
         for(int k = 0; k < loadedBreaks; k++)
         {
-            addBreak((short)(LittleEndian.getShort(data, pos + offset) - 1), LittleEndian.getShort(data, pos + 2 + offset), LittleEndian.getShort(data, pos + 4 + offset));
-            pos += 6;
+            addBreak((short)(in.readShort()-1), in.readShort(), in.readShort());
         }
 
     }

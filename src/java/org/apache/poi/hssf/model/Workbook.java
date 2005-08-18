@@ -625,25 +625,6 @@ public class Workbook implements Model
 
     /**
      * Adds a string to the SST table and returns its index (if its a duplicate
-     * just returns its index and update the counts)
-     *
-     * @param string the string to be added to the SSTRecord
-     * @param use16bits whether to use utf 16 or false for compressed unicode
-     * @return index of the string within the SSTRecord
-     */
-
-    public int addSSTString(String string, boolean use16bits) {
-        if (log.check( POILogger.DEBUG ))
-            log.log(DEBUG, "insert to sst string='", string, "' and use16bits= ",
-        new Boolean(use16bits));
-        if (sst == null) {
-            insertSST();
-        }
-        return sst.addString(string, use16bits);
-    }
-
-    /**
-     * Adds a string to the SST table and returns its index (if its a duplicate
      * just returns its index and update the counts) ASSUMES compressed unicode
      * (meaning 8bit)
      *
@@ -652,8 +633,13 @@ public class Workbook implements Model
      * @return index of the string within the SSTRecord
      */
 
-    public int addSSTString(String string) {
-        return addSSTString(string, false);
+    public int addSSTString(UnicodeString string) {
+        if (log.check( POILogger.DEBUG ))
+          log.log(DEBUG, "insert to sst string='", string);
+        if (sst == null) {
+            insertSST();
+        }
+      return sst.addString(string);
     }
 
     /**
@@ -661,11 +647,11 @@ public class Workbook implements Model
      * @return String containing the SST String
      */
 
-    public String getSSTString(int str) {
+    public UnicodeString getSSTString(int str) {
         if (sst == null) {
             insertSST();
         }
-        String retval = sst.getString(str);
+        UnicodeString retval = sst.getString(str);
 
         if (log.check( POILogger.DEBUG ))
             log.log(DEBUG, "Returning SST for index=", new Integer(str),
@@ -1631,7 +1617,7 @@ public class Workbook implements Model
      */
     protected PaletteRecord createPalette()
     {
-        return new PaletteRecord(PaletteRecord.sid);
+        return new PaletteRecord();
     }
     
     /**

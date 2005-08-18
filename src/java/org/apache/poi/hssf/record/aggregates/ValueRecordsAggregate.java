@@ -291,7 +291,7 @@ public class ValueRecordsAggregate
      * @param offset of the record's data (provided a big array of the file)
      */
 
-    protected void fillFields(byte [] data, short size, int offset)
+    protected void fillFields(RecordInputStream in)
     {
     }
 

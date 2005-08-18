@@ -43,7 +43,7 @@ public class TestHSSFPalette extends TestCase
     
     public void setUp()
     {
-        palette = new PaletteRecord(PaletteRecord.sid);
+        palette = new PaletteRecord();
         hssfPalette = new HSSFPalette(palette);
     }
     

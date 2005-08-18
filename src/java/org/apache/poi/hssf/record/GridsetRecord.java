@@ -51,23 +51,9 @@ public class GridsetRecord
      * @param data  data of the record (should not contain sid/len)
      */
 
-    public GridsetRecord(short id, short size, byte [] data)
+    public GridsetRecord(RecordInputStream in)
     {
-        super(id, size, data);
-    }
-
-    /**
-     * Constructs a GridSet record and sets its fields appropriately.
-     *
-     * @param id     id must be 0x82 or an exception will be throw upon validation
-     * @param size  the size of the data area of the record
-     * @param data  data of the record (should not contain sid/len)
-     * @param offset of the record's data
-     */
-
-    public GridsetRecord(short id, short size, byte [] data, int offset)
-    {
-        super(id, size, data, offset);
+        super(in);
     }
 
     protected void validateSid(short id)
@@ -78,9 +64,9 @@ public class GridsetRecord
         }
     }
 
-    protected void fillFields(byte [] data, short size, int offset)
+    protected void fillFields(RecordInputStream in)
     {
-        field_1_gridset_flag = LittleEndian.getShort(data, 0 + offset);
+        field_1_gridset_flag = in.readShort();
     }
 
     /**

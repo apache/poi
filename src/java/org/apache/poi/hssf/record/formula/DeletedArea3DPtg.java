@@ -16,6 +16,8 @@
 
 package org.apache.poi.hssf.record.formula;
 
+import org.apache.poi.hssf.record.RecordInputStream;
+
 /**
  * Title:        Deleted Area 3D Ptg - 3D referecnce (Sheet + Area)<P>
  * Description:  Defined a area in Extern Sheet. <P>
@@ -34,8 +36,8 @@ public class DeletedArea3DPtg extends Area3DPtg
         super(arearef, externIdx);
     }
 
-    public DeletedArea3DPtg( byte[] data, int offset )
+    public DeletedArea3DPtg( RecordInputStream in)
     {
-        super(data, offset);
+        super(in);
     }
 }

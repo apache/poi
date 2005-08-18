@@ -46,7 +46,7 @@ public class TestNumberFormatIndexRecord
             throws Exception
     {
 
-        NumberFormatIndexRecord record = new NumberFormatIndexRecord((short)0x104e, (short)data.length, data);
+        NumberFormatIndexRecord record = new NumberFormatIndexRecord(new TestcaseRecordInputStream((short)0x104e, (short)data.length, data));
         assertEquals( 5, record.getFormatIndex());
 
 

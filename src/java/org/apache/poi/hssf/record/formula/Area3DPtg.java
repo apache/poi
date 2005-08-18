@@ -23,6 +23,7 @@ import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.hssf.util.SheetReferences;
 
 import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.util.BitField;
 
 /**
@@ -60,14 +61,13 @@ public class Area3DPtg extends Ptg
 
 	}
 
-	public Area3DPtg( byte[] data, int offset )
+	public Area3DPtg(RecordInputStream in)
 	{
-		offset++;
-		field_1_index_extern_sheet = LittleEndian.getShort( data, 0 + offset );
-		field_2_first_row = LittleEndian.getShort( data, 2 + offset );
-		field_3_last_row = LittleEndian.getShort( data, 4 + offset );
-		field_4_first_column = LittleEndian.getShort( data, 6 + offset );
-		field_5_last_column = LittleEndian.getShort( data, 8 + offset );
+		field_1_index_extern_sheet = in.readShort();
+		field_2_first_row = in.readShort();
+		field_3_last_row = in.readShort();
+		field_4_first_column = in.readShort();
+		field_5_last_column = in.readShort();
 	}
 
 	public String toString()

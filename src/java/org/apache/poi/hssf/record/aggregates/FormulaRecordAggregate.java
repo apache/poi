@@ -64,7 +64,7 @@ public class FormulaRecordAggregate
     {
     }
 
-    protected void fillFields( byte[] data, short size, int offset )
+    protected void fillFields( RecordInputStream in )
     {
     }
 

@@ -25,6 +25,7 @@ package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.record.RecordInputStream;
 
 /**
  * Integer (short intger)
@@ -47,9 +48,9 @@ public class IntPtg
       //Required for clone methods
     }
 
-    public IntPtg(byte [] data, int offset)
+    public IntPtg(RecordInputStream in)
     {
-        setValue(LittleEndian.getShort(data, offset + 1));
+        setValue(in.readShort());
     }
     
     

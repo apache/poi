@@ -47,20 +47,28 @@ class SSTRecordHeader
      *
      * @return The bufer of bytes modified.
      */
-    public int writeSSTHeader( byte[] data, int bufferIndex, int recSize )
+    public int writeSSTHeader( UnicodeString.UnicodeRecordStats stats, byte[] data, int bufferIndex, int recSize )
     {
         int offset = bufferIndex;
 
         LittleEndian.putShort( data, offset, SSTRecord.sid );
         offset += LittleEndianConsts.SHORT_SIZE;
-        LittleEndian.putShort( data, offset, (short) ( recSize ) );
+        stats.recordSize += LittleEndianConsts.SHORT_SIZE;
+        stats.remainingSize -= LittleEndianConsts.SHORT_SIZE;
+        //Delay writing the length
+        stats.lastLengthPos = offset;
         offset += LittleEndianConsts.SHORT_SIZE;
-//        LittleEndian.putInt( data, offset, getNumStrings() );
+        stats.recordSize += LittleEndianConsts.SHORT_SIZE;
+        stats.remainingSize -= LittleEndianConsts.SHORT_SIZE;
         LittleEndian.putInt( data, offset, numStrings );
         offset += LittleEndianConsts.INT_SIZE;
-//        LittleEndian.putInt( data, offset, getNumUniqueStrings() );
+        stats.recordSize += LittleEndianConsts.INT_SIZE;
+        stats.remainingSize -= LittleEndianConsts.INT_SIZE;
         LittleEndian.putInt( data, offset, numUniqueStrings );
         offset += LittleEndianConsts.INT_SIZE;
+        stats.recordSize += LittleEndianConsts.INT_SIZE;
+        stats.remainingSize -= LittleEndianConsts.INT_SIZE;
+
         return offset - bufferIndex;
     }
 

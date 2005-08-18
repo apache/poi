@@ -76,23 +76,9 @@ public class WindowTwoRecord
      * @param data  data of the record (should not contain sid/len)
      */
 
-    public WindowTwoRecord(short id, short size, byte [] data)
+    public WindowTwoRecord(RecordInputStream in)
     {
-        super(id, size, data);
-    }
-
-    /**
-     * Constructs a WindowTwo record and sets its fields appropriately.
-     *
-     * @param id     id must be 0x23e or an exception will be throw upon validation
-     * @param size  the size of the data area of the record
-     * @param data  data of the record (should not contain sid/len)
-     * @param offset of the record's data
-     */
-
-    public WindowTwoRecord(short id, short size, byte [] data, int offset)
-    {
-        super(id, size, data, offset);
+        super(in);
     }
 
     protected void validateSid(short id)
@@ -103,22 +89,21 @@ public class WindowTwoRecord
         }
     }
 
-    protected void fillFields(byte [] data, short size, int offset)
+    protected void fillFields(RecordInputStream in)
     {
-        field_1_options      = LittleEndian.getShort(data, 0 + offset);
-        field_2_top_row      = LittleEndian.getShort(data, 2 + offset);
-        field_3_left_col     = LittleEndian.getShort(data, 4 + offset);
-        field_4_header_color = LittleEndian.getInt(data, 6 + offset);
+      int size = in.remaining();
+        field_1_options      = in.readShort();
+        field_2_top_row      = in.readShort();
+        field_3_left_col     = in.readShort();
+        field_4_header_color = in.readInt();
         if (size > 10)
         {
-            field_5_page_break_zoom = LittleEndian.getShort(data,
-                    10 + offset);
-            field_6_normal_zoom     = LittleEndian.getShort(data,
-                    12 + offset);
+            field_5_page_break_zoom = in.readShort();
+            field_6_normal_zoom     = in.readShort();
         }
         if (size > 14)
         {   // there is a special case of this record that has only 14 bytes...undocumented!
-            field_7_reserved = LittleEndian.getInt(data, 14 + offset);
+            field_7_reserved = in.readInt();
         }
     }
 

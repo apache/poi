@@ -20,7 +20,9 @@ package org.apache.poi.hssf.record.aggregates;
 
 import org.apache.poi.hssf.record.DBCellRecord;
 import org.apache.poi.hssf.record.Record;
+import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.RowRecord;
+
 
 import java.util.Iterator;
 import java.util.Map;
@@ -123,7 +125,7 @@ public class RowRecordsAggregate
 
     /** Returns the physical row number of the first row in a block*/
     public int getStartRowNumberForBlock(int block) {
-      //JMH Given that we basically iterate through the rows in order, 
+      //Given that we basically iterate through the rows in order,
       //For a performance improvement, it would be better to return an instance of
       //an iterator and use that instance throughout, rather than recreating one and
       //having to move it to the right position.
@@ -161,7 +163,7 @@ public class RowRecordsAggregate
       Iterator rowIterator = records.values().iterator();
       int pos = offset;
 
-      //JMH Given that we basically iterate through the rows in order, 
+      //Given that we basically iterate through the rows in order,
       //For a performance improvement, it would be better to return an instance of
       //an iterator and use that instance throughout, rather than recreating one and
       //having to move it to the right position.
@@ -235,7 +237,7 @@ public class RowRecordsAggregate
      * @param offset of the record's data (provided a big array of the file)
      */
 
-    protected void fillFields(byte [] data, short size, int offset)
+    protected void fillFields(RecordInputStream in)
     {
     }
 

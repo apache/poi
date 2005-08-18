@@ -51,7 +51,7 @@ public class TestValueRangeRecord
             throws Exception
     {
 
-        ValueRangeRecord record = new ValueRangeRecord((short)0x101f, (short)data.length, data);
+        ValueRangeRecord record = new ValueRangeRecord(new TestcaseRecordInputStream((short)0x101f, (short)data.length, data));
         assertEquals( 0.0, record.getMinimumAxisValue(), 0.001);
         assertEquals( 0.0, record.getMaximumAxisValue(), 0.001);
         assertEquals( 0.0, record.getMajorIncrement(), 0.001);

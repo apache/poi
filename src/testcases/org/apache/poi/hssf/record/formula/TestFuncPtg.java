@@ -18,6 +18,7 @@
 package org.apache.poi.hssf.record.formula;
 
 import junit.framework.TestCase;
+import org.apache.poi.hssf.record.TestcaseRecordInputStream;
 
 /**
  * Make sure the FuncPtg performs as expected
@@ -50,12 +51,12 @@ public class TestFuncPtg extends TestCase
     {
         byte[] fakeData = new byte[4];
 
-        fakeData[0] = (byte) 0x41;
-        fakeData[1] = (byte) 0x20;  //function index
-        fakeData[2] = (byte) 0;
-        fakeData[3] = (byte) 8;
+        //fakeData[0] = (byte) 0x41;
+        fakeData[0] = (byte) 0x20;  //function index
+        fakeData[1] = (byte) 0;
+        fakeData[2] = (byte) 8;
 
-        FuncPtg ptg = new FuncPtg( fakeData, 0 );
+        FuncPtg ptg = new FuncPtg( new TestcaseRecordInputStream((short)0, (short)fakeData.length, fakeData) );
         assertEquals( "Len formula index is not 32(20H)", (int) 0x20, ptg.getFunctionIndex() );
         assertEquals( "Number of operands in the len formula", 1, ptg.getNumberOfOperands() );
         assertEquals( "Function Name", "LEN", ptg.getName() );

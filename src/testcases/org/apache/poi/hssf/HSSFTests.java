@@ -20,7 +20,11 @@ package org.apache.poi.hssf;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.apache.poi.hssf.eventmodel.TestEventRecordFactory;
+import org.apache.poi.hssf.eventmodel.TestModelFactory;
 import org.apache.poi.hssf.model.TestFormulaParser;
+import org.apache.poi.hssf.model.TestDrawingManager;
+import org.apache.poi.hssf.model.TestSheet;
 import org.apache.poi.hssf.record.TestAreaFormatRecord;
 import org.apache.poi.hssf.record.TestAreaRecord;
 import org.apache.poi.hssf.record.TestAxisLineFormatRecord;
@@ -65,20 +69,34 @@ import org.apache.poi.hssf.record.TestStringRecord;
 import org.apache.poi.hssf.record.TestSupBookRecord;
 import org.apache.poi.hssf.record.TestTextRecord;
 import org.apache.poi.hssf.record.TestTickRecord;
+import org.apache.poi.hssf.record.TestUnicodeString;
 import org.apache.poi.hssf.record.TestUnitsRecord;
 import org.apache.poi.hssf.record.TestValueRangeRecord;
 import org.apache.poi.hssf.record.aggregates.TestRowRecordsAggregate;
 import org.apache.poi.hssf.record.aggregates.TestValueRecordsAggregate;
 import org.apache.poi.hssf.record.formula.TestFuncPtg;
+import org.apache.poi.hssf.usermodel.TestBugs;
 import org.apache.poi.hssf.usermodel.TestCellStyle;
+import org.apache.poi.hssf.usermodel.TestCloneSheet;
+import org.apache.poi.hssf.usermodel.TestEscherGraphics;
+import org.apache.poi.hssf.usermodel.TestEscherGraphics2d;
+import org.apache.poi.hssf.usermodel.TestFontDetails;
 import org.apache.poi.hssf.usermodel.TestFormulas;
 import org.apache.poi.hssf.usermodel.TestHSSFCell;
+import org.apache.poi.hssf.usermodel.TestHSSFClientAnchor;
 import org.apache.poi.hssf.usermodel.TestHSSFDateUtil;
+import org.apache.poi.hssf.usermodel.TestHSSFHeaderFooter;
 import org.apache.poi.hssf.usermodel.TestHSSFPalette;
+import org.apache.poi.hssf.usermodel.TestHSSFRichTextString;
 import org.apache.poi.hssf.usermodel.TestHSSFRow;
 import org.apache.poi.hssf.usermodel.TestHSSFSheet;
+import org.apache.poi.hssf.usermodel.TestHSSFSheetOrder;
+import org.apache.poi.hssf.usermodel.TestHSSFSheetSetOrder;
+import org.apache.poi.hssf.usermodel.TestHSSFWorkbook;
 import org.apache.poi.hssf.usermodel.TestNamedRange;
 import org.apache.poi.hssf.usermodel.TestReadWriteChart;
+import org.apache.poi.hssf.usermodel.TestSanityChecker;
+import org.apache.poi.hssf.usermodel.TestSheetShiftRows;
 import org.apache.poi.hssf.usermodel.TestWorkbook;
 import org.apache.poi.hssf.util.TestAreaReference;
 import org.apache.poi.hssf.util.TestCellReference;
@@ -105,6 +123,21 @@ public class HSSFTests
         TestSuite suite =
             new TestSuite("Test for org.apache.poi.hssf.usermodel");
         //$JUnit-BEGIN$
+
+    suite.addTest(new TestSuite(TestBugs.class));
+    suite.addTest(new TestSuite(TestCloneSheet.class));
+    suite.addTest(new TestSuite(TestEscherGraphics.class));
+    suite.addTest(new TestSuite(TestEscherGraphics2d.class));
+    suite.addTest(new TestSuite(TestFontDetails.class));
+    suite.addTest(new TestSuite(TestHSSFClientAnchor.class));
+    suite.addTest(new TestSuite(TestHSSFHeaderFooter.class));
+    suite.addTest(new TestSuite(TestHSSFRichTextString.class));
+    suite.addTest(new TestSuite(TestHSSFSheetOrder.class));
+    suite.addTest(new TestSuite(TestHSSFSheetSetOrder.class));
+    suite.addTest(new TestSuite(TestHSSFWorkbook.class));
+    suite.addTest(new TestSuite(TestSanityChecker.class));
+    suite.addTest(new TestSuite(TestSheetShiftRows.class));
+
         suite.addTest(new TestSuite(TestCellStyle.class));
         suite.addTest(new TestSuite(TestFormulas.class));
         suite.addTest(new TestSuite(TestHSSFCell.class));
@@ -115,6 +148,9 @@ public class HSSFTests
         suite.addTest(new TestSuite(TestNamedRange.class));
         suite.addTest(new TestSuite(TestReadWriteChart.class));
         suite.addTest(new TestSuite(TestWorkbook.class));
+
+
+
         suite.addTest(new TestSuite(TestFormulaParser.class));
         suite.addTest(new TestSuite(TestAreaFormatRecord.class));
         suite.addTest(new TestSuite(TestAreaRecord.class));
@@ -160,6 +196,7 @@ public class HSSFTests
         suite.addTest(new TestSuite(TestSupBookRecord.class));
         suite.addTest(new TestSuite(TestTextRecord.class));
         suite.addTest(new TestSuite(TestTickRecord.class));
+        suite.addTest(new TestSuite(TestUnicodeString.class));
         suite.addTest(new TestSuite(TestUnitsRecord.class));
         suite.addTest(new TestSuite(TestValueRangeRecord.class));
         suite.addTest(new TestSuite(TestRowRecordsAggregate.class));
@@ -173,6 +210,10 @@ public class HSSFTests
         suite.addTest(new TestSuite(TestFuncPtg.class));
 		  suite.addTest(new TestSuite(TestValueRecordsAggregate.class));
 		  suite.addTest(new TestSuite(TestNameRecord.class));
+                  suite.addTest(new TestSuite(TestEventRecordFactory.class));
+                  suite.addTest(new TestSuite(TestModelFactory.class));
+                  suite.addTest(new TestSuite(TestDrawingManager.class));
+                  suite.addTest(new TestSuite(TestSheet.class));
         
         //$JUnit-END$
         return suite;

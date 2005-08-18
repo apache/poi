@@ -60,23 +60,9 @@ public class ExtSSTRecord
      * @param data  data of the record (should not contain sid/len)
      */
 
-    public ExtSSTRecord(short id, short size, byte [] data)
+    public ExtSSTRecord(RecordInputStream in)
     {
-        super(id, size, data);
-    }
-
-    /**
-     * Constructs a EOFRecord record and sets its fields appropriately.
-     *
-     * @param id     id must be 0xff or an exception will be throw upon validation
-     * @param size  the size of the data area of the record
-     * @param data  data of the record (should not contain sid/len)
-     * @param offset of the record's data
-     */
-
-    public ExtSSTRecord(short id, short size, byte [] data, int offset)
-    {
-        super(id, size, data, offset);
+        super(in);
     }
 
     protected void validateSid(short id)
@@ -87,17 +73,12 @@ public class ExtSSTRecord
         }
     }
 
-    protected void fillFields(byte [] data, short size, int offset)
+    protected void fillFields(RecordInputStream in)
     {
         field_2_sst_info           = new ArrayList();
-        field_1_strings_per_bucket = LittleEndian.getShort(data, 0 + offset);
-        for (int k = 2; k < (size-offset); k += 8)
-        {
-            byte[] tempdata = new byte[ 8 + offset ];
-
-            System.arraycopy(data, k, tempdata, 0, 8);
-            ExtSSTInfoSubRecord rec = new ExtSSTInfoSubRecord(( short ) 0,
-                                          ( short ) 8, tempdata);
+        field_1_strings_per_bucket = in.readShort();
+        while (in.remaining() > 0) {
+            ExtSSTInfoSubRecord rec = new ExtSSTInfoSubRecord(in);
 
             field_2_sst_info.add(rec);
         }

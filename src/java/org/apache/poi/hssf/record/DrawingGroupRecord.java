@@ -36,14 +36,9 @@ public class DrawingGroupRecord extends AbstractEscherHolderRecord
     {
     }
 
-    public DrawingGroupRecord( short id, short size, byte[] data )
+    public DrawingGroupRecord( RecordInputStream in )
     {
-        super( id, size, data );
-    }
-
-    public DrawingGroupRecord( short id, short size, byte[] data, int offset )
-    {
-        super( id, size, data, offset );
+        super( in );
     }
 
     protected String getRecordName()
