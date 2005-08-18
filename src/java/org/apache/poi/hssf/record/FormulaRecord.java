@@ -80,68 +80,40 @@ public class FormulaRecord
      * @param data  data of the record (should not contain sid/len)
      */
 
-    public FormulaRecord(short id, short size, byte [] data)
+    public FormulaRecord(RecordInputStream in)
     {
-        super(id, size, data);
+        super(in);
     }
 
-    /**
-     * Constructs a Formula record and sets its fields appropriately.
-     *
-     * @param id     id must be 0x06 (NOT 0x406 see MSKB #Q184647 for an "explanation of
-     * this bug in the documentation) or an exception will be throw upon validation
-     * @param size  the size of the data area of the record
-     * @param data  data of the record (should not contain sid/len)
-     * @param offset of the record's data
-     */
-
-    public FormulaRecord(short id, short size, byte [] data, int offset)
-    {
-        super(id, size, data, offset);
-    }
-
-    protected void fillFields(byte [] data, short size, int offset)
+    protected void fillFields(RecordInputStream in)
     {
         try {
-        //field_1_row            = LittleEndian.getShort(data, 0 + offset);
-        field_1_row            = LittleEndian.getUShort(data, 0 + offset);
-        field_2_column         = LittleEndian.getShort(data, 2 + offset);
-        field_3_xf             = LittleEndian.getShort(data, 4 + offset);
-        field_4_value          = LittleEndian.getDouble(data, 6 + offset);
-		field_5_options        = LittleEndian.getShort(data, 14 + offset);
+          field_1_row            = in.readUShort();
+          field_2_column         = in.readShort();
+          field_3_xf             = in.readShort();
+          field_4_value          = in.readDouble();
+          field_5_options        = in.readShort();
 		        
         if (Double.isNaN(field_4_value)) {
-        	value_data = new byte[8];
-        	System.arraycopy(data, offset+6, value_data, 0, 8);
+            value_data = in.getNANData();
         }
         
-        field_6_zero           = LittleEndian.getInt(data, 16 + offset);
-        field_7_expression_len = LittleEndian.getShort(data, 20 + offset);
-        field_8_parsed_expr    = getParsedExpressionTokens(data, size,
-                                 22 + offset);
-        
+          field_6_zero           = in.readInt();
+          field_7_expression_len = in.readShort();
+          field_8_parsed_expr    = getParsedExpressionTokens(in, field_7_expression_len);
         } catch (java.lang.UnsupportedOperationException uoe)  {
-            field_8_parsed_expr = null;
-            all_data = new byte[size+4];
-            LittleEndian.putShort(all_data,0,sid);
-            LittleEndian.putShort(all_data,2,size);
-            System.arraycopy(data,offset,all_data,4,size);
-            System.err.println("[WARNING] Unknown Ptg " 
-                    + uoe.getMessage() 
-                    + " at cell ("+field_1_row+","+field_2_column+")");
+          throw new RecordFormatException(uoe.toString());
         }
-
     }
 
-    private Stack getParsedExpressionTokens(byte [] data, short size,
-                                            int offset)
+    private Stack getParsedExpressionTokens(RecordInputStream in, short size)
     {
         Stack stack = new Stack();
-        int   pos   = offset;
+        int   pos   = 0;
 
         while (pos < size)
         {
-            Ptg ptg = Ptg.createPtg(data, pos);
+            Ptg ptg = Ptg.createPtg(in);
             pos += ptg.getSize();
             stack.push(ptg);
         }

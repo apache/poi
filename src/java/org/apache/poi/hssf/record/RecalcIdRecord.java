@@ -42,7 +42,7 @@ public class RecalcIdRecord
     public final static short sid = 0x1c1;
     public short[]            field_1_recalcids;
 
-    private boolean isNeeded = false;
+    private boolean isNeeded = true;
 
     public RecalcIdRecord()
     {
@@ -56,23 +56,9 @@ public class RecalcIdRecord
      * @param data  data of the record (should not contain sid/len)
      */
 
-    public RecalcIdRecord(short id, short size, byte [] data)
+    public RecalcIdRecord(RecordInputStream in)
     {
-        super(id, size, data);
-    }
-
-    /**
-     * Constructs a RECALCID record and sets its fields appropriately.
-     *
-     * @param id     id must be 0x13d or an exception will be throw upon validation
-     * @param size  the size of the data area of the record
-     * @param data  data of the record (should not contain sid/len)
-     * @param offset of the record
-     */
-
-    public RecalcIdRecord(short id, short size, byte [] data, int offset)
-    {
-        super(id, size, data, offset);
+        super(in);
     }
 
     protected void validateSid(short id)
@@ -83,13 +69,12 @@ public class RecalcIdRecord
         }
     }
 
-    protected void fillFields(byte [] data, short size, int offset)
+    protected void fillFields(RecordInputStream in)
     {
-        field_1_recalcids = new short[ size / 2 ];
+        field_1_recalcids = new short[ in.remaining() / 2 ];
         for (int k = 0; k < field_1_recalcids.length; k++)
         {
-            field_1_recalcids[ k ] = LittleEndian.getShort(data,
-                                                        (k * 2) + offset);
+            field_1_recalcids[ k ] = in.readShort();
         }
     }
 

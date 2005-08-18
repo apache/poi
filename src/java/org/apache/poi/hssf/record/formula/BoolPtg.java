@@ -18,6 +18,7 @@ package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.record.RecordInputStream;
 
 /**
  * Boolean (boolean)
@@ -40,9 +41,9 @@ public class BoolPtg
       //Required for clone methods
     }
 
-    public BoolPtg(byte [] data, int offset)
+    public BoolPtg(RecordInputStream in)
     {
-        field_1_value = (data[offset + 1] == 1);
+        field_1_value = (in.readByte() == 1);
     }
 
 

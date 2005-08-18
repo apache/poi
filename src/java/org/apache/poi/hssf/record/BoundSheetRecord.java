@@ -54,23 +54,9 @@ public class BoundSheetRecord
      * @param data  data of the record (should not contain sid/len)
      */
 
-    public BoundSheetRecord( short id, short size, byte[] data )
+    public BoundSheetRecord( RecordInputStream in )
     {
-        super( id, size, data );
-    }
-
-    /**
-     * Constructs a BoundSheetRecord and sets its fields appropriately
-     *
-     * @param id     id must be 0x85 or an exception will be throw upon validation
-     * @param size  the size of the data area of the record
-     * @param data  data of the record (should not contain sid/len)
-     * @param offset of the record's data
-     */
-
-    public BoundSheetRecord( short id, short size, byte[] data, int offset )
-    {
-        super( id, size, data, offset );
+        super( in );
     }
 
     protected void validateSid( short id )
@@ -92,21 +78,21 @@ public class BoundSheetRecord
      *
      */
 
-    protected void fillFields( byte[] data, short size, int offset )
+    protected void fillFields( RecordInputStream in )
     {
-        field_1_position_of_BOF = LittleEndian.getInt( data, 0 + offset );	// bof
-        field_2_option_flags = LittleEndian.getShort( data, 4 + offset );	// flags
-        field_3_sheetname_length = data[6 + offset];						// len(str)
-        field_4_compressed_unicode_flag = data[7 + offset];						// unicode
+        field_1_position_of_BOF = in.readInt();	// bof
+        field_2_option_flags = in.readShort();	// flags
+        field_3_sheetname_length = in.readByte();						// len(str)
+        field_4_compressed_unicode_flag = in.readByte();						// unicode
 
         int nameLength = LittleEndian.ubyteToInt( field_3_sheetname_length );
         if ( ( field_4_compressed_unicode_flag & 0x01 ) == 1 )
         {
-            field_5_sheetname = StringUtil.getFromUnicodeLE( data, 8 + offset, nameLength );
+            field_5_sheetname = in.readUnicodeLEString(nameLength);
         }
         else
         {
-            field_5_sheetname = StringUtil.getFromCompressedUnicode( data, 8 + offset, nameLength );
+            field_5_sheetname = in.readCompressedUnicode(nameLength);
         }
     }
 
@@ -158,7 +144,11 @@ public class BoundSheetRecord
     /**
      * Set the sheetname for this sheet.  (this appears in the tabs at the bottom)
      * @param sheetname the name of the sheet
+<<<<<<< BoundSheetRecord.java
+     * @thows IllegalArgumentException if sheet name will cause excel to crash.
+=======
      * @throws IllegalArgumentException if sheet name will cause excel to crash. 
+>>>>>>> 1.14
      */
 
     public void setSheetname( String sheetname )

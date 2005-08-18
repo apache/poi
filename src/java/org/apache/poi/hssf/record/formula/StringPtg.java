@@ -19,6 +19,7 @@ package org.apache.poi.hssf.record.formula;
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.StringUtil;
+import org.apache.poi.hssf.record.RecordInputStream;
 
 /**
  * Number
@@ -45,15 +46,14 @@ public class StringPtg
     }
 
     /** Create a StringPtg from a byte array read from disk */
-    public StringPtg(byte [] data, int offset)
+    public StringPtg(RecordInputStream in)
     {
-        offset++;
-        field_1_length = data[offset] & 0xFF;
-        field_2_options = data[offset+1];
+        field_1_length = in.readByte() & 0xFF;
+        field_2_options = in.readByte();
         if (fHighByte.isSet(field_2_options)) {
-            field_3_string= StringUtil.getFromUnicodeLE(data,offset+2,field_1_length);
+            field_3_string= in.readUnicodeLEString(field_1_length);
         }else {
-            field_3_string=StringUtil.getFromCompressedUnicode(data,offset+2,field_1_length);
+            field_3_string=in.readCompressedUnicode(field_1_length);
         }
 
         //setValue(new String(data, offset+3, data[offset+1] + 256*data[offset+2]));

@@ -51,23 +51,9 @@ public class CountryRecord
      * @param data  data of the record (should not contain sid/len)
      */
 
-    public CountryRecord(short id, short size, byte [] data)
+    public CountryRecord(RecordInputStream in)
     {
-        super(id, size, data);
-    }
-
-    /**
-     * Constructs a CountryRecord and sets its fields appropriately
-     *
-     * @param id     id must be 0x8c or an exception will be throw upon validation
-     * @param size  the size of the data area of the record
-     * @param data  data of the record (should not contain sid/len)
-     * @param offset of the record's data
-     */
-
-    public CountryRecord(short id, short size, byte [] data, int offset)
-    {
-        super(id, size, data, offset);
+        super(in);
     }
 
     protected void validateSid(short id)
@@ -78,10 +64,10 @@ public class CountryRecord
         }
     }
 
-    protected void fillFields(byte [] data, short size, int offset)
+    protected void fillFields(RecordInputStream in)
     {
-        field_1_default_country = LittleEndian.getShort(data, 0 + offset);
-        field_2_current_country = LittleEndian.getShort(data, 2 + offset);
+        field_1_default_country = in.readShort();
+        field_2_current_country = in.readShort();
     }
 
     /**

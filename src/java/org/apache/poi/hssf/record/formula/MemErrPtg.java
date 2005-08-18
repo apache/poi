@@ -25,6 +25,7 @@ package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.record.RecordInputStream;
 
 /**
  *
@@ -46,10 +47,10 @@ public class MemErrPtg
     {
     }
 
-    public MemErrPtg(byte [] data, int offset)
+    public MemErrPtg(RecordInputStream in)
     {
-        field_1_reserved  = LittleEndian.getInt(data, 0);
-        field_2_subex_len = LittleEndian.getShort(data, 4);
+        field_1_reserved  = in.readInt();
+        field_2_subex_len = in.readShort();
     }
 
     public void setReserved(int res)

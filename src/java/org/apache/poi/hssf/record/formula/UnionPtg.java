@@ -17,6 +17,7 @@
 package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.record.RecordInputStream;
 
 /**
  * @author Glen Stampoultzis (glens at apache.org)
@@ -30,7 +31,7 @@ public class UnionPtg extends OperationPtg
     {
     }
 
-    public UnionPtg(byte [] data, int offset)
+    public UnionPtg(RecordInputStream in)
     {
         // doesn't need anything
     }

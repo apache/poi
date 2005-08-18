@@ -18,6 +18,7 @@ package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.record.RecordInputStream;
 
 /**
  *
@@ -46,12 +47,11 @@ public class NameXPtg extends Ptg
 
     /** Creates new NamePtg */
 
-    public NameXPtg(byte[] data, int offset)
+    public NameXPtg(RecordInputStream in)
     {
-        offset++;
-        field_1_ixals        = LittleEndian.getShort(data, offset);
-        field_2_ilbl        = LittleEndian.getShort(data, offset + 2);
-        field_3_reserved = LittleEndian.getShort(data, offset +4);
+        field_1_ixals        = in.readShort();
+        field_2_ilbl        = in.readShort();
+        field_3_reserved = in.readShort();
         
         //field_2_reserved = LittleEndian.getByteArray(data, offset + 12,12);
     }

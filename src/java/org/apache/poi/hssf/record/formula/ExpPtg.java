@@ -18,6 +18,9 @@
 package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.record.RecordInputStream;
+
+import org.apache.poi.util.LittleEndian;
 
 /**
  *
@@ -31,7 +34,8 @@ public class ExpPtg
 {
     private final static int  SIZE = 5;
     public final static short sid  = 0x1;
-	 private	byte[] existing = null;
+    private short            field_1_first_row;
+    private short            field_2_first_col;
 
     /** Creates new ExpPtg */
 
@@ -41,17 +45,17 @@ public class ExpPtg
 
     /** Creates new ExpPtg */
 
-    public ExpPtg(byte [] array, int offset)
+    public ExpPtg(RecordInputStream in)
     {
-    	existing = new byte[this.getSize()];
-    	System.arraycopy(array, offset, existing, 0, this.getSize());
+      field_1_first_row = in.readShort();
+      field_2_first_col = in.readShort();
     }
 
     public void writeBytes(byte [] array, int offset)
     {
-    	if (existing != null) {
-			System.arraycopy(existing, 0, array, offset, existing.length);
-    	}
+      array[offset+0]= (byte) (sid);
+      LittleEndian.putShort(array,offset+1,field_1_first_row);
+      LittleEndian.putShort(array,offset+3,field_2_first_col);
     }
 
     public int getSize()
@@ -67,10 +71,10 @@ public class ExpPtg
     public byte getDefaultOperandClass() {return Ptg.CLASS_VALUE;}
     
     public Object clone() {
-    	//can't clone one that doesnt have data can we??
-		if (this.existing == null) throw new RuntimeException("NO IDEA SHARED FORMULA EXP PTG"); 
-		
-    	return new ExpPtg(this.existing, 0);
+	ExpPtg result = new ExpPtg();
+        result.field_1_first_row = field_1_first_row;
+        result.field_2_first_col = field_2_first_col;        
+        return result;
     }
 
 }

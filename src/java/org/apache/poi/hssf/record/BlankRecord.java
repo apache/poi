@@ -58,31 +58,17 @@ public class BlankRecord
      * @param data  data of the record (should not contain sid/len)
      */
 
-    public BlankRecord(short id, short size, byte [] data)
+    public BlankRecord(RecordInputStream in)
     {
-        super(id, size, data);
+        super(in);
     }
 
-    /**
-     * Constructs a BlankRecord and sets its fields appropriately
-     *
-     * @param id     id must be 0x201 or an exception will be throw upon validation
-     * @param size  the size of the data area of the record
-     * @param data  data of the record (should not contain sid/len)
-     * @param offset of the record's data
-     */
-
-    public BlankRecord(short id, short size, byte [] data, int offset)
-    {
-        super(id, size, data, offset);
-    }
-
-    protected void fillFields(byte [] data, short size, int offset)
+    protected void fillFields(RecordInputStream in)
     {
         //field_1_row = LittleEndian.getShort(data, 0 + offset);
-        field_1_row = LittleEndian.getUShort(data, 0 + offset);
-        field_2_col = LittleEndian.getShort(data, 2 + offset);
-        field_3_xf  = LittleEndian.getShort(data, 4 + offset);
+        field_1_row = in.readUShort();
+        field_2_col = in.readShort();
+        field_3_xf  = in.readShort();
     }
 
     /**

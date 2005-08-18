@@ -20,6 +20,7 @@ package org.apache.poi.hssf.record.formula;
 import java.util.List;
 
 import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.record.RecordInputStream;
 
 /**
  * This PTG implements the standard binomial divide "/"
@@ -39,7 +40,7 @@ public class DividePtg
     {
     }
 
-    public DividePtg(byte [] data, int offset)
+    public DividePtg(RecordInputStream in)
     {
 
         // doesn't need anything

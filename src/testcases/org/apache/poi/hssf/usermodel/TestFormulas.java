@@ -851,7 +851,7 @@ extends TestCase {
             File file = TempFile.createTempFile("testDateFormula",".xls");
             FileOutputStream out    = new FileOutputStream(file);
             HSSFWorkbook     wb     = new HSSFWorkbook();
-            HSSFSheet        s      = wb.createSheet("Sheet1");
+            HSSFSheet        s      = wb.createSheet("testSheet1");
             HSSFRow          r      = null;
             HSSFCell         c      = null;
 
@@ -889,7 +889,7 @@ extends TestCase {
             File file = TempFile.createTempFile("testIfFormula",".xls");
             FileOutputStream out    = new FileOutputStream(file);
             HSSFWorkbook     wb     = new HSSFWorkbook();
-            HSSFSheet        s      = wb.createSheet("Sheet1");
+            HSSFSheet        s      = wb.createSheet("testSheet1");
             HSSFRow          r      = null;
             HSSFCell         c      = null;
             r = s.createRow((short)0);
@@ -926,7 +926,7 @@ extends TestCase {
 		File simpleIf = TempFile.createTempFile("testSimpleIfFormulaWrite",".xls");
 		out    = new FileOutputStream(simpleIf);
 		wb     = new HSSFWorkbook();
-		s      = wb.createSheet("Sheet1");
+		s      = wb.createSheet("testSheet1");
 		r      = null;
 		c      = null;
 		r = s.createRow((short)0);
@@ -941,7 +941,7 @@ extends TestCase {
 		File nestedIf = TempFile.createTempFile("testNestedIfFormula",".xls");
 		out    = new FileOutputStream(nestedIf);
 		wb     = new HSSFWorkbook();
-		s      = wb.createSheet("Sheet1");
+		s      = wb.createSheet("testSheet1");
 		r      = null;
 		c      = null;
 		r = s.createRow((short)0);

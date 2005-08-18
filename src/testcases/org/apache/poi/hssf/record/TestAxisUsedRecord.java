@@ -45,7 +45,7 @@ public class TestAxisUsedRecord
     public void testLoad()
             throws Exception
     {
-        AxisUsedRecord record = new AxisUsedRecord((short)0x1046, (short)data.length, data);
+        AxisUsedRecord record = new AxisUsedRecord(new TestcaseRecordInputStream((short)0x1046, (short)data.length, data));
         assertEquals( 1, record.getNumAxis());
 
 

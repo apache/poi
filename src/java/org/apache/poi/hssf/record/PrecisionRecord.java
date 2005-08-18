@@ -47,23 +47,9 @@ public class PrecisionRecord
      * @param data  data of the record (should not contain sid/len)
      */
 
-    public PrecisionRecord(short id, short size, byte [] data)
+    public PrecisionRecord(RecordInputStream in)
     {
-        super(id, size, data);
-    }
-
-    /**
-     * Constructs a Precision record and sets its fields appropriately.
-     *
-     * @param id     id must be 0xe or an exception will be throw upon validation
-     * @param size  the size of the data area of the record
-     * @param data  data of the record (should not contain sid/len)
-     * @param offset of the record
-     */
-
-    public PrecisionRecord(short id, short size, byte [] data, int offset)
-    {
-        super(id, size, data, offset);
+        super(in);
     }
 
     protected void validateSid(short id)
@@ -74,9 +60,9 @@ public class PrecisionRecord
         }
     }
 
-    protected void fillFields(byte [] data, short size, int offset)
+    protected void fillFields(RecordInputStream in)
     {
-        field_1_precision = LittleEndian.getShort(data, 0 + offset);
+        field_1_precision = in.readShort();
     }
 
     /**

@@ -48,7 +48,7 @@ public class TestEscherGraphics2d extends TestCase
     {
         graphics.drawString("This is a test", 10, 10);
         HSSFTextbox t = (HSSFTextbox) escherGroup.getChildren().get(0);
-        assertEquals("This is a test", t.getString().toString());
+        assertEquals("This is a test", t.getString().getString().toString());
     }
 
     public void testFillRect() throws Exception

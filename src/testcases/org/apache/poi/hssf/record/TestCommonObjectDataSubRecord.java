@@ -49,7 +49,7 @@ public class TestCommonObjectDataSubRecord
     public void testLoad()
             throws Exception
     {
-        CommonObjectDataSubRecord record = new CommonObjectDataSubRecord((short)0x15, (short)data.length, data);
+        CommonObjectDataSubRecord record = new CommonObjectDataSubRecord(new TestcaseRecordInputStream((short)0x15, (short)data.length, data));
         
 
         assertEquals( CommonObjectDataSubRecord.OBJECT_TYPE_LIST_BOX, record.getObjectType());

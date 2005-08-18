@@ -1,6 +1,6 @@
 
 /* ====================================================================
-   Copyright 2002-2004   Apache Software Foundation
+   Copyright 2003-2004   Apache Software Foundation
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
    limitations under the License.
 ==================================================================== */
         
-
 
 package org.apache.poi.hssf.record;
 
@@ -52,25 +51,9 @@ public class SCLRecord
      * @param data  data of the record (should not contain sid/len)
      */
 
-    public SCLRecord(short id, short size, byte [] data)
+    public SCLRecord(RecordInputStream in)
     {
-        super(id, size, data);
-    
-    }
-
-    /**
-     * Constructs a SCL record and sets its fields appropriately.
-     *
-     * @param id    id must be 0xa0 or an exception
-     *              will be throw upon validation
-     * @param size  size the size of the data area of the record
-     * @param data  data of the record (should not contain sid/len)
-     * @param offset of the record's data
-     */
-
-    public SCLRecord(short id, short size, byte [] data, int offset)
-    {
-        super(id, size, data, offset);
+        super(in);
     
     }
 
@@ -87,12 +70,12 @@ public class SCLRecord
         }
     }
 
-    protected void fillFields(byte [] data, short size, int offset)
+    protected void fillFields(RecordInputStream in)
     {
 
         int pos = 0;
-        field_1_numerator              = LittleEndian.getShort(data, pos + 0x0 + offset);
-        field_2_denominator            = LittleEndian.getShort(data, pos + 0x2 + offset);
+        field_1_numerator              = in.readShort();
+        field_2_denominator            = in.readShort();
 
     }
 

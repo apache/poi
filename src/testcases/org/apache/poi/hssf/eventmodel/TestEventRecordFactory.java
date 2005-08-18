@@ -26,6 +26,7 @@ import org.apache.poi.hssf.record.EOFRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.UnknownRecord;
 import org.apache.poi.hssf.record.ContinueRecord;
+import org.apache.poi.hssf.record.TestcaseRecordInputStream;
 
 import junit.framework.TestCase;
 
@@ -149,7 +150,7 @@ public class TestEventRecordFactory extends TestCase
         nbytes = new byte[bytes.length - 4];
         System.arraycopy(bytes,4,nbytes,0,nbytes.length);
             
-        records = factory.createRecord(bof.getSid(),(short)nbytes.length,nbytes);
+        records = factory.createRecord(new TestcaseRecordInputStream(bof.getSid(),(short)nbytes.length,nbytes));
         
         assertTrue("record.length must be 1, was ="+records.length,records.length == 1);
         assertTrue("record is the same", compareRec(bof,records[0]));

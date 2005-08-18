@@ -16,6 +16,7 @@
 package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.record.RecordInputStream;
 
 /**
  *
@@ -34,7 +35,7 @@ public class UnknownPtg
     {
     }
 
-    public UnknownPtg(byte [] data, int offset)
+    public UnknownPtg(RecordInputStream in)
     {
 
         // doesn't need anything

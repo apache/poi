@@ -63,23 +63,9 @@ public class StyleRecord
      * @param data  data of the record (should not contain sid/len)
      */
 
-    public StyleRecord(short id, short size, byte [] data)
+    public StyleRecord(RecordInputStream in)
     {
-        super(id, size, data);
-    }
-
-    /**
-     * Constructs a Style record and sets its fields appropriately.
-     *
-     * @param id     id must be 0x293 or an exception will be throw upon validation
-     * @param size  the size of the data area of the record
-     * @param data  data of the record (should not contain sid/len)
-     * @param offset
-     */
-
-    public StyleRecord(short id, short size, byte [] data, int offset)
-    {
-        super(id, size, data, offset);
+        super(in);
     }
 
     protected void validateSid(short id)
@@ -90,25 +76,26 @@ public class StyleRecord
         }
     }
 
-    protected void fillFields(byte [] data, short size, int offset)
+    protected void fillFields(RecordInputStream in)
     {
         fHighByte = new BitField(0x01); //have to init here, since we are being called
                                         //from super, and class level init hasnt been done. 
-        field_1_xf_index = LittleEndian.getShort(data, 0 + offset);
+        field_1_xf_index = in.readShort();
         if (getType() == STYLE_BUILT_IN)
         {
-            field_2_builtin_style       = data[ 2 + offset ];
-            field_3_outline_style_level = data[ 3 + offset ];
+            field_2_builtin_style       = in.readByte();
+            field_3_outline_style_level = in.readByte();
         }
         else if (getType() == STYLE_USER_DEFINED)
         {
-            field_2_name_length = LittleEndian.getShort(data, 2 + offset );
-            field_3_string_options = data[4+offset];
+            field_2_name_length = in.readShort();
+            field_3_string_options = in.readByte();
             
+            byte[] string = in.readRemainder();
             if (fHighByte.isSet(field_3_string_options)) {
-                field_4_name= StringUtil.getFromUnicodeBE(data,offset+5,field_2_name_length);
+                field_4_name= StringUtil.getFromUnicodeBE(string, 0, field_2_name_length);
             }else {
-                field_4_name=StringUtil.getFromCompressedUnicode(data,offset+5,field_2_name_length);
+                field_4_name=StringUtil.getFromCompressedUnicode(string, 0, field_2_name_length);
             }
         }
 

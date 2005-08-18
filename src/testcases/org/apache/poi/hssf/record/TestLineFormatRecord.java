@@ -49,7 +49,7 @@ public class TestLineFormatRecord
     public void testLoad()
             throws Exception
     {
-        LineFormatRecord record = new LineFormatRecord((short)0x1007, (short)data.length, data);
+        LineFormatRecord record = new LineFormatRecord(new TestcaseRecordInputStream((short)0x1007, (short)data.length, data));
         assertEquals( 0, record.getLineColor());
         assertEquals( 0, record.getLinePattern());
         assertEquals( 0, record.getWeight());

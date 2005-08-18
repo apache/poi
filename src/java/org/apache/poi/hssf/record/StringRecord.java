@@ -46,22 +46,9 @@ public class StringRecord
      * @param size  the size of the data area of the record
      * @param data  data of the record (should not contain sid/len)
      */
-    public StringRecord( short id, short size, byte[] data )
+    public StringRecord(RecordInputStream in)
     {
-        super( id, size, data );
-    }
-
-    /**
-     * Constructs an String record and sets its fields appropriately.
-     *
-     * @param id     id must be 0x204 or an exception will be throw upon validation
-     * @param size  the size of the data area of the record
-     * @param data  data of the record (should not contain sid/len)
-     * @param offset of the record
-     */
-    public StringRecord( short id, short size, byte[] data, int offset )
-    {
-        super( id, size, data, offset );
+        super(in);
     }
 
 
@@ -87,17 +74,19 @@ public class StringRecord
      * @param size size of data
      * @param offset of the record's data (provided a big array of the file)
      */
-    protected void fillFields( byte[] data, short size, int offset )
+    protected void fillFields( RecordInputStream in)
     {
-        field_1_string_length           = LittleEndian.getUShort(data, 0 + offset);
-        field_2_unicode_flag            = data[ 2 + offset ];
+        field_1_string_length           = in.readShort();
+        field_2_unicode_flag            = in.readByte();
+        byte[] data = in.readRemainder();
+        //Why isnt this using the in.readString methods???
         if (isUnCompressedUnicode())
         {
-            field_3_string = StringUtil.getFromUnicodeLE(data, 3 + offset, field_1_string_length );
+            field_3_string = StringUtil.getFromUnicodeLE(data, 0, field_1_string_length );
         }
         else
         {
-            field_3_string = StringUtil.getFromCompressedUnicode(data, 3 + offset, field_1_string_length);
+            field_3_string = StringUtil.getFromCompressedUnicode(data, 0, field_1_string_length);
         }
     }
 

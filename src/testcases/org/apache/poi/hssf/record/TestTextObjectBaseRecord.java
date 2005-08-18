@@ -47,7 +47,7 @@ public class TestTextObjectBaseRecord
     public void testLoad()
             throws Exception
     {
-        TextObjectBaseRecord record = new TextObjectBaseRecord((short)0x1B6, (short)data.length, data);
+        TextObjectBaseRecord record = new TextObjectBaseRecord(new TestcaseRecordInputStream((short)0x1B6, (short)data.length, data));
 
 
 //        assertEquals( (short), record.getOptions());

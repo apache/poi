@@ -54,8 +54,7 @@ public class TestNameRecord
         };
 
 
-        NameRecord name = new NameRecord();
-        name.fillFields( examples, (short) examples.length );
+        NameRecord name = new NameRecord(new TestcaseRecordInputStream(NameRecord.sid, (short) examples.length, examples));
         String description = name.getDescriptionText();
         assertNotNull( description );
         assertTrue( "text contains ALLWOR", description.indexOf( "ALLWOR" ) > 0 );

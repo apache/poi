@@ -18,6 +18,7 @@
 package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.record.RecordInputStream;
 
 /**
  * Ptg class to implement not equal
@@ -37,7 +38,7 @@ public class NotEqualPtg
     {
     }
 
-    public NotEqualPtg( byte[] data, int offset )
+    public NotEqualPtg( RecordInputStream in )
     {
         // doesn't need anything
     }

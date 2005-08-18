@@ -1,6 +1,6 @@
 
 /* ====================================================================
-   Copyright 2002-2004   Apache Software Foundation
+   Copyright 2003-2004   Apache Software Foundation
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
    limitations under the License.
 ==================================================================== */
         
-
 
 package org.apache.poi.hssf.record;
 
@@ -65,25 +64,9 @@ public class ValueRangeRecord
      * @param data  data of the record (should not contain sid/len)
      */
 
-    public ValueRangeRecord(short id, short size, byte [] data)
+    public ValueRangeRecord(RecordInputStream in)
     {
-        super(id, size, data);
-    
-    }
-
-    /**
-     * Constructs a ValueRange record and sets its fields appropriately.
-     *
-     * @param id    id must be 0x101f or an exception
-     *              will be throw upon validation
-     * @param size  size the size of the data area of the record
-     * @param data  data of the record (should not contain sid/len)
-     * @param offset of the record's data
-     */
-
-    public ValueRangeRecord(short id, short size, byte [] data, int offset)
-    {
-        super(id, size, data, offset);
+        super(in);
     
     }
 
@@ -100,16 +83,16 @@ public class ValueRangeRecord
         }
     }
 
-    protected void fillFields(byte [] data, short size, int offset)
+    protected void fillFields(RecordInputStream in)
     {
 
         int pos = 0;
-        field_1_minimumAxisValue       = LittleEndian.getDouble(data, pos + 0x0 + offset);
-        field_2_maximumAxisValue       = LittleEndian.getDouble(data, pos + 0x8 + offset);
-        field_3_majorIncrement         = LittleEndian.getDouble(data, pos + 0x10 + offset);
-        field_4_minorIncrement         = LittleEndian.getDouble(data, pos + 0x18 + offset);
-        field_5_categoryAxisCross      = LittleEndian.getDouble(data, pos + 0x20 + offset);
-        field_6_options                = LittleEndian.getShort(data, pos + 0x28 + offset);
+        field_1_minimumAxisValue       = in.readDouble();
+        field_2_maximumAxisValue       = in.readDouble();
+        field_3_majorIncrement         = in.readDouble();
+        field_4_minorIncrement         = in.readDouble();
+        field_5_categoryAxisCross      = in.readDouble();
+        field_6_options                = in.readShort();
 
     }
 

@@ -45,7 +45,7 @@ public class TestPlotAreaRecord
     public void testLoad()
             throws Exception
     {
-        PlotAreaRecord record = new PlotAreaRecord((short)0x1035, (short)data.length, data);
+        PlotAreaRecord record = new PlotAreaRecord(new TestcaseRecordInputStream((short)0x1035, (short)data.length, data));
         
 
 

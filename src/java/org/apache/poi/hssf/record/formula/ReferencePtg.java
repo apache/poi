@@ -21,6 +21,7 @@ import org.apache.poi.util.BitField;
 
 import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.record.RecordInputStream;
 
 /**
  * ReferencePtg - handles references (such as A1, A2, IA4)
@@ -56,11 +57,10 @@ public class ReferencePtg extends Ptg
 
     /** Creates new ValueReferencePtg */
 
-    public ReferencePtg(byte[] data, int offset)
+    public ReferencePtg(RecordInputStream in)
     {
-        offset++;   // adjust for ptg
-        field_1_row = LittleEndian.getShort(data, offset + 0);
-        field_2_col = LittleEndian.getShort(data, offset + 2);
+        field_1_row = in.readShort();
+        field_2_col = in.readShort();
 
     }
 

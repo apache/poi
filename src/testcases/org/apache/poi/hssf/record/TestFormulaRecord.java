@@ -70,7 +70,7 @@ public class TestFormulaRecord
 		formulaByte[25] = (byte)0x1E;
 		formulaByte[28] = (byte)0x06;
     	
-		FormulaRecord record = new FormulaRecord(FormulaRecord.sid, (short)29, formulaByte);
+		FormulaRecord record = new FormulaRecord(new TestcaseRecordInputStream(FormulaRecord.sid, (short)29, formulaByte));
 		assertEquals("Row", 0, record.getRow());
 		assertEquals("Column", 0, record.getColumn());		
 		assertTrue("Value is not NaN", Double.isNaN(record.getValue()));
@@ -99,7 +99,7 @@ public class TestFormulaRecord
 		formulaByte[19]=(byte)0xFD;
 		formulaByte[20]=(byte)0x05;
 		formulaByte[22]=(byte)0x01;
-		FormulaRecord record = new FormulaRecord(FormulaRecord.sid, (short)27, formulaByte);
+		FormulaRecord record = new FormulaRecord(new TestcaseRecordInputStream(FormulaRecord.sid, (short)27, formulaByte));
 		assertEquals("Row", 0, record.getRow());
 		assertEquals("Column", 0, record.getColumn());
 		byte[] output = record.serialize();

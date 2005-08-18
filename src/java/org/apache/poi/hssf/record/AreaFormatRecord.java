@@ -1,6 +1,6 @@
 
 /* ====================================================================
-   Copyright 2002-2004   Apache Software Foundation
+   Copyright 2003-2004   Apache Software Foundation
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
    limitations under the License.
 ==================================================================== */
         
-
 
 package org.apache.poi.hssf.record;
 
@@ -58,25 +57,9 @@ public class AreaFormatRecord
      * @param data  data of the record (should not contain sid/len)
      */
 
-    public AreaFormatRecord(short id, short size, byte [] data)
+    public AreaFormatRecord(RecordInputStream in)
     {
-        super(id, size, data);
-    
-    }
-
-    /**
-     * Constructs a AreaFormat record and sets its fields appropriately.
-     *
-     * @param id    id must be 0x100a or an exception
-     *              will be throw upon validation
-     * @param size  size the size of the data area of the record
-     * @param data  data of the record (should not contain sid/len)
-     * @param offset of the record's data
-     */
-
-    public AreaFormatRecord(short id, short size, byte [] data, int offset)
-    {
-        super(id, size, data, offset);
+        super(in);
     
     }
 
@@ -93,16 +76,16 @@ public class AreaFormatRecord
         }
     }
 
-    protected void fillFields(byte [] data, short size, int offset)
+    protected void fillFields(RecordInputStream in)
     {
 
         int pos = 0;
-        field_1_foregroundColor        = LittleEndian.getInt(data, pos + 0x0 + offset);
-        field_2_backgroundColor        = LittleEndian.getInt(data, pos + 0x4 + offset);
-        field_3_pattern                = LittleEndian.getShort(data, pos + 0x8 + offset);
-        field_4_formatFlags            = LittleEndian.getShort(data, pos + 0xa + offset);
-        field_5_forecolorIndex         = LittleEndian.getShort(data, pos + 0xc + offset);
-        field_6_backcolorIndex         = LittleEndian.getShort(data, pos + 0xe + offset);
+        field_1_foregroundColor        = in.readInt();
+        field_2_backgroundColor        = in.readInt();
+        field_3_pattern                = in.readShort();
+        field_4_formatFlags            = in.readShort();
+        field_5_forecolorIndex         = in.readShort();
+        field_6_backcolorIndex         = in.readShort();
 
     }
 

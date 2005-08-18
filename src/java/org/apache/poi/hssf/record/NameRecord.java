@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Copyright 2002-2004   Apache Software Foundation
 
@@ -115,7 +114,6 @@ public class NameRecord extends Record {
     private byte              field_12_builtIn_name;
     private String            field_12_name_text;
     private Stack             field_13_name_definition;
-    private byte[]            field_13_raw_name_definition;       // raw data
     private String            field_14_custom_menu_text;
     private String            field_15_description_text;
     private String            field_16_help_topic_text;
@@ -140,20 +138,8 @@ public class NameRecord extends Record {
      * @param size  the size of the data area of the record
      * @param data  data of the record (should not contain sid/len)
      */
-    public NameRecord(short id, short size, byte [] data) {
-        super(id, size, data);
-    }
-
-    /**
-     * Constructs a Name record and sets its fields appropriately.
-     *
-     * @param id     id must be 0x18 or an exception will be throw upon validation
-     * @param size  the size of the data area of the record
-     * @param data  data of the record (should not contain sid/len)
-     * @param offset of the record's data
-     */
-    public NameRecord(short id, short size, byte [] data, int offset) {
-        super(id, size, data, offset);
+    public NameRecord(RecordInputStream in) {
+        super(in);
     }
 
 	/**
@@ -553,15 +539,7 @@ public class NameRecord extends Record {
 			}
 
 
-			if ( this.field_13_name_definition != null )
-			{
 				serializePtgs( data, start_of_name_definition + offset );
-			}
-			else
-			{
-				System.arraycopy( field_13_raw_name_definition, 0, data
-					, start_of_name_definition + offset, field_13_raw_name_definition.length );
-			}				
 
 
             int start_of_custom_menu_text = start_of_name_definition + field_4_length_name_definition;
@@ -731,97 +709,55 @@ public class NameRecord extends Record {
      * @param size size of data
      * @param offset of the record's data (provided a big array of the file)
      */
-    protected void fillFields(byte[] data, short size, int offset) {
-        field_1_option_flag             = LittleEndian.getShort(data, 0 + offset);
-        field_2_keyboard_shortcut       = data [2 + offset];
-        field_3_length_name_text        = data [3 + offset];
-        field_4_length_name_definition  = LittleEndian.getShort(data, 4 + offset);
-        field_5_index_to_sheet          = LittleEndian.getShort(data, 6 + offset);
-        field_6_equals_to_index_to_sheet= LittleEndian.getShort(data, 8 + offset);
-        field_7_length_custom_menu      = data [10 + offset];
-        field_8_length_description_text = data [11 + offset];
-        field_9_length_help_topic_text  = data [12 + offset];
-        field_10_length_status_bar_text = data [13 + offset];
-        
-
-        /*
-        temp: gjs
-        if (isBuiltInName()) {
-            // DEBUG
-            // System.out.println( "Built-in name" );
-
-            field_11_compressed_unicode_flag = data[ 14 + offset ];
-            field_12_builtIn_name = data[ 15 + offset ];
-
-            if ( (field_12_builtIn_name & (short)0x07) != 0 ) {
-                field_12_name_text = "Print_Titles";
-
-                // DEBUG
-                // System.out.println( field_12_name_text );
-
-                field_13_raw_name_definition = new byte[ field_4_length_name_definition ];
-                System.arraycopy( data, 16 + offset, field_13_raw_name_definition, 0, field_13_raw_name_definition.length );
-
-                // DEBUG
-                // System.out.println( HexDump.toHex( field_13_raw_name_definition ) );
-            }
-        }
-        else { */
-    
-            field_11_compressed_unicode_flag= data [14 + offset];
-            
+    protected void fillFields(RecordInputStream in) {
+        field_1_option_flag             = in.readShort();
+        field_2_keyboard_shortcut       = in.readByte();
+        field_3_length_name_text        = in.readByte();
+        field_4_length_name_definition  = in.readShort();
+        field_5_index_to_sheet          = in.readShort();
+        field_6_equals_to_index_to_sheet= in.readShort();
+        field_7_length_custom_menu      = in.readByte();
+        field_8_length_description_text = in.readByte();
+        field_9_length_help_topic_text  = in.readByte();
+        field_10_length_status_bar_text = in.readByte();
             
 			//store the name in byte form if it's a builtin name
+        field_11_compressed_unicode_flag= in.readByte();        
 			if (this.isBuiltInName()) {
-				field_12_builtIn_name = data[ 15 + offset ];
+                field_12_builtIn_name = in.readByte();
+        } else {                
+          if (field_11_compressed_unicode_flag == 1) {
+            field_12_name_text = in.readCompressedUnicode(field_3_length_name_text);
+          } else {
+            field_12_name_text = in.readCompressedUnicode(field_3_length_name_text);
+          }
 			}
             
-            field_12_name_text = StringUtil.getFromCompressedUnicode(data, 15 + offset,
-            LittleEndian.ubyteToInt(field_3_length_name_text));
-        
-            int start_of_name_definition    = 15 + field_3_length_name_text;
-            field_13_name_definition = getParsedExpressionTokens(data, field_4_length_name_definition,
-            offset, start_of_name_definition);
+        field_13_name_definition = getParsedExpressionTokens(in, field_4_length_name_definition);
     
-            int start_of_custom_menu_text   = start_of_name_definition + field_4_length_name_definition;
-            field_14_custom_menu_text       = StringUtil.getFromCompressedUnicode(data, start_of_custom_menu_text + offset,
-            LittleEndian.ubyteToInt(field_7_length_custom_menu));
+        //Who says that this can only ever be compressed unicode???
+        field_14_custom_menu_text       = in.readCompressedUnicode(LittleEndian.ubyteToInt(field_7_length_custom_menu));
     
-            int start_of_description_text   = start_of_custom_menu_text + field_7_length_custom_menu;;
-            field_15_description_text       = StringUtil.getFromCompressedUnicode(data, start_of_description_text + offset,
-            LittleEndian.ubyteToInt(field_8_length_description_text));
+        field_15_description_text       = in.readCompressedUnicode(LittleEndian.ubyteToInt(field_8_length_description_text));
     
-            int start_of_help_topic_text    = start_of_description_text + field_8_length_description_text;
-            field_16_help_topic_text        = StringUtil.getFromCompressedUnicode(data, start_of_help_topic_text + offset,
-            LittleEndian.ubyteToInt(field_9_length_help_topic_text));
+        field_16_help_topic_text        = in.readCompressedUnicode(LittleEndian.ubyteToInt(field_9_length_help_topic_text));
     
-            int start_of_status_bar_text       = start_of_help_topic_text + field_9_length_help_topic_text;
-            field_17_status_bar_text        = StringUtil.getFromCompressedUnicode(data, start_of_status_bar_text +  offset,
-            LittleEndian.ubyteToInt(field_10_length_status_bar_text));
+        field_17_status_bar_text        = in.readCompressedUnicode(LittleEndian.ubyteToInt(field_10_length_status_bar_text));
         /*} */
     }
 
-    private Stack getParsedExpressionTokens(byte [] data, short size,
-        int offset, int start_of_expression) {
+    private Stack getParsedExpressionTokens(RecordInputStream in, short size) {
         Stack stack = new Stack();
-        int   pos           = start_of_expression + offset;
         int   sizeCounter   = 0;
         try {
             while (sizeCounter < size) {
-                Ptg ptg = Ptg.createPtg(data, pos);
+                Ptg ptg = Ptg.createPtg(in);
 
-                pos += ptg.getSize();
                 sizeCounter += ptg.getSize();
                 stack.push(ptg);
-                field_13_raw_name_definition=new byte[size];
-                System.arraycopy(data,offset,field_13_raw_name_definition,0,size);
             }
         } catch (java.lang.UnsupportedOperationException uoe) {
-            System.err.println("[WARNING] Unknown Ptg "
-                    + uoe.getMessage() + "for named range: "+ field_12_name_text);
-            field_13_raw_name_definition=new byte[size];
-            System.arraycopy(data,offset,field_13_raw_name_definition,0,size);
-            return null;
+           throw new RecordFormatException(uoe.toString());
         }
         return stack;
     }
@@ -915,10 +851,6 @@ public class NameRecord extends Record {
             .append("\n");
         buffer.append("    .Name (Unicode text)  = ").append( getNameText() )
             .append("\n");
-        buffer.append("    .Formula data (RPN token array without size field)      = ").append( HexDump.toHex( 
-                       ((field_13_raw_name_definition != null) ? field_13_raw_name_definition : new byte[0] ) ) )
-            .append("\n");
-            
         buffer.append("    .Menu text (Unicode string without length field)        = ").append( field_14_custom_menu_text )
             .append("\n");
         buffer.append("    .Description text (Unicode string without length field) = ").append( field_15_description_text )
@@ -927,8 +859,6 @@ public class NameRecord extends Record {
             .append("\n");
         buffer.append("    .Status bar text (Unicode string without length field)  = ").append( field_17_status_bar_text )
             .append("\n");
-        if (field_13_raw_name_definition != null)
-            buffer.append(org.apache.poi.util.HexDump.dump(this.field_13_raw_name_definition,0,0));
         buffer.append("[/NAME]\n");
         
         return buffer.toString();
@@ -958,6 +888,4 @@ public class NameRecord extends Record {
 	    
 	    return "Unknown";
 	}
-	
-
 }

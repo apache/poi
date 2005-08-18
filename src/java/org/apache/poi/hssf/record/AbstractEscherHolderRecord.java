@@ -57,25 +57,9 @@ public abstract class AbstractEscherHolderRecord
      * @param data  data of the record (should not contain sid/len)
      */
 
-    public AbstractEscherHolderRecord(short id, short size, byte [] data)
+    public AbstractEscherHolderRecord(RecordInputStream in)
     {
-        super(id, size, data);
-    
-    }
-
-    /**
-     * Constructs a Bar record and sets its fields appropriately.
-     *
-     * @param id    id must be 0x1017 or an exception
-     *              will be throw upon validation
-     * @param size  size the size of the data area of the record
-     * @param data  data of the record (should not contain sid/len)
-     * @param offset of the record's data
-     */
-
-    public AbstractEscherHolderRecord(short id, short size, byte [] data, int offset)
-    {
-        super(id, size, data, offset);
+        super(in);
     
     }
 
@@ -92,17 +76,17 @@ public abstract class AbstractEscherHolderRecord
         }
     }
 
-    protected void fillFields(byte [] data, short size, int offset)
+    protected void fillFields(RecordInputStream in)
     {
         escherRecords = new ArrayList();
         if (! DESERIALISE )
         {
-            rawData = new byte[size];
-            System.arraycopy(data, offset, rawData, 0, size);
+            rawData = in.readRemainder();
         }
         else
         {
-            convertToEscherRecords( offset, size, data );
+            byte[] data = in.readAllContinuedRemainder();
+            convertToEscherRecords( 0, data.length, data );
         }
     }
 

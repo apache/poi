@@ -46,7 +46,7 @@ public class TestDatRecord
             throws Exception
     {
 
-        DatRecord record = new DatRecord((short)0x1063, (short)data.length, data);
+        DatRecord record = new DatRecord(new TestcaseRecordInputStream((short)0x1063, (short)data.length, data));
         assertEquals( 0xD, record.getOptions());
         assertEquals( true, record.isHorizontalBorder() );
         assertEquals( false, record.isVerticalBorder() );

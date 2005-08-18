@@ -83,24 +83,9 @@ public class FontRecord
      * @param data  data of the record (should not contain sid/len)
      */
 
-    public FontRecord(short id, short size, byte [] data)
+    public FontRecord(RecordInputStream in)
     {
-        super(id, size, data);
-    }
-
-    /**
-     * Constructs a Font record and sets its fields appropriately.
-     *
-     * @param id     id must be 0x31 (NOT 0x231 see MSKB #Q184647 for an "explanation of
-     * this bug in the documentation) or an exception will be throw upon validation
-     * @param size  the size of the data area of the record
-     * @param data  data of the record (should not contain sid/len)
-     * @param offset of the record's data
-     */
-
-    public FontRecord(short id, short size, byte [] data, int offset)
-    {
-        super(id, size, data, offset);
+        super(in);
     }
 
     protected void validateSid(short id)
@@ -111,29 +96,27 @@ public class FontRecord
         }
     }
 
-    protected void fillFields(byte [] data, short size, int offset)
+    protected void fillFields(RecordInputStream in)
     {
-        field_1_font_height         = LittleEndian.getShort(data, 0 + offset);
-        field_2_attributes          = LittleEndian.getShort(data, 2 + offset);
-        field_3_color_palette_index = LittleEndian.getShort(data, 4 + offset);
-        field_4_bold_weight         = LittleEndian.getShort(data, 6 + offset);
-        field_5_super_sub_script    = LittleEndian.getShort(data, 8 + offset);
-        field_6_underline           = data[ 10 + offset ];
-        field_7_family              = data[ 11 + offset ];
-        field_8_charset             = data[ 12 + offset ];
-        field_9_zero                = data[ 13 + offset ];
-        field_10_font_name_len      = data[ 14 + offset ];
+        field_1_font_height         = in.readShort();
+        field_2_attributes          = in.readShort();
+        field_3_color_palette_index = in.readShort();
+        field_4_bold_weight         = in.readShort();
+        field_5_super_sub_script    = in.readShort();
+        field_6_underline           = in.readByte();
+        field_7_family              = in.readByte();
+        field_8_charset             = in.readByte();
+        field_9_zero                = in.readByte();
+        field_10_font_name_len      = in.readByte();
         if (field_10_font_name_len > 0)
         {
-            if (data[ 15 ] == 0)
+            if (in.readByte() == 0)
             {   // is compressed unicode
-                field_11_font_name = StringUtil.getFromCompressedUnicode(data, 16,
-                                                LittleEndian.ubyteToInt(field_10_font_name_len));
+                field_11_font_name = in.readCompressedUnicode(LittleEndian.ubyteToInt(field_10_font_name_len));
             }
             else
             {   // is not compressed unicode
-                field_11_font_name = StringUtil.getFromUnicodeLE(data, 16,
-                        field_10_font_name_len);
+                field_11_font_name = in.readUnicodeLEString(field_10_font_name_len);
             }
         }
     }

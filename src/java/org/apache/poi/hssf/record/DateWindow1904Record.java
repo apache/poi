@@ -47,24 +47,9 @@ public class DateWindow1904Record
      * @param data  data of the record (should not contain sid/len)
      */
 
-    public DateWindow1904Record(short id, short size, byte [] data)
+    public DateWindow1904Record(RecordInputStream in)
     {
-        super(id, size, data);
-    }
-
-    /**
-     * Constructs a DateWindow1904 record and sets its fields appropriately.
-     *
-     * @param id     id must be 0x22 or an exception will be throw upon validation
-     * @param size  the size of the data area of the record
-     * @param data  data of the record (should not contain sid/len)
-     * @param offset of the record's data
-     */
-
-    public DateWindow1904Record(short id, short size, byte [] data,
-                                int offset)
-    {
-        super(id, size, data, offset);
+        super(in);
     }
 
     protected void validateSid(short id)
@@ -75,9 +60,9 @@ public class DateWindow1904Record
         }
     }
 
-    protected void fillFields(byte [] data, short size, int offset)
+    protected void fillFields(RecordInputStream in)
     {
-        field_1_window = LittleEndian.getShort(data, 0 + offset);
+        field_1_window = in.readShort();
     }
 
     /**

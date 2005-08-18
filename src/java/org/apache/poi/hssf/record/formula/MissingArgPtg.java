@@ -17,6 +17,7 @@
 package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.record.RecordInputStream;
 
 /**
  * Missing Function Arguments
@@ -35,7 +36,7 @@ public class MissingArgPtg
     {
     }
 
-    public MissingArgPtg(byte [] data, int offset)
+    public MissingArgPtg(RecordInputStream in)
     {
        // doesn't need anything
     }

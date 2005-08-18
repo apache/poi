@@ -47,23 +47,9 @@ public class DSFRecord
      * @param data  data of the record (should not contain sid/len)
      */
 
-    public DSFRecord(short id, short size, byte [] data)
+    public DSFRecord(RecordInputStream in)
     {
-        super(id, size, data);
-    }
-
-    /**
-     * Constructs a DBCellRecord and sets its fields appropriately.
-     *
-     * @param id     id must be 0x161 or an exception will be throw upon validation
-     * @param size  the size of the data area of the record
-     * @param data  data of the record (should not contain sid/len)
-     * @param offset of the record's data
-     */
-
-    public DSFRecord(short id, short size, byte [] data, int offset)
-    {
-        super(id, size, data, offset);
+        super(in);
     }
 
     protected void validateSid(short id)
@@ -74,9 +60,9 @@ public class DSFRecord
         }
     }
 
-    protected void fillFields(byte [] data, short size, int offset)
+    protected void fillFields(RecordInputStream in)
     {
-        field_1_dsf = LittleEndian.getShort(data, 0 + offset);
+        field_1_dsf = in.readShort();
     }
 
     /**

@@ -55,23 +55,9 @@ public class IndexRecord
      * @param data  data of the record (should not contain sid/len)
      */
 
-    public IndexRecord(short id, short size, byte [] data)
+    public IndexRecord(RecordInputStream in)
     {
-        super(id, size, data);
-    }
-
-    /**
-     * Constructs an Index record and sets its fields appropriately.
-     *
-     * @param id     id must be 0x208 or an exception will be throw upon validation
-     * @param size  the size of the data area of the record
-     * @param data  data of the record (should not contain sid/len)
-     * @param offset of record data
-     */
-
-    public IndexRecord(short id, short size, byte [] data, int offset)
-    {
-        super(id, size, data, offset);
+        super(in);
     }
 
     protected void validateSid(short id)
@@ -82,19 +68,19 @@ public class IndexRecord
         }
     }
 
-    protected void fillFields(byte [] data, short size, int offset)
+    protected void fillFields(RecordInputStream in)
     {
         field_5_dbcells       =
             new IntList(DBCELL_CAPACITY);   // initial capacity of 30
-        field_1_zero          = LittleEndian.getInt(data, 0 + offset);
-        field_2_first_row     = LittleEndian.getInt(data, 4 + offset);
-        field_3_last_row_add1 = LittleEndian.getInt(data, 8 + offset);
-        field_4_zero          = LittleEndian.getInt(data, 12 + offset);
-        for (int k = 16; k < size; k = k + 4)
+        field_1_zero          = in.readInt();
+        field_2_first_row     = in.readInt();
+        field_3_last_row_add1 = in.readInt();
+        field_4_zero          = in.readInt();
+        while(in.remaining() > 0)
         {
 
             // System.out.println("getting " + k);
-            field_5_dbcells.add(LittleEndian.getInt(data, k + offset));
+            field_5_dbcells.add(in.readInt());
         }
     }
 

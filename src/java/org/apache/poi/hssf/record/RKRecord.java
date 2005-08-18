@@ -66,23 +66,9 @@ public class RKRecord
      * @param data  data of the record (should not contain sid/len)
      */
 
-    public RKRecord(short id, short size, byte [] data)
+    public RKRecord(RecordInputStream in)
     {
-        super(id, size, data);
-    }
-
-    /**
-     * Constructs a RK record and sets its fields appropriately.
-     *
-     * @param id     id must be 0x27e or an exception will be throw upon validation
-     * @param size  the size of the data area of the record
-     * @param data  data of the record (should not contain sid/len)
-     * @param offset of the data
-     */
-
-    public RKRecord(short id, short size, byte [] data, int offset)
-    {
-        super(id, size, data, offset);
+        super(in);
     }
 
     protected void validateSid(short id)
@@ -93,13 +79,13 @@ public class RKRecord
         }
     }
 
-    protected void fillFields(byte [] data, short size, int offset)
+    protected void fillFields(RecordInputStream in)
     {
         //field_1_row       = LittleEndian.getShort(data, 0 + offset);
-        field_1_row       = LittleEndian.getUShort(data, 0 + offset);
-        field_2_col       = LittleEndian.getShort(data, 2 + offset);
-        field_3_xf_index  = LittleEndian.getShort(data, 4 + offset);
-        field_4_rk_number = LittleEndian.getInt(data, 6 + offset);
+        field_1_row       = in.readUShort();
+        field_2_col       = in.readShort();
+        field_3_xf_index  = in.readShort();
+        field_4_rk_number = in.readInt();
     }
 
     //public short getRow()

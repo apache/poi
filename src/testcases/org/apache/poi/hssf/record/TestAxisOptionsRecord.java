@@ -48,7 +48,7 @@ public class TestAxisOptionsRecord
     public void testLoad()
             throws Exception
     {
-        AxisOptionsRecord record = new AxisOptionsRecord((short)0x1062, (short)data.length, data);
+        AxisOptionsRecord record = new AxisOptionsRecord(new TestcaseRecordInputStream((short)0x1062, (short)data.length, data));
         assertEquals( 0, record.getMinimumCategory());
         assertEquals( 0, record.getMaximumCategory());
         assertEquals( 1, record.getMajorUnitValue());

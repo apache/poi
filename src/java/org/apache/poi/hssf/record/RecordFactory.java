@@ -141,24 +141,15 @@ public class RecordFactory
         throws RecordFormatException
     {
         ArrayList records     = new ArrayList(NUM_RECORDS);
-        Record    last_record = null;
 
-        try
-        {
-            short rectype;
-
+        RecordInputStream recStream = new RecordInputStream(in);
             DrawingRecord lastDrawingRecord = new DrawingRecord( );
-            do
+        Record lastRecord = null;
+        while (recStream.hasNextRecord()) {
+          recStream.nextRecord();
+          if (recStream.getSid() != 0)
             {
-                rectype = LittleEndian.readShort(in);
-                if (rectype != 0)
-                {
-                    short  recsize = LittleEndian.readShort(in);
-                    byte[] data    = new byte[ ( int ) recsize ];
-
-                    in.read(data);
-                    Record[] recs = createRecord(rectype, recsize,
-                                                 data);   // handle MulRK records
+              Record[] recs = createRecord(recStream);   // handle MulRK records
 
                     if (recs.length > 1)
                     {
@@ -166,9 +157,7 @@ public class RecordFactory
                         {
                             records.add(
                                 recs[ k ]);               // these will be number records
-                            last_record =
-                                recs[ k ];                // do to keep the algorythm homogenous...you can't
-                        }                                 // actually continue a number record anyhow.
+                  }
                     }
                     else
                     {
@@ -176,31 +165,29 @@ public class RecordFactory
 
                         if (record != null)
                         {
-                            if (rectype == DrawingGroupRecord.sid
-                                && last_record instanceof DrawingGroupRecord)
+                        if (record.getSid() == DrawingGroupRecord.sid
+                            && lastRecord instanceof DrawingGroupRecord)
                             {
-                                DrawingGroupRecord lastDGRecord = (DrawingGroupRecord) last_record;
+                            DrawingGroupRecord lastDGRecord = (DrawingGroupRecord) lastRecord;
                                 lastDGRecord.join((AbstractEscherHolderRecord) record);
                             }
-                            else if (rectype == ContinueRecord.sid &&
-                                ! (last_record instanceof ContinueRecord) && // include continuation records after
-                                ! (last_record instanceof UnknownRecord) )   // unknown records or previous continuation records
-                            {
-                                if (last_record == null)
-                                {
-                                    throw new RecordFormatException(
-                                        "First record is a ContinueRecord??");
-                                }
-
-                                // Drawing records have a very strange continue behaviour.  There can actually be OBJ records mixed between the continues.
-                                if (last_record instanceof ObjRecord)
-                                    lastDrawingRecord.processContinueRecord( data );
-                                else
-                                    last_record.processContinueRecord(data);
+                        else if (record.getSid() == ContinueRecord.sid &&
+                                 (lastRecord instanceof ObjRecord)) {
+                          // Drawing records have a very strange continue behaviour.
+                          //There can actually be OBJ records mixed between the continues.
+                          lastDrawingRecord.processContinueRecord( ((ContinueRecord)record).getData() );
+                        } else if (record.getSid() == ContinueRecord.sid &&
+                                   (lastRecord instanceof DrawingGroupRecord)) {
+                            ((DrawingGroupRecord)lastRecord).processContinueRecord(((ContinueRecord)record).getData());
+                        } else if (record.getSid() == ContinueRecord.sid) {
+                          if (lastRecord instanceof UnknownRecord) {
+                            //Gracefully handle records that we dont know about,
+                            //that happen to be continued
+                            records.add(record);
+                          } else throw new RecordFormatException("Unhandled Continue Record");
                             }
-                            else
-                            {
-                                last_record = record;
+                        else {
+                            lastRecord = record;
                                 if (record instanceof DrawingRecord)
                                     lastDrawingRecord = (DrawingRecord) record;
                                 records.add(record);
@@ -209,20 +196,11 @@ public class RecordFactory
                     }
                 }
             }
-            while (rectype != 0);
-        }
-        catch (IOException e)
-        {
-            throw new RecordFormatException("Error reading bytes");
-        }
 
-        // Record[] retval = new Record[ records.size() ];
-        // retval = ( Record [] ) records.toArray(retval);
         return records;
     }
 
-    public static Record [] createRecord(short rectype, short size,
-                                         byte [] data)
+    public static Record [] createRecord(RecordInputStream in)
     {
         Record   retval;
         Record[] realretval = null;
@@ -230,18 +208,18 @@ public class RecordFactory
         try
         {
             Constructor constructor =
-                ( Constructor ) recordsMap.get(new Short(rectype));
+                ( Constructor ) recordsMap.get(new Short(in.getSid()));
 
             if (constructor != null)
             {
                 retval = ( Record ) constructor.newInstance(new Object[]
                 {
-                    new Short(rectype), new Short(size), data
+                    in
                 });
             }
             else
             {
-                retval = new UnknownRecord(rectype, size, data);
+                retval = new UnknownRecord(in);
             }
         }
         catch (Exception introspectionException)
@@ -335,7 +313,7 @@ public class RecordFactory
                 sid         = record.getField("sid").getShort(null);
                 constructor = record.getConstructor(new Class[]
                 {
-                    short.class, short.class, byte [].class
+                    RecordInputStream.class
                 });
             }
             catch (Exception illegalArgumentException)

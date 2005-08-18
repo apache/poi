@@ -93,25 +93,9 @@ public class BOFRecord
      * @param data  data of the record (should not contain sid/len)
      */
 
-    public BOFRecord(short id, short size, byte [] data)
+    public BOFRecord(RecordInputStream in)
     {
-        super(id, size, data);
-
-        // fillFields(data,size);
-    }
-
-    /**
-     * Constructs a BOFRecord and sets its fields appropriately
-     *
-     * @param id     id must be 0x809 or an exception will be throw upon validation
-     * @param size  the size of the data area of the record
-     * @param data  data of the record (should not contain sid/len)
-     * @param offset the offset of the record's data
-     */
-
-    public BOFRecord(short id, short size, byte [] data, int offset)
-    {
-        super(id, size, data, offset);
+        super(in);
 
         // fillFields(data,size);
     }
@@ -124,14 +108,14 @@ public class BOFRecord
         }
     }
 
-    protected void fillFields(byte [] data, short size, int offset)
+    protected void fillFields(RecordInputStream in)
     {
-        field_1_version  = LittleEndian.getShort(data, 0 + offset);
-        field_2_type     = LittleEndian.getShort(data, 2 + offset);
-        field_3_build    = LittleEndian.getShort(data, 4 + offset);
-        field_4_year     = LittleEndian.getShort(data, 6 + offset);
-        field_5_history  = LittleEndian.getInt(data, 8 + offset);
-        field_6_rversion = LittleEndian.getInt(data, 12 + offset);
+        field_1_version  = in.readShort();
+        field_2_type     = in.readShort();
+        field_3_build    = in.readShort();
+        field_4_year     = in.readShort();
+        field_5_history  = in.readInt();
+        field_6_rversion = in.readInt();
     }
 
     /**

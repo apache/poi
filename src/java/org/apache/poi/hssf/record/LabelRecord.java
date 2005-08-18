@@ -63,23 +63,9 @@ public class LabelRecord
      * @param data  data of the record (should not contain sid/len)
      */
 
-    public LabelRecord(short id, short size, byte [] data)
+    public LabelRecord(RecordInputStream in)
     {
-        super(id, size, data);
-    }
-
-    /**
-     * Constructs an Label record and sets its fields appropriately.
-     *
-     * @param id     id must be 0x204 or an exception will be throw upon validation
-     * @param size  the size of the data area of the record
-     * @param data  data of the record (should not contain sid/len)
-     * @param offset of the record
-     */
-
-    public LabelRecord(short id, short size, byte [] data, int offset)
-    {
-        super(id, size, data, offset);
+        super(in);
     }
 
     /**
@@ -105,22 +91,19 @@ public class LabelRecord
      * @param size size of data
      */
 
-    protected void fillFields(byte [] data, short size, int offset)
+    protected void fillFields(RecordInputStream in)
     {
         //field_1_row          = LittleEndian.getShort(data, 0 + offset);
-        field_1_row          = LittleEndian.getUShort(data, 0 + offset);
-        field_2_column       = LittleEndian.getShort(data, 2 + offset);
-        field_3_xf_index     = LittleEndian.getShort(data, 4 + offset);
-        field_4_string_len   = LittleEndian.getShort(data, 6 + offset);
-        field_5_unicode_flag = data[ 8 + offset ];
+        field_1_row          = in.readUShort();
+        field_2_column       = in.readShort();
+        field_3_xf_index     = in.readShort();
+        field_4_string_len   = in.readShort();
+        field_5_unicode_flag = in.readByte();
         if (field_4_string_len > 0) {
           if (isUnCompressedUnicode()) {
-            field_6_value = StringUtil.getFromUnicodeLE(data, 9 + offset,
-                                                      field_4_string_len);
-        }
-          else {
-            field_6_value = StringUtil.getFromCompressedUnicode(data, 9 + offset,
-                getStringLength());
+            field_6_value = in.readUnicodeLEString(field_4_string_len);
+          } else {
+            field_6_value = in.readCompressedUnicode(field_4_string_len);
         }
         } else field_6_value = null;
     }

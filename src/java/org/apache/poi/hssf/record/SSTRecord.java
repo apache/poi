@@ -18,8 +18,7 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.BinaryTree;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.IntMapper;
 import org.apache.poi.util.LittleEndianConsts;
 
 import java.util.Iterator;
@@ -45,6 +44,8 @@ public class SSTRecord
         extends Record
 {
 
+      private static UnicodeString EMPTY_STRING = new UnicodeString("");
+
     /** how big can an SST record be? As big as any record can be: 8228 bytes */
     static final int MAX_RECORD_SIZE = 8228;
 
@@ -69,10 +70,8 @@ public class SSTRecord
 
     /** according to docs ONLY SST */
     private int field_2_num_unique_strings;
-    private BinaryTree field_3_strings;
+    private IntMapper field_3_strings;
 
-    /** Record lengths for initial SST record and all continue records */
-    private List _record_lengths = null;
     private SSTDeserializer deserializer;
 
     /** Offsets from the beginning of the SST record (even across continuations) */
@@ -87,7 +86,7 @@ public class SSTRecord
     {
         field_1_num_strings = 0;
         field_2_num_unique_strings = 0;
-        field_3_strings = new BinaryTree();
+        field_3_strings = new IntMapper();
         deserializer = new SSTDeserializer(field_3_strings);
     }
 
@@ -100,116 +99,38 @@ public class SSTRecord
      * @param data of the record (should not contain sid/len)
      */
 
-    public SSTRecord( final short id, final short size, final byte[] data )
+    public SSTRecord( RecordInputStream in )
     {
-        super( id, size, data );
+        super( in );
     }
 
     /**
-     * Constructs an SST record and sets its fields appropriately.
-     *
-     * @param id must be 0xfc or an exception will be throw upon
-     *           validation
-     * @param size the size of the data area of the record
-     * @param data of the record (should not contain sid/len)
-     * @param offset of the record
-     */
-
-    public SSTRecord( final short id, final short size, final byte[] data,
-                      int offset )
-    {
-        super( id, size, data, offset );
-    }
-
-    /**
-     * Add a string. Determines whether 8-bit encoding can be used, or
-     * whether 16-bit encoding must be used.
-     * <p>
-     * THIS IS THE PREFERRED METHOD OF ADDING A STRING. IF YOU USE THE
-     * OTHER ,code>addString</code> METHOD AND FORCE 8-BIT ENCODING ON
-     * A STRING THAT SHOULD USE 16-BIT ENCODING, YOU WILL CORRUPT THE
-     * STRING; IF YOU USE THAT METHOD AND FORCE 16-BIT ENCODING, YOU
-     * ARE WASTING SPACE WHEN THE WORKBOOK IS WRITTEN OUT.
+     * Add a string.
      *
      * @param string string to be added
      *
      * @return the index of that string in the table
      */
 
-    public int addString( final String string )
-    {
-        int rval;
-
-        if ( string == null )
-        {
-            rval = addString( "", false );
-        }
-        else
-        {
-
-            // scan for characters greater than 255 ... if any are
-            // present, we have to use 16-bit encoding. Otherwise, we
-            // can use 8-bit encoding
-            boolean useUTF16 = false;
-            int strlen = string.length();
-
-            for ( int j = 0; j < strlen; j++ )
-            {
-                if ( string.charAt( j ) > 255 )
-                {
-                    useUTF16 = true;
-                    break;
-                }
-            }
-            rval = addString( string, useUTF16 );
-        }
-        return rval;
-    }
-
-    /**
-     * Add a string and assert the encoding (8-bit or 16-bit) to be
-     * used.
-     * <P>
-     * USE THIS METHOD AT YOUR OWN RISK. IF YOU FORCE 8-BIT ENCODING,
-     * YOU MAY CORRUPT YOUR STRING. IF YOU FORCE 16-BIT ENCODING AND
-     * IT ISN'T NECESSARY, YOU WILL WASTE SPACE WHEN THIS RECORD IS
-     * WRITTEN OUT.
-     *
-     * @param string string to be added
-     * @param useUTF16 if true, forces 16-bit encoding. If false,
-     *                 forces 8-bit encoding
-     *
-     * @return the index of that string in the table
-     */
-
-    public int addString( final String string, final boolean useUTF16 )
+    public int addString( final UnicodeString string )
     {
         field_1_num_strings++;
-        String str = ( string == null ) ? ""
+        UnicodeString ucs = ( string == null ) ? EMPTY_STRING
                 : string;
         int rval;
-        UnicodeString ucs = new UnicodeString();
+        int index = field_3_strings.getIndex(ucs);
 
-        ucs.setString( str );
-        ucs.setCharCount( (short) str.length() );
-        ucs.setOptionFlags( (byte) ( useUTF16 ? 1
-                : 0 ) );
-        Integer integer = (Integer) field_3_strings.getKeyForValue( ucs );
-
-        if ( integer != null )
+        if ( index != -1 )
         {
-            rval = integer.intValue();
+            rval = index;
         }
         else
         {
-
             // This is a new string -- we didn't see it among the
             // strings we've already collected
             rval = field_3_strings.size();
             field_2_num_unique_strings++;
-            integer = new Integer( rval );
-            SSTDeserializer.addToStringTable( field_3_strings, integer, ucs );
-//            field_3_strings.put( integer, ucs );
+            SSTDeserializer.addToStringTable( field_3_strings, ucs );
         }
         return rval;
     }
@@ -272,14 +193,14 @@ public class SSTRecord
      * @return the desired string
      */
 
-    public String getString( final int id )
+    public UnicodeString getString( final int id )
     {
-        return ( (UnicodeString) field_3_strings.get( new Integer( id ) ) ).getString();
+        return (UnicodeString) field_3_strings.get( id );
     }
 
     public boolean isString16bit( final int id )
     {
-        UnicodeString unicodeString = ( (UnicodeString) field_3_strings.get( new Integer( id ) ) );
+        UnicodeString unicodeString = ( (UnicodeString) field_3_strings.get( id  ) );
         return ( ( unicodeString.getOptionFlags() & 0x01 ) == 1 );
     }
 
@@ -300,9 +221,9 @@ public class SSTRecord
                 .append( Integer.toHexString( getNumUniqueStrings() ) ).append( "\n" );
         for ( int k = 0; k < field_3_strings.size(); k++ )
         {
+          UnicodeString s = (UnicodeString)field_3_strings.get( k );
             buffer.append( "    .string_" + k + "      = " )
-                    .append( ( field_3_strings
-                    .get( new Integer( k ) ) ).toString() ).append( "\n" );
+                    .append( s.getDebugInfo() ).append( "\n" );
         }
         buffer.append( "[/SST]\n" );
         return buffer.toString();
@@ -435,18 +356,16 @@ public class SSTRecord
      * @param size size of the raw data
      */
 
-    protected void fillFields( final byte[] data, final short size,
-                               int offset )
+    protected void fillFields( RecordInputStream in )
     {
-
         // this method is ALWAYS called after construction -- using
         // the nontrivial constructor, of course -- so this is where
         // we initialize our fields
-        field_1_num_strings = LittleEndian.getInt( data, 0 + offset );
-        field_2_num_unique_strings = LittleEndian.getInt( data, 4 + offset );
-        field_3_strings = new BinaryTree();
+        field_1_num_strings = in.readInt();
+        field_2_num_unique_strings = in.readInt();
+        field_3_strings = new IntMapper();
         deserializer = new SSTDeserializer(field_3_strings);
-        deserializer.manufactureStrings( data, 8 + offset);
+        deserializer.manufactureStrings( field_2_num_unique_strings, in );
     }
 
 
@@ -457,7 +376,7 @@ public class SSTRecord
 
     Iterator getStrings()
     {
-        return field_3_strings.values().iterator();
+        return field_3_strings.iterator();
     }
 
     /**
@@ -480,15 +399,10 @@ public class SSTRecord
     public int serialize( int offset, byte[] data )
     {
         SSTSerializer serializer = new SSTSerializer(
-                _record_lengths, field_3_strings, getNumStrings(), getNumUniqueStrings() );
-        int bytes = serializer.serialize( getRecordSize(), offset, data );
+               field_3_strings, getNumStrings(), getNumUniqueStrings() );
+        int bytes = serializer.serialize( offset, data );
         bucketAbsoluteOffsets = serializer.getBucketAbsoluteOffsets();
         bucketRelativeOffsets = serializer.getBucketRelativeOffsets();
-//        for ( int i = 0; i < bucketAbsoluteOffsets.length; i++ )
-//        {
-//            System.out.println( "bucketAbsoluteOffset = " + bucketAbsoluteOffsets[i] );
-//            System.out.println( "bucketRelativeOffset = " + bucketRelativeOffsets[i] );
-//        }
         return bytes;
     }
 
@@ -497,21 +411,12 @@ public class SSTRecord
     {
         SSTRecordSizeCalculator calculator = new SSTRecordSizeCalculator(field_3_strings);
         int recordSize = calculator.getRecordSize();
-        _record_lengths = calculator.getRecordLengths();
         return recordSize;
     }
 
     SSTDeserializer getDeserializer()
     {
         return deserializer;
-    }
-
-    /**
-     * Strange to handle continue records this way.  Is it a smell?
-     */
-    public void processContinueRecord( byte[] record )
-    {
-        deserializer.processContinueRecord( record );
     }
 
     /**
@@ -553,5 +458,3 @@ public class SSTRecord
       return ExtSSTRecord.getRecordSizeForStrings(field_3_strings.size());
     }
 }
-
-

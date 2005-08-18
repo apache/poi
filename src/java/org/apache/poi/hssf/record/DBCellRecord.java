@@ -49,23 +49,9 @@ public class DBCellRecord
      * @param data  data of the record (should not contain sid/len)
      */
 
-    public DBCellRecord(short id, short size, byte [] data)
+    public DBCellRecord(RecordInputStream in)
     {
-        super(id, size, data);
-    }
-
-    /**
-     * Constructs a DBCellRecord and sets its fields appropriately
-     *
-     * @param id     id must be 0xd7 or an exception will be throw upon validation
-     * @param size  the size of the data area of the record
-     * @param data  data of the record (should not contain sid/len)
-     * @param offset of the record's data
-     */
-
-    public DBCellRecord(short id, short size, byte [] data, int offset)
-    {
-        super(id, size, data, offset);
+        super(in);
     }
 
     protected void validateSid(short id)
@@ -76,16 +62,15 @@ public class DBCellRecord
         }
     }
 
-    protected void fillFields(byte [] data, short size, int offset)
+    protected void fillFields(RecordInputStream in)
     {
-        field_1_row_offset   = LittleEndian.getUShort(data, 0 + offset);
-        field_2_cell_offsets = new short[ (size - 4) / 2 ];
-        int element = 0;
+        field_1_row_offset   = in.readUShort();
+        int size = in.remaining();        
+        field_2_cell_offsets = new short[ size / 2 ];
 
-        for (int k = 4; k < data.length; k += 2)
+        for (int i=0;i<field_2_cell_offsets.length;i++)
         {
-            field_2_cell_offsets[ element++ ] = LittleEndian.getShort(data,
-                    k + offset);
+            field_2_cell_offsets[ i ] = in.readShort();
         }
     }
 

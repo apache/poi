@@ -47,21 +47,10 @@ public class ExternSheetSubRecord extends Record {
      * @param size  the size of the data area of the record
      * @param data  data of the record (should not contain sid/len)
      */
-    public ExternSheetSubRecord(short id, short size, byte[] data) {
-        super(id, size, data);
+    public ExternSheetSubRecord(RecordInputStream in) {
+        super(in);
     }
     
-    /**
-     * Constructs a Extern Sheet Sub Record record and sets its fields appropriately.
-     *
-     * @param id     id must be 0x18 or an exception will be throw upon validation
-     * @param size  the size of the data area of the record
-     * @param data  data of the record (should not contain sid/len)
-     * @param offset of the record's data
-     */
-    public ExternSheetSubRecord(short id, short size, byte[] data, int offset) {
-        super(id, size, data, offset);
-    }
     
     /** Sets the Index to the sup book
      * @param index sup book index
@@ -123,10 +112,10 @@ public class ExternSheetSubRecord extends Record {
      * @param size size of data
      * @param offset of the record's data (provided a big array of the file)
      */
-    protected void fillFields(byte [] data, short size, int offset) {
-        field_1_index_to_supbook             = LittleEndian.getShort(data, 0 + offset);
-        field_2_index_to_first_supbook_sheet = LittleEndian.getShort(data, 2 + offset);
-        field_3_index_to_last_supbook_sheet  = LittleEndian.getShort(data, 4 + offset);
+    protected void fillFields(RecordInputStream in) {
+        field_1_index_to_supbook             = in.readShort();
+        field_2_index_to_first_supbook_sheet = in.readShort();
+        field_3_index_to_last_supbook_sheet  = in.readShort();
     }
     
     

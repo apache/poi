@@ -46,7 +46,7 @@ public class TestDefaultDataLabelTextPropertiesRecord
             throws Exception
     {
 
-        DefaultDataLabelTextPropertiesRecord record = new DefaultDataLabelTextPropertiesRecord((short)0x1024, (short)data.length, data);
+        DefaultDataLabelTextPropertiesRecord record = new DefaultDataLabelTextPropertiesRecord(new TestcaseRecordInputStream((short)0x1024, (short)data.length, data));
         assertEquals( 2, record.getCategoryDataType());
 
 

@@ -48,7 +48,7 @@ public class TestPaneRecord
     public void testLoad()
             throws Exception
     {
-        PaneRecord record = new PaneRecord((short)0x41, (short)data.length, data);
+        PaneRecord record = new PaneRecord(new TestcaseRecordInputStream((short)0x41, (short)data.length, data));
         
 
         assertEquals( (short)1, record.getX());

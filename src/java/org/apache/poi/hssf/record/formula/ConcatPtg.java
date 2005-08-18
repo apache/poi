@@ -20,6 +20,7 @@ package org.apache.poi.hssf.record.formula;
 import java.util.List;
 
 import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.record.RecordInputStream;
 
 /**
  *
@@ -35,7 +36,7 @@ public class ConcatPtg
     
     private final static String CONCAT = "&";
 
-    public ConcatPtg(byte [] data, int offset)
+    public ConcatPtg(RecordInputStream in)
     {
 
         // doesn't need anything

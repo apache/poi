@@ -53,24 +53,11 @@ public class LabelSSTRecord
      * @param data  data of the record (should not contain sid/len)
      */
 
-    public LabelSSTRecord(short id, short size, byte [] data)
+    public LabelSSTRecord(RecordInputStream in)
     {
-        super(id, size, data);
+        super(in);
     }
 
-    /**
-     * Constructs an LabelSST record and sets its fields appropriately.
-     *
-     * @param id     id must be 0xfd or an exception will be throw upon validation
-     * @param size  the size of the data area of the record
-     * @param data  data of the record (should not contain sid/len)
-     * @param offset of the record's data
-     */
-
-    public LabelSSTRecord(short id, short size, byte [] data, int offset)
-    {
-        super(id, size, data, offset);
-    }
 
     protected void validateSid(short id)
     {
@@ -80,13 +67,13 @@ public class LabelSSTRecord
         }
     }
 
-    protected void fillFields(byte [] data, short size, int offset)
+    protected void fillFields(RecordInputStream in)
     {
         //field_1_row       = LittleEndian.getShort(data, 0 + offset);
-        field_1_row       = LittleEndian.getUShort(data, 0 + offset);
-        field_2_column    = LittleEndian.getShort(data, 2 + offset);
-        field_3_xf_index  = LittleEndian.getShort(data, 4 + offset);
-        field_4_sst_index = LittleEndian.getInt(data, 6 + offset);
+        field_1_row       = in.readUShort();
+        field_2_column    = in.readShort();
+        field_3_xf_index  = in.readShort();
+        field_4_sst_index = in.readInt();
     }
 
     //public void setRow(short row)

@@ -17,6 +17,9 @@
 
 package org.apache.poi.hssf.record.formula;
 
+
+import org.apache.poi.hssf.record.RecordInputStream;
+
 /**
  * Title:        Deleted Reference 3D Ptg <P>
  * Description:  Defined a cell in extern sheet. <P>
@@ -29,8 +32,8 @@ public class DeletedRef3DPtg extends Ref3DPtg {
     public final static byte sid  = 0x3c;
 
     /** Creates new DeletedRef3DPtg */
-    public DeletedRef3DPtg(byte[] data, int offset) {
-        super(data, offset);
+    public DeletedRef3DPtg(RecordInputStream in) {
+        super(in);
     }
 
     public DeletedRef3DPtg(String cellref, short externIdx ) {

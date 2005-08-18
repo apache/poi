@@ -49,7 +49,7 @@ public class TestDataFormatRecord
             throws Exception
     {
 
-        DataFormatRecord record = new DataFormatRecord((short)0x1006, (short)data.length, data);
+        DataFormatRecord record = new DataFormatRecord(new TestcaseRecordInputStream((short)0x1006, (short)data.length, data));
         assertEquals( (short)0xFFFF, record.getPointNumber());
         assertEquals( 0, record.getSeriesIndex());
         assertEquals( 0, record.getSeriesNumber());

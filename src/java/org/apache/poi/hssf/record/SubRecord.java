@@ -28,20 +28,16 @@ abstract public class SubRecord
     {
     }
 
-    public SubRecord( short id, short size, byte[] data )
+    public SubRecord( RecordInputStream in )
     {
-        super( id, size, data );
+        super( in );
     }
 
-    public SubRecord( short id, short size, byte[] data, int offset )
-    {
-        super( id, size, data, offset );
-    }
-
-    public static Record createSubRecord( short subRecordSid, short size, byte[] data, int offset )
+    public static Record createSubRecord(RecordInputStream in)
     {
         Record r = null;
 
+        /* This must surely be an earlier hack?? Delete when confident
         short adjustedSize = size;
         if ( size < 0 )
         {
@@ -55,22 +51,21 @@ abstract public class SubRecord
                 adjustedSize -= 4;
             }
         }
-
-        switch ( subRecordSid )
+*/
+        switch ( in.getSid() )
         {
             case CommonObjectDataSubRecord.sid:
-                r = new CommonObjectDataSubRecord( subRecordSid, adjustedSize, data, offset );
+                r = new CommonObjectDataSubRecord( in );
                 break;
             case GroupMarkerSubRecord.sid:
-                r = new GroupMarkerSubRecord( subRecordSid, adjustedSize, data, offset );
+                r = new GroupMarkerSubRecord( in );
                 break;
             case EndSubRecord.sid:
-                r = new EndSubRecord( subRecordSid, adjustedSize, data, offset );
+                r = new EndSubRecord( in );
                 break;
             default:
-                r = new UnknownRecord( subRecordSid, adjustedSize, data, offset );
+                r = new UnknownRecord( in );
         }
-
         return r;
     }
 }

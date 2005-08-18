@@ -24,9 +24,9 @@ public class TestHSSFRichTextString extends TestCase
     {
 
         HSSFRichTextString r = new HSSFRichTextString("testing");
-        assertEquals(1,r.numFormattingRuns());
+        assertEquals(0,r.numFormattingRuns());
         r.applyFont(2,4, new HSSFFont((short)1, null));
-        assertEquals(3,r.numFormattingRuns());
+        assertEquals(2,r.numFormattingRuns());
         assertEquals(HSSFRichTextString.NO_FONT, r.getFontAtIndex(0));
         assertEquals(HSSFRichTextString.NO_FONT, r.getFontAtIndex(1));
         assertEquals(1, r.getFontAtIndex(2));
@@ -63,4 +63,14 @@ public class TestHSSFRichTextString extends TestCase
 
     }
 
+    public void testClearFormatting() throws Exception
+    {
+
+      HSSFRichTextString r = new HSSFRichTextString("testing");
+      assertEquals(0, r.numFormattingRuns());
+      r.applyFont(2, 4, new HSSFFont( (short) 1, null));
+      assertEquals(2, r.numFormattingRuns());
+      r.clearFormatting();
+      assertEquals(0, r.numFormattingRuns());
+    }
 }

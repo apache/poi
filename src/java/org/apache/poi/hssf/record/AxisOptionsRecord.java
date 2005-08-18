@@ -1,6 +1,6 @@
 
 /* ====================================================================
-   Copyright 2002-2004   Apache Software Foundation
+   Copyright 2003-2004   Apache Software Foundation
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
    limitations under the License.
 ==================================================================== */
         
-
 
 package org.apache.poi.hssf.record;
 
@@ -67,25 +66,9 @@ public class AxisOptionsRecord
      * @param data  data of the record (should not contain sid/len)
      */
 
-    public AxisOptionsRecord(short id, short size, byte [] data)
+    public AxisOptionsRecord(RecordInputStream in)
     {
-        super(id, size, data);
-    
-    }
-
-    /**
-     * Constructs a AxisOptions record and sets its fields appropriately.
-     *
-     * @param id    id must be 0x1062 or an exception
-     *              will be throw upon validation
-     * @param size  size the size of the data area of the record
-     * @param data  data of the record (should not contain sid/len)
-     * @param offset of the record's data
-     */
-
-    public AxisOptionsRecord(short id, short size, byte [] data, int offset)
-    {
-        super(id, size, data, offset);
+        super(in);
     
     }
 
@@ -102,19 +85,19 @@ public class AxisOptionsRecord
         }
     }
 
-    protected void fillFields(byte [] data, short size, int offset)
+    protected void fillFields(RecordInputStream in)
     {
 
         int pos = 0;
-        field_1_minimumCategory        = LittleEndian.getShort(data, pos + 0x0 + offset);
-        field_2_maximumCategory        = LittleEndian.getShort(data, pos + 0x2 + offset);
-        field_3_majorUnitValue         = LittleEndian.getShort(data, pos + 0x4 + offset);
-        field_4_majorUnit              = LittleEndian.getShort(data, pos + 0x6 + offset);
-        field_5_minorUnitValue         = LittleEndian.getShort(data, pos + 0x8 + offset);
-        field_6_minorUnit              = LittleEndian.getShort(data, pos + 0xa + offset);
-        field_7_baseUnit               = LittleEndian.getShort(data, pos + 0xc + offset);
-        field_8_crossingPoint          = LittleEndian.getShort(data, pos + 0xe + offset);
-        field_9_options                = LittleEndian.getShort(data, pos + 0x10 + offset);
+        field_1_minimumCategory        = in.readShort();
+        field_2_maximumCategory        = in.readShort();
+        field_3_majorUnitValue         = in.readShort();
+        field_4_majorUnit              = in.readShort();
+        field_5_minorUnitValue         = in.readShort();
+        field_6_minorUnit              = in.readShort();
+        field_7_baseUnit               = in.readShort();
+        field_8_crossingPoint          = in.readShort();
+        field_9_options                = in.readShort();
 
     }
 

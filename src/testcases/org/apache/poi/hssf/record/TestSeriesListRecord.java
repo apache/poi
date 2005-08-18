@@ -46,7 +46,7 @@ public class TestSeriesListRecord
             throws Exception
     {
 
-        SeriesListRecord record = new SeriesListRecord((short)0x1016, (short)data.length, data);
+        SeriesListRecord record = new SeriesListRecord(new TestcaseRecordInputStream((short)0x1016, (short)data.length, data));
         assertEquals( (short)0x2001, record.getSeriesNumbers()[0]);
         assertEquals( (short)0xf0ff, record.getSeriesNumbers()[1]);
         assertEquals( 2, record.getSeriesNumbers().length);

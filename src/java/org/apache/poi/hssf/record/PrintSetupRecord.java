@@ -77,22 +77,9 @@ public class PrintSetupRecord
      * @param data  data of the record (should not contain sid/len)
      */
 
-    public PrintSetupRecord(short id, short size, byte [] data)
+    public PrintSetupRecord(RecordInputStream in)
     {
-        super(id, size, data);
-    }
-
-    /**
-     * Constructs a PrintSetup (SETUP) record and sets its fields appropriately.
-     *
-     * @param id     id must be 0xa1 or an exception will be throw upon validation
-     * @param size  the size of the data area of the record
-     * @param data  data of the record (should not contain sid/len)
-     */
-
-    public PrintSetupRecord(short id, short size, byte [] data, int offset)
-    {
-        super(id, size, data, offset);
+        super(in);
     }
 
     protected void validateSid(short id)
@@ -104,19 +91,19 @@ public class PrintSetupRecord
         }
     }
 
-    protected void fillFields(byte [] data, short size, int offset)
+    protected void fillFields(RecordInputStream in)
     {
-        field_1_paper_size    = LittleEndian.getShort(data, 0 + offset);
-        field_2_scale         = LittleEndian.getShort(data, 2 + offset);
-        field_3_page_start    = LittleEndian.getShort(data, 4 + offset);
-        field_4_fit_width     = LittleEndian.getShort(data, 6 + offset);
-        field_5_fit_height    = LittleEndian.getShort(data, 8 + offset);
-        field_6_options       = LittleEndian.getShort(data, 10 + offset);
-        field_7_hresolution   = LittleEndian.getShort(data, 12 + offset);
-        field_8_vresolution   = LittleEndian.getShort(data, 14 + offset);
-        field_9_headermargin  = LittleEndian.getDouble(data, 16 + offset);
-        field_10_footermargin = LittleEndian.getDouble(data, 24 + offset);
-        field_11_copies       = LittleEndian.getShort(data, 32 + offset);
+        field_1_paper_size    = in.readShort();
+        field_2_scale         = in.readShort();
+        field_3_page_start    = in.readShort();
+        field_4_fit_width     = in.readShort();
+        field_5_fit_height    = in.readShort();
+        field_6_options       = in.readShort();
+        field_7_hresolution   = in.readShort();
+        field_8_vresolution   = in.readShort();
+        field_9_headermargin  = in.readDouble();
+        field_10_footermargin = in.readDouble();
+        field_11_copies       = in.readShort();
     }
 
     public void setPaperSize(short size)

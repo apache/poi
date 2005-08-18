@@ -48,7 +48,7 @@ public class TestAxisParentRecord
     public void testLoad()
             throws Exception
     {
-        AxisParentRecord record = new AxisParentRecord((short)0x1041, (short)data.length, data);
+        AxisParentRecord record = new AxisParentRecord(new TestcaseRecordInputStream((short)0x1041, (short)data.length, data));
         assertEquals( AxisParentRecord.AXIS_TYPE_MAIN, record.getAxisType());
         assertEquals( 0x021d, record.getX());
         assertEquals( 0xdd, record.getY());

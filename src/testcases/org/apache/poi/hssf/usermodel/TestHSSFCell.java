@@ -61,7 +61,7 @@ extends TestCase {
             File file = TempFile.createTempFile("testBoolErr",".xls");
             FileOutputStream out    = new FileOutputStream(file);
             HSSFWorkbook     wb     = new HSSFWorkbook();
-            HSSFSheet        s      = wb.createSheet("Sheet1");
+            HSSFSheet        s      = wb.createSheet("testSheet1");
             HSSFRow          r      = null;
             HSSFCell         c      = null;
             r = s.createRow((short)0);
@@ -199,7 +199,7 @@ extends TestCase {
             File file = TempFile.createTempFile("testFormulaStyle",".xls");
             FileOutputStream out    = new FileOutputStream(file);
             HSSFWorkbook     wb     = new HSSFWorkbook();
-            HSSFSheet        s      = wb.createSheet("Sheet1");
+            HSSFSheet        s      = wb.createSheet("testSheet1");
             HSSFRow          r      = null;
             HSSFCell         c      = null;
             HSSFCellStyle cs = wb.createCellStyle();

@@ -212,10 +212,10 @@ public class TestNamedRange
 	    HSSFWorkbook wb     = new HSSFWorkbook();
          
 
-		HSSFSheet sheet = wb.createSheet("Sheet1");
+		HSSFSheet sheet = wb.createSheet("testSheet1");
 		String sheetName = wb.getSheetName(0);
         
-        assertEquals("Sheet1", sheetName);
+        assertEquals("testSheet1", sheetName);
          
 		//Creating new Named Range
 		HSSFName newNamedRange = wb.createName();

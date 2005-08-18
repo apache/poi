@@ -50,41 +50,22 @@ public class MergeCellsRecord
      * @param data  data of the record (should not contain sid/len)
      */
 
-    public MergeCellsRecord(short sid, short size, byte [] data)
+    public MergeCellsRecord(RecordInputStream in)
     {
-        super(sid, size, data);
+        super(in);
     }
 
-    /**
-     * Constructs a MergedCellsRecord and sets its fields appropriately
-     *
-     * @param sid     id must be 0xe5 or an exception will be throw upon validation
-     * @param size  the size of the data area of the record
-     * @param data  data of the record (should not contain sid/len)
-     * @param offset the offset of the record's data
-     */
-
-    public MergeCellsRecord(short sid, short size, byte [] data, int offset)
+    protected void fillFields(RecordInputStream in)
     {
-        super(sid, size, data, offset);
-    }
-
-    protected void fillFields(byte [] data, short size, int offset)
-    {
-        short numAreas    = LittleEndian.getShort(data, 0 + offset);
+        short numAreas    = in.readShort();
         field_2_regions   = new ArrayList(numAreas + 10);
-        int pos = 2;
 
         for (int k = 0; k < numAreas; k++)
         {
             MergedRegion region =
-                new MergedRegion(LittleEndian
-                    .getShort(data, pos + offset), LittleEndian
-                    .getShort(data, pos + 2 + offset), LittleEndian
-                    .getShort(data, pos + 4 + offset), LittleEndian
-                    .getShort(data, pos + 6 + offset));
+                new MergedRegion(in.readShort(), in.readShort(),
+                                 in.readShort(), in.readShort());
 
-            pos += 8;
             field_2_regions.add(region);
         }
     }

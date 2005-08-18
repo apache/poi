@@ -45,7 +45,7 @@ public class TestSeriesTextRecord
     public void testLoad()
             throws Exception
     {
-        SeriesTextRecord record = new SeriesTextRecord((short)0x100d, (short)data.length, data);
+        SeriesTextRecord record = new SeriesTextRecord(new TestcaseRecordInputStream((short)0x100d, (short)data.length, data));
         
 
         assertEquals( (short)0, record.getId());

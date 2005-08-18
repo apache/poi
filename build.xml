@@ -355,6 +355,7 @@
           <exclude name="**/AllTests.java"/>
           <exclude name="**/TestEmptyDocument.java"/>
           <exclude name="**/TestUnfixedBugs.java"/>
+          <exclude name="**/TestcaseRecordInputStream.java"/>
         </fileset>
       </batchtest>
     </junit>

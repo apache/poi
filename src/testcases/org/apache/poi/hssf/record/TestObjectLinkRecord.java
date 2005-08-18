@@ -45,7 +45,7 @@ public class TestObjectLinkRecord
     public void testLoad()
             throws Exception
     {
-        ObjectLinkRecord record = new ObjectLinkRecord((short)0x1027, (short)data.length, data);
+        ObjectLinkRecord record = new ObjectLinkRecord(new TestcaseRecordInputStream((short)0x1027, (short)data.length, data));
         
 
         assertEquals( (short)3, record.getAnchorId());

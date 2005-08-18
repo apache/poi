@@ -49,14 +49,9 @@ public class ExtSSTInfoSubRecord
     {
     }
 
-    public ExtSSTInfoSubRecord(short id, short size, byte [] data)
+    public ExtSSTInfoSubRecord(RecordInputStream in)
     {
-        super(id, size, data);
-    }
-
-    public ExtSSTInfoSubRecord(short id, short size, byte [] data, int offset)
-    {
-        super(id, size, data, offset);
+        super(in);
     }
 
     protected void validateSid(short id)
@@ -65,11 +60,11 @@ public class ExtSSTInfoSubRecord
         // do nothing
     }
 
-    protected void fillFields(byte [] data, short size, int offset)
+    protected void fillFields(RecordInputStream in)
     {
-        field_1_stream_pos        = LittleEndian.getInt(data, 0 + offset);
-        field_2_bucket_sst_offset = LittleEndian.getShort(data, 4 + offset);
-        field_3_zero              = LittleEndian.getShort(data, 6 + offset);
+        field_1_stream_pos        = in.readInt();
+        field_2_bucket_sst_offset = in.readShort();
+        field_3_zero              = in.readShort();
     }
 
     public void setStreamPos(int pos)

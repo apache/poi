@@ -25,6 +25,7 @@ import org.apache.poi.hssf.util.SheetReferences;
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.util.BitField;
 import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.record.RecordInputStream;
 
 /**
  * Title:        Reference 3D Ptg <P>
@@ -47,11 +48,10 @@ public class Ref3DPtg extends Ptg {
     /** Creates new AreaPtg */
     public Ref3DPtg() {}
 
-    public Ref3DPtg(byte[] data, int offset) {
-        offset++;
-        field_1_index_extern_sheet = LittleEndian.getShort(data, 0 + offset);
-        field_2_row          = LittleEndian.getShort(data, 2 + offset);
-        field_3_column        = LittleEndian.getShort(data, 4 + offset);
+    public Ref3DPtg(RecordInputStream in) {
+        field_1_index_extern_sheet = in.readShort();
+        field_2_row          = in.readShort();
+        field_3_column        = in.readShort();
     }
     
     public Ref3DPtg(String cellref, short externIdx ) {

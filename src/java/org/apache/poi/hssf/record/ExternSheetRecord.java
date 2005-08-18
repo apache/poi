@@ -47,20 +47,8 @@ public class ExternSheetRecord extends Record {
      * @param data  data of the record (should not contain sid/len)
      */
     
-    public ExternSheetRecord(short id, short size, byte[] data) {
-        super(id, size, data);
-    }
-    
-    /**
-     * Constructs a Extern Sheet record and sets its fields appropriately.
-     *
-     * @param id     id must be 0x16 or an exception will be throw upon validation
-     * @param size  the size of the data area of the record
-     * @param data  data of the record (should not contain sid/len)
-     * @param offset of the record's data
-     */
-    public ExternSheetRecord(short id, short size, byte[] data, int offset) {
-        super(id, size, data, offset);
+    public ExternSheetRecord(RecordInputStream in) {
+        super(in);
     }
     
     /**
@@ -83,16 +71,13 @@ public class ExternSheetRecord extends Record {
      * @param size size of data
      * @param offset of the record's data (provided a big array of the file)
      */
-    protected void fillFields(byte [] data, short size, int offset) {
+    protected void fillFields(RecordInputStream in) {
         field_2_REF_structures           = new ArrayList();
         
-        field_1_number_of_REF_sturcutres = LittleEndian.getShort(data, 0 + offset);
+        field_1_number_of_REF_sturcutres = in.readShort();
         
-        int pos = 2 + offset;
         for (int i = 0 ; i < field_1_number_of_REF_sturcutres ; ++i) {
-            ExternSheetSubRecord rec = new ExternSheetSubRecord((short)0, (short)6 , data , pos);
-            
-            pos += 6;
+            ExternSheetSubRecord rec = new ExternSheetSubRecord(in);
             
             field_2_REF_structures.add( rec);
         }

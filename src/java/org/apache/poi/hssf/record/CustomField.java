@@ -32,7 +32,7 @@ public interface CustomField
      * @param   offset of the record's data (provided a big array of the file)
      * @return  the number of bytes read.
      */
-    int fillField(byte [] data, short size, int offset);
+    int fillField(RecordInputStream in);
 
     /**
      * Appends the string representation of this field to the supplied

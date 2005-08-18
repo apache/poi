@@ -46,23 +46,9 @@ public class BeginRecord
      * @param data  data of the record (should not contain sid/len)
      */
 
-    public BeginRecord(short id, short size, byte [] data)
+    public BeginRecord(RecordInputStream in)
     {
-        super(id, size, data);
-    }
-
-    /**
-     * Constructs a BeginRecord record and sets its fields appropriately.
-     *
-     * @param id     id must be 0x1033 or an exception will be throw upon validation
-     * @param size  the size of the data area of the record
-     * @param data  data of the record (should not contain sid/len)
-     * @param offset of the record's data
-     */
-
-    public BeginRecord(short id, short size, byte [] data, int offset)
-    {
-        super(id, size, data, offset);
+        super(in);
     }
 
     protected void validateSid(short id)
@@ -73,7 +59,7 @@ public class BeginRecord
         }
     }
 
-    protected void fillFields(byte [] data, short size, int offset)
+    protected void fillFields(RecordInputStream in)
     {
     }
 

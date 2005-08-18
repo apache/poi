@@ -51,11 +51,9 @@ public class SharedFormulaRecord
      * @param data  the data
      */
 
-    public SharedFormulaRecord(short id, short size, byte [] data)
+    public SharedFormulaRecord(RecordInputStream in)
     {
-    	  super(id, size, data);
-    	  
-    	  this.fillFields(data, size, 0);
+    	  super(in);
     }
 
     /**
@@ -121,11 +119,9 @@ public class SharedFormulaRecord
 	 /**
 	  * Shared formulas are to treated like unknown records, and as a result d
 	  */
-    protected void fillFields(byte [] data, short size, int offset)
+    protected void fillFields(RecordInputStream in)
     {
-		thedata = new byte[size];
-		System.arraycopy(data, 0, thedata, 0, size);		
-
+      thedata = in.readRemainder();
     }
 
 	/**

@@ -49,23 +49,9 @@ public class RefModeRecord
      * @param data  data of the record (should not contain sid/len)
      */
 
-    public RefModeRecord(short id, short size, byte [] data)
+    public RefModeRecord(RecordInputStream in)
     {
-        super(id, size, data);
-    }
-
-    /**
-     * Constructs a RefMode record and sets its fields appropriately.
-     *
-     * @param id     id must be 0xf or an exception will be throw upon validation
-     * @param size  the size of the data area of the record
-     * @param data  data of the record (should not contain sid/len)
-     * @param offset of the record's data
-     */
-
-    public RefModeRecord(short id, short size, byte [] data, int offset)
-    {
-        super(id, size, data, offset);
+        super(in);
     }
 
     protected void validateSid(short id)
@@ -76,9 +62,9 @@ public class RefModeRecord
         }
     }
 
-    protected void fillFields(byte [] data, short size, int offset)
+    protected void fillFields(RecordInputStream in)
     {
-        field_1_mode = LittleEndian.getShort(data, 0 + offset);
+        field_1_mode = in.readShort();
     }
 
     /**

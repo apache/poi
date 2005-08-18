@@ -45,21 +45,27 @@ public class UnknownRecord
      * construct an unknown record.  No fields are interperated and the record will
      * be serialized in its original form more or less
      * @param id    id of the record -not validated, just stored for serialization
+     * @param data  the data
+     */
+    public UnknownRecord(short id, byte[] data)
+    {
+      this.sid = id;
+      this.thedata = data;
+    }
+
+
+    /**
+     * construct an unknown record.  No fields are interperated and the record will
+     * be serialized in its original form more or less
+     * @param id    id of the record -not validated, just stored for serialization
      * @param size  size of the data
      * @param data  the data
      */
 
-    public UnknownRecord(short id, short size, byte [] data)
+    public UnknownRecord(RecordInputStream in)
     {
-        sid     = id;
-        thedata = data;
-    }
-
-    public UnknownRecord( short id, short size, byte[] data, int offset )
-    {
-        sid     = id;
-        thedata = new byte[size];
-        System.arraycopy(data, offset, thedata, 0, size);
+        sid     = in.getSid();
+        thedata = in.readRemainder();
     }
 
     /**
@@ -136,7 +142,7 @@ public class UnknownRecord
      * @param offset of the records data (provided a big array of the file)
      */
 
-    protected void fillFields(byte [] data, short size, int offset)
+    protected void fillFields(RecordInputStream in)
     {
         throw new RecordFormatException(
             "Unknown record cannot be constructed via offset -- we need a copy of the data");

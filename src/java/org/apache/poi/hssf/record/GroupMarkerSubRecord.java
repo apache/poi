@@ -49,25 +49,9 @@ public class GroupMarkerSubRecord
      * @param data  data of the record (should not contain sid/len)
      */
 
-    public GroupMarkerSubRecord(short id, short size, byte [] data)
+    public GroupMarkerSubRecord(RecordInputStream in)
     {
-        super(id, size, data);
-    
-    }
-
-    /**
-     * Constructs a group marker record and sets its fields appropriately.
-     *
-     * @param id    id must be 0x00 or an exception
-     *              will be throw upon validation
-     * @param size  size the size of the data area of the record
-     * @param data  data of the record (should not contain sid/len)
-     * @param offset of the record's data
-     */
-
-    public GroupMarkerSubRecord(short id, short size, byte [] data, int offset)
-    {
-        super(id, size, data, offset);
+        super(in);
     
     }
 
@@ -84,11 +68,10 @@ public class GroupMarkerSubRecord
         }
     }
 
-    protected void fillFields(byte [] data, short size, int offset)
+    protected void fillFields(RecordInputStream in)
     {
 //        int pos = 0;
-        reserved = new byte[size];
-        System.arraycopy(data, offset, reserved, 0, size);
+        reserved = in.readRemainder();
     }
 
     public String toString()

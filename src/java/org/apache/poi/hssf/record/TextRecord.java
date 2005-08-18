@@ -1,6 +1,6 @@
 
 /* ====================================================================
-   Copyright 2002-2004   Apache Software Foundation
+   Copyright 2003-2004   Apache Software Foundation
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
    limitations under the License.
 ==================================================================== */
         
-
 
 package org.apache.poi.hssf.record;
 
@@ -101,25 +100,9 @@ public class TextRecord
      * @param data  data of the record (should not contain sid/len)
      */
 
-    public TextRecord(short id, short size, byte [] data)
+    public TextRecord(RecordInputStream in)
     {
-        super(id, size, data);
-    
-    }
-
-    /**
-     * Constructs a Text record and sets its fields appropriately.
-     *
-     * @param id    id must be 0x1025 or an exception
-     *              will be throw upon validation
-     * @param size  size the size of the data area of the record
-     * @param data  data of the record (should not contain sid/len)
-     * @param offset of the record's data
-     */
-
-    public TextRecord(short id, short size, byte [] data, int offset)
-    {
-        super(id, size, data, offset);
+        super(in);
     
     }
 
@@ -136,22 +119,22 @@ public class TextRecord
         }
     }
 
-    protected void fillFields(byte [] data, short size, int offset)
+    protected void fillFields(RecordInputStream in)
     {
 
         int pos = 0;
-        field_1_horizontalAlignment    = data[ pos + 0x0 + offset ];
-        field_2_verticalAlignment      = data[ pos + 0x1 + offset ];
-        field_3_displayMode            = LittleEndian.getShort(data, pos + 0x2 + offset);
-        field_4_rgbColor               = LittleEndian.getInt(data, pos + 0x4 + offset);
-        field_5_x                      = LittleEndian.getInt(data, pos + 0x8 + offset);
-        field_6_y                      = LittleEndian.getInt(data, pos + 0xc + offset);
-        field_7_width                  = LittleEndian.getInt(data, pos + 0x10 + offset);
-        field_8_height                 = LittleEndian.getInt(data, pos + 0x14 + offset);
-        field_9_options1               = LittleEndian.getShort(data, pos + 0x18 + offset);
-        field_10_indexOfColorValue     = LittleEndian.getShort(data, pos + 0x1a + offset);
-        field_11_options2              = LittleEndian.getShort(data, pos + 0x1c + offset);
-        field_12_textRotation          = LittleEndian.getShort(data, pos + 0x1e + offset);
+        field_1_horizontalAlignment    = in.readByte();
+        field_2_verticalAlignment      = in.readByte();
+        field_3_displayMode            = in.readShort();
+        field_4_rgbColor               = in.readInt();
+        field_5_x                      = in.readInt();
+        field_6_y                      = in.readInt();
+        field_7_width                  = in.readInt();
+        field_8_height                 = in.readInt();
+        field_9_options1               = in.readShort();
+        field_10_indexOfColorValue     = in.readShort();
+        field_11_options2              = in.readShort();
+        field_12_textRotation          = in.readShort();
 
     }
 

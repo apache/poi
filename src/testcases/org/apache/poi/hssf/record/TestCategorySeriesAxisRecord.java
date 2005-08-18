@@ -49,7 +49,7 @@ public class TestCategorySeriesAxisRecord
             throws Exception
     {
 
-        CategorySeriesAxisRecord record = new CategorySeriesAxisRecord((short)0x1020, (short)data.length, data);
+        CategorySeriesAxisRecord record = new CategorySeriesAxisRecord(new TestcaseRecordInputStream((short)0x1020, (short)data.length, data));
         assertEquals( 1, record.getCrossingPoint());
         assertEquals( 1, record.getLabelFrequency());
         assertEquals( 1, record.getTickMarkFrequency());

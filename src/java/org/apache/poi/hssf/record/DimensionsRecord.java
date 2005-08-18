@@ -52,23 +52,9 @@ public class DimensionsRecord
      * @param data  data of the record (should not contain sid/len)
      */
 
-    public DimensionsRecord(short id, short size, byte [] data)
+    public DimensionsRecord(RecordInputStream in)
     {
-        super(id, size, data);
-    }
-
-    /**
-     * Constructs a Dimensions record and sets its fields appropriately.
-     *
-     * @param id     id must be 0x200 or an exception will be throw upon validation
-     * @param size  the size of the data area of the record
-     * @param data  data of the record (should not contain sid/len)
-     * @param offset of the record's data
-     */
-
-    public DimensionsRecord(short id, short size, byte [] data, int offset)
-    {
-        super(id, size, data, offset);
+        super(in);
     }
 
     protected void validateSid(short id)
@@ -79,13 +65,13 @@ public class DimensionsRecord
         }
     }
 
-    protected void fillFields(byte [] data, short size, int offset)
+    protected void fillFields(RecordInputStream in)
     {
-        field_1_first_row = LittleEndian.getInt(data, 0 + offset);
-        field_2_last_row  = LittleEndian.getInt(data, 4 + offset);
-        field_3_first_col = LittleEndian.getShort(data, 8 + offset);
-        field_4_last_col  = LittleEndian.getShort(data, 10 + offset);
-        field_5_zero      = LittleEndian.getShort(data, 12 + offset);
+        field_1_first_row = in.readInt();
+        field_2_last_row  = in.readInt();
+        field_3_first_col = in.readShort();
+        field_4_last_col  = in.readShort();
+        field_5_zero      = in.readShort();
     }
 
     /**

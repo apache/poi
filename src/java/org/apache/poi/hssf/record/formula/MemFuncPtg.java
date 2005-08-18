@@ -24,6 +24,7 @@ package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.record.RecordInputStream;
 
 /**
  * @author Glen Stampoultzis (glens at apache.org)
@@ -42,10 +43,9 @@ public class MemFuncPtg extends ControlPtg
     /**Creates new function pointer from a byte array
      * usually called while reading an excel file.
      */
-    public MemFuncPtg( byte[] data, int offset )
+    public MemFuncPtg( RecordInputStream in )
     {
-        offset++;
-        field_1_len_ref_subexpression = LittleEndian.getShort( data, offset + 0 );
+        field_1_len_ref_subexpression = in.readShort();
     }
 
     public int getSize()
