@@ -429,7 +429,7 @@ public class TestSSTRecord
         HSSFWorkbook wb = new HSSFWorkbook( stream );
         stream.close();
         HSSFSheet sheet = wb.getSheetAt( 1 );
-        assertEquals( "01/05 (Wed) ", sheet.getRow( 0 ).getCell( (short) 8 ).getStringCellValue() );
+        assertEquals( "01/05 (Wed)", sheet.getRow( 0 ).getCell( (short) 8 ).getStringCellValue() );
         assertEquals( "01/05 (Wed)", sheet.getRow( 1 ).getCell( (short) 8 ).getStringCellValue() );
 
         file = TempFile.createTempFile( "testout", "xls" );
@@ -445,11 +445,11 @@ public class TestSSTRecord
         stream.close();
         sheet = wb.getSheetAt( 0 );
         int row = 0;
-        assertEquals( "Testing ", sheet.getRow( row++ ).getCell( (short) 0 ).getStringCellValue() );
+        assertEquals( "Testing", sheet.getRow( row++ ).getCell( (short) 0 ).getStringCellValue() );
         assertEquals( "rich", sheet.getRow( row++ ).getCell( (short) 0 ).getStringCellValue() );
         assertEquals( "text", sheet.getRow( row++ ).getCell( (short) 0 ).getStringCellValue() );
         assertEquals( "strings", sheet.getRow( row++ ).getCell( (short) 0 ).getStringCellValue() );
-        assertEquals( "Testing  ", sheet.getRow( row++ ).getCell( (short) 0 ).getStringCellValue() );
+        assertEquals( "Testing", sheet.getRow( row++ ).getCell( (short) 0 ).getStringCellValue() );
         assertEquals( "Testing", sheet.getRow( row++ ).getCell( (short) 0 ).getStringCellValue() );
 
 //        file = new File("/tryme.xls");
