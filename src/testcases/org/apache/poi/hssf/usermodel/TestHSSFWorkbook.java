@@ -64,4 +64,24 @@ public class TestHSSFWorkbook extends TestCase
         c.createSheet("Sheet4");
 
     }
+    
+    public void testWindowOneDefaults() {
+        HSSFWorkbook b = new HSSFWorkbook( );
+        try {
+            assertEquals(b.getSelectedTab(), 0);
+            assertEquals(b.getDisplayedTab(), 0);
+        } catch (NullPointerException npe) {
+            fail("WindowOneRecord in Workbook is probably not initialized");
+        }
+    }
+    
+    public void testSheetSelection() {
+        HSSFWorkbook b = new HSSFWorkbook();
+        b.createSheet("Sheet One");
+        HSSFSheet s = b.createSheet("Sheet Two");
+        b.setSelectedTab((short) 1);
+        b.setDisplayedTab((short) 1);
+        assertEquals(b.getSelectedTab(), 1);
+        assertEquals(b.getDisplayedTab(), 1);
+    }
 }
