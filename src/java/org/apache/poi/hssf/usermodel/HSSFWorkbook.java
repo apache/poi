@@ -251,6 +251,48 @@ public class HSSFWorkbook
     public void setSheetOrder(String sheetname, int pos ) {
         workbook.setSheetOrder(sheetname, pos);
     }
+    
+    /**
+     * sets the tab whose data is actually seen when the sheet is opened.
+     * This may be different from the "selected sheet" since excel seems to
+     * allow you to show the data of one sheet when another is seen "selected"
+     * in the tabs (at the bottom).
+     * @see org.apache.poi.hssf.usermodel.HSSFSheet#setSelected(boolean)
+     * @param index
+     */
+    public void setSelectedTab(short index) {
+        workbook.getWindowOne().setSelectedTab(index);
+    }
+    
+    /**
+     * gets the tab whose data is actually seen when the sheet is opened.
+     * This may be different from the "selected sheet" since excel seems to
+     * allow you to show the data of one sheet when another is seen "selected"
+     * in the tabs (at the bottom).
+     * @see org.apache.poi.hssf.usermodel.HSSFSheet#setSelected(boolean)
+     * @return
+     */
+    public short getSelectedTab() {
+        return workbook.getWindowOne().getSelectedTab();
+    }
+    
+    /**
+     * sets the first tab that is displayed in the list of tabs
+     * in excel.
+     * @param index
+     */
+    public void setDisplayedTab(short index) {
+        workbook.getWindowOne().setDisplayedTab(index);
+    }
+    
+    /**
+     * sets the first tab that is displayed in the list of tabs
+     * in excel.
+     * @return
+     */
+    public short getDisplayedTab() {
+        return workbook.getWindowOne().getDisplayedTab();
+    }
 
     public final static byte ENCODING_COMPRESSED_UNICODE = 0;
     public final static byte ENCODING_UTF_16             = 1;

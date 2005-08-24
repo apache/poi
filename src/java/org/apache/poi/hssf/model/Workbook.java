@@ -100,6 +100,7 @@ public class Workbook implements Model
     private boolean            uses1904datewindowing  = false;  // whether 1904 date windowing is being used
     private DrawingManager2    drawingManager;
     private List               escherBSERecords = new ArrayList();  // EscherBSERecord
+    private WindowOneRecord windowOne;
 
     private static POILogger   log = POILogFactory.getLogger(Workbook.class);
 
@@ -215,6 +216,10 @@ public class Workbook implements Model
                     if (log.check( POILogger.DEBUG ))
                         log.log(DEBUG, "found palette record at " + k);
                     retval.records.setPalettepos( k );
+                case WindowOneRecord.sid:
+                    if (log.check( POILogger.DEBUG ))
+                        log.log(DEBUG, "found WindowOneRecord at " + k);
+                    retval.windowOne = (WindowOneRecord) rec;
                 default :
             }
             records.add(rec);
@@ -226,6 +231,10 @@ public class Workbook implements Model
         //        }
 
         retval.records.setRecords(records);
+        
+        if (retval.windowOne == null) {
+            retval.windowOne = (WindowOneRecord) retval.createWindowOne();
+        }
         if (log.check( POILogger.DEBUG ))
             log.log(DEBUG, "exit create workbook from existing file function");
         return retval;
@@ -259,7 +268,8 @@ public class Workbook implements Model
         records.add( retval.createPassword() );
         records.add( retval.createProtectionRev4() );
         records.add( retval.createPasswordRev4() );
-        records.add( retval.createWindowOne() );
+        retval.windowOne = (WindowOneRecord) retval.createWindowOne();
+        records.add( retval.windowOne );
         records.add( retval.createBackup() );
         retval.records.setBackuppos( records.size() - 1 );
         records.add( retval.createHideObj() );
@@ -2164,7 +2174,11 @@ public class Workbook implements Model
         }
 
     }
-
+    
+    public WindowOneRecord getWindowOne() {
+        return windowOne;
+    }
+    
     public int addBSERecord(EscherBSERecord e)
     {
         createDrawingGroup();
