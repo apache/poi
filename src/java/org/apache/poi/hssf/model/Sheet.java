@@ -65,7 +65,6 @@ public class Sheet implements Model
     protected ArrayList                  records           =     null;
               int                        preoffset         =     0;            // offset of the sheet in a new file
               int                        loc               =     0;
-    protected boolean                    containsLabels    =     false;
     protected int                        dimsloc           =     0;
     protected DimensionsRecord           dims;
     protected DefaultColWidthRecord      defaultcolwidth   =     null;
@@ -138,13 +137,7 @@ public class Sheet implements Model
         {
             Record rec = ( Record ) recs.get(k);
 
-            if (rec.getSid() == LabelRecord.sid)
-            {
-                if (log.check( POILogger.DEBUG ))
-                    log.log(POILogger.DEBUG, "Hit label record.");
-                retval.containsLabels = true;
-            }
-            else if (rec.getSid() == BOFRecord.sid)
+            if (rec.getSid() == BOFRecord.sid)
             {
                 bofEofNestingLevel++;
                 if (log.check( POILogger.DEBUG ))
