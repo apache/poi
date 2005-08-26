@@ -577,53 +577,6 @@ public class Sheet implements Model
     }
 
     /**
-     * This is basically a kludge to deal with the now obsolete Label records.  If
-     * you have to read in a sheet that contains Label records, be aware that the rest
-     * of the API doesn't deal with them, the low level structure only provides read-only
-     * semi-immutable structures (the sets are there for interface conformance with NO
-     * impelmentation).  In short, you need to call this function passing it a reference
-     * to the Workbook object.  All labels will be converted to LabelSST records and their
-     * contained strings will be written to the Shared String tabel (SSTRecord) within
-     * the Workbook.
-     *
-     * @param wb sheet's matching low level Workbook structure containing the SSTRecord.
-     * @see org.apache.poi.hssf.record.LabelRecord
-     * @see org.apache.poi.hssf.record.LabelSSTRecord
-     * @see org.apache.poi.hssf.record.SSTRecord
-     */
-
-    public void convertLabelRecords(Workbook wb)
-    {
-        if (log.check( POILogger.DEBUG ))
-            log.log(POILogger.DEBUG, "convertLabelRecords called");
-        if (containsLabels)
-        {
-            for (int k = 0; k < records.size(); k++)
-            {
-                Record rec = ( Record ) records.get(k);
-
-                if (rec.getSid() == LabelRecord.sid)
-                {
-                    LabelRecord oldrec = ( LabelRecord ) rec;
-
-                    records.remove(k);
-                    LabelSSTRecord newrec   = new LabelSSTRecord();
-                    int            stringid =
-                        wb.addSSTString(new UnicodeString(oldrec.getValue()));
-
-                    newrec.setRow(oldrec.getRow());
-                    newrec.setColumn(oldrec.getColumn());
-                    newrec.setXFIndex(oldrec.getXFIndex());
-                    newrec.setSSTIndex(stringid);
-                          records.add(k, newrec);
-                }
-            }
-        }
-        if (log.check( POILogger.DEBUG ))
-            log.log(POILogger.DEBUG, "convertLabelRecords exit");
-    }
-
-    /**
      * Returns the number of low level binary records in this sheet.  This adjusts things for the so called
      * AgregateRecords.
      *

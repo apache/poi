@@ -186,14 +186,14 @@ public class HSSFWorkbook
         setPropertiesFromWorkbook(workbook);
         int recOffset = workbook.getNumRecords();
         int sheetNum = 0;
-
+        
+        // convert all LabelRecord records to LabelSSTRecord
+        convertLabelRecords(records, recOffset);        
         while (recOffset < records.size())
         {
             Sheet sheet = Sheet.createSheet(records, sheetNum++, recOffset );
 
             recOffset = sheet.getEofLoc()+1;
-            sheet.convertLabelRecords(
-                    workbook);   // convert all LabelRecord records to LabelSSTRecord
             HSSFSheet hsheet = new HSSFSheet(workbook, sheet);
 
             sheets.add(hsheet);
@@ -240,6 +240,51 @@ public class HSSFWorkbook
 
         // none currently
     }
+    
+    /**
+      * This is basically a kludge to deal with the now obsolete Label records.  If
+      * you have to read in a sheet that contains Label records, be aware that the rest
+      * of the API doesn't deal with them, the low level structure only provides read-only
+      * semi-immutable structures (the sets are there for interface conformance with NO
+      * impelmentation).  In short, you need to call this function passing it a reference
+      * to the Workbook object.  All labels will be converted to LabelSST records and their
+      * contained strings will be written to the Shared String tabel (SSTRecord) within
+      * the Workbook.
+      *
+      * @param wb sheet's matching low level Workbook structure containing the SSTRecord.
+      * @see org.apache.poi.hssf.record.LabelRecord
+      * @see org.apache.poi.hssf.record.LabelSSTRecord
+      * @see org.apache.poi.hssf.record.SSTRecord
+      */
+ 
+     private void convertLabelRecords(List records, int offset)
+     {
+         if (log.check( POILogger.DEBUG ))
+             log.log(POILogger.DEBUG, "convertLabelRecords called");
+         for (int k = offset; k < records.size(); k++)
+         {
+             Record rec = ( Record ) records.get(k);
+
+             if (rec.getSid() == LabelRecord.sid)
+             {
+                 LabelRecord oldrec = ( LabelRecord ) rec;
+
+                 records.remove(k);
+                 LabelSSTRecord newrec   = new LabelSSTRecord();
+                 int            stringid =
+                     workbook.addSSTString(new UnicodeString(oldrec.getValue()));
+
+                 newrec.setRow(oldrec.getRow());
+                 newrec.setColumn(oldrec.getColumn());
+                 newrec.setXFIndex(oldrec.getXFIndex());
+                 newrec.setSSTIndex(stringid);
+                       records.add(k, newrec);
+             }
+         }
+         if (log.check( POILogger.DEBUG ))
+             log.log(POILogger.DEBUG, "convertLabelRecords exit");
+     }
+    
 
     /**
      * sets the order of appearance for a given sheet.
