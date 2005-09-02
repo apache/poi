@@ -42,14 +42,14 @@ public class AxisOptionsRecord
     private  short      field_7_baseUnit;
     private  short      field_8_crossingPoint;
     private  short      field_9_options;
-    private  BitField   defaultMinimum                              = new BitField(0x1);
-    private  BitField   defaultMaximum                              = new BitField(0x2);
-    private  BitField   defaultMajor                                = new BitField(0x4);
-    private  BitField   defaultMinorUnit                            = new BitField(0x8);
-    private  BitField   isDate                                      = new BitField(0x10);
-    private  BitField   defaultBase                                 = new BitField(0x20);
-    private  BitField   defaultCross                                = new BitField(0x40);
-    private  BitField   defaultDateSettings                         = new BitField(0x80);
+    private  BitField   defaultMinimum                              = BitFieldFactory.getInstance(0x1);
+    private  BitField   defaultMaximum                              = BitFieldFactory.getInstance(0x2);
+    private  BitField   defaultMajor                                = BitFieldFactory.getInstance(0x4);
+    private  BitField   defaultMinorUnit                            = BitFieldFactory.getInstance(0x8);
+    private  BitField   isDate                                      = BitFieldFactory.getInstance(0x10);
+    private  BitField   defaultBase                                 = BitFieldFactory.getInstance(0x20);
+    private  BitField   defaultCross                                = BitFieldFactory.getInstance(0x40);
+    private  BitField   defaultDateSettings                         = BitFieldFactory.getInstance(0x80);
 
 
     public AxisOptionsRecord()

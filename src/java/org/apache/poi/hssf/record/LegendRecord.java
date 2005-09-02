@@ -49,12 +49,12 @@ public class LegendRecord
     public final static byte        SPACING_MEDIUM                 = 1;
     public final static byte        SPACING_OPEN                   = 2;
     private  short      field_7_options;
-    private  BitField   autoPosition                                = new BitField(0x1);
-    private  BitField   autoSeries                                  = new BitField(0x2);
-    private  BitField   autoXPositioning                            = new BitField(0x4);
-    private  BitField   autoYPositioning                            = new BitField(0x8);
-    private  BitField   vertical                                    = new BitField(0x10);
-    private  BitField   dataTable                                   = new BitField(0x20);
+    private  BitField   autoPosition                                = BitFieldFactory.getInstance(0x1);
+    private  BitField   autoSeries                                  = BitFieldFactory.getInstance(0x2);
+    private  BitField   autoXPositioning                            = BitFieldFactory.getInstance(0x4);
+    private  BitField   autoYPositioning                            = BitFieldFactory.getInstance(0x8);
+    private  BitField   vertical                                    = BitFieldFactory.getInstance(0x10);
+    private  BitField   dataTable                                   = BitFieldFactory.getInstance(0x20);
 
 
     public LegendRecord()

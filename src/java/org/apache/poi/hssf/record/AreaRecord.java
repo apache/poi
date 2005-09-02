@@ -34,9 +34,9 @@ public class AreaRecord
 {
     public final static short      sid                             = 0x101A;
     private  short      field_1_formatFlags;
-    private  BitField   stacked                                     = new BitField(0x1);
-    private  BitField   displayAsPercentage                         = new BitField(0x2);
-    private  BitField   shadow                                      = new BitField(0x4);
+    private  BitField   stacked                                     = BitFieldFactory.getInstance(0x1);
+    private  BitField   displayAsPercentage                         = BitFieldFactory.getInstance(0x2);
+    private  BitField   shadow                                      = BitFieldFactory.getInstance(0x4);
 
 
     public AreaRecord()

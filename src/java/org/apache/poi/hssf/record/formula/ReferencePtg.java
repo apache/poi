@@ -18,6 +18,7 @@ package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.BitField;
+import org.apache.poi.util.BitFieldFactory;
 
 import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.hssf.model.Workbook;
@@ -36,8 +37,8 @@ public class ReferencePtg extends Ptg
     //public final static byte sid = 0x44;
     private short            field_1_row;
     private short            field_2_col;
-    private BitField         rowRelative = new BitField(0x8000);
-    private BitField         colRelative = new BitField(0x4000);
+    private BitField         rowRelative = BitFieldFactory.getInstance(0x8000);
+    private BitField         colRelative = BitFieldFactory.getInstance(0x4000);
 
     private ReferencePtg() {
       //Required for clone methods

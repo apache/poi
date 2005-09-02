@@ -37,8 +37,8 @@ public class FrameRecord
     public final static short       BORDER_TYPE_REGULAR            = 0;
     public final static short       BORDER_TYPE_SHADOW             = 1;
     private  short      field_2_options;
-    private  BitField   autoSize                                    = new BitField(0x1);
-    private  BitField   autoPosition                                = new BitField(0x2);
+    private  BitField   autoSize                                    = BitFieldFactory.getInstance(0x1);
+    private  BitField   autoPosition                                = BitFieldFactory.getInstance(0x2);
 
 
     public FrameRecord()

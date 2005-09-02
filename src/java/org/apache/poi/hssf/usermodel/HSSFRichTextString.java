@@ -77,7 +77,11 @@ public class HSSFRichTextString
 
     private void addToSSTIfRequired() {
       if (book != null) {
-        record.setSSTIndex(book.addSSTString(string));
+        int index = book.addSSTString(string);
+        record.setSSTIndex(index);
+        //The act of adding the string to the SST record may have meant that
+        //a extsing string was returned for the index, so update our local version
+        string = book.getSSTString(index);
       }
     }
 
@@ -162,9 +166,16 @@ public class HSSFRichTextString
         return string.getString();
     }
 
+    /** Used internally by the HSSFCell to get the internal string value*/
     UnicodeString getUnicodeString() {
       return cloneStringIfRequired();
     }
+
+    /** Used internally by the HSSFCell to set the internal string value*/
+    void setUnicodeString(UnicodeString str) {
+      this.string = str;
+    }
+    
 
     /**
      * @return  the number of characters in the font.
@@ -238,6 +249,14 @@ public class HSSFRichTextString
     {
        HSSFRichTextString r = (HSSFRichTextString)o;
        return string.compareTo(r.string);
+    }
+
+    public boolean equals(Object o) {
+      if (o instanceof HSSFRichTextString) {
+        return string.equals(((HSSFRichTextString)o).string);
+      }
+      return false;
+    
     }
 
     /**

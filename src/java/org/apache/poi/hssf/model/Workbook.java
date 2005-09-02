@@ -216,6 +216,7 @@ public class Workbook implements Model
                     if (log.check( POILogger.DEBUG ))
                         log.log(DEBUG, "found palette record at " + k);
                     retval.records.setPalettepos( k );
+                    break;
                 case WindowOneRecord.sid:
                     if (log.check( POILogger.DEBUG ))
                         log.log(DEBUG, "found WindowOneRecord at " + k);

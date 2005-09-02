@@ -39,15 +39,15 @@ public class ValueRangeRecord
     private  double     field_4_minorIncrement;
     private  double     field_5_categoryAxisCross;
     private  short      field_6_options;
-    private  BitField   automaticMinimum                            = new BitField(0x1);
-    private  BitField   automaticMaximum                            = new BitField(0x2);
-    private  BitField   automaticMajor                              = new BitField(0x4);
-    private  BitField   automaticMinor                              = new BitField(0x8);
-    private  BitField   automaticCategoryCrossing                   = new BitField(0x10);
-    private  BitField   logarithmicScale                            = new BitField(0x20);
-    private  BitField   valuesInReverse                             = new BitField(0x40);
-    private  BitField   crossCategoryAxisAtMaximum                  = new BitField(0x80);
-    private  BitField   reserved                                    = new BitField(0x100);
+    private  BitField   automaticMinimum                            = BitFieldFactory.getInstance(0x1);
+    private  BitField   automaticMaximum                            = BitFieldFactory.getInstance(0x2);
+    private  BitField   automaticMajor                              = BitFieldFactory.getInstance(0x4);
+    private  BitField   automaticMinor                              = BitFieldFactory.getInstance(0x8);
+    private  BitField   automaticCategoryCrossing                   = BitFieldFactory.getInstance(0x10);
+    private  BitField   logarithmicScale                            = BitFieldFactory.getInstance(0x20);
+    private  BitField   valuesInReverse                             = BitFieldFactory.getInstance(0x40);
+    private  BitField   crossCategoryAxisAtMaximum                  = BitFieldFactory.getInstance(0x80);
+    private  BitField   reserved                                    = BitFieldFactory.getInstance(0x100);
 
 
     public ValueRangeRecord()

@@ -25,6 +25,7 @@ package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.BitField;
+import org.apache.poi.util.BitFieldFactory;
 
 /**
  * Title: ColumnInfo Record<P>
@@ -43,9 +44,9 @@ public class ColumnInfoRecord
     private short                 field_3_col_width;
     private short                 field_4_xf_index;
     private short                 field_5_options;
-    static final private BitField hidden    = new BitField(0x01);
-    static final private BitField outlevel  = new BitField(0x0700);
-    static final private BitField collapsed = new BitField(0x1000);
+    static final private BitField hidden    = BitFieldFactory.getInstance(0x01);
+    static final private BitField outlevel  = BitFieldFactory.getInstance(0x0700);
+    static final private BitField collapsed = BitFieldFactory.getInstance(0x1000);
     private short                 field_6_reserved;
 
     public ColumnInfoRecord()

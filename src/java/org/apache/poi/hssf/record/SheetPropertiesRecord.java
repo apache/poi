@@ -34,11 +34,11 @@ public class SheetPropertiesRecord
 {
     public final static short      sid                             = 0x1044;
     private  short      field_1_flags;
-    private  BitField   chartTypeManuallyFormatted                  = new BitField(0x1);
-    private  BitField   plotVisibleOnly                             = new BitField(0x2);
-    private  BitField   doNotSizeWithWindow                         = new BitField(0x4);
-    private  BitField   defaultPlotDimensions                       = new BitField(0x8);
-    private  BitField   autoPlotArea                                = new BitField(0x10);
+    private  BitField   chartTypeManuallyFormatted                  = BitFieldFactory.getInstance(0x1);
+    private  BitField   plotVisibleOnly                             = BitFieldFactory.getInstance(0x2);
+    private  BitField   doNotSizeWithWindow                         = BitFieldFactory.getInstance(0x4);
+    private  BitField   defaultPlotDimensions                       = BitFieldFactory.getInstance(0x8);
+    private  BitField   autoPlotArea                                = BitFieldFactory.getInstance(0x10);
     private  byte       field_2_empty;
     public final static byte        EMPTY_NOT_PLOTTED              = 0;
     public final static byte        EMPTY_ZERO                     = 1;

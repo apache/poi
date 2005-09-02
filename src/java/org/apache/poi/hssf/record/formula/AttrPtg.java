@@ -22,6 +22,7 @@ import org.apache.poi.hssf.record.RecordInputStream;
 
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.BitField;
+import org.apache.poi.util.BitFieldFactory;
 
 import java.util.List;
 
@@ -40,13 +41,13 @@ public class AttrPtg
     private final static int  SIZE = 4;
     private byte              field_1_options;
     private short             field_2_data;
-    private BitField          semiVolatile = new BitField(0x01);
-    private BitField          optiIf       = new BitField(0x02);
-    private BitField          optiChoose   = new BitField(0x04);
-    private BitField          optGoto      = new BitField(0x08);
-    private BitField          sum          = new BitField(0x10);
-    private BitField          baxcel       = new BitField(0x20);
-    private BitField          space        = new BitField(0x40);
+    private BitField          semiVolatile = BitFieldFactory.getInstance(0x01);
+    private BitField          optiIf       = BitFieldFactory.getInstance(0x02);
+    private BitField          optiChoose   = BitFieldFactory.getInstance(0x04);
+    private BitField          optGoto      = BitFieldFactory.getInstance(0x08);
+    private BitField          sum          = BitFieldFactory.getInstance(0x10);
+    private BitField          baxcel       = BitFieldFactory.getInstance(0x20);
+    private BitField          space        = BitFieldFactory.getInstance(0x40);
 
     public AttrPtg() {
     }

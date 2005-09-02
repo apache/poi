@@ -19,6 +19,7 @@
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.BitField;
+import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -37,23 +38,23 @@ public class WindowTwoRecord
     private short             field_1_options;
 
     // bitfields
-    private BitField          displayFormulas         = new BitField(0x01);
-    private BitField          displayGridlines        = new BitField(0x02);
-    private BitField          displayRowColHeadings   = new BitField(0x04);
-    private BitField          freezePanes             = new BitField(0x08);
-    private BitField          displayZeros            = new BitField(0x10);
+    private BitField          displayFormulas         = BitFieldFactory.getInstance(0x01);
+    private BitField          displayGridlines        = BitFieldFactory.getInstance(0x02);
+    private BitField          displayRowColHeadings   = BitFieldFactory.getInstance(0x04);
+    private BitField          freezePanes             = BitFieldFactory.getInstance(0x08);
+    private BitField          displayZeros            = BitFieldFactory.getInstance(0x10);
     private BitField          defaultHeader           =
-        new BitField(0x20);   // if false use color in field 4
+        BitFieldFactory.getInstance(0x20);   // if false use color in field 4
 
     // if true use default foreground
     // for headers
     private BitField          arabic                  =
-        new BitField(0x40);   // for our desert dwelling friends
-    private BitField          displayGuts             = new BitField(0x80);
-    private BitField          freezePanesNoSplit      = new BitField(0x100);
-    private BitField          selected                = new BitField(0x200);
-    private BitField          paged                   = new BitField(0x400);
-    private BitField          savedInPageBreakPreview = new BitField(0x800);
+        BitFieldFactory.getInstance(0x40);   // for our desert dwelling friends
+    private BitField          displayGuts             = BitFieldFactory.getInstance(0x80);
+    private BitField          freezePanesNoSplit      = BitFieldFactory.getInstance(0x100);
+    private BitField          selected                = BitFieldFactory.getInstance(0x200);
+    private BitField          paged                   = BitFieldFactory.getInstance(0x400);
+    private BitField          savedInPageBreakPreview = BitFieldFactory.getInstance(0x800);
 
     // 4-7 reserved
     // end bitfields

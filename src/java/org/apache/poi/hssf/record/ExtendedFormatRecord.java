@@ -19,6 +19,7 @@
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.BitField;
+import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -104,81 +105,81 @@ public class ExtendedFormatRecord
     private short                 field_2_format_index;           // not bit-mapped
 
     // field_3_cell_options bit map
-    static final private BitField _locked       = new BitField(0x0001);
-    static final private BitField _hidden       = new BitField(0x0002);
-    static final private BitField _xf_type      = new BitField(0x0004);
-    static final private BitField _123_prefix   = new BitField(0x0008);
-    static final private BitField _parent_index = new BitField(0xFFF0);
+    static final private BitField _locked       = BitFieldFactory.getInstance(0x0001);
+    static final private BitField _hidden       = BitFieldFactory.getInstance(0x0002);
+    static final private BitField _xf_type      = BitFieldFactory.getInstance(0x0004);
+    static final private BitField _123_prefix   = BitFieldFactory.getInstance(0x0008);
+    static final private BitField _parent_index = BitFieldFactory.getInstance(0xFFF0);
     private short                 field_3_cell_options;
 
     // field_4_alignment_options bit map
-    static final private BitField _alignment          = new BitField(0x0007);
-    static final private BitField _wrap_text          = new BitField(0x0008);
-    static final private BitField _vertical_alignment = new BitField(0x0070);
-    static final private BitField _justify_last       = new BitField(0x0080);
-    static final private BitField _rotation           = new BitField(0xFF00);
+    static final private BitField _alignment          = BitFieldFactory.getInstance(0x0007);
+    static final private BitField _wrap_text          = BitFieldFactory.getInstance(0x0008);
+    static final private BitField _vertical_alignment = BitFieldFactory.getInstance(0x0070);
+    static final private BitField _justify_last       = BitFieldFactory.getInstance(0x0080);
+    static final private BitField _rotation           = BitFieldFactory.getInstance(0xFF00);
     private short                 field_4_alignment_options;
 
     // field_5_indention_options
     static final private BitField _indent                         =
-        new BitField(0x000F);
+        BitFieldFactory.getInstance(0x000F);
     static final private BitField _shrink_to_fit                  =
-        new BitField(0x0010);
+        BitFieldFactory.getInstance(0x0010);
     static final private BitField _merge_cells                    =
-        new BitField(0x0020);
+        BitFieldFactory.getInstance(0x0020);
     static final private BitField _reading_order                  =
-        new BitField(0x00C0);
+        BitFieldFactory.getInstance(0x00C0);
 
     // apparently bits 8 and 9 are unused
     static final private BitField _indent_not_parent_format       =
-        new BitField(0x0400);
+        BitFieldFactory.getInstance(0x0400);
     static final private BitField _indent_not_parent_font         =
-        new BitField(0x0800);
+        BitFieldFactory.getInstance(0x0800);
     static final private BitField _indent_not_parent_alignment    =
-        new BitField(0x1000);
+        BitFieldFactory.getInstance(0x1000);
     static final private BitField _indent_not_parent_border       =
-        new BitField(0x2000);
+        BitFieldFactory.getInstance(0x2000);
     static final private BitField _indent_not_parent_pattern      =
-        new BitField(0x4000);
+        BitFieldFactory.getInstance(0x4000);
     static final private BitField _indent_not_parent_cell_options =
-        new BitField(0x8000);
+        BitFieldFactory.getInstance(0x8000);
     private short                 field_5_indention_options;
 
     // field_6_border_options bit map
-    static final private BitField _border_left   = new BitField(0x000F);
-    static final private BitField _border_right  = new BitField(0x00F0);
-    static final private BitField _border_top    = new BitField(0x0F00);
-    static final private BitField _border_bottom = new BitField(0xF000);
+    static final private BitField _border_left   = BitFieldFactory.getInstance(0x000F);
+    static final private BitField _border_right  = BitFieldFactory.getInstance(0x00F0);
+    static final private BitField _border_top    = BitFieldFactory.getInstance(0x0F00);
+    static final private BitField _border_bottom = BitFieldFactory.getInstance(0xF000);
     private short                 field_6_border_options;
 
     // all three of the following attributes are palette options
     // field_7_palette_options bit map
     static final private BitField _left_border_palette_idx  =
-        new BitField(0x007F);
+        BitFieldFactory.getInstance(0x007F);
     static final private BitField _right_border_palette_idx =
-        new BitField(0x3F80);
+        BitFieldFactory.getInstance(0x3F80);
     static final private BitField _diag                     =
-        new BitField(0xC000);
+        BitFieldFactory.getInstance(0xC000);
     private short                 field_7_palette_options;
 
     // field_8_adtl_palette_options bit map
     static final private BitField _top_border_palette_idx    =
-        new BitField(0x0000007F);
+        BitFieldFactory.getInstance(0x0000007F);
     static final private BitField _bottom_border_palette_idx =
-        new BitField(0x00003F80);
+        BitFieldFactory.getInstance(0x00003F80);
     static final private BitField _adtl_diag                 =
-        new BitField(0x001fc000);
+        BitFieldFactory.getInstance(0x001fc000);
     static final private BitField _adtl_diag_line_style      =
-        new BitField(0x01e00000);
+        BitFieldFactory.getInstance(0x01e00000);
 
     // apparently bit 25 is unused
     static final private BitField _adtl_fill_pattern         =
-        new BitField(0xfc000000);
+        BitFieldFactory.getInstance(0xfc000000);
     private int                   field_8_adtl_palette_options;   // additional to avoid 2
 
     // field_9_fill_palette_options bit map
-    static final private BitField _fill_foreground = new BitField(0x007F);
-    static final private BitField _fill_background = new BitField(0x3f80);
+    static final private BitField _fill_foreground = BitFieldFactory.getInstance(0x007F);
+    static final private BitField _fill_background = BitFieldFactory.getInstance(0x3f80);
 
     // apparently bits 15 and 14 are unused
     private short                 field_9_fill_palette_options;

@@ -19,6 +19,7 @@ package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.BitField;
+import org.apache.poi.util.BitFieldFactory;
 
 import org.apache.poi.hssf.util.AreaReference;
 import org.apache.poi.hssf.util.CellReference;
@@ -41,9 +42,9 @@ public class AreaPtg
     private short             field_3_first_column;
     private short             field_4_last_column;
     
-    private BitField         rowRelative = new BitField(0x8000);
-    private BitField         colRelative = new BitField(0x4000);
-    private BitField         column      = new BitField(0x3FFF);
+    private BitField         rowRelative = BitFieldFactory.getInstance(0x8000);
+    private BitField         colRelative = BitFieldFactory.getInstance(0x4000);
+    private BitField         column      = BitFieldFactory.getInstance(0x3FFF);
 
     private AreaPtg() {
       //Required for clone methods
