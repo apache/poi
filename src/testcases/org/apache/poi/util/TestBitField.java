@@ -30,8 +30,8 @@ import junit.framework.*;
 public class TestBitField
     extends TestCase
 {
-    private static BitField bf_multi  = new BitField(0x3F80);
-    private static BitField bf_single = new BitField(0x4000);
+    private static BitField bf_multi  = BitFieldFactory.getInstance(0x3F80);
+    private static BitField bf_single = BitFieldFactory.getInstance(0x4000);
 
     /**
      * Constructor TestBitField
@@ -182,29 +182,29 @@ public class TestBitField
 
     public void testByte()
     {
-        assertEquals(1, new BitField(1).setByteBoolean(( byte ) 0, true));
-        assertEquals(2, new BitField(2).setByteBoolean(( byte ) 0, true));
-        assertEquals(4, new BitField(4).setByteBoolean(( byte ) 0, true));
-        assertEquals(8, new BitField(8).setByteBoolean(( byte ) 0, true));
-        assertEquals(16, new BitField(16).setByteBoolean(( byte ) 0, true));
-        assertEquals(32, new BitField(32).setByteBoolean(( byte ) 0, true));
-        assertEquals(64, new BitField(64).setByteBoolean(( byte ) 0, true));
+        assertEquals(1, BitFieldFactory.getInstance(1).setByteBoolean(( byte ) 0, true));
+        assertEquals(2, BitFieldFactory.getInstance(2).setByteBoolean(( byte ) 0, true));
+        assertEquals(4, BitFieldFactory.getInstance(4).setByteBoolean(( byte ) 0, true));
+        assertEquals(8, BitFieldFactory.getInstance(8).setByteBoolean(( byte ) 0, true));
+        assertEquals(16, BitFieldFactory.getInstance(16).setByteBoolean(( byte ) 0, true));
+        assertEquals(32, BitFieldFactory.getInstance(32).setByteBoolean(( byte ) 0, true));
+        assertEquals(64, BitFieldFactory.getInstance(64).setByteBoolean(( byte ) 0, true));
         assertEquals(-128,
-                     new BitField(128).setByteBoolean(( byte ) 0, true));
-        assertEquals(0, new BitField(1).setByteBoolean(( byte ) 1, false));
-        assertEquals(0, new BitField(2).setByteBoolean(( byte ) 2, false));
-        assertEquals(0, new BitField(4).setByteBoolean(( byte ) 4, false));
-        assertEquals(0, new BitField(8).setByteBoolean(( byte ) 8, false));
-        assertEquals(0, new BitField(16).setByteBoolean(( byte ) 16, false));
-        assertEquals(0, new BitField(32).setByteBoolean(( byte ) 32, false));
-        assertEquals(0, new BitField(64).setByteBoolean(( byte ) 64, false));
-        assertEquals(0, new BitField(128).setByteBoolean(( byte ) 128,
+                     BitFieldFactory.getInstance(128).setByteBoolean(( byte ) 0, true));
+        assertEquals(0, BitFieldFactory.getInstance(1).setByteBoolean(( byte ) 1, false));
+        assertEquals(0, BitFieldFactory.getInstance(2).setByteBoolean(( byte ) 2, false));
+        assertEquals(0, BitFieldFactory.getInstance(4).setByteBoolean(( byte ) 4, false));
+        assertEquals(0, BitFieldFactory.getInstance(8).setByteBoolean(( byte ) 8, false));
+        assertEquals(0, BitFieldFactory.getInstance(16).setByteBoolean(( byte ) 16, false));
+        assertEquals(0, BitFieldFactory.getInstance(32).setByteBoolean(( byte ) 32, false));
+        assertEquals(0, BitFieldFactory.getInstance(64).setByteBoolean(( byte ) 64, false));
+        assertEquals(0, BitFieldFactory.getInstance(128).setByteBoolean(( byte ) 128,
                                      false));
-        assertEquals(-2, new BitField(1).setByteBoolean(( byte ) 255, false));
-        byte clearedBit = new BitField(0x40).setByteBoolean(( byte ) -63,
+        assertEquals(-2, BitFieldFactory.getInstance(1).setByteBoolean(( byte ) 255, false));
+        byte clearedBit = BitFieldFactory.getInstance(0x40).setByteBoolean(( byte ) -63,
                                        false);
 
-        assertEquals(false, new BitField(0x40).isSet(clearedBit));
+        assertEquals(false, BitFieldFactory.getInstance(0x40).isSet(clearedBit));
     }
 
     /**
