@@ -19,6 +19,7 @@
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.BitField;
+import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.HexDump;
 
@@ -48,9 +49,9 @@ public class UnicodeString
     private String            field_3_string;        // = null;
     private List field_4_format_runs;
     private byte[] field_5_ext_rst;
-    private  BitField   highByte  = new BitField(0x1);
-    private  BitField   extBit    = new BitField(0x4);
-    private  BitField   richText  = new BitField(0x8);
+    private  BitField   highByte  = BitFieldFactory.getInstance(0x1);
+    private  BitField   extBit    = BitFieldFactory.getInstance(0x4);
+    private  BitField   richText  = BitFieldFactory.getInstance(0x8);
 
     public static class FormatRun implements Comparable {
       private short character;
@@ -550,8 +551,7 @@ public class UnicodeString
 
       byte[] strBytes = null;
         try {
-              //JMH Why does this do this?
-            String unicodeString = new String(getString().getBytes("Unicode"),"Unicode");
+            String unicodeString = getString();
               if (!isUncompressedUnicode())
             {
                 strBytes = unicodeString.getBytes("ISO-8859-1");
@@ -562,17 +562,8 @@ public class UnicodeString
             }
         }
         catch (Exception e) {
-            try {
-              if (!isUncompressedUnicode()) {
-                strBytes = getString().getBytes("ISO-8859-1");
-            }
-              else {
-                strBytes = getString().getBytes("UTF-16LE");
-            }
-            } catch (Exception ex) {
               throw new InternalError();
         }
-          }
           if (strSize != strBytes.length)
             throw new InternalError("That shouldnt have happened!");
 
