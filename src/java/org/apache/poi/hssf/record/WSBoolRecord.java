@@ -19,6 +19,7 @@
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.BitField;
+import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -41,29 +42,29 @@ public class WSBoolRecord
 
     // I decided to be consistant in this way.
     static final private BitField autobreaks          =
-        new BitField(0x01);                               // are automatic page breaks visible
+        BitFieldFactory.getInstance(0x01);                               // are automatic page breaks visible
 
     // bits 1 to 3 unused
     static final private BitField dialog              =
-        new BitField(0x10);                               // is sheet dialog sheet
+        BitFieldFactory.getInstance(0x10);                               // is sheet dialog sheet
     static final private BitField applystyles         =
-        new BitField(0x20);                               // whether to apply automatic styles to outlines
-    static final private BitField rowsumsbelow        = new BitField(
+        BitFieldFactory.getInstance(0x20);                               // whether to apply automatic styles to outlines
+    static final private BitField rowsumsbelow        = BitFieldFactory.getInstance(
         0x40);                                            // whether summary rows will appear below detail in outlines
-    static final private BitField rowsumsright        = new BitField(
+    static final private BitField rowsumsright        = BitFieldFactory.getInstance(
         0x80);                                            // whether summary rows will appear right of the detail in outlines
     static final private BitField fittopage           =
-        new BitField(0x01);                               // whether to fit stuff to the page
+        BitFieldFactory.getInstance(0x01);                               // whether to fit stuff to the page
 
     // bit 2 reserved
-    static final private BitField displayguts         = new BitField(
+    static final private BitField displayguts         = BitFieldFactory.getInstance(
         0x06);                                            // whether to display outline symbols (in the gutters)
 
     // bits 4-5 reserved
     static final private BitField alternateexpression =   // whether to use alternate expression eval
-        new BitField(0x40);
+        BitFieldFactory.getInstance(0x40);
     static final private BitField alternateformula    =   // whether to use alternate formula entry
-        new BitField(0x80);
+        BitFieldFactory.getInstance(0x80);
 
     public WSBoolRecord()
     {

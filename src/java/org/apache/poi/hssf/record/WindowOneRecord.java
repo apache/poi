@@ -19,6 +19,7 @@
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.BitField;
+import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -43,16 +44,16 @@ public class WindowOneRecord
     private short                 field_4_height;
     private short                 field_5_options;
     static final private BitField hidden   =
-        new BitField(0x01);                                        // is this window is hidden
+        BitFieldFactory.getInstance(0x01);                                        // is this window is hidden
     static final private BitField iconic   =
-        new BitField(0x02);                                        // is this window is an icon
-    static final private BitField reserved = new BitField(0x04);   // reserved
+        BitFieldFactory.getInstance(0x02);                                        // is this window is an icon
+    static final private BitField reserved = BitFieldFactory.getInstance(0x04);   // reserved
     static final private BitField hscroll  =
-        new BitField(0x08);                                        // display horizontal scrollbar
+        BitFieldFactory.getInstance(0x08);                                        // display horizontal scrollbar
     static final private BitField vscroll  =
-        new BitField(0x10);                                        // display vertical scrollbar
+        BitFieldFactory.getInstance(0x10);                                        // display vertical scrollbar
     static final private BitField tabs     =
-        new BitField(0x20);                                        // display tabs at the bottom
+        BitFieldFactory.getInstance(0x20);                                        // display tabs at the bottom
 
     // all the rest are "reserved"
     private short                 field_6_selected_tab;

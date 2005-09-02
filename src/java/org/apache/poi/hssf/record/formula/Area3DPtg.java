@@ -25,6 +25,8 @@ import org.apache.poi.hssf.util.SheetReferences;
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.util.BitField;
+import org.apache.poi.util.BitFieldFactory;
+
 
 /**
  * Title:        Area 3D Ptg - 3D referecnce (Sheet + Area)<P>
@@ -46,8 +48,8 @@ public class Area3DPtg extends Ptg
 	private short field_4_first_column;
 	private short field_5_last_column;
 
-	private BitField rowRelative = new BitField( 0x8000 );
-	private BitField colRelative = new BitField( 0x4000 );
+	private BitField rowRelative = BitFieldFactory.getInstance( 0x8000 );
+	private BitField colRelative = BitFieldFactory.getInstance( 0x4000 );
 
 	/** Creates new AreaPtg */
 	public Area3DPtg()

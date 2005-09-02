@@ -21,6 +21,7 @@ package org.apache.poi.hssf.record;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
 import org.apache.poi.util.BitField;
+import org.apache.poi.util.BitFieldFactory;
 
 /**
  * Title:        Style Record<P>
@@ -78,7 +79,7 @@ public class StyleRecord
 
     protected void fillFields(RecordInputStream in)
     {
-        fHighByte = new BitField(0x01); //have to init here, since we are being called
+        fHighByte = BitFieldFactory.getInstance(0x01); //have to init here, since we are being called
                                         //from super, and class level init hasnt been done. 
         field_1_xf_index = in.readShort();
         if (getType() == STYLE_BUILT_IN)

@@ -20,6 +20,7 @@ package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.BitField;
+import org.apache.poi.util.BitFieldFactory;
 
 /**
  * Class ChartFormatRecord
@@ -40,7 +41,7 @@ public class ChartFormatRecord
     private int               field3_width;
     private int               field4_height;
     private short             field5_grbit;
-    private BitField          varyDisplayPattern = new BitField(0x01);
+    private BitField          varyDisplayPattern = BitFieldFactory.getInstance(0x01);
 
     public ChartFormatRecord()
     {

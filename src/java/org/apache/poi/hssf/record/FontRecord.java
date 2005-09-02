@@ -21,6 +21,7 @@ package org.apache.poi.hssf.record;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
 import org.apache.poi.util.BitField;
+import org.apache.poi.util.BitFieldFactory;
 
 /**
  * Title:        Font Record - descrbes a font in the workbook (index = 0-3,5-infinity - skip 4)<P>
@@ -48,14 +49,14 @@ public class FontRecord
 
     // 0 0x01 - Reserved bit must be 0
     static final private BitField italic     =
-        new BitField(0x02);                                   // is this font in italics
+        BitFieldFactory.getInstance(0x02);                                   // is this font in italics
 
     // 2 0x04 - reserved bit must be 0
     static final private BitField strikeout  =
-        new BitField(0x08);                                   // is this font has a line through the center
-    static final private BitField macoutline = new BitField(
+        BitFieldFactory.getInstance(0x08);                                   // is this font has a line through the center
+    static final private BitField macoutline = BitFieldFactory.getInstance(
         0x10);                                                // some weird macintosh thing....but who understands those mac people anyhow
-    static final private BitField macshadow  = new BitField(
+    static final private BitField macshadow  = BitFieldFactory.getInstance(
         0x20);                                                // some weird macintosh thing....but who understands those mac people anyhow
 
     // 7-6 - reserved bits must be 0

@@ -43,10 +43,10 @@ public class TickRecord
     private  int        field_8_zero3;
     private  int        field_9_zero4;
     private  short      field_10_options;
-    private  BitField   autoTextColor                               = new BitField(0x1);
-    private  BitField   autoTextBackground                          = new BitField(0x2);
-    private BitField   rotation                                   = new BitField(0x1c);
-    private  BitField   autorotate                                  = new BitField(0x20);
+    private  BitField   autoTextColor                               = BitFieldFactory.getInstance(0x1);
+    private  BitField   autoTextBackground                          = BitFieldFactory.getInstance(0x2);
+    private BitField   rotation                                   = BitFieldFactory.getInstance(0x1c);
+    private  BitField   autorotate                                  = BitFieldFactory.getInstance(0x20);
     private  short      field_11_tickColor;
     private  short      field_12_zero5;
 

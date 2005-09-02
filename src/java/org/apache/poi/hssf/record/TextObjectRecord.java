@@ -38,16 +38,20 @@ public class TextObjectRecord
     protected void fillFields(RecordInputStream in)
     {
       super.fillFields(in);
+      if (getTextLength() > 0) {
       if (in.isContinueNext() && in.remaining() == 0) {
         //1st Continue
         in.nextRecord();
         processRawString(in);
+        } else
+          throw new RecordFormatException("Expected Continue record to hold string data for TextObjectRecord");        
+      }
+      if (getFormattingRunLength() > 0) {
         if (in.isContinueNext() && in.remaining() == 0) {
           in.nextRecord();
           processFontRuns(in);
         } else throw new RecordFormatException("Expected Continue Record to hold font runs for TextObjectRecord");
-      } else
-        throw new RecordFormatException("Expected Continue record to hold string data for TextObjectRecord");
+      }
     }
 
 

@@ -50,9 +50,9 @@ public class LineFormatRecord
     public final static short       WEIGHT_MEDIUM                  = 1;
     public final static short       WEIGHT_WIDE                    = 2;
     private  short      field_4_format;
-    private  BitField   auto                                        = new BitField(0x1);
-    private  BitField   drawTicks                                   = new BitField(0x4);
-    private  BitField   unknown                                     = new BitField(0x4);
+    private  BitField   auto                                        = BitFieldFactory.getInstance(0x1);
+    private  BitField   drawTicks                                   = BitFieldFactory.getInstance(0x4);
+    private  BitField   unknown                                     = BitFieldFactory.getInstance(0x4);
     private  short      field_5_colourPaletteIndex;
 
 

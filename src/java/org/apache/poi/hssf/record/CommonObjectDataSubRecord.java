@@ -67,10 +67,10 @@ public class CommonObjectDataSubRecord
     public final static short       OBJECT_TYPE_MICROSOFT_OFFICE_DRAWING = 30;
     private  short      field_2_objectId;
     private  short      field_3_option;
-    private  BitField   locked                                      = new BitField(0x1);
-    private  BitField   printable                                   = new BitField(0x10);
-    private  BitField   autofill                                    = new BitField(0x2000);
-    private  BitField   autoline                                    = new BitField(0x4000);
+    private  BitField   locked                                      = BitFieldFactory.getInstance(0x1);
+    private  BitField   printable                                   = BitFieldFactory.getInstance(0x10);
+    private  BitField   autofill                                    = BitFieldFactory.getInstance(0x2000);
+    private  BitField   autoline                                    = BitFieldFactory.getInstance(0x4000);
     private  int        field_4_reserved1;
     private  int        field_5_reserved2;
     private  int        field_6_reserved3;

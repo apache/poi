@@ -24,6 +24,7 @@ import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.hssf.util.SheetReferences;
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.util.BitField;
+import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.RecordInputStream;
 
@@ -42,8 +43,8 @@ public class Ref3DPtg extends Ptg {
     private short             field_1_index_extern_sheet;
     private short             field_2_row;
     private short             field_3_column;
-    private BitField         rowRelative = new BitField(0x8000);
-    private BitField         colRelative = new BitField(0x4000);
+    private BitField         rowRelative = BitFieldFactory.getInstance(0x8000);
+    private BitField         colRelative = BitFieldFactory.getInstance(0x4000);
 
     /** Creates new AreaPtg */
     public Ref3DPtg() {}

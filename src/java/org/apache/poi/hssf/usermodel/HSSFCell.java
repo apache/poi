@@ -103,6 +103,7 @@ public class HSSFCell
      */
 
     public final static int          CELL_TYPE_ERROR             = 5;
+    public final static short        ENCODING_UNCHANGED          = -1;
     public final static short        ENCODING_COMPRESSED_UNICODE = 0;
     public final static short        ENCODING_UTF_16             = 1;
     private short                    cellNum;
@@ -112,7 +113,7 @@ public class HSSFCell
     private HSSFRichTextString       stringValue;
     private boolean                  booleanValue;
     private byte                     errorValue;
-    private short                    encoding = ENCODING_COMPRESSED_UNICODE;
+    private short                    encoding = ENCODING_UNCHANGED;
     private Workbook                 book;
     private Sheet                    sheet;
     //private short                    row;
@@ -467,19 +468,17 @@ public class HSSFCell
                     {
                         int sst = 0;
 
+                        UnicodeString str = getRichStringCellValue().getUnicodeString();
                         if (encoding == ENCODING_COMPRESSED_UNICODE)
                         {
-                            UnicodeString str = getRichStringCellValue().getUnicodeString();
                             str.setCompressedUnicode();
-                            sst = book.addSSTString(str);
-                        }
-                        if (encoding == ENCODING_UTF_16)
+                        } else if (encoding == ENCODING_UTF_16)
                         {
-                            UnicodeString str = getRichStringCellValue().getUnicodeString();
                             str.setUncompressedUnicode();
-                            sst = book.addSSTString(str);
                         }
+                        sst = book.addSSTString(str);
                         lrec.setSSTIndex(sst);
+                        getRichStringCellValue().setUnicodeString(book.getSSTString(sst));
                     }
                 }
                 record = lrec;
@@ -661,21 +660,19 @@ public class HSSFCell
             }
             int index = 0;
 
+            UnicodeString str = value.getUnicodeString();            
             if (encoding == ENCODING_COMPRESSED_UNICODE)
             {
-                UnicodeString str = value.getUnicodeString();
                 str.setCompressedUnicode();
-                index = book.addSSTString(str);
-            }
-            if (encoding == ENCODING_UTF_16)
+            } else if (encoding == ENCODING_UTF_16)
             {
-                UnicodeString str = value.getUnicodeString();
                 str.setUncompressedUnicode();
-                index = book.addSSTString(str);
             }
+            index = book.addSSTString(str);            
             (( LabelSSTRecord ) record).setSSTIndex(index);
             stringValue = value;
             stringValue.setWorkbookReferences(book, (( LabelSSTRecord ) record));
+            stringValue.setUnicodeString(book.getSSTString(index));            
         }
     }
 
@@ -924,14 +921,14 @@ public class HSSFCell
     }
 
     /**
-     * used for internationalization, currently 0 for compressed unicode or 1 for 16-bit
+     * used for internationalization, currently -1 for unchanged, 0 for compressed unicode or 1 for 16-bit
      *
+     * @see #ENCODING_UNCHANGED
      * @see #ENCODING_COMPRESSED_UNICODE
      * @see #ENCODING_UTF_16
      *
-     * @return 1 or 0 for compressed or uncompressed (used only with String type)
+     * @return -1, 1 or 0 for unchanged, compressed or uncompressed (used only with String type)
      */
-
     public short getEncoding()
     {
         return encoding;
@@ -940,6 +937,7 @@ public class HSSFCell
     /**
      * set the encoding to either 8 or 16 bit. (US/UK use 8-bit, rest of the western world use 16bit)
      *
+     * @see #ENCODING_UNCHANGED
      * @see #ENCODING_COMPRESSED_UNICODE
      * @see #ENCODING_UTF_16
      *

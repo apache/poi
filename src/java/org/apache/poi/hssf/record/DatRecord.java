@@ -34,10 +34,10 @@ public class DatRecord
 {
     public final static short      sid                             = 0x1063;
     private  short      field_1_options;
-    private  BitField   horizontalBorder                            = new BitField(0x1);
-    private  BitField   verticalBorder                              = new BitField(0x2);
-    private  BitField   border                                      = new BitField(0x4);
-    private  BitField   showSeriesKey                               = new BitField(0x8);
+    private  BitField   horizontalBorder                            = BitFieldFactory.getInstance(0x1);
+    private  BitField   verticalBorder                              = BitFieldFactory.getInstance(0x2);
+    private  BitField   border                                      = BitFieldFactory.getInstance(0x4);
+    private  BitField   showSeriesKey                               = BitFieldFactory.getInstance(0x8);
 
 
     public DatRecord()

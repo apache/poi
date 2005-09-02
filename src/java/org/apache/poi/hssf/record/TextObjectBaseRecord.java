@@ -36,20 +36,20 @@ public class TextObjectBaseRecord
 {
     public final static short      sid                             = 0x1B6;
     private  short      field_1_options;
-    private  BitField   reserved1                                   = new BitField(0x1);
-    private BitField   HorizontalTextAlignment                    = new BitField(0x000E);
+    private  BitField   reserved1                                   = BitFieldFactory.getInstance(0x1);
+    private BitField   HorizontalTextAlignment                    = BitFieldFactory.getInstance(0x000E);
     public final static short  HORIZONTAL_TEXT_ALIGNMENT_LEFT_ALIGNED = 1;
     public final static short  HORIZONTAL_TEXT_ALIGNMENT_CENTERED = 2;
     public final static short  HORIZONTAL_TEXT_ALIGNMENT_RIGHT_ALIGNED = 3;
     public final static short  HORIZONTAL_TEXT_ALIGNMENT_JUSTIFIED = 4;
-    private BitField   VerticalTextAlignment                      = new BitField(0x0070);
+    private BitField   VerticalTextAlignment                      = BitFieldFactory.getInstance(0x0070);
     public final static short  VERTICAL_TEXT_ALIGNMENT_TOP    = 1;
     public final static short  VERTICAL_TEXT_ALIGNMENT_CENTER = 2;
     public final static short  VERTICAL_TEXT_ALIGNMENT_BOTTOM = 3;
     public final static short  VERTICAL_TEXT_ALIGNMENT_JUSTIFY = 4;
-    private BitField   reserved2                                  = new BitField(0x0180);
-    private  BitField   textLocked                                  = new BitField(0x200);
-    private BitField   reserved3                                  = new BitField(0xFC00);
+    private BitField   reserved2                                  = BitFieldFactory.getInstance(0x0180);
+    private  BitField   textLocked                                  = BitFieldFactory.getInstance(0x200);
+    private BitField   reserved3                                  = BitFieldFactory.getInstance(0xFC00);
     private  short      field_2_textOrientation;
     public final static short       TEXT_ORIENTATION_NONE          = 0;
     public final static short       TEXT_ORIENTATION_TOP_TO_BOTTOM = 1;

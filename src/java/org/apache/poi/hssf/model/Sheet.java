@@ -1033,6 +1033,12 @@ public class Sheet implements Model
         setLoc(dimsloc);
         if (log.check( POILogger.DEBUG ))
             log.log(POILogger.DEBUG, "replaceValueRecord ");
+        //The ValueRecordsAggregate use a tree map underneath.
+        //The tree Map uses the CellValueRecordInterface as both the
+        //key and the value, if we dont do a remove, then
+        //the previous instance of the key is retained, effectively using 
+        //double the memory
+        cells.removeCell(newval);
         cells.insertCell(newval);
 
         /*

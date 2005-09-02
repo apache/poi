@@ -18,6 +18,7 @@ package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.util.BitField;
+import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.StringUtil;
 import org.apache.poi.hssf.record.RecordInputStream;
 
@@ -38,7 +39,7 @@ public class StringPtg
     // Book says something totally different, so dont look there!
     int field_1_length;
     byte field_2_options;
-    BitField fHighByte = new BitField(0x01);
+    BitField fHighByte = BitFieldFactory.getInstance(0x01);
     private String            field_3_string;
 
     private StringPtg() {
