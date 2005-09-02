@@ -37,31 +37,31 @@ public class FileInformationBlock extends FIBAbstractType
     private  short field_5_unknown;
     private  short field_6_options;
 
-        private static final BitField template          = new BitField(0x0001);
-        private static final BitField glossary          = new BitField(0x0002);
-        private static final BitField quicksave         = new BitField(0x0004);
-        private static final BitField haspictr          = new BitField(0x0008);
-        private static final BitField nquicksaves       = new BitField(0x00F0);
-        private static final BitField encrypted         = new BitField(0x0100);
-        private static final BitField tabletype         = new BitField(0x0200);
-        private static final BitField readonly          = new BitField(0x0400);
-        private static final BitField writeReservation  = new BitField(0x0800);
-        private static final BitField extendedCharacter = new BitField(0x1000);
-        private static final BitField loadOverride      = new BitField(0x2000);
-        private static final BitField farEast           = new BitField(0x4000);
-        private static final BitField crypto            = new BitField(0x8000);
+        private static final BitField template          = BitFieldFactory.getInstance(0x0001);
+        private static final BitField glossary          = BitFieldFactory.getInstance(0x0002);
+        private static final BitField quicksave         = BitFieldFactory.getInstance(0x0004);
+        private static final BitField haspictr          = BitFieldFactory.getInstance(0x0008);
+        private static final BitField nquicksaves       = BitFieldFactory.getInstance(0x00F0);
+        private static final BitField encrypted         = BitFieldFactory.getInstance(0x0100);
+        private static final BitField tabletype         = BitFieldFactory.getInstance(0x0200);
+        private static final BitField readonly          = BitFieldFactory.getInstance(0x0400);
+        private static final BitField writeReservation  = BitFieldFactory.getInstance(0x0800);
+        private static final BitField extendedCharacter = BitFieldFactory.getInstance(0x1000);
+        private static final BitField loadOverride      = BitFieldFactory.getInstance(0x2000);
+        private static final BitField farEast           = BitFieldFactory.getInstance(0x4000);
+        private static final BitField crypto            = BitFieldFactory.getInstance(0x8000);
 
     private short field_7_minversion;
     private short field_8_encrypted_key;
     private short field_9_environment; // 0 or 1 - windows or mac
     private short field_10_history;
 
-        private static final BitField history_mac   = new BitField(0x01);
-        private static final BitField empty_special = new BitField(0x02);
-        private static final BitField load_override = new BitField(0x04);
-        private static final BitField future_undo   = new BitField(0x08);
-        private static final BitField w97_saved     = new BitField(0x10);
-        private static final BitField spare         = new BitField(0xfe);
+        private static final BitField history_mac   = BitFieldFactory.getInstance(0x01);
+        private static final BitField empty_special = BitFieldFactory.getInstance(0x02);
+        private static final BitField load_override = BitFieldFactory.getInstance(0x04);
+        private static final BitField future_undo   = BitFieldFactory.getInstance(0x08);
+        private static final BitField w97_saved     = BitFieldFactory.getInstance(0x10);
+        private static final BitField spare         = BitFieldFactory.getInstance(0xfe);
 
     private short field_11_default_charset;
     private short field_12_default_extcharset;

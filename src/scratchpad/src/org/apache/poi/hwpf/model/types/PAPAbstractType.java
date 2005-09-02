@@ -22,6 +22,7 @@ package org.apache.poi.hwpf.model.types;
 
 
 import org.apache.poi.util.BitField;
+import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
 import org.apache.poi.util.HexDump;
@@ -74,9 +75,9 @@ public abstract class PAPAbstractType
     protected  byte field_33_fAutoSpaceDN;
     protected  int field_34_wAlignFont;
     protected  short field_35_fontAlign;
-        private static BitField  fVertical = new BitField(0x0001);
-        private static BitField  fBackward = new BitField(0x0002);
-        private static BitField  fRotateFont = new BitField(0x0004);
+        private static BitField  fVertical = BitFieldFactory.getInstance(0x0001);
+        private static BitField  fBackward = BitFieldFactory.getInstance(0x0002);
+        private static BitField  fRotateFont = BitFieldFactory.getInstance(0x0004);
     protected  byte field_36_fBackward;
     protected  byte field_37_fRotateFont;
     protected  byte field_38_fInTable;

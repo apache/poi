@@ -23,15 +23,16 @@ import java.io.OutputStream;
 import java.io.IOException;
 
 import org.apache.poi.util.BitField;
+import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndian;
 
 public class ParagraphHeight
 {
   private short infoField;
-    private BitField fSpare = new BitField(0x0001);
-    private BitField fUnk = new BitField(0x0002);
-    private BitField fDiffLines = new BitField(0x0004);
-    private BitField clMac = new BitField(0xff00);
+    private BitField fSpare = BitFieldFactory.getInstance(0x0001);
+    private BitField fUnk = BitFieldFactory.getInstance(0x0002);
+    private BitField fDiffLines = BitFieldFactory.getInstance(0x0004);
+    private BitField clMac = BitFieldFactory.getInstance(0xff00);
   private short reserved;
   private int dxaCol;
   private int dymLineOrHeight;

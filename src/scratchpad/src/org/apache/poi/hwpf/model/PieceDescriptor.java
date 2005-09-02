@@ -20,15 +20,16 @@
 package org.apache.poi.hwpf.model;
 
 import org.apache.poi.util.BitField;
+import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndian;
 
 public class PieceDescriptor
 {
 
   short descriptor;
-   private static BitField fNoParaLast = new BitField(0x01);
-   private static BitField fPaphNil = new BitField(0x02);
-   private static BitField fCopied = new BitField(0x04);
+   private static BitField fNoParaLast = BitFieldFactory.getInstance(0x01);
+   private static BitField fPaphNil = BitFieldFactory.getInstance(0x02);
+   private static BitField fCopied = BitFieldFactory.getInstance(0x04);
   int fc;
   short prm;
   boolean unicode;

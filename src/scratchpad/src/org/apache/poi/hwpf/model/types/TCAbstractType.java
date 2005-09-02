@@ -22,6 +22,7 @@ package org.apache.poi.hwpf.model.types;
 
 
 import org.apache.poi.util.BitField;
+import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
 import org.apache.poi.util.HexDump;
@@ -40,14 +41,14 @@ public abstract class TCAbstractType
 {
 
     protected  short field_1_rgf;
-        private static BitField  fFirstMerged = new BitField(0x0001);
-        private static BitField  fMerged = new BitField(0x0002);
-        private static BitField  fVertical = new BitField(0x0004);
-        private static BitField  fBackward = new BitField(0x0008);
-        private static BitField  fRotateFont = new BitField(0x0010);
-        private static BitField  fVertMerge = new BitField(0x0020);
-        private static BitField  fVertRestart = new BitField(0x0040);
-        private static BitField  vertAlign = new BitField(0x0180);
+        private static BitField  fFirstMerged = BitFieldFactory.getInstance(0x0001);
+        private static BitField  fMerged = BitFieldFactory.getInstance(0x0002);
+        private static BitField  fVertical = BitFieldFactory.getInstance(0x0004);
+        private static BitField  fBackward = BitFieldFactory.getInstance(0x0008);
+        private static BitField  fRotateFont = BitFieldFactory.getInstance(0x0010);
+        private static BitField  fVertMerge = BitFieldFactory.getInstance(0x0020);
+        private static BitField  fVertRestart = BitFieldFactory.getInstance(0x0040);
+        private static BitField  vertAlign = BitFieldFactory.getInstance(0x0180);
     protected  short field_2_unused;
     protected  BorderCode field_3_brcTop;
     protected  BorderCode field_4_brcLeft;
