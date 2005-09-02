@@ -26,6 +26,7 @@ import org.apache.poi.hwpf.usermodel.CharacterProperties;
 import org.apache.poi.hwpf.usermodel.ParagraphProperties;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.BitField;
+import org.apache.poi.util.BitFieldFactory;
 /**
  * Comment me
  *
@@ -41,21 +42,21 @@ public class StyleDescription implements HDFType
   private int _istd;
   private int _baseLength;
   private short _infoShort;
-    private static BitField _sti = new BitField(0xfff);
-    private static BitField _fScratch = new BitField(0x1000);
-    private static BitField _fInvalHeight = new BitField(0x2000);
-    private static BitField _fHasUpe = new BitField(0x4000);
-    private static BitField _fMassCopy = new BitField(0x8000);
+    private static BitField _sti = BitFieldFactory.getInstance(0xfff);
+    private static BitField _fScratch = BitFieldFactory.getInstance(0x1000);
+    private static BitField _fInvalHeight = BitFieldFactory.getInstance(0x2000);
+    private static BitField _fHasUpe = BitFieldFactory.getInstance(0x4000);
+    private static BitField _fMassCopy = BitFieldFactory.getInstance(0x8000);
   private short _infoShort2;
-    private static BitField _styleTypeCode = new BitField(0xf);
-    private static BitField _baseStyle = new BitField(0xfff0);
+    private static BitField _styleTypeCode = BitFieldFactory.getInstance(0xf);
+    private static BitField _baseStyle = BitFieldFactory.getInstance(0xfff0);
   private short _infoShort3;
-    private static BitField _numUPX = new BitField(0xf);
-    private static BitField _nextStyle = new BitField(0xfff0);
+    private static BitField _numUPX = BitFieldFactory.getInstance(0xf);
+    private static BitField _nextStyle = BitFieldFactory.getInstance(0xfff0);
   private short _bchUpe;
   private short _infoShort4;
-    private static BitField _fAutoRedef = new BitField(0x1);
-    private static BitField _fHidden = new BitField(0x2);
+    private static BitField _fAutoRedef = BitFieldFactory.getInstance(0x1);
+    private static BitField _fHidden = BitFieldFactory.getInstance(0x2);
 
   UPX[] _upxs;
   String _name;

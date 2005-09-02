@@ -19,6 +19,7 @@
 package org.apache.poi.hwpf.sprm;
 
 import org.apache.poi.util.BitField;
+import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -29,10 +30,10 @@ import org.apache.poi.util.LittleEndian;
  */
 public class SprmOperation
 {
-  final static private BitField OP_BITFIELD = new BitField(0x1ff);
-  final static private BitField SPECIAL_BITFIELD = new BitField(0x200);
-  final static private BitField TYPE_BITFIELD = new BitField(0x1c00);
-  final static private BitField SIZECODE_BITFIELD = new BitField(0xe000);
+  final static private BitField OP_BITFIELD = BitFieldFactory.getInstance(0x1ff);
+  final static private BitField SPECIAL_BITFIELD = BitFieldFactory.getInstance(0x200);
+  final static private BitField TYPE_BITFIELD = BitFieldFactory.getInstance(0x1c00);
+  final static private BitField SIZECODE_BITFIELD = BitFieldFactory.getInstance(0xe000);
 
   final static private short LONG_SPRM_TABLE = (short)0xd608;
   final static private short LONG_SPRM_PARAGRAPH = (short)0xc615;

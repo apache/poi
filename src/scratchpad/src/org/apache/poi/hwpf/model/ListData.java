@@ -19,6 +19,7 @@
 package org.apache.poi.hwpf.model;
 
 import org.apache.poi.util.BitField;
+import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndian;
 
 import java.util.Arrays;
@@ -29,8 +30,8 @@ public class ListData
   private int _tplc;
   private short[] _rgistd;
   private byte _info;
-    private static BitField _fSimpleList = new BitField(0x1);
-    private static BitField _fRestartHdn = new BitField(0x2);
+    private static BitField _fSimpleList = BitFieldFactory.getInstance(0x1);
+    private static BitField _fRestartHdn = BitFieldFactory.getInstance(0x2);
   private byte _reserved;
   ListLevel[] _levels;
 

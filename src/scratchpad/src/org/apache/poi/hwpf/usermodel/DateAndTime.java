@@ -19,6 +19,7 @@
 package org.apache.poi.hwpf.usermodel;
 
 import org.apache.poi.util.BitField;
+import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -31,13 +32,13 @@ public class DateAndTime
 {
   public static final int SIZE = 4;
   private short _info;
-    private static final BitField _minutes = new BitField(0x3f);
-    private static final BitField _hours = new BitField(0x7c0);
-    private static final BitField _dom = new BitField(0xf800);
+    private static final BitField _minutes = BitFieldFactory.getInstance(0x3f);
+    private static final BitField _hours = BitFieldFactory.getInstance(0x7c0);
+    private static final BitField _dom = BitFieldFactory.getInstance(0xf800);
   private short _info2;
-    private static final BitField _months = new BitField(0xf);
-    private static final BitField _years = new BitField(0x1ff0);
-    private static final BitField _weekday = new BitField(0xe000);
+    private static final BitField _months = BitFieldFactory.getInstance(0xf);
+    private static final BitField _years = BitFieldFactory.getInstance(0x1ff0);
+    private static final BitField _weekday = BitFieldFactory.getInstance(0xe000);
 
   public DateAndTime()
   {

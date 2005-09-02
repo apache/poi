@@ -19,6 +19,7 @@
 package org.apache.poi.hwpf.usermodel;
 
 import org.apache.poi.util.BitField;
+import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndian;
 
 public class BorderCode
@@ -26,13 +27,13 @@ public class BorderCode
 {
   public static final int SIZE = 4;
   private short _info;
-    private final static BitField _dptLineWidth = new BitField(0xff);
-    private final static BitField _brcType = new BitField(0xff00);
+    private final static BitField _dptLineWidth = BitFieldFactory.getInstance(0xff);
+    private final static BitField _brcType = BitFieldFactory.getInstance(0xff00);
   private short _info2;
-    private final static BitField _ico = new BitField(0xff);
-    private final static BitField _dptDpace = new BitField(0x1f00);
-    private final static BitField _fShadow = new BitField(0x2000);
-    private final static BitField _fFrame = new BitField(0x4000);
+    private final static BitField _ico = BitFieldFactory.getInstance(0xff);
+    private final static BitField _dptDpace = BitFieldFactory.getInstance(0x1f00);
+    private final static BitField _fShadow = BitFieldFactory.getInstance(0x2000);
+    private final static BitField _fFrame = BitFieldFactory.getInstance(0x4000);
 
   public BorderCode()
   {

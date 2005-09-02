@@ -19,6 +19,7 @@
 package org.apache.poi.hwpf.usermodel;
 
 import org.apache.poi.util.BitField;
+import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndian;
 
 public class ShadingDescriptor
@@ -27,9 +28,9 @@ public class ShadingDescriptor
   public static final int SIZE = 2;
 
   private short _info;
-    private final static BitField _icoFore = new BitField(0x1f);
-    private final static BitField _icoBack = new BitField(0x3e0);
-    private final static BitField _ipat = new BitField(0xfc00);
+    private final static BitField _icoFore = BitFieldFactory.getInstance(0x1f);
+    private final static BitField _icoBack = BitFieldFactory.getInstance(0x3e0);
+    private final static BitField _ipat = BitFieldFactory.getInstance(0xfc00);
 
   public ShadingDescriptor()
   {

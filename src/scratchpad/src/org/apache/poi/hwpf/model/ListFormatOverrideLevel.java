@@ -20,6 +20,7 @@ package org.apache.poi.hwpf.model;
 
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.BitField;
+import org.apache.poi.util.BitFieldFactory;
 
 import java.util.Arrays;
 
@@ -29,9 +30,9 @@ public class ListFormatOverrideLevel
 
   int _iStartAt;
   byte _info;
-   private static BitField _ilvl = new BitField(0xf);
-   private static BitField _fStartAt = new BitField(0x10);
-   private static BitField _fFormatting = new BitField(0x20);
+   private static BitField _ilvl = BitFieldFactory.getInstance(0xf);
+   private static BitField _fStartAt = BitFieldFactory.getInstance(0x10);
+   private static BitField _fFormatting = BitFieldFactory.getInstance(0x20);
   byte[] _reserved = new byte[3];
   ListLevel _lvl;
 
