@@ -219,57 +219,92 @@ BE15 0000        5566           Sheet (1+4)=5 starts at offset 5566
 			be one of these records.
 		</p>
 		<p>
-			Firstly, this contains the number of characters it applies to,
-			stored in a 2 byte little endian number.
-			Normally, this will be the same as the number of characters
-			in the text record. Then there are two values which encode
-			paragraph properties (alignment, text spacing etc), both 4
-			byte little endian numbers.
+			This record is made up of two lists of lists. Firstly, 
+			there's a list of paragraph stylings - each made up of the
+			number of characters it applies two, followed by the matching
+			styling elements. Following that is the equivalent for 
+			character stylings.
 		</p>
 		<p>
-			Following this is one block of information for each subsequent
-			bit of text with a different styling. (If your text was
-			10 characters in blue, then 10 in red, you would have two blocks).
-			Firstly is the number of characters it applies to, or 0 if it
-			applies to all remaining text. (This is a 2 byte little endian
-			number). Then there is a number (4 byte little endian) that
-			encodes if the text is bold/italic/underlined. If that number
-			was non zero, it is followed by another 4 byte number, that
-			encodes further text styling information. If it was zero,
-			then it's followed by a 2 byte number.
+			Each styling list (in either list) starts with the number 
+			of characters it applies to, stored in a 2 byte little 
+			endian number. If it is a paragraph styling, it will be
+			followed by a 2 byte number (of unknown use). After this is
+			a four byte number, which is a mask indicating which stylings
+			will follow. You then have an entry for each of the stylings
+			indicated in the mask. Finally, you move onto the next set
+			of stylings. 
 		</p>
 		<p>
-			In the character styling block, the first number after the
-			character count indicated the bold/italic/underlined status
-			of the text. If you binary AND it with 0x00010000 (65536) and
-			get that value back, it is in bold. If you binary AND it with
-			0x00020000 (131072) and get that value back, it is in italic.
-			If you binary AND it with 0x00040000 (262144) and get that
-			value back, it is underlined.
+			Each styling has a specific mask flag to indicate its
+			presence. (The list may be found towards the top of
+			org.apache.poi.hslf.record.StyleTextPropAtom.java, and is
+			too long to sensibly include here). For each styling entry
+			will occur in the order of its mask value (so one with mask
+			1 will come first, followed by the next higest mask value).
+			Depending on the styling, it is either made up of a 2 byte
+			or 4 byte numeric value. The meaning of the value will
+			depend on the styling (eg for font.size, it is the font
+			size in points).
+		</p>
+		<p>
+			Some stylings are actually mask stylings. For these, the
+			value will be a 4 byte number. This is then processed as 
+			mask, to indicate a number of different sub-stylings. 
+			The styling for bold/italic/underline is one such example.
 		</p>
 <source>
 hex on disk      decimal        description
 -----------      -------        -----------
+
 0000             0              No options
 A10F             4001           Record type is 4001
-2E00 0000        46             Length of data is 46 bytes
-5300             83             The paragraph stylings apply to 83 characters
-0000 0000        0              Paragraph stylings 1 - as per the master
-0000 0000        0              Paragraph stylings 2 - as per the master
+8000 0000        128            Length of data is 128 bytes
+1E00 0000        30             The paragraph styling applies to 30 characters
+0000             0              Paragraph options are 0
+0018 0000        6144           0x0800=Text Alignment, 0x1000=Line Spacing
+0000             0              Text Alignment = Left
+5000             80             Line Spacing = 80
 
-1E00             30             These character properties apply to 30 characters
-0000 0100        65536          Bold
-0000 0100        65536          ??
-1C00             28             These character properties apply to 28 characters
-0000 0200        131072         Italic
-0400 0200        131076         ??
-0000             0              These character properties apply to the remaining characters
-0005 1900        1639680        Bold
-0000 0000        0              ??
+1C00 0000        28             The paragraph styling applies to 28 characters
+0000             0              Paragraph options are 0
+0010 0000        4096           0x1000=Line Spacing
+5000             80             Line Spacing = 80
 
-0400             4              ??
-FF33             13311          ??
-00FE             65024          ??
+1900 0000        25             The paragraph styling applies to 25 characters
+0000             0              Paragraph options are 0
+0018 0000        6144           0x0800=Text Alignment, 0x1000=Line Spacing
+0200             0              Text Alignment = Right
+5000             80             Line Spacing = 80
+
+6100 0000        61             The paragraph styling applies to 61 characters
+                                (includes final CR)
+0000             0              Paragraph options are 0
+0018 0000        6144           0x0800=Text Alignment, 0x1000=Line Spacing
+0000             0              Text Alignment = Left
+5000             80             Line Spacing = 80
+
+1E00 0000        30             The character styling applies to 30 characters
+0100 0200        131073         0x0001=Char Props Mask, 0x20000=Font Size
+0100             1              Char Props 0x0001=Bold
+1400             20             Font Size = 20
+
+1C00 0000        28             The character styling applies to 28 characters
+0200 0600        393218         0x0002=Char Props Mask, 0x20000=Font Size,  0x40000=Font Color
+0200             2              Char Props 0x0002=Italic
+1400             20             Font Size = 20
+0000 0005        83886080       Blue
+ 
+1900 0000        25             The character styling applies to 25 characters
+0000 0600        393216         0x20000=Font Size,  0x40000=Font Color
+1400             20             Font Size = 20
+FF33 00FE        4261426175     Red
+
+6000 0000        96             The character styling applies to 96 characters
+0400 0300        196612         0x0004=Char Props Mask, 0x10000=Font Index, 0x20000=Font Size
+0400             4              Char Props 0x0004=Underlined
+0100             1              Font Index = 1 (2nd Font in table)
+1800             24             Font Size = 24
 </source>
 		</section>
 	</body>
