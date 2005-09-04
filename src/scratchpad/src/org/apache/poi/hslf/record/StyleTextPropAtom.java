@@ -475,7 +475,7 @@ public class StyleTextPropAtom extends RecordAtom
 	 *  of the property is itself a mask, encoding several different
 	 *  (but related) properties
 	 */
-	public static class BitMaskTextProp extends TextProp {
+	public static class BitMaskTextProp extends TextProp implements Cloneable {
 		private String[] subPropNames;
 		private int[] subPropMasks;
 		private boolean[] subPropMatches;
@@ -526,6 +526,16 @@ public class StyleTextPropAtom extends RecordAtom
 			} else {
 				dataValue -= subPropMasks[idx];
 			}
+		}
+		
+		public Object clone(){
+			BitMaskTextProp newObj = (BitMaskTextProp)super.clone();
+			
+			// Don't carry over matches, but keep everything 
+			//  else as it was
+			newObj.subPropMatches = new boolean[subPropMatches.length];
+			
+			return newObj;
 		}
 	}
 
