@@ -27,7 +27,7 @@ import java.util.Vector;
 
 /**
  * A StyleTextPropAtom (type 4001). Holds basic character properties 
- *  (bold, italic, underline, possibly more?) and paragraph properties
+ *  (bold, italic, underline, font size etc) and paragraph properties
  *  (alignment, line spacing etc) for the block of text (TextBytesAtom
  *  or TextCharsAtom) that this record follows.
  * You will find two lists within this class.
@@ -39,6 +39,7 @@ import java.util.Vector;
  *  encapsulates a property of the style
  *
  * @author Nick Burch
+ * @author Yegor Kozlov
  */
 
 public class StyleTextPropAtom extends RecordAtom
