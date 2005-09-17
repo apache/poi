@@ -308,5 +308,43 @@ FF33 00FE        4261426175     Red
 1800             24             Font Size = 24
 </source>
 		</section>
+		
+		<section><title>Fonts in PowerPoint</title>
+		<p>
+			PowerPoint stores information about the fonts used in FontEntityAtoms,
+			which live inside Document.Environment.FontCollection. For every different
+			font used, a FontEntityAtom must exist for that font. There is always at 
+			least one FontEntityAtom in Document.Environment.FontCollection,
+			which describes the default font.
+		</p>
+		</section>
+		
+		<section><title>FontEntityAtom</title>
+		<p>
+			The instance field of the record header contains the zero based index of the
+			font. Font index entries in StyleTextPropAtoms will refer to their required
+			font via this index.
+		</p>
+		<p>
+			The length of FontEntityAtoms is always 68 bytes. The first 64 bytes of
+			it hold the typeface name of the font to be used. This is stored as
+			a null-terminated string, and encoded as little endian unicode. (The
+			length of the string must not exceed 32 characters including the null
+			termination, so the typeface name cannot exceed 31 characters).
+		</p>
+		
+		<p>
+			After the typeface name there are 4 bytes of bitmask flags. The details of these
+			can be found in the Windows API, under the LOGFONT structure.
+			The 65th byte is the output precision, which defines how closely the system chosen
+			font must match the requested font, in terms of heigh, width, pitch etc.
+			The 66th byte is the clipping precision, which defines how to clip characters
+			that occur partly outside the clipping region.
+			The 67th byte is the output quality, which defines how closely the system
+			must match the logical font's attributes to those of the physical font used.
+			The 68th (and final) byte is the pitch and family, which is used by the
+			system when matching fonts.
+		</p>
+		</section>
 	</body>
 </document>
