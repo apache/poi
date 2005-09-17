@@ -71,12 +71,22 @@ public abstract class Sheet
 		if(records[i] instanceof TextHeaderAtom) {
 			TextRun trun = null;
 			TextHeaderAtom tha = (TextHeaderAtom)records[i];
+			StyleTextPropAtom stpa = null;
+			
+			// Look for a subsequent StyleTextPropAtom
+			if(i < (records.length-2)) {
+				if(records[i+2] instanceof StyleTextPropAtom) {
+					stpa = (StyleTextPropAtom)records[i+2];
+				}
+			}
+			
+			// See what follows the TextHeaderAtom
 			if(records[i+1] instanceof TextCharsAtom) {
 				TextCharsAtom tca = (TextCharsAtom)records[i+1];
-				trun = new TextRun(tha,tca);
+				trun = new TextRun(tha,tca,stpa);
 			} else if(records[i+1] instanceof TextBytesAtom) {
 				TextBytesAtom tba = (TextBytesAtom)records[i+1];
-				trun = new TextRun(tha,tba);
+				trun = new TextRun(tha,tba,stpa);
 			} else if(records[i+1].getRecordType() == 4001l) {
 				// StyleTextPropAtom - Safe to ignore
 			} else if(records[i+1].getRecordType() == 4010l) {

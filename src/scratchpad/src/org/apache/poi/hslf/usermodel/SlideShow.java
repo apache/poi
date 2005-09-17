@@ -26,7 +26,9 @@ import org.apache.poi.util.LittleEndian;
 
 import org.apache.poi.hslf.*;
 import org.apache.poi.hslf.model.*;
+import org.apache.poi.hslf.record.FontCollection;
 import org.apache.poi.hslf.record.Record;
+import org.apache.poi.hslf.record.RecordTypes;
 import org.apache.poi.hslf.record.SlideAtom;
 import org.apache.poi.hslf.record.SlideListWithText;
 import org.apache.poi.hslf.record.SlideListWithText.*;
@@ -59,6 +61,7 @@ public class SlideShow
   // Friendly objects for people to deal with
   private Slide[] _slides;
   private Notes[] _notes;
+  private FontCollection _fonts;
   // MetaSheets (eg masters) not yet supported
   // private MetaSheets[] _msheets;
 
@@ -183,7 +186,7 @@ public class SlideShow
 		if(_mostRecentCoreRecords[i] instanceof org.apache.poi.hslf.record.Slide) {
 			slidesV.add(_mostRecentCoreRecords[i]);
 		}
-		if(_records[i].getRecordType() == 1000l) {
+		if(_records[i].getRecordType() == RecordTypes.Document.typeID) {
 			documentRecord = _mostRecentCoreRecords[i];
 		}
 	}
@@ -210,8 +213,18 @@ public class SlideShow
 
 	Record[] docChildren = documentRecord.getChildRecords();
 	for(int i=0; i<docChildren.length; i++) {
+		// Look for SlideListWithText
 		if(docChildren[i] instanceof SlideListWithText) {
 			slwtV.add(docChildren[i]);
+		}
+		// Look for FontCollection under Environment
+		if(docChildren[i].getRecordType() == RecordTypes.Environment.typeID) {
+			Record[] envChildren = docChildren[i].getChildRecords();
+			for(int j=0; j<envChildren.length; j++) {
+				if(envChildren[j] instanceof FontCollection) {
+					_fonts = (FontCollection)envChildren[j];
+				}
+			}
 		}
 	}
 

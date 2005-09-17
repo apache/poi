@@ -35,6 +35,7 @@ public class TextRun
 	private TextHeaderAtom _headerAtom;
 	private TextBytesAtom  _byteAtom;
 	private TextCharsAtom  _charAtom;
+	private StyleTextPropAtom _styleAtom;
 	private boolean _isUnicode;
 
 	/**
@@ -43,9 +44,10 @@ public class TextRun
 	* @param tha the TextHeaderAtom that defines what's what
 	* @param tca the TextCharsAtom containing the text
 	*/
-	public TextRun(TextHeaderAtom tha, TextCharsAtom tca) {
+	public TextRun(TextHeaderAtom tha, TextCharsAtom tca, StyleTextPropAtom sta) {
 		_headerAtom = tha;
 		_charAtom = tca;
+		_styleAtom = sta;
 		_isUnicode = true;
 	}
 
@@ -55,9 +57,10 @@ public class TextRun
 	* @param tha the TextHeaderAtom that defines what's what
 	* @param tba the TextBytesAtom containing the text
 	*/
-	public TextRun(TextHeaderAtom tha, TextBytesAtom tba) {
+	public TextRun(TextHeaderAtom tha, TextBytesAtom tba, StyleTextPropAtom sta) {
 		_headerAtom = tha;
 		_byteAtom = tba;
+		_styleAtom = sta;
 		_isUnicode = false;
 	}
 
