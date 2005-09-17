@@ -29,6 +29,7 @@ import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.util.LittleEndian;
 
 import org.apache.poi.hslf.record.Record;
+import org.apache.poi.hslf.record.StyleTextPropAtom;
 import org.apache.poi.hslf.record.TextHeaderAtom;
 import org.apache.poi.hslf.record.TextBytesAtom;
 import org.apache.poi.hslf.record.TextCharsAtom;
@@ -182,12 +183,12 @@ public class QuickButCruddyTextExtractor
 		// TextBytesAtom
 		if(type == 4008l) {
 			TextBytesAtom tba = (TextBytesAtom)Record.createRecordForType(type, pptContents, startPos, len+8);
-			trun = new TextRun((TextHeaderAtom)null,tba);
+			trun = new TextRun((TextHeaderAtom)null,tba,(StyleTextPropAtom)null);
 		}
 		// TextCharsAtom
 		if(type == 4000l) {
 			TextCharsAtom tca = (TextCharsAtom)Record.createRecordForType(type, pptContents, startPos, len+8);
-			trun = new TextRun((TextHeaderAtom)null,tca);
+			trun = new TextRun((TextHeaderAtom)null,tca,(StyleTextPropAtom)null);
 		}
 
 		// If we found text, save it in the vector

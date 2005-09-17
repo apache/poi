@@ -41,7 +41,7 @@ public class RecordTypes {
     public static final Type SlideAtom = new Type(1007,SlideAtom.class);
     public static final Type Notes = new Type(1008,Notes.class);
     public static final Type NotesAtom = new Type(1009,NotesAtom.class);
-    public static final Type Environment = new Type(1010,null);
+    public static final Type Environment = new Type(1010,DummyRecordWithChildren.class);
     public static final Type SlidePersistAtom = new Type(1011,SlidePersistAtom.class);
     public static final Type SSlideLayoutAtom = new Type(1015,null);
     public static final Type MainMaster = new Type(1016,DummyPositionSensitiveRecordWithChildren.class);
