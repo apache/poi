@@ -32,7 +32,6 @@ import java.io.ByteArrayOutputStream;
 
 public class Slide extends PositionDependentRecordContainer
 {
-	private Record[] _children;
 	private byte[] _header;
 	private static long _type = 1006l;
 
@@ -79,11 +78,6 @@ public class Slide extends PositionDependentRecordContainer
 	 * We are of type 1006
 	 */
 	public long getRecordType() { return _type; }
-
-	/** 
-	 * Return any children 
-	 */
-	public Record[] getChildRecords() { return _children; }
 
 	/**
 	 * Write the contents of the record back, so it can be written

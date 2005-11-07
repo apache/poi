@@ -49,7 +49,6 @@ import java.util.Vector;
 // For now, pretend to be an atom
 public class SlideListWithText extends RecordContainer
 {
-	private Record[] _children;
 	private byte[] _header;
 	private static long _type = 4080;
 
@@ -108,11 +107,6 @@ public class SlideListWithText extends RecordContainer
 	 * Return the value we were given at creation
 	 */
 	public long getRecordType() { return _type; }
-
-	/** 
-	 * We're pretending to be an atom, so return null
-	 */
-	public Record[] getChildRecords() { return _children; }
 
 	/**
 	 * Write the contents of the record back, so it can be written

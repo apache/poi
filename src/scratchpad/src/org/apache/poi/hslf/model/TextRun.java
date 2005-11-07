@@ -135,6 +135,9 @@ public class TextRun
 			throw new IllegalArgumentException("Supplied RichTextRun wasn't from this TextRun");
 		}
 		
+		// Ensure a StyleTextPropAtom is present, adding if required
+		ensureStyleAtomPresent();
+		
 		// Update the text length for its Paragraph and Character stylings
 		LinkedList pStyles = _styleAtom.getParagraphStyles();
 		LinkedList cStyles = _styleAtom.getCharacterStyles();
@@ -191,6 +194,27 @@ public class TextRun
 		_rtRuns[0] = new RichTextRun(this,0,s.length());
 	}
 
+	/**
+	 * Ensure a StyleTextPropAtom is present for this run, 
+	 *  by adding if required
+	 */
+	private synchronized void ensureStyleAtomPresent() {
+		if(_styleAtom != null) {
+			// All there
+			return;
+		}
+		
+		// Create a new one
+		_styleAtom = new StyleTextPropAtom(0);
+		
+		// Use the TextHeader atom to get at the parent
+		RecordContainer runAtomsParent = _headerAtom.getParentRecord();
+		
+		// Add the new StyleTextPropAtom after the TextCharsAtom / TextBytesAtom
+		Record addAfter = _byteAtom;
+		if(_byteAtom == null) { addAfter = _charAtom; }
+		runAtomsParent.addChildAfter(_styleAtom, addAfter);
+	}
 
 	// Accesser methods follow
 

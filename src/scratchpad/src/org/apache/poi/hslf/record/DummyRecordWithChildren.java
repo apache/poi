@@ -33,7 +33,6 @@ import java.io.ByteArrayOutputStream;
 
 public class DummyRecordWithChildren extends RecordContainer
 {
-	private Record[] _children;
 	private byte[] _header;
 	private long _type;
 
@@ -54,11 +53,6 @@ public class DummyRecordWithChildren extends RecordContainer
 	 * Return the value we were given at creation
 	 */
 	public long getRecordType() { return _type; }
-
-	/** 
-	 * Return any children 
-	 */
-	public Record[] getChildRecords() { return _children; }
 
 	/**
 	 * Write the contents of the record back, so it can be written

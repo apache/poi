@@ -34,6 +34,13 @@ import java.io.ByteArrayOutputStream;
 
 public abstract class RecordContainer extends Record
 {
+	protected Record[] _children;
+	
+	/** 
+	 * Return any children 
+	 */
+	public Record[] getChildRecords() { return _children; }
+
 	/** 
 	 * We're not an atom
 	 */
@@ -48,6 +55,34 @@ public abstract class RecordContainer extends Record
 		System.arraycopy(children,0,r,0,children.length);
 		r[r.length-1] = newChild;
 		return r;
+	}
+	
+	/**
+	 * Adds the given Child Record after the supplied record
+	 * @param newChild
+	 * @param after
+	 */
+	public synchronized void addChildAfter(Record newChild, Record after) {
+		boolean added = false;
+		Record[] newChildren = new Record[_children.length+1];
+		for(int i=0; i<_children.length; i++) {
+			int newPos = i;
+			if(added) { newPos++; }
+			
+			newChildren[newPos] = _children[i];
+			if(_children[i].equals(after)) {
+				// Found one to add after
+				added = true;
+				newPos++;
+				newChildren[newPos] = newChild;
+			}
+		}
+		
+		if(added) {
+			_children = newChildren;
+		} else {
+			throw new IllegalArgumentException("Asked to add a new child after another record, but that record wasn't one of our children!");
+		}
 	}
 
 	/**
