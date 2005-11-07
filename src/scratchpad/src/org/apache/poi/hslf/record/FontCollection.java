@@ -30,7 +30,6 @@ import java.util.*;
 
 public class FontCollection extends RecordContainer {
     private List fonts;
-	private Record[] _children;
 	private byte[] _header;
 
 	protected FontCollection(byte[] source, int start, int len) {
@@ -48,12 +47,11 @@ public class FontCollection extends RecordContainer {
 
 	}
 
+	/**
+	 * Return the type, which is 2005
+	 */
 	public long getRecordType() {
         return RecordTypes.FontCollection.typeID;
-    }
-
-	public Record[] getChildRecords() {
-        return _children;
     }
 
 	/**

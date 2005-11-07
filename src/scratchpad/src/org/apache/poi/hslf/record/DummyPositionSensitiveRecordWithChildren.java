@@ -37,7 +37,6 @@ import java.io.ByteArrayOutputStream;
 
 public class DummyPositionSensitiveRecordWithChildren extends PositionDependentRecordContainer
 {
-	private Record[] _children;
 	private byte[] _header;
 	private long _type;
 
@@ -59,11 +58,6 @@ public class DummyPositionSensitiveRecordWithChildren extends PositionDependentR
 	 * Return the value we were given at creation
 	 */
 	public long getRecordType() { return _type; }
-
-	/** 
-	 * Return any children 
-	 */
-	public Record[] getChildRecords() { return _children; }
 
 	/**
 	 * Write the contents of the record back, so it can be written

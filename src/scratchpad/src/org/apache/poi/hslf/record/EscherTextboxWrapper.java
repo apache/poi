@@ -37,7 +37,6 @@ import java.io.ByteArrayOutputStream;
 public class EscherTextboxWrapper extends RecordContainer
 {
 	private EscherTextboxRecord _escherRecord;
-	private Record[] _children;
 	private long _type;
 
 	/**
@@ -62,11 +61,6 @@ public class EscherTextboxWrapper extends RecordContainer
 	 * Return the type of the escher record (normally in the 0xFnnn range)
 	 */
 	public long getRecordType() { return _type; }
-
-	/** 
-	 * Return any children 
-	 */
-	public Record[] getChildRecords() { return _children; }
 
 	/**
 	 * Stores the data for the child records back into the Escher layer.
