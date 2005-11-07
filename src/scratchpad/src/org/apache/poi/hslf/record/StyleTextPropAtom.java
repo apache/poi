@@ -64,6 +64,11 @@ public class StyleTextPropAtom extends RecordAtom
 	 */
 	private LinkedList paragraphStyles;
 	public LinkedList getParagraphStyles() { return paragraphStyles; }
+	/**
+	 * Updates the link list of TextPropCollections which make up the
+	 *  paragraph stylings
+	 */
+	public void setParagraphStyles(LinkedList ps) { paragraphStyles = ps; }
 	/** 
 	 * The list of all the different character stylings we code for.
 	 * Each entry is a TextPropCollection, which tells you how many
@@ -72,6 +77,11 @@ public class StyleTextPropAtom extends RecordAtom
 	 */
 	private LinkedList charStyles;
 	public LinkedList getCharacterStyles() { return charStyles; }
+	/**
+	 * Updates the link list of TextPropCollections which make up the
+	 *  character stylings
+	 */
+	public void setCharacterStyles(LinkedList cs) { charStyles = cs; }
 
 	/** All the different kinds of paragraph properties we might handle */
 	public TextProp[] paragraphTextPropTypes = new TextProp[] {
@@ -369,6 +379,14 @@ public class StyleTextPropAtom extends RecordAtom
 			charactersCovered = textSize;
 			reservedField = -1;
 			textPropList = new LinkedList();
+		}
+		
+		/**
+		 * Update the size of the text that this set of properties
+		 *  applies to 
+		 */
+		public void updateTextSize(int textSize) {
+			charactersCovered = textSize;
 		}
 
 		/**

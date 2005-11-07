@@ -30,10 +30,11 @@ import java.io.OutputStream;
  * @author Nick Burch
  */
 
-public class TextHeaderAtom extends RecordAtom
+public class TextHeaderAtom extends RecordAtom implements ParentAwareRecord
 {
 	private byte[] _header;
 	private static long _type = 3999l;
+	private RecordContainer parentRecord;
 
 	public static final int TITLE_TYPE = 0;
 	public static final int BODY_TYPE = 1;
@@ -49,6 +50,9 @@ public class TextHeaderAtom extends RecordAtom
 
 	public int getTextType() { return textType; }
 	public void setTextType(int type) { textType = type; }
+	
+	public RecordContainer getParentRecord() { return parentRecord; }
+	public void setParentRecord(RecordContainer record) { this.parentRecord = record; } 
 
 	/* *************** record code follows ********************** */
 
