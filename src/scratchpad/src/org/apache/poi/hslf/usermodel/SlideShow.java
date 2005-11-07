@@ -27,7 +27,9 @@ import org.apache.poi.util.LittleEndian;
 import org.apache.poi.hslf.*;
 import org.apache.poi.hslf.model.*;
 import org.apache.poi.hslf.record.FontCollection;
+import org.apache.poi.hslf.record.ParentAwareRecord;
 import org.apache.poi.hslf.record.Record;
+import org.apache.poi.hslf.record.RecordContainer;
 import org.apache.poi.hslf.record.RecordTypes;
 import org.apache.poi.hslf.record.SlideAtom;
 import org.apache.poi.hslf.record.SlideListWithText;
@@ -78,12 +80,43 @@ public class SlideShow
     _hslfSlideShow = hslfSlideShow;
 	_records = _hslfSlideShow.getRecords();
 	byte[] _docstream = _hslfSlideShow.getUnderlyingBytes();
+	
+	// Handle Parent-aware Reocrds
+	for(int i=0; i<_records.length; i++) {
+		handleParentAwareRecords(_records[i]);
+	}
 
 	// Find the versions of the core records we'll want to use
 	findMostRecentCoreRecords();
 
 	// Build up the model level Slides and Notes
 	buildSlidesAndNotes();
+  }
+  
+  
+  /**
+   * Find the records that are parent-aware, and tell them
+   *  who their parent is
+   */
+  private void handleParentAwareRecords(Record baseRecord) {
+	  // Only need to do something if this is a container record
+	  if(baseRecord instanceof RecordContainer) {
+		RecordContainer br = (RecordContainer)baseRecord;
+		Record[] childRecords = br.getChildRecords();
+		
+		// Loop over child records, looking for interesting ones
+		for(int i=0; i<childRecords.length; i++) {
+			Record record = childRecords[i];
+			// Tell parent aware records of their parent
+			if(record instanceof ParentAwareRecord) {
+				((ParentAwareRecord)record).setParentRecord(br);
+			}
+			// Walk on down for the case of container records
+			if(record instanceof RecordContainer) {
+				handleParentAwareRecords(record);
+			}
+		}
+	  }
   }
 
 

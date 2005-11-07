@@ -19,7 +19,11 @@
 
 package org.apache.poi.hslf.model;
 
+import java.util.LinkedList;
+
 import org.apache.poi.hslf.record.*;
+import org.apache.poi.hslf.record.StyleTextPropAtom.TextPropCollection;
+import org.apache.poi.hslf.usermodel.RichTextRun;
 import org.apache.poi.util.StringUtil;
 
 /**
@@ -37,18 +41,17 @@ public class TextRun
 	private TextCharsAtom  _charAtom;
 	private StyleTextPropAtom _styleAtom;
 	private boolean _isUnicode;
+	private RichTextRun[] _rtRuns;
 
 	/**
 	* Constructs a Text Run from a Unicode text block
 	*
 	* @param tha the TextHeaderAtom that defines what's what
 	* @param tca the TextCharsAtom containing the text
+	* @param sta the StyleTextPropAtom which defines the character stylings
 	*/
 	public TextRun(TextHeaderAtom tha, TextCharsAtom tca, StyleTextPropAtom sta) {
-		_headerAtom = tha;
-		_charAtom = tca;
-		_styleAtom = sta;
-		_isUnicode = true;
+		this(tha,null,tca,sta);
 	}
 
 	/**
@@ -56,12 +59,136 @@ public class TextRun
 	*
 	* @param tha the TextHeaderAtom that defines what's what
 	* @param tba the TextBytesAtom containing the text
+	* @param sta the StyleTextPropAtom which defines the character stylings
 	*/
 	public TextRun(TextHeaderAtom tha, TextBytesAtom tba, StyleTextPropAtom sta) {
+		this(tha,tba,null,sta);
+	}
+	
+	/**
+	 * Internal constructor and initializer
+	 */
+	private TextRun(TextHeaderAtom tha, TextBytesAtom tba, TextCharsAtom tca, StyleTextPropAtom sta) {
 		_headerAtom = tha;
-		_byteAtom = tba;
 		_styleAtom = sta;
-		_isUnicode = false;
+		if(tba != null) {
+			_byteAtom = tba;
+			_isUnicode = false;
+		} else {
+			_charAtom = tca;
+			_isUnicode = true;
+		}
+		
+		// Figure out the rich text runs
+		// TODO: Handle when paragraph style and character styles don't match up
+		LinkedList pStyles = new LinkedList();
+		LinkedList cStyles = new LinkedList();
+		if(_styleAtom != null) {
+			pStyles = _styleAtom.getParagraphStyles();
+			cStyles = _styleAtom.getCharacterStyles();
+		}
+		if(pStyles.size() != cStyles.size()) {
+			throw new RuntimeException("Don't currently handle case of overlapping styles");
+		}
+		_rtRuns = new RichTextRun[pStyles.size()];
+		//for(int i=0; i<)
+	}
+	
+	
+	// Update methods follow
+
+	/**
+	 * Saves the given string to the records. Doesn't touch the stylings. 
+	 */
+	private void storeText(String s) {
+		if(_isUnicode) {
+			// The atom can safely convert to unicode
+			_charAtom.setText(s);
+		} else {
+			// Will it fit in a 8 bit atom?
+			boolean hasMultibyte = StringUtil.hasMultibyte(s);
+			if(! hasMultibyte) {
+				// Fine to go into 8 bit atom
+				byte[] text = new byte[s.length()];
+				StringUtil.putCompressedUnicode(s,text,0);
+				_byteAtom.setText(text);
+			} else {
+				throw new RuntimeException("Setting of unicode text is currently only possible for Text Runs that are Unicode in the file, sorry. For now, please convert that text to us-ascii and re-try it");
+			}
+		}
+	}
+	
+	/**
+	 * Handles an update to the text stored in one of the Rich Text Runs
+	 * @param run
+	 * @param s
+	 */
+	public synchronized void changeTextInRichTextRun(RichTextRun run, String s) {
+		// Figure out which run it is
+		int runID = -1;
+		for(int i=0; i<_rtRuns.length; i++) {
+			if(run.equals(_rtRuns[i])) {
+				runID = i;
+			}
+		}
+		if(runID == -1) {
+			throw new IllegalArgumentException("Supplied RichTextRun wasn't from this TextRun");
+		}
+		
+		// Update the text length for its Paragraph and Character stylings
+		LinkedList pStyles = _styleAtom.getParagraphStyles();
+		LinkedList cStyles = _styleAtom.getCharacterStyles();
+		TextPropCollection pCol = (TextPropCollection)pStyles.get(runID);
+		TextPropCollection cCol = (TextPropCollection)cStyles.get(runID);
+		pCol.updateTextSize(s.length());
+		cCol.updateTextSize(s.length());
+		
+		// Build up the new text
+		// As we go through, update the start position for all subsequent runs
+		// The building relies on the old text still being present
+		StringBuffer newText = new StringBuffer();
+		for(int i=0; i<_rtRuns.length; i++) {
+			// Update start position
+			if(i > runID) {
+				_rtRuns[i].updateStartPosition(newText.length());
+			}
+			// Grab new text
+			if(i != runID) {
+				newText.append(_rtRuns[i].getRawText());
+			} else {
+				newText.append(s);
+			}
+		}
+		
+		// Save the new text
+		storeText(newText.toString());
+	}
+
+	/**
+	 * Changes the text, and sets it all to have the same styling
+	 *  as the the first character has. 
+	 * If you care about styling, do setText on a RichTextRun instead 
+	 */
+	public synchronized void setText(String s) {
+		// Save the new text to the atoms
+		storeText(s);
+
+		// Now handle record stylings:
+		//  everthing gets the same style that the first block has
+		LinkedList pStyles = _styleAtom.getParagraphStyles();
+		while(pStyles.size() > 1) { pStyles.removeLast(); }
+		
+		LinkedList cStyles = _styleAtom.getCharacterStyles();
+		while(cStyles.size() > 1) { cStyles.removeLast(); }
+		
+		TextPropCollection pCol = (TextPropCollection)pStyles.getFirst();
+		TextPropCollection cCol = (TextPropCollection)cStyles.getFirst();
+		pCol.updateTextSize(s.length());
+		cCol.updateTextSize(s.length());
+		
+		// Finally, zap and re-do the RichTextRuns
+		_rtRuns = new RichTextRun[1];
+		_rtRuns[0] = new RichTextRun(this,0,s.length());
 	}
 
 
@@ -93,36 +220,16 @@ public class TextRun
 			return _byteAtom.getText();
 		}
 	}
-
+	
 	/**
-	 * Changes the text. Chance are, this won't work just yet, because
-	 *  we also need to update some other bits of the powerpoint file
-	 *  to match the change in the Text Atom, especially byte offsets
+	 * Fetch the rich text runs (runs of text with the same styling) that
+	 *  are contained within this block of text
+	 * @return
 	 */
-	public void setText(String s) {
-		// If size changed, warn
-		if(s.length() != getText().length()) {
-			System.err.println("Warning: Your powerpoint file may no longer readable by powerpoint, as the text run has changed size!");
-		}
-
-		if(_isUnicode) {
-			// The atom can safely convert to unicode
-			_charAtom.setText(s);
-		} else {
-			// Will it fit in a 8 bit atom?
-			boolean hasMultibyte = StringUtil.hasMultibyte(s);
-			if(! hasMultibyte) {
-				// Fine to go into 8 bit atom
-				byte[] text = new byte[s.length()];
-				StringUtil.putCompressedUnicode(s,text,0);
-				_byteAtom.setText(text);
-			} else {
-				throw new RuntimeException("Setting of unicode text is currently only possible for Text Runs that are Unicode in the file, sorry. For now, please convert that text to us-ascii and re-try it");
-			}
-		}
-		
+	public RichTextRun[] getRichTextRuns() {
+		return 	_rtRuns;
 	}
-
+	
 	/**
 	* Returns the type of the text, from the TextHeaderAtom.
 	* Possible values can be seen from TextHeaderAtom
