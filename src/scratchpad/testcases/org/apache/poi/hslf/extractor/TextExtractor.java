@@ -28,40 +28,56 @@ import junit.framework.TestCase;
  * @author Nick Burch (nick at torchbox dot com)
  */
 public class TextExtractor extends TestCase {
-	// Extractor primed on the test data
+	// Extractor primed on the 2 page basic test data
 	private PowerPointExtractor ppe;
+	// Extractor primed on the 1 page but text-box'd test data
+	private PowerPointExtractor ppe2;
 
     public TextExtractor() throws Exception {
 		String dirname = System.getProperty("HSLF.testdata.path");
 		String filename = dirname + "/basic_test_ppt_file.ppt";
 		ppe = new PowerPointExtractor(filename);
+		String filename2 = dirname + "/with_textbox.ppt";
+		ppe2 = new PowerPointExtractor(filename2);
     }
 
     public void testReadSheetText() throws Exception {
+    	// Basic 2 page example
 		String sheetText = ppe.getText();
 		String expectText = "This is a test title\nThis is a test subtitle\nThis is on page 1\nThis is the title on page 2\nThis is page two\nIt has several blocks of text\nNone of them have formatting\n";
 
-		assertEquals(expectText.length(),sheetText.length());
-		char[] st = sheetText.toCharArray();
-		char[] et = expectText.toCharArray();
-		for(int i=0; i<et.length; i++) {
-			System.out.println(i + "\t" + et[i] + " " + st[i]);
-			assertEquals(et[i],st[i]);
-		}
-		assertEquals(expectText,sheetText);
-    }
+		ensureTwoStringsTheSame(expectText, sheetText);
+		
+		
+		// 1 page example with text boxes
+		sheetText = ppe2.getText();
+		expectText = "Hello, World!!!\nI am just a poor boy\nThis is Times New Roman\nPlain Text \n"; 
 
+		ensureTwoStringsTheSame(expectText, sheetText);
+    }
+    
 	public void testReadNoteText() throws Exception {
+		// Basic 2 page example
 		String notesText = ppe.getNotes();
 		String expectText = "These are the notes for page 1\nThese are the notes on page two, again lacking formatting\n";
 
-		assertEquals(expectText.length(),notesText.length());
-		char[] nt = notesText.toCharArray();
-		char[] et = expectText.toCharArray();
-		for(int i=0; i<et.length; i++) {
-			System.out.println(i + "\t" + et[i] + " " + nt[i]);
-			assertEquals(et[i],nt[i]);
-		}
-		assertEquals(expectText,notesText);
+		ensureTwoStringsTheSame(expectText, notesText);
+		
+		// Other one doesn't have notes
+		notesText = ppe2.getNotes();
+		expectText = "";
+		
+		ensureTwoStringsTheSame(expectText, notesText);
 	}
+	
+    private void ensureTwoStringsTheSame(String exp, String act) throws Exception {
+		assertEquals(exp.length(),act.length());
+		char[] expC = exp.toCharArray();
+		char[] actC = act.toCharArray();
+		for(int i=0; i<expC.length; i++) {
+			System.out.println(i + "\t" + expC[i] + " " + actC[i]);
+			assertEquals(expC[i],actC[i]);
+		}
+		assertEquals(exp,act);
+    }
 }
