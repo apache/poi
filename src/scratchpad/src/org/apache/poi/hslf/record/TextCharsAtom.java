@@ -71,6 +71,15 @@ public class TextCharsAtom extends RecordAtom
 		_text = new byte[len-8];
 		System.arraycopy(source,start+8,_text,0,len-8);
 	}
+	/**
+	 * Create an empty TextCharsAtom
+	 */
+	public TextCharsAtom() {
+		// 0 length header
+		_header = new byte[] {  0, 0, 0xA0-256, 0x0f, 0, 0, 0, 0 };
+		// Empty text
+		_text = new byte[0];
+	}
 
 	/**
 	 * We are of type 4000

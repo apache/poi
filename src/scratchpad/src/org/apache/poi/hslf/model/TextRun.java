@@ -36,12 +36,14 @@ import org.apache.poi.util.StringUtil;
 
 public class TextRun
 {
-	private TextHeaderAtom _headerAtom;
-	private TextBytesAtom  _byteAtom;
-	private TextCharsAtom  _charAtom;
-	private StyleTextPropAtom _styleAtom;
-	private boolean _isUnicode;
-	private RichTextRun[] _rtRuns;
+	// Note: These fields are protected to help with unit testing
+	//   Other classes shouldn't really go playing with them!
+	protected TextHeaderAtom _headerAtom;
+	protected TextBytesAtom  _byteAtom;
+	protected TextCharsAtom  _charAtom;
+	protected StyleTextPropAtom _styleAtom;
+	protected boolean _isUnicode;
+	protected RichTextRun[] _rtRuns;
 
 	/**
 	* Constructs a Text Run from a Unicode text block
@@ -101,6 +103,13 @@ public class TextRun
 	 * Saves the given string to the records. Doesn't touch the stylings. 
 	 */
 	private void storeText(String s) {
+		// Remove a single trailing \n, as there is an implicit one at the
+		//  end of every record
+		if(s.endsWith("\n")) {
+			s = s.substring(0, s.length()-1);
+		}
+		
+		// Store in the appropriate record
 		if(_isUnicode) {
 			// The atom can safely convert to unicode
 			_charAtom.setText(s);
@@ -113,7 +122,27 @@ public class TextRun
 				StringUtil.putCompressedUnicode(s,text,0);
 				_byteAtom.setText(text);
 			} else {
-				throw new RuntimeException("Setting of unicode text is currently only possible for Text Runs that are Unicode in the file, sorry. For now, please convert that text to us-ascii and re-try it");
+				// Need to swap a TextBytesAtom for a TextCharsAtom
+				
+				// Build the new TextCharsAtom
+				_charAtom = new TextCharsAtom();
+				_charAtom.setText(s);
+				
+				// Use the TextHeaderAtom to do the swap on the parent
+				RecordContainer parent = _headerAtom.getParentRecord();
+				Record[] cr = parent.getChildRecords();
+				for(int i=0; i<cr.length; i++) {
+					// Look for TextBytesAtom
+					if(cr[i].equals(_byteAtom)) {
+						// Found it, so replace, then all done
+						cr[i] = _charAtom;
+						break;
+					}
+				}
+				
+				// Flag the change
+				_byteAtom = null;
+				_isUnicode = true;
 			}
 		}
 	}
@@ -151,19 +180,25 @@ public class TextRun
 		// The building relies on the old text still being present
 		StringBuffer newText = new StringBuffer();
 		for(int i=0; i<_rtRuns.length; i++) {
-			// Update start position
-			if(i > runID) {
+			// Do we need to update the start position of this run?
+			if(i <= runID) {
+				// Change is after this, so don't need to change start position
+			} else {
+				// Change has occured, so update start position
 				_rtRuns[i].updateStartPosition(newText.length());
 			}
-			// Grab new text
+			
+			// Build up the new text
 			if(i != runID) {
+				// Not the affected run, so keep old text
 				newText.append(_rtRuns[i].getRawText());
 			} else {
+				// Affected run, so use new text
 				newText.append(s);
 			}
 		}
 		
-		// Save the new text
+		// Now we can save the new text
 		storeText(newText.toString());
 	}
 
@@ -177,17 +212,22 @@ public class TextRun
 		storeText(s);
 
 		// Now handle record stylings:
+		// If there isn't styling
+		//  no change, stays with no styling
+		// If there is styling:
 		//  everthing gets the same style that the first block has
-		LinkedList pStyles = _styleAtom.getParagraphStyles();
-		while(pStyles.size() > 1) { pStyles.removeLast(); }
-		
-		LinkedList cStyles = _styleAtom.getCharacterStyles();
-		while(cStyles.size() > 1) { cStyles.removeLast(); }
-		
-		TextPropCollection pCol = (TextPropCollection)pStyles.getFirst();
-		TextPropCollection cCol = (TextPropCollection)cStyles.getFirst();
-		pCol.updateTextSize(s.length());
-		cCol.updateTextSize(s.length());
+		if(_styleAtom != null) {
+			LinkedList pStyles = _styleAtom.getParagraphStyles();
+			while(pStyles.size() > 1) { pStyles.removeLast(); }
+			
+			LinkedList cStyles = _styleAtom.getCharacterStyles();
+			while(cStyles.size() > 1) { cStyles.removeLast(); }
+			
+			TextPropCollection pCol = (TextPropCollection)pStyles.getFirst();
+			TextPropCollection cCol = (TextPropCollection)cStyles.getFirst();
+			pCol.updateTextSize(s.length());
+			cCol.updateTextSize(s.length());
+		}
 		
 		// Finally, zap and re-do the RichTextRuns
 		_rtRuns = new RichTextRun[1];
