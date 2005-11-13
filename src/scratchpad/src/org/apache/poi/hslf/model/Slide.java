@@ -75,9 +75,15 @@ public class Slide extends Sheet
 	}
 
 	// Build an array, more useful than a vector
-	_runs = new TextRun[textRuns.size()];
-	for(int i=0; i<_runs.length; i++) {
+	_runs = new TextRun[textRuns.size()+_otherRuns.length];
+	// Grab text from SlideListWithTexts entries
+	int i=0;
+	for(i=0; i<textRuns.size(); i++) {
 		_runs[i] = (TextRun)textRuns.get(i);
+	}
+	// Grab text from slide's PPDrawing
+	for(int k=0; k<_otherRuns.length; i++, k++) {
+		_runs[i] = _otherRuns[k];
 	}
   }
 
