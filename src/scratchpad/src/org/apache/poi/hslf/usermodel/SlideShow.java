@@ -224,6 +224,12 @@ public class SlideShow
 		}
 	}
 
+	// Ensure we really found a Document record
+	// If we didn't, then the file is probably corrupt
+	if(documentRecord == null) {
+		throw new IllegalStateException("The PowerPoint file didn't contain a Document Record in its PersistPtr blocks. It is probably corrupt.");
+	}
+
 
 	// Now look for SlideListWithTexts in the most up-to-date Document Record
 	//
