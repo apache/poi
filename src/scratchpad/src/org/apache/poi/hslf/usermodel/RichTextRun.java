@@ -20,6 +20,7 @@
 package org.apache.poi.hslf.usermodel;
 
 import org.apache.poi.hslf.model.TextRun;
+import org.apache.poi.hslf.record.StyleTextPropAtom.TextPropCollection;
 
 /**
  * Represents a run of text, all with the same style
@@ -40,18 +41,39 @@ public class RichTextRun
 	/** How long a string (in the parent TextRun) we represent */
 	private int length;
 	
-	/** Our paragraph and character style */
+	/** 
+	 * Our paragraph and character style.
+	 * Note - we may share the Paragraph style with another RichTextRun
+	 *  (the Character style should be ours alone) 
+	 */
+	private TextPropCollection paragraphStyle;
+	private TextPropCollection characterStyle;
 	
 	/**
-	 * Create a new wrapper around a rich text string
+	 * Create a new wrapper around a (currently not)
+	 *  rich text string
 	 * @param parent
 	 * @param startAt
 	 * @param len
 	 */
 	public RichTextRun(TextRun parent, int startAt, int len) {
+		this(parent, startAt, len, null, null);
+	}
+	/**
+	 * Create a new wrapper around a rich text string
+	 * @param parent The parent TextRun
+	 * @param startAt The start position of this run
+	 * @param len The length of this run
+	 * @param pStyle The paragraph style property collection
+	 * @param cStyle The character style property collection
+	 */
+	public RichTextRun(TextRun parent, int startAt, int len, 
+	TextPropCollection pStyle,  TextPropCollection cStyle) {
 		parentRun = parent;
 		startPos = startAt;
 		length = len;
+		paragraphStyle = pStyle;
+		characterStyle = cStyle;
 	}
 	
 	/**
@@ -82,4 +104,17 @@ public class RichTextRun
 	public void updateStartPosition(int startAt) {
 		startPos = startAt;
 	}
+	
+	
+	
+	/**
+	 * Unit Testing Only - get the underlying paragraph style collection.
+	 * For normal use, use the friendly setters and getters 
+	 */
+	public TextPropCollection _getRawParagraphStyle() { return paragraphStyle; }
+	/**
+	 * Unit Testing Only - get the underlying character style collection.
+	 * For normal use, use the friendly setters and getters 
+	 */
+	public TextPropCollection _getRawCharacterStyle() { return characterStyle; }
 }

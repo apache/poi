@@ -80,20 +80,36 @@ public class TextRun
 			_charAtom = tca;
 			_isUnicode = true;
 		}
+		String runRawText = getText();
 		
 		// Figure out the rich text runs
 		// TODO: Handle when paragraph style and character styles don't match up
 		LinkedList pStyles = new LinkedList();
 		LinkedList cStyles = new LinkedList();
 		if(_styleAtom != null) {
+			_styleAtom.setParentTextSize(runRawText.length());
 			pStyles = _styleAtom.getParagraphStyles();
 			cStyles = _styleAtom.getCharacterStyles();
 		}
 		if(pStyles.size() != cStyles.size()) {
 			throw new RuntimeException("Don't currently handle case of overlapping styles");
 		}
+		
+		int pos = 0;
 		_rtRuns = new RichTextRun[pStyles.size()];
-		//for(int i=0; i<)
+		for(int i=0; i<_rtRuns.length; i++) {
+			TextPropCollection pProps = (TextPropCollection)pStyles.get(i);
+			TextPropCollection cProps = (TextPropCollection)cStyles.get(i);
+			int len = cProps.getCharactersCovered();
+			_rtRuns[i] = new RichTextRun(this, pos, len, pProps, cProps);
+			pos += len;
+		}
+		
+		// Handle case of no current style, with a default
+		if(_rtRuns.length == 0) {
+			_rtRuns = new RichTextRun[1];
+			_rtRuns[0] = new RichTextRun(this, 0, runRawText.length());
+		}
 	}
 	
 	
