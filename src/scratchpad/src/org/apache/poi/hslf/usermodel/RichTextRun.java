@@ -75,6 +75,17 @@ public class RichTextRun
 		paragraphStyle = pStyle;
 		characterStyle = cStyle;
 	}
+
+	/**
+	 * Supply (normally default) textprops, when a run gets them 
+	 */
+	public void supplyTextProps(TextPropCollection pStyle,  TextPropCollection cStyle) {
+		if(paragraphStyle != null || characterStyle != null) {
+			throw new IllegalStateException("Can't call supplyTextProps if run already has some");
+		}
+		paragraphStyle = pStyle;
+		characterStyle = cStyle;
+	}
 	
 	/**
 	 * Fetch the text, in output suitable form

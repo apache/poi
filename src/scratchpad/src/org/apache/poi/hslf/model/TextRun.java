@@ -83,7 +83,7 @@ public class TextRun
 		String runRawText = getText();
 		
 		// Figure out the rich text runs
-		// TODO: Handle when paragraph style and character styles don't match up
+		// Assumes the paragraph styles are never shorter than the character ones
 		LinkedList pStyles = new LinkedList();
 		LinkedList cStyles = new LinkedList();
 		if(_styleAtom != null) {
@@ -91,24 +91,48 @@ public class TextRun
 			pStyles = _styleAtom.getParagraphStyles();
 			cStyles = _styleAtom.getCharacterStyles();
 		}
-		if(pStyles.size() != cStyles.size()) {
-			throw new RuntimeException("Don't currently handle case of overlapping styles");
-		}
-		
-		int pos = 0;
-		_rtRuns = new RichTextRun[pStyles.size()];
-		for(int i=0; i<_rtRuns.length; i++) {
-			TextPropCollection pProps = (TextPropCollection)pStyles.get(i);
-			TextPropCollection cProps = (TextPropCollection)cStyles.get(i);
-			int len = cProps.getCharactersCovered();
-			_rtRuns[i] = new RichTextRun(this, pos, len, pProps, cProps);
-			pos += len;
-		}
+
+		_rtRuns = new RichTextRun[cStyles.size()];
 		
 		// Handle case of no current style, with a default
 		if(_rtRuns.length == 0) {
 			_rtRuns = new RichTextRun[1];
 			_rtRuns[0] = new RichTextRun(this, 0, runRawText.length());
+		} else {
+			// Build up Rich Text Runs, one for each character style block
+			int pos = 0;
+			int curP = 0;
+			int pLenRemain = ((TextPropCollection)pStyles.get(curP)).getCharactersCovered();
+			
+			// Build one for each character style
+			for(int i=0; i<_rtRuns.length; i++) {
+				// Get the Props to use
+				TextPropCollection pProps = (TextPropCollection)pStyles.get(curP);
+				TextPropCollection cProps = (TextPropCollection)cStyles.get(i);
+				
+				// Get the length to extend over
+				// (Last run is often 1 char shorter than the cProp claims)
+				int len = cProps.getCharactersCovered();
+				if(len+pos > runRawText.length()) {
+					len = runRawText.length()-pos;
+				}
+				
+				// Build the rich text run
+				_rtRuns[i] = new RichTextRun(this, pos, len, pProps, cProps);
+				pos += len;
+				
+				// See if we need to move onto the next paragraph style
+				pLenRemain -= len;
+				if(pLenRemain == 0) {
+					curP++;
+					if(curP < pStyles.size()) {
+						pLenRemain = ((TextPropCollection)pStyles.get(curP)).getCharactersCovered();
+					}
+				}
+				if(pLenRemain < 0) {
+					throw new IllegalStateException("Paragraph style ran out before character style did!");
+				}
+			}
 		}
 	}
 	
@@ -226,6 +250,10 @@ public class TextRun
 	public synchronized void setText(String s) {
 		// Save the new text to the atoms
 		storeText(s);
+		
+		// Finally, zap and re-do the RichTextRuns
+		for(int i=0; i<_rtRuns.length; i++) { _rtRuns[i] = null; }
+		_rtRuns = new RichTextRun[1];
 
 		// Now handle record stylings:
 		// If there isn't styling
@@ -243,11 +271,13 @@ public class TextRun
 			TextPropCollection cCol = (TextPropCollection)cStyles.getFirst();
 			pCol.updateTextSize(s.length());
 			cCol.updateTextSize(s.length());
+			
+			// Recreate rich text run with first styling
+			_rtRuns[0] = new RichTextRun(this,0,s.length(), pCol, cCol);
+		} else {
+			// Recreate rich text run with no styling
+			_rtRuns[0] = new RichTextRun(this,0,s.length());
 		}
-		
-		// Finally, zap and re-do the RichTextRuns
-		_rtRuns = new RichTextRun[1];
-		_rtRuns[0] = new RichTextRun(this,0,s.length());
 	}
 
 	/**
@@ -270,6 +300,15 @@ public class TextRun
 		Record addAfter = _byteAtom;
 		if(_byteAtom == null) { addAfter = _charAtom; }
 		runAtomsParent.addChildAfter(_styleAtom, addAfter);
+		
+		// Feed this to our sole rich text run
+		if(_rtRuns.length != 1) {
+			throw new IllegalStateException("Needed to add StyleTextPropAtom when had many rich text runs");
+		}
+		_rtRuns[0].supplyTextProps(
+				(TextPropCollection)_styleAtom.getParagraphStyles().get(0),
+				(TextPropCollection)_styleAtom.getCharacterStyles().get(0)
+		);
 	}
 
 	// Accesser methods follow
