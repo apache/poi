@@ -49,9 +49,8 @@ public class TestBoundSheetRecord
     public void testWideRecordLength()
             throws Exception
     {
-        BoundSheetRecord record = new BoundSheetRecord();
-        record.setCompressedUnicodeFlag((byte)0x01);
-        record.setSheetname("Sheet1");
+        BoundSheetRecord record = new BoundSheetRecord();        
+        record.setSheetname("Sheet\u20ac");
         record.setSheetnameLength((byte)6);
 
         assertEquals(" 2  +  2  +  4  +   2   +    1     +    1    + len(str) * 2", 24, record.getRecordSize());

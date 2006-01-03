@@ -457,10 +457,11 @@ public class Workbook implements Model
      * @param sheetnum the sheet number (0 based)
      * @param sheetname the name for the sheet
      */
-
-    // for compatibility
     public void setSheetName(int sheetnum, String sheetname ) {
-        setSheetName( sheetnum, sheetname, (byte)0 );
+        checkSheets(sheetnum);
+        BoundSheetRecord sheet = (BoundSheetRecord)boundsheets.get( sheetnum );
+        sheet.setSheetname(sheetname);
+        sheet.setSheetnameLength( (byte)sheetname.length() );
     }
 
     /**
@@ -481,6 +482,14 @@ public class Workbook implements Model
         return false;
     }
 
+    /**
+     * sets the name for a given sheet forcing the encoding. This is STILL A BAD IDEA.
+     * Poi now automatically detects unicode
+     *
+     *@deprecated 3-Jan-06 Simply use setSheetNam e(int sheetnum, String sheetname)
+     * @param sheetnum the sheet number (0 based)
+     * @param sheetname the name for the sheet
+     */    
     public void setSheetName(int sheetnum, String sheetname, short encoding ) {
         checkSheets(sheetnum);
         BoundSheetRecord sheet = (BoundSheetRecord)boundsheets.get( sheetnum );

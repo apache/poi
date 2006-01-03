@@ -46,15 +46,15 @@ public class TestHSSFWorkbook extends TestCase
 
         try
         {
-            b.setSheetName( 3,  "name1", HSSFWorkbook.ENCODING_UTF_16 );
+            b.setSheetName( 3,  "name1"/*JMH, HSSFWorkbook.ENCODING_UTF_16*/ );
             fail();
         }
         catch ( IllegalArgumentException pass )
         {
         }
 
-        b.setSheetName( 3,  "name2", HSSFWorkbook.ENCODING_UTF_16 );
-        b.setSheetName( 3,  "name2", HSSFWorkbook.ENCODING_UTF_16 );
+        b.setSheetName( 3,  "name2"/*JMH, HSSFWorkbook.ENCODING_UTF_16*/ );
+        b.setSheetName( 3,  "name2"/*JMH, HSSFWorkbook.ENCODING_UTF_16*/ );
         b.setSheetName( 3,  "name2" );
         
         HSSFWorkbook c = new HSSFWorkbook( );

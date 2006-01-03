@@ -339,7 +339,15 @@ public class HSSFWorkbook
         return workbook.getWindowOne().getDisplayedTab();
     }
 
+    /**
+     * @deprecated POI will now properly handle unicode strings without
+     * forceing an encoding
+     */
     public final static byte ENCODING_COMPRESSED_UNICODE = 0;
+    /**
+     * @deprecated POI will now properly handle unicode strings without
+     * forceing an encoding
+     */
     public final static byte ENCODING_UTF_16             = 1;
 
 
@@ -354,9 +362,23 @@ public class HSSFWorkbook
         if (workbook.doesContainsSheetName( name, sheet ))
             throw new IllegalArgumentException( "The workbook already contains a sheet with this name" );
 
-        workbook.setSheetName( sheet, name, ENCODING_COMPRESSED_UNICODE );
+        if (sheet > (sheets.size() - 1))
+        {
+            throw new RuntimeException("Sheet out of bounds");
+        }
+        
+        workbook.setSheetName( sheet, name);
     }
 
+    
+    /**
+     * set the sheet name forcing the encoding. Forcing the encoding IS A BAD IDEA!!!
+     * @deprecated 3-Jan-2006 POI now automatically detects unicode and sets the encoding
+     * appropriately. Simply use setSheetName(int sheet, String encoding) 
+     * @throws IllegalArgumentException if the name is greater than 31 chars
+     * or contains /\?*[]
+     * @param sheet number (0 based)
+     */    
     public void setSheetName( int sheet, String name, short encoding )
     {
         if (workbook.doesContainsSheetName( name, sheet ))
