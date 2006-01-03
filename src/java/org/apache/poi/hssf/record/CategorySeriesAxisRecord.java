@@ -77,13 +77,10 @@ public class CategorySeriesAxisRecord
 
     protected void fillFields(RecordInputStream in)
     {
-
-        int pos = 0;
         field_1_crossingPoint          = in.readShort();
         field_2_labelFrequency         = in.readShort();
         field_3_tickMarkFrequency      = in.readShort();
         field_4_options                = in.readShort();
-
     }
 
     public String toString()
@@ -140,7 +137,7 @@ public class CategorySeriesAxisRecord
 
     public short getSid()
     {
-        return this.sid;
+        return sid;
     }
 
     public Object clone() {

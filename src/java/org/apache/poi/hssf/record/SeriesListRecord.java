@@ -71,10 +71,7 @@ public class SeriesListRecord
 
     protected void fillFields(RecordInputStream in)
     {
-
-        int pos = 0;
         field_1_seriesNumbers          = in.readShortArray();
-
     }
 
     public String toString()
@@ -112,7 +109,7 @@ public class SeriesListRecord
 
     public short getSid()
     {
-        return this.sid;
+        return sid;
     }
 
     public Object clone() {

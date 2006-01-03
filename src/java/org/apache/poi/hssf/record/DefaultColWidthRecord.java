@@ -112,7 +112,7 @@ public class DefaultColWidthRecord
 
     public short getSid()
     {
-        return this.sid;
+        return sid;
     }
 
     public Object clone() {

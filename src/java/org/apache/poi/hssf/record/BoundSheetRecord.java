@@ -144,11 +144,7 @@ public class BoundSheetRecord
     /**
      * Set the sheetname for this sheet.  (this appears in the tabs at the bottom)
      * @param sheetname the name of the sheet
-<<<<<<< BoundSheetRecord.java
-     * @thows IllegalArgumentException if sheet name will cause excel to crash.
-=======
      * @throws IllegalArgumentException if sheet name will cause excel to crash. 
->>>>>>> 1.14
      */
 
     public void setSheetname( String sheetname )
@@ -165,6 +161,7 @@ public class BoundSheetRecord
                     throw new IllegalArgumentException("Sheet name cannot be blank, greater than 31 chars, or contain any of /\\*?[]");
         }
         field_5_sheetname = sheetname;
+        setCompressedUnicodeFlag(StringUtil.hasMultibyte(sheetname) ?  (byte)1 : (byte)0);        
     }
 
     /**
@@ -303,6 +300,6 @@ public class BoundSheetRecord
 
     public short getSid()
     {
-        return this.sid;
+        return sid;
     }
 }

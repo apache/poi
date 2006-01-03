@@ -78,14 +78,11 @@ public class AxisRecord
 
     protected void fillFields(RecordInputStream in)
     {
-
-        int pos = 0;
         field_1_axisType               = in.readShort();
         field_2_reserved1              = in.readInt();
         field_3_reserved2              = in.readInt();
         field_4_reserved3              = in.readInt();
         field_5_reserved4              = in.readInt();
-
     }
 
     public String toString()
@@ -144,7 +141,7 @@ public class AxisRecord
 
     public short getSid()
     {
-        return this.sid;
+        return sid;
     }
 
     public Object clone() {

@@ -23,22 +23,15 @@
  */
 package org.apache.poi.hssf.dev;
 
-import java.io.InputStream;
-import java.io.IOException;
-import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 
 //import java.io.*;
 import java.util.List;
 
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.HexDump;
 import org.apache.poi.hssf.record.*;
 import org.apache.poi.hssf.record.formula.*;
 import org.apache.poi.hssf.model.*;
-import org.apache.poi.hssf.usermodel.*;
 
 /**
  * FormulaViewer - finds formulas in a BIFF8 file and attempts to read them/display

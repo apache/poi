@@ -23,7 +23,6 @@ import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.hssf.util.SheetReferences;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.Iterator;

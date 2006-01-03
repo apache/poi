@@ -18,8 +18,6 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.LittleEndianConsts;
-import org.apache.poi.util.LittleEndian;
 
 /**
  * Process a single record.  That is, an SST record or a continue record.

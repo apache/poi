@@ -78,8 +78,6 @@ public class AreaFormatRecord
 
     protected void fillFields(RecordInputStream in)
     {
-
-        int pos = 0;
         field_1_foregroundColor        = in.readInt();
         field_2_backgroundColor        = in.readInt();
         field_3_pattern                = in.readShort();
@@ -152,7 +150,7 @@ public class AreaFormatRecord
 
     public short getSid()
     {
-        return this.sid;
+        return sid;
     }
 
     public Object clone() {

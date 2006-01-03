@@ -130,7 +130,7 @@ public class UnknownRecord
 
     public short getSid()
     {
-        return this.sid;
+        return sid;
     }
 
     /**

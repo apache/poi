@@ -77,10 +77,7 @@ public class SeriesLabelsRecord
 
     protected void fillFields(RecordInputStream in)
     {
-
-        int pos = 0;
         field_1_formatFlags            = in.readShort();
-
     }
 
     public String toString()
@@ -125,7 +122,7 @@ public class SeriesLabelsRecord
 
     public short getSid()
     {
-        return this.sid;
+        return sid;
     }
 
     public Object clone() {

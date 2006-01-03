@@ -58,11 +58,11 @@ public class ColumnInfoRecordsAggregate
     public Object clone()
     {
         ColumnInfoRecordsAggregate rec = new ColumnInfoRecordsAggregate();
-        for ( Iterator colIter = getIterator(); colIter.hasNext(); )
+        for (int k = 0; k < records.size(); k++)
         {
-            //return the cloned Row Record & insert
-            ColumnInfoRecord col = (ColumnInfoRecord) ( (ColumnInfoRecord) colIter.next() ).clone();
-            rec.insertColumn( col );
+            ColumnInfoRecord ci = ( ColumnInfoRecord ) records.get(k);
+            ci=(ColumnInfoRecord) ci.clone();
+            rec.insertColumn( ci );
         }
         return rec;
     }

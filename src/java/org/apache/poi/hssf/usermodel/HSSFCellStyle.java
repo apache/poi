@@ -35,7 +35,6 @@ public class HSSFCellStyle
 {
     private ExtendedFormatRecord format                     = null;
     private short                index                      = 0;
-    private short                fontindex                  = 0;
 
     /**
      * general (normal) horizontal alignment
@@ -276,7 +275,7 @@ public class HSSFCellStyle
     public void setFont(HSSFFont font)
     {
         format.setIndentNotParentFont(true);
-        fontindex = font.getIndex();
+        short fontindex = font.getIndex();
         format.setFontIndex(fontindex);
     }
 

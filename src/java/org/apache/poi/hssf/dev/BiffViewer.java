@@ -24,7 +24,6 @@ package org.apache.poi.hssf.dev;
 import org.apache.poi.hssf.record.*;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndian;
 
 import java.io.FileInputStream;
 import java.io.IOException;

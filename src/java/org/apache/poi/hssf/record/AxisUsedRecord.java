@@ -71,10 +71,7 @@ public class AxisUsedRecord
 
     protected void fillFields(RecordInputStream in)
     {
-
-        int pos = 0;
         field_1_numAxis                = in.readShort();
-
     }
 
     public String toString()
@@ -113,7 +110,7 @@ public class AxisUsedRecord
 
     public short getSid()
     {
-        return this.sid;
+        return sid;
     }
 
     public Object clone() {

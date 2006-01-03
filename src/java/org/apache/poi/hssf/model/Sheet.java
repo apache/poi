@@ -936,10 +936,13 @@ public class Sheet implements Model
     public void addValueRecord(int row, CellValueRecordInterface col)
     {
         checkCells();
-        log.logFormatted(POILogger.DEBUG, "add value record  row,loc %,%", new int[]
+        if(log.check(POILogger.DEBUG))
         {
-            row, loc
-        });
+          log.logFormatted(POILogger.DEBUG, "add value record  row,loc %,%", new int[]
+          {
+              row, loc
+          });
+        }
         DimensionsRecord d = ( DimensionsRecord ) records.get(getDimsLoc());
 
         if (col.getColumn() > d.getLastCol())
@@ -1764,9 +1767,10 @@ public class Sheet implements Model
 
         if (columns != null)
         {
-            for ( Iterator iterator = columns.getIterator(); iterator.hasNext(); )
+            int count=columns.getNumColumns();
+            for ( int k=0;k<count;k++ )
             {
-                ci = ( ColumnInfoRecord ) iterator.next();
+                ci = columns.getColInfo(k);
                 if ((ci.getFirstColumn() <= column)
                         && (column <= ci.getLastColumn()))
                 {
@@ -1804,8 +1808,10 @@ public class Sheet implements Model
         short retval = 0;
         ColumnInfoRecord ci = null;
         if (columns != null) {
-            for (Iterator iterator = columns.getIterator(); iterator.hasNext();) {
-                ci = (ColumnInfoRecord) iterator.next();
+          int count=columns.getNumColumns();
+          for ( int k=0;k<count;k++ )
+          {
+                ci = columns.getColInfo(k);
                 if ((ci.getFirstColumn() <= column)
                         && (column <= ci.getLastColumn())) {
                     break;
@@ -1850,9 +1856,10 @@ public class Sheet implements Model
 
         // Determine the maximum overall level
         int maxLevel = 0;
-        for ( Iterator iterator = columns.getIterator(); iterator.hasNext(); )
+        int count=columns.getNumColumns();
+        for ( int k=0;k<count;k++ )
         {
-            ColumnInfoRecord columnInfoRecord = (ColumnInfoRecord) iterator.next();
+            ColumnInfoRecord columnInfoRecord = columns.getColInfo(k);
             maxLevel = Math.max(columnInfoRecord.getOutlineLevel(), maxLevel);
         }
 

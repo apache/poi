@@ -71,8 +71,6 @@ public class UnitsRecord
 
     protected void fillFields(RecordInputStream in)
     {
-
-        int pos = 0;
         field_1_units                  = in.readShort();
 
     }
@@ -113,7 +111,7 @@ public class UnitsRecord
 
     public short getSid()
     {
-        return this.sid;
+        return sid;
     }
 
     public Object clone() {

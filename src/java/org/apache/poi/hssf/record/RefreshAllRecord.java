@@ -119,6 +119,6 @@ public class RefreshAllRecord
 
     public short getSid()
     {
-        return this.sid;
+        return sid;
     }
 }

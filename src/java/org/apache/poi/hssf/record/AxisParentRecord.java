@@ -77,14 +77,11 @@ public class AxisParentRecord
 
     protected void fillFields(RecordInputStream in)
     {
-
-        int pos = 0;
         field_1_axisType               = in.readShort();
         field_2_x                      = in.readInt();
         field_3_y                      = in.readInt();
         field_4_width                  = in.readInt();
         field_5_height                 = in.readInt();
-
     }
 
     public String toString()
@@ -143,7 +140,7 @@ public class AxisParentRecord
 
     public short getSid()
     {
-        return this.sid;
+        return sid;
     }
 
     public Object clone() {

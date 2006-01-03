@@ -77,12 +77,9 @@ public class BarRecord
 
     protected void fillFields(RecordInputStream in)
     {
-
-        int pos = 0;
         field_1_barSpace               = in.readShort();
         field_2_categorySpace          = in.readShort();
         field_3_formatFlags            = in.readShort();
-
     }
 
     public String toString()
@@ -135,7 +132,7 @@ public class BarRecord
 
     public short getSid()
     {
-        return this.sid;
+        return sid;
     }
 
     public Object clone() {

@@ -63,16 +63,11 @@ public class FormulaParser {
      * Using an unsynchronized linkedlist to implement a stack since we're not multi-threaded.
      */
     private List functionTokens = new LinkedList();
-    
-    //private Stack tokens = new java.util.Stack();
-    private List result = new ArrayList();
-    private int numParen;
-    
+        
     private static char TAB = '\t';
     private static char CR = '\n';
     
    private char look;              // Lookahead Character
-   private boolean inFunction = false;
    
    private Workbook book;
     

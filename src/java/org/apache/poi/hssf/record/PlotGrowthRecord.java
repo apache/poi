@@ -72,8 +72,6 @@ public class PlotGrowthRecord
 
     protected void fillFields(RecordInputStream in)
     {
-
-        int pos = 0;
         field_1_horizontalScale        = in.readInt();
         field_2_verticalScale          = in.readInt();
 
@@ -120,7 +118,7 @@ public class PlotGrowthRecord
 
     public short getSid()
     {
-        return this.sid;
+        return sid;
     }
 
     public Object clone() {

@@ -214,7 +214,7 @@ public class BlankRecord
 
     public short getSid()
     {
-        return BlankRecord.sid;
+        return sid;
     }
 
     public String toString()

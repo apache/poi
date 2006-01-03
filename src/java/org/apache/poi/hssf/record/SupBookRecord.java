@@ -131,6 +131,6 @@ public class SupBookRecord extends Record
 
     public short getSid()
     {
-        return this.sid;
+        return sid;
     }
 }

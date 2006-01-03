@@ -114,6 +114,6 @@ public class PasswordRev4Record
 
     public short getSid()
     {
-        return this.sid;
+        return sid;
     }
 }

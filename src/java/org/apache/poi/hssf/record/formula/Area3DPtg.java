@@ -17,7 +17,6 @@
 package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.hssf.util.RangeAddress;
 import org.apache.poi.hssf.util.AreaReference;
 import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.hssf.util.SheetReferences;

@@ -182,7 +182,7 @@ public class LabelSSTRecord
 
     public short getSid()
     {
-        return this.sid;
+        return sid;
     }
 
     public boolean isBefore(CellValueRecordInterface i)

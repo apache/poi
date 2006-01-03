@@ -88,8 +88,6 @@ public class SeriesRecord
 
     protected void fillFields(RecordInputStream in)
     {
-
-        int pos = 0;
         field_1_categoryDataType       = in.readShort();
         field_2_valuesDataType         = in.readShort();
         field_3_numCategories          = in.readShort();
@@ -160,7 +158,7 @@ public class SeriesRecord
 
     public short getSid()
     {
-        return this.sid;
+        return sid;
     }
 
     public Object clone() {

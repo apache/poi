@@ -70,9 +70,6 @@ public class EndSubRecord
 
     protected void fillFields(RecordInputStream in)
     {
-
-        int pos = 0;
-
     }
 
     public String toString()
@@ -87,8 +84,6 @@ public class EndSubRecord
 
     public int serialize(int offset, byte[] data)
     {
-        int pos = 0;
-
         LittleEndian.putShort(data, 0 + offset, sid);
         LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
 
@@ -106,7 +101,7 @@ public class EndSubRecord
 
     public short getSid()
     {
-        return this.sid;
+        return sid;
     }
 
     public Object clone() {

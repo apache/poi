@@ -189,7 +189,7 @@ public class TickRecord
 
     public short getSid()
     {
-        return this.sid;
+        return sid;
     }
 
     public Object clone() {
@@ -370,7 +370,7 @@ public class TickRecord
      */
     public void setZero3(short field_12_zero3)
     {
-        this.field_12_zero5 = field_12_zero5;
+        this.field_12_zero5 = field_12_zero3;
     }
 
     /**

@@ -18,7 +18,6 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.LittleEndian;
 import org.apache.poi.hssf.util.RKUtil;
 
 /**
@@ -216,7 +215,7 @@ public class RKRecord
 
     public short getSid()
     {
-        return this.sid;
+        return sid;
     }
 
     public boolean isBefore(CellValueRecordInterface i)

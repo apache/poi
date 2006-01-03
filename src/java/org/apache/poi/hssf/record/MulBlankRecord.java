@@ -23,8 +23,6 @@
  */
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.LittleEndian;
-
 /**
  * Title:        Mulitple Blank cell record <P>
  * Description:  Represents a  set of columns in a row with no value but with styling.
@@ -34,7 +32,6 @@ import org.apache.poi.util.LittleEndian;
  * @author Andrew C. Oliver (acoliver at apache dot org)
  * @author Glen Stampoultzis (glens at apache.org)
  * @version 2.0-pre
- * @see org.apache.poi.hssf.record.RecordFactory
  * @see org.apache.poi.hssf.record.BlankRecord
  */
 
@@ -185,7 +182,7 @@ public class MulBlankRecord
 
     public short getSid()
     {
-        return this.sid;
+        return sid;
     }
 
     public int serialize(int offset, byte [] data)
