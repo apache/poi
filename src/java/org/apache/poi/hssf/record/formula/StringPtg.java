@@ -69,8 +69,8 @@ public class StringPtg
         if (value.length() >255) {
             throw new IllegalArgumentException("String literals in formulas cant be bigger than 255 characters ASCII");
         }
-        this.field_2_options=0;
-        this.fHighByte.setBoolean(field_2_options, false);
+        this.field_2_options=0;        
+        field_2_options = (byte)this.fHighByte.setBoolean(field_2_options, StringUtil.hasMultibyte(value));
         this.field_3_string=value;
         this.field_1_length=value.length(); //for the moment, we support only ASCII strings in formulas we create
     }

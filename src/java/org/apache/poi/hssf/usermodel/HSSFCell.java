@@ -381,13 +381,13 @@ public class HSSFCell
                         int sst = 0;
 
                         UnicodeString str = getRichStringCellValue().getUnicodeString();
-                        if (encoding == ENCODING_COMPRESSED_UNICODE)
-                        {
-                            str.setCompressedUnicode();
-                        } else if (encoding == ENCODING_UTF_16)
-                        {
-                            str.setUncompressedUnicode();
-                        }
+//jmh                        if (encoding == ENCODING_COMPRESSED_UNICODE)
+//jmh                        {
+//                      jmh                            str.setCompressedUnicode();
+//                      jmh                        } else if (encoding == ENCODING_UTF_16)
+//                      jmh                        {
+//                      jmh                            str.setUncompressedUnicode();
+//                      jmh                        }
                         sst = book.addSSTString(str);
                         lrec.setSSTIndex(sst);
                         getRichStringCellValue().setUnicodeString(book.getSSTString(sst));
@@ -572,13 +572,13 @@ public class HSSFCell
             int index = 0;
 
             UnicodeString str = value.getUnicodeString();            
-            if (encoding == ENCODING_COMPRESSED_UNICODE)
-            {
-                str.setCompressedUnicode();
-            } else if (encoding == ENCODING_UTF_16)
-            {
-                str.setUncompressedUnicode();
-            }
+//          jmh            if (encoding == ENCODING_COMPRESSED_UNICODE)
+//          jmh            {
+//          jmh                str.setCompressedUnicode();
+//          jmh            } else if (encoding == ENCODING_UTF_16)
+//          jmh            {
+//          jmh                str.setUncompressedUnicode();
+//          jmh            }
             index = book.addSSTString(str);            
             (( LabelSSTRecord ) record).setSSTIndex(index);
             stringValue = value;
@@ -856,6 +856,8 @@ public class HSSFCell
      * @see #ENCODING_UTF_16
      *
      * @return -1, 1 or 0 for unchanged, compressed or uncompressed (used only with String type)
+     * 
+     * @deprecated As of 3-Jan-06 POI now automatically handles Unicode without forcing the encoding.
      */
     public short getEncoding()
     {
@@ -870,6 +872,7 @@ public class HSSFCell
      * @see #ENCODING_UTF_16
      *
      * @param encoding either ENCODING_COMPRESSED_UNICODE (0) or ENCODING_UTF_16 (1)
+     * @deprecated As of 3-Jan-06 POI now automatically handles Unicode without forcing the encoding.
      */
 
     public void setEncoding(short encoding)
