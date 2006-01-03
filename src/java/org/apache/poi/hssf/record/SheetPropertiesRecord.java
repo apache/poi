@@ -80,11 +80,8 @@ public class SheetPropertiesRecord
 
     protected void fillFields(RecordInputStream in)
     {
-
-        int pos = 0;
         field_1_flags                  = in.readShort();
         field_2_empty                  = in.readByte();
-
     }
 
     public String toString()
@@ -133,7 +130,7 @@ public class SheetPropertiesRecord
 
     public short getSid()
     {
-        return this.sid;
+        return sid;
     }
 
     public Object clone() {

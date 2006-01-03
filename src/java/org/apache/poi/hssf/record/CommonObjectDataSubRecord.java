@@ -110,15 +110,12 @@ public class CommonObjectDataSubRecord
 
     protected void fillFields(RecordInputStream in)
     {
-
-        int pos = 0;
         field_1_objectType             = in.readShort();
         field_2_objectId               = in.readShort();
         field_3_option                 = in.readShort();
         field_4_reserved1              = in.readInt();
         field_5_reserved2              = in.readInt();
         field_6_reserved3              = in.readInt();
-
     }
 
     public String toString()
@@ -186,7 +183,7 @@ public class CommonObjectDataSubRecord
 
     public short getSid()
     {
-        return this.sid;
+        return sid;
     }
 
     public Object clone() {

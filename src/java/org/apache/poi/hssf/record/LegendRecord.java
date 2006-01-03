@@ -92,8 +92,6 @@ public class LegendRecord
 
     protected void fillFields(RecordInputStream in)
     {
-
-        int pos = 0;
         field_1_xAxisUpperLeft         = in.readInt();
         field_2_yAxisUpperLeft         = in.readInt();
         field_3_xSize                  = in.readInt();
@@ -101,7 +99,6 @@ public class LegendRecord
         field_5_type                   = in.readByte();
         field_6_spacing                = in.readByte();
         field_7_options                = in.readShort();
-
     }
 
     public String toString()
@@ -176,7 +173,7 @@ public class LegendRecord
 
     public short getSid()
     {
-        return this.sid;
+        return sid;
     }
 
     public Object clone() {

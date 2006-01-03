@@ -17,13 +17,11 @@
 
 package org.apache.poi.hssf.dev;
 
-import java.io.InputStream;
 import java.io.IOException;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.hssf.record.*;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.hssf.util.*;
 
@@ -41,9 +39,6 @@ public class HSSF
 {
     private String         filename     = null;
 
-    // private POIFSFileSystem     fs           = null;
-    private InputStream    stream       = null;
-    private Record[]       records      = null;
     protected HSSFWorkbook hssfworkbook = null;
 
     /**
@@ -98,13 +93,13 @@ public class HSSF
 
         f.setFontHeightInPoints(( short ) 12);
         f.setColor(( short ) 0xA);
-        f.setBoldweight(f.BOLDWEIGHT_BOLD);
+        f.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
         f2.setFontHeightInPoints(( short ) 10);
         f2.setColor(( short ) 0xf);
-        f2.setBoldweight(f2.BOLDWEIGHT_BOLD);
+        f2.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
         cs.setFont(f);
         cs.setDataFormat(HSSFDataFormat.getBuiltinFormat("($#,##0_);[Red]($#,##0)"));
-        cs2.setBorderBottom(cs2.BORDER_THIN);
+        cs2.setBorderBottom(HSSFCellStyle.BORDER_THIN);
         cs2.setFillPattern(( short ) 1);   // fill w fg
         cs2.setFillForegroundColor(( short ) 0xA);
         cs2.setFont(f2);
@@ -144,7 +139,7 @@ public class HSSF
         rownum++;
         rownum++;
         r = s.createRow(rownum);
-        cs3.setBorderBottom(cs3.BORDER_THICK);
+        cs3.setBorderBottom(HSSFCellStyle.BORDER_THICK);
         for (short cellnum = ( short ) 0; cellnum < 50; cellnum++)
         {
             c = r.createCell(cellnum, HSSFCell.CELL_TYPE_BLANK);
@@ -183,7 +178,7 @@ public class HSSF
     public HSSF(String infile, String outfile, boolean write)
         throws IOException
     {
-        this.filename = filename;
+        this.filename = infile;
         POIFSFileSystem fs =
             new POIFSFileSystem(new FileInputStream(filename));
 

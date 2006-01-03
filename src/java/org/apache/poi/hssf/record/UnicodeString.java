@@ -49,9 +49,9 @@ public class UnicodeString
     private String            field_3_string;        // = null;
     private List field_4_format_runs;
     private byte[] field_5_ext_rst;
-    private  BitField   highByte  = BitFieldFactory.getInstance(0x1);
-    private  BitField   extBit    = BitFieldFactory.getInstance(0x4);
-    private  BitField   richText  = BitFieldFactory.getInstance(0x8);
+    private  static final BitField   highByte  = BitFieldFactory.getInstance(0x1);
+    private  static final BitField   extBit    = BitFieldFactory.getInstance(0x4);
+    private  static final BitField   richText  = BitFieldFactory.getInstance(0x8);
 
     public static class FormatRun implements Comparable {
       private short character;
@@ -840,7 +840,7 @@ public class UnicodeString
 
     public short getSid()
     {
-        return this.sid;
+        return sid;
     }
 
     public int compareTo(Object obj)

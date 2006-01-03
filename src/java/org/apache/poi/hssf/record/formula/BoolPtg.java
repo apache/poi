@@ -16,7 +16,6 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.util.LittleEndian;
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.RecordInputStream;
 
@@ -34,8 +33,6 @@ public class BoolPtg
     public final static int  SIZE = 2;
     public final static byte sid  = 0x1d;
     private boolean          field_1_value;
-
-    private String val;
 
     private BoolPtg() {
       //Required for clone methods

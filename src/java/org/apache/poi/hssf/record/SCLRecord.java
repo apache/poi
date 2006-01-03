@@ -72,11 +72,8 @@ public class SCLRecord
 
     protected void fillFields(RecordInputStream in)
     {
-
-        int pos = 0;
         field_1_numerator              = in.readShort();
         field_2_denominator            = in.readShort();
-
     }
 
     public String toString()
@@ -120,7 +117,7 @@ public class SCLRecord
 
     public short getSid()
     {
-        return this.sid;
+        return sid;
     }
 
     public Object clone() {

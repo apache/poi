@@ -76,11 +76,8 @@ public class FrameRecord
 
     protected void fillFields(RecordInputStream in)
     {
-
-        int pos = 0;
         field_1_borderType             = in.readShort();
         field_2_options                = in.readShort();
-
     }
 
     public String toString()
@@ -126,7 +123,7 @@ public class FrameRecord
 
     public short getSid()
     {
-        return this.sid;
+        return sid;
     }
 
     public Object clone() {

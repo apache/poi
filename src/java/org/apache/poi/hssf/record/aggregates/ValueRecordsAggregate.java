@@ -22,8 +22,6 @@ import org.apache.poi.hssf.record.*;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 
 /**
@@ -41,144 +39,75 @@ public class ValueRecordsAggregate
     public final static short sid       = -1000;
     int                       firstcell = -1;
     int                       lastcell  = -1;
-    TreeMap                   records   = null;
+  CellValueRecordInterface[][] records;
 
-   /** This class is used to find a row in the TreeMap.
-    *  
-    * This instance of which is used by the rowHasCells method as the key.
-    */
-   private class RowComparator implements CellValueRecordInterface, Comparable {
-     private int row;
-     
-     public void setRow(int row) {
-       this.row = row;
-     }
-     
-     public int compareTo(Object obj) {
-         CellValueRecordInterface cell = (CellValueRecordInterface) obj;
- 
-         if (row == cell.getRow()) {
-           return 0;
-         }
-         else if (row < cell.getRow()) {
-           return -1;
-         }
-         else if (row > cell.getRow()){
-           return 1;
-         }
-         return -1;         
-     }
-     public int getRow() { return row;}     
-     public short getColumn() { return 0;}
-     public void setColumn(short col){}
-     public void setXFIndex(short xf){}
-     public short getXFIndex(){return 0;}
-     public boolean isBefore(CellValueRecordInterface i){ return false; }
-     public boolean isAfter(CellValueRecordInterface i){ return false; }
-     public boolean isEqual(CellValueRecordInterface i){ return false; }
-     public Object clone(){ return null;}     
-   }
-   
-   /**
-    * Iterates the cell records that exist between the startRow and endRow (inclusive).
-    * 
-    * User must ensure that hasNext & next are called insequence for correct
-    * operation. Could fix, but since this is only used internally to the
-    * ValueRecordsAggregate class there doesnt seem much point.
-    */   
-   private class RowCellIterator implements Iterator {
-     private int startRow;
-     private int endRow;
-     private Iterator internalIterator;
-     private CellValueRecordInterface atCell;
-     
-     public class RowCellComparator extends RowComparator {
-       public int compareTo(Object obj) {
-           CellValueRecordInterface cell = (CellValueRecordInterface) obj;
-  
-           if (getRow() == cell.getRow() && cell.getColumn() == 0) {
-             return 0;
-           }
-           else if (getRow() < cell.getRow()) {
-             return -1;
-           }
-           else if (getRow() > cell.getRow()){
-             return 1;
-           }
-           if (cell.getColumn() > 0)
-           {
-               return -1;
-           }
-           if (cell.getColumn() < 0)
-           {
-               return 1;
-           }
-           return -1;         
-       }
-     }
-     
-     private RowCellComparator rowCellCompare;
-     
-     
-     public RowCellIterator(int startRow, int endRow) {
-       this.startRow = startRow;
-       this.endRow = endRow;
-       rowCellCompare = new RowCellComparator();
-       rowCellCompare.setRow(startRow);
-     }
-     
-     public boolean hasNext() {
-       if (internalIterator == null) {
-         internalIterator = records.tailMap(rowCellCompare).values().iterator();
-       }
-       if (internalIterator.hasNext()) {
-         atCell = (CellValueRecordInterface) internalIterator.next();
-         return (atCell.getRow() <= endRow);
-       } else return false;
-     }
-     
-     public Object next() {
-       return atCell;
-     }
-     
-     public void remove() {
-       //Do Nothing (Not called)
-     }
-   }
-   
-   //Only need a single instance of this class, but the row fields
-   //will probably change each use. Instance is only used in the rowHasCells method.
-   public final RowComparator compareRow = new RowComparator();
-   
     /** Creates a new instance of ValueRecordsAggregate */
 
     public ValueRecordsAggregate()
     {
-        records = new TreeMap();
+    records = new CellValueRecordInterface[30][]; // We start with 30 Rows.
     }
 
-    public void insertCell(CellValueRecordInterface cell)
-    {
-        Object o = records.put(cell, cell);
-
-        if ((cell.getColumn() < firstcell) || (firstcell == -1))
-        {
-            firstcell = cell.getColumn();
-        }
-        if ((cell.getColumn() > lastcell) || (lastcell == -1))
-        {
-            lastcell = cell.getColumn();
-        }
+  public void insertCell(CellValueRecordInterface cell) {
+    short column = cell.getColumn();
+    int row = cell.getRow();
+    if (row >= records.length) {
+      CellValueRecordInterface[][] oldRecords = records;
+      int newSize = oldRecords.length * 2;
+      if(newSize<row+1) newSize=row+1;
+      records = new CellValueRecordInterface[newSize][];
+      System.arraycopy(oldRecords, 0, records, 0, oldRecords.length);
     }
+    CellValueRecordInterface[] rowCells = records[row];
+    if (rowCells == null) {
+      int newSize = column + 1;
+      if(newSize<10) newSize=10;
+      rowCells = new CellValueRecordInterface[newSize];
+      records[row] = rowCells;
+    }
+    if (column >= rowCells.length) {
+      CellValueRecordInterface[] oldRowCells = rowCells;
+      int newSize = oldRowCells.length * 2;
+      if(newSize<column+1) newSize=column+1;
+      // if(newSize>257) newSize=257; // activate?
+      rowCells = new CellValueRecordInterface[newSize];
+      System.arraycopy(oldRowCells, 0, rowCells, 0, oldRowCells.length);
+      records[row] = rowCells;
+    }
+    rowCells[column] = cell;
+
+    if ((column < firstcell) || (firstcell == -1)) {
+      firstcell = column;
+    }
+    if ((column > lastcell) || (lastcell == -1)) {
+      lastcell = column;
+    }
+  }
 
     public void removeCell(CellValueRecordInterface cell)
     {
-        records.remove(cell);
+    	if (cell != null) {
+          short column = cell.getColumn();
+          int row = cell.getRow();
+          if(row>=records.length) return;
+          CellValueRecordInterface[] rowCells=records[row];
+          if(rowCells==null) return;
+          if(column>=rowCells.length) return;
+          rowCells[column]=null;
+    	}
     }
 
     public int getPhysicalNumberOfCells()
     {
-        return records.size();
+    int count=0;
+    for(int r=0;r<records.length;r++) {
+      CellValueRecordInterface[] rowCells=records[r];
+      if (rowCells != null)
+        for(short c=0;c<rowCells.length;c++) {
+          if(rowCells[c]!=null) count++;
+        }
+    }
+    return count;
     }
 
     public int getFirstCellNum()
@@ -246,7 +175,7 @@ public class ValueRecordsAggregate
      *  that are attached to the rows in the range specified.
      */
     public int getRowCellBlockSize(int startRow, int endRow) {
-      RowCellIterator itr = new RowCellIterator(startRow, endRow);
+      MyIterator itr = new MyIterator(startRow, endRow);
       int size = 0;
       while (itr.hasNext()) {
         CellValueRecordInterface cell = (CellValueRecordInterface)itr.next();
@@ -261,14 +190,18 @@ public class ValueRecordsAggregate
 
     /** Returns true if the row has cells attached to it */
     public boolean rowHasCells(int row) {
-      compareRow.setRow(row);
-      return records.containsKey(compareRow);
+      CellValueRecordInterface[] rowCells=records[row];
+      if(rowCells==null) return false;
+      for(int col=0;col<rowCells.length;col++) {
+        if(rowCells[col]!=null) return true;
+      }
+      return false;
     }
 
     /** Serializes the cells that are allocated to a certain row range*/
     public int serializeCellRow(final int row, int offset, byte [] data)
     {
-        RowCellIterator itr = new RowCellIterator(row, row);      
+      MyIterator itr = new MyIterator(row, row);
         int      pos = offset;
 
         while (itr.hasNext())
@@ -318,7 +251,7 @@ public class ValueRecordsAggregate
     public int getRecordSize() {
     
         int size = 0;
-        Iterator irecs = records.values().iterator();
+    Iterator irecs = this.getIterator();
         
         while (irecs.hasNext()) {
                 size += (( Record ) irecs.next()).getRecordSize();
@@ -329,7 +262,7 @@ public class ValueRecordsAggregate
 
     public Iterator getIterator()
     {
-        return records.values().iterator();
+    return new MyIterator();
     }
 
     /** Performs a deep clone of the record*/
@@ -341,4 +274,51 @@ public class ValueRecordsAggregate
       }
       return rec;
     }
+  
+  public class MyIterator implements Iterator {
+    short nextColumn=-1;
+    int nextRow,lastRow;
+
+    public MyIterator()
+    {
+      this.nextRow=0;
+      this.lastRow=records.length-1;
+      findNext();
+    }
+    
+    public MyIterator(int firstRow,int lastRow)
+    {
+      this.nextRow=firstRow;
+      this.lastRow=lastRow;
+      findNext();
+    }
+
+    public boolean hasNext() {
+      return nextRow<=lastRow;
+    }
+    public Object next() {
+      Object o=records[nextRow][nextColumn];
+      findNext();
+      return o;
+    }
+    public void remove() {
+      throw new UnsupportedOperationException("gibt's noch nicht");
+    }
+
+    private void findNext() {
+      nextColumn++;
+      for(;nextRow<=lastRow;nextRow++) {
+        CellValueRecordInterface[] rowCells=records[nextRow];
+        if(rowCells==null) { // This row is empty
+          nextColumn=0;
+          continue;
+        }
+        for(;nextColumn<rowCells.length;nextColumn++) {
+          if(rowCells[nextColumn]!=null) return;
+        }
+        nextColumn=0;
+      }
+    }
+
+  }
 }

@@ -18,8 +18,6 @@
 
 package org.apache.poi.hssf.record;
 
-import java.util.ArrayList;
-
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -134,7 +132,7 @@ public class ContinueRecord
 
     public short getSid()
     {
-        return this.sid;
+        return sid;
     }
 
     /**

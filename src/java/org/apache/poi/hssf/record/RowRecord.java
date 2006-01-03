@@ -52,13 +52,13 @@ public class RowRecord
     // for generated sheets.
     private short             field_6_reserved;
     private short             field_7_option_flags;
-    private BitField          outlineLevel  = BitFieldFactory.getInstance(0x07);
+    private static final BitField          outlineLevel  = BitFieldFactory.getInstance(0x07);
 
     // bit 3 reserved
-    private BitField          colapsed      = BitFieldFactory.getInstance(0x10);
-    private BitField          zeroHeight    = BitFieldFactory.getInstance(0x20);
-    private BitField          badFontHeight = BitFieldFactory.getInstance(0x40);
-    private BitField          formatted     = BitFieldFactory.getInstance(0x80);
+    private static final BitField          colapsed      = BitFieldFactory.getInstance(0x10);
+    private static final BitField          zeroHeight    = BitFieldFactory.getInstance(0x20);
+    private static final BitField          badFontHeight = BitFieldFactory.getInstance(0x40);
+    private static final BitField          formatted     = BitFieldFactory.getInstance(0x80);
     private short             field_8_xf_index;   // only if isFormatted
 
     public RowRecord()
@@ -433,7 +433,7 @@ public class RowRecord
 
     public short getSid()
     {
-        return this.sid;
+        return sid;
     }
 
     public int compareTo(Object obj)

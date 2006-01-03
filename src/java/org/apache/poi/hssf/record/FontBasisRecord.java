@@ -75,14 +75,11 @@ public class FontBasisRecord
 
     protected void fillFields(RecordInputStream in)
     {
-
-        int pos = 0;
         field_1_xBasis                 = in.readShort();
         field_2_yBasis                 = in.readShort();
         field_3_heightBasis            = in.readShort();
         field_4_scale                  = in.readShort();
         field_5_indexToFontTable       = in.readShort();
-
     }
 
     public String toString()
@@ -141,7 +138,7 @@ public class FontBasisRecord
 
     public short getSid()
     {
-        return this.sid;
+        return sid;
     }
 
     public Object clone() {

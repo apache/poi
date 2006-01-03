@@ -73,7 +73,7 @@ public class RightMarginRecord extends Record implements Margin
      */
     public int getRecordSize()    {        return 4 + 8;    }
 
-    public short getSid()    {        return this.sid;    }
+    public short getSid()    {        return sid;    }
 
     /**
      * Get the margin field for the RightMargin record.

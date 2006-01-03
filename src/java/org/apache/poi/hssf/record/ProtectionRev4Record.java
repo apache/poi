@@ -119,6 +119,6 @@ public class ProtectionRev4Record
 
     public short getSid()
     {
-        return this.sid;
+        return sid;
     }
 }

@@ -75,10 +75,7 @@ public class DatRecord
 
     protected void fillFields(RecordInputStream in)
     {
-
-        int pos = 0;
         field_1_options                = in.readShort();
-
     }
 
     public String toString()
@@ -121,7 +118,7 @@ public class DatRecord
 
     public short getSid()
     {
-        return this.sid;
+        return sid;
     }
 
     public Object clone() {

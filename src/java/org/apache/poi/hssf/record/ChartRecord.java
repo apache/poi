@@ -74,13 +74,10 @@ public class ChartRecord
 
     protected void fillFields(RecordInputStream in)
     {
-
-        int pos = 0;
         field_1_x                      = in.readInt();
         field_2_y                      = in.readInt();
         field_3_width                  = in.readInt();
         field_4_height                 = in.readInt();
-
     }
 
     public String toString()
@@ -134,7 +131,7 @@ public class ChartRecord
 
     public short getSid()
     {
-        return this.sid;
+        return sid;
     }
 
     public Object clone() {

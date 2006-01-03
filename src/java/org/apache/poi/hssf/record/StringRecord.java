@@ -60,7 +60,7 @@ public class StringRecord
      */
     protected void validateSid( short id )
     {
-        if (id != this.sid)
+        if (id != sid)
         {
             throw new RecordFormatException("Not a valid StringRecord");
         }
@@ -93,11 +93,6 @@ public class StringRecord
     public boolean isInValueSection()
     {
         return true;
-    }
-
-    private int getStringLength()
-    {
-        return field_1_string_length;
     }
 
     private int getStringByteLength()
@@ -180,6 +175,7 @@ public class StringRecord
     {
         this.field_1_string_length = string.length();
         this.field_3_string = string;
+        setCompressedFlag(StringUtil.hasMultibyte(string) ?  (byte)1 : (byte)0);        
     }
 
 

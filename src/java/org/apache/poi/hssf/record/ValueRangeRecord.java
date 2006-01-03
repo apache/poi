@@ -85,8 +85,6 @@ public class ValueRangeRecord
 
     protected void fillFields(RecordInputStream in)
     {
-
-        int pos = 0;
         field_1_minimumAxisValue       = in.readDouble();
         field_2_maximumAxisValue       = in.readDouble();
         field_3_majorIncrement         = in.readDouble();
@@ -161,7 +159,7 @@ public class ValueRangeRecord
 
     public short getSid()
     {
-        return this.sid;
+        return sid;
     }
 
     public Object clone() {

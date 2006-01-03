@@ -767,7 +767,7 @@ public class NameRecord extends Record {
      * return the non static version of the id for this record.
      */
     public short getSid() {
-        return this.sid;
+        return sid;
     }
     /*
       20 00 

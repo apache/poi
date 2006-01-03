@@ -127,7 +127,7 @@ public class FormatRecord
     public void setFormatString(String fs)
     {
         field_4_formatstring = fs;
-        setUnicodeFlag(StringUtil.isUnicodeString(fs));
+        setUnicodeFlag(StringUtil.hasMultibyte(fs));
     }
 
     /**
@@ -227,6 +227,6 @@ public class FormatRecord
 
     public short getSid()
     {
-        return this.sid;
+        return sid;
     }
 }

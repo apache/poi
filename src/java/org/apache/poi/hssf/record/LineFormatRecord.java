@@ -91,8 +91,6 @@ public class LineFormatRecord
 
     protected void fillFields(RecordInputStream in)
     {
-
-        int pos = 0;
         field_1_lineColor              = in.readInt();
         field_2_linePattern            = in.readShort();
         field_3_weight                 = in.readShort();
@@ -160,7 +158,7 @@ public class LineFormatRecord
 
     public short getSid()
     {
-        return this.sid;
+        return sid;
     }
 
     public Object clone() {

@@ -87,8 +87,6 @@ public class AxisOptionsRecord
 
     protected void fillFields(RecordInputStream in)
     {
-
-        int pos = 0;
         field_1_minimumCategory        = in.readShort();
         field_2_maximumCategory        = in.readShort();
         field_3_majorUnitValue         = in.readShort();
@@ -98,7 +96,6 @@ public class AxisOptionsRecord
         field_7_baseUnit               = in.readShort();
         field_8_crossingPoint          = in.readShort();
         field_9_options                = in.readShort();
-
     }
 
     public String toString()
@@ -185,7 +182,7 @@ public class AxisOptionsRecord
 
     public short getSid()
     {
-        return this.sid;
+        return sid;
     }
 
     public Object clone() {

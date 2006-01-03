@@ -120,6 +120,6 @@ public class FnGroupCountRecord
 
     public short getSid()
     {
-        return this.sid;
+        return sid;
     }
 }

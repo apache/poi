@@ -112,6 +112,6 @@ public class DSFRecord
 
     public short getSid()
     {
-        return this.sid;
+        return sid;
     }
 }

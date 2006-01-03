@@ -137,6 +137,6 @@ public class MMSRecord
 
     public short getSid()
     {
-        return this.sid;
+        return sid;
     }
 }

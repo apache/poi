@@ -25,7 +25,6 @@ package org.apache.poi.hssf.record;
 
 import java.util.ArrayList;
 
-import org.apache.poi.util.LittleEndian;
 import org.apache.poi.hssf.util.RKUtil;
 
 /**
@@ -188,7 +187,7 @@ public class MulRKRecord
 
     public short getSid()
     {
-        return this.sid;
+        return sid;
     }
 
     public int serialize(int offset, byte [] data)

@@ -71,10 +71,7 @@ public class SeriesIndexRecord
 
     protected void fillFields(RecordInputStream in)
     {
-
-        int pos = 0;
         field_1_index                  = in.readShort();
-
     }
 
     public String toString()
@@ -113,7 +110,7 @@ public class SeriesIndexRecord
 
     public short getSid()
     {
-        return this.sid;
+        return sid;
     }
 
     public Object clone() {

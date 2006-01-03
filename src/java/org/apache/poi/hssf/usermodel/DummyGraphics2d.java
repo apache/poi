@@ -411,7 +411,7 @@ public class DummyGraphics2d
 
     public void drawChars(char data[], int offset, int length, int x, int y) {
         System.out.println( "drawChars(data,int,int,int,int):" );
-        System.out.println( "data = " + data );
+        System.out.println( "data = " + data.toString() );
         System.out.println( "offset = " + offset );
         System.out.println( "length = " + length );
         System.out.println( "x = " + x );

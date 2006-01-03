@@ -55,7 +55,7 @@ public class VerticalPageBreakRecord extends PageBreakRecord {
 	 * @see org.apache.poi.hssf.record.Record#getSid()
 	 */
 	public short getSid() {
-		return PageBreakRecord.VERTICAL_SID;
+		return sid;
 	}
 
 }

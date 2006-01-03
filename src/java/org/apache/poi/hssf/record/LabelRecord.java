@@ -23,9 +23,6 @@
  */
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.StringUtil;
-
 /**
  * Label Record - read only support for strings stored directly in the cell..  Don't
  * use this (except to read), use LabelSST instead <P>
@@ -77,7 +74,7 @@ public class LabelRecord
 
     protected void validateSid(short id)
     {
-        if (id != this.sid)
+        if (id != sid)
         {
             throw new RecordFormatException("Not a valid LabelRecord");
         }
@@ -181,7 +178,7 @@ public class LabelRecord
 
     public short getSid()
     {
-        return this.sid;
+        return sid;
     }
 
     public String toString()

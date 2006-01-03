@@ -79,8 +79,6 @@ public class PaneRecord
 
     protected void fillFields(RecordInputStream in)
     {
-
-        int pos = 0;
         field_1_x                      = in.readShort();
         field_2_y                      = in.readShort();
         field_3_topRow                 = in.readShort();
@@ -145,7 +143,7 @@ public class PaneRecord
 
     public short getSid()
     {
-        return this.sid;
+        return sid;
     }
 
     public Object clone() {

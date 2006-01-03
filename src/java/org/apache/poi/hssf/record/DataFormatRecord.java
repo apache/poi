@@ -75,13 +75,10 @@ public class DataFormatRecord
 
     protected void fillFields(RecordInputStream in)
     {
-
-        int pos = 0;
         field_1_pointNumber            = in.readShort();
         field_2_seriesIndex            = in.readShort();
         field_3_seriesNumber           = in.readShort();
         field_4_formatFlags            = in.readShort();
-
     }
 
     public String toString()
@@ -136,7 +133,7 @@ public class DataFormatRecord
 
     public short getSid()
     {
-        return this.sid;
+        return sid;
     }
 
     public Object clone() {

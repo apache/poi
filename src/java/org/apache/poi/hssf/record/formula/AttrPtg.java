@@ -24,8 +24,6 @@ import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 
-import java.util.List;
-
 /**
  * "Special Attributes"
  * This seems to be a Misc Stuff and Junk record.  One function it serves is

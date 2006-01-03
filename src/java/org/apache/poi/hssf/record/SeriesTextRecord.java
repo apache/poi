@@ -74,8 +74,6 @@ public class SeriesTextRecord
 
     protected void fillFields(RecordInputStream in)
     {
-
-        int pos = 0;
         field_1_id                     = in.readShort();
         field_2_textLength             = in.readByte();
         field_3_undocumented           = in.readByte();
@@ -132,7 +130,7 @@ public class SeriesTextRecord
 
     public short getSid()
     {
-        return this.sid;
+        return sid;
     }
 
     public Object clone() {

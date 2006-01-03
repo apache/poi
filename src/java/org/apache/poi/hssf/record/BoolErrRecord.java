@@ -268,7 +268,7 @@ public class BoolErrRecord
 
     protected void validateSid(short id)
     {
-        if (id != this.sid)
+        if (id != BoolErrRecord.sid)
         {
             throw new RecordFormatException("Not a valid BoolErrRecord");
         }
@@ -276,7 +276,7 @@ public class BoolErrRecord
 
     public short getSid()
     {
-        return this.sid;
+        return sid;
     }
 
     public boolean isBefore(CellValueRecordInterface i)

@@ -121,8 +121,6 @@ public class TextRecord
 
     protected void fillFields(RecordInputStream in)
     {
-
-        int pos = 0;
         field_1_horizontalAlignment    = in.readByte();
         field_2_verticalAlignment      = in.readByte();
         field_3_displayMode            = in.readShort();
@@ -135,7 +133,6 @@ public class TextRecord
         field_10_indexOfColorValue     = in.readShort();
         field_11_options2              = in.readShort();
         field_12_textRotation          = in.readShort();
-
     }
 
     public String toString()
@@ -243,7 +240,7 @@ public class TextRecord
 
     public short getSid()
     {
-        return this.sid;
+        return sid;
     }
 
     public Object clone() {

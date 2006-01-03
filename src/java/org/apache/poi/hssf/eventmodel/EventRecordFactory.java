@@ -16,7 +16,6 @@
 
 package org.apache.poi.hssf.eventmodel;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -104,7 +103,6 @@ import org.apache.poi.hssf.record.WindowOneRecord;
 import org.apache.poi.hssf.record.WindowProtectRecord;
 import org.apache.poi.hssf.record.WindowTwoRecord;
 import org.apache.poi.hssf.record.WriteAccessRecord;
-import org.apache.poi.util.LittleEndian;
 
 
 /**

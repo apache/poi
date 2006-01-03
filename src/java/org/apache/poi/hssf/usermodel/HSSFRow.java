@@ -46,7 +46,7 @@ public class HSSFRow
     public final static int INITIAL_CAPACITY = 5;
     //private short rowNum;
     private int rowNum;
-    private HashMap cells;
+    private HSSFCell[] cells=new HSSFCell[INITIAL_CAPACITY];
 //    private short firstcell = -1;
 //    private short lastcell = -1;
 
@@ -84,7 +84,7 @@ public class HSSFRow
     //protected HSSFRow(Workbook book, Sheet sheet, short rowNum)
     protected HSSFRow(Workbook book, Sheet sheet, int rowNum)
     {
-        cells = new HashMap(10);   // new ArrayList(INITIAL_CAPACITY);
+        this.rowNum = rowNum;
         this.book = book;
         this.sheet = sheet;
         row = new RowRecord();
@@ -108,7 +108,6 @@ public class HSSFRow
 
     protected HSSFRow(Workbook book, Sheet sheet, RowRecord record)
     {
-        cells = new HashMap();   // ArrayList(INITIAL_CAPACITY);
         this.book = book;
         this.sheet = sheet;
         row = record;
@@ -129,11 +128,7 @@ public class HSSFRow
 
     public HSSFCell createCell(short column)
     {
-        HSSFCell cell = new HSSFCell(book, sheet, getRowNum(), column);
-
-        addCell(cell);
-        sheet.addValueRecord(getRowNum(), cell.getCellValueRecord());
-        return cell;
+      return this.createCell(column,HSSFCell.CELL_TYPE_BLANK);
     }
 
     /**
@@ -145,8 +140,6 @@ public class HSSFRow
      * @param column - the column number this cell represents
      *
      * @return HSSFCell a high level representation of the created cell.
-     * @deprecated As of 22-Jan-2002 use createCell(short) and use setCellValue to
-     * specify the type lazily.
      */
 
     public HSSFCell createCell(short column, int type)
@@ -167,7 +160,11 @@ public class HSSFRow
         CellValueRecordInterface cval = cell.getCellValueRecord();
 
         sheet.removeValueRecord(getRowNum(), cval);
-        cells.remove(new Integer(cell.getCellNum()));
+        short column=cell.getCellNum();
+        if(cell!=null && column<cells.length)
+        {
+          cells[column]=null;
+        }
 
         if (cell.getCellNum() == row.getLastCol())
         {
@@ -231,23 +228,33 @@ public class HSSFRow
 
     private void addCell(HSSFCell cell)
     {
+        short column=cell.getCellNum();
         if (row.getFirstCol() == -1)
         {
-            row.setFirstCol(cell.getCellNum());
+            row.setFirstCol(column);
         }
         if (row.getLastCol() == -1)
         {
-            row.setLastCol(cell.getCellNum());
+            row.setLastCol(column);
         }
-        cells.put(new Integer(cell.getCellNum()), cell);
 
-        if (cell.getCellNum() < row.getFirstCol())
+        if(column>=cells.length)
         {
-            row.setFirstCol(cell.getCellNum());
+          HSSFCell[] oldCells=cells;
+          int newSize=oldCells.length*2;
+          if(newSize<column+1) newSize=column+1;
+          cells=new HSSFCell[newSize];
+          System.arraycopy(oldCells,0,cells,0,oldCells.length);
         }
-        if (cell.getCellNum() > row.getLastCol())
+        cells[column]=cell;
+
+        if (column < row.getFirstCol())
         {
-            row.setLastCol(cell.getCellNum());
+            row.setFirstCol(column);
+        }
+        if (column > row.getLastCol())
+        {
+            row.setLastCol(column);
         }
     }
 
@@ -261,17 +268,8 @@ public class HSSFRow
 
     public HSSFCell getCell(short cellnum)
     {
-
-/*        for (int k = 0; k < cells.size(); k++)
-        {
-            HSSFCell cell = ( HSSFCell ) cells.get(k);
-
-            if (cell.getCellNum() == cellnum)
-            {
-                return cell;
-            }
-        }*/
-        return (HSSFCell) cells.get(new Integer(cellnum));
+      if(cellnum<0||cellnum>=cells.length) return null;
+      return cells[cellnum];
     }
 
     /**
@@ -309,11 +307,12 @@ public class HSSFRow
 
     public int getPhysicalNumberOfCells()
     {
-        if (cells == null)
-        {
-            return 0;   // shouldn't be possible but it is due to missing API support for BLANK/MULBLANK
-        }
-        return cells.size();
+      int count=0;
+      for(int i=0;i<cells.length;i++)
+      {
+        if(cells[i]!=null) count++;
+      }
+      return count;
     }
 
     /**
@@ -432,7 +431,43 @@ public class HSSFRow
 
     public Iterator cellIterator()
     {
-        return cells.values().iterator();
+      return new CellIterator();
+    }
+    
+    private class CellIterator implements Iterator
+    {
+      int thisId,nextId=0;
+      
+      public CellIterator()
+      {
+        findNext();
+      }
+
+      public boolean hasNext() {
+        return nextId<cells.length;
+      }
+
+      public Object next() {
+        HSSFCell cell=cells[nextId];
+        thisId=nextId;
+        findNext();
+        return cell;
+      }
+
+      public void remove() {
+        cells[thisId]=null;
+      }
+      
+      private void findNext()
+      {
+        int i=nextId+1;
+        for(;i<cells.length;i++)
+        {
+          if(cells[i]!=null) break;
+        }
+        nextId=i;
+      }
+      
     }
 
     public int compareTo(Object obj)

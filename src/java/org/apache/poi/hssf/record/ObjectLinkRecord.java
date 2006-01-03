@@ -78,8 +78,6 @@ public class ObjectLinkRecord
 
     protected void fillFields(RecordInputStream in)
     {
-
-        int pos = 0;
         field_1_anchorId               = in.readShort();
         field_2_link1                  = in.readShort();
         field_3_link2                  = in.readShort();
@@ -132,7 +130,7 @@ public class ObjectLinkRecord
 
     public short getSid()
     {
-        return this.sid;
+        return sid;
     }
 
     public Object clone() {

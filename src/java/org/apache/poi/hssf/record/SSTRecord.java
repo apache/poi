@@ -22,7 +22,6 @@ import org.apache.poi.util.IntMapper;
 import org.apache.poi.util.LittleEndianConsts;
 
 import java.util.Iterator;
-import java.util.List;
 
 /**
  * Title:        Static String Table Record

@@ -142,7 +142,7 @@ public class CalcModeRecord
 
     public short getSid()
     {
-        return this.sid;
+        return sid;
     }
 
     public Object clone() {

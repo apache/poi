@@ -75,10 +75,7 @@ public class AxisLineFormatRecord
 
     protected void fillFields(RecordInputStream in)
     {
-
-        int pos = 0;
         field_1_axisType               = in.readShort();
-
     }
 
     public String toString()
@@ -117,7 +114,7 @@ public class AxisLineFormatRecord
 
     public short getSid()
     {
-        return this.sid;
+        return sid;
     }
 
     public Object clone() {
