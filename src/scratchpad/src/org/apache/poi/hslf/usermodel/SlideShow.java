@@ -36,6 +36,7 @@ import org.apache.poi.hslf.record.SlideListWithText;
 import org.apache.poi.hslf.record.SlideListWithText.*;
 import org.apache.poi.hslf.record.PersistPtrHolder;
 import org.apache.poi.hslf.record.PositionDependentRecord;
+import org.apache.poi.hslf.exceptions.CorruptPowerPointFileException;
 
 /**
  * This class is a friendly wrapper on top of the more scary HSLFSlideShow.
@@ -227,7 +228,7 @@ public class SlideShow
 	// Ensure we really found a Document record
 	// If we didn't, then the file is probably corrupt
 	if(documentRecord == null) {
-		throw new IllegalStateException("The PowerPoint file didn't contain a Document Record in its PersistPtr blocks. It is probably corrupt.");
+		throw new CorruptPowerPointFileException("The PowerPoint file didn't contain a Document Record in its PersistPtr blocks. It is probably corrupt.");
 	}
 
 
