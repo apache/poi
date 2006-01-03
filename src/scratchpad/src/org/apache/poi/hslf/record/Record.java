@@ -24,6 +24,7 @@ import java.io.OutputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.Vector;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.hslf.exceptions.CorruptPowerPointFileException;
 
 
 /**
@@ -83,7 +84,7 @@ public abstract class Record
 	}
 
 	/**
-	 * Default method for finding child records of a given record
+	 * Default method for finding child records of a container record
 	 */
 	public static Record[] findChildRecords(byte[] b, int start, int len) {
 		Vector children = new Vector(5);
@@ -97,6 +98,12 @@ public abstract class Record
 			// Sanity check the length
 			int rleni = (int)rlen;
 			if(rleni < 0) { rleni = 0; }
+
+			// Abort if first record is of type 0000 and length FFFF,
+			//  as that's a sign of a screwed up record
+			if(pos == 0 && type == 0l && rleni == 0xffff) {
+				throw new CorruptPowerPointFileException("Corrupt document - starts with record of type 0000 and length 0xFFFF");
+			}
 
 //System.out.println("Found a " + type + " at pos " + pos + " (" + Integer.toHexString(pos) + "), len " + rlen);
 			Record r = createRecordForType(type,b,pos,8+rleni);
@@ -148,7 +155,7 @@ public abstract class Record
 		} catch(InstantiationException ie) {
 			throw new RuntimeException("Couldn't instantiate the class for type with id " + type + " on class " + c + " : " + ie);
 		} catch(java.lang.reflect.InvocationTargetException ite) {
-			throw new RuntimeException("Couldn't instantiate the class for type with id " + type + " on class " + c + " : " + ite);
+			throw new RuntimeException("Couldn't instantiate the class for type with id " + type + " on class " + c + " : " + ite + "\nCause was : " + ite.getCause());
 		} catch(IllegalAccessException iae) {
 			throw new RuntimeException("Couldn't access the constructor for type with id " + type + " on class " + c + " : " + iae);
 		} catch(NoSuchMethodException nsme) {
