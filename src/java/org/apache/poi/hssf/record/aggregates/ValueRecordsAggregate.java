@@ -190,6 +190,8 @@ public class ValueRecordsAggregate
 
     /** Returns true if the row has cells attached to it */
     public boolean rowHasCells(int row) {
+    	if (row > records.length)
+    		return false;
       CellValueRecordInterface[] rowCells=records[row];
       if(rowCells==null) return false;
       for(int col=0;col<rowCells.length;col++) {
