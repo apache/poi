@@ -204,6 +204,24 @@ public class TestHSSFSheet
         cell.setCellValue("Difference Check");
         assertEquals(cloned.getRow((short)0).getCell((short)0).getStringCellValue(), "clone_test");
     }
+
+    /** tests that the sheet name for multiple clones of the same sheet is unique
+     * BUG 37416
+     */    
+    public void testCloneSheetMultipleTimes() {
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        HSSFSheet sheet = workbook.createSheet("Test Clone");
+        HSSFRow row = sheet.createRow((short) 0);
+        HSSFCell cell = row.createCell((short) 0);
+        cell.setCellValue("clone_test");
+        //Clone the sheet multiple times
+        workbook.cloneSheet(0);
+        workbook.cloneSheet(0);
+        
+        assertNotNull(workbook.getSheet("Test Clone"));
+        assertNotNull(workbook.getSheet("Test Clone(1)"));
+        assertNotNull(workbook.getSheet("Test Clone(2)"));  
+    }
     
 	/**
 	 * Test that the ProtectRecord is included when creating or cloning a sheet

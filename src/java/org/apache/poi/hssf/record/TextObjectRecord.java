@@ -24,7 +24,7 @@ import java.io.UnsupportedEncodingException;
 public class TextObjectRecord
         extends TextObjectBaseRecord
 {
-    HSSFRichTextString str = new HSSFRichTextString( "" );
+    HSSFRichTextString str;
 
     public TextObjectRecord()
     {
@@ -33,6 +33,8 @@ public class TextObjectRecord
     public TextObjectRecord( RecordInputStream in )
     {
         super( in );
+        if (str == null)
+        	str = new HSSFRichTextString("");
     }
 
     protected void fillFields(RecordInputStream in)

@@ -473,10 +473,20 @@ public class HSSFWorkbook
         windowTwo.setPaged(sheets.size() == 1);
 
         sheets.add(clonedSheet);
-        if (srcName.length()<28) {
-            workbook.setSheetName(sheets.size()-1, srcName+"(2)");
-        }else {
-            workbook.setSheetName(sheets.size()-1,srcName.substring(0,28)+"(2)");
+        int i=1;
+        while (true) {
+        	//Try and find the next sheet name that is unique
+        	String name = srcName;
+        	String index = Integer.toString(i++);
+        	if (name.length()+index.length()+2<31)
+        	  name = name + "("+index+")";
+        	else name = name.substring(0, 31-index.length()-2)+"("+index+")";
+        	
+        	//If the sheet name is unique, then set it otherwise move on to the next number.
+        	if (workbook.getSheetIndex(name) == -1) {
+              workbook.setSheetName(sheets.size()-1, name);
+              break;
+        	}
         }
         return clonedSheet;
       }

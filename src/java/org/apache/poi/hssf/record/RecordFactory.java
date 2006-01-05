@@ -169,7 +169,7 @@ public class RecordFactory
                                 lastDGRecord.join((AbstractEscherHolderRecord) record);
                             }
                         else if (record.getSid() == ContinueRecord.sid &&
-                                 (lastRecord instanceof ObjRecord)) {
+                                 ((lastRecord instanceof ObjRecord) || (lastRecord instanceof TextObjectRecord))) {
                           // Drawing records have a very strange continue behaviour.
                           //There can actually be OBJ records mixed between the continues.
                           lastDrawingRecord.processContinueRecord( ((ContinueRecord)record).getData() );
@@ -181,7 +181,8 @@ public class RecordFactory
                             //Gracefully handle records that we dont know about,
                             //that happen to be continued
                             records.add(record);
-                          } else throw new RecordFormatException("Unhandled Continue Record");
+                          } else 
+                        	  throw new RecordFormatException("Unhandled Continue Record");
                             }
                         else {
                             lastRecord = record;
