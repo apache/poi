@@ -672,7 +672,6 @@ public class UnicodeString
       }
 
         return pos - offset;
-        //jmh return getRecordSize();
     }
 
 
