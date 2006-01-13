@@ -228,6 +228,10 @@ public class Sheet implements Model
             {
                 retval.printGridlines = (PrintGridlinesRecord) rec;
             }
+            else if ( rec.getSid() == GridsetRecord.sid )
+            {
+                retval.gridset = (GridsetRecord) rec;
+            }            
             else if ( rec.getSid() == HeaderRecord.sid && bofEofNestingLevel == 1)
             {
                 retval.header = (HeaderRecord) rec;
@@ -1709,6 +1713,12 @@ public class Sheet implements Model
 
     public boolean isGridsPrinted()
     {
+    	if (gridset == null) {
+    		gridset = (GridsetRecord)createGridset();
+    		//Insert the newlycreated Gridset record at the end of the record (just before the EOF)
+    		int loc = findFirstRecordLocBySid(EOFRecord.sid);
+    		records.add(loc, gridset);     		
+    	}
         return !gridset.getGridset();
     }
 
@@ -2416,8 +2426,18 @@ public class Sheet implements Model
         return retval;
     }
 
+    /** Returns the ProtectRecord.
+     * If one is not contained in the sheet, then one is created.
+     * @return
+     */
     public ProtectRecord getProtect()
     {
+    	if (protect == null) {
+    		protect = (ProtectRecord)createProtect();
+    		//Insert the newlycreated protect record at the end of the record (just before the EOF)
+    		int loc = findFirstRecordLocBySid(EOFRecord.sid);
+    		records.add(loc, protect);    		
+    	}
         return protect;
     }
 
