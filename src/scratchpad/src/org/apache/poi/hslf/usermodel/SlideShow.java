@@ -391,4 +391,11 @@ public class SlideShow
    * found in the slideshow
    */
   //public MetaSheet[] getMetaSheets() { return _msheets; }
+
+	/**
+	 * Returns all the pictures attached to the SlideShow
+	 */
+	public Picture[] getPictures() throws IOException {
+		return _hslfSlideShow.getPictures();
+	}
 }

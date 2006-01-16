@@ -36,6 +36,7 @@ import org.apache.poi.hpsf.DocumentSummaryInformation;
 import org.apache.poi.util.LittleEndian;
 
 import org.apache.poi.hslf.record.*;
+import org.apache.poi.hslf.usermodel.Picture;
 
 /**
  * This class contains the main functionality for the Powerpoint file 
@@ -337,4 +338,34 @@ public class HSLFSlideShow
   * Fetch the Current User Atom of the document
   */
  public CurrentUserAtom getCurrentUserAtom() { return currentUser; }
+
+	/**
+	 *  Read pictures contained in this presentation
+	 *
+	 *  @return array with the read pictures ot <code>null</code> if the
+	 *  presentation doesn't contain pictures.
+	 */
+	public Picture[] getPictures() throws IOException {
+		byte[] pictstream;
+
+		try {
+			DocumentEntry entry = (DocumentEntry)filesystem.getRoot().getEntry("Pictures");
+			pictstream = new byte[entry.getSize()];
+			DocumentInputStream is = filesystem.createDocumentInputStream("Pictures");
+			is.read(pictstream);
+		} catch (FileNotFoundException e){
+			//silently catch exceptions if the presentation doesn't contain pictures
+			return null;
+		}
+
+		ArrayList p = new ArrayList();
+		int pos = 0; 
+		while (pos < pictstream.length) {
+			Picture pict = new Picture(pictstream, pos);
+			p.add(pict);
+			pos += Picture.HEADER_SIZE + pict.getSize();
+		}
+
+		return (Picture[])p.toArray(new Picture[p.size()]);
+	}
 }
