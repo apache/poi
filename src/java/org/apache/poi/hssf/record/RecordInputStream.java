@@ -249,7 +249,10 @@ public class RecordInputStream extends InputStream
     for (int i=0;i<length;i++) {
       if ((remaining() == 0) && (isContinueNext()))
         nextRecord();
-      char ch = (char)readByte();
+      byte b = readByte();
+      //Typecast direct to char from byte with high bit set causes all ones
+      //in the high byte of the char (which is of course incorrect)
+      char ch = (char)( (short)0xff & (short)b );
       buf.append(ch); 
     }
     return buf.toString();    
