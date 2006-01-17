@@ -91,5 +91,41 @@ public class TestUnicodeWorkbook extends TestCase {
         c3 = r.getCell((short)3);
         assertEquals(c3.getCellFormula(), formulaString);
     }
+    
+    /** Tests Bug38230
+     *  That a Umlat is written  and then read back.
+     *  It should have been written as a compressed unicode.
+     * 
+     * 
+     *
+     */
+    public void testUmlatReadWrite() throws Exception {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        
+        //Create a unicode sheet name (euro symbol)
+        HSSFSheet s = wb.createSheet("test");
+        
+        HSSFRow r = s.createRow(0);
+        HSSFCell c = r.createCell((short)1);
+        c.setCellValue(new HSSFRichTextString("\u00e4"));
+        
+        //Confirm that the sring will be compressed
+        assertEquals(c.getRichStringCellValue().getUnicodeString().getOptionFlags(), 0);
+        
+        File tempFile = TempFile.createTempFile("umlat", "test.xls");
+        FileOutputStream stream = new FileOutputStream(tempFile);
+        wb.write(stream);
+        
+        wb = null;
+        FileInputStream in = new FileInputStream(tempFile);
+        wb = new HSSFWorkbook(in);
+
+        //Test the sheetname
+        s = wb.getSheet("test");
+        assertNotNull(s);
+        
+        c = r.getCell((short)1);
+        assertEquals(c.getRichStringCellValue().getString(), "\u00e4");
+    }    
 
 }

@@ -230,19 +230,21 @@ public class UnicodeString
         in.setAutoContinue(false);
         StringBuffer tmpString = new StringBuffer(field_1_charCount);
         int stringCharCount = field_1_charCount;
-        boolean isUncompressed = ((field_2_optionflags & 1) == 0);
+        boolean isCompressed = ((field_2_optionflags & 1) == 0);
         while (stringCharCount != 0) {
           if (in.remaining() == 0) {
             if (in.isContinueNext()) {
               in.nextRecord();
               //Check if we are now reading, compressed or uncompressed unicode.
               byte optionflags = in.readByte();
-              isUncompressed = ((optionflags & 1) == 0);
+              isCompressed = ((optionflags & 1) == 0);
             } else
               throw new RecordFormatException("Expected continue record.");
           }
-          if (isUncompressed) {
-            char ch = (char)in.readByte();
+          if (isCompressed) {
+            //Typecast direct to char from byte with high bit set causes all ones
+            //in the high byte of the char (which is of course incorrect)
+            char ch = (char)( (short)0xff & (short)in.readByte() );
             tmpString.append(ch);
           } else {
             char ch = (char) in.readShort();
