@@ -331,7 +331,7 @@ public class NameRecord extends Record {
     /** get the definition length
      * @return definition length
      */
-    public short getDefinitionTextLength(){
+    public short getDefinitionLength(){
         return field_4_length_name_definition;
     }
 
@@ -488,7 +488,7 @@ public class NameRecord extends Record {
             throw new RecordFormatException("NOT A valid Name RECORD");
         }
     }
-
+    
     /**
      * called by the class that is responsible for writing this sucker.
      * Subclasses should implement this so that their data is passed back in a
@@ -501,11 +501,13 @@ public class NameRecord extends Record {
     public int serialize( int offset, byte[] data )
     {
         LittleEndian.putShort( data, 0 + offset, sid );
+        short size = (short)( 15 + getTextsLength() + getNameDefinitionSize());
+        LittleEndian.putShort( data, 2 + offset, size );
         // size defined below
         LittleEndian.putShort( data, 4 + offset, getOptionFlag() );
         data[6 + offset] = getKeyboardShortcut();
         data[7 + offset] = getNameTextLength();
-        LittleEndian.putShort( data, 8 + offset, getDefinitionTextLength() );
+        LittleEndian.putShort( data, 8 + offset, getDefinitionLength() );
         LittleEndian.putShort( data, 10 + offset, getUnused() );
         LittleEndian.putShort( data, 12 + offset, getEqualsToIndexToSheet() );
         data[14 + offset] = getCustomMenuLength();
@@ -525,8 +527,7 @@ public class NameRecord extends Record {
             return 20 + field_13_raw_name_definition.length;
         }
         else
-        {     */
-            LittleEndian.putShort( data, 2 + offset, (short) ( 15 + getTextsLength() ) );
+        {     */            
             
 			int start_of_name_definition = 19 + field_3_length_name_text;
 
@@ -539,7 +540,7 @@ public class NameRecord extends Record {
 			}
 
 
-				serializePtgs( data, start_of_name_definition + offset );
+			Ptg.serializePtgStack(field_13_name_definition,  data, start_of_name_definition + offset );
 
 
             int start_of_custom_menu_text = start_of_name_definition + field_4_length_name_definition;
@@ -558,29 +559,30 @@ public class NameRecord extends Record {
         /* } */
     }
 
-    private void serializePtgs(byte [] data, int offset) {
-        int pos = offset;
-
-        for (int k = 0; k < field_13_name_definition.size(); k++) {
-            Ptg ptg = ( Ptg ) field_13_name_definition.get(k);
-
-            ptg.writeBytes(data, pos);
-            pos += ptg.getSize();
-        }
-    }
-
-
     /** gets the length of all texts
      * @return total length
      */
     public int getTextsLength(){
         int result;
 
-        result = getNameTextLength() + getDefinitionTextLength() + getDescriptionTextLength() +
+        result = getNameTextLength() + getDescriptionTextLength() +
         getHelpTopicLength() + getStatusBarLength();
 
 
         return result;
+    }
+    
+    private int getNameDefinitionSize() {
+    	int result = 0;
+        List list   = field_13_name_definition;
+        
+        for (int k = 0; k < list.size(); k++)
+        {
+        	Ptg ptg = ( Ptg ) list.get(k);
+        	
+        	result += ptg.getSize();
+        }
+        return result;    
     }
 
     /** returns the record size
@@ -588,7 +590,8 @@ public class NameRecord extends Record {
     public int getRecordSize(){
         int result;
 
-        result = 19 + getTextsLength();
+        result = 19 + getTextsLength() + getNameDefinitionSize();
+        
 
         return result;
     }
@@ -733,7 +736,7 @@ public class NameRecord extends Record {
           }
 			}
             
-        field_13_name_definition = getParsedExpressionTokens(in, field_4_length_name_definition);
+        field_13_name_definition = Ptg.createParsedExpressionTokens(field_4_length_name_definition, in);
     
         //Who says that this can only ever be compressed unicode???
         field_14_custom_menu_text       = in.readCompressedUnicode(LittleEndian.ubyteToInt(field_7_length_custom_menu));
@@ -745,23 +748,6 @@ public class NameRecord extends Record {
         field_17_status_bar_text        = in.readCompressedUnicode(LittleEndian.ubyteToInt(field_10_length_status_bar_text));
         /*} */
     }
-
-    private Stack getParsedExpressionTokens(RecordInputStream in, short size) {
-        Stack stack = new Stack();
-        int   sizeCounter   = 0;
-        try {
-            while (sizeCounter < size) {
-                Ptg ptg = Ptg.createPtg(in);
-
-                sizeCounter += ptg.getSize();
-                stack.push(ptg);
-            }
-        } catch (java.lang.UnsupportedOperationException uoe) {
-           throw new RecordFormatException(uoe.toString());
-        }
-        return stack;
-    }
-
 
     /**
      * return the non static version of the id for this record.

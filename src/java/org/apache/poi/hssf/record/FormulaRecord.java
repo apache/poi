@@ -100,24 +100,10 @@ public class FormulaRecord
         
           field_6_zero           = in.readInt();
           field_7_expression_len = in.readShort();
-          field_8_parsed_expr    = getParsedExpressionTokens(in, field_7_expression_len);
+          field_8_parsed_expr    = Ptg.createParsedExpressionTokens(field_7_expression_len, in);
         } catch (java.lang.UnsupportedOperationException uoe)  {
           throw new RecordFormatException(uoe.toString());
         }
-    }
-
-    private Stack getParsedExpressionTokens(RecordInputStream in, short size)
-    {
-        Stack stack = new Stack();
-        int   pos   = 0;
-
-        while (pos < size)
-        {
-            Ptg ptg = Ptg.createPtg(in);
-            pos += ptg.getSize();
-            stack.push(ptg);
-        }
-        return stack;
     }
 
     //public void setRow(short row)
@@ -330,7 +316,7 @@ public class FormulaRecord
         //Microsoft Excel Developer's Kit Page 318
         LittleEndian.putInt(data, 20 + offset, 0);
         LittleEndian.putShort(data, 24 + offset, getExpressionLength());
-        serializePtgs(data, 26+offset);
+        Ptg.serializePtgStack(field_8_parsed_expr, data, 26+offset);
         } else {
             System.arraycopy(all_data,0,data,offset,all_data.length);
         }
@@ -366,19 +352,6 @@ public class FormulaRecord
             retval += ptg.getSize();
         }
         return retval;
-    }
-
-    private void serializePtgs(byte [] data, int offset)
-    {
-        int pos = offset;
-
-        for (int k = 0; k < field_8_parsed_expr.size(); k++)
-        {
-            Ptg ptg = ( Ptg ) field_8_parsed_expr.get(k);
-
-            ptg.writeBytes(data, pos);
-            pos += ptg.getSize();
-        }
     }
 
     public boolean isBefore(CellValueRecordInterface i)
