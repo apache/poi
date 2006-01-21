@@ -1331,5 +1331,13 @@ public class HSSFSheet
         sheet.setRowGroupCollapsed( row, collapse );
     }
 
-
+    /**
+     * Sets the default column style for a given column.  POI will only apply this style to new cells added to the sheet.
+     *
+     * @param fromCol the starting column index
+     * @param column the column index
+     */
+    public void setDefaultColumnStyle(short column, HSSFCellStyle style) {
+	sheet.setColumn(column, new Short(style.getIndex()), null, null, null, null);
+    }
 }
