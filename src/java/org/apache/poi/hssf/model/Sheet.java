@@ -44,7 +44,7 @@ import java.util.List;   // normally I don't do this, buy we literally mean ALL
  * <P>
  * @author  Andrew C. Oliver (acoliver at apache dot org)
  * @author  Glen Stampoultzis (glens at apache.org)
- * @author  Shawn Laubach (slaubach at apache dot org) Gridlines, Headers, Footers, and PrintSetup
+ * @author  Shawn Laubach (slaubach at apache dot org) Gridlines, Headers, Footers, PrintSetup, and Setting Default Column Styles
  * @author Jason Height (jheight at chariot dot net dot au) Clone support. DBCell & Index Record writing support
  * @author  Brian Sanders (kestrel at burdell dot org) Active Cell support
  *
@@ -1848,8 +1848,17 @@ public class Sheet implements Model
         if (columns == null)
             columns = new ColumnInfoRecordsAggregate();
 
-        columns.setColumn( column, width, level, hidden, collapsed );
+        columns.setColumn( column, null, width, level, hidden, collapsed );
     }
+
+    public void setColumn(short column, Short xfStyle, Short width, Integer level, Boolean hidden, Boolean collapsed)
+    {
+        if (columns == null)
+            columns = new ColumnInfoRecordsAggregate();
+
+        columns.setColumn( column, xfStyle, width, level, hidden, collapsed );
+    }
+
 
     /**
      * Creates an outline group for the specified columns.

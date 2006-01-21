@@ -269,7 +269,7 @@ public class ColumnInfoRecordsAggregate
         columnInfo = writeHidden( columnInfo, idx, true );
 
         // Write collapse field
-        setColumn( (short) ( columnInfo.getLastColumn() + 1 ), null, null, null, Boolean.TRUE);
+        setColumn( (short) ( columnInfo.getLastColumn() + 1 ), null, null, null, null, Boolean.TRUE);
     }
 
     public void expandColumn( short columnNumber )
@@ -307,7 +307,7 @@ public class ColumnInfoRecordsAggregate
         }
 
         // Write collapse field
-        setColumn( (short) ( columnInfo.getLastColumn() + 1 ), null, null, null, Boolean.FALSE);
+        setColumn( (short) ( columnInfo.getLastColumn() + 1 ), null, null, null, null, Boolean.FALSE);
     }
 
     /**
@@ -327,7 +327,7 @@ public class ColumnInfoRecordsAggregate
     }
 
 
-    public void setColumn(short column, Short width, Integer level, Boolean hidden, Boolean collapsed)
+    public void setColumn(short column, Short xfIndex, Short width, Integer level, Boolean hidden, Boolean collapsed)
     {
         ColumnInfoRecord ci = null;
         int              k  = 0;
@@ -345,11 +345,12 @@ public class ColumnInfoRecordsAggregate
 
         if (ci != null)
         {
+	    boolean styleChanged = xfIndex != null && ci.getXFIndex() != xfIndex.shortValue();
             boolean widthChanged = width != null && ci.getColumnWidth() != width.shortValue();
             boolean levelChanged = level != null && ci.getOutlineLevel() != level.intValue();
             boolean hiddenChanged = hidden != null && ci.getHidden() != hidden.booleanValue();
             boolean collapsedChanged = collapsed != null && ci.getCollapsed() != collapsed.booleanValue();
-            boolean columnChanged = widthChanged || levelChanged || hiddenChanged || collapsedChanged;
+            boolean columnChanged = styleChanged || widthChanged || levelChanged || hiddenChanged || collapsedChanged;
             if (!columnChanged)
             {
                 // do nothing...nothing changed.
@@ -357,7 +358,7 @@ public class ColumnInfoRecordsAggregate
             else if ((ci.getFirstColumn() == column)
                      && (ci.getLastColumn() == column))
             {                               // if its only for this cell then
-                setColumnInfoFields( ci, width, level, hidden, collapsed );
+                setColumnInfoFields( ci, xfIndex, width, level, hidden, collapsed );
             }
             else if ((ci.getFirstColumn() == column)
                      || (ci.getLastColumn() == column))
@@ -378,7 +379,7 @@ public class ColumnInfoRecordsAggregate
                 nci.setLastColumn(column);
                 nci.setOptions(ci.getOptions());
                 nci.setXFIndex(ci.getXFIndex());
-                setColumnInfoFields( nci, width, level, hidden, collapsed );
+                setColumnInfoFields( nci, xfIndex, width, level, hidden, collapsed );
 
                 insertColumn(k, nci);
             }
@@ -393,7 +394,7 @@ public class ColumnInfoRecordsAggregate
                 nci.setLastColumn(column);
                 nci.setOptions(ci.getOptions());
                 nci.setXFIndex(ci.getXFIndex());
-                setColumnInfoFields( nci, width, level, hidden, collapsed );
+                setColumnInfoFields( nci, xfIndex, width, level, hidden, collapsed );
                 insertColumn(++k, nci);
 
                 nci = ( ColumnInfoRecord ) createColInfo();
@@ -413,7 +414,7 @@ public class ColumnInfoRecordsAggregate
 
             nci.setFirstColumn(column);
             nci.setLastColumn(column);
-            setColumnInfoFields( nci, width, level, hidden, collapsed );
+            setColumnInfoFields( nci, xfIndex, width, level, hidden, collapsed );
             insertColumn(k, nci);
         }
     }
@@ -421,8 +422,10 @@ public class ColumnInfoRecordsAggregate
     /**
      * Sets all non null fields into the <code>ci</code> parameter.
      */
-    private void setColumnInfoFields( ColumnInfoRecord ci, Short width, Integer level, Boolean hidden, Boolean collapsed )
+    private void setColumnInfoFields( ColumnInfoRecord ci, Short xfStyle, Short width, Integer level, Boolean hidden, Boolean collapsed )
     {
+	if (xfStyle != null)
+	    ci.setXFIndex(xfStyle.shortValue());
         if (width != null)
             ci.setColumnWidth(width.shortValue());
         if (level != null)
@@ -500,7 +503,7 @@ public class ColumnInfoRecordsAggregate
                 level = Math.min(7, level);
                 fromIdx = columnIdx - 1; // subtract 1 just in case this column is collapsed later.
             }
-            setColumn((short)i, null, new Integer(level), null, null);
+            setColumn((short)i, null, null, new Integer(level), null, null);
             columnIdx = findColumnIdx( i, Math.max(0, fromIdx ) );
             collapseColInfoRecords( columnIdx );
         }

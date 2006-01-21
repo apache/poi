@@ -469,6 +469,17 @@ public class TestHSSFSheet
    	assertNotNull(r.getCell((short)1)); 
    	assertEquals("formula", r.getCell((short)1).getCellFormula(), "A1*2");
    }
+
+    /** test that new default column styles get applied */
+    public void testDefaultColumnStyle() {
+	HSSFWorkbook wb = new HSSFWorkbook();
+	HSSFCellStyle style = wb.createCellStyle();
+	HSSFSheet s = wb.createSheet();
+	s.setDefaultColumnStyle((short)0, style);
+	HSSFRow r = s.createRow(0);
+	HSSFCell c = r.createCell((short)0);
+	assertEquals("style should match", style.getIndex(), c.getCellStyle().getIndex());
+    }
 	 
 	 
 	public static void main(java.lang.String[] args) {
