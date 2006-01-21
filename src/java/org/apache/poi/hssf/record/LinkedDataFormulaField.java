@@ -49,7 +49,7 @@ public class LinkedDataFormulaField
     public int fillField( RecordInputStream in )
     {
         short tokenSize = in.readShort();
-        formulaTokens = getParsedExpressionTokens(tokenSize, in);
+        formulaTokens = Ptg.createParsedExpressionTokens(tokenSize, in);
 
         return tokenSize + 2;
     }
@@ -80,12 +80,7 @@ public class LinkedDataFormulaField
         int size = getSize();
         LittleEndian.putShort(data, offset, (short)(size - 2));
         int pos = offset + 2;
-        for ( Iterator iterator = formulaTokens.iterator(); iterator.hasNext(); )
-        {
-            Ptg ptg = (Ptg) iterator.next();
-            ptg.writeBytes(data, pos);
-            pos += ptg.getSize();
-        }
+        pos += Ptg.serializePtgStack(formulaTokens, data, pos);
         return size;
     }
 
@@ -101,19 +96,6 @@ public class LinkedDataFormulaField
             // should not happen
             return null;
         }
-    }
-
-    private Stack getParsedExpressionTokens(short size,  RecordInputStream in )
-    {
-        Stack stack = new Stack();
-        int pos = 0;
-        while ( pos < size )
-        {
-            Ptg ptg = Ptg.createPtg( in );
-            pos += ptg.getSize();
-            stack.push( ptg );
-        }
-        return stack;
     }
 
     public void setFormulaTokens( Stack formulaTokens )

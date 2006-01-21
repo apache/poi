@@ -522,6 +522,22 @@ extends TestCase {
 	       HSSFWorkbook wb = new HSSFWorkbook(in);
 	       assertTrue("Read book fine!" , true);
 	}
+	
+	/** Error when reading then writing ArrayValues in NameRecord's*/
+	public void test37630() throws java.io.IOException {
+	       String filename = System.getProperty("HSSF.testdata.path");
+	       filename=filename+"/37630.xls";
+	       FileInputStream in = new FileInputStream(filename);
+	       HSSFWorkbook wb = new HSSFWorkbook(in);
+           File file = TempFile.createTempFile("test37630",".xls");
+	       FileOutputStream out    = new FileOutputStream(file);
+	       wb.write(out);
+	       
+	       assertTrue("Read book fine!" , true);
+	}
+	
+	
+	
 
 }
 

@@ -18,6 +18,7 @@ package org.apache.poi.hssf.record.formula;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Stack;
 
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.RecordInputStream;
@@ -85,8 +86,33 @@ public abstract class Ptg
         return retval;
     }
     */
+
+    public static Stack createParsedExpressionTokens(short size,  RecordInputStream in )
+    {
+        Stack stack = new Stack();
+        int pos = 0;
+        List arrayPtgs = null;
+        while ( pos < size )
+        {
+            Ptg ptg = Ptg.createPtg( in );
+            if (ptg instanceof ArrayPtg) {
+            	if (arrayPtgs == null)
+            		arrayPtgs = new ArrayList(5);
+            	arrayPtgs.add(ptg);
+            	pos += 8;
+            } else pos += ptg.getSize();
+            stack.push( ptg );
+        }
+        if (arrayPtgs != null) {
+        	for (int i=0;i<arrayPtgs.size();i++) {
+        		ArrayPtg p = (ArrayPtg)arrayPtgs.get(i);
+        		p.readTokenValues(in);
+        	}
+        }
+        return stack;
+    }
     
-    public static Ptg createPtg(RecordInputStream in)
+    private static Ptg createPtg(RecordInputStream in)
     {
         byte id     = in.readByte();
         Ptg  retval = null;
@@ -157,6 +183,16 @@ public abstract class Ptg
             case ConcatPtg.sid :
                 retval = new ConcatPtg(in);
                 break;
+                
+            case ArrayPtg.sid:
+            	retval = new ArrayPtg(in);
+            	break;
+            case ArrayPtgV.sid:
+            	retval = new ArrayPtgV(in);
+            	break;            	
+            case ArrayPtgA.sid:            	
+            	retval = new ArrayPtgA(in);
+            	break;
 
             case AreaPtg.sid :
                 retval = new AreaPtg(in);
@@ -303,6 +339,34 @@ public abstract class Ptg
             retval.setClass(CLASS_REF);
        return retval;
         
+    }
+    
+    public static int serializePtgStack(Stack expression, byte[] array, int offset) {
+    	int pos = 0;
+    	int size = 0;
+    	if (expression != null)
+    		size = expression.size();
+
+    	List arrayPtgs = null;
+    	
+    	for (int k = 0; k < size; k++) {
+    		Ptg ptg = ( Ptg ) expression.get(k);
+    		
+    		ptg.writeBytes(array, pos + offset);
+    		if (ptg instanceof ArrayPtg) {
+    		  if (arrayPtgs == null)
+    			  arrayPtgs = new ArrayList(5);
+    		  arrayPtgs.add(ptg);
+    		  pos += 8;
+    		} else pos += ptg.getSize();
+    	}
+    	if (arrayPtgs != null) {
+    		for (int i=0;i<arrayPtgs.size();i++) {
+    			ArrayPtg p = (ArrayPtg)arrayPtgs.get(i);
+    			pos += p.writeTokenValueBytes(array, pos + offset);
+    		}
+    	}
+    	return pos;
     }
 
     public abstract int getSize();
