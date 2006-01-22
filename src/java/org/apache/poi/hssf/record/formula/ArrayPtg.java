@@ -90,7 +90,7 @@ public class ArrayPtg extends Ptg
         	for (int y=0;y<token_2_rows;y++) {
         		byte grbit = in.readByte();
         		if (grbit == 0x01) {
-        			token_3_arrayValues[x][y] = Double.valueOf(in.readDouble());
+			    token_3_arrayValues[x][y] = new Double(in.readDouble());
         		} else if (grbit == 0x02) {
         			//Ignore the doco, it is actually a unicode string with all the
         			//trimmings ie 16 bit size, option byte etc
