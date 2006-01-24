@@ -238,6 +238,12 @@ public void walkTree(int depth, int startPos, int maxLen) {
 			// Now check if it's a container or not
 			int container = (int)opt & 0x0f;
 
+			// BinaryTagData seems to contain records, but it
+			//  isn't tagged as doing so. Try stepping in anyway
+			if(type == 5003L && opt == 0L) {
+				container = 0x0f;
+			}
+
 			if(type == 0L || (container != 0x0f)) {
 				System.out.println();
 			} else if (type == 1035l || type == 1036l) {
