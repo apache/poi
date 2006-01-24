@@ -104,8 +104,18 @@ public class HWPFDocument
   public HWPFDocument(InputStream istream) throws IOException
   {
     //do Ole stuff
-    POIFSFileSystem filesystem = new POIFSFileSystem(istream);
+    this( new POIFSFileSystem(istream) );
+  }
 
+  /**
+   * This constructor loads a Word document from a POIFSFileSystem
+   *
+   * @param filesystem The POIFSFileSystem that contains the Word document.
+   * @throws IOException If there is an unexpected IOException from the passed
+   *         in POIFSFileSystem.
+   */
+  public HWPFDocument(POIFSFileSystem filesystem) throws IOException
+  {
     // read in the main stream.
     DocumentEntry documentProps =
        (DocumentEntry)filesystem.getRoot().getEntry("WordDocument");
