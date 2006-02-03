@@ -128,8 +128,8 @@ public class WriteAuthorAndTitle
      * summary information property set and copies everything else unmodified
      * to the destination POI filesystem. Since an instance of it is registered
      * as a {@link POIFSReader} its method {@link 
-     * #processPOIFSReaderEvent(POIFSReaderEvent) is called for each document in
-     * the origin POIFS.</p>
+     * #processPOIFSReaderEvent(POIFSReaderEvent)} is called for each document
+     * in the origin POIFS.</p>
      */
     static class ModifySICopyTheRest implements POIFSReaderListener
     {
@@ -145,7 +145,6 @@ public class WriteAuthorAndTitle
          * 
          * @param dstName The name of the disk file the destination POIFS is to
          * be written to.
-         * @throws FileNotFoundException
          */
         public ModifySICopyTheRest(final String dstName)
         {
@@ -242,12 +241,15 @@ public class WriteAuthorAndTitle
          * @param name The original (and destination) stream's name.
          * @param si The property set. It should be a summary information
          * property set.
+         * @throws IOException 
+         * @throws WritingNotSupportedException 
          */
         public void editSI(final POIFSFileSystem poiFs,
                            final POIFSDocumentPath path,
                            final String name,
                            final PropertySet si)
-            throws WritingNotSupportedException, IOException
+        throws WritingNotSupportedException, IOException
+            
         {
             /* Get the directory entry for the target stream. */
             final DirectoryEntry de = getPath(poiFs, path);
@@ -285,6 +287,8 @@ public class WriteAuthorAndTitle
          * @param path The file's path in the POI filesystem.
          * @param name The file's name in the POI filesystem.
          * @param ps The property set to write.
+         * @throws WritingNotSupportedException 
+         * @throws IOException 
          */
         public void copy(final POIFSFileSystem poiFs,
                          final POIFSDocumentPath path,
@@ -305,7 +309,9 @@ public class WriteAuthorAndTitle
          *
          * @param poiFs The POI filesystem to write to.
          * @param path The source document's path.
+         * @param name The source document's name.
          * @param stream The stream containing the source document.
+         * @throws IOException 
          */
         public void copy(final POIFSFileSystem poiFs,
                          final POIFSDocumentPath path,

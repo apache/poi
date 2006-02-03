@@ -173,6 +173,7 @@ public class CopyCompare
      * @exception NoPropertySetStreamException if the application tries to
      * create a property set from a POI document stream that is not a property
      * set stream.
+     * @throws UnsupportedEncodingException 
      * @exception IOException if any I/O exception occurs.
      */
     private static boolean equal(final DirectoryEntry d1,
@@ -252,6 +253,7 @@ public class CopyCompare
      * @exception NoPropertySetStreamException if the application tries to
      * create a property set from a POI document stream that is not a property
      * set stream.
+     * @throws UnsupportedEncodingException 
      * @exception IOException if any I/O exception occurs.
      */
     private static boolean equal(final DocumentEntry d1, final DocumentEntry d2,
@@ -303,7 +305,7 @@ public class CopyCompare
      * everything unmodified to the destination POI filesystem. Property set
      * streams are copied by creating a new {@link PropertySet} from the
      * original property set by using the {@link
-     * MutablePropertySet#MutablePropertySet(PropertySet) constructor.</p>
+     * MutablePropertySet#MutablePropertySet(PropertySet)} constructor.</p>
      */
     static class CopyFile implements POIFSReaderListener
     {
@@ -319,7 +321,6 @@ public class CopyCompare
          * 
          * @param dstName The name of the disk file the destination POIFS is to
          * be written to.
-         * @throws FileNotFoundException
          */
         public CopyFile(final String dstName)
         {
@@ -405,6 +406,8 @@ public class CopyCompare
          * @param path The file's path in the POI filesystem.
          * @param name The file's name in the POI filesystem.
          * @param ps The property set to write.
+         * @throws WritingNotSupportedException 
+         * @throws IOException 
          */
         public void copy(final POIFSFileSystem poiFs,
                          final POIFSDocumentPath path,
@@ -425,7 +428,9 @@ public class CopyCompare
          *
          * @param poiFs The POI filesystem to write to.
          * @param path The source document's path.
+         * @param name The source document's name.
          * @param stream The stream containing the source document.
+         * @throws IOException 
          */
         public void copy(final POIFSFileSystem poiFs,
                          final POIFSDocumentPath path,
