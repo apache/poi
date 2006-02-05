@@ -95,7 +95,7 @@ public class RecordTypes {
     public static final Type DefaultRulerAtom = new Type(4011,null);
     public static final Type FontEntityAtom = new Type(4023,FontEntityAtom.class);
     public static final Type FontEmbeddedData = new Type(4024,null);
-    public static final Type CString = new Type(4026,null);
+    public static final Type CString = new Type(4026,CString.class);
     public static final Type MetaFile = new Type(4033,null);
     public static final Type ExOleObjAtom = new Type(4035,null);
     public static final Type SrKinsoku = new Type(4040,null);
@@ -153,9 +153,9 @@ public class RecordTypes {
     // Records ~12000 seem to be related to the Comments used in PPT 2000/XP
     // (Comments in PPT97 are normal Escher text boxes)
     public static final Type Comment2000 = new Type(12000,null);
-    public static final Type Comment2000Record = new Type(12002,null);
+    public static final Type Comment2000Atom = new Type(12002,null);
     public static final Type Comment2000Summary = new Type(12004,null);
-    public static final Type Comment2000SummaryRecord = new Type(12005,null);
+    public static final Type Comment2000SummaryAtom = new Type(12005,null);
 
     //records greater then 0xF000 belong to with Microsoft Office Drawing format also known as Escher
     public static final int EscherDggContainer = 0xf000;
