@@ -140,15 +140,22 @@ public class RecordTypes {
     public static final Type ExWAVAudioEmbeddedAtom = new Type(4115,null);
     public static final Type AnimationInfoAtom = new Type(4116,null);
     public static final Type RTFDateTimeMCAtom = new Type(4117,null);
-    public static final Type ProgTags = new Type(5000,null);
+    public static final Type ProgTags = new Type(5000,DummyPositionSensitiveRecordWithChildren.class);
     public static final Type ProgStringTag = new Type(5001,null);
-    public static final Type ProgBinaryTag = new Type(5002,null);
-    public static final Type BinaryTagData = new Type(5003,null);
+    public static final Type ProgBinaryTag = new Type(5002,DummyPositionSensitiveRecordWithChildren.class);
+    public static final Type BinaryTagData = new Type(5003,DummyPositionSensitiveRecordWithChildren.class);
     public static final Type PrpublicintOptions = new Type(6000,null);
     public static final Type PersistPtrFullBlock = new Type(6001,PersistPtrHolder.class);
     public static final Type PersistPtrIncrementalBlock = new Type(6002,PersistPtrHolder.class);
     public static final Type GScalingAtom = new Type(10001,null);
     public static final Type GRColorAtom = new Type(10002,null);
+    
+    // Records ~12000 seem to be related to the Comments used in PPT 2000/XP
+    // (Comments in PPT97 are normal Escher text boxes)
+    public static final Type Comment2000 = new Type(12000,null);
+    public static final Type Comment2000Record = new Type(12002,null);
+    public static final Type Comment2000Summary = new Type(12004,null);
+    public static final Type Comment2000SummaryRecord = new Type(12005,null);
 
     //records greater then 0xF000 belong to with Microsoft Office Drawing format also known as Escher
     public static final int EscherDggContainer = 0xf000;
