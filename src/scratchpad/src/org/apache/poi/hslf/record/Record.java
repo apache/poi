@@ -105,9 +105,12 @@ public abstract class Record
 				throw new CorruptPowerPointFileException("Corrupt document - starts with record of type 0000 and length 0xFFFF");
 			}
 
-//System.out.println("Found a " + type + " at pos " + pos + " (" + Integer.toHexString(pos) + "), len " + rlen);
 			Record r = createRecordForType(type,b,pos,8+rleni);
-			children.add(r);
+			if(r != null) {
+				children.add(r);
+			} else {
+				// Record was horribly corrupt
+			}
 			pos += 8;
 			pos += rlen;
 		}
@@ -131,6 +134,13 @@ public abstract class Record
 	 */
 	public static Record createRecordForType(long type, byte[] b, int start, int len) {
 		Record toReturn = null;
+
+		// Handle case of a corrupt last record, whose claimed length
+		//  would take us passed the end of the file
+		if(start + len > b.length) {
+			System.err.println("Warning: Skipping record of type " + type + " at position " + start + " which claims to be longer than the file! (" + len + " vs " + (b.length-start) + ")");
+			return null;
+		}
 
 		// We use the RecordTypes class to provide us with the right
 		//  class to use for a given type
