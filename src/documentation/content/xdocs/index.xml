@@ -92,8 +92,8 @@
 	<p>HPSF supports reading and writing of properties. However, with the
 	  current POI release only reading is possible. In order to write
 	  properties, you'll have to fetch the latest POI version <link
-	    href="http://jakarta.apache.org/site/cvsindex.html">from the CVS
-	    repository</link>.</p>
+	    href="http://jakarta.apache.org/site/cvsindex.html">from the
+	    Subversion repository</link>.</p>
 
 	<p>Please see <link href="./hpsf/index.html">the HPSF project
 	    page</link> for more information.</p>
@@ -124,3 +124,21 @@
     </legal>
   </footer>
 </document>
+
+<!-- Keep this comment at the end of the file
+Local variables:
+mode: xml
+sgml-omittag:nil
+sgml-shorttag:nil
+sgml-namecase-general:nil
+sgml-general-insert-case:lower
+sgml-minimize-attributes:nil
+sgml-always-quote-attributes:t
+sgml-indent-step:2
+sgml-indent-data:t
+sgml-parent-document:nil
+sgml-exposed-tags:nil
+sgml-local-catalogs:nil
+sgml-local-ecat-files:nil
+End:
+-->
