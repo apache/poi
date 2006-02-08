@@ -35,16 +35,17 @@
                 <link href="contrib.xml">Third-Party
                     Contributions</link>. The preferred submission method for patches is:
             </p>
-            <ul>
-                <li>Post to POI developers list</li>
-                <li>Describe the patch, the reason for it and (if necessary) why this is important.</li>
-                <li>Generate the patch in
-                    <code>diff -u</code> format from CVS
-                </li>
-                <li>Also generate a documentation patch or new file, if this is something that should be documented.
-                </li>
-                <li>Post as an attachment rather than inline (unless it is trivially small).</li>
-            </ul>
+      <ul>
+        <li>Post to POI developers list</li>
+        <li>Describe the patch, the reason for it and (if necessary) why this
+          is important.</li>
+        <li>Generate the patch in the unified diff format. This format is
+          created by the typical Subversion client when you execute the
+          <code>svn diff</code> command or the equivalent of it in a GUI environment.</li>
+        <li>Also generate a documentation patch or new file, if this is
+          something that should be documented.</li>
+        <li>Post as an attachment rather than inline (unless it is trivially small).</li>
+      </ul>
             <p>Following the above guidelines will facilitate your patch being reviewed
                 and applied efficiently.</p>
         </section>

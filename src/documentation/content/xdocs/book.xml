@@ -58,13 +58,10 @@
     </menu>
 
     <menu label="Code">
-        <!--    <menu-item label="Source Code" href="http://jakarta.apache.org/poi/javadocs/javasrc/"/>       -->
-        <menu-item label="CVS" href="http://jakarta.apache.org/site/cvsindex.html"/>
-        <!-- <menu-item label="CVS Changelog" href="changelog.html"/> -->
+        <menu-item label="Subversion (current source code)" href="http://jakarta.apache.org/site/cvsindex.html"/>
         <menu-item label="Top Voted Bugs" href="http://issues.apache.org/bugzilla/buglist.cgi?votes=1&amp;product=POI&amp;order=bugs.votes"/>
         <menu-item label="Bug Database" href="http://issues.apache.org/bugzilla/buglist.cgi?product=POI"/>
         <menu-item label="Patches" href="http://issues.apache.org/bugzilla/buglist.cgi?product=POI&amp;short_desc=%5BPATCH%5D&amp;short_desc_type=allwordssubstr"/>
-
         <menu-item label="Junit Test Results" href="ext:junit"/>
         <menu-item label="Dependency Metrics" href="ext:jdepend"/>
         <!--    <menu-item label="Checkstyle Metrics" href="http://jakarta.apache.org/poi/metrics/checkstyle/"/> -->

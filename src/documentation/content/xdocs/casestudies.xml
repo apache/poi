@@ -138,7 +138,7 @@ format,
                     Managament and Maintenance System for the Telecommunications industry
                     based
                     on Turbine and Velocity. Originally the invoicing was done with a simple
-                    CVS
+                    CSV
                     sheet which was then marked up by accounts and customized for each client.
                     As growth has been consistent with the application, the requirement for
                     invoices that need not be touched by hand increased. POI provided the
