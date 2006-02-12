@@ -88,6 +88,13 @@ public class RichTextRun
 	}
 	
 	/**
+	 * Get the length of the text
+	 */
+	public int getLength() {
+		return length;
+	}
+	
+	/**
 	 * Fetch the text, in output suitable form
 	 */
 	public String getText() {
@@ -119,12 +126,12 @@ public class RichTextRun
 	
 	
 	/**
-	 * Unit Testing Only - get the underlying paragraph style collection.
+	 * Internal Use Only - get the underlying paragraph style collection.
 	 * For normal use, use the friendly setters and getters 
 	 */
 	public TextPropCollection _getRawParagraphStyle() { return paragraphStyle; }
 	/**
-	 * Unit Testing Only - get the underlying character style collection.
+	 * Internal Use Only - get the underlying character style collection.
 	 * For normal use, use the friendly setters and getters 
 	 */
 	public TextPropCollection _getRawCharacterStyle() { return characterStyle; }

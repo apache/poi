@@ -208,25 +208,19 @@ public class TextRun
 		ensureStyleAtomPresent();
 		
 		// Update the text length for its Paragraph and Character stylings
-		LinkedList pStyles = _styleAtom.getParagraphStyles();
-		LinkedList cStyles = _styleAtom.getCharacterStyles();
-		TextPropCollection pCol = (TextPropCollection)pStyles.get(runID);
-		TextPropCollection cCol = (TextPropCollection)cStyles.get(runID);
-		pCol.updateTextSize(s.length());
+		TextPropCollection pCol = run._getRawParagraphStyle();
+		TextPropCollection cCol = run._getRawCharacterStyle();
+		// Character style covers the new run
 		cCol.updateTextSize(s.length());
+		// Paragraph might cover other runs to, so remove old size and add new one
+		pCol.updateTextSize( pCol.getCharactersCovered() - run.getLength() + s.length());
 		
 		// Build up the new text
 		// As we go through, update the start position for all subsequent runs
 		// The building relies on the old text still being present
 		StringBuffer newText = new StringBuffer();
 		for(int i=0; i<_rtRuns.length; i++) {
-			// Do we need to update the start position of this run?
-			if(i <= runID) {
-				// Change is after this, so don't need to change start position
-			} else {
-				// Change has occured, so update start position
-				_rtRuns[i].updateStartPosition(newText.length());
-			}
+			int newStartPos = newText.length();
 			
 			// Build up the new text
 			if(i != runID) {
@@ -235,6 +229,15 @@ public class TextRun
 			} else {
 				// Affected run, so use new text
 				newText.append(s);
+			}
+			
+			// Do we need to update the start position of this run?
+			// (Need to get the text before we update the start pos)
+			if(i <= runID) {
+				// Change is after this, so don't need to change start position
+			} else {
+				// Change has occured, so update start position
+				_rtRuns[i].updateStartPosition(newStartPos);
 			}
 		}
 		
