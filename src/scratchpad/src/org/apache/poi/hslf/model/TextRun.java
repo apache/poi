@@ -285,9 +285,9 @@ public class TextRun
 
 	/**
 	 * Ensure a StyleTextPropAtom is present for this run, 
-	 *  by adding if required
+	 *  by adding if required. Normally for internal TextRun use.
 	 */
-	private synchronized void ensureStyleAtomPresent() {
+	public synchronized void ensureStyleAtomPresent() {
 		if(_styleAtom != null) {
 			// All there
 			return;

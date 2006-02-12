@@ -84,8 +84,8 @@ public class StyleTextPropAtom extends RecordAtom
 	public void setCharacterStyles(LinkedList cs) { charStyles = cs; }
 
 	/** All the different kinds of paragraph properties we might handle */
-	public TextProp[] paragraphTextPropTypes = new TextProp[] {
-				new BitMaskTextProp(2,  0xF, new String[] {
+	public static TextProp[] paragraphTextPropTypes = new TextProp[] {
+				new BitMaskTextProp(2,  0xF, "paragraph_flags", new String[] {
 					"bullet", "bullet.hardfont", 
 					"bullet.hardcolor", "bullet.hardsize"}
 				),
@@ -105,7 +105,7 @@ public class StyleTextPropAtom extends RecordAtom
 				new TextProp(2, 0xA0000, "para_unknown_6")
 	};
 	/** All the different kinds of character properties we might handle */
-	public TextProp[] characterTextPropTypes = new TextProp[] {
+	public static TextProp[] characterTextPropTypes = new TextProp[] {
 				new CharFlagsTextProp(),
 				new TextProp(2, 0x10000, "font.index"),
 				new TextProp(2, 0x20000, "font.size"),
@@ -329,6 +329,48 @@ public class StyleTextPropAtom extends RecordAtom
 		public int getCharactersCovered() { return charactersCovered; }
 		/** Fetch the TextProps that define this styling */
 		public LinkedList getTextPropList() { return textPropList; }
+		
+		/** Fetch the TextProp with this name, or null if it isn't present */
+		public TextProp findByName(String textPropName) {
+			for(int i=0; i<textPropList.size(); i++) {
+				TextProp prop = (TextProp)textPropList.get(i);
+				if(prop.getName().equals(textPropName)) {
+					return prop;
+				}
+			}
+			return null;
+		}
+		
+		/** Add the TextProp with this name to the list */
+		public TextProp addWithName(String name) {
+			// Find the base TextProp to base on
+			TextProp base = null;
+			for(int i=0; i < StyleTextPropAtom.characterTextPropTypes.length; i++) {
+				if(StyleTextPropAtom.characterTextPropTypes[i].getName().equals(name)) {
+					base = StyleTextPropAtom.characterTextPropTypes[i];
+				}
+			}
+			for(int i=0; i < StyleTextPropAtom.paragraphTextPropTypes.length; i++) {
+				if(StyleTextPropAtom.paragraphTextPropTypes[i].getName().equals(name)) {
+					base = StyleTextPropAtom.paragraphTextPropTypes[i];
+				}
+			}
+			if(base == null) {
+				throw new IllegalArgumentException("No TextProp with name " + name + " is defined to add from");
+			}
+			
+			// Add a copy of this property, in the right place to the list
+			TextProp textProp = (TextProp)base.clone();
+			int pos = 0;
+			for(int i=0; i<textPropList.size(); i++) {
+				TextProp curProp = (TextProp)textPropList.get(i);
+				if(textProp.getMask() > curProp.getMask()) {
+					pos++;
+				}
+			}
+			textPropList.add(pos, textProp);
+			return textProp;
+		}
 
 		/**
 		 * Create a new collection of text properties (be they paragraph
@@ -504,9 +546,10 @@ public class StyleTextPropAtom extends RecordAtom
 		/** Fetch the list of if the sub properties match or not */
 		public boolean[] getSubPropMatches() { return subPropMatches; }
 
-		private BitMaskTextProp(int sizeOfDataBlock, int maskInHeader, String[] subPropNames) {
+		private BitMaskTextProp(int sizeOfDataBlock, int maskInHeader, String overallName, String[] subPropNames) {
 			super(sizeOfDataBlock,maskInHeader,"bitmask");
 			this.subPropNames = subPropNames;
+			this.propName = overallName;
 			subPropMasks = new int[subPropNames.length];
 			subPropMatches = new boolean[subPropNames.length];
 		}
@@ -545,6 +588,7 @@ public class StyleTextPropAtom extends RecordAtom
 			} else {
 				dataValue -= subPropMasks[idx];
 			}
+			subPropMatches[idx] = value;
 		}
 		
 		public Object clone(){
@@ -575,7 +619,7 @@ public class StyleTextPropAtom extends RecordAtom
 		public static final int ENABLE_NUMBERING_2_IDX = 12;
 
 		private CharFlagsTextProp() {
-			super(2,0xffff, new String[] {
+			super(2,0xffff, "char_flags", new String[] {
 					"bold",          // 0x0001
 					"italic",        // 0x0002
 					"underline",     // 0x0004
