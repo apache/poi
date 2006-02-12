@@ -282,7 +282,7 @@ public class TestStyleTextPropAtom extends TestCase {
 		// 3rd is normal, so lacks a CharFlagsTextProp
 		assertFalse(b_ch_3.getTextPropList().get(0) instanceof CharFlagsTextProp);
 		
-		// 4th is underlinds
+		// 4th is underlined
 		CharFlagsTextProp cf_4_1 = (CharFlagsTextProp)b_ch_4.getTextPropList().get(0);
 		assertEquals(false,cf_4_1.getSubValue(CharFlagsTextProp.BOLD_IDX));
 		assertEquals(false,cf_4_1.getSubValue(CharFlagsTextProp.ITALIC_IDX));
@@ -293,6 +293,77 @@ public class TestStyleTextPropAtom extends TestCase {
 		assertEquals(false,cf_4_1.getSubValue(CharFlagsTextProp.SHADOW_IDX));
 		assertEquals(false,cf_4_1.getSubValue(CharFlagsTextProp.STRIKETHROUGH_IDX));
 		assertEquals(true,cf_4_1.getSubValue(CharFlagsTextProp.UNDERLINE_IDX));
+		
+		// The value for this should be 4
+		assertEquals(0x0004, cf_4_1.getValue());
+		
+		// Now make the 4th bold, italic and not underlined
+		cf_4_1.setSubValue(true, CharFlagsTextProp.BOLD_IDX);
+		cf_4_1.setSubValue(true, CharFlagsTextProp.ITALIC_IDX);
+		cf_4_1.setSubValue(false, CharFlagsTextProp.UNDERLINE_IDX);
+		
+		assertEquals(true,cf_4_1.getSubValue(CharFlagsTextProp.BOLD_IDX));
+		assertEquals(true,cf_4_1.getSubValue(CharFlagsTextProp.ITALIC_IDX));
+		assertEquals(false,cf_4_1.getSubValue(CharFlagsTextProp.ENABLE_NUMBERING_1_IDX));
+		assertEquals(false,cf_4_1.getSubValue(CharFlagsTextProp.ENABLE_NUMBERING_2_IDX));
+		assertEquals(false,cf_4_1.getSubValue(CharFlagsTextProp.RELIEF_IDX));
+		assertEquals(false,cf_4_1.getSubValue(CharFlagsTextProp.RESET_NUMBERING_IDX));
+		assertEquals(false,cf_4_1.getSubValue(CharFlagsTextProp.SHADOW_IDX));
+		assertEquals(false,cf_4_1.getSubValue(CharFlagsTextProp.STRIKETHROUGH_IDX));
+		assertEquals(false,cf_4_1.getSubValue(CharFlagsTextProp.UNDERLINE_IDX));
+		
+		// The value should now be 3
+		assertEquals(0x0003, cf_4_1.getValue());
+	}
+	
+	public void testFindAddTextProp() {
+		StyleTextPropAtom stpb = new StyleTextPropAtom(data_b,0,data_b.length);
+		stpb.setParentTextSize(data_b_text_len);
+
+		LinkedList b_p_l = stpb.getParagraphStyles();
+		TextPropCollection b_p_1 = (TextPropCollection)b_p_l.get(0);
+		TextPropCollection b_p_2 = (TextPropCollection)b_p_l.get(1);
+		TextPropCollection b_p_3 = (TextPropCollection)b_p_l.get(2);
+		TextPropCollection b_p_4 = (TextPropCollection)b_p_l.get(3);
+		
+		LinkedList b_ch_l = stpb.getCharacterStyles();
+		TextPropCollection b_ch_1 = (TextPropCollection)b_ch_l.get(0);
+		TextPropCollection b_ch_2 = (TextPropCollection)b_ch_l.get(1);
+		TextPropCollection b_ch_3 = (TextPropCollection)b_ch_l.get(2);
+		TextPropCollection b_ch_4 = (TextPropCollection)b_ch_l.get(3);
+
+		// CharFlagsTextProp: 3 doesn't have, 4 does
+		assertNull(b_ch_3.findByName("char_flags"));
+		assertNotNull(b_ch_4.findByName("char_flags"));
+		
+		// Now add in on 3, should go to front
+		assertEquals(2, b_ch_3.getTextPropList().size());
+		TextProp new_cftp = b_ch_3.addWithName("char_flags");
+		assertEquals(3, b_ch_3.getTextPropList().size());
+		assertEquals(new_cftp, b_ch_3.getTextPropList().get(0));
+		
+		// alignment: 1 does have, 2 doesn't
+		assertNotNull(b_p_1.findByName("alignment"));
+		assertNull(b_p_2.findByName("alignment"));
+		
+		// Now add in on 2, should go to the front
+		assertEquals(1, b_p_2.getTextPropList().size());
+		TextProp new_al = b_p_2.addWithName("alignment");
+		assertEquals(2, b_p_2.getTextPropList().size());
+		assertEquals(new_al, b_p_2.getTextPropList().get(0));
+		
+		// This should go at the end
+		TextProp new_sa = b_p_2.addWithName("spaceafter");
+		assertEquals(3, b_p_2.getTextPropList().size());
+		assertEquals(new_sa, b_p_2.getTextPropList().get(2));
+		
+		// Check we get an error with a made up one
+		try {
+			b_p_2.addWithName("madeUpOne");
+			fail();
+		} catch(IllegalArgumentException e) {
+			// Good, as expected
+		}
 	}
 
 
