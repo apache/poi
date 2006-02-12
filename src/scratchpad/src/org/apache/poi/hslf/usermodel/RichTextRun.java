@@ -20,6 +20,7 @@
 package org.apache.poi.hslf.usermodel;
 
 import org.apache.poi.hslf.model.TextRun;
+import org.apache.poi.hslf.record.StyleTextPropAtom.CharFlagsTextProp;
 import org.apache.poi.hslf.record.StyleTextPropAtom.TextPropCollection;
 
 /**
@@ -123,6 +124,39 @@ public class RichTextRun
 		startPos = startAt;
 	}
 	
+	
+	// --------------- Internal helpers on rich text properties -------
+	private boolean isCharFlagsTextPropVal(int index) {
+		if(characterStyle == null) { return false; }
+		
+		CharFlagsTextProp cftp = (CharFlagsTextProp)
+			characterStyle.findByName("char_flags");
+		
+		if(cftp == null) { return false; }
+		return cftp.getSubValue(index);
+	}
+	private void setCharFlagsTextPropVal(int index, boolean value) {
+		if(characterStyle == null) {
+			parentRun.ensureStyleAtomPresent();
+		}
+		
+		CharFlagsTextProp cftp = (CharFlagsTextProp)
+			characterStyle.findByName("char_flags");
+		if(cftp == null) {
+			cftp = (CharFlagsTextProp)characterStyle.addWithName("char_flags");
+		}
+		
+		cftp.setSubValue(value,index);
+	}
+	
+	// --------------- Friendly getters / setters on rich text properties -------
+	public boolean isBold() {
+		return isCharFlagsTextPropVal(CharFlagsTextProp.BOLD_IDX);
+	}
+	
+	public void setBold(boolean bold) {
+		setCharFlagsTextPropVal(CharFlagsTextProp.BOLD_IDX, bold);
+	}
 	
 	
 	/**
