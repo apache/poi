@@ -108,9 +108,9 @@ public class WordExtractor {
     	return text;
 	}
 	
-	/*
+	/**
 	 * Grab the text, based on the paragraphs. Shouldn't include any crud,
-	 *  but slightly slower than getTextFromPieces()
+	 *  but slightly slower than getTextFromPieces().
 	 */
 	public String getText() {
 		StringBuffer ret = new StringBuffer();
