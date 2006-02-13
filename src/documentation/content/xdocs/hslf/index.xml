@@ -8,6 +8,7 @@
         <subtitle>Overview</subtitle>
         <authors>
             <person name="Avik Sengupta" email="avik at apache dot org"/>
+            <person name="Nick Burch" email="nick at apache dot org"/>
         </authors>
     </header>
 
@@ -19,8 +20,12 @@
             <p>HSSF provides a way to read powerpoint presentations, and extract text from it.
             It also provides some (currently limited) edit capabilities.
             </p>
-            <note> This code currently lives the scratchpad area of the POI CVS repository. 
-				Ensure that you have the scratchpad jar or the scratchpad build area in your
+            <note> 
+                This code currently lives the 
+                <link href="http://svn.apache.org/viewcvs.cgi/jakarta/poi/trunk/src/scratchpad/">scratchpad area</link> 
+                of the POI SVN repository. 
+				Ensure that you have the scratchpad jar or the scratchpad 
+                build area in your
 				classpath before experimenting with this code.
 			</note>
 			<p>The <link href="./quick-guide.html">quick guide</link> documentation provides 

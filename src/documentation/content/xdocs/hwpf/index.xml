@@ -21,11 +21,16 @@
     to pure Java.</p>
 
   <p>HWPF is still in early development. It is in the <link
-     href="http://cvs.apache.org/viewcvs/jakarta-poi/src/scratchpad/">
-     scratchpad section of the CVS.</link> Source code in the
-    <em>org.apache.poi.hwpf.extractor</em> tree is legacy code. Source in the
-    <em>org.apache.poi.hwpf.model</em> tree is the old legacy code refactored
-    into an object model.</p>
+     href="http://svn.apache.org/viewcvs.cgi/jakarta/poi/trunk/src/scratchpad/">
+     scratchpad section of the SVN.</link> 
+     Source in the
+     <em>org.apache.poi.hwpf.model</em> tree is the old legacy code refactored
+     into an object model. Source code in the
+     <em>org.apache.poi.hwpf.extractor</em> tree is a wrapper of this to
+     facilitate easy extraction of interesting things (eg the Text). 
+     Source code in the <em>org.apache.poi.hdf</em> tree is the old legacy
+     code.
+   </p>
 
    <section>
     <title>HWPF Pointman Needed!</title>
