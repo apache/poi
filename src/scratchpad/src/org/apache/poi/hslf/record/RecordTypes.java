@@ -152,8 +152,8 @@ public class RecordTypes {
     
     // Records ~12000 seem to be related to the Comments used in PPT 2000/XP
     // (Comments in PPT97 are normal Escher text boxes)
-    public static final Type Comment2000 = new Type(12000,org.apache.poi.hslf.record.Comment2000.class);
-    public static final Type Comment2000Atom = new Type(12002,null);
+    public static final Type Comment2000 = new Type(12000,Comment2000.class);
+    public static final Type Comment2000Atom = new Type(12001,Comment2000Atom.class);
     public static final Type Comment2000Summary = new Type(12004,null);
     public static final Type Comment2000SummaryAtom = new Type(12005,null);
 

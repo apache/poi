@@ -16,12 +16,12 @@ public class Comment2000 extends RecordContainer {
 	private CString authorRecord;
 	private CString authorInitialsRecord;
 	private CString commentRecord;
-	//private Comment2000Atom commentAtom; 
+	private Comment2000Atom commentAtom; 
 	
 	/** 
 	 * Returns the Comment2000Atom of this Comment
 	 */ 
-	//public Comment2000Atom getComment2000Atom() { return commentAtom; }
+	public Comment2000Atom getComment2000Atom() { return commentAtom; }
 	
 	/**
 	 * Get the Author of this comment
@@ -92,6 +92,11 @@ public class Comment2000 extends RecordContainer {
 			throw new IllegalStateException("Third child record wasn't a CString, was of type " + _children[2].getRecordType());
 		}
 		// Fourth child should be the comment atom
+		if(_children[3] instanceof Comment2000Atom) {
+			commentAtom = (Comment2000Atom)_children[3];
+		} else {
+			throw new IllegalStateException("Fourth child record wasn't a Comment2000Atom, was of type " + _children[3].getRecordType());
+		}
 	}
 
 	/**
