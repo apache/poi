@@ -51,7 +51,7 @@ public class TestComment2000Atom extends TestCase {
 	
     public void testRecordType() throws Exception {
 		Comment2000Atom ca = new Comment2000Atom(data_a, 0, data_a.length);
-		assertEquals(12002l, ca.getRecordType());
+		assertEquals(12001l, ca.getRecordType());
 	}
     
     public void testGetDate() throws Exception {
@@ -89,7 +89,7 @@ public class TestComment2000Atom extends TestCase {
 		assertEquals(0x0A, cb.getXOffset());
 		assertEquals(0x0E, cb.getYOffset());
     }
-
+    
 	public void testWrite() throws Exception {
 		Comment2000Atom ca = new Comment2000Atom(data_a, 0, data_a.length);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -101,7 +101,31 @@ public class TestComment2000Atom extends TestCase {
 			assertEquals(data_a[i],b[i]);
 		}
 	}
-	
+
+	// Create A from scratch
+    public void testCreate() throws Exception {
+    	Comment2000Atom a = new Comment2000Atom();
+    	
+    	// Set number, x and y
+    	a.setNumber(1);
+    	a.setXOffset(0x92);
+    	a.setYOffset(0x92);
+    	
+    	// Set the date
+		Date date_a = sdf.parse("2006-01-24 22:26:15.205");
+		a.setDate(date_a);
+		
+		// Check it's now the same as a
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		a.writeOut(baos);
+		byte[] b = baos.toByteArray();
+		
+		assertEquals(data_a.length, b.length);
+		for(int i=0; i<data_a.length; i++) {
+			assertEquals(data_a[i],b[i]);
+		}
+    }
+
 	// Try to turn a into b
 	public void testChange() throws Exception {
 		Comment2000Atom ca = new Comment2000Atom(data_a, 0, data_a.length);

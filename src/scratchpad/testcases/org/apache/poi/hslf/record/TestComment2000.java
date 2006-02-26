@@ -22,6 +22,8 @@ package org.apache.poi.hslf.record;
 
 import junit.framework.TestCase;
 import java.io.ByteArrayOutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Tests that Comment2000 works properly.
@@ -82,6 +84,8 @@ public class TestComment2000 extends TestCase {
 		0x0A, 00, 00, 00
 		};
 	
+	private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
+	
     public void testRecordType() throws Exception {
 		Comment2000 ca = new Comment2000(data_a, 0, data_a.length);
 		assertEquals(12000l, ca.getRecordType());
@@ -94,6 +98,16 @@ public class TestComment2000 extends TestCase {
 	public void testText() throws Exception {
 		Comment2000 ca = new Comment2000(data_a, 0, data_a.length);
 		assertEquals("Yes, they certainly are, aren't they!", ca.getText());
+	}
+	public void testCommentAtom() throws Exception {
+		Comment2000 ca = new Comment2000(data_a, 0, data_a.length);
+		Comment2000Atom c2a = ca.getComment2000Atom();
+		
+		assertEquals(1, c2a.getNumber());
+		assertEquals(0x92, c2a.getXOffset());
+		assertEquals(0x92, c2a.getYOffset());
+		Date exp_a = sdf.parse("2006-01-24 22:26:15.205");
+		assertEquals(exp_a, c2a.getDate());
 	}
 
 	public void testWrite() throws Exception {
@@ -116,8 +130,14 @@ public class TestComment2000 extends TestCase {
 		ca.setAuthorInitials("H");
 		ca.setText("Comments are fun things to add in, aren't they?");
 		
-		// TODO: Make me a proper copy of the Comment2000Atom
-		ca._children[3] = cb._children[3];
+		// Change the Comment2000Atom
+		Comment2000Atom c2a = ca.getComment2000Atom();
+		c2a.setNumber(1);
+		c2a.setXOffset(0x0a);
+		c2a.setYOffset(0x0a);
+		
+		Date new_date = sdf.parse("2006-01-24 22:25:03.725");
+		c2a.setDate(new_date);
 		
 		// Check now the same
 		assertEquals(ca.getText(), cb.getText());
