@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Copyright 2002-2004   Apache Software Foundation
 
@@ -231,6 +230,11 @@ public class PropertyIDMap extends HashMap
      * re-evaluated.</p>
      */
     public static final int PID_LINKSDIRTY = 16;
+    
+    /**
+     * <p>The highest well-known property ID. Applications are free to use higher values for custom purposes.</p>
+     */
+    public static final int PID_MAX = PID_LINKSDIRTY;
 
 
 

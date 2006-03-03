@@ -1,5 +1,5 @@
 /* ====================================================================
-   Copyright 2002-2004   Apache Software Foundation
+   Copyright 2002-2006   Apache Software Foundation
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -107,7 +108,7 @@ public class MutableSection extends Section
      * @param formatID The section's format ID
      *
      * @see #setFormatID(byte[])
-     * @see #getFormatID
+     * @see Section#getFormatID
      */
     public void setFormatID(final ClassID formatID)
     {
@@ -123,7 +124,7 @@ public class MutableSection extends Section
      * are in big-endian format.
      *
      * @see #setFormatID(ClassID)
-     * @see #getFormatID
+     * @see Section#getFormatID
      */
     public void setFormatID(final byte[] formatID)
     {
@@ -155,10 +156,7 @@ public class MutableSection extends Section
 
 
     /**
-     * <p>Sets the value of the property with the specified ID. If a
-     * property with this ID is not yet present in the section, it
-     * will be added. An already present property with the specified
-     * ID will be overwritten.</p>
+     * <p>Sets the string value of the property with the specified ID.</p>
      *
      * @param id The property's ID
      * @param value The property's value. It will be written as a Unicode
@@ -170,6 +168,57 @@ public class MutableSection extends Section
     public void setProperty(final int id, final String value)
     {
         setProperty(id, Variant.VT_LPWSTR, value);
+        dirty = true;
+    }
+
+
+
+    /**
+     * <p>Sets the int value of the property with the specified ID.</p>
+     *
+     * @param id The property's ID
+     * @param value The property's value.
+     *
+     * @see #setProperty(int, long, Object)
+     * @see #getProperty
+     */
+    public void setProperty(final int id, final int value)
+    {
+        setProperty(id, Variant.VT_I4, new Integer(value));
+        dirty = true;
+    }
+
+
+
+    /**
+     * <p>Sets the long value of the property with the specified ID.</p>
+     *
+     * @param id The property's ID
+     * @param value The property's value.
+     *
+     * @see #setProperty(int, long, Object)
+     * @see #getProperty
+     */
+    public void setProperty(final int id, final long value)
+    {
+        setProperty(id, Variant.VT_I8, new Long(value));
+        dirty = true;
+    }
+
+
+
+    /**
+     * <p>Sets the boolean value of the property with the specified ID.</p>
+     *
+     * @param id The property's ID
+     * @param value The property's value.
+     *
+     * @see #setProperty(int, long, Object)
+     * @see #getProperty
+     */
+    public void setProperty(final int id, final boolean value)
+    {
+        setProperty(id, Variant.VT_BOOL, new Boolean(value));
         dirty = true;
     }
 
@@ -204,15 +253,11 @@ public class MutableSection extends Section
 
 
     /**
-     * <p>Sets a property. If a property with the same ID is not yet present in
-     * the section, the property will be added to the section. If there is
-     * already a property with the same ID present in the section, it will be
-     * overwritten.</p>
+     * <p>Sets a property.</p>
      *
-     * @param p The property to be added to the section
+     * @param p The property to be set.
      *
      * @see #setProperty(int, long, Object)
-     * @see #setProperty(int, String)
      * @see #getProperty
      * @see Variant
      */
@@ -257,7 +302,7 @@ public class MutableSection extends Section
      */
     protected void setPropertyBooleanValue(final int id, final boolean value)
     {
-        setProperty(id, (long) Variant.VT_BOOL, new Boolean(value));
+        setProperty(id, Variant.VT_BOOL, new Boolean(value));
     }
 
 
@@ -296,6 +341,8 @@ public class MutableSection extends Section
      * properties) and the properties themselves.</p>
      *
      * @return the section's length in bytes.
+     * @throws WritingNotSupportedException 
+     * @throws IOException 
      */
     private int calcSize() throws WritingNotSupportedException, IOException 
     {
@@ -372,7 +419,7 @@ public class MutableSection extends Section
                 /* Warning: The codepage property is not set although a
                  * dictionary is present. In order to cope with this problem we
                  * add the codepage property and set it to Unicode. */
-                setProperty(PropertyIDMap.PID_CODEPAGE, (long) Variant.VT_I2,
+                setProperty(PropertyIDMap.PID_CODEPAGE, Variant.VT_I2,
                             new Integer(Constants.CP_UNICODE));
             codepage = getCodepage();
         }
@@ -474,16 +521,15 @@ public class MutableSection extends Section
                     sLength++;
                 length += TypeWriter.writeUIntToStream(out, key.longValue());
                 length += TypeWriter.writeUIntToStream(out, sLength);
-                final char[] ca = value.toCharArray();
-                for (int j = 0; j < ca.length; j++)
+                final byte[] ca =
+                    value.getBytes(VariantSupport.codepageToEncoding(codepage));
+                for (int j = 2; j < ca.length; j += 2)
                 {
-                    int high = (ca[j] & 0x0ff00) >> 8;
-                    int low  = (ca[j] & 0x000ff);
-                    out.write(low);
-                    out.write(high);
+                    out.write(ca[j+1]);
+                    out.write(ca[j]);
                     length += 2;
-                    sLength--;
                 }
+                sLength -= value.length();
                 while (sLength > 0)
                 {
                     out.write(0x00);
@@ -608,6 +654,62 @@ public class MutableSection extends Section
             /* Setting the dictionary to null means to remove property 0.
              * However, it does not mean to remove property 1 (codepage). */
             removeProperty(PropertyIDMap.PID_DICTIONARY);
+    }
+
+
+
+    /**
+     * <p>Sets a property.</p>
+     * 
+     * @param id The property ID.
+     * @param value The property's value. The value's class must be one of those
+     *        supported by HPSF.
+     */
+    public void setProperty(final int id, final Object value)
+    {
+        if (value instanceof String)
+            setProperty(id, (String) value);
+        else if (value instanceof Long)
+            setProperty(id, ((Long) value).longValue());
+        else if (value instanceof Integer)
+            setProperty(id, ((Integer) value).intValue());
+        else if (value instanceof Short)
+            setProperty(id, ((Short) value).intValue());
+        else if (value instanceof Boolean)
+            setProperty(id, ((Boolean) value).booleanValue());
+        else if (value instanceof Date)
+            setProperty(id, Variant.VT_FILETIME, value);
+        else
+            throw new HPSFRuntimeException(
+                    "HPSF does not support properties of type " +
+                    value.getClass().getName() + ".");
+    }
+
+
+
+    /**
+     * <p>Removes all properties from the section including 0 (dictionary) and
+     * 1 (codepage).</p>
+     */
+    public void clear()
+    {
+        final Property[] properties = getProperties();
+        for (int i = 0; i < properties.length; i++)
+        {
+            final Property p = properties[i];
+            removeProperty(p.getID());
+        }
+    }
+
+    /**
+     * <p>Sets the codepage.</p>
+     *
+     * @param codepage the codepage
+     */
+    public void setCodepage(final int codepage)
+    {
+        setProperty(PropertyIDMap.PID_CODEPAGE, Variant.VT_I2,
+                new Integer(codepage));
     }
 
 }

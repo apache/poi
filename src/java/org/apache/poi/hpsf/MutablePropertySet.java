@@ -1,5 +1,5 @@
 /* ====================================================================
-   Copyright 2002-2004   Apache Software Foundation
+   Copyright 2002-2006   Apache Software Foundation
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.apache.poi.hpsf;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -26,6 +27,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
+import org.apache.poi.poifs.filesystem.DirectoryEntry;
+import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
 
@@ -151,7 +154,7 @@ public class MutablePropertySet extends PropertySet
      *
      * @param classID The property set stream's low-level "class ID" field.
      *
-     * @see #getClassID
+     * @see PropertySet#getClassID()
      */
     public void setClassID(final ClassID classID)
     {
@@ -205,9 +208,9 @@ public class MutablePropertySet extends PropertySet
         /* Write the property set's header. */
         length += TypeWriter.writeToStream(out, (short) getByteOrder());
         length += TypeWriter.writeToStream(out, (short) getFormat());
-        length += TypeWriter.writeToStream(out, (int) getOSVersion());
+        length += TypeWriter.writeToStream(out, getOSVersion());
         length += TypeWriter.writeToStream(out, getClassID());
-        length += TypeWriter.writeToStream(out, (int) nrSections);
+        length += TypeWriter.writeToStream(out, nrSections);
         int offset = OFFSET_HEADER;
 
         /* Write the section list, i.e. the references to the sections. Each
@@ -270,6 +273,33 @@ public class MutablePropertySet extends PropertySet
         psStream.close();
         final byte[] streamData = psStream.toByteArray();
         return new ByteArrayInputStream(streamData);
+    }
+
+    /**
+     * <p>Writes a property set to a document in a POI filesystem directory.</p>
+     *
+     * @param dir The directory in the POI filesystem to write the document to.
+     * @param name The document's name. If there is already a document with the
+     * same name in the directory the latter will be overwritten.
+     * 
+     * @throws WritingNotSupportedException
+     * @throws IOException
+     */
+    public void write(final DirectoryEntry dir, final String name)
+    throws WritingNotSupportedException, IOException
+    {
+        /* If there is already an entry with the same name, remove it. */
+        try
+        {
+            final Entry e = dir.getEntry(name);
+            e.delete();
+        }
+        catch (FileNotFoundException ex)
+        {
+            /* Entry not found, no need to remove it. */
+        }
+        /* Create the new entry. */
+        dir.createDocument(name, toInputStream());
     }
 
 }

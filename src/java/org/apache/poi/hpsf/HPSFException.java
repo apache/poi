@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Copyright 2002-2004   Apache Software Foundation
 
@@ -18,12 +17,12 @@
 package org.apache.poi.hpsf;
 
 /**
- * <p>This exception is the superclass of all other checked exceptions
- * thrown in this package. It supports a nested "reason" throwable,
- * i.e. an exception that caused this one to be thrown.</p>
- *
+ * <p>This exception is the superclass of all other checked exceptions thrown
+ * in this package. It supports a nested "reason" throwable, i.e. an exception
+ * that caused this one to be thrown.</p>
+ * 
  * @author Rainer Klute <a
- * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
+ *         href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
  * @version $Id$
  * @since 2002-02-09
  */

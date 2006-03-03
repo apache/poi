@@ -21,7 +21,7 @@ import org.apache.poi.util.HexDump;
 /**
  * <p>This exception is thrown if HPSF encounters a variant type that isn't
  * supported yet. Although a variant type is unsupported the value can still be
- * retrieved using the {@link #getValue} method.</p>
+ * retrieved using the {@link VariantTypeException#getValue} method.</p>
  * 
  * <p>Obviously this class should disappear some day.</p>
  *

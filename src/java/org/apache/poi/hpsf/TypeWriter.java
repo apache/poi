@@ -1,6 +1,5 @@
-
 /* ====================================================================
-   Copyright 2002-2004   Apache Software Foundation
+   Copyright 2002-2006   Apache Software Foundation
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -46,7 +45,7 @@ public class TypeWriter
     {
         final int length = LittleEndian.SHORT_SIZE;
         byte[] buffer = new byte[length];
-        LittleEndian.putUShort(buffer, 0, n);
+        LittleEndian.putShort(buffer, 0, n); // FIXME: unsigned
         out.write(buffer, 0, length);
         return length;
     }
@@ -67,6 +66,27 @@ public class TypeWriter
         final int l = LittleEndian.INT_SIZE;
         final byte[] buffer = new byte[l];
         LittleEndian.putInt(buffer, 0, n);
+        out.write(buffer, 0, l);
+        return l;
+        
+    }
+
+
+
+    /**
+     * <p>Writes a eight-byte value to an output stream.</p>
+     *
+     * @param out The stream to write to.
+     * @param n The value to write.
+     * @exception IOException if an I/O error occurs
+     * @return The number of bytes written to the output stream. 
+     */
+    public static int writeToStream(final OutputStream out, final long n)
+        throws IOException
+    {
+        final int l = LittleEndian.LONG_SIZE;
+        final byte[] buffer = new byte[l];
+        LittleEndian.putLong(buffer, 0, n);
         out.write(buffer, 0, l);
         return l;
         
@@ -118,6 +138,7 @@ public class TypeWriter
      *
      * @param out The stream to write to
      * @param n The value to write
+     * @return The number of bytes written
      * @exception IOException if an I/O error occurs
      */
     public static int writeToStream(final OutputStream out, final ClassID n)
@@ -134,10 +155,13 @@ public class TypeWriter
     /**
      * <p>Writes an array of {@link Property} instances to an output stream
      * according to the Horrible Property Stream Format.</p>
-     *
+     * 
      * @param out The stream to write to
      * @param properties The array to write to the stream
+     * @param codepage The codepage number to use for writing strings
      * @exception IOException if an I/O error occurs
+     * @throws UnsupportedVariantTypeException if HPSF does not support some
+     *         variant type.
      */
     public static void writeToStream(final OutputStream out,
                                      final Property[] properties,
@@ -152,7 +176,7 @@ public class TypeWriter
          * ID and offset into the stream. */
         for (int i = 0; i < properties.length; i++)
         {
-            final Property p = (Property) properties[i];
+            final Property p = properties[i];
             writeUIntToStream(out, p.getID());
             writeUIntToStream(out, p.getSize());
         }
@@ -160,7 +184,7 @@ public class TypeWriter
         /* Write the properties themselves. */
         for (int i = 0; i < properties.length; i++)
         {
-            final Property p = (Property) properties[i];
+            final Property p = properties[i];
             long type = p.getType();
             writeUIntToStream(out, type);
             VariantSupport.write(out, (int) type, p.getValue(), codepage);

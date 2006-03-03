@@ -1,5 +1,5 @@
 /* ====================================================================
-   Copyright 2002-2004   Apache Software Foundation
+   Copyright 2002-2006   Apache Software Foundation
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -103,6 +103,22 @@ public class Property
     public Object getValue()
     {
         return value;
+    }
+
+
+
+    /**
+     * <p>Creates a property.</p>
+     * 
+     * @param id the property's ID.
+     * @param type the property's type, see {@link Variant}.
+     * @param value the property's value. Only certain types are allowed, see {@link Variant}. 
+     */
+    public Property(final long id, final long type, final Object value)
+    {
+        this.id = id;
+        this.type = type;
+        this.value = value;
     }
 
 
@@ -222,12 +238,15 @@ public class Property
                 {
                     /* The length is the number of characters, i.e. the number
                      * of bytes is twice the number of the characters. */
-                    for (int j = 0; j < sLength; j++)
+                    final int nrBytes = (int) (sLength * 2);
+                    final byte[] h = new byte[nrBytes];
+                    for (int i2 = 0; i2 < nrBytes; i2 += 2)
                     {
-                        final int i1 = o + (j * 2);
-                        final int i2 = i1 + 1;
-                        b.append((char) ((src[i2] << 8) + src[i1]));
+                        h[i2] = src[o + i2 + 1];
+                        h[i2 + 1] = src[o + i2];
                     }
+                    b.append(new String(h, 0, nrBytes,
+                            VariantSupport.codepageToEncoding(codepage)));
                     break;
                 }
                 default:

@@ -1,6 +1,5 @@
-
 /* ====================================================================
-   Copyright 2002-2004   Apache Software Foundation
+   Copyright 2002-2006   Apache Software Foundation
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -152,6 +151,21 @@ public class Util
     public static Date filetimeToDate(final int high, final int low)
     {
         final long filetime = ((long) high) << 32 | (low & 0xffffffffL);
+        return filetimeToDate(filetime);
+    }
+
+    /**
+     * <p>Converts a Windows FILETIME into a {@link Date}. The Windows
+     * FILETIME structure holds a date and time associated with a
+     * file. The structure identifies a 64-bit integer specifying the
+     * number of 100-nanosecond intervals which have passed since
+     * January 1, 1601.</p>
+     *
+     * @param filetime The filetime to convert.
+     * @return The Windows FILETIME as a {@link Date}.
+     */
+    public static Date filetimeToDate(final long filetime)
+    {
         final long ms_since_16010101 = filetime / (1000 * 10);
         final long ms_since_19700101 = ms_since_16010101 - EPOCH_DIFF;
         return new Date(ms_since_19700101);
@@ -165,7 +179,8 @@ public class Util
      * @param date The date to be converted
      * @return The filetime
      * 
-     * @see #filetimeToDate
+     * @see #filetimeToDate(long)
+     * @see #filetimeToDate(int, int)
      */
     public static long dateToFileTime(final Date date)
     {

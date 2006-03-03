@@ -1,5 +1,5 @@
 /* ====================================================================
-   Copyright 2002-2004   Apache Software Foundation
+   Copyright 2002-2006   Apache Software Foundation
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hpsf.basic;
 
@@ -124,11 +123,8 @@ public class TestWrite extends TestCase
      * in.</p>
      * 
      * @exception IOException if an I/O exception occurs
-     * @exception UnsupportedVariantTypeException if HPSF does not yet support
-     * a variant type to be written
      */
-    public void testNoFormatID()
-        throws IOException, UnsupportedVariantTypeException
+    public void testNoFormatID() throws IOException
     {
         final String dataDirName = System.getProperty("HPSF.testdata.path");
         final File dataDir = new File(dataDirName);
@@ -409,10 +405,19 @@ public class TestWrite extends TestCase
             check(Variant.VT_CF, new byte[]{0, 1, 2, 3, 4, 5}, codepage);
             check(Variant.VT_CF, new byte[]{0, 1, 2, 3, 4, 5, 6}, codepage);
             check(Variant.VT_CF, new byte[]{0, 1, 2, 3, 4, 5, 6, 7}, codepage);
-            check(Variant.VT_I2, new Integer(27), codepage);
-            check(Variant.VT_I4, new Long(28), codepage);
+            check(Variant.VT_I4, new Integer(27), codepage);
+            check(Variant.VT_I8, new Long(28), codepage);
             check(Variant.VT_R8, new Double(29.0), codepage);
+            check(Variant.VT_I4, new Integer(-27), codepage);
+            check(Variant.VT_I8, new Long(-28), codepage);
+            check(Variant.VT_R8, new Double(-29.0), codepage);
             check(Variant.VT_FILETIME, new Date(), codepage);
+            check(Variant.VT_I4, new Integer(Integer.MAX_VALUE), codepage);
+            check(Variant.VT_I4, new Integer(Integer.MIN_VALUE), codepage);
+            check(Variant.VT_I8, new Long(Long.MAX_VALUE), codepage);
+            check(Variant.VT_I8, new Long(Long.MIN_VALUE), codepage);
+            check(Variant.VT_R8, new Double(Double.MAX_VALUE), codepage);
+            check(Variant.VT_R8, new Double(Double.MIN_VALUE), codepage);
 
             check(Variant.VT_LPSTR,
                   "", codepage);
@@ -602,8 +607,11 @@ public class TestWrite extends TestCase
      *
      * @param variantType The property's variant type.
      * @param value The property's value.
+     * @param codepage The codepage to use for writing and reading.
      * @throws UnsupportedVariantTypeException if the variant is not supported.
      * @throws IOException if an I/O exception occurs.
+     * @throws ReadingNotSupportedException 
+     * @throws UnsupportedEncodingException 
      */
     private void check(final long variantType, final Object value, 
                        final int codepage)
@@ -779,7 +787,7 @@ public class TestWrite extends TestCase
             m.put(new Long(2), "String 2");
             m.put(new Long(3), "String 3");
             s.setDictionary(m);
-            s.setFormatID(SectionIDMap.DOCUMENT_SUMMARY_INFORMATION_ID);
+            s.setFormatID(SectionIDMap.DOCUMENT_SUMMARY_INFORMATION_ID[0]);
             int codepage = Constants.CP_UNICODE;
             s.setProperty(PropertyIDMap.PID_CODEPAGE, Variant.VT_I2,
                           new Integer(codepage));
@@ -831,7 +839,7 @@ public class TestWrite extends TestCase
             m.put(new Long(2), "String 2");
             m.put(new Long(3), "String 3");
             s.setDictionary(m);
-            s.setFormatID(SectionIDMap.DOCUMENT_SUMMARY_INFORMATION_ID);
+            s.setFormatID(SectionIDMap.DOCUMENT_SUMMARY_INFORMATION_ID[0]);
             int codepage = 12345;
             s.setProperty(PropertyIDMap.PID_CODEPAGE, Variant.VT_I2,
                           new Integer(codepage));
@@ -902,8 +910,11 @@ public class TestWrite extends TestCase
 
     /**
      * <p>In order to execute tests with characters beyond US-ASCII, this
-     * method checks whether the application has is runing in an environment
+     * method checks whether the application is runing in an environment
      * where the default character set is 16-bit-capable.</p>
+     *
+     * @return <code>true</code> if the default character set is 16-bit-capable,
+     * else <code>false</code>.
      */
     private boolean hasProperDefaultCharset()
     {
@@ -916,6 +927,9 @@ public class TestWrite extends TestCase
 
     /**
      * <p>Runs the test cases stand-alone.</p>
+     * 
+     * @param args The command-line parameters.
+     * @throws Throwable if anything goes wrong.
      */
     public static void main(final String[] args) throws Throwable
     {

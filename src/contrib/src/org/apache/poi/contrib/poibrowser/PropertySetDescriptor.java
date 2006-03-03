@@ -25,7 +25,6 @@ import org.apache.poi.hpsf.MarkUnsupportedException;
 import org.apache.poi.hpsf.NoPropertySetStreamException;
 import org.apache.poi.hpsf.PropertySet;
 import org.apache.poi.hpsf.PropertySetFactory;
-import org.apache.poi.hpsf.UnexpectedPropertySetTypeException;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.POIFSDocumentPath;
 
@@ -70,7 +69,7 @@ public class PropertySetDescriptor extends DocumentDescriptor
                                  final POIFSDocumentPath path,
                                  final DocumentInputStream stream,
                                  final int nrOfBytesToDump)
-        throws UnexpectedPropertySetTypeException, NoPropertySetStreamException,
+        throws NoPropertySetStreamException,
                MarkUnsupportedException, UnsupportedEncodingException,
                IOException
     {
