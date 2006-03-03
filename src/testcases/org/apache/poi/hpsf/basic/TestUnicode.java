@@ -1,6 +1,5 @@
-
 /* ====================================================================
-   Copyright 2002-2004   Apache Software Foundation
+   Copyright 2002-2006   Apache Software Foundation
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -27,10 +26,12 @@ import junit.framework.Assert;
 import junit.framework.TestCase;
 
 import org.apache.poi.hpsf.Constants;
+import org.apache.poi.hpsf.DocumentSummaryInformation;
 import org.apache.poi.hpsf.HPSFException;
 import org.apache.poi.hpsf.PropertySet;
 import org.apache.poi.hpsf.PropertySetFactory;
 import org.apache.poi.hpsf.Section;
+import org.apache.poi.hpsf.SummaryInformation;
 
 
 
@@ -102,7 +103,7 @@ public class TestUnicode extends TestCase
         Assert.assertEquals(s.getProperty(1),
                             new Integer(Constants.CP_UTF16));
         Assert.assertEquals(s.getProperty(2),
-                            new Long(4198897018L));
+                            new Integer(-96070278));
         Assert.assertEquals(s.getProperty(3),
                             "MCon_Info zu Office bei Schreiner");
         Assert.assertEquals(s.getProperty(4),

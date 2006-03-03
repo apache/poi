@@ -1,5 +1,5 @@
 /* ====================================================================
-   Copyright 2003-2004   Apache Software Foundation
+   Copyright 2003-2006   Apache Software Foundation
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -64,9 +64,9 @@ public class LittleEndian
         short num = (short) getNumber(data, offset, SHORT_SIZE);
         int retNum;
         if (num < 0) {
-            retNum = ((int) Short.MAX_VALUE + 1) * 2 + (int) num;
+            retNum = (Short.MAX_VALUE + 1) * 2 + num;
         } else {
-            retNum = (int) num;
+            retNum = num;
         }
         return retNum;
     }
@@ -163,9 +163,9 @@ public class LittleEndian
         int num = (int) getNumber(data, offset, INT_SIZE);
         long retNum;
         if (num < 0) {
-            retNum = ((long) Integer.MAX_VALUE + 1) * 2 + (long) num;
+            retNum = ((long) Integer.MAX_VALUE + 1) * 2 + num;
         } else {
-            retNum = (int) num;
+            retNum = num;
         }
         return retNum;
     }
@@ -522,7 +522,7 @@ public class LittleEndian
      *@return    Description of the Return Value
      */
     public static int ubyteToInt(byte b) {
-        return ((b & 0x80) == 0 ? (int) b : (int) (b & (byte) 0x7f) + 0x80);
+        return ((b & 0x80) == 0 ? (int) b : (b & (byte) 0x7f) + 0x80);
     }
 
 
@@ -566,5 +566,22 @@ public class LittleEndian
         return copy;
     }
 
+    /**
+     * <p>Gets an unsigned int value (8 bytes) from a byte array.</p>
+     * 
+     * @param data the byte array
+     * @param offset a starting offset into the byte array
+     * @return the unsigned int (32-bit) value in a long
+     */
+    public static long getULong(final byte[] data, final int offset)
+    {
+        int num = (int) getNumber(data, offset, LONG_SIZE);
+        long retNum;
+        if (num < 0)
+            retNum = ((long) Integer.MAX_VALUE + 1) * 2 + num;
+        else
+            retNum = num;
+        return retNum;
+    }
 
 }

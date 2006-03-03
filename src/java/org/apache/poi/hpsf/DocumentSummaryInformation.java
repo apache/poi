@@ -1,6 +1,5 @@
-
 /* ====================================================================
-   Copyright 2002-2004   Apache Software Foundation
+   Copyright 2002-2006   Apache Software Foundation
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -17,11 +16,11 @@
         
 package org.apache.poi.hpsf;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.poi.hpsf.wellknown.PropertyIDMap;
+import org.apache.poi.hpsf.wellknown.SectionIDMap;
 
 /**
  * <p>Convenience class representing a DocumentSummary Information stream in a
@@ -68,7 +67,7 @@ public class DocumentSummaryInformation extends SpecialPropertySet
 
 
     /**
-     * <p>Returns the stream's category (or <code>null</code>).</p>
+     * <p>Returns the category (or <code>null</code>).</p>
      *
      * @return The category value
      */
@@ -77,23 +76,63 @@ public class DocumentSummaryInformation extends SpecialPropertySet
         return (String) getProperty(PropertyIDMap.PID_CATEGORY);
     }
 
+    /**
+     * <p>Sets the category.</p>
+     *
+     * @param category The category to set.
+     */
+    public void setCategory(final String category)
+    {
+        final MutableSection s = (MutableSection) getFirstSection();
+        s.setProperty(PropertyIDMap.PID_CATEGORY, category);
+    }
+
+    /**
+     * <p>Removes the category.</p>
+     */
+    public void removeCategory()
+    {
+        final MutableSection s = (MutableSection) getFirstSection();
+        s.removeProperty(PropertyIDMap.PID_CATEGORY);
+    }
+
 
 
     /**
-     * <p>Returns the stream's presentation format (or
+     * <p>Returns the presentation format (or
      * <code>null</code>).</p>
      *
-     * @return The presentationFormat value
+     * @return The presentation format value
      */
     public String getPresentationFormat()
     {
         return (String) getProperty(PropertyIDMap.PID_PRESFORMAT);
     }
 
+    /**
+     * <p>Sets the presentation format.</p>
+     *
+     * @param presentationFormat The presentation format to set.
+     */
+    public void setPresentationFormat(final String presentationFormat)
+    {
+        final MutableSection s = (MutableSection) getFirstSection();
+        s.setProperty(PropertyIDMap.PID_PRESFORMAT, presentationFormat);
+    }
+
+    /**
+     * <p>Removes the presentation format.</p>
+     */
+    public void removePresentationFormat()
+    {
+        final MutableSection s = (MutableSection) getFirstSection();
+        s.removeProperty(PropertyIDMap.PID_PRESFORMAT);
+    }
+
 
 
     /**
-     * <p>Returns the stream's byte count or 0 if the {@link
+     * <p>Returns the byte count or 0 if the {@link
      * DocumentSummaryInformation} does not contain a byte count.</p>
      *
      * @return The byteCount value
@@ -103,84 +142,224 @@ public class DocumentSummaryInformation extends SpecialPropertySet
         return getPropertyIntValue(PropertyIDMap.PID_BYTECOUNT);
     }
 
+    /**
+     * <p>Sets the byte count.</p>
+     *
+     * @param byteCount The byte count to set.
+     */
+    public void setByteCount(final int byteCount)
+    {
+        final MutableSection s = (MutableSection) getFirstSection();
+        s.setProperty(PropertyIDMap.PID_BYTECOUNT, byteCount);
+    }
+
+    /**
+     * <p>Removes the byte count.</p>
+     */
+    public void removeByteCount()
+    {
+        final MutableSection s = (MutableSection) getFirstSection();
+        s.removeProperty(PropertyIDMap.PID_BYTECOUNT);
+    }
+
 
 
     /**
-     * <p>Returns the stream's line count or 0 if the {@link
+     * <p>Returns the line count or 0 if the {@link
      * DocumentSummaryInformation} does not contain a line count.</p>
      *
-     * @return The lineCount value
+     * @return The line count value
      */
     public int getLineCount()
     {
         return getPropertyIntValue(PropertyIDMap.PID_LINECOUNT);
     }
 
+    /**
+     * <p>Sets the line count.</p>
+     *
+     * @param lineCount The line count to set.
+     */
+    public void setLineCount(final int lineCount)
+    {
+        final MutableSection s = (MutableSection) getFirstSection();
+        s.setProperty(PropertyIDMap.PID_LINECOUNT, lineCount);
+    }
+
+    /**
+     * <p>Removes the line count.</p>
+     */
+    public void removeLineCount()
+    {
+        final MutableSection s = (MutableSection) getFirstSection();
+        s.removeProperty(PropertyIDMap.PID_LINECOUNT);
+    }
+
 
 
     /**
-     * <p>Returns the stream's par count or 0 if the {@link
+     * <p>Returns the par count or 0 if the {@link
      * DocumentSummaryInformation} does not contain a par count.</p>
      *
-     * @return The parCount value
+     * @return The par count value
      */
     public int getParCount()
     {
         return getPropertyIntValue(PropertyIDMap.PID_PARCOUNT);
     }
 
+    /**
+     * <p>Sets the par count.</p>
+     *
+     * @param parCount The par count to set.
+     */
+    public void setParCount(final int parCount)
+    {
+        final MutableSection s = (MutableSection) getFirstSection();
+        s.setProperty(PropertyIDMap.PID_PARCOUNT, parCount);
+    }
+
+    /**
+     * <p>Removes the par count.</p>
+     */
+    public void removeParCount()
+    {
+        final MutableSection s = (MutableSection) getFirstSection();
+        s.removeProperty(PropertyIDMap.PID_PARCOUNT);
+    }
+
 
 
     /**
-     * <p>Returns the stream's slide count or 0 if the {@link
+     * <p>Returns the slide count or 0 if the {@link
      * DocumentSummaryInformation} does not contain a slide count.</p>
      *
-     * @return The slideCount value
+     * @return The slide count value
      */
     public int getSlideCount()
     {
         return getPropertyIntValue(PropertyIDMap.PID_SLIDECOUNT);
     }
 
+    /**
+     * <p>Sets the slideCount.</p>
+     *
+     * @param slideCount The slide count to set.
+     */
+    public void setSlideCount(final int slideCount)
+    {
+        final MutableSection s = (MutableSection) getFirstSection();
+        s.setProperty(PropertyIDMap.PID_SLIDECOUNT, slideCount);
+    }
+
+    /**
+     * <p>Removes the slide count.</p>
+     */
+    public void removeSlideCount()
+    {
+        final MutableSection s = (MutableSection) getFirstSection();
+        s.removeProperty(PropertyIDMap.PID_SLIDECOUNT);
+    }
+
 
 
     /**
-     * <p>Returns the stream's note count or 0 if the {@link
+     * <p>Returns the note count or 0 if the {@link
      * DocumentSummaryInformation} does not contain a note count.</p>
      *
-     * @return The noteCount value
+     * @return The note count value
      */
     public int getNoteCount()
     {
         return getPropertyIntValue(PropertyIDMap.PID_NOTECOUNT);
     }
 
+    /**
+     * <p>Sets the note count.</p>
+     *
+     * @param noteCount The note count to set.
+     */
+    public void setNoteCount(final int noteCount)
+    {
+        final MutableSection s = (MutableSection) getFirstSection();
+        s.setProperty(PropertyIDMap.PID_NOTECOUNT, noteCount);
+    }
+
+    /**
+     * <p>Removes the noteCount.</p>
+     */
+    public void removeNoteCount()
+    {
+        final MutableSection s = (MutableSection) getFirstSection();
+        s.removeProperty(PropertyIDMap.PID_NOTECOUNT);
+    }
+
 
 
     /**
-     * <p>Returns the stream's hidden count or 0 if the {@link
+     * <p>Returns the hidden count or 0 if the {@link
      * DocumentSummaryInformation} does not contain a hidden
      * count.</p>
      *
-     * @return The hiddenCount value
+     * @return The hidden count value
      */
     public int getHiddenCount()
     {
         return getPropertyIntValue(PropertyIDMap.PID_HIDDENCOUNT);
     }
 
+    /**
+     * <p>Sets the hidden count.</p>
+     *
+     * @param hiddenCount The hidden count to set.
+     */
+    public void setHiddenCount(final int hiddenCount)
+    {
+        final MutableSection s = (MutableSection) getSections().get(0);
+        s.setProperty(PropertyIDMap.PID_HIDDENCOUNT, hiddenCount);
+    }
+
+    /**
+     * <p>Removes the hidden count.</p>
+     */
+    public void removeHiddenCount()
+    {
+        final MutableSection s = (MutableSection) getFirstSection();
+        s.removeProperty(PropertyIDMap.PID_HIDDENCOUNT);
+    }
+
 
 
     /**
-     * <p>Returns the stream's mmclip count or 0 if the {@link
+     * <p>Returns the mmclip count or 0 if the {@link
      * DocumentSummaryInformation} does not contain a mmclip
      * count.</p>
      *
-     * @return The mMClipCount value
+     * @return The mmclip count value
      */
     public int getMMClipCount()
     {
         return getPropertyIntValue(PropertyIDMap.PID_MMCLIPCOUNT);
+    }
+
+    /**
+     * <p>Sets the mmclip count.</p>
+     *
+     * @param mmClipCount The mmclip count to set.
+     */
+    public void setMMClipCount(final int mmClipCount)
+    {
+        final MutableSection s = (MutableSection) getFirstSection();
+        s.setProperty(PropertyIDMap.PID_MMCLIPCOUNT, mmClipCount);
+    }
+
+    /**
+     * <p>Removes the mmclip count.</p>
+     */
+    public void removeMMClipCount()
+    {
+        final MutableSection s = (MutableSection) getFirstSection();
+        s.removeProperty(PropertyIDMap.PID_MMCLIPCOUNT);
     }
 
 
@@ -196,42 +375,100 @@ public class DocumentSummaryInformation extends SpecialPropertySet
         return getPropertyBooleanValue(PropertyIDMap.PID_SCALE);
     }
 
-
+    /**
+     * <p>Sets the scale.</p>
+     *
+     * @param scale The scale to set.
+     */
+    public void setScale(final boolean scale)
+    {
+        final MutableSection s = (MutableSection) getFirstSection();
+        s.setProperty(PropertyIDMap.PID_SCALE, scale);
+    }
 
     /**
-     * <p>Returns the stream's heading pair (or <code>null</code>)
-     * <strong>when this method is implemented. Please note that the
-     * return type is likely to change!</strong>
-     *
-     * @return The headingPair value
+     * <p>Removes the scale.</p>
      */
-    public byte[] getHeadingPair()
+    public void removeScale()
     {
-        if (true)
-            throw new UnsupportedOperationException("FIXME");
-        return (byte[]) getProperty(PropertyIDMap.PID_HEADINGPAIR);
+        final MutableSection s = (MutableSection) getFirstSection();
+        s.removeProperty(PropertyIDMap.PID_SCALE);
     }
 
 
 
     /**
-     * <p>Returns the stream's doc parts (or <code>null</code>)
+     * <p>Returns the heading pair (or <code>null</code>)
      * <strong>when this method is implemented. Please note that the
      * return type is likely to change!</strong>
      *
-     * @return The docparts value
+     * @return The heading pair value
+     */
+    public byte[] getHeadingPair()
+    {
+        notYetImplemented("Reading byte arrays ");
+        return (byte[]) getProperty(PropertyIDMap.PID_HEADINGPAIR);
+    }
+
+    /**
+     * <p>Sets the heading pair.</p>
+     *
+     * @param headingPair The heading pair to set.
+     */
+    public void setHeadingPair(final byte[] headingPair)
+    {
+        notYetImplemented("Writing byte arrays ");
+    }
+
+    /**
+     * <p>Removes the heading pair.</p>
+     */
+    public void removeHeadingPair()
+    {
+        final MutableSection s = (MutableSection) getFirstSection();
+        s.removeProperty(PropertyIDMap.PID_HEADINGPAIR);
+    }
+
+
+
+    /**
+     * <p>Returns the doc parts (or <code>null</code>)
+     * <strong>when this method is implemented. Please note that the
+     * return type is likely to change!</strong>
+     *
+     * @return The doc parts value
      */
     public byte[] getDocparts()
     {
-        if (true)
-            throw new UnsupportedOperationException("FIXME");
+        notYetImplemented("Reading byte arrays");
         return (byte[]) getProperty(PropertyIDMap.PID_DOCPARTS);
     }
 
 
 
     /**
-     * <p>Returns the stream's manager (or <code>null</code>).</p>
+     * <p>Sets the doc parts.</p>
+     *
+     * @param docparts The doc parts to set.
+     */
+    public void setDocparts(final byte[] docparts)
+    {
+        notYetImplemented("Writing byte arrays");
+    }
+
+    /**
+     * <p>Removes the doc parts.</p>
+     */
+    public void removeDocparts()
+    {
+        final MutableSection s = (MutableSection) getFirstSection();
+        s.removeProperty(PropertyIDMap.PID_DOCPARTS);
+    }
+
+
+
+    /**
+     * <p>Returns the manager (or <code>null</code>).</p>
      *
      * @return The manager value
      */
@@ -240,10 +477,30 @@ public class DocumentSummaryInformation extends SpecialPropertySet
         return (String) getProperty(PropertyIDMap.PID_MANAGER);
     }
 
+    /**
+     * <p>Sets the manager.</p>
+     *
+     * @param manager The manager to set.
+     */
+    public void setManager(final String manager)
+    {
+        final MutableSection s = (MutableSection) getFirstSection();
+        s.setProperty(PropertyIDMap.PID_MANAGER, manager);
+    }
+
+    /**
+     * <p>Removes the manager.</p>
+     */
+    public void removeManager()
+    {
+        final MutableSection s = (MutableSection) getFirstSection();
+        s.removeProperty(PropertyIDMap.PID_MANAGER);
+    }
+
 
 
     /**
-     * <p>Returns the stream's company (or <code>null</code>).</p>
+     * <p>Returns the company (or <code>null</code>).</p>
      *
      * @return The company value
      */
@@ -252,47 +509,168 @@ public class DocumentSummaryInformation extends SpecialPropertySet
         return (String) getProperty(PropertyIDMap.PID_COMPANY);
     }
 
+    /**
+     * <p>Sets the company.</p>
+     *
+     * @param company The company to set.
+     */
+    public void setCompany(final String company)
+    {
+        final MutableSection s = (MutableSection) getFirstSection();
+        s.setProperty(PropertyIDMap.PID_COMPANY, company);
+    }
+
+    /**
+     * <p>Removes the company.</p>
+     */
+    public void removeCompany()
+    {
+        final MutableSection s = (MutableSection) getFirstSection();
+        s.removeProperty(PropertyIDMap.PID_COMPANY);
+    }
+
 
 
     /**
      * <p>Returns <code>true</code> if the custom links are dirty.</p> <p>
      *
-     * @return The linksDirty value
+     * @return The links dirty value
      */
     public boolean getLinksDirty()
     {
         return getPropertyBooleanValue(PropertyIDMap.PID_LINKSDIRTY);
     }
 
+    /**
+     * <p>Sets the linksDirty.</p>
+     *
+     * @param linksDirty The links dirty value to set.
+     */
+    public void setLinksDirty(final boolean linksDirty)
+    {
+        final MutableSection s = (MutableSection) getFirstSection();
+        s.setProperty(PropertyIDMap.PID_LINKSDIRTY, linksDirty);
+    }
+
+    /**
+     * <p>Removes the links dirty.</p>
+     */
+    public void removeLinksDirty()
+    {
+        final MutableSection s = (MutableSection) getFirstSection();
+        s.removeProperty(PropertyIDMap.PID_LINKSDIRTY);
+    }
+
 
 
     /**
-     * <p>Gets the custom properties as a map from the property name to
-     * value.</p>
+     * <p>Gets the custom properties.</p>
      * 
-     * @return The custom properties if any exist, <code>null</code> otherwise.
-     * @since 2003-10-22
+     * @return The custom properties.
+     * @since 2006-02-09
      */
-    public Map getCustomProperties()
+    public CustomProperties getCustomProperties()
     {
-        Map nameToValue = null;
+        CustomProperties cps = null;
         if (getSectionCount() >= 2)
         {
+            cps = new CustomProperties();
             final Section section = (Section) getSections().get(1);
-            final Map pidToName = 
-                      (Map) section.getProperty(PropertyIDMap.PID_DICTIONARY);
-            if (pidToName != null)
+            final Map dictionary = section.getDictionary();
+            final Property[] properties = section.getProperties();
+            int propertyCount = 0;
+            for (int i = 0; i < properties.length; i++)
             {
-                nameToValue = new HashMap(pidToName.size());
-                for (Iterator i = pidToName.entrySet().iterator(); i.hasNext();)
+                final Property p = properties[i];
+                final long id = p.getID();
+                if (id != 0 && id != 1)
                 {
-                    final Map.Entry e = (Map.Entry) i.next();
-                    final long pid = ((Number) e.getKey()).longValue();
-                    nameToValue.put(e.getValue(), section.getProperty(pid));
+                    propertyCount++;
+                    final CustomProperty cp = new CustomProperty(p,
+                            (String) dictionary.get(new Long(id)));
+                    cps.put(cp.getName(), cp);
                 }
             }
+            if (cps.size() != propertyCount)
+                cps.setPure(false);
         }
-        return nameToValue;
+        return cps;
+    }
+
+    /**
+     * <p>Sets the custom properties.</p>
+     * 
+     * @param customProperties The custom properties
+     * @since 2006-02-07
+     */
+    public void setCustomProperties(final CustomProperties customProperties)
+    {
+        ensureSection2();
+        final MutableSection section = (MutableSection) getSections().get(1);
+        final Map dictionary = customProperties.getDictionary();
+        section.clear();
+
+        /* Set the codepage. If both custom properties and section have a
+         * codepage, the codepage from the custom properties wins, else take the
+         * one that is defined. If none is defined, take Unicode. */
+        int cpCodepage = customProperties.getCodepage();
+        if (cpCodepage < 0)
+            cpCodepage = section.getCodepage();
+        if (cpCodepage < 0)
+            cpCodepage = Constants.CP_UNICODE;
+        customProperties.setCodepage(cpCodepage);
+        section.setCodepage(cpCodepage);
+        section.setDictionary(dictionary);
+        for (final Iterator i = customProperties.values().iterator(); i.hasNext();)
+        {
+            final Property p = (Property) i.next();
+            section.setProperty(p);
+        }
+    }
+
+
+
+    /**
+     * <p>Creates section 2 if it is not already present.</p>
+     *
+     */
+    private void ensureSection2()
+    {
+        if (getSectionCount() < 2)
+        {
+            MutableSection s2 = new MutableSection();
+            s2.setFormatID(SectionIDMap.DOCUMENT_SUMMARY_INFORMATION_ID[1]);
+            addSection(s2);
+        }
+    }
+
+
+
+    /**
+     * <p>Removes the custom properties.</p>
+     * 
+     * @since 2006-02-08
+     */
+    public void removeCustomProperties()
+    {
+        if (getSectionCount() >= 2)
+            getSections().remove(1);
+        else
+            throw new HPSFRuntimeException("Illegal internal format of Document SummaryInformation stream: second section is missing.");
+    }
+
+
+
+    /**
+     * <p>Throws an {@link UnsupportedOperationException} with a message text
+     * telling which functionality is not yet implemented.</p>
+     *
+     * @param msg text telling was leaves to be implemented, e.g.
+     * "Reading byte arrays".
+     */
+    private void notYetImplemented(final String msg)
+    {
+        throw new UnsupportedOperationException(msg + " is not yet implemented.");
     }
 
 }

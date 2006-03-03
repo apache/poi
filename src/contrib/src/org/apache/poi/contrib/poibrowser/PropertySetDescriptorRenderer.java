@@ -127,6 +127,9 @@ public class PropertySetDescriptorRenderer extends DocumentDescriptorRenderer
 
     /**
      * <p>Returns a string representation of a {@link Section}.</p>
+     * @param s the section
+     * @param name the section's name
+     * @return a string representation of the {@link Section}
      */
     protected String toString(final Section s, final String name)
     {
@@ -141,12 +144,18 @@ public class PropertySetDescriptorRenderer extends DocumentDescriptorRenderer
         for (int i = 0; i < properties.length; i++)
         {
             final Property p = properties[i];
+            final long id = p.getID();
+            final long type = p.getType();
             final Object value = p.getValue();
-            b.append("\n" + name + " ");
-            b.append("PID_");
-            b.append(p.getID());
-            b.append(' ');
-            b.append(s.getPIDString(p.getID()) + ": ");
+            b.append('\n');
+            b.append(name);
+            b.append(", Name: ");
+            b.append(id);
+            b.append(" (");
+            b.append(s.getPIDString(id));
+            b.append("), Type: ");
+            b.append(type);
+            b.append(", Value: ");
             if (value instanceof byte[])
             {
                 byte[] b2 = (byte[]) value;

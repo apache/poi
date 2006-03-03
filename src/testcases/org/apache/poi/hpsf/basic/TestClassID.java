@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Copyright 2002-2004   Apache Software Foundation
 
@@ -22,6 +21,9 @@ import junit.framework.Assert;
 import junit.framework.TestCase;
 
 import org.apache.poi.hpsf.ClassID;
+import org.apache.poi.hpsf.DocumentSummaryInformation;
+import org.apache.poi.hpsf.PropertySet;
+import org.apache.poi.hpsf.SummaryInformation;
 
 /**
  * <p>Tests ClassID structure.</p>

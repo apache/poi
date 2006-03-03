@@ -1006,41 +1006,40 @@
      helpful. If you have any amendments or corrections, please let us know!
      Thank you!</p>
 
-   <ol>
+    <ol>
 
-    <li>In
+     <li>In
       <link href="http://www.kyler.com/pubs/ddj9894.html"><em>Understanding OLE
-	 documents</em></link>, Ken Kyler gives an introduction to OLE2
-       documents
-      and especially to property sets. He names the property names, types, and
-      IDs of the Summary Information and Document Summary Information
-      stream.</li>
+	documents</em></link>, Ken Kyler gives an introduction to OLE2
+      documents and especially to property sets. He names the property names,
+      types, and IDs of the Summary Information and Document Summary
+      Information stream.</li>
 
-    <li>The
-      <link href="http://www.dwam.net/docs/oleref/"><em>ActiveX Programmer's
-	Reference</em></link> at
-      <link href="http://www.dwam.net/docs/oleref/">http://www.dwam.net/docs/oleref/</link>
+     <li>The <link href="http://www.dwam.net/docs/oleref/"><em>ActiveX
+	Programmer's Reference</em></link> at <link
+       href="http://www.dwam.net/docs/oleref/">http://www.dwam.net/docs/oleref/</link>
       seems a little outdated, but that's what I have found.</li>
 
-    <li>An overview of the <code>VT_</code> types is in
+     <li>An overview of the <code>VT_</code> types is in
       <link href="http://www.marin.clara.net/COM/variant_type_definitions.htm"><em>Variant
 	Type Definitions</em></link>.</li>
 
-    <li>What is a <code>FILETIME</code>? The answer can be found
-     under <link
-      href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/sysinfo/base/filetime_str.asp"></link>, <link href="http://www.vbapi.com/ref/f/filetime.html">http://www.vbapi.com/ref/f/filetime.html</link> or
+     <li>What is a <code>FILETIME</code>? The answer can be found
+      under <link
+       href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/sysinfo/base/filetime_str.asp"></link>, <link href="http://www.vbapi.com/ref/f/filetime.html">http://www.vbapi.com/ref/f/filetime.html</link> or
       <link href="http://www.cs.rpi.edu/courses/fall01/os/FILETIME.html">http://www.cs.rpi.edu/courses/fall01/os/FILETIME.html</link>.
       In short: <em>The FILETIME structure holds a date and time associated
-      with a file. The structure identifies a 64-bit integer specifying the
-      number of 100-nanosecond intervals which have passed since January 1,
-      1601. This 64-bit value is split into the two dwords stored in the
-      structure.</em></li>
+       with a file. The structure identifies a 64-bit integer specifying the
+       number of 100-nanosecond intervals which have passed since January 1,
+       1601. This 64-bit value is split into the two dwords stored in the
+       structure.</em></li>
 
-    <li>Information about the code page property in the
-     DocumentSummaryInformation stream is available at <link
-      href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/stg/stg/property_id_1.asp">http://msdn.microsoft.com/library/default.asp?url=/library/en-us/stg/stg/property_id_1.asp</link>.</li>
+     <li>Microsoft provides some public information in the <link
+       href="http://msdn.microsoft.com/library/default.asp">MSDN
+       Library</link>. Use the search function to try to find what you are
+      looking for, e.g. "codepage" or "document summary information" etc.</li>
 
-    <li>This documentation origins from the <link href="http://www.rainer-klute.de/~klute/Software/poibrowser/doc/HPSF-Description.html">HPSF description</link> available at <link href="http://www.rainer-klute.de/~klute/Software/poibrowser/doc/HPSF-Description.html">http://www.rainer-klute.de/~klute/Software/poibrowser/doc/HPSF-Description.html</link>.</li>
+     <li>This documentation origins from the <link href="http://www.rainer-klute.de/~klute/Software/poibrowser/doc/HPSF-Description.html">HPSF description</link> available at <link href="http://www.rainer-klute.de/~klute/Software/poibrowser/doc/HPSF-Description.html">http://www.rainer-klute.de/~klute/Software/poibrowser/doc/HPSF-Description.html</link>.</li>
     </ol>
    </section>
   </section>

@@ -1,5 +1,5 @@
 /* ====================================================================
-   Copyright 2002-2004   Apache Software Foundation
+   Copyright 2002-2006   Apache Software Foundation
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -157,16 +157,25 @@ public class VariantSupport extends Variant
                  * Read a short. In Java it is represented as an
                  * Integer object.
                  */
-                value = new Integer(LittleEndian.getUShort(src, o1));
+                value = new Integer(LittleEndian.getShort(src, o1));
                 break;
             }
             case Variant.VT_I4:
             {
                 /*
-                 * Read a word. In Java it is represented as a
+                 * Read a word. In Java it is represented as an
+                 * Integer object.
+                 */
+                value = new Integer(LittleEndian.getInt(src, o1));
+                break;
+            }
+            case Variant.VT_I8:
+            {
+                /*
+                 * Read a double word. In Java it is represented as a
                  * Long object.
                  */
-                value = new Long(LittleEndian.getUInt(src, o1));
+                value = new Long(LittleEndian.getLong(src, o1));
                 break;
             }
             case Variant.VT_R8:
@@ -204,9 +213,9 @@ public class VariantSupport extends Variant
                     last--;
                 final int l = (int) (last - first + 1);
                 value = codepage != -1 ?
-                    new String(src, (int) first, l,
+                    new String(src, first, l,
                                codepageToEncoding(codepage)) :
-                    new String(src, (int) first, l);
+                    new String(src, first, l);
                 break;
             }
             case Variant.VT_LPWSTR:
@@ -240,7 +249,7 @@ public class VariantSupport extends Variant
             {
                 final byte[] v = new byte[l1];
                 for (int i = 0; i < l1; i++)
-                    v[i] = src[(int) (o1 + i)];
+                    v[i] = src[(o1 + i)];
                 value = v;
                 break;
             }
@@ -263,7 +272,7 @@ public class VariantSupport extends Variant
             {
                 final byte[] v = new byte[l1];
                 for (int i = 0; i < l1; i++)
-                    v[i] = src[(int) (o1 + i)];
+                    v[i] = src[(o1 + i)];
                 throw new ReadingNotSupportedException(type, v);
             }
         }
@@ -397,8 +406,8 @@ public class VariantSupport extends Variant
                 char[] s = Util.pad4((String) value);
                 for (int i = 0; i < s.length; i++)
                 {
-                    final int high = (int) ((s[i] & 0x0000ff00) >> 8);
-                    final int low = (int) (s[i] & 0x000000ff);
+                    final int high = ((s[i] & 0x0000ff00) >> 8);
+                    final int low = (s[i] & 0x000000ff);
                     final byte highb = (byte) high;
                     final byte lowb = (byte) low;
                     out.write(lowb);
@@ -431,8 +440,21 @@ public class VariantSupport extends Variant
             }
             case Variant.VT_I4:
             {
+                if (!(value instanceof Integer))
+                {
+                    throw new ClassCastException("Could not cast an object to "
+                            + Integer.class.toString() + ": "
+                            + value.getClass().toString() + ", "
+                            + value.toString());
+                }
                 length += TypeWriter.writeToStream(out, 
-                          ((Long) value).intValue());
+                          ((Integer) value).intValue());
+                break;
+            }
+            case Variant.VT_I8:
+            {
+                TypeWriter.writeToStream(out, ((Long) value).longValue());
+                length = LittleEndianConsts.LONG_SIZE;
                 break;
             }
             case Variant.VT_R8:

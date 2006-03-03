@@ -1,5 +1,5 @@
 /* ====================================================================
-   Copyright 2002-2004   Apache Software Foundation
+   Copyright 2002-2006   Apache Software Foundation
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -17,23 +17,24 @@
 package org.apache.poi.hpsf;
 
 /**
- * <p>This exception is thrown if a {@link MutablePropertySet} is to be written
- * but does not have a formatID set (see {@link
- * MutableSection#setFormatID(ClassID)} or
- * {@link org.apache.poi.hpsf.MutableSection#setFormatID(byte[])}. 
+ * <p>This exception is thrown if one of the {@link PropertySet}'s
+ * convenience methods does not find a required {@link Section}.</p>
+ *
+ * <p>The constructors of this class are analogous to those of its
+ * superclass and documented there.</p>
  *
  * @author Rainer Klute <a
  * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
- * @version $Id$
- * @since 2002-09-03
+ * @version $Id: NoSingleSectionException.java 353545 2004-04-09 13:05:39Z glens $
+ * @since 2006-02-08
  */
-public class NoFormatIDException extends HPSFRuntimeException
+public class MissingSectionException extends HPSFRuntimeException
 {
 
     /**
      * <p>Constructor</p>
      */
-    public NoFormatIDException()
+    public MissingSectionException()
     {
         super();
     }
@@ -44,7 +45,7 @@ public class NoFormatIDException extends HPSFRuntimeException
      * 
      * @param msg The exception's message string
      */
-    public NoFormatIDException(final String msg)
+    public MissingSectionException(final String msg)
     {
         super(msg);
     }
@@ -55,7 +56,7 @@ public class NoFormatIDException extends HPSFRuntimeException
      * 
      * @param reason This exception's underlying reason
      */
-    public NoFormatIDException(final Throwable reason)
+    public MissingSectionException(final Throwable reason)
     {
         super(reason);
     }
@@ -67,7 +68,7 @@ public class NoFormatIDException extends HPSFRuntimeException
      * @param msg The exception's message string
      * @param reason This exception's underlying reason
      */
-    public NoFormatIDException(final String msg, final Throwable reason)
+    public MissingSectionException(final String msg, final Throwable reason)
     {
         super(msg, reason);
     }

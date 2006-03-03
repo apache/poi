@@ -112,10 +112,8 @@ public class TestBasic extends TestCase
     /**
      * <p>Checks the names of the files in the POI filesystem. They
      * are expected to be in a certain order.</p>
-     * 
-     * @exception IOException if an I/O exception occurs
      */
-    public void testReadFiles() throws IOException
+    public void testReadFiles()
     {
         String[] expected = POI_FILES;
         for (int i = 0; i < expected.length; i++)
@@ -166,7 +164,7 @@ public class TestBasic extends TestCase
                 o = ex;
             }
             in.close();
-            Assert.assertEquals(o.getClass(), expected[i]);
+            Assert.assertEquals(expected[i], o.getClass());
         }
     }
 
@@ -223,7 +221,7 @@ public class TestBasic extends TestCase
         Assert.assertNotNull(s.getProperties());
         Assert.assertEquals(17, s.getPropertyCount());
         Assert.assertEquals("Titel", s.getProperty(2));
-        Assert.assertEquals(1764, s.getSize());
+        Assert.assertEquals(1748, s.getSize());
     }
 
 

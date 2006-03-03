@@ -1,6 +1,5 @@
-
 /* ====================================================================
-   Copyright 2002-2004   Apache Software Foundation
+   Copyright 2002-2006   Apache Software Foundation
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -402,8 +401,10 @@ public class PropertySet
      *
      * @param src Byte array containing the property set stream
      * @param offset The property set stream starts at this offset
-     * from the beginning of <var>src</src>
+     * from the beginning of <var>src</var>
      * @param length Length of the property set stream.
+     * @throws UnsupportedEncodingException if HPSF does not (yet) support the
+     * property set's character encoding.
      */
     private void init(final byte[] src, final int offset, final int length)
     throws UnsupportedEncodingException
@@ -482,7 +483,7 @@ public class PropertySet
     public boolean isDocumentSummaryInformation()
     {
         return Util.equal(((Section) sections.get(0)).getFormatID().getBytes(),
-                          SectionIDMap.DOCUMENT_SUMMARY_INFORMATION_ID);
+                          SectionIDMap.DOCUMENT_SUMMARY_INFORMATION_ID[0]);
     }
 
 
@@ -492,9 +493,7 @@ public class PropertySet
      * contained in this property set. It is a shortcut for getting
      * the {@link PropertySet}'s {@link Section}s list and then
      * getting the {@link Property} array from the first {@link
-     * Section}. However, it can only be used if the {@link
-     * PropertySet} contains exactly one {@link Section}, so check
-     * {@link #getSectionCount} first!</p>
+     * Section}.</p>
      *
      * @return The properties of the only {@link Section} of this
      * {@link PropertySet}.
@@ -504,7 +503,7 @@ public class PropertySet
     public Property[] getProperties()
         throws NoSingleSectionException
     {
-        return getSingleSection().getProperties();
+        return getFirstSection().getProperties();
     }
 
 
@@ -522,7 +521,7 @@ public class PropertySet
      */
     protected Object getProperty(final int id) throws NoSingleSectionException
     {
-        return getSingleSection().getProperty(id);
+        return getFirstSection().getProperty(id);
     }
 
 
@@ -543,7 +542,7 @@ public class PropertySet
     protected boolean getPropertyBooleanValue(final int id)
         throws NoSingleSectionException
     {
-        return getSingleSection().getPropertyBooleanValue(id);
+        return getFirstSection().getPropertyBooleanValue(id);
     }
 
 
@@ -563,7 +562,7 @@ public class PropertySet
     protected int getPropertyIntValue(final int id)
         throws NoSingleSectionException
     {
-        return getSingleSection().getPropertyIntValue(id);
+        return getFirstSection().getPropertyIntValue(id);
     }
 
 
@@ -585,7 +584,21 @@ public class PropertySet
      */
     public boolean wasNull() throws NoSingleSectionException
     {
-        return getSingleSection().wasNull();
+        return getFirstSection().wasNull();
+    }
+
+
+
+    /**
+     * <p>Gets the {@link PropertySet}'s first section.</p>
+     *
+     * @return The {@link PropertySet}'s first section.
+     */
+    public Section getFirstSection()
+    {
+        if (getSectionCount() < 1)
+            throw new MissingSectionException("Property set does not contain any sections.");
+        return ((Section) sections.get(0));
     }
 
 

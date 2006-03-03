@@ -1,6 +1,5 @@
-
 /* ====================================================================
-   Copyright 2002-2004   Apache Software Foundation
+   Copyright 2002-2006   Apache Software Foundation
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -17,7 +16,12 @@
         
 package org.apache.poi.hpsf;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.List;
+
+import org.apache.poi.poifs.filesystem.DirectoryEntry;
 
 /**
  * <p>Abstract superclass for the convenience classes {@link
@@ -50,24 +54,37 @@ import java.util.List;
  * @version $Id$
  * @since 2002-02-09
  */
-public abstract class SpecialPropertySet extends PropertySet
+public abstract class SpecialPropertySet extends MutablePropertySet
 {
 
     /**
      * <p>The "real" property set <code>SpecialPropertySet</code>
      * delegates to.</p>
      */
-    private PropertySet delegate;
+    private MutablePropertySet delegate;
 
 
 
     /**
      * <p>Creates a <code>SpecialPropertySet</code>.
      *
-     * @param ps The property set encapsulated by the
+     * @param ps The property set to be encapsulated by the
      * <code>SpecialPropertySet</code>
      */
     public SpecialPropertySet(final PropertySet ps)
+    {
+        delegate = new MutablePropertySet(ps);
+    }
+
+
+
+    /**
+     * <p>Creates a <code>SpecialPropertySet</code>.
+     *
+     * @param ps The mutable property set to be encapsulated by the
+     * <code>SpecialPropertySet</code>
+     */
+    public SpecialPropertySet(final MutablePropertySet ps)
     {
         delegate = ps;
     }
@@ -157,9 +174,178 @@ public abstract class SpecialPropertySet extends PropertySet
     /**
      * @see PropertySet#getSingleSection
      */
-    public Section getSingleSection()
+    public Section getFirstSection()
     {
-        return delegate.getSingleSection();
+        return delegate.getFirstSection();
+    }
+
+
+    /**
+     * @see org.apache.poi.hpsf.MutablePropertySet#addSection(org.apache.poi.hpsf.Section)
+     */
+    public void addSection(final Section section)
+    {
+        delegate.addSection(section);
+    }
+
+
+
+    /**
+     * @see org.apache.poi.hpsf.MutablePropertySet#clearSections()
+     */
+    public void clearSections()
+    {
+        delegate.clearSections();
+    }
+
+
+
+    /**
+     * @see org.apache.poi.hpsf.MutablePropertySet#setByteOrder(int)
+     */
+    public void setByteOrder(final int byteOrder)
+    {
+        delegate.setByteOrder(byteOrder);
+    }
+
+
+
+    /**
+     * @see org.apache.poi.hpsf.MutablePropertySet#setClassID(org.apache.poi.hpsf.ClassID)
+     */
+    public void setClassID(final ClassID classID)
+    {
+        delegate.setClassID(classID);
+    }
+
+
+
+    /**
+     * @see org.apache.poi.hpsf.MutablePropertySet#setFormat(int)
+     */
+    public void setFormat(final int format)
+    {
+        delegate.setFormat(format);
+    }
+
+
+
+    /**
+     * @see org.apache.poi.hpsf.MutablePropertySet#setOSVersion(int)
+     */
+    public void setOSVersion(final int osVersion)
+    {
+        delegate.setOSVersion(osVersion);
+    }
+
+
+
+    /**
+     * @see org.apache.poi.hpsf.MutablePropertySet#toInputStream()
+     */
+    public InputStream toInputStream() throws IOException, WritingNotSupportedException
+    {
+        return delegate.toInputStream();
+    }
+
+
+
+    /**
+     * @see org.apache.poi.hpsf.MutablePropertySet#write(org.apache.poi.poifs.filesystem.DirectoryEntry, java.lang.String)
+     */
+    public void write(final DirectoryEntry dir, final String name) throws WritingNotSupportedException, IOException
+    {
+        delegate.write(dir, name);
+    }
+
+
+
+    /**
+     * @see org.apache.poi.hpsf.MutablePropertySet#write(java.io.OutputStream)
+     */
+    public void write(final OutputStream out) throws WritingNotSupportedException, IOException
+    {
+        delegate.write(out);
+    }
+
+
+
+    /**
+     * @see org.apache.poi.hpsf.PropertySet#equals(java.lang.Object)
+     */
+    public boolean equals(final Object o)
+    {
+        return delegate.equals(o);
+    }
+
+
+
+    /**
+     * @see org.apache.poi.hpsf.PropertySet#getProperties()
+     */
+    public Property[] getProperties() throws NoSingleSectionException
+    {
+        return delegate.getProperties();
+    }
+
+
+
+    /**
+     * @see org.apache.poi.hpsf.PropertySet#getProperty(int)
+     */
+    protected Object getProperty(final int id) throws NoSingleSectionException
+    {
+        return delegate.getProperty(id);
+    }
+
+
+
+    /**
+     * @see org.apache.poi.hpsf.PropertySet#getPropertyBooleanValue(int)
+     */
+    protected boolean getPropertyBooleanValue(final int id) throws NoSingleSectionException
+    {
+        return delegate.getPropertyBooleanValue(id);
+    }
+
+
+
+    /**
+     * @see org.apache.poi.hpsf.PropertySet#getPropertyIntValue(int)
+     */
+    protected int getPropertyIntValue(final int id) throws NoSingleSectionException
+    {
+        return delegate.getPropertyIntValue(id);
+    }
+
+
+
+    /**
+     * @see org.apache.poi.hpsf.PropertySet#hashCode()
+     */
+    public int hashCode()
+    {
+        return delegate.hashCode();
+    }
+
+
+
+    /**
+     * @see org.apache.poi.hpsf.PropertySet#toString()
+     */
+    public String toString()
+    {
+        return delegate.toString();
+    }
+
+
+
+    /**
+     * @see org.apache.poi.hpsf.PropertySet#wasNull()
+     */
+    public boolean wasNull() throws NoSingleSectionException
+    {
+        return delegate.wasNull();
     }
 
 }

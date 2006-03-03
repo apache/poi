@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Copyright 2002-2004   Apache Software Foundation
 
@@ -27,16 +26,18 @@ import java.io.UnsupportedEncodingException;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
+import org.apache.poi.hpsf.DocumentSummaryInformation;
 import org.apache.poi.hpsf.HPSFException;
 import org.apache.poi.hpsf.MarkUnsupportedException;
 import org.apache.poi.hpsf.NoPropertySetStreamException;
 import org.apache.poi.hpsf.PropertySet;
 import org.apache.poi.hpsf.PropertySetFactory;
 import org.apache.poi.hpsf.SummaryInformation;
+import org.apache.poi.hpsf.Variant;
 
 /**
  * <p>Test case for OLE2 files with empty properties. An empty property's type
- * is {@link Variant.VT_EMPTY}.</p>
+ * is {@link Variant#VT_EMPTY}.</p>
  *
  * @author Rainer Klute <a
  * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
@@ -96,10 +97,8 @@ public class TestEmptyProperties extends TestCase
     /**
      * <p>Checks the names of the files in the POI filesystem. They
      * are expected to be in a certain order.</p>
-     * 
-     * @exception IOException if an I/O exception occurs
      */
-    public void testReadFiles() throws IOException
+    public void testReadFiles()
     {
         String[] expected = POI_FILES;
         for (int i = 0; i < expected.length; i++)

@@ -1,6 +1,5 @@
-
 /* ====================================================================
-   Copyright 2002-2004   Apache Software Foundation
+   Copyright 2002-2006   Apache Software Foundation
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -278,9 +277,12 @@ public class Section
         for (final Iterator i = propertyList.iterator(); i.hasNext();)
         {
             ple = (PropertyListEntry) i.next();
-            properties[i1++] = new Property(ple.id, src,
-                                            this.offset + ple.offset,
-                                            ple.length, codepage);
+            Property p = new Property(ple.id, src,
+                    this.offset + ple.offset,
+                    ple.length, codepage);
+            if (p.getID() == PropertyIDMap.PID_CODEPAGE)
+                p = new Property(p.getID(), p.getType(), new Integer(codepage));
+            properties[i1++] = p;
         }
 
         /*
@@ -359,15 +361,15 @@ public class Section
      */
     protected int getPropertyIntValue(final long id)
     {
-        final Long i;
+        final Number i;
         final Object o = getProperty(id);
         if (o == null)
             return 0;
-        if (!(o instanceof Long))
+        if (!(o instanceof Long || o instanceof Integer))
             throw new HPSFRuntimeException
                 ("This property is not an integer type, but " +
                  o.getClass().getName() + ".");
-        i = (Long) o;
+        i = (Number) o;
         return i.intValue();
     }
 
@@ -545,6 +547,10 @@ public class Section
     /**
      * <p>Removes a field from a property array. The resulting array is
      * compactified and returned.</p>
+     *
+     * @param pa The property array. 
+     * @param i The index of the field to be removed.
+     * @return the compactified array.
      */
     private Property[] remove(final Property[] pa, final int i)
     {
@@ -629,7 +635,10 @@ public class Section
     {
         final Integer codepage =
             (Integer) getProperty(PropertyIDMap.PID_CODEPAGE);
-        return codepage != null ? codepage.intValue() : -1;
+        if (codepage == null)
+            return -1;
+        int cp = codepage.intValue();
+        return cp;
     }
 
 }

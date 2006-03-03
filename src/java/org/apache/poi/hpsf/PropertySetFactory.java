@@ -1,6 +1,5 @@
-
 /* ====================================================================
-   Copyright 2002-2004   Apache Software Foundation
+   Copyright 2002-2006   Apache Software Foundation
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -21,6 +20,8 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.rmi.UnexpectedException;
+
+import org.apache.poi.hpsf.wellknown.SectionIDMap;
 
 /**
  * <p>Factory class to create instances of {@link SummaryInformation},
@@ -71,6 +72,52 @@ public class PropertySetFactory
             /* This exception will never be throws because we already checked
              * explicitly for this case above. */
             throw new UnexpectedException(ex.toString());
+        }
+    }
+
+
+
+    /**
+     * <p>Creates a new summary information.</p>
+     *
+     * @return the new summary information.
+     */
+    public static SummaryInformation newSummaryInformation()
+    {
+        final MutablePropertySet ps = new MutablePropertySet();
+        final MutableSection s = (MutableSection) ps.getFirstSection();
+        s.setFormatID(SectionIDMap.SUMMARY_INFORMATION_ID);
+        try
+        {
+            return new SummaryInformation(ps);
+        }
+        catch (UnexpectedPropertySetTypeException ex)
+        {
+            /* This should never happen. */
+            throw new HPSFRuntimeException(ex);
+        }
+    }
+
+
+
+    /**
+     * <p>Creates a new document summary information.</p>
+     *
+     * @return the new document summary information.
+     */
+    public static DocumentSummaryInformation newDocumentSummaryInformation()
+    {
+        final MutablePropertySet ps = new MutablePropertySet();
+        final MutableSection s = (MutableSection) ps.getFirstSection();
+        s.setFormatID(SectionIDMap.DOCUMENT_SUMMARY_INFORMATION_ID[0]);
+        try
+        {
+            return new DocumentSummaryInformation(ps);
+        }
+        catch (UnexpectedPropertySetTypeException ex)
+        {
+            /* This should never happen. */
+            throw new HPSFRuntimeException(ex);
         }
     }
 

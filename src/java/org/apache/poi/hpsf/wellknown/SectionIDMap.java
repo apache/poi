@@ -1,6 +1,5 @@
-
 /* ====================================================================
-   Copyright 2002-2004   Apache Software Foundation
+   Copyright 2002-2006   Apache Software Foundation
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -53,16 +52,23 @@ public class SectionIDMap extends HashMap
     };
 
     /**
-     * <p>The DocumentSummaryInformation's first section's format
-     * ID. The second section has a different format ID which is not
-     * well-known.</p>
+     * <p>The DocumentSummaryInformation's first and second sections' format
+     * ID.</p>
      */
-    public static final byte[] DOCUMENT_SUMMARY_INFORMATION_ID = new byte[]
+    public static final byte[][] DOCUMENT_SUMMARY_INFORMATION_ID = new byte[][]
     {
-        (byte) 0xD5, (byte) 0xCD, (byte) 0xD5, (byte) 0x02,
-        (byte) 0x2E, (byte) 0x9C, (byte) 0x10, (byte) 0x1B,
-        (byte) 0x93, (byte) 0x97, (byte) 0x08, (byte) 0x00,
-        (byte) 0x2B, (byte) 0x2C, (byte) 0xF9, (byte) 0xAE
+        {
+            (byte) 0xD5, (byte) 0xCD, (byte) 0xD5, (byte) 0x02,
+            (byte) 0x2E, (byte) 0x9C, (byte) 0x10, (byte) 0x1B,
+            (byte) 0x93, (byte) 0x97, (byte) 0x08, (byte) 0x00,
+            (byte) 0x2B, (byte) 0x2C, (byte) 0xF9, (byte) 0xAE
+        },
+        {
+            (byte) 0xD5, (byte) 0xCD, (byte) 0xD5, (byte) 0x05,
+            (byte) 0x2E, (byte) 0x9C, (byte) 0x10, (byte) 0x1B,
+            (byte) 0x93, (byte) 0x97, (byte) 0x08, (byte) 0x00,
+            (byte) 0x2B, (byte) 0x2C, (byte) 0xF9, (byte) 0xAE
+        }
     };
 
     /**
@@ -91,7 +97,7 @@ public class SectionIDMap extends HashMap
             final SectionIDMap m = new SectionIDMap();
             m.put(SUMMARY_INFORMATION_ID,
                   PropertyIDMap.getSummaryInformationProperties());
-            m.put(DOCUMENT_SUMMARY_INFORMATION_ID,
+            m.put(DOCUMENT_SUMMARY_INFORMATION_ID[0],
                   PropertyIDMap.getDocumentSummaryInformationProperties());
             defaultMap = m;
         }
@@ -116,8 +122,7 @@ public class SectionIDMap extends HashMap
     public static String getPIDString(final byte[] sectionFormatID,
                                       final long pid)
     {
-        final PropertyIDMap m =
-            (PropertyIDMap) getInstance().get(sectionFormatID);
+        final PropertyIDMap m = getInstance().get(sectionFormatID);
         if (m == null)
             return UNDEFINED;
         else
@@ -178,7 +183,8 @@ public class SectionIDMap extends HashMap
 
     /**
      * @deprecated Use {@link #put(byte[], PropertyIDMap)} instead!
-     * @link #put(byte[], PropertyIDMap)
+     *
+     * @see #put(byte[], PropertyIDMap)
      * 
      * @param key This parameter remains undocumented since the method is
      * deprecated.
