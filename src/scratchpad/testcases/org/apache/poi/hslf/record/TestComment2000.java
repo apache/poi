@@ -126,23 +126,35 @@ public class TestComment2000 extends TestCase {
 	public void testChange() throws Exception {
 		Comment2000 ca = new Comment2000(data_a, 0, data_a.length);
 		Comment2000 cb = new Comment2000(data_b, 0, data_b.length);
+		Comment2000 cn = new Comment2000();
 		ca.setAuthor("Hogwarts");
 		ca.setAuthorInitials("H");
 		ca.setText("Comments are fun things to add in, aren't they?");
+		cn.setAuthor("Hogwarts");
+		cn.setAuthorInitials("H");
+		cn.setText("Comments are fun things to add in, aren't they?");
 		
 		// Change the Comment2000Atom
 		Comment2000Atom c2a = ca.getComment2000Atom();
+		Comment2000Atom c2n = cn.getComment2000Atom();
 		c2a.setNumber(1);
 		c2a.setXOffset(0x0a);
 		c2a.setYOffset(0x0a);
+		c2n.setNumber(1);
+		c2n.setXOffset(0x0a);
+		c2n.setYOffset(0x0a);
 		
 		Date new_date = sdf.parse("2006-01-24 22:25:03.725");
 		c2a.setDate(new_date);
+		c2n.setDate(new_date);
 		
 		// Check now the same
 		assertEquals(ca.getText(), cb.getText());
+		assertEquals(cn.getText(), cb.getText());
 		assertEquals(ca.getAuthor(), cb.getAuthor());
+		assertEquals(cn.getAuthor(), cb.getAuthor());
 		assertEquals(ca.getAuthorInitials(), cb.getAuthorInitials());
+		assertEquals(cn.getAuthorInitials(), cb.getAuthorInitials());
 		
 		// Check bytes weren't the same
 		try {
@@ -155,14 +167,21 @@ public class TestComment2000 extends TestCase {
 		}
 		
 		// Check bytes are now the same
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		ca.writeOut(baos);
-		byte[] b = baos.toByteArray();
+		ByteArrayOutputStream baosa = new ByteArrayOutputStream();
+		ByteArrayOutputStream baosn = new ByteArrayOutputStream();
+		ca.writeOut(baosa);
+		cn.writeOut(baosn);
+		byte[] ba = baosa.toByteArray();
+		byte[] bn = baosn.toByteArray();
 		
 		// Should now be the same
-		assertEquals(data_b.length, b.length);
+		assertEquals(data_b.length, ba.length);
 		for(int i=0; i<data_b.length; i++) {
-			assertEquals(data_b[i],b[i]);
+			assertEquals(data_b[i],ba[i]);
+		}
+		assertEquals(data_b.length, bn.length);
+		for(int i=0; i<data_b.length; i++) {
+			assertEquals(data_b[i],bn[i]);
 		}
 	}
 }
