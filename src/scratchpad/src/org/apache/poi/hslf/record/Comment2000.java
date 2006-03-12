@@ -3,6 +3,8 @@ package org.apache.poi.hslf.record;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.apache.poi.util.LittleEndian;
+
 /**
  * This class represents a comment on a slide, in the format used by
  *  PPT 2000/XP/etc. (PPT 97 uses plain Escher Text Boxes for comments) 
@@ -72,7 +74,15 @@ public class Comment2000 extends RecordContainer {
 
 		// Find our children
 		_children = Record.findChildRecords(source,start+8,len-8);
+		findInterestingChildren();
+	}
 
+	/**
+	 * Go through our child records, picking out the ones that are
+	 *  interesting, and saving those for use by the easy helper
+	 *  methods.
+	 */	
+	private void findInterestingChildren() {
 		// First child should be the author
 		if(_children[0] instanceof CString) {
 			authorRecord = (CString)_children[0];
@@ -97,6 +107,31 @@ public class Comment2000 extends RecordContainer {
 		} else {
 			throw new IllegalStateException("Fourth child record wasn't a Comment2000Atom, was of type " + _children[3].getRecordType());
 		}
+	}
+	
+	/**
+	 * Create a new Comment2000, with blank fields
+	 */
+	public Comment2000() {
+		_header = new byte[8];
+		_children = new Record[4];
+		
+		// Setup our header block
+		_header[0] = 0x0f; // We are a container record
+		LittleEndian.putShort(_header, 2, (short)_type);
+		
+		// Setup our child records
+		CString csa = new CString();
+		CString csb = new CString();
+		CString csc = new CString();
+		csa.setCount(0x00);
+		csb.setCount(0x10);
+		csc.setCount(0x20);
+		_children[0] = csa;
+		_children[1] = csb;
+		_children[2] = csc;
+		_children[3] = new Comment2000Atom();
+		findInterestingChildren();
 	}
 
 	/**
