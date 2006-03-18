@@ -86,5 +86,18 @@ public class FontCollection extends RecordContainer {
 
         return fonts.size()-1; //the added font is the last in the list
     }
-
+    
+	/**
+	 * Get the name of the font at the given ID, or null if there is
+	 *  no font at that ID.
+	 * @param id
+	 * @return
+	 */
+	public String getFontWithId(int id) {
+		if(id >= fonts.size()) {
+			// No font with that id
+			return null;
+		}
+		return (String)fonts.get(id);
+	}
 }

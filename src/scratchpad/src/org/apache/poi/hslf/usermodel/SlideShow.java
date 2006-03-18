@@ -60,6 +60,9 @@ public class SlideShow
   // Pointers to the most recent versions of the core records
   //  (Document, Notes, Slide etc)
   private Record[] _mostRecentCoreRecords;
+  
+  // Records that are interesting
+  private Record _documentRecord;
 
   // Friendly objects for people to deal with
   private Slide[] _slides;
@@ -89,7 +92,7 @@ public class SlideShow
 
 	// Find the versions of the core records we'll want to use
 	findMostRecentCoreRecords();
-
+	
 	// Build up the model level Slides and Notes
 	buildSlidesAndNotes();
   }
@@ -194,6 +197,13 @@ public class SlideShow
 			}
 		}
 	}
+	
+	// Now look for the interesting records in there
+	for(int i=0; i<_mostRecentCoreRecords.length; i++) {
+		if(_mostRecentCoreRecords[i].getRecordType() == RecordTypes.Document.typeID) {
+			_documentRecord = _mostRecentCoreRecords[i];
+		}
+	}
   }
 
   /**
@@ -209,8 +219,6 @@ public class SlideShow
 	Vector metaSheetsV = new Vector(10);
 	// For holding SlideListWithText Records
 	Vector slwtV = new Vector(10);
-	// For holding the Document record we're going to use
-	Record documentRecord = null;
 
 	// Look for Notes, Slides and Documents
 	for(int i=0; i<_mostRecentCoreRecords.length; i++) {
@@ -220,14 +228,11 @@ public class SlideShow
 		if(_mostRecentCoreRecords[i] instanceof org.apache.poi.hslf.record.Slide) {
 			slidesV.add(_mostRecentCoreRecords[i]);
 		}
-		if(_records[i].getRecordType() == RecordTypes.Document.typeID) {
-			documentRecord = _mostRecentCoreRecords[i];
-		}
 	}
 
-	// Ensure we really found a Document record
+	// Ensure we really found a Document record earlier
 	// If we didn't, then the file is probably corrupt
-	if(documentRecord == null) {
+	if(_documentRecord == null) {
 		throw new CorruptPowerPointFileException("The PowerPoint file didn't contain a Document Record in its PersistPtr blocks. It is probably corrupt.");
 	}
 
@@ -251,7 +256,7 @@ public class SlideShow
 	// There shouldn't be any text duplication - only using the most
 	//  record Document record's SLWTs should see to that
 
-	Record[] docChildren = documentRecord.getChildRecords();
+	Record[] docChildren = _documentRecord.getChildRecords();
 	for(int i=0; i<docChildren.length; i++) {
 		// Look for SlideListWithText
 		if(docChildren[i] instanceof SlideListWithText) {
@@ -322,6 +327,16 @@ public class SlideShow
 	_notes = new Notes[notesV.size()];
 	for(int i=0; i<_notes.length; i++) {
 		_notes[i] = new Notes((org.apache.poi.hslf.record.Notes)notesV.get(i));
+		
+		// Now supply ourselves to all the rich text runs
+		//  of this note's TextRuns
+		TextRun[] trs = _notes[i].getTextRuns(); 
+		for(int j=0; j<trs.length; j++) {
+			RichTextRun[] rtrs = trs[j].getRichTextRuns();
+			for(int k=0; k<rtrs.length; k++) {
+				rtrs[k].supplySlideShow(this);
+			}
+		}
 	}
 
 
@@ -352,6 +367,16 @@ public class SlideShow
 
 		// Create the Slide model layer
 		_slides[i] = new Slide(slideRecord,thisNotes,atomSet);
+		
+		// Now supply ourselves to all the rich text runs
+		//  of this slide's TextRuns
+		TextRun[] trs = _slides[i].getTextRuns(); 
+		for(int j=0; j<trs.length; j++) {
+			RichTextRun[] rtrs = trs[j].getRichTextRuns();
+			for(int k=0; k<rtrs.length; k++) {
+				rtrs[k].supplySlideShow(this);
+			}
+		}
 	}
   }
 
@@ -398,4 +423,13 @@ public class SlideShow
 	public Picture[] getPictures() throws IOException {
 		return _hslfSlideShow.getPictures();
 	}
+	
+	/**
+	 * Helper method for usermodel: Get the font collection
+	 */
+	protected FontCollection getFontCollection() { return _fonts; }
+	/**
+	 * Helper method for usermodel: Get the document record
+	 */
+	protected Record getDocumentRecord() { return _documentRecord; }
 }
