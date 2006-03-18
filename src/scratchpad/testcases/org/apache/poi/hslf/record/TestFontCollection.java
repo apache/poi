@@ -60,9 +60,15 @@ public class TestFontCollection extends TestCase {
         idx = fonts.addFont("Arial"); //the font being added twice
         assertEquals(idx, 2);
 
-        //font collection should contain 3 fonts
+        // Font collection should contain 3 fonts
         Record[] child = fonts.getChildRecords();
         assertEquals(child.length, 3);
+        
+        // Check we get the right font name for the indicies
+        assertEquals("Times New Roman", fonts.getFontWithId(0));
+        assertEquals("Helvetica", fonts.getFontWithId(1));
+        assertEquals("Arial", fonts.getFontWithId(2));
+        assertNull(fonts.getFontWithId(3));
     }
 
     public void testWrite() throws Exception {
