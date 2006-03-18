@@ -21,6 +21,7 @@ package org.apache.poi.hslf.usermodel;
 
 import org.apache.poi.hslf.model.TextRun;
 import org.apache.poi.hslf.record.StyleTextPropAtom.CharFlagsTextProp;
+import org.apache.poi.hslf.record.StyleTextPropAtom.TextProp;
 import org.apache.poi.hslf.record.StyleTextPropAtom.TextPropCollection;
 
 /**
@@ -35,6 +36,8 @@ public class RichTextRun
 {
 	/** The TextRun we belong to */
 	private TextRun parentRun;
+	/** The SlideShow we belong to */
+	private SlideShow slideShow;
 	
 	/** Where in the parent TextRun we start from */
 	private int startPos;
@@ -87,6 +90,12 @@ public class RichTextRun
 		paragraphStyle = pStyle;
 		characterStyle = cStyle;
 	}
+	/**
+	 * Supply the SlideShow we belong to
+	 */
+	protected void supplySlideShow(SlideShow ss) {
+		slideShow = ss;
+	}
 	
 	/**
 	 * Get the length of the text
@@ -126,6 +135,12 @@ public class RichTextRun
 	
 	
 	// --------------- Internal helpers on rich text properties -------
+	
+	/**
+	 * Fetch the value of the given flag in the CharFlagsTextProp.
+	 * Returns false if the CharFlagsTextProp isn't present, since the
+	 *  text property won't be set if there's no CharFlagsTextProp.
+	 */
 	private boolean isCharFlagsTextPropVal(int index) {
 		if(characterStyle == null) { return false; }
 		
@@ -135,29 +150,139 @@ public class RichTextRun
 		if(cftp == null) { return false; }
 		return cftp.getSubValue(index);
 	}
+	/**
+	 * Set the value of the given flag in the CharFlagsTextProp, adding
+	 *  it if required. 
+	 */
 	private void setCharFlagsTextPropVal(int index, boolean value) {
+		// Ensure we have the StyleTextProp atom we're going to need
 		if(characterStyle == null) {
 			parentRun.ensureStyleAtomPresent();
+			// characterStyle will now be defined
 		}
 		
 		CharFlagsTextProp cftp = (CharFlagsTextProp)
-			characterStyle.findByName("char_flags");
-		if(cftp == null) {
-			cftp = (CharFlagsTextProp)characterStyle.addWithName("char_flags");
-		}
-		
+			fetchOrAddTextProp(characterStyle, "char_flags");
 		cftp.setSubValue(value,index);
 	}
 	
+	/**
+	 * Returns the named TextProp, either by fetching it (if it exists) or adding it
+	 *  (if it didn't)
+	 * @param textPropCol The TextPropCollection to fetch from / add into
+	 * @param textPropName The name of the TextProp to fetch/add
+	 */
+	private TextProp fetchOrAddTextProp(TextPropCollection textPropCol, String textPropName) {
+		// Fetch / Add the TextProp
+		TextProp tp = textPropCol.findByName(textPropName);
+		if(tp == null) {
+			tp = textPropCol.addWithName(textPropName);
+		}
+		return tp;
+	}
+	
+	/**
+	 * Fetch the value of the given Character related TextProp. 
+	 * Returns -1 if that TextProp isn't present. 
+	 * If the TextProp isn't present, the value from the appropriate 
+	 *  Master Sheet will apply.
+	 */
+	private int getCharTextPropVal(String propName) {
+		if(characterStyle == null) { return -1; }
+		
+		TextProp cTextProp = characterStyle.findByName(propName);
+		if(cTextProp == null) { return -1; }
+		return cTextProp.getValue();
+	}
+	/**
+	 * Fetch the value of the given Paragraph related TextProp. 
+	 * Returns -1 if that TextProp isn't present. 
+	 * If the TextProp isn't present, the value from the appropriate 
+	 *  Master Sheet will apply.
+	 */
+	private int getParaTextPropVal(String propName) {
+		if(paragraphStyle == null) { return -1; }
+		
+		TextProp pTextProp = paragraphStyle.findByName(propName);
+		if(pTextProp == null) { return -1; }
+		return pTextProp.getValue();
+	}
+	
+	/**
+	 * Sets the value of the given Character TextProp, add if required
+	 * @param propName The name of the Character TextProp
+	 * @param val The value to set for the TextProp
+	 */
+	private void setParaTextPropVal(String propName, int val) {
+		// Ensure we have the StyleTextProp atom we're going to need
+		if(paragraphStyle == null) {
+			parentRun.ensureStyleAtomPresent();
+			// paragraphStyle will now be defined
+		}
+		
+		TextProp tp = fetchOrAddTextProp(paragraphStyle, propName);
+		tp.setValue(val);
+	}
+	/**
+	 * Sets the value of the given Paragraph TextProp, add if required
+	 * @param propName The name of the Paragraph TextProp
+	 * @param val The value to set for the TextProp
+	 */
+	private void setCharTextPropVal(String propName, int val) {
+		// Ensure we have the StyleTextProp atom we're going to need
+		if(characterStyle == null) {
+			parentRun.ensureStyleAtomPresent();
+			// characterStyle will now be defined
+		}
+		
+		TextProp tp = fetchOrAddTextProp(characterStyle, propName);
+		tp.setValue(val);
+	}
+	
+	
 	// --------------- Friendly getters / setters on rich text properties -------
+	
 	public boolean isBold() {
 		return isCharFlagsTextPropVal(CharFlagsTextProp.BOLD_IDX);
 	}
-	
 	public void setBold(boolean bold) {
 		setCharFlagsTextPropVal(CharFlagsTextProp.BOLD_IDX, bold);
 	}
 	
+	public boolean isItalic() {
+		return isCharFlagsTextPropVal(CharFlagsTextProp.ITALIC_IDX);
+	}
+	public void setItalic(boolean italic) {
+		setCharFlagsTextPropVal(CharFlagsTextProp.ITALIC_IDX, italic);
+	}
+	
+	public boolean isUnderlined() {
+		return isCharFlagsTextPropVal(CharFlagsTextProp.UNDERLINE_IDX);
+	}
+	public void setUnderlined(boolean underlined) {
+		setCharFlagsTextPropVal(CharFlagsTextProp.UNDERLINE_IDX, underlined);
+	}
+	
+	public int getFontSize() {
+		return getCharTextPropVal("font.size");
+	}
+	public void setFontSize(int fontSize) {
+		setCharTextPropVal("font.size", fontSize);
+	}
+	
+	public void setFontName(String fontName) {
+		// Get the index for this font (adding if needed)
+		int fontIdx = slideShow.getFontCollection().addFont(fontName);
+		setCharTextPropVal("font.index", fontIdx);
+	}
+	public String getFontName() {
+		int fontIdx = getCharTextPropVal("font.index");
+		if(fontIdx == -1) { return null; }
+		return slideShow.getFontCollection().getFontWithId(fontIdx);
+	}
+	
+	
+	// --------------- Internal HSLF methods, not intended for end-user use! -------
 	
 	/**
 	 * Internal Use Only - get the underlying paragraph style collection.
