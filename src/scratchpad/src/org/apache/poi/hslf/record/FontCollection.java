@@ -81,8 +81,8 @@ public class FontCollection extends RecordContainer {
         fnt.setFontName(name);
         fonts.add(name);
 
-        // append new child to the end
-		_children = appendChildRecord(fnt,_children);
+        // Append new child to the end
+		appendChildRecord(fnt);
 
         return fonts.size()-1; //the added font is the last in the list
     }

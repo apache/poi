@@ -77,6 +77,13 @@ public class PersistPtrHolder extends PositionDependentRecordAtom
 	public Hashtable getSlideLocationsLookup() {
 		return _slideLocations;
 	}
+	/**
+	 * Get the lookup from slide numbers to their offsets inside
+	 *  _ptrData, used when adding or moving slides. 
+	 */
+	public Hashtable getSlideOffsetDataLocationsLookup() {
+		return _slideOffsetDataLocation;
+	}
 
 	/**
 	 * Adds a new slide, notes or similar, to be looked up by this.
@@ -104,6 +111,10 @@ public class PersistPtrHolder extends PositionDependentRecordAtom
 
 		// Update the atom header
 		LittleEndian.putInt(_header,4,newPtrData.length);
+		
+		// Update info (first 4 bytes in ptr data)
+		int info = (slideID << 20 | 1);
+		LittleEndian.putInt(_ptrData, 0, info);
 	}
 
 	/** 

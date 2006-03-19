@@ -118,6 +118,27 @@ public class ColorSchemeAtom extends RecordAtom
 		accentAndHyperlinkColourRGB = (int)LittleEndian.getInt(source,start+8+24);
 		accentAndFollowingHyperlinkColourRGB = (int)LittleEndian.getInt(source,start+8+28);
 	}
+	
+	/**
+	 * Create a new ColorSchemeAtom, to go with a new Slide
+	 */
+	public ColorSchemeAtom(){
+		_header = new byte[8];
+		LittleEndian.putUShort(_header, 0, 16);
+		LittleEndian.putUShort(_header, 2, (int)_type);
+		LittleEndian.putInt(_header, 4, 32);
+		 
+		// Setup the default rgb values
+		backgroundColourRGB = 16777215;
+		textAndLinesColourRGB = 0;
+		shadowsColourRGB = 8421504;
+		titleTextColourRGB = 0;
+		fillsColourRGB = 10079232;
+		accentColourRGB = 13382451;
+		accentAndHyperlinkColourRGB = 16764108;
+		accentAndFollowingHyperlinkColourRGB = 11711154;
+	}
+	
 
 	/**
 	 * We are of type 3999

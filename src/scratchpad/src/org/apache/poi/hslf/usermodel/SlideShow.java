@@ -34,6 +34,8 @@ import org.apache.poi.hslf.record.RecordContainer;
 import org.apache.poi.hslf.record.RecordTypes;
 import org.apache.poi.hslf.record.SlideAtom;
 import org.apache.poi.hslf.record.SlideListWithText;
+import org.apache.poi.hslf.record.SlidePersistAtom;
+import org.apache.poi.hslf.record.UserEditAtom;
 import org.apache.poi.hslf.record.SlideListWithText.*;
 import org.apache.poi.hslf.record.PersistPtrHolder;
 import org.apache.poi.hslf.record.PositionDependentRecord;
@@ -378,74 +380,94 @@ public class SlideShow
 	 * @throws IOException
 	 */
   	public Slide createSlide() throws IOException {
-//        RecordContainer slist=null;
-//        Record[] rec = doc.getChildRecords();
-//        int num = 0;
-//        for (int i = 0; i < rec.length; i++) {
-//            Record record = rec[i];
-//            if (record.getRecordType() == RecordTypes.SlideListWithText.typeID){
-//                if (num > 0){
-//                    slist = (RecordContainer)record;
-//                }
-//                num++;
-//            }
-//        }
-//        if (num == 1){
-//            slist = new SlideListWithText();
-//            rec = doc.getChildRecords();
-//            for (int i = 0; i < rec.length-1; i++) {
-//                Record record = rec[i+1];
-//                if (record.getRecordType() == RecordTypes.EndDocument.typeID){
-//
-//                    doc.addChildAfter(slist, rec[i]);
-//                }
-//            }
-//        }
-//        rec = slist.getChildRecords();
-//
-//        //add SlidePersistAtom
-//        SlidePersistAtom prev = rec.length == 0 ? null : (SlidePersistAtom)rec[rec.length - 1];
-//        SlidePersistAtom sp = new SlidePersistAtom();
-//
-//        //refernce is the 1-based index of the slide container in the document root.
-//        //it always starts with 3 (1 is Document, 2 is MainMaster, 3 is the first slide)
-//        sp.setRefID(prev == null ? 3 : (prev.getRefID() + 1));
-//        //first slideId is always 256
-//        sp.setSlideIdentifier(prev == null ? 256 : (prev.getSlideIdentifier() + 1));
-//
-//        Record[] r = slist.appendChildRecord(sp,
-//                slist.getChildRecords() == null ? new Record[]{} : slist.getChildRecords());
-//        slist.setChildRecords(r);
-//        Slide slide = new Slide();
-//
-//        int offset = 0;
-//        List lst = new ArrayList();
-//        for (int i = 0; i < _records.length; i++) {
-//            Record record = _records[i];
-//            lst.add(record);
-//            ByteArrayOutputStream out = new ByteArrayOutputStream();
-//            record.writeOut(out);
-//
-//            if (_records[i].getRecordType() == RecordTypes.PersistPtrIncrementalBlock.typeID){
-//                lst.add(i, slide.getSlideRecord());
-//
-//                slide.getSlideRecord().setLastOnDiskOffset(offset);
-//                PersistPtrHolder ptr = (PersistPtrHolder)_records[i];
-//                int id = sp.getRefID();
-//                ptr.getSlideDataLocationsLookup().put(new Integer(id), new Integer((i+1)*4));
-//                ptr.getSlideLocationsLookup().put(new Integer(id), new Integer(offset));
-//                ptr.addSlideLookup(id, offset);
-//
-//            }
-//            offset += out.size() ;
-//        }
-//        _records = (Record[])lst.toArray(new Record[lst.size()]);
-//        _hslfSlideShow.setRecords(_records);
-//
-//        UserEditAtom usr = (UserEditAtom)_records[_records.length-1];
-//        usr.setLastViewType((short)UserEditAtom.LAST_VIEW_SLIDE_VIEW);
-//        return slide;
-  		return null;
+  		SlideListWithText[] slwts = _documentRecord.getSlideListWithTexts();
+  		SlideListWithText slist = null;
+  		
+  		if(slwts.length > 1) {
+  			// Just use the last one
+  			slist = slwts[slwts.length - 1];
+  		} else {
+  			// Need to add a new one
+  			slist = new SlideListWithText();
+  			
+  			// Goes in just before the EndDocumentRecord
+  			Record[] docChildren = _documentRecord.getChildRecords();
+  			Record endDoc = docChildren[docChildren.length - 1];
+  			if(endDoc.getRecordType() != RecordTypes.EndDocument.typeID) {
+  				throw new IllegalStateException("The last child record of a Document should be EndDocument, but it was " + endDoc);
+  			}
+  			_documentRecord.addChildBefore(slist, endDoc);
+  		}
+
+  		Record[] rec = slist.getChildRecords();
+
+  		// Add SlidePersistAtom
+  		SlidePersistAtom prev = rec.length == 0 ? null : (SlidePersistAtom)rec[rec.length - 1];
+  		SlidePersistAtom sp = new SlidePersistAtom();
+
+  		// Refernce is the 1-based index of the slide container in 
+  		//  the document root.
+  		// It always starts with 3 (1 is Document, 2 is MainMaster, 3 is 
+  		//  the first slide)
+  		sp.setRefID(prev == null ? 3 : (prev.getRefID() + 1));
+  		// First slideId is always 256
+  		sp.setSlideIdentifier(prev == null ? 256 : (prev.getSlideIdentifier() + 1));
+  		
+  		slist.appendChildRecord(sp);
+  		
+  		// Create a new Slide
+  		Slide slide = new Slide();
+  		Slide[] s = new Slide[_slides.length+1];
+  		System.arraycopy(_slides, 0, s, 0, _slides.length);
+  		s[_slides.length] = slide;
+  		_slides = s;
+  		System.out.println("Added slide " + _slides.length + " with ref " + sp.getRefID() + " and identifier " + sp.getSlideIdentifier());
+  		
+  		// Add in to the core records
+  		org.apache.poi.hslf.record.Slide slideRecord = slide.getSlideRecord(); 
+  		int slideRecordPos = _hslfSlideShow.appendRootLevelRecord(slideRecord);
+
+  		// Add the new Slide into the PersistPtr stuff
+  		int offset = 0;
+  		int slideOffset = 0;
+  		PersistPtrHolder ptr = null;
+  		UserEditAtom usr = null;
+  		for (int i = 0; i < _records.length; i++) {
+  			Record record = _records[i];
+  			ByteArrayOutputStream out = new ByteArrayOutputStream();
+  			record.writeOut(out);
+  			
+  			// Grab interesting records as they come past
+  			if(_records[i].getRecordType() == RecordTypes.PersistPtrIncrementalBlock.typeID){
+  				ptr = (PersistPtrHolder)_records[i];
+  			}
+  			if(_records[i].getRecordType() == RecordTypes.UserEditAtom.typeID) {
+  				usr = (UserEditAtom)_records[i];
+  			}
+  			
+  			if(i == slideRecordPos) {
+  				slideOffset = offset;
+  			}
+  			offset += out.size();
+  		}
+  		
+		// Add the new slide into the last PersistPtr
+		slideRecord.setLastOnDiskOffset(slideOffset);
+		int id = sp.getRefID();
+		ptr.getSlideOffsetDataLocationsLookup().put(
+				new Integer(id), 
+				new Integer((slideRecordPos+1)*4)
+		);
+		ptr.getSlideLocationsLookup().put(
+				new Integer(id), new Integer(slideOffset));
+		ptr.addSlideLookup(id, slideOffset);
+		System.out.println("New slide ended up at " + slideOffset);
+
+		// Last view is now of the slide
+  		usr.setLastViewType((short)UserEditAtom.LAST_VIEW_SLIDE_VIEW);
+  		
+  		// All done and added
+  		return slide;
 	}
 
 

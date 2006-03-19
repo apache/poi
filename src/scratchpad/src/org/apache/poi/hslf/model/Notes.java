@@ -70,4 +70,5 @@ public class Notes extends Sheet
    * Returns the sheet number
    */
   public int getSheetNumber() { return _sheetNo; }
-} 
+  
+  protected PPDrawing getPPDrawing() { return _notes.getPPDrawing(); }} 

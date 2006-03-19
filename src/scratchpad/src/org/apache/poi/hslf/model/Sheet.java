@@ -19,7 +19,14 @@
 
 package org.apache.poi.hslf.model;
 
+import org.apache.poi.ddf.EscherContainerRecord;
+import org.apache.poi.ddf.EscherDgRecord;
+import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.hslf.record.*;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Vector;
 
 /**
@@ -40,6 +47,11 @@ public abstract class Sheet
    * Returns the sheet number
    */
   public abstract int getSheetNumber();
+  
+  /**
+   * Fetch the PPDrawing from the underlying record
+   */
+  protected abstract PPDrawing getPPDrawing();
 
   /**
    * For a given PPDrawing, grab all the TextRuns
@@ -106,4 +118,49 @@ public abstract class Sheet
 	}
   }
 
+  /**
+   * Returns all shapes contained in this Sheet
+   *
+   * @return all shapes contained in this Sheet (Slide or Notes)
+   */
+  public Shape[] getShapes() {
+	PPDrawing ppdrawing = getPPDrawing();
+	
+	EscherContainerRecord dg = (EscherContainerRecord)ppdrawing.getEscherRecords()[0];
+	EscherContainerRecord spgr = null;
+	List ch = dg.getChildRecords();
+
+	for (Iterator it = ch.iterator(); it.hasNext();) {
+		EscherRecord rec = (EscherRecord)it.next();
+		if (rec.getRecordId() == EscherContainerRecord.SPGR_CONTAINER){
+				spgr = (EscherContainerRecord)rec;
+				break;
+		}
+	}
+	ch = spgr.getChildRecords();
+
+	ArrayList shapes = new ArrayList();
+	for (int i=1;i<ch.size();i++) {
+		EscherContainerRecord sp = (EscherContainerRecord)ch.get(i);
+		shapes.add(ShapeFactory.createShape(sp, null));
+	}
+	
+	return (Shape[])shapes.toArray(new Shape[shapes.size()]);
+  }
+
+  /**
+   * Add a new Shape to this Slide
+   *
+   * @param shape - the Shape to add
+   */
+  public void addShape(Shape shape){
+	PPDrawing ppdrawing = getPPDrawing();
+
+	EscherContainerRecord dgContainer = (EscherContainerRecord)ppdrawing.getEscherRecords()[0];
+	EscherContainerRecord spgr = (EscherContainerRecord)Shape.getEscherChild(dgContainer, EscherContainerRecord.SPGR_CONTAINER);
+	spgr.addChildRecord(shape.getShapeRecord());
+
+	EscherDgRecord dg = (EscherDgRecord)Shape.getEscherChild(dgContainer, EscherDgRecord.RECORD_ID);
+	dg.setNumShapes(dg.getNumShapes()+1);
+  }
 } 

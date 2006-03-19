@@ -97,6 +97,17 @@ public class SlideListWithText extends RecordContainer
 		}
 	}
 
+	/**
+	 * Create a new, empty, SlideListWithText
+	 */
+	public SlideListWithText(){
+		_header = new byte[8];
+		LittleEndian.putUShort(_header, 0, 15);
+		LittleEndian.putUShort(_header, 2, (int)_type);
+		LittleEndian.putInt(_header, 4, 0);
+
+		_children = new Record[0];
+	}
 
 	/**
 	 * Get access to the SlideAtomsSets of the children of this record
