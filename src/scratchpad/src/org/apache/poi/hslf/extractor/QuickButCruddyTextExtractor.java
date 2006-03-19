@@ -28,7 +28,9 @@ import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.util.LittleEndian;
 
+import org.apache.poi.hslf.record.CString;
 import org.apache.poi.hslf.record.Record;
+import org.apache.poi.hslf.record.RecordTypes;
 import org.apache.poi.hslf.record.StyleTextPropAtom;
 import org.apache.poi.hslf.record.TextHeaderAtom;
 import org.apache.poi.hslf.record.TextBytesAtom;
@@ -181,17 +183,30 @@ public class QuickButCruddyTextExtractor
 		TextRun trun = null;
 
 		// TextBytesAtom
-		if(type == 4008l) {
+		if(type == RecordTypes.TextBytesAtom.typeID) {
 			TextBytesAtom tba = (TextBytesAtom)Record.createRecordForType(type, pptContents, startPos, len+8);
 			trun = new TextRun((TextHeaderAtom)null,tba,(StyleTextPropAtom)null);
 		}
 		// TextCharsAtom
-		if(type == 4000l) {
+		if(type == RecordTypes.TextCharsAtom.typeID) {
 			TextCharsAtom tca = (TextCharsAtom)Record.createRecordForType(type, pptContents, startPos, len+8);
 			trun = new TextRun((TextHeaderAtom)null,tca,(StyleTextPropAtom)null);
 		}
+		
+		// CString (doesn't go via a TextRun)
+		if(type == RecordTypes.CString.typeID) {
+			CString cs = (CString)Record.createRecordForType(type, pptContents, startPos, len+8);
+			String text = cs.getText();
+			
+			// Ignore the ones we know to be rubbish
+			if(text.equals("___PPT10")) {
+			} else if(text.equals("Default Design")) {
+			} else {
+				textV.add(text);
+			}
+		}
 
-		// If we found text, save it in the vector
+		// If we found text via a TextRun, save it in the vector
 		if(trun != null) {
 			textV.add(trun.getText());
 		}
