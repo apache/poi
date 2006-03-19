@@ -92,6 +92,46 @@ public class TestRecordContainer extends TestCase {
 		assertEquals(newRecord, ncr[cr.length]);
 	}
 	
+	public void testAddChildBefore() {
+		// Working with new StyleTextPropAtom
+		Record newRecord = new StyleTextPropAtom(0);
+		
+		// Try to add before a mid-record
+		Record[] cr = recordContainer.getChildRecords();
+		Record before = cr[2];
+		
+		recordContainer.addChildBefore(newRecord, before);
+		Record[] ncr = recordContainer.getChildRecords();
+		
+		assertEquals(cr.length+1, ncr.length);
+		assertEquals(newRecord, ncr[2]);
+		assertEquals(before, ncr[3]);
+		
+		
+		// Try again at the end
+		recordContainer._children = cr;
+		before = cr[cr.length-1];
+		
+		recordContainer.addChildBefore(newRecord, before);
+		ncr = recordContainer.getChildRecords();
+		
+		assertEquals(cr.length+1, ncr.length);
+		assertEquals(newRecord, ncr[cr.length-1]);
+		assertEquals(before, ncr[cr.length]);
+		
+		
+		// And at the start
+		recordContainer._children = cr;
+		before = cr[0];
+		
+		recordContainer.addChildBefore(newRecord, before);
+		ncr = recordContainer.getChildRecords();
+		
+		assertEquals(cr.length+1, ncr.length);
+		assertEquals(newRecord, ncr[0]);
+		assertEquals(before, ncr[1]);
+	}
+	
 	protected void setUp() throws Exception {
 		super.setUp();
 		
