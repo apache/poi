@@ -173,7 +173,7 @@ public class StyleTextPropAtom extends RecordAtom
 		paragraphStyles = new LinkedList();
 		charStyles = new LinkedList();
 
-		TextPropCollection defaultParagraphTextProps = new TextPropCollection(parentTextSize);
+		TextPropCollection defaultParagraphTextProps = new TextPropCollection(parentTextSize, (short)0);
 		paragraphStyles.add(defaultParagraphTextProps);
 
 		TextPropCollection defaultCharacterTextProps = new TextPropCollection(parentTextSize);
