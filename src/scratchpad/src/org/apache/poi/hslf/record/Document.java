@@ -35,7 +35,7 @@ public class Document extends PositionDependentRecordContainer
 
 	// Links to our more interesting children
 	private DocumentAtom documentAtom;
-	private Record environment;
+	private Environment environment;
 	private SlideListWithText[] slwts;
 
 	/**
@@ -46,7 +46,7 @@ public class Document extends PositionDependentRecordContainer
 	 * Returns the Environment of this Notes, which lots of
 	 *  settings for the document in it
 	 */
-	public Record getEnvironment() { return environment; }
+	public Environment getEnvironment() { return environment; }
 	/**
 	 * Returns all the SlideListWithTexts that are defined for
 	 *  this Document. They hold the text, and some of the text
@@ -79,8 +79,8 @@ public class Document extends PositionDependentRecordContainer
 			if(_children[i] instanceof SlideListWithText) {
 				slwtcount++;
 			}
-			if(_children[i].getRecordType() == RecordTypes.Environment.typeID) {
-				environment = _children[i];
+			if(_children[i] instanceof Environment) {
+				environment = (Environment)_children[i];
 			}
 		}
 		// Now grab them all
