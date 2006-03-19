@@ -293,8 +293,8 @@ public class TextRun
 			return;
 		}
 		
-		// Create a new one
-		_styleAtom = new StyleTextPropAtom(0);
+		// Create a new one at the right size
+		_styleAtom = new StyleTextPropAtom(getRawText().length());
 		
 		// Use the TextHeader atom to get at the parent
 		RecordContainer runAtomsParent = _headerAtom.getParentRecord();
