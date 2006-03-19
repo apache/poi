@@ -201,8 +201,10 @@ public class SlideShow
 	
 	// Now look for the interesting records in there
 	for(int i=0; i<_mostRecentCoreRecords.length; i++) {
+		// Find the Document, and interesting things in it
 		if(_mostRecentCoreRecords[i].getRecordType() == RecordTypes.Document.typeID) {
 			_documentRecord = (Document)_mostRecentCoreRecords[i];
+			_fonts = _documentRecord.getEnvironment().getFontCollection();
 		}
 	}
   }
@@ -238,7 +240,7 @@ public class SlideShow
 	}
 
 
-	// Now look for SlideListWithTexts in the most up-to-date Document Record
+	// Fetch the SlideListWithTexts in the most up-to-date Document Record
 	//
 	// Need to get the SlideAtomsSets for all of these. Then, query the
 	//  SlidePersistAtom, and group stuff together between SLWT blocks
@@ -257,23 +259,11 @@ public class SlideShow
 	// There shouldn't be any text duplication - only using the most
 	//  record Document record's SLWTs should see to that
 
-	Record[] docChildren = _documentRecord.getChildRecords();
-	for(int i=0; i<docChildren.length; i++) {
-		// Look for SlideListWithText
-		if(docChildren[i] instanceof SlideListWithText) {
-			slwtV.add(docChildren[i]);
-		}
-		// Look for FontCollection under Environment
-		if(docChildren[i].getRecordType() == RecordTypes.Environment.typeID) {
-			Record[] envChildren = docChildren[i].getChildRecords();
-			for(int j=0; j<envChildren.length; j++) {
-				if(envChildren[j] instanceof FontCollection) {
-					_fonts = (FontCollection)envChildren[j];
-				}
-			}
-		}
+	SlideListWithText[] slwts = _documentRecord.getSlideListWithTexts();
+	for(int i=0; i<slwts.length; i++) {
+		slwtV.add(slwts[i]);
 	}
-
+	
 	// For now, grab out all the sets of Atoms in the SlideListWithText's
 	// Only store those which aren't empty
 	// Also, get the list of IDs while we're at it
