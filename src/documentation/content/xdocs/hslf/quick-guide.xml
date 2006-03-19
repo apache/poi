@@ -26,9 +26,16 @@ from both.
 (from a <code>org.apache.poi.HSLFSlideShow</code>, which accepts a file or an input
 stream). Use <code>getSlides()</code> and <code>getNotes()</code> to get the slides and notes.
 These can be queried to get their page ID (though they should be returned
-in the right order). You can also call <code>getTextRuns()</code> on these, to get their
-blocks of text. From the <code>TextRun</code>, you can extract the text, and check
-what type of text it is (eg Body, Title)
+in the right order).</p>
+		<p>You can then call <code>getTextRuns()</code> on these, to get 
+their blocks of text. (One TextRun normally holds all the text in a 
+given area of the page, eg in the title bar, or in a box).
+From the <code>TextRun</code>, you can extract the text, and check
+what type of text it is (eg Body, Title). You can allso call
+<code>getRichTextRuns()</code>, which will return the 
+<code>RichTextRun</code>s that make up the <code>TextRun</code>. A 
+<code>RichTextRun</code> is made up of a sequence of text, all having the
+same character and paragraph formatting.
 		</p>
 		</section>
 		
@@ -53,11 +60,22 @@ what type of text it is (eg Body, Title)
 
 		<section><title>Changing Text</title>
 		<p>It is possible to change the text via 
-		<code>TextRun.setText(String)</code>. However, if the length of 
-		the text is changed, things will break because PowerPoint has
-		internal file references in byte offsets. We currently update all
-		of these byte references that we know about when writing out, but
-		there are a few more still to be found.
+		<code>TextRun.setText(String)</code> or
+		<code>RichTextRun.setText(String)</code>. It is not yet possible
+		to add additional TextRuns or RichTextRuns.</p>
+		<p>When calling <code>TextRun.setText(String)</code>, all
+		the text will end up with the same formatting. When calling
+		<code>RichTextRun.setText(String)</code>, the text will retain
+		the old formatting of that <code>RichTextRun</code>.
+		</p>
+		</section>
+
+		<section><title>Adding Slides</title>
+		<p>You may add new slides by calling
+		<code>SlideShow.createSlide()</code>, which will add a new slide
+		to the end of the SlideShow. It is not currently possible to
+		re-order slides, nor to add new text to slides (currently only
+		adding Escher objects to new slides is supported).
 		</p>
 		</section>
 		
@@ -72,12 +90,28 @@ what type of text it is (eg Body, Title)
 		Base class of all records. Also provides the main record generation
 		code, which will build up a tree of records for a file.
   		</li>
-  		<li><code>org.apache.poi.hslf.usermode.SlideShow</code>
+  		<li><code>org.apache.poi.hslf.usermodel.SlideShow</code>
   Builds up model entries from the records, and presents a user facing
   view of the file
   		</li>
+  		<li><code>org.apache.poi.hslf.model.Slide</code>
+  A user facing view of a Slide in a slidesow. Allows you to get at the 
+  Text of the slide, and at any drawing objects on it.
+  		</li>
+  		<li><code>org.apache.poi.hslf.model.TextRun</code>
+  Holds all the Text in a given area of the Slide, and will
+  contain one or more <code>RichTextRun</code>s.
+  		</li>
+  		<li><code>org.apache.poi.hslf.usermodel.RichTextRun</code>
+  Holds a run of text, all having the same character and
+  paragraph stylings. It is possible to modify text, and/or text stylings.
+  		</li>
   		<li><code>org.apache.poi.hslf.extractor.PowerPointExtractor</code>
   Uses the model code to allow extraction of text from files
+		</li>
+		<li><code>org.apache.poi.extractor.QuickButCruddyTextExtractor</code>
+  Uses the record code to extract all the text from files very fast, 
+  but including deleted text (and other bits of Crud).
 		</li>
 		</ul>
 		</section>
