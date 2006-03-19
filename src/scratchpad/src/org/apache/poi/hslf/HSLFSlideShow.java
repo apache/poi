@@ -262,6 +262,7 @@ public class HSLFSlideShow
 			int oldPos = pdr.getLastOnDiskOffset();
 			int newPos = baos.size();
 			pdr.setLastOnDiskOffset(newPos);
+			//System.out.println(i + "  " + oldPos + " " + newPos);
 			oldToNewPositions.put(new Integer(oldPos),new Integer(newPos));
 			pdr.updateOtherRecordReferences(oldToNewPositions);
 		}
@@ -317,6 +318,31 @@ public class HSLFSlideShow
    * Returns an array of all the records found in the slideshow
    */
   public Record[] getRecords() { return _records; }
+  
+  /**
+   * Adds a new root level record, at the end, but before the last
+   *  PersistPtrIncrementalBlock.
+   */
+  public synchronized int appendRootLevelRecord(Record newRecord) {
+	  int addedAt = -1;
+	  Record[] r = new Record[_records.length+1];
+	  boolean added = false;
+	  for(int i=(_records.length-1); i>=0; i--) {
+		  if(added) {
+			  // Just copy over
+			  r[i] = _records[i];
+		  } else {
+			  r[(i+1)] = _records[i];
+			  if(_records[i] instanceof PersistPtrHolder) {
+				  r[i] = newRecord;
+				  added = true;
+				  addedAt = i;
+			  }
+		  }
+	  }
+	  _records = r;
+	  return addedAt;
+  }
 
   /**
    * Returns an array of the bytes of the file. Only correct after a

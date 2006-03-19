@@ -111,6 +111,27 @@ public class SlideAtom extends RecordAtom
 		reserved = new byte[len-30];
 		System.arraycopy(source,start+30,reserved,0,reserved.length);
 	}
+	
+	/**
+	 * Create a new SlideAtom, to go with a new Slide
+	 */
+	public SlideAtom(){
+		_header = new byte[8];
+		LittleEndian.putUShort(_header, 0, 2);
+		LittleEndian.putUShort(_header, 2, (int)_type);
+		LittleEndian.putInt(_header, 4, 24);
+		 
+		byte[] ssdate = new byte[12];
+		layoutAtom = new SSlideLayoutAtom(ssdate);
+		layoutAtom.setGeometryType(SSlideLayoutAtom.BLANK_SLIDE);
+
+		followMasterObjects = true;
+		followMasterScheme = true;
+		followMasterBackground = true;
+		masterID = -2147483648;
+		notesID = 0;
+		reserved = new byte[2];
+	}
 
 	/**
 	 * We are of type 1007
@@ -180,6 +201,8 @@ public class SlideAtom extends RecordAtom
 
 		/** Retrieve the geometry type */
 		public int getGeometryType() { return geometry; }
+		/** Set the geometry type */
+		public void setGeometryType(int geom) { geometry = geom; }
 
 		/**
 		 * Create a new Embeded SSlideLayoutAtom, from 12 bytes of data

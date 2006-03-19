@@ -86,7 +86,13 @@ public class Slide extends Sheet
 		_runs[i] = _otherRuns[k];
 	}
   }
-
+  
+  /**
+   * Create a new Slide instance
+   */
+  public Slide(){
+	_slide = new org.apache.poi.hslf.record.Slide();    
+  }
 
   /**
    * Sets the Notes that are associated with this. Updates the
@@ -129,4 +135,6 @@ public class Slide extends Sheet
    * Returns the Notes Sheet for this slide, or null if there isn't one
    */
   public Notes getNotesSheet() { return _notes; }
+  
+  protected PPDrawing getPPDrawing() { return _slide.getPPDrawing(); }
 } 

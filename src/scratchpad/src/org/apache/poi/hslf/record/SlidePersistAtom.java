@@ -48,6 +48,14 @@ public class SlidePersistAtom extends RecordAtom
 	public int getSlideIdentifier() { return slideIdentifier; }
 	public int getNumPlaceholderTexts() { return numPlaceholderTexts; }
 	public boolean getHasShapesOtherThanPlaceholders() { return hasShapesOtherThanPlaceholders; }
+	
+	// Only set these if you know what you're doing!
+	public void setRefID(int id) {
+		refID = id;
+	}
+	public void setSlideIdentifier(int id) {
+		slideIdentifier = id;
+	}
 
 	/* *************** record code follows ********************** */
 
@@ -83,6 +91,19 @@ public class SlidePersistAtom extends RecordAtom
 		//  all zero running from 24 bytes in to the end
 		reservedFields = new byte[len-24];
 		System.arraycopy(source,start+24,reservedFields,0,reservedFields.length);
+	}
+	
+	/**
+	 * Create a new SlidePersistAtom, for use with a new Slide
+	 */
+	public SlidePersistAtom(){
+		_header = new byte[8];
+		LittleEndian.putUShort(_header, 0, 0);
+		LittleEndian.putUShort(_header, 2, (int)_type);
+		LittleEndian.putInt(_header, 4, 20);
+
+		hasShapesOtherThanPlaceholders = true;
+		reservedFields = new byte[4];
 	}
 
 	/**

@@ -48,17 +48,12 @@ public abstract class RecordContainer extends Record
 	public boolean isAnAtom() { return false; }
 
 	/**
-	 * Add a new child record onto a record's list of children, and 
-	 *  return the new list.
+	 * Add a new child record onto a record's list of children.
 	 */
-	public Record[] appendChildRecord(Record newChild, Record[] children) {
-		Record[] r;
+	public void appendChildRecord(Record newChild) {
 		synchronized(addingChildRecordLock) {
-			r = new Record[children.length + 1];
-			System.arraycopy(children,0,r,0,children.length);
-			r[r.length-1] = newChild;
+			addChildAt(newChild, _children.length);
 		}
-		return r;
 	}
 	
 	/**

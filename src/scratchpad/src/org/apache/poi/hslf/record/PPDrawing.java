@@ -21,6 +21,7 @@ package org.apache.poi.hslf.record;
 import org.apache.poi.util.LittleEndian;
 
 import org.apache.poi.ddf.*;
+import org.apache.poi.hslf.model.ShapeTypes;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -96,6 +97,20 @@ public class PPDrawing extends RecordAtom
 		for(int i=0; i<textboxWrappers.length; i++) {
 			textboxWrappers[i] = (EscherTextboxWrapper)textboxes.get(i);
 		}
+	}
+	
+	/**
+	 * Creates a new, empty, PPDrawing (typically for use with a new Slide
+	 *  or Notes)
+	 */
+	public PPDrawing(){
+		_header = new byte[8];
+		LittleEndian.putUShort(_header, 0, 15);
+		LittleEndian.putUShort(_header, 2, (int)RecordTypes.PPDrawing.typeID);
+		LittleEndian.putInt(_header, 4, 0);
+		 
+		textboxWrappers = new EscherTextboxWrapper[]{};
+		create();
 	}
 
 	/** 
@@ -187,5 +202,64 @@ public class PPDrawing extends RecordAtom
 
 		// Finally, write out the children
 		out.write(b);
+	}
+
+	/**
+	 * Create the Escher records associated with a new PPDrawing
+	 */
+	private void create(){
+		EscherContainerRecord dgContainer = new EscherContainerRecord();
+		dgContainer.setRecordId( EscherContainerRecord.DG_CONTAINER );
+		dgContainer.setOptions((short)15);
+
+		EscherDgRecord dg = new EscherDgRecord();
+		dg.setOptions((short)16);
+		dg.setNumShapes(1);
+		dgContainer.addChildRecord(dg);
+
+		EscherContainerRecord spgrContainer = new EscherContainerRecord();
+		spgrContainer.setOptions((short)15);
+		spgrContainer.setRecordId(EscherContainerRecord.SPGR_CONTAINER);
+		
+		EscherContainerRecord spContainer = new EscherContainerRecord();
+		spContainer.setOptions((short)15);
+		spContainer.setRecordId(EscherContainerRecord.SP_CONTAINER);
+		
+		EscherSpgrRecord spgr = new EscherSpgrRecord();
+		spgr.setOptions((short)1);
+		spContainer.addChildRecord(spgr);
+
+		EscherSpRecord sp = new EscherSpRecord();
+		sp.setOptions((short)((ShapeTypes.NotPrimitive << 4) + 2));
+		sp.setFlags(EscherSpRecord.FLAG_PATRIARCH | EscherSpRecord.FLAG_GROUP);
+		spContainer.addChildRecord(sp);
+		spgrContainer.addChildRecord(spContainer);
+		dgContainer.addChildRecord(spgrContainer);
+
+		spContainer = new EscherContainerRecord();
+		spContainer.setOptions((short)15);
+		spContainer.setRecordId(EscherContainerRecord.SP_CONTAINER);
+		sp = new EscherSpRecord();
+		sp.setOptions((short)((ShapeTypes.Rectangle << 4) + 2));
+		sp.setFlags(EscherSpRecord.FLAG_BACKGROUND | EscherSpRecord.FLAG_HASSHAPETYPE);
+		spContainer.addChildRecord(sp);
+
+		EscherOptRecord opt = new EscherOptRecord();
+		opt.setRecordId(EscherOptRecord.RECORD_ID);
+		opt.addEscherProperty(new EscherRGBProperty(EscherProperties.FILL__FILLCOLOR, 134217728));
+		opt.addEscherProperty(new EscherRGBProperty(EscherProperties.FILL__FILLBACKCOLOR, 134217733));
+		opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.FILL__RECTRIGHT, 10064750));
+		opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.FILL__RECTBOTTOM, 7778750));
+		opt.addEscherProperty(new EscherBoolProperty(EscherProperties.FILL__NOFILLHITTEST, 1179666));
+		opt.addEscherProperty(new EscherBoolProperty(EscherProperties.LINESTYLE__NOLINEDRAWDASH, 524288));
+		opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.SHAPE__BLACKANDWHITESETTINGS, 9));
+		opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.SHAPE__BACKGROUNDSHAPE, 65537));
+		spContainer.addChildRecord(opt);
+
+		dgContainer.addChildRecord(spContainer);
+
+		childRecords = new EscherRecord[]{
+			dgContainer
+		};
 	}
 }

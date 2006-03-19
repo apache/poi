@@ -18,10 +18,10 @@
 
 package org.apache.poi.hslf.record;
 
-import org.apache.poi.util.LittleEndian;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.ByteArrayOutputStream;
+
+import org.apache.poi.util.LittleEndian;
 
 /**
  * Master container for Slides. There is one of these for every slide,
@@ -73,6 +73,27 @@ public class Slide extends PositionDependentRecordContainer
 		}
 	}
 
+	/**
+	 * Create a new, empty, Slide, along with its required
+	 *  child records.
+	 */
+	public Slide(){
+		_header = new byte[8];
+		LittleEndian.putUShort(_header, 0, 15);
+		LittleEndian.putUShort(_header, 2, (int)_type);
+		LittleEndian.putInt(_header, 4, 0);
+
+		slideAtom = new SlideAtom();
+		ppDrawing = new PPDrawing();
+
+		ColorSchemeAtom colorAtom = new ColorSchemeAtom();
+
+		_children = new Record[] {
+			slideAtom,
+			ppDrawing,
+			colorAtom
+		};
+	}
 
 	/**
 	 * We are of type 1006

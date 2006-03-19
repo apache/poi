@@ -66,6 +66,7 @@ public class UserEditAtom extends PositionDependentRecordAtom
 	// More scary internal setters
 	public void setLastUserEditAtomOffset(int offset) { lastUserEditAtomOffset = offset; }
 	public void setPersistPointersOffset(int offset)  { persistPointersOffset = offset; }
+	public void setLastViewType(short type)           { lastViewType=type; }
 
 	/* *************** record code follows ********************** */
 
