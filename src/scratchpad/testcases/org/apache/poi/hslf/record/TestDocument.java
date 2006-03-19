@@ -28,6 +28,7 @@ import org.apache.poi.poifs.filesystem.*;
 
 /**
  * Tests that Document works properly
+ * (Also tests Environment while we're at it)
  *
  * @author Nick Burch (nick at torchbox dot com)
  */
@@ -66,7 +67,7 @@ public class TestDocument extends TestCase {
     	assertTrue(dr.getDocumentAtom() instanceof DocumentAtom);
     	
     	assertNotNull(dr.getEnvironment());
-    	assertEquals(RecordTypes.Environment.typeID, dr.getEnvironment().getRecordType());
+    	assertTrue(dr.getEnvironment() instanceof Environment);
     	
     	assertNotNull(dr.getSlideListWithTexts());
     	assertEquals(3, dr.getSlideListWithTexts().length);
@@ -76,6 +77,15 @@ public class TestDocument extends TestCase {
     	assertTrue(dr.getSlideListWithTexts()[1] instanceof SlideListWithText);
     	assertNotNull(dr.getSlideListWithTexts()[2]);
     	assertTrue(dr.getSlideListWithTexts()[2] instanceof SlideListWithText);
+    }
+    
+    public void testEnvironment() throws Exception {
+    	Document dr = getDocRecord();
+    	Environment env = dr.getEnvironment();
+    	
+    	assertEquals(1010, env.getRecordType());
+    	assertNotNull(env.getFontCollection());
+    	assertTrue(env.getFontCollection() instanceof FontCollection);
     }
     
     // No need to check re-writing - hslf.TestReWrite does all that for us
