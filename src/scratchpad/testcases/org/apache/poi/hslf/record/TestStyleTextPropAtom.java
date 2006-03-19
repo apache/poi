@@ -31,20 +31,24 @@ import java.util.LinkedList;
  * @author Nick Burch (nick at torchbox dot com)
  */
 public class TestStyleTextPropAtom extends TestCase {
-	// From a real file: a paragraph with 4 different styles:
-	// ??? (21)
-	// ??? (17)
-	// ??? (16)
-	private byte[] data_a = new byte[] { 0, 0, 0xA1-256, 0x0F, 0x2A, 0, 0, 0,
-      0x36, 00, 00, 00, 00, 00, 00, 00, 
-	  00, 00, 0x15, 00, 00, 00, 00, 00,
-      00, 00, 0x11, 00, 00, 00, 00, 00,
-	  0x04, 00, 00, 00, 00, 0x05, 0x10, 00,
-      00, 00, 00, 00, 0x04, 00, 0xFF-256, 0x33, 00, 0xFE-256
+	// From a real file: a paragraph with 4 different styles
+	private byte[] data_a = new byte[] { 
+	  0, 0, 0xA1-256, 0x0F, 0x2A, 0, 0, 0,
+      0x36, 00, 00, 00, // paragraph is 54 long 
+      00, 00,           // (paragraph reserved field)
+      00, 00, 00, 00,   // it doesn't have any styles
+      0x15, 00, 00, 00, // first char run is 21 long
+      00, 00, 00, 00,   // it doesn't have any styles
+      0x11, 00, 00, 00, // second char run is 17 long
+      00, 00, 0x04, 00, // font.color only
+      00, 00, 00, 0x05, // blue
+      0x10, 00, 00, 00, // third char run is 16 long
+      00, 00, 0x04, 00, // font.color only
+      0xFF-256, 0x33, 00, 0xFE-256 // red
 	};
 	private int data_a_text_len = 54;
 
-	// From a real file: a paragraph with text in 4 different styles:
+	// From a real file: 4 paragraphs with text in 4 different styles:
 	// left aligned+bold (30)
 	// centre aligned+italic+blue (28)
 	// right aligned+red (25)
@@ -363,6 +367,46 @@ public class TestStyleTextPropAtom extends TestCase {
 			fail();
 		} catch(IllegalArgumentException e) {
 			// Good, as expected
+		}
+	}
+	
+	/**
+	 * Try to recreate an existing StyleTextPropAtom from the empty
+	 *  constructor, and setting the required properties
+	 */
+	public void testCreateFromScatch() throws Exception {
+		// Start with an empty one
+		StyleTextPropAtom stpa = new StyleTextPropAtom(54);
+		
+		// Don't need to touch the paragraph styles
+		// Add two more character styles
+		LinkedList cs = stpa.getCharacterStyles();
+		
+		// First char style is boring, and 21 long
+		TextPropCollection tpca = (TextPropCollection)cs.get(0);
+		tpca.updateTextSize(21);
+		
+		// Second char style is coloured, 00 00 00 05, and 17 long
+		TextPropCollection tpcb = new TextPropCollection(17);
+		TextProp tpb = tpcb.addWithName("font.color");
+		tpb.setValue(0x05000000);
+		cs.add(tpcb);
+		
+		// Third char style is coloured, FF 33 00 FE, and 16 long
+		TextPropCollection tpcc = new TextPropCollection(16);
+		TextProp tpc = tpcc.addWithName("font.color");
+		tpc.setValue(0xFE0033FF);
+		cs.add(tpcc);
+		
+		// Should now be the same as data_a
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		stpa.writeOut(baos);
+		byte[] b = baos.toByteArray();
+
+		assertEquals(data_a.length, b.length);
+		for(int i=0; i<data_a.length; i++) {
+			System.out.println(i + "\t" + b[i] + "\t" + data_a[i]);
+			assertEquals(data_a[i],b[i]);
 		}
 	}
 

@@ -1,5 +1,8 @@
 package org.apache.poi.hslf.usermodel;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+
 import org.apache.poi.hslf.HSLFSlideShow;
 import org.apache.poi.hslf.model.Slide;
 import org.apache.poi.hslf.model.TextRun;
@@ -151,5 +154,44 @@ public class TestRichTextRun extends TestCase {
 		assertNotNull(rtr._getRawCharacterStyle());
 		assertNotNull(rtr._getRawParagraphStyle());
 		assertEquals(2, ss.getFontCollection().getChildRecords().length);
+	}
+	
+	public void testChangeWriteRead() throws Exception {
+		HSLFSlideShow[] h = new HSLFSlideShow[] { hss, hssRichA, hssRichB };
+		Slide[] s = new Slide[] { ss.getSlides()[0], ssRichA.getSlides()[0], ssRichB.getSlides()[0] };
+		
+		for(int i=0; i<h.length; i++) {
+			// Change
+			Slide slideOne = s[i];
+			TextRun[] textRuns = slideOne.getTextRuns();
+			RichTextRun rtr = textRuns[0].getRichTextRuns()[0];
+			
+			rtr.setBold(true);
+			rtr.setFontSize(18);
+			rtr.setFontName("Courier");
+			
+			// Write out and back in
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			h[i].write(baos);
+			ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+			
+			HSLFSlideShow readHSLF = new HSLFSlideShow(bais);
+			SlideShow readS = new SlideShow(readHSLF);
+			
+			// Tweak existing one again, to ensure really worked
+			rtr.setBold(false);
+			rtr.setFontSize(17);
+			rtr.setFontName("CourierZZ");
+			
+			
+			// Check written out/back ing one contains modifications
+			Slide slideOneRR = readS.getSlides()[0];
+			TextRun[] textRunsRR = slideOneRR.getTextRuns();
+			RichTextRun rtrRRa = textRunsRR[0].getRichTextRuns()[0];
+			
+			assertEquals(true, rtrRRa.isBold());
+			assertEquals(18, rtrRRa.getFontSize());
+			assertEquals("Courier", rtrRRa.getFontName());
+		}
 	}
 }
