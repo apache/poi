@@ -34,7 +34,7 @@ public class RecordTypes {
     public static HashMap typeToClass;
 
     public static final Type Unknown = new Type(0,null);
-    public static final Type Document = new Type(1000,DummyPositionSensitiveRecordWithChildren.class);
+    public static final Type Document = new Type(1000,Document.class);
     public static final Type DocumentAtom = new Type(1001,DocumentAtom.class);
     public static final Type EndDocument = new Type(1002,null);
     public static final Type Slide = new Type(1006,Slide.class);

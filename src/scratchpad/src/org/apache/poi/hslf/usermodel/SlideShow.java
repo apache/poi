@@ -20,12 +20,13 @@
 package org.apache.poi.hslf.usermodel;
 
 import java.util.*;
+import java.awt.Dimension;
 import java.io.*;
-
-import org.apache.poi.util.LittleEndian;
 
 import org.apache.poi.hslf.*;
 import org.apache.poi.hslf.model.*;
+import org.apache.poi.hslf.record.Document;
+import org.apache.poi.hslf.record.DocumentAtom;
 import org.apache.poi.hslf.record.FontCollection;
 import org.apache.poi.hslf.record.ParentAwareRecord;
 import org.apache.poi.hslf.record.Record;
@@ -62,7 +63,7 @@ public class SlideShow
   private Record[] _mostRecentCoreRecords;
   
   // Records that are interesting
-  private Record _documentRecord;
+  private Document _documentRecord;
 
   // Friendly objects for people to deal with
   private Slide[] _slides;
@@ -201,7 +202,7 @@ public class SlideShow
 	// Now look for the interesting records in there
 	for(int i=0; i<_mostRecentCoreRecords.length; i++) {
 		if(_mostRecentCoreRecords[i].getRecordType() == RecordTypes.Document.typeID) {
-			_documentRecord = _mostRecentCoreRecords[i];
+			_documentRecord = (Document)_mostRecentCoreRecords[i];
 		}
 	}
   }
@@ -380,6 +381,83 @@ public class SlideShow
 	}
   }
 
+	/**
+	 * Create a blank <code>Slide</code>.
+	 *
+	 * @return  the created <code>Slide</code>
+	 * @throws IOException
+	 */
+  	public Slide createSlide() throws IOException {
+//        RecordContainer slist=null;
+//        Record[] rec = doc.getChildRecords();
+//        int num = 0;
+//        for (int i = 0; i < rec.length; i++) {
+//            Record record = rec[i];
+//            if (record.getRecordType() == RecordTypes.SlideListWithText.typeID){
+//                if (num > 0){
+//                    slist = (RecordContainer)record;
+//                }
+//                num++;
+//            }
+//        }
+//        if (num == 1){
+//            slist = new SlideListWithText();
+//            rec = doc.getChildRecords();
+//            for (int i = 0; i < rec.length-1; i++) {
+//                Record record = rec[i+1];
+//                if (record.getRecordType() == RecordTypes.EndDocument.typeID){
+//
+//                    doc.addChildAfter(slist, rec[i]);
+//                }
+//            }
+//        }
+//        rec = slist.getChildRecords();
+//
+//        //add SlidePersistAtom
+//        SlidePersistAtom prev = rec.length == 0 ? null : (SlidePersistAtom)rec[rec.length - 1];
+//        SlidePersistAtom sp = new SlidePersistAtom();
+//
+//        //refernce is the 1-based index of the slide container in the document root.
+//        //it always starts with 3 (1 is Document, 2 is MainMaster, 3 is the first slide)
+//        sp.setRefID(prev == null ? 3 : (prev.getRefID() + 1));
+//        //first slideId is always 256
+//        sp.setSlideIdentifier(prev == null ? 256 : (prev.getSlideIdentifier() + 1));
+//
+//        Record[] r = slist.appendChildRecord(sp,
+//                slist.getChildRecords() == null ? new Record[]{} : slist.getChildRecords());
+//        slist.setChildRecords(r);
+//        Slide slide = new Slide();
+//
+//        int offset = 0;
+//        List lst = new ArrayList();
+//        for (int i = 0; i < _records.length; i++) {
+//            Record record = _records[i];
+//            lst.add(record);
+//            ByteArrayOutputStream out = new ByteArrayOutputStream();
+//            record.writeOut(out);
+//
+//            if (_records[i].getRecordType() == RecordTypes.PersistPtrIncrementalBlock.typeID){
+//                lst.add(i, slide.getSlideRecord());
+//
+//                slide.getSlideRecord().setLastOnDiskOffset(offset);
+//                PersistPtrHolder ptr = (PersistPtrHolder)_records[i];
+//                int id = sp.getRefID();
+//                ptr.getSlideDataLocationsLookup().put(new Integer(id), new Integer((i+1)*4));
+//                ptr.getSlideLocationsLookup().put(new Integer(id), new Integer(offset));
+//                ptr.addSlideLookup(id, offset);
+//
+//            }
+//            offset += out.size() ;
+//        }
+//        _records = (Record[])lst.toArray(new Record[lst.size()]);
+//        _hslfSlideShow.setRecords(_records);
+//
+//        UserEditAtom usr = (UserEditAtom)_records[_records.length-1];
+//        usr.setLastViewType((short)UserEditAtom.LAST_VIEW_SLIDE_VIEW);
+//        return slide;
+  		return null;
+	}
+
 
   /**
    * Writes out the slideshow file the is represented by an instance of
@@ -393,29 +471,29 @@ public class SlideShow
    }
 
 
-  // Accesser methods follow
+	// Accesser methods follow
 
-  /**
-   * Returns an array of the most recent version of all the interesting
-   *  records
-   */
-  public Record[] getMostRecentCoreRecords() { return _mostRecentCoreRecords; }
+	/**
+	 * Returns an array of the most recent version of all the interesting
+	 *  records
+	 */
+	public Record[] getMostRecentCoreRecords() { return _mostRecentCoreRecords; }
 
-  /**
-   * Returns an array of all the normal Slides found in the slideshow
-   */
-  public Slide[] getSlides() { return _slides; }
+	/**
+	 * Returns an array of all the normal Slides found in the slideshow
+	 */
+	public Slide[] getSlides() { return _slides; }
 
-  /**
-   * Returns an array of all the normal Notes found in the slideshow
-   */
-  public Notes[] getNotes() { return _notes; }
+	/**
+	 * Returns an array of all the normal Notes found in the slideshow
+	 */
+	public Notes[] getNotes() { return _notes; }
 
-  /**
-   * Returns an array of all the meta Sheets (master sheets etc) 
-   * found in the slideshow
-   */
-  //public MetaSheet[] getMetaSheets() { return _msheets; }
+	/**
+	 * Returns an array of all the meta Sheets (master sheets etc) 
+	 * found in the slideshow
+	 */
+	//public MetaSheet[] getMetaSheets() { return _msheets; }
 
 	/**
 	 * Returns all the pictures attached to the SlideShow
@@ -425,11 +503,19 @@ public class SlideShow
 	}
 	
 	/**
+	 * Return the current page size
+	 */
+	public Dimension getPageSize(){
+		DocumentAtom docatom = _documentRecord.getDocumentAtom();
+		return new Dimension((int)docatom.getSlideSizeX(), (int)docatom.getSlideSizeY());
+	}
+	
+	/**
 	 * Helper method for usermodel: Get the font collection
 	 */
 	protected FontCollection getFontCollection() { return _fonts; }
 	/**
 	 * Helper method for usermodel: Get the document record
 	 */
-	protected Record getDocumentRecord() { return _documentRecord; }
+	protected Document getDocumentRecord() { return _documentRecord; }
 }
