@@ -37,24 +37,30 @@ public class TestRecordContainer extends TestCase {
 	}
 	
 	public void testAppendChildRecord() {
+		// Grab records for testing with
+		Record r = recordContainer.getChildRecords()[0];
+		Record rb = recordContainer.getChildRecords()[1];
+		Record rc = recordContainer.getChildRecords()[2];
+		Record rd = recordContainer.getChildRecords()[3];
+		
 		// Start with an empty set
 		Record[] rs = new Record[0];
-		Record r = recordContainer.getChildRecords()[0];
-		Record[] nrs = recordContainer.appendChildRecord(r, rs);
+		recordContainer._children = rs;
+		recordContainer.appendChildRecord(r);
+		Record[] nrs = recordContainer.getChildRecords();
 		
 		assertEquals(1, nrs.length);
 		assertEquals(r, nrs[0]);
 		
 		// Now start with one with 3 entries
 		rs = new Record[3];
-		Record rb = recordContainer.getChildRecords()[1];
-		Record rc = recordContainer.getChildRecords()[2];
-		Record rd = recordContainer.getChildRecords()[3];
+		recordContainer._children = rs;
 		rs[0] = rb;
 		rs[1] = rc;
 		rs[2] = rd;
 		
-		nrs = recordContainer.appendChildRecord(r, rs);
+		recordContainer.appendChildRecord(r);
+		nrs = recordContainer.getChildRecords();
 		
 		assertEquals(4, nrs.length);
 		assertEquals(rb, nrs[0]);
