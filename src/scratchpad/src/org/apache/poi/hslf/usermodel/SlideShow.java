@@ -399,10 +399,14 @@ public class SlideShow
   			_documentRecord.addChildBefore(slist, endDoc);
   		}
 
-  		Record[] rec = slist.getChildRecords();
-
-  		// Add SlidePersistAtom
-  		SlidePersistAtom prev = rec.length == 0 ? null : (SlidePersistAtom)rec[rec.length - 1];
+  		// Grab the last SlidePersistAtom, if there was one
+  		SlidePersistAtom prev = null;
+  		SlideAtomsSet[] sas = slist.getSlideAtomsSets(); 
+  		if(sas != null && sas.length > 0) {
+  			prev = sas[sas.length - 1].getSlidePersistAtom();
+  		}
+  		
+  		// Add a new SlidePersistAtom
   		SlidePersistAtom sp = new SlidePersistAtom();
 
   		// Refernce is the 1-based index of the slide container in 
@@ -413,6 +417,7 @@ public class SlideShow
   		// First slideId is always 256
   		sp.setSlideIdentifier(prev == null ? 256 : (prev.getSlideIdentifier() + 1));
   		
+  		// Add this new SlidePersistAtom to the SlideListWithText
   		slist.appendChildRecord(sp);
   		
   		// Create a new Slide
