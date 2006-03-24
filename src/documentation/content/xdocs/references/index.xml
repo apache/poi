@@ -3,36 +3,47 @@
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "./dtd/document-v11.dtd">
 
 <document>
-    <header>
-        <title>Live Sites using Poi</title>
-        <authors>
-            <person name="Donald Ball" email="balld@webslingerZ.com"/>
-            <person name="Stefano Mazzocchi" email="stefano@apache.org"/>
-            <person name="Robin Green" email="greenrd@hotmail.com"/>
-            <person name="Nicola Ken Barozzi" email="barozzi@nicolaken.com"/>
-            <person name="Glen Stampoultzis" email="poi-user@jakarta.apache.org"/>
-        </authors>
-    </header>
+  <header>
+    <title>Live Sites using Poi</title>
+    <authors>
+      <person name="Donald Ball" email="balld@webslingerZ.com"/>
+      <person name="Stefano Mazzocchi" email="stefano@apache.org"/>
+      <person name="Robin Green" email="greenrd@hotmail.com"/>
+      <person name="Nicola Ken Barozzi" email="barozzi@nicolaken.com"/>
+      <person name="Glen Stampoultzis" email="poi-user@jakarta.apache.org"/>
+      <person name="Rainer Klute" email="klute@rainer-klute.org"/>
+    </authors>
+  </header>
 
-    <body>
-        <section><title>Live Sites using Poi</title>
-            <p>Currently we don't have any sites listed that use Poi, but we're sure they're out there.
-            Help us change this.  If you've
-            written a site that utilises POI let us know.
-            </p>
-            <!--
-            <ul>
-             <li><link href=""></link></li>
-            </ul>
-           </section>
-            -->
-        </section>
-        <section><title>Products/Projects using POI</title>
-            <p> Publically available products/projects using POI include:
-            </p>
-            <ul>
-              <li><link href="http://jtimetracker.sourceforge.net/">JTimeTracker</link></li>
-            </ul> 
-        </section>
-    </body>
+  <body>
+    <section><title>References</title>
+
+      <section><title>Live Sites using POI</title>
+	<p>Currently we don't have any sites listed that use POI, but we're
+	  sure they're out there. Help us change this. If you've written a site
+	  that utilises POI let us know.</p>
+	<!--
+	<ul>
+	  <li><link href=""></link></li>
+	</ul>
+	-->
+      </section>
+
+      <section><title>Products/Projects using POI</title>
+	<p>Publically available products/projects using POI include:</p>
+	<ul>
+	  <li><link href="http://jtimetracker.sourceforge.net/">JTimeTracker</link></li>
+	</ul> 
+      </section>
+
+      <section><title>File Format Descriptions</title>
+	<p>POI depends on publically available documents describing various
+	  file formats. The list below contains links to some of them.</p>
+	<ul>
+	  <li><link href="http://www.wotsit.org/">Wotsit's Format</link></li>
+	</ul> 
+      </section>
+
+    </section>
+  </body>
 </document>
