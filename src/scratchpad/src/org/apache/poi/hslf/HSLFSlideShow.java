@@ -23,7 +23,6 @@ import java.util.*;
 import java.io.*;
 
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.poifs.filesystem.POIFSDocument;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
 
@@ -33,10 +32,8 @@ import org.apache.poi.hpsf.MutablePropertySet;
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hpsf.DocumentSummaryInformation;
 
-import org.apache.poi.util.LittleEndian;
-
 import org.apache.poi.hslf.record.*;
-import org.apache.poi.hslf.usermodel.Picture;
+import org.apache.poi.hslf.usermodel.PictureData;
 
 /**
  * This class contains the main functionality for the Powerpoint file 
@@ -47,78 +44,91 @@ import org.apache.poi.hslf.usermodel.Picture;
 
 public class HSLFSlideShow
 {
-  private InputStream istream;
-  private POIFSFileSystem filesystem;
+	private InputStream istream;
+	private POIFSFileSystem filesystem;
 
-  // Holds metadata on our document
-  private SummaryInformation sInf;
-  private DocumentSummaryInformation dsInf;
-  private CurrentUserAtom currentUser;
+	// Holds metadata on our document
+	private SummaryInformation sInf;
+	private DocumentSummaryInformation dsInf;
+	private CurrentUserAtom currentUser;
 
-  // Low level contents of the file
-  private byte[] _docstream;
+	// Low level contents of the file
+	private byte[] _docstream;
 
-  // Low level contents
-  private Record[] _records;
+	// Low level contents
+	private Record[] _records;
 
-  /**
-   * Constructs a Powerpoint document from fileName. Parses the document 
-   * and places all the important stuff into data structures.
-   *
-   * @param fileName The name of the file to read.
-   * @throws IOException if there is a problem while parsing the document.
-   */
-  public HSLFSlideShow(String fileName) throws IOException
-  {
-  	this(new FileInputStream(fileName));
-  }
+	// Raw Pictures contained in the pictures stream
+	private PictureData[] _pictures;
+
+	/**
+	 * Constructs a Powerpoint document from fileName. Parses the document 
+	 * and places all the important stuff into data structures.
+	 *
+	 * @param fileName The name of the file to read.
+	 * @throws IOException if there is a problem while parsing the document.
+	 */
+	public HSLFSlideShow(String fileName) throws IOException
+	{
+		this(new FileInputStream(fileName));
+	}
   
-  /**
-   * Constructs a Powerpoint document from an input stream. Parses the 
-   * document and places all the important stuff into data structures.
-   *
-   * @param inputStream the source of the data
-   * @throws IOException if there is a problem while parsing the document.
-   */
-  public HSLFSlideShow(InputStream inputStream) throws IOException
-  {
-        //do Ole stuff
+	/**
+	 * Constructs a Powerpoint document from an input stream. Parses the 
+	 * document and places all the important stuff into data structures.
+	 *
+	 * @param inputStream the source of the data
+	 * @throws IOException if there is a problem while parsing the document.
+	 */
+	public HSLFSlideShow(InputStream inputStream) throws IOException
+	{
+		//do Ole stuff
 		this(new POIFSFileSystem(inputStream));
-        istream = inputStream;
-  }
+		istream = inputStream;
+	}
 
-  /**
-   * Constructs a Powerpoint document from a POIFS Filesystem. Parses the 
-   * document and places all the important stuff into data structures.
-   *
-   * @param filesystem the POIFS FileSystem to read from
-   * @throws IOException if there is a problem while parsing the document.
-   */
-  public HSLFSlideShow(POIFSFileSystem filesystem) throws IOException
-  {
+	/**
+	 * Constructs a Powerpoint document from a POIFS Filesystem. Parses the 
+	 * document and places all the important stuff into data structures.
+	 *
+	 * @param filesystem the POIFS FileSystem to read from
+	 * @throws IOException if there is a problem while parsing the document.
+	 */
+	public HSLFSlideShow(POIFSFileSystem filesystem) throws IOException
+	{
 		this.filesystem = filesystem;
 
-        // Go find a PowerPoint document in the stream
-        // Save anything useful we come across
-        readFIB();
+		// Go find a PowerPoint document in the stream
+		// Save anything useful we come across
+		readFIB();
 
 		// Look for Property Streams:
 		readProperties();
-  }
 
-
-  /**
-   * Shuts things down. Closes underlying streams etc
-   *
-   * @throws IOException
-   */
-  public void close() throws IOException
-  {
-	if(istream != null) {
-		istream.close();
+		// Look for Picture Streams:
+		readPictures();
 	}
-	filesystem = null;
-  }
+
+	/**
+	 * Constructs a new, empty, Powerpoint document.
+	 */
+	public HSLFSlideShow() throws IOException 
+	{
+		this(HSLFSlideShow.class.getResourceAsStream("/org/apache/poi/hslf/data/empty.ppt"));
+	}
+
+	/**
+	 * Shuts things down. Closes underlying streams etc
+	 *
+	 * @throws IOException
+	 */
+	public void close() throws IOException
+	{
+		if(istream != null) {
+			istream.close();
+		}
+		filesystem = null;
+	}
 
 
   /**
@@ -175,24 +185,52 @@ public class HSLFSlideShow
   }
 
 
-  /**
-   * Find the properties from the filesystem, and load them
-   */
-  public void readProperties() {
-	// DocumentSummaryInformation
-	dsInf = (DocumentSummaryInformation)getPropertySet("\005DocumentSummaryInformation");
+	/**
+	 * Find the properties from the filesystem, and load them
+	 */
+	public void readProperties() {
+		// DocumentSummaryInformation
+		dsInf = (DocumentSummaryInformation)getPropertySet("\005DocumentSummaryInformation");
 
-	// SummaryInformation
-	sInf = (SummaryInformation)getPropertySet("\005SummaryInformation");
+		// SummaryInformation
+		sInf = (SummaryInformation)getPropertySet("\005SummaryInformation");
 
-	// Current User
-	try {
-		currentUser = new CurrentUserAtom(filesystem);
-	} catch(IOException ie) {
-		System.err.println("Error finding Current User Atom:\n" + ie);
-		currentUser = new CurrentUserAtom();
+		// Current User
+		try {
+			currentUser = new CurrentUserAtom(filesystem);
+		} catch(IOException ie) {
+			System.err.println("Error finding Current User Atom:\n" + ie);
+			currentUser = new CurrentUserAtom();
+		}
 	}
-  }
+
+	/**
+	 * Find and read in pictures contained in this presentation
+	 */
+	private void readPictures() throws IOException {
+		byte[] pictstream;
+
+		try {
+			DocumentEntry entry = (DocumentEntry)filesystem.getRoot().getEntry("Pictures");
+			pictstream = new byte[entry.getSize()];
+			DocumentInputStream is = filesystem.createDocumentInputStream("Pictures");
+			is.read(pictstream);
+		} catch (FileNotFoundException e){
+			// Silently catch exceptions if the presentation doesn't 
+			//  contain pictures - will use a null set instead
+			return;
+		}
+
+		ArrayList p = new ArrayList();
+		int pos = 0; 
+		while (pos < pictstream.length) {
+			PictureData pict = new PictureData(pictstream, pos);
+			p.add(pict);
+			pos += PictureData.HEADER_SIZE + pict.getSize();
+		}
+
+		_pictures = (PictureData[])p.toArray(new PictureData[p.size()]);
+	}
 
 
   /** 
@@ -287,6 +325,17 @@ public class HSLFSlideShow
 	currentUser.setCurrentEditOffset(newLastUserEditAtomPos.intValue());
 	currentUser.writeToFS(outFS);
 
+	
+	// Write any pictures, into another stream
+	if (_pictures != null) {
+		ByteArrayOutputStream pict = new ByteArrayOutputStream();
+		for (int i = 0; i < _pictures.length; i++ ) {
+			_pictures[i].write(pict);
+		}
+		outFS.createDocument(
+				new ByteArrayInputStream(pict.toByteArray()), "Pictures"
+		);
+	}
 
 	// Send the POIFSFileSystem object out to the underlying stream
 	outFS.writeFilesystem(out);
@@ -311,87 +360,86 @@ public class HSLFSlideShow
   }
 
 
-  /* ******************* fetching methods follow ********************* */
-
-
-  /**
-   * Returns an array of all the records found in the slideshow
-   */
-  public Record[] getRecords() { return _records; }
-  
-  /**
-   * Adds a new root level record, at the end, but before the last
-   *  PersistPtrIncrementalBlock.
-   */
-  public synchronized int appendRootLevelRecord(Record newRecord) {
-	  int addedAt = -1;
-	  Record[] r = new Record[_records.length+1];
-	  boolean added = false;
-	  for(int i=(_records.length-1); i>=0; i--) {
-		  if(added) {
-			  // Just copy over
-			  r[i] = _records[i];
-		  } else {
-			  r[(i+1)] = _records[i];
-			  if(_records[i] instanceof PersistPtrHolder) {
-				  r[i] = newRecord;
-				  added = true;
-				  addedAt = i;
-			  }
-		  }
-	  }
-	  _records = r;
-	  return addedAt;
-  }
-
-  /**
-   * Returns an array of the bytes of the file. Only correct after a
-   *  call to open or write - at all other times might be wrong!
-   */
-  public byte[] getUnderlyingBytes() { return _docstream; }
-
-  /** 
-   * Fetch the Document Summary Information of the document
-   */
-  public DocumentSummaryInformation getDocumentSummaryInformation() { return dsInf; }
-
-  /** 
-   * Fetch the Summary Information of the document
-   */
-  public SummaryInformation getSummaryInformation() { return sInf; }
-
- /**
-  * Fetch the Current User Atom of the document
-  */
- public CurrentUserAtom getCurrentUserAtom() { return currentUser; }
+	/* ******************* adding methods follow ********************* */
 
 	/**
-	 *  Read pictures contained in this presentation
+	 * Adds a new root level record, at the end, but before the last
+	 *  PersistPtrIncrementalBlock.
+	 */
+	public synchronized int appendRootLevelRecord(Record newRecord) {
+		int addedAt = -1;
+		Record[] r = new Record[_records.length+1];
+		boolean added = false;
+		for(int i=(_records.length-1); i>=0; i--) {
+			if(added) {
+				// Just copy over
+				r[i] = _records[i];
+			} else {
+				r[(i+1)] = _records[i];
+				if(_records[i] instanceof PersistPtrHolder) {
+					r[i] = newRecord;
+					added = true;
+					addedAt = i;
+				}
+			}
+		}
+		_records = r;
+		return addedAt;
+	}
+	
+	/**
+	 *  Add a new picture to this presentation.
+	 */
+	public void addPicture(PictureData img) {
+		// Copy over the existing pictures, into an array one bigger
+		PictureData[] lst;
+		if(_pictures == null) {
+			lst = new PictureData[1];
+		} else {
+			lst = new PictureData[(_pictures.length+1)];
+			System.arraycopy(_pictures,0,lst,0,_pictures.length);
+		}
+		// Add in the new image
+		lst[lst.length - 1] = img;
+		_pictures = lst;
+	}
+
+	/* ******************* fetching methods follow ********************* */
+
+
+	/**
+	 * Returns an array of all the records found in the slideshow
+	 */
+	public Record[] getRecords() { return _records; }
+
+	/**
+	 * Returns an array of the bytes of the file. Only correct after a
+	 *  call to open or write - at all other times might be wrong!
+	 */
+	public byte[] getUnderlyingBytes() { return _docstream; }
+
+	/** 
+	 * Fetch the Document Summary Information of the document
+	 */
+	public DocumentSummaryInformation getDocumentSummaryInformation() { return dsInf; }
+
+	/** 
+	 * Fetch the Summary Information of the document
+	 */
+	public SummaryInformation getSummaryInformation() { return sInf; }
+
+	/**
+	 * Fetch the Current User Atom of the document
+	 */
+	public CurrentUserAtom getCurrentUserAtom() { return currentUser; }
+
+	/**
+	 *  Return array of pictures contained in this presentation
 	 *
-	 *  @return array with the read pictures ot <code>null</code> if the
+	 *  @return array with the read pictures or <code>null</code> if the
 	 *  presentation doesn't contain pictures.
 	 */
-	public Picture[] getPictures() throws IOException {
-		byte[] pictstream;
-
-		try {
-			DocumentEntry entry = (DocumentEntry)filesystem.getRoot().getEntry("Pictures");
-			pictstream = new byte[entry.getSize()];
-			DocumentInputStream is = filesystem.createDocumentInputStream("Pictures");
-			is.read(pictstream);
-		} catch (FileNotFoundException e){
-			//silently catch exceptions if the presentation doesn't contain pictures
-			return null;
-		}
-
-		ArrayList p = new ArrayList();
-		int pos = 0; 
-		while (pos < pictstream.length) {
-			Picture pict = new Picture(pictstream, pos);
-			p.add(pict);
-			pos += Picture.HEADER_SIZE + pict.getSize();
-		}
-
-		return (Picture[])p.toArray(new Picture[p.size()]);
+	public PictureData[] getPictures() {
+		return _pictures;
 	}
 }

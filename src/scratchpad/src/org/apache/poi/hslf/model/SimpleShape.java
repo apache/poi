@@ -39,10 +39,10 @@ public class SimpleShape extends Shape {
      * @param isChild   <code>true</code> if the Line is inside a group, <code>false</code> otherwise
      * @return the record container which holds this shape
      */
-    protected EscherContainerRecord create(boolean isChild) {
+    protected EscherContainerRecord createSpContainer(boolean isChild) {
         EscherContainerRecord spContainer = new EscherContainerRecord();
         spContainer.setRecordId( EscherContainerRecord.SP_CONTAINER );
-        //spContainer.setOptions((short)15);
+        spContainer.setOptions((short)15);
 
         EscherSpRecord sp = new EscherSpRecord();
         int flags = EscherSpRecord.FLAG_HAVEANCHOR | EscherSpRecord.FLAG_HASSHAPETYPE;

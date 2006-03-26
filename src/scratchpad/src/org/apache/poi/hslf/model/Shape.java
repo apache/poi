@@ -26,14 +26,9 @@ import java.util.Iterator;
   *
   * @author Yegor Kozlov
  */
-public class Shape {
+public abstract class Shape {
 
     public static final int EMU_PER_POINT = 12700;
-
-    /**
-     *  The parent of the shape
-     */
-    protected Shape _parent;
 
     /**
      * Either EscherSpContainer or EscheSpgrContainer record
@@ -41,10 +36,27 @@ public class Shape {
      */
     protected EscherContainerRecord _escherContainer;
 
-    protected Shape(EscherContainerRecord escherRecord, Shape parent){
+    /**
+     * Parent of this shape.
+     * <code>null</code> for the topmost shapes.
+     */
+    protected Shape _parent;
+
+    /**
+     * Create a Shape object. This constructor is used when an existing Shape is read from from a PowerPoint document.
+     *
+     * @param escherRecord       <code>EscherSpContainer</code> container which holds information about this shape
+     * @param parent             the parent of this Shape
+     */
+      protected Shape(EscherContainerRecord escherRecord, Shape parent){
         _escherContainer = escherRecord;
         _parent = parent;
-    }
+     }
+
+    /**
+     * Creates the lowerlevel escher records for this shape.
+     */
+    protected abstract EscherContainerRecord createSpContainer(boolean isChild);
 
     /**
      *  @return the parent of this shape
@@ -128,17 +140,27 @@ public class Shape {
         setAnchor(anchor);
     }
 
-    protected static EscherRecord getEscherChild(EscherContainerRecord owner, int recordId){
+    /**
+     * Helper method to return escher child by record ID
+     *
+     * @return escher record or <code>null</code> if not found.
+     */
+    public static EscherRecord getEscherChild(EscherContainerRecord owner, int recordId){
         for ( Iterator iterator = owner.getChildRecords().iterator(); iterator.hasNext(); )
         {
             EscherRecord escherRecord = (EscherRecord) iterator.next();
             if (escherRecord.getRecordId() == recordId)
-                return (EscherRecord) escherRecord;
+                return escherRecord;
         }
         return null;
     }
 
-    protected static EscherProperty getEscherProperty(EscherOptRecord opt, int propId){
+    /**
+     * Returns  escher property by id.
+     *
+     * @return escher property or <code>null</code> if not found.
+     */
+     public static EscherProperty getEscherProperty(EscherOptRecord opt, int propId){
         for ( Iterator iterator = opt.getEscherProperties().iterator(); iterator.hasNext(); )
         {
             EscherProperty prop = (EscherProperty) iterator.next();
@@ -148,7 +170,14 @@ public class Shape {
         return null;
     }
 
-    protected static void setEscherProperty(EscherOptRecord opt, short propId, int value){
+    /**
+     * Set an escher property in the opt record.
+     *
+     * @param opt       The opt record to set the properties to.
+     * @param propId    The id of the property. One of the constants defined in EscherOptRecord.
+     * @param value     value of the property
+     */
+     public static void setEscherProperty(EscherOptRecord opt, short propId, int value){
         java.util.List props = opt.getEscherProperties();
         for ( Iterator iterator = props.iterator(); iterator.hasNext(); ) {
             EscherProperty prop = (EscherProperty) iterator.next();
@@ -163,10 +192,10 @@ public class Shape {
     }
 
     /**
-     *
-     * @return escher container which holds information about this shape
+     * @return  The shape container and it's children that can represent this
+     *          shape.
      */
-    public EscherContainerRecord getShapeRecord(){
+    public EscherContainerRecord getSpContainer(){
         return _escherContainer;
     }
 }

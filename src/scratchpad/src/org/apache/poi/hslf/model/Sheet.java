@@ -158,7 +158,7 @@ public abstract class Sheet
 
 	EscherContainerRecord dgContainer = (EscherContainerRecord)ppdrawing.getEscherRecords()[0];
 	EscherContainerRecord spgr = (EscherContainerRecord)Shape.getEscherChild(dgContainer, EscherContainerRecord.SPGR_CONTAINER);
-	spgr.addChildRecord(shape.getShapeRecord());
+	spgr.addChildRecord(shape.getSpContainer());
 
 	EscherDgRecord dg = (EscherDgRecord)Shape.getEscherChild(dgContainer, EscherDgRecord.RECORD_ID);
 	dg.setNumShapes(dg.getNumShapes()+1);

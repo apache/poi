@@ -33,15 +33,15 @@ public class Rectangle extends SimpleShape {
 
     public Rectangle(Shape parent){
         super(null, parent);
-        _escherContainer = create(parent instanceof ShapeGroup);
+        _escherContainer = createSpContainer(parent instanceof ShapeGroup);
     }
 
     public Rectangle(){
         this(null);
     }
 
-    protected EscherContainerRecord create(boolean isChild){
-        EscherContainerRecord spcont = super.create(isChild);
+    protected EscherContainerRecord createSpContainer(boolean isChild){
+        EscherContainerRecord spcont = super.createSpContainer(isChild);
         spcont.setOptions((short)15);
 
         EscherSpRecord spRecord = spcont.getChildById(EscherSpRecord.RECORD_ID);
