@@ -71,7 +71,7 @@ public class Document extends PositionDependentRecordContainer
 
 		// Find our children
 		_children = Record.findChildRecords(source,start+8,len-8);
-		
+
 		// Our first one should be a document atom
 		if(! (_children[0] instanceof DocumentAtom)) {
 			throw new IllegalStateException("The first child of a Document must be a DocumentAtom");
@@ -101,6 +101,28 @@ public class Document extends PositionDependentRecordContainer
 				slwtcount++;
 			}
 		}
+	}
+	
+	/**
+	 * Adds a new SlideListWithText record, at the appropriate 
+	 *  point
+	 */
+	public void addSlideListWithText(SlideListWithText slwt) {
+		// The new SlideListWithText should go in 
+		//  just before the EndDocumentRecord
+		Record endDoc = _children[_children.length - 1];
+		if(endDoc.getRecordType() != RecordTypes.EndDocument.typeID) {
+			throw new IllegalStateException("The last child record of a Document should be EndDocument, but it was " + endDoc);
+		}
+		
+		// Add in the record
+		addChildBefore(slwt, endDoc);
+			
+		// Updated our cached list of SlideListWithText records
+		SlideListWithText[] nl = new SlideListWithText[slwts.length + 1];
+		System.arraycopy(slwts, 0, nl, 0, slwts.length);
+		nl[nl.length-1] = slwt;
+		slwts = nl;
 	}
 
 

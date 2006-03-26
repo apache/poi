@@ -476,24 +476,27 @@ public class SlideShow
   		} else {
   			// Need to add a new one
   			slist = new SlideListWithText();
-  			
-  			// Goes in just before the EndDocumentRecord
-  			Record[] docChildren = _documentRecord.getChildRecords();
-  			Record endDoc = docChildren[docChildren.length - 1];
-  			if(endDoc.getRecordType() != RecordTypes.EndDocument.typeID) {
-  				throw new IllegalStateException("The last child record of a Document should be EndDocument, but it was " + endDoc);
-  			}
-  			_documentRecord.addChildBefore(slist, endDoc);
+  			_documentRecord.addSlideListWithText(slist);
+  			slwts = _documentRecord.getSlideListWithTexts();
   		}
 
-  		// Grab the last SlidePersistAtom, if there was one
+  		// Grab the SlidePersistAtom with the highest Slide Number.
+  		// (Will stay as null if no SlidePersistAtom exists yet in
+  		//  the slide)
   		SlidePersistAtom prev = null;
-  		SlideAtomsSet[] sas = slist.getSlideAtomsSets(); 
-  		if(sas != null && sas.length > 0) {
-  			prev = sas[sas.length - 1].getSlidePersistAtom();
+  		for(int i=0; i<slwts.length; i++) {
+  			SlideAtomsSet[] sas = slwts[i].getSlideAtomsSets();
+  			for(int j=0; j<sas.length; j++) {
+  				SlidePersistAtom spa = sas[j].getSlidePersistAtom();
+  				if(prev == null) { prev = spa; }
+  				if(prev.getSlideIdentifier() < spa.getSlideIdentifier()) {
+  					prev = spa;
+  				}
+  	  			System.err.println("Prev is " + prev.getRefID());
+  			}
   		}
   		
-  		// Add a new SlidePersistAtom
+  		// Set up a new  SlidePersistAtom for this slide 
   		SlidePersistAtom sp = new SlidePersistAtom();
 
   		// Refernce is the 1-based index of the slide container in 
@@ -505,7 +508,8 @@ public class SlideShow
   		sp.setSlideIdentifier(prev == null ? 256 : (prev.getSlideIdentifier() + 1));
   		
   		// Add this new SlidePersistAtom to the SlideListWithText
-  		slist.appendChildRecord(sp);
+  		slist.addSlidePersistAtom(sp);
+  		
   		
   		// Create a new Slide
   		Slide slide = new Slide();
@@ -515,9 +519,10 @@ public class SlideShow
   		_slides = s;
   		System.out.println("Added slide " + _slides.length + " with ref " + sp.getRefID() + " and identifier " + sp.getSlideIdentifier());
   		
-  		// Add in to the core records
+  		// Add the core records for this new Slide to the record tree
   		org.apache.poi.hslf.record.Slide slideRecord = slide.getSlideRecord(); 
   		int slideRecordPos = _hslfSlideShow.appendRootLevelRecord(slideRecord);
+  		_records = _hslfSlideShow.getRecords();
 
   		// Add the new Slide into the PersistPtr stuff
   		int offset = 0;
@@ -544,15 +549,9 @@ public class SlideShow
   		}
   		
 		// Add the new slide into the last PersistPtr
+  		// (Also need to tell it where it is)
 		slideRecord.setLastOnDiskOffset(slideOffset);
-		int id = sp.getRefID();
-		ptr.getSlideOffsetDataLocationsLookup().put(
-				new Integer(id), 
-				new Integer((slideRecordPos+1)*4)
-		);
-		ptr.getSlideLocationsLookup().put(
-				new Integer(id), new Integer(slideOffset));
-		ptr.addSlideLookup(id, slideOffset);
+		ptr.addSlideLookup(sp.getRefID(), slideOffset);
 		System.out.println("New slide ended up at " + slideOffset);
 
 		// Last view is now of the slide
