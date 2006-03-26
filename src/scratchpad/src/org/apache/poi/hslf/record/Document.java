@@ -36,6 +36,7 @@ public class Document extends PositionDependentRecordContainer
 	// Links to our more interesting children
 	private DocumentAtom documentAtom;
 	private Environment environment;
+	private PPDrawingGroup ppDrawing;
 	private SlideListWithText[] slwts;
 
 	/**
@@ -47,6 +48,11 @@ public class Document extends PositionDependentRecordContainer
 	 *  settings for the document in it
 	 */
 	public Environment getEnvironment() { return environment; }
+	/**
+	 * Returns the PPDrawingGroup, which holds an Escher Structure
+	 *  that contains information on pictures in the slides.
+	 */
+	public PPDrawingGroup getPPDrawingGroup() { return ppDrawing; }
 	/**
 	 * Returns all the SlideListWithTexts that are defined for
 	 *  this Document. They hold the text, and some of the text
@@ -81,6 +87,9 @@ public class Document extends PositionDependentRecordContainer
 			}
 			if(_children[i] instanceof Environment) {
 				environment = (Environment)_children[i];
+			}
+			if(_children[i] instanceof PPDrawingGroup) {
+				ppDrawing = (PPDrawingGroup)_children[i];
 			}
 		}
 		// Now grab them all

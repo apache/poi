@@ -27,13 +27,9 @@ import java.util.List;
  */
 public class ShapeGroup extends Shape{
 
-    public ShapeGroup(Shape parent){
-        super(null, parent);
-        _escherContainer = create();
-    }
-
     public ShapeGroup(){
-        this(null);
+        this(null, null);
+        _escherContainer = createSpContainer(false);
     }
 
     protected ShapeGroup(EscherContainerRecord escherRecord, Shape parent){
@@ -91,7 +87,7 @@ public class ShapeGroup extends Shape{
     /**
      * Create a new ShapeGroup and create an instance of <code>EscherSpgrContainer</code> which represents a group of shapes
      */
-    protected EscherContainerRecord create() {
+    protected EscherContainerRecord createSpContainer(boolean isChild) {
         EscherContainerRecord spgr = new EscherContainerRecord();
         spgr.setRecordId(EscherContainerRecord.SPGR_CONTAINER);
         spgr.setOptions((short)15);
@@ -124,7 +120,7 @@ public class ShapeGroup extends Shape{
      * @param shape - the Shape to add
      */
     public void addShape(Shape shape){
-        _escherContainer.addChildRecord(shape.getShapeRecord());
+        _escherContainer.addChildRecord(shape.getSpContainer());
     }
 
     /**

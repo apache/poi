@@ -23,6 +23,10 @@ import java.util.*;
 import java.awt.Dimension;
 import java.io.*;
 
+import org.apache.poi.ddf.EscherBSERecord;
+import org.apache.poi.ddf.EscherContainerRecord;
+import org.apache.poi.ddf.EscherOptRecord;
+import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.hslf.*;
 import org.apache.poi.hslf.model.*;
 import org.apache.poi.hslf.record.Document;
@@ -50,6 +54,7 @@ import org.apache.poi.hslf.exceptions.CorruptPowerPointFileException;
  *  - handle Slide creation cleaner
  * 
  * @author Nick Burch
+ * @author Yegor kozlov
  */
 
 public class SlideShow
@@ -74,6 +79,12 @@ public class SlideShow
   // MetaSheets (eg masters) not yet supported
   // private MetaSheets[] _msheets;
 
+  
+  /* ===============================================================
+   *                       Setup Code
+   * ===============================================================
+   */
+  
 
   /**
    * Constructs a Powerpoint document from the underlying 
@@ -86,7 +97,6 @@ public class SlideShow
 	// Get useful things from our base slideshow
     _hslfSlideShow = hslfSlideShow;
 	_records = _hslfSlideShow.getRecords();
-	byte[] _docstream = _hslfSlideShow.getUnderlyingBytes();
 	
 	// Handle Parent-aware Reocrds
 	for(int i=0; i<_records.length; i++) {
@@ -100,6 +110,12 @@ public class SlideShow
 	buildSlidesAndNotes();
   }
   
+  /**
+   * Constructs a new, empty, Powerpoint document.
+   */
+  public SlideShow() throws IOException {
+	this(new HSLFSlideShow());
+  }
   
   /**
    * Find the records that are parent-aware, and tell them
@@ -373,6 +389,77 @@ public class SlideShow
 	}
   }
 
+  /**
+   * Writes out the slideshow file the is represented by an instance of
+   *  this class
+   * @param out The OutputStream to write to.
+   *  @throws IOException If there is an unexpected IOException from the passed
+   *            in OutputStream
+   */
+   public void write(OutputStream out) throws IOException {
+	_hslfSlideShow.write(out);
+   }
+
+
+   /* ===============================================================
+    *                       Accessor Code
+    * ===============================================================
+    */
+   
+
+	/**
+	 * Returns an array of the most recent version of all the interesting
+	 *  records
+	 */
+	public Record[] getMostRecentCoreRecords() { return _mostRecentCoreRecords; }
+
+	/**
+	 * Returns an array of all the normal Slides found in the slideshow
+	 */
+	public Slide[] getSlides() { return _slides; }
+
+	/**
+	 * Returns an array of all the normal Notes found in the slideshow
+	 */
+	public Notes[] getNotes() { return _notes; }
+
+	/**
+	 * Returns an array of all the meta Sheets (master sheets etc) 
+	 * found in the slideshow
+	 */
+	//public MetaSheet[] getMetaSheets() { return _msheets; }
+
+	/**
+	 * Returns all the pictures attached to the SlideShow
+	 */
+	public PictureData[] getPictures() throws IOException {
+		return _hslfSlideShow.getPictures();
+	}
+	
+	/**
+	 * Return the current page size
+	 */
+	public Dimension getPageSize(){
+		DocumentAtom docatom = _documentRecord.getDocumentAtom();
+		return new Dimension((int)docatom.getSlideSizeX(), (int)docatom.getSlideSizeY());
+	}
+	
+	/**
+	 * Helper method for usermodel: Get the font collection
+	 */
+	protected FontCollection getFontCollection() { return _fonts; }
+	/**
+	 * Helper method for usermodel: Get the document record
+	 */
+	protected Document getDocumentRecord() { return _documentRecord; }
+
+	
+	/* ===============================================================
+	 *                       Addition Code
+	 * ===============================================================
+	 */
+	   
+
 	/**
 	 * Create a blank <code>Slide</code>.
 	 *
@@ -476,63 +563,87 @@ public class SlideShow
 	}
 
 
-  /**
-   * Writes out the slideshow file the is represented by an instance of
-   *  this class
-   * @param out The OutputStream to write to.
-   *  @throws IOException If there is an unexpected IOException from the passed
-   *            in OutputStream
-   */
-   public void write(OutputStream out) throws IOException {
-	_hslfSlideShow.write(out);
-   }
+    /**
+     * Adds a picture to this presentation and returns the associated index.
+     *
+     * @param data      picture data
+     * @param format    the format of the picture.  One of constans defined in the <code>Picture</code> class.
+     * @return          the index to this picture (1 based).
+     */
+    public int addPicture(byte[] data, int format) {
+        byte[] uid = PictureData.getChecksum(data);
 
+        EscherContainerRecord bstore;
+        int offset = 0;
 
-	// Accesser methods follow
+        EscherContainerRecord dggContainer = _documentRecord.getPPDrawingGroup().getDggContainer();
+        bstore = (EscherContainerRecord)Shape.getEscherChild(dggContainer, EscherContainerRecord.BSTORE_CONTAINER);
+        if (bstore == null){
+            bstore = new EscherContainerRecord();
+            bstore.setRecordId( EscherContainerRecord.BSTORE_CONTAINER);
 
-	/**
-	 * Returns an array of the most recent version of all the interesting
-	 *  records
-	 */
-	public Record[] getMostRecentCoreRecords() { return _mostRecentCoreRecords; }
+            List child = dggContainer.getChildRecords();
+            for ( int i = 0; i < child.size(); i++ ) {
+                EscherRecord rec = (EscherRecord)child.get(i);
+                if (rec.getRecordId() == EscherOptRecord.RECORD_ID){
+                    child.add(i, bstore);
+                    i++;
+                }
+            }
+            dggContainer.setChildRecords(child);
+        } else {
+            List lst = bstore.getChildRecords();
+            for ( int i = 0; i < lst.size(); i++ ) {
+                EscherBSERecord bse = (EscherBSERecord) lst.get(i);
+                if (Arrays.equals(bse.getUid(), uid)){
+                    return i + 1;
+                }
+                offset += bse.getSize();
+             }
+        }
 
-	/**
-	 * Returns an array of all the normal Slides found in the slideshow
-	 */
-	public Slide[] getSlides() { return _slides; }
+        EscherBSERecord bse = new EscherBSERecord();
+        bse.setRecordId(EscherBSERecord.RECORD_ID);
+        bse.setOptions( (short) ( 0x0002 | ( format << 4 ) ) );
+        bse.setSize(data.length + PictureData.HEADER_SIZE);
+        bse.setUid(uid);
+        bse.setBlipTypeMacOS((byte)format);
+        bse.setBlipTypeWin32((byte)format);
 
-	/**
-	 * Returns an array of all the normal Notes found in the slideshow
-	 */
-	public Notes[] getNotes() { return _notes; }
+        bse.setRef(1);
+        bse.setOffset(offset);
 
-	/**
-	 * Returns an array of all the meta Sheets (master sheets etc) 
-	 * found in the slideshow
-	 */
-	//public MetaSheet[] getMetaSheets() { return _msheets; }
+        bstore.addChildRecord(bse);
+        int count = bstore.getChildRecords().size();
+        bstore.setOptions((short)( (count << 4) | 0xF ));
 
-	/**
-	 * Returns all the pictures attached to the SlideShow
-	 */
-	public Picture[] getPictures() throws IOException {
-		return _hslfSlideShow.getPictures();
-	}
-	
-	/**
-	 * Return the current page size
-	 */
-	public Dimension getPageSize(){
-		DocumentAtom docatom = _documentRecord.getDocumentAtom();
-		return new Dimension((int)docatom.getSlideSizeX(), (int)docatom.getSlideSizeY());
-	}
-	
-	/**
-	 * Helper method for usermodel: Get the font collection
-	 */
-	protected FontCollection getFontCollection() { return _fonts; }
-	/**
-	 * Helper method for usermodel: Get the document record
-	 */
-	protected Document getDocumentRecord() { return _documentRecord; }
+        PictureData pict = new PictureData();
+        pict.setUID(uid);
+        pict.setData(data);
+        pict.setType(format);
+
+        _hslfSlideShow.addPicture(pict);
+
+        return count;
+    }
+
+    /**
+     * Adds a picture to this presentation and returns the associated index.
+     *
+     * @param pict       the file containing the image to add
+     * @param format    the format of the picture.  One of constans defined in the <code>Picture</code> class.
+     * @return          the index to this picture (1 based).
+     */
+    public int addPicture(File pict, int format) {
+        int length = (int)pict.length();
+        byte[] data = new byte[length];
+        try {
+            FileInputStream is = new FileInputStream(pict);
+            is.read(data);
+            is.close();
+        } catch (IOException e){
+            throw new RuntimeException(e);
+        }
+        return addPicture(data, format);
+    }
 }

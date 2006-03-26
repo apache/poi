@@ -33,16 +33,15 @@ public class Ellipse extends SimpleShape {
 
     public Ellipse(Shape parent){
         super(null, parent);
-        _escherContainer = create(parent instanceof ShapeGroup);
+        _escherContainer = createSpContainer(parent instanceof ShapeGroup);
     }
 
     public Ellipse(){
         this(null);
     }
 
-    protected EscherContainerRecord create(boolean isChild){
-        EscherContainerRecord spcont = super.create(isChild);
-        spcont.setOptions((short)15);
+    protected EscherContainerRecord createSpContainer(boolean isChild){
+        EscherContainerRecord spcont = super.createSpContainer(isChild);
 
         EscherSpRecord spRecord = spcont.getChildById(EscherSpRecord.RECORD_ID);
         short type = (ShapeTypes.Ellipse << 4) + 2;

@@ -37,10 +37,10 @@ public class ShapeFactory {
         switch (type){
             case ShapeTypes.TextBox:
             case ShapeTypes.Rectangle:
-                shape = new Shape(spContainer, parent);
+                shape = new Rectangle(spContainer, parent);
                 break;
             case ShapeTypes.PictureFrame:
-                shape = new Shape(spContainer, parent);
+                shape = new Picture(spContainer, parent);
                 break;
             case ShapeTypes.Line:
                 shape = new Line(spContainer, parent);
@@ -52,7 +52,7 @@ public class ShapeFactory {
                 shape = new ShapeGroup(spContainer, parent);
                 break;
             default:
-                shape = new Shape(spContainer, parent);
+                shape = new SimpleShape(spContainer, parent);
                 break;
         }
         return shape;
