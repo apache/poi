@@ -293,6 +293,15 @@
         <pathelement location="${junit.jar1.dir}"/>
       </classpath>
     </javac>
+
+	<!-- Copy HSLF Resources over -->
+	<property name="hslf.data" value="org/apache/poi/hslf/data" />
+	<mkdir dir="${scratchpad.output.dir}/${hslf.data}" />
+	<copy todir="${scratchpad.output.dir}/${hslf.data}">
+		<fileset dir="${scratchpad.src}/${hslf.data}">
+			<include name="*.ppt" />
+		</fileset>
+	</copy>
   </target>
 
   <target name="compile-contrib" depends="init">
