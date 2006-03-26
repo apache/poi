@@ -44,11 +44,30 @@ public class TestCounts extends TestCase {
 		Slide[] slides = ss.getSlides();
 		// Two sheets - master sheet is seperate
 		assertEquals(2, slides.length);
+		
+		// They are slides 1+2
+		assertEquals(1, slides[0].getSlideNumber());
+		assertEquals(2, slides[1].getSlideNumber());
+		
+		// The internal IDs are 4 and 6
+		assertEquals(4, slides[0].getSheetNumber());
+		assertEquals(6, slides[1].getSheetNumber());
 	}
 
     public void testNotesCount() throws Exception {
 		Notes[] notes = ss.getNotes();
 		// Two sheets -> two notes, plus the notes on the slide master
 		assertEquals(3, notes.length);
+		
+		// First is for master
+		assertEquals(-2147483648, notes[0].getSlideInternalNumber());
+		
+		// Next two are for the two slides
+		assertEquals(256, notes[1].getSlideInternalNumber());
+		assertEquals(257, notes[2].getSlideInternalNumber());
+		
+		// They go between the slides
+		assertEquals(5, notes[1].getSheetNumber());
+		assertEquals(7, notes[2].getSheetNumber());
 	}
 }
