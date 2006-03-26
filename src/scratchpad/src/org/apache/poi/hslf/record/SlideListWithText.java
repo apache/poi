@@ -19,7 +19,6 @@
 package org.apache.poi.hslf.record;
 
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.hslf.model.Sheet;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -106,7 +105,27 @@ public class SlideListWithText extends RecordContainer
 		LittleEndian.putUShort(_header, 2, (int)_type);
 		LittleEndian.putInt(_header, 4, 0);
 
+		// We have no children to start with 
 		_children = new Record[0];
+		slideAtomsSets = new SlideAtomsSet[0];
+	}
+	
+	/**
+	 * Add a new SlidePersistAtom, to the end of the current list,
+	 *  and update the internal list of SlidePersistAtoms
+	 * @param spa
+	 */
+	public void addSlidePersistAtom(SlidePersistAtom spa) {
+		// Add the new SlidePersistAtom at the end
+		appendChildRecord(spa);
+		
+		SlideAtomsSet newSAS = new SlideAtomsSet(spa, new Record[0]);
+		
+		// Update our SlideAtomsSets with this
+		SlideAtomsSet[] sas = new SlideAtomsSet[slideAtomsSets.length+1];
+		System.arraycopy(slideAtomsSets, 0, sas, 0, slideAtomsSets.length);
+		sas[sas.length-1] = newSAS;
+		slideAtomsSets = sas;
 	}
 
 	/**

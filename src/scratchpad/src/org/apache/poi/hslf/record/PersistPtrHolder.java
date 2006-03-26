@@ -90,11 +90,17 @@ public class PersistPtrHolder extends PositionDependentRecordAtom
 	 * For now, won't look for the most optimal on disk representation.
 	 */
 	public void addSlideLookup(int slideID, int posOnDisk) {
+		// PtrData grows by 8 bytes:
+		//  4 bytes for the new info block
+		//  4 bytes for the slide offset
 		byte[] newPtrData = new byte[_ptrData.length + 8];
 		System.arraycopy(_ptrData,0,newPtrData,0,_ptrData.length);
 
-		// Add to the lookup hash
+		// Add to the slide location lookup hash
 		_slideLocations.put(new Integer(slideID), new Integer(posOnDisk));
+		// Add to the ptrData offset lookup hash
+		_slideOffsetDataLocation.put(new Integer(slideID), 
+				new Integer(_ptrData.length + 4));
 
 		// Build the info block
 		// First 20 bits = offset number = slide ID
@@ -111,10 +117,6 @@ public class PersistPtrHolder extends PositionDependentRecordAtom
 
 		// Update the atom header
 		LittleEndian.putInt(_header,4,newPtrData.length);
-		
-		// Update info (first 4 bytes in ptr data)
-		int info = (slideID << 20 | 1);
-		LittleEndian.putInt(_ptrData, 0, info);
 	}
 
 	/** 
