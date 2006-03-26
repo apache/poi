@@ -44,7 +44,8 @@ public abstract class Sheet
   public abstract TextRun[] getTextRuns();
 
   /**
-   * Returns the sheet number
+   * Returns the (internal, RefID based) sheet number, as used 
+   *  to reference this sheet from other records.
    */
   public abstract int getSheetNumber();
   

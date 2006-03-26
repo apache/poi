@@ -19,11 +19,11 @@
 
 package org.apache.poi.hslf.model;
 
-import java.util.*;
+import java.util.Vector;
 
-import org.apache.poi.hslf.record.*;
-import org.apache.poi.hslf.record.SlideListWithText.*;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.hslf.record.PPDrawing;
+import org.apache.poi.hslf.record.SlideAtom;
+import org.apache.poi.hslf.record.SlideListWithText.SlideAtomsSet;
 
 /**
  * This class represents a slide in a PowerPoint Document. It allows 
@@ -37,6 +37,7 @@ public class Slide extends Sheet
 {
 
   private int _sheetNo;
+  private int _slideNo;
   private org.apache.poi.hslf.record.Slide _slide;
   private SlideAtomsSet _atomSet;
   private TextRun[] _runs;
@@ -52,14 +53,12 @@ public class Slide extends Sheet
    * @param notes the Notes sheet attached to us
    * @param atomSet the SlideAtomsSet to get the text from
    */
-  public Slide(org.apache.poi.hslf.record.Slide slide, Notes notes, SlideAtomsSet atomSet) {
+  public Slide(org.apache.poi.hslf.record.Slide slide, Notes notes, SlideAtomsSet atomSet, int slideNumber) {
 	_slide = slide;
 	_notes = notes;
 	_atomSet = atomSet;
-
-	// Grab the sheet number
-	//_sheetNo = _slide.getSlideAtom().getSheetNumber();
-	_sheetNo = -1;
+	_sheetNo = slide.getSheetId();
+	_slideNo = slideNumber;
 
 	// Grab the TextRuns from the PPDrawing
 	_otherRuns = findTextRuns(_slide.getPPDrawing());
@@ -89,9 +88,13 @@ public class Slide extends Sheet
   
   /**
    * Create a new Slide instance
+   * @param sheetNumber The internal number of the sheet, as used by PersistPtrHolder
+   * @param slideNumber The user facing number of the sheet
    */
-  public Slide(){
-	_slide = new org.apache.poi.hslf.record.Slide();    
+  public Slide(int sheetNumber, int slideNumber){
+	_slide = new org.apache.poi.hslf.record.Slide();
+	_sheetNo = sheetNumber;
+	_slideNo = slideNumber;
   }
 
   /**
@@ -122,10 +125,16 @@ public class Slide extends Sheet
   public TextRun[] getTextRuns() { return _runs; }
 
   /**
-   * Returns the sheet number
+   * Returns the (internal, RefId based) sheet number
+   * @see getSlideNumber()
    */
   public int getSheetNumber() { return _sheetNo; }
-
+  
+  /**
+   * Returns the (public facing) page number of this slide
+   */
+  public int getSlideNumber() { return _slideNo; }
+  
   /**
    * Returns the underlying slide record
    */

@@ -29,6 +29,20 @@ import java.util.Hashtable;
 
 public abstract class PositionDependentRecordContainer extends RecordContainer implements PositionDependentRecord
 {
+	private int sheetId; // Found from PersistPtrHolder
+	
+	/**
+	 * Fetch our sheet ID, as found from a PersistPtrHolder.
+	 * Should match the RefId of our matching SlidePersistAtom
+	 */
+	public int getSheetId() { return sheetId; }
+
+	/**
+	 * Set our sheet ID, as found from a PersistPtrHolder
+	 */
+	public void setSheetId(int id) { sheetId = id; }
+
+	
 	/** Our location on the disk, as of the last write out */
 	protected int myLastOnDiskOffset;
 

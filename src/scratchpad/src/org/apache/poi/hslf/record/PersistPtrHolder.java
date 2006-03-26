@@ -41,7 +41,7 @@ public class PersistPtrHolder extends PositionDependentRecordAtom
 	private byte[] _header;
 	private byte[] _ptrData; // Will need to update this once we allow updates to _slideLocations
 	private long _type;
-
+	
 	/** 
 	 * Holds the lookup for slides to their position on disk.
 	 * You always need to check the most recent PersistPtrHolder
