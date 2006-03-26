@@ -99,7 +99,7 @@ public class Slide extends PositionDependentRecordContainer
 	 * We are of type 1006
 	 */
 	public long getRecordType() { return _type; }
-
+	
 	/**
 	 * Write the contents of the record back, so it can be written
 	 *  to disk

@@ -19,11 +19,7 @@
 
 package org.apache.poi.hslf.model;
 
-import java.util.*;
-
-import org.apache.poi.hslf.record.*;
-import org.apache.poi.hslf.record.SlideListWithText.*;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.hslf.record.PPDrawing;
 
 /**
  * This class represents a slide's notes in a PowerPoint Document. It 
@@ -35,8 +31,8 @@ import org.apache.poi.util.LittleEndian;
 
 public class Notes extends Sheet
 {
-
   private int _sheetNo;
+  private int _slideNo;
   private org.apache.poi.hslf.record.Notes _notes;
   private TextRun[] _runs;
 
@@ -48,9 +44,12 @@ public class Notes extends Sheet
    */
   public Notes (org.apache.poi.hslf.record.Notes notes) {
 	_notes = notes;
+	
+	// Grab our internal sheet ID
+	_sheetNo = notes.getSheetId();
 
-	// Grab the sheet number, via the NotesAtom
-	_sheetNo = _notes.getNotesAtom().getSlideID();
+	// Grab the number of the slide we're for, via the NotesAtom
+	_slideNo = _notes.getNotesAtom().getSlideID();
 
 	// Now, build up TextRuns from pairs of TextHeaderAtom and
 	//  one of TextBytesAtom or TextCharsAtom, found inside 
@@ -67,8 +66,13 @@ public class Notes extends Sheet
   public TextRun[] getTextRuns() { return _runs; }
 
   /**
-   * Returns the sheet number
+   * Returns the (internal, RefId based) sheet number (RefId)
    */
   public int getSheetNumber() { return _sheetNo; }
+  
+  /**
+   * Returns the (internal, identifer based) number of the slide we're attached to 
+   */
+  public int getSlideInternalNumber() { return _slideNo; }
   
   protected PPDrawing getPPDrawing() { return _notes.getPPDrawing(); }} 

@@ -33,6 +33,7 @@ import org.apache.poi.hslf.record.Document;
 import org.apache.poi.hslf.record.DocumentAtom;
 import org.apache.poi.hslf.record.FontCollection;
 import org.apache.poi.hslf.record.ParentAwareRecord;
+import org.apache.poi.hslf.record.PositionDependentRecordContainer;
 import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.RecordContainer;
 import org.apache.poi.hslf.record.RecordTypes;
@@ -210,6 +211,14 @@ public class SlideShow
 						(Integer)slideIDtoRecordLookup.get(thisID);
 					int storeAt = storeAtI.intValue();
 					
+					// Tell it its Sheet ID, if it cares
+					// TODO: Check that this is the right ID to feed in
+					if(pdr instanceof PositionDependentRecordContainer) {
+						PositionDependentRecordContainer pdrc = 
+							(PositionDependentRecordContainer)_records[i];
+						pdrc.setSheetId(thisID.intValue());
+					}
+					
 					// Finally, save the record
 					_mostRecentCoreRecords[storeAt] = _records[i];
 				}
@@ -356,6 +365,7 @@ public class SlideShow
 		org.apache.poi.hslf.record.Slide slideRecord = (org.apache.poi.hslf.record.Slide)slidesV.get(i);
 
 		// Decide if we've got a SlideAtomSet to use
+		// TODO: Use the internal IDs to match instead
 		SlideAtomsSet atomSet = null;
 		if(i < slideAtomSets.length) {
 			atomSet = slideAtomSets[i];
@@ -368,14 +378,14 @@ public class SlideShow
 		int notesID = sa.getNotesID();
 		if(notesID != 0) {
 			for(int k=0; k<_notes.length; k++) {
-				if(_notes[k].getSheetNumber() == notesID) {
+				if(_notes[k].getSlideInternalNumber() == notesID) {
 					thisNotes = _notes[k];
 				}
 			}
 		}
 
 		// Create the Slide model layer
-		_slides[i] = new Slide(slideRecord,thisNotes,atomSet);
+		_slides[i] = new Slide(slideRecord,thisNotes,atomSet, (i+1));
 		
 		// Now supply ourselves to all the rich text runs
 		//  of this slide's TextRuns
@@ -492,7 +502,6 @@ public class SlideShow
   				if(prev.getSlideIdentifier() < spa.getSlideIdentifier()) {
   					prev = spa;
   				}
-  	  			System.err.println("Prev is " + prev.getRefID());
   			}
   		}
   		
@@ -512,7 +521,8 @@ public class SlideShow
   		
   		
   		// Create a new Slide
-  		Slide slide = new Slide();
+  		Slide slide = new Slide(sp.getRefID(), _slides.length+1);
+  		// Add in to the list of Slides
   		Slide[] s = new Slide[_slides.length+1];
   		System.arraycopy(_slides, 0, s, 0, _slides.length);
   		s[_slides.length] = slide;
@@ -520,7 +530,8 @@ public class SlideShow
   		System.out.println("Added slide " + _slides.length + " with ref " + sp.getRefID() + " and identifier " + sp.getSlideIdentifier());
   		
   		// Add the core records for this new Slide to the record tree
-  		org.apache.poi.hslf.record.Slide slideRecord = slide.getSlideRecord(); 
+  		org.apache.poi.hslf.record.Slide slideRecord = slide.getSlideRecord();
+  		slideRecord.setSheetId(sp.getRefID());
   		int slideRecordPos = _hslfSlideShow.appendRootLevelRecord(slideRecord);
   		_records = _hslfSlideShow.getRecords();
 
