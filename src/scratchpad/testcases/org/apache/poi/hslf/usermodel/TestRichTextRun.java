@@ -20,9 +20,11 @@ public class TestRichTextRun extends TestCase {
 	private SlideShow ss;
 	private SlideShow ssRichA;
 	private SlideShow ssRichB;
+	private SlideShow ssRichC;
 	private HSLFSlideShow hss;
 	private HSLFSlideShow hssRichA;
 	private HSLFSlideShow hssRichB;
+	private HSLFSlideShow hssRichC;
 	
     protected void setUp() throws Exception {
 		String dirname = System.getProperty("HSLF.testdata.path");
@@ -41,6 +43,12 @@ public class TestRichTextRun extends TestCase {
 		filename = dirname + "/Single_Coloured_Page_With_Fonts_and_Alignments.ppt";
 		hssRichB = new HSLFSlideShow(filename);
 		ssRichB = new SlideShow(hssRichB);
+		
+		// Rich test file C - has paragraph styles that run out before
+		//   the character ones do
+		filename = dirname + "/ParagraphStylesShorterThanCharStyles.ppt";
+		hssRichC = new HSLFSlideShow(filename);
+		ssRichC = new SlideShow(hssRichC);
 	}
 
 	/**
@@ -193,5 +201,14 @@ public class TestRichTextRun extends TestCase {
 			assertEquals(18, rtrRRa.getFontSize());
 			assertEquals("Courier", rtrRRa.getFontName());
 		}
+	}
+	
+	/**
+	 * Test that we can do the right things when the paragraph styles
+	 *  run out before the character styles do
+	 * NOTE: Disabled, as we can't currently do this!
+	 */
+	public void BROKENtestParagraphStylesShorterTheCharStyles() {
+		// TODO
 	}
 }

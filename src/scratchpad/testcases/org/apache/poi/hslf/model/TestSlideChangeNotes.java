@@ -58,6 +58,6 @@ public class TestSlideChangeNotes extends TestCase {
 
 		slideOne.setNotes(notesOne);
 
-		assertEquals(notesOne.getSheetNumber(), sa.getNotesID());
+		assertEquals(notesOne._getSheetNumber(), sa.getNotesID());
     }
 }

@@ -49,25 +49,31 @@ public class TestCounts extends TestCase {
 		assertEquals(1, slides[0].getSlideNumber());
 		assertEquals(2, slides[1].getSlideNumber());
 		
-		// The internal IDs are 4 and 6
-		assertEquals(4, slides[0].getSheetNumber());
-		assertEquals(6, slides[1].getSheetNumber());
+		// The ref IDs are 4 and 6
+		assertEquals(4, slides[0]._getSheetRefId());
+		assertEquals(6, slides[1]._getSheetRefId());
+		
+		// These are slides 1+2 -> 256+257
+		assertEquals(256, slides[0]._getSheetNumber());
+		assertEquals(257, slides[1]._getSheetNumber());
 	}
 
     public void testNotesCount() throws Exception {
 		Notes[] notes = ss.getNotes();
-		// Two sheets -> two notes, plus the notes on the slide master
-		assertEquals(3, notes.length);
+		// Two sheets -> two notes
+		// Note: there are also notes on the slide master
+		//assertEquals(3, notes.length); // When we do slide masters
+		assertEquals(2, notes.length);
 		
 		// First is for master
-		assertEquals(-2147483648, notes[0].getSlideInternalNumber());
+		//assertEquals(-2147483648, notes[0]._getSheetNumber());  // When we do slide masters
 		
 		// Next two are for the two slides
-		assertEquals(256, notes[1].getSlideInternalNumber());
-		assertEquals(257, notes[2].getSlideInternalNumber());
+		assertEquals(256, notes[0]._getSheetNumber());
+		assertEquals(257, notes[1]._getSheetNumber());
 		
-		// They go between the slides
-		assertEquals(5, notes[1].getSheetNumber());
-		assertEquals(7, notes[2].getSheetNumber());
+		// They happen to go between the two slides in Ref terms
+		assertEquals(5, notes[0]._getSheetRefId());
+		assertEquals(7, notes[1]._getSheetRefId());
 	}
 }
