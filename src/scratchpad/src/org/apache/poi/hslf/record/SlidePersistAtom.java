@@ -34,12 +34,18 @@ public class SlidePersistAtom extends RecordAtom
 	private byte[] _header;
 	private static long _type = 1011l;
 
-	/** Slide reference ID. A machine readable "page id" */
+	/** 
+	 * Slide reference ID. Should correspond to the PersistPtr 
+	 *  "sheet ID" of the matching slide/notes record 
+	 */
 	private int refID;
 	private boolean hasShapesOtherThanPlaceholders;
 	/** Number of placeholder texts that will follow in the SlideListWithText */
 	private int numPlaceholderTexts;
-	/** Less useful identifier */
+	/** 
+	 * The internal identifier (256+), which is used to tie slides
+	 *  and notes together 
+	 */
 	private int slideIdentifier;
 	/** Reserved fields. Who knows what they do */
 	private byte[] reservedFields;
