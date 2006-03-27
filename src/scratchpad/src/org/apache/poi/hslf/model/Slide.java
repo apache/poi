@@ -35,7 +35,7 @@ import org.apache.poi.hslf.record.SlideListWithText.SlideAtomsSet;
 
 public class Slide extends Sheet
 {
-
+  private int _refSheetNo;  
   private int _sheetNo;
   private int _slideNo;
   private org.apache.poi.hslf.record.Slide _slide;
@@ -53,11 +53,12 @@ public class Slide extends Sheet
    * @param notes the Notes sheet attached to us
    * @param atomSet the SlideAtomsSet to get the text from
    */
-  public Slide(org.apache.poi.hslf.record.Slide slide, Notes notes, SlideAtomsSet atomSet, int slideNumber) {
+  public Slide(org.apache.poi.hslf.record.Slide slide, Notes notes, SlideAtomsSet atomSet, int slideIdentifier, int slideNumber) {
 	_slide = slide;
 	_notes = notes;
 	_atomSet = atomSet;
-	_sheetNo = slide.getSheetId();
+	_refSheetNo = slide.getSheetId();
+	_sheetNo = slideIdentifier;
 	_slideNo = slideNumber;
 
 	// Grab the TextRuns from the PPDrawing
@@ -91,8 +92,9 @@ public class Slide extends Sheet
    * @param sheetNumber The internal number of the sheet, as used by PersistPtrHolder
    * @param slideNumber The user facing number of the sheet
    */
-  public Slide(int sheetNumber, int slideNumber){
+  public Slide(int sheetNumber, int sheetRefId, int slideNumber){
 	_slide = new org.apache.poi.hslf.record.Slide();
+	_refSheetNo = sheetRefId;
 	_sheetNo = sheetNumber;
 	_slideNo = slideNumber;
   }
@@ -112,7 +114,7 @@ public class Slide extends Sheet
 		sa.setNotesID(0);
 	} else {
 		// Set to the value from the notes' sheet id
-		sa.setNotesID(notes.getSheetNumber());
+		sa.setNotesID(notes._getSheetNumber());
 	}
   }
 
@@ -125,10 +127,15 @@ public class Slide extends Sheet
   public TextRun[] getTextRuns() { return _runs; }
 
   /**
-   * Returns the (internal, RefId based) sheet number
+   * Returns the (internal, RefID based) sheet number, as used 
+   *  to in PersistPtr stuff.
+   */
+  public int _getSheetRefId() { return _refSheetNo; }
+  /**
+   * Returns the (internal, SlideIdentifier based) sheet number
    * @see getSlideNumber()
    */
-  public int getSheetNumber() { return _sheetNo; }
+  public int _getSheetNumber() { return _sheetNo; }
   
   /**
    * Returns the (public facing) page number of this slide

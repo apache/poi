@@ -130,7 +130,8 @@ public class TextRun
 					}
 				}
 				if(pLenRemain < 0) {
-					throw new IllegalStateException("Paragraph style ran out before character style did!");
+					System.err.println("Paragraph style ran out before character style did! Short by " + (0-pLenRemain) + " characters.");
+					System.err.println("Calling RichTextRun functions is likely to break things - see Bug #38544");
 				}
 			}
 		}

@@ -31,7 +31,7 @@ import org.apache.poi.hslf.record.PPDrawing;
 
 public class Notes extends Sheet
 {
-  private int _sheetNo;
+  private int _refSheetNo;
   private int _slideNo;
   private org.apache.poi.hslf.record.Notes _notes;
   private TextRun[] _runs;
@@ -46,7 +46,7 @@ public class Notes extends Sheet
 	_notes = notes;
 	
 	// Grab our internal sheet ID
-	_sheetNo = notes.getSheetId();
+	_refSheetNo = notes.getSheetId();
 
 	// Grab the number of the slide we're for, via the NotesAtom
 	_slideNo = _notes.getNotesAtom().getSlideID();
@@ -66,13 +66,14 @@ public class Notes extends Sheet
   public TextRun[] getTextRuns() { return _runs; }
 
   /**
-   * Returns the (internal, RefId based) sheet number (RefId)
+   * Returns the (internal, RefID based) sheet number, as used 
+   *  to in PersistPtr stuff.
    */
-  public int getSheetNumber() { return _sheetNo; }
-  
+  public int _getSheetRefId() { return _refSheetNo; }
   /**
-   * Returns the (internal, identifer based) number of the slide we're attached to 
+   * Returns the (internal, SlideIdentifer based) number of the 
+   *  slide we're attached to 
    */
-  public int getSlideInternalNumber() { return _slideNo; }
+  public int _getSheetNumber() { return _slideNo; }
   
   protected PPDrawing getPPDrawing() { return _notes.getPPDrawing(); }} 
