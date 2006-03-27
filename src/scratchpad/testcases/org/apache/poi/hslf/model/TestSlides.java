@@ -42,7 +42,8 @@ public class TestSlides extends TestCase {
         
         Slide s1 = ppt.createSlide();
         assertTrue(ppt.getSlides().length == 1);
-        assertEquals(3, s1.getSheetNumber());
+        assertEquals(3, s1._getSheetRefId());
+        assertEquals(256, s1._getSheetNumber());
         assertEquals(1, s1.getSlideNumber());
 
         //serialize and read again
@@ -64,12 +65,14 @@ public class TestSlides extends TestCase {
         
         Slide s1 = ppt.createSlide();
         assertTrue(ppt.getSlides().length == 1);
-        assertEquals(3, s1.getSheetNumber());
+        assertEquals(3, s1._getSheetRefId());
+        assertEquals(256, s1._getSheetNumber());
         assertEquals(1, s1.getSlideNumber());
         
         Slide s2 = ppt.createSlide();
         assertTrue(ppt.getSlides().length == 2);
-        assertEquals(4, s2.getSheetNumber());
+        assertEquals(4, s2._getSheetRefId());
+        assertEquals(257, s2._getSheetNumber());
         assertEquals(2, s2.getSlideNumber());
 
         //serialize and read again
@@ -91,17 +94,20 @@ public class TestSlides extends TestCase {
         
         Slide s1 = ppt.createSlide();
         assertTrue(ppt.getSlides().length == 1);
-        assertEquals(3, s1.getSheetNumber());
+        assertEquals(3, s1._getSheetRefId());
+        assertEquals(256, s1._getSheetNumber());
         assertEquals(1, s1.getSlideNumber());
         
         Slide s2 = ppt.createSlide();
         assertTrue(ppt.getSlides().length == 2);
-        assertEquals(4, s2.getSheetNumber());
+        assertEquals(4, s2._getSheetRefId());
+        assertEquals(257, s2._getSheetNumber());
         assertEquals(2, s2.getSlideNumber());
 
         Slide s3 = ppt.createSlide();
         assertTrue(ppt.getSlides().length == 3);
-        assertEquals(5, s3.getSheetNumber());
+        assertEquals(5, s3._getSheetRefId());
+        assertEquals(258, s3._getSheetNumber());
         assertEquals(3, s3.getSlideNumber());
 
         //serialize and read again

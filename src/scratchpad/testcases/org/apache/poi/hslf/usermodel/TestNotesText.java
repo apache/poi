@@ -41,7 +41,7 @@ public class TestNotesText extends TestCase {
     }
 
     public void testNotesOne() throws Exception {
-		Notes notes = ss.getNotes()[1];
+		Notes notes = ss.getNotes()[0];
 
 		String[] expectText = new String[] {"These are the notes for page 1"};
 		assertEquals(expectText.length, notes.getTextRuns().length);
@@ -51,7 +51,7 @@ public class TestNotesText extends TestCase {
     }
 
 	public void testNotesTwo() throws Exception {
-		Notes notes = ss.getNotes()[2];
+		Notes notes = ss.getNotes()[1];
 		String[] expectText = new String[] {"These are the notes on page two, again lacking formatting"};
 		assertEquals(expectText.length, notes.getTextRuns().length);
 		for(int i=0; i<expectText.length; i++) {
