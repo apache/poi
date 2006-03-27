@@ -163,7 +163,7 @@ public class PowerPointExtractor
 		for(int i=0; i<_slides.length; i++) {
 			Notes notes = _slides[i].getNotesSheet();
 			if(notes == null) { continue; }
-			Integer id = new Integer(notes.getSheetNumber());
+			Integer id = new Integer(notes._getSheetNumber());
 			if(seenNotes.contains(id)) { continue; }
 			seenNotes.add(id);
 

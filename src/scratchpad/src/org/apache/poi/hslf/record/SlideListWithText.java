@@ -76,9 +76,12 @@ public class SlideListWithText extends RecordContainer
 					endPos += 1;
 				}
 
-				// Now, if not empty, create a SlideAtomsSets
 				int clen = endPos - i - 1;
-				if(clen == 0) { continue; }
+				boolean emptySet = false;
+				if(clen == 0) { emptySet = true; }
+				
+				// Create a SlideAtomsSets, not caring if they're empty
+				//if(emptySet) { continue; }
 				Record[] spaChildren = new Record[clen];
 				System.arraycopy(_children,i+1,spaChildren,0,clen);
 				SlideAtomsSet set = new SlideAtomsSet((SlidePersistAtom)_children[i],spaChildren);

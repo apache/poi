@@ -45,9 +45,15 @@ public abstract class Sheet
 
   /**
    * Returns the (internal, RefID based) sheet number, as used 
+   *  to in PersistPtr stuff.
+   */
+  public abstract int _getSheetRefId();
+  
+  /**
+   * Returns the (internal, SlideIdentifier based) sheet number, as used 
    *  to reference this sheet from other records.
    */
-  public abstract int getSheetNumber();
+  public abstract int _getSheetNumber();
   
   /**
    * Fetch the PPDrawing from the underlying record
