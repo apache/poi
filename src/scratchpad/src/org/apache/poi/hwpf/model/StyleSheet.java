@@ -230,10 +230,16 @@ public class StyleSheet implements HDFType
           {
 
               parentPAP = _styleDescriptions[baseIndex].getPAP();
-              if(parentPAP == null)
+              if(parentPAP == null) 
               {
-                  createPap(baseIndex);
-                  parentPAP = _styleDescriptions[baseIndex].getPAP();
+            	  if(baseIndex == istd) {
+            		  // Oh dear, style claims that it is its own parent
+            		  throw new IllegalStateException("Pap style " + istd + " claimed to have itself as its parent, which isn't allowed");
+            	  } else {
+            		  // Create the parent style
+                      createPap(baseIndex);
+                      parentPAP = _styleDescriptions[baseIndex].getPAP();
+            	  }
               }
 
           }
