@@ -22,18 +22,13 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.ByteArrayInputStream;
-import java.io.FileOutputStream;
 
 import java.util.Iterator;
 
+import org.apache.poi.POIDocument;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.common.POIFSConstants;
-import org.apache.poi.hwpf.usermodel.CharacterRun;
-import org.apache.poi.hwpf.usermodel.Paragraph;
-import org.apache.poi.hwpf.usermodel.TableProperties;
-import org.apache.poi.hwpf.sprm.TableSprmUncompressor;
-import org.apache.poi.hwpf.sprm.ParagraphSprmUncompressor;
 
 import org.apache.poi.hwpf.model.*;
 import org.apache.poi.hwpf.model.io.*;
@@ -47,7 +42,7 @@ import org.apache.poi.hwpf.usermodel.*;
  *
  * @author Ryan Ackley
  */
-public class HWPFDocument
+public class HWPFDocument extends POIDocument
 //  implements Cloneable
 {
   /** The FIB*/
@@ -110,12 +105,16 @@ public class HWPFDocument
   /**
    * This constructor loads a Word document from a POIFSFileSystem
    *
-   * @param filesystem The POIFSFileSystem that contains the Word document.
+   * @param pfilesystem The POIFSFileSystem that contains the Word document.
    * @throws IOException If there is an unexpected IOException from the passed
    *         in POIFSFileSystem.
    */
-  public HWPFDocument(POIFSFileSystem filesystem) throws IOException
+  public HWPFDocument(POIFSFileSystem pfilesystem) throws IOException
   {
+    // Sort out the hpsf properties
+    filesystem = pfilesystem;
+    readProperties();
+    
     // read in the main stream.
     DocumentEntry documentProps =
        (DocumentEntry)filesystem.getRoot().getEntry("WordDocument");
