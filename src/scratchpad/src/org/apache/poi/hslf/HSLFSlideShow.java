@@ -22,6 +22,7 @@ package org.apache.poi.hslf;
 import java.util.*;
 import java.io.*;
 
+import org.apache.poi.POIDocument;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
@@ -42,14 +43,11 @@ import org.apache.poi.hslf.usermodel.PictureData;
  * @author Nick Burch
  */
 
-public class HSLFSlideShow
+public class HSLFSlideShow extends POIDocument
 {
 	private InputStream istream;
-	private POIFSFileSystem filesystem;
 
-	// Holds metadata on our document
-	private SummaryInformation sInf;
-	private DocumentSummaryInformation dsInf;
+	// Holds metadata on where things are in our document
 	private CurrentUserAtom currentUser;
 
 	// Low level contents of the file
@@ -104,6 +102,9 @@ public class HSLFSlideShow
 
 		// Look for Property Streams:
 		readProperties();
+		
+		// Look for other streams
+		readOtherStreams();
 
 		// Look for Picture Streams:
 		readPictures();
@@ -186,15 +187,10 @@ public class HSLFSlideShow
 
 
 	/**
-	 * Find the properties from the filesystem, and load them
+	 * Find the other from the filesystem (currently just CurrentUserAtom), 
+	 *  and load them
 	 */
-	public void readProperties() {
-		// DocumentSummaryInformation
-		dsInf = (DocumentSummaryInformation)getPropertySet("\005DocumentSummaryInformation");
-
-		// SummaryInformation
-		sInf = (SummaryInformation)getPropertySet("\005SummaryInformation");
-
+	public void readOtherStreams() {
 		// Current User
 		try {
 			currentUser = new CurrentUserAtom(filesystem);
@@ -233,36 +229,6 @@ public class HSLFSlideShow
 	}
 
 
-  /** 
-   * For a given named property entry, either return it or null if
-   *  if it wasn't found
-   */
-  public PropertySet getPropertySet(String setName) {
-	DocumentInputStream dis;
-	try {
-		// Find the entry, and get an input stream for it
-		dis = filesystem.createDocumentInputStream(setName);
-	} catch(IOException ie) {
-		// Oh well, doesn't exist
-		System.err.println("Error getting property set with name " + setName + "\n" + ie);
-		return null;
-	}
-
-	try {
-		// Create the Property Set
-		PropertySet set = PropertySetFactory.create(dis);
-		return set;
-	} catch(IOException ie) {
-		// Must be corrupt or something like that
-		System.err.println("Error creating property set with name " + setName + "\n" + ie);
-	} catch(org.apache.poi.hpsf.HPSFException he) {
-		// Oh well, doesn't exist
-		System.err.println("Error creating property set with name " + setName + "\n" + he);
-	}
-	return null;
-  }
-
-
   /**
    * Writes out the slideshow file the is represented by an instance of
    *  this class
@@ -275,12 +241,7 @@ public class HSLFSlideShow
 	POIFSFileSystem outFS = new POIFSFileSystem();
 
 	// Write out the Property Streams
-	if(sInf != null) {
-		writePropertySet("\005SummaryInformation",sInf,outFS);
-	}
-	if(dsInf != null) {
-		writePropertySet("\005DocumentSummaryInformation",dsInf,outFS);
-	}
+	writeProperties(outFS);
 
 
 	// For position dependent records, hold where they were and now are
@@ -342,24 +303,6 @@ public class HSLFSlideShow
    }
 
 
-  /**
-   * Writes out a given ProperySet
-   */
-  private void writePropertySet(String name, PropertySet set, POIFSFileSystem fs) throws IOException {
-	try {
-		MutablePropertySet mSet = new MutablePropertySet(set);
-		ByteArrayOutputStream bOut = new ByteArrayOutputStream();
-		mSet.write(bOut);
-		byte[] data = bOut.toByteArray();
-		ByteArrayInputStream bIn = new ByteArrayInputStream(data);
-		fs.createDocument(bIn,name);
-		System.out.println("Wrote property set " + name + " of size " + data.length);
-	} catch(org.apache.poi.hpsf.WritingNotSupportedException wnse) {
-		System.err.println("Couldn't write property set with name " + name + " as not supported by HPSF yet");
-	}
-  }
-
-
 	/* ******************* adding methods follow ********************* */
 
 	/**
@@ -417,16 +360,6 @@ public class HSLFSlideShow
 	 *  call to open or write - at all other times might be wrong!
 	 */
 	public byte[] getUnderlyingBytes() { return _docstream; }
-
-	/** 
-	 * Fetch the Document Summary Information of the document
-	 */
-	public DocumentSummaryInformation getDocumentSummaryInformation() { return dsInf; }
-
-	/** 
-	 * Fetch the Summary Information of the document
-	 */
-	public SummaryInformation getSummaryInformation() { return sInf; }
 
 	/**
 	 * Fetch the Current User Atom of the document
