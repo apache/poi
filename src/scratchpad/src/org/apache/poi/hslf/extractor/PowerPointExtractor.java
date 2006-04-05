@@ -66,8 +66,8 @@ public class PowerPointExtractor
   }
 
   /**
-   * Creates a PowerPointExtractor
-   * @param fileName
+   * Creates a PowerPointExtractor, from a file
+   * @param fileName The name of the file to extract from
    */
   public PowerPointExtractor(String fileName) throws IOException {
 	_hslfshow = new HSLFSlideShow(fileName);
@@ -77,8 +77,8 @@ public class PowerPointExtractor
   }
 
   /**
-   * Creates a PowerPointExtractor
-   * @param iStream
+   * Creates a PowerPointExtractor, from an Input Stream
+   * @param iStream The input stream containing the PowerPoint document
    */
   public PowerPointExtractor(InputStream iStream) throws IOException {
 	_hslfshow = new HSLFSlideShow(iStream);
@@ -88,11 +88,22 @@ public class PowerPointExtractor
   }
 
   /**
-   * Creates a PowerPointExtractor
-   * @param fs
+   * Creates a PowerPointExtractor, from an open POIFSFileSystem
+   * @param fs the POIFSFileSystem containing the PowerPoint document
    */
   public PowerPointExtractor(POIFSFileSystem fs) throws IOException {
 	_hslfshow = new HSLFSlideShow(fs);
+	_show = new SlideShow(_hslfshow);
+	_slides = _show.getSlides();
+	_notes = _show.getNotes();
+  }
+
+  /**
+   * Creates a PowerPointExtractor, from a HSLFSlideShow
+   * @param ss the HSLFSlideShow to extract text from
+   */
+  public PowerPointExtractor(HSLFSlideShow ss) throws IOException {
+	_hslfshow = ss;
 	_show = new SlideShow(_hslfshow);
 	_slides = _show.getSlides();
 	_notes = _show.getNotes();

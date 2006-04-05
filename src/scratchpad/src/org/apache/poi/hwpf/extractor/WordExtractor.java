@@ -36,8 +36,16 @@ public class WordExtractor {
 	 * @param fs POIFSFileSystem containing the word file
 	 */
 	public WordExtractor(POIFSFileSystem fs) throws IOException {
+		this(new HWPFDocument(fs));
 		this.fs = fs;
-		doc = new HWPFDocument(fs);
+	}
+	
+	/**
+	 * Create a new Word Extractor
+	 * @param doc The HWPFDocument to extract from
+	 */
+	public WordExtractor(HWPFDocument doc) throws IOException {
+		this.doc = doc;
 	}
 	
 	/**
