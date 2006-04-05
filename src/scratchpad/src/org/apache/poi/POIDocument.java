@@ -54,14 +54,14 @@ public abstract class POIDocument {
 
 	/**
 	 * Find, and create objects for, the standard
-	 *  Documment Information Properties (hpsf)
+	 *  Documment Information Properties (HPSF)
 	 */
 	protected void readProperties() {
 		// DocumentSummaryInformation
-		dsInf = (DocumentSummaryInformation)getPropertySet("\005DocumentSummaryInformation");
+		dsInf = (DocumentSummaryInformation)getPropertySet(DocumentSummaryInformation.DEFAULT_STREAM_NAME);
 
 		// SummaryInformation
-		sInf = (SummaryInformation)getPropertySet("\005SummaryInformation");
+		sInf = (SummaryInformation)getPropertySet(SummaryInformation.DEFAULT_STREAM_NAME);
 	}
 
 	/** 
@@ -94,7 +94,7 @@ public abstract class POIDocument {
 	}
 	
 	/**
-	 * Writes out the standard Documment Information Properties (hpsf)
+	 * Writes out the standard Documment Information Properties (HPSF)
 	 * @param outFS the POIFSFileSystem to write the properties into
 	 */
 	protected void writeProperties(POIFSFileSystem outFS) throws IOException {
