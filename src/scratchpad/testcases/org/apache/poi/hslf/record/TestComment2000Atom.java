@@ -42,7 +42,7 @@ public class TestComment2000Atom extends TestCase {
 	private byte[] data_b = new byte[] { 
 		00, 00, 0xE1-256, 0x2E, 0x1C, 00, 00, 00,
 		05, 00, 00, 00, 0xD6-256, 0x07, 01, 00, 
-		02, 00, 0x18, 00, 0x0A, 00, 0x19, 00, 03,
+		02, 00, 0x18, 00, 0x15, 00, 0x19, 00, 03,
 		00, 0xD5-256, 02, 0x0A, 00, 00, 00, 
 		0x0E, 00, 00, 00
 		};
@@ -58,10 +58,10 @@ public class TestComment2000Atom extends TestCase {
 		Comment2000Atom ca = new Comment2000Atom(data_a, 0, data_a.length);
 		Comment2000Atom cb = new Comment2000Atom(data_b, 0, data_b.length);
 
-    	// A is 2006-01-24 (2nd day of week) 22:26:15.205
-		Date exp_a = sdf.parse("2006-01-24 22:26:15.205");
-		// B is 2006-01-24 (2nd day of week) 22:25:03.725
-		Date exp_b = sdf.parse("2006-01-24 22:25:03.725");
+    	// A is 2006-01-24 (2nd day of week) 20:26:15.205
+		Date exp_a = sdf.parse("2006-01-24 10:26:15.205");
+		// B is 2006-01-24 (2nd day of week) 21:25:03.725
+		Date exp_b = sdf.parse("2006-01-24 21:25:03.725");
 		
 		assertEquals(exp_a, ca.getDate());
 		assertEquals(exp_b, cb.getDate());
@@ -112,7 +112,7 @@ public class TestComment2000Atom extends TestCase {
     	a.setYOffset(0x92);
     	
     	// Set the date
-		Date date_a = sdf.parse("2006-01-24 22:26:15.205");
+		Date date_a = sdf.parse("2006-01-24 10:26:15.205");
 		a.setDate(date_a);
 		
 		// Check it's now the same as a
@@ -134,7 +134,7 @@ public class TestComment2000Atom extends TestCase {
 		ca.setNumber(5);
 		
 		// Change the date
-		Date new_date = sdf.parse("2006-01-24 22:25:03.725");
+		Date new_date = sdf.parse("2006-01-24 21:25:03.725");
 		ca.setDate(new_date);
 		
 		// Change the x and y

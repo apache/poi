@@ -40,7 +40,7 @@ public class TestSystemTimeUtils extends TestCase {
 	private byte[] data_b = new byte[] {
 		00, 00, 0xE1-256, 0x2E, 0x1C, 00, 00, 00,
 		01, 00, 00, 00, 0xD6-256, 0x07, 01, 00, 
-		02, 00, 0x18, 00, 0x0A, 00, 0x19, 00, 03,
+		02, 00, 0x18, 00, 0x15, 00, 0x19, 00, 03,
 		00, 0xD5-256, 02, 0x0A, 00, 00, 00, 
 		0x0A, 00, 00, 00
 	};
@@ -50,8 +50,8 @@ public class TestSystemTimeUtils extends TestCase {
 	public void testGetDateA() throws Exception {
 		Date date = SystemTimeUtils.getDate(data_a);
 		
-		// Is 2006-01-24 (2nd day of week) 22:26:15.205
-		Date exp = sdf.parse("2006-01-24 22:26:15.205");
+		// Is 2006-01-24 (2nd day of week) 10:26:15.205
+		Date exp = sdf.parse("2006-01-24 10:26:15.205");
 		assertEquals(exp.getTime(), date.getTime());
 		assertEquals(exp, date);
 	}
@@ -59,15 +59,15 @@ public class TestSystemTimeUtils extends TestCase {
 	public void testGetDateB() throws Exception {
 		Date date = SystemTimeUtils.getDate(data_b, 8+4);
 		
-		// Is 2006-01-24 (2nd day of week) 22:25:03.725
-		Date exp = sdf.parse("2006-01-24 22:25:03.725");
+		// Is 2006-01-24 (2nd day of week) 21:25:03.725
+		Date exp = sdf.parse("2006-01-24 21:25:03.725");
 		assertEquals(exp.getTime(), date.getTime());
 		assertEquals(exp, date);
 	}
 	
 	public void testWriteDateA() throws Exception {
 		byte[] out_a = new byte[data_a.length];
-		Date date = sdf.parse("2006-01-24 22:26:15.205");
+		Date date = sdf.parse("2006-01-24 10:26:15.205");
 		SystemTimeUtils.storeDate(date, out_a);
 		
 		for(int i=0; i<out_a.length; i++) {
@@ -81,7 +81,7 @@ public class TestSystemTimeUtils extends TestCase {
 		System.arraycopy(data_b, 0, out_b, 0, 12);
 		System.arraycopy(data_b, 12+16, out_b, 12+16, data_b.length-12-16);
 		
-		Date date = sdf.parse("2006-01-24 22:25:03.725");
+		Date date = sdf.parse("2006-01-24 21:25:03.725");
 		SystemTimeUtils.storeDate(date, out_b, 12);
 		
 		for(int i=0; i<out_b.length; i++) {
