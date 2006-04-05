@@ -50,10 +50,10 @@ public class SystemTimeUtils {
         
         cal.set(Calendar.YEAR,         LittleEndian.getShort(data,offset));
         cal.set(Calendar.MONTH,        LittleEndian.getShort(data,offset+2)-1);
-        // Not actually needed 0 - can be found from day of month 
+        // Not actually needed - can be found from day of month 
         //cal.set(Calendar.DAY_OF_WEEK,  LittleEndian.getShort(data,offset+4)+1);
         cal.set(Calendar.DAY_OF_MONTH, LittleEndian.getShort(data,offset+6));
-        cal.set(Calendar.HOUR,         LittleEndian.getShort(data,offset+8));
+        cal.set(Calendar.HOUR_OF_DAY,  LittleEndian.getShort(data,offset+8));
         cal.set(Calendar.MINUTE,       LittleEndian.getShort(data,offset+10));
         cal.set(Calendar.SECOND,       LittleEndian.getShort(data,offset+12));
         cal.set(Calendar.MILLISECOND,  LittleEndian.getShort(data,offset+14));
@@ -80,7 +80,7 @@ public class SystemTimeUtils {
         LittleEndian.putShort(dest, offset + 2, (short)(cal.get(Calendar.MONTH) + 1));
         LittleEndian.putShort(dest, offset + 4, (short)(cal.get(Calendar.DAY_OF_WEEK)-1));
         LittleEndian.putShort(dest, offset + 6, (short) cal.get(Calendar.DAY_OF_MONTH));
-        LittleEndian.putShort(dest, offset + 8, (short) cal.get(Calendar.HOUR));
+        LittleEndian.putShort(dest, offset + 8, (short) cal.get(Calendar.HOUR_OF_DAY));
         LittleEndian.putShort(dest, offset + 10,(short) cal.get(Calendar.MINUTE));
         LittleEndian.putShort(dest, offset + 12,(short) cal.get(Calendar.SECOND));
         LittleEndian.putShort(dest, offset + 14,(short) cal.get(Calendar.MILLISECOND));

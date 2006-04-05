@@ -79,7 +79,7 @@ public class TestComment2000 extends TestCase {
 		0x48, 00,
 		00, 00, 0xE1-256, 0x2E, 0x1C, 00, 00, 00,
 		01, 00, 00, 00, 0xD6-256, 0x07, 01, 00, 
-		02, 00, 0x18, 00, 0x0A, 00, 0x19, 00, 03,
+		02, 00, 0x18, 00, 0x16, 00, 0x19, 00, 03,
 		00, 0xD5-256, 02, 0x0A, 00, 00, 00, 
 		0x0A, 00, 00, 00
 		};
@@ -106,8 +106,18 @@ public class TestComment2000 extends TestCase {
 		assertEquals(1, c2a.getNumber());
 		assertEquals(0x92, c2a.getXOffset());
 		assertEquals(0x92, c2a.getYOffset());
-		Date exp_a = sdf.parse("2006-01-24 22:26:15.205");
+		Date exp_a = sdf.parse("2006-01-24 10:26:15.205");
 		assertEquals(exp_a, c2a.getDate());
+	}
+	public void testCommentAtomB() throws Exception {
+		Comment2000 cb = new Comment2000(data_b, 0, data_b.length);
+		Comment2000Atom c2b = cb.getComment2000Atom();
+		
+		assertEquals(1, c2b.getNumber());
+		assertEquals(0x0a, c2b.getXOffset());
+		assertEquals(0x0a, c2b.getYOffset());
+		Date exp_b = sdf.parse("2006-01-24 22:25:03.725");
+		assertEquals(exp_b, c2b.getDate());
 	}
 
 	public void testWrite() throws Exception {
