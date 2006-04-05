@@ -99,10 +99,10 @@ public abstract class POIDocument {
 	 */
 	protected void writeProperties(POIFSFileSystem outFS) throws IOException {
 		if(sInf != null) {
-			writePropertySet("\005SummaryInformation",sInf,outFS);
+			writePropertySet(SummaryInformation.DEFAULT_STREAM_NAME,sInf,outFS);
 		}
 		if(dsInf != null) {
-			writePropertySet("\005DocumentSummaryInformation",dsInf,outFS);
+			writePropertySet(DocumentSummaryInformation.DEFAULT_STREAM_NAME,dsInf,outFS);
 		}
 	}
 	
