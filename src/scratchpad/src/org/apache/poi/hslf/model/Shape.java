@@ -22,13 +22,47 @@ import java.awt.*;
 import java.util.Iterator;
 
 /**
+ *  <p>
   * Represents a Shape which is the elemental object that composes a drawing.
+ *  This class is a wrapper around EscherSpContainer which holds all information
+ *  about a shape in PowerPoint document.
+ *  </p>
+ *  <p>
+ *  When you add a shape, you usually specify the dimensions of the shape and the position
+ *  of the upper�left corner of the bounding box for the shape relative to the upper�left
+ *  corner of the page, worksheet, or slide. Distances in the drawing layer are measured
+ *  in points (72 points = 1 inch).
+ *  </p>
+ * <p>
   *
   * @author Yegor Kozlov
  */
 public abstract class Shape {
 
+    /**
+     * In Escher absolute distances are specified in
+     * English Metric Units (EMUs), occasionally referred to as A units;
+     * there are 360000 EMUs per centimeter, 914400 EMUs per inch, 12700 EMUs per point.
+     */
+    public static final int EMU_PER_INCH = 914400;
     public static final int EMU_PER_POINT = 12700;
+    public static final int EMU_PER_CENTIMETER = 360000;
+
+    /**
+     * Master DPI (576 pixels per inch).
+     * Used by the reference coordinate system in PowerPoint.
+     */
+    public static final int MASTER_DPI = 576;
+
+    /**
+     * Pixels DPI (96 pixels per inch)
+     */
+    public static final int PIXEL_DPI = 96;
+
+    /**
+     * Points DPI (72 pixels per inch)
+     */
+    public static final int POINT_DPI = 72;
 
     /**
      * Either EscherSpContainer or EscheSpgrContainer record
@@ -41,6 +75,11 @@ public abstract class Shape {
      * <code>null</code> for the topmost shapes.
      */
     protected Shape _parent;
+
+    /**
+     * The <code>Sheet</code> this shape belongs to
+     */
+    protected Sheet _sheet;
 
     /**
      * Create a Shape object. This constructor is used when an existing Shape is read from from a PowerPoint document.
@@ -86,25 +125,25 @@ public abstract class Shape {
         if ((flags & EscherSpRecord.FLAG_CHILD) != 0){
             EscherChildAnchorRecord rec = (EscherChildAnchorRecord)getEscherChild(_escherContainer, EscherChildAnchorRecord.RECORD_ID);
             anchor = new java.awt.Rectangle();
-            anchor.x = rec.getDx1();
-            anchor.y = rec.getDy1();
-            anchor.width = rec.getDx2() - anchor.x;
-            anchor.height = rec.getDy2() - anchor.y;
+            anchor.x = rec.getDx1()*POINT_DPI/MASTER_DPI;
+            anchor.y = rec.getDy1()*POINT_DPI/MASTER_DPI;
+            anchor.width = (rec.getDx2() - anchor.x)*POINT_DPI/MASTER_DPI;
+            anchor.height = (rec.getDy2() - anchor.y)*POINT_DPI/MASTER_DPI;
         }
         else {
             EscherClientAnchorRecord rec = (EscherClientAnchorRecord)getEscherChild(_escherContainer, EscherClientAnchorRecord.RECORD_ID);
             anchor = new java.awt.Rectangle();
-            anchor.y = rec.getFlag();
-            anchor.x = rec.getCol1();
-            anchor.width = rec.getDx1() - anchor.x;
-            anchor.height = rec.getRow1() - anchor.y;
+            anchor.y = rec.getFlag()*POINT_DPI/MASTER_DPI;
+            anchor.x = rec.getCol1()*POINT_DPI/MASTER_DPI;
+            anchor.width = (rec.getDx1() - rec.getCol1())*POINT_DPI/MASTER_DPI;
+            anchor.height = (rec.getRow1() - rec.getFlag())*POINT_DPI/MASTER_DPI;
         }
         return anchor;
     }
 
     /**
      * Sets the anchor (the bounding box rectangle) of this shape.
-     * All coordinates should be expressed in Master units (576 dpi).
+     * All coordinates should be expressed in poitns (72 dpi).
      *
      * @param anchor new anchor
      */
@@ -113,17 +152,17 @@ public abstract class Shape {
         int flags = spRecord.getFlags();
         if ((flags & EscherSpRecord.FLAG_CHILD) != 0){
             EscherChildAnchorRecord rec = (EscherChildAnchorRecord)getEscherChild(_escherContainer, EscherChildAnchorRecord.RECORD_ID);
-            rec.setDx1(anchor.x);
-            rec.setDy1(anchor.y);
-            rec.setDx2(anchor.width + anchor.x);
-            rec.setDy2(anchor.height + anchor.y);
+            rec.setDx1(anchor.x*MASTER_DPI/POINT_DPI);
+            rec.setDy1(anchor.y*MASTER_DPI/POINT_DPI);
+            rec.setDx2((anchor.width + anchor.x)*MASTER_DPI/POINT_DPI);
+            rec.setDy2((anchor.height + anchor.y)*MASTER_DPI/POINT_DPI);
         }
         else {
             EscherClientAnchorRecord rec = (EscherClientAnchorRecord)getEscherChild(_escherContainer, EscherClientAnchorRecord.RECORD_ID);
-            rec.setFlag((short)anchor.y);
-            rec.setCol1((short)anchor.x);
-            rec.setDx1((short)(anchor.width + anchor.x));
-            rec.setRow1((short)(anchor.height + anchor.y));
+            rec.setFlag((short)(anchor.y*MASTER_DPI/POINT_DPI));
+            rec.setCol1((short)(anchor.x*MASTER_DPI/POINT_DPI));
+            rec.setDx1((short)((anchor.width + anchor.x)*MASTER_DPI/POINT_DPI));
+            rec.setRow1((short)((anchor.height + anchor.y)*MASTER_DPI/POINT_DPI));
         }
 
     }
@@ -171,11 +210,11 @@ public abstract class Shape {
     }
 
     /**
-     * Set an escher property in the opt record.
+     * Set an escher property for this shape.
      *
      * @param opt       The opt record to set the properties to.
      * @param propId    The id of the property. One of the constants defined in EscherOptRecord.
-     * @param value     value of the property
+     * @param value     value of the property. If value = -1 then the property is removed.
      */
      public static void setEscherProperty(EscherOptRecord opt, short propId, int value){
         java.util.List props = opt.getEscherProperties();
@@ -198,4 +237,33 @@ public abstract class Shape {
     public EscherContainerRecord getSpContainer(){
         return _escherContainer;
     }
+
+    /**
+     * Event which fires when a shape is inserted in the sheet.
+     * In some cases we need to propagate changes to upper level containers.
+     * <br>
+     * Default implementation does nothing.
+     *
+     * @param sh - owning shape
+     */
+    protected void afterInsert(Sheet sh){
+
+    }
+
+    /**
+     *  @return the <code>SlideShow</code> this shape belongs to
+     */
+    public Sheet getSheet(){
+        return _sheet;
+    }
+
+    /**
+     * Assign the <code>SlideShow</code> this shape belongs to
+     *
+     * @param sheet owner of this shape
+     */
+    public void setSheet(Sheet sheet){
+        _sheet = sheet;
+    }
+
 }

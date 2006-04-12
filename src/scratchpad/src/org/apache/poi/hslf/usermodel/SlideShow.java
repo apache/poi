@@ -401,6 +401,7 @@ public class SlideShow
 	_notes = new Notes[notesV.size()];
 	for(int i=0; i<_notes.length; i++) {
 		_notes[i] = (Notes)notesV.get(i);
+		_notes[i].setSlideShow(this);
 		
 		// Now supply ourselves to all the rich text runs
 		//  of this note's TextRuns
@@ -418,6 +419,7 @@ public class SlideShow
 	_slides = new Slide[slidesV.size()];
 	for(int i=0; i<_slides.length; i++) {
 		_slides[i] = (Slide)slidesV.get(i);
+		_slides[i].setSlideShow(this);
 
 		// Now supply ourselves to all the rich text runs
 		//  of this slide's TextRuns
@@ -472,9 +474,9 @@ public class SlideShow
 	//public MetaSheet[] getMetaSheets() { return _msheets; }
 
 	/**
-	 * Returns all the pictures attached to the SlideShow
+	 * Returns the data of all the pictures attached to the SlideShow
 	 */
-	public PictureData[] getPictures() throws IOException {
+	public PictureData[] getPictureData() {
 		return _hslfSlideShow.getPictures();
 	}
 	
@@ -483,7 +485,20 @@ public class SlideShow
 	 */
 	public Dimension getPageSize(){
 		DocumentAtom docatom = _documentRecord.getDocumentAtom();
-		return new Dimension((int)docatom.getSlideSizeX(), (int)docatom.getSlideSizeY());
+		int pgx = (int)docatom.getSlideSizeX()*Shape.POINT_DPI/Shape.MASTER_DPI;
+		int pgy = (int)docatom.getSlideSizeY()*Shape.POINT_DPI/Shape.MASTER_DPI;
+		return new Dimension(pgx, pgy);
+	}
+	
+	/**
+	 * Change the current page size
+	 * 
+	 * @param pgsize page size (in points)
+	 */
+	public void setPageSize(Dimension pgsize){
+		DocumentAtom docatom = _documentRecord.getDocumentAtom();
+		docatom.setSlideSizeX(pgsize.width*Shape.MASTER_DPI/Shape.POINT_DPI);
+		docatom.setSlideSizeY(pgsize.height*Shape.MASTER_DPI/Shape.POINT_DPI);
 	}
 	
 	/**
@@ -491,9 +506,9 @@ public class SlideShow
 	 */
 	protected FontCollection getFontCollection() { return _fonts; }
 	/**
-	 * Helper method for usermodel: Get the document record
+	 * Helper method for usermodel and model: Get the document record
 	 */
-	protected Document getDocumentRecord() { return _documentRecord; }
+	public Document getDocumentRecord() { return _documentRecord; }
 
 	
 	/* ===============================================================
@@ -607,6 +622,7 @@ public class SlideShow
   		usr.setLastViewType((short)UserEditAtom.LAST_VIEW_SLIDE_VIEW);
   		
   		// All done and added
+  		slide.setSlideShow(this);
   		return slide;
 	}
 

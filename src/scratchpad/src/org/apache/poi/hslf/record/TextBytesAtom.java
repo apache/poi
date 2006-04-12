@@ -71,6 +71,18 @@ public class TextBytesAtom extends RecordAtom
 		_text = new byte[len-8];
 		System.arraycopy(source,start+8,_text,0,len-8);
 	}
+	
+	/**
+	 * Create an empty TextBytes Atom
+	 */
+	public TextBytesAtom() {
+		_header = new byte[8];
+		LittleEndian.putUShort(_header, 0, 0);
+		LittleEndian.putUShort(_header, 2, (int)_type);
+		LittleEndian.putInt(_header, 4, 0);
+
+		_text = new byte[]{};
+	}
 
 	/**
 	 * We are of type 4008

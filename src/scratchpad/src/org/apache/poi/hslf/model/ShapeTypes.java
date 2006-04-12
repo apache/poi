@@ -82,9 +82,9 @@ public class ShapeTypes {
     public static final int Chevron = 55;
     public static final int Pentagon = 56;
     public static final int NoSmoking = 57;
-    public static final int Seal8 = 58;
-    public static final int Seal16 = 59;
-    public static final int Seal32 = 60;
+    public static final int Star8 = 58;
+    public static final int Star16 = 59;
+    public static final int Star32 = 60;
     public static final int WedgeRectCallout = 61;
     public static final int WedgeRRectCallout = 62;
     public static final int WedgeEllipseCallout = 63;
@@ -116,7 +116,7 @@ public class ShapeTypes {
     public static final int LeftUpArrow = 89;
     public static final int BentUpArrow = 90;
     public static final int BentArrow = 91;
-    public static final int Seal24 = 92;
+    public static final int Star24 = 92;
     public static final int StripedRightArrow = 93;
     public static final int NotchedRightArrow = 94;
     public static final int BlockArc = 95;
@@ -211,7 +211,7 @@ public class ShapeTypes {
     public static final int Moon = 184;
     public static final int BracketPair = 185;
     public static final int BracePair = 186;
-    public static final int Seal4 = 187;
+    public static final int Star4 = 187;
     public static final int DoubleWave = 188;
     public static final int ActionButtonBlank = 189;
     public static final int ActionButtonHome = 190;

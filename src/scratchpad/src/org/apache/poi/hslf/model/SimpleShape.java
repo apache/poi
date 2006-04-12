@@ -29,6 +29,12 @@ import java.awt.*;
  */
 public class SimpleShape extends Shape {
 
+    /**
+     * Create a SimpleShape object and initialize it from the supplied Record container.
+     *
+     * @param escherRecord    <code>EscherSpContainer</code> container which holds information about this shape
+     * @param parent    the parent of the shape
+     */
     protected SimpleShape(EscherContainerRecord escherRecord, Shape parent){
         super(escherRecord, parent);
     }
@@ -102,12 +108,12 @@ public class SimpleShape extends Shape {
     }
 
     /**
-     * @return color of the line
+     * @return color of the line. If color is not set returns <code>java.awt.Color.black</code>
      */
     public Color getLineColor(){
         EscherOptRecord opt = (EscherOptRecord)getEscherChild(_escherContainer, EscherOptRecord.RECORD_ID);
         EscherRGBProperty prop = (EscherRGBProperty)getEscherProperty(opt, EscherProperties.LINESTYLE__COLOR);
-        Color color = null;
+        Color color = Color.black;
         if (prop != null){
             Color swp = new Color(prop.getRgbColor());
             color = new Color(swp.getBlue(), swp.getGreen(), swp.getRed());
@@ -136,6 +142,11 @@ public class SimpleShape extends Shape {
         return prop == null ? Line.LineSolid : prop.getPropertyValue();
     }
 
+    /**
+     * The color used to fill this shape.
+     *
+     * @param color the background color
+     */
     public void setFillColor(Color color){
         EscherOptRecord opt = (EscherOptRecord)getEscherChild(_escherContainer, EscherOptRecord.RECORD_ID);
         int rgb = new Color(color.getBlue(), color.getGreen(), color.getRed(), 0).getRGB();

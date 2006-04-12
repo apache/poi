@@ -47,7 +47,7 @@ public class EscherTextboxWrapper extends RecordContainer
 	/** 
 	 * Creates the wrapper for the given DDF Escher Record and children
 	 */
-	protected EscherTextboxWrapper(EscherTextboxRecord textbox) {
+	public EscherTextboxWrapper(EscherTextboxRecord textbox) {
 		_escherRecord = textbox;
 		_type = (long)_escherRecord.getRecordId();
 
@@ -55,7 +55,18 @@ public class EscherTextboxWrapper extends RecordContainer
 		byte[] data = _escherRecord.getData();
 		_children = Record.findChildRecords(data,0,data.length);
 	}
+	
+	/**
+	 * Creates a new, empty wrapper for DDF Escher Records and their children
+	 */
+	public EscherTextboxWrapper() {
+		_escherRecord = new EscherTextboxRecord();
+		_escherRecord.setRecordId(EscherTextboxRecord.RECORD_ID);
+		_escherRecord.setOptions((short)15);
 
+		_children = new Record[0];
+	}
+	
 
 	/**
 	 * Return the type of the escher record (normally in the 0xFnnn range)

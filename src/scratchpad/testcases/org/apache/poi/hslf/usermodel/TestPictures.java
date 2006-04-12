@@ -50,8 +50,35 @@ public class TestPictures extends TestCase{
 
             BufferedImage img = ImageIO.read(new ByteArrayInputStream(data));
             assertNotNull(img);
+            assertEquals(Picture.PNG, pict[i].getType());
         }
         ppt.close();
+    }
+
+    public void testReadPicturesForSlide() throws Exception {
+
+        SlideShow ppt = new SlideShow(new HSLFSlideShow(filename));
+
+        Slide[] slide = ppt.getSlides();
+        for (int i = 0; i < slide.length; i++) {
+            Slide sl = slide[i];
+            Shape[] sh = sl.getShapes();
+            for (int j = 0; j < sh.length; j++) {
+                Shape shape = sh[j];
+                if (shape instanceof Picture){
+                    Picture picture = (Picture)shape;
+
+                    PictureData pictdata = picture.getPictureData();
+                    assertEquals(Picture.PNG, pictdata.getType());
+
+                    //raw data.
+                    byte[] data = pictdata.getData();
+                    BufferedImage img = ImageIO.read(new ByteArrayInputStream(data));
+                    assertNotNull(img);
+                }
+            }
+
+        }
     }
 
     public void testSerializePictures() throws Exception {
@@ -78,12 +105,10 @@ public class TestPictures extends TestCase{
         idx = ppt.addPicture(new File(dirname + "/clock.jpg"), Picture.JPEG);
         slide = ppt.createSlide();
         pict = new Picture(idx);
-        pict.setDefaultSize(ppt);
         slide.addShape(pict);
 
         idx = ppt.addPicture(new File(dirname + "/painting.png"), Picture.PNG);
         pict = new Picture(idx);
-        pict.setDefaultSize(ppt);
         slide.addShape(pict);
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -91,7 +116,7 @@ public class TestPictures extends TestCase{
         out.close();
 
         ppt = new SlideShow(new HSLFSlideShow(new ByteArrayInputStream(out.toByteArray())));
-        assertTrue(ppt.getPictures().length == 2 );
+        assertTrue(ppt.getPictureData().length == 2 );
     }
 
 }
