@@ -84,7 +84,7 @@ public class TestComment2000 extends TestCase {
 		0x0A, 00, 00, 00
 		};
 	
-	private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
+	private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 	
     public void testRecordType() throws Exception {
 		Comment2000 ca = new Comment2000(data_a, 0, data_a.length);
