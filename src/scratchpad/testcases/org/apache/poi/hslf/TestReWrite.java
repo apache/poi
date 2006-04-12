@@ -22,6 +22,8 @@ package org.apache.poi.hslf;
 
 import junit.framework.TestCase;
 import java.io.*;
+
+import org.apache.poi.hslf.usermodel.SlideShow;
 import org.apache.poi.poifs.filesystem.*;
 
 /**
@@ -32,22 +34,56 @@ import org.apache.poi.poifs.filesystem.*;
  */
 public class TestReWrite extends TestCase {
 	// HSLFSlideShow primed on the test data
-	private HSLFSlideShow ss;
+	private HSLFSlideShow hss;
 	// POIFS primed on the test data
 	private POIFSFileSystem pfs;
 
-    public TestReWrite() throws Exception {
+    public void setUp() throws Exception {
 		String dirname = System.getProperty("HSLF.testdata.path");
 		String filename = dirname + "/basic_test_ppt_file.ppt";
 		FileInputStream fis = new FileInputStream(filename);
 		pfs = new POIFSFileSystem(fis);
-		ss = new HSLFSlideShow(pfs);
+		hss = new HSLFSlideShow(pfs);
     }
 
     public void testWritesOutTheSame() throws Exception {
 		// Write out to a byte array
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		ss.write(baos);
+		hss.write(baos);
+
+		// Build an input stream of it
+		ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+
+		// Use POIFS to query that lot
+		POIFSFileSystem npfs = new POIFSFileSystem(bais);
+
+		// Check that the "PowerPoint Document" sections have the same size
+		DocumentEntry oProps = (DocumentEntry)pfs.getRoot().getEntry("PowerPoint Document");
+		DocumentEntry nProps = (DocumentEntry)npfs.getRoot().getEntry("PowerPoint Document");
+		assertEquals(oProps.getSize(),nProps.getSize());
+
+		// Check that they contain the same data
+		byte[] _oData = new byte[oProps.getSize()];
+		byte[] _nData = new byte[nProps.getSize()];
+		pfs.createDocumentInputStream("PowerPoint Document").read(_oData);
+		npfs.createDocumentInputStream("PowerPoint Document").read(_nData);
+		for(int i=0; i<_oData.length; i++) {
+			System.out.println(i + "\t" + Integer.toHexString(i));
+			assertEquals(_oData[i], _nData[i]);
+		}
+	}
+
+    /**
+     * Ensure that simply opening a slideshow (usermodel) view of it
+     *  doesn't change things 
+     */
+    public void testSlideShowWritesOutTheSame() throws Exception {
+    	// Create a slideshow covering it
+    	SlideShow ss = new SlideShow(hss);
+    	
+		// Now write out to a byte array
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		hss.write(baos);
 
 		// Build an input stream of it
 		ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
