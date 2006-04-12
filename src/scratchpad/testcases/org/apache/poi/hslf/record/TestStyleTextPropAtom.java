@@ -405,13 +405,12 @@ public class TestStyleTextPropAtom extends TestCase {
 
 		assertEquals(data_a.length, b.length);
 		for(int i=0; i<data_a.length; i++) {
-			System.out.println(i + "\t" + b[i] + "\t" + data_a[i]);
 			assertEquals(data_a[i],b[i]);
 		}
 	}
 
 
-	public void testWrite() throws Exception {
+	public void testWriteA() throws Exception {
 		StyleTextPropAtom stpa = new StyleTextPropAtom(data_a,0,data_a.length);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		stpa.writeOut(baos);
@@ -423,7 +422,7 @@ public class TestStyleTextPropAtom extends TestCase {
 		}
 	}
 
-	public void testLoadWrite() throws Exception {
+	public void testLoadWriteA() throws Exception {
 		StyleTextPropAtom stpa = new StyleTextPropAtom(data_a,0,data_a.length);
 		stpa.setParentTextSize(data_a_text_len);
 
@@ -434,6 +433,34 @@ public class TestStyleTextPropAtom extends TestCase {
 		assertEquals(data_a.length, b.length);
 		for(int i=0; i<data_a.length; i++) {
 			assertEquals(data_a[i],b[i]);
+		}
+	}
+
+
+	public void testWriteB() throws Exception {
+		StyleTextPropAtom stpb = new StyleTextPropAtom(data_b,0,data_b.length);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		stpb.writeOut(baos);
+		byte[] b = baos.toByteArray();
+
+		assertEquals(data_b.length, b.length);
+		for(int i=0; i<data_b.length; i++) {
+			assertEquals(data_b[i],b[i]);
+		}
+	}
+
+	public void testLoadWriteB() throws Exception {
+		StyleTextPropAtom stpb = new StyleTextPropAtom(data_b,0,data_b.length);
+		stpb.setParentTextSize(data_b_text_len);
+
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		stpb.writeOut(baos);
+		byte[] b = baos.toByteArray();
+
+		assertEquals(data_b.length, b.length);
+		for(int i=0; i<data_b.length; i++) {
+			System.out.println(i + "\t" + b[i] + "\t" + data_b[i] + "\t" + Integer.toHexString(b[i]) );
+			assertEquals(data_b[i],b[i]);
 		}
 	}
 }
