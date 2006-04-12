@@ -216,6 +216,14 @@ public class TextRun
 		// Paragraph might cover other runs to, so remove old size and add new one
 		pCol.updateTextSize( pCol.getCharactersCovered() - run.getLength() + s.length());
 		
+		// If we were dealing with the last RichTextRun in the set, then
+		//  we need to tell the Character TextPropCollections a size 1 bigger 
+		//  than it really is
+		// (The Paragraph one will keep the extra 1 length from before)
+		if(runID == _rtRuns.length-1) {
+			cCol.updateTextSize( cCol.getCharactersCovered() + 1 );
+		}
+		
 		// Build up the new text
 		// As we go through, update the start position for all subsequent runs
 		// The building relies on the old text still being present
@@ -271,10 +279,12 @@ public class TextRun
 			LinkedList cStyles = _styleAtom.getCharacterStyles();
 			while(cStyles.size() > 1) { cStyles.removeLast(); }
 			
+			// Note - TextPropCollection's idea of the text length must
+			//         be one larger than it actually is!
 			TextPropCollection pCol = (TextPropCollection)pStyles.getFirst();
 			TextPropCollection cCol = (TextPropCollection)cStyles.getFirst();
-			pCol.updateTextSize(s.length());
-			cCol.updateTextSize(s.length());
+			pCol.updateTextSize(s.length()+1);
+			cCol.updateTextSize(s.length()+1);
 			
 			// Recreate rich text run with first styling
 			_rtRuns[0] = new RichTextRun(this,0,s.length(), pCol, cCol);
