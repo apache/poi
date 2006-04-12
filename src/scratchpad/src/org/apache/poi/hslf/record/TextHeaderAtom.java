@@ -75,6 +75,18 @@ public class TextHeaderAtom extends RecordAtom implements ParentAwareRecord
 		// Grab the type
 		textType = (int)LittleEndian.getInt(source,start+8);
 	}
+	
+	/**
+	 * Create a new TextHeader Atom, for an unknown type of text
+	 */
+	public TextHeaderAtom() {
+		_header = new byte[8];
+		LittleEndian.putUShort(_header, 0, 0);
+		LittleEndian.putUShort(_header, 2, (int)_type);
+		LittleEndian.putInt(_header, 4, 4);
+
+		textType = OTHER_TYPE;
+	}
 
 	/**
 	 * We are of type 3999

@@ -107,13 +107,12 @@ public class Line extends SimpleShape {
         EscherContainerRecord spcont = super.createSpContainer(isChild);
 
         EscherSpRecord spRecord = spcont.getChildById(EscherSpRecord.RECORD_ID);
-        short type = (ShapeTypes.Line << 4) + 2;
+        short type = (ShapeTypes.Line << 4) | 0x2;
         spRecord.setOptions(type);
   
         //set default properties for a line
         EscherOptRecord opt = (EscherOptRecord)getEscherChild(spcont, EscherOptRecord.RECORD_ID);
 
-        //opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.GEOMETRY__SHAPEPATH, 4));
         opt.sortProperties();
 
         return spcont;

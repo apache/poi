@@ -3,11 +3,14 @@ package org.apache.poi.hslf.model;
 import org.apache.poi.ddf.*;
 import org.apache.poi.hslf.usermodel.PictureData;
 import org.apache.poi.hslf.usermodel.SlideShow;
+import org.apache.poi.hslf.record.Document;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.List;
+import java.util.Arrays;
 
 
 /**
@@ -122,16 +125,49 @@ public class Picture extends SimpleShape {
     }
 
     /**
-     * Set default size of the picture
-     *
-     * @param ppt presentation which holds the picture
+     * Resize this picture to the default size.
      */
-    public void setDefaultSize(SlideShow ppt) throws IOException {
-        int idx = getPictureIndex();
-
-        PictureData pict = ppt.getPictures()[idx-1];
-        BufferedImage img = ImageIO.read(new ByteArrayInputStream(pict.getData()));
-
-        setAnchor(new java.awt.Rectangle(0, 0, img.getWidth()*6, img.getHeight()*6));
+    public void setDefaultSize(){
+        PictureData pict = getPictureData();
+        try {
+            BufferedImage img = ImageIO.read(new ByteArrayInputStream(pict.getData()));
+            setAnchor(new java.awt.Rectangle(0, 0, img.getWidth(), img.getHeight()));
+        } catch (IOException e){
+            throw new RuntimeException(e);
+        }
     }
+
+    /**
+     * Returns the picture data for this picture.
+     *
+     * @return the picture data for this picture.
+     */
+    public PictureData getPictureData(){
+        SlideShow ppt = getSheet().getSlideShow();
+        PictureData[] pict = ppt.getPictureData();
+        Document doc = ppt.getDocumentRecord();
+        EscherContainerRecord dggContainer = doc.getPPDrawingGroup().getDggContainer();
+        EscherContainerRecord bstore = (EscherContainerRecord)Shape.getEscherChild(dggContainer, EscherContainerRecord.BSTORE_CONTAINER);
+
+        List lst = bstore.getChildRecords();
+        int idx = getPictureIndex()-1;
+        EscherBSERecord bse = (EscherBSERecord)lst.get(idx);
+        for ( int i = 0; i < pict.length; i++ ) {
+            if (Arrays.equals(bse.getUid(), pict[i].getUID())){
+                return pict[i];
+            }
+        }
+        return null;
+    }
+
+    /**
+     * By default set the orininal image size
+     */
+    protected void afterInsert(Sheet sh){
+        java.awt.Rectangle anchor = getAnchor();
+        if (anchor.equals(new java.awt.Rectangle())){
+            setDefaultSize();
+        }
+    }
+
 }

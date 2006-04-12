@@ -262,4 +262,15 @@ public class PPDrawing extends RecordAtom
 			dgContainer
 		};
 	}
+	
+	/**
+	 * Add a new EscherTextboxWrapper to this <code>PPDrawing</code>.
+	 */
+	public void addTextboxWrapper(EscherTextboxWrapper txtbox){
+		EscherTextboxWrapper[] tw = new EscherTextboxWrapper[textboxWrappers.length + 1];
+		System.arraycopy(textboxWrappers, 0, tw, 0, textboxWrappers.length);
+		
+		tw[textboxWrappers.length] = txtbox;
+		textboxWrappers = tw;
+	}
 }

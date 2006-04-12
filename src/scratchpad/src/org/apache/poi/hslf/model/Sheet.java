@@ -23,6 +23,7 @@ import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherDgRecord;
 import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.hslf.record.*;
+import org.apache.poi.hslf.usermodel.SlideShow;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -38,6 +39,11 @@ import java.util.Vector;
 
 public abstract class Sheet
 {
+  /**
+   * The <code>SlideShow</code> we belong to
+   */
+  private SlideShow _slideShow; 
+  
   /**
    * Returns an array of all the TextRuns in the sheet.
    */
@@ -59,7 +65,19 @@ public abstract class Sheet
    * Fetch the PPDrawing from the underlying record
    */
   protected abstract PPDrawing getPPDrawing();
+  
+  
+  /**
+   * Fetch the SlideShow we're attached to
+   */
+  public SlideShow getSlideShow() { return _slideShow; }
+  
+  /**
+   * Set the SlideShow we're attached to
+   */
+  public void setSlideShow(SlideShow ss) { _slideShow = ss; }
 
+  
   /**
    * For a given PPDrawing, grab all the TextRuns
    */
@@ -149,7 +167,9 @@ public abstract class Sheet
 	ArrayList shapes = new ArrayList();
 	for (int i=1;i<ch.size();i++) {
 		EscherContainerRecord sp = (EscherContainerRecord)ch.get(i);
-		shapes.add(ShapeFactory.createShape(sp, null));
+		Shape sh = ShapeFactory.createShape(sp, null);
+		sh.setSheet(this);
+		shapes.add(sh);
 	}
 	
 	return (Shape[])shapes.toArray(new Shape[shapes.size()]);
@@ -169,5 +189,8 @@ public abstract class Sheet
 
 	EscherDgRecord dg = (EscherDgRecord)Shape.getEscherChild(dgContainer, EscherDgRecord.RECORD_ID);
 	dg.setNumShapes(dg.getNumShapes()+1);
+	
+	shape.setSheet(this);
+	shape.afterInsert(this);
   }
 } 

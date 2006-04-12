@@ -27,11 +27,21 @@ import java.util.List;
  */
 public class ShapeGroup extends Shape{
 
+    /**
+      * Create a new ShapeGroup. This constructor is used when a new shape is created.
+      *
+      */
     public ShapeGroup(){
         this(null, null);
         _escherContainer = createSpContainer(false);
     }
 
+    /**
+      * Create a ShapeGroup object and initilize it from the supplied Record container.
+      *
+      * @param escherRecord       <code>EscherSpContainer</code> container which holds information about this shape
+      * @param parent    the parent of the shape
+      */
     protected ShapeGroup(EscherContainerRecord escherRecord, Shape parent){
         super(escherRecord, parent);
     }

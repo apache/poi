@@ -17,12 +17,14 @@ package org.apache.poi.hslf.model;
 
 import junit.framework.TestCase;
 import org.apache.poi.hslf.usermodel.SlideShow;
+import org.apache.poi.hslf.usermodel.RichTextRun;
 import org.apache.poi.hslf.HSLFSlideShow;
 
 import java.awt.*;
 import java.awt.Rectangle;
 import java.io.ByteArrayOutputStream;
 import java.io.ByteArrayInputStream;
+import java.io.FileOutputStream;
 
 /**
  * Test drawing shapes via Graphics2D
@@ -36,21 +38,23 @@ public class TestShapes extends TestCase {
 		String dirname = System.getProperty("HSLF.testdata.path");
 		String filename = dirname + "/empty.ppt";
 		ppt = new SlideShow(new HSLFSlideShow(filename));
-        getClass().getResourceAsStream("");
     }
 
     public void testGraphics() throws Exception {
         Slide slide = ppt.createSlide();
 
         Line line = new Line();
-        line.setAnchor(new Rectangle(1296, 2544, 1344, 528));
+        java.awt.Rectangle lineAnchor = new java.awt.Rectangle(100, 200, 50, 60);
+        line.setAnchor(lineAnchor);
+        System.out.println(line.getAnchor());
         line.setLineWidth(3);
         line.setLineStyle(Line.LineDashSys);
         line.setLineColor(Color.red);
         slide.addShape(line);
 
-        Ellipse ellipse = new Ellipse();
-        ellipse.setAnchor(new Rectangle(4000, 1000, 1000, 1000));
+        AutoShape ellipse = new AutoShape(ShapeTypes.Ellipse);
+        java.awt.Rectangle ellipseAnchor = new Rectangle(320, 154, 55, 111);
+        ellipse.setAnchor(ellipseAnchor);
         ellipse.setLineWidth(2);
         ellipse.setLineStyle(Line.LineSolid);
         ellipse.setLineColor(Color.green);
@@ -64,17 +68,103 @@ public class TestShapes extends TestCase {
         //read ppt from byte array
 
         ppt = new SlideShow(new HSLFSlideShow(new ByteArrayInputStream(out.toByteArray())));
-        assertEquals(ppt.getSlides().length, 1);
+        assertEquals(1, ppt.getSlides().length);
 
         slide = ppt.getSlides()[0];
         Shape[] shape = slide.getShapes();
-        assertEquals(shape.length, 2);
+        assertEquals(2, shape.length);
 
         assertTrue(shape[0] instanceof Line); //group shape
-        assertEquals(shape[0].getAnchor(), new Rectangle(1296, 2544, 1344, 528)); //group shape
+        assertEquals(lineAnchor, shape[0].getAnchor()); //group shape
 
-        assertTrue(shape[1] instanceof Ellipse); //group shape
-        assertEquals(shape[1].getAnchor(), new Rectangle(4000, 1000, 1000, 1000)); //group shape
+        assertTrue(shape[1] instanceof AutoShape); //group shape
+        assertEquals(ellipseAnchor, shape[1].getAnchor()); //group shape
+    }
+
+    /**
+     * Verify that we can read TextBox shapes
+     * @throws Exception
+     */
+    public void testTextBoxRead() throws Exception {
+        String dirname = System.getProperty("HSLF.testdata.path");
+        String filename = dirname + "/with_textbox.ppt";
+        ppt = new SlideShow(new HSLFSlideShow(filename));
+        Slide sl = ppt.getSlides()[0];
+        Shape[] sh = sl.getShapes();
+        for (int i = 0; i < sh.length; i++) {
+            assertTrue(sh[i] instanceof TextBox);
+            TextBox txtbox = (TextBox)sh[i];
+            String text = txtbox.getText();
+            assertNotNull(text);
+
+            assertEquals(txtbox.getRichTextRuns().length, 1);
+            RichTextRun rt = txtbox.getRichTextRuns()[0];
+
+            if (text.equals("Hello, World!!!")){
+                assertEquals(32, rt.getFontSize());
+                assertTrue(rt.isBold());
+                assertTrue(rt.isItalic());
+            } else if (text.equals("I am just a poor boy")){
+                assertEquals(44, rt.getFontSize());
+                assertTrue(rt.isBold());
+            } else if (text.equals("This is Times New Roman")){
+                assertEquals(16, rt.getFontSize());
+                assertTrue(rt.isBold());
+                assertTrue(rt.isItalic());
+                assertTrue(rt.isUnderlined());
+            } else if (text.equals("Plain Text")){
+                assertEquals(18, rt.getFontSize());
+            }
+        }
+    }
+
+    /**
+     * Verify that we can add TextBox shapes to a slide
+     * @throws Exception
+     */
+    public void testTextBoxWrite() throws Exception {
+        ppt = new SlideShow();
+        Slide sl = ppt.createSlide();
+
+        TextBox txtbox = new TextBox();
+        txtbox.setText("Hello, World!");
+        txtbox.setFontSize(42);
+        txtbox.setBold(true);
+        txtbox.setItalic(true);
+
+        sl.addShape(txtbox);
+
+        txtbox = new TextBox();
+        txtbox.setText("Plain text in default font");
+        sl.addShape(txtbox);
+
+        assertEquals(sl.getShapes().length, 2);
+        
+        //serialize and read again
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ppt.write(out);
+        out.close();
+
+        ppt = new SlideShow(new HSLFSlideShow(new ByteArrayInputStream(out.toByteArray())));
+        sl = ppt.getSlides()[0];
+        assertEquals(sl.getShapes().length, 2);
+
+        Shape[] sh = sl.getShapes();
+        for (int i = 0; i < sh.length; i++) {
+            assertTrue(sh[i] instanceof TextBox);
+            txtbox = (TextBox)sh[i];
+            String text = txtbox.getText();
+            assertNotNull(text);
+
+            assertEquals(txtbox.getRichTextRuns().length, 1);
+            RichTextRun rt = txtbox.getRichTextRuns()[0];
+
+            if (text.equals("Hello, World!")){
+                assertEquals(42, rt.getFontSize());
+                assertTrue(rt.isBold());
+                assertTrue(rt.isItalic());
+            }
+        }
     }
 
 }

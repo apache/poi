@@ -139,6 +139,34 @@ public class PPGraphics2D extends Graphics2D {
     }
 
     public void drawString(String string, float x, float y){
+
+         TextBox txt = new TextBox(group);
+         txt.setMarginBottom(0);
+         txt.setMarginTop(0);
+         txt.setMarginLeft(0);
+         txt.setMarginRight(0);
+         txt.setText(string);
+         txt.setWordWrap(TextBox.WrapNone);
+        
+         if (font != null){
+             txt.setFontSize(font.getSize());
+             txt.setFontName(font.getName());
+             //if(getColor() != null) txt.setFontColor(getColor());
+             if (font.isBold()) txt.setBold(true);
+             if (font.isItalic()) txt.setItalic(true);
+         }
+
+         txt.resizeToFitText();
+         int height = (int)txt.getAnchor().getHeight();
+
+         /*
+           In powerpoint anchor of a shape is its top left corner.
+           Java graphics sets string coordinates by the baseline of the first character
+           so we need to shift down by the height of the textbox
+         */
+        txt.moveTo((int)x, (int)(y - height));
+
+        group.addShape(txt);
     }
 
     public void fill(Shape shape){
@@ -212,7 +240,7 @@ public class PPGraphics2D extends Graphics2D {
     }
 
     public void drawOval(int x, int y, int width, int height) {
-        Ellipse ellipse = new Ellipse();
+        AutoShape ellipse = new AutoShape(ShapeTypes.Ellipse);
         ellipse.setAnchor(new java.awt.Rectangle(x-width/2, y-height/2, width, height));
         if (stroke instanceof BasicStroke){
             BasicStroke bs = (BasicStroke)stroke;

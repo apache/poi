@@ -25,6 +25,7 @@ import java.security.NoSuchAlgorithmException;
 
 /**
  * A class that represents the image data contained in the Presentation.
+ * 
  *
  *  @author Yegor Kozlov
  */
@@ -34,6 +35,9 @@ public class PictureData {
 	* The size of the header
 	*/
 	public static final int HEADER_SIZE = 25;
+
+    protected static final int JPEG_HEADER = -266516832;
+    protected static final int PNG_HEADER = -266441216;
 
 	/**
 	* Binary data of the picture
@@ -118,10 +122,26 @@ public class PictureData {
 	*/
 	public void setType(int format){
         switch (format){
-            case Picture.JPEG: LittleEndian.putInt(header, 0, -266516832); break;
-            case Picture.PNG: LittleEndian.putInt(header, 0, -266441216); break;
+            case Picture.JPEG: LittleEndian.putInt(header, 0, PictureData.JPEG_HEADER); break;
+            case Picture.PNG: LittleEndian.putInt(header, 0, PictureData.PNG_HEADER); break;
         }
 	}
+
+    /**
+     * Returns type of this picture.
+     * Must be one of the static constans defined in the <code>Picture<code> class.
+     *
+     * @return type of this picture.
+     */
+    public int getType(){
+        int format = 0;
+        int val = LittleEndian.getInt(header, 0);
+        switch (val){
+            case PictureData.JPEG_HEADER: format = Picture.JPEG; break;
+            case PictureData.PNG_HEADER: format = Picture.PNG; break;
+        }
+        return format;
+    }
 
     /**
      * Returns the header of the Picture

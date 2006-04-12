@@ -25,6 +25,9 @@ import org.apache.poi.ddf.EscherContainerRecord;
  */
 public class ShapeFactory {
 
+    /**
+     * Create a new shape from the data provided.  
+     */
     public static Shape createShape(EscherContainerRecord spContainer, Shape parent){
         if (spContainer.getRecordId() == EscherContainerRecord.SPGR_CONTAINER){
             return new ShapeGroup(spContainer, parent);
@@ -36,6 +39,8 @@ public class ShapeFactory {
         int type = spRecord.getOptions() >> 4;
         switch (type){
             case ShapeTypes.TextBox:
+                shape = new TextBox(spContainer, parent);
+                break;
             case ShapeTypes.Rectangle:
                 shape = new Rectangle(spContainer, parent);
                 break;
@@ -45,14 +50,11 @@ public class ShapeFactory {
             case ShapeTypes.Line:
                 shape = new Line(spContainer, parent);
                 break;
-            case ShapeTypes.Ellipse:
-                shape = new Ellipse(spContainer, parent);
-                break;
             case ShapeTypes.NotPrimitive:
                 shape = new ShapeGroup(spContainer, parent);
                 break;
             default:
-                shape = new SimpleShape(spContainer, parent);
+                shape = new AutoShape(spContainer, parent);
                 break;
         }
         return shape;
