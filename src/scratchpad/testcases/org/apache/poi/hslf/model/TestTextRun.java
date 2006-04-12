@@ -394,7 +394,12 @@ public class TestTextRun extends TestCase {
 		// The styles should have been updated for the new sizes
 		assertEquals(newBText.length(), tpBC.getCharactersCovered());
 		assertEquals(newCText.length(), tpCC.getCharactersCovered());
-		assertEquals(newDText.length(), tpDC.getCharactersCovered());
+		assertEquals(newDText.length()+1, tpDC.getCharactersCovered()); // Last one is always one larger
+		
+		assertEquals(
+				newBText.length() + newCText.length() + newDText.length(), 
+				tpBP.getCharactersCovered()
+		);
 		
 		// Paragraph style should be sum of text length
 		assertEquals(newBText.length() + newCText.length() + newDText.length(), tpBP.getCharactersCovered());
