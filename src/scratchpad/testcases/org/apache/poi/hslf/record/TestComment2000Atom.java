@@ -47,7 +47,7 @@ public class TestComment2000Atom extends TestCase {
 		0x0E, 00, 00, 00
 		};
 	
-	private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
+	private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 	
     public void testRecordType() throws Exception {
 		Comment2000Atom ca = new Comment2000Atom(data_a, 0, data_a.length);
@@ -58,7 +58,7 @@ public class TestComment2000Atom extends TestCase {
 		Comment2000Atom ca = new Comment2000Atom(data_a, 0, data_a.length);
 		Comment2000Atom cb = new Comment2000Atom(data_b, 0, data_b.length);
 
-    	// A is 2006-01-24 (2nd day of week) 20:26:15.205
+    	// A is 2006-01-24 (2nd day of week) 10:26:15.205
 		Date exp_a = sdf.parse("2006-01-24 10:26:15.205");
 		// B is 2006-01-24 (2nd day of week) 21:25:03.725
 		Date exp_b = sdf.parse("2006-01-24 21:25:03.725");
