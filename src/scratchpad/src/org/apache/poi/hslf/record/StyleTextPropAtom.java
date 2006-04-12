@@ -447,7 +447,7 @@ public class StyleTextPropAtom extends RecordAtom
 			int mask = 0;
 			for(int i=0; i<textPropList.size(); i++) {
 				TextProp textProp = (TextProp)textPropList.get(i);
-				mask += textProp.getMask();
+				mask += textProp.getWriteMask();
 			}
 			writeLittleEndian(mask,o);
 
@@ -504,6 +504,11 @@ public class StyleTextPropAtom extends RecordAtom
 		 *  that indicates that this text property is present.
 		 */
 		public int getMask() { return maskInHeader; }
+		/**
+		 * Get the mask that's used at write time. Only differs from
+		 *  the result of getMask() for the mask based properties 
+		 */
+		public int getWriteMask() { return getMask(); }
 
 		/**
 		 * Fetch the value of the text property (meaning is specific to
@@ -553,7 +558,15 @@ public class StyleTextPropAtom extends RecordAtom
 			subPropMasks = new int[subPropNames.length];
 			subPropMatches = new boolean[subPropNames.length];
 		}
-
+		
+		/**
+		 * As we're purely mask based, just set flags for stuff
+		 *  that is set
+		 */
+		public int getWriteMask() {
+			return dataValue;
+		}
+		
 		/**
 		 * Set the value of the text property, and recompute the sub
 		 *  properties based on it
