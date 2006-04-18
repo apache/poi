@@ -189,7 +189,7 @@ public class SVTableCellRenderer extends JLabel
                 setValue(cellFormatter.format(format, c.getNumericCellValue()));
               break;
               case HSSFCell.CELL_TYPE_STRING:
-                setValue(c.getStringCellValue());
+                setValue(c.getRichStringCellValue().getString());
               break;
               case HSSFCell.CELL_TYPE_FORMULA:
               default:
