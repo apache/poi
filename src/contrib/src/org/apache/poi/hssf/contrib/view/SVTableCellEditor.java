@@ -160,7 +160,7 @@ public class SVTableCellEditor extends AbstractCellEditor implements TableCellEd
           editor.setText(Double.toString(cell.getNumericCellValue()));
           break;
         case HSSFCell.CELL_TYPE_STRING:
-          editor.setText(cell.getStringCellValue());
+          editor.setText(cell.getRichStringCellValue().getString());
           break;
         case HSSFCell.CELL_TYPE_FORMULA:
         default:
