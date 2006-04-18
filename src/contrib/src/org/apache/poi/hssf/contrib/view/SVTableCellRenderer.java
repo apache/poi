@@ -112,7 +112,7 @@ public class SVTableCellRenderer extends JLabel
       }
 
       public String format(short index, double value) {
-        if (index == 0)
+        if ( index <= 0 )
           return generalNumberFormat.format(value);
         if (textFormatter[index] == null)
           throw new RuntimeException("Sorry. I cant handle the format code :"+Integer.toHexString(index));
