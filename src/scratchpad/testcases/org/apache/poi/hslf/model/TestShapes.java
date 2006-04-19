@@ -120,51 +120,47 @@ public class TestShapes extends TestCase {
 
     /**
      * Verify that we can add TextBox shapes to a slide
-     * @throws Exception
+     * and set some of the style attributes
      */
     public void testTextBoxWrite() throws Exception {
         ppt = new SlideShow();
         Slide sl = ppt.createSlide();
+        RichTextRun rt;
 
+        String val = "Hello, World!";
+
+        // Create a new textbox, and give it lots of properties
         TextBox txtbox = new TextBox();
-        txtbox.setText("Hello, World!");
+        txtbox.setText(val);
         txtbox.setFontSize(42);
         txtbox.setBold(true);
         txtbox.setItalic(true);
-
+        txtbox.setUnderline(false);
         sl.addShape(txtbox);
 
-        txtbox = new TextBox();
-        txtbox.setText("Plain text in default font");
-        sl.addShape(txtbox);
+        // Check it before save
+        rt = txtbox.getRichTextRuns()[0];
+        assertEquals(val, rt.getText());
+        assertEquals(42, rt.getFontSize());
+        assertTrue(rt.isBold());
+        assertTrue(rt.isItalic());
+        assertFalse(rt.isUnderlined());
 
-        assertEquals(sl.getShapes().length, 2);
-        
-        //serialize and read again
+        // Serialize and read again
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ppt.write(out);
         out.close();
 
         ppt = new SlideShow(new HSLFSlideShow(new ByteArrayInputStream(out.toByteArray())));
-        sl = ppt.getSlides()[0];
-        assertEquals(sl.getShapes().length, 2);
 
-        Shape[] sh = sl.getShapes();
-        for (int i = 0; i < sh.length; i++) {
-            assertTrue(sh[i] instanceof TextBox);
-            txtbox = (TextBox)sh[i];
-            String text = txtbox.getText();
-            assertNotNull(text);
+        txtbox = (TextBox)sl.getShapes()[0];
+        rt = txtbox.getRichTextRuns()[0];
 
-            assertEquals(txtbox.getRichTextRuns().length, 1);
-            RichTextRun rt = txtbox.getRichTextRuns()[0];
-
-            if (text.equals("Hello, World!")){
-                assertEquals(42, rt.getFontSize());
-                assertTrue(rt.isBold());
-                assertTrue(rt.isItalic());
-            }
-        }
+        // Check after save
+        assertEquals(val, rt.getText());
+        assertEquals(42, rt.getFontSize());
+        assertTrue(rt.isBold());
+        assertTrue(rt.isItalic());
+        assertFalse(rt.isUnderlined());
     }
-
 }
