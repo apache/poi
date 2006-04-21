@@ -52,26 +52,55 @@ public class TestStyleTextPropAtom extends TestCase {
 	// left aligned+bold (30)
 	// centre aligned+italic+blue (28)
 	// right aligned+red (25)
-	// left aligned+underlined+larger font size (97)
+	// left aligned+underlined+larger font size (96)
+	// left aligned+underlined+larger font size+red (1)
 	private byte[] data_b = new byte[] { 
-		00, 00, 0xA1-256, 0x0F, 0x80-256, 00, 
-		00, 00, 0x1E, 00, 00, 00, 00, 00,
-		00, 0x18, 00, 00, 00, 00, 0x50, 00,
-		0x1C, 00, 00, 00, 00, 00, 00, 0x10,
-	    00, 00, 0x50, 00, 0x19, 00, 00, 00,
-	    00, 00, 00, 0x18, 00, 00, 02, 00,
-	    0x50, 00, 0x61, 00, 00, 00, 00, 00,
-	    00, 0x18, 00, 00, 00, 00, 0x50, 00,
-	    0x1E, 00, 00, 00, 01, 00, 02, 00,
-	    01, 00, 0x14, 00, 0x1C, 00, 00, 00,
-	    02, 00, 06, 00, 02, 00, 0x14, 00,
-	    00, 00, 00, 05, 0x19, 00, 00, 00,
-	    00, 00, 06, 00, 0x14, 00, 0xFF-256, 0x33,
-	    00, 0xFE-256, 0x60, 00, 00, 00, 04, 00,
-	    03, 00, 04, 00, 01, 00, 0x18, 00,
-	    01, 00, 00, 00, 04, 00, 07, 00,
-	    04, 00, 01, 00, 0x18, 00, 0xFF-256, 0x33,
-	    00, 0xFE-256
+		0, 0, 0xA1-256, 0x0F, 0x80-256, 0, 0, 0, 
+		0x1E, 00, 00, 00,     // paragraph is 30 long 
+		00, 00,               // paragraph reserved field
+		00, 0x18, 00, 00,     // mask is 0x1800
+		00, 00,               // left aligned
+		0x50, 00,             // line spacing 80
+		0x1C, 00, 00, 00,     // paragprah is 28 long 
+		00, 00,               // paragraph reserved field
+		00, 0x10, 00, 00,     // mask is 0x1000
+		0x50, 00,             // line spacing 80
+		0x19, 00, 00, 00,     // paragraph is 25 long
+	    00, 00,               // paragraph reserved field
+	    00, 0x18, 00, 00,     // mask is 0x1800 
+	    02, 00,               // right aligned
+	    0x50, 00,             // line spacing 80
+	    0x61, 00, 00, 00,     // paragraph is 97 long
+	    00, 00,               // paragraph reserved field
+	    00, 0x18, 00, 00,     // mask is 0x1800
+	    00, 00,               // left aligned
+	    0x50, 00,             // line spacing 80
+	    
+	    0x1E, 00, 00, 00,     // character run is 30 long
+	    01, 00, 02, 00,       // mask is 0x020001
+	    01, 00,               // char flags 0x0001 = bold
+	    0x14, 00,             // font size 20
+	    0x1C, 00, 00, 00,     // character run is 28 long
+	    02, 00, 06, 00,       // mask is 0x060002
+	    02, 00,               // char flags 0x0002 = italic
+	    0x14, 00,             // font size 20
+	    00, 00, 00, 05,       // colour blue
+	    0x19, 00, 00, 00,     // character run is 25 long
+	    00, 00, 06, 00,       // char flags 0x060000
+	    0x14, 00,             // font size 20
+	    0xFF-256, 0x33, 00, 0xFE-256, // colour red
+	    0x60, 00, 00, 00,     // character run is 96 long
+	    04, 00, 03, 00,       // mask is 0x030004
+	    04, 00,               // char flags 0x0004 = underlined
+	    01, 00,               // font index is 1
+	    0x18, 00,             // font size 24
+	    
+	    01, 00, 00, 00,       // character run is 1 long
+	    04, 00, 07, 00,       // mask is 0x070004
+	    04, 00,               // char flags 0x0004 = underlined
+	    01, 00,               // font index is 1 
+	    0x18, 00,             // font size 24
+	    0xFF-256, 0x33, 00, 0xFE-256 // colour red
 	};
 	private int data_b_text_len = 0xB3;
 	
@@ -94,8 +123,8 @@ public class TestStyleTextPropAtom extends TestCase {
 
 		// In case A, there is a single styling of the characters
 		assertEquals(3, stpa.getCharacterStyles().size());
-		// In case B, there are 4 different stylings
-		assertEquals(4, stpb.getCharacterStyles().size());
+		// In case B, there are 5 different stylings
+		assertEquals(5, stpb.getCharacterStyles().size());
 	}
 
 	public void testParagraphStyleCounts() throws Exception {
@@ -371,10 +400,10 @@ public class TestStyleTextPropAtom extends TestCase {
 	}
 	
 	/**
-	 * Try to recreate an existing StyleTextPropAtom from the empty
+	 * Try to recreate an existing StyleTextPropAtom (a) from the empty
 	 *  constructor, and setting the required properties
 	 */
-	public void testCreateFromScatch() throws Exception {
+	public void testCreateAFromScatch() throws Exception {
 		// Start with an empty one
 		StyleTextPropAtom stpa = new StyleTextPropAtom(54);
 		
@@ -387,16 +416,14 @@ public class TestStyleTextPropAtom extends TestCase {
 		tpca.updateTextSize(21);
 		
 		// Second char style is coloured, 00 00 00 05, and 17 long
-		TextPropCollection tpcb = new TextPropCollection(17);
+		TextPropCollection tpcb = stpa.addCharacterTextPropCollection(17);
 		TextProp tpb = tpcb.addWithName("font.color");
 		tpb.setValue(0x05000000);
-		cs.add(tpcb);
 		
 		// Third char style is coloured, FF 33 00 FE, and 16 long
-		TextPropCollection tpcc = new TextPropCollection(16);
+		TextPropCollection tpcc = stpa.addCharacterTextPropCollection(16);
 		TextProp tpc = tpcc.addWithName("font.color");
 		tpc.setValue(0xFE0033FF);
-		cs.add(tpcc);
 		
 		// Should now be the same as data_a
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -409,6 +436,179 @@ public class TestStyleTextPropAtom extends TestCase {
 		}
 	}
 
+	/**
+	 * Try to recreate an existing StyleTextPropAtom (b) from the empty
+	 *  constructor, and setting the required properties
+	 */
+	public void testCreateBFromScatch() throws Exception {
+		// Start with an empty one
+		StyleTextPropAtom stpa = new StyleTextPropAtom(data_b_text_len);
+		
+		
+		// Need 4 paragraph styles
+		LinkedList ps = stpa.getParagraphStyles();
+		
+		// First is 30 long, left aligned, normal spacing
+		TextPropCollection tppa = (TextPropCollection)ps.get(0);
+		tppa.updateTextSize(30);
+		
+		TextProp tp = tppa.addWithName("alignment");
+		tp.setValue(0);
+		tp = tppa.addWithName("linespacing");
+		tp.setValue(80);
+
+		// Second is 28 long, centre aligned and normal spacing
+		TextPropCollection tppb = stpa.addParagraphTextPropCollection(28);
+		
+		tp = tppb.addWithName("linespacing");
+		tp.setValue(80);
+		
+		// Third is 25 long, right aligned and normal spacing
+		TextPropCollection tppc = stpa.addParagraphTextPropCollection(25);
+		
+		tp = tppc.addWithName("alignment");
+		tp.setValue(2);
+		tp = tppc.addWithName("linespacing");
+		tp.setValue(80);
+		
+		// Forth is left aligned + normal line spacing (despite differing font)
+		TextPropCollection tppd = stpa.addParagraphTextPropCollection(97);
+		
+		tp = tppd.addWithName("alignment");
+		tp.setValue(0);
+		tp = tppd.addWithName("linespacing");
+		tp.setValue(80);
+		
+		
+		// Now do 4 character styles
+		LinkedList cs = stpa.getCharacterStyles();
+		
+		// First is 30 long, bold and font size
+		TextPropCollection tpca = (TextPropCollection)cs.get(0);
+		tpca.updateTextSize(30);
+		
+		tp = tpca.addWithName("font.size");
+		tp.setValue(20);
+		CharFlagsTextProp cftp = (CharFlagsTextProp)
+			tpca.addWithName("char_flags");
+		assertEquals(0, cftp.getValue());
+		cftp.setSubValue(true, CharFlagsTextProp.BOLD_IDX);
+		assertEquals(1, cftp.getValue());
+		
+		// Second is 28 long, blue and italic
+		TextPropCollection tpcb = stpa.addCharacterTextPropCollection(28);
+		
+		tp = tpcb.addWithName("font.size");
+		tp.setValue(20);
+		tp = tpcb.addWithName("font.color");
+		tp.setValue(0x05000000);
+		cftp = (CharFlagsTextProp)tpcb.addWithName("char_flags");
+		cftp.setSubValue(true, CharFlagsTextProp.ITALIC_IDX);
+		assertEquals(2, cftp.getValue());
+		
+		// Third is 25 long and red
+		TextPropCollection tpcc = stpa.addCharacterTextPropCollection(25);
+		
+		tp = tpcc.addWithName("font.size");
+		tp.setValue(20);
+		tp = tpcc.addWithName("font.color");
+		tp.setValue(0xfe0033ff);
+		
+		// Fourth is 96 long, underlined and different+bigger font 
+		TextPropCollection tpcd = stpa.addCharacterTextPropCollection(96);
+		
+		tp = tpcd.addWithName("font.size");
+		tp.setValue(24);
+		tp = tpcd.addWithName("font.index");
+		tp.setValue(1);
+		cftp = (CharFlagsTextProp)tpcd.addWithName("char_flags");
+		cftp.setSubValue(true, CharFlagsTextProp.UNDERLINE_IDX);
+		assertEquals(4, cftp.getValue());
+		
+		// Fifth is 1 long, underlined and different+bigger font + red
+		TextPropCollection tpce = stpa.addCharacterTextPropCollection(1);
+		
+		tp = tpce.addWithName("font.size");
+		tp.setValue(24);
+		tp = tpce.addWithName("font.index");
+		tp.setValue(1);
+		tp = tpce.addWithName("font.color");
+		tp.setValue(0xfe0033ff);
+		cftp = (CharFlagsTextProp)tpce.addWithName("char_flags");
+		cftp.setSubValue(true, CharFlagsTextProp.UNDERLINE_IDX);
+		assertEquals(4, cftp.getValue());
+		
+		
+		// Check it's as expected
+		assertEquals(4, stpa.getParagraphStyles().size());
+		assertEquals(5, stpa.getCharacterStyles().size());
+		
+		// Compare in detail to b
+		StyleTextPropAtom stpb = new StyleTextPropAtom(data_b,0,data_b.length);
+		stpb.setParentTextSize(data_b_text_len);
+		LinkedList psb = stpb.getParagraphStyles();
+		LinkedList csb = stpb.getCharacterStyles();
+		
+		assertEquals(psb.size(), ps.size());
+		assertEquals(csb.size(), cs.size());
+		
+		// Ensure Paragraph Character styles match
+		for(int z=0; z<2; z++) {
+			LinkedList lla = cs; 
+			LinkedList llb = csb;
+			int upto = 5;
+			if(z == 1) {
+				lla = ps;
+				llb = psb;
+				upto = 4;
+			}
+			
+			for(int i=0; i<upto; i++) {
+				TextPropCollection ca = (TextPropCollection)lla.get(i);
+				TextPropCollection cb = (TextPropCollection)llb.get(i);
+				
+				assertEquals(ca.getCharactersCovered(), cb.getCharactersCovered());
+				assertEquals(ca.getTextPropList().size(), cb.getTextPropList().size());
+				
+				for(int j=0; j<ca.getTextPropList().size(); j++) {
+					TextProp tpa = (TextProp)ca.getTextPropList().get(j);
+					TextProp tpb = (TextProp)cb.getTextPropList().get(j);
+					//System.out.println("TP " + i + " " + j + " " + tpa.getName() + "\t" + tpa.getValue() );
+					assertEquals(tpa.getName(), tpb.getName());
+					assertEquals(tpa.getMask(), tpb.getMask());
+					assertEquals(tpa.getWriteMask(), tpb.getWriteMask());
+					assertEquals(tpa.getValue(), tpb.getValue());
+				}
+				
+				ByteArrayOutputStream ba = new ByteArrayOutputStream();
+				ByteArrayOutputStream bb = new ByteArrayOutputStream();
+				
+				ca.writeOut(ba);
+				cb.writeOut(bb);
+				byte[] cab = ba.toByteArray(); 
+				byte[] cbb = bb.toByteArray();
+				
+				assertEquals(cbb.length, cab.length);
+				for(int j=0; j<cab.length; j++) {
+					//System.out.println("On tp " + z + " " + i + " " + j + "\t" + cab[j] + "\t" + cbb[j]);
+					assertEquals(cbb[j], cab[j]);
+				}
+			}
+		}
+		
+
+		
+		// Check byte level with b
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		stpa.writeOut(baos);
+		byte[] b = baos.toByteArray();
+
+		assertEquals(data_b.length, b.length);
+		for(int i=0; i<data_b.length; i++) {
+			System.out.println(i + "\t" + b[i] + "\t" + data_b[i] + "\t" + Integer.toHexString(b[i]) );
+			assertEquals(data_b[i],b[i]);
+		}
+	}
 
 	public void testWriteA() throws Exception {
 		StyleTextPropAtom stpa = new StyleTextPropAtom(data_a,0,data_a.length);
@@ -459,7 +659,7 @@ public class TestStyleTextPropAtom extends TestCase {
 
 		assertEquals(data_b.length, b.length);
 		for(int i=0; i<data_b.length; i++) {
-			System.out.println(i + "\t" + b[i] + "\t" + data_b[i] + "\t" + Integer.toHexString(b[i]) );
+			//System.out.println(i + "\t" + b[i] + "\t" + data_b[i] + "\t" + Integer.toHexString(b[i]) );
 			assertEquals(data_b[i],b[i]);
 		}
 	}
