@@ -25,6 +25,7 @@ import java.awt.*;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
 import java.io.IOException;
+import java.util.Vector;
 
 /**
  * Represents a TextFrame shape in PowerPoint.
@@ -86,7 +87,7 @@ public class TextBox extends SimpleShape {
 
     /**
      * Create a TextBox object and initialize it from the supplied Record container.
-     *
+     * 
      * @param escherRecord       <code>EscherSpContainer</code> container which holds information about this shape
      * @param parent    the parent of the shape
      */
@@ -95,18 +96,17 @@ public class TextBox extends SimpleShape {
 
         EscherTextboxRecord textbox = (EscherTextboxRecord)Shape.getEscherChild(_escherContainer, EscherTextboxRecord.RECORD_ID);
         _txtbox = new EscherTextboxWrapper(textbox);
-
-        TextHeaderAtom tha = null;
-        TextBytesAtom tba = null;
-        StyleTextPropAtom sta = null;
-        Record[] child = _txtbox.getChildRecords();
-        for (int i = 0; i < child.length; i++) {
-            if (child[i] instanceof TextHeaderAtom) tha = (TextHeaderAtom)child[i];
-            else if (child[i] instanceof TextBytesAtom) tba = (TextBytesAtom)child[i];
-            else if (child[i] instanceof StyleTextPropAtom) sta = (StyleTextPropAtom)child[i];
+        
+        // Find our TextRun
+        Vector v = new Vector();
+        Sheet.findTextRuns(_txtbox.getChildRecords(), v);
+        
+        // We should just have one
+        if(v.size() == 1) {
+        	_txtrun = (TextRun)v.get(0);
+        } else {
+        	throw new IllegalStateException("A TextBox should have one TextRun's worth of records in it, found " + v.size());
         }
-
-        _txtrun = new TextRun(tha,tba,sta);
     }
 
     /**
@@ -157,6 +157,7 @@ public class TextBox extends SimpleShape {
         _txtbox = new EscherTextboxWrapper();
 
         TextHeaderAtom tha = new TextHeaderAtom();
+        tha.setParentRecord(_txtbox); // TextHeaderAtom is parent aware
         _txtbox.appendChildRecord(tha);
 
         TextBytesAtom tba = new TextBytesAtom();
