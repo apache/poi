@@ -173,10 +173,12 @@ public class StyleTextPropAtom extends RecordAtom
 		paragraphStyles = new LinkedList();
 		charStyles = new LinkedList();
 
-		TextPropCollection defaultParagraphTextProps = new TextPropCollection(parentTextSize, (short)0);
+		TextPropCollection defaultParagraphTextProps = 
+			new TextPropCollection(parentTextSize, (short)0);
 		paragraphStyles.add(defaultParagraphTextProps);
 
-		TextPropCollection defaultCharacterTextProps = new TextPropCollection(parentTextSize);
+		TextPropCollection defaultCharacterTextProps = 
+			new TextPropCollection(parentTextSize);
 		charStyles.add(defaultCharacterTextProps);
 
 		// Set us as now initialised
@@ -271,6 +273,11 @@ public class StyleTextPropAtom extends RecordAtom
 
 			// Save this properties set
 			charStyles.add(thisCollection);
+			
+			// Handle extra 1 char styles at the end
+			if(pos < rawContents.length && textHandled == size) {
+				size++;
+			}
 		}
 
 		// Handle anything left over
@@ -309,6 +316,27 @@ public class StyleTextPropAtom extends RecordAtom
 
 		rawContents	= baos.toByteArray();
 	}
+	
+	/**
+	 * Create a new Paragraph TextPropCollection, and add it to the list
+	 * @param charactersCovered The number of characters this TextPropCollection will cover
+	 * @return the new TextPropCollection, which will then be in the list
+	 */
+	public TextPropCollection addParagraphTextPropCollection(int charactersCovered) {
+		TextPropCollection tpc = new TextPropCollection(charactersCovered, (short)0);
+		paragraphStyles.add(tpc);
+		return tpc;
+	}
+	/**
+	 * Create a new Character TextPropCollection, and add it to the list
+	 * @param charactersCovered The number of characters this TextPropCollection will cover
+	 * @return the new TextPropCollection, which will then be in the list
+	 */
+	public TextPropCollection addCharacterTextPropCollection(int charactersCovered) {
+		TextPropCollection tpc = new TextPropCollection(charactersCovered);
+		charStyles.add(tpc);
+		return tpc;
+	}
 
 
 /* ************************************************************************ */
@@ -320,7 +348,7 @@ public class StyleTextPropAtom extends RecordAtom
 	 * Used to hold the number of characters affected, the list of active
 	 *  properties, and the random reserved field if required.
 	 */
-	public static class TextPropCollection {
+	public class TextPropCollection {
 		private int charactersCovered;
 		private short reservedField;
 		private LinkedList textPropList;
@@ -373,17 +401,6 @@ public class StyleTextPropAtom extends RecordAtom
 		}
 
 		/**
-		 * Create a new collection of text properties (be they paragraph
-		 *  or character) which will be groked via a subsequent call to
-		 *  buildTextPropList().
-		 */
-		public TextPropCollection(int charactersCovered, short reservedField) {
-			this.charactersCovered = charactersCovered;
-			this.reservedField = reservedField;
-			textPropList = new LinkedList();
-		}
-
-		/**
 		 * For an existing set of text properties, build the list of 
 		 *  properties coded for in a given run of properties.
 		 * @return the number of bytes that were used encoding the properties list
@@ -415,9 +432,20 @@ public class StyleTextPropAtom extends RecordAtom
 
 		/**
 		 * Create a new collection of text properties (be they paragraph
+		 *  or character) which will be groked via a subsequent call to
+		 *  buildTextPropList().
+		 */
+		private TextPropCollection(int charactersCovered, short reservedField) {
+			this.charactersCovered = charactersCovered;
+			this.reservedField = reservedField;
+			textPropList = new LinkedList();
+		}
+
+		/**
+		 * Create a new collection of text properties (be they paragraph
 		 *  or character) for a run of text without any
 		 */
-		public TextPropCollection(int textSize) {
+		private TextPropCollection(int textSize) {
 			charactersCovered = textSize;
 			reservedField = -1;
 			textPropList = new LinkedList();
@@ -434,7 +462,7 @@ public class StyleTextPropAtom extends RecordAtom
 		/**
 		 * Writes out to disk the header, and then all the properties
 		 */
-		private void writeOut(OutputStream o) throws IOException {
+		protected void writeOut(OutputStream o) throws IOException {
 			// First goes the number of characters we affect
 			writeLittleEndian(charactersCovered,o);
 
@@ -487,6 +515,7 @@ public class StyleTextPropAtom extends RecordAtom
 			this.sizeOfDataBlock = sizeOfDataBlock;
 			this.maskInHeader = maskInHeader;
 			this.propName = propName;
+			this.dataValue = 0;
 		}
 
 		/**
@@ -557,6 +586,11 @@ public class StyleTextPropAtom extends RecordAtom
 			this.propName = overallName;
 			subPropMasks = new int[subPropNames.length];
 			subPropMatches = new boolean[subPropNames.length];
+			
+			// Initialise the masks list
+			for(int i=0; i<subPropMasks.length; i++) {
+				subPropMasks[i] = (1 << i);
+			}
 		}
 		
 		/**
@@ -576,7 +610,6 @@ public class StyleTextPropAtom extends RecordAtom
 
 			// Figure out the values of the sub properties
 			for(int i=0; i< subPropMatches.length; i++) {
-				subPropMasks[i] = (1 << i);
 				subPropMatches[i] = false;
 				if((dataValue & subPropMasks[i]) != 0) {
 					subPropMatches[i] = true;
