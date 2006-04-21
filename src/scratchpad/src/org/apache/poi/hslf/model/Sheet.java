@@ -192,5 +192,12 @@ public abstract class Sheet
 	
 	shape.setSheet(this);
 	shape.afterInsert(this);
+	
+	// If it's a TextBox, we need to tell the PPDrawing, as it has to 
+	//  track TextboxWrappers specially
+	if(shape instanceof TextBox) {
+		TextBox tbox = (TextBox)shape;
+		ppdrawing.addTextboxWrapper(tbox._txtbox);
+	}
   }
 } 
