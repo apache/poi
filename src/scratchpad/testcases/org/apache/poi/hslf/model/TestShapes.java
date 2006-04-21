@@ -122,7 +122,7 @@ public class TestShapes extends TestCase {
      * Verify that we can add TextBox shapes to a slide
      * and set some of the style attributes
      */
-    public void testTextBoxWrite() throws Exception {
+    public void testTextBoxWriteBytes() throws Exception {
         ppt = new SlideShow();
         Slide sl = ppt.createSlide();
         RichTextRun rt;
@@ -161,6 +161,51 @@ public class TestShapes extends TestCase {
         assertEquals(42, rt.getFontSize());
         assertTrue(rt.isBold());
         assertTrue(rt.isItalic());
+        assertFalse(rt.isUnderlined());
+    }
+
+    /**
+     * Verify that we can add TextBox shapes to a slide
+     * and set some of the style attributes, with a unicode string
+     */
+    public void testTextBoxWriteChars() throws Exception {
+        ppt = new SlideShow();
+        Slide sl = ppt.createSlide();
+        RichTextRun rt;
+
+        String val = "Hello, World! (With some \u1234 and \uffee unicode in it)";
+
+        // Create a new textbox, and give it lots of properties
+        TextBox txtbox = new TextBox();
+        txtbox.setText(val);
+        txtbox.setFontSize(42);
+        txtbox.setBold(true);
+        txtbox.setUnderline(false);
+        sl.addShape(txtbox);
+
+        // Check it before save
+        rt = txtbox.getRichTextRuns()[0];
+        assertEquals(val, rt.getText());
+        assertEquals(42, rt.getFontSize());
+        assertTrue(rt.isBold());
+        assertFalse(rt.isItalic());
+        assertFalse(rt.isUnderlined());
+
+        // Serialize and read again
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ppt.write(out);
+        out.close();
+
+        ppt = new SlideShow(new HSLFSlideShow(new ByteArrayInputStream(out.toByteArray())));
+
+        txtbox = (TextBox)sl.getShapes()[0];
+        rt = txtbox.getRichTextRuns()[0];
+
+        // Check after save
+        assertEquals(val, rt.getText());
+        assertEquals(42, rt.getFontSize());
+        assertTrue(rt.isBold());
+        assertFalse(rt.isItalic());
         assertFalse(rt.isUnderlined());
     }
 }
