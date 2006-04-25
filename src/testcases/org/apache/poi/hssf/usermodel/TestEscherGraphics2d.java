@@ -19,7 +19,7 @@ package org.apache.poi.hssf.usermodel;
 import junit.framework.TestCase;
 
 import java.awt.*;
-import java.io.FileOutputStream;
+import java.awt.geom.Line2D;
 
 /**
  * Tests the Graphics2d drawing capability.
@@ -65,7 +65,7 @@ public class TestEscherGraphics2d extends TestCase
     public void testGetFontMetrics() throws Exception
     {
         FontMetrics fontMetrics = graphics.getFontMetrics(graphics.getFont());
-	if (graphics.getFont().toString().indexOf("dialog") != -1) // if dialog is returned we can't run the test properly.
+    if (graphics.getFont().toString().indexOf("dialog") != -1) // if dialog is returned we can't run the test properly.
             return;
         assertEquals(7, fontMetrics.charWidth('X'));
         assertEquals("java.awt.Font[family=Arial,name=Arial,style=plain,size=10]", fontMetrics.getFont().toString());
@@ -91,5 +91,17 @@ public class TestEscherGraphics2d extends TestCase
             return;
 
         assertEquals("java.awt.Font[family=Arial,name=Arial,style=plain,size=10]", f.toString());
+    }
+
+    public void testDraw() throws Exception
+    {
+        graphics.draw(new Line2D.Double(10,10,20,20));
+        HSSFSimpleShape s = (HSSFSimpleShape) escherGroup.getChildren().get(0);
+        assertTrue(s.getShapeType() == HSSFSimpleShape.OBJECT_TYPE_LINE);
+        assertEquals(10, s.getAnchor().getDx1());
+        assertEquals(10, s.getAnchor().getDy1());
+        assertEquals(20, s.getAnchor().getDx2());
+        assertEquals(20, s.getAnchor().getDy2());
+        System.out.println("s = " + s);
     }
 }

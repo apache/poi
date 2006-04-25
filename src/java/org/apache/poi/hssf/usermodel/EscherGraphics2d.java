@@ -23,9 +23,7 @@ import java.awt.*;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
 import java.awt.font.TextLayout;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Area;
-import java.awt.geom.GeneralPath;
+import java.awt.geom.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
 import java.awt.image.ImageObserver;
@@ -141,8 +139,16 @@ public class EscherGraphics2d extends Graphics2D
 
     public void draw(Shape shape)
     {
-        if (logger.check( POILogger.WARN ))
-            logger.log(POILogger.WARN,"copyArea not supported");
+        if (shape instanceof Line2D)
+        {
+            Line2D shape2d = (Line2D) shape;
+            drawLine((int)shape2d.getX1(), (int)shape2d.getY1(), (int)shape2d.getX2(), (int)shape2d.getY2());
+        }
+        else
+        {
+            if (logger.check(POILogger.WARN))
+                logger.log(POILogger.WARN, "draw not fully supported");
+        }
     }
 
     public void drawArc(int x, int y, int width, int height,
