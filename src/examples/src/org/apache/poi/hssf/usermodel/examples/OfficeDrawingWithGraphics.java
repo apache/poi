@@ -91,6 +91,7 @@ public class OfficeDrawingWithGraphics
             int y1 = (int) ( Math.sin(i) * 138.0 ) + 138;
             int x2 = (int) ( -Math.cos(i) * 160.0 ) + 160;
             int y2 = (int) ( -Math.sin(i) * 138.0 ) + 138;
+            g2d.setStroke(new BasicStroke(2));
             g2d.drawLine(x1,y1,x2,y2);
         }
         g2d.setFont(new Font("SansSerif",Font.BOLD | Font.ITALIC, 20));

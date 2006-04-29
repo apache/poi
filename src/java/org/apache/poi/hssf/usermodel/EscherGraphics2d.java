@@ -23,7 +23,10 @@ import java.awt.*;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
 import java.awt.font.TextLayout;
-import java.awt.geom.*;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Area;
+import java.awt.geom.GeneralPath;
+import java.awt.geom.Line2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
 import java.awt.image.ImageObserver;
@@ -142,7 +145,13 @@ public class EscherGraphics2d extends Graphics2D
         if (shape instanceof Line2D)
         {
             Line2D shape2d = (Line2D) shape;
-            drawLine((int)shape2d.getX1(), (int)shape2d.getY1(), (int)shape2d.getX2(), (int)shape2d.getY2());
+
+            int width = 0;
+            if (stroke != null && stroke instanceof BasicStroke) {
+                width = (int) ((BasicStroke)stroke).getLineWidth() * 12700;
+            }
+
+            drawLine((int)shape2d.getX1(), (int)shape2d.getY1(), (int)shape2d.getX2(), (int)shape2d.getY2(), width);
         }
         else
         {
@@ -216,9 +225,18 @@ public class EscherGraphics2d extends Graphics2D
         drawImage(((Image) (img)), new AffineTransform(1.0F, 0.0F, 0.0F, 1.0F, x, y), null);
     }
 
+    public void drawLine(int x1, int y1, int x2, int y2, int width)
+    {
+        getEscherGraphics().drawLine(x1,y1,x2,y2, width);
+    }
+
     public void drawLine(int x1, int y1, int x2, int y2)
     {
-        getEscherGraphics().drawLine(x1,y1,x2,y2);
+        int width = 0;
+        if (stroke != null && stroke instanceof BasicStroke) {
+            width = (int) ((BasicStroke)stroke).getLineWidth() * 12700;
+        }
+        getEscherGraphics().drawLine(x1,y1,x2,y2, width);
 //        draw(new GeneralPath(new java.awt.geom.Line2D.Float(x1, y1, x2, y2)));
     }
 

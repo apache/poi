@@ -16,9 +16,9 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.hssf.util.HSSFColor;
 
 import java.awt.*;
 import java.awt.image.ImageObserver;
@@ -204,9 +204,14 @@ public class EscherGraphics
 
     public void drawLine(int x1, int y1, int x2, int y2)
     {
+        drawLine(x1,y1,x2,y2,0);
+    }
+
+    public void drawLine(int x1, int y1, int x2, int y2, int width)
+    {
         HSSFSimpleShape shape = escherGroup.createShape(new HSSFChildAnchor(x1, y1, x2, y2) );
         shape.setShapeType(HSSFSimpleShape.OBJECT_TYPE_LINE);
-        shape.setLineWidth(0);
+        shape.setLineWidth(width);
         shape.setLineStyleColor(foreground.getRed(), foreground.getGreen(), foreground.getBlue());
     }
 
@@ -475,6 +480,9 @@ public class EscherGraphics
         this.background = background;
     }
 
-
+    HSSFShapeGroup getEscherGraphics()
+    {
+        return escherGroup;
+    }
 }
 
