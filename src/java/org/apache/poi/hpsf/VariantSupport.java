@@ -305,10 +305,36 @@ public class VariantSupport extends Variant
         {
             case Constants.CP_UTF16:
                 return "UTF-16";
+            case Constants.CP_UTF16_BE:
+                return "UTF-16BE";
             case Constants.CP_UTF8:
                 return "UTF-8";
+            case Constants.CP_037:
+                return "cp037";
+            case Constants.CP_GBK:
+                return "GBK";
             case Constants.CP_MS949:
                 return "ms949";
+            case Constants.CP_WINDOWS_1250:
+                return "windows-1250";
+            case Constants.CP_WINDOWS_1251:
+                return "windows-1251";
+            case Constants.CP_WINDOWS_1252:
+                return "windows-1252";
+            case Constants.CP_WINDOWS_1253:
+                return "windows-1253";
+            case Constants.CP_WINDOWS_1254:
+                return "windows-1254";
+            case Constants.CP_WINDOWS_1255:
+                return "windows-1255";
+            case Constants.CP_WINDOWS_1256:
+                return "windows-1256";
+            case Constants.CP_WINDOWS_1257:
+                return "windows-1257";
+            case Constants.CP_WINDOWS_1258:
+                return "windows-1258";
+            case Constants.CP_JOHAB:
+                return "johab";
             case Constants.CP_MAC_ROMAN:
                 return "MacRoman";
             case Constants.CP_MAC_JAPAN:
@@ -341,6 +367,43 @@ public class VariantSupport extends Variant
                 return "MacTurkish";
             case Constants.CP_MAC_CROATIAN:
                 return "MacCroatian";
+            case Constants.CP_US_ACSII:
+            case Constants.CP_US_ASCII2:
+                return "US-ASCII";
+            case Constants.CP_KOI8_R:
+                return "KOI8-R";
+            case Constants.CP_ISO_8859_1:
+                return "ISO-8859-1";
+            case Constants.CP_ISO_8859_2:
+                return "ISO-8859-2";
+            case Constants.CP_ISO_8859_3:
+                return "ISO-8859-3";
+            case Constants.CP_ISO_8859_4:
+                return "ISO-8859-4";
+            case Constants.CP_ISO_8859_5:
+                return "ISO-8859-5";
+            case Constants.CP_ISO_8859_6:
+                return "ISO-8859-6";
+            case Constants.CP_ISO_8859_7:
+                return "ISO-8859-7";
+            case Constants.CP_ISO_8859_8:
+                return "ISO-8859-8";
+            case Constants.CP_ISO_8859_9:
+                return "ISO-8859-9";
+            case Constants.CP_ISO_2022_JP1:
+            case Constants.CP_ISO_2022_JP2:
+            case Constants.CP_ISO_2022_JP3:
+                return "ISO-2022-JP";
+            case Constants.CP_ISO_2022_KR:
+                return "ISO-2022-KR";
+            case Constants.CP_EUC_JP:
+                return "EUC-JP";
+            case Constants.CP_EUC_KR:
+                return "EUC-KR";
+            case Constants.CP_GB2312:
+                return "GB2312";
+            case Constants.CP_GB18030:
+                return "GB18030";
             case Constants.CP_SJIS:
                 return "SJIS";
             default:
