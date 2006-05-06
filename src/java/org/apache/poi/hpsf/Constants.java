@@ -26,52 +26,52 @@ package org.apache.poi.hpsf;
  */
 public class Constants
 {
-    /** <p>Codepage 037, a special case.</p> */
+    /** <p>Codepage 037, a special case</p> */
     public static final int CP_037 = 37;
 
     /** <p>Codepage for SJIS</p> */
     public static final int CP_SJIS = 932;
 
-    /** <p>Codepage for GBK, aka MS936.</p> */
+    /** <p>Codepage for GBK, aka MS936</p> */
     public static final int CP_GBK = 936;
 
     /** <p>Codepage for MS949</p> */
     public static final int CP_MS949 = 949;
 
-    /** <p>Codepage for UTF-16 (little-endian.)</p> */
+    /** <p>Codepage for UTF-16</p> */
     public static final int CP_UTF16 = 1200;
 
-    /** <p>Codepage for UTF-16 big-endian.</p> */
+    /** <p>Codepage for UTF-16 big-endian</p> */
     public static final int CP_UTF16_BE = 1201;
 
-    /** <p>Codepage for Windows 1250.</p> */
+    /** <p>Codepage for Windows 1250</p> */
     public static final int CP_WINDOWS_1250 = 1250;
 
-    /** <p>Codepage for Windows 1251.</p> */
+    /** <p>Codepage for Windows 1251</p> */
     public static final int CP_WINDOWS_1251 = 1251;
 
-    /** <p>Codepage for Windows 1252.</p> */
+    /** <p>Codepage for Windows 1252</p> */
     public static final int CP_WINDOWS_1252 = 1252;
 
-    /** <p>Codepage for Windows 1253.</p> */
+    /** <p>Codepage for Windows 1253</p> */
     public static final int CP_WINDOWS_1253 = 1253;
 
-    /** <p>Codepage for Windows 1254.</p> */
+    /** <p>Codepage for Windows 1254</p> */
     public static final int CP_WINDOWS_1254 = 1254;
 
-    /** <p>Codepage for Windows 1255.</p> */
+    /** <p>Codepage for Windows 1255</p> */
     public static final int CP_WINDOWS_1255 = 1255;
 
-    /** <p>Codepage for Windows 1256.</p> */
+    /** <p>Codepage for Windows 1256</p> */
     public static final int CP_WINDOWS_1256 = 1256;
 
-    /** <p>Codepage for Windows 1257.</p> */
+    /** <p>Codepage for Windows 1257</p> */
     public static final int CP_WINDOWS_1257 = 1257;
 
-    /** <p>Codepage for Windows 1258.</p> */
+    /** <p>Codepage for Windows 1258</p> */
     public static final int CP_WINDOWS_1258 = 1258;
 
-    /** <p>Codepage for Johab.</p> */
+    /** <p>Codepage for Johab</p> */
     public static final int CP_JOHAB = 1361;
 
     /** <p>Codepage for Macintosh Roman (Java: MacRoman)</p> */
@@ -127,37 +127,37 @@ public class Constants
     /** <p>Codepage for Macintosh Croatian (Java: MacCroatian)</p> */
     public static final int CP_MAC_CROATIAN = 10082;
 
-    /** <p>Codepage for US-ASCII.</p> */
+    /** <p>Codepage for US-ASCII</p> */
     public static final int CP_US_ACSII = 20127;
 
     /** <p>Codepage for KOI8-R</p> */
     public static final int CP_KOI8_R = 20866;
 
-    /** <p>Codepage for ISO-8859-1.</p> */
+    /** <p>Codepage for ISO-8859-1</p> */
     public static final int CP_ISO_8859_1 = 28591;
 
-    /** <p>Codepage for ISO-8859-2.</p> */
+    /** <p>Codepage for ISO-8859-2</p> */
     public static final int CP_ISO_8859_2 = 28592;
 
-    /** <p>Codepage for ISO-8859-3.</p> */
+    /** <p>Codepage for ISO-8859-3</p> */
     public static final int CP_ISO_8859_3 = 28593;
 
-    /** <p>Codepage for ISO-8859-4.</p> */
+    /** <p>Codepage for ISO-8859-4</p> */
     public static final int CP_ISO_8859_4 = 28594;
 
-    /** <p>Codepage for ISO-8859-5.</p> */
+    /** <p>Codepage for ISO-8859-5</p> */
     public static final int CP_ISO_8859_5 = 28595;
 
-    /** <p>Codepage for ISO-8859-6.</p> */
+    /** <p>Codepage for ISO-8859-6</p> */
     public static final int CP_ISO_8859_6 = 28596;
 
-    /** <p>Codepage for ISO-8859-7.</p> */
+    /** <p>Codepage for ISO-8859-7</p> */
     public static final int CP_ISO_8859_7 = 28597;
 
-    /** <p>Codepage for ISO-8859-8.</p> */
+    /** <p>Codepage for ISO-8859-8</p> */
     public static final int CP_ISO_8859_8 = 28598;
 
-    /** <p>Codepage for ISO-8859-9.</p> */
+    /** <p>Codepage for ISO-8859-9</p> */
     public static final int CP_ISO_8859_9 = 28599;
 
     /** <p>Codepage for ISO-2022-JP</p> */
@@ -178,13 +178,13 @@ public class Constants
     /** <p>Codepage for EUC-KR</p> */
     public static final int CP_EUC_KR = 51949;
 
-    /** <p>Codepage for GB2312.</p> */
+    /** <p>Codepage for GB2312</p> */
     public static final int CP_GB2312 = 52936;
 
-    /** <p>Codepage for GB18030.</p> */
+    /** <p>Codepage for GB18030</p> */
     public static final int CP_GB18030 = 54936;
 
-    /** <p>Another codepage for US-ASCII.</p> */
+    /** <p>Another codepage for US-ASCII</p> */
     public static final int CP_US_ASCII2 = 65000;
 
     /** <p>Codepage for UTF-8</p> */
