@@ -85,6 +85,8 @@ public class TextBox extends SimpleShape {
      */
     protected EscherTextboxWrapper _txtbox;
 
+    private String _fontname;
+
     /**
      * Create a TextBox object and initialize it from the supplied Record container.
      * 
@@ -96,17 +98,6 @@ public class TextBox extends SimpleShape {
 
         EscherTextboxRecord textbox = (EscherTextboxRecord)Shape.getEscherChild(_escherContainer, EscherTextboxRecord.RECORD_ID);
         _txtbox = new EscherTextboxWrapper(textbox);
-        
-        // Find our TextRun
-        Vector v = new Vector();
-        Sheet.findTextRuns(_txtbox.getChildRecords(), v);
-        
-        // We should just have one
-        if(v.size() == 1) {
-        	_txtrun = (TextRun)v.get(0);
-        } else {
-        	throw new IllegalStateException("A TextBox should have one TextRun's worth of records in it, found " + v.size());
-        }
     }
 
     /**
@@ -206,6 +197,7 @@ public class TextBox extends SimpleShape {
         } catch (IOException e){
             throw new RuntimeException(e);
         }
+        if(getAnchor().equals(new java.awt.Rectangle())) resizeToFitText();
     }
 
     /**
@@ -214,7 +206,7 @@ public class TextBox extends SimpleShape {
      *
      * @return  the bounds of this <code>TextFrame</code>.
      */
-    protected Dimension getTextSize(){
+    protected Dimension getTextDimensions(){
         FontRenderContext frc = new FontRenderContext(null, true, true);
         RichTextRun rt = _txtrun.getRichTextRuns()[0];
         int size = rt.getFontSize();
@@ -229,9 +221,9 @@ public class TextBox extends SimpleShape {
 
         TextLayout layout = new TextLayout(getText(), font, frc);
         int width = Math.round(layout.getAdvance());
-        width += getMarginLeft() + getMarginRight();
+        width += getMarginLeft() + getMarginRight() + 2;
         int height = Math.round(layout.getAscent());
-        height += getMarginTop() + getMarginBottom();
+        height += getMarginTop() + getMarginBottom() + 12;
         return new Dimension(width, height);
     }
 
@@ -239,7 +231,7 @@ public class TextBox extends SimpleShape {
      * Adjust the size of the TextBox so it encompasses the text inside it.
      */
     public void resizeToFitText(){
-        Dimension size = getTextSize();
+        Dimension size = getTextDimensions();
         java.awt.Rectangle anchor = getAnchor();
         anchor.setSize(size);
         setAnchor(anchor);
@@ -449,6 +441,17 @@ public class TextBox extends SimpleShape {
     }
 
     /**
+     *
+     * @return  the size of the font applied to this text shape
+     */
+    public Color getFontColor(){
+        RichTextRun rt = _txtrun.getRichTextRuns()[0];
+        Color color = new Color(rt.getFontColor());
+        //in PowerPont RGB bytes are swapped,
+        return new Color(color.getBlue(), color.getGreen(), color.getRed(), 255);
+    }
+
+    /**
      * Set whether to use bold or not
      *
      * @param bold  <code>true</code>   if the text should be bold, <code>false</code>  otherwise
@@ -484,8 +487,92 @@ public class TextBox extends SimpleShape {
      * @param name  the name of the font to be applied to this text shape
      */
     public void setFontName(String name){
+        if (_sheet == null) {
+            //we can't set font since slideshow is not assigned yet
+            _fontname = name;
+        } else{
         RichTextRun rt = _txtrun.getRichTextRuns()[0];
         rt.setFontName(name);
     }
+    }
+
+    /**
+     * Sets the font color
+     * @param color  the font color
+     */
+    public void setFontColor(Color color){
+        //in PowerPont RGB bytes are swapped,
+        int rgb = new Color(color.getBlue(), color.getGreen(), color.getRed(), 254).getRGB();
+        RichTextRun rt = _txtrun.getRichTextRuns()[0];
+        rt.setFontColor(rgb);
+    }
+
+    /**
+     * Set type of the text.
+     * Must be one of the static constants defined in <code>TextHeaderAtom</code>
+     *
+     * @param type type of the text
+     */
+    public void setTextType(int type){
+        _txtrun._headerAtom.setTextType(type);
+    }
     
+    public void setSheet(Sheet sheet){
+        _sheet = sheet;
+
+        //initialize _txtrun object.
+        //we can't do it in the constructor because the sheet is not assigned yet
+        if(_txtrun == null) initTextRun();
+
+        RichTextRun[] rt = _txtrun.getRichTextRuns();
+        for (int i = 0; i < rt.length; i++) {
+            rt[i].supplySlideShow(_sheet.getSlideShow());
+        }
+        if (_fontname != null) {
+            setFontName(_fontname);
+            _fontname = null;
+        }
+
+    }
+
+    private void initTextRun(){
+
+        TextHeaderAtom tha = null;
+        TextCharsAtom tca = null;
+        TextBytesAtom tba = null;
+        StyleTextPropAtom sta = null;
+        OutlineTextRefAtom ota = null;
+        Record[] child = _txtbox.getChildRecords();
+        for (int i = 0; i < child.length; i++) {
+            if (child[i] instanceof TextHeaderAtom) tha = (TextHeaderAtom)child[i];
+            else if (child[i] instanceof TextBytesAtom) tba = (TextBytesAtom)child[i];
+            else if (child[i] instanceof StyleTextPropAtom) sta = (StyleTextPropAtom)child[i];
+            else if (child[i] instanceof OutlineTextRefAtom) ota = (OutlineTextRefAtom)child[i];
+            else if (child[i] instanceof TextCharsAtom) tca = (TextCharsAtom)child[i];
+        }
+
+        if (ota != null){
+            //TextHeaderAtom, TextBytesAtom and  StyleTextPropAtom are stored outside of  EscherContainerRecord
+            int idx = ota.getTextIndex();
+            Slide sl = (Slide)getSheet();
+            Record[] rec = sl.getSlideAtomsSet().getSlideRecords();
+            for (int i = 0, j = 0; i < rec.length; i++) {
+                if(rec[i].getRecordType() == RecordTypes.TextHeaderAtom.typeID){
+                    if(j++ == idx) { //we found j-th  TextHeaderAtom, read the text data
+                        for (int k = i; k < rec.length; k++) {
+                            if (rec[k] instanceof TextHeaderAtom) {
+                                if (tha != null) break;
+                                else tha = (TextHeaderAtom)rec[k];
+                            }
+                            else if (rec[k] instanceof TextBytesAtom) tba = (TextBytesAtom)rec[k];
+                            else if (rec[k] instanceof TextCharsAtom) tca = (TextCharsAtom)rec[k];
+                            else if (rec[k] instanceof StyleTextPropAtom) sta = (StyleTextPropAtom)rec[k];
+                        }
+                    }
+                }
+            }
+        }
+        if(tba != null) _txtrun = new TextRun(tha,tba,sta);
+        else if (tca != null) _txtrun = new TextRun(tha,tca,sta);
+    }
 }

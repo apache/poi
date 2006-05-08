@@ -151,7 +151,7 @@ public class PPGraphics2D extends Graphics2D {
          if (font != null){
              txt.setFontSize(font.getSize());
              txt.setFontName(font.getName());
-             //if(getColor() != null) txt.setFontColor(getColor());
+             if(getColor() != null) txt.setFontColor(getColor());
              if (font.isBold()) txt.setBold(true);
              if (font.isItalic()) txt.setItalic(true);
          }

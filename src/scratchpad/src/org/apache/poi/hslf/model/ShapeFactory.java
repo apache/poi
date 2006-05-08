@@ -15,8 +15,7 @@
 ==================================================================== */
 package org.apache.poi.hslf.model;
 
-import org.apache.poi.ddf.EscherSpRecord;
-import org.apache.poi.ddf.EscherContainerRecord;
+import org.apache.poi.ddf.*;
 
 /**
  * Create a <code>Shape</code> object depending on its type
@@ -38,11 +37,18 @@ public class ShapeFactory {
 
         int type = spRecord.getOptions() >> 4;
         switch (type){
+            case ShapeTypes.Rectangle:
+                EscherTextboxRecord txtbox = (EscherTextboxRecord)Shape.getEscherChild(spContainer, EscherTextboxRecord.RECORD_ID);
+                if (txtbox == null) shape = new AutoShape(spContainer, parent);
+                else{
+                    if(Shape.getEscherChild(spContainer, EscherClientDataRecord.RECORD_ID) != null )
+                        shape = new Placeholder(spContainer, parent);
+                    else
+                        shape = new TextBox(spContainer, parent);
+                }
+                break;
             case ShapeTypes.TextBox:
                 shape = new TextBox(spContainer, parent);
-                break;
-            case ShapeTypes.Rectangle:
-                shape = new Rectangle(spContainer, parent);
                 break;
             case ShapeTypes.PictureFrame:
                 shape = new Picture(spContainer, parent);

@@ -93,7 +93,7 @@ public class RichTextRun
 	/**
 	 * Supply the SlideShow we belong to
 	 */
-	protected void supplySlideShow(SlideShow ss) {
+	public void supplySlideShow(SlideShow ss) {
 		slideShow = ss;
 	}
 	
@@ -279,6 +279,21 @@ public class RichTextRun
 		int fontIdx = getCharTextPropVal("font.index");
 		if(fontIdx == -1) { return null; }
 		return slideShow.getFontCollection().getFontWithId(fontIdx);
+	}
+	
+	/**
+	 * @return font color as RGB value
+	 * @see java.awt.Color
+	 */
+	public int getFontColor() {
+		return getCharTextPropVal("font.color");
+	}
+	/**
+	 * Sets color of the text, as a RGB value
+	 * @see java.awt.Color
+	 */
+	public void setFontColor(int rgb) {
+		setCharTextPropVal("font.color", rgb);
 	}
 	
 	

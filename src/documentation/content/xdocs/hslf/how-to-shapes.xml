@@ -18,6 +18,7 @@
                     <li><link href="#GetShapes">How to get shapes contained in a particular slide</link></li>
                     <li><link href="#Shapes">Drawing a shape on a slide</link></li>
                     <li><link href="#Pictures">How to add/retrieve pictures</link></li>
+                    <li><link href="#SlideTitle">How to set slide title</link></li>
                 </ul>
             </section>
             <section><title>Features</title>
@@ -62,7 +63,7 @@
                     The following pictute shows the class tree of HSLF shapes:
                   </p>
                   <p>
-                    <img src="hslf_shapes.gif" alt="Class Tree of HSLF Shapes" width="611" height="285"/>
+                    <img src="hslf_shapes.gif" alt="Class Tree of HSLF Shapes" width="611" height="412"/>
                   </p>
                   <p>
                     The following fragment demonstrates how to iterate over shapes for each slide.
@@ -209,6 +210,28 @@
 
                     </source>
                 </section>
+                <anchor id="SlideTitle"/>
+                <section><title>How to set slide title</title>
+                    <source>
+    SlideShow ppt = new SlideShow();
+    Slide slide = ppt.createSlide();
+    TextBox title = slide.addTitle();
+    title.setText("Hello, World!");
+    
+    //save changes 
+    FileOutputStream out = new FileOutputStream("slideshow.ppt");
+    wb.write(out);
+    out.close();
+                  </source>
+                  <p>
+                    Below is the equivalent code in PowerPoint VBA:
+                  </p>  
+                  <source>
+    Set myDocument = ActivePresentation.Slides(1)
+    myDocument.Shapes.AddTitle.TextFrame.TextRange.Text = "Hello, World!"
+                  </source>
+                </section>
+                  
             </section>
         </section>
     </body>

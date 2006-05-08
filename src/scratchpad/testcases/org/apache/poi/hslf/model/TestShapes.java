@@ -25,6 +25,7 @@ import java.awt.Rectangle;
 import java.io.ByteArrayOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
 
 /**
  * Test drawing shapes via Graphics2D
@@ -132,10 +133,12 @@ public class TestShapes extends TestCase {
         // Create a new textbox, and give it lots of properties
         TextBox txtbox = new TextBox();
         txtbox.setText(val);
+        txtbox.setFontName("Arial");
         txtbox.setFontSize(42);
         txtbox.setBold(true);
         txtbox.setItalic(true);
         txtbox.setUnderline(false);
+        txtbox.setFontColor(Color.red);
         sl.addShape(txtbox);
 
         // Check it before save
@@ -145,6 +148,8 @@ public class TestShapes extends TestCase {
         assertTrue(rt.isBold());
         assertTrue(rt.isItalic());
         assertFalse(rt.isUnderlined());
+        assertEquals("Arial", rt.getFontName());
+        assertEquals(Color.red, txtbox.getFontColor());
 
         // Serialize and read again
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -162,50 +167,44 @@ public class TestShapes extends TestCase {
         assertTrue(rt.isBold());
         assertTrue(rt.isItalic());
         assertFalse(rt.isUnderlined());
+        assertEquals("Arial", rt.getFontName());
+        assertEquals(Color.red, txtbox.getFontColor());
     }
 
     /**
-     * Verify that we can add TextBox shapes to a slide
-     * and set some of the style attributes, with a unicode string
+     * If you iterate over text shapes in a slide and collect them in a set
+     * it must be the same as returned by Slide.getTextRuns().
      */
-    public void testTextBoxWriteChars() throws Exception {
-        ppt = new SlideShow();
-        Slide sl = ppt.createSlide();
-        RichTextRun rt;
+    public void testTextBoxSet() throws Exception {
+        textBoxSet("/with_textbox.ppt");
+        textBoxSet("/basic_test_ppt_file.ppt");
+        textBoxSet("/next_test_ppt_file.ppt");
+        textBoxSet("/Single_Coloured_Page.ppt");
+        textBoxSet("/Single_Coloured_Page_With_Fonts_and_Alignments.ppt");
+        textBoxSet("/incorrect_slide_order.ppt");
+    }
 
-        String val = "Hello, World! (With some \u1234 and \uffee unicode in it)";
+    private void textBoxSet(String filename) throws Exception {
+        String dirname = System.getProperty("HSLF.testdata.path");
+        SlideShow ppt = new SlideShow(new HSLFSlideShow(dirname + filename));
+        Slide[] sl = ppt.getSlides();
+        for (int k = 0; k < sl.length; k++) {
+            ArrayList lst1 = new ArrayList();
+            TextRun[] txt = sl[k].getTextRuns();
+            for (int i = 0; i < txt.length; i++) {
+                lst1.add(txt[i].getText());
+            }
 
-        // Create a new textbox, and give it lots of properties
-        TextBox txtbox = new TextBox();
-        txtbox.setText(val);
-        txtbox.setFontSize(42);
-        txtbox.setBold(true);
-        txtbox.setUnderline(false);
-        sl.addShape(txtbox);
-
-        // Check it before save
-        rt = txtbox.getRichTextRuns()[0];
-        assertEquals(val, rt.getText());
-        assertEquals(42, rt.getFontSize());
-        assertTrue(rt.isBold());
-        assertFalse(rt.isItalic());
-        assertFalse(rt.isUnderlined());
-
-        // Serialize and read again
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        ppt.write(out);
-        out.close();
-
-        ppt = new SlideShow(new HSLFSlideShow(new ByteArrayInputStream(out.toByteArray())));
-
-        txtbox = (TextBox)sl.getShapes()[0];
-        rt = txtbox.getRichTextRuns()[0];
-
-        // Check after save
-        assertEquals(val, rt.getText());
-        assertEquals(42, rt.getFontSize());
-        assertTrue(rt.isBold());
-        assertFalse(rt.isItalic());
-        assertFalse(rt.isUnderlined());
+            ArrayList lst2 = new ArrayList();
+            Shape[] sh = sl[k].getShapes();
+            for (int i = 0; i < sh.length; i++) {
+                if (sh[i] instanceof TextBox){
+                    TextBox tbox = (TextBox)sh[i];
+                    lst2.add(tbox.getText());
+                }
+            }
+            assertTrue(lst1.containsAll(lst2));
+            assertTrue(lst2.containsAll(lst1));
+        }
     }
 }
