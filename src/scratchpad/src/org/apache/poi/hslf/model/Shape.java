@@ -113,8 +113,26 @@ public abstract class Shape {
     }
 
     /**
+     * @return type of the shape.
+     * @see org.apache.poi.hslf.record.RecordTypes
+     */
+    public int getShapeType(){
+        EscherSpRecord spRecord = _escherContainer.getChildById(EscherSpRecord.RECORD_ID);
+        return spRecord.getOptions() >> 4;
+    }
+
+    /**
+     * @param type type of the shape.
+     * @see org.apache.poi.hslf.record.RecordTypes
+     */
+    public void setShapeType(int type){
+        EscherSpRecord spRecord = _escherContainer.getChildById(EscherSpRecord.RECORD_ID);
+        spRecord.setOptions((short)(type << 4 | 0x2));
+    }
+
+    /**
      * Returns the anchor (the bounding box rectangle) of this shape.
-     * All coordinates are expressed in Master units (576 dpi).
+     * All coordinates are expressed in points (72 dpi).
      *
      * @return the anchor of this shape
      */
@@ -143,7 +161,7 @@ public abstract class Shape {
 
     /**
      * Sets the anchor (the bounding box rectangle) of this shape.
-     * All coordinates should be expressed in poitns (72 dpi).
+     * All coordinates should be expressed in points (72 dpi).
      *
      * @param anchor new anchor
      */

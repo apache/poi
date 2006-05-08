@@ -76,10 +76,10 @@ public class RecordTypes {
     public static final Type ColorSchemeAtom = new Type(2032,ColorSchemeAtom.class);
     public static final Type ExObjRefAtom = new Type(3009,null);
     public static final Type OEShapeAtom = new Type(3009,null);
-    public static final Type OEPlaceholderAtom = new Type(3011,null);
+    public static final Type OEPlaceholderAtom = new Type(3011,OEPlaceholderAtom.class);
     public static final Type GPopublicintAtom = new Type(3024,null);
     public static final Type GRatioAtom = new Type(3031,null);
-    public static final Type OutlineTextRefAtom = new Type(3998,null);
+    public static final Type OutlineTextRefAtom = new Type(3998,OutlineTextRefAtom.class);
     public static final Type TextHeaderAtom = new Type(3999,TextHeaderAtom.class);
     public static final Type TextCharsAtom = new Type(4000,TextCharsAtom.class);
     public static final Type StyleTextPropAtom = new Type(4001,StyleTextPropAtom.class);

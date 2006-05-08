@@ -23,6 +23,7 @@ import java.util.Vector;
 
 import org.apache.poi.hslf.record.PPDrawing;
 import org.apache.poi.hslf.record.SlideAtom;
+import org.apache.poi.hslf.record.TextHeaderAtom;
 import org.apache.poi.hslf.record.SlideListWithText.SlideAtomsSet;
 
 /**
@@ -117,6 +118,21 @@ public class Slide extends Sheet
 		sa.setNotesID(notes._getSheetNumber());
 	}
   }
+  
+  /**
+   * Create a <code>TextBox</code> object that represents the slide's title.
+   *
+   * @return <code>TextBox</code> object that represents the slide's title.
+   */
+  public TextBox addTitle() {
+	  Placeholder pl = new Placeholder();
+	  pl.setShapeType(ShapeTypes.Rectangle);
+	  pl.setTextType(TextHeaderAtom.TITLE_TYPE);
+	  pl.setText("Click to edit title");
+	  pl.setAnchor(new java.awt.Rectangle(54, 48, 612, 90));
+	  addShape(pl);
+	  return pl;
+  }
 
 
   // Accesser methods follow
@@ -133,7 +149,7 @@ public class Slide extends Sheet
   public int _getSheetRefId() { return _refSheetNo; }
   /**
    * Returns the (internal, SlideIdentifier based) sheet number
-   * @see getSlideNumber()
+   * @see #getSlideNumber()
    */
   public int _getSheetNumber() { return _sheetNo; }
   
@@ -152,5 +168,14 @@ public class Slide extends Sheet
    */
   public Notes getNotesSheet() { return _notes; }
   
+  /**
+   * Returns the PPDrawing associated with this slide, or null if there isn't one
+   */
   protected PPDrawing getPPDrawing() { return _slide.getPPDrawing(); }
+  
+  /**
+   * @return set of records inside <code>SlideListWithtext</code> container
+   *  which hold text data for this slide (typically for placeholders).
+   */
+  protected SlideAtomsSet getSlideAtomsSet() { return _atomSet;  }
 } 
