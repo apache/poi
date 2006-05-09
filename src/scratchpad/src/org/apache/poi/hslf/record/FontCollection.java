@@ -38,13 +38,17 @@ public class FontCollection extends RecordContainer {
 		System.arraycopy(source,start,_header,0,8);
 
 		_children = Record.findChildRecords(source,start+8,len-8);
-        // Save font names into <code>List</code>
-        fonts = new ArrayList();
-        for (int i = 0; i < _children.length; i++){
-            FontEntityAtom atom = (FontEntityAtom)_children[i];
-            fonts.add(atom.getFontName());
-        }
 
+		// Save font names into <code>List</code>
+		fonts = new ArrayList();
+		for (int i = 0; i < _children.length; i++){
+			if(_children[i] instanceof FontEntityAtom) {
+	            FontEntityAtom atom = (FontEntityAtom)_children[i];
+	            fonts.add(atom.getFontName());
+			} else {
+				System.err.println("Warning: FontCollection child wasn't a FontEntityAtom, was " + _children[i]);
+			}
+		}
 	}
 
 	/**
