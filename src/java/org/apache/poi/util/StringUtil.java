@@ -88,6 +88,7 @@ public class StringUtil {
 	 *@return         the converted string    
 	 */
 	public static String getFromUnicodeLE(final byte[] string) {
+		if(string.length == 0) { return ""; }
 		return getFromUnicodeLE(string, 0, string.length / 2);
 	}
 
@@ -140,6 +141,7 @@ public class StringUtil {
 	 *@return         the converted string     
 	 */
 	public static String getFromUnicodeBE(final byte[] string) {
+		if(string.length == 0) { return ""; }
 		return getFromUnicodeBE(string, 0, string.length / 2);
 	}
 
