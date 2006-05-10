@@ -65,7 +65,7 @@ public class TestTextCharsAtom extends TestCase {
 			assertEquals(alt_data[i],b[i]);
 		}
 	}
-
+	
 	public void testWrite() throws Exception {
 		TextCharsAtom tca = new TextCharsAtom(data,0,data.length);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -77,4 +77,23 @@ public class TestTextCharsAtom extends TestCase {
 			assertEquals(data[i],b[i]);
 		}
 	}
+	
+	public void testCreateNew() throws Exception {
+		TextCharsAtom tca = new TextCharsAtom();
+		assertEquals(0, tca.getText().length());
+		
+		tca.setText(data_text);
+		assertEquals(data_text, tca.getText());
+		
+		// Check it's now like data
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		tca.writeOut(baos);
+		byte[] b = baos.toByteArray();
+
+		assertEquals(data.length, b.length);
+		for(int i=0; i<data.length; i++) {
+			assertEquals(data[i],b[i]);
+		}
+	}
+
 }
