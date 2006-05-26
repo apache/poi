@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (C) 2004 The Apache Software Foundation. All rights reserved. -->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "../dtd/document-v11.dtd">
+
+<document>
+    <header>
+        <title>POI-HWPF - A Quick Guide</title>
+        <subtitle>Overview</subtitle>
+        <authors>
+            <person name="Nick Burch" email="nick at torchbox dot com"/>
+        </authors>
+    </header>
+
+    <body>
+        <section><title>Basic Text Extraction</title>
+        <p>For basic text extraction, make use of 
+<code>org.apache.poi.hwpf.extractor.WordExtractor</code>. It accepts an input
+stream or a <code>HWPFDocument</code>. The <code>getText()</code> 
+method can be used to 
+get the text from all the paragraphs, or <code>getParagraphText()</code>
+can be used to fetch the text from each paragraph in turn. The other
+option is <code>getTextFromPieces()</code>, which is very fast, but
+tends to return things that aren't text from the page. YMMV.
+		</p>
+		</section>
+		
+		<section><title>Specific Text Extraction</title>
+		<p>To get specific bits of text, first create a 
+<code>org.apache.poi.hwpf.HWPFDocument</code>. Fetch the range 
+with <code>getRange()</code>, then get paragraphs from that. You
+can then get text and other properties.
+		</p>
+		</section>
+		
+		<section><title>Changing Text</title>
+		<p>It is possible to change the text via 
+		<code>insertBefore()</code> and <code>insertAfter()</code>
+		on a <code>Range</code> object (either a <code>Range</code>,
+		<code>Paragraph</code> or <code>CharacterRun</code>).
+		It is also possible to delete a <code>Range</code>, but this
+		code is know to have bugs in it.
+		</p>
+		</section>
+	</body>
+</document>

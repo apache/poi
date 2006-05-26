@@ -7,6 +7,7 @@
 	</menu>
 	<menu label="HWPF">
 		<menu-item label="Overview" href="index.html"/>
+		<menu-item label="Quick Guide" href="quick-guide.html"/>
 		<menu-item label="HWPF Format" href="docoverview.html"/>
 		<menu-item label="HWPF Project plan" href="projectplan.html"/>
 	</menu>
