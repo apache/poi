@@ -14,7 +14,7 @@
     <body>
         <section><title>Basic Text Extraction</title>
         <p>For basic text extraction, make use of 
-<code>org.apache.poi.extractor.PowerPointExtractor</code>. It accepts a file or an input
+<code>org.apache.poi.hslf.extractor.PowerPointExtractor</code>. It accepts a file or an input
 stream. The <code>getText()</code> method can be used to get the text from the slides, and the <code>getNotes()</code> method can be used to get the text
 from the notes. Finally, <code>getText(true,true)</code> will get the text
 from both.
@@ -22,8 +22,8 @@ from both.
 		</section>
 		
 		<section><title>Specific Text Extraction</title>
-		<p>To get specific bits of text, first create a <code>org.apache.poi.usermodel.SlideShow</code>
-(from a <code>org.apache.poi.HSLFSlideShow</code>, which accepts a file or an input
+		<p>To get specific bits of text, first create a <code>org.apache.poi.hslf.usermodel.SlideShow</code>
+(from a <code>org.apache.poi.hslf.HSLFSlideShow</code>, which accepts a file or an input
 stream). Use <code>getSlides()</code> and <code>getNotes()</code> to get the slides and notes.
 These can be queried to get their page ID (though they should be returned
 in the right order).</p>
@@ -44,7 +44,7 @@ same character and paragraph formatting.
 		about getting duplicate blocks of text, you don't care about 
 		getting text from master sheets, and you don't care about getting
 		old text, then 
-		<code>org.apache.poi.extractor.QuickButCruddyTextExtractor</code>
+		<code>org.apache.poi.hslf.extractor.QuickButCruddyTextExtractor</code>
 		might be of use.</p>
 		<p>QuickButCruddyTextExtractor doesn't use the normal record 
 		parsing code, instead it uses a tree structure blind search 
@@ -109,7 +109,7 @@ same character and paragraph formatting.
   		<li><code>org.apache.poi.hslf.extractor.PowerPointExtractor</code>
   Uses the model code to allow extraction of text from files
 		</li>
-		<li><code>org.apache.poi.extractor.QuickButCruddyTextExtractor</code>
+		<li><code>org.apache.poi.hslf.extractor.QuickButCruddyTextExtractor</code>
   Uses the record code to extract all the text from files very fast, 
   but including deleted text (and other bits of Crud).
 		</li>
