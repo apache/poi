@@ -47,11 +47,12 @@ public class RichTextRun
 	
 	/** 
 	 * Our paragraph and character style.
-	 * Note - we may share the Paragraph style with another RichTextRun
-	 *  (the Character style should be ours alone) 
+	 * Note - we may share these styles with other RichTextRuns
 	 */
 	private TextPropCollection paragraphStyle;
 	private TextPropCollection characterStyle;
+	private boolean sharingParagraphStyle;
+	private boolean sharingCharacterStyle;
 	
 	/**
 	 * Create a new wrapper around a (currently not)
@@ -61,7 +62,7 @@ public class RichTextRun
 	 * @param len
 	 */
 	public RichTextRun(TextRun parent, int startAt, int len) {
-		this(parent, startAt, len, null, null);
+		this(parent, startAt, len, null, null, false, false);
 	}
 	/**
 	 * Create a new wrapper around a rich text string
@@ -70,9 +71,12 @@ public class RichTextRun
 	 * @param len The length of this run
 	 * @param pStyle The paragraph style property collection
 	 * @param cStyle The character style property collection
+	 * @param pShared The paragraph styles are shared with other runs
+	 * @param cShared The character styles are shared with other runs
 	 */
 	public RichTextRun(TextRun parent, int startAt, int len, 
-	TextPropCollection pStyle,  TextPropCollection cStyle) {
+	TextPropCollection pStyle,  TextPropCollection cStyle,
+	boolean pShared, boolean cShared) {
 		parentRun = parent;
 		startPos = startAt;
 		length = len;
@@ -81,14 +85,17 @@ public class RichTextRun
 	}
 
 	/**
-	 * Supply (normally default) textprops, when a run gets them 
+	 * Supply (normally default) textprops, and if they're shared, 
+	 *  when a run gets them 
 	 */
-	public void supplyTextProps(TextPropCollection pStyle,  TextPropCollection cStyle) {
+	public void supplyTextProps(TextPropCollection pStyle,  TextPropCollection cStyle, boolean pShared, boolean cShared) {
 		if(paragraphStyle != null || characterStyle != null) {
 			throw new IllegalStateException("Can't call supplyTextProps if run already has some");
 		}
 		paragraphStyle = pStyle;
 		characterStyle = cStyle;
+		sharingParagraphStyle = pShared;
+		sharingCharacterStyle = cShared;
 	}
 	/**
 	 * Supply the SlideShow we belong to
@@ -309,4 +316,12 @@ public class RichTextRun
 	 * For normal use, use the friendly setters and getters 
 	 */
 	public TextPropCollection _getRawCharacterStyle() { return characterStyle; }
+	/**
+	 * Internal Use Only - are the Paragraph styles shared?
+	 */
+	public boolean _isParagraphStyleShared() { return sharingParagraphStyle; }
+	/**
+	 * Internal Use Only - are the Character styles shared?
+	 */
+	public boolean _isCharacterStyleShared() { return sharingCharacterStyle; }
 }
