@@ -219,7 +219,7 @@ public class HSLFSlideShow extends POIDocument
 
 		ArrayList p = new ArrayList();
 		int pos = 0; 
-		while (pos < pictstream.length) {
+		while (pos < (pictstream.length - PictureData.HEADER_SIZE)) {
 			PictureData pict = new PictureData(pictstream, pos);
 			p.add(pict);
 			pos += PictureData.HEADER_SIZE + pict.getSize();

@@ -63,9 +63,20 @@ public class PictureData {
 		header = new byte[PictureData.HEADER_SIZE];
 		System.arraycopy(pictstream, offset, header, 0, header.length);
 
-		int size = LittleEndian.getInt(header, 4) - 17;
+		// Get the size of the picture, and make sure it's sane
+		// Size is stored unsigned, since it must always be positive
+		int size = (int)LittleEndian.getUInt(header, 4) - 17;
+		int startPos = offset + PictureData.HEADER_SIZE;
+		if(size < 0) { size = 0; }
+		if(size > (pictstream.length - startPos)) { 
+			int remaining = pictstream.length - startPos;
+			System.err.println("Warning: PictureData claimed picture was of length " + size + ", but only " + remaining + " remained!");
+			size = remaining;
+		}
+
+		// Save the picture data
 		pictdata = new byte[size];
-		System.arraycopy(pictstream, offset + PictureData.HEADER_SIZE, pictdata, 0, pictdata.length);
+		System.arraycopy(pictstream, startPos, pictdata, 0, pictdata.length);
 	}
 
 	/**
