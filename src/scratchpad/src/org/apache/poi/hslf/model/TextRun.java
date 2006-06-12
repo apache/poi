@@ -100,7 +100,9 @@ public class TextRun
 			_rtRuns[0] = new RichTextRun(this, 0, runRawText.length());
 		} else {
 			// Build up Rich Text Runs, one for each character style block
+			// TODO: Handle case of shared character styles
 			int pos = 0;
+			
 			int curP = 0;
 			int pLenRemain = ((TextPropCollection)pStyles.get(curP)).getCharactersCovered();
 			
@@ -118,7 +120,8 @@ public class TextRun
 				}
 				
 				// Build the rich text run
-				_rtRuns[i] = new RichTextRun(this, pos, len, pProps, cProps);
+				// TODO: Tell the RichTextRun if the styles are shared
+				_rtRuns[i] = new RichTextRun(this, pos, len, pProps, cProps, false, false);
 				pos += len;
 				
 				// See if we need to move onto the next paragraph style
@@ -291,7 +294,7 @@ public class TextRun
 			cCol.updateTextSize(s.length()+1);
 			
 			// Recreate rich text run with first styling
-			_rtRuns[0] = new RichTextRun(this,0,s.length(), pCol, cCol);
+			_rtRuns[0] = new RichTextRun(this,0,s.length(), pCol, cCol, false, false);
 		} else {
 			// Recreate rich text run with no styling
 			_rtRuns[0] = new RichTextRun(this,0,s.length());
@@ -323,9 +326,12 @@ public class TextRun
 		if(_rtRuns.length != 1) {
 			throw new IllegalStateException("Needed to add StyleTextPropAtom when had many rich text runs");
 		}
+		// These are the only styles for now 
 		_rtRuns[0].supplyTextProps(
 				(TextPropCollection)_styleAtom.getParagraphStyles().get(0),
-				(TextPropCollection)_styleAtom.getCharacterStyles().get(0)
+				(TextPropCollection)_styleAtom.getCharacterStyles().get(0),
+				false,
+				false
 		);
 	}
 
