@@ -220,6 +220,8 @@ public class TextRun
 		//  we need to tell the Character TextPropCollections a size 1 bigger 
 		//  than it really is
 		// (The Paragraph one will keep the extra 1 length from before)
+		// This extra style length is used to indicate that new text in
+		//  the paragraph should go into this set of styling
 		if(runID == _rtRuns.length-1) {
 			cCol.updateTextSize( cCol.getCharactersCovered() + 1 );
 		}
@@ -281,6 +283,8 @@ public class TextRun
 			
 			// Note - TextPropCollection's idea of the text length must
 			//         be one larger than it actually is!
+			// (This indicates that new text added to the end should
+			//   get the same styling as the current text)
 			TextPropCollection pCol = (TextPropCollection)pStyles.getFirst();
 			TextPropCollection cCol = (TextPropCollection)cStyles.getFirst();
 			pCol.updateTextSize(s.length()+1);
