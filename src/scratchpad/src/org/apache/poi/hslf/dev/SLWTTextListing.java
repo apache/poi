@@ -48,7 +48,7 @@ public class SLWTTextListing {
 				Record[] docChildren = docRecord.getChildRecords();
 				for(int j=0; j<docChildren.length; j++) {
 					if(docChildren[j] instanceof SlideListWithText) {
-						System.out.println("Found SLWT in document at " + i);
+						System.out.println("Found SLWT at pos " + j + " in the Document at " + i);
 						System.out.println("  Has " + docChildren[j].getChildRecords().length + " children");
 
 						// Grab the SlideAtomSet's, which contain 
