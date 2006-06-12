@@ -43,7 +43,7 @@ public class SLWTTextListing {
 		// Find the documents, and then their SLWT
 		Record[] records = ss.getRecords();
 		for(int i=0; i<records.length; i++) {
-			if(records[i].getRecordType() == 1000l) {
+			if(records[i] instanceof Document) {
 				Record docRecord = records[i];
 				Record[] docChildren = docRecord.getChildRecords();
 				for(int j=0; j<docChildren.length; j++) {
