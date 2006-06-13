@@ -32,7 +32,17 @@ import java.io.IOException;
 public class EscherArrayProperty
         extends EscherComplexProperty
 {
+	/**
+	 * The size of the header that goes at the
+	 *  start of the array, before the data
+	 */
     private static final int FIXED_SIZE = 3 * 2;
+    /**
+     * Normally, the size recorded in the simple data (for the complex
+     *  data) includes the size of the header.
+     * There are a few cases when it doesn't though...
+     */
+    private boolean sizeIncludesHeaderSize = true;
 
     public EscherArrayProperty( short id, byte[] complexData )
     {
@@ -158,10 +168,30 @@ public class EscherArrayProperty
         short sizeOfElements = LittleEndian.getShort(data, offset + 4);
 
         int arraySize = getActualSizeOfElements(sizeOfElements) * numElements;
-        if (arraySize == complexData.length)
-            complexData = new byte[arraySize + 6];  // Calculation missing the header for some reason
+        if (arraySize == complexData.length) {
+        	// The stored data size in the simple block excludes the header size 
+            complexData = new byte[arraySize + 6];
+            sizeIncludesHeaderSize = false;
+        }
         System.arraycopy(data, offset, complexData, 0, complexData.length );
         return complexData.length;
+    }
+
+    /**
+     * Serializes the simple part of this property.  ie the first 6 bytes.
+     * 
+     * Needs special code to handle the case when the size doesn't 
+     *  include the size of the header block
+     */
+    public int serializeSimplePart( byte[] data, int pos )
+    {
+        LittleEndian.putShort(data, pos, getId());
+        int recordSize = complexData.length;
+        if(!sizeIncludesHeaderSize) {
+        	recordSize -= 6;
+        }
+        LittleEndian.putInt(data, pos + 2, recordSize);
+        return 6;
     }
 
     /**
