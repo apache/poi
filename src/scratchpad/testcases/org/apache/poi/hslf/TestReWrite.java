@@ -34,19 +34,33 @@ import org.apache.poi.poifs.filesystem.*;
  */
 public class TestReWrite extends TestCase {
 	// HSLFSlideShow primed on the test data
-	private HSLFSlideShow hss;
+	private HSLFSlideShow hssA;
+	private HSLFSlideShow hssB;
 	// POIFS primed on the test data
-	private POIFSFileSystem pfs;
+	private POIFSFileSystem pfsA;
+	private POIFSFileSystem pfsB;
 
     public void setUp() throws Exception {
 		String dirname = System.getProperty("HSLF.testdata.path");
-		String filename = dirname + "/basic_test_ppt_file.ppt";
-		FileInputStream fis = new FileInputStream(filename);
-		pfs = new POIFSFileSystem(fis);
-		hss = new HSLFSlideShow(pfs);
+		
+		String filenameA = dirname + "/basic_test_ppt_file.ppt";
+		FileInputStream fisA = new FileInputStream(filenameA);
+		pfsA = new POIFSFileSystem(fisA);
+		hssA = new HSLFSlideShow(pfsA);
+		
+		String filenameB = dirname + "/ParagraphStylesShorterThanCharStyles.ppt";
+		FileInputStream fisB = new FileInputStream(filenameB);
+		pfsB = new POIFSFileSystem(fisB);
+		hssB = new HSLFSlideShow(pfsB);
     }
 
     public void testWritesOutTheSame() throws Exception {
+    	assertWritesOutTheSame(hssA, pfsA);
+    	
+    	// Disabled until bug #39800 is fixed
+    	//assertWritesOutTheSame(hssB, pfsB);
+    }
+    public void assertWritesOutTheSame(HSLFSlideShow hss, POIFSFileSystem pfs) throws Exception {
 		// Write out to a byte array
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		hss.write(baos);
@@ -78,8 +92,16 @@ public class TestReWrite extends TestCase {
      *  doesn't change things 
      */
     public void testSlideShowWritesOutTheSame() throws Exception {
+    	assertSlideShowWritesOutTheSame(hssA, pfsA);
+    	
+    	// Disabled until bug #39800 is fixed
+    	//assertSlideShowWritesOutTheSame(hssB, pfsB);
+    }
+    public void assertSlideShowWritesOutTheSame(HSLFSlideShow hss, POIFSFileSystem pfs) throws Exception {
     	// Create a slideshow covering it
     	SlideShow ss = new SlideShow(hss);
+    	ss.getSlides();
+    	ss.getNotes();
     	
 		// Now write out to a byte array
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -102,7 +124,7 @@ public class TestReWrite extends TestCase {
 		pfs.createDocumentInputStream("PowerPoint Document").read(_oData);
 		npfs.createDocumentInputStream("PowerPoint Document").read(_nData);
 		for(int i=0; i<_oData.length; i++) {
-			System.out.println(i + "\t" + Integer.toHexString(i));
+			//System.out.println(i + "\t" + Integer.toHexString(i));
 			assertEquals(_oData[i], _nData[i]);
 		}
 	}
