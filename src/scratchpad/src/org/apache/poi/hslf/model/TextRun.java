@@ -20,6 +20,7 @@
 package org.apache.poi.hslf.model;
 
 import java.util.LinkedList;
+import java.util.Vector;
 
 import org.apache.poi.hslf.record.*;
 import org.apache.poi.hslf.record.StyleTextPropAtom.TextPropCollection;
@@ -92,51 +93,149 @@ public class TextRun
 			cStyles = _styleAtom.getCharacterStyles();
 		}
 
-		_rtRuns = new RichTextRun[cStyles.size()];
-		
 		// Handle case of no current style, with a default
-		if(_rtRuns.length == 0) {
+		if(pStyles.size() == 0 || cStyles.size() == 0) { 
 			_rtRuns = new RichTextRun[1];
 			_rtRuns[0] = new RichTextRun(this, 0, runRawText.length());
 		} else {
-			// Build up Rich Text Runs, one for each character style block
-			// TODO: Handle case of shared character styles
+			// Build up Rich Text Runs, one for each 
+			//  character/paragraph style pair
+			Vector rtrs = new Vector();
+
 			int pos = 0;
 			
 			int curP = 0;
-			int pLenRemain = ((TextPropCollection)pStyles.get(curP)).getCharactersCovered();
+			int curC = 0;
+			int pLenRemain = -1;
+			int cLenRemain = -1;
 			
-			// Build one for each character style
-			for(int i=0; i<_rtRuns.length; i++) {
+			// Build one for each run with the same style
+			while(pos <= runRawText.length() && curP < pStyles.size() && curC < cStyles.size()) {
 				// Get the Props to use
 				TextPropCollection pProps = (TextPropCollection)pStyles.get(curP);
-				TextPropCollection cProps = (TextPropCollection)cStyles.get(i);
+				TextPropCollection cProps = (TextPropCollection)cStyles.get(curC);
 				
-				// Get the length to extend over
-				// (Last run is often 1 char shorter than the cProp claims)
-				int len = cProps.getCharactersCovered();
-				if(len+pos > runRawText.length()) {
-					len = runRawText.length()-pos;
-				}
+				int pLen = pProps.getCharactersCovered();
+				int cLen = cProps.getCharactersCovered();
 				
-				// Build the rich text run
-				// TODO: Tell the RichTextRun if the styles are shared
-				_rtRuns[i] = new RichTextRun(this, pos, len, pProps, cProps, false, false);
-				pos += len;
+				// Handle new pass
+				boolean freshSet = false;
+				if(pLenRemain == -1 && cLenRemain == -1) { freshSet = true; }
+				if(pLenRemain == -1) { pLenRemain = pLen; }
+				if(cLenRemain == -1) { cLenRemain = cLen; }
 				
-				// See if we need to move onto the next paragraph style
-				pLenRemain -= len;
-				if(pLenRemain == 0) {
+				// So we know how to build the eventual run
+				int runLen = -1;
+				boolean pShared = false;
+				boolean cShared = false;
+				
+				// Same size, new styles - neither shared
+				if(pLen == cLen && freshSet) {
+					runLen = cLen;
+					pShared = false;
+					cShared = false;
 					curP++;
-					if(curP < pStyles.size()) {
-						pLenRemain = ((TextPropCollection)pStyles.get(curP)).getCharactersCovered();
+					curC++;
+					pLenRemain = -1;
+					cLenRemain = -1;
+				} else {
+					// Some sharing
+					
+					// See if we are already in a shared block
+					if(pLenRemain < pLen) {
+						// Existing shared p block
+						pShared = true;
+						
+						// Do we end with the c block, or either side of it?
+						if(pLenRemain == cLenRemain) {
+							// We end at the same time
+							cShared = false;
+							runLen = pLenRemain;
+							curP++;
+							curC++;
+							pLenRemain = -1;
+							cLenRemain = -1;
+						} else if(pLenRemain < cLenRemain) {
+							// We end before the c block
+							cShared = true;
+							runLen = pLenRemain;
+							curP++;
+							cLenRemain -= pLenRemain;
+							pLenRemain = -1;
+						} else {
+							// We end after the c block
+							cShared = false;
+							runLen = cLenRemain;
+							curC++;
+							pLenRemain -= cLenRemain;
+							cLenRemain = -1;
+						}
+					} else if(cLenRemain < cLen) {
+						// Existing shared c block
+						cShared = true;
+						
+						// Do we end with the p block, or either side of it?
+						if(pLenRemain == cLenRemain) {
+							// We end at the same time
+							pShared = false;
+							runLen = cLenRemain;
+							curP++;
+							curC++;
+							pLenRemain = -1;
+							cLenRemain = -1;
+						} else if(cLenRemain < pLenRemain) {
+							// We end before the p block
+							pShared = true;
+							runLen = cLenRemain;
+							curC++;
+							pLenRemain -= cLenRemain;
+							cLenRemain = -1;
+						} else {
+							// We end after the p block
+							pShared = false;
+							runLen = pLenRemain;
+							curP++;
+							cLenRemain -= pLenRemain;
+							pLenRemain = -1;
+						}
+					} else {
+						// Start of a shared block
+						if(pLenRemain < cLenRemain) {
+							// Shared c block
+							pShared = false;
+							cShared = true;
+							runLen = pLenRemain;
+							curP++;
+							cLenRemain -= pLenRemain;
+							pLenRemain = -1;
+						} else {
+							// Shared p block
+							pShared = true;
+							cShared = false;
+							runLen = cLenRemain;
+							curC++;
+							pLenRemain -= cLenRemain;
+							cLenRemain = -1;
+						}
 					}
 				}
-				if(pLenRemain < 0) {
-					System.err.println("Paragraph style ran out before character style did! Short by " + (0-pLenRemain) + " characters.");
-					System.err.println("Calling RichTextRun functions is likely to break things - see Bug #38544");
+				
+				// Wind on
+				int prevPos = pos;
+				pos += runLen;
+				// Adjust for end-of-run extra 1 length
+				if(pos > runRawText.length()) {
+					runLen--; 
 				}
+				
+				// Save
+				RichTextRun rtr = new RichTextRun(this, prevPos, runLen, pProps, cProps, pShared, cShared);
+				rtrs.add(rtr);
 			}
+			
+			// Build the array
+			_rtRuns = new RichTextRun[rtrs.size()];
+			rtrs.copyInto(_rtRuns);
 		}
 	}
 	
@@ -212,21 +311,31 @@ public class TextRun
 		ensureStyleAtomPresent();
 		
 		// Update the text length for its Paragraph and Character stylings
+		// If it's shared:
+		//   * calculate the new length based on the run's old text
+		//   * this should leave in any +1's for the end of block if needed
+		// If it isn't shared:
+		//   * reset the length, to the new string's length
+		//   * add on +1 if the last block
+		// The last run needs its stylings to be 1 longer than the raw
+		//  text is. This is to define the stylings that any new text
+		//  that is added will inherit
 		TextPropCollection pCol = run._getRawParagraphStyle();
 		TextPropCollection cCol = run._getRawCharacterStyle();
-		// Character style covers the new run
-		cCol.updateTextSize(s.length());
-		// Paragraph might cover other runs to, so remove old size and add new one
-		pCol.updateTextSize( pCol.getCharactersCovered() - run.getLength() + s.length());
-		
-		// If we were dealing with the last RichTextRun in the set, then
-		//  we need to tell the Character TextPropCollections a size 1 bigger 
-		//  than it really is
-		// (The Paragraph one will keep the extra 1 length from before)
-		// This extra style length is used to indicate that new text in
-		//  the paragraph should go into this set of styling
+		int newSize = s.length();
 		if(runID == _rtRuns.length-1) {
-			cCol.updateTextSize( cCol.getCharactersCovered() + 1 );
+			newSize++;
+		}
+		
+		if(run._isParagraphStyleShared()) {
+			pCol.updateTextSize( pCol.getCharactersCovered() - run.getLength() + s.length() );
+		} else {
+			pCol.updateTextSize(newSize);
+		}
+		if(run._isCharacterStyleShared()) {
+			cCol.updateTextSize( cCol.getCharactersCovered() - run.getLength() + s.length() );
+		} else {
+			cCol.updateTextSize(newSize);
 		}
 		
 		// Build up the new text

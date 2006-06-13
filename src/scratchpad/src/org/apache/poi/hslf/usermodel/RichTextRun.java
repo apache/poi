@@ -82,6 +82,8 @@ public class RichTextRun
 		length = len;
 		paragraphStyle = pStyle;
 		characterStyle = cStyle;
+		sharingParagraphStyle = pShared;
+		sharingCharacterStyle = cShared;
 	}
 
 	/**
