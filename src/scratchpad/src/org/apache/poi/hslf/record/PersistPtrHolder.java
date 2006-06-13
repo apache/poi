@@ -192,7 +192,9 @@ public class PersistPtrHolder extends PositionDependentRecordAtom
 			Integer newPos = (Integer)oldToNewReferencesLookup.get(oldPos);
 
 			if(newPos == null) {
-				throw new RuntimeException("Couldn't find the new location of the \"slide\" that used to be at " + oldPos);
+				System.err.println("Couldn't find the new location of the \"slide\" with id " + id + " that used to be at " + oldPos);
+				System.err.println("Not updating the position of it, you probably won't be able to find it any more (if you ever could!)");
+				newPos = oldPos;
 			}
 
 			// Write out the new location

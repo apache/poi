@@ -248,25 +248,42 @@ public class HSLFSlideShow extends POIDocument
 	// As we go along, update, and hand over, to any Position Dependent
 	//  records we happen across
 	Hashtable oldToNewPositions = new Hashtable();
-
-	// Write ourselves out
+	
+	// First pass - figure out where all the position dependent
+	//   records are going to end up, in the new scheme
+	// (Annoyingly, some powerpoing files have PersistPtrHolders
+	//  that reference slides after the PersistPtrHolder)
 	ByteArrayOutputStream baos = new ByteArrayOutputStream();
+	for(int i=0; i<_records.length; i++) {
+		if(_records[i] instanceof PositionDependentRecord) {
+			PositionDependentRecord pdr = (PositionDependentRecord)_records[i];
+			int oldPos = pdr.getLastOnDiskOffset();
+			int newPos = baos.size();
+			pdr.setLastOnDiskOffset(newPos);
+			oldToNewPositions.put(new Integer(oldPos),new Integer(newPos));
+			//System.out.println(oldPos + " -> " + newPos);
+		}
+		
+		// Dummy write out, so the position winds on properly
+		_records[i].writeOut(baos);
+	}
+
+	// No go back through, actually writing ourselves out
+	baos.reset();
 	for(int i=0; i<_records.length; i++) {
 		// For now, we're only handling PositionDependentRecord's that
 		//  happen at the top level.
 		// In future, we'll need the handle them everywhere, but that's
 		//  a bit trickier
 		if(_records[i] instanceof PositionDependentRecord) {
+			// We've already figured out their new location, and
+			//  told them that
+			// Tell them of the positions of the other records though
 			PositionDependentRecord pdr = (PositionDependentRecord)_records[i];
-			int oldPos = pdr.getLastOnDiskOffset();
-			int newPos = baos.size();
-			pdr.setLastOnDiskOffset(newPos);
-			//System.out.println(i + "  " + oldPos + " " + newPos);
-			oldToNewPositions.put(new Integer(oldPos),new Integer(newPos));
 			pdr.updateOtherRecordReferences(oldToNewPositions);
 		}
 
-		// Finally, write out
+		// Whatever happens, write out that record tree
 		_records[i].writeOut(baos);
 	}
 	// Update our cached copy of the bytes that make up the PPT stream
