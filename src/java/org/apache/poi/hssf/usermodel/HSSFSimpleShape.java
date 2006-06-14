@@ -34,7 +34,7 @@ public class HSSFSimpleShape
 //    public final static short       OBJECT_TYPE_CHART              = 5;
 //    public final static short       OBJECT_TYPE_TEXT               = 6;
 //    public final static short       OBJECT_TYPE_BUTTON             = 7;
-//    public final static short       OBJECT_TYPE_PICTURE            = 8;
+    public final static short       OBJECT_TYPE_PICTURE            = 8;
 //    public final static short       OBJECT_TYPE_POLYGON            = 9;
 //    public final static short       OBJECT_TYPE_CHECKBOX           = 11;
 //    public final static short       OBJECT_TYPE_OPTION_BUTTON      = 12;
@@ -63,6 +63,7 @@ public class HSSFSimpleShape
      * @see #OBJECT_TYPE_LINE
      * @see #OBJECT_TYPE_OVAL
      * @see #OBJECT_TYPE_RECTANGLE
+     * @see #OBJECT_TYPE_PICTURE
      */
     public int getShapeType() { return shapeType; }
 
@@ -74,6 +75,7 @@ public class HSSFSimpleShape
      * @see #OBJECT_TYPE_LINE
      * @see #OBJECT_TYPE_OVAL
      * @see #OBJECT_TYPE_RECTANGLE
+     * @see #OBJECT_TYPE_PICTURE
      */
     public void setShapeType( int shapeType ){ this.shapeType = shapeType; }
 
