@@ -43,14 +43,14 @@ public class TestEscherGraphics extends TestCase
     public void testGetFont() throws Exception
     {
         Font f = graphics.getFont();
-        if (f.toString().indexOf("dialog") == -1)
+        if (f.toString().indexOf("dialog") == -1 && f.toString().indexOf("Dialog") == -1)
             assertEquals("java.awt.Font[family=Arial,name=Arial,style=plain,size=10]", f.toString());
     }
 
     public void testGetFontMetrics() throws Exception
     {
         Font f = graphics.getFont();
-        if (f.toString().indexOf("dialog") != -1)
+        if (f.toString().indexOf("dialog") != -1 || f.toString().indexOf("Dialog") != -1)
             return;
         FontMetrics fontMetrics = graphics.getFontMetrics(graphics.getFont());
         assertEquals(7, fontMetrics.charWidth('X'));
