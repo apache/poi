@@ -12,6 +12,11 @@
     </developers>
 
     <changes>
+        <release version="3.0-alpha2" date="16 June 2006">
+            <action dev="POI-DEVELOPERS" type="add">HSSF Formula support</action>
+			<action dev="POI-DEVELOPERS" type="add">Additional HSLF support for PowerPoint</action>
+            <action dev="POI-DEVELOPERS" type="fix">39389 - [PATCH] Extended Ascii support for WingDings</action>
+        </release>
 
         <release version="3.0-alpha1" date="4 July 2005">
             <action dev="POI-DEVELOPERS" type="fix" context="All">Bugzilla Bug 29976 [PATCH] HSSF hyperlink formula size problem</action>
