@@ -1,0 +1,1040 @@
+<?xml version="1.0"?>
+<!-- Copyright 2005 The Apache Software Foundation. All rights reserved. -->
+<!DOCTYPE project PUBLIC "-//Ant//Project 1.5//EN" "ant.dtd">
+
+<!--
+    POI Build System.  Written by:
+
+        Glen Stampoultzis   glens at apache.org
+
+    Modified by:
+
+        Rainer Klute        klute@rainer-klute.de
+
+    This build was tested with ant 1.6.2 although it will probably work with
+    other versions.  The following jar files should be available on the 
+    classpath when running ant:
+
+    LIBRARY         LOCATION
+    =======         ========
+    junit(3.8+)     http://www.ibiblio.org/maven/junit/jars/
+    xerces          http://www.ibiblio.org/maven/xerces/jars/
+    jdepend         http://www.ibiblio.org/maven/jdepend/jars/
+    xalan           http://www.ibiblio.org/maven/xalan/jars/
+
+    The ant jar "optional.jar" should also be available otherwise the
+    build will fail.
+
+    To build the documentation you will need to install forrest and set
+    the FORREST_HOME environment variable.  Forrest 0.5.1 required.
+
+
+    TO BE COMPLETED:
+
+    Convert book.xml files to a sitemap.
+
+ -->
+<project name="POI Build" default="help" basedir=".">
+
+  <description>
+    The POI project Ant build.
+  </description>
+
+  <property environment="env"/>
+
+  <property name="repository" value="http://www.ibiblio.org/maven"/>
+  <property name="forrest.home" value="${env.FORREST_HOME}"/>
+
+  <!-- Main: -->
+  <property name="main.resource1.dir" value="src/resources/fontmetrics"/>
+  <property name="main.src" location="src/java"/>
+  <property name="main.src.test" location="src/testcases"/>
+  <property name="main.documentation" value="src/documentation"/>
+  <property name="main.output.dir" location="build/classes"/>
+  <property name="main.output.test.dir" location="build/test-classes"/>
+  <property name="main.lib" location="lib"/>
+  <property name="main.reports.test" location="build/test-results"/>
+  <property name="main.jar1.dir" location="${main.lib}/commons-logging-1.0.1.jar"/>
+  <property name="main.jar1.url" value="${repository}/commons-logging/jars/commons-logging-1.0.1.jar"/>
+  <property name="main.jar2.dir" location="${main.lib}/log4j-1.2.8.jar"/>
+  <property name="main.jar2.url" value="${repository}/log4j/jars/log4j-1.2.8.jar"/>
+  <property name="main.testokfile" location="build/main-testokfile.txt"/>
+
+  <!-- Scratchpad: -->
+  <property name="scratchpad.src" location="src/scratchpad/src"/>
+  <property name="scratchpad.src.test" location="src/scratchpad/testcases"/>
+  <property name="scratchpad.lib" location="src/scratchpad/lib"/>
+  <property name="scratchpad.reports.test" location="build/scratchpad-test-results"/>
+  <property name="scratchpad.output.dir" location="build/scratchpad-classes"/>
+  <property name="scratchpad.output.test.dir" location="build/scratchpad-test-classes"/>
+  <property name="scratchpad.testokfile" location="build/scratchpad-testokfile.txt"/>
+
+  <!-- Contributed software: -->
+  <property name="contrib.src" location="src/contrib/src"/>
+  <property name="contrib.src.test" location="src/contrib/testcases"/>
+  <property name="contrib.lib" location="src/contrib/lib"/>
+  <property name="contrib.reports.test" location="build/contrib-test-results"/>
+  <property name="contrib.output.dir" location="build/contrib-classes"/>
+  <property name="contrib.output.test.dir" location="build/contrib-test-classes"/>
+  <property name="contrib.jar1.dir" location="${contrib.lib}/commons-beanutils-1.6.jar"/>
+  <property name="contrib.jar1.url" value="${repository}/commons-beanutils/jars/commons-beanutils-1.6.jar"/>
+  <property name="contrib.jar2.dir" location="${contrib.lib}/commons-collections-2.1.jar"/>
+  <property name="contrib.jar2.url" value="${repository}/commons-collections/jars/commons-collections-2.1.jar"/>
+  <property name="contrib.jar3.dir" location="${contrib.lib}/commons-lang-1.0-b1.jar"/>
+  <property name="contrib.jar3.url" value="${repository}/commons-lang/jars/commons-lang-1.0-b1.jar"/>
+  <property name="contrib.testokfile" location="build/contrib-testokfile.txt"/>
+
+  <!-- Examples: -->
+  <property name="examples.src" location="src/examples/src"/>
+  <property name="examples.src.test" location="src/examples/testcases"/>
+  <property name="examples.lib" location="src/examples/lib"/>
+  <property name="examples.reports.test" location="build/examples-test-results"/>
+  <property name="examples.output.dir" location="build/examples-classes"/>
+  <property name="examples.output.test.dir" location="build/examples-test-classes"/>
+  <property name="examples.jar1.dir" location="${examples.lib}/commons-beanutils-1.6.jar"/>
+  <property name="examples.jar1.url" value="${repository}/commons-beanutils/jars/commons-beanutils-1.6.jar"/>
+  <property name="examples.jar2.dir" location="${examples.lib}/commons-collections-2.1.jar"/>
+  <property name="examples.jar2.url" value="${repository}/commons-collections/jars/commons-collections-2.1.jar"/>
+  <property name="examples.jar3.dir" location="${examples.lib}/commons-lang-1.0-b1.jar"/>
+  <property name="examples.jar3.url" value="${repository}/commons-lang/jars/commons-lang-1.0-b1.jar"/>
+  <property name="examples.testokfile" location="build/examples-testokfile.txt"/>
+
+  <property name="junit.jar1.dir" location="${main.lib}/junit-3.8.1.jar"/>
+  <property name="junit.jar1.url" value="${repository}/junit/jars/junit-3.8.1.jar"/>
+  <property name="build.site" location="build/tmp/site/build/site"/>
+  <property name="build.site.src" location="build/tmp/site"/>
+  <property name="junit.report.dir" location="${build.site}/junit"/>
+  <property name="jdepend.report.dir" location="${build.site}/jdepend"/>
+  <property name="jdepend.report.out.dir" location="${build.site.src}/src/documentation/content/jdepend"/>
+  <property name="apidocs.report.dir" location="${build.site}/apidocs"/>
+  <property name="changelog.file" location="${build.site}/changelog.html"/>
+  <property name="dist.dir" location="build/dist"/>
+  <property name="jar.name" value="poi"/>
+  <property name="version.id" value="3.0-alpha2"/>
+  <property name="halt.on.test.failure" value="true"/>
+  <property name="jdk.version.source" value="1.3"
+    description="JDK version of source code"/>
+  <property name="jdk.version.class" value="1.3"
+    description="JDK version of generated class files"/>  
+ 
+
+    <path id="main.classpath">
+        <pathelement location="${main.jar1.dir}"/>
+        <pathelement location="${main.jar2.dir}"/>
+        <pathelement location="${main.resource1.dir}"/>
+    </path>
+
+    <path id="scratchpad.classpath">
+        <path refid="main.classpath"/>
+        <pathelement location="${main.output.dir}"/>
+    </path>
+
+    <path id="contrib.classpath">
+        <path refid="main.classpath"/>
+        <pathelement location="${contrib.jar1.dir}"/>
+        <pathelement location="${contrib.jar2.dir}"/>
+        <pathelement location="${contrib.jar3.dir}"/>
+        <pathelement location="${main.output.dir}"/>
+        <pathelement location="${main.output.test.dir}"/>
+        <pathelement location="${scratchpad.output.dir}"/>
+        <pathelement location="${scratchpad.output.test.dir}"/>
+        <pathelement location="${contrib.output.dir}"/>
+        <pathelement location="${contrib.output.test.dir}"/>
+    </path>
+
+  <path id="examples.classpath">
+    <path refid="main.classpath"/>
+    <pathelement location="${main.output.dir}"/>
+  </path>
+
+
+
+  <!-- Prints POI's Ant usage help -->
+  <target name="help" description="Prints POI's Ant usage help">
+    <echo>
+      - Execute "ant -projecthelp" to view a listing of the main build
+        targets.
+      - Execute "ant help-properties" to view a listing of some properties
+        controlling the build process.
+    </echo>
+  </target>
+
+
+
+  <target name="help-properties"
+    description="Prints a listing of build controlling properties">
+    <echo>
+      The following properties control the build process:
+
+      -Ddisconnected="true": Do not execute any targets that require an online
+          connection to the Internet.
+      -Dtestcase=org.apache.poi.xxx.xxx : for the single-test target, specify
+	      the test to run
+
+      WARNING: This list is not exhaustive.
+    </echo>
+  </target>
+
+
+
+    <target name="with.clover" if="clover.present">
+        <taskdef resource="clovertasks"/>
+        <clover-setup initString="mycoverage.db"/>
+    </target>
+
+    <target name="clover.html" depends="with.clover" if="clover.present">
+        <echo>Generating clover report</echo>
+       <clover-report>
+          <current outfile="build/tmp/site/build/site/clover_html">
+             <format type="html"/>
+          </current>
+       </clover-report>
+    </target>
+
+    <target name="init" depends="check-jars,fetch-jars">
+
+        <tstamp>
+          <format property="tstamp.year" pattern="yyyy"/>
+        </tstamp>
+
+        <available resource="clovertasks" property="clover.present"/>
+        <antcall target="with.clover"/>
+        
+        <mkdir dir="build"/>
+        <mkdir dir="${main.output.dir}"/>
+        <mkdir dir="${scratchpad.output.dir}"/>
+        <mkdir dir="${contrib.output.dir}"/>
+        <mkdir dir="${examples.output.dir}"/>
+        <mkdir dir="${main.output.test.dir}"/>
+        <mkdir dir="${contrib.output.test.dir}"/>
+        <mkdir dir="${scratchpad.output.test.dir}"/>
+        <mkdir dir="${main.reports.test}"/>
+        <mkdir dir="${scratchpad.reports.test}"/>
+        <mkdir dir="${contrib.reports.test}"/>
+        <mkdir dir="${junit.report.dir}"/>
+        <mkdir dir="${jdepend.report.dir}"/>
+        <mkdir dir="${jdepend.report.out.dir}"/>
+        <mkdir dir="${apidocs.report.dir}"/>
+        <mkdir dir="${dist.dir}"/>
+        <mkdir dir="${build.site.src}/${main.documentation}"/>
+
+        <copy todir="${build.site.src}/${main.documentation}">
+            <fileset dir="${main.documentation}"/>
+        </copy>
+        <copy file="forrest.properties" tofile="${build.site.src}/forrest.properties"/>
+    </target>
+
+    <target name="clean">
+        <delete dir="build"/>
+    </target>
+
+    <target name="check-jars">
+        <condition property="jars.present">
+            <or>
+                <and>
+                    <available file="${main.jar1.dir}"/>
+                    <available file="${main.jar2.dir}"/>
+                    <available file="${contrib.jar1.dir}"/>
+                    <available file="${contrib.jar2.dir}"/>
+                    <available file="${contrib.jar3.dir}"/>
+                    <available file="${junit.jar1.dir}"/>
+                </and>
+                <isset property="disconnected"/>
+            </or>
+        </condition>
+    </target>
+
+    <target name="fetch-jars" unless="jars.present"
+     description="Fetches needed JAR files from the Internet">
+        <get src="${main.jar1.url}" dest="${main.jar1.dir}"/>
+        <get src="${main.jar2.url}" dest="${main.jar2.dir}"/>
+        <get src="${contrib.jar1.url}" dest="${contrib.jar1.dir}"/>
+        <get src="${contrib.jar2.url}" dest="${contrib.jar2.dir}"/>
+        <get src="${contrib.jar3.url}" dest="${contrib.jar3.dir}"/>
+        <get src="${junit.jar1.url}" dest="${junit.jar1.dir}"/>
+    </target>
+
+  <target name="compile" depends="init, compile-main, compile-scratchpad,
+    compile-contrib, compile-examples"
+    description="Compiles the POI main classes, scratchpad, contrib, and examples"/>
+
+  <target name="compile-main" depends="fail-unless-xslt-is-available">
+    <copy todir="${main.output.dir}">
+      <fileset dir="${main.resource1.dir}"/>
+    </copy>
+    <javac target="${jdk.version.class}" source="${jdk.version.source}"
+      failonerror="true" destdir="${main.output.dir}" debug="on" fork="yes"
+      srcdir="${main.src}">
+      <classpath refid="main.classpath"/>
+    </javac>
+    <javac target="${jdk.version.class}" source="${jdk.version.source}"
+      failonerror="true" destdir="${main.output.test.dir}" debug="on"
+      fork="yes" srcdir="${main.src.test}">
+      <classpath>
+        <path refid="main.classpath"/>
+        <pathelement location="${main.output.dir}"/>
+        <pathelement location="${junit.jar1.dir}"/>
+      </classpath>
+    </javac>
+  </target>
+
+  <target name="compile-scratchpad" depends="init">
+    <javac target="${jdk.version.class}" source="${jdk.version.source}"
+      failonerror="true" destdir="${scratchpad.output.dir}" debug="on"
+      fork="yes" srcdir="${scratchpad.src}">
+      <classpath refid="scratchpad.classpath"/>
+    </javac>
+    <javac target="${jdk.version.class}" source="${jdk.version.source}"
+      failonerror="true" destdir="${scratchpad.output.test.dir}" debug="on"
+      fork="yes" srcdir="${scratchpad.src.test}">
+      <classpath>
+        <path refid="scratchpad.classpath"/>
+        <pathelement location="${scratchpad.output.dir}"/>
+        <pathelement location="${junit.jar1.dir}"/>
+      </classpath>
+    </javac>
+
+	<!-- Copy HSLF Resources over -->
+	<property name="hslf.data" value="org/apache/poi/hslf/data" />
+	<mkdir dir="${scratchpad.output.dir}/${hslf.data}" />
+	<copy todir="${scratchpad.output.dir}/${hslf.data}">
+		<fileset dir="${scratchpad.src}/${hslf.data}">
+			<include name="*.ppt" />
+		</fileset>
+	</copy>
+  </target>
+
+  <target name="compile-contrib" depends="init">
+    <javac target="${jdk.version.class}" source="${jdk.version.source}"
+      failonerror="true" destdir="${contrib.output.dir}" debug="on" fork="yes"
+      srcdir="${contrib.src}">
+      <classpath refid="contrib.classpath"/>
+    </javac>
+    <javac target="${jdk.version.class}" source="${jdk.version.source}"
+      failonerror="true" destdir="${contrib.output.test.dir}" debug="on"
+      fork="yes" srcdir="${contrib.src.test}">
+      <classpath>
+        <path refid="contrib.classpath"/>
+        <pathelement location="${contrib.output.dir}"/>
+        <pathelement location="${junit.jar1.dir}"/>
+      </classpath>
+    </javac>
+  </target>
+
+  <target name="compile-examples" depends="init">
+    <javac target="${jdk.version.class}" source="${jdk.version.source}"
+      destdir="${examples.output.dir}" debug="on" srcdir="${examples.src}">
+      <classpath refid="examples.classpath"/>
+    </javac>
+  </target>
+
+  <target name="test" depends="test-main,test-scratchpad,test-contrib"
+    description="Tests main, contrib and scratchpad"/>
+
+    <target name="-test-main-check">
+        <uptodate property="main.test.notRequired" targetfile="${main.testokfile}">
+            <srcfiles dir="${main.src}"/>
+            <srcfiles dir="${main.src.test}"/>
+        </uptodate>
+    </target>
+
+    <path id="test.classpath">
+        <path refid="main.classpath"/>
+        <pathelement location="${main.output.dir}"/>
+        <pathelement location="${main.output.test.dir}"/>
+        <pathelement location="${junit.jar1.dir}"/>
+    </path>
+
+  <target name="test-main" unless="main.test.notRequired"
+    depends="compile-main, -test-main-check, fail-unless-junit-is-available">
+    <junit fork="no" printsummary="yes" haltonfailure="${halt.on.test.failure}"
+      failureproperty="main.test.failed" showoutput="true">
+      <classpath refid="test.classpath"/>
+      <sysproperty key="HSSF.testdata.path"
+        file="${main.src.test}/org/apache/poi/hssf/data"/> 
+      <sysproperty key="HPSF.testdata.path"
+        file="${main.src.test}/org/apache/poi/hpsf/data"/> 
+      <sysproperty key="java.awt.headless" value="true"/>
+      <formatter type="plain"/>
+      <formatter type="xml"/>
+      <batchtest todir="${main.reports.test}">
+        <fileset dir="${main.src.test}">
+          <include name="**/Test*.java"/>
+          <exclude name="**/AllTests.java"/>
+          <exclude name="**/TestEmptyDocument.java"/>
+          <exclude name="**/TestUnfixedBugs.java"/>
+          <exclude name="**/TestcaseRecordInputStream.java"/>
+        </fileset>
+      </batchtest>
+    </junit>
+    <delete file="${main.testokfile}"/>
+    <antcall target="-test-main-write-testfile"/>
+  </target>
+
+  <target name="test-fail" depends="compile-main,
+    fail-unless-junit-is-available"
+    description="run tests that are known to fail">
+    <junit printsummary="yes" showoutput="true" filtertrace="no"
+      haltonfailure="false">
+      <classpath refid="test.classpath"/>
+      <classpath>
+        <path refid="scratchpad.classpath"/>
+        <pathelement location="${main.output.dir}"/>
+        <pathelement location="${scratchpad.output.dir}"/>
+        <pathelement location="${scratchpad.output.test.dir}"/>
+        <pathelement location="${junit.jar1.dir}"/>
+      </classpath>
+      <sysproperty key="HSSF.testdata.path"
+        file="${main.src.test}/org/apache/poi/hssf/data"/>
+      <sysproperty key="HPSF.testdata.path"
+        file="${main.src.test}/org/apache/poi/hpsf/data"/>
+      <sysproperty key="HWPF.testdata.path"
+        file="${scratchpad.src.test}/org/apache/poi/hwpf/data"/>
+      <sysproperty key="java.awt.headless" value="true"/>
+      <formatter type="plain" usefile="no"/>
+      <batchtest todir="${main.reports.test}">
+        <fileset dir="${main.src.test}">
+          <include name="**/TestEmptyDocument.java"/>
+          <include name="**/TestUnfixedBugs.java"/>
+        </fileset>
+      </batchtest>
+    </junit>
+  </target>        
+
+
+
+    <target name="single-test" depends="-test-property-check,compile-main" description="Runs a single test case specified with -Dtestcase=classname">
+        <junit printsummary="yes" showoutput="true" filtertrace="no" haltonfailure="false" >
+            <classpath refid="test.classpath"/>
+                 <classpath>
+                                <path refid="test.classpath"/>
+                                <pathelement location="${main.output.dir}"/>
+                                <pathelement location="${scratchpad.output.dir}"/>
+                                <pathelement location="${scratchpad.output.test.dir}"/>
+                                <pathelement location="${junit.jar1.dir}"/>
+                            </classpath>
+            <sysproperty key="HSSF.testdata.path" file="${main.src.test}/org/apache/poi/hssf/data"/>
+            <sysproperty key="HPSF.testdata.path" file="${main.src.test}/org/apache/poi/hpsf/data"/>
+            <sysproperty key="HWPF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hwpf/data"/>
+                <sysproperty key="java.awt.headless" value="true"/>
+            <formatter type="plain" usefile="no"/>
+            <formatter type="xml"/>
+            <test name="${testcase}"/>
+        </junit>
+    </target>
+
+    <target name="debug-test" depends="-test-property-check,compile-main" description="Runs a single test case specified with -Dtestcase=classname with remote debug options turned on." >
+	    <echo>Waiting for debugger on port 5001</echo>    
+        <junit printsummary="no" showoutput="true" filtertrace="no" fork="yes" haltonfailure="${halt.on.test.failure}" failureproperty="main.test.failed">
+            <jvmarg value="-Xdebug"/>
+            <jvmarg value="-Xrunjdwp:transport=dt_socket,address=5001,server=y,suspend=y"/>
+            <sysproperty key="java.compiler" value="NONE"/>
+            <classpath refid="test.classpath"/>
+            <sysproperty key="HSSF.testdata.path" file="${main.src.test}/org/apache/poi/hssf/data"/>
+            <sysproperty key="HPSF.testdata.path" file="${main.src.test}/org/apache/poi/hpsf/data"/>
+            <sysproperty key="java.awt.headless" value="true"/>
+            <formatter type="plain" usefile="no"/>
+            <test name="${testcase}"/>
+        </junit>
+    </target>
+
+    <target name="-test-property-check" unless="testcase">
+        <echo message="Please use -Dtestcase=org.your.testcase to run a single test"/>
+        <fail/>
+    </target>
+
+    <target name="-test-main-write-testfile" unless="main.test.failed">
+        <echo file="${main.testokfile}" append="false" message="testok"/>
+    </target>
+
+    <target name="-test-scratchpad-check">
+        <uptodate property="scratchpad.test.notRequired" targetfile="${scratchpad.testokfile}">
+            <srcfiles dir="${scratchpad.src}"/>
+            <srcfiles dir="${scratchpad.src.test}"/>
+        </uptodate>
+    </target>
+
+    <target name="test-scratchpad" depends="compile-scratchpad,-test-scratchpad-check" unless="scratchpad.test.notRequired">
+        <junit printsummary="yes" fork="no" haltonfailure="${halt.on.test.failure}" failureproperty="scratchpad.test.failed">
+            <classpath>
+                <path refid="scratchpad.classpath"/>
+                <pathelement location="${main.output.dir}"/>
+                <pathelement location="${scratchpad.output.dir}"/>
+                <pathelement location="${scratchpad.output.test.dir}"/>
+                <pathelement location="${junit.jar1.dir}"/>
+            </classpath>
+            <sysproperty key="HSSF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hssf/data"/>
+            <sysproperty key="HPSF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hpsf/data"/>
+            <sysproperty key="HDF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hdf/data"/>
+            <sysproperty key="HWPF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hwpf/data"/>
+            <sysproperty key="HSLF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hslf/data"/>
+            <sysproperty key="java.awt.headless" value="true"/>
+            <formatter type="plain"/>
+            <formatter type="xml"/>
+            <batchtest todir="${scratchpad.reports.test}">
+                <fileset dir="${scratchpad.src.test}">
+                    <include name="**/Test*.java"/>
+                    <exclude name="**/AllTests.java"/>
+                </fileset>
+            </batchtest>
+        </junit>
+        <delete file="${scratchpad.testokfile}"/>
+        <antcall target="-test-scratchpad-write-testfile"/>
+    </target>
+
+    <target name="-test-scratchpad-write-testfile" unless="scratchpad.test.failed">
+        <echo file="${scratchpad.testokfile}" append="false" message="testok"/>
+    </target>
+
+	<target name="single-scratchpad-test" depends="compile-scratchpad,-test-property-check" description="Runs a single test case specified with -Dtestcase=classname">
+	        <junit printsummary="yes" showoutput="true" filtertrace="no" haltonfailure="false" >
+	            <classpath refid="test.classpath"/>
+	                 <classpath>
+	                                <path refid="scratchpad.classpath"/>
+	                                <pathelement location="${main.output.dir}"/>
+	                                <pathelement location="${scratchpad.output.dir}"/>
+	                                <pathelement location="${scratchpad.output.test.dir}"/>
+	                                <pathelement location="${junit.jar1.dir}"/>
+	                            </classpath>
+	            <sysproperty key="HSSF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hssf/data"/>
+	            <sysproperty key="HPSF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hpsf/data"/>
+	            <sysproperty key="HWPF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hwpf/data"/>
+            <sysproperty key="HSLF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hslf/data"/>
+	            <sysproperty key="java.awt.headless" value="true"/>
+	                <sysproperty key="java.awt.headless" value="true"/>
+	            <formatter type="plain" usefile="no"/>
+	            <formatter type="xml"/>
+	            <test name="${testcase}"/>
+	        </junit>
+	    </target>
+	
+    <target name="-test-contrib-check">
+        <uptodate property="contrib.test.notRequired" targetfile="${contrib.testokfile}">
+            <srcfiles dir="${contrib.src}"/>
+            <srcfiles dir="${contrib.src.test}"/>
+        </uptodate>
+    </target>
+
+    <target name="test-contrib" depends="compile-contrib,-test-contrib-check" unless="contrib.test.notRequired">
+        <junit printsummary="yes" fork="no" haltonfailure="${halt.on.test.failure}" failureproperty="contrib.test.failed">
+            <classpath>
+                <path refid="contrib.classpath"/>
+                <pathelement location="${main.output.dir}"/>
+                <pathelement location="${contrib.output.dir}"/>
+                <pathelement location="${contrib.output.test.dir}"/>
+                <pathelement location="${junit.jar1.dir}"/>
+            </classpath>
+            <sysproperty key="HSSF.testdata.path" file="${contrib.src.test}/org/apache/poi/hssf/data"/>
+            <sysproperty key="HPSF.testdata.path" file="${contrib.src.test}/org/apache/poi/hpsf/data"/>
+            <sysproperty key="java.awt.headless" value="true"/>
+            <formatter type="plain"/>
+            <formatter type="xml"/>
+            <batchtest todir="${contrib.reports.test}">
+                <fileset dir="${contrib.src.test}">
+                    <include name="**/Test*.java"/>
+                    <exclude name="**/AllTests.java"/>
+                </fileset>
+            </batchtest>
+        </junit>
+        <delete file="${contrib.testokfile}"/>
+        <antcall target="-test-contrib-write-testfile"/>
+    </target>
+
+    <target name="-test-contrib-write-testfile" unless="contrib.test.failed">
+        <echo file="${contrib.testokfile}" append="false" message="testok"/>
+    </target>
+
+    <target name="-check-docs">
+        <uptodate property="main.docs.notRequired" targetfile="${build.site}/index.html">
+            <srcfiles dir="${build.site.src}"/>
+        </uptodate>
+    </target>
+
+    <target name="-check-forrest-installed" unless="env.FORREST_HOME">
+        <echo>Please install Apache Forrest (see
+&lt;http://xml.apache.org/forrest/index.html&gt;) and set the
+FORREST_HOME environment variable!</echo>
+        <fail message="Apache Forrest is not installed."/>
+    </target>
+
+    <!--    <target name="check-docs">-->
+    <!--        <uptodate property="main.docs.notRequired" targetfile="${build.site}/index.html" >-->
+    <!--            <srcfiles dir= "${build.site.src}"/>-->
+    <!--        </uptodate>-->
+    <!--    </target>-->
+
+    <target name="docs" depends="init, -check-forrest-installed, -check-docs"
+      unless="main.docs.notRequired" description="Builds the POI website">
+
+        <mkdir dir="${build.site.src}/src/documentation/content/apidocs"/>
+        <copy todir="${build.site.src}/src/documentation/content/apidocs">
+            <fileset dir="${apidocs.report.dir}"/>
+        </copy>
+        <copy
+          tofile="${build.site.src}/src/documentation/content/jdepend.ehtml"
+          file="${jdepend.report.dir}/index.html" failonerror="false"/>
+        <mkdir dir="${build.site.src}/src/documentation/content/junit"/>
+        <copy todir="${build.site.src}/src/documentation/content/junit">
+            <fileset dir="${junit.report.dir}"/>
+        </copy>
+
+        <move
+          file="${build.site.src}/src/documentation/content/xdocs/status.xml"
+          tofile="${build.site.src}/status.xml"/>
+
+        <ant antfile="${forrest.home}/forrest.antproxy.xml" target="site">
+            <property name="project.home" location="${build.site.src}"/>
+        </ant>
+
+        <echo>Broken links:</echo>
+        <echo file="${build.site}/../tmp/brokenlinks.txt"/>
+
+        <touch>
+            <fileset dir="${build.site}"/>
+        </touch>
+    </target>
+
+    <!-- Checks whether reports are required to be run.  If nothing has changed then they dont. -->
+    <target name="-check-reports">
+        <condition property="reports.notRequired">
+            <and>
+                <equals arg1="${main.test.notRequired}" arg2="true"/>
+                <equals arg1="${scratchpad.test.notRequired}" arg2="true"/>
+                <equals arg1="${contrib.test.notRequired}" arg2="true"/>
+            </and>
+        </condition>
+    </target>
+
+
+
+  <!-- Generates a log of the latest changes in the CVS repository. -->
+  <target name="cvschangelog" unless="disconnected"
+    depends="fail-unless-xslt-is-available"
+    description="Generates a CVS change log report">
+    <antcall target="cvs-rsh-warning"/>
+    <cvschangelog destfile="${changelog.file}" daysinpast="30"/>
+
+    <style in="${changelog.file}"
+      out="${build.site.src}/src/documentation/content/changelog.html"
+      style="changelog.xsl">
+      <param name="title"  expression="POI Change Log"/>
+      <param name="module" expression="jakarta-poi"/>
+      <param name="cvsweb" expression="http://cvs.apache.org/viewcvs/"/>
+    </style>
+  </target>
+
+  <target name="cvs-rsh-warning" unless="env.CVS_RSH">
+    <echo>
+      WARNING: The environment variable CVS_RSH is not set. If you cannot
+      access the CVS repository this could be one of the reasons for the
+      failure.
+    </echo>
+  </target>
+
+
+
+  <!-- Creates reports and API documentation -->
+  <target name="reports" unless="reports.notRequired" depends="-check-reports,
+    fail-unless-xslt-is-available, fail-unless-junit-is-available,
+    fail-unless-jdepend-is-available, test-ignore-failures, junitreport,
+    jdepend, cvschangelog, javadocs, clover.html"
+    description="Creates various reports and the API documentation">
+  </target>
+
+
+
+  <!-- Runs all JUnit tests without aborting if one of the tests fails. -->
+  <target name="test-ignore-failures" depends="init">
+    <antcall target="test">
+      <param name="halt.on.test.failure" value="false"/>
+    </antcall>
+  </target>
+
+
+
+  <!-- Produces a report of the JUnit test results -->
+  <target name="junitreport"
+    depends="fail-unless-xslt-is-available, test-ignore-failures"
+    description="Produces a report of the JUnit test results">
+    <junitreport todir="${junit.report.dir}">
+      <fileset dir="${main.reports.test}">
+        <include name="TEST-*.xml"/>
+      </fileset>
+      <fileset dir="${scratchpad.reports.test}">
+        <include name="TEST-*.xml"/>
+      </fileset>
+      <fileset dir="${contrib.reports.test}">
+        <include name="TEST-*.xml"/>
+      </fileset>
+      <report format="frames" todir="${junit.report.dir}"/>
+    </junitreport>
+  </target>
+
+
+
+  <!-- Generates the API documentation. -->
+  <target name="javadocs" depends="init, warn-unless-junit-is-available,
+    warn-unless-xslt-is-available"
+    description="Generates the API documentation">
+    <javadoc verbose="false" author="true" destdir="${apidocs.report.dir}"
+      windowtitle="POI API Documentation" use="true" version="true">
+
+      <packageset dir="${main.src}" defaultexcludes="yes">
+        <include name="org/apache/poi/**"/>
+      </packageset>
+      <packageset dir="${scratchpad.src}" defaultexcludes="yes">
+        <include name="org/apache/poi/**"/>
+        <exclude name="org/apache/poi/hdf/**"/>
+      </packageset>
+      <packageset dir="${contrib.src}" defaultexcludes="yes">
+        <include name="org/apache/poi/**"/>
+      </packageset>
+      <packageset dir="${examples.src}" defaultexcludes="yes">
+        <include name="org/apache/poi/**"/>
+      </packageset>
+
+      <classpath id="javadoc.classpath">
+        <path refid="main.classpath"/>
+        <path refid="scratchpad.classpath"/>
+        <path refid="contrib.classpath"/>
+        <path refid="examples.classpath"/>
+        <path path="${env.CLASSPATH}"/>
+      </classpath>
+
+      <doctitle><![CDATA[<h1>POI API Documentation</h1>]]></doctitle>
+      <bottom>
+        <![CDATA[<i>Copyright ${tstamp.year} The Apache Software Foundation or
+        its licensors, as applicable.</i>]]>
+      </bottom>
+      <group>
+        <title>DDF - Dreadful Drawing Format</title>
+        <package name="org.apache.poi.ddf*"/>
+      </group>
+      <group>
+        <title>HPSF - Horrible Property Set Format</title>
+        <package name="org.apache.poi.hpsf*"/>
+      </group>
+      <group>
+        <title>HSSF - Horrible Spreadsheet Format</title>
+        <package name="org.apache.poi.hssf*"/>
+      </group>
+      <group>
+        <title>HWPF - Horrible Word Processor Format</title>
+        <package name="org.apache.poi.hwpf*"/>
+      </group>
+      <group>
+        <title>POIFS - POI File System</title>
+        <package name="org.apache.poi.poifs*"/>
+      </group>
+      <group>
+        <title>Utilities</title>
+        <package name="org.apache.poi.util*"/>
+      </group>
+      <group>
+        <title>Examples</title>
+        <package name="org.apache.poi.hpsf.examples*"/>
+        <package name="org.apache.poi.hssf.usermodel.examples*"/>
+      </group>
+    </javadoc>
+
+    <antcall target="clover.html"/>
+  </target>
+
+
+
+  <!-- ================================== -->
+  <!--       Generate records                -->
+  <!-- ================================== -->
+
+  <target name="generate-records" depends="init"
+    description="Generates HSSF records"> 
+    <java classname="org.apache.poi.dev.RecordGenerator" fork="yes">
+      <arg file="src/records/definitions"/>
+      <arg file="src/records/styles"/>
+      <arg file="src/java"/>
+      <arg file="src/testcases"/>
+      <classpath>
+        <path refid="scratchpad.classpath"/>
+        <pathelement location="${main.output.dir}"/>
+        <pathelement location="${scratchpad.output.dir}"/>
+      </classpath>
+    </java>  
+  </target>
+
+  <!-- ================================== -->
+  <!--       Generate types               -->
+  <!-- ================================== -->
+
+  <target name="generate-types" depends="init"
+    description="Generates word types">
+    <java classname="org.apache.poi.dev.RecordGenerator" fork="yes">
+      <arg file="src/types/definitions"/>
+      <arg file="src/types/styles"/>
+      <arg file="src/scratchpad/src"/>
+      <arg file="src/scratchpad/testcases"/>
+      <classpath>
+        <path refid="scratchpad.classpath">
+        </path>
+        <pathelement location="${main.output.dir}"/>
+        <pathelement location="${scratchpad.output.dir}"/>
+      </classpath>
+    </java>
+  </target>
+
+
+
+    <!-- Generates documentation and reports -->
+    <target name="site" depends="reports, docs"
+      description="Generates POI's website's contents"/>
+
+
+
+    <target name="jar" depends="compile" description="Creates jar files for distribution">
+        <jar basedir="${main.output.dir}" destfile="${dist.dir}/${jar.name}-${version.id}-${DSTAMP}.jar">
+            <manifest>
+                <attribute name="Built-By" value="${user.name}"/>
+                <section name="common">
+                  <attribute name="Specification-Title" value="Jakarta POI"/>
+                  <attribute name="Specification-Version" value="${version.id}-${DSTAMP}"/>
+                  <attribute name="Specification-Vendor" value="Apache"/>
+                  <attribute name="Implementation-Title" value="Jakarta POI"/>
+                  <attribute name="Implementation-Version" value="${version.id}-${DSTAMP}"/>
+                  <attribute name="Implementation-Vendor" value="Apache"/>
+                </section>
+            </manifest>        
+        </jar>
+        <jar basedir="${contrib.output.dir}" destfile="${dist.dir}/${jar.name}-contrib-${version.id}-${DSTAMP}.jar">
+            <manifest>
+                <attribute name="Built-By" value="${user.name}"/>
+                <section name="common">
+                  <attribute name="Specification-Title" value="Jakarta POI"/>
+                  <attribute name="Specification-Version" value="${version.id}-${DSTAMP}"/>
+                  <attribute name="Specification-Vendor" value="Apache"/>
+                  <attribute name="Implementation-Title" value="Jakarta POI"/>
+                  <attribute name="Implementation-Version" value="${version.id}-${DSTAMP}"/>
+                  <attribute name="Implementation-Vendor" value="Apache"/>
+                </section>
+            </manifest>        
+        </jar>
+        <jar basedir="${scratchpad.output.dir}" destfile="${dist.dir}/${jar.name}-scratchpad-${version.id}-${DSTAMP}.jar">
+            <manifest>
+                <attribute name="Built-By" value="${user.name}"/>
+                <section name="common">
+                  <attribute name="Specification-Title" value="Jakarta POI"/>
+                  <attribute name="Specification-Version" value="${version.id}-${DSTAMP}"/>
+                  <attribute name="Specification-Vendor" value="Apache"/>
+                  <attribute name="Implementation-Title" value="Jakarta POI"/>
+                  <attribute name="Implementation-Version" value="${version.id}-${DSTAMP}"/>
+                  <attribute name="Implementation-Vendor" value="Apache"/>
+                </section>
+            </manifest>        
+        </jar>
+    </target>
+
+  <target name="dist" depends="fail-unless-tools-are-available, compile, site, jar"
+    description="Creates the entire distribution into build/dist">
+
+    <zip destfile="${dist.dir}/${jar.name}-bin-${version.id}-${DSTAMP}.zip">
+      <zipfileset dir="legal/"/>
+      <zipfileset dir="${build.site}" prefix="docs"/>
+      <zipfileset file="${dist.dir}/${jar.name}-${version.id}-${DSTAMP}.jar"/>
+      <zipfileset file="${dist.dir}/${jar.name}-contrib-${version.id}-${DSTAMP}.jar"/>
+      <zipfileset file="${dist.dir}/${jar.name}-scratchpad-${version.id}-${DSTAMP}.jar"/>
+      <zipfileset dir="legal" prefix="legal"/>
+    </zip>
+
+    <zip destfile="${dist.dir}/${jar.name}-src-${version.id}-${DSTAMP}.zip">
+      <zipfileset dir="legal/"/>    
+      <zipfileset dir="${build.site}" prefix="docs"/>
+      <zipfileset dir=".">
+        <exclude name="build/**"/>
+        <exclude name="scripts/**"/>
+        <exclude name="*.ipr"/>
+        <exclude name="*.iml"/>
+        <exclude name="*.iws"/>
+      </zipfileset>
+    </zip>
+
+    <tar destfile="${dist.dir}/${jar.name}-bin-${version.id}-${DSTAMP}.tar.gz"
+      compression="gzip">
+      <tarfileset dir="legal/"/>
+      <tarfileset dir="${build.site}" prefix="docs"/>
+      <tarfileset file="${dist.dir}/${jar.name}-${version.id}-${DSTAMP}.jar"/>
+      <tarfileset file="${dist.dir}/${jar.name}-contrib-${version.id}-${DSTAMP}.jar"/>
+      <tarfileset file="${dist.dir}/${jar.name}-scratchpad-${version.id}-${DSTAMP}.jar"/>
+      <tarfileset dir="legal" prefix="legal"/>
+    </tar>
+
+    <tar destfile="${dist.dir}/${jar.name}-src-${version.id}-${DSTAMP}.tar.gz"
+      compression="gzip">
+      <tarfileset dir="legal/"/>
+      <tarfileset dir="${build.site}" prefix="docs"/>
+      <tarfileset dir=".">
+        <exclude name="build/**"/>
+        <exclude name="scripts/**"/>
+        <exclude name="*.ipr"/>
+        <exclude name="*.iml"/>
+        <exclude name="*.iws"/>
+      </tarfileset>
+    </tar>
+
+    <echo>Distribution located in build/dist</echo>
+  </target>
+
+  <target name="clean-compile" depends="clean, compile"/>
+
+  <target name="clean-dist" depends="clean, dist"
+    description="Cleans the build directory then creates a distribution"/>
+
+  <target name="gump" depends="test, jar"/>
+
+
+
+  <!-- Generates the Ant document type definition (DTD) -->
+  <target name="dtd"
+    description="Generates the Ant document type definition (DTD)">
+    <antstructure output="ant.dtd"/>
+  </target>
+
+
+
+
+  <!-- Abort the build if JUnit is missing. -->
+  <target name="fail-unless-junit-is-available" depends="init">
+    <condition property="isAvailable.junit">
+      <available classname="junit.framework.TestCase"/>
+    </condition>
+    <antcall target="fail-junit"/>
+  </target>
+
+  <target name="fail-junit" unless="isAvailable.junit">
+    <echo>
+      JUnit is not available. You must download JUnit from
+      &lt;http://www.junit.org/&gt; and include the JAR file in your
+      classpath.
+    </echo> 
+    <fail message="JUnit is not available."/>
+  </target>
+
+  <!-- Warn if JUnit is missing. -->
+  <target name="warn-unless-junit-is-available" depends="init">
+    <condition property="isAvailable.junit">
+      <available classname="junit.framework.TestCase"/>
+    </condition>
+    <antcall target="warn-junit"/>
+  </target>
+
+  <target name="warn-junit" unless="isAvailable.junit">
+    <echo>
+      WARNING: Since JUnit is not available you might encounter failures
+      subsequently. In order to avoid this you should download JUnit from
+      &lt;http://www.junit.org/&gt; and include the JAR file in your
+      classpath.
+    </echo> 
+  </target>
+
+
+
+  <!-- Abort the build if JDepend is missing. -->
+  <target name="fail-unless-jdepend-is-available" depends="init">
+    <condition property="isAvailable.jdepend">
+      <available classname="jdepend.framework.JDepend"/>
+    </condition>
+    <antcall target="fail-jdepend"/>
+  </target>
+
+  <target name="fail-jdepend" unless="isAvailable.jdepend">
+    <echo>
+      JDepend is not available. You must download JDepend from
+      &lt;http://www.clarkware.com/software/JDepend.html&gt; and include the
+      JAR file in your classpath.
+    </echo> 
+    <fail message="JDepend is not available."/>
+  </target>
+
+
+
+  <!-- Abort the build if an XSLT processor is missing. -->
+  <target name="fail-unless-xslt-is-available" depends="init">
+    <condition property="isAvailable.xslt">
+      <available classname="javax.xml.transform.TransformerFactory"/>
+    </condition>
+    <antcall target="fail-xslt"/>
+  </target>
+
+  <target name="fail-xslt" unless="isAvailable.xslt">
+    <echo>
+      An XSLT processor is missing. You must download e.g. Xalan from
+      &lt;http://xml.apache.org/xalan-j/&gt; and include the JAR file in your
+      classpath.
+    </echo> 
+    <fail message="An XSLT processor is not available."/>
+  </target>
+
+  <!-- Warn if an XSLT processor is missing. -->
+  <target name="warn-unless-xslt-is-available" depends="init">
+    <condition property="isAvailable.xslt">
+      <available classname="javax.xml.transform.TransformerFactory"/>
+    </condition>
+    <antcall target="warn-xslt"/>
+  </target>
+
+  <target name="warn-xslt" unless="isAvailable.xslt">
+    <echo>
+      WARNING: Since an XSLT processor is not available you might encounter
+      failures subsequently. In order to avoid this you should download
+      e.g. Xalan from &lt;http://xml.apache.org/xalan-j/&gt; and include the
+      JAR file in your classpath.
+    </echo> 
+  </target>
+
+
+
+  <!-- Aborts the build if any of the required tools are missing. -->
+  <target name="fail-unless-tools-are-available"
+    depends="fail-unless-junit-is-available, fail-unless-junit-is-available,
+    fail-unless-jdepend-is-available"/>
+
+
+
+  <!-- Runs jdepend to produce a report about package dependencies -->
+  <target name="jdepend" depends="fail-unless-jdepend-is-available"
+    description="Runs jdepend to produce a report about package dependencies">
+    <jdepend outputfile="${jdepend.report.dir}/jdepend.xml" format="xml">
+      <classespath>
+        <pathelement location="${main.output.dir}"/>
+        <pathelement location="${contrib.output.dir}"/>
+        <pathelement location="${scratchpad.output.dir}"/>
+      </classespath>
+      <classpath>
+        <path refid="main.classpath"/>
+        <path refid="contrib.classpath"/>
+        <path refid="scratchpad.classpath"/>
+      </classpath>
+    </jdepend>
+
+    <style basedir="${jdepend.report.dir}"
+      in="${jdepend.report.dir}/jdepend.xml"
+      out="${jdepend.report.out.dir}/index.html"
+      style="jdepend.xsl"/>
+  </target>
+
+</project>
+
+<!-- Keep this comment at the end of the file
+Local variables:
+mode: xml
+sgml-omittag:nil
+sgml-shorttag:nil
+sgml-namecase-general:nil
+sgml-general-insert-case:lower
+sgml-minimize-attributes:nil
+sgml-always-quote-attributes:t
+sgml-indent-step:2
+sgml-indent-data:t
+sgml-parent-document:nil
+sgml-exposed-tags:nil
+sgml-local-catalogs:nil
+sgml-local-ecat-files:nil
+End:
+-->

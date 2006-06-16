@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (C) 2004 The Apache Software Foundation. All rights reserved. -->
+<!DOCTYPE book PUBLIC "-//APACHE//DTD Cocoon Documentation Book V1.0//EN" "./dtd/book-cocoon-v10.dtd">
+
+<book software="POI" 
+      title="POI Documentation Translations" 
+      copyright="@year@ POI Project"
+      xmlns:xlink="http://www.w3.org/1999/xlink">
+
+  <menu label="Translations">
+    <menu-item label="Main Index" href="../index.html"/>    
+    <menu-item label="Guidelines" href="guidelines.html"/>    
+  </menu>
+
+  <menu label="Languages">
+    <menu-item label="Spanish" href="es/index.html"/>    
+    <menu-item label="German" href="de/index.html"/>    
+    <menu-item label="Japanese" href="http://jakarta.terra-intl.com/poi/"/>    
+    <menu-item label="Korean" href="http://jakarta.apache-korea.org/poi/"/>    
+  </menu>
+
+</book>

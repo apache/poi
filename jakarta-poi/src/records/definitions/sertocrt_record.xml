@@ -1,0 +1,10 @@
+<!-- Copyright (C) 2004 The Apache Software Foundation. All rights reserved. -->
+<record id="0x1045" name="SeriesToChartGroup" package="org.apache.poi.hssf.record">
+    <suffix>Record</suffix>
+    <extends>Record</extends>
+    <description>Indicates the chart-group index for a series.  The order probably defines the mapping.  So the 0th record probably means the 0th series.  The only field in this of course defines which chart group the 0th series (for instance) would map to.  Confusing?  Well thats because it is.  (p 522 BCG)</description>
+    <author>Andrew C. Oliver (acoliver at apache.org)</author>
+    <fields>
+        <field type="int" size="2" name="chart group index" description="index to the chart group for this series"/>
+    </fields>
+</record>

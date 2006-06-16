@@ -1,0 +1,319 @@
+###
+### Jindent 3.2x property file -- http://www.jindent.de
+###
+### this encapsulates my preferred style, plus project-specific style ...
+###
+### author: Marc Johnson
+###
+
+### General -- Convention
+
+conventionName                            = ""
+conventionString                          = ""
+conventionNotePosition                    = "none"
+blankLinesToSeparateConventionNote        = 2
+
+### General -- Jindent Note
+
+jindentNotePosition                       = "none"
+blankLinesToSeparateJindentNote           = 2
+
+### Header/Footer -- Header Template
+
+headerSmartMode                           = infinite
+headerIdentifyKey                         = "Copyright (c) 2002 The Apache Software Foundation"
+blankLinesBeforeHeader                    = 1
+header[00]="/* ===================================================================="
+header[01]=" * The Apache Software License, Version 1.1"
+header[02]=" *"
+header[03]=" * Copyright (c) 2002 The Apache Software Foundation.  All rights"
+header[04]=" * reserved."
+header[05]=" *"
+header[06]=" * Redistribution and use in source and binary forms, with or without"
+header[07]=" * modification, are permitted provided that the following conditions"
+header[08]=" * are met:"
+header[09]=" *"
+header[10]=" * 1. Redistributions of source code must retain the above copyright"
+header[11]=" *    notice, this list of conditions and the following disclaimer."
+header[12]=" *"
+header[13]=" * 2. Redistributions in binary form must reproduce the above copyright"
+header[14]=" *    notice, this list of conditions and the following disclaimer in"
+header[15]=" *    the documentation and/or other materials provided with the"
+header[16]=" *    distribution."
+header[17]=" *"
+header[18]=" * 3. The end-user documentation included with the redistribution,"
+header[19]=" *    if any, must include the following acknowledgment:"
+header[20]=" *       "This product includes software developed by the"
+header[21]=" *        Apache Software Foundation (http://www.apache.org/).""
+header[22]=" *    Alternately, this acknowledgment may appear in the software itself,"
+header[23]=" *    if and wherever such third-party acknowledgments normally appear."
+header[24]=" *"
+header[25]=" * 4. The names "Apache" and "Apache Software Foundation" and"
+header[26]=" *    "Apache POI" must not be used to endorse or promote products"
+header[27]=" *    derived from this software without prior written permission. For"
+header[28]=" *    written permission, please contact apache@apache.org."
+header[29]=" *"
+header[30]=" * 5. Products derived from this software may not be called "Apache","
+header[31]=" *    "Apache POI", nor may "Apache" appear in their name, without"
+header[32]=" *    prior written permission of the Apache Software Foundation."
+header[33]=" *"
+header[34]=" * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED"
+header[35]=" * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES"
+header[36]=" * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE"
+header[37]=" * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR"
+header[38]=" * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,"
+header[39]=" * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT"
+header[40]=" * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF"
+header[41]=" * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND"
+header[42]=" * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,"
+header[43]=" * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT"
+header[44]=" * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF"
+header[45]=" * SUCH DAMAGE."
+header[46]=" * ===================================================================="
+header[47]=" *"
+header[48]=" * This software consists of voluntary contributions made by many"
+header[49]=" * individuals on behalf of the Apache Software Foundation.  For more"
+header[50]=" * information on the Apache Software Foundation, please see"
+header[51]=" * <http://www.apache.org/>."
+header[52]=" */"
+blankLinesAfterHeader                     = 1
+
+### Header/Footer -- Footer Template
+
+footerSmartMode                           = infinite
+footerIdentifyKey                         = ""
+blankLinesBeforeFooter                    = 0
+footer[00]                                = ""
+blankLinesAfterFooter                     = 0
+
+### Indentation -- Misc
+
+tabulatorSize                             = 8
+indentSize                                = 4
+firstLevelIndent                          = 0
+indentCaseFromSwitch                      = true
+labelNewLine                              = true
+indentLabels                              = true
+minimumCommentIndent                      = 3
+indentLeadingsByTabs                      = false
+indentCommentsByTabs                      = false
+indentDeclarationsByTabs                  = false
+indentAssignmentsByTabs                   = false
+
+### Indentation -- Alignment
+
+alignComments                             = true
+alignDeclarations                         = true
+alignAssignments                          = true
+alignTernaryConditions                    = false
+alignTernaryExpressions                   = true
+alignTooLongComments                      = true
+
+### Braces -- Style
+
+leftBraceNewLineGeneral                   = true
+rightBraceNewLineGeneral                  = true
+indentLeftBraceGeneral                    = 0
+indentRightBraceGeneral                   = 0
+indentAfterRightBraceGeneral              = 0
+cuddleEmptyBracesGeneral                  = false
+indentCuddledBracesGeneral                = 0
+
+leftBraceNewLineClassInterface            = true
+rightBraceNewLineClassInterface           = true
+indentLeftBraceClassInterface             = 0
+indentRightBraceClassInterface            = 0
+indentAfterRightBraceClassInterface       = 0
+cuddleEmptyBracesClassInterface           = false
+indentCuddledBracesClassInterface         = 0
+
+leftBraceNewLineMethod                    = true
+rightBraceNewLineMethod                   = true
+indentLeftBraceMethod                     = 0
+indentRightBraceMethod                    = 0
+indentAfterRightBraceMethod               = 0
+cuddleEmptyBracesMethod                   = false
+indentCuddledBracesMethod                 = 0
+
+leftBraceNewLineTryCatch                  = true
+rightBraceNewLineTryCatch                 = true
+indentLeftBraceTryCatch                   = 0
+indentRightBraceTryCatch                  = 0
+indentAfterRightBraceTryCatch             = 0
+cuddleEmptyBracesTryCatch                 = false
+indentCuddledBracesTryCatch               = 0
+
+### Braces -- Insert At
+
+insertBracesAtIfElse                      = true
+insertBracesAtFor                         = true
+insertBracesAtWhile                       = true
+insertBracesAtDoWhile                     = true
+insertParenthesisAtConditions             = true
+
+### Braces -- If-Else
+
+singleIfStatementInOneLine                = false
+singleElseStatementInOneLine              = false
+specialElseIfTreatment                    = true
+
+### JavaDoc -- Misc
+
+deleteJavaDocComments                     = false
+formatJavaDocComments                     = true
+insertMissingJavaDocTags                  = true
+deleteObsoleteJavaDocTags                 = false
+createPublicClassInterfaceJavaDocs        = true
+createFriendlyClassInterfaceJavaDocs      = false
+createPrivateClassInterfaceJavaDocs       = false
+createProtectedClassInterfaceJavaDocs     = false
+createPublicMethodJavaDocs                = false
+createFriendlyMethodJavaDocs              = false
+createPrivateMethodJavaDocs               = false
+createProtectedMethodJavaDocs             = false
+createPublicFieldJavaDocs                 = false
+createFriendlyFieldJavaDocs               = false
+createPrivateFieldJavaDocs                = false
+createProtectedFieldJavaDocs              = false
+
+### JavaDoc -- Templates
+
+sortExceptionsInTemplates                 = true
+javaDocMethodTop[00]                      = "/**"
+javaDocMethodTop[01]                      = " * Method $objectName$"
+javaDocMethodTop[02]                      = " *"
+javaDocMethodParamSeparator[00]           = " *"
+javaDocMethodParam[00]                    = " * @param $paramName$"
+javaDocMethodReturn[00]                   = " *"
+javaDocMethodReturn[01]                   = " * @return"
+javaDocMethodExceptionSeparator[00]       = " *"
+javaDocMethodException[00]                = " * @exception $exceptionName$"
+javaDocMethodBottom[00]                   = " *"
+javaDocMethodBottom[01]                   = " */"
+javaDocConstructorTop[00]                 = "/**"
+javaDocConstructorTop[01]                 = " * Constructor $objectName$"
+javaDocConstructorTop[02]                 = " *"
+javaDocConstructorParamSeparator[00]      = " *"
+javaDocConstructorParam[00]               = " * @param $paramName$"
+javaDocConstructorExceptionSeparator[00]  = " *"
+javaDocConstructorException[00]           = " * @exception $exceptionName$"
+javaDocConstructorBottom[00]              = " *"
+javaDocConstructorBottom[01]              = " */"
+javaDocClass[00]                          = "/**"
+javaDocClass[01]                          = " * Class $objectName$"
+javaDocClass[02]                          = " *"
+javaDocClass[03]                          = " *"
+javaDocClass[04]                          = " * @author"
+javaDocClass[05]                          = " * @version %I%, %G%"
+javaDocClass[06]                          = " */"
+javaDocInterface[00]                      = "/**"
+javaDocInterface[01]                      = " * Interface $objectName$"
+javaDocInterface[02]                      = " *"
+javaDocInterface[03]                      = " *"
+javaDocInterface[04]                      = " * @author"
+javaDocInterface[05]                      = " * @version %I%, %G%"
+javaDocInterface[06]                      = " */"
+javaDocField[00]                          = "/** Field $objectName$           */"
+
+### Comments -- Format/Delete
+
+deleteBlockComments                       = false
+deleteSingleLineComments                  = false
+deleteTrailingComments                    = false
+deleteEndOfLineComments                   = false
+formatBlockComments                       = true
+formatSingleLineComments                  = true
+formatTrailingComments                    = true
+formatEndOfLineComments                   = true
+
+### Comments -- Exceptions
+
+neverIndentFirstColumnComments            = true
+neverFormatFirstColumnComments            = true
+neverFormatHeader                         = false
+neverFormatFooter                         = false
+
+### Separation -- Misc
+
+keepBlankLines                            = 0
+minLinesToInsertBlankLineInClasses        = infinite
+minLinesToInsertBlankLineInMethods        = infinite
+
+### Separation -- Separate
+
+separateChunksByComments                  = false
+allowBreakSeparatedFromCaseBlock          = false
+blankLinesBetweenCaseBlocks               = 1
+blankLinesBetweenChunks                   = 0
+comparableImportDepth                     = 2
+blankLinesToSeparateImports               = 1
+blankLinesBetweenClassInterface           = 2
+
+### Separation -- Insert Blank Lines
+
+blankLinesAfterDeclarations               = 1
+blankLinesAfterMethods                    = 1
+blankLinesAfterClasses                    = 1
+blankLinesAfterInterfaces                 = 1
+blankLinesBeforeJavaDocComments           = 1
+blankLinesAfterJavaDocComments            = 1
+blankLinesBeforeBlockComments             = 1
+blankLinesAfterBlockComments              = 0
+blankLinesBeforeSingleLineComments        = 1
+blankLinesAfterSingleLineComments         = 0
+blankLinesBeforeEndOfLineComments         = 1
+blankLinesAfterEndOfLineComments          = 0
+blankLinesAfterSwitch                     = 1
+blankLinesAfterPackage                    = 1
+blankLinesAfterLastImport                 = 1
+
+### Whitespaces -- Padding
+
+separateAssignmentOperators               = true
+separateConditionalOperators              = true
+separateComparisonOperators               = true
+separateNumericalOperators                = true
+paddingCastParenthesis                    = true
+paddingParenthesis                        = false
+paddingBrackets                           = true
+paddingBraces                             = true
+
+### Whitespaces -- Space Before
+
+spaceBeforeMethodDeclarationParenthesis   = false
+spaceBeforeMethodCallParenthesis          = false
+spaceBeforeBrackets                       = false
+spaceBeforeBracketsInTypes                = true
+spaceBeforeStatementParenthesis           = true
+spaceBeforeConditionBang                  = true
+spaceBeforeCaseColon                      = true
+
+### Whitespaces -- Space After
+
+spaceAfterComma                           = true
+spaceAfterSemicolon                       = true
+spaceAfterCasting                         = true
+
+### Whitespaces -- No Spaces
+
+noSpacesInEmptyForExpressions             = true
+
+### Line Wrapping -- Misc
+
+maxFieldElementsPerLine                   = 0
+wrapLines                                 = true
+wrapBecauseOfComments                     = true
+wrapLongMethodNames                       = true
+maxLineLength                             = 78
+deepIndent                                = 45
+forceIndent                               = 8
+forceIndentTolerance                      = 4
+allowWrappingAfterAssignments             = true
+allowWrappingAfterParenthesis             = true
+preferWrappingAfterThrows                 = true
+alwaysWrapThrows                          = true
+alwaysWrapExtends                         = true
+alwaysWrapImplements                      = true
+indentWrappedThrows                       = 4
+indentWrappedExtends                      = 4
+indentWrappedImplements                   = 4

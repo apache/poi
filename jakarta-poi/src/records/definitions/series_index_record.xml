@@ -1,0 +1,17 @@
+<!-- Copyright (C) 2004 The Apache Software Foundation. All rights reserved. -->
+<record id="0x1065" name="SeriesIndex" excel-record-id="SINDEX"
+    package="org.apache.poi.hssf.record">
+    <suffix>Record</suffix>
+    <extends>Record</extends>
+    <description>links a series to its position in the series list.</description>
+    <author>Andrew C. Oliver (acoliver at apache.org)</author>
+    <fields>
+        <field type="int" size="2" name="index" description="where is this series in the list">
+            <testresult value="3"/>
+        </field>
+    </fields>
+    <testdata>
+	03 00
+     </testdata>
+    <testsize>6</testsize>
+</record>

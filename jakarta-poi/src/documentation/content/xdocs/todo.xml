@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2004 The Apache Software Foundation. All rights reserved. -->
+
+<!DOCTYPE todo PUBLIC "-//APACHE//DTD Todo V1.1//EN" "./dtd/todo-v11.dtd">
+
+<todo><title>Things To Do for Poi</title>
+
+    <devs>
+        <person id="AO"  name="Andrew C. Oliver"   email="acoliver@apache.org"/>
+        <person id="GS"  name="Glen Stampoultzis"  email="poi-user@jakarta.apache.org"/>
+        <person id="MJ"  name="Marc Johnson"       email="mjohnson at apache dot org"/>
+        <person id="NKB" name="Nicola Ken Barozzi" email="barozzi@nicolaken.com"/>
+		<person id="RA" name="Ryan Ackley" email="poi-dev@jakarta.apache.org"/>
+		<person id="AS" name="Avik Sengupta" email="poi-dev@jakarta.apache.org"/>
+        <person id="open" name="POI Developers"    email="poi-dev@jakarta.apache.org"/>
+		<person id="Everyone" name="POI Developers"    email="poi-dev@jakarta.apache.org"/>
+    </devs>
+
+    <actions priority="high">
+        <action context="code" dev="RA">
+          Finish HWPF
+        </action>
+        <action context="code" dev="GS">
+          Finish Charts
+        </action>
+		<action context="code" dev="Everyone">
+          Evaluate and bugfix performance code in HEAD
+        </action>
+
+    </actions>
+
+    <actions priority="medium">
+        <action context="code" dev="open">
+          Implement more record types.
+        </action>
+        <action context="code" dev="open">
+          Add more dummy checks (for when API user's do things they
+          &quot;can't&quot; do).  This will involve exploring the various
+          upper limits on the things Excel can handle.
+        </action>
+        <action context="code" dev="open">
+              Add support for embedded graphics and other objects.
+        </action>
+        <action context="code" dev="open">
+          Create new adapter object for handling MulBlank, MulRk, Rk
+          records.
+        </action>
+		<action context="code" dev="AS">
+              Improve formulas (Shared Formulas, Unkown PTG's)
+        </action>
+    </actions>
+
+</todo>

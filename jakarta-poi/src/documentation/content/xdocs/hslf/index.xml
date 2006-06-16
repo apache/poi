@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (C) 2004 The Apache Software Foundation. All rights reserved. -->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "../dtd/document-v11.dtd">
+
+<document>
+    <header>
+        <title>POI-HSLF - Java API To Access Microsoft Powerpoint Format Files</title>
+        <subtitle>Overview</subtitle>
+        <authors>
+            <person name="Avik Sengupta" email="avik at apache dot org"/>
+            <person name="Nick Burch" email="nick at apache dot org"/>
+        </authors>
+    </header>
+
+    <body>
+        <section>
+            <title>Overview</title>
+
+            <p>HSLF is the POI Project's pure Java implementation of the Powerpoint file format.</p>
+            <p>HSSF provides a way to read powerpoint presentations, and extract text from it.
+            It also provides some (currently limited) edit capabilities.
+            </p>
+            <note> 
+                This code currently lives the 
+                <link href="http://svn.apache.org/viewcvs.cgi/jakarta/poi/trunk/src/scratchpad/">scratchpad area</link> 
+                of the POI SVN repository. 
+				Ensure that you have the scratchpad jar or the scratchpad 
+                build area in your
+				classpath before experimenting with this code.
+			</note>
+			<p>The <link href="./quick-guide.html">quick guide</link> documentation provides 
+            information on using this API. Comments and fixes gratefully accepted on the POI
+            dev mailing lists.</p>
+
+
+        </section>
+    </body>
+</document>

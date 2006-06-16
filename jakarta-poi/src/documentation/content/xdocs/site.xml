@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<!-- Copyright (C) 2004 The Apache Software Foundation. All rights reserved. -->
+
+<!--
+Forrest site.xml
+
+This file contains an outline of the site's information content.  It is used to:
+- Generate the website menus (though these can be overridden - see docs)
+- Provide semantic, location-independent aliases for internal 'site:' URIs, eg
+<link href="site:changes"> links to changes.html (or ../changes.html if in
+  subdir).
+- Provide aliases for external URLs in the external-refs section.  Eg, <link
+  href="ext:cocoon"> links to http://xml.apache.org/cocoon/
+
+See http://xml.apache.org/forrest/linking.html for more info
+-->
+
+<site label="POI" href="" xmlns="http://apache.org/forrest/linkmap/1.0">
+
+    <external-refs>
+        <xml.apache.org href="http://xml.apache.org/">
+            <forrest href="forrest/">
+                <validation href="validation.html"/>
+                <webapp href="your-project.html#webapp"/>
+            </forrest>
+            <cocoon href="cocoon/"/>
+        </xml.apache.org>
+        <jakarta.apache.org href="http://jakarta.apache.org/">
+            <ant href="ant/"/>
+            <poi href="poi/"/>
+        </jakarta.apache.org>
+        <junit href="junit/index.html"/>
+        <jdepend href="jdepend/index.html"/>
+        <javadoc href="apidocs/index.html"/>
+	    <download href="http://www.apache.org/dyn/closer.cgi/jakarta/poi/"/>
+    </external-refs>
+
+</site>

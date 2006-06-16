@@ -1,0 +1,15 @@
+<!-- Copyright (C) 2004 The Apache Software Foundation. All rights reserved. -->
+<record id="0x1024" name="DefaultDataLabelTextProperties"
+    excel-record-id="DEFAULTTEXT" package="org.apache.poi.hssf.record">
+    <suffix>Record</suffix>
+    <extends>Record</extends>
+    <description>The default data label text properties record identifies the text characteristics of the preceeding text record.</description>
+    <author>Glen Stampoultzis (glens at apache.org)</author>
+    <fields>
+        <field type="int" size="2" name="category data type">
+            <const name="show labels characteristic" value="0"/>
+            <const name="value and percentage characteristic" value="1"/>
+            <const name="all text characteristic" value="2"/>
+        </field>
+    </fields>
+</record>

@@ -1,0 +1,16 @@
+dist
+scripts
+*.el
+*.ipr
+*.iws
+*.iml
+build.number
+log*.*
+*.log
+build
+.classpath
+.project
+workbook.xls
+bak
+classes
+untitled1.jpx

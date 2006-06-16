@@ -1,0 +1,18 @@
+<!-- Copyright (C) 2004 The Apache Software Foundation. All rights reserved. -->
+<record id="0x1032" name="Frame" excel-record-id="FRAME"
+    package="org.apache.poi.hssf.record">
+    <suffix>Record</suffix>
+    <extends>Record</extends>
+    <description>The frame record indicates whether there is a border around the displayed text of a chart.</description>
+    <author>Glen Stampoultzis (glens at apache.org)</author>
+    <fields>
+        <field type="int" size="2" name="border type">
+            <const name="regular" value="0" description="regular rectangle or no border"/>
+            <const name="shadow" value="1" description="rectangle with shadow"/>
+        </field>
+        <field type="int" size="2" name="options">
+            <bit number="0" name="auto size" description="excel calculates the size automatically if true"/>
+            <bit number="1" name="auto position" description="excel calculates the position automatically"/>
+        </field>
+    </fields>
+</record>

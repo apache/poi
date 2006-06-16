@@ -1,0 +1,28 @@
+<!-- Copyright (C) 2004 The Apache Software Foundation. All rights reserved. -->
+<record id="0x1027" name="ObjectLink" excel-record-id="OBJECTLINK"
+    package="org.apache.poi.hssf.record">
+    <suffix>Record</suffix>
+    <extends>Record</extends>
+    <description>Links text to an object on the chart or identifies it as the title.</description>
+    <author>Andrew C. Oliver (acoliver at apache.org)</author>
+    <fields>
+        <field type="int" size="2" name="anchor id" description="what is the text object linked to">
+            <const name="chart title" value="1"/>
+            <const name="y axis" value="2"/>
+            <const name="x axis" value="3"/>
+            <const name="series or point" value="4"/>
+            <const name="z axis" value="7"/>
+            <testresult value="3"/>
+        </field>
+        <field type="int" size="2" name="link 1" description="if this is a data series or point, this holds a link to that point or series">
+            <testresult  value="0x00"/>
+        </field>
+        <field type="int" size="2" name="link 2" description="if this is a data series or point, this holds a link to that point or series">
+            <testresult  value="0x00"/>
+        </field>
+    </fields>
+    <testdata>
+	03 00 00 00 00 00
+     </testdata>
+    <testsize>10</testsize>
+</record>

@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!-- Copyright (C) 2005 The Apache Software Foundation. All rights reserved. -->
+<!DOCTYPE book PUBLIC "-//APACHE//DTD Cocoon Documentation Book V1.0//EN" "../dtd/book-cocoon-v10.dtd">
+
+<book software="POI Project"
+    title="HSSF"
+    copyright="@year@ POI Project">
+
+    <menu label="Jakarta POI">
+        <menu-item label="Top" href="../index.html"/>
+    </menu>
+
+    <menu label="HSLF">
+        <menu-item label="Overview" href="index.html"/>
+        <menu-item label="Quick Guide" href="quick-guide.html"/>
+        <menu-item label="Shapes HowTo" href="how-to-shapes.html"/>
+        <menu-item label="PPT File Format" href="ppt-file-format.html"/>
+	</menu>
+	
+</book>

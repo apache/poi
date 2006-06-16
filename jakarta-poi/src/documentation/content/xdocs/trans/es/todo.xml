@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- Copyright (C) 2004 The Apache Software Foundation. All rights reserved. -->
+
+<!DOCTYPE todo PUBLIC "-//APACHE//DTD Todo V1.1//EN" "../../dtd/todo-v11.dtd">
+
+<todo><title>Jakarta POI - Tareas Pendientes para POI</title>
+
+    <devs>
+        <person id="AO"  name="Andrew C. Oliver"   email="acoliver@apache.org"/>
+        <person id="GS"  name="Glen Stampoultzis"  email="poi-user@jakarta.apache.org"/>
+        <person id="MJ"  name="Marc Johnson"       email="mjohnson at apache dot org"/>
+        <person id="NKB" name="Nicola Ken Barozzi" email="barozzi@nicolaken.com"/>
+		<person id="RA" name="Ryan Ackley" email="poi-dev@jakarta.apache.org"/>
+		<person id="AS" name="Avik Sengupta" email="poi-dev@jakarta.apache.org"/>
+        <person id="open" name="Desarrolladores de POI"    email="poi-dev@jakarta.apache.org"/>
+		<person id="Everyone" name="Desarrolladores de POI"    email="poi-dev@jakarta.apache.org"/>
+    </devs>
+
+    <actions priority="high">
+        <action context="code" dev="RA">
+          Terminar HWPF
+        </action>
+        <action context="code" dev="GS">
+          Terminar Gráficas (Charts)
+        </action>
+        <action context="code" dev="Everyone">
+          Evaluar y arreglar el código de rendimiento en HEAD.
+        </action>
+        
+    </actions>
+
+    <actions priority="medium">
+        <action context="code" dev="open">
+          Implementar más tipos de registros.
+        </action>
+        <action context="code" dev="open">
+          Añadir más comprobaciones evidentes (para cuando los usuarios del API
+          hagan cosas que &quot;no pueden&quot; hacer). Esto conllevará la exploración de varios
+          límites superiores en las cosas que puede manejar Excel.
+        </action>
+        <action context="code" dev="open">
+          Añadir soporte para gráficos embebidos y otros objetos.
+        </action>
+        <action context="code" dev="open">
+          Crear un nuevo objeto adaptador para manejar registros 
+          MulBlank, MulRk, Rk.
+        </action>
+        <action context="code" dev="AS">
+          Mejorar las fórmulas (Fórmulas Compartidas, PTGs Desconocidos).
+        </action>
+    </actions>
+
+</todo>

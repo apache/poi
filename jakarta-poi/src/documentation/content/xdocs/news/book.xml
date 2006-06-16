@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!-- Copyright (C) 2004 The Apache Software Foundation. All rights reserved. -->
+<!DOCTYPE book PUBLIC "-//APACHE//DTD Cocoon Documentation Book V1.0//EN" "../dtd/book-cocoon-v10.dtd">
+
+<book software="POI Project" 
+      title="POI Project News Pages" 
+      copyright="@year@ POI Project">
+
+  <menu label="Navigation">
+    <menu-item label="Main" href="../index.html"/>
+  </menu>
+
+  <menu label="News">
+    <menu-item label="Logo Submissions" href="logocontest.html"/>
+  </menu>
+
+
+</book>
+
+

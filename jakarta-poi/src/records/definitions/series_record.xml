@@ -1,0 +1,30 @@
+<!-- Copyright (C) 2004 The Apache Software Foundation. All rights reserved. -->
+<record id="0x1003" name="Series" excel-record-id="SERIES" package="org.apache.poi.hssf.record">
+    <suffix>Record</suffix>
+    <extends>Record</extends>
+    <description>The series record describes the overall data for a series.</description>
+    <author>Glen Stampoultzis (glens at apache.org)</author>
+    <fields>
+        <field type="int" size="2" name="category data type">
+            <const name="dates" value="0"/>
+            <const name="numeric" value="1"/>
+            <const name="sequence" value="2"/>
+            <const name="text" value="3"/>
+        </field>
+        <field type="int" size="2" name="values data type">
+            <const name="dates" value="0"/>
+            <const name="numeric" value="1"/>
+            <const name="sequence" value="2"/>
+            <const name="text" value="3"/>
+        </field>
+        <field type="int" size="2" name="num categories"/>
+        <field type="int" size="2" name="num values"/>
+        <field type="int" size="2" name="bubble series type">
+            <const name="dates" value="0"/>
+            <const name="numeric" value="1"/>
+            <const name="sequence" value="2"/>
+            <const name="text" value="3"/>
+        </field>
+        <field type="int" size="2" name="num bubble values"/>
+    </fields>
+</record>

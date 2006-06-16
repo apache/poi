@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!-- Copyright (C) 2004 The Apache Software Foundation. All rights reserved. -->
+<!DOCTYPE book PUBLIC "-//APACHE//DTD Cocoon Documentation Book V1.0//EN" "../dtd/book-cocoon-v10.dtd">
+<book software="POI Project" title="HWPF" copyright="@year@ POI Project">
+	<menu label="Jakarta POI">
+		<menu-item label="Top" href="../index.html"/>
+	</menu>
+	<menu label="HWPF">
+		<menu-item label="Overview" href="index.html"/>
+		<menu-item label="Quick Guide" href="quick-guide.html"/>
+		<menu-item label="HWPF Format" href="docoverview.html"/>
+		<menu-item label="HWPF Project plan" href="projectplan.html"/>
+	</menu>
+</book>

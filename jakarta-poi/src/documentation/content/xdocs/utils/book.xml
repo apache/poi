@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!-- Copyright (C) 2004 The Apache Software Foundation. All rights reserved. -->
+<!DOCTYPE book PUBLIC "-//APACHE//DTD Cocoon Documentation Book V1.0//EN" "../dtd/book-cocoon-v10.dtd">
+
+<book software="POI Project" 
+      title="POI Utils" 
+      copyright="@year@ POI Project">
+
+  <menu label="Jakarta POI">
+    <menu-item label="Top" href="../index.html"/>
+  </menu>
+
+  <menu label="POI Util">
+    <menu-item label="Overview" href="index.html"/>
+    <menu-item label="Logging"  href="logging.html"/>
+  </menu>
+  
+</book>
+
+

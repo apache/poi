@@ -1,0 +1,15 @@
+<!-- Copyright (C) 2004 The Apache Software Foundation. All rights reserved. -->
+<record id="0x1060" name="FontBasis" excel-record-id="FBI"
+    package="org.apache.poi.hssf.record">
+    <suffix>Record</suffix>
+    <extends>Record</extends>
+    <description>The font basis record stores various font metrics.</description>
+    <author>Glen Stampoultzis (glens at apache.org)</author>
+    <fields>
+        <field type="int" size="2" name="x Basis" description="width when font was supplied"/>
+        <field type="int" size="2" name="y Basis" description="height when font was supplied"/>
+        <field type="int" size="2" name="height basis" description="font height applied"/>
+        <field type="int" size="2" name="scale" description="scale"/>
+        <field type="int" size="2" name="index to font table" description="the index number into the font table"/>
+    </fields>
+</record>

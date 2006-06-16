@@ -1,0 +1,11 @@
+<!-- Copyright (C) 2004 The Apache Software Foundation. All rights reserved. -->
+<record id="0x1026" name="FontIndex" excel-record-id="FONTX"
+    package="org.apache.poi.hssf.record">
+    <suffix>Record</suffix>
+    <extends>Record</extends>
+    <description>The font index record indexes into the font table for the text record.</description>
+    <author>Glen Stampoultzis (glens at apache.org)</author>
+    <fields>
+        <field type="int" size="2" name="font index" description="index to the font table"/>
+    </fields>
+</record>

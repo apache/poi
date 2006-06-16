@@ -1,0 +1,35 @@
+<!-- Copyright (C) 2004 The Apache Software Foundation. All rights reserved. -->
+<record id="0x31" name="Font"  excel-record-id="FONT" package="org.apache.poi.hssf.records">
+    <suffix>Record</suffix>
+    <extends>Record</extends>
+    <description>Describes a font record.  In Excel a font belongs in the font table.</description>
+    <author>Glen Stampoultzis (glens at apache.org)</author>
+    <fields>
+        <field type="int" size="2" name="font height"/>
+        <field type="bits" size="2" name="attributes">
+            <bit number="1" name="italic" description="Indicates whether a font has an italic appearance"/>
+            <bit number="3" name="struck out" description="Indicates whether a font has a line through the middle."/>
+        </field>
+        <field type="int" size="2" name="colour palette index"/>
+        <field type="int" size="2" name="bold weight">
+            <const name="normal text" value="400" description="Sets text to normal appearance"/>
+            <const name="bold text" value="700" description="Redenders a font bold"/>
+        </field>
+        <field type="int" size="2" name="super sub script">
+            <const name="none" value="0"/>
+            <const name="super script" value="1"/>
+            <const name="subscript" value="2"/>
+        </field>
+        <field type="int" size="1" name="underline">
+            <const name="none" value="0"/>
+            <const name="single" value="1"/>
+            <const name="double" value="2"/>
+            <const name="single accounting" value="3"/>
+            <const name="double accounting" value="4"/>
+        </field>
+        <field type="int" size="1" name="font family"/>
+        <field type="int" size="1" name="character set"/>
+        <field type="int" size="1" name="reserved"/>
+        <field type="string" size="var" name="font name"/>
+    </fields>
+</record>

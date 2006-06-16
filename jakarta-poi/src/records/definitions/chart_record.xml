@@ -1,0 +1,14 @@
+<!-- Copyright (C) 2004 The Apache Software Foundation. All rights reserved. -->
+<record id="0x1002" name="Chart" excel-record-id="CHART"
+    package="org.apache.poi.hssf.record">
+    <suffix>Record</suffix>
+    <extends>Record</extends>
+    <description>The chart record is used to define the location and size of a chart.</description>
+    <author>Glen Stampoultzis (glens at apache.org)</author>
+    <fields>
+        <field type="int" size="4" name="x" description="x position of top-left corner (specified on 1/72 of an inch, two bytes are a whole and two are a fraction)"/>
+        <field type="int" size="4" name="y" description="y position of top-left corner (specified on 1/72 of an inch, two bytes are a whole and two are a fraction)"/>
+        <field type="int" size="4" name="width" description="width of chart (specified on 1/72 of an inch), two bytes are a whole and two are a fraction"/>
+        <field type="int" size="4" name="height" description="height of chart (specified on 1/72 of an inch), two bytes are a whole and two are a fraction"/>
+    </fields>
+</record>

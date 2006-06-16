@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (C) 2004 The Apache Software Foundation. All rights reserved. -->
+<!DOCTYPE book PUBLIC "-//APACHE//DTD Cocoon Documentation Book V1.0//EN" "./dtd/book-cocoon-v10.dtd">
+
+<book software="POI" 
+      title="POI Project Documentation" 
+      copyright="@year@ POI Project"
+      xmlns:xlink="http://www.w3.org/1999/xlink">
+
+  <menu label="Jakarta POI">
+    <menu-item label="Top" href="../index.html"/>
+  </menu>
+
+  <menu label="References">
+    <menu-item label="Live Sites" href="index.html"/>
+    <menu-item label="XLS spec [PDF]" href="http://sc.openoffice.org/excelfileformat.pdf"/>
+    <menu-item label="Apache Cocoon" href="http://xml.apache.org/cocoon/"/>
+  </menu>
+
+
+</book>

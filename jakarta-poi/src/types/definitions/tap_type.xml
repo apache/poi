@@ -1,0 +1,25 @@
+<!-- Copyright (C) 2004 The Apache Software Foundation. All rights reserved. -->
+<record id="0x101B" name="TAP" package="org.apache.poi.hwpf.model.types">
+    <suffix>AbstractType</suffix>
+    <extends>HDFType</extends>
+    <description>Table Properties.</description>
+    <author>S. Ryan Ackley</author>
+    <fields>
+      <field type="int" size="2" name="jc"/>
+      <field type="int" size="4" name="dxaGapHalf"/>
+      <field type="int" size="4" name="dyaRowHeight"/>
+      <field type="boolean" size="0" name="fCantSplit"/>
+      <field type="boolean" size="0" name="fTableHeader"/>
+      <field type="int" size="4" name="tlp"/>
+      <field type="short" size="2" name="itcMac"/>
+      <field type="short[]" size="130" name="rgdxaCenter"/>
+      <field type="TableCellDescriptor[]" size="0" name="rgtc"/>
+      <field type="ShadingDescriptor[]" size="0" name="rgshd"/>
+      <field type="BorderCode" size="4" name="brcBottom"/>
+      <field type="BorderCode" size="4" name="brcTop"/>
+      <field type="BorderCode" size="4" name="brcLeft"/>
+      <field type="BorderCode" size="4" name="brcRight"/>
+      <field type="BorderCode" size="4" name="brcVertical"/>
+      <field type="BorderCode" size="4" name="brcHorizontal"/>
+    </fields>
+</record>

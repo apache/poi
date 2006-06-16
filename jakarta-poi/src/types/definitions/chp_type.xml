@@ -1,0 +1,82 @@
+<!-- Copyright (C) 2004 The Apache Software Foundation. All rights reserved. -->
+<record id="0x101B" name="CHP" package="org.apache.poi.hwpf.model.types">
+    <suffix>AbstractType</suffix>
+    <extends>HDFType</extends>
+    <description>Character Properties.</description>
+    <author>S. Ryan Ackley</author>
+    <fields>
+      <field type="short" size="2" name="chse"/>
+      <field type="int" size="2" name="format_flags">
+        <bit number="0" mask="0x0001" name="fBold"/>
+        <bit number="1" mask="0x0002" name="fItalic"/>
+        <bit number="2" mask="0x0004" name="fRMarkDel"/>
+        <bit number="3" mask="0x0008" name="fOutline"/>
+        <bit number="4" mask="0x0010" name="fFldVanish"/>
+        <bit number="5" mask="0x0020" name="fSmallCaps"/>
+        <bit number="6" mask="0x0040" name="fCaps"/>
+        <bit number="7" mask="0x0080" name="fVanish"/>
+        <bit number="8" mask="0x0100" name="fRMark"/>
+        <bit number="9" mask="0x0200" name="fSpec"/>
+        <bit number="10" mask="0x0400" name="fStrike"/>
+        <bit number="11" mask="0x0800" name="fObj"/>
+        <bit number="12" mask="0x1000" name="fShadow"/>
+        <bit number="13" mask="0x2000" name="fLowerCase"/>
+        <bit number="14" mask="0x4000" name="fData"/>
+        <bit number="15" mask="0x8000" name="fOle2"/>
+      </field>
+      <field type="int" size="2" name="format_flags1">
+        <bit number="0" mask="0x0001" name="fEmboss"/>
+        <bit number="1" mask="0x0002" name="fImprint"/>
+        <bit number="2" mask="0x0004" name="fDStrike"/>
+        <bit number="3" mask="0x0008" name="fUsePgsuSettings"/>
+      </field>
+      <field type="int" size="2" name="ftcAscii"/>
+      <field type="int" size="2" name="ftcFE"/>
+      <field type="int" size="2" name="ftcOther"/>
+      <field type="int" size="2" name="hps"/>
+      <field type="int" size="4" name="dxaSpace"/>
+      <field type="byte" size="1" name="iss"/>
+      <field type="byte" size="1" name="kul"/>
+      <field type="byte" size="1" name="ico"/>
+      <field type="int" size="2" name="hpsPos"/>
+      <field type="int" size="2" name="lidDefault"/>
+      <field type="int" size="2" name="lidFE"/>
+      <field type="byte" size="1" name="idctHint"/>
+      <field type="int" size="2" name="wCharScale"/>
+      <field type="int" size="4" name="fcPic"/>
+      <field type="int" size="4" name="fcObj"/>
+      <field type="int" size="4" name="lTagObj"/>
+      <field type="int" size="2" name="ibstRMark"/>
+      <field type="int" size="2" name="ibstRMarkDel"/>
+      <field type="DateAndTime" size="4" name="dttmRMark"/>
+      <field type="DateAndTime" size="4" name="dttmRMarkDel"/>
+      <field type="int" size="2" name="istd"/>
+      <field type="int" size="2" name="baseIstd"/>
+      <field type="int" size="2" name="ftcSym"/>
+      <field type="int" size="2" name="xchSym"/>
+      <field type="int" size="2" name="idslRMReason"/>
+      <field type="int" size="2" name="idslReasonDel"/>
+      <field type="byte" size="1" name="ysr"/>
+      <field type="byte" size="1" name="chYsr"/>
+      <field type="int" size="2" name="hpsKern"/>
+      <field type="short" size="2" name="Highlight">
+        <bit number="0" mask="0x001f" name="icoHighlight"/>
+        <bit number="1" mask="0x0020" name="fHighlight"/>
+        <bit number="2" mask="0x01c0" name="kcd"/>
+        <bit number="3" mask="0x0200" name="fNavHighlight"/>
+        <bit number="4" mask="0x0400" name="fChsDiff"/>
+        <bit number="5" mask="0x0800" name="fMacChs"/>
+        <bit number="6" mask="0x1000" name="fFtcAsciSym"/>
+      </field>
+      <field type="short" size="2" name="fPropMark"/>
+      <field type="int" size="2" name="ibstPropRMark"/>
+      <field type="DateAndTime" size="4" name="dttmPropRMark"/>
+      <field type="byte" size="1" name="sfxtText"/>
+      <field type="byte" size="1" name="fDispFldRMark"/>
+      <field type="int" size="2" name="ibstDispFldRMark"/>
+      <field type="DateAndTime" size="4" name="dttmDispFldRMark"/>
+      <field type="byte[]" size="32" name="xstDispFldRMark"/>
+      <field type="ShadingDescriptor" size="2" name="shd"/>
+      <field type="BorderCode" size="4" name="brc"/>
+    </fields>
+</record>

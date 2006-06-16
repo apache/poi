@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (C) 2004 The Apache Software Foundation. All rights reserved. -->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "../dtd/document-v11.dtd">
+
+<document>
+ <header>
+  <title>Resolutions</title>
+  <subtitle>About this section</subtitle>
+  <authors>
+   <person name="Andrew C. Oliver" email="acoliver@apache.org"/>   
+  </authors>
+ </header>
+
+ <body>
+ <section><title>About Resolutions</title>
+        <p>
+                Every project on Jakarta has resolutions that they vote on.
+                Decisions are made, etc.  But what happens once those decisions
+                are made?  They are archived in the mail list archive never to
+                be read again (once its not in the top 10 or so posts).  So they
+                get discussed again and again.
+        </p>
+        <p>
+                Rather than have that big waste of time, we have this section to
+                record important POI decisions.  Once a decision is passed it 
+                need only be linked to this page (either by creating a page for 
+                it or by simply linking it to the archive messages).  Wherever 
+                possible a brief about how many votes for and against an maybe
+                some background should be posted.
+        </p>
+        <p>
+                This section is intended mainly to reduce big waste of time
+                discussions from taking away from whats important...developing
+                POI! :-D
+        </p>
+  </section>
+ </body>
+</document>

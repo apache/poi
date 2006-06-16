@@ -1,0 +1,74 @@
+
+/* ====================================================================
+   Copyright 2002-2004   Apache Software Foundation
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+==================================================================== */
+        
+
+package org.apache.poi.hssf.usermodel;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+
+import junit.framework.TestCase;
+
+import org.apache.poi.hssf.util.Region;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+
+/**
+ * Test the ability to clone a sheet. 
+ *  If adding new records that belong to a sheet (as opposed to a book)
+ *  add that record to the sheet in the testCloneSheetBasic method. 
+ * @author  avik
+ */
+public class TestCloneSheet extends TestCase {
+
+	public TestCloneSheet(String arg0) {
+		super(arg0);
+	}
+	
+	public void testCloneSheetBasic(){
+		try{
+			HSSFWorkbook b = new HSSFWorkbook();
+			HSSFSheet s = b.createSheet("Test");
+			s.addMergedRegion(new Region((short)0,(short)0,(short)1,(short)1));
+			HSSFSheet clonedSheet = b.cloneSheet(0);
+			
+			assertEquals("One merged area", 1, clonedSheet.getNumMergedRegions());
+
+		}
+		catch(Exception e){e.printStackTrace();fail(e.getMessage());}
+	}
+
+   /**
+    * Ensures that pagebreak cloning works properly
+    *
+    */
+   public void testPageBreakClones() {
+      HSSFWorkbook b = new HSSFWorkbook();
+      HSSFSheet s = b.createSheet("Test");
+      s.setRowBreak(3);
+      s.setColumnBreak((short)6);
+      
+      HSSFSheet clone = b.cloneSheet(0);
+      assertTrue("Row 3 not broken", clone.isRowBroken(3));
+      assertTrue("Column 6 not broken", clone.isColumnBroken((short)6));
+      
+      s.removeRowBreak(3);
+      
+      assertTrue("Row 3 still should be broken", clone.isRowBroken(3));
+   }
+   
+}

@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (C) 2004 The Apache Software Foundation. All rights reserved. -->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "../dtd/document-v11.dtd">
+
+<document>
+    <header>
+        <title>Busy Developers' Guide to HSLF drawing layer</title>
+        <authors>
+            <person email="yegor@dinom.ru" name="Yegor Kozlov" id="CO"/>
+        </authors>
+    </header>
+    <body>
+        <section><title>Busy Developers' Guide to HSLF drawing layer</title>
+             <section><title>Index of Features</title>
+                <ul>
+                    <li><link href="#NewPresentation">How to create a new presentation and add new slides to it</link></li>
+                    <li><link href="#PageSize">How to retrieve or change slide size</link></li>
+                    <li><link href="#GetShapes">How to get shapes contained in a particular slide</link></li>
+                    <li><link href="#Shapes">Drawing a shape on a slide</link></li>
+                    <li><link href="#Pictures">How to add/retrieve pictures</link></li>
+                    <li><link href="#SlideTitle">How to set slide title</link></li>
+                </ul>
+            </section>
+            <section><title>Features</title>
+                <anchor id="NewPresentation"/>
+                <section><title>New Presentation</title>
+                  <source>
+    //create a new empty slide show
+    SlideShow ppt = new SlideShow();
+
+    //add first slide
+    Slide s1 = ppt.createSlide();
+
+    //add second slide
+    Slide s2 = ppt.createSlide();
+    
+    //save changes in a file
+    FileOutputStream out = new FileOutputStream("slideshow.ppt");
+    wb.write(out);
+    out.close();
+                 </source>
+                </section>
+                <anchor id="PageSize"/>
+                <section><title>How to retrieve or change slide size</title>
+                    <source>
+    SlideShow ppt = new SlideShow(new HSLFSlideShow("slideshow.ppt"));
+    //retrieve page size. Coordinates are expressed in points (72 dpi)
+    java.awt.Dimension pgsize = ppt.getPageSize();
+    int pgx = pgsize.width; //slide width
+    int pgy = pgsize.height; //slide height
+
+    //set new page size
+    ppt.setPageSize(new java.awt.Dimension(1024, 768));
+    //save changes 
+    FileOutputStream out = new FileOutputStream("slideshow.ppt");
+    wb.write(out);
+    out.close();
+                  </source>
+                </section>
+                <anchor id="GetShapes"/>
+                <section><title>How to get shapes contained in a particular slide</title>
+                  <p>The superclass of all shapes in HSLF is the Shape class - the elemental object that composes a drawing.
+                    The following pictute shows the class tree of HSLF shapes:
+                  </p>
+                  <p>
+                    <img src="hslf_shapes.gif" alt="Class Tree of HSLF Shapes" width="611" height="412"/>
+                  </p>
+                  <p>
+                    The following fragment demonstrates how to iterate over shapes for each slide.
+                  </p>
+                    <source>
+  SlideShow ppt = new SlideShow(new HSLFSlideShow("slideshow.ppt"));
+  //get slides 
+  Slide[] slide = ppt.getSlides();
+  for (int i = 0; i &lt; slide.length; i++){
+    Shape[] sh = slide[i].getShapes();
+    for (int j = 0; j &lt; sh.length; j++){
+      //name of the shape
+      String name = sh[j].getShapeName();
+
+      //shapes's anchor which defines the position of this shape in the slide
+      java.awt.Rectangle anchor = sh[j].getAnchor();
+
+      if (sh[j] instanceof Line){
+        Line line = (Line)sh[j];
+        //work with Line
+      } else if (sh[j] instanceof AutoShape){
+        AutoShape shape = (AutoShape)sh[j];
+        //work with AutoShape
+      } else if (sh[j] instanceof TextBox){
+        TextBox shape = (TextBox)sh[j];
+        //work with TextBox
+      } else if (sh[j] instanceof Picture){
+        Picture shape = (Picture)sh[j];
+        //work with Picture
+      }
+    }
+  }
+                  </source>
+                </section>
+                <anchor id="Shapes"/>
+                <section><title>Drawing a shape on a slide</title>
+                   <p>
+                     When you add a shape, you usually specify the dimensions of the shape and the position
+                     of the upper left corner of the bounding box for the shape relative to the upper left
+                     corner of the slide. Distances in the drawing layer are measured in points (72 points = 1 inch).
+                   </p>
+                    <source>
+  SlideShow ppt = new SlideShow);
+
+  Slide slide = ppt.createSlide();
+
+  //Line shape
+  Line line = new Line();
+  line.setAnchor(new java.awt.Rectangle(50, 50, 100, 20));
+  line.setLineColor(new Color(0, 128, 0));
+  line.setLineStyle(Line.LineDashDotSys);
+  slide.addShape(line);
+
+  //TextBox
+  TextBox txt = new TextBox();
+  txt.setText("Hello, World!");
+  txt.setAnchor(new java.awt.Rectangle(100, 100, 200, 50));
+  txt.setFontSize(32);
+  txt.setFontName("Arial");
+  txt.setBold(true);
+  slide.addShape(txt);
+
+  //Autoshape
+  //32-point star
+  AutoShape sh1 = new AutoShape(ShapeTypes.Star32);
+  sh1.setAnchor(new java.awt.Rectangle(50, 50, 100, 200));
+  sh1.setFillColor(Color.red);
+  slide.addShape(sh1);
+
+  //Trapezoid
+  AutoShape sh2 = new AutoShape(ShapeTypes.Trapezoid);
+  sh2.setAnchor(new java.awt.Rectangle(150, 150, 100, 200));
+  sh2.setFillColor(Color.blue);
+  slide.addShape(sh2);
+
+  FileOutputStream out = new FileOutputStream("slideshow.ppt");
+  wb.write(out);
+  out.close();
+                  </source>
+                </section>
+                <anchor id="Pictures"/>
+                <section><title>How to add/retrieve pictures</title>
+                  <p>
+                    Note, for now only PNG and JPEG formats are supported.
+                  </p>
+                    <source>
+  SlideShow ppt = new SlideShow(new HSLFSlideShow("slideshow.ppt"));
+
+  //extract all pictures contained in the presentation
+  PictureData[] pdata = ppt.getPictureData();
+  for (int i = 0; i &lt; pdata.length; i++){
+    PictureData pict = pdata[i];
+
+    //raw picture data
+    byte[] data = pict.getData();
+
+    int type = pict.getType();
+    if (type == Picture.JPEG){
+      FileOutputStream out = new FileOutputStream("pict"+i+".jpg");
+      out.write(data);
+      out.close();
+    } else if (type == Picture.PNG){
+      FileOutputStream out = new FileOutputStream("pict"+i+".png");
+      out.write(data);
+      out.close();
+    }
+  }
+
+  // add a new picture to this slideshow and insert it in a  new slide
+  int idx = ppt.addPicture(new File("clock.jpg"), Picture.JPEG);
+
+  Picture pict = new Picture(idx);
+
+  //set image position in the slide
+  pict.setAnchor(new java.awt.Rectangle(100, 100, 300, 200));
+
+  Slide slide = ppt.createSlide();
+  slide.addShape(pict);
+
+  //now retrieve pictures containes in the first slide and save them on disk
+  slide = ppt.getSlides()[0];
+  Shape[] sh = slide.getShapes();
+  for (int i = 0; i &lt; sh.length; i++){
+    if (sh[i] instanceof Picture){
+      Picture pict = (Picture)sh[i];
+      PictureData data = pict.getPictureData();
+      byte[] data = pict.getData();
+      int type = pict.getType();
+      if (type == Picture.JPEG){
+        FileOutputStream out = new FileOutputStream("slide0_"+i+".jpg");
+        out.write(data);
+        out.close();
+      } else if (type == Picture.PNG){
+        FileOutputStream out = new FileOutputStream("slide0_"+i+".png");
+        out.write(data);
+        out.close();
+      }
+    }
+  }
+
+  FileOutputStream out = new FileOutputStream("slideshow.ppt");
+  wb.write(out);
+  out.close();
+
+                    </source>
+                </section>
+                <anchor id="SlideTitle"/>
+                <section><title>How to set slide title</title>
+                    <source>
+    SlideShow ppt = new SlideShow();
+    Slide slide = ppt.createSlide();
+    TextBox title = slide.addTitle();
+    title.setText("Hello, World!");
+    
+    //save changes 
+    FileOutputStream out = new FileOutputStream("slideshow.ppt");
+    wb.write(out);
+    out.close();
+                  </source>
+                  <p>
+                    Below is the equivalent code in PowerPoint VBA:
+                  </p>  
+                  <source>
+    Set myDocument = ActivePresentation.Slides(1)
+    myDocument.Shapes.AddTitle.TextFrame.TextRange.Text = "Hello, World!"
+                  </source>
+                </section>
+                  
+            </section>
+        </section>
+    </body>
+</document>

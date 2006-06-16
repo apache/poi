@@ -1,0 +1,24 @@
+<!-- Copyright (C) 2004 The Apache Software Foundation. All rights reserved. -->
+<record id="0x100d" name="SeriesText" excel-record-id="SERIESTEXT"
+    package="org.apache.poi.hssf.record">
+    <suffix>Record</suffix>
+    <extends>Record</extends>
+    <description>Defines a series name</description>
+    <author>Andrew C. Oliver (acoliver at apache.org)</author>
+    <fields>
+        <field type="int" size="2" name="id" description="should always be 0">
+            <testresult value="0"/>
+        </field>
+        <field type="int" size="1" name="text length">
+            <testresult  value="0x0C"/>
+        </field>
+        <field type="int" size="1" name="undocumented" description="probably highbyte flag to tell whether string is little or big endian">
+            <testresult  value="0x01"/>
+        </field>
+        <field type="hbstring" size="(field_2_textLength *2)" name="text">
+            <testresult value="Value Number"/>
+        </field>
+    </fields>
+    <testdata>00 00 0C 01 56 00 61 00 6C 00 75 00 65 00 20 00 4E 00 75 00 6D 00 62 00 65 00 72 00</testdata>
+    <testsize>32</testsize>
+</record>

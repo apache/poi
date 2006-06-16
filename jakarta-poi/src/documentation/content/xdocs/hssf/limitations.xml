@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (C) 2004 The Apache Software Foundation. All rights reserved. -->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "../dtd/document-v11.dtd">
+
+<document>
+    <header>
+        <title>Limitations</title>
+        <authors>
+            <person email="poi-user@jakarta.apache.org" name="Glen Stampoultzis" id="GJS"/>
+        </authors>
+    </header>
+    <body>
+        <section><title>Version 2.0 limitations</title>
+            <p>
+                The intent of this document is to outline some of the known limitations of the
+                POI HSSF API's.  It is not intended to be complete list of every bug or missing
+                feature of HSSF, rather it's purpose is to provide a broad feel for some of the
+                functionality that is missing or broken.
+            </p>
+            <ul>
+                <li>
+                    Charts<br/><br/>
+                    You can not currently create charts.  You can
+                    however create a chart in Excel, modify the chart data values using HSSF and write
+                    a new spreadsheet out.  This is possible because POI attempts to keep existing records
+                    intact as far as possible.<br/><br/>
+                </li>
+                <li>
+                    Rich Text<br/><br/>
+                    HSSF does not support rich text cells.  Rich text cells are
+                    cells that have multiple fonts and styles in the once cell.  Any attempt to read
+                    a spreadsheet that has rich text cells will throw an exception.  This feature may
+                    be supported in the future but it is not currently planned.  Patches are welcome.<br/><br/>
+                </li>
+                <li>
+                    Outlines<br/><br/>
+                    It is not yet possible to create outlines.  Reading a spreadsheet with outlines
+                    may work correctly but has not been tested.  Write support for outlines may
+                    be added in the future but it is not currently planned.  Patches are welcome.<br/><br/>
+                </li>
+                <li>
+                    Macros<br/><br/>
+                    Macros can not be created.  However, reading and re-writing files containing macros will
+					safely preserve the macros.<br/><br/>
+                </li>
+                <li>
+                    Pivot Tables<br/><br/>
+                    Generating pivot tables is not supported. It has been reported that files containing pivot
+					tables can be read and re-written safely.
+                </li>
+            </ul>
+        </section>
+    </body>
+</document>

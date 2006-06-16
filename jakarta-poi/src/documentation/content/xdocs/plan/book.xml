@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!-- Copyright (C) 2004 The Apache Software Foundation. All rights reserved. -->
+<!DOCTYPE book PUBLIC "-//APACHE//DTD Cocoon Documentation Book V1.0//EN" "../dtd/book-cocoon-v10.dtd">
+
+<book software="POI Project" 
+      title="POI Project planning" 
+      copyright="@year@ POI Project">
+
+  <menu label="Jakarta POI">
+    <menu-item label="Top" href="../index.html"/>
+  </menu>
+
+  <menu label="Planning Documents">
+    <menu-item label="Overview" href="index.html"/>
+    <menu-item label="1.0 Vision" href="POI10Vision.html"/>
+    <menu-item label="2.0 Vision" href="POI20Vision.html"/>
+  </menu>
+
+
+</book>
+
+
