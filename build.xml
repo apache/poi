@@ -110,7 +110,7 @@
   <property name="changelog.file" location="${build.site}/changelog.html"/>
   <property name="dist.dir" location="build/dist"/>
   <property name="jar.name" value="poi"/>
-  <property name="version.id" value="3.0-alpha1"/>
+  <property name="version.id" value="3.0-alpha2"/>
   <property name="halt.on.test.failure" value="true"/>
   <property name="jdk.version.source" value="1.3"
     description="JDK version of source code"/>
