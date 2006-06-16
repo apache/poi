@@ -65,7 +65,7 @@ public class TestEscherGraphics2d extends TestCase
     public void testGetFontMetrics() throws Exception
     {
         FontMetrics fontMetrics = graphics.getFontMetrics(graphics.getFont());
-    if (graphics.getFont().toString().indexOf("dialog") != -1) // if dialog is returned we can't run the test properly.
+    if (graphics.getFont().toString().indexOf("dialog") != -1 || graphics.getFont().toString().indexOf("Dialog") != -1) // if dialog is returned we can't run the test properly.
             return;
         assertEquals(7, fontMetrics.charWidth('X'));
         assertEquals("java.awt.Font[family=Arial,name=Arial,style=plain,size=10]", fontMetrics.getFont().toString());
@@ -87,7 +87,7 @@ public class TestEscherGraphics2d extends TestCase
     public void testGetFont() throws Exception
     {
         Font f = graphics.getFont();
-        if (graphics.getFont().toString().indexOf("dialog") != -1) // if dialog is returned we can't run the test properly.
+        if (graphics.getFont().toString().indexOf("dialog") != -1 || graphics.getFont().toString().indexOf("Dialog") != -1) // if dialog is returned we can't run the test properly.
             return;
 
         assertEquals("java.awt.Font[family=Arial,name=Arial,style=plain,size=10]", f.toString());
