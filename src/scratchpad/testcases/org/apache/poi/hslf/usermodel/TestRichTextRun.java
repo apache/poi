@@ -182,6 +182,11 @@ public class TestRichTextRun extends TestCase {
 			rtr.setFontSize(18);
 			rtr.setFontName("Courier");
 			
+			// Check it took those
+			assertEquals(true, rtr.isBold());
+			assertEquals(18, rtr.getFontSize());
+			assertEquals("Courier", rtr.getFontName());
+			
 			// Write out and back in
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			h[i].write(baos);
@@ -195,8 +200,14 @@ public class TestRichTextRun extends TestCase {
 			rtr.setFontSize(17);
 			rtr.setFontName("CourierZZ");
 			
+			// Check it took those changes
+			assertEquals(false, rtr.isBold());
+			assertEquals(17, rtr.getFontSize());
+			assertEquals("CourierZZ", rtr.getFontName());
+
 			
-			// Check written out/back ing one contains modifications
+			// Now, look at the one we changed, wrote out, and read back in
+			// Ensure it does contain our original modifications
 			Slide slideOneRR = readS.getSlides()[0];
 			TextRun[] textRunsRR = slideOneRR.getTextRuns();
 			RichTextRun rtrRRa = textRunsRR[0].getRichTextRuns()[0];
