@@ -84,11 +84,11 @@ public class TextRun
 		String runRawText = getText();
 		
 		// Figure out the rich text runs
-		// Assumes the paragraph styles are never shorter than the character ones
 		LinkedList pStyles = new LinkedList();
 		LinkedList cStyles = new LinkedList();
 		if(_styleAtom != null) {
-			_styleAtom.setParentTextSize(runRawText.length());
+			// Get the style atom to grok itself
+			_styleAtom.setParentTextSize(runRawText.length()+1);
 			pStyles = _styleAtom.getParagraphStyles();
 			cStyles = _styleAtom.getCharacterStyles();
 		}
