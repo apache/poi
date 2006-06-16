@@ -114,6 +114,24 @@ public class HSSFFont
      */
 
     public final static byte   U_DOUBLE_ACCOUNTING = 0x22;
+
+    /**
+     * ANSI character set
+     */
+    public final static byte ANSI_CHARSET = 0;
+
+    /**
+     * Default character set.
+     */
+    public final static byte DEFAULT_CHARSET = 1;
+
+    /**
+     * Symbol character set
+     */
+    public final static byte SYMBOL_CHARSET = 2;
+
+
+
     private FontRecord         font;
     private short              index;
 
@@ -347,6 +365,31 @@ public class HSSFFont
     public byte getUnderline()
     {
         return font.getUnderline();
+    }
+
+
+    /**
+     * get character-set to use.
+     * @return character-set
+     * @see #ANSI_CHARSET
+     * @see #DEFAULT_CHARSET
+     * @see #SYMBOL_CHARSET
+     */
+    public byte getCharSet()
+    {
+        return font.getCharset();
+    }
+
+    /**
+     * set character-set to use.
+     * @return character-set
+     * @see #ANSI_CHARSET
+     * @see #DEFAULT_CHARSET
+     * @see #SYMBOL_CHARSET
+     */
+    public void setCharSet(byte charset)
+    {
+        font.setCharset(charset);
     }
 
     public String toString()
