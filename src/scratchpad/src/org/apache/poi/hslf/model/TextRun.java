@@ -88,7 +88,7 @@ public class TextRun
 		LinkedList cStyles = new LinkedList();
 		if(_styleAtom != null) {
 			// Get the style atom to grok itself
-			_styleAtom.setParentTextSize(runRawText.length()+1);
+			_styleAtom.setParentTextSize(runRawText.length());
 			pStyles = _styleAtom.getParagraphStyles();
 			cStyles = _styleAtom.getCharacterStyles();
 		}
