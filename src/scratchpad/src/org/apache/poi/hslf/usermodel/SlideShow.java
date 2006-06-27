@@ -247,19 +247,34 @@ public class SlideShow
 		}
 	}
   }
+  
+  	/**
+  	 * For a given SlideAtomsSet, return the core record, based on the refID from the
+  	 *  SlidePersistAtom
+  	 */
+	private Record getCoreRecordForSAS(SlideAtomsSet sas) {
+		SlidePersistAtom spa = sas.getSlidePersistAtom();
+		int refID = spa.getRefID();
+		return getCoreRecordForRefID(refID);
+	}
+  
+	/**
+   	 * For a given refID (the internal, 0 based numbering scheme), return the
+	 *  core record
+	 * @param refID the refID
+	 */
+	private Record getCoreRecordForRefID(int refID) {
+		Integer coreRecordId = (Integer)
+			_sheetIdToCoreRecordsLookup.get(new Integer(refID));
+		Record r = _mostRecentCoreRecords[coreRecordId.intValue()];
+		return r;
+	}
 
   /**
    * Build up model level Slide and Notes objects, from the underlying
    *  records.
    */
   private void buildSlidesAndNotes() {
-    // For holding the Slide Records
-    Vector slidesV = new Vector(10);
-    // For holding the Notes Records
-    Vector notesV = new Vector(10);
-    // For holding the Meta Sheet Records
-    Vector metaSheetsV = new Vector(10);
-	  
 	// Ensure we really found a Document record earlier
 	// If we didn't, then the file is probably corrupt
 	if(_documentRecord == null) {
@@ -269,167 +284,102 @@ public class SlideShow
 
 	// Fetch the SlideListWithTexts in the most up-to-date Document Record
 	//
-	// Then, use this to find the Slide records, and also the Notes record
-	//  for each Slide (if it has one)
+	// As far as we understand it:
+	//  * The first SlideListWithText will contain a SlideAtomsSet
+	//     for each of the master slides
+	//  * The second SlideListWithText will contain a SlideAtomsSet
+	//     for each of the slides, in their current order
+	//    These SlideAtomsSets will normally contain text
+	//  * The third SlideListWithText (if present), will contain a
+	//     SlideAtomsSet for each Notes
+	//    These SlideAtomsSets will not normally contain text
 	//
-	// The following matching algorithm is based on looking at the output
-	//  of org.apache.poi.hslf.dev.SlideIdListing on a number of files:
-	//
-	// 1) Get the SlideAtomSets from the SlideListWithTexts of the most
-	//     up-to-date Document
-	// 2) Get the SlidePersistAtoms from all of these
-	// 3) Get the RefId, which corresponds to a "sheet ID" from the
-	//    PersistPtr Stuff
-	// 4) Grab the record at that ID, and see if it's a slide or a notes
-	// 5) Build a mapping between the SlideIdentifier ID and the RefId
-	//     for both slides and notes
-	// 6) Loop over all the slides
-	// 7) Look each slide's SlideAtom to see if it has associated Notes - 
-	//     if it does, the ID will be SlideIdentifier for those notes
-	//     (Note: might not be the same as the SlideIdentifier of the Slide)
-	// 8) Generate the model representations, giving them the matching
-	//     slide atom sets, IDs etc
+	// Having indentified the masters, slides and notes + their orders,
+	//  we have to go and find their matching records
+	// We always use the latest versions of these records, and use the
+	//  SlideAtom/NotesAtom to match them with the StyleAtomSet 
 
-	SlideListWithText[] slwts = _documentRecord.getSlideListWithTexts();
+	SlideListWithText masterSLWT = _documentRecord.getMasterSlideListWithText();
+	SlideListWithText slidesSLWT = _documentRecord.getSlideSlideListWithText();
+	SlideListWithText notesSLWT  = _documentRecord.getNotesSlideListWithText();
 	
-	// To hold the lookup from SlideIdentifier IDs to RefIDs
-	Hashtable slideSlideIdToRefid = new Hashtable();
-	Hashtable notesSlideIdToRefid = new Hashtable();
-	// To hold the lookup from SlideIdentifier IDs to SlideAtomsSets
-	Hashtable slideSlideIdToSlideAtomsSet = new Hashtable();
-	Hashtable notesSlideIdToSlideAtomsSet = new Hashtable();
-	
-	// Loop over all the SlideListWithTexts, getting their 
-	//  SlideAtomSets
-	for(int i=0; i<slwts.length; i++) {
-		SlideAtomsSet[] sas = slwts[i].getSlideAtomsSets();
-		for(int j=0; j<sas.length; j++) {
-			// What does this SlidePersistAtom point to?
-			SlidePersistAtom spa = sas[j].getSlidePersistAtom();
-			Integer slideIdentifier = new Integer( spa.getSlideIdentifier() );
-			Integer slideRefId = new Integer( spa.getRefID() ); 
+	// Start by finding the notes records to go with the entries in
+	//  notesSLWT
+	org.apache.poi.hslf.record.Notes[] notesRecords;
+	SlideAtomsSet[] notesSets = new SlideAtomsSet[0];
+	Hashtable slideIdToNotes = new Hashtable();
+	if(notesSLWT == null) {
+		// None
+		notesRecords = new org.apache.poi.hslf.record.Notes[0]; 
+	} else {
+		// Match up the records and the SlideAtomSets
+		notesSets = notesSLWT.getSlideAtomsSets();
+		notesRecords = new org.apache.poi.hslf.record.Notes[notesSets.length];
+		for(int i=0; i<notesSets.length; i++) {
+			// Get the right core record
+			Record r = getCoreRecordForSAS(notesSets[i]);
 			
-			// Grab the record it points to
-			Integer coreRecordId = (Integer)
-				_sheetIdToCoreRecordsLookup.get(slideRefId);
-			Record r = _mostRecentCoreRecords[coreRecordId.intValue()];
-			
-			// Add the IDs to the appropriate lookups
-			if(r instanceof org.apache.poi.hslf.record.Slide) {
-				slideSlideIdToRefid.put( slideIdentifier, slideRefId );
-				// Save the SlideAtomsSet
-				slideSlideIdToSlideAtomsSet.put( slideIdentifier, sas[j] );
-			} else if(r instanceof org.apache.poi.hslf.record.Notes) {
-				notesSlideIdToRefid.put( slideIdentifier, slideRefId );
-				// Save the SlideAtomsSet
-				notesSlideIdToSlideAtomsSet.put( slideIdentifier, sas[j] );
-			} else if(r.getRecordType() == RecordTypes.MainMaster.typeID) {
-				// Skip for now, we don't do Master slides yet
+			// Ensure it really is a notes record
+			if(r instanceof org.apache.poi.hslf.record.Notes) {
+				notesRecords[i] = (org.apache.poi.hslf.record.Notes)r;
 			} else {
-				throw new IllegalStateException("SlidePersistAtom had a RefId that pointed to something other than a Slide or a Notes, was a " + r + " with type " + r.getRecordType());
+				System.err.println("A Notes SlideAtomSet at " + i + " said its record was at refID " + notesSets[i].getSlidePersistAtom().getRefID() + ", but that was actually a " + r);
+			}
+			
+			// Record the match between slide id and these notes
+			SlidePersistAtom spa = notesSets[i].getSlidePersistAtom();
+			Integer slideId = new Integer(spa.getSlideIdentifier());
+			slideIdToNotes.put(slideId, new Integer(i));
+		}
+	}
+	
+	// Now, do the same thing for our slides
+	org.apache.poi.hslf.record.Slide[] slidesRecords;
+	SlideAtomsSet[] slidesSets = new SlideAtomsSet[0];
+	if(slidesSLWT == null) {
+		// None
+		slidesRecords = new org.apache.poi.hslf.record.Slide[0]; 
+	} else {
+		// Match up the records and the SlideAtomSets
+		slidesSets = slidesSLWT.getSlideAtomsSets();
+		slidesRecords = new org.apache.poi.hslf.record.Slide[slidesSets.length];
+		for(int i=0; i<slidesSets.length; i++) {
+			// Get the right core record
+			Record r = getCoreRecordForSAS(slidesSets[i]);
+			
+			// Ensure it really is a slide record
+			if(r instanceof org.apache.poi.hslf.record.Slide) {
+				slidesRecords[i] = (org.apache.poi.hslf.record.Slide)r;
+			} else {
+				System.err.println("A Slide SlideAtomSet at " + i + " said its record was at refID " + slidesSets[i].getSlidePersistAtom().getRefID() + ", but that was actually a " + r);
 			}
 		}
 	}
 	
-	// Now, create a model representation of a slide for each
-	//  slide + slideatomset we found
-	// Do it in order of the SlideIdentifiers
-	int[] slideIDs = new int[slideSlideIdToRefid.size()];
-	int pos = 0;
-	Enumeration e = slideSlideIdToRefid.keys();
-	while(e.hasMoreElements()) {
-		Integer id = (Integer)e.nextElement();
-		slideIDs[pos] = id.intValue();
-		pos++;
-	}
-	// Sort
-	Arrays.sort(slideIDs);
-	
-	// Create
-	for(int i=0; i<slideIDs.length; i++) {
-		// Build up the list of all the IDs we might want to use
-		int slideIdentifier = slideIDs[i];
-		Integer slideIdentifierI = new Integer(slideIdentifier);
-		int slideNumber = (i+1);
-		Integer slideRefI = (Integer)slideSlideIdToRefid.get(slideIdentifierI); 
-		Integer slideCoreRecNumI = (Integer)_sheetIdToCoreRecordsLookup.get(slideRefI);
-		int slideCoreRecNum = slideCoreRecNumI.intValue();
-		
-		// Fetch the Slide record
-		org.apache.poi.hslf.record.Slide s = (org.apache.poi.hslf.record.Slide)
-			_mostRecentCoreRecords[slideCoreRecNum];
-		
-		// Do we have a notes for this slide?
-		org.apache.poi.hslf.record.Notes n = null;
-		if(s.getSlideAtom().getNotesID() > 0) {
-			// Get the SlideIdentifier of the Notes
-			// (Note - might not be the same as the SlideIdentifier of the Slide)
-			int notesSlideIdentifier = s.getSlideAtom().getNotesID();
-			Integer notesSlideIdentifierI = new Integer(notesSlideIdentifier);
-			
-			// Grab the notes record
-			Integer notesRefI = (Integer)notesSlideIdToRefid.get(notesSlideIdentifierI);
-			Integer notesCoreRecNum = (Integer)_sheetIdToCoreRecordsLookup.get(notesRefI);
-			n = (org.apache.poi.hslf.record.Notes)
-				_mostRecentCoreRecords[notesCoreRecNum.intValue()];
-		}
-		
-		// Grab the matching SlideAtomSet 
-		SlideAtomsSet sas = (SlideAtomsSet)
-			slideSlideIdToSlideAtomsSet.get(slideIdentifierI);
-		
-		// Build the notes model, if there's notes
-		Notes notes = null;
-		if(n != null) {
-			// TODO: Use this
-			SlideAtomsSet nsas = (SlideAtomsSet)
-				notesSlideIdToSlideAtomsSet.get(slideIdentifierI);
-			
-			// Create the model view of the notes
-			notes = new Notes(n);
-			notesV.add(notes);
-		}
-		
-		// Build the slide model
-		Slide slide = new Slide(s, notes, sas, slideIdentifier, slideNumber);
-		slidesV.add(slide);
-	}
-	
-	// ******************* Finish up ****************
-
-	// Finish setting up the notes
-	_notes = new Notes[notesV.size()];
+	// Finally, generate model objects for everything
+	// Notes first
+	_notes = new Notes[notesRecords.length];
 	for(int i=0; i<_notes.length; i++) {
-		_notes[i] = (Notes)notesV.get(i);
+		_notes[i] = new Notes(notesRecords[i]);
 		_notes[i].setSlideShow(this);
-		
-		// Now supply ourselves to all the rich text runs
-		//  of this note's TextRuns
-		TextRun[] trs = _notes[i].getTextRuns(); 
-		for(int j=0; j<trs.length; j++) {
-			RichTextRun[] rtrs = trs[j].getRichTextRuns();
-			for(int k=0; k<rtrs.length; k++) {
-				rtrs[k].supplySlideShow(this);
-			}
-		}
 	}
-
-
-	// Create our Slides
-	_slides = new Slide[slidesV.size()];
+	// Then slides
+	_slides = new Slide[slidesRecords.length];
 	for(int i=0; i<_slides.length; i++) {
-		_slides[i] = (Slide)slidesV.get(i);
-		_slides[i].setSlideShow(this);
-
-		// Now supply ourselves to all the rich text runs
-		//  of this slide's TextRuns
-		TextRun[] trs = _slides[i].getTextRuns(); 
-		for(int j=0; j<trs.length; j++) {
-			RichTextRun[] rtrs = trs[j].getRichTextRuns();
-			for(int k=0; k<rtrs.length; k++) {
-				rtrs[k].supplySlideShow(this);
-			}
+		SlideAtomsSet sas = slidesSets[i];
+		int slideIdentifier = sas.getSlidePersistAtom().getSlideIdentifier();
+		Integer slideIdentifierI = new Integer(slideIdentifier);
+		
+		// Do we have a notes for this?
+		Notes notes = null;
+		if(slideIdToNotes.containsKey(slideIdentifierI)) {
+			Integer notesPos = (Integer)slideIdToNotes.get(slideIdentifierI);
+			notes = _notes[notesPos.intValue()];
 		}
+		
+		// Now, build our slide
+		_slides[i] = new Slide(slidesRecords[i], notes, sas, slideIdentifier, (i+1));
+		_slides[i].setSlideShow(this);
 	}
   }
 

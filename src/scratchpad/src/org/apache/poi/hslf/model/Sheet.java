@@ -73,9 +73,18 @@ public abstract class Sheet
   public SlideShow getSlideShow() { return _slideShow; }
   
   /**
-   * Set the SlideShow we're attached to
+   * Set the SlideShow we're attached to.
+   * Also passes it on to our child RichTextRuns
    */
-  public void setSlideShow(SlideShow ss) { _slideShow = ss; }
+  public void setSlideShow(SlideShow ss) { 
+	  _slideShow = ss;
+	  TextRun[] trs = getTextRuns();
+	  if(trs != null) {
+		  for(int i=0; i<trs.length; i++) {
+			  trs[i].supplySlideShow(_slideShow);
+		  }
+	  }
+  }
 
   
   /**
