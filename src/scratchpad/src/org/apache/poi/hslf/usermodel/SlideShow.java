@@ -524,35 +524,33 @@ public class SlideShow
 	 * @throws IOException
 	 */
   	public Slide createSlide() throws IOException {
-  		SlideListWithText[] slwts = _documentRecord.getSlideListWithTexts();
   		SlideListWithText slist = null;
-  		
-  		if(slwts.length > 1) {
-  			// Just use the last one
-  			slist = slwts[slwts.length - 1];
-  		} else {
+
+  		// We need to add the records to the SLWT that deals
+  		//  with Slides.
+  		// Add it, if it doesn't exist
+  		slist = _documentRecord.getSlideSlideListWithText();
+  		if(slist == null) {
   			// Need to add a new one
   			slist = new SlideListWithText();
   			_documentRecord.addSlideListWithText(slist);
-  			slwts = _documentRecord.getSlideListWithTexts();
   		}
 
   		// Grab the SlidePersistAtom with the highest Slide Number.
   		// (Will stay as null if no SlidePersistAtom exists yet in
   		//  the slide, or only master slide's ones do)
   		SlidePersistAtom prev = null;
-  		for(int i=0; i<slwts.length; i++) {
-  			SlideAtomsSet[] sas = slwts[i].getSlideAtomsSets();
-  			for(int j=0; j<sas.length; j++) {
-  				SlidePersistAtom spa = sas[j].getSlidePersistAtom();
-  				if(spa.getSlideIdentifier() < 0) {
-  					// This is for a master slide
-  				} else {
-  					// Must be for a real slide
-  	  				if(prev == null) { prev = spa; }
-  	  				if(prev.getSlideIdentifier() < spa.getSlideIdentifier()) {
-  	  					prev = spa;
-  	  				}
+		SlideAtomsSet[] sas = slist.getSlideAtomsSets();
+  		for(int j=0; j<sas.length; j++) {
+  			SlidePersistAtom spa = sas[j].getSlidePersistAtom();
+  			if(spa.getSlideIdentifier() < 0) {
+  				// This is for a master slide
+  				// Odd, since we only deal with the Slide SLWT
+  			} else {
+				// Must be for a real slide
+  				if(prev == null) { prev = spa; }
+  				if(prev.getSlideIdentifier() < spa.getSlideIdentifier()) {
+  					prev = spa;
   				}
   			}
   		}
