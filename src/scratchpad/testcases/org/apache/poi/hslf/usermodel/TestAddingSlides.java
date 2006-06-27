@@ -70,6 +70,9 @@ public class TestAddingSlides extends TestCase {
 		// Doesn't have any slides
 		assertEquals(0, ss_empty.getSlides().length);
 		
+		// Should only have a master SLWT
+		assertEquals(1, ss_empty.getDocumentRecord().getSlideListWithTexts().length);
+		
 		// Add one
 		Slide slide = ss_empty.createSlide();
 		assertEquals(1, ss_empty.getSlides().length);
@@ -87,6 +90,9 @@ public class TestAddingSlides extends TestCase {
 		
 		// Check it now has a slide
 		assertEquals(1, ss_read.getSlides().length);
+
+		// Check it now has two SLWTs
+		assertEquals(2, ss_empty.getDocumentRecord().getSlideListWithTexts().length);
 		
 		// And check it's as expected
 		slide = ss_read.getSlides()[0];
@@ -102,6 +108,9 @@ public class TestAddingSlides extends TestCase {
 		// Has one slide
 		assertEquals(1, ss_one.getSlides().length);
 		Slide s1 = ss_one.getSlides()[0];
+		
+		// Should have two SLTWs
+		assertEquals(2, ss_one.getDocumentRecord().getSlideListWithTexts().length);
 		
 		// Check slide 1 is as expected
 		assertEquals(256, s1._getSheetNumber());
@@ -125,6 +134,9 @@ public class TestAddingSlides extends TestCase {
 		
 		// Check it now has two slides
 		assertEquals(2, ss_read.getSlides().length);
+		
+		// Should still have two SLTWs
+		assertEquals(2, ss_read.getDocumentRecord().getSlideListWithTexts().length);
 		
 		// And check it's as expected
 		s1 = ss_read.getSlides()[0];

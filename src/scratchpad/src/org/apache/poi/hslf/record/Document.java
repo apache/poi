@@ -53,12 +53,35 @@ public class Document extends PositionDependentRecordContainer
 	 *  that contains information on pictures in the slides.
 	 */
 	public PPDrawingGroup getPPDrawingGroup() { return ppDrawing; }
+	
 	/**
 	 * Returns all the SlideListWithTexts that are defined for
 	 *  this Document. They hold the text, and some of the text
 	 *  properties, which are referred to by the slides.
+	 * This will normally return an array of size 2 or 3
 	 */
 	public SlideListWithText[] getSlideListWithTexts() { return slwts; }
+	/**
+	 * Returns the SlideListWithText that deals with the
+	 *  Master Slides 
+	 */
+	public SlideListWithText getMasterSlideListWithText() { 
+		if(slwts.length > 0) { return slwts[0]; }
+		return null; }
+	/**
+	 * Returns the SlideListWithText that deals with the
+	 *  Slides, or null if there isn't one
+	 */
+	public SlideListWithText getSlideSlideListWithText() { 
+		if(slwts.length > 1) { return slwts[1]; }
+		return null; }
+	/**
+	 * Returns the SlideListWithText that deals with the
+	 *  notes, or null if there isn't one
+	 */
+	public SlideListWithText getNotesSlideListWithText() {
+		if(slwts.length > 2) { return slwts[2]; }
+		return null; }
 
 
 	/** 
@@ -77,9 +100,10 @@ public class Document extends PositionDependentRecordContainer
 			throw new IllegalStateException("The first child of a Document must be a DocumentAtom");
 		}
 		documentAtom = (DocumentAtom)_children[0];
-		
+
 		// Find how many SlideListWithTexts we have
-		// Also, grab the Environment record on our way past
+		// Also, grab the Environment and PPDrawing records
+		//  on our way past
 		int slwtcount = 0;
 		for(int i=1; i<_children.length; i++) {
 			if(_children[i] instanceof SlideListWithText) {
@@ -92,7 +116,18 @@ public class Document extends PositionDependentRecordContainer
 				ppDrawing = (PPDrawingGroup)_children[i];
 			}
 		}
-		// Now grab them all
+		
+		// You should only every have 1, 2 or 3 SLWTs
+		//  (normally it's 2, or 3 if you have notes)
+		// Complain if it's not
+		if(slwtcount == 0) {
+			System.err.println("No SlideListWithText's found - there should normally be at least one!");
+		}
+		if(slwtcount > 3) {
+			System.err.println("Found " + slwtcount + " SlideListWithTexts - normally there should only be three!");
+		}
+		
+		// Now grab all the SLWTs
 		slwts = new SlideListWithText[slwtcount];
 		slwtcount = 0;
 		for(int i=1; i<_children.length; i++) {
@@ -105,7 +140,7 @@ public class Document extends PositionDependentRecordContainer
 	
 	/**
 	 * Adds a new SlideListWithText record, at the appropriate 
-	 *  point
+	 *  point in the child records.
 	 */
 	public void addSlideListWithText(SlideListWithText slwt) {
 		// The new SlideListWithText should go in 
@@ -119,7 +154,8 @@ public class Document extends PositionDependentRecordContainer
 		addChildBefore(slwt, endDoc);
 			
 		// Updated our cached list of SlideListWithText records
-		SlideListWithText[] nl = new SlideListWithText[slwts.length + 1];
+		int newSize = slwts.length + 1;
+		SlideListWithText[] nl = new SlideListWithText[newSize];
 		System.arraycopy(slwts, 0, nl, 0, slwts.length);
 		nl[nl.length-1] = slwt;
 		slwts = nl;

@@ -56,9 +56,7 @@ public class TestReWrite extends TestCase {
 
     public void testWritesOutTheSame() throws Exception {
     	assertWritesOutTheSame(hssA, pfsA);
-    	
-    	// Disabled until bug #39800 is fixed
-    	//assertWritesOutTheSame(hssB, pfsB);
+    	assertWritesOutTheSame(hssB, pfsB);
     }
     public void assertWritesOutTheSame(HSLFSlideShow hss, POIFSFileSystem pfs) throws Exception {
 		// Write out to a byte array
@@ -82,7 +80,7 @@ public class TestReWrite extends TestCase {
 		pfs.createDocumentInputStream("PowerPoint Document").read(_oData);
 		npfs.createDocumentInputStream("PowerPoint Document").read(_nData);
 		for(int i=0; i<_oData.length; i++) {
-			System.out.println(i + "\t" + Integer.toHexString(i));
+			//System.out.println(i + "\t" + Integer.toHexString(i));
 			assertEquals(_oData[i], _nData[i]);
 		}
 	}
@@ -94,7 +92,8 @@ public class TestReWrite extends TestCase {
     public void testSlideShowWritesOutTheSame() throws Exception {
     	assertSlideShowWritesOutTheSame(hssA, pfsA);
     	
-    	// Disabled until bug #39800 is fixed
+    	// Some bug in StyleTextPropAtom rewriting means this will fail
+    	// We need to identify and fix that first
     	//assertSlideShowWritesOutTheSame(hssB, pfsB);
     }
     public void assertSlideShowWritesOutTheSame(HSLFSlideShow hss, POIFSFileSystem pfs) throws Exception {
@@ -124,7 +123,8 @@ public class TestReWrite extends TestCase {
 		pfs.createDocumentInputStream("PowerPoint Document").read(_oData);
 		npfs.createDocumentInputStream("PowerPoint Document").read(_nData);
 		for(int i=0; i<_oData.length; i++) {
-			//System.out.println(i + "\t" + Integer.toHexString(i));
+			if(_oData[i] != _nData[i])
+				System.out.println(i + "\t" + Integer.toHexString(i));
 			assertEquals(_oData[i], _nData[i]);
 		}
 	}
