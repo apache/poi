@@ -25,6 +25,7 @@ import java.util.Vector;
 import org.apache.poi.hslf.record.*;
 import org.apache.poi.hslf.record.StyleTextPropAtom.TextPropCollection;
 import org.apache.poi.hslf.usermodel.RichTextRun;
+import org.apache.poi.hslf.usermodel.SlideShow;
 import org.apache.poi.util.StringUtil;
 
 /**
@@ -45,6 +46,7 @@ public class TextRun
 	protected StyleTextPropAtom _styleAtom;
 	protected boolean _isUnicode;
 	protected RichTextRun[] _rtRuns;
+	private SlideShow slideShow;
 
 	/**
 	* Constructs a Text Run from a Unicode text block
@@ -499,5 +501,18 @@ public class TextRun
 	*/
 	public void setRunType(int type) {
 		_headerAtom.setTextType(type);
+	}
+	
+	/**
+	 * Supply the SlideShow we belong to.
+	 * Also passes it on to our child RichTextRuns
+	 */
+	public void supplySlideShow(SlideShow ss) {
+		slideShow = ss;
+		if(_rtRuns != null) {
+			for(int i=0; i<_rtRuns.length; i++) {
+				_rtRuns[i].supplySlideShow(slideShow);
+			}
+		}
 	}
 } 
