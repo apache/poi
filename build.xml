@@ -54,10 +54,10 @@
   <property name="main.output.test.dir" location="build/test-classes"/>
   <property name="main.lib" location="lib"/>
   <property name="main.reports.test" location="build/test-results"/>
-  <property name="main.jar1.dir" location="${main.lib}/commons-logging-1.0.1.jar"/>
-  <property name="main.jar1.url" value="${repository}/commons-logging/jars/commons-logging-1.0.1.jar"/>
-  <property name="main.jar2.dir" location="${main.lib}/log4j-1.2.8.jar"/>
-  <property name="main.jar2.url" value="${repository}/log4j/jars/log4j-1.2.8.jar"/>
+  <property name="main.jar1.dir" location="${main.lib}/commons-logging-1.1.jar"/>
+  <property name="main.jar1.url" value="${repository}/commons-logging/jars/commons-logging-1.1.jar"/>
+  <property name="main.jar2.dir" location="${main.lib}/log4j-1.2.13.jar"/>
+  <property name="main.jar2.url" value="${repository}/log4j/jars/log4j-1.2.13.jar"/>
   <property name="main.testokfile" location="build/main-testokfile.txt"/>
 
   <!-- Scratchpad: -->
@@ -76,12 +76,12 @@
   <property name="contrib.reports.test" location="build/contrib-test-results"/>
   <property name="contrib.output.dir" location="build/contrib-classes"/>
   <property name="contrib.output.test.dir" location="build/contrib-test-classes"/>
-  <property name="contrib.jar1.dir" location="${contrib.lib}/commons-beanutils-1.6.jar"/>
-  <property name="contrib.jar1.url" value="${repository}/commons-beanutils/jars/commons-beanutils-1.6.jar"/>
-  <property name="contrib.jar2.dir" location="${contrib.lib}/commons-collections-2.1.jar"/>
-  <property name="contrib.jar2.url" value="${repository}/commons-collections/jars/commons-collections-2.1.jar"/>
-  <property name="contrib.jar3.dir" location="${contrib.lib}/commons-lang-1.0-b1.jar"/>
-  <property name="contrib.jar3.url" value="${repository}/commons-lang/jars/commons-lang-1.0-b1.jar"/>
+  <property name="contrib.jar1.dir" location="${contrib.lib}/commons-beanutils-1.7.0.jar"/>
+  <property name="contrib.jar1.url" value="${repository}/commons-beanutils/jars/commons-beanutils-1.7.0.jar"/>
+  <property name="contrib.jar2.dir" location="${contrib.lib}/commons-collections-3.2.jar"/>
+  <property name="contrib.jar2.url" value="${repository}/commons-collections/jars/commons-collections-3.2.jar"/>
+  <property name="contrib.jar3.dir" location="${contrib.lib}/commons-lang-2.1.jar"/>
+  <property name="contrib.jar3.url" value="${repository}/commons-lang/jars/commons-lang-2.1.jar"/>
   <property name="contrib.testokfile" location="build/contrib-testokfile.txt"/>
 
   <!-- Examples: -->
@@ -91,12 +91,12 @@
   <property name="examples.reports.test" location="build/examples-test-results"/>
   <property name="examples.output.dir" location="build/examples-classes"/>
   <property name="examples.output.test.dir" location="build/examples-test-classes"/>
-  <property name="examples.jar1.dir" location="${examples.lib}/commons-beanutils-1.6.jar"/>
-  <property name="examples.jar1.url" value="${repository}/commons-beanutils/jars/commons-beanutils-1.6.jar"/>
-  <property name="examples.jar2.dir" location="${examples.lib}/commons-collections-2.1.jar"/>
-  <property name="examples.jar2.url" value="${repository}/commons-collections/jars/commons-collections-2.1.jar"/>
-  <property name="examples.jar3.dir" location="${examples.lib}/commons-lang-1.0-b1.jar"/>
-  <property name="examples.jar3.url" value="${repository}/commons-lang/jars/commons-lang-1.0-b1.jar"/>
+  <property name="examples.jar1.dir" location="${examples.lib}/commons-beanutils-1.7.0.jar"/>
+  <property name="examples.jar1.url" value="${repository}/commons-beanutils/jars/commons-beanutils-1.7.0.jar"/>
+  <property name="examples.jar2.dir" location="${examples.lib}/commons-collections-3.2.jar"/>
+  <property name="examples.jar2.url" value="${repository}/commons-collections/jars/commons-collections-3.2.jar"/>
+  <property name="examples.jar3.dir" location="${examples.lib}/commons-lang-2.1.jar"/>
+  <property name="examples.jar3.url" value="${repository}/commons-lang/jars/commons-lang-2.1.jar"/>
   <property name="examples.testokfile" location="build/examples-testokfile.txt"/>
 
   <property name="junit.jar1.dir" location="${main.lib}/junit-3.8.1.jar"/>
