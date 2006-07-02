@@ -18,6 +18,7 @@
 
 package org.apache.poi.hslf.record;
 
+import org.apache.poi.util.ArrayUtil;
 import org.apache.poi.util.LittleEndian;
 
 import java.io.IOException;
@@ -149,6 +150,34 @@ public class SlideListWithText extends RecordContainer
 		writeOut(_header[0],_header[1],_type,_children,out);
 	}
 
+	/**
+	 * Shifts a SlideAtomsSet to a new position.
+	 * Works by shifting the child records about, then updating
+	 *  the SlideAtomSets array
+	 * @param toMove The SlideAtomsSet to move
+	 * @param newPosition The new (0 based) position for the SlideAtomsSet
+	 */
+	public void repositionSlideAtomsSet(SlideAtomsSet toMove, int newPosition) {
+		// Ensure it's one of ours
+		int curPos = -1;
+		for(int i=0; i<slideAtomsSets.length; i++) {
+			if(slideAtomsSets[i] == toMove) { curPos = i; }
+		}
+		if(curPos == -1) {
+			throw new IllegalArgumentException("The supplied SlideAtomsSet didn't belong to this SlideListWithText");
+		}
+		
+		// Ensure the newPosision is valid
+		if(newPosition < 0 || newPosition >= slideAtomsSets.length) {
+			throw new IllegalArgumentException("The new position must be between 0, and the number of SlideAtomsSets");
+		}
+		
+		// Build the new records list
+		moveChildrenBefore(toMove.getSlidePersistAtom(), toMove.slideRecords.length, slideAtomsSets[newPosition].getSlidePersistAtom());
+		
+		// Build the new SlideAtomsSets list
+		ArrayUtil.arrayMoveWithin(slideAtomsSets, curPos, newPosition, 1);
+	}
 
 	/** 
 	 * Inner class to wrap up a matching set of records that hold the

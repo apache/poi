@@ -45,6 +45,7 @@ import org.apache.poi.hslf.record.SlideListWithText.*;
 import org.apache.poi.hslf.record.PersistPtrHolder;
 import org.apache.poi.hslf.record.PositionDependentRecord;
 import org.apache.poi.hslf.exceptions.CorruptPowerPointFileException;
+import org.apache.poi.util.ArrayUtil;
 
 /**
  * This class is a friendly wrapper on top of the more scary HSLFSlideShow.
@@ -243,7 +244,8 @@ public class SlideShow
 				_fonts = _documentRecord.getEnvironment().getFontCollection();
 			}
 		} else {
-			System.err.println("No core record found with ID " + (i+1) + " based on PersistPtr lookup");
+			// No record at this number
+			// Odd, but not normally a problem
 		}
 	}
   }
@@ -461,6 +463,42 @@ public class SlideShow
 	public Document getDocumentRecord() { return _documentRecord; }
 
 	
+	/* ===============================================================
+	 *                       Re-ordering Code
+	 * ===============================================================
+	 */
+	   
+	
+	/**
+	 * Re-orders a slide, to a new position.
+	 * @param oldSlideNumer The old slide number (1 based)
+	 * @param newSlideNumber The new slide number (1 based)
+	 */
+	public void reorderSlide(int oldSlideNumer, int newSlideNumber) {
+		// Ensure these numbers are valid
+		if(oldSlideNumer < 1 || newSlideNumber < 1) {
+			throw new IllegalArgumentException("Old and new slide numbers must be greater than 0");
+		}
+		if(oldSlideNumer > _slides.length || newSlideNumber > _slides.length) {
+			throw new IllegalArgumentException("Old and new slide numbers must not exceed the number of slides (" + _slides.length + ")");
+		}
+		
+		// Shift the SlideAtomsSet
+		SlideListWithText slwt = _documentRecord.getSlideSlideListWithText(); 
+		slwt.repositionSlideAtomsSet( 
+				slwt.getSlideAtomsSets()[(oldSlideNumer-1)],
+				(newSlideNumber-1)
+		);
+		
+		// Re-order the slides
+		ArrayUtil.arrayMoveWithin(_slides, (oldSlideNumer-1), (newSlideNumber-1), 1);
+		
+		// Tell the appropriate slides their new numbers
+		for(int i=0; i<_slides.length; i++) {
+			_slides[i].setSlideNumber( (i+1) );
+		}
+	}
+
 	/* ===============================================================
 	 *                       Addition Code
 	 * ===============================================================
