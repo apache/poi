@@ -18,6 +18,7 @@
 
 package org.apache.poi.hslf.record;
 
+import org.apache.poi.util.ArrayUtil;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.hslf.util.MutableByteArrayOutputStream;
 
@@ -35,7 +36,7 @@ import java.io.ByteArrayOutputStream;
 public abstract class RecordContainer extends Record
 {
 	protected Record[] _children;
-	private Boolean addingChildRecordLock = new Boolean(true);
+	private Boolean changingChildRecordsLock = new Boolean(true);
 	
 	/** 
 	 * Return any children 
@@ -47,22 +48,19 @@ public abstract class RecordContainer extends Record
 	 */
 	public boolean isAnAtom() { return false; }
 
-	/**
-	 * Add a new child record onto a record's list of children.
-	 */
-	public void appendChildRecord(Record newChild) {
-		synchronized(addingChildRecordLock) {
-			addChildAt(newChild, _children.length);
-		}
-	}
 	
+	/* ===============================================================
+	 *                   Internal Move Helpers
+	 * ===============================================================
+	 */
+
 	/**
 	 * Finds the location of the given child record
 	 */
 	private int findChildLocation(Record child) {
 		// Synchronized as we don't want things changing 
 		//  as we're doing our search
-		synchronized(addingChildRecordLock) {
+		synchronized(changingChildRecordsLock) {
 			for(int i=0; i<_children.length; i++) {
 				if(_children[i].equals(child)) {
 					return i;
@@ -73,36 +71,68 @@ public abstract class RecordContainer extends Record
 	}
 	
 	/**
+	 * Adds a child record, at the very end.
+	 * @param newChild The child record to add
+	 */
+	private void appendChild(Record newChild) {
+		synchronized(changingChildRecordsLock) {
+			// Copy over, and pop the child in at the end
+			Record[] nc = new Record[(_children.length + 1)];
+			System.arraycopy(_children, 0, nc, 0, _children.length);
+			// Switch the arrays
+			nc[_children.length] = newChild;
+			_children = nc;
+		}
+	}
+	
+	/**
 	 * Adds the given new Child Record at the given location,
 	 *  shuffling everything from there on down by one
 	 * @param newChild
 	 * @param position
 	 */
 	private void addChildAt(Record newChild, int position) {
-		synchronized(addingChildRecordLock) {
-			Record[] newChildren = new Record[_children.length+1];
-			// Move over to the new array, shuffling on by one after
-			//  the addition point
-			for(int i=0; i<_children.length; i++) {
-				if(i == position) {
-					newChildren[i] = newChild;
-				}
+		synchronized(changingChildRecordsLock) {
+			// Firstly, have the child added in at the end
+			appendChild(newChild);
+			
+			// Now, have them moved to the right place
+			moveChildRecords( (_children.length-1), position, 1 );
+		}
+	}
+	
+	/**
+	 * Moves <i>number</i> child records from <i>oldLoc</i>
+	 *  to <i>newLoc</i>. Caller must have the changingChildRecordsLock
+	 * @param oldLoc the current location of the records to move
+	 * @param newLoc the new location for the records
+	 * @param number the number of records to move
+	 */
+	private void moveChildRecords(int oldLoc, int newLoc, int number) {
+		if(oldLoc == newLoc) { return; }
+		if(number == 0) { return; }
+			
+		// Check that we're not asked to move too many
+		if(oldLoc+number > _children.length) {
+			throw new IllegalArgumentException("Asked to move more records than there are!");
+		}
+		
+		// Do the move
+		ArrayUtil.arrayMoveWithin(_children, oldLoc, newLoc, number);
+	}
+	
+	
+	/* ===============================================================
+	 *                   External Move Methods
+	 * ===============================================================
+	 */
 
-				if(i >= position) {
-					newChildren[i+1] = _children[i];
-				}
-				if(i < position) {
-					newChildren[i] = _children[i];
-				}
-			}
-			
-			// Special case - new record goes at the end
-			if(position == _children.length) {
-				newChildren[position] = newChild;
-			}
-			
-			// All done, replace our child list
-			_children = newChildren;
+	/**
+	 * Add a new child record onto a record's list of children.
+	 */
+	public void appendChildRecord(Record newChild) {
+		synchronized(changingChildRecordsLock) {
+			appendChild(newChild);
 		}
 	}
 	
@@ -112,7 +142,7 @@ public abstract class RecordContainer extends Record
 	 * @param after
 	 */
 	public void addChildAfter(Record newChild, Record after) {
-		synchronized(addingChildRecordLock) {
+		synchronized(changingChildRecordsLock) {
 			// Decide where we're going to put it
 			int loc = findChildLocation(after);
 			if(loc == -1) {
@@ -130,7 +160,7 @@ public abstract class RecordContainer extends Record
 	 * @param after
 	 */
 	public void addChildBefore(Record newChild, Record before) {
-		synchronized(addingChildRecordLock) {
+		synchronized(changingChildRecordsLock) {
 			// Decide where we're going to put it
 			int loc = findChildLocation(before);
 			if(loc == -1) {
@@ -142,6 +172,69 @@ public abstract class RecordContainer extends Record
 		}
 	}
 	
+	/**
+	 * Moves the given Child Record to before the supplied record
+	 */
+	public void moveChildBefore(Record child, Record before) {
+		moveChildrenBefore(child, 1, before);
+	}
+	
+	/**
+	 * Moves the given Child Records to before the supplied record
+	 */
+	public void moveChildrenBefore(Record firstChild, int number, Record before) {
+		if(number < 1) { return; }
+		
+		synchronized(changingChildRecordsLock) {
+			// Decide where we're going to put them
+			int newLoc = findChildLocation(before);
+			if(newLoc == -1) {
+				throw new IllegalArgumentException("Asked to move children before another record, but that record wasn't one of our children!");
+			}
+			
+			// Figure out where they are now
+			int oldLoc = findChildLocation(firstChild);
+			if(oldLoc == -1) {
+				throw new IllegalArgumentException("Asked to move a record that wasn't a child!");
+			}
+			
+			// Actually move
+			moveChildRecords(oldLoc, newLoc, number);
+		}
+	}
+	
+	/**
+	 * Moves the given Child Records to after the supplied record 
+	 */
+	public void moveChildrenAfter(Record firstChild, int number, Record after) {
+		if(number < 1) { return; }
+		
+		synchronized(changingChildRecordsLock) {
+			// Decide where we're going to put them
+			int newLoc = findChildLocation(after);
+			if(newLoc == -1) {
+				throw new IllegalArgumentException("Asked to move children before another record, but that record wasn't one of our children!");
+			}
+			// We actually want after this though
+			newLoc++;
+			
+			// Figure out where they are now
+			int oldLoc = findChildLocation(firstChild);
+			if(oldLoc == -1) {
+				throw new IllegalArgumentException("Asked to move a record that wasn't a child!");
+			}
+			
+			// Actually move
+			moveChildRecords(oldLoc, newLoc, number);
+		}
+	}
+	
+	
+	/* ===============================================================
+	 *                 External Serialisation Methods
+	 * ===============================================================
+	 */
+
 	/**
 	 * Write out our header, and our children.
 	 * @param headerA the first byte of the header

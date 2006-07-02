@@ -120,6 +120,14 @@ public class Slide extends Sheet
   }
   
   /**
+   * Changes the Slide's (external facing) page number.
+   * @see SlideShow.reorderSlide()
+   */
+  public void setSlideNumber(int newSlideNumber) {
+	  _slideNo = newSlideNumber;
+  }
+  
+  /**
    * Create a <code>TextBox</code> object that represents the slide's title.
    *
    * @return <code>TextBox</code> object that represents the slide's title.
