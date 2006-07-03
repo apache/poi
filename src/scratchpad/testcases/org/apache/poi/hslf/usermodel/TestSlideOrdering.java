@@ -124,8 +124,6 @@ public class TestSlideOrdering extends TestCase {
                     "This is a test title",
                     "This is the title on page 2"
                 });
-String a = "’";
-System.err.println((int)(a.toCharArray()[0]));
 
         assertSlideOrdering(dirname + "/Single_Coloured_Page.ppt",
                 new String[]{
