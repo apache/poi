@@ -82,6 +82,23 @@ public abstract class Record
 		LittleEndian.putShort(bs,s);
 		o.write(bs);
 	}
+	
+	/**
+	 * Build and return the Record at the given offset.
+	 * Note - does less error checking and handling than findChildRecords
+	 * @param b The byte array to build from
+	 * @param offset The offset to build at
+	 */
+	public static Record buildRecordAtOffset(byte[] b, int offset) {
+		long type = LittleEndian.getUShort(b,offset+2);
+		long rlen = LittleEndian.getUInt(b,offset+4);
+
+		// Sanity check the length
+		int rleni = (int)rlen;
+		if(rleni < 0) { rleni = 0; }
+
+		return createRecordForType(type,b,offset,8+rleni);
+	}
 
 	/**
 	 * Default method for finding child records of a container record
