@@ -143,7 +143,33 @@ public class Slide extends Sheet
   }
 
 
-  // Accesser methods follow
+	// Complex Accesser methods follow
+
+	/**
+	 * Return title of this slide or <code>null</code> if the slide does not have title.
+	 * <p>
+	 * The title is a run of text of type <code>TextHeaderAtom.CENTER_TITLE_TYPE</code> or
+	 * <code>TextHeaderAtom.TITLE_TYPE</code>
+	 * </p>
+	 *
+	 * @see TextHeaderAtom
+	 *
+	 * @return title of this slide
+	 */
+	public String getTitle(){
+		TextRun[] txt = getTextRuns();
+		for (int i = 0; i < txt.length; i++) {
+			int type = txt[i].getRunType();
+			if (type == TextHeaderAtom.CENTER_TITLE_TYPE ||
+			type == TextHeaderAtom.TITLE_TYPE ){
+				String title = txt[i].getText();
+				return title;
+			}
+		}
+		return null;
+	}
+  
+	// Simple Accesser methods follow
 
   /**
    * Returns an array of all the TextRuns found
