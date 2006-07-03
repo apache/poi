@@ -33,6 +33,7 @@ import org.apache.poi.hpsf.MutablePropertySet;
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hpsf.DocumentSummaryInformation;
 
+import org.apache.poi.hslf.exceptions.EncryptedPowerPointFileException;
 import org.apache.poi.hslf.record.*;
 import org.apache.poi.hslf.usermodel.PictureData;
 
@@ -58,6 +59,14 @@ public class HSLFSlideShow extends POIDocument
 
 	// Raw Pictures contained in the pictures stream
 	private PictureData[] _pictures;
+	
+	/**
+	 * Returns the underlying POIFSFileSystem for the document
+	 *  that is open.
+	 */
+	protected POIFSFileSystem getPOIFSFileSystem() {
+		return filesystem;
+	}
 
 	/**
 	 * Constructs a Powerpoint document from fileName. Parses the document 
@@ -95,15 +104,29 @@ public class HSLFSlideShow extends POIDocument
 	public HSLFSlideShow(POIFSFileSystem filesystem) throws IOException
 	{
 		this.filesystem = filesystem;
+		
+		// First up, grab the "Current User" stream
+		// We need this before we can detect Encrypted Documents
+		readCurrentUserStream();
+		
+		// Next up, grab the data that makes up the 
+		//  PowerPoint stream
+		readPowerPointStream();
+		
+		// Check to see if we have an encrypted document,
+		//  bailing out if we do
+		boolean encrypted = EncryptedSlideShow.checkIfEncrypted(this);
+		if(encrypted) {
+			throw new EncryptedPowerPointFileException("Encrypted PowerPoint files are not supported");
+		}
 
-		// Go find a PowerPoint document in the stream
-		// Save anything useful we come across
-		readFIB();
+		// Now, build records based on the PowerPoint stream
+		buildRecords();
 
 		// Look for Property Streams:
 		readProperties();
 		
-		// Look for other streams
+		// Look for any other streams
 		readOtherStreams();
 
 		// Look for Picture Streams:
@@ -132,72 +155,83 @@ public class HSLFSlideShow extends POIDocument
 	}
 
 
-  /**
-   * Extracts the main document stream from the POI file then hands off 
-   * to other functions that parse other areas.
-   *
-   * @throws IOException
-   */
-  private void readFIB() throws IOException
-  {
-	// Get the main document stream
-	DocumentEntry docProps =
-		(DocumentEntry)filesystem.getRoot().getEntry("PowerPoint Document");
+	/**
+	 * Extracts the main PowerPoint document stream from the 
+	 *  POI file, ready to be passed 
+	 *
+	 * @throws IOException
+	 */
+	private void readPowerPointStream() throws IOException
+	{
+		// Get the main document stream
+		DocumentEntry docProps =
+			(DocumentEntry)filesystem.getRoot().getEntry("PowerPoint Document");
 
-	// Grab the document stream
-	_docstream = new byte[docProps.getSize()];
-	filesystem.createDocumentInputStream("PowerPoint Document").read(_docstream);
-
-	// The format of records in a powerpoint file are:
-	//   <little endian 2 byte "info">
-	//   <little endian 2 byte "type">
-	//   <little endian 4 byte "length">
-	// If it has a zero length, following it will be another record
-	//		<xx xx yy yy 00 00 00 00> <xx xx yy yy zz zz zz zz>
-	// If it has a length, depending on its type it may have children or data
-	// If it has children, these will follow straight away
-	//		<xx xx yy yy zz zz zz zz <xx xx yy yy zz zz zz zz>>
-	// If it has data, this will come straigh after, and run for the length
-	//      <xx xx yy yy zz zz zz zz dd dd dd dd dd dd dd>
-	// All lengths given exclude the 8 byte record header
-	// (Data records are known as Atoms)
-
-	// Document should start with:
-	//   0F 00 E8 03 ## ## ## ##
-    //     (type 1000 = document, info 00 0f is normal, rest is document length)
-	//   01 00 E9 03 28 00 00 00
-	//     (type 1001 = document atom, info 00 01 normal, 28 bytes long)
-	//   80 16 00 00 E0 10 00 00 xx xx xx xx xx xx xx xx
-	//   05 00 00 00 0A 00 00 00 xx xx xx
-	//     (the contents of the document atom, not sure what it means yet)
-	//   (records then follow)
-
-	// When parsing a document, look to see if you know about that type
-	//  of the current record. If you know it's a type that has children, 
-	//  process the record's data area looking for more records
-	// If you know about the type and it doesn't have children, either do
-	//  something with the data (eg TextRun) or skip over it
-	// If you don't know about the type, play safe and skip over it (using
-	//  its length to know where the next record will start)
-	//
-	// For now, this work is handled by Record.findChildRecords
-
-	_records = Record.findChildRecords(_docstream,0,_docstream.length);
-  }
-
+		// Grab the document stream
+		_docstream = new byte[docProps.getSize()];
+		filesystem.createDocumentInputStream("PowerPoint Document").read(_docstream);
+	}
+	
+	/**
+	 * Builds the list of records, based on the contents  
+	 *  of the PowerPoint stream
+	 */
+	private void buildRecords()
+	{
+		// The format of records in a powerpoint file are:
+		//   <little endian 2 byte "info">
+		//   <little endian 2 byte "type">
+		//   <little endian 4 byte "length">
+		// If it has a zero length, following it will be another record
+		//		<xx xx yy yy 00 00 00 00> <xx xx yy yy zz zz zz zz>
+		// If it has a length, depending on its type it may have children or data
+		// If it has children, these will follow straight away
+		//		<xx xx yy yy zz zz zz zz <xx xx yy yy zz zz zz zz>>
+		// If it has data, this will come straigh after, and run for the length
+		//      <xx xx yy yy zz zz zz zz dd dd dd dd dd dd dd>
+		// All lengths given exclude the 8 byte record header
+		// (Data records are known as Atoms)
+	
+		// Document should start with:
+		//   0F 00 E8 03 ## ## ## ##
+	    //     (type 1000 = document, info 00 0f is normal, rest is document length)
+		//   01 00 E9 03 28 00 00 00
+		//     (type 1001 = document atom, info 00 01 normal, 28 bytes long)
+		//   80 16 00 00 E0 10 00 00 xx xx xx xx xx xx xx xx
+		//   05 00 00 00 0A 00 00 00 xx xx xx
+		//     (the contents of the document atom, not sure what it means yet)
+		//   (records then follow)
+	
+		// When parsing a document, look to see if you know about that type
+		//  of the current record. If you know it's a type that has children, 
+		//  process the record's data area looking for more records
+		// If you know about the type and it doesn't have children, either do
+		//  something with the data (eg TextRun) or skip over it
+		// If you don't know about the type, play safe and skip over it (using
+		//  its length to know where the next record will start)
+		//
+		// For now, this work is handled by Record.findChildRecords
+	
+		_records = Record.findChildRecords(_docstream,0,_docstream.length);
+	}
 
 	/**
-	 * Find the other from the filesystem (currently just CurrentUserAtom), 
-	 *  and load them
+	 * Find the "Current User" stream, and load it 
 	 */
-	public void readOtherStreams() {
-		// Current User
+	private void readCurrentUserStream() {
 		try {
 			currentUser = new CurrentUserAtom(filesystem);
 		} catch(IOException ie) {
 			System.err.println("Error finding Current User Atom:\n" + ie);
 			currentUser = new CurrentUserAtom();
 		}
+	}
+	
+	/**
+	 * Find any other streams from the filesystem, and load them 
+	 */
+	private void readOtherStreams() {
+		// Currently, there aren't any
 	}
 
 	/**

@@ -156,6 +156,9 @@ public class RecordTypes {
     public static final Type Comment2000Atom = new Type(12001,Comment2000Atom.class);
     public static final Type Comment2000Summary = new Type(12004,null);
     public static final Type Comment2000SummaryAtom = new Type(12005,null);
+    
+    // Records ~12050 seem to be related to Document Encryption
+    public static final Type DocumentEncryptionAtom = new Type(12052,DocumentEncryptionAtom.class);
 
     //records greater then 0xF000 belong to with Microsoft Office Drawing format also known as Escher
     public static final int EscherDggContainer = 0xf000;
