@@ -85,4 +85,74 @@ public class TestSlideOrdering extends TestCase {
     	assertEquals(firstTRs[1], s2.getTextRuns()[0].getText());
     	assertEquals(firstTRs[2], s3.getTextRuns()[0].getText());
     }
+
+    /**
+     * Assert that the order of slides is correct.
+     *
+     * @param filename  file name of the slide show to assert
+     * @param titles    array of reference slide titles
+     */
+    protected void assertSlideOrdering(String filename, String[] titles) throws Exception {
+        SlideShow ppt = new SlideShow(new HSLFSlideShow(filename));
+        Slide[] slide = ppt.getSlides();
+
+        assertEquals(titles.length, slide.length);
+        for (int i = 0; i < slide.length; i++) {
+            String title = slide[i].getTitle();
+            assertEquals("Wrong slide title in " + filename, titles[i], title);
+        }
+    }
+
+    public void testTitles() throws Exception{
+        String dirname = System.getProperty("HSLF.testdata.path");
+
+        assertSlideOrdering(dirname + "/basic_test_ppt_file.ppt",
+                new String[]{
+                    "This is a test title",
+                    "This is the title on page 2"
+                });
+
+        assertSlideOrdering(dirname + "/incorrect_slide_order.ppt",
+                new String[]{
+                    "Slide 1",
+                    "Slide 2",
+                    "Slide 3"
+                });
+
+        assertSlideOrdering(dirname + "/next_test_ppt_file.ppt",
+                new String[]{
+                    "This is a test title",
+                    "This is the title on page 2"
+                });
+String a = "’";
+System.err.println((int)(a.toCharArray()[0]));
+
+        assertSlideOrdering(dirname + "/Single_Coloured_Page.ppt",
+                new String[]{
+                    "This is a title, it" + (char)0x2019 +"s in black"
+                });
+
+        assertSlideOrdering(dirname + "/Single_Coloured_Page_With_Fonts_and_Alignments.ppt",
+                new String[]{
+                    "This is a title, it"+ (char)0x2019 +"s in black"
+                });
+
+        assertSlideOrdering(dirname + "/ParagraphStylesShorterThanCharStyles.ppt",
+                new String[]{
+                    "ROMANCE: AN ANALYSIS",
+                    "AGENDA",
+                    "You are an important supplier of various items that I need",
+                    (char)0x0B + "Although The Psycho set back my relationship process, recovery is luckily enough under way",
+                    "Since the time that we seriously go out together, you rank highly among existing relationships",
+                    "Although our personal interests are mostly compatible, the greatest gap exists in Sex and Shopping",
+                    "Your physical characteristics are strong when compared with your competition",
+                    "The combination of your high physical appearance and personality rank you highly, although your sister is also a top prospect",
+                    "When people found out that we were going out, their responses have been mixed",
+                    "The benchmark of relationship lifecycles, suggests that we are on schedule",
+                    "In summary we can say that we are on the right track, but we must remain aware of possible roadblocks ",
+                    "THE ANSWER",
+                    "Unfortunately a huge disconnect exists between my needs and your existing service",
+                    "SUMMARY",
+                });
+    }
 }
