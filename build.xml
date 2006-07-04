@@ -109,6 +109,7 @@
   <property name="apidocs.report.dir" location="${build.site}/apidocs"/>
   <property name="changelog.file" location="${build.site}/changelog.html"/>
   <property name="dist.dir" location="build/dist"/>
+  <property name="mavendist.dir" location="build/maven-dist"/>
   <property name="jar.name" value="poi"/>
   <property name="version.id" value="3.0-alpha2"/>
   <property name="halt.on.test.failure" value="true"/>
@@ -216,6 +217,7 @@
         <mkdir dir="${jdepend.report.out.dir}"/>
         <mkdir dir="${apidocs.report.dir}"/>
         <mkdir dir="${dist.dir}"/>
+        <mkdir dir="${mavendist.dir}"/>
         <mkdir dir="${build.site.src}/${main.documentation}"/>
 
         <copy todir="${build.site.src}/${main.documentation}">
@@ -788,6 +790,52 @@ FORREST_HOME environment variable!</echo>
       description="Generates POI's website's contents"/>
 
 
+    <target name="maven-dist" depends="compile" description="Builds the jar files for a maven distribution, and the POM to go with them">
+		<!-- Build a Jar of all the class files -->
+        <jar destfile="${mavendist.dir}/${jar.name}-${version.id}.jar">
+            <manifest>
+                <attribute name="Built-By" value="${user.name}"/>
+                <section name="common">
+                  <attribute name="Specification-Title" value="Jakarta POI"/>
+                  <attribute name="Specification-Version" value="${version.id}-${DSTAMP}"/>
+                  <attribute name="Specification-Vendor" value="Apache"/>
+                  <attribute name="Implementation-Title" value="Jakarta POI"/>
+                  <attribute name="Implementation-Version" value="${version.id}-${DSTAMP}"/>
+                  <attribute name="Implementation-Vendor" value="Apache"/>
+                </section>
+            </manifest>        
+			<fileset dir="${main.output.dir}" />
+			<fileset dir="${contrib.output.dir}" />
+			<fileset dir="${scratchpad.output.dir}" />
+        </jar>
+
+		<!-- Build a Jar file of all the source files -->
+        <jar destfile="${mavendist.dir}/${jar.name}-${version.id}-sources.jar">
+            <manifest>
+                <attribute name="Built-By" value="${user.name}"/>
+                <section name="common">
+                  <attribute name="Specification-Title" value="Jakarta POI"/>
+                  <attribute name="Specification-Version" value="${version.id}-${DSTAMP}"/>
+                  <attribute name="Specification-Vendor" value="Apache"/>
+                  <attribute name="Implementation-Title" value="Jakarta POI"/>
+                  <attribute name="Implementation-Version" value="${version.id}-${DSTAMP}"/>
+                  <attribute name="Implementation-Vendor" value="Apache"/>
+                </section>
+            </manifest>        
+			<fileset dir="${main.src}" includes="**/*.java" />
+			<fileset dir="${contrib.src}" includes="**/*.java" />
+			<fileset dir="${scratchpad.src}" includes="**/*.java" />
+        </jar>
+
+		<!-- Build the pom -->
+		<!-- Copy from the base file, and substitute in the version -->
+		<filter token="VERSION" value="${version.id}" />
+		<copy 
+			filtering="true" 
+			file="poi.pom" 
+			tofile="${mavendist.dir}/${jar.name}-${version.id}.pom" 
+		/>
+	</target>
 
     <target name="jar" depends="compile" description="Creates jar files for distribution">
         <jar basedir="${main.output.dir}" destfile="${dist.dir}/${jar.name}-${version.id}-${DSTAMP}.jar">
