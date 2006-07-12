@@ -2,6 +2,7 @@ package org.apache.poi.hwpf.extractor;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.FileInputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Iterator;
 
@@ -46,6 +47,23 @@ public class WordExtractor {
 	 */
 	public WordExtractor(HWPFDocument doc) throws IOException {
 		this.doc = doc;
+	}
+
+	/**
+	 * Command line extractor, so people will stop moaning that
+	 *  they can't just run this.
+	 */
+	public static void main(String[] args) throws IOException {
+		if(args.length == 0) {
+			System.err.println("Use:");
+			System.err.println("   java org.apache.poi.hwpf.extractor.WordExtractor <filename>");
+			System.exit(1);
+		}
+
+		// Process the first argument as a file
+		FileInputStream fin = new FileInputStream(args[0]);
+		WordExtractor extractor = new WordExtractor(fin);
+		System.out.println(extractor.getText());
 	}
 	
 	/**
