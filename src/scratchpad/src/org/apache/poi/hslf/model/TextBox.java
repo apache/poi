@@ -415,6 +415,13 @@ public class TextBox extends SimpleShape {
     }
 
     /**
+      * @return the TextRun object for this text box
+      */
+     public TextRun getTextRun(){
+         return _txtrun;
+     }
+
+    /**
       * @return  array of RichTextRun objects which control text formatting in this text box
       */
      public RichTextRun[] getRichTextRuns(){
