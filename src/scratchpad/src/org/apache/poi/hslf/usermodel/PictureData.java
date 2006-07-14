@@ -49,6 +49,11 @@ public class PictureData {
 	*/
 	protected byte[] header;
 
+	/**
+	 * The offset to the picture in the stream
+	 */
+	protected int offset;
+
     public PictureData(){
         header = new byte[PictureData.HEADER_SIZE];
     }
@@ -76,6 +81,7 @@ public class PictureData {
 
 		// Save the picture data
 		pictdata = new byte[size];
+		this.offset = offset;
 		System.arraycopy(pictstream, startPos, pictdata, 0, pictdata.length);
 	}
 
@@ -162,6 +168,25 @@ public class PictureData {
     public byte[] getHeader(){
         return header;
     }
+
+	/**
+	 * File offset in the 'Pictures' stream
+	 *
+	 * @return offset in the 'Pictures' stream
+	 */
+	public int getOffset(){
+		return offset;
+	}
+
+	/**
+	 * Set offset of this picture in the 'Pictures' stream.
+	 * We need to set it when a new picture is created.
+	 *
+	 * @param offset in the 'Pictures' stream
+	 */
+	public void setOffset(int offset){
+		this.offset = offset;
+	}
 
     /**
      * Compute 16-byte checksum of this picture
