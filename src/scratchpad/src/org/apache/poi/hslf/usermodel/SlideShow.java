@@ -671,6 +671,7 @@ public class SlideShow
         pict.setUID(uid);
         pict.setData(data);
         pict.setType(format);
+		pict.setOffset(offset);
 
         _hslfSlideShow.addPicture(pict);
 

@@ -153,10 +153,11 @@ public class Picture extends SimpleShape {
         int idx = getPictureIndex()-1;
         EscherBSERecord bse = (EscherBSERecord)lst.get(idx);
         for ( int i = 0; i < pict.length; i++ ) {
-            if (Arrays.equals(bse.getUid(), pict[i].getUID())){
+			if (pict[i].getOffset() ==  bse.getOffset()){
                 return pict[i];
             }
         }
+		System.err.println("Warning - no picture found for our BSE offset " + bse.getOffset());
         return null;
     }
 
