@@ -93,9 +93,9 @@ public class StyleTextPropAtom extends RecordAtom
 				new TextProp(4, 0x20, "bullet.color"),
 				new TextProp(2, 0x40, "bullet.size"),
 				new TextProp(2, 0x80, "bullet.char"),
-				new TextProp(2, 0x100, "para_unknown_1"),
+				new TextProp(2, 0x100, "text.offset"),
 				new TextProp(2, 0x200, "para_unknown_2"),
-				new TextProp(2, 0x400, "para_unknown_3"),
+				new TextProp(2, 0x400, "bullet.offset"),
 				new AlignmentTextProp(), // 0x800
 				new TextProp(2, 0x1000, "linespacing"),
 				new TextProp(2, 0x2000, "spacebefore"),
@@ -348,7 +348,7 @@ public class StyleTextPropAtom extends RecordAtom
 	 * Used to hold the number of characters affected, the list of active
 	 *  properties, and the random reserved field if required.
 	 */
-	public class TextPropCollection {
+	public static class TextPropCollection {
 		private int charactersCovered;
 		private short reservedField;
 		private LinkedList textPropList;
@@ -445,7 +445,7 @@ public class StyleTextPropAtom extends RecordAtom
 		 * Create a new collection of text properties (be they paragraph
 		 *  or character) for a run of text without any
 		 */
-		private TextPropCollection(int textSize) {
+		public TextPropCollection(int textSize) {
 			charactersCovered = textSize;
 			reservedField = -1;
 			textPropList = new LinkedList();
@@ -511,7 +511,7 @@ public class StyleTextPropAtom extends RecordAtom
 		/** 
 		 * Generate the definition of a given type of text property.
 		 */
-		private TextProp(int sizeOfDataBlock, int maskInHeader, String propName) {
+		public TextProp(int sizeOfDataBlock, int maskInHeader, String propName) {
 			this.sizeOfDataBlock = sizeOfDataBlock;
 			this.maskInHeader = maskInHeader;
 			this.propName = propName;
@@ -580,7 +580,7 @@ public class StyleTextPropAtom extends RecordAtom
 		/** Fetch the list of if the sub properties match or not */
 		public boolean[] getSubPropMatches() { return subPropMatches; }
 
-		private BitMaskTextProp(int sizeOfDataBlock, int maskInHeader, String overallName, String[] subPropNames) {
+		public BitMaskTextProp(int sizeOfDataBlock, int maskInHeader, String overallName, String[] subPropNames) {
 			super(sizeOfDataBlock,maskInHeader,"bitmask");
 			this.subPropNames = subPropNames;
 			this.propName = overallName;
@@ -679,7 +679,7 @@ public class StyleTextPropAtom extends RecordAtom
 		public static final int ENABLE_NUMBERING_1_IDX = 11;
 		public static final int ENABLE_NUMBERING_2_IDX = 12;
 
-		private CharFlagsTextProp() {
+		public CharFlagsTextProp() {
 			super(2,0xffff, "char_flags", new String[] {
 					"bold",          // 0x0001
 					"italic",        // 0x0002
