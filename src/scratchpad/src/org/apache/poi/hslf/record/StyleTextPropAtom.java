@@ -96,7 +96,7 @@ public class StyleTextPropAtom extends RecordAtom
 				new TextProp(2, 0x100, "para_unknown_1"),
 				new TextProp(2, 0x200, "para_unknown_2"),
 				new TextProp(2, 0x400, "para_unknown_3"),
-				new TextProp(2, 0x800, "alignment"),
+				new AlignmentTextProp(), // 0x800
 				new TextProp(2, 0x1000, "linespacing"),
 				new TextProp(2, 0x2000, "spacebefore"),
 				new TextProp(2, 0x4000, "spaceafter"),
@@ -648,6 +648,21 @@ public class StyleTextPropAtom extends RecordAtom
 		}
 	}
 
+	/**
+	 * Definition for the alignment text property.
+	 */
+	public static class AlignmentTextProp extends TextProp {
+		public static final int LEFT = 0;
+		public static final int CENTER = 1;
+		public static final int RIGHT = 2;
+		public static final int JUSTIFY = 3;
+		public static final int THAIDISTRIBUTED = 5;
+		public static final int JUSTIFYLOW = 6;
+
+		public AlignmentTextProp() {
+			super(2, 0x800, "alignment");
+		}
+	}
 
 	/** 
 	 * Definition for the common character text property bitset, which
