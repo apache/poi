@@ -277,6 +277,7 @@ public class HSSFDataFormat
      * get the format string that matches the given format index
      * @param index of a built in format
      * @return string represented at index of format or null if there is not a builtin format at that index
+     * @throws ArrayOutOfBoundsException when the index exceeds the number of builtin formats.
      */
 
     public static String getBuiltinFormat( short index )
