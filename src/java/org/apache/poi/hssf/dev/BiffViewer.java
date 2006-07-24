@@ -111,7 +111,7 @@ public class BiffViewer {
                 }
             activeRecord.dump();
         } catch (IOException e) {
-            throw new RecordFormatException("Error reading bytes");
+            throw new RecordFormatException("Error reading bytes", e);
         }
         Record[] retval = new Record[records.size()];
 

@@ -332,9 +332,7 @@ public class EventRecordFactory
         }
         catch (Exception introspectionException)
         {
-            introspectionException.printStackTrace();
-            throw new RecordFormatException(
-                "Unable to construct record instance, the following exception occured: " + introspectionException.getMessage());
+            throw new RecordFormatException("Unable to construct record instance" , introspectionException);
         }
         if (retval instanceof RKRecord)
         {
