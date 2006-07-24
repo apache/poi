@@ -102,7 +102,7 @@ public class FormulaRecord
           field_7_expression_len = in.readShort();
           field_8_parsed_expr    = Ptg.createParsedExpressionTokens(field_7_expression_len, in);
         } catch (java.lang.UnsupportedOperationException uoe)  {
-          throw new RecordFormatException(uoe.toString());
+          throw new RecordFormatException(uoe);
         }
     }
 

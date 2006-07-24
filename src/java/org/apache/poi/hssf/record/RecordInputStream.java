@@ -54,7 +54,7 @@ public class RecordInputStream extends InputStream
       //Dont increment the pos just yet (technically we are at the start of
       //the record stream until nextRecord is called).      
     } catch (IOException ex) {
-      throw new RecordFormatException("Error reading bytes");
+      throw new RecordFormatException("Error reading bytes", ex);
     }
   }
   

@@ -327,7 +327,7 @@ public abstract class Ptg
             default :
 
                  //retval = new UnknownPtg();
-                 throw new java.lang.UnsupportedOperationException(
+                 throw new java.lang.UnsupportedOperationException(" Unknown Ptg in Formula: 0x"+
                         Integer.toHexString(( int ) id) + " (" + ( int ) id + ")");
         }
         

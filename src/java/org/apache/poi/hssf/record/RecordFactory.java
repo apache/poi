@@ -222,9 +222,7 @@ public class RecordFactory
         }
         catch (Exception introspectionException)
         {
-            introspectionException.printStackTrace();
-            throw new RecordFormatException(
-                "Unable to construct record instance, the following exception occured: " + introspectionException.getMessage());
+            throw new RecordFormatException("Unable to construct record instance",introspectionException);
         }
         if (retval instanceof RKRecord)
         {
@@ -316,9 +314,8 @@ public class RecordFactory
             }
             catch (Exception illegalArgumentException)
             {
-                illegalArgumentException.printStackTrace();
                 throw new RecordFormatException(
-                    "Unable to determine record types");
+                    "Unable to determine record types", illegalArgumentException);
             }
             result.put(new Short(sid), constructor);
         }
