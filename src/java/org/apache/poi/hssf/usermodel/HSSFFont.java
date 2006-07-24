@@ -56,7 +56,7 @@ public class HSSFFont
     public final static short  BOLDWEIGHT_BOLD     = 0x2bc;
 
     /**
-     * normal type of black color
+     * normal type of black color.
      */
 
     public final static short  COLOR_NORMAL        = 0x7fff;
@@ -266,7 +266,7 @@ public class HSSFFont
     /**
      * set the color for the font
      * @param color to use
-     * @see #COLOR_NORMAL
+     * @see #COLOR_NORMAL Note: Use this rather than HSSFColor.AUTOMATIC for default font color
      * @see #COLOR_RED
      */
 

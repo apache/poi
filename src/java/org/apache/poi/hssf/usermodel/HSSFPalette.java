@@ -44,11 +44,16 @@ public class HSSFPalette
      */
     public HSSFColor getColor(short index)
     {
-        byte[] b = palette.getColor(index);
-        if (b != null)
-        {
-            return new CustomColor(index, b);
-        }
+    	//Handle the special AUTOMATIC case
+    	if (index == HSSFColor.AUTOMATIC.index)
+    		return HSSFColor.AUTOMATIC.getInstance();
+    	else {
+          byte[] b = palette.getColor(index);
+          if (b != null)
+          {
+             return new CustomColor(index, b);
+          }
+    	}
         return null;
     }
     

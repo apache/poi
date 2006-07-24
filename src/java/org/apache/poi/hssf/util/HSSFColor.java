@@ -1693,4 +1693,38 @@ public class HSSFColor
             return hexString;
         }
     }
+    
+    /**
+     * Special Default/Normal/Automatic color.
+     * <p><i>Note:</i> This class is NOT in the default HashTables returned by HSSFColor.
+     * The index is a special case which is interpreted in the various setXXXColor calls.
+     * 
+     * @author Jason
+     *
+     */
+    public final static class AUTOMATIC extends HSSFColor
+    {
+    	private static HSSFColor instance = new AUTOMATIC();
+    	
+        public final static short   index     = 0x40;
+
+        public short getIndex()
+        {
+            return index;
+        }
+
+        public short [] getTriplet()
+        {
+            return BLACK.triplet;
+        }
+
+        public String getHexString()
+        {
+            return BLACK.hexString;
+        }
+        
+        public static HSSFColor getInstance() {
+          return instance;
+        }
+    }
 }

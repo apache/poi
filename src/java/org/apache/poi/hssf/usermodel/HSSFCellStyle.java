@@ -18,6 +18,7 @@
 package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.hssf.record.ExtendedFormatRecord;
+import org.apache.poi.hssf.util.*;
 
 /**
  * High level representation of the style of a cell in a sheet of a workbook.
@@ -798,6 +799,29 @@ public class HSSFCellStyle
     {
         return format.getAdtlFillPattern();
     }
+    
+    /**
+     * Checks if the background and foreground fills are set correctly when one
+     * or the other is set to the default color.
+     * <p>Works like the logic table below:</p>
+     * <p>BACKGROUND   FOREGROUND</p>
+     * <p>NONE         AUTOMATIC</p>
+     * <p>0x41         0x40</p>
+     * <p>NONE         RED/ANYTHING</p>
+     * <p>0x40         0xSOMETHING</p> 
+     */
+    private void checkDefaultBackgroundFills() {
+      if (format.getFillForeground() == org.apache.poi.hssf.util.HSSFColor.AUTOMATIC.index) {
+    	  //JMH: Why +1, hell why not. I guess it made some sense to someone at the time. Doesnt
+    	  //to me now.... But experience has shown that when the fore is set to AUTOMATIC then the
+    	  //background needs to be incremented......
+    	  if (format.getFillBackground() != (org.apache.poi.hssf.util.HSSFColor.AUTOMATIC.index+1))
+    		  setFillBackgroundColor((short)(org.apache.poi.hssf.util.HSSFColor.AUTOMATIC.index+1));
+      } else if (format.getFillBackground() == org.apache.poi.hssf.util.HSSFColor.AUTOMATIC.index+1)
+    	  //Now if the forground changes to a non-AUTOMATIC color the background resets itself!!!
+    	  if (format.getFillForeground() != org.apache.poi.hssf.util.HSSFColor.AUTOMATIC.index)
+    		  setFillBackgroundColor(org.apache.poi.hssf.util.HSSFColor.AUTOMATIC.index);
+    }
 
     /**
      * set the background fill color.
@@ -805,7 +829,14 @@ public class HSSFCellStyle
      * For example:
      * <pre>
      * cs.setFillPattern(HSSFCellStyle.FINE_DOTS );
-     * cs.setFillBackgroundColor(new HSSFColor.RED().getIndex());
+     * cs.setFillBackgroundColor(new HSSFColor.RED().getIndex()); 
+     * </pre>
+     * optionally a Foreground and background fill can be applied:
+     * <i>Note: Ensure Foreground color is set prior to background</i>
+     * <pre>
+     * cs.setFillPattern(HSSFCellStyle.FINE_DOTS );
+     * cs.setFillForegroundColor(new HSSFColor.BLUE().getIndex());
+     * cs.setFillBackgroundColor(new HSSFColor.RED().getIndex()); 
      * </pre>
      * or, for the special case of SOLID_FILL:
      * <pre>
@@ -819,8 +850,9 @@ public class HSSFCellStyle
      */
 
     public void setFillBackgroundColor(short bg)
-    {
+    {    	
         format.setFillBackground(bg);
+        checkDefaultBackgroundFills();
     }
 
     /**
@@ -830,17 +862,24 @@ public class HSSFCellStyle
 
     public short getFillBackgroundColor()
     {
-        return format.getFillBackground();
+    	short result = format.getFillBackground();
+    	//JMH: Do this ridiculous conversion, and let HSSFCellStyle
+    	//internally migrate back and forth
+    	if (result == (HSSFColor.AUTOMATIC.index+1))
+    		return HSSFColor.AUTOMATIC.index;
+    	else return result;
     }
 
     /**
      * set the foreground fill color
+     * <i>Note: Ensure Foreground color is set prior to background color.</i>
      * @param bg  color
      */
 
     public void setFillForegroundColor(short bg)
     {
         format.setFillForeground(bg);
+        checkDefaultBackgroundFills();
     }
 
     /**
