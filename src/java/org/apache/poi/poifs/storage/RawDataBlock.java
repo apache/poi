@@ -56,6 +56,10 @@ public class RawDataBlock
         }
         else if (count != POIFSConstants.BIG_BLOCK_SIZE)
         {
+        	if (count == -1)
+        		//Cant have -1 bytes read in the error message!
+        		count = 0;
+        	
             String type = " byte" + ((count == 1) ? ("")
                                                   : ("s"));
 
