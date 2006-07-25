@@ -80,7 +80,7 @@ import java.util.Vector;
 
 public class HSSFDataFormat
 {
-    private static Vector builtinFormats;
+    private static List builtinFormats = createBuiltinFormats();
 
     private Vector formats = new Vector();
     private Workbook workbook;
@@ -97,7 +97,6 @@ public class HSSFDataFormat
     public HSSFDataFormat( Workbook workbook )
     {
         this.workbook = workbook;
-        if ( builtinFormats == null ) populateBuiltinFormats();
         Iterator i = workbook.getFormats().iterator();
         while ( i.hasNext() )
         {
@@ -111,9 +110,9 @@ public class HSSFDataFormat
 
     }
 
-    private static synchronized void populateBuiltinFormats()
+    private static synchronized List createBuiltinFormats()
     {
-        builtinFormats = new Vector();
+        List builtinFormats = new Vector();
         builtinFormats.add( 0, "General" );
         builtinFormats.add( 1, "0" );
         builtinFormats.add( 2, "0.00" );
@@ -169,14 +168,11 @@ public class HSSFDataFormat
         builtinFormats.add( 0x2f, "mm:ss.0" );
         builtinFormats.add( 0x30, "##0.0E+0" );
         builtinFormats.add( 0x31, "@" );
+        return builtinFormats;
     }
 
     public static List getBuiltinFormats()
     {
-        if ( builtinFormats == null )
-        {
-            populateBuiltinFormats();
-        }
         return builtinFormats;
     }
 
@@ -192,10 +188,6 @@ public class HSSFDataFormat
 	if (format.toUpperCase().equals("TEXT")) 
 		format = "@";
 
-        if ( builtinFormats == null )
-        {
-            populateBuiltinFormats();
-        }
         short retval = -1;
 
         for (short k = 0; k <= 0x31; k++)
@@ -282,10 +274,6 @@ public class HSSFDataFormat
 
     public static String getBuiltinFormat( short index )
     {
-        if ( builtinFormats == null )
-        {
-            populateBuiltinFormats();
-        }
         return (String) builtinFormats.get( index );
     }
 
@@ -296,10 +284,6 @@ public class HSSFDataFormat
 
     public static int getNumberOfBuiltinBuiltinFormats()
     {
-        if ( builtinFormats == null )
-        {
-            populateBuiltinFormats();
-        }
         return builtinFormats.size();
     }
 }
