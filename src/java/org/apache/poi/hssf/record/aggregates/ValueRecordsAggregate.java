@@ -125,6 +125,7 @@ public class ValueRecordsAggregate
         int k = 0;
 
         FormulaRecordAggregate lastFormulaAggregate = null;
+        SharedFormulaRecord lastSharedFormula = null;
 
         for (k = offset; k < records.size(); k++)
         {
@@ -136,6 +137,26 @@ public class ValueRecordsAggregate
             }
             if (rec instanceof FormulaRecord)
             {
+              FormulaRecord formula = (FormulaRecord)rec;
+              if (formula.isSharedFormula()) {
+                if ((lastSharedFormula != null) && (lastSharedFormula.isFormulaInShared(formula))) {
+                  //Convert this Formula Record from a shared formula to a real formula
+                  lastSharedFormula.convertSharedFormulaRecord(formula);
+                } else {
+                  Record nextRecord = (Record) records.get(k + 1);
+                  if (nextRecord instanceof SharedFormulaRecord) {
+                    k++;
+                    lastSharedFormula = (SharedFormulaRecord) nextRecord;
+
+                    //Convert this Formula Record from a shared formula to a real formula
+                    lastSharedFormula.convertSharedFormulaRecord(formula);
+                  }
+                  else
+                    throw new RuntimeException(
+                        "Shared formula bit set but next record is not a Shared Formula??");
+                }
+              }
+            	
                 lastFormulaAggregate = new FormulaRecordAggregate((FormulaRecord)rec, null);
                 insertCell( lastFormulaAggregate );
             }
@@ -143,11 +164,11 @@ public class ValueRecordsAggregate
             {
                 lastFormulaAggregate.setStringRecord((StringRecord)rec);
             }
-            else if (rec instanceof SharedFormulaRecord)
-            {
-            	//these follow the first formula in a group
-            	lastFormulaAggregate.setSharedFormulaRecord((SharedFormulaRecord)rec);
-            }
+            //else if (rec instanceof SharedFormulaRecord)
+            //{
+            //	//these follow the first formula in a group
+            //	lastFormulaAggregate.setSharedFormulaRecord((SharedFormulaRecord)rec);
+            //}
             else if (rec.isValue())
             {
                 insertCell(( CellValueRecordInterface ) rec);

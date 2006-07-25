@@ -46,7 +46,7 @@ public class AreaPtg
     private BitField         colRelative = BitFieldFactory.getInstance(0x4000);
     private BitField         column      = BitFieldFactory.getInstance(0x3FFF);
 
-    private AreaPtg() {
+    protected AreaPtg() {
       //Required for clone methods
     }
    
@@ -59,9 +59,19 @@ public class AreaPtg
         setFirstColRelative(!ar.getCells()[0].isColAbsolute());
         setLastColRelative(!ar.getCells()[1].isColAbsolute());
         setFirstRowRelative(!ar.getCells()[0].isRowAbsolute());
-        setLastRowRelative(!ar.getCells()[1].isRowAbsolute());
-        
+        setLastRowRelative(!ar.getCells()[1].isRowAbsolute());        
     }
+    
+    public AreaPtg(short firstRow, short lastRow, short firstColumn, short lastColumn, boolean firstRowRelative, boolean lastRowRelative, boolean firstColRelative, boolean lastColRelative) {
+      setFirstRow(firstRow);
+      setLastRow(lastRow);
+      setFirstColumn(firstColumn);
+      setLastColumn(lastColumn);
+      setFirstRowRelative(firstRowRelative);
+      setLastRowRelative(lastRowRelative);
+      setFirstColRelative(firstColRelative);
+      setLastColRelative(lastColRelative);
+    }    
 
     public AreaPtg(RecordInputStream in)
     {
@@ -71,12 +81,17 @@ public class AreaPtg
         field_4_last_column  = in.readShort();
         //System.out.println(toString());
     }
+    
+    public String getAreaPtgName() {
+      return "AreaPtg";
+    }    
 
     public String toString()
     {
         StringBuffer buffer = new StringBuffer();
 
-        buffer.append("AreaPtg\n");
+        buffer.append(getAreaPtgName());
+        buffer.append("\n");
         buffer.append("firstRow = " + getFirstRow()).append("\n");
         buffer.append("lastRow  = " + getLastRow()).append("\n");
         buffer.append("firstCol = " + getFirstColumn()).append("\n");

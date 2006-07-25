@@ -62,11 +62,27 @@ public class ExpPtg
     {
         return SIZE;
     }
+    
+    public short getRow() {
+      return field_1_first_row;
+    }
+
+    public short getColumn() {
+      return field_2_first_col;
+    }    
 
     public String toFormulaString(Workbook book)
     {
         return "NO IDEA SHARED FORMULA EXP PTG";
     }
+    
+    public String toString()
+    {
+        StringBuffer buffer = new StringBuffer("[Array Formula or Shared Formula]\n");
+        buffer.append("row = ").append(getRow()).append("\n");
+        buffer.append("col = ").append(getColumn()).append("\n");
+        return buffer.toString();
+    }    
     
     public byte getDefaultOperandClass() {return Ptg.CLASS_VALUE;}
     

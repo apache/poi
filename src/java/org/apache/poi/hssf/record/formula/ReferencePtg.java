@@ -39,8 +39,9 @@ public class ReferencePtg extends Ptg
     private short            field_2_col;
     private BitField         rowRelative = BitFieldFactory.getInstance(0x8000);
     private BitField         colRelative = BitFieldFactory.getInstance(0x4000);
+    private BitField         column      = BitFieldFactory.getInstance(0x3FFF);
 
-    private ReferencePtg() {
+    protected ReferencePtg() {
       //Required for clone methods
     }
     
@@ -55,6 +56,13 @@ public class ReferencePtg extends Ptg
         setColRelative(!c.isColAbsolute());
         setRowRelative(!c.isRowAbsolute());
     }
+    
+    public ReferencePtg(short row, short column, boolean isRowRelative, boolean isColumnRelative) {
+      setRow(row);
+      setColumn(column);
+      setRowRelative(isRowRelative);
+      setColRelative(isColumnRelative);
+    }    
 
     /** Creates new ValueReferencePtg */
 
@@ -62,15 +70,20 @@ public class ReferencePtg extends Ptg
     {
         field_1_row = in.readShort();
         field_2_col = in.readShort();
-
     }
+    
+    public String getRefPtgName() {
+      return "ReferencePtg";
+    }    
 
     public String toString()
     {
-        StringBuffer buffer = new StringBuffer("[ValueReferencePtg]\n");
+        StringBuffer buffer = new StringBuffer("[");
+        buffer.append(getRefPtgName());
+        buffer.append("]\n");
 
         buffer.append("row = ").append(getRow()).append("\n");
-        buffer.append("col = ").append(getColumnRaw()).append("\n");
+        buffer.append("col = ").append(getColumn()).append("\n");
         buffer.append("rowrelative = ").append(isRowRelative()).append("\n");
         buffer.append("colrelative = ").append(isColRelative()).append("\n");
         return buffer.toString();
@@ -123,12 +136,12 @@ public class ReferencePtg extends Ptg
 
     public void setColumn(short col)
     {
-        field_2_col = col;   // fix this
+    	field_2_col = column.setShortValue(field_2_col, col);
     }
 
     public short getColumn()
     {
-        return rowRelative.setShortBoolean(colRelative.setShortBoolean(field_2_col,false),false);
+    	return column.getShortValue(field_2_col);
     }
 
     public int getSize()
