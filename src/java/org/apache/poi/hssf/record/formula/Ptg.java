@@ -112,19 +112,15 @@ public abstract class Ptg
         return stack;
     }
     
-    private static Ptg createPtg(RecordInputStream in)
+    public static Ptg createPtg(RecordInputStream in)
     {
         byte id     = in.readByte();
         Ptg  retval = null;
 
-        final byte valueRef = ReferencePtg.sid + 0x20;
-        final byte arrayRef = ReferencePtg.sid + 0x40;
         final byte valueFunc = FuncPtg.sid + 0x20;
         final byte arrayFunc = FuncPtg.sid + 0x40;
         final byte valueFuncVar = FuncVarPtg.sid +0x20;
         final byte arrayFuncVar = FuncVarPtg.sid+0x40;
-        final byte valueArea = AreaPtg.sid + 0x20;
-        final byte arrayArea = AreaPtg.sid + 0x40;
 
         switch (id)
         {
@@ -197,12 +193,22 @@ public abstract class Ptg
             case AreaPtg.sid :
                 retval = new AreaPtg(in);
                 break;
-            case valueArea:
-                retval = new AreaPtg(in);
+            case AreaAPtg.sid:
+                retval = new AreaAPtg(in);
                 break;
-            case arrayArea:
-                retval = new AreaPtg(in);
+            case AreaVPtg.sid:
+                retval = new AreaVPtg(in);
                 break;
+            case AreaNAPtg.sid :
+                retval = new AreaNAPtg(in);
+                 break;
+            case AreaNPtg.sid :
+                retval = new AreaNPtg(in);
+                break;
+            case AreaNVPtg.sid :
+               retval = new AreaNVPtg(in);
+               break;
+                
             case MemErrPtg.sid :        // 0x27       These 3 values 
             case MemErrPtg.sid+0x20 :   // 0x47       documented in 
             case MemErrPtg.sid+0x40 :   // 0x67       openOffice.org doc.
@@ -216,12 +222,21 @@ public abstract class Ptg
             case ReferencePtg.sid :
                 retval = new ReferencePtg(in);
                 break;   
-            case valueRef :
-                retval = new ReferencePtg(in);
+            case RefAPtg.sid :
+                retval = new RefAPtg(in);
                 break;   
-            case arrayRef :
-                retval = new ReferencePtg(in);
+            case RefVPtg.sid :
+                retval = new RefVPtg(in);
                 break;   
+            case RefNAPtg.sid :
+                retval = new RefNAPtg(in);
+                break;
+            case RefNPtg.sid :
+                retval = new RefNPtg(in);
+                break;
+            case RefNVPtg.sid :
+                retval = new RefNVPtg(in);
+                break;                   
             case RefErrorPtg.sid:
                 retval = new RefErrorPtg(in);
                 break;   

@@ -18,6 +18,10 @@
 
 package org.apache.poi.hssf.record;
 
+import java.util.Stack;
+import java.util.List;
+
+import org.apache.poi.hssf.record.formula.*;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -36,9 +40,14 @@ public class SharedFormulaRecord
     extends Record
 {
 	 public final static short   sid = 0x4BC;
-    private short  size    = 0;
-    private byte[] thedata = null;
-    int             offset  = 0;
+    
+    private int               field_1_first_row;
+    private int               field_2_last_row;
+    private short             field_3_first_column;
+    private short             field_4_last_column;
+    private int               field_5_reserved;
+    private short             field_6_expression_len;
+    private Stack             field_7_parsed_expr;    
 
     public SharedFormulaRecord()
     {
@@ -55,6 +64,35 @@ public class SharedFormulaRecord
     {
     	  super(in);
     }
+    
+    protected void validateSid(short id)
+    {
+		if (id != this.sid)
+		{
+			throw new RecordFormatException("Not a valid SharedFormula");
+		}        
+    }    
+    
+    public int getFirstRow() {
+      return field_1_first_row;
+    }
+
+    public int getLastRow() {
+      return field_2_last_row;
+    }
+
+    public short getFirstColumn() {
+      return field_3_first_column;
+    }
+
+    public short getLastColumn() {
+      return field_4_last_column;
+    }
+
+    public short getExpressionLength()
+    {
+        return field_6_expression_len;
+    }
 
     /**
      * spit the record out AS IS.  no interperatation or identification
@@ -62,38 +100,15 @@ public class SharedFormulaRecord
 
     public int serialize(int offset, byte [] data)
     {
-        if (thedata == null)
-        {
-            thedata = new byte[ 0 ];
-        }
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset, ( short ) (thedata.length));
-        if (thedata.length > 0)
-        {
-            System.arraycopy(thedata, 0, data, 4 + offset, thedata.length);
-        }
-        return getRecordSize();
+    	//Because this record is converted to individual Formula records, this method is not required.
+    	throw new UnsupportedOperationException("Cannot serialize a SharedFormulaRecord");
     }
 
     public int getRecordSize()
     {
-        int retval = 4;
+    	//Because this record is converted to individual Formula records, this method is not required.
+    	throw new UnsupportedOperationException("Cannot get the size for a SharedFormulaRecord");
 
-        if (thedata != null)
-        {
-            retval += thedata.length;
-        }
-        return retval;
-    }
-
-
-    protected void validateSid(short id)
-    {
-		if (id != this.sid)
-		{
-			throw new RecordFormatException("Not a valid SharedFormula");
-		}
-        
     }
 
     /**
@@ -107,6 +122,33 @@ public class SharedFormulaRecord
         buffer.append("[SHARED FORMULA RECORD:" + Integer.toHexString(sid) + "]\n");
         buffer.append("    .id        = ").append(Integer.toHexString(sid))
             .append("\n");
+        buffer.append("    .first_row       = ")
+            .append(Integer.toHexString(getFirstRow())).append("\n");
+        buffer.append("    .last_row    = ")
+            .append(Integer.toHexString(getLastRow()))
+            .append("\n");
+        buffer.append("    .first_column       = ")
+            .append(Integer.toHexString(getFirstColumn())).append("\n");
+        buffer.append("    .last_column    = ")
+            .append(Integer.toHexString(getLastColumn()))
+            .append("\n");
+        buffer.append("    .reserved    = ")
+            .append(Integer.toHexString(field_5_reserved))
+            .append("\n");
+        buffer.append("    .expressionlength= ").append(getExpressionLength())
+            .append("\n");
+
+        buffer.append("    .numptgsinarray  = ").append(field_7_parsed_expr.size())
+              .append("\n");
+
+        for (int k = 0; k < field_7_parsed_expr.size(); k++ ) {
+           buffer.append("Formula ")
+                .append(k)
+                .append("\n")
+                .append(field_7_parsed_expr.get(k).toString())
+                .append("\n");
+        }
+        
         buffer.append("[/SHARED FORMULA RECORD]\n");
         return buffer.toString();
     }
@@ -121,7 +163,99 @@ public class SharedFormulaRecord
 	  */
     protected void fillFields(RecordInputStream in)
     {
-      thedata = in.readRemainder();
+      field_1_first_row       = in.readShort();
+      field_2_last_row        = in.readShort();
+      field_3_first_column    = in.readByte();
+      field_4_last_column     = in.readByte();
+      field_5_reserved        = in.readShort();
+      field_6_expression_len = in.readShort();
+      field_7_parsed_expr    = getParsedExpressionTokens(in);
+    }
+
+    private Stack getParsedExpressionTokens(RecordInputStream in)
+    {
+        Stack stack = new Stack();
+        
+        while (in.remaining() != 0) {
+            Ptg ptg = Ptg.createPtg(in);
+            stack.push(ptg);
+        }
+        return stack;
+    }
+
+    public boolean isFormulaInShared(FormulaRecord formula) {
+      final int formulaRow = formula.getRow();
+      final int formulaColumn = formula.getColumn();
+      return ((getFirstRow() <= formulaRow) && (getLastRow() >= formulaRow) &&
+          (getFirstColumn() <= formulaColumn) && (getLastColumn() >= formulaColumn));
+    }
+
+    /** Creates a non shared formula from the shared formula counter part*/
+    public void convertSharedFormulaRecord(FormulaRecord formula) {
+      //Sanity checks
+      final int formulaRow = formula.getRow();
+      final int formulaColumn = formula.getColumn();
+      if (isFormulaInShared(formula)) {
+        formula.setExpressionLength(getExpressionLength());
+        Stack newPtgStack = new Stack();
+
+        for (int k = 0; k < field_7_parsed_expr.size(); k++) {
+          Ptg ptg = (Ptg) field_7_parsed_expr.get(k);
+          if (ptg instanceof RefNPtg) {
+            RefNPtg refNPtg = (RefNPtg)ptg;
+            ptg = new ReferencePtg( (short)(formulaRow + refNPtg.getRow()),
+                                    (byte)(formulaColumn + refNPtg.getColumn()),
+                                   refNPtg.isRowRelative(),
+                                   refNPtg.isColRelative());
+          } else if (ptg instanceof RefNVPtg) {
+            RefNVPtg refNVPtg = (RefNVPtg)ptg;
+            ptg = new RefVPtg( (short)(formulaRow + refNVPtg.getRow()),
+                               (byte)(formulaColumn + refNVPtg.getColumn()),
+                               refNVPtg.isRowRelative(),
+                               refNVPtg.isColRelative());
+          } else if (ptg instanceof RefNAPtg) {
+            RefNAPtg refNAPtg = (RefNAPtg)ptg;
+            ptg = new RefAPtg( (short)(formulaRow + refNAPtg.getRow()),
+                               (byte)(formulaColumn + refNAPtg.getColumn()),
+                               refNAPtg.isRowRelative(),
+                               refNAPtg.isColRelative());
+          } else if (ptg instanceof AreaNPtg) {
+            AreaNPtg areaNPtg = (AreaNPtg)ptg;
+            ptg = new AreaPtg((short)(formulaRow + areaNPtg.getFirstRow()),
+                              (short)(formulaRow + areaNPtg.getLastRow()),
+                              (short)(formulaColumn + areaNPtg.getFirstColumn()),
+                              (short)(formulaColumn + areaNPtg.getLastColumn()),
+                              areaNPtg.isFirstRowRelative(),
+                              areaNPtg.isLastRowRelative(),
+                              areaNPtg.isFirstColRelative(),
+                              areaNPtg.isLastColRelative());
+          } else if (ptg instanceof AreaNVPtg) {
+            AreaNVPtg areaNVPtg = (AreaNVPtg)ptg;
+            ptg = new AreaVPtg((short)(formulaRow + areaNVPtg.getFirstRow()),
+                              (short)(formulaRow + areaNVPtg.getLastRow()),
+                              (short)(formulaColumn + areaNVPtg.getFirstColumn()),
+                              (short)(formulaColumn + areaNVPtg.getLastColumn()),
+                              areaNVPtg.isFirstRowRelative(),
+                              areaNVPtg.isLastRowRelative(),
+                              areaNVPtg.isFirstColRelative(),
+                              areaNVPtg.isLastColRelative());
+          } else if (ptg instanceof AreaNAPtg) {
+            AreaNAPtg areaNAPtg = (AreaNAPtg)ptg;
+            ptg = new AreaAPtg((short)(formulaRow + areaNAPtg.getFirstRow()),
+                              (short)(formulaRow + areaNAPtg.getLastRow()),
+                              (short)(formulaColumn + areaNAPtg.getFirstColumn()),
+                              (short)(formulaColumn + areaNAPtg.getLastColumn()),
+                              areaNAPtg.isFirstRowRelative(),
+                              areaNAPtg.isLastRowRelative(),
+                              areaNAPtg.isFirstColRelative(),
+                              areaNAPtg.isLastColRelative());
+          }
+          newPtgStack.add(ptg);
+        }
+        formula.setParsedExpression(newPtgStack);
+      } else {
+        throw new RuntimeException("Shared Formula Conversion: Coding Error");
+      }
     }
 
 	/**
@@ -141,10 +275,7 @@ public class SharedFormulaRecord
 	 }
 
     public Object clone() {
-      SharedFormulaRecord rec = new SharedFormulaRecord();
-      rec.offset = offset;      
-      rec.size = size;
-      rec.thedata = thedata;
-      return rec;
+    	//Because this record is converted to individual Formula records, this method is not required.
+    	throw new UnsupportedOperationException("Cannot clone a SharedFormulaRecord");
     }
 }

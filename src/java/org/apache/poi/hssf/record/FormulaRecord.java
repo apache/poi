@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.Stack;
 
 import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.util.BitField;
+import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -53,6 +55,9 @@ public class FormulaRecord
     private short             field_3_xf;
     private double            field_4_value;
     private short             field_5_options;
+    private BitField          alwaysCalc = BitFieldFactory.getInstance(0x0001);
+    private BitField          calcOnLoad = BitFieldFactory.getInstance(0x0002);
+    private BitField          sharedFormula = BitFieldFactory.getInstance(0x0008);    
     private int               field_6_zero;
     private short             field_7_expression_len;
     private Stack             field_8_parsed_expr;
@@ -191,7 +196,11 @@ public class FormulaRecord
     {
         return field_5_options;
     }
-
+    
+    public boolean isSharedFormula() {
+        return sharedFormula.isSet(field_5_options);
+    }
+    
     /**
      * get the length (in number of tokens) of the expression
      * @return  expression length
@@ -261,6 +270,10 @@ public class FormulaRecord
     public List getParsedExpression()
     {
         return field_8_parsed_expr;
+    }
+    
+    public void setParsedExpression(Stack ptgs) {
+      field_8_parsed_expr = ptgs;
     }
 
     /**
@@ -474,6 +487,12 @@ public class FormulaRecord
                   .append("\n");
             buffer.append("    .options         = ").append(getOptions())
                 .append("\n");
+            buffer.append("      .alwaysCalc         = ").append(alwaysCalc.isSet(getOptions()))
+                .append("\n");
+            buffer.append("      .calcOnLoad         = ").append(calcOnLoad.isSet(getOptions()))
+                .append("\n");
+            buffer.append("      .sharedFormula         = ").append(sharedFormula.isSet(getOptions()))
+                .append("\n");
             buffer.append("    .zero            = ").append(field_6_zero)
                 .append("\n");
             buffer.append("    .expressionlength= ").append(getExpressionLength())
@@ -485,9 +504,9 @@ public class FormulaRecord
             
 
                 for (int k = 0; k < field_8_parsed_expr.size(); k++ ) {
-                   buffer.append("Formula ")
+                   buffer.append("     Ptg(")
                         .append(k)
-                        .append("=")
+                        .append(")=")
                         .append(field_8_parsed_expr.get(k).toString())
                         .append("\n")
                         .append(((Ptg)field_8_parsed_expr.get(k)).toDebugString())
