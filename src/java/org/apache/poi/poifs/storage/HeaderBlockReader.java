@@ -72,6 +72,9 @@ public class HeaderBlockReader
 
         if (byte_count != POIFSConstants.BIG_BLOCK_SIZE)
         {
+        	if (byte_count == -1)
+        		//Cant have -1 bytes read in the error message!
+        		byte_count = 0;
             String type = " byte" + ((byte_count == 1) ? ("")
                                                        : ("s"));
 
