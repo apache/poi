@@ -359,7 +359,7 @@ public abstract class AbstractFunctionPtg extends OperationPtg {
         dmap.put(new Integer(258),"GETTOOLBAR");
         dmap.put(new Integer(259),"GETTOOL");
         dmap.put(new Integer(260),"SPELLINGCHECK");
-        dmap.put(new Integer(261),"ERRORTYPE");
+        dmap.put(new Integer(261),"ERROR.TYPE");
         dmap.put(new Integer(262),"APPTITLE");
         dmap.put(new Integer(263),"WINDOWTITLE");
         dmap.put(new Integer(264),"SAVETOOLBAR");
@@ -716,7 +716,7 @@ public abstract class AbstractFunctionPtg extends OperationPtg {
         
         
         
-        
+        functionData[261][0]=new Byte(Ptg.CLASS_VALUE);functionData[261][1]=new byte[] {Ptg.CLASS_VALUE};functionData[261][2]=new Integer(1);
         
         
         

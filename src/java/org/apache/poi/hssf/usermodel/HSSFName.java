@@ -17,6 +17,7 @@
 package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.record.BoundSheetRecord;
 import org.apache.poi.hssf.record.NameRecord;
 import org.apache.poi.hssf.util.RangeAddress;
 
@@ -75,6 +76,16 @@ public class HSSFName {
     public void setNameName(String nameName){
         name.setNameText(nameName);
         name.setNameTextLength((byte)nameName.length());
+        
+        //Check to ensure no other names have the same case-insensitive name
+        for ( int i = book.getNumNames()-1; i >=0; i-- )
+        {
+        	NameRecord rec = book.getNameRecord(i);
+        	if (rec != name) {
+        		if (rec.getNameText().equalsIgnoreCase(getNameName()))
+        			throw new IllegalArgumentException("The workbook already contains this name (case-insensitive)");
+        	}
+        }
     }
 
     /** 

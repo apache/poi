@@ -1076,6 +1076,9 @@ public class HSSFWorkbook
     }
 
     /** gets the named range index by his name
+     * <i>Note:</i>Excel named ranges are case-insensitive and
+     * this method performs a case-insensitive search.
+     * 
      * @param name named range name
      * @return named range index
      */
@@ -1087,7 +1090,7 @@ public class HSSFWorkbook
         {
             String nameName = getNameName(k);
 
-            if (nameName.equals(name))
+            if (nameName.equalsIgnoreCase(name))
             {
                 retval = k;
                 break;

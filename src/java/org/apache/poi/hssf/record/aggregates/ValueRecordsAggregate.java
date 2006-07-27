@@ -125,7 +125,8 @@ public class ValueRecordsAggregate
         int k = 0;
 
         FormulaRecordAggregate lastFormulaAggregate = null;
-        SharedFormulaRecord lastSharedFormula = null;
+        
+        List sharedFormulas = new java.util.ArrayList();
 
         for (k = offset; k < records.size(); k++)
         {
@@ -134,17 +135,37 @@ public class ValueRecordsAggregate
             if (rec instanceof StringRecord == false && !rec.isInValueSection() && !(rec instanceof UnknownRecord))
             {
                 break;
-            }
-            if (rec instanceof FormulaRecord)
+            } else if (rec instanceof SharedFormulaRecord) {
+            	sharedFormulas.add(rec);
+            } else if (rec instanceof FormulaRecord)
             {
               FormulaRecord formula = (FormulaRecord)rec;
               if (formula.isSharedFormula()) {
+                Record nextRecord = (Record) records.get(k + 1);
+                if (nextRecord instanceof SharedFormulaRecord) {
+                	sharedFormulas.add(nextRecord);
+                	k++;
+                }
+                //traverse the list of shared formulas in reverse order, and try to find the correct one
+                //for us
+                boolean found = false;
+                for (int i=sharedFormulas.size()-1;i>=0;i--) {
+                	SharedFormulaRecord shrd = (SharedFormulaRecord)sharedFormulas.get(i);
+                	if (shrd.isFormulaInShared(formula)) {
+                		shrd.convertSharedFormulaRecord(formula);
+                		found = true;
+                	}
+                }
+                if (!found)
+                	throw new RecordFormatException("Could not find appropriate shared formula");
+/*                	
+                
                 if ((lastSharedFormula != null) && (lastSharedFormula.isFormulaInShared(formula))) {
                   //Convert this Formula Record from a shared formula to a real formula
                   lastSharedFormula.convertSharedFormulaRecord(formula);
-                } else {
-                  Record nextRecord = (Record) records.get(k + 1);
+                } else {                  
                   if (nextRecord instanceof SharedFormulaRecord) {
+                	  //Handle the SharedFormulaRecord and move on.
                     k++;
                     lastSharedFormula = (SharedFormulaRecord) nextRecord;
 
@@ -154,21 +175,16 @@ public class ValueRecordsAggregate
                   else
                     throw new RuntimeException(
                         "Shared formula bit set but next record is not a Shared Formula??");
-                }
+                }*/
               }
             	
-                lastFormulaAggregate = new FormulaRecordAggregate((FormulaRecord)rec, null);
-                insertCell( lastFormulaAggregate );
+              lastFormulaAggregate = new FormulaRecordAggregate((FormulaRecord)rec, null);
+              insertCell( lastFormulaAggregate );
             }
             else if (rec instanceof StringRecord)
             {
                 lastFormulaAggregate.setStringRecord((StringRecord)rec);
             }
-            //else if (rec instanceof SharedFormulaRecord)
-            //{
-            //	//these follow the first formula in a group
-            //	lastFormulaAggregate.setSharedFormulaRecord((SharedFormulaRecord)rec);
-            //}
             else if (rec.isValue())
             {
                 insertCell(( CellValueRecordInterface ) rec);

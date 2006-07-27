@@ -28,7 +28,7 @@ public class TestValueRecordsAggregate extends TestCase
     ValueRecordsAggregate valueRecord = new ValueRecordsAggregate();
 
     /**
-     * Make sure the shared formula makes it to the FormulaRecordAggregate when being parsed
+     * Make sure the shared formula DOESNT makes it to the FormulaRecordAggregate when being parsed
      * as part of the value records
      */
     public void testSharedFormula()
@@ -42,8 +42,8 @@ public class TestValueRecordsAggregate extends TestCase
         Record record = (Record) iterator.next();
         assertNotNull( "Row contains a value", record );
         assertTrue( "First record is a FormulaRecordsAggregate", ( record instanceof FormulaRecordAggregate ) );
-        FormulaRecordAggregate aggregate = (FormulaRecordAggregate) record;
-        assertNotNull( "SharedFormulaRecord is null", aggregate.getSharedFormulaRecord() );
+        //Ensure that the SharedFormulaRecord has been converted
+        assertFalse( "SharedFormulaRecord is null", iterator.hasNext() );
 
     }
 

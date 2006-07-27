@@ -74,7 +74,13 @@ import org.apache.poi.hssf.record.TestUnitsRecord;
 import org.apache.poi.hssf.record.TestValueRangeRecord;
 import org.apache.poi.hssf.record.aggregates.TestRowRecordsAggregate;
 import org.apache.poi.hssf.record.aggregates.TestValueRecordsAggregate;
+import org.apache.poi.hssf.record.formula.TestAreaErrPtg;
+import org.apache.poi.hssf.record.formula.TestErrPtg;
 import org.apache.poi.hssf.record.formula.TestFuncPtg;
+import org.apache.poi.hssf.record.formula.TestIntersectionPtg;
+import org.apache.poi.hssf.record.formula.TestPercentPtg;
+import org.apache.poi.hssf.record.formula.TestRangePtg;
+import org.apache.poi.hssf.record.formula.TestUnionPtg;
 import org.apache.poi.hssf.usermodel.TestBugs;
 import org.apache.poi.hssf.usermodel.TestCellStyle;
 import org.apache.poi.hssf.usermodel.TestCloneSheet;
@@ -207,7 +213,13 @@ public class HSSFTests
         suite.addTest(new TestSuite(TestSheetReferences.class));
         
         
+        suite.addTest(new TestSuite(TestAreaErrPtg.class));
+        suite.addTest(new TestSuite(TestErrPtg.class));
         suite.addTest(new TestSuite(TestFuncPtg.class));
+        suite.addTest(new TestSuite(TestIntersectionPtg.class));
+        suite.addTest(new TestSuite(TestPercentPtg.class));
+        suite.addTest(new TestSuite(TestRangePtg.class));
+        suite.addTest(new TestSuite(TestUnionPtg.class));
 		  suite.addTest(new TestSuite(TestValueRecordsAggregate.class));
 		  suite.addTest(new TestSuite(TestNameRecord.class));
                   suite.addTest(new TestSuite(TestEventRecordFactory.class));
