@@ -17,7 +17,7 @@
 
 
 /*
- * MemErrPtg.java
+ * MemAreaPtg.java
  *
  * Created on November 21, 2001, 8:46 AM
  */
@@ -28,43 +28,71 @@ import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.RecordInputStream;
 
 /**
- *
- * @author  andy
- * @author Jason Height (jheight at chariot dot net dot au)
  * @author Daniel Noll (daniel at nuix dot com dot au)
  */
-
-public class MemErrPtg
-    extends MemAreaPtg
+public class MemAreaPtg
+    extends Ptg
 {
-    public final static short sid  = 0x27;
+    public final static short sid  = 0x26;
+    private final static int  SIZE = 7;
+    private int               field_1_reserved;
+    private short             field_2_subex_len;
 
-    /** Creates new MemErrPtg */
+    /** Creates new MemAreaPtg */
 
-    public MemErrPtg()
+    public MemAreaPtg()
     {
     }
 
-    public MemErrPtg(RecordInputStream in)
+    public MemAreaPtg(RecordInputStream in)
     {
-        super(in);
+        field_1_reserved  = in.readInt();
+        field_2_subex_len = in.readShort();
+    }
+
+    public void setReserved(int res)
+    {
+        field_1_reserved = res;
+    }
+
+    public int getReserved()
+    {
+        return field_1_reserved;
+    }
+
+    public void setSubexpressionLength(short subexlen)
+    {
+        field_2_subex_len = subexlen;
+    }
+
+    public short getSubexpressionLength()
+    {
+        return field_2_subex_len;
     }
 
     public void writeBytes(byte [] array, int offset)
     {
-        super.writeBytes(array, offset);
         array[offset] = (byte) (sid + ptgClass);
+        LittleEndian.putInt(array, offset + 1, field_1_reserved);
+        LittleEndian.putShort(array, offset + 5, field_2_subex_len);
+    }
+
+    public int getSize()
+    {
+        return SIZE;
     }
 
     public String toFormulaString(Workbook book)
     {
-        return "ERR#";
+        return ""; // TODO: Not sure how to format this. -- DN
     }
 
+    public byte getDefaultOperandClass() {return Ptg.CLASS_VALUE;}
+
     public Object clone() {
-      MemErrPtg ptg = new MemErrPtg();
-      ptg.setReserved(getReserved());
-      ptg.setSubexpressionLength(getSubexpressionLength());
+      MemAreaPtg ptg = new MemAreaPtg();
+      ptg.field_1_reserved = field_1_reserved;
+      ptg.field_2_subex_len = field_2_subex_len;
       return ptg;
     }
 }

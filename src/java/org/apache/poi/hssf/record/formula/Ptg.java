@@ -117,227 +117,238 @@ public abstract class Ptg
         byte id     = in.readByte();
         Ptg  retval = null;
 
-        final byte valueFunc = FuncPtg.sid + 0x20;
-        final byte arrayFunc = FuncPtg.sid + 0x40;
-        final byte valueFuncVar = FuncVarPtg.sid +0x20;
-        final byte arrayFuncVar = FuncVarPtg.sid+0x40;
-
         switch (id)
         {
-            case AddPtg.sid :
-                retval = new AddPtg(in);
-                break;
-
-            case SubtractPtg.sid :
-                retval = new SubtractPtg(in);
-                break;
-
-            case BoolPtg.sid:
-               retval = new BoolPtg(in);
-               break;
-
-            case IntPtg.sid :
-                retval = new IntPtg(in);
-                break;
-
-            case DividePtg.sid :
-                retval = new DividePtg(in);
-                break;
-
-            case MultiplyPtg.sid :
-                retval = new MultiplyPtg(in);
-                break;
-
-            case PowerPtg.sid :
-                retval = new PowerPtg(in);
+             case ExpPtg.sid :                  // 0x01
+                 retval = new ExpPtg(in);
+                 break;
+ 
+             case AddPtg.sid :                  // 0x03
+                 retval = new AddPtg(in);
+                 break;
+       	  
+             case SubtractPtg.sid :             // 0x04
+                 retval = new SubtractPtg(in);
+                 break;
+      	  
+             case MultiplyPtg.sid :             // 0x05
+                 retval = new MultiplyPtg(in);
+                 break;
+        	  
+             case DividePtg.sid :               // 0x06
+        	                  retval = new DividePtg(in);
+        	                  break;
+        	  
+             case PowerPtg.sid :                // 0x07
+                 retval = new PowerPtg(in);
+                 break;
+       	  
+             case ConcatPtg.sid :               // 0x08
+                 retval = new ConcatPtg(in);
+        	                  break;
+ 
+             case LessThanPtg.sid:              // 0x09
+                 retval = new LessThanPtg(in);
+        	                  break;
+ 
+              case LessEqualPtg.sid :            // 0x0a
+                 retval = new LessEqualPtg(in);
+        	                  break;
+ 
+             case EqualPtg.sid :                // 0x0b
+                 retval = new EqualPtg(in);
+        	                  break;
+        	  
+             case GreaterEqualPtg.sid :         // 0x0c
+                 retval = new GreaterEqualPtg(in);
+        	                  break;
+        	  
+             case GreaterThanPtg.sid :          // 0x0d
+                 retval = new GreaterThanPtg(in);
+        	                  break;
+ 
+             case NotEqualPtg.sid :             // 0x0e
+                 retval = new NotEqualPtg(in);
+        	                  break;
+ 
+             case IntersectionPtg.sid :         // 0x0f
+                 retval = new IntersectionPtg(in);
+        	                  break;
+              case UnionPtg.sid :                // 0x10
+                 retval = new UnionPtg(in);
+        	                  break;
+        	  
+             case RangePtg.sid :                // 0x11
+                 retval = new RangePtg(in);
+        	                  break;
+        	  
+             case UnaryPlusPtg.sid :            // 0x12
+                 retval = new UnaryPlusPtg(in);
+        	                  break;
+        	  
+             case UnaryMinusPtg.sid :           // 0x13
+                 retval = new UnaryMinusPtg(in);
+        	                  break;
+        	  
+             case PercentPtg.sid :              // 0x14
+                 retval = new PercentPtg(in);
+        	                  break;
+        	  
+             case ParenthesisPtg.sid :          // 0x15
+                 retval = new ParenthesisPtg(in);
+        	                  break;
+ 
+             case MissingArgPtg.sid :           // 0x16
+                 retval = new MissingArgPtg(in);
+        	                  break;
+ 
+             case StringPtg.sid :               // 0x17
+                retval = new StringPtg(in);
                 break;
  
-            case EqualPtg.sid:
-                retval = new EqualPtg(in);
+             case AttrPtg.sid :                 // 0x19
+                 retval = new AttrPtg(in);
+        	                  break;
+        	  
+             case ErrPtg.sid :                  // 0x1c
+                 retval = new ErrPtg(in);
+        	                  break;
+ 
+             case BoolPtg.sid :                 // 0x1d
+                retval = new BoolPtg(in);
                 break;
-                
-            case GreaterThanPtg.sid:
-                retval = new GreaterThanPtg(in);
-                break;
-                
-            case LessThanPtg.sid:
-                retval = new LessThanPtg(in);
-                break;
-
-			   case LessEqualPtg.sid:
-			       retval = new LessEqualPtg(in);
-			       break;
-			                
-			   case GreaterEqualPtg.sid:
-			       retval = new GreaterEqualPtg(in);
-			       break;
-			       
-			   case NotEqualPtg.sid:
-          		 retval = new NotEqualPtg(in);
-         		 break;
-			       
-            case ConcatPtg.sid :
-                retval = new ConcatPtg(in);
-                break;
-                
-            case ArrayPtg.sid:
-            	retval = new ArrayPtg(in);
-            	break;
-            case ArrayPtgV.sid:
-            	retval = new ArrayPtgV(in);
-            	break;            	
-            case ArrayPtgA.sid:            	
-            	retval = new ArrayPtgA(in);
-            	break;
-
-            case AreaPtg.sid :
-                retval = new AreaPtg(in);
-                break;
-            case AreaAPtg.sid:
-                retval = new AreaAPtg(in);
-                break;
-            case AreaVPtg.sid:
-                retval = new AreaVPtg(in);
-                break;
-            case AreaNAPtg.sid :
-                retval = new AreaNAPtg(in);
+ 
+             case IntPtg.sid :                  // 0x1e
+                 retval = new IntPtg(in);
+        	                  break;
+ 
+             case NumberPtg.sid :               // 0x1f
+        	                 retval = new NumberPtg(in);
+        	                 break;
+        	  
+             case ArrayPtg.sid :                // 0x20
+             	retval = new ArrayPtg(in);
+             	break;
+             case ArrayPtgV.sid :               // 0x40
+             	retval = new ArrayPtgV(in);
+             	break;
+             case ArrayPtgA.sid :               // 0x60
+             	retval = new ArrayPtgA(in);
+             	break;
+        	  
+             case FuncPtg.sid :                 // 0x21
+             case FuncPtg.sid + 0x20 :          // 0x41
+             case FuncPtg.sid + 0x40 :          // 0x61
+                 retval = new FuncPtg(in);
                  break;
-            case AreaNPtg.sid :
-                retval = new AreaNPtg(in);
+        	  
+             case FuncVarPtg.sid :              // 0x22
+             case FuncVarPtg.sid + 0x20 :       // 0x42
+             case FuncVarPtg.sid + 0x40 :       // 0x62
+                 retval = new FuncVarPtg(in);
+        	                  break;
+        	  
+             case ReferencePtg.sid :            // 0x24  
+                 retval = new ReferencePtg(in);
+        	                  break;
+             case RefAPtg.sid :                 // 0x64
+                 retval = new RefAPtg(in);
+                 break;   
+             case RefVPtg.sid :                 // 0x44
+                 retval = new RefVPtg(in);
+                 break;   
+             case RefNAPtg.sid :                // 0x6C
+                 retval = new RefNAPtg(in);
+                 break;
+             case RefNPtg.sid :                 // 0x2C
+                 retval = new RefNPtg(in);
+                 break;
+             case RefNVPtg.sid :                // 0x4C
+                 retval = new RefNVPtg(in);
+                 break;           	                  
+        	  
+             case AreaPtg.sid :                 // 0x25          
+                 retval = new AreaPtg(in);
+        	                  break;
+             case AreaVPtg.sid:                 // 0x45
+                 retval = new AreaVPtg(in);
+                 break;
+             case AreaAPtg.sid:                 // 0x65
+                 retval = new AreaAPtg(in);
+                 break;
+             case AreaNAPtg.sid :               // 0x6D
+                 retval = new AreaNAPtg(in);
+                  break;
+             case AreaNPtg.sid :                // 0x2D
+                 retval = new AreaNPtg(in);
+                 break;
+             case AreaNVPtg.sid :               // 0x4D
+                retval = new AreaNVPtg(in);
                 break;
-            case AreaNVPtg.sid :
-               retval = new AreaNVPtg(in);
-               break;
-                
-            case MemErrPtg.sid :        // 0x27       These 3 values 
-            case MemErrPtg.sid+0x20 :   // 0x47       documented in 
-            case MemErrPtg.sid+0x40 :   // 0x67       openOffice.org doc.
-                retval = new MemErrPtg(in);
-                break;
-
-            case AttrPtg.sid :
-                retval = new AttrPtg(in);
-                break;
-                
-            case ReferencePtg.sid :
-                retval = new ReferencePtg(in);
-                break;   
-            case RefAPtg.sid :
-                retval = new RefAPtg(in);
-                break;   
-            case RefVPtg.sid :
-                retval = new RefVPtg(in);
-                break;   
-            case RefNAPtg.sid :
-                retval = new RefNAPtg(in);
-                break;
-            case RefNPtg.sid :
-                retval = new RefNPtg(in);
-                break;
-            case RefNVPtg.sid :
-                retval = new RefNVPtg(in);
-                break;                   
-            case RefErrorPtg.sid:
-                retval = new RefErrorPtg(in);
-                break;   
-
-            case ParenthesisPtg.sid :
-                retval = new ParenthesisPtg(in);
-                break;
-
-            case MemFuncPtg.sid :
-                retval = new MemFuncPtg(in);
-                break;
-
-            case UnionPtg.sid :
-                retval = new UnionPtg(in);
-                break;
-
-            case FuncPtg.sid :
-                retval = new FuncPtg(in);
-                break;
-                
-            case valueFunc :
-                retval = new FuncPtg(in);
-                break;
-            case arrayFunc :
-                retval = new FuncPtg(in);
-                break;
-
-            case FuncVarPtg.sid :
-                retval = new FuncVarPtg(in);
-                break;
-                
-            case valueFuncVar :
-                retval = new FuncVarPtg(in);
-                break;
-            case arrayFuncVar :
-                retval = new FuncVarPtg(in);
-                break;
-                
-            case NumberPtg.sid :
-               retval = new NumberPtg(in);
-               break;
-
-            case StringPtg.sid :
-               retval = new StringPtg(in);
-               break;
-
-            case NamePtg.sid :            // 0x23     These 3 values
-            case NamePtg.sid+0x20 :       // 0x43     documented in
-            case NamePtg.sid+0x40 :       // 0x63     openOffice.org doc.
-
-                retval = new NamePtg(in);
-                break;
-                
-            case NameXPtg.sid :            // 0x39
-            case NameXPtg.sid+0x20 :       // 0x45
-            case NameXPtg.sid+0x40 :       // 0x79
-
-                retval = new NameXPtg(in);
-                break;
-
-            case ExpPtg.sid :
-                retval = new ExpPtg(in);
-                break;
-
-            case Area3DPtg.sid :          // 0x3b     These 3 values 
-             case Area3DPtg.sid+0x20 :     // 0x5b     documented in 
-             case Area3DPtg.sid+0x40 :     // 0x7b     openOffice.org doc.
-
-                retval = new Area3DPtg(in);
-                break;
-
-            case Ref3DPtg.sid:            // 0x3a     These 3 values 
-             case Ref3DPtg.sid+0x20:       // 0x5a     documented in 
-             case Ref3DPtg.sid+0x40:       // 0x7a     openOffice.org doc.
-
-                retval = new Ref3DPtg(in);
-                break;
-                
-            case DeletedArea3DPtg.sid :      // 0x3d     
-            case DeletedArea3DPtg.sid+0x20 : // 0x5d     
-            case DeletedArea3DPtg.sid+0x40 : // 0x7d     
-
-                retval = new DeletedArea3DPtg(in);
-                break;
-
-            case DeletedRef3DPtg.sid:      // 0x3c      
-            case DeletedRef3DPtg.sid+0x20: // 0x5c     
-            case DeletedRef3DPtg.sid+0x40: // 0x7c     
-
-                retval = new DeletedRef3DPtg(in);
-                break;
-                
-            case MissingArgPtg.sid:
-                retval = new MissingArgPtg(in);
-                break;
-            case UnaryPlusPtg.sid:
-                retval=new UnaryPlusPtg(in);
-                break;
-            case UnaryMinusPtg.sid:
-                retval=new UnaryMinusPtg(in);
-                break;
+        	  
+             case MemAreaPtg.sid :              // 0x26
+             case MemAreaPtg.sid + 0x40 :       // 0x46
+             case MemAreaPtg.sid + 0x20 :       // 0x66
+                 retval = new MemAreaPtg(in);
+                 break;
+        	  
+             case MemErrPtg.sid :               // 0x27
+             case MemErrPtg.sid + 0x20 :        // 0x47
+             case MemErrPtg.sid + 0x40 :        // 0x67
+                 retval = new MemErrPtg(in);
+        	                  break;
+        	  
+             case MemFuncPtg.sid :              // 0x29
+                 retval = new MemFuncPtg(in);
+                 break;
+        	  
+             case RefErrorPtg.sid :             // 0x2a
+             case RefErrorPtg.sid + 0x20 :      // 0x4a
+             case RefErrorPtg.sid + 0x40 :      // 0x6a
+                 retval = new RefErrorPtg(in);
+        	                  break;
+        	  
+             case AreaErrPtg.sid :              // 0x2b
+             case AreaErrPtg.sid + 0x20 :       // 0x4b
+             case AreaErrPtg.sid + 0x40 :       // 0x6b
+                 retval = new AreaErrPtg(in);
+        	                  break;
+        	  
+             case NamePtg.sid :                 // 0x23
+             case NamePtg.sid + 0x20 :          // 0x43
+             case NamePtg.sid + 0x40 :          // 0x63
+                 retval = new NamePtg(in);
+                 break;
+        	  
+             case NameXPtg.sid :                // 0x39
+             case NameXPtg.sid + 0x20 :         // 0x45
+             case NameXPtg.sid + 0x40 :         // 0x79
+                 retval = new NameXPtg(in);
+        	                  break;
+ 
+             case Area3DPtg.sid :               // 0x3b
+             case Area3DPtg.sid + 0x20 :        // 0x5b
+             case Area3DPtg.sid + 0x40 :        // 0x7b
+                 retval = new Area3DPtg(in);
+        	                  break;
+ 
+             case Ref3DPtg.sid :                // 0x3a
+             case Ref3DPtg.sid + 0x20:          // 0x5a
+             case Ref3DPtg.sid + 0x40:          // 0x7a
+                 retval = new Ref3DPtg(in);
+        	                  break;
+ 
+             case DeletedRef3DPtg.sid:          // 0x3c
+             case DeletedRef3DPtg.sid + 0x20:   // 0x5c
+             case DeletedRef3DPtg.sid + 0x40:   // 0x7c
+                 retval = new DeletedRef3DPtg(in);
+        	                  break;
+        	  
+             case DeletedArea3DPtg.sid :        // 0x3d
+             case DeletedArea3DPtg.sid + 0x20 : // 0x5d
+             case DeletedArea3DPtg.sid + 0x40 : // 0x7d
+                 retval = new DeletedArea3DPtg(in);
+                 break;
 
             default :
 
@@ -350,8 +361,10 @@ public abstract class Ptg
             retval.setClass(CLASS_ARRAY);
         } else if (id > 0x40) {
             retval.setClass(CLASS_VALUE);
-        } else 
+        } else {
             retval.setClass(CLASS_REF);
+        }
+
        return retval;
         
     }

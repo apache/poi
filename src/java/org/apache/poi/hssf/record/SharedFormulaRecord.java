@@ -199,59 +199,60 @@ public class SharedFormulaRecord
         formula.setExpressionLength(getExpressionLength());
         Stack newPtgStack = new Stack();
 
-        for (int k = 0; k < field_7_parsed_expr.size(); k++) {
-          Ptg ptg = (Ptg) field_7_parsed_expr.get(k);
-          if (ptg instanceof RefNPtg) {
-            RefNPtg refNPtg = (RefNPtg)ptg;
-            ptg = new ReferencePtg( (short)(formulaRow + refNPtg.getRow()),
-                                    (byte)(formulaColumn + refNPtg.getColumn()),
-                                   refNPtg.isRowRelative(),
-                                   refNPtg.isColRelative());
-          } else if (ptg instanceof RefNVPtg) {
-            RefNVPtg refNVPtg = (RefNVPtg)ptg;
-            ptg = new RefVPtg( (short)(formulaRow + refNVPtg.getRow()),
-                               (byte)(formulaColumn + refNVPtg.getColumn()),
-                               refNVPtg.isRowRelative(),
-                               refNVPtg.isColRelative());
-          } else if (ptg instanceof RefNAPtg) {
-            RefNAPtg refNAPtg = (RefNAPtg)ptg;
-            ptg = new RefAPtg( (short)(formulaRow + refNAPtg.getRow()),
-                               (byte)(formulaColumn + refNAPtg.getColumn()),
-                               refNAPtg.isRowRelative(),
-                               refNAPtg.isColRelative());
-          } else if (ptg instanceof AreaNPtg) {
-            AreaNPtg areaNPtg = (AreaNPtg)ptg;
-            ptg = new AreaPtg((short)(formulaRow + areaNPtg.getFirstRow()),
-                              (short)(formulaRow + areaNPtg.getLastRow()),
-                              (short)(formulaColumn + areaNPtg.getFirstColumn()),
-                              (short)(formulaColumn + areaNPtg.getLastColumn()),
-                              areaNPtg.isFirstRowRelative(),
-                              areaNPtg.isLastRowRelative(),
-                              areaNPtg.isFirstColRelative(),
-                              areaNPtg.isLastColRelative());
-          } else if (ptg instanceof AreaNVPtg) {
-            AreaNVPtg areaNVPtg = (AreaNVPtg)ptg;
-            ptg = new AreaVPtg((short)(formulaRow + areaNVPtg.getFirstRow()),
-                              (short)(formulaRow + areaNVPtg.getLastRow()),
-                              (short)(formulaColumn + areaNVPtg.getFirstColumn()),
-                              (short)(formulaColumn + areaNVPtg.getLastColumn()),
-                              areaNVPtg.isFirstRowRelative(),
-                              areaNVPtg.isLastRowRelative(),
-                              areaNVPtg.isFirstColRelative(),
-                              areaNVPtg.isLastColRelative());
-          } else if (ptg instanceof AreaNAPtg) {
-            AreaNAPtg areaNAPtg = (AreaNAPtg)ptg;
-            ptg = new AreaAPtg((short)(formulaRow + areaNAPtg.getFirstRow()),
-                              (short)(formulaRow + areaNAPtg.getLastRow()),
-                              (short)(formulaColumn + areaNAPtg.getFirstColumn()),
-                              (short)(formulaColumn + areaNAPtg.getLastColumn()),
-                              areaNAPtg.isFirstRowRelative(),
-                              areaNAPtg.isLastRowRelative(),
-                              areaNAPtg.isFirstColRelative(),
-                              areaNAPtg.isLastColRelative());
+        if (field_7_parsed_expr != null)
+          for (int k = 0; k < field_7_parsed_expr.size(); k++) {
+            Ptg ptg = (Ptg) field_7_parsed_expr.get(k);
+            if (ptg instanceof RefNPtg) {
+              RefNPtg refNPtg = (RefNPtg)ptg;
+              ptg = new ReferencePtg( (short)(formulaRow + refNPtg.getRow()),
+                                      (byte)(formulaColumn + refNPtg.getColumn()),
+                                     refNPtg.isRowRelative(),
+                                     refNPtg.isColRelative());
+            } else if (ptg instanceof RefNVPtg) {
+              RefNVPtg refNVPtg = (RefNVPtg)ptg;
+              ptg = new RefVPtg( (short)(formulaRow + refNVPtg.getRow()),
+                                 (byte)(formulaColumn + refNVPtg.getColumn()),
+                                 refNVPtg.isRowRelative(),
+                                 refNVPtg.isColRelative());
+            } else if (ptg instanceof RefNAPtg) {
+              RefNAPtg refNAPtg = (RefNAPtg)ptg;
+              ptg = new RefAPtg( (short)(formulaRow + refNAPtg.getRow()),
+                                 (byte)(formulaColumn + refNAPtg.getColumn()),
+                                 refNAPtg.isRowRelative(),
+                                 refNAPtg.isColRelative());
+            } else if (ptg instanceof AreaNPtg) {
+              AreaNPtg areaNPtg = (AreaNPtg)ptg;
+              ptg = new AreaPtg((short)(formulaRow + areaNPtg.getFirstRow()),
+                                (short)(formulaRow + areaNPtg.getLastRow()),
+                                (short)(formulaColumn + areaNPtg.getFirstColumn()),
+                                (short)(formulaColumn + areaNPtg.getLastColumn()),
+                                areaNPtg.isFirstRowRelative(),
+                                areaNPtg.isLastRowRelative(),
+                                areaNPtg.isFirstColRelative(),
+                                areaNPtg.isLastColRelative());
+            } else if (ptg instanceof AreaNVPtg) {
+              AreaNVPtg areaNVPtg = (AreaNVPtg)ptg;
+              ptg = new AreaVPtg((short)(formulaRow + areaNVPtg.getFirstRow()),
+                                (short)(formulaRow + areaNVPtg.getLastRow()),
+                                (short)(formulaColumn + areaNVPtg.getFirstColumn()),
+                                (short)(formulaColumn + areaNVPtg.getLastColumn()),
+                                areaNVPtg.isFirstRowRelative(),
+                                areaNVPtg.isLastRowRelative(),
+                                areaNVPtg.isFirstColRelative(),
+                                areaNVPtg.isLastColRelative());
+            } else if (ptg instanceof AreaNAPtg) {
+              AreaNAPtg areaNAPtg = (AreaNAPtg)ptg;
+              ptg = new AreaAPtg((short)(formulaRow + areaNAPtg.getFirstRow()),
+                                (short)(formulaRow + areaNAPtg.getLastRow()),
+                                (short)(formulaColumn + areaNAPtg.getFirstColumn()),
+                                (short)(formulaColumn + areaNAPtg.getLastColumn()),
+                                areaNAPtg.isFirstRowRelative(),
+                                areaNAPtg.isLastRowRelative(),
+                                areaNAPtg.isFirstColRelative(),
+                                areaNAPtg.isLastColRelative());
+            } 
+            newPtgStack.add(ptg);
           }
-          newPtgStack.add(ptg);
-        }
         formula.setParsedExpression(newPtgStack);
       } else {
         throw new RuntimeException("Shared Formula Conversion: Coding Error");

@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Copyright 2003-2004   Apache Software Foundation
 
@@ -15,56 +14,70 @@
    limitations under the License.
 ==================================================================== */
 
-
-/*
- * MemErrPtg.java
- *
- * Created on November 21, 2001, 8:46 AM
- */
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.util.LittleEndian;
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.RecordInputStream;
 
 /**
- *
- * @author  andy
- * @author Jason Height (jheight at chariot dot net dot au)
  * @author Daniel Noll (daniel at nuix dot com dot au)
  */
-
-public class MemErrPtg
-    extends MemAreaPtg
+public class IntersectionPtg extends OperationPtg
 {
-    public final static short sid  = 0x27;
+    public final static byte sid  = 0x0f;
 
-    /** Creates new MemErrPtg */
 
-    public MemErrPtg()
+    public IntersectionPtg()
     {
     }
 
-    public MemErrPtg(RecordInputStream in)
+    public IntersectionPtg(RecordInputStream in)
     {
-        super(in);
+        // doesn't need anything
     }
 
-    public void writeBytes(byte [] array, int offset)
+
+    public int getSize()
     {
-        super.writeBytes(array, offset);
-        array[offset] = (byte) (sid + ptgClass);
+        return 1;
     }
 
+    public void writeBytes( byte[] array, int offset )
+    {
+        array[ offset + 0 ] = sid;
+    }
+
+    public Object clone()
+    {
+        return new IntersectionPtg();
+    }
+
+    public int getType()
+    {
+        return TYPE_BINARY;
+    }
+
+    /** Implementation of method from Ptg */
     public String toFormulaString(Workbook book)
     {
-        return "ERR#";
+        return " ";
     }
 
-    public Object clone() {
-      MemErrPtg ptg = new MemErrPtg();
-      ptg.setReserved(getReserved());
-      ptg.setSubexpressionLength(getSubexpressionLength());
-      return ptg;
+
+    /** implementation of method from OperationsPtg*/
+    public String toFormulaString(String[] operands)
+    {
+         StringBuffer buffer = new StringBuffer();
+
+         buffer.append(operands[ 0 ]);
+         buffer.append(" ");
+         buffer.append(operands[ 1 ]);
+         return buffer.toString();
+     }
+
+    public int getNumberOfOperands()
+    {
+        return 2;
     }
+
 }
