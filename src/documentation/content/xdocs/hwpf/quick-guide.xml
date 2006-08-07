@@ -12,6 +12,12 @@
     </header>
 
     <body>
+		<p>HWPF is still in early development. It is in the <link
+     	href="http://svn.apache.org/viewcvs.cgi/jakarta/poi/trunk/src/scratchpad/">
+		scratchpad section of the SVN.</link> You will need to ensure you
+		either have a recent SVN checkout, or a recent SVN nightly build
+		(including the scratchpad jar!)</p>
+
         <section><title>Basic Text Extraction</title>
         <p>For basic text extraction, make use of 
 <code>org.apache.poi.hwpf.extractor.WordExtractor</code>. It accepts an input
@@ -39,6 +45,14 @@ can then get text and other properties.
 		<code>Paragraph</code> or <code>CharacterRun</code>).
 		It is also possible to delete a <code>Range</code>, but this
 		code is know to have bugs in it.
+		</p>
+		</section>
+
+		<section><title>Further Examples</title>
+		<p>For now, the best source of additional examples is in the unit 
+		tests. <link
+     	href="http://svn.apache.org/viewvc/jakarta/poi/trunk/src/scratchpad/testcases/org/apache/poi/hwpf/">
+		Browse the HWPF unit tests.</link>
 		</p>
 		</section>
 	</body>

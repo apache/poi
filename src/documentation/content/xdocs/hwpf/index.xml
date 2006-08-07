@@ -22,8 +22,11 @@
 
   <p>HWPF is still in early development. It is in the <link
      href="http://svn.apache.org/viewcvs.cgi/jakarta/poi/trunk/src/scratchpad/">
-     scratchpad section of the SVN.</link> 
-     Source in the
+     scratchpad section of the SVN.</link> You will need to ensure you
+     either have a recent SVN checkout, or a recent SVN nightly build
+     (including the scratchpad jar!)</p>
+
+  <p>Source in the
      <em>org.apache.poi.hwpf.model</em> tree is the old legacy code refactored
      into an object model. Source code in the
      <em>org.apache.poi.hwpf.extractor</em> tree is a wrapper of this to
