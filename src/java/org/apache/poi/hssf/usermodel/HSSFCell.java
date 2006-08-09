@@ -597,8 +597,9 @@ public class HSSFCell
         } else {
             setCellType(CELL_TYPE_FORMULA,false,row,col,styleIndex);
             FormulaRecordAggregate rec = (FormulaRecordAggregate) record;
-            rec.getFormulaRecord().setOptions(( short ) 2);
-            rec.getFormulaRecord().setValue(0);
+            FormulaRecord frec = rec.getFormulaRecord();
+            frec.setOptions(( short ) 2);
+            frec.setValue(0);
             
             //only set to default if there is no extended format index already set
             if (rec.getXFIndex() == (short)0) rec.setXFIndex(( short ) 0x0f);
@@ -606,10 +607,16 @@ public class HSSFCell
             fp.parse();
             Ptg[] ptg  = fp.getRPNPtg();
             int   size = 0;
-            //System.out.println("got Ptgs " + ptg.length);
+
+            // clear the Ptg Stack
+            for (int i=0, iSize=frec.getNumberOfExpressionTokens(); i<iSize; i++) {
+                frec.popExpressionToken();
+            }
+
+            // fill the Ptg Stack with Ptgs of new formula
             for (int k = 0; k < ptg.length; k++) {
                 size += ptg[ k ].getSize();
-                rec.getFormulaRecord().pushExpressionToken(ptg[ k ]);
+                frec.pushExpressionToken(ptg[ k ]);
             }
             rec.getFormulaRecord().setExpressionLength(( short ) size);
             //Workbook.currentBook = null;
