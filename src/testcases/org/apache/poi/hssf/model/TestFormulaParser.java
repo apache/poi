@@ -404,6 +404,104 @@ public class TestFormulaParser extends TestCase {
 		
 	}
 
+    // bug 38396 : Formula with exponential numbers not parsed correctly.
+    public void testExponentialParsing() {
+        FormulaParser fp = new FormulaParser("1.3E21/2", null);
+        fp.parse();
+        Ptg[] ptgs = fp.getRPNPtg();
+        assertTrue("three tokens expected, got " + ptgs.length, ptgs.length == 3);
+        assertTrue("NumberPtg", (ptgs[0] instanceof NumberPtg));
+        assertTrue("IntPtg", (ptgs[1] instanceof IntPtg));
+        assertTrue("DividePtg", (ptgs[2] instanceof DividePtg));
+
+        fp = new FormulaParser("1322E21/2", null);
+        fp.parse();
+        ptgs = fp.getRPNPtg();
+        assertTrue("three tokens expected, got " + ptgs.length, ptgs.length == 3);
+        assertTrue("NumberPtg", (ptgs[0] instanceof NumberPtg));
+        assertTrue("IntPtg", (ptgs[1] instanceof IntPtg));
+        assertTrue("DividePtg", (ptgs[2] instanceof DividePtg));
+
+        fp = new FormulaParser("1.3E1/2", null);
+        fp.parse();
+        ptgs = fp.getRPNPtg();
+        assertTrue("three tokens expected, got " + ptgs.length, ptgs.length == 3);
+        assertTrue("NumberPtg", (ptgs[0] instanceof NumberPtg));
+        assertTrue("IntPtg", (ptgs[1] instanceof IntPtg));
+        assertTrue("DividePtg", (ptgs[2] instanceof DividePtg));
+
+    }
+    public void testExponentialInSheet() throws Exception {
+        HSSFWorkbook wb = new HSSFWorkbook();
+
+        wb.createSheet("Cash_Flow");;
+
+        HSSFSheet sheet = wb.createSheet("Test");
+        HSSFRow row = sheet.createRow(0);
+        HSSFCell cell = row.createCell((short)0);
+        String formula = null;
+
+        cell.setCellFormula("1.3E21/3");
+        formula = cell.getCellFormula();
+        assertEquals("Exponential formula string", "1.3E21/3", formula);
+
+        cell.setCellFormula("-1.3E21/3");
+        formula = cell.getCellFormula();
+        assertEquals("Exponential formula string", "-1.3E21/3", formula);
+
+        cell.setCellFormula("1322E21/3");
+        formula = cell.getCellFormula();
+        assertEquals("Exponential formula string", "1.322E24/3", formula);
+
+        cell.setCellFormula("-1322E21/3");
+        formula = cell.getCellFormula();
+        assertEquals("Exponential formula string", "-1.322E24/3", formula);
+
+        cell.setCellFormula("1.3E1/3");
+        formula = cell.getCellFormula();
+        assertEquals("Exponential formula string", "13.0/3", formula);
+
+        cell.setCellFormula("-1.3E1/3");
+        formula = cell.getCellFormula();
+        assertEquals("Exponential formula string", "-13.0/3", formula);
+
+        cell.setCellFormula("1.3E-4/3");
+        formula = cell.getCellFormula();
+        assertEquals("Exponential formula string", "1.3E-4/3", formula);
+
+        cell.setCellFormula("-1.3E-4/3");
+        formula = cell.getCellFormula();
+        assertEquals("Exponential formula string", "-1.3E-4/3", formula);
+
+        cell.setCellFormula("13E-15/3");
+        formula = cell.getCellFormula();
+        assertEquals("Exponential formula string", "1.3E-14/3", formula);
+
+        cell.setCellFormula("-13E-15/3");
+        formula = cell.getCellFormula();
+        assertEquals("Exponential formula string", "-1.3E-14/3", formula);
+
+        cell.setCellFormula("1.3E3/3");
+        formula = cell.getCellFormula();
+        assertEquals("Exponential formula string", "1300.0/3", formula);
+
+        cell.setCellFormula("-1.3E3/3");
+        formula = cell.getCellFormula();
+        assertEquals("Exponential formula string", "-1300.0/3", formula);
+
+        cell.setCellFormula("1300000000000000/3");
+        formula = cell.getCellFormula();
+        assertEquals("Exponential formula string", "1.3E15/3", formula);
+
+        cell.setCellFormula("-1300000000000000/3");
+        formula = cell.getCellFormula();
+        assertEquals("Exponential formula string", "-1.3E15/3", formula);
+
+        cell.setCellFormula("-10E-1/3.1E2*4E3/3E4");
+        formula = cell.getCellFormula();
+        assertEquals("Exponential formula string", "-1.0/310.0*4000.0/30000.0", formula);
+    }
+
      public static void main(String [] args) {
         System.out.println("Testing org.apache.poi.hssf.record.formula.FormulaParser");
         junit.textui.TestRunner.run(TestFormulaParser.class);

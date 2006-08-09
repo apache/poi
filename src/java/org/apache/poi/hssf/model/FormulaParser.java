@@ -229,18 +229,36 @@ public class FormulaParser {
     }
     
     
+    /** Get the exponent for numbers of form 1.3E21 */
+    private String GetExponent() {
+        StringBuffer retval = new StringBuffer();
+        String sign = "";
+        GetChar();
+        if ('-' == look) {
+            sign = "-";
+            GetChar();
+        }
+        while (IsDigit(look)) {
+            retval.append(look);
+            GetChar();
+        }
+        if (retval.length() > 0) {
+            retval.insert(0, sign);
+        }
+        return retval.toString();
+    }
+
     /** Get a Number */
     private String GetNum() {
-        String Value ="";
+        StringBuffer value = new StringBuffer();
         if  (!IsDigit(look)) Expected("Integer");
         while (IsDigit(look)){
-            Value = Value + look;
+            value.append(look);
             GetChar();
         }
         SkipWhite();
-        return Value;
+        return value.toString();
     }
-
     /** Output a String with Tab */
     private void  Emit(String s){
         System.out.print(TAB+s);
@@ -482,8 +500,18 @@ public class FormulaParser {
                 Match('.');
                 String decimalPart = null;
                 if (IsDigit(look)) number = number +"."+ GetNum(); //this also takes care of someone entering "1234."
+                if ('E' == look) {
+                    String exponent = GetExponent();
+                    number += 'E' + exponent;
+                }
                 tokens.add(new NumberPtg(number));
-            } else {
+            }
+            else if ('E' == look) {
+                String exponent = GetExponent();
+                number += 'E'+exponent;
+                tokens.add(new NumberPtg(number));
+            }
+            else {
                 tokens.add(getNumberPtgFromString(number));  //TODO:what if the number is too big to be a short? ..add factory to return Int or Number!
             }
         }
