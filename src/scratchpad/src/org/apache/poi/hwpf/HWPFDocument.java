@@ -19,6 +19,7 @@ package org.apache.poi.hwpf;
 
 import java.io.InputStream;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.PushbackInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -153,9 +154,16 @@ public class HWPFDocument extends POIDocument
       name = "1Table";
     }
 
+    // Grab the table stream.
+    DocumentEntry tableProps;
+	try {
+		tableProps =
+			(DocumentEntry)filesystem.getRoot().getEntry(name);
+	} catch(FileNotFoundException fnfe) {
+		throw new IllegalStateException("Table Stream '" + name + "' wasn't found - Either the document is corrupt, or is Word95 (or earlier)");
+	}
+
     // read in the table stream.
-    DocumentEntry tableProps =
-      (DocumentEntry)filesystem.getRoot().getEntry(name);
     _tableStream = new byte[tableProps.getSize()];
     filesystem.createDocumentInputStream(name).read(_tableStream);
 
