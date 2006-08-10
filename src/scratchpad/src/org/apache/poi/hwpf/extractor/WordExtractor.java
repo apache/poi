@@ -29,7 +29,7 @@ public class WordExtractor {
 	 * @param is InputStream containing the word file
 	 */
 	public WordExtractor(InputStream is) throws IOException {
-		this(new POIFSFileSystem(is));
+		this( HWPFDocument.verifyAndBuildPOIFS(is) );
 	}
 
 	/**

@@ -19,6 +19,7 @@ package org.apache.poi.hwpf;
 
 import java.io.InputStream;
 import java.io.FileInputStream;
+import java.io.PushbackInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.ByteArrayInputStream;
@@ -90,6 +91,28 @@ public class HWPFDocument extends POIDocument
   }
 
   /**
+   * Takens an InputStream, verifies that it's not RTF, builds a
+   *  POIFSFileSystem from it, and returns that.
+   */
+  public static POIFSFileSystem verifyAndBuildPOIFS(InputStream istream) throws IOException {
+	// Open a PushbackInputStream, so we can peek at the first few bytes
+	PushbackInputStream pis = new PushbackInputStream(istream,6);
+	byte[] first6 = new byte[6];
+	pis.read(first6);
+
+	// Does it start with {\rtf ? If so, it's really RTF
+	if(first6[0] == '{' && first6[1] == '\\' && first6[2] == 'r'
+		&& first6[3] == 't' && first6[4] == 'f') {
+		throw new IllegalArgumentException("The document is really a RTF file");
+	}
+
+	// OK, so it's not RTF
+	// Open a POIFSFileSystem on the (pushed back) stream
+	pis.unread(first6);
+	return new POIFSFileSystem(pis);
+  }
+
+  /**
    * This constructor loads a Word document from an InputStream.
    *
    * @param istream The InputStream that contains the Word document.
@@ -99,7 +122,7 @@ public class HWPFDocument extends POIDocument
   public HWPFDocument(InputStream istream) throws IOException
   {
     //do Ole stuff
-    this( new POIFSFileSystem(istream) );
+    this( verifyAndBuildPOIFS(istream) );
   }
 
   /**
