@@ -31,7 +31,7 @@ import java.util.ListIterator;
 import java.util.Vector;
 
 /**
- * Utility to identify builin formats.  Now can handle user defined data formats also.  The following is a list of the formats as
+ * Utility to identify builtin formats.  Now can handle user defined data formats also.  The following is a list of the formats as
  * returned by this class.<P>
  *<P>
  *       0, "General"<br>
