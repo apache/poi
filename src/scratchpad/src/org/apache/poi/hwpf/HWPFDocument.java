@@ -86,6 +86,9 @@ public class HWPFDocument extends POIDocument
   /** Hold list tables */
   protected ListTables _lt;
 
+  /** Holds the save history for this document. */
+  protected SavedByTable _sbt;
+
   protected HWPFDocument()
   {
 
@@ -212,6 +215,13 @@ public class HWPFDocument extends POIDocument
       _lt = new ListTables(_tableStream, _fib.getFcPlcfLst(), _fib.getFcPlfLfo());
     }
 
+    int sbtOffset = _fib.getFcSttbSavedBy();
+    int sbtLength = _fib.getLcbSttbSavedBy();
+    if (sbtOffset != 0 && sbtLength != 0)
+    {
+      _sbt = new SavedByTable(_tableStream, sbtOffset, sbtLength);
+    }
+
     PlexOfCps plc = new PlexOfCps(_tableStream, _fib.getFcPlcffldMom(), _fib.getLcbPlcffldMom(), 2);
     for (int x = 0; x < plc.length(); x++)
     {
@@ -267,6 +277,17 @@ public class HWPFDocument extends POIDocument
   {
     return _lt;
   }
+
+  /**
+   * Gets a reference to the saved -by table, which holds the save history for the document.
+   *
+   * @return the saved-by table.
+   */
+  public SavedByTable getSavedByTable()
+  {
+    return _sbt;
+  }
+
   /**
    * Writes out the word file that is represented by an instance of this class.
    *
@@ -344,6 +365,16 @@ public class HWPFDocument extends POIDocument
       _fib.setFcPlfLfo(tableStream.getOffset());
       _lt.writeListOverridesTo(tableStream);
       _fib.setLcbPlfLfo(tableStream.getOffset() - tableOffset);
+      tableOffset = tableStream.getOffset();
+    }
+
+    // write out the saved-by table.
+    if (_sbt != null)
+    {
+      _fib.setFcSttbSavedBy(tableOffset);
+      _sbt.writeTo(tableStream);
+      _fib.setLcbSttbSavedBy(tableStream.getOffset() - tableOffset);
+
       tableOffset = tableStream.getOffset();
     }
 
