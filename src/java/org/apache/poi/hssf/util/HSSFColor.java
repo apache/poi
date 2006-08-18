@@ -183,7 +183,7 @@ public class HSSFColor
         hash.put(HSSFColor.YELLOW.hexString, new HSSFColor.YELLOW());
         hash.put(HSSFColor.BRIGHT_GREEN.hexString,
                  new HSSFColor.BRIGHT_GREEN());
-        hash.put(HSSFColor.BRIGHT_GREEN.hexString, new HSSFColor.TURQUOISE());
+        hash.put(HSSFColor.TURQUOISE.hexString, new HSSFColor.TURQUOISE());
         hash.put(HSSFColor.DARK_RED.hexString, new HSSFColor.DARK_RED());
         hash.put(HSSFColor.SKY_BLUE.hexString, new HSSFColor.SKY_BLUE());
         hash.put(HSSFColor.PLUM.hexString, new HSSFColor.PLUM());
