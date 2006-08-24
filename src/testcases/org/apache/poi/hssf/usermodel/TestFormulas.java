@@ -1118,6 +1118,13 @@ extends TestCase {
 		wb.write(new FileOutputStream(outF));
 		System.out.println("Open "+outF.getAbsolutePath()+" in Excel");
 	}
+	
+	/* MissingArgPtg */
+	public void testMissingArgPtg() throws Exception {
+		HSSFWorkbook wb = new HSSFWorkbook();
+		HSSFCell cell = wb.createSheet("Sheet1").createRow(4).createCell((short) 0);
+		cell.setCellFormula("IF(A1=\"A\",1,)");
+	}
     
     
     public static void main(String [] args) {
