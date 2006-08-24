@@ -110,7 +110,7 @@ public class FormulaParser {
     private void Abort(String s) {
         Error(s);
         //System.exit(1);  //throw exception??
-        throw new RuntimeException("Cannot Parse, sorry : "+s + " [Formula String was: '"+formulaString+"']");
+        throw new RuntimeException("Cannot Parse, sorry : " + s + " @ " + pointer + " [Formula String was: '" + formulaString + "']");
     }
     
     
@@ -493,6 +493,8 @@ public class FormulaParser {
             Ident();
         } else if(look == '"') {
            StringLiteral();
+        } else if (look == ')' || look == ',') {
+        	tokens.add(new MissingArgPtg());
         } else {
              
             String number = GetNum();
