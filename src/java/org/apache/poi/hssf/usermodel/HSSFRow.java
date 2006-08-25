@@ -28,6 +28,7 @@ import org.apache.poi.hssf.record.RowRecord;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  * High level representation of a row of a spreadsheet.
@@ -436,7 +437,8 @@ public class HSSFRow
     
     private class CellIterator implements Iterator
     {
-      int thisId,nextId=0;
+      int thisId=-1;
+      int nextId=-1;
       
       public CellIterator()
       {
@@ -448,6 +450,8 @@ public class HSSFRow
       }
 
       public Object next() {
+    	  if (!hasNext())
+    		  throw new NoSuchElementException("At last element");
         HSSFCell cell=cells[nextId];
         thisId=nextId;
         findNext();
@@ -455,6 +459,8 @@ public class HSSFRow
       }
 
       public void remove() {
+    	  if (thisId == -1)
+    		  throw new IllegalStateException("remove() called before next()");
         cells[thisId]=null;
       }
       
