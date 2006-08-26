@@ -23,18 +23,10 @@ import org.apache.poi.hssf.util.CellReference;
  */
 public class GenericFormulaTestCase extends TestCase {
 
-    protected static final String FILENAME = System.getProperty("HSSF.testdata.path")+ "/FormulaEvalTestData.xls";
+    protected final String FILENAME = System.getProperty("HSSF.testdata.path")+ "/FormulaEvalTestData.xls";
 
-    protected static HSSFWorkbook workbook = null;
-    
-    static {
-        try {
-            FileInputStream fin = new FileInputStream( FILENAME );
-            workbook = new HSSFWorkbook( fin );
-            fin.close();
-            }
-            catch (Exception e) {e.printStackTrace();}
-    }
+    protected HSSFWorkbook workbook = null;
+
     protected CellReference beginCell;
     protected int getBeginRow() {
         return beginCell.getRow();
@@ -98,11 +90,14 @@ public class GenericFormulaTestCase extends TestCase {
     }
 
     public GenericFormulaTestCase(String beginCell) {
-        super("genericTest");
+        super("genericTest");      
         this.beginCell = new CellReference(beginCell);
     }
     
-    public void setUp() {
+    public void setUp() throws Exception {
+        FileInputStream fin = new FileInputStream( FILENAME );
+        workbook = new HSSFWorkbook( fin );
+        fin.close();    	
     }
     
     public void genericTest() throws Exception {

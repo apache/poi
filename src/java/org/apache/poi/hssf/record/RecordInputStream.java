@@ -95,7 +95,7 @@ public class RecordInputStream extends InputStream
   
   public void nextRecord() throws RecordFormatException {
     if ((currentLength != -1) && (currentLength != recordOffset)) {
-      System.out.println("WARN. Unread "+remaining()+" bytes of record "+Integer.toHexString(currentSid));
+      System.out.println("WARN. Unread "+remaining()+" bytes of record 0x"+Integer.toHexString(currentSid));
     }
     currentSid = nextSid;
     pos += LittleEndian.SHORT_SIZE;
@@ -111,7 +111,7 @@ public class RecordInputStream extends InputStream
       //Read the Sid of the next record
       nextSid = LittleEndian.readShort(in);
     } catch (IOException ex) {
-      throw new RecordFormatException("Error reading bytes");
+      throw new RecordFormatException("Error reading bytes", ex);
     }
   }
   
@@ -226,7 +226,7 @@ public class RecordInputStream extends InputStream
    *      length)     
    */  
   public String readUnicodeLEString(int length) {
-    if ((length < 0) || ((remaining() / 2) < length)) {
+    if ((length < 0) || (((remaining() / 2) < length) && !isContinueNext())) {
             throw new IllegalArgumentException("Illegal length");
     }
     
@@ -239,7 +239,7 @@ public class RecordInputStream extends InputStream
     }
     return buf.toString();
   }
-  
+    
   public String readCompressedUnicode(int length) {
     if ((length < 0) || (remaining() < length)) {
             throw new IllegalArgumentException("Illegal length");
@@ -258,10 +258,20 @@ public class RecordInputStream extends InputStream
     return buf.toString();    
   }
   
+  /** Returns an excel style unicode string from the bytes reminaing in the record.
+   * <i>Note:</i> Unicode strings differ from <b>normal</b> strings due to the addition of
+   * formatting information.
+   * 
+   * @return The unicode string representation of the remaining bytes.
+   */
   public UnicodeString readUnicodeString() {
     return new UnicodeString(this);
   }
   
+  /** Returns the remaining bytes for the current record.
+   * 
+   * @return The remaining bytes of the current record.
+   */
   public byte[] readRemainder() {
     int size = remaining();
     byte[] result = new byte[size];
@@ -293,10 +303,18 @@ public class RecordInputStream extends InputStream
     return out.toByteArray();
   }
 
+  /** The remaining number of bytes in the <i>current</i> record.
+   * 
+   * @return The number of bytes remaining in the current record
+   */
   public int remaining() {
     return (currentLength - recordOffset);
   }
 
+  /** Returns true iif a Continue record is next in the excel stream 
+   * 
+   * @return True when a ContinueRecord is next.
+   */
   public boolean isContinueNext() {
     return (nextSid == ContinueRecord.sid);
   }

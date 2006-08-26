@@ -154,28 +154,14 @@ public class ValueRecordsAggregate
                 	if (shrd.isFormulaInShared(formula)) {
                 		shrd.convertSharedFormulaRecord(formula);
                 		found = true;
+                		break;
                 	}
                 }
-                if (!found)
-                	throw new RecordFormatException("Could not find appropriate shared formula");
-/*                	
-                
-                if ((lastSharedFormula != null) && (lastSharedFormula.isFormulaInShared(formula))) {
-                  //Convert this Formula Record from a shared formula to a real formula
-                  lastSharedFormula.convertSharedFormulaRecord(formula);
-                } else {                  
-                  if (nextRecord instanceof SharedFormulaRecord) {
-                	  //Handle the SharedFormulaRecord and move on.
-                    k++;
-                    lastSharedFormula = (SharedFormulaRecord) nextRecord;
-
-                    //Convert this Formula Record from a shared formula to a real formula
-                    lastSharedFormula.convertSharedFormulaRecord(formula);
-                  }
-                  else
-                    throw new RuntimeException(
-                        "Shared formula bit set but next record is not a Shared Formula??");
-                }*/
+                if (!found) {
+                	//Sometimes the shared formula flag "seems" to be errornously set,
+                	//cant really do much about that.
+                	//throw new RecordFormatException("Could not find appropriate shared formula");
+                }
               }
             	
               lastFormulaAggregate = new FormulaRecordAggregate((FormulaRecord)rec, null);
