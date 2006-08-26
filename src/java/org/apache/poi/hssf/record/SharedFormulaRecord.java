@@ -254,6 +254,8 @@ public class SharedFormulaRecord
             newPtgStack.add(ptg);
           }
         formula.setParsedExpression(newPtgStack);
+        //Now its not shared!
+        formula.setSharedFormula(false);
       } else {
         throw new RuntimeException("Shared Formula Conversion: Coding Error");
       }
