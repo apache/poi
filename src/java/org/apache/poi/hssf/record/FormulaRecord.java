@@ -195,10 +195,14 @@ public class FormulaRecord
     public short getOptions()
     {
         return field_5_options;
-    }
+    }    
     
     public boolean isSharedFormula() {
         return sharedFormula.isSet(field_5_options);
+    }
+    
+    public void setSharedFormula(boolean flag) {
+    	sharedFormula.setBoolean(field_5_options, flag);
     }
     
     /**
