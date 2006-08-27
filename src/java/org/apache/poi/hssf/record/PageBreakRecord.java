@@ -243,10 +243,12 @@ public class PageBreakRecord extends Record {
     /**
      * Retrieves the region at the row/column indicated
      * @param main FIXME: Document this!
-     * @return FIXME: Document this!
+     * @return The Break or null if no break exists at the row/col specified.
      */
     public Break getBreak(short main)
     {
+    	if (BreakMap == null)
+    		return null;
         Integer rowKey = new Integer(main);
         return (Break)BreakMap.get(rowKey);
     }
