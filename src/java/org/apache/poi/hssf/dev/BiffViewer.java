@@ -502,6 +502,12 @@ public class BiffViewer {
             case VerticalPageBreakRecord.sid:
                 retval = new VerticalPageBreakRecord( in);
                 break;
+            case WriteProtectRecord.sid:
+            	retval = new WriteProtectRecord( in);
+            	break;
+            case FilePassRecord.sid:
+            	retval = new FilePassRecord(in);
+            	break;
             default:
                 retval = new UnknownRecord( in );
         }

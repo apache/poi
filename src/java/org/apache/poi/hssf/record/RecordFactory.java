@@ -72,7 +72,8 @@ public class RecordFactory
                 DrawingRecord.class, DrawingGroupRecord.class, DrawingSelectionRecord.class,
                 ObjRecord.class, TextObjectRecord.class,
                 PaletteRecord.class, StringRecord.class, RecalcIdRecord.class, SharedFormulaRecord.class,
-                HorizontalPageBreakRecord.class, VerticalPageBreakRecord.class
+                HorizontalPageBreakRecord.class, VerticalPageBreakRecord.class, 
+                WriteProtectRecord.class, FilePassRecord.class
             };
         } else {
             records = new Class[]
@@ -106,7 +107,8 @@ public class RecordFactory
                 PaletteRecord.class, StringRecord.class, RecalcIdRecord.class, SharedFormulaRecord.class,
                 DrawingRecord.class, DrawingGroupRecord.class, DrawingSelectionRecord.class,
                 ObjRecord.class, TextObjectRecord.class,
-                HorizontalPageBreakRecord.class, VerticalPageBreakRecord.class
+                HorizontalPageBreakRecord.class, VerticalPageBreakRecord.class, 
+                WriteProtectRecord.class, FilePassRecord.class
             };
 
         }
