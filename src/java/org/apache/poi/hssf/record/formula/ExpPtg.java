@@ -18,6 +18,7 @@
 package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.record.RecordFormatException;
 import org.apache.poi.hssf.record.RecordInputStream;
 
 import org.apache.poi.util.LittleEndian;
@@ -73,7 +74,7 @@ public class ExpPtg
 
     public String toFormulaString(Workbook book)
     {
-        return "NO IDEA SHARED FORMULA EXP PTG";
+        throw new RecordFormatException("Coding Error: Expected ExpPtg to be converted from Shared to Non-Shared Formula");
     }
     
     public String toString()
