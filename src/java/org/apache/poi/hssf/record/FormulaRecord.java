@@ -44,8 +44,6 @@ public class FormulaRecord
     implements CellValueRecordInterface, Comparable
 {
     
-    public static final boolean EXPERIMENTAL_FORMULA_SUPPORT_ENABLED=true;
-    
     public static final short sid =
         0x06;   // docs say 406...because of a bug Microsoft support site article #Q184647)
     
@@ -473,7 +471,6 @@ public class FormulaRecord
     public String toString()
     {
         StringBuffer buffer = new StringBuffer();
-        if (EXPERIMENTAL_FORMULA_SUPPORT_ENABLED) {
             buffer.append("[FORMULA]\n");
             buffer.append("    .row       = ")
                 .append(Integer.toHexString(getRow())).append("\n");
@@ -523,9 +520,6 @@ public class FormulaRecord
             
             
             buffer.append("[/FORMULA]\n");
-        } else {
-            buffer.append(super.toString());
-        }
         return buffer.toString();
     }
     
