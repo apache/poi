@@ -66,6 +66,8 @@ public class UnknownRecord
     {
         sid     = in.getSid();
         thedata = in.readRemainder();
+        
+        //System.out.println("UnknownRecord: 0x"+Integer.toHexString(sid));
     }
 
     /**

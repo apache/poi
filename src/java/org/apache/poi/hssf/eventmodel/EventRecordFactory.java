@@ -103,6 +103,8 @@ import org.apache.poi.hssf.record.WindowOneRecord;
 import org.apache.poi.hssf.record.WindowProtectRecord;
 import org.apache.poi.hssf.record.WindowTwoRecord;
 import org.apache.poi.hssf.record.WriteAccessRecord;
+import org.apache.poi.hssf.record.WriteProtectRecord;
+import org.apache.poi.hssf.record.FilePassRecord;
 
 
 /**
@@ -153,7 +155,8 @@ public class EventRecordFactory
                 BoolErrRecord.class, ExternSheetRecord.class, NameRecord.class,
                 LeftMarginRecord.class, RightMarginRecord.class,
                 TopMarginRecord.class, BottomMarginRecord.class,
-                PaletteRecord.class, StringRecord.class, SharedFormulaRecord.class
+                PaletteRecord.class, StringRecord.class, SharedFormulaRecord.class, 
+                WriteProtectRecord.class, FilePassRecord.class
             };
        
     }
