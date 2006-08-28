@@ -160,7 +160,13 @@ public class Ref3DPtg extends Ptg {
         StringBuffer retval = new StringBuffer();
         SheetReferences refs = book == null ? null : book.getSheetReferences();
         if (refs != null) {
-            retval.append(refs.getSheetName((int)this.field_1_index_extern_sheet));
+        	String sheetName =refs.getSheetName((int)this.field_1_index_extern_sheet);
+        	boolean appendQuotes = sheetName.contains(" ");
+        	if (appendQuotes)
+        	  retval.append("'");
+            retval.append(sheetName);
+        	if (appendQuotes)
+          	  retval.append("'");
             retval.append('!');
         }
         retval.append((new CellReference(getRow(),getColumn(),!isRowRelative(),!isColRelative())).toString()); 
