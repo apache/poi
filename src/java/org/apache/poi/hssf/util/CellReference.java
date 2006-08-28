@@ -34,13 +34,17 @@ public class CellReference {
     public CellReference(String cellRef) {
         String[] parts = separateRefParts(cellRef);
         sheetName = parts[0];
-        String ref = parts[1];
+        String ref = parts[1]; 
+        if ((ref == null)||("".equals(ref)))
+        	throw new IllegalArgumentException("Invalid Formula cell reference: '"+cellRef+"'");
         if (ref.charAt(0) == '$') {
             colAbs=true;
             ref=ref.substring(1);
         }
         col = convertColStringToNum(ref);
         ref=parts[2];
+        if ((ref == null)||("".equals(ref)))
+        	throw new IllegalArgumentException("Invalid Formula cell reference: '"+cellRef+"'");
         if (ref.charAt(0) == '$') {
             rowAbs=true;
             ref=ref.substring(1);
