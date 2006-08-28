@@ -12,7 +12,7 @@ import junit.framework.TestSuite;
  */
 public class TestEverything extends TestSuite {
 
-    public static TestSuite suite() {
+    public static TestSuite suite() throws Exception {
         TestSuite suite = new TestSuite("Tests for OperationEval concrete implementation classes.");
         suite.addTest(new GenericFormulaTestCase("D23"));
         suite.addTest(new GenericFormulaTestCase("D27"));

@@ -23,9 +23,9 @@ import org.apache.poi.hssf.util.CellReference;
  */
 public class GenericFormulaTestCase extends TestCase {
 
-    protected final String FILENAME = System.getProperty("HSSF.testdata.path")+ "/FormulaEvalTestData.xls";
+    protected final static String FILENAME = System.getProperty("HSSF.testdata.path")+ "/FormulaEvalTestData.xls";
 
-    protected HSSFWorkbook workbook = null;
+    protected static HSSFWorkbook workbook = null;
 
     protected CellReference beginCell;
     protected int getBeginRow() {
@@ -36,7 +36,7 @@ public class GenericFormulaTestCase extends TestCase {
         return beginCell.getCol();
     }
 
-    protected static final HSSFCell getExpectedValueCell(HSSFSheet sheet, HSSFRow row, HSSFCell cell) {
+    protected final HSSFCell getExpectedValueCell(HSSFSheet sheet, HSSFRow row, HSSFCell cell) {
         HSSFCell retval = null;
         if (sheet != null) {
             row = sheet.getRow(row.getRowNum()+1);
@@ -89,15 +89,17 @@ public class GenericFormulaTestCase extends TestCase {
         }
     }
 
-    public GenericFormulaTestCase(String beginCell) {
-        super("genericTest");      
+    public GenericFormulaTestCase(String beginCell) throws Exception {
+        super("genericTest");
+        if (workbook == null) {
+          FileInputStream fin = new FileInputStream( FILENAME );
+          workbook = new HSSFWorkbook( fin );
+          fin.close();        
+        }
         this.beginCell = new CellReference(beginCell);
     }
     
-    public void setUp() throws Exception {
-        FileInputStream fin = new FileInputStream( FILENAME );
-        workbook = new HSSFWorkbook( fin );
-        fin.close();    	
+    public void setUp() {
     }
     
     public void genericTest() throws Exception {
