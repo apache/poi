@@ -290,8 +290,19 @@ public class FormulaParser {
             if (look == ':') {
                 Match(':');
                 String second=GetName();
-                
-                tokens.add(new Area3DPtg(first+":"+second,externIdx));
+                if (look == '!') {
+                	//The sheet name was included in both of the areas. Only really
+                	//need it once
+                	Match('!');
+                	String third=GetName();
+                	
+                	if (!sheetName.equals(second))
+                		throw new RuntimeException("Unhandled double sheet reference.");
+                	
+                	tokens.add(new Area3DPtg(first+":"+third,externIdx));
+                } else {                                  
+                  tokens.add(new Area3DPtg(first+":"+second,externIdx));
+                }
             } else {
                 tokens.add(new Ref3DPtg(first,externIdx));
             }
