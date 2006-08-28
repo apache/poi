@@ -41,6 +41,7 @@ import java.util.TreeMap;
  * @author  Glen Stampoultzis (glens at apache.org)
  * @author  Libin Roman (romal at vistaportal.com)
  * @author  Shawn Laubach (slaubach at apache dot org) (Just a little)
+ * @author  Jean-Pierre Paris (jean-pierre.paris at m4x dot org) (Just a little, too)
  */
 
 public class HSSFSheet
@@ -337,6 +338,28 @@ public class HSSFSheet
     public int getLastRowNum()
     {
         return lastrow;
+    }
+
+    /**
+     * Get the visibility state for a given column.
+     * @param column - the column to get (0-based)
+     * @param width - the visiblity state of the column
+     */
+
+    public void setColumnHidden(short column, boolean hidden)
+    {
+        sheet.setColumnHidden(column, hidden);
+    }
+
+    /**
+     * Get the hidden state for a given column.
+     * @param column - the column to set (0-based)
+     * @return hidden - the visiblity state of the column
+     */
+
+    public boolean isColumnHidden(short column)
+    {
+        return sheet.isColumnHidden(column);
     }
 
     /**

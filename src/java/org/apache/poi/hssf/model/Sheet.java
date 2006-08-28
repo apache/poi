@@ -47,6 +47,7 @@ import java.util.List;   // normally I don't do this, buy we literally mean ALL
  * @author  Shawn Laubach (slaubach at apache dot org) Gridlines, Headers, Footers, PrintSetup, and Setting Default Column Styles
  * @author Jason Height (jheight at chariot dot net dot au) Clone support. DBCell & Index Record writing support
  * @author  Brian Sanders (kestrel at burdell dot org) Active Cell support
+ * @author  Jean-Pierre Paris (jean-pierre.paris at m4x dot org) (Just a little)
  *
  * @see org.apache.poi.hssf.model.Workbook
  * @see org.apache.poi.hssf.usermodel.HSSFSheet
@@ -1841,6 +1842,50 @@ public class Sheet implements Model
     public void setColumnWidth(short column, short width)
     {
         setColumn( column, new Short(width), null, null, null);
+    }
+
+    /**
+     * Get the hidden property for a given column.
+     * @param column index
+     * @see org.apache.poi.hssf.record.DefaultColWidthRecord
+     * @see org.apache.poi.hssf.record.ColumnInfoRecord
+     * @see #setColumnHidden(short,boolean)
+     * @return whether the column is hidden or not.
+     */
+
+    public boolean isColumnHidden(short column)
+    {
+        boolean          retval = false;
+        ColumnInfoRecord ci     = null;
+
+        if (columns != null)
+        {
+            for ( Iterator iterator = columns.getIterator(); iterator.hasNext(); )
+            {
+                ci = ( ColumnInfoRecord ) iterator.next();
+                if ((ci.getFirstColumn() <= column)
+                        && (column <= ci.getLastColumn()))
+                {
+                    break;
+                }
+                ci = null;
+            }
+        }
+        if (ci != null)
+        {
+            retval = ci.getHidden();
+        }
+        return retval;
+    }
+
+    /**
+     * Get the hidden property for a given column.
+     * @param column - the column number
+     * @param hidden - whether the column is hidden or not
+     */
+    public void setColumnHidden(short column, boolean hidden)
+    {
+        setColumn( column, null, null, new Boolean(hidden), null);
     }
 
     public void setColumn(short column, Short width, Integer level, Boolean hidden, Boolean collapsed)
