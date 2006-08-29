@@ -18,14 +18,8 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-
 import junit.framework.TestCase;
-
 import org.apache.poi.hssf.util.Region;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
  * Test the ability to clone a sheet. 

@@ -17,10 +17,7 @@
         
 package org.apache.poi.hwpf.model;
 
-import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
-
-import org.apache.poi.hwpf.sprm.SprmBuffer;
 
 /**
  * Represents a lightweight node in the Trees used to store content

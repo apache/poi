@@ -237,7 +237,7 @@ public class ValueEvalToNumericXlator {
             String s = sve.getStringValue();
             try { 
                 boolean b = Boolean.getBoolean(s);
-                retval = retval = b ? BoolEval.TRUE : BoolEval.FALSE;;
+                retval = b ? BoolEval.TRUE : BoolEval.FALSE;;
             } 
             catch (Exception e) { retval = ErrorEval.VALUE_INVALID; }
         }

@@ -18,8 +18,6 @@ package org.apache.poi.hslf.model;
 
 import org.apache.poi.ddf.*;
 
-import java.awt.*;
-
 /**
  * Represents a autoshape in a PowerPoint drawing
  *

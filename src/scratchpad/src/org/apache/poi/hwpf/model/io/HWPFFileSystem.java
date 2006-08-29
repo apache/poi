@@ -27,7 +27,6 @@ package org.apache.poi.hwpf.model.io;
  */
 
 
-import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 
 public class HWPFFileSystem

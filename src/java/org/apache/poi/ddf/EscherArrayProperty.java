@@ -20,9 +20,6 @@ package org.apache.poi.ddf;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.HexDump;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-
 /**
  * Escher array properties are the most wierd construction ever invented
  * with all sorts of special cases.  I'm hopeful I've got them all.

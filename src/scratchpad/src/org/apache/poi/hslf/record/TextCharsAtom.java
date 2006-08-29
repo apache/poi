@@ -22,7 +22,6 @@ import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 
 /**
  * A TextCharsAtom (type 4000). Holds text in byte swapped unicode form.

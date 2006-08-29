@@ -20,10 +20,6 @@ package org.apache.poi.hssf.record;
 
 import junit.framework.TestCase;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.io.*;
-
 /**
  * Tests that records size calculates correctly.
  *

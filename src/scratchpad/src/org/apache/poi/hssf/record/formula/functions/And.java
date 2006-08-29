@@ -32,7 +32,7 @@ public class And extends BooleanFunction {
                 AreaEval ae = (AreaEval) operands[i];
                 ValueEval[] values = ae.getValues();
                 for (int j=0, jSize=values.length; j<jSize; j++) {
-                    ValueEval tempVe = tempVe = singleOperandEvaluate(values[j], srcRow, srcCol, true);
+                    ValueEval tempVe = singleOperandEvaluate(values[j], srcRow, srcCol, true);
                     if (tempVe instanceof BoolEval) {
                         b = b && ((BoolEval) tempVe).getBooleanValue();
                         atleastOneNonBlank = true;

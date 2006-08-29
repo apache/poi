@@ -21,7 +21,6 @@ package org.apache.poi.hslf.record;
 import org.apache.poi.util.LittleEndian;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.ByteArrayOutputStream;
 
 /**
  * If we come across a record we know has children of (potential)

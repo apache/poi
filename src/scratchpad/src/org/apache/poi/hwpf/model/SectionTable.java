@@ -17,7 +17,6 @@
 package org.apache.poi.hwpf.model;
 
 import java.util.ArrayList;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
 

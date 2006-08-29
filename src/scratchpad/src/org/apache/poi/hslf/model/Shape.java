@@ -17,8 +17,6 @@ package org.apache.poi.hslf.model;
 
 import org.apache.poi.ddf.*;
 import org.apache.poi.hslf.model.ShapeTypes;
-
-import java.awt.*;
 import java.util.Iterator;
 
 /**

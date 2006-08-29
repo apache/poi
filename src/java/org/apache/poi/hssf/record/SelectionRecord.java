@@ -50,13 +50,29 @@ public class SelectionRecord
       private short field_1_first_row;
       private short field_2_last_row;
       private byte field_3_first_column;
-      private byte field_3_last_column;
+      private byte field_4_last_column;
       
-      public Reference(RecordInputStream in) {
+      Reference(RecordInputStream in) {
         field_1_first_row = in.readShort();
         field_2_last_row = in.readShort();
         field_3_first_column = in.readByte();
-        field_3_last_column = in.readByte();
+        field_4_last_column = in.readByte();
+      }
+      
+      public short getFirstRow() {
+    	  return field_1_first_row;
+      }
+      
+      public short getLastRow() {
+    	  return field_2_last_row;
+      }
+      
+      public byte getFirstColumn() {
+    	  return field_3_first_column;
+      }
+      
+      public byte getLastColumn() {
+    	  return field_4_last_column;
       }
     }
 

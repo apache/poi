@@ -22,7 +22,6 @@ import junit.framework.*;
 
 import org.apache.poi.hwpf.*;
 import org.apache.poi.hwpf.model.io.*;
-import java.io.*;
 
 public class TestStyleSheet
   extends TestCase

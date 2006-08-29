@@ -18,13 +18,9 @@
 
 package org.apache.poi.hwpf.model;
 
-import java.lang.reflect.AccessibleObject;
-import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.io.IOException;
 
-import org.apache.poi.util.BitField;
-import org.apache.poi.util.LittleEndian;
 import org.apache.poi.hwpf.model.io.*;
 
 
