@@ -24,7 +24,6 @@ import java.awt.*;
 import java.awt.Rectangle;
 import java.io.ByteArrayOutputStream;
 import java.io.ByteArrayInputStream;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 
 /**

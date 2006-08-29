@@ -21,7 +21,6 @@ package org.apache.poi.hslf.record;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.ByteArrayOutputStream;
 import java.util.Vector;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.hslf.exceptions.CorruptPowerPointFileException;

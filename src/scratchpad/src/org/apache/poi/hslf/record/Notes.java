@@ -18,10 +18,8 @@
 
 package org.apache.poi.hslf.record;
 
-import org.apache.poi.util.LittleEndian;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.ByteArrayOutputStream;
 
 /**
  * Master container for Notes. There is one of these for every page of

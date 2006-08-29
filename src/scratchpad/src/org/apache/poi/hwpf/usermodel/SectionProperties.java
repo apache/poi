@@ -22,7 +22,6 @@ import org.apache.poi.hwpf.model.types.SEPAbstractType;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.AccessibleObject;
-import java.lang.reflect.Array;
 
 public class SectionProperties
   extends SEPAbstractType

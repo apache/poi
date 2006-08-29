@@ -20,13 +20,7 @@ package org.apache.poi.hssf.record;
 
 import junit.framework.TestCase;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.io.*;
-
 import org.apache.poi.util.IntMapper;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.LittleEndianConsts;
 
 /**
  * Tests that records size calculates correctly.

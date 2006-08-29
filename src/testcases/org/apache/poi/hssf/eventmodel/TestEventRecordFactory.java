@@ -17,9 +17,7 @@
 package org.apache.poi.hssf.eventmodel;
 
 import java.io.ByteArrayInputStream;
-import java.io.EOFException;
 import java.util.Iterator;
-import java.util.Arrays;
 
 import org.apache.poi.hssf.record.BOFRecord;
 import org.apache.poi.hssf.record.EOFRecord;

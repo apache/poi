@@ -40,9 +40,6 @@ public class IntPtg
     public final static int  SIZE = 3;
     public final static byte sid  = 0x1e;
     private short            field_1_value;
-
-    private String val;
-    private int strlen = 0;
   
     private IntPtg() {
       //Required for clone methods

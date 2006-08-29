@@ -22,9 +22,6 @@ import junit.framework.*;
 import org.apache.poi.hwpf.*;
 import org.apache.poi.hwpf.model.io.*;
 
-import java.io.*;
-import java.util.*;
-
 public class TestFontTable
   extends TestCase
 {

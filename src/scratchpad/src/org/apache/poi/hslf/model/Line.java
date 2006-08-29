@@ -18,8 +18,6 @@ package org.apache.poi.hslf.model;
 
 import org.apache.poi.ddf.*;
 
-import java.awt.*;
-
 /**
  * Represents a line in a PowerPoint drawing
  *

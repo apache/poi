@@ -24,12 +24,8 @@ import org.apache.poi.hdf.extractor.util.*;
 import org.apache.poi.hdf.extractor.data.*;
 import java.util.*;
 import java.io.*;
-import javax.swing.*;
-
-import java.awt.*;
 
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.poifs.filesystem.POIFSDocument;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 
 import org.apache.poi.util.LittleEndian;

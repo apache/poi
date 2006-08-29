@@ -522,7 +522,7 @@ public class FontRecord
         data[ 14 + offset ] = getUnderline();
         data[ 15 + offset ] = getFamily();
         data[ 16 + offset ] = getCharset();
-        data[ 17 + offset ] = (( byte ) 0);
+        data[ 17 + offset ] = field_9_zero;
         data[ 18 + offset ] = getFontNameLength();
         data[ 19 + offset ] = ( byte ) 1;
         if (getFontName() != null) {

@@ -30,30 +30,19 @@ import org.apache.poi.hwpf.usermodel.Section;
 
 import org.apache.poi.hwpf.model.PropertyNode;
 import org.apache.poi.hwpf.model.StyleSheet;
-import org.apache.poi.hwpf.model.StyleDescription;
-import org.apache.poi.hwpf.model.CHPBinTable;
 import org.apache.poi.hwpf.model.CHPX;
 import org.apache.poi.hwpf.model.PAPX;
 import org.apache.poi.hwpf.model.SEPX;
-import org.apache.poi.hwpf.model.PAPBinTable;
-import org.apache.poi.hwpf.model.SectionTable;
-import org.apache.poi.hwpf.model.TextPieceTable;
 import org.apache.poi.hwpf.model.TextPiece;
 import org.apache.poi.hwpf.model.ListTables;
 
-import org.apache.poi.hwpf.sprm.CharacterSprmUncompressor;
 import org.apache.poi.hwpf.sprm.CharacterSprmCompressor;
-import org.apache.poi.hwpf.sprm.SectionSprmUncompressor;
-import org.apache.poi.hwpf.sprm.ParagraphSprmUncompressor;
 import org.apache.poi.hwpf.sprm.ParagraphSprmCompressor;
 import org.apache.poi.hwpf.sprm.SprmBuffer;
 
 
 import java.util.List;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.NoSuchElementException;
-import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
 
 /**

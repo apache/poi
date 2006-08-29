@@ -29,8 +29,6 @@ public class MultiplyPtg
 {
     public final static int  SIZE = 1;
     public final static byte sid  = 0x05;
-    
-    private final static String MULTIPLY="*";
 
     /** Creates new AddPtg */
 

@@ -20,12 +20,8 @@ import org.apache.poi.hslf.usermodel.SlideShow;
 import org.apache.poi.hslf.usermodel.RichTextRun;
 import org.apache.poi.hslf.HSLFSlideShow;
 
-import java.awt.*;
-import java.awt.Rectangle;
 import java.io.ByteArrayOutputStream;
 import java.io.ByteArrayInputStream;
-import java.io.FileOutputStream;
-import java.util.ArrayList;
 
 /**
  * Test setting text properties of newly added TextBoxes

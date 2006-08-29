@@ -165,7 +165,7 @@ public class WSBoolRecord
 
     public void setWSBool2(byte bool2)
     {
-        field_2_wsbool = field_2_wsbool = bool2;
+        field_2_wsbool = bool2;
     }
 
     // bool2 bitfields

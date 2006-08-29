@@ -18,10 +18,6 @@
 
 package org.apache.poi.poifs.filesystem;
 
-import java.io.*;
-
-import java.util.*;
-
 import org.apache.poi.poifs.property.Property;
 
 /**

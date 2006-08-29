@@ -19,7 +19,6 @@
 package org.apache.poi.poifs.storage;
 
 import java.io.IOException;
-import java.io.OutputStream;
 
 import java.util.*;
 
