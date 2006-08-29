@@ -24,6 +24,8 @@ import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
 import org.apache.poi.hssf.record.aggregates.RowRecordsAggregate;
 import org.apache.poi.hssf.record.aggregates.ValueRecordsAggregate;
 import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.hssf.util.PaneInformation;
+
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -2383,7 +2385,7 @@ public class Sheet implements Model
     }
 
     /**
-     * Creates a split (freezepane).
+     * Creates a split (freezepane). Any existing freezepane or split pane is overwritten.
      * @param colSplit      Horizonatal position of split.
      * @param rowSplit      Vertical position of split.
      * @param topRow        Top row visible in bottom pane
@@ -2391,6 +2393,10 @@ public class Sheet implements Model
      */
     public void createFreezePane(int colSplit, int rowSplit, int topRow, int leftmostColumn )
     {
+    	int paneLoc = findFirstRecordLocBySid(PaneRecord.sid);
+    	if (paneLoc != -1)
+    		records.remove(paneLoc);
+    	
         int loc = findFirstRecordLocBySid(WindowTwoRecord.sid);
         PaneRecord pane = new PaneRecord();
         pane.setX((short)colSplit);
@@ -2422,7 +2428,7 @@ public class Sheet implements Model
     }
 
     /**
-     * Creates a split pane.
+     * Creates a split pane. Any existing freezepane or split pane is overwritten.
      * @param xSplitPos      Horizonatal position of split (in 1/20th of a point).
      * @param ySplitPos      Vertical position of split (in 1/20th of a point).
      * @param topRow        Top row visible in bottom pane
@@ -2436,6 +2442,10 @@ public class Sheet implements Model
      */
     public void createSplitPane(int xSplitPos, int ySplitPos, int topRow, int leftmostColumn, int activePane )
     {
+    	int paneLoc = findFirstRecordLocBySid(PaneRecord.sid);
+    	if (paneLoc != -1)
+    		records.remove(paneLoc);
+    	
         int loc = findFirstRecordLocBySid(WindowTwoRecord.sid);
         PaneRecord r = new PaneRecord();
         r.setX((short)xSplitPos);
@@ -2451,6 +2461,19 @@ public class Sheet implements Model
         SelectionRecord sel = (SelectionRecord) findFirstRecordBySid(SelectionRecord.sid);
         sel.setPane(PANE_LOWER_RIGHT);
 
+    }
+    
+    /**
+     * Returns the information regarding the currently configured pane (split or freeze).
+     * @return null if no pane configured, or the pane information.
+     */
+    public PaneInformation getPaneInformation() {
+      PaneRecord rec = (PaneRecord)findFirstRecordBySid(PaneRecord.sid);
+      if (rec == null)
+        return null;
+        
+      return new PaneInformation(rec.getX(), rec.getY(), rec.getTopRow(),
+    		                     rec.getLeftColumn(), (byte)rec.getActivePane(), windowTwo.getFreezePanes());      
     }
 
     public SelectionRecord getSelection()

@@ -26,6 +26,7 @@ import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.*;
 import org.apache.poi.hssf.util.Region;
+import org.apache.poi.hssf.util.PaneInformation;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -1076,7 +1077,7 @@ public class HSSFSheet
     }
 
     /**
-     * Creates a split (freezepane).
+     * Creates a split (freezepane). Any existing freezepane or split pane is overwritten.
      * @param colSplit      Horizonatal position of split.
      * @param rowSplit      Vertical position of split.
      * @param topRow        Top row visible in bottom pane
@@ -1092,7 +1093,7 @@ public class HSSFSheet
     }
 
     /**
-     * Creates a split (freezepane).
+     * Creates a split (freezepane). Any existing freezepane or split pane is overwritten.
      * @param colSplit      Horizonatal position of split.
      * @param rowSplit      Vertical position of split.
      */
@@ -1102,7 +1103,7 @@ public class HSSFSheet
     }
 
     /**
-     * Creates a split pane.
+     * Creates a split pane. Any existing freezepane or split pane is overwritten.
      * @param xSplitPos      Horizonatal position of split (in 1/20th of a point).
      * @param ySplitPos      Vertical position of split (in 1/20th of a point).
      * @param topRow        Top row visible in bottom pane
@@ -1117,6 +1118,14 @@ public class HSSFSheet
     public void createSplitPane(int xSplitPos, int ySplitPos, int leftmostColumn, int topRow, int activePane )
     {
         getSheet().createSplitPane( xSplitPos, ySplitPos, topRow, leftmostColumn, activePane );
+    }
+    
+    /**
+     * Returns the information regarding the currently configured pane (split or freeze).
+     * @return null if no pane configured, or the pane information.
+     */
+    public PaneInformation getPaneInformation() {
+      return getSheet().getPaneInformation();
     }
 
     /**

@@ -70,6 +70,7 @@ import org.apache.poi.hssf.record.MulBlankRecord;
 import org.apache.poi.hssf.record.MulRKRecord;
 import org.apache.poi.hssf.record.NameRecord;
 import org.apache.poi.hssf.record.NumberRecord;
+import org.apache.poi.hssf.record.PaneRecord;
 import org.apache.poi.hssf.record.PaletteRecord;
 import org.apache.poi.hssf.record.PasswordRecord;
 import org.apache.poi.hssf.record.PasswordRev4Record;
@@ -156,7 +157,7 @@ public class EventRecordFactory
                 LeftMarginRecord.class, RightMarginRecord.class,
                 TopMarginRecord.class, BottomMarginRecord.class,
                 PaletteRecord.class, StringRecord.class, SharedFormulaRecord.class, 
-                WriteProtectRecord.class, FilePassRecord.class
+                WriteProtectRecord.class, FilePassRecord.class, PaneRecord.class
             };
        
     }
