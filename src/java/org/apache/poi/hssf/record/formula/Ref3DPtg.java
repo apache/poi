@@ -161,7 +161,7 @@ public class Ref3DPtg extends Ptg {
         SheetReferences refs = book == null ? null : book.getSheetReferences();
         if (refs != null) {
         	String sheetName =refs.getSheetName((int)this.field_1_index_extern_sheet);
-        	boolean appendQuotes = sheetName.contains(" ");
+        	boolean appendQuotes = sheetName.indexOf(" ") >= 0;
         	if (appendQuotes)
         	  retval.append("'");
             retval.append(sheetName);
