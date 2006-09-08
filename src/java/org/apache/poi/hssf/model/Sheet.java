@@ -2666,7 +2666,12 @@ public class Sheet implements Model
      * Sets a page break at the indicated row
      * @param row
      */
-    public void setRowBreak(int row, short fromCol, short toCol) {    	
+    public void setRowBreak(int row, short fromCol, short toCol) { 
+    	if (rowBreaks == null) {
+            int loc = findFirstRecordLocBySid(WindowTwoRecord.sid);
+            rowBreaks = new PageBreakRecord(PageBreakRecord.HORIZONTAL_SID);
+            records.add(loc, rowBreaks);
+    	}
     	rowBreaks.addBreak((short)row, fromCol, toCol);
     }
 
@@ -2675,6 +2680,8 @@ public class Sheet implements Model
      * @param row
      */
     public void removeRowBreak(int row) {
+    	if (rowBreaks == null)
+    		throw new IllegalArgumentException("Sheet does not define any row breaks");
     	rowBreaks.removeBreak((short)row);
     }
 
@@ -2684,14 +2691,19 @@ public class Sheet implements Model
      * @return true if the specified row has a page break
      */
     public boolean isRowBroken(int row) {
-    	return rowBreaks.getBreak((short)row) != null;
+    	return (rowBreaks == null) ? false : rowBreaks.getBreak((short)row) != null;
     }
 
     /**
      * Sets a page break at the indicated column
      *
      */
-    public void setColumnBreak(short column, short fromRow, short toRow) {    	
+    public void setColumnBreak(short column, short fromRow, short toRow) {
+    	if (colBreaks == null) {
+            int loc = findFirstRecordLocBySid(WindowTwoRecord.sid);
+            colBreaks = new PageBreakRecord(PageBreakRecord.VERTICAL_SID);
+            records.add(loc, colBreaks);
+    	}    	
     	colBreaks.addBreak(column, fromRow, toRow);
     }
 
@@ -2700,6 +2712,9 @@ public class Sheet implements Model
      *
      */
     public void removeColumnBreak(short column) {
+    	if (colBreaks == null)
+    		throw new IllegalArgumentException("Sheet does not define any column breaks");
+    	
     	colBreaks.removeBreak(column);
     }
 
@@ -2709,7 +2724,7 @@ public class Sheet implements Model
      * @return true if the specified column has a page break
      */
     public boolean isColumnBroken(short column) {
-    	return colBreaks.getBreak(column) != null;
+    	return (colBreaks == null) ? false : colBreaks.getBreak(column) != null;
     }
     
     /**
@@ -2745,7 +2760,7 @@ public class Sheet implements Model
      * @return the number of row page breaks
      */
     public int getNumRowBreaks(){
-    	return (int)rowBreaks.getNumBreaks();
+    	return (rowBreaks == null) ? 0 : (int)rowBreaks.getNumBreaks();
     }
     
     /**
@@ -2761,7 +2776,7 @@ public class Sheet implements Model
      * @return the number of column page breaks
      */
     public int getNumColumnBreaks(){
-    	return (int)colBreaks.getNumBreaks();
+    	return (colBreaks == null) ? 0 : (int)colBreaks.getNumBreaks();
     }
 
     public void setColumnGroupCollapsed( short columnNumber, boolean collapsed )

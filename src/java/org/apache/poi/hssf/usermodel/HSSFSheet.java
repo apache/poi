@@ -1204,34 +1204,42 @@ public class HSSFSheet
     
     /**
      * Retrieves all the horizontal page breaks
-     * @return all the horizontal page breaks
+     * @return all the horizontal page breaks, or null if there are no row page breaks
      */
     public int[] getRowBreaks(){
-    	//we can probably cache this information, but this should be a sparsely used function 
-    	int[] returnValue = new int[sheet.getNumRowBreaks()];
-    	Iterator iterator = sheet.getRowBreaks();
-    	int i = 0;
-    	while (iterator.hasNext()) {
+    	//we can probably cache this information, but this should be a sparsely used function
+    	int count = sheet.getNumRowBreaks();
+    	if (count > 0) {
+    	  int[] returnValue = new int[count];
+    	  Iterator iterator = sheet.getRowBreaks();
+    	  int i = 0;
+    	  while (iterator.hasNext()) {
     		PageBreakRecord.Break breakItem = (PageBreakRecord.Break)iterator.next();
     		returnValue[i++] = (int)breakItem.main;
+    	  }
+    	  return returnValue;
     	}
-    	return returnValue;
+    	return null;
     }
 
     /**
      * Retrieves all the vertical page breaks
-     * @return all the vertical page breaks
+     * @return all the vertical page breaks, or null if there are no column page breaks
      */
     public short[] getColumnBreaks(){
     	//we can probably cache this information, but this should be a sparsely used function 
-    	short[] returnValue = new short[sheet.getNumColumnBreaks()];
-    	Iterator iterator = sheet.getColumnBreaks();
-    	int i = 0;
-    	while (iterator.hasNext()) {
+    	int count = sheet.getNumColumnBreaks();
+    	if (count > 0) {
+    	  short[] returnValue = new short[count];
+    	  Iterator iterator = sheet.getColumnBreaks();
+    	  int i = 0;
+    	  while (iterator.hasNext()) {
     		PageBreakRecord.Break breakItem = (PageBreakRecord.Break)iterator.next();
     		returnValue[i++] = breakItem.main;
+    	  }
+    	  return returnValue;
     	}
-    	return returnValue;
+    	return null;
     }
     
     
