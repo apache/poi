@@ -258,8 +258,8 @@ public class RowRecord
     }
 
     /**
-     * get the logical col number for the last cell this row (0 based index)
-     * @return col - the col number
+     * get the logical col number for the last cell this row plus one (0 based index)
+     * @return col - the last col number + 1
      */
 
     public short getLastCol()
