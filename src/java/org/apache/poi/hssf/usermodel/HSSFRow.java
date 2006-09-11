@@ -275,7 +275,7 @@ public class HSSFRow
 
     /**
      * get the number of the first cell contained in this row.
-     * @return short representing the first logical cell in the row
+     * @return short representing the first logical cell in the row, or -1 if the row does not contain any cells.
      */
 
     public short getFirstCellNum()
@@ -287,8 +287,8 @@ public class HSSFRow
     }
 
     /**
-     * get the number of the last cell contained in this row.
-     * @return short representing the last logical cell in the row
+     * gets the number of the last cell contained in this row <b>PLUS ONE</b>. 
+     * @return short representing the last logical cell in the row <b>PLUS ONE</b>, or -1 if the row does not contain any cells.
      */
 
     public short getLastCellNum()
