@@ -244,7 +244,7 @@ method (sheet.removeRow(hssfrow)) and create objects just as you
 would if creating a new xls. When you are done modifying cells just
 call workbook.write(outputstream) just as you did above.</p>
 <p>An example of this can be seen in
-<link href="http://cvs.apache.org/viewcvs/~checkout~/jakarta-poi/src/java/org/apache/poi/hssf/dev/HSSF.java?rev=1.1">org.apache.poi.hssf.dev.HSSF</link>.</p>
+<link href="http://svn.apache.org/repos/asf/jakarta/poi/trunk/src/java/org/apache/poi/hssf/dev/HSSF.java">org.apache.poi.hssf.dev.HSSF</link>.</p>
          </section>
         </section>
                 <section><title>Event API</title>
