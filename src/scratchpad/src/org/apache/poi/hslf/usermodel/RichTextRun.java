@@ -24,6 +24,8 @@ import org.apache.poi.hslf.record.StyleTextPropAtom.CharFlagsTextProp;
 import org.apache.poi.hslf.record.StyleTextPropAtom.TextProp;
 import org.apache.poi.hslf.record.StyleTextPropAtom.TextPropCollection;
 
+import java.awt.*;
+
 /**
  * Represents a run of text, all with the same style
  * 
@@ -54,6 +56,7 @@ public class RichTextRun
 	private boolean sharingParagraphStyle;
 	private boolean sharingCharacterStyle;
 	
+    private String _fontname;
 	/**
 	 * Create a new wrapper around a (currently not)
 	 *  rich text string
@@ -104,6 +107,10 @@ public class RichTextRun
 	 */
 	public void supplySlideShow(SlideShow ss) {
 		slideShow = ss;
+        if (_fontname != null) {
+            setFontName(_fontname);
+            _fontname = null;
+        }
 	}
 	
 	/**
@@ -280,9 +287,14 @@ public class RichTextRun
 	}
 	
 	public void setFontName(String fontName) {
+        if (slideShow == null) {
+            //we can't set font since slideshow is not assigned yet
+            _fontname = fontName;
+        } else{
 		// Get the index for this font (adding if needed)
 		int fontIdx = slideShow.getFontCollection().addFont(fontName);
 		setCharTextPropVal("font.index", fontIdx);
+	}
 	}
 	public String getFontName() {
 		int fontIdx = getCharTextPropVal("font.index");
@@ -305,6 +317,41 @@ public class RichTextRun
 		setCharTextPropVal("font.color", rgb);
 	}
 	
+    /**
+     * Sets color of the text, as a java.awt.Color
+     */
+    public void setFontColor(Color color) {
+        //in PowerPont RGB bytes are swapped,
+        int rgb = new Color(color.getBlue(), color.getGreen(), color.getRed(), 254).getRGB();
+        setFontColor(rgb);
+    }
+
+    /**
+     * Sets the type of horizontal alignment for the text.
+     * One of the <code>Align*</code> constants defined in the <code>TextBox</code> class.
+     *
+     * @param align - the type of alignment
+     */
+    public void setAlignment(int align) {
+        setParaTextPropVal("alignment", align);
+    }
+    /**
+     * Returns the type of horizontal alignment for the text.
+     * One of the <code>Align*</code> constants defined in the <code>TextBox</class> class.
+     *
+     * @return the type of alignment
+     */
+    public int getAlignment() {
+        return getParaTextPropVal("alignment");
+    }
+
+    /**
+     *
+     * @return indentation level
+     */
+    public int getIndentLevel() {
+        return paragraphStyle == null ? 0 : paragraphStyle.getReservedField();
+    }
 	
 	// --------------- Internal HSLF methods, not intended for end-user use! -------
 	

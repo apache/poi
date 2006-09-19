@@ -85,8 +85,6 @@ public class TextBox extends SimpleShape {
      */
     protected EscherTextboxWrapper _txtbox;
 
-    private String _fontname;
-
     /**
      * Create a TextBox object and initialize it from the supplied Record container.
      * 
@@ -432,7 +430,10 @@ public class TextBox extends SimpleShape {
      * Sets the <code>Font</code> object for this text frame
      *
      * @param size  the size of the font
-     */
+	 *
+	 * @deprecated Use <code>RichTextRun</code> to work with the text format.
+	 * <p>This method will be permanently removed in a future version of the POI HSLF API.</p>
+	 */
     public void setFontSize(int size){
         RichTextRun rt = _txtrun.getRichTextRuns()[0];
         rt.setFontSize(size);
@@ -441,6 +442,9 @@ public class TextBox extends SimpleShape {
     /**
      *
      * @return  the size of the font applied to this text shape
+     *
+	 * @deprecated Use <code>RichTextRun</code> to work with the text format.
+	 * <p>This method will be permanently removed in a future version of the POI HSLF API.</p>
      */
     public int getFontSize(){
         RichTextRun rt = _txtrun.getRichTextRuns()[0];
@@ -450,6 +454,9 @@ public class TextBox extends SimpleShape {
     /**
      *
      * @return  the size of the font applied to this text shape
+     *
+	 * @deprecated Use <code>RichTextRun</code> to work with the text format.
+	 * <p>This method will be permanently removed in a future version of the POI HSLF API.</p>
      */
     public Color getFontColor(){
         RichTextRun rt = _txtrun.getRichTextRuns()[0];
@@ -462,6 +469,9 @@ public class TextBox extends SimpleShape {
      * Set whether to use bold or not
      *
      * @param bold  <code>true</code>   if the text should be bold, <code>false</code>  otherwise
+     *
+	 * @deprecated Use <code>RichTextRun</code> to work with the text format.
+	 * <p>This method will be permanently removed in a future version of the POI HSLF API.</p>
      */
     public void setBold(boolean bold){
         RichTextRun rt = _txtrun.getRichTextRuns()[0];
@@ -472,6 +482,9 @@ public class TextBox extends SimpleShape {
      * Set whether to use italic or not
      *
      * @param italic  <code>true</code>   if the text should be italic, <code>false</code>  otherwise
+     *
+	 * @deprecated Use <code>RichTextRun</code> to work with the text format.
+	 * <p>This method will be permanently removed in a future version of the POI HSLF API.</p>
      */
     public void setItalic(boolean italic){
         RichTextRun rt = _txtrun.getRichTextRuns()[0];
@@ -482,6 +495,9 @@ public class TextBox extends SimpleShape {
      * Set whether to use underline or not
      *
      * @param underline  <code>true</code>   if the text should be underlined, <code>false</code>  otherwise
+     *
+	 * @deprecated Use <code>RichTextRun</code> to work with the text format.
+	 * <p>This method will be permanently removed in a future version of the POI HSLF API.</p>
      */
     public void setUnderline(boolean underline){
         RichTextRun rt = _txtrun.getRichTextRuns()[0];
@@ -492,20 +508,21 @@ public class TextBox extends SimpleShape {
      *  Sets the font of this text shape
      *
      * @param name  the name of the font to be applied to this text shape
+     *
+	 * @deprecated Use <code>RichTextRun</code> to work with the text format.
+	 * <p>This method will be permanently removed in a future version of the POI HSLF API.</p>
      */
     public void setFontName(String name){
-        if (_sheet == null) {
-            //we can't set font since slideshow is not assigned yet
-            _fontname = name;
-        } else{
         RichTextRun rt = _txtrun.getRichTextRuns()[0];
         rt.setFontName(name);
-    }
     }
 
     /**
      * Sets the font color
      * @param color  the font color
+     *
+	 * @deprecated Use <code>RichTextRun</code> to work with the text format.
+	 * <p>This method will be permanently removed in a future version of the POI HSLF API.</p>
      */
     public void setFontColor(Color color){
         //in PowerPont RGB bytes are swapped,
@@ -535,11 +552,6 @@ public class TextBox extends SimpleShape {
         for (int i = 0; i < rt.length; i++) {
             rt[i].supplySlideShow(_sheet.getSlideShow());
         }
-        if (_fontname != null) {
-            setFontName(_fontname);
-            _fontname = null;
-        }
-
     }
 
     private void initTextRun(){

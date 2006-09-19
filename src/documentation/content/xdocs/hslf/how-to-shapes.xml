@@ -120,17 +120,17 @@
   //TextBox
   TextBox txt = new TextBox();
   txt.setText("Hello, World!");
-        txt.setAnchor(new java.awt.Rectangle(300, 100, 300, 50));
+  txt.setAnchor(new java.awt.Rectangle(300, 100, 300, 50));
 
-        //use RichTextRun to work with the text format
-        RichTextRun rt = txt.getRichTextRuns()[0];
-        rt.setFontSize(32);
-        rt.setFontName("Arial");
-        rt.setBold(true);
-        rt.setItalic(true);
-        rt.setUnderlined(true);
-        rt.setFontColor(Color.red);
-        rt.setAlignment(TextBox.AlignRight);
+  //use RichTextRun to work with the text format
+  RichTextRun rt = txt.getRichTextRuns()[0];
+  rt.setFontSize(32);
+  rt.setFontName("Arial");
+  rt.setBold(true);
+  rt.setItalic(true);
+  rt.setUnderlined(true);
+  rt.setFontColor(Color.red);
+  rt.setAlignment(TextBox.AlignRight);
 
   slide.addShape(txt);
 
