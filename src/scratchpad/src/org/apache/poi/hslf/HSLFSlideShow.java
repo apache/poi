@@ -23,6 +23,7 @@ import java.util.*;
 import java.io.*;
 
 import org.apache.poi.POIDocument;
+import org.apache.poi.util.LittleEndian;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
@@ -251,13 +252,31 @@ public class HSLFSlideShow extends POIDocument
 			return;
 		}
 
-		ArrayList p = new ArrayList();
-		int pos = 0; 
-		while (pos < (pictstream.length - PictureData.HEADER_SIZE)) {
-			PictureData pict = new PictureData(pictstream, pos);
-			p.add(pict);
-			pos += PictureData.HEADER_SIZE + pict.getSize();
-		}
+        List p = new ArrayList();
+        int pos = 0;
+
+        while (pos < pictstream.length) {
+            int offset = pos;
+
+            //image signature
+            int signature = LittleEndian.getUShort(pictstream, pos);
+            pos += LittleEndian.SHORT_SIZE;
+            //image type + 0xF018
+            int type = LittleEndian.getUShort(pictstream, pos);
+            pos += LittleEndian.SHORT_SIZE;
+            //image size
+            int imgsize = LittleEndian.getInt(pictstream, pos);
+            pos += LittleEndian.INT_SIZE;
+
+            byte[] imgdata = new byte[imgsize];
+            System.arraycopy(pictstream, pos, imgdata, 0, imgdata.length);
+
+            PictureData pict = PictureData.create(type - 0xF018);
+            pict.setRawData(imgdata);
+            pict.setOffset(offset);
+            p.add(pict);
+            pos += imgsize;
+        }
 
 		_pictures = (PictureData[])p.toArray(new PictureData[p.size()]);
 	}

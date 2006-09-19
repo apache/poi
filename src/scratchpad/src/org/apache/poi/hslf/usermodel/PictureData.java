@@ -17,6 +17,7 @@ package org.apache.poi.hslf.usermodel;
 
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.hslf.model.Picture;
+import org.apache.poi.hslf.blip.*;
 
 import java.io.OutputStream;
 import java.io.IOException;
@@ -24,172 +25,95 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 /**
- * A class that represents the image data contained in the Presentation.
- * 
+ * A class that represents image data contained in a slide show.
  *
  *  @author Yegor Kozlov
  */
-public class PictureData {
+public abstract class PictureData {
 
-	/**
-	* The size of the header
-	*/
-	public static final int HEADER_SIZE = 25;
-
-    protected static final int JPEG_HEADER = -266516832;
-    protected static final int PNG_HEADER = -266441216;
+    /**
+     * Size of the image checksum calculated using MD5 algorithm.
+     */
+    protected static final int CHECKSUM_SIZE = 16;
 
 	/**
 	* Binary data of the picture
 	*/
-	protected byte[] pictdata;
-
-	/**
-	* Header which holds information about this picture
-	*/
-	protected byte[] header;
-
+    private byte[] rawdata;
 	/**
 	 * The offset to the picture in the stream
 	 */
 	protected int offset;
 
-    public PictureData(){
-        header = new byte[PictureData.HEADER_SIZE];
-    }
+    /**
+     * Returns type of this picture.
+     * Must be one of the static constants defined in the <code>Picture<code> class.
+     *
+     * @return type of this picture.
+     */
+    public abstract int getType();
 
-	/**
-	* Read a picture from "Pictures" OLE stream
-	*
-	* @param pictstream    the bytes to read
-	* @param offset        the index of the first byte to read
-	*/
-	public PictureData(byte[] pictstream, int offset){
-		header = new byte[PictureData.HEADER_SIZE];
-		System.arraycopy(pictstream, offset, header, 0, header.length);
-
-		// Get the size of the picture, and make sure it's sane
-		// Size is stored unsigned, since it must always be positive
-		int size = (int)LittleEndian.getUInt(header, 4) - 17;
-		int startPos = offset + PictureData.HEADER_SIZE;
-		if(size < 0) { size = 0; }
-		if(size > (pictstream.length - startPos)) { 
-			int remaining = pictstream.length - startPos;
-			System.err.println("Warning: PictureData claimed picture was of length " + size + ", but only " + remaining + " remained!");
-			size = remaining;
-		}
-
-		// Save the picture data
-		pictdata = new byte[size];
-		this.offset = offset;
-		System.arraycopy(pictstream, startPos, pictdata, 0, pictdata.length);
-	}
-
-	/**
-	* @return  the binary data of this picture
-	*/
-	public byte[] getData(){
-		return pictdata;
-	}
+    /**
+     * Returns the binary data of this Picture
+     * @return picture data
+     */
+    public abstract byte[] getData();
 
     /**
      *  Set picture data
      */
-    public void setData(byte[] data) {
-        pictdata = data;
-        LittleEndian.putInt(header, 4, data.length + 17);
-    }
-
-	/**
-	* Return image size in bytes
-	*
-	* @return the size of the picture in bytes
-	*/
-	public int getSize(){
-		return pictdata.length;
-	}
-
-	/**
-	* Returns the unique identifier (UID) of this picture.
-	* The UID is a checksum of the picture data. Its length is 16 bytes
-	* and it must be unique across the presentation.
-	*
-	* @return the unique identifier of this picture
-	*/
-	public byte[] getUID(){
-		byte[] uid = new byte[16];
-		System.arraycopy(header, 8, uid, 0, uid.length);
-		return uid;
-	}
+    public abstract void setData(byte[] data) throws IOException;
 
     /**
-     * Set the unique identifier (UID) of this picture.
-     *
-     * @param uid checksum of the picture data
+     * Blip signature.
      */
-    public void setUID(byte[] uid){
-        System.arraycopy(uid, 0, header, 8, uid.length);
-    }
-
-	/**
-	* Set the type of this picture.
-	*
-	* @return type of this picture.
-    * Must be one of the static constans defined in the <code>Picture<code> class.
-	*/
-	public void setType(int format){
-        switch (format){
-            case Picture.JPEG: LittleEndian.putInt(header, 0, PictureData.JPEG_HEADER); break;
-            case Picture.PNG: LittleEndian.putInt(header, 0, PictureData.PNG_HEADER); break;
-        }
-	}
+    protected abstract int getSignature();
 
     /**
-     * Returns type of this picture.
-     * Must be one of the static constans defined in the <code>Picture<code> class.
+     * Returns the raw binary data of this Picture excluding the first 8 bytes
+     * which hold image signature and size of the image data.
      *
-     * @return type of this picture.
+     * @return picture data
      */
-    public int getType(){
-        int format = 0;
-        int val = LittleEndian.getInt(header, 0);
-        switch (val){
-            case PictureData.JPEG_HEADER: format = Picture.JPEG; break;
-            case PictureData.PNG_HEADER: format = Picture.PNG; break;
-        }
-        return format;
+    public byte[] getRawData(){
+        return rawdata;
+    }
+
+    public void setRawData(byte[] data){
+        rawdata = data;
     }
 
     /**
-     * Returns the header of the Picture
+     * File offset in the 'Pictures' stream
      *
-     * @return the header of the Picture
+     * @return offset in the 'Pictures' stream
      */
-    public byte[] getHeader(){
-        return header;
+    public int getOffset(){
+        return offset;
     }
 
-	/**
-	 * File offset in the 'Pictures' stream
-	 *
-	 * @return offset in the 'Pictures' stream
-	 */
-	public int getOffset(){
-		return offset;
-	}
-
-	/**
-	 * Set offset of this picture in the 'Pictures' stream.
-	 * We need to set it when a new picture is created.
-	 *
-	 * @param offset in the 'Pictures' stream
-	 */
-	public void setOffset(int offset){
-		this.offset = offset;
-	}
+    /**
+     * Set offset of this picture in the 'Pictures' stream.
+     * We need to set it when a new picture is created.
+     *
+     * @param offset in the 'Pictures' stream
+     */
+    public void setOffset(int offset){
+        this.offset = offset;
+    }
 
     /**
-     * Compute 16-byte checksum of this picture
+     * Returns 16-byte checksum of this picture
+     */
+    public byte[] getUID(){
+        byte[] uid = new byte[16];
+        System.arraycopy(rawdata, 0, uid, 0, uid.length);
+        return uid;
+    }
+
+
+    /**
+     * Compute 16-byte checksum of this picture using MD5 algorithm.
      */
     public static byte[] getChecksum(byte[] data) {
         MessageDigest sha;
@@ -206,8 +130,81 @@ public class PictureData {
      * Write this picture into <code>OutputStream</code>
      */
     public void write(OutputStream out) throws IOException {
-        out.write(header);
-        out.write(pictdata);
+        byte[] data;
+
+        data = new byte[LittleEndian.SHORT_SIZE];
+        LittleEndian.putUShort(data, 0, getSignature());
+        out.write(data);
+
+        data = new byte[LittleEndian.SHORT_SIZE];
+        LittleEndian.putUShort(data, 0, getType() + 0xF018);
+        out.write(data);
+
+        byte[] rawdata = getRawData();
+
+        data = new byte[LittleEndian.INT_SIZE];
+        LittleEndian.putInt(data, 0, rawdata.length);
+        out.write(data);
+
+        out.write(rawdata);
+    }
+
+    /**
+     * Create an instance of <code>PictureData</code> by type.
+     *
+     * @param type type of the picture data.
+     * Must be one of the static constants defined in the <code>Picture<code> class.
+     * @return concrete instance of <code>PictureData</code>
+     */
+     public static PictureData create(int type){
+        PictureData pict;
+        switch (type){
+            case Picture.EMF:
+                pict = new EMF();
+                break;
+            case Picture.WMF:
+                pict = new WMF();
+                break;
+            case Picture.PICT:
+                pict = new PICT();
+                break;
+            case Picture.JPEG:
+                pict = new JPEG();
+                break;
+            case Picture.PNG:
+                pict = new PNG();
+                break;
+            default:
+                throw new RuntimeException("Unsupported picture type: " + type);
+        }
+        return pict;
+    }
+
+    /**
+     * Return 24 byte header which preceeds the actual picture data.
+     * <p>
+     * The header consists of 2-byte signature, 2-byte type,
+     * 4-byte image size and 16-byte checksum of the image data.
+     * </p>
+     *
+     * @return the 24 byte header which preceeds the actual picture data.
+     */
+    public byte[] getHeader() {
+        byte[] header = new byte[16 + 8];
+        LittleEndian.putInt(header, 0, getSignature());
+        LittleEndian.putInt(header, 4, getRawData().length);
+        System.arraycopy(rawdata, 0, header, 8, 16);
+        return header;
+    }
+
+    /**
+    * Return image size in bytes
+    *
+    *  @return the size of the picture in bytes
+     * @deprecated Use <code>getData().length</code> instead.
+    */
+    public int getSize(){
+        return getData().length;
     }
 
 }

@@ -620,7 +620,7 @@ public class SlideShow
      * @param format    the format of the picture.  One of constans defined in the <code>Picture</code> class.
      * @return          the index to this picture (1 based).
      */
-    public int addPicture(byte[] data, int format) {
+    public int addPicture(byte[] data, int format) throws IOException {
         byte[] uid = PictureData.getChecksum(data);
 
         EscherContainerRecord bstore;
@@ -652,13 +652,22 @@ public class SlideShow
              }
         }
 
+        PictureData pict = PictureData.create(format);
+        pict.setData(data);
+        pict.setOffset(offset);
+
         EscherBSERecord bse = new EscherBSERecord();
         bse.setRecordId(EscherBSERecord.RECORD_ID);
         bse.setOptions( (short) ( 0x0002 | ( format << 4 ) ) );
-        bse.setSize(data.length + PictureData.HEADER_SIZE);
+        bse.setSize(pict.getRawData().length + 8);
         bse.setUid(uid);
+
         bse.setBlipTypeMacOS((byte)format);
         bse.setBlipTypeWin32((byte)format);
+
+        if (format == Picture.EMF) bse.setBlipTypeMacOS((byte)Picture.PICT);
+        else if (format == Picture.WMF) bse.setBlipTypeMacOS((byte)Picture.PICT);
+        else if (format == Picture.PICT) bse.setBlipTypeWin32((byte)Picture.WMF);
 
         bse.setRef(1);
         bse.setOffset(offset);
@@ -666,12 +675,6 @@ public class SlideShow
         bstore.addChildRecord(bse);
         int count = bstore.getChildRecords().size();
         bstore.setOptions((short)( (count << 4) | 0xF ));
-
-        PictureData pict = new PictureData();
-        pict.setUID(uid);
-        pict.setData(data);
-        pict.setType(format);
-		pict.setOffset(offset);
 
         _hslfSlideShow.addPicture(pict);
 
@@ -685,7 +688,7 @@ public class SlideShow
      * @param format    the format of the picture.  One of constans defined in the <code>Picture</code> class.
      * @return          the index to this picture (1 based).
      */
-    public int addPicture(File pict, int format) {
+    public int addPicture(File pict, int format) throws IOException {
         int length = (int)pict.length();
         byte[] data = new byte[length];
         try {

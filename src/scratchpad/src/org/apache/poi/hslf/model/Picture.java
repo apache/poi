@@ -4,9 +4,11 @@ import org.apache.poi.ddf.*;
 import org.apache.poi.hslf.usermodel.PictureData;
 import org.apache.poi.hslf.usermodel.SlideShow;
 import org.apache.poi.hslf.record.Document;
+import org.apache.poi.hslf.blip.Bitmap;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.awt.*;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.List;
@@ -22,33 +24,23 @@ import java.util.Arrays;
  *    type, image index to refer by slides etc.
  *  <li> "Pictures" OLE stream holds the actual data of the image.
  * </p>
- * <p>
- *  Data in the "Pictures" OLE stream is organized as follows:<br>
- *  For each image there is an entry: 25 byte header + image data.
- *  Image data is the exact content of the JPEG file, i.e. PowerPoint
- *  puts the whole jpeg file there without any modifications.<br>
- *   Header format:
- *    <li> 2 byte: image type. For JPEGs it is 0x46A0, for PNG it is 0x6E00.
- *    <li> 2 byte: unknown.
- *    <li> 4 byte : image size + 17. Looks like shift from the end of
- *          header but why to add it to the image  size?
- *    <li> next 16 bytes. Unique identifier of this image which is used by
- *          EscherBSE record.
- *  </p>
  *
  * @author Yegor Kozlov
  */
 public class Picture extends SimpleShape {
 
     /**
-    *  Windows Metafile
-    *  ( NOT YET SUPPORTED )
+    *  Windows Enhanced Metafile (EMF)
+    */
+    public static final int EMF = 2;
+
+    /**
+    *  Windows Metafile (WMF)
     */
     public static final int WMF = 3;
 
     /**
     * Macintosh PICT
-     *  ( NOT YET SUPPORTED )
     */
     public static final int PICT = 4;
 
@@ -63,10 +55,10 @@ public class Picture extends SimpleShape {
     public static final int PNG = 6;
 
     /**
-    * Windows DIB (BMP)
-    */
-    public static final int DIB = 7;
-
+     * Windows DIB (BMP)
+     */
+    public static final byte DIB = 7;
+    
     /**
      * Create a new <code>Picture</code>
      *
@@ -129,11 +121,17 @@ public class Picture extends SimpleShape {
      */
     public void setDefaultSize(){
         PictureData pict = getPictureData();
-        try {
-            BufferedImage img = ImageIO.read(new ByteArrayInputStream(pict.getData()));
-            setAnchor(new java.awt.Rectangle(0, 0, img.getWidth(), img.getHeight()));
-        } catch (IOException e){
-            throw new RuntimeException(e);
+        if (pict  instanceof Bitmap){
+            try {
+                BufferedImage img = ImageIO.read(new ByteArrayInputStream(pict.getData()));
+                if(img != null) setAnchor(new java.awt.Rectangle(0, 0, img.getWidth(), img.getHeight()));
+                else setAnchor(new java.awt.Rectangle(0, 0, 200, 200));
+            } catch (IOException e){
+                ;
+            }
+        } else {
+            //default size of a metafile picture is 200x200 
+            setAnchor(new java.awt.Rectangle(50, 50, 200, 200));
         }
     }
 

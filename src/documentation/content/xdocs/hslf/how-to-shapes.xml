@@ -17,7 +17,7 @@
                     <li><link href="#PageSize">How to retrieve or change slide size</link></li>
                     <li><link href="#GetShapes">How to get shapes contained in a particular slide</link></li>
                     <li><link href="#Shapes">Drawing a shape on a slide</link></li>
-                    <li><link href="#Pictures">How to add/retrieve pictures</link></li>
+                    <li><link href="#Pictures">How to work with pictures</link></li>
                     <li><link href="#SlideTitle">How to set slide title</link></li>
                 </ul>
             </section>
@@ -106,7 +106,7 @@
                      corner of the slide. Distances in the drawing layer are measured in points (72 points = 1 inch).
                    </p>
                     <source>
-  SlideShow ppt = new SlideShow);
+        SlideShow ppt = new SlideShow();
 
   Slide slide = ppt.createSlide();
 
@@ -120,10 +120,18 @@
   //TextBox
   TextBox txt = new TextBox();
   txt.setText("Hello, World!");
-  txt.setAnchor(new java.awt.Rectangle(100, 100, 200, 50));
-  txt.setFontSize(32);
-  txt.setFontName("Arial");
-  txt.setBold(true);
+        txt.setAnchor(new java.awt.Rectangle(300, 100, 300, 50));
+
+        //use RichTextRun to work with the text format
+        RichTextRun rt = txt.getRichTextRuns()[0];
+        rt.setFontSize(32);
+        rt.setFontName("Arial");
+        rt.setBold(true);
+        rt.setItalic(true);
+        rt.setUnderlined(true);
+        rt.setFontColor(Color.red);
+        rt.setAlignment(TextBox.AlignRight);
+
   slide.addShape(txt);
 
   //Autoshape
@@ -140,15 +148,24 @@
   slide.addShape(sh2);
 
   FileOutputStream out = new FileOutputStream("slideshow.ppt");
-  wb.write(out);
+        ppt.write(out);
   out.close();
                   </source>
                 </section>
                 <anchor id="Pictures"/>
-                <section><title>How to add/retrieve pictures</title>
-                  <p>
-                    Note, for now only PNG and JPEG formats are supported.
-                  </p>
+                <section><title>How to work with pictures</title>
+                 
+  <p>
+  Currently, HSLF API supports the following types of pictures:
+  <ul>
+    <li>Windows Metafiles (WMF)</li>
+    <li>Enhanced Metafiles (EMF)</li>
+    <li>JPEG Interchange Format</li>
+    <li>Portable Network Graphics (PNG)</li>
+    <li>Macintosh PICT</li>
+  </ul>
+  </p>
+
                     <source>
   SlideShow ppt = new SlideShow(new HSLFSlideShow("slideshow.ppt"));
 
@@ -157,19 +174,23 @@
   for (int i = 0; i &lt; pdata.length; i++){
     PictureData pict = pdata[i];
 
-    //raw picture data
+    // picture data
     byte[] data = pict.getData();
 
     int type = pict.getType();
-    if (type == Picture.JPEG){
-      FileOutputStream out = new FileOutputStream("pict"+i+".jpg");
-      out.write(data);
-      out.close();
-    } else if (type == Picture.PNG){
-      FileOutputStream out = new FileOutputStream("pict"+i+".png");
-      out.write(data);
-      out.close();
+    String ext;
+    switch (type){
+      case Picture.JPEG: ext=".jpg"; break;
+      case Picture.PNG: ext=".png"; break;
+      case Picture.WMF: ext=".wmf"; break;
+      case Picture.EMF: ext=".emf"; break;
+      case Picture.PICT: ext=".pict"; break;
+      default: continue;
     }
+    FileOutputStream out = new FileOutputStream("pict_"+i + ext);
+      out.write(data);
+      out.close();
+
   }
 
   // add a new picture to this slideshow and insert it in a  new slide
