@@ -3,6 +3,7 @@ package org.apache.poi.hslf.usermodel;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
+import java.io.File;
 
 import org.apache.poi.hslf.HSLFSlideShow;
 import org.apache.poi.hslf.model.Slide;
@@ -420,4 +421,20 @@ if(false) {
 		r.writeOut(baos);
 		return baos.toByteArray();
 	}
+
+    public void testIndentationLevel() throws Exception {
+        SlideShow ppt = new SlideShow(new HSLFSlideShow(new File(System.getProperty("HSLF.testdata.path"), "ParagraphStylesShorterThanCharStyles.ppt").getPath()));
+        Slide[] sl = ppt.getSlides();
+        for (int i = 0; i < sl.length; i++) {
+            TextRun[] txt = sl[i].getTextRuns();
+            for (int j = 0; j < txt.length; j++) {
+                RichTextRun[] rt = txt[j].getRichTextRuns();
+                for (int k = 0; k < rt.length; k++) {
+                    int indent = rt[k].getIndentLevel();
+                    assertTrue(indent >= 0 && indent <= 4 );
+                }
+
+            }
+        }
+    }
 }

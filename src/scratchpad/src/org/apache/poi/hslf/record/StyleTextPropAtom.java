@@ -490,6 +490,14 @@ public class StyleTextPropAtom extends RecordAtom
 				}
 			}
 		}
+
+        public short getReservedField(){
+            return reservedField;
+        }
+
+        public void setReservedField(short val){
+            reservedField = val;
+        }
 	}
 
 
