@@ -18,6 +18,7 @@ package org.apache.poi.hslf.model;
 import org.apache.poi.ddf.*;
 import org.apache.poi.util.LittleEndian;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -50,16 +51,29 @@ public class ShapeGroup extends Shape{
      * @return the shapes contained in this group container
      */
     public Shape[] getShapes() {
-        //several SpContainers, the first of which is the group shape itself
+    	// Out escher container record should contain serveral
+        //  SpContainers, the first of which is the group shape itself
         List lst = _escherContainer.getChildRecords();
 
-        //don't include the first SpContainer, it is always NotPrimitive
-        Shape[] shapes = new Shape[lst.size() - 1];
+        ArrayList shapeList = new ArrayList();
+        // Don't include the first SpContainer, it is always NotPrimitive
         for (int i = 1; i < lst.size(); i++){
-            EscherContainerRecord container = (EscherContainerRecord)lst.get(i);
-            shapes[i-1] = ShapeFactory.createShape(container, this);
+        	EscherRecord r = (EscherRecord)lst.get(i);
+        	if(r instanceof EscherContainerRecord) {
+        		// Create the Shape for it
+        		EscherContainerRecord container = (EscherContainerRecord)r;
+        		Shape shape = ShapeFactory.createShape(container, this);
+        		shapeList.add( shape );
+        	} else {
+        		// Should we do anything special with these non
+        		//  Container records?
+        		System.err.println("Shape contained non container escher record, was " + r.getClass().getName());
+        	}
         }
-         return shapes;
+        
+        // Put the shapes into an array, and return
+        Shape[] shapes = (Shape[])shapeList.toArray(new Shape[shapeList.size()]);
+        return shapes;
     }
 
     /**
