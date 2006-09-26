@@ -33,11 +33,15 @@ import java.util.ArrayList;
  */
 public class TestShapes extends TestCase {
     private SlideShow ppt;
+    private SlideShow pptB;
 
     protected void setUp() throws Exception {
 		String dirname = System.getProperty("HSLF.testdata.path");
 		String filename = dirname + "/empty.ppt";
 		ppt = new SlideShow(new HSLFSlideShow(filename));
+		
+		String filenameB = dirname + "/empty_textbox.ppt";
+		pptB = new SlideShow(new HSLFSlideShow(filenameB));
     }
 
     public void testGraphics() throws Exception {
@@ -168,6 +172,19 @@ public class TestShapes extends TestCase {
         assertFalse(rt.isUnderlined());
         assertEquals("Arial", rt.getFontName());
         assertEquals(Color.red, txtbox.getFontColor());
+    }
+    
+    /**
+     * Test with an empty text box
+     */
+    public void testEmptyTextBox() throws Exception {
+    	assertEquals(2, pptB.getSlides().length);
+    	Slide s1 = pptB.getSlides()[0];
+    	Slide s2 = pptB.getSlides()[1];
+    	
+    	// Check we can get the shapes count
+    	assertEquals(2, s1.getShapes().length);
+    	assertEquals(2, s2.getShapes().length);
     }
 
     /**

@@ -84,6 +84,12 @@ public class TextBox extends SimpleShape {
      * TextHeaderAtom, TextBytesAtom ot TextCharsAtom, StyleTextPropAtom etc.
      */
     protected EscherTextboxWrapper _txtbox;
+    
+    /**
+     * Is the TextBox missing the text records which actually
+     *  store the text?
+     */
+    private boolean _missingTextRecords = false;
 
     /**
      * Create a TextBox object and initialize it from the supplied Record container.
@@ -544,10 +550,20 @@ public class TextBox extends SimpleShape {
     public void setSheet(Sheet sheet){
         _sheet = sheet;
 
-        //initialize _txtrun object.
-        //we can't do it in the constructor because the sheet is not assigned yet
+        // Initialize _txtrun object.
+        // (We can't do it in the constructor because the sheet
+        //  is not assigned then, it's only built once we have
+        //  all the records)
         if(_txtrun == null) initTextRun();
-
+        if(_txtrun == null) {
+        	// No text records found, skip
+        	_missingTextRecords = true;
+        	return;
+        } else {
+        	_missingTextRecords = false;
+        }
+        
+        // Supply the sheet to our child RichTextRuns
         RichTextRun[] rt = _txtrun.getRichTextRuns();
         for (int i = 0; i < rt.length; i++) {
             rt[i].supplySlideShow(_sheet.getSlideShow());
@@ -555,12 +571,13 @@ public class TextBox extends SimpleShape {
     }
 
     private void initTextRun(){
-
         TextHeaderAtom tha = null;
         TextCharsAtom tca = null;
         TextBytesAtom tba = null;
         StyleTextPropAtom sta = null;
         OutlineTextRefAtom ota = null;
+        
+        // Find the interesting child records 
         Record[] child = _txtbox.getChildRecords();
         for (int i = 0; i < child.length; i++) {
             if (child[i] instanceof TextHeaderAtom) tha = (TextHeaderAtom)child[i];
@@ -570,8 +587,10 @@ public class TextBox extends SimpleShape {
             else if (child[i] instanceof TextCharsAtom) tca = (TextCharsAtom)child[i];
         }
 
-        if (ota != null){
-            //TextHeaderAtom, TextBytesAtom and  StyleTextPropAtom are stored outside of  EscherContainerRecord
+        // Special handling for cases where there's an OutlineTextRefAtom
+        if (ota != null) {
+            // TextHeaderAtom, TextBytesAtom and StyleTextPropAtom are
+        	//  stored outside of  EscherContainerRecord
             int idx = ota.getTextIndex();
             Slide sl = (Slide)getSheet();
             Record[] rec = sl.getSlideAtomsSet().getSlideRecords();
@@ -591,7 +610,17 @@ public class TextBox extends SimpleShape {
                 }
             }
         }
-        if(tba != null) _txtrun = new TextRun(tha,tba,sta);
-        else if (tca != null) _txtrun = new TextRun(tha,tca,sta);
+        
+        // If we found the records we needed, create a TextRun
+        if(tba != null) {
+        	// Bytes based Text Run
+        	_txtrun = new TextRun(tha,tba,sta);
+        } else if (tca != null) {
+        	// Characters (unicode) based Text Run
+        	_txtrun = new TextRun(tha,tca,sta);
+        } else {
+        	// Empty text box
+        	System.err.println("Warning - no text records found for TextBox");
+        }
     }
 }
