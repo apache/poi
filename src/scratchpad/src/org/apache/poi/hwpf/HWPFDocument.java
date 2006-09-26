@@ -88,6 +88,9 @@ public class HWPFDocument extends POIDocument
 
   /** Holds the save history for this document. */
   protected SavedByTable _sbt;
+  
+  /** Holds pictures table */
+  protected PicturesTable _pictures;
 
   protected HWPFDocument()
   {
@@ -184,6 +187,9 @@ public class HWPFDocument extends POIDocument
     {
         _dataStream = new byte[0];
     }
+    
+    // read in the pictures stream
+    _pictures = new PicturesTable(_dataStream);
 
     // get the start of text in the main stream
     int fcMin = _fib.getFcMin();
@@ -286,6 +292,13 @@ public class HWPFDocument extends POIDocument
   public SavedByTable getSavedByTable()
   {
     return _sbt;
+  }
+  
+  /**
+   * @return PicturesTable object, that is able to extract images from this document
+   */
+  public PicturesTable getPicturesTable() {
+	  return _pictures;
   }
 
   /**
