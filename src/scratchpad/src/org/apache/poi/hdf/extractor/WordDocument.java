@@ -815,10 +815,14 @@ public class WordDocument
     int marginLeft = sep._dxaLeft/20;
     int marginRight = sep._dxaRight/20;
 
-    return "<fo:region-" + where + " display-align=\"" + align + "\" extent=\"" +
-             extent + "pt\" padding-left=\"" + marginLeft + "pt\" padding-right=\"" +
-             marginRight + "pt\" padding-top=\"" + marginTop + "pt\" padding-bottom=\"" +
-             marginBottom + "pt\" " + region + "/>";
+    return "<fo:region-" + where + " display-align=\"" + align + "\" extent=\""
+             + extent + "pt\" "+region+"/>";
+// org.apache.fop.fo.expr.PropertyException: 
+// Border and padding for region "xsl-region-before" must be '0' 
+// (See 6.4.13 in XSL 1.0).
+//             extent + "pt\" padding-left=\"" + marginLeft + "pt\" padding-right=\"" +
+//             marginRight + "pt\" padding-top=\"" + marginTop + "pt\" padding-bottom=\"" +
+//             marginBottom + "pt\" " + region + "/>";
 
   }
   private String createRegion(String where, String name)
