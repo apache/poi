@@ -19,7 +19,9 @@
 
 package org.apache.poi.hslf.record;
 
+import org.apache.poi.hslf.HSLFSlideShow;
 import org.apache.poi.hslf.record.StyleTextPropAtom.*;
+import org.apache.poi.hslf.usermodel.SlideShow;
 
 import junit.framework.TestCase;
 import java.io.ByteArrayOutputStream;
@@ -31,7 +33,7 @@ import java.util.LinkedList;
  * @author Nick Burch (nick at torchbox dot com)
  */
 public class TestStyleTextPropAtom extends TestCase {
-	// From a real file: a paragraph with 4 different styles
+	/** From a real file: a paragraph with 4 different styles */
 	private byte[] data_a = new byte[] { 
 	  0, 0, 0xA1-256, 0x0F, 0x2A, 0, 0, 0,
       0x36, 00, 00, 00, // paragraph is 54 long 
@@ -48,12 +50,14 @@ public class TestStyleTextPropAtom extends TestCase {
 	};
 	private int data_a_text_len = 54;
 
-	// From a real file: 4 paragraphs with text in 4 different styles:
-	// left aligned+bold (30)
-	// centre aligned+italic+blue (28)
-	// right aligned+red (25)
-	// left aligned+underlined+larger font size (96)
-	// left aligned+underlined+larger font size+red (1)
+	/** 
+	 * From a real file: 4 paragraphs with text in 4 different styles:
+	 * left aligned+bold (30)
+	 * centre aligned+italic+blue (28)
+	 * right aligned+red (25)
+	 * left aligned+underlined+larger font size (96)
+	 * left aligned+underlined+larger font size+red (1)
+	 */
 	private byte[] data_b = new byte[] { 
 		0, 0, 0xA1-256, 0x0F, 0x80-256, 0, 0, 0, 
 		0x1E, 00, 00, 00,     // paragraph is 30 long 
@@ -104,12 +108,32 @@ public class TestStyleTextPropAtom extends TestCase {
 	};
 	private int data_b_text_len = 0xB3;
 	
+	/**
+	 * From a real file. Has a mask with more bits
+	 *  set than it actually has data for. Shouldn't do,
+	 *  but some real files do :(
+	 */
+	private byte[] data_c = new byte[] {
+		0, 0, -95, 15, 62, 0, 0, 0,
+		123, 0, 0, 0, 0, 0, 48, 8, 
+		10, 0, 1, 0, 0, 0, 0, 0, 
+		1, 0, 2, 0, 1, 0, 0, 0, 
+		0, 0, 48, 0, 10, 0, 1, 0, 
+		0, 0, 0, 0, 2, 0, 123, 0, 
+		0, 0, 0, 0, 3, 0, 1, 0, 
+		28, 0, 1, 0, 0, 0, 0, 0, 
+		3, 0, 1, 0, 24, 0
+	};
+	private int data_c_text_len = 123;
 
+	
     public void testRecordType() throws Exception {
 		StyleTextPropAtom stpa = new StyleTextPropAtom(data_a,0,data_a.length);
 		StyleTextPropAtom stpb = new StyleTextPropAtom(data_b,0,data_b.length);
+		StyleTextPropAtom stpc = new StyleTextPropAtom(data_c,0,data_c.length);
 		assertEquals(4001l, stpa.getRecordType());
 		assertEquals(4001l, stpb.getRecordType());
+		assertEquals(4001l, stpc.getRecordType());
 	}
 
 
@@ -662,5 +686,16 @@ public class TestStyleTextPropAtom extends TestCase {
 			//System.out.println(i + "\t" + b[i] + "\t" + data_b[i] + "\t" + Integer.toHexString(b[i]) );
 			assertEquals(data_b[i],b[i]);
 		}
+	}
+	
+	
+	public void testNotEnoughDataProp() throws Exception {
+		// We don't have enough data in the record to cover
+		//  all the properties the mask says we have
+		// Make sure we just do the best we can
+		StyleTextPropAtom stpc = new StyleTextPropAtom(data_c,0,data_c.length);
+		stpc.setParentTextSize(data_c_text_len);
+		
+		// If we get here, we didn't break
 	}
 }
