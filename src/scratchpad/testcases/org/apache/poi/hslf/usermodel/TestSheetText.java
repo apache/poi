@@ -58,4 +58,34 @@ public class TestSheetText extends TestCase {
 			assertEquals(expectText[i], slideTwo.getTextRuns()[i].getText());
 		}
 	}
+	
+	/**
+	 * Check we can still get the text from a file where the
+	 *  TextProps don't have enough data.
+	 * (Make sure we don't screw up / throw an exception etc)
+	 */
+	public void testWithShortTextPropData() throws Exception {
+		String dirname = System.getProperty("HSLF.testdata.path");
+		String filename = dirname + "/iisd_report.ppt";
+		HSLFSlideShow hss = new HSLFSlideShow(filename);
+		SlideShow sss = new SlideShow(hss);
+		
+		// Should come out with 10 slides, no notes
+		assertEquals(10, sss.getSlides().length);
+		assertEquals(0, sss.getNotes().length);
+		
+		// Check text on first slide
+		Slide s = sss.getSlides()[0];
+		String exp = 
+			"Realizing the Development Dividend:\n" +
+			"Community Capacity Building and CDM.\n" +
+			"Can they co-exist?\n\n" +
+			"Gay Harley\n" +
+			"Clean Development Alliance\n" +
+			"COP 11 – MOP 1\n" +
+			"December 5, 2005\n";
+
+		assertEquals(1, s.getTextRuns().length);
+		assertEquals(exp, s.getTextRuns()[0].getText());
+	}
 }

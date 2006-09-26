@@ -266,6 +266,7 @@ public class StyleTextPropAtom extends RecordAtom
 			pos += 4;
 
 			// Now make sense of those properties
+			// (Assuming we actually have some)
 			TextPropCollection thisCollection = new TextPropCollection(textLen, no_val);
 			int chSize = thisCollection.buildTextPropList(
 					charFlags, characterTextPropTypes, rawContents, pos);
@@ -411,8 +412,15 @@ public class StyleTextPropAtom extends RecordAtom
 			// For each possible entry, see if we match the mask
 			// If we do, decode that, save it, and shuffle on
 			for(int i=0; i<potentialProperties.length; i++) {
+				// Check there's still data left to read
+				if(dataOffset+bytesPassed >= data.length) {
+					// Out of data, can't be any more properties to go
+					return bytesPassed;
+				}
+				
+				// Check if this property is found in the mask
 				if((containsField & potentialProperties[i].getMask()) != 0) {
-					// Bingo, contained
+					// Bingo, data contains this property
 					TextProp prop = (TextProp)potentialProperties[i].clone();
 					int val = 0;
 					if(prop.getSize() == 2) {
