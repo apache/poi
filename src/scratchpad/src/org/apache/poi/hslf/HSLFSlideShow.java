@@ -271,10 +271,15 @@ public class HSLFSlideShow extends POIDocument
             byte[] imgdata = new byte[imgsize];
             System.arraycopy(pictstream, pos, imgdata, 0, imgdata.length);
 
-            PictureData pict = PictureData.create(type - 0xF018);
-            pict.setRawData(imgdata);
-            pict.setOffset(offset);
-            p.add(pict);
+            try {
+            	PictureData pict = PictureData.create(type - 0xF018);
+            	pict.setRawData(imgdata);
+            	pict.setOffset(offset);
+            	p.add(pict);
+            } catch(IllegalArgumentException e) {
+            	System.err.println("Problem reading picture: " + e + "\nYou document will probably become corrupted if you save it!");
+            }
+            
             pos += imgsize;
         }
 
