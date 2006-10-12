@@ -175,7 +175,7 @@ public abstract class PictureData {
                 pict = new PNG();
                 break;
             default:
-                throw new RuntimeException("Unsupported picture type: " + type);
+                throw new IllegalArgumentException("Unsupported picture type: " + type);
         }
         return pict;
     }
