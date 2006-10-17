@@ -27,66 +27,69 @@ public class Line extends SimpleShape {
     /**
     * Solid (continuous) pen
     */
-    public static final int LineSolid = 1;
+    public static final int PEN_SOLID = 1;
     /**
      *  PS_DASH system   dash style
      */
-    public static final int LineDashSys = 2;
+    public static final int PEN_PS_DASH = 2;
     /**
      *  PS_DOT system   dash style
      */
-    public static final int LineDotSys = 3;
+    public static final int PEN_DOT = 3;
     /**
      * PS_DASHDOT system dash style
      */
-    public static final int LineDashDotSys = 4;
-
+    public static final int PEN_DASHDOT = 4;
     /**
      * PS_DASHDOTDOT system dash style
      */
-    public static final int LineDashDotDotSys = 5;
+    public static final int PEN_DASHDOTDOT = 5;
     /**
      *  square dot style
      */
-    public static final int LineDotGEL = 6;
+    public static final int PEN_DOTGEL = 6;
     /**
      *  dash style
      */
-    public static final int LineDashGEL = 7;
+    public static final int PEN_DASH = 7;
     /**
      *  long dash style
      */
-    public static final int LineLongDashGEL = 8;
+    public static final int PEN_LONGDASHGEL = 8;
     /**
      * dash short dash
      */
-    public static final int LineDashDotGEL = 9;
+    public static final int PEN_DASHDOTGEL = 9;
     /**
      * long dash short dash
      */
-    public static final int LineLongDashDotGEL = 10;
+    public static final int PEN_LONGDASHDOTGEL = 10;
     /**
      * long dash short dash short dash
      */
-    public static final int LineLongDashDotDotGEL = 11;
+    public static final int PEN_LONGDASHDOTDOTGEL = 11;
 
     /**
-     * Decoration of the end of line,
-     * reserved in API but not supported.
+     *  Single line (of width lineWidth)
      */
+    public static final int LINE_SIMPLE = 0;
+    /**
+     * Double lines of equal width
+     */
+    public static final int LINE_DOUBLE = 1;
+    /**
+     * Double lines, one thick, one thin
+     */
+    public static final int LINE_THICKTHIN = 2;
+    /**
+     *  Double lines, reverse order
+     */
+    public static final int LINE_THINTHICK = 3;
+    /**
+     * Three lines, thin, thick, thin
+     */
+    public static final int LINE_TRIPLE = 4;
 
-    /**
-     *  Line ends at end point
-     */
-    public static final int EndCapFlat = 0;
-    /**
-     *  Rounded ends - the default
-     */
-    public static final int EndCapRound = 1;
-    /**
-     * Square protrudes by half line width
-     */
-    public static final int EndCapSquare = 2;
 
     protected Line(EscherContainerRecord escherRecord, Shape parent){
         super(escherRecord, parent);
@@ -111,7 +114,13 @@ public class Line extends SimpleShape {
         //set default properties for a line
         EscherOptRecord opt = (EscherOptRecord)getEscherChild(spcont, EscherOptRecord.RECORD_ID);
 
-        opt.sortProperties();
+        //default line properties
+        setEscherProperty(opt, EscherProperties.GEOMETRY__SHAPEPATH, 4);
+        setEscherProperty(opt, EscherProperties.GEOMETRY__FILLOK, 0x10000);
+        setEscherProperty(opt, EscherProperties.FILL__NOFILLHITTEST, 0x100000);
+        setEscherProperty(opt, EscherProperties.LINESTYLE__COLOR, 0x8000001);
+        setEscherProperty(opt, EscherProperties.LINESTYLE__NOLINEDRAWDASH, 0xA0008);
+        setEscherProperty(opt, EscherProperties.SHADOWSTYLE__COLOR, 0x8000002);
 
         return spcont;
     }

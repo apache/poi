@@ -24,6 +24,7 @@ import java.util.Vector;
 import org.apache.poi.hslf.record.PPDrawing;
 import org.apache.poi.hslf.record.SlideAtom;
 import org.apache.poi.hslf.record.TextHeaderAtom;
+import org.apache.poi.hslf.record.ColorSchemeAtom;
 import org.apache.poi.hslf.record.SlideListWithText.SlideAtomsSet;
 
 /**
@@ -81,10 +82,12 @@ public class Slide extends Sheet
 		int i=0;
 		for(i=0; i<textRuns.size(); i++) {
 			_runs[i] = (TextRun)textRuns.get(i);
+            _runs[i].setSheet(this);
 		}
 		// Grab text from slide's PPDrawing
 		for(int k=0; k<_otherRuns.length; i++, k++) {
 			_runs[i] = _otherRuns[k];
+            _runs[i].setSheet(this);
 		}
 	}
   
@@ -135,7 +138,7 @@ public class Slide extends Sheet
 	public TextBox addTitle() {
 		Placeholder pl = new Placeholder();
 		pl.setShapeType(ShapeTypes.Rectangle);
-		pl.setTextType(TextHeaderAtom.TITLE_TYPE);
+		pl.getTextRun().setRunType(TextHeaderAtom.TITLE_TYPE);
 		pl.setText("Click to edit title");
 		pl.setAnchor(new java.awt.Rectangle(54, 48, 612, 90));
 		addShape(pl);
@@ -212,4 +215,34 @@ public class Slide extends Sheet
 	 *  which hold text data for this slide (typically for placeholders).
 	 */
 	protected SlideAtomsSet getSlideAtomsSet() { return _atomSet;  }
-} 
+
+    /**
+     * Returns the slide master associated with this slide.
+     *
+     * @return the slide master associated with this slide.
+     */
+     public MasterSheet getMasterSheet(){
+        SlideMaster[] master = getSlideShow().getSlidesMasters();
+        SlideAtom sa = _slide.getSlideAtom();
+        int masterId = sa.getMasterID();
+        for (int i = 0; i < master.length; i++) {
+            if (masterId == master[i]._getSheetNumber()) return master[i];
+        }
+        throw new RuntimeException("Master slide not found for slide " + _slideNo);
+    }
+
+    /**
+     * Change Master of this slide.
+     */
+    public void setMasterSheet(MasterSheet master){
+        SlideAtom sa = _slide.getSlideAtom();
+        int sheetNo = master._getSheetNumber();
+        sa.setMasterID(sheetNo);
+    }
+
+
+    public ColorSchemeAtom getColorScheme(){
+        return _slide.getColorScheme();
+    }
+
+}

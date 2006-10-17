@@ -34,6 +34,8 @@ public class Environment extends PositionDependentRecordContainer
 
 	// Links to our more interesting children
 	private FontCollection fontCollection;
+    //master style for text with type=TextHeaderAtom.OTHER_TYPE
+    private TxMasterStyleAtom txmaster;
 
 	/**
 	 * Returns the FontCollection of this Environment
@@ -56,7 +58,9 @@ public class Environment extends PositionDependentRecordContainer
 		for(int i=0; i<_children.length; i++) {
 			if(_children[i] instanceof FontCollection) {
 				fontCollection = (FontCollection)_children[i];
-			}
+			} else if (_children[i] instanceof TxMasterStyleAtom){
+                txmaster = (TxMasterStyleAtom)_children[i];
+            }
 		}
 		
 		if(fontCollection == null) {
@@ -64,6 +68,9 @@ public class Environment extends PositionDependentRecordContainer
 		}
 	}
 
+    public TxMasterStyleAtom getTxMasterStyleAtom(){
+        return txmaster;
+    }
 
 	/**
 	 * We are of type 1010

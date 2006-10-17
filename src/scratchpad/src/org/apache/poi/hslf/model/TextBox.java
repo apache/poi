@@ -70,11 +70,6 @@ public class TextBox extends SimpleShape {
     public static final int AlignJustify = 3;
 
     /**
-     * Default font size
-     */
-    public static final int DefaultFontSize = 24;
-
-    /**
      * Low-level object which holds actual text and format data
      */
     protected TextRun _txtrun;
@@ -139,14 +134,12 @@ public class TextBox extends SimpleShape {
         EscherOptRecord opt = (EscherOptRecord)getEscherChild(spcont, EscherOptRecord.RECORD_ID);
         setEscherProperty(opt, EscherProperties.TEXT__TEXTID, 0);
 
-        setEscherProperty(opt, EscherProperties.FILL__FILLCOLOR, 134217732);
-        setEscherProperty(opt, EscherProperties.FILL__FILLBACKCOLOR, 134217728);
-        setEscherProperty(opt, EscherProperties.FILL__NOFILLHITTEST, 1048576);
-        setEscherProperty(opt, EscherProperties.LINESTYLE__COLOR, 134217729);
-        setEscherProperty(opt, EscherProperties.LINESTYLE__NOLINEDRAWDASH, 524288);
-        setEscherProperty(opt, EscherProperties.SHADOWSTYLE__COLOR, 134217730);
-
-        opt.sortProperties();
+        setEscherProperty(opt, EscherProperties.FILL__FILLCOLOR, 0x8000004);
+        setEscherProperty(opt, EscherProperties.FILL__FILLBACKCOLOR, 0x8000000);
+        setEscherProperty(opt, EscherProperties.FILL__NOFILLHITTEST, 0x100000);
+        setEscherProperty(opt, EscherProperties.LINESTYLE__COLOR, 0x8000001);
+        setEscherProperty(opt, EscherProperties.LINESTYLE__NOLINEDRAWDASH, 0x80000);
+        setEscherProperty(opt, EscherProperties.SHADOWSTYLE__COLOR, 0x8000002);
 
         //create EscherTextboxWrapper
         _txtbox = new EscherTextboxWrapper();
@@ -155,13 +148,13 @@ public class TextBox extends SimpleShape {
         tha.setParentRecord(_txtbox); // TextHeaderAtom is parent aware
         _txtbox.appendChildRecord(tha);
 
-        TextBytesAtom tba = new TextBytesAtom();
-        _txtbox.appendChildRecord(tba);
+        TextCharsAtom tca = new TextCharsAtom();
+        _txtbox.appendChildRecord(tca);
 
         StyleTextPropAtom sta = new StyleTextPropAtom(0);
         _txtbox.appendChildRecord(sta);
 
-        _txtrun = new TextRun(tha,tba,sta);
+        _txtrun = new TextRun(tha,tca,sta);
         _txtrun.setText("");
         spcont.addChildRecord(_txtbox.getEscherRecord());
 
@@ -205,40 +198,31 @@ public class TextBox extends SimpleShape {
     }
 
     /**
-     * Returns the bounds of this <code>TextFrame</code>.
-     * <code>Note</b>, this is very primitive estimation, the precision is poor.
-     *
-     * @return  the bounds of this <code>TextFrame</code>.
+     * Adjust the size of the TextBox so it encompasses the text inside it.
      */
-    protected Dimension getTextDimensions(){
+    public void resizeToFitText(){
+        try{
         FontRenderContext frc = new FontRenderContext(null, true, true);
         RichTextRun rt = _txtrun.getRichTextRuns()[0];
         int size = rt.getFontSize();
-        if (size == -1) size = TextBox.DefaultFontSize;
         int style = 0;
         if (rt.isBold()) style |= Font.BOLD;
         if (rt.isItalic()) style |= Font.ITALIC;
         String fntname = rt.getFontName();
-        if (fntname == null) //get the default font from Document.Environment.FontCollection
-            fntname = getSheet().getSlideShow().getDocumentRecord().getEnvironment().getFontCollection().getFontWithId(0);
         Font font = new Font(fntname, style, size);
 
         TextLayout layout = new TextLayout(getText(), font, frc);
         int width = Math.round(layout.getAdvance());
-        width += getMarginLeft() + getMarginRight() + 2;
         int height = Math.round(layout.getAscent());
-        height += getMarginTop() + getMarginBottom() + 12;
-        return new Dimension(width, height);
-    }
 
-    /**
-     * Adjust the size of the TextBox so it encompasses the text inside it.
-     */
-    public void resizeToFitText(){
-        Dimension size = getTextDimensions();
+        Dimension txsize = new Dimension(width, height);
         java.awt.Rectangle anchor = getAnchor();
-        anchor.setSize(size);
+        anchor.setSize(txsize);
         setAnchor(anchor);
+        } catch (Exception e){
+            e.printStackTrace();
+
+        }
     }
 
     /**
@@ -250,7 +234,22 @@ public class TextBox extends SimpleShape {
     public int getVerticalAlignment(){
         EscherOptRecord opt = (EscherOptRecord)getEscherChild(_escherContainer, EscherOptRecord.RECORD_ID);
         EscherSimpleProperty prop = (EscherSimpleProperty)getEscherProperty(opt, EscherProperties.TEXT__ANCHORTEXT);
-        return prop == null ? AlignCenter : prop.getPropertyValue();
+        int valign;
+        if (prop == null){
+            int type = getTextRun().getRunType();
+            switch (type){
+                case TextHeaderAtom.TITLE_TYPE:
+                case TextHeaderAtom.CENTER_TITLE_TYPE:
+                    valign = TextBox.AnchorMiddle;
+                    break;
+                default:
+                    valign = TextBox.AnchorTop;
+                    break;
+            }
+        } else {
+            valign = prop.getPropertyValue();
+        }
+        return valign;
     }
 
     /**
@@ -425,129 +424,7 @@ public class TextBox extends SimpleShape {
          return _txtrun;
      }
 
-    /**
-      * @return  array of RichTextRun objects which control text formatting in this text box
-      */
-     public RichTextRun[] getRichTextRuns(){
-         return _txtrun.getRichTextRuns();
-     }
-
-    /**
-     * Sets the <code>Font</code> object for this text frame
-     *
-     * @param size  the size of the font
-	 *
-	 * @deprecated Use <code>RichTextRun</code> to work with the text format.
-	 * <p>This method will be permanently removed in a future version of the POI HSLF API.</p>
-	 */
-    public void setFontSize(int size){
-        RichTextRun rt = _txtrun.getRichTextRuns()[0];
-        rt.setFontSize(size);
-    }
-
-    /**
-     *
-     * @return  the size of the font applied to this text shape
-     *
-	 * @deprecated Use <code>RichTextRun</code> to work with the text format.
-	 * <p>This method will be permanently removed in a future version of the POI HSLF API.</p>
-     */
-    public int getFontSize(){
-        RichTextRun rt = _txtrun.getRichTextRuns()[0];
-        return rt.getFontSize();
-    }
-
-    /**
-     *
-     * @return  the size of the font applied to this text shape
-     *
-	 * @deprecated Use <code>RichTextRun</code> to work with the text format.
-	 * <p>This method will be permanently removed in a future version of the POI HSLF API.</p>
-     */
-    public Color getFontColor(){
-        RichTextRun rt = _txtrun.getRichTextRuns()[0];
-        Color color = new Color(rt.getFontColor());
-        //in PowerPont RGB bytes are swapped,
-        return new Color(color.getBlue(), color.getGreen(), color.getRed(), 255);
-    }
-
-    /**
-     * Set whether to use bold or not
-     *
-     * @param bold  <code>true</code>   if the text should be bold, <code>false</code>  otherwise
-     *
-	 * @deprecated Use <code>RichTextRun</code> to work with the text format.
-	 * <p>This method will be permanently removed in a future version of the POI HSLF API.</p>
-     */
-    public void setBold(boolean bold){
-        RichTextRun rt = _txtrun.getRichTextRuns()[0];
-        rt.setBold(bold);
-    }
-
-    /**
-     * Set whether to use italic or not
-     *
-     * @param italic  <code>true</code>   if the text should be italic, <code>false</code>  otherwise
-     *
-	 * @deprecated Use <code>RichTextRun</code> to work with the text format.
-	 * <p>This method will be permanently removed in a future version of the POI HSLF API.</p>
-     */
-    public void setItalic(boolean italic){
-        RichTextRun rt = _txtrun.getRichTextRuns()[0];
-        rt.setItalic(italic);
-    }
-
-    /**
-     * Set whether to use underline or not
-     *
-     * @param underline  <code>true</code>   if the text should be underlined, <code>false</code>  otherwise
-     *
-	 * @deprecated Use <code>RichTextRun</code> to work with the text format.
-	 * <p>This method will be permanently removed in a future version of the POI HSLF API.</p>
-     */
-    public void setUnderline(boolean underline){
-        RichTextRun rt = _txtrun.getRichTextRuns()[0];
-        rt.setUnderlined(underline);
-    }
-
-    /**
-     *  Sets the font of this text shape
-     *
-     * @param name  the name of the font to be applied to this text shape
-     *
-	 * @deprecated Use <code>RichTextRun</code> to work with the text format.
-	 * <p>This method will be permanently removed in a future version of the POI HSLF API.</p>
-     */
-    public void setFontName(String name){
-        RichTextRun rt = _txtrun.getRichTextRuns()[0];
-        rt.setFontName(name);
-    }
-
-    /**
-     * Sets the font color
-     * @param color  the font color
-     *
-	 * @deprecated Use <code>RichTextRun</code> to work with the text format.
-	 * <p>This method will be permanently removed in a future version of the POI HSLF API.</p>
-     */
-    public void setFontColor(Color color){
-        //in PowerPont RGB bytes are swapped,
-        int rgb = new Color(color.getBlue(), color.getGreen(), color.getRed(), 254).getRGB();
-        RichTextRun rt = _txtrun.getRichTextRuns()[0];
-        rt.setFontColor(rgb);
-    }
-
-    /**
-     * Set type of the text.
-     * Must be one of the static constants defined in <code>TextHeaderAtom</code>
-     *
-     * @param type type of the text
-     */
-    public void setTextType(int type){
-        _txtrun._headerAtom.setTextType(type);
-    }
-    
-    public void setSheet(Sheet sheet){
+     public void setSheet(Sheet sheet){
         _sheet = sheet;
 
         // Initialize _txtrun object.
@@ -564,6 +441,7 @@ public class TextBox extends SimpleShape {
         }
         
         // Supply the sheet to our child RichTextRuns
+        _txtrun.setSheet(sheet);
         RichTextRun[] rt = _txtrun.getRichTextRuns();
         for (int i = 0; i < rt.length; i++) {
             rt[i].supplySlideShow(_sheet.getSlideShow());

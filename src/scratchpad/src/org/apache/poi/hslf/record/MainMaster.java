@@ -20,24 +20,26 @@ package org.apache.poi.hslf.record;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 
 import org.apache.poi.util.LittleEndian;
 
 /**
- * Master container for Slides. There is one of these for every slide,
- *  and they have certain specific children
+ * Master slide
  *
- * @author Nick Burch
+ * @author Yegor Kozlov
  */
 
-public class Slide extends PositionDependentRecordContainer
+public class MainMaster extends PositionDependentRecordContainer
 {
 	private byte[] _header;
-	private static long _type = 1006l;
+	private static long _type = 1016;
 
 	// Links to our more interesting children
 	private SlideAtom slideAtom;
 	private PPDrawing ppDrawing;
+    private TxMasterStyleAtom[] txmasters;
+    private ColorSchemeAtom[] clrscheme;
     private ColorSchemeAtom _colorScheme;
 
 	/**
@@ -51,11 +53,14 @@ public class Slide extends PositionDependentRecordContainer
 	 */
 	public PPDrawing getPPDrawing() { return ppDrawing; }
 
+    public TxMasterStyleAtom[] getTxMasterStyleAtoms() { return txmasters; }
+
+    public ColorSchemeAtom[] getColorSchemeAtoms() { return clrscheme; }
 
 	/** 
 	 * Set things up, and find our more interesting children
 	 */
-	protected Slide(byte[] source, int start, int len) {
+	protected MainMaster(byte[] source, int start, int len) {
 		// Grab the header
 		_header = new byte[8];
 		System.arraycopy(source,start,_header,0,8);
@@ -63,45 +68,31 @@ public class Slide extends PositionDependentRecordContainer
 		// Find our children
 		_children = Record.findChildRecords(source,start+8,len-8);
 
+        ArrayList tx = new ArrayList();
+        ArrayList clr = new ArrayList();
 		// Find the interesting ones in there
 		for(int i=0; i<_children.length; i++) {
 			if(_children[i] instanceof SlideAtom) {
 				slideAtom = (SlideAtom)_children[i];
-			}
-			else if(_children[i] instanceof PPDrawing) {
+			} else if(_children[i] instanceof PPDrawing) {
 				ppDrawing = (PPDrawing)_children[i];
+            } else if(_children[i] instanceof TxMasterStyleAtom) {
+                tx.add(_children[i]);
+            } else if(_children[i] instanceof ColorSchemeAtom) {
+                clr.add(_children[i]);
 			}
 
             if(ppDrawing != null && _children[i] instanceof ColorSchemeAtom) {
                 _colorScheme = (ColorSchemeAtom)_children[i];
             }
+
 		}
+        txmasters = (TxMasterStyleAtom[])tx.toArray(new TxMasterStyleAtom[tx.size()]);
+        clrscheme = (ColorSchemeAtom[])clr.toArray(new ColorSchemeAtom[clr.size()]);
 	}
 
 	/**
-	 * Create a new, empty, Slide, along with its required
-	 *  child records.
-	 */
-	public Slide(){
-		_header = new byte[8];
-		LittleEndian.putUShort(_header, 0, 15);
-		LittleEndian.putUShort(_header, 2, (int)_type);
-		LittleEndian.putInt(_header, 4, 0);
-
-		slideAtom = new SlideAtom();
-		ppDrawing = new PPDrawing();
-
-		ColorSchemeAtom colorAtom = new ColorSchemeAtom();
-
-		_children = new Record[] {
-			slideAtom,
-			ppDrawing,
-			colorAtom
-		};
-	}
-
-	/**
-	 * We are of type 1006
+	 * We are of type 1016
 	 */
 	public long getRecordType() { return _type; }
 	
@@ -116,4 +107,5 @@ public class Slide extends PositionDependentRecordContainer
     public ColorSchemeAtom getColorScheme(){
         return _colorScheme;
     }
+    
 }

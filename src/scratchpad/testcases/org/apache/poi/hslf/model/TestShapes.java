@@ -50,9 +50,8 @@ public class TestShapes extends TestCase {
         Line line = new Line();
         java.awt.Rectangle lineAnchor = new java.awt.Rectangle(100, 200, 50, 60);
         line.setAnchor(lineAnchor);
-        System.out.println(line.getAnchor());
         line.setLineWidth(3);
-        line.setLineStyle(Line.LineDashSys);
+        line.setLineStyle(Line.PEN_DASH);
         line.setLineColor(Color.red);
         slide.addShape(line);
 
@@ -60,7 +59,7 @@ public class TestShapes extends TestCase {
         java.awt.Rectangle ellipseAnchor = new Rectangle(320, 154, 55, 111);
         ellipse.setAnchor(ellipseAnchor);
         ellipse.setLineWidth(2);
-        ellipse.setLineStyle(Line.LineSolid);
+        ellipse.setLineStyle(Line.PEN_SOLID);
         ellipse.setLineColor(Color.green);
         ellipse.setFillColor(Color.lightGray);
         slide.addShape(ellipse);
@@ -101,8 +100,8 @@ public class TestShapes extends TestCase {
             String text = txtbox.getText();
             assertNotNull(text);
 
-            assertEquals(txtbox.getRichTextRuns().length, 1);
-            RichTextRun rt = txtbox.getRichTextRuns()[0];
+            assertEquals(txtbox.getTextRun().getRichTextRuns().length, 1);
+            RichTextRun rt = txtbox.getTextRun().getRichTextRuns()[0];
 
             if (text.equals("Hello, World!!!")){
                 assertEquals(32, rt.getFontSize());
@@ -135,24 +134,25 @@ public class TestShapes extends TestCase {
 
         // Create a new textbox, and give it lots of properties
         TextBox txtbox = new TextBox();
+        rt = txtbox.getTextRun().getRichTextRuns()[0];
         txtbox.setText(val);
-        txtbox.setFontName("Arial");
-        txtbox.setFontSize(42);
-        txtbox.setBold(true);
-        txtbox.setItalic(true);
-        txtbox.setUnderline(false);
-        txtbox.setFontColor(Color.red);
+        rt.setFontName("Arial");
+        rt.setFontSize(42);
+        rt.setBold(true);
+        rt.setItalic(true);
+        rt.setUnderlined(false);
+        rt.setFontColor(Color.red);
         sl.addShape(txtbox);
 
         // Check it before save
-        rt = txtbox.getRichTextRuns()[0];
+        rt = txtbox.getTextRun().getRichTextRuns()[0];
         assertEquals(val, rt.getText());
         assertEquals(42, rt.getFontSize());
         assertTrue(rt.isBold());
         assertTrue(rt.isItalic());
         assertFalse(rt.isUnderlined());
         assertEquals("Arial", rt.getFontName());
-        assertEquals(Color.red, txtbox.getFontColor());
+        assertEquals(Color.red, rt.getFontColor());
 
         // Serialize and read again
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -162,7 +162,7 @@ public class TestShapes extends TestCase {
         ppt = new SlideShow(new HSLFSlideShow(new ByteArrayInputStream(out.toByteArray())));
 
         txtbox = (TextBox)sl.getShapes()[0];
-        rt = txtbox.getRichTextRuns()[0];
+        rt = txtbox.getTextRun().getRichTextRuns()[0];
 
         // Check after save
         assertEquals(val, rt.getText());
@@ -171,7 +171,7 @@ public class TestShapes extends TestCase {
         assertTrue(rt.isItalic());
         assertFalse(rt.isUnderlined());
         assertEquals("Arial", rt.getFontName());
-        assertEquals(Color.red, txtbox.getFontColor());
+        assertEquals(Color.red, rt.getFontColor());
     }
     
     /**

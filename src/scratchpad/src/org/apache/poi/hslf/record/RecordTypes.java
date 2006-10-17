@@ -44,7 +44,7 @@ public class RecordTypes {
     public static final Type Environment = new Type(1010,Environment.class);
     public static final Type SlidePersistAtom = new Type(1011,SlidePersistAtom.class);
     public static final Type SSlideLayoutAtom = new Type(1015,null);
-    public static final Type MainMaster = new Type(1016,DummyPositionSensitiveRecordWithChildren.class);
+    public static final Type MainMaster = new Type(1016,MainMaster.class);
     public static final Type SSSlideInfoAtom = new Type(1017,null);
     public static final Type SlideViewInfo = new Type(1018,null);
     public static final Type GuideAtom = new Type(1019,null);

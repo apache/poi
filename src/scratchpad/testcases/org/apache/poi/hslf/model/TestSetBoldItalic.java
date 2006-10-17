@@ -46,15 +46,16 @@ public class TestSetBoldItalic extends TestCase {
 
         // Create a new textbox, and give it lots of properties
         TextBox txtbox = new TextBox();
+        rt = txtbox.getTextRun().getRichTextRuns()[0];
         txtbox.setText(val);
-        txtbox.setFontSize(42);
-        txtbox.setBold(true);
-        txtbox.setItalic(true);
-        txtbox.setUnderline(false);
+        rt.setFontSize(42);
+        rt.setBold(true);
+        rt.setItalic(true);
+        rt.setUnderlined(false);
         sl.addShape(txtbox);
 
         // Check it before save
-        rt = txtbox.getRichTextRuns()[0];
+        rt = txtbox.getTextRun().getRichTextRuns()[0];
         assertEquals(val, rt.getText());
         assertEquals(42, rt.getFontSize());
         assertTrue(rt.isBold());
@@ -69,7 +70,7 @@ public class TestSetBoldItalic extends TestCase {
         sl = ppt.getSlides()[0];
 
         txtbox = (TextBox)sl.getShapes()[0];
-        rt = txtbox.getRichTextRuns()[0];
+        rt = txtbox.getTextRun().getRichTextRuns()[0];
 
         // Check after save
         assertEquals(val, rt.getText());

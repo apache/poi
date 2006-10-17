@@ -45,17 +45,15 @@ public class AutoShape extends SimpleShape {
         short type = (short)((shapeType << 4) | 0x2);
         spRecord.setOptions(type);
 
-        //set default properties for a line
+        //set default properties for an autoshape
         EscherOptRecord opt = (EscherOptRecord)getEscherChild(spcont, EscherOptRecord.RECORD_ID);
 
-        opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.FILL__FILLCOLOR, 134217732));
-        opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.FILL__FILLBACKCOLOR, 134217728));
-        opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.FILL__NOFILLHITTEST, 1048592));
-        opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.LINESTYLE__COLOR, 134217729));
-        opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.LINESTYLE__NOLINEDRAWDASH, 524296));
-        opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.SHADOWSTYLE__COLOR, 134217730));
-
-        opt.sortProperties();
+        opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.FILL__FILLCOLOR, 0x8000004));
+        opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.FILL__FILLBACKCOLOR, 0x8000000));
+        opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.FILL__NOFILLHITTEST, 0x100010));
+        opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.LINESTYLE__COLOR, 0x8000001));
+        opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.LINESTYLE__NOLINEDRAWDASH, 0x80008));
+        opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.SHADOWSTYLE__COLOR, 0x8000002));
 
         return spcont;
     }

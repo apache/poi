@@ -209,4 +209,18 @@ public abstract class Sheet
 		ppdrawing.addTextboxWrapper(tbox._txtbox);
 	}
   }
-} 
+    
+    /**
+     * Return the master sheet .
+     */
+    public MasterSheet getMasterSheet(){
+        return null;
+    }
+
+    /**
+     * Color scheme for this sheet.
+     */
+     public  ColorSchemeAtom getColorScheme(){
+        return null;
+    }
+}
