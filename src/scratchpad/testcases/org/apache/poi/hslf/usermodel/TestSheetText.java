@@ -82,7 +82,7 @@ public class TestSheetText extends TestCase {
 			"Can they co-exist?\n\n" +
 			"Gay Harley\n" +
 			"Clean Development Alliance\n" +
-			"COP 11 – MOP 1\n" +
+			"COP 11 \u2013 MOP 1\n" + // special long hyphon
 			"December 5, 2005\n";
 
 		assertEquals(1, s.getTextRuns().length);
