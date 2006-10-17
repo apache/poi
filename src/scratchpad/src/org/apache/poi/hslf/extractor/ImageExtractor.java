@@ -64,6 +64,9 @@ public class ImageExtractor {
                 case Picture.PICT:
                     ext = ".pict";
                     break;
+                case Picture.DIB:
+                    ext = ".dib";
+                    break;
                 default:
                     continue;
             }
