@@ -174,6 +174,9 @@ public abstract class PictureData {
             case Picture.PNG:
                 pict = new PNG();
                 break;
+            case Picture.DIB:
+                pict = new DIB();
+                break;
             default:
                 throw new IllegalArgumentException("Unsupported picture type: " + type);
         }

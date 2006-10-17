@@ -250,6 +250,46 @@ public class TestPictures extends TestCase{
     }
 
     /**
+     * Test read/write DIB
+     */
+    public void testDIB() throws Exception {
+        SlideShow ppt = new SlideShow();
+
+        Slide slide = ppt.createSlide();
+        File img = new File(cwd, "sci_cec.dib");
+        int idx = ppt.addPicture(img, Picture.DIB);
+        Picture pict = new Picture(idx);
+        assertEquals(idx, pict.getPictureIndex());
+        slide.addShape(pict);
+
+        //serialize and read again
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ppt.write(out);
+        out.close();
+
+        ppt = new SlideShow(new HSLFSlideShow(new ByteArrayInputStream(out.toByteArray())));
+
+        //make sure we can read this picture shape and it refers to the correct picture data
+        Shape[] sh = ppt.getSlides()[0].getShapes();
+        assertEquals(1, sh.length);
+        pict = (Picture)sh[0];
+        assertEquals(idx, pict.getPictureIndex());
+
+        //check picture data
+        PictureData[] pictures = ppt.getPictureData();
+        //the Picture shape refers to the PictureData object in the Presentation
+        assertEquals(pict.getPictureData(), pictures[0]);
+
+        assertEquals(1, pictures.length);
+        assertEquals(Picture.DIB, pictures[0].getType());
+        assertTrue(pictures[0] instanceof DIB);
+        //compare the content of the initial file with what is stored in the PictureData
+        byte[] src_bytes = read(img);
+        byte[] ppt_bytes = pictures[0].getData();
+        assertTrue(Arrays.equals(src_bytes, ppt_bytes));
+    }
+
+    /**
      * Read file into a byte array
      */
     protected byte[] read(File f) throws IOException {
