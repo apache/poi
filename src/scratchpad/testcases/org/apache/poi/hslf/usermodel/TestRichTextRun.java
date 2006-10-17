@@ -8,6 +8,7 @@ import java.io.File;
 import org.apache.poi.hslf.HSLFSlideShow;
 import org.apache.poi.hslf.model.Slide;
 import org.apache.poi.hslf.model.TextRun;
+import org.apache.poi.hslf.model.SlideMaster;
 import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.SlideListWithText;
 
@@ -114,7 +115,8 @@ public class TestRichTextRun extends TestCase {
 	 *  rich text runs
 	 */
 	public void testFontSize() throws Exception {
-		Slide slideOne = ss.getSlides()[0];
+		SlideMaster master;
+        Slide slideOne = ss.getSlides()[0];
 		TextRun[] textRuns = slideOne.getTextRuns();
 		RichTextRun rtr = textRuns[0].getRichTextRuns()[0];
 		
@@ -124,13 +126,16 @@ public class TestRichTextRun extends TestCase {
 		RichTextRun rtrRb = textRunsR[1].getRichTextRuns()[0];
 		RichTextRun rtrRc = textRunsR[1].getRichTextRuns()[3];
 
+        String defaultFont = "Arial";
+
 		// Start off with rich one
 		// First run has defaults
-		assertEquals(-1, rtrRa.getFontSize());
-		assertEquals(null, rtrRa.getFontName());
+        assertEquals(44, rtrRa.getFontSize());
+		assertEquals(defaultFont, rtrRa.getFontName());
+
 		// Second is size 20, default font
 		assertEquals(20, rtrRb.getFontSize());
-		assertEquals(null, rtrRb.getFontName());
+		assertEquals(defaultFont, rtrRb.getFontName());
 		// Third is size 24, alt font
 		assertEquals(24, rtrRc.getFontSize());
 		assertEquals("Times New Roman", rtrRc.getFontName());
@@ -145,8 +150,8 @@ public class TestRichTextRun extends TestCase {
 		
 		
 		// Now do non rich one
-		assertEquals(-1, rtr.getFontSize());
-		assertEquals(null, rtr.getFontName());
+		assertEquals(44, rtr.getFontSize());
+		assertEquals(defaultFont, rtr.getFontName());
 		assertEquals(1, ss.getFontCollection().getChildRecords().length); // Default
 		assertNull(rtr._getRawCharacterStyle());
 		assertNull(rtr._getRawParagraphStyle());
@@ -154,7 +159,7 @@ public class TestRichTextRun extends TestCase {
 		// Change Font size
 		rtr.setFontSize(99);
 		assertEquals(99, rtr.getFontSize());
-		assertEquals(null, rtr.getFontName());
+		assertEquals(defaultFont, rtr.getFontName());
 		assertNotNull(rtr._getRawCharacterStyle());
 		assertNotNull(rtr._getRawParagraphStyle());
 		assertEquals(1, ss.getFontCollection().getChildRecords().length); // Default

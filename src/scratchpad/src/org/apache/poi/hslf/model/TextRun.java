@@ -47,6 +47,7 @@ public class TextRun
 	protected boolean _isUnicode;
 	protected RichTextRun[] _rtRuns;
 	private SlideShow slideShow;
+    private Sheet sheet;
 
 	/**
 	* Constructs a Text Run from a Unicode text block
@@ -378,10 +379,12 @@ public class TextRun
 	public synchronized void setText(String s) {
 		// Save the new text to the atoms
 		storeText(s);
-		
+		RichTextRun fst = _rtRuns[0];
+
 		// Finally, zap and re-do the RichTextRuns
 		for(int i=0; i<_rtRuns.length; i++) { _rtRuns[i] = null; }
 		_rtRuns = new RichTextRun[1];
+        _rtRuns[0] = fst;
 
 		// Now handle record stylings:
 		// If there isn't styling
@@ -395,17 +398,7 @@ public class TextRun
 			LinkedList cStyles = _styleAtom.getCharacterStyles();
 			while(cStyles.size() > 1) { cStyles.removeLast(); }
 			
-			// Note - TextPropCollection's idea of the text length must
-			//         be one larger than it actually is!
-			// (This indicates that new text added to the end should
-			//   get the same styling as the current text)
-			TextPropCollection pCol = (TextPropCollection)pStyles.getFirst();
-			TextPropCollection cCol = (TextPropCollection)cStyles.getFirst();
-			pCol.updateTextSize(s.length()+1);
-			cCol.updateTextSize(s.length()+1);
-			
-			// Recreate rich text run with first styling
-			_rtRuns[0] = new RichTextRun(this,0,s.length(), pCol, cCol, false, false);
+			_rtRuns[0].setText(s);
 		} else {
 			// Recreate rich text run with no styling
 			_rtRuns[0] = new RichTextRun(this,0,s.length());
@@ -515,4 +508,12 @@ public class TextRun
 			}
 		}
 	}
-} 
+
+    public void setSheet(Sheet sheet){
+        this.sheet = sheet;
+    }
+
+    public Sheet getSheet(){
+        return this.sheet;        
+    }
+}

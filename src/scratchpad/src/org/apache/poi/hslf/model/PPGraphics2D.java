@@ -26,8 +26,10 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.PathIterator;
 import java.text.AttributedCharacterIterator;
 import java.util.Map;
+import java.util.ArrayList;
 
 import org.apache.poi.ddf.EscherProperties;
+import org.apache.poi.hslf.usermodel.RichTextRun;
 
 /**
  * Translates Graphics2D calls into PowerPoint.
@@ -45,9 +47,9 @@ public class PPGraphics2D extends Graphics2D {
     private Color foreground;
     private Color background = Color.white;
     private Shape clip;
-
+    int count = 0;
     /**
-     * Construct an powerpoint Graphics object.
+     * Construct Java Graphics object which translates graphic calls in ppt drawing layer.
      *
      * @param group           The shape group to write the graphics calls into.
      */
@@ -106,8 +108,11 @@ public class PPGraphics2D extends Graphics2D {
 
     public void draw(Shape shape){
         if(clip != null) {
-            if (!clip.getBounds().contains(transform.createTransformedShape(shape).getBounds())) {
-                //return;
+            java.awt.Rectangle bounds = getTransform().createTransformedShape(shape).getBounds();
+            if (bounds.width == 0) bounds.width = 1;
+            if (bounds.height == 0) bounds.height = 1;
+            if (!clip.getBounds().contains(bounds)) {
+                return;
             }
         }
 
@@ -123,6 +128,8 @@ public class PPGraphics2D extends Graphics2D {
                 if (stroke instanceof BasicStroke){
                     BasicStroke bs = (BasicStroke)stroke;
                     line.setLineWidth(bs.getLineWidth());
+                    float[] dash = bs.getDashArray();
+                    if (dash != null) line.setLineDashing(Line.PEN_DASH);
                 }
                 if(getColor() != null) line.setLineColor(getColor());
                 if (type == PathIterator.SEG_LINETO) {
@@ -139,24 +146,26 @@ public class PPGraphics2D extends Graphics2D {
     }
 
     public void drawString(String string, float x, float y){
-
          TextBox txt = new TextBox(group);
+         txt.getTextRun().supplySlideShow(group.getSheet().getSlideShow());
+         txt.getTextRun().setSheet(group.getSheet());
+         txt.setText(string);
+
+         RichTextRun rt = txt.getTextRun().getRichTextRuns()[0];
+         rt.setFontSize(font.getSize());
+         rt.setFontName(font.getFamily());
+
+        if(getColor() != null) rt.setFontColor(getColor());
+        if (font.isBold()) rt.setBold(true);
+        if (font.isItalic()) rt.setItalic(true);
+
          txt.setMarginBottom(0);
          txt.setMarginTop(0);
          txt.setMarginLeft(0);
          txt.setMarginRight(0);
-         txt.setText(string);
          txt.setWordWrap(TextBox.WrapNone);
-        
-         if (font != null){
-             txt.setFontSize(font.getSize());
-             txt.setFontName(font.getName());
-             if(getColor() != null) txt.setFontColor(getColor());
-             if (font.isBold()) txt.setBold(true);
-             if (font.isItalic()) txt.setItalic(true);
-         }
 
-         txt.resizeToFitText();
+         if (!"".equals(string)) txt.resizeToFitText();
          int height = (int)txt.getAnchor().getHeight();
 
          /*
@@ -166,15 +175,57 @@ public class PPGraphics2D extends Graphics2D {
          */
         txt.moveTo((int)x, (int)(y - height));
 
-        group.addShape(txt);
+        if(clip != null) {
+            if (!clip.getBounds().contains(txt.getAnchor())) {
+                ;//return;
+            }
+        }
+       group.addShape(txt);
     }
 
     public void fill(Shape shape){
-        if (paint instanceof Color){
-            Color color = (Color)paint;
+        if(clip != null) {
+            java.awt.Rectangle bounds = getTransform().createTransformedShape(shape).getBounds();
+            if (bounds.width == 0) bounds.width = 1;
+            if (bounds.height == 0) bounds.height = 1;
+             if (!clip.getBounds().contains(bounds)) {
+                return;
+            }
+        }
+        PathIterator it = shape.getPathIterator(transform);
+        ArrayList pnt = new ArrayList();
+        double[] coords = new double[6];
+        while(!it.isDone()){
+            int type = it.currentSegment(coords);
+            if (type != PathIterator.SEG_CLOSE) {
+                pnt.add(new Point((int)coords[0], (int)coords[1]));
+            }
+            it.next();
+        }
+        int[] xPoints= new int[pnt.size()];
+        int[] yPoints= new int[pnt.size()];
+        for (int i = 0; i < pnt.size(); i++) {
+            Point p = (Point)pnt.get(i);
+            xPoints[i] = p.x;
+            yPoints[i] = p.y;
         }
 
-        throw new RuntimeException("Not implemented");
+        AutoShape r = new AutoShape(ShapeTypes.Rectangle);
+        if (paint instanceof Color){
+            Color color = (Color)paint;
+            r.setFillColor(color);
+        }
+        if(getColor() != null) r.setLineColor(getColor());
+        if (stroke instanceof BasicStroke){
+            BasicStroke bs = (BasicStroke)stroke;
+            r.setLineWidth(bs.getLineWidth());
+            float[] dash = bs.getDashArray();
+            if (dash != null) r.setLineDashing(Line.PEN_DASH);
+        }
+
+        java.awt.Rectangle bounds = transform.createTransformedShape(shape).getBounds();
+        r.setAnchor(bounds);
+        group.addShape(r);
     }
 
     public void translate(int x, int y) {
@@ -458,5 +509,4 @@ public class PPGraphics2D extends Graphics2D {
     public void drawRenderableImage(RenderableImage renderableimage, AffineTransform affinetransform) {
         throw new RuntimeException("Not implemented");
     }
-
 }

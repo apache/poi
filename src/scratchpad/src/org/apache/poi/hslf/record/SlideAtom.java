@@ -49,6 +49,8 @@ public class SlideAtom extends RecordAtom
 
 	/** Get the ID of the master slide used. 0 if this is a master slide, otherwise -2147483648 */
 	public int getMasterID() { return masterID; }
+    /** Change slide master.  */ 
+    public void setMasterID(int id) { masterID = id; }
 	/** Get the ID of the notes for this slide. 0 if doesn't have one */
 	public int getNotesID()  { return notesID; }
 	/** Get the embeded SSlideLayoutAtom */

@@ -205,4 +205,17 @@ public class ColorSchemeAtom extends RecordAtom
 		writeLittleEndian(accentAndHyperlinkColourRGB,out);
 		writeLittleEndian(accentAndFollowingHyperlinkColourRGB,out);
 	}
+
+    /**
+     * Returns color by its index
+     *
+     * @param idx 0-based color index
+     * @return color by its index
+     */
+    public int getColor(int idx){
+        int[] clr = {backgroundColourRGB, textAndLinesColourRGB, shadowsColourRGB, titleTextColourRGB,
+            fillsColourRGB, accentColourRGB, accentAndHyperlinkColourRGB, accentAndFollowingHyperlinkColourRGB};
+        return clr[idx];
+    }
+
 }

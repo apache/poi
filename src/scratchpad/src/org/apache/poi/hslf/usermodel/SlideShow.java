@@ -80,11 +80,10 @@ public class SlideShow
   private Document _documentRecord;
 
   // Friendly objects for people to deal with
+  private SlideMaster[] _masters;
   private Slide[] _slides;
   private Notes[] _notes;
   private FontCollection _fonts;
-  // MetaSheets (eg masters) not yet supported
-  // private MetaSheets[] _msheets;
 
   
   /* ===============================================================
@@ -305,6 +304,18 @@ public class SlideShow
 	SlideListWithText slidesSLWT = _documentRecord.getSlideSlideListWithText();
 	SlideListWithText notesSLWT  = _documentRecord.getNotesSlideListWithText();
 	
+    //find master slides
+    SlideAtomsSet[] masterSets = new SlideAtomsSet[0];
+    org.apache.poi.hslf.record.MainMaster[] masterRecords = null;
+    if (masterSLWT != null){
+
+        masterSets = masterSLWT.getSlideAtomsSets();
+        masterRecords = new org.apache.poi.hslf.record.MainMaster[masterSets.length];
+        for(int i=0; i<masterRecords.length; i++) {
+            masterRecords[i] = (org.apache.poi.hslf.record.MainMaster)getCoreRecordForSAS(masterSets[i]);
+        }
+    }
+
 	// Start by finding the notes records to go with the entries in
 	//  notesSLWT
 	org.apache.poi.hslf.record.Notes[] notesRecords;
@@ -359,6 +370,14 @@ public class SlideShow
 	}
 	
 	// Finally, generate model objects for everything
+    _masters = new SlideMaster[masterRecords.length];
+    for(int i=0; i<_masters.length; i++) {
+        SlideAtomsSet sas = masterSets[i];
+        int sheetNo = sas.getSlidePersistAtom().getSlideIdentifier();
+        _masters[i] = new SlideMaster(masterRecords[i], sheetNo);
+        _masters[i].setSlideShow(this);
+    }
+
 	// Notes first
 	_notes = new Notes[notesRecords.length];
 	for(int i=0; i<_notes.length; i++) {
@@ -420,10 +439,9 @@ public class SlideShow
 	public Notes[] getNotes() { return _notes; }
 
 	/**
-	 * Returns an array of all the meta Sheets (master sheets etc) 
-	 * found in the slideshow
+     * Returns an array of all the normal Slides found in the slideshow
 	 */
-	//public MetaSheet[] getMetaSheets() { return _msheets; }
+    public SlideMaster[] getSlidesMasters() { return _masters; }
 
 	/**
 	 * Returns the data of all the pictures attached to the SlideShow

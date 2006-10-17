@@ -20,9 +20,12 @@
 package org.apache.poi.hslf.usermodel;
 
 import org.apache.poi.hslf.model.TextRun;
+import org.apache.poi.hslf.model.Sheet;
+import org.apache.poi.hslf.model.SlideMaster;
 import org.apache.poi.hslf.record.StyleTextPropAtom.CharFlagsTextProp;
 import org.apache.poi.hslf.record.StyleTextPropAtom.TextProp;
 import org.apache.poi.hslf.record.StyleTextPropAtom.TextPropCollection;
+import org.apache.poi.hslf.record.ColorSchemeAtom;
 
 import java.awt.*;
 
@@ -47,7 +50,8 @@ public class RichTextRun
 	/** How long a string (in the parent TextRun) we represent */
 	private int length;
 	
-	/** 
+    private String _fontname;
+    /**
 	 * Our paragraph and character style.
 	 * Note - we may share these styles with other RichTextRuns
 	 */
@@ -56,7 +60,6 @@ public class RichTextRun
 	private boolean sharingParagraphStyle;
 	private boolean sharingCharacterStyle;
 	
-    private String _fontname;
 	/**
 	 * Create a new wrapper around a (currently not)
 	 *  rich text string
@@ -158,14 +161,20 @@ public class RichTextRun
 	 *  text property won't be set if there's no CharFlagsTextProp.
 	 */
 	private boolean isCharFlagsTextPropVal(int index) {
-		if(characterStyle == null) { return false; }
-		
-		CharFlagsTextProp cftp = (CharFlagsTextProp)
-			characterStyle.findByName("char_flags");
-		
-		if(cftp == null) { return false; }
-		return cftp.getSubValue(index);
+        CharFlagsTextProp cftp = null;
+        if (characterStyle != null){
+            cftp = (CharFlagsTextProp)characterStyle.findByName("char_flags");
+        }
+        if (cftp == null){
+            Sheet sheet = parentRun.getSheet();
+            int txtype = parentRun.getRunType();
+            SlideMaster master = (SlideMaster)sheet.getMasterSheet();
+            cftp = (CharFlagsTextProp)master.getStyleAttribute(txtype, getIndentLevel(), "char_flags", true);
+        }
+
+		return cftp == null ? false : cftp.getSubValue(index);
 	}
+
 	/**
 	 * Set the value of the given flag in the CharFlagsTextProp, adding
 	 *  it if required. 
@@ -204,24 +213,38 @@ public class RichTextRun
 	 *  Master Sheet will apply.
 	 */
 	private int getCharTextPropVal(String propName) {
-		if(characterStyle == null) { return -1; }
-		
-		TextProp cTextProp = characterStyle.findByName(propName);
-		if(cTextProp == null) { return -1; }
-		return cTextProp.getValue();
+        TextProp prop = null;
+        if (characterStyle != null){
+            prop = characterStyle.findByName(propName);
+        }
+
+        if (prop == null){
+            Sheet sheet = parentRun.getSheet();
+            int txtype = parentRun.getRunType();
+            SlideMaster master = (SlideMaster)sheet.getMasterSheet();
+            prop = master.getStyleAttribute(txtype, getIndentLevel(), propName, true);
+        }
+		return prop == null ? -1 : prop.getValue();
 	}
 	/**
-	 * Fetch the value of the given Paragraph related TextProp. 
-	 * Returns -1 if that TextProp isn't present. 
-	 * If the TextProp isn't present, the value from the appropriate 
+	 * Fetch the value of the given Paragraph related TextProp.
+	 * Returns -1 if that TextProp isn't present.
+	 * If the TextProp isn't present, the value from the appropriate
 	 *  Master Sheet will apply.
 	 */
 	private int getParaTextPropVal(String propName) {
-		if(paragraphStyle == null) { return -1; }
-		
-		TextProp pTextProp = paragraphStyle.findByName(propName);
-		if(pTextProp == null) { return -1; }
-		return pTextProp.getValue();
+        TextProp prop = null;
+        if (paragraphStyle != null){
+            prop = paragraphStyle.findByName(propName);
+        }
+        if (prop == null){
+            Sheet sheet = parentRun.getSheet();
+            int txtype = parentRun.getRunType();
+            SlideMaster master = (SlideMaster)sheet.getMasterSheet();
+            prop = master.getStyleAttribute(txtype, getIndentLevel(), propName, false);
+        }
+
+		return prop == null ? -1 : prop.getValue();
 	}
 	
 	/**
@@ -290,27 +313,40 @@ public class RichTextRun
         if (slideShow == null) {
             //we can't set font since slideshow is not assigned yet
             _fontname = fontName;
-        } else{
-		// Get the index for this font (adding if needed)
-		int fontIdx = slideShow.getFontCollection().addFont(fontName);
-		setCharTextPropVal("font.index", fontIdx);
-	}
+        } else {
+    		// Get the index for this font (adding if needed)
+	    	int fontIdx = slideShow.getFontCollection().addFont(fontName);
+		    setCharTextPropVal("font.index", fontIdx);
+        }
 	}
 	public String getFontName() {
-		int fontIdx = getCharTextPropVal("font.index");
-		if(fontIdx == -1) { return null; }
-		return slideShow.getFontCollection().getFontWithId(fontIdx);
+        if (slideShow == null) {
+            return _fontname;
+        } else {
+            int fontIdx = getCharTextPropVal("font.index");
+            if(fontIdx == -1) { return null; }
+            return slideShow.getFontCollection().getFontWithId(fontIdx);
+        }
 	}
 	
 	/**
 	 * @return font color as RGB value
 	 * @see java.awt.Color
 	 */
-	public int getFontColor() {
-		return getCharTextPropVal("font.color");
+	public Color getFontColor() {
+        int rgb = getCharTextPropVal("font.color");
+        if (rgb >= 0x8000000) {
+            int idx = rgb % 0x8000000;
+            ColorSchemeAtom ca = parentRun.getSheet().getColorScheme();
+            if(idx >= 0 && idx <= 7) rgb = ca.getColor(idx);
+        }
+
+        Color tmp = new Color(rgb, true);
+        return new Color(tmp.getBlue(), tmp.getGreen(), tmp.getRed());
 	}
+
 	/**
-	 * Sets color of the text, as a RGB value
+	 * Sets color of the text, as a int rgb
 	 * @see java.awt.Color
 	 */
 	public void setFontColor(int rgb) {

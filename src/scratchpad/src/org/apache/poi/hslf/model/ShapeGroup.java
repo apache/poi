@@ -95,17 +95,17 @@ public class ShapeGroup extends Shape{
         LittleEndian.putInt(header, 4, 8);
         clientAnchor.fillFields(header, 0, null);
 
-        clientAnchor.setFlag((short)anchor.y);
-        clientAnchor.setCol1((short)anchor.x);
-        clientAnchor.setDx1((short)(anchor.width + anchor.x));
-        clientAnchor.setRow1((short)(anchor.height + anchor.y));
+        clientAnchor.setFlag((short)(anchor.y*MASTER_DPI/POINT_DPI));
+        clientAnchor.setCol1((short)(anchor.x*MASTER_DPI/POINT_DPI));
+        clientAnchor.setDx1((short)((anchor.width + anchor.x)*MASTER_DPI/POINT_DPI));
+        clientAnchor.setRow1((short)((anchor.height + anchor.y)*MASTER_DPI/POINT_DPI));
 
         EscherSpgrRecord spgr = (EscherSpgrRecord)getEscherChild(spContainer, EscherSpgrRecord.RECORD_ID);
 
-        spgr.setRectX1(anchor.x);
-        spgr.setRectY1(anchor.y);
-        spgr.setRectX2(anchor.x + anchor.width);
-        spgr.setRectY2(anchor.y + anchor.height);
+        spgr.setRectX1(anchor.x*MASTER_DPI/POINT_DPI);
+        spgr.setRectY1(anchor.y*MASTER_DPI/POINT_DPI);
+        spgr.setRectX2((anchor.x + anchor.width)*MASTER_DPI/POINT_DPI);
+        spgr.setRectY2((anchor.y + anchor.height)*MASTER_DPI/POINT_DPI);
     }
 
     /**
@@ -145,6 +145,15 @@ public class ShapeGroup extends Shape{
      */
     public void addShape(Shape shape){
         _escherContainer.addChildRecord(shape.getSpContainer());
+
+        Sheet sheet = getSheet();
+        shape.setSheet(sheet);
+        shape.afterInsert(sheet);
+
+        if(shape instanceof TextBox) {
+            TextBox tbox = (TextBox)shape;
+            getSheet().getPPDrawing().addTextboxWrapper(tbox._txtbox);
+        }
     }
 
     /**
