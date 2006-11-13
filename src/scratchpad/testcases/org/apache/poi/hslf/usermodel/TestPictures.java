@@ -257,6 +257,11 @@ public class TestPictures extends TestCase{
 
         Slide slide = ppt.createSlide();
         File img = new File(cwd, "sci_cec.dib");
+        
+        // Check we can read the test DIB image
+        assertTrue(img.exists());
+        
+        // Add the image
         int idx = ppt.addPicture(img, Picture.DIB);
         Picture pict = new Picture(idx);
         assertEquals(idx, pict.getPictureIndex());

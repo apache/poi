@@ -122,12 +122,19 @@ public class Picture extends SimpleShape {
     public void setDefaultSize(){
         PictureData pict = getPictureData();
         if (pict  instanceof Bitmap){
+            BufferedImage img = null;
             try {
-                BufferedImage img = ImageIO.read(new ByteArrayInputStream(pict.getData()));
-                if(img != null) setAnchor(new java.awt.Rectangle(0, 0, img.getWidth(), img.getHeight()));
-                else setAnchor(new java.awt.Rectangle(0, 0, 200, 200));
-            } catch (IOException e){
-                ;
+               	img = ImageIO.read(new ByteArrayInputStream(pict.getData()));
+            } 
+            catch (IOException e){}
+        	catch (NegativeArraySizeException ne) {}
+        	
+            if(img != null) {
+            	// Valid image, set anchor from it
+            	setAnchor(new java.awt.Rectangle(0, 0, img.getWidth(), img.getHeight()));
+            } else {
+            	// Invalid image, go with the default metafile size
+            	setAnchor(new java.awt.Rectangle(0, 0, 200, 200));
             }
         } else {
             //default size of a metafile picture is 200x200 
