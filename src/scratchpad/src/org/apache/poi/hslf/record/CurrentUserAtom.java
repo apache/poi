@@ -23,6 +23,7 @@ import java.io.*;
 import org.apache.poi.poifs.filesystem.*;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
+import org.apache.poi.hslf.exceptions.CorruptPowerPointFileException;
 
 
 /**
@@ -95,6 +96,12 @@ public class CurrentUserAtom
 		DocumentEntry docProps =
 			(DocumentEntry)fs.getRoot().getEntry("Current User");
 		_contents = new byte[docProps.getSize()];
+
+		// Check it's big enough - if it's not at least 28 bytes long, then
+		//  the record is corrupt
+		if(_contents.length < 28) {
+			throw new CorruptPowerPointFileException("The Current User stream must be at least 28 bytes long, but was only " + _contents.length);
+		}
 
 		// Grab the contents
 		InputStream in = fs.createDocumentInputStream("Current User");
