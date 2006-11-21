@@ -4,7 +4,6 @@
  */
 package org.apache.poi.hssf.usermodel;
 
-import java.io.FileInputStream;
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;
@@ -75,7 +74,6 @@ import org.apache.poi.hssf.record.formula.eval.SubtractEval;
 import org.apache.poi.hssf.record.formula.eval.UnaryMinusEval;
 import org.apache.poi.hssf.record.formula.eval.UnaryPlusEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
-import org.apache.poi.hssf.util.CellReference;
 
 /**
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
@@ -89,8 +87,6 @@ public class HSSFFormulaEvaluator {
     private static final Class[] OPERATION_CONSTRUCTOR_CLASS_ARRAY = new Class[] { Ptg.class };
 
     private static final Class[] VALUE_CONTRUCTOR_CLASS_ARRAY = new Class[] { Ptg.class };
-
-    private static final Class[] AREA_CONSTRUCTOR_CLASS_ARRAY = new Class[] { Ptg.class, ValueEval[].class };
 
     private static final Class[] AREA3D_CONSTRUCTOR_CLASS_ARRAY = new Class[] { Ptg.class, ValueEval[].class };
 
@@ -186,7 +182,7 @@ public class HSSFFormulaEvaluator {
                 break;
             case HSSFCell.CELL_TYPE_STRING:
                 retval = new CellValue(HSSFCell.CELL_TYPE_STRING);
-                retval.setStringValue(cell.getStringCellValue());
+                retval.setRichTextStringValue(cell.getRichStringCellValue());
                 break;
             }
         }
@@ -221,7 +217,7 @@ public class HSSFFormulaEvaluator {
                     cell.setCellValue(cv.getNumberValue());
                     break;
                 case HSSFCell.CELL_TYPE_STRING:
-                    cell.setCellValue(cv.getStringValue());
+                    cell.setCellValue(cv.getRichTextStringValue());
                     break;
                 case HSSFCell.CELL_TYPE_BLANK:
                     break;
@@ -333,7 +329,7 @@ public class HSSFFormulaEvaluator {
                 HSSFSheet xsheet = workbook.getSheetAt(ptg.getExternSheetIndex());
                 HSSFRow row = sheet.getRow(rownum);
                 HSSFCell cell = (row != null) ? row.getCell(colnum) : null;
-                pushRef3DEval(ptg, stack, cell, row, sheet, workbook);
+                pushRef3DEval(ptg, stack, cell, row, xsheet, workbook);
             }
             else if (ptgs[i] instanceof AreaPtg) {
                 AreaPtg ap = (AreaPtg) ptgs[i];
@@ -364,7 +360,7 @@ public class HSSFFormulaEvaluator {
                     HSSFRow row = sheet.getRow(x);
                     for (short y = col0; row != null && y < col1 + 1; y++) {
                         values[(x - row0) * (col1 - col0 + 1) + (y - col0)] = 
-                            getEvalForCell(row.getCell(y), row, sheet, workbook);
+                            getEvalForCell(row.getCell(y), row, xsheet, workbook);
                     }
                 }
                 AreaEval ae = new Area3DEval(a3dp, values);
@@ -475,7 +471,7 @@ public class HSSFFormulaEvaluator {
                 retval = new NumberEval(cell.getNumericCellValue());
                 break;
             case HSSFCell.CELL_TYPE_STRING:
-                retval = new StringEval(cell.getStringCellValue());
+                retval = new StringEval(cell.getRichStringCellValue().getString());
                 break;
             case HSSFCell.CELL_TYPE_FORMULA:
                 retval = internalEvaluate(cell, row, sheet, workbook);
@@ -511,7 +507,7 @@ public class HSSFFormulaEvaluator {
                 stack.push(new Ref2DEval(ptg, new NumberEval(cell.getNumericCellValue()), false));
                 break;
             case HSSFCell.CELL_TYPE_STRING:
-                stack.push(new Ref2DEval(ptg, new StringEval(cell.getStringCellValue()), false));
+                stack.push(new Ref2DEval(ptg, new StringEval(cell.getRichStringCellValue().getString()), false));
                 break;
             case HSSFCell.CELL_TYPE_FORMULA:
                 stack.push(new Ref2DEval(ptg, internalEvaluate(cell, row, sheet, workbook), true));
@@ -548,7 +544,7 @@ public class HSSFFormulaEvaluator {
                 stack.push(new Ref3DEval(ptg, new NumberEval(cell.getNumericCellValue()), false));
                 break;
             case HSSFCell.CELL_TYPE_STRING:
-                stack.push(new Ref3DEval(ptg, new StringEval(cell.getStringCellValue()), false));
+                stack.push(new Ref3DEval(ptg, new StringEval(cell.getRichStringCellValue().getString()), false));
                 break;
             case HSSFCell.CELL_TYPE_FORMULA:
                 stack.push(new Ref3DEval(ptg, internalEvaluate(cell, row, sheet, workbook), true));
@@ -576,7 +572,7 @@ public class HSSFFormulaEvaluator {
      */
     public static final class CellValue {
         private int cellType;
-        private String stringValue;
+        private HSSFRichTextString richTextStringValue;
         private double numberValue;
         private boolean booleanValue;
         private byte errorValue;
@@ -614,16 +610,20 @@ public class HSSFFormulaEvaluator {
             this.numberValue = numberValue;
         }
         /**
-         * @return Returns the stringValue.
+         * @return Returns the stringValue. This method is deprecated, use
+         * getRichTextStringValue instead
+         * @deprecated
          */
         public String getStringValue() {
-            return stringValue;
+            return richTextStringValue.getString();
         }
         /**
-         * @param stringValue The stringValue to set.
+         * @param stringValue The stringValue to set. This method is deprecated, use
+         * getRichTextStringValue instead.
+         * @deprecated
          */
         public void setStringValue(String stringValue) {
-            this.stringValue = stringValue;
+            this.richTextStringValue = new HSSFRichTextString(stringValue);
         }
         /**
          * @return Returns the cellType.
@@ -643,30 +643,18 @@ public class HSSFFormulaEvaluator {
         public void setErrorValue(byte errorValue) {
             this.errorValue = errorValue;
         }
-    }
-
-    /**
-     * Manual testing... needs "the" c:/temp/test1.xls file to be present.
-     * 
-     * @param args
-     * @throws Exception
-     */
-    public static void main(String[] args) throws Exception {
-        String FILE_NAME = "c:/temp/test1.xls";
-
-        FileInputStream fis = new FileInputStream(FILE_NAME);
-        HSSFWorkbook wb = new HSSFWorkbook(fis);
-        fis.close();
-        HSSFSheet sheet = wb.getSheetAt(0);
-        HSSFFormulaEvaluator instance = new HSSFFormulaEvaluator(sheet, wb);
-
-        for (int rn = 1, rnSize = 4; rn <= rnSize; rn++) {
-            HSSFRow row = sheet.getRow(rn);
-            for (int cn = 5, cnSize = 7; cn <= cnSize; cn++) {
-                HSSFCell cell = row.getCell((short) cn);
-                System.out.println(new CellReference(rn, cn).toString() + ": " + instance.evaluate(cell));
-            }
-        }
+        /**
+         * @return Returns the richTextStringValue.
+         */
+		public HSSFRichTextString getRichTextStringValue() {
+			return richTextStringValue;
+		}
+        /**
+         * @param richTextStringValue The richTextStringValue to set.
+         */
+		public void setRichTextStringValue(HSSFRichTextString richTextStringValue) {
+			this.richTextStringValue = richTextStringValue;
+		}
     }
 
     /**
