@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Stack;
 
 import org.apache.poi.hssf.model.FormulaParser;
+import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.formula.AddPtg;
 import org.apache.poi.hssf.record.formula.Area3DPtg;
 import org.apache.poi.hssf.record.formula.AreaPtg;
@@ -100,11 +101,9 @@ public class HSSFFormulaEvaluator {
     private static final Map OPERATION_EVALS_MAP = new HashMap();
 
     /*
-     * If you dont like this map, join the club :) I did this becoz it was
-     * desired to keep the FormulaEvaluator separate from FormulaParser and
-     * related classes in the CVS-HEAD. So now we need some mapping between the
-     * Ptg tokens that the FormulaParser returns and the *Eval classes taht are
-     * used by the FormulaEvaluator - hence the following :)
+     * Following is the mapping between the Ptg tokens returned 
+     * by the FormulaParser and the *Eval classes that are used 
+     * by the FormulaEvaluator
      */
     static {
         VALUE_EVALS_MAP.put(BoolPtg.class, BoolEval.class);
@@ -214,6 +213,7 @@ public class HSSFFormulaEvaluator {
                     cell.setCellValue(cv.getErrorValue());
                     break;
                 case HSSFCell.CELL_TYPE_NUMERIC:
+                	cell.setCellType(HSSFCell.CELL_TYPE_NUMERIC);
                     cell.setCellValue(cv.getNumberValue());
                     break;
                 case HSSFCell.CELL_TYPE_STRING:
@@ -326,8 +326,9 @@ public class HSSFFormulaEvaluator {
                 Ref3DPtg ptg = (Ref3DPtg) ptgs[i];
                 short colnum = ptg.getColumn();
                 short rownum = ptg.getRow();
-                HSSFSheet xsheet = workbook.getSheetAt(ptg.getExternSheetIndex());
-                HSSFRow row = sheet.getRow(rownum);
+                Workbook wb = workbook.getWorkbook();
+                HSSFSheet xsheet = workbook.getSheetAt(wb.getSheetIndexFromExternSheetIndex(ptg.getExternSheetIndex()));
+                HSSFRow row = xsheet.getRow(rownum);
                 HSSFCell cell = (row != null) ? row.getCell(colnum) : null;
                 pushRef3DEval(ptg, stack, cell, row, xsheet, workbook);
             }
