@@ -17,7 +17,7 @@ public class TestEverything extends TestSuite {
     public static TestSuite suite() throws Exception {
         TestSuite suite = new TestSuite("Tests for individual function classes");
         String s;
-        for(int i=80; i<1481;i=i+4) {
+        for(int i=80; i<1485;i=i+4) {
         	s = "D"+Integer.toString(i).trim();
         	suite.addTest(new GenericFormulaTestCase(s));
         }
