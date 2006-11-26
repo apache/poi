@@ -23,7 +23,7 @@ public abstract class FunctionEval implements OperationEval {
     private static Function[] produceFunctions() {
         Function[] retval = new Function[368];
         retval[0] = new Count(); // COUNT
-        retval[1] = null; // Specialflag(); // SPECIALFLAG
+        retval[1] = new If(); // IF
         retval[2] = new IsNa(); // ISNA
         retval[3] = new IsError(); // ISERROR
         retval[4] = new Sum(); // SUM
