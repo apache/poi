@@ -51,7 +51,7 @@ public class GenericFormulaTestCase extends TestCase {
     protected void assertEquals(String msg, HSSFCell expected, HSSFFormulaEvaluator.CellValue actual) {
         if (expected != null && actual!=null) {
             if (expected!=null && expected.getCellType() == HSSFCell.CELL_TYPE_STRING) {
-                String value = expected.getStringCellValue();
+                String value = expected.getRichStringCellValue().getString();
                 if (value.startsWith("#")) {
                     expected.setCellType(HSSFCell.CELL_TYPE_ERROR);
                 }
@@ -79,7 +79,7 @@ public class GenericFormulaTestCase extends TestCase {
                     break;
                 case HSSFCell.CELL_TYPE_STRING:
                     assertEquals(msg, HSSFCell.CELL_TYPE_STRING, actual.getCellType());
-                    assertEquals(msg, expected.getStringCellValue(), actual.getStringValue());
+                    assertEquals(msg, expected.getRichStringCellValue().getString(), actual.getRichTextStringValue().getString());
                     break;
                 }
             }
