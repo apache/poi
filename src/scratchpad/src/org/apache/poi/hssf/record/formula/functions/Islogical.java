@@ -4,10 +4,38 @@
  */
 package org.apache.poi.hssf.record.formula.functions;
 
+import org.apache.poi.hssf.record.formula.eval.BoolEval;
+import org.apache.poi.hssf.record.formula.eval.ErrorEval;
+import org.apache.poi.hssf.record.formula.eval.Eval;
+import org.apache.poi.hssf.record.formula.eval.RefEval;
+import org.apache.poi.hssf.record.formula.eval.ValueEval;
+
 /**
- * @author 
+ * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
  *
  */
-public class Islogical extends NotImplementedFunction {
+public class Islogical extends LogicalFunction {
 
+    public Eval evaluate(Eval[] operands, int srcCellRow, short srcCellCol) {
+        Eval retval = BoolEval.FALSE;
+        
+        switch (operands.length) {
+        default:
+            retval = ErrorEval.VALUE_INVALID;
+            break;
+        case 1:
+            Eval eval = operands[0];
+            if (eval instanceof BoolEval) {
+                retval = BoolEval.TRUE;
+            }
+            else if (eval instanceof RefEval) {
+                Eval xlatedEval = xlateRefEval((RefEval) eval);
+                if (xlatedEval instanceof BoolEval) {
+                    retval = BoolEval.TRUE;
+                }
+            }
+        }
+        
+        return retval;
+    }
 }
