@@ -17,7 +17,10 @@ package org.apache.poi.hslf.model;
 
 import org.apache.poi.ddf.*;
 import org.apache.poi.hslf.model.ShapeTypes;
+import org.apache.poi.hslf.record.ColorSchemeAtom;
+
 import java.util.Iterator;
+import java.awt.*;
 
 /**
  *  <p>
@@ -280,6 +283,25 @@ public abstract class Shape {
      */
     public void setSheet(Sheet sheet){
         _sheet = sheet;
+    }
+
+    protected Color getColor(int rgb){
+        if (rgb >= 0x8000000) {
+            int idx = rgb - 0x8000000;
+            ColorSchemeAtom ca = getSheet().getColorScheme();
+            if(idx >= 0 && idx <= 7) rgb = ca.getColor(idx);
+        }
+        Color tmp = new Color(rgb, true);
+        return new Color(tmp.getBlue(), tmp.getGreen(), tmp.getRed());
+    }
+
+    /**
+     * Fill properties of this shape
+     *
+     * @return fill properties of this shape
+     */
+    public Fill getFill(){
+        return new Fill(this);
     }
 
 }
