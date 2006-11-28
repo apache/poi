@@ -27,6 +27,8 @@ import org.apache.poi.hpsf.PropertySetFactory;
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * This holds the common functionality for all POI
@@ -36,11 +38,16 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  * @author Nick Burch
  */
 public abstract class POIDocument {
-	// Holds metadata on our document
+	/** Holds metadata on our document */
 	protected SummaryInformation sInf;
+	/** Holds further metadata on our document */
 	protected DocumentSummaryInformation dsInf;
-	
+	/** The open POIFS FileSystem that contains our document */
 	protected POIFSFileSystem filesystem;
+	
+	/** For our own logging use */
+	protected POILogger logger = POILogFactory.getLogger(this.getClass());
+
 	
 	/** 
 	 * Fetch the Document Summary Information of the document
@@ -116,11 +123,13 @@ public abstract class POIDocument {
 		try {
 			MutablePropertySet mSet = new MutablePropertySet(set);
 			ByteArrayOutputStream bOut = new ByteArrayOutputStream();
+
 			mSet.write(bOut);
 			byte[] data = bOut.toByteArray();
 			ByteArrayInputStream bIn = new ByteArrayInputStream(data);
 			outFS.createDocument(bIn,name);
-			System.out.println("Wrote property set " + name + " of size " + data.length);
+
+			logger.log(POILogger.INFO, "Wrote property set " + name + " of size " + data.length);
 		} catch(org.apache.poi.hpsf.WritingNotSupportedException wnse) {
 			System.err.println("Couldn't write property set with name " + name + " as not supported by HPSF yet");
 		}

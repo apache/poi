@@ -46,6 +46,8 @@ import org.apache.poi.hslf.record.PersistPtrHolder;
 import org.apache.poi.hslf.record.PositionDependentRecord;
 import org.apache.poi.hslf.exceptions.CorruptPowerPointFileException;
 import org.apache.poi.util.ArrayUtil;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * This class is a friendly wrapper on top of the more scary HSLFSlideShow.
@@ -84,6 +86,9 @@ public class SlideShow
   private Slide[] _slides;
   private Notes[] _notes;
   private FontCollection _fonts;
+
+  // For logging
+  private POILogger logger = POILogFactory.getLogger(this.getClass());
 
   
   /* ===============================================================
@@ -336,7 +341,7 @@ public class SlideShow
 			if(r instanceof org.apache.poi.hslf.record.Notes) {
 				notesRecords[i] = (org.apache.poi.hslf.record.Notes)r;
 			} else {
-				System.err.println("A Notes SlideAtomSet at " + i + " said its record was at refID " + notesSets[i].getSlidePersistAtom().getRefID() + ", but that was actually a " + r);
+				logger.log(POILogger.ERROR, "A Notes SlideAtomSet at " + i + " said its record was at refID " + notesSets[i].getSlidePersistAtom().getRefID() + ", but that was actually a " + r);
 			}
 			
 			// Record the match between slide id and these notes
@@ -584,7 +589,7 @@ public class SlideShow
   		System.arraycopy(_slides, 0, s, 0, _slides.length);
   		s[_slides.length] = slide;
   		_slides = s;
-  		System.out.println("Added slide " + _slides.length + " with ref " + sp.getRefID() + " and identifier " + sp.getSlideIdentifier());
+  		logger.log(POILogger.INFO, "Added slide " + _slides.length + " with ref " + sp.getRefID() + " and identifier " + sp.getSlideIdentifier());
   		
   		// Add the core records for this new Slide to the record tree
   		org.apache.poi.hslf.record.Slide slideRecord = slide.getSlideRecord();
@@ -620,7 +625,7 @@ public class SlideShow
   		// (Also need to tell it where it is)
 		slideRecord.setLastOnDiskOffset(slideOffset);
 		ptr.addSlideLookup(sp.getRefID(), slideOffset);
-		System.out.println("New slide ended up at " + slideOffset);
+		logger.log(POILogger.INFO, "New slide ended up at " + slideOffset);
 
 		// Last view is now of the slide
   		usr.setLastViewType((short)UserEditAtom.LAST_VIEW_SLIDE_VIEW);
