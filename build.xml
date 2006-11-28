@@ -456,7 +456,7 @@
         </uptodate>
     </target>
 
-    <target name="test-scratchpad" depends="compile-scratchpad,-test-scratchpad-check" unless="scratchpad.test.notRequired">
+    <target name="test-scratchpad" depends="compile-main,compile-scratchpad,-test-scratchpad-check" unless="scratchpad.test.notRequired">
         <junit printsummary="yes" fork="no" haltonfailure="${halt.on.test.failure}" failureproperty="scratchpad.test.failed">
             <classpath>
                 <path refid="scratchpad.classpath"/>
@@ -517,7 +517,7 @@
         </uptodate>
     </target>
 
-    <target name="test-contrib" depends="compile-contrib,-test-contrib-check" unless="contrib.test.notRequired">
+    <target name="test-contrib" depends="compile-main,compile-contrib,-test-contrib-check" unless="contrib.test.notRequired">
         <junit printsummary="yes" fork="no" haltonfailure="${halt.on.test.failure}" failureproperty="contrib.test.failed">
             <classpath>
                 <path refid="contrib.classpath"/>
