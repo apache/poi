@@ -19,6 +19,11 @@ package org.apache.poi.hslf.model;
 import org.apache.poi.hslf.record.*;
 import org.apache.poi.hslf.usermodel.SlideShow;
 import org.apache.poi.hslf.record.StyleTextPropAtom.*;
+import org.apache.poi.ddf.EscherContainerRecord;
+import org.apache.poi.ddf.EscherRecord;
+
+import java.util.List;
+import java.util.Iterator;
 
 /**
  * SlideMaster determines the graphics, layout, and formatting for all the slides in a given presentation.
@@ -32,6 +37,7 @@ public class SlideMaster extends MasterSheet {
     private int _sheetNo;
     private MainMaster _master;
     private TextRun[] _runs;
+    private Background _background;
 
     /**
      * all TxMasterStyleAtoms available in this master
@@ -141,6 +147,32 @@ public class SlideMaster extends MasterSheet {
      */
     public ColorSchemeAtom getColorScheme(){
         return _master.getColorScheme();
+    }
+
+    /**
+     * Returns the background shape for this sheet.
+     *
+     * @return the background shape for this sheet.
+     */
+    public Background getBackground(){
+        if (_background == null){
+            PPDrawing ppdrawing = getPPDrawing();
+
+            EscherContainerRecord dg = (EscherContainerRecord)ppdrawing.getEscherRecords()[0];
+            EscherContainerRecord spContainer = null;
+            List ch = dg.getChildRecords();
+
+            for (Iterator it = ch.iterator(); it.hasNext();) {
+                EscherRecord rec = (EscherRecord)it.next();
+                if (rec.getRecordId() == EscherContainerRecord.SP_CONTAINER){
+                        spContainer = (EscherContainerRecord)rec;
+                        break;
+                }
+            }
+            _background = new Background(spContainer, null);
+            _background.setSheet(this);
+        }
+        return _background;
     }
 
 }

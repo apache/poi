@@ -19,6 +19,7 @@
                     <li><link href="#Shapes">Drawing a shape on a slide</link></li>
                     <li><link href="#Pictures">How to work with pictures</link></li>
                     <li><link href="#SlideTitle">How to set slide title</link></li>
+                    <li><link href="#Fill">How to work with slide/shape background</link></li>
                 </ul>
             </section>
             <section><title>Features</title>
@@ -250,6 +251,47 @@
                   <source>
     Set myDocument = ActivePresentation.Slides(1)
     myDocument.Shapes.AddTitle.TextFrame.TextRange.Text = "Hello, World!"
+                  </source>
+                </section>
+                <anchor id="Fill"/>
+                <section><title>How to modify background of a slide master</title>
+                    <source>
+        SlideShow ppt = new SlideShow();
+        SlideMaster master = ppt.getSlidesMasters()[0];
+
+        Fill fill = master.getBackground().getFill();
+        int idx = ppt.addPicture(new File("background.png"), Picture.PNG);
+        fill.setFillType(Fill.FILL_PICTURE);
+        fill.setPictureData(idx);
+                  </source>
+                </section>
+                <section><title>How to modify background of a slide</title>
+                    <source>
+        SlideShow ppt = new SlideShow();
+        Slide slide = ppt.createSlide();
+        
+        //This slide has its own background. 
+        //Without this line it will use master's background.
+        slide.setFollowMasterBackground(false);
+        Fill fill = slide.getBackground().getFill();
+        int idx = ppt.addPicture(new File("background.png"), Picture.PNG);
+        fill.setFillType(Fill.FILL_PATTERN);
+        fill.setPictureData(idx);
+                  </source>
+                </section>
+                <section><title>How to modify background of a shape</title>
+                    <source>
+        SlideShow ppt = new SlideShow();
+        Slide slide = ppt.createSlide();
+        
+        Shape shape = new AutoShape(ShapeTypes.Rectangle);
+        shape.setAnchor(new java.awt.Rectangle(100, 100, 200, 200));
+        Fill fill = shape.getFill();
+        fill.setFillType(Fill.FILL_SHADE);
+        fill.setBackgroundColor(Color.red);
+        fill.setForegroundColor(Color.green);
+        
+        slide.addShape(shape);
                   </source>
                 </section>
                   

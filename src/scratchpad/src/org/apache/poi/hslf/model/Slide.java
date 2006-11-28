@@ -20,12 +20,17 @@
 package org.apache.poi.hslf.model;
 
 import java.util.Vector;
+import java.util.List;
+import java.util.Iterator;
+import java.util.ArrayList;
 
 import org.apache.poi.hslf.record.PPDrawing;
 import org.apache.poi.hslf.record.SlideAtom;
 import org.apache.poi.hslf.record.TextHeaderAtom;
 import org.apache.poi.hslf.record.ColorSchemeAtom;
 import org.apache.poi.hslf.record.SlideListWithText.SlideAtomsSet;
+import org.apache.poi.ddf.EscherContainerRecord;
+import org.apache.poi.ddf.EscherRecord;
 
 /**
  * This class represents a slide in a PowerPoint Document. It allows 
@@ -33,6 +38,7 @@ import org.apache.poi.hslf.record.SlideListWithText.SlideAtomsSet;
  *  the text side of things though
  *
  * @author Nick Burch
+ * @author Yegor Kozlov
  */
 
 public class Slide extends Sheet
@@ -45,6 +51,7 @@ public class Slide extends Sheet
 	private TextRun[] _runs;
 	private TextRun[] _otherRuns; // Any from the PPDrawing, shouldn't really be any though
 	private Notes _notes; // usermodel needs to set this
+    private Background _background;
 
 	/**
 	 * Constructs a Slide from the Slide record, and the SlideAtomsSet
@@ -245,4 +252,51 @@ public class Slide extends Sheet
         return _slide.getColorScheme();
     }
 
+    /**
+     * Returns the background shape for this sheet.
+     *
+     * @return the background shape for this sheet.
+     */
+    public Background getBackground(){
+        if (_background == null){
+            PPDrawing ppdrawing = getPPDrawing();
+
+            EscherContainerRecord dg = (EscherContainerRecord)ppdrawing.getEscherRecords()[0];
+            EscherContainerRecord spContainer = null;
+            List ch = dg.getChildRecords();
+
+            for (Iterator it = ch.iterator(); it.hasNext();) {
+                EscherRecord rec = (EscherRecord)it.next();
+                if (rec.getRecordId() == EscherContainerRecord.SP_CONTAINER){
+                        spContainer = (EscherContainerRecord)rec;
+                        break;
+                }
+            }
+            _background = new Background(spContainer, null);
+            _background.setSheet(this);
+        }
+        return _background;
+    }
+
+    /**
+     * Sets whether this slide follows master background
+     *
+     * @param flag  <code>true</code> if the slide follows master,
+     * <code>false</code> otherwise
+     */
+    public void setFollowMasterBackground(boolean flag){
+        SlideAtom sa = _slide.getSlideAtom();
+        sa.setFollowMasterBackground(flag);
+    }
+
+    /**
+     * Whether this slide follows master sheet background
+     *
+     * @return <code>true</code> if the slide follows master background,
+     * <code>false</code> otherwise
+     */
+    public boolean getFollowMasterBackground(){
+        SlideAtom sa = _slide.getSlideAtom();
+        return sa.getFollowMasterBackground();
+    }
 }
