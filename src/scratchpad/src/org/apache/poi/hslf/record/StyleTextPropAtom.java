@@ -102,7 +102,8 @@ public class StyleTextPropAtom extends RecordAtom
 				new TextProp(2, 0x4000, "spaceafter"),
 				new TextProp(2, 0x8000, "para_unknown_4"),
 				new TextProp(2, 0x10000, "para_unknown_5"),
-				new TextProp(2, 0xA0000, "para_unknown_6")
+				new TextProp(2, 0xA0000, "para_unknown_6"),
+				new TextProp(2, 0x200000, "para_unknown_7")
 	};
 	/** All the different kinds of character properties we might handle */
 	public static TextProp[] characterTextPropTypes = new TextProp[] {

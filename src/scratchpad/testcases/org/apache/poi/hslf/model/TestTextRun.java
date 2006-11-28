@@ -412,4 +412,36 @@ public class TestTextRun extends TestCase {
 		assertEquals(tpCC.getTextPropList(), ntpCC.getTextPropList());
 		assertEquals(tpDC.getTextPropList(), ntpDC.getTextPropList());
     }
+    
+
+	/**
+	 * Test case for Bug 41015.
+	 *
+	 * In some cases RichTextRun.getText() threw StringIndexOutOfBoundsException because
+	 * of the wrong list of potential paragraph properties defined in StyleTextPropAtom.
+	 *
+	 */
+	public void testBug41015() throws Exception {
+		RichTextRun[] rt;
+		
+		SlideShow ppt = new SlideShow(new HSLFSlideShow(System.getProperty("HSLF.testdata.path") + "/bug-41015.ppt"));
+		Slide sl = ppt.getSlides()[0];
+		TextRun[] txt = sl.getTextRuns();
+		assertEquals(2, txt.length);
+		
+		rt = txt[0].getRichTextRuns();
+		assertEquals(1, rt.length);
+		assertEquals(0, rt[0].getIndentLevel());
+		assertEquals("sdfsdfsdf", rt[0].getText());
+		
+		rt = txt[1].getRichTextRuns();
+		assertEquals(2, rt.length);
+		assertEquals(0, rt[0].getIndentLevel());
+		assertEquals("Sdfsdfsdf\n" +
+		        "Dfgdfg\n" +
+		        "Dfgdfgdfg\n", rt[0].getText());
+		assertEquals(1, rt[1].getIndentLevel());
+		assertEquals("Sdfsdfs\n" +
+		        "Sdfsdf\n", rt[1].getText());
+	}
 }
