@@ -18,9 +18,14 @@
 package org.apache.poi.hwpf.usermodel;
 
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.POILogger;
+import org.apache.poi.util.POILogFactory;
 
 import java.io.OutputStream;
 import java.io.IOException;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.util.zip.InflaterInputStream;
 
 /**
  * Represents embedded picture extracted from Word Document
@@ -28,8 +33,11 @@ import java.io.IOException;
  */
 public class Picture
 {
+  private static final POILogger log = POILogFactory.getLogger(Picture.class);
+
 //  public static final int FILENAME_OFFSET = 0x7C;
 //  public static final int FILENAME_SIZE_OFFSET = 0x6C;
+  static final int MFPMM_OFFSET = 0x6;
   static final int BLOCK_TYPE_OFFSET = 0xE;
   static final int PICT_HEADER_OFFSET = 0x4;
   static final int UNKNOWN_HEADER_SIZE = 0x49;
@@ -41,13 +49,22 @@ public class Picture
   public static final byte[] TIFF = new byte[]{0x49, 0x49, 0x2A, 0x00};
   public static final byte[] TIFF1 = new byte[]{0x4D, 0x4D, 0x00, 0x2A};
 
+  public static final byte[] EMF = { 0x01, 0x00, 0x00, 0x00 };
+  public static final byte[] WMF1 = { (byte)0xD7, (byte)0xCD, (byte)0xC6, (byte)0x9A, 0x00, 0x00 };
+  public static final byte[] WMF2 = { 0x01, 0x00, 0x09, 0x00, 0x00, 0x03 }; // Windows 3.x
+  // TODO: DIB, PICT
+
   public static final byte[] IHDR = new byte[]{'I', 'H', 'D', 'R'};
+
+  public static final byte[] COMPRESSED1 = { (byte)0xFE, 0x78, (byte)0xDA };
+  public static final byte[] COMPRESSED2 = { (byte)0xFE, 0x78, (byte)0x9C };
 
   private int dataBlockStartOfsset;
   private int pictureBytesStartOffset;
   private int dataBlockSize;
   private int size;
 //  private String fileName;
+  private byte[] rawContent;
   private byte[] content;
   private byte[] _dataStream;
   private int aspectRatioX;
@@ -77,9 +94,12 @@ public class Picture
 
     if (fillBytes)
     {
-      fillImageContent(_dataStream);
+      fillImageContent();
     }
+  }
 
+  private void fillWidthHeight()
+  {
     String ext = suggestFileExtension();
     // trying to extract width and height from pictures content:
     if ("jpg".equalsIgnoreCase(ext)) {
@@ -121,8 +141,8 @@ public class Picture
    */
   public void writeImageContent(OutputStream out) throws IOException
   {
-    if (content!=null && content.length>0) {
-      out.write(content, 0, size);
+    if (rawContent!=null && rawContent.length>0) {
+      out.write(rawContent, 0, size);
     } else {
       out.write(_dataStream, pictureBytesStartOffset, size);
     }
@@ -135,9 +155,18 @@ public class Picture
   {
     if (content == null || content.length<=0)
     {
-      fillImageContent(this._dataStream);
+      fillImageContent();
     }
     return content;
+  }
+
+  public byte[] getRawContent()
+  {
+    if (rawContent == null || rawContent.length <= 0)
+    {
+      fillRawImageContent();
+    }
+    return rawContent;
   }
 
   /**
@@ -171,10 +200,12 @@ public class Picture
    */
   public String suggestFileExtension()
   {
-    if (content!=null && content.length>0) {
-      return suggestFileExtension(content, 0);
+    String extension = suggestFileExtension(_dataStream, pictureBytesStartOffset);
+    if ("".equals(extension)) {
+      // May be compressed.  Get the uncompressed content and inspect that.
+      extension = suggestFileExtension(getContent(), 0);
     }
-    return suggestFileExtension(_dataStream, pictureBytesStartOffset);
+    return extension;
   }
 
 
@@ -188,11 +219,16 @@ public class Picture
       return "gif";
     } else if (matchSignature(_dataStream, BMP, pictureBytesStartOffset)) {
       return "bmp";
-    } else if (matchSignature(_dataStream, TIFF, pictureBytesStartOffset)) {
+    } else if (matchSignature(_dataStream, TIFF, pictureBytesStartOffset) ||
+               matchSignature(_dataStream, TIFF1, pictureBytesStartOffset)) {
       return "tiff";
-    } else if (matchSignature(_dataStream, TIFF1, pictureBytesStartOffset)) {
-      return "tiff";
+    } else if (matchSignature(content, WMF1, 0) ||
+               matchSignature(content, WMF2, 0)) {
+      return "wmf";
+    } else if (matchSignature(content, EMF, 0)) {
+      return "emf";
     }
+    // TODO: DIB, PICT
     return "";
   }
 
@@ -233,10 +269,44 @@ public class Picture
 //        return fileName.trim();
 //    }
 
-  private void fillImageContent(byte[] dataStream)
+  private void fillRawImageContent()
   {
-    this.content = new byte[size];
-    System.arraycopy(dataStream, pictureBytesStartOffset, content, 0, size);
+    this.rawContent = new byte[size];
+    System.arraycopy(_dataStream, pictureBytesStartOffset, rawContent, 0, size);
+  }
+
+  private void fillImageContent()
+  {
+    byte[] rawContent = getRawContent();
+
+    // HACK: Detect compressed images.  In reality there should be some way to determine
+    //       this from the first 32 bytes, but I can't see any similarity between all the
+    //       samples I have obtained, nor any similarity in the data block contents.
+    if (matchSignature(rawContent, COMPRESSED1, 32) || matchSignature(rawContent, COMPRESSED2, 32))
+    {
+      try
+      {
+        InflaterInputStream in = new InflaterInputStream(
+          new ByteArrayInputStream(rawContent, 33, rawContent.length - 33));
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        byte[] buf = new byte[4096];
+        int readBytes;
+        while ((readBytes = in.read(buf)) > 0)
+        {
+          out.write(buf, 0, readBytes);
+        }
+        content = out.toByteArray();
+      }
+      catch (IOException e)
+      {
+        // Problems reading from the actual ByteArrayInputStream should never happen
+        // so this will only ever be a ZipException.
+        log.log(POILogger.INFO, "Possibly corrupt compression or non-compressed data", e);
+      }
+    } else {
+      // Raw data is not compressed.
+      content = rawContent;
+    }
   }
 
   private static int getPictureBytesStartOffset(int dataBlockStartOffset, byte[] _dataStream, int dataBlockSize)
@@ -322,18 +392,28 @@ public class Picture
       this.height = getBigEndianInt(_dataStream, IHDR_CHUNK_WIDTH + 4);
     }
   }
+
   /**
    * returns pixel width of the picture or -1 if dimensions determining was failed
    */
   public int getWidth()
   {
+    if (width == -1)
+    {
+      fillWidthHeight();
+    }
     return width;
   }
+
   /**
    * returns pixel height of the picture or -1 if dimensions determining was failed
    */
   public int getHeight()
   {
+    if (height == -1)
+    {
+      fillWidthHeight();
+    }
     return height;
   }
 

@@ -23,7 +23,13 @@ public class UnhandledDataStructure
 
   public UnhandledDataStructure(byte[] buf, int offset, int length)
   {
+//    System.out.println("Yes, using my code");
     _buf = new byte[length];
+    if (offset + length > buf.length)
+    {
+      throw new IndexOutOfBoundsException("buffer length is " + buf.length +
+                                          "but code is trying to read " + length + " from offset " + offset);
+    }
     System.arraycopy(buf, offset, _buf, 0, length);
   }
 
