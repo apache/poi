@@ -25,6 +25,8 @@ import java.io.IOException;
 import org.apache.poi.hwpf.model.io.HWPFOutputStream;
 
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 public class FIBFieldHandler
 {
@@ -122,6 +124,8 @@ public class FIBFieldHandler
   public static final int STTBLISTNAMES = 91;
   public static final int STTBFUSSR = 92;
 
+  private static POILogger log = POILogFactory.getLogger(FIBFieldHandler.class);
+
   private static final int FIELD_SIZE = LittleEndian.INT_SIZE * 2;
 
   private HashMap _unknownMap = new HashMap();
@@ -146,9 +150,18 @@ public class FIBFieldHandler
       {
         if (dsSize > 0)
         {
-          UnhandledDataStructure unhandled = new UnhandledDataStructure(
-            tableStream, dsOffset, dsSize);
-          _unknownMap.put(new Integer(x), unhandled);
+          if (dsOffset + dsSize > tableStream.length)
+          {
+            log.log(POILogger.WARN, "Unhandled data structure points to outside the buffer. " +
+                                    "offset = " + dsOffset + ", length = " + dsSize +
+                                    ", buffer length = " + tableStream.length);
+          }
+          else
+          {
+            UnhandledDataStructure unhandled = new UnhandledDataStructure(
+              tableStream, dsOffset, dsSize);
+            _unknownMap.put(new Integer(x), unhandled);
+          }
         }
       }
       _fields[x*2] = dsOffset;

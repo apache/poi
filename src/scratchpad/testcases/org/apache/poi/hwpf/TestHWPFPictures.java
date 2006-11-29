@@ -31,38 +31,40 @@ import junit.framework.TestCase;
  * @author nick
  */
 public class TestHWPFPictures extends TestCase {
-	private HWPFDocument docA;
-	private HWPFDocument docB;
 	private String docAFile;
 	private String docBFile;
+	private String docCFile;
 	
 	private String imgAFile;
 	private String imgBFile;
+	private String imgCFile;
 	
 	protected void setUp() throws Exception {
 		String dirname = System.getProperty("HWPF.testdata.path");
 		
 		docAFile = dirname + "/testPictures.doc";
 		docBFile = dirname + "/two_images.doc";
+		docCFile = dirname + "/vector_image.doc";
 		
 		imgAFile = dirname + "/simple_image.jpg";
 		imgBFile = dirname + "/simple_image.png";
+		imgCFile = dirname + "/vector_image.emf";
 	}
 	
 	/**
 	 * Test just opening the files
 	 */
 	public void testOpen() throws Exception {
-		docA = new HWPFDocument(new FileInputStream(docAFile));
-		docB = new HWPFDocument(new FileInputStream(docBFile));
+		HWPFDocument docA = new HWPFDocument(new FileInputStream(docAFile));
+		HWPFDocument docB = new HWPFDocument(new FileInputStream(docBFile));
 	}
 	
 	/**
 	 * Test that we have the right numbers of images in each file
 	 */
 	public void testImageCount() throws Exception {
-		docA = new HWPFDocument(new FileInputStream(docAFile));
-		docB = new HWPFDocument(new FileInputStream(docBFile));
+		HWPFDocument docA = new HWPFDocument(new FileInputStream(docAFile));
+		HWPFDocument docB = new HWPFDocument(new FileInputStream(docBFile));
 		
 		assertNotNull(docA.getPicturesTable());
 		assertNotNull(docB.getPicturesTable());
@@ -81,7 +83,7 @@ public class TestHWPFPictures extends TestCase {
 	 * Test that we have the right images in at least one file
 	 */
 	public void testImageData() throws Exception {
-		docB = new HWPFDocument(new FileInputStream(docBFile));
+		HWPFDocument docB = new HWPFDocument(new FileInputStream(docBFile));
 		PicturesTable picB = docB.getPicturesTable();
 		List picturesB = picB.getAllPictures();
 		
@@ -102,6 +104,26 @@ public class TestHWPFPictures extends TestCase {
 
 		assertBytesSame(pic1B, pic1.getContent());
 		assertBytesSame(pic2B, pic2.getContent());
+	}
+	
+	/**
+	 * Test that compressed image data is correctly returned.
+	 */
+	public void testCompressedImageData() throws Exception {
+		HWPFDocument docC = new HWPFDocument(new FileInputStream(docCFile));
+		PicturesTable picC = docC.getPicturesTable();
+		List picturesC = picC.getAllPictures();
+		
+		assertEquals(1, picturesC.size());
+		
+		Picture pic = (Picture)picturesC.get(0);
+		assertNotNull(pic);
+		
+		// Check the same
+		byte[] picBytes = readFile(imgCFile);
+		
+		assertEquals(picBytes.length, pic.getContent().length);
+		assertBytesSame(picBytes, pic.getContent());
 	}
 	
 	
