@@ -38,6 +38,7 @@ import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
 import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -175,8 +176,29 @@ public class HSSFWorkbook
 
         sheets = new ArrayList(INITIAL_CAPACITY);
         names  = new ArrayList(INITIAL_CAPACITY);
+        
+        // Normally, the Workbook will be in a POIFS Stream
+        //  called "Workbook". However, some wierd XLS generators
+        //  put theirs in one called "WORKBOOK"
+        String workbookName = "Workbook";
+        try {
+        	fs.getRoot().getEntry(workbookName);
+        	// Is the default name
+        } catch(FileNotFoundException fe) {
+        	// Try the upper case form
+        	try {
+        		workbookName = "WORKBOOK";
+        		fs.getRoot().getEntry(workbookName);
+        	} catch(FileNotFoundException wfe) {
+        		// Doesn't contain it in either form
+        		throw new IllegalArgumentException("The supplied POIFSFileSystem contained neither a 'Workbook' entry, nor a 'WORKBOOK' entry. Is it really an excel file?");
+        	}
+        }
 
-        InputStream stream = fs.createDocumentInputStream("Workbook");
+        
+        // Grab the data from the workbook stream, however
+        //  it happens to be spelt.
+        InputStream stream = fs.createDocumentInputStream(workbookName);
 
         EventRecordFactory factory = new EventRecordFactory();
 
