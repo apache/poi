@@ -158,6 +158,7 @@
                  
   <p>
   Currently, HSLF API supports the following types of pictures:
+  </p>
   <ul>
     <li>Windows Metafiles (WMF)</li>
     <li>Enhanced Metafiles (EMF)</li>
@@ -165,7 +166,6 @@
     <li>Portable Network Graphics (PNG)</li>
     <li>Macintosh PICT</li>
   </ul>
-  </p>
 
                     <source>
   SlideShow ppt = new SlideShow(new HSLFSlideShow("slideshow.ppt"));
