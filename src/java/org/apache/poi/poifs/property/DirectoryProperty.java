@@ -127,7 +127,7 @@ public class DirectoryProperty
         return result;
     }
 
-    private class PropertyComparator
+    public static class PropertyComparator
         implements Comparator
     {
 
@@ -162,13 +162,40 @@ public class DirectoryProperty
 
         public int compare(Object o1, Object o2)
         {
+            String VBA_PROJECT = "_VBA_PROJECT";
             String name1  = (( Property ) o1).getName();
             String name2  = (( Property ) o2).getName();
-            int    result = name1.length() - name2.length();
+            int  result = name1.length() - name2.length();
 
             if (result == 0)
             {
-                result = name1.compareTo(name2);
+              // _VBA_PROJECT, it seems, will always come last
+              if (name1.compareTo(VBA_PROJECT) == 0)
+                result = 1;
+              else if (name2.compareTo(VBA_PROJECT) == 0)
+                result = -1;
+              else
+              {
+                if (name1.startsWith("__") && name2.startsWith("__"))
+                {
+                  // Betweeen __SRP_0 and __SRP_1 just sort as normal
+                  result = name1.compareToIgnoreCase(name2);
+                }
+                else if (name1.startsWith("__"))
+                {
+                  // If only name1 is __XXX then this will be placed after name2
+                  result = 1;
+                }
+                else if (name2.startsWith("__"))
+                {
+                  // If only name2 is __XXX then this will be placed after name1
+                  result = -1;
+                }
+                else
+                  // result = name1.compareTo(name2);
+                  // The default case is to sort names ignoring case
+                  result = name1.compareToIgnoreCase(name2);
+              }
             }
             return result;
         }
