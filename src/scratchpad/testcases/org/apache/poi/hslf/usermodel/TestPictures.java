@@ -373,5 +373,22 @@ public class TestPictures extends TestCase{
 
     }
 
+	/**
+	 * Test that on a party corrupt powerpoint document, which has 
+	 *  crazy pictures of type 0, we do our best.
+	 */
+	public void testZeroPictureType() throws Exception {
+		HSLFSlideShow hslf = new HSLFSlideShow(new File(cwd, "PictureTypeZero.ppt").getPath());
 
+		// Should still have 2 real pictures
+		assertEquals(2, hslf.getPictures().length);
+		// Both are real pictures, both WMF
+		assertEquals(Picture.WMF, hslf.getPictures()[0].getType());
+		assertEquals(Picture.WMF, hslf.getPictures()[1].getType());
+
+		// TODO: DISABLED: Pending bug #41176
+
+		// Now test what happens when we use the SlideShow interface
+		//SlideShow ppt = new SlideShow(hslf);
+	}
 }

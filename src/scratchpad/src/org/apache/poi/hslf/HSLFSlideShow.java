@@ -255,30 +255,36 @@ public class HSLFSlideShow extends POIDocument
         List p = new ArrayList();
         int pos = 0;
 
-        while (pos < pictstream.length) {
+		// An empty picture record (length 0) will take up 8 bytes
+        while (pos <= (pictstream.length-8)) {
             int offset = pos;
 
-            //image signature
+            // Image signature
             int signature = LittleEndian.getUShort(pictstream, pos);
             pos += LittleEndian.SHORT_SIZE;
-            //image type + 0xF018
+            // Image type + 0xF018
             int type = LittleEndian.getUShort(pictstream, pos);
             pos += LittleEndian.SHORT_SIZE;
-            //image size
+            // Image size (excluding the 8 byte header)
             int imgsize = LittleEndian.getInt(pictstream, pos);
             pos += LittleEndian.INT_SIZE;
-
             byte[] imgdata = new byte[imgsize];
             System.arraycopy(pictstream, pos, imgdata, 0, imgdata.length);
 
-            try {
-            	PictureData pict = PictureData.create(type - 0xF018);
-            	pict.setRawData(imgdata);
-            	pict.setOffset(offset);
-            	p.add(pict);
-            } catch(IllegalArgumentException e) {
-            	System.err.println("Problem reading picture: " + e + "\nYou document will probably become corrupted if you save it!");
-            }
+			// If they type (including the bonus 0xF018) is 0, skip it
+			if(type == 0) {
+				System.err.println("Problem reading picture: Invalid image type 0, on picture with length" + imgsize + ".\nYou document will probably become corrupted if you save it!");
+			} else {
+				// Build the PictureData object from the data
+				try {
+					PictureData pict = PictureData.create(type - 0xF018);
+					pict.setRawData(imgdata);
+					pict.setOffset(offset);
+					p.add(pict);
+				} catch(IllegalArgumentException e) {
+					System.err.println("Problem reading picture: " + e + "\nYou document will probably become corrupted if you save it!");
+				}
+			}
             
             pos += imgsize;
         }
