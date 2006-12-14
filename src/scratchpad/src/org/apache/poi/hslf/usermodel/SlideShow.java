@@ -304,22 +304,58 @@ public class SlideShow
 	//  we have to go and find their matching records
 	// We always use the latest versions of these records, and use the
 	//  SlideAtom/NotesAtom to match them with the StyleAtomSet 
+	//
+	// Some crazy documents don't have a master SlideListWithText, their
+	//  first one is the slide containing one, which makes things fun...
 
 	SlideListWithText masterSLWT = _documentRecord.getMasterSlideListWithText();
 	SlideListWithText slidesSLWT = _documentRecord.getSlideSlideListWithText();
 	SlideListWithText notesSLWT  = _documentRecord.getNotesSlideListWithText();
 	
-    //find master slides
+    // Find master slides
+	// Need to ensure they're really master slides, and we're not dealing
+	//  with a crazy document that doesn't have any master slides
     SlideAtomsSet[] masterSets = new SlideAtomsSet[0];
     org.apache.poi.hslf.record.MainMaster[] masterRecords = null;
     if (masterSLWT != null){
-
         masterSets = masterSLWT.getSlideAtomsSets();
-        masterRecords = new org.apache.poi.hslf.record.MainMaster[masterSets.length];
-        for(int i=0; i<masterRecords.length; i++) {
-            masterRecords[i] = (org.apache.poi.hslf.record.MainMaster)getCoreRecordForSAS(masterSets[i]);
-        }
+
+		// Are they Slides, Master Slides, or some broken mix?
+		int slideCount = 0;
+		int masterCount = 0;
+		for(int i=0; i<masterSets.length; i++) {
+			Record r = getCoreRecordForSAS(masterSets[i]);
+			if(r instanceof org.apache.poi.hslf.record.Slide) {
+				slideCount++;
+			} else if(r instanceof org.apache.poi.hslf.record.MainMaster) {
+				masterCount++;
+			} else {
+				throw new CorruptPowerPointFileException("The PowerPoint file had a broken first SlideListWithTexts. This should only contain either MainMasters, or Slides, but it contained a record of type " + r.getRecordType());
+			}
+		}
+
+		if(slideCount > 0 && masterCount == 0) {
+			// Actually the Slide SlideListWithTexts
+			notesSLWT = slidesSLWT;
+			slidesSLWT = masterSLWT;
+			masterSLWT = null;
+		} else if(masterCount >= 0 && slideCount == 0) {
+			// Is a normal, proper Masters SlideListWithTexts
+			masterRecords = new org.apache.poi.hslf.record.MainMaster[masterSets.length];
+
+			// Grab the Main Master records
+			for(int i=0; i<masterRecords.length; i++) {
+				masterRecords[i] = (org.apache.poi.hslf.record.MainMaster)getCoreRecordForSAS(masterSets[i]);
+			}
+		} else {
+			// Contains both Slides and Main Masters, is corrupt
+				throw new CorruptPowerPointFileException("The PowerPoint file had a broken first SlideListWithTexts. This should only contain either MainMasters, or Slides, but it contained a mix of both (" + slideCount + " slides and " + masterCount + " masters)");
+		}
     }
+
+
+	// Having sorted out the masters, that leaves the notes and slides
+
 
 	// Start by finding the notes records to go with the entries in
 	//  notesSLWT
