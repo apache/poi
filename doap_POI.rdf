@@ -27,7 +27,7 @@
     <repository>
       <SVNRepository>
         <location rdf:resource="http://svn.apache.org/repos/asf/jakarta/poi"/>
-        <browse rdf:resource="http://svn.apache.org/viewcvs.cgi/jakarta/poi/"/>
+        <browse rdf:resource="http://svn.apache.org/viewvc/jakarta/poi/"/>
       </SVNRepository>
     </repository>
   </Project>
