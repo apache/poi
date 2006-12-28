@@ -838,7 +838,9 @@ FORREST_HOME environment variable!</echo>
 	</target>
 
     <target name="jar" depends="compile" description="Creates jar files for distribution">
-        <jar basedir="${main.output.dir}" destfile="${dist.dir}/${jar.name}-${version.id}-${DSTAMP}.jar">
+        <jar destfile="${dist.dir}/${jar.name}-${version.id}-${DSTAMP}.jar">
+			<fileset dir="${main.output.dir}" />
+			<fileset dir="legal/" />
             <manifest>
                 <attribute name="Built-By" value="${user.name}"/>
                 <section name="common">
@@ -851,7 +853,9 @@ FORREST_HOME environment variable!</echo>
                 </section>
             </manifest>        
         </jar>
-        <jar basedir="${contrib.output.dir}" destfile="${dist.dir}/${jar.name}-contrib-${version.id}-${DSTAMP}.jar">
+        <jar destfile="${dist.dir}/${jar.name}-contrib-${version.id}-${DSTAMP}.jar">
+			<fileset dir="${contrib.output.dir}" />
+			<fileset dir="legal/" />
             <manifest>
                 <attribute name="Built-By" value="${user.name}"/>
                 <section name="common">
@@ -864,7 +868,9 @@ FORREST_HOME environment variable!</echo>
                 </section>
             </manifest>        
         </jar>
-        <jar basedir="${scratchpad.output.dir}" destfile="${dist.dir}/${jar.name}-scratchpad-${version.id}-${DSTAMP}.jar">
+        <jar destfile="${dist.dir}/${jar.name}-scratchpad-${version.id}-${DSTAMP}.jar">
+			<fileset dir="${scratchpad.output.dir}" />
+			<fileset dir="legal/" />
             <manifest>
                 <attribute name="Built-By" value="${user.name}"/>
                 <section name="common">
@@ -882,47 +888,49 @@ FORREST_HOME environment variable!</echo>
   <target name="dist" depends="fail-unless-tools-are-available, compile, site, jar"
     description="Creates the entire distribution into build/dist">
 
+	<property name="zipdir" value="${jar.name}-${version.id}" />
+
     <zip destfile="${dist.dir}/${jar.name}-bin-${version.id}-${DSTAMP}.zip">
-      <zipfileset dir="legal/"/>
-      <zipfileset dir="${build.site}" prefix="docs"/>
-      <zipfileset file="${dist.dir}/${jar.name}-${version.id}-${DSTAMP}.jar"/>
-      <zipfileset file="${dist.dir}/${jar.name}-contrib-${version.id}-${DSTAMP}.jar"/>
-      <zipfileset file="${dist.dir}/${jar.name}-scratchpad-${version.id}-${DSTAMP}.jar"/>
-      <zipfileset dir="legal" prefix="legal"/>
+      <zipfileset dir="legal/" prefix="${zipdir}" />
+      <zipfileset dir="${build.site}" prefix="${zipdir}/docs"/>
+      <zipfileset file="${dist.dir}/${jar.name}-${version.id}-${DSTAMP}.jar" prefix="${zipdir}" />
+      <zipfileset file="${dist.dir}/${jar.name}-contrib-${version.id}-${DSTAMP}.jar" prefix="${zipdir}" />
+      <zipfileset file="${dist.dir}/${jar.name}-scratchpad-${version.id}-${DSTAMP}.jar" prefix="${zipdir}" />
     </zip>
 
     <zip destfile="${dist.dir}/${jar.name}-src-${version.id}-${DSTAMP}.zip">
-      <zipfileset dir="legal/"/>    
-      <zipfileset dir="${build.site}" prefix="docs"/>
-      <zipfileset dir=".">
+      <zipfileset dir="legal/" prefix="${zipdir}" />
+      <zipfileset dir="${build.site}" prefix="${zipdir}/docs"/>
+      <zipfileset dir="." prefix="${zipdir}">
         <exclude name="build/**"/>
         <exclude name="scripts/**"/>
         <exclude name="*.ipr"/>
         <exclude name="*.iml"/>
         <exclude name="*.iws"/>
+        <exclude name="*.swp"/>
       </zipfileset>
     </zip>
 
     <tar destfile="${dist.dir}/${jar.name}-bin-${version.id}-${DSTAMP}.tar.gz"
       compression="gzip">
-      <tarfileset dir="legal/"/>
-      <tarfileset dir="${build.site}" prefix="docs"/>
-      <tarfileset file="${dist.dir}/${jar.name}-${version.id}-${DSTAMP}.jar"/>
-      <tarfileset file="${dist.dir}/${jar.name}-contrib-${version.id}-${DSTAMP}.jar"/>
-      <tarfileset file="${dist.dir}/${jar.name}-scratchpad-${version.id}-${DSTAMP}.jar"/>
-      <tarfileset dir="legal" prefix="legal"/>
+      <tarfileset dir="legal/" prefix="${zipdir}" />
+      <tarfileset dir="${build.site}" prefix="${zipdir}/docs"/>
+      <tarfileset file="${dist.dir}/${jar.name}-${version.id}-${DSTAMP}.jar" prefix="${zipdir}" />
+      <tarfileset file="${dist.dir}/${jar.name}-contrib-${version.id}-${DSTAMP}.jar" prefix="${zipdir}" />
+      <tarfileset file="${dist.dir}/${jar.name}-scratchpad-${version.id}-${DSTAMP}.jar" prefix="${zipdir}" />
     </tar>
 
     <tar destfile="${dist.dir}/${jar.name}-src-${version.id}-${DSTAMP}.tar.gz"
       compression="gzip">
-      <tarfileset dir="legal/"/>
-      <tarfileset dir="${build.site}" prefix="docs"/>
-      <tarfileset dir=".">
+      <tarfileset dir="legal/" prefix="${zipdir}" />
+      <tarfileset dir="${build.site}" prefix="${zipdir}/docs"/>
+      <tarfileset dir="." prefix="${zipdir}">
         <exclude name="build/**"/>
         <exclude name="scripts/**"/>
         <exclude name="*.ipr"/>
         <exclude name="*.iml"/>
         <exclude name="*.iws"/>
+        <exclude name="*.swp"/>
       </tarfileset>
     </tar>
 
