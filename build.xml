@@ -807,6 +807,7 @@ FORREST_HOME environment variable!</echo>
 			<fileset dir="${main.output.dir}" />
 			<fileset dir="${contrib.output.dir}" />
 			<fileset dir="${scratchpad.output.dir}" />
+			<fileset dir="legal/" />
         </jar>
 
 		<!-- Build a Jar file of all the source files -->
@@ -825,6 +826,7 @@ FORREST_HOME environment variable!</echo>
 			<fileset dir="${main.src}" includes="**/*.java" />
 			<fileset dir="${contrib.src}" includes="**/*.java" />
 			<fileset dir="${scratchpad.src}" includes="**/*.java" />
+			<fileset dir="legal/" />
         </jar>
 
 		<!-- Build the pom -->
