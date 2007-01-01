@@ -47,7 +47,7 @@ public class HSSFSimpleShape
 //    public final static short       OBJECT_TYPE_LIST_BOX           = 18;
 //    public final static short       OBJECT_TYPE_GROUP_BOX          = 19;
 //    public final static short       OBJECT_TYPE_COMBO_BOX          = 20;
-//    public final static short       OBJECT_TYPE_COMMENT            = 25;
+    public final static short       OBJECT_TYPE_COMMENT            = 25;
 //    public final static short       OBJECT_TYPE_MICROSOFT_OFFICE_DRAWING = 30;
 
     int shapeType = OBJECT_TYPE_LINE;
@@ -65,6 +65,7 @@ public class HSSFSimpleShape
      * @see #OBJECT_TYPE_OVAL
      * @see #OBJECT_TYPE_RECTANGLE
      * @see #OBJECT_TYPE_PICTURE
+     * @see #OBJECT_TYPE_COMMENT
      */
     public int getShapeType() { return shapeType; }
 
@@ -77,6 +78,7 @@ public class HSSFSimpleShape
      * @see #OBJECT_TYPE_OVAL
      * @see #OBJECT_TYPE_RECTANGLE
      * @see #OBJECT_TYPE_PICTURE
+     * @see #OBJECT_TYPE_COMMENT
      */
     public void setShapeType( int shapeType ){ this.shapeType = shapeType; }
 

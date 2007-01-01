@@ -107,6 +107,7 @@ import org.apache.poi.hssf.record.WindowTwoRecord;
 import org.apache.poi.hssf.record.WriteAccessRecord;
 import org.apache.poi.hssf.record.WriteProtectRecord;
 import org.apache.poi.hssf.record.FilePassRecord;
+import org.apache.poi.hssf.record.NoteRecord;
 
 
 /**
@@ -158,7 +159,8 @@ public class EventRecordFactory
                 LeftMarginRecord.class, RightMarginRecord.class,
                 TopMarginRecord.class, BottomMarginRecord.class,
                 PaletteRecord.class, StringRecord.class, SharedFormulaRecord.class, 
-                WriteProtectRecord.class, FilePassRecord.class, PaneRecord.class
+                WriteProtectRecord.class, FilePassRecord.class, PaneRecord.class,
+                NoteRecord.class
             };
        
     }

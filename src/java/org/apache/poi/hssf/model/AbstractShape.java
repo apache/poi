@@ -36,7 +36,11 @@ public abstract class AbstractShape
     public static AbstractShape createShape( HSSFShape hssfShape, int shapeId )
     {
         AbstractShape shape;
-        if (hssfShape instanceof HSSFTextbox)
+        if (hssfShape instanceof HSSFComment)
+        {
+            shape = new CommentShape( (HSSFComment)hssfShape, shapeId );
+        }
+        else if (hssfShape instanceof HSSFTextbox)
         {
             shape = new TextboxShape( (HSSFTextbox)hssfShape, shapeId );
         }

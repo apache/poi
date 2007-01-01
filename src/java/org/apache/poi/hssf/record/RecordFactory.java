@@ -73,7 +73,8 @@ public class RecordFactory
                 ObjRecord.class, TextObjectRecord.class,
                 PaletteRecord.class, StringRecord.class, RecalcIdRecord.class, SharedFormulaRecord.class,
                 HorizontalPageBreakRecord.class, VerticalPageBreakRecord.class, 
-                WriteProtectRecord.class, FilePassRecord.class, PaneRecord.class
+                WriteProtectRecord.class, FilePassRecord.class, PaneRecord.class,
+                NoteRecord.class
             };
     }
     private static Map           recordsMap  = recordsToMap(records);

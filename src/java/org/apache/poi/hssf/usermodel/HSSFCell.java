@@ -33,8 +33,7 @@ import org.apache.poi.hssf.record.formula.Ptg;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
+import java.util.*;
 
 /**
  * High level representation of a cell in a row of a spreadsheet.
@@ -51,6 +50,7 @@ import java.util.Date;
  * @author  Andrew C. Oliver (acoliver at apache dot org)
  * @author  Dan Sherman (dsherman at isisph.com)
  * @author  Brian Sanders (kestrel at burdell dot org) Active Cell support
+ * @author  Yegor Kozlov cell comments support
  * @version 1.0-pre
  */
 
@@ -113,6 +113,7 @@ public class HSSFCell
     private Workbook                 book;
     private Sheet                    sheet;
     private CellValueRecordInterface record;
+    private HSSFComment              comment;
 
     /**
      * Creates new Cell - Should only be called by HSSFRow.  This creates a cell
@@ -958,5 +959,61 @@ public class HSSFCell
     		default:
     			return "Unknown Cell Type: " + getCellType();
     	}
+    }
+
+    /**
+     * Assign a comment to this cell
+     *
+     * @param comment comment associated with this cell
+     */
+    public void setCellComment(HSSFComment comment){
+        comment.setRow((short)record.getRow());
+        comment.setColumn(record.getColumn());
+        this.comment = comment;
+    }
+
+    /**
+     * Returns the comment associated with this cell
+     *
+     * @return comment associated with this cell
+     */
+     public HSSFComment getCellComment(){
+        if (comment == null) {
+            HashMap txshapes = new HashMap(); //map shapeId and TextObjectRecord
+            for (Iterator it = sheet.getRecords().iterator(); it.hasNext(); ) {
+                Record rec = ( Record ) it.next();
+                if (rec instanceof NoteRecord){
+                    NoteRecord note = (NoteRecord)rec;
+                    if (note.getRow() == record.getRow() && note.getColumn() == record.getColumn()){
+                        TextObjectRecord txo = (TextObjectRecord)txshapes.get(new Integer(note.getShapeId()));
+                        comment = new HSSFComment(null, null);
+                        comment.setRow(note.getRow());
+                        comment.setColumn(note.getColumn());
+                        comment.setAuthor(note.getAuthor());
+                        comment.setVisible(note.getFlags() == NoteRecord.NOTE_VISIBLE);
+                        comment.setString(txo.getStr());
+                        break;
+                    }
+                } else if (rec instanceof ObjRecord){
+                    ObjRecord obj = (ObjRecord)rec;
+                    SubRecord sub = (SubRecord)obj.getSubRecords().get(0);
+                    if (sub instanceof CommonObjectDataSubRecord){
+                        CommonObjectDataSubRecord cmo = (CommonObjectDataSubRecord)sub;
+                        if (cmo.getObjectType() == CommonObjectDataSubRecord.OBJECT_TYPE_COMMENT){
+                            //find the nearest TextObjectRecord which holds comment's text and map it to its shapeId
+                            while(it.hasNext()) {
+                                rec = ( Record ) it.next();
+                                if (rec instanceof TextObjectRecord) {
+                                    txshapes.put(new Integer(cmo.getObjectId()), rec);
+                                    break;
+                                }
+                            }
+
+                        }
+                    }
+                }
+            }
+        }
+        return comment;
     }
 }

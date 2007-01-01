@@ -509,6 +509,9 @@ public class BiffViewer {
             case FilePassRecord.sid:
             	retval = new FilePassRecord(in);
             	break;
+            case NoteRecord.sid:
+                retval = new NoteRecord( in );
+                break;
             default:
                 retval = new UnknownRecord( in );
         }

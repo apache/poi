@@ -23,6 +23,7 @@ import org.apache.poi.hssf.model.AbstractShape;
 import org.apache.poi.hssf.model.TextboxShape;
 import org.apache.poi.hssf.model.DrawingManager2;
 import org.apache.poi.hssf.model.ConvertAnchor;
+import org.apache.poi.hssf.model.CommentShape;
 
 import java.util.*;
 
@@ -260,6 +261,11 @@ public class EscherAggregate extends AbstractEscherHolderRecord
     private DrawingManager2 drawingManager;
     private short drawingGroupId;
 
+    /**
+     * list of "tail" records that need to be serialized after all drawing group records
+     */
+    private List tailRec = new ArrayList();
+
     public EscherAggregate( DrawingManager2 drawingManager )
     {
         this.drawingManager = drawingManager;
@@ -450,6 +456,13 @@ public class EscherAggregate extends AbstractEscherHolderRecord
 
         }
 
+        // write records that need to be serialized after all drawing group records
+        for ( int i = 0; i < tailRec.size(); i++ )
+        {
+            Record rec = (Record)tailRec.get(i);
+            pos += rec.serialize( pos, data );
+        }
+
         int bytesWritten = pos - offset;
         if ( bytesWritten != getRecordSize() )
             throw new RecordFormatException( bytesWritten + " bytes written but getRecordSize() reports " + getRecordSize() );
@@ -484,7 +497,13 @@ public class EscherAggregate extends AbstractEscherHolderRecord
             Record r = (Record) iterator.next();
             objRecordSize += r.getRecordSize();
         }
-        return drawingRecordSize + objRecordSize;
+        int tailRecordSize = 0;
+        for ( Iterator iterator = tailRec.iterator(); iterator.hasNext(); )
+        {
+            Record r = (Record) iterator.next();
+            tailRecordSize += r.getRecordSize();
+        }
+        return drawingRecordSize + objRecordSize + tailRecordSize;
     }
 
     /**
@@ -529,6 +548,7 @@ public class EscherAggregate extends AbstractEscherHolderRecord
         if ( patriarch != null )
         {
             shapeToObj.clear();
+            tailRec.clear();
             clearEscherRecords();
             if ( patriarch.getChildren().size() != 0 )
             {
@@ -568,6 +588,12 @@ public class EscherAggregate extends AbstractEscherHolderRecord
                     EscherRecord escherTextbox = ( (TextboxShape) shapeModel ).getEscherTextbox();
                     shapeToObj.put( escherTextbox, ( (TextboxShape) shapeModel ).getTextObjectRecord() );
                     //                    escherParent.addChildRecord(escherTextbox);
+                    
+                    if ( shapeModel instanceof CommentShape ){
+                        CommentShape comment = (CommentShape)shapeModel;
+                        tailRec.add(comment.getNoteRecord());
+                    }
+
                 }
                 escherParent.addChildRecord( shapeModel.getSpContainer() );
             }
