@@ -126,6 +126,21 @@ public class HSSFPatriarch
     }
 
     /**
+     * Constructs a cell comment.
+     *
+     * @param anchor    the client anchor describes how this comment is attached
+     *                  to the sheet.
+     * @return      the newly created comment.
+     */
+   public HSSFComment createComment(HSSFAnchor anchor)
+    {
+        HSSFComment shape = new HSSFComment(null, anchor);
+        shape.anchor = anchor;
+        shapes.add(shape);
+        return shape;
+    }
+
+    /**
      * Returns a list of all shapes contained by the patriarch.
      */
     public List getChildren()

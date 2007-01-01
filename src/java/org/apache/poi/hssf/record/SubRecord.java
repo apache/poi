@@ -64,6 +64,9 @@ abstract public class SubRecord
             case EndSubRecord.sid:
                 r = new EndSubRecord( in );
                 break;
+            case NoteStructureSubRecord.sid:
+                r = new NoteStructureSubRecord( in );
+                break;
             default:
                 r = new UnknownRecord( in );
         }

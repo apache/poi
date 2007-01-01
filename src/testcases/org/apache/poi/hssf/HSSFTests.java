@@ -110,6 +110,7 @@ import org.apache.poi.hssf.util.TestCellReference;
 import org.apache.poi.hssf.util.TestRKUtil;
 import org.apache.poi.hssf.util.TestRangeAddress;
 import org.apache.poi.hssf.util.TestSheetReferences;
+import org.apache.poi.hssf.usermodel.TestHSSFComment;
 
 /**
  * Test Suite for running just HSSF tests.  Mostly
@@ -227,7 +228,8 @@ public class HSSFTests
                   suite.addTest(new TestSuite(TestModelFactory.class));
                   suite.addTest(new TestSuite(TestDrawingManager.class));
                   suite.addTest(new TestSuite(TestSheet.class));
-        
+
+        suite.addTest(new TestSuite(TestHSSFComment.class));
         //$JUnit-END$
         return suite;
     }
