@@ -64,7 +64,7 @@
                     The following pictute shows the class tree of HSLF shapes:
                   </p>
                   <p>
-                    <img src="hslf_shapes.gif" alt="Class Tree of HSLF Shapes" width="611" height="412"/>
+			  <img src="images/hslf_shapes.gif" alt="Class Tree of HSLF Shapes" width="611" height="412"/>
                   </p>
                   <p>
                     The following fragment demonstrates how to iterate over shapes for each slide.
