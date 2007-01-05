@@ -81,13 +81,25 @@ public class ObjRecord
         subrecords = new ArrayList();
         //Check if this can be continued, if so then the
         //following wont work properly
+        int subSize = 0;
         byte[] subRecordData = in.readRemainder();
         RecordInputStream subRecStream = new RecordInputStream(new ByteArrayInputStream(subRecordData));
         while(subRecStream.hasNextRecord()) {
           subRecStream.nextRecord();
           Record subRecord = SubRecord.createSubRecord(subRecStream);
+          subSize += subRecord.getRecordSize();
           subrecords.add(subRecord);
         }
+
+        /**
+         * Check if the RecordInputStream skipped EndSubRecord,
+         * if it did then append it explicitly.
+         * See Bug 41242 for details.
+         */
+        if (subRecordData.length - subSize == 4){
+            subrecords.add(new EndSubRecord());
+        }
+
         /* JMH the size present/not present in the code below
            needs to be considered in the RecordInputStream??
         int pos = offset;
