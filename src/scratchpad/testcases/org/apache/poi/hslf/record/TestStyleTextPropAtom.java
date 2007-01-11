@@ -49,7 +49,7 @@ public class TestStyleTextPropAtom extends TestCase {
       00, 00, 0x04, 00, // font.color only
       0xFF-256, 0x33, 00, 0xFE-256 // red
 	};
-	private int data_a_text_len = 54;
+	private int data_a_text_len = 0x36-1;
 
 	/** 
 	 * From a real file: 4 paragraphs with text in 4 different styles:
@@ -125,7 +125,7 @@ public class TestStyleTextPropAtom extends TestCase {
 		28, 0, 1, 0, 0, 0, 0, 0, 
 		3, 0, 1, 0, 24, 0
 	};
-	private int data_c_text_len = 123;
+	private int data_c_text_len = 123-1;
 
 	
     public void testRecordType() throws Exception {
