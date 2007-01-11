@@ -228,7 +228,8 @@ public class StyleTextPropAtom extends RecordAtom
 
 		// While we have text in need of paragraph stylings, go ahead and
 		// grok the contents as paragraph formatting data
-		while(pos < rawContents.length && textHandled < size) {
+        int prsize = size;
+		while(pos < rawContents.length && textHandled < prsize) {
 			// First up, fetch the number of characters this applies to
 			int textLen = LittleEndian.getInt(rawContents,pos);
 			textHandled += textLen;
@@ -250,11 +251,21 @@ public class StyleTextPropAtom extends RecordAtom
 
 			// Save this properties set
 			paragraphStyles.add(thisCollection);
+
+            // Handle extra 1 paragraph styles at the end
+            if(pos < rawContents.length && textHandled == size) {
+                prsize++;
+            }
+
 		}
+        if (rawContents.length > 0 && textHandled != (size+1)){
+            System.err.println("Problem reading paragraph style runs: textHandled = " + textHandled + ", text.size+1 = " + (size+1));
+        }
 
 		// Now do the character stylings
 		textHandled = 0;
-		while(pos < rawContents.length && textHandled < size) {
+        int chsize = size;
+		while(pos < rawContents.length && textHandled < chsize) {
 			// First up, fetch the number of characters this applies to
 			int textLen = LittleEndian.getInt(rawContents,pos);
 			textHandled += textLen;
@@ -279,9 +290,12 @@ public class StyleTextPropAtom extends RecordAtom
 			
 			// Handle extra 1 char styles at the end
 			if(pos < rawContents.length && textHandled == size) {
-				size++;
+				chsize++;
 			}
 		}
+        if (rawContents.length > 0 && textHandled != (size+1)){
+            System.err.println("Problem reading character style runs: textHandled = " + textHandled + ", text.size+1 = " + (size+1));
+        }
 
 		// Handle anything left over
 		if(pos < rawContents.length) {
