@@ -35,6 +35,7 @@ import org.apache.poi.hpsf.MutablePropertySet;
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hpsf.DocumentSummaryInformation;
 
+import org.apache.poi.hslf.exceptions.CorruptPowerPointFileException;
 import org.apache.poi.hslf.exceptions.EncryptedPowerPointFileException;
 import org.apache.poi.hslf.record.*;
 import org.apache.poi.hslf.usermodel.PictureData;
@@ -271,6 +272,13 @@ public class HSLFSlideShow extends POIDocument
             pos += LittleEndian.INT_SIZE;
             byte[] imgdata = new byte[imgsize];
             System.arraycopy(pictstream, pos, imgdata, 0, imgdata.length);
+
+			// The image size must be 0 or greater
+			// (0 is allowed, but odd, since we do wind on by the header each
+			//  time, so we won't get stuck)
+			if(imgsize < 0) {
+				throw new CorruptPowerPointFileException("The file contains a picture, at position " + p.size() + ", which has a negatively sized data length, so we can't trust any of the picture data");
+			}
 
 			// If they type (including the bonus 0xF018) is 0, skip it
 			if(type == 0) {
