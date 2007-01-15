@@ -24,10 +24,10 @@ package org.apache.poi.hslf.model;
 import junit.framework.TestCase;
 
 import org.apache.poi.hslf.HSLFSlideShow;
+import org.apache.poi.hslf.model.textproperties.TextPropCollection;
 import org.apache.poi.hslf.record.TextBytesAtom;
 import org.apache.poi.hslf.record.TextCharsAtom;
 import org.apache.poi.hslf.record.TextHeaderAtom;
-import org.apache.poi.hslf.record.StyleTextPropAtom.TextPropCollection;
 import org.apache.poi.hslf.usermodel.RichTextRun;
 import org.apache.poi.hslf.usermodel.SlideShow;
 

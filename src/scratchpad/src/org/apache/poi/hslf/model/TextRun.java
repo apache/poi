@@ -23,8 +23,8 @@ package org.apache.poi.hslf.model;
 import java.util.LinkedList;
 import java.util.Vector;
 
+import org.apache.poi.hslf.model.textproperties.TextPropCollection;
 import org.apache.poi.hslf.record.*;
-import org.apache.poi.hslf.record.StyleTextPropAtom.TextPropCollection;
 import org.apache.poi.hslf.usermodel.RichTextRun;
 import org.apache.poi.hslf.usermodel.SlideShow;
 import org.apache.poi.util.StringUtil;

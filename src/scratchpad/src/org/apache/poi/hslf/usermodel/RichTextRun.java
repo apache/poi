@@ -23,9 +23,9 @@ package org.apache.poi.hslf.usermodel;
 import org.apache.poi.hslf.model.TextRun;
 import org.apache.poi.hslf.model.Sheet;
 import org.apache.poi.hslf.model.SlideMaster;
-import org.apache.poi.hslf.record.StyleTextPropAtom.CharFlagsTextProp;
-import org.apache.poi.hslf.record.StyleTextPropAtom.TextProp;
-import org.apache.poi.hslf.record.StyleTextPropAtom.TextPropCollection;
+import org.apache.poi.hslf.model.textproperties.CharFlagsTextProp;
+import org.apache.poi.hslf.model.textproperties.TextProp;
+import org.apache.poi.hslf.model.textproperties.TextPropCollection;
 import org.apache.poi.hslf.record.ColorSchemeAtom;
 
 import java.awt.*;

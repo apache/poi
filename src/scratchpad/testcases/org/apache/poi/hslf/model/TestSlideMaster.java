@@ -21,6 +21,7 @@ import junit.framework.TestCase;
 import org.apache.poi.hslf.usermodel.SlideShow;
 import org.apache.poi.hslf.usermodel.RichTextRun;
 import org.apache.poi.hslf.HSLFSlideShow;
+import org.apache.poi.hslf.model.textproperties.CharFlagsTextProp;
 import org.apache.poi.hslf.record.*;
 import org.apache.poi.hslf.record.StyleTextPropAtom.*;
 

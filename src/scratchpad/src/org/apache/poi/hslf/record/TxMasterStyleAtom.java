@@ -22,7 +22,11 @@ import org.apache.poi.util.LittleEndian;
 
 import java.io.OutputStream;
 import java.io.IOException;
-import org.apache.poi.hslf.record.StyleTextPropAtom.*;
+
+import org.apache.poi.hslf.model.textproperties.BitMaskTextProp;
+import org.apache.poi.hslf.model.textproperties.CharFlagsTextProp;
+import org.apache.poi.hslf.model.textproperties.TextProp;
+import org.apache.poi.hslf.model.textproperties.TextPropCollection;
 
 /**
  * TxMasterStyleAtom atom (4003).
@@ -163,7 +167,10 @@ public class TxMasterStyleAtom extends RecordAtom {
     }
 
     /**
-     *  Paragraph properties for the specified text type and indent level
+     * Paragraph properties for the specified text type and
+     *  indent level
+     * Depending on the level and type, it may be our special
+     *  ones, or the standard StyleTextPropAtom ones
      */
     protected TextProp[] getParagraphProps(int type, int level){
         if (level != 0 || type >= MAX_INDENT){
@@ -194,7 +201,10 @@ public class TxMasterStyleAtom extends RecordAtom {
     }
 
     /**
-     *  Character properties for the specified text type and indent level
+     * Character properties for the specified text type and
+     *  indent level.
+     * Depending on the level and type, it may be our special
+     *  ones, or the standard StyleTextPropAtom ones
      */
     protected TextProp[] getCharacterProps(int type, int level){
         if (level != 0 || type >= MAX_INDENT){
