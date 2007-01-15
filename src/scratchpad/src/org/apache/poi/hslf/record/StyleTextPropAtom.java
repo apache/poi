@@ -25,6 +25,8 @@ import java.io.OutputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.LinkedList;
 import java.util.Vector;
+import java.util.List;
+import java.util.Iterator;
 
 /**
  * A StyleTextPropAtom (type 4001). Holds basic character properties 
@@ -90,33 +92,33 @@ public class StyleTextPropAtom extends RecordAtom
 					"bullet", "bullet.hardfont", 
 					"bullet.hardcolor", "bullet.hardsize"}
 				),
+                new TextProp(2, 0x80, "bullet.char"),
 				new TextProp(2, 0x10, "bullet.font"),
 				new TextProp(4, 0x20, "bullet.color"),
 				new TextProp(2, 0x40, "bullet.size"),
-				new TextProp(2, 0x80, "bullet.char"),
-				new TextProp(2, 0x100, "text.offset"),
+                new AlignmentTextProp(),
+                new TextProp(2, 0x400, "bullet.offset"),
 				new TextProp(2, 0x200, "para_unknown_2"),
-				new TextProp(2, 0x400, "bullet.offset"),
-				new AlignmentTextProp(), // 0x800
+                new TextProp(2, 0x100, "text.offset"),
 				new TextProp(2, 0x1000, "linespacing"),
 				new TextProp(2, 0x2000, "spacebefore"),
 				new TextProp(2, 0x4000, "spaceafter"),
 				new TextProp(2, 0x8000, "para_unknown_4"),
 				new TextProp(2, 0x10000, "para_unknown_5"),
-				new TextProp(2, 0xA0000, "para_unknown_6"),
+				new TextProp(2, 0xE0000, "para_unknown_6"),
 				new TextProp(2, 0x200000, "para_unknown_7")
 	};
 	/** All the different kinds of character properties we might handle */
 	public static TextProp[] characterTextPropTypes = new TextProp[] {
 				new CharFlagsTextProp(),
 				new TextProp(2, 0x10000, "font.index"),
+                new TextProp(2, 0x200000, "asian_or_complex"),
+                new TextProp(2, 0x400000, "char_unknown_2"),
+                new TextProp(2, 0x800000, "symbol"),
 				new TextProp(2, 0x20000, "font.size"),
 				new TextProp(4, 0x40000, "font.color"),
 				new TextProp(2, 0x80000, "offset"),
 				new TextProp(2, 0x100000, "char_unknown_1"),
-				new TextProp(2, 0x200000, "asian_or_complex"),
-				new TextProp(2, 0x400000, "char_unknown_2"),
-				new TextProp(2, 0x800000, "symbol"),
 				new TextProp(2, 0x1000000, "char_unknown_3"),
 				new TextProp(2, 0x2000000, "char_unknown_4"),
 				new TextProp(2, 0x4000000, "char_unknown_5"),
@@ -127,7 +129,6 @@ public class StyleTextPropAtom extends RecordAtom
 				new TextProp(2, 0x80000000, "char_unknown_10"),
 	};
 
-	
 	/* *************** record code follows ********************** */
 
 	/** 
@@ -730,4 +731,34 @@ public class StyleTextPropAtom extends RecordAtom
 			);
 		}
 	}
+
+    /**
+     * Dump the record content into <code>StringBuffer</code>
+     *
+     * @return the string representation of the record data
+     */
+    public String toString(){
+        StringBuffer out = new StringBuffer();
+        out.append("Paragraph properties\n");
+        for (Iterator it1 = getParagraphStyles().iterator(); it1.hasNext();) {
+            TextPropCollection pr = (TextPropCollection)it1.next();
+            out.append("  chars covered: " + pr.getCharactersCovered() + "\n");
+            for (Iterator it2 = pr.getTextPropList().iterator(); it2.hasNext(); ) {
+                TextProp p = (TextProp)it2.next();
+                out.append("    " + p.getName() + " = " + p.getValue() + "\n");
+            }
+        }
+
+        out.append("Character properties\n");
+        for (Iterator it1 = getCharacterStyles().iterator(); it1.hasNext();) {
+            TextPropCollection pr = (TextPropCollection)it1.next();
+            out.append("  chars covered: " + pr.getCharactersCovered() + "\n");
+            for (Iterator it2 = pr.getTextPropList().iterator(); it2.hasNext(); ) {
+                TextProp p = (TextProp)it2.next();
+                out.append("    " + p.getName() + " = " + p.getValue() + "\n");
+            }
+        }
+
+        return out.toString();
+    }
 }

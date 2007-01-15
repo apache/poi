@@ -127,7 +127,17 @@ public class TestStyleTextPropAtom extends TestCase {
 	};
 	private int data_c_text_len = 123-1;
 
-	
+    /**
+     * From a real file supplied for Bug 40143 by tales@great.ufc.br
+     */
+    private byte[] data_d = {
+        0x00, 0x00, 0xA1-256, 0x0F, 0x1E, 0x00, 0x00, 0x00, //header
+        (byte)0xA0, 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x08 , 0x00 , 0x00 ,
+        0x01 , 0x00, (byte)0xA0 , 0x00 , 0x00 , 0x00 , 0x01 , 0x00 , 0x63 , 0x00 ,
+        0x01 , 0x00, 0x01 , 0x00 , 0x00, 0x00 , 0x01 , 0x00 , 0x14 , 0x00
+    };
+    private int data_d_text_len = 0xA0-1;
+
     public void testRecordType() throws Exception {
 		StyleTextPropAtom stpa = new StyleTextPropAtom(data_a,0,data_a.length);
 		StyleTextPropAtom stpb = new StyleTextPropAtom(data_b,0,data_b.length);
@@ -699,4 +709,26 @@ public class TestStyleTextPropAtom extends TestCase {
 		
 		// If we get here, we didn't break
 	}
+
+    /**
+     * Check the test data for Bug 40143.
+     */
+    public void testBug40143() throws Exception {
+        StyleTextPropAtom atom = new StyleTextPropAtom(data_d, 0, data_d.length);
+        atom.setParentTextSize(data_d_text_len);
+
+        TextPropCollection prprops = (TextPropCollection)atom.getParagraphStyles().getFirst();
+        assertEquals(data_d_text_len+1, prprops.getCharactersCovered());
+        assertEquals(1, prprops.getTextPropList().size()); //1 property found
+        assertEquals(1, prprops.findByName("alignment").getValue());
+
+        TextPropCollection chprops = (TextPropCollection)atom.getCharacterStyles().getFirst();
+        assertEquals(data_d_text_len+1, chprops.getCharactersCovered());
+        assertEquals(5, chprops.getTextPropList().size()); //5 properties found
+        assertEquals(1, chprops.findByName("char_flags").getValue());
+        assertEquals(1, chprops.findByName("font.index").getValue());
+        assertEquals(20, chprops.findByName("font.size").getValue());
+        assertEquals(0, chprops.findByName("asian_or_complex").getValue());
+        assertEquals(1, chprops.findByName("char_unknown_2").getValue());
+    }
 }
