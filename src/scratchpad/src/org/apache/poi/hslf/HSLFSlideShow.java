@@ -270,8 +270,6 @@ public class HSLFSlideShow extends POIDocument
             // Image size (excluding the 8 byte header)
             int imgsize = LittleEndian.getInt(pictstream, pos);
             pos += LittleEndian.INT_SIZE;
-            byte[] imgdata = new byte[imgsize];
-            System.arraycopy(pictstream, pos, imgdata, 0, imgdata.length);
 
 			// The image size must be 0 or greater
 			// (0 is allowed, but odd, since we do wind on by the header each
@@ -282,8 +280,15 @@ public class HSLFSlideShow extends POIDocument
 
 			// If they type (including the bonus 0xF018) is 0, skip it
 			if(type == 0) {
-				System.err.println("Problem reading picture: Invalid image type 0, on picture with length" + imgsize + ".\nYou document will probably become corrupted if you save it!");
+				System.err.println("Problem reading picture: Invalid image type 0, on picture with length " + imgsize + ".\nYou document will probably become corrupted if you save it!");
+				System.err.println(pos);
 			} else {
+	            // Copy the data, ready to pass to PictureData
+	            byte[] imgdata = new byte[imgsize];
+	            if(imgsize > 0) {
+	            	System.arraycopy(pictstream, pos, imgdata, 0, imgdata.length);
+	            }
+	            
 				// Build the PictureData object from the data
 				try {
 					PictureData pict = PictureData.create(type - 0xF018);
