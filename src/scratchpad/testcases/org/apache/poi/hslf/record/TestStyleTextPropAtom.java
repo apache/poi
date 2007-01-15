@@ -21,6 +21,9 @@
 package org.apache.poi.hslf.record;
 
 import org.apache.poi.hslf.HSLFSlideShow;
+import org.apache.poi.hslf.model.textproperties.CharFlagsTextProp;
+import org.apache.poi.hslf.model.textproperties.TextProp;
+import org.apache.poi.hslf.model.textproperties.TextPropCollection;
 import org.apache.poi.hslf.record.StyleTextPropAtom.*;
 import org.apache.poi.hslf.usermodel.SlideShow;
 

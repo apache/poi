@@ -19,6 +19,8 @@ package org.apache.poi.hslf.record;
 
 import junit.framework.TestCase;
 import org.apache.poi.hslf.usermodel.SlideShow;
+import org.apache.poi.hslf.model.textproperties.TextProp;
+import org.apache.poi.hslf.model.textproperties.TextPropCollection;
 import org.apache.poi.hslf.record.StyleTextPropAtom.*;
 
 import java.util.ArrayList;

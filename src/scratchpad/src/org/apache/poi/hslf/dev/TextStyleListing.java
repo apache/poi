@@ -21,6 +21,9 @@
 package org.apache.poi.hslf.dev;
 
 import org.apache.poi.hslf.*;
+import org.apache.poi.hslf.model.textproperties.BitMaskTextProp;
+import org.apache.poi.hslf.model.textproperties.TextProp;
+import org.apache.poi.hslf.model.textproperties.TextPropCollection;
 import org.apache.poi.hslf.record.*;
 import org.apache.poi.hslf.record.StyleTextPropAtom.*;
 
