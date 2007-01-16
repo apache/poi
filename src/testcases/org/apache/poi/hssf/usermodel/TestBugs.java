@@ -24,6 +24,7 @@ import org.apache.poi.hssf.util.Region;
 import org.apache.poi.util.TempFile;
 
 import java.io.*;
+import java.util.Iterator;
 
 
 
@@ -31,6 +32,7 @@ import java.io.*;
  * Testcases for bugs entered in bugzilla
  * the Test name contains the bugzilla bug id
  * @author Avik Sengupta
+ * @author Yegor Kozlov
  */
 
 public class TestBugs
@@ -537,7 +539,335 @@ extends TestCase {
 	       assertTrue("Read book fine!" , true);
 	}
 	
-	
+    protected String cwd = System.getProperty("HSSF.testdata.path");
+
+    /**
+     * Bug 25183: org.apache.poi.hssf.usermodel.HSSFSheet.setPropertiesFromSheet
+     */
+    public void test25183() throws Exception {
+        FileInputStream in = new FileInputStream(new File(cwd, "25183.xls"));
+        HSSFWorkbook wb = new HSSFWorkbook(in);
+        in.close();
+        assertTrue("No Exceptions while reading file", true);
+
+        //serialize and read again
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        wb.write(out);
+        out.close();
+
+        wb = new HSSFWorkbook(new ByteArrayInputStream(out.toByteArray()));
+        assertTrue("No Exceptions while reading file", true);
+    }
+
+    /**
+     * Bug 26100: 128-character message in IF statement cell causes HSSFWorkbook open failure
+     */
+    public void test26100() throws Exception {
+        FileInputStream in = new FileInputStream(new File(cwd, "26100.xls"));
+        HSSFWorkbook wb = new HSSFWorkbook(in);
+        in.close();
+        assertTrue("No Exceptions while reading file", true);
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        wb.write(out);
+        out.close();
+
+        wb = new HSSFWorkbook(new ByteArrayInputStream(out.toByteArray()));
+        assertTrue("No Exceptions while reading file", true);
+    }
+
+    /**
+     * Bug 27933: Unable to use a template (xls) file containing a wmf graphic
+     */
+    public void test27933() throws Exception {
+        FileInputStream in = new FileInputStream(new File(cwd, "27933.xls"));
+        HSSFWorkbook wb = new HSSFWorkbook(in);
+        in.close();
+        assertTrue("No Exceptions while reading file", true);
+
+        //serialize and read again
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        wb.write(out);
+        out.close();
+
+        wb = new HSSFWorkbook(new ByteArrayInputStream(out.toByteArray()));
+        assertTrue("No Exceptions while reading file", true);
+    }
+
+    /**
+     * Bug 29206:  	NPE on HSSFSheet.getRow for blank rows
+     */
+    public void test29206() throws Exception {
+        //the first check with blank workbook
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet();
+
+        for(int i = 1; i < 400; i++) {
+            HSSFRow row = sheet.getRow(i);
+            if(row != null) {
+                HSSFCell cell = row.getCell((short)0);
+            }
+        }
+
+        //now check on an existing xls file
+        FileInputStream in = new FileInputStream(new File(cwd, "Simple.xls"));
+        wb = new HSSFWorkbook(in);
+        in.close();
+
+        for(int i = 1; i < 400; i++) {
+            HSSFRow row = sheet.getRow(i);
+            if(row != null) {
+                HSSFCell cell = row.getCell((short)0);
+            }
+        }
+
+        assertTrue("No Exceptions while reading file", true);
+    }
+
+    /**
+     * Bug 29675: POI 2.5 final corrupts output when starting workbook has a graphic
+     */
+    public void test29675() throws Exception {
+        FileInputStream in = new FileInputStream(new File(cwd, "29675.xls"));
+        HSSFWorkbook wb = new HSSFWorkbook(in);
+        in.close();
+        assertTrue("No Exceptions while reading file", true);
+
+        //serialize and read again
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        wb.write(out);
+        out.close();
+
+        wb = new HSSFWorkbook(new ByteArrayInputStream(out.toByteArray()));
+        assertTrue("No Exceptions while reading file", true);
+    }
+
+    /**
+     * Bug 29942: Importing Excel files that have been created by Open Office on Linux
+     */
+    public void test29942() throws Exception {
+        FileInputStream in = new FileInputStream(new File(cwd, "29942.xls"));
+        HSSFWorkbook wb = new HSSFWorkbook(in);
+        in.close();
+
+        HSSFSheet sheet = wb.getSheetAt(0);
+        int count = 0;
+        for (int i = sheet.getFirstRowNum(); i <= sheet.getLastRowNum(); i++) {
+            HSSFRow row =  sheet.getRow(i);
+            if (row != null) {
+                HSSFCell cell = row .getCell((short)0);
+                assertEquals(HSSFCell.CELL_TYPE_STRING, cell.getCellType());
+                count++;
+            }
+        }
+        assertEquals(85, count); //should read 85 rows
+        assertTrue("No Exceptions while reading file", true);
+
+        //serialize and read again
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        wb.write(out);
+        out.close();
+
+        wb = new HSSFWorkbook(new ByteArrayInputStream(out.toByteArray()));
+        assertTrue("No Exceptions while reading file", true);
+    }
+
+    /**
+     * Bug 29982: Unable to read spreadsheet when dropdown list cell is selected -
+     *  Unable to construct record instance
+     */
+    public void test29982() throws Exception {
+        FileInputStream in = new FileInputStream(new File(cwd, "29982.xls"));
+        HSSFWorkbook wb = new HSSFWorkbook(in);
+        in.close();
+        assertTrue("No Exceptions while reading file", true);
+
+        //serialize and read again
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        wb.write(out);
+        out.close();
+
+        wb = new HSSFWorkbook(new ByteArrayInputStream(out.toByteArray()));
+        assertTrue("No Exceptions while reading file", true);
+    }
+
+    /**
+     * Bug 30540: HSSFSheet.setRowBreak throws NullPointerException
+     */
+    public void test30540() throws Exception {
+        FileInputStream in = new FileInputStream(new File(cwd, "30540.xls"));
+        HSSFWorkbook wb = new HSSFWorkbook(in);
+        in.close();
+
+        HSSFSheet s = wb.getSheetAt(0);
+        s.setRowBreak(1);
+        assertTrue("No Exceptions while reading file", true);
+
+        //serialize and read again
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        wb.write(out);
+        out.close();
+
+        wb = new HSSFWorkbook(new ByteArrayInputStream(out.toByteArray()));
+        assertTrue("No Exceptions while reading file", true);
+    }
+
+    /**
+     * Bug 31749: {Need help urgently}[This is critical] workbook.write() corrupts the file......?
+     */
+    public void test31749() throws Exception {
+        FileInputStream in = new FileInputStream(new File(cwd, "31749.xls"));
+        HSSFWorkbook wb = new HSSFWorkbook(in);
+        in.close();
+        assertTrue("No Exceptions while reading file", true);
+
+        //serialize and read again
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        wb.write(out);
+        out.close();
+
+        wb = new HSSFWorkbook(new ByteArrayInputStream(out.toByteArray()));
+        assertTrue("No Exceptions while reading file", true);
+    }
+
+    /**
+     * Bug 31979: {urgent help needed .....}poi library does not support form objects properly.
+     */
+    public void test31979() throws Exception {
+        FileInputStream in = new FileInputStream(new File(cwd, "31979.xls"));
+        HSSFWorkbook wb = new HSSFWorkbook(in);
+        in.close();
+
+        assertTrue("No Exceptions while reading file", true);
+
+        //serialize and read again
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        wb.write(out);
+        out.close();
+
+        //wb = new HSSFWorkbook(new ByteArrayInputStream(out.toByteArray()));
+        assertTrue("No Exceptions while reading file", true);
+
+    }
+
+    /**
+     * Bug 35564: HSSFCell.java: NullPtrExc in isGridsPrinted() and getProtect()
+     *  when HSSFWorkbook is created from file
+     */
+    public void test35564() throws Exception {
+        FileInputStream in = new FileInputStream(new File(cwd, "35564.xls"));
+        HSSFWorkbook wb = new HSSFWorkbook(in);
+        in.close();
+
+        HSSFSheet sheet = wb.getSheetAt( 0 );
+        assertEquals(false, sheet.isGridsPrinted());
+        assertEquals(false, sheet.getProtect());
+
+        assertTrue("No Exceptions while reading file", true);
+
+        //serialize and read again
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        wb.write(out);
+        out.close();
+
+        wb = new HSSFWorkbook(new ByteArrayInputStream(out.toByteArray()));
+        assertTrue("No Exceptions while reading file", true);
+
+    }
+
+    /**
+     * Bug 35565: HSSFCell.java: NullPtrExc in getColumnBreaks() when HSSFWorkbook is created from file
+     */
+    public void test35565() throws Exception {
+        FileInputStream in = new FileInputStream(new File(cwd, "35565.xls"));
+        HSSFWorkbook wb = new HSSFWorkbook(in);
+        in.close();
+
+        HSSFSheet sheet = wb.getSheetAt( 0 );
+        assertNotNull(sheet);
+
+        assertTrue("No Exceptions while reading file", true);
+
+        //serialize and read again
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        wb.write(out);
+        out.close();
+
+        wb = new HSSFWorkbook(new ByteArrayInputStream(out.toByteArray()));
+        assertTrue("No Exceptions while reading file", true);
+
+    }
+
+    /**
+     * Bug 37376: Cannot open the saved Excel file if checkbox controls exceed certain limit
+     */
+    public void test37376() throws Exception {
+        FileInputStream in = new FileInputStream(new File(cwd, "37376.xls"));
+        HSSFWorkbook wb = new HSSFWorkbook(in);
+        in.close();
+
+        assertTrue("No Exceptions while reading file", true);
+
+        //serialize and read again
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        wb.write(out);
+        out.close();
+
+        wb = new HSSFWorkbook(new ByteArrayInputStream(out.toByteArray()));
+        assertTrue("No Exceptions while reading file", true);
+
+    }
+
+    /**
+     * Bug 40285:  	CellIterator Skips First Column
+     */
+    public void test40285() throws Exception {
+        FileInputStream in = new FileInputStream(new File(cwd, "40285.xls"));
+        HSSFWorkbook wb = new HSSFWorkbook(in);
+        in.close();
+
+        HSSFSheet sheet = wb.getSheetAt( 0 );
+        int rownum = 0;
+        for (Iterator it = sheet.rowIterator(); it.hasNext(); rownum++) {
+            HSSFRow row = (HSSFRow)it.next();
+            assertEquals(rownum, row.getRowNum());
+            int cellNum = 0;
+            for (Iterator it2 = row.cellIterator(); it2.hasNext(); cellNum++) {
+                HSSFCell cell = (HSSFCell)it2.next();
+                assertEquals(cellNum, cell.getCellNum());
+            }
+        }
+    }
+
+    /**
+     * Bug 40296:  	HSSFCell.setCellFormula throws
+     *   ClassCastException if cell is created using HSSFRow.createCell(short column, int type)
+     */
+    public void test40296() throws Exception {
+        HSSFWorkbook wb = new HSSFWorkbook();
+
+        HSSFWorkbook workBook = new HSSFWorkbook();
+        HSSFSheet workSheet = workBook.createSheet("Sheet1");
+        HSSFCell cell;
+        HSSFRow row;
+
+        row = workSheet.createRow(0);
+        cell = row.createCell((short)0, HSSFCell.CELL_TYPE_NUMERIC);
+        cell.setCellValue(1.0);
+        cell = row.createCell((short)1, HSSFCell.CELL_TYPE_NUMERIC);
+        cell.setCellValue(2.0);
+        cell = row.createCell((short)2, HSSFCell.CELL_TYPE_FORMULA);
+        cell.setCellFormula("SUM(A1:B1)");
+
+        //serialize and read again
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        wb.write(out);
+        out.close();
+
+        wb = new HSSFWorkbook(new ByteArrayInputStream(out.toByteArray()));
+        assertTrue("No Exceptions while reading file", true);
+    }
+
 	
 
 }
