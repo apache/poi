@@ -347,18 +347,20 @@ public class RichTextRun
 	}
 
 	/**
-	 * Sets color of the text, as a int rgb
+	 * Sets color of the text, as a int bgr.
+	 * (PowerPoint stores as BlueGreenRed, not the more
+	 *  usual RedGreenBlue) 
 	 * @see java.awt.Color
 	 */
-	public void setFontColor(int rgb) {
-		setCharTextPropVal("font.color", rgb);
+	public void setFontColor(int bgr) {
+		setCharTextPropVal("font.color", bgr);
 	}
 	
     /**
      * Sets color of the text, as a java.awt.Color
      */
     public void setFontColor(Color color) {
-        //in PowerPont RGB bytes are swapped,
+        // In PowerPont RGB bytes are swapped, as BGR
         int rgb = new Color(color.getBlue(), color.getGreen(), color.getRed(), 254).getRGB();
         setFontColor(rgb);
     }
