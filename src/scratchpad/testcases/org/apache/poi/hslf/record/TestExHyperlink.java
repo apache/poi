@@ -24,7 +24,11 @@ package org.apache.poi.hslf.record;
 import junit.framework.TestCase;
 import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+
+import org.apache.poi.hslf.HSLFSlideShow;
+import org.apache.poi.hslf.usermodel.SlideShow;
 
 /**
  * Tests that ExHyperlink works properly.
@@ -95,6 +99,46 @@ public class TestExHyperlink extends TestCase {
 	}
 	
 	public void testRealFile() throws Exception {
-		// TODO
+		String dirname = System.getProperty("HSLF.testdata.path");
+		HSLFSlideShow hss = new HSLFSlideShow(dirname + "WithLinks.ppt");
+		SlideShow ss = new SlideShow(hss);
+		
+		// Get the document
+		Document doc = ss.getDocumentRecord();
+		// Get the ExObjList
+		RecordContainer exObjList = null;
+		for(int i=0; i<doc._children.length; i++) {
+			if(doc._children[i].getRecordType() == RecordTypes.ExObjList.typeID) {
+				exObjList = (RecordContainer)doc._children[i];
+			}
+		}
+		assertNotNull(exObjList);
+		
+		// Within that, grab out the Hyperlink atoms
+		ArrayList linksA = new ArrayList();
+		for(int i=0; i<exObjList._children.length; i++) {
+			if(exObjList._children[i] instanceof ExHyperlink) {
+				linksA.add(exObjList._children[i]);
+			}
+		}
+		
+		// Should be 4 of them
+		assertEquals(4, linksA.size());
+		ExHyperlink[] links = new ExHyperlink[linksA.size()];
+		linksA.toArray(links);
+		
+		// Check they have what we expect in them
+		assertEquals(1, links[0].getExHyperlinkAtom().getNumber());
+		assertEquals("http://jakarta.apache.org/poi/", links[0].getLinkURL());
+		
+		assertEquals(2, links[1].getExHyperlinkAtom().getNumber());
+		assertEquals("http://slashdot.org/", links[1].getLinkURL());
+		
+		assertEquals(3, links[2].getExHyperlinkAtom().getNumber());
+		assertEquals("http://jakarta.apache.org/poi/hssf/", links[2].getLinkURL());
+		
+		assertEquals(4, links[3].getExHyperlinkAtom().getNumber());
+		assertEquals("http://jakarta.apache.org/hslf/", links[3].getLinkURL());
+		
 	}
 }
