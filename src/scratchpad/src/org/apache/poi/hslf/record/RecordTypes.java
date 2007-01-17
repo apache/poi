@@ -107,8 +107,8 @@ public class RecordTypes {
     public static final Type BookmarkEntityAtom = new Type(4048,null);
     public static final Type ExLinkAtom = new Type(4049,null);
     public static final Type SrKinsokuAtom = new Type(4050,null);
-    public static final Type ExHyperlinkAtom = new Type(4051,null);
-    public static final Type ExHyperlink = new Type(4055,null);
+    public static final Type ExHyperlinkAtom = new Type(4051,ExHyperlinkAtom.class);
+    public static final Type ExHyperlink = new Type(4055,ExHyperlink.class);
     public static final Type SlideNumberMCAtom = new Type(4056,null);
     public static final Type HeadersFooters = new Type(4057,null);
     public static final Type HeadersFootersAtom = new Type(4058,null);
