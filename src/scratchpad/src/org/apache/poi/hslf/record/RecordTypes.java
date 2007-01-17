@@ -59,8 +59,8 @@ public class RecordTypes {
     public static final Type DocRoutingSlip = new Type(1030,null);
     public static final Type OutlineViewInfo = new Type(1031,null);
     public static final Type SorterViewInfo = new Type(1032,null);
-    public static final Type ExObjList = new Type(1033,DummyRecordWithChildren.class);
-    public static final Type ExObjListAtom = new Type(1034,null);
+    public static final Type ExObjList = new Type(1033,ExObjList.class);
+    public static final Type ExObjListAtom = new Type(1034,ExObjListAtom.class);
     public static final Type PPDrawingGroup = new Type(1035,PPDrawingGroup.class);
     public static final Type PPDrawing = new Type(1036,PPDrawing.class);
     public static final Type NamedShows = new Type(1040,null);
