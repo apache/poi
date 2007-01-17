@@ -39,6 +39,7 @@ public class Document extends PositionDependentRecordContainer
 	private Environment environment;
 	private PPDrawingGroup ppDrawing;
 	private SlideListWithText[] slwts;
+	private ExObjList exObjList; // Can be null
 
 	/**
 	 * Returns the DocumentAtom of this Document
@@ -54,6 +55,12 @@ public class Document extends PositionDependentRecordContainer
 	 *  that contains information on pictures in the slides.
 	 */
 	public PPDrawingGroup getPPDrawingGroup() { return ppDrawing; }
+	/**
+	 * Returns the ExObjList, which holds the references to 
+	 *  external objects used in the slides. This may be null, if
+	 *  there are no external references.
+	 */
+	public ExObjList getExObjList() { return exObjList; }
 	
 	/**
 	 * Returns all the SlideListWithTexts that are defined for
@@ -115,6 +122,9 @@ public class Document extends PositionDependentRecordContainer
 			}
 			if(_children[i] instanceof PPDrawingGroup) {
 				ppDrawing = (PPDrawingGroup)_children[i];
+			}
+			if(_children[i] instanceof ExObjList) {
+				exObjList = (ExObjList)_children[i];
 			}
 		}
 		

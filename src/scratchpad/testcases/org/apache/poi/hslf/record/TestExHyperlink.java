@@ -23,6 +23,7 @@ package org.apache.poi.hslf.record;
 
 import junit.framework.TestCase;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -100,16 +101,16 @@ public class TestExHyperlink extends TestCase {
 	
 	public void testRealFile() throws Exception {
 		String dirname = System.getProperty("HSLF.testdata.path");
-		HSLFSlideShow hss = new HSLFSlideShow(dirname + "WithLinks.ppt");
+		HSLFSlideShow hss = new HSLFSlideShow(dirname + File.separator + "WithLinks.ppt");
 		SlideShow ss = new SlideShow(hss);
 		
 		// Get the document
 		Document doc = ss.getDocumentRecord();
 		// Get the ExObjList
-		RecordContainer exObjList = null;
+		ExObjList exObjList = null;
 		for(int i=0; i<doc._children.length; i++) {
-			if(doc._children[i].getRecordType() == RecordTypes.ExObjList.typeID) {
-				exObjList = (RecordContainer)doc._children[i];
+			if(doc._children[i] instanceof ExObjList) {
+				exObjList = (ExObjList)doc._children[i];
 			}
 		}
 		assertNotNull(exObjList);
@@ -126,6 +127,10 @@ public class TestExHyperlink extends TestCase {
 		assertEquals(4, linksA.size());
 		ExHyperlink[] links = new ExHyperlink[linksA.size()];
 		linksA.toArray(links);
+		
+		assertEquals(4, exObjList.getExHyperlinks().length);
+		
+		// Check the other way
 		
 		// Check they have what we expect in them
 		assertEquals(1, links[0].getExHyperlinkAtom().getNumber());

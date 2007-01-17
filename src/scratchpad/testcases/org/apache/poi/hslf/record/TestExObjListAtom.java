@@ -27,38 +27,38 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * Tests that ExHyperlinkAtom works properly.
+ * Tests that ExObjListAtom works properly.
  *
  * @author Nick Burch (nick at torchbox dot com)
  */
-public class TestExHyperlinkAtom extends TestCase {
+public class TestExObjListAtom extends TestCase {
 	// From a real file
 	private byte[] data_a = new byte[] {
-		00, 00, 0xD3-256, 0x0F, 04, 00, 00, 00,
+		00, 00, 0x0A, 0x04, 04, 00, 00, 00,
 		01, 00, 00, 00
 	};
 	private byte[] data_b = new byte[] { 
-		00, 00, 0xD3-256, 0x0F, 04, 00, 00, 00,
+		00, 00, 0x0A, 0x04, 04, 00, 00, 00,
 		04, 00, 00, 00
 	};
 	
     public void testRecordType() throws Exception {
-    	ExHyperlinkAtom eha = new ExHyperlinkAtom(data_a, 0, data_a.length);
-		assertEquals(4051l, eha.getRecordType());
+    	ExObjListAtom eoa = new ExObjListAtom(data_a, 0, data_a.length);
+		assertEquals(1034l, eoa.getRecordType());
 	}
     
-    public void testGetNumber() throws Exception {
-    	ExHyperlinkAtom eha = new ExHyperlinkAtom(data_a, 0, data_a.length);
-    	ExHyperlinkAtom ehb = new ExHyperlinkAtom(data_b, 0, data_b.length);
+    public void testGetSeed() throws Exception {
+    	ExObjListAtom eoa = new ExObjListAtom(data_a, 0, data_a.length);
+    	ExObjListAtom eob = new ExObjListAtom(data_b, 0, data_b.length);
 		
-		assertEquals(1, eha.getNumber());
-		assertEquals(4, ehb.getNumber());
+		assertEquals(1, eoa.getObjectIDSeed());
+		assertEquals(4, eob.getObjectIDSeed());
     }
     
 	public void testWrite() throws Exception {
-    	ExHyperlinkAtom eha = new ExHyperlinkAtom(data_a, 0, data_a.length);
+    	ExObjListAtom eoa = new ExObjListAtom(data_a, 0, data_a.length);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		eha.writeOut(baos);
+		eoa.writeOut(baos);
 		byte[] b = baos.toByteArray();
 
 		assertEquals(data_a.length, b.length);
@@ -69,14 +69,14 @@ public class TestExHyperlinkAtom extends TestCase {
 
 	// Create A from scratch
     public void testCreate() throws Exception {
-    	ExHyperlinkAtom eha = new ExHyperlinkAtom();
+    	ExObjListAtom eoa = new ExObjListAtom();
     	
-    	// Set value
-    	eha.setNumber(1);
+    	// Set seed
+    	eoa.setObjectIDSeed(1);
     	
 		// Check it's now the same as a
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		eha.writeOut(baos);
+		eoa.writeOut(baos);
 		byte[] b = baos.toByteArray();
 		
 		assertEquals(data_a.length, b.length);
@@ -87,14 +87,14 @@ public class TestExHyperlinkAtom extends TestCase {
 
 	// Try to turn a into b
 	public void testChange() throws Exception {
-    	ExHyperlinkAtom eha = new ExHyperlinkAtom(data_a, 0, data_a.length);
+    	ExObjListAtom eoa = new ExObjListAtom(data_a, 0, data_a.length);
 
 		// Change the number
-		eha.setNumber(4);
+		eoa.setObjectIDSeed(4);
 		
 		// Check bytes are now the same
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		eha.writeOut(baos);
+		eoa.writeOut(baos);
 		byte[] b = baos.toByteArray();
 		
 		// Should now be the same
