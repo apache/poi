@@ -121,7 +121,7 @@ public class RecordTypes {
     public static final Type ExControl = new Type(4078,null);
     public static final Type SlideListWithText = new Type(4080,SlideListWithText.class);
     public static final Type InteractiveInfo = new Type(4082,null);
-    public static final Type InteractiveInfoAtom = new Type(4083,null);
+    public static final Type InteractiveInfoAtom = new Type(4083,InteractiveInfoAtom.class);
     public static final Type UserEditAtom = new Type(4085,UserEditAtom.class);
     public static final Type CurrentUserAtom = new Type(4086,null);
     public static final Type DateTimeMCAtom = new Type(4087,null);
