@@ -29,7 +29,7 @@ import org.apache.poi.util.LittleEndian;
  */
 public class InteractiveInfo extends RecordContainer {
 	private byte[] _header;
-	private static long _type = RecordTypes.InteractiveInfo.typeID;
+	private static long _type = 4082;
 	
 	// Links to our more interesting children
 	private InteractiveInfoAtom infoAtom;
