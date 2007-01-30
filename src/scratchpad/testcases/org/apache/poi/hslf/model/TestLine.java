@@ -48,7 +48,7 @@ public class TestLine extends TestCase {
          * line styles
          */
         line = new Line();
-        line.setAnchor(new Rectangle(75, 200, 300, 0));
+        line.setAnchor(new java.awt.Rectangle(75, 200, 300, 0));
         line.setLineStyle(Line.LINE_SIMPLE);
         line.setLineColor(Color.blue);
         slide.addShape(line);
