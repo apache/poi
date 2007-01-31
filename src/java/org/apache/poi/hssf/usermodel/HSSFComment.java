@@ -28,13 +28,16 @@ import java.util.Iterator;
 /**
  * Represents a cell comment - a sticky note associated with a cell.
  *
- * @author Yegor Kolzlov
+ * @author Yegor Kozlov
  */
 public class HSSFComment extends HSSFTextbox {
 
     private boolean visible;
     private short col, row;
     private String author;
+
+    private NoteRecord note = null;
+    private TextObjectRecord txo = null;
 
     /**
      * Construct a new comment with the given parent and anchor.
@@ -56,6 +59,12 @@ public class HSSFComment extends HSSFTextbox {
         author = "";
     }
 
+    protected HSSFComment( NoteRecord note, TextObjectRecord txo )
+    {
+        this( (HSSFShape)null, (HSSFAnchor)null );
+        this.txo = txo;
+        this.note = note;
+    }
 
     /**
      * Returns whether this comment is visible.
@@ -63,6 +72,7 @@ public class HSSFComment extends HSSFTextbox {
      * @param visible <code>true</code> if the comment is visible, <code>false</code> otherwise
      */
     public void setVisible(boolean visible){
+        if(note != null) note.setFlags(visible ? NoteRecord.NOTE_VISIBLE : NoteRecord.NOTE_HIDDEN);
         this.visible = visible;
     }
 
@@ -90,6 +100,7 @@ public class HSSFComment extends HSSFTextbox {
      * @param row the 0-based row of the cell that contains the comment
      */
     public void setRow(int row){
+        if(note != null) note.setRow((short)row);
         this.row = (short)row;
     }
 
@@ -108,6 +119,7 @@ public class HSSFComment extends HSSFTextbox {
      * @param col the 0-based column of the cell that contains the comment
      */
     public void setColumn(short col){
+        if(note != null) note.setColumn(col);
         this.col = col;
     }
 
@@ -126,6 +138,7 @@ public class HSSFComment extends HSSFTextbox {
      * @param author the name of the original author of the comment
      */
     public void setAuthor(String author){
+        if(note != null) note.setAuthor(author);
         this.author = author;
     }
 
@@ -134,10 +147,16 @@ public class HSSFComment extends HSSFTextbox {
      *
      * @param string    Sets the rich text string used by this object.
      */
-    public void setString( HSSFRichTextString string )
-    {
-        //if font is not set we must set the default one implicitly
+    public void setString( HSSFRichTextString string )  {
+        //if font is not set we must set the default one
         if (string.numFormattingRuns() == 0) string.applyFont((short)0);
+
+        if (txo != null) {
+            int frLength = ( string.numFormattingRuns() + 1 ) * 8;
+            txo.setFormattingRunLength( (short) frLength );
+            txo.setTextLength( (short) string.length() );
+            txo.setStr( string );
+        }
         super.setString(string);
     }
 }

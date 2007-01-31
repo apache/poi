@@ -117,4 +117,45 @@ public class TestHSSFComment extends TestCase {
          }
      }
 
+    /**
+     * test that we can modify existing cell comments
+     */
+    public static void testModifyComments() throws Exception {
+
+         String dir = System.getProperty("HSSF.testdata.path");
+         FileInputStream is = new FileInputStream(new File(dir, "SimpleWithComments.xls"));
+         HSSFWorkbook wb = new HSSFWorkbook(is);
+         is.close();
+
+         HSSFSheet sheet = wb.getSheetAt(0);
+
+         HSSFCell cell;
+         HSSFRow row;
+         HSSFComment comment;
+
+         for (int rownum = 0; rownum < 3; rownum++) {
+             row = sheet.getRow(rownum);
+             cell = row.getCell((short)1);
+             comment = cell.getCellComment();
+             comment.setAuthor("Mofified["+rownum+"] by Yegor");
+             comment.setString(new HSSFRichTextString("Modified comment at row " + rownum));
+         }
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        wb.write(out);
+        out.close();
+
+        wb = new HSSFWorkbook(new ByteArrayInputStream(out.toByteArray()));
+        sheet = wb.getSheetAt(0);
+
+        for (int rownum = 0; rownum < 3; rownum++) {
+            row = sheet.getRow(rownum);
+            cell = row.getCell((short)1);
+            comment = cell.getCellComment();
+
+            assertEquals("Mofified["+rownum+"] by Yegor", comment.getAuthor());
+            assertEquals("Modified comment at row " + rownum, comment.getString().getString());
+        }
+
+     }
 }

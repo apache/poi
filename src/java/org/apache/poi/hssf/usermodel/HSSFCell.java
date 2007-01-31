@@ -986,7 +986,7 @@ public class HSSFCell
                     NoteRecord note = (NoteRecord)rec;
                     if (note.getRow() == record.getRow() && note.getColumn() == record.getColumn()){
                         TextObjectRecord txo = (TextObjectRecord)txshapes.get(new Integer(note.getShapeId()));
-                        comment = new HSSFComment(null, null);
+                        comment = new HSSFComment(note, txo);
                         comment.setRow(note.getRow());
                         comment.setColumn(note.getColumn());
                         comment.setAuthor(note.getAuthor());
