@@ -65,6 +65,7 @@
                     <li><link href="#Images">Images</link></li>
                     <li><link href="#NamedRanges">Named Ranges and Named Cells</link></li>
                     <li><link href="#CellComments">How to set cell comments</link></li>
+                    <li><link href="#Autofit">How to adjust column width to fit the contents</link></li>
                 </ul>
             </section>
             <section><title>Features</title>
@@ -451,9 +452,9 @@
     HSSFWorkbook wb = new HSSFWorkbook();
     HSSFSheet sheet = wb.createSheet("format sheet");
     HSSFPrintSetup ps = sheet.getPrintSetup();
-    
+
     sheet.setAutobreaks(true);
-    
+
     ps.setFitHeight((short)1);
     ps.setFitWidth((short)1);
 
@@ -473,15 +474,15 @@
     wb.setPrintArea(0, "$A$1:$C$2");
     //sets the print area for the first sheet
     //Alternatively:
-    //wb.setPrintArea(0, 0, 1, 0, 0) is equivalent to using the name reference (See the JavaDocs for more details)  
+    //wb.setPrintArea(0, 0, 1, 0, 0) is equivalent to using the name reference (See the JavaDocs for more details)
 
     // Create various cells and rows for spreadsheet.
 
     FileOutputStream fileOut = new FileOutputStream("workbook.xls");
     wb.write(fileOut);
     fileOut.close();
-    
-    
+
+
                     </source>
                 </section>
 
@@ -491,9 +492,9 @@
     HSSFWorkbook wb = new HSSFWorkbook();
     HSSFSheet sheet = wb.createSheet("format sheet");
     HSSFFooter footer = sheet.getFooter()
-    
+
     footer.setRight( "Page " + HSSFFooter.page() + " of " + HSSFFooter.numPages() );
-    
+
 
 
     // Create various cells and rows for spreadsheet.
@@ -502,8 +503,8 @@
     wb.write(fileOut);
     fileOut.close();
                     </source>
-                </section>                
-                
+                </section>
+
                 <anchor id="ConvenienceFunctions"/>
                 <section><title>Using the Convenience Functions</title>
                     <p>
@@ -568,7 +569,7 @@
     wb.write(fileOut);
     fileOut.close();
                     </source>
-                </section>                
+                </section>
 
                 <anchor id="SelectSheet"/>
                 <section><title>Set a sheet as selected</title>
@@ -583,7 +584,7 @@
     wb.write(fileOut);
     fileOut.close();
                     </source>
-                </section>                
+                </section>
 
                 <anchor id="Zoom"/>
                 <section><title>Set the zoom magnification</title>
@@ -709,7 +710,7 @@
     HSSFHeader header = sheet.getHeader();
     header.setCenter("Center Header");
     header.setLeft("Left Header");
-    header.setRight(HSSFHeader.font("Stencil-Normal", "Italic") + 
+    header.setRight(HSSFHeader.font("Stencil-Normal", "Italic") +
                     HSSFHeader.fontSize((short) 16) + "Right w/ Stencil-Normal Italic font and size 16");
 
     FileOutputStream fileOut = new FileOutputStream("workbook.xls");
@@ -993,10 +994,10 @@
         <section>
             <title>Named Ranges and Named Cells</title>
             <p>
-                Named Range is a way to refer to a group of cells by a name. Named Cell is a 
+                Named Range is a way to refer to a group of cells by a name. Named Cell is a
                 degenerate case of Named Range in that the 'group of cells' contains exactly one
                 cell. You can create as well as refer to cells in a workbook by their named range.
-                When working with Named Ranges, the classes: org.apache.poi.hssf.util.CellReference and 
+                When working with Named Ranges, the classes: org.apache.poi.hssf.util.CellReference and
                 &amp; org.apache.poi.hssf.util.AreaReference are used.
             </p>
             <p>
@@ -1008,25 +1009,25 @@
     HSSFWorkbook wb = new HSSFWorkbook();
     HSSFSheet sheet = wb.createSheet(sname);
     sheet.createRow(0).createCell((short) 0).setCellValue(cvalue);
-     
+
     // 1. create named range for a single cell using areareference
     HSSFName namedCell = wb.createName();
     namedCell.setNameName(cname);
     String reference = sname+"!A1:A1"; // area reference
     namedCell.setReference(reference);
-    
+
     // 2. create named range for a single cell using cellreference
     HSSFName namedCell = wb.createName();
     namedCell.setNameName(cname);
     String reference = sname+"!A1"; // cell reference
     namedCell.setReference(reference);
-    
+
     // 3. create named range for an area using AreaReference
     HSSFName namedCell = wb.createName();
     namedCell.setNameName(cname);
     String reference = sname+"!A1:C5"; // area reference
     namedCell.setReference(reference);
-    
+
             </source>
             <p>
             Reading from Named Range / Named Cell
@@ -1039,7 +1040,7 @@
     // retrieve the named range
     int namedCellIdx = wb.getNameIndex(cellName);
     HSSFName aNamedCell = wb.getNameAt(namedCellIdx);
-    
+
     // retrieve the cell at the named range and test its contents
     AreaReference aref = new AreaReference(aNamedCell.getReference());
     CellReference[] crefs = aref.getCells();
@@ -1050,7 +1051,7 @@
         // extract the cell contents based on cell type etc.
     }
             </source>
-            
+
         </section>
         <anchor id="CellComments"/>
         <section><title>Cell Comments</title>
@@ -1103,7 +1104,7 @@
 
     comment2.setString(string);
     //by default comments are hidden. This one is always visible.
-    comment2.setVisible(true); 
+    comment2.setVisible(true);
 
     comment2.setAuthor("Bill Gates");
 
@@ -1124,12 +1125,21 @@
         </p>
         <source>
     HSSFCell cell = sheet.get(3).getColumn((short)1);
-    HSSFComment comment = cell.getCellComment(); 
+    HSSFComment comment = cell.getCellComment();
     if (comment != null) {
       HSSFRichTextString str = comment.getString();
       String author = comment.getAuthor();
     }
        </source>
+     </section>
+     <anchor id="Autofit"/>
+     <section><title>Adjust column width to fit the contents</title>
+        <source>
+    HSSFSheet sheet = workbook.getSheetAt(0);
+    sheet.autoSizeColumn((short)0); //adjust width of the first column
+    sheet.autoSizeColumn((short)1); //adjust width of the second column
+        </source>
+
      </section>
 
     </body>

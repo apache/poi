@@ -36,6 +36,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.TreeMap;
+import java.text.AttributedString;
+import java.text.NumberFormat;
+import java.text.DecimalFormat;
+import java.awt.font.TextLayout;
+import java.awt.font.FontRenderContext;
+import java.awt.font.TextAttribute;
 
 /**
  * High level representation of a worksheet.
@@ -44,6 +50,7 @@ import java.util.TreeMap;
  * @author  Libin Roman (romal at vistaportal.com)
  * @author  Shawn Laubach (slaubach at apache dot org) (Just a little)
  * @author  Jean-Pierre Paris (jean-pierre.paris at m4x dot org) (Just a little, too)
+ * @author  Yegor Kozlov (yegor at apache.org) (Autosizing columns)
  */
 
 public class HSSFSheet
@@ -1381,4 +1388,96 @@ public class HSSFSheet
     public void setDefaultColumnStyle(short column, HSSFCellStyle style) {
 	sheet.setColumn(column, new Short(style.getIndex()), null, null, null, null);
     }
+
+    /**
+     * Adjusts the column width to fit the contents.
+     *
+     * @param column the column index
+     */
+    public void autoSizeColumn(short column) {
+        AttributedString str;
+        TextLayout layout;
+        /**
+         * Excel measures columns in units of 1/256th of a character width
+         * but the docs say nothing about what particular character is used.
+         * '0' looks a good choice.
+         */
+        char defaultChar = '0';
+       
+        FontRenderContext frc = new FontRenderContext(null, true, true);
+
+        HSSFWorkbook wb = new HSSFWorkbook(book);
+        HSSFFont defaultFont = wb.getFontAt((short) 0);
+
+        str = new AttributedString("" + defaultChar);
+        str.addAttribute(TextAttribute.FAMILY, defaultFont.getFontName());
+        str.addAttribute(TextAttribute.SIZE, new Float(defaultFont.getFontHeightInPoints()));
+        layout = new TextLayout(str.getIterator(), frc);
+        int defaultCharWidth = (int)layout.getAdvance();
+
+        double width = -1;
+        for (Iterator it = rowIterator(); it.hasNext();) {
+            HSSFRow row = (HSSFRow) it.next();
+            HSSFCell cell = row.getCell(column);
+            if (cell == null) continue;
+
+            HSSFCellStyle style = cell.getCellStyle();
+            HSSFFont font = wb.getFontAt(style.getFontIndex());
+            if (cell.getCellType() == HSSFCell.CELL_TYPE_STRING) {
+                HSSFRichTextString rt = cell.getRichStringCellValue();
+                String[] lines = rt.getString().split("\\n");
+                for (int i = 0; i < lines.length; i++) {
+                    str = new AttributedString(lines[i] + defaultChar);
+                    str.addAttribute(TextAttribute.FAMILY, font.getFontName());
+                    str.addAttribute(TextAttribute.SIZE, new Float(font.getFontHeightInPoints()));
+                    if (font.getBoldweight() == HSSFFont.BOLDWEIGHT_BOLD) str.addAttribute(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD);
+                    if (rt.numFormattingRuns() > 0) {
+                        for (int j = 0; j < lines[i].length(); j++) {
+                            int idx = rt.getFontAtIndex(j);
+                            if (idx != 0) {
+                                HSSFFont fnt = wb.getFontAt((short) idx);
+                                str.addAttribute(TextAttribute.FAMILY, fnt.getFontName(), j, j + 1);
+                                str.addAttribute(TextAttribute.SIZE, new Float(fnt.getFontHeightInPoints()), j, j + 1);
+                            }
+                        }
+                    }
+                    layout = new TextLayout(str.getIterator(), frc);
+                    width = Math.max(width, layout.getAdvance() / defaultCharWidth);
+                }
+            } else {
+                String sval = null;
+                if (cell.getCellType() == HSSFCell.CELL_TYPE_NUMERIC) {
+                    HSSFDataFormat dataformat = wb.createDataFormat();
+                    short idx = style.getDataFormat();
+                    String format = dataformat.getFormat(idx).replaceAll("\"", "");
+                    double value = cell.getNumericCellValue();
+                    try {
+                        NumberFormat fmt;
+                        if ("General".equals(format))
+                            fmt = new DecimalFormat();
+                        else
+                            fmt = new DecimalFormat(format);
+                        sval = fmt.format(value);
+                    } catch (Exception e) {
+                        sval = "" + value;
+                    }
+                } else if (cell.getCellType() == HSSFCell.CELL_TYPE_FORMULA) {
+                    sval = cell.getCellFormula();
+                } else if (cell.getCellType() == HSSFCell.CELL_TYPE_BOOLEAN) {
+                    sval = String.valueOf(cell.getBooleanCellValue());
+                }
+
+                str = new AttributedString(sval + defaultChar);
+                str.addAttribute(TextAttribute.FAMILY, font.getFontName());
+                str.addAttribute(TextAttribute.SIZE, new Float(font.getFontHeightInPoints()));
+                layout = new TextLayout(str.getIterator(), frc);
+                width = Math.max(width, layout.getAdvance() / defaultCharWidth);
+            }
+
+            if (width != -1) {
+                sheet.setColumnWidth(column, (short) (width * 256));
+            }
+        }
+    }
+
 }
