@@ -1461,8 +1461,6 @@ public class HSSFSheet
                     } catch (Exception e) {
                         sval = "" + value;
                     }
-                } else if (cell.getCellType() == HSSFCell.CELL_TYPE_FORMULA) {
-                    sval = cell.getCellFormula();
                 } else if (cell.getCellType() == HSSFCell.CELL_TYPE_BOOLEAN) {
                     sval = String.valueOf(cell.getBooleanCellValue());
                 }
