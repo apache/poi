@@ -135,9 +135,20 @@ public class CurrentUserAtom
 
 		// Get the username length
 		long usernameLen = LittleEndian.getUShort(_contents,20);
+		if(usernameLen > 512) {
+			// Handle the case of it being garbage
+			System.err.println("Warning - invalid username length " + usernameLen + " found, treating as if there was no username set");
+			usernameLen = 0;
+		}
 
-		// Use this to grab the revision
-		releaseVersion = LittleEndian.getUInt(_contents,28+(int)usernameLen);
+		// Now we know the length of the username, 
+		//  use this to grab the revision
+		if(_contents.length >= 28+(int)usernameLen + 4) {
+			releaseVersion = LittleEndian.getUInt(_contents,28+(int)usernameLen);
+		} else {
+			// No revision given, as not enough data. Odd
+			releaseVersion = 0;
+		}
 
 		// Grab the unicode username, if stored
 		int start = 28+(int)usernameLen+4;
