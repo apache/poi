@@ -750,11 +750,14 @@ public class HSSFWorkbook
         NameRecord r = null;
         while ((r = (NameRecord) workbook.findNextRecordBySid(NameRecord.sid, index)) != null)
         {
-            int nameRecordSheetIndex = workbook.getSheetIndexFromExternSheetIndex(r.getEqualsToIndexToSheet() - 1);
-            if (isRowColHeaderRecord( r ) && nameRecordSheetIndex == sheetIndex)
-            {
-                return index;
-            }
+            int indexToSheet = r.getEqualsToIndexToSheet() -1;
+            if(indexToSheet > -1) { //ignore "GLOBAL" name records
+                int nameRecordSheetIndex = workbook.getSheetIndexFromExternSheetIndex(indexToSheet);
+                if (isRowColHeaderRecord( r ) && nameRecordSheetIndex == sheetIndex)
+                {
+                    return index;
+                }
+            } 
             index++;
         }
 
