@@ -51,7 +51,10 @@ public class AreaNPtg
   }
 
   public void writeBytes(byte [] array, int offset) {
-    throw new RuntimeException("Coding Error: This method should never be called. This ptg should be converted");
+    super.writeBytes(array,offset);
+    //this should be a warning...there doesn't seem to be any rationale to throwing an exception here...
+    //this excpeiton appears to break user defined named ranges...
+    //throw new RuntimeException("Coding Error: This method should never be called. This ptg should be converted");
   }
 
   public String getAreaPtgName() {
