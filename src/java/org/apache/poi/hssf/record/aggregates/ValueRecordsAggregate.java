@@ -214,9 +214,9 @@ public class ValueRecordsAggregate
 
     /** Returns true if the row has cells attached to it */
     public boolean rowHasCells(int row) {
-    	if (row > records.length)
-    		return false;
-      CellValueRecordInterface[] rowCells=records[row];
+    	if (row > records.length-1) //previously this said row > records.length which means if 
+    		return false;  // if records.length == 60 and I pass "60" here I get array out of bounds
+      CellValueRecordInterface[] rowCells=records[row]; //because a 60 length array has the last index = 59
       if(rowCells==null) return false;
       for(int col=0;col<rowCells.length;col++) {
         if(rowCells[col]!=null) return true;
@@ -334,7 +334,8 @@ public class ValueRecordsAggregate
     private void findNext() {
       nextColumn++;
       for(;nextRow<=lastRow;nextRow++) {
-        CellValueRecordInterface[] rowCells=records[nextRow];
+                                           //previously this threw array out of bounds...
+        CellValueRecordInterface[] rowCells=(nextRow < records.length) ? records[nextRow] : null;
         if(rowCells==null) { // This row is empty
           nextColumn=0;
           continue;
