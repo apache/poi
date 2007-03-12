@@ -973,47 +973,59 @@ public class HSSFCell
     }
 
     /**
-     * Returns the comment associated with this cell
+     * Returns comment associated with this cell
      *
      * @return comment associated with this cell
      */
      public HSSFComment getCellComment(){
         if (comment == null) {
-            HashMap txshapes = new HashMap(); //map shapeId and TextObjectRecord
-            for (Iterator it = sheet.getRecords().iterator(); it.hasNext(); ) {
-                Record rec = ( Record ) it.next();
-                if (rec instanceof NoteRecord){
-                    NoteRecord note = (NoteRecord)rec;
-                    if (note.getRow() == record.getRow() && note.getColumn() == record.getColumn()){
-                        TextObjectRecord txo = (TextObjectRecord)txshapes.get(new Integer(note.getShapeId()));
-                        comment = new HSSFComment(note, txo);
-                        comment.setRow(note.getRow());
-                        comment.setColumn(note.getColumn());
-                        comment.setAuthor(note.getAuthor());
-                        comment.setVisible(note.getFlags() == NoteRecord.NOTE_VISIBLE);
-                        comment.setString(txo.getStr());
-                        break;
-                    }
-                } else if (rec instanceof ObjRecord){
-                    ObjRecord obj = (ObjRecord)rec;
-                    SubRecord sub = (SubRecord)obj.getSubRecords().get(0);
-                    if (sub instanceof CommonObjectDataSubRecord){
-                        CommonObjectDataSubRecord cmo = (CommonObjectDataSubRecord)sub;
-                        if (cmo.getObjectType() == CommonObjectDataSubRecord.OBJECT_TYPE_COMMENT){
-                            //find the nearest TextObjectRecord which holds comment's text and map it to its shapeId
-                            while(it.hasNext()) {
-                                rec = ( Record ) it.next();
-                                if (rec instanceof TextObjectRecord) {
-                                    txshapes.put(new Integer(cmo.getObjectId()), rec);
-                                    break;
-                                }
-                            }
-
-                        }
-                    }
-                }
-            }
+            comment = findCellComment(sheet, record.getRow(), record.getColumn());
         }
         return comment;
     }
+
+    /**
+     * Cell comment finder.
+     * Returns cell comment for the specified sheet, row and column.
+     *
+     * @return cell comment or <code>null</code> if not found
+     */
+    protected static HSSFComment findCellComment(Sheet sheet, int row, int column){
+        HSSFComment comment = null;
+        HashMap txshapes = new HashMap(); //map shapeId and TextObjectRecord
+        for (Iterator it = sheet.getRecords().iterator(); it.hasNext(); ) {
+           Record rec = ( Record ) it.next();
+           if (rec instanceof NoteRecord){
+               NoteRecord note = (NoteRecord)rec;
+               if (note.getRow() == row && note.getColumn() == column){
+                   TextObjectRecord txo = (TextObjectRecord)txshapes.get(new Integer(note.getShapeId()));
+                   comment = new HSSFComment(note, txo);
+                   comment.setRow(note.getRow());
+                   comment.setColumn(note.getColumn());
+                   comment.setAuthor(note.getAuthor());
+                   comment.setVisible(note.getFlags() == NoteRecord.NOTE_VISIBLE);
+                   comment.setString(txo.getStr());
+                   break;
+               }
+           } else if (rec instanceof ObjRecord){
+               ObjRecord obj = (ObjRecord)rec;
+               SubRecord sub = (SubRecord)obj.getSubRecords().get(0);
+               if (sub instanceof CommonObjectDataSubRecord){
+                   CommonObjectDataSubRecord cmo = (CommonObjectDataSubRecord)sub;
+                   if (cmo.getObjectType() == CommonObjectDataSubRecord.OBJECT_TYPE_COMMENT){
+                       //find the nearest TextObjectRecord which holds comment's text and map it to its shapeId
+                       while(it.hasNext()) {
+                           rec = ( Record ) it.next();
+                           if (rec instanceof TextObjectRecord) {
+                               txshapes.put(new Integer(cmo.getObjectId()), rec);
+                               break;
+                           }
+                       }
+
+                   }
+               }
+           }
+        }
+        return comment;
+   }
 }
