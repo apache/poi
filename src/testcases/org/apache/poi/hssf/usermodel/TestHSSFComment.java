@@ -101,6 +101,7 @@ public class TestHSSFComment extends TestCase {
              cell = row.getCell((short)0);
              comment = cell.getCellComment();
              assertNull("Cells in the first column are not commented", comment);
+             assertNull(sheet.getCellComment(rownum, 0));
          }
 
          for (int rownum = 0; rownum < 3; rownum++) {
@@ -108,6 +109,8 @@ public class TestHSSFComment extends TestCase {
              cell = row.getCell((short)1);
              comment = cell.getCellComment();
              assertNotNull("Cells in the second column have comments", comment);
+             assertNotNull("Cells in the second column have comments", sheet.getCellComment(rownum, 1));
+
              assertEquals(HSSFSimpleShape.OBJECT_TYPE_COMMENT, comment.getShapeType());
              assertEquals("Yegor Kozlov", comment.getAuthor());
              assertFalse("cells in the second column have not empyy notes", 

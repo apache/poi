@@ -1478,4 +1478,13 @@ public class HSSFSheet
         }
     }
 
+    /**
+     * Returns cell comment for the specified row and column
+     *
+     * @return cell comment or <code>null</code> if not found
+     */
+     public HSSFComment getCellComment(int row, int column){
+        return HSSFCell.findCellComment(sheet, row, column);
+    }
+
 }

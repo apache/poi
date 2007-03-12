@@ -1123,14 +1123,16 @@
          <p>
   Reading cell comments
         </p>
-        <source>
+  <source>
     HSSFCell cell = sheet.get(3).getColumn((short)1);
     HSSFComment comment = cell.getCellComment();
     if (comment != null) {
       HSSFRichTextString str = comment.getString();
       String author = comment.getAuthor();
     }
-       </source>
+    //  alternatively you can retrieve cell comments by (row, column)
+    comment = sheet.getCellComment(3, 1);
+  </source>
      </section>
      <anchor id="Autofit"/>
      <section><title>Adjust column width to fit the contents</title>
