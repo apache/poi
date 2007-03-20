@@ -19,9 +19,7 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.*;
 
 import junit.framework.TestCase;
 
@@ -481,8 +479,43 @@ public class TestHSSFSheet
 	HSSFCell c = r.createCell((short)0);
 	assertEquals("style should match", style.getIndex(), c.getCellStyle().getIndex());
     }
-	 
-	 
+
+
+    /**
+     *
+     */
+    public void testAddEmptyRow() throws Exception {
+        //try to add 5 empty rows to a new sheet
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        HSSFSheet sheet = workbook.createSheet();
+        for (int i = 0; i < 5; i++) sheet.createRow(i);
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        workbook.write(out);
+        out.close();
+
+        workbook = new HSSFWorkbook(new ByteArrayInputStream(out.toByteArray()));
+        assertTrue("No Exceptions while reading file", true);
+
+        //try adding empty rows in an existing worksheet
+        String cwd = System.getProperty("HSSF.testdata.path");
+        FileInputStream in = new FileInputStream(new File(cwd, "Simple.xls"));
+        workbook = new HSSFWorkbook(in);
+        in.close();
+        assertTrue("No Exceptions while reading file", true);
+
+        sheet = workbook.getSheetAt(0);
+        for (int i = 3; i < 10; i++) sheet.createRow(i);
+
+        out = new ByteArrayOutputStream();
+        workbook.write(out);
+        out.close();
+
+        workbook = new HSSFWorkbook(new ByteArrayInputStream(out.toByteArray()));
+        assertTrue("No Exceptions while reading file", true);
+
+    }
+
 	public static void main(java.lang.String[] args) {
 		 junit.textui.TestRunner.run(TestHSSFSheet.class);
 	}    

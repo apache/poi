@@ -213,7 +213,7 @@ public class RowRecordsAggregate
           //Note: Cell references start from the second row...
           int cellRefOffset = (rowBlockSize-20);
           for (int row=startRowNumber;row<=endRowNumber;row++) {
-            if (cells.rowHasCells(row)) {
+            if (null != cells && cells.rowHasCells(row)) {
               final int rowCellSize = cells.serializeCellRow(row, pos, data);
               pos += rowCellSize;
               //Add the offset to the first cell for the row into the DBCellRecord.

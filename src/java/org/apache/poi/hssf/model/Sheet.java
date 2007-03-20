@@ -783,7 +783,7 @@ public class Sheet implements Model
       int dbCellOffset = 0;
       for (int block=0;block<blockCount;block++) {
         rowBlockOffset += rows.getRowBlockSize(block);
-        cellBlockOffset += cells.getRowCellBlockSize(rows.getStartRowNumberForBlock(block),
+        cellBlockOffset += null == cells ? 0 : cells.getRowCellBlockSize(rows.getStartRowNumberForBlock(block),
                                                      rows.getEndRowNumberForBlock(block));
         //Note: The offsets are relative to the Workbook BOF. Assume that this is
         //0 for now.....
