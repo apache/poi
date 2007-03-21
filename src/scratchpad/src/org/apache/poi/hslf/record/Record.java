@@ -129,7 +129,7 @@ public abstract class Record
 				// Record was horribly corrupt
 			}
 			pos += 8;
-			pos += rlen;
+			pos += rleni;
 		}
 
 		// Turn the vector into an array, and return
