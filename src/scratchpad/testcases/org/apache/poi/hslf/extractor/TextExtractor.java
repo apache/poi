@@ -29,13 +29,15 @@ import junit.framework.TestCase;
  * @author Nick Burch (nick at torchbox dot com)
  */
 public class TextExtractor extends TestCase {
-	// Extractor primed on the 2 page basic test data
+	/** Extractor primed on the 2 page basic test data */
 	private PowerPointExtractor ppe;
-	// Extractor primed on the 1 page but text-box'd test data
+	/** Extractor primed on the 1 page but text-box'd test data */
 	private PowerPointExtractor ppe2;
+	/** Where to go looking for our test files */
+	private String dirname;
 
     public TextExtractor() throws Exception {
-		String dirname = System.getProperty("HSLF.testdata.path");
+		dirname = System.getProperty("HSLF.testdata.path");
 		String filename = dirname + "/basic_test_ppt_file.ppt";
 		ppe = new PowerPointExtractor(filename);
 		String filename2 = dirname + "/with_textbox.ppt";
@@ -69,6 +71,28 @@ public class TextExtractor extends TestCase {
 		expectText = "";
 		
 		ensureTwoStringsTheSame(expectText, notesText);
+	}
+
+	/**
+	 * Test that when presented with a PPT file missing the odd
+	 *  core record, we can still get the rest of the text out
+	 * @throws Exception
+	 */
+	public void testMissingCoreRecords() throws Exception {
+		String filename = dirname + "/missing_core_records.ppt";
+		ppe = new PowerPointExtractor(filename);
+		
+		String text = ppe.getText(true, false);
+		String nText = ppe.getNotes();
+
+		assertNotNull(text);
+		assertNotNull(nText);
+		
+		// Notes record were corrupt, so don't expect any
+		assertEquals(nText.length(), 0);
+		
+		// Slide records were fine
+		assertTrue(text.startsWith("Using Disease Surveillance and Response"));
 	}
 	
     private void ensureTwoStringsTheSame(String exp, String act) throws Exception {
