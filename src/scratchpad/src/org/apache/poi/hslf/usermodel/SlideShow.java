@@ -273,8 +273,13 @@ public class SlideShow
 	private Record getCoreRecordForRefID(int refID) {
 		Integer coreRecordId = (Integer)
 			_sheetIdToCoreRecordsLookup.get(new Integer(refID));
-		Record r = _mostRecentCoreRecords[coreRecordId.intValue()];
-		return r;
+		if(coreRecordId != null) {
+			Record r = _mostRecentCoreRecords[coreRecordId.intValue()];
+			return r;
+		} else {
+			logger.log(POILogger.ERROR, "We tried to look up a reference to a core record, but there was no core ID for reference ID " + refID);
+			return null;
+		}
 	}
 
   /**
@@ -352,23 +357,26 @@ public class SlideShow
 	} else {
 		// Match up the records and the SlideAtomSets
 		notesSets = notesSLWT.getSlideAtomsSets();
-		notesRecords = new org.apache.poi.hslf.record.Notes[notesSets.length];
+		ArrayList notesRecordsL = new ArrayList();
 		for(int i=0; i<notesSets.length; i++) {
 			// Get the right core record
 			Record r = getCoreRecordForSAS(notesSets[i]);
 			
 			// Ensure it really is a notes record
-			if(r instanceof org.apache.poi.hslf.record.Notes) {
-				notesRecords[i] = (org.apache.poi.hslf.record.Notes)r;
+			if(r != null && r instanceof org.apache.poi.hslf.record.Notes) {
+				notesRecordsL.add( (org.apache.poi.hslf.record.Notes)r );
+				
+				// Record the match between slide id and these notes
+				SlidePersistAtom spa = notesSets[i].getSlidePersistAtom();
+				Integer slideId = new Integer(spa.getSlideIdentifier());
+				slideIdToNotes.put(slideId, new Integer(i));
 			} else {
 				logger.log(POILogger.ERROR, "A Notes SlideAtomSet at " + i + " said its record was at refID " + notesSets[i].getSlidePersistAtom().getRefID() + ", but that was actually a " + r);
 			}
-			
-			// Record the match between slide id and these notes
-			SlidePersistAtom spa = notesSets[i].getSlidePersistAtom();
-			Integer slideId = new Integer(spa.getSlideIdentifier());
-			slideIdToNotes.put(slideId, new Integer(i));
 		}
+		notesRecords = new org.apache.poi.hslf.record.Notes[notesRecordsL.size()];
+		notesRecords = (org.apache.poi.hslf.record.Notes[])
+			notesRecordsL.toArray(notesRecords);
 	}
 	
 	// Now, do the same thing for our slides
