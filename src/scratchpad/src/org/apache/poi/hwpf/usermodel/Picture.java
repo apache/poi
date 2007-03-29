@@ -223,11 +223,15 @@ public class Picture
     } else if (matchSignature(_dataStream, TIFF, pictureBytesStartOffset) ||
                matchSignature(_dataStream, TIFF1, pictureBytesStartOffset)) {
       return "tiff";
-    } else if (matchSignature(content, WMF1, 0) ||
-               matchSignature(content, WMF2, 0)) {
-      return "wmf";
-    } else if (matchSignature(content, EMF, 0)) {
-      return "emf";
+	} else {
+        // Need to load the image content before we can try the following tests
+        fillImageContent();
+
+        if (matchSignature(content, WMF1, 0) || matchSignature(content, WMF2, 0)) {
+            return "wmf";
+        } else if (matchSignature(content, EMF, 0)) {
+            return "emf";
+        }
     }
     // TODO: DIB, PICT
     return "";
