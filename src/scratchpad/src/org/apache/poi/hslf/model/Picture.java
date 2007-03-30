@@ -147,7 +147,7 @@ public class Picture extends SimpleShape {
         	
             if(img != null) {
             	// Valid image, set anchor from it
-            	setAnchor(new java.awt.Rectangle(0, 0, img.getWidth(), img.getHeight()));
+            	setAnchor(new java.awt.Rectangle(0, 0, img.getWidth()*POINT_DPI/PIXEL_DPI, img.getHeight()*POINT_DPI/PIXEL_DPI));
             } else {
             	// Invalid image, go with the default metafile size
             	setAnchor(new java.awt.Rectangle(0, 0, 200, 200));
