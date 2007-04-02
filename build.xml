@@ -807,7 +807,7 @@ FORREST_HOME environment variable!</echo>
       description="Generates POI's website's contents"/>
 
 
-    <target name="maven-dist" depends="compile" description="Builds the jar files for a maven distribution, and the POM to go with them">
+    <target name="maven-dist" depends="clean,compile" description="Builds the jar files for a maven distribution, and the POM to go with them">
 		<!-- Build a Jar of all the class files -->
         <jar destfile="${mavendist.dir}/${jar.name}-${version.id}.jar">
             <manifest>
@@ -904,8 +904,8 @@ FORREST_HOME environment variable!</echo>
         </jar>
     </target>
 
-  <target name="dist" depends="fail-unless-tools-are-available, compile, site, jar"
-    description="Creates the entire distribution into build/dist">
+  <target name="dist" depends="clean, fail-unless-tools-are-available, compile, site, jar"
+    description="Creates the entire distribution into build/dist, from scratch">
 
 	<property name="zipdir" value="${jar.name}-${version.id}" />
 
