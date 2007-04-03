@@ -33,7 +33,6 @@ public class ExHyperlink extends RecordContainer {
 	private ExHyperlinkAtom linkAtom;
 	private CString linkDetailsA;
 	private CString linkDetailsB;
-	private Comment2000Atom commentAtom; 
 	
 	/** 
 	 * Returns the ExHyperlinkAtom of this link
@@ -55,7 +54,11 @@ public class ExHyperlink extends RecordContainer {
 	 */
 	public void setLinkURL(String url) {
 		linkDetailsA.setText(url);
-		linkDetailsB.setText(url);
+
+		// linkDetailsB isn't present in all PPT versions
+		if(linkDetailsB != null) {
+			linkDetailsB.setText(url);
+		}
 	}
 	
 	/**
@@ -90,6 +93,11 @@ public class ExHyperlink extends RecordContainer {
 	 *  methods.
 	 */	
 	private void findInterestingChildren() {
+		// We need to have 2 children, ideally 3, and sometimes have more
+		if(_children.length < 2) {
+			throw new IllegalStateException("We need at least two child records, but we only had " + _children.length);
+		}
+
 		// First child should be the ExHyperlinkAtom
 		if(_children[0] instanceof ExHyperlinkAtom) {
 			linkAtom = (ExHyperlinkAtom)_children[0];
@@ -103,11 +111,16 @@ public class ExHyperlink extends RecordContainer {
 		} else {
 			throw new IllegalStateException("Second child record wasn't a CString, was of type " + _children[1].getRecordType());
 		}
-		// Third child should be the second link details
-		if(_children[2] instanceof CString) {
-			linkDetailsB = (CString)_children[2];
+
+		// Third child, if it exists, should be the second link details
+		if(_children.length >= 3) {
+			if(_children[2] instanceof CString) {
+				linkDetailsB = (CString)_children[2];
+			} else {
+				throw new IllegalStateException("Third child record wasn't a CString, was of type " + _children[2].getRecordType());
+			}
 		} else {
-			throw new IllegalStateException("Third child record wasn't a CString, was of type " + _children[2].getRecordType());
+			// Should be fine to not have one
 		}
 	}
 	
