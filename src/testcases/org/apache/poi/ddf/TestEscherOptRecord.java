@@ -23,6 +23,9 @@ import org.apache.poi.util.HexRead;
 import org.apache.poi.util.HexDump;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Iterator;
 
 public class TestEscherOptRecord extends TestCase
 {
@@ -248,5 +251,83 @@ public class TestEscherOptRecord extends TestCase
         for(int i=0; i<data.length; i++) {
         	assertEquals(data[i], dest[i]);
         }
+    }
+
+    /**
+     * Test read/write against an OPT record from a real ppt file.
+     * In PowerPoint is is legal to have array properties with empty complex part.
+     * In Glen's original implementation complex part is always 6 bytes which resulted
+     * in +6 extra bytes when writing back out. As the result the ppt becomes unreadable.
+     *
+     * Make sure we write back the original empty complex part.
+     *
+     * See Bug 41946 for details.
+     */
+    public void test41946() throws IOException {
+        String dataStr1 =
+                "03 08 0B F0 00 03 00 00 81 00 30 65 01 00 82 00 98 B2 00 00 83 00 30 65 01 " +
+                "00 84 00 98 B2 00 00 85 00 00 00 00 00 87 00 01 00 00 00 88 00 00 00 00 00 " +
+                "89 00 00 00 00 00 BF 00 00 00 0F 00 0C 01 F4 00 00 10 0D 01 00 00 00 20 0E " +
+                "01 00 00 00 20 80 01 00 00 00 00 81 01 04 00 00 08 82 01 00 00 01 00 83 01 " +
+                "00 00 00 08 84 01 00 00 01 00 85 01 00 00 00 20 86 41 00 00 00 00 87 C1 00 " +
+                "00 00 00 88 01 00 00 00 00 89 01 00 00 00 00 8A 01 00 00 00 00 8B 01 00 00 " +
+                "00 00 8C 01 00 00 00 00 8D 01 00 00 00 00 8E 01 00 00 00 00 8F 01 00 00 00 " +
+                "00 90 01 00 00 00 00 91 01 00 00 00 00 92 01 00 00 00 00 93 01 00 00 00 00 " +
+                "94 01 00 00 00 00 95 01 00 00 00 00 96 01 00 00 00 00 97 C1 00 00 00 00 98 " +
+                "01 00 00 00 00 99 01 00 00 00 00 9A 01 00 00 00 00 9B 01 00 00 00 00 9C 01 " +
+                "03 00 00 40 BF 01 0C 00 1E 00 C0 01 01 00 00 08 C1 01 00 00 01 00 C2 01 FF " +
+                "FF FF 00 C3 01 00 00 00 20 C4 01 00 00 00 00 C5 41 00 00 00 00 C6 C1 00 00 " +
+                "00 00 C7 01 00 00 00 00 C8 01 00 00 00 00 C9 01 00 00 00 00 CA 01 00 00 00 " +
+                "00 CB 01 35 25 00 00 CC 01 00 00 08 00 CD 01 00 00 00 00 CE 01 00 00 00 00 " +
+                "CF C1 00 00 00 00 D7 01 02 00 00 00 FF 01 06 00 0E 00 00 02 00 00 00 00 01 " +
+                "02 02 00 00 08 02 02 CB CB CB 00 03 02 00 00 00 20 04 02 00 00 01 00 05 02 " +
+                "38 63 00 00 06 02 38 63 00 00 07 02 00 00 00 00 08 02 00 00 00 00 09 02 00 " +
+                "00 01 00 0A 02 00 00 00 00 0B 02 00 00 00 00 0C 02 00 00 01 00 0D 02 00 00 " +
+                "00 00 0E 02 00 00 00 00 0F 02 00 01 00 00 10 02 00 00 00 00 11 02 00 00 00 " +
+                "00 3F 02 00 00 03 00 80 02 00 00 00 00 81 02 00 00 01 00 82 02 05 00 00 00 " +
+                "83 02 9C 31 00 00 84 02 00 00 00 00 85 02 F0 F9 06 00 86 02 00 00 00 00 87 " +
+                "02 F7 00 00 10 88 02 00 00 00 20 BF 02 01 00 0F 00 C0 02 00 00 00 00 C1 02 " +
+                "00 00 00 00 C2 02 64 00 00 00 C3 02 00 00 00 00 C4 02 00 00 00 00 C5 02 00 " +
+                "00 00 00 C6 02 00 00 00 00 C7 02 00 00 00 00 C8 02 00 00 00 00 C9 02 00 00 " +
+                "00 00 CA 02 30 75 00 00 CB 02 D0 12 13 00 CC 02 30 ED EC FF CD 02 40 54 89 " +
+                "00 CE 02 00 80 00 00 CF 02 00 80 FF FF D0 02 00 00 79 FF D1 02 32 00 00 00 " +
+                "D2 02 20 4E 00 00 D3 02 50 C3 00 00 D4 02 00 00 00 00 D5 02 10 27 00 00 D6 " +
+                "02 70 94 00 00 D7 02 B0 3C FF FF D8 02 00 00 00 00 D9 02 10 27 00 00 DA 02 " +
+                "70 94 00 00 FF 02 16 00 1F 00 04 03 01 00 00 00 41 03 A8 29 01 00 42 03 00 " +
+                "00 00 00 43 03 03 00 00 00 44 03 7C BE 01 00 45 03 00 00 00 00 7F 03 00 00 " +
+                "0F 00 84 03 7C BE 01 00 85 03 00 00 00 00 86 03 7C BE 01 00 87 03 00 00 00 " +
+                "00";
+
+        EscherOptRecord r = new EscherOptRecord();
+        byte[] data = HexRead.readFromString( dataStr1 );
+        r.fillFields( data, 0, new DefaultEscherRecordFactory() );
+        assertEquals( (short) 0xF00B, r.getRecordId() );
+
+        byte[] data1 = r.serialize();
+        EscherOptRecord opt2 = new EscherOptRecord();
+        opt2.fillFields( data1, new DefaultEscherRecordFactory() );
+
+        byte[] data2 = opt2.serialize();
+        assertTrue(Arrays.equals(data1, data2));
+    }
+
+    /**
+     * Test that EscherOptRecord can properly read/write array properties
+     * with empty complex part.
+     */
+    public void testEmptyArrayProperty() throws IOException {
+        EscherOptRecord r = new EscherOptRecord();
+        EscherArrayProperty p = new EscherArrayProperty((short)(EscherProperties.FILL__SHADECOLORS + 0x8000), new byte[0] );
+        assertEquals(0, p.getNumberOfElementsInArray());
+        r.addEscherProperty(p);
+
+        byte[] data1 = r.serialize();
+        EscherOptRecord opt2 = new EscherOptRecord();
+        opt2.fillFields( data1, new DefaultEscherRecordFactory() );
+        p = (EscherArrayProperty)opt2.getEscherProperties().get(0);
+        assertEquals(0, p.getNumberOfElementsInArray());
+
+        byte[] data2 = opt2.serialize();
+        assertTrue(Arrays.equals(data1, data2));
     }
 }

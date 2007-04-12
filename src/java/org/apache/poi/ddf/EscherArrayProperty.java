@@ -42,9 +42,15 @@ public class EscherArrayProperty
      */
     private boolean sizeIncludesHeaderSize = true;
 
+    /**
+     * When reading a property from data stream remeber if the complex part is empty and set this flag.
+     */
+    private boolean emptyComplexPart = false;
+
     public EscherArrayProperty( short id, byte[] complexData )
     {
         super( id, checkComplexData(complexData) );
+        emptyComplexPart = complexData.length == 0;
     }
 
     public EscherArrayProperty( short propertyNumber, boolean isBlipId, byte[] complexData )
@@ -161,17 +167,21 @@ public class EscherArrayProperty
      */
     public int setArrayData( byte[] data, int offset )
     {
-        short numElements = LittleEndian.getShort(data, offset);
-        short numReserved = LittleEndian.getShort(data, offset + 2);
-        short sizeOfElements = LittleEndian.getShort(data, offset + 4);
+        if (emptyComplexPart){
+            complexData = new byte[0];
+        } else {
+            short numElements = LittleEndian.getShort(data, offset);
+            short numReserved = LittleEndian.getShort(data, offset + 2);
+            short sizeOfElements = LittleEndian.getShort(data, offset + 4);
 
-        int arraySize = getActualSizeOfElements(sizeOfElements) * numElements;
-        if (arraySize == complexData.length) {
-        	// The stored data size in the simple block excludes the header size 
-            complexData = new byte[arraySize + 6];
-            sizeIncludesHeaderSize = false;
+            int arraySize = getActualSizeOfElements(sizeOfElements) * numElements;
+            if (arraySize == complexData.length) {
+                // The stored data size in the simple block excludes the header size
+                complexData = new byte[arraySize + 6];
+                sizeIncludesHeaderSize = false;
+            }
+            System.arraycopy(data, offset, complexData, 0, complexData.length );
         }
-        System.arraycopy(data, offset, complexData, 0, complexData.length );
         return complexData.length;
     }
 
