@@ -20,6 +20,7 @@
 package org.apache.poi.hslf.record;
 
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.POILogger;
 
 import org.apache.poi.ddf.*;
 import org.apache.poi.hslf.model.ShapeTypes;
@@ -128,7 +129,7 @@ public class PPDrawing extends RecordAtom
 		// Wind on
 		int size = r.getRecordSize();
 		if(size < 8) {
-			System.err.println("Hit short DDF record at " + startPos + " - " + size);
+			logger.log(POILogger.WARN, "Hit short DDF record at " + startPos + " - " + size);
 		}
 		startPos += size;
 		lenToGo -= size;

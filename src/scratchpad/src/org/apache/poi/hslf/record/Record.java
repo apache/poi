@@ -24,6 +24,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Vector;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.POILogger;
+import org.apache.poi.util.POILogFactory;
 import org.apache.poi.hslf.exceptions.CorruptPowerPointFileException;
 
 
@@ -37,7 +39,10 @@ import org.apache.poi.hslf.exceptions.CorruptPowerPointFileException;
 
 public abstract class Record
 {
-	/** 
+    // For logging
+    protected POILogger logger = POILogFactory.getLogger(this.getClass());
+
+	/**
 	 * Is this record type an Atom record (only has data),
 	 *  or is it a non-Atom record (has other records)?
 	 */
