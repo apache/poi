@@ -25,6 +25,8 @@ import org.apache.poi.hslf.model.textproperties.CharFlagsTextProp;
 import org.apache.poi.hslf.model.textproperties.TextProp;
 import org.apache.poi.hslf.model.textproperties.TextPropCollection;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.POILogger;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.ByteArrayOutputStream;
@@ -265,7 +267,7 @@ public class StyleTextPropAtom extends RecordAtom
 
 		}
         if (rawContents.length > 0 && textHandled != (size+1)){
-            System.err.println("Problem reading paragraph style runs: textHandled = " + textHandled + ", text.size+1 = " + (size+1));
+            logger.log(POILogger.WARN, "Problem reading paragraph style runs: textHandled = " + textHandled + ", text.size+1 = " + (size+1));
         }
 
 		// Now do the character stylings
@@ -300,7 +302,7 @@ public class StyleTextPropAtom extends RecordAtom
 			}
 		}
         if (rawContents.length > 0 && textHandled != (size+1)){
-            System.err.println("Problem reading character style runs: textHandled = " + textHandled + ", text.size+1 = " + (size+1));
+            logger.log(POILogger.WARN, "Problem reading character style runs: textHandled = " + textHandled + ", text.size+1 = " + (size+1));
         }
 
 		// Handle anything left over
