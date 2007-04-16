@@ -98,6 +98,22 @@ public class HSSFShapeGroup
     }
 
     /**
+     * Creates a picture.
+     *
+     * @param anchor    the client anchor describes how this group is attached
+     *                  to the sheet.
+     * @return  the newly created shape.
+     * @author  zunker
+     */
+    public HSSFPicture createPicture(HSSFChildAnchor anchor, int pictureIndex)
+    {
+      HSSFPicture shape = new HSSFPicture(this, anchor);
+      shape.anchor = anchor;
+      shape.setPictureIndex( pictureIndex );
+      shapes.add(shape);
+      return shape;
+    }
+    /**
      * Return all children contained by this shape.
      */
     public List getChildren()
@@ -162,4 +178,5 @@ public class HSSFShapeGroup
         }
         return count;
     }
+
 }
