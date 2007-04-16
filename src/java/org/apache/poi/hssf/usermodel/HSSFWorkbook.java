@@ -26,6 +26,7 @@ package org.apache.poi.hssf.usermodel;
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.ddf.EscherBitmapBlip;
 import org.apache.poi.ddf.EscherRecord;
+import org.apache.poi.ddf.EscherBlipRecord;
 import org.apache.poi.hssf.eventmodel.EventRecordFactory;
 import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.model.Workbook;
@@ -114,14 +115,12 @@ public class HSSFWorkbook
     private HSSFDataFormat formatter;
 
 
-    /// NOT YET SUPPORTED:
     /** Extended windows meta file */
-    //public static final int PICTURE_TYPE_EMF = 2;
+    public static final int PICTURE_TYPE_EMF = 2;
     /** Windows Meta File */
-    //public static final int PICTURE_TYPE_WMF = 3;
+    public static final int PICTURE_TYPE_WMF = 3;
     /** Mac PICT format */
-    //public static final int PICTURE_TYPE_PICT = 4;
-
+    public static final int PICTURE_TYPE_PICT = 4;
     /** JPEG format */
     public static final int PICTURE_TYPE_JPEG = 5;
     /** PNG format */
@@ -217,6 +216,11 @@ public class HSSFWorkbook
             Sheet sheet = Sheet.createSheet(records, sheetNum++, recOffset );
 
             recOffset = sheet.getEofLoc()+1;
+            if (recOffset == 1)
+            {
+                break;
+            }
+
             HSSFSheet hsheet = new HSSFSheet(workbook, sheet);
 
             sheets.add(hsheet);
@@ -1274,12 +1278,27 @@ public class HSSFWorkbook
         byte[] uid = newUID();
         EscherBitmapBlip blipRecord = new EscherBitmapBlip();
         blipRecord.setRecordId( (short) ( EscherBitmapBlip.RECORD_ID_START + format ) );
-        if (format == HSSFWorkbook.PICTURE_TYPE_PNG)
-            blipRecord.setOptions( (short) 0x6E00 );  // MSOBI
-        else if (format == HSSFWorkbook.PICTURE_TYPE_JPEG)
-            blipRecord.setOptions( (short) 0x46A0 );  // MSOBI
-        else if (format == HSSFWorkbook.PICTURE_TYPE_DIB)
-            blipRecord.setOptions( (short) 0x7A8 );  // MSOBI
+        switch (format)
+        {
+            case PICTURE_TYPE_EMF:
+                blipRecord.setOptions(HSSFPictureData.MSOBI_EMF);
+                break;
+            case PICTURE_TYPE_WMF:
+                blipRecord.setOptions(HSSFPictureData.MSOBI_WMF);
+                break;
+            case PICTURE_TYPE_PICT:
+                blipRecord.setOptions(HSSFPictureData.MSOBI_PICT);
+                break;
+            case PICTURE_TYPE_PNG:
+                blipRecord.setOptions(HSSFPictureData.MSOBI_PNG);
+                break;
+            case HSSFWorkbook.PICTURE_TYPE_JPEG:
+                blipRecord.setOptions(HSSFPictureData.MSOBI_JPEG);
+                break;
+            case HSSFWorkbook.PICTURE_TYPE_DIB:
+                blipRecord.setOptions(HSSFPictureData.MSOBI_DIB);
+                break;
+        }
 
         blipRecord.setUID( uid );
         blipRecord.setMarker( (byte) 0xFF );
@@ -1298,6 +1317,60 @@ public class HSSFWorkbook
         r.setBlipRecord( blipRecord );
 
         return workbook.addBSERecord( r );
+    }
+
+    /**
+     * Gets all pictures from the Workbook.
+     *
+     * @return the list of pictures (a list of {@link HSSFPictureData} objects.)
+     */
+    public List getAllPictures()
+    {
+        List pictures = new ArrayList();
+        Iterator recordIter = workbook.getRecords().iterator();
+        while (recordIter.hasNext())
+        {
+            Object obj = recordIter.next();
+            if (obj instanceof AbstractEscherHolderRecord)
+            {
+                ((AbstractEscherHolderRecord) obj).decode();
+                List escherRecords = ((AbstractEscherHolderRecord) obj).getEscherRecords();
+                searchForPictures(escherRecords, pictures);
+            }
+        }
+        return pictures;
+    }
+
+    /**
+     * Performs a recursive search for pictures in the given list of escher records.
+     *
+     * @param escherRecords the escher records.
+     * @param pictures the list to populate with the pictures.
+     */
+    private void searchForPictures(List escherRecords, List pictures)
+    {
+        Iterator recordIter = escherRecords.iterator();
+        while (recordIter.hasNext())
+        {
+            Object obj = recordIter.next();
+            if (obj instanceof EscherRecord)
+            {
+                EscherRecord escherRecord = (EscherRecord) obj;
+
+                if (escherRecord instanceof EscherBSERecord)
+                {
+                    EscherBlipRecord blip = ((EscherBSERecord) escherRecord).getBlipRecord();
+                    if (blip instanceof EscherBitmapBlip)
+                    {
+                        // TODO: Some kind of structure.
+                        pictures.add(new HSSFPictureData((EscherBitmapBlip) blip));
+                    }
+                }
+
+                // Recursive call.
+                searchForPictures(escherRecord.getChildRecords(), pictures);
+            }
+        }
     }
 
     private byte[] newUID()
