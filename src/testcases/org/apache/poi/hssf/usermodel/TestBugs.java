@@ -868,8 +868,52 @@ extends TestCase {
         assertTrue("No Exceptions while reading file", true);
     }
 
-	
+    /**
+     * Test bug 38266: NPE when adding a row break
+     *
+     * User's diagnosis:
+     * 1. Manually (i.e., not using POI) create an Excel Workbook, making sure it
+     * contains a sheet that doesn't have any row breaks
+     * 2. Using POI, create a new HSSFWorkbook from the template in step #1
+     * 3. Try adding a row break (via sheet.setRowBreak()) to the sheet mentioned in step #1
+     * 4. Get a NullPointerException
+     */
+    public void test38266() throws Exception {
+        String[] files = {"Simple.xls", "SimpleMultiCell.xls", "duprich1.xls"};
+        for (int i = 0; i < files.length; i++) {
+            FileInputStream in = new FileInputStream(new File(cwd, files[i]));
+            HSSFWorkbook wb = new HSSFWorkbook(in);
+            in.close();
 
+            HSSFSheet sheet = wb.getSheetAt( 0 );
+            int[] breaks = sheet.getRowBreaks();
+            assertNull(breaks);
+
+            //add 3 row breaks
+            for (int j = 1; j <= 3; j++) {
+                sheet.setRowBreak(j*20);
+            }
+
+            assertTrue("No Exceptions while adding row breaks in " + files[i], true);
+        }
+    }
+
+    public void test40738() throws Exception {
+        FileInputStream in = new FileInputStream(new File(cwd, "SimpleWithAutofilter.xls"));
+        HSSFWorkbook wb = new HSSFWorkbook(in);
+        in.close();
+
+        //serialize and read again
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        wb.write(out);
+        out.close();
+
+        wb = new HSSFWorkbook(new ByteArrayInputStream(out.toByteArray()));
+        assertTrue("No Exceptions while reading file", true);
+
+    }
+
+    
 }
 
 
