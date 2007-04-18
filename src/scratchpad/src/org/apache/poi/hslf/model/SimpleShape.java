@@ -179,10 +179,8 @@ public class SimpleShape extends Shape {
 
     /**
      * The color used to fill this shape.
-     *
-     * @param color the background color
      */
-    public Color getFillColor(Color color){
+    public Color getFillColor(){
         EscherOptRecord opt = (EscherOptRecord)getEscherChild(_escherContainer, EscherOptRecord.RECORD_ID);
         EscherSimpleProperty p1 = (EscherSimpleProperty)getEscherProperty(opt, EscherProperties.FILL__FILLCOLOR);
         EscherSimpleProperty p2= (EscherSimpleProperty)getEscherProperty(opt, EscherProperties.FILL__NOFILLHITTEST);

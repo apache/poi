@@ -33,13 +33,6 @@ import java.util.Arrays;
 
 /**
  * Represents a picture in a PowerPoint document.
- * <p>
- * The information about an image in PowerPoint document is stored in
- * two places:
- *  <li> EscherBSE container in the Document keeps information about image
- *    type, image index to refer by slides etc.
- *  <li> "Pictures" OLE stream holds the actual data of the image.
- * </p>
  *
  * @author Yegor Kozlov
  */
@@ -134,6 +127,8 @@ public class Picture extends SimpleShape {
 
     /**
      * Resize this picture to the default size.
+     * For PNG and JPEG resizes the image to 100%,
+     * for other types sets the default size of 200x200 pixels.  
      */
     public void setDefaultSize(){
         PictureData pict = getPictureData();
