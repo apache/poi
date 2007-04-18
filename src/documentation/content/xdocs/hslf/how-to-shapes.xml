@@ -54,7 +54,7 @@
     
     //save changes in a file
     FileOutputStream out = new FileOutputStream("slideshow.ppt");
-    wb.write(out);
+    ppt.write(out);
     out.close();
                  </source>
                 </section>
@@ -71,7 +71,7 @@
     ppt.setPageSize(new java.awt.Dimension(1024, 768));
     //save changes 
     FileOutputStream out = new FileOutputStream("slideshow.ppt");
-    wb.write(out);
+    ppt.write(out);
     out.close();
                   </source>
                 </section>
@@ -123,8 +123,8 @@
                      of the upper left corner of the bounding box for the shape relative to the upper left
                      corner of the slide. Distances in the drawing layer are measured in points (72 points = 1 inch).
                    </p>
-                    <source>
-        SlideShow ppt = new SlideShow();
+                   <source>
+  SlideShow ppt = new SlideShow();
 
   Slide slide = ppt.createSlide();
 
@@ -132,7 +132,7 @@
   Line line = new Line();
   line.setAnchor(new java.awt.Rectangle(50, 50, 100, 20));
   line.setLineColor(new Color(0, 128, 0));
-  line.setLineStyle(Line.LineDashDotSys);
+  line.setLineStyle(Line.LINE_DOUBLE);
   slide.addShape(line);
 
   //TextBox
@@ -141,7 +141,7 @@
   txt.setAnchor(new java.awt.Rectangle(300, 100, 300, 50));
 
   //use RichTextRun to work with the text format
-  RichTextRun rt = txt.getRichTextRuns()[0];
+  RichTextRun rt = txt.getTextRun().getRichTextRuns()[0];
   rt.setFontSize(32);
   rt.setFontName("Arial");
   rt.setBold(true);
@@ -166,8 +166,9 @@
   slide.addShape(sh2);
 
   FileOutputStream out = new FileOutputStream("slideshow.ppt");
-        ppt.write(out);
+  ppt.write(out);
   out.close();
+                    
                   </source>
                 </section>
                 <anchor id="Pictures"/>
@@ -228,9 +229,9 @@
   for (int i = 0; i &lt; sh.length; i++){
     if (sh[i] instanceof Picture){
       Picture pict = (Picture)sh[i];
-      PictureData data = pict.getPictureData();
-      byte[] data = pict.getData();
-      int type = pict.getType();
+      PictureData pictData = pict.getPictureData();
+      byte[] data = pictData.getData();
+      int type = pictData.getType();
       if (type == Picture.JPEG){
         FileOutputStream out = new FileOutputStream("slide0_"+i+".jpg");
         out.write(data);
@@ -244,7 +245,7 @@
   }
 
   FileOutputStream out = new FileOutputStream("slideshow.ppt");
-  wb.write(out);
+  ppt.write(out);
   out.close();
 
                     </source>
@@ -259,7 +260,7 @@
     
     //save changes 
     FileOutputStream out = new FileOutputStream("slideshow.ppt");
-    wb.write(out);
+    ppt.write(out);
     out.close();
                   </source>
                   <p>
