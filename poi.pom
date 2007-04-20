@@ -1,6 +1,6 @@
 <metadata> 
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>poi</groupId>
+	<groupId>org.apache.poi</groupId>
 	<artifactId>poi</artifactId>
 	<version>@VERSION@</version>
 	<packaging>jar</packaging>
