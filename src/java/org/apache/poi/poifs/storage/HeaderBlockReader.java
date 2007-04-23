@@ -24,6 +24,7 @@ import java.io.*;
 import java.util.*;
 
 import org.apache.poi.poifs.common.POIFSConstants;
+import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.IntegerField;
 import org.apache.poi.util.LittleEndian;
@@ -89,6 +90,13 @@ public class HeaderBlockReader
 
         if (signature.get() != _signature)
         {
+			// Is it one of the usual suspects?
+			if(_data[0] == 0x50 && _data[1] == 0x4b && _data[2] == 0x03 &&
+					_data[3] == 0x04) {
+				throw new OfficeXmlFileException("The supplied data appears to be in the Office 2007+ XML. POI only supports OLE2 Office documents");
+			}
+
+			// Give a generic error
             throw new IOException("Invalid header signature; read "
                                   + signature.get() + ", expected "
                                   + _signature);
