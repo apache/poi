@@ -21,7 +21,10 @@
 		<url>http://svn.apache.org/viewvc/jakarta/poi/trunk</url>
 		<connection>scm:svn:http://svn.apache.org/repos/asf/jakarta/poi/trunk</connection>
 	</scm>
-	<issueTrackingUrl>http://issues.apache.org/bugzilla/</issueTrackingUrl>
+	<issueTrackingUrl>
+		<system>bugzilla</system>
+		<url>http://issues.apache.org/bugzilla/buglist.cgi?product=POI</url>
+	</issueTrackingUrl>
 	<organization>
 		<name>Apache Software Foundation</name>
 		<url>http://www.apache.org/</url>
