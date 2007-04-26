@@ -1,4 +1,4 @@
-<metadata> 
+<project> 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.apache.poi</groupId>
 	<artifactId>poi</artifactId>
@@ -21,13 +21,13 @@
 		<url>http://svn.apache.org/viewvc/jakarta/poi/trunk</url>
 		<connection>scm:svn:http://svn.apache.org/repos/asf/jakarta/poi/trunk</connection>
 	</scm>
-	<issueTrackingUrl>
+	<issueManagement>
 		<system>bugzilla</system>
 		<url>http://issues.apache.org/bugzilla/buglist.cgi?product=POI</url>
-	</issueTrackingUrl>
+	</issueManagement>
 	<organization>
 		<name>Apache Software Foundation</name>
 		<url>http://www.apache.org/</url>
 		<logo>http://jakarta.apache.org/images/original-jakarta-logo.gif</logo>
 	</organization>
-</metadata>
+</project>
