@@ -32,7 +32,20 @@
         <person id="NB" name="Nick Burch" email="nick@torchbox.com"/>
         <person id="POI-DEVELOPERS" name="POI Developers" email="poi-dev@jakarta.apache.org"/>
         <person id="RK" name="Rainer Klute" email="klute@apache.org"/>
+        <person id="YK" name="Yegor Kozlov" email="yegor@apache.org"/>
     </devs>
+        <release version="3.0-FINAL" date="99 May 2007">
+            <action dev="POI-DEVELOPERS" type="fix">39977 - [PATCH] Fix POM for Maven users</action>
+            <action dev="POI-DEVELOPERS" type="fix">38976 - [PATCH] Add createPicture to HSSFShapeGroup</action>
+            <action dev="POI-DEVELOPERS" type="add">Detect Office 2007 XML documents, and throw a meaningful exception</action>
+			<action dev="POI-DEVELOPERS" type="add">Additional HSLF support for PowerPoint</action>
+			<action dev="POI-DEVELOPERS" type="add">Initial support for HWPF image extraction</action>
+        </release>
+
+        <release version="3.0-alpha3" date="12 December 2006">
+			<action dev="POI-DEVELOPERS" type="add">Additional HSLF support for PowerPoint</action>
+        </release>
+
         <release version="3.0-alpha2" date="16 June 2006">
             <action dev="POI-DEVELOPERS" type="add">HSSF Formula support</action>
 			<action dev="POI-DEVELOPERS" type="add">Additional HSLF support for PowerPoint</action>
