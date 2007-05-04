@@ -408,6 +408,14 @@ should view the source in org.apache.poi.hssf.usermodel.* and
 the classes in org.apache.poi.hssf.model.*. You should read the
 documentation for the POIFS libraries as well.</p>
      </section>
+                <section><title>Generating XLS from XML</title>
+<p>If you wish to generate an XLS file from some XML, it is possible to
+write your own XML processing code, then use the User API to write out 
+the document.</p>
+<p>The other option is to use <link href="http://cocoon.apache.org/">Cocoon</link>.
+In Cocoon, there is the <link href="http://cocoon.apache.org/2.1/userdocs/xls-serializer.html">HSSF Serializer</link>,
+which takes in XML (in the gnumeric format), and outputs an XLS file for you.</p>
+     </section>
                 <section><title>HSSF Class/Test Application</title>
 
 <p>The HSSF application is nothing more than a test for the high
