@@ -975,8 +975,7 @@
                 <li>DIB</li>
             </ul>
             <p>
-                It is not currently possible to read existing images and it
-                should be noted that any existing drawings may be erased
+                It should be noted that any existing drawings may be erased
                 once you add a image to a sheet.
             </p>
             <source>
@@ -988,7 +987,23 @@
     anchor = new HSSFClientAnchor(0,0,0,255,(short)2,2,(short)4,7);
     anchor.setAnchorType( 2 );
     patriarch.createPicture(anchor, loadPicture( "src/resources/logos/logoKarmokar4.png", wb ));
-            </source>
+  </source>
+  <p>Reading images from a workbook:</p>
+      <source>
+    HSSFWorkbook wb;
+
+    List lst = wb.getAllPictures();
+    for (Iterator it = lst.iterator(); it.hasNext(); ) {
+        HSSFPictureData pict = (HSSFPictureData)it.next();
+        String ext = pict.suggestFileExtension();
+        byte[] data = pict.getData();
+        if (ext.equals("jpeg")){
+          FileOutputStream out = new FileOutputStream("pict.jpg");
+          out.write(data);
+          out.close();
+        }
+    }
+      </source>
         </section>
         <anchor id="NamedRanges"/>
         <section>
@@ -1141,7 +1156,13 @@
     sheet.autoSizeColumn((short)0); //adjust width of the first column
     sheet.autoSizeColumn((short)1); //adjust width of the second column
         </source>
-
+        <warning>
+    To calculate column width HSSFSheet.autoSizeColumn uses Java2D classes
+    that throw exception if graphical environment is not available. In case if graphical environment
+    is not available, you must tell Java that you are running in headless mode and
+    set the following system property: <code> java.awt.headless=true </code>
+    (either via <code>-Djava.awt.headless=true</code> startup parameter or via <code>System.setProperty("java.awt.headless", "true")</code>).
+        </warning>
      </section>
 
     </body>
