@@ -118,6 +118,13 @@
                 </section>
                 <anchor id="Shapes"/>
                 <section><title>Drawing a shape on a slide</title>
+        <warning>
+    To work with graphic objects HSLF uses Java2D classes
+    that may throw exceptions if graphical environment is not available. In case if graphical environment
+    is not available, you must tell Java that you are running in headless mode and
+    set the following system property: <code> java.awt.headless=true </code>
+    (either via <code>-Djava.awt.headless=true</code> startup parameter or via <code>System.setProperty("java.awt.headless", "true")</code>).
+        </warning>
                    <p>
                      When you add a shape, you usually specify the dimensions of the shape and the position
                      of the upper left corner of the bounding box for the shape relative to the upper left
