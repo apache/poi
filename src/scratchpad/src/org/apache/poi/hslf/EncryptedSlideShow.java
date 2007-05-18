@@ -22,6 +22,7 @@ package org.apache.poi.hslf;
 
 import java.io.FileNotFoundException;
 
+import org.apache.poi.hslf.exceptions.CorruptPowerPointFileException;
 import org.apache.poi.hslf.record.CurrentUserAtom;
 import org.apache.poi.hslf.record.DocumentEncryptionAtom;
 import org.apache.poi.hslf.record.PersistPtrHolder;
@@ -84,6 +85,11 @@ public class EncryptedSlideShow
 		
 		CurrentUserAtom cua = hss.getCurrentUserAtom();
 		if(cua.getCurrentEditOffset() != 0) {
+			// Check it's not past the end of the file
+			if(cua.getCurrentEditOffset() > hss.getUnderlyingBytes().length) {
+				throw new CorruptPowerPointFileException("The CurrentUserAtom claims that the offset of last edit details are past the end of the file");
+			}
+			
 			// Grab the details of the UserEditAtom there
 			Record r = Record.buildRecordAtOffset(
 					hss.getUnderlyingBytes(),
