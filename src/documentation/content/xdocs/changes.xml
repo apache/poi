@@ -20,8 +20,7 @@
 <!DOCTYPE changes PUBLIC "-//APACHE//DTD Changes V1.1//EN" "./dtd/changes-v11.dtd">
 
 <changes>
-
-    <title>History of Changes</title>
+	<title>History of Changes</title> <!-- this breaks dtd validation -->
 
     <devs>
         <!-- in strict alphabetical order -->
@@ -34,7 +33,8 @@
         <person id="RK" name="Rainer Klute" email="klute@apache.org"/>
         <person id="YK" name="Yegor Kozlov" email="yegor@apache.org"/>
     </devs>
-        <release version="3.0-FINAL" date="99 May 2007">
+
+        <release version="3.0-FINAL" date="18 May 2007">
             <action dev="POI-DEVELOPERS" type="fix">39977 - [PATCH] Fix POM for Maven users</action>
             <action dev="POI-DEVELOPERS" type="fix">38976 - [PATCH] Add createPicture to HSSFShapeGroup</action>
             <action dev="POI-DEVELOPERS" type="add">Detect Office 2007 XML documents, and throw a meaningful exception</action>

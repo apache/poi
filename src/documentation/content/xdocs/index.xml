@@ -31,10 +31,15 @@
   </header>
 
   <body>
-<!--    <section><title>POI News</title>-->
-<!--        <p>All POI news can now be found at the <link href="http://nagoya.apache.org/poi/news/">poi news weblog</link>.</p>-->
+	<section><title>POI 3.0 Release</title>
+	  <p>After quite a wait, version 3.0 of Apache Jakarta POI has now been
+		released. You can 
+		<link href="./changes.html">view the changelog</link>, and 
+		<link href="http://www.apache.org/dyn/closer.cgi/jakarta/poi/release/">download</link>
+		the source and binaries from your
+		<link href="http://www.apache.org/dyn/closer.cgi/jakarta/poi/release/">local mirror</link>.</p>
+	</section>
 
-<!--    </section>-->
     <section><title>Purpose</title>
       <p>
       The POI project consists of APIs for manipulating various file formats
@@ -88,17 +93,24 @@
              definition.  Please see <link href="./poifs/index.html">the POIFS project page</link> for more information.</p>
         </section>
         <section><title>HSSF for Excel Documents</title>
-             <p>HSSF is our port of the Microsoft Excel 97(-2002) file format (BIFF8) to pure Java.  It supports read and write
+             <p>HSSF is our port of the Microsoft Excel 97(-2003) file format (BIFF8) to pure Java.  It supports read and write
              capability.  Please see <link href="./hssf/index.html">the HSSF project page</link> for more information.</p>
         </section>
         <section><title>HWPF for Word Documents</title>
 	<p>HWPF is our port of the Microsoft Word 97 file format to pure
-	  Java.  It supports read and write capability. Please see <link
+	  Java.  It supports read, and limited write capabilities. Please see <link
 	    href="./hwpf/index.html">the HWPF project page for more
 	    information</link>.  This component is in the early stages of
 	  development. It can already read and write simple files.</p>
 	<p>Presently we are looking for a contributor to foster the HWPF
 	  development. Jump in!</p>
+        </section>
+        <section><title>HSLF for PowerPoint Documents</title>
+	<p>HWSL is our port of the Microsoft PowerPoint 97(-2003) file format to pure
+	  Java. It supports read and write capabilities of some, but not yet all
+      of the core records. Please see <link
+	    href="./hslf/index.html">the HSLF project page for more
+	    information</link>.</p>
         </section>
         <section><title>HPSF for Document Properties</title>
 	<p>HPSF is our port of the OLE 2 property set format to pure
