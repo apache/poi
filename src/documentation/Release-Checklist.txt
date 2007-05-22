@@ -19,7 +19,8 @@ Release Checklist
 - send notification of vote passing to private@
 
 - move distributions from your area of people.apache.org to the 
-   distribution directories on www.apache.org/dist/
+   distribution directories on www.apache.org/dist/poi/ and
+   people.apache.org/repo/m1-ibiblio-rsync-repository/org.apache.poi/
 - copy the new distributions to archive.apache.org
 - remove the old distributions from www.apache.org/dist/
 - wait for the distributions to appear on your favourite mirror
