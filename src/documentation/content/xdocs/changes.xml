@@ -17,6 +17,7 @@
    limitations under the License.
    ====================================================================
 -->
+<!-- Don't forget to update status.xml too! -->
 <!DOCTYPE changes PUBLIC "-//APACHE//DTD Changes V1.1//EN" "./dtd/changes-v11.dtd">
 
 <changes>
@@ -34,7 +35,7 @@
         <person id="YK" name="Yegor Kozlov" email="yegor@apache.org"/>
     </devs>
 
-        <release version="3.0-FINAL" date="18 May 2007">
+        <release version="3.0-FINAL" date="2007-05-18">
             <action dev="POI-DEVELOPERS" type="fix">39977 - [PATCH] Fix POM for Maven users</action>
             <action dev="POI-DEVELOPERS" type="fix">38976 - [PATCH] Add createPicture to HSSFShapeGroup</action>
             <action dev="POI-DEVELOPERS" type="add">Detect Office 2007 XML documents, and throw a meaningful exception</action>
@@ -42,39 +43,39 @@
 			<action dev="POI-DEVELOPERS" type="add">Initial support for HWPF image extraction</action>
         </release>
 
-        <release version="3.0-alpha3" date="12 December 2006">
+        <release version="3.0-alpha3" date="2006-12-12">
 			<action dev="POI-DEVELOPERS" type="add">Additional HSLF support for PowerPoint</action>
         </release>
 
-        <release version="3.0-alpha2" date="16 June 2006">
+        <release version="3.0-alpha2" date="2006-06-16">
             <action dev="POI-DEVELOPERS" type="add">HSSF Formula support</action>
 			<action dev="POI-DEVELOPERS" type="add">Additional HSLF support for PowerPoint</action>
             <action dev="POI-DEVELOPERS" type="fix">39389 - [PATCH] Extended Ascii support for WingDings</action>
         </release>
 
-        <release version="3.0-alpha1" date="4 July 2005">
+        <release version="3.0-alpha1" date="2005-07-04">
             <action dev="POI-DEVELOPERS" type="fix">Bugzilla Bug 29976 [PATCH] HSSF hyperlink formula size problem</action>
             <action dev="POI-DEVELOPERS" type="add">Image writing support</action>
             <action dev="NB" type="add">HSLF - Initial PowerPoint support</action>
         </release>
 
-        <release version="2.5.1-FINAL" date="29 Feburary 2004">
+        <release version="2.5.1-FINAL" date="2004-02-29">
             <action dev="POI-DEVELOPERS" type="add">Outlining support</action>
             <action dev="POI-DEVELOPERS" type="fix">27574 - [PATCH] HSSFDateUtil.getExcelDate() is one hour off when DST changes</action>
             <action dev="POI-DEVELOPERS" type="fix">26465 - [PATCH] wrong lastrow entry</action>
             <action dev="POI-DEVELOPERS" type="fix">28203 - [PATCH] Unable to open read-write excel file including forms</action>
         </release>
 
-        <release version="2.5-FINAL" date="29 Feburary 2004">
+        <release version="2.5-FINAL" date="2004-02-29">
             <action dev="POI-DEVELOPERS" type="add">Add support for the Escher file format</action>
             <action dev="POI-DEVELOPERS" type="fix">27005 java.lang.IndexOutOfBoundsException during Workbook.cloneSheet()</action>
         </release>
 
-        <release version="2.0-FINAL" date="26 Janurary 2004">
+        <release version="2.0-FINAL" date="2004-01-26">
             <action dev="POI-DEVELOPERS" type="update">No changes</action>
         </release>
 
-        <release version="2.0-RC2" date="11 Janurary 2004">
+        <release version="2.0-RC2" date="2004-01-11">
             <action dev="POI-DEVELOPERS" type="fix">Bug 25695 - HSSFCell.getStringCellValue() on cell which has string formula will return swap bye unicode characters.</action>
             <action dev="POI-DEVELOPERS" type="fix">Updated website for upcoming release</action>
             <action dev="POI-DEVELOPERS" type="fix">Formula Parser fixes with tests, by Peter M Murray Bug 25457</action>
@@ -83,7 +84,7 @@
             <action dev="POI-DEVELOPERS" type="fix">Fix to 24519 call to getCustomPalette() from a newly created workbook now works</action>
             <action dev="POI-DEVELOPERS" type="fix">Fix supplied for bug 24397 where some compilation got ambiguous classes.  Explicitly imports the classes.  Patch supplied by Jean-Pierre Paris.</action>
         </release>
-        <release version="2.0-RC1" date="2 November 2003">
+        <release version="2.0-RC1" date="2003-11-02">
             <action dev="POI-DEVELOPERS" type="fix">12561 (Min)   HSSFWorkbook throws Exceptions</action>
             <action dev="POI-DEVELOPERS" type="fix">12730 (Nor)   values dont get copied to another sheet.</action>
             <action dev="POI-DEVELOPERS" type="fix">13224 (Maj)   Exception thrown when cell has =Names call</action>
@@ -119,7 +120,7 @@
             <action dev="POI-DEVELOPERS" type="fix">15375 (Blo)   Post 1.5.1 POI causes spreadsheet to become unopenable.</action>
         </release>
 
-        <release version="2.0-pre3" date="29 July 2003">
+        <release version="2.0-pre3" date="2003-07-29">
             <action dev="POI-DEVELOPERS" type="add">HPSF is now able to read properties which are given in the property set stream but which don't have a value ("variant" type VT_EMPTY). The getXXX() methods of the PropertySet class return null if their return type is a reference (like a string) or 0 if the return type is numeric. Details about the return types and about how to distinguish between a property value of zero and a property value that is not present can be found in the API documentation.</action>
             <action dev="POI-DEVELOPERS" type="fix">Gridlines can now be turned on and off</action>
             <action dev="POI-DEVELOPERS" type="fix">NamePTG refactoring/fixes</action>
@@ -127,7 +128,7 @@
             <action dev="POI-DEVELOPERS" type="fix">Sheet comparisons now ignore case</action>
         </release>
 
-        <release version="2.0-pre2" date="6 July 2003">
+        <release version="2.0-pre2" date="2003-07-06">
             <action dev="POI-DEVELOPERS" type="fix">A nasty concurrency problem has been fixed. Any users working in a multithreaded environment should seriously consider upgrading to this release.</action>
             <action dev="POI-DEVELOPERS" type="update">The EXTSST record has been implemented. This record is used by excel for optimized reading of strings.</action>
             <action dev="POI-DEVELOPERS" type="update">When rows are shifted, the merged regions now move with them. If a row contains 2 merged cells, the resulting shifted row should have those cells merged as well.</action>
@@ -139,7 +140,7 @@
             <action dev="POI-DEVELOPERS" type="add">Support added for reading formulas with UnaryPlus and UnaryMinus operators.</action>
         </release>
 
-        <release version="2.0-pre1" date="17 May 2003">
+        <release version="2.0-pre1" date="2003-05-17">
             <action dev="POI-DEVELOPERS" type="add">Patch applied for deep cloning of worksheets was provided</action>
             <action dev="POI-DEVELOPERS" type="add">Patch applied to allow sheet reordering</action>
             <action dev="POI-DEVELOPERS" type="add">Added additional print area setting methods using row/column numbers</action>
@@ -160,12 +161,12 @@
             <action dev="POI-DEVELOPERS" type="fix">font names can now be null</action>
         </release>
 
-    <release version="1.10-dev" date="19 Feb 2003">
+    <release version="1.10-dev" date="2003-02-19">
         <action dev="POI-DEVELOPERS" type="add">Support for zoom level</action>
         <action dev="POI-DEVELOPERS" type="add">Freeze and split pane support</action>
         <action dev="POI-DEVELOPERS" type="add">Row and column headers on printouts</action>
     </release>
-    <release version="1.8-dev" date="20 Sep 2002">
+    <release version="1.8-dev" date="2002-09-20">
         <action dev="POI-DEVELOPERS" type="add">Custom Data Format Support</action>
         <action dev="POI-DEVELOPERS" type="add">Enhanced Unicode Support for Russian and Japanese</action>
         <action dev="POI-DEVELOPERS" type="add">Enhanced formula support including read-only for
@@ -175,15 +176,15 @@
         <action dev="POI-DEVELOPERS" type="add">Spanish Documentation translations</action>
         <action dev="POI-DEVELOPERS" type="add">Support for preserving VBA macros</action>
     </release>
-    <release version="1.7-dev" date="???">
+    <release version="1.7-dev" date="Release date not recorded">
         <action dev="NKB" type="update">Removed runtime dependency on commons logging.</action>
         <action dev="POI-DEVELOPERS" type="update">Formula support</action>
     </release>
-    <release version="1.5.1" date="16 June 2002">
+    <release version="1.5.1" date="2002-06-16">
         <action dev="GJS" type="update">Removed depedency on commons logging.  Now define poi.logging system property to enable logging to standard out.</action>
         <action dev="GJS" type="fix">Fixed SST string handling so that spreadsheets with rich text or extended text will be read correctly.</action>
     </release>
-    <release version="1.5" date="06 May 2002">
+    <release version="1.5" date="2002-05-06">
         <action dev="NKB" type="update">New project build.</action>
         <action dev="NKB" type="update">New project documentation system based on Cocoon.</action>
         <action dev="POI-DEVELOPERS" type="update">Package rename</action>
