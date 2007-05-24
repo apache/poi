@@ -236,7 +236,7 @@ public class Slide extends Sheet
         for (int i = 0; i < master.length; i++) {
             if (masterId == master[i]._getSheetNumber()) return master[i];
         }
-        throw new RuntimeException("Master slide not found for slide " + _slideNo);
+        return null;
     }
 
     /**
