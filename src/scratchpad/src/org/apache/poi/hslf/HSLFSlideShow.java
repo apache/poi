@@ -37,6 +37,7 @@ import org.apache.poi.hpsf.DocumentSummaryInformation;
 
 import org.apache.poi.hslf.exceptions.CorruptPowerPointFileException;
 import org.apache.poi.hslf.exceptions.EncryptedPowerPointFileException;
+import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.hslf.record.*;
 import org.apache.poi.hslf.usermodel.PictureData;
 
@@ -376,7 +377,7 @@ public class HSLFSlideShow extends POIDocument
 	int oldLastUserEditAtomPos = (int)currentUser.getCurrentEditOffset();
 	Integer newLastUserEditAtomPos = (Integer)oldToNewPositions.get(new Integer(oldLastUserEditAtomPos));
 	if(newLastUserEditAtomPos == null) {
-		throw new RuntimeException("Couldn't find the new location of the UserEditAtom that used to be at " + oldLastUserEditAtomPos);
+		throw new HSLFException("Couldn't find the new location of the UserEditAtom that used to be at " + oldLastUserEditAtomPos);
 	}
 	currentUser.setCurrentEditOffset(newLastUserEditAtomPos.intValue());
 	currentUser.writeToFS(outFS);

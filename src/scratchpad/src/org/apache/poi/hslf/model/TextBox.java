@@ -21,6 +21,7 @@ package org.apache.poi.hslf.model;
 import org.apache.poi.ddf.*;
 import org.apache.poi.hslf.record.*;
 import org.apache.poi.hslf.usermodel.RichTextRun;
+import org.apache.poi.hslf.exceptions.HSLFException;
 
 import java.awt.*;
 import java.awt.font.FontRenderContext;
@@ -193,7 +194,7 @@ public class TextBox extends SimpleShape {
         try {
             _txtbox.writeOut(null);
         } catch (IOException e){
-            throw new RuntimeException(e);
+            throw new HSLFException(e);
         }
         if(getAnchor().equals(new java.awt.Rectangle())) resizeToFitText();
     }

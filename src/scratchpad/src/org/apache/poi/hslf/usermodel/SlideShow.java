@@ -35,6 +35,7 @@ import org.apache.poi.hslf.model.Slide;
 import org.apache.poi.hslf.record.SlideListWithText.*;
 import org.apache.poi.hslf.record.*;
 import org.apache.poi.hslf.exceptions.CorruptPowerPointFileException;
+import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.util.ArrayUtil;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -739,7 +740,7 @@ public class SlideShow
             is.read(data);
             is.close();
         } catch (IOException e){
-            throw new RuntimeException(e);
+            throw new HSLFException(e);
         }
         return addPicture(data, format);
     }

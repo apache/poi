@@ -22,6 +22,7 @@ import org.apache.poi.ddf.*;
 import org.apache.poi.hslf.record.*;
 import org.apache.poi.hslf.usermodel.PictureData;
 import org.apache.poi.hslf.usermodel.SlideShow;
+import org.apache.poi.hslf.exceptions.HSLFException;
 
 import java.awt.*;
 import java.util.*;
@@ -211,7 +212,7 @@ public class Fill {
                 return pict[i];
             }
         }
-        throw new RuntimeException("Picture data not found: \n" +
+        throw new HSLFException("Picture data not found: \n" +
                 "  bse: " + bse + " at " + bse.getOffset() );
 
     }
