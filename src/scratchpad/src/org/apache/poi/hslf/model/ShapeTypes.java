@@ -16,6 +16,8 @@
 ==================================================================== */
 package org.apache.poi.hslf.model;
 
+import org.apache.poi.hslf.exceptions.HSLFException;
+
 import java.util.HashMap;
 import java.lang.reflect.Field;
 
@@ -251,7 +253,7 @@ public class ShapeTypes {
                 }
             }
         } catch (IllegalAccessException e){
-            throw new RuntimeException("Failed to initialize shape types");
+            throw new HSLFException("Failed to initialize shape types");
         }
     }
 

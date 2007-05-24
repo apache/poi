@@ -19,6 +19,7 @@ package org.apache.poi.hslf.blip;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.hslf.model.Picture;
 import org.apache.poi.hslf.model.Shape;
+import org.apache.poi.hslf.exceptions.HSLFException;
 
 import java.io.*;
 import java.util.zip.InflaterInputStream;
@@ -60,7 +61,7 @@ public class WMF extends Metafile {
             inflater.close();
             return out.toByteArray();
         } catch (IOException e){
-            throw new RuntimeException(e);
+            throw new HSLFException(e);
         }
     }
 
@@ -130,7 +131,7 @@ public class WMF extends Metafile {
         public void read(byte[] data, int offset){
             int pos = offset;
             int key = LittleEndian.getInt(data, pos); pos += LittleEndian.INT_SIZE; //header key
-            if (key != APMHEADER_KEY) throw new RuntimeException("Not a valid WMF file");
+            if (key != APMHEADER_KEY) throw new HSLFException("Not a valid WMF file");
 
             handle = LittleEndian.getUShort(data, pos); pos += LittleEndian.SHORT_SIZE;
             left = LittleEndian.getUShort(data, pos); pos += LittleEndian.SHORT_SIZE;
@@ -143,7 +144,7 @@ public class WMF extends Metafile {
 
             checksum = LittleEndian.getShort(data, pos); pos += LittleEndian.SHORT_SIZE;
             if (checksum != getChecksum())
-                throw new RuntimeException("WMF checksum does not match the header data");
+                throw new HSLFException("WMF checksum does not match the header data");
         }
 
         /**

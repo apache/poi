@@ -19,6 +19,7 @@ package org.apache.poi.hslf.usermodel;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.hslf.model.Picture;
 import org.apache.poi.hslf.blip.*;
+import org.apache.poi.hslf.exceptions.HSLFException;
 
 import java.io.OutputStream;
 import java.io.IOException;
@@ -121,7 +122,7 @@ public abstract class PictureData {
         try {
             sha = MessageDigest.getInstance("MD5");
         } catch (NoSuchAlgorithmException e){
-            throw new RuntimeException(e.getMessage());
+            throw new HSLFException(e.getMessage());
         }
         sha.update(data);
         return sha.digest();

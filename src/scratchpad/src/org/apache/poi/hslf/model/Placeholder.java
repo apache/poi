@@ -19,6 +19,7 @@ package org.apache.poi.hslf.model;
 
 import org.apache.poi.ddf.*;
 import org.apache.poi.hslf.record.OEPlaceholderAtom;
+import org.apache.poi.hslf.exceptions.HSLFException;
 
 import java.util.List;
 import java.io.ByteArrayOutputStream;
@@ -80,7 +81,7 @@ public class Placeholder extends TextBox {
         try {
             oep.writeOut(out);
         } catch(Exception e){
-            throw new RuntimeException(e);
+            throw new HSLFException(e);
         }
         cldata.setRemainingData(out.toByteArray());
 

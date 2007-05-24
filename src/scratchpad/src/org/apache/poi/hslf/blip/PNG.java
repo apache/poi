@@ -17,6 +17,7 @@
 package org.apache.poi.hslf.blip;
 
 import org.apache.poi.hslf.model.Picture;
+import org.apache.poi.hslf.exceptions.HSLFException;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -45,7 +46,7 @@ public class PNG extends Bitmap {
                   data = png;
               }
           } catch (IOException e){
-              throw new RuntimeException(e);
+              throw new HSLFException(e);
           }
          return data;
      }

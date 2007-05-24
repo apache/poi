@@ -18,6 +18,7 @@ package org.apache.poi.hslf.blip;
 
 import org.apache.poi.hslf.model.Picture;
 import org.apache.poi.hslf.model.Shape;
+import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.util.LittleEndian;
 
 import java.io.*;
@@ -56,7 +57,7 @@ public class PICT extends Metafile {
             out.write(pict);
             return out.toByteArray();
         } catch (IOException e){
-            throw new RuntimeException(e);
+            throw new HSLFException(e);
         }
     }
 

@@ -31,6 +31,7 @@ import java.util.ArrayList;
 
 import org.apache.poi.ddf.EscherProperties;
 import org.apache.poi.hslf.usermodel.RichTextRun;
+import org.apache.poi.hslf.exceptions.HSLFException;
 
 /**
  * Translates Graphics2D calls into PowerPoint.
@@ -252,43 +253,43 @@ public class PPGraphics2D extends Graphics2D {
     }
     //===============================================
     public void drawRoundRect(int x, int y, int width, int height, int arcWidth, int arcHeight) {
-        throw new RuntimeException("Not implemented");
+        throw new HSLFException("Not implemented");
     }
 
     public void drawString(String str, int x, int y) {
-        throw new RuntimeException("Not implemented");
+        throw new HSLFException("Not implemented");
     }
 
     public void fillOval(int x, int y, int width, int height) {
-        throw new RuntimeException("Not implemented");
+        throw new HSLFException("Not implemented");
     }
 
     public void fillRoundRect(int x, int y, int width, int height, int arcWidth, int arcHeight) {
-        throw new RuntimeException("Not implemented");
+        throw new HSLFException("Not implemented");
     }
 
     public void fillArc(int x, int y, int width, int height,
                         int startAngle, int arcAngle) {
-        throw new RuntimeException("Not implemented");
+        throw new HSLFException("Not implemented");
     }
 
     public void setPaintMode() {
-        throw new RuntimeException("Not implemented");
+        throw new HSLFException("Not implemented");
     }
 
     public void drawArc(int x, int y, int width, int height,
                         int startAngle, int arcAngle) {
-        throw new RuntimeException("Not implemented");
+        throw new HSLFException("Not implemented");
     }
 
 
     public void drawPolyline(int xPoints[], int yPoints[],
                              int nPoints) {
-        throw new RuntimeException("Not implemented");
+        throw new HSLFException("Not implemented");
     }
 
     public Graphics create() {
-        throw new RuntimeException("Not implemented");
+        throw new HSLFException("Not implemented");
     }
 
     public void drawOval(int x, int y, int width, int height) {
@@ -308,21 +309,21 @@ public class PPGraphics2D extends Graphics2D {
     }
 
     public void setXORMode(Color color1) {
-        throw new RuntimeException("Not implemented");
+        throw new HSLFException("Not implemented");
     }
 
 
     public boolean drawImage(Image img, int x, int y,
                              Color bgcolor,
                              ImageObserver observer) {
-        throw new RuntimeException("Not implemented");
+        throw new HSLFException("Not implemented");
     }
 
     public boolean drawImage(Image img, int x, int y,
                              int width, int height,
                              Color bgcolor,
                              ImageObserver observer) {
-        throw new RuntimeException("Not implemented");
+        throw new HSLFException("Not implemented");
     }
 
 
@@ -330,7 +331,7 @@ public class PPGraphics2D extends Graphics2D {
                              int dx1, int dy1, int dx2, int dy2,
                              int sx1, int sy1, int sx2, int sy2,
                              ImageObserver observer) {
-        throw new RuntimeException("Not implemented");
+        throw new HSLFException("Not implemented");
     }
 
     public boolean drawImage(Image img,
@@ -338,22 +339,22 @@ public class PPGraphics2D extends Graphics2D {
                              int sx1, int sy1, int sx2, int sy2,
                              Color bgcolor,
                              ImageObserver observer) {
-        throw new RuntimeException("Not implemented");
+        throw new HSLFException("Not implemented");
     }
 
     public boolean drawImage(Image img, int x, int y,
                              ImageObserver observer) {
-        throw new RuntimeException("Not implemented");
+        throw new HSLFException("Not implemented");
     }
 
     public boolean drawImage(Image img, int x, int y,
                              int width, int height,
                              ImageObserver observer) {
-        throw new RuntimeException("Not implemented");
+        throw new HSLFException("Not implemented");
     }
 
     public void dispose() {
-        throw new RuntimeException("Not implemented");
+        throw new HSLFException("Not implemented");
     }
 
     public void drawLine(int x1, int y1, int x2, int y2) {
@@ -369,61 +370,61 @@ public class PPGraphics2D extends Graphics2D {
 
     public void fillPolygon(int xPoints[], int yPoints[],
                             int nPoints) {
-        throw new RuntimeException("Not implemented");
+        throw new HSLFException("Not implemented");
     }
 
     public FontMetrics getFontMetrics(Font f) {
-        throw new RuntimeException("Not implemented");
+        throw new HSLFException("Not implemented");
     }
 
     public void fillRect(int x, int y, int width, int height) {
-        throw new RuntimeException("Not implemented");
+        throw new HSLFException("Not implemented");
     }
 
     public void drawPolygon(int xPoints[], int yPoints[],
                             int nPoints) {
-        throw new RuntimeException("Not implemented");
+        throw new HSLFException("Not implemented");
     }
 
     public void clipRect(int x, int y, int width, int height) {
-        throw new RuntimeException("Not implemented");
+        throw new HSLFException("Not implemented");
     }
 
     public void setClip(Shape clip) {
-        throw new RuntimeException("Not implemented");
+        throw new HSLFException("Not implemented");
     }
 
     public java.awt.Rectangle getClipBounds() {
-        throw new RuntimeException("Not implemented");
+        throw new HSLFException("Not implemented");
     }
 
     public void drawString(AttributedCharacterIterator iterator, int x, int y) {
-        throw new RuntimeException("Not implemented");
+        throw new HSLFException("Not implemented");
     }
 
     public void clearRect(int x, int y, int width, int height) {
-        throw new RuntimeException("Not implemented");
+        throw new HSLFException("Not implemented");
     }
 
     public void copyArea(int x, int y, int width, int height, int dx, int dy) {
-        throw new RuntimeException("Not implemented");
+        throw new HSLFException("Not implemented");
     }
 
     public void setClip(int x, int y, int width, int height) {
-        throw new RuntimeException("Not implemented");
+        throw new HSLFException("Not implemented");
     }
 
     public void rotate(double d) {
-        throw new RuntimeException("Not implemented");
+        throw new HSLFException("Not implemented");
 
     }
 
     public void rotate(double d, double d1, double d2) {
-        throw new RuntimeException("Not implemented");
+        throw new HSLFException("Not implemented");
     }
 
     public void shear(double d, double d1) {
-        throw new RuntimeException("Not implemented");
+        throw new HSLFException("Not implemented");
     }
 
     public FontRenderContext getFontRenderContext() {
@@ -431,83 +432,83 @@ public class PPGraphics2D extends Graphics2D {
     }
 
     public void transform(AffineTransform affinetransform) {
-        throw new RuntimeException("Not implemented");
+        throw new HSLFException("Not implemented");
     }
 
     public void drawImage(BufferedImage bufferedimage, BufferedImageOp op, int x, int y) {
-        throw new RuntimeException("Not implemented");
+        throw new HSLFException("Not implemented");
     }
 
     public void setBackground(Color c) {
-        throw new RuntimeException("Not implemented");
+        throw new HSLFException("Not implemented");
     }
 
     public void drawRenderedImage(RenderedImage renderedimage, AffineTransform affinetransform) {
-        throw new RuntimeException("Not implemented");
+        throw new HSLFException("Not implemented");
     }
 
     public Color getBackground() {
-        throw new RuntimeException("Not implemented");
+        throw new HSLFException("Not implemented");
     }
 
     public void setComposite(Composite composite) {
-        throw new RuntimeException("Not implemented");
+        throw new HSLFException("Not implemented");
 
     }
 
     public Composite getComposite() {
-        throw new RuntimeException("Not implemented");
+        throw new HSLFException("Not implemented");
     }
 
     public Object getRenderingHint(java.awt.RenderingHints.Key key) {
-        throw new RuntimeException("Not implemented");
+        throw new HSLFException("Not implemented");
     }
 
     public boolean drawImage(Image image, AffineTransform affinetransform, ImageObserver imageobserver) {
-        throw new RuntimeException("Not implemented");
+        throw new HSLFException("Not implemented");
     }
 
     public void setRenderingHint(java.awt.RenderingHints.Key key, Object obj) {
-        throw new RuntimeException("Not implemented");
+        throw new HSLFException("Not implemented");
     }
 
 
     public void drawGlyphVector(GlyphVector g, float x, float y) {
-        throw new RuntimeException("Not implemented");
+        throw new HSLFException("Not implemented");
 
     }
 
     public GraphicsConfiguration getDeviceConfiguration() {
-        throw new RuntimeException("Not implemented");
+        throw new HSLFException("Not implemented");
     }
 
     public void addRenderingHints(Map map) {
-        throw new RuntimeException("Not implemented");
+        throw new HSLFException("Not implemented");
     }
 
     public void translate(double d, double d1) {
 
-        throw new RuntimeException("Not implemented");
+        throw new HSLFException("Not implemented");
     }
 
     public void drawString(AttributedCharacterIterator attributedcharacteriterator, float x, float y) {
-        throw new RuntimeException("Not implemented");
+        throw new HSLFException("Not implemented");
     }
 
     public boolean hit(java.awt.Rectangle rectangle, Shape shape, boolean flag) {
-        throw new RuntimeException("Not implemented");
+        throw new HSLFException("Not implemented");
     }
 
     public RenderingHints getRenderingHints() {
-        throw new RuntimeException("Not implemented");
+        throw new HSLFException("Not implemented");
     }
 
     public void setRenderingHints(Map map) {
-        throw new RuntimeException("Not implemented");
+        throw new HSLFException("Not implemented");
 
     }
 
     public void drawRenderableImage(RenderableImage renderableimage, AffineTransform affinetransform) {
-        throw new RuntimeException("Not implemented");
+        throw new HSLFException("Not implemented");
     }
 }

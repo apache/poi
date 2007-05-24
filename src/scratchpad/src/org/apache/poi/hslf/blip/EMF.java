@@ -18,6 +18,7 @@ package org.apache.poi.hslf.blip;
 
 import org.apache.poi.hslf.model.Picture;
 import org.apache.poi.hslf.model.Shape;
+import org.apache.poi.hslf.exceptions.HSLFException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -55,7 +56,7 @@ public class EMF extends Metafile {
             inflater.close();
             return out.toByteArray();
         } catch (IOException e){
-            throw new RuntimeException(e);
+            throw new HSLFException(e);
         }
     }
 
