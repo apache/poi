@@ -179,4 +179,22 @@ public class ShapeGroup extends Shape{
         }
     }
 
+    /**
+     * Returns the anchor (the bounding box rectangle) of this shape group.
+     * All coordinates are expressed in points (72 dpi).
+     *
+     * @return the anchor of this shape group
+     */
+    public java.awt.Rectangle getAnchor(){
+        EscherContainerRecord groupInfoContainer = (EscherContainerRecord)_escherContainer.getChild(0);
+        EscherSpgrRecord spgr = (EscherSpgrRecord)getEscherChild(groupInfoContainer, EscherSpgrRecord.RECORD_ID);
+        java.awt.Rectangle anchor=null;
+
+        anchor = new java.awt.Rectangle();
+        anchor.x = spgr.getRectX1()*POINT_DPI/MASTER_DPI;
+        anchor.y = spgr.getRectY1()*POINT_DPI/MASTER_DPI;
+        anchor.width = (spgr.getRectX2() - spgr.getRectX1())*POINT_DPI/MASTER_DPI;
+        anchor.height = (spgr.getRectY2() - spgr.getRectY1())*POINT_DPI/MASTER_DPI;
+        return anchor;
+    }
 }

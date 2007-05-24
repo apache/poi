@@ -140,4 +140,27 @@ public class TestBugs extends TestCase {
         }
     }
 
+    /**
+     * Bug 42484: NullPointerException from ShapeGroup.getAnchor()
+     */
+    public void test42484 () throws Exception {
+        FileInputStream is = new FileInputStream(new File(cwd, "42485.ppt")); //test file is the same as for bug 42485
+        HSLFSlideShow hslf = new HSLFSlideShow(is);
+        is.close();
+
+        SlideShow ppt = new SlideShow(hslf);
+        Shape[] shape = ppt.getSlides()[0].getShapes();
+        for (int i = 0; i < shape.length; i++) {
+            if(shape[i] instanceof ShapeGroup){
+                ShapeGroup  group = (ShapeGroup)shape[i];
+                assertNotNull(group.getAnchor());
+                Shape[] sh = group.getShapes();
+                for (int j = 0; j < sh.length; j++) {
+                    assertNotNull(sh[j].getAnchor());
+                }
+            }
+        }
+        assertTrue("No Exceptions while reading file", true);
+    }
+
 }
