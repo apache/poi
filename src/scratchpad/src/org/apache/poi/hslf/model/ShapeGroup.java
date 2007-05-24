@@ -64,6 +64,7 @@ public class ShapeGroup extends Shape{
         		// Create the Shape for it
         		EscherContainerRecord container = (EscherContainerRecord)r;
         		Shape shape = ShapeFactory.createShape(container, this);
+                shape.setSheet(getSheet());
         		shapeList.add( shape );
         	} else {
         		// Should we do anything special with these non

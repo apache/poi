@@ -19,10 +19,7 @@ package org.apache.poi.hslf.usermodel;
 
 import junit.framework.TestCase;
 import org.apache.poi.hslf.HSLFSlideShow;
-import org.apache.poi.hslf.model.Picture;
-import org.apache.poi.hslf.model.Slide;
-import org.apache.poi.hslf.model.Notes;
-import org.apache.poi.hslf.model.TextRun;
+import org.apache.poi.hslf.model.*;
 
 import java.io.*;
 import java.util.HashSet;
@@ -118,4 +115,29 @@ public class TestBugs extends TestCase {
             }
         }
     }
+
+    /**
+     * Bug 42485: All TextBoxes inside ShapeGroups have null TextRuns
+     */
+    public void test42485 () throws Exception {
+        FileInputStream is = new FileInputStream(new File(cwd, "42485.ppt"));
+        HSLFSlideShow hslf = new HSLFSlideShow(is);
+        is.close();
+
+        SlideShow ppt = new SlideShow(hslf);
+        Shape[] shape = ppt.getSlides()[0].getShapes();
+        for (int i = 0; i < shape.length; i++) {
+            if(shape[i] instanceof ShapeGroup){
+                ShapeGroup  group = (ShapeGroup)shape[i];
+                Shape[] sh = group.getShapes();
+                for (int j = 0; j < sh.length; j++) {
+                    if( sh[j] instanceof TextBox){
+                        TextBox txt = (TextBox)sh[j];
+                        assertNotNull(txt.getTextRun());
+                    }
+                }
+            }
+        }
+    }
+
 }
