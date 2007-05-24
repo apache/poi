@@ -170,7 +170,8 @@ public class RichTextRun
             Sheet sheet = parentRun.getSheet();
             int txtype = parentRun.getRunType();
             SlideMaster master = (SlideMaster)sheet.getMasterSheet();
-            cftp = (CharFlagsTextProp)master.getStyleAttribute(txtype, getIndentLevel(), "char_flags", true);
+            if (master != null)
+                cftp = (CharFlagsTextProp)master.getStyleAttribute(txtype, getIndentLevel(), "char_flags", true);
         }
 
 		return cftp == null ? false : cftp.getSubValue(index);
@@ -223,7 +224,8 @@ public class RichTextRun
             Sheet sheet = parentRun.getSheet();
             int txtype = parentRun.getRunType();
             SlideMaster master = (SlideMaster)sheet.getMasterSheet();
-            prop = master.getStyleAttribute(txtype, getIndentLevel(), propName, true);
+            if (master != null)
+                prop = master.getStyleAttribute(txtype, getIndentLevel(), propName, true);
         }
 		return prop == null ? -1 : prop.getValue();
 	}
@@ -242,7 +244,8 @@ public class RichTextRun
             Sheet sheet = parentRun.getSheet();
             int txtype = parentRun.getRunType();
             SlideMaster master = (SlideMaster)sheet.getMasterSheet();
-            prop = master.getStyleAttribute(txtype, getIndentLevel(), propName, false);
+            if (master != null)
+                prop = master.getStyleAttribute(txtype, getIndentLevel(), propName, false);
         }
 
 		return prop == null ? -1 : prop.getValue();

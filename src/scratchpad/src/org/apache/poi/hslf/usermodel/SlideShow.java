@@ -30,21 +30,10 @@ import org.apache.poi.ddf.EscherOptRecord;
 import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.hslf.*;
 import org.apache.poi.hslf.model.*;
-import org.apache.poi.hslf.record.Document;
-import org.apache.poi.hslf.record.DocumentAtom;
-import org.apache.poi.hslf.record.FontCollection;
-import org.apache.poi.hslf.record.ParentAwareRecord;
-import org.apache.poi.hslf.record.PositionDependentRecordContainer;
-import org.apache.poi.hslf.record.Record;
-import org.apache.poi.hslf.record.RecordContainer;
-import org.apache.poi.hslf.record.RecordTypes;
-import org.apache.poi.hslf.record.SlideAtom;
-import org.apache.poi.hslf.record.SlideListWithText;
-import org.apache.poi.hslf.record.SlidePersistAtom;
-import org.apache.poi.hslf.record.UserEditAtom;
+import org.apache.poi.hslf.model.Notes;
+import org.apache.poi.hslf.model.Slide;
 import org.apache.poi.hslf.record.SlideListWithText.*;
-import org.apache.poi.hslf.record.PersistPtrHolder;
-import org.apache.poi.hslf.record.PositionDependentRecord;
+import org.apache.poi.hslf.record.*;
 import org.apache.poi.hslf.exceptions.CorruptPowerPointFileException;
 import org.apache.poi.util.ArrayUtil;
 import org.apache.poi.util.POILogFactory;
@@ -363,13 +352,14 @@ public class SlideShow
 			Record r = getCoreRecordForSAS(notesSets[i]);
 			
 			// Ensure it really is a notes record
-			if(r != null && r instanceof org.apache.poi.hslf.record.Notes) {
-				notesRecordsL.add( (org.apache.poi.hslf.record.Notes)r );
+			if(r instanceof org.apache.poi.hslf.record.Notes) {
+                org.apache.poi.hslf.record.Notes notesRecord = (org.apache.poi.hslf.record.Notes)r;
+				notesRecordsL.add( notesRecord );
 				
 				// Record the match between slide id and these notes
-				SlidePersistAtom spa = notesSets[i].getSlidePersistAtom();
-				Integer slideId = new Integer(spa.getSlideIdentifier());
-				slideIdToNotes.put(slideId, new Integer(i));
+                SlidePersistAtom spa = notesSets[i].getSlidePersistAtom();
+                Integer slideId = new Integer(spa.getSlideIdentifier());
+                slideIdToNotes.put(slideId, new Integer(i));
 			} else {
 				logger.log(POILogger.ERROR, "A Notes SlideAtomSet at " + i + " said its record was at refID " + notesSets[i].getSlidePersistAtom().getRefID() + ", but that was actually a " + r);
 			}
@@ -397,7 +387,7 @@ public class SlideShow
 			if(r instanceof org.apache.poi.hslf.record.Slide) {
 				slidesRecords[i] = (org.apache.poi.hslf.record.Slide)r;
 			} else {
-				System.err.println("A Slide SlideAtomSet at " + i + " said its record was at refID " + slidesSets[i].getSlidePersistAtom().getRefID() + ", but that was actually a " + r);
+				logger.log(POILogger.ERROR, "A Slide SlideAtomSet at " + i + " said its record was at refID " + slidesSets[i].getSlidePersistAtom().getRefID() + ", but that was actually a " + r);
 			}
 		}
 	}
@@ -422,15 +412,17 @@ public class SlideShow
 	for(int i=0; i<_slides.length; i++) {
 		SlideAtomsSet sas = slidesSets[i];
 		int slideIdentifier = sas.getSlidePersistAtom().getSlideIdentifier();
-		Integer slideIdentifierI = new Integer(slideIdentifier);
-		
+
 		// Do we have a notes for this?
 		Notes notes = null;
-		if(slideIdToNotes.containsKey(slideIdentifierI)) {
-			Integer notesPos = (Integer)slideIdToNotes.get(slideIdentifierI);
-			notes = _notes[notesPos.intValue()];
-		}
-		
+        //Slide.SlideAtom.notesId references the corresponding notes slide. 0 if slide has no notes.
+        int noteId = slidesRecords[i].getSlideAtom().getNotesID();
+        if (noteId != 0){
+            Integer notesPos = (Integer)slideIdToNotes.get(new Integer(noteId));
+            if (notesPos != null) notes = _notes[notesPos.intValue()];
+            else logger.log(POILogger.ERROR, "Notes not found for noteId=" + noteId);
+        }
+
 		// Now, build our slide
 		_slides[i] = new Slide(slidesRecords[i], notes, sas, slideIdentifier, (i+1));
 		_slides[i].setSlideShow(this);

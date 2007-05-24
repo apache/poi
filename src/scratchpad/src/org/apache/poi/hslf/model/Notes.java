@@ -56,6 +56,10 @@ public class Notes extends Sheet
 	//  one of TextBytesAtom or TextCharsAtom, found inside 
 	//  EscherTextboxWrapper's in the PPDrawing
 	_runs = findTextRuns(_notes.getPPDrawing());
+
+	// Set the sheet on each TextRun
+	for (int i = 0; i < _runs.length; i++)
+		_runs[i].setSheet(this);
   }
 
 
