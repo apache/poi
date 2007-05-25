@@ -23,9 +23,11 @@ package org.apache.poi.hslf.usermodel;
 import org.apache.poi.hslf.model.TextRun;
 import org.apache.poi.hslf.model.Sheet;
 import org.apache.poi.hslf.model.SlideMaster;
+import org.apache.poi.hslf.model.MasterSheet;
 import org.apache.poi.hslf.model.textproperties.CharFlagsTextProp;
 import org.apache.poi.hslf.model.textproperties.TextProp;
 import org.apache.poi.hslf.model.textproperties.TextPropCollection;
+import org.apache.poi.hslf.model.textproperties.BitMaskTextProp;
 import org.apache.poi.hslf.record.ColorSchemeAtom;
 
 import java.awt.*;
@@ -60,7 +62,7 @@ public class RichTextRun
 	private TextPropCollection characterStyle;
 	private boolean sharingParagraphStyle;
 	private boolean sharingCharacterStyle;
-	
+
 	/**
 	 * Create a new wrapper around a (currently not)
 	 *  rich text string
@@ -169,7 +171,7 @@ public class RichTextRun
         if (cftp == null){
             Sheet sheet = parentRun.getSheet();
             int txtype = parentRun.getRunType();
-            SlideMaster master = (SlideMaster)sheet.getMasterSheet();
+            MasterSheet master = sheet.getMasterSheet();
             if (master != null)
                 cftp = (CharFlagsTextProp)master.getStyleAttribute(txtype, getIndentLevel(), "char_flags", true);
         }
@@ -192,7 +194,7 @@ public class RichTextRun
 			fetchOrAddTextProp(characterStyle, "char_flags");
 		cftp.setSubValue(value,index);
 	}
-	
+
 	/**
 	 * Returns the named TextProp, either by fetching it (if it exists) or adding it
 	 *  (if it didn't)
@@ -223,7 +225,7 @@ public class RichTextRun
         if (prop == null){
             Sheet sheet = parentRun.getSheet();
             int txtype = parentRun.getRunType();
-            SlideMaster master = (SlideMaster)sheet.getMasterSheet();
+            MasterSheet master = sheet.getMasterSheet();
             if (master != null)
                 prop = master.getStyleAttribute(txtype, getIndentLevel(), propName, true);
         }
@@ -243,7 +245,7 @@ public class RichTextRun
         if (prop == null){
             Sheet sheet = parentRun.getSheet();
             int txtype = parentRun.getRunType();
-            SlideMaster master = (SlideMaster)sheet.getMasterSheet();
+            MasterSheet master = sheet.getMasterSheet();
             if (master != null)
                 prop = master.getStyleAttribute(txtype, getIndentLevel(), propName, false);
         }

@@ -39,8 +39,6 @@ public class ShapeFactory {
         int type = spRecord.getOptions() >> 4;
         switch (type){
             case ShapeTypes.TextBox:
-                shape = new TextBox(spContainer, parent);
-                break;
             case ShapeTypes.Rectangle:
                 EscherTextboxRecord txtbox = (EscherTextboxRecord)Shape.getEscherChild(spContainer, EscherTextboxRecord.RECORD_ID);
                 if (txtbox == null)

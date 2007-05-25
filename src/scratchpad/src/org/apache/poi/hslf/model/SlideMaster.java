@@ -36,11 +36,7 @@ import java.util.Iterator;
  * @author Yegor Kozlov
  */
 public class SlideMaster extends MasterSheet {
-    private int _refSheetNo;
-    private int _sheetNo;
-    private MainMaster _master;
     private TextRun[] _runs;
-    private Background _background;
 
     /**
      * all TxMasterStyleAtoms available in this master
@@ -51,16 +47,11 @@ public class SlideMaster extends MasterSheet {
      * Constructs a SlideMaster from the MainMaster record,
      *
      */
-    public SlideMaster(org.apache.poi.hslf.record.MainMaster rec, int slideId) {
-        _master = rec;
+    public SlideMaster(MainMaster record, int sheetNo) {
+        super(record, sheetNo);
 
-        // Grab our internal sheet ID
-        _refSheetNo = rec.getSheetId();
-
-        // Grab the number of the slide we're for, via the NotesAtom
-        _sheetNo = slideId;
-
-        _runs = findTextRuns(_master.getPPDrawing());
+        _runs = findTextRuns(getPPDrawing());
+        for (int i = 0; i < _runs.length; i++) _runs[i].setSheet(this);
     }
 
     /**
@@ -71,26 +62,10 @@ public class SlideMaster extends MasterSheet {
     }
 
     /**
-     * Returns the (internal, RefID based) sheet number, as used
-     * to in PersistPtr stuff.
+     * Returns <code>null</code> since SlideMasters doen't have master sheet.
      */
-    public int _getSheetRefId() {
-        return _refSheetNo;
-    }
-
-    /**
-     * Returns the (internal, SlideIdentifer based) number of the
-     * slide we're attached to
-     */
-    public int _getSheetNumber() {
-        return _sheetNo;
-    }
-
-    /**
-     * Returns the PPDrawing associated with this slide master
-     */
-    protected PPDrawing getPPDrawing() {
-        return _master.getPPDrawing();
+    public MasterSheet getMasterSheet() {
+        return null;
     }
 
     /**
@@ -138,44 +113,10 @@ public class SlideMaster extends MasterSheet {
             TxMasterStyleAtom txdoc = getSlideShow().getDocumentRecord().getEnvironment().getTxMasterStyleAtom();
             _txmaster[txdoc.getTextType()] = txdoc;
 
-            TxMasterStyleAtom[] txrec = _master.getTxMasterStyleAtoms();
+            TxMasterStyleAtom[] txrec = ((MainMaster)getSheetContainer()).getTxMasterStyleAtoms();
             for (int i = 0; i < txrec.length; i++) {
                 _txmaster[txrec[i].getTextType()] = txrec[i];
             }
         }
     }
-
-    /**
-     * Returns the ColorSchemeAtom associated with this slide master
-     */
-    public ColorSchemeAtom getColorScheme(){
-        return _master.getColorScheme();
-    }
-
-    /**
-     * Returns the background shape for this sheet.
-     *
-     * @return the background shape for this sheet.
-     */
-    public Background getBackground(){
-        if (_background == null){
-            PPDrawing ppdrawing = getPPDrawing();
-
-            EscherContainerRecord dg = (EscherContainerRecord)ppdrawing.getEscherRecords()[0];
-            EscherContainerRecord spContainer = null;
-            List ch = dg.getChildRecords();
-
-            for (Iterator it = ch.iterator(); it.hasNext();) {
-                EscherRecord rec = (EscherRecord)it.next();
-                if (rec.getRecordId() == EscherContainerRecord.SP_CONTAINER){
-                        spContainer = (EscherContainerRecord)rec;
-                        break;
-                }
-            }
-            _background = new Background(spContainer, null);
-            _background.setSheet(this);
-        }
-        return _background;
-    }
-
 }

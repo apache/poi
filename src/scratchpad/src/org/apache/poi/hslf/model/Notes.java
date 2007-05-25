@@ -20,8 +20,6 @@
 
 package org.apache.poi.hslf.model;
 
-import org.apache.poi.hslf.record.PPDrawing;
-
 /**
  * This class represents a slide's notes in a PowerPoint Document. It 
  *  allows access to the text within, and the layout. For now, it only 
@@ -32,9 +30,6 @@ import org.apache.poi.hslf.record.PPDrawing;
 
 public class Notes extends Sheet
 {
-  private int _refSheetNo;
-  private int _slideNo;
-  private org.apache.poi.hslf.record.Notes _notes;
   private TextRun[] _runs;
 
   /**
@@ -44,18 +39,12 @@ public class Notes extends Sheet
    * @param notes the Notes record to read from
    */
   public Notes (org.apache.poi.hslf.record.Notes notes) {
-	_notes = notes;
-	
-	// Grab our internal sheet ID
-	_refSheetNo = notes.getSheetId();
-
-	// Grab the number of the slide we're for, via the NotesAtom
-	_slideNo = _notes.getNotesAtom().getSlideID();
+      super(notes, notes.getNotesAtom().getSlideID());
 
 	// Now, build up TextRuns from pairs of TextHeaderAtom and
 	//  one of TextBytesAtom or TextCharsAtom, found inside 
 	//  EscherTextboxWrapper's in the PPDrawing
-	_runs = findTextRuns(_notes.getPPDrawing());
+	_runs = findTextRuns(getPPDrawing());
 
 	// Set the sheet on each TextRun
 	for (int i = 0; i < _runs.length; i++)
@@ -70,15 +59,11 @@ public class Notes extends Sheet
    */
   public TextRun[] getTextRuns() { return _runs; }
 
-  /**
-   * Returns the (internal, RefID based) sheet number, as used 
-   *  to in PersistPtr stuff.
-   */
-  public int _getSheetRefId() { return _refSheetNo; }
-  /**
-   * Returns the (internal, SlideIdentifer based) number of the 
-   *  slide we're attached to 
-   */
-  public int _getSheetNumber() { return _slideNo; }
-  
-  protected PPDrawing getPPDrawing() { return _notes.getPPDrawing(); }} 
+    /**
+     * Return <code>null</code> - Notes Masters are not yet supported
+     */
+    public MasterSheet getMasterSheet() {
+        return null;
+    }
+
+}
