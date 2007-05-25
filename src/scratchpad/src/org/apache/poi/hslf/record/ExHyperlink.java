@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.POILogger;
 
 /**
  * This class represents the data of a link in the document. 
@@ -93,37 +94,25 @@ public class ExHyperlink extends RecordContainer {
 	 *  methods.
 	 */	
 	private void findInterestingChildren() {
-		// We need to have 2 children, ideally 3, and sometimes have more
-		if(_children.length < 2) {
-			throw new IllegalStateException("We need at least two child records, but we only had " + _children.length);
-		}
 
 		// First child should be the ExHyperlinkAtom
 		if(_children[0] instanceof ExHyperlinkAtom) {
 			linkAtom = (ExHyperlinkAtom)_children[0];
 		} else {
-			throw new IllegalStateException("First child record wasn't a ExHyperlinkAtom, was of type " + _children[0].getRecordType());
-		}
-		
-		// Second child should be the first link details
-		if(_children[1] instanceof CString) {
-			linkDetailsA = (CString)_children[1];
-		} else {
-			throw new IllegalStateException("Second child record wasn't a CString, was of type " + _children[1].getRecordType());
+			logger.log(POILogger.ERROR, "First child record wasn't a ExHyperlinkAtom, was of type " + _children[0].getRecordType());
 		}
 
-		// Third child, if it exists, should be the second link details
-		if(_children.length >= 3) {
-			if(_children[2] instanceof CString) {
-				linkDetailsB = (CString)_children[2];
-			} else {
-				throw new IllegalStateException("Third child record wasn't a CString, was of type " + _children[2].getRecordType());
-			}
-		} else {
-			// Should be fine to not have one
-		}
+        for (int i = 1; i < _children.length; i++) {
+            if (_children[i] instanceof CString){
+                if ( linkDetailsA == null) linkDetailsA = (CString)_children[i];
+                else linkDetailsB = (CString)_children[i];
+            } else {
+                logger.log(POILogger.ERROR, "Record after ExHyperlinkAtom wasn't a CString, was of type " + _children[1].getRecordType());
+            }
+
+        }
 	}
-	
+
 	/**
 	 * Create a new ExHyperlink, with blank fields
 	 */

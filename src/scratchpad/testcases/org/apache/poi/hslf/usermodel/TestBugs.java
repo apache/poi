@@ -184,4 +184,21 @@ public class TestBugs extends TestCase {
         }
     }
 
+    /**
+     * Bug 42486:  Failure parsing a seemingly valid PPT
+     */
+    public void test42486 () throws Exception {
+        FileInputStream is = new FileInputStream(new File(cwd, "42486.ppt"));
+        HSLFSlideShow hslf = new HSLFSlideShow(is);
+        is.close();
+
+        SlideShow ppt = new SlideShow(hslf);
+        Slide[] slide = ppt.getSlides();
+        for (int i = 0; i < slide.length; i++) {
+            Shape[] shape = slide[i].getShapes();
+        }
+        assertTrue("No Exceptions while reading file", true);
+
+    }
+
 }
