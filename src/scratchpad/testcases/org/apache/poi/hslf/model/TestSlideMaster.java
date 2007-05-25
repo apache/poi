@@ -27,6 +27,7 @@ import org.apache.poi.hslf.record.StyleTextPropAtom.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.ByteArrayInputStream;
+import java.awt.*;
 
 /**
  * Tests for SlideMaster
@@ -82,12 +83,62 @@ public class TestSlideMaster extends TestCase{
     }
 
     /**
+     * Test we can read default text attributes for a title master sheet
+     */
+    public void testTitleMasterTextAttributes() throws Exception {
+        SlideShow ppt = new SlideShow(new HSLFSlideShow(home + "/slide_master.ppt"));
+        TitleMaster[] master = ppt.getTitleMasters();
+        assertEquals(1, master.length);
+
+        assertEquals(32, master[0].getStyleAttribute(TextHeaderAtom.CENTER_TITLE_TYPE, 0, "font.size", true).getValue());
+        CharFlagsTextProp prop1 = (CharFlagsTextProp)master[0].getStyleAttribute(TextHeaderAtom.CENTER_TITLE_TYPE, 0, "char_flags", true);
+        assertEquals(true, prop1.getSubValue(CharFlagsTextProp.BOLD_IDX));
+        assertEquals(false, prop1.getSubValue(CharFlagsTextProp.ITALIC_IDX));
+        assertEquals(true, prop1.getSubValue(CharFlagsTextProp.UNDERLINE_IDX));
+
+        assertEquals(20, master[0].getStyleAttribute(TextHeaderAtom.CENTRE_BODY_TYPE, 0, "font.size", true).getValue());
+        CharFlagsTextProp prop2 = (CharFlagsTextProp)master[0].getStyleAttribute(TextHeaderAtom.CENTRE_BODY_TYPE, 0, "char_flags", true);
+        assertEquals(true, prop2.getSubValue(CharFlagsTextProp.BOLD_IDX));
+        assertEquals(false, prop2.getSubValue(CharFlagsTextProp.ITALIC_IDX));
+        assertEquals(false, prop2.getSubValue(CharFlagsTextProp.UNDERLINE_IDX));
+    }
+
+    /**
+     * Slide 3 has title layout and follows the TitleMaster. Verify that.
+     */
+    public void testTitleMaster() throws Exception {
+        SlideShow ppt = new SlideShow(new HSLFSlideShow(home + "/slide_master.ppt"));
+        Slide slide = ppt.getSlides()[2];
+        MasterSheet masterSheet = slide.getMasterSheet();
+        assertTrue(masterSheet instanceof TitleMaster);
+
+        TextRun[] txt = slide.getTextRuns();
+        for (int i = 0; i < txt.length; i++) {
+            RichTextRun rt = txt[i].getRichTextRuns()[0];
+            switch(txt[i].getRunType()){
+                case TextHeaderAtom.CENTER_TITLE_TYPE:
+                    assertEquals("Arial", rt.getFontName());
+                    assertEquals(32, rt.getFontSize());
+                    assertEquals(true, rt.isBold());
+                    assertEquals(true, rt.isUnderlined());
+                    break;
+                case TextHeaderAtom.CENTRE_BODY_TYPE:
+                    assertEquals("Courier New", rt.getFontName());
+                    assertEquals(20, rt.getFontSize());
+                    assertEquals(true, rt.isBold());
+                    assertEquals(false, rt.isUnderlined());
+                    break;
+            }
+
+        }
+    }
+    /**
      * If a style attribute is not set ensure it is read from the master
      */
     public void testMasterAttributes() throws Exception {
         SlideShow ppt = new SlideShow(new HSLFSlideShow(home + "/slide_master.ppt"));
         Slide[] slide = ppt.getSlides();
-        assertEquals(2, slide.length);
+        assertEquals(3, slide.length);
         TextRun[] trun;
 
         trun = slide[0].getTextRuns();

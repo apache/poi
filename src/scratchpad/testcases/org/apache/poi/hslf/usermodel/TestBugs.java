@@ -163,4 +163,25 @@ public class TestBugs extends TestCase {
         assertTrue("No Exceptions while reading file", true);
     }
 
+    /**
+     * Bug 41381: Exception from Slide.getMasterSheet() on a seemingly valid PPT file
+     */
+    public void test41381() throws Exception {
+        FileInputStream is = new FileInputStream(new File(cwd, "alterman_security.ppt"));
+        HSLFSlideShow hslf = new HSLFSlideShow(is);
+        is.close();
+
+        SlideShow ppt = new SlideShow(hslf);
+        assertTrue("No Exceptions while reading file", true);
+
+        assertEquals(1, ppt.getSlidesMasters().length);
+        assertEquals(1, ppt.getTitleMasters().length);
+        Slide[] slide = ppt.getSlides();
+        for (int i = 0; i < slide.length; i++) {
+            MasterSheet master = slide[i].getMasterSheet();
+            if (i == 0) assertTrue(master instanceof TitleMaster); //the first slide follows TitleMaster
+            else assertTrue(master instanceof SlideMaster);
+        }
+    }
+
 }

@@ -29,7 +29,7 @@ import java.io.OutputStream;
  * @author Nick Burch
  */
 
-public class Notes extends PositionDependentRecordContainer
+public class Notes extends SheetContainer
 {
 	private byte[] _header;
 	private static long _type = 1008l;
@@ -37,6 +37,7 @@ public class Notes extends PositionDependentRecordContainer
 	// Links to our more interesting children
 	private NotesAtom notesAtom;
 	private PPDrawing ppDrawing;
+    private ColorSchemeAtom _colorScheme;
 
 	/**
 	 * Returns the NotesAtom of this Notes
@@ -69,6 +70,9 @@ public class Notes extends PositionDependentRecordContainer
 			if(_children[i] instanceof PPDrawing) {
 				ppDrawing = (PPDrawing)_children[i];
 			}
+            if(ppDrawing != null && _children[i] instanceof ColorSchemeAtom) {
+                _colorScheme = (ColorSchemeAtom)_children[i];
+            }
 		}
 	}
 
@@ -85,4 +89,8 @@ public class Notes extends PositionDependentRecordContainer
 	public void writeOut(OutputStream out) throws IOException {
 		writeOut(_header[0],_header[1],_type,_children,out);
 	}
+
+    public ColorSchemeAtom getColorScheme(){
+        return _colorScheme;
+    }
 }

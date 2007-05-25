@@ -31,7 +31,7 @@ import org.apache.poi.util.LittleEndian;
  * @author Nick Burch
  */
 
-public class Slide extends PositionDependentRecordContainer
+public class Slide extends SheetContainer
 {
 	private byte[] _header;
 	private static long _type = 1006l;

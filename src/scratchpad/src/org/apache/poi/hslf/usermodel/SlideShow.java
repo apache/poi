@@ -74,6 +74,7 @@ public class SlideShow
 
   // Friendly objects for people to deal with
   private SlideMaster[] _masters;
+  private TitleMaster[] _titleMasters;
   private Slide[] _slides;
   private Notes[] _notes;
   private FontCollection _fonts;
@@ -311,25 +312,33 @@ public class SlideShow
 	// About the only thing you can say is that the master details are in
 	//  the first SLWT.
     SlideAtomsSet[] masterSets = new SlideAtomsSet[0];
-    org.apache.poi.hslf.record.MainMaster[] mainMasterRecords = null;
     if (masterSLWT != null){
         masterSets = masterSLWT.getSlideAtomsSets();
 
-		// For now, we only care about the records which are MainMasters
-		// (In future, we might want to know about the other too)
 		ArrayList mmr = new ArrayList();
+        ArrayList tmr = new ArrayList();
 
 		for(int i=0; i<masterSets.length; i++) {
 			Record r = getCoreRecordForSAS(masterSets[i]);
+            SlideAtomsSet sas = masterSets[i];
+            int sheetNo = sas.getSlidePersistAtom().getSlideIdentifier();
 			if(r instanceof org.apache.poi.hslf.record.Slide) {
-				// Slide master, skip
+                TitleMaster master = new TitleMaster((org.apache.poi.hslf.record.Slide)r, sheetNo);
+                master.setSlideShow(this);
+                tmr.add(master);
 			} else if(r instanceof org.apache.poi.hslf.record.MainMaster) {
-				mmr.add(r);
-			}
+                SlideMaster master = new SlideMaster((org.apache.poi.hslf.record.MainMaster)r, sheetNo);
+                master.setSlideShow(this);
+                mmr.add(master);
+            }
 		}
 
-		mainMasterRecords = new org.apache.poi.hslf.record.MainMaster[mmr.size()];
-		mmr.toArray(mainMasterRecords);
+        _masters = new SlideMaster[mmr.size()];
+        mmr.toArray(_masters);
+
+        _titleMasters = new TitleMaster[tmr.size()];
+        tmr.toArray(_titleMasters);
+
     }
 
 
@@ -351,12 +360,12 @@ public class SlideShow
 		for(int i=0; i<notesSets.length; i++) {
 			// Get the right core record
 			Record r = getCoreRecordForSAS(notesSets[i]);
-			
+
 			// Ensure it really is a notes record
 			if(r instanceof org.apache.poi.hslf.record.Notes) {
                 org.apache.poi.hslf.record.Notes notesRecord = (org.apache.poi.hslf.record.Notes)r;
 				notesRecordsL.add( notesRecord );
-				
+
 				// Record the match between slide id and these notes
                 SlidePersistAtom spa = notesSets[i].getSlidePersistAtom();
                 Integer slideId = new Integer(spa.getSlideIdentifier());
@@ -394,14 +403,6 @@ public class SlideShow
 	}
 	
 	// Finally, generate model objects for everything
-    _masters = new SlideMaster[mainMasterRecords.length];
-    for(int i=0; i<_masters.length; i++) {
-        SlideAtomsSet sas = masterSets[i];
-        int sheetNo = sas.getSlidePersistAtom().getSlideIdentifier();
-        _masters[i] = new SlideMaster(mainMasterRecords[i], sheetNo);
-        _masters[i].setSlideShow(this);
-    }
-
 	// Notes first
 	_notes = new Notes[notesRecords.length];
 	for(int i=0; i<_notes.length; i++) {
@@ -465,10 +466,14 @@ public class SlideShow
 	public Notes[] getNotes() { return _notes; }
 
 	/**
-     * Returns an array of all the normal Slides found in the slideshow
+     * Returns an array of all the normal Slide Masters found in the slideshow
 	 */
     public SlideMaster[] getSlidesMasters() { return _masters; }
 
+    /**
+     * Returns an array of all the normal Title Masters found in the slideshow
+     */
+    public TitleMaster[] getTitleMasters() { return _titleMasters; }
 	/**
 	 * Returns the data of all the pictures attached to the SlideShow
 	 */

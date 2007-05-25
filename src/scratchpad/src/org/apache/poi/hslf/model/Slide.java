@@ -44,15 +44,10 @@ import org.apache.poi.ddf.EscherRecord;
 
 public class Slide extends Sheet
 {
-	private int _refSheetNo;  
-	private int _sheetNo;
 	private int _slideNo;
-	private org.apache.poi.hslf.record.Slide _slide;
 	private SlideAtomsSet _atomSet;
 	private TextRun[] _runs;
-	private TextRun[] _otherRuns; // Any from the PPDrawing, shouldn't really be any though
 	private Notes _notes; // usermodel needs to set this
-    private Background _background;
 
 	/**
 	 * Constructs a Slide from the Slide record, and the SlideAtomsSet
@@ -64,15 +59,14 @@ public class Slide extends Sheet
 	 * @param atomSet the SlideAtomsSet to get the text from
 	 */
 	public Slide(org.apache.poi.hslf.record.Slide slide, Notes notes, SlideAtomsSet atomSet, int slideIdentifier, int slideNumber) {
-		_slide = slide;
+        super(slide, slideIdentifier);
+
 		_notes = notes;
 		_atomSet = atomSet;
-		_refSheetNo = slide.getSheetId();
-		_sheetNo = slideIdentifier;
 		_slideNo = slideNumber;
 
-		// Grab the TextRuns from the PPDrawing
-		_otherRuns = findTextRuns(_slide.getPPDrawing());
+ 		// Grab the TextRuns from the PPDrawing
+		TextRun[] _otherRuns = findTextRuns(getPPDrawing());
 
 		// For the text coming in from the SlideAtomsSet:
 		// Build up TextRuns from pairs of TextHeaderAtom and
@@ -105,10 +99,9 @@ public class Slide extends Sheet
 	* @param slideNumber The user facing number of the sheet
 	*/
 	public Slide(int sheetNumber, int sheetRefId, int slideNumber){
-		_slide = new org.apache.poi.hslf.record.Slide();
-		_refSheetNo = sheetRefId;
-		_sheetNo = sheetNumber;
+		super(new org.apache.poi.hslf.record.Slide(), sheetNumber);
 		_slideNo = slideNumber;
+        getSheetContainer().setSheetId(sheetRefId);
 	}
 
 	/**
@@ -119,7 +112,7 @@ public class Slide extends Sheet
 		_notes = notes;
 
 		// Update the Slide Atom's ID of where to point to
-		SlideAtom sa = _slide.getSlideAtom();
+		SlideAtom sa = getSlideRecord().getSlideAtom();
 
 		if(notes == null) {
 			// Set to 0
@@ -132,7 +125,7 @@ public class Slide extends Sheet
   
 	/**
 	* Changes the Slide's (external facing) page number.
-	* @see SlideShow.reorderSlide()
+	* @see org.apache.poi.hslf.usermodel.SlideShow#reorderSlide(int, int)
 	*/
 	public void setSlideNumber(int newSlideNumber) {
 		_slideNo = newSlideNumber;
@@ -188,17 +181,6 @@ public class Slide extends Sheet
 	public TextRun[] getTextRuns() { return _runs; }
 
 	/**
-	 * Returns the (internal, RefID based) sheet number, as used 
-	 *  to in PersistPtr stuff.
-	 */
-	public int _getSheetRefId() { return _refSheetNo; }
-	/**
-	 * Returns the (internal, SlideIdentifier based) sheet number
-	 * @see #getSlideNumber()
-	 */
-	public int _getSheetNumber() { return _sheetNo; }
-
-	/**
 	 * Returns the (public facing) page number of this slide
 	 */
 	public int getSlideNumber() { return _slideNo; }
@@ -206,17 +188,14 @@ public class Slide extends Sheet
 	/**
 	 * Returns the underlying slide record
 	 */
-	public org.apache.poi.hslf.record.Slide getSlideRecord() { return _slide; }
+	public org.apache.poi.hslf.record.Slide getSlideRecord() {
+        return (org.apache.poi.hslf.record.Slide)getSheetContainer();
+    }
 
 	/**
 	 * Returns the Notes Sheet for this slide, or null if there isn't one
 	 */
 	public Notes getNotesSheet() { return _notes; }
-
-	/**
-	 * Returns the PPDrawing associated with this slide, or null if there isn't one
-	 */
-	protected PPDrawing getPPDrawing() { return _slide.getPPDrawing(); }
 
 	/**
 	 * @return set of records inside <code>SlideListWithtext</code> container
@@ -225,58 +204,41 @@ public class Slide extends Sheet
 	protected SlideAtomsSet getSlideAtomsSet() { return _atomSet;  }
 
     /**
-     * Returns the slide master associated with this slide.
+     * Returns master sheet associated with this slide.
+     * It can be either SlideMaster or TitleMaster objects.
      *
-     * @return the slide master associated with this slide.
+     * @return the master sheet associated with this slide.
      */
      public MasterSheet getMasterSheet(){
         SlideMaster[] master = getSlideShow().getSlidesMasters();
-        SlideAtom sa = _slide.getSlideAtom();
+        SlideAtom sa = getSlideRecord().getSlideAtom();
         int masterId = sa.getMasterID();
+        MasterSheet sheet = null;
         for (int i = 0; i < master.length; i++) {
-            if (masterId == master[i]._getSheetNumber()) return master[i];
+            if (masterId == master[i]._getSheetNumber()) {
+                sheet = master[i];
+                break;
+            }
         }
-        return null;
+        if (sheet == null){
+            TitleMaster[] titleMaster = getSlideShow().getTitleMasters();
+            if(titleMaster != null) for (int i = 0; i < titleMaster.length; i++) {
+                if (masterId == titleMaster[i]._getSheetNumber()) {
+                    sheet = titleMaster[i];
+                    break;
+                }
+            }
+        }
+        return sheet;
     }
 
     /**
      * Change Master of this slide.
      */
     public void setMasterSheet(MasterSheet master){
-        SlideAtom sa = _slide.getSlideAtom();
+        SlideAtom sa = getSlideRecord().getSlideAtom();
         int sheetNo = master._getSheetNumber();
         sa.setMasterID(sheetNo);
-    }
-
-
-    public ColorSchemeAtom getColorScheme(){
-        return _slide.getColorScheme();
-    }
-
-    /**
-     * Returns the background shape for this sheet.
-     *
-     * @return the background shape for this sheet.
-     */
-    public Background getBackground(){
-        if (_background == null){
-            PPDrawing ppdrawing = getPPDrawing();
-
-            EscherContainerRecord dg = (EscherContainerRecord)ppdrawing.getEscherRecords()[0];
-            EscherContainerRecord spContainer = null;
-            List ch = dg.getChildRecords();
-
-            for (Iterator it = ch.iterator(); it.hasNext();) {
-                EscherRecord rec = (EscherRecord)it.next();
-                if (rec.getRecordId() == EscherContainerRecord.SP_CONTAINER){
-                        spContainer = (EscherContainerRecord)rec;
-                        break;
-                }
-            }
-            _background = new Background(spContainer, null);
-            _background.setSheet(this);
-        }
-        return _background;
     }
 
     /**
@@ -286,7 +248,7 @@ public class Slide extends Sheet
      * <code>false</code> otherwise
      */
     public void setFollowMasterBackground(boolean flag){
-        SlideAtom sa = _slide.getSlideAtom();
+        SlideAtom sa = getSlideRecord().getSlideAtom();
         sa.setFollowMasterBackground(flag);
     }
 
@@ -297,7 +259,7 @@ public class Slide extends Sheet
      * <code>false</code> otherwise
      */
     public boolean getFollowMasterBackground(){
-        SlideAtom sa = _slide.getSlideAtom();
+        SlideAtom sa = getSlideRecord().getSlideAtom();
         return sa.getFollowMasterBackground();
     }
 }

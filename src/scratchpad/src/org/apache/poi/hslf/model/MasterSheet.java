@@ -16,6 +16,9 @@
 */
 package org.apache.poi.hslf.model;
 
+import org.apache.poi.hslf.record.SheetContainer;
+import org.apache.poi.hslf.model.textproperties.TextProp;
+
 /**
  * The superclass of all master sheets - Slide masters, Notes masters, etc.
  *
@@ -24,5 +27,14 @@ package org.apache.poi.hslf.model;
  * @author Yegor Kozlov
  */
 public abstract class MasterSheet extends Sheet {
+    public MasterSheet(SheetContainer container, int sheetNo){
+        super(container, sheetNo);
+    }
+
+    /**
+     * Pickup a style attribute from the master.
+     * This is the "workhorse" which returns the default style attrubutes.
+     */
+    public abstract TextProp getStyleAttribute(int txtype, int level, String name, boolean isCharacter) ;
 
 }

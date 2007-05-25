@@ -31,7 +31,7 @@ import org.apache.poi.util.LittleEndian;
  * @author Yegor Kozlov
  */
 
-public class MainMaster extends PositionDependentRecordContainer
+public class MainMaster extends SheetContainer
 {
 	private byte[] _header;
 	private static long _type = 1016;
