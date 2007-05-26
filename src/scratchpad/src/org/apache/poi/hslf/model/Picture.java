@@ -21,6 +21,7 @@ import org.apache.poi.hslf.usermodel.PictureData;
 import org.apache.poi.hslf.usermodel.SlideShow;
 import org.apache.poi.hslf.record.Document;
 import org.apache.poi.hslf.blip.Bitmap;
+import org.apache.poi.util.POILogger;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -99,7 +100,7 @@ public class Picture extends SimpleShape {
     public int getPictureIndex(){
         EscherOptRecord opt = (EscherOptRecord)getEscherChild(_escherContainer, EscherOptRecord.RECORD_ID);
         EscherSimpleProperty prop = (EscherSimpleProperty)getEscherProperty(opt, EscherProperties.BLIP__BLIPTODISPLAY + 0x4000);
-        return prop.getPropertyValue();
+        return prop == null ? 0 : prop.getPropertyValue();
     }
 
     /**
@@ -166,14 +167,18 @@ public class Picture extends SimpleShape {
         EscherContainerRecord bstore = (EscherContainerRecord)Shape.getEscherChild(dggContainer, EscherContainerRecord.BSTORE_CONTAINER);
 
         List lst = bstore.getChildRecords();
-        int idx = getPictureIndex()-1;
-        EscherBSERecord bse = (EscherBSERecord)lst.get(idx);
-        for ( int i = 0; i < pict.length; i++ ) {
-			if (pict[i].getOffset() ==  bse.getOffset()){
-                return pict[i];
+        int idx = getPictureIndex();
+        if (idx == 0){
+            logger.log(POILogger.ERROR, "no reference to picture data found ");
+        } else {
+            EscherBSERecord bse = (EscherBSERecord)lst.get(idx-1);
+            for ( int i = 0; i < pict.length; i++ ) {
+                if (pict[i].getOffset() ==  bse.getOffset()){
+                    return pict[i];
+                }
             }
+            logger.log(POILogger.ERROR, "no picture found for our BSE offset " + bse.getOffset());
         }
-		System.err.println("Warning - no picture found for our BSE offset " + bse.getOffset());
         return null;
     }
 

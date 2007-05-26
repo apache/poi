@@ -22,6 +22,7 @@ import org.apache.poi.ddf.*;
 import org.apache.poi.hslf.record.*;
 import org.apache.poi.hslf.usermodel.RichTextRun;
 import org.apache.poi.hslf.exceptions.HSLFException;
+import org.apache.poi.util.POILogger;
 
 import java.awt.*;
 import java.awt.font.FontRenderContext;
@@ -500,7 +501,7 @@ public class TextBox extends SimpleShape {
         	_txtrun = new TextRun(tha,tca,sta);
         } else {
         	// Empty text box
-        	System.err.println("Warning - no text records found for TextBox");
+        	logger.log(POILogger.WARN, "no text records found for TextBox");
         }
     }
 }

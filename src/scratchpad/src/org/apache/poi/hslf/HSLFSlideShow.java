@@ -25,6 +25,8 @@ import java.io.*;
 
 import org.apache.poi.POIDocument;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.POILogger;
+import org.apache.poi.util.POILogFactory;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
@@ -50,6 +52,9 @@ import org.apache.poi.hslf.usermodel.PictureData;
 
 public class HSLFSlideShow extends POIDocument
 {
+    // For logging
+    protected POILogger logger = POILogFactory.getLogger(this.getClass());
+
 	private InputStream istream;
 
 	// Holds metadata on where things are in our document
@@ -226,7 +231,7 @@ public class HSLFSlideShow extends POIDocument
 		try {
 			currentUser = new CurrentUserAtom(filesystem);
 		} catch(IOException ie) {
-			System.err.println("Error finding Current User Atom:\n" + ie);
+			logger.log(POILogger.ERROR, "Error finding Current User Atom:\n" + ie);
 			currentUser = new CurrentUserAtom();
 		}
 	}
@@ -281,8 +286,8 @@ public class HSLFSlideShow extends POIDocument
 
 			// If they type (including the bonus 0xF018) is 0, skip it
 			if(type == 0) {
-				System.err.println("Problem reading picture: Invalid image type 0, on picture with length " + imgsize + ".\nYou document will probably become corrupted if you save it!");
-				System.err.println(pos);
+				logger.log(POILogger.ERROR, "Problem reading picture: Invalid image type 0, on picture with length " + imgsize + ".\nYou document will probably become corrupted if you save it!");
+				logger.log(POILogger.ERROR, "" + pos);
 			} else {
 	            // Copy the data, ready to pass to PictureData
 	            byte[] imgdata = new byte[imgsize];
@@ -297,7 +302,7 @@ public class HSLFSlideShow extends POIDocument
 					pict.setOffset(offset);
 					p.add(pict);
 				} catch(IllegalArgumentException e) {
-					System.err.println("Problem reading picture: " + e + "\nYou document will probably become corrupted if you save it!");
+					logger.log(POILogger.ERROR, "Problem reading picture: " + e + "\nYou document will probably become corrupted if you save it!");
 				}
 			}
             

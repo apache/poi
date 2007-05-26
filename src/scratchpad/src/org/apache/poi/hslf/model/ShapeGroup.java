@@ -18,6 +18,7 @@ package org.apache.poi.hslf.model;
 
 import org.apache.poi.ddf.*;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.POILogger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,7 +70,7 @@ public class ShapeGroup extends Shape{
         	} else {
         		// Should we do anything special with these non
         		//  Container records?
-        		System.err.println("Shape contained non container escher record, was " + r.getClass().getName());
+        		logger.log(POILogger.ERROR, "Shape contained non container escher record, was " + r.getClass().getName());
         	}
         }
         
@@ -197,4 +198,17 @@ public class ShapeGroup extends Shape{
         anchor.height = (spgr.getRectY2() - spgr.getRectY1())*POINT_DPI/MASTER_DPI;
         return anchor;
     }
+
+    /**
+     * Return type of the shape.
+     * In most cases shape group type is {@link org.apache.poi.hslf.model.ShapeTypes#NotPrimitive}
+     *
+     * @return type of the shape.
+     */
+    public int getShapeType(){
+        EscherContainerRecord groupInfoContainer = (EscherContainerRecord)_escherContainer.getChild(0);
+        EscherSpRecord spRecord = groupInfoContainer.getChildById(EscherSpRecord.RECORD_ID);
+        return spRecord.getOptions() >> 4;
+    }
+
 }
