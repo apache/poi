@@ -19,6 +19,8 @@ package org.apache.poi.hslf.model;
 import org.apache.poi.ddf.*;
 import org.apache.poi.hslf.model.ShapeTypes;
 import org.apache.poi.hslf.record.ColorSchemeAtom;
+import org.apache.poi.util.POILogger;
+import org.apache.poi.util.POILogFactory;
 
 import java.util.Iterator;
 import java.awt.*;
@@ -41,6 +43,9 @@ import java.awt.*;
  */
 public abstract class Shape {
 
+    // For logging
+    protected POILogger logger = POILogFactory.getLogger(this.getClass());
+    
     /**
      * In Escher absolute distances are specified in
      * English Metric Units (EMUs), occasionally referred to as A units;
@@ -110,8 +115,7 @@ public abstract class Shape {
      * @return name of the shape.
      */
     public String getShapeName(){
-        EscherSpRecord spRecord = _escherContainer.getChildById(EscherSpRecord.RECORD_ID);
-        return ShapeTypes.typeName(spRecord.getOptions() >> 4);
+        return ShapeTypes.typeName(getShapeType());
     }
 
     /**

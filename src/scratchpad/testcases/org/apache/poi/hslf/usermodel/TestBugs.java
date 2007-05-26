@@ -20,10 +20,12 @@ package org.apache.poi.hslf.usermodel;
 import junit.framework.TestCase;
 import org.apache.poi.hslf.HSLFSlideShow;
 import org.apache.poi.hslf.model.*;
+import org.apache.poi.hslf.model.Shape;
 
 import java.io.*;
 import java.util.HashSet;
 import java.util.HashMap;
+import java.awt.*;
 
 /**
  * Testcases for bugs entered in bugzilla
@@ -196,6 +198,72 @@ public class TestBugs extends TestCase {
         Slide[] slide = ppt.getSlides();
         for (int i = 0; i < slide.length; i++) {
             Shape[] shape = slide[i].getShapes();
+        }
+        assertTrue("No Exceptions while reading file", true);
+
+    }
+
+    /**
+     * Bug 42524:  NPE in Shape.getShapeType()
+     */
+    public void test42524 () throws Exception {
+        FileInputStream is = new FileInputStream(new File(cwd, "42486.ppt")); //test file is the same as for Bug 42486
+        HSLFSlideShow hslf = new HSLFSlideShow(is);
+        is.close();
+
+        SlideShow ppt = new SlideShow(hslf);
+        //walk down the tree and see if there were no errors while reading
+        Slide[] slide = ppt.getSlides();
+        for (int i = 0; i < slide.length; i++) {
+            Shape[] shape = slide[i].getShapes();
+            for (int j = 0; j < shape.length; j++) {
+                assertNotNull(shape[j].getShapeName());
+                if (shape[j] instanceof ShapeGroup){
+                    ShapeGroup group = (ShapeGroup)shape[j];
+                    Shape[] comps = group.getShapes();
+                    for (int k = 0; k < comps.length; k++) {
+                        assertNotNull(comps[k].getShapeName());
+                   }
+                }
+            }
+
+        }
+        assertTrue("No Exceptions while reading file", true);
+
+    }
+
+    /**
+     * Bug 42520:  NPE in Picture.getPictureData()
+     */
+    public void test42520 () throws Exception {
+        FileInputStream is = new FileInputStream(new File(cwd, "42520.ppt")); //test file is the same as for Bug 42486
+        HSLFSlideShow hslf = new HSLFSlideShow(is);
+        is.close();
+
+        SlideShow ppt = new SlideShow(hslf);
+
+        //test case from the bug report
+        ShapeGroup shapeGroup = (ShapeGroup)ppt.getSlides()[11].getShapes()[10];
+        Picture picture = (Picture)shapeGroup.getShapes()[0];
+        picture.getPictureData();
+
+        //walk down the tree and see if there were no errors while reading
+        Slide[] slide = ppt.getSlides();
+        for (int i = 0; i < slide.length; i++) {
+            Shape[] shape = slide[i].getShapes();
+            for (int j = 0; j < shape.length; j++) {
+              if (shape[j] instanceof ShapeGroup){
+                    ShapeGroup group = (ShapeGroup)shape[j];
+                    Shape[] comps = group.getShapes();
+                    for (int k = 0; k < comps.length; k++) {
+                        Shape comp = comps[k];
+                        if (comp instanceof Picture){
+                            PictureData pict = ((Picture)comp).getPictureData();
+                        }
+                    }
+                }
+            }
+
         }
         assertTrue("No Exceptions while reading file", true);
 

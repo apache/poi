@@ -71,6 +71,8 @@ public class TestSheet extends TestCase{
     }
 
     private void verify(Sheet sheet){
+        assertNotNull(sheet.getSlideShow());
+
         ColorSchemeAtom colorscheme = sheet.getColorScheme();
         assertNotNull(colorscheme);
 
@@ -92,9 +94,11 @@ public class TestSheet extends TestCase{
         Shape[] shape = sheet.getShapes();
         assertTrue(shape != null);
         for (int i = 0; i < shape.length; i++) {
+            assertNotNull(shape[i].getSpContainer());
             assertNotNull(shape[i].getSheet());
+            assertNotNull(shape[i].getShapeName());
+            assertNotNull(shape[i].getAnchor());
         }
 
-        assertNotNull(sheet.getSlideShow());
     }
 }
