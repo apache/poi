@@ -19,11 +19,7 @@
 
 package org.apache.poi.hslf.record;
 
-import org.apache.poi.hslf.model.textproperties.AlignmentTextProp;
-import org.apache.poi.hslf.model.textproperties.BitMaskTextProp;
-import org.apache.poi.hslf.model.textproperties.CharFlagsTextProp;
-import org.apache.poi.hslf.model.textproperties.TextProp;
-import org.apache.poi.hslf.model.textproperties.TextPropCollection;
+import org.apache.poi.hslf.model.textproperties.*;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogger;
 
@@ -95,18 +91,15 @@ public class StyleTextPropAtom extends RecordAtom
 
 	/** All the different kinds of paragraph properties we might handle */
 	public static TextProp[] paragraphTextPropTypes = new TextProp[] {
-				new BitMaskTextProp(2,  0xF, "paragraph_flags", new String[] {
-					"bullet", "bullet.hardfont", 
-					"bullet.hardcolor", "bullet.hardsize"}
-				),
+				new ParagraphFlagsTextProp(),
                 new TextProp(2, 0x80, "bullet.char"),
 				new TextProp(2, 0x10, "bullet.font"),
 				new TextProp(4, 0x20, "bullet.color"),
 				new TextProp(2, 0x40, "bullet.size"),
                 new AlignmentTextProp(),
-                new TextProp(2, 0x400, "bullet.offset"),
-				new TextProp(2, 0x200, "para_unknown_2"),
                 new TextProp(2, 0x100, "text.offset"),
+				new TextProp(2, 0x200, "para_unknown_2"),
+                new TextProp(2, 0x400, "bullet.offset"),
 				new TextProp(2, 0x1000, "linespacing"),
 				new TextProp(2, 0x2000, "spacebefore"),
 				new TextProp(2, 0x4000, "spaceafter"),

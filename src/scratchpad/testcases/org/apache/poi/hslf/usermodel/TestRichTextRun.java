@@ -16,15 +16,11 @@
 */
 package org.apache.poi.hslf.usermodel;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.File;
+import java.io.*;
+import java.awt.*;
 
 import org.apache.poi.hslf.HSLFSlideShow;
-import org.apache.poi.hslf.model.Slide;
-import org.apache.poi.hslf.model.TextRun;
-import org.apache.poi.hslf.model.SlideMaster;
+import org.apache.poi.hslf.model.*;
 import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.SlideListWithText;
 
@@ -457,5 +453,100 @@ if(false) {
 
             }
         }
+    }
+
+    public void testReadParagraphStyles() throws Exception {
+        FileInputStream is = new FileInputStream(new File(System.getProperty("HSLF.testdata.path"), "bullets.ppt"));
+        SlideShow ppt = new SlideShow(is);
+        is.close();
+        assertTrue("No Exceptions while reading file", true);
+
+        RichTextRun rt;
+        TextRun[] txt;
+        Slide[] slide = ppt.getSlides();
+        assertEquals(2, slide.length);
+
+        txt = slide[0].getTextRuns();
+        assertEquals(2, txt.length);
+
+        assertEquals("Title text", txt[0].getRawText());
+        assertEquals(1, txt[0].getRichTextRuns().length);
+        rt = txt[0].getRichTextRuns()[0];
+        assertFalse(rt.isBullet());
+
+        assertEquals(
+                "This is a text placeholder that \r" +
+                "follows the design pattern\r" +
+                "Defined in the slide master\r" +
+                "and has bullets by default", txt[1].getRawText());
+        assertEquals(1, txt[1].getRichTextRuns().length);
+        rt = txt[1].getRichTextRuns()[0];
+        assertEquals('\u2022', rt.getBulletChar());
+        assertTrue(rt.isBullet());
+
+
+        txt = slide[1].getTextRuns();
+        assertEquals(2, txt.length);
+
+        assertEquals(
+                "I’m a text box\r" +
+                "With bullets\r" +
+                "That follow the design pattern\r" +
+                "From the slide master", txt[0].getRawText());
+        assertEquals(1, txt[0].getRichTextRuns().length);
+        rt = txt[0].getRichTextRuns()[0];
+        assertTrue(rt.isBullet());
+        assertEquals('\u2022', rt.getBulletChar());
+
+        assertEquals(
+                "I’m a text box with user-defined\r" +
+                "bullet character", txt[1].getRawText());
+        assertEquals(1, txt[1].getRichTextRuns().length);
+        rt = txt[1].getRichTextRuns()[0];
+        assertTrue(rt.isBullet());
+        assertEquals('\u263A', rt.getBulletChar());
+    }
+
+    public void testSetParagraphStyles() throws Exception {
+        SlideShow ppt = new SlideShow();
+
+        Slide slide = ppt.createSlide();
+
+        TextBox shape = new TextBox();
+        RichTextRun rt = shape.getTextRun().getRichTextRuns()[0];
+        shape.setText(
+                "Hello, World!\r" +
+                "This should be\r" +
+                "Multiline text");
+        rt.setFontSize(42);
+        rt.setBullet(true);
+        rt.setTextOffset(50);
+        rt.setBulletOffset(0);
+        rt.setBulletChar('\u263A');
+        slide.addShape(shape);
+
+        assertEquals(42, rt.getFontSize());
+        assertEquals(true, rt.isBullet());
+        assertEquals(50, rt.getTextOffset());
+        assertEquals(0, rt.getBulletOffset());
+        assertEquals('\u263A', rt.getBulletChar());
+
+        shape.setAnchor(new java.awt.Rectangle(50, 50, 500, 300));
+        slide.addShape(shape);
+
+        //serialize and read again
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ppt.write(out);
+        out.close();
+
+        ppt = new SlideShow(new ByteArrayInputStream(out.toByteArray()));
+        slide = ppt.getSlides()[0];
+        shape = (TextBox)slide.getShapes()[0];
+        rt = shape.getTextRun().getRichTextRuns()[0];
+        assertEquals(42, rt.getFontSize());
+        assertEquals(true, rt.isBullet());
+        assertEquals(50, rt.getTextOffset());
+        assertEquals(0, rt.getBulletOffset());
+        assertEquals('\u263A', rt.getBulletChar());
     }
 }

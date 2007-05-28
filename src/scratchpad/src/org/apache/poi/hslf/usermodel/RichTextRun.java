@@ -20,17 +20,14 @@
 
 package org.apache.poi.hslf.usermodel;
 
-import org.apache.poi.hslf.model.TextRun;
-import org.apache.poi.hslf.model.Sheet;
-import org.apache.poi.hslf.model.SlideMaster;
-import org.apache.poi.hslf.model.MasterSheet;
-import org.apache.poi.hslf.model.textproperties.CharFlagsTextProp;
-import org.apache.poi.hslf.model.textproperties.TextProp;
-import org.apache.poi.hslf.model.textproperties.TextPropCollection;
-import org.apache.poi.hslf.model.textproperties.BitMaskTextProp;
+import org.apache.poi.hslf.model.*;
+import org.apache.poi.hslf.model.Shape;
+import org.apache.poi.hslf.model.textproperties.*;
 import org.apache.poi.hslf.record.ColorSchemeAtom;
+import org.apache.poi.hslf.exceptions.HSLFException;
 
 import java.awt.*;
+
 
 /**
  * Represents a run of text, all with the same style
@@ -164,36 +161,63 @@ public class RichTextRun
 	 *  text property won't be set if there's no CharFlagsTextProp.
 	 */
 	private boolean isCharFlagsTextPropVal(int index) {
-        CharFlagsTextProp cftp = null;
-        if (characterStyle != null){
-            cftp = (CharFlagsTextProp)characterStyle.findByName("char_flags");
+		return getFlag(true, index);
+	}
+
+    private boolean getFlag(boolean isCharacter, int index) {
+        TextPropCollection props;
+        String propname;
+        if (isCharacter){
+            props = characterStyle;
+            propname = CharFlagsTextProp.NAME;
+        } else {
+            props = paragraphStyle;
+            propname = ParagraphFlagsTextProp.NAME;
         }
-        if (cftp == null){
+
+        BitMaskTextProp prop = null;
+        if (props != null){
+            prop = (BitMaskTextProp)props.findByName(propname);
+        }
+        if (prop == null){
             Sheet sheet = parentRun.getSheet();
             int txtype = parentRun.getRunType();
             MasterSheet master = sheet.getMasterSheet();
             if (master != null)
-                cftp = (CharFlagsTextProp)master.getStyleAttribute(txtype, getIndentLevel(), "char_flags", true);
+                prop = (BitMaskTextProp)master.getStyleAttribute(txtype, getIndentLevel(), propname, isCharacter);
         }
 
-		return cftp == null ? false : cftp.getSubValue(index);
-	}
+        return prop == null ? false : prop.getSubValue(index);
+    }
 
 	/**
 	 * Set the value of the given flag in the CharFlagsTextProp, adding
 	 *  it if required. 
 	 */
 	private void setCharFlagsTextPropVal(int index, boolean value) {
-		// Ensure we have the StyleTextProp atom we're going to need
-		if(characterStyle == null) {
-			parentRun.ensureStyleAtomPresent();
-			// characterStyle will now be defined
-		}
-		
-		CharFlagsTextProp cftp = (CharFlagsTextProp)
-			fetchOrAddTextProp(characterStyle, "char_flags");
-		cftp.setSubValue(value,index);
+        setFlag(true, index, value);
 	}
+
+    private void setFlag(boolean isCharacter, int index, boolean value) {
+        TextPropCollection props;
+        String propname;
+        if (isCharacter){
+            props = characterStyle;
+            propname = CharFlagsTextProp.NAME;
+        } else {
+            props = paragraphStyle;
+            propname = ParagraphFlagsTextProp.NAME;
+        }
+
+		// Ensure we have the StyleTextProp atom we're going to need
+		if(props == null) {
+			parentRun.ensureStyleAtomPresent();
+            props = isCharacter ? characterStyle : paragraphStyle;
+		}
+
+		BitMaskTextProp prop = (BitMaskTextProp) fetchOrAddTextProp(props, propname);
+		prop.setSubValue(value,index);
+    }
 
 	/**
 	 * Returns the named TextProp, either by fetching it (if it exists) or adding it
@@ -396,7 +420,62 @@ public class RichTextRun
     public int getIndentLevel() {
         return paragraphStyle == null ? 0 : paragraphStyle.getReservedField();
     }
-	
+
+    /**
+     * Sets whether this rich text run has bullets
+     */
+    public void setBullet(boolean flag) {
+        setFlag(false, ParagraphFlagsTextProp.BULLET_IDX, flag);
+    }
+
+    /**
+     * Returns whether this rich text run has bullets
+     */
+    public boolean isBullet() {
+        return getFlag(false, ParagraphFlagsTextProp.BULLET_IDX);
+    }
+
+    /**
+     * Sets the bullet character
+     */
+    public void setBulletChar(char c) {
+        setParaTextPropVal("bullet.char", c);
+    }
+
+    /**
+     * Returns the bullet character
+     */
+    public char getBulletChar() {
+        return (char)getParaTextPropVal("bullet.char");
+    }
+
+    /**
+     * Sets the bullet offset
+     */
+    public void setBulletOffset(int offset) {
+        setParaTextPropVal("bullet.offset", offset*Shape.MASTER_DPI/Shape.POINT_DPI);
+    }
+
+    /**
+     * Returns the bullet offset
+     */
+    public int getBulletOffset() {
+        return getParaTextPropVal("bullet.offset")*Shape.POINT_DPI/Shape.MASTER_DPI;
+    }
+
+    /**
+     * Sets the text offset
+     */
+    public void setTextOffset(int offset) {
+        setParaTextPropVal("text.offset", offset*Shape.MASTER_DPI/Shape.POINT_DPI);
+    }
+
+    /**
+     * Returns the text offset
+     */
+    public int getTextOffset() {
+        return getParaTextPropVal("text.offset")*Shape.POINT_DPI/Shape.MASTER_DPI;
+    }
 	// --------------- Internal HSLF methods, not intended for end-user use! -------
 	
 	/**
