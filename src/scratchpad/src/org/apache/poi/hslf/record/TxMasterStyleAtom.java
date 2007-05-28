@@ -23,10 +23,7 @@ import org.apache.poi.util.LittleEndian;
 import java.io.OutputStream;
 import java.io.IOException;
 
-import org.apache.poi.hslf.model.textproperties.BitMaskTextProp;
-import org.apache.poi.hslf.model.textproperties.CharFlagsTextProp;
-import org.apache.poi.hslf.model.textproperties.TextProp;
-import org.apache.poi.hslf.model.textproperties.TextPropCollection;
+import org.apache.poi.hslf.model.textproperties.*;
 
 /**
  * TxMasterStyleAtom atom (4003).
@@ -177,10 +174,7 @@ public class TxMasterStyleAtom extends RecordAtom {
             return StyleTextPropAtom.paragraphTextPropTypes;
         } else {
             return new TextProp[] {
-                    new BitMaskTextProp(2,  0xF, "paragraph_flags", new String[] {
-                        "bullet", "bullet.hardfont",
-                        "bullet.hardcolor", "bullet.hardsize"}
-                    ),
+                    new ParagraphFlagsTextProp(),
                     new TextProp(2, 0x80, "bullet.char"),
                     new TextProp(2, 0x10, "bullet.font"),
                     new TextProp(2, 0x40, "bullet.size"),

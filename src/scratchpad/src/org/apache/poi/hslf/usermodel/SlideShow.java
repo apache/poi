@@ -119,7 +119,14 @@ public class SlideShow
   public SlideShow() throws IOException {
 	this(new HSLFSlideShow());
   }
-  
+
+    /**
+     * Constructs a Powerpoint document from an input stream.
+     */
+    public SlideShow(InputStream inputStream) throws IOException {
+      this(new HSLFSlideShow(inputStream));
+    }
+
   /**
    * Find the records that are parent-aware, and tell them
    *  who their parent is
