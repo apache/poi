@@ -219,10 +219,41 @@ public class HSLFSlideShow extends POIDocument
 		// If you don't know about the type, play safe and skip over it (using
 		//  its length to know where the next record will start)
 		//
-		// For now, this work is handled by Record.findChildRecords
-	
-		_records = Record.findChildRecords(_docstream,0,_docstream.length);
+
+        _records = read(_docstream, (int)currentUser.getCurrentEditOffset());
 	}
+
+    private Record[] read(byte[] docstream, int usrOffset){
+        ArrayList lst = new ArrayList();
+        while (usrOffset != 0){
+            UserEditAtom usr = (UserEditAtom) Record.buildRecordAtOffset(docstream, usrOffset);
+            lst.add(new Integer(usrOffset));
+            int psrOffset = usr.getPersistPointersOffset();
+
+            PersistPtrHolder ptr = (PersistPtrHolder)Record.buildRecordAtOffset(docstream, psrOffset);
+            lst.add(new Integer(psrOffset));
+            Hashtable entries = ptr.getSlideLocationsLookup();
+            for (Iterator it = entries.keySet().iterator(); it.hasNext(); ) {
+                Integer id = (Integer)it.next();
+                Integer offset = (Integer)entries.get(id);
+
+                lst.add(offset);
+            }
+
+            usrOffset = usr.getLastUserEditAtomOffset();
+        }
+        //sort found records by offset.
+        //(it is not necessary but SlideShow.findMostRecentCoreRecords() expects them sorted)
+        Object a[] = lst.toArray();
+        Arrays.sort(a);
+        Record[] rec = new Record[lst.size()];
+        for (int i = 0; i < a.length; i++) {
+            Integer offset = (Integer)a[i];
+            rec[i] = (Record)Record.buildRecordAtOffset(docstream, offset.intValue());
+        }
+
+        return rec;
+    }
 
 	/**
 	 * Find the "Current User" stream, and load it 
