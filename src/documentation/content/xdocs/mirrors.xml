@@ -21,7 +21,7 @@
 
 <document>
   <header>
-    <title>Jakarta POI Mirror Site</title>
+    <title>Apache POI Mirror Site</title>
     <authors>
       <person id="AO" name="Andrew C. Oliver" email="acoliver@apache.org"/>
     </authors>
@@ -31,7 +31,7 @@
     <section><title>Mirrors</title>
         <p>
            These are mirrors of the 
-           <link href="http://jakarta.apache.org/poi">POI</link> website.
+           <link href="http://poi.apache.org/">POI</link> website.
            If you know of others...report them! :-)
         </p>                        
     </section>

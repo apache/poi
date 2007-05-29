@@ -35,9 +35,9 @@
 	  <p>After quite a wait, version 3.0 of Apache POI (formerly
 		Apache Jakarta POI) has now been released. You can 
 		<link href="./changes.html">view the changelog</link>, and 
-		<link href="http://www.apache.org/dyn/closer.cgi/jakarta/poi/release/">download</link>
+		<link href="http://www.apache.org/dyn/closer.cgi/poi/release/">download</link>
 		the source and binaries from your
-		<link href="http://www.apache.org/dyn/closer.cgi/jakarta/poi/release/">local mirror</link>.</p>
+		<link href="http://www.apache.org/dyn/closer.cgi/poi/release/">local mirror</link>.</p>
 	</section>
 
     <section><title>Purpose</title>
