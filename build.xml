@@ -813,10 +813,10 @@ FORREST_HOME environment variable!</echo>
             <manifest>
                 <attribute name="Built-By" value="${user.name}"/>
                 <section name="common">
-                  <attribute name="Specification-Title" value="Jakarta POI"/>
+                  <attribute name="Specification-Title" value="Apache POI"/>
                   <attribute name="Specification-Version" value="${version.id}-${DSTAMP}"/>
                   <attribute name="Specification-Vendor" value="Apache"/>
-                  <attribute name="Implementation-Title" value="Jakarta POI"/>
+                  <attribute name="Implementation-Title" value="Apache POI"/>
                   <attribute name="Implementation-Version" value="${version.id}-${DSTAMP}"/>
                   <attribute name="Implementation-Vendor" value="Apache"/>
                 </section>
@@ -832,10 +832,10 @@ FORREST_HOME environment variable!</echo>
             <manifest>
                 <attribute name="Built-By" value="${user.name}"/>
                 <section name="common">
-                  <attribute name="Specification-Title" value="Jakarta POI"/>
+                  <attribute name="Specification-Title" value="Apache POI"/>
                   <attribute name="Specification-Version" value="${version.id}-${DSTAMP}"/>
                   <attribute name="Specification-Vendor" value="Apache"/>
-                  <attribute name="Implementation-Title" value="Jakarta POI"/>
+                  <attribute name="Implementation-Title" value="Apache POI"/>
                   <attribute name="Implementation-Version" value="${version.id}-${DSTAMP}"/>
                   <attribute name="Implementation-Vendor" value="Apache"/>
                 </section>
@@ -863,10 +863,10 @@ FORREST_HOME environment variable!</echo>
             <manifest>
                 <attribute name="Built-By" value="${user.name}"/>
                 <section name="common">
-                  <attribute name="Specification-Title" value="Jakarta POI"/>
+                  <attribute name="Specification-Title" value="Apache POI"/>
                   <attribute name="Specification-Version" value="${version.id}-${DSTAMP}"/>
                   <attribute name="Specification-Vendor" value="Apache"/>
-                  <attribute name="Implementation-Title" value="Jakarta POI"/>
+                  <attribute name="Implementation-Title" value="Apache POI"/>
                   <attribute name="Implementation-Version" value="${version.id}-${DSTAMP}"/>
                   <attribute name="Implementation-Vendor" value="Apache"/>
                 </section>
@@ -878,10 +878,10 @@ FORREST_HOME environment variable!</echo>
             <manifest>
                 <attribute name="Built-By" value="${user.name}"/>
                 <section name="common">
-                  <attribute name="Specification-Title" value="Jakarta POI"/>
+                  <attribute name="Specification-Title" value="Apache POI"/>
                   <attribute name="Specification-Version" value="${version.id}-${DSTAMP}"/>
                   <attribute name="Specification-Vendor" value="Apache"/>
-                  <attribute name="Implementation-Title" value="Jakarta POI"/>
+                  <attribute name="Implementation-Title" value="Apache POI"/>
                   <attribute name="Implementation-Version" value="${version.id}-${DSTAMP}"/>
                   <attribute name="Implementation-Vendor" value="Apache"/>
                 </section>
@@ -893,10 +893,10 @@ FORREST_HOME environment variable!</echo>
             <manifest>
                 <attribute name="Built-By" value="${user.name}"/>
                 <section name="common">
-                  <attribute name="Specification-Title" value="Jakarta POI"/>
+                  <attribute name="Specification-Title" value="Apache POI"/>
                   <attribute name="Specification-Version" value="${version.id}-${DSTAMP}"/>
                   <attribute name="Specification-Vendor" value="Apache"/>
-                  <attribute name="Implementation-Title" value="Jakarta POI"/>
+                  <attribute name="Implementation-Title" value="Apache POI"/>
                   <attribute name="Implementation-Version" value="${version.id}-${DSTAMP}"/>
                   <attribute name="Implementation-Vendor" value="Apache"/>
                 </section>

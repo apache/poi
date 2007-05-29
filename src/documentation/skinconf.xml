@@ -95,19 +95,19 @@ be used to configure the chosen Forrest skin.
   <!-- Do we want to disable w3c compliance links? -->
   <disable-compliance-links>false</disable-compliance-links>
 
-  <searchsite-domain>jakarta.apache.org</searchsite-domain>
-  <searchsite-name>jakarta</searchsite-name>
+  <searchsite-domain>poi.apache.org</searchsite-domain>
+  <searchsite-name>poi</searchsite-name>
 
   <!-- mandatory project logo
        skin: forrest-site renders it at the top -->
   <project-name>POI</project-name>
-  <project-url>http://jakarta.apache.org/poi/</project-url>
+  <project-url>http://poi.apache.org/</project-url>
   <project-logo>resources/images/project-logo.gif</project-logo>
 
   <!-- optional group logo
        skin: forrest-site renders it at the top-left corner -->
-  <group-name>Jakarta</group-name>
-  <group-url>http://jakarta.apache.org</group-url>
+  <group-name>Apache POI</group-name>
+  <group-url>http://poi.apache.org</group-url>
   <group-logo>resources/images/group-logo.gif</group-logo>
 
   <!-- optional host logo (e.g. sourceforge logo)
@@ -116,7 +116,7 @@ be used to configure the chosen Forrest skin.
   <host-logo></host-logo>
 
   <!-- The following are used to construct a copyright statement -->
-  <year>2002-2006</year>
+  <year>2002-2007</year>
   <vendor>The Apache Software Foundation</vendor>
 
   <!-- Some skins use this to form a 'breadcrumb trail' of links. If you don't
@@ -124,8 +124,7 @@ be used to configure the chosen Forrest skin.
   -->
   <trail>
     <link1 name="Apache" href="http://www.apache.org/"/>
-    <link2 name="Jakarta" href="http://jakarta.apache.org/"/>
-    <link3 name="POI" href="http://jakarta.apache.org/poi/"/>
+    <link2 name="POI" href="http://poi.apache.org/"/>
   </trail>
 
   <!-- Credits are typically rendered as a set of small clickable images in the
