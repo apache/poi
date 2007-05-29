@@ -35,6 +35,13 @@
         <person id="YK" name="Yegor Kozlov" email="yegor@apache.org"/>
     </devs>
 
+        <release version="3.0.1-FINAL" date="2007-06-08">
+            <action dev="POI-DEVELOPERS" type="add">Initial support for a "missing record aware" HSSF event model</action>
+            <action dev="POI-DEVELOPERS" type="add">Additional HSLF support for Title and Slide Master Sheets</action>
+            <action dev="POI-DEVELOPERS" type="fix">42474 - [PATCH] Improved HSLF note to slide matching, and a NPE</action>
+            <action dev="POI-DEVELOPERS" type="fix">42481 - [PATCH] Tweak some HSLF exceptions, to make it clearer what you're catching</action>
+        </release>
+
         <release version="3.0-FINAL" date="2007-05-18">
             <action dev="POI-DEVELOPERS" type="fix">39977 - [PATCH] Fix POM for Maven users</action>
             <action dev="POI-DEVELOPERS" type="fix">38976 - [PATCH] Add createPicture to HSSFShapeGroup</action>
