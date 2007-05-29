@@ -50,7 +50,7 @@
         <menu-item label="Changes" href="changes.html"/>
         <menu-item label="To Do" href="todo.html"/>
         <menu-item label="Get Involved" href="getinvolved/index.html"/>
-        <menu-item label="Mailing Lists" href="http://jakarta.apache.org/site/mail2.html#poi"/>
+        <menu-item label="Mailing Lists" href="mailinglists.html"/>
         <menu-item label="Vision" href="plan/POI20Vision.html"/>
         <menu-item label="History and Future" href="historyandfuture.html"/>
         <menu-item label="Who We Are" href="who.html"/>

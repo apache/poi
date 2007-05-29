@@ -23,7 +23,7 @@
     <header>
         <title>How To Build POI</title>
         <authors>
-            <person email="poi-user@jakarta.apache.org" name="Glen Stampoultzis" id="GS"/>
+            <person email="user@poi.apache.org" name="Glen Stampoultzis" id="GS"/>
             <person email="tetsuya@apache.org" name="Tetsuya Kitahata" id="TK"/>
         </authors>
     </header>
@@ -33,7 +33,7 @@
             <p>
                 The POI build system requires two components to perform a
                 build.
-                <link href="ext:jakarta.apache.org/ant">Ant</link> and
+                <link href="ext:ant.apache.org/">Ant</link> and
                 <link href="ext:xml.apache.org/forrest">forrest</link>.
             </p>
             <p>

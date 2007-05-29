@@ -24,13 +24,13 @@
 
     <devs>
         <person id="AO"  name="Andrew C. Oliver"   email="acoliver@apache.org"/>
-        <person id="GS"  name="Glen Stampoultzis"  email="poi-user@jakarta.apache.org"/>
+        <person id="GS"  name="Glen Stampoultzis"  email="user@poi.apache.org"/>
         <person id="MJ"  name="Marc Johnson"       email="mjohnson at apache dot org"/>
         <person id="NKB" name="Nicola Ken Barozzi" email="barozzi@nicolaken.com"/>
-		<person id="RA" name="Ryan Ackley" email="poi-dev@jakarta.apache.org"/>
-		<person id="AS" name="Avik Sengupta" email="poi-dev@jakarta.apache.org"/>
-        <person id="open" name="POI Developers"    email="poi-dev@jakarta.apache.org"/>
-		<person id="Everyone" name="POI Developers"    email="poi-dev@jakarta.apache.org"/>
+		<person id="RA" name="Ryan Ackley" email="dev@poi.apache.org"/>
+		<person id="AS" name="Avik Sengupta" email="dev@poi.apache.org"/>
+        <person id="open" name="POI Developers"    email="dev@poi.apache.org"/>
+		<person id="Everyone" name="POI Developers"    email="dev@poi.apache.org"/>
     </devs>
 
     <actions priority="high">

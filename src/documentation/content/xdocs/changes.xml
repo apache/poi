@@ -26,11 +26,11 @@
     <devs>
         <!-- in strict alphabetical order -->
         <person id="AO" name="Andrew C. Oliver" email="acoliver2@users.sourceforge.net"/>
-        <person id="GJS" name="Glen Stampoultzis" email="poi-user@jakarta.apache.org"/>
+        <person id="GJS" name="Glen Stampoultzis" email="user@poi.apache.org"/>
         <person id="MJ" name="Marc Johnson" email="mjohnson@apache.org"/>
         <person id="NKB" name="Nicola Ken Barozzi" email="barozzi@nicolaken.com"/>
         <person id="NB" name="Nick Burch" email="nick@torchbox.com"/>
-        <person id="POI-DEVELOPERS" name="POI Developers" email="poi-dev@jakarta.apache.org"/>
+        <person id="POI-DEVELOPERS" name="POI Developers" email="dev@poi.apache.org"/>
         <person id="RK" name="Rainer Klute" email="klute@apache.org"/>
         <person id="YK" name="Yegor Kozlov" email="yegor@apache.org"/>
     </devs>
