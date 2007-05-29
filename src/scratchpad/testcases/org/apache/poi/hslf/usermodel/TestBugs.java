@@ -269,4 +269,33 @@ public class TestBugs extends TestCase {
 
     }
 
+    /**
+     * Bug 38256:  RuntimeException: Couldn't instantiate the class for type with id 0.
+     * ( also fixed followup: getTextRuns() returns no text )
+     */
+    public void test38256 () throws Exception {
+        FileInputStream is = new FileInputStream(new File(cwd, "38256.ppt"));
+        SlideShow ppt = new SlideShow(is);
+        is.close();
+
+        assertTrue("No Exceptions while reading file", true);
+
+        Slide[] slide = ppt.getSlides();
+        assertEquals(1, slide.length);
+        TextRun[] runs = slide[0].getTextRuns();
+        assertEquals(4, runs.length);
+
+        HashSet txt = new HashSet();
+        txt.add("“HAPPY BIRTHDAY SCOTT”");
+        txt.add("Have a HAPPY DAY");
+        txt.add("PS Nobody is allowed to hassle Scott TODAY…");
+        txt.add("Drinks will be in the Boardroom at 5pm today to celebrate Scott’s B’Day…  See you all there!");
+
+        for (int i = 0; i < runs.length; i++) {
+            String text = runs[i].getRawText();
+            assertTrue(txt.contains(text));
+        }
+
+    }
+
 }
