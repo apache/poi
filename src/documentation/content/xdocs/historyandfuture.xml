@@ -21,7 +21,7 @@
 
 <document>
   <header>
-    <title>Jakarta POI - Project History</title>
+    <title>Apache POI - Project History</title>
     <authors>
       <person id="AO" name="Andrew C. Oliver" email="acoliver@apache.org"/>
     </authors>
@@ -30,7 +30,7 @@
   <body>
 
 
-    <section><title>Jakarta POI - Brief Project History</title>
+    <section><title>Apache POI - Brief Project History</title>
 
         <p>The POI project was dreamed up back around April 2001, when
         Andrew Oliver landed a short term contract to do Java-based
@@ -94,10 +94,14 @@ already started making waves.
          looks like everything turned out since you're reading this!
         </p>
 
+         <p>In Early 2007, we graduated from 
+          <link href="http://jakarta.apache.org/">Jakarta</link>, and became
+          our own Top Level Project (TLP) within Apache.</p>
     </section>
 
+<!--
     <section><title>What's next for Poi</title>
-<!--        <p>First we'll tackle this from a project standpoint: Well, we
+        <p>First we'll tackle this from a project standpoint: Well, we
         made an offer to Microsoft and Actuate (tongue in cheek
         ... well mostly) that we'd quit the project and retire if
         they'd simply write us each a really large check. I've yet to
@@ -107,7 +111,7 @@ already started making waves.
         <p>Next, we've got some work to do here at Jakarta to finish
            integrating POI into the community.  Furthermore, we're
            still transitioning the Serializer to Cocoon.
-        </p>-->
+        </p>
         <p>HSSF, during the 2.0 cycle, will undergo a few
         optimizations. We'll also be adding new features like a full
         implementation of Formulas and custom text formats. We're
@@ -138,7 +142,7 @@ already started making waves.
         that new blood will join the team and allow us to tackle this
         even faster (in part because POIFS is already finished). But
         maybe what we need most is you!  </p>
-      </section>
+      </section> -->
 
     </body>
   <footer>

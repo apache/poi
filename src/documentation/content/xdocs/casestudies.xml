@@ -21,7 +21,7 @@
 
 <document>
     <header>
-        <title>Jakarta POI - Case Studies</title>
+        <title>Apache POI - Case Studies</title>
         <authors>
             <person id="AO" name="Andrew C. Oliver" email="acoliver@apache.org"/>
             <person id="CR" name="Cameron Riley" email="crileyNO@SPAMekmail.com"/>
@@ -48,9 +48,9 @@
                 agreed to have a few T-Shirts printed with the POI logo (once its
                 chosen) for the first
                 few best submissions.  To submit a case study, either
-                <link href="http://jakarta.apache.org/poi/getinvolved/index.html">
+                <link href="getinvolved/index.html">
                     submit a patch for this page</link> or email it to the
-                <link href="http://jakarta.apache.org/site/mail2.html#poi">mailing list
+                <link href="mailinglists.html">mailing list
                 </link> (with [PATCH] prefixed subject, please).
             </p>
         </section>
@@ -68,7 +68,7 @@
               </p>
               <p>
 
-              The Jakarta-POI project has helped QuestionPro compete with the other players in the marketplace with proprietary technology. It leveled the playing field with respect to reporting and data analysis solutions. It helped in opening doors into closed solutions like Microsoft's CDF. Today about 100 excel reports are generated daily, each with about 10-30 sheets in them. 
+              The Apache-POI project has helped QuestionPro compete with the other players in the marketplace with proprietary technology. It leveled the playing field with respect to reporting and data analysis solutions. It helped in opening doors into closed solutions like Microsoft's CDF. Today about 100 excel reports are generated daily, each with about 10-30 sheets in them. 
               </p>
 
               <p>
@@ -130,9 +130,9 @@ format,
                     The
                     <link href="http://www.lbank.lt/">Bank of Lithuania</link>
                     reports financial statistical data to Excel format using the
-                    <link href="http://jakarta.apache.org/poi/">Jakarta POI</link>
+                    <link href="http://poi.apache.org/">Apache POI</link>
                     project's
-                    <link href="http://jakarta.apache.org/poi/hssf/">
+                    <link href="hssf/">
                         HSSF</link> API.  The system is based on Oracle JServer and
                     utilizes a Java stored procedure that outputs to XLS format
                     using the HSSF API.  - Arian Lashkov (alaskov at lbank.lt)

@@ -42,14 +42,10 @@ See http://xml.apache.org/forrest/linking.html for more info
             </forrest>
             <cocoon href="cocoon/"/>
         </xml.apache.org>
-        <jakarta.apache.org href="http://jakarta.apache.org/">
-            <ant href="ant/"/>
-            <poi href="poi/"/>
-        </jakarta.apache.org>
         <junit href="junit/index.html"/>
         <jdepend href="jdepend/index.html"/>
         <javadoc href="apidocs/index.html"/>
-	    <download href="http://www.apache.org/dyn/closer.cgi/jakarta/poi/"/>
+	    <download href="http://www.apache.org/dyn/closer.cgi/poi/"/>
     </external-refs>
 
 </site>
