@@ -51,14 +51,21 @@
       <section><title>HSSF</title>
         <p>
           <link href="hssf/index.html">HSSF</link> is the set of APIs 
-           for reading and writing Microsoft Excel 97(-XP) spreadsheet using (only) Java.
+           for reading and writing Microsoft Excel 97(-XP) spreadsheets using (only) Java.
         </p>
       </section>
 
       <section><title>HWPF</title>
         <p>
           <link href="hwpf/index.html">HWPF</link>  is the set of APIs                   
-          for reading and writing Microsoft Word 97(-XP) spreadsheet using (only) Java.
+          for reading and writing Microsoft Word 97(-XP) documents using (only) Java.
+        </p>
+      </section>
+
+      <section><title>HSLF</title>
+        <p>
+          <link href="hslf/index.html">HSLF</link>  is the set of APIs                   
+          for reading and writing Microsoft PowerPoint 97(-XP) documents using (only) Java.
         </p>
       </section>
 
@@ -110,7 +117,7 @@
   </body>
   <footer>
     <legal>
-      Copyright 2005 The Apache Software Foundation or its licensors, as applicable.
+      Copyright 2007 The Apache Software Foundation or its licensors, as applicable.
       $Revision$ $Date$
     </legal>
   </footer>
