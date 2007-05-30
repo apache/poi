@@ -45,7 +45,7 @@ public abstract class Shape {
 
     // For logging
     protected POILogger logger = POILogFactory.getLogger(this.getClass());
-    
+
     /**
      * In Escher absolute distances are specified in
      * English Metric Units (EMUs), occasionally referred to as A units;
@@ -307,6 +307,17 @@ public abstract class Shape {
      */
     public Fill getFill(){
         return new Fill(this);
+    }
+
+
+    /**
+     * Returns the hyperlink assigned to this shape
+     *
+     * @return the hyperlink assigned to this shape
+     * or <code>null</code> if not found.
+     */
+     public Hyperlink getHyperlink(){
+        return Hyperlink.find(this);
     }
 
 }

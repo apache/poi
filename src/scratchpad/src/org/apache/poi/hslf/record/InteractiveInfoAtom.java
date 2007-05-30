@@ -30,10 +30,37 @@ import org.apache.poi.util.LittleEndian;
  * (The actual link is held Document.ExObjList.ExHyperlink)
  *
  * @author Nick Burch
+ * @author Yegor Kozlov
  */
 
 public class InteractiveInfoAtom extends RecordAtom
 {
+
+    /**
+     * Action Table
+     */
+    public static final int ACTION_NONE = 0;
+    public static final int ACTION_MACRO = 1;
+    public static final int ACTION_RUNPROGRAM = 2;
+    public static final int ACTION_JUMP = 3;
+    public static final int ACTION_HYPERLINK = 4;
+    public static final int ACTION_OLE = 5;
+    public static final int ACTION_MEDIA = 6;
+    public static final int ACTION_CUSTOMSHOW = 7;
+
+    /**
+     *  Jump Table
+     */
+    public static final int JUMP_NONE = 0;
+    public static final int JUMP_NEXTSLIDE = 1;
+    public static final int JUMP_PREVIOUSSLIDE = 2;
+    public static final int JUMP_FIRSTSLIDE = 3;
+    public static final int JUMP_LASTSLIDE = 4;
+    public static final int JUMP_LASTSLIDEVIEWED = 5;
+    public static final int JUMP_ENDSHOW = 6;
+
+
+
     /**
      * Record header.
      */
@@ -90,46 +117,138 @@ public class InteractiveInfoAtom extends RecordAtom
      *  ExHyperlink with this number to get the details.
      * @return the link number
      */
-    public int getNumber() {
+    public int getHyperlinkID() {
         return LittleEndian.getInt(_data,4);
     }
 
     /**
-     * Sets the link number
-     * @param number the link number.
+     * Sets the persistent unique identifier of the link
+     *
+     * @param number the persistent unique identifier of the link
      */
-    public void setNumber(int number) {
+    public void setHyperlinkID(int number) {
         LittleEndian.putInt(_data,4,number);
     }
     
     /**
-     * Get the first number - meaning unknown
+     * a reference to a sound in the sound collection.
      */
-    public int _getNumber1() { 
+    public int getSoundRef() {
         return LittleEndian.getInt(_data,0);
     }
-    protected void _setNumber1(int val) {
+    /**
+     * a reference to a sound in the sound collection.
+     *
+     * @param val a reference to a sound in the sound collection
+     */
+    public void setSoundRef(int val) {
     	LittleEndian.putInt(_data, 0, val);
     }
 
     /**
-     * Get the third number - meaning unknown
+     * Hyperlink Action.
+     * <p>
+     * see <code>ACTION_*</code> constants for the list of actions
+     * </p>
+     *
+     * @return hyperlink action.
      */
-    public int _getNumber3() { 
-        return LittleEndian.getInt(_data,8);
-    }
-    protected void _setNumber3(int val) {
-    	LittleEndian.putInt(_data, 8, val);
+    public byte getAction() {
+        return _data[8];
     }
 
     /**
-     * Get the fourth number - meaning unknown
+     * Hyperlink Action
+     * <p>
+     * see <code>ACTION_*</code> constants for the list of actions
+     * </p>
+     *
+     * @param val hyperlink action.
      */
-    public int _getNumber4() { 
-        return LittleEndian.getInt(_data,12);
+    public void setAction(byte val) {
+    	_data[8] = val;
     }
-    protected void _setNumber4(int val) {
-    	LittleEndian.putInt(_data, 12, val);
+
+    /**
+     * Only valid when action == OLEAction. OLE verb to use, 0 = first verb, 1 = second verb, etc.
+     */
+    public byte getOleVerb() {
+        return _data[9];
+    }
+
+    /**
+     * Only valid when action == OLEAction. OLE verb to use, 0 = first verb, 1 = second verb, etc.
+     */
+    public void setOleVerb(byte val) {
+    	_data[9] = val;
+    }
+
+    /**
+     * Jump
+     * <p>
+     * see <code>JUMP_*</code> constants for the list of actions
+     * </p>
+     *
+     * @return jump
+     */
+    public byte getJump() {
+        return _data[10];
+    }
+
+    /**
+     * Jump
+     * <p>
+     * see <code>JUMP_*</code> constants for the list of actions
+     * </p>
+     *
+     * @param val jump
+     */
+    public void setJump(byte val) {
+    	_data[10] = val;
+    }
+
+    /**
+     * Flags
+     * <p>
+     * <li> Bit 1: Animated. If 1, then button is animated
+     * <li> Bit 2: Stop sound. If 1, then stop current sound when button is pressed.
+     * <li> Bit 3: CustomShowReturn. If 1, and this is a jump to custom show,
+     *   then return to this slide after custom show.
+     * </p>
+     */
+    public byte getFlags() {
+        return _data[11];
+    }
+
+    /**
+     * Flags
+     * <p>
+     * <li> Bit 1: Animated. If 1, then button is animated
+     * <li> Bit 2: Stop sound. If 1, then stop current sound when button is pressed.
+     * <li> Bit 3: CustomShowReturn. If 1, and this is a jump to custom show,
+     *   then return to this slide after custom show.
+     * </p>
+     */
+    public void setFlags(byte val) {
+    	_data[11] = val;
+    }
+
+    /**
+     * hyperlink type
+     *
+     * @return hyperlink type
+     */
+    public byte getHyperlinkType() {
+        return _data[12];
+    }
+
+    /**
+     * hyperlink type
+     *
+     * @param val hyperlink type
+     */
+    public void setHyperlinkType(byte val) {
+    	_data[12] = val;
     }
 
     /**

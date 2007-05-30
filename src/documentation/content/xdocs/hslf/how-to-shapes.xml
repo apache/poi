@@ -38,6 +38,7 @@
                     <li><link href="#SlideTitle">How to set slide title</link></li>
                     <li><link href="#Fill">How to work with slide/shape background</link></li>
                     <li><link href="#Bullets">How to create bulleted lists</link></li>
+                    <li><link href="#Hyperlinks">Hyperlinks</link></li>
                 </ul>
             </section>
             <section><title>Features</title>
@@ -323,31 +324,68 @@
                 <anchor id="Bullets"/>
                 <section><title>How to create bulleted lists</title>
                     <source>
-        SlideShow ppt = new SlideShow();
+  SlideShow ppt = new SlideShow();
 
-        Slide slide = ppt.createSlide();
+  Slide slide = ppt.createSlide();
 
-        TextBox shape = new TextBox();
-        RichTextRun rt = shape.getTextRun().getRichTextRuns()[0];
-        shape.setText(
-                "January\r" +
-                "February\r" +
-                "March\r" +
-                "April");
-        rt.setFontSize(42);
-        rt.setBullet(true);
-        rt.setBulletOffset(0);  //bullet offset
-        rt.setTextOffset(50);   //text offset (should be greater than bullet offset)
-        rt.setBulletChar('\u263A'); //bullet character
-        slide.addShape(shape);
+  TextBox shape = new TextBox();
+  RichTextRun rt = shape.getTextRun().getRichTextRuns()[0];
+  shape.setText(
+          "January\r" +
+          "February\r" +
+          "March\r" +
+          "April");
+  rt.setFontSize(42);
+  rt.setBullet(true);
+  rt.setBulletOffset(0);  //bullet offset
+  rt.setTextOffset(50);   //text offset (should be greater than bullet offset)
+  rt.setBulletChar('\u263A'); //bullet character
+  slide.addShape(shape);
 
-        shape.setAnchor(new java.awt.Rectangle(50, 50, 500, 300));  //position of the text box in the slide
-        slide.addShape(shape);
+  shape.setAnchor(new java.awt.Rectangle(50, 50, 500, 300));  //position of the text box in the slide
+  slide.addShape(shape);
 
-        FileOutputStream out = new FileOutputStream("bullets.ppt");
-        ppt.write(out);
-        out.close();
-                  </source>
+  FileOutputStream out = new FileOutputStream("bullets.ppt");
+  ppt.write(out);
+  out.close();
+                </source>
+                </section>
+                <anchor id="Hyperlinks"/>
+                <section><title>How to read hyperlinks from a slide show</title>
+                    <source>
+    FileInputStream is = new FileInputStream("slideshow.ppt");
+    SlideShow ppt = new SlideShow(is);
+    is.close();
+
+    Slide[] slide = ppt.getSlides();
+    for (int j = 0; j &lt; slide.length; j++) {
+
+        //read hyperlinks from the text runs
+        TextRun[] txt = slide[j].getTextRuns();
+        for (int k = 0; k &lt; txt.length; k++) {
+            String text = txt[k].getText();
+            Hyperlink[] links = txt[k].getHyperlinks();
+            if(links != null) for (int l = 0; l &lt; links.length; l++) {
+                Hyperlink link = links[l];
+                String title = link.getTitle();
+                String address = link.getAddress();
+                String substring = text.substring(link.getStartIndex(), link.getEndIndex()-1); //in ppt end index is inclusive
+            }
+        }
+
+        //in PowerPoint you can assign a hyperlink to a shape without text,
+        //for example to a Line object. The code below demonstrates how to
+        //read such hyperlinks
+        Shape[] sh = slide[j].getShapes();
+        for (int k = 0; k &lt; sh.length; k++) {
+            Hyperlink link = sh[k].getHyperlink();
+            if(link != null)  {
+                String title = link.getTitle();
+                String address = link.getAddress();
+            }
+        }
+    }
+                </source>
                 </section>
                   
             </section>

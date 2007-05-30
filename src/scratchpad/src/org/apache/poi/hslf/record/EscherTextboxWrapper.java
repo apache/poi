@@ -39,6 +39,7 @@ public class EscherTextboxWrapper extends RecordContainer
 {
 	private EscherTextboxRecord _escherRecord;
 	private long _type;
+    private int shapeId;
 
 	/**
 	 * Returns the underlying DDF Escher Record
@@ -93,4 +94,18 @@ public class EscherTextboxWrapper extends RecordContainer
 		// Save in the escher layer
 		_escherRecord.setData(data);
 	}
+
+    /**
+     * @return  Shape ID
+     */
+    public int getShapeId(){
+        return shapeId;
+    }
+
+    /**
+     *  @param id Shape ID
+     */
+    public void setShapeId(int id){
+        shapeId = id;
+    }
 }

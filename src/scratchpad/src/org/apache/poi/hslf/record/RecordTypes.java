@@ -112,7 +112,7 @@ public class RecordTypes {
     public static final Type SlideNumberMCAtom = new Type(4056,null);
     public static final Type HeadersFooters = new Type(4057,null);
     public static final Type HeadersFootersAtom = new Type(4058,null);
-    public static final Type TxInteractiveInfoAtom = new Type(4063,null);
+    public static final Type TxInteractiveInfoAtom = new Type(4063,TxInteractiveInfoAtom.class);
     public static final Type CharFormatAtom = new Type(4066,null);
     public static final Type ParaFormatAtom = new Type(4067,null);
     public static final Type RecolorInfoAtom = new Type(4071,null);

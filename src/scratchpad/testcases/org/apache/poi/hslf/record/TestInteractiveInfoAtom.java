@@ -53,22 +53,22 @@ public class TestInteractiveInfoAtom extends TestCase {
 		InteractiveInfoAtom ia = new InteractiveInfoAtom(data_a, 0, data_a.length);
 		InteractiveInfoAtom ib = new InteractiveInfoAtom(data_b, 0, data_b.length);
 		
-		assertEquals(1, ia.getNumber());
-		assertEquals(4, ib.getNumber());
+		assertEquals(1, ia.getHyperlinkID());
+		assertEquals(4, ib.getHyperlinkID());
     }
     
     public void testGetRest() throws Exception {
 		InteractiveInfoAtom ia = new InteractiveInfoAtom(data_a, 0, data_a.length);
 		InteractiveInfoAtom ib = new InteractiveInfoAtom(data_b, 0, data_b.length);
 		
-		assertEquals(0, ia._getNumber1());
-		assertEquals(0, ib._getNumber1());
+		assertEquals(0, ia.getSoundRef());
+		assertEquals(0, ib.getSoundRef());
 		
-		assertEquals(4, ia._getNumber3());
-		assertEquals(4, ib._getNumber3());
+		assertEquals(4, ia.getAction());
+		assertEquals(4, ib.getAction());
 		
-		assertEquals(8, ia._getNumber4());
-		assertEquals(8, ib._getNumber4());
+		assertEquals(8, ia.getHyperlinkType());
+		assertEquals(8, ib.getHyperlinkType());
     }
     
 	public void testWrite() throws Exception {
@@ -88,10 +88,10 @@ public class TestInteractiveInfoAtom extends TestCase {
     	InteractiveInfoAtom ia = new InteractiveInfoAtom();
     	
     	// Set values
-    	ia.setNumber(1);
-    	ia._setNumber1(0);
-    	ia._setNumber3(4);
-    	ia._setNumber4(8);
+    	ia.setHyperlinkID(1);
+    	ia.setSoundRef(0);
+    	ia.setAction((byte)4);
+    	ia.setHyperlinkType((byte)8);
     	
 		// Check it's now the same as a
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -109,7 +109,7 @@ public class TestInteractiveInfoAtom extends TestCase {
 		InteractiveInfoAtom ia = new InteractiveInfoAtom(data_a, 0, data_a.length);
 
 		// Change the number
-		ia.setNumber(4);
+		ia.setHyperlinkID(4);
 		
 		// Check bytes are now the same
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();

@@ -21,6 +21,7 @@ package org.apache.poi.hslf.model;
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherDgRecord;
 import org.apache.poi.ddf.EscherRecord;
+import org.apache.poi.ddf.EscherSpRecord;
 import org.apache.poi.hslf.record.*;
 import org.apache.poi.hslf.usermodel.SlideShow;
 
@@ -127,7 +128,13 @@ public abstract class Sheet {
         Vector runsV = new Vector();
         EscherTextboxWrapper[] wrappers = ppdrawing.getTextboxWrappers();
         for (int i = 0; i < wrappers.length; i++) {
+            int s1 = runsV.size();
             findTextRuns(wrappers[i].getChildRecords(), runsV);
+            int s2 = runsV.size();
+            if (s2 != s1){
+                TextRun t = (TextRun) runsV.get(runsV.size()-1);
+                t.setShapeId(wrappers[i].getShapeId());
+            }
         }
         TextRun[] runs = new TextRun[runsV.size()];
         for (int i = 0; i < runs.length; i++) {
@@ -176,6 +183,15 @@ public abstract class Sheet {
                 }
 
                 if (trun != null) {
+                    ArrayList lst = new ArrayList();
+                    for (int j = i; j < records.length; j++) {
+                        if(j > i && records[j] instanceof TextHeaderAtom) break;
+                        lst.add(records[j]);
+                    }
+                    Record[] recs = new Record[lst.size()];
+                    lst.toArray(recs);
+                    trun._records = recs;
+                    
                     found.add(trun);
                     i++;
                 } else {
@@ -232,6 +248,11 @@ public abstract class Sheet {
         EscherDgRecord dg = (EscherDgRecord) Shape.getEscherChild(dgContainer, EscherDgRecord.RECORD_ID);
         dg.setNumShapes(dg.getNumShapes() + 1);
 
+        int shapeId = dg.getLastMSOSPID()+1;
+        dg.setLastMSOSPID(shapeId);
+
+        EscherSpRecord sp = shape.getSpContainer().getChildById(EscherSpRecord.RECORD_ID);
+        if(sp != null) sp.setShapeId(shapeId);
         shape.setSheet(this);
         shape.afterInsert(this);
 
