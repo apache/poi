@@ -48,7 +48,7 @@ public class TestInteractiveInfo extends TestCase {
 		InteractiveInfo ii = new InteractiveInfo(data_a, 0, data_a.length);
 		InteractiveInfoAtom ia = ii.getInteractiveInfoAtom();
 		
-		assertEquals(1, ia.getNumber());
+		assertEquals(1, ia.getHyperlinkID());
     }
     
 	public void testWrite() throws Exception {
@@ -69,10 +69,10 @@ public class TestInteractiveInfo extends TestCase {
     	InteractiveInfoAtom ia = ii.getInteractiveInfoAtom();
     	
     	// Set values
-    	ia.setNumber(1);
-    	ia._setNumber1(0);
-    	ia._setNumber3(4);
-    	ia._setNumber4(8);
+    	ia.setHyperlinkID(1);
+    	ia.setSoundRef(0);
+    	ia.setAction((byte)4);
+    	ia.setHyperlinkType((byte)8);
     	
 		// Check it's now the same as a
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();

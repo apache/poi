@@ -161,7 +161,8 @@ public class TestShapes extends TestCase {
         out.close();
 
         ppt = new SlideShow(new HSLFSlideShow(new ByteArrayInputStream(out.toByteArray())));
-
+        sl = ppt.getSlides()[0];
+        
         txtbox = (TextBox)sl.getShapes()[0];
         rt = txtbox.getTextRun().getRichTextRuns()[0];
 

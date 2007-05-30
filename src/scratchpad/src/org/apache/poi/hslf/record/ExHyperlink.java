@@ -42,13 +42,22 @@ public class ExHyperlink extends RecordContainer {
 	
 	/**
 	 * Returns the URL of the link.
-	 * TODO: Figure out which of detailsA or detailsB is the
-	 *  one that always holds it 
+     *
+     * @return the URL of the link
 	 */
 	public String getLinkURL() {
-		return linkDetailsA.getText();
+		return linkDetailsB == null ? null : linkDetailsB.getText();
 	}
-	
+
+    /**
+     * Returns the hyperlink's user-readable name
+     *
+     * @return the hyperlink's user-readable name
+     */
+    public String getLinkTitle() {
+        return linkDetailsA == null ? null : linkDetailsA.getText();
+    }
+
 	/**
 	 * Sets the URL of the link
 	 * TODO: Figure out if we should always set both
@@ -66,13 +75,13 @@ public class ExHyperlink extends RecordContainer {
 	 * Get the link details (field A)
 	 */
 	public String _getDetailsA() {
-		return linkDetailsA.getText();
+		return linkDetailsA == null ? null : linkDetailsA.getText();
 	}
 	/**
 	 * Get the link details (field B)
 	 */
 	public String _getDetailsB() {
-		return linkDetailsB.getText();
+		return linkDetailsB == null ? null : linkDetailsB.getText();
 	}
 
 	/** 

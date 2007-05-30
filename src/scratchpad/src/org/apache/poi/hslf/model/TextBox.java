@@ -28,7 +28,6 @@ import java.awt.*;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
 import java.io.IOException;
-import java.util.Vector;
 
 /**
  * Represents a TextFrame shape in PowerPoint.
@@ -170,7 +169,7 @@ public class TextBox extends SimpleShape {
      * @return the text string for this textbox.
      */
      public String getText(){
-        return _txtrun.getText();        
+        return _txtrun == null ? null : _txtrun.getText();
     }
 
     /**
@@ -452,56 +451,37 @@ public class TextBox extends SimpleShape {
     }
 
     private void initTextRun(){
-        TextHeaderAtom tha = null;
-        TextCharsAtom tca = null;
-        TextBytesAtom tba = null;
-        StyleTextPropAtom sta = null;
         OutlineTextRefAtom ota = null;
         
         // Find the interesting child records 
         Record[] child = _txtbox.getChildRecords();
         for (int i = 0; i < child.length; i++) {
-            if (child[i] instanceof TextHeaderAtom) tha = (TextHeaderAtom)child[i];
-            else if (child[i] instanceof TextBytesAtom) tba = (TextBytesAtom)child[i];
-            else if (child[i] instanceof StyleTextPropAtom) sta = (StyleTextPropAtom)child[i];
-            else if (child[i] instanceof OutlineTextRefAtom) ota = (OutlineTextRefAtom)child[i];
-            else if (child[i] instanceof TextCharsAtom) tca = (TextCharsAtom)child[i];
-        }
-
-        // Special handling for cases where there's an OutlineTextRefAtom
-        if (ota != null) {
-            // TextHeaderAtom, TextBytesAtom and StyleTextPropAtom are
-        	//  stored outside of  EscherContainerRecord
-            int idx = ota.getTextIndex();
-            Slide sl = (Slide)getSheet();
-            Record[] rec = sl.getSlideAtomsSet().getSlideRecords();
-            for (int i = 0, j = 0; i < rec.length; i++) {
-                if(rec[i].getRecordType() == RecordTypes.TextHeaderAtom.typeID){
-                    if(j++ == idx) { //we found j-th  TextHeaderAtom, read the text data
-                        for (int k = i; k < rec.length; k++) {
-                            if (rec[k] instanceof TextHeaderAtom) {
-                                if (tha != null) break;
-                                else tha = (TextHeaderAtom)rec[k];
-                            }
-                            else if (rec[k] instanceof TextBytesAtom) tba = (TextBytesAtom)rec[k];
-                            else if (rec[k] instanceof TextCharsAtom) tca = (TextCharsAtom)rec[k];
-                            else if (rec[k] instanceof StyleTextPropAtom) sta = (StyleTextPropAtom)rec[k];
-                        }
-                    }
-                }
+            if (child[i] instanceof OutlineTextRefAtom) {
+                ota = (OutlineTextRefAtom)child[i];
+                break;
             }
         }
-        
-        // If we found the records we needed, create a TextRun
-        if(tba != null) {
-        	// Bytes based Text Run
-        	_txtrun = new TextRun(tha,tba,sta);
-        } else if (tca != null) {
-        	// Characters (unicode) based Text Run
-        	_txtrun = new TextRun(tha,tca,sta);
+
+        Sheet sheet = getSheet();
+        TextRun[] runs = sheet.getTextRuns();
+        if (ota != null) {
+            int idx = ota.getTextIndex();
+            if(idx < runs.length) _txtrun = runs[idx];
+            if(_txtrun == null) {
+                logger.log(POILogger.WARN, "text run not found for OutlineTextRefAtom.TextIndex=" + idx);
+            }
         } else {
-        	// Empty text box
-        	logger.log(POILogger.WARN, "no text records found for TextBox");
+            int shapeId = _escherContainer.getChildById(EscherSpRecord.RECORD_ID).getShapeId();
+            if(runs != null) for (int i = 0; i < runs.length; i++) {
+                if(runs[i].getShapeId() == shapeId){
+                    _txtrun = runs[i];
+                    break;
+                }
+            }
+            if(_txtrun == null) {
+                logger.log(POILogger.WARN, "text run not found for shapeId=" + shapeId);
+            }
         }
+
     }
 }

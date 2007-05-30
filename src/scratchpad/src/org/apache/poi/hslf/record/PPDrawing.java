@@ -147,6 +147,13 @@ public class PPDrawing extends RecordAtom
 				EscherTextboxRecord tbr = (EscherTextboxRecord)toSearch[i];
 				EscherTextboxWrapper w = new EscherTextboxWrapper(tbr);
 				found.add(w);
+                for (int j = i; j >= 0; j--) {
+                    if(toSearch[j] instanceof EscherSpRecord){
+                        EscherSpRecord sp = (EscherSpRecord)toSearch[j];
+                        w.setShapeId(sp.getShapeId());
+                        break;
+                    }
+                }
 			} else {
 				// If it has children, walk them
 				if(toSearch[i].isContainerRecord()) {

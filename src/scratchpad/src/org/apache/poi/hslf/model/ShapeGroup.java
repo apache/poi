@@ -211,4 +211,13 @@ public class ShapeGroup extends Shape{
         return spRecord.getOptions() >> 4;
     }
 
+    /**
+     * Returns <code>null</code> - shape groups can't have hyperlinks
+     *
+     * @return <code>null</code>.
+     */
+     public Hyperlink getHyperlink(){
+        return null;
+    }
+    
 }

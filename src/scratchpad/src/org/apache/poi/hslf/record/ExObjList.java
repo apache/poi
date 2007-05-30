@@ -109,4 +109,21 @@ public class ExObjList extends RecordContainer {
 		writeOut(_header[0],_header[1],_type,_children,out);
 	}
 
+    /**
+     * Lookup a hyperlink by its unique id
+     *
+     * @param id hyperlink id
+     * @return found <code>ExHyperlink</code> or <code>null</code>
+     */
+    public ExHyperlink get(int id){
+        for(int i=0; i<_children.length; i++) {
+            if(_children[i] instanceof ExHyperlink) {
+                ExHyperlink rec = (ExHyperlink)_children[i];
+                if (rec.getExHyperlinkAtom().getNumber() == id){
+                    return rec;
+                }
+            }
+        }
+        return null;
+    }
 }

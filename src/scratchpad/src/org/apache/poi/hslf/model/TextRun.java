@@ -49,6 +49,12 @@ public class TextRun
 	protected RichTextRun[] _rtRuns;
 	private SlideShow slideShow;
     private Sheet sheet;
+    private int shapeId;
+    /**
+     * all text run records that follow TextHeaderAtom.
+     * (there can be misc InteractiveInfo, TxInteractiveInfo and other records)
+     */
+    protected Record[] _records;
 
 	/**
 	* Constructs a Text Run from a Unicode text block
@@ -516,5 +522,29 @@ public class TextRun
 
     public Sheet getSheet(){
         return this.sheet;        
+    }
+
+    /**
+     * @return  Shape ID
+     */
+    protected int getShapeId(){
+        return shapeId;
+    }
+
+    /**
+     *  @param id Shape ID
+     */
+    protected void setShapeId(int id){
+        shapeId = id;
+    }
+
+    /**
+     * Returns the array of all hyperlinks in this text run
+     *
+     * @return the array of all hyperlinks in this text run
+     * or <code>null</code> if not found.
+     */
+    public Hyperlink[] getHyperlinks(){
+        return Hyperlink.find(this);
     }
 }
