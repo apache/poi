@@ -25,6 +25,7 @@
         <authors>
             <person email="acoliver2@users.sourceforge.net" name="Andrew C. Oliver" id="AO"/>
             <person email="poi-user@jakarta.apache.org" name="Glen Stampoultzis" id="GJS"/>
+            <person email="nick@apache.org" name="Nick Burch" id="NB"/>
             <person email="sergeikozello@mail.ru" name="Sergei Kozello" id="SK"/>
         </authors>
     </header>
@@ -47,9 +48,22 @@
               memory footprint. 
               </p>
         </section>
+        <section><title>Different APIs</title>
+           <p>There are a few different ways to access the HSSF API. These
+              have different characteristics, so you should read up on
+              all to select the best for you.</p>
+           <ul>
+             <li><link href="#user_api">User API</link></li>
+             <li><link href="#event_api">Event API</link></li>
+             <li><link href="#record_aware_event_api">Event API with extensions to be Record Aware</link></li>
+             <li><link href="#low_level_api">Low Level API</link></li>
+           </ul>
+        </section>
+    </section>
     <section><title>General Use</title>
+        <anchor id="user_api" />
         <section><title>User API</title>
-                <section><title>Writing a new one</title>
+                <section><title>Writing a new file</title>
 
                     <p>The high level API (package: org.apache.poi.hssf.usermodel)
                     is what most people should use. Usage is very simple.
@@ -245,7 +259,7 @@ wb.write(out);
 out.close();
         ]]></source>
         </section>
-                <section><title>Reading or modifying an existing file</title>
+        <section><title>Reading or modifying an existing file</title>
 
 <p>Reading in a file is equally simple. To read in a file, create a
 new instance of org.apache.poi.poifs.Filesystem, passing in an open InputStream, such as a FileInputStream
@@ -264,28 +278,38 @@ call workbook.write(outputstream) just as you did above.</p>
 <link href="http://svn.apache.org/repos/asf/jakarta/poi/trunk/src/java/org/apache/poi/hssf/dev/HSSF.java">org.apache.poi.hssf.dev.HSSF</link>.</p>
          </section>
         </section>
-                <section><title>Event API</title>
 
-                    <p>The event API is brand new.  It is intended for intermediate
-                    developers who are willing to learn a little bit of the low level API
-                    structures.  Its relatively simple to use, but requires a basic
-                    understanding of the parts of an Excel file (or willingness to
-                    learn).  The advantage provided is that you can read an XLS with a
-                    relatively small memory footprint.
-                    </p>
-                    <p>To use this API you construct an instance of
-                    org.apache.poi.hssf.eventmodel.HSSFRequest. Register a class you
-                    create that supports the
-                    org.apache.poi.hssf.eventmodel.HSSFListener interface using the
-                    HSSFRequest.addListener(yourlistener, recordsid).  The recordsid
-                    should be a static reference number (such as BOFRecord.sid) contained
-                    in the classes in org.apache.poi.hssf.record.  The trick is you
-                    have to know what these records are.  Alternatively you can call
-                    HSSFRequest.addListenerForAllRecords(mylistener).  In order to learn
-                    about these records you can either read all of the javadoc in the
-                    org.apache.poi.hssf.record package or you can just hack up a
-                    copy of org.apache.poi.hssf.dev.EFHSSF and adapt it to your
-                    needs.  TODO: better documentation on records.</p>
+        <anchor id="event_api" />
+        <section><title>Event API</title>
+
+          <p>The event API is newer than the User API.  It is intended for intermediate
+             developers who are willing to learn a little bit of the low level API
+             structures.  Its relatively simple to use, but requires a basic
+             understanding of the parts of an Excel file (or willingness to
+             learn).  The advantage provided is that you can read an XLS with a
+             relatively small memory footprint.
+          </p>
+          <p>One important thing to note with the basic Event API is that it
+             triggers events only for things actually stored within the file.
+             With the XLS file format, it is quite common for things that
+             have yet to be edited to simply not exist in the file. This means
+             there may well be apparent "gaps" in the record stream, which
+             you either need to work around, or use the
+             <link href="#record_aware_event_api">Record Aware</link> extension
+             to the Event API.</p>
+          <p>To use this API you construct an instance of
+			 org.apache.poi.hssf.eventmodel.HSSFRequest. Register a class you
+ 			 create that supports the
+ 			 org.apache.poi.hssf.eventmodel.HSSFListener interface using the
+ 			 HSSFRequest.addListener(yourlistener, recordsid).  The recordsid
+			 should be a static reference number (such as BOFRecord.sid) contained
+			 in the classes in org.apache.poi.hssf.record.  The trick is you
+			 have to know what these records are.  Alternatively you can call
+			 HSSFRequest.addListenerForAllRecords(mylistener).  In order to learn
+			 about these records you can either read all of the javadoc in the
+			 org.apache.poi.hssf.record package or you can just hack up a
+			 copy of org.apache.poi.hssf.dev.EFHSSF and adapt it to your
+			 needs.  TODO: better documentation on records.</p>
                     <p>Once you've registered your listeners in the HSSFRequest object
                     you can construct an instance of
                     org.apache.poi.poifs.filesystem.FileSystem (see POIFS howto) and
@@ -393,7 +417,51 @@ public class EventExample
 }
 ]]></source>
      </section>
-                <section><title>Low Level APIs</title>
+
+     <anchor id="record_aware_event_api" />
+     <section><title>Record Aware Event API</title>
+<p>
+This is an experimental extension to the normal 
+<link href="#event_api">Event API</link>. With this, your listener
+will be called with extra, dummy records. These dummy records should
+alert you to records which aren't present in the file (eg cells that have
+yet to be edited), and allow you to handle these.
+</p>
+<p>
+There are three dummy records that your HSSFListener will be called with:
+</p>
+<ul>
+ <li>org.apache.poi.hssf.eventusermodel.dummyrecord.MissingRowDummyRecord
+   <br />
+   This is called during the row record phase (which typically occurs before
+   the cell records), and indicates that the row record for the given
+   row is not present in the file.</li>
+ <li>org.apache.poi.hssf.eventusermodel.dummyrecord.MissingCellDummyRecord
+   <br />
+   This is called during the cell record phase. It is called when a cell
+   record is encountered which leaves a gap between it an the previous one.
+   You can get multiple of these, before the real cell record.</li>
+ <li>org.apache.poi.hssf.eventusermodel.dummyrecord.LastCellOfRowDummyRecord
+   <br />
+   This is called after the last cell of a given row. It indicates that there
+   are no more cells for the row, and also tells you how many cells you have
+   had. For a row with no cells, this will be the only record you get.</li>
+</ul>
+<p>
+To use the Record Aware Event API, you should create an
+org.apache.poi.hssf.eventusermodel.MissingRecordAwareHSSFListener, and pass
+it your HSSFListener. Then, register the MissingRecordAwareHSSFListener
+to the event model, and start that as normal.
+</p>
+<p>
+<em>This code is currently in the scratchpad section, so you will either
+ need to include the scratchpad jar on your classpath, or build from a</em>
+ <link href="../subversion.html">subversion checkout</link>.
+</p>
+     </section>
+
+     <anchor id="low_level_api" />
+     <section><title>Low Level APIs</title>
 
 <p>The low level API is not much to look at. It consists of lots of
 &quot;Records&quot; in the org.apache.poi.hssf.record.* package,
@@ -508,8 +576,6 @@ yet. When it does something, we'll document it.</p>
 <p><link href="../getinvolved/index.html"> So jump in! </link> </p>
 
      </section>
-
-</section>
 
 </section>
 </body>
