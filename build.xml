@@ -846,13 +846,21 @@ FORREST_HOME environment variable!</echo>
 			<fileset dir="legal/" />
         </jar>
 
-		<!-- Build the pom -->
+		<!-- Build the main pom -->
 		<!-- Copy from the base file, and substitute in the version -->
 		<filter token="VERSION" value="${version.id}" />
 		<copy 
 			filtering="true" 
 			file="poi.pom" 
 			tofile="${mavendist.dir}/${jar.name}-${version.id}.pom" 
+		/>
+		<!-- Build the poi => org.apache.poi redirect pom -->
+		<!-- Copy from the base file, and substitute in the version -->
+		<filter token="VERSION" value="${version.id}" />
+		<copy 
+			filtering="true" 
+			file="poi-redirect.pom" 
+			tofile="${mavendist.dir}/${jar.name}-${version.id}-redirect.pom" 
 		/>
 	</target>
 
