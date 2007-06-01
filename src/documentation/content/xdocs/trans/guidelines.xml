@@ -50,7 +50,7 @@
      </p>
      <p>
        To generate all of the documentation such as it would appear on the 
-       <link href="http://jakarta.apache.org/poi/">POI Website</link> you can execute the "site" target (optionally
+       <link href="http://poi.apache.org/">POI Website</link> you can execute the "site" target (optionally
        preceeded by the "clean" target. See "<link href="../howtobuild.html">How to Build</link>" page for more detail (Now, POI build uses <link href="http://xml.apache.org/forrest/">Forrest</link>).
      </p>
      <p> 
@@ -68,7 +68,7 @@
        requesting it be translated) into English and applied to the master before being applied to a translation.
      </p>
      <p>
-       We prefer you donate translations directly to the <link href="http://jakarta.apache.org/poi/">Jakarta POI</link>
+       We prefer you donate translations directly to the <link href="http://poi.apache.org/">Apache POI</link>
        project rather than hosting them offsite.  We will make every effort to accomidate you as we greatly appreciate your 
        efforts.  However, we understand that sites located within a country are the fastest and most searchable.  Therefore,
        we recommend and welcome folks mirroring the POI site and making the translated page the home page.  You can do this 
@@ -80,7 +80,7 @@
      </p>
      <p>
        Submitting translations is simple, you follow the same 
-       <link href="http://jakarta.apache.org/poi/getinvolved/index.html">instructions</link> as you would for submitting a code patch.
+       <link href="/getinvolved/index.html">instructions</link> as you would for submitting a code patch.
        Remeber to always generate patchs in diff -u format preserving the context relative to the jakarta-poi directory.  Also remember
        to submit any new files in a directory preserving archive format.  Never post these to the list, always use 
        <link href="http://issues.apache.org/bugzilla/buglist.cgi?product=POI&amp;short_desc=%5BPATCH%5D&amp;short_desc_type=allwordssubstr">Bugzilla</link>

@@ -23,7 +23,7 @@
   <header>
    <title>Record Generator HOWTO</title>
    <authors>
-    <person email="poi-user@jakarta.apache.org" name="Glen Stampoultzis" id="glens"/>
+    <person email="user@poi.apache.org" name="Glen Stampoultzis" id="glens"/>
     <person email="acoliver@apache.org" name="Andrew C. Oliver" id="acoliver"/>
    </authors>
   </header>

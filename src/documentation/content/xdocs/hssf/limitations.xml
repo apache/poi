@@ -23,7 +23,7 @@
     <header>
         <title>Limitations</title>
         <authors>
-            <person email="poi-user@jakarta.apache.org" name="Glen Stampoultzis" id="GJS"/>
+            <person email="user@poi.apache.org" name="Glen Stampoultzis" id="GJS"/>
         </authors>
     </header>
     <body>

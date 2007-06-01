@@ -24,7 +24,7 @@
         <title>The New Halloween Document</title>
         <authors>
             <person email="acoliver2@users.sourceforge.net" name="Andrew C. Oliver" id="AO"/>
-            <person email="poi-user@jakarta.apache.org" name="Glen Stampoultzis" id="GJS"/>
+            <person email="user@poi.apache.org" name="Glen Stampoultzis" id="GJS"/>
             <person email="nick@apache.org" name="Nick Burch" id="NB"/>
             <person email="sergeikozello@mail.ru" name="Sergei Kozello" id="SK"/>
         </authors>
@@ -275,7 +275,7 @@ method (sheet.removeRow(hssfrow)) and create objects just as you
 would if creating a new xls. When you are done modifying cells just
 call workbook.write(outputstream) just as you did above.</p>
 <p>An example of this can be seen in
-<link href="http://svn.apache.org/repos/asf/jakarta/poi/trunk/src/java/org/apache/poi/hssf/dev/HSSF.java">org.apache.poi.hssf.dev.HSSF</link>.</p>
+<link href="http://svn.apache.org/repos/asf/poi/trunk/src/java/org/apache/poi/hssf/dev/HSSF.java">org.apache.poi.hssf.dev.HSSF</link>.</p>
          </section>
         </section>
 
