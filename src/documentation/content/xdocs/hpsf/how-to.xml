@@ -76,10 +76,9 @@
 
    <note><strong>Please note:</strong> HPSF's writing functionality is
     <strong>not</strong> present in POI releases up to and including 2.5. In
-    order to write properties you have to download a later POI release (when
-    available) or retrieve the POI development version from the <link
-     href="http://jakarta.apache.org/site/cvsindex.html">Subversion
-     repository</link>.</note>
+    order to write properties you have to download a 3.0.x POI release,
+    or retrieve the POI development version from the <link
+     href="subversion.html">Subversion repository</link>.</note>
 
 
 

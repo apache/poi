@@ -23,7 +23,7 @@
     <header>
         <title>Hacking HSSF</title>
         <authors>
-            <person email="poi-user@jakarta.apache.org" name="Glen Stampoultzis" id="GJS"/>
+            <person email="user@poi.apache.org" name="Glen Stampoultzis" id="GJS"/>
             <person email="acoliver@apache.org" name="Andrew Oliver" id="AO"/>
         </authors>
     </header>
@@ -83,7 +83,7 @@
             and work your way up.</p>
         </section>
         <section><title>What Else Should I Know?</title>
-            <p>Make sure you <link href="http://jakarta.apache.org/poi/contrib.html">read the contributing section</link>
+            <p>Make sure you <link href="contrib.html">read the contributing section</link>
             as it contains more generation information about contributing to POI in general.</p>
         </section>
     </body>

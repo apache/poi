@@ -99,7 +99,7 @@
                 org.apache.poi.hssf.record.formula.FormulaParser</strong> class. This class implements a hand 
                 written recursive descent parser. 
             </p>
-            <p>Check out the <link href="http://jakarta.apache.org/poi/javadocs/">javadocs </link> for details. 
+            <p>Check out the <link href="http://poi.apache.org/javadocs/">javadocs </link> for details. 
             </p>
         </section>
        

@@ -23,7 +23,7 @@
       title="POI Project planning" 
       copyright="@year@ POI Project">
 
-  <menu label="Jakarta POI">
+  <menu label="Apache POI">
     <menu-item label="Top" href="../index.html"/>
   </menu>
 

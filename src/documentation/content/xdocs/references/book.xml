@@ -24,7 +24,7 @@
       copyright="@year@ POI Project"
       xmlns:xlink="http://www.w3.org/1999/xlink">
 
-  <menu label="Jakarta POI">
+  <menu label="Apache POI">
     <menu-item label="Top" href="../index.html"/>
   </menu>
 

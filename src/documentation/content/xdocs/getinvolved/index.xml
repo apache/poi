@@ -113,7 +113,7 @@
      or created.  Make sure you've documented your changes and altered the 
      examples/etc to reflect them.  Any new additions should have unit tests.
      Lastly, ensure that you've provided approriate javadoc.  (see 
-     <link href="http://jakarta.apache.org/poi/resolutions/res001.html">Coding
+     <link href="http://poi.apache.org/resolutions/res001.html">Coding
      Standards</link>).  Patches that are of low quality may be rejected or 
      the contributer may be asked to bring them up to spec.
    </p>

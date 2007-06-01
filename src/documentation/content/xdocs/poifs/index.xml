@@ -20,7 +20,7 @@
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "../dtd/document-v11.dtd">
 <document>
   <header>
-    <title>Jakarta POI - POIFS - Java implementation of the OLE 2 Compound Document format</title>
+    <title>Apache POI - POIFS - Java implementation of the OLE 2 Compound Document format</title>
     <subtitle>Overview</subtitle>
     <authors>
       <person name="Andrew C. Oliver" email="acoliver@apache.org"/>     

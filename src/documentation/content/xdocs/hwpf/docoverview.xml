@@ -21,7 +21,7 @@
 
 <document>
  <header>
-  <title>Jakarta POI - HWPF - Java API to Handle Microsoft Word Files</title>
+  <title>Apache POI - HWPF - Java API to Handle Microsoft Word Files</title>
   <subtitle>Word File Format</subtitle>
   <authors>
    <person name="S. Ryan Ackley" email="sackley@cfl.rr.com"/>
