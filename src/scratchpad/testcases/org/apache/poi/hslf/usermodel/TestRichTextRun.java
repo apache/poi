@@ -489,7 +489,7 @@ if(false) {
         assertEquals(2, txt.length);
 
         assertEquals(
-                "I’m a text box\r" +
+                "I\u2019m a text box\r" +
                 "With bullets\r" +
                 "That follow the design pattern\r" +
                 "From the slide master", txt[0].getRawText());
@@ -499,7 +499,7 @@ if(false) {
         assertEquals('\u2022', rt.getBulletChar());
 
         assertEquals(
-                "I’m a text box with user-defined\r" +
+                "I\u2019m a text box with user-defined\r" +
                 "bullet character", txt[1].getRawText());
         assertEquals(1, txt[1].getRichTextRuns().length);
         rt = txt[1].getRichTextRuns()[0];

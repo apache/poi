@@ -277,7 +277,7 @@ public class TestBugs extends TestCase {
         FileInputStream is = new FileInputStream(new File(cwd, "38256.ppt"));
         SlideShow ppt = new SlideShow(is);
         is.close();
-
+         
         assertTrue("No Exceptions while reading file", true);
 
         Slide[] slide = ppt.getSlides();
@@ -286,14 +286,14 @@ public class TestBugs extends TestCase {
         assertEquals(4, runs.length);
 
         HashSet txt = new HashSet();
-        txt.add("“HAPPY BIRTHDAY SCOTT”");
+        txt.add("\u201CHAPPY BIRTHDAY SCOTT\u201D");
         txt.add("Have a HAPPY DAY");
-        txt.add("PS Nobody is allowed to hassle Scott TODAY…");
-        txt.add("Drinks will be in the Boardroom at 5pm today to celebrate Scott’s B’Day…  See you all there!");
+        txt.add("PS Nobody is allowed to hassle Scott TODAY\u2026");
+        txt.add("Drinks will be in the Boardroom at 5pm today to celebrate Scott\u2019s B\u2019Day\u2026  See you all there!");
 
         for (int i = 0; i < runs.length; i++) {
             String text = runs[i].getRawText();
-            assertTrue(txt.contains(text));
+            assertTrue(text, txt.contains(text));
         }
 
     }
