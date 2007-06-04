@@ -36,6 +36,8 @@
     </devs>
 
         <release version="3.0.1-FINAL" date="2007-06-08">
+            <action dev="POI-DEVELOPERS" type="fix">Administrative updates to the Maven POM, and the release artificat build process</action>
+            <action dev="POI-DEVELOPERS" type="fix">23951 - [PATCH] Fix for HSSF setSheetOrder and tab names</action>
             <action dev="POI-DEVELOPERS" type="fix">42524 - [PATCH] Better HSLF support for problem shape groups</action>
             <action dev="POI-DEVELOPERS" type="fix">42520 - [PATCH] Better HSLF support for corrupt picture records</action>
             <action dev="POI-DEVELOPERS" type="add">Initial support for a "missing record aware" HSSF event model</action>
