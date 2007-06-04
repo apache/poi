@@ -351,6 +351,25 @@ public class EscherGraphics
         shape.setLineStyleColor(foreground.getRed(), foreground.getGreen(), foreground.getBlue());
     }
 
+    /**
+     * Fills a (closed) polygon, as defined by a pair of arrays, which
+     *  hold the <i>x</i> and <i>y</i> coordinates.
+     * <p>
+     * This draws the polygon, with <code>nPoint</code> line segments.
+     * The first <code>nPoint&nbsp;-&nbsp;1</code> line segments are
+     *  drawn between sequential points 
+     *  (<code>xPoints[i],yPoints[i],xPoints[i+1],yPoints[i+1]</code>).
+     * The final line segment is a closing one, from the last point to 
+     *  the first (assuming they are different).
+     * <p>
+     * The area inside of the polygon is defined by using an
+     *  even-odd fill rule (also known as the alternating rule), and 
+     *  the area inside of it is filled.
+     * @param xPoints array of the <code>x</code> coordinates.
+     * @param yPoints array of the <code>y</code> coordinates.
+     * @param nPoints the total number of points in the polygon.
+     * @see   java.awt.Graphics#drawPolygon(int[], int[], int)
+     */
     public void fillPolygon(int xPoints[], int yPoints[],
 				     int nPoints)
     {

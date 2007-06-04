@@ -329,24 +329,23 @@ public class EscherGraphics2d extends Graphics2D
     }
 
     /**
-     * Fills a closed polygon defined by
-     * arrays of <i>x</i> and <i>y</i> coordinates.
+     * Fills a (closed) polygon, as defined by a pair of arrays, which
+     *  hold the <i>x</i> and <i>y</i> coordinates.
      * <p>
-     * This method draws the polygon defined by <code>nPoint</code> line
-     * segments, where the first <code>nPoint&nbsp;-&nbsp;1</code>
-     * line segments are line segments from
-     * <code>(xPoints[i&nbsp;-&nbsp;1],&nbsp;yPoints[i&nbsp;-&nbsp;1])</code>
-     * to <code>(xPoints[i],&nbsp;yPoints[i])</code>, for
-     * 1&nbsp;&le;&nbsp;<i>i</i>&nbsp;&le;&nbsp;<code>nPoints</code>.
-     * The figure is automatically closed by drawing a line connecting
-     * the final point to the first point, if those points are different.
+     * This draws the polygon, with <code>nPoint</code> line segments.
+     * The first <code>nPoint&nbsp;-&nbsp;1</code> line segments are
+     *  drawn between sequential points 
+     *  (<code>xPoints[i],yPoints[i],xPoints[i+1],yPoints[i+1]</code>).
+     * The final line segment is a closing one, from the last point to 
+     *  the first (assuming they are different).
      * <p>
-     * The area inside the polygon is defined using an
-     * even-odd fill rule, also known as the alternating rule.
-     * @param        xPoints   a an array of <code>x</code> coordinates.
-     * @param        yPoints   a an array of <code>y</code> coordinates.
-     * @param        nPoints   a the total number of points.
-     * @see          java.awt.Graphics#drawPolygon(int[], int[], int)
+     * The area inside of the polygon is defined by using an
+     *  even-odd fill rule (also known as the alternating rule), and 
+     *  the area inside of it is filled.
+     * @param xPoints array of the <code>x</code> coordinates.
+     * @param yPoints array of the <code>y</code> coordinates.
+     * @param nPoints the total number of points in the polygon.
+     * @see   java.awt.Graphics#drawPolygon(int[], int[], int)
      */
     public void fillPolygon(int xPoints[], int yPoints[], int nPoints)
     {
