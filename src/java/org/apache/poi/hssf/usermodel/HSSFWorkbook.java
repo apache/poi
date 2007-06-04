@@ -321,6 +321,7 @@ public class HSSFWorkbook
      */
 
     public void setSheetOrder(String sheetname, int pos ) {
+        sheets.add(pos,sheets.remove(getSheetIndex(sheetname)));
         workbook.setSheetOrder(sheetname, pos);
     }
     

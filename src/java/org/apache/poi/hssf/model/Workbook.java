@@ -738,6 +738,7 @@ public class Workbook implements Model
 
         SSTRecord sst = null;
         int sstPos = 0;
+        boolean wroteBoundSheets = false;
         for ( int k = 0; k < records.size(); k++ )
         {
 
@@ -745,6 +746,7 @@ public class Workbook implements Model
             // Let's skip RECALCID records, as they are only use for optimization
             if ( record.getSid() != RecalcIdRecord.sid || ( (RecalcIdRecord) record ).isNeeded() )
             {
+                int len = 0; 
                 if (record instanceof SSTRecord)
                 {
                     sst = (SSTRecord)record;
@@ -754,7 +756,17 @@ public class Workbook implements Model
                 {
                     record = sst.createExtSSTRecord(sstPos + offset);
                 }
-                int len = record.serialize( pos + offset, data );
+                if (record instanceof BoundSheetRecord) {
+                     if(!wroteBoundSheets) {
+                        for (int i = 0; i < boundsheets.size(); i++) {
+                            len+= ((BoundSheetRecord)boundsheets.get(i))
+                                             .serialize(pos+offset+len, data);
+                        }
+                        wroteBoundSheets = true;
+                     }
+                } else {
+                   len = record.serialize( pos + offset, data );
+                }
                 /////  DEBUG BEGIN /////
 //                if (len != record.getRecordSize())
 //                    throw new IllegalStateException("Record size does not match serialized bytes.  Serialized size = " + len + " but getRecordSize() returns " + record.getRecordSize());
