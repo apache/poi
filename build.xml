@@ -127,6 +127,8 @@ under the License.
   <property name="changelog.file" location="${build.site}/changelog.html"/>
   <property name="dist.dir" location="build/dist"/>
   <property name="mavendist.dir" location="build/maven-dist"/>
+  <property name="mavendist.poi.dir" location="build/maven-dist/poi"/>
+  <property name="mavendist.oap.dir" location="build/maven-dist/org.apache.poi"/>
   <property name="jar.name" value="poi"/>
   <property name="version.id" value="3.0.1-alpha1"/>
   <property name="halt.on.test.failure" value="true"/>
@@ -234,8 +236,14 @@ under the License.
         <mkdir dir="${jdepend.report.out.dir}"/>
         <mkdir dir="${apidocs.report.dir}"/>
         <mkdir dir="${dist.dir}"/>
-        <mkdir dir="${mavendist.dir}"/>
         <mkdir dir="${build.site.src}/${main.documentation}"/>
+
+        <mkdir dir="${mavendist.dir}"/>
+        <mkdir dir="${mavendist.poi.dir}"/>
+        <mkdir dir="${mavendist.poi.dir}/poms"/>
+        <mkdir dir="${mavendist.oap.dir}"/>
+        <mkdir dir="${mavendist.oap.dir}/jars"/>
+        <mkdir dir="${mavendist.oap.dir}/poms"/>
 
         <copy todir="${build.site.src}/${main.documentation}">
             <fileset dir="${main.documentation}"/>
@@ -807,57 +815,102 @@ FORREST_HOME environment variable!</echo>
       description="Generates POI's website's contents"/>
 
 
-    <target name="maven-dist" depends="clean,compile" description="Builds the jar files for a maven distribution, and the POM to go with them">
-		<!-- Build a Jar of all the class files -->
-        <jar destfile="${mavendist.dir}/${jar.name}-${version.id}.jar">
-            <manifest>
-                <attribute name="Built-By" value="${user.name}"/>
-                <attribute name="Specification-Title" value="Apache POI"/>
-                <attribute name="Specification-Version" value="${version.id}-${DSTAMP}"/>
-                <attribute name="Specification-Vendor" value="Apache"/>
-                <attribute name="Implementation-Title" value="Apache POI"/>
-                <attribute name="Implementation-Version" value="${version.id}-${DSTAMP}"/>
-                <attribute name="Implementation-Vendor" value="Apache"/>
-            </manifest>        
-			<fileset dir="${main.output.dir}" />
-			<fileset dir="${contrib.output.dir}" />
-			<fileset dir="${scratchpad.output.dir}" />
-			<fileset dir="legal/" />
-        </jar>
+    <target name="maven-dist" depends="jar" description="Builds the POM files for a maven distribution, and copies these and the jars to the appropriate locations">
+		<!-- Copy the jar files into the maven jar directory -->
+		<copy
+			file="${dist.dir}/${jar.name}-${version.id}-${DSTAMP}.jar"
+			todir="${mavendist.oap.dir}/jars/" />
+		<copy
+			file="${dist.dir}/${jar.name}-contrib-${version.id}-${DSTAMP}.jar"
+			todir="${mavendist.oap.dir}/jars/" />
+		<copy
+			file="${dist.dir}/${jar.name}-scratchpad-${version.id}-${DSTAMP}.jar"
+			todir="${mavendist.oap.dir}/jars/" />
 
-		<!-- Build a Jar file of all the source files -->
-        <jar destfile="${mavendist.dir}/${jar.name}-${version.id}-sources.jar">
-            <manifest>
-                <attribute name="Built-By" value="${user.name}"/>
-                <attribute name="Specification-Title" value="Apache POI"/>
-                <attribute name="Specification-Version" value="${version.id}-${DSTAMP}"/>
-                <attribute name="Specification-Vendor" value="Apache"/>
-                <attribute name="Implementation-Title" value="Apache POI"/>
-                <attribute name="Implementation-Version" value="${version.id}-${DSTAMP}"/>
-                <attribute name="Implementation-Vendor" value="Apache"/>
-            </manifest>        
-			<fileset dir="${main.src}" includes="**/*.java" />
-			<fileset dir="${contrib.src}" includes="**/*.java" />
-			<fileset dir="${scratchpad.src}" includes="**/*.java" />
-			<fileset dir="legal/" />
-        </jar>
+		<!-- Build the org.apache.poi poms -->
+		<!-- Copy from the base file, substituting in the version and -->
+		<!--  artificat, plus doing the core poi dependency as needed -->
 
 		<!-- Build the main pom -->
-		<!-- Copy from the base file, and substitute in the version -->
-		<filter token="VERSION" value="${version.id}" />
 		<copy 
-			filtering="true" 
 			file="poi.pom" 
-			tofile="${mavendist.dir}/${jar.name}-${version.id}.pom" 
-		/>
-		<!-- Build the poi => org.apache.poi redirect pom -->
-		<!-- Copy from the base file, and substitute in the version -->
-		<filter token="VERSION" value="${version.id}" />
+			tofile="${mavendist.oap.dir}/poms/${jar.name}-${version.id}.pom" 
+		>
+			<filterchain>
+				<replacetokens>
+					<token key="VERSION" value="${version.id}" />
+					<token key="ARTIFICAT" value="poi" />
+				</replacetokens>
+				<tokenfilter>
+					<filetokenizer/>
+					<replaceregex pattern="START_NON_MAIN.*END_NON_MAIN_DEPENDENCY" replace="No POI dependency on the main jar" flags="s" />
+				</tokenfilter>
+			</filterchain>
+		</copy>
+		<!-- And the contrib pom -->
 		<copy 
-			filtering="true" 
+			file="poi.pom" 
+			tofile="${mavendist.oap.dir}/poms/${jar.name}-contrib-${version.id}.pom" 
+		>
+			<filterchain>
+				<replacetokens>
+					<token key="VERSION" value="${version.id}" />
+					<token key="ARTIFICAT" value="poi-contrib" />
+				</replacetokens>
+				<tokenfilter>
+					<replaceregex pattern="..-- START_NON_MAIN_DEPENDENCY --." replace="" flags="s"/>
+					<replaceregex pattern="..-- END_NON_MAIN_DEPENDENCY --." replace="" flags="s"/>
+				</tokenfilter>
+			</filterchain>
+		</copy>
+		<!-- And the scratchpad pom -->
+		<copy 
+			file="poi.pom" 
+			tofile="${mavendist.oap.dir}/poms/${jar.name}-scratchpad-${version.id}.pom" 
+		>
+			<filterchain>
+				<replacetokens>
+					<token key="VERSION" value="${version.id}" />
+					<token key="ARTIFICAT" value="poi-scratchpad" />
+				</replacetokens>
+				<tokenfilter>
+					<replaceregex pattern="..-- START_NON_MAIN_DEPENDENCY --." replace="" flags="s"/>
+					<replaceregex pattern="..-- END_NON_MAIN_DEPENDENCY --." replace="" flags="s"/>
+				</tokenfilter>
+			</filterchain>
+		</copy>
+
+		<!-- Build the poi => org.apache.poi redirect poms -->
+		<!-- Copy from the base file, substituting in the version+artifact -->
+		<copy 
 			file="poi-redirect.pom" 
-			tofile="${mavendist.dir}/${jar.name}-${version.id}-redirect.pom" 
-		/>
+			tofile="${mavendist.poi.dir}/poms/${jar.name}-${version.id}.pom" 
+		>
+			<filterchain><replacetokens>
+				<token key="VERSION" value="${version.id}" />
+				<token key="ARTIFICAT" value="poi" />
+			</replacetokens></filterchain>
+		</copy>
+		<copy 
+			file="poi-redirect.pom" 
+			tofile="${mavendist.poi.dir}/poms/${jar.name}-contrib-${version.id}.pom" 
+		>
+			<filterchain><replacetokens>
+				<token key="VERSION" value="${version.id}" />
+				<token key="ARTIFICAT" value="poi-contrib" />
+			</replacetokens></filterchain>
+		</copy>
+		<copy 
+			file="poi-redirect.pom" 
+			tofile="${mavendist.poi.dir}/poms/${jar.name}-scratchpad-${version.id}.pom" 
+		>
+			<filterchain><replacetokens>
+				<token key="VERSION" value="${version.id}" />
+				<token key="ARTIFICAT" value="poi-scratchpad" />
+			</replacetokens></filterchain>
+		</copy>
+
+		<!-- And that's it for maven -->
 	</target>
 
     <target name="jar" depends="compile" description="Creates jar files for distribution">
