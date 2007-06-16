@@ -817,15 +817,18 @@ FORREST_HOME environment variable!</echo>
 
     <target name="maven-dist" depends="jar" description="Builds the POM files for a maven distribution, and copies these and the jars to the appropriate locations">
 		<!-- Copy the jar files into the maven jar directory -->
+		<!-- Same jars as for the main release, only lacking the datestamp -->
 		<copy
 			file="${dist.dir}/${jar.name}-${version.id}-${DSTAMP}.jar"
-			todir="${mavendist.oap.dir}/jars/" />
+			tofile="${mavendist.oap.dir}/jars/${jar.name}-${version.id}.jar" />
 		<copy
 			file="${dist.dir}/${jar.name}-contrib-${version.id}-${DSTAMP}.jar"
-			todir="${mavendist.oap.dir}/jars/" />
+			tofile="${mavendist.oap.dir}/jars/${jar.name}-contrib-${version.id}.jar" />
 		<copy
 			file="${dist.dir}/${jar.name}-scratchpad-${version.id}-${DSTAMP}.jar"
-			todir="${mavendist.oap.dir}/jars/" />
+			tofile="${mavendist.oap.dir}/jars/${jar.name}-scratchpad-${version.id}.jar" />
+
+		<!-- TODO: Decide about source jars, and copy them if we have some -->
 
 		<!-- Build the org.apache.poi poms -->
 		<!-- Copy from the base file, substituting in the version and -->
