@@ -148,10 +148,46 @@ public class HSSFDateUtil
             return null;
         }
     }
+    
+    /**
+     * Given a format ID and its format String, will check to see if the
+     *  format represents a date format or not.
+     * Firstly, it will check to see if the format ID corresponds to an
+     *  internal excel date format (eg most US date formats) 
+     * If not, it will check to see if the format string only contains
+     *  date formatting characters (ymd-/), which covers most
+     *  non US date formats.
+     *  
+     * @param formatIndex The index of the format, eg from ExtendedFormatRecord.getFormatIndex
+     * @param formatString The format string
+     */
+    public static boolean isADateFormat(int formatIndex, String formatString) {
+    	// First up, is this an internal date format?
+    	if(isInternalDateFormat(formatIndex)) {
+    		return true;
+    	}
+    	
+    	// If we didn't get a real string, it can't be
+    	if(formatString == null || formatString.length() == 0) {
+    		return false;
+    	}
+    	
+    	// Translate \- into just -, before matching
+    	String fs = formatString.replace("\\-","-"); 
+    	
+    	// Otherwise, check it's only made up of:
+    	//  y m d - /
+    	if(fs.matches("^[ymd\\-/]+$")) {
+    		return true;
+    	}
+    	
+    	return false;
+    }
 
     /**
-     * given a format ID this will check whether the format represents
-     * an internal date format or not. 
+     * Given a format ID this will check whether the format represents
+     *  an internal excel date format or not.
+     * @see isDateFormat(int,String) 
      */
     public static boolean isInternalDateFormat(int format) {
       boolean retval =false;

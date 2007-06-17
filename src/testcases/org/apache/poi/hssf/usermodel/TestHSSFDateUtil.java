@@ -182,6 +182,56 @@ public class TestHSSFDateUtil
                     HSSFDateUtil.getExcelDate(javaDate), oneMinute);
         }
     }
+    
+    /**
+     * Tests that we correctly detect date formats as such
+     */
+    public void testIdentifyDateFormats() {
+    	// First up, try with a few built in date formats
+    	short[] builtins = new short[] { 0x0e, 0x0f, 0x10, 0x16, 0x2d, 0x2e };
+    	for(int i=0; i<builtins.length; i++) {
+    		String formatStr = HSSFDataFormat.getBuiltinFormat(builtins[i]);
+    		assertTrue( HSSFDateUtil.isInternalDateFormat(builtins[i]) );
+    		assertTrue( HSSFDateUtil.isADateFormat(builtins[i],formatStr) );
+    	}
+    	
+    	// Now try a few built-in non date formats
+    	builtins = new short[] { 0x01, 0x02, 0x17, 0x1f, 0x30 };
+    	for(int i=0; i<builtins.length; i++) {
+    		String formatStr = HSSFDataFormat.getBuiltinFormat(builtins[i]);
+    		assertFalse( HSSFDateUtil.isInternalDateFormat(builtins[i]) );
+    		assertFalse( HSSFDateUtil.isADateFormat(builtins[i],formatStr) );
+    	}
+    	
+    	// Now for some non-internal ones
+    	// These come after the real ones
+    	int numBuiltins = HSSFDataFormat.getNumberOfBuiltinBuiltinFormats();
+    	assertTrue(numBuiltins < 60);
+    	short formatId = 60;
+    	assertFalse( HSSFDateUtil.isInternalDateFormat(formatId) );
+    	
+    	// Valid ones first
+    	String[] formats = new String[] {
+    			"yyyy-mm-dd", "yyyy/mm/dd", "yy/mm/dd", "yy/mmm/dd",
+    			"dd/mm/yy", "dd/mm/yyyy", "dd/mmm/yy",
+    			"dd-mm-yy", "dd-mm-yyyy",
+    			"dd\\-mm\\-yy", // Sometimes escaped
+    	};
+    	for(int i=0; i<formats.length; i++) {
+    		assertTrue( HSSFDateUtil.isADateFormat(formatId, formats[i]) );
+    	}
+    	
+    	// Then invalid ones
+    	formats = new String[] {
+    			"yyyy:mm:dd", 
+    			"0.0", "0.000",
+    			"0%", "0.0%",
+    			"", null
+    	};
+    	for(int i=0; i<formats.length; i++) {
+    		assertFalse( HSSFDateUtil.isADateFormat(formatId, formats[i]) );
+    	}
+    }
 
     public static void main(String [] args) {
         System.out
