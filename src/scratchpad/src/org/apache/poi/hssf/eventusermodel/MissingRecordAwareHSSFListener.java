@@ -84,7 +84,7 @@ public class MissingRecordAwareHSSFListener implements HSSFListener {
                 break;
             case BoundSheetRecord.sid:
                 BoundSheetRecord bsr = (BoundSheetRecord) record;
-                System.out.println("New sheet named: " + bsr.getSheetname());
+                //System.out.println("New sheet named: " + bsr.getSheetname());
                 break;
             case RowRecord.sid:
                 RowRecord rowrec = (RowRecord) record;
