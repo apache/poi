@@ -110,14 +110,17 @@ public class MissingRecordAwareHSSFListener implements HSSFListener {
             	BlankRecord brec = (BlankRecord) record;
                 thisRow = brec.getRow();
                 thisColumn = brec.getColumn();
+                break;
             case BoolErrRecord.sid:
             	BoolErrRecord berec = (BoolErrRecord) record;
                 thisRow = berec.getRow();
                 thisColumn = berec.getColumn();
+                break;
             case FormulaRecord.sid:
             	FormulaRecord frec = (FormulaRecord) record;
             	thisRow = frec.getRow();
             	thisColumn = frec.getColumn();
+                break;
             case LabelRecord.sid:
             	LabelRecord lrec = (LabelRecord) record;
                 thisRow = lrec.getRow();
@@ -136,6 +139,7 @@ public class MissingRecordAwareHSSFListener implements HSSFListener {
             	NoteRecord nrec = (NoteRecord) record;
             	thisRow = nrec.getRow();
             	thisColumn = nrec.getColumn();
+                break;
             case NumberRecord.sid:
                 NumberRecord numrec = (NumberRecord) record;
                 thisRow = numrec.getRow();
@@ -147,11 +151,11 @@ public class MissingRecordAwareHSSFListener implements HSSFListener {
             	RKRecord rkrec = (RKRecord) record;
             	thisRow = rkrec.getRow();
             	thisColumn = rkrec.getColumn();
+                break;
             default:
             	//System.out.println(record.getClass());
             	break;
         }
-    	System.out.println(record.getClass());
 		
 		// Do we need to fire dummy end-of-row records?
 		if(thisRow != lastSeenRow) {
