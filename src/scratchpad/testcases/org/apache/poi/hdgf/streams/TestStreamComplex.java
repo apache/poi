@@ -18,8 +18,6 @@ package org.apache.poi.hdgf.streams;
 
 import java.io.FileInputStream;
 
-import junit.framework.TestCase;
-
 import org.apache.poi.hdgf.pointers.Pointer;
 import org.apache.poi.hdgf.pointers.PointerFactory;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
