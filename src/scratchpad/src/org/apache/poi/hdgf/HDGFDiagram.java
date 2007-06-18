@@ -198,7 +198,7 @@ public class HDGFDiagram {
 				int nPointersAt = (int)LittleEndian.getUInt(contents, 0);
 				int numPointers = (int)LittleEndian.getUInt(contents, nPointersAt);
 				int unknownA = (int)LittleEndian.getUInt(contents, nPointersAt+4);
-				
+
 				pointers = new VisioPointer[numPointers];
 				int pos = nPointersAt + 8;
 				for(int i=0; i<numPointers; i++) {
