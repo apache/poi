@@ -1,0 +1,80 @@
+/* ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+==================================================================== */
+package org.apache.poi.hdgf.dev;
+
+import java.io.FileInputStream;
+
+import org.apache.poi.hdgf.HDGFDiagram;
+import org.apache.poi.hdgf.pointers.Pointer;
+import org.apache.poi.hdgf.streams.PointerContainingStream;
+import org.apache.poi.hdgf.streams.Stream;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+
+/**
+ * Developer helper class to dump out the pointer+stream structure
+ *  of a Visio file
+ */
+public class VSDDumper {
+	public static void main(String[] args) throws Exception {
+		if(args.length == 0) {
+			System.err.println("Use:");
+			System.err.println("  VSDDumper <filename>");
+			System.exit(1);
+		}
+		
+		HDGFDiagram hdgf = new HDGFDiagram(
+				new POIFSFileSystem(new FileInputStream(args[0]))
+		);
+		
+		System.out.println("Opened " + args[0]);
+		System.out.println("The document claims a size of " +
+				hdgf.getDocumentSize() + "   (" + 
+				Long.toHexString(hdgf.getDocumentSize()) + ")");
+		System.out.println();
+		
+		dumpStream(hdgf.getTrailerStream(), 0);
+	}
+	
+	public static void dumpStream(Stream stream, int indent) {
+		String ind = "";
+		for(int i=0; i<indent; i++) {
+			ind += "    ";
+		}
+		
+		Pointer ptr = stream.getPointer();
+		System.out.println(ind + "Stream at\t" + ptr.getOffset() +
+				" - " + Integer.toHexString(ptr.getOffset()));
+		System.out.println(ind + "  Type is\t" + ptr.getType() +
+				" - " + Integer.toHexString(ptr.getType()));
+		System.out.println(ind + "  Format is\t" + ptr.getFormat() +
+				" - " + Integer.toHexString(ptr.getFormat()));
+		System.out.println(ind + "  Length is\t" + ptr.getLength() +
+				" - " + Integer.toHexString(ptr.getLength()));
+		System.out.println(ind + "  Compressed is\t" + ptr.destinationCompressed());
+		System.out.println(ind + "  Stream is\t" + stream.getClass().getCanonicalName());
+		
+		if(stream instanceof PointerContainingStream) {
+			PointerContainingStream pcs = (PointerContainingStream)stream;
+			System.out.println(ind + "  Has " + 
+					pcs.getPointedToStreams().length + " children:");
+			
+			for(int i=0; i<pcs.getPointedToStreams().length; i++) {
+				dumpStream(pcs.getPointedToStreams()[i], (indent+1));
+			}
+		}
+	}
+}

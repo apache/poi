@@ -95,8 +95,12 @@ public class HDGFDiagram {
 	 *  pointed to by the TrailerStream.
 	 */
 	public Stream[] getTopLevelStreams() { return trailer.getPointedToStreams(); }
+	public long getDocumentSize() { return docSize; }
 	
-	
+	/**
+	 * Prints out some simple debug on the base contents of the file.
+	 * @see org.apache.poi.hdgf.dev.VSDDumper 
+	 */
 	public void debug() throws IOException {
 		System.err.println("Trailer is at " + trailerPointer.getOffset());
 		System.err.println("Trailer has type " + trailerPointer.getType());
