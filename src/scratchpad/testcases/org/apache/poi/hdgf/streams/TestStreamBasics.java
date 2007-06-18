@@ -18,8 +18,6 @@ package org.apache.poi.hdgf.streams;
 
 import org.apache.poi.hdgf.pointers.Pointer;
 
-import junit.framework.TestCase;
-
 public class TestStreamBasics extends StreamTest {
 	/** The header from when compressedStream is decompressed */
 	public static final byte[] compressedStreamDCHeader = new byte[] {

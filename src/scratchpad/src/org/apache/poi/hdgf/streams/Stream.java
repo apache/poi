@@ -34,6 +34,7 @@ public abstract class Stream {
 	
 	public Pointer getPointer() { return pointer; }
 	protected StreamStore getStore() { return store; }
+	public int _getContentsLength() { return store.getContents().length; }
 	
 	/**
 	 * Creates a new Stream, having already used the pointer
