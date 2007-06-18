@@ -16,21 +16,26 @@
 ==================================================================== */
 package org.apache.poi.hdgf.streams;
 
-/**
- * Holds the representation of the stream on-disk, and
- *  handles de-compressing it as required.
- * In future, may also handle writing it back out again
- */
-class StreamStore {
-	private byte[] contents;
-	
-	/**
-	 * Creates a new, non compressed Stream Store
-	 */
-	protected StreamStore(byte[] data, int offset, int length) {
-		contents = new byte[length];
-		System.arraycopy(data, offset, contents, 0, length);
+import org.apache.poi.hdgf.pointers.Pointer;
+
+import junit.framework.TestCase;
+
+public abstract class StreamTest extends TestCase {
+	public static class TestPointer extends Pointer {
+		private boolean compressed;
+		protected boolean hasPointers = false;
+		public TestPointer(boolean compressed, int offset, int length, int type, short format) {
+			this.compressed = compressed;
+			this.offset = offset;
+			this.length = length;
+			this.type = type;
+			this.format = format;
+		}
+
+		public boolean destinationCompressed() { return compressed; }
+		public boolean destinationHasChunks() { return false; }
+		public boolean destinationHasPointers() { return hasPointers; }
+		public boolean destinationHasStrings() { return false; }
+		public int getSizeInBytes() { return -1; }
 	}
-	
-	protected byte[] getContents() { return contents; }
 }

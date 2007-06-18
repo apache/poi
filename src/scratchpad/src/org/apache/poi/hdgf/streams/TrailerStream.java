@@ -16,21 +16,17 @@
 ==================================================================== */
 package org.apache.poi.hdgf.streams;
 
+import org.apache.poi.hdgf.pointers.Pointer;
+import org.apache.poi.hdgf.pointers.PointerFactory;
+
 /**
- * Holds the representation of the stream on-disk, and
- *  handles de-compressing it as required.
- * In future, may also handle writing it back out again
+ * The TrailerStream is a special kind of Stream containing pointers,
+ *  and some core document settings.
+ * These is one of these in each document, and it's pointed to by
+ *  a special series of byte near the start of the file.
  */
-class StreamStore {
-	private byte[] contents;
-	
-	/**
-	 * Creates a new, non compressed Stream Store
-	 */
-	protected StreamStore(byte[] data, int offset, int length) {
-		contents = new byte[length];
-		System.arraycopy(data, offset, contents, 0, length);
+public class TrailerStream extends PointerContainingStream {
+	protected TrailerStream(Pointer pointer, StreamStore store, PointerFactory pointerFactory) {
+		super(pointer, store, pointerFactory);
 	}
-	
-	protected byte[] getContents() { return contents; }
 }
