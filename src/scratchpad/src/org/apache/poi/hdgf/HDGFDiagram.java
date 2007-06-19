@@ -19,6 +19,7 @@ package org.apache.poi.hdgf;
 import java.io.FileInputStream;
 import java.io.IOException;
 
+import org.apache.poi.hdgf.chunks.ChunkFactory;
 import org.apache.poi.hdgf.pointers.Pointer;
 import org.apache.poi.hdgf.pointers.PointerFactory;
 import org.apache.poi.hdgf.streams.PointerContainingStream;
@@ -47,6 +48,8 @@ public class HDGFDiagram {
 	
 	private Pointer trailerPointer;
 	private TrailerStream trailer;
+	
+	private ChunkFactory chunkFactory;
 	private PointerFactory ptrFactory;
 	
 	public HDGFDiagram(POIFSFileSystem fs) throws IOException {
@@ -71,15 +74,16 @@ public class HDGFDiagram {
 		docSize = LittleEndian.getUInt(_docstream, 0x1c);
 		// ??? 0x20 -> 0x23
 		
-		// Create a Pointer Factory for the document version
+		// Create the Chunk+Pointer Factories for the document version
 		ptrFactory = new PointerFactory(version);
+		chunkFactory = new ChunkFactory(version);
 		
 		// Grab the pointer to the trailer
 		trailerPointer = ptrFactory.createPointer(_docstream, 0x24);
 		
 		// Now grab the trailer
 		trailer = (TrailerStream)
-			Stream.createStream(trailerPointer, _docstream, ptrFactory);
+			Stream.createStream(trailerPointer, _docstream, chunkFactory, ptrFactory);
 		
 		// Finally, find all our streams
 		trailer.findChildren(_docstream);

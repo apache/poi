@@ -29,7 +29,7 @@ public class PointerV6 extends Pointer {
 		return (0x50 <= format && format < 0x60);
 	}
 	public boolean destinationHasChunks() {
-		return (0xd0 <= format && format < 0xd0);
+		return (0xd0 <= format && format < 0xdf);
 	}
 	
 	public boolean destinationCompressed() {

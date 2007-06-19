@@ -14,36 +14,44 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.hdgf.pointers;
-
-import org.apache.poi.util.LittleEndian;
+package org.apache.poi.hdgf.chunks;
 
 /**
- * Factor class to create the appropriate pointers, based on the version
- *  of the file
+ * A chunk header from v6
  */
-public class PointerFactory {
-	private int version;
-	public PointerFactory(int version) {
-		this.version = version;
+public class ChunkHeaderV6 extends ChunkHeader {
+	protected short unknown2;
+	protected short unknown3;
+
+	public short getUnknown2() {
+		return unknown2;
 	}
-	public int getVersion() { return version; }
+	public short getUnknown3() {
+		return unknown3;
+	}
 	
-	public Pointer createPointer(byte[] data, int offset) {
-		Pointer p;
-		if(version >= 6) {
-			p = new PointerV6();
-			p.type = LittleEndian.getInt(data, offset+0);
-			p.address = (int)LittleEndian.getUInt(data, offset+4);
-			p.offset = (int)LittleEndian.getUInt(data, offset+8);
-			p.length = (int)LittleEndian.getUInt(data, offset+12);
-			p.format = LittleEndian.getShort(data, offset+16);
-			
-			return p;
-		} else if(version == 5) {
-			throw new RuntimeException("TODO");
-		} else {
-			throw new IllegalArgumentException("Visio files with versions below 5 are not supported, yours was " + version);
+	public int getSizeInBytes() {
+		return 19;
+	}
+	
+	/**
+	 * Does the chunk have a trailer?
+	 */
+	public boolean hasTrailer() {
+		if(unknown1 != 0 || type == 0x71 || type == 0x70) {
+			return true;
 		}
+		if(type == 0x6b || type == 0x6a || type == 0x69 || type == 0x66
+				|| type == 0x65 || type == 0x2c) {
+			return true;
+		}
+		return false;
+	}
+	/**
+	 * Does the chunk have a separator?
+	 */
+	public boolean hasSeparator() {
+		// V6 never has separators
+		return false;
 	}
 }

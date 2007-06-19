@@ -14,36 +14,17 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.hdgf.pointers;
-
-import org.apache.poi.util.LittleEndian;
+package org.apache.poi.hdgf.chunks;
 
 /**
- * Factor class to create the appropriate pointers, based on the version
- *  of the file
+ * A separator between the trailer of one chunk, and the
+ *  header of the next one
  */
-public class PointerFactory {
-	private int version;
-	public PointerFactory(int version) {
-		this.version = version;
-	}
-	public int getVersion() { return version; }
+public class ChunkSeparator {
+	protected byte[] separatorData;
 	
-	public Pointer createPointer(byte[] data, int offset) {
-		Pointer p;
-		if(version >= 6) {
-			p = new PointerV6();
-			p.type = LittleEndian.getInt(data, offset+0);
-			p.address = (int)LittleEndian.getUInt(data, offset+4);
-			p.offset = (int)LittleEndian.getUInt(data, offset+8);
-			p.length = (int)LittleEndian.getUInt(data, offset+12);
-			p.format = LittleEndian.getShort(data, offset+16);
-			
-			return p;
-		} else if(version == 5) {
-			throw new RuntimeException("TODO");
-		} else {
-			throw new IllegalArgumentException("Visio files with versions below 5 are not supported, yours was " + version);
-		}
+	public ChunkSeparator(byte[] data, int offset) {
+		separatorData = new byte[4];
+		System.arraycopy(data, offset, separatorData, 0, 4);
 	}
 }
