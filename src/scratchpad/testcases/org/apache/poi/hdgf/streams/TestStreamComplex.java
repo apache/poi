@@ -18,6 +18,7 @@ package org.apache.poi.hdgf.streams;
 
 import java.io.FileInputStream;
 
+import org.apache.poi.hdgf.chunks.ChunkFactory;
 import org.apache.poi.hdgf.pointers.Pointer;
 import org.apache.poi.hdgf.pointers.PointerFactory;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
@@ -27,12 +28,14 @@ public class TestStreamComplex extends StreamTest {
 	private byte[] contents;
 	private int trailerPointerAt = 0x24;
 	private int trailerDataAt = 0x8a94;
+	private ChunkFactory chunkFactory;
 	private PointerFactory ptrFactory;
 
 	protected void setUp() throws Exception {
 		String dirname = System.getProperty("HDGF.testdata.path");
 		String filename = dirname + "/Test_Visio-Some_Random_Text.vsd";
-		ptrFactory = new PointerFactory(6);
+		ptrFactory = new PointerFactory(11);
+		chunkFactory = new ChunkFactory(11);
 
 		FileInputStream fin = new FileInputStream(filename);
 		POIFSFileSystem filesystem = new POIFSFileSystem(fin);
@@ -55,7 +58,7 @@ public class TestStreamComplex extends StreamTest {
 		assertEquals(20, trailerPtr.getType());
 		assertEquals(trailerDataAt, trailerPtr.getOffset());
 		
-		Stream stream = Stream.createStream(trailerPtr, contents, ptrFactory);
+		Stream stream = Stream.createStream(trailerPtr, contents, chunkFactory, ptrFactory);
 		assertTrue(stream instanceof TrailerStream);
 		TrailerStream ts = (TrailerStream)stream;
 		
@@ -69,10 +72,14 @@ public class TestStreamComplex extends StreamTest {
 		assertEquals(0xff, ts.getChildPointers()[3].getType());
 	}
 	
+	public void testChunks() {
+		
+	}
+	
 	public void testStrings() {
 		Pointer trailerPtr = ptrFactory.createPointer(contents, trailerPointerAt);
 		TrailerStream ts = (TrailerStream)
-			Stream.createStream(trailerPtr, contents, ptrFactory);
+			Stream.createStream(trailerPtr, contents, chunkFactory, ptrFactory);
 		
 		// Should be the 1st one
 		Pointer stringPtr = ts.getChildPointers()[0];
@@ -80,7 +87,7 @@ public class TestStreamComplex extends StreamTest {
 		assertFalse(stringPtr.destinationHasChunks());
 		assertFalse(stringPtr.destinationHasPointers());
 		
-		Stream stream = Stream.createStream(stringPtr, contents, ptrFactory);
+		Stream stream = Stream.createStream(stringPtr, contents, chunkFactory, ptrFactory);
 		assertNotNull(stream);
 		assertTrue(stream instanceof StringsStream);
 	}
@@ -94,7 +101,7 @@ public class TestStreamComplex extends StreamTest {
 		TestPointer ptr44d3 = new TestPointer(true, 0x44d3, 0x51, 0x4e, (short)0x56);
 		ptr44d3.hasPointers = true;
 		PointerContainingStream s44d3 = (PointerContainingStream)
-			Stream.createStream(ptr44d3, contents, ptrFactory);
+			Stream.createStream(ptr44d3, contents, chunkFactory, ptrFactory);
 		
 		// Type: 0d  Addr: 014ff644  Offset: 4312  Len: 48  Format: 54  From: 44d3
 		Pointer ptr4312 = s44d3.getChildPointers()[1];
@@ -106,7 +113,7 @@ public class TestStreamComplex extends StreamTest {
 		assertFalse(ptr4312.destinationHasStrings());
 		
 		PointerContainingStream s4312 = (PointerContainingStream)
-			Stream.createStream(ptr4312, contents, ptrFactory);
+			Stream.createStream(ptr4312, contents, chunkFactory, ptrFactory);
 		
 		// Check it has 0x347f
 		// Type: 1f  Addr: 01540004  Offset: 347f  Len: 8e8  Format: 46  From: 4312
@@ -132,7 +139,7 @@ public class TestStreamComplex extends StreamTest {
 	public void testTrailerContents() {
 		Pointer trailerPtr = ptrFactory.createPointer(contents, trailerPointerAt);
 		TrailerStream ts = (TrailerStream)
-			Stream.createStream(trailerPtr, contents, ptrFactory);
+			Stream.createStream(trailerPtr, contents, chunkFactory, ptrFactory);
 		
 		assertNotNull(ts.getChildPointers());
 		assertNull(ts.getPointedToStreams());

@@ -16,6 +16,7 @@
 ==================================================================== */
 package org.apache.poi.hdgf.streams;
 
+import org.apache.poi.hdgf.chunks.ChunkFactory;
 import org.apache.poi.hdgf.pointers.Pointer;
 import org.apache.poi.hdgf.pointers.PointerFactory;
 
@@ -26,7 +27,7 @@ import org.apache.poi.hdgf.pointers.PointerFactory;
  *  a special series of byte near the start of the file.
  */
 public class TrailerStream extends PointerContainingStream {
-	protected TrailerStream(Pointer pointer, StreamStore store, PointerFactory pointerFactory) {
-		super(pointer, store, pointerFactory);
+	protected TrailerStream(Pointer pointer, StreamStore store, ChunkFactory chunkFactory, PointerFactory pointerFactory) {
+		super(pointer, store, chunkFactory, pointerFactory);
 	}
 }

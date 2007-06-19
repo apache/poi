@@ -87,7 +87,7 @@ public class TestStreamBasics extends StreamTest {
 		// Create a fake pointer
 		Pointer ptr = new TestPointer(true, 0, compressedStream.length, -1, (short)-1);
 		// Now the stream
-		Stream stream = Stream.createStream(ptr, compressedStream, null);
+		Stream stream = Stream.createStream(ptr, compressedStream, null, null);
 		
 		// Check
 		assertNotNull(stream.getPointer());
@@ -111,7 +111,7 @@ public class TestStreamBasics extends StreamTest {
 		// Create a fake pointer
 		Pointer ptr = new TestPointer(false, 0, uncompressedStream.length, -1, (short)-1);
 		// Now the stream
-		Stream stream = Stream.createStream(ptr, uncompressedStream, null);
+		Stream stream = Stream.createStream(ptr, uncompressedStream, null, null);
 		
 		// Check
 		assertNotNull(stream.getPointer());

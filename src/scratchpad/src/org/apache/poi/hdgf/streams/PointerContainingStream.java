@@ -16,6 +16,7 @@
 ==================================================================== */
 package org.apache.poi.hdgf.streams;
 
+import org.apache.poi.hdgf.chunks.ChunkFactory;
 import org.apache.poi.hdgf.pointers.Pointer;
 import org.apache.poi.hdgf.pointers.PointerFactory;
 import org.apache.poi.util.LittleEndian;
@@ -28,11 +29,13 @@ public class PointerContainingStream extends Stream {
 	private Pointer[] childPointers;
 	private Stream[] childStreams;
 	
+	private ChunkFactory chunkFactory;
 	private PointerFactory pointerFactory;
 	private int numPointersLocalOffset;
 	
-	protected PointerContainingStream(Pointer pointer, StreamStore store, PointerFactory pointerFactory) {
+	protected PointerContainingStream(Pointer pointer, StreamStore store, ChunkFactory chunkFactory, PointerFactory pointerFactory) {
 		super(pointer, store);
+		this.chunkFactory = chunkFactory;
 		this.pointerFactory = pointerFactory;
 		
 		// Find the offset to the number of child pointers we have
@@ -81,9 +84,15 @@ public class PointerContainingStream extends Stream {
 		childStreams = new Stream[childPointers.length];
 		for(int i=0; i<childPointers.length; i++) {
 			Pointer ptr = childPointers[i];
-			childStreams[i] = Stream.createStream(ptr, documentData, pointerFactory);
+			childStreams[i] = Stream.createStream(ptr, documentData, chunkFactory, pointerFactory);
 			
-			// Recurse if required
+			// Process chunk streams into their chunks
+			if(childStreams[i] instanceof ChunkStream) {
+				ChunkStream child = (ChunkStream)childStreams[i];
+//				child.findChunks();
+			}
+			
+			// Recurse into pointer containing streams
 			if(childStreams[i] instanceof PointerContainingStream) {
 				PointerContainingStream child = 
 					(PointerContainingStream)childStreams[i];

@@ -14,36 +14,42 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.hdgf.pointers;
-
-import org.apache.poi.util.LittleEndian;
+package org.apache.poi.hdgf.chunks;
 
 /**
- * Factor class to create the appropriate pointers, based on the version
- *  of the file
+ * Base of all chunks, which hold data, flags etc
  */
-public class PointerFactory {
-	private int version;
-	public PointerFactory(int version) {
-		this.version = version;
-	}
-	public int getVersion() { return version; }
+public class Chunk {
+	/** 
+	 * The contents of the chunk, excluding the header, 
+	 * trailer and separator 
+	 */
+	private byte[] contents;
+	private ChunkHeader header;
+	/** May be null */
+	private ChunkTrailer trailer;
+	/** May be null */
+	private ChunkSeparator separator;
 	
-	public Pointer createPointer(byte[] data, int offset) {
-		Pointer p;
-		if(version >= 6) {
-			p = new PointerV6();
-			p.type = LittleEndian.getInt(data, offset+0);
-			p.address = (int)LittleEndian.getUInt(data, offset+4);
-			p.offset = (int)LittleEndian.getUInt(data, offset+8);
-			p.length = (int)LittleEndian.getUInt(data, offset+12);
-			p.format = LittleEndian.getShort(data, offset+16);
-			
-			return p;
-		} else if(version == 5) {
-			throw new RuntimeException("TODO");
-		} else {
-			throw new IllegalArgumentException("Visio files with versions below 5 are not supported, yours was " + version);
+	public Chunk(ChunkHeader header, ChunkTrailer trailer, ChunkSeparator separator, byte[] contents) {
+		this.header = header;
+		this.trailer = trailer;
+		this.separator = separator;
+		this.contents = contents;
+	}
+	
+	/**
+	 * Returns the size of the chunk, including any
+	 *  headers, trailers and separators.
+	 */
+	public int getOnDiskSize() {
+		int size = header.getSizeInBytes() + contents.length;
+		if(trailer != null) {
+			size += trailer.trailerData.length;
 		}
+		if(separator != null) {
+			size += separator.separatorData.length;
+		}
+		return size;
 	}
 }

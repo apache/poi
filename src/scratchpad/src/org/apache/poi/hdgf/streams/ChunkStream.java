@@ -14,36 +14,41 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.hdgf.pointers;
+package org.apache.poi.hdgf.streams;
 
-import org.apache.poi.util.LittleEndian;
+import java.util.ArrayList;
 
-/**
- * Factor class to create the appropriate pointers, based on the version
- *  of the file
- */
-public class PointerFactory {
-	private int version;
-	public PointerFactory(int version) {
-		this.version = version;
-	}
-	public int getVersion() { return version; }
+import org.apache.poi.hdgf.chunks.Chunk;
+import org.apache.poi.hdgf.chunks.ChunkFactory;
+import org.apache.poi.hdgf.pointers.Pointer;
+
+public class ChunkStream extends Stream {
+	private ChunkFactory chunkFactory;
+	/** All the Chunks we contain */
+	private Chunk[] chunks;
 	
-	public Pointer createPointer(byte[] data, int offset) {
-		Pointer p;
-		if(version >= 6) {
-			p = new PointerV6();
-			p.type = LittleEndian.getInt(data, offset+0);
-			p.address = (int)LittleEndian.getUInt(data, offset+4);
-			p.offset = (int)LittleEndian.getUInt(data, offset+8);
-			p.length = (int)LittleEndian.getUInt(data, offset+12);
-			p.format = LittleEndian.getShort(data, offset+16);
+	protected ChunkStream(Pointer pointer, StreamStore store, ChunkFactory chunkFactory) {
+		super(pointer, store);
+		this.chunkFactory = chunkFactory;
+	}
+	
+	public Chunk[] getChunks() { return chunks; }
+	
+	/**
+	 * Process the contents of the stream out into chunks
+	 */
+	public void findChunks() {
+		ArrayList chunksA = new ArrayList();
+		
+		int pos = 0;
+		byte[] contents = getStore().getContents();
+		while(pos < contents.length) {
+			Chunk chunk = chunkFactory.createChunk(contents, pos);
+			chunksA.add(chunk);
 			
-			return p;
-		} else if(version == 5) {
-			throw new RuntimeException("TODO");
-		} else {
-			throw new IllegalArgumentException("Visio files with versions below 5 are not supported, yours was " + version);
+			pos += chunk.getOnDiskSize();
 		}
+		
+		chunks = (Chunk[])chunksA.toArray(new Chunk[chunksA.size()]);
 	}
 }

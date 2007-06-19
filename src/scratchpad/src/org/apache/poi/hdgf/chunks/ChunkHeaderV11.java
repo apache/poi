@@ -14,36 +14,24 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.hdgf.pointers;
-
-import org.apache.poi.util.LittleEndian;
+package org.apache.poi.hdgf.chunks;
 
 /**
- * Factor class to create the appropriate pointers, based on the version
- *  of the file
+ * A chunk header from v11+
  */
-public class PointerFactory {
-	private int version;
-	public PointerFactory(int version) {
-		this.version = version;
-	}
-	public int getVersion() { return version; }
-	
-	public Pointer createPointer(byte[] data, int offset) {
-		Pointer p;
-		if(version >= 6) {
-			p = new PointerV6();
-			p.type = LittleEndian.getInt(data, offset+0);
-			p.address = (int)LittleEndian.getUInt(data, offset+4);
-			p.offset = (int)LittleEndian.getUInt(data, offset+8);
-			p.length = (int)LittleEndian.getUInt(data, offset+12);
-			p.format = LittleEndian.getShort(data, offset+16);
-			
-			return p;
-		} else if(version == 5) {
-			throw new RuntimeException("TODO");
-		} else {
-			throw new IllegalArgumentException("Visio files with versions below 5 are not supported, yours was " + version);
-		}
+public class ChunkHeaderV11 extends ChunkHeaderV6 {
+	/**
+	 * Does the chunk have a separator?
+	 */
+	public boolean hasSeparator() {
+		// If there's a trailer, there's a separator
+		if(hasTrailer()) { return true; }
+
+		if(unknown2 == 2 && unknown3 == 0x55) { return true; }
+		if(unknown2 == 2 && unknown3 == 0x54 && type == 0xaa) { return true; }
+		if(unknown2 == 3 && unknown3 == 0x50 && type == 0xaa) { return true; }
+		if(type == 0x69) { return true; }
+		
+		return false;
 	}
 }

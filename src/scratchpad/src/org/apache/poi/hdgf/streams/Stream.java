@@ -18,6 +18,7 @@ package org.apache.poi.hdgf.streams;
 
 import java.io.IOException;
 
+import org.apache.poi.hdgf.chunks.ChunkFactory;
 import org.apache.poi.hdgf.pointers.Pointer;
 import org.apache.poi.hdgf.pointers.PointerFactory;
 
@@ -51,7 +52,7 @@ public abstract class Stream {
 	 * @param pointer The Pointer to create a stream for
 	 * @param documentData The raw document data
 	 */
-	public static Stream createStream(Pointer pointer, byte[] documentData, PointerFactory pointerFactory) {
+	public static Stream createStream(Pointer pointer, byte[] documentData, ChunkFactory chunkFactory, PointerFactory pointerFactory) {
 		// Create the store
 		StreamStore store;
 		if(pointer.destinationCompressed()) {
@@ -71,10 +72,13 @@ public abstract class Stream {
 		
 		// Figure out what sort of Stream to create, create and return it
 		if(pointer.getType() == 20) {
-			return new TrailerStream(pointer, store, pointerFactory);
+			return new TrailerStream(pointer, store, chunkFactory, pointerFactory);
 		}
 		else if(pointer.destinationHasPointers()) {
-			return new PointerContainingStream(pointer, store, pointerFactory);
+			return new PointerContainingStream(pointer, store, chunkFactory, pointerFactory);
+		}
+		else if(pointer.destinationHasChunks()) {
+			return new ChunkStream(pointer, store, chunkFactory); 
 		}
 		else if(pointer.destinationHasStrings()) {
 			return new StringsStream(pointer, store);
