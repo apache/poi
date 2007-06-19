@@ -73,7 +73,23 @@ public class TestStreamComplex extends StreamTest {
 	}
 	
 	public void testChunks() {
+		Pointer trailerPtr = ptrFactory.createPointer(contents, trailerPointerAt);
+		TrailerStream ts = (TrailerStream)
+			Stream.createStream(trailerPtr, contents, chunkFactory, ptrFactory);
 		
+		// Should be 7th one
+		Pointer chunkPtr = ts.getChildPointers()[5];
+		assertFalse(chunkPtr.destinationHasStrings());
+		assertTrue(chunkPtr.destinationHasChunks());
+		assertFalse(chunkPtr.destinationHasPointers());
+		
+		Stream stream = Stream.createStream(chunkPtr, contents, chunkFactory, ptrFactory);
+		assertNotNull(stream);
+		assertTrue(stream instanceof ChunkStream);
+		
+		// Now find the chunks within it
+		ChunkStream cs = (ChunkStream)stream;
+		cs.findChunks();
 	}
 	
 	public void testStrings() {

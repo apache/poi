@@ -40,19 +40,48 @@ public class ChunkFactory {
 		// Create the header
 		ChunkHeader header = 
 			ChunkHeader.createChunkHeader(version, data, offset);
+		int endOfDataPos = offset + header.getLength() + header.getSizeInBytes();
 		
+		// Check we have enough data, and tweak the header size
+		//  as required
+		if(endOfDataPos > data.length) {
+			System.err.println("Header called for " + header.getLength() +" bytes, but that would take us passed the end of the data!");
+			
+			endOfDataPos = data.length;
+			header.length = data.length - offset - header.getSizeInBytes();
+			
+			if(header.hasTrailer()) {
+				header.length -= 8;
+				endOfDataPos  -= 8;
+			}
+			if(header.hasSeparator()) {
+				header.length -= 4;
+				endOfDataPos  -= 4;
+			}
+		}
+		
+
 		// Create the trailer and separator, if required
 		ChunkTrailer trailer = null;
 		ChunkSeparator separator = null;
 		if(header.hasTrailer()) {
-			trailer = new ChunkTrailer(
-					data, header.getLength() + header.getSizeInBytes());
-			if(header.hasSeparator()) {
-				separator = new ChunkSeparator(
-					data, header.getLength() + header.getSizeInBytes() + 8);
+			if(endOfDataPos <= data.length-8) {
+				trailer = new ChunkTrailer(
+					data, endOfDataPos);
+				endOfDataPos += 8;
+			} else {
+				System.err.println("Header claims a length to " + endOfDataPos + " there's then no space for the trailer in the data (" + data.length + ")");
 			}
 		}
-		
+		if(header.hasSeparator()) {
+			if(endOfDataPos <= data.length-4) {
+				separator = new ChunkSeparator(
+						data, endOfDataPos);
+			} else {
+				System.err.println("Header claims a length to " + endOfDataPos + " there's then no space for the separator in the data (" + data.length + ")");
+			}
+		}
+
 		// Now, create the chunk
 		byte[] contents = new byte[header.getLength()];
 		System.arraycopy(data, offset+header.getSizeInBytes(), contents, 0, contents.length);

@@ -89,7 +89,7 @@ public class PointerContainingStream extends Stream {
 			// Process chunk streams into their chunks
 			if(childStreams[i] instanceof ChunkStream) {
 				ChunkStream child = (ChunkStream)childStreams[i];
-//				child.findChunks();
+				child.findChunks();
 			}
 			
 			// Recurse into pointer containing streams

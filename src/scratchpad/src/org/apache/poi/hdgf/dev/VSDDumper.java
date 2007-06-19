@@ -67,6 +67,16 @@ public class VSDDumper {
 		System.out.println(ind + "  Compressed is\t" + ptr.destinationCompressed());
 		System.out.println(ind + "  Stream is\t" + stream.getClass().getCanonicalName());
 		
+		byte[] db = stream._getStore()._getContents();
+		String ds = "";
+		if(db.length >= 8) {
+			for(int i=0; i<8; i++) {
+				if(i>0) ds += ", ";
+				ds += db[i];
+			}
+		}
+		System.out.println(ind + "  First few bytes are\t" + ds);
+		
 		if(stream instanceof PointerContainingStream) {
 			PointerContainingStream pcs = (PointerContainingStream)stream;
 			System.out.println(ind + "  Has " + 

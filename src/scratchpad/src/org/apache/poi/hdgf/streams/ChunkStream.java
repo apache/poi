@@ -30,6 +30,9 @@ public class ChunkStream extends Stream {
 	protected ChunkStream(Pointer pointer, StreamStore store, ChunkFactory chunkFactory) {
 		super(pointer, store);
 		this.chunkFactory = chunkFactory;
+		
+		// For compressed stores, we require all of the data
+		store.copyBlockHeaderToContents();
 	}
 	
 	public Chunk[] getChunks() { return chunks; }
