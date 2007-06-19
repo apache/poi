@@ -29,7 +29,7 @@ public class ChunkHeaderV11 extends ChunkHeaderV6 {
 
 		if(unknown2 == 2 && unknown3 == 0x55) { return true; }
 		if(unknown2 == 2 && unknown3 == 0x54 && type == 0xaa) { return true; }
-		if(unknown2 == 3 && unknown3 == 0x50 && type == 0xaa) { return true; }
+		if(unknown2 == 3 && unknown3 != 0x50) { return true; }
 		if(type == 0x69) { return true; }
 		
 		return false;

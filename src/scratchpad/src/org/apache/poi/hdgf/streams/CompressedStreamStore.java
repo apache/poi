@@ -25,7 +25,7 @@ import org.apache.poi.hdgf.LZW4HDGF;
  * A StreamStore where the data on-disk is compressed,
  *  using the crazy Visio LZW
  */
-class CompressedStreamStore extends StreamStore {
+public class CompressedStreamStore extends StreamStore {
 	/** The raw, compressed contents */
 	private byte[] compressedContents;
 	/** 
@@ -33,6 +33,7 @@ class CompressedStreamStore extends StreamStore {
 	 *  real contents in the de-compressed data
 	 */
 	private byte[] blockHeader = new byte[4];
+	private boolean blockHeaderInContents = false;
 	
 	protected byte[] _getCompressedContents() { return compressedContents; }
 	protected byte[] _getBlockHeader() { return blockHeader; }
@@ -54,6 +55,19 @@ class CompressedStreamStore extends StreamStore {
 		super(decompressedData[1], 0, decompressedData[1].length);
 		blockHeader = decompressedData[0];
 	}
+	
+	/**
+	 * Some kinds of streams expect their 4 byte header to be
+	 *  on the front of the contents.
+	 * They can call this to have it sorted.
+	 */
+	protected void copyBlockHeaderToContents() {
+		if(blockHeaderInContents) return;
+		
+		prependContentsWith(blockHeader);
+		blockHeaderInContents = true;
+	}
+	
 
 	/**
 	 * Decompresses the given data, returning it as header + contents

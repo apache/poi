@@ -38,6 +38,21 @@ public class Chunk {
 		this.contents = contents;
 	}
 	
+	public byte[] _getContents() {
+		return contents;
+	}
+	public ChunkHeader getHeader() {
+		return header;
+	}
+	/** Gets the separator between this chunk and the next, if it exists */
+	public ChunkSeparator getSeparator() {
+		return separator;
+	}
+	/** Gets the trailer for this chunk, if it exists */
+	public ChunkTrailer getTrailer() {
+		return trailer;
+	}
+
 	/**
 	 * Returns the size of the chunk, including any
 	 *  headers, trailers and separators.
