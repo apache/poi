@@ -151,10 +151,23 @@ public static final byte[] data_b = new byte[] { 70, 0, 0, 0,
 		assertNotNull(chunk.getSeparator());
 		offset += chunk.getOnDiskSize();
 		
+		// Has a separator but no trailer
 		chunk = cf.createChunk(data_a, offset);
 		assertNotNull(chunk.getHeader());
 		assertNull(chunk.getTrailer());
-		assertNull(chunk.getSeparator());
+		assertNotNull(chunk.getSeparator());
+		offset += chunk.getOnDiskSize();
+		
+		chunk = cf.createChunk(data_a, offset);
+		assertNotNull(chunk.getHeader());
+		assertNull(chunk.getTrailer());
+		assertNotNull(chunk.getSeparator());
+		offset += chunk.getOnDiskSize();
+		
+		chunk = cf.createChunk(data_a, offset);
+		assertNotNull(chunk.getHeader());
+		assertNull(chunk.getTrailer());
+		assertNotNull(chunk.getSeparator());
 		offset += chunk.getOnDiskSize();
 	}
 }
