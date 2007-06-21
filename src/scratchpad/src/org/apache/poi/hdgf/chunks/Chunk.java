@@ -16,7 +16,10 @@
 ==================================================================== */
 package org.apache.poi.hdgf.chunks;
 
+import java.util.ArrayList;
+
 import org.apache.poi.hdgf.chunks.ChunkFactory.CommandDefinition;
+import org.apache.poi.util.LittleEndian;
 
 /**
  * Base of all chunks, which hold data, flags etc
@@ -34,6 +37,12 @@ public class Chunk {
 	private ChunkSeparator separator;
 	/** The possible different commands we can hold */
 	protected CommandDefinition[] commandDefinitions;
+	/** The command+value pairs we hold */
+	private Command[] commands;
+	/** The blocks (if any) we hold */
+	//private Block[] blocks
+	/** The name of the chunk, as found from the commandDefinitions */
+	private String name;
 	
 	public Chunk(ChunkHeader header, ChunkTrailer trailer, ChunkSeparator separator, byte[] contents) {
 		this.header = header;
@@ -63,6 +72,15 @@ public class Chunk {
 	public CommandDefinition[] getCommandDefinitions() {
 		return commandDefinitions;
 	}
+	public Command[] getCommands() {
+		return commands;
+	}
+	/**
+	 * Get the name of the chunk, as found from the CommandDefinitions
+	 */
+	public String getName() {
+		return name;
+	}
 
 	/**
 	 * Returns the size of the chunk, including any
@@ -77,5 +95,157 @@ public class Chunk {
 			size += separator.separatorData.length;
 		}
 		return size;
+	}
+	
+	/**
+	 * Uses our CommandDefinitions to process the commands
+	 *  our chunk type has, and figure out the
+	 *  values for them.
+	 */
+	protected void processCommands() {
+		if(commandDefinitions == null) {
+			throw new IllegalStateException("You must supply the command definitions before calling processCommands!");
+		}
+		
+		// Loop over the definitions, building the commands
+		//  and getting their values
+		ArrayList commands = new ArrayList();
+		for(int i=0; i<commandDefinitions.length; i++) {
+			int type = commandDefinitions[i].getType();
+			int offset = commandDefinitions[i].getOffset();
+			
+			// Handle virtual commands
+			if(type == 10) {
+				name = commandDefinitions[i].getName();
+				continue;
+			} else if(type == 18) {
+				continue;
+			}
+
+			
+			// Build the appropriate command for the type
+			Command command;
+			if(type == 11 || type == 21) {
+				command = new BlockOffsetCommand(commandDefinitions[i]);
+			} else {
+				command = new Command(commandDefinitions[i]);
+			}
+			
+			// Bizarely, many of the offsets are from the start of the
+			//  header, not from the start of the chunk body
+			switch(type) {
+			case 0: case 1: case 2: case 3: case 4: case 5: case 6: case 7:
+			case 11: case 21:
+			case 12: case 16: case 17: case 18: case 28: case 29:
+				// Offset is from start of chunk
+				break;
+			default:
+				// Offset is from start of header!
+				if(offset >= 19) {
+					offset -= 19;
+				}
+			}
+			
+			// Check we seem to have enough data
+			if(offset >= contents.length) {
+				System.err.println("Command offset " + offset + " past end of data at " + contents.length);
+				continue;
+			}
+		
+			// Process
+			switch(type) {
+			// Types 0->7 = a flat at bit 0->7
+			case 0: case 1: case 2: case 3: case 4: case 5: case 6: case 7:
+				int val = contents[offset] & (1<<type);
+				command.value = new Boolean( (val > 0) );
+				break;
+			case 8:
+				command.value = new Byte( contents[offset] );
+				break;
+			case 9:
+				command.value = new Double(
+						LittleEndian.getDouble(contents, offset)
+				);
+				break;
+			case 25:
+				command.value = new Short(
+						LittleEndian.getShort(contents, offset)
+				);
+				break;
+			case 26:
+				command.value = new Integer(
+						LittleEndian.getInt(contents, offset)
+				);
+				break;
+				
+			// Types 11 and 21 hold the offset to the blocks
+			case 11: case 21:
+				if(offset < contents.length - 3) {
+					int bOffset = (int)LittleEndian.getUInt(contents, offset);
+					BlockOffsetCommand bcmd = (BlockOffsetCommand)command;
+					bcmd.setOffset(bOffset);
+				}
+				break;
+				
+			default:
+				//System.err.println("Warning - Command of type " + type + " not processed!");
+			}
+			
+			// Add to the array
+			commands.add(command);
+		}
+		
+		// Save the commands we liked the look of
+		this.commands = (Command[])commands.toArray(
+							new Command[commands.size()] );
+		
+		// Now build up the blocks, if we had a command that tells
+		//  us where a block is
+	}
+	
+	/**
+	 * A command in the visio file. In order to make things fun, 
+	 *  all the chunk actually stores is the value of the command.
+	 * You have to have your own lookup table to figure out what
+	 *  the commands are based on the chunk type.
+	 */
+	public static class Command {
+		protected Object value;
+		private CommandDefinition definition;
+		
+		private Command(CommandDefinition definition, Object value) {
+			this.definition = definition;
+			this.value = value;
+		}
+		private Command(CommandDefinition definition) {
+			this(definition, null);
+		}
+		
+		public CommandDefinition getDefinition() { return definition; }
+		public Object getValue() { return value; }
+	}
+	/**
+	 * A special kind of command that is an artificat of how we
+	 *  process CommandDefinitions, and so doesn't actually exist
+	 *  in the chunk
+	 */
+//	public static class VirtualCommand extends Command {
+//		private VirtualCommand(CommandDefinition definition) {
+//			super(definition);
+//		}
+//	}
+	/**
+	 * A special kind of command that holds the offset to
+	 *  a block
+	 */
+	public static class BlockOffsetCommand extends Command {
+		private int offset;
+		private BlockOffsetCommand(CommandDefinition definition) {
+			super(definition, null);
+		}
+		private void setOffset(int offset) {
+			this.offset = offset;
+			value = new Integer(offset);
+		}
 	}
 }

@@ -19,7 +19,10 @@ package org.apache.poi.hdgf.dev;
 import java.io.FileInputStream;
 
 import org.apache.poi.hdgf.HDGFDiagram;
+import org.apache.poi.hdgf.chunks.Chunk;
+import org.apache.poi.hdgf.chunks.Chunk.Command;
 import org.apache.poi.hdgf.pointers.Pointer;
+import org.apache.poi.hdgf.streams.ChunkStream;
 import org.apache.poi.hdgf.streams.PointerContainingStream;
 import org.apache.poi.hdgf.streams.Stream;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
@@ -54,6 +57,9 @@ public class VSDDumper {
 		for(int i=0; i<indent; i++) {
 			ind += "    ";
 		}
+		String ind2 = ind  + "    ";
+		String ind3 = ind2 + "    ";
+		
 		
 		Pointer ptr = stream.getPointer();
 		System.out.println(ind + "Stream at\t" + ptr.getOffset() +
@@ -84,6 +90,24 @@ public class VSDDumper {
 			
 			for(int i=0; i<pcs.getPointedToStreams().length; i++) {
 				dumpStream(pcs.getPointedToStreams()[i], (indent+1));
+			}
+		}
+		if(stream instanceof ChunkStream) {
+			ChunkStream cs = (ChunkStream)stream;
+			System.out.println(ind + "  Has " + cs.getChunks().length +
+					" chunks:");
+			
+			for(int i=0; i<cs.getChunks().length; i++) {
+				Chunk chunk = cs.getChunks()[i];
+				System.out.println(ind2 + "" + chunk.getName());
+				System.out.println(ind2 + "  Holds " + chunk.getCommands().length + " commands");
+				for(int j=0; j<chunk.getCommands().length; j++) {
+					Command command = chunk.getCommands()[j];
+					System.out.println(ind3 + "" + 
+							command.getDefinition().getName() +
+							" " + command.getValue()
+					);
+				}
 			}
 		}
 	}

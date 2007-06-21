@@ -152,7 +152,11 @@ public class ChunkFactory {
 		// Feed in the stuff from  chunks_parse_cmds.tbl
 		CommandDefinition[] defs = (CommandDefinition[])
 			chunkCommandDefinitions.get(new Integer(header.getType()));
+		if(defs == null) defs = new CommandDefinition[0];
 		chunk.commandDefinitions = defs;
+		
+		// Now get the chunk to process its commands
+		chunk.processCommands();
 		
 		// All done
 		return chunk;
