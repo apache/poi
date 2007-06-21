@@ -329,6 +329,14 @@ under the License.
 			<include name="*.ppt" />
 		</fileset>
 	</copy>
+
+	<!-- Copy HDGF Resources over -->
+	<property name="hdgf.chunks" value="org/apache/poi/hdgf/chunks" />
+	<copy todir="${scratchpad.output.dir}/${hdgf.chunks}">
+		<fileset dir="${scratchpad.src}/${hdgf.chunks}">
+			<include name="*.tbl" />
+		</fileset>
+	</copy>
   </target>
 
   <target name="compile-contrib" depends="init">

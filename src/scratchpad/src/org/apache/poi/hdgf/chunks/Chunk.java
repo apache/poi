@@ -16,6 +16,8 @@
 ==================================================================== */
 package org.apache.poi.hdgf.chunks;
 
+import org.apache.poi.hdgf.chunks.ChunkFactory.CommandDefinition;
+
 /**
  * Base of all chunks, which hold data, flags etc
  */
@@ -30,6 +32,8 @@ public class Chunk {
 	private ChunkTrailer trailer;
 	/** May be null */
 	private ChunkSeparator separator;
+	/** The possible different commands we can hold */
+	protected CommandDefinition[] commandDefinitions;
 	
 	public Chunk(ChunkHeader header, ChunkTrailer trailer, ChunkSeparator separator, byte[] contents) {
 		this.header = header;
@@ -51,6 +55,13 @@ public class Chunk {
 	/** Gets the trailer for this chunk, if it exists */
 	public ChunkTrailer getTrailer() {
 		return trailer;
+	}
+	/**
+	 * Gets the command definitions, which define and describe much
+	 *  of the data held by the chunk.
+	 */
+	public CommandDefinition[] getCommandDefinitions() {
+		return commandDefinitions;
 	}
 
 	/**

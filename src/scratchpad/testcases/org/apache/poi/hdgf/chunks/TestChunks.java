@@ -132,6 +132,56 @@ public static final byte[] data_b = new byte[] { 70, 0, 0, 0,
 		// Should be 19 + length + 8 + 4 big
 		assertEquals(68, chunk.getHeader().getLength());
 		assertEquals(68+19+8+4, chunk.getOnDiskSize());
+		
+		// Type is 70, or 0x46
+		assertEquals(70, chunk.getHeader().getType());
+		assertEquals(0x46, chunk.getHeader().getType());
+		
+		// Should have two different chunk commands, a
+		//  10 (page sheet) and an 18
+		assertEquals(2, chunk.commandDefinitions.length);
+		
+		assertEquals(10, chunk.commandDefinitions[0].getType());
+		assertEquals(0, chunk.commandDefinitions[0].getOffset());
+		assertEquals("PageSheet", chunk.commandDefinitions[0].getName());
+		
+		assertEquals(18, chunk.commandDefinitions[1].getType());
+		assertEquals(0, chunk.commandDefinitions[1].getOffset());
+		assertEquals("0", chunk.commandDefinitions[1].getName());
+	}
+	
+	public void testAnotherChunk() throws Exception {
+		ChunkFactory cf = new ChunkFactory(11);
+		
+		// Go for the 2nd chunk in the stream
+		int offset = 0;
+		Chunk chunk = cf.createChunk(data_b, offset);
+		offset += chunk.getOnDiskSize();
+		chunk = cf.createChunk(data_b, offset);
+		
+		assertNotNull(chunk.getHeader());
+		assertNotNull(chunk.getTrailer());
+		assertNotNull(chunk.getSeparator());
+		
+		// Should be 19 + length + 8 + 4 big
+		assertEquals(32, chunk.getHeader().getLength());
+		assertEquals(32+19+8+4, chunk.getOnDiskSize());
+		
+		// Type is 104, or 0x68
+		assertEquals(104, chunk.getHeader().getType());
+		assertEquals(0x68, chunk.getHeader().getType());
+		
+		// Should have two different chunk commands, a
+		//  10 (Unknown) and an 18
+		assertEquals(2, chunk.commandDefinitions.length);
+		
+		assertEquals(10, chunk.commandDefinitions[0].getType());
+		assertEquals(0, chunk.commandDefinitions[0].getOffset());
+		assertEquals("Unknown 0x68", chunk.commandDefinitions[0].getName());
+		
+		assertEquals(18, chunk.commandDefinitions[1].getType());
+		assertEquals(0, chunk.commandDefinitions[1].getOffset());
+		assertEquals("0", chunk.commandDefinitions[1].getName());
 	}
 	
 	public void testManyChunks() throws Exception {
