@@ -47,7 +47,7 @@ public static final byte[] data_a = new byte[] { 70, 0, 0, 0,
 	0, 0, 0, 1, 0, 84, 24, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
 	0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
 	-125, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 2, 0, 85, 5, 0, 0, 
-	0, 72, 0, 0, 0, 0, 0, 0, 0, 0, 0
+	0, 72, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 public static final byte[] data_b = new byte[] { 70, 0, 0, 0,
 	-1, -1, -1, -1, 3, 0, 0, 0, 68, 0, 0, 0, 0, 0, 0, 68, 0, 0, 0, 0, 0, 
@@ -137,9 +137,10 @@ public static final byte[] data_b = new byte[] { 70, 0, 0, 0,
 		assertEquals(70, chunk.getHeader().getType());
 		assertEquals(0x46, chunk.getHeader().getType());
 		
-		// Should have two different chunk commands, a
+		// Should have two virtual chunk commands, a
 		//  10 (page sheet) and an 18
 		assertEquals(2, chunk.commandDefinitions.length);
+		assertEquals(0, chunk.getCommands().length);
 		
 		assertEquals(10, chunk.commandDefinitions[0].getType());
 		assertEquals(0, chunk.commandDefinitions[0].getOffset());
@@ -171,9 +172,10 @@ public static final byte[] data_b = new byte[] { 70, 0, 0, 0,
 		assertEquals(104, chunk.getHeader().getType());
 		assertEquals(0x68, chunk.getHeader().getType());
 		
-		// Should have two different chunk commands, a
+		// Should have two virtual chunk commands, a
 		//  10 (Unknown) and an 18
 		assertEquals(2, chunk.commandDefinitions.length);
+		assertEquals(0, chunk.getCommands().length);
 		
 		assertEquals(10, chunk.commandDefinitions[0].getType());
 		assertEquals(0, chunk.commandDefinitions[0].getOffset());
