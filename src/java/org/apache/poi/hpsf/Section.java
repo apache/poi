@@ -244,6 +244,16 @@ public class Section
         {
             ple = (PropertyListEntry) propertyList.get(propertyCount - 1);
             ple.length = size - ple.offset;
+            if (ple.length <= 0)
+            {
+                final StringBuffer b = new StringBuffer();
+                b.append("The property set claims to have a size of ");
+                b.append(size);
+                b.append(" bytes. However, it exceeds ");
+                b.append(ple.offset);
+                b.append(" bytes.");
+                throw new IllegalPropertySetDataException(b.toString());
+            }
         }
 
         /* Look for the codepage. */
@@ -322,6 +332,20 @@ public class Section
                 return 0;
             else
                 return 1;
+        }
+
+        public String toString()
+        {
+            final StringBuffer b = new StringBuffer();
+            b.append(getClass().getName());
+            b.append("[id=");
+            b.append(id);
+            b.append(", offset=");
+            b.append(offset);
+            b.append(", length=");
+            b.append(length);
+            b.append(']');
+            return b.toString();
         }
     }
 
