@@ -233,8 +233,8 @@ public class Util
      */
     public static boolean equals(final Object[] c1, final Object[] c2)
     {
-        final Object[] o1 = (Object[]) c1.clone();
-        final Object[] o2 = (Object[]) c2.clone();
+        final Object[] o1 = c1.clone();
+        final Object[] o2 = c2.clone();
         return internalEquals(o1, o2);
     }
 
