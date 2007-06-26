@@ -160,11 +160,15 @@ public class TextPropCollection {
 			StyleTextPropAtom.writeLittleEndian(reservedField,o);
 		}
 
-		// The the mask field
+		// Then the mask field
 		int mask = 0;
 		for(int i=0; i<textPropList.size(); i++) {
 			TextProp textProp = (TextProp)textPropList.get(i);
-			mask += textProp.getWriteMask();
+            //sometimes header indicates that the bitmask is present but its value is 0
+            if (textProp instanceof BitMaskTextProp)
+                mask |= (textProp.getWriteMask() == 0 ? 1 : textProp.getWriteMask());
+            else
+                mask |= textProp.getWriteMask();
 		}
 		StyleTextPropAtom.writeLittleEndian(mask,o);
 
