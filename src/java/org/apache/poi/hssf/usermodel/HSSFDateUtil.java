@@ -173,7 +173,7 @@ public class HSSFDateUtil
     	}
     	
     	// Translate \- into just -, before matching
-    	String fs = formatString.replace("\\-","-"); 
+    	String fs = formatString.replaceAll("\\\\-","-");
     	
     	// Otherwise, check it's only made up of:
     	//  y m d - /

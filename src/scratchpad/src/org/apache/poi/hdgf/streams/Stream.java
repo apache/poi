@@ -21,6 +21,7 @@ import java.io.IOException;
 import org.apache.poi.hdgf.chunks.ChunkFactory;
 import org.apache.poi.hdgf.pointers.Pointer;
 import org.apache.poi.hdgf.pointers.PointerFactory;
+import org.apache.poi.hdgf.exceptions.HDGFException;
 
 /**
  * Base of all Streams within a HDGF document.
@@ -63,7 +64,7 @@ public abstract class Stream {
 				);
 			} catch(IOException e) {
 				// Should never occur
-				throw new IllegalStateException(e);
+				throw new HDGFException(e);
 			}
 		} else {
 			store = new StreamStore(
