@@ -26,6 +26,7 @@ import org.apache.poi.hslf.model.textproperties.TextProp;
 import org.apache.poi.hslf.model.textproperties.TextPropCollection;
 import org.apache.poi.hslf.record.StyleTextPropAtom.*;
 import org.apache.poi.hslf.usermodel.SlideShow;
+import org.apache.poi.util.HexDump;
 
 import junit.framework.TestCase;
 import java.io.ByteArrayOutputStream;
@@ -733,5 +734,29 @@ public class TestStyleTextPropAtom extends TestCase {
         assertEquals(20, chprops.findByName("font.size").getValue());
         assertEquals(0, chprops.findByName("asian_or_complex").getValue());
         assertEquals(1, chprops.findByName("char_unknown_2").getValue());
+    }
+
+    /**
+     * Check the test data for Bug 42677.
+     */
+     public void test42677() throws Exception {
+        int length = 18;
+        byte[] data = {0x00, 0x00, (byte)0xA1, 0x0F, 0x28, 0x00, 0x00, 0x00,
+                       0x13, 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , (byte)0xF1 , 0x20 , 0x00, 0x00 , 0x00 , 0x00 ,
+                       0x22 , 0x20 , 0x00 , 0x00 , 0x64 , 0x00 , 0x00 , 0x00 , 0x00 , (byte)0xFF ,
+                       0x00 , 0x00 , 0x13 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x63 , 0x00 ,
+                       0x00 , 0x00 , 0x01 , 0x00 , 0x00 , 0x00 , 0x0F , 0x00
+        };
+        StyleTextPropAtom stpa = new StyleTextPropAtom(data,0,data.length);
+        stpa.setParentTextSize(length);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        stpa.writeOut(baos);
+        byte[] b = baos.toByteArray();
+
+        assertEquals(data.length, b.length);
+        for(int i=0; i<data.length; i++) {
+            assertEquals(data[i],b[i]);
+        }
+
     }
 }
