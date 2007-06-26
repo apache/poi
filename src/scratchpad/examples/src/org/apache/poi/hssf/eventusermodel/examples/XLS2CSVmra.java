@@ -280,7 +280,7 @@ public class XLS2CSVmra implements HSSFListener {
         		// Java wants M not m for month
         		format = format.replace('m','M');
         		// Change \- into -, if it's there
-        		format = format.replace("\\-","-");
+        		format = format.replaceAll("\\\\-","-");
         		
         		// Format as a date
         		Date d = HSSFDateUtil.getJavaDate(value);

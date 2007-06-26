@@ -71,7 +71,7 @@ public class VSDDumper {
 		System.out.println(ind + "  Length is\t" + ptr.getLength() +
 				" - " + Integer.toHexString(ptr.getLength()));
 		System.out.println(ind + "  Compressed is\t" + ptr.destinationCompressed());
-		System.out.println(ind + "  Stream is\t" + stream.getClass().getCanonicalName());
+		System.out.println(ind + "  Stream is\t" + stream.getClass().getName());
 		
 		byte[] db = stream._getStore()._getContents();
 		String ds = "";
