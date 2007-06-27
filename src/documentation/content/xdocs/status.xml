@@ -32,7 +32,7 @@
     </developers>
 
     <changes>
-        <release version="3.0.1-FINAL" date="2007-06-15">
+        <release version="3.0.1-FINAL" date="2007-07-05">
             <action dev="POI-DEVELOPERS" type="fix">Administrative updates to the Maven POMs, and the release artificat build process</action>
             <action dev="POI-DEVELOPERS" type="fix">23951 - [PATCH] Fix for HSSF setSheetOrder and tab names</action>
             <action dev="POI-DEVELOPERS" type="fix">42524 - [PATCH] Better HSLF support for problem shape groups</action>
@@ -41,6 +41,9 @@
             <action dev="POI-DEVELOPERS" type="add">Additional HSLF support for Title and Slide Master Sheets</action>
             <action dev="POI-DEVELOPERS" type="fix">42474 - [PATCH] Improved HSLF note to slide matching, and a NPE</action>
             <action dev="POI-DEVELOPERS" type="fix">42481 - [PATCH] Tweak some HSLF exceptions, to make it clearer what you're catching</action>
+            <action dev="POI-DEVELOPERS" type="fix">42667 - [PATCH] Fix for HSLF writing of files with tables</action>
+            <action dev="POI-DEVELOPERS" type="add">Improved way of detecting HSSF cells that contain dates, isADateFormat</action>
+            <action dev="POI-DEVELOPERS" type="add">Initial, read-only support for Visio documents, as HDGF</action>
         </release>
 
         <release version="3.0-FINAL" date="2007-05-18">

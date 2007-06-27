@@ -34,12 +34,12 @@
             <title>Overview</title>
 
             <p>HSLF is the POI Project's pure Java implementation of the Powerpoint file format.</p>
-            <p>HSSF provides a way to read powerpoint presentations, and extract text from it.
+            <p>HSLF provides a way to read powerpoint presentations, and extract text from it.
             It also provides some (currently limited) edit capabilities.
             </p>
             <note> 
                 This code currently lives the 
-                <link href="http://svn.apache.org/viewcvs.cgi/jakarta/poi/trunk/src/scratchpad/">scratchpad area</link> 
+                <link href="http://svn.apache.org/viewcvs.cgi/poi/trunk/src/scratchpad/">scratchpad area</link> 
                 of the POI SVN repository. 
 				Ensure that you have the scratchpad jar or the scratchpad 
                 build area in your

@@ -20,18 +20,15 @@
 <!DOCTYPE book PUBLIC "-//APACHE//DTD Cocoon Documentation Book V1.0//EN" "../dtd/book-cocoon-v10.dtd">
 
 <book software="POI Project"
-    title="HSLF"
+    title="HGDF"
     copyright="@year@ POI Project">
 
     <menu label="Apache POI">
         <menu-item label="Top" href="../index.html"/>
     </menu>
 
-    <menu label="HSLF">
+    <menu label="HDGF">
         <menu-item label="Overview" href="index.html"/>
-        <menu-item label="Quick Guide" href="quick-guide.html"/>
-        <menu-item label="Shapes HowTo" href="how-to-shapes.html"/>
-        <menu-item label="PPT File Format" href="ppt-file-format.html"/>
 	</menu>
 	
 </book>
