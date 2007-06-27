@@ -57,7 +57,6 @@ public class VisioTextExtractor {
 		for(int i=0; i<hdgf.getTopLevelStreams().length; i++) {
 			findText(hdgf.getTopLevelStreams()[i], text);
 		}
-		System.err.println("Found " + text.size() + " text string");
 		return (String[])text.toArray( new String[text.size()] );
 	}
 	private void findText(Stream stream, ArrayList text) {
@@ -108,6 +107,8 @@ public class VisioTextExtractor {
 		
 		VisioTextExtractor extractor = 
 			new VisioTextExtractor(new FileInputStream(args[0]));
-		System.out.println(extractor.getText());
+		
+		// Print not PrintLn as already has \n added to it
+		System.out.print(extractor.getText());
 	}
 }

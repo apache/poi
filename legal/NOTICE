@@ -1,5 +1,16 @@
-Apache Jakarta POI
+Apache POI
 Copyright 2001-2007 The Apache Software Foundation
 
 This product includes software developed by
 The Apache Software Foundation (http://www.apache.org/).
+
+
+Unit testing support is provided by JUnit, under the 
+Common Public License Version 1.0: 
+	http://www.opensource.org/licenses/cpl.php
+See http://www.junit.org/
+
+Small parts of the POI component HDGF are based on VSDump,
+and are under the GNU General Public Licence version 3 (GPL v3):
+	http://gplv3.fsf.org/
+See http://www.gnome.ru/projects/vsdump_en.html
