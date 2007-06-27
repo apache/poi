@@ -27,4 +27,8 @@ public class ChunkSeparator {
 		separatorData = new byte[4];
 		System.arraycopy(data, offset, separatorData, 0, 4);
 	}
+	
+	public String toString() {
+		return "<ChunkSeparator of length " + separatorData.length + ">";
+	}
 }

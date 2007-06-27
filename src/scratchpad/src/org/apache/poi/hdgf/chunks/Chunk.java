@@ -20,6 +20,7 @@ import java.util.ArrayList;
 
 import org.apache.poi.hdgf.chunks.ChunkFactory.CommandDefinition;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.StringUtil;
 
 /**
  * Base of all chunks, which hold data, flags etc
@@ -167,9 +168,27 @@ public class Chunk {
 						LittleEndian.getDouble(contents, offset)
 				);
 				break;
+			case 12:
+				// A Little Endian String
+				// Starts 8 bytes into the data segment
+				// Ends at end of data, or 00 00
+				int startsAt = 8;
+				int endsAt = startsAt;
+				for(int j=startsAt; j<contents.length-1 && endsAt == startsAt; j++) {
+					if(contents[j] == 0 && contents[j+1] == 0) {
+						endsAt = j;
+					}
+				}
+				if(endsAt == startsAt) {
+					endsAt = contents.length;
+				}
+				
+				int strLen = (endsAt-startsAt) / 2;
+				command.value = StringUtil.getFromUnicodeLE(contents, startsAt, strLen);
+				break;
 			case 25:
 				command.value = new Short(
-						LittleEndian.getShort(contents, offset)
+					LittleEndian.getShort(contents, offset)
 				);
 				break;
 			case 26:

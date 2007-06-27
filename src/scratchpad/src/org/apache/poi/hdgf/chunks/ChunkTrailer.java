@@ -26,4 +26,8 @@ public class ChunkTrailer {
 		trailerData = new byte[8];
 		System.arraycopy(data, offset, trailerData, 0, 8);
 	}
+	
+	public String toString() {
+		return "<ChunkTrailer of length " + trailerData.length + ">";
+	}
 }
