@@ -20,6 +20,8 @@ import java.util.ArrayList;
 
 import org.apache.poi.hdgf.chunks.ChunkFactory.CommandDefinition;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 import org.apache.poi.util.StringUtil;
 
 /**
@@ -44,6 +46,9 @@ public class Chunk {
 	//private Block[] blocks
 	/** The name of the chunk, as found from the commandDefinitions */
 	private String name;
+	
+	/** For logging warnings about the structure of the file */
+	private POILogger logger = POILogFactory.getLogger(Chunk.class);
 	
 	public Chunk(ChunkHeader header, ChunkTrailer trailer, ChunkSeparator separator, byte[] contents) {
 		this.header = header;
@@ -149,7 +154,9 @@ public class Chunk {
 			
 			// Check we seem to have enough data
 			if(offset >= contents.length) {
-				System.err.println("Command offset " + offset + " past end of data at " + contents.length);
+				logger.log(POILogger.WARN, 
+						"Command offset " + offset + " past end of data at " + contents.length
+				);
 				continue;
 			}
 		
@@ -207,7 +214,8 @@ public class Chunk {
 				break;
 				
 			default:
-				//System.err.println("Warning - Command of type " + type + " not processed!");
+				logger.log(POILogger.INFO, 
+						"Command of type " + type + " not processed!");
 			}
 			
 			// Add to the array
