@@ -83,7 +83,7 @@ public abstract class Stream {
 			return new ChunkStream(pointer, store, chunkFactory); 
 		}
 		else if(pointer.destinationHasStrings()) {
-			return new StringsStream(pointer, store);
+			return new StringsStream(pointer, store, chunkFactory);
 		}
 		
 		// Give up and return a generic one

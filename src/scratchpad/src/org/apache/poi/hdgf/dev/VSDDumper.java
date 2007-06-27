@@ -70,6 +70,11 @@ public class VSDDumper {
 				" - " + Integer.toHexString(ptr.getFormat()));
 		System.out.println(ind + "  Length is\t" + ptr.getLength() +
 				" - " + Integer.toHexString(ptr.getLength()));
+		if(ptr.destinationCompressed()) {
+			int decompLen = stream._getContentsLength();
+			System.out.println(ind + "  DC.Length is\t" + decompLen +
+					" - " + Integer.toHexString(decompLen));
+		}
 		System.out.println(ind + "  Compressed is\t" + ptr.destinationCompressed());
 		System.out.println(ind + "  Stream is\t" + stream.getClass().getName());
 		
@@ -100,6 +105,9 @@ public class VSDDumper {
 			for(int i=0; i<cs.getChunks().length; i++) {
 				Chunk chunk = cs.getChunks()[i];
 				System.out.println(ind2 + "" + chunk.getName());
+				System.out.println(ind2 + "  Length is " + chunk._getContents().length + " (" + Integer.toHexString(chunk._getContents().length) + ")");
+				System.out.println(ind2 + "  OD Size is " + chunk.getOnDiskSize() + " (" + Integer.toHexString(chunk.getOnDiskSize()) + ")");
+				System.out.println(ind2 + "  T / S is " + chunk.getTrailer() + " / " + chunk.getSeparator());
 				System.out.println(ind2 + "  Holds " + chunk.getCommands().length + " commands");
 				for(int j=0; j<chunk.getCommands().length; j++) {
 					Command command = chunk.getCommands()[j];

@@ -18,6 +18,7 @@ package org.apache.poi.hdgf.streams;
 
 import java.io.FileInputStream;
 
+import org.apache.poi.hdgf.chunks.Chunk;
 import org.apache.poi.hdgf.chunks.ChunkFactory;
 import org.apache.poi.hdgf.pointers.Pointer;
 import org.apache.poi.hdgf.pointers.PointerFactory;
@@ -201,5 +202,64 @@ public class TestStreamComplex extends StreamTest {
 		assertNotNull(s8451.getPointedToStreams()[0]);
 		assertTrue(s8451.getPointedToStreams()[0] instanceof StringsStream);
 		assertTrue(s8451.getPointedToStreams()[1] instanceof StringsStream);
+	}
+	
+	public void testChunkWithText() throws Exception {
+		// Parent ChunkStream is at 0x7194
+		// This is one of the last children of the trailer
+		Pointer trailerPtr = ptrFactory.createPointer(contents, trailerPointerAt);
+		TrailerStream ts = (TrailerStream)
+			Stream.createStream(trailerPtr, contents, chunkFactory, ptrFactory);
+		
+		ts.findChildren(contents);
+		
+		assertNotNull(ts.getChildPointers());
+		assertNotNull(ts.getPointedToStreams());
+		assertEquals(20, ts.getChildPointers().length);
+		assertEquals(20, ts.getPointedToStreams().length);
+		
+		assertEquals(0x7194, ts.getChildPointers()[13].getOffset());
+		assertEquals(0x7194, ts.getPointedToStreams()[13].getPointer().getOffset());
+		
+		PointerContainingStream ps7194 = (PointerContainingStream)
+			ts.getPointedToStreams()[13];
+		
+		// First child is at 0x64b3
+		assertEquals(0x64b3, ps7194.getChildPointers()[0].getOffset());
+		assertEquals(0x64b3, ps7194.getPointedToStreams()[0].getPointer().getOffset());
+		
+		ChunkStream cs = (ChunkStream)ps7194.getPointedToStreams()[0];
+		
+		// Should be 26bc bytes un-compressed
+		assertEquals(0x26bc, cs.getStore().getContents().length);
+		// And should have lots of children
+		assertEquals(131, cs.getChunks().length);
+		
+		// One of which is Text
+		boolean hasText = false;
+		for(int i=0; i<cs.getChunks().length; i++) {
+			if(cs.getChunks()[i].getName().equals("Text")) {
+				hasText = true;
+			}
+		}
+		assertTrue(hasText);
+		// Which is the 72nd command
+		assertEquals("Text", cs.getChunks()[72].getName());
+		
+		Chunk text = cs.getChunks()[72];
+		assertEquals("Text", text.getName());
+		
+		// Which contains our text
+		assertEquals(1, text.getCommands().length);
+		assertEquals("Test View\n", text.getCommands()[0].getValue());
+		
+		
+		// Almost at the end is some more text
+		assertEquals("Text", cs.getChunks()[128].getName());
+		text = cs.getChunks()[128];
+		assertEquals("Text", text.getName());
+		
+		assertEquals(1, text.getCommands().length);
+		assertEquals("Some random text, on a page\n", text.getCommands()[0].getValue());
 	}
 }

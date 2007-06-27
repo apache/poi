@@ -16,13 +16,16 @@ limitations under the License.
 ==================================================================== */
 package org.apache.poi.hdgf.streams;
 
+import org.apache.poi.hdgf.chunks.ChunkFactory;
 import org.apache.poi.hdgf.pointers.Pointer;
 
 /**
- * A Stream which holds Strings
+ * A Stream which holds Strings. This is just another kind
+ *  of ChunkStream, it seems
  */
 public class StringsStream extends Stream {
-	protected StringsStream(Pointer pointer, StreamStore store) {
+	protected StringsStream(Pointer pointer, StreamStore store, ChunkFactory chunkFactory) {
 		super(pointer, store);
+//		super(pointer, store, chunkFactory);
 	}
 }

@@ -24,6 +24,10 @@ public class ChunkHeaderV11 extends ChunkHeaderV6 {
 	 * Does the chunk have a separator?
 	 */
 	public boolean hasSeparator() {
+		// For some reason, there are two types that don't have a 
+		//  separator despite the flags that indicate they do
+		if(type == 0x1f || type == 0xc9) { return false; }
+		
 		// If there's a trailer, there's a separator
 		if(hasTrailer()) { return true; }
 

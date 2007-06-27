@@ -43,6 +43,11 @@ public class ChunkStream extends Stream {
 	public void findChunks() {
 		ArrayList chunksA = new ArrayList();
 		
+		if(getPointer().getOffset() == 0x64b3) {
+			int i = 0;
+			i++;
+		}
+		
 		int pos = 0;
 		byte[] contents = getStore().getContents();
 		while(pos < contents.length) {
