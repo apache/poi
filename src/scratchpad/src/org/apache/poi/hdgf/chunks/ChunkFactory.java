@@ -24,6 +24,9 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
 
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
+
 /**
  * Factor class to create the appropriate chunks, which
  *  needs the version of the file to process the chunk header
@@ -41,6 +44,9 @@ public class ChunkFactory {
 	/** What the name is of the chunk table */
 	private static String chunkTableName = 
 		"/org/apache/poi/hdgf/chunks/chunks_parse_cmds.tbl";
+	
+	/** For logging problems we spot with the file */
+	private POILogger logger = POILogFactory.getLogger(ChunkFactory.class);
 	
 	public ChunkFactory(int version) throws IOException {
 		this.version = version;
@@ -107,7 +113,8 @@ public class ChunkFactory {
 		// Check we have enough data, and tweak the header size
 		//  as required
 		if(endOfDataPos > data.length) {
-			System.err.println("Header called for " + header.getLength() +" bytes, but that would take us passed the end of the data!");
+			logger.log(POILogger.WARN,
+				"Header called for " + header.getLength() +" bytes, but that would take us passed the end of the data!");
 			
 			endOfDataPos = data.length;
 			header.length = data.length - offset - header.getSizeInBytes();

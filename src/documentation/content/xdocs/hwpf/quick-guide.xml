@@ -30,7 +30,7 @@
 
     <body>
 		<p>HWPF is still in early development. It is in the <link
-     	href="http://svn.apache.org/viewcvs.cgi/jakarta/poi/trunk/src/scratchpad/">
+     	href="http://svn.apache.org/viewcvs.cgi/poi/trunk/src/scratchpad/">
 		scratchpad section of the SVN.</link> You will need to ensure you
 		either have a recent SVN checkout, or a recent SVN nightly build
 		(including the scratchpad jar!)</p>
@@ -68,7 +68,7 @@ can then get text and other properties.
 		<section><title>Further Examples</title>
 		<p>For now, the best source of additional examples is in the unit 
 		tests. <link
-     	href="http://svn.apache.org/viewvc/jakarta/poi/trunk/src/scratchpad/testcases/org/apache/poi/hwpf/">
+     	href="http://svn.apache.org/viewvc/poi/trunk/src/scratchpad/testcases/org/apache/poi/hwpf/">
 		Browse the HWPF unit tests.</link>
 		</p>
 		</section>

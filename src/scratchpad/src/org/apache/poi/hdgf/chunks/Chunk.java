@@ -20,6 +20,9 @@ import java.util.ArrayList;
 
 import org.apache.poi.hdgf.chunks.ChunkFactory.CommandDefinition;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
+import org.apache.poi.util.StringUtil;
 
 /**
  * Base of all chunks, which hold data, flags etc
@@ -43,6 +46,9 @@ public class Chunk {
 	//private Block[] blocks
 	/** The name of the chunk, as found from the commandDefinitions */
 	private String name;
+	
+	/** For logging warnings about the structure of the file */
+	private POILogger logger = POILogFactory.getLogger(Chunk.class);
 	
 	public Chunk(ChunkHeader header, ChunkTrailer trailer, ChunkSeparator separator, byte[] contents) {
 		this.header = header;
@@ -148,7 +154,9 @@ public class Chunk {
 			
 			// Check we seem to have enough data
 			if(offset >= contents.length) {
-				System.err.println("Command offset " + offset + " past end of data at " + contents.length);
+				logger.log(POILogger.WARN, 
+						"Command offset " + offset + " past end of data at " + contents.length
+				);
 				continue;
 			}
 		
@@ -167,9 +175,27 @@ public class Chunk {
 						LittleEndian.getDouble(contents, offset)
 				);
 				break;
+			case 12:
+				// A Little Endian String
+				// Starts 8 bytes into the data segment
+				// Ends at end of data, or 00 00
+				int startsAt = 8;
+				int endsAt = startsAt;
+				for(int j=startsAt; j<contents.length-1 && endsAt == startsAt; j++) {
+					if(contents[j] == 0 && contents[j+1] == 0) {
+						endsAt = j;
+					}
+				}
+				if(endsAt == startsAt) {
+					endsAt = contents.length;
+				}
+				
+				int strLen = (endsAt-startsAt) / 2;
+				command.value = StringUtil.getFromUnicodeLE(contents, startsAt, strLen);
+				break;
 			case 25:
 				command.value = new Short(
-						LittleEndian.getShort(contents, offset)
+					LittleEndian.getShort(contents, offset)
 				);
 				break;
 			case 26:
@@ -188,7 +214,8 @@ public class Chunk {
 				break;
 				
 			default:
-				//System.err.println("Warning - Command of type " + type + " not processed!");
+				logger.log(POILogger.INFO, 
+						"Command of type " + type + " not processed!");
 			}
 			
 			// Add to the array
