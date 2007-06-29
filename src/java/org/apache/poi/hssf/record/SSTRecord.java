@@ -93,10 +93,7 @@ public class SSTRecord
     /**
      * Constructs an SST record and sets its fields appropriately.
      *
-     * @param id must be 0xfc or an exception will be throw upon
-     *           validation
-     * @param size the size of the data area of the record
-     * @param data of the record (should not contain sid/len)
+     * @param in the RecordInputstream to read the record from
      */
 
     public SSTRecord( RecordInputStream in )
@@ -352,8 +349,7 @@ public class SSTRecord
      * associated data. The UnicodeString class can handle the byte[]
      * vs short[] nature of the actual string data
      *
-     * @param data raw data
-     * @param size size of the raw data
+     * @param in the RecordInputstream to read the record from
      */
 
     protected void fillFields( RecordInputStream in )

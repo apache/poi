@@ -35,14 +35,7 @@ import org.apache.poi.util.LittleEndian;
  * <p>REFERENCE:  Microsoft Excel SDK page 322 and 420</p>
  * 
  * @see HorizontalPageBreakRecord
-<<<<<<< PageBreakRecord.java
- * @see VerticalPageBreakREcord
- *
- * REFERENCE:  Microsoft Excel SDK page 322 and 420
-=======
  * @see VerticalPageBreakRecord
- * 
->>>>>>> 1.5
  * @author Danny Mui (dmui at apache dot org)
  */
 public class PageBreakRecord extends Record {

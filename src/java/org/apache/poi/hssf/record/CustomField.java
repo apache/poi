@@ -28,10 +28,7 @@ public interface CustomField
 
     /**
      * Populates this fields data from the byte array passed in.
-     * @param   data raw data
-     * @param   size size of data
-     * @param   offset of the record's data (provided a big array of the file)
-     * @return  the number of bytes read.
+     * @param in the RecordInputstream to read the record from
      */
     int fillField(RecordInputStream in);
 

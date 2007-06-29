@@ -491,7 +491,8 @@ public class NameRecord extends Record {
     /**
      * called by the class that is responsible for writing this sucker.
      * Subclasses should implement this so that their data is passed back in a
-     * @param in the RecordInputstream to read the record from
+	 * @param offset to begin writing at
+	 * @param data byte array containing instance data
      * @return number of bytes written
      */
     public int serialize( int offset, byte[] data )

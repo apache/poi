@@ -49,8 +49,7 @@ public class GreaterThanPtg
 
     /**
      * Constructor. Create a new GreaterThanPtg.
-     * @param data the byte array to have the PTG added to
-     * @param offset the offset to the PTG to.
+     * @param in the RecordInputstream to read the record from
      */
     public GreaterThanPtg(RecordInputStream in)
     {

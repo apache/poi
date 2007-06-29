@@ -383,7 +383,6 @@ public class HSSFFont
 
     /**
      * set character-set to use.
-     * @return character-set
      * @see #ANSI_CHARSET
      * @see #DEFAULT_CHARSET
      * @see #SYMBOL_CHARSET

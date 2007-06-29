@@ -194,8 +194,8 @@ public class NoteRecord extends Record {
      * Options flags.
      *
      * @return the options flag
-     * @see NoteRecord.NOTE_VISIBLE
-     * @see NoteRecord.NOTE_HIDDEN
+     * @see #NOTE_VISIBLE
+     * @see #NOTE_HIDDEN
      */
     public short getFlags(){
         return field_3_flags;
