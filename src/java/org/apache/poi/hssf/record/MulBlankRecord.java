@@ -118,9 +118,7 @@ public class MulBlankRecord
 
     /**
      * @param in the RecordInputstream to read the record from
-     * @param size size of data
      */
-
     protected void fillFields(RecordInputStream in)
     {
         //field_1_row       = LittleEndian.getShort(data, 0 + offset);

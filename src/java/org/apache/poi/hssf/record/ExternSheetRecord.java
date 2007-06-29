@@ -65,9 +65,7 @@ public class ExternSheetRecord extends Record {
      * called by the constructor, should set class level fields.  Should throw
      * runtime exception for bad/icomplete data.
      *
-     * @param data raw data
-     * @param size size of data
-     * @param offset of the record's data (provided a big array of the file)
+     * @param in the RecordInputstream to read the record from
      */
     protected void fillFields(RecordInputStream in) {
         field_2_REF_structures           = new ArrayList();

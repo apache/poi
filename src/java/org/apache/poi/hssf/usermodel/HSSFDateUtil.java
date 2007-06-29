@@ -160,6 +160,7 @@ public class HSSFDateUtil
      *  
      * @param formatIndex The index of the format, eg from ExtendedFormatRecord.getFormatIndex
      * @param formatString The format string
+     * @see #isInternalDateFormat(int,String) 
      */
     public static boolean isADateFormat(int formatIndex, String formatString) {
     	// First up, is this an internal date format?
@@ -187,7 +188,7 @@ public class HSSFDateUtil
     /**
      * Given a format ID this will check whether the format represents
      *  an internal excel date format or not.
-     * @see isDateFormat(int,String) 
+     * @see #isDateFormat(int,String) 
      */
     public static boolean isInternalDateFormat(int format) {
       boolean retval =false;

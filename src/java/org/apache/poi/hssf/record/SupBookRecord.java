@@ -62,8 +62,6 @@ public class SupBookRecord extends Record
 
     /**
      * @param in the RecordInputstream to read the record from
-     * @param size size of data
-     * @param offset of the record's data (provided a big array of the file)
      */
     protected void fillFields(RecordInputStream in)
     {

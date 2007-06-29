@@ -220,7 +220,7 @@ public class RecordInputStream extends InputStream
    *     
    * { 0x16, 0x00 } -0x16     
    *      
-   * @param len the length of the final string
+   * @param length the length of the final string
    * @return                                     the converted string
    * @exception  IllegalArgumentException        if len is too large (i.e.,
    *      there is not enough data in string to create a String of that     

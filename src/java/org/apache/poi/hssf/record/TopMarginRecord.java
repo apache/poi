@@ -35,10 +35,7 @@ public class TopMarginRecord extends Record implements Margin
     /**
      * Constructs a TopMargin record and sets its fields appropriately.
      *
-     * @param id    id must be 0x28 or an exception
-     *               will be throw upon validation
-     * @param size  size the size of the data area of the record
-     * @param data  data of the record (should not contain sid/len)
+     * @param in the RecordInputstream to read the record from
      */
     public TopMarginRecord( RecordInputStream in )
     {        super( in );    }
@@ -56,6 +53,9 @@ public class TopMarginRecord extends Record implements Margin
         }
     }
 
+    /**
+     * @param in the RecordInputstream to read the record from
+     */
     protected void fillFields( RecordInputStream in )
     {
         field_1_margin = in.readDouble();

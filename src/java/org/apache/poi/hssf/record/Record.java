@@ -66,9 +66,7 @@ public abstract class Record
      * called by the constructor, should set class level fields.  Should throw
      * runtime exception for bad/icomplete data.
      *
-     * @param data raw data
-     * @param size size of data
-     * @param offset of the record's data (provided a big array of the file)
+     * @param in the RecordInputstream to read the record from
      */
 
     protected abstract void fillFields(RecordInputStream in);
