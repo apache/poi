@@ -25,10 +25,6 @@ import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.StringEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 
-/**
- * @author 
- *
- */
 public class T implements Function {
     
     

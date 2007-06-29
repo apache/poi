@@ -20,10 +20,6 @@
  */
 package org.apache.poi.hssf.record.formula.functions;
 
-/**
- * @author 
- *
- */
 public class Forecast extends NotImplementedFunction {
 
 }

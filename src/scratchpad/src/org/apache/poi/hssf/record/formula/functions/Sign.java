@@ -27,10 +27,6 @@ import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.NumericValueEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 
-/**
- * @author 
- *
- */
 public class Sign extends NumericFunction {
     
     public Eval evaluate(Eval[] operands, int srcRow, short srcCol) {
