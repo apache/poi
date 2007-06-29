@@ -27,10 +27,6 @@ import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.RefEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 
-/**
- * @author 
- *
- */
 public class Column implements Function {
     public Eval evaluate(Eval[] evals, int srcCellRow, short srcCellCol) {
         ValueEval retval = null;
