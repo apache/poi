@@ -171,7 +171,6 @@ public class HSSFFormulaEvaluator {
      * evaluateInCell() when the call should not modify the contents of the
      * original cell. 
      * @param cell
-     * @return
      */
     public CellValue evaluate(HSSFCell cell) {
         CellValue retval = null;
@@ -249,7 +248,6 @@ public class HSSFFormulaEvaluator {
     /**
      * Returns a CellValue wrapper around the supplied ValueEval instance.
      * @param eval
-     * @return
      */
     protected static CellValue getCellValueForEval(ValueEval eval) {
         CellValue retval = null;
@@ -287,7 +285,6 @@ public class HSSFFormulaEvaluator {
      * @param formula
      * @param sheet
      * @param workbook
-     * @return
      */
     protected static ValueEval internalEvaluate(HSSFCell srcCell, HSSFRow srcRow, HSSFSheet sheet, HSSFWorkbook workbook) {
         int srcRowNum = srcRow.getRowNum();
@@ -409,7 +406,6 @@ public class HSSFFormulaEvaluator {
      * returns the OperationEval concrete impl instance corresponding
      * to the suplied operationPtg
      * @param ptg
-     * @return
      */
     protected static Eval getOperationEvalForPtg(OperationPtg ptg) {
         Eval retval = null;
@@ -432,7 +428,6 @@ public class HSSFFormulaEvaluator {
      * passed here!
      * 
      * @param ptg
-     * @return
      */
     protected static Eval getEvalForPtg(Ptg ptg) {
         Eval retval = null;
@@ -478,7 +473,6 @@ public class HSSFFormulaEvaluator {
      * @param cell
      * @param sheet
      * @param workbook
-     * @return
      */
     protected static ValueEval getEvalForCell(HSSFCell cell, HSSFRow row, HSSFSheet sheet, HSSFWorkbook workbook) {
         ValueEval retval = BlankEval.INSTANCE;

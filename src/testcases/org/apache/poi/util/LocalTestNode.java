@@ -77,8 +77,6 @@ class LocalTestNode
      * Method compareTo
      *
      * @param o
-     *
-     * @return
      */
 
     public int compareTo(Object o)

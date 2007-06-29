@@ -77,7 +77,6 @@ public final class FinanceLib {
      * @param y pmt per period
      * @param f future value
      * @param t type (true=pmt at end of period, false=pmt at begining of period)
-     * @return
      */
     public static double fv(double r, double n, double y, double p, boolean t) {
         double retval = 0;
@@ -103,7 +102,6 @@ public final class FinanceLib {
      * @param y
      * @param f
      * @param t
-     * @return
      */
     public static double pv(double r, double n, double y, double f, boolean t) {
         double retval = 0;
@@ -127,7 +125,6 @@ public final class FinanceLib {
      * value should be negative.
      * @param r
      * @param cfs cashflow amounts
-     * @return
      */
     public static double npv(double r, double[] cfs) {
         double npv = 0;
@@ -147,7 +144,6 @@ public final class FinanceLib {
      * @param p
      * @param f
      * @param t
-     * @return
      */
     public static double pmt(double r, double n, double p, double f, boolean t) {
         double retval = 0;
@@ -170,7 +166,6 @@ public final class FinanceLib {
      * @param p
      * @param f
      * @param t
-     * @return
      */
     public static double nper(double r, double y, double p, double f, boolean t) {
         double retval = 0;

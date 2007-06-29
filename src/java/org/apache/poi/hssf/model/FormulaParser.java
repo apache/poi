@@ -534,7 +534,6 @@ public class FormulaParser {
 	 /** Get a PTG for an integer from its string representation. 
 	  * return Int or Number Ptg based on size of input
 	 * @param number
-	 * @return
 	 */
 	private Ptg getNumberPtgFromString(String number) {
 		try {

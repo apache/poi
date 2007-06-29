@@ -2506,7 +2506,6 @@ public class Sheet implements Model
 
     /** Returns the ProtectRecord.
      * If one is not contained in the sheet, then one is created.
-     * @return
      */
     public ProtectRecord getProtect()
     {

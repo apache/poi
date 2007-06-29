@@ -48,7 +48,6 @@ public class SimpleFilledShape
      *
      * @param hssfShape
      * @param shapeId
-     * @return
      */
     private EscherContainerRecord createSpContainer( HSSFSimpleShape hssfShape, int shapeId )
     {

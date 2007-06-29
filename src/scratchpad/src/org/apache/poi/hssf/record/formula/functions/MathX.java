@@ -48,7 +48,6 @@ public final class MathX {
      * <p>If n is NaN, returned value is NaN.
      * @param n
      * @param p
-     * @return
      */
     public static double round(double n, int p) {
         double retval;
@@ -83,7 +82,6 @@ public final class MathX {
      * <p>If n is NaN, returned value is NaN.
      * @param n
      * @param p
-     * @return
      */
     public static double roundUp(double n, int p) {
         double retval;
@@ -127,7 +125,6 @@ public final class MathX {
      * <p>If n is NaN, returned value is NaN.
      * @param n
      * @param p
-     * @return
      */
     public static double roundDown(double n, int p) {
         double retval;
@@ -158,7 +155,6 @@ public final class MathX {
      * <p> If d is NaN, then 1 will be returned. It is the responsibility
      * of caller to check for d isNaN if some other value is desired.
      * @param d
-     * @return
      */
     public static short sign(double d) {
         return (short) ((d == 0)
@@ -171,7 +167,6 @@ public final class MathX {
     /**
      * average of all values
      * @param values
-     * @return
      */
     public static double average(double[] values) {
         double ave = 0;
@@ -187,7 +182,6 @@ public final class MathX {
     /**
      * sum of all values
      * @param values
-     * @return
      */
     public static double sum(double[] values) {
         double sum = 0;
@@ -200,7 +194,6 @@ public final class MathX {
     /**
      * sum of squares of all values
      * @param values
-     * @return
      */
     public static double sumsq(double[] values) {
         double sumsq = 0;
@@ -214,7 +207,6 @@ public final class MathX {
     /**
      * product of all values
      * @param values
-     * @return
      */
     public static double product(double[] values) {
         double product = 0;
@@ -231,7 +223,6 @@ public final class MathX {
      * min of all values. If supplied array is zero length,
      * Double.POSITIVE_INFINITY is returned.
      * @param values
-     * @return
      */
     public static double min(double[] values) {
         double min = Double.POSITIVE_INFINITY;
@@ -245,7 +236,6 @@ public final class MathX {
      * min of all values. If supplied array is zero length,
      * Double.NEGATIVE_INFINITY is returned.
      * @param values
-     * @return
      */
     public static double max(double[] values) {
         double max = Double.NEGATIVE_INFINITY;
@@ -269,7 +259,6 @@ public final class MathX {
      * In all such cases, Double.NaN is returned.
      * @param n
      * @param s
-     * @return
      */
     public static double floor(double n, double s) {
         double f;
@@ -298,7 +287,6 @@ public final class MathX {
      * In all such cases, Double.NaN is returned.
      * @param n
      * @param s
-     * @return
      */
     public static double ceiling(double n, double s) {
         double c;
@@ -322,7 +310,6 @@ public final class MathX {
      * than Double.MAX_VALUE; Double.POSITIVE_INFINITY is returned.
      * If n < 0, Double.NaN is returned. 
      * @param n
-     * @return
      */
     public static double factorial(int n) {
         double d = 1;
@@ -358,7 +345,6 @@ public final class MathX {
      * If d == 0, result is NaN
      * @param n
      * @param d
-     * @return
      */
     public static double mod(double n, double d) {
         double result = 0;
@@ -385,7 +371,6 @@ public final class MathX {
     /**
      * inverse hyperbolic cosine
      * @param d
-     * @return
      */
     public static double acosh(double d) {
         return Math.log(Math.sqrt(Math.pow(d, 2) - 1) + d);
@@ -394,7 +379,6 @@ public final class MathX {
     /**
      * inverse hyperbolic sine
      * @param d
-     * @return
      */
     public static double asinh(double d) {
         double d2 = d*d;
@@ -404,7 +388,6 @@ public final class MathX {
     /**
      * inverse hyperbolic tangent
      * @param d
-     * @return
      */
     public static double atanh(double d) {
         return Math.log((1 + d)/(1 - d)) / 2;
@@ -413,7 +396,6 @@ public final class MathX {
     /**
      * hyperbolic cosine
      * @param d
-     * @return
      */
     public static double cosh(double d) {
         double ePowX = Math.pow(Math.E, d);
@@ -425,7 +407,6 @@ public final class MathX {
     /**
      * hyperbolic sine
      * @param d
-     * @return
      */
     public static double sinh(double d) {
         double ePowX = Math.pow(Math.E, d);
@@ -437,7 +418,6 @@ public final class MathX {
     /**
      * hyperbolic tangent
      * @param d
-     * @return
      */
     public static double tanh(double d) {
         double ePowX = Math.pow(Math.E, d);
@@ -452,7 +432,6 @@ public final class MathX {
      * all the subarrays are of equal length. If the subarrays are
      * not of equal length, the return value can be unpredictable.
      * @param arrays
-     * @return
      */
     public static double sumproduct(double[][] arrays) {
         double d = 0;
@@ -485,7 +464,6 @@ public final class MathX {
      * subarrays are not of equal length, the return value can be 
      * unpredictable.
      * @param arrays
-     * @return
      */
     public static double sumx2my2(double[] xarr, double[] yarr) {
         double d = 0;
@@ -511,7 +489,6 @@ public final class MathX {
      * subarrays are not of equal length, the return value can be 
      * unpredictable.
      * @param arrays
-     * @return
      */
     public static double sumx2py2(double[] xarr, double[] yarr) {
         double d = 0;
@@ -538,7 +515,6 @@ public final class MathX {
      * subarrays are not of equal length, the return value can be 
      * unpredictable.
      * @param arrays
-     * @return
      */
     public static double sumxmy2(double[] xarr, double[] yarr) {
         double d = 0;
@@ -565,7 +541,6 @@ public final class MathX {
      * If either of the parameters is negative, Double.NaN is returned.
      * @param n
      * @param k
-     * @return
      */
     public static double nChooseK(int n, int k) {
         double d = 1;

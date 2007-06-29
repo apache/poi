@@ -478,7 +478,6 @@ public class TextRun
 	/**
 	 * Fetch the rich text runs (runs of text with the same styling) that
 	 *  are contained within this block of text
-	 * @return
 	 */
 	public RichTextRun[] getRichTextRuns() {
 		return 	_rtRuns;
