@@ -48,9 +48,7 @@ public class ContinueRecord
     /**
      * Main constructor -- kinda dummy because we don't validate or fill fields
      *
-     * @param id record id
-     * @param size record size
-     * @param data raw data
+     * @param in the RecordInputstream to read the record from
      */
 
     public ContinueRecord(RecordInputStream in)
@@ -80,9 +78,8 @@ public class ContinueRecord
         //    "You're not supposed to serialize Continue records like this directly");
     }
 
-    /**
-     * set the data for continuation
-     * @param data - a byte array containing all of the continued data
+	/*
+     * @param data raw data
      */
 
     public void setData(byte [] data)
@@ -139,9 +136,7 @@ public class ContinueRecord
     /**
      * Fill the fields. Only thing is, this record has no fields --
      *
-     * @param ignored_parm1 Ignored
-     * @param ignored_parm2 Ignored
-     * @param ignored_parm3 Ignored
+     * @param in the RecordInputstream to read the record from
      */
 
     protected void fillFields(RecordInputStream in)

@@ -106,9 +106,7 @@ public class UnicodeString
 
     /**
      * construct a unicode string record and fill its fields, ID is ignored
-     * @param id - ignored
-     * @param size - size of the data
-     * @param data - the bytes of the string/fields
+     * @param in the RecordInputstream to read the record from
      */
 
     public UnicodeString(RecordInputStream in)
@@ -201,12 +199,7 @@ public class UnicodeString
     }
 
     /**
-     * called by the constructor, should set class level fields.  Should throw
-     * runtime exception for bad/icomplete data.
-     *
-     * @param data raw data
-     * @param size size of data
-     * @param offset of the records data (provided a big array of the file)
+     * @param in the RecordInputstream to read the record from
      */
     protected void fillFields(RecordInputStream in)
         {

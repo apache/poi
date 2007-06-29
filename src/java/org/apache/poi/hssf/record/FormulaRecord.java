@@ -77,11 +77,11 @@ public class FormulaRecord
 
     /**
      * Constructs a Formula record and sets its fields appropriately.
+     * Note - id must be 0x06 (NOT 0x406 see MSKB #Q184647 for an 
+     * "explanation of this bug in the documentation) or an exception
+     *  will be throw upon validation
      *
-     * @param id     id must be 0x06 (NOT 0x406 see MSKB #Q184647 for an "explanation of
-     * this bug in the documentation) or an exception will be throw upon validation
-     * @param size  the size of the data area of the record
-     * @param data  data of the record (should not contain sid/len)
+     * @param in the RecordInputstream to read the record from
      */
 
     public FormulaRecord(RecordInputStream in)

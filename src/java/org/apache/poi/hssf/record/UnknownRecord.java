@@ -43,8 +43,6 @@ public class UnknownRecord
     }
 
     /**
-     * construct an unknown record.  No fields are interperated and the record will
-     * be serialized in its original form more or less
      * @param id    id of the record -not validated, just stored for serialization
      * @param data  the data
      */
@@ -58,9 +56,7 @@ public class UnknownRecord
     /**
      * construct an unknown record.  No fields are interperated and the record will
      * be serialized in its original form more or less
-     * @param id    id of the record -not validated, just stored for serialization
-     * @param size  size of the data
-     * @param data  the data
+     * @param in the RecordInputstream to read the record from
      */
 
     public UnknownRecord(RecordInputStream in)

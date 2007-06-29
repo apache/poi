@@ -135,9 +135,7 @@ public class NameRecord extends Record {
     /**
      * Constructs a Name record and sets its fields appropriately.
      *
-     * @param id     id must be 0x18 or an exception will be throw upon validation
-     * @param size  the size of the data area of the record
-     * @param data  data of the record (should not contain sid/len)
+     * @param in the RecordInputstream to read the record from
      */
     public NameRecord(RecordInputStream in) {
         super(in);
@@ -493,10 +491,7 @@ public class NameRecord extends Record {
     /**
      * called by the class that is responsible for writing this sucker.
      * Subclasses should implement this so that their data is passed back in a
-     * byte array.
-     *
-     * @param offset to begin writing at
-     * @param data byte array containing instance data
+     * @param in the RecordInputstream to read the record from
      * @return number of bytes written
      */
     public int serialize( int offset, byte[] data )
@@ -709,9 +704,7 @@ public class NameRecord extends Record {
      * called by the constructor, should set class level fields.  Should throw
      * runtime exception for bad/icomplete data.
      *
-     * @param data raw data
-     * @param size size of data
-     * @param offset of the record's data (provided a big array of the file)
+     * @param in the RecordInputstream to read the record from
      */
     protected void fillFields(RecordInputStream in) {
         field_1_option_flag             = in.readShort();
