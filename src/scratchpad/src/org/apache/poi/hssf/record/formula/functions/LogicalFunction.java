@@ -32,7 +32,6 @@ public abstract class LogicalFunction implements Function {
     /**
      * recursively evaluate any RefEvals
      * @param reval
-     * @return
      */
     protected ValueEval xlateRefEval(RefEval reval) {
         ValueEval retval = (ValueEval) reval.getInnerValueEval();

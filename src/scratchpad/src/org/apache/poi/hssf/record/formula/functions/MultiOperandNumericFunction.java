@@ -66,7 +66,6 @@ public abstract class MultiOperandNumericFunction extends NumericFunction {
     /**
      * Maximum number of operands accepted by this function.
      * Subclasses may override to change default value.
-     * @return
      */
     protected int getMaxNumOperands() {
         return DEFAULT_MAX_NUM_OPERANDS;
@@ -82,7 +81,6 @@ public abstract class MultiOperandNumericFunction extends NumericFunction {
      * @param operands
      * @param srcRow
      * @param srcCol
-     * @return
      */
     protected double[] getNumberArray(Eval[] operands, int srcRow, short srcCol) {
         double[] retval = new double[30];
@@ -120,7 +118,6 @@ public abstract class MultiOperandNumericFunction extends NumericFunction {
      * @param operand
      * @param srcRow
      * @param srcCol
-     * @return
      */
     protected double[] getNumberArray(Eval operand, int srcRow, short srcCol) {
         double[] retval;
@@ -184,7 +181,6 @@ public abstract class MultiOperandNumericFunction extends NumericFunction {
      * @param arr
      * @param pos
      * @param d
-     * @return
      */
     private static double[] putInArray(double[] arr, int pos, double d) {
         double[] tarr = arr;

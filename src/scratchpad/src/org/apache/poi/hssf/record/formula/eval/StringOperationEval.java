@@ -34,7 +34,6 @@ public abstract class StringOperationEval implements OperationEval {
      * @param eval
      * @param srcRow
      * @param srcCol
-     * @return
      */
     protected ValueEval singleOperandEvaluate(Eval eval, int srcRow, short srcCol) {
         ValueEval retval;

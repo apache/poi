@@ -61,7 +61,6 @@ public class ValueEvalToNumericXlator {
      * The params can be either NumberEval, BoolEval, StringEval, or
      * RefEval
      * @param eval
-     * @return
      */
     public ValueEval attemptXlateToNumeric(ValueEval eval) {
         ValueEval retval = null;
@@ -114,7 +113,6 @@ public class ValueEvalToNumericXlator {
      * instance. If flag is set, a zero
      * valued numbereval is returned, else BlankEval.INSTANCE
      * is returned.
-     * @return
      */
     private ValueEval xlateBlankEval(int flag) {
         return ((flags & flag) > 0)
@@ -125,7 +123,6 @@ public class ValueEvalToNumericXlator {
     /**
      * uses the relevant flags to decode the supplied RefVal
      * @param eval
-     * @return
      */
     private ValueEval xlateRefEval(RefEval reval) {
         ValueEval retval = null;
@@ -177,7 +174,6 @@ public class ValueEvalToNumericXlator {
     /**
      * uses the relevant flags to decode the StringEval
      * @param eval
-     * @return
      */
     private ValueEval xlateStringEval(StringEval eval) {
         ValueEval retval = null;
@@ -224,7 +220,6 @@ public class ValueEvalToNumericXlator {
     /**
      * uses the relevant flags to decode the StringEval
      * @param eval
-     * @return
      */
     private ValueEval xlateRefStringEval(StringEval eval) {
         ValueEval retval = null;

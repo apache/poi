@@ -35,7 +35,6 @@ public final class StatsLib {
     /**
      * returns the mean of deviations from mean.
      * @param v
-     * @return
      */
     public static double avedev(double[] v) {
         double r = 0;
@@ -66,7 +65,6 @@ public final class StatsLib {
      * is Double.NaN. Else returns the value that occurs most times
      * and if there is a tie, returns the first such value. 
      * @param v
-     * @return
      */
     public static double mode(double[] v) {
         double r = Double.NaN;
@@ -139,7 +137,6 @@ public final class StatsLib {
      * will result in return value Double.NaN
      * @param v
      * @param k
-     * @return
      */
     public static double kthLargest(double[] v, int k) {
         double r = Double.NaN;
@@ -160,7 +157,6 @@ public final class StatsLib {
      * will result in return value Double.NaN
      * @param v
      * @param k
-     * @return
      */
     public static double kthSmallest(double[] v, int k) {
         double r = Double.NaN;

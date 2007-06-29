@@ -77,7 +77,6 @@ public abstract class TextFunction implements Function {
      * Note: AreaEvals are not handled, if arg is an AreaEval,
      * the returned value is ErrorEval.VALUE_INVALID
      * @param ve
-     * @return
      */
     protected ValueEval attemptXlateToText(ValueEval ve) {
         ValueEval retval;

@@ -343,7 +343,6 @@ public class HSSFWorkbook
      * allow you to show the data of one sheet when another is seen "selected"
      * in the tabs (at the bottom).
      * @see org.apache.poi.hssf.usermodel.HSSFSheet#setSelected(boolean)
-     * @return
      */
     public short getSelectedTab() {
         return workbook.getWindowOne().getSelectedTab();
@@ -361,7 +360,6 @@ public class HSSFWorkbook
     /**
      * sets the first tab that is displayed in the list of tabs
      * in excel.
-     * @return
      */
     public short getDisplayedTab() {
         return workbook.getWindowOne().getDisplayedTab();

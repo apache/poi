@@ -40,19 +40,16 @@ public interface RefEval extends ValueEval {
      * the RefEval representing
      * A1 will return as the getInnerValueEval() the
      * object of concrete type StringEval
-     * @return
      */
     public ValueEval getInnerValueEval();
 
     /**
      * returns the column index.
-     * @return
      */
     public short getColumn();
 
     /**
      * returns the row index.
-     * @return
      */
     public short getRow();
     
@@ -66,7 +63,6 @@ public interface RefEval extends ValueEval {
      * B1 has the value "test", then the RefEval
      * representing A1 will return isEvaluated()
      * equal to true.
-     * @return
      */
     public boolean isEvaluated();
 

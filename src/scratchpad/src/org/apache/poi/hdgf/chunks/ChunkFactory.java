@@ -102,7 +102,6 @@ public class ChunkFactory {
 	 * Creates the appropriate chunk at the given location.
 	 * @param data
 	 * @param offset
-	 * @return
 	 */
 	public Chunk createChunk(byte[] data, int offset) {
 		// Create the header

@@ -74,7 +74,6 @@ public abstract class XYNumericFunction extends NumericFunction {
      * @param operands
      * @param srcRow
      * @param srcCol
-     * @return
      */
     protected double[][] getNumberArray(Eval[] xops, Eval[] yops, int srcRow, short srcCol) {
         double[][] retval = new double[2][30];
