@@ -44,9 +44,7 @@ public class VerticalPageBreakRecord extends PageBreakRecord {
 	}
 
 	/**
-	 * @param id
-	 * @param size
-	 * @param data
+     * @param in the RecordInputstream to read the record from
 	 */
 	public VerticalPageBreakRecord(RecordInputStream in) {
 		super(in);

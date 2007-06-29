@@ -43,10 +43,8 @@ public class HorizontalPageBreakRecord extends PageBreakRecord {
 		super(sid);
 	}
 
-	/**
-	 * @param id
-	 * @param size
-	 * @param data
+   /**
+     * @param in the RecordInputstream to read the record from
 	 */
 	public HorizontalPageBreakRecord(RecordInputStream in) {
 		super(in);

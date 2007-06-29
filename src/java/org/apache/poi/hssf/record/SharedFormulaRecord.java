@@ -55,10 +55,7 @@ public class SharedFormulaRecord
     }
 
     /**
-     * construct the sharedformula record, save all the information
-     * @param id    id of the record -not validated, just stored for serialization
-     * @param size  size of the data
-     * @param data  the data
+     * @param in the RecordInputstream to read the record from
      */
 
     public SharedFormulaRecord(RecordInputStream in)

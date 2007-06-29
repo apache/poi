@@ -45,11 +45,8 @@ public abstract class Record
     /**
      * Constructor Record
      *
-     * @param id record id
-     * @param size record size
-     * @param data raw data
+     * @param in the RecordInputstream to read the record from
      */
-
     public Record(RecordInputStream in)
     {
         validateSid(in.getSid());

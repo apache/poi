@@ -52,10 +52,7 @@ public class ObjectLinkRecord
     /**
      * Constructs a ObjectLink record and sets its fields appropriately.
      *
-     * @param id    id must be 0x1027 or an exception
-     *              will be throw upon validation
-     * @param size  size the size of the data area of the record
-     * @param data  data of the record (should not contain sid/len)
+     * @param in the RecordInputstream to read the record from
      */
 
     public ObjectLinkRecord(RecordInputStream in)
