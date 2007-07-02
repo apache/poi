@@ -282,7 +282,8 @@ public class HSSFFormulaEvaluator {
      * else a runtime exception will be thrown somewhere inside the method.
      * (Hence this is a private method.)
      * 
-     * @param formula
+     * @param srcCell
+     * @param srcRow
      * @param sheet
      * @param workbook
      */

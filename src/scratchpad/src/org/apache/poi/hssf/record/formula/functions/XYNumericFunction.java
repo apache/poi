@@ -71,7 +71,8 @@ public abstract class XYNumericFunction extends NumericFunction {
      * that are considered invalid and would result in #VALUE! error in 
      * excel cause this function to return null.
      * 
-     * @param operands
+     * @param xops
+     * @param yops
      * @param srcRow
      * @param srcCol
      */

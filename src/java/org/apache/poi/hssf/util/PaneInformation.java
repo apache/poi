@@ -87,10 +87,10 @@ public class PaneInformation
 	
 	/**
 	 * Returns the active pane
-	 * @see PANE_LOWER_RIGHT
-	 * @see PANE_UPPER_RIGHT
-	 * @see PANE_LOWER_LEFT
-	 * @see PANE_UPPER_LEFT
+	 * @see #PANE_LOWER_RIGHT
+	 * @see #PANE_UPPER_RIGHT
+	 * @see #PANE_LOWER_LEFT
+	 * @see #PANE_UPPER_LEFT
 	 * @return the active pane.
 	 */
 	public byte getActivePane() {

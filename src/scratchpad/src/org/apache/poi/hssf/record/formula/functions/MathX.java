@@ -463,7 +463,8 @@ public final class MathX {
      * to ensure that the two subarrays are of equal length. If the 
      * subarrays are not of equal length, the return value can be 
      * unpredictable.
-     * @param arrays
+     * @param xarr
+     * @param yarr
      */
     public static double sumx2my2(double[] xarr, double[] yarr) {
         double d = 0;
@@ -488,7 +489,8 @@ public final class MathX {
      * to ensure that the two subarrays are of equal length. If the 
      * subarrays are not of equal length, the return value can be 
      * unpredictable.
-     * @param arrays
+     * @param xarr
+     * @param yarr
      */
     public static double sumx2py2(double[] xarr, double[] yarr) {
         double d = 0;
@@ -514,7 +516,8 @@ public final class MathX {
      * to ensure that the two subarrays are of equal length. If the 
      * subarrays are not of equal length, the return value can be 
      * unpredictable.
-     * @param arrays
+     * @param xarr
+     * @param yarr
      */
     public static double sumxmy2(double[] xarr, double[] yarr) {
         double d = 0;

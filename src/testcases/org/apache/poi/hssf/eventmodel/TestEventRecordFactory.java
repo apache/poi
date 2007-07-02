@@ -186,7 +186,7 @@ public class TestEventRecordFactory extends TestCase
     /**
      * tests that the create record function returns a properly 
      * constructed record in the case of a continued record.
-     * @todo - need a real world example to put in a unit test
+     * TODO - need a real world example to put in a unit test
      */
     public void testCreateContinuedRecord()
     {
