@@ -74,7 +74,7 @@ public class TxMasterStyleAtom extends RecordAtom {
      * We are of type 4003
      *
      * @return type of this record
-     * @see RecordTypes.TxMasterStyleAtom
+     * @see RecordTypes#TxMasterStyleAtom
      */
     public long getRecordType() {
         return _type;

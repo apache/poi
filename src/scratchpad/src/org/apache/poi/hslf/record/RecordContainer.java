@@ -158,7 +158,7 @@ public abstract class RecordContainer extends Record
 	/**
 	 * Adds the given Child Record before the supplied record
 	 * @param newChild
-	 * @param after
+	 * @param before
 	 */
 	public void addChildBefore(Record newChild, Record before) {
 		synchronized(changingChildRecordsLock) {

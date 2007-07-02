@@ -352,7 +352,7 @@ public class HSSFSheet
     /**
      * Get the visibility state for a given column.
      * @param column - the column to get (0-based)
-     * @param width - the visiblity state of the column
+     * @param hidden - the visiblity state of the column
      */
 
     public void setColumnHidden(short column, boolean hidden)
@@ -1414,8 +1414,8 @@ public class HSSFSheet
     /**
      * Sets the default column style for a given column.  POI will only apply this style to new cells added to the sheet.
      *
-     * @param fromCol the starting column index
      * @param column the column index
+     * @param style the style to set
      */
     public void setDefaultColumnStyle(short column, HSSFCellStyle style) {
 	sheet.setColumn(column, new Short(style.getIndex()), null, null, null, null);

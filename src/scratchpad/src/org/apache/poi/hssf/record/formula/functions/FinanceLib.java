@@ -75,7 +75,7 @@ public final class FinanceLib {
      * @param r rate
      * @param n num of periods
      * @param y pmt per period
-     * @param f future value
+     * @param p future value
      * @param t type (true=pmt at end of period, false=pmt at begining of period)
      */
     public static double fv(double r, double n, double y, double p, boolean t) {
@@ -162,7 +162,7 @@ public final class FinanceLib {
     /**
      * 
      * @param r
-     * @param n
+     * @param y
      * @param p
      * @param f
      * @param t

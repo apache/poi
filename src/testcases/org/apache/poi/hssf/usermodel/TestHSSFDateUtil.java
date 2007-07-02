@@ -30,7 +30,6 @@ import java.util.TimeZone;
  * Class TestHSSFDateUtil
  *
  *
- * @author
  * @author  Dan Sherman (dsherman at isisph.com)
  * @author  Hack Kampbjorn (hak at 2mba.dk)
  * @version %I%, %G%
