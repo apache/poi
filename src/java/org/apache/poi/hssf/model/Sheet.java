@@ -93,6 +93,9 @@ public class Sheet implements Model
     protected ProtectRecord              protect           =     null;
     protected PageBreakRecord            rowBreaks         =     null;
     protected PageBreakRecord            colBreaks         =     null;
+    protected ObjectProtectRecord        objprotect        =     null;
+    protected ScenarioProtectRecord      scenprotect       =     null;
+    protected PasswordRecord             password          =     null;
 
 	
     public static final byte PANE_LOWER_RIGHT = (byte)0;
@@ -284,6 +287,18 @@ public class Sheet implements Model
 			else if ( rec.getSid() == ProtectRecord.sid )
 			{
 				retval.protect = (ProtectRecord) rec;
+			} 
+			else if ( rec.getSid() == ObjectProtectRecord.sid )
+			{
+				retval.objprotect = (ObjectProtectRecord) rec;
+			} 
+			else if ( rec.getSid() == ScenarioProtectRecord.sid )
+			{
+				retval.scenprotect = (ScenarioProtectRecord) rec;
+			} 
+			else if ( rec.getSid() == PasswordRecord.sid )
+			{
+				retval.password = (PasswordRecord) rec;
 			} 
 			else if (rec.getSid() == PageBreakRecord.HORIZONTAL_SID) 
 			{	
@@ -2500,7 +2515,38 @@ public class Sheet implements Model
         ProtectRecord retval = new ProtectRecord();
 
         retval.setProtect(false);
-        // by default even when we support encryption we won't
+        return retval;
+    }
+
+    /**
+     * creates an ObjectProtect record with protect set to false.
+     * @see org.apache.poi.hssf.record.ObjectProtectRecord
+     * @see org.apache.poi.hssf.record.Record
+     * @return an ObjectProtectRecord
+     */
+    protected ObjectProtectRecord createObjectProtect()
+    {
+        if (log.check( POILogger.DEBUG ))
+            log.log(POILogger.DEBUG, "create protect record with protection disabled");
+        ObjectProtectRecord retval = new ObjectProtectRecord();
+
+        retval.setProtect(false);
+        return retval;
+    }
+
+    /**
+     * creates a ScenarioProtect record with protect set to false.
+     * @see org.apache.poi.hssf.record.ScenarioProtectRecord
+     * @see org.apache.poi.hssf.record.Record
+     * @return a ScenarioProtectRecord
+     */
+    protected ScenarioProtectRecord createScenarioProtect()
+    {
+        if (log.check( POILogger.DEBUG ))
+            log.log(POILogger.DEBUG, "create protect record with protection disabled");
+        ScenarioProtectRecord retval = new ScenarioProtectRecord();
+
+        retval.setProtect(false);
         return retval;
     }
 
@@ -2517,6 +2563,38 @@ public class Sheet implements Model
     	}
         return protect;
     }
+
+    /** Returns the PasswordRecord.
+     * If one is not contained in the sheet, then one is created.
+     */
+    public PasswordRecord getPassword()
+    {
+    	if (password == null) {
+    		password = createPassword();
+    		//Insert the newly created password record at the end of the record (just before the EOF)
+    		int loc = findFirstRecordLocBySid(EOFRecord.sid);
+    		records.add(loc, password);    		
+    	}
+        return password;
+    }
+
+    /**
+     * creates a Password record with password set to 00.
+     * @see org.apache.poi.hssf.record.PasswordRecord
+     * @see org.apache.poi.hssf.record.Record
+     * @return a PasswordRecord
+     */
+    protected PasswordRecord createPassword()
+    {
+        if (log.check( POILogger.DEBUG ))
+            log.log(POILogger.DEBUG, "create password record with 00 password");
+        PasswordRecord retval = new PasswordRecord();
+
+        retval.setPassword((short)00);
+        return retval;
+    }
+
+    /**
 
     /**
      * Sets whether the gridlines are shown in a viewer.
@@ -2791,6 +2869,68 @@ public class Sheet implements Model
         }
     }
 
+    /**
+     * protect a spreadsheet with a password (not encypted, just sets protect
+     * flags and the password.
+     * @param password to set
+     * @param objects are protected
+     * @param scenarios are protected
+     */
+    public void protectSheet( String password, boolean objects, boolean scenarios ) {
+        int protIdx = -1;
+        ProtectRecord prec = getProtect();
+        PasswordRecord pass = getPassword();
+        prec.setProtect(true);
+        pass.setPassword(PasswordRecord.hashPassword(password));
+        if((objprotect == null && objects) || (scenprotect != null && scenarios)) {
+            protIdx = records.indexOf( protect );
+        }
+        if(objprotect == null && objects) {
+            ObjectProtectRecord rec = createObjectProtect();
+            rec.setProtect(true);
+            records.add(protIdx+1,rec);
+            objprotect = rec;
+        }
+        if(scenprotect == null && scenarios) {
+            ScenarioProtectRecord srec = createScenarioProtect();
+            srec.setProtect(true);
+            records.add(protIdx+2,srec);
+            scenprotect = srec;
+        }
+    }    
+
+    /**
+     * unprotect objects in the sheet (will not protect them, but any set to false are 
+     * unprotected.
+     * @param sheet is unprotected (false = unprotect)
+     * @param objects are unprotected (false = unprotect)
+     * @param scenarios are unprotected (false = unprotect)
+     */
+    public void unprotectSheet( boolean sheet, boolean objects, boolean scenarios ) {
+        int protIdx = -1;
+        if (!sheet) {
+           ProtectRecord prec = getProtect();
+           prec.setProtect(sheet);
+           PasswordRecord pass = getPassword();
+           pass.setPassword((short)00);
+        } 
+        if(objprotect != null && !objects) {
+            objprotect.setProtect(false);
+        }
+        if(scenprotect != null && !scenarios) {
+            scenprotect.setProtect(false);
+        }
+    }    
+
+    /**
+     * @return {sheet is protected, objects are proteced, scenarios are protected}
+     */
+    public boolean[] isProtected() {
+        return new boolean[] { (protect != null && protect.getProtect()), 
+                             (objprotect != null && objprotect.getProtect()),
+                             (scenprotect != null && scenprotect.getProtect())};
+    }
+ 
 //    private void collapseColumn( short columnNumber )
 //    {
 //        int idx = findColumnIdx( columnNumber, 0 );

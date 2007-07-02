@@ -29,14 +29,11 @@ import org.apache.poi.util.LittleEndian;
  * @version 2.0-pre
  */
 
-public class PasswordRecord
-    extends Record
-{
+public class PasswordRecord extends Record {
     public final static short sid = 0x13;
     private short             field_1_password;   // not sure why this is only 2 bytes, but it is... go figure
 
-    public PasswordRecord()
-    {
+    public PasswordRecord() {
     }
 
     /**
@@ -44,23 +41,38 @@ public class PasswordRecord
      * @param in the RecordInputstream to read the record from
      */
 
-    public PasswordRecord(RecordInputStream in)
-    {
+    public PasswordRecord(RecordInputStream in) {
         super(in);
     }
 
-    protected void validateSid(short id)
-    {
-        if (id != sid)
-        {
+    protected void validateSid(short id) {
+        if (id != sid) {
             throw new RecordFormatException("NOT A PASSWORD RECORD");
         }
     }
 
-    protected void fillFields(RecordInputStream in)
-    {
+    protected void fillFields(RecordInputStream in) {
         field_1_password = in.readShort();
     }
+
+    //this is the world's lamest "security".  thanks to Wouter van Vugt for making me
+    //not have to try real hard.  -ACO
+    public static short hashPassword(String password) {
+        byte[] passwordCharacters = password.getBytes();
+        int hash = 0;
+        if (passwordCharacters.length > 0) {
+            int charIndex = passwordCharacters.length;
+            while (charIndex-- > 0) {
+                hash = ((hash >> 14) & 0x01) | ((hash << 1) & 0x7fff);
+                hash ^= passwordCharacters[charIndex];
+            }
+            // also hash with charcount
+            hash = ((hash >> 14) & 0x01) | ((hash << 1) & 0x7fff);
+            hash ^= passwordCharacters.length;
+            hash ^= (0x8000 | ('N' << 8) | 'K');
+        }
+        return (short)hash;
+    } 
 
     /**
      * set the password
@@ -68,8 +80,7 @@ public class PasswordRecord
      * @param password  representing the password
      */
 
-    public void setPassword(short password)
-    {
+    public void setPassword(short password) {
         field_1_password = password;
     }
 
@@ -78,14 +89,11 @@ public class PasswordRecord
      *
      * @return short  representing the password
      */
-
-    public short getPassword()
-    {
+    public short getPassword() {
         return field_1_password;
     }
 
-    public String toString()
-    {
+    public String toString() {
         StringBuffer buffer = new StringBuffer();
 
         buffer.append("[PASSWORD]\n");
@@ -95,8 +103,7 @@ public class PasswordRecord
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte [] data)
-    {
+    public int serialize(int offset, byte [] data) {
         LittleEndian.putShort(data, 0 + offset, sid);
         LittleEndian.putShort(data, 2 + offset,
                               (( short ) 0x02));   // 2 bytes (6 total)
@@ -104,13 +111,11 @@ public class PasswordRecord
         return getRecordSize();
     }
 
-    public int getRecordSize()
-    {
+    public int getRecordSize() {
         return 6;
     }
 
-    public short getSid()
-    {
+    public short getSid() {
         return sid;
     }
 

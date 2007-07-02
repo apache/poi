@@ -26,9 +26,10 @@ import org.apache.poi.util.LittleEndian;
  * Description:  defines whether a sheet or workbook is protected (HSSF DOES NOT SUPPORT ENCRYPTION)<P>
  * (kindly ask the US government to stop having arcane stupid encryption laws and we'll support it) <P>
  * (after all terrorists will all use US-legal encrypton right??)<P>
+ * HSSF now supports the simple "protected" sheets (where they are not encrypted and open office et al
+ * ignore the password record entirely).
  * REFERENCE:  PG 373 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
  * @author Andrew C. Oliver (acoliver at apache dot org)
- * @version 2.0-pre
  */
 
 public class ProtectRecord
