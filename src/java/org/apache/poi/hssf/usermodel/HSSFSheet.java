@@ -872,16 +872,48 @@ public class HSSFSheet
 	 * @return true => protection enabled; false => protection disabled
 	 */
 	public boolean getProtect() {
-		return getSheet().getProtect().getProtect();
+		return getSheet().isProtected()[0];
+	}
+
+	/**
+	 * @return hashed password
+	 */
+	public short getPassword() {
+		return getSheet().getPassword().getPassword();
+	}
+
+	/**
+	 * Answer whether object protection is enabled or disabled
+	 * @return true => protection enabled; false => protection disabled
+	 */
+	public boolean getObjectProtect() {
+		return getSheet().isProtected()[1];
+	}
+
+	/**
+	 * Answer whether scenario protection is enabled or disabled
+	 * @return true => protection enabled; false => protection disabled
+	 */
+	public boolean getScenarioProtect() {
+		return getSheet().isProtected()[2];
 	}
 
 	/**
 	 * Sets the protection on enabled or disabled
 	 * @param protect true => protection enabled; false => protection disabled
+         * @deprecated use protectSheet(String, boolean, boolean)
 	 */
 	public void setProtect(boolean protect) {
 		getSheet().getProtect().setProtect(protect);
 	}
+
+        /**
+         * Sets the protection enabled as well as the password
+         * @param password to set for protection
+         */
+        public void protectSheet(String password) {
+                getSheet().protectSheet(password, true, true); //protect objs&scenarios(normal)
+        }
 
     /**
      * Sets the zoom magnication for the sheet.  The zoom is expressed as a

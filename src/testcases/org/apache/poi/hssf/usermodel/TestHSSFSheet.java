@@ -26,6 +26,7 @@ import junit.framework.TestCase;
 import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.record.HCenterRecord;
 import org.apache.poi.hssf.record.ProtectRecord;
+import org.apache.poi.hssf.record.PasswordRecord;
 import org.apache.poi.hssf.record.SCLRecord;
 import org.apache.poi.hssf.record.VCenterRecord;
 import org.apache.poi.hssf.record.WSBoolRecord;
@@ -38,6 +39,7 @@ import org.apache.poi.util.TempFile;
  *
  *
  * @author Glen Stampoultzis (glens at apache.org)
+ * @author Andrew C. Oliver (acoliver apache org)
  */
 
 public class TestHSSFSheet
@@ -241,6 +243,20 @@ public class TestHSSFSheet
 		assertNotNull(cloned.getProtect());
 		assertTrue(hssfSheet.getProtect());
 	}
+
+    public void testProtectSheet() {
+        short expected = (short)0xfef1;
+	HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet s = wb.createSheet();
+        s.protectSheet("abcdefghij");
+        Sheet sheet = s.getSheet();
+	ProtectRecord protect = sheet.getProtect();
+	PasswordRecord pass = sheet.getPassword();
+        assertTrue("protection should be on",protect.getProtect());
+        assertTrue("object protection should be on",sheet.isProtected()[1]);
+        assertTrue("scenario protection should be on",sheet.isProtected()[2]);
+        assertEquals("well known value for top secret hash should be "+Integer.toHexString(expected).substring(4),expected,pass.getPassword());
+    }
 
 
     public void testZoom()
