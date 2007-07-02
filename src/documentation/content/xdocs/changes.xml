@@ -35,6 +35,11 @@
         <person id="YK" name="Yegor Kozlov" email="yegor@apache.org"/>
     </devs>
 
+        <release version="3.0.2-FINAL" date="2007-??-??">
+            <action dev="POI-DEVELOPERS" type="add">Support for querying, setting and un-setting protection on sheets in a HSSF workbook</action>
+            <action dev="POI-DEVELOPERS" type="fix">Tidy up the javadocs</action>
+        </release>
+
         <release version="3.0.1-FINAL" date="2007-07-05">
             <action dev="POI-DEVELOPERS" type="fix">Administrative updates to the Maven POMs, and the release artificat build process</action>
             <action dev="POI-DEVELOPERS" type="fix">23951 - [PATCH] Fix for HSSF setSheetOrder and tab names</action>
