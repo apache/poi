@@ -31,14 +31,17 @@
   </header>
 
   <body>
-	<section><title>POI 3.0 Release</title>
-	  <p>After quite a wait, version 3.0 of Apache POI (formerly
-		Apache Jakarta POI) has now been released. You can 
-		<link href="./changes.html">view the changelog</link>, and 
+	<section><title>POI 3.0.1 Release</title>
+	  <p>The latest release of Apache POI (formerly Apache Jakarta POI),
+		version 3.0.1, has now been released. It contains a mixture of
+		new features and bug fixes, compared to 3.0. A full list of changes
+		is available in 
+		<link href="./changes.html">the changelog</link>, and 
 		<link href="http://www.apache.org/dyn/closer.cgi/poi/release/">download</link>
 		the source and binaries from your
 		<link href="http://www.apache.org/dyn/closer.cgi/poi/release/">local mirror</link>.</p>
-      <p>We would also like to confirm that verion 3.0 of Apache POI does
+      <p>We would also like to confirm that verions 3.0 and 3.0.1 of Apache 
+		POI do
 		<em>not</em> contain any viruses. Users of broken virus checkers
 		which do detect a 94 byte file, sci_cec.db, as containing one are
 		advised to contact their vendor for a fix.</p>
