@@ -1,0 +1,146 @@
+/* ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+==================================================================== */
+
+package org.apache.poi.hsmf;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
+import org.apache.poi.hsmf.datatypes.Chunk;
+import org.apache.poi.hsmf.datatypes.Chunks;
+import org.apache.poi.hsmf.datatypes.StringChunk;
+import org.apache.poi.hsmf.exceptions.ChunkNotFoundException;
+import org.apache.poi.hsmf.parsers.POIFSChunkParser;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+
+/**
+ * Reads an Outlook MSG File in and provides hooks into its data structure.
+ * 
+ * @author Travis Ferguson
+ */
+public class MAPIMessage {
+	private POIFSChunkParser chunkParser;
+	private POIFSFileSystem fs;
+	
+	/**
+	 * Constructor for creating new files.
+	 *
+	 */
+	public MAPIMessage() {
+		//TODO make writing possible
+	}
+	
+	
+	/**
+	 * Constructor for reading MSG Files.
+	 * @param filename
+	 * @throws IOException
+	 */
+	public MAPIMessage(String filename) throws IOException {
+		InputStream in = new FileInputStream(new File(filename));
+		this.fs = new POIFSFileSystem(in);
+		chunkParser = new POIFSChunkParser(this.fs);
+	}
+
+	/**
+	 * Gets a string value based on the passed chunk.
+	 * @param chunk
+	 * @return
+	 * @throws ChunkNotFoundException
+	 */
+	public String getStringFromChunk(StringChunk chunk) throws ChunkNotFoundException {
+		Chunk out = this.chunkParser.getDocumentNode(chunk);
+		StringChunk strchunk = (StringChunk)out;
+		return strchunk.toString();
+	}
+	
+	
+	/**
+	 * Gets the plain text body of this Outlook Message
+	 * @return The string representation of the 'text' version of the body, if available.
+	 * @throws IOException 
+	 * @throws ChunkNotFoundException 
+	 */
+	public String getTextBody() throws IOException, ChunkNotFoundException {
+		return getStringFromChunk(Chunks.getInstance().textBodyChunk);
+	}
+
+	/**
+	 * Gets the subject line of the Outlook Message
+	 * @return
+	 * @throws ChunkNotFoundException
+	 */
+	public String getSubject() throws ChunkNotFoundException {
+		return getStringFromChunk(Chunks.getInstance().subjectChunk);
+	}
+	
+	
+	/**
+	 * Gets the display value of the "TO" line of the outlook message
+	 * This is not the actual list of addresses/values that will be sent to if you click Reply in the email.
+	 * @return
+	 * @throws ChunkNotFoundException
+	 */
+	public String getDisplayTo() throws ChunkNotFoundException {
+		return getStringFromChunk(Chunks.getInstance().displayToChunk);
+	}
+	
+	/**
+	 * Gets the display value of the "TO" line of the outlook message
+	 * This is not the actual list of addresses/values that will be sent to if you click Reply in the email.
+	 * @return
+	 * @throws ChunkNotFoundException
+	 */
+	public String getDisplayCC() throws ChunkNotFoundException {
+		return getStringFromChunk(Chunks.getInstance().displayCCChunk);
+	}
+	
+	/**
+	 * Gets the display value of the "TO" line of the outlook message
+	 * This is not the actual list of addresses/values that will be sent to if you click Reply in the email.
+	 * @return
+	 * @throws ChunkNotFoundException
+	 */
+	public String getDisplayBCC() throws ChunkNotFoundException {
+		return getStringFromChunk(Chunks.getInstance().displayBCCChunk);
+	}
+
+
+	/**
+	 * Gets the conversation topic of the parsed Outlook Message.
+	 * This is the part of the subject line that is after the RE: and FWD:
+	 * @return
+	 * @throws ChunkNotFoundException
+	 */
+	public String getConversationTopic() throws ChunkNotFoundException {
+		return getStringFromChunk(Chunks.getInstance().conversationTopic);
+	}
+
+	/**
+	 * Gets the message class of the parsed Outlook Message.
+	 * (Yes, you can use this to determine if a message is a calendar item, note, or actual outlook Message)
+	 * For emails the class will be IPM.Note
+	 * 
+	 * @return
+	 * @throws ChunkNotFoundException
+	 */
+	public String getMessageClass() throws ChunkNotFoundException {
+		return getStringFromChunk(Chunks.getInstance().messageClass);
+	}	
+}
