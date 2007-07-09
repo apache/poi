@@ -503,6 +503,7 @@ under the License.
             <sysproperty key="HDF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hdf/data"/>
             <sysproperty key="HWPF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hwpf/data"/>
             <sysproperty key="HSLF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hslf/data"/>
+            <sysproperty key="HSMF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hsmf/data"/>
             <sysproperty key="HDGF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hdgf/data"/>
             <sysproperty key="java.awt.headless" value="true"/>
             <formatter type="plain"/>
@@ -536,6 +537,7 @@ under the License.
 	            <sysproperty key="HPSF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hpsf/data"/>
 	            <sysproperty key="HWPF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hwpf/data"/>
                 <sysproperty key="HSLF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hslf/data"/>
+                <sysproperty key="HSMF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hsmf/data"/>
                 <sysproperty key="HDGF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hdgf/data"/>
 	            <sysproperty key="java.awt.headless" value="true"/>
 	                <sysproperty key="java.awt.headless" value="true"/>
