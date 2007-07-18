@@ -1372,6 +1372,22 @@ public class HSSFWorkbook
         }
     }
 
+    /**
+     * protect a workbook with a password (not encypted, just sets writeprotect
+     * flags and the password.
+     * @param password to set
+     */
+    public void writeProtectWorkbook( String password, String username ) {
+       this.workbook.writeProtectWorkbook(password, username);
+    }
+
+    /**
+     * removes the write protect flag
+     */
+    public void unwriteProtectWorkbook() {
+       this.workbook.unwriteProtectWorkbook();
+    }
+
     private byte[] newUID()
     {
         byte[] bytes = new byte[16];

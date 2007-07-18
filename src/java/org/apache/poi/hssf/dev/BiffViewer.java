@@ -512,6 +512,9 @@ public class BiffViewer {
             case NoteRecord.sid:
                 retval = new NoteRecord( in );
                 break;
+            case FileSharingRecord.sid:
+                retval = new FileSharingRecord( in );
+                break;
             default:
                 retval = new UnknownRecord( in );
         }
