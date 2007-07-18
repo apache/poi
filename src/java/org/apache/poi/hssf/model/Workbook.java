@@ -44,13 +44,13 @@ import java.util.Locale;
  * before even attempting to use this.
  *
  *
+ * @author  Luc Girardin (luc dot girardin at macrofocus dot com)
+ * @author  Sergei Kozello (sergeikozello at mail.ru)
  * @author  Shawn Laubach (slaubach at apache dot org) (Data Formats)
  * @author  Andrew C. Oliver (acoliver at apache dot org)
- * @author  Glen Stampoultzis (glens at apache.org)
- * @author  Sergei Kozello (sergeikozello at mail.ru)
- * @author  Luc Girardin (luc dot girardin at macrofocus dot com)
- * @author  Dan Sherman (dsherman at isisph.com)
  * @author  Brian Sanders (bsanders at risklabs dot com) - custom palette
+ * @author  Dan Sherman (dsherman at isisph.com)
+ * @author  Glen Stampoultzis (glens at apache.org)
  * @see org.apache.poi.hssf.usermodel.HSSFWorkbook
  * @version 1.0-pre
  */
@@ -101,6 +101,9 @@ public class Workbook implements Model
     private DrawingManager2    drawingManager;
     private List               escherBSERecords = new ArrayList();  // EscherBSERecord
     private WindowOneRecord windowOne;
+    private FileSharingRecord fileShare;
+    private WriteAccessRecord writeAccess;
+    private WriteProtectRecord writeProtect;
 
     private static POILogger   log = POILogFactory.getLogger(Workbook.class);
 
@@ -220,7 +223,22 @@ public class Workbook implements Model
                 case WindowOneRecord.sid:
                     if (log.check( POILogger.DEBUG ))
                         log.log(DEBUG, "found WindowOneRecord at " + k);
-                    retval.windowOne = (WindowOneRecord) rec;
+                    retval.windowOne = (WindowOneRecord) rec; 
+                    break;
+                case WriteAccessRecord.sid: 
+                    if (log.check( POILogger.DEBUG ))
+                        log.log(DEBUG, "found WriteAccess at " + k);
+                    retval.writeAccess = (WriteAccessRecord) rec;
+                    break;
+                case WriteProtectRecord.sid: 
+                    if (log.check( POILogger.DEBUG ))
+                        log.log(DEBUG, "found WriteProtect at " + k);
+                    retval.writeProtect = (WriteProtectRecord) rec;
+                    break;
+                case FileSharingRecord.sid: 
+                    if (log.check( POILogger.DEBUG ))
+                        log.log(DEBUG, "found FileSharing at " + k);
+                    retval.fileShare = (FileSharingRecord) rec;
                 default :
             }
             records.add(rec);
@@ -2233,6 +2251,71 @@ public class Workbook implements Model
     public DrawingManager2 getDrawingManager()
     {
         return drawingManager;
+    }
+
+    public WriteProtectRecord getWriteProtect() {
+        if (this.writeProtect == null) {
+           this.writeProtect = new WriteProtectRecord();
+           int i = 0;
+           for (i = 0; 
+                i < records.size() && !(records.get(i) instanceof BOFRecord); 
+                i++) {
+           }
+           records.add(i+1,this.writeProtect);
+        }
+        return this.writeProtect;
+    }
+
+    public WriteAccessRecord getWriteAccess() {
+        if (this.writeAccess == null) {
+           this.writeAccess = (WriteAccessRecord)createWriteAccess();
+           int i = 0;
+           for (i = 0; 
+                i < records.size() && !(records.get(i) instanceof InterfaceEndRecord); 
+                i++) {
+           }
+           records.add(i+1,this.writeAccess);
+        }
+        return this.writeAccess;
+    }
+
+    public FileSharingRecord getFileSharing() {
+        if (this.fileShare == null) {
+           this.fileShare = new FileSharingRecord();
+           int i = 0;
+           for (i = 0; 
+                i < records.size() && !(records.get(i) instanceof WriteAccessRecord); 
+                i++) {
+           }
+           records.add(i+1,this.fileShare);
+        }
+        return this.fileShare;
+    }
+
+    /**
+     * protect a workbook with a password (not encypted, just sets writeprotect
+     * flags and the password.
+     * @param password to set
+     */
+    public void writeProtectWorkbook( String password, String username ) {
+        int protIdx = -1;
+        FileSharingRecord frec = getFileSharing();
+        WriteAccessRecord waccess = getWriteAccess();
+        WriteProtectRecord wprotect = getWriteProtect();
+        frec.setReadOnly((short)1);
+        frec.setPassword(FileSharingRecord.hashPassword(password));
+        frec.setUsername(username);
+        waccess.setUsername(username);
+    }
+
+    /**
+     * removes the write protect flag
+     */
+    public void unwriteProtectWorkbook() {
+        records.remove(fileShare);
+        records.remove(writeProtect);
+        fileShare = null;
+        writeProtect = null;
     }
 
 }

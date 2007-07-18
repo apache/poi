@@ -79,6 +79,11 @@ public class WorkbookRecordList
         return records.iterator();
     }
 
+    public void remove( Object record ) {
+       int i = records.indexOf(record);
+       this.remove(i);
+    }
+
     public void remove( int pos )
     {
         records.remove(pos);
