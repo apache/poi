@@ -18,11 +18,14 @@
 package org.apache.poi.hssf.usermodel;
 
 import junit.framework.TestCase;
+import org.apache.poi.ddf.EscherClientAnchorRecord;
+import org.apache.poi.hssf.model.ConvertAnchor;
 
 /**
  * Various tests for HSSFClientAnchor.
  *
  * @author Glen Stampoultzis (glens at apache.org)
+ * @author Yegor Kozlov (yegor at apache.org)
  */
 public class TestHSSFClientAnchor extends TestCase
 {
@@ -58,4 +61,28 @@ public class TestHSSFClientAnchor extends TestCase
 
     }
 
+    /**
+     * When HSSFClientAnchor is converted into EscherClientAnchorRecord
+     * check that dx1, dx2, dy1 and dy2 are writtem "as is".
+     * (Bug 42999 reported that dx1 ans dx2 are swapped if dx1>dx2. It doesn't make sense for client anchors.)
+     */
+    public void testConvertAnchor() throws Exception
+    {
+        HSSFClientAnchor[] anchor = {
+            new HSSFClientAnchor( 0 , 0 , 0 , 0 ,(short)0, 1,(short)1,3),
+            new HSSFClientAnchor( 100 , 0 , 900 , 255 ,(short)0, 1,(short)1,3),
+            new HSSFClientAnchor( 900 , 0 , 100 , 255 ,(short)0, 1,(short)1,3)
+        };
+        for (int i = 0; i < anchor.length; i++) {
+            EscherClientAnchorRecord record = (EscherClientAnchorRecord)ConvertAnchor.createAnchor(anchor[i]);
+            assertEquals(anchor[i].getDx1(), record.getDx1());
+            assertEquals(anchor[i].getDx2(), record.getDx2());
+            assertEquals(anchor[i].getDy1(), record.getDy1());
+            assertEquals(anchor[i].getDy2(), record.getDy2());
+            assertEquals(anchor[i].getCol1(), record.getCol1());
+            assertEquals(anchor[i].getCol2(), record.getCol2());
+            assertEquals(anchor[i].getRow1(), record.getRow1());
+            assertEquals(anchor[i].getRow2(), record.getRow2());
+        }
+    }
 }
