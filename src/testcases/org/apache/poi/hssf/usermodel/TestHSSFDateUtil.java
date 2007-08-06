@@ -21,10 +21,14 @@ package org.apache.poi.hssf.usermodel;
 
 import junit.framework.TestCase;
 
+import java.io.FileInputStream;
 import java.util.Date;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
+
+import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
  * Class TestHSSFDateUtil
@@ -215,6 +219,14 @@ public class TestHSSFDateUtil
     			"dd/mm/yy", "dd/mm/yyyy", "dd/mmm/yy",
     			"dd-mm-yy", "dd-mm-yyyy",
     			"dd\\-mm\\-yy", // Sometimes escaped
+    			
+    			// These crazy ones are valid
+    			"yyyy-mm-dd;@", "yyyy/mm/dd;@",
+    			"dd-mm-yy;@", "dd-mm-yyyy;@",
+    			// These even crazier ones are also valid
+    			// (who knows what they mean though...)
+    			"[$-F800]dddd\\,\\ mmm\\ dd\\,\\ yyyy",
+    			"[$-F900]ddd/mm/yyy",
     	};
     	for(int i=0; i<formats.length; i++) {
     		assertTrue( HSSFDateUtil.isADateFormat(formatId, formats[i]) );
@@ -232,10 +244,73 @@ public class TestHSSFDateUtil
     	}
     }
 
+    /**
+     * Test that against a real, test file, we still do everything
+     *  correctly
+     */
+    public void testOnARealFile() throws Exception {
+        String path     = System.getProperty("HSSF.testdata.path");
+        String filename = path + "/DateFormats.xls";
+        POIFSFileSystem fs =
+            new POIFSFileSystem(new FileInputStream(filename));
+        HSSFWorkbook workbook = new HSSFWorkbook(fs);
+        HSSFSheet sheet       = workbook.getSheetAt(0);
+        Workbook wb           = workbook.getWorkbook();
+        
+        HSSFRow  row;
+        HSSFCell cell;
+        HSSFCellStyle style;
+        
+        double aug_10_2007 = 39304.0;
+        
+        // Should have dates in 2nd column
+        // All of them are the 10th of August
+        // 2 US dates, 3 UK dates
+        row  = sheet.getRow(0);
+        cell = row.getCell((short)1);
+        style = cell.getCellStyle();
+        assertEquals(aug_10_2007, cell.getNumericCellValue(), 0.0001);
+        assertEquals("d-mmm-yy", style.getDataFormatString(wb));
+        assertTrue(HSSFDateUtil.isInternalDateFormat(style.getDataFormat()));
+        assertTrue(HSSFDateUtil.isADateFormat(style.getDataFormat(), style.getDataFormatString(wb)));
+        assertTrue(HSSFDateUtil.isCellDateFormatted(cell));
+        
+        row  = sheet.getRow(1);
+        cell = row.getCell((short)1);
+        style = cell.getCellStyle();
+        assertEquals(aug_10_2007, cell.getNumericCellValue(), 0.0001);
+        assertFalse(HSSFDateUtil.isInternalDateFormat(cell.getCellStyle().getDataFormat()));
+        assertTrue(HSSFDateUtil.isADateFormat(style.getDataFormat(), style.getDataFormatString(wb)));
+        assertTrue(HSSFDateUtil.isCellDateFormatted(cell));
+        
+        row  = sheet.getRow(2);
+        cell = row.getCell((short)1);
+        style = cell.getCellStyle();
+        assertEquals(aug_10_2007, cell.getNumericCellValue(), 0.0001);
+        assertTrue(HSSFDateUtil.isInternalDateFormat(cell.getCellStyle().getDataFormat()));
+        assertTrue(HSSFDateUtil.isADateFormat(style.getDataFormat(), style.getDataFormatString(wb)));
+        assertTrue(HSSFDateUtil.isCellDateFormatted(cell));
+        
+        row  = sheet.getRow(3);
+        cell = row.getCell((short)1);
+        style = cell.getCellStyle();
+        assertEquals(aug_10_2007, cell.getNumericCellValue(), 0.0001);
+        assertFalse(HSSFDateUtil.isInternalDateFormat(cell.getCellStyle().getDataFormat()));
+        assertTrue(HSSFDateUtil.isADateFormat(style.getDataFormat(), style.getDataFormatString(wb)));
+        assertTrue(HSSFDateUtil.isCellDateFormatted(cell));
+        
+        row  = sheet.getRow(4);
+        cell = row.getCell((short)1);
+        style = cell.getCellStyle();
+        assertEquals(aug_10_2007, cell.getNumericCellValue(), 0.0001);
+        assertFalse(HSSFDateUtil.isInternalDateFormat(cell.getCellStyle().getDataFormat()));
+        assertTrue(HSSFDateUtil.isADateFormat(style.getDataFormat(), style.getDataFormatString(wb)));
+        assertTrue(HSSFDateUtil.isCellDateFormatted(cell));
+    }
+    
     public static void main(String [] args) {
         System.out
                 .println("Testing org.apache.poi.hssf.usermodel.TestHSSFDateUtil");
         junit.textui.TestRunner.run(TestHSSFDateUtil.class);
     }
-
 }
