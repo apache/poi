@@ -68,6 +68,7 @@ public class UserEditAtom extends PositionDependentRecordAtom
 	public void setLastUserEditAtomOffset(int offset) { lastUserEditAtomOffset = offset; }
 	public void setPersistPointersOffset(int offset)  { persistPointersOffset = offset; }
 	public void setLastViewType(short type)           { lastViewType=type; }
+    public void setMaxPersistWritten(int max)           { maxPersistWritten=max; }
 
 	/* *************** record code follows ********************** */
 

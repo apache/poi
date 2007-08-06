@@ -662,7 +662,8 @@ public class SlideShow
 
 		// Last view is now of the slide
   		usr.setLastViewType((short)UserEditAtom.LAST_VIEW_SLIDE_VIEW);
-  		
+  		usr.setMaxPersistWritten(_highestSheetId);
+
   		// All done and added
   		slide.setSlideShow(this);
   		return slide;
