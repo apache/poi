@@ -26,6 +26,9 @@ import java.io.ByteArrayOutputStream;
 
 import junit.framework.TestCase;
 import org.apache.poi.hslf.*;
+import org.apache.poi.hslf.record.Record;
+import org.apache.poi.hslf.record.RecordTypes;
+import org.apache.poi.hslf.record.UserEditAtom;
 import org.apache.poi.hslf.model.*;
 
 /**
@@ -73,14 +76,26 @@ public class TestAddingSlides extends TestCase {
 		
 		// Should only have a master SLWT
 		assertEquals(1, ss_empty.getDocumentRecord().getSlideListWithTexts().length);
-		
+
+        //grab UserEditAtom
+        UserEditAtom usredit = null;
+        Record[] _records = hss_empty.getRecords();
+        for (int i = 0; i < _records.length; i++) {
+            Record record = _records[i];
+            if(_records[i].getRecordType() == RecordTypes.UserEditAtom.typeID) {
+                usredit = (UserEditAtom)_records[i];
+            }
+       }
+       assertNotNull(usredit);
+
 		// Add one
 		Slide slide = ss_empty.createSlide();
 		assertEquals(1, ss_empty.getSlides().length);
 		assertEquals(256, slide._getSheetNumber());
 		assertEquals(3, slide._getSheetRefId());
 		assertEquals(1, slide.getSlideNumber());
-		
+        assertEquals(usredit.getMaxPersistWritten(), slide._getSheetRefId());
+
 		// Write out, and read back in
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		hss_empty.write(baos);
@@ -155,6 +170,17 @@ public class TestAddingSlides extends TestCase {
 	 *  with two slides already
 	 */
 	public void testAddSlideToExisting2() throws Exception {
+        //grab UserEditAtom
+        UserEditAtom usredit = null;
+        Record[] _records = hss_two.getRecords();
+        for (int i = 0; i < _records.length; i++) {
+            Record record = _records[i];
+            if(_records[i].getRecordType() == RecordTypes.UserEditAtom.typeID) {
+                usredit = (UserEditAtom)_records[i];
+            }
+       }
+       assertNotNull(usredit);
+
 		// Has two slides
 		assertEquals(2, ss_two.getSlides().length);
 		Slide s1 = ss_two.getSlides()[0];
@@ -168,14 +194,15 @@ public class TestAddingSlides extends TestCase {
 		assertEquals(257, s2._getSheetNumber());
 		assertEquals(6, s2._getSheetRefId()); // master and 1 have notes
 		assertEquals(2, s2.getSlideNumber());
-		
+
 		// Add a third one
 		Slide s3 = ss_two.createSlide();
 		assertEquals(3, ss_two.getSlides().length);
 		assertEquals(258, s3._getSheetNumber());
 		assertEquals(8, s3._getSheetRefId()); // lots of notes before us
 		assertEquals(3, s3.getSlideNumber());
-		
+        assertEquals(usredit.getMaxPersistWritten(), s3._getSheetRefId());
+
 		// Write out, and read back in
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		hss_two.write(baos);
