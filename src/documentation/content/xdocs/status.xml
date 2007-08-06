@@ -33,7 +33,11 @@
 
     <changes>
         <release version="3.0.2-FINAL" date="2007-??-??">
+            <action dev="POI-DEVELOPERS" type="fix">Improvements to HSSFDateUtils.isADateFormat, and have HSSFDateUtil.isCellDateFormatted use this</action>
+            <action dev="POI-DEVELOPERS" type="fix">42999 - [PATCH] - Fix for HSSFPatriarch positioning problems</action>
+            <action dev="POI-DEVELOPERS" type="add">Support for write-protecting a HSSF workbook</action>
             <action dev="POI-DEVELOPERS" type="add">Support for querying, setting and un-setting protection on sheets in a HSSF workbook</action>
+            <action dev="POI-DEVELOPERS" type="add">Initial HSMF (outlook) support</action>
             <action dev="POI-DEVELOPERS" type="fix">Tidy up the javadocs</action>
         </release>
 

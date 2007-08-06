@@ -256,6 +256,14 @@ public class HSSFCell
         }
         return retval;
     }
+    
+    /**
+     * Returns the Workbook that this Cell is bound to
+     * @return
+     */
+    protected Workbook getBoundWorkbook() {
+    	return book;
+    }
 
     /**
      * set the cell's number within the row (0 based)

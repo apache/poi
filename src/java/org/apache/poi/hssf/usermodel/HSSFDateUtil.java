@@ -159,7 +159,7 @@ public class HSSFDateUtil
      *  non US date formats.
      *  
      * @param formatIndex The index of the format, eg from ExtendedFormatRecord.getFormatIndex
-     * @param formatString The format string
+     * @param formatString The format string, eg from FormatRecord.getFormatString
      * @see #isInternalDateFormat(int)
      */
     public static boolean isADateFormat(int formatIndex, String formatString) {
@@ -173,12 +173,26 @@ public class HSSFDateUtil
     		return false;
     	}
     	
+    	String fs = formatString;
+    	
     	// Translate \- into just -, before matching
-    	String fs = formatString.replaceAll("\\\\-","-");
+    	fs = fs.replaceAll("\\\\-","-");
+    	// And \, into ,
+    	fs = fs.replaceAll("\\\\,",",");
+    	// And '\ ' into ' '
+    	fs = fs.replaceAll("\\\\ "," ");
+    	
+    	// If it end in ;@, that's some crazy dd/mm vs mm/dd
+    	//  switching stuff, which we can ignore
+    	fs = fs.replaceAll(";@", "");
+    	
+    	// If it starts with [$-...], then it is a date, but
+    	//  who knows what that starting bit is all about
+    	fs = fs.replaceAll("\\[\\$\\-.*?\\]", "");
     	
     	// Otherwise, check it's only made up of:
-    	//  y m d - /
-    	if(fs.matches("^[ymd\\-/]+$")) {
+    	//  y m d - / ,
+    	if(fs.matches("^[ymd\\-/, ]+$")) {
     		return true;
     	}
     	
@@ -222,9 +236,31 @@ public class HSSFDateUtil
      *  Check if a cell contains a date
      *  Since dates are stored internally in Excel as double values 
      *  we infer it is a date if it is formatted as such. 
+     *  @see #isADateFormat(int,string)
      *  @see #isInternalDateFormat(int)
      */
     public static boolean isCellDateFormatted(HSSFCell cell) {
+        if (cell == null) return false;
+        boolean bDate = false;
+        
+        double d = cell.getNumericCellValue();
+        if ( HSSFDateUtil.isValidExcelDate(d) ) {
+            HSSFCellStyle style = cell.getCellStyle();
+            int i = style.getDataFormat();
+            String f = style.getDataFormatString(cell.getBoundWorkbook());
+            bDate = isADateFormat(i, f);
+        }
+        return bDate;
+    }
+    /**
+     *  Check if a cell contains a date, checking only for internal
+     *   excel date formats.
+     *  As Excel stores a great many of its dates in "non-internal"
+     *   date formats, you will not normally want to use this method.
+     *  @see #isADateFormat(int,string)
+     *  @see #isInternalDateFormat(int)
+     */
+    public static boolean isCellInternalDateFormatted(HSSFCell cell) {
         if (cell == null) return false;
         boolean bDate = false;
         

@@ -18,7 +18,9 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.ExtendedFormatRecord;
+import org.apache.poi.hssf.record.FormatRecord;
 import org.apache.poi.hssf.util.*;
 
 /**
@@ -265,6 +267,17 @@ public class HSSFCellStyle
     public short getDataFormat()
     {
         return format.getFormatIndex();
+    }
+    
+    /**
+     * Get the contents of the format string, by looking up
+     *  the DataFormat against the supplied workbook
+     * @see org.apache.poi.hssf.usermodel.HSSFDataFormat
+     */
+    public String getDataFormatString(Workbook workbook) {
+    	HSSFDataFormat format = new HSSFDataFormat(workbook);
+    	
+        return format.getFormat(getDataFormat());
     }
 
     /**
