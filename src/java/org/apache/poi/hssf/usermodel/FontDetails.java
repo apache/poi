@@ -82,6 +82,16 @@ public class FontDetails
         }
     }
 
+	protected static String buildFontHeightProperty(String fontName) {
+		return "font." + fontName + ".height";
+	}
+	protected static String buildFontWidthsProperty(String fontName) {
+		return "font." + fontName + ".widths";
+	}
+	protected static String buildFontCharactersProperty(String fontName) {
+		return "font." + fontName + ".characters";
+	}
+
     /**
      * Create an instance of <code>FontDetails</code> by loading them from the
      * provided property object.
@@ -92,9 +102,9 @@ public class FontDetails
      */
     public static FontDetails create( String fontName, Properties fontMetricsProps )
     {
-        String heightStr = fontMetricsProps.getProperty( "font." + fontName + ".height");
-        String widthsStr = fontMetricsProps.getProperty( "font." + fontName + ".widths");
-        String charactersStr = fontMetricsProps.getProperty( "font." + fontName + ".characters");
+        String heightStr = fontMetricsProps.getProperty( buildFontHeightProperty(fontName) );
+        String widthsStr = fontMetricsProps.getProperty( buildFontWidthsProperty(fontName) );
+        String charactersStr = fontMetricsProps.getProperty( buildFontCharactersProperty(fontName) );
 
         // Ensure that this is a font we know about
         if(heightStr == null || widthsStr == null || charactersStr == null) {
