@@ -50,6 +50,20 @@ public class TestEscherGraphics2d extends TestCase
         graphics.drawString("This is a test", 10, 10);
         HSSFTextbox t = (HSSFTextbox) escherGroup.getChildren().get(0);
         assertEquals("This is a test", t.getString().getString().toString());
+
+		// Check that with a valid font, it's still ok
+		Font font = new Font("Forte", Font.PLAIN, 12);
+		graphics.setFont(font);
+        graphics.drawString("This is another test", 10, 10);
+
+		// But with an invalid font, we get an exception
+		font = new Font("IamAmadeUPfont", Font.PLAIN, 22);
+		graphics.setFont(font);
+		try {
+			graphics.drawString("This is another test", 10, 10);
+			fail();
+		} catch(IllegalArgumentException e) {
+		}
     }
 
     public void testFillRect() throws Exception

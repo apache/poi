@@ -95,6 +95,14 @@ public class FontDetails
         String heightStr = fontMetricsProps.getProperty( "font." + fontName + ".height");
         String widthsStr = fontMetricsProps.getProperty( "font." + fontName + ".widths");
         String charactersStr = fontMetricsProps.getProperty( "font." + fontName + ".characters");
+
+        // Ensure that this is a font we know about
+        if(heightStr == null || widthsStr == null || charactersStr == null) {
+            // We don't know all we need to about this font
+            // Since we don't know its sizes, we can't work with it
+            throw new IllegalArgumentException("The supplied FontMetrics doesn't know about the font '" + fontName + "', so we can't use it. Please add it to your font metrics file (see StaticFontMetrics.getFontDetails");
+        }
+
         int height = Integer.parseInt(heightStr);
         FontDetails d = new FontDetails(fontName, height);
         String[] charactersStrArray = split(charactersStr, ",", -1);
