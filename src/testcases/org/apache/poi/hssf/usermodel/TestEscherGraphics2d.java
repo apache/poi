@@ -56,6 +56,15 @@ public class TestEscherGraphics2d extends TestCase
 		graphics.setFont(font);
         graphics.drawString("This is another test", 10, 10);
 
+		// And test with ones that need the style appending
+		font = new Font("dialog", Font.PLAIN, 12);
+		graphics.setFont(font);
+        graphics.drawString("This is another test", 10, 10);
+
+		font = new Font("dialog", Font.BOLD, 12);
+		graphics.setFont(font);
+        graphics.drawString("This is another test", 10, 10);
+
 		// But with an invalid font, we get an exception
 		font = new Font("IamAmadeUPfont", Font.PLAIN, 22);
 		graphics.setFont(font);
