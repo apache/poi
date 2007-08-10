@@ -1505,6 +1505,9 @@ public class HSSFSheet
             }
 
             if (width != -1) {
+                if (width > Short.MAX_VALUE) { //width can be bigger that Short.MAX_VALUE!
+                     width = Short.MAX_VALUE;
+                }
                 sheet.setColumnWidth(column, (short) (width * 256));
             }
         }
