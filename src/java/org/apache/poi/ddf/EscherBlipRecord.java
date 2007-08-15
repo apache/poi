@@ -92,7 +92,7 @@ public class EscherBlipRecord
      */
     public int getRecordSize()
     {
-        return field_pictureData.length + 4;
+        return field_pictureData.length + HEADER_SIZE;
     }
 
     /**
