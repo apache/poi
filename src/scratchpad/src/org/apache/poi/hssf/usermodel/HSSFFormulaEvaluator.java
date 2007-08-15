@@ -91,6 +91,7 @@ import org.apache.poi.hssf.record.formula.eval.SubtractEval;
 import org.apache.poi.hssf.record.formula.eval.UnaryMinusEval;
 import org.apache.poi.hssf.record.formula.eval.UnaryPlusEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
 
 /**
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
@@ -369,10 +370,11 @@ public class HSSFFormulaEvaluator {
                 short col0 = a3dp.getFirstColumn();
                 short row1 = a3dp.getLastRow();
                 short col1 = a3dp.getLastColumn();
-                HSSFSheet xsheet = workbook.getSheetAt(a3dp.getExternSheetIndex());
+                Workbook wb = workbook.getWorkbook();
+                HSSFSheet xsheet = workbook.getSheetAt(wb.getSheetIndexFromExternSheetIndex(a3dp.getExternSheetIndex()));
                 ValueEval[] values = new ValueEval[(row1 - row0 + 1) * (col1 - col0 + 1)];
-                for (short x = row0; sheet != null && x < row1 + 1; x++) {
-                    HSSFRow row = sheet.getRow(x);
+                for (short x = row0; xsheet != null && x < row1 + 1; x++) {
+                    HSSFRow row = xsheet.getRow(x);
                     for (short y = col0; row != null && y < col1 + 1; y++) {
                         values[(x - row0) * (col1 - col0 + 1) + (y - col0)] = 
                             getEvalForCell(row.getCell(y), row, xsheet, workbook);
