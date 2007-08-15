@@ -52,16 +52,22 @@ class StaticFontMetrics
             try
             {
                 fontMetricsProps = new Properties();
-                if (System.getProperty("font.metrics.filename") != null)
-                {
-                    String filename = System.getProperty("font.metrics.filename");
-                    File file = new File(filename);
+
+                // Check to see if the font metric file was specified
+                //  as a system property
+                String propFileName = null;
+                try {
+                    propFileName = System.getProperty("font.metrics.filename");
+                } catch(SecurityException e) {}
+
+                if (propFileName != null) {
+                    File file = new File(propFileName);
                     if (!file.exists())
                         throw new FileNotFoundException("font_metrics.properties not found at path " + file.getAbsolutePath());
                     metricsIn = new FileInputStream(file);
                 }
-                else
-                {
+                else {
+                    // Use the built-in font metrics file off the classpath
                     metricsIn = FontDetails.class.getResourceAsStream("/font_metrics.properties");
                     if (metricsIn == null)
                         throw new FileNotFoundException("font_metrics.properties not found in classpath");

@@ -65,7 +65,13 @@ public class SystemOutLogger extends POILogger
      */
     public boolean check(final int level)
     {
-        int currentLevel = Integer.parseInt(System.getProperty("poi.log.level", WARN + ""));
+        int currentLevel;
+        try {
+            currentLevel = Integer.parseInt(System.getProperty("poi.log.level", WARN + ""));
+        } catch (SecurityException e) {
+            currentLevel = POILogger.DEBUG;
+        }
+
         if (level >= currentLevel)
             return true;
         else

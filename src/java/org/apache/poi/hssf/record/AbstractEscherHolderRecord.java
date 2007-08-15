@@ -38,7 +38,14 @@ import java.util.List;
 public abstract class AbstractEscherHolderRecord
     extends Record
 {
-    private static final boolean DESERIALISE = System.getProperty("poi.deserialize.escher") != null;
+    private static boolean DESERIALISE;
+    static {
+    try {
+            DESERIALISE = (System.getProperty("poi.deserialize.escher") != null);
+        } catch (SecurityException e) {
+            DESERIALISE = false;
+        }
+    }
 
     private List escherRecords;
     private byte[] rawData;

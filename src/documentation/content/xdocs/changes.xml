@@ -36,6 +36,7 @@
     </devs>
 
         <release version="3.0.2-FINAL" date="2007-??-??">
+            <action dev="POI-DEVELOPERS" type="fix">43108 - [PATCH] - Where permissions deny fetching System Properties, use sensible defaults</action>
             <action dev="POI-DEVELOPERS" type="fix">43093 - [PATCH] - Fix formula evaluator support for Area3D references to other sheets</action>
             <action dev="POI-DEVELOPERS" type="fix">Improvements to HSSFDateUtils.isADateFormat, and have HSSFDateUtil.isCellDateFormatted use this</action>
             <action dev="POI-DEVELOPERS" type="fix">42999 - [PATCH] - Fix for HSSFPatriarch positioning problems</action>
