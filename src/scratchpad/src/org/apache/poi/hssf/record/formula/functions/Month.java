@@ -20,6 +20,48 @@
  */
 package org.apache.poi.hssf.record.formula.functions;
 
-public class Month extends NotImplementedFunction {
+import org.apache.poi.hssf.record.formula.eval.BlankEval;
+import org.apache.poi.hssf.record.formula.eval.ErrorEval;
+import org.apache.poi.hssf.record.formula.eval.Eval;
+import org.apache.poi.hssf.record.formula.eval.NumberEval;
+import org.apache.poi.hssf.record.formula.eval.NumericValueEval;
+import org.apache.poi.hssf.record.formula.eval.ValueEval;
+import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 
+/**
+ * 
+ * @author Guenter Kickinger g.kickinger@gmx.net
+ *
+ */
+public class Month extends NumericFunction {
+
+	/* (non-Javadoc)
+	 * @see org.apache.poi.hssf.record.formula.functions.Function#evaluate(org.apache.poi.hssf.record.formula.eval.Eval[], int, short)
+	 */
+	public Eval evaluate(Eval[] operands, int srcCellRow, short srcCellCol) {
+        ValueEval retval = null;
+
+        switch (operands.length) {
+        default:
+            retval = ErrorEval.VALUE_INVALID;
+            break;
+        case 1:
+            ValueEval ve = singleOperandEvaluate(operands[0], srcCellRow, srcCellCol);
+            if (ve instanceof NumericValueEval) {
+                NumericValueEval ne = (NumericValueEval) ve;
+                if (HSSFDateUtil.isValidExcelDate(ne.getNumberValue())) {
+                    java.util.Date d = HSSFDateUtil.getJavaDate(ne.getNumberValue());
+                    retval = new NumberEval(d.getMonth()+1);
+                } else {
+                    retval = ErrorEval.NUM_ERROR;
+                }
+            }
+            else if (ve instanceof BlankEval) {
+                // do nothing
+            } else {
+                retval = ErrorEval.NUM_ERROR;
+            }
+        }
+        return retval;
+    }
 }
