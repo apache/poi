@@ -27,6 +27,10 @@ import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.RecordFactory;
 import org.apache.poi.hssf.record.ContinueRecord;
+import org.apache.poi.hssf.record.DrawingRecord;
+import org.apache.poi.hssf.record.DrawingGroupRecord;
+import org.apache.poi.hssf.record.ObjRecord;
+import org.apache.poi.hssf.record.TextObjectRecord;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
@@ -140,11 +144,12 @@ public class HSSFEventFactory
 		{
                   
 			Record rec       = null;
+			Record lastRec   = null;
+			DrawingRecord lastDrawingRecord = new DrawingRecord();
 
 			while (in.hasNextRecord())
 			{
-                          in.nextRecord();
-
+				in.nextRecord();
 				sid = in.getSid();;
                 
                 //
@@ -190,9 +195,34 @@ public class HSSFEventFactory
 					// if there is only one
 					// records, it will go here too.
 				}
-				else
-					{
-                                  throw new RecordFormatException("Records should handle ContinueRecord internally. Should not see this exception");
+				else {
+					// Normally, ContinueRecords are handled internally
+					// However, in a few cases, there is a gap between a record at
+					//  its Continue, so we have to handle them specially
+					// This logic is much like in RecordFactory.createRecords()
+					Record[] recs = RecordFactory.createRecord(in);
+					ContinueRecord crec = (ContinueRecord)recs[0];
+					if((lastRec instanceof ObjRecord) || (lastRec instanceof TextObjectRecord)) {
+						// You can have Obj records between a DrawingRecord
+						//  and its continue!
+						lastDrawingRecord.processContinueRecord( crec.getData() );
+						// Trigger them on the drawing record, now it's complete
+						rec = lastDrawingRecord;
+					}
+					else if((lastRec instanceof DrawingGroupRecord)) {
+						((DrawingGroupRecord)lastRec).processContinueRecord(crec.getData());
+						// Trigger them on the drawing record, now it's complete
+						rec = lastRec;
+					}
+					else {
+						throw new RecordFormatException("Records should handle ContinueRecord internally. Should not see this exception");
+					}
+				}
+
+				// Update our tracking of the last record
+				lastRec = rec;
+				if(rec instanceof DrawingRecord) {
+					lastDrawingRecord = (DrawingRecord)rec;
 				}
 			}
 			if (rec != null)
