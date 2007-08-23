@@ -16,7 +16,10 @@
 */
 package org.apache.poi.hssf.usermodel;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
@@ -47,9 +50,76 @@ public class TestUppercaseWorkbook extends TestCase {
 
 		// Ensure that we have a WORKBOOK entry
 		fs.getRoot().getEntry("WORKBOOK");
+		// And a summary
+		fs.getRoot().getEntry("\005SummaryInformation");
 		assertTrue(true);
+
+		// But not a Workbook one
+		try {
+			fs.getRoot().getEntry("Workbook");
+			fail();
+		} catch(FileNotFoundException e) {}
 		
 		// Try to open the workbook
 		HSSFWorkbook wb = new HSSFWorkbook(fs);
+	}
+
+	/**
+	 * Test that when we write out, we go back to the correct case
+	 */
+	public void testWrite() throws Exception {
+		FileInputStream is = new FileInputStream(dirPath + "/" + xlsA);
+		POIFSFileSystem fs = new POIFSFileSystem(is);
+
+		// Open the workbook, not preserving nodes
+		HSSFWorkbook wb = new HSSFWorkbook(fs);
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		wb.write(out);
+
+		// Check now
+		ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
+		POIFSFileSystem fs2 = new POIFSFileSystem(in);
+
+		// Check that we have the new entries
+		fs2.getRoot().getEntry("Workbook");
+		try {
+			fs2.getRoot().getEntry("WORKBOOK");
+			fail();
+		} catch(FileNotFoundException e) {}
+
+		// And it can be opened
+		HSSFWorkbook wb2 = new HSSFWorkbook(fs2);
+	}
+
+	/**
+	 * Test that when we write out preserving nodes, we go back to the
+	 *  correct case
+	 */
+	public void testWritePreserve() throws Exception {
+		FileInputStream is = new FileInputStream(dirPath + "/" + xlsA);
+		POIFSFileSystem fs = new POIFSFileSystem(is);
+
+		// Open the workbook, not preserving nodes
+		HSSFWorkbook wb = new HSSFWorkbook(fs,true);
+
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		wb.write(out);
+
+		// Check now
+		ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
+		POIFSFileSystem fs2 = new POIFSFileSystem(in);
+
+		// Check that we have the new entries
+		fs2.getRoot().getEntry("Workbook");
+		try {
+			fs2.getRoot().getEntry("WORKBOOK");
+			fail();
+		} catch(FileNotFoundException e) {}
+
+		// As we preserved, should also have a few other streams
+		fs2.getRoot().getEntry("\005SummaryInformation");
+
+		// And it can be opened
+		HSSFWorkbook wb2 = new HSSFWorkbook(fs2);
 	}
 }
