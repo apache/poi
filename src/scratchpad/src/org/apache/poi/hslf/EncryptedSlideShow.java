@@ -91,10 +91,15 @@ public class EncryptedSlideShow
 			}
 			
 			// Grab the details of the UserEditAtom there
-			Record r = Record.buildRecordAtOffset(
-					hss.getUnderlyingBytes(),
-					(int)cua.getCurrentEditOffset()
-			);
+			// If the record's messed up, we could AIOOB
+			Record r = null;
+			try {
+				r = Record.buildRecordAtOffset(
+						hss.getUnderlyingBytes(),
+						(int)cua.getCurrentEditOffset()
+				);
+			} catch(ArrayIndexOutOfBoundsException e) {}
+			if(r == null) { return null; }
 			if(! (r instanceof UserEditAtom)) { return null; }
 			UserEditAtom uea = (UserEditAtom)r;
 			
