@@ -33,6 +33,8 @@
 
     <changes>
         <release version="3.0.2-FINAL" date="2007-??-??">
+            <action dev="POI-DEVELOPERS" type="fix">42844 - [PATCH] - Fix for the EventUserModel and records that aren't immediately followed by their ContinueRecords</action>
+            <action dev="POI-DEVELOPERS" type="fix">43055 - [PATCH] - Fix for saving Crystal Reports xls files when preserving nodes</action>
             <action dev="POI-DEVELOPERS" type="fix">43116 - [PATCH] - Fix for Escher layer handling of embeded OLE2 documents</action>
             <action dev="POI-DEVELOPERS" type="fix">43108 - [PATCH] - Where permissions deny fetching System Properties, use sensible defaults</action>
             <action dev="POI-DEVELOPERS" type="fix">43093 - [PATCH] - Fix formula evaluator support for Area3D references to other sheets</action>
