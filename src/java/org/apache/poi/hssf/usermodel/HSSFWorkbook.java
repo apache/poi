@@ -908,7 +908,14 @@ public class HSSFWorkbook
 
         if (preserveNodes) {
             List excepts = new ArrayList(1);
+
+			// Don't write out the old Workbook, we'll be doing our new one
             excepts.add("Workbook");
+			// If the file had WORKBOOK instead of Workbook, we'll write it
+			//  out correctly shortly, so don't include the old one
+            excepts.add("WORKBOOK");
+
+			// Copy over all the other nodes to our new poifs
             copyNodes(this.poifs,fs,excepts);
         }
         fs.writeFilesystem(stream);
