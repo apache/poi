@@ -1366,10 +1366,10 @@ public class HSSFWorkbook
                 if (escherRecord instanceof EscherBSERecord)
                 {
                     EscherBlipRecord blip = ((EscherBSERecord) escherRecord).getBlipRecord();
-                    if (blip instanceof EscherBitmapBlip)
+                    if (blip != null)
                     {
                         // TODO: Some kind of structure.
-                        pictures.add(new HSSFPictureData((EscherBitmapBlip) blip));
+                        pictures.add(new HSSFPictureData(blip));
                     }
                 }
 
