@@ -21,6 +21,7 @@ import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.HexDump;
 import java.io.UnsupportedEncodingException;
+import java.io.ByteArrayOutputStream;
 
 public class TextObjectRecord
         extends TextObjectBaseRecord
@@ -40,21 +41,21 @@ public class TextObjectRecord
 
     protected void fillFields(RecordInputStream in)
     {
-      super.fillFields(in);
-      if (getTextLength() > 0) {
-      if (in.isContinueNext() && in.remaining() == 0) {
-        //1st Continue
-        in.nextRecord();
-        processRawString(in);
-        } else
-          throw new RecordFormatException("Expected Continue record to hold string data for TextObjectRecord");        
-      }
-      if (getFormattingRunLength() > 0) {
+        super.fillFields(in);
+        if (getTextLength() > 0) {
         if (in.isContinueNext() && in.remaining() == 0) {
-          in.nextRecord();
-          processFontRuns(in);
-        } else throw new RecordFormatException("Expected Continue Record to hold font runs for TextObjectRecord");
-      }
+            //1st Continue
+            in.nextRecord();
+            processRawString(in);
+        } else
+            throw new RecordFormatException("Expected Continue record to hold string data for TextObjectRecord");
+        }
+        if (getFormattingRunLength() > 0) {
+            if (in.isContinueNext() && in.remaining() == 0) {
+                in.nextRecord();
+                processFontRuns(in);
+            } else throw new RecordFormatException("Expected Continue Record to hold font runs for TextObjectRecord");
+        }
     }
 
 
@@ -64,7 +65,15 @@ public class TextObjectRecord
         int continue2Size = 0;
         if (str.length() != 0)
         {
-            continue1Size = str.length() * 2 + 1 + 4;
+            int length = str.length() * 2;
+            while(length > 0){
+                int chunkSize = Math.min(RecordInputStream.MAX_RECORD_DATA_SIZE-2, length);
+                length -= chunkSize;
+
+                continue1Size += chunkSize;
+                continue1Size += 1 + 4;
+            }
+
             continue2Size = (str.numFormattingRuns() + 1) * 8 + 4;
         }
         return super.getRecordSize() + continue1Size + continue2Size;
@@ -83,9 +92,44 @@ public class TextObjectRecord
         int pos = offset + bytesWritten1;
         if ( str.getString().equals( "" ) == false )
         {
-            ContinueRecord c1 = createContinue1();
             ContinueRecord c2 = createContinue2();
-            int bytesWritten2 = c1.serialize( pos, data );
+            int bytesWritten2 = 0;
+
+            try
+            {
+                byte[] c1Data = str.getString().getBytes( "UTF-16LE" );
+                int length = c1Data.length;
+
+                int charsWritten = 0;
+                int spos = pos;
+                while(length > 0){
+                    int chunkSize = Math.min(RecordInputStream.MAX_RECORD_DATA_SIZE-2 , length);
+                    length -= chunkSize;
+
+                    //continue header
+                    LittleEndian.putShort(data, spos, ContinueRecord.sid);
+                    spos += LittleEndian.SHORT_SIZE;
+                    LittleEndian.putShort(data, spos, (short)(chunkSize+1));
+                    spos += LittleEndian.SHORT_SIZE;
+
+                    //The first byte specifies if the text is compressed unicode or unicode.
+                    //(regardless what was read, we always serialize double-byte unicode characters (UTF-16LE).
+                    data[spos] = 1;
+                    spos += LittleEndian.BYTE_SIZE;
+
+                    //copy characters data
+                    System.arraycopy(c1Data, charsWritten, data, spos, chunkSize);
+                    spos += chunkSize;
+                    charsWritten += chunkSize;
+                }
+
+                bytesWritten2 = (spos-pos);
+            }
+            catch ( UnsupportedEncodingException e )
+            {
+                throw new RuntimeException( e.getMessage(), e );
+            }
+
             pos += bytesWritten2;
             int bytesWritten3 = c2.serialize( pos, data );
             pos += bytesWritten3;
@@ -98,23 +142,6 @@ public class TextObjectRecord
         if ( bytesWritten1 != getRecordSize() )
             throw new RecordFormatException(bytesWritten1 + " bytes written but getRecordSize() reports " + getRecordSize());
         return bytesWritten1;
-    }
-
-    private ContinueRecord createContinue1()
-    {
-        ContinueRecord c1 = new ContinueRecord();
-        byte[] c1Data = new byte[str.length() * 2 + 1];
-        try
-        {
-            c1Data[0] = 1;
-            System.arraycopy( str.getString().getBytes( "UTF-16LE" ), 0, c1Data, 1, str.length() * 2 );
-        }
-        catch ( UnsupportedEncodingException e )
-        {
-            throw new RuntimeException( e.getMessage() );
-        }
-        c1.setData( c1Data );
-        return c1;
     }
 
     private ContinueRecord createContinue2()
