@@ -230,11 +230,14 @@ public class RecordInputStream extends InputStream
     if ((length < 0) || (((remaining() / 2) < length) && !isContinueNext())) {
             throw new IllegalArgumentException("Illegal length");
     }
-    
+
     StringBuffer buf = new StringBuffer(length);
     for (int i=0;i<length;i++) {
-      if ((remaining() == 0) && (isContinueNext()))
+      if ((remaining() == 0) && (isContinueNext())){
         nextRecord();
+        int compressByte = readByte();
+        if(compressByte != 1) throw new IllegalArgumentException("compressByte in continue records must be 1 while reading unicode LE string");
+      }
       char ch = (char)readShort();
       buf.append(ch); 
     }
@@ -242,14 +245,17 @@ public class RecordInputStream extends InputStream
   }
     
   public String readCompressedUnicode(int length) {
-    if ((length < 0) || (remaining() < length)) {
+    if ((length < 0) || ((remaining() < length) && !isContinueNext())) {
             throw new IllegalArgumentException("Illegal length");
     }
 
     StringBuffer buf = new StringBuffer(length);
     for (int i=0;i<length;i++) {
-      if ((remaining() == 0) && (isContinueNext()))
+      if ((remaining() == 0) && (isContinueNext())) {
         nextRecord();
+          int compressByte = readByte();
+          if(compressByte != 0) throw new IllegalArgumentException("compressByte in continue records must be 0 while reading compressed unicode");
+      }
       byte b = readByte();
       //Typecast direct to char from byte with high bit set causes all ones
       //in the high byte of the char (which is of course incorrect)
