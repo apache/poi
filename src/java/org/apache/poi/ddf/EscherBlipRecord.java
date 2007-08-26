@@ -103,6 +103,16 @@ public class EscherBlipRecord
         return "Blip";
     }
 
+    public byte[] getPicturedata()
+    {
+        return field_pictureData;
+    }
+
+    public void setPictureData(byte[] pictureData)
+    {
+        field_pictureData = pictureData;
+    }
+
     public String toString()
     {
         String nl = System.getProperty( "line.separator" );

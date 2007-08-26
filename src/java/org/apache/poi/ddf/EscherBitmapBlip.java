@@ -119,16 +119,6 @@ public class EscherBitmapBlip
         this.field_2_marker = field_2_marker;
     }
 
-    public byte[] getPicturedata()
-    {
-        return field_pictureData;
-    }
-
-    public void setPictureData(byte[] pictureData)
-    {
-        field_pictureData = pictureData;
-    }
-
     public String toString()
     {
         String nl = System.getProperty( "line.separator" );

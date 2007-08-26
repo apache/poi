@@ -81,6 +81,12 @@ public class DefaultEscherRecordFactory
             {
                 r = new EscherBitmapBlip();
             }
+            else if (header.getRecordId() == EscherMetafileBlip.RECORD_ID_EMF ||
+                    header.getRecordId() == EscherMetafileBlip.RECORD_ID_WMF ||
+                    header.getRecordId() == EscherMetafileBlip.RECORD_ID_PICT)
+            {
+                r = new EscherMetafileBlip();
+            }
             else
             {
                 r = new EscherBlipRecord();

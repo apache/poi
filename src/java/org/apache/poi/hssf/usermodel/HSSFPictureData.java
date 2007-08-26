@@ -18,6 +18,7 @@
 package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.ddf.EscherBitmapBlip;
+import org.apache.poi.ddf.EscherBlipRecord;
 
 /**
  * Represents binary data stored in the file.  Eg. A GIF, JPEG etc...
@@ -39,14 +40,14 @@ public class HSSFPictureData
     /**
      * Underlying escher blip record containing the bitmap data.
      */
-    private EscherBitmapBlip blip;
+    private EscherBlipRecord blip;
 
     /**
      * Constructs a picture object.
      *
      * @param blip the underlying blip record containing the bitmap data.
      */
-    HSSFPictureData( EscherBitmapBlip blip )
+    HSSFPictureData( EscherBlipRecord blip )
     {
         this.blip = blip;
     }
