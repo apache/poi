@@ -269,6 +269,25 @@ public class HexDump
     }
 
     /**
+     * Converts the parameter to a hex value.
+     *
+     * @param value     The value to convert
+     * @return          A String representing the array of shorts
+     */
+    public static String toHex(final short[] value)
+    {
+        StringBuffer retVal = new StringBuffer();
+        retVal.append('[');
+        for(int x = 0; x < value.length; x++)
+        {
+            retVal.append(toHex(value[x]));
+            retVal.append(", ");
+        }
+        retVal.append(']');
+        return retVal.toString();
+    }
+
+    /**
      * <p>Converts the parameter to a hex value breaking the results into
      * lines.</p>
      *
