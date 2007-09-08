@@ -208,7 +208,7 @@ public class HSSFWorkbook
         setPropertiesFromWorkbook(workbook);
         int recOffset = workbook.getNumRecords();
         int sheetNum = 0;
-        
+
         // convert all LabelRecord records to LabelSSTRecord
         convertLabelRecords(records, recOffset);        
         while (recOffset < records.size())
@@ -1332,6 +1332,7 @@ public class HSSFWorkbook
      */
     public List getAllPictures()
     {
+        // The drawing group record always exists at the top level, so we won't need to do this recursively.
         List pictures = new ArrayList();
         Iterator recordIter = workbook.getRecords().iterator();
         while (recordIter.hasNext())
@@ -1393,6 +1394,50 @@ public class HSSFWorkbook
      */
     public void unwriteProtectWorkbook() {
        this.workbook.unwriteProtectWorkbook();
+    }
+
+    /**
+     * Gets all embedded OLE2 objects from the Workbook.
+     *
+     * @return the list of embedded objects (a list of {@link HSSFObjectData} objects.)
+     */
+    public List getAllEmbeddedObjects()
+    {
+        List objects = new ArrayList();
+        for (int i = 0; i < getNumberOfSheets(); i++)
+        {
+            getAllEmbeddedObjects(getSheetAt(i).getSheet().getRecords(), objects);
+        }
+        return objects;
+    }
+
+    /**
+     * Gets all embedded OLE2 objects from the Workbook.
+     *
+     * @param records the list of records to search.
+     * @param objects the list of embedded objects to populate.
+     */
+    private void getAllEmbeddedObjects(List records, List objects)
+    {
+        Iterator recordIter = records.iterator();
+        while (recordIter.hasNext())
+        {
+            Object obj = recordIter.next();
+            if (obj instanceof ObjRecord)
+            {
+                // TODO: More convenient way of determining if there is stored binary.
+                // TODO: Link to the data stored in the other stream.
+                Iterator subRecordIter = ((ObjRecord) obj).getSubRecords().iterator();
+                while (subRecordIter.hasNext())
+                {
+                    Object sub = subRecordIter.next();
+                    if (sub instanceof EmbeddedObjectRefSubRecord)
+                    {
+                        objects.add(new HSSFObjectData((ObjRecord) obj, poifs));
+                    }
+                }
+            }
+        }
     }
 
     private byte[] newUID()

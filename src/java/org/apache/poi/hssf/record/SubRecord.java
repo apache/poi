@@ -58,6 +58,9 @@ abstract public class SubRecord
             case CommonObjectDataSubRecord.sid:
                 r = new CommonObjectDataSubRecord( in );
                 break;
+            case EmbeddedObjectRefSubRecord.sid:
+                r = new EmbeddedObjectRefSubRecord( in );
+                break;
             case GroupMarkerSubRecord.sid:
                 r = new GroupMarkerSubRecord( in );
                 break;
