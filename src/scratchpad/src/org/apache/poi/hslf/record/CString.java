@@ -111,4 +111,12 @@ public class CString extends RecordAtom {
 		// Write out our text
 		out.write(_text);
 	}
+
+    /**
+     * Gets a string representation of this object, primarily for debugging.
+     * @return a string representation of this object.
+     */
+    public String toString() {
+        return getText();
+    }
 }

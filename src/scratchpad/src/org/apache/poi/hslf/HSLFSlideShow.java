@@ -20,28 +20,37 @@
 
 package org.apache.poi.hslf;
 
-import java.util.*;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
 
 import org.apache.poi.POIDocument;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.POILogger;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.poifs.filesystem.DocumentEntry;
-import org.apache.poi.poifs.filesystem.DocumentInputStream;
-
-import org.apache.poi.hpsf.PropertySet;
-import org.apache.poi.hpsf.PropertySetFactory;
-import org.apache.poi.hpsf.MutablePropertySet;
-import org.apache.poi.hpsf.SummaryInformation;
-import org.apache.poi.hpsf.DocumentSummaryInformation;
-
 import org.apache.poi.hslf.exceptions.CorruptPowerPointFileException;
 import org.apache.poi.hslf.exceptions.EncryptedPowerPointFileException;
 import org.apache.poi.hslf.exceptions.HSLFException;
-import org.apache.poi.hslf.record.*;
+import org.apache.poi.hslf.record.CurrentUserAtom;
+import org.apache.poi.hslf.record.ExOleObjStg;
+import org.apache.poi.hslf.record.PersistPtrHolder;
+import org.apache.poi.hslf.record.PositionDependentRecord;
+import org.apache.poi.hslf.record.Record;
+import org.apache.poi.hslf.record.UserEditAtom;
+import org.apache.poi.hslf.usermodel.ObjectData;
 import org.apache.poi.hslf.usermodel.PictureData;
+import org.apache.poi.poifs.filesystem.DocumentEntry;
+import org.apache.poi.poifs.filesystem.DocumentInputStream;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * This class contains the main functionality for the Powerpoint file 
@@ -68,8 +77,11 @@ public class HSLFSlideShow extends POIDocument
 
 	// Raw Pictures contained in the pictures stream
 	private PictureData[] _pictures;
-	
-	/**
+
+    // Embedded objects stored in storage records in the document stream, lazily populated.
+    private ObjectData[] _objects;
+
+    /**
 	 * Returns the underlying POIFSFileSystem for the document
 	 *  that is open.
 	 */
@@ -507,4 +519,22 @@ public class HSLFSlideShow extends POIDocument
 	public PictureData[] getPictures() {
 		return _pictures;
 	}
+
+    /**
+     * Gets embedded object data from the slide show.
+     *
+     * @return the embedded objects.
+     */
+    public ObjectData[] getEmbeddedObjects() {
+        if (_objects == null) {
+            List objects = new ArrayList();
+            for (int i = 0; i < _records.length; i++) {
+                if (_records[i] instanceof ExOleObjStg) {
+                    objects.add(new ObjectData((ExOleObjStg) _records[i]));
+                }
+            }
+            _objects = (ObjectData[]) objects.toArray(new ObjectData[objects.size()]);
+        }
+        return _objects;
+    }
 }
