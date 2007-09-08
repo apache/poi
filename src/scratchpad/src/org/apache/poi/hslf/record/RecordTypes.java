@@ -98,11 +98,11 @@ public class RecordTypes {
     public static final Type FontEmbeddedData = new Type(4024,null);
     public static final Type CString = new Type(4026,CString.class);
     public static final Type MetaFile = new Type(4033,null);
-    public static final Type ExOleObjAtom = new Type(4035,null);
+    public static final Type ExOleObjAtom = new Type(4035,ExOleObjAtom.class);
     public static final Type SrKinsoku = new Type(4040,null);
     public static final Type HandOut = new Type(4041,null);
-    public static final Type ExEmbed = new Type(4044,null);
-    public static final Type ExEmbedAtom = new Type(4045,null);
+    public static final Type ExEmbed = new Type(4044,ExEmbed.class);
+    public static final Type ExEmbedAtom = new Type(4045,ExEmbedAtom.class);
     public static final Type ExLink = new Type(4046,null);
     public static final Type BookmarkEntityAtom = new Type(4048,null);
     public static final Type ExLinkAtom = new Type(4049,null);
@@ -136,7 +136,7 @@ public class RecordTypes {
     public static final Type ExCDAudio = new Type(4110,null);
     public static final Type ExWAVAudioEmbedded = new Type(4111,null);
     public static final Type ExWAVAudioLink = new Type(4112,null);
-    public static final Type ExOleObjStg = new Type(4113,null);
+    public static final Type ExOleObjStg = new Type(4113,ExOleObjStg.class);
     public static final Type ExCDAudioAtom = new Type(4114,null);
     public static final Type ExWAVAudioEmbeddedAtom = new Type(4115,null);
     public static final Type AnimationInfoAtom = new Type(4116,null);
