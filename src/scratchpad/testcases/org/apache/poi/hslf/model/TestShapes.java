@@ -25,6 +25,7 @@ import java.awt.*;
 import java.awt.Rectangle;
 import java.io.ByteArrayOutputStream;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -224,5 +225,58 @@ public class TestShapes extends TestCase {
             assertTrue(lst1.containsAll(lst2));
             assertTrue(lst2.containsAll(lst1));
         }
+    }
+
+    /**
+     * Test adding shapes to <code>ShapeGroup</code>
+     */
+    public void testShapeGroup() throws Exception {
+        String cwd = System.getProperty("HSLF.testdata.path");
+        SlideShow ppt = new SlideShow();
+
+        Slide slide = ppt.createSlide();
+        Dimension pgsize = ppt.getPageSize();
+
+        ShapeGroup group = new ShapeGroup();
+
+        group.setAnchor(new Rectangle(0, 0, (int)pgsize.getWidth(), (int)pgsize.getHeight()));
+        slide.addShape(group);
+
+        File img = new File(cwd, "clock.jpg");
+        int idx = ppt.addPicture(img, Picture.JPEG);
+        Picture pict = new Picture(idx, group);
+        pict.setAnchor(new Rectangle(0, 0, 200, 200));
+        group.addShape(pict);
+
+        Line line = new Line(group);
+        line.setAnchor(new Rectangle(300, 300, 500, 0));
+        group.addShape(line);
+
+        //serialize and read again.
+        ByteArrayOutputStream  out = new ByteArrayOutputStream();
+        ppt.write(out);
+        out.close();
+
+        ByteArrayInputStream is = new ByteArrayInputStream(out.toByteArray());
+        ppt = new SlideShow(is);
+        is.close();
+
+        slide = ppt.getSlides()[0];
+
+        Shape[] shape = slide.getShapes();
+        assertEquals(1, shape.length);
+        assertTrue(shape[0] instanceof ShapeGroup);
+
+        group = (ShapeGroup)shape[0];
+        Shape[] grshape = group.getShapes();
+        assertEquals(2, grshape.length);
+        assertTrue(grshape[0] instanceof Picture);
+        assertTrue(grshape[1] instanceof Line);
+
+        pict = (Picture)grshape[0];
+        assertEquals(new Rectangle(0, 0, 200, 200), pict.getAnchor());
+
+        line = (Line)grshape[1];
+        assertEquals(new Rectangle(300, 300, 500, 0), line.getAnchor());
     }
 }
