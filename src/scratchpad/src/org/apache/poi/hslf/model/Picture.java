@@ -75,8 +75,18 @@ public class Picture extends SimpleShape {
     * @param idx the index of the picture
      */
     public Picture(int idx){
-        super(null, null);
-        _escherContainer = createSpContainer(idx);
+        this(idx, null);
+    }
+
+    /**
+     * Create a new <code>Picture</code>
+     *
+     * @param idx the index of the picture
+     * @param parent the parent shape
+     */
+    public Picture(int idx, Shape parent) {
+        super(null, parent);
+        _escherContainer = createSpContainer(idx, parent instanceof ShapeGroup);
     }
 
     /**
@@ -109,8 +119,8 @@ public class Picture extends SimpleShape {
      * @param idx the index of the picture which referes to <code>EscherBSE</code> container.
      * @return the create Picture object
      */
-    protected EscherContainerRecord createSpContainer(int idx) {
-        EscherContainerRecord spContainer = super.createSpContainer(false);
+    protected EscherContainerRecord createSpContainer(int idx, boolean isChild) {
+        EscherContainerRecord spContainer = super.createSpContainer(isChild);
         spContainer.setOptions((short)15);
 
         EscherSpRecord spRecord = spContainer.getChildById(EscherSpRecord.RECORD_ID);

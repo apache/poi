@@ -151,8 +151,8 @@ public abstract class Shape {
             anchor = new java.awt.Rectangle();
             anchor.x = rec.getDx1()*POINT_DPI/MASTER_DPI;
             anchor.y = rec.getDy1()*POINT_DPI/MASTER_DPI;
-            anchor.width = (rec.getDx2() - anchor.x)*POINT_DPI/MASTER_DPI;
-            anchor.height = (rec.getDy2() - anchor.y)*POINT_DPI/MASTER_DPI;
+            anchor.width = rec.getDx2()*POINT_DPI/MASTER_DPI - anchor.x;
+            anchor.height = rec.getDy2()*POINT_DPI/MASTER_DPI - anchor.y;
         }
         else {
             EscherClientAnchorRecord rec = (EscherClientAnchorRecord)getEscherChild(_escherContainer, EscherClientAnchorRecord.RECORD_ID);
