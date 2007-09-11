@@ -20,7 +20,6 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.hslf.blip.Metafile;
 
 import java.awt.Dimension;
 import java.awt.Rectangle;
@@ -101,22 +100,6 @@ public class EscherPictBlip
         return bytesAfterHeader + HEADER_SIZE;
     }
     
-    private byte[] read(byte[] data, int pos) throws IOException {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        ByteArrayInputStream bis = new ByteArrayInputStream(data);
-        Metafile.Header header = new Metafile.Header();
-        header.read(data, pos);
-        bis.skip(pos + header.getSize());
-        InflaterInputStream inflater = new InflaterInputStream( bis );
-        byte[] chunk = new byte[4096];
-        int count;
-        while ((count = inflater.read(chunk)) >=0 ) {
-            out.write(chunk,0,count);
-        }
-        inflater.close();
-        return out.toByteArray();
-    }
-
     /**
      * Serializes the record to an existing byte array.
      *
