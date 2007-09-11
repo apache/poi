@@ -42,7 +42,7 @@ public class TestHSSFPictureData extends TestCase{
     static String cwd = System.getProperty("HSSF.testdata.path");
 
     public void testPictures() throws IOException {
-        FileInputStream is = new FileInputStream(new File(cwd, "SimpleWithImages-win.xls"));
+        FileInputStream is = new FileInputStream(new File(cwd, "SimpleWithImages.xls"));
         HSSFWorkbook wb = new HSSFWorkbook(is);
         is.close();
 
