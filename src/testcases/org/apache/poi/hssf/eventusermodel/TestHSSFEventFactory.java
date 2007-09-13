@@ -76,6 +76,24 @@ public class TestHSSFEventFactory extends TestCase {
 		}
 	}
 
+    /**
+     * Unknown records can be continued.
+     * Check that HSSFEventFactory doesn't break on them.
+     * (the test file was provided in a reopen of bug #42844)
+     */
+    public void testUnknownContinueRecords() throws Exception {
+         File f = new File(dirname + "/42844.xls");
+
+        HSSFRequest req = new HSSFRequest();
+        MockHSSFListener mockListen = new MockHSSFListener();
+        req.addListenerForAllRecords(mockListen);
+
+        POIFSFileSystem fs = new POIFSFileSystem(new FileInputStream(f));
+        HSSFEventFactory factory = new HSSFEventFactory();
+        factory.processWorkbookEvents(req, fs);
+
+        assertTrue("no errors while processing the file", true);
+    }
 
 	private static class MockHSSFListener implements HSSFListener {
 		private MockHSSFListener() {}
