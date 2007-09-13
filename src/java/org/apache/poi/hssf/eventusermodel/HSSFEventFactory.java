@@ -22,15 +22,7 @@ import java.io.InputStream;
 import java.io.IOException;
 
 import org.apache.poi.hssf.eventusermodel.HSSFUserException;
-import org.apache.poi.hssf.record.RecordFormatException;
-import org.apache.poi.hssf.record.Record;
-import org.apache.poi.hssf.record.RecordInputStream;
-import org.apache.poi.hssf.record.RecordFactory;
-import org.apache.poi.hssf.record.ContinueRecord;
-import org.apache.poi.hssf.record.DrawingRecord;
-import org.apache.poi.hssf.record.DrawingGroupRecord;
-import org.apache.poi.hssf.record.ObjRecord;
-import org.apache.poi.hssf.record.TextObjectRecord;
+import org.apache.poi.hssf.record.*;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
@@ -151,7 +143,7 @@ public class HSSFEventFactory
 			{
 				in.nextRecord();
 				sid = in.getSid();;
-                
+
                 //
                 // for some reasons we have to make the workbook to be at least 4096 bytes
                 // but if we have such workbook we fill the end of it with zeros (many zeros)
@@ -215,7 +207,11 @@ public class HSSFEventFactory
 						rec = lastRec;
 					}
 					else {
-						throw new RecordFormatException("Records should handle ContinueRecord internally. Should not see this exception");
+                        if (rec instanceof UnknownRecord) {
+                            ;//silently skip records we don't know about
+                        } else {
+						    throw new RecordFormatException("Records should handle ContinueRecord internally. Should not see this exception");
+                        }
 					}
 				}
 
