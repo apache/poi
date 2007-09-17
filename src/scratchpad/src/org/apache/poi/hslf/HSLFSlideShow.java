@@ -383,8 +383,11 @@ public class HSLFSlideShow extends POIDocument
         // Get a new Filesystem to write into
         POIFSFileSystem outFS = new POIFSFileSystem();
 
+        // The list of entries we've written out
+        List writtenEntries = new ArrayList(1);
+        
         // Write out the Property Streams
-        writeProperties(outFS);
+        writeProperties(outFS, writtenEntries);
 
 
         // For position dependent records, hold where they were and now are
@@ -435,6 +438,7 @@ public class HSLFSlideShow extends POIDocument
         // Write the PPT stream into the POIFS layer
         ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
         outFS.createDocument(bais,"PowerPoint Document");
+        writtenEntries.add("PowerPoint Document");
 
 
         // Update and write out the Current User atom
@@ -445,6 +449,7 @@ public class HSLFSlideShow extends POIDocument
         }
         currentUser.setCurrentEditOffset(newLastUserEditAtomPos.intValue());
         currentUser.writeToFS(outFS);
+        writtenEntries.add("Current User");
 
 	
         // Write any pictures, into another stream
@@ -456,6 +461,12 @@ public class HSLFSlideShow extends POIDocument
             outFS.createDocument(
                 new ByteArrayInputStream(pict.toByteArray()), "Pictures"
             );
+            writtenEntries.add("Pictures");
+        }
+        
+        // If requested, write out any other streams we spot
+        if(preserveNodes) {
+        	copyNodes(filesystem, outFS, writtenEntries);
         }
 
         // Send the POIFSFileSystem object out to the underlying stream
