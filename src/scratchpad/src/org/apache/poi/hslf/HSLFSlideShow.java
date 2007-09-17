@@ -356,95 +356,111 @@ public class HSLFSlideShow extends POIDocument
 	}
 
 
-  /**
-   * Writes out the slideshow file the is represented by an instance of
-   *  this class
-   * @param out The OutputStream to write to.
-   *  @throws IOException If there is an unexpected IOException from the passed
-   *            in OutputStream
-   */
-   public void write(OutputStream out) throws IOException {
-	// Get a new Filesystem to write into
-	POIFSFileSystem outFS = new POIFSFileSystem();
+    /**
+     * Writes out the slideshow file the is represented by an instance
+     *  of this class.
+     * It will write out the common OLE2 streams. If you require all
+     *  streams to be written out, pass in preserveNodes
+     * @param out The OutputStream to write to.
+     * @throws IOException If there is an unexpected IOException from
+     *           the passed in OutputStream
+     */
+    public void write(OutputStream out) throws IOException {
+        // Write out, but only the common streams
+        write(out,false);
+    }
+    /**
+     * Writes out the slideshow file the is represented by an instance
+     *  of this class.
+     * If you require all streams to be written out (eg Marcos, embeded
+     *  documents), then set preserveNodes to true
+     * @param out The OutputStream to write to.
+     * @param preserveNodes Should all OLE2 streams be written back out, or only the common ones?
+     * @throws IOException If there is an unexpected IOException from
+     *           the passed in OutputStream
+     */
+    public void write(OutputStream out, boolean preserveNodes) throws IOException {
+        // Get a new Filesystem to write into
+        POIFSFileSystem outFS = new POIFSFileSystem();
 
-	// Write out the Property Streams
-	writeProperties(outFS);
+        // Write out the Property Streams
+        writeProperties(outFS);
 
 
-	// For position dependent records, hold where they were and now are
-	// As we go along, update, and hand over, to any Position Dependent
-	//  records we happen across
-	Hashtable oldToNewPositions = new Hashtable();
+        // For position dependent records, hold where they were and now are
+        // As we go along, update, and hand over, to any Position Dependent
+        //  records we happen across
+        Hashtable oldToNewPositions = new Hashtable();
+
+        // First pass - figure out where all the position dependent
+        //   records are going to end up, in the new scheme
+        // (Annoyingly, some powerpoing files have PersistPtrHolders
+        //  that reference slides after the PersistPtrHolder)
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        for(int i=0; i<_records.length; i++) {
+            if(_records[i] instanceof PositionDependentRecord) {
+                PositionDependentRecord pdr = (PositionDependentRecord)_records[i];
+                int oldPos = pdr.getLastOnDiskOffset();
+                int newPos = baos.size();
+                pdr.setLastOnDiskOffset(newPos);
+                oldToNewPositions.put(new Integer(oldPos),new Integer(newPos));
+                //System.out.println(oldPos + " -> " + newPos);
+            }
+
+            // Dummy write out, so the position winds on properly
+            _records[i].writeOut(baos);
+        }
+
+        // No go back through, actually writing ourselves out
+        baos.reset();
+        for(int i=0; i<_records.length; i++) {
+            // For now, we're only handling PositionDependentRecord's that
+            //  happen at the top level.
+            // In future, we'll need the handle them everywhere, but that's
+            //  a bit trickier
+            if(_records[i] instanceof PositionDependentRecord) {
+                // We've already figured out their new location, and
+                //  told them that
+                // Tell them of the positions of the other records though
+                PositionDependentRecord pdr = (PositionDependentRecord)_records[i];
+                pdr.updateOtherRecordReferences(oldToNewPositions);
+            }
+
+            // Whatever happens, write out that record tree
+            _records[i].writeOut(baos);
+        }
+        // Update our cached copy of the bytes that make up the PPT stream
+        _docstream = baos.toByteArray();
+
+        // Write the PPT stream into the POIFS layer
+        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+        outFS.createDocument(bais,"PowerPoint Document");
+
+
+        // Update and write out the Current User atom
+        int oldLastUserEditAtomPos = (int)currentUser.getCurrentEditOffset();
+        Integer newLastUserEditAtomPos = (Integer)oldToNewPositions.get(new Integer(oldLastUserEditAtomPos));
+        if(newLastUserEditAtomPos == null) {
+            throw new HSLFException("Couldn't find the new location of the UserEditAtom that used to be at " + oldLastUserEditAtomPos);
+        }
+        currentUser.setCurrentEditOffset(newLastUserEditAtomPos.intValue());
+        currentUser.writeToFS(outFS);
+
 	
-	// First pass - figure out where all the position dependent
-	//   records are going to end up, in the new scheme
-	// (Annoyingly, some powerpoing files have PersistPtrHolders
-	//  that reference slides after the PersistPtrHolder)
-	ByteArrayOutputStream baos = new ByteArrayOutputStream();
-	for(int i=0; i<_records.length; i++) {
-		if(_records[i] instanceof PositionDependentRecord) {
-			PositionDependentRecord pdr = (PositionDependentRecord)_records[i];
-			int oldPos = pdr.getLastOnDiskOffset();
-			int newPos = baos.size();
-			pdr.setLastOnDiskOffset(newPos);
-			oldToNewPositions.put(new Integer(oldPos),new Integer(newPos));
-			//System.out.println(oldPos + " -> " + newPos);
-		}
-		
-		// Dummy write out, so the position winds on properly
-		_records[i].writeOut(baos);
-	}
+        // Write any pictures, into another stream
+        if (_pictures != null) {
+            ByteArrayOutputStream pict = new ByteArrayOutputStream();
+            for (int i = 0; i < _pictures.length; i++ ) {
+                _pictures[i].write(pict);
+            }
+            outFS.createDocument(
+                new ByteArrayInputStream(pict.toByteArray()), "Pictures"
+            );
+        }
 
-	// No go back through, actually writing ourselves out
-	baos.reset();
-	for(int i=0; i<_records.length; i++) {
-		// For now, we're only handling PositionDependentRecord's that
-		//  happen at the top level.
-		// In future, we'll need the handle them everywhere, but that's
-		//  a bit trickier
-		if(_records[i] instanceof PositionDependentRecord) {
-			// We've already figured out their new location, and
-			//  told them that
-			// Tell them of the positions of the other records though
-			PositionDependentRecord pdr = (PositionDependentRecord)_records[i];
-			pdr.updateOtherRecordReferences(oldToNewPositions);
-		}
-
-		// Whatever happens, write out that record tree
-		_records[i].writeOut(baos);
-	}
-	// Update our cached copy of the bytes that make up the PPT stream
-	_docstream = baos.toByteArray();
-
-	// Write the PPT stream into the POIFS layer
-	ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-	outFS.createDocument(bais,"PowerPoint Document");
-
-
-	// Update and write out the Current User atom
-	int oldLastUserEditAtomPos = (int)currentUser.getCurrentEditOffset();
-	Integer newLastUserEditAtomPos = (Integer)oldToNewPositions.get(new Integer(oldLastUserEditAtomPos));
-	if(newLastUserEditAtomPos == null) {
-		throw new HSLFException("Couldn't find the new location of the UserEditAtom that used to be at " + oldLastUserEditAtomPos);
-	}
-	currentUser.setCurrentEditOffset(newLastUserEditAtomPos.intValue());
-	currentUser.writeToFS(outFS);
-
-	
-	// Write any pictures, into another stream
-	if (_pictures != null) {
-		ByteArrayOutputStream pict = new ByteArrayOutputStream();
-		for (int i = 0; i < _pictures.length; i++ ) {
-			_pictures[i].write(pict);
-		}
-		outFS.createDocument(
-				new ByteArrayInputStream(pict.toByteArray()), "Pictures"
-		);
-	}
-
-	// Send the POIFSFileSystem object out to the underlying stream
-	outFS.writeFilesystem(out);
-   }
+        // Send the POIFSFileSystem object out to the underlying stream
+        outFS.writeFilesystem(out);
+    }
 
 
 	/* ******************* adding methods follow ********************* */
