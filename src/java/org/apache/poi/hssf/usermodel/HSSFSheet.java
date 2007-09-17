@@ -1424,6 +1424,10 @@ public class HSSFSheet
     /**
      * Adjusts the column width to fit the contents.
      *
+     * This process can be relatively slow on large sheets, so this should
+     *  normally only be called once per column, at the end of your
+     *  processing.
+     *
      * @param column the column index
      */
     public void autoSizeColumn(short column) {

@@ -36,6 +36,11 @@
     </devs>
 
         <release version="3.0.2-FINAL" date="2007-??-??">
+            <action dev="POI-DEVELOPERS" type="add">43323 - [PATCH] - Support for adding Pictures to ShapeGroups in HSLF.</action>
+            <action dev="POI-DEVELOPERS" type="add">43222 - [PATCH] - Support for getting OLE object data from HSSFWorkbook.</action>
+            <action dev="POI-DEVELOPERS" type="add">43247 - [PATCH] - Support for getting OLE object data from slideshows.</action>
+            <action dev="POI-DEVELOPERS" type="add">43125 - [PATCH] - Support for reading EMF, WMF and PICT images via HSSFWorkbook.getAllPictures()</action>
+            <action dev="POI-DEVELOPERS" type="fix">43088 - [PATCH] - Fix for reading files with long cell comments and text boxes</action>
             <action dev="POI-DEVELOPERS" type="fix">42844 - [PATCH] - Fix for the EventUserModel and records that aren't immediately followed by their ContinueRecords</action>
             <action dev="POI-DEVELOPERS" type="fix">43055 - [PATCH] - Fix for saving Crystal Reports xls files when preserving nodes</action>
             <action dev="POI-DEVELOPERS" type="fix">43116 - [PATCH] - Fix for Escher layer handling of embeded OLE2 documents</action>
