@@ -19,6 +19,7 @@ package org.apache.poi.hdgf;
 import java.io.FileInputStream;
 import java.io.IOException;
 
+import org.apache.poi.POIDocument;
 import org.apache.poi.hdgf.chunks.ChunkFactory;
 import org.apache.poi.hdgf.pointers.Pointer;
 import org.apache.poi.hdgf.pointers.PointerFactory;
@@ -37,10 +38,9 @@ import org.apache.poi.util.LittleEndian;
  *  http://www.gnome.ru/projects/docs/slide1.png
  *  http://www.gnome.ru/projects/docs/slide2.png
  */
-public class HDGFDiagram {
+public class HDGFDiagram extends POIDocument {
 	private static final String VISIO_HEADER = "Visio (TM) Drawing\r\n";
 	
-	private POIFSFileSystem filesystem;
 	private byte[] _docstream;
 	
 	private short version;
@@ -61,6 +61,9 @@ public class HDGFDiagram {
 		// Grab the document stream
 		_docstream = new byte[docProps.getSize()];
 		filesystem.createDocumentInputStream("VisioDocument").read(_docstream);
+		
+		// Read in the common POI streams
+		readProperties();
 		
 		// Check it's really visio
 		String typeString = new String(_docstream, 0, 20);
