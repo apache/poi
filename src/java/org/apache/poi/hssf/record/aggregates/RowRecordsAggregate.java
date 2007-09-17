@@ -76,11 +76,13 @@ public class RowRecordsAggregate
 
     public RowRecord getRow(int rownum)
     {
+		// Row must be between 0 and 65535
+		if(rownum < 0 || rownum > 65535) {
+			throw new IllegalArgumentException("The row number must be between 0 and 65535");
+		}
 
-        // Integer integer = new Integer(rownum);
         RowRecord row = new RowRecord();
-
-        row.setRowNumber(( short ) rownum);
+        row.setRowNumber(rownum);
         return ( RowRecord ) records.get(row);
     }
 
