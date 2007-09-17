@@ -223,9 +223,11 @@ public class HSSFFormulaEvaluator {
                 CellValue cv = getCellValueForEval(internalEvaluate(cell, row, sheet, workbook));
                 switch (cv.getCellType()) {
                 case HSSFCell.CELL_TYPE_BOOLEAN:
+                	cell.setCellType(HSSFCell.CELL_TYPE_BOOLEAN);
                     cell.setCellValue(cv.getBooleanValue());
                     break;
                 case HSSFCell.CELL_TYPE_ERROR:
+                	cell.setCellType(HSSFCell.CELL_TYPE_ERROR);
                     cell.setCellValue(cv.getErrorValue());
                     break;
                 case HSSFCell.CELL_TYPE_NUMERIC:
@@ -233,6 +235,7 @@ public class HSSFFormulaEvaluator {
                     cell.setCellValue(cv.getNumberValue());
                     break;
                 case HSSFCell.CELL_TYPE_STRING:
+                	cell.setCellType(HSSFCell.CELL_TYPE_STRING);
                     cell.setCellValue(cv.getRichTextStringValue());
                     break;
                 case HSSFCell.CELL_TYPE_BLANK:
