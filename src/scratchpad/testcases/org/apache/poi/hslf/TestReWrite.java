@@ -37,9 +37,11 @@ public class TestReWrite extends TestCase {
 	// HSLFSlideShow primed on the test data
 	private HSLFSlideShow hssA;
 	private HSLFSlideShow hssB;
+	private HSLFSlideShow hssC;
 	// POIFS primed on the test data
 	private POIFSFileSystem pfsA;
 	private POIFSFileSystem pfsB;
+	private POIFSFileSystem pfsC;
 
     public void setUp() throws Exception {
 		String dirname = System.getProperty("HSLF.testdata.path");
@@ -53,6 +55,11 @@ public class TestReWrite extends TestCase {
 		FileInputStream fisB = new FileInputStream(filenameB);
 		pfsB = new POIFSFileSystem(fisB);
 		hssB = new HSLFSlideShow(pfsB);
+		
+		String filenameC = dirname + "/WithMacros.ppt";
+		FileInputStream fisC = new FileInputStream(filenameC);
+		pfsC = new POIFSFileSystem(fisC);
+		hssC = new HSLFSlideShow(pfsC);
     }
 
     public void testWritesOutTheSame() throws Exception {
@@ -85,6 +92,34 @@ public class TestReWrite extends TestCase {
 			assertEquals(_oData[i], _nData[i]);
 		}
 	}
+    
+    public void testWithMacroStreams() throws Exception {
+    	// Check that they're apparently the same
+    	assertSlideShowWritesOutTheSame(hssC, pfsC);
+    	
+    	// Currently has a Macros stream
+    	assertNotNull( pfsC.getRoot().getEntry("Macros") );
+    	
+    	// Write out normally, will loose the macro stream
+    	ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    	hssC.write(baos);
+    	POIFSFileSystem pfsNew = new POIFSFileSystem(
+    			new ByteArrayInputStream(baos.toByteArray()) );
+    	
+    	try {
+    		pfsNew.getRoot().getEntry("Macros");
+    		fail();
+    	} catch(FileNotFoundException e) {
+    		// Good, as expected
+    	}
+    	
+    	// But if we write out with nodes preserved, will be there
+    	baos = new ByteArrayOutputStream();
+    	hssC.write(baos, true);
+    	pfsNew = new POIFSFileSystem(
+    			new ByteArrayInputStream(baos.toByteArray()) );
+    	assertNotNull( pfsNew.getRoot().getEntry("Macros") );
+    }
 
     /**
      * Ensure that simply opening a slideshow (usermodel) view of it

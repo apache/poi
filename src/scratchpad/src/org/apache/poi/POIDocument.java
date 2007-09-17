@@ -20,13 +20,18 @@ package org.apache.poi;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
 
 import org.apache.poi.hpsf.DocumentSummaryInformation;
 import org.apache.poi.hpsf.MutablePropertySet;
 import org.apache.poi.hpsf.PropertySet;
 import org.apache.poi.hpsf.PropertySetFactory;
 import org.apache.poi.hpsf.SummaryInformation;
+import org.apache.poi.poifs.filesystem.DirectoryEntry;
+import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
+import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -106,11 +111,25 @@ public abstract class POIDocument {
 	 * @param outFS the POIFSFileSystem to write the properties into
 	 */
 	protected void writeProperties(POIFSFileSystem outFS) throws IOException {
+		writeProperties(outFS, null);
+	}
+	/**
+	 * Writes out the standard Documment Information Properties (HPSF)
+	 * @param outFS the POIFSFileSystem to write the properties into
+	 * @param writtenEntries a list of POIFS entries to add the property names too
+	 */
+	protected void writeProperties(POIFSFileSystem outFS, List writtenEntries) throws IOException {
 		if(sInf != null) {
 			writePropertySet(SummaryInformation.DEFAULT_STREAM_NAME,sInf,outFS);
+			if(writtenEntries != null) {
+				writtenEntries.add(SummaryInformation.DEFAULT_STREAM_NAME);
+			}
 		}
 		if(dsInf != null) {
 			writePropertySet(DocumentSummaryInformation.DEFAULT_STREAM_NAME,dsInf,outFS);
+			if(writtenEntries != null) {
+				writtenEntries.add(DocumentSummaryInformation.DEFAULT_STREAM_NAME);
+			}
 		}
 	}
 	
@@ -133,6 +152,65 @@ public abstract class POIDocument {
 			logger.log(POILogger.INFO, "Wrote property set " + name + " of size " + data.length);
 		} catch(org.apache.poi.hpsf.WritingNotSupportedException wnse) {
 			System.err.println("Couldn't write property set with name " + name + " as not supported by HPSF yet");
+		}
+	}
+
+	/**
+	 * Copies nodes from one POIFS to the other minus the excepts
+	 * @param source is the source POIFS to copy from
+	 * @param target is the target POIFS to copy to
+	 * @param excepts is a list of Strings specifying what nodes NOT to copy
+	 */
+	protected void copyNodes(POIFSFileSystem source, POIFSFileSystem target,
+	                          List excepts) throws IOException {
+		//System.err.println("CopyNodes called");
+
+		DirectoryEntry root = source.getRoot();
+		DirectoryEntry newRoot = target.getRoot();
+
+		Iterator entries = root.getEntries();
+
+		while (entries.hasNext()) {
+			Entry entry = (Entry)entries.next();
+			if (!isInList(entry.getName(), excepts)) {
+				copyNodeRecursively(entry,newRoot);
+			}
+		}
+	}
+		
+	/**
+	 * Checks to see if the String is in the list, used when copying
+	 *  nodes between one POIFS and another
+	 */
+	private boolean isInList(String entry, List list) {
+		for (int k = 0; k < list.size(); k++) {
+			if (list.get(k).equals(entry)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Copies an Entry into a target POIFS directory, recursively
+	 */
+	private void copyNodeRecursively(Entry entry, DirectoryEntry target)
+	throws IOException {
+		//System.err.println("copyNodeRecursively called with "+entry.getName()+
+		//                   ","+target.getName());
+		DirectoryEntry newTarget = null;
+		if (entry.isDirectoryEntry()) {
+			newTarget = target.createDirectory(entry.getName());
+			Iterator entries = ((DirectoryEntry)entry).getEntries();
+
+			while (entries.hasNext()) {
+				copyNodeRecursively((Entry)entries.next(),newTarget);
+			}
+		} else {
+			DocumentEntry dentry = (DocumentEntry)entry;
+			DocumentInputStream dstream = new DocumentInputStream(dentry);
+			target.createDocument(dentry.getName(),dstream);
+			dstream.close();
 		}
 	}
 }
