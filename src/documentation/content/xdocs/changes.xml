@@ -36,6 +36,7 @@
     </devs>
 
         <release version="3.0.2-FINAL" date="2007-??-??">
+            <action dev="POI-DEVELOPERS" type="fix">43399 - [PATCH] - Fix for Cell References for rows > 32678</action>
             <action dev="POI-DEVELOPERS" type="fix">43410 - [PATCH] - Improved Formula Parser support for numbers and ranges</action>
             <action dev="POI-DEVELOPERS" type="add">When writing HSLF files out, optionally preserve all OLE2 nodes (default is just the HSLF related nodes)</action>
             <action dev="POI-DEVELOPERS" type="add">43323 - [PATCH] - Support for adding Pictures to ShapeGroups in HSLF.</action>
