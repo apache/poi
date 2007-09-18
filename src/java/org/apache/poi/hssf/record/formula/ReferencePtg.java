@@ -35,8 +35,18 @@ public class ReferencePtg extends Ptg
 {
     private final static int SIZE = 5;
     public final static byte sid  = 0x24;
+    private final static int MAX_ROW_NUMBER = 65536;             
     //public final static byte sid = 0x44;
+
+   /** 
+     * The row number, between 0 and 65535, but stored as a signed
+     *  short between -32767 and 32768.
+     * Take care about which version you fetch back!
+     */
     private short            field_1_row;
+    /**
+     * The column number, between 0 and ??
+     */
     private short            field_2_col;
     private BitField         rowRelative = BitFieldFactory.getInstance(0x8000);
     private BitField         colRelative = BitFieldFactory.getInstance(0x4000);
@@ -93,6 +103,7 @@ public class ReferencePtg extends Ptg
     public void writeBytes(byte [] array, int offset)
     {
         array[offset] = (byte) (sid + ptgClass);
+
         LittleEndian.putShort(array,offset+1,field_1_row);
         LittleEndian.putShort(array,offset+3,field_2_col);
     }
@@ -101,9 +112,36 @@ public class ReferencePtg extends Ptg
     {
         field_1_row = row;
     }
+    public void setRow(int row)
+    {
+        if(row < 0 || row >= MAX_ROW_NUMBER) {
+           throw new IllegalArgumentException("The row number, when specified as an integer, must be between 0 and " + MAX_ROW_NUMBER);
+        }
+        
+        // Save, wrapping as needed
+        if(row > Short.MAX_VALUE) {
+        	field_1_row = (short)(row - MAX_ROW_NUMBER);
+        } else {
+        	field_1_row = (short)row;
+        }
+    }
 
+    /**
+     * Returns the row number as a short, which will be
+     *  wrapped (negative) for values between 32769 and 65535
+     */
     public short getRow()
     {
+        return field_1_row;
+    }
+    /**
+     * Returns the row number as an int, between 0 and 65535
+     */
+    public int getRowAsInt()
+    {
+    	if(field_1_row < 0) {
+    		return field_1_row + MAX_ROW_NUMBER;
+    	}
         return field_1_row;
     }
 
@@ -153,7 +191,7 @@ public class ReferencePtg extends Ptg
     public String toFormulaString(Workbook book)
     {
         //TODO -- should we store a cellreference instance in this ptg?? but .. memory is an issue, i believe!
-        return (new CellReference(getRow(),getColumn(),!isRowRelative(),!isColRelative())).toString();
+        return (new CellReference(getRowAsInt(),getColumn(),!isRowRelative(),!isColRelative())).toString();
     }
     
     public byte getDefaultOperandClass() {
