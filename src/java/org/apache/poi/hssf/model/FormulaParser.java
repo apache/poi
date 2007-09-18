@@ -45,6 +45,7 @@ import org.apache.poi.hssf.record.formula.*;
  *  @author Eric Ladner (eladner at goldinc dot com)
  *  @author Cameron Riley (criley at ekmail.com)
  *  @author Peter M. Murray (pete at quantrix dot com)
+ *  @author Pavel Krupets (pkrupets at palmtreebusiness dot com)
  */
 public class FormulaParser {
     
@@ -230,36 +231,21 @@ public class FormulaParser {
     }
     
     
-    /** Get the exponent for numbers of form 1.3E21 */
-    private String GetExponent() {
-        StringBuffer retval = new StringBuffer();
-        String sign = "";
-        GetChar();
-        if ('-' == look) {
-            sign = "-";
-            GetChar();
-        }
-        while (IsDigit(look)) {
-            retval.append(look);
-            GetChar();
-        }
-        if (retval.length() > 0) {
-            retval.insert(0, sign);
-        }
-        return retval.toString();
-    }
-
     /** Get a Number */
     private String GetNum() {
         StringBuffer value = new StringBuffer();
-        if  (!IsDigit(look)) Expected("Integer");
-        while (IsDigit(look)){
-            value.append(look);
+        
+        while (IsDigit(this.look)){
+            value.append(this.look);
             GetChar();
         }
+        
         SkipWhite();
-        return value.toString();
+        
+        return value.length() == 0 ? null : value.toString();
     }
+        
+    
     /** Output a String with Tab */
     private void  Emit(String s){
         System.out.print(TAB+s);
@@ -278,9 +264,14 @@ public class FormulaParser {
         if (look == '('){
             //This is a function
             function(name);
-        } else if (look == ':') { // this is a AreaReference
+        } else if (look == ':' || look == '.') { // this is a AreaReference
+            GetChar();
+            
+            while (look == '.') { // formulas can have . or .. or ... instead of :
+                GetChar();
+            }
+            
             String first = name;
-            Match(':');
             String second = GetName();
             tokens.add(new AreaPtg(first+":"+second));
         } else if (look == '!') {
@@ -508,43 +499,81 @@ public class FormulaParser {
         } else if (look == ')' || look == ',') {
         	tokens.add(new MissingArgPtg());
         } else {
-             
-            String number = GetNum();
-            if (look=='.') {
-                Match('.');
-                String decimalPart = null;
-                if (IsDigit(look)) number = number +"."+ GetNum(); //this also takes care of someone entering "1234."
-                if ('E' == look) {
-                    String exponent = GetExponent();
-                    number += 'E' + exponent;
+            String number2 = null;
+            String exponent = null;
+            String number1 = GetNum();
+            
+            if (look == '.') {
+                GetChar();
+                number2 = GetNum();
+            }
+            
+            if (look == 'E') {
+                GetChar();
+                
+                String sign = "";
+                if (look == '+') {
+                    GetChar();
+                } else if (look == '-') {
+                    GetChar();
+                    sign = "-";
                 }
-                tokens.add(new NumberPtg(number));
+                
+                String number = GetNum();
+                if (number == null) {
+                    Expected("Integer");
+                }
+                exponent = sign + number;
             }
-            else if ('E' == look) {
-                String exponent = GetExponent();
-                number += 'E'+exponent;
-                tokens.add(new NumberPtg(number));
+            
+            if (number1 == null && number2 == null) {
+                Expected("Integer");
             }
-            else {
-                tokens.add(getNumberPtgFromString(number));  //TODO:what if the number is too big to be a short? ..add factory to return Int or Number!
-            }
+            
+            tokens.add(getNumberPtgFromString(number1, number2, exponent));
         }
     }
     
-	 /** Get a PTG for an integer from its string representation. 
-	  * return Int or Number Ptg based on size of input
-	 * @param number
+	/** 
+	 * Get a PTG for an integer from its string representation. 
+	 * return Int or Number Ptg based on size of input
 	 */
-	private Ptg getNumberPtgFromString(String number) {
-		try {
-			return new IntPtg(number);
-		} catch (NumberFormatException e) {
-			return new NumberPtg(number);
-		}
-
+	private Ptg getNumberPtgFromString(String number1, String number2, String exponent) {
+        StringBuffer number = new StringBuffer();
+        
+	    if (number2 == null) {
+	        number.append(number1);
+    	    
+    	    if (exponent != null) {
+    	        number.append('E');
+    	        number.append(exponent);
+    	    }
+    	    
+            String numberStr = number.toString();
+            
+            try {
+                return new IntPtg(numberStr);
+            } catch (NumberFormatException e) {
+                return new NumberPtg(numberStr);
+            }
+	    } else {
+            if (number1 != null) {
+                number.append(number1);
+            }
+            
+            number.append('.');
+            number.append(number2);
+            
+            if (exponent != null) {
+                number.append('E');
+                number.append(exponent);
+            }
+            
+            return new NumberPtg(number.toString());
+	    }
 	}
-
-
+	
+	
 	private void StringLiteral() 
 	{
 		// Can't use match here 'cuz it consumes whitespace

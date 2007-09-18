@@ -507,4 +507,66 @@ public class TestFormulaParser extends TestCase {
         System.out.println("Testing org.apache.poi.hssf.record.formula.FormulaParser");
         junit.textui.TestRunner.run(TestFormulaParser.class);
     }
+    
+    public void testNumbers() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        
+        wb.createSheet("Cash_Flow");;
+        
+        HSSFSheet sheet = wb.createSheet("Test");
+        HSSFRow row = sheet.createRow(0);
+        HSSFCell cell = row.createCell((short)0);
+        String formula = null;
+        
+        // starts from decimal point
+        
+        cell.setCellFormula(".1");
+        formula = cell.getCellFormula();
+        assertEquals("0.1", formula);
+        
+        cell.setCellFormula("+.1");
+        formula = cell.getCellFormula();
+        assertEquals("+0.1", formula);
+        
+        cell.setCellFormula("-.1");
+        formula = cell.getCellFormula();
+        assertEquals("-0.1", formula);
+        
+        // has exponent
+        
+        cell.setCellFormula("10E1");
+        formula = cell.getCellFormula();
+        assertEquals("100.0", formula);
+        
+        cell.setCellFormula("10E+1");
+        formula = cell.getCellFormula();
+        assertEquals("100.0", formula);
+        
+        cell.setCellFormula("10E-1");
+        formula = cell.getCellFormula();
+        assertEquals("1.0", formula);
+    }
+    
+    public void testRanges() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        
+        wb.createSheet("Cash_Flow");;
+        
+        HSSFSheet sheet = wb.createSheet("Test");
+        HSSFRow row = sheet.createRow(0);
+        HSSFCell cell = row.createCell((short)0);
+        String formula = null;
+        
+        cell.setCellFormula("A1.A2");
+        formula = cell.getCellFormula();
+        assertEquals("A1:A2", formula);
+        
+        cell.setCellFormula("A1..A2");
+        formula = cell.getCellFormula();
+        assertEquals("A1:A2", formula);
+        
+        cell.setCellFormula("A1...A2");
+        formula = cell.getCellFormula();
+        assertEquals("A1:A2", formula);
+    }        
 }
