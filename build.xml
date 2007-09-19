@@ -387,6 +387,10 @@ under the License.
       <classpath refid="test.classpath"/>
       <sysproperty key="HSSF.testdata.path"
         file="${main.src.test}/org/apache/poi/hssf/data"/> 
+      <sysproperty key="HSLF.testdata.path"
+        file="${main.src.test}/org/apache/poi/hslf/data"/> 
+      <sysproperty key="HWPF.testdata.path"
+        file="${main.src.test}/org/apache/poi/hwpf/data"/> 
       <sysproperty key="HPSF.testdata.path"
         file="${main.src.test}/org/apache/poi/hpsf/data"/> 
       <sysproperty key="java.awt.headless" value="true"/>
