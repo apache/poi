@@ -88,7 +88,7 @@ public abstract class POIDocument {
 			dis = filesystem.createDocumentInputStream(setName);
 		} catch(IOException ie) {
 			// Oh well, doesn't exist
-			System.err.println("Error getting property set with name " + setName + "\n" + ie);
+			logger.log(POILogger.WARN, "Error getting property set with name " + setName + "\n" + ie);
 			return null;
 		}
 
@@ -98,10 +98,10 @@ public abstract class POIDocument {
 			return set;
 		} catch(IOException ie) {
 			// Must be corrupt or something like that
-			System.err.println("Error creating property set with name " + setName + "\n" + ie);
+			logger.log(POILogger.WARN, "Error creating property set with name " + setName + "\n" + ie);
 		} catch(org.apache.poi.hpsf.HPSFException he) {
 			// Oh well, doesn't exist
-			System.err.println("Error creating property set with name " + setName + "\n" + he);
+			logger.log(POILogger.WARN, "Error creating property set with name " + setName + "\n" + he);
 		}
 		return null;
 	}
