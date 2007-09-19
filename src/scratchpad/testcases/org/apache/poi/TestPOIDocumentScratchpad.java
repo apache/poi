@@ -32,9 +32,12 @@ import org.apache.poi.poifs.filesystem.*;
  * Tests that POIDocument correctly loads and saves the common
  *  (hspf) Document Properties
  *
+ * This is part 2 of 2 of the tests - it only does the POIDocuments
+ *  which are part of the scratchpad (not main)
+ *  
  * @author Nick Burch (nick at torchbox dot com)
  */
-public class TestPOIDocument extends TestCase {
+public class TestPOIDocumentScratchpad extends TestCase {
 	// The POI Documents to work on
 	private POIDocument doc;
 	private POIDocument doc2;
@@ -49,6 +52,8 @@ public class TestPOIDocument extends TestCase {
     public void setUp() throws Exception {
 		String dirnameHSLF = System.getProperty("HSLF.testdata.path");
 		String filenameHSLF = dirnameHSLF + "/basic_test_ppt_file.ppt";
+		String dirnameHSSF = System.getProperty("HSSF.testdata.path");
+		String filenameHSSF = dirnameHSLF + "/DateFormats.ppt";
 		String dirnameHWPF = System.getProperty("HWPF.testdata.path");
 		String filenameHWPF = dirnameHWPF + "/test2.doc";
 		
