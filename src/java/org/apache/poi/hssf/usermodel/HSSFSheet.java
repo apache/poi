@@ -84,6 +84,7 @@ public class HSSFSheet
     private Sheet sheet;
     private TreeMap rows;
     private Workbook book;
+    private HSSFWorkbook workbook;
     private int firstrow;
     private int lastrow;
     private static POILogger log = POILogFactory.getLogger(HSSFSheet.class);
@@ -92,36 +93,38 @@ public class HSSFSheet
      * Creates new HSSFSheet   - called by HSSFWorkbook to create a sheet from
      * scratch.  You should not be calling this from application code (its protected anyhow).
      *
-     * @param book - lowlevel Workbook object associated with the sheet.
+     * @param workbook - The HSSF Workbook object associated with the sheet.
      * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#createSheet()
      */
 
-    protected HSSFSheet(Workbook book)
+    protected HSSFSheet(HSSFWorkbook workbook)
     {
         sheet = Sheet.createSheet();
         rows = new TreeMap();   // new ArrayList(INITIAL_CAPACITY);
-        this.book = book;
+        this.workbook = workbook;
+        this.book = workbook.getWorkbook();
     }
 
     /**
      * Creates an HSSFSheet representing the given Sheet object.  Should only be
      * called by HSSFWorkbook when reading in an exisiting file.
      *
-     * @param book - lowlevel Workbook object associated with the sheet.
+     * @param workbook - The HSSF Workbook object associated with the sheet.
      * @param sheet - lowlevel Sheet object this sheet will represent
      * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#createSheet()
      */
 
-    protected HSSFSheet(Workbook book, Sheet sheet)
+    protected HSSFSheet(HSSFWorkbook workbook, Sheet sheet)
     {
         this.sheet = sheet;
         rows = new TreeMap();
-        this.book = book;
+        this.workbook = workbook;
+        this.book = workbook.getWorkbook();
         setPropertiesFromSheet(sheet);
     }
 
-    HSSFSheet cloneSheet(Workbook book) {
-      return new HSSFSheet(book, sheet.cloneSheet());
+    HSSFSheet cloneSheet(HSSFWorkbook workbook) {
+      return new HSSFSheet(workbook, sheet.cloneSheet());
     }
 
 
