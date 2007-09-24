@@ -223,7 +223,7 @@ public class HSSFWorkbook extends POIDocument
                 break;
             }
 
-            HSSFSheet hsheet = new HSSFSheet(workbook, sheet);
+            HSSFSheet hsheet = new HSSFSheet(this, sheet);
 
             sheets.add(hsheet);
 
@@ -462,6 +462,20 @@ public class HSSFWorkbook extends POIDocument
         return retval;
     }
 
+    /** Returns the index of the given sheet
+     * @param sheet the sheet to look up
+     * @return index of the sheet (0 based)
+     */
+    public int getSheetIndex(HSSFSheet sheet)
+    {
+    	for(int i=0; i<sheets.size(); i++) {
+    		if(sheets.get(i) == sheet) {
+    			return i;
+    		}
+    	}
+    	return -1;
+    }
+
     /**
      * create an HSSFSheet for this HSSFWorkbook, adds it to the sheets and returns
      * the high level representation.  Use this to create new sheets.
@@ -474,7 +488,7 @@ public class HSSFWorkbook extends POIDocument
 
 //        if (getNumberOfSheets() == 3)
 //            throw new RuntimeException("You cannot have more than three sheets in HSSF 1.0");
-        HSSFSheet sheet = new HSSFSheet(workbook);
+        HSSFSheet sheet = new HSSFSheet(this);
 
         sheets.add(sheet);
         workbook.setSheetName(sheets.size() - 1,
@@ -495,7 +509,7 @@ public class HSSFWorkbook extends POIDocument
       HSSFSheet srcSheet = (HSSFSheet)sheets.get(sheetNum);
       String srcName = workbook.getSheetName(sheetNum);
       if (srcSheet != null) {
-        HSSFSheet clonedSheet = srcSheet.cloneSheet(workbook);
+        HSSFSheet clonedSheet = srcSheet.cloneSheet(this);
         WindowTwoRecord windowTwo = (WindowTwoRecord) clonedSheet.getSheet().findFirstRecordBySid(WindowTwoRecord.sid);
         windowTwo.setSelected(sheets.size() == 1);
         windowTwo.setPaged(sheets.size() == 1);
@@ -534,7 +548,7 @@ public class HSSFWorkbook extends POIDocument
         if (workbook.doesContainsSheetName( sheetname, sheets.size() ))
             throw new IllegalArgumentException( "The workbook already contains a sheet of this name" );
 
-        HSSFSheet sheet = new HSSFSheet(workbook);
+        HSSFSheet sheet = new HSSFSheet(this);
 
         sheets.add(sheet);
         workbook.setSheetName(sheets.size() - 1, sheetname);
