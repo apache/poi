@@ -42,6 +42,12 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 public class TestHSSFDateUtil
         extends TestCase
 {
+
+	public static final int CALENDAR_JANUARY = 0;
+	public static final int CALENDAR_FEBRUARY = 0;
+	public static final int CALENDAR_MARCH = 0;
+	public static final int CALENDAR_APRIL = 0;
+
     public TestHSSFDateUtil(String s)
     {
         super(s);
@@ -308,9 +314,37 @@ public class TestHSSFDateUtil
         assertTrue(HSSFDateUtil.isCellDateFormatted(cell));
     }
     
+    public void testDateBug_2Excel() {
+        assertEquals(59.0, HSSFDateUtil.getExcelDate(createDate(1900, CALENDAR_FEBRUARY, 28)), 0.00001);
+        assertEquals(61.0, HSSFDateUtil.getExcelDate(createDate(1900, CALENDAR_MARCH, 1)), 0.00001);
+        
+        assertEquals(37315.00, HSSFDateUtil.getExcelDate(createDate(2002, CALENDAR_FEBRUARY, 28)), 0.00001);
+        assertEquals(37316.00, HSSFDateUtil.getExcelDate(createDate(2002, CALENDAR_MARCH, 1)), 0.00001);
+        assertEquals(37257.00, HSSFDateUtil.getExcelDate(createDate(2002, CALENDAR_JANUARY, 1)), 0.00001);
+        assertEquals(38074.00, HSSFDateUtil.getExcelDate(createDate(2004, CALENDAR_MARCH, 28)), 0.00001);
+    }
+    
+    public void testDateBug_2Java() {
+        assertEquals(createDate(1900, Calendar.FEBRUARY, 28), HSSFDateUtil.getJavaDate(59.0));
+        assertEquals(createDate(1900, Calendar.MARCH, 1), HSSFDateUtil.getJavaDate(61.0));
+        
+        assertEquals(createDate(2002, Calendar.FEBRUARY, 28), HSSFDateUtil.getJavaDate(37315.00));
+        assertEquals(createDate(2002, Calendar.MARCH, 1), HSSFDateUtil.getJavaDate(37316.00));
+        assertEquals(createDate(2002, Calendar.JANUARY, 1), HSSFDateUtil.getJavaDate(37257.00));
+        assertEquals(createDate(2004, Calendar.MARCH, 28), HSSFDateUtil.getJavaDate(38074.00));
+    }
+
+    private Date createDate(int year, int month, int day) {
+        Calendar c = new GregorianCalendar();
+        c.set(year, month, day, 0, 0, 0);
+        c.set(Calendar.MILLISECOND, 0);
+        return c.getTime();
+    }
+    
     public static void main(String [] args) {
         System.out
                 .println("Testing org.apache.poi.hssf.usermodel.TestHSSFDateUtil");
         junit.textui.TestRunner.run(TestHSSFDateUtil.class);
     }
 }
+

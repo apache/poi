@@ -43,13 +43,10 @@ public class HSSFDateUtil
     {
     }
 
-    private static final int    BAD_DATE          =
+    private static final int    BAD_DATE         =
         -1;   // used to specify that date is invalid
-    private static final long   DAY_MILLISECONDS  = 24 * 60 * 60 * 1000;
-    private static final double CAL_1900_ABSOLUTE =
-        ( double ) absoluteDay(new GregorianCalendar(1900, Calendar
-        .JANUARY, 1)) - 2.0;
-
+    private static final long   DAY_MILLISECONDS = 24 * 60 * 60 * 1000;
+    
     /**
      * Given a Date, converts it into a double representing its internal Excel representation,
      *   which is the number of days since 1/1/1900. Fractional days represent hours, minutes, and seconds.
@@ -84,8 +81,13 @@ public class HSSFDateUtil
                               ) / ( double ) DAY_MILLISECONDS;
             calStart = dayStart(calStart);
 
-            return fraction + ( double ) absoluteDay(calStart)
-                   - CAL_1900_ABSOLUTE;
+            double value = fraction + absoluteDay(calStart);
+            
+            if (value >= 60) {
+                value += 1;
+            }
+            
+            return value;
         }
     }
 
@@ -287,9 +289,9 @@ public class HSSFDateUtil
     }
 
     /**
-     * Given a Calendar, return the number of days since 1600/12/31.
+     * Given a Calendar, return the number of days since 1900/12/31.
      *
-     * @return days number of days since 1600/12/31
+     * @return days number of days since 1900/12/31
      * @param  cal the Calendar
      * @exception IllegalArgumentException if date is invalid
      */
@@ -301,29 +303,29 @@ public class HSSFDateUtil
     }
 
     /**
-     * Return the number of days in prior years since 1601
+     * Return the number of days in prior years since 1900
      *
      * @return    days  number of days in years prior to yr.
-     * @param     yr    a year (1600 < yr < 4000)
+     * @param     yr    a year (1900 < yr < 4000)
      * @exception IllegalArgumentException if year is outside of range.
      */
 
     private static int daysInPriorYears(int yr)
     {
-        if (yr < 1601)
-        {
+        if (yr < 1900) {
             throw new IllegalArgumentException(
-                "'year' must be 1601 or greater");
+                "'year' must be 1900 or greater");
         }
-        int y    = yr - 1601;
-        int days = 365 * y      // days in prior years
-                   + y / 4      // plus julian leap days in prior years
-                   - y / 100    // minus prior century years
-                   + y / 400;   // plus years divisible by 400
-
-        return days;
+        
+        int yr1  = yr - 1;
+        int leapDays =   yr1 / 4   // plus julian leap days in prior years
+                       - yr1 / 100 // minus prior century years
+                       + yr1 / 400 // plus years divisible by 400 
+                       - 460;      // leap days in previous 1900 years
+        
+        return 365 * (yr - 1900) + leapDays;
     }
-
+    
     // set HH:MM:SS fields of cal to 00:00:00:000
     private static Calendar dayStart(final Calendar cal)
     {
