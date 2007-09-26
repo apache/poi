@@ -22,14 +22,11 @@ package org.apache.poi.hssf.usermodel;
 
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
 import org.apache.poi.hssf.model.FormulaParser;
 import org.apache.poi.hssf.model.Workbook;
-import org.apache.poi.hssf.record.CellValueRecordInterface;
-import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
 import org.apache.poi.hssf.record.formula.AddPtg;
 import org.apache.poi.hssf.record.formula.Area3DPtg;
 import org.apache.poi.hssf.record.formula.AreaPtg;
@@ -103,7 +100,7 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
  * exception
  */
 public class HSSFFormulaEvaluator {
-
+                
     // params to lookup the right constructor using reflection
     private static final Class[] OPERATION_CONSTRUCTOR_CLASS_ARRAY = new Class[] { Ptg.class };
 
@@ -297,24 +294,25 @@ public class HSSFFormulaEvaluator {
     protected static ValueEval internalEvaluate(HSSFCell srcCell, HSSFRow srcRow, HSSFSheet sheet, HSSFWorkbook workbook) {
         int srcRowNum = srcRow.getRowNum();
         short srcColNum = srcCell.getCellNum();
+        FormulaParser parser = new FormulaParser(srcCell.getCellFormula(), workbook.getWorkbook());
+        parser.parse();
+        Ptg[] ptgs = parser.getRPNPtg();
+        // -- parsing over --
         
-        FormulaRecordAggregate record = (FormulaRecordAggregate) srcCell.getCellValueRecord();
-        List ptgs = record.getFormulaRecord().getParsedExpression();
-        
-        Stack stack = new Stack();
-        for (int i = 0, iSize = ptgs.size(); i < iSize; i++) {
-            Ptg token = (Ptg) ptgs.get(i);
-            
-            // since we dont know how to handle these yet :(
-            if (token instanceof ControlPtg) { continue; }
-            if (token instanceof MemErrPtg) { continue; }
-            if (token instanceof MissingArgPtg) { continue; }
-            if (token instanceof NamePtg) { continue; }
-            if (token instanceof NameXPtg) { continue; }
-            if (token instanceof UnknownPtg) { continue; }
 
-            if (token instanceof OperationPtg) {
-                OperationPtg optg = (OperationPtg) token;
+        Stack stack = new Stack();
+        for (int i = 0, iSize = ptgs.length; i < iSize; i++) {
+
+            // since we dont know how to handle these yet :(
+            if (ptgs[i] instanceof ControlPtg) { continue; }
+            if (ptgs[i] instanceof MemErrPtg) { continue; }
+            if (ptgs[i] instanceof MissingArgPtg) { continue; }
+            if (ptgs[i] instanceof NamePtg) { continue; }
+            if (ptgs[i] instanceof NameXPtg) { continue; }
+            if (ptgs[i] instanceof UnknownPtg) { continue; }
+
+            if (ptgs[i] instanceof OperationPtg) {
+                OperationPtg optg = (OperationPtg) ptgs[i];
 
                 // parens can be ignored since we have RPN tokens
                 if (optg instanceof ParenthesisPtg) { continue; }
@@ -334,16 +332,16 @@ public class HSSFFormulaEvaluator {
                 Eval opresult = operation.evaluate(ops, srcRowNum, srcColNum);
                 stack.push(opresult);
             }
-            else if (token instanceof ReferencePtg) {
-                ReferencePtg ptg = (ReferencePtg) token;
+            else if (ptgs[i] instanceof ReferencePtg) {
+                ReferencePtg ptg = (ReferencePtg) ptgs[i];
                 short colnum = ptg.getColumn();
                 short rownum = ptg.getRow();
                 HSSFRow row = sheet.getRow(rownum);
                 HSSFCell cell = (row != null) ? row.getCell(colnum) : null;
                 pushRef2DEval(ptg, stack, cell, row, sheet, workbook);
             }
-            else if (token instanceof Ref3DPtg) {
-                Ref3DPtg ptg = (Ref3DPtg) token;
+            else if (ptgs[i] instanceof Ref3DPtg) {
+                Ref3DPtg ptg = (Ref3DPtg) ptgs[i];
                 short colnum = ptg.getColumn();
                 short rownum = ptg.getRow();
                 Workbook wb = workbook.getWorkbook();
@@ -352,8 +350,8 @@ public class HSSFFormulaEvaluator {
                 HSSFCell cell = (row != null) ? row.getCell(colnum) : null;
                 pushRef3DEval(ptg, stack, cell, row, xsheet, workbook);
             }
-            else if (token instanceof AreaPtg) {
-                AreaPtg ap = (AreaPtg) token;
+            else if (ptgs[i] instanceof AreaPtg) {
+                AreaPtg ap = (AreaPtg) ptgs[i];
                 short row0 = ap.getFirstRow();
                 short col0 = ap.getFirstColumn();
                 short row1 = ap.getLastRow();
@@ -369,8 +367,8 @@ public class HSSFFormulaEvaluator {
                 AreaEval ae = new Area2DEval(ap, values);
                 stack.push(ae);
             }
-            else if (token instanceof Area3DPtg) {
-                Area3DPtg a3dp = (Area3DPtg) token;
+            else if (ptgs[i] instanceof Area3DPtg) {
+                Area3DPtg a3dp = (Area3DPtg) ptgs[i];
                 short row0 = a3dp.getFirstRow();
                 short col0 = a3dp.getFirstColumn();
                 short row1 = a3dp.getLastRow();
@@ -389,7 +387,7 @@ public class HSSFFormulaEvaluator {
                 stack.push(ae);
             }
             else {
-                Eval ptgEval = getEvalForPtg(token);
+                Eval ptgEval = getEvalForPtg(ptgs[i]);
                 stack.push(ptgEval);
             }
         }
@@ -700,4 +698,3 @@ public class HSSFFormulaEvaluator {
     }
 
 }
-
