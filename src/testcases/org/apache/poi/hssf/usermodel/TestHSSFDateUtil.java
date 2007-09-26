@@ -44,9 +44,9 @@ public class TestHSSFDateUtil
 {
 
 	public static final int CALENDAR_JANUARY = 0;
-	public static final int CALENDAR_FEBRUARY = 0;
-	public static final int CALENDAR_MARCH = 0;
-	public static final int CALENDAR_APRIL = 0;
+	public static final int CALENDAR_FEBRUARY = 1;
+	public static final int CALENDAR_MARCH = 2;
+	public static final int CALENDAR_APRIL = 3;
 
     public TestHSSFDateUtil(String s)
     {
@@ -313,8 +313,7 @@ public class TestHSSFDateUtil
         assertTrue(HSSFDateUtil.isADateFormat(style.getDataFormat(), style.getDataFormatString(wb)));
         assertTrue(HSSFDateUtil.isCellDateFormatted(cell));
     }
-    /*
-        //commented out until find the reson.
+    
     public void testDateBug_2Excel() {
         assertEquals(59.0, HSSFDateUtil.getExcelDate(createDate(1900, CALENDAR_FEBRUARY, 28)), 0.00001);
         assertEquals(61.0, HSSFDateUtil.getExcelDate(createDate(1900, CALENDAR_MARCH, 1)), 0.00001);
@@ -324,7 +323,6 @@ public class TestHSSFDateUtil
         assertEquals(37257.00, HSSFDateUtil.getExcelDate(createDate(2002, CALENDAR_JANUARY, 1)), 0.00001);
         assertEquals(38074.00, HSSFDateUtil.getExcelDate(createDate(2004, CALENDAR_MARCH, 28)), 0.00001);
     }
-    */
     
     public void testDateBug_2Java() {
         assertEquals(createDate(1900, Calendar.FEBRUARY, 28), HSSFDateUtil.getJavaDate(59.0));
