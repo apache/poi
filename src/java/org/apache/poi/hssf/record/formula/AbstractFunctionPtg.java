@@ -506,8 +506,8 @@ public abstract class AbstractFunctionPtg extends OperationPtg {
         functionData[31][0]=new Byte(Ptg.CLASS_VALUE);functionData[31][1]=new byte[] {Ptg.CLASS_VALUE};functionData[31][2]=new Integer(3);
         functionData[32][0]=new Byte(Ptg.CLASS_VALUE);functionData[32][1]=new byte[] {Ptg.CLASS_VALUE};functionData[32][2]=new Integer(1);
         functionData[33][0]=new Byte(Ptg.CLASS_VALUE);functionData[33][1]=new byte[] {Ptg.CLASS_VALUE};functionData[33][2]=new Integer(1);
-        functionData[34][0]=new Byte(Ptg.CLASS_VALUE);functionData[34][1]=new byte[] {Ptg.CLASS_VALUE};functionData[34][2]=new Integer(1);
-        functionData[35][0]=new Byte(Ptg.CLASS_VALUE);functionData[35][1]=new byte[] {Ptg.CLASS_VALUE};functionData[35][2]=new Integer(1);
+        functionData[34][0]=new Byte(Ptg.CLASS_VALUE);functionData[34][1]=new byte[] {Ptg.CLASS_VALUE};functionData[34][2]=new Integer(0);
+        functionData[35][0]=new Byte(Ptg.CLASS_VALUE);functionData[35][1]=new byte[] {Ptg.CLASS_VALUE};functionData[35][2]=new Integer(0);
         functionData[36][0]=new Byte(Ptg.CLASS_VALUE);functionData[36][1]=new byte[] {Ptg.CLASS_REF};functionData[36][2]=new Integer(-1);
         functionData[37][0]=new Byte(Ptg.CLASS_VALUE);functionData[37][1]=new byte[] {Ptg.CLASS_REF};functionData[37][2]=new Integer(-1);
         functionData[38][0]=new Byte(Ptg.CLASS_VALUE);functionData[38][1]=new byte[] {Ptg.CLASS_VALUE};functionData[38][2]=new Integer(1);
