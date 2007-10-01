@@ -36,6 +36,7 @@
     </devs>
 
         <release version="3.0.2-FINAL" date="2007-??-??">
+            <action dev="POI-DEVELOPERS" type="add">HSSFPicture.resize() - a handy method to reset a picture to its original width and height</action>
             <action dev="POI-DEVELOPERS" type="add">Add a getSheetIndex(HSSFSheet) method to HSSFWorkbook, and allow a HSSFSheet to get at its parent HSSFWorkbook</action>
             <action dev="POI-DEVELOPERS" type="add">Move POIDocument out of Scratchpad, and update HSSFWorkbook to use it</action>
             <action dev="POI-DEVELOPERS" type="fix">43399 - [PATCH] - Fix for Cell References for rows > 32678</action>
