@@ -2218,7 +2218,12 @@ public class Workbook implements Model
     public WindowOneRecord getWindowOne() {
         return windowOne;
     }
-    
+
+    public EscherBSERecord getBSERecord(int pictureIndex)
+    {
+        return (EscherBSERecord)escherBSERecords.get(pictureIndex-1);
+    }
+
     public int addBSERecord(EscherBSERecord e)
     {
         createDrawingGroup();
