@@ -83,8 +83,8 @@ public class HSSFSheet
 
     private Sheet sheet;
     private TreeMap rows;
-    private Workbook book;
-    private HSSFWorkbook workbook;
+    protected Workbook book;
+    protected HSSFWorkbook workbook;
     private int firstrow;
     private int lastrow;
     private static POILogger log = POILogFactory.getLogger(HSSFSheet.class);

@@ -24,6 +24,7 @@
         <title>Busy Developers' Guide to HSSF Features</title>
         <authors>
             <person email="user@poi.apache.org" name="Glen Stampoultzis" id="CO"/>
+            <person email="user@poi.apache.org" name="Yegor Kozlov" id="YK"/>
         </authors>
     </header>
     <body>
@@ -988,7 +989,26 @@
     anchor.setAnchorType( 2 );
     patriarch.createPicture(anchor, loadPicture( "src/resources/logos/logoKarmokar4.png", wb ));
   </source>
-  <p>Reading images from a workbook:</p>
+  <p>Creating an image and setting its anchor to the actual width and height:</p>
+      <source>
+    HSSFPatriarch patriarch = sheet5.createDrawingPatriarch();
+
+    HSSFPicture picture = patriarch.createPicture(new HSSFClientAnchor(), loadPicture( "src/resources/logos/logoKarmokar4.png", wb ));
+    picture.resize();
+      </source>
+      <p>or</p> 
+      <source>
+    HSSFPatriarch patriarch = sheet5.createDrawingPatriarch();
+
+    HSSFPicture picture = patriarch.createPicture(new HSSFClientAnchor(), loadPicture( "src/resources/logos/logoKarmokar4.png", wb ));
+    HSSFClientAnchor prefferedSize = picture.getPrefferedSize();
+    picture.setAnchor(prefferedSize);
+      </source>
+        <warning>
+          HSSFPicture.resize() works only for JPEG and PNG. Other formats are not yet supported.
+        </warning>
+
+   <p>Reading images from a workbook:</p>
       <source>
     HSSFWorkbook wb;
 

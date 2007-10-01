@@ -166,6 +166,8 @@ public class OfficeDrawing
         anchor = new HSSFClientAnchor(0,0,1023,255,(short)6,2,(short)8,7);
         anchor.setAnchorType( 2 );
         HSSFPicture picture = patriarch.createPicture(anchor, loadPicture( "src/resources/logos/logoKarmokar4s.png", wb ));
+        //Reset the image to the original size.
+        picture.resize();
         picture.setLineStyle( picture.LINESTYLE_DASHDOTGEL );
 
     }

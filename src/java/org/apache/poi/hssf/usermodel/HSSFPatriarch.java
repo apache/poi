@@ -90,6 +90,7 @@ public class HSSFPatriarch
         HSSFPicture shape = new HSSFPicture(null, anchor);
         shape.setPictureIndex( pictureIndex );
         shape.anchor = anchor;
+        shape.patriarch = this;
         shapes.add(shape);
         return shape;
     }
