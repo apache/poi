@@ -33,7 +33,9 @@
         <section>
             <title>Overview</title>
 
-            <p>HSSF is the POI Project's pure Java implementation of the Excel '97(-2002) file format.</p>
+            <p>HSSF is the POI Project's pure Java implementation of the Excel 
+			'97(-2007) file format. It <em>does not</em> support the new
+			Excel 2007 .xlsx OOXML file format, which is not OLE2 based.</p>
             <p>HSSF provides a way to read spreadsheets create, modify, read and write XLS spreadsheets
              It provides:
             </p>

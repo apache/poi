@@ -34,8 +34,9 @@
  <body>
  <section><title>Overview</title>
 
-  <p>HWPF is the name of our port of the Microsoft Word 97(-2002) file format
-    to pure Java.</p>
+  <p>HWPF is the name of our port of the Microsoft Word 97(-2007) file format
+    to pure Java. It <em>does not</em> support the new Word 2007 .docx
+	file format, which is not OLE2 based.</p>
 
   <p>HWPF is still in early development. It is in the <link
      href="http://svn.apache.org/viewcvs.cgi/poi/trunk/src/scratchpad/">
