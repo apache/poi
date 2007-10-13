@@ -19,7 +19,7 @@ package org.apache.poi.hdgf.streams;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
-import org.apache.poi.hdgf.LZW4HDGF;
+import org.apache.poi.hdgf.HDGFLZW;
 
 /**
  * A StreamStore where the data on-disk is compressed,
@@ -76,7 +76,7 @@ public class CompressedStreamStore extends StreamStore {
 		ByteArrayInputStream bais = new ByteArrayInputStream(data, offset, length);
 		
 		// Decompress
-		LZW4HDGF lzw = new LZW4HDGF();
+		HDGFLZW lzw = new HDGFLZW();
 		byte[] decompressed = lzw.decode(bais);
 		
 		// Split into header and contents
