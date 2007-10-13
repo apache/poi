@@ -20,7 +20,7 @@ import java.io.ByteArrayInputStream;
 
 import junit.framework.TestCase;
 
-public class TestLZW4HDGF extends TestCase {
+public class TestHDGFLZW extends TestCase {
 	public static final byte[] testTrailerComp = new byte[] {
 		123, -60, 2, -21, -16, 1, 0, 0, -72, -13, -16, 78, -32, -5, 1, 
 		0, 3, -21, -16, 10, 5, 4, -21, -16, 21, 9, -21, -16, 103, -21, 
@@ -86,8 +86,8 @@ public class TestLZW4HDGF extends TestCase {
 		assertEquals(632, testTrailerDecomp.length);
 		
 		// Decode it using our engine
-		LZW4HDGF lzw2 = new LZW4HDGF();
-		byte[] dec = lzw2.decode(new ByteArrayInputStream(testTrailerComp));
+		HDGFLZW lzw = new HDGFLZW();
+		byte[] dec = lzw.decode(new ByteArrayInputStream(testTrailerComp));
 		
 		// Check it's of the right size
 		assertEquals(632, dec.length);
