@@ -22,10 +22,34 @@ import junit.framework.TestCase;
 
 public class TestHDGFLZW extends TestCase {
 	public static final byte[] testTrailerComp = new byte[] {
-		123, -60, 2, -21, -16, 1, 0, 0, -72, -13, -16, 78, -32, -5, 1, 
-		0, 3, -21, -16, 10, 5, 4, -21, -16, 21, 9, -21, -16, 103, -21, 
-		-16, 34, -36, -1, 52, 15, 70, 15, 120, 88, 15, -7, -2, -28, -9, 
-		-123, 21, 0, 44, -122, 1, -4, 104, 15, -24, -13, 40, -98, 32, 
+		123,      // *mask bit*
+		-60, 2, 
+		-21, -16, // 3 @ 4093
+		1, 0, 0, -72, 
+		-13, -16, // 3 @ 5
+		78,       // *mask bit*
+		-32, -5,  // 14 @ 4082 
+		1, 0, 3, 
+		-21, -16, // 3 @ 4093
+		10, 5,    // 8 @ 28
+		4, 
+		-21, -16, // 3 @ 4093
+		21,       // *mask bit* 
+		9, 
+		-21, -16, // 3 @ 4093 
+		103, -21, -16, 34, 
+		-36, -1,  // 18 @ 4078
+		52, 15,   // 18 @ 70 
+		70, 15,   // 18 @ 88 
+		120,      // *mask bit*
+		88, 15,   // 18 @ 106 
+		-7, -2,   // 17 @ 11 
+		-28, -9,  // 10 @ 4086
+		-123, 21, 0, 44, 
+		-122, 1,  // 4 @ 152 
+		-4,       // *mask bit* 
+		104, 15,  // 18 @ 122 
+		-24, -13, 40, -98, 32, 
 		78, 102, -67, -1, -2, -30, 64, 40, -67, -113, -73, 116, -98, 
 		-85, 2, 66, 123, 9, 109, -85, 2, -89, 14, -56, -69, -83, -79, 
 		-34, -3, 120, 110, 75, -9, -10, 20, -6, -25, -12, 22, -21, -16, 
@@ -81,6 +105,33 @@ public class TestHDGFLZW extends TestCase {
 		0, 0, 42, 1, 0, 0, 84, 0, 0, 0, 0, 0
 	};
 	
+	public void testFromToInt() throws Exception {
+		byte b255 = -1;
+		assertEquals(255, HDGFLZW.fromByte(b255));
+		assertEquals(-1, HDGFLZW.fromInt( HDGFLZW.fromByte(b255) ));
+		assertEquals(-1, HDGFLZW.fromInt( 255 ));
+		
+		byte b11 = 11;
+		assertEquals(11, HDGFLZW.fromByte(b11));
+		assertEquals(11, HDGFLZW.fromInt( HDGFLZW.fromByte(b11) ));
+		assertEquals(11, HDGFLZW.fromInt( 11 ));
+		
+		byte b0 = 0;
+		assertEquals(0, HDGFLZW.fromByte(b0));
+		assertEquals(0, HDGFLZW.fromInt( HDGFLZW.fromByte(b0) ));
+		assertEquals(0, HDGFLZW.fromInt( 0 ));
+		
+		byte b127 = 127;
+		assertEquals(127, HDGFLZW.fromByte(b127));
+		assertEquals(127, HDGFLZW.fromInt( HDGFLZW.fromByte(b127) ));
+		assertEquals(127, HDGFLZW.fromInt( 127 ));
+		
+		byte b128 = -128;
+		assertEquals(128, HDGFLZW.fromByte(b128));
+		assertEquals(-128, HDGFLZW.fromInt( HDGFLZW.fromByte(b128) ));
+		assertEquals(-128, HDGFLZW.fromInt( 128 ));
+	}
+	
 	public void testCounts() throws Exception {
 		assertEquals(339, testTrailerComp.length);
 		assertEquals(632, testTrailerDecomp.length);
@@ -91,11 +142,45 @@ public class TestHDGFLZW extends TestCase {
 		
 		// Check it's of the right size
 		assertEquals(632, dec.length);
+
+/*		
+		// Encode it again using our engine
+		byte[] comp = lzw.compress(new ByteArrayInputStream(testTrailerDecomp));
 		
-		// Now check it matches
+		// Check it's of the right size
+		assertEquals(339, comp.length);
+*/
+	}
+	
+	public void testDecompress() throws Exception {
+		assertEquals(339, testTrailerComp.length);
+		assertEquals(632, testTrailerDecomp.length);
+		
+		// Decode it using our engine
+		HDGFLZW lzw = new HDGFLZW();
+		byte[] dec = lzw.decode(new ByteArrayInputStream(testTrailerComp));
+		
+		// Now check it's the right data
+		assertEquals(632, dec.length);
 		for(int i=0; i<dec.length; i++) {
 			if(dec[i] != testTrailerDecomp[i]) 
 				System.err.println(i + "\t" + dec[i] + "\t" + testTrailerDecomp[i]);
+		}
+	}
+	
+	public void DISABLEDtestCompress() throws Exception {
+		assertEquals(339, testTrailerComp.length);
+		assertEquals(632, testTrailerDecomp.length);
+		
+		// Compress it using our engine
+		HDGFLZW lzw = new HDGFLZW();
+		byte[] comp = lzw.compress(new ByteArrayInputStream(testTrailerDecomp));
+		
+		// Now check it's the right data
+		assertEquals(339, comp.length);
+		for(int i=0; i<comp.length; i++) {
+			if(comp[i] != testTrailerComp[i]) 
+				System.err.println(i + "\t" + comp[i] + "\t" + testTrailerComp[i]);
 		}
 	}
 }
