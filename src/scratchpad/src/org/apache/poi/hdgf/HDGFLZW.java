@@ -40,7 +40,7 @@ public class HDGFLZW {
  *  the wrapping.
  * This is a convenience method
  */
-public byte fromInt(int b) {
+public static byte fromInt(int b) {
 	if(b < 128) return (byte)b;
 	return (byte)(b - 256);
 }
@@ -49,9 +49,19 @@ public byte fromInt(int b) {
  *  and 255 (i.e. handle the unwrapping).
  * This is a convenience method
  */
-public int fromByte(byte b) {
+public static int fromByte(byte b) {
 	if(b >= 0) return (int)b;
 	return (int)(b + 256);
+}
+
+/**
+ * Compress the given input stream, returning the array of bytes
+ *  of the compressed input
+ */
+public byte[] compress(InputStream src) throws IOException {
+	ByteArrayOutputStream res = new ByteArrayOutputStream();
+	compress(src,res);
+    return res.toByteArray();
 }
 
 /**
@@ -135,7 +145,7 @@ public void decode(InputStream src, OutputStream res) throws IOException {
 				//  length is the last 4 bits)
 				len = (dataIPt2 & 15) + 3;
 				pntr = (dataIPt2 & 240)*16 + dataIPt1;
-                
+
 				// If the pointer happens to be passed the end
 				//  of our buffer, then wrap around
 				if(pntr > 4078) {
@@ -156,6 +166,90 @@ public void decode(InputStream src, OutputStream res) throws IOException {
 			}
 		}
     }
+}
+
+/**
+ * Performs the Visio compatible streaming LZW compression.
+ * Works by:
+ * 1) ???
+ * 2) ???
+ * TODO - Finish
+ */
+public void compress(InputStream src, OutputStream res) throws IOException {
+	// We use 12 bit codes:
+	// * 0-255 are real bytes
+	// * 256-4095 are the substring codes
+	// Java handily initialises our buffer / dictionary
+	//  to all zeros
+	byte[] dict = new byte[4096];
+	// The next block of data to be written out, minus
+	//  its mask byte
+	byte[] buffer = new byte[16];
+	// And how long it is
+	// (Un-compressed codes are 1 byte each, compressed codes
+	//   are two)
+	int bufferLen = 0;
+	
+	// How far through the input and output streams we are
+	int posInp = 0;
+	int posOut = 0;
+	
+	// What the next mask byte to output will be
+	int nextMask = 0;
+	// And how many bits we've already set
+	int maskBitsSet = 0;
+	
+	// This is a byte as looked up in the dictionary
+	// It needs to be signed, as it'll get passed on to
+	//  the output stream
+	byte dataB;
+	// This is an unsigned byte read from the stream
+	// It needs to be unsigned, so that bit stuff works
+	int dataI;
+	
+	// Have we hit the end of the file yet?
+	boolean going = true;
+	
+	while( going ) {
+		dataI = src.read();
+		posInp++;
+		if(dataI == -1) { going = false; }
+		
+		// Decide if we're going to output uncompressed or compressed
+		//  for this byte
+		// (It takes 2 bytes to hold a compressed code, so it's only
+		//  worth doing for 3+ byte long sequences)
+		// TODO
+		
+		boolean compressThis = true;
+		if(compressThis) {
+			// Set the mask bit for us 
+			nextMask += (1<<maskBitsSet);
+			
+			// And add us to the buffer + dictionary
+			buffer[bufferLen] = fromInt(dataI);
+			bufferLen++;
+			dict[(posOut&4095)] = fromInt(dataI);
+			posOut++;
+		} else {
+			// ????
+		}
+		// Increment the mask bit count, we've done another code
+		maskBitsSet++;
+		
+		// If we've just done the 8th bit, or reached the end
+		//  of the stream, output our mask and data
+		if(maskBitsSet == 8 || !going) {
+			// Output
+			res.write(new byte[] { fromInt(nextMask) } );
+			res.write(buffer, 0, bufferLen);
+			
+			// Reset things
+			nextMask = 0;
+			maskBitsSet = 0;
+			bufferLen = 0;
+		}
+	}
 }
 
 }
