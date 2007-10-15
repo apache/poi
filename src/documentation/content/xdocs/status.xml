@@ -17,7 +17,6 @@
    limitations under the License.
    ====================================================================
 -->
-<!-- Don't forget to update changes.xml too! -->
 <status>
     <developers>
         <!-- in strict alphabetical order -->
@@ -31,8 +30,11 @@
         <person id="YK" name="Yegor Kozlov" email="yegor@apache.org"/>
     </developers>
 
+	<!-- Don't forget to update changes.xml too! -->
     <changes>
         <release version="3.0.2-FINAL" date="2007-??-??">
+            <action dev="POI-DEVELOPERS" type="add">Improvements to the LZW compression engine used by HDGF</action>
+            <action dev="POI-DEVELOPERS" type="add">HSSFPicture.resize() - a handy method to reset a picture to its original width and height</action>
             <action dev="POI-DEVELOPERS" type="add">Add a getSheetIndex(HSSFSheet) method to HSSFWorkbook, and allow a HSSFSheet to get at its parent HSSFWorkbook</action>
             <action dev="POI-DEVELOPERS" type="add">Move POIDocument out of Scratchpad, and update HSSFWorkbook to use it</action>
             <action dev="POI-DEVELOPERS" type="fix">43399 - [PATCH] - Fix for Cell References for rows > 32678</action>
