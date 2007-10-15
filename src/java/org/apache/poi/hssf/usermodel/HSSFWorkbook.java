@@ -1019,7 +1019,7 @@ public class HSSFWorkbook extends POIDocument
         return workbook.getSSTString(index).getString();
     }
 
-    Workbook getWorkbook()
+    protected Workbook getWorkbook()
     {
         return workbook;
     }

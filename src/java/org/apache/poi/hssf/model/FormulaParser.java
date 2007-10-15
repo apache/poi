@@ -74,10 +74,17 @@ public class FormulaParser {
    private Workbook book;
     
     
-    /** create the parser with the string that is to be parsed
-     *    later call the parse() method to return ptg list in rpn order
-     *    then call the getRPNPtg() to retrive the parse results
-     *  This class is recommended only for single threaded use
+    /** 
+     * Create the formula parser, with the string that is to be
+     *  parsed against the supplied workbook.
+     * A later call the parse() method to return ptg list in
+     *  rpn order, then call the getRPNPtg() to retrive the
+     *  parse results.
+     * This class is recommended only for single threaded use.
+     * 
+     * If you only have a usermodel.HSSFWorkbook, and not a
+     *  model.Workbook, then use the convenience method on
+     *  usermodel.HSSFFormulaEvaluator 
      */
     public FormulaParser(String formula, Workbook book){
         formulaString = formula;
