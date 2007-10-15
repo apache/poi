@@ -889,8 +889,8 @@ end;
         }
      }
     /**
-     * Convience method which takes in a list then passes it to the other toFormulaString
-     * signature. 
+     * Convience method which takes in a list then passes it to the
+     *  other toFormulaString signature. 
      * @param book   workbook for 3D and named references
      * @param lptgs  list of Ptg, can be null or empty
      * @return a human readable String
@@ -902,6 +902,16 @@ end;
         ptgs = (Ptg[])lptgs.toArray(ptgs);
         retval = toFormulaString(book, ptgs);
         return retval;
+    }
+    /**
+     * Convience method which takes in a list then passes it to the
+     *  other toFormulaString signature. Works on the current
+     *  workbook for 3D and named references
+     * @param lptgs  list of Ptg, can be null or empty
+     * @return a human readable String
+     */
+    public String toFormulaString(List lptgs) {
+    	return toFormulaString(book, lptgs);
     }
     
     /**
@@ -967,6 +977,16 @@ end;
     }
         // TODO: catch stack underflow and throw parse exception.
         return (String) stack.pop();
+    }
+    /**
+     * Static method to convert an array of Ptgs in RPN order
+     *  to a human readable string format in infix mode. Works
+     *  on the current workbook for named and 3D references.
+     * @param ptgs  array of Ptg, can be null or empty
+     * @return a human readable String
+     */
+    public String toFormulaString(Ptg[] ptgs) {
+    	return toFormulaString(book, ptgs);
     }
 
 
