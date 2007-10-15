@@ -166,6 +166,17 @@ public class HSSFFormulaEvaluator {
 
     
     /**
+     * Returns an underlying FormulaParser, for the specified
+     *  Formula String and HSSFWorkbook.
+     * This will allow you to generate the Ptgs yourself, if
+     *  your needs are more complex than just having the
+     *  formula evaluated. 
+     */
+    public static FormulaParser getUnderlyingParser(HSSFWorkbook workbook, String formula) {
+    	return new FormulaParser(formula, workbook.getWorkbook());
+    }
+    
+    /**
      * If cell contains a formula, the formula is evaluated and returned,
      * else the CellValue simply copies the appropriate cell value from
      * the cell and also its cell type. This method should be preferred over
