@@ -22,6 +22,7 @@ import java.io.FileInputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Iterator;
 
+import org.apache.poi.POITextExtractor;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.model.TextPiece;
 import org.apache.poi.hwpf.usermodel.Paragraph;
@@ -36,7 +37,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  *
  * @author Nick Burch (nick at torchbox dot com)
  */
-public class WordExtractor {
+public class WordExtractor extends POITextExtractor {
 	private POIFSFileSystem fs;
 	private HWPFDocument doc;
 	
@@ -62,6 +63,7 @@ public class WordExtractor {
 	 * @param doc The HWPFDocument to extract from
 	 */
 	public WordExtractor(HWPFDocument doc) throws IOException {
+		super(doc);
 		this.doc = doc;
 	}
 
