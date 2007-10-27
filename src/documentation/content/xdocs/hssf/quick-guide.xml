@@ -41,6 +41,7 @@
                     <li><link href="#CreateCells">How to create cells</link></li>
                     <li><link href="#CreateDateCells">How to create date cells</link></li>
                     <li><link href="#CellTypes">Working with different types of cells</link></li>
+                    <li><link href="#TextExtraction">Text Extraction</link></li>
                     <li><link href="#Alignment">Aligning cells</link></li>
                     <li><link href="#Borders">Working with borders</link></li>
                     <li><link href="#FrillsAndFills">Fills and color</link></li>
@@ -232,6 +233,24 @@
     wb.write(fileOut);
     fileOut.close();
                     </source>
+                </section>
+                <anchor id="TextExtraction"/>
+                <section><title>Text Extraction</title>
+					<p>For most text extraction requirements, the standard
+					ExcelExtractor class should provide all you need.</p>
+					<source>
+	InputStream inp = new FileInputStream("workbook.xls");
+    HSSFWorkbook wb = new HSSFWorkbook(new POIFSFileSystem(inp));
+	ExcelExtractor extractor = new ExcelExtractor(wb);
+
+	extractor.setFormulasNotResults(true);
+	extractor.setIncludeSheetNames(false);
+	String text = extractor.getText();
+					</source>
+					<p>For very fancy text extraction, XLS to CSV etc, 
+					take a look at
+					<em>/src/scratchpad/examples/src/org/apache/poi/hssf/eventusermodel/examples/XLS2CSVmra.java</em>
+					</p>
                 </section>
                 <anchor id="FillsAndFrills"/>
                 <section><title>Fills and colors</title>
