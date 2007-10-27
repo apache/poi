@@ -22,6 +22,8 @@ package org.apache.poi.hslf.extractor;
 
 import java.io.*;
 import java.util.HashSet;
+
+import org.apache.poi.POITextExtractor;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.hslf.*;
 import org.apache.poi.hslf.model.*;
@@ -34,12 +36,12 @@ import org.apache.poi.hslf.usermodel.*;
  * @author Nick Burch
  */
 
-public class PowerPointExtractor
+public class PowerPointExtractor extends POITextExtractor
 {
-  private HSLFSlideShow _hslfshow;
-  private SlideShow _show;
-  private Slide[] _slides;
-  private Notes[] _notes;
+	private HSLFSlideShow _hslfshow;
+	private SlideShow _show;
+	private Slide[] _slides;
+	private Notes[] _notes;
 
   /**
    * Basic extractor. Returns all the text, and optionally all the notes
@@ -66,61 +68,50 @@ public class PowerPointExtractor
 	ppe.close();
   }
 
-  /**
-   * Creates a PowerPointExtractor, from a file
-   * @param fileName The name of the file to extract from
-   */
-  public PowerPointExtractor(String fileName) throws IOException {
-	_hslfshow = new HSLFSlideShow(fileName);
-	_show = new SlideShow(_hslfshow);
-	_slides = _show.getSlides();
-	_notes = _show.getNotes();
-  }
+	/**
+	 * Creates a PowerPointExtractor, from a file
+	 * @param fileName The name of the file to extract from
+	 */
+	public PowerPointExtractor(String fileName) throws IOException {
+		this(new FileInputStream(fileName));
+	}
+	/**
+	 * Creates a PowerPointExtractor, from an Input Stream
+	 * @param iStream The input stream containing the PowerPoint document
+	 */
+	public PowerPointExtractor(InputStream iStream) throws IOException {
+		this(new POIFSFileSystem(iStream));
+	}
+	/**
+	 * Creates a PowerPointExtractor, from an open POIFSFileSystem
+	 * @param fs the POIFSFileSystem containing the PowerPoint document
+	 */
+	public PowerPointExtractor(POIFSFileSystem fs) throws IOException {
+		this(new HSLFSlideShow(fs));
+	}
 
-  /**
-   * Creates a PowerPointExtractor, from an Input Stream
-   * @param iStream The input stream containing the PowerPoint document
-   */
-  public PowerPointExtractor(InputStream iStream) throws IOException {
-	_hslfshow = new HSLFSlideShow(iStream);
-	_show = new SlideShow(_hslfshow);
-	_slides = _show.getSlides();
-	_notes = _show.getNotes();
-  }
+	/**
+	 * Creates a PowerPointExtractor, from a HSLFSlideShow
+	 * @param ss the HSLFSlideShow to extract text from
+	 */
+	public PowerPointExtractor(HSLFSlideShow ss) throws IOException {
+		super(ss);
+		_hslfshow = ss;
+		_show = new SlideShow(_hslfshow);
+		_slides = _show.getSlides();
+		_notes = _show.getNotes();
+	}
 
-  /**
-   * Creates a PowerPointExtractor, from an open POIFSFileSystem
-   * @param fs the POIFSFileSystem containing the PowerPoint document
-   */
-  public PowerPointExtractor(POIFSFileSystem fs) throws IOException {
-	_hslfshow = new HSLFSlideShow(fs);
-	_show = new SlideShow(_hslfshow);
-	_slides = _show.getSlides();
-	_notes = _show.getNotes();
-  }
-
-  /**
-   * Creates a PowerPointExtractor, from a HSLFSlideShow
-   * @param ss the HSLFSlideShow to extract text from
-   */
-  public PowerPointExtractor(HSLFSlideShow ss) throws IOException {
-	_hslfshow = ss;
-	_show = new SlideShow(_hslfshow);
-	_slides = _show.getSlides();
-	_notes = _show.getNotes();
-  }
-
-
-  /**
-   * Shuts down the underlying streams
-   */
-  public void close() throws IOException {
-	_hslfshow.close();
-	_hslfshow = null;
-	_show = null;
-	_slides = null;
-	_notes = null;
-  }
+	/**
+	 * Shuts down the underlying streams
+	 */
+	public void close() throws IOException {
+		_hslfshow.close();
+		_hslfshow = null;
+		_show = null;
+		_slides = null;
+		_notes = null;
+	}
 
 
   /**
