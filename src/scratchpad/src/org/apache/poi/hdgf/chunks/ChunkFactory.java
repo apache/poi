@@ -107,6 +107,12 @@ public class ChunkFactory {
 		// Create the header
 		ChunkHeader header = 
 			ChunkHeader.createChunkHeader(version, data, offset);
+		// Sanity check
+		if(header.length < 0) {
+			throw new IllegalArgumentException("Found a chunk with a negative length, which isn't allowed");
+		}
+		
+		// How far up to look
 		int endOfDataPos = offset + header.getLength() + header.getSizeInBytes();
 		
 		// Check we have enough data, and tweak the header size
