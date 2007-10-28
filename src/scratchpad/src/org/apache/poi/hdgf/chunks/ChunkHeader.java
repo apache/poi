@@ -45,6 +45,7 @@ public abstract class ChunkHeader {
 			ch.length   = (int)LittleEndian.getUInt(data, offset + 12);
 			ch.unknown2 = LittleEndian.getShort(data, offset + 16);
 			ch.unknown3 = (short)LittleEndian.getUnsignedByte(data, offset + 18);
+			
 			return ch;
 		} else if(documentVersion == 5) {
 			throw new RuntimeException("TODO");

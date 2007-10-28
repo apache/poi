@@ -25,11 +25,13 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import junit.framework.TestCase;
 
 public class TestHDGFCore extends TestCase {
-	POIFSFileSystem fs;
+	private POIFSFileSystem fs;
+	private String dirname;
+	private String filename;
 	
 	protected void setUp() throws Exception {
-		String dirname = System.getProperty("HDGF.testdata.path");
-		String filename = dirname + "/Test_Visio-Some_Random_Text.vsd";
+		dirname = System.getProperty("HDGF.testdata.path");
+		filename = dirname + "/Test_Visio-Some_Random_Text.vsd";
 		fs = new POIFSFileSystem(new FileInputStream(filename));
 	}
 	
@@ -58,5 +60,17 @@ public class TestHDGFCore extends TestCase {
 			trailer.getPointedToStreams()[8];
 		assertNotNull(ps8.getPointedToStreams());
 		assertEquals(8, ps8.getPointedToStreams().length);
+	}
+	
+	/**
+	 * Tests that we can open a problematic file, that initially
+	 *  appears to have a negative chunk length
+	 */
+	public void DISABLEDtestNegativeChunkLength() throws Exception {
+		filename = dirname + "/NegativeChunkLength.vsd";
+		fs = new POIFSFileSystem(new FileInputStream(filename));
+		
+		HDGFDiagram hdgf = new HDGFDiagram(fs);
+		assertNotNull(hdgf);
 	}
 }
