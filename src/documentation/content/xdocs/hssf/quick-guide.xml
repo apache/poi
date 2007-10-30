@@ -240,7 +240,7 @@
 					ExcelExtractor class should provide all you need.</p>
 					<source>
 	InputStream inp = new FileInputStream("workbook.xls");
-    HSSFWorkbook wb = new HSSFWorkbook(new POIFSFileSystem(inp));
+	HSSFWorkbook wb = new HSSFWorkbook(new POIFSFileSystem(inp));
 	ExcelExtractor extractor = new ExcelExtractor(wb);
 
 	extractor.setFormulasNotResults(true);
