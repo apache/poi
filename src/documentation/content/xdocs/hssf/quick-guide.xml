@@ -1020,8 +1020,8 @@
     HSSFPatriarch patriarch = sheet5.createDrawingPatriarch();
 
     HSSFPicture picture = patriarch.createPicture(new HSSFClientAnchor(), loadPicture( "src/resources/logos/logoKarmokar4.png", wb ));
-    HSSFClientAnchor prefferedSize = picture.getPrefferedSize();
-    picture.setAnchor(prefferedSize);
+    HSSFClientAnchor preferredSize = picture.getPreferredSize();
+    picture.setAnchor(preferredSize);
       </source>
         <warning>
           HSSFPicture.resize() works only for JPEG and PNG. Other formats are not yet supported.
