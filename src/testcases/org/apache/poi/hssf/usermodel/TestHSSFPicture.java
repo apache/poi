@@ -36,7 +36,7 @@ public class TestHSSFPicture extends TestCase{
 
         int idx1 = loadPicture( "src/resources/logos/logoKarmokar4.png", wb);
         HSSFPicture picture1 = p1.createPicture(new HSSFClientAnchor(), idx1);
-        HSSFClientAnchor anchor1 = picture1.getPrefferedSize();
+        HSSFClientAnchor anchor1 = picture1.getPreferredSize();
 
         //assert against what would BiffViewer print if we insert the image in xls and dump the file
         assertEquals(0, anchor1.getCol1());

@@ -79,7 +79,7 @@ public class HSSFPicture
         HSSFClientAnchor anchor = (HSSFClientAnchor)getAnchor();
         anchor.setAnchorType(2);
 
-        HSSFClientAnchor pref = getPrefferedSize();
+        HSSFClientAnchor pref = getPreferredSize();
 
         int row2 = anchor.getRow1() + (pref.getRow2() - pref.getRow1());
         int col2 = anchor.getCol1() + (pref.getCol2() - pref.getCol1());
@@ -94,19 +94,19 @@ public class HSSFPicture
     }
 
     /**
-     * Calculate the preffered size for this picture.
+     * Calculate the preferred size for this picture.
      *
-     * @return HSSFClientAnchor with the preffered size for this image
+     * @return HSSFClientAnchor with the preferred size for this image
      * @since POI 3.0.2
      */
-    public HSSFClientAnchor getPrefferedSize(){
+    public HSSFClientAnchor getPreferredSize(){
         HSSFClientAnchor anchor = new HSSFClientAnchor();
 
         EscherBSERecord bse = (EscherBSERecord)patriarch.sheet.book.getBSERecord(pictureIndex);
         byte[] data = bse.getBlipRecord().getPicturedata();
         int type = bse.getBlipTypeWin32();
         switch (type){
-            //we can calculate the preffered size only for JPEG and PNG
+            //we can calculate the preferred size only for JPEG and PNG
             //other formats like WMF, EMF and PICT are not supported in Java
             case HSSFWorkbook.PICTURE_TYPE_JPEG:
             case HSSFWorkbook.PICTURE_TYPE_PNG:
