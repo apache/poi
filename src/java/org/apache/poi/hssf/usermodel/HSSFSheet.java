@@ -43,6 +43,8 @@ import java.awt.font.TextLayout;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextAttribute;
 
+import java.awt.geom.AffineTransform;
+
 /**
  * High level representation of a worksheet.
  * @author  Andrew C. Oliver (acoliver at apache dot org)
@@ -1443,6 +1445,14 @@ public class HSSFSheet
          */
         char defaultChar = '0';
        
+        /**
+         * This is the multiple of the scale measure that is added to the height
+         * of rotated text.
+         *
+         * TODO: research if this constant works well with different font sizes and different dpi
+         */
+        double rotationLeadingMultiple = 40.0;
+       
         FontRenderContext frc = new FontRenderContext(null, true, true);
 
         HSSFWorkbook wb = new HSSFWorkbook(book);
@@ -1462,6 +1472,7 @@ public class HSSFSheet
 
             HSSFCellStyle style = cell.getCellStyle();
             HSSFFont font = wb.getFontAt(style.getFontIndex());
+
             if (cell.getCellType() == HSSFCell.CELL_TYPE_STRING) {
                 HSSFRichTextString rt = cell.getRichStringCellValue();
                 String[] lines = rt.getString().split("\\n");
@@ -1480,8 +1491,21 @@ public class HSSFSheet
                             }
                         }
                     }
+
                     layout = new TextLayout(str.getIterator(), frc);
-                    width = Math.max(width, layout.getAdvance() / defaultCharWidth);
+                    /* 
+                     * Transform the text using a scale so that it's height is increased by a multiple of the leading,
+                     * and then rotate the text before computing the bounds. The scale results in some whitespace around
+                     * the unrotated top and bottom of the text that normally wouldn't be present if unscaled, but
+                     * is added by the standard Excel autosize.
+                     */
+                    AffineTransform trans = new AffineTransform();
+                    double height = layout.getOutline(trans).getBounds().getHeight();
+                    trans.concatenate(AffineTransform.getRotateInstance(style.getRotation()*2.0*Math.PI/360.0));
+                    trans.concatenate(
+                        AffineTransform.getScaleInstance(1, (layout.getLeading()*rotationLeadingMultiple+height)/height)
+                    );
+                    width = Math.max(width, layout.getOutline(trans).getBounds().getWidth() / defaultCharWidth);
                 }
             } else {
                 String sval = null;
@@ -1493,10 +1517,12 @@ public class HSSFSheet
                     try {
                         NumberFormat fmt;
                         if ("General".equals(format))
-                            fmt = new DecimalFormat();
+                            sval = "" + value;
                         else
+                        {
                             fmt = new DecimalFormat(format);
-                        sval = fmt.format(value);
+                            sval = fmt.format(value);
+                        }
                     } catch (Exception e) {
                         sval = "" + value;
                     }
@@ -1508,7 +1534,19 @@ public class HSSFSheet
                 str.addAttribute(TextAttribute.FAMILY, font.getFontName());
                 str.addAttribute(TextAttribute.SIZE, new Float(font.getFontHeightInPoints()));
                 layout = new TextLayout(str.getIterator(), frc);
-                width = Math.max(width, layout.getAdvance() / defaultCharWidth);
+                /* 
+                 * Transform the text using a scale so that it's height is increased by a multiple of the leading,
+                 * and then rotate the text before computing the bounds. The scale results in some whitespace around
+                 * the unrotated top and bottom of the text that normally wouldn't be present if unscaled, but
+                 * is added by the standard Excel autosize.
+                 */
+                AffineTransform trans = new AffineTransform();
+                double height = layout.getOutline(trans).getBounds().getHeight();
+                trans.concatenate(AffineTransform.getRotateInstance(style.getRotation()*2.0*Math.PI/360.0));
+                trans.concatenate(
+                    AffineTransform.getScaleInstance(1, (layout.getLeading()*rotationLeadingMultiple+height)/height)
+                );
+                width = Math.max(width, layout.getOutline(trans).getBounds().getWidth() / defaultCharWidth);
             }
 
             if (width != -1) {
