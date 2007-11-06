@@ -1441,17 +1441,15 @@ public class HSSFSheet
         /**
          * Excel measures columns in units of 1/256th of a character width
          * but the docs say nothing about what particular character is used.
-         * '0' looks a good choice.
+         * '0' looks to be a good choice.
          */
         char defaultChar = '0';
        
         /**
-         * This is the multiple of the scale measure that is added to the height
-         * of rotated text.
-         *
-         * TODO: research if this constant works well with different font sizes and different dpi
+         * This is the multiple that the font height is scaled by when determining the
+         * boundary of rotated text.
          */
-        double rotationLeadingMultiple = 40.0;
+        double fontHeightMultiple = 2.0;
        
         FontRenderContext frc = new FontRenderContext(null, true, true);
 
@@ -1459,8 +1457,7 @@ public class HSSFSheet
         HSSFFont defaultFont = wb.getFontAt((short) 0);
 
         str = new AttributedString("" + defaultChar);
-        str.addAttribute(TextAttribute.FAMILY, defaultFont.getFontName());
-        str.addAttribute(TextAttribute.SIZE, new Float(defaultFont.getFontHeightInPoints()));
+        copyAttributes(defaultFont, str, 0, 1);
         layout = new TextLayout(str.getIterator(), frc);
         int defaultCharWidth = (int)layout.getAdvance();
 
@@ -1477,35 +1474,37 @@ public class HSSFSheet
                 HSSFRichTextString rt = cell.getRichStringCellValue();
                 String[] lines = rt.getString().split("\\n");
                 for (int i = 0; i < lines.length; i++) {
-                    str = new AttributedString(lines[i] + defaultChar);
-                    str.addAttribute(TextAttribute.FAMILY, font.getFontName());
-                    str.addAttribute(TextAttribute.SIZE, new Float(font.getFontHeightInPoints()));
-                    if (font.getBoldweight() == HSSFFont.BOLDWEIGHT_BOLD) str.addAttribute(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD);
+                    String txt = lines[i] + defaultChar;
+                    str = new AttributedString(txt);
+                    copyAttributes(font, str, 0, txt.length());
+
                     if (rt.numFormattingRuns() > 0) {
                         for (int j = 0; j < lines[i].length(); j++) {
                             int idx = rt.getFontAtIndex(j);
                             if (idx != 0) {
                                 HSSFFont fnt = wb.getFontAt((short) idx);
-                                str.addAttribute(TextAttribute.FAMILY, fnt.getFontName(), j, j + 1);
-                                str.addAttribute(TextAttribute.SIZE, new Float(fnt.getFontHeightInPoints()), j, j + 1);
+                                copyAttributes(fnt, str, j, j + 1);
                             }
                         }
                     }
 
                     layout = new TextLayout(str.getIterator(), frc);
-                    /* 
-                     * Transform the text using a scale so that it's height is increased by a multiple of the leading,
-                     * and then rotate the text before computing the bounds. The scale results in some whitespace around
-                     * the unrotated top and bottom of the text that normally wouldn't be present if unscaled, but
-                     * is added by the standard Excel autosize.
-                     */
-                    AffineTransform trans = new AffineTransform();
-                    double height = layout.getOutline(trans).getBounds().getHeight();
-                    trans.concatenate(AffineTransform.getRotateInstance(style.getRotation()*2.0*Math.PI/360.0));
-                    trans.concatenate(
-                        AffineTransform.getScaleInstance(1, (layout.getLeading()*rotationLeadingMultiple+height)/height)
-                    );
-                    width = Math.max(width, layout.getOutline(trans).getBounds().getWidth() / defaultCharWidth);
+                    if(style.getRotation() != 0){
+                        /*
+                         * Transform the text using a scale so that it's height is increased by a multiple of the leading,
+                         * and then rotate the text before computing the bounds. The scale results in some whitespace around
+                         * the unrotated top and bottom of the text that normally wouldn't be present if unscaled, but
+                         * is added by the standard Excel autosize.
+                         */
+                        AffineTransform trans = new AffineTransform();
+                        trans.concatenate(AffineTransform.getRotateInstance(style.getRotation()*2.0*Math.PI/360.0));
+                        trans.concatenate(
+                        AffineTransform.getScaleInstance(1, fontHeightMultiple)
+                        );
+                        width = Math.max(width, layout.getOutline(trans).getBounds().getWidth() / defaultCharWidth);
+                    } else {
+                        width = Math.max(width, layout.getBounds().getWidth() / defaultCharWidth);
+                    }
                 }
             } else {
                 String sval = null;
@@ -1530,23 +1529,27 @@ public class HSSFSheet
                     sval = String.valueOf(cell.getBooleanCellValue());
                 }
 
-                str = new AttributedString(sval + defaultChar);
-                str.addAttribute(TextAttribute.FAMILY, font.getFontName());
-                str.addAttribute(TextAttribute.SIZE, new Float(font.getFontHeightInPoints()));
+                String txt = sval + defaultChar;
+                str = new AttributedString(txt);
+                copyAttributes(font, str, 0, txt.length());
+
                 layout = new TextLayout(str.getIterator(), frc);
-                /* 
-                 * Transform the text using a scale so that it's height is increased by a multiple of the leading,
-                 * and then rotate the text before computing the bounds. The scale results in some whitespace around
-                 * the unrotated top and bottom of the text that normally wouldn't be present if unscaled, but
-                 * is added by the standard Excel autosize.
-                 */
-                AffineTransform trans = new AffineTransform();
-                double height = layout.getOutline(trans).getBounds().getHeight();
-                trans.concatenate(AffineTransform.getRotateInstance(style.getRotation()*2.0*Math.PI/360.0));
-                trans.concatenate(
-                    AffineTransform.getScaleInstance(1, (layout.getLeading()*rotationLeadingMultiple+height)/height)
-                );
-                width = Math.max(width, layout.getOutline(trans).getBounds().getWidth() / defaultCharWidth);
+                if(style.getRotation() != 0){
+                    /*
+                     * Transform the text using a scale so that it's height is increased by a multiple of the leading,
+                     * and then rotate the text before computing the bounds. The scale results in some whitespace around
+                     * the unrotated top and bottom of the text that normally wouldn't be present if unscaled, but
+                     * is added by the standard Excel autosize.
+                     */
+                    AffineTransform trans = new AffineTransform();
+                    trans.concatenate(AffineTransform.getRotateInstance(style.getRotation()*2.0*Math.PI/360.0));
+                    trans.concatenate(
+                    AffineTransform.getScaleInstance(1, fontHeightMultiple)
+                    );
+                    width = Math.max(width, layout.getOutline(trans).getBounds().getWidth() / defaultCharWidth);
+                } else {
+                    width = Math.max(width, layout.getBounds().getWidth() / defaultCharWidth);
+                }
             }
 
             if (width != -1) {
@@ -1556,6 +1559,17 @@ public class HSSFSheet
                 sheet.setColumnWidth(column, (short) (width * 256));
             }
         }
+    }
+
+    /**
+     * Copy text attributes from the supplied HSSFFont to Java2D AttributedString
+     */
+    private void copyAttributes(HSSFFont font, AttributedString str, int startIdx, int endIdx){
+        str.addAttribute(TextAttribute.FAMILY, font.getFontName(), startIdx, endIdx);
+        str.addAttribute(TextAttribute.SIZE, new Float(font.getFontHeightInPoints()));
+        if (font.getBoldweight() == HSSFFont.BOLDWEIGHT_BOLD) str.addAttribute(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD, startIdx, endIdx);
+        if (font.getItalic() ) str.addAttribute(TextAttribute.POSTURE, TextAttribute.POSTURE_OBLIQUE, startIdx, endIdx);
+        if (font.getUnderline() == HSSFFont.U_SINGLE ) str.addAttribute(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON, startIdx, endIdx);
     }
 
     /**
