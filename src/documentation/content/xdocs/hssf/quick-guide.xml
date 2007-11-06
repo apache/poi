@@ -330,7 +330,40 @@
     FileOutputStream fileOut = new FileOutputStream("workbook.xls");
     wb.write(fileOut);
     fileOut.close();
-                    </source>
+  </source>
+<p>
+  Note, the maximum number of unique fonts in a workbook is limited to 32767 (
+  the maximum positive short). You should re-use fonts in your apllications instead of
+  creating a font for each cell.
+Examples:
+</p>
+<p><strong>Wrong:</strong></p>
+<source>
+        for (int i = 0; i &lt; 10000; i++) {
+            HSSFRow row = sheet.createRow(i);
+            HSSFCell cell = row.createCell((short) 0);
+
+            HSSFCellStyle style = workbook.createCellStyle();
+            HSSFFont font = workbook.createFont();
+            font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+            style.setFont(font);
+            cell.setCellStyle(style);
+        }
+</source>
+<p><strong>Correct:</strong></p>
+<source>
+
+        HSSFCellStyle style = workbook.createCellStyle();
+        HSSFFont font = workbook.createFont();
+        font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+        style.setFont(font);
+        for (int i = 0; i &lt; 10000; i++) {
+            HSSFRow row = sheet.createRow(i);
+            HSSFCell cell = row.createCell((short) 0);
+            cell.setCellStyle(style);
+        }
+</source>
+  
                 </section>
                 <anchor id="CustomColors"/>
                 <section><title>Custom colors</title>
