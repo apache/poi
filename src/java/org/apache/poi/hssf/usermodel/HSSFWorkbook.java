@@ -802,6 +802,9 @@ public class HSSFWorkbook extends POIDocument
         {
             fontindex++;   // THERE IS NO FOUR!!
         }
+        if(fontindex == Short.MAX_VALUE){
+            throw new IllegalArgumentException("Maximum number of fonts was exceeded");
+        }
         HSSFFont retval = new HSSFFont(fontindex, font);
 
         return retval;
