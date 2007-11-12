@@ -36,7 +36,8 @@
 
 		<!-- Don't forget to update status.xml too! -->
         <release version="3.0.2-FINAL" date="2007-??-??">
-            <action dev="POI-DEVELOPERS" type="add">43751 - [PATCH] - Fix for handling rotated text in HSSFSheet.autoSizeColumn</action>
+            <action dev="POI-DEVELOPERS" type="fix">43648 - Fix for IntPtg and short vs int</action>
+            <action dev="POI-DEVELOPERS" type="fix">43751 - [PATCH] - Fix for handling rotated text in HSSFSheet.autoSizeColumn</action>
             <action dev="POI-DEVELOPERS" type="add">Include an Excel text extractor, and put all existing text extractors under a common superclass</action>
             <action dev="POI-DEVELOPERS" type="add">Improvements to the LZW compression engine used by HDGF</action>
             <action dev="POI-DEVELOPERS" type="add">HSSFPicture.resize() - a handy method to reset a picture to its original width and height</action>

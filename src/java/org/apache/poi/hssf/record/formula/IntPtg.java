@@ -29,8 +29,8 @@ import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.RecordInputStream;
 
 /**
- * Integer (short intger)
- * Stores a (java) short value in a formula
+ * Integer (unsigned short intger)
+ * Stores an unsigned short value (java int) in a formula
  * @author  Andrew C. Oliver (acoliver at apache dot org)
  * @author Jason Height (jheight at chariot dot net dot au)
  */
@@ -57,13 +57,45 @@ public class IntPtg
         setValue(Short.parseShort(formulaToken));
     }
 
+    /**
+     * Sets the wrapped value.
+     * Normally you should call with a positive int.
+     */
     public void setValue(short value)
     {
         field_1_value = value;
     }
 
+    /**
+     * Sets the unsigned value.
+     * (Handles conversion to the internal short value) 
+     */
+    public void setValue(int value)
+    {
+    	if(value > Short.MAX_VALUE) {
+    		// Need to wrap
+    		value -= (Short.MAX_VALUE+1)*2;
+    	}
+    	field_1_value = (short)value;
+    }
+
+    /**
+     * Returns the value as a short, which may have
+     *  been wrapped into negative numbers
+     */
     public short getValue()
     {
+        return field_1_value;
+    }
+
+    /**
+     * Returns the value as an unsigned positive int.
+     */
+    public int getValueAsInt()
+    {
+    	if(field_1_value < 0) {
+    		return (Short.MAX_VALUE + 1)*2 + field_1_value;
+    	}
         return field_1_value;
     }
 
