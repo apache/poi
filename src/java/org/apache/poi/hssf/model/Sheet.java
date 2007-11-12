@@ -497,6 +497,14 @@ public class Sheet implements Model
     public int addMergedRegion(int rowFrom, short colFrom, int rowTo,
                                short colTo)
     {
+    	// Validate input
+    	if(rowTo < rowFrom) {
+    		throw new IllegalArgumentException("The row to ("+rowTo+") must be >= the row from ("+rowFrom+")");
+    	}
+    	if(colTo < colFrom) {
+    		throw new IllegalArgumentException("The col to ("+colTo+") must be >= the col from ("+colFrom+")");
+    	}
+    	
         if (merged == null || merged.getNumAreas() == 1027)
         {
             merged = ( MergeCellsRecord ) createMergedCells();
