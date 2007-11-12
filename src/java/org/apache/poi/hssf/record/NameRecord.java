@@ -719,17 +719,17 @@ public class NameRecord extends Record {
         field_9_length_help_topic_text  = in.readByte();
         field_10_length_status_bar_text = in.readByte();
             
-			//store the name in byte form if it's a builtin name
+        //store the name in byte form if it's a builtin name
         field_11_compressed_unicode_flag= in.readByte();        
-			if (this.isBuiltInName()) {
-                field_12_builtIn_name = in.readByte();
+        if (this.isBuiltInName()) {
+           field_12_builtIn_name = in.readByte();
         } else {                
-          if (field_11_compressed_unicode_flag == 1) {
-            field_12_name_text = in.readCompressedUnicode(field_3_length_name_text);
-          } else {
-            field_12_name_text = in.readCompressedUnicode(field_3_length_name_text);
-          }
-			}
+           if (field_11_compressed_unicode_flag == 1) {
+             field_12_name_text = in.readUnicodeLEString(field_3_length_name_text);
+           } else {
+             field_12_name_text = in.readCompressedUnicode(field_3_length_name_text);
+           }
+        }
             
         field_13_name_definition = Ptg.createParsedExpressionTokens(field_4_length_name_definition, in);
     
