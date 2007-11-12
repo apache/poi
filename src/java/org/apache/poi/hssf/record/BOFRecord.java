@@ -110,10 +110,21 @@ public class BOFRecord
     {
         field_1_version  = in.readShort();
         field_2_type     = in.readShort();
-        field_3_build    = in.readShort();
-        field_4_year     = in.readShort();
-        field_5_history  = in.readInt();
-        field_6_rversion = in.readInt();
+        
+        // Some external tools don't generate all of
+        //  the remaining fields
+        if (in.remaining() >= 2) {
+            field_3_build = in.readShort();
+        }
+        if (in.remaining() >= 2) {
+            field_4_year = in.readShort();
+        }
+        if (in.remaining() >= 4) {
+            field_5_history  = in.readInt();
+        }
+        if (in.remaining() >= 4) {
+            field_6_rversion = in.readInt();
+        }
     }
 
     /**
