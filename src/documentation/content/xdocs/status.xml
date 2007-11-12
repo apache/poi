@@ -33,6 +33,7 @@
 	<!-- Don't forget to update changes.xml too! -->
     <changes>
         <release version="3.0.2-FINAL" date="2007-??-??">
+            <action dev="POI-DEVELOPERS" type="fix">43837 - [PATCH] Support for unicode NameRecords</action>
             <action dev="POI-DEVELOPERS" type="add">43721 - [PATCH] Support for Chart Title Format records</action>
             <action dev="POI-DEVELOPERS" type="fix">42794 - [PATCH] Fix for BOF records from things like Access</action>
             <action dev="POI-DEVELOPERS" type="fix">43648 - Fix for IntPtg and short vs int</action>
