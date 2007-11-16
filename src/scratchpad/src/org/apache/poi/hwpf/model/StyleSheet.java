@@ -286,6 +286,14 @@ public class StyleSheet implements HDFType
   }
 
   /**
+   * Gets the number of styles in the style sheet.
+   * @return The number of styles in the style sheet.
+   */
+  public int numStyles() {
+      return _styleDescriptions.length;
+  }
+
+  /**
    * Gets the StyleDescription at index x.
    *
    * @param x the index of the desired StyleDescription.
