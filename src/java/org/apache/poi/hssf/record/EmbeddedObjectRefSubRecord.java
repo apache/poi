@@ -43,8 +43,15 @@ public class EmbeddedObjectRefSubRecord
     public String  field_5_ole_classname;                       // Classname of the embedded OLE document (e.g. Word.Document.8)
     public int     field_6_stream_id;                           // ID of the OLE stream containing the actual data.
 
+    private int field_5_ole_classname_padding; // developer laziness...
+    public byte[] remainingBytes;
+
     public EmbeddedObjectRefSubRecord()
     {
+        field_2_unknown = new short[0];
+        remainingBytes = new byte[0];
+        field_1_stream_id_offset = 6;
+        field_5_ole_classname = "";
     }
 
     /**
@@ -93,18 +100,24 @@ public class EmbeddedObjectRefSubRecord
 
         // Padded with NUL bytes.  The -2 is because field_1_stream_id_offset
         // is relative to after the offset field, whereas in.getRecordOffset()
-        // is relative to the start of this record.
+        // is relative to the start of this record (minus the header.)
+        field_5_ole_classname_padding = 0;
         while (in.getRecordOffset() - 2 < field_1_stream_id_offset)
         {
+            field_5_ole_classname_padding++;
             in.readByte(); // discard
         }
 
         field_6_stream_id              = in.readInt();
+        remainingBytes = in.readRemainder();
     }
 
     public int serialize(int offset, byte[] data)
     {
         int pos = offset;
+
+        LittleEndian.putShort(data, pos, sid); pos += 2;
+        LittleEndian.putShort(data, pos, (short)(getRecordSize() - 4)); pos += 2;
 
         LittleEndian.putShort(data, pos, field_1_stream_id_offset); pos += 2;
         LittleEndian.putShortArray(data, pos, field_2_unknown); pos += field_2_unknown.length * 2 + 2;
@@ -120,10 +133,13 @@ public class EmbeddedObjectRefSubRecord
             StringUtil.putCompressedUnicode( field_5_ole_classname, data, pos ); pos += field_5_ole_classname.length();
         }
 
-        // Padded with NUL bytes.
-        pos = field_1_stream_id_offset;
-
+        // Padded with the same number of NUL bytes as were originally skipped.
+        // XXX: This is only accurate until we make the classname mutable.
+        pos += field_5_ole_classname_padding;
+        
         LittleEndian.putInt(data, pos, field_6_stream_id); pos += 4;
+
+        System.arraycopy(remainingBytes, 0, data, pos, remainingBytes.length);
 
         return getRecordSize();
     }
@@ -133,8 +149,9 @@ public class EmbeddedObjectRefSubRecord
      */
     public int getRecordSize()
     {
-        // Conveniently this stores the length of all the crap before the final int value.
-        return field_1_stream_id_offset + 4;
+        // The stream id offset is relative to after the stream ID.
+        // Add 2 bytes for the stream id offset and 4 bytes for the stream id itself and 4 byts for the record header.
+        return remainingBytes.length + field_1_stream_id_offset + 2 + 4 + 4;
     }
 
     /**
@@ -160,7 +177,7 @@ public class EmbeddedObjectRefSubRecord
             .append(System.getProperty("line.separator"));
         buffer.append("    .unknown              = ")
             .append("0x").append(HexDump.toHex(  field_2_unknown ))
-            .append(" (").append( field_2_unknown ).append(" )")
+            .append(" (").append( field_2_unknown.length ).append(" )")
             .append(System.getProperty("line.separator"));
         buffer.append("    .unicodeLen           = ")
             .append("0x").append(HexDump.toHex(  field_3_unicode_len ))
