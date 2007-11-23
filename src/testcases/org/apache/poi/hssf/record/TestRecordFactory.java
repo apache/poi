@@ -20,8 +20,13 @@
 package org.apache.poi.hssf.record;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.util.List;
+import java.util.Iterator;
+import java.util.Arrays;
 
 import junit.framework.TestCase;
+import org.apache.poi.util.HexRead;
 
 /**
  * Tests the record factory
@@ -164,6 +169,63 @@ public class TestRecordFactory
         record = (ContinueRecord) records[2];
         assertEquals("3nd record's sid", 0x3C, record.getSid());
         assertEquals("4th data byte", 4, record.getData()[ 0 ]);
+    }
+
+    /**
+     * Drawing records have a very strange continue behaviour.
+     * There can actually be OBJ records mixed between the continues.
+     * Record factory must preserve this structure when reading records.
+     */
+    public void testMixedContinue() throws Exception {
+        /**
+         *  Taken from a real file $HSSF.testdata.path/39512.xls. See Bug 39512 for details.
+         */
+        String dump =
+                //OBJ
+                "5D, 00, 48, 00, 15, 00, 12, 00, 0C, 00, 3C, 00, 11, 00, A0, 2E, 03, 01, CC, 42, " +
+                "CF, 00, 00, 00, 00, 00, 0A, 00, 0C, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, " +
+                "03, 00, 0B, 00, 06, 00, 28, 01, 03, 01, 00, 00, 12, 00, 08, 00, 00, 00, 00, 00, " +
+                "00, 00, 03, 00, 11, 00, 04, 00, 3D, 00, 00, 00, 00, 00, 00, 00, " +
+                 //MSODRAWING
+                "EC, 00, 08, 00, 00, 00, 0D, F0, 00, 00, 00, 00, " +
+                //TXO
+                "B6, 01, 12, 00, 22, 02, 00, 00, 00, 00, 00, 00, 00, 00, 10, 00, 10, 00, 00, 00, " +
+                "00, 00, 3C, 00, 21, 00, 01, 4F, 00, 70, 00, 74, 00, 69, 00, 6F, 00, 6E, 00, 20, " +
+                "00, 42, 00, 75, 00, 74, 00, 74, 00, 6F, 00, 6E, 00, 20, 00, 33, 00, 39, 00, 3C, " +
+                "00, 10, 00, 00, 00, 05, 00, 00, 00, 00, 00, 10, 00, 00, 00, 00, 00, 00, 00, " +
+                //CONTINUE
+                "3C, 00, 7E, 00, 0F, 00, 04, F0, 7E, 00, 00, 00, 92, 0C, 0A, F0, 08, 00, 00, 00, " +
+                "3D, 04, 00, 00, 00, 0A, 00, 00, A3, 00, 0B, F0, 3C, 00, 00, 00, 7F, 00, 00, 01, " +
+                "00, 01, 80, 00, 8C, 01, 03, 01, 85, 00, 01, 00, 00, 00, 8B, 00, 02, 00, 00, 00, " +
+                "BF, 00, 08, 00, 1A, 00, 7F, 01, 29, 00, 29, 00, 81, 01, 41, 00, 00, 08, BF, 01, " +
+                "00, 00, 10, 00, C0, 01, 40, 00, 00, 08, FF, 01, 00, 00, 08, 00, 00, 00, 10, F0, " +
+                "12, 00, 00, 00, 02, 00, 02, 00, A0, 03, 18, 00, B5, 00, 04, 00, 30, 02, 1A, 00, " +
+                "00, 00, 00, 00, 11, F0, 00, 00, 00, 00, " +
+                //OBJ
+                "5D, 00, 48, 00, 15, 00, 12, 00, 0C, 00, 3D, 00, 11, 00, 8C, 01, 03, 01, C8, 59, CF, 00, 00, " +
+                "00, 00, 00, 0A, 00, 0C, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 03, 00, 0B, 00, 06, 00, " +
+                "7C, 16, 03, 01, 00, 00, 12, 00, 08, 00, 00, 00, 00, 00, 00, 00, 03, 00, 11, 00, 04, 00, 01, " +
+                "00, 00, 00, 00, 00, 00, 00";
+        byte[] data = HexRead.readFromString(dump);
+
+        List records = RecordFactory.createRecords(new ByteArrayInputStream(data));
+        assertEquals(5, records.size());
+        assertTrue(records.get(0) instanceof ObjRecord);
+        assertTrue(records.get(1) instanceof DrawingRecord);
+        assertTrue(records.get(2) instanceof TextObjectRecord);
+        assertTrue(records.get(3) instanceof ContinueRecord);
+        assertTrue(records.get(4) instanceof ObjRecord);
+
+        //serialize and verify that the serialized data is the same as the original
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        for(Iterator it = records.iterator(); it.hasNext(); ){
+            Record rec = (Record)it.next();
+            out.write(rec.serialize());
+        }
+
+        byte[] ser = out.toByteArray();
+        assertEquals(data.length, ser.length);
+        assertTrue(Arrays.equals(data, ser));
     }
 
     public static void main(String [] ignored_args)

@@ -140,6 +140,9 @@ public class RecordFactory
                           // Drawing records have a very strange continue behaviour.
                           //There can actually be OBJ records mixed between the continues.
                           lastDrawingRecord.processContinueRecord( ((ContinueRecord)record).getData() );
+                            //we must rememeber the position of the continue record.
+                            //in the serialization procedure the original structure of records must be preserved
+                            records.add(record);
                         } else if (record.getSid() == ContinueRecord.sid &&
                                    (lastRecord instanceof DrawingGroupRecord)) {
                             ((DrawingGroupRecord)lastRecord).processContinueRecord(((ContinueRecord)record).getData());
