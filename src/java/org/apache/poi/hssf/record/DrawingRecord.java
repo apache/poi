@@ -23,6 +23,7 @@ public class DrawingRecord extends Record
     public static final short sid = 0xEC;
 
     private byte[] recordData;
+    private byte[] contd;
 
     public DrawingRecord()
     {
@@ -53,10 +54,8 @@ public class DrawingRecord extends Record
 
     public void processContinueRecord( byte[] record )
     {
-        byte[] newBuffer = new byte[ recordData.length + record.length ];
-        System.arraycopy( recordData, 0, newBuffer, 0, recordData.length );
-        System.arraycopy( record, 0, newBuffer, recordData.length, record.length);
-        recordData = newBuffer;
+        //don't merge continue record with the drawing record, it must be serialized separately
+        contd = record;
     }
 
     public int serialize( int offset, byte[] data )
@@ -92,7 +91,14 @@ public class DrawingRecord extends Record
 
     public byte[] getData()
     {
-        return recordData;
+        if(contd != null) {
+            byte[] newBuffer = new byte[ recordData.length + contd.length ];
+            System.arraycopy( recordData, 0, newBuffer, 0, recordData.length );
+            System.arraycopy( contd, 0, newBuffer, recordData.length, contd.length);
+            return newBuffer;
+        } else {
+            return recordData;
+        }
     }
 
     public void setData( byte[] thedata )
