@@ -77,8 +77,8 @@ under the License.
 		</license>
 	</licenses>
 	<scm>
-		<url>http://svn.apache.org/viewvc/jakarta/poi/trunk</url>
-		<connection>scm:svn:http://svn.apache.org/repos/asf/jakarta/poi/trunk</connection>
+		<url>http://svn.apache.org/viewvc/poi/trunk</url>
+		<connection>scm:svn:http://svn.apache.org/repos/asf/poi/trunk</connection>
 	</scm>
 	<issueManagement>
 		<system>bugzilla</system>
