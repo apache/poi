@@ -16,6 +16,7 @@
 
 package org.apache.poi.hssf.util;
 
+import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.util.LittleEndian;
 import java.util.ArrayList;
 
@@ -56,29 +57,27 @@ public class HSSFCellRangeAddress
      * Construct a new HSSFCellRangeAddress object and sets its fields appropriately .
      * Even this isn't an Excel record , I kept the same behavior for reading/writing
      * the object's data as for a regular record .
-     * @param data  Excel's file stream data
-     * @param offset the offset in Excel's file data
+     * 
+     * @param in the RecordInputstream to read the record from
      */
-    public HSSFCellRangeAddress( byte [] data, int offset )
+    public HSSFCellRangeAddress(RecordInputStream in)
     {
-        this.fillFields(data, offset);
+        this.fillFields(in);
     }
 
-    public void fillFields(byte [] data, int offset)
+    public void fillFields(RecordInputStream in)
     {
-        this.field_addr_number = LittleEndian.getShort(data, 0 + offset);
+        this.field_addr_number = in.readShort(); 
 		this.field_regions_list = new ArrayList(this.field_addr_number);
-		int pos = 2;
 
 		for (int k = 0; k < this.field_addr_number; k++)
 		{
-            short first_row = LittleEndian.getShort(data, pos + offset);
-            short first_col = LittleEndian.getShort(data, pos + 2 + offset);
-            short last_row  = LittleEndian.getShort(data, pos + 4 + offset);
-            short last_col  = LittleEndian.getShort(data, pos + 6 + offset);
+            short first_row = in.readShort(); 
+            short first_col = in.readShort();
+            short last_row  = in.readShort();
+            short last_col  = in.readShort();
 
 			AddrStructure region = new AddrStructure(first_row, first_col, last_row, last_col);
-            pos += 8;
 			this.field_regions_list.add(region);
 		}
     }
