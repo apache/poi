@@ -75,7 +75,8 @@ public class RecordFactory
                 HorizontalPageBreakRecord.class, VerticalPageBreakRecord.class, 
                 WriteProtectRecord.class, FilePassRecord.class, PaneRecord.class,
                 NoteRecord.class, ObjectProtectRecord.class, ScenarioProtectRecord.class, 
-                FileSharingRecord.class, ChartTitleFormatRecord.class
+                FileSharingRecord.class, ChartTitleFormatRecord.class,
+                DVRecord.class, DVALRecord.class
             };
     }
     private static Map           recordsMap  = recordsToMap(records);
