@@ -51,7 +51,7 @@ public class Year extends NumericFunction {
             if (ve instanceof NumericValueEval) {
                 NumericValueEval ne = (NumericValueEval) ve;
                 if (HSSFDateUtil.isValidExcelDate(ne.getNumberValue())) {
-                    java.util.Date d = HSSFDateUtil.getJavaDate(ne.getNumberValue());
+                    java.util.Date d = HSSFDateUtil.getJavaDate(ne.getNumberValue(), false); // XXX fix 1900/1904 problem
                     retval = new NumberEval(d.getYear()+1900);
                 } else {
                     retval = ErrorEval.NUM_ERROR;

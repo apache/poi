@@ -36,6 +36,7 @@
 
 		<!-- Don't forget to update status.xml too! -->
         <release version="3.0.2-FINAL" date="2007-??-??">
+            <action dev="POI-DEVELOPERS" type="add">43551 - [PATCH] Support for 1904 date windowing in HSSF (previously only supported 1900 date windowing)</action>
             <action dev="POI-DEVELOPERS" type="add">41064 - [PATCH] Support for String continue records</action>
             <action dev="POI-DEVELOPERS" type="add">27511 - [PATCH] Support for data validation, via DVRecord and DVALRecord</action>
             <action dev="POI-DEVELOPERS" type="fix">43877 and 39512 - Fix for handling mixed OBJ and CONTINUE records.</action>

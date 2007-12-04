@@ -36,6 +36,8 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  *
  * @author  Dan Sherman (dsherman at isisph.com)
  * @author  Hack Kampbjorn (hak at 2mba.dk)
+ * @author  Pavel Krupets (pkrupets at palmtreebusiness dot com)
+ * @author Alex Jacoby (ajacoby at gmail.com)
  * @version %I%, %G%
  */
 
@@ -47,7 +49,9 @@ public class TestHSSFDateUtil
 	public static final int CALENDAR_FEBRUARY = 1;
 	public static final int CALENDAR_MARCH = 2;
 	public static final int CALENDAR_APRIL = 3;
-
+	public static final int CALENDAR_JULY = 6;
+    public static final int CALENDAR_OCTOBER = 9;
+    
     public TestHSSFDateUtil(String s)
     {
         super(s);
@@ -67,10 +71,10 @@ public class TestHSSFDateUtil
             GregorianCalendar date      = new GregorianCalendar(2002, 0, 1,
                     hour, 1, 1);
             double            excelDate =
-                    HSSFDateUtil.getExcelDate(date.getTime());
+                    HSSFDateUtil.getExcelDate(date.getTime(), false);
 
             assertEquals("Checking hour = " + hour, date.getTime().getTime(),
-                    HSSFDateUtil.getJavaDate(excelDate).getTime());
+                    HSSFDateUtil.getJavaDate(excelDate, false).getTime());
         }
 
         // check 1900 and 1904 date windowing conversions
@@ -99,7 +103,7 @@ public class TestHSSFDateUtil
     public void testExcelConversionOnDSTStart() {
         TimeZone cet = TimeZone.getTimeZone("Europe/Copenhagen");
         TimeZone.setDefault(cet);
-        Calendar cal = new GregorianCalendar(2004, Calendar.MARCH, 28);
+        Calendar cal = new GregorianCalendar(2004, CALENDAR_MARCH, 28);
         for (int hour = 0; hour < 24; hour++) {
 
             // Skip 02:00 CET as that is the Daylight change time
@@ -110,7 +114,7 @@ public class TestHSSFDateUtil
 
             cal.set(Calendar.HOUR_OF_DAY, hour);
             Date javaDate = cal.getTime();
-            double excelDate = HSSFDateUtil.getExcelDate(javaDate);
+            double excelDate = HSSFDateUtil.getExcelDate(javaDate, false);
             double difference = excelDate - Math.floor(excelDate);
             int differenceInHours = (int) (difference * 24 * 60 + 0.5) / 60;
             assertEquals("Checking " + hour + " hour on Daylight Saving Time start date",
@@ -118,7 +122,7 @@ public class TestHSSFDateUtil
                     differenceInHours);
             assertEquals("Checking " + hour + " hour on Daylight Saving Time start date",
                     javaDate.getTime(),
-                    HSSFDateUtil.getJavaDate(excelDate).getTime());
+                    HSSFDateUtil.getJavaDate(excelDate, false).getTime());
         }
     }
 
@@ -129,8 +133,8 @@ public class TestHSSFDateUtil
     public void testJavaConversionOnDSTStart() {
         TimeZone cet = TimeZone.getTimeZone("Europe/Copenhagen");
         TimeZone.setDefault(cet);
-        Calendar cal = new GregorianCalendar(2004, Calendar.MARCH, 28);
-        double excelDate = HSSFDateUtil.getExcelDate(cal.getTime());
+        Calendar cal = new GregorianCalendar(2004, CALENDAR_MARCH, 28);
+        double excelDate = HSSFDateUtil.getExcelDate(cal.getTime(), false);
         double oneHour = 1.0 / 24;
         double oneMinute = oneHour / 60;
         for (int hour = 0; hour < 24; hour++, excelDate += oneHour) {
@@ -142,10 +146,10 @@ public class TestHSSFDateUtil
             }
 
             cal.set(Calendar.HOUR_OF_DAY, hour);
-            Date javaDate = HSSFDateUtil.getJavaDate(excelDate);
+            Date javaDate = HSSFDateUtil.getJavaDate(excelDate, false);
             assertEquals("Checking " + hour + " hours on Daylight Saving Time start date",
                     excelDate,
-                    HSSFDateUtil.getExcelDate(javaDate), oneMinute);
+                    HSSFDateUtil.getExcelDate(javaDate, false), oneMinute);
         }
     }
 
@@ -156,11 +160,11 @@ public class TestHSSFDateUtil
     public void testExcelConversionOnDSTEnd() {
         TimeZone cet = TimeZone.getTimeZone("Europe/Copenhagen");
         TimeZone.setDefault(cet);
-        Calendar cal = new GregorianCalendar(2004, Calendar.OCTOBER, 31);
+        Calendar cal = new GregorianCalendar(2004, CALENDAR_OCTOBER, 31);
         for (int hour = 0; hour < 24; hour++) {
             cal.set(Calendar.HOUR_OF_DAY, hour);
             Date javaDate = cal.getTime();
-            double excelDate = HSSFDateUtil.getExcelDate(javaDate);
+            double excelDate = HSSFDateUtil.getExcelDate(javaDate, false);
             double difference = excelDate - Math.floor(excelDate);
             int differenceInHours = (int) (difference * 24 * 60 + 0.5) / 60;
             assertEquals("Checking " + hour + " hour on Daylight Saving Time end date",
@@ -168,7 +172,7 @@ public class TestHSSFDateUtil
                     differenceInHours);
             assertEquals("Checking " + hour + " hour on Daylight Saving Time start date",
                     javaDate.getTime(),
-                    HSSFDateUtil.getJavaDate(excelDate).getTime());
+                    HSSFDateUtil.getJavaDate(excelDate, false).getTime());
         }
     }
 
@@ -179,16 +183,16 @@ public class TestHSSFDateUtil
     public void testJavaConversionOnDSTEnd() {
         TimeZone cet = TimeZone.getTimeZone("Europe/Copenhagen");
         TimeZone.setDefault(cet);
-        Calendar cal = new GregorianCalendar(2004, Calendar.OCTOBER, 31);
-        double excelDate = HSSFDateUtil.getExcelDate(cal.getTime());
+        Calendar cal = new GregorianCalendar(2004, CALENDAR_OCTOBER, 31);
+        double excelDate = HSSFDateUtil.getExcelDate(cal.getTime(), false);
         double oneHour = 1.0 / 24;
         double oneMinute = oneHour / 60;
         for (int hour = 0; hour < 24; hour++, excelDate += oneHour) {
             cal.set(Calendar.HOUR_OF_DAY, hour);
-            Date javaDate = HSSFDateUtil.getJavaDate(excelDate);
+            Date javaDate = HSSFDateUtil.getJavaDate(excelDate, false);
             assertEquals("Checking " + hour + " hours on Daylight Saving Time start date",
                     excelDate,
-                    HSSFDateUtil.getExcelDate(javaDate), oneMinute);
+                    HSSFDateUtil.getExcelDate(javaDate, false), oneMinute);
         }
     }
     
@@ -315,30 +319,55 @@ public class TestHSSFDateUtil
     }
     
     public void testDateBug_2Excel() {
-        assertEquals(59.0, HSSFDateUtil.getExcelDate(createDate(1900, CALENDAR_FEBRUARY, 28)), 0.00001);
-        assertEquals(61.0, HSSFDateUtil.getExcelDate(createDate(1900, CALENDAR_MARCH, 1)), 0.00001);
+        assertEquals(59.0, HSSFDateUtil.getExcelDate(createDate(1900, CALENDAR_FEBRUARY, 28), false), 0.00001);
+        assertEquals(61.0, HSSFDateUtil.getExcelDate(createDate(1900, CALENDAR_MARCH, 1), false), 0.00001);
 
-        assertEquals(37315.00, HSSFDateUtil.getExcelDate(createDate(2002, CALENDAR_FEBRUARY, 28)), 0.00001);
-        assertEquals(37316.00, HSSFDateUtil.getExcelDate(createDate(2002, CALENDAR_MARCH, 1)), 0.00001);
-        assertEquals(37257.00, HSSFDateUtil.getExcelDate(createDate(2002, CALENDAR_JANUARY, 1)), 0.00001);
-        assertEquals(38074.00, HSSFDateUtil.getExcelDate(createDate(2004, CALENDAR_MARCH, 28)), 0.00001);
+        assertEquals(37315.00, HSSFDateUtil.getExcelDate(createDate(2002, CALENDAR_FEBRUARY, 28), false), 0.00001);
+        assertEquals(37316.00, HSSFDateUtil.getExcelDate(createDate(2002, CALENDAR_MARCH, 1), false), 0.00001);
+        assertEquals(37257.00, HSSFDateUtil.getExcelDate(createDate(2002, CALENDAR_JANUARY, 1), false), 0.00001);
+        assertEquals(38074.00, HSSFDateUtil.getExcelDate(createDate(2004, CALENDAR_MARCH, 28), false), 0.00001);
     }
     
     public void testDateBug_2Java() {
-        assertEquals(createDate(1900, Calendar.FEBRUARY, 28), HSSFDateUtil.getJavaDate(59.0));
-        assertEquals(createDate(1900, Calendar.MARCH, 1), HSSFDateUtil.getJavaDate(61.0));
+        assertEquals(createDate(1900, CALENDAR_FEBRUARY, 28), HSSFDateUtil.getJavaDate(59.0, false));
+        assertEquals(createDate(1900, CALENDAR_MARCH, 1), HSSFDateUtil.getJavaDate(61.0, false));
         
-        assertEquals(createDate(2002, Calendar.FEBRUARY, 28), HSSFDateUtil.getJavaDate(37315.00));
-        assertEquals(createDate(2002, Calendar.MARCH, 1), HSSFDateUtil.getJavaDate(37316.00));
-        assertEquals(createDate(2002, Calendar.JANUARY, 1), HSSFDateUtil.getJavaDate(37257.00));
-        assertEquals(createDate(2004, Calendar.MARCH, 28), HSSFDateUtil.getJavaDate(38074.00));
+        assertEquals(createDate(2002, CALENDAR_FEBRUARY, 28), HSSFDateUtil.getJavaDate(37315.00, false));
+        assertEquals(createDate(2002, CALENDAR_MARCH, 1), HSSFDateUtil.getJavaDate(37316.00, false));
+        assertEquals(createDate(2002, CALENDAR_JANUARY, 1), HSSFDateUtil.getJavaDate(37257.00, false));
+        assertEquals(createDate(2004, CALENDAR_MARCH, 28), HSSFDateUtil.getJavaDate(38074.00, false));
     }
-
+    
+    public void testDate1904() {
+        assertEquals(createDate(1904, CALENDAR_JANUARY, 2), HSSFDateUtil.getJavaDate(1.0, true));
+        assertEquals(createDate(1904, CALENDAR_JANUARY, 1), HSSFDateUtil.getJavaDate(0.0, true));
+        assertEquals(0.0, HSSFDateUtil.getExcelDate(createDate(1904, CALENDAR_JANUARY, 1), true), 0.00001);
+        assertEquals(1.0, HSSFDateUtil.getExcelDate(createDate(1904, CALENDAR_JANUARY, 2), true), 0.00001);
+        
+        assertEquals(createDate(1998, CALENDAR_JULY, 5), HSSFDateUtil.getJavaDate(35981, false));
+        assertEquals(createDate(1998, CALENDAR_JULY, 5), HSSFDateUtil.getJavaDate(34519, true));
+        
+        assertEquals(35981.0, HSSFDateUtil.getExcelDate(createDate(1998, CALENDAR_JULY, 5), false), 0.00001);
+        assertEquals(34519.0, HSSFDateUtil.getExcelDate(createDate(1998, CALENDAR_JULY, 5), true), 0.00001);
+    }
+    
     private Date createDate(int year, int month, int day) {
         Calendar c = new GregorianCalendar();
         c.set(year, month, day, 0, 0, 0);
         c.set(Calendar.MILLISECOND, 0);
         return c.getTime();
+    }
+    
+    /**
+     * Check if HSSFDateUtil.getAbsoluteDay works as advertised.
+     */
+    public void testAbsoluteDay() {
+        // 1 Jan 1900 is 1 day after 31 Dec 1899
+        GregorianCalendar calendar = new GregorianCalendar(1900, 0, 1);
+        assertEquals("Checking absolute day (1 Jan 1900)", 1, HSSFDateUtil.absoluteDay(calendar, false));
+        // 1 Jan 1901 is 366 days after 31 Dec 1899
+        calendar = new GregorianCalendar(1901, 0, 1);
+        assertEquals("Checking absolute day (1 Jan 1901)", 366, HSSFDateUtil.absoluteDay(calendar, false));
     }
     
     public static void main(String [] args) {
@@ -347,4 +376,3 @@ public class TestHSSFDateUtil
         junit.textui.TestRunner.run(TestHSSFDateUtil.class);
     }
 }
-

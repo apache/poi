@@ -521,7 +521,7 @@ public class HSSFCell
      */
     public void setCellValue(Date value)
     {
-        setCellValue(HSSFDateUtil.getExcelDate(value));
+        setCellValue(HSSFDateUtil.getExcelDate(value, this.book.isUsing1904DateWindowing()));
     }
 
     /**

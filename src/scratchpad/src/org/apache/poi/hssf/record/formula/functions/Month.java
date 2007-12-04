@@ -50,7 +50,7 @@ public class Month extends NumericFunction {
             if (ve instanceof NumericValueEval) {
                 NumericValueEval ne = (NumericValueEval) ve;
                 if (HSSFDateUtil.isValidExcelDate(ne.getNumberValue())) {
-                    java.util.Date d = HSSFDateUtil.getJavaDate(ne.getNumberValue());
+                    java.util.Date d = HSSFDateUtil.getJavaDate(ne.getNumberValue(), false); // XXX fix 1900/1904 problem
                     retval = new NumberEval(d.getMonth()+1);
                 } else {
                     retval = ErrorEval.NUM_ERROR;

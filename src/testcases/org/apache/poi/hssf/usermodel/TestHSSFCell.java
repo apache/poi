@@ -44,6 +44,7 @@ import java.util.GregorianCalendar;
  * paticular datatypes, etc.
  * @author Andrew C. Oliver (andy at superlinksoftware dot com)
  * @author  Dan Sherman (dsherman at isisph.com)
+ * @author Alex Jacoby (ajacoby at gmail.com)
  */
 
 public class TestHSSFCell
@@ -107,42 +108,106 @@ extends TestCase {
     }
 
     /**
-    * Checks that the recognition of files using 1904 date windowing
-    *  is working properly. Conversion of the date is also an issue,
-    *  but there's a separate unit test for that.
-    */
-    public void testDateWindowing() throws Exception {
-        GregorianCalendar cal = new GregorianCalendar(2000,0,1); // Jan. 1, 2000
-        Date date = cal.getTime();
-        String path = System.getProperty("HSSF.testdata.path");
+     * Checks that the recognition of files using 1904 date windowing
+     *  is working properly. Conversion of the date is also an issue,
+     *  but there's a separate unit test for that.
+     */
+     public void testDateWindowingRead() throws Exception {
+         GregorianCalendar cal = new GregorianCalendar(2000,0,1); // Jan. 1, 2000
+         Date date = cal.getTime();
+         String path = System.getProperty("HSSF.testdata.path");
 
-        // first check a file with 1900 Date Windowing
-        String filename = path + "/1900DateWindowing.xls";
-        FileInputStream stream   = new FileInputStream(filename);
-        POIFSFileSystem fs       = new POIFSFileSystem(stream);
-        HSSFWorkbook    workbook = new HSSFWorkbook(fs);
-        HSSFSheet       sheet    = workbook.getSheetAt(0);
+         // first check a file with 1900 Date Windowing
+         String filename = path + "/1900DateWindowing.xls";
+         FileInputStream stream   = new FileInputStream(filename);
+         POIFSFileSystem fs       = new POIFSFileSystem(stream);
+         HSSFWorkbook    workbook = new HSSFWorkbook(fs);
+         HSSFSheet       sheet    = workbook.getSheetAt(0);
 
-        assertEquals("Date from file using 1900 Date Windowing",
-                        date.getTime(),
-                           sheet.getRow(0).getCell((short)0)
-                              .getDateCellValue().getTime());
-        stream.close();
-        
-        // now check a file with 1904 Date Windowing
-        filename = path + "/1904DateWindowing.xls";
-        stream   = new FileInputStream(filename);
-        fs       = new POIFSFileSystem(stream);
-        workbook = new HSSFWorkbook(fs);
-        sheet    = workbook.getSheetAt(0);
+         assertEquals("Date from file using 1900 Date Windowing",
+                         date.getTime(),
+                            sheet.getRow(0).getCell((short)0)
+                               .getDateCellValue().getTime());
+         stream.close();
+         
+         // now check a file with 1904 Date Windowing
+         filename = path + "/1904DateWindowing.xls";
+         stream   = new FileInputStream(filename);
+         fs       = new POIFSFileSystem(stream);
+         workbook = new HSSFWorkbook(fs);
+         sheet    = workbook.getSheetAt(0);
 
-        assertEquals("Date from file using 1904 Date Windowing",
-                        date.getTime(),
-                           sheet.getRow(0).getCell((short)0)
-                              .getDateCellValue().getTime());
-        stream.close();
-    }
-    
+         assertEquals("Date from file using 1904 Date Windowing",
+                         date.getTime(),
+                            sheet.getRow(0).getCell((short)0)
+                               .getDateCellValue().getTime());
+         stream.close();
+     }
+
+     /**
+      * Checks that dates are properly written to both types of files:
+      * those with 1900 and 1904 date windowing.  Note that if the
+      * previous test ({@link #testDateWindowingRead}) fails, the
+      * results of this test are meaningless.
+      */
+      public void testDateWindowingWrite() throws Exception {
+          GregorianCalendar cal = new GregorianCalendar(2000,0,1); // Jan. 1, 2000
+          Date date = cal.getTime();
+          String path = System.getProperty("HSSF.testdata.path");
+
+          // first check a file with 1900 Date Windowing
+          String filename = path + "/1900DateWindowing.xls";
+          writeCell(filename, 0, (short) 1, date);          
+          assertEquals("Date from file using 1900 Date Windowing",
+                          date.getTime(),
+                          readCell(filename, 0, (short) 1).getTime());
+          
+          // now check a file with 1904 Date Windowing
+          filename = path + "/1904DateWindowing.xls";
+          writeCell(filename, 0, (short) 1, date);          
+          assertEquals("Date from file using 1900 Date Windowing",
+                          date.getTime(),
+                          readCell(filename, 0, (short) 1).getTime());
+      }
+
+      /**
+       * Sets cell value and writes file.
+       */
+      private void writeCell(String filename,
+     		 int rowIdx, short colIdx, Date date) throws Exception {
+          FileInputStream stream   = new FileInputStream(filename);
+          POIFSFileSystem fs       = new POIFSFileSystem(stream);
+          HSSFWorkbook    workbook = new HSSFWorkbook(fs);
+          HSSFSheet       sheet    = workbook.getSheetAt(0);
+          HSSFRow         row      = sheet.getRow(rowIdx);
+          HSSFCell        cell     = row.getCell(colIdx);
+          
+          if (cell == null) {
+        	  cell = row.createCell(colIdx);
+          }
+          cell.setCellValue(date);
+          
+          // Write the file
+          stream.close();
+          FileOutputStream oStream = new FileOutputStream(filename);
+          workbook.write(oStream);
+          oStream.close();
+      }
+      
+      /**
+       * Reads cell value from file.
+       */
+      private Date readCell(String filename,
+     		 int rowIdx, short colIdx) throws Exception {
+          FileInputStream stream   = new FileInputStream(filename);
+          POIFSFileSystem fs       = new POIFSFileSystem(stream);
+          HSSFWorkbook    workbook = new HSSFWorkbook(fs);
+          HSSFSheet       sheet    = workbook.getSheetAt(0);
+          HSSFRow         row      = sheet.getRow(rowIdx);
+          HSSFCell        cell     = row.getCell(colIdx);
+          return cell.getDateCellValue();
+      }
+      
     /**
      * Tests that the active cell can be correctly read and set
      */
