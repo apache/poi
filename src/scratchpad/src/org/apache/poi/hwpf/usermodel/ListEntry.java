@@ -23,21 +23,28 @@ import org.apache.poi.hwpf.model.ListFormatOverrideLevel;
 import org.apache.poi.hwpf.model.ListLevel;
 import org.apache.poi.hwpf.model.ListTables;
 import org.apache.poi.hwpf.model.PAPX;
-
-import org.apache.poi.hwpf.sprm.SprmBuffer;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 public class ListEntry
   extends Paragraph
 {
-  ListLevel _level;
-  ListFormatOverrideLevel _overrideLevel;
+	private static POILogger log = POILogFactory.getLogger(ListEntry.class);
+	
+	ListLevel _level;
+	ListFormatOverrideLevel _overrideLevel;
 
   ListEntry(PAPX papx, Range parent, ListTables tables)
   {
     super(papx, parent);
-    ListFormatOverride override = tables.getOverride(_props.getIlfo());
-    _overrideLevel = override.getOverrideLevel(_props.getIlvl());
-    _level = tables.getLevel(override.getLsid(), _props.getIlvl());
+    
+    if(tables != null) {
+	    ListFormatOverride override = tables.getOverride(_props.getIlfo());
+	    _overrideLevel = override.getOverrideLevel(_props.getIlvl());
+	    _level = tables.getLevel(override.getLsid(), _props.getIlvl());
+    } else {
+    	log.log(POILogger.WARN, "No ListTables found for ListEntry - document probably partly corrupt, and you may experience problems");
+    }
   }
 
   public int type()
