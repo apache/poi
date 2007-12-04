@@ -57,6 +57,7 @@
         <menu-item label="History and Future" href="historyandfuture.html"/>
         <menu-item label="Who We Are" href="who.html"/>
         <menu-item label="Resolutions" href="resolutions/index.html"/>
+        <menu-item label="Sponsors" href="http://www.apache.org/foundation/thanks.html" />
     </menu>
 
     <menu label="Docs">
