@@ -68,6 +68,19 @@ public class TestExcelExtractor extends TestCase {
 		);
 	}
 	
+	public void testwithContinueRecords() throws Exception {
+		String path = System.getProperty("HSSF.testdata.path");
+		FileInputStream fin = new FileInputStream(path + File.separator + "StringContinueRecords.xls");
+		
+		ExcelExtractor extractor = new ExcelExtractor(new POIFSFileSystem(fin));
+		
+		extractor.getText();
+		
+		// Has masses of text
+		// Until we fixed bug #41064, this would've
+		//   failed by now
+		assertTrue(extractor.getText().length() > 40960);
+	}
 	
 	public void testStringConcat() throws Exception {
 		String path = System.getProperty("HSSF.testdata.path");

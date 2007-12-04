@@ -33,6 +33,7 @@
 	<!-- Don't forget to update changes.xml too! -->
     <changes>
         <release version="3.0.2-FINAL" date="2007-??-??">
+            <action dev="POI-DEVELOPERS" type="add">41064 - [PATCH] Support for String continue records</action>
             <action dev="POI-DEVELOPERS" type="add">27511 - [PATCH] Support for data validation, via DVRecord and DVALRecord</action>
             <action dev="POI-DEVELOPERS" type="fix">43877 - Fix for handling mixed OBJ and CONTINUE records</action>
             <action dev="POI-DEVELOPERS" type="fix">39512 - Fix for handling mixed OBJ and CONTINUE records</action>

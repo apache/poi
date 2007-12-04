@@ -147,6 +147,9 @@ public class RecordFactory
                         } else if (record.getSid() == ContinueRecord.sid &&
                                    (lastRecord instanceof DrawingGroupRecord)) {
                             ((DrawingGroupRecord)lastRecord).processContinueRecord(((ContinueRecord)record).getData());
+                        } else if (record.getSid() == ContinueRecord.sid &&
+                        			(lastRecord instanceof StringRecord)) {
+                        	((StringRecord)lastRecord).processContinueRecord(((ContinueRecord)record).getData());
                         } else if (record.getSid() == ContinueRecord.sid) {
                           if (lastRecord instanceof UnknownRecord) {
                             //Gracefully handle records that we dont know about,
