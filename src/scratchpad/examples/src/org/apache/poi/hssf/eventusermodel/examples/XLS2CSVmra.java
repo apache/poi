@@ -283,7 +283,7 @@ public class XLS2CSVmra implements HSSFListener {
         		format = format.replaceAll("\\\\-","-");
         		
         		// Format as a date
-        		Date d = HSSFDateUtil.getJavaDate(value);
+        		Date d = HSSFDateUtil.getJavaDate(value, false);
         		DateFormat df = new SimpleDateFormat(format);
 	            return df.format(d);
         	} else {

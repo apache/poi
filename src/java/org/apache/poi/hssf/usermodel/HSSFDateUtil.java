@@ -35,6 +35,8 @@ import java.util.GregorianCalendar;
  * @author  Glen Stampoultzis (glens at apache.org)
  * @author  Dan Sherman (dsherman at isisph.com)
  * @author  Hack Kampbjorn (hak at 2mba.dk)
+ * @author  Alex Jacoby (ajacoby at gmail.com)
+ * @author  Pavel Krupets (pkrupets at palmtreebusiness dot com)
  */
 
 public class HSSFDateUtil
@@ -54,19 +56,26 @@ public class HSSFDateUtil
      * @return Excel representation of Date (-1 if error - test for error by checking for less than 0.1)
      * @param  date the Date
      */
-
-    public static double getExcelDate(Date date)
-    {
+    public static double getExcelDate(Date date) {
+    	return getExcelDate(date, false);
+    }
+    /**
+     * Given a Date, converts it into a double representing its internal Excel representation,
+     *   which is the number of days since 1/1/1900. Fractional days represent hours, minutes, and seconds.
+     *
+     * @return Excel representation of Date (-1 if error - test for error by checking for less than 0.1)
+     * @param date the Date
+     * @param use1904windowing Should 1900 or 1904 date windowing be used?
+     */
+    public static double getExcelDate(Date date, boolean use1904windowing) {
         Calendar calStart = new GregorianCalendar();
-
-        calStart.setTime(
-            date);   // If date includes hours, minutes, and seconds, set them to 0
-        if (calStart.get(Calendar.YEAR) < 1900)
+        calStart.setTime(date);   // If date includes hours, minutes, and seconds, set them to 0
+        
+        if ((!use1904windowing && calStart.get(Calendar.YEAR) < 1900) || 
+            (use1904windowing && calStart.get(Calendar.YEAR) < 1904)) 
         {
             return BAD_DATE;
-        }
-        else
-        {
+        } else {
 	    // Because of daylight time saving we cannot use
 	    //     date.getTime() - calStart.getTimeInMillis()
 	    // as the difference in milliseconds between 00:00 and 04:00
@@ -80,32 +89,39 @@ public class HSSFDateUtil
                                ) * 1000 + calStart.get(Calendar.MILLISECOND)
                               ) / ( double ) DAY_MILLISECONDS;
             calStart = dayStart(calStart);
-
-            double value = fraction + absoluteDay(calStart);
             
-            if (value >= 60) {
-                value += 1;
+            double value = fraction + absoluteDay(calStart, use1904windowing);
+            
+            if (!use1904windowing && value >= 60) {
+                value++;
+            } else if (use1904windowing) {
+                value--;
             }
             
             return value;
         }
     }
-
-    /**
-     * Given a excel date, converts it into a Date.
-     * Assumes 1900 date windowing.
-     *
-     * @param  date the Excel Date
-     *
-     * @return Java representation of a date (null if error)
-     * @see #getJavaDate(double,boolean)
-     */
-
-    public static Date getJavaDate(double date)
-    {
-        return getJavaDate(date,false);
-    }
     
+    /**
+     *  Given an Excel date with using 1900 date windowing, and
+     *   converts it to a java.util.Date.
+     *
+     *  NOTE: If the default <code>TimeZone</code> in Java uses Daylight
+     *  Saving Time then the conversion back to an Excel date may not give
+     *  the same value, that is the comparison
+     *  <CODE>excelDate == getExcelDate(getJavaDate(excelDate,false))</CODE>
+     *  is not always true. For example if default timezone is
+     *  <code>Europe/Copenhagen</code>, on 2004-03-28 the minute after
+     *  01:59 CET is 03:00 CEST, if the excel date represents a time between
+     *  02:00 and 03:00 then it is converted to past 03:00 summer time
+     *  
+     *  @param date  The Excel date.
+     *  @return Java representation of the date, or null if date is not a valid Excel date
+     *  @see java.util.TimeZone
+     */
+    public static Date getJavaDate(double date) {
+    	return getJavaDate(date, false);
+    }
     /**
      *  Given an Excel date with either 1900 or 1904 date windowing,
      *  converts it to a java.util.Date.
@@ -142,7 +158,7 @@ public class HSSFDateUtil
             GregorianCalendar calendar = new GregorianCalendar(startYear,0,
                                                      wholeDays + dayAdjust);
             int millisecondsInDay = (int)((date - Math.floor(date)) * 
-                                          (double) DAY_MILLISECONDS + 0.5);
+                                          DAY_MILLISECONDS + 0.5);
             calendar.set(GregorianCalendar.MILLISECOND, millisecondsInDay);
             return calendar.getTime();
         }
@@ -238,7 +254,7 @@ public class HSSFDateUtil
      *  Check if a cell contains a date
      *  Since dates are stored internally in Excel as double values 
      *  we infer it is a date if it is formatted as such. 
-     *  @see #isADateFormat(int,string)
+     *  @see #isADateFormat(int, String)
      *  @see #isInternalDateFormat(int)
      */
     public static boolean isCellDateFormatted(HSSFCell cell) {
@@ -259,7 +275,7 @@ public class HSSFDateUtil
      *   excel date formats.
      *  As Excel stores a great many of its dates in "non-internal"
      *   date formats, you will not normally want to use this method.
-     *  @see #isADateFormat(int,string)
+     *  @see #isADateFormat(int,String)
      *  @see #isInternalDateFormat(int)
      */
     public static boolean isCellInternalDateFormatted(HSSFCell cell) {
@@ -296,10 +312,10 @@ public class HSSFDateUtil
      * @exception IllegalArgumentException if date is invalid
      */
 
-    private static int absoluteDay(Calendar cal)
+    static int absoluteDay(Calendar cal, boolean use1904windowing)
     {
         return cal.get(Calendar.DAY_OF_YEAR)
-               + daysInPriorYears(cal.get(Calendar.YEAR));
+               + daysInPriorYears(cal.get(Calendar.YEAR), use1904windowing);
     }
 
     /**
@@ -307,14 +323,14 @@ public class HSSFDateUtil
      *
      * @return    days  number of days in years prior to yr.
      * @param     yr    a year (1900 < yr < 4000)
+     * @param use1904windowing 
      * @exception IllegalArgumentException if year is outside of range.
      */
 
-    private static int daysInPriorYears(int yr)
+    private static int daysInPriorYears(int yr, boolean use1904windowing)
     {
-        if (yr < 1900) {
-            throw new IllegalArgumentException(
-                "'year' must be 1900 or greater");
+        if ((!use1904windowing && yr < 1900) || (use1904windowing && yr < 1900)) {
+            throw new IllegalArgumentException("'year' must be 1900 or greater");
         }
         
         int yr1  = yr - 1;
@@ -323,7 +339,7 @@ public class HSSFDateUtil
                        + yr1 / 400 // plus years divisible by 400 
                        - 460;      // leap days in previous 1900 years
         
-        return 365 * (yr - 1900) + leapDays;
+        return 365 * (yr - (use1904windowing ? 1904 : 1900)) + leapDays;
     }
     
     // set HH:MM:SS fields of cal to 00:00:00:000
