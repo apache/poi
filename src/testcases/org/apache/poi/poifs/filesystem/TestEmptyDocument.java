@@ -23,6 +23,7 @@ import java.io.ByteArrayOutputStream;
 
 import junit.framework.TestCase;
 
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSWriterEvent;
 import org.apache.poi.poifs.filesystem.POIFSWriterListener;
@@ -140,4 +141,28 @@ public class TestEmptyDocument extends TestCase {
     fs.writeFilesystem(out);
     new POIFSFileSystem(new ByteArrayInputStream(out.toByteArray()));
   }
+
+  public void testEmptyDocumentBug11744() throws Exception {
+        byte[] testData = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+
+        POIFSFileSystem fs = new POIFSFileSystem();
+        fs.createDocument(new ByteArrayInputStream(new byte[0]), "Empty");
+        fs.createDocument(new ByteArrayInputStream(testData), "NotEmpty");
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        fs.writeFilesystem(out);
+        out.toByteArray();
+
+        // This line caused the error.
+        fs = new POIFSFileSystem(new ByteArrayInputStream(out.toByteArray()));
+
+        DocumentEntry entry = (DocumentEntry) fs.getRoot().getEntry("Empty");
+        assertEquals("Expected zero size", 0, entry.getSize());
+        assertEquals("Expected zero read from stream", 0,
+                     IOUtils.toByteArray(new DocumentInputStream(entry)).length);
+
+        entry = (DocumentEntry) fs.getRoot().getEntry("NotEmpty");
+        assertEquals("Expected size was wrong", testData.length, entry.getSize());
+        assertEquals("Expected different data read from stream", testData,
+                     IOUtils.toByteArray(new DocumentInputStream(entry)));
+    }
 }

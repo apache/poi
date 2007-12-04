@@ -247,7 +247,7 @@
 				and HSSFSheet provides a <em>rowIterator()</em> method to
 				give an iterator over all the rows.</p>
 				<source>
-    HSSFSheet sheet = wb.getSheetAt(0);
+	HSSFSheet sheet = wb.getSheetAt(0);
 	for (HSSFRow row : sheet.rowIterator()) {
 		for (HSSFCell cell : row.cellIterator()) {
 			// Do something here
