@@ -161,7 +161,8 @@ public class StringUtil {
 		final int offset,
 		final int len) {
 		try {
-			return new String(string, offset, len, "ISO-8859-1");
+			int len_to_use = Math.min(len, string.length - offset);
+			return new String(string, offset, len_to_use, "ISO-8859-1");
 		} catch (UnsupportedEncodingException e) {
 			throw new InternalError(); /* unreachable */
 		}

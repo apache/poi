@@ -83,6 +83,14 @@ public class StringRecord
             field_3_string = StringUtil.getFromCompressedUnicode(data, 0, field_1_string_length);
         }
     }
+    
+    public void processContinueRecord(byte[] data) {
+    	if(isUnCompressedUnicode()) {
+    		field_3_string += StringUtil.getFromUnicodeLE(data, 0, field_1_string_length - field_3_string.length());
+    	} else {
+    		field_3_string += StringUtil.getFromCompressedUnicode(data, 0, field_1_string_length - field_3_string.length());
+    	}
+    }
 
     public boolean isInValueSection()
     {
