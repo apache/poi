@@ -39,6 +39,9 @@
             <action dev="POI-DEVELOPERS" type="add">43551 - [PATCH] Support for 1904 date windowing in HSSF (previously only supported 1900 date windowing)</action>
             <action dev="POI-DEVELOPERS" type="add">41064 - [PATCH] Support for String continue records</action>
             <action dev="POI-DEVELOPERS" type="add">27511 - [PATCH] Support for data validation, via DVRecord and DVALRecord</action>
+        </release>
+
+        <release version="3.0.2-BETA1" date="2007-12-04">
             <action dev="POI-DEVELOPERS" type="fix">43877 and 39512 - Fix for handling mixed OBJ and CONTINUE records.</action>
             <action dev="POI-DEVELOPERS" type="fix">43807 - Throw an IllegalArgumentException if asked to create a merged region with invalid columns or rows, rather than writing out a corrupt file</action>
             <action dev="POI-DEVELOPERS" type="fix">43837 - [PATCH] Support for unicode NameRecords</action>
