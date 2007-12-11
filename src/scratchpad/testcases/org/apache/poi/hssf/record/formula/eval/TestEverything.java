@@ -30,20 +30,28 @@ public class TestEverything extends TestSuite {
 
     public static TestSuite suite() throws Exception {
         TestSuite suite = new TestSuite("Tests for OperationEval concrete implementation classes.");
-        suite.addTest(new GenericFormulaTestCase("D23"));
-        suite.addTest(new GenericFormulaTestCase("D27"));
-        suite.addTest(new GenericFormulaTestCase("D31"));
-        suite.addTest(new GenericFormulaTestCase("D35"));
-        suite.addTest(new GenericFormulaTestCase("D39"));
-        suite.addTest(new GenericFormulaTestCase("D43"));
-        suite.addTest(new GenericFormulaTestCase("D47"));
-        suite.addTest(new GenericFormulaTestCase("D51"));
-        suite.addTest(new GenericFormulaTestCase("D55"));
-        suite.addTest(new GenericFormulaTestCase("D59"));
-        suite.addTest(new GenericFormulaTestCase("D63"));
-        suite.addTest(new GenericFormulaTestCase("D67"));
-        suite.addTest(new GenericFormulaTestCase("D71"));
-        suite.addTest(new GenericFormulaTestCase("D75"));
+        suite.addTest(new GenericFormulaTestCase("D23")); // Add
+        suite.addTest(new GenericFormulaTestCase("D27")); // ConcatEval
+        suite.addTest(new GenericFormulaTestCase("D31")); // DivideEval
+        suite.addTest(new GenericFormulaTestCase("D35")); // EqualEval
+        suite.addTest(new GenericFormulaTestCase("D39")); // GreaterEqualEval
+        suite.addTest(new GenericFormulaTestCase("D43")); // GreaterThanEval
+        suite.addTest(new GenericFormulaTestCase("D47")); // LessEqualEval
+        suite.addTest(new GenericFormulaTestCase("D51")); // LessThanEval
+        suite.addTest(new GenericFormulaTestCase("D55")); // MultiplyEval
+        suite.addTest(new GenericFormulaTestCase("D59")); // NotEqualEval
+        suite.addTest(new GenericFormulaTestCase("D63")); // PowerEval
+        suite.addTest(new GenericFormulaTestCase("D67")); // SubtractEval
+        suite.addTest(new GenericFormulaTestCase("D71")); // UnaryMinusEval
+        suite.addTest(new GenericFormulaTestCase("D75")); // UnaryPlusEval
+        
+        suite.addTest(new GenericFormulaTestCase("D249")); // Concatenate
+        suite.addTest(new GenericFormulaTestCase("D741")); // Int
+        suite.addTest(new GenericFormulaTestCase("D1393")); // Trim
+        suite.addTest(new GenericFormulaTestCase("D1421")); // Upper
+        
+        // Add newly implemented formula functions here 
+        
         return suite;
     }
 }
