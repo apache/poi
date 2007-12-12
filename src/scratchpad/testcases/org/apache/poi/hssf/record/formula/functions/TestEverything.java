@@ -25,11 +25,16 @@ import org.apache.poi.hssf.record.formula.eval.GenericFormulaTestCase;
 import junit.framework.TestSuite;
 
 /**
- * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
+ * This is a test of all the normal formula functions we have implemented.
+ * It should pick up newly implemented functions which are correctly added
+ *  to the test formula excel file, but tweak the rows below if you
+ *  add any past the end of what's currently checked.
+ * For newly implemented eval functions, 
+ *  @see org.apache.poi.hssf.record.formula.eval.TestEverything
  *
+ * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
  */
 public class TestEverything extends TestSuite {
-
     public static TestSuite suite() throws Exception {
         TestSuite suite = new TestSuite("Tests for individual function classes");
         String s;
