@@ -23,8 +23,13 @@ package org.apache.poi.hssf.record.formula.eval;
 import junit.framework.TestSuite;
 
 /**
- * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
+ * This is a test of all the Eval functions we have implemented.
+ * Add newly implemented Eval functions in here to have them
+ *  tested.
+ * For newly implemented functions, 
+ *  @see org.apache.poi.hssf.record.formula.functions.TestEverything
  *
+ * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
  */
 public class TestEverything extends TestSuite {
 
@@ -45,12 +50,9 @@ public class TestEverything extends TestSuite {
         suite.addTest(new GenericFormulaTestCase("D71")); // UnaryMinusEval
         suite.addTest(new GenericFormulaTestCase("D75")); // UnaryPlusEval
         
-        suite.addTest(new GenericFormulaTestCase("D249")); // Concatenate
-        suite.addTest(new GenericFormulaTestCase("D741")); // Int
-        suite.addTest(new GenericFormulaTestCase("D1393")); // Trim
-        suite.addTest(new GenericFormulaTestCase("D1421")); // Upper
-        
-        // Add newly implemented formula functions here 
+		// Add newly implemented Eval functions here
+		// (Formula functions go in 
+ 		//  @see org.apache.poi.hssf.record.formula.functions.TestEverything )
         
         return suite;
     }
