@@ -63,6 +63,8 @@ HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(sheet, wb);
 CellReference cellReference = new CellReference("B3"); 
 HSSFRow row = sheet.getRow(cellReference.getRow());
 HSSFCell cell = row.getCell(cellReference.getCol()); 
+
+evaluator.setCurrentRow(row);
 HSSFFormulaEvaluator.CellValue cellValue = evaluator.evaluate(cell);
 
 switch (cellValue.getCellType()) {
@@ -106,7 +108,7 @@ HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(sheet, wb);
 CellReference cellReference = new CellReference("B3"); 
 HSSFRow row = sheet.getRow(cellReference.getRow());
 HSSFCell cell = row.getCell(cellReference.getCol()); 
-
+evaluator.setCurrentRow(row);
 
 if (cell!=null) {
 	switch (<strong>evaluator.evaluateInCell</strong>(cell).getCellType()) {
