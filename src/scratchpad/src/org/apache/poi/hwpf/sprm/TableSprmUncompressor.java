@@ -148,8 +148,10 @@ public class TableSprmUncompressor
 
         for (int x = 0; x < itcMac; x++)
         {
-          if(hasTCs) rgtc[x] = TableCellDescriptor.convertBytesToTC(grpprl,
-              offset + (1 + ( (itcMac + 1) * 2) + (x * 20)));
+          // Sometimes, the grpprl does not contain data at every offset. I have no idea why this happens.
+          if(hasTCs && offset + (1 + ( (itcMac + 1) * 2) + (x * 20)) < grpprl.length)
+            rgtc[x] = TableCellDescriptor.convertBytesToTC(grpprl,
+               offset + (1 + ( (itcMac + 1) * 2) + (x * 20)));
           else
             rgtc[x] = new TableCellDescriptor();
         }

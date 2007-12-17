@@ -53,8 +53,25 @@ public class TestProblems extends TestCase {
     		Section s = r.getSection(x);
     		for (int y = 0; y < s.numParagraphs(); y++) {
     			Paragraph paragraph = s.getParagraph(y);
-    			System.out.println(paragraph.getCharacterRun(0).text());
+    			//System.out.println(paragraph.getCharacterRun(0).text());
     		}
     	}
     }
+
+	/**
+	 * AIOOB for TableSprmUncompressor.unCompressTAPOperation
+	 */
+	public void testSprmAIOOB() throws Exception {
+    	HWPFDocument doc = new HWPFDocument(new FileInputStream(dirname + "/AIOOB-Tap.doc"));
+    	
+    	Range r = doc.getRange();
+    	StyleSheet styleSheet = doc.getStyleSheet();
+    	for (int x = 0; x < r.numSections(); x++) {
+    		Section s = r.getSection(x);
+    		for (int y = 0; y < s.numParagraphs(); y++) {
+    			Paragraph paragraph = s.getParagraph(y);
+    			//System.out.println(paragraph.getCharacterRun(0).text());
+    		}
+    	}
+	}
 }
