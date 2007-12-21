@@ -29,6 +29,7 @@ public class Chunks {
 	public StringChunk textBodyChunk = new StringChunk(0x1000);		//BODY Chunk, for plain/text messages
 	public StringChunk subjectChunk = new StringChunk(0x0037);  	//Subject link chunk, in plain/text
 	public StringChunk displayToChunk = new StringChunk(0x0E04);	//Value that is in the TO field (not actually the addresses as they are stored in recip directory nodes
+	public StringChunk displayFromChunk = new StringChunk(0x0C1A);	//Value that is in the FROM field
 	public StringChunk displayCCChunk = new StringChunk(0x0E03);	//value that shows in the CC field
 	public StringChunk displayBCCChunk = new StringChunk(0x0E02);	//Value that shows in the BCC field
 	public StringChunk conversationTopic = new StringChunk(0x0070); //Sort of like the subject line, but without the RE: and FWD: parts.

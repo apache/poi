@@ -48,15 +48,24 @@ public class MAPIMessage {
 	
 	
 	/**
-	 * Constructor for reading MSG Files.
+	 * Constructor for reading MSG Files from the file system.
 	 * @param filename
 	 * @throws IOException
 	 */
 	public MAPIMessage(String filename) throws IOException {
-		InputStream in = new FileInputStream(new File(filename));
+		this(new FileInputStream(new File(filename)));
+	}
+	
+	/**
+	 * Constructor for reading MSG Files from an input stream.
+	 * @param in
+	 * @throws IOException
+	 */
+	public MAPIMessage(InputStream in) throws IOException {
 		this.fs = new POIFSFileSystem(in);
 		chunkParser = new POIFSChunkParser(this.fs);
 	}
+	
 
 	/**
 	 * Gets a string value based on the passed chunk.
@@ -99,6 +108,16 @@ public class MAPIMessage {
 	 */
 	public String getDisplayTo() throws ChunkNotFoundException {
 		return getStringFromChunk(Chunks.getInstance().displayToChunk);
+	}
+	
+	/**
+	 * Gets the display value of the "FROM" line of the outlook message
+	 * This is not the actual address that was sent from but the formated display of the user name.
+	 * @return
+	 * @throws ChunkNotFoundException
+	 */
+	public String getDisplayFrom() throws ChunkNotFoundException {
+		return getStringFromChunk(Chunks.getInstance().displayFromChunk);
 	}
 	
 	/**
