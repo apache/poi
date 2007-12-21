@@ -67,6 +67,18 @@ private MAPIMessage mapiMessage;
 	}
 	
 	/**
+	 * Test to see if we can read the From Chunk.
+	 * @throws ChunkNotFoundException 
+	 * 
+	 */
+	public void testReadDisplayFrom() throws ChunkNotFoundException {
+		String obtained = mapiMessage.getDisplayFrom();
+		String expected = "Travis Ferguson";
+		
+		TestCase.assertEquals(obtained, expected);
+	}
+	
+	/**
 	 * Test to see if we can read the CC Chunk.
 	 * @throws ChunkNotFoundException 
 	 * 
