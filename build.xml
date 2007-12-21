@@ -305,7 +305,7 @@ under the License.
     </javac>
   </target>
 
-  <target name="compile-scratchpad" depends="init">
+  <target name="compile-scratchpad" depends="init,compile-main">
     <javac target="${jdk.version.class}" source="${jdk.version.source}"
       failonerror="true" destdir="${scratchpad.output.dir}" debug="on"
       fork="yes" srcdir="${scratchpad.src}">
