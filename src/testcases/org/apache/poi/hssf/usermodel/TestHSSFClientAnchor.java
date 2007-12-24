@@ -85,4 +85,23 @@ public class TestHSSFClientAnchor extends TestCase
             assertEquals(anchor[i].getRow2(), record.getRow2());
         }
     }
+
+    public void testAnchorHeightInPoints(){
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet();
+
+        HSSFClientAnchor[] anchor = {
+            new HSSFClientAnchor( 0 , 0,    0 , 0 ,(short)0, 1,(short)1, 3),
+            new HSSFClientAnchor( 0 , 254 , 0 , 126 ,(short)0, 1,(short)1, 3),
+            new HSSFClientAnchor( 0 , 128 , 0 , 128 ,(short)0, 1,(short)1, 3),
+            new HSSFClientAnchor( 0 , 0 , 0 , 128 ,(short)0, 1,(short)1, 3),
+        };
+        float[] ref = {24.0f, 18.0f, 24.0f, 30.0f};
+        for (int i = 0; i < anchor.length; i++) {
+            float height = anchor[i].getAnchorHeightInPoints(sheet);
+            assertEquals(ref[i], height, 0);
+        }
+
+    }
+
 }

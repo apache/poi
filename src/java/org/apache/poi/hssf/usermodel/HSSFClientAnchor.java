@@ -82,8 +82,8 @@ public class HSSFClientAnchor
      */
     public float getAnchorHeightInPoints(HSSFSheet sheet )
     {
-        int y1 = Math.min( getDy1(), getDy2() );
-        int y2 = Math.max( getDy1(), getDy2() );
+        int y1 = getDy1();
+        int y2 = getDy2();
         int row1 = Math.min( getRow1(), getRow2() );
         int row2 = Math.max( getRow1(), getRow2() );
 
