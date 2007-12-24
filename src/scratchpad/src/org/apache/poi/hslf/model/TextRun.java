@@ -50,6 +50,7 @@ public class TextRun
 	private SlideShow slideShow;
     private Sheet sheet;
     private int shapeId;
+    private int slwtIndex; //position in the owning SlideListWithText
     /**
      * all text run records that follow TextHeaderAtom.
      * (there can be misc InteractiveInfo, TxInteractiveInfo and other records)
@@ -535,6 +536,20 @@ public class TextRun
      */
     protected void setShapeId(int id){
         shapeId = id;
+    }
+
+    /**
+     * @return  0-based index of the text run in the SLWT container
+     */
+    protected int getIndex(){
+        return slwtIndex;
+    }
+
+    /**
+     *  @param id 0-based index of the text run in the SLWT container
+     */
+    protected void setIndex(int id){
+        slwtIndex = id;
     }
 
     /**

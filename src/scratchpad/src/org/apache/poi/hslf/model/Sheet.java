@@ -153,7 +153,7 @@ public abstract class Sheet {
      */
     protected static void findTextRuns(Record[] records, Vector found) {
         // Look for a TextHeaderAtom
-        for (int i = 0; i < (records.length - 1); i++) {
+        for (int i = 0, slwtIndex=0; i < (records.length - 1); i++) {
             if (records[i] instanceof TextHeaderAtom) {
                 TextRun trun = null;
                 TextHeaderAtom tha = (TextHeaderAtom) records[i];
@@ -179,7 +179,6 @@ public abstract class Sheet {
                     // TextSpecInfoAtom - Safe to ignore
                 } else {
                     System.err.println("Found a TextHeaderAtom not followed by a TextBytesAtom or TextCharsAtom: Followed by " + records[i + 1].getRecordType());
-                    continue;
                 }
 
                 if (trun != null) {
@@ -191,12 +190,14 @@ public abstract class Sheet {
                     Record[] recs = new Record[lst.size()];
                     lst.toArray(recs);
                     trun._records = recs;
+                    trun.setIndex(slwtIndex);
                     
                     found.add(trun);
                     i++;
                 } else {
                     // Not a valid one, so skip on to next and look again
                 }
+                slwtIndex++;
             }
         }
     }
