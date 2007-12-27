@@ -18,7 +18,7 @@ package org.apache.poi.hssf;
 
 import java.io.IOException;
 
-import org.apache.poi.HXFDocument;
+import org.apache.poi.hxf.HXFDocument;
 import org.apache.xmlbeans.XmlException;
 import org.openxml4j.exceptions.OpenXML4JException;
 import org.openxml4j.opc.Package;

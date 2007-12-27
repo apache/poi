@@ -14,12 +14,13 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi;
+package org.apache.poi.hxf;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import org.apache.poi.POIXMLDocument;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.io.SAXReader;

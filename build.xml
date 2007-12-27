@@ -145,6 +145,7 @@ under the License.
   <property name="ooxml.xsds.ozip" location="${ooxml.lib}/OfficeOpenXML-Part4.zip"/>
   <property name="ooxml.xsds.izip" location="${ooxml.lib}/OfficeOpenXML-XMLSchema.zip"/>
   <property name="ooxml.xsds.url" value="http://www.ecma-international.org/publications/files/ECMA-ST/Office%20Open%20XML%20Part%204%20(DOCX).zip" />
+  <property name="ooxml.xsds.jar" location="${ooxml.lib}/ooxml-schemas.jar"/>
 
   <property name="build.site" location="build/tmp/site/build/site"/>
   <property name="build.site.src" location="build/tmp/site"/>
@@ -262,9 +263,11 @@ under the License.
         <mkdir dir="${scratchpad.output.dir}"/>
         <mkdir dir="${contrib.output.dir}"/>
         <mkdir dir="${examples.output.dir}"/>
+        <mkdir dir="${ooxml.output.dir}"/>
         <mkdir dir="${main.output.test.dir}"/>
         <mkdir dir="${contrib.output.test.dir}"/>
         <mkdir dir="${scratchpad.output.test.dir}"/>
+        <mkdir dir="${ooxml.output.test.dir}"/>
         <mkdir dir="${main.reports.test}"/>
         <mkdir dir="${scratchpad.reports.test}"/>
         <mkdir dir="${contrib.reports.test}"/>
@@ -348,7 +351,18 @@ under the License.
 			</patternset>
 		</unzip>
 	</target>
-	<target name="compile-ooxml-xsds" depends="check-jars,fetch-jars,check-ooxml-xsds,fetch-ooxml-xsds"
+	<target name="check-compiled-ooxml-xsds">
+        <condition property="ooxml-compiled-xsds.present">
+            <or>
+                <and>
+                    <available file="${ooxml.xsds.jar}"/>
+                </and>
+                <isset property="disconnected"/>
+            </or>
+        </condition>
+	</target>
+	<target name="compile-ooxml-xsds" unless="ooxml-compiled-xsds.present"
+	 depends="check-jars,fetch-jars,check-ooxml-xsds,fetch-ooxml-xsds,check-compiled-ooxml-xsds"
 	 description="Unpacks the OOXML xsd files, and compiles them into XmlBeans">
 		<taskdef name="xmlbean"
 			classname="org.apache.xmlbeans.impl.tool.XMLBean"
@@ -361,7 +375,7 @@ under the License.
 		-->
 		<xmlbean
 			schema="build/ooxml-xsds/"
-			destfile="${ooxml.lib}/ooxml-schemas.jar"
+			destfile="${ooxml.xsds.jar}"
 			javasource="1.4"
 			failonerror="false"
 		>
@@ -452,7 +466,8 @@ under the License.
   </target>
 
   <target name="compile-ooxml" depends="init, check-ooxml-xsds, fetch-ooxml-xsds, compile-ooxml-xsds, compile-main">
-    <javac target="${jdk.version.class}" source="${jdk.version.source}"
+	<!-- openxml4j requires java 1.5, so so must we, for now -->
+    <javac target="1.5" source="1.5"
       destdir="${ooxml.output.dir}" debug="on" srcdir="${ooxml.src}">
       <classpath refid="ooxml.classpath"/>
     </javac>
