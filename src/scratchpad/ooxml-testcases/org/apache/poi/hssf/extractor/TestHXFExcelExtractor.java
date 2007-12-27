@@ -66,10 +66,78 @@ public class TestHXFExcelExtractor extends TestCase {
 		
 		String text = extractor.getText();
 		assertTrue(text.length() > 0);
-		System.err.println(text);
 		
 		// Check sheet names
 		assertTrue(text.startsWith("Sheet1"));
 		assertTrue(text.endsWith("Sheet3\n"));
+		
+		// Now without, will have text
+		extractor.setIncludeSheetNames(false);
+		text = extractor.getText();
+		assertEquals(
+				"0\t111\n" +
+				"1\t222\n" +
+				"2\t333\n" +
+				"3\t444\n" +
+				"4\t555\n" +
+				"5\t666\n" +
+				"6\t777\n" +
+				"7\t888\n" +
+				"8\t999\n" +
+				"9\t4995\n" +
+				"\n\n", text);
+		
+		// Now get formulas not their values
+		extractor.setFormulasNotResults(true);
+		text = extractor.getText();
+		assertEquals(
+				"0\t111\n" +
+				"1\t222\n" +
+				"2\t333\n" +
+				"3\t444\n" +
+				"4\t555\n" +
+				"5\t666\n" +
+				"6\t777\n" +
+				"7\t888\n" +
+				"8\t999\n" +
+				"9\tSUM(B1:B9)\n" +
+				"\n\n", text);
+		
+		// With sheet names too
+		extractor.setIncludeSheetNames(true);
+		text = extractor.getText();
+		assertEquals(
+				"Sheet1\n" +
+				"0\t111\n" +
+				"1\t222\n" +
+				"2\t333\n" +
+				"3\t444\n" +
+				"4\t555\n" +
+				"5\t666\n" +
+				"6\t777\n" +
+				"7\t888\n" +
+				"8\t999\n" +
+				"9\tSUM(B1:B9)\n\n" +
+				"Sheet2\n\n" +
+				"Sheet3\n"
+				, text);
+	}
+	
+	public void testGetComplexText() throws Exception {
+		new HXFExcelExtractor(xmlB.getPackage());
+		new HXFExcelExtractor(new HSSFXMLWorkbook(xmlB));
+		
+		HXFExcelExtractor extractor = 
+			new HXFExcelExtractor(xmlB.getPackage());
+		extractor.getText();
+		
+		String text = extractor.getText();
+		assertTrue(text.length() > 0);
+		
+		// Might not have all formatting it should do!
+		assertTrue(text.startsWith(
+						"Avgtxfull\n" +
+						"3\t13\t3\t2\t2\t3\t2\t"	
+		));
 	}
 }

@@ -20,6 +20,7 @@ import java.io.IOException;
 
 import org.apache.poi.POIXMLTextExtractor;
 import org.apache.poi.hssf.HSSFXML;
+import org.apache.poi.hssf.usermodel.HSSFXMLCell;
 import org.apache.poi.hssf.usermodel.HSSFXMLWorkbook;
 import org.apache.xmlbeans.XmlException;
 import org.openxml4j.exceptions.OpenXML4JException;
@@ -89,16 +90,18 @@ public class HXFExcelExtractor extends POIXMLTextExtractor {
 							text.append("\t");
 						}
 						
+						boolean done = false;
+						
 						// Is it a formula one?
 						if(cell.getF() != null) {
 							if(formulasNotResults) {
 								text.append(cell.getF().getStringValue());
-							} else {
-								text.append(cell.getV());
+								done = true;
 							}
-						} else {
-							// Probably just want the v value
-							text.append(cell.getV());
+						}
+						if(!done) {
+							HSSFXMLCell uCell = new HSSFXMLCell(cell);
+							text.append(uCell.getStringValue());
 						}
 					}
 					text.append("\n");
