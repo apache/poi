@@ -29,6 +29,9 @@ import org.openxml4j.exceptions.OpenXML4JException;
 import org.openxml4j.opc.Package;
 import org.openxml4j.opc.PackageAccess;
 import org.openxml4j.opc.PackagePart;
+import org.openxml4j.opc.PackagePartName;
+import org.openxml4j.opc.PackageRelationship;
+import org.openxml4j.opc.PackagingURIHelper;
 
 /**
  * Parent class of the low level interface to  
@@ -76,8 +79,28 @@ public abstract class HXFDocument {
 		}
 	}
 	
-	public static Package openPackage(File f) throws InvalidFormatException {
-		return Package.open(f.toString(), PackageAccess.READ_WRITE);
+	/**
+	 * Retrieves the PackagePart for the given relation
+	 *  id. This will normally come from a  r:id attribute
+	 *  on part of the base document. 
+	 * @param partId The r:id pointing to the other PackagePart
+	 */
+	protected PackagePart getRelatedPackagePart(String partId) {
+		PackageRelationship rel =
+			basePart.getRelationship(partId);
+
+		PackagePartName relName;
+		try {
+			relName = PackagingURIHelper.createPartName(rel.getTargetURI());
+		} catch(InvalidFormatException e) {
+			throw new InternalError(e.getMessage());
+		}
+		
+		PackagePart part = container.getPart(relName);
+		if(part == null) {
+			throw new IllegalArgumentException("No part found for rel " + rel);
+		}
+		return part;
 	}
 
 	/**
@@ -86,5 +109,13 @@ public abstract class HXFDocument {
 	 */
 	public Package getPackage() {
 		return container;
+	}
+	
+	/**
+	 * Returns an opened OOXML Package for the supplied File
+	 * @param f File to open
+	 */
+	public static Package openPackage(File f) throws InvalidFormatException {
+		return Package.open(f.toString(), PackageAccess.READ_WRITE);
 	}
 }
