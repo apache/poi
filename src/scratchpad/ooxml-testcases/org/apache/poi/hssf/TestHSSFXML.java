@@ -2,7 +2,7 @@ package org.apache.poi.hssf;
 
 import java.io.File;
 
-import org.apache.poi.HXFDocument;
+import org.apache.poi.hxf.HXFDocument;
 import org.openxml4j.opc.Package;
 import org.openxml4j.opc.PackagePart;
 
