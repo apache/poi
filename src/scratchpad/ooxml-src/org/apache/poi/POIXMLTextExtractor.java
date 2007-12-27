@@ -16,18 +16,16 @@
 ==================================================================== */
 package org.apache.poi;
 
-import org.apache.poi.hxf.HXFDocument;
+public abstract class POIXMLTextExtractor extends POITextExtractor {
+	/** The POIXMLDocument that's open */
+	protected POIXMLDocument document;
 
-/** 
- * Parent class of all UserModel POI XML (ooxml) 
- *  implementations.
- * Provides a similar function to {@link POIDocument},
- *  for the XML based classes.
- */
-public abstract class POIXMLDocument {
-	private HXFDocument document;
-
-	protected POIXMLDocument(HXFDocument document) {
+	/**
+	 * Creates a new text extractor for the given document
+	 */
+	public POIXMLTextExtractor(POIXMLDocument document) {
+		super(null);
+		
 		this.document = document;
 	}
 }
