@@ -14,20 +14,20 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi;
+package org.apache.poi.hssf.usermodel;
 
-import org.apache.poi.hxf.HXFDocument;
+import org.apache.poi.POIXMLDocument;
+import org.apache.poi.hssf.HSSFXML;
 
-/** 
- * Parent class of all UserModel POI XML (ooxml) 
- *  implementations.
- * Provides a similar function to {@link POIDocument},
- *  for the XML based classes.
- */
-public abstract class POIXMLDocument {
-	private HXFDocument document;
-
-	protected POIXMLDocument(HXFDocument document) {
-		this.document = document;
+public class HSSFXMLWorkbook extends POIXMLDocument {
+	private HSSFXML hssfXML;
+	
+	public HSSFXMLWorkbook(HSSFXML xml) {
+		super(xml);
+		this.hssfXML = xml;
+	}
+	
+	public HSSFXML _getHSSFXML() {
+		return hssfXML;
 	}
 }
