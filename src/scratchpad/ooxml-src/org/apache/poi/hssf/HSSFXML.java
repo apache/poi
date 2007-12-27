@@ -22,8 +22,13 @@ import org.apache.poi.hxf.HXFDocument;
 import org.apache.xmlbeans.XmlException;
 import org.openxml4j.exceptions.OpenXML4JException;
 import org.openxml4j.opc.Package;
+import org.openxml4j.opc.PackagePart;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheets;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbook;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.WorkbookDocument;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.WorksheetDocument;
 
 /**
  * Experimental class to do low level processing
@@ -45,7 +50,30 @@ public class HSSFXML extends HXFDocument {
 			WorkbookDocument.Factory.parse(basePart.getInputStream());
 	}
 	
+	/**
+	 * Returns the low level workbook base object
+	 */
 	public CTWorkbook getWorkbook() {
 		return workbookDoc.getWorkbook();
+	}
+	/**
+	 * Returns the references from the workbook to its
+	 *  sheets.
+	 * You'll need these to figure out the sheet ordering,
+	 *  and to get at the actual sheets themselves
+	 */
+	public CTSheets getSheetReferences() {
+		return getWorkbook().getSheets();
+	}
+	/**
+	 * Returns the low level (work)sheet object from
+	 *  the supplied sheet reference
+	 */
+	public CTWorksheet getSheet(CTSheet sheet) throws IOException, XmlException {
+		PackagePart sheetPart =
+			getRelatedPackagePart(sheet.getId());
+		WorksheetDocument sheetDoc =
+			WorksheetDocument.Factory.parse(sheetPart.getInputStream());
+		return sheetDoc.getWorksheet();
 	}
 }

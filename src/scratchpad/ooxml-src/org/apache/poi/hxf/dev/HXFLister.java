@@ -80,6 +80,9 @@ public class HXFLister {
 			
 			if(! part.isRelationshipPart()) {
 				disp.println("\t" + part.getRelationships().size() + " relations");
+				for(PackageRelationship rel : part.getRelationships()) {
+					displayRelation(rel, "\t  ");
+				}
 			}
 		}
 	}
@@ -92,12 +95,15 @@ public class HXFLister {
 		PackageRelationshipCollection rels = 
 			container.getRelationships();
 		for (PackageRelationship rel : rels) {
-			disp.println("Relationship:");
-			disp.println("\tFrom: "+ rel.getSourceURI());
-			disp.println("\tTo:   " + rel.getTargetURI());
-			disp.println("\tMode: " + rel.getTargetMode());
-			disp.println("\tType: " + rel.getRelationshipType());
+			displayRelation(rel, "");
 		}
+	}
+	private void displayRelation(PackageRelationship rel, String indent) {
+		disp.println(indent+"Relationship:");
+		disp.println(indent+"\tFrom: "+ rel.getSourceURI());
+		disp.println(indent+"\tTo:   " + rel.getTargetURI());
+		disp.println(indent+"\tMode: " + rel.getTargetMode());
+		disp.println(indent+"\tType: " + rel.getRelationshipType());
 	}
 	
 	public static void main(String[] args) throws Exception {

@@ -271,6 +271,7 @@ under the License.
         <mkdir dir="${main.reports.test}"/>
         <mkdir dir="${scratchpad.reports.test}"/>
         <mkdir dir="${contrib.reports.test}"/>
+        <mkdir dir="${ooxml.reports.test}"/>
         <mkdir dir="${junit.report.dir}"/>
         <mkdir dir="${jdepend.report.dir}"/>
         <mkdir dir="${jdepend.report.out.dir}"/>
@@ -698,6 +699,43 @@ under the License.
 
     <target name="-test-contrib-write-testfile" unless="contrib.test.failed">
         <echo file="${contrib.testokfile}" append="false" message="testok"/>
+    </target>
+
+    <target name="-test-ooxml-check">
+        <uptodate property="ooxml.test.notRequired" targetfile="${ooxml.testokfile}">
+            <srcfiles dir="${ooxml.src}"/>
+            <srcfiles dir="${ooxml.src.test}"/>
+        </uptodate>
+    </target>
+
+    <target name="test-ooxml" depends="compile-main,compile-ooxml,-test-ooxml-check" unless="ooxml.test.notRequired">
+        <junit printsummary="yes" fork="no" haltonfailure="${halt.on.test.failure}" failureproperty="ooxml.test.failed">
+            <classpath>
+                <path refid="ooxml.classpath"/>
+                <pathelement location="${main.output.dir}"/>
+                <pathelement location="${ooxml.output.dir}"/>
+                <pathelement location="${ooxml.output.test.dir}"/>
+                <pathelement location="${junit.jar1.dir}"/>
+            </classpath>
+            <sysproperty key="HSSF.testdata.path" file="${main.src.test}/org/apache/poi/hssf/data"/>
+            <sysproperty key="HWPF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hwpf/data"/>
+            <sysproperty key="HSLF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hslf/data"/>
+            <sysproperty key="java.awt.headless" value="true"/>
+            <formatter type="plain"/>
+            <formatter type="xml"/>
+            <batchtest todir="${ooxml.reports.test}">
+                <fileset dir="${ooxml.src.test}">
+                    <include name="**/Test*.java"/>
+                    <exclude name="**/AllTests.java"/>
+                </fileset>
+            </batchtest>
+        </junit>
+        <delete file="${ooxml.testokfile}"/>
+        <antcall target="-test-ooxml-write-testfile"/>
+    </target>
+
+    <target name="-test-ooxml-write-testfile" unless="ooxml.test.failed">
+        <echo file="${ooxml.testokfile}" append="false" message="testok"/>
     </target>
 
     <target name="-check-docs">
