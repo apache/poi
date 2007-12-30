@@ -21,7 +21,6 @@ import java.io.File;
 import org.apache.poi.hxf.HXFDocument;
 import org.openxml4j.opc.Package;
 import org.openxml4j.opc.PackagePart;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideIdList;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideIdListEntry;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideMasterIdListEntry;
 
