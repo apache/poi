@@ -102,6 +102,7 @@ public class HXFLister {
 		disp.println(indent+"Relationship:");
 		disp.println(indent+"\tFrom: "+ rel.getSourceURI());
 		disp.println(indent+"\tTo:   " + rel.getTargetURI());
+		disp.println(indent+"\tID:   " + rel.getId());
 		disp.println(indent+"\tMode: " + rel.getTargetMode());
 		disp.println(indent+"\tType: " + rel.getRelationshipType());
 	}
