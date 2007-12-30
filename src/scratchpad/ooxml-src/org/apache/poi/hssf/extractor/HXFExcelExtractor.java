@@ -16,12 +16,14 @@
 ==================================================================== */
 package org.apache.poi.hssf.extractor;
 
+import java.io.File;
 import java.io.IOException;
 
 import org.apache.poi.POIXMLTextExtractor;
 import org.apache.poi.hssf.HSSFXML;
 import org.apache.poi.hssf.usermodel.HSSFXMLCell;
 import org.apache.poi.hssf.usermodel.HSSFXMLWorkbook;
+import org.apache.poi.hxf.HXFDocument;
 import org.apache.xmlbeans.XmlException;
 import org.openxml4j.exceptions.OpenXML4JException;
 import org.openxml4j.opc.Package;
@@ -30,6 +32,9 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 
+/**
+ * Helper class to extract text from an OOXML Excel file
+ */
 public class HXFExcelExtractor extends POIXMLTextExtractor {
 	private HSSFXMLWorkbook workbook;
 	private boolean includeSheetNames = true;
@@ -43,6 +48,19 @@ public class HXFExcelExtractor extends POIXMLTextExtractor {
 	public HXFExcelExtractor(HSSFXMLWorkbook workbook) {
 		super(workbook);
 		this.workbook = workbook;
+	}
+	
+	public static void main(String[] args) throws Exception {
+		if(args.length < 1) {
+			System.err.println("Use:");
+			System.err.println("  HXFExcelExtractor <filename.xlsx>");
+			System.exit(1);
+		}
+		POIXMLTextExtractor extractor = 
+			new HXFExcelExtractor(HXFDocument.openPackage(
+					new File(args[0])
+			));
+		System.out.println(extractor.getText());
 	}
 
 	/**
