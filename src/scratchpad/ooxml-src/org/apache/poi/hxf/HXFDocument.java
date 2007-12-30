@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import org.apache.poi.POIXMLDocument;
+import org.apache.xmlbeans.XmlException;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.io.SAXReader;
@@ -31,7 +32,10 @@ import org.openxml4j.opc.PackageAccess;
 import org.openxml4j.opc.PackagePart;
 import org.openxml4j.opc.PackagePartName;
 import org.openxml4j.opc.PackageRelationship;
+import org.openxml4j.opc.PackageRelationshipCollection;
 import org.openxml4j.opc.PackagingURIHelper;
+import org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.CTProperties;
+import org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.PropertiesDocument;
 
 /**
  * Parent class of the low level interface to  
@@ -39,6 +43,11 @@ import org.openxml4j.opc.PackagingURIHelper;
  * Normal users should probably deal with things that
  *  extends {@link POIXMLDocument}, unless they really
  *  do need to get low level access to the files.
+ *  
+ * If you are using these low level classes, then you
+ *  will almost certainly need to refer to the OOXML
+ *  specifications from
+ *  http://www.ecma-international.org/publications/standards/Ecma-376.htm
  *  
  * WARNING - APIs expected to change rapidly
  */
@@ -81,14 +90,22 @@ public abstract class HXFDocument {
 	
 	/**
 	 * Retrieves the PackagePart for the given relation
-	 *  id. This will normally come from a  r:id attribute
+	 *  id. This will normally come from a r:id attribute
 	 *  on part of the base document. 
 	 * @param partId The r:id pointing to the other PackagePart
 	 */
 	protected PackagePart getRelatedPackagePart(String partId) {
 		PackageRelationship rel =
 			basePart.getRelationship(partId);
+		return getPackagePart(rel);
+	}
 
+	/**
+	 * Retrieves the PackagePart for the given Relationship
+	 *  object. Normally you'll want to go via a content type
+	 *  or r:id to get one of those.
+	 */
+	protected PackagePart getPackagePart(PackageRelationship rel) {
 		PackagePartName relName;
 		try {
 			relName = PackagingURIHelper.createPartName(rel.getTargetURI());
@@ -102,6 +119,24 @@ public abstract class HXFDocument {
 		}
 		return part;
 	}
+	
+	/**
+	 * Retrieves all the PackageParts which are defined as
+	 *  relationships of the base document with the
+	 *  specified content type.
+	 */
+	protected PackagePart[] getRelatedByType(String contentType) throws InvalidFormatException {
+		PackageRelationshipCollection partsC =
+			basePart.getRelationshipsByType(contentType);
+		
+		PackagePart[] parts = new PackagePart[partsC.size()];
+		int count = 0;
+		for (PackageRelationship rel : partsC) {
+			parts[count] = getPackagePart(rel);
+			count++;
+		}
+		return parts;
+	}
 
 	/**
 	 * Get the package container.
@@ -109,6 +144,26 @@ public abstract class HXFDocument {
 	 */
 	public Package getPackage() {
 		return container;
+	}
+	
+	/**
+	 * Get the document properties (extended ooxml properties)
+	 */
+	public CTProperties getDocumentProperties() throws OpenXML4JException, XmlException, IOException {
+		PackageRelationshipCollection docProps =
+			container.getRelationshipsByType("http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties");
+		if(docProps.size() == 0) {
+			return null;
+		}
+		if(docProps.size() > 1) {
+			throw new IllegalStateException("Found " + docProps.size() + " relations for the extended properties, should only ever be one!");
+		}
+		PackageRelationship rel = docProps.getRelationship(0);
+		PackagePart propsPart = getPackagePart(rel);
+		
+		PropertiesDocument props = PropertiesDocument.Factory.parse(
+				propsPart.getInputStream());
+		return props.getProperties();
 	}
 	
 	/**

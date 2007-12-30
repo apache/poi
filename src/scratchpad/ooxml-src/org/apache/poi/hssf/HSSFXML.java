@@ -33,6 +33,11 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.WorksheetDocument;
 /**
  * Experimental class to do low level processing
  *  of xlsx files.
+ *  
+ * If you are using these low level classes, then you
+ *  will almost certainly need to refer to the OOXML
+ *  specifications from
+ *  http://www.ecma-international.org/publications/standards/Ecma-376.htm
  * 
  * WARNING - APIs expected to change rapidly
  */
