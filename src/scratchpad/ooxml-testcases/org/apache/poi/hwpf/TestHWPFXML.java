@@ -18,7 +18,6 @@ package org.apache.poi.hwpf;
 
 import java.io.File;
 
-import org.apache.poi.hssf.HSSFXML;
 import org.apache.poi.hxf.HXFDocument;
 import org.openxml4j.opc.Package;
 import org.openxml4j.opc.PackagePart;

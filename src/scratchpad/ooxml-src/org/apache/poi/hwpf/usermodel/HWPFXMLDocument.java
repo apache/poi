@@ -14,26 +14,23 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.hssf.usermodel;
+package org.apache.poi.hwpf.usermodel;
 
 import org.apache.poi.POIXMLDocument;
-import org.apache.poi.hssf.HSSFXML;
+import org.apache.poi.hwpf.HWPFXML;
 
 /**
- * High level representation of a ooxml workbook.
- * This is the first object most users will construct whether
- *  they are reading or writing a workbook. It is also the
- *  top level object for creating new sheets/etc.
+ * High level representation of a ooxml text document.
  */
-public class HSSFXMLWorkbook extends POIXMLDocument {
-	private HSSFXML hssfXML;
+public class HWPFXMLDocument extends POIXMLDocument {
+	private HWPFXML hwpfXML;
 	
-	public HSSFXMLWorkbook(HSSFXML xml) {
+	public HWPFXMLDocument(HWPFXML xml) {
 		super(xml);
-		this.hssfXML = xml;
+		this.hwpfXML = xml;
 	}
 	
-	public HSSFXML _getHSSFXML() {
-		return hssfXML;
+	public HWPFXML _getHWPFXML() {
+		return hwpfXML;
 	}
 }
