@@ -294,9 +294,23 @@ public class HSSFCellStyle
         format.setFontIndex(fontindex);
     }
 
+    /**
+     * gets the index of the font for this style
+     * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#getFontAt(short)
+     */
     public short getFontIndex()
     {
         return format.getFontIndex();
+    }
+    
+    /**
+     * gets the font for this style
+     * @param parentWorkbook The HSSFWorkbook that this style belongs to
+     * @see org.apache.poi.hssf.usermodel.HSSFCellStyle#getFontIndex()
+     * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#getFontAt(short)
+     */
+    public HSSFFont getFont(HSSFWorkbook parentWorkbook) {
+    	return parentWorkbook.getFontAt(getFontIndex());
     }
 
     /**
@@ -689,7 +703,6 @@ public class HSSFCellStyle
      * @see #BORDER_MEDIUM_DASH_DOT_DOT
      * @see #BORDER_SLANTED_DASH_DOT
      */
-
     public short getBorderBottom()
     {
         return format.getBorderBottom();
@@ -697,9 +710,8 @@ public class HSSFCellStyle
 
     /**
      * set the color to use for the left border
-     * @param color
+     * @param color The index of the color definition
      */
-
     public void setLeftBorderColor(short color)
     {
         format.setLeftBorderPaletteIdx(color);
@@ -707,9 +719,9 @@ public class HSSFCellStyle
 
     /**
      * get the color to use for the left border
-     * @return color
+     * @see org.apache.poi.hssf.usermodel.HSSFPalette#getColor(short)
+     * @param color The index of the color definition
      */
-
     public short getLeftBorderColor()
     {
         return format.getLeftBorderPaletteIdx();
@@ -717,9 +729,8 @@ public class HSSFCellStyle
 
     /**
      * set the color to use for the right border
-     * @param color
+     * @param color The index of the color definition
      */
-
     public void setRightBorderColor(short color)
     {
         format.setRightBorderPaletteIdx(color);
@@ -727,9 +738,9 @@ public class HSSFCellStyle
 
     /**
      * get the color to use for the left border
-     * @return color
+     * @see org.apache.poi.hssf.usermodel.HSSFPalette#getColor(short)
+     * @param color The index of the color definition
      */
-
     public short getRightBorderColor()
     {
         return format.getRightBorderPaletteIdx();
@@ -737,9 +748,8 @@ public class HSSFCellStyle
 
     /**
      * set the color to use for the top border
-     * @param color
+     * @param color The index of the color definition
      */
-
     public void setTopBorderColor(short color)
     {
         format.setTopBorderPaletteIdx(color);
@@ -747,9 +757,9 @@ public class HSSFCellStyle
 
     /**
      * get the color to use for the top border
-     * @return color
+     * @see org.apache.poi.hssf.usermodel.HSSFPalette#getColor(short)
+     * @param color The index of the color definition
      */
-
     public short getTopBorderColor()
     {
         return format.getTopBorderPaletteIdx();
@@ -757,9 +767,8 @@ public class HSSFCellStyle
 
     /**
      * set the color to use for the bottom border
-     * @param color
+     * @param color The index of the color definition
      */
-
     public void setBottomBorderColor(short color)
     {
         format.setBottomBorderPaletteIdx(color);
@@ -767,9 +776,9 @@ public class HSSFCellStyle
 
     /**
      * get the color to use for the left border
-     * @return color
+     * @see org.apache.poi.hssf.usermodel.HSSFPalette#getColor(short)
+     * @param color The index of the color definition
      */
-
     public short getBottomBorderColor()
     {
         return format.getBottomBorderPaletteIdx();
@@ -871,9 +880,9 @@ public class HSSFCellStyle
 
     /**
      * get the background fill color
+     * @see org.apache.poi.hssf.usermodel.HSSFPalette#getColor(short)
      * @return fill color
      */
-
     public short getFillBackgroundColor()
     {
     	short result = format.getFillBackground();
@@ -889,7 +898,6 @@ public class HSSFCellStyle
      * <i>Note: Ensure Foreground color is set prior to background color.</i>
      * @param bg  color
      */
-
     public void setFillForegroundColor(short bg)
     {
         format.setFillForeground(bg);
@@ -898,12 +906,11 @@ public class HSSFCellStyle
 
     /**
      * get the foreground fill color
+     * @see org.apache.poi.hssf.usermodel.HSSFPalette#getColor(short)
      * @return fill color
      */
-
     public short getFillForegroundColor()
     {
         return format.getFillForeground();
     }
-
 }

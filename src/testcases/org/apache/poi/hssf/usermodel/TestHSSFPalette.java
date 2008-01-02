@@ -96,6 +96,71 @@ public class TestHSSFPalette extends TestCase
     }
     
     /**
+     * Uses the palette from cell stylings
+     */
+    public void testPaletteFromCellColours() throws Exception {
+        String dir = System.getProperty("HSSF.testdata.path");
+        File sample = new File(dir + "/SimpleWithColours.xls");
+        assertTrue("SimpleWithColours.xls exists and is readable", sample.canRead());
+        FileInputStream fis = new FileInputStream(sample);
+        HSSFWorkbook book = new HSSFWorkbook(fis);
+        fis.close();
+    	
+        HSSFPalette p = book.getCustomPalette();
+        
+        HSSFCell cellA = book.getSheetAt(0).getRow(0).getCell((short)0);
+        HSSFCell cellB = book.getSheetAt(0).getRow(1).getCell((short)0);
+        HSSFCell cellC = book.getSheetAt(0).getRow(2).getCell((short)0);
+        HSSFCell cellD = book.getSheetAt(0).getRow(3).getCell((short)0);
+        HSSFCell cellE = book.getSheetAt(0).getRow(4).getCell((short)0);
+        
+        // Plain
+        assertEquals("I'm plain", cellA.getStringCellValue());
+        assertEquals(64, cellA.getCellStyle().getFillForegroundColor());
+        assertEquals(64, cellA.getCellStyle().getFillBackgroundColor());
+        assertEquals(HSSFFont.COLOR_NORMAL, cellA.getCellStyle().getFont(book).getColor());
+        assertEquals(0, cellA.getCellStyle().getFillPattern());
+        assertEquals("0:0:0", p.getColor((short)64).getHexString());
+        assertEquals(null, p.getColor((short)32767));
+        
+        // Red
+        assertEquals("I'm red", cellB.getStringCellValue());
+        assertEquals(64, cellB.getCellStyle().getFillForegroundColor());
+        assertEquals(64, cellB.getCellStyle().getFillBackgroundColor());
+        assertEquals(10, cellB.getCellStyle().getFont(book).getColor());
+        assertEquals(0, cellB.getCellStyle().getFillPattern());
+        assertEquals("0:0:0", p.getColor((short)64).getHexString());
+        assertEquals("FFFF:0:0", p.getColor((short)10).getHexString());
+        
+        // Red + green bg
+        assertEquals("I'm red with a green bg", cellC.getStringCellValue());
+        assertEquals(11, cellC.getCellStyle().getFillForegroundColor());
+        assertEquals(64, cellC.getCellStyle().getFillBackgroundColor());
+        assertEquals(10, cellC.getCellStyle().getFont(book).getColor());
+        assertEquals(1, cellC.getCellStyle().getFillPattern());
+        assertEquals("0:FFFF:0", p.getColor((short)11).getHexString());
+        assertEquals("FFFF:0:0", p.getColor((short)10).getHexString());
+        
+        // Pink with yellow
+        assertEquals("I'm pink with a yellow pattern (none)", cellD.getStringCellValue());
+        assertEquals(13, cellD.getCellStyle().getFillForegroundColor());
+        assertEquals(64, cellD.getCellStyle().getFillBackgroundColor());
+        assertEquals(14, cellD.getCellStyle().getFont(book).getColor());
+        assertEquals(0, cellD.getCellStyle().getFillPattern());
+        assertEquals("FFFF:FFFF:0", p.getColor((short)13).getHexString());
+        assertEquals("FFFF:0:FFFF", p.getColor((short)14).getHexString());
+        
+        // Pink with yellow - full
+        assertEquals("I'm pink with a yellow pattern (full)", cellE.getStringCellValue());
+        assertEquals(13, cellE.getCellStyle().getFillForegroundColor());
+        assertEquals(64, cellE.getCellStyle().getFillBackgroundColor());
+        assertEquals(14, cellE.getCellStyle().getFont(book).getColor());
+        assertEquals(0, cellE.getCellStyle().getFillPattern());
+        assertEquals("FFFF:FFFF:0", p.getColor((short)13).getHexString());
+        assertEquals("FFFF:0:FFFF", p.getColor((short)14).getHexString());
+    }
+    
+    /**
      * Verifies that the generated gnumeric-format string values match the
      * hardcoded values in the HSSFColor default color palette
      */
