@@ -27,7 +27,19 @@ import org.apache.poi.hxf.HXFDocument;
 public abstract class POIXMLDocument {
 	private HXFDocument document;
 
+	/**
+	 * Creates a new POI XML Document, wrapping up
+	 *  the underlying raw HXFDocument
+	 */
 	protected POIXMLDocument(HXFDocument document) {
 		this.document = document;
+	}
+
+	/**
+	 * Returns the underlying HXFDocument, typically
+	 *  used for unit testing
+	 */
+	public HXFDocument _getHXFDocument() {
+		return document;
 	}
 }
