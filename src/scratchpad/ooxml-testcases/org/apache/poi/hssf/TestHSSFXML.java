@@ -114,10 +114,14 @@ public class TestHSSFXML extends TestCase {
 		HSSFXML xml = new HSSFXML(
 				HXFDocument.openPackage(sampleFile)
 		);
-		assertNotNull(xml.getDocumentProperties());
+		assertNotNull(xml.getCoreProperties());
+		assertNotNull(xml.getExtendedProperties());
 		
-		assertEquals("Microsoft Excel", xml.getDocumentProperties().getApplication());
-		assertEquals(0, xml.getDocumentProperties().getCharacters());
-		assertEquals(0, xml.getDocumentProperties().getLines());
+		assertEquals("Microsoft Excel", xml.getExtendedProperties().getApplication());
+		assertEquals(0, xml.getExtendedProperties().getCharacters());
+		assertEquals(0, xml.getExtendedProperties().getLines());
+		
+		assertEquals(null, xml.getCoreProperties().getTitleProperty().getValue());
+		assertEquals(null, xml.getCoreProperties().getSubjectProperty().getValue());
 	}
 }

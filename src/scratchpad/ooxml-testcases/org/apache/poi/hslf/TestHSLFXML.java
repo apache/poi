@@ -113,10 +113,15 @@ public class TestHSLFXML extends TestCase {
 		HSLFXML xml = new HSLFXML(
 				HXFDocument.openPackage(sampleFile)
 		);
-		assertNotNull(xml.getDocumentProperties());
 		
-		assertEquals("Microsoft Office PowerPoint", xml.getDocumentProperties().getApplication());
-		assertEquals(0, xml.getDocumentProperties().getCharacters());
-		assertEquals(0, xml.getDocumentProperties().getLines());
+		assertNotNull(xml.getCoreProperties());
+		assertNotNull(xml.getExtendedProperties());
+		
+		assertEquals("Microsoft Office PowerPoint", xml.getExtendedProperties().getApplication());
+		assertEquals(0, xml.getExtendedProperties().getCharacters());
+		assertEquals(0, xml.getExtendedProperties().getLines());
+		
+		assertEquals(null, xml.getCoreProperties().getTitleProperty().getValue());
+		assertEquals(null, xml.getCoreProperties().getSubjectProperty().getValue());
 	}
 }

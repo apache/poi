@@ -34,6 +34,7 @@ import org.openxml4j.opc.PackagePartName;
 import org.openxml4j.opc.PackageRelationship;
 import org.openxml4j.opc.PackageRelationshipCollection;
 import org.openxml4j.opc.PackagingURIHelper;
+import org.openxml4j.opc.internal.PackagePropertiesPart;
 import org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.CTProperties;
 import org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.PropertiesDocument;
 
@@ -52,6 +53,9 @@ import org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.Proper
  * WARNING - APIs expected to change rapidly
  */
 public abstract class HXFDocument {
+	public static final String CORE_PROPERTIES_REL_TYPE = "http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties";
+	public static final String EXTENDED_PROPERTIES_REL_TYPE = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties";
+	
 	/**
 	 * File package/container.
 	 */
@@ -70,12 +74,7 @@ public abstract class HXFDocument {
 		this.container = container;
 		
 		// Find the base document
-		ArrayList<PackagePart> baseParts =
-			container.getPartsByContentType(baseContentType);
-		if(baseParts.size() != 1) {
-			throw new OpenXML4JException("Expecting one entry with content type of " + baseContentType + ", but found " + baseParts.size());
-		}
-		basePart = baseParts.get(0);
+		basePart = getSinglePartByType(baseContentType);
 		
 		// And load it up
 		try {
@@ -86,6 +85,41 @@ public abstract class HXFDocument {
 		} catch (IOException ioe) {
 			throw new OpenXML4JException(ioe.getMessage());
 		}
+	}
+	
+	/**
+	 * Fetches the (single) PackagePart with the supplied
+	 *  content type.
+	 * @param contentType The content type to search for
+	 * @throws IllegalArgumentException If we don't find a single part of that type
+	 */
+	private PackagePart getSinglePartByType(String contentType) throws IllegalArgumentException {
+		ArrayList<PackagePart> parts =
+			container.getPartsByContentType(contentType);
+		if(parts.size() != 1) {
+			throw new IllegalArgumentException("Expecting one entry with content type of " + contentType + ", but found " + parts.size());
+		}
+		return parts.get(0);
+	}
+
+	/**
+	 * Fetches the (single) PackagePart which is defined as
+	 *  the supplied relation content type of the base
+	 *  container, or null if none found.
+	 * @param relationType The relation content type to search for
+	 * @throws IllegalArgumentException If we find more than one part of that type
+	 */
+	private PackagePart getSinglePartByRelationType(String relationType) throws IllegalArgumentException, OpenXML4JException {
+		PackageRelationshipCollection rels =
+			container.getRelationshipsByType(relationType);
+		if(rels.size() == 0) {
+			return null;
+		}
+		if(rels.size() > 1) {
+			throw new IllegalArgumentException("Found " + rels.size() + " relations for the type " + relationType + ", should only ever be one!");
+		}
+		PackageRelationship rel = rels.getRelationship(0);
+		return getPackagePart(rel);
 	}
 	
 	/**
@@ -147,19 +181,21 @@ public abstract class HXFDocument {
 	}
 	
 	/**
-	 * Get the document properties (extended ooxml properties)
+	 * Get the core document properties (core ooxml properties).
 	 */
-	public CTProperties getDocumentProperties() throws OpenXML4JException, XmlException, IOException {
-		PackageRelationshipCollection docProps =
-			container.getRelationshipsByType("http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties");
-		if(docProps.size() == 0) {
+	public PackagePropertiesPart getCoreProperties() throws OpenXML4JException, XmlException, IOException {
+		PackagePart propsPart = getSinglePartByRelationType(CORE_PROPERTIES_REL_TYPE);
+		if(propsPart == null) {
 			return null;
 		}
-		if(docProps.size() > 1) {
-			throw new IllegalStateException("Found " + docProps.size() + " relations for the extended properties, should only ever be one!");
-		}
-		PackageRelationship rel = docProps.getRelationship(0);
-		PackagePart propsPart = getPackagePart(rel);
+		return (PackagePropertiesPart)propsPart;
+	}
+	
+	/**
+	 * Get the extended document properties (extended ooxml properties)
+	 */
+	public CTProperties getExtendedProperties() throws OpenXML4JException, XmlException, IOException {
+		PackagePart propsPart = getSinglePartByRelationType(EXTENDED_PROPERTIES_REL_TYPE);
 		
 		PropertiesDocument props = PropertiesDocument.Factory.parse(
 				propsPart.getInputStream());

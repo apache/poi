@@ -82,10 +82,29 @@ public class TestHWPFXML extends TestCase {
 		HWPFXML xml = new HWPFXML(
 				HXFDocument.openPackage(sampleFile)
 		);
-		assertNotNull(xml.getDocumentProperties());
+		assertNotNull(xml.getCoreProperties());
+		assertNotNull(xml.getExtendedProperties());
 		
-		assertEquals("Microsoft Office Word", xml.getDocumentProperties().getApplication());
-		assertEquals(1315, xml.getDocumentProperties().getCharacters());
-		assertEquals(10, xml.getDocumentProperties().getLines());
+		assertEquals("Microsoft Office Word", xml.getExtendedProperties().getApplication());
+		assertEquals(1315, xml.getExtendedProperties().getCharacters());
+		assertEquals(10, xml.getExtendedProperties().getLines());
+		
+		assertEquals(null, xml.getCoreProperties().getTitleProperty().getValue());
+		assertEquals(null, xml.getCoreProperties().getSubjectProperty().getValue());
+	}
+	
+	public void testMetadataComplex() throws Exception {
+		HWPFXML xml = new HWPFXML(
+				HXFDocument.openPackage(complexFile)
+		);
+		assertNotNull(xml.getCoreProperties());
+		assertNotNull(xml.getExtendedProperties());
+		
+		assertEquals("Microsoft Office Outlook", xml.getExtendedProperties().getApplication());
+		assertEquals(5184, xml.getExtendedProperties().getCharacters());
+		assertEquals(0, xml.getExtendedProperties().getLines());
+		
+		assertEquals(" ", xml.getCoreProperties().getTitleProperty().getValue());
+		assertEquals(" ", xml.getCoreProperties().getSubjectProperty().getValue());
 	}
 }
