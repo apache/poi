@@ -124,8 +124,10 @@ public class SimpleShape extends Shape {
             int rgb = p1.getPropertyValue();
             if (rgb >= 0x8000000) {
                 int idx = rgb % 0x8000000;
-                ColorSchemeAtom ca = getSheet().getColorScheme();
-                if(idx >= 0 && idx <= 7) rgb = ca.getColor(idx);
+                if(getSheet() != null) {
+                    ColorSchemeAtom ca = getSheet().getColorScheme();
+                    if(idx >= 0 && idx <= 7) rgb = ca.getColor(idx);
+                }
             }
             Color tmp = new Color(rgb, true);
             clr = new Color(tmp.getBlue(), tmp.getGreen(), tmp.getRed());
@@ -192,8 +194,10 @@ public class SimpleShape extends Shape {
             int rgb = p1.getPropertyValue();
             if (rgb >= 0x8000000) {
                 int idx = rgb % 0x8000000;
-                ColorSchemeAtom ca = getSheet().getColorScheme();
-                rgb = ca.getColor(idx);
+                if(getSheet() != null) {
+                    ColorSchemeAtom ca = getSheet().getColorScheme();
+                    rgb = ca.getColor(idx);
+                }
             }
             Color tmp = new Color(rgb, true);
             clr = new Color(tmp.getBlue(), tmp.getGreen(), tmp.getRed());

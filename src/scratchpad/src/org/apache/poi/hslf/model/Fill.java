@@ -150,10 +150,12 @@ public class Fill {
         EscherOptRecord opt = (EscherOptRecord)Shape.getEscherChild(shape.getSpContainer(), EscherOptRecord.RECORD_ID);
         if (color == null) {
             Shape.setEscherProperty(opt, EscherProperties.FILL__FILLCOLOR, -1);
+            Shape.setEscherProperty(opt, EscherProperties.FILL__NOFILLHITTEST, 0x150010);
         }
         else {
             int rgb = new Color(color.getBlue(), color.getGreen(), color.getRed(), 0).getRGB();
             Shape.setEscherProperty(opt, EscherProperties.FILL__FILLCOLOR, rgb);
+            Shape.setEscherProperty(opt, EscherProperties.FILL__NOFILLHITTEST, 0x150011);
         }
     }
 

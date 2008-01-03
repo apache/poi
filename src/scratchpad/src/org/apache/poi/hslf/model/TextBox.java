@@ -490,9 +490,6 @@ public class TextBox extends SimpleShape {
                     break;
                 }
             }
-            if(_txtrun == null) {
-                logger.log(POILogger.WARN, "text run not found for shapeId=" + shapeId);
-            }
         }
 
     }
