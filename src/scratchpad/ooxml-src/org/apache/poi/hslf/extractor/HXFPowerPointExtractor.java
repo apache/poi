@@ -37,6 +37,8 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideIdListEntry;
 
 public class HXFPowerPointExtractor extends POIXMLTextExtractor {
 	private HSLFXMLSlideShow slideshow;
+	private boolean slidesByDefault = true;
+	private boolean notesByDefault = false;
 	
 	public HXFPowerPointExtractor(Package container) throws XmlException, OpenXML4JException, IOException {
 		this(new HSLFXMLSlideShow(
@@ -60,12 +62,27 @@ public class HXFPowerPointExtractor extends POIXMLTextExtractor {
 			));
 		System.out.println(extractor.getText());
 	}
+
+	/**
+	 * Should a call to getText() return slide text?
+	 * Default is yes
+	 */
+	public void setSlidesByDefault(boolean slidesByDefault) {
+		this.slidesByDefault = slidesByDefault;
+	}
+	/**
+	 * Should a call to getText() return notes text?
+	 * Default is no
+	 */
+	public void setNotesByDefault(boolean notesByDefault) {
+		this.notesByDefault = notesByDefault;
+	}
 	
 	/**
-	 * Gets the slide and notes text
+	 * Gets the slide text, but not the notes text
 	 */
 	public String getText() {
-		return getText(true, true);
+		return getText(slidesByDefault, notesByDefault);
 	}
 	
 	/**

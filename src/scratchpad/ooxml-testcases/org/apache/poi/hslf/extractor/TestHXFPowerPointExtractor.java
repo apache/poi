@@ -60,7 +60,7 @@ public class TestHXFPowerPointExtractor extends TestCase {
 		
 		// Check Basics
 		assertTrue(text.startsWith("Lorem ipsum dolor sit amet\n"));
-		assertTrue(text.endsWith("amet\n\n\n\n"));
+		assertTrue(text.endsWith("amet\n\n"));
 		
 		// Just slides, no notes
 		text = extractor.getText(true, false);
@@ -96,6 +96,14 @@ public class TestHXFPowerPointExtractor extends TestCase {
 				"sit\n" +
 				"amet\n" +
 				"\n\n\n", text
+		);
+		
+		// Via set defaults
+		extractor.setSlidesByDefault(false);
+		extractor.setNotesByDefault(true);
+		text = extractor.getText();
+		assertEquals(
+				"\n\n\n\n", text
 		);
 	}
 }
