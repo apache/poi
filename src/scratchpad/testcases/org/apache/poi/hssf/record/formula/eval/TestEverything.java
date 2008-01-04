@@ -23,27 +23,37 @@ package org.apache.poi.hssf.record.formula.eval;
 import junit.framework.TestSuite;
 
 /**
- * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
+ * This is a test of all the Eval functions we have implemented.
+ * Add newly implemented Eval functions in here to have them
+ *  tested.
+ * For newly implemented functions, 
+ *  @see org.apache.poi.hssf.record.formula.functions.TestEverything
  *
+ * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
  */
 public class TestEverything extends TestSuite {
 
     public static TestSuite suite() throws Exception {
         TestSuite suite = new TestSuite("Tests for OperationEval concrete implementation classes.");
-        suite.addTest(new GenericFormulaTestCase("D23"));
-        suite.addTest(new GenericFormulaTestCase("D27"));
-        suite.addTest(new GenericFormulaTestCase("D31"));
-        suite.addTest(new GenericFormulaTestCase("D35"));
-        suite.addTest(new GenericFormulaTestCase("D39"));
-        suite.addTest(new GenericFormulaTestCase("D43"));
-        suite.addTest(new GenericFormulaTestCase("D47"));
-        suite.addTest(new GenericFormulaTestCase("D51"));
-        suite.addTest(new GenericFormulaTestCase("D55"));
-        suite.addTest(new GenericFormulaTestCase("D59"));
-        suite.addTest(new GenericFormulaTestCase("D63"));
-        suite.addTest(new GenericFormulaTestCase("D67"));
-        suite.addTest(new GenericFormulaTestCase("D71"));
-        suite.addTest(new GenericFormulaTestCase("D75"));
+        suite.addTest(new GenericFormulaTestCase("D23")); // Add
+        suite.addTest(new GenericFormulaTestCase("D27")); // ConcatEval
+        suite.addTest(new GenericFormulaTestCase("D31")); // DivideEval
+        suite.addTest(new GenericFormulaTestCase("D35")); // EqualEval
+        suite.addTest(new GenericFormulaTestCase("D39")); // GreaterEqualEval
+        suite.addTest(new GenericFormulaTestCase("D43")); // GreaterThanEval
+        suite.addTest(new GenericFormulaTestCase("D47")); // LessEqualEval
+        suite.addTest(new GenericFormulaTestCase("D51")); // LessThanEval
+        suite.addTest(new GenericFormulaTestCase("D55")); // MultiplyEval
+        suite.addTest(new GenericFormulaTestCase("D59")); // NotEqualEval
+        suite.addTest(new GenericFormulaTestCase("D63")); // PowerEval
+        suite.addTest(new GenericFormulaTestCase("D67")); // SubtractEval
+        suite.addTest(new GenericFormulaTestCase("D71")); // UnaryMinusEval
+        suite.addTest(new GenericFormulaTestCase("D75")); // UnaryPlusEval
+        
+		// Add newly implemented Eval functions here
+		// (Formula functions go in 
+ 		//  @see org.apache.poi.hssf.record.formula.functions.TestEverything )
+        
         return suite;
     }
 }

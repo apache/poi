@@ -63,7 +63,7 @@ public class TestReadWriteChart
         //System.out.println("first assertion for date");
         assertEquals(new GregorianCalendar(2000, 0, 1, 10, 51, 2).getTime(),
                      HSSFDateUtil
-                         .getJavaDate(firstCell.getNumericCellValue()));
+                         .getJavaDate(firstCell.getNumericCellValue(), false));
         HSSFRow  row  = sheet.createRow(( short ) 15);
         HSSFCell cell = row.createCell(( short ) 1);
 

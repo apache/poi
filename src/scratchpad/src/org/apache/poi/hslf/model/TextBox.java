@@ -196,7 +196,7 @@ public class TextBox extends SimpleShape {
         } catch (IOException e){
             throw new HSLFException(e);
         }
-        if(getAnchor().equals(new java.awt.Rectangle())) resizeToFitText();
+        if(getAnchor().equals(new java.awt.Rectangle()) && !"".equals(getText())) resizeToFitText();
     }
 
     /**
@@ -264,6 +264,14 @@ public class TextBox extends SimpleShape {
         EscherOptRecord opt = (EscherOptRecord)getEscherChild(_escherContainer, EscherOptRecord.RECORD_ID);
         setEscherProperty(opt, EscherProperties.TEXT__ANCHORTEXT, align);
     }
+
+    public void setHorizontalAlignment(int align){
+        _txtrun.getRichTextRuns()[0].setAlignment(align);
+    }
+    public int getHorizontalAlignment(){
+        return _txtrun.getRichTextRuns()[0].getAlignment();
+    }
+
     /**
      * Returns the distance (in points) between the bottom of the text frame
      * and the bottom of the inscribed rectangle of the shape that contains the text.
@@ -466,7 +474,11 @@ public class TextBox extends SimpleShape {
         TextRun[] runs = sheet.getTextRuns();
         if (ota != null) {
             int idx = ota.getTextIndex();
-            if(idx < runs.length) _txtrun = runs[idx];
+            for (int i = 0; i < runs.length; i++) {
+                if(runs[i].getIndex() == idx){
+                    _txtrun = runs[i];
+                }
+            }
             if(_txtrun == null) {
                 logger.log(POILogger.WARN, "text run not found for OutlineTextRefAtom.TextIndex=" + idx);
             }
@@ -477,9 +489,6 @@ public class TextBox extends SimpleShape {
                     _txtrun = runs[i];
                     break;
                 }
-            }
-            if(_txtrun == null) {
-                logger.log(POILogger.WARN, "text run not found for shapeId=" + shapeId);
             }
         }
 

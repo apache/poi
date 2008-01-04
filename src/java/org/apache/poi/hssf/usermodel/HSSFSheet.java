@@ -23,9 +23,13 @@
 package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.ddf.EscherRecord;
+import org.apache.poi.hssf.model.FormulaParser;
 import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.*;
+import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.hssf.util.HSSFCellRangeAddress;
+import org.apache.poi.hssf.util.HSSFDataValidation;
 import org.apache.poi.hssf.util.Region;
 import org.apache.poi.hssf.util.PaneInformation;
 import org.apache.poi.util.POILogFactory;
@@ -35,6 +39,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Stack;
 import java.util.TreeMap;
 import java.text.AttributedString;
 import java.text.NumberFormat;
@@ -352,6 +357,94 @@ public class HSSFSheet
     public int getLastRowNum()
     {
         return lastrow;
+    }
+    
+    /**
+     * Creates a data validation object
+     * @param obj_validation The Data validation object settings
+     */
+    public void addValidationData(HSSFDataValidation obj_validation)
+    {
+       if ( obj_validation == null )
+       {
+         return;
+       }
+       DVALRecord dvalRec = (DVALRecord)sheet.findFirstRecordBySid( DVALRecord.sid );
+       int eofLoc = sheet.findFirstRecordLocBySid( EOFRecord.sid );
+       if ( dvalRec == null )
+       {
+          dvalRec = new DVALRecord();
+          sheet.getRecords().add( eofLoc, dvalRec );
+       }
+       int curr_dvRecNo = dvalRec.getDVRecNo();
+       dvalRec.setDVRecNo(curr_dvRecNo+1);
+
+       //create dv record
+       DVRecord dvRecord = new DVRecord();
+
+       //dv record's option flags
+       dvRecord.setDataType( obj_validation.getDataValidationType() );
+       dvRecord.setErrorStyle(obj_validation.getErrorStyle());
+       dvRecord.setEmptyCellAllowed(obj_validation.getEmptyCellAllowed());
+       dvRecord.setSurppresDropdownArrow(obj_validation.getSurppressDropDownArrow());
+       dvRecord.setShowPromptOnCellSelected(obj_validation.getShowPromptBox());
+       dvRecord.setShowErrorOnInvalidValue(obj_validation.getShowErrorBox());
+       dvRecord.setConditionOperator(obj_validation.getOperator());
+
+       //string fields
+       dvRecord.setStringField( DVRecord.STRING_PROMPT_TITLE,obj_validation.getPromptBoxTitle());
+       dvRecord.setStringField( DVRecord.STRING_PROMPT_TEXT, obj_validation.getPromptBoxText());
+       dvRecord.setStringField( DVRecord.STRING_ERROR_TITLE, obj_validation.getErrorBoxTitle());
+       dvRecord.setStringField( DVRecord.STRING_ERROR_TEXT, obj_validation.getErrorBoxText());
+
+       //formula fields ( size and data )
+       String str_formula = obj_validation.getFirstFormula();
+       FormulaParser fp = new FormulaParser(str_formula+";",book);
+       fp.parse();
+       Stack ptg_arr = new Stack();
+       Ptg[] ptg  = fp.getRPNPtg();
+       int size = 0;
+       for (int k = 0; k < ptg.length; k++)
+       {
+           if ( ptg[k] instanceof org.apache.poi.hssf.record.formula.AreaPtg )
+           {
+              //we should set ptgClass to Ptg.CLASS_REF and explicit formula string to false
+              ptg[k].setClass(Ptg.CLASS_REF);
+              obj_validation.setExplicitListFormula(false);
+           }
+           size += ptg[k].getSize();
+           ptg_arr.push(ptg[k]);
+       }
+       dvRecord.setFirstFormulaRPN(ptg_arr);
+       dvRecord.setFirstFormulaSize((short)size);
+
+       dvRecord.setListExplicitFormula(obj_validation.getExplicitListFormula());
+
+       if ( obj_validation.getSecondFormula() != null )
+       {
+         str_formula = obj_validation.getSecondFormula();
+         fp = new FormulaParser(str_formula+";",book);
+         fp.parse();
+         ptg_arr = new Stack();
+         ptg  = fp.getRPNPtg();
+         size = 0;
+         for (int k = 0; k < ptg.length; k++)
+         {
+             size += ptg[k].getSize();
+             ptg_arr.push(ptg[k]);
+         }
+         dvRecord.setSecFormulaRPN(ptg_arr);
+         dvRecord.setSecFormulaSize((short)size);
+       }
+
+       //dv records cell range field
+       HSSFCellRangeAddress cell_range = new HSSFCellRangeAddress();
+       cell_range.addADDRStructure(obj_validation.getFirstRow(), obj_validation.getFirstColumn(), obj_validation.getLastRow(), obj_validation.getLastColumn());
+       dvRecord.setCellRangeAddress(cell_range);
+
+       //add dv record
+       eofLoc = sheet.findFirstRecordLocBySid( EOFRecord.sid );
+       sheet.getRecords().add( eofLoc, dvRecord );
     }
 
     /**

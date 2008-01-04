@@ -84,6 +84,21 @@ public class TestBlankFileRead extends TestCase {
 	}
 	
 	/**
+	 * Test to see if we can read the FROM Chunk.
+	 * @throws ChunkNotFoundException 
+	 * 
+	 */
+	public void testReadDisplayFrom() throws ChunkNotFoundException {
+		try {
+			mapiMessage.getDisplayFrom();		
+		} catch(ChunkNotFoundException exp) {
+			return;
+		}
+		
+		TestCase.fail("Should have thrown a ChunkNotFoundException but didn't");
+	}
+	
+	/**
 	 * Test to see if we can read the CC Chunk.
 	 * @throws ChunkNotFoundException 
 	 * 

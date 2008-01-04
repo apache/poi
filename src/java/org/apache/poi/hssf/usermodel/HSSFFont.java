@@ -281,8 +281,8 @@ public class HSSFFont
      * @return color to use
      * @see #COLOR_NORMAL
      * @see #COLOR_RED
+     * @see org.apache.poi.hssf.usermodel.HSSFPalette#getColor(short)
      */
-
     public short getColor()
     {
         return font.getColorPaletteIndex();

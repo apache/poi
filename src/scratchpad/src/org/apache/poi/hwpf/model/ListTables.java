@@ -19,6 +19,8 @@
 package org.apache.poi.hwpf.model;
 
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 import org.apache.poi.hwpf.model.io.*;
 
@@ -37,6 +39,7 @@ public class ListTables
 {
   private static final int LIST_DATA_SIZE = 28;
   private static final int LIST_FORMAT_OVERRIDE_SIZE = 16;
+  private static POILogger log = POILogFactory.getLogger(ListTables.class);
 
   HashMap _listMap = new HashMap();
   ArrayList _overrideList = new ArrayList();
@@ -189,8 +192,13 @@ public class ListTables
   public ListLevel getLevel(int listID, int level)
   {
     ListData lst = (ListData)_listMap.get(new Integer(listID));
-    ListLevel lvl = lst.getLevels()[level];
-    return lvl;
+    if(level < lst.numLevels()) {
+    	ListLevel lvl = lst.getLevels()[level];
+    	return lvl;
+    } else {
+    	log.log(POILogger.WARN, "Requested level " + level + " which was greater than the maximum defined (" + lst.numLevels() + ")"); 
+    	return null;
+    }
   }
 
   public ListData getListData(int listID)

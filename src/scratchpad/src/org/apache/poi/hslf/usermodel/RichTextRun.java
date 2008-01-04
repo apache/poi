@@ -198,7 +198,7 @@ public class RichTextRun
         setFlag(true, index, value);
 	}
 
-    private void setFlag(boolean isCharacter, int index, boolean value) {
+    public void setFlag(boolean isCharacter, int index, boolean value) {
         TextPropCollection props;
         String propname;
         if (isCharacter){
@@ -282,7 +282,7 @@ public class RichTextRun
 	 * @param propName The name of the Character TextProp
 	 * @param val The value to set for the TextProp
 	 */
-	private void setParaTextPropVal(String propName, int val) {
+	public void setParaTextPropVal(String propName, int val) {
 		// Ensure we have the StyleTextProp atom we're going to need
 		if(paragraphStyle == null) {
 			parentRun.ensureStyleAtomPresent();
@@ -297,7 +297,7 @@ public class RichTextRun
 	 * @param propName The name of the Paragraph TextProp
 	 * @param val The value to set for the TextProp
 	 */
-	private void setCharTextPropVal(String propName, int val) {
+	public void setCharTextPropVal(String propName, int val) {
 		// Ensure we have the StyleTextProp atom we're going to need
 		if(characterStyle == null) {
 			parentRun.ensureStyleAtomPresent();

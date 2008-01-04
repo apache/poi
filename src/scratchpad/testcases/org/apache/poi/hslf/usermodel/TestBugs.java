@@ -25,6 +25,7 @@ import org.apache.poi.hslf.model.Shape;
 import java.io.*;
 import java.util.HashSet;
 import java.util.HashMap;
+import java.util.ArrayList;
 import java.awt.*;
 
 /**
@@ -298,4 +299,35 @@ public class TestBugs extends TestCase {
 
     }
 
+    /**
+     * Bug 38256:  RuntimeException: Couldn't instantiate the class for type with id 0.
+     * ( also fixed followup: getTextRuns() returns no text )
+     */
+    public void test43781 () throws Exception {
+        FileInputStream is = new FileInputStream(new File(cwd, "43781.ppt"));
+        SlideShow ppt = new SlideShow(is);
+        is.close();
+
+        assertTrue("No Exceptions while reading file", true);
+
+        Slide slide = ppt.getSlides()[0];
+        TextRun[] tr1 = slide.getTextRuns();
+
+        ArrayList lst = new ArrayList();
+        Shape[] shape = slide.getShapes();
+        for (int i = 0; i < shape.length; i++) {
+            if( shape[i] instanceof TextBox){
+                TextRun textRun = ((TextBox)shape[i]).getTextRun();
+                if(textRun != null) lst.add(textRun);
+            }
+
+        }
+        TextRun[] tr2 = new TextRun[lst.size()];
+        lst.toArray(tr2);
+
+        assertEquals(tr1.length, tr2.length);
+        for (int i = 0; i < tr1.length; i++) {
+            assertEquals(tr1[i].getText(), tr2[i].getText());
+        }
+    }
 }

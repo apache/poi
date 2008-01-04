@@ -32,7 +32,17 @@
 
 	<!-- Don't forget to update changes.xml too! -->
     <changes>
-        <release version="3.0.2-FINAL" date="2007-??-??">
+        <release version="3.0.2-FINAL" date="2008-??-??">
+            <action dev="POI-DEVELOPERS" type="add">Support for tables in HSLF</action>
+            <action dev="POI-DEVELOPERS" type="fix">43781 - Fix for extracting text from TextBoxes HSLF in</action>
+            <action dev="POI-DEVELOPERS" type="fix">Improve JavaDocs relating to hssf font and fill colourings</action>
+            <action dev="POI-DEVELOPERS" type="add">44095, 44097, 44099 - [PATCH] Support for Mid, Replace and Substitute excel functions</action>
+            <action dev="POI-DEVELOPERS" type="add">44055 - [PATCH] Support for getting the from field from HSMF messages</action>
+            <action dev="POI-DEVELOPERS" type="add">43551 - [PATCH] Support for 1904 date windowing in HSSF (previously only supported 1900 date windowing)</action>
+            <action dev="POI-DEVELOPERS" type="add">41064 - [PATCH] Support for String continue records</action>
+            <action dev="POI-DEVELOPERS" type="add">27511 - [PATCH] Support for data validation, via DVRecord and DVALRecord</action>
+        </release>
+        <release version="3.0.2-BETA1" date="2007-12-04">
             <action dev="POI-DEVELOPERS" type="fix">43877 - Fix for handling mixed OBJ and CONTINUE records</action>
             <action dev="POI-DEVELOPERS" type="fix">39512 - Fix for handling mixed OBJ and CONTINUE records</action>
             <action dev="POI-DEVELOPERS" type="fix">43837 - [PATCH] Support for unicode NameRecords</action>

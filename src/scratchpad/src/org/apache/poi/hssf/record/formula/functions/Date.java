@@ -70,7 +70,7 @@ public class Date extends NumericFunction {
                 c.set(year, month, day, 0, 0, 0);
                 c.set(Calendar.MILLISECOND, 0);
                 
-                return new NumberEval(HSSFDateUtil.getExcelDate(c.getTime()));
+                return new NumberEval(HSSFDateUtil.getExcelDate(c.getTime(), false)); // XXX fix 1900/1904 problem
             }
         }
         

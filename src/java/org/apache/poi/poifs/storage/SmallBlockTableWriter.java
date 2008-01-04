@@ -19,6 +19,7 @@
 
 package org.apache.poi.poifs.storage;
 
+import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.filesystem.BATManaged;
 import org.apache.poi.poifs.filesystem.POIFSDocument;
 import org.apache.poi.poifs.property.RootProperty;
@@ -69,6 +70,8 @@ public class SmallBlockTableWriter
                 {
                     _small_blocks.add(blocks[ j ]);
                 }
+            } else {
+            	doc.setStartBlock(POIFSConstants.END_OF_CHAIN);
             }
         }
         _sbat.simpleCreateBlocks();

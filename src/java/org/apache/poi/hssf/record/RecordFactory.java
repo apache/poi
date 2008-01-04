@@ -75,7 +75,8 @@ public class RecordFactory
                 HorizontalPageBreakRecord.class, VerticalPageBreakRecord.class, 
                 WriteProtectRecord.class, FilePassRecord.class, PaneRecord.class,
                 NoteRecord.class, ObjectProtectRecord.class, ScenarioProtectRecord.class, 
-                FileSharingRecord.class, ChartTitleFormatRecord.class
+                FileSharingRecord.class, ChartTitleFormatRecord.class,
+                DVRecord.class, DVALRecord.class
             };
     }
     private static Map           recordsMap  = recordsToMap(records);
@@ -146,6 +147,9 @@ public class RecordFactory
                         } else if (record.getSid() == ContinueRecord.sid &&
                                    (lastRecord instanceof DrawingGroupRecord)) {
                             ((DrawingGroupRecord)lastRecord).processContinueRecord(((ContinueRecord)record).getData());
+                        } else if (record.getSid() == ContinueRecord.sid &&
+                        			(lastRecord instanceof StringRecord)) {
+                        	((StringRecord)lastRecord).processContinueRecord(((ContinueRecord)record).getData());
                         } else if (record.getSid() == ContinueRecord.sid) {
                           if (lastRecord instanceof UnknownRecord) {
                             //Gracefully handle records that we dont know about,

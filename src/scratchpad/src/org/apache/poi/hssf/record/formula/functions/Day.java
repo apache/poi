@@ -46,7 +46,7 @@ srcCellRow, srcCellCol);
             if (ve instanceof NumericValueEval) {
                 NumericValueEval ne = (NumericValueEval) ve;
                 if (HSSFDateUtil.isValidExcelDate(ne.getNumberValue())) {
-                    java.util.Date d = HSSFDateUtil.getJavaDate(ne.getNumberValue());
+                    java.util.Date d = HSSFDateUtil.getJavaDate(ne.getNumberValue(), false); // XXX fix 1900/1904 problem
                     java.util.Calendar c = java.util.Calendar.getInstance();
                     c.setTime(d);
                     retval = new NumberEval(c.get(java.util.Calendar.DAY_OF_MONTH));
