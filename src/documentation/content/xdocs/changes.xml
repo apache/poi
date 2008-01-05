@@ -35,7 +35,7 @@
     </devs>
 
 		<!-- Don't forget to update status.xml too! -->
-        <release version="3.0.2-FINAL" date="2008-??-??">
+        <release version="3.0.2-BETA2" date="2008-01-12">
             <action dev="POI-DEVELOPERS" type="add">Support for tables in HSLF</action>
             <action dev="POI-DEVELOPERS" type="fix">43781 - Fix for extracting text from TextBoxes HSLF in</action>
             <action dev="POI-DEVELOPERS" type="fix">Improve JavaDocs relating to hssf font and fill colourings</action>
