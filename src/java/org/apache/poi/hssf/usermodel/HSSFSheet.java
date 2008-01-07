@@ -1202,6 +1202,12 @@ public class HSSFSheet
                     row2Replace.createCellFromRecord( cellRecord );
                     sheet.addValueRecord( rowNum + n, cellRecord );
                 }
+
+                // move comments if exist (can exist even if cell is null)
+                HSSFComment comment = getCellComment(rowNum, col);
+                if (comment != null) {
+                   comment.setRow(rowNum + n);
+                }
             }
         }
         if ( endRow == lastrow || endRow + n > lastrow ) lastrow = Math.min( endRow + n, 65535 );
@@ -1671,7 +1677,21 @@ public class HSSFSheet
      * @return cell comment or <code>null</code> if not found
      */
      public HSSFComment getCellComment(int row, int column){
-        return HSSFCell.findCellComment(sheet, row, column);
+        // Don't call findCellComment directly, otherwise
+        //  two calls to this method will result in two
+        //  new HSSFComment instances, which is bad
+        HSSFRow r = getRow(row);
+        if(r != null) {
+            HSSFCell c = r.getCell((short)column);
+            if(c != null) {
+                return c.getCellComment();
+            } else {
+                // No cell, so you will get new
+                //  objects every time, sorry...
+                return HSSFCell.findCellComment(sheet, row, column);
+            }
+        }
+        return null;
     }
 
 }
