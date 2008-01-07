@@ -379,6 +379,8 @@ under the License.
 			destfile="${ooxml.xsds.jar}"
 			javasource="1.4"
 			failonerror="false"
+			fork="true"
+			memoryMaximumSize="512m"
 		>
 			<classpath refid="ooxml.classpath"/>
 		</xmlbean>
