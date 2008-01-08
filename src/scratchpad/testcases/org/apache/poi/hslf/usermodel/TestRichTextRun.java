@@ -16,15 +16,21 @@
 */
 package org.apache.poi.hslf.usermodel;
 
-import java.io.*;
-import java.awt.*;
-
-import org.apache.poi.hslf.HSLFSlideShow;
-import org.apache.poi.hslf.model.*;
-import org.apache.poi.hslf.record.Record;
-import org.apache.poi.hslf.record.SlideListWithText;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 
 import junit.framework.TestCase;
+
+import org.apache.poi.hslf.HSLFSlideShow;
+import org.apache.poi.hslf.model.Slide;
+import org.apache.poi.hslf.model.SlideMaster;
+import org.apache.poi.hslf.model.TextBox;
+import org.apache.poi.hslf.model.TextRun;
+import org.apache.poi.hslf.record.Record;
+import org.apache.poi.hslf.record.SlideListWithText;
 
 /**
  * Test that the friendly getters and setters on RichTextRun
@@ -548,5 +554,76 @@ if(false) {
         assertEquals(50, rt.getTextOffset());
         assertEquals(0, rt.getBulletOffset());
         assertEquals('\u263A', rt.getBulletChar());
+    }
+    
+    public void testAddText() throws Exception {
+        FileInputStream is = new FileInputStream(new File(System.getProperty("HSLF.testdata.path"), "bullets.ppt"));
+        SlideShow ppt = new SlideShow(is);
+        is.close();
+        assertTrue("No Exceptions while reading file", true);
+
+        RichTextRun rt;
+        TextRun[] txt;
+        Slide[] slides = ppt.getSlides();
+        
+        assertEquals(2, slides.length);
+        txt = slides[0].getTextRuns();
+        assertEquals(2, txt.length);
+
+        assertEquals("Title text", txt[0].getRawText());
+        assertEquals(1, txt[0].getRichTextRuns().length);
+        rt = txt[0].getRichTextRuns()[0];
+        assertFalse(rt.isBullet());
+        
+        // Add some new text
+        txt[0].appendText("Foo! I'm new!");
+        assertEquals(2, txt[0].getRichTextRuns().length);
+        
+        rt = txt[0].getRichTextRuns()[0];
+        assertFalse(rt.isBold());
+        assertEquals("Title text", rt.getText());
+        rt = txt[0].getRichTextRuns()[1];
+        assertFalse(rt.isBold());
+        assertEquals("Foo! I'm new!", rt.getText());
+        rt.setBold(true);
+        
+        // And some more
+        txt[0].appendText("Me too!");
+        assertEquals(3, txt[0].getRichTextRuns().length);
+        rt = txt[0].getRichTextRuns()[0];
+        assertFalse(rt.isBold());
+        assertEquals("Title text", rt.getText());
+        rt = txt[0].getRichTextRuns()[1];
+        assertTrue(rt.isBold());
+        assertEquals("Foo! I'm new!", rt.getText());
+        rt = txt[0].getRichTextRuns()[2];
+        assertFalse(rt.isBold());
+        assertEquals("Me too!", rt.getText());
+        
+        // Save and re-open
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ppt.write(out);
+        out.close();
+
+        ppt = new SlideShow(new ByteArrayInputStream(out.toByteArray()));
+        slides = ppt.getSlides();
+        
+        assertEquals(2, slides.length);
+        
+        txt = slides[0].getTextRuns();
+        assertEquals(2, txt.length);
+        assertEquals(3, txt[0].getRichTextRuns().length);
+        rt = txt[0].getRichTextRuns()[0];
+        assertFalse(rt.isBold());
+        assertEquals("Title text", rt.getText());
+        rt = txt[0].getRichTextRuns()[1];
+        assertTrue(rt.isBold());
+        assertEquals("Foo! I'm new!", rt.getText());
+        rt = txt[0].getRichTextRuns()[2];
+        assertFalse(rt.isBold());
+        assertEquals("Me too!", rt.getText());
+        
+//        FileOutputStream fout = new FileOutputStream("/tmp/foo.ppt");
+//        ppt.write(fout);
     }
 }
