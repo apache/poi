@@ -110,6 +110,13 @@ public class TestUnfixedBugs extends TestCase {
 	        assertTrue("No Exceptions while reading file", true);
 
 	    }
-
-	
+	    
+	    public void test43493() throws Exception {
+	    	// Has crazy corrup subrecords on
+	    	//  a EmbeddedObjectRefSubRecord
+	    	File f = new File(cwd, "43493.xls");
+	    	HSSFWorkbook wb = new HSSFWorkbook(
+	    			new FileInputStream(f)
+	    	);
+	    }
 }

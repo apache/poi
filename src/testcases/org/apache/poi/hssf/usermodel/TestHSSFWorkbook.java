@@ -16,14 +16,23 @@
 */
 package org.apache.poi.hssf.usermodel;
 
+import java.io.File;
+import java.io.FileInputStream;
+
 import junit.framework.*;
 import org.apache.poi.hssf.record.NameRecord;
 
 public class TestHSSFWorkbook extends TestCase
 {
     HSSFWorkbook hssfWorkbook;
+    String filename;
 
-    public void testSetRepeatingRowsAndColumns() throws Exception
+	protected void setUp() throws Exception {
+		super.setUp();
+        filename = System.getProperty("HSSF.testdata.path");
+	}
+
+	public void testSetRepeatingRowsAndColumns() throws Exception
     {
         // Test bug 29747
         HSSFWorkbook b = new HSSFWorkbook( );
@@ -34,7 +43,7 @@ public class TestHSSFWorkbook extends TestCase
         NameRecord nameRecord = b.getWorkbook().getNameRecord( 0 );
         assertEquals( 3, nameRecord.getIndexToSheet() );
     }
-
+    
     public void testDuplicateNames()
             throws Exception
     {
