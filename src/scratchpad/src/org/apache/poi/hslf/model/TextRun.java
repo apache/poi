@@ -20,12 +20,16 @@
 
 package org.apache.poi.hslf.model;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Vector;
 
 import org.apache.poi.hslf.model.textproperties.TextPropCollection;
-import org.apache.poi.hslf.record.*;
+import org.apache.poi.hslf.record.Record;
+import org.apache.poi.hslf.record.RecordContainer;
+import org.apache.poi.hslf.record.StyleTextPropAtom;
+import org.apache.poi.hslf.record.TextBytesAtom;
+import org.apache.poi.hslf.record.TextCharsAtom;
+import org.apache.poi.hslf.record.TextHeaderAtom;
 import org.apache.poi.hslf.usermodel.RichTextRun;
 import org.apache.poi.hslf.usermodel.SlideShow;
 import org.apache.poi.util.StringUtil;
@@ -258,12 +262,15 @@ public class TextRun
 	 * Adds the supplied text onto the end of the TextRun, 
 	 *  creating a new RichTextRun (returned) for it to
 	 *  sit in. 
+	 * In many cases, before calling this, you'll want to add
+	 *  a newline onto the end of your last RichTextRun
 	 */
 	public RichTextRun appendText(String s) {
 		// We will need a StyleTextProp atom
 		ensureStyleAtomPresent();
 		
-		// First up, append the text
+		// First up, append the text to the 
+		//  underlying text atom
 		int oldSize = getRawText().length();
 		storeText(
 				getRawText() + s
@@ -272,21 +279,8 @@ public class TextRun
 		// If either of the previous styles overran
 		//  the text by one, we need to shuffle that
 		//  extra character onto the new ones
-		Iterator it = _styleAtom.getParagraphStyles().iterator();
-		int pLen = 0;
-		while(it.hasNext()) {
-			TextPropCollection tpc = (TextPropCollection)it.next();
-			pLen += tpc.getCharactersCovered();
-		}
-		it = _styleAtom.getCharacterStyles().iterator();
-		int cLen = 0;
-		while(it.hasNext()) {
-			TextPropCollection tpc = (TextPropCollection)it.next();
-			cLen += tpc.getCharactersCovered();
-		}
-		int pOverRun = pLen - oldSize;
-		int cOverRun = cLen - oldSize;
-		
+		int pOverRun = _styleAtom.getParagraphTextLengthCovered() - oldSize;
+		int cOverRun = _styleAtom.getCharacterTextLengthCovered() - oldSize;
 		if(pOverRun > 0) {
 			TextPropCollection tpc = (TextPropCollection)
 				_styleAtom.getParagraphStyles().getLast();
@@ -302,8 +296,7 @@ public class TextRun
 			);
 		}
 		
-		// Next, add the styles for its 
-		//  paragraph and characters
+		// Next, add the styles for its paragraph and characters
 		TextPropCollection newPTP =
 			_styleAtom.addParagraphTextPropCollection(s.length()+pOverRun);
 		TextPropCollection newCTP =
