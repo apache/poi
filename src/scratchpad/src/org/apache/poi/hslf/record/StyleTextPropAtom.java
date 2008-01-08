@@ -19,17 +19,19 @@
 
 package org.apache.poi.hslf.record;
 
-import org.apache.poi.hslf.model.textproperties.*;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.POILogger;
-
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.ByteArrayOutputStream;
-import java.util.LinkedList;
-import java.util.Vector;
-import java.util.List;
 import java.util.Iterator;
+import java.util.LinkedList;
+
+import org.apache.poi.hslf.model.textproperties.AlignmentTextProp;
+import org.apache.poi.hslf.model.textproperties.CharFlagsTextProp;
+import org.apache.poi.hslf.model.textproperties.ParagraphFlagsTextProp;
+import org.apache.poi.hslf.model.textproperties.TextProp;
+import org.apache.poi.hslf.model.textproperties.TextPropCollection;
+import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.POILogger;
 
 /**
  * A StyleTextPropAtom (type 4001). Holds basic character properties 
@@ -88,6 +90,37 @@ public class StyleTextPropAtom extends RecordAtom
 	 *  character stylings
 	 */
 	public void setCharacterStyles(LinkedList cs) { charStyles = cs; }
+	
+	/**
+	 * Returns how many characters the paragraph's
+	 *  TextPropCollections cover.
+	 * (May be one or two more than the underlying text does,
+	 *  due to having extra characters meaning something
+	 *  special to powerpoint)
+	 */
+	public int getParagraphTextLengthCovered() {
+		return getCharactersCovered(paragraphStyles);
+	}
+	/**
+	 * Returns how many characters the character's
+	 *  TextPropCollections cover.
+	 * (May be one or two more than the underlying text does,
+	 *  due to having extra characters meaning something
+	 *  special to powerpoint)
+	 */
+	public int getCharacterTextLengthCovered() {
+		return getCharactersCovered(charStyles);
+	}
+	private int getCharactersCovered(LinkedList styles) {
+		int length = 0;
+		Iterator it = styles.iterator();
+		while(it.hasNext()) {
+			TextPropCollection tpc =
+				(TextPropCollection)it.next();
+			length += tpc.getCharactersCovered();
+		}
+		return length;
+	}
 
 	/** All the different kinds of paragraph properties we might handle */
 	public static TextProp[] paragraphTextPropTypes = new TextProp[] {
@@ -355,8 +388,7 @@ public class StyleTextPropAtom extends RecordAtom
 		charStyles.add(tpc);
 		return tpc;
 	}
-
-
+	
 /* ************************************************************************ */
 
 
