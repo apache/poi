@@ -36,4 +36,8 @@ public class HSSFXMLWorkbook extends POIXMLDocument {
 	public HSSFXML _getHSSFXML() {
 		return hssfXML;
 	}
+	
+	public String getSharedString(int index) {
+		return hssfXML.getSharedString(index);
+	}
 }

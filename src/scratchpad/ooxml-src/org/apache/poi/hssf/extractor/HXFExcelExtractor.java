@@ -117,7 +117,7 @@ public class HXFExcelExtractor extends POIXMLTextExtractor {
 							}
 						}
 						if(!done) {
-							HSSFXMLCell uCell = new HSSFXMLCell(cell);
+							HSSFXMLCell uCell = new HSSFXMLCell(cell, workbook);
 							text.append(uCell.getStringValue());
 						}
 					}

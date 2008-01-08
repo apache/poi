@@ -17,32 +17,40 @@
 package org.apache.poi.hssf.usermodel;
 
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellType;
 
 /**
  * User facing wrapper around an underlying cell object
  */
 public class HSSFXMLCell {
-	private CTCell cell;
-	public HSSFXMLCell(CTCell rawCell) {
-		this.cell = rawCell;
-	}
-	
-	/**
-	 * Formats the cell's contents, based on its type,
-	 *  and returns it as a string.
-	 */
-	public String getStringValue() {
-		if(cell.getV() != null) {
-			return cell.getV();
-		}
-		if(cell.getIs() != null) {
-			return cell.getIs().getT();
-		}
-		// TODO: Formatting
-		return Long.toString(cell.getS());
-	}
-	
-	public String toString() {
-		return cell.getR() + " - " + getStringValue(); 
-	}
+    private CTCell cell;
+
+    /** The workbook to which this cell belongs */
+    private final HSSFXMLWorkbook workbook;
+
+    public HSSFXMLCell(CTCell rawCell, HSSFXMLWorkbook workbook) {
+        this.cell = rawCell;
+        this.workbook = workbook;
+    }
+
+    /**
+     * Formats the cell's contents, based on its type,
+     *  and returns it as a string.
+     */
+    public String getStringValue() {
+
+        switch (cell.getT().intValue()) {
+        case STCellType.INT_S:
+            return this.workbook.getSharedString(Integer.valueOf(cell.getV()));
+        case STCellType.INT_N:
+            return cell.getV();
+        // TODO: support other types
+        default:
+            return "UNSUPPORTED CELL TYPE: '" + cell.getT() + "'";
+        }
+    }
+
+    public String toString() {
+        return cell.getR() + " - " + getStringValue(); 
+    }
 }
