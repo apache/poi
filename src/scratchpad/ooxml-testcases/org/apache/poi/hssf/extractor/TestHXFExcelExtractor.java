@@ -18,6 +18,8 @@ package org.apache.poi.hssf.extractor;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import junit.framework.TestCase;
 
@@ -170,7 +172,7 @@ public class TestHXFExcelExtractor extends TestCase {
 	 *  ExcelExtractor does, when we're both passed
 	 *  the same file, just saved as xls and xlsx
 	 */
-	public void BROKENtestComparedToOLE2() throws Exception {
+	public void testComparedToOLE2() throws Exception {
 		HXFExcelExtractor ooxmlExtractor =
 			new HXFExcelExtractor(simpleXLSX.getPackage());
 		ExcelExtractor ole2Extractor =
@@ -181,14 +183,13 @@ public class TestHXFExcelExtractor extends TestCase {
 		for (int i = 0; i < extractors.length; i++) {
 			POITextExtractor extractor = extractors[i];
 			
-			String text = extractor.getText().replace("\r", "");
+			String text = extractor.getText().replaceAll("[\r\t]", "");
 			System.out.println(text.length());
 			System.out.println(text);
-			assertTrue(text.startsWith("First Sheet\nTest spreadsheet\t\n2nd row\t2nd row 2nd column\n"));
-			assertTrue(text.endsWith("13.0\nSheet3\n"));
-			
-			assertTrue(text.length() >= 214);
-			assertTrue(text.length() <= 214);
+			assertTrue(text.startsWith("First Sheet\nTest spreadsheet\n2nd row2nd row 2nd column\n"));
+			Pattern pattern = Pattern.compile(".*13(\\.0+)?\\s+Sheet3.*", Pattern.DOTALL);
+			Matcher m = pattern.matcher(text);
+			assertTrue(m.matches());			
 		}
 	}
 }

@@ -104,12 +104,33 @@ public abstract class HXFDocument {
 
 	/**
 	 * Fetches the (single) PackagePart which is defined as
+	 *  the supplied relation content type of the specified part, 
+	 *  or null if none found.
+	 * @param relationType The relation content type to search for
+	 * @throws IllegalArgumentException If we find more than one part of that type
+	 * TODO: this sucks! Make Package and PackagePart implement common intf that defines getRelationshipsByType & friends
+	 */
+	protected PackagePart getSinglePartByRelationType(String relationType, PackagePart part) throws IllegalArgumentException, OpenXML4JException {
+		PackageRelationshipCollection rels =
+			part.getRelationshipsByType(relationType);
+		if(rels.size() == 0) {
+			return null;
+		}
+		if(rels.size() > 1) {
+			throw new IllegalArgumentException("Found " + rels.size() + " relations for the type " + relationType + ", should only ever be one!");
+		}
+		PackageRelationship rel = rels.getRelationship(0);
+		return getPackagePart(rel);
+	}
+	
+	/**
+	 * Fetches the (single) PackagePart which is defined as
 	 *  the supplied relation content type of the base
 	 *  container, or null if none found.
 	 * @param relationType The relation content type to search for
 	 * @throws IllegalArgumentException If we find more than one part of that type
 	 */
-	private PackagePart getSinglePartByRelationType(String relationType) throws IllegalArgumentException, OpenXML4JException {
+	protected PackagePart getSinglePartByRelationType(String relationType) throws IllegalArgumentException, OpenXML4JException {
 		PackageRelationshipCollection rels =
 			container.getRelationshipsByType(relationType);
 		if(rels.size() == 0) {

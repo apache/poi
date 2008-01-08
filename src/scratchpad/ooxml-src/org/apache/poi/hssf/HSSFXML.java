@@ -18,6 +18,7 @@ package org.apache.poi.hssf;
 
 import java.io.IOException;
 
+import org.apache.poi.hssf.model.SharedStringsTable;
 import org.apache.poi.hxf.HXFDocument;
 import org.apache.xmlbeans.XmlException;
 import org.openxml4j.exceptions.OpenXML4JException;
@@ -45,14 +46,24 @@ public class HSSFXML extends HXFDocument {
 	public static final String MAIN_CONTENT_TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml";
 	public static final String SHEET_CONTENT_TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml";
 	public static final String SHARED_STRINGS_CONTENT_TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sharedStrings+xml";
+	public static final String SHARED_STRINGS_RELATION_TYPE = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings";
 	
 	private WorkbookDocument workbookDoc;
 	
+	private SharedStringsTable sharedStrings;
+
 	public HSSFXML(Package container) throws OpenXML4JException, IOException, XmlException {
 		super(container, MAIN_CONTENT_TYPE);
 		
 		workbookDoc =
 			WorkbookDocument.Factory.parse(basePart.getInputStream());
+		
+		PackagePart ssPart = getSinglePartByRelationType(SHARED_STRINGS_RELATION_TYPE, basePart);
+		if (ssPart != null) {
+			sharedStrings = new SharedStringsTable(ssPart);
+		} else {
+			
+		}
 	}
 	
 	/**
@@ -80,5 +91,9 @@ public class HSSFXML extends HXFDocument {
 		WorksheetDocument sheetDoc =
 			WorksheetDocument.Factory.parse(sheetPart.getInputStream());
 		return sheetDoc.getWorksheet();
+	}
+	
+	public String getSharedString(int index) {
+		return this.sharedStrings.get(index);
 	}
 }
