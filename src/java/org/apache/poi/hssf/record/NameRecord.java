@@ -24,6 +24,7 @@ import java.util.Iterator;
 
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.formula.*;
+import org.apache.poi.hssf.util.AreaReference;
 import org.apache.poi.hssf.util.RangeAddress;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
@@ -712,19 +713,32 @@ public class NameRecord extends Record {
         }
 
         if (ra.hasRange()) {
-            ptg = new Area3DPtg();
-            ((Area3DPtg) ptg).setExternSheetIndex(externSheetIndex);
-            ((Area3DPtg) ptg).setArea(ref);
-            this.setDefinitionTextLength((short)ptg.getSize());
+        	// Is it contiguous or not?
+        	AreaReference[] refs = 
+        		AreaReference.generateContiguous(ref);
+            this.setDefinitionTextLength((short)0);
+
+            // Add the area reference(s) 
+        	for(int i=0; i<refs.length; i++) {
+	            ptg = new Area3DPtg();
+	            ((Area3DPtg) ptg).setExternSheetIndex(externSheetIndex);
+	            ((Area3DPtg) ptg).setArea(refs[i].toString());
+	            field_13_name_definition.push(ptg);
+	            this.setDefinitionTextLength( (short)(getDefinitionLength() + ptg.getSize()) );
+        	}
+        	// And then a union if we had more than one area
+        	if(refs.length > 1) {
+        		ptg = new UnionPtg();
+                field_13_name_definition.push(ptg);
+	            this.setDefinitionTextLength( (short)(getDefinitionLength() + ptg.getSize()) );
+        	}
         } else {
             ptg = new Ref3DPtg();
             ((Ref3DPtg) ptg).setExternSheetIndex(externSheetIndex);
             ((Ref3DPtg) ptg).setArea(ref);
+            field_13_name_definition.push(ptg);
             this.setDefinitionTextLength((short)ptg.getSize());
         }
-
-        field_13_name_definition.push(ptg);
-
     }
 
     /**
@@ -858,6 +872,15 @@ public class NameRecord extends Record {
             .append("\n");
         buffer.append("    .Name (Unicode text)  = ").append( getNameText() )
             .append("\n");
+        
+        buffer.append("    .Parts (" + field_13_name_definition.size() +"):")
+            .append("\n");
+        Iterator it = field_13_name_definition.iterator();
+        while(it.hasNext()) {
+        	Ptg ptg = (Ptg)it.next();
+        	buffer.append("       " + ptg.toString()).append("\n");
+        }
+        
         buffer.append("    .Menu text (Unicode string without length field)        = ").append( field_14_custom_menu_text )
             .append("\n");
         buffer.append("    .Description text (Unicode string without length field) = ").append( field_15_description_text )
