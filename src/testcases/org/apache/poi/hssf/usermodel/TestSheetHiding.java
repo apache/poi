@@ -19,11 +19,10 @@ package org.apache.poi.hssf.usermodel;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 import junit.framework.TestCase;
+
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
  * Tests for how HSSFWorkbook behaves with XLS files
@@ -34,11 +33,21 @@ public class TestSheetHiding extends TestCase {
 	private String dirPath;
 	private String xlsHidden = "TwoSheetsOneHidden.xls";
 	private String xlsShown  = "TwoSheetsNoneHidden.xls";
+	private HSSFWorkbook wbH;
+	private HSSFWorkbook wbU;
 
 	protected void setUp() throws Exception {
 		super.setUp();
-		
-        dirPath = System.getProperty("HSSF.testdata.path");
+
+		dirPath = System.getProperty("HSSF.testdata.path");
+		FileInputStream isH = new FileInputStream(dirPath + "/" + xlsHidden);
+		POIFSFileSystem fsH = new POIFSFileSystem(isH);
+
+		FileInputStream isU = new FileInputStream(dirPath + "/" + xlsShown);
+		POIFSFileSystem fsU = new POIFSFileSystem(isU);
+
+		wbH = new HSSFWorkbook(fsH);
+		wbU = new HSSFWorkbook(fsU);
 	}
 
 	/**
@@ -47,36 +56,27 @@ public class TestSheetHiding extends TestCase {
 	 *  the hidden flags are
 	 */
 	public void testTextSheets() throws Exception {
-		FileInputStream isH = new FileInputStream(dirPath + "/" + xlsHidden);
-		POIFSFileSystem fsH = new POIFSFileSystem(isH);
-		
-		FileInputStream isU = new FileInputStream(dirPath + "/" + xlsShown);
-		POIFSFileSystem fsU = new POIFSFileSystem(isU);
-
-		HSSFWorkbook wbH = new HSSFWorkbook(fsH);
-		HSSFWorkbook wbU = new HSSFWorkbook(fsU);
-		
 		// Both should have two sheets
 		assertEquals(2, wbH.sheets.size());
 		assertEquals(2, wbU.sheets.size());
-		
+
 		// All sheets should have one row
 		assertEquals(0, wbH.getSheetAt(0).getLastRowNum());
 		assertEquals(0, wbH.getSheetAt(1).getLastRowNum());
 		assertEquals(0, wbU.getSheetAt(0).getLastRowNum());
 		assertEquals(0, wbU.getSheetAt(1).getLastRowNum());
-		
+
 		// All rows should have one column
 		assertEquals(1, wbH.getSheetAt(0).getRow(0).getLastCellNum());
 		assertEquals(1, wbH.getSheetAt(1).getRow(0).getLastCellNum());
 		assertEquals(1, wbU.getSheetAt(0).getRow(0).getLastCellNum());
 		assertEquals(1, wbU.getSheetAt(1).getRow(0).getLastCellNum());
-		
+
 		// Text should be sheet based
-		assertEquals("Sheet1A1", wbH.getSheetAt(0).getRow(0).getCell((short)0).getStringCellValue());
-		assertEquals("Sheet2A1", wbH.getSheetAt(1).getRow(0).getCell((short)0).getStringCellValue());
-		assertEquals("Sheet1A1", wbU.getSheetAt(0).getRow(0).getCell((short)0).getStringCellValue());
-		assertEquals("Sheet2A1", wbU.getSheetAt(1).getRow(0).getCell((short)0).getStringCellValue());
+		assertEquals("Sheet1A1", wbH.getSheetAt(0).getRow(0).getCell((short)0).getRichStringCellValue().getString());
+		assertEquals("Sheet2A1", wbH.getSheetAt(1).getRow(0).getCell((short)0).getRichStringCellValue().getString());
+		assertEquals("Sheet1A1", wbU.getSheetAt(0).getRow(0).getCell((short)0).getRichStringCellValue().getString());
+		assertEquals("Sheet2A1", wbU.getSheetAt(1).getRow(0).getCell((short)0).getRichStringCellValue().getString());
 	}
 
 	/**
@@ -84,7 +84,10 @@ public class TestSheetHiding extends TestCase {
 	 *  as expected
 	 */
 	public void testHideUnHideFlags() throws Exception {
-		// TODO
+		assertTrue(wbH.isSheetHidden(0));
+		assertFalse(wbH.isSheetHidden(1));
+		assertFalse(wbU.isSheetHidden(0));
+		assertFalse(wbU.isSheetHidden(1));
 	}
 
 	/**
@@ -92,7 +95,15 @@ public class TestSheetHiding extends TestCase {
 	 *  one hidden
 	 */
 	public void testHide() throws Exception {
-		// TODO
+		wbU.setSheetHidden(0, true);
+		assertTrue(wbU.isSheetHidden(0));
+		assertFalse(wbU.isSheetHidden(1));
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		wbU.write(out);
+		out.close();
+		HSSFWorkbook wb2 = new HSSFWorkbook(new ByteArrayInputStream(out.toByteArray()));
+		assertTrue(wb2.isSheetHidden(0));
+		assertFalse(wb2.isSheetHidden(1));
 	}
 
 	/**
@@ -100,6 +111,14 @@ public class TestSheetHiding extends TestCase {
 	 *  none hidden
 	 */
 	public void testUnHide() throws Exception {
-		// TODO
+		wbH.setSheetHidden(0, false);
+		assertFalse(wbH.isSheetHidden(0));
+		assertFalse(wbH.isSheetHidden(1));
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		wbH.write(out);
+		out.close();
+		HSSFWorkbook wb2 = new HSSFWorkbook(new ByteArrayInputStream(out.toByteArray()));
+		assertFalse(wb2.isSheetHidden(0));
+		assertFalse(wb2.isSheetHidden(1));
 	}
 }

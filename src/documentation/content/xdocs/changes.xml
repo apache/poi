@@ -36,6 +36,7 @@
 
 		<!-- Don't forget to update status.xml too! -->
         <release version="3.0.2-FINAL" date="2008-??-??">
+            <action dev="POI-DEVELOPERS" type="add">43937 - Add support for hiding and un-hiding sheets, and checking their current hidden status</action>
             <action dev="POI-DEVELOPERS" type="fix">44167 - Fix for non-contiguous named ranges</action>
             <action dev="POI-DEVELOPERS" type="fix">44070 - Fix for shifting comments when shifting rows</action>
         </release>

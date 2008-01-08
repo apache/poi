@@ -543,6 +543,29 @@ public class Workbook implements Model
     }
 
     /**
+     * gets the hidden flag for a given sheet.
+     *
+     * @param sheetnum the sheet number (0 based)
+     * @return True if sheet is hidden
+     */
+
+    public boolean isSheetHidden(int sheetnum) {
+        BoundSheetRecord bsr = ( BoundSheetRecord ) boundsheets.get(sheetnum);
+        return bsr.isHidden();
+    }
+
+    /**
+     * Hide or unhide a sheet
+     * 
+     * @param sheetnum The sheet number
+     * @param hidden True to mark the sheet as hidden, false otherwise
+     */
+    
+    public void setSheetHidden(int sheetnum, boolean hidden) {
+        BoundSheetRecord bsr = ( BoundSheetRecord ) boundsheets.get(sheetnum);
+        bsr.setHidden(hidden);
+    }
+    /**
      * get the sheet's index
      * @param name  sheet name
      * @return sheet index or -1 if it was not found.

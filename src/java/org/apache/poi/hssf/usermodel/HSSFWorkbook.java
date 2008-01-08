@@ -445,6 +445,35 @@ public class HSSFWorkbook extends POIDocument
         return workbook.getSheetName(sheet);
     }
 
+    /**
+     * check whether a sheet is hidden
+     * @param sheet Number
+     * @return True if sheet is hidden
+     */
+
+    public boolean isSheetHidden(int sheet) {
+        if (sheet > (sheets.size() - 1))
+        {
+            throw new RuntimeException("Sheet out of bounds");
+        }
+        return workbook.isSheetHidden(sheet);
+    }
+
+    /**
+     * Hide or unhide a sheet
+     * 
+     * @param sheetnum The sheet number
+     * @param hidden True to mark the sheet as hidden, false otherwise
+     */
+
+    public void setSheetHidden(int sheet, boolean hidden) {
+        if (sheet > (sheets.size() - 1))
+        {
+            throw new RuntimeException("Sheet out of bounds");
+        }
+        workbook.setSheetHidden(sheet,hidden);
+    }
+    
     /*
      * get the sheet's index
      * @param name  sheet name
