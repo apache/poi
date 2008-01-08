@@ -17,12 +17,15 @@
 package org.apache.poi.hssf.extractor;
 
 import java.io.File;
-
-import org.apache.poi.hssf.HSSFXML;
-import org.apache.poi.hssf.usermodel.HSSFXMLWorkbook;
-import org.apache.poi.hxf.HXFDocument;
+import java.io.FileInputStream;
 
 import junit.framework.TestCase;
+
+import org.apache.poi.POITextExtractor;
+import org.apache.poi.hssf.HSSFXML;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.usermodel.HSSFXMLWorkbook;
+import org.apache.poi.hxf.HXFDocument;
 
 /**
  * Tests for HXFExcelExtractor
@@ -36,6 +39,15 @@ public class TestHXFExcelExtractor extends TestCase {
 	 * A fairly complex file
 	 */
 	private HSSFXML xmlB;
+	
+	/**
+	 * A fairly simple file - ooxml
+	 */
+	private HSSFXML simpleXLSX; 
+	/**
+	 * A fairly simple file - ole2
+	 */
+	private HSSFWorkbook simpleXLS;
 
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -49,8 +61,20 @@ public class TestHXFExcelExtractor extends TestCase {
 				File.separator + "AverageTaxRates.xlsx"
 		);
 		
+		File fileSOOXML = new File(
+				System.getProperty("HSSF.testdata.path") +
+				File.separator + "SampleSS.xlsx"
+		);
+		File fileSOLE2 = new File(
+				System.getProperty("HSSF.testdata.path") +
+				File.separator + "SampleSS.xls"
+		);
+		
 		xmlA = new HSSFXML(HXFDocument.openPackage(fileA));
 		xmlB = new HSSFXML(HXFDocument.openPackage(fileB));
+		
+		simpleXLSX = new HSSFXML(HXFDocument.openPackage(fileSOOXML));
+		simpleXLS = new HSSFWorkbook(new FileInputStream(fileSOLE2));
 	}
 
 	/**
@@ -139,5 +163,32 @@ public class TestHXFExcelExtractor extends TestCase {
 						"Avgtxfull\n" +
 						"3\t13\t3\t2\t2\t3\t2\t"	
 		));
+	}
+	
+	/**
+	 * Test that we return pretty much the same as
+	 *  ExcelExtractor does, when we're both passed
+	 *  the same file, just saved as xls and xlsx
+	 */
+	public void BROKENtestComparedToOLE2() throws Exception {
+		HXFExcelExtractor ooxmlExtractor =
+			new HXFExcelExtractor(simpleXLSX.getPackage());
+		ExcelExtractor ole2Extractor =
+			new ExcelExtractor(simpleXLS);
+		
+		POITextExtractor[] extractors =
+			new POITextExtractor[] { ooxmlExtractor, ole2Extractor };
+		for (int i = 0; i < extractors.length; i++) {
+			POITextExtractor extractor = extractors[i];
+			
+			String text = extractor.getText().replace("\r", "");
+			System.out.println(text.length());
+			System.out.println(text);
+			assertTrue(text.startsWith("First Sheet\nTest spreadsheet\t\n2nd row\t2nd row 2nd column\n"));
+			assertTrue(text.endsWith("13.0\nSheet3\n"));
+			
+			assertTrue(text.length() >= 214);
+			assertTrue(text.length() <= 214);
+		}
 	}
 }
