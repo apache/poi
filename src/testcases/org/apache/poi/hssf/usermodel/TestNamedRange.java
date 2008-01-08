@@ -26,6 +26,8 @@ import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.TempFile;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -316,7 +318,23 @@ public class TestNamedRange
 		 assertTrue("Name is "+nm2.getNameName(),"RangeTest2".equals(nm2.getNameName()));
 		 assertTrue("Reference is "+nm2.getReference(),(wb.getSheetName(1)+"!$A$1:$O$21").equals(nm2.getReference()));
 	 }       
-        
+
+	public void testUnicodeNamedRange() throws Exception {
+	    HSSFWorkbook workBook = new HSSFWorkbook();
+	    HSSFSheet sheet = workBook.createSheet("Test");
+	    HSSFName name = workBook.createName();
+	    name.setNameName("\u03B1");
+	    name.setReference("Test!$D$3:$E$8");
+	    
+	    ByteArrayOutputStream out = new ByteArrayOutputStream();
+	    workBook.write(out);
+	    
+	    HSSFWorkbook workBook2 = new HSSFWorkbook(new ByteArrayInputStream(out.toByteArray()));
+	    HSSFName name2 = workBook2.getNameAt(0);
+	    
+	    assertEquals("\u03B1", name2.getNameName());
+	    assertEquals("Test!$D$3:$E$8", name2.getReference());
+	}
         
 	 /**
 	  * Test to see if the print areas can be retrieved/created in memory

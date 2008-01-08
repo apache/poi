@@ -270,6 +270,9 @@ public class NameRecord extends Record {
      */
     public void setNameText(String name){
         field_12_name_text = name;
+        setCompressedUnicodeFlag(
+        	StringUtil.hasMultibyte(name) ?	(byte)1 : (byte)0
+        );
     }
 
     //    public void setNameDefintion(String definition){
@@ -318,11 +321,23 @@ public class NameRecord extends Record {
         return field_2_keyboard_shortcut ;
     }
 
-    /** gets the name length
+    /** 
+     * gets the name length, in characters
      * @return name length
      */
     public byte getNameTextLength(){
         return field_3_length_name_text;
+    }
+    
+    /** 
+     * gets the name length, in bytes
+     * @return raw name length
+     */
+    public byte getRawNameTextLength(){
+    	if( (field_11_compressed_unicode_flag & 0x01) == 1 ) {
+    		return (byte)(2 * field_3_length_name_text);
+    	}
+    	return field_3_length_name_text;
     }
 
     /** get the definition length
@@ -511,27 +526,16 @@ public class NameRecord extends Record {
         data[17 + offset] = getStatusBarLength();
         data[18 + offset] = getCompressedUnicodeFlag();
 
-        /* temp: gjs
-        if (isBuiltInName())
-        {
-            LittleEndian.putShort( data, 2 + offset, (short) ( 16 + field_13_raw_name_definition.length ) );
-
-            data[19 + offset] = field_12_builtIn_name;
-            System.arraycopy( field_13_raw_name_definition, 0, data, 20 + offset, field_13_raw_name_definition.length );
-
-            return 20 + field_13_raw_name_definition.length;
-        }
-        else
-        {     */            
-            
 			int start_of_name_definition = 19 + field_3_length_name_text;
 
 			if (this.isBuiltInName()) {
 				//can send the builtin name directly in
 				data [19 + offset] =  this.getBuiltInName();
+			} else if ((this.getCompressedUnicodeFlag() & 0x01) == 1) {
+				StringUtil.putUnicodeLE( getNameText(), data, 19 + offset );
+				start_of_name_definition = 19 + (2 * field_3_length_name_text);
 			} else {
 				StringUtil.putCompressedUnicode( getNameText(), data, 19 + offset );
-				
 			}
 
 
@@ -554,15 +558,15 @@ public class NameRecord extends Record {
         /* } */
     }
 
-    /** gets the length of all texts
+    /** 
+     * Gets the length of all texts, in bytes
      * @return total length
      */
     public int getTextsLength(){
         int result;
 
-        result = getNameTextLength() + getDescriptionTextLength() +
-        getHelpTopicLength() + getStatusBarLength();
-
+        result = getRawNameTextLength() + getDescriptionTextLength() +
+        	getHelpTopicLength() + getStatusBarLength();
 
         return result;
     }
