@@ -39,6 +39,8 @@ import org.apache.poi.hssf.record.formula.StringPtg;
 import org.apache.poi.hssf.record.formula.UnaryMinusPtg;
 import org.apache.poi.hssf.record.formula.UnaryPlusPtg;
 import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
+import org.apache.poi.hssf.usermodel.HSSFName;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -348,6 +350,38 @@ public class TestFormulaParser extends TestCase {
 		assertTrue("got 1 ptg", ptg.length == 1);
 		assertTrue("ptg0 is a StringPtg", ptg[0] instanceof StringPtg);
 		assertTrue("ptg0 contains exact value", ((StringPtg)ptg[0]).getValue().equals(value));
+	}
+	
+	public void testWithNamedRange() throws Exception {
+		HSSFWorkbook workbook = new HSSFWorkbook();
+		FormulaParser fp;
+		Ptg[] ptgs;
+
+		HSSFSheet s = workbook.createSheet("Foo");
+		s.createRow(0).createCell((short)0).setCellValue(1.1);
+		s.createRow(1).createCell((short)0).setCellValue(2.3);
+		s.createRow(2).createCell((short)2).setCellValue(3.1);
+
+		HSSFName name = workbook.createName();
+		name.setNameName("testName");
+		name.setReference("A1:A2");
+
+		fp = HSSFFormulaEvaluator.getUnderlyingParser(workbook, "SUM(testName)");
+		fp.parse();
+		ptgs = fp.getRPNPtg();
+		assertTrue("two tokens expected, got "+ptgs.length,ptgs.length == 2);
+		assertEquals(NamePtg.class, ptgs[0].getClass());
+		assertEquals(FuncVarPtg.class, ptgs[1].getClass());
+
+		// Now make it a single cell
+		name.setReference("C3");
+
+		fp = HSSFFormulaEvaluator.getUnderlyingParser(workbook, "SUM(testName)");
+		fp.parse();
+		ptgs = fp.getRPNPtg();
+		assertTrue("two tokens expected, got "+ptgs.length,ptgs.length == 2);
+		assertEquals(NamePtg.class, ptgs[0].getClass());
+		assertEquals(FuncVarPtg.class, ptgs[1].getClass());
 	}
 
 	public void testLookupAndMatchFunctionArgs()
