@@ -36,6 +36,7 @@
 
 		<!-- Don't forget to update status.xml too! -->
         <release version="3.0.2-FINAL" date="2008-??-??">
+            <action dev="POI-DEVELOPERS" type="fix">42464 - Avoid "Expected ExpPtg to be converted from Shared to Non-Shared Formula" on large, formula heavy worksheets</action>
             <action dev="POI-DEVELOPERS" type="add">42033 - Add support for named ranges with unicode names</action>
             <action dev="POI-DEVELOPERS" type="add">34023 - When shifting rows, update formulas on that sheet to point to the new location of those rows</action>
             <action dev="POI-DEVELOPERS" type="add">Support getting all the cells referenced by an AreaReference, not just the corner ones</action>

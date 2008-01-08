@@ -99,7 +99,7 @@ public class FormulaRecordAggregate
     {
         this.formulaRecord = formulaRecord;
     }
-
+    
     public FormulaRecord getFormulaRecord()
     {
         return formulaRecord;
@@ -109,7 +109,7 @@ public class FormulaRecordAggregate
     {
         return stringRecord;
     }
-
+    
     public boolean isEqual(CellValueRecordInterface i)
     {
         return formulaRecord.isEqual( i );

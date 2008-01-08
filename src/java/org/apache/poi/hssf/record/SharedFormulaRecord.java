@@ -20,10 +20,8 @@
 package org.apache.poi.hssf.record;
 
 import java.util.Stack;
-import java.util.List;
 
 import org.apache.poi.hssf.record.formula.*;
-import org.apache.poi.util.LittleEndian;
 
 /**
  * Title:        SharedFormulaRecord
@@ -156,15 +154,12 @@ public class SharedFormulaRecord
         return sid;
     }
 
-	 /**
-	  * Shared formulas are to treated like unknown records, and as a result d
-	  */
     protected void fillFields(RecordInputStream in)
     {
       field_1_first_row       = in.readShort();
       field_2_last_row        = in.readShort();
-      field_3_first_column    = in.readByte();
-      field_4_last_column     = in.readByte();
+      field_3_first_column    = in.readUByte();
+      field_4_last_column     = in.readUByte();
       field_5_reserved        = in.readShort();
       field_6_expression_len = in.readShort();
       field_7_parsed_expr    = getParsedExpressionTokens(in);
@@ -181,6 +176,9 @@ public class SharedFormulaRecord
         return stack;
     }
 
+    /**
+     * Are we shared by the supplied formula record?
+     */
     public boolean isFormulaInShared(FormulaRecord formula) {
       final int formulaRow = formula.getRow();
       final int formulaColumn = formula.getColumn();

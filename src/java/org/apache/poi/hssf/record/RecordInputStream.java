@@ -133,6 +133,9 @@ public class RecordInputStream extends InputStream
     }    
   }
   
+  /**
+   * Reads an 8 bit, signed value
+   */
   public byte readByte() {
     checkRecordPosition();
     
@@ -141,7 +144,10 @@ public class RecordInputStream extends InputStream
     pos += 1;
     return result;
   }
-
+  
+  /**
+   * Reads a 16 bit, signed value
+   */
   public short readShort() {
     checkRecordPosition();
     
@@ -169,6 +175,21 @@ public class RecordInputStream extends InputStream
     return result;
   }
 
+  /**
+   * Reads an 8 bit, unsigned value
+   */
+  public short readUByte() {
+	  short s = readByte();
+	  if(s < 0) {
+		  s += 256;
+	  }
+	  return s;
+  }
+
+  /**
+   * Reads a 16 bit,un- signed value.
+   * @return
+   */
   public int readUShort() {
     checkRecordPosition();    
     
