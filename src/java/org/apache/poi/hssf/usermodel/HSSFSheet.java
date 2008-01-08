@@ -28,6 +28,7 @@ import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.*;
 import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.hssf.record.formula.ReferencePtg;
 import org.apache.poi.hssf.util.HSSFCellRangeAddress;
 import org.apache.poi.hssf.util.HSSFDataValidation;
 import org.apache.poi.hssf.util.Region;
@@ -1215,12 +1216,52 @@ public class HSSFSheet
         
         // Update any formulas on this sheet that point to
         //  rows which have been moved
-        
-        // Update any named ranges defined for this workbook
-        //  that point to this sheet and had rows they reference
-        //  moved
-        for(int i=0; i<workbook.getNumberOfNames(); i++) {
-        	HSSFName name = workbook.getNameAt(i);
+        updateFormulasAfterShift(startRow, endRow, n);
+    }
+    
+    /**
+     * Called by shiftRows to update formulas on this sheet
+     *  to point to the new location of moved rows
+     */
+    private void updateFormulasAfterShift(int startRow, int endRow, int n) {
+    	// Need to look at every cell on the sheet
+    	// Not just those that were moved
+        Iterator ri = rowIterator();
+        while(ri.hasNext()) {
+        	HSSFRow r = (HSSFRow)ri.next();
+        	Iterator ci = r.cellIterator();
+        	while(ci.hasNext()) {
+        		HSSFCell c = (HSSFCell)ci.next();
+        		if(c.getCellType() == HSSFCell.CELL_TYPE_FORMULA) {
+        			// Since it's a formula cell, process the
+        			//  formula string, and look to see if
+        			//  it contains any references
+        			FormulaParser fp = new FormulaParser(c.getCellFormula(), workbook.getWorkbook());
+        			fp.parse();
+        			
+        			// Look for references, and update if needed
+        			Ptg[] ptgs = fp.getRPNPtg();
+        			boolean changed = false;
+        			for(int i=0; i<ptgs.length; i++) {
+        				if(ptgs[i] instanceof ReferencePtg) {
+        					ReferencePtg rptg = (ReferencePtg)ptgs[i];
+        					if(startRow <= rptg.getRowAsInt() &&
+        							rptg.getRowAsInt() <= endRow) {
+        						// References a row that moved
+        						rptg.setRow(rptg.getRowAsInt() + n);
+        						changed = true;
+        					}
+        				}
+        			}
+        			// If any references were changed, then
+        			//  re-create the formula string
+        			if(changed) {
+        				c.setCellFormula(
+        						fp.toFormulaString(ptgs)
+        				);
+        			}
+        		}
+        	}
         }
     }
 
