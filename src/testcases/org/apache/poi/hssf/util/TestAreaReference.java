@@ -52,6 +52,25 @@ public class TestAreaReference extends TestCase {
         assertTrue("row is abs",cf.isRowAbsolute());
         assertTrue("col is abs",cf.isColAbsolute());
         assertTrue("string is $B$2",cf.toString().equals("$B$2"));
+        
+        CellReference[] refs = ar.getAllReferencedCells();
+        assertEquals(4, refs.length);
+        
+        assertEquals(0, refs[0].getRow());
+        assertEquals(0, refs[0].getCol());
+        assertNull(refs[0].getSheetName());
+        
+        assertEquals(0, refs[1].getRow());
+        assertEquals(1, refs[1].getCol());
+        assertNull(refs[1].getSheetName());
+        
+        assertEquals(1, refs[2].getRow());
+        assertEquals(0, refs[2].getCol());
+        assertNull(refs[2].getSheetName());
+        
+        assertEquals(1, refs[3].getRow());
+        assertEquals(1, refs[3].getCol());
+        assertNull(refs[3].getSheetName());
     }
     
     /**
@@ -59,13 +78,58 @@ public class TestAreaReference extends TestCase {
      * Reported by Arne.Clauss@gedas.de
      */
     public void testReferenceWithSheet() {
-    	String ref = "Tabelle1!$B$5";
+    	String ref = "Tabelle1!B5";
 		AreaReference myAreaReference = new AreaReference(ref);
 		CellReference[] myCellReference = myAreaReference.getCells();
-		
+
+		assertEquals(1, myCellReference.length);
 		assertNotNull("cell reference not null : "+myCellReference[0]);
     	assertEquals("Not Column B", (short)1,myCellReference[0].getCol());
 		assertEquals("Not Row 5", 4,myCellReference[0].getRow());
+		assertEquals("Shouldn't be absolute", false, myCellReference[0].isRowAbsolute());
+		assertEquals("Shouldn't be absolute", false, myCellReference[0].isColAbsolute());
+		
+		assertEquals(1, myAreaReference.getAllReferencedCells().length);
+		
+		
+		ref = "Tabelle1!$B$5:$B$7";
+		myAreaReference = new AreaReference(ref);
+		myCellReference = myAreaReference.getCells();
+		assertEquals(2, myCellReference.length);
+		
+		assertEquals("Tabelle1", myCellReference[0].getSheetName());
+		assertEquals(4, myCellReference[0].getRow());
+		assertEquals(1, myCellReference[0].getCol());
+		assertTrue(myCellReference[0].isRowAbsolute());
+		assertTrue(myCellReference[0].isColAbsolute());
+		
+		assertEquals("Tabelle1", myCellReference[1].getSheetName());
+		assertEquals(6, myCellReference[1].getRow());
+		assertEquals(1, myCellReference[1].getCol());
+		assertTrue(myCellReference[1].isRowAbsolute());
+		assertTrue(myCellReference[1].isColAbsolute());
+		
+		// And all that make it up
+		myCellReference = myAreaReference.getAllReferencedCells();
+		assertEquals(3, myCellReference.length);
+		
+		assertEquals("Tabelle1", myCellReference[0].getSheetName());
+		assertEquals(4, myCellReference[0].getRow());
+		assertEquals(1, myCellReference[0].getCol());
+		assertTrue(myCellReference[0].isRowAbsolute());
+		assertTrue(myCellReference[0].isColAbsolute());
+		
+		assertEquals("Tabelle1", myCellReference[1].getSheetName());
+		assertEquals(5, myCellReference[1].getRow());
+		assertEquals(1, myCellReference[1].getCol());
+		assertTrue(myCellReference[1].isRowAbsolute());
+		assertTrue(myCellReference[1].isColAbsolute());
+		
+		assertEquals("Tabelle1", myCellReference[2].getSheetName());
+		assertEquals(6, myCellReference[2].getRow());
+		assertEquals(1, myCellReference[2].getCol());
+		assertTrue(myCellReference[2].isRowAbsolute());
+		assertTrue(myCellReference[2].isColAbsolute());
     }
 
     private static class HSSFWB extends HSSFWorkbook {

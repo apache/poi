@@ -79,9 +79,36 @@ private int dim;
     public int getDim() {
         return dim;
     }
-    /** return the cell references that define this area */
+    /** 
+     * Return the cell references that define this area
+     * (i.e. the two corners) 
+     */
     public CellReference[] getCells() {
         return cells;
+    }
+    /**
+     * Returns a reference to every cell covered by this area
+     */
+    public CellReference[] getAllReferencedCells() {
+    	// Special case for single cell reference
+    	if(cells.length == 1) {
+    		return cells;
+    	}
+    	// Interpolate between the two
+    	int minRow = Math.min(cells[0].getRow(), cells[1].getRow());
+    	int maxRow = Math.max(cells[0].getRow(), cells[1].getRow());
+    	int minCol = Math.min(cells[0].getCol(), cells[1].getCol());
+    	int maxCol = Math.max(cells[0].getCol(), cells[1].getCol());
+    	
+    	ArrayList refs = new ArrayList();
+    	for(int row=minRow; row<=maxRow; row++) {
+    		for(int col=minCol; col<=maxCol; col++) {
+    			CellReference ref = new CellReference(row, col, cells[0].isRowAbsolute(), cells[0].isColAbsolute());
+    			ref.setSheetName(cells[0].getSheetName());
+    			refs.add(ref);
+    		}
+    	}
+    	return (CellReference[])refs.toArray(new CellReference[refs.size()]);
     }
 
     public String toString() {

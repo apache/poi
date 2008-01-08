@@ -1212,6 +1212,16 @@ public class HSSFSheet
         }
         if ( endRow == lastrow || endRow + n > lastrow ) lastrow = Math.min( endRow + n, 65535 );
         if ( startRow == firstrow || startRow + n < firstrow ) firstrow = Math.max( startRow + n, 0 );
+        
+        // Update any formulas on this sheet that point to
+        //  rows which have been moved
+        
+        // Update any named ranges defined for this workbook
+        //  that point to this sheet and had rows they reference
+        //  moved
+        for(int i=0; i<workbook.getNumberOfNames(); i++) {
+        	HSSFName name = workbook.getNameAt(i);
+        }
     }
 
     protected void insertChartRecords( List records )

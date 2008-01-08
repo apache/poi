@@ -36,6 +36,7 @@
 
 		<!-- Don't forget to update status.xml too! -->
         <release version="3.0.2-FINAL" date="2008-??-??">
+            <action dev="POI-DEVELOPERS" type="add">Support getting all the cells referenced by an AreaReference, not just the corner ones</action>
             <action dev="POI-DEVELOPERS" type="add">43510 - Add support for named ranges in formulas, including non-contiguous named ranges</action>
             <action dev="POI-DEVELOPERS" type="add">43937 - Add support for hiding and un-hiding sheets, and checking their current hidden status</action>
             <action dev="POI-DEVELOPERS" type="fix">44167 - Fix for non-contiguous named ranges</action>
