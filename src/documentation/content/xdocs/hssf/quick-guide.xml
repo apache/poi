@@ -1176,13 +1176,13 @@ Examples:
     // Will get back one AreaReference for C10, and
     //  another for D12 to D14
     AreaReference[] arefs = AreaReference.generateContiguous(aNamedCell.getReference());
-    for(int i=0; i<arefs.length; i++) {
+    for (int i=0; i&lt;arefs.length; i++) {
         CellReference[] crefs = arefs[i].getCells();
-        for (int j=0; j<crefs.length; j++) {
-	    // Check it turns into real stuff
-	    HSSFSheet s = wb.getSheet(crefs[j].getSheetName());
-	    HSSFRow r = s.getRow(crefs[j].getRow());
-	    HSSFCell c = r.getCell(crefs[j].getCol());
+        for (int j=0; j&lt;crefs.length; j++) {
+            // Check it turns into real stuff
+            HSSFSheet s = wb.getSheet(crefs[j].getSheetName());
+            HSSFRow r = s.getRow(crefs[j].getRow());
+            HSSFCell c = r.getCell(crefs[j].getCol());
             // extract the cell contents based on cell type etc.
         }
     }
