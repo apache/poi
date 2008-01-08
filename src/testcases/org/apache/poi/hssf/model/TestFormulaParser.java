@@ -382,6 +382,15 @@ public class TestFormulaParser extends TestCase {
 		assertTrue("two tokens expected, got "+ptgs.length,ptgs.length == 2);
 		assertEquals(NamePtg.class, ptgs[0].getClass());
 		assertEquals(FuncVarPtg.class, ptgs[1].getClass());
+		
+		// And make it non-contiguous
+		name.setReference("A1:A2,C3");
+		fp = HSSFFormulaEvaluator.getUnderlyingParser(workbook, "SUM(testName)");
+		fp.parse();
+		ptgs = fp.getRPNPtg();
+		assertTrue("two tokens expected, got "+ptgs.length,ptgs.length == 2);
+		assertEquals(NamePtg.class, ptgs[0].getClass());
+		assertEquals(FuncVarPtg.class, ptgs[1].getClass());
 	}
 
 	public void testLookupAndMatchFunctionArgs()
