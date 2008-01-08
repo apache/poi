@@ -224,6 +224,90 @@ public class TestHSSFSheet
         assertNotNull(workbook.getSheet("Test Clone(2)"));  
     }
     
+    /**
+     * Setting landscape and portrait stuff on new sheets
+     */
+    public void testPrintSetupLandscapeNew() throws Exception {
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        HSSFSheet sheetL = workbook.createSheet("LandscapeS");
+        HSSFSheet sheetP = workbook.createSheet("LandscapeP");
+        
+        // Check two aspects of the print setup
+        assertFalse(sheetL.getPrintSetup().getLandscape());
+        assertFalse(sheetP.getPrintSetup().getLandscape());
+        assertEquals(0, sheetL.getPrintSetup().getCopies());
+        assertEquals(0, sheetP.getPrintSetup().getCopies());
+        
+        // Change one on each
+        sheetL.getPrintSetup().setLandscape(true);
+        sheetP.getPrintSetup().setCopies((short)3);
+        
+        // Check taken
+        assertTrue(sheetL.getPrintSetup().getLandscape());
+        assertFalse(sheetP.getPrintSetup().getLandscape());
+        assertEquals(0, sheetL.getPrintSetup().getCopies());
+        assertEquals(3, sheetP.getPrintSetup().getCopies());
+        
+        // Save and re-load, and check still there
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        workbook.write(baos);
+        workbook = new HSSFWorkbook(new ByteArrayInputStream(baos.toByteArray()));
+        
+        assertTrue(sheetL.getPrintSetup().getLandscape());
+        assertFalse(sheetP.getPrintSetup().getLandscape());
+        assertEquals(0, sheetL.getPrintSetup().getCopies());
+        assertEquals(3, sheetP.getPrintSetup().getCopies());
+    }
+    
+    /**
+     * Setting landscape and portrait stuff on existing sheets
+     */
+    public void testPrintSetupLandscapeExisting() throws Exception {
+        String filename = System.getProperty("HSSF.testdata.path");
+        filename = filename + "/SimpleWithPageBreaks.xls";
+        HSSFWorkbook workbook = 
+        	new HSSFWorkbook(new FileInputStream(filename));
+        
+        assertEquals(3, workbook.getNumberOfSheets());
+        
+        HSSFSheet sheetL = workbook.getSheetAt(0);
+        HSSFSheet sheetPM = workbook.getSheetAt(1);
+        HSSFSheet sheetLS = workbook.getSheetAt(2);
+        
+        // Check two aspects of the print setup
+        assertFalse(sheetL.getPrintSetup().getLandscape());
+        assertTrue(sheetPM.getPrintSetup().getLandscape());
+        assertTrue(sheetLS.getPrintSetup().getLandscape());
+        assertEquals(1, sheetL.getPrintSetup().getCopies());
+        assertEquals(1, sheetPM.getPrintSetup().getCopies());
+        assertEquals(1, sheetLS.getPrintSetup().getCopies());
+        
+        // Change one on each
+        sheetL.getPrintSetup().setLandscape(true);
+        sheetPM.getPrintSetup().setLandscape(false);
+        sheetPM.getPrintSetup().setCopies((short)3);
+        
+        // Check taken
+        assertTrue(sheetL.getPrintSetup().getLandscape());
+        assertFalse(sheetPM.getPrintSetup().getLandscape());
+        assertTrue(sheetLS.getPrintSetup().getLandscape());
+        assertEquals(1, sheetL.getPrintSetup().getCopies());
+        assertEquals(3, sheetPM.getPrintSetup().getCopies());
+        assertEquals(1, sheetLS.getPrintSetup().getCopies());
+        
+        // Save and re-load, and check still there
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        workbook.write(baos);
+        workbook = new HSSFWorkbook(new ByteArrayInputStream(baos.toByteArray()));
+        
+        assertTrue(sheetL.getPrintSetup().getLandscape());
+        assertFalse(sheetPM.getPrintSetup().getLandscape());
+        assertTrue(sheetLS.getPrintSetup().getLandscape());
+        assertEquals(1, sheetL.getPrintSetup().getCopies());
+        assertEquals(3, sheetPM.getPrintSetup().getCopies());
+        assertEquals(1, sheetLS.getPrintSetup().getCopies());
+    }
+    
 	/**
 	 * Test that the ProtectRecord is included when creating or cloning a sheet
 	 */
