@@ -20,13 +20,10 @@ package org.apache.poi.hssf.record;
 
 import java.util.List;
 import java.util.Stack;
+import java.util.Iterator;
 
 import org.apache.poi.hssf.model.Workbook;
-import org.apache.poi.hssf.record.formula.Area3DPtg;
-import org.apache.poi.hssf.record.formula.DeletedArea3DPtg;
-import org.apache.poi.hssf.record.formula.DeletedRef3DPtg;
-import org.apache.poi.hssf.record.formula.Ptg;
-import org.apache.poi.hssf.record.formula.Ref3DPtg;
+import org.apache.poi.hssf.record.formula.*;
 import org.apache.poi.hssf.util.RangeAddress;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
@@ -648,15 +645,44 @@ public class NameRecord extends Record {
         Ptg ptg = (Ptg) field_13_name_definition.peek();
         String result = "";
 
-        if (ptg.getClass() == Area3DPtg.class){
-            result = ptg.toFormulaString(book);
+        // If it's a union, descend in and process
+        if (ptg.getClass() == UnionPtg.class) {
+            Iterator it =field_13_name_definition.iterator();
+            while( it.hasNext() ) {
+                Ptg p = (Ptg)it.next();
 
-        } else if (ptg.getClass() == Ref3DPtg.class){
-            result = ptg.toFormulaString(book);
-        } else if (ptg.getClass() == DeletedArea3DPtg.class || ptg.getClass() == DeletedRef3DPtg.class) {
-        	result = "#REF!"   ;     }
+                String thisRes = getAreaRefString(p, book);
+                if(thisRes.length() > 0) {
+                    // Add a comma to the end if needed
+                    if(result.length() > 0 && !result.endsWith(",")) {
+                        result += ",";
+                    }
+                    // And add the string it corresponds to
+                    result += thisRes;
+                }
+            }
+        } else {
+            // Otherwise just get the string
+            result = getAreaRefString(ptg, book);
+        }
 
         return result;
+    }
+
+    /**
+     * Turn the given ptg into a string, or
+     *  return an empty string if nothing is possible
+     *  for it.
+     */
+    private String getAreaRefString(Ptg ptg,Workbook book) {
+        if (ptg.getClass() == Area3DPtg.class){
+            return ptg.toFormulaString(book);
+        } else if (ptg.getClass() == Ref3DPtg.class){
+            return ptg.toFormulaString(book);
+        } else if (ptg.getClass() == DeletedArea3DPtg.class || ptg.getClass() == DeletedRef3DPtg.class) {
+        	return "#REF!";
+        }
+        return "";
     }
 
     /** sets the reference , the area only (range)

@@ -18,15 +18,24 @@
 
 package org.apache.poi.hssf.util;
 
+import java.util.ArrayList;
+import java.util.StringTokenizer;
+
 public class AreaReference {
 
 
 private CellReference [] cells;
 private int dim;
 
-    /** Create an area ref from a string representation
+    /**
+     * Create an area ref from a string representation.
+     * The area reference must be contiguous
      */
     public AreaReference(String reference) {
+        if(! isContiguous(reference)) {
+            throw new IllegalArgumentException("References passed to the AreaReference must be contiguous, use generateContiguous(ref) if you have non-contiguous references");
+        }
+
         String[] refs = seperateAreaRefs(reference);
         dim = refs.length;
         cells = new CellReference[dim];
@@ -34,6 +43,36 @@ private int dim;
             cells[i]=new CellReference(refs[i]);
         }
     }
+
+    /**
+     * Is the reference for a contiguous (i.e.
+     *  unbroken) area, or is it made up of
+     *  several different parts?
+     * (If it is, you will need to call
+     *  ....
+     */
+    public static boolean isContiguous(String reference) {
+        if(reference.indexOf(',') == -1) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Takes a non-contiguous area reference, and
+     *  returns an array of contiguous area references.
+     */
+    public static AreaReference[] generateContiguous(String reference) {
+        ArrayList refs = new ArrayList();
+        StringTokenizer st = new StringTokenizer(reference, ",");
+        while(st.hasMoreTokens()) {
+            refs.add(
+                    new AreaReference(st.nextToken())
+            );
+        }
+        return (AreaReference[])refs.toArray(new AreaReference[refs.size()]);
+    }
+
     //not sure if we need to be flexible here!
     /** return the dimensions of this area
      **/
