@@ -199,9 +199,22 @@ public class FormulaRecord
     public boolean isSharedFormula() {
         return sharedFormula.isSet(field_5_options);
     }
-    
     public void setSharedFormula(boolean flag) {
     	sharedFormula.setBoolean(field_5_options, flag);
+    }
+    
+    public boolean isAlwaysCalc() {
+    	return alwaysCalc.isSet(field_5_options);
+    }
+    public void setAlwaysCalc(boolean flag) {
+    	alwaysCalc.setBoolean(field_5_options, flag);
+    }
+    
+    public boolean isCalcOnLoad() {
+    	return calcOnLoad.isSet(field_5_options);
+    }
+    public void setCalcOnLoad(boolean flag) {
+    	calcOnLoad.setBoolean(field_5_options, flag);
     }
     
     /**

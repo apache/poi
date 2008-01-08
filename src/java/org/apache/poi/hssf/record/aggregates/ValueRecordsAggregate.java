@@ -127,8 +127,17 @@ public class ValueRecordsAggregate
 
         FormulaRecordAggregate lastFormulaAggregate = null;
         
+        // First up, locate all the shared formulas
         List sharedFormulas = new java.util.ArrayList();
+        for (k = offset; k < records.size(); k++)
+        {
+            Record rec = ( Record ) records.get(k);
+            if (rec instanceof SharedFormulaRecord) {
+            	sharedFormulas.add(rec);
+            }
+        }
 
+        // Now do the main processing sweep
         for (k = offset; k < records.size(); k++)
         {
             Record rec = ( Record ) records.get(k);
@@ -137,18 +146,14 @@ public class ValueRecordsAggregate
             {
                 break;
             } else if (rec instanceof SharedFormulaRecord) {
-            	sharedFormulas.add(rec);
+            	// Already handled, not to worry
             } else if (rec instanceof FormulaRecord)
             {
               FormulaRecord formula = (FormulaRecord)rec;
               if (formula.isSharedFormula()) {
-                Record nextRecord = (Record) records.get(k + 1);
-                if (nextRecord instanceof SharedFormulaRecord) {
-                	sharedFormulas.add(nextRecord);
-                	k++;
-                }
-                //traverse the list of shared formulas in reverse order, and try to find the correct one
-                //for us
+                // Traverse the list of shared formulas in
+            	//  reverse order, and try to find the correct one
+                //  for us
                 boolean found = false;
                 for (int i=sharedFormulas.size()-1;i>=0;i--) {
                 	SharedFormulaRecord shrd = (SharedFormulaRecord)sharedFormulas.get(i);
