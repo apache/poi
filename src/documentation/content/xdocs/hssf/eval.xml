@@ -39,8 +39,9 @@
 				being supported fairly frequently.
 			</note>
 		</section>
+
+		<anchor id="Status"/>
 		<section><title>Status</title>
-			<anchor id="Status"/>
 			<p>	The code currently provides implementations for all the arithmatic operators.
 				It also provides implementations for approx. 100 built in 
 				functions in Excel. The framework however makes is easy to add 
@@ -55,8 +56,9 @@
 				in the context of other POI excel reading code.
 			</p>
 			<p>There are two ways in which you can use the HSSFFormulaEvalutator API.</p>
+
+			<anchor id="Evaluate"/>
 			<section><title>Using HSSFFormulaEvaluator.<strong>evaluate</strong>(HSSFCell cell)</title>
-				<anchor id="Evaluate"/>
 				<source>
 FileInputStream fis = new FileInputStream("c:/temp/test.xls");
 HSSFWorkbook wb = new HSSFWorkbook(fis);
@@ -98,10 +100,10 @@ switch (cellValue.getCellType()) {
 					a simple value object and does not maintain reference 
 					to the original cell.
 				</p>
-				
 			</section>
+
+			<anchor id="EvaluateInCell"/>
 			<section><title>Using HSSFFormulaEvaluator.<strong>evaluateInCell</strong>(HSSFCell cell)</title>
-				<anchor id="EvaluateInCell"/>
 				<p><strong>evaluateInCell</strong>(HSSFCell cell) will check to
 				see if the supplied cell is a formula cell. If it isn't,
 				then no changes will be made to it. If it is, then the
@@ -142,8 +144,9 @@ if (cell!=null) {
 }
 				</source>
 			</section>
+
+			<anchor id="EvaluateAll"/>
 			<section><title>Re-calculating all formulas in a Workbook</title>
-				<anchor id="EvaluateAll"/>
 				<source>
 FileInputStream fis = new FileInputStream("/somepath/test.xls");
 HSSFWorkbook wb = new HSSFWorkbook(fis);
@@ -168,8 +171,8 @@ wb.write(new FileOutputStream("/somepath/changed.xls"));
 			</section>
 		</section>
 		
+		<anchor id="Performance"/>
 		<section><title>Performance Notes</title>
-			<anchor id="Performance"/>
 			<ul>
 				<li>Generally you should have to create only one HSSFFormulaEvaluator 
 					instance per sheet, but there really is no overhead in creating 
