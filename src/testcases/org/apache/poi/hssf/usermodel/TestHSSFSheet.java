@@ -727,11 +727,12 @@ public class TestHSSFSheet
 		// Can't use literal numbers for column sizes, as
 		//  will come out with different values on different
 		//  machines based on the fonts available.
-		// So, we use ranges
-		int minWithRow1And2 = 7169; 
-		int maxWithRow1And2 = 7732;
+		// So, we use ranges, which are pretty large, but
+		//  thankfully don't overlap!
+		int minWithRow1And2 = 6400; 
+		int maxWithRow1And2 = 7800;
 		int minWithRow1Only = 3024;
-		int maxWithRow1Only = 3292;
+		int maxWithRow1Only = 3300;
 		
 		// autoSize the first column and check its size before the merged region (1,0,1,1) is set:
 		// it has to be based on the 2nd row width
