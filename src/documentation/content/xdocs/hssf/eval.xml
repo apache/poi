@@ -32,14 +32,17 @@
 				formulas in Excels sheets read-in, or created in POI. This document explains
 				how to use the API to evaluate your formulas. 
 			</p>
-			<note> This code currently lives the scratchpad area of the POI CVS repository. 
+			<note> This code currently lives the scratchpad area of the POI SVN repository. 
 				Ensure that you have the scratchpad jar or the scratchpad build area in your
-				classpath before experimenting with this code.
+				classpath before experimenting with this code. You are advised
+				to make use of a recent SVN checkout, as new functions are
+				being supported fairly frequently.
 			</note>
 		</section>
 		<section><title>Status</title>
+			<anchor id="Status"/>
 			<p>	The code currently provides implementations for all the arithmatic operators.
-				It also provides implementations for approx. 20 built in 
+				It also provides implementations for approx. 100 built in 
 				functions in Excel. The framework however makes is easy to add 
 			 	implementation of new functions. See the <link href="eval-devguide.html"> Formula
 				evaluation development guide</link> for details. </p>
@@ -53,6 +56,7 @@
 			</p>
 			<p>There are two ways in which you can use the HSSFFormulaEvalutator API.</p>
 			<section><title>Using HSSFFormulaEvaluator.<strong>evaluate</strong>(HSSFCell cell)</title>
+				<anchor id="Evaluate"/>
 				<source>
 FileInputStream fis = new FileInputStream("c:/temp/test.xls");
 HSSFWorkbook wb = new HSSFWorkbook(fis);
@@ -96,8 +100,12 @@ switch (cellValue.getCellType()) {
 				</p>
 				
 			</section>
-			<section><title>Using HSSFFormulaEvaluator.<strong>evaluateInCell</strong>(HSSFCell cell)
-				</title>
+			<section><title>Using HSSFFormulaEvaluator.<strong>evaluateInCell</strong>(HSSFCell cell)</title>
+				<anchor id="EvaluateInCell"/>
+				<p><strong>evaluateInCell</strong>(HSSFCell cell) will check to
+				see if the supplied cell is a formula cell. If it isn't,
+				then no changes will be made to it. If it is, then the
+				formula is evaluated, and the new value saved into the cell.</p>
 				<source>
 FileInputStream fis = new FileInputStream("/somepath/test.xls");
 HSSFWorkbook wb = new HSSFWorkbook(fis);
@@ -132,12 +140,36 @@ if (cell!=null) {
 		    break;
 	}
 }
-					</source>
+				</source>
+			</section>
+			<section><title>Re-calculating all formulas in a Workbook</title>
+				<anchor id="EvaluateAll"/>
+				<source>
+FileInputStream fis = new FileInputStream("/somepath/test.xls");
+HSSFWorkbook wb = new HSSFWorkbook(fis);
+for(int sheetNum = 0; sheetNum &lt; wb.getNumberOfSheets(); sheetNum++) {
+	HSSFSheet sheet = wb.getSheetAt(sheetNum);
+	HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(sheet, wb);
 
-				</section>
+	for(Iterator rit = s.rowIterator(); rit.hasNext();) {
+		HSSFRow r = (HSSFRow)rit.next();
+		evaluator.setCurrentRow(r);
+
+		for(Iterator cit = r.cellIterator(); cit.hasNext();) {
+			HSSFCell c = (HSSFCell)cit.next();
+			if(c.getCellType() == HSSFCell.CELL_TYPE_FORMULA) {
+				evaluator.evaluateInCell(c);
+			}
+		}
+	}
+}
+wb.write(new FileOutputStream("/somepath/changed.xls"));
+				</source>
+			</section>
 		</section>
 		
 		<section><title>Performance Notes</title>
+			<anchor id="Performance"/>
 			<ul>
 				<li>Generally you should have to create only one HSSFFormulaEvaluator 
 					instance per sheet, but there really is no overhead in creating 
