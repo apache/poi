@@ -223,6 +223,16 @@ public class HSSFRow
     {
         return rowNum;
     }
+    
+    /**
+     * Returns the rows outline level. Increased as you
+     *  put it into more groups (outlines), reduced as
+     *  you take it out of them.
+     * TODO - Should this really be public?
+     */
+    protected int getOutlineLevel() {
+    	return row.getOutlineLevel();
+    }
 
     /**
      * used internally to add a cell.

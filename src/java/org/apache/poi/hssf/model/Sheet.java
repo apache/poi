@@ -3144,7 +3144,13 @@ public class Sheet implements Model
             maxLevel = Math.max(rowRecord.getOutlineLevel(), maxLevel);
         }
 
+        // Grab the guts record, adding if needed
         GutsRecord guts = (GutsRecord) findFirstRecordBySid( GutsRecord.sid );
+        if(guts == null) {
+        	guts = new GutsRecord();
+        	records.add(guts);
+        }
+        // Set the levels onto it
         guts.setRowLevelMax( (short) ( maxLevel + 1 ) );
         guts.setLeftRowGutter( (short) ( 29 + (12 * (maxLevel)) ) );
     }
