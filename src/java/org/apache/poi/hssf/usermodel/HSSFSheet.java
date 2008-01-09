@@ -1615,7 +1615,13 @@ public class HSSFSheet
         for (Iterator it = rowIterator(); it.hasNext();) {
             HSSFRow row = (HSSFRow) it.next();
             HSSFCell cell = row.getCell(column);
-            if (cell == null) continue;
+
+            boolean isCellInMergedRegion = false;
+            for (int i = 0 ; i < getNumMergedRegions() && ! isCellInMergedRegion; i++) {
+                isCellInMergedRegion = getMergedRegionAt(i).contains(row.getRowNum(), column);
+            }
+
+            if (cell == null | isCellInMergedRegion) continue;
 
             HSSFCellStyle style = cell.getCellStyle();
             HSSFFont font = wb.getFontAt(style.getFontIndex());
