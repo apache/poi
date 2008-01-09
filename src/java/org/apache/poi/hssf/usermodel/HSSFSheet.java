@@ -1488,7 +1488,7 @@ public class HSSFSheet
      */
     public void dumpDrawingRecords(boolean fat)
     {
-        sheet.aggregateDrawingRecords(book.getDrawingManager());
+        sheet.aggregateDrawingRecords(book.getDrawingManager(), false);
 
         EscherAggregate r = (EscherAggregate) getSheet().findFirstRecordBySid(EscherAggregate.sid);
         List escherRecords = r.getEscherRecords();
@@ -1505,9 +1505,10 @@ public class HSSFSheet
     }
 
     /**
-     * Creates the toplevel drawing patriarch.  This will have the effect of
-     * removing any existing drawings on this sheet.
-     *
+     * Creates the top-level drawing patriarch.  This will have
+     *  the effect of removing any existing drawings on this
+     *  sheet.
+     * This may then be used to add graphics or charts
      * @return  The new patriarch.
      */
     public HSSFPatriarch createDrawingPatriarch()
@@ -1515,12 +1516,41 @@ public class HSSFSheet
         // Create the drawing group if it doesn't already exist.
         book.createDrawingGroup();
 
-        sheet.aggregateDrawingRecords(book.getDrawingManager());
+        sheet.aggregateDrawingRecords(book.getDrawingManager(), true);
         EscherAggregate agg = (EscherAggregate) sheet.findFirstRecordBySid(EscherAggregate.sid);
-        HSSFPatriarch patriarch = new HSSFPatriarch(this);
+        HSSFPatriarch patriarch = new HSSFPatriarch(this, agg);
         agg.clear();     // Initially the behaviour will be to clear out any existing shapes in the sheet when
                          // creating a new patriarch.
         agg.setPatriarch(patriarch);
+        return patriarch;
+    }
+    
+    /**
+     * Returns the top-level drawing patriach, if there is
+     *  one.
+     * This will hold any graphics or charts for the sheet
+     */
+    public HSSFPatriarch getDrawingPatriarch() {
+    	book.findDrawingGroup();
+    	
+    	// If there's now no drawing manager, then there's
+    	//  no drawing escher records on the workbook
+    	if(book.getDrawingManager() == null) {
+    		return null;
+    	}
+    	
+    	int found = sheet.aggregateDrawingRecords(
+    			book.getDrawingManager(), false
+    	);
+    	if(found == -1) {
+    		// Workbook has drawing stuff, but this sheet doesn't
+    		return null;
+    	}
+    	
+        EscherAggregate agg = (EscherAggregate) sheet.findFirstRecordBySid(EscherAggregate.sid);
+        HSSFPatriarch patriarch = new HSSFPatriarch(this, agg);
+        agg.setPatriarch(patriarch);
+        agg.convertRecordsToUserModel();
         return patriarch;
     }
 

@@ -523,7 +523,20 @@ public class EscherAggregate extends AbstractEscherHolderRecord
     {
         this.patriarch = patriarch;
     }
-
+    
+    /**
+     * Converts the Records into UserModel
+     *  objects on the bound HSSFPatriarch
+     */
+    public void convertRecordsToUserModel() {
+    	if(patriarch == null) {
+    		throw new IllegalStateException("Must call setPatriarch() first");
+    	}
+    	
+    	// TODO: Support converting our records
+    	//  back into shapes
+    }
+    
     public void clear()
     {
         clearEscherRecords();

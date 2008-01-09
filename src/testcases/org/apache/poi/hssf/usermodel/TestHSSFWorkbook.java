@@ -16,6 +16,8 @@
 */
 package org.apache.poi.hssf.usermodel;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 
@@ -128,5 +130,70 @@ public class TestHSSFWorkbook extends TestCase
         assertEquals(1, b.getNumberOfSheets());
         b.cloneSheet(0);
         assertEquals(2, b.getNumberOfSheets());
+    }
+    
+    public void testReadWriteWithCharts() throws Exception {
+        HSSFWorkbook b;
+        HSSFSheet s;
+        
+        // Single chart, two sheets
+        b = new HSSFWorkbook(
+        		new FileInputStream(new File(filename,"44010-SingleChart.xls"))
+        );
+        assertEquals(2, b.getNumberOfSheets());
+        s = b.getSheetAt(1);
+        assertEquals(0, s.getFirstRowNum());
+        assertEquals(0, s.getLastRowNum());
+        
+        // Has chart on 1st sheet??
+        // FIXME
+        assertNotNull(b.getSheetAt(0).getDrawingPatriarch());
+        assertNull(b.getSheetAt(1).getDrawingPatriarch());
+        assertFalse(b.getSheetAt(0).getDrawingPatriarch().containsChart());
+        
+        b = writeRead(b);
+        assertEquals(2, b.getNumberOfSheets());
+        s = b.getSheetAt(1);
+        assertEquals(0, s.getFirstRowNum());
+        assertEquals(0, s.getLastRowNum());
+
+        
+        // Two charts, three sheets
+        b = new HSSFWorkbook(
+        		new FileInputStream(new File(filename,"44010-TwoCharts.xls"))
+        );
+        assertEquals(3, b.getNumberOfSheets());
+        
+        s = b.getSheetAt(1);
+        assertEquals(0, s.getFirstRowNum());
+        assertEquals(0, s.getLastRowNum());
+        s = b.getSheetAt(2);
+        assertEquals(0, s.getFirstRowNum());
+        assertEquals(0, s.getLastRowNum());
+        
+        // Has chart on 1st sheet??
+        // FIXME
+        assertNotNull(b.getSheetAt(0).getDrawingPatriarch());
+        assertNull(b.getSheetAt(1).getDrawingPatriarch());
+        assertNull(b.getSheetAt(2).getDrawingPatriarch());
+        assertFalse(b.getSheetAt(0).getDrawingPatriarch().containsChart());
+        
+        b = writeRead(b);
+        assertEquals(3, b.getNumberOfSheets());
+        
+        s = b.getSheetAt(1);
+        assertEquals(0, s.getFirstRowNum());
+        assertEquals(0, s.getLastRowNum());
+        s = b.getSheetAt(2);
+        assertEquals(0, s.getFirstRowNum());
+        assertEquals(0, s.getLastRowNum());
+    }
+    
+    private HSSFWorkbook writeRead(HSSFWorkbook b) throws Exception {
+    	ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    	b.write(baos);
+    	return new HSSFWorkbook(
+    			new ByteArrayInputStream(baos.toByteArray())
+    	);
     }
 }
