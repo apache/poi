@@ -407,6 +407,30 @@ public class TestHSSFSheet
         assertEquals(0, r6.getOutlineLevel());
     }
     
+    public void testGetDrawings() throws Exception {
+        String filename = System.getProperty("HSSF.testdata.path");
+    	HSSFWorkbook wb1c = new HSSFWorkbook(
+    			new FileInputStream(new File(filename,"WithChart.xls"))
+    	);
+    	HSSFWorkbook wb2c = new HSSFWorkbook(
+    			new FileInputStream(new File(filename,"WithTwoCharts.xls"))
+    	);
+    	
+    	// 1 chart sheet -> data on 1st, chart on 2nd
+    	assertNotNull(wb1c.getSheetAt(0).getDrawingPatriarch());
+    	assertNotNull(wb1c.getSheetAt(1).getDrawingPatriarch());
+    	assertFalse(wb1c.getSheetAt(0).getDrawingPatriarch().containsChart());
+    	assertTrue(wb1c.getSheetAt(1).getDrawingPatriarch().containsChart());
+    	
+    	// 2 chart sheet -> data on 1st, chart on 2nd+3rd
+    	assertNotNull(wb2c.getSheetAt(0).getDrawingPatriarch());
+    	assertNotNull(wb2c.getSheetAt(1).getDrawingPatriarch());
+    	assertNotNull(wb2c.getSheetAt(2).getDrawingPatriarch());
+    	assertFalse(wb2c.getSheetAt(0).getDrawingPatriarch().containsChart());
+    	assertTrue(wb2c.getSheetAt(1).getDrawingPatriarch().containsChart());
+    	assertTrue(wb2c.getSheetAt(2).getDrawingPatriarch().containsChart());
+    }
+    
 	/**
 	 * Test that the ProtectRecord is included when creating or cloning a sheet
 	 */

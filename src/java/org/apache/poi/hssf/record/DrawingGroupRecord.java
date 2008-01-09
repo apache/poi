@@ -72,6 +72,16 @@ public class DrawingGroupRecord extends AbstractEscherHolderRecord
             return writeData( offset, data, buffer );
         }
     }
+    
+    /**
+     * Process the bytes into escher records.
+     * (Not done by default in case we break things,
+     *  unless you set the "poi.deserialize.escher" 
+     *  system property)
+     */
+    public void processChildRecords() {
+    	convertRawBytesToEscherRecords();
+    }
 
     /**
      * Size of record (including 4 byte headers for all sections)

@@ -21,6 +21,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.poi.ddf.EscherComplexProperty;
+import org.apache.poi.ddf.EscherOptRecord;
+import org.apache.poi.ddf.EscherProperty;
+import org.apache.poi.hssf.record.EscherAggregate;
+import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.StringUtil;
+
 /**
  * The patriarch is the toplevel container for shapes in a sheet.  It does
  * little other than act as a container for other shapes and groups.
@@ -38,12 +45,20 @@ public class HSSFPatriarch
     int y2 = 255;
 
     /**
+     * The EscherAggregate we have been bound to.
+     * (This will handle writing us out into records,
+     *  and building up our shapes from the records)
+     */
+    private EscherAggregate boundAggregate;
+
+    /**
      * Creates the patriarch.
      *
-     * @param sheet     the sheet this patriarch is stored in.
+     * @param sheet the sheet this patriarch is stored in.
      */
-    HSSFPatriarch(HSSFSheet sheet)
+    HSSFPatriarch(HSSFSheet sheet, EscherAggregate boundAggregate)
     {
+    	this.boundAggregate = boundAggregate;
         this.sheet = sheet;
     }
 
@@ -172,6 +187,39 @@ public class HSSFPatriarch
         this.y1 = y1;
         this.x2 = x2;
         this.y2 = y2;
+    }
+    
+    /**
+     * Does this HSSFPatriarch contain a chart?
+     * (Technically a reference to a chart, since they
+     *  get stored in a different block of records)
+     * FIXME - detect chart in all cases (only seems
+     *  to work on some charts so far)
+     */
+    public boolean containsChart() {
+    	// TODO - support charts properly in usermodel
+    	
+    	// We're looking for a EscherOptRecord
+    	EscherOptRecord optRecord = (EscherOptRecord)
+    		boundAggregate.findFirstWithId(EscherOptRecord.RECORD_ID);
+    	if(optRecord == null) {
+    		// No opt record, can't have chart
+    		return false;
+    	}
+    	
+    	for(Iterator it = optRecord.getEscherProperties().iterator(); it.hasNext();) {
+    		EscherProperty prop = (EscherProperty)it.next();
+    		if(prop.getPropertyNumber() == 896 && prop.isComplex()) {
+    			EscherComplexProperty cp = (EscherComplexProperty)prop;
+    			String str = StringUtil.getFromUnicodeLE(cp.getComplexData());
+    			System.err.println(str);
+    			if(str.equals("Chart 1\0")) {
+    				return true;
+    			}
+    		}
+    	}
+
+    	return false;
     }
 
     /**

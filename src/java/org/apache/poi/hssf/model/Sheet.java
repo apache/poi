@@ -2663,12 +2663,26 @@ public class Sheet implements Model
     	return margins;
     }
 
-    public int aggregateDrawingRecords(DrawingManager2 drawingManager)
+    /**
+     * Finds the DrawingRecord for our sheet, and
+     *  attaches it to the DrawingManager (which knows about
+     *  the overall DrawingGroup for our workbook).
+     * If requested, will create a new DrawRecord
+     *  if none currently exist
+     * @param drawingManager The DrawingManager2 for our workbook
+     * @param createIfMissing Should one be created if missing?
+     */
+    public int aggregateDrawingRecords(DrawingManager2 drawingManager, boolean createIfMissing)
     {
         int loc = findFirstRecordLocBySid(DrawingRecord.sid);
-        boolean noDrawingRecordsFound = loc == -1;
+        boolean noDrawingRecordsFound = (loc == -1);
         if (noDrawingRecordsFound)
         {
+        	if(!createIfMissing) {
+        		// None found, and not allowed to add in
+        		return -1;
+        	}
+        	
             EscherAggregate aggregate = new EscherAggregate( drawingManager );
             loc = findFirstRecordLocBySid(EscherAggregate.sid);
             if (loc == -1)
