@@ -58,11 +58,16 @@ public class IOUtils
     }
 
     /**
-     * Same as the normal <tt>in.read(b, off, len)</tt>, but tries to ensure that
-     * the entire len number of bytes is read.
+     * Same as the normal <tt>in.read(b, off, len)</tt>, but
+     *  tries to ensure that the entire len number of bytes
+     *  is read.
      * <p>
-     * If the end of file is reached before any bytes are read, returns -1.
-     * Otherwise, returns the number of bytes read.
+     * If the end of file is reached before any bytes
+     *  are read, returns -1.
+     * If the end of the file is reached after some bytes are
+     *  read, returns the number of bytes read.
+     * If the end of the file isn't reached before len
+     *  bytes have been read, will return len bytes.
      */
     public static int readFully(InputStream in, byte[] b, int off, int len)
     throws IOException
@@ -80,4 +85,3 @@ public class IOUtils
         }
     }
 }
-
