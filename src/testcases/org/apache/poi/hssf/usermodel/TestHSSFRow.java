@@ -56,6 +56,11 @@ public class TestHSSFRow
         row.createCell((short) 1);
         assertEquals(1, row.getFirstCellNum());
         assertEquals(2, row.getLastCellNum());
+        
+        // check the exact case reported in 'bug' 43901 - notice that the cellNum is '0' based
+        row.createCell((short) 3);
+        assertEquals(1, row.getFirstCellNum());
+        assertEquals(3, row.getLastCellNum());
 
     }
 
