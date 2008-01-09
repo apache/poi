@@ -724,10 +724,20 @@ public class TestHSSFSheet
 		HSSFWorkbook wb = new HSSFWorkbook(fs);
 		HSSFSheet sheet = wb.getSheet(sheetName);
 		
+		// Can't use literal numbers for column sizes, as
+		//  will come out with different values on different
+		//  machines based on the fonts available.
+		// So, we use ranges
+		int minWithRow1And2 = 7169; 
+		int maxWithRow1And2 = 7732;
+		int minWithRow1Only = 3024;
+		int maxWithRow1Only = 3292;
+		
 		// autoSize the first column and check its size before the merged region (1,0,1,1) is set:
 		// it has to be based on the 2nd row width
 		sheet.autoSizeColumn((short)0);
-		assertEquals("Column autosized with only one row: wrong width", (short)7169, sheet.getColumnWidth((short)0));
+		assertTrue("Column autosized with only one row: wrong width", sheet.getColumnWidth((short)0) >= minWithRow1And2);
+		assertTrue("Column autosized with only one row: wrong width", sheet.getColumnWidth((short)0) <= maxWithRow1And2);
 		
 		//create a region over the 2nd row and auto size the first column
 		sheet.addMergedRegion(new Region(1,(short)0,1,(short)1));
@@ -740,7 +750,8 @@ public class TestHSSFSheet
 		// because it is included in a merged region (Excel like behavior)
 		HSSFWorkbook wb2 = new HSSFWorkbook(new ByteArrayInputStream(out.toByteArray()));
 		HSSFSheet sheet2 = wb2.getSheet(sheetName);
-		assertEquals((short)3024, sheet2.getColumnWidth((short)0));
+		assertTrue(sheet2.getColumnWidth((short)0) >= minWithRow1Only);
+		assertTrue(sheet2.getColumnWidth((short)0) <= maxWithRow1Only);
 		
 		// remove the 2nd row merged region and check that the 2nd row value is used to the autoSizeColumn width
 		sheet2.removeMergedRegion(1);
@@ -750,7 +761,8 @@ public class TestHSSFSheet
 		out.close();
 		HSSFWorkbook wb3 = new HSSFWorkbook(new ByteArrayInputStream(out.toByteArray()));
 		HSSFSheet sheet3 = wb3.getSheet(sheetName);
-		assertEquals((short)7169, sheet3.getColumnWidth((short)0));
+		assertTrue(sheet3.getColumnWidth((short)0) >= minWithRow1And2);
+		assertTrue(sheet3.getColumnWidth((short)0) <= maxWithRow1And2);
     }
 
 	public static void main(java.lang.String[] args) {
