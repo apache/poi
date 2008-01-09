@@ -309,6 +309,104 @@ public class TestHSSFSheet
         assertEquals(1, sheetLS.getPrintSetup().getCopies());
     }
     
+    public void testGroupRows() throws Exception {
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        HSSFSheet s = workbook.createSheet();
+        HSSFRow r1 = s.createRow(0);
+        HSSFRow r2 = s.createRow(1);
+        HSSFRow r3 = s.createRow(2);
+        HSSFRow r4 = s.createRow(3);
+        HSSFRow r5 = s.createRow(4);
+        
+        assertEquals(0, r1.getOutlineLevel());
+        assertEquals(0, r2.getOutlineLevel());
+        assertEquals(0, r3.getOutlineLevel());
+        assertEquals(0, r4.getOutlineLevel());
+        assertEquals(0, r5.getOutlineLevel());
+        
+        s.groupRow(2,3);
+        
+        assertEquals(0, r1.getOutlineLevel());
+        assertEquals(0, r2.getOutlineLevel());
+        assertEquals(1, r3.getOutlineLevel());
+        assertEquals(1, r4.getOutlineLevel());
+        assertEquals(0, r5.getOutlineLevel());
+        
+        // Save and re-open
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        workbook.write(baos);
+        workbook = new HSSFWorkbook(
+        		new ByteArrayInputStream(baos.toByteArray())
+        );
+        
+        s = workbook.getSheetAt(0);
+        r1 = s.getRow(0);
+        r2 = s.getRow(1);
+        r3 = s.getRow(2);
+        r4 = s.getRow(3);
+        r5 = s.getRow(4);
+        
+        assertEquals(0, r1.getOutlineLevel());
+        assertEquals(0, r2.getOutlineLevel());
+        assertEquals(1, r3.getOutlineLevel());
+        assertEquals(1, r4.getOutlineLevel());
+        assertEquals(0, r5.getOutlineLevel());
+    }
+    
+    public void testGroupRowsExisting() throws Exception {
+        String filename = System.getProperty("HSSF.testdata.path");
+        filename = filename + "/NoGutsRecords.xls";
+        HSSFWorkbook workbook = 
+        	new HSSFWorkbook(new FileInputStream(filename));
+        
+        HSSFSheet s = workbook.getSheetAt(0);
+        HSSFRow r1 = s.getRow(0);
+        HSSFRow r2 = s.getRow(1);
+        HSSFRow r3 = s.getRow(2);
+        HSSFRow r4 = s.getRow(3);
+        HSSFRow r5 = s.getRow(4);
+        HSSFRow r6 = s.getRow(5);
+
+        assertEquals(0, r1.getOutlineLevel());
+        assertEquals(0, r2.getOutlineLevel());
+        assertEquals(0, r3.getOutlineLevel());
+        assertEquals(0, r4.getOutlineLevel());
+        assertEquals(0, r5.getOutlineLevel());
+        assertEquals(0, r6.getOutlineLevel());
+        
+        // This used to complain about lacking guts records
+        s.groupRow(2, 4);
+        
+        assertEquals(0, r1.getOutlineLevel());
+        assertEquals(0, r2.getOutlineLevel());
+        assertEquals(1, r3.getOutlineLevel());
+        assertEquals(1, r4.getOutlineLevel());
+        assertEquals(1, r5.getOutlineLevel());
+        assertEquals(0, r6.getOutlineLevel());
+        
+        // Save and re-open
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        workbook.write(baos);
+        workbook = new HSSFWorkbook(
+        		new ByteArrayInputStream(baos.toByteArray())
+        );
+        
+        s = workbook.getSheetAt(0);
+        r1 = s.getRow(0);
+        r2 = s.getRow(1);
+        r3 = s.getRow(2);
+        r4 = s.getRow(3);
+        r5 = s.getRow(4);
+        r6 = s.getRow(5);
+        
+        assertEquals(0, r1.getOutlineLevel());
+        assertEquals(0, r2.getOutlineLevel());
+        assertEquals(1, r3.getOutlineLevel());
+        assertEquals(1, r4.getOutlineLevel());
+        assertEquals(1, r5.getOutlineLevel());
+        assertEquals(0, r6.getOutlineLevel());
+    }
+    
 	/**
 	 * Test that the ProtectRecord is included when creating or cloning a sheet
 	 */
