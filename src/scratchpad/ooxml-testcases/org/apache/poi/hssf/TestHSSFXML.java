@@ -18,6 +18,7 @@ package org.apache.poi.hssf;
 
 import java.io.File;
 
+import org.apache.poi.hssf.model.SharedStringsTable;
 import org.apache.poi.hxf.HXFDocument;
 import org.openxml4j.opc.Package;
 import org.openxml4j.opc.PackagePart;
@@ -123,5 +124,37 @@ public class TestHSSFXML extends TestCase {
 		
 		assertEquals(null, xml.getCoreProperties().getTitleProperty().getValue());
 		assertEquals(null, xml.getCoreProperties().getSubjectProperty().getValue());
+	}
+	
+	public void testSharedStringBasics() throws Exception {
+		HSSFXML xml = new HSSFXML(
+				HXFDocument.openPackage(sampleFile)
+		);
+		assertNotNull(xml._getSharedStringsTable());
+		
+		SharedStringsTable sst = xml._getSharedStringsTable();
+		assertEquals(10, sst.size());
+		
+		assertEquals("Lorem", sst.get(0));
+		for(int i=0; i<sst.size(); i++) {
+			assertEquals(sst.get(i), xml.getSharedString(i));
+		}
+		
+		// Add a few more, then save and reload, checking
+		//  changes have been kept
+		sst.add("Foo");
+		sst.add("Bar");
+		sst.set(0, "LoremLorem");
+		
+		sst.write();
+		
+		xml = new HSSFXML(xml.getPackage());
+		sst = xml._getSharedStringsTable();
+		assertEquals(12, sst.size());
+		
+		assertEquals("LoremLorem", sst.get(0));
+		for(int i=0; i<sst.size(); i++) {
+			assertEquals(sst.get(i), xml.getSharedString(i));
+		}
 	}
 }
