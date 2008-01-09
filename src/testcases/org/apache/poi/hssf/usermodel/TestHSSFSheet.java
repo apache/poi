@@ -32,6 +32,7 @@ import org.apache.poi.hssf.record.VCenterRecord;
 import org.apache.poi.hssf.record.WSBoolRecord;
 import org.apache.poi.hssf.record.WindowTwoRecord;
 import org.apache.poi.hssf.util.Region;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.TempFile;
 
 /**
@@ -614,6 +615,44 @@ public class TestHSSFSheet
         workbook = new HSSFWorkbook(new ByteArrayInputStream(out.toByteArray()));
         assertTrue("No Exceptions while reading file", true);
 
+    }
+    
+    public void testAutoSizeColumn() throws Exception {
+		String filename = System.getProperty("HSSF.testdata.path");
+		filename = filename + "/43902.xls";
+		String sheetName = "my sheet";
+		FileInputStream is = new FileInputStream(filename);
+		POIFSFileSystem fs = new POIFSFileSystem(is);
+		HSSFWorkbook wb = new HSSFWorkbook(fs);
+		HSSFSheet sheet = wb.getSheet(sheetName);
+		
+		// autoSize the first column and check its size before the merged region (1,0,1,1) is set:
+		// it has to be based on the 2nd row width
+		sheet.autoSizeColumn((short)0);
+		assertEquals("Column autosized with only one row: wrong width", (short)7169, sheet.getColumnWidth((short)0));
+		
+		//create a region over the 2nd row and auto size the first column
+		sheet.addMergedRegion(new Region(1,(short)0,1,(short)1));
+		sheet.autoSizeColumn((short)0);
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		wb.write(out);
+		out.close();
+		
+		// check that the autoSized column width has ignored the 2nd row 
+		// because it is included in a merged region (Excel like behavior)
+		HSSFWorkbook wb2 = new HSSFWorkbook(new ByteArrayInputStream(out.toByteArray()));
+		HSSFSheet sheet2 = wb2.getSheet(sheetName);
+		assertEquals((short)3024, sheet2.getColumnWidth((short)0));
+		
+		// remove the 2nd row merged region and check that the 2nd row value is used to the autoSizeColumn width
+		sheet2.removeMergedRegion(1);
+		sheet2.autoSizeColumn((short)0);
+		out = new ByteArrayOutputStream();
+		wb2.write(out);
+		out.close();
+		HSSFWorkbook wb3 = new HSSFWorkbook(new ByteArrayInputStream(out.toByteArray()));
+		HSSFSheet sheet3 = wb3.getSheet(sheetName);
+		assertEquals((short)7169, sheet3.getColumnWidth((short)0));
     }
 
 	public static void main(java.lang.String[] args) {
