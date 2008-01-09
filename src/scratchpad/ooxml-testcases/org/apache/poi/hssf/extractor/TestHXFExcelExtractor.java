@@ -101,32 +101,32 @@ public class TestHXFExcelExtractor extends TestCase {
 		extractor.setIncludeSheetNames(false);
 		text = extractor.getText();
 		assertEquals(
-				"0\t111\n" +
-				"1\t222\n" +
-				"2\t333\n" +
-				"3\t444\n" +
-				"4\t555\n" +
-				"5\t666\n" +
-				"6\t777\n" +
-				"7\t888\n" +
-				"8\t999\n" +
-				"9\t4995\n" +
+				"Lorem\t111\n" +
+				"ipsum\t222\n" +
+				"dolor\t333\n" +
+				"sit\t444\n" +
+				"amet\t555\n" +
+				"consectetuer\t666\n" +
+				"adipiscing\t777\n" +
+				"elit\t888\n" +
+				"Nunc\t999\n" +
+				"at\t4995\n" +
 				"\n\n", text);
 		
 		// Now get formulas not their values
 		extractor.setFormulasNotResults(true);
 		text = extractor.getText();
 		assertEquals(
-				"0\t111\n" +
-				"1\t222\n" +
-				"2\t333\n" +
-				"3\t444\n" +
-				"4\t555\n" +
-				"5\t666\n" +
-				"6\t777\n" +
-				"7\t888\n" +
-				"8\t999\n" +
-				"9\tSUM(B1:B9)\n" +
+				"Lorem\t111\n" +
+				"ipsum\t222\n" +
+				"dolor\t333\n" +
+				"sit\t444\n" +
+				"amet\t555\n" +
+				"consectetuer\t666\n" +
+				"adipiscing\t777\n" +
+				"elit\t888\n" +
+				"Nunc\t999\n" +
+				"at\tSUM(B1:B9)\n" +
 				"\n\n", text);
 		
 		// With sheet names too
@@ -134,16 +134,16 @@ public class TestHXFExcelExtractor extends TestCase {
 		text = extractor.getText();
 		assertEquals(
 				"Sheet1\n" +
-				"0\t111\n" +
-				"1\t222\n" +
-				"2\t333\n" +
-				"3\t444\n" +
-				"4\t555\n" +
-				"5\t666\n" +
-				"6\t777\n" +
-				"7\t888\n" +
-				"8\t999\n" +
-				"9\tSUM(B1:B9)\n\n" +
+				"Lorem\t111\n" +
+				"ipsum\t222\n" +
+				"dolor\t333\n" +
+				"sit\t444\n" +
+				"amet\t555\n" +
+				"consectetuer\t666\n" +
+				"adipiscing\t777\n" +
+				"elit\t888\n" +
+				"Nunc\t999\n" +
+				"at\tSUM(B1:B9)\n\n" +
 				"Sheet2\n\n" +
 				"Sheet3\n"
 				, text);
@@ -161,9 +161,10 @@ public class TestHXFExcelExtractor extends TestCase {
 		assertTrue(text.length() > 0);
 		
 		// Might not have all formatting it should do!
+		// TODO decide if we should really have the "null" in there
 		assertTrue(text.startsWith(
 						"Avgtxfull\n" +
-						"3\t13\t3\t2\t2\t3\t2\t"	
+						"null\t(iii) AVERAGE TAX RATES ON ANNUAL"	
 		));
 	}
 	
@@ -184,8 +185,8 @@ public class TestHXFExcelExtractor extends TestCase {
 			POITextExtractor extractor = extractors[i];
 			
 			String text = extractor.getText().replaceAll("[\r\t]", "");
-			System.out.println(text.length());
-			System.out.println(text);
+			//System.out.println(text.length());
+			//System.out.println(text);
 			assertTrue(text.startsWith("First Sheet\nTest spreadsheet\n2nd row2nd row 2nd column\n"));
 			Pattern pattern = Pattern.compile(".*13(\\.0+)?\\s+Sheet3.*", Pattern.DOTALL);
 			Matcher m = pattern.matcher(text);

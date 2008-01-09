@@ -42,6 +42,8 @@ public class HSSFXMLCell {
         switch (cell.getT().intValue()) {
         case STCellType.INT_S:
             return this.workbook.getSharedString(Integer.valueOf(cell.getV()));
+        case STCellType.INT_INLINE_STR:
+        	return cell.getV();
         case STCellType.INT_N:
             return cell.getV();
         // TODO: support other types

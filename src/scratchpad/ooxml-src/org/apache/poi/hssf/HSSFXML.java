@@ -49,7 +49,6 @@ public class HSSFXML extends HXFDocument {
 	public static final String SHARED_STRINGS_RELATION_TYPE = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings";
 	
 	private WorkbookDocument workbookDoc;
-	
 	private SharedStringsTable sharedStrings;
 
 	public HSSFXML(Package container) throws OpenXML4JException, IOException, XmlException {
@@ -92,8 +91,14 @@ public class HSSFXML extends HXFDocument {
 			WorksheetDocument.Factory.parse(sheetPart.getInputStream());
 		return sheetDoc.getWorksheet();
 	}
-	
+
+	/**
+	 * Returns the shared string at the given index
+	 */
 	public String getSharedString(int index) {
 		return this.sharedStrings.get(index);
+	}
+	protected SharedStringsTable _getSharedStringsTable() {
+		return sharedStrings;
 	}
 }
