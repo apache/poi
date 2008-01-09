@@ -109,4 +109,24 @@ public class TestHSSFWorkbook extends TestCase
         assertEquals(b.getSelectedTab(), 1);
         assertEquals(b.getDisplayedTab(), 1);
     }
+    
+    public void testSheetClone() throws Exception {
+    	// First up, try a simple file
+        HSSFWorkbook b = new HSSFWorkbook();
+        assertEquals(0, b.getNumberOfSheets());
+        b.createSheet("Sheet One");
+        b.createSheet("Sheet Two");
+        
+        assertEquals(2, b.getNumberOfSheets());
+        b.cloneSheet(0);
+        assertEquals(3, b.getNumberOfSheets());
+    	
+    	// Now try a problem one with drawing records in it
+        b = new HSSFWorkbook(
+        		new FileInputStream(new File(filename,"SheetWithDrawing.xls"))
+        );
+        assertEquals(1, b.getNumberOfSheets());
+        b.cloneSheet(0);
+        assertEquals(2, b.getNumberOfSheets());
+    }
 }

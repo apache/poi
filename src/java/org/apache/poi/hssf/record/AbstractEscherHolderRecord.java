@@ -24,6 +24,9 @@ import org.apache.poi.ddf.EscherRecordFactory;
 import org.apache.poi.ddf.NullEscherSerializationListener;
 import org.apache.poi.util.LittleEndian;
 
+import java.io.ByteArrayInputStream;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -76,7 +79,7 @@ public abstract class AbstractEscherHolderRecord
     {
         if (id != getSid())
         {
-            throw new RecordFormatException("Not an escher record");
+            throw new RecordFormatException("Not an escher record! (sid was " + id + ", expecting " + getSid() + ")");
         }
     }
 
@@ -227,7 +230,19 @@ public abstract class AbstractEscherHolderRecord
 
     public Object clone()
     {
-        throw new IllegalStateException("Not implemented yet.");
+    	// Do it via a re-serialise
+    	// It's a cheat, but it works...
+    	byte[] b = serialize();
+    	RecordInputStream rinp = new RecordInputStream(
+    			new ByteArrayInputStream(b)
+    	);
+    	rinp.nextRecord();
+
+    	Record[] r = RecordFactory.createRecord(rinp);
+    	if(r.length != 1) {
+    		throw new IllegalStateException("Re-serialised a record to clone it, but got " + r.length + " records back!");
+    	}
+    	return r[0];
     }
 
     public void addEscherRecord(int index, EscherRecord element)
