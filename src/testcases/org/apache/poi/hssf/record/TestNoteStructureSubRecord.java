@@ -65,4 +65,16 @@ public class TestNoteStructureSubRecord
         assertEquals(ser.length - 4, data.length);
 
     }
+
+    public void testClone()
+    {
+        NoteStructureSubRecord record = new NoteStructureSubRecord();
+        byte[] src = record.serialize();
+
+        NoteStructureSubRecord cloned = (NoteStructureSubRecord)record.clone();
+        byte[] cln = cloned.serialize();
+
+        assertEquals(record.getRecordSize(), cloned.getRecordSize());
+        assertTrue(Arrays.equals(src, cln));
+    }
 }

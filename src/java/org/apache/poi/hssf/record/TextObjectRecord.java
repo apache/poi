@@ -251,4 +251,21 @@ public class TextObjectRecord
         buffer.append( "[/TXO]\n" );
         return buffer.toString();
     }
+
+    public Object clone() {
+
+        TextObjectRecord rec = new TextObjectRecord();
+        rec.str = str;
+
+        rec.setOptions(getOptions());
+        rec.setTextOrientation(getTextOrientation());
+        rec.setReserved4(getReserved4());
+        rec.setReserved5(getReserved5());
+        rec.setReserved6(getReserved6());
+        rec.setTextLength(getTextLength());
+        rec.setFormattingRunLength(getFormattingRunLength());
+        rec.setReserved7(getReserved7());
+        return rec;
+    }
+
 }

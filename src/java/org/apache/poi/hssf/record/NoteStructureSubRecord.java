@@ -125,6 +125,15 @@ public class NoteStructureSubRecord
     {
         return sid;
     }
+
+    public Object clone() {
+        NoteStructureSubRecord rec = new NoteStructureSubRecord();
+        byte[] recdata = new byte[reserved.length];
+        System.arraycopy(reserved, 0, recdata, 0, recdata.length);
+        rec.reserved = recdata;
+        return rec;
+    }
+
 }
 
 
