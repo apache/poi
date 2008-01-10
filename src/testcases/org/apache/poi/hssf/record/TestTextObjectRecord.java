@@ -117,4 +117,44 @@ public class TestTextObjectRecord extends TestCase {
         }
 
     }
+
+    /**
+     * Test cloning
+     */
+    public void testClone() {
+        String text = "Hello, World";
+        HSSFRichTextString str = new HSSFRichTextString(text);
+
+        TextObjectRecord obj = new TextObjectRecord();
+        int frLength = ( str.numFormattingRuns() + 1 ) * 8;
+        obj.setFormattingRunLength( (short) frLength );
+        obj.setTextLength( (short) str.length() );
+        obj.setReserved1(true);
+        obj.setReserved2((short)2);
+        obj.setReserved3((short)3);
+        obj.setReserved4((short)4);
+        obj.setReserved5((short)5);
+        obj.setReserved6((short)6);
+        obj.setReserved7((short)7);
+        obj.setStr( str );
+
+
+        TextObjectRecord cloned = (TextObjectRecord)obj.clone();
+        assertEquals(obj.getReserved2(), cloned.getReserved2());
+        assertEquals(obj.getReserved3(), cloned.getReserved3());
+        assertEquals(obj.getReserved4(), cloned.getReserved4());
+        assertEquals(obj.getReserved5(), cloned.getReserved5());
+        assertEquals(obj.getReserved6(), cloned.getReserved6());
+        assertEquals(obj.getReserved7(), cloned.getReserved7());
+        assertEquals(obj.getRecordSize(), cloned.getRecordSize());
+        assertEquals(obj.getOptions(), cloned.getOptions());
+        assertEquals(obj.getHorizontalTextAlignment(), cloned.getHorizontalTextAlignment());
+        assertEquals(obj.getFormattingRunLength(), cloned.getFormattingRunLength());
+        assertEquals(obj.getStr().getString(), cloned.getStr().getString());
+
+        //finally check that the serialized data is the same
+        byte[] src = obj.serialize();
+        byte[] cln = cloned.serialize();
+        assertTrue(Arrays.equals(src, cln));
+    }
 }

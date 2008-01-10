@@ -913,7 +913,27 @@ extends TestCase {
 
     }
 
-    
+    /**
+     * Bug 44200: Sheet not cloneable when Note added to excel cell
+     */
+    public void test44200() throws Exception {
+        FileInputStream in = new FileInputStream(new File(cwd, "44200.xls"));
+        HSSFWorkbook wb = new HSSFWorkbook(in);
+        in.close();
+
+        wb.cloneSheet(0);
+        assertTrue("No Exceptions while cloning sheet", true);
+
+        //serialize and read again
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        wb.write(out);
+        out.close();
+
+        wb = new HSSFWorkbook(new ByteArrayInputStream(out.toByteArray()));
+        assertTrue("No Exceptions while reading file", true);
+
+    }
+
 }
 
 

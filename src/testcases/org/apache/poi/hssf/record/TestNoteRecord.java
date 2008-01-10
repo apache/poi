@@ -79,4 +79,27 @@ public class TestNoteRecord
         System.arraycopy(ser, 4, recdata, 0, recdata.length);
         assertTrue(Arrays.equals(data, recdata));
     }
+
+    public void testClone()
+    {
+        NoteRecord record = new NoteRecord();
+
+        record.setRow((short)1);
+        record.setColumn((short)2);
+        record.setFlags(NoteRecord.NOTE_VISIBLE);
+        record.setShapeId((short)1026);
+        record.setAuthor("Apache Software Foundation");
+
+        NoteRecord cloned = (NoteRecord)record.clone();
+        assertEquals(record.getRow(), cloned.getRow());
+        assertEquals(record.getColumn(), cloned.getColumn());
+        assertEquals(record.getFlags(), cloned.getFlags());
+        assertEquals(record.getShapeId(), cloned.getShapeId());
+        assertEquals(record.getAuthor(), cloned.getAuthor());
+
+        //finally check that the serialized data is the same
+        byte[] src = record.serialize();
+        byte[] cln = cloned.serialize();
+        assertTrue(Arrays.equals(src, cln));
+    }
 }

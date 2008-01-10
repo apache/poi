@@ -243,4 +243,15 @@ public class NoteRecord extends Record {
     public void setAuthor(String author){
         field_5_author = author;
     }
+
+    public Object clone() {
+        NoteRecord rec = new NoteRecord();
+        rec.field_1_row = field_1_row;
+        rec.field_2_col = field_2_col;
+        rec.field_3_flags = field_3_flags;
+        rec.field_4_shapeid = field_4_shapeid;
+        rec.field_5_author = field_5_author;
+        return rec;
+    }
+
 }
