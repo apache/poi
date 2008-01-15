@@ -24,6 +24,8 @@ import org.apache.poi.hssf.model.TextboxShape;
 import org.apache.poi.hssf.model.DrawingManager2;
 import org.apache.poi.hssf.model.ConvertAnchor;
 import org.apache.poi.hssf.model.CommentShape;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 import java.util.*;
 
@@ -47,6 +49,7 @@ import java.util.*;
 public class EscherAggregate extends AbstractEscherHolderRecord
 {
     public static final short sid = 9876;
+    private static POILogger log = POILogFactory.getLogger(EscherAggregate.class);
 
     public static final short ST_MIN = (short) 0;
     public static final short ST_NOT_PRIMATIVE = ST_MIN;
@@ -533,8 +536,134 @@ public class EscherAggregate extends AbstractEscherHolderRecord
     		throw new IllegalStateException("Must call setPatriarch() first");
     	}
     	
+    	// The top level container ought to have
+    	//  the DgRecord and the container of one container
+    	//  per shape group (patriach overall first)
+    	EscherContainerRecord topContainer =
+    		(EscherContainerRecord)getEscherContainer();
+    	if(topContainer == null) {
+    		return;
+    	}
+    	topContainer = (EscherContainerRecord) 
+    		topContainer.getChildContainers().get(0);
+    	
+    	List tcc = topContainer.getChildContainers();
+    	if(tcc.size() == 0) {
+    		throw new IllegalStateException("No child escher containers at the point that should hold the patriach data, and one container per top level shape!");
+    	}
+    	
+    	// First up, get the patriach position
+    	// This is in the first EscherSpgrRecord, in
+    	//  the first container, with a EscherSRecord too
+    	EscherContainerRecord patriachContainer =
+    		(EscherContainerRecord)tcc.get(0);
+    	EscherSpgrRecord spgr = null;
+    	for(Iterator it = patriachContainer.getChildRecords().iterator(); it.hasNext();) {
+    		EscherRecord r = (EscherRecord)it.next();
+    		if(r instanceof EscherSpgrRecord) {
+    			spgr = (EscherSpgrRecord)r;
+    			break;
+    		}
+    	}
+    	if(spgr != null) {
+    		patriarch.setCoordinates(
+    				spgr.getRectX1(), spgr.getRectY1(),
+    				spgr.getRectX2(), spgr.getRectY2()
+    		);
+    	}
+    	
+    	// Now process the containers for each group
+    	//  and objects
+    	for(int i=1; i<tcc.size(); i++) {
+    		EscherContainerRecord shapeContainer =
+    			(EscherContainerRecord)tcc.get(i);
+    		//System.err.println("\n\n*****\n\n");
+    		//System.err.println(shapeContainer);
+    		
+    		// Could be a group, or a base object
+    		if(shapeContainer.getChildRecords().size() == 1 &&
+    				shapeContainer.getChildContainers().size() == 1) {
+    			// Group
+    			HSSFShapeGroup group =
+    				new HSSFShapeGroup(null, new HSSFClientAnchor());
+    			patriarch.getChildren().add(group);
+    			
+    			EscherContainerRecord groupContainer =
+    				(EscherContainerRecord)shapeContainer.getChild(0);
+    			convertRecordsToUserModel(groupContainer, group);
+    		} else if(shapeContainer.hasChildOfType((short)0xF00D)) {
+    			// TextBox
+    			HSSFTextbox box =
+    				new HSSFTextbox(null, new HSSFClientAnchor());
+    			patriarch.getChildren().add(box);
+    			
+    			convertRecordsToUserModel(shapeContainer, box);
+    		} else if(shapeContainer.hasChildOfType((short)0xF011)) {
+    			// Not yet supporting EscherClientDataRecord stuff
+    		} else {
+    			// Base level
+    			convertRecordsToUserModel(shapeContainer, patriarch);
+    		}
+    	}
+    	
+    	// Now, clear any trace of what records make up
+    	//  the patriarch
+    	// Otherwise, everything will go horribly wrong
+    	//  when we try to write out again....
+//    	clearEscherRecords();
+    	drawingManager.getDgg().setFileIdClusters(new EscherDggRecord.FileIdCluster[0]);
+
     	// TODO: Support converting our records
     	//  back into shapes
+    	log.log(POILogger.WARN, "Not processing objects into Patriarch!");
+    }
+    
+    private void convertRecordsToUserModel(EscherContainerRecord shapeContainer, Object model) {
+    	for(Iterator it = shapeContainer.getChildRecords().iterator(); it.hasNext();) {
+    		EscherRecord r = (EscherRecord)it.next();
+    		if(r instanceof EscherSpgrRecord) {
+    			// This may be overriden by a later EscherClientAnchorRecord
+    			EscherSpgrRecord spgr = (EscherSpgrRecord)r;
+    			
+    			if(model instanceof HSSFShapeGroup) {
+    				HSSFShapeGroup g = (HSSFShapeGroup)model;
+    				g.setCoordinates(
+    						spgr.getRectX1(), spgr.getRectY1(),
+    						spgr.getRectX2(), spgr.getRectY2()
+    				);
+    			} else {
+    				throw new IllegalStateException("Got top level anchor but not processing a group");
+    			}
+    		} 
+    		else if(r instanceof EscherClientAnchorRecord) {
+    			EscherClientAnchorRecord car = (EscherClientAnchorRecord)r;
+    			
+    			if(model instanceof HSSFShape) {
+    				HSSFShape g = (HSSFShape)model;
+    				g.getAnchor().setDx1(car.getDx1());
+    				g.getAnchor().setDx2(car.getDx2());
+    				g.getAnchor().setDy1(car.getDy1());
+    				g.getAnchor().setDy2(car.getDy2());
+    			} else {
+    				throw new IllegalStateException("Got top level anchor but not processing a group or shape");
+    			}
+    		}
+    		else if(r instanceof EscherTextboxRecord) {
+    			EscherTextboxRecord tbr = (EscherTextboxRecord)r;
+    			
+    			// Also need to find the TextObjectRecord too
+    			// TODO
+    		}
+    		else if(r instanceof EscherSpRecord) {
+    			// Use flags if needed
+    		}
+    		else if(r instanceof EscherOptRecord) {
+    			// Use properties if needed
+    		}
+    		else {
+    			//System.err.println(r);
+    		}
+    	}
     }
     
     public void clear()

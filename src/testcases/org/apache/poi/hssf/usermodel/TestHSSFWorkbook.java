@@ -151,6 +151,13 @@ public class TestHSSFWorkbook extends TestCase
         assertNull(b.getSheetAt(1).getDrawingPatriarch());
         assertFalse(b.getSheetAt(0).getDrawingPatriarch().containsChart());
         
+        // We've now called getDrawingPatriarch() so 
+        //  everything will be all screwy
+        // So, start again
+        b = new HSSFWorkbook(
+        		new FileInputStream(new File(filename,"44010-SingleChart.xls"))
+        );
+        
         b = writeRead(b);
         assertEquals(2, b.getNumberOfSheets());
         s = b.getSheetAt(1);
@@ -177,6 +184,13 @@ public class TestHSSFWorkbook extends TestCase
         assertNull(b.getSheetAt(1).getDrawingPatriarch());
         assertNull(b.getSheetAt(2).getDrawingPatriarch());
         assertFalse(b.getSheetAt(0).getDrawingPatriarch().containsChart());
+        
+        // We've now called getDrawingPatriarch() so 
+        //  everything will be all screwy
+        // So, start again
+        b = new HSSFWorkbook(
+        		new FileInputStream(new File(filename,"44010-TwoCharts.xls"))
+        );
         
         b = writeRead(b);
         assertEquals(3, b.getNumberOfSheets());
