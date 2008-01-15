@@ -254,4 +254,10 @@ public class HSSFPatriarch
         return y2;
     }
 
+    /**
+     * Returns the aggregate escher record we're bound to 
+     */
+    protected EscherAggregate _getBoundAggregate() {
+    	return boundAggregate;
+    }
 }
