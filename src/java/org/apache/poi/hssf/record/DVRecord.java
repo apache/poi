@@ -16,16 +16,16 @@
 
 package org.apache.poi.hssf.record;
 
+import java.io.IOException;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Stack;
+
+import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.hssf.util.HSSFCellRangeAddress;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
-import org.apache.poi.hssf.util.HSSFCellRangeAddress;
-import org.apache.poi.hssf.record.formula.Ptg;
-
-import java.io.IOException;
-import java.util.Stack;
-import java.util.Hashtable;
-import java.util.Enumeration;
 
 /**
  * Title:        DV Record<P>
@@ -501,6 +501,14 @@ public class DVRecord extends Record
     public short getSid()
     {
         return this.sid;
+    }
+    
+    /**
+     * Clones the object. Uses serialisation, as the
+     *  contents are somewhat complex
+     */
+    public Object clone() {
+    	return cloneViaReserialise();
     }
 
     /**@todo DVRecord = Serializare */
