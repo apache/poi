@@ -18,7 +18,6 @@
 
 package org.apache.poi.hssf.record;
 
-import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -232,19 +231,7 @@ public abstract class AbstractEscherHolderRecord
 
     public Object clone()
     {
-    	// Do it via a re-serialise
-    	// It's a cheat, but it works...
-    	byte[] b = serialize();
-    	RecordInputStream rinp = new RecordInputStream(
-    			new ByteArrayInputStream(b)
-    	);
-    	rinp.nextRecord();
-
-    	Record[] r = RecordFactory.createRecord(rinp);
-    	if(r.length != 1) {
-    		throw new IllegalStateException("Re-serialised a record to clone it, but got " + r.length + " records back!");
-    	}
-    	return r[0];
+    	return cloneViaReserialise();
     }
 
     public void addEscherRecord(int index, EscherRecord element)

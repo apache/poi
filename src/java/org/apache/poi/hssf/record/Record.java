@@ -19,6 +19,8 @@
 
 package org.apache.poi.hssf.record;
 
+import java.io.ByteArrayInputStream;
+
 /**
  * Title: Record
  * Description: All HSSF Records inherit from this class.  It
@@ -146,5 +148,31 @@ public abstract class Record
 
     public Object clone() {
       throw new RuntimeException("The class "+getClass().getName()+" needs to define a clone method");
+    }
+    
+    /**
+     * Clone the current record, via a call to serialise
+     *  it, and another to create a new record from the
+     *  bytes.
+     * May only be used for classes which don't have
+     *  internal counts / ids in them. For those which
+     *  do, a full record-aware serialise is needed, which
+     *  allocates new ids / counts as needed.
+     */
+    public Record cloneViaReserialise()
+    {
+    	// Do it via a re-serialise
+    	// It's a cheat, but it works...
+    	byte[] b = serialize();
+    	RecordInputStream rinp = new RecordInputStream(
+    			new ByteArrayInputStream(b)
+    	);
+    	rinp.nextRecord();
+
+    	Record[] r = RecordFactory.createRecord(rinp);
+    	if(r.length != 1) {
+    		throw new IllegalStateException("Re-serialised a record to clone it, but got " + r.length + " records back!");
+    	}
+    	return r[0];
     }
 }
