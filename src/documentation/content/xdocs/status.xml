@@ -33,6 +33,7 @@
 	<!-- Don't forget to update changes.xml too! -->
     <changes>
         <release version="3.0.2-FINAL" date="2008-??-??">
+            <action dev="POI-DEVELOPERS" type="add">44233 - Support for getting and setting a flag on the sheet, which tells excel to re-calculate all formulas on it at next reload</action>
             <action dev="POI-DEVELOPERS" type="fix">44201 - Enable cloning of sheets with data validation rules</action>
             <action dev="POI-DEVELOPERS" type="fix">44200 - Enable cloning of sheets with notes</action>
             <action dev="POI-DEVELOPERS" type="add">43008 - Add a moveCell method to HSSFRow, and deprecate setCellNum(), which didn't update things properly</action>
