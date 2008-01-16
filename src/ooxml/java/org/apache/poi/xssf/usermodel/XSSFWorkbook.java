@@ -27,11 +27,11 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
-import org.apache.poi.hssf.usermodel.HSSFPalette;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Name;
+import org.apache.poi.ss.usermodel.Palette;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.xmlbeans.XmlOptions;
@@ -147,7 +147,7 @@ public class XSSFWorkbook implements Workbook {
         return null;
     }
 
-    public HSSFPalette getCustomPalette() {
+    public Palette getCustomPalette() {
         // TODO Auto-generated method stub
         return null;
     }
