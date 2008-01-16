@@ -474,6 +474,16 @@ under the License.
       destdir="${ooxml.output.dir}" debug="on" srcdir="${ooxml.src}">
       <classpath refid="ooxml.classpath"/>
     </javac>
+
+    <javac target="1.5" source="1.5"
+      failonerror="true" destdir="${ooxml.output.test.dir}" debug="on"
+      fork="yes" srcdir="${ooxml.src.test}">
+      <classpath>
+        <path refid="ooxml.classpath"/>
+        <pathelement location="${ooxml.output.dir}"/>
+        <pathelement location="${junit.jar1.dir}"/>
+      </classpath>
+    </javac>
   </target>
 
   <target name="test" depends="test-main,test-scratchpad,test-contrib"
