@@ -97,6 +97,8 @@ public class Sheet implements Model
     protected ScenarioProtectRecord      scenprotect       =     null;
     protected PasswordRecord             password          =     null;
 
+    /** Add an UncalcedRecord if not true indicating formulas have not been calculated */ 
+    protected boolean uncalced = false;
 	
     public static final byte PANE_LOWER_RIGHT = (byte)0;
     public static final byte PANE_UPPER_RIGHT = (byte)1;
@@ -160,6 +162,9 @@ public class Sheet implements Model
                     retval.eofLoc = k;
                     break;
                 }
+            }
+            else if (rec.getSid() == UncalcedRecord.sid) {
+            	retval.uncalced = true; 
             }
             else if (rec.getSid() == DimensionsRecord.sid)
             {
@@ -736,8 +741,14 @@ public class Sheet implements Model
         {
             Record record = (( Record ) records.get(k));
             
-            //Once the rows have been found in the list of records, start
-            //writing out the blocked row information. This includes the DBCell references
+            // Don't write out UncalcedRecord entries, as
+            //  we handle those specially just below
+            if (record instanceof UncalcedRecord) {
+            	continue;
+            }
+            
+            // Once the rows have been found in the list of records, start
+            //  writing out the blocked row information. This includes the DBCell references
             if (record instanceof RowRecordsAggregate) {
               pos += ((RowRecordsAggregate)record).serialize(pos, data, cells);   // rec.length;
             } else if (record instanceof ValueRecordsAggregate) {
@@ -745,8 +756,14 @@ public class Sheet implements Model
             } else {
               pos += record.serialize(pos, data );   // rec.length;
             }
-            //If the BOF record was just serialized then add the IndexRecord
+            
+            // If the BOF record was just serialized then add the IndexRecord
             if (record.getSid() == BOFRecord.sid) {
+              // Add an optional UncalcedRecord
+              if (uncalced) {
+            	  UncalcedRecord rec = new UncalcedRecord();
+            	  pos += rec.serialize(pos, data);
+              }
               //Can there be more than one BOF for a sheet? If not then we can
               //remove this guard. So be safe it is left here.
               if (rows != null && !haveSerializedIndex) {
@@ -2184,6 +2201,11 @@ public class Sheet implements Model
                     retval += 2;
             }
         }
+        // Add space for UncalcedRecord
+        if (uncalced) {
+        	retval += UncalcedRecord.getStaticRecordSize();
+        }
+        
         return retval;
     }
 
@@ -2651,8 +2673,22 @@ public class Sheet implements Model
     public boolean isDisplayRowColHeadings() {
 	    return windowTwo.getDisplayRowColHeadings();
     }
+    
 
     /**
+	 * @return whether an uncalced record must be inserted or not at generation
+	 */
+	public boolean getUncalced() {
+		return uncalced;
+	}
+	/**
+	 * @param uncalced whether an uncalced record must be inserted or not at generation
+	 */
+	public void setUncalced(boolean uncalced) {
+		this.uncalced = uncalced;
+	}
+
+	/**
      * Returns the array of margins.  If not created, will create.
      *
      * @return the array of marings.

@@ -19,14 +19,18 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.record.HCenterRecord;
-import org.apache.poi.hssf.record.ProtectRecord;
 import org.apache.poi.hssf.record.PasswordRecord;
+import org.apache.poi.hssf.record.ProtectRecord;
 import org.apache.poi.hssf.record.SCLRecord;
 import org.apache.poi.hssf.record.VCenterRecord;
 import org.apache.poi.hssf.record.WSBoolRecord;
@@ -790,7 +794,81 @@ public class TestHSSFSheet
 		assertTrue(sheet3.getColumnWidth((short)0) <= maxWithRow1And2);
     }
 
-	public static void main(java.lang.String[] args) {
+    /**
+     * Setting ForceFormulaRecalculation on sheets
+     */
+    public void testForceRecalculation() throws Exception {
+        String filename = System.getProperty("HSSF.testdata.path");
+        filename = filename + "/UncalcedRecord.xls";
+        HSSFWorkbook workbook = new HSSFWorkbook(new FileInputStream(filename));
+        
+        HSSFSheet sheet = workbook.getSheetAt(0);
+        HSSFSheet sheet2 = workbook.getSheetAt(0);
+        HSSFRow row = sheet.getRow(0);
+        row.createCell((short) 0).setCellValue(5);
+        row.createCell((short) 1).setCellValue(8);
+		assertFalse(sheet.getForceFormulaRecalculation());
+		assertFalse(sheet2.getForceFormulaRecalculation());
+
+        // Save and manually verify that on column C we have 0, value in template
+        File tempFile = new File(System.getProperty("java.io.tmpdir")+"/uncalced_err.xls" );
+        tempFile.delete();
+        FileOutputStream fout = new FileOutputStream( tempFile );
+        workbook.write( fout );
+        fout.close();
+        sheet.setForceFormulaRecalculation(true);
+		assertTrue(sheet.getForceFormulaRecalculation());
+
+        // Save and manually verify that on column C we have now 13, calculated value
+        tempFile = new File(System.getProperty("java.io.tmpdir")+"/uncalced_succ.xls" );
+        tempFile.delete();
+        fout = new FileOutputStream( tempFile );
+        workbook.write( fout );
+        fout.close();
+
+        // Try it can be opened
+		HSSFWorkbook wb2 = new HSSFWorkbook(new FileInputStream(tempFile));
+		
+		// And check correct sheet settings found
+		sheet = wb2.getSheetAt(0);
+		sheet2 = wb2.getSheetAt(1);
+		assertTrue(sheet.getForceFormulaRecalculation());
+		assertFalse(sheet2.getForceFormulaRecalculation());
+		
+		// Now turn if back off again
+		sheet.setForceFormulaRecalculation(false);
+		
+        fout = new FileOutputStream( tempFile );
+        wb2.write( fout );
+        fout.close();
+        wb2 = new HSSFWorkbook(new FileInputStream(tempFile));
+        
+		assertFalse(wb2.getSheetAt(0).getForceFormulaRecalculation());
+		assertFalse(wb2.getSheetAt(1).getForceFormulaRecalculation());
+		assertFalse(wb2.getSheetAt(2).getForceFormulaRecalculation());
+		
+		// Now add a new sheet, and check things work
+		//  with old ones unset, new one set
+		HSSFSheet s4 = wb2.createSheet();
+		s4.setForceFormulaRecalculation(true);
+		
+		assertFalse(sheet.getForceFormulaRecalculation());
+		assertFalse(sheet2.getForceFormulaRecalculation());
+		assertTrue(s4.getForceFormulaRecalculation());
+		
+        fout = new FileOutputStream( tempFile );
+        wb2.write( fout );
+        fout.close();
+        
+		HSSFWorkbook wb3 = new HSSFWorkbook(new FileInputStream(tempFile));
+		assertFalse(wb3.getSheetAt(0).getForceFormulaRecalculation());
+		assertFalse(wb3.getSheetAt(1).getForceFormulaRecalculation());
+		assertFalse(wb3.getSheetAt(2).getForceFormulaRecalculation());
+		assertTrue(wb3.getSheetAt(3).getForceFormulaRecalculation());
+    }
+
+    
+    public static void main(java.lang.String[] args) {
 		 junit.textui.TestRunner.run(TestHSSFSheet.class);
 	}    
 }

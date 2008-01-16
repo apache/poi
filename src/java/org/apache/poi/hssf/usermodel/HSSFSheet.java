@@ -595,6 +595,26 @@ public class HSSFSheet
     }
 
     /**
+     * Whether a record must be inserted or not at generation to indicate that 
+     * formula must be recalculated when workbook is opened.
+     * @param value true if an uncalced record must be inserted or not at generation
+     */
+    public void setForceFormulaRecalculation(boolean value)
+    {
+    	sheet.setUncalced(value);
+    }
+    /**
+     * Whether a record must be inserted or not at generation to indicate that 
+     * formula must be recalculated when workbook is opened.
+     * @return true if an uncalced record must be inserted or not at generation
+     */
+    public boolean getForceFormulaRecalculation()
+    {
+    	return sheet.getUncalced();
+    }
+
+    
+    /**
      * determines whether the output is vertically centered on the page.
      * @param value true to vertically center, false otherwise.
      */

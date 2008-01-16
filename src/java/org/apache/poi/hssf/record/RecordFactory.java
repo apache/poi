@@ -76,7 +76,7 @@ public class RecordFactory
                 WriteProtectRecord.class, FilePassRecord.class, PaneRecord.class,
                 NoteRecord.class, ObjectProtectRecord.class, ScenarioProtectRecord.class, 
                 FileSharingRecord.class, ChartTitleFormatRecord.class,
-                DVRecord.class, DVALRecord.class
+                DVRecord.class, DVALRecord.class, UncalcedRecord.class
             };
     }
     private static Map           recordsMap  = recordsToMap(records);
