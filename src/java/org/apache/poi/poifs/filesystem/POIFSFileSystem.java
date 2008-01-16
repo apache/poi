@@ -19,14 +19,19 @@
 
 package org.apache.poi.poifs.filesystem;
 
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PushbackInputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
-import java.util.*;
-
-import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.dev.POIFSViewable;
 import org.apache.poi.poifs.property.DirectoryProperty;
-import org.apache.poi.poifs.property.DocumentProperty;
 import org.apache.poi.poifs.property.Property;
 import org.apache.poi.poifs.property.PropertyTable;
 import org.apache.poi.poifs.storage.BATBlock;
@@ -37,14 +42,11 @@ import org.apache.poi.poifs.storage.BlockWritable;
 import org.apache.poi.poifs.storage.HeaderBlockConstants;
 import org.apache.poi.poifs.storage.HeaderBlockReader;
 import org.apache.poi.poifs.storage.HeaderBlockWriter;
-import org.apache.poi.poifs.storage.RawDataBlock;
 import org.apache.poi.poifs.storage.RawDataBlockList;
 import org.apache.poi.poifs.storage.SmallBlockTableReader;
 import org.apache.poi.poifs.storage.SmallBlockTableWriter;
-import org.apache.poi.poifs.storage.SmallDocumentBlock;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LongField;
-import org.apache.xmlbeans.impl.common.IOUtil;
 
 /**
  * This is the main class of the POIFS system; it manages the entire
