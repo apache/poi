@@ -17,18 +17,16 @@
 ==================================================================== */
         
 
-package org.apache.poi.poifs.filesystem;
+package org.apache.poi.hxf;
 
 import junit.framework.TestCase;
 import java.io.*;
 
 /**
- * Class to test that POIFS complains when given an Office 2007 XML document
- *
- * @author Marc Johnson
+ * Class to test that HXF correctly detects OOXML
+ *  documents
  */
-
-public class TestOffice2007XMLException extends TestCase
+public class TestDetectAsOOXML extends TestCase
 {
 	public String dirname;
 
@@ -36,37 +34,32 @@ public class TestOffice2007XMLException extends TestCase
 		dirname = System.getProperty("HSSF.testdata.path");
 	}
 
-	public void testXMLException() throws IOException
+	public void testOpensProperly() throws Exception
 	{
-		FileInputStream in = new FileInputStream(dirname + "/sample.xlsx");
+		File f = new File(dirname + "/sample.xlsx");
 
-		try {
-			new POIFSFileSystem(in);
-			fail();
-		} catch(OfficeXmlFileException e) {
-			// Good
-		}
+		HXFDocument.openPackage(f);
 	}
 	
-	public void testDetectAsPOIFS() throws IOException {
+	public void testDetectAsPOIFS() throws Exception {
 		InputStream in;
 		
-		// ooxml file isn't
+		// ooxml file is
 		in = new PushbackInputStream(
 				new FileInputStream(dirname + "/SampleSS.xlsx"), 10
 		);
-		assertFalse(POIFSFileSystem.hasPOIFSHeader(in));
+		assertTrue(HXFDocument.hasOOXMLHeader(in));
 		
-		// xls file is
+		// xls file isn't
 		in = new PushbackInputStream(
 				new FileInputStream(dirname + "/SampleSS.xls"), 10
 		);
-		assertTrue(POIFSFileSystem.hasPOIFSHeader(in));
+		assertFalse(HXFDocument.hasOOXMLHeader(in));
 		
 		// text file isn't
 		in = new PushbackInputStream(
 				new FileInputStream(dirname + "/SampleSS.txt"), 10
 		);
-		assertFalse(POIFSFileSystem.hasPOIFSHeader(in));
+		assertFalse(HXFDocument.hasOOXMLHeader(in));
 	}
 }

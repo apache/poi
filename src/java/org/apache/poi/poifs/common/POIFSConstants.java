@@ -31,4 +31,7 @@ public interface POIFSConstants
     public static final int END_OF_CHAIN   = -2;
     public static final int PROPERTY_SIZE  = 0x0080;
     public static final int UNUSED_BLOCK   = -1;
+    
+    public static final byte[] OOXML_FILE_HEADER = 
+    	new byte[] { 0x50, 0x4b, 0x03, 0x04 };
 }   // end public interface POIFSConstants;
