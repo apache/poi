@@ -121,8 +121,8 @@ under the License.
   <property name="examples.testokfile" location="build/examples-testokfile.txt"/>
 
   <!-- Experimental OOXML support: -->
-  <property name="ooxml.src" location="src/scratchpad/ooxml-src"/>
-  <property name="ooxml.src.test" location="src/scratchpad/ooxml-testcases"/>
+  <property name="ooxml.src" location="src/ooxml/java"/>
+  <property name="ooxml.src.test" location="src/ooxml/testcases"/>
   <property name="ooxml.reports.test" location="build/ooxml-test-results"/>
   <property name="ooxml.output.dir" location="build/ooxml-classes"/>
   <property name="ooxml.output.test.dir" location="build/ooxml-test-classes"/>
