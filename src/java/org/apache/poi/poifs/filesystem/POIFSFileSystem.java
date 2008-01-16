@@ -34,6 +34,7 @@ import org.apache.poi.poifs.storage.BlockAllocationTableReader;
 import org.apache.poi.poifs.storage.BlockAllocationTableWriter;
 import org.apache.poi.poifs.storage.BlockList;
 import org.apache.poi.poifs.storage.BlockWritable;
+import org.apache.poi.poifs.storage.HeaderBlockConstants;
 import org.apache.poi.poifs.storage.HeaderBlockReader;
 import org.apache.poi.poifs.storage.HeaderBlockWriter;
 import org.apache.poi.poifs.storage.RawDataBlock;
@@ -41,6 +42,9 @@ import org.apache.poi.poifs.storage.RawDataBlockList;
 import org.apache.poi.poifs.storage.SmallBlockTableReader;
 import org.apache.poi.poifs.storage.SmallBlockTableWriter;
 import org.apache.poi.poifs.storage.SmallDocumentBlock;
+import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.LongField;
+import org.apache.xmlbeans.impl.common.IOUtil;
 
 /**
  * This is the main class of the POIFS system; it manages the entire
@@ -105,6 +109,35 @@ public class POIFSFileSystem
                 .getRoot(), header_block_reader
                     .getSBATStart()), data_blocks, properties.getRoot()
                         .getChildren(), null);
+    }
+    
+    /**
+     * Checks that the supplied InputStream (which MUST
+     *  support mark and reset, or be a PushbackInputStream) 
+     *  has a POIFS (OLE2) header at the start of it.
+     * If your InputStream does not support mark / reset,
+     *  then wrap it in a PushBackInputStream, then be
+     *  sure to always use that, and not the original!
+     * @param inp An InputStream which supports either mark/reset, or is a PushbackInputStream 
+     */
+    public static boolean hasPOIFSHeader(InputStream inp) throws IOException {
+    	// We want to peek at the first 8 bytes 
+    	inp.mark(8);
+
+    	byte[] header = new byte[8];
+    	IOUtils.readFully(inp, header);
+        LongField signature = new LongField(HeaderBlockConstants._signature_offset, header);
+
+        // Wind back those 8 bytes
+        if(inp instanceof PushbackInputStream) {
+        	PushbackInputStream pin = (PushbackInputStream)inp;
+        	pin.unread(header);
+        } else {
+        	inp.reset();
+        }
+    	
+    	// Did it match the signature?
+    	return (signature.get() == HeaderBlockConstants._signature);
     }
 
     /**

@@ -91,8 +91,11 @@ public class HeaderBlockReader
         if (signature.get() != _signature)
         {
 			// Is it one of the usual suspects?
-			if(_data[0] == 0x50 && _data[1] == 0x4b && _data[2] == 0x03 &&
-					_data[3] == 0x04) {
+        	byte[] OOXML_FILE_HEADER = POIFSConstants.OOXML_FILE_HEADER;
+			if(_data[0] == OOXML_FILE_HEADER[0] && 
+					_data[1] == OOXML_FILE_HEADER[1] && 
+					_data[2] == OOXML_FILE_HEADER[2] &&
+					_data[3] == OOXML_FILE_HEADER[3]) {
 				throw new OfficeXmlFileException("The supplied data appears to be in the Office 2007+ XML. POI only supports OLE2 Office documents");
 			}
 
