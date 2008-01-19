@@ -187,10 +187,13 @@ public class DVRecord extends Record
        this.field_not_used_2 = in.readShort();
 
        //read sec formula data condition
-       // Not sure if this was needed or not...
+       //Not sure if this was needed or not...
        try {
            in.skip(this.field_size_sec_formula);
-       } catch(IOException e) { throw new IllegalStateException(e); } 
+       } catch(IOException e) {
+           e.printStackTrace();
+           throw new IllegalStateException(e.getMessage());
+       }
 
        token_pos = 0;
        while (token_pos < this.field_size_sec_formula)
