@@ -1129,7 +1129,22 @@ FORREST_HOME environment variable!</echo>
 		<!-- And that's it for maven -->
 	</target>
 
-    <target name="jar" depends="compile" description="Creates jar files for distribution">
+    <target name="jar-14" depends="compile-main-14" description="Creates the jdk 1.4 only jar file">
+        <jar destfile="${dist.dir}/${jar.name}-jdk14-${version.id}-${DSTAMP}.jar">
+			<fileset dir="${main14.output.dir}" />
+			<fileset dir="legal/" />
+            <manifest>
+                <attribute name="Built-By" value="${user.name}"/>
+                <attribute name="Specification-Title" value="Apache POI"/>
+                <attribute name="Specification-Version" value="${version.id}-${DSTAMP}"/>
+                <attribute name="Specification-Vendor" value="Apache"/>
+                <attribute name="Implementation-Title" value="Apache POI for JDK 1.3/1.4"/>
+                <attribute name="Implementation-Version" value="${version.id}-${DSTAMP}"/>
+                <attribute name="Implementation-Vendor" value="Apache"/>
+            </manifest>        
+        </jar>
+	</target>
+    <target name="jar" depends="compile, jar-14" description="Creates jar files for distribution">
         <jar destfile="${dist.dir}/${jar.name}-${version.id}-${DSTAMP}.jar">
 			<fileset dir="${main.output.dir}" />
 			<fileset dir="legal/" />
