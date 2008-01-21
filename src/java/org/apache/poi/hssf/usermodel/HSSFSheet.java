@@ -1748,27 +1748,28 @@ public class HSSFSheet
                 } else if (cell.getCellType() == HSSFCell.CELL_TYPE_BOOLEAN) {
                     sval = String.valueOf(cell.getBooleanCellValue());
                 }
+                if(sval != null) {
+                    String txt = sval + defaultChar;
+                    str = new AttributedString(txt);
+                    copyAttributes(font, str, 0, txt.length());
 
-                String txt = sval + defaultChar;
-                str = new AttributedString(txt);
-                copyAttributes(font, str, 0, txt.length());
-
-                layout = new TextLayout(str.getIterator(), frc);
-                if(style.getRotation() != 0){
-                    /*
-                     * Transform the text using a scale so that it's height is increased by a multiple of the leading,
-                     * and then rotate the text before computing the bounds. The scale results in some whitespace around
-                     * the unrotated top and bottom of the text that normally wouldn't be present if unscaled, but
-                     * is added by the standard Excel autosize.
-                     */
-                    AffineTransform trans = new AffineTransform();
-                    trans.concatenate(AffineTransform.getRotateInstance(style.getRotation()*2.0*Math.PI/360.0));
-                    trans.concatenate(
-                    AffineTransform.getScaleInstance(1, fontHeightMultiple)
-                    );
-                    width = Math.max(width, layout.getOutline(trans).getBounds().getWidth() / defaultCharWidth);
-                } else {
-                    width = Math.max(width, layout.getBounds().getWidth() / defaultCharWidth);
+                    layout = new TextLayout(str.getIterator(), frc);
+                    if(style.getRotation() != 0){
+                        /*
+                         * Transform the text using a scale so that it's height is increased by a multiple of the leading,
+                         * and then rotate the text before computing the bounds. The scale results in some whitespace around
+                         * the unrotated top and bottom of the text that normally wouldn't be present if unscaled, but
+                         * is added by the standard Excel autosize.
+                         */
+                        AffineTransform trans = new AffineTransform();
+                        trans.concatenate(AffineTransform.getRotateInstance(style.getRotation()*2.0*Math.PI/360.0));
+                        trans.concatenate(
+                        AffineTransform.getScaleInstance(1, fontHeightMultiple)
+                        );
+                        width = Math.max(width, layout.getOutline(trans).getBounds().getWidth() / defaultCharWidth);
+                    } else {
+                        width = Math.max(width, layout.getBounds().getWidth() / defaultCharWidth);
+                    }
                 }
             }
 
