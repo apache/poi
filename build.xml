@@ -45,6 +45,9 @@ under the License.
     To build the documentation you will need to install forrest and set
     the FORREST_HOME environment variable.  Forrest 0.5.1 required.
 
+    You will need JDK 1.5 or newer to build much of POI. If all you want
+    is the core OLE2 support, then you only need JDK 1.4
+
 
     TO BE COMPLETED:
 
@@ -68,6 +71,7 @@ under the License.
   <property name="main.src.test" location="src/testcases"/>
   <property name="main.documentation" value="src/documentation"/>
   <property name="main.output.dir" location="build/classes"/>
+  <property name="main14.output.dir" location="build/classes-jdk14"/>
   <property name="main.output.test.dir" location="build/test-classes"/>
   <property name="main.lib" location="lib"/>
   <property name="ooxml.lib" location="ooxml-lib"/>
@@ -120,6 +124,10 @@ under the License.
   <property name="examples.jar3.url" value="${repository}/commons-lang/jars/commons-lang-2.1.jar"/>
   <property name="examples.testokfile" location="build/examples-testokfile.txt"/>
 
+  <!-- Common interfaces for ole2 and ooxml classes -->
+  <property name="interfaces.jdk14.src" location="src/ooxml/interfaces-jdk14"/>
+  <property name="interfaces.jdk15.src" location="src/ooxml/interfaces-jdk15"/>
+
   <!-- Experimental OOXML support: -->
   <property name="ooxml.src" location="src/ooxml/java"/>
   <property name="ooxml.src.test" location="src/ooxml/testcases"/>
@@ -161,13 +169,25 @@ under the License.
   <property name="jar.name" value="poi"/>
   <property name="version.id" value="3.0.2-beta1"/>
   <property name="halt.on.test.failure" value="true"/>
-  <property name="jdk.version.source" value="1.3"
+
+  <property name="jdk.version.source" value="1.5"
     description="JDK version of source code"/>
-  <property name="jdk.version.class" value="1.3"
+  <property name="jdk.version.class" value="1.5"
     description="JDK version of generated class files"/>  
+  <property name="jdk14.version.source" value="1.3"
+    description="JDK version of source code, when built on JDK 1.4"/>
+  <property name="jdk14.version.class" value="1.3"
+    description="JDK version of generated class files, when built on JDK 1.4"/>  
  
 
+	<!-- normally use the jdk 1.5 stuff -->
     <path id="main.classpath">
+        <pathelement location="${main.jar1.dir}"/>
+        <pathelement location="${main.jar2.dir}"/>
+        <pathelement location="${main.resource1.dir}"/>
+    </path>
+
+    <path id="main14.classpath">
         <pathelement location="${main.jar1.dir}"/>
         <pathelement location="${main.jar2.dir}"/>
         <pathelement location="${main.resource1.dir}"/>
@@ -260,6 +280,7 @@ under the License.
         
         <mkdir dir="build"/>
         <mkdir dir="${main.output.dir}"/>
+        <mkdir dir="${main14.output.dir}"/>
         <mkdir dir="${scratchpad.output.dir}"/>
         <mkdir dir="${contrib.output.dir}"/>
         <mkdir dir="${examples.output.dir}"/>
@@ -386,8 +407,8 @@ under the License.
 		</xmlbean>
 	</target>
 
-  <target name="compile" depends="init, compile-main, compile-scratchpad,
-    compile-contrib, compile-examples"
+  <target name="compile" depends="init, compile-main, compile-main-14, 
+    compile-scratchpad, compile-contrib, compile-examples"
     description="Compiles the POI main classes, scratchpad, contrib, and examples"/>
 
   <target name="compile-main" depends="fail-unless-xslt-is-available">
@@ -395,8 +416,9 @@ under the License.
       <fileset dir="${main.resource1.dir}"/>
     </copy>
     <javac target="${jdk.version.class}" source="${jdk.version.source}"
-      failonerror="true" destdir="${main.output.dir}" debug="on" fork="yes"
-      srcdir="${main.src}">
+      failonerror="true" destdir="${main.output.dir}" debug="on" fork="yes">
+      <src path="${main.src}" />
+      <src path="${interfaces.jdk15.src}" />
       <classpath refid="main.classpath"/>
     </javac>
     <javac target="${jdk.version.class}" source="${jdk.version.source}"
@@ -407,6 +429,18 @@ under the License.
         <pathelement location="${main.output.dir}"/>
         <pathelement location="${junit.jar1.dir}"/>
       </classpath>
+    </javac>
+  </target>
+
+  <target name="compile-main-14" depends="fail-unless-xslt-is-available">
+    <copy todir="${main14.output.dir}">
+      <fileset dir="${main.resource1.dir}"/>
+    </copy>
+    <javac target="${jdk14.version.class}" source="${jdk14.version.source}"
+      failonerror="true" destdir="${main14.output.dir}" debug="on" fork="yes">
+      <src path="${main.src}" />
+      <src path="${interfaces.jdk14.src}" />
+      <classpath refid="main.classpath"/>
     </javac>
   </target>
 
