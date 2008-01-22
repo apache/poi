@@ -156,8 +156,8 @@ public class SharedFormulaRecord
 
     protected void fillFields(RecordInputStream in)
     {
-      field_1_first_row       = in.readShort();
-      field_2_last_row        = in.readShort();
+      field_1_first_row       = in.readUShort();
+      field_2_last_row        = in.readUShort();
       field_3_first_column    = in.readUByte();
       field_4_last_column     = in.readUByte();
       field_5_reserved        = in.readShort();
@@ -200,48 +200,48 @@ public class SharedFormulaRecord
             Ptg ptg = (Ptg) field_7_parsed_expr.get(k);
             if (ptg instanceof RefNPtg) {
               RefNPtg refNPtg = (RefNPtg)ptg;
-              ptg = new ReferencePtg( (short)(formulaRow + refNPtg.getRow()),
-                                      (byte)(formulaColumn + refNPtg.getColumn()),
+              ptg = new ReferencePtg(fixupRelativeRow(formulaRow,refNPtg.getRow(),refNPtg.isRowRelative()),
+                                     fixupRelativeColumn(formulaColumn,refNPtg.getColumn(),refNPtg.isColRelative()),
                                      refNPtg.isRowRelative(),
                                      refNPtg.isColRelative());
             } else if (ptg instanceof RefNVPtg) {
               RefNVPtg refNVPtg = (RefNVPtg)ptg;
-              ptg = new RefVPtg( (short)(formulaRow + refNVPtg.getRow()),
-                                 (byte)(formulaColumn + refNVPtg.getColumn()),
-                                 refNVPtg.isRowRelative(),
-                                 refNVPtg.isColRelative());
+              ptg = new RefVPtg(fixupRelativeRow(formulaRow,refNVPtg.getRow(),refNVPtg.isRowRelative()),
+                                fixupRelativeColumn(formulaColumn,refNVPtg.getColumn(),refNVPtg.isColRelative()),
+                                refNVPtg.isRowRelative(),
+                                refNVPtg.isColRelative());
             } else if (ptg instanceof RefNAPtg) {
               RefNAPtg refNAPtg = (RefNAPtg)ptg;
-              ptg = new RefAPtg( (short)(formulaRow + refNAPtg.getRow()),
-                                 (byte)(formulaColumn + refNAPtg.getColumn()),
+              ptg = new RefAPtg( fixupRelativeRow(formulaRow,refNAPtg.getRow(),refNAPtg.isRowRelative()),
+                                 fixupRelativeColumn(formulaColumn,refNAPtg.getColumn(),refNAPtg.isColRelative()),
                                  refNAPtg.isRowRelative(),
                                  refNAPtg.isColRelative());
             } else if (ptg instanceof AreaNPtg) {
               AreaNPtg areaNPtg = (AreaNPtg)ptg;
-              ptg = new AreaPtg((short)(formulaRow + areaNPtg.getFirstRow()),
-                                (short)(formulaRow + areaNPtg.getLastRow()),
-                                (short)(formulaColumn + areaNPtg.getFirstColumn()),
-                                (short)(formulaColumn + areaNPtg.getLastColumn()),
+              ptg = new AreaPtg(fixupRelativeRow(formulaRow,areaNPtg.getFirstRow(),areaNPtg.isFirstRowRelative()),
+                                fixupRelativeRow(formulaRow,areaNPtg.getLastRow(),areaNPtg.isLastRowRelative()),
+                                fixupRelativeColumn(formulaColumn,areaNPtg.getFirstColumn(),areaNPtg.isFirstColRelative()),
+                                fixupRelativeColumn(formulaColumn,areaNPtg.getLastColumn(),areaNPtg.isLastColRelative()),
                                 areaNPtg.isFirstRowRelative(),
                                 areaNPtg.isLastRowRelative(),
                                 areaNPtg.isFirstColRelative(),
                                 areaNPtg.isLastColRelative());
             } else if (ptg instanceof AreaNVPtg) {
               AreaNVPtg areaNVPtg = (AreaNVPtg)ptg;
-              ptg = new AreaVPtg((short)(formulaRow + areaNVPtg.getFirstRow()),
-                                (short)(formulaRow + areaNVPtg.getLastRow()),
-                                (short)(formulaColumn + areaNVPtg.getFirstColumn()),
-                                (short)(formulaColumn + areaNVPtg.getLastColumn()),
+              ptg = new AreaVPtg(fixupRelativeRow(formulaRow,areaNVPtg.getFirstRow(),areaNVPtg.isFirstRowRelative()),
+                                fixupRelativeRow(formulaRow,areaNVPtg.getLastRow(),areaNVPtg.isLastRowRelative()),
+                                fixupRelativeColumn(formulaColumn,areaNVPtg.getFirstColumn(),areaNVPtg.isFirstColRelative()),
+                                fixupRelativeColumn(formulaColumn,areaNVPtg.getLastColumn(),areaNVPtg.isLastColRelative()),
                                 areaNVPtg.isFirstRowRelative(),
                                 areaNVPtg.isLastRowRelative(),
                                 areaNVPtg.isFirstColRelative(),
                                 areaNVPtg.isLastColRelative());
             } else if (ptg instanceof AreaNAPtg) {
               AreaNAPtg areaNAPtg = (AreaNAPtg)ptg;
-              ptg = new AreaAPtg((short)(formulaRow + areaNAPtg.getFirstRow()),
-                                (short)(formulaRow + areaNAPtg.getLastRow()),
-                                (short)(formulaColumn + areaNAPtg.getFirstColumn()),
-                                (short)(formulaColumn + areaNAPtg.getLastColumn()),
+              ptg = new AreaAPtg(fixupRelativeRow(formulaRow,areaNAPtg.getFirstRow(),areaNAPtg.isFirstRowRelative()),
+                                fixupRelativeRow(formulaRow,areaNAPtg.getLastRow(),areaNAPtg.isLastRowRelative()),
+                                fixupRelativeColumn(formulaColumn,areaNAPtg.getFirstColumn(),areaNAPtg.isFirstColRelative()),
+                                fixupRelativeColumn(formulaColumn,areaNAPtg.getLastColumn(),areaNAPtg.isLastColRelative()),
                                 areaNAPtg.isFirstRowRelative(),
                                 areaNAPtg.isLastRowRelative(),
                                 areaNAPtg.isFirstColRelative(),
@@ -256,6 +256,21 @@ public class SharedFormulaRecord
         throw new RuntimeException("Shared Formula Conversion: Coding Error");
       }
     }
+    
+    private short fixupRelativeColumn(int currentcolumn, short column, boolean relative) {
+    	if(relative) {
+    		if((column&128)!=0) column=(short)(column-256);
+    		column+=currentcolumn;
+    	}
+    	return column;
+	}
+
+	private short fixupRelativeRow(int currentrow, short row, boolean relative) {
+		if(relative) {
+			row+=currentrow;
+		}
+		return row;
+	}
 
 	/**
 	 * Mirroring formula records so it is registered in the ValueRecordsAggregate
