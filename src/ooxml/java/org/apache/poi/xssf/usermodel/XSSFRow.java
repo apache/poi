@@ -124,13 +124,17 @@ public class XSSFRow implements Row {
     }
 
     public short getHeight() {
-        // TODO Auto-generated method stub
-        return 0;
+    	if (this.row.getHt() > 0) {
+    		return (short) (this.row.getHt() * 20);
+    	}
+        return -1;
     }
 
     public float getHeightInPoints() {
-        // TODO Auto-generated method stub
-        return 0;
+    	if (this.row.getHt() > 0) {
+    		return (short) this.row.getHt();
+    	}
+        return -1;
     }
 
     public short getLastCellNum() {
@@ -159,8 +163,7 @@ public class XSSFRow implements Row {
     }
 
     public boolean getZeroHeight() {
-        // TODO Auto-generated method stub
-        return false;
+    	return this.row.getHidden();
     }
 
     public void removeCell(Cell cell) {
@@ -177,13 +180,11 @@ public class XSSFRow implements Row {
     }
 
     public void setHeight(short height) {
-        // TODO Auto-generated method stub
-
+    	this.row.setHt((double) height / 20);
     }
 
     public void setHeightInPoints(float height) {
-        // TODO Auto-generated method stub
-
+    	this.row.setHt((double) height);
     }
 
     public void setRowNum(int rowNum) {
@@ -192,7 +193,7 @@ public class XSSFRow implements Row {
     }
 
     public void setZeroHeight(boolean height) {
-        // TODO Auto-generated method stub
+    	this.row.setHidden(height);
 
     }
 

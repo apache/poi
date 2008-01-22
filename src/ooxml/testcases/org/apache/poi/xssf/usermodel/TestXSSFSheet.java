@@ -86,8 +86,29 @@ public class TestXSSFSheet extends TestCase {
 		Row row2_overwritten_copy = it2.next();
 		assertEquals(row2_ovrewritten, row2_overwritten_copy);
 		assertEquals(row2_overwritten_copy.getCell((short) 0).getNumericCellValue(), (double) 100);
-		
-		
-		
+	}
+	
+	public void testGetSetDefaultRowHeight() throws Exception {
+		XSSFWorkbook workbook = new XSSFWorkbook();
+		Sheet sheet = workbook.createSheet("Sheet 1");
+		// Test that default height set by the constructor
+		assertEquals((short) 300, sheet.getDefaultRowHeight());
+		assertEquals((float) 15, sheet.getDefaultRowHeightInPoints());
+		// Set a new default row height in twips and test getting the value in points
+		sheet.setDefaultRowHeight((short) 360);
+		assertEquals((float) 18, sheet.getDefaultRowHeightInPoints());
+		// Set a new default row height in points and test getting the value in twips
+		sheet.setDefaultRowHeightInPoints((short) 17);
+		assertEquals((short) 340, sheet.getDefaultRowHeight());
+	}
+	
+	public void testGetSetDefaultColumnWidth() throws Exception {
+		XSSFWorkbook workbook = new XSSFWorkbook();
+		Sheet sheet = workbook.createSheet("Sheet 1");
+		// Test that default column width set by the constructor
+		assertEquals((short) 13, sheet.getDefaultColumnWidth());
+		// Set a new default column width and get its value
+		sheet.setDefaultColumnWidth((short) 14);
+		assertEquals((short) 14, sheet.getDefaultColumnWidth());
 	}
 }

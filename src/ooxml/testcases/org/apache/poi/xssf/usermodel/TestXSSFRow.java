@@ -141,6 +141,28 @@ public class TestXSSFRow extends TestCase {
     	
     }
     
+    public void testGetSetHeight() throws Exception {
+        XSSFRow row = getSampleRow();
+        // I assume that "ht" attribute value is in 'points', please verify that
+        // Test that no rowHeight is set
+        assertEquals((short) -1, row.getHeight());
+        // Set a rowHeight in twips (1/20th of a point) and test the new value
+        row.setHeight((short) 240);
+        assertEquals((short) 240, row.getHeight());
+        assertEquals((float) 12, row.getHeightInPoints());
+        // Set a new rowHeight in points and test the new value
+        row.setHeightInPoints((float) 13);
+        assertEquals((float) 13, row.getHeightInPoints());
+        assertEquals((short) 260, row.getHeight());
+    }
+    
+    public void testGetSetZeroHeight() throws Exception {
+        XSSFRow row = getSampleRow();
+        assertFalse(row.getZeroHeight());
+        row.setZeroHeight(true);
+        assertTrue(row.getZeroHeight());
+    }
+    
     /**
      * Method that returns a row with some sample cells
      * @return row
