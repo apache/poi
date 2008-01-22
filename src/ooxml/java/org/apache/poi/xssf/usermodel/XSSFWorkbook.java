@@ -34,6 +34,7 @@ import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.usermodel.Palette;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxml4j.exceptions.InvalidFormatException;
 import org.openxml4j.opc.Package;
@@ -61,6 +62,10 @@ public class XSSFWorkbook implements Workbook {
         CTBookView bv = bvs.addNewWorkbookView();
         bv.setActiveTab(0);
         this.workbook.addNewSheets();
+    }
+    
+    protected CTWorkbook getWorkbook() {
+        return this.workbook;
     }
     
     public int addPicture(byte[] pictureData, int format) {
@@ -207,8 +212,14 @@ public class XSSFWorkbook implements Workbook {
     }
 
     public short getSelectedTab() {
-        // TODO Auto-generated method stub
-        return 0;
+        short i = 0;
+        for (XSSFSheet sheet : this.sheets) {
+            if (sheet.isTabSelected()) {
+                return i;
+            }
+            ++i;
+        }
+        return -1;
     }
 
     public Sheet getSheet(String name) {
@@ -217,17 +228,21 @@ public class XSSFWorkbook implements Workbook {
     }
 
     public Sheet getSheetAt(int index) {
-        return this.sheets.get(index - 1);
+        return this.sheets.get(index);
     }
 
     public int getSheetIndex(String name) {
-        // TODO Auto-generated method stub
-        return 0;
+        CTSheet[] sheets = this.workbook.getSheets().getSheetArray();  
+        for (int i = 0 ; i < sheets.length ; ++i) {
+            if (name.equals(sheets[i].getName())) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     public int getSheetIndex(Sheet sheet) {
-        // TODO Auto-generated method stub
-        return 0;
+        return this.sheets.indexOf(sheet);
     }
 
     public String getSheetName(int sheet) {
@@ -285,9 +300,14 @@ public class XSSFWorkbook implements Workbook {
 
     }
 
+    /**
+     * We only set one sheet as selected for compatibility with HSSF.
+     */
     public void setSelectedTab(short index) {
-        // TODO Auto-generated method stub
-
+        for (int i = 0 ; i < this.sheets.size() ; ++i) {
+            XSSFSheet sheet = this.sheets.get(i);
+            sheet.setTabSelected(i == index);
+        }
     }
 
     public void setSheetName(int sheet, String name) {
@@ -301,8 +321,13 @@ public class XSSFWorkbook implements Workbook {
     }
 
     public void setSheetOrder(String sheetname, int pos) {
-        // TODO Auto-generated method stub
-
+        int idx = getSheetIndex(sheetname);
+        sheets.add(pos, sheets.remove(idx));
+        // Reorder CTSheets
+        XmlObject cts = this.workbook.getSheets().getSheetArray(idx).copy();
+        this.workbook.getSheets().removeSheet(idx);
+        CTSheet newcts = this.workbook.getSheets().insertNewSheet(pos);
+        newcts.set(cts);
     }
 
     public void unwriteProtectWorkbook() {

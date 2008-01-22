@@ -18,6 +18,8 @@
 package org.apache.poi.xssf.usermodel;
 
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.poi.hssf.util.PaneInformation;
 import org.apache.poi.hssf.util.Region;
@@ -44,13 +46,17 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 public class XSSFSheet implements Sheet {
 
     private CTSheet sheet;
-    
     private CTWorksheet worksheet;
+    private List<Row> rows;
     
     public XSSFSheet(CTSheet sheet) {
         this.sheet = sheet;
         this.worksheet = CTWorksheet.Factory.newInstance();
         this.worksheet.addNewSheetData();
+        this.rows = new LinkedList<Row>();
+        for (CTRow row : worksheet.getSheetData().getRowArray()) {
+                this.rows.add(new XSSFRow(row));
+        }
         // XXX ???
         CTSheetViews views = this.worksheet.addNewSheetViews();
         CTSheetView view = views.addNewSheetView();
@@ -109,11 +115,33 @@ public class XSSFSheet implements Sheet {
 
     }
 
+        protected XSSFRow addRow(int index, int rownum) {
+                CTRow row = this.worksheet.getSheetData().insertNewRow(index);
+                XSSFRow xrow = new XSSFRow(row);
+                xrow.setRowNum(rownum);
+//              xrow.setHeight(13.41);
+                return xrow;
+        }
+
     public Row createRow(int rownum) {
-        CTRow row = this.worksheet.getSheetData().insertNewRow(rownum);
-        row.setR(rownum + 1);
-        row.setHt(13.41); // XXX ???
-        return new XSSFRow(row);
+        int index = 0;
+        for (Row r : this.rows) {
+                if (r.getRowNum() == rownum) {
+                        // Replace r with new row
+                XSSFRow xrow = addRow(index, rownum);
+                        rows.set(index, xrow);
+                        return xrow;
+                }
+                if (r.getRowNum() > rownum) {
+                        XSSFRow xrow = addRow(index, rownum);
+                        rows.add(index, xrow);
+                        return xrow;
+                }
+                ++index;
+        }
+        XSSFRow xrow = addRow(index, rownum);
+        rows.add(xrow);
+        return xrow;
     }
 
     public void createSplitPane(int splitPos, int splitPos2, int leftmostColumn, int topRow, int activePane) {
@@ -262,7 +290,12 @@ public class XSSFSheet implements Sheet {
     }
 
     public Row getRow(int rownum) {
-        // TODO Auto-generated method stub
+        for (Iterator<Row> it = rowIterator() ; it.hasNext() ; ) {
+                Row row = it.next();
+                if (row.getRowNum() == rownum) {
+                        return row;
+                }
+        }
         return null;
     }
 
@@ -371,9 +404,8 @@ public class XSSFSheet implements Sheet {
 
     }
 
-    public Iterator rowIterator() {
-        // TODO Auto-generated method stub
-        return null;
+    public Iterator<Row> rowIterator() {
+        return rows.iterator();
     }
 
     public void setAlternativeExpression(boolean b) {
@@ -546,4 +578,32 @@ public class XSSFSheet implements Sheet {
 
     }
 
+    public void setTabSelected(boolean flag) {
+        CTSheetViews views = this.worksheet.getSheetViews();
+        for (CTSheetView view : views.getSheetViewArray()) {
+            view.setTabSelected(flag);
+        }
+    }
+    
+    public boolean isTabSelected() {
+        CTSheetView view = getDefaultSheetView();
+        return view != null && view.getTabSelected();
+    }
+
+    /**
+     * Return the default sheet view. This is the last one if the sheet's views, according to sec. 3.3.1.83
+     * of the OOXML spec: "A single sheet view definition. When more than 1 sheet view is defined in the file,
+     * it means that when opening the workbook, each sheet view corresponds to a separate window within the 
+     * spreadsheet application, where each window is showing the particular sheet. containing the same 
+     * workbookViewId value, the last sheetView definition is loaded, and the others are discarded. 
+     * When multiple windows are viewing the same sheet, multiple sheetView elements (with corresponding 
+     * workbookView entries) are saved."
+     */
+    private CTSheetView getDefaultSheetView() {
+        CTSheetViews views = this.worksheet.getSheetViews();
+        if (views == null || views.getSheetViewArray() == null || views.getSheetViewArray().length <= 0) {
+            return null;
+        }
+        return views.getSheetViewArray(views.getSheetViewArray().length - 1);
+    }
 }

@@ -155,8 +155,7 @@ public class XSSFRow implements Row {
     }
 
     public int getRowNum() {
-        // TODO Auto-generated method stub
-        return 0;
+        return (int) (row.getR() - 1);
     }
 
     public boolean getZeroHeight() {
@@ -188,7 +187,7 @@ public class XSSFRow implements Row {
     }
 
     public void setRowNum(int rowNum) {
-        // TODO Auto-generated method stub
+        this.row.setR(rowNum + 1);
 
     }
 
