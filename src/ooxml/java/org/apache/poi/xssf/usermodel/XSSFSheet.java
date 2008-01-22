@@ -65,20 +65,20 @@ public class XSSFSheet implements Sheet {
         CTSelection selection = view.addNewSelection();
         selection.setActiveCell("A1");
         CTSheetFormatPr format = this.worksheet.addNewSheetFormatPr();
-        format.setDefaultColWidth(13.2307692307692);
-        format.setDefaultRowHeight(13);
+        format.setDefaultColWidth(13);
+        format.setDefaultRowHeight(15);
         format.setCustomHeight(true);
         CTCols cols = this.worksheet.addNewCols();
         CTCol col = cols.addNewCol();
         col.setMin(1);
         col.setMax(2);
-        col.setWidth(13.2307692307692);
+        col.setWidth(13);
         col.setCustomWidth(true);
         for (int i = 3 ; i < 5 ; ++i) {
             col = cols.addNewCol();
             col.setMin(i);
             col.setMax(i);
-            col.setWidth(13.2307692307692);
+            col.setWidth(13);
             col.setCustomWidth(true);
         }
         CTHeaderFooter hf = this.worksheet.addNewHeaderFooter();
@@ -180,23 +180,20 @@ public class XSSFSheet implements Sheet {
     }
 
     public short getColumnWidth(short column) {
-        // TODO Auto-generated method stub
-        return 0;
+    	// TODO Auto-generated method stub
+    	return 0;
     }
 
     public short getDefaultColumnWidth() {
-        // TODO Auto-generated method stub
-        return 0;
+    	return (short) this.worksheet.getSheetFormatPr().getDefaultColWidth();
     }
 
     public short getDefaultRowHeight() {
-        // TODO Auto-generated method stub
-        return 0;
+    	return (short) (this.worksheet.getSheetFormatPr().getDefaultRowHeight() * 20);
     }
 
     public float getDefaultRowHeightInPoints() {
-        // TODO Auto-generated method stub
-        return 0;
+    	return (short) this.worksheet.getSheetFormatPr().getDefaultRowHeight();
     }
 
     public boolean getDialog() {
@@ -440,7 +437,6 @@ public class XSSFSheet implements Sheet {
 
     public void setColumnWidth(short column, short width) {
         // TODO Auto-generated method stub
-
     }
 
     public void setDefaultColumnStyle(short column, CellStyle style) {
@@ -449,17 +445,16 @@ public class XSSFSheet implements Sheet {
     }
 
     public void setDefaultColumnWidth(short width) {
-        // TODO Auto-generated method stub
-
+    	this.worksheet.getSheetFormatPr().setDefaultColWidth((double) width);
     }
 
     public void setDefaultRowHeight(short height) {
-        // TODO Auto-generated method stub
+    	this.worksheet.getSheetFormatPr().setDefaultRowHeight(height / 20);
 
     }
 
     public void setDefaultRowHeightInPoints(float height) {
-        // TODO Auto-generated method stub
+    	this.worksheet.getSheetFormatPr().setDefaultRowHeight(height);
 
     }
 
