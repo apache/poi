@@ -202,7 +202,7 @@ public class EscherContainerRecord extends EscherRecord
             	String newIndent = indent + "   ";
             	
                 EscherRecord record = (EscherRecord) iterator.next();
-                children.append(newIndent + "Child " + count + ":\n");
+                children.append(newIndent + "Child " + count + ":" + nl);
                 
                 if(record instanceof EscherContainerRecord) {
                 	EscherContainerRecord ecr = (EscherContainerRecord)record;
