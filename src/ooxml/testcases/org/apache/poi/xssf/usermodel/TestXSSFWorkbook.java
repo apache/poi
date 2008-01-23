@@ -70,4 +70,24 @@ public class TestXSSFWorkbook extends TestCase {
         workbook.setSelectedTab((short) 1);
         assertEquals(1, workbook.getSelectedTab());
     }
+    
+    public void testSetSheetName() throws Exception {
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        Sheet sheet1 = workbook.createSheet("sheet1");
+        assertEquals("sheet1", workbook.getSheetName(0));
+        workbook.setSheetName(0, "sheet2");
+        assertEquals("sheet2", workbook.getSheetName(0));
+    }
+    
+    public void testCloneSheet() throws Exception {
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        Sheet sheet1 = workbook.createSheet("sheet");
+        Sheet sheet2 = workbook.cloneSheet(0);
+        assertEquals(2, workbook.getNumberOfSheets());
+        assertEquals("sheet(1)", workbook.getSheetName(1));
+        workbook.setSheetName(1, "clonedsheet");
+        Sheet sheet3 = workbook.cloneSheet(1);
+        assertEquals(3, workbook.getNumberOfSheets());
+        assertEquals("clonedsheet(1)", workbook.getSheetName(2));
+    }
 }

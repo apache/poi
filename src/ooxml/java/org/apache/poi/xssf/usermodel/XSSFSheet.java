@@ -86,6 +86,10 @@ public class XSSFSheet implements Sheet {
         hf.setOddFooter("&amp;C&amp;\"Arial\"&amp;10Page &amp;P");
     }
 
+    protected CTSheet getSheet() {
+        return this.sheet;
+    }
+    
     protected CTWorksheet getWorksheet() {
         return this.worksheet;
     }
@@ -601,4 +605,9 @@ public class XSSFSheet implements Sheet {
         }
         return views.getSheetViewArray(views.getSheetViewArray().length - 1);
     }
+    
+    protected XSSFSheet cloneSheet() {
+        return new XSSFSheet((CTSheet) sheet.copy());
+    }
+
 }
