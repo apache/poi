@@ -79,7 +79,34 @@ public class XSSFWorkbook implements Workbook {
     }
 
     public Sheet cloneSheet(int sheetNum) {
-        // TODO Auto-generated method stub
+        XSSFSheet srcSheet = sheets.get(sheetNum);
+        String srcName = getSheetName(sheetNum);
+        if (srcSheet != null) {
+            XSSFSheet clonedSheet = srcSheet.cloneSheet();
+
+            sheets.add(clonedSheet);
+            CTSheet newcts = this.workbook.getSheets().addNewSheet();
+            newcts.set(clonedSheet.getSheet());
+            
+            int i = 1;
+            while (true) {
+                //Try and find the next sheet name that is unique
+                String name = srcName;
+                String index = Integer.toString(i++);
+                if (name.length() + index.length() + 2 < 31) {
+                    name = name + "("+index+")";
+                } else {
+                    name = name.substring(0, 31 - index.length() - 2) + "(" +index + ")";
+                }
+
+                //If the sheet name is unique, then set it otherwise move on to the next number.
+                if (getSheetIndex(name) == -1) {
+                    setSheetName(sheets.size() - 1, name);
+                    break;
+                }
+            }
+            return clonedSheet;
+        }
         return null;
     }
 
@@ -246,8 +273,7 @@ public class XSSFWorkbook implements Workbook {
     }
 
     public String getSheetName(int sheet) {
-        // TODO Auto-generated method stub
-        return null;
+        return this.workbook.getSheets().getSheetArray(sheet).getName();
     }
 
     public void insertChartRecord() {
@@ -311,13 +337,11 @@ public class XSSFWorkbook implements Workbook {
     }
 
     public void setSheetName(int sheet, String name) {
-        // TODO Auto-generated method stub
-
+        this.workbook.getSheets().getSheetArray(sheet).setName(name);
     }
 
     public void setSheetName(int sheet, String name, short encoding) {
-        // TODO Auto-generated method stub
-
+        this.workbook.getSheets().getSheetArray(sheet).setName(name);
     }
 
     public void setSheetOrder(String sheetname, int pos) {
