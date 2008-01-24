@@ -33,6 +33,7 @@
 	<!-- Don't forget to update changes.xml too! -->
     <changes>
         <release version="3.0.2-FINAL" date="2008-??-??">
+            <action dev="POI-DEVELOPERS" type="fix">44254 - Avoid some unread byte warnings, and properly understand DVALRecord</action>
             <action dev="POI-DEVELOPERS" type="add">Add another formula evaluation method, evaluateFormulaCell(cell), which will re-calculate the value for a formula, without affecting the formula itself.</action>
             <action dev="POI-DEVELOPERS" type="fix">41726 - Fix how we handle signed cell offsets in relative areas and references</action>
             <action dev="POI-DEVELOPERS" type="add">44233 - Support for getting and setting a flag on the sheet, which tells excel to re-calculate all formulas on it at next reload</action>

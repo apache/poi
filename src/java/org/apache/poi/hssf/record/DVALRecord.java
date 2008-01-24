@@ -29,19 +29,22 @@ import org.apache.poi.util.LittleEndian;
 
 public class DVALRecord extends Record
 {
-    public final static short sid = 0x01B2;
+	public final static short sid = 0x01B2;
 
-    //unknown field ; it's size should be 10
-    private short field_unknown     = 0x0000;
+	/** Options of the DVAL */
+	private short field_1_options;
+	/** Horizontal position of the dialog */
+	private int field_2_horiz_pos;
+	/** Vertical position of the dialog */
+	private int field_3_vert_pos;
 
-    //Object ID of the drop down arrow object for list boxes ;
-    //in our case this will be always FFFF , until
-    //MSODrawingGroup and MSODrawing records are implemented
-    private int  field_cbo_id      = 0xFFFFFFFF;
+	/** Object ID of the drop down arrow object for list boxes ;
+	 * in our case this will be always FFFF , until
+	 * MSODrawingGroup and MSODrawing records are implemented */
+	private int  field_cbo_id      = 0xFFFFFFFF;
 
-    //Number of following DV records
-    //Default value is 1
-    private int  field_3_dv_no     = 0x00000000;
+	/** Number of following DV Records */
+	private int  field_5_dv_no     = 0x00000000;
 
     public DVALRecord()
     {
@@ -66,17 +69,38 @@ public class DVALRecord extends Record
         }
     }
 
-    protected void fillFields(RecordInputStream in)
-    {
-        for ( int i=0; i<5; i++)
-        {
-        	this.field_unknown = in.readShort();
-        }
+	protected void fillFields(RecordInputStream in)
+	{
+		this.field_1_options = in.readShort();
+		this.field_2_horiz_pos = in.readInt();
+		this.field_3_vert_pos = in.readInt();
         this.field_cbo_id    = in.readInt(); 
-        this.field_3_dv_no   = in.readInt();
-    }
+        this.field_5_dv_no   = in.readInt();
+	}
+
 
     /**
+	 * @param field_1_options the options of the dialog
+	 */
+	public void setOptions(short field_1_options) {
+		this.field_1_options = field_1_options;
+	}
+
+	/**
+	 * @param field_2_horiz_pos the Horizontal position of the dialog
+	 */
+	public void setHorizontalPos(int field_2_horiz_pos) {
+		this.field_2_horiz_pos = field_2_horiz_pos;
+	}
+
+	/**
+	 * @param field_3_vert_pos the Vertical position of the dialog
+	 */
+	public void setVerticalPos(int field_3_vert_pos) {
+		this.field_3_vert_pos = field_3_vert_pos;
+	}
+
+	/**
      * set the object ID of the drop down arrow object for list boxes
      * @param cboID - Object ID
      */
@@ -91,10 +115,33 @@ public class DVALRecord extends Record
      */
     public void setDVRecNo(int dvNo)
     {
-        this.field_3_dv_no = dvNo;
+        this.field_5_dv_no = dvNo;
     }
 
+    
+    
     /**
+	 * @return the field_1_options
+	 */
+	public short getOptions() {
+		return field_1_options;
+	}
+
+	/**
+	 * @return the Horizontal position of the dialog
+	 */
+	public int getHorizontalPos() {
+		return field_2_horiz_pos;
+	}
+
+	/**
+	 * @return the the Vertical position of the dialog
+	 */
+	public int getVerticalPos() {
+		return field_3_vert_pos;
+	}
+
+	/**
      * get Object ID of the drop down arrow object for list boxes
      */
     public int getObjectID( )
@@ -107,29 +154,32 @@ public class DVALRecord extends Record
      */
     public int getDVRecNo( )
     {
-        return this.field_3_dv_no;
+        return this.field_5_dv_no;
     }
 
 
-    public String toString()
-    {
-        StringBuffer buffer = new StringBuffer();
+	public String toString()
+	{
+		StringBuffer buffer = new StringBuffer();
 
-        buffer.append("[DVAL]\n");
-        buffer.append("    .comboObjectID   = ").append(Integer.toHexString(this.getObjectID())).append("\n");
-        buffer.append("    .DVRecordsNumber = ").append(Integer.toHexString(this.getDVRecNo())).append("\n");
-        buffer.append("[/DVAL]\n");
-        return buffer.toString();
-    }
+		buffer.append("[DVAL]\n");
+		buffer.append("    .options      = ").append(this.getOptions()).append('\n');
+		buffer.append("    .horizPos     = ").append(this.getHorizontalPos()).append('\n');
+		buffer.append("    .vertPos      = ").append(this.getVerticalPos()).append('\n');
+		buffer.append("    .comboObjectID   = ").append(Integer.toHexString(this.getObjectID())).append("\n");
+		buffer.append("    .DVRecordsNumber = ").append(Integer.toHexString(this.getDVRecNo())).append("\n");
+		buffer.append("[/DVAL]\n");
+		return buffer.toString();
+	}
 
     public int serialize(int offset, byte [] data)
     {
         LittleEndian.putShort(data, 0 + offset, this.sid);
         LittleEndian.putShort(data, 2 + offset, ( short)(this.getRecordSize()-4));
-        for ( int i=0; i<5; i++)
-        {
-          LittleEndian.putShort(data, 4 + i*2 + offset, (short)this.field_unknown);
-        }
+		
+		LittleEndian.putShort(data, 4 + offset, this.getOptions());
+		LittleEndian.putInt(data, 6 + offset, this.getHorizontalPos());
+		LittleEndian.putInt(data, 10 + offset, this.getVerticalPos());
         LittleEndian.putInt(data, 14 + offset, this.getObjectID());
         LittleEndian.putInt(data, 18 + offset, this.getDVRecNo());
         return getRecordSize();
@@ -149,9 +199,11 @@ public class DVALRecord extends Record
     public Object clone()
     {
       DVALRecord rec = new DVALRecord();
-      rec.field_unknown = this.field_unknown;
+      rec.field_1_options = field_1_options;
+      rec.field_2_horiz_pos = field_2_horiz_pos;
+      rec.field_3_vert_pos = field_3_vert_pos;
       rec.field_cbo_id = this.field_cbo_id;
-      rec.field_3_dv_no = this.field_3_dv_no;
+      rec.field_5_dv_no = this.field_5_dv_no;
       return rec;
     }
 }
