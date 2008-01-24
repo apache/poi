@@ -140,7 +140,7 @@ public class HSSFRichTextString
      */
     public void applyFont(int startIndex, int endIndex, Font font)
     {
-        applyFont(startIndex, endIndex, font.getIndex());
+        applyFont(startIndex, endIndex, ((HSSFFont) font).getIndex());
     }
 
     /**

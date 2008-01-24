@@ -242,28 +242,29 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
 
     public void removeRow(Row row)
     {
+        HSSFRow hrow = (HSSFRow) row;
         sheet.setLoc(sheet.getDimsLoc());
         if (rows.size() > 0)
         {
             rows.remove(row);
-            if (row.getRowNum() == getLastRowNum())
+            if (hrow.getRowNum() == getLastRowNum())
             {
                 lastrow = findLastRow(lastrow);
             }
-            if (row.getRowNum() == getFirstRowNum())
+            if (hrow.getRowNum() == getFirstRowNum())
             {
                 firstrow = findFirstRow(firstrow);
             }
-            Iterator iter = row.cellIterator();
+            Iterator iter = hrow.cellIterator();
 
             while (iter.hasNext())
             {
                 HSSFCell cell = (HSSFCell) iter.next();
 
-                sheet.removeValueRecord(row.getRowNum(),
+                sheet.removeValueRecord(hrow.getRowNum(),
                         cell.getCellValueRecord());
             }
-            sheet.removeRow(((HSSFRow) row).getRowRecord());
+            sheet.removeRow(hrow.getRowRecord());
         }
     }
 
@@ -1650,7 +1651,7 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
      * @param style the style to set
      */
     public void setDefaultColumnStyle(short column, CellStyle style) {
-	sheet.setColumn(column, new Short(style.getIndex()), null, null, null, null);
+	sheet.setColumn(column, new Short(((HSSFCellStyle) style).getIndex()), null, null, null, null);
     }
 
     /**

@@ -144,14 +144,15 @@ public class HSSFComment extends HSSFTextbox implements Comment {
      * @param string    Sets the rich text string used by this object.
      */
     public void setString( RichTextString string )  {
+        HSSFRichTextString hstring = (HSSFRichTextString) string;
         //if font is not set we must set the default one
-        if (string.numFormattingRuns() == 0) string.applyFont((short)0);
+        if (hstring.numFormattingRuns() == 0) hstring.applyFont((short)0);
 
         if (txo != null) {
-            int frLength = ( string.numFormattingRuns() + 1 ) * 8;
+            int frLength = ( hstring.numFormattingRuns() + 1 ) * 8;
             txo.setFormattingRunLength( (short) frLength );
-            txo.setTextLength( (short) string.length() );
-            txo.setStr( (HSSFRichTextString) string );
+            txo.setTextLength( (short) hstring.length() );
+            txo.setStr( hstring );
         }
         super.setString(string);
     }

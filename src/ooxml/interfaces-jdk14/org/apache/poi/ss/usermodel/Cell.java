@@ -17,4 +17,54 @@
 
 package org.apache.poi.ss.usermodel;
 
-public interface Cell {}
+public interface Cell {
+
+    /**
+     * Numeric Cell type (0)
+     * @see #setCellType(int)
+     * @see #getCellType()
+     */
+
+    public final static int CELL_TYPE_NUMERIC = 0;
+
+    /**
+     * String Cell type (1)
+     * @see #setCellType(int)
+     * @see #getCellType()
+     */
+
+    public final static int CELL_TYPE_STRING = 1;
+
+    /**
+     * Formula Cell type (2)
+     * @see #setCellType(int)
+     * @see #getCellType()
+     */
+
+    public final static int CELL_TYPE_FORMULA = 2;
+
+    /**
+     * Blank Cell type (3)
+     * @see #setCellType(int)
+     * @see #getCellType()
+     */
+
+    public final static int CELL_TYPE_BLANK = 3;
+
+    /**
+     * Boolean Cell type (4)
+     * @see #setCellType(int)
+     * @see #getCellType()
+     */
+
+    public final static int CELL_TYPE_BOOLEAN = 4;
+
+    /**
+     * Error Cell type (5)
+     * @see #setCellType(int)
+     * @see #getCellType()
+     */
+
+    public final static int CELL_TYPE_ERROR = 5;
+
+}
