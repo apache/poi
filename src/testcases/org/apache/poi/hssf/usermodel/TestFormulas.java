@@ -1127,6 +1127,17 @@ extends TestCase {
 		cell.setCellFormula("IF(A1=\"A\",1,)");
 	}
     
+	public void testSharedFormula() throws Exception {
+		String readFilename = System.getProperty("HSSF.testdata.path");	
+		File inFile = new File(readFilename+"/SharedFormulaTest.xls");
+		FileInputStream fis = new FileInputStream(inFile);
+		HSSFWorkbook wb = new HSSFWorkbook(fis);
+		
+		assertEquals("A$1*2", wb.getSheetAt(0).getRow(1).getCell((short)1).toString());
+		assertEquals("$A11*2", wb.getSheetAt(0).getRow(11).getCell((short)1).toString());
+		assertEquals("DZ2*2", wb.getSheetAt(0).getRow(1).getCell((short)128).toString());
+		assertEquals("B32770*2", wb.getSheetAt(0).getRow(32768).getCell((short)1).toString());
+	}
     
     public static void main(String [] args) {
         System.out
