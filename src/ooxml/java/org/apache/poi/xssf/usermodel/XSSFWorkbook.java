@@ -250,7 +250,12 @@ public class XSSFWorkbook implements Workbook {
     }
 
     public Sheet getSheet(String name) {
-        // TODO Auto-generated method stub
+        CTSheet[] sheets = this.workbook.getSheets().getSheetArray();  
+        for (int i = 0 ; i < sheets.length ; ++i) {
+            if (name.equals(sheets[i].getName())) {
+                return this.sheets.get(i);
+            }
+        }
         return null;
     }
 
@@ -297,8 +302,8 @@ public class XSSFWorkbook implements Workbook {
     }
 
     public void removeSheetAt(int index) {
-        // TODO Auto-generated method stub
-
+        XSSFSheet sheet = this.sheets.remove(index);
+        this.workbook.getSheets().removeSheet(index);
     }
 
     public void setBackupFlag(boolean backupValue) {
