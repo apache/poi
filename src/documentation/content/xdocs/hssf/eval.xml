@@ -55,10 +55,12 @@
 			<p>The following code demonstrates how to use the HSSFFormulaEvaluator 
 				in the context of other POI excel reading code.
 			</p>
-			<p>There are two ways in which you can use the HSSFFormulaEvalutator API.</p>
+			<p>There are several ways in which you can use the HSSFFormulaEvalutator API.</p>
 
 			<anchor id="Evaluate"/>
 			<section><title>Using HSSFFormulaEvaluator.<strong>evaluate</strong>(HSSFCell cell)</title>
+				<p>This evaluates a given cell, and returns the new value,
+				without affecting the cell</p>
 				<source>
 FileInputStream fis = new FileInputStream("c:/temp/test.xls");
 HSSFWorkbook wb = new HSSFWorkbook(fis);
@@ -102,12 +104,60 @@ switch (cellValue.getCellType()) {
 				</p>
 			</section>
 
+			<anchor id="EvaluateFormulaCell"/>
+			<section><title>Using HSSFFormulaEvaluator.<strong>evaluateFormulaCell</strong>(HSSFCell cell)</title>
+				<p><strong>evaluateFormulaCell</strong>(HSSFCell cell) 
+				will check to see if the supplied cell is a formula cell. 
+				If it isn't, then no changes will be made to it. If it is, 
+				then the formula is evaluated. The value for the formula
+				is saved alongside it, to be displayed in excel. The
+				formula remains in the cell, just with a new value</p>
+				<p>The return of the function is the type of the
+				formula result, such as HSSFCell.CELL_TYPE_BOOLEAN</p>
+				<source>
+FileInputStream fis = new FileInputStream("/somepath/test.xls");
+HSSFWorkbook wb = new HSSFWorkbook(fis);
+HSSFSheet sheet = wb.getSheetAt(0);
+HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(sheet, wb);
+
+// suppose your formula is in B3
+CellReference cellReference = new CellReference("B3"); 
+HSSFRow row = sheet.getRow(cellReference.getRow());
+HSSFCell cell = row.getCell(cellReference.getCol()); 
+evaluator.setCurrentRow(row);
+
+if (cell!=null) {
+	switch (<strong>evaluator.evaluateFormulaCell</strong>(cell)) {
+		case HSSFCell.CELL_TYPE_BOOLEAN:
+		    System.out.println(cell.getBooleanCellValue());
+		    break;
+		case HSSFCell.CELL_TYPE_NUMERIC:
+		    System.out.println(cell.getNumberCellValue());
+		    break;
+		case HSSFCell.CELL_TYPE_STRING:
+		    System.out.println(cell.getStringCellValue());
+		    break;
+		case HSSFCell.CELL_TYPE_BLANK:
+		    break;
+		case HSSFCell.CELL_TYPE_ERROR:
+		    System.out.println(cell.getErrorCellValue());
+		    break;
+		
+		// CELL_TYPE_FORMULA will never occur
+		case HSSFCell.CELL_TYPE_FORMULA: 
+		    break;
+	}
+}
+				</source>
+			</section>
+
 			<anchor id="EvaluateInCell"/>
 			<section><title>Using HSSFFormulaEvaluator.<strong>evaluateInCell</strong>(HSSFCell cell)</title>
 				<p><strong>evaluateInCell</strong>(HSSFCell cell) will check to
 				see if the supplied cell is a formula cell. If it isn't,
 				then no changes will be made to it. If it is, then the
-				formula is evaluated, and the new value saved into the cell.</p>
+				formula is evaluated, and the new value saved into the cell,
+				in place of the old formula.</p>
 				<source>
 FileInputStream fis = new FileInputStream("/somepath/test.xls");
 HSSFWorkbook wb = new HSSFWorkbook(fis);
@@ -154,14 +204,14 @@ for(int sheetNum = 0; sheetNum &lt; wb.getNumberOfSheets(); sheetNum++) {
 	HSSFSheet sheet = wb.getSheetAt(sheetNum);
 	HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(sheet, wb);
 
-	for(Iterator rit = s.rowIterator(); rit.hasNext();) {
+	for(Iterator rit = sheet.rowIterator(); rit.hasNext();) {
 		HSSFRow r = (HSSFRow)rit.next();
 		evaluator.setCurrentRow(r);
 
 		for(Iterator cit = r.cellIterator(); cit.hasNext();) {
 			HSSFCell c = (HSSFCell)cit.next();
 			if(c.getCellType() == HSSFCell.CELL_TYPE_FORMULA) {
-				evaluator.evaluateInCell(c);
+				evaluator.evaluateFormulaCell(c);
 			}
 		}
 	}
