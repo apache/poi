@@ -24,6 +24,7 @@
 package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.hssf.record.FontRecord;
+import org.apache.poi.ss.usermodel.Font;
 
 /**
  * Represents a Font used in a workbook.
@@ -35,7 +36,7 @@ import org.apache.poi.hssf.record.FontRecord;
  * @see org.apache.poi.hssf.usermodel.HSSFCellStyle#setFont(HSSFFont)
  */
 
-public class HSSFFont
+public class HSSFFont implements Font
 {
 
     /**

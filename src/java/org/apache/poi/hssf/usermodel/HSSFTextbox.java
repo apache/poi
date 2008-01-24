@@ -17,6 +17,8 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import org.apache.poi.ss.usermodel.RichTextString;
+
 /**
  * A textbox is a shape that may hold a rich text string.
  *
@@ -53,9 +55,9 @@ public class HSSFTextbox
     /**
      * @param string    Sets the rich text string used by this object.
      */
-    public void setString( HSSFRichTextString string )
+    public void setString( RichTextString string )
     {
-        this.string = string;
+        this.string = (HSSFRichTextString) string;
     }
 
     /**

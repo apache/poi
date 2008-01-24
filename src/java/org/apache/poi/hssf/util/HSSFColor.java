@@ -18,7 +18,9 @@
 
 package org.apache.poi.hssf.util;
 
-import java.util.*;
+import java.util.Hashtable;
+
+import org.apache.poi.ss.usermodel.Color;
 
 /**
  * Intends to provide support for the very evil index to triplet issue and
@@ -34,7 +36,7 @@ import java.util.*;
  * @author  Brian Sanders (bsanders at risklabs dot com) - full default color palette
  */
 
-public class HSSFColor
+public class HSSFColor implements Color
 {
     private final static int PALETTE_SIZE = 56;
     private final static int DISTINCT_COLOR_COUNT = 46;

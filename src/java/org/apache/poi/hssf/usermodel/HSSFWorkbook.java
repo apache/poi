@@ -23,23 +23,6 @@
  */
 package org.apache.poi.hssf.usermodel;
 
-import org.apache.poi.POIDocument;
-import org.apache.poi.ddf.EscherBSERecord;
-import org.apache.poi.ddf.EscherBitmapBlip;
-import org.apache.poi.ddf.EscherRecord;
-import org.apache.poi.ddf.EscherBlipRecord;
-import org.apache.poi.hssf.eventmodel.EventRecordFactory;
-import org.apache.poi.hssf.model.Sheet;
-import org.apache.poi.hssf.model.Workbook;
-import org.apache.poi.hssf.record.*;
-import org.apache.poi.hssf.record.formula.Area3DPtg;
-import org.apache.poi.hssf.record.formula.MemFuncPtg;
-import org.apache.poi.hssf.record.formula.UnionPtg;
-import org.apache.poi.hssf.util.CellReference;
-import org.apache.poi.poifs.filesystem.*;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
-
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -50,6 +33,38 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
+
+import org.apache.poi.POIDocument;
+import org.apache.poi.ddf.EscherBSERecord;
+import org.apache.poi.ddf.EscherBitmapBlip;
+import org.apache.poi.ddf.EscherBlipRecord;
+import org.apache.poi.ddf.EscherRecord;
+import org.apache.poi.hssf.eventmodel.EventRecordFactory;
+import org.apache.poi.hssf.model.Sheet;
+import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.record.AbstractEscherHolderRecord;
+import org.apache.poi.hssf.record.BackupRecord;
+import org.apache.poi.hssf.record.DrawingGroupRecord;
+import org.apache.poi.hssf.record.EmbeddedObjectRefSubRecord;
+import org.apache.poi.hssf.record.ExtendedFormatRecord;
+import org.apache.poi.hssf.record.FontRecord;
+import org.apache.poi.hssf.record.LabelRecord;
+import org.apache.poi.hssf.record.LabelSSTRecord;
+import org.apache.poi.hssf.record.NameRecord;
+import org.apache.poi.hssf.record.ObjRecord;
+import org.apache.poi.hssf.record.Record;
+import org.apache.poi.hssf.record.RecordFactory;
+import org.apache.poi.hssf.record.SSTRecord;
+import org.apache.poi.hssf.record.UnicodeString;
+import org.apache.poi.hssf.record.UnknownRecord;
+import org.apache.poi.hssf.record.WindowTwoRecord;
+import org.apache.poi.hssf.record.formula.Area3DPtg;
+import org.apache.poi.hssf.record.formula.MemFuncPtg;
+import org.apache.poi.hssf.record.formula.UnionPtg;
+import org.apache.poi.hssf.util.CellReference;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * High level representation of a workbook.  This is the first object most users
@@ -64,7 +79,7 @@ import java.util.Stack;
  * @version 2.0-pre
  */
 
-public class HSSFWorkbook extends POIDocument
+public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.usermodel.Workbook
 {
     private static final int DEBUG = POILogger.DEBUG;
 
@@ -495,7 +510,7 @@ public class HSSFWorkbook extends POIDocument
      * @param sheet the sheet to look up
      * @return index of the sheet (0 based)
      */
-    public int getSheetIndex(HSSFSheet sheet)
+    public int getSheetIndex(org.apache.poi.ss.usermodel.Sheet sheet)
     {
     	for(int i=0; i<sheets.size(); i++) {
     		if(sheets.get(i) == sheet) {

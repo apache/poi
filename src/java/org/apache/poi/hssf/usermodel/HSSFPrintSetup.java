@@ -19,6 +19,7 @@
 package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.hssf.record.PrintSetupRecord;
+import org.apache.poi.ss.usermodel.PrintSetup;
 
 /**
  * Used to modify the print setup.
@@ -36,16 +37,7 @@ import org.apache.poi.hssf.record.PrintSetupRecord;
  *  public static final short ENVELOPE_MONARCH_PAPERSIZE  = 37;<br>
  * <P>
  * @author Shawn Laubach (slaubach at apache dot org) */
-public class HSSFPrintSetup extends Object {    
-    public static final short LETTER_PAPERSIZE 	          = 1;
-    public static final short LEGAL_PAPERSIZE 		  = 5;
-    public static final short EXECUTIVE_PAPERSIZE 	  = 7;
-    public static final short A4_PAPERSIZE 	  	  = 9;
-    public static final short A5_PAPERSIZE 		  = 11;
-    public static final short ENVELOPE_10_PAPERSIZE 	  = 20;
-    public static final short ENVELOPE_DL_PAPERSIZE 	  = 27;
-    public static final short ENVELOPE_CS_PAPERSIZE 	  = 28;
-    public static final short ENVELOPE_MONARCH_PAPERSIZE  = 37;
+public class HSSFPrintSetup implements PrintSetup {    
     PrintSetupRecord printSetupRecord;
     
     /**    

@@ -22,34 +22,47 @@
  */
 package org.apache.poi.hssf.usermodel;
 
-import org.apache.poi.ddf.EscherRecord;
-import org.apache.poi.hssf.model.FormulaParser;
-import org.apache.poi.hssf.model.Sheet;
-import org.apache.poi.hssf.model.Workbook;
-import org.apache.poi.hssf.record.*;
-import org.apache.poi.hssf.record.formula.Ptg;
-import org.apache.poi.hssf.record.formula.ReferencePtg;
-import org.apache.poi.hssf.util.HSSFCellRangeAddress;
-import org.apache.poi.hssf.util.HSSFDataValidation;
-import org.apache.poi.hssf.util.Region;
-import org.apache.poi.hssf.util.PaneInformation;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
-
+import java.awt.font.FontRenderContext;
+import java.awt.font.TextAttribute;
+import java.awt.font.TextLayout;
+import java.awt.geom.AffineTransform;
 import java.io.PrintWriter;
+import java.text.AttributedString;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
 import java.util.TreeMap;
-import java.text.AttributedString;
-import java.text.NumberFormat;
-import java.text.DecimalFormat;
-import java.awt.font.TextLayout;
-import java.awt.font.FontRenderContext;
-import java.awt.font.TextAttribute;
 
-import java.awt.geom.AffineTransform;
+import org.apache.poi.ddf.EscherRecord;
+import org.apache.poi.hssf.model.FormulaParser;
+import org.apache.poi.hssf.model.Sheet;
+import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.record.CellValueRecordInterface;
+import org.apache.poi.hssf.record.DVALRecord;
+import org.apache.poi.hssf.record.DVRecord;
+import org.apache.poi.hssf.record.EOFRecord;
+import org.apache.poi.hssf.record.EscherAggregate;
+import org.apache.poi.hssf.record.HCenterRecord;
+import org.apache.poi.hssf.record.PageBreakRecord;
+import org.apache.poi.hssf.record.Record;
+import org.apache.poi.hssf.record.RowRecord;
+import org.apache.poi.hssf.record.SCLRecord;
+import org.apache.poi.hssf.record.VCenterRecord;
+import org.apache.poi.hssf.record.WSBoolRecord;
+import org.apache.poi.hssf.record.WindowTwoRecord;
+import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.hssf.record.formula.ReferencePtg;
+import org.apache.poi.hssf.util.HSSFCellRangeAddress;
+import org.apache.poi.hssf.util.HSSFDataValidation;
+import org.apache.poi.hssf.util.PaneInformation;
+import org.apache.poi.hssf.util.Region;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * High level representation of a worksheet.
@@ -61,7 +74,7 @@ import java.awt.geom.AffineTransform;
  * @author  Yegor Kozlov (yegor at apache.org) (Autosizing columns)
  */
 
-public class HSSFSheet
+public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
 {
     private static final int DEBUG = POILogger.DEBUG;
 
@@ -227,7 +240,7 @@ public class HSSFSheet
      * @param row   representing a row to remove.
      */
 
-    public void removeRow(HSSFRow row)
+    public void removeRow(Row row)
     {
         sheet.setLoc(sheet.getDimsLoc());
         if (rows.size() > 0)
@@ -250,7 +263,7 @@ public class HSSFSheet
                 sheet.removeValueRecord(row.getRowNum(),
                         cell.getCellValueRecord());
             }
-            sheet.removeRow(row.getRowRecord());
+            sheet.removeRow(((HSSFRow) row).getRowRecord());
         }
     }
 
@@ -1636,7 +1649,7 @@ public class HSSFSheet
      * @param column the column index
      * @param style the style to set
      */
-    public void setDefaultColumnStyle(short column, HSSFCellStyle style) {
+    public void setDefaultColumnStyle(short column, CellStyle style) {
 	sheet.setColumn(column, new Short(style.getIndex()), null, null, null, null);
     }
 

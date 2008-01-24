@@ -16,21 +16,17 @@
 ==================================================================== */
 package org.apache.poi.hssf.usermodel;
 
-import org.apache.poi.hssf.record.EscherAggregate;
 import org.apache.poi.hssf.record.NoteRecord;
 import org.apache.poi.hssf.record.TextObjectRecord;
-import org.apache.poi.ddf.*;
-
-import java.util.Map;
-import java.util.List;
-import java.util.Iterator;
+import org.apache.poi.ss.usermodel.Comment;
+import org.apache.poi.ss.usermodel.RichTextString;
 
 /**
  * Represents a cell comment - a sticky note associated with a cell.
  *
  * @author Yegor Kozlov
  */
-public class HSSFComment extends HSSFTextbox {
+public class HSSFComment extends HSSFTextbox implements Comment {
 
     private boolean visible;
     private short col, row;
@@ -147,7 +143,7 @@ public class HSSFComment extends HSSFTextbox {
      *
      * @param string    Sets the rich text string used by this object.
      */
-    public void setString( HSSFRichTextString string )  {
+    public void setString( RichTextString string )  {
         //if font is not set we must set the default one
         if (string.numFormattingRuns() == 0) string.applyFont((short)0);
 
@@ -155,7 +151,7 @@ public class HSSFComment extends HSSFTextbox {
             int frLength = ( string.numFormattingRuns() + 1 ) * 8;
             txo.setFormattingRunLength( (short) frLength );
             txo.setTextLength( (short) string.length() );
-            txo.setStr( string );
+            txo.setStr( (HSSFRichTextString) string );
         }
         super.setString(string);
     }
