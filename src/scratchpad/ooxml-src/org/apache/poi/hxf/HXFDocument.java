@@ -24,9 +24,7 @@ import java.util.ArrayList;
 
 import org.apache.poi.POIXMLDocument;
 import org.apache.poi.poifs.common.POIFSConstants;
-import org.apache.poi.poifs.storage.HeaderBlockConstants;
 import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.LongField;
 import org.apache.xmlbeans.XmlException;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -40,6 +38,7 @@ import org.openxml4j.opc.PackagePartName;
 import org.openxml4j.opc.PackageRelationship;
 import org.openxml4j.opc.PackageRelationshipCollection;
 import org.openxml4j.opc.PackagingURIHelper;
+import org.openxml4j.opc.RelationshipSource;
 import org.openxml4j.opc.internal.PackagePropertiesPart;
 import org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.CTProperties;
 import org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.PropertiesDocument;
@@ -147,9 +146,8 @@ public abstract class HXFDocument {
 	 *  or null if none found.
 	 * @param relationType The relation content type to search for
 	 * @throws IllegalArgumentException If we find more than one part of that type
-	 * TODO: this sucks! Make Package and PackagePart implement common intf that defines getRelationshipsByType & friends
 	 */
-	protected PackagePart getSinglePartByRelationType(String relationType, PackagePart part) throws IllegalArgumentException, OpenXML4JException {
+	protected PackagePart getSinglePartByRelationType(String relationType, RelationshipSource part) throws IllegalArgumentException, OpenXML4JException {
 		PackageRelationshipCollection rels =
 			part.getRelationshipsByType(relationType);
 		if(rels.size() == 0) {
@@ -170,16 +168,7 @@ public abstract class HXFDocument {
 	 * @throws IllegalArgumentException If we find more than one part of that type
 	 */
 	protected PackagePart getSinglePartByRelationType(String relationType) throws IllegalArgumentException, OpenXML4JException {
-		PackageRelationshipCollection rels =
-			container.getRelationshipsByType(relationType);
-		if(rels.size() == 0) {
-			return null;
-		}
-		if(rels.size() > 1) {
-			throw new IllegalArgumentException("Found " + rels.size() + " relations for the type " + relationType + ", should only ever be one!");
-		}
-		PackageRelationship rel = rels.getRelationship(0);
-		return getPackagePart(rel);
+		return getSinglePartByRelationType(relationType, container);
 	}
 	
 	/**
