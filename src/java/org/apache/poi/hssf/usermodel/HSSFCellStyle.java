@@ -291,7 +291,7 @@ public class HSSFCellStyle implements CellStyle
     public void setFont(Font font)
     {
         format.setIndentNotParentFont(true);
-        short fontindex = font.getIndex();
+        short fontindex = ((HSSFFont) font).getIndex();
         format.setFontIndex(fontindex);
     }
 
@@ -310,8 +310,8 @@ public class HSSFCellStyle implements CellStyle
      * @see org.apache.poi.hssf.usermodel.HSSFCellStyle#getFontIndex()
      * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#getFontAt(short)
      */
-    public Font getFont(org.apache.poi.ss.usermodel.Workbook parentWorkbook) {
-    	return parentWorkbook.getFontAt(getFontIndex());
+    public HSSFFont getFont(org.apache.poi.ss.usermodel.Workbook parentWorkbook) {
+    	return ((HSSFWorkbook) parentWorkbook).getFontAt(getFontIndex());
     }
 
     /**

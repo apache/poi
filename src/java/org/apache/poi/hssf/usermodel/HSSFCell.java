@@ -880,7 +880,7 @@ public class HSSFCell implements Cell
 
     public void setCellStyle(CellStyle style)
     {
-        record.setXFIndex(style.getIndex());
+        record.setXFIndex(((HSSFCellStyle) style).getIndex());
     }
 
     /**
@@ -1006,9 +1006,9 @@ public class HSSFCell implements Cell
      * @param comment comment associated with this cell
      */
     public void setCellComment(Comment comment){
-        comment.setRow((short)record.getRow());
-        comment.setColumn(record.getColumn());
         this.comment = (HSSFComment) comment;
+        this.comment.setRow((short)record.getRow());
+        this.comment.setColumn(record.getColumn());
     }
 
     /**
