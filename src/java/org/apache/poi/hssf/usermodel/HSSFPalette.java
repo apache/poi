@@ -19,6 +19,7 @@ package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.hssf.record.PaletteRecord;
 import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.Palette;
 
 /**
  * Represents a workbook color palette.
@@ -28,7 +29,7 @@ import org.apache.poi.hssf.util.HSSFColor;
  *
  * @author Brian Sanders (bsanders at risklabs dot com)
  */
-public class HSSFPalette
+public class HSSFPalette implements Palette
 {
     private PaletteRecord palette;
     

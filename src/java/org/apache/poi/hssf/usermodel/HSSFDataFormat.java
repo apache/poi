@@ -23,13 +23,14 @@
  */
 package org.apache.poi.hssf.usermodel;
 
-import org.apache.poi.hssf.model.Workbook;
-import org.apache.poi.hssf.record.FormatRecord;
-
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Vector;
+
+import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.record.FormatRecord;
+import org.apache.poi.ss.usermodel.DataFormat;
 
 /**
  * Utility to identify builtin formats.  Now can handle user defined data formats also.  The following is a list of the formats as
@@ -79,7 +80,7 @@ import java.util.Vector;
  * @author  Shawn M. Laubach (slaubach at apache dot org)
  */
 
-public class HSSFDataFormat
+public class HSSFDataFormat implements DataFormat
 {
     private static List builtinFormats = createBuiltinFormats();
 

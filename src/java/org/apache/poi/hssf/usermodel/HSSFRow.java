@@ -29,6 +29,8 @@ import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.CellValueRecordInterface;
 import org.apache.poi.hssf.record.RowRecord;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
 
 /**
  * High level representation of a row of a spreadsheet.
@@ -40,7 +42,7 @@ import org.apache.poi.hssf.record.RowRecord;
  */
 
 public class HSSFRow
-        implements Comparable
+        implements Comparable, Row
 {
 
     // used for collections
@@ -156,26 +158,29 @@ public class HSSFRow
      * remove the HSSFCell from this row.
      * @param cell to remove
      */
-    public void removeCell(HSSFCell cell) {
+    public void removeCell(Cell cell) {
     	removeCell(cell, true);
     }
-    private void removeCell(HSSFCell cell, boolean alsoRemoveRecords) {
+    
+    private void removeCell(Cell cell, boolean alsoRemoveRecords) {
+        
+        HSSFCell hcell = (HSSFCell) cell;
     	if(alsoRemoveRecords) {
-	        CellValueRecordInterface cval = cell.getCellValueRecord();
+	        CellValueRecordInterface cval = hcell.getCellValueRecord();
 	        sheet.removeValueRecord(getRowNum(), cval);
     	}
     	
-        short column=cell.getCellNum();
-        if(cell!=null && column<cells.length)
+        short column=hcell.getCellNum();
+        if(hcell!=null && column<cells.length)
         {
           cells[column]=null;
         }
 
-        if (cell.getCellNum() == row.getLastCol())
+        if (hcell.getCellNum() == row.getLastCol())
         {
             row.setLastCol(findLastCell(row.getLastCol()));
         }
-        if (cell.getCellNum() == row.getFirstCol())
+        if (hcell.getCellNum() == row.getFirstCol())
         {
             row.setFirstCol(findFirstCell(row.getFirstCol()));
         }

@@ -50,6 +50,10 @@ import org.apache.poi.hssf.record.TextObjectRecord;
 import org.apache.poi.hssf.record.UnicodeString;
 import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
 import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Comment;
+import org.apache.poi.ss.usermodel.RichTextString;
 
 /**
  * High level representation of a cell in a row of a spreadsheet.
@@ -70,7 +74,7 @@ import org.apache.poi.hssf.record.formula.Ptg;
  * @version 1.0-pre
  */
 
-public class HSSFCell
+public class HSSFCell implements Cell
 {
 
     /**
@@ -590,12 +594,13 @@ public class HSSFCell
      * If value is null then we will change the cell to a Blank cell.
      */
 
-    public void setCellValue(HSSFRichTextString value)
+    public void setCellValue(RichTextString value)
     {
+        HSSFRichTextString hvalue = (HSSFRichTextString) value;
         int row=record.getRow();
         short col=record.getColumn();
         short styleIndex=record.getXFIndex();
-        if (value == null)
+        if (hvalue == null)
         {
             setCellType(CELL_TYPE_BLANK, false, row, col, styleIndex);
         }
@@ -607,7 +612,7 @@ public class HSSFCell
             }
             int index = 0;
 
-            UnicodeString str = value.getUnicodeString();            
+            UnicodeString str = hvalue.getUnicodeString();            
 //          jmh            if (encoding == ENCODING_COMPRESSED_UNICODE)
 //          jmh            {
 //          jmh                str.setCompressedUnicode();
@@ -617,7 +622,7 @@ public class HSSFCell
 //          jmh            }
             index = book.addSSTString(str);            
             (( LabelSSTRecord ) record).setSSTIndex(index);
-            stringValue = value;
+            stringValue = hvalue;
             stringValue.setWorkbookReferences(book, (( LabelSSTRecord ) record));
             stringValue.setUnicodeString(book.getSSTString(index));            
         }
@@ -873,7 +878,7 @@ public class HSSFCell
      * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#getCellStyleAt(short)
      */
 
-    public void setCellStyle(HSSFCellStyle style)
+    public void setCellStyle(CellStyle style)
     {
         record.setXFIndex(style.getIndex());
     }
@@ -1000,10 +1005,10 @@ public class HSSFCell
      *
      * @param comment comment associated with this cell
      */
-    public void setCellComment(HSSFComment comment){
+    public void setCellComment(Comment comment){
         comment.setRow((short)record.getRow());
         comment.setColumn(record.getColumn());
-        this.comment = comment;
+        this.comment = (HSSFComment) comment;
     }
 
     /**

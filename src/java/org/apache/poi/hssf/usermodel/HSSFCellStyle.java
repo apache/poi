@@ -20,8 +20,9 @@ package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.ExtendedFormatRecord;
-import org.apache.poi.hssf.record.FormatRecord;
-import org.apache.poi.hssf.util.*;
+import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Font;
 
 /**
  * High level representation of the style of a cell in a sheet of a workbook.
@@ -35,7 +36,7 @@ import org.apache.poi.hssf.util.*;
  * @see org.apache.poi.hssf.usermodel.HSSFCell#setCellStyle(HSSFCellStyle)
  */
 
-public class HSSFCellStyle
+public class HSSFCellStyle implements CellStyle
 {
     private ExtendedFormatRecord format                     = null;
     private short                index                      = 0;
@@ -287,7 +288,7 @@ public class HSSFCellStyle
      * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#getFontAt(short)
      */
 
-    public void setFont(HSSFFont font)
+    public void setFont(Font font)
     {
         format.setIndentNotParentFont(true);
         short fontindex = font.getIndex();
@@ -309,7 +310,7 @@ public class HSSFCellStyle
      * @see org.apache.poi.hssf.usermodel.HSSFCellStyle#getFontIndex()
      * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#getFontAt(short)
      */
-    public HSSFFont getFont(HSSFWorkbook parentWorkbook) {
+    public Font getFont(org.apache.poi.ss.usermodel.Workbook parentWorkbook) {
     	return parentWorkbook.getFontAt(getFontIndex());
     }
 
