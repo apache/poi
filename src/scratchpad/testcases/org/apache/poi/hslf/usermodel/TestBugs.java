@@ -330,4 +330,24 @@ public class TestBugs extends TestCase {
             assertEquals(tr1[i].getText(), tr2[i].getText());
         }
     }
+
+    /**
+     * Bug 44296: HSLF Not Extracting Slide Background Image
+     */
+    public void test44296  () throws Exception {
+        FileInputStream is = new FileInputStream(new File(cwd, "44296.ppt"));
+        SlideShow ppt = new SlideShow(is);
+        is.close();
+
+        Slide slide = ppt.getSlides()[0];
+
+        Background b = slide.getBackground();
+        Fill f = b.getFill();
+        assertEquals(Fill.FILL_PICTURE, f.getFillType());
+
+        PictureData pict = f.getPictureData();
+        assertNotNull(pict);
+        assertEquals(Picture.JPEG, pict.getType());
+    }
+
 }

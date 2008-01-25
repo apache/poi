@@ -109,7 +109,7 @@ public class Picture extends SimpleShape {
      */
     public int getPictureIndex(){
         EscherOptRecord opt = (EscherOptRecord)getEscherChild(_escherContainer, EscherOptRecord.RECORD_ID);
-        EscherSimpleProperty prop = (EscherSimpleProperty)getEscherProperty(opt, EscherProperties.BLIP__BLIPTODISPLAY + 0x4000);
+        EscherSimpleProperty prop = (EscherSimpleProperty)getEscherProperty(opt, EscherProperties.BLIP__BLIPTODISPLAY);
         return prop == null ? 0 : prop.getPropertyValue();
     }
 
