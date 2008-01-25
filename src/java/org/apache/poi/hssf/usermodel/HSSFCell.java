@@ -538,7 +538,13 @@ public class HSSFCell implements Cell
         {
             setCellType(CELL_TYPE_NUMERIC, false, row, col, styleIndex);
         }
-        (( NumberRecord ) record).setValue(value);
+        
+        // Save into the apropriate record
+        if(record instanceof FormulaRecordAggregate) {
+        	(( FormulaRecordAggregate ) record).getFormulaRecord().setValue(value);
+        } else {
+        	(( NumberRecord ) record).setValue(value);
+        }
     }
 
     /**

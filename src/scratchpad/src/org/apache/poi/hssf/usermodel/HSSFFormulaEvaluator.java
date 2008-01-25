@@ -217,14 +217,66 @@ public class HSSFFormulaEvaluator {
     
     
     /**
-     * If cell contains formula, it evaluates the formula, and puts the 
-     * formula result back into the cell.
-     * Else if cell does not contain formula, this method leaves the cell 
-     * unchanged. Note that the same instance of HSSFCell is returned to 
+     * If cell contains formula, it evaluates the formula,
+     *  and saves the result of the formula. The cell
+     *  remains as a formula cell.
+     * Else if cell does not contain formula, this method leaves
+     *  the cell unchanged. 
+     * Note that the type of the formula result is returned,
+     *  so you know what kind of value is also stored with
+     *  the formula. 
+     * <pre>
+     * int evaluatedCellType = evaluator.evaluateFormulaCell(cell);
+     * </pre>
+     * Be aware that your cell will hold both the formula,
+     *  and the result. If you want the cell replaced with
+     *  the result of the formula, use {@link #evaluateInCell(HSSFCell)}
+     * @param cell The cell to evaluate
+     * @return The type of the formula result (the cell's type remains as HSSFCell.CELL_TYPE_FORMULA however)
+     */
+    public int evaluateFormulaCell(HSSFCell cell) {
+        if (cell != null) {
+            switch (cell.getCellType()) {
+            case HSSFCell.CELL_TYPE_FORMULA:
+                CellValue cv = getCellValueForEval(internalEvaluate(cell, row, sheet, workbook));
+                switch (cv.getCellType()) {
+                case HSSFCell.CELL_TYPE_BOOLEAN:
+                    cell.setCellValue(cv.getBooleanValue());
+                    break;
+                case HSSFCell.CELL_TYPE_ERROR:
+                    cell.setCellValue(cv.getErrorValue());
+                    break;
+                case HSSFCell.CELL_TYPE_NUMERIC:
+                    cell.setCellValue(cv.getNumberValue());
+                    break;
+                case HSSFCell.CELL_TYPE_STRING:
+                    cell.setCellValue(cv.getRichTextStringValue());
+                    break;
+                case HSSFCell.CELL_TYPE_BLANK:
+                    break;
+                case HSSFCell.CELL_TYPE_FORMULA: // this will never happen, we have already evaluated the formula
+                    break;
+                }
+                return cv.getCellType();
+            }
+        }
+        return -1;
+    }
+        
+    /**
+     * If cell contains formula, it evaluates the formula, and
+     *  puts the formula result back into the cell, in place
+     *  of the old formula.
+     * Else if cell does not contain formula, this method leaves
+     *  the cell unchanged. 
+     * Note that the same instance of HSSFCell is returned to 
      * allow chained calls like:
      * <pre>
      * int evaluatedCellType = evaluator.evaluateInCell(cell).getCellType();
      * </pre>
+     * Be aware that your cell value will be changed to hold the
+     *  result of the formula. If you simply want the formula
+     *  value computed for you, use {@link #evaluateFormulaCell(HSSFCell)}
      * @param cell
      */
     public HSSFCell evaluateInCell(HSSFCell cell) {

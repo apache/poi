@@ -29,7 +29,7 @@ import org.apache.poi.hssf.usermodel.HSSFErrorConstants;
 public class ErrPtg extends Ptg
 {
     public static final short sid  = 0x1c;
-    private static final int  SIZE = 7;
+    private static final int  SIZE = 2;
     private byte              field_1_error_code;
 
     /** Creates new ErrPtg */
