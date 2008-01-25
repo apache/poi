@@ -74,4 +74,34 @@ public class TestProblems extends TestCase {
     		}
     	}
 	}
+
+	/**
+	 * Test for TableCell not skipping the last paragraph
+	 */
+	public void testTableCellLastParagraph() throws Exception {
+    	HWPFDocument doc = new HWPFDocument(new FileInputStream(dirname + "/Bug44292.doc"));
+		Range r = doc.getRange();
+			
+		//get the table
+		Paragraph p = r.getParagraph(0);
+		Table t = r.getTable(p);
+		
+		//get the only row
+		TableRow row = t.getRow(0);
+		
+		//get the first cell
+		TableCell cell = row.getCell(0);
+		// First cell should have one paragraph
+		assertEquals(1, cell.numParagraphs());
+		
+		//get the second
+		cell = row.getCell(1);
+		// Second cell should be detected as having two paragraphs
+		assertEquals(2, cell.numParagraphs());
+				
+		//get the last cell
+		cell = row.getCell(2);
+		// Last cell should have one paragraph
+		assertEquals(1, cell.numParagraphs());
+	}
 }
