@@ -100,10 +100,46 @@ public class EscherContainerRecord extends EscherRecord
         }
         return 8 + childRecordsSize;
     }
+    
+    /**
+     * Do any of our (top level) children have the
+     *  given recordId?
+     */
+    public boolean hasChildOfType(short recordId) {
+        for ( Iterator iterator = getChildRecords().iterator(); iterator.hasNext(); )
+        {
+            EscherRecord r = (EscherRecord) iterator.next();
+            if(r.getRecordId() == recordId) {
+            	return true;
+            }
+        }
+        return false;
+    }
 
+    /**
+     * Returns a list of all the child (escher) records
+     *  of the container.
+     */
     public List getChildRecords()
     {
         return childRecords;
+    }
+    
+    /**
+     * Returns all of our children which are also
+     *  EscherContainers (may be 0, 1, or vary rarely
+     *   2 or 3)
+     */
+    public List getChildContainers() {
+    	List containers = new ArrayList();
+        for ( Iterator iterator = getChildRecords().iterator(); iterator.hasNext(); )
+        {
+            EscherRecord r = (EscherRecord) iterator.next();
+            if(r instanceof EscherContainerRecord) {
+            	containers.add(r);
+            }
+        }
+        return containers;
     }
 
     public void setChildRecords( List childRecords )
@@ -149,26 +185,42 @@ public class EscherContainerRecord extends EscherRecord
 
     public String toString()
     {
+    	return toString("");
+    }
+    public String toString(String indent)
+    {
         String nl = System.getProperty( "line.separator" );
 
         StringBuffer children = new StringBuffer();
         if ( getChildRecords().size() > 0 )
         {
             children.append( "  children: " + nl );
+            
+            int count = 0;
             for ( Iterator iterator = getChildRecords().iterator(); iterator.hasNext(); )
             {
+            	String newIndent = indent + "   ";
+            	
                 EscherRecord record = (EscherRecord) iterator.next();
-                children.append( record.toString() );
-//                children.append( nl );
+                children.append(newIndent + "Child " + count + ":" + nl);
+                
+                if(record instanceof EscherContainerRecord) {
+                	EscherContainerRecord ecr = (EscherContainerRecord)record;
+                	children.append( ecr.toString(newIndent));
+                } else {
+                	children.append( record.toString() );
+                }
+                count++;
             }
         }
 
-        return getClass().getName() + " (" + getRecordName() + "):" + nl +
-                "  isContainer: " + isContainerRecord() + nl +
-                "  options: 0x" + HexDump.toHex( getOptions() ) + nl +
-                "  recordId: 0x" + HexDump.toHex( getRecordId() ) + nl +
-                "  numchildren: " + getChildRecords().size() + nl +
-                children.toString();
+        return 
+        	indent + getClass().getName() + " (" + getRecordName() + "):" + nl +
+            indent + "  isContainer: " + isContainerRecord() + nl +
+            indent + "  options: 0x" + HexDump.toHex( getOptions() ) + nl +
+            indent + "  recordId: 0x" + HexDump.toHex( getRecordId() ) + nl +
+            indent + "  numchildren: " + getChildRecords().size() + nl +
+            indent + children.toString();
 
     }
 

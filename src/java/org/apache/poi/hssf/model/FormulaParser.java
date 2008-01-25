@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 //import PTG's .. since we need everything, import *
 import org.apache.poi.hssf.record.formula.*;
@@ -65,6 +66,12 @@ public class FormulaParser {
      * Using an unsynchronized linkedlist to implement a stack since we're not multi-threaded.
      */
     private List functionTokens = new LinkedList();
+
+    /**
+     * Used for spotting if we have a cell reference,
+     *  or a named range
+     */
+    private final static Pattern CELL_REFERENCE_PATTERN = Pattern.compile("(?:('?)[^:\\\\/\\?\\*\\[\\]]+\\1!)?\\$?[A-Za-z]+\\$?[\\d]+");
         
     private static char TAB = '\t';
     private static char CR = '\n';
@@ -306,15 +313,27 @@ public class FormulaParser {
                 tokens.add(new Ref3DPtg(first,externIdx));
             }
         } else {
-            //this can be either a cell ref or a named range !!
-            boolean cellRef = true ; //we should probably do it with reg exp??
+            // This can be either a cell ref or a named range
+        	// Try to spot which it is
+        	boolean cellRef = CELL_REFERENCE_PATTERN.matcher(name).matches();
             boolean boolLit = (name.equals("TRUE") || name.equals("FALSE"));
+            
             if (boolLit) {
                 tokens.add(new BoolPtg(name));
             } else if (cellRef) {
                 tokens.add(new ReferencePtg(name));
-            }else {
-                //handle after named range is integrated!!
+            } else {
+            	boolean nameRecordExists = false;
+                for(int i = 0; i < book.getNumNames(); i++) {
+                	// Our formula will by now contain an upper-cased
+                	//  version of any named range names
+                    if(book.getNameRecord(i).getNameText().toUpperCase().equals(name)) {
+                        nameRecordExists = true;
+                    }
+                }
+                if(!nameRecordExists)
+                    Abort("Found reference to named range \"" + name + "\", but that named range wasn't defined!");
+                tokens.add(new NamePtg(name, book));
             }
         }
     }

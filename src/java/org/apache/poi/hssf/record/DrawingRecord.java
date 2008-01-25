@@ -106,4 +106,18 @@ public class DrawingRecord extends Record
         this.recordData = thedata;
     }
 
+    public Object clone() {
+    	DrawingRecord rec = new DrawingRecord();
+    	
+        if (recordData != null) {
+        	rec.recordData = new byte[ recordData.length ];
+        	System.arraycopy(recordData, 0, rec.recordData, 0, recordData.length);
+        }
+    	if (contd != null) {
+	    	System.arraycopy(contd, 0, rec.contd, 0, contd.length);
+	    	rec.contd = new byte[ contd.length ];
+    	}
+    	
+    	return rec;
+    }
 }

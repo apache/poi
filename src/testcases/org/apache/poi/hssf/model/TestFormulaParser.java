@@ -45,7 +45,9 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 /**
  * Test the low level formula parser functionality. High level tests are to 
- * be done via usermodel/HSSFCell.setFormulaValue() . 
+ *  be done via usermodel/HSSFCell.setFormulaValue() .
+ * Some tests are also done in scratchpad, if they need
+ *  HSSFFormulaEvaluator, which is there
  */
 public class TestFormulaParser extends TestCase {
 
@@ -349,7 +351,7 @@ public class TestFormulaParser extends TestCase {
 		assertTrue("ptg0 is a StringPtg", ptg[0] instanceof StringPtg);
 		assertTrue("ptg0 contains exact value", ((StringPtg)ptg[0]).getValue().equals(value));
 	}
-
+	
 	public void testLookupAndMatchFunctionArgs()
 	{
 		FormulaParser fp = new FormulaParser("lookup(A1, A3:A52, B3:B52)", null);

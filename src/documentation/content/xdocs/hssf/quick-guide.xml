@@ -1151,7 +1151,7 @@ Examples:
 
     // retrieve the cell at the named range and test its contents
     AreaReference aref = new AreaReference(aNamedCell.getReference());
-    CellReference[] crefs = aref.getCells();
+    CellReference[] crefs = aref.getAllReferencedCells();
     for (int i=0; i&lt;crefs.length; i++) {
         HSSFSheet s = wb.getSheet(crefs[i].getSheetName());
         HSSFRow r = sheet.getRow(crefs[i].getRow());
@@ -1159,7 +1159,36 @@ Examples:
         // extract the cell contents based on cell type etc.
     }
             </source>
+            <p>
+            Reading from non-contiguous Named Ranges
+            </p>
+            <source>
+    // Setup code
+    String cname = "TestName";
+    HSSFWorkbook wb = getMyWorkbook(); // retrieve workbook
 
+    // Retrieve the named range
+    // Will be something like "$C$10,$D$12:$D$14";
+    int namedCellIdx = wb.getNameIndex(cellName);
+    HSSFName aNamedCell = wb.getNameAt(namedCellIdx);
+
+    // Retrieve the cell at the named range and test its contents
+    // Will get back one AreaReference for C10, and
+    //  another for D12 to D14
+    AreaReference[] arefs = AreaReference.generateContiguous(aNamedCell.getReference());
+    for (int i=0; i&lt;arefs.length; i++) {
+        // Only get the corners of the Area
+        // (use arefs[i].getAllReferencedCells() to get all cells)
+        CellReference[] crefs = arefs[i].getCells();
+        for (int j=0; j&lt;crefs.length; j++) {
+            // Check it turns into real stuff
+            HSSFSheet s = wb.getSheet(crefs[j].getSheetName());
+            HSSFRow r = s.getRow(crefs[j].getRow());
+            HSSFCell c = r.getCell(crefs[j].getCol());
+            // Do something with this corner cell
+        }
+    }
+            </source>
         </section>
         <anchor id="CellComments"/>
         <section><title>Cell Comments</title>

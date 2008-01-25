@@ -75,7 +75,7 @@ public class ExpPtg
 
     public String toFormulaString(Workbook book)
     {
-        throw new RecordFormatException("Coding Error: Expected ExpPtg to be converted from Shared to Non-Shared Formula");
+        throw new RecordFormatException("Coding Error: Expected ExpPtg to be converted from Shared to Non-Shared Formula by ValueRecordsAggregate, but it wasn't");
     }
     
     public String toString()

@@ -72,6 +72,29 @@ public class TextExtractor extends TestCase {
 		
 		ensureTwoStringsTheSame(expectText, notesText);
 	}
+	
+	public void testReadBoth() throws Exception {
+		String[] slText = new String[] {
+				"This is a test title\nThis is a test subtitle\nThis is on page 1\n",
+				"This is the title on page 2\nThis is page two\nIt has several blocks of text\nNone of them have formatting\n"
+		};
+		String[] ntText = new String[] {
+				"These are the notes for page 1\n",
+				"These are the notes on page two, again lacking formatting\n"
+		};
+		
+		ppe.setSlidesByDefault(true);
+		ppe.setNotesByDefault(false);
+		assertEquals(slText[0]+slText[1], ppe.getText());
+		
+		ppe.setSlidesByDefault(false);
+		ppe.setNotesByDefault(true);
+		assertEquals(ntText[0]+ntText[1], ppe.getText());
+		
+		ppe.setSlidesByDefault(true);
+		ppe.setNotesByDefault(true);
+		assertEquals(slText[0]+slText[1]+"\n"+ntText[0]+ntText[1], ppe.getText());
+	}
 
 	/**
 	 * Test that when presented with a PPT file missing the odd

@@ -121,7 +121,7 @@ public class HSSFShapeGroup
     }
 
     /**
-     * Sets the coordinate space of this group.  All children are contrained
+     * Sets the coordinate space of this group.  All children are constrained
      * to these coordinates.
      */
     public void setCoordinates( int x1, int y1, int x2, int y2 )
@@ -177,5 +177,4 @@ public class HSSFShapeGroup
         }
         return count;
     }
-
 }

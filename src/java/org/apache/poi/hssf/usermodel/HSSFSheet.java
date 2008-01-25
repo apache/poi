@@ -28,6 +28,7 @@ import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.*;
 import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.hssf.record.formula.ReferencePtg;
 import org.apache.poi.hssf.util.HSSFCellRangeAddress;
 import org.apache.poi.hssf.util.HSSFDataValidation;
 import org.apache.poi.hssf.util.Region;
@@ -593,6 +594,26 @@ public class HSSFSheet
                 region.getColumnTo());
     }
 
+    /**
+     * Whether a record must be inserted or not at generation to indicate that 
+     * formula must be recalculated when workbook is opened.
+     * @param value true if an uncalced record must be inserted or not at generation
+     */
+    public void setForceFormulaRecalculation(boolean value)
+    {
+    	sheet.setUncalced(value);
+    }
+    /**
+     * Whether a record must be inserted or not at generation to indicate that 
+     * formula must be recalculated when workbook is opened.
+     * @return true if an uncalced record must be inserted or not at generation
+     */
+    public boolean getForceFormulaRecalculation()
+    {
+    	return sheet.getUncalced();
+    }
+
+    
     /**
      * determines whether the output is vertically centered on the page.
      * @param value true to vertically center, false otherwise.
@@ -1202,10 +1223,66 @@ public class HSSFSheet
                     row2Replace.createCellFromRecord( cellRecord );
                     sheet.addValueRecord( rowNum + n, cellRecord );
                 }
+
+                // move comments if exist (can exist even if cell is null)
+                HSSFComment comment = getCellComment(rowNum, col);
+                if (comment != null) {
+                   comment.setRow(rowNum + n);
+                }
             }
         }
         if ( endRow == lastrow || endRow + n > lastrow ) lastrow = Math.min( endRow + n, 65535 );
         if ( startRow == firstrow || startRow + n < firstrow ) firstrow = Math.max( startRow + n, 0 );
+        
+        // Update any formulas on this sheet that point to
+        //  rows which have been moved
+        updateFormulasAfterShift(startRow, endRow, n);
+    }
+    
+    /**
+     * Called by shiftRows to update formulas on this sheet
+     *  to point to the new location of moved rows
+     */
+    private void updateFormulasAfterShift(int startRow, int endRow, int n) {
+    	// Need to look at every cell on the sheet
+    	// Not just those that were moved
+        Iterator ri = rowIterator();
+        while(ri.hasNext()) {
+        	HSSFRow r = (HSSFRow)ri.next();
+        	Iterator ci = r.cellIterator();
+        	while(ci.hasNext()) {
+        		HSSFCell c = (HSSFCell)ci.next();
+        		if(c.getCellType() == HSSFCell.CELL_TYPE_FORMULA) {
+        			// Since it's a formula cell, process the
+        			//  formula string, and look to see if
+        			//  it contains any references
+        			FormulaParser fp = new FormulaParser(c.getCellFormula(), workbook.getWorkbook());
+        			fp.parse();
+        			
+        			// Look for references, and update if needed
+        			Ptg[] ptgs = fp.getRPNPtg();
+        			boolean changed = false;
+        			for(int i=0; i<ptgs.length; i++) {
+        				if(ptgs[i] instanceof ReferencePtg) {
+        					ReferencePtg rptg = (ReferencePtg)ptgs[i];
+        					if(startRow <= rptg.getRowAsInt() &&
+        							rptg.getRowAsInt() <= endRow) {
+        						// References a row that moved
+        						rptg.setRow(rptg.getRowAsInt() + n);
+        						changed = true;
+        					}
+        				}
+        			}
+        			// If any references were changed, then
+        			//  re-create the formula string
+        			if(changed) {
+        				c.setCellFormula(
+        						fp.toFormulaString(ptgs)
+        				);
+        			}
+        		}
+        	}
+        }
     }
 
     protected void insertChartRecords( List records )
@@ -1431,7 +1508,7 @@ public class HSSFSheet
      */
     public void dumpDrawingRecords(boolean fat)
     {
-        sheet.aggregateDrawingRecords(book.getDrawingManager());
+        sheet.aggregateDrawingRecords(book.getDrawingManager(), false);
 
         EscherAggregate r = (EscherAggregate) getSheet().findFirstRecordBySid(EscherAggregate.sid);
         List escherRecords = r.getEscherRecords();
@@ -1448,9 +1525,10 @@ public class HSSFSheet
     }
 
     /**
-     * Creates the toplevel drawing patriarch.  This will have the effect of
-     * removing any existing drawings on this sheet.
-     *
+     * Creates the top-level drawing patriarch.  This will have
+     *  the effect of removing any existing drawings on this
+     *  sheet.
+     * This may then be used to add graphics or charts
      * @return  The new patriarch.
      */
     public HSSFPatriarch createDrawingPatriarch()
@@ -1458,12 +1536,55 @@ public class HSSFSheet
         // Create the drawing group if it doesn't already exist.
         book.createDrawingGroup();
 
-        sheet.aggregateDrawingRecords(book.getDrawingManager());
+        sheet.aggregateDrawingRecords(book.getDrawingManager(), true);
         EscherAggregate agg = (EscherAggregate) sheet.findFirstRecordBySid(EscherAggregate.sid);
-        HSSFPatriarch patriarch = new HSSFPatriarch(this);
+        HSSFPatriarch patriarch = new HSSFPatriarch(this, agg);
         agg.clear();     // Initially the behaviour will be to clear out any existing shapes in the sheet when
                          // creating a new patriarch.
         agg.setPatriarch(patriarch);
+        return patriarch;
+    }
+    
+    /**
+     * Returns the top-level drawing patriach, if there is
+     *  one.
+     * This will hold any graphics or charts for the sheet.
+     * WARNING - calling this will trigger a parsing of the
+     *  associated escher records. Any that aren't supported
+     *  (such as charts and complex drawing types) will almost
+     *  certainly be lost or corrupted when written out. Only
+     *  use this with simple drawings, otherwise call
+     *  {@link HSSFSheet#createDrawingPatriarch()} and
+     *  start from scratch!
+     */
+    public HSSFPatriarch getDrawingPatriarch() {
+    	book.findDrawingGroup();
+    	
+    	// If there's now no drawing manager, then there's
+    	//  no drawing escher records on the workbook
+    	if(book.getDrawingManager() == null) {
+    		return null;
+    	}
+    	
+    	int found = sheet.aggregateDrawingRecords(
+    			book.getDrawingManager(), false
+    	);
+    	if(found == -1) {
+    		// Workbook has drawing stuff, but this sheet doesn't
+    		return null;
+    	}
+    	
+    	// Grab our aggregate record, and wire it up
+        EscherAggregate agg = (EscherAggregate) sheet.findFirstRecordBySid(EscherAggregate.sid);
+        HSSFPatriarch patriarch = new HSSFPatriarch(this, agg);
+        agg.setPatriarch(patriarch);
+        
+        // Have it process the records into high level objects
+        //  as best it can do (this step may eat anything
+        //  that isn't supported, you were warned...)
+        agg.convertRecordsToUserModel();
+        
+        // Return what we could cope with
         return patriarch;
     }
 
@@ -1558,7 +1679,13 @@ public class HSSFSheet
         for (Iterator it = rowIterator(); it.hasNext();) {
             HSSFRow row = (HSSFRow) it.next();
             HSSFCell cell = row.getCell(column);
-            if (cell == null) continue;
+
+            boolean isCellInMergedRegion = false;
+            for (int i = 0 ; i < getNumMergedRegions() && ! isCellInMergedRegion; i++) {
+                isCellInMergedRegion = getMergedRegionAt(i).contains(row.getRowNum(), column);
+            }
+
+            if (cell == null | isCellInMergedRegion) continue;
 
             HSSFCellStyle style = cell.getCellStyle();
             HSSFFont font = wb.getFontAt(style.getFontIndex());
@@ -1621,27 +1748,28 @@ public class HSSFSheet
                 } else if (cell.getCellType() == HSSFCell.CELL_TYPE_BOOLEAN) {
                     sval = String.valueOf(cell.getBooleanCellValue());
                 }
+                if(sval != null) {
+                    String txt = sval + defaultChar;
+                    str = new AttributedString(txt);
+                    copyAttributes(font, str, 0, txt.length());
 
-                String txt = sval + defaultChar;
-                str = new AttributedString(txt);
-                copyAttributes(font, str, 0, txt.length());
-
-                layout = new TextLayout(str.getIterator(), frc);
-                if(style.getRotation() != 0){
-                    /*
-                     * Transform the text using a scale so that it's height is increased by a multiple of the leading,
-                     * and then rotate the text before computing the bounds. The scale results in some whitespace around
-                     * the unrotated top and bottom of the text that normally wouldn't be present if unscaled, but
-                     * is added by the standard Excel autosize.
-                     */
-                    AffineTransform trans = new AffineTransform();
-                    trans.concatenate(AffineTransform.getRotateInstance(style.getRotation()*2.0*Math.PI/360.0));
-                    trans.concatenate(
-                    AffineTransform.getScaleInstance(1, fontHeightMultiple)
-                    );
-                    width = Math.max(width, layout.getOutline(trans).getBounds().getWidth() / defaultCharWidth);
-                } else {
-                    width = Math.max(width, layout.getBounds().getWidth() / defaultCharWidth);
+                    layout = new TextLayout(str.getIterator(), frc);
+                    if(style.getRotation() != 0){
+                        /*
+                         * Transform the text using a scale so that it's height is increased by a multiple of the leading,
+                         * and then rotate the text before computing the bounds. The scale results in some whitespace around
+                         * the unrotated top and bottom of the text that normally wouldn't be present if unscaled, but
+                         * is added by the standard Excel autosize.
+                         */
+                        AffineTransform trans = new AffineTransform();
+                        trans.concatenate(AffineTransform.getRotateInstance(style.getRotation()*2.0*Math.PI/360.0));
+                        trans.concatenate(
+                        AffineTransform.getScaleInstance(1, fontHeightMultiple)
+                        );
+                        width = Math.max(width, layout.getOutline(trans).getBounds().getWidth() / defaultCharWidth);
+                    } else {
+                        width = Math.max(width, layout.getBounds().getWidth() / defaultCharWidth);
+                    }
                 }
             }
 
@@ -1671,7 +1799,21 @@ public class HSSFSheet
      * @return cell comment or <code>null</code> if not found
      */
      public HSSFComment getCellComment(int row, int column){
-        return HSSFCell.findCellComment(sheet, row, column);
+        // Don't call findCellComment directly, otherwise
+        //  two calls to this method will result in two
+        //  new HSSFComment instances, which is bad
+        HSSFRow r = getRow(row);
+        if(r != null) {
+            HSSFCell c = r.getCell((short)column);
+            if(c != null) {
+                return c.getCellComment();
+            } else {
+                // No cell, so you will get new
+                //  objects every time, sorry...
+                return HSSFCell.findCellComment(sheet, row, column);
+            }
+        }
+        return null;
     }
 
 }

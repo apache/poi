@@ -58,7 +58,7 @@ public class TableRow
         p = getParagraph(end);
         s = p.text();
       }
-      _cells[cellIndex] = new TableCell(start, end, this, levelNum,
+      _cells[cellIndex] = new TableCell(start, end+1, this, levelNum,
                                         _tprops.getRgtc()[cellIndex],
                                         _tprops.getRgdxaCenter()[cellIndex],
                                         _tprops.getRgdxaCenter()[cellIndex+1]-_tprops.getRgdxaCenter()[cellIndex]);

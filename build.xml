@@ -137,7 +137,7 @@ under the License.
   <property name="ooxml.jar4.dir" location="${ooxml.lib}/jsr173_1.0_api.jar"/>
   <property name="ooxml.jar4.url" value="${repository}/xmlbeans/jars/jsr173_1.0_api.jar"/>
   <!-- No official release of openxml4j yet -->
-  <property name="ooxml.jar5.dir" location="${ooxml.lib}/openxml4j-bin-prealpha-071224.jar"/>
+  <property name="ooxml.jar5.dir" location="${ooxml.lib}/openxml4j-bin-alpha-080124.jar"/>
   <property name="ooxml.jar5.url" value="http://people.apache.org/~nick/openxml4j-bin-prealpha-071224.jar"/>
 
   <!-- See http://www.ecma-international.org/publications/standards/Ecma-376.htm -->
@@ -159,7 +159,7 @@ under the License.
   <property name="mavendist.poi.dir" location="build/maven-dist/poi"/>
   <property name="mavendist.oap.dir" location="build/maven-dist/org.apache.poi"/>
   <property name="jar.name" value="poi"/>
-  <property name="version.id" value="3.0.2-beta2"/>
+  <property name="version.id" value="3.0.2-FINAL"/>
   <property name="halt.on.test.failure" value="true"/>
   <property name="jdk.version.source" value="1.3"
     description="JDK version of source code"/>
@@ -368,6 +368,8 @@ under the License.
 			destfile="${ooxml.xsds.jar}"
 			javasource="1.4"
 			failonerror="false"
+			fork="true"
+			memoryMaximumSize="512m"
 		>
 			<classpath refid="ooxml.classpath"/>
 		</xmlbean>
@@ -460,6 +462,16 @@ under the License.
     <javac target="1.5" source="1.5"
       destdir="${ooxml.output.dir}" debug="on" srcdir="${ooxml.src}">
       <classpath refid="ooxml.classpath"/>
+    </javac>
+
+    <javac target="1.5" source="1.5"
+      failonerror="true" destdir="${ooxml.output.test.dir}" debug="on"
+      fork="yes" srcdir="${ooxml.src.test}">
+      <classpath>
+        <path refid="ooxml.classpath"/>
+        <pathelement location="${ooxml.output.dir}"/>
+        <pathelement location="${junit.jar1.dir}"/>
+      </classpath>
     </javac>
   </target>
 

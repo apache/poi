@@ -56,6 +56,11 @@ public class TestHSSFRow
         row.createCell((short) 1);
         assertEquals(1, row.getFirstCellNum());
         assertEquals(2, row.getLastCellNum());
+        
+        // check the exact case reported in 'bug' 43901 - notice that the cellNum is '0' based
+        row.createCell((short) 3);
+        assertEquals(1, row.getFirstCellNum());
+        assertEquals(3, row.getLastCellNum());
 
     }
 
@@ -97,8 +102,49 @@ public class TestHSSFRow
         file.delete();
         assertEquals(-1, sheet.getRow((short) 0).getLastCellNum());
         assertEquals(-1, sheet.getRow((short) 0).getFirstCellNum());
-
-
+    }
+    
+    public void testMoveCell() throws Exception {
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        HSSFSheet sheet = workbook.createSheet();
+        HSSFRow row = sheet.createRow((short) 0);
+        HSSFRow rowB = sheet.createRow((short) 1);
+        
+        HSSFCell cellA2 = rowB.createCell((short)0);
+        assertEquals(0, rowB.getFirstCellNum());
+        assertEquals(0, rowB.getFirstCellNum());
+        
+        assertEquals(-1, row.getLastCellNum());
+        assertEquals(-1, row.getFirstCellNum());
+        HSSFCell cellB2 = row.createCell((short) 1);
+        HSSFCell cellB3 = row.createCell((short) 2);
+        HSSFCell cellB4 = row.createCell((short) 3);
+    	
+        assertEquals(1, row.getFirstCellNum());
+        assertEquals(3, row.getLastCellNum());
+        
+        // Try to move to somewhere else that's used
+        try {
+        	row.moveCell(cellB2, (short)3);
+        	fail();
+        } catch(IllegalArgumentException e) {}
+        
+        // Try to move one off a different row
+        try {
+        	row.moveCell(cellA2, (short)3);
+        	fail();
+        } catch(IllegalArgumentException e) {}
+        
+        // Move somewhere spare
+        assertNotNull(row.getCell((short)1));
+    	row.moveCell(cellB2, (short)5);
+        assertNull(row.getCell((short)1));
+        assertNotNull(row.getCell((short)5));
+    	
+    	assertEquals(5, cellB2.getCellNum());
+        assertEquals(2, row.getFirstCellNum());
+        assertEquals(5, row.getLastCellNum());
+        
     }
     
     public void testRowBounds()

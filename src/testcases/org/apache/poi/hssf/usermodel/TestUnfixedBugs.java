@@ -44,72 +44,13 @@ public class TestUnfixedBugs extends TestCase {
 	protected String cwd = System.getProperty("HSSF.testdata.path");
 	
 	 
-	 /* ArrayIndexOutOfBound in BOFRecord */  
-	 public void test28772() throws java.io.IOException {
-       String filename = System.getProperty("HSSF.testdata.path");
-       filename=filename+"/28772.xls";
-       FileInputStream in = new FileInputStream(filename);
-       HSSFWorkbook wb = new HSSFWorkbook(in);
-       assertTrue("Read book fine!" , true);
-   }
-	 
-	 /**
-	     * Bug 37684: Unhandled Continue Record Error
-	     * 
-	     * BUT NOW(Jan07): It triggers bug 41026!!
-	     * 
-	     * java.lang.ArrayIndexOutOfBoundsException: 30
-         at org.apache.poi.hssf.record.aggregates.ValueRecordsAggregate.rowHasCells(ValueRecordsAggregate.java:219)
-	     */
-	    public void test37684() throws Exception {
-	        FileInputStream in = new FileInputStream(new File(cwd, "37684.xls"));
-	        HSSFWorkbook wb = new HSSFWorkbook(in);
-	        in.close();
 
-	        HSSFSheet sheet = wb.getSheetAt( 0 );
-	        assertNotNull(sheet);
-
-	        assertTrue("No Exceptions while reading file", true);
-
-	        //serialize and read again
-	        ByteArrayOutputStream out = new ByteArrayOutputStream();
-	        wb.write(out);
-	        out.close();
-
-	        wb = new HSSFWorkbook(new ByteArrayInputStream(out.toByteArray()));
-	        assertTrue("No Exceptions while reading file", true);
-
-	    }
-	    
-	    /**
-	     * Bug 41139: Constructing HSSFWorkbook is failed,threw threw ArrayIndexOutOfBoundsException for creating UnknownRecord
-	     * 
-	     * BUT NOW (Jan07): It throws the following in write!!
-	     * java.lang.RuntimeException: Coding Error: This method should never be called. This ptg should be converted
-         at org.apache.poi.hssf.record.formula.AreaNPtg.writeBytes(AreaNPtg.java:54)
-         at org.apache.poi.hssf.record.formula.Ptg.serializePtgStack(Ptg.java:384)
-         at org.apache.poi.hssf.record.NameRecord.serialize(NameRecord.java:544)
-         at org.apache.poi.hssf.model.Workbook.serialize(Workbook.java:757)
-         at org.apache.poi.hssf.usermodel.HSSFWorkbook.getBytes(HSSFWorkbook.java:952)
-         at org.apache.poi.hssf.usermodel.HSSFWorkbook.write(HSSFWorkbook.java:898)
-
-	     */
-	    public void test41139() throws Exception {
-	        FileInputStream in = new FileInputStream(new File(cwd, "41139.xls"));
-	        HSSFWorkbook wb = new HSSFWorkbook(in);
-	        in.close();
-
-	        assertTrue("No Exceptions while reading file", true);
-
-	        //serialize and read again
-	        ByteArrayOutputStream out = new ByteArrayOutputStream();
-	        wb.write(out);
-	        out.close();
-
-	        wb = new HSSFWorkbook(new ByteArrayInputStream(out.toByteArray()));
-	        assertTrue("No Exceptions while reading file", true);
-
-	    }
-
-	
+    public void test43493() throws Exception {
+        // Has crazy corrup subrecords on
+        //  a EmbeddedObjectRefSubRecord
+        File f = new File(cwd, "43493.xls");
+        HSSFWorkbook wb = new HSSFWorkbook(
+                new FileInputStream(f)
+        );
+    }
 }

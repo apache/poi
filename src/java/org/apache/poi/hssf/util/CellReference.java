@@ -69,6 +69,10 @@ public class CellReference {
     public boolean isRowAbsolute(){return rowAbs;}
     public boolean isColAbsolute(){return colAbs;}
     public String getSheetName(){return sheetName;}
+    
+    protected void setSheetName(String sheetName) {
+    	this.sheetName = sheetName;
+    }
 
     /**
      * takes in a column reference portion of a CellRef and converts it from

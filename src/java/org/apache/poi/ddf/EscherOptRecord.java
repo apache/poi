@@ -18,11 +18,14 @@
         
 package org.apache.poi.ddf;
 
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.HexDump;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
 
-import java.util.*;
-import java.io.IOException;
+import org.apache.poi.util.HexDump;
+import org.apache.poi.util.LittleEndian;
 
 /**
  * The opt record is used to store property values for a shape.  It is the key to determining

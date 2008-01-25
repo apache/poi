@@ -25,6 +25,8 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.util.TempFile;
 
 import java.io.File;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 
@@ -169,6 +171,114 @@ public class TestSheetShiftRows extends TestCase {
       s.shiftRows(4, 4, 2);
       assertTrue("Row number 6 should have a pagebreak", s.isRowBroken(6));
       
+    }
+
+
+    public void testShiftWithComments() throws Exception {
+        String filename = System.getProperty( "HSSF.testdata.path" );
+        filename = filename + "/comments.xls";
+        FileInputStream fin = new FileInputStream( filename );
+        HSSFWorkbook wb = new HSSFWorkbook( fin );
+        fin.close();
+
+        HSSFSheet sheet = wb.getSheet("Sheet1");
+        assertEquals(3, sheet.getLastRowNum());
+        
+        // Verify comments are in the position expected
+        assertNotNull(sheet.getCellComment(0,0));
+        assertNull(sheet.getCellComment(1,0));
+        assertNotNull(sheet.getCellComment(2,0));
+        assertNotNull(sheet.getCellComment(3,0));
+        
+        String comment1 = sheet.getCellComment(0,0).getString().getString();
+        assertEquals(comment1,"comment top row1 (index0)\n");
+        String comment3 = sheet.getCellComment(2,0).getString().getString();
+        assertEquals(comment3,"comment top row3 (index2)\n");
+        String comment4 = sheet.getCellComment(3,0).getString().getString();
+        assertEquals(comment4,"comment top row4 (index3)\n");
+
+        // Shifting all but first line down to test comments shifting 
+        sheet.shiftRows(1, sheet.getLastRowNum(), 1, true, true);
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        wb.write(outputStream);
+
+        // Test that comments were shifted as expected
+        assertEquals(4, sheet.getLastRowNum());
+        assertNotNull(sheet.getCellComment(0,0));
+        assertNull(sheet.getCellComment(1,0));
+        assertNull(sheet.getCellComment(2,0));
+        assertNotNull(sheet.getCellComment(3,0));
+        assertNotNull(sheet.getCellComment(4,0));
+
+        String comment1_shifted = sheet.getCellComment(0,0).getString().getString();
+        assertEquals(comment1,comment1_shifted);
+        String comment3_shifted = sheet.getCellComment(3,0).getString().getString();
+        assertEquals(comment3,comment3_shifted);
+        String comment4_shifted = sheet.getCellComment(4,0).getString().getString();
+        assertEquals(comment4,comment4_shifted);
+                
+        // Write out and read back in again
+        // Ensure that the changes were persisted
+        wb = new HSSFWorkbook( new ByteArrayInputStream(outputStream.toByteArray()) );
+        sheet = wb.getSheet("Sheet1");
+        assertEquals(4, sheet.getLastRowNum());
+
+        // Verify comments are in the position expected after the shift
+        assertNotNull(sheet.getCellComment(0,0));
+        assertNull(sheet.getCellComment(1,0));
+        assertNull(sheet.getCellComment(2,0));
+        assertNotNull(sheet.getCellComment(3,0));
+        assertNotNull(sheet.getCellComment(4,0));
+
+        comment1_shifted = sheet.getCellComment(0,0).getString().getString();
+        assertEquals(comment1,comment1_shifted);
+        comment3_shifted = sheet.getCellComment(3,0).getString().getString();
+        assertEquals(comment3,comment3_shifted);
+        comment4_shifted = sheet.getCellComment(4,0).getString().getString();
+        assertEquals(comment4,comment4_shifted);        
+    }
+    
+    /**
+     * See bug #34023
+     */
+    public void testShiftWithFormulas() throws Exception {
+        String filename = System.getProperty( "HSSF.testdata.path" );
+        filename = filename + "/ForShifting.xls";
+        FileInputStream fin = new FileInputStream( filename );
+        HSSFWorkbook wb = new HSSFWorkbook( fin );
+        fin.close();
+
+        HSSFSheet sheet = wb.getSheet("Sheet1");
+        assertEquals(19, sheet.getLastRowNum());
+        
+        assertEquals("cell B1 (ref)", sheet.getRow(0).getCell((short)3).getRichStringCellValue().toString());
+        assertEquals("CONCATENATE(B1,\" (ref)\")", sheet.getRow(0).getCell((short)3).getCellFormula());
+        assertEquals("cell B2 (ref)", sheet.getRow(1).getCell((short)3).getRichStringCellValue().toString());
+        assertEquals("CONCATENATE(B2,\" (ref)\")", sheet.getRow(1).getCell((short)3).getCellFormula());
+        assertEquals("cell B3 (ref)", sheet.getRow(2).getCell((short)3).getRichStringCellValue().toString());
+        assertEquals("CONCATENATE(B3,\" (ref)\")", sheet.getRow(2).getCell((short)3).getCellFormula());
+        assertEquals("cell B2 (ref)", sheet.getRow(6).getCell((short)1).getRichStringCellValue().toString());
+        assertEquals("CONCATENATE(B2,\" (ref)\")", sheet.getRow(6).getCell((short)1).getCellFormula());
+        
+        sheet.shiftRows(1, 1, 10);
+        
+        // Row 1 => Row 11
+        // So strings on row 11 unchanged, but reference in formula is
+        assertEquals("cell B1 (ref)", sheet.getRow(0).getCell((short)3).getRichStringCellValue().toString());
+        assertEquals("CONCATENATE(B1,\" (ref)\")", sheet.getRow(0).getCell((short)3).getCellFormula());
+        assertEquals(0, sheet.getRow(1).getPhysicalNumberOfCells());
+        
+        // still save b2
+        assertEquals("cell B2 (ref)", sheet.getRow(11).getCell((short)3).getRichStringCellValue().toString());
+        // but points to b12
+        assertEquals("CONCATENATE(B12,\" (ref)\")", sheet.getRow(11).getCell((short)3).getCellFormula());
+
+        assertEquals("cell B3 (ref)", sheet.getRow(2).getCell((short)3).getRichStringCellValue().toString());
+        assertEquals("CONCATENATE(B3,\" (ref)\")", sheet.getRow(2).getCell((short)3).getCellFormula());
+        
+        // one on a non-shifted row also updated
+        assertEquals("cell B2 (ref)", sheet.getRow(6).getCell((short)1).getRichStringCellValue().toString());
+        assertEquals("CONCATENATE(B12,\" (ref)\")", sheet.getRow(6).getCell((short)1).getCellFormula());
     }
 }
 

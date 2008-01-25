@@ -23,8 +23,8 @@ import junit.framework.TestSuite;
 
 import org.apache.poi.hssf.eventmodel.TestEventRecordFactory;
 import org.apache.poi.hssf.eventmodel.TestModelFactory;
-import org.apache.poi.hssf.model.TestFormulaParser;
 import org.apache.poi.hssf.model.TestDrawingManager;
+import org.apache.poi.hssf.model.TestFormulaParser;
 import org.apache.poi.hssf.model.TestSheet;
 import org.apache.poi.hssf.record.TestAreaFormatRecord;
 import org.apache.poi.hssf.record.TestAreaRecord;
@@ -91,6 +91,7 @@ import org.apache.poi.hssf.usermodel.TestFontDetails;
 import org.apache.poi.hssf.usermodel.TestFormulas;
 import org.apache.poi.hssf.usermodel.TestHSSFCell;
 import org.apache.poi.hssf.usermodel.TestHSSFClientAnchor;
+import org.apache.poi.hssf.usermodel.TestHSSFComment;
 import org.apache.poi.hssf.usermodel.TestHSSFDateUtil;
 import org.apache.poi.hssf.usermodel.TestHSSFHeaderFooter;
 import org.apache.poi.hssf.usermodel.TestHSSFPalette;
@@ -110,7 +111,6 @@ import org.apache.poi.hssf.util.TestCellReference;
 import org.apache.poi.hssf.util.TestRKUtil;
 import org.apache.poi.hssf.util.TestRangeAddress;
 import org.apache.poi.hssf.util.TestSheetReferences;
-import org.apache.poi.hssf.usermodel.TestHSSFComment;
 
 /**
  * Test Suite for running just HSSF tests.  Mostly

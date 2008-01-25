@@ -22,14 +22,13 @@
  */
 package org.apache.poi.hssf.usermodel;
 
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
 import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.CellValueRecordInterface;
 import org.apache.poi.hssf.record.RowRecord;
-
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
 
 /**
  * High level representation of a row of a spreadsheet.
@@ -157,11 +156,15 @@ public class HSSFRow
      * remove the HSSFCell from this row.
      * @param cell to remove
      */
-    public void removeCell(HSSFCell cell)
-    {
-        CellValueRecordInterface cval = cell.getCellValueRecord();
-
-        sheet.removeValueRecord(getRowNum(), cval);
+    public void removeCell(HSSFCell cell) {
+    	removeCell(cell, true);
+    }
+    private void removeCell(HSSFCell cell, boolean alsoRemoveRecords) {
+    	if(alsoRemoveRecords) {
+	        CellValueRecordInterface cval = cell.getCellValueRecord();
+	        sheet.removeValueRecord(getRowNum(), cval);
+    	}
+    	
         short column=cell.getCellNum();
         if(cell!=null && column<cells.length)
         {
@@ -223,11 +226,44 @@ public class HSSFRow
     {
         return rowNum;
     }
+    
+    /**
+     * Returns the rows outline level. Increased as you
+     *  put it into more groups (outlines), reduced as
+     *  you take it out of them.
+     * TODO - Should this really be public?
+     */
+    protected int getOutlineLevel() {
+    	return row.getOutlineLevel();
+    }
+    
+    /**
+     * Moves the supplied cell to a new column, which
+     *  must not already have a cell there!
+     * @param cell The cell to move
+     * @param newColumn The new column number (0 based)
+     */
+    public void moveCell(HSSFCell cell, short newColumn) {
+    	// Ensure the destination is free
+    	if(cells.length > newColumn && cells[newColumn] != null) {
+    		throw new IllegalArgumentException("Asked to move cell to column " + newColumn + " but there's already a cell there");
+    	}
+    	
+    	// Check it's one of ours
+    	if(! cells[cell.getCellNum()].equals(cell)) {
+    		throw new IllegalArgumentException("Asked to move a cell, but it didn't belong to our row");
+    	}
+    	
+    	// Move the cell to the new position
+    	// (Don't remove the records though)
+    	removeCell(cell, false);
+    	cell.updateCellNum(newColumn);
+    	addCell(cell);
+    }
 
     /**
      * used internally to add a cell.
      */
-
     private void addCell(HSSFCell cell)
     {
         short column=cell.getCellNum();

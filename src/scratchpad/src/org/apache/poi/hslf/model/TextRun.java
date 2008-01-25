@@ -24,7 +24,12 @@ import java.util.LinkedList;
 import java.util.Vector;
 
 import org.apache.poi.hslf.model.textproperties.TextPropCollection;
-import org.apache.poi.hslf.record.*;
+import org.apache.poi.hslf.record.Record;
+import org.apache.poi.hslf.record.RecordContainer;
+import org.apache.poi.hslf.record.StyleTextPropAtom;
+import org.apache.poi.hslf.record.TextBytesAtom;
+import org.apache.poi.hslf.record.TextCharsAtom;
+import org.apache.poi.hslf.record.TextHeaderAtom;
 import org.apache.poi.hslf.usermodel.RichTextRun;
 import org.apache.poi.hslf.usermodel.SlideShow;
 import org.apache.poi.util.StringUtil;
@@ -252,9 +257,70 @@ public class TextRun
 	
 	
 	// Update methods follow
+	
+	/**
+	 * Adds the supplied text onto the end of the TextRun, 
+	 *  creating a new RichTextRun (returned) for it to
+	 *  sit in. 
+	 * In many cases, before calling this, you'll want to add
+	 *  a newline onto the end of your last RichTextRun
+	 */
+	public RichTextRun appendText(String s) {
+		// We will need a StyleTextProp atom
+		ensureStyleAtomPresent();
+		
+		// First up, append the text to the 
+		//  underlying text atom
+		int oldSize = getRawText().length();
+		storeText(
+				getRawText() + s
+		);
+		
+		// If either of the previous styles overran
+		//  the text by one, we need to shuffle that
+		//  extra character onto the new ones
+		int pOverRun = _styleAtom.getParagraphTextLengthCovered() - oldSize;
+		int cOverRun = _styleAtom.getCharacterTextLengthCovered() - oldSize;
+		if(pOverRun > 0) {
+			TextPropCollection tpc = (TextPropCollection)
+				_styleAtom.getParagraphStyles().getLast();
+			tpc.updateTextSize(
+					tpc.getCharactersCovered() - pOverRun
+			);
+		}
+		if(cOverRun > 0) {
+			TextPropCollection tpc = (TextPropCollection)
+				_styleAtom.getCharacterStyles().getLast();
+			tpc.updateTextSize(
+					tpc.getCharactersCovered() - cOverRun
+			);
+		}
+		
+		// Next, add the styles for its paragraph and characters
+		TextPropCollection newPTP =
+			_styleAtom.addParagraphTextPropCollection(s.length()+pOverRun);
+		TextPropCollection newCTP =
+			_styleAtom.addCharacterTextPropCollection(s.length()+cOverRun);
+		
+		// Now, create the new RichTextRun
+		RichTextRun nr = new RichTextRun(
+				this, oldSize, s.length(), 
+				newPTP, newCTP, false, false
+		);
+		
+		// Add the new RichTextRun onto our list
+		RichTextRun[] newRuns = new RichTextRun[_rtRuns.length+1];
+		System.arraycopy(_rtRuns, 0, newRuns, 0, _rtRuns.length);
+		newRuns[newRuns.length-1] = nr;
+		_rtRuns = newRuns;
+		
+		// And return the new run to the caller
+		return nr;
+	}
 
 	/**
-	 * Saves the given string to the records. Doesn't touch the stylings. 
+	 * Saves the given string to the records. Doesn't 
+	 *  touch the stylings. 
 	 */
 	private void storeText(String s) {
 		// Remove a single trailing \n, as there is an implicit one at the

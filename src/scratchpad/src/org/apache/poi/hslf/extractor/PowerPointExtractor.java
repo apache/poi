@@ -41,7 +41,9 @@ public class PowerPointExtractor extends POITextExtractor
 	private HSLFSlideShow _hslfshow;
 	private SlideShow _show;
 	private Slide[] _slides;
-	private Notes[] _notes;
+	
+	private boolean slidesByDefault = true;
+	private boolean notesByDefault = false;
 
   /**
    * Basic extractor. Returns all the text, and optionally all the notes
@@ -99,7 +101,6 @@ public class PowerPointExtractor extends POITextExtractor
 		_hslfshow = ss;
 		_show = new SlideShow(_hslfshow);
 		_slides = _show.getSlides();
-		_notes = _show.getNotes();
 	}
 
 	/**
@@ -110,23 +111,39 @@ public class PowerPointExtractor extends POITextExtractor
 		_hslfshow = null;
 		_show = null;
 		_slides = null;
-		_notes = null;
 	}
 
+	/**
+	 * Should a call to getText() return slide text?
+	 * Default is yes
+	 */
+	public void setSlidesByDefault(boolean slidesByDefault) {
+		this.slidesByDefault = slidesByDefault;
+	}
+	/**
+	 * Should a call to getText() return notes text?
+	 * Default is no
+	 */
+	public void setNotesByDefault(boolean notesByDefault) {
+		this.notesByDefault = notesByDefault;
+	}
 
-  /**
-   * Fetches all the slide text from the slideshow, but not the notes
-   */
-  public String getText() {
-	return getText(true,false);
-  }
+	/**
+	 * Fetches all the slide text from the slideshow, 
+	 *  but not the notes, unless you've called
+	 *  setSlidesByDefault() and setNotesByDefault()
+	 *  to change this
+	 */
+	public String getText() {
+		return getText(slidesByDefault,notesByDefault);
+	}
 
-  /**
-   * Fetches all the notes text from the slideshow, but not the slide text
-   */
-  public String getNotes() {
-	return getText(false,true);
-  }
+	/**
+	 * Fetches all the notes text from the slideshow, but not the slide text
+	 */
+	public String getNotes() {
+		return getText(false,true);
+	}
 
   /**
    * Fetches text from the slideshow, be it slide text or note text.
@@ -154,7 +171,7 @@ public class PowerPointExtractor extends POITextExtractor
 			}
 		}
 		if(getNoteText) {
-			ret.append(" ");
+			ret.append("\n");
 		}
 	}
 

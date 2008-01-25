@@ -42,34 +42,44 @@ public class RawDataBlock
      * @param stream the InputStream from which the data will be read
      *
      * @exception IOException on I/O errors, and if an insufficient
-     *            amount of data is read
+     *            amount of data is read (the InputStream must
+     *            be an exact multiple of the block size)
      */
-
     public RawDataBlock(final InputStream stream)
-        throws IOException
-    {
-        _data = new byte[ POIFSConstants.BIG_BLOCK_SIZE ];
+    		throws IOException {
+    	this(stream, POIFSConstants.BIG_BLOCK_SIZE);
+    }
+    /**
+     * Constructor RawDataBlock
+     *
+     * @param stream the InputStream from which the data will be read
+     * @param blockSize the size of the POIFS blocks, normally 512 bytes {@link POIFSConstants#BIG_BLOCK_SIZE}
+     *
+     * @exception IOException on I/O errors, and if an insufficient
+     *            amount of data is read (the InputStream must
+     *            be an exact multiple of the block size)
+     */
+    public RawDataBlock(final InputStream stream, int blockSize)
+    		throws IOException {
+        _data = new byte[ blockSize ];
         int count = IOUtils.readFully(stream, _data);
 
-        if (count == -1)
-        {
+        if (count == -1) {
             _eof = true;
         }
-        else if (count != POIFSConstants.BIG_BLOCK_SIZE)
-        {
-        	if (count == -1)
-        		//Cant have -1 bytes read in the error message!
-        		count = 0;
-        	
+        else if (count != blockSize) {
+        	// IOUtils.readFully will always read the
+        	//  requested number of bytes, unless it hits
+        	//  an EOF
+            _eof = true;
             String type = " byte" + ((count == 1) ? ("")
                                                   : ("s"));
 
             throw new IOException("Unable to read entire block; " + count
-                                  + type + " read; expected "
-                                  + POIFSConstants.BIG_BLOCK_SIZE + " bytes");
+                                  + type + " read before EOF; expected "
+                                  + blockSize + " bytes");
         }
-        else
-        {
+        else {
             _eof = false;
         }
     }
@@ -82,7 +92,6 @@ public class RawDataBlock
      *
      * @exception IOException
      */
-
     public boolean eof()
         throws IOException
     {
@@ -98,7 +107,6 @@ public class RawDataBlock
      *
      * @exception IOException if there is no data
      */
-
     public byte [] getData()
         throws IOException
     {

@@ -47,4 +47,26 @@ public class TestOffice2007XMLException extends TestCase
 			// Good
 		}
 	}
+	
+	public void testDetectAsPOIFS() throws IOException {
+		InputStream in;
+		
+		// ooxml file isn't
+		in = new PushbackInputStream(
+				new FileInputStream(dirname + "/SampleSS.xlsx"), 10
+		);
+		assertFalse(POIFSFileSystem.hasPOIFSHeader(in));
+		
+		// xls file is
+		in = new PushbackInputStream(
+				new FileInputStream(dirname + "/SampleSS.xls"), 10
+		);
+		assertTrue(POIFSFileSystem.hasPOIFSHeader(in));
+		
+		// text file isn't
+		in = new PushbackInputStream(
+				new FileInputStream(dirname + "/SampleSS.txt"), 10
+		);
+		assertFalse(POIFSFileSystem.hasPOIFSHeader(in));
+	}
 }

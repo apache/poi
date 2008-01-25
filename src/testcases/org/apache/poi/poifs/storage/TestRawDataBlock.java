@@ -20,6 +20,7 @@
 package org.apache.poi.poifs.storage;
 
 import java.io.*;
+import java.util.Random;
 
 import junit.framework.*;
 
@@ -123,6 +124,118 @@ public class TestRawDataBlock
                 // as expected
             }
         }
+    }
+    
+    /**
+     * Tests that when using a slow input stream, which
+     *  won't return a full block at a time, we don't
+     *  incorrectly think that there's not enough data
+     */
+    public void testSlowInputStream() throws Exception {
+        for (int k = 1; k < 512; k++) {
+            byte[] data = new byte[ 512 ];
+            for (int j = 0; j < data.length; j++) {
+                data[j] = (byte) j;
+            }
+            
+            // Shouldn't complain, as there is enough data,
+            //  even if it dribbles through
+            RawDataBlock block = 
+            	new RawDataBlock(new SlowInputStream(data, k));
+            assertFalse(block.eof());
+        }
+        
+        // But if there wasn't enough data available, will
+        //  complain
+        for (int k = 1; k < 512; k++) {
+            byte[] data = new byte[ 511 ];
+            for (int j = 0; j < data.length; j++) {
+                data[j] = (byte) j;
+            }
+            
+            // Shouldn't complain, as there is enough data
+            try {
+	            RawDataBlock block = 
+	            	new RawDataBlock(new SlowInputStream(data, k));
+	            fail();
+            } catch(IOException e) {
+            	// as expected
+            }
+        }
+    }
+    
+    /**
+     * An input stream which will return a maximum of
+     *  a given number of bytes to read, and often claims
+     *  not to have any data
+     */
+    public static class SlowInputStream extends InputStream {
+    	private Random rnd = new Random();
+    	private byte[] data;
+    	private int chunkSize;
+    	private int pos = 0;
+    	
+    	public SlowInputStream(byte[] data, int chunkSize) {
+    		this.chunkSize = chunkSize;
+    		this.data = data;
+    	}
+    	
+    	/**
+    	 * 75% of the time, claim there's no data available
+    	 */
+    	private boolean claimNoData() {
+    		if(rnd.nextFloat() < 0.25f) {
+    			return false;
+    		}
+    		return true;
+    	}
+    	
+		public int read() throws IOException {
+			if(pos >= data.length) {
+				return -1;
+			}
+			int ret = data[pos];
+			pos++;
+			
+			if(ret < 0) ret += 256;
+			return ret;
+		}
+
+		/**
+		 * Reads the requested number of bytes, or the chunk
+		 *  size, whichever is lower.
+		 * Quite often will simply claim to have no data
+		 */
+		public int read(byte[] b, int off, int len) throws IOException {
+			// Keep the length within the chunk size
+			if(len > chunkSize) {
+				len = chunkSize;
+			}
+			// Don't read off the end of the data
+			if(pos + len > data.length) {
+				len = data.length - pos;
+				
+				// Spot when we're out of data
+				if(len == 0) {
+					return -1;
+				}
+			}
+			
+			// 75% of the time, claim there's no data
+			if(claimNoData()) {
+				return 0;
+			}
+			
+			// Copy, and return what we read
+			System.arraycopy(data, pos, b, off, len);
+			pos += len;
+			return len;
+		}
+
+		public int read(byte[] b) throws IOException {
+			return read(b, 0, b.length);
+		}
+		
     }
 
     /**

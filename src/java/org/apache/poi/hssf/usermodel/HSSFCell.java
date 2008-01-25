@@ -24,16 +24,32 @@
  */
 package org.apache.poi.hssf.usermodel;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+
 import org.apache.poi.hssf.model.FormulaParser;
 import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.model.Workbook;
-import org.apache.poi.hssf.record.*;
+import org.apache.poi.hssf.record.BlankRecord;
+import org.apache.poi.hssf.record.BoolErrRecord;
+import org.apache.poi.hssf.record.CellValueRecordInterface;
+import org.apache.poi.hssf.record.CommonObjectDataSubRecord;
+import org.apache.poi.hssf.record.ExtendedFormatRecord;
+import org.apache.poi.hssf.record.FormulaRecord;
+import org.apache.poi.hssf.record.LabelSSTRecord;
+import org.apache.poi.hssf.record.NoteRecord;
+import org.apache.poi.hssf.record.NumberRecord;
+import org.apache.poi.hssf.record.ObjRecord;
+import org.apache.poi.hssf.record.Record;
+import org.apache.poi.hssf.record.SubRecord;
+import org.apache.poi.hssf.record.TextObjectRecord;
+import org.apache.poi.hssf.record.UnicodeString;
 import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
 import org.apache.poi.hssf.record.formula.Ptg;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.*;
 
 /**
  * High level representation of a cell in a row of a spreadsheet.
@@ -266,13 +282,23 @@ public class HSSFCell
     }
 
     /**
-     * set the cell's number within the row (0 based)
+     * Set the cell's number within the row (0 based).
      * @param num  short the cell number
+     * @deprecated Doesn't update the row's idea of what cell this is, use {@link HSSFRow#moveCell(HSSFCell, short)} instead
      */
-
     public void setCellNum(short num)
     {
         record.setColumn(num);
+    }
+    
+    /**
+     * Updates the cell record's idea of what
+     *  column it belongs in (0 based)
+     * @param num the new cell number
+     */
+    protected void updateCellNum(short num)
+    {
+    	record.setColumn(num);
     }
 
     /**
@@ -508,7 +534,13 @@ public class HSSFCell
         {
             setCellType(CELL_TYPE_NUMERIC, false, row, col, styleIndex);
         }
-        (( NumberRecord ) record).setValue(value);
+        
+        // Save into the apropriate record
+        if(record instanceof FormulaRecordAggregate) {
+        	(( FormulaRecordAggregate ) record).getFormulaRecord().setValue(value);
+        } else {
+        	(( NumberRecord ) record).setValue(value);
+        }
     }
 
     /**

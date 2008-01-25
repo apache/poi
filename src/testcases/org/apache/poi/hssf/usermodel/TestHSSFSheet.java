@@ -19,19 +19,24 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.record.HCenterRecord;
-import org.apache.poi.hssf.record.ProtectRecord;
 import org.apache.poi.hssf.record.PasswordRecord;
+import org.apache.poi.hssf.record.ProtectRecord;
 import org.apache.poi.hssf.record.SCLRecord;
 import org.apache.poi.hssf.record.VCenterRecord;
 import org.apache.poi.hssf.record.WSBoolRecord;
 import org.apache.poi.hssf.record.WindowTwoRecord;
 import org.apache.poi.hssf.util.Region;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.TempFile;
 
 /**
@@ -222,6 +227,212 @@ public class TestHSSFSheet
         assertNotNull(workbook.getSheet("Test Clone"));
         assertNotNull(workbook.getSheet("Test Clone(1)"));
         assertNotNull(workbook.getSheet("Test Clone(2)"));  
+    }
+    
+    /**
+     * Setting landscape and portrait stuff on new sheets
+     */
+    public void testPrintSetupLandscapeNew() throws Exception {
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        HSSFSheet sheetL = workbook.createSheet("LandscapeS");
+        HSSFSheet sheetP = workbook.createSheet("LandscapeP");
+        
+        // Check two aspects of the print setup
+        assertFalse(sheetL.getPrintSetup().getLandscape());
+        assertFalse(sheetP.getPrintSetup().getLandscape());
+        assertEquals(0, sheetL.getPrintSetup().getCopies());
+        assertEquals(0, sheetP.getPrintSetup().getCopies());
+        
+        // Change one on each
+        sheetL.getPrintSetup().setLandscape(true);
+        sheetP.getPrintSetup().setCopies((short)3);
+        
+        // Check taken
+        assertTrue(sheetL.getPrintSetup().getLandscape());
+        assertFalse(sheetP.getPrintSetup().getLandscape());
+        assertEquals(0, sheetL.getPrintSetup().getCopies());
+        assertEquals(3, sheetP.getPrintSetup().getCopies());
+        
+        // Save and re-load, and check still there
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        workbook.write(baos);
+        workbook = new HSSFWorkbook(new ByteArrayInputStream(baos.toByteArray()));
+        
+        assertTrue(sheetL.getPrintSetup().getLandscape());
+        assertFalse(sheetP.getPrintSetup().getLandscape());
+        assertEquals(0, sheetL.getPrintSetup().getCopies());
+        assertEquals(3, sheetP.getPrintSetup().getCopies());
+    }
+    
+    /**
+     * Setting landscape and portrait stuff on existing sheets
+     */
+    public void testPrintSetupLandscapeExisting() throws Exception {
+        String filename = System.getProperty("HSSF.testdata.path");
+        filename = filename + "/SimpleWithPageBreaks.xls";
+        HSSFWorkbook workbook = 
+        	new HSSFWorkbook(new FileInputStream(filename));
+        
+        assertEquals(3, workbook.getNumberOfSheets());
+        
+        HSSFSheet sheetL = workbook.getSheetAt(0);
+        HSSFSheet sheetPM = workbook.getSheetAt(1);
+        HSSFSheet sheetLS = workbook.getSheetAt(2);
+        
+        // Check two aspects of the print setup
+        assertFalse(sheetL.getPrintSetup().getLandscape());
+        assertTrue(sheetPM.getPrintSetup().getLandscape());
+        assertTrue(sheetLS.getPrintSetup().getLandscape());
+        assertEquals(1, sheetL.getPrintSetup().getCopies());
+        assertEquals(1, sheetPM.getPrintSetup().getCopies());
+        assertEquals(1, sheetLS.getPrintSetup().getCopies());
+        
+        // Change one on each
+        sheetL.getPrintSetup().setLandscape(true);
+        sheetPM.getPrintSetup().setLandscape(false);
+        sheetPM.getPrintSetup().setCopies((short)3);
+        
+        // Check taken
+        assertTrue(sheetL.getPrintSetup().getLandscape());
+        assertFalse(sheetPM.getPrintSetup().getLandscape());
+        assertTrue(sheetLS.getPrintSetup().getLandscape());
+        assertEquals(1, sheetL.getPrintSetup().getCopies());
+        assertEquals(3, sheetPM.getPrintSetup().getCopies());
+        assertEquals(1, sheetLS.getPrintSetup().getCopies());
+        
+        // Save and re-load, and check still there
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        workbook.write(baos);
+        workbook = new HSSFWorkbook(new ByteArrayInputStream(baos.toByteArray()));
+        
+        assertTrue(sheetL.getPrintSetup().getLandscape());
+        assertFalse(sheetPM.getPrintSetup().getLandscape());
+        assertTrue(sheetLS.getPrintSetup().getLandscape());
+        assertEquals(1, sheetL.getPrintSetup().getCopies());
+        assertEquals(3, sheetPM.getPrintSetup().getCopies());
+        assertEquals(1, sheetLS.getPrintSetup().getCopies());
+    }
+    
+    public void testGroupRows() throws Exception {
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        HSSFSheet s = workbook.createSheet();
+        HSSFRow r1 = s.createRow(0);
+        HSSFRow r2 = s.createRow(1);
+        HSSFRow r3 = s.createRow(2);
+        HSSFRow r4 = s.createRow(3);
+        HSSFRow r5 = s.createRow(4);
+        
+        assertEquals(0, r1.getOutlineLevel());
+        assertEquals(0, r2.getOutlineLevel());
+        assertEquals(0, r3.getOutlineLevel());
+        assertEquals(0, r4.getOutlineLevel());
+        assertEquals(0, r5.getOutlineLevel());
+        
+        s.groupRow(2,3);
+        
+        assertEquals(0, r1.getOutlineLevel());
+        assertEquals(0, r2.getOutlineLevel());
+        assertEquals(1, r3.getOutlineLevel());
+        assertEquals(1, r4.getOutlineLevel());
+        assertEquals(0, r5.getOutlineLevel());
+        
+        // Save and re-open
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        workbook.write(baos);
+        workbook = new HSSFWorkbook(
+        		new ByteArrayInputStream(baos.toByteArray())
+        );
+        
+        s = workbook.getSheetAt(0);
+        r1 = s.getRow(0);
+        r2 = s.getRow(1);
+        r3 = s.getRow(2);
+        r4 = s.getRow(3);
+        r5 = s.getRow(4);
+        
+        assertEquals(0, r1.getOutlineLevel());
+        assertEquals(0, r2.getOutlineLevel());
+        assertEquals(1, r3.getOutlineLevel());
+        assertEquals(1, r4.getOutlineLevel());
+        assertEquals(0, r5.getOutlineLevel());
+    }
+    
+    public void testGroupRowsExisting() throws Exception {
+        String filename = System.getProperty("HSSF.testdata.path");
+        filename = filename + "/NoGutsRecords.xls";
+        HSSFWorkbook workbook = 
+        	new HSSFWorkbook(new FileInputStream(filename));
+        
+        HSSFSheet s = workbook.getSheetAt(0);
+        HSSFRow r1 = s.getRow(0);
+        HSSFRow r2 = s.getRow(1);
+        HSSFRow r3 = s.getRow(2);
+        HSSFRow r4 = s.getRow(3);
+        HSSFRow r5 = s.getRow(4);
+        HSSFRow r6 = s.getRow(5);
+
+        assertEquals(0, r1.getOutlineLevel());
+        assertEquals(0, r2.getOutlineLevel());
+        assertEquals(0, r3.getOutlineLevel());
+        assertEquals(0, r4.getOutlineLevel());
+        assertEquals(0, r5.getOutlineLevel());
+        assertEquals(0, r6.getOutlineLevel());
+        
+        // This used to complain about lacking guts records
+        s.groupRow(2, 4);
+        
+        assertEquals(0, r1.getOutlineLevel());
+        assertEquals(0, r2.getOutlineLevel());
+        assertEquals(1, r3.getOutlineLevel());
+        assertEquals(1, r4.getOutlineLevel());
+        assertEquals(1, r5.getOutlineLevel());
+        assertEquals(0, r6.getOutlineLevel());
+        
+        // Save and re-open
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        workbook.write(baos);
+        workbook = new HSSFWorkbook(
+        		new ByteArrayInputStream(baos.toByteArray())
+        );
+        
+        s = workbook.getSheetAt(0);
+        r1 = s.getRow(0);
+        r2 = s.getRow(1);
+        r3 = s.getRow(2);
+        r4 = s.getRow(3);
+        r5 = s.getRow(4);
+        r6 = s.getRow(5);
+        
+        assertEquals(0, r1.getOutlineLevel());
+        assertEquals(0, r2.getOutlineLevel());
+        assertEquals(1, r3.getOutlineLevel());
+        assertEquals(1, r4.getOutlineLevel());
+        assertEquals(1, r5.getOutlineLevel());
+        assertEquals(0, r6.getOutlineLevel());
+    }
+    
+    public void testGetDrawings() throws Exception {
+        String filename = System.getProperty("HSSF.testdata.path");
+    	HSSFWorkbook wb1c = new HSSFWorkbook(
+    			new FileInputStream(new File(filename,"WithChart.xls"))
+    	);
+    	HSSFWorkbook wb2c = new HSSFWorkbook(
+    			new FileInputStream(new File(filename,"WithTwoCharts.xls"))
+    	);
+    	
+    	// 1 chart sheet -> data on 1st, chart on 2nd
+    	assertNotNull(wb1c.getSheetAt(0).getDrawingPatriarch());
+    	assertNotNull(wb1c.getSheetAt(1).getDrawingPatriarch());
+    	assertFalse(wb1c.getSheetAt(0).getDrawingPatriarch().containsChart());
+    	assertTrue(wb1c.getSheetAt(1).getDrawingPatriarch().containsChart());
+    	
+    	// 2 chart sheet -> data on 1st, chart on 2nd+3rd
+    	assertNotNull(wb2c.getSheetAt(0).getDrawingPatriarch());
+    	assertNotNull(wb2c.getSheetAt(1).getDrawingPatriarch());
+    	assertNotNull(wb2c.getSheetAt(2).getDrawingPatriarch());
+    	assertFalse(wb2c.getSheetAt(0).getDrawingPatriarch().containsChart());
+    	assertTrue(wb2c.getSheetAt(1).getDrawingPatriarch().containsChart());
+    	assertTrue(wb2c.getSheetAt(2).getDrawingPatriarch().containsChart());
     }
     
 	/**
@@ -531,8 +742,133 @@ public class TestHSSFSheet
         assertTrue("No Exceptions while reading file", true);
 
     }
+    
+    public void testAutoSizeColumn() throws Exception {
+		String filename = System.getProperty("HSSF.testdata.path");
+		filename = filename + "/43902.xls";
+		String sheetName = "my sheet";
+		FileInputStream is = new FileInputStream(filename);
+		POIFSFileSystem fs = new POIFSFileSystem(is);
+		HSSFWorkbook wb = new HSSFWorkbook(fs);
+		HSSFSheet sheet = wb.getSheet(sheetName);
+		
+		// Can't use literal numbers for column sizes, as
+		//  will come out with different values on different
+		//  machines based on the fonts available.
+		// So, we use ranges, which are pretty large, but
+		//  thankfully don't overlap!
+		int minWithRow1And2 = 6400; 
+		int maxWithRow1And2 = 7800;
+		int minWithRow1Only = 3024;
+		int maxWithRow1Only = 3300;
+		
+		// autoSize the first column and check its size before the merged region (1,0,1,1) is set:
+		// it has to be based on the 2nd row width
+		sheet.autoSizeColumn((short)0);
+		assertTrue("Column autosized with only one row: wrong width", sheet.getColumnWidth((short)0) >= minWithRow1And2);
+		assertTrue("Column autosized with only one row: wrong width", sheet.getColumnWidth((short)0) <= maxWithRow1And2);
+		
+		//create a region over the 2nd row and auto size the first column
+		sheet.addMergedRegion(new Region(1,(short)0,1,(short)1));
+		sheet.autoSizeColumn((short)0);
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		wb.write(out);
+		out.close();
+		
+		// check that the autoSized column width has ignored the 2nd row 
+		// because it is included in a merged region (Excel like behavior)
+		HSSFWorkbook wb2 = new HSSFWorkbook(new ByteArrayInputStream(out.toByteArray()));
+		HSSFSheet sheet2 = wb2.getSheet(sheetName);
+		assertTrue(sheet2.getColumnWidth((short)0) >= minWithRow1Only);
+		assertTrue(sheet2.getColumnWidth((short)0) <= maxWithRow1Only);
+		
+		// remove the 2nd row merged region and check that the 2nd row value is used to the autoSizeColumn width
+		sheet2.removeMergedRegion(1);
+		sheet2.autoSizeColumn((short)0);
+		out = new ByteArrayOutputStream();
+		wb2.write(out);
+		out.close();
+		HSSFWorkbook wb3 = new HSSFWorkbook(new ByteArrayInputStream(out.toByteArray()));
+		HSSFSheet sheet3 = wb3.getSheet(sheetName);
+		assertTrue(sheet3.getColumnWidth((short)0) >= minWithRow1And2);
+		assertTrue(sheet3.getColumnWidth((short)0) <= maxWithRow1And2);
+    }
 
-	public static void main(java.lang.String[] args) {
+    /**
+     * Setting ForceFormulaRecalculation on sheets
+     */
+    public void testForceRecalculation() throws Exception {
+        String filename = System.getProperty("HSSF.testdata.path");
+        filename = filename + "/UncalcedRecord.xls";
+        HSSFWorkbook workbook = new HSSFWorkbook(new FileInputStream(filename));
+        
+        HSSFSheet sheet = workbook.getSheetAt(0);
+        HSSFSheet sheet2 = workbook.getSheetAt(0);
+        HSSFRow row = sheet.getRow(0);
+        row.createCell((short) 0).setCellValue(5);
+        row.createCell((short) 1).setCellValue(8);
+		assertFalse(sheet.getForceFormulaRecalculation());
+		assertFalse(sheet2.getForceFormulaRecalculation());
+
+        // Save and manually verify that on column C we have 0, value in template
+        File tempFile = new File(System.getProperty("java.io.tmpdir")+"/uncalced_err.xls" );
+        tempFile.delete();
+        FileOutputStream fout = new FileOutputStream( tempFile );
+        workbook.write( fout );
+        fout.close();
+        sheet.setForceFormulaRecalculation(true);
+		assertTrue(sheet.getForceFormulaRecalculation());
+
+        // Save and manually verify that on column C we have now 13, calculated value
+        tempFile = new File(System.getProperty("java.io.tmpdir")+"/uncalced_succ.xls" );
+        tempFile.delete();
+        fout = new FileOutputStream( tempFile );
+        workbook.write( fout );
+        fout.close();
+
+        // Try it can be opened
+		HSSFWorkbook wb2 = new HSSFWorkbook(new FileInputStream(tempFile));
+		
+		// And check correct sheet settings found
+		sheet = wb2.getSheetAt(0);
+		sheet2 = wb2.getSheetAt(1);
+		assertTrue(sheet.getForceFormulaRecalculation());
+		assertFalse(sheet2.getForceFormulaRecalculation());
+		
+		// Now turn if back off again
+		sheet.setForceFormulaRecalculation(false);
+		
+        fout = new FileOutputStream( tempFile );
+        wb2.write( fout );
+        fout.close();
+        wb2 = new HSSFWorkbook(new FileInputStream(tempFile));
+        
+		assertFalse(wb2.getSheetAt(0).getForceFormulaRecalculation());
+		assertFalse(wb2.getSheetAt(1).getForceFormulaRecalculation());
+		assertFalse(wb2.getSheetAt(2).getForceFormulaRecalculation());
+		
+		// Now add a new sheet, and check things work
+		//  with old ones unset, new one set
+		HSSFSheet s4 = wb2.createSheet();
+		s4.setForceFormulaRecalculation(true);
+		
+		assertFalse(sheet.getForceFormulaRecalculation());
+		assertFalse(sheet2.getForceFormulaRecalculation());
+		assertTrue(s4.getForceFormulaRecalculation());
+		
+        fout = new FileOutputStream( tempFile );
+        wb2.write( fout );
+        fout.close();
+        
+		HSSFWorkbook wb3 = new HSSFWorkbook(new FileInputStream(tempFile));
+		assertFalse(wb3.getSheetAt(0).getForceFormulaRecalculation());
+		assertFalse(wb3.getSheetAt(1).getForceFormulaRecalculation());
+		assertFalse(wb3.getSheetAt(2).getForceFormulaRecalculation());
+		assertTrue(wb3.getSheetAt(3).getForceFormulaRecalculation());
+    }
+
+    
+    public static void main(java.lang.String[] args) {
 		 junit.textui.TestRunner.run(TestHSSFSheet.class);
 	}    
 }

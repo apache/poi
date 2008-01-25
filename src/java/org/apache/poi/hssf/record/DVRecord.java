@@ -16,16 +16,16 @@
 
 package org.apache.poi.hssf.record;
 
+import java.io.IOException;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Stack;
+
+import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.hssf.util.HSSFCellRangeAddress;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
-import org.apache.poi.hssf.util.HSSFCellRangeAddress;
-import org.apache.poi.hssf.record.formula.Ptg;
-
-import java.io.IOException;
-import java.util.Stack;
-import java.util.Hashtable;
-import java.util.Enumeration;
 
 /**
  * Title:        DV Record<P>
@@ -187,10 +187,13 @@ public class DVRecord extends Record
        this.field_not_used_2 = in.readShort();
 
        //read sec formula data condition
-       // Not sure if this was needed or not...
+       //Not sure if this was needed or not...
        try {
            in.skip(this.field_size_sec_formula);
-       } catch(IOException e) { throw new IllegalStateException(e); } 
+       } catch(IOException e) {
+           e.printStackTrace();
+           throw new IllegalStateException(e.getMessage());
+       }
 
        token_pos = 0;
        while (token_pos < this.field_size_sec_formula)
@@ -501,6 +504,14 @@ public class DVRecord extends Record
     public short getSid()
     {
         return this.sid;
+    }
+    
+    /**
+     * Clones the object. Uses serialisation, as the
+     *  contents are somewhat complex
+     */
+    public Object clone() {
+    	return cloneViaReserialise();
     }
 
     /**@todo DVRecord = Serializare */

@@ -20,25 +20,28 @@
 
 package org.apache.poi.hslf.usermodel;
 
-import org.apache.poi.hslf.model.*;
-import org.apache.poi.hslf.model.Shape;
-import org.apache.poi.hslf.model.textproperties.*;
-import org.apache.poi.hslf.record.ColorSchemeAtom;
-import org.apache.poi.hslf.exceptions.HSLFException;
+import java.awt.Color;
 
-import java.awt.*;
+import org.apache.poi.hslf.model.MasterSheet;
+import org.apache.poi.hslf.model.Shape;
+import org.apache.poi.hslf.model.Sheet;
+import org.apache.poi.hslf.model.TextRun;
+import org.apache.poi.hslf.model.textproperties.BitMaskTextProp;
+import org.apache.poi.hslf.model.textproperties.CharFlagsTextProp;
+import org.apache.poi.hslf.model.textproperties.ParagraphFlagsTextProp;
+import org.apache.poi.hslf.model.textproperties.TextProp;
+import org.apache.poi.hslf.model.textproperties.TextPropCollection;
+import org.apache.poi.hslf.record.ColorSchemeAtom;
 
 
 /**
  * Represents a run of text, all with the same style
  * 
- * TODO: get access to the font/character properties
- *
- * @author Nick Burch
+ * TODO: finish all the getters and setters to the
+ *  font/character/paragraph properties (currently only
+ *  has some of them) 
  */
-
-public class RichTextRun
-{
+public class RichTextRun {
 	/** The TextRun we belong to */
 	private TextRun parentRun;
 	/** The SlideShow we belong to */

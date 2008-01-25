@@ -82,21 +82,45 @@ public class TestEscherContainerRecord extends TestCase
         r2.setOptions( (short) 0x9876 );
         r2.setRecordId( EscherOptRecord.RECORD_ID );
 
+        String expected;
         r.addChildRecord( r2 );
-        String expected = "org.apache.poi.ddf.EscherContainerRecord (SpContainer):" + nl +
-                        "  isContainer: true" + nl +
-                        "  options: 0x000F" + nl +
-                        "  recordId: 0xF004" + nl +
-                        "  numchildren: 1" + nl +
-                        "  children: " + nl +
-                        "org.apache.poi.ddf.EscherOptRecord:" + nl +
-                        "  isContainer: false" + nl +
-                        "  options: 0x0003" + nl +
-                        "  recordId: 0xF00B" + nl +
-                        "  numchildren: 0" + nl +
-                        "  properties:" + nl;
+        expected = "org.apache.poi.ddf.EscherContainerRecord (SpContainer):" + nl +
+                   "  isContainer: true" + nl +
+                   "  options: 0x000F" + nl +
+                   "  recordId: 0xF004" + nl +
+                   "  numchildren: 1" + nl +
+                   "  children: " + nl +
+                   "   Child 0:" + nl +
+                   "org.apache.poi.ddf.EscherOptRecord:" + nl +
+                   "  isContainer: false" + nl +
+                   "  options: 0x0003" + nl +
+                   "  recordId: 0xF00B" + nl +
+                   "  numchildren: 0" + nl +
+                   "  properties:" + nl;
         assertEquals( expected, r.toString() );
 
+        r.addChildRecord( r2 );
+        expected = "org.apache.poi.ddf.EscherContainerRecord (SpContainer):" + nl +
+                   "  isContainer: true" + nl +
+                   "  options: 0x000F" + nl +
+                   "  recordId: 0xF004" + nl +
+                   "  numchildren: 2" + nl +
+                   "  children: " + nl +
+                   "   Child 0:" + nl +
+                   "org.apache.poi.ddf.EscherOptRecord:" + nl +
+                   "  isContainer: false" + nl +
+                   "  options: 0x0003" + nl +
+                   "  recordId: 0xF00B" + nl +
+                   "  numchildren: 0" + nl +
+                   "  properties:" + nl +
+                   "   Child 1:" + nl +
+                   "org.apache.poi.ddf.EscherOptRecord:" + nl +
+                   "  isContainer: false" + nl +
+                   "  options: 0x0003" + nl +
+                   "  recordId: 0xF00B" + nl +
+                   "  numchildren: 0" + nl +
+                   "  properties:" + nl;
+        assertEquals( expected, r.toString() );
     }
 
     public void testGetRecordSize() throws Exception

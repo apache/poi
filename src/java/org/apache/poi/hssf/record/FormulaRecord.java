@@ -179,7 +179,6 @@ public class FormulaRecord
      *
      * @return calculated value
      */
-
     public double getValue()
     {
         return field_4_value;
@@ -190,7 +189,6 @@ public class FormulaRecord
      *
      * @return bitmask
      */
-
     public short getOptions()
     {
         return field_5_options;
@@ -199,9 +197,25 @@ public class FormulaRecord
     public boolean isSharedFormula() {
         return sharedFormula.isSet(field_5_options);
     }
-    
     public void setSharedFormula(boolean flag) {
-    	sharedFormula.setBoolean(field_5_options, flag);
+    	field_5_options =
+    		sharedFormula.setShortBoolean(field_5_options, flag);
+    }
+    
+    public boolean isAlwaysCalc() {
+    	return alwaysCalc.isSet(field_5_options);
+    }
+    public void setAlwaysCalc(boolean flag) {
+    	field_5_options =
+    		alwaysCalc.setShortBoolean(field_5_options, flag);
+    }
+    
+    public boolean isCalcOnLoad() {
+    	return calcOnLoad.isSet(field_5_options);
+    }
+    public void setCalcOnLoad(boolean flag) {
+    	field_5_options =
+    		calcOnLoad.setShortBoolean(field_5_options, flag);
     }
     
     /**

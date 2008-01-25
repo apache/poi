@@ -18,15 +18,16 @@
 
 package org.apache.poi.hssf.record;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.apache.poi.ddf.DefaultEscherRecordFactory;
+import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.ddf.EscherRecordFactory;
 import org.apache.poi.ddf.NullEscherSerializationListener;
 import org.apache.poi.util.LittleEndian;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * The escher container record is used to hold escher records.  It is abstract and
@@ -76,7 +77,7 @@ public abstract class AbstractEscherHolderRecord
     {
         if (id != getSid())
         {
-            throw new RecordFormatException("Not an escher record");
+            throw new RecordFormatException("Not an escher record! (sid was " + id + ", expecting " + getSid() + ")");
         }
     }
 
@@ -94,6 +95,9 @@ public abstract class AbstractEscherHolderRecord
         }
     }
 
+    protected void convertRawBytesToEscherRecords() {
+    	convertToEscherRecords(0, rawData.length, rawData);
+    }
     private void convertToEscherRecords( int offset, int size, byte[] data )
     {
         EscherRecordFactory recordFactory = new DefaultEscherRecordFactory();
@@ -227,7 +231,7 @@ public abstract class AbstractEscherHolderRecord
 
     public Object clone()
     {
-        throw new IllegalStateException("Not implemented yet.");
+    	return cloneViaReserialise();
     }
 
     public void addEscherRecord(int index, EscherRecord element)
@@ -248,6 +252,54 @@ public abstract class AbstractEscherHolderRecord
     public void clearEscherRecords()
     {
         escherRecords.clear();
+    }
+    
+    /**
+     * If we have a EscherContainerRecord as one of our
+     *  children (and most top level escher holders do),
+     *  then return that.
+     */
+    public EscherContainerRecord getEscherContainer() {
+    	for(Iterator it = escherRecords.iterator(); it.hasNext();) {
+    		Object er = it.next();
+    		if(er instanceof EscherContainerRecord) {
+    			return (EscherContainerRecord)er;
+    		}
+    	}
+    	return null;
+    }
+
+    /**
+     * Descends into all our children, returning the
+     *  first EscherRecord with the given id, or null
+     *  if none found
+     */
+    public EscherRecord findFirstWithId(short id) {
+    	return findFirstWithId(id, getEscherRecords());
+    }
+    private EscherRecord findFirstWithId(short id, List records) {
+    	// Check at our level
+    	for(Iterator it = records.iterator(); it.hasNext();) {
+    		EscherRecord r = (EscherRecord)it.next();
+    		if(r.getRecordId() == id) {
+    			return r;
+    		}
+    	}
+    	
+    	// Then check our children in turn
+    	for(Iterator it = records.iterator(); it.hasNext();) {
+    		EscherRecord r = (EscherRecord)it.next();
+    		if(r.isContainerRecord()) {
+    			EscherRecord found =
+    				findFirstWithId(id, r.getChildRecords());
+    			if(found != null) {
+    				return found;
+    			}
+    		}
+    	}
+    	
+    	// Not found in this lot
+    	return null;
     }
 
 

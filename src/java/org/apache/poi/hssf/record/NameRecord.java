@@ -20,13 +20,11 @@ package org.apache.poi.hssf.record;
 
 import java.util.List;
 import java.util.Stack;
+import java.util.Iterator;
 
 import org.apache.poi.hssf.model.Workbook;
-import org.apache.poi.hssf.record.formula.Area3DPtg;
-import org.apache.poi.hssf.record.formula.DeletedArea3DPtg;
-import org.apache.poi.hssf.record.formula.DeletedRef3DPtg;
-import org.apache.poi.hssf.record.formula.Ptg;
-import org.apache.poi.hssf.record.formula.Ref3DPtg;
+import org.apache.poi.hssf.record.formula.*;
+import org.apache.poi.hssf.util.AreaReference;
 import org.apache.poi.hssf.util.RangeAddress;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
@@ -272,6 +270,9 @@ public class NameRecord extends Record {
      */
     public void setNameText(String name){
         field_12_name_text = name;
+        setCompressedUnicodeFlag(
+        	StringUtil.hasMultibyte(name) ?	(byte)1 : (byte)0
+        );
     }
 
     //    public void setNameDefintion(String definition){
@@ -320,11 +321,23 @@ public class NameRecord extends Record {
         return field_2_keyboard_shortcut ;
     }
 
-    /** gets the name length
+    /** 
+     * gets the name length, in characters
      * @return name length
      */
     public byte getNameTextLength(){
         return field_3_length_name_text;
+    }
+    
+    /** 
+     * gets the name length, in bytes
+     * @return raw name length
+     */
+    public byte getRawNameTextLength(){
+    	if( (field_11_compressed_unicode_flag & 0x01) == 1 ) {
+    		return (byte)(2 * field_3_length_name_text);
+    	}
+    	return field_3_length_name_text;
     }
 
     /** get the definition length
@@ -513,27 +526,16 @@ public class NameRecord extends Record {
         data[17 + offset] = getStatusBarLength();
         data[18 + offset] = getCompressedUnicodeFlag();
 
-        /* temp: gjs
-        if (isBuiltInName())
-        {
-            LittleEndian.putShort( data, 2 + offset, (short) ( 16 + field_13_raw_name_definition.length ) );
-
-            data[19 + offset] = field_12_builtIn_name;
-            System.arraycopy( field_13_raw_name_definition, 0, data, 20 + offset, field_13_raw_name_definition.length );
-
-            return 20 + field_13_raw_name_definition.length;
-        }
-        else
-        {     */            
-            
 			int start_of_name_definition = 19 + field_3_length_name_text;
 
 			if (this.isBuiltInName()) {
 				//can send the builtin name directly in
 				data [19 + offset] =  this.getBuiltInName();
+			} else if ((this.getCompressedUnicodeFlag() & 0x01) == 1) {
+				StringUtil.putUnicodeLE( getNameText(), data, 19 + offset );
+				start_of_name_definition = 19 + (2 * field_3_length_name_text);
 			} else {
 				StringUtil.putCompressedUnicode( getNameText(), data, 19 + offset );
-				
 			}
 
 
@@ -556,15 +558,15 @@ public class NameRecord extends Record {
         /* } */
     }
 
-    /** gets the length of all texts
+    /** 
+     * Gets the length of all texts, in bytes
      * @return total length
      */
     public int getTextsLength(){
         int result;
 
-        result = getNameTextLength() + getDescriptionTextLength() +
-        getHelpTopicLength() + getStatusBarLength();
-
+        result = getRawNameTextLength() + getDescriptionTextLength() +
+        	getHelpTopicLength() + getStatusBarLength();
 
         return result;
     }
@@ -648,15 +650,44 @@ public class NameRecord extends Record {
         Ptg ptg = (Ptg) field_13_name_definition.peek();
         String result = "";
 
-        if (ptg.getClass() == Area3DPtg.class){
-            result = ptg.toFormulaString(book);
+        // If it's a union, descend in and process
+        if (ptg.getClass() == UnionPtg.class) {
+            Iterator it =field_13_name_definition.iterator();
+            while( it.hasNext() ) {
+                Ptg p = (Ptg)it.next();
 
-        } else if (ptg.getClass() == Ref3DPtg.class){
-            result = ptg.toFormulaString(book);
-        } else if (ptg.getClass() == DeletedArea3DPtg.class || ptg.getClass() == DeletedRef3DPtg.class) {
-        	result = "#REF!"   ;     }
+                String thisRes = getAreaRefString(p, book);
+                if(thisRes.length() > 0) {
+                    // Add a comma to the end if needed
+                    if(result.length() > 0 && !result.endsWith(",")) {
+                        result += ",";
+                    }
+                    // And add the string it corresponds to
+                    result += thisRes;
+                }
+            }
+        } else {
+            // Otherwise just get the string
+            result = getAreaRefString(ptg, book);
+        }
 
         return result;
+    }
+
+    /**
+     * Turn the given ptg into a string, or
+     *  return an empty string if nothing is possible
+     *  for it.
+     */
+    private String getAreaRefString(Ptg ptg,Workbook book) {
+        if (ptg.getClass() == Area3DPtg.class){
+            return ptg.toFormulaString(book);
+        } else if (ptg.getClass() == Ref3DPtg.class){
+            return ptg.toFormulaString(book);
+        } else if (ptg.getClass() == DeletedArea3DPtg.class || ptg.getClass() == DeletedRef3DPtg.class) {
+        	return "#REF!";
+        }
+        return "";
     }
 
     /** sets the reference , the area only (range)
@@ -686,19 +717,32 @@ public class NameRecord extends Record {
         }
 
         if (ra.hasRange()) {
-            ptg = new Area3DPtg();
-            ((Area3DPtg) ptg).setExternSheetIndex(externSheetIndex);
-            ((Area3DPtg) ptg).setArea(ref);
-            this.setDefinitionTextLength((short)ptg.getSize());
+        	// Is it contiguous or not?
+        	AreaReference[] refs = 
+        		AreaReference.generateContiguous(ref);
+            this.setDefinitionTextLength((short)0);
+
+            // Add the area reference(s) 
+        	for(int i=0; i<refs.length; i++) {
+	            ptg = new Area3DPtg();
+	            ((Area3DPtg) ptg).setExternSheetIndex(externSheetIndex);
+	            ((Area3DPtg) ptg).setArea(refs[i].toString());
+	            field_13_name_definition.push(ptg);
+	            this.setDefinitionTextLength( (short)(getDefinitionLength() + ptg.getSize()) );
+        	}
+        	// And then a union if we had more than one area
+        	if(refs.length > 1) {
+        		ptg = new UnionPtg();
+                field_13_name_definition.push(ptg);
+	            this.setDefinitionTextLength( (short)(getDefinitionLength() + ptg.getSize()) );
+        	}
         } else {
             ptg = new Ref3DPtg();
             ((Ref3DPtg) ptg).setExternSheetIndex(externSheetIndex);
             ((Ref3DPtg) ptg).setArea(ref);
+            field_13_name_definition.push(ptg);
             this.setDefinitionTextLength((short)ptg.getSize());
         }
-
-        field_13_name_definition.push(ptg);
-
     }
 
     /**
@@ -832,6 +876,15 @@ public class NameRecord extends Record {
             .append("\n");
         buffer.append("    .Name (Unicode text)  = ").append( getNameText() )
             .append("\n");
+        
+        buffer.append("    .Parts (" + field_13_name_definition.size() +"):")
+            .append("\n");
+        Iterator it = field_13_name_definition.iterator();
+        while(it.hasNext()) {
+        	Ptg ptg = (Ptg)it.next();
+        	buffer.append("       " + ptg.toString()).append("\n");
+        }
+        
         buffer.append("    .Menu text (Unicode string without length field)        = ").append( field_14_custom_menu_text )
             .append("\n");
         buffer.append("    .Description text (Unicode string without length field) = ").append( field_15_description_text )

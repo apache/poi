@@ -19,6 +19,7 @@
 
 package org.apache.poi.hssf.record;
 
+import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
 
@@ -36,6 +37,7 @@ import org.apache.poi.util.StringUtil;
 public class BoundSheetRecord
         extends Record
 {
+    private static final short HIDDEN_FLAG_MASK = 0x01;
     public final static short sid = 0x85;
     private int field_1_position_of_BOF;
     private short field_2_option_flags;
@@ -300,5 +302,13 @@ public class BoundSheetRecord
     public short getSid()
     {
         return sid;
+    }
+
+    public boolean isHidden() {
+	    return BitFieldFactory.getInstance(HIDDEN_FLAG_MASK).isSet(field_2_option_flags);
+    }
+
+    public void setHidden(boolean hidden) {
+	    field_2_option_flags = BitFieldFactory.getInstance(HIDDEN_FLAG_MASK).setShortBoolean(field_2_option_flags, hidden);
     }
 }

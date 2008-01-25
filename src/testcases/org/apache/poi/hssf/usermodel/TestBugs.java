@@ -913,7 +913,104 @@ extends TestCase {
 
     }
 
-    
+    /**
+     * Bug 44200: Sheet not cloneable when Note added to excel cell
+     */
+    public void test44200() throws Exception {
+        FileInputStream in = new FileInputStream(new File(cwd, "44200.xls"));
+        HSSFWorkbook wb = new HSSFWorkbook(in);
+        in.close();
+
+        wb.cloneSheet(0);
+        assertTrue("No Exceptions while cloning sheet", true);
+
+        //serialize and read again
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        wb.write(out);
+        out.close();
+
+        wb = new HSSFWorkbook(new ByteArrayInputStream(out.toByteArray()));
+        assertTrue("No Exceptions while reading file", true);
+
+    }
+
+    /**
+     * Bug 44201: Sheet not cloneable when validation added to excel cell
+     */
+    public void test44201() throws Exception {
+        FileInputStream in = new FileInputStream(new File(cwd, "44201.xls"));
+        HSSFWorkbook wb = new HSSFWorkbook(in);
+        in.close();
+
+        wb.cloneSheet(0);
+        assertTrue("No Exceptions while cloning sheet", true);
+
+        //serialize and read again
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        wb.write(out);
+        out.close();
+
+        wb = new HSSFWorkbook(new ByteArrayInputStream(out.toByteArray()));
+        assertTrue("No Exceptions while reading file", true);
+
+    }
+
+    /**
+     * Bug 37684  : Unhandled Continue Record Error
+     */
+    public void test37684 () throws Exception {
+        FileInputStream in = new FileInputStream(new File(cwd, "37684-1.xls"));
+        HSSFWorkbook wb = new HSSFWorkbook(in);
+        in.close();
+
+        assertTrue("No exceptions while reading workbook", true);
+
+        //serialize and read again
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        wb.write(out);
+        out.close();
+        assertTrue("No exceptions while saving workbook", true);
+
+        wb = new HSSFWorkbook(new ByteArrayInputStream(out.toByteArray()));
+        assertTrue("No exceptions while reading saved stream", true);
+
+
+        in = new FileInputStream(new File(cwd, "37684-2.xls"));
+        wb = new HSSFWorkbook(in);
+        in.close();
+
+        assertTrue("No exceptions while reading workbook", true);
+
+        //serialize and read again
+        out = new ByteArrayOutputStream();
+        wb.write(out);
+        out.close();
+        assertTrue("No exceptions while saving workbook", true);
+
+        wb = new HSSFWorkbook(new ByteArrayInputStream(out.toByteArray()));
+        assertTrue("No exceptions while reading saved stream", true);
+    }
+
+    /**
+     * Bug 41139: Constructing HSSFWorkbook is failed,threw threw ArrayIndexOutOfBoundsException for creating UnknownRecord
+     */
+    public void test41139() throws Exception {
+        FileInputStream in = new FileInputStream(new File(cwd, "41139.xls"));
+        HSSFWorkbook wb = new HSSFWorkbook(in);
+        in.close();
+
+        assertTrue("No Exceptions while reading file", true);
+
+        //serialize and read again
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        wb.write(out);
+        out.close();
+
+        wb = new HSSFWorkbook(new ByteArrayInputStream(out.toByteArray()));
+        assertTrue("No Exceptions while reading file", true);
+
+    }
+
 }
 
 
