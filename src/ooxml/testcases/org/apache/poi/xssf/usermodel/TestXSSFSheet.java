@@ -111,4 +111,12 @@ public class TestXSSFSheet extends TestCase {
 		sheet.setDefaultColumnWidth((short) 14);
 		assertEquals((short) 14, sheet.getDefaultColumnWidth());
 	}
+	
+	public void testGetSetColumnWidth() throws Exception {
+		XSSFWorkbook workbook = new XSSFWorkbook();
+		Sheet sheet = workbook.createSheet("Sheet 1");
+		// Test setting a column width and getting that value
+		sheet.setColumnWidth((short) 0, (short) 16);
+		assertEquals(16, sheet.getColumnWidth((short) 0));
+	}
 }

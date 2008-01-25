@@ -31,6 +31,7 @@ import org.apache.poi.ss.usermodel.Patriarch;
 import org.apache.poi.ss.usermodel.PrintSetup;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.usermodel.helpers.ColumnHelper;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHeaderFooter;
@@ -48,6 +49,7 @@ public class XSSFSheet implements Sheet {
     private CTSheet sheet;
     private CTWorksheet worksheet;
     private List<Row> rows;
+    private ColumnHelper columnHelper;
     
     public XSSFSheet(CTSheet sheet) {
         this.sheet = sheet;
@@ -84,6 +86,7 @@ public class XSSFSheet implements Sheet {
         CTHeaderFooter hf = this.worksheet.addNewHeaderFooter();
         hf.setOddHeader("&amp;C&amp;A");
         hf.setOddFooter("&amp;C&amp;\"Arial\"&amp;10Page &amp;P");
+        columnHelper = new ColumnHelper(worksheet);
     }
 
     protected CTSheet getSheet() {
@@ -184,8 +187,7 @@ public class XSSFSheet implements Sheet {
     }
 
     public short getColumnWidth(short column) {
-    	// TODO Auto-generated method stub
-    	return 0;
+    	return (short) columnHelper.getColumn(column).getWidth();
     }
 
     public short getDefaultColumnWidth() {
@@ -440,7 +442,11 @@ public class XSSFSheet implements Sheet {
     }
 
     public void setColumnWidth(short column, short width) {
-        // TODO Auto-generated method stub
+    	CTCol col = columnHelper.getColumn(column);
+    	if (col == null) {
+    		col = columnHelper.createColumn(column);
+    	}
+    	col.setWidth(width);
     }
 
     public void setDefaultColumnStyle(short column, CellStyle style) {
