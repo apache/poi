@@ -43,9 +43,9 @@ public class AreaPtg
     private short             field_3_first_column;
     private short             field_4_last_column;
     
-    private BitField         rowRelative = BitFieldFactory.getInstance(0x8000);
-    private BitField         colRelative = BitFieldFactory.getInstance(0x4000);
-    private BitField         column      = BitFieldFactory.getInstance(0x3FFF);
+    private final static BitField   rowRelative = BitFieldFactory.getInstance(0x8000);
+    private final static BitField   colRelative = BitFieldFactory.getInstance(0x4000);
+    private final static BitField   columnMask      = BitFieldFactory.getInstance(0x3FFF);
 
     protected AreaPtg() {
       //Required for clone methods
@@ -157,7 +157,7 @@ public class AreaPtg
      */
     public short getFirstColumn()
     {
-        return column.getShortValue(field_3_first_column);
+        return columnMask.getShortValue(field_3_first_column);
     }
 
     /**
@@ -204,7 +204,7 @@ public class AreaPtg
      */
     public void setFirstColumn(short column)
     {
-        field_3_first_column = column;   // fixme
+    	field_3_first_column=columnMask.setShortValue(field_3_first_column, column);
     }
 
     /**
@@ -220,7 +220,7 @@ public class AreaPtg
      */
     public short getLastColumn()
     {
-        return column.getShortValue(field_4_last_column);
+        return columnMask.getShortValue(field_4_last_column);
     }
 
     /**
@@ -269,7 +269,7 @@ public class AreaPtg
      */
     public void setLastColumn(short column)
     {
-        field_4_last_column = column;   // fixme
+    	field_4_last_column=columnMask.setShortValue(field_4_last_column, column);
     }
 
     /**
