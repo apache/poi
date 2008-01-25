@@ -17,9 +17,6 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.LinkedList;
@@ -364,20 +361,11 @@ public class XSSFWorkbook implements Workbook {
 
     }
 
-    /**
-     * XXX: Horribly naive implementation based on OpenXML4J's Package class,
-     * which sucks because it does not allow instantiation using an
-     * OutputStream instead of a File. So we write the Package to a temporary
-     * file, which we then proceed to read and stream out.
-     */
     public void write(OutputStream stream) throws IOException {
-        // Create a temporary file
-        File file = File.createTempFile("poi-", ".xlsx");
-        file.delete();
 
         try {
             // Create a package referring the temp file.
-            Package pkg = Package.create(file);
+            Package pkg = Package.create(stream);
             // Main part
             PackagePartName corePartName = PackagingURIHelper.createPartName("/xl/workbook.xml");
             // Create main part relationship
@@ -397,7 +385,7 @@ public class XSSFWorkbook implements Workbook {
              workbook.save(out, xmlOptions);
              out.close();
              
-             for (int i = 1 ; i <= this.getNumberOfSheets() ; ++i) {
+             for (int i = 0 ; i < this.getNumberOfSheets() ; ++i) {
                  XSSFSheet sheet = (XSSFSheet) this.getSheetAt(i);
                  PackagePartName partName = PackagingURIHelper.createPartName("/xl/worksheets/sheet" + i + ".xml");
                  corePart.addRelationship(partName, TargetMode.INTERNAL, "http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet", "rSheet" + 1);
@@ -409,23 +397,11 @@ public class XSSFWorkbook implements Workbook {
                  out = part.getOutputStream();
                  sheet.getWorksheet().save(out, xmlOptions);
                  
-                 // XXX DEBUG
-                 System.err.println(sheet.getWorksheet().xmlText(xmlOptions));
                  out.close();
              }
              
              pkg.close();
              
-             byte[] buf = new byte[8192];
-             int nread = 0;
-             BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
-             try {
-                 while ((nread = bis.read(buf)) > 0) {
-                     stream.write(buf, 0, nread);
-                 }
-             } finally {
-                 bis.close();
-             }
         } catch (InvalidFormatException e) {
             // TODO: replace with more meaningful exception
             throw new RuntimeException(e);

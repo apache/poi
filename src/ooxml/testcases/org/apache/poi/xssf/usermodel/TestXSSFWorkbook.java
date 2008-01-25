@@ -17,6 +17,10 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+
 import junit.framework.TestCase;
 
 import org.apache.poi.ss.usermodel.Sheet;
@@ -113,5 +117,17 @@ public class TestXSSFWorkbook extends TestCase {
         assertEquals("sheet3", workbook.getSheetName(0));
         workbook.removeSheetAt(0);
         assertEquals(0, workbook.getNumberOfSheets());
+    }
+    
+    public void testSave() throws Exception {
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        Sheet sheet1 = workbook.createSheet("sheet1");
+        Sheet sheet2 = workbook.createSheet("sheet2");
+        Sheet sheet3 = workbook.createSheet("sheet3");
+        File file = File.createTempFile("poi-", ".xlsx");
+        System.out.println("Saving to " + file.getAbsolutePath());
+        OutputStream out = new FileOutputStream(file);
+        workbook.write(out);
+        out.close();
     }
 }
