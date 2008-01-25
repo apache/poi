@@ -55,6 +55,7 @@ public class UncalcedRecord extends Record
 	}
 
 	protected void fillFields(RecordInputStream in) {
+		short unused = in.readShort();
 	}
 
 	public String toString() {
