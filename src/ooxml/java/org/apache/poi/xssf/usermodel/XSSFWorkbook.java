@@ -17,6 +17,7 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.LinkedList;
@@ -31,12 +32,15 @@ import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.usermodel.Palette;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxml4j.exceptions.InvalidFormatException;
+import org.openxml4j.exceptions.OpenXML4JException;
 import org.openxml4j.opc.Package;
 import org.openxml4j.opc.PackagePart;
 import org.openxml4j.opc.PackagePartName;
+import org.openxml4j.opc.PackageRelationship;
 import org.openxml4j.opc.PackageRelationshipTypes;
 import org.openxml4j.opc.PackagingURIHelper;
 import org.openxml4j.opc.TargetMode;
@@ -45,6 +49,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBookViews;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbook;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.WorkbookDocument;
 
 
 public class XSSFWorkbook implements Workbook {
@@ -52,6 +57,9 @@ public class XSSFWorkbook implements Workbook {
     private CTWorkbook workbook;
     
     private List<XSSFSheet> sheets = new LinkedList<XSSFSheet>();
+    
+    /** The OPC Package */
+    private Package pkg;
 
     public XSSFWorkbook() {
         this.workbook = CTWorkbook.Factory.newInstance();
@@ -61,6 +69,26 @@ public class XSSFWorkbook implements Workbook {
         this.workbook.addNewSheets();
     }
     
+    public XSSFWorkbook(String path) throws IOException {
+        try {
+            this.pkg = Package.open(path);
+            PackageRelationship coreDocRelationship = this.pkg.getRelationshipsByType(
+                    PackageRelationshipTypes.CORE_DOCUMENT).getRelationship(0);
+        
+            // Get core part
+            PackagePart corePart = this.pkg.getPart(coreDocRelationship);
+            WorkbookDocument doc = WorkbookDocument.Factory.parse(corePart.getInputStream());
+            this.workbook = doc.getWorkbook();
+            
+        } catch (InvalidFormatException e) {
+            throw new IOException(e.toString());
+        } catch (OpenXML4JException e) {
+            throw new IOException(e.toString());
+        } catch (XmlException e) {
+            throw new IOException(e.toString());
+        }
+    }
+
     protected CTWorkbook getWorkbook() {
         return this.workbook;
     }
