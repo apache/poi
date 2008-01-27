@@ -33,6 +33,8 @@
 	<!-- Don't forget to update changes.xml too! -->
     <changes>
         <release version="3.0.2-FINAL" date="2008-??-??">
+            <action dev="POI-DEVELOPERS" type="fix">44297 - IntPtg must operate with unsigned short. Reading signed short results in incorrect formula calculation</action>
+            <action dev="POI-DEVELOPERS" type="fix">44296 - Fix for reading slide background images</action>
             <action dev="POI-DEVELOPERS" type="fix">44293 - Avoid swapping AreaPtgs from relative to absolute</action>
             <action dev="POI-DEVELOPERS" type="fix">44292 - Correctly process the last paragraph in a word file</action>
             <action dev="POI-DEVELOPERS" type="fix">44254 - Avoid some unread byte warnings, and properly understand DVALRecord</action>
