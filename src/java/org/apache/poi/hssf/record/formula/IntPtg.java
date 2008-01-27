@@ -40,7 +40,7 @@ public class IntPtg
 {
     public final static int  SIZE = 3;
     public final static byte sid  = 0x1e;
-    private short            field_1_value;
+    private int            field_1_value;
   
     private IntPtg() {
       //Required for clone methods
@@ -48,42 +48,31 @@ public class IntPtg
 
     public IntPtg(RecordInputStream in)
     {
-        setValue(in.readShort());
+        setValue(in.readUShort());
     }
     
     
     // IntPtg should be able to create itself, shouldnt have to call setValue
     public IntPtg(String formulaToken) {
-        setValue(Short.parseShort(formulaToken));
+        setValue(Integer.parseInt(formulaToken));
     }
 
     /**
      * Sets the wrapped value.
      * Normally you should call with a positive int.
      */
-    public void setValue(short value)
-    {
-        field_1_value = value;
-    }
-
-    /**
-     * Sets the unsigned value.
-     * (Handles conversion to the internal short value) 
-     */
     public void setValue(int value)
     {
-    	if(value > Short.MAX_VALUE) {
-    		// Need to wrap
-    		value -= (Short.MAX_VALUE+1)*2;
-    	}
-    	field_1_value = (short)value;
+        if(value < 0 || value > (Short.MAX_VALUE + 1)*2 )
+            throw new IllegalArgumentException("Unsigned short is out of range: " + value);
+        field_1_value = value;
     }
 
     /**
      * Returns the value as a short, which may have
      *  been wrapped into negative numbers
      */
-    public short getValue()
+    public int getValue()
     {
         return field_1_value;
     }
@@ -102,7 +91,7 @@ public class IntPtg
     public void writeBytes(byte [] array, int offset)
     {
         array[ offset + 0 ] = sid;
-        LittleEndian.putShort(array, offset + 1, getValue());
+        LittleEndian.putUShort(array, offset + 1, getValue());
     }
 
     public int getSize()

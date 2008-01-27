@@ -379,15 +379,16 @@ public class TestFormulaParser extends TestCase {
 		fp = new FormulaParser("40000", null);
 		fp.parse();
 		ptg=fp.getRPNPtg();
-		assertTrue("ptg should be  Number, is "+ptg[0].getClass(), ptg[0] instanceof NumberPtg);
+		assertTrue("ptg should be  IntPtg, is "+ptg[0].getClass(), ptg[0] instanceof IntPtg);
 	}
+
 	/** bug 33160, testcase by Amol Deshmukh*/
 	public void testSimpleLongFormula() {
 		        FormulaParser fp = new FormulaParser("40000/2", null);
 		        fp.parse();
 		        Ptg[] ptgs = fp.getRPNPtg();
 		        assertTrue("three tokens expected, got "+ptgs.length,ptgs.length == 3);
-		        assertTrue("NumberPtg",(ptgs[0] instanceof NumberPtg));
+		        assertTrue("IntPtg",(ptgs[0] instanceof IntPtg));
 		        assertTrue("IntPtg",(ptgs[1] instanceof IntPtg));
 		        assertTrue("DividePtg",(ptgs[2] instanceof DividePtg));
 	}
