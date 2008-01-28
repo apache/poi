@@ -1013,11 +1013,9 @@ extends TestCase {
 	/**
 	 * Bug 42618: RecordFormatException reading a file containing
 	 * 	=CHOOSE(2,A2,A3,A4)
+	 * TODO - support getCellFormula too!
 	 */
     public void test42618() throws Exception {
-        //Comment the test until we are sure it passes.
-        // Yegor, January 25, 2008
-        /*
         FileInputStream in = new FileInputStream(new File(cwd, "SimpleWithChoose.xls"));
         HSSFWorkbook wb = new HSSFWorkbook(in);
         in.close();
@@ -1031,7 +1029,23 @@ extends TestCase {
 
         wb = new HSSFWorkbook(new ByteArrayInputStream(out.toByteArray()));
         assertTrue("No Exceptions while reading file", true);
-        */
+        
+        // Check we detect the string properly too
+        HSSFSheet s = wb.getSheetAt(0);
+        
+        // Textual value
+        HSSFRow r1 = s.getRow(0);
+        HSSFCell c1 = r1.getCell((short)1);
+        assertEquals("=CHOOSE(2,A2,A3,A4)", c1.getRichStringCellValue().toString());
+        
+        // Formula Value
+        HSSFRow r2 = s.getRow(1);
+        HSSFCell c2 = r2.getCell((short)1);
+        assertEquals(25, (int)c2.getNumericCellValue());
+        
+        // This will blow up with a 
+        //  "EmptyStackException"
+        //assertEquals("=CHOOSE(2,A2,A3,A4)", c2.getCellFormula());
     }
 }
 
