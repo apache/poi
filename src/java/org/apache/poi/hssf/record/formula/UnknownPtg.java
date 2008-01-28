@@ -28,7 +28,7 @@ import org.apache.poi.hssf.record.RecordInputStream;
 public class UnknownPtg
     extends Ptg
 {
-    private short size;
+    private short size = 1;
 
     /** Creates new UnknownPtg */
 

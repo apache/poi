@@ -34,11 +34,10 @@ public class ConcatPtg
     public final static byte sid  = 0x08;
     
     private final static String CONCAT = "&";
-
+    
     public ConcatPtg(RecordInputStream in)
     {
-
-        // doesn't need anything
+    	// No contents
     }
     
     public ConcatPtg() {
