@@ -35,7 +35,11 @@
     </devs>
 
 		<!-- Don't forget to update status.xml too! -->
-        <release version="3.0.2-FINAL" date="2008-??-??">
+        <release version="3.1-beta1" date="2008-??-??">
+           <!-- an action tag is requered to keep Forrest quite.  --> 
+           <action dev="POI-DEVELOPERS" type="fix">...</action>
+        </release>
+        <release version="3.0.2-FINAL" date="2008-02-04">
             <action dev="POI-DEVELOPERS" type="fix">44297 - IntPtg must operate with unsigned short. Reading signed short results in incorrect formula calculation</action>
             <action dev="POI-DEVELOPERS" type="fix">44296 - Fix for reading slide background images</action>
             <action dev="POI-DEVELOPERS" type="fix">44293 - Avoid swapping AreaPtgs from relative to absolute</action>
