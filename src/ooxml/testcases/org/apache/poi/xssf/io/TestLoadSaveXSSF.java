@@ -17,7 +17,7 @@
 
 package org.apache.poi.xssf.io;
 
-import java.net.URL;
+import java.io.File;
 
 import junit.framework.TestCase;
 
@@ -25,10 +25,16 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 
 public class TestLoadSaveXSSF extends TestCase {
+
+    String filename;
+
+    protected void setUp() throws Exception {
+        super.setUp();
+        filename = System.getProperty("HSSF.testdata.path");
+    }
     
     public void testLoadSample() throws Exception {
-        URL url = this.getClass().getResource("sample.xlsx");
-        XSSFWorkbook workbook = new XSSFWorkbook(url.getFile());
+        XSSFWorkbook workbook = new XSSFWorkbook(new File(filename, "sample.xlsx").getAbsolutePath());
         assertEquals(3, workbook.getNumberOfSheets());
         assertEquals("Sheet1", workbook.getSheetName(0));
     }
