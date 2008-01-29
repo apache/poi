@@ -32,13 +32,18 @@ import org.apache.poi.ss.usermodel.PrintSetup;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.helpers.ColumnHelper;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBreak;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHeaderFooter;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageBreak;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageMargins;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageSetUpPr;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSelection;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetFormatPr;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetPr;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetView;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetViews;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
@@ -50,6 +55,13 @@ public class XSSFSheet implements Sheet {
     private CTWorksheet worksheet;
     private List<Row> rows;
     private ColumnHelper columnHelper;
+
+    public static final short LeftMargin = 0;
+    public static final short RightMargin = 1;
+    public static final short TopMargin = 2;
+    public static final short BottomMargin = 3;
+    public static final short HeaderMargin = 4;
+    public static final short FooterMargin = 5;
     
     public XSSFSheet(CTSheet sheet) {
         this.sheet = sheet;
@@ -86,6 +98,11 @@ public class XSSFSheet implements Sheet {
         CTHeaderFooter hf = this.worksheet.addNewHeaderFooter();
         hf.setOddHeader("&amp;C&amp;A");
         hf.setOddFooter("&amp;C&amp;\"Arial\"&amp;10Page &amp;P");
+        CTPageBreak rowBreaks = worksheet.addNewRowBreaks();
+        CTPageBreak columnBreak = worksheet.addNewColBreaks();
+        CTSheetPr sheetPr = worksheet.addNewSheetPr();
+        CTPageSetUpPr sheetPageSetUpPr = sheetPr.addNewPageSetUpPr();
+        CTPageMargins pageMargins = worksheet.addNewPageMargins();
         columnHelper = new ColumnHelper(worksheet);
     }
 
@@ -172,8 +189,7 @@ public class XSSFSheet implements Sheet {
     }
 
     public boolean getAutobreaks() {
-        // TODO Auto-generated method stub
-        return false;
+        return worksheet.getSheetPr().getPageSetUpPr().getAutoPageBreaks();
     }
 
     public Comment getCellComment(int row, int column) {
@@ -182,24 +198,32 @@ public class XSSFSheet implements Sheet {
     }
 
     public short[] getColumnBreaks() {
-        // TODO Auto-generated method stub
-        return null;
+        CTBreak[] brkArray = worksheet.getColBreaks().getBrkArray();
+        if (brkArray.length == 0) {
+            return null;
+        }
+        short[] breaks = new short[brkArray.length];
+        for (int i = 0 ; i < brkArray.length ; i++) {
+            CTBreak brk = brkArray[i];
+            breaks[i] = (short) brk.getId();
+        }
+        return breaks;
     }
 
     public short getColumnWidth(short column) {
-    	return (short) columnHelper.getColumn(column).getWidth();
+        return (short) columnHelper.getColumn(column).getWidth();
     }
 
     public short getDefaultColumnWidth() {
-    	return (short) this.worksheet.getSheetFormatPr().getDefaultColWidth();
+        return (short) this.worksheet.getSheetFormatPr().getDefaultColWidth();
     }
 
     public short getDefaultRowHeight() {
-    	return (short) (this.worksheet.getSheetFormatPr().getDefaultRowHeight() * 20);
+        return (short) (this.worksheet.getSheetFormatPr().getDefaultRowHeight() * 20);
     }
 
     public float getDefaultRowHeightInPoints() {
-    	return (short) this.worksheet.getSheetFormatPr().getDefaultRowHeight();
+        return (short) this.worksheet.getSheetFormatPr().getDefaultRowHeight();
     }
 
     public boolean getDialog() {
@@ -213,13 +237,17 @@ public class XSSFSheet implements Sheet {
     }
 
     public int getFirstRowNum() {
-        // TODO Auto-generated method stub
-        return 0;
+        for (Iterator<Row> it = rowIterator() ; it.hasNext() ; ) {
+            Row row = it.next();
+            if (row != null) {
+                return row.getRowNum();
+            }
+        }
+        return -1;
     }
 
     public boolean getFitToPage() {
-        // TODO Auto-generated method stub
-        return false;
+        return worksheet.getSheetPr().getPageSetUpPr().getFitToPage();
     }
 
     public Footer getFooter() {
@@ -238,8 +266,14 @@ public class XSSFSheet implements Sheet {
     }
 
     public int getLastRowNum() {
-        // TODO Auto-generated method stub
-        return 0;
+        int lastRowNum = -1;
+        for (Iterator<Row> it = rowIterator() ; it.hasNext() ; ) {
+            Row row = it.next();
+            if (row != null) {
+                lastRowNum = row.getRowNum();
+            }
+        }
+        return lastRowNum;
     }
 
     public short getLeftCol() {
@@ -248,8 +282,23 @@ public class XSSFSheet implements Sheet {
     }
 
     public double getMargin(short margin) {
-        // TODO Auto-generated method stub
-        return 0;
+    	CTPageMargins pageMargins = worksheet.getPageMargins();
+    	switch (margin) {
+    	case LeftMargin:
+    		return pageMargins.getLeft();
+    	case RightMargin:
+    		return pageMargins.getRight();
+    	case TopMargin:
+    		return pageMargins.getTop();
+    	case BottomMargin:
+    		return pageMargins.getBottom();
+    	case HeaderMargin:
+    		return pageMargins.getHeader();
+    	case FooterMargin:
+    		return pageMargins.getFooter();
+    	default :
+    		throw new RuntimeException( "Unknown margin constant:  " + margin );
+    	}
     }
 
     public Region getMergedRegionAt(int index) {
@@ -278,8 +327,13 @@ public class XSSFSheet implements Sheet {
     }
 
     public int getPhysicalNumberOfRows() {
-        // TODO Auto-generated method stub
-        return 0;
+        int counter = 0;
+        for (Iterator<Row> it = rowIterator() ; it.hasNext() ; ) {
+            if (it.next() != null) {
+                counter++;
+            }
+        }
+        return counter;
     }
 
     public PrintSetup getPrintSetup() {
@@ -303,8 +357,17 @@ public class XSSFSheet implements Sheet {
     }
 
     public int[] getRowBreaks() {
-        // TODO Auto-generated method stub
-        return null;
+        CTPageBreak rowBreaks = worksheet.getRowBreaks();
+        int breaksCount = rowBreaks.getBrkArray().length;
+        if (breaksCount == 0) {
+            return null;
+        }
+        int[] breaks = new int[breaksCount];
+        for (int i = 0 ; i < breaksCount ; i++) {
+            CTBreak brk = rowBreaks.getBrkArray(i);
+            breaks[i] = (int) brk.getId();
+        }
+        return breaks;
     }
 
     public boolean getRowSumsBelow() {
@@ -343,13 +406,17 @@ public class XSSFSheet implements Sheet {
     }
 
     public boolean isColumnBroken(short column) {
-        // TODO Auto-generated method stub
+        CTBreak[] brkArray = worksheet.getColBreaks().getBrkArray();
+        for (int i = 0 ; i < brkArray.length ; i++) {
+            if (brkArray[i].getId() == column) {
+                return true;
+            }
+        }
         return false;
     }
 
     public boolean isColumnHidden(short column) {
-        // TODO Auto-generated method stub
-        return false;
+        return columnHelper.getColumn(column).getHidden();
     }
 
     public boolean isDisplayFormulas() {
@@ -378,7 +445,15 @@ public class XSSFSheet implements Sheet {
     }
 
     public boolean isRowBroken(int row) {
-        // TODO Auto-generated method stub
+        int[] rowBreaks = getRowBreaks();
+        if (rowBreaks == null) {
+            return false;
+        }
+        for (int i = 0 ; i < rowBreaks.length ; i++) {
+            if (rowBreaks[i] == row) {
+                return true;
+            }
+        }
         return false;
     }
 
@@ -388,8 +463,13 @@ public class XSSFSheet implements Sheet {
     }
 
     public void removeColumnBreak(short column) {
-        // TODO Auto-generated method stub
-
+        CTBreak[] brkArray = worksheet.getColBreaks().getBrkArray();
+        for (int i = 0 ; i < brkArray.length ; i++) {
+            if (brkArray[i].getId() == column) {
+                worksheet.getColBreaks().removeBrk(i);
+                continue;
+            }
+        }
     }
 
     public void removeMergedRegion(int index) {
@@ -398,13 +478,25 @@ public class XSSFSheet implements Sheet {
     }
 
     public void removeRow(Row row) {
-        // TODO Auto-generated method stub
-
+        int counter = 0;
+        for (Iterator<Row> it = rowIterator() ; it.hasNext() ; ) {
+            Row r = it.next();
+            if (r.getRowNum() == row.getRowNum()) {
+                it.remove();
+                worksheet.getSheetData().removeRow(counter);
+            }
+            counter++;
+        }
     }
 
     public void removeRowBreak(int row) {
-        // TODO Auto-generated method stub
-
+        CTBreak[] brkArray = worksheet.getRowBreaks().getBrkArray();
+        for (int i = 0 ; i < brkArray.length ; i++) {
+            if (brkArray[i].getId() == row) {
+                worksheet.getRowBreaks().removeBrk(i);
+                continue;
+            }
+        }
     }
 
     public Iterator<Row> rowIterator() {
@@ -422,13 +514,14 @@ public class XSSFSheet implements Sheet {
     }
 
     public void setAutobreaks(boolean b) {
-        // TODO Auto-generated method stub
-
+        worksheet.getSheetPr().getPageSetUpPr().setAutoPageBreaks(b);
     }
 
     public void setColumnBreak(short column) {
-        // TODO Auto-generated method stub
-
+        if (! isColumnBroken(column)) {
+            CTBreak brk = worksheet.getColBreaks().addNewBrk();
+            brk.setId(column);
+        }
     }
 
     public void setColumnGroupCollapsed(short columnNumber, boolean collapsed) {
@@ -437,16 +530,19 @@ public class XSSFSheet implements Sheet {
     }
 
     public void setColumnHidden(short column, boolean hidden) {
-        // TODO Auto-generated method stub
-
+        CTCol col = columnHelper.getColumn(column);
+        if (col == null) {
+            col = columnHelper.createColumn(column);
+        }
+        col.setHidden(hidden);
     }
 
     public void setColumnWidth(short column, short width) {
-    	CTCol col = columnHelper.getColumn(column);
-    	if (col == null) {
-    		col = columnHelper.createColumn(column);
-    	}
-    	col.setWidth(width);
+        CTCol col = columnHelper.getColumn(column);
+        if (col == null) {
+            col = columnHelper.createColumn(column);
+        }
+        col.setWidth(width);
     }
 
     public void setDefaultColumnStyle(short column, CellStyle style) {
@@ -455,16 +551,16 @@ public class XSSFSheet implements Sheet {
     }
 
     public void setDefaultColumnWidth(short width) {
-    	this.worksheet.getSheetFormatPr().setDefaultColWidth((double) width);
+        this.worksheet.getSheetFormatPr().setDefaultColWidth((double) width);
     }
 
     public void setDefaultRowHeight(short height) {
-    	this.worksheet.getSheetFormatPr().setDefaultRowHeight(height / 20);
+        this.worksheet.getSheetFormatPr().setDefaultRowHeight(height / 20);
 
     }
 
     public void setDefaultRowHeightInPoints(float height) {
-    	this.worksheet.getSheetFormatPr().setDefaultRowHeight(height);
+        this.worksheet.getSheetFormatPr().setDefaultRowHeight(height);
 
     }
 
@@ -494,8 +590,7 @@ public class XSSFSheet implements Sheet {
     }
 
     public void setFitToPage(boolean b) {
-        // TODO Auto-generated method stub
-
+        worksheet.getSheetPr().getPageSetUpPr().setFitToPage(b);
     }
 
     public void setGridsPrinted(boolean value) {
@@ -509,8 +604,21 @@ public class XSSFSheet implements Sheet {
     }
 
     public void setMargin(short margin, double size) {
-        // TODO Auto-generated method stub
-
+	    CTPageMargins pageMargins = worksheet.getPageMargins();
+	    switch (margin) {
+	    case LeftMargin:
+	    	pageMargins.setLeft(size);
+	    case RightMargin:
+	    	pageMargins.setRight(size);
+	    case TopMargin:
+	    	pageMargins.setTop(size);
+	    case BottomMargin:
+	    	pageMargins.setBottom(size);
+	    case HeaderMargin:
+	    	pageMargins.setHeader(size);
+	    case FooterMargin:
+	    	pageMargins.setFooter(size);
+	    }
     }
 
     public void setPrintGridlines(boolean newPrintGridlines) {
@@ -524,8 +632,11 @@ public class XSSFSheet implements Sheet {
     }
 
     public void setRowBreak(int row) {
-        // TODO Auto-generated method stub
-
+        CTPageBreak pageBreak = worksheet.getRowBreaks();
+        if (! isRowBroken(row)) {
+            CTBreak brk = pageBreak.addNewBrk();
+            brk.setId(row);
+        }
     }
 
     public void setRowGroupCollapsed(int row, boolean collapse) {
