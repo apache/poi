@@ -161,31 +161,37 @@ public class HSSFEventFactory
                     break;
 
 
+                // If we had a last record, and this one
+                //  isn't a continue record, then pass
+                //  it on to the listener
 				if ((rec != null) && (sid != ContinueRecord.sid))
 				{
 					userCode = req.processRecord(rec);
 					if (userCode != 0) break process;
 				}
+				
+				// If this record isn't a continue record,
+				//  then build it up
 				if (sid != ContinueRecord.sid)
 				{
-                                        //System.out.println("creating "+sid);
+					//System.out.println("creating "+sid);
 					Record[] recs = RecordFactory.createRecord(in);
 
-					if (recs.length > 1)
-					{                                // we know that the multiple
-						for (int k = 0; k < (recs.length - 1); k++)
-						{                            // record situations do not
+					// We know that the multiple record situations
+					//  don't contain continue records, so just
+					//  pass those on to the listener now
+					if (recs.length > 1) {
+						for (int k = 0; k < (recs.length - 1); k++)	{
 							userCode = req.processRecord(
-								recs[ k ]);          // contain continue records
+								recs[ k ]);
 							if (userCode != 0) break process;
 						}
 					}
-					rec = recs[ recs.length - 1 ];   // regardless we'll process
-
-					// the last record as though
-					// it might be continued
-					// if there is only one
-					// records, it will go here too.
+					
+					// Regardless of the number we created, always hold
+					//  onto the last record to be processed on the next
+					//  loop, in case it has any continue records
+					rec = recs[ recs.length - 1 ];
 				}
 				else {
 					// Normally, ContinueRecords are handled internally
@@ -220,18 +226,16 @@ public class HSSFEventFactory
 				if(rec instanceof DrawingRecord) {
 					lastDrawingRecord = (DrawingRecord)rec;
 				}
-			}
-			if (rec != null)
-			{
+			} // main while loop
+			
+			// Process the last record in the stream, if
+			//  it's still outstanding
+			if (rec != null) {
 				userCode = req.processRecord(rec);
 				if (userCode != 0) break process;
 			}
 		}
 		
 		return userCode;
-
-		// Record[] retval = new Record[ records.size() ];
-		// retval = ( Record [] ) records.toArray(retval);
-		// return null;
     }
 }
