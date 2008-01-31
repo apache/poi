@@ -33,6 +33,7 @@
 	<!-- Don't forget to update changes.xml too! -->
     <changes>
         <release version="3.1-beta1" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="add">Support for a completed Record based "pull" stream, via org.apache.poi.hssf.eventusermodel.HSSFRecordStream, to complement the existing "push" Event User Model listener stuff</action>
         </release>
         <release version="3.0.2-FINAL" date="2008-02-04">
             <action dev="POI-DEVELOPERS" type="fix">44297 - IntPtg must operate with unsigned short. Reading signed short results in incorrect formula calculation</action>
