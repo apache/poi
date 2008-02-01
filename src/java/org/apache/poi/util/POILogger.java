@@ -51,7 +51,24 @@ public abstract class POILogger
     
     abstract public void initialize(final String cat);
     
+    /**
+     * Log a message
+     *
+     * @param level One of DEBUG, INFO, WARN, ERROR, FATAL
+     * @param obj1 The object to log.  This is converted to a string.
+     */
     abstract public void log(final int level, final Object obj1);
+    
+    /**
+     * Log a message
+     *
+     * @param level One of DEBUG, INFO, WARN, ERROR, FATAL
+     * @param obj1 The object to log.  This is converted to a string.
+     * @param exception An exception to be logged
+     */
+    abstract public void log(final int level, final Object obj1,
+                    final Throwable exception);
+
 
     /**
      * Check if a logger is enabled to log at the specified level
@@ -237,17 +254,15 @@ public abstract class POILogger
     }
 
     /**
-     * Log a message
+     * Log an exception, without a message
      *
      * @param level One of DEBUG, INFO, WARN, ERROR, FATAL
-     * @param obj1 The object to log.  This is converted to a string.
      * @param exception An exception to be logged
      */
 
-    public void log(final int level, final Object obj1,
-                    final Throwable exception)
+    public void log(final int level, final Throwable exception)
     {
-        log(level , obj1, exception);
+        log(level, null, exception);
     }
 
     /**
