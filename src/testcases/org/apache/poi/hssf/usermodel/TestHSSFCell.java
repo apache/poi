@@ -19,25 +19,20 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import junit.framework.TestCase;
-
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.hssf.model.Sheet;
-import org.apache.poi.hssf.record.Record;
-import org.apache.poi.hssf.record.BOFRecord;
-import org.apache.poi.hssf.record.EOFRecord;
-import org.apache.poi.hssf.util.CellReference;
-import org.apache.poi.hssf.util.HSSFColor;
-import org.apache.poi.util.TempFile;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-
-import java.util.List;
-import java.util.Iterator;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
+
+import junit.framework.TestCase;
+
+import org.apache.poi.hssf.model.Sheet;
+import org.apache.poi.hssf.record.HyperlinkRecord;
+import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.util.TempFile;
 
 /**
  * Tests various functionity having to do with HSSFCell.  For instance support for
@@ -310,10 +305,75 @@ extends TestCase {
             in.close();
     }    
     
-    public void testWithHyperlinks() throws Exception {
+    public void BROKENtestWithHyperlink() throws Exception {
         String dir = System.getProperty("HSSF.testdata.path");
         File f = new File(dir, "WithHyperlink.xls");
     	HSSFWorkbook wb = new HSSFWorkbook(new FileInputStream(f));
+    	
+    	assertEquals(3, wb.getNumberOfSheets());
+    	
+    	// Find our hyperlink record, and check they're
+    	//  as we'd expect
+    	List records = wb.getWorkbook().getHyperlinks();
+    	assertEquals(1, records.size());
+    	
+    	HyperlinkRecord link = (HyperlinkRecord)
+    		records.get(0);
+    	assertNotNull(link);
+    	
+    	// Is in A5
+    	assertEquals("Foo", link.getLabel());
+    	assertEquals("http://poi.apache.org/", link.getUrlString());
+    	assertEquals(4, link.getRow());
+    	assertEquals(0, link.getColumn());
+    	
+    	// Now check at the HSSFCell level
+    	assertEquals(3, wb.getNumberOfSheets());
+    	
+    	HSSFSheet s = wb.getSheetAt(1);
+    	HSSFRow r = s.getRow(4);
+    	assertNotNull(r);
+    	HSSFCell c = r.getCell((short)0);
+    }
+    
+    public void BROKENtestWithTwoHyperlinks() throws Exception {
+        String dir = System.getProperty("HSSF.testdata.path");
+        File f = new File(dir, "WithTwoHyperLinks.xls");
+    	HSSFWorkbook wb = new HSSFWorkbook(new FileInputStream(f));
+    	
+    	assertEquals(3, wb.getNumberOfSheets());
+    	
+    	// Find our hyperlink record, and check they're
+    	//  as we'd expect
+    	List records = wb.getWorkbook().getHyperlinks();
+    	assertEquals(2, records.size());
+    	
+    	HyperlinkRecord linkA = (HyperlinkRecord)
+    		records.get(0);
+    	HyperlinkRecord linkB = (HyperlinkRecord)
+			records.get(1);
+    	assertNotNull(linkA);
+    	assertNotNull(linkB);
+    	
+    	// Is in A5
+    	assertEquals("Foo", linkA.getLabel());
+    	assertEquals("http://poi.apache.org/", linkA.getUrlString());
+    	assertEquals(4, linkA.getRow());
+    	assertEquals(0, linkA.getColumn());
+    	
+    	// Is in B9
+    	assertEquals("Bar", linkB.getLabel());
+    	assertEquals("http://poi.apache.org/", linkB.getUrlString());
+    	assertEquals(8, linkB.getRow());
+    	assertEquals(1, linkB.getColumn());
+    	
+    	// Now check at the HSSFCell level
+    	assertEquals(3, wb.getNumberOfSheets());
+    	
+    	HSSFSheet s = wb.getSheetAt(1);
+    	HSSFRow r = s.getRow(4);
+    	assertNotNull(r);
+    	HSSFCell c = r.getCell((short)0);
     }
     
     /*tests the toString() method of HSSFCell*/

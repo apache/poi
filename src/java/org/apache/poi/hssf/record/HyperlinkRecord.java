@@ -14,11 +14,6 @@
  limitations under the License.
  ==================================================================== */
 
-/*
- * HyperlinkRecord
- *
- * Created on February 20th, 2005, 16:00 PM
- */
 package org.apache.poi.hssf.record;
 
 import java.io.IOException;
@@ -27,20 +22,15 @@ import java.net.URL;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
 
-/**The <code>HyperlinkRecord</code> wraps an HLINK-record from the Excel-97 format 
+/**
+ * The <code>HyperlinkRecord</code> wraps an HLINK-record 
+ *  from the Excel-97 format.
+ * Supports only external links for now (eg http://) 
  *
- * @version     20-feb-2005
  * @author      Mark Hissink Muller <a href="mailto:mark@hissinkmuller.nl >mark&064;hissinkmuller.nl</a>
- *
- * Version by   date     changes
- * ------- ---  -------- -------
- * 0.1     MHM  20022005 draft version; need to fix serialize and getRecordSize()
- * 
- * 1.0     MHM  20022005 (Initial version; only aims to support internet URLs (e.g. http://www.example.com) ) - added 31-08-07: AFAIK, this file is NOT functional/working. Please let me know if you turn it into something that does work.
  */
 public class HyperlinkRecord extends Record implements CellValueRecordInterface
 {
@@ -60,10 +50,10 @@ public class HyperlinkRecord extends Record implements CellValueRecordInterface
 
     public final static short sid = 0x1b8;
 
-    private int field_1_row;
-    private short field_2_column;
-    private short field_3_xf_index;
-    private short field_4_unknown;
+    private short field_1_unknown;
+    private int field_2_row;
+    private short field_3_column;
+    private short field_4_xf_index;
     private byte[] field_5_unknown;
     private int field_6_label_opts;
     private int field_7_url_len;
@@ -89,7 +79,7 @@ public class HyperlinkRecord extends Record implements CellValueRecordInterface
      */
     public short getColumn()
     {
-        return field_2_column;
+        return field_3_column;
     }
 
     /* (non-Javadoc)
@@ -97,7 +87,7 @@ public class HyperlinkRecord extends Record implements CellValueRecordInterface
      */
     public int getRow()
     {
-        return field_1_row;
+        return field_2_row;
     }
 
     /* (non-Javadoc)
@@ -105,7 +95,7 @@ public class HyperlinkRecord extends Record implements CellValueRecordInterface
      */
     public short getXFIndex()
     {
-        return field_3_xf_index;
+        return field_4_xf_index;
     }
 
     /* (non-Javadoc)
@@ -161,7 +151,7 @@ public class HyperlinkRecord extends Record implements CellValueRecordInterface
      */
     public void setColumn(short col)
     {
-        this.field_2_column = col;
+        this.field_3_column = col;
 
     }
 
@@ -170,7 +160,7 @@ public class HyperlinkRecord extends Record implements CellValueRecordInterface
      */
     public void setRow(int row)
     {
-        this.field_1_row = row;
+        this.field_2_row = row;
 
     }
 
@@ -179,7 +169,7 @@ public class HyperlinkRecord extends Record implements CellValueRecordInterface
      */
     public void setXFIndex(short xf)
     {
-        this.field_3_xf_index = xf;
+        this.field_4_xf_index = xf;
 
     }
 
@@ -196,10 +186,10 @@ public class HyperlinkRecord extends Record implements CellValueRecordInterface
 //    	if(1==1)
 //    		throw new IllegalArgumentException("");
     	
-        field_1_row = in.readUShort(); 
-        field_2_column = in.readShort();
-        field_3_xf_index = in.readShort();
-        field_4_unknown = in.readShort();
+        field_1_unknown = in.readShort();
+        field_2_row = in.readUShort(); 
+        field_3_column = in.readShort();
+        field_4_xf_index = in.readShort();
         
         // Next up is 16 bytes we don't get
         field_5_unknown = new byte[16];
@@ -256,10 +246,10 @@ public class HyperlinkRecord extends Record implements CellValueRecordInterface
         LittleEndian.putShort(data, 0 + offset, sid);
         LittleEndian.putShort(data, 2 + offset,
                               ( short )(getRecordSize()-4));
-        LittleEndian.putUShort(data, 4 + offset, field_1_row);
-        LittleEndian.putShort(data, 6 + offset, field_2_column);
-        LittleEndian.putShort(data, 8 + offset, field_3_xf_index);
-        LittleEndian.putShort(data, 10 + offset, field_4_unknown);
+        LittleEndian.putShort(data, 4 + offset, field_1_unknown);
+        LittleEndian.putUShort(data, 6 + offset, field_2_row);
+        LittleEndian.putShort(data, 8 + offset, field_3_column);
+        LittleEndian.putShort(data, 10 + offset, field_4_xf_index);
         
         offset += 12;
         for(int i=0; i<field_5_unknown.length; i++) {
