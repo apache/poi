@@ -56,6 +56,37 @@ public class TestHyperlinkRecord extends TestCase {
 		0, 110, 0, 103, 0, 115, 0, 46, 0, 99, 0, 111, 0,
 		109, 0, 
 		0, 0 };
+	
+	private byte[] data2 = new byte[] {
+		-72, 1, -126, 0,
+		// Row, col, xf, ??
+		2, 0, 2, 0, 4, 0, 4, 0,
+
+		// ??
+		-48, -55, -22, 121, -7, -70, -50, 17,
+		-116, -126, 0, -86, 0, 75, -87, 11,
+		2, 0, 0, 0,
+		
+		// URL and Label lengths
+		23, 0, 0, 0,
+		15, 0, 0, 0,
+
+		// Label
+		83, 0, 116, 0, 97, 0, 99, 0, 105, 0,
+		101, 0, 64, 0, 65, 0, 66, 0, 67, 0,
+		46, 0, 99, 0, 111, 0, 109, 0, 0, 0,
+
+		// ??
+		-32, -55, -22, 121, -7, -70, -50, 17,
+		-116, -126, 0, -86, 0, 75, -87, 11,
+		44, 0, 0, 0,
+
+		// URL
+		109, 0, 97, 0, 105, 0, 108, 0, 116, 0,
+		111, 0, 58, 0, 83, 0, 116, 0, 97, 0,
+		99, 0, 105, 0, 101, 0, 64, 0, 65, 0,
+		66, 0, 67, 0, 46, 0, 99, 0, 111, 0,
+		109, 0, 0, 0 };
 
 	public void testRecordParsing() throws Exception {
         RecordInputStream inp = new RecordInputStream(
@@ -80,5 +111,21 @@ public class TestHyperlinkRecord extends TestCase {
         for(int i=0; i<data.length; i++) {
         	assertEquals(data[i], d[i]);
         }
+	}
+
+	public void testSecondRecord() throws Exception {
+        RecordInputStream inp = new RecordInputStream(
+                new ByteArrayInputStream(data2)
+        );
+        inp.nextRecord();
+
+        HyperlinkRecord r = new HyperlinkRecord(inp);
+        
+        assertEquals(2, r.getRow());
+        assertEquals(2, r.getColumn());
+        assertEquals(4, r.getXFIndex());
+        
+		assertEquals("Stacie@ABC.com", r.getLabel());
+		assertEquals("mailto:Stacie@ABC.com", r.getUrlString());
 	}
 }
