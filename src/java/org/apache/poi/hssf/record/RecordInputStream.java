@@ -249,7 +249,7 @@ public class RecordInputStream extends InputStream
    */  
   public String readUnicodeLEString(int length) {
     if ((length < 0) || (((remaining() / 2) < length) && !isContinueNext())) {
-            throw new IllegalArgumentException("Illegal length");
+            throw new IllegalArgumentException("Illegal length - asked for " + length + " but only " + (remaining()/2) + " left!");
     }
 
     StringBuffer buf = new StringBuffer(length);

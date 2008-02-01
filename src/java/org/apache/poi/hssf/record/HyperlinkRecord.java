@@ -65,11 +65,13 @@ public class HyperlinkRecord extends Record implements CellValueRecordInterface
     private short field_3_xf_index;
     private short field_4_unknown;
     private byte[] field_5_unknown;
-    private int field_6_url_len;
-    private int field_7_label_len;
-    private String field_8_label;
-    private byte[] field_9_unknown;
-    private String field_10_url;
+    private int field_6_label_opts;
+    private int field_7_url_len;
+    private int field_8_label_len;
+    private String field_9_label;
+    private byte[] field_10_unknown;
+    private int field_11_url_opts;
+    private String field_12_url;
 
     /** Blank Constructor */
     public HyperlinkRecord()
@@ -186,33 +188,51 @@ public class HyperlinkRecord extends Record implements CellValueRecordInterface
      */
     protected void fillFields(RecordInputStream in)
     {
+//    	System.err.println(in.currentSid);
+//    	System.err.println(in.currentLength);
+//    	for(int i=0; i<300; i++) {
+//    		System.err.println(in.readByte());
+//    	}
+//    	if(1==1)
+//    		throw new IllegalArgumentException("");
+    	
         field_1_row = in.readUShort(); 
         field_2_column = in.readShort();
         field_3_xf_index = in.readShort();
         field_4_unknown = in.readShort();
         
-        // Next up is 20 bytes we don't get
-        field_5_unknown = new byte[20];
+        // Next up is 16 bytes we don't get
+        field_5_unknown = new byte[16];
         try {
         in.read(field_5_unknown);
         } catch(IOException e) { throw new IllegalStateException(e); }
         
+        // Some sort of opts
+        field_6_label_opts = in.readInt();
+        
         // Now for lengths, in characters
-        field_6_url_len = in.readInt();
-        field_7_label_len = in.readInt();
+        field_7_url_len = in.readInt();
+        field_8_label_len = in.readInt();
         
         // Now we have the label, as little endian unicode,
         //  with a trailing \0
-        field_8_label = in.readUnicodeLEString(field_7_label_len);
+        field_9_label = in.readUnicodeLEString(field_8_label_len);
         
         // Next up is some more data we can't make sense of
-        field_9_unknown = new byte[20];
+        field_10_unknown = new byte[16];
         try {
-        in.read(field_9_unknown);
+        in.read(field_10_unknown);
         } catch(IOException e) { throw new IllegalStateException(e); }
         
+        // Might need to nudge the length by one byte
+        // This is an empirical hack!
+        field_11_url_opts = in.readInt();
+        if(field_11_url_opts == 44) {
+        	field_7_url_len--;
+        }
+        
         // Finally it's the URL
-        field_10_url = in.readUnicodeLEString(field_6_url_len);
+        field_12_url = in.readUnicodeLEString(field_7_url_len);
     }
     
     /* (non-Javadoc)
@@ -247,19 +267,23 @@ public class HyperlinkRecord extends Record implements CellValueRecordInterface
         	offset++;
         }
         
-        LittleEndian.putInt(data, offset, field_6_url_len);
+        LittleEndian.putInt(data, offset, field_6_label_opts);
         offset += 4;
-        LittleEndian.putInt(data, offset, field_7_label_len);
+        LittleEndian.putInt(data, offset, field_7_url_len);
         offset += 4;
-        StringUtil.putUnicodeLE(field_8_label, data, offset);
-        offset += field_8_label.length()*2;
+        LittleEndian.putInt(data, offset, field_8_label_len);
+        offset += 4;
+        StringUtil.putUnicodeLE(field_9_label, data, offset);
+        offset += field_9_label.length()*2;
 
-        for(int i=0; i<field_9_unknown.length; i++) {
-        	data[offset] = field_9_unknown[i];
+        for(int i=0; i<field_10_unknown.length; i++) {
+        	data[offset] = field_10_unknown[i];
         	offset++;
         }
     	
-        StringUtil.putUnicodeLE(field_10_url, data, offset);
+        LittleEndian.putInt(data, offset, field_11_url_opts);
+        offset += 4;
+        StringUtil.putUnicodeLE(field_12_url, data, offset);
         
     	return getRecordSize();
     }
@@ -269,14 +293,15 @@ public class HyperlinkRecord extends Record implements CellValueRecordInterface
     	// We have:
     	// 4 shorts
     	// junk
-    	// 2 ints
+    	// 3 ints
     	// label
     	// junk
+    	// int
     	// url
     	return 4 + 4*2 + field_5_unknown.length +
-    		2*4 + field_8_label.length()*2 +
-    		field_9_unknown.length +
-    		field_10_url.length()*2;
+    		3*4 + field_9_label.length()*2 +
+    		field_10_unknown.length + 4 +
+    		field_12_url.length()*2;
     }
 
     public String toString()
@@ -287,8 +312,8 @@ public class HyperlinkRecord extends Record implements CellValueRecordInterface
         buffer.append("    .row            = ").append(Integer.toHexString(getRow())).append("\n");
         buffer.append("    .column         = ").append(Integer.toHexString(getColumn())).append("\n");
         buffer.append("    .xfindex        = ").append(Integer.toHexString(getXFIndex())).append("\n");
-        buffer.append("    .label          = ").append(field_8_label).append("\n");
-        buffer.append("    .url            = ").append(field_10_url).append("\n");
+        buffer.append("    .label          = ").append(field_9_label).append("\n");
+        buffer.append("    .url            = ").append(field_12_url).append("\n");
         buffer.append("[/HYPERLINK RECORD]\n");
         return buffer.toString();
     }
@@ -298,11 +323,11 @@ public class HyperlinkRecord extends Record implements CellValueRecordInterface
      */
     public String getLabel()
     {
-    	if(field_8_label.length() == 0) {
+    	if(field_9_label.length() == 0) {
     		return "";
     	} else {
     		// Trim off \0
-            return field_8_label.substring(0, field_8_label.length() - 1);
+            return field_9_label.substring(0, field_9_label.length() - 1);
     	}
     }
 
@@ -311,8 +336,8 @@ public class HyperlinkRecord extends Record implements CellValueRecordInterface
      */
     public void setLabel(String label)
     {
-        this.field_8_label = label + '\u0000';
-        this.field_7_label_len = field_8_label.length();
+        this.field_9_label = label + '\u0000';
+        this.field_8_label_len = field_9_label.length();
     }
 
     /**
@@ -324,11 +349,11 @@ public class HyperlinkRecord extends Record implements CellValueRecordInterface
     }
     public String getUrlString()
     {
-    	if(field_10_url.length() == 0) {
+    	if(field_12_url.length() == 0) {
     		return "";
     	} else {
     		// Trim off \0
-            return field_10_url.substring(0, field_10_url.length() - 1);
+            return field_12_url.substring(0, field_12_url.length() - 1);
     	}
     }
 
@@ -344,7 +369,7 @@ public class HyperlinkRecord extends Record implements CellValueRecordInterface
      */
     public void setUrl(String url)
     {
-        this.field_10_url = url + '\u0000';
-        this.field_6_url_len = field_10_url.length();
+        this.field_12_url = url + '\u0000';
+        this.field_7_url_len = field_12_url.length();
     }
 }

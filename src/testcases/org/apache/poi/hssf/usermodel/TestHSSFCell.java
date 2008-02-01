@@ -310,6 +310,12 @@ extends TestCase {
             in.close();
     }    
     
+    public void testWithHyperlinks() throws Exception {
+        String dir = System.getProperty("HSSF.testdata.path");
+        File f = new File(dir, "WithHyperlink.xls");
+    	HSSFWorkbook wb = new HSSFWorkbook(new FileInputStream(f));
+    }
+    
     /*tests the toString() method of HSSFCell*/
     public void testToString() throws Exception {
     	HSSFWorkbook wb = new HSSFWorkbook();
