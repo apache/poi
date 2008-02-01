@@ -26,6 +26,7 @@ import java.io.InputStream;
 
 import junit.framework.TestCase;
 
+import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 /**
@@ -34,7 +35,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
  *
  * @author Daniel Noll (daniel at nuix dot com dot au)
  */
-public class AbstractPtgTestCase extends TestCase
+public abstract class AbstractPtgTestCase extends TestCase
 {
     /** Directory containing the test data. */
     private static String dataDir = System.getProperty("HSSF.testdata.path");
@@ -46,7 +47,7 @@ public class AbstractPtgTestCase extends TestCase
      * @return the loaded workbook.
      * @throws IOException if an error occurs loading the workbook.
      */
-    protected static HSSFWorkbook loadWorkbook(String filename)
+    protected static final HSSFWorkbook loadWorkbook(String filename)
             throws IOException {
         File file = new File(dataDir, filename);
         InputStream stream = new BufferedInputStream(new FileInputStream(file));
@@ -59,4 +60,18 @@ public class AbstractPtgTestCase extends TestCase
             stream.close();
         }
     }
+    
+    /**
+     * Creates a new Workbook and adds one sheet with the specified name
+     */
+    protected static final Workbook createWorkbookWithSheet(String sheetName) {
+		
+		Workbook book = Workbook.createWorkbook();
+		// this creates sheet if it doesn't exist
+		book.checkExternSheet(0);
+		// TODO - this call alone does not create the sheet even though the javadoc says it does
+		book.setSheetName(0, sheetName); 
+		return book;
+	}
+    
 }
