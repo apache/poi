@@ -93,6 +93,8 @@ public class Workbook implements Model
     protected ArrayList        formats = new ArrayList();
 
     protected ArrayList        names = new ArrayList();
+    
+    protected ArrayList        hyperlinks = new ArrayList();
 
     protected int              numxfs      = 0;   // hold the number of extended format records
     protected int              numfonts    = 0;   // hold the number of font records
@@ -133,7 +135,8 @@ public class Workbook implements Model
         Workbook  retval  = new Workbook();
         ArrayList records = new ArrayList(recs.size() / 3);
 
-        for (int k = 0; k < recs.size(); k++) {
+        int k;
+        for (k = 0; k < recs.size(); k++) {
             Record rec = ( Record ) recs.get(k);
 
             if (rec.getSid() == EOFRecord.sid) {
@@ -248,6 +251,17 @@ public class Workbook implements Model
         //            retval.records.supbookpos = retval.records.bspos + 1;
         //            retval.records.namepos    = retval.records.supbookpos + 1;
         //        }
+        
+        // Look for other interesting values that
+        //  follow the EOFRecord
+        for ( ; k < recs.size(); k++) {
+            Record rec = ( Record ) recs.get(k);
+            switch (rec.getSid()) {
+            	case HyperlinkRecord.sid:
+            		retval.hyperlinks.add(rec);
+            		break;
+            }
+        }
 
         retval.records.setRecords(records);
         
@@ -2116,6 +2130,11 @@ public class Workbook implements Model
         return null;
     }
 
+    public List getHyperlinks()
+    {
+    	return hyperlinks;
+    }
+    
     public List getRecords()
     {
         return records.getRecords();

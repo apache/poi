@@ -28,7 +28,7 @@ public class TestHyperlinkRecord extends TestCase {
 
 	private byte[] data = new byte[] { 
 		-72, 1, 110, 0,
-		// Row, col, xf, ??
+		// ??, Row, col, xf
 		6, 0, 3, 0,	2, 0, 2, 0, 
 		
 		// ??
@@ -59,7 +59,7 @@ public class TestHyperlinkRecord extends TestCase {
 	
 	private byte[] data2 = new byte[] {
 		-72, 1, -126, 0,
-		// Row, col, xf, ??
+		// ??, Row, col, xf
 		2, 0, 2, 0, 4, 0, 4, 0,
 
 		// ??
@@ -96,8 +96,8 @@ public class TestHyperlinkRecord extends TestCase {
 
         HyperlinkRecord r = new HyperlinkRecord(inp);
         
-        assertEquals(6, r.getRow());
-        assertEquals(3, r.getColumn());
+        assertEquals(3, r.getRow());
+        assertEquals(2, r.getColumn());
         assertEquals(2, r.getXFIndex());
         
         assertEquals("L,A", r.getLabel());
@@ -122,7 +122,7 @@ public class TestHyperlinkRecord extends TestCase {
         HyperlinkRecord r = new HyperlinkRecord(inp);
         
         assertEquals(2, r.getRow());
-        assertEquals(2, r.getColumn());
+        assertEquals(4, r.getColumn());
         assertEquals(4, r.getXFIndex());
         
 		assertEquals("Stacie@ABC.com", r.getLabel());
