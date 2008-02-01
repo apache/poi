@@ -157,18 +157,31 @@ public class Ref3DPtg extends Ptg {
 
     }
 
-    public String toFormulaString(Workbook book) {
+    // TODO - find a home for this method
+    // There is already a method on Workbook called getSheetName but it seems to do something different.
+	static String getSheetName(Workbook book, int externSheetIndex) {
+        // TODO - there are 3 ways this method can return null. Is each valid?
+        if (book == null) {
+            return null;
+        }
+
+        SheetReferences refs = book.getSheetReferences();
+        if (refs == null) {
+            return null;
+        }
+        return refs.getSheetName(externSheetIndex);
+    }
+    /**
+     * @return text representation of this cell reference that can be used in text 
+     * formulas. The sheet name will get properly delimited if required.
+     */
+    public String toFormulaString(Workbook book)
+    {
         StringBuffer retval = new StringBuffer();
-        SheetReferences refs = book == null ? null : book.getSheetReferences();
-        if (refs != null) {
-        	String sheetName =refs.getSheetName((int)this.field_1_index_extern_sheet);
-        	boolean appendQuotes = sheetName.indexOf(" ") >= 0;
-        	if (appendQuotes)
-        	  retval.append("'");
-            retval.append(sheetName);
-        	if (appendQuotes)
-          	  retval.append("'");
-            retval.append('!');
+        String sheetName = getSheetName(book, field_1_index_extern_sheet);
+        if(sheetName != null) {
+            SheetNameFormatter.appendFormat(retval, sheetName);
+            retval.append( '!' );
         }
         retval.append((new CellReference(getRow(),getColumn(),!isRowRelative(),!isColRelative())).toString()); 
         return retval.toString();

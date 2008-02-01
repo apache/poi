@@ -259,6 +259,7 @@ under the License.
         <antcall target="with.clover"/>
         
         <mkdir dir="build"/>
+        <mkdir dir="build/non-ant-classes"/>
         <mkdir dir="${main.output.dir}"/>
         <mkdir dir="${scratchpad.output.dir}"/>
         <mkdir dir="${contrib.output.dir}"/>
