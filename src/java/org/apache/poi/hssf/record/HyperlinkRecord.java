@@ -195,7 +195,7 @@ public class HyperlinkRecord extends Record implements CellValueRecordInterface
         field_5_unknown = new byte[16];
         try {
         in.read(field_5_unknown);
-        } catch(IOException e) { throw new IllegalStateException(e); }
+        } catch(IOException e) { throw new IllegalStateException(e.getMessage()); }
         
         // Some sort of opts
         field_6_label_opts = in.readInt();
@@ -212,7 +212,7 @@ public class HyperlinkRecord extends Record implements CellValueRecordInterface
         field_10_unknown = new byte[16];
         try {
         in.read(field_10_unknown);
-        } catch(IOException e) { throw new IllegalStateException(e); }
+        } catch(IOException e) { throw new IllegalStateException(e.getMessage()); }
         
         // Might need to nudge the length by one byte
         // This is an empirical hack!
@@ -222,7 +222,8 @@ public class HyperlinkRecord extends Record implements CellValueRecordInterface
         }
         
         // Finally it's the URL
-        field_12_url = in.readUnicodeLEString(field_7_url_len);
+        int strlen = field_7_url_len > (in.remaining()/2) ? (in.remaining()/2) : field_7_url_len;
+        field_12_url = in.readUnicodeLEString(strlen);
     }
     
     /* (non-Javadoc)
@@ -361,5 +362,9 @@ public class HyperlinkRecord extends Record implements CellValueRecordInterface
     {
         this.field_12_url = url + '\u0000';
         this.field_7_url_len = field_12_url.length();
+    }
+
+    public int getOptions(){
+        return field_11_url_opts;
     }
 }

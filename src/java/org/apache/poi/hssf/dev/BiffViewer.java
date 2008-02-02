@@ -515,6 +515,9 @@ public class BiffViewer {
             case FileSharingRecord.sid:
                 retval = new FileSharingRecord( in );
                 break;
+            case HyperlinkRecord.sid:
+                retval = new HyperlinkRecord( in );
+                break;
             default:
                 retval = new UnknownRecord( in );
         }
