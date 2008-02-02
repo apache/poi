@@ -303,77 +303,53 @@ extends TestCase {
             assertTrue("Bottom Border", (cs.getBorderBottom() == (short)1));
             
             in.close();
-    }    
-    
-    public void BROKENtestWithHyperlink() throws Exception {
+    }
+
+    /**
+     * Test reading hyperlinks
+     */
+    public void testWithHyperlink() throws Exception {
         String dir = System.getProperty("HSSF.testdata.path");
         File f = new File(dir, "WithHyperlink.xls");
     	HSSFWorkbook wb = new HSSFWorkbook(new FileInputStream(f));
-    	
-    	assertEquals(3, wb.getNumberOfSheets());
-    	
-    	// Find our hyperlink record, and check they're
-    	//  as we'd expect
-    	List records = wb.getWorkbook().getHyperlinks();
-    	assertEquals(1, records.size());
-    	
-    	HyperlinkRecord link = (HyperlinkRecord)
-    		records.get(0);
-    	assertNotNull(link);
-    	
-    	// Is in A5
-    	assertEquals("Foo", link.getLabel());
-    	assertEquals("http://poi.apache.org/", link.getUrlString());
-    	assertEquals(4, link.getRow());
-    	assertEquals(0, link.getColumn());
-    	
-    	// Now check at the HSSFCell level
-    	assertEquals(3, wb.getNumberOfSheets());
-    	
-    	HSSFSheet s = wb.getSheetAt(1);
-    	HSSFRow r = s.getRow(4);
-    	assertNotNull(r);
-    	HSSFCell c = r.getCell((short)0);
+
+        HSSFSheet sheet = wb.getSheetAt(0);
+        HSSFCell cell = sheet.getRow(4).getCell((short)0);
+        HSSFHyperlink link = cell.getHyperlink();
+        assertNotNull(link);
+
+        assertEquals("Foo", link.getLabel());
+        assertEquals("http://poi.apache.org/", link.getAddress());
+        assertEquals(4, link.getRow());
+        assertEquals(0, link.getColumn());
     }
     
-    public void BROKENtestWithTwoHyperlinks() throws Exception {
+    /**
+     * Test reading hyperlinks
+     */
+    public void testWithTwoHyperlinks() throws Exception {
         String dir = System.getProperty("HSSF.testdata.path");
         File f = new File(dir, "WithTwoHyperLinks.xls");
     	HSSFWorkbook wb = new HSSFWorkbook(new FileInputStream(f));
     	
-    	assertEquals(3, wb.getNumberOfSheets());
-    	
-    	// Find our hyperlink record, and check they're
-    	//  as we'd expect
-    	List records = wb.getWorkbook().getHyperlinks();
-    	assertEquals(2, records.size());
-    	
-    	HyperlinkRecord linkA = (HyperlinkRecord)
-    		records.get(0);
-    	HyperlinkRecord linkB = (HyperlinkRecord)
-			records.get(1);
-    	assertNotNull(linkA);
-    	assertNotNull(linkB);
-    	
-    	// Is in A5
-    	assertEquals("Foo", linkA.getLabel());
-    	assertEquals("http://poi.apache.org/", linkA.getUrlString());
-    	assertEquals(4, linkA.getRow());
-    	assertEquals(0, linkA.getColumn());
-    	
-    	// Is in B9
-    	assertEquals("Bar", linkB.getLabel());
-    	assertEquals("http://poi.apache.org/", linkB.getUrlString());
-    	assertEquals(8, linkB.getRow());
-    	assertEquals(1, linkB.getColumn());
-    	
-    	// Now check at the HSSFCell level
-    	assertEquals(3, wb.getNumberOfSheets());
-    	
-    	HSSFSheet s = wb.getSheetAt(1);
-    	HSSFRow r = s.getRow(4);
-    	assertNotNull(r);
-    	HSSFCell c = r.getCell((short)0);
+        HSSFSheet sheet = wb.getSheetAt(0);
+
+        HSSFCell cell1 = sheet.getRow(4).getCell((short)0);
+        HSSFHyperlink link1 = cell1.getHyperlink();
+        assertNotNull(link1);
+        assertEquals("Foo", link1.getLabel());
+        assertEquals("http://poi.apache.org/", link1.getAddress());
+        assertEquals(4, link1.getRow());
+        assertEquals(0, link1.getColumn());
+
+        HSSFCell cell2 = sheet.getRow(8).getCell((short)1);
+        HSSFHyperlink link2 = cell2.getHyperlink();
+        assertNotNull(link2);
+        assertEquals("Bar", link2.getLabel());
+        assertEquals("http://poi.apache.org/", link2.getAddress());
+        assertEquals(8, link2.getRow());
+        assertEquals(1, link2.getColumn());
+
     }
     
     /*tests the toString() method of HSSFCell*/

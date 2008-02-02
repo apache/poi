@@ -34,20 +34,7 @@ import java.util.Iterator;
 import org.apache.poi.hssf.model.FormulaParser;
 import org.apache.poi.hssf.model.Sheet;
 import org.apache.poi.hssf.model.Workbook;
-import org.apache.poi.hssf.record.BlankRecord;
-import org.apache.poi.hssf.record.BoolErrRecord;
-import org.apache.poi.hssf.record.CellValueRecordInterface;
-import org.apache.poi.hssf.record.CommonObjectDataSubRecord;
-import org.apache.poi.hssf.record.ExtendedFormatRecord;
-import org.apache.poi.hssf.record.FormulaRecord;
-import org.apache.poi.hssf.record.LabelSSTRecord;
-import org.apache.poi.hssf.record.NoteRecord;
-import org.apache.poi.hssf.record.NumberRecord;
-import org.apache.poi.hssf.record.ObjRecord;
-import org.apache.poi.hssf.record.Record;
-import org.apache.poi.hssf.record.SubRecord;
-import org.apache.poi.hssf.record.TextObjectRecord;
-import org.apache.poi.hssf.record.UnicodeString;
+import org.apache.poi.hssf.record.*;
 import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
 import org.apache.poi.hssf.record.formula.Ptg;
 
@@ -1068,4 +1055,31 @@ public class HSSFCell
         }
         return comment;
    }
+
+    /**
+     * Returns hyperlink associated with this cell
+     *
+     * @return hyperlink associated with this cell or null if not found
+     */
+    public HSSFHyperlink getHyperlink(){
+        for (Iterator it = sheet.getRecords().iterator(); it.hasNext(); ) {
+            Record rec = ( Record ) it.next();
+            if (rec instanceof HyperlinkRecord){
+                HyperlinkRecord link = (HyperlinkRecord)rec;
+                if(link.getColumn() == record.getColumn() && link.getRow() == record.getRow()){
+                    return new HSSFHyperlink(link);
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Assign a hypelrink to this cell
+     *
+     * @param link hypelrink associated with this cell
+     */
+    public void setHyperlink(HSSFHyperlink link){
+
+    }
 }
