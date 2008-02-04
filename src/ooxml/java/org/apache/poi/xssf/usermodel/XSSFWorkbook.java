@@ -17,7 +17,6 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.LinkedList;
@@ -25,6 +24,7 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
+import org.apache.poi.POIXMLDocument;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.Font;
@@ -36,11 +36,9 @@ import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxml4j.exceptions.InvalidFormatException;
-import org.openxml4j.exceptions.OpenXML4JException;
 import org.openxml4j.opc.Package;
 import org.openxml4j.opc.PackagePart;
 import org.openxml4j.opc.PackagePartName;
-import org.openxml4j.opc.PackageRelationship;
 import org.openxml4j.opc.PackageRelationshipTypes;
 import org.openxml4j.opc.PackagingURIHelper;
 import org.openxml4j.opc.TargetMode;
@@ -52,14 +50,11 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.WorkbookDocument;
 
 
-public class XSSFWorkbook implements Workbook {
+public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 
     private CTWorkbook workbook;
     
     private List<XSSFSheet> sheets = new LinkedList<XSSFSheet>();
-    
-    /** The OPC Package */
-    private Package pkg;
 
     public XSSFWorkbook() {
         this.workbook = CTWorkbook.Factory.newInstance();
@@ -70,20 +65,10 @@ public class XSSFWorkbook implements Workbook {
     }
     
     public XSSFWorkbook(String path) throws IOException {
+        super(path);
         try {
-            this.pkg = Package.open(path);
-            PackageRelationship coreDocRelationship = this.pkg.getRelationshipsByType(
-                    PackageRelationshipTypes.CORE_DOCUMENT).getRelationship(0);
-        
-            // Get core part
-            PackagePart corePart = this.pkg.getPart(coreDocRelationship);
-            WorkbookDocument doc = WorkbookDocument.Factory.parse(corePart.getInputStream());
+            WorkbookDocument doc = WorkbookDocument.Factory.parse(getCorePart().getInputStream());
             this.workbook = doc.getWorkbook();
-            
-        } catch (InvalidFormatException e) {
-            throw new IOException(e.toString());
-        } catch (OpenXML4JException e) {
-            throw new IOException(e.toString());
         } catch (XmlException e) {
             throw new IOException(e.toString());
         }
