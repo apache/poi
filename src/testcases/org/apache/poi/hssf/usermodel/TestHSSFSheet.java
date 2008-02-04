@@ -759,7 +759,7 @@ public class TestHSSFSheet
 		//  thankfully don't overlap!
 		int minWithRow1And2 = 6400; 
 		int maxWithRow1And2 = 7800;
-		int minWithRow1Only = 3024;
+		int minWithRow1Only = 2750;
 		int maxWithRow1Only = 3300;
 		
 		// autoSize the first column and check its size before the merged region (1,0,1,1) is set:
