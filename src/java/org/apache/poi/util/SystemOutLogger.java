@@ -49,8 +49,24 @@ public class SystemOutLogger extends POILogger
 
     public void log(final int level, final Object obj1)
     {
-        if (check(level))
+    	log(level, obj1, null);
+    }
+    
+    /**
+     * Log a message
+     *
+     * @param level One of DEBUG, INFO, WARN, ERROR, FATAL
+     * @param obj1 The object to log.  This is converted to a string.
+     * @param exception An exception to be logged
+     */
+    public void log(final int level, final Object obj1,
+                    final Throwable exception) {
+        if (check(level)) {
             System.out.println("["+cat+"] "+obj1);
+            if(exception != null) {
+            	exception.printStackTrace(System.out);
+            }
+        }
     }
 
     /**

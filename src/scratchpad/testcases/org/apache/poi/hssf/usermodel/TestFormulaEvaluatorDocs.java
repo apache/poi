@@ -82,7 +82,7 @@ public class TestFormulaEvaluatorDocs extends TestCase {
 		assertEquals(HSSFCell.CELL_TYPE_FORMULA, wb.getSheetAt(0).getRow(1).getCell((short)2).getCellType());
 		
 		assertEquals(22.3, wb.getSheetAt(1).getRow(0).getCell((short)0).getNumericCellValue(), 0);
-		assertEquals("S1!A1", wb.getSheetAt(1).getRow(0).getCell((short)0).getCellFormula());
+		assertEquals("'S1'!A1", wb.getSheetAt(1).getRow(0).getCell((short)0).getCellFormula());
 		assertEquals(HSSFCell.CELL_TYPE_FORMULA, wb.getSheetAt(1).getRow(0).getCell((short)0).getCellType());
 		
 		

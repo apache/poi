@@ -206,12 +206,12 @@ public class HSSFDataFormat implements DataFormat
     }
 
     /**
-     * get the format index that matches the given format string.
-     * Creates a new format if one is not found.  Aliases text to the proper format.
+     * Get the format index that matches the given format
+     *  string, creating a new format entry if required.
+     * Aliases text to the proper format as required.
      * @param format string matching a built in format
      * @return index of format.
      */
-
     public short getFormat( String format )
     {
         ListIterator i;

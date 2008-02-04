@@ -35,7 +35,17 @@
     </devs>
 
 		<!-- Don't forget to update status.xml too! -->
-        <release version="3.0.2-FINAL" date="2008-??-??">
+        <release version="3.1-beta1" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">44345 - Implement CountA, CountIf, Index, Rows and Columns functions</action>
+           <action dev="POI-DEVELOPERS" type="fix">44336 - Properly escape sheet names as required when figuring out the text of formulas</action>
+           <action dev="POI-DEVELOPERS" type="add">44326 - Improvements to how SystemOutLogger and CommonsLogger log messages with exceptions, and avoid an infinite loop with certain log messages with exceptions</action>
+           <action dev="POI-DEVELOPERS" type="add">Support for a completed Record based "pull" stream, via org.apache.poi.hssf.eventusermodel.HSSFRecordStream, to complement the existing "push" Event User Model listener stuff</action>
+        </release>
+        <release version="3.0.2-FINAL" date="2008-02-04">
+            <action dev="POI-DEVELOPERS" type="fix">44297 - IntPtg must operate with unsigned short. Reading signed short results in incorrect formula calculation</action>
+            <action dev="POI-DEVELOPERS" type="fix">44296 - Fix for reading slide background images</action>
+            <action dev="POI-DEVELOPERS" type="fix">44293 - Avoid swapping AreaPtgs from relative to absolute</action>
+            <action dev="POI-DEVELOPERS" type="fix">44292 - Correctly process the last paragraph in a word file</action>
             <action dev="POI-DEVELOPERS" type="fix">44254 - Avoid some unread byte warnings, and properly understand DVALRecord</action>
             <action dev="POI-DEVELOPERS" type="add">Add another formula evaluation method, evaluateFormulaCell(cell), which will re-calculate the value for a formula, without affecting the formula itself.</action>
             <action dev="POI-DEVELOPERS" type="fix">41726 - Fix how we handle signed cell offsets in relative areas and references</action>

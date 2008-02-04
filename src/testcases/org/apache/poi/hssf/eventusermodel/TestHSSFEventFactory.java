@@ -23,8 +23,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
 
+import org.apache.poi.hssf.record.DVALRecord;
+import org.apache.poi.hssf.record.DVRecord;
+import org.apache.poi.hssf.record.EOFRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.ContinueRecord;
+import org.apache.poi.hssf.record.SelectionRecord;
+import org.apache.poi.hssf.record.WindowTwoRecord;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 import junit.framework.TestCase;
@@ -48,7 +53,15 @@ public class TestHSSFEventFactory extends TestCase {
 		factory.processWorkbookEvents(req, fs);
 
 		// Check we got the records
+		System.out.println("Processed, found " + mockListen.records.size() + " records");
 		assertTrue( mockListen.records.size() > 100 );
+		
+		// Check that the last few records are as we expect
+		// (Makes sure we don't accidently skip the end ones)
+		int numRec = mockListen.records.size();
+		assertEquals(WindowTwoRecord.class, mockListen.records.get(numRec-3).getClass());
+		assertEquals(SelectionRecord.class, mockListen.records.get(numRec-2).getClass());
+		assertEquals(EOFRecord.class,       mockListen.records.get(numRec-1).getClass());
 	}
 
 	public void testWithCrazyContinueRecords() throws Exception {
@@ -66,6 +79,7 @@ public class TestHSSFEventFactory extends TestCase {
 		factory.processWorkbookEvents(req, fs);
 
 		// Check we got the records
+		System.out.println("Processed, found " + mockListen.records.size() + " records");
 		assertTrue( mockListen.records.size() > 100 );
 
 		// And none of them are continue ones
@@ -74,6 +88,13 @@ public class TestHSSFEventFactory extends TestCase {
 		for(int i=0; i<r.length; i++) {
 			assertFalse( r[i] instanceof ContinueRecord );
 		}
+		
+		// Check that the last few records are as we expect
+		// (Makes sure we don't accidently skip the end ones)
+		int numRec = mockListen.records.size();
+		assertEquals(DVALRecord.class, mockListen.records.get(numRec-3).getClass());
+		assertEquals(DVRecord.class, mockListen.records.get(numRec-2).getClass());
+		assertEquals(EOFRecord.class,       mockListen.records.get(numRec-1).getClass());
 	}
 
     /**

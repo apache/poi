@@ -14,12 +14,95 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-/*
- * Created on May 15, 2005
- *
- */
+
+
 package org.apache.poi.hssf.record.formula.functions;
 
-public class Index extends NotImplementedFunction {
+import org.apache.poi.hssf.record.formula.eval.AreaEval;
+import org.apache.poi.hssf.record.formula.eval.ErrorEval;
+import org.apache.poi.hssf.record.formula.eval.Eval;
+import org.apache.poi.hssf.record.formula.eval.NumberEval;
+import org.apache.poi.hssf.record.formula.eval.RefEval;
 
+/**
+ * Implementation for the Excel function INDEX<p/>
+ * 
+ * Syntax : <br/>
+ *  INDEX ( reference, row_num[, column_num [, area_num]])</br>
+ *  INDEX ( array, row_num[, column_num])
+ *    <table border="0" cellpadding="1" cellspacing="0" summary="Parameter descriptions">
+ *      <tr><th>reference</th><td>typically an area reference, possibly a union of areas</td></tr>
+ *      <tr><th>array</th><td>a literal array value (currently not supported)</td></tr>
+ *      <tr><th>row_num</th><td>selects the row within the array or area reference</td></tr>
+ *      <tr><th>column_num</th><td>selects column within the array or area reference. default is 1</td></tr>
+ *      <tr><th>area_num</th><td>used when reference is a union of areas</td></tr>
+ *    </table>
+ * <p/>
+ * 
+ * @author Josh Micich
+ */
+public final class Index implements Function {
+
+	// TODO - javadoc for interface method
+	public Eval evaluate(Eval[] args, int srcCellRow, short srcCellCol) {
+		int nArgs = args.length;
+		if(nArgs < 2) {
+			// too few arguments
+			return ErrorEval.VALUE_INVALID;
+		}
+		Eval firstArg = args[0];
+		if(firstArg instanceof AreaEval) {
+			AreaEval reference = (AreaEval) firstArg;
+			
+			int rowIx = 0;
+			int columnIx = 0;
+			int areaIx = 0;
+			switch(nArgs) {
+				case 4:
+					areaIx = convertIndexArgToZeroBase(args[3]);
+					throw new RuntimeException("Incomplete code" +
+							" - don't know how to support the 'area_num' parameter yet)");
+					// Excel expression might look like this "INDEX( (A1:B4, C3:D6, D2:E5 ), 1, 2, 3)
+					// In this example, the 3rd area would be used i.e. D2:E5, and the overall result would be E2
+					// Token array might be encoded like this: MemAreaPtg, AreaPtg, AreaPtg, UnionPtg, UnionPtg, ParenthesesPtg
+					// The formula parser doesn't seem to support this yet. Not sure if the evaluator does either
+					
+				case 3:
+					columnIx = convertIndexArgToZeroBase(args[2]);
+				case 2:
+					rowIx = convertIndexArgToZeroBase(args[1]);
+					break;
+				default:
+					// too many arguments
+					return ErrorEval.VALUE_INVALID;
+			}
+			
+	        int nColumns = reference.getLastColumn()-reference.getFirstColumn()+1;
+			int index = rowIx * nColumns + columnIx;
+			
+			return reference.getValues()[index];
+		}
+		
+		// else the other variation of this function takes an array as the first argument
+		// it seems like interface 'ArrayEval' does not even exist yet
+		
+		throw new RuntimeException("Incomplete code - cannot handle first arg of type ("
+				+ firstArg.getClass().getName() + ")");
+	}
+	
+	/**
+	 * takes a NumberEval representing a 1-based index and returns the zero-based int value
+	 */
+	private static int convertIndexArgToZeroBase(Eval ev) {
+		NumberEval ne;
+		if(ev instanceof RefEval) {
+			// TODO - write junit to justify this
+			RefEval re = (RefEval) ev;
+			ne = (NumberEval) re.getInnerValueEval();
+		} else {
+			ne = (NumberEval)ev;
+		}
+		
+		return (int)ne.getNumberValue() - 1;
+	}
 }

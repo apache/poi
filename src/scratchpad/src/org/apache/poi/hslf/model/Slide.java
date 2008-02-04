@@ -262,4 +262,11 @@ public class Slide extends Sheet
         SlideAtom sa = getSlideRecord().getSlideAtom();
         return sa.getFollowMasterBackground();
     }
+
+    public Background getBackground() {
+        if(getFollowMasterBackground())
+            return getMasterSheet().getBackground();
+        else
+            return super.getBackground();
+    }
 }

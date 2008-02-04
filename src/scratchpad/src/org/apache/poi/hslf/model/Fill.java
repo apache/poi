@@ -23,6 +23,8 @@ import org.apache.poi.hslf.record.*;
 import org.apache.poi.hslf.usermodel.PictureData;
 import org.apache.poi.hslf.usermodel.SlideShow;
 import org.apache.poi.hslf.exceptions.HSLFException;
+import org.apache.poi.util.POILogger;
+import org.apache.poi.util.POILogFactory;
 
 import java.awt.*;
 import java.util.*;
@@ -33,6 +35,9 @@ import java.util.*;
  * @author Yegor Kozlov
  */
 public class Fill {
+    // For logging
+    protected POILogger logger = POILogFactory.getLogger(this.getClass());
+
     /**
      *  Fill with a solid color
      */
@@ -208,15 +213,18 @@ public class Fill {
 
         java.util.List lst = bstore.getChildRecords();
         int idx = p.getPropertyValue();
-        EscherBSERecord bse = (EscherBSERecord)lst.get(idx);
-        for ( int i = 0; i < pict.length; i++ ) {
-			if (pict[i].getOffset() ==  bse.getOffset()){
-                return pict[i];
+        if (idx == 0){
+            logger.log(POILogger.ERROR, "no reference to picture data found ");
+        } else {
+            EscherBSERecord bse = (EscherBSERecord)lst.get(idx - 1);
+            for ( int i = 0; i < pict.length; i++ ) {
+                if (pict[i].getOffset() ==  bse.getOffset()){
+                    return pict[i];
+                }
             }
         }
-        throw new HSLFException("Picture data not found: \n" +
-                "  bse: " + bse + " at " + bse.getOffset() );
 
+        return null;
     }
 
     /**

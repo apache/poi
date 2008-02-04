@@ -137,8 +137,8 @@ public abstract class Ptg
                  break;
         	  
              case DividePtg.sid :               // 0x06
-        	                  retval = new DividePtg(in);
-        	                  break;
+        	      retval = new DividePtg(in);
+        	      break;
         	  
              case PowerPtg.sid :                // 0x07
                  retval = new PowerPtg(in);
@@ -208,6 +208,7 @@ public abstract class Ptg
                 break;
  
              case AttrPtg.sid :                 // 0x19
+             case 0x1a :
                  retval = new AttrPtg(in);
         	                  break;
         	  
@@ -224,8 +225,8 @@ public abstract class Ptg
         	                  break;
  
              case NumberPtg.sid :               // 0x1f
-        	                 retval = new NumberPtg(in);
-        	                 break;
+        	      retval = new NumberPtg(in);
+        	      break;
         	  
              case ArrayPtg.sid :                // 0x20
              	retval = new ArrayPtg(in);
@@ -350,9 +351,12 @@ public abstract class Ptg
              case DeletedArea3DPtg.sid + 0x40 : // 0x7d
                  retval = new DeletedArea3DPtg(in);
                  break;
-
+                 
+             case 0x00:
+            	 retval = new UnknownPtg();
+            	 break;
+                 
             default :
-
                  //retval = new UnknownPtg();
                  throw new java.lang.UnsupportedOperationException(" Unknown Ptg in Formula: 0x"+
                         Integer.toHexString(( int ) id) + " (" + ( int ) id + ")");
