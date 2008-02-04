@@ -167,7 +167,7 @@ under the License.
   <property name="mavendist.poi.dir" location="build/maven-dist/poi"/>
   <property name="mavendist.oap.dir" location="build/maven-dist/org.apache.poi"/>
   <property name="jar.name" value="poi"/>
-  <property name="version.id" value="3.0.2-beta1"/>
+  <property name="version.id" value="3.1-alpha1"/>
   <property name="halt.on.test.failure" value="true"/>
 
   <property name="jdk.version.source" value="1.5"
@@ -279,6 +279,7 @@ under the License.
         <antcall target="with.clover"/>
         
         <mkdir dir="build"/>
+        <mkdir dir="build/non-ant-classes"/>
         <mkdir dir="${main.output.dir}"/>
         <mkdir dir="${main14.output.dir}"/>
         <mkdir dir="${scratchpad.output.dir}"/>

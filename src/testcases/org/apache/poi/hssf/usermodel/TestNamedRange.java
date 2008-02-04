@@ -351,7 +351,7 @@ public class TestNamedRange
 	     String retrievedPrintArea = workbook.getPrintArea(0);
 	    
 	 	 assertNotNull("Print Area not defined for first sheet", retrievedPrintArea);        
-	     assertEquals(reference, retrievedPrintArea);
+	     assertEquals("'" + sheetName + "'!$A$1:$B$1", retrievedPrintArea);
 	     
 	 }
 
@@ -370,7 +370,7 @@ public class TestNamedRange
 		 String retrievedPrintArea = workbook.getPrintArea(0);
 	    
 		 assertNotNull("Print Area not defined for first sheet", retrievedPrintArea);        
-		 assertEquals(sheetName+"!"+reference, retrievedPrintArea);
+		 assertEquals("'" + sheetName + "'!" + reference, retrievedPrintArea);
 	     
 	 }
 
@@ -437,7 +437,7 @@ public class TestNamedRange
 	     
 	 	String retrievedPrintArea = workbook.getPrintArea(0);       
 	 	assertNotNull("Print Area not defined for first sheet", retrievedPrintArea);        
-	 	assertEquals("References Match", reference, retrievedPrintArea);
+	 	assertEquals("References Match", "'" + sheetName + "'!$A$1:$B$1", retrievedPrintArea);
          
 	}
 
@@ -449,9 +449,9 @@ public class TestNamedRange
 	{
 	    HSSFWorkbook workbook = new HSSFWorkbook();        
 	    
-	    HSSFSheet sheet = workbook.createSheet("Sheet 1");
-	    sheet = workbook.createSheet("Sheet 2");
-	    sheet = workbook.createSheet("Sheet 3");
+	    HSSFSheet sheet = workbook.createSheet("Sheet1");
+	    sheet = workbook.createSheet("Sheet2");
+	    sheet = workbook.createSheet("Sheet3");
 	    
 	    String sheetName = workbook.getSheetName(0);
 		String reference = null;
@@ -508,9 +508,30 @@ public class TestNamedRange
 		String retrievedPrintArea = workbook.getPrintArea(0);
 	    
 		assertNotNull("Print Area not defined for first sheet", retrievedPrintArea);        
-		assertEquals(reference, retrievedPrintArea);    	
+		assertEquals("'" + sheetName + "'!$A$1:$B$1", retrievedPrintArea);    	
     }
-     
+
+    
+    /**
+     * Tests the parsing of union area expressions, and re-display in the presence of sheet names
+     * with special characters.
+     */
+    public void testPrintAreaUnion(){
+		HSSFWorkbook workbook = new HSSFWorkbook();        
+		HSSFSheet sheet = workbook.createSheet("Test Print Area");                
+		String sheetName = workbook.getSheetName(0);
+		
+ 
+		String reference =       sheetName +  "!$A$1:$B$1, " + sheetName + "!$D$1:$F$2";
+		String expResult = "'" + sheetName + "'!$A$1:$B$1,'" + sheetName + "'!$D$1:$F$2";
+		workbook.setPrintArea(0, reference);
+	             
+		String retrievedPrintArea = workbook.getPrintArea(0);
+	    
+		assertNotNull("Print Area not defined for first sheet", retrievedPrintArea);        
+		assertEquals(expResult, retrievedPrintArea);    	
+    }
+    
     /**
      * Verifies an existing print area is deleted
      *

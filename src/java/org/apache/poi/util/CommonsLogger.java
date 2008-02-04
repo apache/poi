@@ -22,8 +22,6 @@ package org.apache.poi.util;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.util.*;
-
 /**
  * A logger class that strives to make it as easy as possible for
  * developers to write log calls, while simultaneously making those
@@ -53,7 +51,6 @@ public class CommonsLogger extends POILogger
      * @param level One of DEBUG, INFO, WARN, ERROR, FATAL
      * @param obj1 The object to log.
      */
-
     public void log(final int level, final Object obj1)
     {
         if(level==FATAL)
@@ -96,6 +93,78 @@ public class CommonsLogger extends POILogger
           if(log.isTraceEnabled())
           {
             log.trace(obj1);
+          }
+        }
+    }
+    
+    /**
+     * Log a message
+     *
+     * @param level One of DEBUG, INFO, WARN, ERROR, FATAL
+     * @param obj1 The object to log.  This is converted to a string.
+     * @param exception An exception to be logged
+     */
+    public void log(final int level, final Object obj1,
+                    final Throwable exception) 
+    {
+        if(level==FATAL)
+        {
+          if(log.isFatalEnabled())
+          {
+            if(obj1 != null)
+               log.fatal(obj1, exception);
+            else
+               log.fatal(exception);
+          }
+        }
+        else if(level==ERROR)
+        {
+          if(log.isErrorEnabled())
+          {
+            if(obj1 != null)
+               log.error(obj1, exception);
+            else
+               log.error(exception);
+          }
+        }
+        else if(level==WARN)
+        {
+          if(log.isWarnEnabled())
+          {
+            if(obj1 != null)
+               log.warn(obj1, exception);
+            else
+               log.warn(exception);
+          }
+        }
+        else if(level==INFO)
+        {
+          if(log.isInfoEnabled())
+          {
+        	if(obj1 != null)
+               log.info(obj1, exception);
+        	else
+        	   log.info(exception);
+          }
+        }
+        else if(level==DEBUG)
+        {
+          if(log.isDebugEnabled())
+          {
+        	if(obj1 != null)
+               log.debug(obj1, exception);
+        	else
+        	   log.debug(exception);
+          }
+        }
+        else
+        {
+          if(log.isTraceEnabled())
+          {
+        	if(obj1 != null)
+               log.trace(obj1, exception);
+        	else
+        	   log.trace(exception);
           }
         }
 

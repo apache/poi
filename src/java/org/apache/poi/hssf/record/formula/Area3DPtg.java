@@ -261,13 +261,16 @@ public class Area3DPtg extends Ptg
 		setLastRowRelative(  !lastCell.isRowAbsolute() );
 	}
 
+    /**
+     * @return text representation of this area reference that can be used in text
+     *  formulas. The sheet name will get properly delimited if required.
+     */
 	public String toFormulaString(Workbook book)
 	{
-		SheetReferences refs = book == null ? null : book.getSheetReferences();
 		StringBuffer retval = new StringBuffer();
-		if ( refs != null )
-		{
-			retval.append( refs.getSheetName( this.field_1_index_extern_sheet ) );
+		String sheetName = Ref3DPtg.getSheetName(book, field_1_index_extern_sheet);
+		if(sheetName != null) {
+			SheetNameFormatter.appendFormat(retval, sheetName);
 			retval.append( '!' );
 		}
 		retval.append( ( new CellReference( getFirstRow(), getFirstColumn(), !isFirstRowRelative(), !isFirstColRelative() ) ).toString() );

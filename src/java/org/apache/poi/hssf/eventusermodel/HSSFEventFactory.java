@@ -129,109 +129,25 @@ public class HSSFEventFactory
 	protected short genericProcessEvents(HSSFRequest req, RecordInputStream in)
 		throws IOException, HSSFUserException
 	{
+		boolean going = true;
 		short userCode = 0;
-
-		short sid = 0;
-		process:
-		{
-                  
-			Record rec       = null;
-			Record lastRec   = null;
-			DrawingRecord lastDrawingRecord = new DrawingRecord();
-
-			while (in.hasNextRecord())
-			{
-				in.nextRecord();
-				sid = in.getSid();;
-
-                //
-                // for some reasons we have to make the workbook to be at least 4096 bytes
-                // but if we have such workbook we fill the end of it with zeros (many zeros)
-                //
-                // it is not good:
-                // if the length( all zero records ) % 4 = 1
-                // e.g.: any zero record would be readed as  4 bytes at once ( 2 - id and 2 - size ).
-                // And the last 1 byte will be readed WRONG ( the id must be 2 bytes )
-                //
-                // So we should better to check if the sid is zero and not to read more data
-                // The zero sid shows us that rest of the stream data is a fake to make workbook 
-                // certain size
-                //
-                if ( sid == 0 )
-                    break;
-
-
-				if ((rec != null) && (sid != ContinueRecord.sid))
-				{
-					userCode = req.processRecord(rec);
-					if (userCode != 0) break process;
-				}
-				if (sid != ContinueRecord.sid)
-				{
-                                        //System.out.println("creating "+sid);
-					Record[] recs = RecordFactory.createRecord(in);
-
-					if (recs.length > 1)
-					{                                // we know that the multiple
-						for (int k = 0; k < (recs.length - 1); k++)
-						{                            // record situations do not
-							userCode = req.processRecord(
-								recs[ k ]);          // contain continue records
-							if (userCode != 0) break process;
-						}
-					}
-					rec = recs[ recs.length - 1 ];   // regardless we'll process
-
-					// the last record as though
-					// it might be continued
-					// if there is only one
-					// records, it will go here too.
-				}
-				else {
-					// Normally, ContinueRecords are handled internally
-					// However, in a few cases, there is a gap between a record at
-					//  its Continue, so we have to handle them specially
-					// This logic is much like in RecordFactory.createRecords()
-					Record[] recs = RecordFactory.createRecord(in);
-					ContinueRecord crec = (ContinueRecord)recs[0];
-					if((lastRec instanceof ObjRecord) || (lastRec instanceof TextObjectRecord)) {
-						// You can have Obj records between a DrawingRecord
-						//  and its continue!
-						lastDrawingRecord.processContinueRecord( crec.getData() );
-						// Trigger them on the drawing record, now it's complete
-						rec = lastDrawingRecord;
-					}
-					else if((lastRec instanceof DrawingGroupRecord)) {
-						((DrawingGroupRecord)lastRec).processContinueRecord(crec.getData());
-						// Trigger them on the drawing record, now it's complete
-						rec = lastRec;
-					}
-					else {
-                        if (rec instanceof UnknownRecord) {
-                            ;//silently skip records we don't know about
-                        } else {
-						    throw new RecordFormatException("Records should handle ContinueRecord internally. Should not see this exception");
-                        }
-					}
-				}
-
-				// Update our tracking of the last record
-				lastRec = rec;
-				if(rec instanceof DrawingRecord) {
-					lastDrawingRecord = (DrawingRecord)rec;
-				}
-			}
-			if (rec != null)
-			{
-				userCode = req.processRecord(rec);
-				if (userCode != 0) break process;
+		Record r = null;
+		
+		// Create a new RecordStream and use that
+		HSSFRecordStream recordStream = new HSSFRecordStream(in);
+		
+		// Process each record as they come in
+		while(going) {
+			r = recordStream.nextRecord();
+			if(r != null) {
+				userCode = req.processRecord(r);
+				if (userCode != 0) break;
+			} else {
+				going = false;
 			}
 		}
 		
+		// All done, return our last code
 		return userCode;
-
-		// Record[] retval = new Record[ records.size() ];
-		// retval = ( Record [] ) records.toArray(retval);
-		// return null;
     }
 }

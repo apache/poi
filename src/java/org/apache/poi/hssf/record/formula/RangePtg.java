@@ -25,8 +25,8 @@ import org.apache.poi.hssf.record.RecordInputStream;
  */
 public class RangePtg extends OperationPtg
 {
+    public final static int  SIZE = 1;
     public final static byte sid  = 0x11;
-
 
     public RangePtg()
     {
@@ -34,13 +34,13 @@ public class RangePtg extends OperationPtg
 
     public RangePtg(RecordInputStream in)
     {
-        // doesn't need anything
+    	// No contents
     }
 
 
     public int getSize()
     {
-        return 1;
+        return SIZE;
     }
 
     public void writeBytes( byte[] array, int offset )

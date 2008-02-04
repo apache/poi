@@ -227,7 +227,7 @@ public abstract class Shape {
         for ( Iterator iterator = opt.getEscherProperties().iterator(); iterator.hasNext(); )
         {
             EscherProperty prop = (EscherProperty) iterator.next();
-            if (prop.getId() == propId)
+            if (prop.getPropertyNumber() == propId)
                 return prop;
         }
         return null;
