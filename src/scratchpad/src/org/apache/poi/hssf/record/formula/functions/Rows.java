@@ -14,12 +14,46 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-/*
- * Created on May 15, 2005
- *
- */
+
+
 package org.apache.poi.hssf.record.formula.functions;
 
-public class Rows extends NotImplementedFunction {
+import org.apache.poi.hssf.record.formula.eval.AreaEval;
+import org.apache.poi.hssf.record.formula.eval.ErrorEval;
+import org.apache.poi.hssf.record.formula.eval.Eval;
+import org.apache.poi.hssf.record.formula.eval.NumberEval;
+import org.apache.poi.hssf.record.formula.eval.RefEval;
 
+/**
+ * Implementation for Excel COLUMNS function.
+ * 
+ * @author Josh Micich
+ */
+public final class Rows implements Function {
+
+	public Eval evaluate(Eval[] args, int srcCellRow, short srcCellCol) {
+		switch(args.length) {
+			case 1:
+				// expected
+				break;
+			case 0:
+				// too few arguments
+				return ErrorEval.VALUE_INVALID;
+			default:
+				// too many arguments
+				return ErrorEval.VALUE_INVALID;
+		}
+		Eval firstArg = args[0];
+		
+		int result;
+        if (firstArg instanceof AreaEval) {
+            AreaEval ae = (AreaEval) firstArg;
+            result = ae.getLastRow() - ae.getFirstRow() + 1;
+        } else if (firstArg instanceof RefEval) {
+            result = 1;
+        } else { // anything else is not valid argument
+            return ErrorEval.VALUE_INVALID;
+        }
+        return new NumberEval(result);
+	}
 }
