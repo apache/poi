@@ -476,6 +476,13 @@ public class HSSFRow
     {
       return new CellIterator();
     }
+    /**
+     * Alias for {@link CellIterator} to allow
+     *  foreach loops
+     */
+    public Iterator iterator() { 
+    	return cellIterator();
+    }
     
     private class CellIterator implements Iterator
     {

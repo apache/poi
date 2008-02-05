@@ -53,6 +53,13 @@ public class XSSFRow implements Row {
     public Iterator<Cell> cellIterator() {
         return cells.iterator();
     }
+    /**
+     * Alias for {@link #cellIterator()} to allow
+     *  foreach loops
+     */
+    public Iterator<Cell> iterator() {
+    	return cellIterator();
+    }
 
     public int compareTo(Object obj) {
         // TODO Auto-generated method stub

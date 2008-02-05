@@ -17,9 +17,10 @@
 
 package org.apache.poi.ss.usermodel;
 
+import java.lang.Iterable;
 import java.util.Iterator;
 
-public interface Row {
+public interface Row extends Iterable {
 
     // used for collections
     public final static int INITIAL_CAPACITY = 5;
@@ -145,11 +146,16 @@ public interface Row {
     float getHeightInPoints();
 
     /**
-     * @return cell iterator of the physically defined cells.  Note element 4 may
+     * @return Cell iterator of the physically defined cells.  Note element 4 may
      * actually be row cell depending on how many are defined!
      */
+    Iterator<Cell> cellIterator();
 
-    Iterator cellIterator();
+	/**
+	 * Alias for {@link #cellIterator()} to allow
+	 * foreach loops
+	 */
+	Iterator<Cell> iterator();
 
     int compareTo(Object obj);
 
