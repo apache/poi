@@ -502,6 +502,13 @@ public class XSSFSheet implements Sheet {
     public Iterator<Row> rowIterator() {
         return rows.iterator();
     }
+    /**
+     * Alias for {@link #rowIterator()} to
+     *  allow foreach loops
+     */
+    public Iterator<Row> iterator() {
+    	return rowIterator();
+    }
 
     public void setAlternativeExpression(boolean b) {
         // TODO Auto-generated method stub
