@@ -701,11 +701,18 @@ public class HSSFSheet
      * @return an iterator of the PHYSICAL rows.  Meaning the 3rd element may not
      * be the third row if say for instance the second row is undefined.
      */
-
     public Iterator rowIterator()
     {
         return rows.values().iterator();
     }
+    /**
+     * Alias for {@link #rowIterator()} to allow 
+     *  foreach loops
+     */
+    public Iterator iterator() {
+        return rowIterator();
+    }
+    
 
     /**
      * used internally in the API to get the low level Sheet record represented by this
