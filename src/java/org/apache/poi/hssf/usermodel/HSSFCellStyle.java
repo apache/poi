@@ -20,7 +20,6 @@ package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.ExtendedFormatRecord;
-import org.apache.poi.hssf.record.FormatRecord;
 import org.apache.poi.hssf.util.*;
 
 /**
@@ -913,4 +912,29 @@ public class HSSFCellStyle
     {
         return format.getFillForeground();
     }
+
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((format == null) ? 0 : format.hashCode());
+		result = prime * result + index;
+		return result;
+	}
+
+	public boolean equals(Object obj) {
+		if (this == obj) return true;
+		if (obj == null) return false;
+		if (obj instanceof HSSFCellStyle) {
+			final HSSFCellStyle other = (HSSFCellStyle) obj;
+			if (format == null) {
+				if (other.format != null)
+					return false;
+			} else if (!format.equals(other.format))
+				return false;
+			if (index != other.index)
+				return false;
+			return true;
+		}
+		return false;
+	}
 }
