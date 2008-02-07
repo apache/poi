@@ -1066,7 +1066,7 @@ public class HSSFCell
             Record rec = ( Record ) it.next();
             if (rec instanceof HyperlinkRecord){
                 HyperlinkRecord link = (HyperlinkRecord)rec;
-                if(link.getColumn() == record.getColumn() && link.getRow() == record.getRow()){
+                if(link.getFirstColumn() == record.getColumn() && link.getFirstRow() == record.getRow()){
                     return new HSSFHyperlink(link);
                 }
             }
@@ -1080,6 +1080,25 @@ public class HSSFCell
      * @param link hypelrink associated with this cell
      */
     public void setHyperlink(HSSFHyperlink link){
+        link.setFirstRow(record.getRow());
+        link.setLastRow(record.getRow());
+        link.setFirstColumn(record.getColumn());
+        link.setLastColumn(record.getColumn());
 
+        switch(link.getType()){
+            case HSSFHyperlink.LINK_EMAIL:
+            case HSSFHyperlink.LINK_URL:
+                link.setLabel("url");
+                break;
+            case HSSFHyperlink.LINK_FILE:
+                link.setLabel("file");
+                break;
+            case HSSFHyperlink.LINK_DOCUMENT:
+                link.setLabel("place");
+                break;
+        }
+
+        int eofLoc = sheet.findFirstRecordLocBySid( EOFRecord.sid );
+        sheet.getRecords().add( eofLoc, link.record );
     }
 }
