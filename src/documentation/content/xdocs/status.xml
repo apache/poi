@@ -33,6 +33,7 @@
 	<!-- Don't forget to update changes.xml too! -->
     <changes>
         <release version="3.1-beta1" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">38641 - Handle timezones better with cell.setCellValue(Calendar), so now 20:00-03:00, 20:00+00:00 and 20:00+03:00 will all be recorded as 20:00, and not 17:00 / 20:00 / 23:00 (pass a Date not a Calendar for old behaviour)</action>
            <action dev="POI-DEVELOPERS" type="fix">44373 - Have HSSFDateUtil.isADateFormat recognize more formats as being dates</action>
            <action dev="POI-DEVELOPERS" type="add">37923 - Support for Excel hyperlinks</action>
            <action dev="POI-DEVELOPERS" type="add">Implement hashCode() and equals(obj) on HSSFFont and HSSFCellStyle</action>
