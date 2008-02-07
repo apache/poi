@@ -320,8 +320,8 @@ extends TestCase {
 
         assertEquals("Foo", link.getLabel());
         assertEquals("http://poi.apache.org/", link.getAddress());
-        assertEquals(4, link.getRow());
-        assertEquals(0, link.getColumn());
+        assertEquals(4, link.getFirstRow());
+        assertEquals(0, link.getFirstColumn());
     }
     
     /**
@@ -339,16 +339,16 @@ extends TestCase {
         assertNotNull(link1);
         assertEquals("Foo", link1.getLabel());
         assertEquals("http://poi.apache.org/", link1.getAddress());
-        assertEquals(4, link1.getRow());
-        assertEquals(0, link1.getColumn());
+        assertEquals(4, link1.getFirstRow());
+        assertEquals(0, link1.getFirstColumn());
 
         HSSFCell cell2 = sheet.getRow(8).getCell((short)1);
         HSSFHyperlink link2 = cell2.getHyperlink();
         assertNotNull(link2);
         assertEquals("Bar", link2.getLabel());
-        assertEquals("http://poi.apache.org/", link2.getAddress());
-        assertEquals(8, link2.getRow());
-        assertEquals(1, link2.getColumn());
+        assertEquals("http://poi.apache.org/hssf/", link2.getAddress());
+        assertEquals(8, link2.getFirstRow());
+        assertEquals(1, link2.getFirstColumn());
 
     }
     
