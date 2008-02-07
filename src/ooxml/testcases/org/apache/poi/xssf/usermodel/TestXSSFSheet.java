@@ -20,6 +20,7 @@ package org.apache.poi.xssf.usermodel;
 import java.util.Iterator;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Footer;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 
@@ -125,14 +126,6 @@ public class TestXSSFSheet extends TestCase {
         assertEquals((short) 14, sheet.getDefaultColumnWidth());
     }
     
-    public void testGetSetColumnWidth() {
-        XSSFWorkbook workbook = new XSSFWorkbook();
-        Sheet sheet = workbook.createSheet("Sheet 1");
-        // Test setting a column width and getting that value
-        sheet.setColumnWidth((short) 0, (short) 16);
-        assertEquals(16, sheet.getColumnWidth((short) 0));
-    }
-    
     public void testGetFirstLastRowNum() {
         XSSFWorkbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("Sheet 1");
@@ -220,17 +213,6 @@ public class TestXSSFSheet extends TestCase {
         assertFalse(sheet.getAutobreaks());
     }
     
-    public void testIsSetColumnHidden() {
-        XSSFWorkbook workbook = new XSSFWorkbook();
-        Sheet sheet = workbook.createSheet("Sheet 1");
-        sheet.setColumnWidth((short) 0, (short) 13);
-        sheet.setColumnHidden((short) 1, false);
-        sheet.setColumnHidden((short) 2, true);
-        assertFalse(sheet.isColumnHidden((short) 0));
-        assertFalse(sheet.isColumnHidden((short) 1));
-        assertTrue(sheet.isColumnHidden((short) 2));
-    }
-    
     public void testIsSetFitToPage() {
         XSSFWorkbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("Sheet 1");
@@ -246,16 +228,31 @@ public class TestXSSFSheet extends TestCase {
         Sheet sheet = workbook.createSheet("Sheet 1");
         assertEquals((double) 0, sheet.getMargin((short) 0));
         sheet.setMargin((short) 0, 10);
-        sheet.setMargin((short) 1, 11);
-        sheet.setMargin((short) 2, 12);
-        sheet.setMargin((short) 3, 13);
-        sheet.setMargin((short) 4, 14);
-        sheet.setMargin((short) 5, 15);
         assertEquals((double) 10, sheet.getMargin((short) 0));
+        assertEquals((double) 10, sheet.getMargin((short) 1));
+        assertEquals((double) 10, sheet.getMargin((short) 2));
+        assertEquals((double) 10, sheet.getMargin((short) 3));
+        assertEquals((double) 10, sheet.getMargin((short) 4));
+        assertEquals((double) 10, sheet.getMargin((short) 5));
+        sheet.setMargin((short) 1, 11);
         assertEquals((double) 11, sheet.getMargin((short) 1));
+        assertEquals((double) 11, sheet.getMargin((short) 2));
+        assertEquals((double) 11, sheet.getMargin((short) 3));
+        assertEquals((double) 11, sheet.getMargin((short) 4));
+        assertEquals((double) 11, sheet.getMargin((short) 5));
+        sheet.setMargin((short) 2, 12);
         assertEquals((double) 12, sheet.getMargin((short) 2));
+        assertEquals((double) 12, sheet.getMargin((short) 3));
+        assertEquals((double) 12, sheet.getMargin((short) 4));
+        assertEquals((double) 12, sheet.getMargin((short) 5));
+        sheet.setMargin((short) 3, 13);
         assertEquals((double) 13, sheet.getMargin((short) 3));
+        assertEquals((double) 13, sheet.getMargin((short) 4));
+        assertEquals((double) 13, sheet.getMargin((short) 5));
+        sheet.setMargin((short) 4, 14);
         assertEquals((double) 14, sheet.getMargin((short) 4));
+        assertEquals((double) 14, sheet.getMargin((short) 5));
+        sheet.setMargin((short) 5, 15);
         assertEquals((double) 15, sheet.getMargin((short) 5));
         
         // Test that nothing happens if another margin constant is given (E.G. 65)
@@ -266,5 +263,63 @@ public class TestXSSFSheet extends TestCase {
         assertEquals((double) 13, sheet.getMargin((short) 3));
         assertEquals((double) 14, sheet.getMargin((short) 4));
         assertEquals((double) 15, sheet.getMargin((short) 5));
+    }
+    
+    public void testGetFooter() {
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Sheet 1");
+        assertNotNull(sheet.getFooter());
+        sheet.getFooter().setCenter("test center footer");
+        assertEquals("test center footer", sheet.getFooter().getCenter());
+    }
+    
+    public void testGetAllHeadersFooters() {
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        XSSFSheet sheet = (XSSFSheet) workbook.createSheet("Sheet 1");
+        assertNotNull(sheet.getOddFooter());
+        assertNotNull(sheet.getEvenFooter());
+        assertNotNull(sheet.getFirstFooter());
+        assertNotNull(sheet.getOddHeader());
+        assertNotNull(sheet.getEvenHeader());
+        assertNotNull(sheet.getFirstHeader());
+        
+        assertEquals("", sheet.getOddFooter().getLeft());
+        sheet.getOddFooter().setLeft("odd footer left");
+        assertEquals("odd footer left", sheet.getOddFooter().getLeft());
+        
+        assertEquals("", sheet.getEvenFooter().getLeft());
+        sheet.getEvenFooter().setLeft("even footer left");
+        assertEquals("even footer left", sheet.getEvenFooter().getLeft());
+        
+        assertEquals("", sheet.getFirstFooter().getLeft());
+        sheet.getFirstFooter().setLeft("first footer left");
+        assertEquals("first footer left", sheet.getFirstFooter().getLeft());
+        
+        assertEquals("", sheet.getOddHeader().getLeft());
+        sheet.getOddHeader().setLeft("odd header left");
+        assertEquals("odd header left", sheet.getOddHeader().getLeft());
+        
+        assertEquals("", sheet.getOddHeader().getRight());
+        sheet.getOddHeader().setRight("odd header right");
+        assertEquals("odd header right", sheet.getOddHeader().getRight());
+        
+        assertEquals("", sheet.getOddHeader().getCenter());
+        sheet.getOddHeader().setCenter("odd header center");
+        assertEquals("odd header center", sheet.getOddHeader().getCenter());
+
+    }
+    
+    public void testGetSetColumnWidth() {
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Sheet 1");
+        sheet.setColumnWidth((short) 1,(short)  22);
+        assertEquals(22, sheet.getColumnWidth((short) 1));
+    }
+    
+    public void testGetSetColumnHidden() {
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Sheet 1");
+        sheet.setColumnHidden((short) 2, true);
+        assertTrue(sheet.isColumnHidden((short) 2));
     }
 }

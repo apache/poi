@@ -96,8 +96,6 @@ public class XSSFSheet implements Sheet {
             col.setCustomWidth(true);
         }
         CTHeaderFooter hf = this.worksheet.addNewHeaderFooter();
-        hf.setOddHeader("&amp;C&amp;A");
-        hf.setOddFooter("&amp;C&amp;\"Arial\"&amp;10Page &amp;P");
         CTPageBreak rowBreaks = worksheet.addNewRowBreaks();
         CTPageBreak columnBreak = worksheet.addNewColBreaks();
         CTSheetPr sheetPr = worksheet.addNewSheetPr();
@@ -251,13 +249,36 @@ public class XSSFSheet implements Sheet {
     }
 
     public Footer getFooter() {
-        // TODO Auto-generated method stub
-        return null;
+        return getOddFooter();
+    }
+    
+    public Footer getOddFooter() {
+        return new XSSFOddFooter(worksheet.getHeaderFooter());
+    }
+    
+    public Footer getEvenFooter() {
+        return new XSSFEvenFooter(worksheet.getHeaderFooter());
+    }
+    
+    public Footer getFirstFooter() {
+        return new XSSFFirstFooter(worksheet.getHeaderFooter());
     }
 
     public Header getHeader() {
-        // TODO Auto-generated method stub
-        return null;
+        return getOddHeader();
+    }
+    
+    public Header getOddHeader() {
+        return new XSSFOddHeader(worksheet.getHeaderFooter());
+    }
+    
+    public Header getEvenHeader() {
+        return new XSSFEvenHeader(worksheet.getHeaderFooter()
+);
+    }
+    
+    public Header getFirstHeader() {
+        return new XSSFFirstHeader(worksheet.getHeaderFooter());
     }
 
     public boolean getHorizontallyCenter() {
@@ -282,23 +303,23 @@ public class XSSFSheet implements Sheet {
     }
 
     public double getMargin(short margin) {
-    	CTPageMargins pageMargins = worksheet.getPageMargins();
-    	switch (margin) {
-    	case LeftMargin:
-    		return pageMargins.getLeft();
-    	case RightMargin:
-    		return pageMargins.getRight();
-    	case TopMargin:
-    		return pageMargins.getTop();
-    	case BottomMargin:
-    		return pageMargins.getBottom();
-    	case HeaderMargin:
-    		return pageMargins.getHeader();
-    	case FooterMargin:
-    		return pageMargins.getFooter();
-    	default :
-    		throw new RuntimeException( "Unknown margin constant:  " + margin );
-    	}
+        CTPageMargins pageMargins = worksheet.getPageMargins();
+        switch (margin) {
+        case LeftMargin:
+            return pageMargins.getLeft();
+        case RightMargin:
+            return pageMargins.getRight();
+        case TopMargin:
+            return pageMargins.getTop();
+        case BottomMargin:
+            return pageMargins.getBottom();
+        case HeaderMargin:
+            return pageMargins.getHeader();
+        case FooterMargin:
+            return pageMargins.getFooter();
+        default :
+            throw new RuntimeException( "Unknown margin constant:  " + margin );
+        }
     }
 
     public Region getMergedRegionAt(int index) {
@@ -537,19 +558,11 @@ public class XSSFSheet implements Sheet {
     }
 
     public void setColumnHidden(short column, boolean hidden) {
-        CTCol col = columnHelper.getColumn(column);
-        if (col == null) {
-            col = columnHelper.createColumn(column);
-        }
-        col.setHidden(hidden);
+        columnHelper.getColumn(column).setHidden(hidden);
     }
 
     public void setColumnWidth(short column, short width) {
-        CTCol col = columnHelper.getColumn(column);
-        if (col == null) {
-            col = columnHelper.createColumn(column);
-        }
-        col.setWidth(width);
+        columnHelper.getColumn(column).setWidth(width);
     }
 
     public void setDefaultColumnStyle(short column, CellStyle style) {
@@ -611,21 +624,21 @@ public class XSSFSheet implements Sheet {
     }
 
     public void setMargin(short margin, double size) {
-	    CTPageMargins pageMargins = worksheet.getPageMargins();
-	    switch (margin) {
-	    case LeftMargin:
-	    	pageMargins.setLeft(size);
-	    case RightMargin:
-	    	pageMargins.setRight(size);
-	    case TopMargin:
-	    	pageMargins.setTop(size);
-	    case BottomMargin:
-	    	pageMargins.setBottom(size);
-	    case HeaderMargin:
-	    	pageMargins.setHeader(size);
-	    case FooterMargin:
-	    	pageMargins.setFooter(size);
-	    }
+        CTPageMargins pageMargins = worksheet.getPageMargins();
+        switch (margin) {
+        case LeftMargin:
+            pageMargins.setLeft(size);
+        case RightMargin:
+            pageMargins.setRight(size);
+        case TopMargin:
+            pageMargins.setTop(size);
+        case BottomMargin:
+            pageMargins.setBottom(size);
+        case HeaderMargin:
+            pageMargins.setHeader(size);
+        case FooterMargin:
+            pageMargins.setFooter(size);
+        }
     }
 
     public void setPrintGridlines(boolean newPrintGridlines) {

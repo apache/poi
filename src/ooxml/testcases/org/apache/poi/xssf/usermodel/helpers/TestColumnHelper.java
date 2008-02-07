@@ -17,55 +17,95 @@
 
 package org.apache.poi.xssf.usermodel.helpers;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-
 import junit.framework.TestCase;
 
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.SharedStringSource;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellType;
 
 
 public class TestColumnHelper extends TestCase {
-	
-	public void testGetColumnList() {
-		CTWorksheet worksheet = CTWorksheet.Factory.newInstance();
-		ColumnHelper columnHelper = new ColumnHelper(worksheet);
-		
-		CTCols cols1 = worksheet.addNewCols();
-		CTCols cols2 = worksheet.addNewCols();
-		
-		CTCol col1_1 = cols1.addNewCol();
-		col1_1.setMin(1);
-		col1_1.setMax(10);
-		col1_1.setWidth(13);
-		CTCol col1_2 = cols1.addNewCol();
-		col1_2.setMin(15);
-		col1_2.setMax(15);
-		col1_2.setWidth(14);
+    
+    public void testCleanColumns() {
+        CTWorksheet worksheet = CTWorksheet.Factory.newInstance();
+        
+        CTCols cols1 = worksheet.addNewCols();
+        CTCol col1 = cols1.addNewCol();
+        col1.setMin(1);
+        col1.setMax(1);
+        col1.setWidth(88);
+        col1.setHidden(true);
+        CTCol col2 = cols1.addNewCol();
+        col2.setMin(2);
+        col2.setMax(3);
+        CTCols cols2 = worksheet.addNewCols();
+        CTCol col4 = cols2.addNewCol();
+        col4.setMin(3);
+        col4.setMax(6);
+        
+        // Test cleaning cols
+        assertEquals(2, worksheet.sizeOfColsArray());
+        int count = countColumns(worksheet);
+        assertEquals(7, count);
+        // Clean columns and test a clean worksheet
+        ColumnHelper helper = new ColumnHelper(worksheet);
+        assertEquals(1, worksheet.sizeOfColsArray());
+        count = countColumns(worksheet);
+        assertEquals(6, count);
+        assertEquals((double) 88, helper.getColumn(1).getWidth());
+        assertTrue(helper.getColumn(1).getHidden());
+        
+    }
+    
+    public void testGetColumn() {
+        CTWorksheet worksheet = CTWorksheet.Factory.newInstance();
+        
+        CTCols cols1 = worksheet.addNewCols();
+        CTCol col1 = cols1.addNewCol();
+        col1.setMin(1);
+        col1.setMax(1);
+        col1.setWidth(88);
+        col1.setHidden(true);
+        CTCol col2 = cols1.addNewCol();
+        col2.setMin(2);
+        col2.setMax(3);
+        CTCols cols2 = worksheet.addNewCols();
+        CTCol col4 = cols2.addNewCol();
+        col4.setMin(3);
+        col4.setMax(6);
+        
+        ColumnHelper helper = new ColumnHelper(worksheet);
+        assertNotNull(helper.getColumn(1));
+        assertEquals((double) 88, helper.getColumn(1).getWidth());
+        assertTrue(helper.getColumn(1).getHidden());
+        assertFalse(helper.getColumn(2).getHidden());
+        assertNull(helper.getColumn(99));
+    }
+    
+    public void testSetColumnAttributes() {
+        CTCol col = CTCol.Factory.newInstance();
+        col.setWidth(12);
+        col.setHidden(true);
+        CTCol newCol = CTCol.Factory.newInstance();
+        assertEquals((double) 0, newCol.getWidth());
+        assertFalse(newCol.getHidden());
+        ColumnHelper helper = new ColumnHelper(CTWorksheet.Factory.newInstance());
+        helper.setColumnAttributes(col, newCol);
+        assertEquals((double) 12, newCol.getWidth());
+        assertTrue(newCol.getHidden());
+    }
 
-		CTCol col2_1 = cols2.addNewCol();
-		col2_1.setMin(6);
-		col2_1.setMax(10);
-		CTCol col2_2 = cols2.addNewCol();
-		col2_2.setMin(20);
-		col2_2.setMax(20);
-		
-		columnHelper.setColumns(worksheet);
-		List<CTCol> columns = columnHelper.getColumns();
-		
-		assertEquals(12, columns.size());
-		assertEquals((double) 14, columnHelper.getColumn(15).getWidth());
-	}
-	
+    private int countColumns(CTWorksheet worksheet) {
+        int count;
+        count = 0;
+        for (int i = 0 ; i < worksheet.sizeOfColsArray() ; i++) {
+            for (int y = 0 ; y < worksheet.getColsArray(i).sizeOfColArray() ; y++) {
+                for (long k = worksheet.getColsArray(i).getColArray(y).getMin() ; k <= worksheet.getColsArray(i).getColArray(y).getMax() ; k++) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+    
 }
