@@ -70,9 +70,25 @@ public class HSSFDateUtil
     public static double getExcelDate(Date date, boolean use1904windowing) {
         Calendar calStart = new GregorianCalendar();
         calStart.setTime(date);   // If date includes hours, minutes, and seconds, set them to 0
-        
-        if ((!use1904windowing && calStart.get(Calendar.YEAR) < 1900) || 
-            (use1904windowing && calStart.get(Calendar.YEAR) < 1904)) 
+        return internalGetExcelDate(calStart, use1904windowing);
+    }
+    /**
+     * Given a Date in the form of a Calendar, converts it into a double
+     *  representing its internal Excel representation, which is the 
+     *  number of days since 1/1/1900. Fractional days represent hours, 
+     *  minutes, and seconds.
+     *
+     * @return Excel representation of Date (-1 if error - test for error by checking for less than 0.1)
+     * @param date the Calendar holding the date to convert
+     * @param use1904windowing Should 1900 or 1904 date windowing be used?
+     */
+    public static double getExcelDate(Calendar date, boolean use1904windowing) {
+    	// Don't alter the supplied Calendar as we do our work
+    	return internalGetExcelDate( (Calendar)date.clone(), use1904windowing );
+    }
+    private static double internalGetExcelDate(Calendar date, boolean use1904windowing) {
+        if ((!use1904windowing && date.get(Calendar.YEAR) < 1900) || 
+            (use1904windowing && date.get(Calendar.YEAR) < 1904)) 
         {
             return BAD_DATE;
         } else {
@@ -83,12 +99,12 @@ public class HSSFDateUtil
 	    // be 4 hours.
 	    // E.g. 2004-03-28 04:00 CEST - 2004-03-28 00:00 CET is 3 hours
 	    // and 2004-10-31 04:00 CET - 2004-10-31 00:00 CEST is 5 hours
-            double fraction = (((calStart.get(Calendar.HOUR_OF_DAY) * 60
-                                 + calStart.get(Calendar.MINUTE)
-                                ) * 60 + calStart.get(Calendar.SECOND)
-                               ) * 1000 + calStart.get(Calendar.MILLISECOND)
+            double fraction = (((date.get(Calendar.HOUR_OF_DAY) * 60
+                                 + date.get(Calendar.MINUTE)
+                                ) * 60 + date.get(Calendar.SECOND)
+                               ) * 1000 + date.get(Calendar.MILLISECOND)
                               ) / ( double ) DAY_MILLISECONDS;
-            calStart = dayStart(calStart);
+            Calendar calStart = dayStart(date);
             
             double value = fraction + absoluteDay(calStart, use1904windowing);
             

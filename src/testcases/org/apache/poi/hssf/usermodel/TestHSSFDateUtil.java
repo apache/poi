@@ -197,6 +197,29 @@ public class TestHSSFDateUtil
     }
     
     /**
+     * Tests that we deal with timezones properly
+     */
+    public void testCalendarConversion() {
+        GregorianCalendar date = new GregorianCalendar(2002, 0, 1, 12, 1, 1);
+        Date expected = date.getTime();
+        double expectedExcel = HSSFDateUtil.getExcelDate(expected);
+
+        // Iteratating over the hours exposes any rounding issues.
+        for (int hour = -12; hour <= 12; hour++)
+        {
+            String id = "GMT" + (hour < 0 ? "" : "+") + hour + ":00";
+            date.setTimeZone(TimeZone.getTimeZone(id));
+            date.set(Calendar.HOUR_OF_DAY, 12);
+            double excelDate = HSSFDateUtil.getExcelDate(date, false);
+            Date javaDate = HSSFDateUtil.getJavaDate(excelDate);
+
+            // Should match despite timezone
+            assertEquals("Checking timezone " + id, expected.getTime(), javaDate.getTime());
+        }
+    }
+    
+    
+    /**
      * Tests that we correctly detect date formats as such
      */
     public void testIdentifyDateFormats() {
