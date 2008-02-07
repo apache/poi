@@ -39,6 +39,7 @@ import org.openxml4j.exceptions.InvalidFormatException;
 import org.openxml4j.opc.Package;
 import org.openxml4j.opc.PackagePart;
 import org.openxml4j.opc.PackagePartName;
+import org.openxml4j.opc.PackageRelationship;
 import org.openxml4j.opc.PackageRelationshipTypes;
 import org.openxml4j.opc.PackagingURIHelper;
 import org.openxml4j.opc.TargetMode;
@@ -48,9 +49,14 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbook;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.WorkbookDocument;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.WorksheetDocument;
 
 
 public class XSSFWorkbook extends POIXMLDocument implements Workbook {
+
+    private static final String WORKSHEET_TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml";
+
+    private static final String WORKSHEET_RELATIONSHIP = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet";
 
     private CTWorkbook workbook;
     
@@ -69,8 +75,25 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         try {
             WorkbookDocument doc = WorkbookDocument.Factory.parse(getCorePart().getInputStream());
             this.workbook = doc.getWorkbook();
+            for (CTSheet ctSheet : this.workbook.getSheets().getSheetArray()) {
+                PackageRelationship rel = this.getCorePart().getRelationship(ctSheet.getId());
+                PackagePartName relName = PackagingURIHelper.createPartName(rel.getTargetURI());
+                PackagePart part = getPackage().getPart(relName);
+                if (part == null) {
+                    throw new IllegalArgumentException("No part found for relationship " + rel);
+                }
+                WorksheetDocument worksheetDoc = WorksheetDocument.Factory.parse(part.getInputStream());
+                XSSFSheet sheet = new XSSFSheet(ctSheet, worksheetDoc.getWorksheet());
+                this.sheets.add(sheet);
+            }
         } catch (XmlException e) {
             throw new IOException(e.toString());
+        } catch (InvalidFormatException e) {
+            throw new IOException(e.toString());
+/*            
+        } catch (OpenXML4JException e) {
+            throw new IOException(e.toString());
+*/
         }
     }
 
@@ -401,9 +424,8 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
              for (int i = 0 ; i < this.getNumberOfSheets() ; ++i) {
                  XSSFSheet sheet = (XSSFSheet) this.getSheetAt(i);
                  PackagePartName partName = PackagingURIHelper.createPartName("/xl/worksheets/sheet" + i + ".xml");
-                 corePart.addRelationship(partName, TargetMode.INTERNAL, "http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet", "rSheet" + 1);
-                 PackagePart part = pkg.createPart(partName, 
-                         "application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml");
+                 corePart.addRelationship(partName, TargetMode.INTERNAL, WORKSHEET_RELATIONSHIP, "rSheet" + 1);
+                 PackagePart part = pkg.createPart(partName, WORKSHEET_TYPE);
                  
                  // XXX This should not be needed, but apparently the setSaveOuter call above does not work in XMLBeans 2.2
                  xmlOptions.setSaveSyntheticDocumentElement(new QName(CTWorksheet.type.getName().getNamespaceURI(), "worksheet"));

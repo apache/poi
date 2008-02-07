@@ -50,6 +50,7 @@ public class XSSFCell implements Cell {
     
     public XSSFCell(XSSFRow row, CTCell cell) {
         this.cell = cell;
+        // TODO: parse cell.getR() to obtain cellnum
         this.row = row;
     }
 
