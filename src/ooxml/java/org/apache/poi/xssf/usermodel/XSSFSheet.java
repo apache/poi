@@ -35,10 +35,8 @@ import org.apache.poi.xssf.usermodel.helpers.ColumnHelper;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBreak;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHeaderFooter;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageBreak;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageMargins;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageSetUpPr;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSelection;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
@@ -67,11 +65,16 @@ public class XSSFSheet implements Sheet {
         this.sheet = sheet;
         this.worksheet = CTWorksheet.Factory.newInstance();
         this.worksheet.addNewSheetData();
-        this.rows = new LinkedList<Row>();
-        for (CTRow row : worksheet.getSheetData().getRowArray()) {
-                this.rows.add(new XSSFRow(row));
-        }
-        // XXX ???
+        initRows(worksheet);
+        
+        this.worksheet.addNewHeaderFooter();
+        worksheet.addNewRowBreaks();
+        worksheet.addNewColBreaks();
+        CTSheetPr sheetPr = worksheet.addNewSheetPr();
+        sheetPr.addNewPageSetUpPr();
+        worksheet.addNewPageMargins();
+        
+        // XXX Initial default data, probably useful only for testing. Review and eliminate if necessary.
         CTSheetViews views = this.worksheet.addNewSheetViews();
         CTSheetView view = views.addNewSheetView();
         view.setWorkbookViewId(0);
@@ -95,12 +98,25 @@ public class XSSFSheet implements Sheet {
             col.setWidth(13);
             col.setCustomWidth(true);
         }
-        CTHeaderFooter hf = this.worksheet.addNewHeaderFooter();
-        CTPageBreak rowBreaks = worksheet.addNewRowBreaks();
-        CTPageBreak columnBreak = worksheet.addNewColBreaks();
-        CTSheetPr sheetPr = worksheet.addNewSheetPr();
-        CTPageSetUpPr sheetPageSetUpPr = sheetPr.addNewPageSetUpPr();
-        CTPageMargins pageMargins = worksheet.addNewPageMargins();
+
+        initColumns(worksheet);
+    }
+    
+    public XSSFSheet(CTSheet sheet, CTWorksheet worksheet) {
+        this.sheet = sheet;
+        this.worksheet = worksheet;
+        initRows(worksheet);
+        initColumns(worksheet);
+    }
+
+    private void initRows(CTWorksheet worksheet) {
+        this.rows = new LinkedList<Row>();
+        for (CTRow row : worksheet.getSheetData().getRowArray()) {
+            this.rows.add(new XSSFRow(row));
+        }
+    }
+
+    private void initColumns(CTWorksheet worksheet) {
         columnHelper = new ColumnHelper(worksheet);
     }
 

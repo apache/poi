@@ -21,6 +21,9 @@ import java.io.File;
 
 import junit.framework.TestCase;
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 
@@ -31,12 +34,20 @@ public class TestLoadSaveXSSF extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
         filename = System.getProperty("HSSF.testdata.path");
+        if (filename == null) {
+            filename = "src/testcases/org/apache/poi/hssf/data";
+        }
     }
     
     public void testLoadSample() throws Exception {
         XSSFWorkbook workbook = new XSSFWorkbook(new File(filename, "sample.xlsx").getAbsolutePath());
         assertEquals(3, workbook.getNumberOfSheets());
         assertEquals("Sheet1", workbook.getSheetName(0));
+        Sheet sheet = workbook.getSheetAt(0);
+        Row row = sheet.getRow(0);
+        Cell cell = row.getCell((short) 1);
+        // assertNotNull(cell);
+        // assertEquals(111.0, cell.getNumericCellValue());
     }
 
 }
