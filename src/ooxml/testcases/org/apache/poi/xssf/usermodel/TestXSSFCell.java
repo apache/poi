@@ -160,6 +160,31 @@ public class TestXSSFCell extends TestCase {
         cell.setCellType(Cell.CELL_TYPE_STRING);
         assertEquals("", cell.getRichStringCellValue().getString());
     }
+
+    public void testParseCellNum() {
+        assertEquals(0, XSSFCell.parseCellNum("A1"));
+        assertEquals(1, XSSFCell.parseCellNum("B1"));
+        assertEquals(1, XSSFCell.parseCellNum("B2"));
+        assertEquals(26, XSSFCell.parseCellNum("AA1"));
+        assertEquals(255, XSSFCell.parseCellNum("IV1"));
+        assertEquals(255, XSSFCell.parseCellNum("IV32768"));
+    }
+    
+    public void testFormatPosition() {
+        XSSFRow row = new XSSFRow();
+        row.setRowNum(0);
+        XSSFCell cell = new XSSFCell(row);
+        cell.setCellNum((short) 0);
+        assertEquals("A1", cell.formatPosition());
+        cell.setCellNum((short) 25);
+        assertEquals("Z1", cell.formatPosition());
+        cell.setCellNum((short) 26);
+        assertEquals("AA1", cell.formatPosition());
+        cell.setCellNum((short) 255);
+        assertEquals("IV1", cell.formatPosition());
+        row.setRowNum(32767);
+        assertEquals("IV32768", cell.formatPosition());
+    }
     
     public static class DummySharedStringSource implements SharedStringSource {
         ArrayList<String> strs = new ArrayList<String>();

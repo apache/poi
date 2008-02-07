@@ -50,8 +50,10 @@ public class XSSFCell implements Cell {
     
     public XSSFCell(XSSFRow row, CTCell cell) {
         this.cell = cell;
-        // TODO: parse cell.getR() to obtain cellnum
         this.row = row;
+        if (cell.getR() != null) {
+            this.cellNum = parseCellNum(cell.getR());
+        }
     }
 
     protected void setSharedStringSource(SharedStringSource sharedStringSource) {
@@ -196,7 +198,30 @@ public class XSSFCell implements Cell {
     }
 
     public void setCellNum(short num) {
+        checkBounds(num);
         this.cellNum = num;
+        this.cell.setR(formatPosition());
+    }
+
+    protected static short parseCellNum(String r) {
+        r = r.split("\\d+")[0];
+        if (r.length() == 1) {
+            return (short) (r.charAt(0) - 'A');
+        } else {
+            return (short) (r.charAt(1) - 'A' + 26 * (r.charAt(0) - '@'));
+
+        }
+    }
+
+    protected String formatPosition() {
+        int col = this.getCellNum();
+        String result = Character.valueOf((char) (col % 26 + 'A')).toString();
+        if (col >= 26){
+            col = col / 26;
+            result = Character.valueOf((char) (col + '@')) + result;
+        }
+        result = result + String.valueOf(row.getRowNum() + 1);
+        return result;
     }
 
     public void setCellStyle(CellStyle style) {
@@ -263,6 +288,19 @@ public class XSSFCell implements Cell {
     @Override
     public String toString() {
         return "[" + this.row.getRowNum() + "," + this.getCellNum() + "] " + this.cell.getV();
+    }
+
+    /**
+     * @throws RuntimeException if the bounds are exceeded.
+     */
+    private void checkBounds(int cellNum) {
+      if (cellNum > 255) {
+          throw new RuntimeException("You cannot have more than 255 columns "+
+                    "in a given row (IV).  Because Excel can't handle it");
+      }
+      else if (cellNum < 0) {
+          throw new RuntimeException("You cannot reference columns with an index of less then 0.");
+      }
     }
 
     

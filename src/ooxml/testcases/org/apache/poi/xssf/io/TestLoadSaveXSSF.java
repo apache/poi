@@ -46,8 +46,8 @@ public class TestLoadSaveXSSF extends TestCase {
         Sheet sheet = workbook.getSheetAt(0);
         Row row = sheet.getRow(0);
         Cell cell = row.getCell((short) 1);
-        // assertNotNull(cell);
-        // assertEquals(111.0, cell.getNumericCellValue());
+        assertNotNull(cell);
+        assertEquals(111.0, cell.getNumericCellValue());
     }
 
 }
