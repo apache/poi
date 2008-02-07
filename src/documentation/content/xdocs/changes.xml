@@ -36,6 +36,7 @@
 
 		<!-- Don't forget to update status.xml too! -->
         <release version="3.1-beta1" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">44373 - Have HSSFDateUtil.isADateFormat recognize more formats as being dates</action>
            <action dev="POI-DEVELOPERS" type="add">37923 - Support for Excel hyperlinks</action>
            <action dev="POI-DEVELOPERS" type="add">Implement hashCode() and equals(obj) on HSSFFont and HSSFCellStyle</action>
            <action dev="POI-DEVELOPERS" type="fix">44345 - Implement CountA, CountIf, Index, Rows and Columns functions</action>

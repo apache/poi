@@ -208,9 +208,9 @@ public class HSSFDateUtil
     	//  who knows what that starting bit is all about
     	fs = fs.replaceAll("\\[\\$\\-.*?\\]", "");
     	
-    	// Otherwise, check it's only made up of:
-    	//  y m d - / ,
-    	if(fs.matches("^[ymd\\-/, ]+$")) {
+    	// Otherwise, check it's only made up, in any case, of:
+    	//  y m d h s - / , . :
+    	if(fs.matches("^[yYmMdDhHsS\\-/,. :]+$")) {
     		return true;
     	}
     	
