@@ -109,25 +109,51 @@ public class VariantSupport extends Variant
     }
 
 
+    /**
+     * <p>HPSF is able to read these {@link Variant} types.</p>
+     */
+    final static public int[] SUPPORTED_TYPES = { Variant.VT_EMPTY,
+            Variant.VT_I2, Variant.VT_I4, Variant.VT_I8, Variant.VT_R8,
+            Variant.VT_FILETIME, Variant.VT_LPSTR, Variant.VT_LPWSTR,
+            Variant.VT_CF, Variant.VT_BOOL };
+
+
+
+    /**
+     * <p>Checks whether HPSF supports the specified variant type. Unsupported
+     * types should be implemented included in the {@link #SUPPORTED_TYPES}
+     * array.</p>
+     * 
+     * @see Variant
+     * @param variantType the variant type to check
+     * @return <code>true</code> if HPFS supports this type, else
+     *         <code>false</code>
+     */
+    public boolean isSupportedType(final int variantType)
+    {
+        for (int i = 0; i < SUPPORTED_TYPES.length; i++)
+            if (variantType == SUPPORTED_TYPES[i])
+                return true;
+        return false;
+    }
+
+
 
     /**
      * <p>Reads a variant type from a byte array.</p>
-     *
+     * 
      * @param src The byte array
-     * @param offset The offset in the byte array where the variant
-     * starts
-     * @param length The length of the variant including the variant
-     * type field
+     * @param offset The offset in the byte array where the variant starts
+     * @param length The length of the variant including the variant type field
      * @param type The variant type to read
-     * @param codepage The codepage to use to write non-wide strings
-     * @return A Java object that corresponds best to the variant
-     * field. For example, a VT_I4 is returned as a {@link Long}, a
-     * VT_LPSTR as a {@link String}.
+     * @param codepage The codepage to use for non-wide strings
+     * @return A Java object that corresponds best to the variant field. For
+     *         example, a VT_I4 is returned as a {@link Long}, a VT_LPSTR as a
+     *         {@link String}.
      * @exception ReadingNotSupportedException if a property is to be written
-     * who's variant type HPSF does not yet support
+     *            who's variant type HPSF does not yet support
      * @exception UnsupportedEncodingException if the specified codepage is not
-     * supported.
-     *
+     *            supported.
      * @see Variant
      */
     public static Object read(final byte[] src, final int offset,
