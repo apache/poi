@@ -20,7 +20,6 @@ package org.apache.poi.hpsf.basic;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -223,46 +222,6 @@ public class TestBasic extends TestCase
         Assert.assertEquals(17, s.getPropertyCount());
         Assert.assertEquals("Titel", s.getProperty(2));
         Assert.assertEquals(1748, s.getSize());
-    }
-
-
-
-    /**
-     * <p>This test methods reads all property set streams from all POI
-     * filesystems in the "data" directory.</p>
-     */
-    public void testReadAllFiles()
-    {
-        final File dataDir =
-            new File(System.getProperty("HPSF.testdata.path"));
-        final File[] fileList = dataDir.listFiles(new FileFilter()
-            {
-                public boolean accept(final File f)
-                {
-                    return f.isFile();
-                }
-            });
-        try
-        {
-            for (int i = 0; i < fileList.length; i++)
-            {
-                File f = fileList[i];
-                /* Read the POI filesystem's property set streams: */
-                final POIFile[] psf1 = Util.readPropertySets(f);
-
-                for (int j = 0; j < psf1.length; j++)
-                {
-                    final InputStream in =
-                        new ByteArrayInputStream(psf1[j].getBytes());
-                    PropertySetFactory.create(in);
-                }
-            }
-        }
-        catch (Throwable t)
-        {
-            final String s = org.apache.poi.hpsf.Util.toString(t);
-            fail(s);
-        }
     }
 
 
