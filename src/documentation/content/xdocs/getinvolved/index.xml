@@ -140,9 +140,10 @@ cd /tmp/poi-patch/new-files/
 tar jcvf ../new-files.tar.bz2
 cd ..
 
-# Upload these two bugzilla
+# Upload these to bugzilla
 echo "Please upload to bugzilla:"
-echo "   /tmp/poi-patch/diff.txt and /tmp/poi-patch/new-files.tar.bz2"
+echo "   /tmp/poi-patch/diff.txt"
+echo "   /tmp/poi-patch/new-files.tar.bz2"
    </source>
   </section>
 
