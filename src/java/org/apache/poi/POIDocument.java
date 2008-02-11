@@ -67,14 +67,28 @@ public abstract class POIDocument {
 
 	/**
 	 * Find, and create objects for, the standard
-	 *  Documment Information Properties (HPSF)
+	 *  Documment Information Properties (HPSF).
+	 * If a given property set is missing or corrupt,
+	 *  it will remain null;
 	 */
 	protected void readProperties() {
+		PropertySet ps;
+		
 		// DocumentSummaryInformation
-		dsInf = (DocumentSummaryInformation)getPropertySet(DocumentSummaryInformation.DEFAULT_STREAM_NAME);
+		ps = getPropertySet(DocumentSummaryInformation.DEFAULT_STREAM_NAME);
+		if(ps != null && ps instanceof DocumentSummaryInformation) {
+			dsInf = (DocumentSummaryInformation)ps;
+		} else if(ps != null) {
+			logger.log(POILogger.WARN, "DocumentSummaryInformation property set came back with wrong class - ", ps.getClass());
+		}
 
 		// SummaryInformation
-		sInf = (SummaryInformation)getPropertySet(SummaryInformation.DEFAULT_STREAM_NAME);
+		ps = getPropertySet(SummaryInformation.DEFAULT_STREAM_NAME);
+		if(ps instanceof SummaryInformation) {
+			sInf = (SummaryInformation)ps;
+		} else if(ps != null) {
+			logger.log(POILogger.WARN, "SummaryInformation property set came back with wrong class - ", ps.getClass());
+		}
 	}
 
 	/** 
