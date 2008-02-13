@@ -48,6 +48,8 @@ public class TestLoadSaveXSSF extends TestCase {
         Cell cell = row.getCell((short) 1);
         assertNotNull(cell);
         assertEquals(111.0, cell.getNumericCellValue());
+        cell = row.getCell((short) 0);
+        assertEquals("Lorem", cell.getRichStringCellValue().getString());
     }
 
 }

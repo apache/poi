@@ -35,7 +35,8 @@ public class TestXSSFCell extends TestCase {
      * Test setting and getting boolean values.
      */
     public void testSetGetBoolean() throws Exception {
-        XSSFCell cell = new XSSFCell(new XSSFRow());
+        XSSFRow row = createParentObjects();
+        XSSFCell cell = new XSSFCell(row);
         cell.setCellValue(true);
         assertEquals(Cell.CELL_TYPE_BOOLEAN, cell.getCellType());
         assertTrue(cell.getBooleanCellValue());
@@ -54,7 +55,8 @@ public class TestXSSFCell extends TestCase {
      * Test setting and getting numeric values.
      */
     public void testSetGetNumeric() throws Exception {
-        XSSFCell cell = new XSSFCell(new XSSFRow());
+        XSSFRow row = createParentObjects();
+        XSSFCell cell = new XSSFCell(row);
         cell.setCellValue(10d);
         assertEquals(Cell.CELL_TYPE_NUMERIC, cell.getCellType());
         assertEquals(10d, cell.getNumericCellValue());
@@ -66,7 +68,8 @@ public class TestXSSFCell extends TestCase {
      * Test setting and getting numeric values.
      */
     public void testSetGetDate() throws Exception {
-        XSSFCell cell = new XSSFCell(new XSSFRow());
+        XSSFRow row = createParentObjects();
+        XSSFCell cell = new XSSFCell(row);
         Date now = new Date();
         cell.setCellValue(now);
         assertEquals(Cell.CELL_TYPE_NUMERIC, cell.getCellType());
@@ -89,7 +92,8 @@ public class TestXSSFCell extends TestCase {
     }
     
     public void testSetGetError() throws Exception {
-        XSSFCell cell = new XSSFCell(new XSSFRow());
+        XSSFRow row = createParentObjects();
+        XSSFCell cell = new XSSFCell(row);
         cell.setCellErrorValue((byte)255);
         assertEquals(Cell.CELL_TYPE_ERROR, cell.getCellType());
 
@@ -97,7 +101,8 @@ public class TestXSSFCell extends TestCase {
     }
     
     public void testSetGetFormula() throws Exception {
-        XSSFCell cell = new XSSFCell(new XSSFRow());
+        XSSFRow row = createParentObjects();
+        XSSFCell cell = new XSSFCell(row);
         String formula = "SQRT(C2^2+D2^2)";
         
         cell.setCellFormula(formula);
@@ -109,8 +114,8 @@ public class TestXSSFCell extends TestCase {
     
     public void testSetGetStringInline() throws Exception {
         CTCell rawCell = CTCell.Factory.newInstance();
-        XSSFCell cell = new XSSFCell(new XSSFRow(), rawCell);
-        cell.setSharedStringSource(new DummySharedStringSource());
+        XSSFRow row = createParentObjects();
+        XSSFCell cell = new XSSFCell(row, rawCell);
         
         // Default is shared string mode, so have to do this explicitly
         rawCell.setT(STCellType.INLINE_STR);
@@ -133,8 +138,8 @@ public class TestXSSFCell extends TestCase {
     }
     
     public void testSetGetStringShared() throws Exception {
-        XSSFCell cell = new XSSFCell(new XSSFRow());
-        cell.setSharedStringSource(new DummySharedStringSource());
+        XSSFRow row = createParentObjects();
+        XSSFCell cell = new XSSFCell(row);
 
         cell.setCellValue(new XSSFRichTextString(""));
         assertEquals(Cell.CELL_TYPE_STRING, cell.getCellType());
@@ -149,7 +154,8 @@ public class TestXSSFCell extends TestCase {
      * Test that empty cells (no v element) return default values.
      */
     public void testGetEmptyCellValue() throws Exception {
-        XSSFCell cell = new XSSFCell(new XSSFRow());
+        XSSFRow row = createParentObjects();
+        XSSFCell cell = new XSSFCell(row);
         cell.setCellType(Cell.CELL_TYPE_BOOLEAN);
         assertFalse(cell.getBooleanCellValue());
         cell.setCellType(Cell.CELL_TYPE_NUMERIC);
@@ -171,7 +177,7 @@ public class TestXSSFCell extends TestCase {
     }
     
     public void testFormatPosition() {
-        XSSFRow row = new XSSFRow();
+        XSSFRow row = createParentObjects();
         row.setRowNum(0);
         XSSFCell cell = new XSSFCell(row);
         cell.setCellNum((short) 0);
@@ -184,6 +190,14 @@ public class TestXSSFCell extends TestCase {
         assertEquals("IV1", cell.formatPosition());
         row.setRowNum(32767);
         assertEquals("IV32768", cell.formatPosition());
+    }
+
+    private XSSFRow createParentObjects() {
+        XSSFWorkbook wb = new XSSFWorkbook();
+        wb.setSharedStringSource(new DummySharedStringSource());
+        XSSFSheet sheet = new XSSFSheet(wb);
+        XSSFRow row = new XSSFRow(sheet);
+        return row;
     }
     
     public static class DummySharedStringSource implements SharedStringSource {

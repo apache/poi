@@ -37,8 +37,8 @@ public class XSSFCell implements Cell {
     private static final String TRUE_AS_STRING  = "1";
     private final CTCell cell;
     private final XSSFRow row;
-    private SharedStringSource sharedStringSource;
     private short cellNum;
+    private SharedStringSource sharedStringSource;
     
     /**
      * Create a new XSSFCell. This method is protected to be used only by
@@ -54,10 +54,11 @@ public class XSSFCell implements Cell {
         if (cell.getR() != null) {
             this.cellNum = parseCellNum(cell.getR());
         }
+        this.sharedStringSource = row.getSheet().getWorkbook().getSharedStringSource();
     }
-
-    protected void setSharedStringSource(SharedStringSource sharedStringSource) {
-        this.sharedStringSource = sharedStringSource;
+    
+    protected SharedStringSource getSharedStringSource() {
+        return this.sharedStringSource;
     }
 
     public boolean getBooleanCellValue() {
@@ -154,7 +155,7 @@ public class XSSFCell implements Cell {
         if(this.cell.getT() == STCellType.S) {
             if(this.cell.isSetV()) {
                 int sRef = Integer.parseInt(this.cell.getV());
-                return new XSSFRichTextString(sharedStringSource.getSharedStringAt(sRef));
+                return new XSSFRichTextString(getSharedStringSource().getSharedStringAt(sRef));
             } else {
                 return new XSSFRichTextString("");
             }
@@ -273,7 +274,7 @@ public class XSSFCell implements Cell {
         if(this.cell.getT() != STCellType.S) {
             this.cell.setT(STCellType.S);
         }
-        int sRef = sharedStringSource.putSharedString(value.getString());
+        int sRef = getSharedStringSource().putSharedString(value.getString());
         this.cell.setV(Integer.toString(sRef));
     }
 

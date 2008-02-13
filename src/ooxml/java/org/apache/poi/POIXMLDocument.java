@@ -22,8 +22,10 @@ import org.openxml4j.exceptions.InvalidFormatException;
 import org.openxml4j.exceptions.OpenXML4JException;
 import org.openxml4j.opc.Package;
 import org.openxml4j.opc.PackagePart;
+import org.openxml4j.opc.PackagePartName;
 import org.openxml4j.opc.PackageRelationship;
 import org.openxml4j.opc.PackageRelationshipTypes;
+import org.openxml4j.opc.PackagingURIHelper;
 
 
 public abstract class POIXMLDocument {
@@ -61,5 +63,14 @@ public abstract class POIXMLDocument {
     
     protected PackagePart getCorePart() {
         return this.corePart;
+    }
+
+    protected PackagePart getPart(PackageRelationship rel) throws InvalidFormatException {
+        PackagePartName relName = PackagingURIHelper.createPartName(rel.getTargetURI());
+        PackagePart part = getPackage().getPart(relName);
+        if (part == null) {
+            throw new IllegalArgumentException("No part found for relationship " + rel);
+        }
+        return part;
     }
 }

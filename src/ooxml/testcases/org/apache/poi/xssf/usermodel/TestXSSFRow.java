@@ -22,6 +22,7 @@ import java.util.Iterator;
 import junit.framework.TestCase;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.xssf.usermodel.TestXSSFCell.DummySharedStringSource;
 
 
 public class TestXSSFRow extends TestCase {
@@ -30,7 +31,7 @@ public class TestXSSFRow extends TestCase {
      * Test adding cells to a row in various places and see if we can find them again.
      */
     public void testAddAndIterateCells() {
-        XSSFRow row = new XSSFRow();
+        XSSFRow row = new XSSFRow(createParentObjects());
         
         // One cell at the beginning
         Cell cell1 = row.createCell((short) 1);
@@ -110,7 +111,7 @@ public class TestXSSFRow extends TestCase {
         assertFalse(row.getFirstCellNum() == (short) 2);
         
         // Test a row without cells
-        XSSFRow emptyRow = new XSSFRow();
+        XSSFRow emptyRow = new XSSFRow(createParentObjects());
         assertEquals(-1, emptyRow.getFirstCellNum());
     }
     
@@ -167,8 +168,8 @@ public class TestXSSFRow extends TestCase {
      * Method that returns a row with some sample cells
      * @return row
      */
-    public static XSSFRow getSampleRow() {
-    	XSSFRow row = new XSSFRow();
+    public XSSFRow getSampleRow() {
+    	XSSFRow row = new XSSFRow(createParentObjects());
     	row.createCell((short) 2);
     	row.createCell((short) 3, Cell.CELL_TYPE_NUMERIC);
     	row.createCell((short) 4);
@@ -177,5 +178,11 @@ public class TestXSSFRow extends TestCase {
     	row.createCell((short) 8);
     	row.createCell((short) 100);
     	return row;
+    }
+
+    private XSSFSheet createParentObjects() {
+        XSSFWorkbook wb = new XSSFWorkbook();
+        wb.setSharedStringSource(new DummySharedStringSource());
+        return new XSSFSheet(wb);
     }
 }
