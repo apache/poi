@@ -53,6 +53,7 @@ public class XSSFSheet implements Sheet {
     private CTWorksheet worksheet;
     private List<Row> rows;
     private ColumnHelper columnHelper;
+    private XSSFWorkbook workbook;
 
     public static final short LeftMargin = 0;
     public static final short RightMargin = 1;
@@ -61,9 +62,10 @@ public class XSSFSheet implements Sheet {
     public static final short HeaderMargin = 4;
     public static final short FooterMargin = 5;
     
-    public XSSFSheet(CTSheet sheet) {
+    public XSSFSheet(CTSheet sheet, XSSFWorkbook workbook) {
         this.sheet = sheet;
         this.worksheet = CTWorksheet.Factory.newInstance();
+        this.workbook = workbook;
         this.worksheet.addNewSheetData();
         initRows(worksheet);
         
@@ -102,17 +104,26 @@ public class XSSFSheet implements Sheet {
         initColumns(worksheet);
     }
     
-    public XSSFSheet(CTSheet sheet, CTWorksheet worksheet) {
+    public XSSFSheet(CTSheet sheet, CTWorksheet worksheet, XSSFWorkbook workbook) {
         this.sheet = sheet;
         this.worksheet = worksheet;
+        this.workbook = workbook;
         initRows(worksheet);
         initColumns(worksheet);
+    }
+
+    public XSSFSheet(XSSFWorkbook workbook) {
+        this.workbook = workbook;
+    }
+
+    public XSSFWorkbook getWorkbook() {
+        return this.workbook;
     }
 
     private void initRows(CTWorksheet worksheet) {
         this.rows = new LinkedList<Row>();
         for (CTRow row : worksheet.getSheetData().getRowArray()) {
-            this.rows.add(new XSSFRow(row));
+            this.rows.add(new XSSFRow(row, this));
         }
     }
 
@@ -153,13 +164,12 @@ public class XSSFSheet implements Sheet {
 
     }
 
-        protected XSSFRow addRow(int index, int rownum) {
-                CTRow row = this.worksheet.getSheetData().insertNewRow(index);
-                XSSFRow xrow = new XSSFRow(row);
-                xrow.setRowNum(rownum);
-//              xrow.setHeight(13.41);
-                return xrow;
-        }
+    protected XSSFRow addRow(int index, int rownum) {
+        CTRow row = this.worksheet.getSheetData().insertNewRow(index);
+        XSSFRow xrow = new XSSFRow(row, this);
+        xrow.setRowNum(rownum);
+        return xrow;
+    }
 
     public Row createRow(int rownum) {
         int index = 0;
@@ -760,7 +770,7 @@ public class XSSFSheet implements Sheet {
     }
     
     protected XSSFSheet cloneSheet() {
-        return new XSSFSheet((CTSheet) sheet.copy());
+        return new XSSFSheet((CTSheet) sheet.copy(), this.workbook);
     }
 
 }

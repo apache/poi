@@ -33,21 +33,34 @@ public class XSSFRow implements Row {
     
     private List<Cell> cells;
     
+    private XSSFSheet sheet;
+    
     /**
      * Create a new XSSFRow. This method is protected to be used only by
      * tests.
      */
-    protected XSSFRow() {
-        this(CTRow.Factory.newInstance());
+    protected XSSFRow(XSSFSheet sheet) {
+        this(CTRow.Factory.newInstance(), sheet);
     }
     
-    public XSSFRow(CTRow row) {
+    /**
+     * Create a new XSSFRow.
+     * 
+     * @param row The underlying XMLBeans row.
+     * @param sheet The parent sheet.
+     */
+    public XSSFRow(CTRow row, XSSFSheet sheet) {
         this.row = row;
+        this.sheet = sheet;
         this.cells = new LinkedList<Cell>(); 
         for (CTCell c : row.getCArray()) {
             this.cells.add(new XSSFCell(this, c));
         }
         
+    }
+
+    public XSSFSheet getSheet() {
+        return this.sheet;
     }
     
     public Iterator<Cell> cellIterator() {

@@ -19,6 +19,7 @@ package org.apache.poi.xssf.usermodel;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -30,8 +31,10 @@ import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.usermodel.Palette;
+import org.apache.poi.ss.usermodel.SharedStringSource;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.strings.SharedStringsTable;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
@@ -40,6 +43,7 @@ import org.openxml4j.opc.Package;
 import org.openxml4j.opc.PackagePart;
 import org.openxml4j.opc.PackagePartName;
 import org.openxml4j.opc.PackageRelationship;
+import org.openxml4j.opc.PackageRelationshipCollection;
 import org.openxml4j.opc.PackageRelationshipTypes;
 import org.openxml4j.opc.PackagingURIHelper;
 import org.openxml4j.opc.TargetMode;
@@ -58,10 +62,14 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 
     private static final String WORKSHEET_RELATIONSHIP = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet";
 
+    private static final String SHARED_STRINGS_RELATIONSHIP = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings";
+    
     private CTWorkbook workbook;
     
     private List<XSSFSheet> sheets = new LinkedList<XSSFSheet>();
-
+    
+    private SharedStringSource sharedStringSource;
+    
     public XSSFWorkbook() {
         this.workbook = CTWorkbook.Factory.newInstance();
         CTBookViews bvs = this.workbook.addNewBookViews();
@@ -75,25 +83,26 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         try {
             WorkbookDocument doc = WorkbookDocument.Factory.parse(getCorePart().getInputStream());
             this.workbook = doc.getWorkbook();
+            // Load shared strings
+            PackageRelationshipCollection prc = getCorePart().getRelationshipsByType(SHARED_STRINGS_RELATIONSHIP);
+            Iterator<PackageRelationship> it = prc.iterator();
+            if (it.hasNext()) { 
+                PackageRelationship rel = it.next();
+                PackagePart part = getPart(rel);
+                this.sharedStringSource = new SharedStringsTable(part);
+            }
+            // Load individual sheets
             for (CTSheet ctSheet : this.workbook.getSheets().getSheetArray()) {
                 PackageRelationship rel = this.getCorePart().getRelationship(ctSheet.getId());
-                PackagePartName relName = PackagingURIHelper.createPartName(rel.getTargetURI());
-                PackagePart part = getPackage().getPart(relName);
-                if (part == null) {
-                    throw new IllegalArgumentException("No part found for relationship " + rel);
-                }
+                PackagePart part = getPart(rel);
                 WorksheetDocument worksheetDoc = WorksheetDocument.Factory.parse(part.getInputStream());
-                XSSFSheet sheet = new XSSFSheet(ctSheet, worksheetDoc.getWorksheet());
+                XSSFSheet sheet = new XSSFSheet(ctSheet, worksheetDoc.getWorksheet(), this);
                 this.sheets.add(sheet);
             }
         } catch (XmlException e) {
             throw new IOException(e.toString());
         } catch (InvalidFormatException e) {
             throw new IOException(e.toString());
-/*            
-        } catch (OpenXML4JException e) {
-            throw new IOException(e.toString());
-*/
         }
     }
 
@@ -172,7 +181,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         if (sheetname != null) {
             sheet.setName(sheetname);
         }
-        XSSFSheet wrapper = new XSSFSheet(sheet);
+        XSSFSheet wrapper = new XSSFSheet(sheet, this);
         this.sheets.add(wrapper);
         return wrapper;
     }
@@ -446,6 +455,14 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     public void writeProtectWorkbook(String password, String username) {
         // TODO Auto-generated method stub
 
+    }
+
+    public SharedStringSource getSharedStringSource() {
+        return this.sharedStringSource;
+    }
+
+    protected void setSharedStringSource(SharedStringSource sharedStringSource) {
+        this.sharedStringSource = sharedStringSource;
     }
 
 }
