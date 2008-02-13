@@ -96,7 +96,8 @@
      Create patches by getting the latest sources from Subversion.
      Alter or add files as appropriate.  Then, from the poi directiory,
      type svn diff > mypatch.patch.  This will capture all of your changes
-     in a patch file of the appropriate format.  Next, if you've added any 
+     in a patch file of the appropriate format. However, svn diff won't
+     capture any new files you may have added. So, if you've added any 
      files, create an archive (tar.bz2 preferred as its the smallest) in a 
      path-preserving archive format, relative to your poi directory. 
      You'll attach both files in the next step.
@@ -117,6 +118,33 @@
      Standards</link>).  Patches that are of low quality may be rejected or 
      the contributer may be asked to bring them up to spec.
    </p>
+   <p>If you use a unix shell, you may find the following following
+    sequence of commands useful for building the files to attach.</p>
+   <source>
+# Run this in the root of the checkout, i.e. the directory holding
+#  build.xml and poi.pom
+
+# Build the directory to hold new files
+mkdir /tmp/poi-patch/
+mkdir /tmp/poi-patch/new-files/
+
+# Get changes to existing files
+svn diff > /tmp/poi-patch/diff.txt
+
+# Capture any new files, as svn diff won't include them
+# Preserve the path
+svn status | grep "^\?" | awk '{printf "cp --parents %s /tmp/poi-patch/new-files/\n", $2 }' | sh -s
+
+# tar up the new files
+cd /tmp/poi-patch/new-files/
+tar jcvf ../new-files.tar.bz2
+cd ..
+
+# Upload these to bugzilla
+echo "Please upload to bugzilla:"
+echo "   /tmp/poi-patch/diff.txt"
+echo "   /tmp/poi-patch/new-files.tar.bz2"
+   </source>
   </section>
 
 </body>

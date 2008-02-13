@@ -306,5 +306,28 @@ public class HSSFFont implements Font
                 "}";
     }
 
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((font == null) ? 0 : font.hashCode());
+		result = prime * result + index;
+		return result;
+	}
 
+	public boolean equals(Object obj) {
+		if (this == obj) return true;
+		if (obj == null) return false;
+		if (obj instanceof HSSFFont) {
+			final HSSFFont other = (HSSFFont) obj;
+			if (font == null) {
+				if (other.font != null)
+					return false;
+			} else if (!font.equals(other.font))
+				return false;
+			if (index != other.index)
+				return false;
+			return true;
+		}
+		return false;
+	}
 }

@@ -724,8 +724,9 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
      *  foreach loops
      */
     public Iterator iterator() {
-    	return rowIterator();
+        return rowIterator();
     }
+    
 
     /**
      * used internally in the API to get the low level Sheet record represented by this

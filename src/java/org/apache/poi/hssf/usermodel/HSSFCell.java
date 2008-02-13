@@ -550,6 +550,13 @@ public class HSSFCell implements Cell
     /**
      * set a date value for the cell. Excel treats dates as numeric so you will need to format the cell as
      * a date.
+     * 
+     * This will set the cell value based on the Calendar's timezone. As Excel
+     * does not support timezones this means that both 20:00+03:00 and
+     * 20:00-03:00 will be reported as the same value (20:00) even that there
+     * are 6 hours difference between the two times. This difference can be
+     * preserved by using <code>setCellValue(value.getTime())</code> which will
+     * automatically shift the times to the default timezone.
      *
      * @param value  the date value to set this cell to.  For formulas we'll set the
      *        precalculated value, for numerics we'll set its value. For othertypes we
@@ -557,7 +564,7 @@ public class HSSFCell implements Cell
      */
     public void setCellValue(Calendar value)
     {
-        setCellValue(value.getTime());
+        setCellValue( HSSFDateUtil.getExcelDate(value, this.book.isUsing1904DateWindowing()) );
     }
 
     /**
@@ -1071,7 +1078,7 @@ public class HSSFCell implements Cell
             Record rec = ( Record ) it.next();
             if (rec instanceof HyperlinkRecord){
                 HyperlinkRecord link = (HyperlinkRecord)rec;
-                if(link.getColumn() == record.getColumn() && link.getRow() == record.getRow()){
+                if(link.getFirstColumn() == record.getColumn() && link.getFirstRow() == record.getRow()){
                     return new HSSFHyperlink(link);
                 }
             }
@@ -1085,6 +1092,25 @@ public class HSSFCell implements Cell
      * @param link hypelrink associated with this cell
      */
     public void setHyperlink(HSSFHyperlink link){
+        link.setFirstRow(record.getRow());
+        link.setLastRow(record.getRow());
+        link.setFirstColumn(record.getColumn());
+        link.setLastColumn(record.getColumn());
 
+        switch(link.getType()){
+            case HSSFHyperlink.LINK_EMAIL:
+            case HSSFHyperlink.LINK_URL:
+                link.setLabel("url");
+                break;
+            case HSSFHyperlink.LINK_FILE:
+                link.setLabel("file");
+                break;
+            case HSSFHyperlink.LINK_DOCUMENT:
+                link.setLabel("place");
+                break;
+        }
+
+        int eofLoc = sheet.findFirstRecordLocBySid( EOFRecord.sid );
+        sheet.getRecords().add( eofLoc, link.record );
     }
 }

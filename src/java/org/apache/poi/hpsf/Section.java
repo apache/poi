@@ -210,7 +210,7 @@ public class Section
         
         /* Pass 1: Read the property list. */
         int pass1Offset = o1;
-        List propertyList = new ArrayList(propertyCount);
+        final List propertyList = new ArrayList(propertyCount);
         PropertyListEntry ple;
         for (int i = 0; i < properties.length; i++)
         {

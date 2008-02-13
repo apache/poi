@@ -197,6 +197,29 @@ public class TestHSSFDateUtil
     }
     
     /**
+     * Tests that we deal with timezones properly
+     */
+    public void testCalendarConversion() {
+        GregorianCalendar date = new GregorianCalendar(2002, 0, 1, 12, 1, 1);
+        Date expected = date.getTime();
+        double expectedExcel = HSSFDateUtil.getExcelDate(expected);
+
+        // Iteratating over the hours exposes any rounding issues.
+        for (int hour = -12; hour <= 12; hour++)
+        {
+            String id = "GMT" + (hour < 0 ? "" : "+") + hour + ":00";
+            date.setTimeZone(TimeZone.getTimeZone(id));
+            date.set(Calendar.HOUR_OF_DAY, 12);
+            double excelDate = HSSFDateUtil.getExcelDate(date, false);
+            Date javaDate = HSSFDateUtil.getJavaDate(excelDate);
+
+            // Should match despite timezone
+            assertEquals("Checking timezone " + id, expected.getTime(), javaDate.getTime());
+        }
+    }
+    
+    
+    /**
      * Tests that we correctly detect date formats as such
      */
     public void testIdentifyDateFormats() {
@@ -228,6 +251,7 @@ public class TestHSSFDateUtil
     			"yyyy-mm-dd", "yyyy/mm/dd", "yy/mm/dd", "yy/mmm/dd",
     			"dd/mm/yy", "dd/mm/yyyy", "dd/mmm/yy",
     			"dd-mm-yy", "dd-mm-yyyy",
+    			"DD-MM-YY", "DD-mm-YYYY",
     			"dd\\-mm\\-yy", // Sometimes escaped
     			
     			// These crazy ones are valid
@@ -242,15 +266,33 @@ public class TestHSSFDateUtil
     		assertTrue( HSSFDateUtil.isADateFormat(formatId, formats[i]) );
     	}
     	
+    	// Then time based ones too
+    	formats = new String[] {
+    			"yyyy-mm-dd hh:mm:ss", "yyyy/mm/dd HH:MM:SS", 
+    			"mm/dd HH:MM", "yy/mmm/dd SS",
+    	};
+    	for(int i=0; i<formats.length; i++) {
+    		assertTrue( HSSFDateUtil.isADateFormat(formatId, formats[i]) );
+    	}
+    	
     	// Then invalid ones
     	formats = new String[] {
-    			"yyyy:mm:dd", 
+    			"yyyy*mm*dd", 
     			"0.0", "0.000",
     			"0%", "0.0%",
     			"", null
     	};
     	for(int i=0; i<formats.length; i++) {
     		assertFalse( HSSFDateUtil.isADateFormat(formatId, formats[i]) );
+    	}
+    	
+    	// And these are ones we probably shouldn't allow,
+    	//  but would need a better regexp
+    	formats = new String[] {
+    			"yyyy:mm:dd", 
+    	};
+    	for(int i=0; i<formats.length; i++) {
+    	//	assertFalse( HSSFDateUtil.isADateFormat(formatId, formats[i]) );
     	}
     }
 

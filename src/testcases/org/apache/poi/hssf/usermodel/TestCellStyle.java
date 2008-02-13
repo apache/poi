@@ -137,6 +137,35 @@ public class TestCellStyle
         assertEquals("FIRST ROW ", 0, s.getFirstRowNum());
 
     }
+    
+    public void testHashEquals() {
+        HSSFWorkbook     wb   = new HSSFWorkbook();
+        HSSFSheet        s    = wb.createSheet();
+        HSSFCellStyle    cs1  = wb.createCellStyle();
+        HSSFCellStyle    cs2  = wb.createCellStyle();
+        HSSFRow row = s.createRow((short)0);
+        HSSFCell cell1 = row.createCell((short)1);
+        HSSFCell cell2 = row.createCell((short)2);
+        
+        cs1.setDataFormat(HSSFDataFormat.getBuiltinFormat("m/d/yy"));
+        cs2.setDataFormat(HSSFDataFormat.getBuiltinFormat("m/dd/yy"));
+        
+        cell1.setCellStyle(cs1);
+        cell1.setCellValue(new Date());
+        
+        cell2.setCellStyle(cs2);
+        cell2.setCellValue(new Date());
+        
+        assertEquals(cs1.hashCode(), cs1.hashCode());
+        assertEquals(cs2.hashCode(), cs2.hashCode());
+        assertTrue(cs1.equals(cs1));
+        assertTrue(cs2.equals(cs2));
+        
+        // Change cs1, hash will alter
+        int hash1 = cs1.hashCode();
+        cs1.setDataFormat(HSSFDataFormat.getBuiltinFormat("m/dd/yy"));
+        assertFalse(hash1 == cs1.hashCode());
+    }
 
     /**
      * TEST NAME:  Test Write Sheet Style <P>
