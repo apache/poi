@@ -471,7 +471,6 @@ public class HSSFRow
      * @return cell iterator of the physically defined cells.  Note element 4 may
      * actually be row cell depending on how many are defined!
      */
-
     public Iterator cellIterator()
     {
       return new CellIterator();
@@ -481,7 +480,7 @@ public class HSSFRow
      *  foreach loops
      */
     public Iterator iterator() { 
-    	return cellIterator();
+       return cellIterator();
     }
     
     private class CellIterator implements Iterator

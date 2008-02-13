@@ -69,6 +69,7 @@
                     <li><link href="#NamedRanges">Named Ranges and Named Cells</link></li>
                     <li><link href="#CellComments">How to set cell comments</link></li>
                     <li><link href="#Autofit">How to adjust column width to fit the contents</link></li>
+                    <li><link href="#Hyperlinks">Hyperlinks</link></li>
                 </ul>
             </section>
             <section><title>Features</title>
@@ -236,16 +237,51 @@
                     </source>
                 </section>
                 <anchor id="Iterator"/>
-                <section><title>Iterate over rows and cells (including Java 5 foreach loops)</title>
+                <section><title>Iterate over rows and cells</title>
 				<p>Sometimes, you'd like to just iterate over all the rows in
-				a sheet, or all the cells in a row. If you are using Java
-				5 or later, then this is especially handy, as it'll allow the
-				new foreach loop support to work.</p>
+				a sheet, or all the cells in a row. This is possible with
+				a simple for loop.</p>
 				<p>Luckily, this is very easy. HSSFRow defines a 
 				<em>CellIterator</em> inner class to handle iterating over 
 				the cells (get one with a call to <em>row.cellIterator()</em>),
 				and HSSFSheet provides a <em>rowIterator()</em> method to
 				give an iterator over all the rows.</p>
+				<p>(Unfortunately, due to the broken and
+				backwards-incompatible way that Java 5 foreach loops were
+				implemented, it isn't possible to use them on a codebase
+				that supports Java 1.4, as POI does)</p>
+				<source>
+	HSSFSheet sheet = wb.getSheetAt(0);
+	for (Iterator rit = sheet.rowIterator(); rit.hasNext(); ) {
+		HSSFRow row = (HSSFRow)rit.next();
+		for (Iterator cit = row.cellIterator(); cit.hasNext(); ) {
+			HSSFCell cell = (HSSFCell)cit.next();
+			// Do something here
+		}
+	}
+				</source>
+				<source>
+	HSSFSheet sheet = wb.getSheetAt(0);
+	for (Iterator&lt;HSSFRow&gt; rit = (Iterator&lt;HSSFRow&gt;)sheet.rowIterator(); rit.hasNext(); ) {
+		HSSFRow row = rit.next();
+		for (Iterator&lt;HSSFCell&gt; cit = (Iterator&lt;HSSFCell&gt;)row.cellIterator(); cit.hasNext(); ) {
+			HSSFCell cell = cit.next();
+			// Do something here
+		}
+	}
+				</source>
+                </section>
+                <section><title>Iterate over rows and cells using Java 1.5 foreach loops - OOXML Branch Only</title>
+				<p>Sometimes, you'd like to just iterate over all the rows in
+				a sheet, or all the cells in a row. If you are using Java
+				5 or later, then this is especially handy, as it'll allow the
+				new foreach loop support to work.</p>
+				<p>Luckily, this is very easy. Both HSSFSheet and HSSFRow
+				implement <em>java.lang.Iterable</em> to allow foreach
+				loops. For HSSFRow this allows access to the 
+				<em>CellIterator</em> inner class to handle iterating over 
+				the cells, and for HSSFSheet gives the 
+				<em>rowIterator()</em> to iterator over all the rows.</p>
 				<source>
 	HSSFSheet sheet = wb.getSheetAt(0);
 	for (HSSFRow row : sheet.rowIterator()) {
@@ -254,6 +290,7 @@
 		}
 	}
 				</source>
+				<note>This only works on the OOXML branch of POI</note>
                 </section>
                 <anchor id="TextExtraction"/>
                 <section><title>Text Extraction</title>
@@ -1285,6 +1322,76 @@ Examples:
     set the following system property: <code> java.awt.headless=true </code>
     (either via <code>-Djava.awt.headless=true</code> startup parameter or via <code>System.setProperty("java.awt.headless", "true")</code>).
         </warning>
+     </section>
+     <anchor id="Hyperlinks"/>
+     <section><title>How to read hyperlinks</title>
+        <source>
+    HSSFSheet sheet = workbook.getSheetAt(0);
+
+    HSSFCell cell = sheet.getRow(0).getCell((short)0);
+    HSSFHyperlink link = cell.getHyperlink();
+    if(link != null){
+        System.out.println(link.getAddress());
+    }
+      </source>
+     </section>
+     <section><title>How to create hyperlinks</title>
+        <source>
+    HSSFWorkbook wb = new HSSFWorkbook();
+
+    //cell style for hyperlinks
+    //by default hypelrinks are blue and underlined
+    HSSFCellStyle hlink_style = wb.createCellStyle();
+    HSSFFont hlink_font = wb.createFont();
+    hlink_font.setUnderline(HSSFFont.U_SINGLE);
+    hlink_font.setColor(HSSFColor.BLUE.index);
+    hlink_style.setFont(hlink_font);
+
+    HSSFCell cell;
+    HSSFSheet sheet = wb.createSheet("Hyperlinks");
+
+    //URL
+    cell = sheet.createRow(0).createCell((short)0);
+    cell.setCellValue("URL Link");
+    HSSFHyperlink link = new HSSFHyperlink(HSSFHyperlink.LINK_URL);
+    link.setAddress("http://poi.apache.org/");
+    cell.setHyperlink(link);
+    cell.setCellStyle(hlink_style);
+
+    //link to a file in the current directory
+    cell = sheet.createRow(1).createCell((short)0);
+    cell.setCellValue("File Link");
+    link = new HSSFHyperlink(HSSFHyperlink.LINK_FILE);
+    link.setAddress("link1.xls");
+    cell.setHyperlink(link);
+    cell.setCellStyle(hlink_style);
+
+    //e-mail link
+    cell = sheet.createRow(2).createCell((short)0);
+    cell.setCellValue("Email Link");
+    link = new HSSFHyperlink(HSSFHyperlink.LINK_EMAIL);
+    //note, if subject contains white spaces, make sure they are url-encoded
+    link.setAddress("mailto:poi@apache.org?subject=Hyperlinks");
+    cell.setHyperlink(link);
+    cell.setCellStyle(hlink_style);
+
+    //link to a place in this workbook
+
+    //create a target sheet and cell
+    HSSFSheet sheet2 = wb.createSheet("Target Sheet");
+    sheet2.createRow(0).createCell((short)0).setCellValue("Target Cell");
+
+    cell = sheet.createRow(3).createCell((short)0);
+    cell.setCellValue("Worksheet Link");
+    link = new HSSFHyperlink(HSSFHyperlink.LINK_DOCUMENT);
+    link.setAddress("'Target Sheet'!A1");
+    cell.setHyperlink(link);
+    cell.setCellStyle(hlink_style);
+
+    FileOutputStream out = new FileOutputStream("hssf-links.xls");
+    wb.write(out);
+    out.close();
+    </source>
      </section>
 
     </body>

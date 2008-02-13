@@ -1010,6 +1010,48 @@ extends TestCase {
         assertTrue("No Exceptions while reading file", true);
     }
 
+    /**
+     * Bug 42564: Some files from Access were giving a RecordFormatException
+     *  when reading the BOFRecord
+     */
+    public void test42564() throws Exception {
+        FileInputStream in = new FileInputStream(new File(cwd, "42564.xls"));
+        HSSFWorkbook wb = new HSSFWorkbook(in);
+        in.close();
+
+        assertTrue("No Exceptions while reading file", true);
+
+        //serialize and read again
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        wb.write(out);
+        out.close();
+
+        wb = new HSSFWorkbook(new ByteArrayInputStream(out.toByteArray()));
+        assertTrue("No Exceptions while reading file", true);
+    }
+    
+    /**
+     * Bug 42564: Some files from Access also have issues
+     *  with the NameRecord, once you get past the BOFRecord
+     *  issue.
+     * TODO - still broken
+     */
+    public void DISABLEDtest42564Alt() throws Exception {
+        FileInputStream in = new FileInputStream(new File(cwd, "42564-2.xls"));
+        HSSFWorkbook wb = new HSSFWorkbook(in);
+        in.close();
+
+        assertTrue("No Exceptions while reading file", true);
+
+        //serialize and read again
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        wb.write(out);
+        out.close();
+
+        wb = new HSSFWorkbook(new ByteArrayInputStream(out.toByteArray()));
+        assertTrue("No Exceptions while reading file", true);
+    }
+
 	/**
 	 * Bug 42618: RecordFormatException reading a file containing
 	 * 	=CHOOSE(2,A2,A3,A4)

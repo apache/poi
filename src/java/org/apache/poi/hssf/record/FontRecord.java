@@ -538,4 +538,37 @@ public class FontRecord
     {
         return sid;
     }
+
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime
+				* result
+				+ ((field_11_font_name == null) ? 0 : field_11_font_name
+						.hashCode());
+		result = prime * result + field_1_font_height;
+		result = prime * result + field_2_attributes;
+		result = prime * result + field_3_color_palette_index;
+		result = prime * result + field_4_bold_weight;
+		result = prime * result + field_5_super_sub_script;
+		result = prime * result + field_6_underline;
+		result = prime * result + field_7_family;
+		result = prime * result + field_8_charset;
+		result = prime * result + field_9_zero;
+		result = prime * result + field_10_font_name_len;
+		return result;
+	}
+
+	/**
+	 * Only returns two for the same exact object -
+	 *  creating a second FontRecord with the same
+	 *  properties won't be considered equal, as 
+	 *  the record's position in the record stream
+	 *  matters.
+	 */
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		return false;
+	}
 }

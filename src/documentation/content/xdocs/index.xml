@@ -31,16 +31,17 @@
   </header>
 
   <body>
-    <section><title>POI 3.0.2 BETA2 Release</title>
- 	  <p>The latest release of Apache POI is 3.0.2 BETA2 which was promoted to "Beta" on 12 January 2008. It contains a mixture of
-		new features and bug fixes, compared to 3.0.1. A full list of changes
-		is available in 
-		<link href="./changes.html">the changelog</link>, and 
-		<link href="http://www.apache.org/dyn/closer.cgi/poi/dev/">download</link>
+    <section><title>February 06 2008 - POI 3.0.2 Released</title>
+      <p>The POI team is pleased to announce POI 3.0.2, the latest release of Apache POI.
+        There have been many important bug fixes since the 3.0.1 release and a lot of new features.  A full list of changes	is available in 
+      <link href="./changes.html">the changelog</link>, and 
+		<link href="http://www.apache.org/dyn/closer.cgi/poi/release/">download</link>
 		the source and binaries from your
-    <link href="http://www.apache.org/dyn/closer.cgi/poi/dev/">local mirror</link>.
-     The release is also available from the central Maven repository under Group ID "org.apache.poi".
+    <link href="http://www.apache.org/dyn/closer.cgi/poi/release/">local mirror</link>.
   </p>
+    <p>
+      The release is also available from the central Maven repository under Group ID "org.apache.poi" and Version "3.0.2-FINAL".
+    </p>  
   </section>
 
   <section><title>POI 3.0.1 Release</title>

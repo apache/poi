@@ -1814,4 +1814,56 @@ public class ExtendedFormatRecord
     {
         return sid;
     }
+
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + field_1_font_index;
+		result = prime * result + field_2_format_index;
+		result = prime * result + field_3_cell_options;
+		result = prime * result + field_4_alignment_options;
+		result = prime * result + field_5_indention_options;
+		result = prime * result + field_6_border_options;
+		result = prime * result + field_7_palette_options;
+		result = prime * result + field_8_adtl_palette_options;
+		result = prime * result + field_9_fill_palette_options;
+		return result;
+	}
+
+	/**
+	 * Will consider two different records with the same
+	 *  contents as equals, as the various indexes
+	 *  that matter are embedded in the records
+	 */
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (obj instanceof ExtendedFormatRecord) {
+			final ExtendedFormatRecord other = (ExtendedFormatRecord) obj;
+			if (field_1_font_index != other.field_1_font_index)
+				return false;
+			if (field_2_format_index != other.field_2_format_index)
+				return false;
+			if (field_3_cell_options != other.field_3_cell_options)
+				return false;
+			if (field_4_alignment_options != other.field_4_alignment_options)
+				return false;
+			if (field_5_indention_options != other.field_5_indention_options)
+				return false;
+			if (field_6_border_options != other.field_6_border_options)
+				return false;
+			if (field_7_palette_options != other.field_7_palette_options)
+				return false;
+			if (field_8_adtl_palette_options != other.field_8_adtl_palette_options)
+				return false;
+			if (field_9_fill_palette_options != other.field_9_fill_palette_options)
+				return false;
+			return true;
+		}
+		return false;
+	}
+    
+    
 }
