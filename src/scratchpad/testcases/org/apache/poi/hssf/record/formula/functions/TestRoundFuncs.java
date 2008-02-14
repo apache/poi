@@ -14,34 +14,36 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record.formula.functions;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.apache.poi.hssf.record.formula.eval.ErrorEval;
+import org.apache.poi.hssf.record.formula.eval.Eval;
+import org.apache.poi.hssf.record.formula.eval.NumberEval;
+import org.apache.poi.hssf.record.formula.eval.StringEval;
+
+import junit.framework.TestCase;
 
 /**
- * Direct tests for all implementors of <code>Function</code>.
+ * Test cases for ROUND(), ROUNDUP(), ROUNDDOWN()
  * 
  * @author Josh Micich
  */
-public final class AllIndividualFunctionEvaluationTests {
-
-	// TODO - have this suite incorporated into a higher level one
-	public static Test suite() {
-		TestSuite result = new TestSuite("Tests for org.apache.poi.hssf.record.formula.functions");
-		result.addTestSuite(TestCountFuncs.class);
-		result.addTestSuite(TestDate.class);
-		result.addTestSuite(TestFinanceLib.class);
-		result.addTestSuite(TestIndex.class);
-		result.addTestSuite(TestMathX.class);
-		result.addTestSuite(TestMatch.class);
-		result.addTestSuite(TestRowCol.class);
-		result.addTestSuite(TestSumproduct.class);
-		result.addTestSuite(TestStatsLib.class);
-		result.addTestSuite(TestTFunc.class);
-		return result;
+public final class TestRoundFuncs extends TestCase {
+	public void testRounddownWithStringArg() {
+		
+		Eval strArg = new StringEval("abc");
+		Eval[] args = { strArg, new NumberEval(2), };
+		Eval result = new Rounddown().evaluate(args, -1, (short)-1);
+		assertEquals(ErrorEval.VALUE_INVALID, result);
 	}
-
+	
+	public void testRoundupWithStringArg() {
+		
+		Eval strArg = new StringEval("abc");
+		Eval[] args = { strArg, new NumberEval(2), };
+		Eval result = new Roundup().evaluate(args, -1, (short)-1);
+		assertEquals(ErrorEval.VALUE_INVALID, result);
+	}
+	
 }

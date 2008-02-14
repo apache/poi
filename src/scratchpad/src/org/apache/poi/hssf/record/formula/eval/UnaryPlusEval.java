@@ -58,6 +58,9 @@ public class UnaryPlusEval implements OperationEval /*extends NumericOperationEv
 //                ));
 
 
+    /**
+     * called by reflection
+     */
     public UnaryPlusEval(Ptg ptg) {
         this.delegate = (UnaryPlusPtg) ptg;
     }
@@ -108,7 +111,7 @@ public class UnaryPlusEval implements OperationEval /*extends NumericOperationEv
                 }
                 else if (ae.isColumn()) {
                     if (ae.containsRow(srcRow)) {
-                        ValueEval ve = ae.getValueAt(ae.getFirstRow(), srcCol);
+                        ValueEval ve = ae.getValueAt(srcRow, ae.getFirstColumn());
                         if (ve instanceof RefEval) {
                             ve = ((RefEval) ve).getInnerValueEval();
                         }

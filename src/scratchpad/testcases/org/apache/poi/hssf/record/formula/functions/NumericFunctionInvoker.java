@@ -23,13 +23,14 @@ import junit.framework.AssertionFailedError;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.NumericValueEval;
+import org.apache.poi.hssf.record.formula.eval.OperationEval;
 
 /**
  * Test helper class for invoking functions with numeric results.
  * 
  * @author Josh Micich
  */
-final class NumericFunctionInvoker {
+public final class NumericFunctionInvoker {
 
 	private NumericFunctionInvoker() {
 		// no instances of this class
@@ -61,11 +62,35 @@ final class NumericFunctionInvoker {
 		
 	}
 	/**
+	 * Invokes the specified operator with the arguments.
+	 * <p/>
+	 * This method cannot be used for confirming error return codes.  Any non-numeric evaluation
+	 * result causes the current junit test to fail.
+	 */
+	public static double invoke(OperationEval f, Eval[] args, int srcCellRow, int srcCellCol) {
+		try {
+			return invokeInternal(f, args, srcCellRow, srcCellCol);
+		} catch (NumericEvalEx e) {
+			throw new AssertionFailedError("Evaluation of function (" + f.getClass().getName() 
+					+ ") failed: " + e.getMessage());
+		}
+		
+	}
+	/**
 	 * Formats nicer error messages for the junit output
 	 */
-	private static double invokeInternal(Function f, Eval[] args, int srcCellRow, int srcCellCol)
+	private static double invokeInternal(Object target, Eval[] args, int srcCellRow, int srcCellCol)
 				throws NumericEvalEx {
-		Eval evalResult = f.evaluate(args, srcCellRow, (short)srcCellCol);
+		Eval evalResult;
+		// TODO - make OperationEval extend Function
+		if (target instanceof Function) {
+			Function ff = (Function) target;
+			evalResult = ff.evaluate(args, srcCellRow, (short)srcCellCol);
+		} else {
+			OperationEval ff = (OperationEval) target;
+			evalResult = ff.evaluate(args, srcCellRow, (short)srcCellCol);
+		}
+		
 		if(evalResult == null) {
 			throw new NumericEvalEx("Result object was null");
 		}
@@ -88,6 +113,9 @@ final class NumericFunctionInvoker {
 		}
 		if(errorCodesAreEqual(ee, ErrorEval.UNKNOWN_ERROR)) {
 			return "Unknown error";
+		}
+		if(errorCodesAreEqual(ee, ErrorEval.VALUE_INVALID)) {
+			return "Error code: #VALUE! (invalid value)";
 		}
 		return "Error code=" + ee.getErrorCode();
 	}
