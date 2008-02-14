@@ -18,6 +18,8 @@
         
 package org.apache.poi.hssf.model;
 
+import java.util.List;
+
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.record.formula.AbstractFunctionPtg;
@@ -26,6 +28,7 @@ import org.apache.poi.hssf.record.formula.AttrPtg;
 import org.apache.poi.hssf.record.formula.BoolPtg;
 import org.apache.poi.hssf.record.formula.DividePtg;
 import org.apache.poi.hssf.record.formula.EqualPtg;
+import org.apache.poi.hssf.record.formula.FuncPtg;
 import org.apache.poi.hssf.record.formula.FuncVarPtg;
 import org.apache.poi.hssf.record.formula.IntPtg;
 import org.apache.poi.hssf.record.formula.LessEqualPtg;
@@ -397,7 +400,7 @@ public class TestFormulaParser extends TestCase {
 	public void testUnderscore() {
 		HSSFWorkbook wb = new HSSFWorkbook();
     	
-    	wb.createSheet("Cash_Flow");;
+    	wb.createSheet("Cash_Flow");
     	
     	HSSFSheet sheet = wb.createSheet("Test");
     	HSSFRow row = sheet.createRow(0);
@@ -438,7 +441,7 @@ public class TestFormulaParser extends TestCase {
     public void testExponentialInSheet() throws Exception {
         HSSFWorkbook wb = new HSSFWorkbook();
 
-        wb.createSheet("Cash_Flow");;
+        wb.createSheet("Cash_Flow");
 
         HSSFSheet sheet = wb.createSheet("Test");
         HSSFRow row = sheet.createRow(0);
@@ -514,7 +517,7 @@ public class TestFormulaParser extends TestCase {
     public void testNumbers() {
         HSSFWorkbook wb = new HSSFWorkbook();
         
-        wb.createSheet("Cash_Flow");;
+        wb.createSheet("Cash_Flow");
         
         HSSFSheet sheet = wb.createSheet("Test");
         HSSFRow row = sheet.createRow(0);
@@ -553,7 +556,7 @@ public class TestFormulaParser extends TestCase {
     public void testRanges() {
         HSSFWorkbook wb = new HSSFWorkbook();
         
-        wb.createSheet("Cash_Flow");;
+        wb.createSheet("Cash_Flow");
         
         HSSFSheet sheet = wb.createSheet("Test");
         HSSFRow row = sheet.createRow(0);
@@ -571,5 +574,19 @@ public class TestFormulaParser extends TestCase {
         cell.setCellFormula("A1...A2");
         formula = cell.getCellFormula();
         assertEquals("A1:A2", formula);
-    }        
+    }
+    
+    /**
+     * Test for bug observable at svn revision 618865 (5-Feb-2008)<br/>
+     * a formula consisting of a single no-arg function got rendered without the function braces
+     */
+    public void testToFormulaStringZeroArgFunction() {
+        
+        Workbook book = Workbook.createWorkbook(); // not really used in this test
+        
+        Ptg[] ptgs = {
+                new FuncPtg(10, 0),
+        };
+        assertEquals("NA()", FormulaParser.toFormulaString(book, ptgs));
+    }
 }

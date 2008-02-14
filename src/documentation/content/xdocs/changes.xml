@@ -36,6 +36,7 @@
 
 		<!-- Don't forget to update status.xml too! -->
         <release version="3.1-beta1" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="add">44364 - Support for Match, NA and SumProduct functions, as well as initial function error support</action>
            <action dev="POI-DEVELOPERS" type="fix">44375 - Cope with a broken dictionary in Document Summary Information stream. RuntimeExceptions that occured when trying to read bogus data are now caught. Dictionary entries up to but not including the bogus one are preserved, the rest is ignored.</action>
            <action dev="POI-DEVELOPERS" type="fix">38641 - Handle timezones better with cell.setCellValue(Calendar), so now 20:00-03:00, 20:00+00:00 and 20:00+03:00 will all be recorded as 20:00, and not 17:00 / 20:00 / 23:00 (pass a Date not a Calendar for old behaviour)</action>
            <action dev="POI-DEVELOPERS" type="fix">44373 - Have HSSFDateUtil.isADateFormat recognize more formats as being dates</action>

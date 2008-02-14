@@ -173,7 +173,7 @@ public class HSSFFormulaEvaluator {
      *  formula evaluated. 
      */
     public static FormulaParser getUnderlyingParser(HSSFWorkbook workbook, String formula) {
-    	return new FormulaParser(formula, workbook.getWorkbook());
+        return new FormulaParser(formula, workbook.getWorkbook());
     }
     
     /**
@@ -286,19 +286,19 @@ public class HSSFFormulaEvaluator {
                 CellValue cv = getCellValueForEval(internalEvaluate(cell, row, sheet, workbook));
                 switch (cv.getCellType()) {
                 case HSSFCell.CELL_TYPE_BOOLEAN:
-                	cell.setCellType(HSSFCell.CELL_TYPE_BOOLEAN);
+                    cell.setCellType(HSSFCell.CELL_TYPE_BOOLEAN);
                     cell.setCellValue(cv.getBooleanValue());
                     break;
                 case HSSFCell.CELL_TYPE_ERROR:
-                	cell.setCellType(HSSFCell.CELL_TYPE_ERROR);
+                    cell.setCellType(HSSFCell.CELL_TYPE_ERROR);
                     cell.setCellValue(cv.getErrorValue());
                     break;
                 case HSSFCell.CELL_TYPE_NUMERIC:
-                	cell.setCellType(HSSFCell.CELL_TYPE_NUMERIC);
+                    cell.setCellType(HSSFCell.CELL_TYPE_NUMERIC);
                     cell.setCellValue(cv.getNumberValue());
                     break;
                 case HSSFCell.CELL_TYPE_STRING:
-                	cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+                    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
                     cell.setCellValue(cv.getRichTextStringValue());
                     break;
                 case HSSFCell.CELL_TYPE_BLANK:
@@ -336,6 +336,11 @@ public class HSSFFormulaEvaluator {
             }
             else if (eval instanceof BlankEval) {
                 retval = new CellValue(HSSFCell.CELL_TYPE_BLANK);
+            }
+            else if (eval instanceof ErrorEval) {
+                retval = new CellValue(HSSFCell.CELL_TYPE_ERROR);
+                retval.setErrorValue((byte)((ErrorEval)eval).getErrorCode());
+//                retval.setRichTextStringValue(new HSSFRichTextString("#An error occurred. check cell.getErrorCode()"));
             }
             else {
                 retval = new CellValue(HSSFCell.CELL_TYPE_ERROR);
@@ -401,7 +406,7 @@ public class HSSFFormulaEvaluator {
                 short rownum = ptg.getRow();
                 HSSFRow row = sheet.getRow(rownum);
                 HSSFCell cell = (row != null) ? row.getCell(colnum) : null;
-                pushRef2DEval(ptg, stack, cell, row, sheet, workbook);
+                stack.push(createRef2DEval(ptg, cell, row, sheet, workbook));
             }
             else if (ptgs[i] instanceof Ref3DPtg) {
                 Ref3DPtg ptg = (Ref3DPtg) ptgs[i];
@@ -411,7 +416,7 @@ public class HSSFFormulaEvaluator {
                 HSSFSheet xsheet = workbook.getSheetAt(wb.getSheetIndexFromExternSheetIndex(ptg.getExternSheetIndex()));
                 HSSFRow row = xsheet.getRow(rownum);
                 HSSFCell cell = (row != null) ? row.getCell(colnum) : null;
-                pushRef3DEval(ptg, stack, cell, row, xsheet, workbook);
+                stack.push(createRef3DEval(ptg, cell, row, xsheet, workbook));
             }
             else if (ptgs[i] instanceof AreaPtg) {
                 AreaPtg ap = (AreaPtg) ptgs[i];
@@ -544,104 +549,77 @@ public class HSSFFormulaEvaluator {
      * @param workbook
      */
     protected static ValueEval getEvalForCell(HSSFCell cell, HSSFRow row, HSSFSheet sheet, HSSFWorkbook workbook) {
-        ValueEval retval = BlankEval.INSTANCE;
-        if (cell != null) {
-            switch (cell.getCellType()) {
-            case HSSFCell.CELL_TYPE_NUMERIC:
-                retval = new NumberEval(cell.getNumericCellValue());
-                break;
-            case HSSFCell.CELL_TYPE_STRING:
-                retval = new StringEval(cell.getRichStringCellValue().getString());
-                break;
-            case HSSFCell.CELL_TYPE_FORMULA:
-                retval = internalEvaluate(cell, row, sheet, workbook);
-                break;
-            case HSSFCell.CELL_TYPE_BOOLEAN:
-                retval = cell.getBooleanCellValue() ? BoolEval.TRUE : BoolEval.FALSE;
-                break;
-            case HSSFCell.CELL_TYPE_BLANK:
-                retval = BlankEval.INSTANCE;
-                break;
-            case HSSFCell.CELL_TYPE_ERROR:
-                retval = ErrorEval.UNKNOWN_ERROR; // TODO: think about this...
-                break;
-            }
+
+        if (cell == null) {
+            return BlankEval.INSTANCE;
         }
-        return retval;
+        switch (cell.getCellType()) {
+            case HSSFCell.CELL_TYPE_NUMERIC:
+                return new NumberEval(cell.getNumericCellValue());
+            case HSSFCell.CELL_TYPE_STRING:
+                return new StringEval(cell.getRichStringCellValue().getString());
+            case HSSFCell.CELL_TYPE_FORMULA:
+                return internalEvaluate(cell, row, sheet, workbook);
+            case HSSFCell.CELL_TYPE_BOOLEAN:
+                return BoolEval.valueOf(cell.getBooleanCellValue());
+            case HSSFCell.CELL_TYPE_BLANK:
+                return BlankEval.INSTANCE;
+            case HSSFCell.CELL_TYPE_ERROR:
+                return ErrorEval.valueOf(cell.getErrorCellValue());
+        }
+        throw new RuntimeException("Unexpected cell type (" + cell.getCellType() + ")");
     }
 
     /**
-     * create a Ref2DEval for ReferencePtg and push it on the stack.
+     * Creates a Ref2DEval for ReferencePtg.
      * Non existent cells are treated as RefEvals containing BlankEval.
-     * @param ptg
-     * @param stack
-     * @param cell
-     * @param sheet
-     * @param workbook
      */
-    protected static void pushRef2DEval(ReferencePtg ptg, Stack stack, 
-            HSSFCell cell, HSSFRow row, HSSFSheet sheet, HSSFWorkbook workbook) {
-        if (cell != null)
-            switch (cell.getCellType()) {
-            case HSSFCell.CELL_TYPE_NUMERIC:
-                stack.push(new Ref2DEval(ptg, new NumberEval(cell.getNumericCellValue()), false));
-                break;
-            case HSSFCell.CELL_TYPE_STRING:
-                stack.push(new Ref2DEval(ptg, new StringEval(cell.getRichStringCellValue().getString()), false));
-                break;
-            case HSSFCell.CELL_TYPE_FORMULA:
-                stack.push(new Ref2DEval(ptg, internalEvaluate(cell, row, sheet, workbook), true));
-                break;
-            case HSSFCell.CELL_TYPE_BOOLEAN:
-                stack.push(new Ref2DEval(ptg, cell.getBooleanCellValue() ? BoolEval.TRUE : BoolEval.FALSE, false));
-                break;
-            case HSSFCell.CELL_TYPE_BLANK:
-                stack.push(new Ref2DEval(ptg, BlankEval.INSTANCE, false));
-                break;
-            case HSSFCell.CELL_TYPE_ERROR:
-                stack.push(new Ref2DEval(ptg, ErrorEval.UNKNOWN_ERROR, false)); // TODO: think abt this
-                break;
-            }
-        else {
-            stack.push(new Ref2DEval(ptg, BlankEval.INSTANCE, false));
+    private static Ref2DEval createRef2DEval(ReferencePtg ptg, HSSFCell cell, 
+            HSSFRow row, HSSFSheet sheet, HSSFWorkbook workbook) {
+        if (cell == null) {
+            return new Ref2DEval(ptg, BlankEval.INSTANCE, false);
         }
+        
+        switch (cell.getCellType()) {
+            case HSSFCell.CELL_TYPE_NUMERIC:
+                return new Ref2DEval(ptg, new NumberEval(cell.getNumericCellValue()), false);
+            case HSSFCell.CELL_TYPE_STRING:
+                return new Ref2DEval(ptg, new StringEval(cell.getRichStringCellValue().getString()), false);
+            case HSSFCell.CELL_TYPE_FORMULA:
+                return new Ref2DEval(ptg, internalEvaluate(cell, row, sheet, workbook), true);
+            case HSSFCell.CELL_TYPE_BOOLEAN:
+                return new Ref2DEval(ptg, BoolEval.valueOf(cell.getBooleanCellValue()), false);
+            case HSSFCell.CELL_TYPE_BLANK:
+                return new Ref2DEval(ptg, BlankEval.INSTANCE, false);
+            case HSSFCell.CELL_TYPE_ERROR:
+                return new  Ref2DEval(ptg, ErrorEval.valueOf(cell.getErrorCellValue()), false);
+        }
+        throw new RuntimeException("Unexpected cell type (" + cell.getCellType() + ")");
     }
 
     /**
-     * create a Ref3DEval for Ref3DPtg and push it on the stack.
-     * 
-     * @param ptg
-     * @param stack
-     * @param cell
-     * @param sheet
-     * @param workbook
+     * create a Ref3DEval for Ref3DPtg.
      */
-    protected static void pushRef3DEval(Ref3DPtg ptg, Stack stack, HSSFCell cell, 
+    private static Ref3DEval createRef3DEval(Ref3DPtg ptg, HSSFCell cell, 
             HSSFRow row, HSSFSheet sheet, HSSFWorkbook workbook) {
-        if (cell != null)
-            switch (cell.getCellType()) {
-            case HSSFCell.CELL_TYPE_NUMERIC:
-                stack.push(new Ref3DEval(ptg, new NumberEval(cell.getNumericCellValue()), false));
-                break;
-            case HSSFCell.CELL_TYPE_STRING:
-                stack.push(new Ref3DEval(ptg, new StringEval(cell.getRichStringCellValue().getString()), false));
-                break;
-            case HSSFCell.CELL_TYPE_FORMULA:
-                stack.push(new Ref3DEval(ptg, internalEvaluate(cell, row, sheet, workbook), true));
-                break;
-            case HSSFCell.CELL_TYPE_BOOLEAN:
-                stack.push(new Ref3DEval(ptg, cell.getBooleanCellValue() ? BoolEval.TRUE : BoolEval.FALSE, false));
-                break;
-            case HSSFCell.CELL_TYPE_BLANK:
-                stack.push(new Ref3DEval(ptg, BlankEval.INSTANCE, false));
-                break;
-            case HSSFCell.CELL_TYPE_ERROR:
-                stack.push(new Ref3DEval(ptg, ErrorEval.UNKNOWN_ERROR, false)); // TODO: think abt this
-                break;
-            }
-        else {
-            stack.push(new Ref3DEval(ptg, BlankEval.INSTANCE, false));
+        if (cell == null) {
+            return new Ref3DEval(ptg, BlankEval.INSTANCE, false);
         }
+        switch (cell.getCellType()) {
+            case HSSFCell.CELL_TYPE_NUMERIC:
+                return new Ref3DEval(ptg, new NumberEval(cell.getNumericCellValue()), false);
+            case HSSFCell.CELL_TYPE_STRING:
+                return new Ref3DEval(ptg, new StringEval(cell.getRichStringCellValue().getString()), false);
+            case HSSFCell.CELL_TYPE_FORMULA:
+                return new Ref3DEval(ptg, internalEvaluate(cell, row, sheet, workbook), true);
+            case HSSFCell.CELL_TYPE_BOOLEAN:
+                return new Ref3DEval(ptg, BoolEval.valueOf(cell.getBooleanCellValue()), false);
+            case HSSFCell.CELL_TYPE_BLANK:
+                return new Ref3DEval(ptg, BlankEval.INSTANCE, false);
+            case HSSFCell.CELL_TYPE_ERROR:
+                return new Ref3DEval(ptg, ErrorEval.valueOf(cell.getErrorCellValue()), false);
+        }
+        throw new RuntimeException("Unexpected cell type (" + cell.getCellType() + ")");
     }
     
     /**
@@ -726,15 +704,15 @@ public class HSSFFormulaEvaluator {
         /**
          * @return Returns the richTextStringValue.
          */
-		public HSSFRichTextString getRichTextStringValue() {
-			return richTextStringValue;
-		}
+        public HSSFRichTextString getRichTextStringValue() {
+            return richTextStringValue;
+        }
         /**
          * @param richTextStringValue The richTextStringValue to set.
          */
-		public void setRichTextStringValue(HSSFRichTextString richTextStringValue) {
-			this.richTextStringValue = richTextStringValue;
-		}
+        public void setRichTextStringValue(HSSFRichTextString richTextStringValue) {
+            this.richTextStringValue = richTextStringValue;
+        }
     }
 
     /**

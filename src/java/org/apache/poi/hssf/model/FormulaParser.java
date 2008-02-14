@@ -947,20 +947,28 @@ end;
 
            // Excel allows to have AttrPtg at position 0 (such as Blanks) which
            // do not have any operands. Skip them.
-        stack.push(ptgs[0].toFormulaString(book));
+        int i;
+        if(ptgs[0] instanceof AttrPtg) {
+        	// TODO -this requirement is unclear and is not addressed by any junits
+        	stack.push(ptgs[0].toFormulaString(book));
+        	i=1;
+        } else {
+        	i=0;
+        }
                   
-        for (int i = 1; i < ptgs.length; i++) {
-            if (! (ptgs[i] instanceof OperationPtg)) {
-                stack.push(ptgs[i].toFormulaString(book));
+        for ( ; i < ptgs.length; i++) {
+            Ptg ptg = ptgs[i];
+            if (! (ptg instanceof OperationPtg)) {
+                stack.push(ptg.toFormulaString(book));
                 continue;
             }
                       
-            if (ptgs[i] instanceof AttrPtg && ((AttrPtg) ptgs[i]).isOptimizedIf()) {
-                ifptg = (AttrPtg) ptgs[i];
+            if (ptg instanceof AttrPtg && ((AttrPtg) ptg).isOptimizedIf()) {
+                ifptg = (AttrPtg) ptg;
                 continue;
             }
                       
-            final OperationPtg o = (OperationPtg) ptgs[i];
+            final OperationPtg o = (OperationPtg) ptg;
             final String[] operands = new String[o.getNumberOfOperands()];
 
             for (int j = operands.length; j > 0; j--) {

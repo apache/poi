@@ -63,6 +63,10 @@ public class FuncPtg extends AbstractFunctionPtg{
         }   
         
     }
+    public FuncPtg(int functionIndex, int numberOfParameters) {
+        field_2_fnc_index = (short) functionIndex;
+        numParams = numberOfParameters;
+    }
     
      public void writeBytes(byte[] array, int offset) {
         array[offset+0]= (byte) (sid + ptgClass);
