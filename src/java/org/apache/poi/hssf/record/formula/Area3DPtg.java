@@ -17,15 +17,13 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.hssf.util.AreaReference;
-import org.apache.poi.hssf.util.CellReference;
-import org.apache.poi.hssf.util.SheetReferences;
-
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.RecordInputStream;
+import org.apache.poi.hssf.util.AreaReference;
+import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.LittleEndian;
 
 
 /**
@@ -38,7 +36,7 @@ import org.apache.poi.util.BitFieldFactory;
  * @version 1.0-pre
  */
 
-public class Area3DPtg extends Ptg
+public class Area3DPtg extends Ptg implements AreaI
 {
 	public final static byte sid = 0x3b;
 	private final static int SIZE = 11; // 10 + 1 for Ptg
@@ -263,15 +261,18 @@ public class Area3DPtg extends Ptg
      */
 	public String toFormulaString(Workbook book)
 	{
+		// First do the sheet name
 		StringBuffer retval = new StringBuffer();
 		String sheetName = Ref3DPtg.getSheetName(book, field_1_index_extern_sheet);
 		if(sheetName != null) {
 			SheetNameFormatter.appendFormat(retval, sheetName);
 			retval.append( '!' );
 		}
-		retval.append( ( new CellReference( getFirstRow(), getFirstColumn(), !isFirstRowRelative(), !isFirstColRelative() ) ).formatAsString() );
-		retval.append( ':' );
-		retval.append( ( new CellReference( getLastRow(), getLastColumn(), !isLastRowRelative(), !isLastColRelative() ) ).formatAsString() );
+		
+		// Now the normal area bit
+		retval.append( AreaPtg.toFormulaString(this, book) );
+		
+		// All done
 		return retval.toString();
 	}
 

@@ -34,7 +34,7 @@ import org.apache.poi.hssf.record.RecordInputStream;
  */
 
 public class AreaPtg
-    extends Ptg
+    extends Ptg implements AreaI
 {
     public final static short sid  = 0x25;
     private final static int  SIZE = 9;
@@ -281,14 +281,20 @@ public class AreaPtg
     {
         field_4_last_column = column;
     }
-
+    
     public String toFormulaString(Workbook book)
     {
-         // TODO:
-         //  For a reference like C:C, which is stored as
-         //   C1:C0 (last row is -1), return as C:C 
-         return (new CellReference(getFirstRow(),getFirstColumn(),!isFirstRowRelative(),!isFirstColRelative())).formatAsString() + ":" +
-                (new CellReference(getLastRow(),getLastColumn(),!isLastRowRelative(),!isLastColRelative())).formatAsString();
+    	return toFormulaString(this, book);
+    }
+    protected static String toFormulaString(AreaI area, Workbook book) {
+    	CellReference topLeft = new CellReference(area.getFirstRow(),area.getFirstColumn(),!area.isFirstRowRelative(),!area.isFirstColRelative());
+    	CellReference botRight = new CellReference(area.getLastRow(),area.getLastColumn(),!area.isLastRowRelative(),!area.isLastColRelative());
+    	
+    	if(AreaReference.isWholeColumnReference(topLeft, botRight)) {
+    		return (new AreaReference(topLeft, botRight)).formatAsString();
+    	} else {
+    		return topLeft.formatAsString() + ":" + botRight.formatAsString(); 
+    	}
     }
 
     public byte getDefaultOperandClass() {
