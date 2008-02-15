@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
  * 
  * @author Josh Micich
  */
-final class SheetNameFormatter {
+public final class SheetNameFormatter {
 	
 	private static final String BIFF8_LAST_COLUMN = "IV";
 	private static final int BIFF8_LAST_COLUMN_TEXT_LEN = BIFF8_LAST_COLUMN.length();

@@ -726,7 +726,7 @@ public class NameRecord extends Record {
         	for(int i=0; i<refs.length; i++) {
 	            ptg = new Area3DPtg();
 	            ((Area3DPtg) ptg).setExternSheetIndex(externSheetIndex);
-	            ((Area3DPtg) ptg).setArea(refs[i].toString());
+	            ((Area3DPtg) ptg).setArea(refs[i].formatAsString());
 	            field_13_name_definition.push(ptg);
 	            this.setDefinitionTextLength( (short)(getDefinitionLength() + ptg.getSize()) );
         	}

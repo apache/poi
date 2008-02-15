@@ -302,10 +302,10 @@ extends TestCase {
                 }
                 
                 c = r.getCell((short) y);
-                CellReference cr= new CellReference(refx1,refy1);
-                ref=cr.toString();
-                cr=new CellReference(refx2,refy2);
-                ref2=cr.toString();
+                CellReference cr= new CellReference(refx1,refy1, false, false);
+                ref=cr.formatAsString();
+                cr=new CellReference(refx2,refy2, false, false);
+                ref2=cr.formatAsString();
 
                 c = r.createCell((short) y);
                 c.setCellFormula("" + ref + operator + ref2);
@@ -379,10 +379,10 @@ extends TestCase {
                 }
 
                 c = r.getCell((short) y);
-                CellReference cr= new CellReference(refx1,refy1);
-                ref=cr.toString();
-                cr=new CellReference(refx2,refy2);
-                ref2=cr.toString();
+                CellReference cr= new CellReference(refx1, refy1, false, false);
+                ref=cr.formatAsString();
+                cr=new CellReference(refx2,refy2, false, false);
+                ref2=cr.formatAsString();
                 
                 
                 assertTrue("loop Formula is as expected "+ref+operator+ref2+"!="+c.getCellFormula(),(

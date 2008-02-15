@@ -100,11 +100,7 @@ import org.apache.poi.hssf.usermodel.TestReadWriteChart;
 import org.apache.poi.hssf.usermodel.TestSanityChecker;
 import org.apache.poi.hssf.usermodel.TestSheetShiftRows;
 import org.apache.poi.hssf.usermodel.TestWorkbook;
-import org.apache.poi.hssf.util.TestAreaReference;
-import org.apache.poi.hssf.util.TestCellReference;
-import org.apache.poi.hssf.util.TestRKUtil;
-import org.apache.poi.hssf.util.TestRangeAddress;
-import org.apache.poi.hssf.util.TestSheetReferences;
+import org.apache.poi.hssf.util.AllHSSFUtilTests;
 
 /**
  * Test Suite for running just HSSF tests.  Mostly
@@ -202,11 +198,7 @@ public class HSSFTests
         suite.addTest(new TestSuite(TestUnitsRecord.class));
         suite.addTest(new TestSuite(TestValueRangeRecord.class));
         suite.addTest(new TestSuite(TestRowRecordsAggregate.class));
-        suite.addTest(new TestSuite(TestAreaReference.class));
-        suite.addTest(new TestSuite(TestCellReference.class));
-		  suite.addTest(new TestSuite(TestRangeAddress.class));		
-        suite.addTest(new TestSuite(TestRKUtil.class));
-        suite.addTest(new TestSuite(TestSheetReferences.class));
+        suite.addTest(AllHSSFUtilTests.suite());
         
         
         suite.addTest(AllFormulaTests.suite());
