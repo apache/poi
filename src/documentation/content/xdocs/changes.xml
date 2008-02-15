@@ -36,6 +36,7 @@
 
 		<!-- Don't forget to update status.xml too! -->
         <release version="3.1-beta1" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">44413 - Fix for circular references in INDEX, OFFSET, VLOOKUP formulas, where a cell is actually allowed to reference itself</action>
            <action dev="POI-DEVELOPERS" type="fix">44403 - Fix for Mid function handling its arguments wrong</action>
            <action dev="POI-DEVELOPERS" type="add">44364 - Support for Match, NA and SumProduct functions, as well as initial function error support</action>
            <action dev="POI-DEVELOPERS" type="fix">44375 - Cope with a broken dictionary in Document Summary Information stream. RuntimeExceptions that occured when trying to read bogus data are now caught. Dictionary entries up to but not including the bogus one are preserved, the rest is ignored.</action>

@@ -96,8 +96,6 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 /**
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
  * 
- * Limitations: Unfortunately, cyclic references will cause stackoverflow
- * exception
  */
 public class HSSFFormulaEvaluator {
                 
@@ -353,16 +351,26 @@ public class HSSFFormulaEvaluator {
      * Dev. Note: Internal evaluate must be passed only a formula cell 
      * else a runtime exception will be thrown somewhere inside the method.
      * (Hence this is a private method.)
-     * 
-     * @param srcCell
-     * @param srcRow
-     * @param sheet
-     * @param workbook
      */
-    protected static ValueEval internalEvaluate(HSSFCell srcCell, HSSFRow srcRow, HSSFSheet sheet, HSSFWorkbook workbook) {
+    private static ValueEval internalEvaluate(HSSFCell srcCell, HSSFRow srcRow, HSSFSheet sheet, HSSFWorkbook workbook) {
         int srcRowNum = srcRow.getRowNum();
         short srcColNum = srcCell.getCellNum();
-        FormulaParser parser = new FormulaParser(srcCell.getCellFormula(), workbook.getWorkbook());
+        
+        
+        EvaluationCycleDetector tracker = EvaluationCycleDetectorManager.getTracker();
+        
+        if(!tracker.startEvaluate(workbook, sheet, srcRowNum, srcColNum)) {
+        	return ErrorEval.CIRCULAR_REF_ERROR;
+        }
+        try {
+        	return evaluateCell(workbook, sheet, srcRowNum, srcColNum, srcCell.getCellFormula());
+        } finally {
+        	tracker.endEvaluate(workbook, sheet, srcRowNum, srcColNum);
+        }
+    }
+    private static ValueEval evaluateCell(HSSFWorkbook workbook, HSSFSheet sheet, 
+    		int srcRowNum, short srcColNum, String cellFormulaText) {
+        FormulaParser parser = new FormulaParser(cellFormulaText, workbook.getWorkbook());
         parser.parse();
         Ptg[] ptgs = parser.getRPNPtg();
         // -- parsing over --
