@@ -1119,12 +1119,12 @@ public class HSSFWorkbook extends POIDocument
 	public void setPrintArea(int sheetIndex, int startColumn, int endColumn,
 							  int startRow, int endRow) {
 
-		//using absolute references because they dont get copied and pasted anyway
+		//using absolute references because they don't get copied and pasted anyway
 		CellReference cell = new CellReference(startRow, startColumn, true, true);
-		String reference = cell.toString();
+		String reference = cell.formatAsString();
 
 		cell = new CellReference(endRow, endColumn, true, true);
-		reference = reference+":"+cell.toString();
+		reference = reference+":"+cell.formatAsString();
 
 		setPrintArea(sheetIndex, reference);
 	}

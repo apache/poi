@@ -191,7 +191,7 @@ public class ReferencePtg extends Ptg
     public String toFormulaString(Workbook book)
     {
         //TODO -- should we store a cellreference instance in this ptg?? but .. memory is an issue, i believe!
-        return (new CellReference(getRowAsInt(),getColumn(),!isRowRelative(),!isColRelative())).toString();
+        return (new CellReference(getRowAsInt(),getColumn(),!isRowRelative(),!isColRelative())).formatAsString();
     }
     
     public byte getDefaultOperandClass() {

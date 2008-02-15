@@ -36,6 +36,7 @@
 
 		<!-- Don't forget to update status.xml too! -->
         <release version="3.1-beta1" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">44417 - Improved handling of references for the need to quote the sheet name for some formulas, but not when fetching a sheet by name</action>
            <action dev="POI-DEVELOPERS" type="fix">44413 - Fix for circular references in INDEX, OFFSET, VLOOKUP formulas, where a cell is actually allowed to reference itself</action>
            <action dev="POI-DEVELOPERS" type="fix">44403 - Fix for Mid function handling its arguments wrong</action>
            <action dev="POI-DEVELOPERS" type="add">44364 - Support for Match, NA and SumProduct functions, as well as initial function error support</action>

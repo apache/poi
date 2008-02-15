@@ -578,18 +578,16 @@ public class TestNamedRange
         
         // retrieve the cell at the named range and test its contents
         AreaReference aref = new AreaReference(aNamedCell.getReference());
-        CellReference[] crefs = aref.getCells();
-        assertNotNull(crefs);
-        assertEquals("Should be exactly 1 cell in the named cell :'" +cellName+"'", 1, crefs.length);
-        for (int i=0, iSize=crefs.length; i<iSize; i++) {
-            CellReference cref = crefs[i];
-            assertNotNull(cref);
-            HSSFSheet s = wb.getSheet(cref.getSheetName());
-            HSSFRow r = sheet.getRow(cref.getRow());
-            HSSFCell c = r.getCell(cref.getCol());
-            String contents = c.getStringCellValue();
-            assertEquals("Contents of cell retrieved by its named reference", contents, cellValue);
-        }
+        assertTrue("Should be exactly 1 cell in the named cell :'" +cellName+"'", aref.isSingleCell());
+        
+        CellReference cref = aref.getFirstCell();
+        assertNotNull(cref);
+        HSSFSheet s = wb.getSheet(cref.getSheetName());
+        assertNotNull(s);
+        HSSFRow r = sheet.getRow(cref.getRow());
+        HSSFCell c = r.getCell(cref.getCol());
+        String contents = c.getRichStringCellValue().getString();
+        assertEquals("Contents of cell retrieved by its named reference", contents, cellValue);
     }
 
     /**

@@ -243,21 +243,17 @@ public class Area3DPtg extends Ptg
 	public void setArea( String ref )
 	{
 		AreaReference ar = new AreaReference( ref );
-		CellReference[] crs = ar.getCells();
 		
-		CellReference firstCell = crs[0];
-		CellReference lastCell = firstCell;
-		if(crs.length > 1) {
-			lastCell = crs[1];
-		}
+		CellReference frstCell = ar.getFirstCell();
+		CellReference lastCell = ar.getLastCell();
 
-		setFirstRow(    (short) firstCell.getRow() );
-		setFirstColumn( (short) firstCell.getCol() );
+		setFirstRow(    (short) frstCell.getRow() );
+		setFirstColumn(         frstCell.getCol() );
 		setLastRow(     (short) lastCell.getRow() );
-		setLastColumn(  (short) lastCell.getCol() );
-		setFirstColRelative( !firstCell.isColAbsolute() );
+		setLastColumn(          lastCell.getCol() );
+		setFirstColRelative( !frstCell.isColAbsolute() );
 		setLastColRelative(  !lastCell.isColAbsolute() );
-		setFirstRowRelative( !firstCell.isRowAbsolute() );
+		setFirstRowRelative( !frstCell.isRowAbsolute() );
 		setLastRowRelative(  !lastCell.isRowAbsolute() );
 	}
 
@@ -273,9 +269,9 @@ public class Area3DPtg extends Ptg
 			SheetNameFormatter.appendFormat(retval, sheetName);
 			retval.append( '!' );
 		}
-		retval.append( ( new CellReference( getFirstRow(), getFirstColumn(), !isFirstRowRelative(), !isFirstColRelative() ) ).toString() );
+		retval.append( ( new CellReference( getFirstRow(), getFirstColumn(), !isFirstRowRelative(), !isFirstColRelative() ) ).formatAsString() );
 		retval.append( ':' );
-		retval.append( ( new CellReference( getLastRow(), getLastColumn(), !isLastRowRelative(), !isLastColRelative() ) ).toString() );
+		retval.append( ( new CellReference( getLastRow(), getLastColumn(), !isLastRowRelative(), !isLastColRelative() ) ).formatAsString() );
 		return retval.toString();
 	}
 

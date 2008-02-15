@@ -183,7 +183,7 @@ public class Ref3DPtg extends Ptg {
             SheetNameFormatter.appendFormat(retval, sheetName);
             retval.append( '!' );
         }
-        retval.append((new CellReference(getRow(),getColumn(),!isRowRelative(),!isColRelative())).toString()); 
+        retval.append((new CellReference(getRow(),getColumn(),!isRowRelative(),!isColRelative())).formatAsString()); 
         return retval.toString();
     }
 

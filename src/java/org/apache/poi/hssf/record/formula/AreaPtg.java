@@ -53,14 +53,16 @@ public class AreaPtg
    
     public AreaPtg(String arearef) {
         AreaReference ar = new AreaReference(arearef);
-        setFirstRow((short)ar.getCells()[0].getRow());
-        setFirstColumn((short)ar.getCells()[0].getCol());
-        setLastRow((short)ar.getCells()[1].getRow());
-        setLastColumn((short)ar.getCells()[1].getCol());
-        setFirstColRelative(!ar.getCells()[0].isColAbsolute());
-        setLastColRelative(!ar.getCells()[1].isColAbsolute());
-        setFirstRowRelative(!ar.getCells()[0].isRowAbsolute());
-        setLastRowRelative(!ar.getCells()[1].isRowAbsolute());        
+        CellReference firstCell = ar.getFirstCell();
+        CellReference lastCell = ar.getLastCell();
+        setFirstRow((short)firstCell.getRow());
+        setFirstColumn(firstCell.getCol());
+        setLastRow((short)lastCell.getRow());
+        setLastColumn(lastCell.getCol());
+        setFirstColRelative(!firstCell.isColAbsolute());
+        setLastColRelative(!lastCell.isColAbsolute());
+        setFirstRowRelative(!firstCell.isRowAbsolute());
+        setLastRowRelative(!lastCell.isRowAbsolute());        
     }
     
     public AreaPtg(short firstRow, short lastRow, short firstColumn, short lastColumn, boolean firstRowRelative, boolean lastRowRelative, boolean firstColRelative, boolean lastColRelative) {
@@ -282,8 +284,8 @@ public class AreaPtg
 
     public String toFormulaString(Workbook book)
     {
-         return (new CellReference(getFirstRow(),getFirstColumn(),!isFirstRowRelative(),!isFirstColRelative())).toString() + ":" +
-                (new CellReference(getLastRow(),getLastColumn(),!isLastRowRelative(),!isLastColRelative())).toString();
+         return (new CellReference(getFirstRow(),getFirstColumn(),!isFirstRowRelative(),!isFirstColRelative())).formatAsString() + ":" +
+                (new CellReference(getLastRow(),getLastColumn(),!isLastRowRelative(),!isLastColRelative())).formatAsString();
     }
 
     public byte getDefaultOperandClass() {
