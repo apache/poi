@@ -21,6 +21,7 @@ import junit.framework.TestCase;
 
 import org.apache.poi.hssf.record.formula.AreaPtg;
 import org.apache.poi.hssf.record.formula.eval.Area2DEval;
+import org.apache.poi.hssf.record.formula.eval.AreaEval;
 import org.apache.poi.hssf.record.formula.eval.BoolEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.Eval;
@@ -53,6 +54,13 @@ public final class TestMatch extends TestCase {
 		NumericValueEval nve = (NumericValueEval)actualEval;
 		assertEquals(expected, nve.getNumberValue(), 0);
 	}
+	/**
+	 * Convenience method
+	 * @return <code>new Area2DEval(new AreaPtg(ref), values)</code>
+	 */
+	private static AreaEval createAreaEval(String ref, ValueEval[] values) {
+		return new Area2DEval(new AreaPtg(ref), values);
+	}
 	
 	public void testSimpleNumber() {
 		
@@ -64,9 +72,7 @@ public final class TestMatch extends TestCase {
 			new NumberEval(25),	
 		};
 		
-		AreaPtg areaPtg = new AreaPtg("A1:A5");
-		Area2DEval ae = new Area2DEval(areaPtg, values);
-		
+		AreaEval ae = createAreaEval("A1:A5", values);
 		
 		confirmInt(2, invokeMatch(new NumberEval(5), ae, MATCH_LARGEST_LTE));
 		confirmInt(2, invokeMatch(new NumberEval(5), ae, MATCH_EXACT));
@@ -86,9 +92,7 @@ public final class TestMatch extends TestCase {
 			new NumberEval(4),	
 		};
 		
-		AreaPtg areaPtg = new AreaPtg("A1:A5");
-		Area2DEval ae = new Area2DEval(areaPtg, values);
-		
+		AreaEval ae = createAreaEval("A1:A5", values);
 		
 		confirmInt(2, invokeMatch(new NumberEval(10), ae, MATCH_SMALLEST_GTE));
 		confirmInt(2, invokeMatch(new NumberEval(10), ae, MATCH_EXACT));
@@ -108,8 +112,7 @@ public final class TestMatch extends TestCase {
 			new StringEval("Ian"),	
 		};
 		
-		AreaPtg areaPtg = new AreaPtg("A1:A5");
-		Area2DEval ae = new Area2DEval(areaPtg, values);
+		AreaEval ae = createAreaEval("A1:A5", values);
 		
 		// Note String comparisons are case insensitive
 		confirmInt(3, invokeMatch(new StringEval("Ed"), ae, MATCH_LARGEST_LTE));
@@ -129,8 +132,7 @@ public final class TestMatch extends TestCase {
 				BoolEval.TRUE,	
 		};
 		
-		AreaPtg areaPtg = new AreaPtg("A1:A4");
-		Area2DEval ae = new Area2DEval(areaPtg, values);
+		AreaEval ae = createAreaEval("A1:A4", values);
 		
 		// Note String comparisons are case insensitive
 		confirmInt(2, invokeMatch(BoolEval.FALSE, ae, MATCH_LARGEST_LTE));
@@ -157,8 +159,7 @@ public final class TestMatch extends TestCase {
 				new StringEval("Ed"),	
 		};
 		
-		AreaPtg areaPtg = new AreaPtg("A1:A13");
-		Area2DEval ae = new Area2DEval(areaPtg, values);
+		AreaEval ae = createAreaEval("A1:A13", values);
 		
 		assertEquals(ErrorEval.NA, invokeMatch(new StringEval("Aaron"), ae, MATCH_LARGEST_LTE));
 		
@@ -181,4 +182,34 @@ public final class TestMatch extends TestCase {
 		confirmInt(12, invokeMatch(BoolEval.TRUE, ae, MATCH_LARGEST_LTE));
 	}
 	
+
+	/**
+	 * Ensures that the match_type argument can be an <tt>AreaEval</tt>.<br/>
+	 * Bugzilla 44421
+	 */
+	public void testMatchArgTypeArea() {
+		
+		ValueEval[] values = {
+			new NumberEval(4),	
+			new NumberEval(5),	
+			new NumberEval(10),	
+			new NumberEval(10),	
+			new NumberEval(25),	
+		};
+		
+		AreaEval ae = createAreaEval("A1:A5", values);
+
+		AreaEval matchAE = createAreaEval("C1:C1", new ValueEval[] { MATCH_LARGEST_LTE, });
+		
+		try {
+			confirmInt(4, invokeMatch(new NumberEval(10), ae, matchAE));
+		} catch (RuntimeException e) {
+			if(e.getMessage().startsWith("Unexpected match_type type")) {
+				// identified bug 44421 
+				fail(e.getMessage());
+			}
+			// some other error ??
+			throw e;
+		}
+	}
 }
