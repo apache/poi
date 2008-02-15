@@ -432,6 +432,15 @@ public class HSSFFormulaEvaluator {
                 short col0 = ap.getFirstColumn();
                 short row1 = ap.getLastRow();
                 short col1 = ap.getLastColumn();
+                
+                // If the last row is -1, then the
+                //  reference is for the rest of the column
+                // (eg C:C)
+                // TODO: Handle whole column ranges properly
+                if(row1 == -1 && row0 >= 0) {
+                	row1 = (short)sheet.getLastRowNum();
+                }
+                
                 ValueEval[] values = new ValueEval[(row1 - row0 + 1) * (col1 - col0 + 1)];
                 for (short x = row0; sheet != null && x < row1 + 1; x++) {
                     HSSFRow row = sheet.getRow(x);
@@ -451,6 +460,15 @@ public class HSSFFormulaEvaluator {
                 short col1 = a3dp.getLastColumn();
                 Workbook wb = workbook.getWorkbook();
                 HSSFSheet xsheet = workbook.getSheetAt(wb.getSheetIndexFromExternSheetIndex(a3dp.getExternSheetIndex()));
+                
+                // If the last row is -1, then the
+                //  reference is for the rest of the column
+                // (eg C:C)
+                // TODO: Handle whole column ranges properly
+                if(row1 == -1 && row0 >= 0) {
+                	row1 = (short)xsheet.getLastRowNum();
+                }
+                
                 ValueEval[] values = new ValueEval[(row1 - row0 + 1) * (col1 - col0 + 1)];
                 for (short x = row0; xsheet != null && x < row1 + 1; x++) {
                     HSSFRow row = xsheet.getRow(x);

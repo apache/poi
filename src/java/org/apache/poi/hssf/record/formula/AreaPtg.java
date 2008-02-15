@@ -284,6 +284,9 @@ public class AreaPtg
 
     public String toFormulaString(Workbook book)
     {
+         // TODO:
+         //  For a reference like C:C, which is stored as
+         //   C1:C0 (last row is -1), return as C:C 
          return (new CellReference(getFirstRow(),getFirstColumn(),!isFirstRowRelative(),!isFirstColRelative())).formatAsString() + ":" +
                 (new CellReference(getLastRow(),getLastColumn(),!isLastRowRelative(),!isLastColRelative())).formatAsString();
     }
