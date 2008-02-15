@@ -23,11 +23,9 @@ import java.io.FileInputStream;
 import java.io.File;
 import java.util.List;
 
-import org.apache.poi.hssf.record.FormulaRecord;
 import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
 import org.apache.poi.hssf.record.formula.AreaPtg;
-import org.apache.poi.hssf.record.formula.AttrPtg;
-import org.apache.poi.hssf.record.formula.functions.Sumproduct;
+import org.apache.poi.hssf.record.formula.FuncVarPtg;
 
 /**
  * Bug 44410: SUM(C:C) is valid in excel, and means a sum
@@ -52,6 +50,8 @@ public class TestBug44410 extends TestCase {
         HSSFRow rowIDX = (HSSFRow)sheet.getRow(3);
         // =sum(C:C)         -> 6
         HSSFRow rowSUM = (HSSFRow)sheet.getRow(4);
+        // =sum(C:D)         -> 66
+        HSSFRow rowSUM2D = (HSSFRow)sheet.getRow(5);
         
         // Test the sum
         HSSFCell cellSUM = rowSUM.getCell((short)0);
@@ -59,8 +59,9 @@ public class TestBug44410 extends TestCase {
         FormulaRecordAggregate frec = 
         	(FormulaRecordAggregate)cellSUM.getCellValueRecord();
         List ops = frec.getFormulaRecord().getParsedExpression();
+        assertEquals(2, ops.size());
         assertEquals(AreaPtg.class, ops.get(0).getClass());
-        assertEquals(AttrPtg.class, ops.get(1).getClass());
+        assertEquals(FuncVarPtg.class, ops.get(1).getClass());
 
         // Actually stored as C1 to C0 (last row is -1)
         AreaPtg ptg = (AreaPtg)ops.get(0);
@@ -68,12 +69,12 @@ public class TestBug44410 extends TestCase {
         assertEquals(2, ptg.getLastColumn());
         assertEquals(0, ptg.getFirstRow());
         assertEquals(-1, ptg.getLastRow());
-        assertEquals("C$1:C$0", ptg.toFormulaString(wb.getWorkbook()));
+        assertEquals("C:C", ptg.toFormulaString(wb.getWorkbook()));
         
-        // So will show up wrong here, as we don't
-        //  have the sheet to hand when turning the Ptgs
-        //  into a string
-        assertEquals("SUM(C$1:C$0)", cellSUM.getCellFormula());
+        // Will show as C:C, but won't know how many
+        //  rows it covers as we don't have the sheet
+        //  to hand when turning the Ptgs into a string
+        assertEquals("SUM(C:C)", cellSUM.getCellFormula());
         eva.setCurrentRow(rowSUM);
         
         // But the evaluator knows the sheet, so it
@@ -82,12 +83,17 @@ public class TestBug44410 extends TestCase {
         
         
         // Test the index
-        // Again, the formula string will be wrong, as we
-        //  don't have the sheet to hand, but the
-        //  evaluator will be correct
+        // Again, the formula string will be right but
+        //  lacking row count, evaluated will be right
         HSSFCell cellIDX = rowIDX.getCell((short)0);
-        assertEquals("INDEX(C$1:C$0,2,1)", cellIDX.getCellFormula());
+        assertEquals("INDEX(C:C,2,1)", cellIDX.getCellFormula());
         eva.setCurrentRow(rowIDX);
         assertEquals(2, eva.evaluate(cellIDX).getNumberValue(), 0);
+        
+        // Across two colums
+        HSSFCell cellSUM2D = rowSUM2D.getCell((short)0);
+        assertEquals("SUM(C:D)", cellSUM2D.getCellFormula());
+        eva.setCurrentRow(rowSUM2D);
+        assertEquals(66, eva.evaluate(cellSUM2D).getNumberValue(), 0);
     }
 }

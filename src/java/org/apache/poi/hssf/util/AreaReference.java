@@ -47,6 +47,17 @@ public final class AreaReference {
         }
 
         String[] parts = separateAreaRefs(reference);
+        
+        // Special handling for whole-column references
+        if(parts.length == 2 && parts[0].length() == 1 &&
+        		parts[1].length() == 1 && 
+        		parts[0].charAt(0) >= 'A' && parts[0].charAt(0) <= 'Z' &&
+        		parts[1].charAt(0) >= 'A' && parts[1].charAt(0) <= 'Z') {
+        	// Represented internally as x$1 to x$0
+        	parts[0] = parts[0] + "$1";
+        	parts[1] = parts[1] + "$0";
+        }
+        
         _firstCell = new CellReference(parts[0]);
         
         if(parts.length == 2) {
@@ -56,6 +67,15 @@ public final class AreaReference {
             _lastCell = _firstCell;
             _isSingleCell = true;
         }
+    }
+    
+    /**
+     * Creates an area ref from a pair of Cell References.
+     */
+    public AreaReference(CellReference topLeft, CellReference botRight) {
+    	_firstCell = topLeft;
+    	_lastCell = botRight;
+    	_isSingleCell = false;
     }
 
     /**
@@ -70,6 +90,24 @@ public final class AreaReference {
             return true;
         }
         return false;
+    }
+    
+    /**
+     * Is the reference for a whole-column reference,
+     *  such as C:C or D:G ?
+     */
+    public static boolean isWholeColumnReference(CellReference topLeft, CellReference botRight) {
+    	// These are represented as something like
+    	//   C$1:C$0 or D$1:F$0
+    	// i.e. absolute from 1st row to 0th one
+    	if(topLeft.getRow() == 0 && topLeft.isRowAbsolute() &&
+    		botRight.getRow() == -1 && botRight.isRowAbsolute()) {
+    		return true;
+    	}
+    	return false;
+    }
+    public boolean isWholeColumnReference() {
+    	return isWholeColumnReference(_firstCell, _lastCell);
     }
 
     /**
@@ -150,6 +188,14 @@ public final class AreaReference {
      * @return the text representation of this area reference as it would appear in a formula.
      */
     public String formatAsString() {
+    	// Special handling for whole-column references
+    	if(isWholeColumnReference()) {
+    		return
+    			CellReference.convertNumToColString(_firstCell.getCol())
+    			+ ":" +
+    			CellReference.convertNumToColString(_lastCell.getCol());
+    	}
+    	
         StringBuffer sb = new StringBuffer(32);
         sb.append(_firstCell.formatAsString());
         if(!_isSingleCell) {
