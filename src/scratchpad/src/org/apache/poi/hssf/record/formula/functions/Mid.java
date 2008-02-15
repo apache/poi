@@ -90,7 +90,7 @@ public class Mid extends TextFunction {
 			} else if (startNum + numChars > str.length()) {
 				retval = new StringEval(str.substring(startNum - 1));
 			} else {
-				retval = new StringEval(str.substring(startNum - 1, numChars));
+				retval = new StringEval(str.substring(startNum - 1, (numChars + startNum - 1)));
 			} 
         } 
 		return retval;
