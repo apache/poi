@@ -26,7 +26,6 @@ import org.apache.poi.hssf.record.formula.eval.NumericValueEval;
 import org.apache.poi.hssf.record.formula.eval.RefEval;
 import org.apache.poi.hssf.record.formula.eval.StringEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
-import org.apache.poi.hssf.util.AreaReference;
 
 /**
  * Implementation for the MATCH() Excel function.<p/>
@@ -188,7 +187,7 @@ public final class Match implements Function {
 	private static double evaluateMatchTypeArg(Eval arg, int srcCellRow, short srcCellCol) 
 			throws EvalEx {
 		Eval match_type = arg;
-		if(arg instanceof AreaReference) {
+		if(arg instanceof AreaEval) {
 			AreaEval ae = (AreaEval) arg;
 			// an area ref can work as a scalar value if it is 1x1
 			if(ae.isColumn() &&  ae.isRow()) {

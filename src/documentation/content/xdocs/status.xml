@@ -33,6 +33,7 @@
 	<!-- Don't forget to update changes.xml too! -->
     <changes>
         <release version="3.1-beta1" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">44421 - Update Match function to properly support Area references</action>
            <action dev="POI-DEVELOPERS" type="fix">44417 - Improved handling of references for the need to quote the sheet name for some formulas, but not when fetching a sheet by name</action>
            <action dev="POI-DEVELOPERS" type="fix">44413 - Fix for circular references in INDEX, OFFSET, VLOOKUP formulas, where a cell is actually allowed to reference itself</action>
            <action dev="POI-DEVELOPERS" type="fix">44403 - Fix for Mid function handling its arguments wrong</action>
