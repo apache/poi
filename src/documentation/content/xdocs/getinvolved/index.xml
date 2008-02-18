@@ -53,6 +53,43 @@
      license.
    </p>
   </section>
+  <section><title>Publicly Available Information on the file formats</title>
+  <p>
+   In early 2008, Microsoft made a fairly complete set of documentation
+   on the binary file formats freely and publicly available. These were 
+   released under the <link href="http://www.microsoft.com/interop/osp">Open
+   Specification Promise</link>, which does allow us to use them for
+   building open source software under the <link 
+     href="http://www.apache.org/foundation/licence-FAQ.html">
+   Apache Software License</link>.
+  </p>
+  <p>
+   You can download the documentation on Excel, Word, PowerPoint and
+   Escher (drawing) from 
+   <link href="http://www.microsoft.com/interop/docs/OfficeBinaryFormats.mspx">http://www.microsoft.com/interop/docs/OfficeBinaryFormats.mspx</link>.
+   Documentation on a few of the supporting technologies used in these
+   file formats can be downloaded from
+   <link href="http://www.microsoft.com/interop/docs/supportingtechnologies.mspx">http://www.microsoft.com/interop/docs/supportingtechnologies.mspx</link>.
+  </p>
+  <p>
+   Previously, Microsoft published a book on the Excel 97 file format.
+   It can still be of plenty of use, and is handy dead tree form. Pick up
+   a copy of "Excel 97 Developer's Kit" from your favourite second hand
+   book store.
+  </p>
+  <p>
+   The newer Office Open XML (ooxml) file formats are documented as part
+   of the ECMA / ISO standardisation effort for the formats. This 
+   documentation is quite large, but you can normally find the bit you
+   need without too much effort! This can be downloaded from
+   <link href="http://www.ecma-international.org/publications/standards/Ecma-376.htm">http://www.ecma-international.org/publications/standards/Ecma-376.htm</link>,
+   and is also under the <link href="http://www.microsoft.com/interop/osp">OSP</link>.
+  </p>
+  <p>
+   It is also worth checking the documentation and code of the other
+   open source implementations of the file formats.
+  </p>
+  </section>
   <section><title>I just signed an NDA to get a spec from Microsoft and I'd like to contribute</title>
    <p>
      In short, stay away, stay far far away.  Implementing these file formats
@@ -66,13 +103,14 @@
    <p> 
      If you've ever received information regarding the OLE 2 Compound Document
      Format under any type of exclusionary agreement from Microsoft, or  
-     (probably illegally) received such information from a person bound by
-     such an agreement, you cannot participate in this project.  (Sorry)
+     (possibly illegally) received such information from a person bound by
+     such an agreement, you cannot participate in this project. (Sorry)
    </p>
    <p>
      Those submitting patches that show insight into the file format may be 
-     asked to state explicitly that they are eligible or possibly sign an 
-     agreement.
+     asked to state explicitly that they have only ever read the publicly
+     available file format information, and not any received under an NDA
+     or similar.
    </p>
   </section>
  </section>
@@ -86,7 +124,9 @@
      <li>Documentation is always the best place to start contributing, maybe you found that if the documentation just told you how to do X then it would make more sense, modify the documentation.</li>
      <li>Get used to building POI, you'll be doing it a lot, be one with the build, know its targets, etc.</li>
      <li>Write Unit Tests.  Great way to understand POI.  Look for classes that aren't tested, or aren't tested on a public/protected method level, start there.</li>
-     <li>(HSSF)Get the Excel 97 Developer's Kit - its out of print but its dirt cheap (seen copies for under $15 (US)) used on <link href="http://www.amazon.com">amazon</link>.  It explains the Excel file format.</li>
+     <li>Download the file format documentation from Microsoft -
+      <link href="http://www.microsoft.com/interop/docs/OfficeBinaryFormats.mspx">OLE2 Binary File Formats</link> or
+      <link href="http://www.ecma-international.org/publications/standards/Ecma-376.htm">OOXML XML File Formats</link></li>
      <li>Submit patches (see below) of your contributions, modifications.</li>
      <li>Fill out new features, see <link href="http://issues.apache.org/bugzilla/buglist.cgi?product=POI">Bug database</link> for suggestions.</li>
    </ul>
