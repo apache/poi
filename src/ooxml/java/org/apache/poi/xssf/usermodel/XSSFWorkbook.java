@@ -31,6 +31,7 @@ import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.usermodel.Palette;
+import org.apache.poi.ss.usermodel.PictureData;
 import org.apache.poi.ss.usermodel.SharedStringSource;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -66,6 +67,10 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 
     private static final String SHARED_STRINGS_RELATIONSHIP = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings";
     
+    private static final String DRAWING_RELATIONSHIP = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing";
+    
+    private static final String IMAGE_RELATIONSHIP = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image";
+    
     private CTWorkbook workbook;
     
     private List<XSSFSheet> sheets = new LinkedList<XSSFSheet>();
@@ -92,17 +97,15 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
             Iterator<PackageRelationship> it = prc.iterator();
             if (it.hasNext()) { 
                 PackageRelationship rel = it.next();
-                PackagePart part = getPart(rel);
+                PackagePart part = getTargetPart(rel);
                 this.sharedStringSource = new SharedStringsTable(part);
             }
             // Load individual sheets
             for (CTSheet ctSheet : this.workbook.getSheets().getSheetArray()) {
-                PackageRelationship rel = this.getCorePart().getRelationship(ctSheet.getId());
-                if (rel == null) {
-                    log.log(log.WARN, "No relationship found for sheet " + ctSheet.getId());
+                PackagePart part = getPackagePart(ctSheet);
+                if (part == null) {
                     continue;
                 }
-                PackagePart part = getPart(rel);
                 WorksheetDocument worksheetDoc = WorksheetDocument.Factory.parse(part.getInputStream());
                 XSSFSheet sheet = new XSSFSheet(ctSheet, worksheetDoc.getWorksheet(), this);
                 this.sheets.add(sheet);
@@ -116,6 +119,22 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 
     protected CTWorkbook getWorkbook() {
         return this.workbook;
+    }
+
+    /**
+     * Get the PackagePart corresponding to a given sheet.
+     * 
+     * @param ctSheet The sheet
+     * @return A PackagePart, or null if no matching part found.
+     * @throws InvalidFormatException
+     */
+    private PackagePart getPackagePart(CTSheet ctSheet) throws InvalidFormatException {
+        PackageRelationship rel = this.getCorePart().getRelationship(ctSheet.getId());
+        if (rel == null) {
+            log.log(POILogger.WARN, "No relationship found for sheet " + ctSheet.getId());
+            return null;
+        }
+        return getTargetPart(rel);
     }
     
     public int addPicture(byte[] pictureData, int format) {
@@ -209,9 +228,30 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         return null;
     }
 
-    public List getAllPictures() {
-        // TODO Auto-generated method stub
-        return null;
+    public List<PictureData> getAllPictures() {
+        // In OOXML pictures are referred to in sheets
+        List<PictureData> pictures = new LinkedList<PictureData>();
+        for (CTSheet ctSheet : this.workbook.getSheets().getSheetArray()) {
+            try {
+                PackagePart sheetPart = getPackagePart(ctSheet);
+                if (sheetPart == null) {
+                    continue;
+                }
+                PackageRelationshipCollection prc = sheetPart.getRelationshipsByType(DRAWING_RELATIONSHIP);
+                for (PackageRelationship rel : prc) {
+                    PackagePart drawingPart = getTargetPart(rel);
+                    PackageRelationshipCollection prc2 = drawingPart.getRelationshipsByType(IMAGE_RELATIONSHIP);
+                    for (PackageRelationship rel2 : prc2) {
+                        PackagePart imagePart = getTargetPart(rel2);
+                        XSSFPictureData pd = new XSSFPictureData(imagePart);
+                        pictures.add(pd);
+                    }
+                }
+            } catch (InvalidFormatException e) {
+                throw new RuntimeException(e.getMessage(), e);
+            }
+        }
+        return pictures;
     }
 
     public boolean getBackupFlag() {

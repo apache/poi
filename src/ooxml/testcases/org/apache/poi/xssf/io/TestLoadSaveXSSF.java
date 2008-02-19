@@ -18,11 +18,13 @@
 package org.apache.poi.xssf.io;
 
 import java.io.File;
+import java.util.List;
 
 import junit.framework.TestCase;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.PictureData;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -61,6 +63,12 @@ public class TestLoadSaveXSSF extends TestCase {
         Cell cell = row.getCell((short) 0);
         CellStyle style = cell.getCellStyle();
         // assertNotNull(style);
+    }
+    
+    public void testLoadPictures() throws Exception {
+        XSSFWorkbook workbook = new XSSFWorkbook(new File(filename, "picture.xlsx").getAbsolutePath());
+        List<PictureData> pictures = workbook.getAllPictures();
+        assertEquals(1, pictures.size());
     }
 
 }
