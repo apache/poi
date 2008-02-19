@@ -34,6 +34,8 @@ import org.apache.poi.ss.usermodel.Palette;
 import org.apache.poi.ss.usermodel.SharedStringSource;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 import org.apache.poi.xssf.strings.SharedStringsTable;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
@@ -69,6 +71,8 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     private List<XSSFSheet> sheets = new LinkedList<XSSFSheet>();
     
     private SharedStringSource sharedStringSource;
+
+    private static POILogger log = POILogFactory.getLogger(XSSFWorkbook.class);
     
     public XSSFWorkbook() {
         this.workbook = CTWorkbook.Factory.newInstance();
@@ -94,6 +98,10 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
             // Load individual sheets
             for (CTSheet ctSheet : this.workbook.getSheets().getSheetArray()) {
                 PackageRelationship rel = this.getCorePart().getRelationship(ctSheet.getId());
+                if (rel == null) {
+                    log.log(log.WARN, "No relationship found for sheet " + ctSheet.getId());
+                    continue;
+                }
                 PackagePart part = getPart(rel);
                 WorksheetDocument worksheetDoc = WorksheetDocument.Factory.parse(part.getInputStream());
                 XSSFSheet sheet = new XSSFSheet(ctSheet, worksheetDoc.getWorksheet(), this);

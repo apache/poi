@@ -22,6 +22,7 @@ import java.io.File;
 import junit.framework.TestCase;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -33,9 +34,10 @@ public class TestLoadSaveXSSF extends TestCase {
 
     protected void setUp() throws Exception {
         super.setUp();
+        System.setProperty("org.apache.poi.util.POILogger", org.apache.poi.util.CommonsLogger.class.getName());
         filename = System.getProperty("HSSF.testdata.path");
         if (filename == null) {
-            filename = "src/testcases/org/apache/poi/hssf/data";
+            filename = "src/ooxml/testcases/org/apache/poi/xssf/data";
         }
     }
     
@@ -50,6 +52,15 @@ public class TestLoadSaveXSSF extends TestCase {
         assertEquals(111.0, cell.getNumericCellValue());
         cell = row.getCell((short) 0);
         assertEquals("Lorem", cell.getRichStringCellValue().getString());
+    }
+    
+    public void testLoadStyles() throws Exception {
+        XSSFWorkbook workbook = new XSSFWorkbook(new File(filename, "styles.xlsx").getAbsolutePath());
+        Sheet sheet = workbook.getSheetAt(0);
+        Row row = sheet.getRow(0);
+        Cell cell = row.getCell((short) 0);
+        CellStyle style = cell.getCellStyle();
+        // assertNotNull(style);
     }
 
 }
