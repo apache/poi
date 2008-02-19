@@ -65,7 +65,14 @@ public abstract class POIXMLDocument {
         return this.corePart;
     }
 
-    protected PackagePart getPart(PackageRelationship rel) throws InvalidFormatException {
+    /**
+     * Get the PackagePart that is the target of a relationship.
+     * 
+     * @param rel The relationship
+     * @return The target part
+     * @throws InvalidFormatException
+     */
+    protected PackagePart getTargetPart(PackageRelationship rel) throws InvalidFormatException {
         PackagePartName relName = PackagingURIHelper.createPartName(rel.getTargetURI());
         PackagePart part = getPackage().getPart(relName);
         if (part == null) {
