@@ -35,6 +35,7 @@ public final class AllIndividualFunctionEvaluationTests {
 		result.addTestSuite(TestDate.class);
 		result.addTestSuite(TestFinanceLib.class);
 		result.addTestSuite(TestIndex.class);
+		result.addTestSuite(TestMid.class);
 		result.addTestSuite(TestMathX.class);
 		result.addTestSuite(TestMatch.class);
 		result.addTestSuite(TestRowCol.class);
