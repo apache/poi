@@ -45,8 +45,8 @@
                 <link href="http://svn.apache.org/viewcvs.cgi/poi/trunk/src/scratchpad/">scratchpad area</link> 
                 of the POI SVN repository. 
 				Ensure that you have the scratchpad jar or the scratchpad 
-                build area in your
-				classpath before experimenting with this code.
+                build area in your classpath before experimenting with 
+                this code - the main POI jar is not enough.
 			</note>
 			<p>The <link href="./quick-guide.html">quick guide</link> documentation provides 
             information on using this API. Comments and fixes gratefully accepted on the POI
