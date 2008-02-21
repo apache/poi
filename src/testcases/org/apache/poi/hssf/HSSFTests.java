@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -100,15 +99,20 @@ import org.apache.poi.hssf.usermodel.TestReadWriteChart;
 import org.apache.poi.hssf.usermodel.TestSanityChecker;
 import org.apache.poi.hssf.usermodel.TestSheetShiftRows;
 import org.apache.poi.hssf.usermodel.TestWorkbook;
-import org.apache.poi.hssf.util.AllHSSFUtilTests;
+import org.apache.poi.hssf.util.TestAreaReference;
+import org.apache.poi.hssf.util.TestCellReference;
+import org.apache.poi.hssf.util.TestRKUtil;
+import org.apache.poi.hssf.util.TestRangeAddress;
+import org.apache.poi.hssf.util.TestSheetReferences;
 
 /**
- * Test Suite for running just HSSF tests.  Mostly
- * this is for my convienience.
+ * Test Suite for all sub-packages of org.apache.poi.hssf<br/>
+ * 
+ * Mostly this is for my convenience.
  * 
  * @author Andrew C. Oliver acoliver@apache.org
  */
-public class HSSFTests
+public final class HSSFTests
 {
 
     public static void main(String[] args)
@@ -119,7 +123,7 @@ public class HSSFTests
     public static Test suite()
     {
         TestSuite suite =
-            new TestSuite("Test for org.apache.poi.hssf.usermodel");
+            new TestSuite("Tests for org.apache.poi.hssf");
         //$JUnit-BEGIN$
 
     suite.addTest(new TestSuite(TestBugs.class));
@@ -198,7 +202,11 @@ public class HSSFTests
         suite.addTest(new TestSuite(TestUnitsRecord.class));
         suite.addTest(new TestSuite(TestValueRangeRecord.class));
         suite.addTest(new TestSuite(TestRowRecordsAggregate.class));
-        suite.addTest(AllHSSFUtilTests.suite());
+        suite.addTest(new TestSuite(TestAreaReference.class));
+        suite.addTest(new TestSuite(TestCellReference.class));
+		  suite.addTest(new TestSuite(TestRangeAddress.class));		
+        suite.addTest(new TestSuite(TestRKUtil.class));
+        suite.addTest(new TestSuite(TestSheetReferences.class));
         
         
         suite.addTest(AllFormulaTests.suite());

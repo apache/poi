@@ -20,6 +20,7 @@ package org.apache.poi.poifs.filesystem;
 import java.io.IOException;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.util.Arrays;
 
 import junit.framework.TestCase;
 
@@ -157,12 +158,15 @@ public class TestEmptyDocument extends TestCase {
 
         DocumentEntry entry = (DocumentEntry) fs.getRoot().getEntry("Empty");
         assertEquals("Expected zero size", 0, entry.getSize());
+        byte[] actualReadbackData;
+        actualReadbackData = IOUtils.toByteArray(new DocumentInputStream(entry));
         assertEquals("Expected zero read from stream", 0,
-                     IOUtils.toByteArray(new DocumentInputStream(entry)).length);
+                     actualReadbackData.length);
 
         entry = (DocumentEntry) fs.getRoot().getEntry("NotEmpty");
+        actualReadbackData = IOUtils.toByteArray(new DocumentInputStream(entry));
         assertEquals("Expected size was wrong", testData.length, entry.getSize());
-        assertEquals("Expected different data read from stream", testData,
-                     IOUtils.toByteArray(new DocumentInputStream(entry)));
+        assertTrue("Expected different data read from stream", 
+                Arrays.equals(testData, actualReadbackData));
     }
 }

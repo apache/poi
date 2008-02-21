@@ -523,8 +523,7 @@ under the License.
       <batchtest todir="${main.reports.test}">
         <fileset dir="${main.src.test}">
           <include name="**/Test*.java"/>
-          <exclude name="**/AllTests.java"/>
-          <exclude name="**/TestEmptyDocument.java"/>
+          <exclude name="**/All*Tests.java"/>
           <exclude name="**/TestUnfixedBugs.java"/>
           <exclude name="**/TestcaseRecordInputStream.java"/>
         </fileset>
