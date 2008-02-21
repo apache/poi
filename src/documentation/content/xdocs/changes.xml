@@ -36,6 +36,7 @@
 
 		<!-- Don't forget to update status.xml too! -->
         <release version="3.1-beta1" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">38921 - Have HSSFPalette.findSimilar() work properly</action>
            <action dev="POI-DEVELOPERS" type="fix">44456 - Fix the contrib SViewer / SViewerPanel to not fail on sheets with missing rows</action>
            <action dev="POI-DEVELOPERS" type="fix">44403 - Further support for unusual, but valid, arguments to the Mid function</action>
            <action dev="POI-DEVELOPERS" type="fix">44410 - Support for whole-column ranges, such as C:C, in formula strings and the formula evaluator</action>
