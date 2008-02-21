@@ -99,9 +99,11 @@ public class HSSFPalette
         for (short i = (short) PaletteRecord.FIRST_COLOR_INDEX; b != null;
             b = palette.getColor(++i))
         {
-            int colorDistance = red - b[0] + green - b[1] + blue - b[2];
+            int colorDistance = Math.abs(red - b[0]) + 
+            	Math.abs(green - b[1]) + Math.abs(blue - b[2]);
             if (colorDistance < minColorDistance)
             {
+                minColorDistance = colorDistance;
                 result = getColor(i);
             }
         }
