@@ -200,3 +200,20 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
+
+
+
+
+Office Open XML (OOXML) xsds:
+-----------------------------
+
+These were downloaded as part of the Office Open XML ECMA Specification 
+from <http://www.ecma-international.org/publications/standards/Ecma-376.htm>
+
+These are included within the Apache POI distribution, and are available
+under compatible licensing terms.
+
+Copyright - ECMA International, "made available without restriction"
+    http://www.ecma-international.org/memento/Ecmabylaws.htm - section 9.4
+Patent License - Microsoft Open Specification Promise (OSP) 
+    http://www.microsoft.com/interop/osp/
