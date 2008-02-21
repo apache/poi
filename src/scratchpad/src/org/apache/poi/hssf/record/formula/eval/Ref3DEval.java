@@ -27,7 +27,7 @@ import org.apache.poi.hssf.record.formula.Ref3DPtg;
  * @author Amol S. Deshmukh
  *  
  */
-public class Ref3DEval implements RefEval {
+public final class Ref3DEval implements RefEval {
 
     private ValueEval value;
 
@@ -55,6 +55,10 @@ public class Ref3DEval implements RefEval {
     
     public boolean isEvaluated() {
         return evaluated;
+    }
+
+    public int getExternSheetIndex() {
+        return delegate.getExternSheetIndex();
     }
 
 }

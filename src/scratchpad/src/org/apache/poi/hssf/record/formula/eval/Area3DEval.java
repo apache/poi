@@ -27,7 +27,7 @@ import org.apache.poi.hssf.record.formula.Ptg;
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
  *  
  */
-public class Area3DEval implements AreaEval {
+public final class Area3DEval implements AreaEval {
 
     private Area3DPtg delegate;
 
@@ -88,6 +88,10 @@ public class Area3DEval implements AreaEval {
 
     public boolean isRow() {
         return delegate.getFirstRow() == delegate.getLastRow();
+    }
+
+    public int getExternSheetIndex() {
+        return delegate.getExternSheetIndex();
     }
 
 }

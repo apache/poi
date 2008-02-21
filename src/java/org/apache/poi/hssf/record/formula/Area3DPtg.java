@@ -70,7 +70,21 @@ public class Area3DPtg extends Ptg implements AreaI
 		field_5_last_column = in.readShort();
 	}
 
-	public String toString()
+	public Area3DPtg(short firstRow, short lastRow, short firstColumn, short lastColumn,
+	        boolean firstRowRelative, boolean lastRowRelative, boolean firstColRelative, boolean lastColRelative,
+	        short externalSheetIndex) {
+	      setFirstRow(firstRow);
+	      setLastRow(lastRow);
+	      setFirstColumn(firstColumn);
+	      setLastColumn(lastColumn);
+	      setFirstRowRelative(firstRowRelative);
+	      setLastRowRelative(lastRowRelative);
+	      setFirstColRelative(firstColRelative);
+	      setLastColRelative(lastColRelative);
+	      setExternSheetIndex(externalSheetIndex);
+    }
+
+    public String toString()
 	{
 		StringBuffer buffer = new StringBuffer();
 
