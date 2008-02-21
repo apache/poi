@@ -23,13 +23,10 @@ package org.apache.poi.hssf.contrib.view;
 import java.awt.*;
 import java.awt.event.*;
 import java.net.*;
-import java.applet.*;
 import java.io.*;
 import javax.swing.*;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFCell;
 
 /**
  * Sheet Viewer - Views XLS files via HSSF.  Can be used as an applet with
