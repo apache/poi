@@ -34,7 +34,7 @@ import java.util.List;
  * @author Jason Height (jheight at chariot dot net dot au)
  */
 
-public class ValueRecordsAggregate
+public final class ValueRecordsAggregate
     extends Record
 {
     public final static short sid       = -1000;
@@ -127,13 +127,17 @@ public class ValueRecordsAggregate
 
         FormulaRecordAggregate lastFormulaAggregate = null;
         
-        // First up, locate all the shared formulas
+        // First up, locate all the shared formulas for this sheet
         List sharedFormulas = new java.util.ArrayList();
         for (k = offset; k < records.size(); k++)
         {
             Record rec = ( Record ) records.get(k);
             if (rec instanceof SharedFormulaRecord) {
             	sharedFormulas.add(rec);
+            }
+            if(rec instanceof EOFRecord) {
+                // End of current sheet. Ignore all subsequent shared formula records (Bugzilla 44449)
+                break;
             }
         }
 
@@ -156,6 +160,8 @@ public class ValueRecordsAggregate
                 //  for us
                 boolean found = false;
                 for (int i=sharedFormulas.size()-1;i>=0;i--) {
+                    // TODO - there is no junit test case to justify this reversed loop
+                    // perhaps it could just run in the normal direction?
                 	SharedFormulaRecord shrd = (SharedFormulaRecord)sharedFormulas.get(i);
                 	if (shrd.isFormulaInShared(formula)) {
                 		shrd.convertSharedFormulaRecord(formula);
@@ -164,9 +170,7 @@ public class ValueRecordsAggregate
                 	}
                 }
                 if (!found) {
-                	//Sometimes the shared formula flag "seems" to be errornously set,
-                	//cant really do much about that.
-                	//throw new RecordFormatException("Could not find appropriate shared formula");
+                    handleMissingSharedFormulaRecord(formula);
                 }
               }
             	
@@ -183,6 +187,24 @@ public class ValueRecordsAggregate
             }
         }
         return k;
+    }
+
+    /**
+     * Sometimes the shared formula flag "seems" to be erroneously set, in which case there is no 
+     * call to <tt>SharedFormulaRecord.convertSharedFormulaRecord</tt> and hence the 
+     * <tt>parsedExpression</tt> field of this <tt>FormulaRecord</tt> will not get updated.<br/>
+     * As it turns out, this is not a problem, because in these circumstances, the existing value
+     * for <tt>parsedExpression</tt> is perfectly OK.<p/>
+     * 
+     * This method may also be used for setting breakpoints to help diagnose issues regarding the
+     * abnormally-set 'shared formula' flags. 
+     * (see TestValueRecordsAggregate.testSpuriousSharedFormulaFlag()).<p/>
+     * 
+     * The method currently does nothing but do not delete it without finding a nice home for this 
+     * comment.
+     */
+    private static void handleMissingSharedFormulaRecord(FormulaRecord formula) {
+        // could log an info message here since this is a fairly unusual occurrence.
     }
 
     /**
@@ -300,7 +322,7 @@ public class ValueRecordsAggregate
       return rec;
     }
   
-  public class MyIterator implements Iterator {
+  private final class MyIterator implements Iterator {
     short nextColumn=-1;
     int nextRow,lastRow;
 
