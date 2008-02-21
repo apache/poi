@@ -38,6 +38,7 @@ public final class AllIndividualFunctionEvaluationTests {
 		result.addTestSuite(TestMid.class);
 		result.addTestSuite(TestMathX.class);
 		result.addTestSuite(TestMatch.class);
+		result.addTestSuite(TestOffset.class);
 		result.addTestSuite(TestRowCol.class);
 		result.addTestSuite(TestSumproduct.class);
 		result.addTestSuite(TestStatsLib.class);

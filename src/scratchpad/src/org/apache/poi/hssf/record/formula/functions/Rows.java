@@ -25,7 +25,7 @@ import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.RefEval;
 
 /**
- * Implementation for Excel COLUMNS function.
+ * Implementation for Excel ROWS function.
  * 
  * @author Josh Micich
  */
