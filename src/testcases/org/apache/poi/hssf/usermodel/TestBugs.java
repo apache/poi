@@ -1089,6 +1089,24 @@ extends TestCase {
         //  "EmptyStackException"
         //assertEquals("=CHOOSE(2,A2,A3,A4)", c2.getCellFormula());
     }
+    
+    /**
+     * Date: Tue, 19 Feb 2008 05:03:47 -0800 (PST)
+     * From: Setya <jsetya@gmail.com>
+     * Subject: Exception when parsing excel file
+     */
+    public void BROKENtest20080219() throws Exception {
+        FileInputStream in = new FileInputStream(new File(cwd, "OddStyleRecord.xls"));
+        
+        // Blows up with an ArrayIndexOutOfBounds
+        //  when creating a StyleRecord
+        // However, our code matches the latest Microsoft
+        //  docs, so no idea what's wrong
+        HSSFWorkbook wb = new HSSFWorkbook(in);
+        in.close();
+        
+        assertEquals(1, wb.getNumberOfSheets());
+    }
 }
 
 
