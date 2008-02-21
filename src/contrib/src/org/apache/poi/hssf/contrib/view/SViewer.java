@@ -143,6 +143,10 @@ public class SViewer extends JApplet {
 
   /**Main method*/
   public static void main(String[] args) {
+    if(args.length < 1) {
+      throw new IllegalArgumentException("A filename to view must be supplied as the first argument, but none was given");
+    }
+
     SViewer applet = new SViewer();
     applet.isStandalone = true;
     applet.filename = args[0];

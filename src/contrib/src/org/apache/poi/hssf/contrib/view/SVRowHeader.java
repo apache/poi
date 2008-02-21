@@ -73,7 +73,13 @@ public class SVRowHeader extends JList {
     public Component getListCellRendererComponent( JList list,
            Object value, int index, boolean isSelected, boolean cellHasFocus) {
       Dimension d = getPreferredSize();
-      int rowHeight = (int)sheet.getRow(index).getHeightInPoints();
+      HSSFRow row = sheet.getRow(index);
+      int rowHeight;
+      if(row == null) {
+    	  rowHeight = (int)sheet.getDefaultRowHeightInPoints();
+      } else {
+    	  rowHeight = (int)row.getHeightInPoints();
+      }
       d.height = rowHeight+extraHeight;
       setPreferredSize(d);
       setText((value == null) ? "" : value.toString());
