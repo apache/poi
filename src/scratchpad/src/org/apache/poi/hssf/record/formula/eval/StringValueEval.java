@@ -14,10 +14,7 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-/*
- * Created on May 8, 2005
- *
- */
+
 package org.apache.poi.hssf.record.formula.eval;
 
 /**
@@ -26,5 +23,8 @@ package org.apache.poi.hssf.record.formula.eval;
  */
 public interface StringValueEval extends ValueEval {
 
-    public String getStringValue();
+    /**
+     * @return never <code>null</code>, possibly empty string.
+     */
+    String getStringValue();
 }
