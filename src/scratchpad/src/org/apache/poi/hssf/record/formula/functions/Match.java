@@ -18,14 +18,17 @@
 package org.apache.poi.hssf.record.formula.functions;
 
 import org.apache.poi.hssf.record.formula.eval.AreaEval;
-import org.apache.poi.hssf.record.formula.eval.BoolEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.Eval;
+import org.apache.poi.hssf.record.formula.eval.EvaluationException;
 import org.apache.poi.hssf.record.formula.eval.NumberEval;
 import org.apache.poi.hssf.record.formula.eval.NumericValueEval;
+import org.apache.poi.hssf.record.formula.eval.OperandResolver;
 import org.apache.poi.hssf.record.formula.eval.RefEval;
 import org.apache.poi.hssf.record.formula.eval.StringEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
+import org.apache.poi.hssf.record.formula.functions.LookupUtils.CompareResult;
+import org.apache.poi.hssf.record.formula.functions.LookupUtils.LookupValueComparer;
 
 /**
  * Implementation for the MATCH() Excel function.<p/>
@@ -62,17 +65,6 @@ import org.apache.poi.hssf.record.formula.eval.ValueEval;
  */
 public final class Match implements Function {
 	
-	private static final class EvalEx extends Exception {
-		private final ErrorEval _error;
-
-		public EvalEx(ErrorEval error) {
-			_error = error;
-		}
-		public ErrorEval getError() {
-			return _error;
-		}
-	}
-	
 
 	public Eval evaluate(Eval[] args, int srcCellRow, short srcCellCol) {
 		
@@ -82,7 +74,7 @@ public final class Match implements Function {
 			case 3:
 				try {
 					match_type = evaluateMatchTypeArg(args[2], srcCellRow, srcCellCol);
-				} catch (EvalEx e) {
+				} catch (EvaluationException e) {
 					// Excel/MATCH() seems to have slightly abnormal handling of errors with
 					// the last parameter.  Errors do not propagate up.  Every error gets
 					// translated into #REF!
@@ -100,53 +92,16 @@ public final class Match implements Function {
 		
 		
 		try {
-			ValueEval lookupValue = evaluateLookupValue(args[0], srcCellRow, srcCellCol);
+			ValueEval lookupValue = OperandResolver.getSingleValue(args[0], srcCellRow, srcCellCol);
 			ValueEval[] lookupRange = evaluateLookupRange(args[1]);
 			int index = findIndexOfValue(lookupValue, lookupRange, matchExact, findLargestLessThanOrEqual);
 			return new NumberEval(index + 1); // +1 to convert to 1-based
-		} catch (EvalEx e) {
-			return e.getError();
+		} catch (EvaluationException e) {
+			return e.getErrorEval();
 		}
 	}
 
-	private static ValueEval chooseSingleElementFromArea(AreaEval ae, 
-			int srcCellRow, short srcCellCol) throws EvalEx {
-		if (ae.isColumn()) {
-			if(ae.isRow()) {
-				return ae.getValues()[0];
-			}
-			if(!ae.containsRow(srcCellRow)) {
-				throw new EvalEx(ErrorEval.VALUE_INVALID);
-			}
-			return ae.getValueAt(srcCellRow, ae.getFirstColumn());
-		}
-		if(!ae.isRow()) {
-			throw new EvalEx(ErrorEval.VALUE_INVALID);
-		}
-		if(!ae.containsColumn(srcCellCol)) {
-			throw new EvalEx(ErrorEval.VALUE_INVALID);
-		}
-		return ae.getValueAt(ae.getFirstRow(), srcCellCol);
-		
-	}
-
-	private static ValueEval evaluateLookupValue(Eval eval, int srcCellRow, short srcCellCol)
-			throws EvalEx {
-		if (eval instanceof RefEval) {
-			RefEval re = (RefEval) eval;
-			return re.getInnerValueEval();
-		}
-		if (eval instanceof AreaEval) {
-			return chooseSingleElementFromArea((AreaEval) eval, srcCellRow, srcCellCol);
-		}
-		if (eval instanceof ValueEval) {
-			return (ValueEval) eval;
-		}
-		throw new RuntimeException("Unexpected eval type (" + eval.getClass().getName() + ")");
-	}
-
-
-	private static ValueEval[] evaluateLookupRange(Eval eval) throws EvalEx {
+	private static ValueEval[] evaluateLookupRange(Eval eval) throws EvaluationException {
 		if (eval instanceof RefEval) {
 			RefEval re = (RefEval) eval;
 			return new ValueEval[] { re.getInnerValueEval(), };
@@ -154,55 +109,36 @@ public final class Match implements Function {
 		if (eval instanceof AreaEval) {
 			AreaEval ae = (AreaEval) eval;
 			if(!ae.isColumn() && !ae.isRow()) {
-				throw new EvalEx(ErrorEval.NA);
+				throw new EvaluationException(ErrorEval.NA);
 			}
 			return ae.getValues();
 		}
 		
 		// Error handling for lookup_range arg is also unusual
 		if(eval instanceof NumericValueEval) {
-			throw new EvalEx(ErrorEval.NA);
+			throw new EvaluationException(ErrorEval.NA);
 		}
 		if (eval instanceof StringEval) {
 			StringEval se = (StringEval) eval;
-			Double d = parseDouble(se.getStringValue());
+			Double d = OperandResolver.parseDouble(se.getStringValue());
 			if(d == null) {
 				// plain string
-				throw new EvalEx(ErrorEval.VALUE_INVALID);
+				throw new EvaluationException(ErrorEval.VALUE_INVALID);
 			}
 			// else looks like a number
-			throw new EvalEx(ErrorEval.NA);
+			throw new EvaluationException(ErrorEval.NA);
 		}
 		throw new RuntimeException("Unexpected eval type (" + eval.getClass().getName() + ")");
 	}
 
 
-	private static Double parseDouble(String stringValue) {
-		// TODO find better home for parseDouble
-		return Countif.parseDouble(stringValue);
-	}
-
-
 
 	private static double evaluateMatchTypeArg(Eval arg, int srcCellRow, short srcCellCol) 
-			throws EvalEx {
-		Eval match_type = arg;
-		if(arg instanceof AreaEval) {
-			AreaEval ae = (AreaEval) arg;
-			// an area ref can work as a scalar value if it is 1x1
-			if(ae.isColumn() &&  ae.isRow()) {
-				match_type = ae.getValues()[0];
-			} else {
-				match_type = chooseSingleElementFromArea(ae, srcCellRow, srcCellCol);
-			}
-		}
-		
-		if(match_type instanceof RefEval) {
-			RefEval re = (RefEval) match_type;
-			match_type = re.getInnerValueEval();
-		}
+			throws EvaluationException {
+		Eval match_type = OperandResolver.getSingleValue(arg, srcCellRow, srcCellCol);
+
 		if(match_type instanceof ErrorEval) {
-			throw new EvalEx((ErrorEval)match_type);
+			throw new EvaluationException((ErrorEval)match_type);
 		}
 		if(match_type instanceof NumericValueEval) {
 			NumericValueEval ne = (NumericValueEval) match_type;
@@ -210,12 +146,12 @@ public final class Match implements Function {
 		}
 		if (match_type instanceof StringEval) {
 			StringEval se = (StringEval) match_type;
-			Double d = parseDouble(se.getStringValue());
+			Double d = OperandResolver.parseDouble(se.getStringValue());
 			if(d == null) {
 				// plain string
-				throw new EvalEx(ErrorEval.VALUE_INVALID);
+				throw new EvaluationException(ErrorEval.VALUE_INVALID);
 			}
-			// if the string parses as a number, it is ok
+			// if the string parses as a number, it is OK
 			return d.doubleValue();
 		}
 		throw new RuntimeException("Unexpected match_type type (" + match_type.getClass().getName() + ")");
@@ -225,88 +161,66 @@ public final class Match implements Function {
 	 * @return zero based index
 	 */
 	private static int findIndexOfValue(ValueEval lookupValue, ValueEval[] lookupRange,
-			boolean matchExact, boolean findLargestLessThanOrEqual) throws EvalEx {
-		// TODO - wildcard matching when matchExact and lookupValue is text containing * or ?
+			boolean matchExact, boolean findLargestLessThanOrEqual) throws EvaluationException {
+
+		LookupValueComparer lookupComparer = createLookupComparer(lookupValue, matchExact);
+		
 		if(matchExact) {
 			for (int i = 0; i < lookupRange.length; i++) {
-				ValueEval lri = lookupRange[i];
-				if(lri.getClass() != lookupValue.getClass()) {
-					continue;
-				}
-				if(compareValues(lookupValue, lri) == 0) {
+				if(lookupComparer.compareTo(lookupRange[i]).isEqual()) {
 					return i;
 				}
 			}
-		} else {
+			throw new EvaluationException(ErrorEval.NA);
+		}
+		
+		if(findLargestLessThanOrEqual) {
 			// Note - backward iteration
-			if(findLargestLessThanOrEqual) {
-				for (int i = lookupRange.length - 1; i>=0;  i--) {
-					ValueEval lri = lookupRange[i];
-					if(lri.getClass() != lookupValue.getClass()) {
-						continue;
-					}
-					int cmp = compareValues(lookupValue, lri);
-					if(cmp == 0) {
-						return i;
-					}
-					if(cmp > 0) {
-						return i;
-					}
+			for (int i = lookupRange.length - 1; i>=0;  i--) {
+				CompareResult cmp = lookupComparer.compareTo(lookupRange[i]);
+				if(cmp.isTypeMismatch()) {
+					continue;
 				}
-			} else {
-				// find smallest greater than or equal to
-				for (int i = 0; i<lookupRange.length; i++) {
-					ValueEval lri = lookupRange[i];
-					if(lri.getClass() != lookupValue.getClass()) {
-						continue;
-					}
-					int cmp = compareValues(lookupValue, lri);
-					if(cmp == 0) {
-						return i;
-					}
-					if(cmp > 0) {
-						if(i<1) {
-							throw new EvalEx(ErrorEval.NA);
-						}
-						return i-1;
-					}
+				if(!cmp.isLessThan()) {
+					return i;
 				}
-				
+			}
+			throw new EvaluationException(ErrorEval.NA);
+		}
+		
+		// else - find smallest greater than or equal to
+		// TODO - is binary search used for (match_type==+1) ?
+		for (int i = 0; i<lookupRange.length; i++) {
+			CompareResult cmp = lookupComparer.compareTo(lookupRange[i]);
+			if(cmp.isEqual()) {
+				return i;
+			}
+			if(cmp.isGreaterThan()) {
+				if(i<1) {
+					throw new EvaluationException(ErrorEval.NA);
+				}
+				return i-1;
 			}
 		}
 
-		throw new EvalEx(ErrorEval.NA);
+		throw new EvaluationException(ErrorEval.NA);
 	}
 
+	private static LookupValueComparer createLookupComparer(ValueEval lookupValue, boolean matchExact) throws EvaluationException {
+		if (matchExact && lookupValue instanceof StringEval) {
+			String stringValue = ((StringEval) lookupValue).getStringValue();
+			if(isLookupValueWild(stringValue)) {
+				throw new RuntimeException("Wildcard lookup values '" + stringValue + "' not supported yet");
+			}
+			
+		}
+		return LookupUtils.createLookupComparer(lookupValue);
+	}
 
-	/**
-	 * This method can only compare a pair of <tt>NumericValueEval</tt>s, <tt>StringEval</tt>s
-	 * or <tt>BoolEval</tt>s
-	 * @return negative for a&lt;b, positive for a&gt;b and 0 for a = b
-	 */
-	private static int compareValues(ValueEval a, ValueEval b) {
-		if (a instanceof StringEval) {
-			StringEval sa = (StringEval) a;
-			StringEval sb = (StringEval) b;
-			return sa.getStringValue().compareToIgnoreCase(sb.getStringValue());
+	private static boolean isLookupValueWild(String stringValue) {
+		if(stringValue.indexOf('?') >=0 || stringValue.indexOf('*') >=0) {
+			return true;
 		}
-		if (a instanceof NumericValueEval) {
-			NumericValueEval na = (NumericValueEval) a;
-			NumericValueEval nb = (NumericValueEval) b;
-			return Double.compare(na.getNumberValue(), nb.getNumberValue());
-		}
-		if (a instanceof BoolEval) {
-			boolean ba = ((BoolEval) a).getBooleanValue();
-			boolean bb = ((BoolEval) b).getBooleanValue();
-			if(ba == bb) {
-				return 0;
-			}
-			// TRUE > FALSE
-			if(ba) {
-				return +1;
-			}
-			return -1;
-		}
-		throw new RuntimeException("bad eval type (" + a.getClass().getName() + ")");
+		return false;
 	}
 }

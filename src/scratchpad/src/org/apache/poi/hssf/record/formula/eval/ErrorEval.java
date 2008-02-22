@@ -14,112 +14,105 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-/*
- * Created on May 8, 2005
- *
- */
+
 package org.apache.poi.hssf.record.formula.eval;
+
+import org.apache.poi.hssf.usermodel.HSSFErrorConstants;
 
 /**
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
- * 
+ *
  */
 public final class ErrorEval implements ValueEval {
-    /**
-     * Contains raw Excel error codes (as defined in OOO's excelfileformat.pdf (2.5.6)
-     */
-    private static final class ErrorCode {
-        /** <b>#NULL!</b>  - Intersection of two cell ranges is empty */
-        public static final int NULL = 0x00;
-        /** <b>#DIV/0!</b> - Division by zero */
-        public static final int DIV_0 = 0x07;
-        /** <b>#VALUE!</b> - Wrong type of operand */
-        public static final int VALUE = 0x0F; 
-        /** <b>#REF!</b> - Illegal or deleted cell reference */
-        public static final int REF = 0x17;  
-        /** <b>#NAME?</b> - Wrong function or range name */
-        public static final int NAME = 0x1D; 
-        /** <b>#NUM!</b> - Value range overflow */
-        public static final int NUM = 0x24; 
-        /** <b>#N/A</b> - Argument or function not available */
-        public static final int N_A = 0x2A;   
-        
-        public static final String getText(int errorCode) {
-            switch(errorCode) {
-                case NULL:  return "#NULL!";
-                case DIV_0: return "#DIV/0!";
-                case VALUE: return "#VALUE!";
-                case REF:   return "#REF!";
-                case NAME:  return "#NAME?";
-                case NUM:   return "#NUM!";
-                case N_A:   return "#N/A";
-            }
-            return "???";
-        }
-    }
+
+    // convenient access to namespace
+    private static final HSSFErrorConstants EC = null;
 
     /** <b>#NULL!</b>  - Intersection of two cell ranges is empty */
-    public static final ErrorEval NULL_INTERSECTION = new ErrorEval(ErrorCode.NULL); 
+    public static final ErrorEval NULL_INTERSECTION = new ErrorEval(EC.ERROR_NULL);
     /** <b>#DIV/0!</b> - Division by zero */
-    public static final ErrorEval DIV_ZERO = new ErrorEval(ErrorCode.DIV_0);
+    public static final ErrorEval DIV_ZERO = new ErrorEval(EC.ERROR_DIV_0);
     /** <b>#VALUE!</b> - Wrong type of operand */
-    public static final ErrorEval VALUE_INVALID = new ErrorEval(ErrorCode.VALUE);
+    public static final ErrorEval VALUE_INVALID = new ErrorEval(EC.ERROR_VALUE);
     /** <b>#REF!</b> - Illegal or deleted cell reference */
-    public static final ErrorEval REF_INVALID = new ErrorEval(ErrorCode.REF);
+    public static final ErrorEval REF_INVALID = new ErrorEval(EC.ERROR_REF);
     /** <b>#NAME?</b> - Wrong function or range name */
-    public static final ErrorEval NAME_INVALID = new ErrorEval(ErrorCode.NAME); 
+    public static final ErrorEval NAME_INVALID = new ErrorEval(EC.ERROR_NAME);
     /** <b>#NUM!</b> - Value range overflow */
-    public static final ErrorEval NUM_ERROR = new ErrorEval(ErrorCode.NUM);
+    public static final ErrorEval NUM_ERROR = new ErrorEval(EC.ERROR_NUM);
     /** <b>#N/A</b> - Argument or function not available */
-    public static final ErrorEval NA = new ErrorEval(ErrorCode.N_A);
+    public static final ErrorEval NA = new ErrorEval(EC.ERROR_NA);
 
-    
+
+    // POI internal error codes
+    private static final int CIRCULAR_REF_ERROR_CODE = 0xFFFFFFC4;
+    private static final int FUNCTION_NOT_IMPLEMENTED_CODE = 0xFFFFFFE2;
+
     /**
-     * Translates an Excel internal error code into the corresponding POI ErrorEval instance 
+     * @deprecated do not use this error code. For conditions that should never occur, throw an
+     *  unchecked exception. For all other situations use the error code that corresponds to the
+     *  error Excel would have raised under the same circumstances.
+     */
+    public static final ErrorEval UNKNOWN_ERROR = new ErrorEval(-20);
+    public static final ErrorEval FUNCTION_NOT_IMPLEMENTED = new ErrorEval(FUNCTION_NOT_IMPLEMENTED_CODE);
+    // Note - Excel does not seem to represent this condition with an error code
+    public static final ErrorEval CIRCULAR_REF_ERROR = new ErrorEval(CIRCULAR_REF_ERROR_CODE);
+
+
+    /**
+     * Translates an Excel internal error code into the corresponding POI ErrorEval instance
      * @param errorCode
      */
     public static ErrorEval valueOf(int errorCode) {
         switch(errorCode) {
-            case ErrorCode.NULL: return NULL_INTERSECTION;
-            case ErrorCode.DIV_0: return DIV_ZERO;
-            case ErrorCode.VALUE: return VALUE_INVALID;
-//            case ErrorCode.REF: return REF_INVALID;
-            case ErrorCode.REF: return UNKNOWN_ERROR;
-            case ErrorCode.NAME: return NAME_INVALID;
-            case ErrorCode.NUM: return NUM_ERROR;
-            case ErrorCode.N_A: return NA;
-            
-            // these cases probably shouldn't be coming through here 
-            // but (as of Jan-2008) a lot of code depends on it. 
-//            case -20: return UNKNOWN_ERROR;
-//            case -30: return FUNCTION_NOT_IMPLEMENTED;
-//            case -60: return CIRCULAR_REF_ERROR;
+            case HSSFErrorConstants.ERROR_NULL:  return NULL_INTERSECTION;
+            case HSSFErrorConstants.ERROR_DIV_0: return DIV_ZERO;
+            case HSSFErrorConstants.ERROR_VALUE: return VALUE_INVALID;
+            case HSSFErrorConstants.ERROR_REF:   return REF_INVALID;
+            case HSSFErrorConstants.ERROR_NAME:  return NAME_INVALID;
+            case HSSFErrorConstants.ERROR_NUM:   return NUM_ERROR;
+            case HSSFErrorConstants.ERROR_NA:    return NA;
+            // non-std errors (conditions modeled as errors by POI)
+            case CIRCULAR_REF_ERROR_CODE:        return CIRCULAR_REF_ERROR;
+            case FUNCTION_NOT_IMPLEMENTED_CODE:  return FUNCTION_NOT_IMPLEMENTED;
         }
         throw new RuntimeException("Unexpected error code (" + errorCode + ")");
     }
-    
-    // POI internal error codes
-    public static final ErrorEval UNKNOWN_ERROR = new ErrorEval(-20);
-    public static final ErrorEval FUNCTION_NOT_IMPLEMENTED = new ErrorEval(-30);
-    // Note - Excel does not seem to represent this condition with an error code
-    public static final ErrorEval CIRCULAR_REF_ERROR = new ErrorEval(-60); 
 
+    /**
+     * Converts error codes to text.  Handles non-standard error codes OK.  
+     * For debug/test purposes (and for formatting error messages).
+     * @return the String representation of the specified Excel error code.
+     */
+    public static String getText(int errorCode) {
+        if(HSSFErrorConstants.isValidCode(errorCode)) {
+            return HSSFErrorConstants.getText(errorCode);
+        }
+        // It is desirable to make these (arbitrary) strings look clearly different from any other
+        // value expression that might appear in a formula.  In addition these error strings should
+        // look unlike the standard Excel errors.  Hence tilde ('~') was used.
+        switch(errorCode) {
+            case CIRCULAR_REF_ERROR_CODE: return "~CIRCULAR~REF~";
+            case FUNCTION_NOT_IMPLEMENTED_CODE: return "~FUNCTION~NOT~IMPLEMENTED~";
+        }
+        return "~non~std~err(" + errorCode + ")~";
+    }
 
-    private int errorCode;
+    private int _errorCode;
     /**
      * @param errorCode an 8-bit value
      */
     private ErrorEval(int errorCode) {
-        this.errorCode = errorCode;
+        _errorCode = errorCode;
     }
 
     public int getErrorCode() {
-        return errorCode;
+        return _errorCode;
     }
     public String toString() {
         StringBuffer sb = new StringBuffer(64);
         sb.append(getClass().getName()).append(" [");
-        sb.append(ErrorCode.getText(errorCode));
+        sb.append(getText(_errorCode));
         sb.append("]");
         return sb.toString();
     }
