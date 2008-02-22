@@ -33,6 +33,7 @@
 	<!-- Don't forget to update changes.xml too! -->
     <changes>
         <release version="3.1-beta1" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">44471 - Crystal Reports generates files with short StyleRecords, which isn't allowed in the spec. Work around this</action>
            <action dev="POI-DEVELOPERS" type="add">44450 - Support for Lookup, HLookup and VLookup functions</action>
            <action dev="POI-DEVELOPERS" type="fix">44449 - Avoid getting confused when two sheets have shared formulas for the same areas, and when the shared formula is set incorrectly</action>
            <action dev="POI-DEVELOPERS" type="fix">44366 - InputStreams passed to POIFSFileSystem are now automatically closed. A warning is generated for people who might've relied on them not being closed before, and a wrapper to restore the old behaviour is supplied</action>

@@ -1091,17 +1091,14 @@ extends TestCase {
     }
     
     /**
-     * Date: Tue, 19 Feb 2008 05:03:47 -0800 (PST)
-     * From: Setya <jsetya@gmail.com>
-     * Subject: Exception when parsing excel file
+     * Crystal reports generates files with short 
+     *  StyleRecords, which is against the spec
      */
-    public void BROKENtest20080219() throws Exception {
+    public void test44471() throws Exception {
         FileInputStream in = new FileInputStream(new File(cwd, "OddStyleRecord.xls"));
         
-        // Blows up with an ArrayIndexOutOfBounds
+        // Used to blow up with an ArrayIndexOutOfBounds
         //  when creating a StyleRecord
-        // However, our code matches the latest Microsoft
-        //  docs, so no idea what's wrong
         HSSFWorkbook wb = new HSSFWorkbook(in);
         in.close();
         
