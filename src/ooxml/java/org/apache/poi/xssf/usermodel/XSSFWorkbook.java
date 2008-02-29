@@ -52,6 +52,7 @@ import org.openxml4j.opc.PackagingURIHelper;
 import org.openxml4j.opc.TargetMode;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBookView;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBookViews;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDialogsheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbook;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
@@ -204,14 +205,30 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     }
 
     public Sheet createSheet(String sheetname) {
-        CTSheet sheet = workbook.getSheets().addNewSheet();
-        if (sheetname != null) {
-            sheet.setName(sheetname);
-        }
-        XSSFSheet wrapper = new XSSFSheet(sheet, this);
+        return createSheet(sheetname, null);
+    }
+    
+    public Sheet createSheet(String sheetname, CTWorksheet worksheet) {
+        CTSheet sheet = addSheet(sheetname);
+        XSSFWorksheet wrapper = new XSSFWorksheet(sheet, worksheet, this);
         this.sheets.add(wrapper);
         return wrapper;
     }
+    
+    public Sheet createDialogsheet(String sheetname, CTDialogsheet dialogsheet) {
+    	  CTSheet sheet = addSheet(sheetname);
+    	  XSSFDialogsheet wrapper = new XSSFDialogsheet(sheet, dialogsheet, this);
+    	  this.sheets.add(wrapper);
+    	  return wrapper;
+    }
+
+	private CTSheet addSheet(String sheetname) {
+		CTSheet sheet = workbook.getSheets().addNewSheet();
+        if (sheetname != null) {
+            sheet.setName(sheetname);
+        }
+		return sheet;
+	}
 
     public void dumpDrawingGroupRecords(boolean fat) {
         // TODO Auto-generated method stub
@@ -331,7 +348,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     public short getSelectedTab() {
         short i = 0;
         for (XSSFSheet sheet : this.sheets) {
-            if (sheet.isTabSelected()) {
+            if (sheet.isSelected()) {
                 return i;
             }
             ++i;
@@ -392,7 +409,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     }
 
     public void removeSheetAt(int index) {
-        XSSFSheet sheet = this.sheets.remove(index);
+        this.sheets.remove(index);
         this.workbook.getSheets().removeSheet(index);
     }
 
@@ -427,7 +444,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     public void setSelectedTab(short index) {
         for (int i = 0 ; i < this.sheets.size() ; ++i) {
             XSSFSheet sheet = this.sheets.get(i);
-            sheet.setTabSelected(i == index);
+            sheet.setSelected(i == index);
         }
     }
 
@@ -479,7 +496,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
              out.close();
              
              for (int i = 0 ; i < this.getNumberOfSheets() ; ++i) {
-                 XSSFSheet sheet = (XSSFSheet) this.getSheetAt(i);
+            	 XSSFSheet sheet = (XSSFSheet) this.getSheetAt(i);
                  PackagePartName partName = PackagingURIHelper.createPartName("/xl/worksheets/sheet" + i + ".xml");
                  corePart.addRelationship(partName, TargetMode.INTERNAL, WORKSHEET_RELATIONSHIP, "rSheet" + 1);
                  PackagePart part = pkg.createPart(partName, WORKSHEET_TYPE);

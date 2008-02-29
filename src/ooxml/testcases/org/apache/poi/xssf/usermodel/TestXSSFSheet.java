@@ -19,12 +19,16 @@ package org.apache.poi.xssf.usermodel;
 
 import java.util.Iterator;
 
+import junit.framework.TestCase;
+
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Footer;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-
-import junit.framework.TestCase;
+import org.apache.poi.xssf.usermodel.helpers.ColumnHelper;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDialogsheet;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 
 
 public class TestXSSFSheet extends TestCase {
@@ -106,8 +110,8 @@ public class TestXSSFSheet extends TestCase {
         XSSFWorkbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("Sheet 1");
         // Test that default height set by the constructor
-        assertEquals((short) 300, sheet.getDefaultRowHeight());
-        assertEquals((float) 15, sheet.getDefaultRowHeightInPoints());
+        assertEquals((short) 0, sheet.getDefaultRowHeight());
+        assertEquals((float) 0, sheet.getDefaultRowHeightInPoints());
         // Set a new default row height in twips and test getting the value in points
         sheet.setDefaultRowHeight((short) 360);
         assertEquals((float) 18, sheet.getDefaultRowHeightInPoints());
@@ -120,7 +124,7 @@ public class TestXSSFSheet extends TestCase {
         XSSFWorkbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("Sheet 1");
         // Test that default column width set by the constructor
-        assertEquals((short) 13, sheet.getDefaultColumnWidth());
+        assertEquals((short) 0, sheet.getDefaultColumnWidth());
         // Set a new default column width and get its value
         sheet.setDefaultColumnWidth((short) 14);
         assertEquals((short) 14, sheet.getDefaultColumnWidth());
@@ -321,5 +325,95 @@ public class TestXSSFSheet extends TestCase {
         Sheet sheet = workbook.createSheet("Sheet 1");
         sheet.setColumnHidden((short) 2, true);
         assertTrue(sheet.isColumnHidden((short) 2));
+    }
+    
+    public void testAutoSizeColumn() {
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        XSSFSheet sheet = (XSSFSheet) workbook.createSheet("Sheet 1");
+        ColumnHelper columnHelper = sheet.getColumnHelper();
+        CTCol col = columnHelper.getColumn(13);
+        assertNull(col);
+        sheet.autoSizeColumn((short)13);
+        col = columnHelper.getColumn(13);
+        assertNotNull(col);
+        assertTrue(col.getBestFit());	
+    }
+    
+    public void testGetDialog() {
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        XSSFSheet sheet = (XSSFSheet) workbook.createSheet("Sheet 1");
+        assertFalse(sheet.getDialog());
+        XSSFSheet dialogsheet = (XSSFSheet) workbook.createDialogsheet("Dialogsheet 1", null);
+        assertTrue(dialogsheet.getDialog());
+    	
+    }
+    
+    public void testGetSetHorizontallyCentered() {
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        XSSFSheet sheet = (XSSFSheet) workbook.createSheet("Sheet 1");
+        assertFalse(sheet.getHorizontallyCenter());
+        sheet.setHorizontallyCenter(true);
+        assertTrue(sheet.getHorizontallyCenter());
+        sheet.setHorizontallyCenter(false);
+        assertFalse(sheet.getHorizontallyCenter());
+    }
+    
+    public void testGetSetVerticallyCentered() {
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        XSSFSheet sheet = (XSSFSheet) workbook.createSheet("Sheet 1");
+        assertFalse(sheet.getVerticallyCenter());
+        sheet.setVerticallyCenter(true);
+        assertTrue(sheet.getVerticallyCenter());
+        sheet.setVerticallyCenter(false);
+        assertFalse(sheet.getVerticallyCenter());
+    }
+    
+    public void testIsSetPrintGridlines() {
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        XSSFSheet sheet = (XSSFSheet) workbook.createSheet("Sheet 1");
+        assertFalse(sheet.isPrintGridlines());
+        sheet.setPrintGridlines(true);
+        assertTrue(sheet.isPrintGridlines());
+    }
+    
+    public void testIsSetDisplayFormulas() {
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        XSSFSheet sheet = (XSSFSheet) workbook.createSheet("Sheet 1");
+        assertFalse(sheet.isDisplayFormulas());
+        sheet.setDisplayFormulas(true);
+        assertTrue(sheet.isDisplayFormulas());
+    }
+    
+    public void testIsSetDisplayGridLines() {
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        XSSFSheet sheet = (XSSFSheet) workbook.createSheet("Sheet 1");
+        assertTrue(sheet.isDisplayGridlines());
+        sheet.setDisplayGridlines(false);
+        assertFalse(sheet.isDisplayGridlines());
+    }
+    
+    public void testIsSetDisplayRowColHeadings() {
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        XSSFSheet sheet = (XSSFSheet) workbook.createSheet("Sheet 1");
+        assertTrue(sheet.isDisplayRowColHeadings());
+        sheet.setDisplayRowColHeadings(false);
+        assertFalse(sheet.isDisplayRowColHeadings());
+    }
+    
+    public void testGetScenarioProtect() {
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        XSSFSheet sheet = (XSSFSheet) workbook.createSheet("Sheet 1");
+        assertFalse(sheet.getScenarioProtect());
+    }
+    
+    public void testTopRowLeftCol() {
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        XSSFSheet sheet = (XSSFSheet) workbook.createSheet("Sheet 1");
+        sheet.showInPane((short)1, (short)1);
+        assertEquals((short) 1, sheet.getTopRow());
+        assertEquals((short) 1, sheet.getLeftCol());
+        sheet.showInPane((short)2, (short)26);
+        assertEquals((short) 2, sheet.getTopRow());
+        assertEquals((short) 26, sheet.getLeftCol());
     }
 }
