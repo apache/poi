@@ -26,7 +26,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 public class ColumnHelper {
     
     private CTWorksheet worksheet;
-    
+    private CTCols newCols;
 
     public ColumnHelper(CTWorksheet worksheet) {
         super();
@@ -35,7 +35,7 @@ public class ColumnHelper {
     }
 
     public void cleanColumns() {
-        CTCols newCols = CTCols.Factory.newInstance();
+        this.newCols = CTCols.Factory.newInstance();
         CTCols[] colsArray = worksheet.getColsArray();
         int i = 0;
         for (i = 0 ; i < colsArray.length ; i++) {
@@ -85,6 +85,34 @@ public class ColumnHelper {
         if (col.getHidden()) {
             newCol.setHidden(true);
         }
+        if (col.getBestFit()) {
+            newCol.setBestFit(true);
+        }
     }
+    
+    public void setColBestFit(long index, boolean bestFit) {
+    	CTCol col = getOrCreateColumn(index);
+    	col.setBestFit(bestFit);
+    }
+    
+    public void setColWidth(long index, double width) {
+    	CTCol col = getOrCreateColumn(index);
+    	col.setWidth(width);
+    }
+    
+    public void setColHidden(long index, boolean hidden) {
+    	CTCol col = getOrCreateColumn(index);
+    	col.setHidden(hidden);
+    }
+
+	protected CTCol getOrCreateColumn(long index) {
+		CTCol col = getColumn(index);
+    	if (col == null) {
+    		col = worksheet.getColsArray(0).addNewCol();
+    		col.setMin(index);
+    		col.setMax(index);
+    	}
+    	return col;
+	}
     
 }

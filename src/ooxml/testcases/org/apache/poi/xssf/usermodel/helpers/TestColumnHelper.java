@@ -19,6 +19,8 @@ package org.apache.poi.xssf.usermodel.helpers;
 
 import junit.framework.TestCase;
 
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
@@ -93,6 +95,19 @@ public class TestColumnHelper extends TestCase {
         helper.setColumnAttributes(col, newCol);
         assertEquals((double) 12, newCol.getWidth());
         assertTrue(newCol.getHidden());
+    }
+    
+    public void testGetOrCreateColumn() {
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        XSSFSheet sheet = (XSSFSheet) workbook.createSheet("Sheet 1");
+        ColumnHelper columnHelper = sheet.getColumnHelper();
+        CTCol col = columnHelper.getOrCreateColumn(3);
+        assertNotNull(col);
+        assertNotNull(columnHelper.getColumn(3));
+
+        CTCol col2 = columnHelper.getOrCreateColumn(30);
+        assertNotNull(col2);
+        assertNotNull(columnHelper.getColumn(30));
     }
 
     private int countColumns(CTWorksheet worksheet) {

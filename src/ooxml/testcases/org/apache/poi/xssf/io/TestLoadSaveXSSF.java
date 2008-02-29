@@ -56,17 +56,19 @@ public class TestLoadSaveXSSF extends TestCase {
         assertEquals("Lorem", cell.getRichStringCellValue().getString());
     }
     
+    // TODO filename string hard coded in XSSFWorkbook constructor in order to make ant test-ooxml target be successfull.
     public void testLoadStyles() throws Exception {
-        XSSFWorkbook workbook = new XSSFWorkbook(new File(filename, "styles.xlsx").getAbsolutePath());
+        XSSFWorkbook workbook = new XSSFWorkbook(new File("src/ooxml/testcases/org/apache/poi/xssf/data", "styles.xlsx").getAbsolutePath());
         Sheet sheet = workbook.getSheetAt(0);
         Row row = sheet.getRow(0);
         Cell cell = row.getCell((short) 0);
         CellStyle style = cell.getCellStyle();
         // assertNotNull(style);
     }
-    
+
+    // TODO filename string hard coded in XSSFWorkbook constructor in order to make ant test-ooxml target be successfull.
     public void testLoadPictures() throws Exception {
-        XSSFWorkbook workbook = new XSSFWorkbook(new File(filename, "picture.xlsx").getAbsolutePath());
+        XSSFWorkbook workbook = new XSSFWorkbook(new File("src/ooxml/testcases/org/apache/poi/xssf/data", "picture.xlsx").getAbsolutePath());
         List<PictureData> pictures = workbook.getAllPictures();
         assertEquals(1, pictures.size());
     }
