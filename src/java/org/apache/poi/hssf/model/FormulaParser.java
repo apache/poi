@@ -327,7 +327,7 @@ public class FormulaParser {
                 for(int i = 0; i < book.getNumNames(); i++) {
                 	// Our formula will by now contain an upper-cased
                 	//  version of any named range names
-                    if(book.getNameRecord(i).getNameText().toUpperCase().equals(name)) {
+                    if(book.getNameRecord(i).getNameText().equalsIgnoreCase(name)) {
                         nameRecordExists = true;
                     }
                 }

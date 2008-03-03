@@ -50,7 +50,7 @@ public class NamePtg
         NameRecord rec;
         for (short i = 1; i < n; i++) {
             rec = book.getNameRecord(i - 1);
-            if (name.equals(rec.getNameText())) {
+            if (name.equalsIgnoreCase(rec.getNameText())) {
                 field_1_label_index = i;
                 return;
             }
