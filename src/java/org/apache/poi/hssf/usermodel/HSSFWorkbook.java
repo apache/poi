@@ -165,10 +165,7 @@ public class HSSFWorkbook extends POIDocument
             throws IOException
     {
         this.preserveNodes = preserveNodes;
-
-        // Read in the HPSF properties
         this.filesystem = fs;
-        readProperties();
         
         // If we're not preserving nodes, don't track the
         //  POIFS any more

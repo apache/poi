@@ -54,16 +54,24 @@ public abstract class POIDocument {
 	/** For our own logging use */
 	protected POILogger logger = POILogFactory.getLogger(this.getClass());
 
-	
-	/** 
+    /* Have the property streams been read yet? (Only done on-demand) */
+    protected boolean initialized = false;
+
+	/**
 	 * Fetch the Document Summary Information of the document
 	 */
-	public DocumentSummaryInformation getDocumentSummaryInformation() { return dsInf; }
+	public DocumentSummaryInformation getDocumentSummaryInformation() {
+        if(!initialized) readProperties();
+        return dsInf;
+    }
 
 	/** 
 	 * Fetch the Summary Information of the document
 	 */
-	public SummaryInformation getSummaryInformation() { return sInf; }
+	public SummaryInformation getSummaryInformation() {
+        if(!initialized) readProperties();
+        return sInf;
+    }
 
 	/**
 	 * Find, and create objects for, the standard
@@ -89,6 +97,9 @@ public abstract class POIDocument {
 		} else if(ps != null) {
 			logger.log(POILogger.WARN, "SummaryInformation property set came back with wrong class - ", ps.getClass());
 		}
+
+		// Mark the fact that we've now loaded up the properties
+        initialized = true;
 	}
 
 	/** 
@@ -133,7 +144,7 @@ public abstract class POIDocument {
 	 * @param writtenEntries a list of POIFS entries to add the property names too
 	 */
 	protected void writeProperties(POIFSFileSystem outFS, List writtenEntries) throws IOException {
-		if(sInf != null) {
+        if(sInf != null) {
 			writePropertySet(SummaryInformation.DEFAULT_STREAM_NAME,sInf,outFS);
 			if(writtenEntries != null) {
 				writtenEntries.add(SummaryInformation.DEFAULT_STREAM_NAME);
