@@ -628,10 +628,17 @@ public class HSSFSheet
     }
 
     /**
+     * TODO: Boolean not needed, remove after next release
+     * @deprecated use getVerticallyCenter() instead
+     */
+    public boolean getVerticallyCenter(boolean value) {
+        return getVerticallyCenter();
+    }
+
+    /**
      * Determine whether printed output for this sheet will be vertically centered.
      */
-
-    public boolean getVerticallyCenter(boolean value)
+    public boolean getVerticallyCenter()
     {
         VCenterRecord record =
                 (VCenterRecord) sheet.findFirstRecordBySid(VCenterRecord.sid);
