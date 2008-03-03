@@ -33,6 +33,7 @@
 	<!-- Don't forget to update changes.xml too! -->
     <changes>
         <release version="3.1-beta1" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">44495 - Handle named cell ranges in formulas that have lower case parts</action>
            <action dev="POI-DEVELOPERS" type="fix">44491 - Don't have the new-style "HPSF properties are always available" affect the old-style use of HPSF alongside HSSF</action>
            <action dev="POI-DEVELOPERS" type="fix">44471 - Crystal Reports generates files with short StyleRecords, which isn't allowed in the spec. Work around this</action>
            <action dev="POI-DEVELOPERS" type="add">44450 - Support for Lookup, HLookup and VLookup functions</action>
