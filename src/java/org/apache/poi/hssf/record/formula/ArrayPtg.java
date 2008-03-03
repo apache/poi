@@ -72,8 +72,10 @@ public class ArrayPtg extends Ptg
     	field_7_reserved = in.readByte();
     }
     
-    /** Read in the actual token (array) values. This occurs AFTER the last
-     * Ptg in the expression.
+    /** 
+     * Read in the actual token (array) values. This occurs 
+     * AFTER the last Ptg in the expression.
+     * See page 304-305 of Excel97-2007BinaryFileFormat(xls)Specification.pdf
      */
     public void readTokenValues(RecordInputStream in) {    	
         token_1_columns = (short)(0x00ff & in.readByte());
@@ -88,18 +90,17 @@ public class ArrayPtg extends Ptg
         token_3_arrayValues = new Object[token_1_columns][token_2_rows];
         
         for (int x=0;x<token_1_columns;x++) {
-        	for (int y=0;y<token_2_rows;y++) {
-        		byte grbit = in.readByte();
-        		if (grbit == 0x01) {
-			    token_3_arrayValues[x][y] = new Double(in.readDouble());
-        		} else if (grbit == 0x02) {
-        			//Ignore the doco, it is actually a unicode string with all the
-        			//trimmings ie 16 bit size, option byte etc
-        			token_3_arrayValues[x][y] = in.readUnicodeString();
-        		} else throw new RecordFormatException("Unknown grbit '"+grbit+"'");
-        	}
+			for (int y=0;y<token_2_rows;y++) {
+				byte grbit = in.readByte();
+				if (grbit == 0x01) {
+					token_3_arrayValues[x][y] = new Double(in.readDouble());
+				} else if (grbit == 0x02) {
+					//Ignore the doco, it is actually a unicode string with all the
+					//trimmings ie 16 bit size, option byte etc
+					token_3_arrayValues[x][y] = in.readUnicodeString();
+				} else throw new RecordFormatException("Unknown grbit '"+grbit+"' at " + x + "," + y + " with " + in.remaining() + " bytes left");
+			}
         }
-
     }
 
     public String toString()
