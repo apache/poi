@@ -33,6 +33,9 @@
 	<!-- Don't forget to update changes.xml too! -->
     <changes>
         <release version="3.1-beta1" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">44504 - Added initial support for recognising external functions like YEARFRAC and ISEVEN (using NameXPtg), via LinkTable support</action>
+           <action dev="POI-DEVELOPERS" type="fix">44504 - Improvements to FormulaParser - operators, precedence, error literals, quotes in string literals, range checking on IntPtg, formulas with extra un-parsed stuff at the end, improved parse error handling</action>
+           <action dev="POI-DEVELOPERS" type="fix">44504 - Fixed number conversion inconsistencies in many functions, and improved RefEval</action>
            <action dev="POI-DEVELOPERS" type="fix">44508 - Fix formula evaluation with evaluateInCell on boolean formulas</action>
            <action dev="POI-DEVELOPERS" type="fix">44510 - Fix how DVALRecord works with dropdowns</action>
            <action dev="POI-DEVELOPERS" type="fix">44495 - Handle named cell ranges in formulas that have lower case parts</action>
