@@ -25,25 +25,16 @@ import org.apache.poi.hssf.record.RecordInputStream;
  *
  * @author  aviks
  */
-
-public class NameXPtg extends Ptg
-{
+public final class NameXPtg extends Ptg {
     public final static short sid  = 0x39;
     private final static int  SIZE = 7;
-    private short             field_1_ixals;   // index to externsheet record
-    private short             field_2_ilbl;    //index to name or externname table(1 based)
+    private short             field_1_ixals;   // index to REF entry in externsheet record
+    private short             field_2_ilbl;    //index to defined name or externname table(1 based)
     private short            field_3_reserved;   // reserved must be 0
 
 
     private NameXPtg() {
       //Required for clone methods
-    }
-
-    /** Creates new NamePtg */
-
-    public NameXPtg(String name)
-    {
-        //TODO
     }
 
     /** Creates new NamePtg */
@@ -72,7 +63,8 @@ public class NameXPtg extends Ptg
 
     public String toFormulaString(Workbook book)
     {
-        return "NO IDEA - NAME";
+        // -1 to convert definedNameIndex from 1-based to zero-based
+        return book.resolveNameXText(field_1_ixals, field_2_ilbl-1); 
     }
     
     public byte getDefaultOperandClass() {return Ptg.CLASS_VALUE;}

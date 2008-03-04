@@ -14,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record.formula;
 
@@ -33,7 +32,8 @@ public class AllFormulaTests {
 		result.addTestSuite(TestArea3DPtg.class);
 		result.addTestSuite(TestAreaErrPtg.class);
         result.addTestSuite(TestAreaPtg.class);
-		result.addTestSuite(TestErrPtg.class);
+        result.addTestSuite(TestErrPtg.class);
+        result.addTestSuite(TestExternalFunctionFormulas.class);
 		result.addTestSuite(TestFuncPtg.class);
 		result.addTestSuite(TestIntersectionPtg.class);
 		result.addTestSuite(TestPercentPtg.class);

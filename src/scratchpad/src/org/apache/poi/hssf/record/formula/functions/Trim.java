@@ -16,12 +16,11 @@
 */
 package org.apache.poi.hssf.record.formula.functions;
 
-import org.apache.poi.hssf.record.formula.eval.BlankEval;
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.apache.poi.hssf.record.formula.eval.Eval;
-import org.apache.poi.hssf.record.formula.eval.NumberEval;
+import org.apache.poi.hssf.record.formula.eval.EvaluationException;
+import org.apache.poi.hssf.record.formula.eval.OperandResolver;
 import org.apache.poi.hssf.record.formula.eval.StringEval;
-import org.apache.poi.hssf.record.formula.eval.StringValueEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 
 /**
@@ -30,46 +29,25 @@ import org.apache.poi.hssf.record.formula.eval.ValueEval;
  *  value is string.
  * @author Manda Wilson &lt; wilson at c bio dot msk cc dot org &gt;
  */
-public class Trim extends TextFunction {
+public final class Trim extends TextFunction {
 
-	/**
-	 * Removes leading and trailing spaces from value if evaluated 
-	 *  operand value is string.
-	 * Returns StringEval only if evaluated operand is of type string 
-	 *  (and is not blank or null) or number. If evaluated operand is 
-	 *  of type string and is blank or null, or if evaluated operand is 
-	 *  of type blank, returns BlankEval.  Otherwise returns ErrorEval.
-	 * 
-	 * @see org.apache.poi.hssf.record.formula.eval.Eval
-	 */
-    public Eval evaluate(Eval[] operands, int srcCellRow, short srcCellCol) {
-    	Eval retval = ErrorEval.VALUE_INVALID;
-        String str = null;
-        
-        switch (operands.length) {
-	        default:
-	            break;
-	        case 1:
-	            ValueEval veval = singleOperandEvaluate(operands[0], srcCellRow, srcCellCol);
-	            if (veval instanceof StringValueEval) {
-	                StringValueEval sve = (StringValueEval) veval;
-	                str = sve.getStringValue();
-	                if (str == null || str.trim().equals("")) {
-	                	return BlankEval.INSTANCE;
-	                }
-	            }
-	            else if (veval instanceof NumberEval) {
-	                NumberEval neval = (NumberEval) veval;
-	                str = neval.getStringValue();
-	            } 
-	            else if (veval instanceof BlankEval) {
-	            	return BlankEval.INSTANCE;
-	            }
-	    }
-	        
-        if (str != null) {
-            retval = new StringEval(str.trim());
-        } 
-        return retval;
-    }
+	public Eval evaluate(Eval[] args, int srcCellRow, short srcCellCol) {
+		
+		if(args.length != 1) {
+			return ErrorEval.VALUE_INVALID;
+		}
+		
+		try {
+			ValueEval veval = OperandResolver.getSingleValue(args[0], srcCellRow, srcCellCol);
+
+			String str = OperandResolver.coerceValueToString(veval);
+			str = str.trim();
+			if(str.length() < 1) {
+				return StringEval.EMPTY_INSTANCE;
+			}
+			return new StringEval(str);
+		} catch (EvaluationException e) {
+			return e.getErrorEval();
+		}
+	}
 }

@@ -77,13 +77,14 @@ public final class TestMid extends TestCase {
 		
 		// startPos is 1x1 area ref, numChars is cell ref
 		AreaEval aeStart = new Area2DEval(new AreaPtg("A1:A1"), new ValueEval[] { new NumberEval(2), } );
-		RefEval reNumChars = new Ref2DEval(new ReferencePtg("B1"), new NumberEval(3),false);
+		RefEval reNumChars = new Ref2DEval(new ReferencePtg("B1"), new NumberEval(3));
 		confirmMid(new StringEval("galactic"), aeStart, reNumChars, "ala");
 
 		confirmMid(new StringEval("galactic"), new NumberEval(3.1), BlankEval.INSTANCE, "");
 
 		confirmMid(new StringEval("galactic"), new NumberEval(3), BoolEval.FALSE, "");
 		confirmMid(new StringEval("galactic"), new NumberEval(3), BoolEval.TRUE, "l");
+		confirmMid(BlankEval.INSTANCE, new NumberEval(3), BoolEval.TRUE, "");
 	
 	}
 

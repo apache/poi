@@ -33,18 +33,18 @@ import org.apache.poi.hssf.record.formula.eval.ValueEvalToNumericXlator;
 public class Sumsq extends MultiOperandNumericFunction {
     private static final ValueEvalToNumericXlator DEFAULT_NUM_XLATOR =
         new ValueEvalToNumericXlator((short) (
-              //  ValueEvalToNumericXlator.BOOL_IS_PARSED  
+                ValueEvalToNumericXlator.BOOL_IS_PARSED  
               //| ValueEvalToNumericXlator.REF_BOOL_IS_PARSED  
               //| ValueEvalToNumericXlator.EVALUATED_REF_BOOL_IS_PARSED  
-              //| ValueEvalToNumericXlator.STRING_IS_PARSED  
+                | ValueEvalToNumericXlator.STRING_IS_PARSED  
               //| ValueEvalToNumericXlator.REF_STRING_IS_PARSED  
               //| ValueEvalToNumericXlator.EVALUATED_REF_STRING_IS_PARSED  
               //| ValueEvalToNumericXlator.STRING_TO_BOOL_IS_PARSED  
               //| ValueEvalToNumericXlator.REF_STRING_TO_BOOL_IS_PARSED  
               //| ValueEvalToNumericXlator.STRING_IS_INVALID_VALUE  
               //| ValueEvalToNumericXlator.REF_STRING_IS_INVALID_VALUE  
-                  ValueEvalToNumericXlator.REF_BLANK_IS_PARSED
-                | ValueEvalToNumericXlator.BLANK_IS_PARSED
+              //| ValueEvalToNumericXlator.REF_BLANK_IS_PARSED
+              //| ValueEvalToNumericXlator.BLANK_IS_PARSED
                 ));
     
     protected ValueEvalToNumericXlator getXlator() {

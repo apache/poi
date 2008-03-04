@@ -39,10 +39,8 @@ public abstract class NumericFunction implements Function {
         new ValueEvalToNumericXlator((short) (
                   ValueEvalToNumericXlator.BOOL_IS_PARSED  
                 | ValueEvalToNumericXlator.REF_BOOL_IS_PARSED  
-                | ValueEvalToNumericXlator.EVALUATED_REF_BOOL_IS_PARSED  
                 | ValueEvalToNumericXlator.STRING_IS_PARSED  
                 | ValueEvalToNumericXlator.REF_STRING_IS_PARSED  
-                | ValueEvalToNumericXlator.EVALUATED_REF_STRING_IS_PARSED  
               //| ValueEvalToNumericXlator.STRING_TO_BOOL_IS_PARSED  
               //| ValueEvalToNumericXlator.REF_STRING_TO_BOOL_IS_PARSED  
               //| ValueEvalToNumericXlator.STRING_IS_INVALID_VALUE  

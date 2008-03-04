@@ -38,7 +38,8 @@ public abstract class FunctionEval implements OperationEval {
         public static final int OFFSET = 78;
         /** 148 */
         public static final int INDIRECT = 148;
-        
+        /** 255 */
+        public static final int EXTERNAL_FUNC = 255;
     }
     // convenient access to namespace
     private static final FunctionID ID = null;
@@ -51,6 +52,7 @@ public abstract class FunctionEval implements OperationEval {
         Map m = new HashMap();
         addMapping(m, ID.OFFSET, new Offset());
         addMapping(m, ID.INDIRECT, new Indirect());
+        addMapping(m, ID.EXTERNAL_FUNC, new ExternalFunction());
         freeRefFunctionsByIdMap = m;
     }
     private static void addMapping(Map m, int offset, FreeRefFunction frf) {
@@ -316,7 +318,7 @@ public abstract class FunctionEval implements OperationEval {
         retval[252] = new Frequency(); // FREQUENCY
         retval[253] = new NotImplementedFunction(); // ADDTOOLBAR
         retval[254] = new NotImplementedFunction(); // DELETETOOLBAR
-        retval[255] = new NotImplementedFunction(); // EXTERNALFLAG
+        retval[ID.EXTERNAL_FUNC] = null; // ExternalFunction is a FreeREfFunction
         retval[256] = new NotImplementedFunction(); // RESETTOOLBAR
         retval[257] = new Evaluate(); // EVALUATE
         retval[258] = new NotImplementedFunction(); // GETTOOLBAR

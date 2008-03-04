@@ -111,9 +111,6 @@ public final class NumericFunctionInvoker {
 		if(errorCodesAreEqual(ee, ErrorEval.FUNCTION_NOT_IMPLEMENTED)) {
 			return "Function not implemented";
 		}
-		if(errorCodesAreEqual(ee, ErrorEval.UNKNOWN_ERROR)) {
-			return "Unknown error";
-		}
 		if(errorCodesAreEqual(ee, ErrorEval.VALUE_INVALID)) {
 			return "Error code: #VALUE! (invalid value)";
 		}

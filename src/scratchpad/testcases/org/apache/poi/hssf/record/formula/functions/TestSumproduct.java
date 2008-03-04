@@ -50,7 +50,7 @@ public final class TestSumproduct extends TestCase {
 
 	public void testScalarSimple() {
 		
-		RefEval refEval = new Ref2DEval(new ReferencePtg("A1"), new NumberEval(3), true);
+		RefEval refEval = new Ref2DEval(new ReferencePtg("A1"), new NumberEval(3));
 		Eval[] args = {
 			refEval, 
 			new NumberEval(2),

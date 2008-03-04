@@ -23,7 +23,6 @@ import org.apache.poi.hssf.record.formula.eval.Eval;
 import org.apache.poi.hssf.record.formula.eval.EvaluationException;
 import org.apache.poi.hssf.record.formula.eval.OperandResolver;
 import org.apache.poi.hssf.record.formula.eval.StringEval;
-import org.apache.poi.hssf.record.formula.eval.StringValueEval;
 import org.apache.poi.hssf.record.formula.eval.ValueEval;
 
 /**
@@ -35,7 +34,7 @@ import org.apache.poi.hssf.record.formula.eval.ValueEval;
  * 
  * @author Manda Wilson &lt; wilson at c bio dot msk cc dot org &gt;
  */
-public class Mid extends TextFunction {
+public class Mid implements Function {
 	/**
 	 * Returns a specific number of characters from a text string, starting at
 	 * the position you specify, based on the number of characters you specify.
@@ -52,7 +51,8 @@ public class Mid extends TextFunction {
 		int numChars;
 
 		try {
-			text = evaluateTextArg(args[0], srcCellRow, srcCellCol);
+			ValueEval evText = OperandResolver.getSingleValue(args[0], srcCellRow, srcCellCol);
+			text = OperandResolver.coerceValueToString(evText);
 			int startCharNum = evaluateNumberArg(args[1], srcCellRow, srcCellCol);
 			numChars = evaluateNumberArg(args[2], srcCellRow, srcCellCol);
 			startIx = startCharNum - 1; // convert to zero-based
@@ -79,7 +79,7 @@ public class Mid extends TextFunction {
 
 	}
 
-	public static int evaluateNumberArg(Eval arg, int srcCellRow, short srcCellCol) throws EvaluationException {
+	private static int evaluateNumberArg(Eval arg, int srcCellRow, short srcCellCol) throws EvaluationException {
 		ValueEval ev = OperandResolver.getSingleValue(arg, srcCellRow, srcCellCol);
 		if (ev instanceof BlankEval) {
 			// Note - for start_num arg, blank causes error(#VALUE!),
@@ -88,13 +88,5 @@ public class Mid extends TextFunction {
 		}
 
 		return OperandResolver.coerceValueToInt(ev);
-	}
-
-	private static String evaluateTextArg(Eval arg, int srcCellRow, short srcCellCol) throws EvaluationException {
-		ValueEval ev = OperandResolver.getSingleValue(arg, srcCellRow, srcCellCol);
-		if (ev instanceof StringValueEval) {
-			return ((StringValueEval) ev).getStringValue();
-		}
-		throw EvaluationException.invalidValue();
 	}
 }

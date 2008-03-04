@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -16,11 +15,12 @@
    limitations under the License.
 ==================================================================== */
 
-
-
 package org.apache.poi.hssf.record;
 
 import java.io.ByteArrayInputStream;
+
+import junit.framework.Assert;
+
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -33,6 +33,14 @@ import org.apache.poi.util.LittleEndian;
 public class TestcaseRecordInputStream
         extends RecordInputStream
 {
+    /**
+     * Convenience constructor
+     */
+    public TestcaseRecordInputStream(int sid, byte[] data)
+    {
+      super(new ByteArrayInputStream(mergeDataAndSid((short)sid, (short)data.length, data)));
+      nextRecord();
+    }
     public TestcaseRecordInputStream(short sid, short length, byte[] data)
     {
       super(new ByteArrayInputStream(mergeDataAndSid(sid, length, data)));
@@ -45,5 +53,19 @@ public class TestcaseRecordInputStream
       LittleEndian.putShort(result, 2, length);
       System.arraycopy(data, 0, result, 4, data.length);
       return result;
+    }
+    /**
+     * Confirms data sections are equal
+     * @param expectedData - just raw data (without sid or size short ints)
+     * @param actualRecordBytes this includes 4 prefix bytes (sid & size)
+     */
+    public static void confirmRecordEncoding(int expectedSid, byte[] expectedData, byte[] actualRecordBytes) {
+        int expectedDataSize = expectedData.length;
+        Assert.assertEquals(actualRecordBytes.length - 4, expectedDataSize);
+        Assert.assertEquals(expectedSid, LittleEndian.getShort(actualRecordBytes, 0));
+        Assert.assertEquals(expectedDataSize, LittleEndian.getShort(actualRecordBytes, 2));
+        for (int i = 0; i < expectedDataSize; i++)
+            Assert.assertEquals("At offset " + i, expectedData[i], actualRecordBytes[i+4]);
+        
     }
 }
