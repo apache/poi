@@ -14,10 +14,7 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-/*
- * Created on Jun 20, 2005
- *
- */
+
 package org.apache.poi.hssf.record.formula.functions;
 
 import org.apache.poi.hssf.record.formula.eval.BoolEval;
@@ -38,13 +35,10 @@ public abstract class FinanceFunction extends NumericFunction {
         new ValueEvalToNumericXlator((short) (0
                 | ValueEvalToNumericXlator.BOOL_IS_PARSED  
                 | ValueEvalToNumericXlator.REF_BOOL_IS_PARSED  
-                | ValueEvalToNumericXlator.EVALUATED_REF_BOOL_IS_PARSED  
                 | ValueEvalToNumericXlator.STRING_IS_PARSED  
                 | ValueEvalToNumericXlator.REF_STRING_IS_PARSED  
-                | ValueEvalToNumericXlator.EVALUATED_REF_STRING_IS_PARSED  
                 | ValueEvalToNumericXlator.BLANK_IS_PARSED  
                 | ValueEvalToNumericXlator.REF_BLANK_IS_PARSED  
-                | ValueEvalToNumericXlator.EVALUATED_REF_BLANK_IS_PARSED  
               //| ValueEvalToNumericXlator.REF_STRING_TO_BOOL_IS_PARSED  
               //| ValueEvalToNumericXlator.STRING_IS_INVALID_VALUE  
               //| ValueEvalToNumericXlator.REF_STRING_IS_INVALID_VALUE
@@ -56,11 +50,11 @@ public abstract class FinanceFunction extends NumericFunction {
      * if they desire to return a different ValueEvalToNumericXlator instance
      * than the default.
      */
-    protected ValueEvalToNumericXlator getXlator() {
+    protected final ValueEvalToNumericXlator getXlator() {
         return DEFAULT_NUM_XLATOR;
     }
     
-    protected ValueEval singleOperandNumericAsBoolean(Eval eval, int srcRow, short srcCol) {
+    protected final ValueEval singleOperandNumericAsBoolean(Eval eval, int srcRow, short srcCol) {
         ValueEval retval = null;
         retval = singleOperandEvaluate(eval, srcRow, srcCol);
         if (retval instanceof NumericValueEval) {
@@ -74,5 +68,4 @@ public abstract class FinanceFunction extends NumericFunction {
         }
         return retval;
     }
-
 }

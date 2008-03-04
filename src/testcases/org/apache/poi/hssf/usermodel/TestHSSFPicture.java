@@ -16,25 +16,28 @@
 */
 package org.apache.poi.hssf.usermodel;
 
-import junit.framework.TestCase;
-
-import java.io.IOException;
-import java.io.FileInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
+import junit.framework.TestCase;
 
 /**
  * Test <code>HSSFPicture</code>.
  *
  * @author Yegor Kozlov (yegor at apache.org)
  */
-public class TestHSSFPicture extends TestCase{
+public final class TestHSSFPicture extends TestCase{
 
-    public void testResize() throws Exception {
+    public void testResize() {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sh1 = wb.createSheet();
         HSSFPatriarch p1 = sh1.createDrawingPatriarch();
 
-        int idx1 = loadPicture( "src/resources/logos/logoKarmokar4.png", wb);
+        byte[] pictureData = getTestDataFileContent("logoKarmokar4.png");
+        int idx1 = wb.addPicture( pictureData, HSSFWorkbook.PICTURE_TYPE_PNG );
         HSSFPicture picture1 = p1.createPicture(new HSSFClientAnchor(), idx1);
         HSSFClientAnchor anchor1 = picture1.getPreferredSize();
 
@@ -52,28 +55,25 @@ public class TestHSSFPicture extends TestCase{
     /**
      * Copied from org.apache.poi.hssf.usermodel.examples.OfficeDrawing
      */
-    private static int loadPicture( String path, HSSFWorkbook wb ) throws IOException
-    {
-        int pictureIndex;
-        FileInputStream fis = null;
-        ByteArrayOutputStream bos = null;
-        try
-        {
-            fis = new FileInputStream( path);
-            bos = new ByteArrayOutputStream( );
-            int c;
-            while ( (c = fis.read()) != -1)
-                bos.write( c );
-            pictureIndex = wb.addPicture( bos.toByteArray(), HSSFWorkbook.PICTURE_TYPE_PNG );
-        }
-        finally
-        {
-            if (fis != null)
-                fis.close();
-            if (bos != null)
-                bos.close();
-        }
-        return pictureIndex;
-    }
+     private static byte[] getTestDataFileContent(String fileName) {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
+        String readFilename = System.getProperty("HSSF.testdata.path");
+        try {
+            InputStream fis = new FileInputStream(readFilename+File.separator+fileName);
+
+            byte[] buf = new byte[512];
+            while(true) {
+                int bytesRead = fis.read(buf);
+                if(bytesRead < 1) {
+                    break;
+                }
+                bos.write(buf, 0, bytesRead);
+            }
+            fis.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return bos.toByteArray();
+     }
 }

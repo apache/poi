@@ -76,32 +76,9 @@ public abstract class MultiOperandNumericFunction extends NumericFunction {
         }
     }
     
-
-    private static final ValueEvalToNumericXlator DEFAULT_NUM_XLATOR =
-        new ValueEvalToNumericXlator((short) (
-                  ValueEvalToNumericXlator.BOOL_IS_PARSED  
-                | ValueEvalToNumericXlator.REF_BOOL_IS_PARSED  
-                | ValueEvalToNumericXlator.EVALUATED_REF_BOOL_IS_PARSED  
-              //| ValueEvalToNumericXlator.STRING_IS_PARSED  
-                | ValueEvalToNumericXlator.REF_STRING_IS_PARSED  
-                | ValueEvalToNumericXlator.EVALUATED_REF_STRING_IS_PARSED  
-              //| ValueEvalToNumericXlator.STRING_TO_BOOL_IS_PARSED  
-              //| ValueEvalToNumericXlator.REF_STRING_TO_BOOL_IS_PARSED  
-              //| ValueEvalToNumericXlator.STRING_IS_INVALID_VALUE  
-              //| ValueEvalToNumericXlator.REF_STRING_IS_INVALID_VALUE  
-                ));
-    
     private static final int DEFAULT_MAX_NUM_OPERANDS = 30;
 
-    /**
-     * this is the default impl for the factory method getXlator
-     * of the super class NumericFunction. Subclasses can override this method
-     * if they desire to return a different ValueEvalToNumericXlator instance
-     * than the default.
-     */
-    protected ValueEvalToNumericXlator getXlator() {
-        return DEFAULT_NUM_XLATOR;
-    }
+    protected abstract ValueEvalToNumericXlator getXlator();
     
     /**
      * Maximum number of operands accepted by this function.
@@ -160,9 +137,7 @@ public abstract class MultiOperandNumericFunction extends NumericFunction {
                  * HSSFFormulaEvaluator where we store an array
                  * of RefEvals as the "values" array. 
                  */
-                RefEval re = (values[j] instanceof RefEval)
-                        ? new Ref2DEval(null, ((RefEval) values[j]).getInnerValueEval(), true)
-                        : new Ref2DEval(null, values[j], false);
+                RefEval re = new Ref2DEval(null, values[j]);
                 ValueEval ve = singleOperandEvaluate(re, srcRow, srcCol);
                 
                 if (ve instanceof NumericValueEval) {

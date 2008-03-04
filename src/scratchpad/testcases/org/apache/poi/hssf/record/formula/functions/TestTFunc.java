@@ -50,7 +50,7 @@ public final class TestTFunc extends TestCase {
 	 * where cell A1 has the specified innerValue
 	 */
 	private Eval invokeTWithReference(ValueEval innerValue) {
-		Eval arg = new Ref2DEval(new ReferencePtg((short)1, (short)1, false, false), innerValue, true);
+		Eval arg = new Ref2DEval(new ReferencePtg((short)1, (short)1, false, false), innerValue);
 		return invokeT(arg);
 	}
 	

@@ -17,7 +17,6 @@
 
 package org.apache.poi.hssf.record.formula.eval;
 
-
 /**
  * Provides functionality for evaluating arguments to functions and operators.
  * 
@@ -43,12 +42,10 @@ public final class OperandResolver {
 	 */
 	public static ValueEval getSingleValue(Eval arg, int srcCellRow, short srcCellCol)
 			throws EvaluationException {
-		if (arg instanceof RefEval) {
-			RefEval re = (RefEval) arg;
-			return re.getInnerValueEval();
-		}
 		Eval result;
-		if (arg instanceof AreaEval) {
+		if (arg instanceof RefEval) {
+			result = ((RefEval) arg).getInnerValueEval();
+		} else if (arg instanceof AreaEval) {
 			result = chooseSingleElementFromArea((AreaEval) arg, srcCellRow, srcCellCol);
 		} else {
 			result = arg;
@@ -223,13 +220,26 @@ public final class OperandResolver {
 	 *  Some examples:<br/> 
 	 *  " 123 " -&gt; 123.0<br/>
 	 *  ".123" -&gt; 0.123<br/>
+	 *  These not supported yet:<br/>
 	 *  " $ 1,000.00 " -&gt; 1000.0<br/>
 	 *  "$1.25E4" -&gt; 12500.0<br/>
+	 *  "5**2" -&gt; 500<br/>
+	 *  "250%" -&gt; 2.5<br/>
 	 *  
 	 * @param text
 	 * @return <code>null</code> if the specified text cannot be parsed as a number
 	 */
-	public static Double parseDouble(String text) {
+	public static Double parseDouble(String pText) {
+		String text = pText.trim();
+		if(text.length() < 1) {
+			return null;
+		}
+		boolean isPositive = true;
+		if(text.charAt(0) == '-') {
+			isPositive = false;
+			text= text.substring(1).trim();
+		}
+
 		if(!Character.isDigit(text.charAt(0))) {
 			// avoid using NumberFormatException to tell when string is not a number
 			return null;
@@ -242,8 +252,26 @@ public final class OperandResolver {
 		} catch (NumberFormatException e) {
 			return null;
 		}
-		return new Double(val);
+		return new Double(isPositive ? +val : -val);
 	}
 	
-	
+	/**
+	 * @param ve must be a <tt>NumberEval</tt>, <tt>StringEval</tt>, <tt>BoolEval</tt>, or <tt>BlankEval</tt>
+	 * @return the converted string value. never <code>null</code>
+	 */
+	public static String coerceValueToString(ValueEval ve) {
+		if (ve instanceof StringValueEval) {
+			StringValueEval sve = (StringValueEval) ve;
+			return sve.getStringValue();
+		}
+		if (ve instanceof NumberEval) {
+			NumberEval neval = (NumberEval) ve;
+			return neval.getStringValue();
+		} 
+
+		if (ve instanceof BlankEval) {
+			return "";
+		}
+		throw new IllegalArgumentException("Unexpected eval class (" + ve.getClass().getName() + ")");
+	}
 }

@@ -48,12 +48,6 @@ public final class ErrorEval implements ValueEval {
     private static final int CIRCULAR_REF_ERROR_CODE = 0xFFFFFFC4;
     private static final int FUNCTION_NOT_IMPLEMENTED_CODE = 0xFFFFFFE2;
 
-    /**
-     * @deprecated do not use this error code. For conditions that should never occur, throw an
-     *  unchecked exception. For all other situations use the error code that corresponds to the
-     *  error Excel would have raised under the same circumstances.
-     */
-    public static final ErrorEval UNKNOWN_ERROR = new ErrorEval(-20);
     public static final ErrorEval FUNCTION_NOT_IMPLEMENTED = new ErrorEval(FUNCTION_NOT_IMPLEMENTED_CODE);
     // Note - Excel does not seem to represent this condition with an error code
     public static final ErrorEval CIRCULAR_REF_ERROR = new ErrorEval(CIRCULAR_REF_ERROR_CODE);

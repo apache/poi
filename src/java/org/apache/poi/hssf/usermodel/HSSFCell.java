@@ -639,7 +639,7 @@ public class HSSFCell
             
             //only set to default if there is no extended format index already set
             if (rec.getXFIndex() == (short)0) rec.setXFIndex(( short ) 0x0f);
-            FormulaParser fp = new FormulaParser(formula+";",book);
+            FormulaParser fp = new FormulaParser(formula, book);
             fp.parse();
             Ptg[] ptg  = fp.getRPNPtg();
             int   size = 0;

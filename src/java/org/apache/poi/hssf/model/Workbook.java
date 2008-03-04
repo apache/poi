@@ -79,10 +79,8 @@ public class Workbook implements Model
      */
     protected SSTRecord        sst         = null;
 
-    /**
-     * Holds the Extern Sheet with references to bound sheets
-     */
-    protected ExternSheetRecord externSheet= null;
+
+    private LinkTable linkTable; // optionally occurs if there are  references in the document. (4.10.3)
 
     /**
      * holds the "boundsheet" records (aka bundlesheet) so that they can have their
@@ -92,8 +90,6 @@ public class Workbook implements Model
 
     protected ArrayList        formats = new ArrayList();
 
-    protected ArrayList        names = new ArrayList();
-    
     protected ArrayList        hyperlinks = new ArrayList();
 
     protected int              numxfs      = 0;   // hold the number of extended format records
@@ -134,6 +130,7 @@ public class Workbook implements Model
                     new Integer(recs.size()));
         Workbook  retval  = new Workbook();
         ArrayList records = new ArrayList(recs.size() / 3);
+        retval.records.setRecords(records);
 
         int k;
         for (k = 0; k < recs.size(); k++) {
@@ -192,21 +189,16 @@ public class Workbook implements Model
                     retval.records.setBackuppos( k );
                     break;
                 case ExternSheetRecord.sid :
-                    if (log.check( POILogger.DEBUG ))
-                        log.log(DEBUG, "found extern sheet record at " + k);
-                    retval.externSheet = ( ExternSheetRecord ) rec;
-                    break;
+                    throw new RuntimeException("Extern sheet is part of LinkTable");
                 case NameRecord.sid :
-                    if (log.check( POILogger.DEBUG ))
-                        log.log(DEBUG, "found name record at " + k);
-                    retval.names.add(rec);
-                    //                    retval.records.namepos = k;
-                    break;
+                    throw new RuntimeException("DEFINEDNAME is part of LinkTable");
                 case SupBookRecord.sid :
                     if (log.check( POILogger.DEBUG ))
                         log.log(DEBUG, "found SupBook record at " + k);
+                    retval.linkTable = new LinkTable(recs, k, retval.records);
                     //                    retval.records.supbookpos = k;
-                    break;
+                    k+=retval.linkTable.getRecordCount() - 1;
+                    continue;
                 case FormatRecord.sid :
                     if (log.check( POILogger.DEBUG ))
                         log.log(DEBUG, "found format record at " + k);
@@ -262,8 +254,6 @@ public class Workbook implements Model
             		break;
             }
         }
-
-        retval.records.setRecords(records);
         
         if (retval.windowOne == null) {
             retval.windowOne = (WindowOneRecord) retval.createWindowOne();
@@ -283,6 +273,7 @@ public class Workbook implements Model
             log.log( DEBUG, "creating new workbook from scratch" );
         Workbook retval = new Workbook();
         ArrayList records = new ArrayList( 30 );
+        retval.records.setRecords(records);
         ArrayList formats = new ArrayList( 8 );
 
         records.add( retval.createBOF() );
@@ -339,8 +330,9 @@ public class Workbook implements Model
             records.add( retval.createStyle( k ) );
         }
         records.add( retval.createUseSelFS() );
-        for ( int k = 0; k < 1; k++ )
-        {   // now just do 1
+
+        int nBoundSheets = 1; // now just do 1
+        for ( int k = 0; k < nBoundSheets; k++ ) {   
             BoundSheetRecord bsr =
                     (BoundSheetRecord) retval.createBoundSheet( k );
 
@@ -351,12 +343,14 @@ public class Workbook implements Model
 //        retval.records.supbookpos = retval.records.bspos + 1;
 //        retval.records.namepos = retval.records.supbookpos + 2;
         records.add( retval.createCountry() );
+        for ( int k = 0; k < nBoundSheets; k++ ) {   
+            retval.getOrCreateLinkTable().checkExternSheet(k);
+        }
         retval.sst = (SSTRecord) retval.createSST();
         records.add( retval.sst );
         records.add( retval.createExtendedSST() );
 
         records.add( retval.createEOF() );
-        retval.records.setRecords(records);
         if (log.check( POILogger.DEBUG ))
             log.log( DEBUG, "exit create new workbook from scratch" );
         return retval;
@@ -369,36 +363,20 @@ public class Workbook implements Model
 	 * @param sheetIndex Index to match
 	 * @return null if no builtin NameRecord matches
 	 */
-	public NameRecord getSpecificBuiltinRecord(byte name, int sheetIndex)
-	{
-	    Iterator iterator = names.iterator();
-	    while (iterator.hasNext()) {
-	        NameRecord record = ( NameRecord ) iterator.next();
-	
-	        //print areas are one based
-	        if (record.getBuiltInName() == name && record.getIndexToSheet() == sheetIndex) {
-	            return record;
-	        }
-	    }
-	    
-	    return null;
-	    
-	}
+    public NameRecord getSpecificBuiltinRecord(byte name, int sheetIndex)
+    {
+        return getOrCreateLinkTable().getSpecificBuiltinRecord(name, sheetIndex);
+    }
 
 	/**
 	 * Removes the specified Builtin NameRecord that matches the name and index
 	 * @param name byte representation of the builtin to match
 	 * @param sheetIndex zero-based sheet reference
 	 */
-	public void removeBuiltinRecord(byte name, int sheetIndex) {
-		//the name array is smaller so searching through it should be faster than
-		//using the findFirstXXXX methods
-		NameRecord record = getSpecificBuiltinRecord(name, sheetIndex);
-		if (record != null) {
-			names.remove(record);
-		}
-		
-	}
+    public void removeBuiltinRecord(byte name, int sheetIndex) {
+        linkTable.removeBuiltinRecord(name, sheetIndex);
+        // TODO - do we need "this.records.remove(...);" similar to that in this.removeName(int namenum) {}?
+    }
 
     public int getNumRecords() {
         return records.size();
@@ -614,6 +592,7 @@ public class Workbook implements Model
             records.add(records.getBspos()+1, bsr);
             records.setBspos( records.getBspos() + 1 );
             boundsheets.add(bsr);
+            getOrCreateLinkTable().checkExternSheet(sheetnum);
             fixTabIdRecord();
         }
     }
@@ -1824,14 +1803,26 @@ public class Workbook implements Model
     protected Record createEOF() {
         return new EOFRecord();
     }
+    
+    /**
+     * lazy initialization
+     * Note - creating the link table causes creation of 1 EXTERNALBOOK and 1 EXTERNALSHEET record
+     */
+    private LinkTable getOrCreateLinkTable() {
+        if(linkTable == null) {
+            linkTable = new LinkTable((short) getNumSheets(), records);
+        }
+        return linkTable;
+    }
 
     public SheetReferences getSheetReferences() {
         SheetReferences refs = new SheetReferences();
         
-        if (externSheet != null) {
-            for (int k = 0; k < externSheet.getNumOfREFStructures(); k++) {
+        if (linkTable != null) {
+            int numRefStructures = linkTable.getNumberOfREFStructures();
+            for (short k = 0; k < numRefStructures; k++) {
                 
-                String sheetName = findSheetNameFromExternSheet((short)k);
+                String sheetName = findSheetNameFromExternSheet(k);
                 refs.addSheetReference(sheetName, k);
                 
             }
@@ -1846,7 +1837,8 @@ public class Workbook implements Model
     public String findSheetNameFromExternSheet(short num){
         String result="";
 
-        short indexToSheet = externSheet.getREFRecordAt(num).getIndexToFirstSupBook();
+        short indexToSheet = linkTable.getIndexToSheet(num);
+        
         if (indexToSheet>-1) { //error check, bail out gracefully!
             result = getSheetName(indexToSheet);
         }
@@ -1861,10 +1853,7 @@ public class Workbook implements Model
      */
     public int getSheetIndexFromExternSheetIndex(int externSheetNumber)
     {
-        if (externSheetNumber >= externSheet.getNumOfREFStructures())
-            return -1;
-        else
-            return externSheet.getREFRecordAt(externSheetNumber).getIndexToFirstSupBook();
+        return linkTable.getSheetIndexFromExternSheetIndex(externSheetNumber);
     }
 
     /** returns the extern sheet number for specific sheet number ,
@@ -1873,58 +1862,17 @@ public class Workbook implements Model
      * @return index to extern sheet
      */
     public short checkExternSheet(int sheetNumber){
-
-        int i = 0;
-        boolean flag = false;
-        short result = 0;
-
-        if (externSheet == null) {
-            externSheet = createExternSheet();
-        }
-
-        //Trying to find reference to this sheet
-        while (i < externSheet.getNumOfREFStructures() && !flag){
-            ExternSheetSubRecord record = externSheet.getREFRecordAt(i);
-
-            if (record.getIndexToFirstSupBook() ==  sheetNumber &&
-            record.getIndexToLastSupBook() == sheetNumber){
-                flag = true;
-                result = (short) i;
-            }
-
-            ++i;
-        }
-
-        //We Havent found reference to this sheet
-        if (!flag) {
-            result = addSheetIndexToExternSheet((short) sheetNumber);
-        }
-
-        return result;
+        return getOrCreateLinkTable().checkExternSheet(sheetNumber);
     }
-
-    private short addSheetIndexToExternSheet(short sheetNumber){
-        short result;
-
-        ExternSheetSubRecord record = new ExternSheetSubRecord();
-        record.setIndexToFirstSupBook(sheetNumber);
-        record.setIndexToLastSupBook(sheetNumber);
-        externSheet.addREFRecord(record);
-        externSheet.setNumOfREFStructures((short)(externSheet.getNumOfREFStructures() + 1));
-        result = (short)(externSheet.getNumOfREFStructures() - 1);
-
-        return result;
-    }
-
-
 
     /** gets the total number of names
      * @return number of names
      */
     public int getNumNames(){
-        int result = names.size();
-
-        return result;
+        if(linkTable == null) {
+            return 0;
+        }
+        return linkTable.getNumNames();
     }
 
     /** gets the name record
@@ -1932,28 +1880,14 @@ public class Workbook implements Model
      * @return name record
      */
     public NameRecord getNameRecord(int index){
-        NameRecord result = (NameRecord) names.get(index);
-
-        return result;
-
+        return linkTable.getNameRecord(index);
     }
 
     /** creates new name
      * @return new name record
      */
     public NameRecord createName(){
-
-        NameRecord name = new NameRecord();
-
-        // Not the most efficient way but the other way was causing too many bugs
-        int idx = findFirstRecordLocBySid(ExternSheetRecord.sid);
-        if (idx == -1) idx = findFirstRecordLocBySid(SupBookRecord.sid);
-        if (idx == -1) idx = findFirstRecordLocBySid(CountryRecord.sid);
-
-        records.add(idx+names.size()+1, name);
-        names.add(name);
-
-        return name;
+        return addName(new NameRecord());
     }
 
 
@@ -1962,65 +1896,39 @@ public class Workbook implements Model
      */
     public NameRecord addName(NameRecord name)
     {
-        // Not the most efficient way but the other way was causing too many bugs
-        int idx = findFirstRecordLocBySid(ExternSheetRecord.sid);
-        if (idx == -1) idx = findFirstRecordLocBySid(SupBookRecord.sid);
-        if (idx == -1) idx = findFirstRecordLocBySid(CountryRecord.sid);
-        records.add(idx+names.size()+1, name);
-        names.add(name);
+        
+        getOrCreateLinkTable().addName(name);
 
         return name;
     }
 
-	/**Generates a NameRecord to represent a built-in region
-	 * @return a new NameRecord unless the index is invalid
-	 */
-	public NameRecord createBuiltInName(byte builtInName, int index)
-	{
-		if (index == -1 || index+1 > (int)Short.MAX_VALUE) 
-			throw new IllegalArgumentException("Index is not valid ["+index+"]");
-	    
-		NameRecord name = new NameRecord(builtInName, (short)(index));
-	            
-		addName(name);
-	    
-		return name;
-	}
+    /**Generates a NameRecord to represent a built-in region
+     * @return a new NameRecord unless the index is invalid
+     */
+    public NameRecord createBuiltInName(byte builtInName, int index)
+    {
+        if (index == -1 || index+1 > Short.MAX_VALUE) 
+            throw new IllegalArgumentException("Index is not valid ["+index+"]");
+        
+        NameRecord name = new NameRecord(builtInName, (short)(index));
+                
+        addName(name);
+        
+        return name;
+    }
 
 
     /** removes the name
      * @param namenum name index
      */
     public void removeName(int namenum){
-        if (names.size() > namenum) {
+        
+        if (linkTable.getNumNames() > namenum) {
             int idx = findFirstRecordLocBySid(NameRecord.sid);
             records.remove(idx + namenum);
-            names.remove(namenum);
+            linkTable.removeName(namenum);
         }
 
-    }
-
-    /** creates a new extern sheet record
-     * @return the new extern sheet record
-     */
-    protected ExternSheetRecord createExternSheet(){
-        ExternSheetRecord externSheet = new ExternSheetRecord();
-
-        int idx = findFirstRecordLocBySid(CountryRecord.sid);
-
-        records.add(idx+1, externSheet);
-//        records.add(records.supbookpos + 1 , rec);
-
-        //We also adds the supBook for internal reference
-        SupBookRecord supbook = new SupBookRecord();
-
-        supbook.setNumberOfSheets((short)getNumSheets());
-        //supbook.setFlag();
-
-        records.add(idx+1, supbook);
-//        records.add(records.supbookpos + 1 , supbook);
-
-        return externSheet;
     }
 
     /**
@@ -2419,5 +2327,14 @@ public class Workbook implements Model
         writeProtect = null;
     }
 
+    /**
+     * @param refIndex Index to REF entry in EXTERNSHEET record in the Link Table
+     * @param definedNameIndex zero-based to DEFINEDNAME or EXTERNALNAME record
+     * @return the string representation of the defined or external name
+     */
+    public String resolveNameXText(int refIndex, int definedNameIndex) {
+        return linkTable.resolveNameXText(refIndex, definedNameIndex);
+    }
 }
+
 

@@ -43,8 +43,6 @@ public class AddEval extends NumericOperationEval {
     private static final ValueEvalToNumericXlator NUM_XLATOR = 
         new ValueEvalToNumericXlator((short)
                 ( ValueEvalToNumericXlator.BOOL_IS_PARSED 
-                | ValueEvalToNumericXlator.EVALUATED_REF_BOOL_IS_PARSED
-                | ValueEvalToNumericXlator.EVALUATED_REF_STRING_IS_PARSED
                 | ValueEvalToNumericXlator.REF_BOOL_IS_PARSED
                 | ValueEvalToNumericXlator.STRING_IS_PARSED
                 | ValueEvalToNumericXlator.REF_STRING_IS_PARSED
@@ -59,33 +57,31 @@ public class AddEval extends NumericOperationEval {
     }
     
     
-    public Eval evaluate(Eval[] operands, int srcRow, short srcCol) {
-        Eval retval = null;
+    public Eval evaluate(Eval[] args, int srcRow, short srcCol) {
+    	if(args.length != 2) {
+    		return ErrorEval.VALUE_INVALID;
+    	}
+    	
         double d = 0;
-        switch (operands.length) {
-        default: // will rarely happen. currently the parser itself fails.
-            retval = ErrorEval.UNKNOWN_ERROR;
-            break;
-        case 2:
-            for (int i = 0, iSize = 2; retval==null && i < iSize; i++) {
-                ValueEval ve = singleOperandEvaluate(operands[i], srcRow, srcCol);
-                if (ve instanceof NumericValueEval) {
-                    d += ((NumericValueEval) ve).getNumberValue();
-                }
-                else if (ve instanceof BlankEval) {
-                    // do nothing
-                }
-                else {
-                    retval = ErrorEval.VALUE_INVALID;
-                }
-            } // end for inside case
-        } // end switch
-        
-        if (retval == null) {
-            retval = Double.isNaN(d) ? (ValueEval) ErrorEval.VALUE_INVALID : new NumberEval(d);
+        for (int i = 0; i < 2; i++) {
+            ValueEval ve = singleOperandEvaluate(args[i], srcRow, srcCol);
+            if(ve instanceof ErrorEval) {
+				return ve;
+            }
+            if (ve instanceof NumericValueEval) {
+                d += ((NumericValueEval) ve).getNumberValue();
+            }
+            else if (ve instanceof BlankEval) {
+                // do nothing
+            }
+            else {
+                return ErrorEval.VALUE_INVALID;
+            }
         }
-
-        return retval;
+        if(Double.isNaN(d) || Double.isInfinite(d)) {
+        	return ErrorEval.NUM_ERROR;
+        }
+        return new NumberEval(d);
     }
 
     public int getNumberOfOperands() {

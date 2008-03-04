@@ -400,7 +400,7 @@ public class HSSFSheet
 
        //formula fields ( size and data )
        String str_formula = obj_validation.getFirstFormula();
-       FormulaParser fp = new FormulaParser(str_formula+";",book);
+       FormulaParser fp = new FormulaParser(str_formula, book);
        fp.parse();
        Stack ptg_arr = new Stack();
        Ptg[] ptg  = fp.getRPNPtg();
@@ -424,7 +424,7 @@ public class HSSFSheet
        if ( obj_validation.getSecondFormula() != null )
        {
          str_formula = obj_validation.getSecondFormula();
-         fp = new FormulaParser(str_formula+";",book);
+         fp = new FormulaParser(str_formula, book);
          fp.parse();
          ptg_arr = new Stack();
          ptg  = fp.getRPNPtg();

@@ -125,7 +125,7 @@ public final class TestCountFuncs extends TestCase {
 		};
 		Area2DEval arg0 = new Area2DEval(new AreaPtg("C1:C6"), values);
 		
-		Ref2DEval criteriaArg = new Ref2DEval(new ReferencePtg("A1"), new NumberEval(25), true);
+		Ref2DEval criteriaArg = new Ref2DEval(new ReferencePtg("A1"), new NumberEval(25));
 		Eval[] args=  { arg0, criteriaArg, };
 		
 		double actual = NumericFunctionInvoker.invoke(new Countif(), args);
