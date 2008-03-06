@@ -1104,6 +1104,29 @@ extends TestCase {
         
         assertEquals(1, wb.getNumberOfSheets());
     }
+    
+    /**
+     * POI is producing files with the wrong last-column
+     *  number on the row
+     */
+    public void BROKENtest43901() {
+		HSSFWorkbook book = new HSSFWorkbook();
+		HSSFSheet sheet = book.createSheet("test");
+
+		// New row has last col -1
+		HSSFRow row = sheet.createRow(0);
+		assertEquals(-1, row.getLastCellNum());
+		if(row.getLastCellNum() == 0) {
+			fail("Identified bug 43901");
+		}
+		
+		// Create two cells, will return one higher
+		//  than that for the last number
+		row.createCell((short) 0);
+		assertEquals(1, row.getLastCellNum());
+		row.createCell((short) 255);
+		assertEquals(256, row.getLastCellNum());
+	}
 }
 
 
