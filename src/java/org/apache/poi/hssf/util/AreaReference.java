@@ -53,9 +53,10 @@ public final class AreaReference {
         		parts[1].length() == 1 && 
         		parts[0].charAt(0) >= 'A' && parts[0].charAt(0) <= 'Z' &&
         		parts[1].charAt(0) >= 'A' && parts[1].charAt(0) <= 'Z') {
-        	// Represented internally as x$1 to x$0
+        	// Represented internally as x$1 to x$65536
+        	//  which is the maximum range of rows
         	parts[0] = parts[0] + "$1";
-        	parts[1] = parts[1] + "$0";
+        	parts[1] = parts[1] + "$65536";
         }
         
         _firstCell = new CellReference(parts[0]);
@@ -98,10 +99,10 @@ public final class AreaReference {
      */
     public static boolean isWholeColumnReference(CellReference topLeft, CellReference botRight) {
     	// These are represented as something like
-    	//   C$1:C$0 or D$1:F$0
+    	//   C$1:C$65535 or D$1:F$0
     	// i.e. absolute from 1st row to 0th one
     	if(topLeft.getRow() == 0 && topLeft.isRowAbsolute() &&
-    		botRight.getRow() == -1 && botRight.isRowAbsolute()) {
+    		botRight.getRow() == 65535 && botRight.isRowAbsolute()) {
     		return true;
     	}
     	return false;

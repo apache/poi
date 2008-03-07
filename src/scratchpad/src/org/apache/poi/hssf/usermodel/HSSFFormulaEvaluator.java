@@ -14,10 +14,7 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-/*
- * Created on May 5, 2005
- *
- */
+
 package org.apache.poi.hssf.usermodel;
 
 import java.lang.reflect.Constructor;
@@ -420,20 +417,20 @@ public class HSSFFormulaEvaluator {
             }
             else if (ptg instanceof ReferencePtg) {
                 ReferencePtg refPtg = (ReferencePtg) ptg;
-                short colnum = refPtg.getColumn();
-                short rownum = refPtg.getRow();
-                HSSFRow row = sheet.getRow(rownum);
-                HSSFCell cell = (row != null) ? row.getCell(colnum) : null;
+                int colIx = refPtg.getColumn();
+                int rowIx = refPtg.getRow();
+                HSSFRow row = sheet.getRow(rowIx);
+                HSSFCell cell = (row != null) ? row.getCell(colIx) : null;
                 stack.push(createRef2DEval(refPtg, cell, row, sheet, workbook));
             }
             else if (ptg instanceof Ref3DPtg) {
                 Ref3DPtg refPtg = (Ref3DPtg) ptg;
-                short colnum = refPtg.getColumn();
-                short rownum = refPtg.getRow();
+                int colIx = refPtg.getColumn();
+                int rowIx = refPtg.getRow();
                 Workbook wb = workbook.getWorkbook();
                 HSSFSheet xsheet = workbook.getSheetAt(wb.getSheetIndexFromExternSheetIndex(refPtg.getExternSheetIndex()));
-                HSSFRow row = xsheet.getRow(rownum);
-                HSSFCell cell = (row != null) ? row.getCell(colnum) : null;
+                HSSFRow row = xsheet.getRow(rowIx);
+                HSSFCell cell = (row != null) ? row.getCell(colIx) : null;
                 stack.push(createRef3DEval(refPtg, cell, row, xsheet, workbook));
             }
             else if (ptg instanceof AreaPtg) {
@@ -506,10 +503,10 @@ public class HSSFFormulaEvaluator {
     }
     
     public static AreaEval evaluateAreaPtg(HSSFSheet sheet, HSSFWorkbook workbook, AreaPtg ap) {
-        short row0 = ap.getFirstRow();
-        short col0 = ap.getFirstColumn();
-        short row1 = ap.getLastRow();
-        short col1 = ap.getLastColumn();
+        int row0 = ap.getFirstRow();
+        int col0 = ap.getFirstColumn();
+        int row1 = ap.getLastRow();
+        int col1 = ap.getLastColumn();
         
         // If the last row is -1, then the
         //  reference is for the rest of the column
@@ -518,24 +515,15 @@ public class HSSFFormulaEvaluator {
         if(row1 == -1 && row0 >= 0) {
             row1 = (short)sheet.getLastRowNum();
         }
-        
-        ValueEval[] values = new ValueEval[(row1 - row0 + 1) * (col1 - col0 + 1)];
-        for (short x = row0; sheet != null && x < row1 + 1; x++) {
-            HSSFRow row = sheet.getRow(x);
-            for (short y = col0; row != null && y < col1 + 1; y++) {
-                values[(x - row0) * (col1 - col0 + 1) + (y - col0)] = 
-                    getEvalForCell(row.getCell(y), row, sheet, workbook);
-            }
-        }
-        AreaEval ae = new Area2DEval(ap, values);
-        return ae;
+        ValueEval[] values = evalArea(workbook, sheet, row0, col0, row1, col1);
+        return new Area2DEval(ap, values);
     }
 
     public static AreaEval evaluateArea3dPtg(HSSFWorkbook workbook, Area3DPtg a3dp) {
-        short row0 = a3dp.getFirstRow();
-        short col0 = a3dp.getFirstColumn();
-        short row1 = a3dp.getLastRow();
-        short col1 = a3dp.getLastColumn();
+    	int row0 = a3dp.getFirstRow();
+    	int col0 = a3dp.getFirstColumn();
+    	int row1 = a3dp.getLastRow();
+    	int col1 = a3dp.getLastColumn();
         Workbook wb = workbook.getWorkbook();
         HSSFSheet xsheet = workbook.getSheetAt(wb.getSheetIndexFromExternSheetIndex(a3dp.getExternSheetIndex()));
         
@@ -547,18 +535,27 @@ public class HSSFFormulaEvaluator {
             row1 = (short)xsheet.getLastRowNum();
         }
         
+        ValueEval[] values = evalArea(workbook, xsheet, row0, col0, row1, col1);
+        return new Area3DEval(a3dp, values);
+    }
+    
+    private static ValueEval[] evalArea(HSSFWorkbook workbook, HSSFSheet sheet, 
+    		int row0, int col0, int row1, int col1) {
         ValueEval[] values = new ValueEval[(row1 - row0 + 1) * (col1 - col0 + 1)];
-        for (short x = row0; xsheet != null && x < row1 + 1; x++) {
-            HSSFRow row = xsheet.getRow(x);
-            for (short y = col0; row != null && y < col1 + 1; y++) {
-                values[(x - row0) * (col1 - col0 + 1) + (y - col0)] = 
-                    getEvalForCell(row.getCell(y), row, xsheet, workbook);
+        for (int x = row0; sheet != null && x < row1 + 1; x++) {
+            HSSFRow row = sheet.getRow(x);
+            for (int y = col0; y < col1 + 1; y++) {
+                ValueEval cellEval;
+                if(row == null) {
+                	cellEval = BlankEval.INSTANCE;
+                } else {
+                	cellEval = getEvalForCell(row.getCell(y), row, sheet, workbook);
+                }
+				values[(x - row0) * (col1 - col0 + 1) + (y - col0)] = cellEval;
             }
         }
-        AreaEval ae = new Area3DEval(a3dp, values);
-        return ae;
+        return values;
     }
-
 
     /**
      * returns the OperationEval concrete impl instance corresponding

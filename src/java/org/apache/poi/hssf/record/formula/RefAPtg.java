@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -16,34 +15,23 @@
    limitations under the License.
 ==================================================================== */
 
-/*
- * ValueReferencePtg.java
- *
- * Created on November 21, 2001, 5:27 PM
- */
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.BitField;
-
 import org.apache.poi.hssf.record.RecordInputStream;
-import org.apache.poi.hssf.util.CellReference;
-import org.apache.poi.hssf.model.Workbook;
 
 /**
  * RefNAPtg
  * @author Jason Height (jheight at chariot dot net dot au)
  */
 
-public class RefAPtg extends ReferencePtg
-{
+public final class RefAPtg extends ReferencePtg {
     public final static byte sid  = 0x64;
 
     protected RefAPtg() {
       super();
     }
 
-    public RefAPtg(short row, short column, boolean isRowRelative, boolean isColumnRelative) {
+    public RefAPtg(int row, int column, boolean isRowRelative, boolean isColumnRelative) {
       super(row, column, isRowRelative, isColumnRelative);
     }
 

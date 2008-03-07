@@ -14,10 +14,7 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-/*
- * Created on May 8, 2005
- *
- */
+
 package org.apache.poi.hssf.record.formula.eval;
 
 import org.apache.poi.hssf.record.formula.Area3DPtg;
@@ -28,47 +25,59 @@ import org.apache.poi.hssf.record.formula.Ptg;
  *  
  */
 public final class Area3DEval implements AreaEval {
+	// TODO -refactor with Area3DEval
+    private final Area3DPtg _delegate;
 
-    private Area3DPtg delegate;
-
-    private ValueEval[] values;
+    private final ValueEval[] _values;
 
     public Area3DEval(Ptg ptg, ValueEval[] values) {
-        this.values = values;
-        this.delegate = (Area3DPtg) ptg;
+        if(ptg == null) {
+            throw new IllegalArgumentException("ptg must not be null");
+        }
+        if(values == null) {
+            throw new IllegalArgumentException("values must not be null");
+        }
+        for(int i=values.length-1; i>=0; i--) {
+            if(values[i] == null) {
+                throw new IllegalArgumentException("value array elements must not be null");
+            }
+        }
+        // TODO - check size of array vs size of AreaPtg
+        _values = values;
+        _delegate = (Area3DPtg) ptg;
     }
 
-    public short getFirstColumn() {
-        return delegate.getFirstColumn();
+    public int getFirstColumn() {
+        return _delegate.getFirstColumn();
     }
 
     public int getFirstRow() {
-        return delegate.getFirstRow();
+        return _delegate.getFirstRow();
     }
 
-    public short getLastColumn() {
-        return delegate.getLastColumn();
+    public int getLastColumn() {
+        return (short) _delegate.getLastColumn();
     }
 
     public int getLastRow() {
-        return delegate.getLastRow();
+        return _delegate.getLastRow();
     }
 
     public ValueEval[] getValues() {
-        return values;
+        return _values;
     }
     
-    public ValueEval getValueAt(int row, short col) {
+    public ValueEval getValueAt(int row, int col) {
         ValueEval retval;
         int index = (row-getFirstRow())*(col-getFirstColumn());
-        if (index <0 || index >= values.length)
+        if (index <0 || index >= _values.length)
             retval = ErrorEval.VALUE_INVALID;
         else 
-            retval = values[index];
+            retval = _values[index];
         return retval;
     }
     
-    public boolean contains(int row, short col) {
+    public boolean contains(int row, int col) {
         return (getFirstRow() <= row) && (getLastRow() >= row) 
             && (getFirstColumn() <= col) && (getLastColumn() >= col);
     }
@@ -83,15 +92,14 @@ public final class Area3DEval implements AreaEval {
     
     
     public boolean isColumn() {
-        return delegate.getFirstColumn() == delegate.getLastColumn();
+        return _delegate.getFirstColumn() == _delegate.getLastColumn();
     }
 
     public boolean isRow() {
-        return delegate.getFirstRow() == delegate.getLastRow();
+        return _delegate.getFirstRow() == _delegate.getLastRow();
     }
 
     public int getExternSheetIndex() {
-        return delegate.getExternSheetIndex();
+        return _delegate.getExternSheetIndex();
     }
-
 }

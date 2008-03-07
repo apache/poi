@@ -31,26 +31,22 @@ import org.apache.poi.hssf.record.RecordInputStream;
  * @author Jason Height (jheight at chariot dot net dot au)
  */
 
-public class ReferencePtg extends Ptg
-{
+public class ReferencePtg extends Ptg {
     private final static int SIZE = 5;
     public final static byte sid  = 0x24;
     private final static int MAX_ROW_NUMBER = 65536;             
-    //public final static byte sid = 0x44;
 
-   /** 
-     * The row number, between 0 and 65535, but stored as a signed
-     *  short between -32767 and 32768.
-     * Take care about which version you fetch back!
+   /** The row index - zero based unsigned 16 bit value */
+    private int            field_1_row;
+    /** Field 2 
+     * - lower 8 bits is the zero based unsigned byte column index 
+     * - bit 16 - isRowRelative
+     * - bit 15 - isColumnRelative 
      */
-    private short            field_1_row;
-    /**
-     * The column number, between 0 and ??
-     */
-    private short            field_2_col;
-    private BitField         rowRelative = BitFieldFactory.getInstance(0x8000);
-    private BitField         colRelative = BitFieldFactory.getInstance(0x4000);
-    private BitField         column      = BitFieldFactory.getInstance(0x3FFF);
+    private int            field_2_col;
+    private static final BitField         rowRelative = BitFieldFactory.getInstance(0x8000);
+    private static final BitField         colRelative = BitFieldFactory.getInstance(0x4000);
+    private static final BitField         column      = BitFieldFactory.getInstance(0x00FF);
 
     protected ReferencePtg() {
       //Required for clone methods
@@ -62,13 +58,13 @@ public class ReferencePtg extends Ptg
      */
     public ReferencePtg(String cellref) {
         CellReference c= new CellReference(cellref);
-        setRow((short) c.getRow());
-        setColumn((short) c.getCol());
+        setRow(c.getRow());
+        setColumn(c.getCol());
         setColRelative(!c.isColAbsolute());
         setRowRelative(!c.isRowAbsolute());
     }
     
-    public ReferencePtg(short row, short column, boolean isRowRelative, boolean isColumnRelative) {
+    public ReferencePtg(int row, int column, boolean isRowRelative, boolean isColumnRelative) {
       setRow(row);
       setColumn(column);
       setRowRelative(isRowRelative);
@@ -79,8 +75,8 @@ public class ReferencePtg extends Ptg
 
     public ReferencePtg(RecordInputStream in)
     {
-        field_1_row = in.readShort();
-        field_2_col = in.readShort();
+        field_1_row = in.readUShort();
+        field_2_col = in.readUShort();
     }
     
     public String getRefPtgName() {
@@ -104,33 +100,23 @@ public class ReferencePtg extends Ptg
     {
         array[offset] = (byte) (sid + ptgClass);
 
-        LittleEndian.putShort(array,offset+1,field_1_row);
-        LittleEndian.putShort(array,offset+3,field_2_col);
+        LittleEndian.putShort(array, offset+1, (short)field_1_row);
+        LittleEndian.putShort(array, offset+3, (short)field_2_col);
     }
 
-    public void setRow(short row)
-    {
-        field_1_row = row;
-    }
     public void setRow(int row)
     {
         if(row < 0 || row >= MAX_ROW_NUMBER) {
            throw new IllegalArgumentException("The row number, when specified as an integer, must be between 0 and " + MAX_ROW_NUMBER);
         }
-        
-        // Save, wrapping as needed
-        if(row > Short.MAX_VALUE) {
-        	field_1_row = (short)(row - MAX_ROW_NUMBER);
-        } else {
-        	field_1_row = (short)row;
-        }
+        field_1_row = row;
     }
 
     /**
      * Returns the row number as a short, which will be
      *  wrapped (negative) for values between 32769 and 65535
      */
-    public short getRow()
+    public int getRow()
     {
         return field_1_row;
     }
@@ -151,7 +137,7 @@ public class ReferencePtg extends Ptg
     }
     
     public void setRowRelative(boolean rel) {
-        field_2_col=rowRelative.setShortBoolean(field_2_col,rel);
+        field_2_col=rowRelative.setBoolean(field_2_col,rel);
     }
     
     public boolean isColRelative()
@@ -160,27 +146,29 @@ public class ReferencePtg extends Ptg
     }
     
     public void setColRelative(boolean rel) {
-        field_2_col=colRelative.setShortBoolean(field_2_col,rel);
+        field_2_col=colRelative.setBoolean(field_2_col,rel);
     }
 
-    public void setColumnRaw(short col)
+    public void setColumnRaw(int col)
     {
         field_2_col = col;
     }
 
-    public short getColumnRaw()
+    public int getColumnRaw()
     {
         return field_2_col;
     }
 
-    public void setColumn(short col)
+    public void setColumn(int col)
     {
-    	field_2_col = column.setShortValue(field_2_col, col);
+        if(col < 0 || col > 0x100) {
+            throw new IllegalArgumentException("Specified colIx (" + col + ") is out of range");
+        }
+    	field_2_col = column.setValue(field_2_col, col);
     }
 
-    public short getColumn()
-    {
-    	return column.getShortValue(field_2_col);
+    public int getColumn() {
+    	return column.getValue(field_2_col);
     }
 
     public int getSize()

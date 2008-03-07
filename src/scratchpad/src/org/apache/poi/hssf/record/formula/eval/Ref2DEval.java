@@ -29,16 +29,22 @@ public final class Ref2DEval implements RefEval {
     private final ReferencePtg delegate;
     
     public Ref2DEval(ReferencePtg ptg, ValueEval ve) {
+        if(ve == null) {
+            throw new IllegalArgumentException("ve must not be null");
+        }
+        if(false && ptg == null) { // TODO - fix dodgy code in MultiOperandNumericFunction
+            throw new IllegalArgumentException("ptg must not be null");
+        }
         value = ve;
         delegate = ptg;
     }
     public ValueEval getInnerValueEval() {
         return value;
     }
-    public short getRow() {
+    public int getRow() {
         return delegate.getRow();
     }
-    public short getColumn() {
+    public int getColumn() {
         return delegate.getColumn();
     }
 }
