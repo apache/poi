@@ -287,8 +287,8 @@ final class LookupUtils {
 			// It doesn't matter if eval is a 2D or 3D ref, because that detail is never asked of AreaEval.
 			// This code only requires the value array item. 
 			// anything would be ok for rowIx and colIx, but may as well get it right.
-			short rowIx = refEval.getRow();
-			short colIx = refEval.getColumn();
+			int rowIx = refEval.getRow();
+			int colIx = refEval.getColumn();
 			AreaPtg ap = new AreaPtg(rowIx, rowIx, colIx, colIx, false, false, false, false);
 			ValueEval value = refEval.getInnerValueEval();
 			return new Area2DEval(ap, new ValueEval[] { value, });

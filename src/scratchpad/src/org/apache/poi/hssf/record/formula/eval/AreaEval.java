@@ -42,13 +42,13 @@ public interface AreaEval extends ValueEval {
      * returns the 0-based index of the first col in
      * this area.
      */
-    public short getFirstColumn();
+    public int getFirstColumn();
 
     /**
      * returns the 0-based index of the last col in
      * this area.
      */
-    public short getLastColumn();
+    public int getLastColumn();
     
     /**
      * returns true if the Area's start and end row indexes
@@ -80,7 +80,7 @@ public interface AreaEval extends ValueEval {
      * @param row
      * @param col
      */
-    public ValueEval getValueAt(int row, short col);
+    public ValueEval getValueAt(int row, int col);
     
     /**
      * returns true if the cell at row and col specified 
@@ -89,7 +89,7 @@ public interface AreaEval extends ValueEval {
      * @param row
      * @param col
      */
-    public boolean contains(int row, short col);
+    public boolean contains(int row, int col);
     
     /**
      * returns true if the specified col is in range

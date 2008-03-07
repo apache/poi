@@ -71,6 +71,14 @@ public final class CellReference {
         this(null, pRow, pCol, pAbsRow, pAbsCol);
     }
     public CellReference(String pSheetName, int pRow, int pCol, boolean pAbsRow, boolean pAbsCol) {
+        // TODO - "-1" is a special value being temporarily used for whole row and whole column area references.
+        // so these checks are currently N.Q.R.
+        if(pRow < -1) {
+            throw new IllegalArgumentException("row index may not be negative");
+        }
+        if(pCol < -1) {
+            throw new IllegalArgumentException("column index may not be negative");
+        }
         _sheetName = pSheetName;
         _rowIndex=pRow;
         _colIndex=pCol;

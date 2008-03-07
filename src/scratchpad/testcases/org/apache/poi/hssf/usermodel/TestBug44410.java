@@ -63,12 +63,13 @@ public class TestBug44410 extends TestCase {
         assertEquals(AreaPtg.class, ops.get(0).getClass());
         assertEquals(FuncVarPtg.class, ops.get(1).getClass());
 
-        // Actually stored as C1 to C0 (last row is -1)
+        // Actually stored as C1 to C65536 
+        //  (last row is -1 === 65535)
         AreaPtg ptg = (AreaPtg)ops.get(0);
         assertEquals(2, ptg.getFirstColumn());
         assertEquals(2, ptg.getLastColumn());
         assertEquals(0, ptg.getFirstRow());
-        assertEquals(-1, ptg.getLastRow());
+        assertEquals(65535, ptg.getLastRow());
         assertEquals("C:C", ptg.toFormulaString(wb.getWorkbook()));
         
         // Will show as C:C, but won't know how many

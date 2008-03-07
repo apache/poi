@@ -29,16 +29,22 @@ public final class Ref3DEval implements RefEval {
     private final Ref3DPtg delegate;
 
     public Ref3DEval(Ref3DPtg ptg, ValueEval ve) {
+        if(ve == null) {
+            throw new IllegalArgumentException("ve must not be null");
+        }
+        if(ptg == null) {
+            throw new IllegalArgumentException("ptg must not be null");
+        }
         value = ve;
         delegate = ptg;
     }
     public ValueEval getInnerValueEval() {
         return value;
     }
-    public short getRow() {
+    public int getRow() {
         return delegate.getRow();
     }
-    public short getColumn() {
+    public int getColumn() {
         return delegate.getColumn();
     }
     public int getExternSheetIndex() {

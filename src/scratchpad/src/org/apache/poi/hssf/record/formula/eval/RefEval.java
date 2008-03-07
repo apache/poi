@@ -40,12 +40,12 @@ public interface RefEval extends ValueEval {
     public ValueEval getInnerValueEval();
 
     /**
-     * returns the column index.
+     * returns the zero based column index.
      */
-    public short getColumn();
+    public int getColumn();
 
     /**
-     * returns the row index.
+     * returns the zero based row index.
      */
-    public short getRow();
+    public int getRow();
 }

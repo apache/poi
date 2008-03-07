@@ -36,16 +36,14 @@ import org.apache.poi.hssf.model.Workbook;
  * @author Jason Height (jheight at chariot dot net dot au)
  */
 
-public class AreaAPtg
-    extends AreaPtg
-{
+public final class AreaAPtg extends AreaPtg {
     public final static short sid  = 0x65;
 
     protected AreaAPtg() {
       //Required for clone methods
     }
 
-    public AreaAPtg(short firstRow, short lastRow, short firstColumn, short lastColumn, boolean firstRowRelative, boolean lastRowRelative, boolean firstColRelative, boolean lastColRelative) {
+    public AreaAPtg(int firstRow, int lastRow, int firstColumn, int lastColumn, boolean firstRowRelative, boolean lastRowRelative, boolean firstColRelative, boolean lastColRelative) {
       super(firstRow, lastRow, firstColumn, lastColumn, firstRowRelative, lastRowRelative, firstColRelative, lastColRelative);
     }
 

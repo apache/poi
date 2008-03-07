@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -21,6 +20,7 @@ package org.apache.poi.hssf.model;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
+import org.apache.poi.hssf.model.FormulaParser.FormulaParseException;
 import org.apache.poi.hssf.record.formula.AbstractFunctionPtg;
 import org.apache.poi.hssf.record.formula.AddPtg;
 import org.apache.poi.hssf.record.formula.AreaPtg;
@@ -59,18 +59,8 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
  * Some tests are also done in scratchpad, if they need
  *  HSSFFormulaEvaluator, which is there
  */
-public class TestFormulaParser extends TestCase {
+public final class TestFormulaParser extends TestCase {
 
-    public TestFormulaParser(String name) {
-        super(name);
-    }
-    public void setUp(){
-        
-    }
-    
-    public void tearDown() {
-        
-    }
     /**
      * @return parsed token array already confirmed not <code>null</code>
      */
@@ -831,10 +821,27 @@ public class TestFormulaParser extends TestCase {
         try {
             parseFormula(formula);
             throw new AssertionFailedError("expected parse exception");
-        } catch (RuntimeException e) {
-            // TODO - catch more specific exception
+        } catch (FormulaParseException e) {
             // expected during successful test
-            return;
+            assertNotNull(e.getMessage());
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+            fail("Wrong exception:" + e.getMessage());
         }
+    }
+
+    public void testSetFormulaWithRowBeyond32768_Bug44539() {
+        
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet();
+        wb.setSheetName(0, "Sheet1");
+        
+        HSSFRow row = sheet.createRow(0);
+        HSSFCell cell = row.createCell((short)0);
+        cell.setCellFormula("SUM(A32769:A32770)");
+        if("SUM(A-32767:A-32766)".equals(cell.getCellFormula())) {
+            fail("Identified bug 44539");
+        }
+        assertEquals("SUM(A32769:A32770)", cell.getCellFormula());
     }
 }

@@ -33,6 +33,7 @@
 	<!-- Don't forget to update changes.xml too! -->
     <changes>
         <release version="3.1-beta1" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="add">44539 - Support for area references in formulas of rows >= 32768</action>
            <action dev="POI-DEVELOPERS" type="add">44536 - Improved support for detecting read-only recommended files</action>
            <action dev="POI-DEVELOPERS" type="fix">43901 - Correctly update the internal last cell number when adding and removing cells (previously sometimes off-by-one)</action>
            <action dev="POI-DEVELOPERS" type="fix">44504 - Added initial support for recognising external functions like YEARFRAC and ISEVEN (using NameXPtg), via LinkTable support</action>
