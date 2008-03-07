@@ -34,6 +34,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.helpers.ColumnHelper;
 import org.apache.poi.xssf.util.CellReference;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBreak;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDialogsheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHeaderFooter;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageBreak;
@@ -55,6 +56,7 @@ public class XSSFSheet implements Sheet {
     protected CTSheet sheet;
     protected CTWorksheet worksheet;
     protected CTDialogsheet dialogsheet;
+    protected CTComment comment;
     protected List<Row> rows;
     protected ColumnHelper columnHelper;
     protected XSSFWorkbook workbook;
@@ -761,13 +763,37 @@ public class XSSFSheet implements Sheet {
     }
 
     public void shiftRows(int startRow, int endRow, int n) {
-        // TODO Auto-generated method stub
-
+    	shiftRows(startRow, endRow, n, false, false);
     }
 
     public void shiftRows(int startRow, int endRow, int n, boolean copyRowHeight, boolean resetOriginalRowHeight) {
-        // TODO Auto-generated method stub
-
+        for (Iterator<Row> it = rowIterator() ; it.hasNext() ; ) {
+        	Row row = it.next();
+        	if (!copyRowHeight) {
+        		row.setHeight((short)0);
+        	}
+        	if (resetOriginalRowHeight && getDefaultRowHeight() >= 0) {
+        		row.setHeight(getDefaultRowHeight());
+        	}
+        	if (removeRow(startRow, endRow, n, row.getRowNum())) {
+        		it.remove();
+        	}
+        	else if (row.getRowNum() >= startRow && row.getRowNum() <= endRow) {
+        		row.setRowNum(row.getRowNum() + n);
+        	}
+        }
+    }
+    
+    private boolean removeRow(int startRow, int endRow, int n, int rownum) {
+    	if (rownum >= (startRow + n) && rownum <= (endRow + n)) {
+    		if (n > 0 && rownum > endRow) {
+    			return true;
+    		}
+    		else if (n < 0 && rownum < startRow) {
+    			return true;
+    		}
+    	}
+    	return false;
     }
 
     public void showInPane(short toprow, short leftcol) {
