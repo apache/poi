@@ -1380,6 +1380,13 @@ public class HSSFWorkbook extends POIDocument
     }
 
     /**
+     * Is the workbook protected with a password (not encrypted)?
+     */
+    public boolean isWriteProtected() {
+    	return this.workbook.isWriteProtected();
+    }
+    
+    /**
      * protect a workbook with a password (not encypted, just sets writeprotect
      * flags and the password.
      * @param password to set
