@@ -2300,6 +2300,17 @@ public class Workbook implements Model
         }
         return this.fileShare;
     }
+    
+    /**
+     * is the workbook protected with a password (not encrypted)?
+     */
+    public boolean isWriteProtected() {
+        if (this.fileShare == null) {
+        	return false;
+        }
+        FileSharingRecord frec = getFileSharing();
+        return (frec.getReadOnly() == 1);
+    }
 
     /**
      * protect a workbook with a password (not encypted, just sets writeprotect

@@ -1104,6 +1104,29 @@ extends TestCase {
         
         assertEquals(1, wb.getNumberOfSheets());
     }
+    
+    /**
+     * Files with "read only recommended" were giving
+     *  grief on the FileSharingRecord
+     */
+    public void test44536() throws Exception {
+        FileInputStream in = new FileInputStream(new File(cwd, "ReadOnlyRecommended.xls"));
+        
+        // Used to blow up with an IllegalArgumentException
+        //  when creating a FileSharingRecord
+        HSSFWorkbook wb = new HSSFWorkbook(in);
+        in.close();
+        
+        // Check read only advised
+        assertEquals(3, wb.getNumberOfSheets());
+        assertTrue(wb.isWriteProtected());
+        
+        // But also check that another wb isn't
+        in = new FileInputStream(new File(cwd, "SimpleWithChoose.xls"));
+        wb = new HSSFWorkbook(in);
+        in.close();
+        assertFalse(wb.isWriteProtected());
+    }
 }
 
 
