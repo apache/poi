@@ -15,11 +15,6 @@
    limitations under the License.
 ==================================================================== */
 
-/*
- * HSSFRow.java
- *
- * Created on September 30, 2001, 3:44 PM
- */
 package org.apache.poi.hssf.usermodel;
 
 import java.util.Iterator;
@@ -38,10 +33,7 @@ import org.apache.poi.hssf.record.RowRecord;
  * @author  Andrew C. Oliver (acoliver at apache dot org)
  * @author Glen Stampoultzis (glens at apache.org)
  */
-
-public class HSSFRow
-        implements Comparable
-{
+public final class HSSFRow implements Comparable {
 
     // used for collections
     public final static int INITIAL_CAPACITY = 5;
@@ -157,26 +149,31 @@ public class HSSFRow
      * @param cell to remove
      */
     public void removeCell(HSSFCell cell) {
-    	removeCell(cell, true);
+        if(cell == null) {
+            throw new IllegalArgumentException("cell must not be null");
+        }
+        removeCell(cell, true);
     }
     private void removeCell(HSSFCell cell, boolean alsoRemoveRecords) {
-    	if(alsoRemoveRecords) {
-	        CellValueRecordInterface cval = cell.getCellValueRecord();
-	        sheet.removeValueRecord(getRowNum(), cval);
-    	}
-    	
+        
         short column=cell.getCellNum();
-        if(cell!=null && column<cells.length)
-        {
-          cells[column]=null;
+        if(column < 0) {
+            throw new RuntimeException("Negative cell indexes not allowed");
         }
-
-        if (cell.getCellNum() == row.getLastCol())
-        {
-            row.setLastCol(findLastCell(row.getLastCol()));
+        if(column >= cells.length || cell != cells[column]) {
+            throw new RuntimeException("Specified cell is not from this row");
         }
-        if (cell.getCellNum() == row.getFirstCol())
-        {
+        cells[column]=null;
+        
+        if(alsoRemoveRecords) {
+            CellValueRecordInterface cval = cell.getCellValueRecord();
+            sheet.removeValueRecord(getRowNum(), cval);
+        }
+        
+        if (cell.getCellNum()+1 == row.getLastCol()) {
+            row.setLastCol((short) (findLastCell(row.getLastCol())+1));
+        }
+        if (cell.getCellNum() == row.getFirstCol()) {
             row.setFirstCol(findFirstCell(row.getFirstCol()));
         }
     }
@@ -234,7 +231,7 @@ public class HSSFRow
      * TODO - Should this really be public?
      */
     protected int getOutlineLevel() {
-    	return row.getOutlineLevel();
+        return row.getOutlineLevel();
     }
     
     /**
@@ -244,55 +241,48 @@ public class HSSFRow
      * @param newColumn The new column number (0 based)
      */
     public void moveCell(HSSFCell cell, short newColumn) {
-    	// Ensure the destination is free
-    	if(cells.length > newColumn && cells[newColumn] != null) {
-    		throw new IllegalArgumentException("Asked to move cell to column " + newColumn + " but there's already a cell there");
-    	}
-    	
-    	// Check it's one of ours
-    	if(! cells[cell.getCellNum()].equals(cell)) {
-    		throw new IllegalArgumentException("Asked to move a cell, but it didn't belong to our row");
-    	}
-    	
-    	// Move the cell to the new position
-    	// (Don't remove the records though)
-    	removeCell(cell, false);
-    	cell.updateCellNum(newColumn);
-    	addCell(cell);
+        // Ensure the destination is free
+        if(cells.length > newColumn && cells[newColumn] != null) {
+            throw new IllegalArgumentException("Asked to move cell to column " + newColumn + " but there's already a cell there");
+        }
+        
+        // Check it's one of ours
+        if(! cells[cell.getCellNum()].equals(cell)) {
+            throw new IllegalArgumentException("Asked to move a cell, but it didn't belong to our row");
+        }
+        
+        // Move the cell to the new position
+        // (Don't remove the records though)
+        removeCell(cell, false);
+        cell.updateCellNum(newColumn);
+        addCell(cell);
     }
 
     /**
      * used internally to add a cell.
      */
-    private void addCell(HSSFCell cell)
-    {
-        short column=cell.getCellNum();
-        if (row.getFirstCol() == -1)
-        {
-            row.setFirstCol(column);
-        }
-        if (row.getLastCol() == -1)
-        {
-            row.setLastCol(column);
-        }
+    private void addCell(HSSFCell cell) {
 
-        if(column>=cells.length)
-        {
-          HSSFCell[] oldCells=cells;
-          int newSize=oldCells.length*2;
-          if(newSize<column+1) newSize=column+1;
-          cells=new HSSFCell[newSize];
-          System.arraycopy(oldCells,0,cells,0,oldCells.length);
+        short column=cell.getCellNum();
+        // re-allocate cells array as required.
+        if(column>=cells.length) {
+            HSSFCell[] oldCells=cells;
+            int newSize=oldCells.length*2;
+            if(newSize<column+1) {
+                newSize=column+1;
+            }
+            cells=new HSSFCell[newSize];
+            System.arraycopy(oldCells,0,cells,0,oldCells.length);
         }
         cells[column]=cell;
-
-        if (column < row.getFirstCol())
-        {
+        
+        // fix up firstCol and lastCol indexes
+        if (row.getFirstCol() == -1 || column < row.getFirstCol()) {
             row.setFirstCol(column);
         }
-        if (column > row.getLastCol())
-        {
-            row.setLastCol(column);
+        
+        if (row.getLastCol() == -1 || column >= row.getLastCol()) {
+            row.setLastCol((short) (column+1)); // +1 -> for one past the last index 
         }
     }
 
@@ -324,16 +314,29 @@ public class HSSFRow
     }
 
     /**
-     * gets the number of the last cell contained in this row <b>PLUS ONE</b>. 
-     * @return short representing the last logical cell in the row <b>PLUS ONE</b>, or -1 if the row does not contain any cells.
+     * Gets the index of the last cell contained in this row <b>PLUS ONE</b>. The result also 
+     * happens to be the 1-based column number of the last cell.  This value can be used as a
+     * standard upper bound when iterating over cells:
+     * <pre> 
+     * short minColIx = row.getFirstCellNum();
+     * short maxColIx = row.getLastCellNum();
+     * for(short colIx=minColIx; colIx&lt;maxColIx; colIx++) {
+     *   HSSFCell cell = row.getCell(colIx);
+     *   if(cell == null) {
+     *     continue;
+     *   }
+     *   //... do something with cell
+     * }
+     * </pre>
+     * 
+     * @return short representing the last logical cell in the row <b>PLUS ONE</b>, or -1 if the
+     *  row does not contain any cells.
      */
-
-    public short getLastCellNum()
-    {
-        if (getPhysicalNumberOfCells() == 0)
+    public short getLastCellNum() {
+        if (getPhysicalNumberOfCells() == 0) {
             return -1;
-        else
-            return row.getLastCol();
+        }
+        return row.getLastCol();
     }
 
 
@@ -493,8 +496,8 @@ public class HSSFRow
       }
 
       public Object next() {
-    	  if (!hasNext())
-    		  throw new NoSuchElementException("At last element");
+          if (!hasNext())
+              throw new NoSuchElementException("At last element");
         HSSFCell cell=cells[nextId];
         thisId=nextId;
         findNext();
@@ -502,8 +505,8 @@ public class HSSFRow
       }
 
       public void remove() {
-    	  if (thisId == -1)
-    		  throw new IllegalStateException("remove() called before next()");
+          if (thisId == -1)
+              throw new IllegalStateException("remove() called before next()");
         cells[thisId]=null;
       }
       

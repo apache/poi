@@ -36,6 +36,7 @@
 
 		<!-- Don't forget to update status.xml too! -->
         <release version="3.1-beta1" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">43901 - Correctly update the internal last cell number when adding and removing cells (previously sometimes off-by-one)</action>
            <action dev="POI-DEVELOPERS" type="fix">28231 - For apparently truncated files, which are somehow still valid, now issue a truncation warning but carry on, rather than giving an exception as before</action>
            <action dev="POI-DEVELOPERS" type="fix">44504 - Added initial support for recognising external functions like YEARFRAC and ISEVEN (using NameXPtg), via LinkTable support</action>
            <action dev="POI-DEVELOPERS" type="fix">44504 - Improvements to FormulaParser - operators, precedence, error literals, quotes in string literals, range checking on IntPtg, formulas with extra un-parsed stuff at the end, improved parse error handling</action>
