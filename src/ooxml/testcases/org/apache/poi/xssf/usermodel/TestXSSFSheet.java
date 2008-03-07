@@ -26,9 +26,6 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.helpers.ColumnHelper;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDialogsheet;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 
 
 public class TestXSSFSheet extends TestCase {
@@ -114,6 +111,9 @@ public class TestXSSFSheet extends TestCase {
         assertEquals((float) 0, sheet.getDefaultRowHeightInPoints());
         // Set a new default row height in twips and test getting the value in points
         sheet.setDefaultRowHeight((short) 360);
+        assertEquals((float) 18, sheet.getDefaultRowHeightInPoints());
+        // Test that defaultRowHeight is a truncated short: E.G. 360inPoints -> 18; 361inPoints -> 18
+        sheet.setDefaultRowHeight((short) 361);
         assertEquals((float) 18, sheet.getDefaultRowHeightInPoints());
         // Set a new default row height in points and test getting the value in twips
         sheet.setDefaultRowHeightInPoints((short) 17);
@@ -416,4 +416,93 @@ public class TestXSSFSheet extends TestCase {
         assertEquals((short) 2, sheet.getTopRow());
         assertEquals((short) 26, sheet.getLeftCol());
     }
+    
+    public void testShiftRows() {
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        
+        XSSFSheet sheet = (XSSFSheet) createSheet(workbook, "Sheet 1");
+    	sheet.shiftRows(1, 2, 4, true, false);
+    	assertEquals((short) 1, sheet.getRow(5).getHeight());
+    	assertEquals((short) 2, sheet.getRow(6).getHeight());
+    	assertNull(sheet.getRow(1));
+    	assertNull(sheet.getRow(2));
+    	assertEquals(8, sheet.getPhysicalNumberOfRows());
+
+        XSSFSheet sheet2 = (XSSFSheet) createSheet(workbook, "Sheet 2");
+    	sheet2.shiftRows(1, 5, 3, true, false);
+    	assertEquals((short) 1, sheet2.getRow(4).getHeight());
+    	assertEquals((short) 2, sheet2.getRow(5).getHeight());
+    	assertEquals((short) 3, sheet2.getRow(6).getHeight());
+    	assertEquals((short) 4, sheet2.getRow(7).getHeight());
+    	assertEquals((short) 5, sheet2.getRow(8).getHeight());
+    	assertNull(sheet2.getRow(1));
+    	assertNull(sheet2.getRow(2));
+    	assertNull(sheet2.getRow(3));
+    	assertEquals(7, sheet2.getPhysicalNumberOfRows());
+
+        XSSFSheet sheet3 = (XSSFSheet) createSheet(workbook, "Sheet 3");
+    	sheet3.shiftRows(5, 7, -3, true, false);
+    	assertEquals(5, sheet3.getRow(2).getHeight());
+    	assertEquals(6, sheet3.getRow(3).getHeight());
+    	assertEquals(7, sheet3.getRow(4).getHeight());
+    	assertNull(sheet3.getRow(5));
+    	assertNull(sheet3.getRow(6));
+    	assertNull(sheet3.getRow(7));
+    	assertEquals(7, sheet3.getPhysicalNumberOfRows());
+
+        XSSFSheet sheet4 = (XSSFSheet) createSheet(workbook, "Sheet 4");
+    	sheet4.shiftRows(5, 7, -2, true, false);
+    	assertEquals(5, sheet4.getRow(3).getHeight());
+    	assertEquals(6, sheet4.getRow(4).getHeight());
+    	assertEquals(7, sheet4.getRow(5).getHeight());
+    	assertNull(sheet4.getRow(6));
+    	assertNull(sheet4.getRow(7));
+    	assertEquals(8, sheet4.getPhysicalNumberOfRows());
+
+    	// Test without copying rowHeight
+        XSSFSheet sheet5 = (XSSFSheet) createSheet(workbook, "Sheet 5");
+    	sheet5.shiftRows(5, 7, -2, false, false);
+    	assertEquals(-1, sheet5.getRow(3).getHeight());
+    	assertEquals(-1, sheet5.getRow(4).getHeight());
+    	assertEquals(-1, sheet5.getRow(5).getHeight());
+    	assertNull(sheet5.getRow(6));
+    	assertNull(sheet5.getRow(7));
+    	assertEquals(8, sheet5.getPhysicalNumberOfRows());
+
+    	// Test without copying rowHeight and resetting to default height
+        XSSFSheet sheet6 = (XSSFSheet) createSheet(workbook, "Sheet 6");
+        sheet6.setDefaultRowHeight((short) 200);
+    	sheet6.shiftRows(5, 7, -2, false, true);
+    	assertEquals(200, sheet6.getRow(3).getHeight());
+    	assertEquals(200, sheet6.getRow(4).getHeight());
+    	assertEquals(200, sheet6.getRow(5).getHeight());
+    	assertNull(sheet6.getRow(6));
+    	assertNull(sheet6.getRow(7));
+    	assertEquals(8, sheet6.getPhysicalNumberOfRows());
+    }
+
+	private XSSFSheet createSheet(XSSFWorkbook workbook, String name) {
+        XSSFSheet sheet = (XSSFSheet) workbook.createSheet(name);
+    	Row row0 = sheet.createRow(0);
+    	row0.setHeight((short) 1);
+    	Row row1 = sheet.createRow(1);
+    	row1.setHeight((short) 1);
+    	Row row2 = sheet.createRow(2);
+    	row2.setHeight((short) 2);
+    	Row row3 = sheet.createRow(3);
+    	row3.setHeight((short) 3);
+    	Row row4 = sheet.createRow(4);
+    	row4.setHeight((short) 4);
+    	Row row5 = sheet.createRow(5);
+    	row5.setHeight((short) 5);
+    	Row row6 = sheet.createRow(6);
+    	row6.setHeight((short) 6);
+    	Row row7 = sheet.createRow(7);
+    	row7.setHeight((short) 7);
+    	Row row8 = sheet.createRow(8);
+    	row8.setHeight((short) 8);
+    	Row row9 = sheet.createRow(9);
+    	row9.setHeight((short) 9);
+    	return sheet;
+	}
 }
