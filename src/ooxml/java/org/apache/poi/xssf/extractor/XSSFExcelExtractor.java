@@ -14,16 +14,13 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.hssf.extractor;
+package org.apache.poi.xssf.extractor;
 
 import java.io.File;
 import java.io.IOException;
 
 import org.apache.poi.POIXMLTextExtractor;
-import org.apache.poi.hssf.HSSFXML;
-import org.apache.poi.hssf.usermodel.HSSFXMLCell;
-import org.apache.poi.hssf.usermodel.HSSFXMLWorkbook;
-import org.apache.poi.hxf.HXFDocument;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.xmlbeans.XmlException;
 import org.openxml4j.exceptions.OpenXML4JException;
 import org.openxml4j.opc.Package;
@@ -35,17 +32,15 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 /**
  * Helper class to extract text from an OOXML Excel file
  */
-public class HXFExcelExtractor extends POIXMLTextExtractor {
-	private HSSFXMLWorkbook workbook;
+public class XSSFExcelExtractor extends POIXMLTextExtractor {
+	private XSSFWorkbook workbook;
 	private boolean includeSheetNames = true;
 	private boolean formulasNotResults = false;
 	
-	public HXFExcelExtractor(Package container) throws XmlException, OpenXML4JException, IOException {
-		this(new HSSFXMLWorkbook(
-				new HSSFXML(container)
-		));
+	public XSSFExcelExtractor(Package container) throws XmlException, OpenXML4JException, IOException {
+		this(new XSSFWorkbook(container));
 	}
-	public HXFExcelExtractor(HSSFXMLWorkbook workbook) {
+	public XSSFExcelExtractor(XSSFWorkbook workbook) {
 		super(workbook);
 		this.workbook = workbook;
 	}
