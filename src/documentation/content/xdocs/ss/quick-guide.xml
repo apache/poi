@@ -21,7 +21,7 @@
 
 <document>
     <header>
-        <title>Busy Developers' Guide to HSSF Features</title>
+        <title>Busy Developers' Guide to HSSF and XSSF Features</title>
         <authors>
             <person email="user@poi.apache.org" name="Glen Stampoultzis" id="CO"/>
             <person email="user@poi.apache.org" name="Yegor Kozlov" id="YK"/>
@@ -30,8 +30,9 @@
     <body>
         <section><title>Busy Developers' Guide to Features</title>
             <p>
-                Want to use HSSF read and write spreadsheets in a hurry?  This guide is for you.  If you're after
-                more in-depth coverage of the HSSF user-API please consult the <link href="how-to.html">HOWTO</link>
+                Want to use HSSF and XSSF read and write spreadsheets in a hurry?  This 
+                guide is for you.  If you're after more in-depth coverage of the HSSF and 
+                XSSF user-APIs, please consult the <link href="how-to.html">HOWTO</link>
                 guide as it contains actual descriptions of how to use this stuff.
             </p>
             <section><title>Index of Features</title>

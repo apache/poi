@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.hssf.extractor;
+package org.apache.poi.xssf.extractor;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -24,28 +24,28 @@ import java.util.regex.Pattern;
 import junit.framework.TestCase;
 
 import org.apache.poi.POITextExtractor;
-import org.apache.poi.hssf.HSSFXML;
+import org.apache.poi.hssf.extractor.ExcelExtractor;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.usermodel.HSSFXMLWorkbook;
-import org.apache.poi.hxf.HXFDocument;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
- * Tests for HXFExcelExtractor
+ * Tests for XSSFExcelExtractor
  */
-public class TestHXFExcelExtractor extends TestCase {
+public class TestXSSFExcelExtractor extends TestCase {
 	/**
 	 * A very simple file
 	 */
-	private HSSFXML xmlA;
+	private XSSFWorkbook xmlA;
+	private File fileA;
 	/**
 	 * A fairly complex file
 	 */
-	private HSSFXML xmlB;
+	private XSSFWorkbook xmlB;
 	
 	/**
 	 * A fairly simple file - ooxml
 	 */
-	private HSSFXML simpleXLSX; 
+	private XSSFWorkbook simpleXLSX; 
 	/**
 	 * A fairly simple file - ole2
 	 */
@@ -54,7 +54,7 @@ public class TestHXFExcelExtractor extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		
-		File fileA = new File(
+		fileA = new File(
 				System.getProperty("HSSF.testdata.path") +
 				File.separator + "sample.xlsx"
 		);
@@ -72,10 +72,10 @@ public class TestHXFExcelExtractor extends TestCase {
 				File.separator + "SampleSS.xls"
 		);
 		
-		xmlA = new HSSFXML(HXFDocument.openPackage(fileA));
-		xmlB = new HSSFXML(HXFDocument.openPackage(fileB));
+		xmlA = new XSSFWorkbook(fileA.toString());
+		xmlB = new XSSFWorkbook(fileB.toString());
 		
-		simpleXLSX = new HSSFXML(HXFDocument.openPackage(fileSOOXML));
+		simpleXLSX = new XSSFWorkbook(fileSOOXML.toString());
 		simpleXLS = new HSSFWorkbook(new FileInputStream(fileSOLE2));
 	}
 
@@ -83,11 +83,11 @@ public class TestHXFExcelExtractor extends TestCase {
 	 * Get text out of the simple file
 	 */
 	public void testGetSimpleText() throws Exception {
-		new HXFExcelExtractor(xmlA.getPackage());
-		new HXFExcelExtractor(new HSSFXMLWorkbook(xmlA));
+		new XSSFExcelExtractor(fileA.toString());
+		new XSSFExcelExtractor(xmlA);
 		
-		HXFExcelExtractor extractor = 
-			new HXFExcelExtractor(xmlA.getPackage());
+		XSSFExcelExtractor extractor = 
+			new XSSFExcelExtractor(xmlA);
 		extractor.getText();
 		
 		String text = extractor.getText();
@@ -150,11 +150,10 @@ public class TestHXFExcelExtractor extends TestCase {
 	}
 	
 	public void testGetComplexText() throws Exception {
-		new HXFExcelExtractor(xmlB.getPackage());
-		new HXFExcelExtractor(new HSSFXMLWorkbook(xmlB));
+		new XSSFExcelExtractor(xmlB);
 		
-		HXFExcelExtractor extractor = 
-			new HXFExcelExtractor(xmlB.getPackage());
+		XSSFExcelExtractor extractor = 
+			new XSSFExcelExtractor(xmlB);
 		extractor.getText();
 		
 		String text = extractor.getText();
@@ -174,8 +173,8 @@ public class TestHXFExcelExtractor extends TestCase {
 	 *  the same file, just saved as xls and xlsx
 	 */
 	public void testComparedToOLE2() throws Exception {
-		HXFExcelExtractor ooxmlExtractor =
-			new HXFExcelExtractor(simpleXLSX.getPackage());
+		XSSFExcelExtractor ooxmlExtractor =
+			new XSSFExcelExtractor(simpleXLSX);
 		ExcelExtractor ole2Extractor =
 			new ExcelExtractor(simpleXLS);
 		

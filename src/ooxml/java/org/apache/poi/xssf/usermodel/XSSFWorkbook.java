@@ -89,7 +89,10 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     }
     
     public XSSFWorkbook(String path) throws IOException {
-        super(path);
+    	this(openPackage(path));
+    }
+    public XSSFWorkbook(Package pkg) throws IOException {
+        super(pkg);
         try {
             WorkbookDocument doc = WorkbookDocument.Factory.parse(getCorePart().getInputStream());
             this.workbook = doc.getWorkbook();
