@@ -299,17 +299,30 @@ public class HSSFRow
     }
 
     /**
-     * get the hssfcell representing a given column (logical cell) 0-based.  If you
-     * ask for a cell that is not defined....you get a null.
+     * Get the hssfcell representing a given column (logical cell)
+     *  0-based.  If you ask for a cell that is not defined....
+     *  you get a null.
+     * Short method signature provided to retain binary
+     *  compatibility.
      *
      * @param cellnum  0 based column number
      * @return HSSFCell representing that column or null if undefined.
      */
-
     public HSSFCell getCell(short cellnum)
     {
-      if(cellnum<0||cellnum>=cells.length) return null;
-      return cells[cellnum];
+   		return getCell((int)cellnum);
+    }
+    /**
+     * Get the hssfcell representing a given column (logical cell)
+     *  0-based.  If you ask for a cell that is not defined....
+     *  you get a null.
+     *
+     * @param cellnum  0 based column number
+     * @return HSSFCell representing that column or null if undefined.
+     */
+    public HSSFCell getCell(int cellnum) {
+        if(cellnum<0||cellnum>=cells.length) return null;
+        return cells[cellnum];
     }
 
     /**
