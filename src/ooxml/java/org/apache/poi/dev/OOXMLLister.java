@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.hxf.dev;
+package org.apache.poi.dev;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,18 +29,18 @@ import org.openxml4j.opc.PackageRelationship;
 import org.openxml4j.opc.PackageRelationshipCollection;
 
 /**
- * Prints out the contents of a HXF (ooxml) container.
+ * Prints out the contents of a OOXML container.
  * Useful for seeing what parts are defined, and how
  *  they're all related to each other.
  */
-public class HXFLister {
+public class OOXMLLister {
 	private Package container;
 	private PrintStream disp;
 	
-	public HXFLister(Package container) {
+	public OOXMLLister(Package container) {
 		this(container, System.out);
 	}
-	public HXFLister(Package container, PrintStream disp) {
+	public OOXMLLister(Package container, PrintStream disp) {
 		this.container = container;
 		this.disp = disp;
 	}
@@ -121,7 +121,7 @@ public class HXFLister {
 			System.exit(2);
 		}
 		
-		HXFLister lister = new HXFLister(
+		OOXMLLister lister = new OOXMLLister(
 				Package.open(f.toString(), PackageAccess.READ)
 		);
 		
