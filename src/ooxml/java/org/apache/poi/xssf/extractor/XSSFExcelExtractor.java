@@ -18,12 +18,14 @@ package org.apache.poi.xssf.extractor;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Iterator;
 
 import org.apache.poi.POIXMLTextExtractor;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.xmlbeans.XmlException;
@@ -92,17 +94,21 @@ public class XSSFExcelExtractor extends POIXMLTextExtractor {
 			
 			for (Object rawR : sheet) {
 				Row row = (Row)rawR;
-				for (Object rawC: row) {
-					Cell cell = (Cell)rawC;
+				for(Iterator ri = row.cellIterator(); ri.hasNext();) {
+					Cell cell = (Cell)ri.next();
 					
 					// Is it a formula one?
 					if(cell.getCellType() == Cell.CELL_TYPE_FORMULA && formulasNotResults) {
 						text.append(cell.getCellFormula());
+					} else if(cell.getCellType() == Cell.CELL_TYPE_STRING) {
+						text.append(cell.getRichStringCellValue().getString());
 					} else {
-						text.append(cell.toString());
+						XSSFCell xc = (XSSFCell)cell;
+						text.append(xc.getRawValue());
 					}
 					
-					text.append(",");
+					if(ri.hasNext())
+						text.append("\t");
 				}
 				text.append("\n");
 			}
