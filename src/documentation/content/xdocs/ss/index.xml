@@ -21,7 +21,7 @@
 
 <document>
     <header>
-        <title>POI-HSSF - Java API To Access Microsoft Excel Format Files</title>
+        <title>POI-HSSF and POI-XSSF - Java API To Access Microsoft Excel Format Files</title>
         <subtitle>Overview</subtitle>
         <authors>
             <person name="Andrew C. Oliver" email="acoliver@apache.org"/>
@@ -33,11 +33,12 @@
         <section>
             <title>Overview</title>
 
-            <p>HSSF is the POI Project's pure Java implementation of the Excel 
-			'97(-2007) file format. It <em>does not</em> support the new
-			Excel 2007 .xlsx OOXML file format, which is not OLE2 based.</p>
-            <p>HSSF provides a way to read spreadsheets create, modify, read and write XLS spreadsheets
-             It provides:
+            <p>HSSF is the POI Project's pure Java implementation of the 
+            Excel '97(-2007) file format. XSSF is the POI Project's pure 
+            Java implementation of the Excel 2007 OOXML (.xlsx) file 
+            format.</p>
+            <p>HSSF and XSSF provides ways to read spreadsheets create, 
+            modify, read and write XLS spreadsheets. They provide:
             </p>
             <ul>
                 <li>low level structures for those with special needs</li>
