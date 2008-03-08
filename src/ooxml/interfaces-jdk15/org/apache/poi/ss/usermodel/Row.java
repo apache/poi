@@ -79,14 +79,12 @@ public interface Row extends Iterable {
      * @param cellnum  0 based column number
      * @return HSSFCell representing that column or null if undefined.
      */
-
-    Cell getCell(short cellnum);
+    Cell getCell(int cellnum);
 
     /**
      * get the number of the first cell contained in this row.
      * @return short representing the first logical cell in the row, or -1 if the row does not contain any cells.
      */
-
     short getFirstCellNum();
 
     /**

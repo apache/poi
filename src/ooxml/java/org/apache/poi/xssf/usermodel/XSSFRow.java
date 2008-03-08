@@ -122,7 +122,7 @@ public class XSSFRow implements Row {
         return xcell;
     }
 
-    public Cell getCell(short cellnum) {
+    public Cell getCell(int cellnum) {
         Iterator<Cell> it = cellIterator();
         for ( ; it.hasNext() ; ) {
         	Cell cell = it.next();
