@@ -80,4 +80,37 @@ public abstract class POIXMLDocument {
         }
         return part;
     }
+    
+    /**
+     * Checks that the supplied InputStream (which MUST
+     *  support mark and reset, or be a PushbackInputStream) 
+     *  has a OOXML (zip) header at the start of it.
+     * If your InputStream does not support mark / reset,
+     *  then wrap it in a PushBackInputStream, then be
+     *  sure to always use that, and not the original!
+     * @param inp An InputStream which supports either mark/reset, or is a PushbackInputStream 
+     */
+    public static boolean hasOOXMLHeader(InputStream inp) throws IOException {
+    	// We want to peek at the first 4 bytes 
+    	inp.mark(4);
+
+    	byte[] header = new byte[4];
+    	IOUtils.readFully(inp, header);
+
+        // Wind back those 4 bytes
+        if(inp instanceof PushbackInputStream) {
+        	PushbackInputStream pin = (PushbackInputStream)inp;
+        	pin.unread(header);
+        } else {
+        	inp.reset();
+        }
+    	
+    	// Did it match the ooxml zip signature?
+        return (
+        	header[0] == POIFSConstants.OOXML_FILE_HEADER[0] && 
+        	header[1] == POIFSConstants.OOXML_FILE_HEADER[1] && 
+        	header[2] == POIFSConstants.OOXML_FILE_HEADER[2] && 
+        	header[3] == POIFSConstants.OOXML_FILE_HEADER[3]
+        );        	                                            
+    }
 }
