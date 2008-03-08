@@ -20,6 +20,9 @@
  */
 package org.apache.poi.hssf.record.formula.eval;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.poi.hssf.record.formula.functions.*;
 
 /**
@@ -27,11 +30,48 @@ import org.apache.poi.hssf.record.formula.functions.*;
  *  
  */
 public abstract class FunctionEval implements OperationEval {
+    /**
+     * Some function IDs that require special treatment
+     */
+    private static final class FunctionID {
+        /** 78 */
+        public static final int OFFSET = 78;
+        /** 148 */
+        public static final int INDIRECT = 148;
+        /** 255 */
+        public static final int EXTERNAL_FUNC = 255;
+    }
+    // convenient access to namespace
+    private static final FunctionID ID = null;
+    
     protected static Function[] functions = produceFunctions();
 
+    private static Map freeRefFunctionsByIdMap;
+     
+    static {
+        Map m = new HashMap();
+        addMapping(m, ID.OFFSET, new Offset());
+        addMapping(m, ID.INDIRECT, new Indirect());
+        addMapping(m, ID.EXTERNAL_FUNC, new ExternalFunction());
+        freeRefFunctionsByIdMap = m;
+    }
+    private static void addMapping(Map m, int offset, FreeRefFunction frf) {
+        m.put(createFRFKey(offset), frf);
+    }
+    private static Integer createFRFKey(int functionIndex) {
+        return new Integer(functionIndex);
+    }
+    
+    
     public Function getFunction() {
         short fidx = getFunctionIndex();
         return functions[fidx];
+    }
+    public boolean isFreeRefFunction() {
+        return freeRefFunctionsByIdMap.containsKey(createFRFKey(getFunctionIndex()));
+    }
+    public FreeRefFunction getFreeRefFunction() {
+        return (FreeRefFunction) freeRefFunctionsByIdMap.get(createFRFKey(getFunctionIndex()));
     }
 
     public abstract short getFunctionIndex();
@@ -115,7 +155,7 @@ public abstract class FunctionEval implements OperationEval {
         retval[75] = new Areas(); // AREAS
         retval[76] = new Rows(); // ROWS
         retval[77] = new Columns(); // COLUMNS
-        retval[78] = new Offset(); // OFFSET
+        retval[ID.OFFSET] = null; // Offset.evaluate has a different signature
         retval[79] = new Absref(); // ABSREF
         retval[80] = new Relref(); // RELREF
         retval[81] = new Argument(); // ARGUMENT
@@ -185,7 +225,7 @@ public abstract class FunctionEval implements OperationEval {
         retval[145] = new NotImplementedFunction(); // GETDEF
         retval[146] = new Reftext(); // REFTEXT
         retval[147] = new Textref(); // TEXTREF
-        retval[148] = new Indirect(); // INDIRECT
+        retval[ID.INDIRECT] = null; // Indirect.evaluate has different signature
         retval[149] = new NotImplementedFunction(); // REGISTER
         retval[150] = new Call(); // CALL
         retval[151] = new NotImplementedFunction(); // ADDBAR
@@ -278,7 +318,7 @@ public abstract class FunctionEval implements OperationEval {
         retval[252] = new Frequency(); // FREQUENCY
         retval[253] = new NotImplementedFunction(); // ADDTOOLBAR
         retval[254] = new NotImplementedFunction(); // DELETETOOLBAR
-        retval[255] = new NotImplementedFunction(); // EXTERNALFLAG
+        retval[ID.EXTERNAL_FUNC] = null; // ExternalFunction is a FreeREfFunction
         retval[256] = new NotImplementedFunction(); // RESETTOOLBAR
         retval[257] = new Evaluate(); // EVALUATE
         retval[258] = new NotImplementedFunction(); // GETTOOLBAR

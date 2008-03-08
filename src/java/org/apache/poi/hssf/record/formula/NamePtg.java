@@ -33,6 +33,7 @@ public class NamePtg
 {
     public final static short sid  = 0x23;
     private final static int  SIZE = 5;
+    /** one-based index to defined name record */
     private short             field_1_label_index;
     private short             field_2_zero;   // reserved must be 0
     boolean xtra=false;
@@ -42,24 +43,32 @@ public class NamePtg
       //Required for clone methods
     }
 
-    /** Creates new NamePtg */
-
-    public NamePtg(String name, Workbook book)
-    {
-        final short n = (short) (book.getNumNames() + 1);
+    /**
+     * Creates new NamePtg and sets its name index to that of the corresponding defined name record
+     * in the workbook.  The search for the name record is case insensitive.  If it is not found, 
+     * it gets created.
+     */
+    public NamePtg(String name, Workbook book) {
+        field_1_label_index = (short)(1+getOrCreateNameRecord(book, name)); // convert to 1-based
+    }
+    /**
+     * @return zero based index of the found or newly created defined name record. 
+     */
+    private static final int getOrCreateNameRecord(Workbook book, String name) {
+        // perhaps this logic belongs in Workbook
+        int countNames = book.getNumNames();
         NameRecord rec;
-        for (short i = 1; i < n; i++) {
-            rec = book.getNameRecord(i - 1);
-            if (name.equals(rec.getNameText())) {
-                field_1_label_index = i;
-                return;
+        for (int i = 0; i < countNames; i++) {
+            rec = book.getNameRecord(i);
+            if (name.equalsIgnoreCase(rec.getNameText())) {
+                return i; 
             }
         }
         rec = new NameRecord();
         rec.setNameText(name);
         rec.setNameTextLength((byte) name.length());
         book.addName(rec);
-        field_1_label_index = n;
+        return countNames;
     }
 
     /** Creates new NamePtg */
@@ -70,6 +79,13 @@ public class NamePtg
         field_1_label_index = in.readShort();
         field_2_zero        = in.readShort();
         //if (data[offset+6]==0) xtra=true;
+    }
+    
+    /**
+     * @return zero based index to a defined name record in the LinkTable
+     */
+    public int getIndex() {
+        return field_1_label_index-1; // convert to zero based
     }
 
     public void writeBytes(byte [] array, int offset)

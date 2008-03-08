@@ -27,15 +27,12 @@ import org.apache.poi.hssf.model.FormulaParser;
  *
  * @author Dmitriy Kumshayev
  */
-public class TestAreaPtg extends TestCase
-{
+public final class TestAreaPtg extends TestCase {
 
 	AreaPtg relative;
 	AreaPtg absolute;
 	
-	protected void setUp() throws Exception
-	{
-		super.setUp();
+	protected void setUp() {
 		short firstRow=5;
 		short lastRow=13;
 		short firstCol=7;
@@ -64,10 +61,9 @@ public class TestAreaPtg extends TestCase
 	}
 
 
-	public void resetColumns(AreaPtg aptg)
-	{
-		short fc = aptg.getFirstColumn();
-		short lc = aptg.getLastColumn();
+	private static void resetColumns(AreaPtg aptg) {
+		int fc = aptg.getFirstColumn();
+		int lc = aptg.getLastColumn();
 		aptg.setFirstColumn(fc);
 		aptg.setLastColumn(lc);
 		assertEquals(fc , aptg.getFirstColumn() );

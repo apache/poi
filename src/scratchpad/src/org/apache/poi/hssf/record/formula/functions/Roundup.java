@@ -40,6 +40,9 @@ public class Roundup extends NumericFunction {
             break;
         case 2:
             ValueEval ve = singleOperandEvaluate(operands[0], srcRow, srcCol);
+            if(ve instanceof ErrorEval) {
+            	return ve;
+            }
             if (ve instanceof NumericValueEval) {
                 NumericValueEval ne = (NumericValueEval) ve;
                 d0 = ne.getNumberValue();

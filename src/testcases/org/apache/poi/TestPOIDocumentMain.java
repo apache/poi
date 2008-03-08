@@ -85,7 +85,8 @@ public class TestPOIDocumentMain extends TestCase {
     public void testWriteProperties() throws Exception {
     	// Just check we can write them back out into a filesystem
     	POIFSFileSystem outFS = new POIFSFileSystem();
-    	doc.writeProperties(outFS);
+    	doc.readProperties();
+        doc.writeProperties(outFS);
     	
     	// Should now hold them
     	assertNotNull(
@@ -101,7 +102,8 @@ public class TestPOIDocumentMain extends TestCase {
 		
     	// Write them out
     	POIFSFileSystem outFS = new POIFSFileSystem();
-    	doc.writeProperties(outFS);
+    	doc.readProperties();
+        doc.writeProperties(outFS);
     	outFS.writeFilesystem(baos);
     	
     	// Create a new version

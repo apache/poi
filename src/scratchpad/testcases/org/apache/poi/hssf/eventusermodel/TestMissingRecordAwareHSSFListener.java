@@ -16,14 +16,14 @@
 ==================================================================== */
 
 package org.apache.poi.hssf.eventusermodel;
-import org.apache.poi.hssf.eventusermodel.HSSFEventFactory;
-import org.apache.poi.hssf.eventusermodel.HSSFListener;
-
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
-import org.apache.poi.hssf.eventusermodel.HSSFRequest;
+import junit.framework.TestCase;
+
 import org.apache.poi.hssf.eventusermodel.dummyrecord.LastCellOfRowDummyRecord;
 import org.apache.poi.hssf.eventusermodel.dummyrecord.MissingCellDummyRecord;
 import org.apache.poi.hssf.eventusermodel.dummyrecord.MissingRowDummyRecord;
@@ -31,31 +31,33 @@ import org.apache.poi.hssf.record.LabelSSTRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RowRecord;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-
-import junit.framework.TestCase;
-
-public class TestMissingRecordAwareHSSFListener extends TestCase {
-	private String dirname;
+/**
+ * Tests for MissingRecordAwareHSSFListener
+ */
+public final class TestMissingRecordAwareHSSFListener extends TestCase {
 	
-	public TestMissingRecordAwareHSSFListener() {
-		dirname = System.getProperty("HSSF.testdata.path");
-	}
-	
-	public void testMissingRowRecords() throws Exception {
+	private Record[] r;
+
+	public void setUp() {
+		String dirname = System.getProperty("HSSF.testdata.path");
 		File f = new File(dirname + "/MissingBits.xls");
-		
+
 		HSSFRequest req = new HSSFRequest();
 		MockHSSFListener mockListen = new MockHSSFListener();
 		MissingRecordAwareHSSFListener listener = new MissingRecordAwareHSSFListener(mockListen);
 		req.addListenerForAllRecords(listener);
 		
-		POIFSFileSystem fs = new POIFSFileSystem(new FileInputStream(f));
 		HSSFEventFactory factory = new HSSFEventFactory();
-		factory.processWorkbookEvents(req, fs);
-		
-		// Check we got the dummy records
-		Record[] r = (Record[])
-			mockListen.records.toArray(new Record[mockListen.records.size()]);
+		try {
+			POIFSFileSystem fs = new POIFSFileSystem(new FileInputStream(f));
+			factory.processWorkbookEvents(req, fs);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		r = mockListen.getRecords();
+	} 
+	
+	public void testMissingRowRecords() throws Exception {
 		
 		// We have rows 0, 1, 2, 20 and 21
 		int row0 = -1;
@@ -105,20 +107,6 @@ public class TestMissingRecordAwareHSSFListener extends TestCase {
 	}
 	
 	public void testEndOfRowRecords() throws Exception {
-		File f = new File(dirname + "/MissingBits.xls");
-		
-		HSSFRequest req = new HSSFRequest();
-		MockHSSFListener mockListen = new MockHSSFListener();
-		MissingRecordAwareHSSFListener listener = new MissingRecordAwareHSSFListener(mockListen);
-		req.addListenerForAllRecords(listener);
-		
-		POIFSFileSystem fs = new POIFSFileSystem(new FileInputStream(f));
-		HSSFEventFactory factory = new HSSFEventFactory();
-		factory.processWorkbookEvents(req, fs);
-		
-		// Check we got the dummy records
-		Record[] r = (Record[])
-			mockListen.records.toArray(new Record[mockListen.records.size()]);
 		
 		// Find the cell at 0,0
 		int cell00 = -1;
@@ -240,20 +228,6 @@ public class TestMissingRecordAwareHSSFListener extends TestCase {
 	
 	
 	public void testMissingCellRecords() throws Exception {
-		File f = new File(dirname + "/MissingBits.xls");
-		
-		HSSFRequest req = new HSSFRequest();
-		MockHSSFListener mockListen = new MockHSSFListener();
-		MissingRecordAwareHSSFListener listener = new MissingRecordAwareHSSFListener(mockListen);
-		req.addListenerForAllRecords(listener);
-		
-		POIFSFileSystem fs = new POIFSFileSystem(new FileInputStream(f));
-		HSSFEventFactory factory = new HSSFEventFactory();
-		factory.processWorkbookEvents(req, fs);
-		
-		// Check we got the dummy records
-		Record[] r = (Record[])
-			mockListen.records.toArray(new Record[mockListen.records.size()]);
 		
 		// Find the cell at 0,0
 		int cell00 = -1;
@@ -352,25 +326,35 @@ public class TestMissingRecordAwareHSSFListener extends TestCase {
 		assertEquals(10, mc.getColumn());
 	}
 
-	private static class MockHSSFListener implements HSSFListener {
-		private MockHSSFListener() {}
-		private ArrayList records = new ArrayList();
+	private static final class MockHSSFListener implements HSSFListener {
+		public MockHSSFListener() {}
+		private final List _records = new ArrayList();
 
 		public void processRecord(Record record) {
-			records.add(record);
+			_records.add(record);
 			
 			if(record instanceof MissingRowDummyRecord) {
 				MissingRowDummyRecord mr = (MissingRowDummyRecord)record;
-				System.out.println("Got dummy row " + mr.getRowNumber());
+				log("Got dummy row " + mr.getRowNumber());
 			}
 			if(record instanceof MissingCellDummyRecord) {
 				MissingCellDummyRecord mc = (MissingCellDummyRecord)record;
-				System.out.println("Got dummy cell " + mc.getRow() + " " + mc.getColumn());
+				log("Got dummy cell " + mc.getRow() + " " + mc.getColumn());
 			}
 			if(record instanceof LastCellOfRowDummyRecord) {
 				LastCellOfRowDummyRecord lc = (LastCellOfRowDummyRecord)record;
-				System.out.println("Got end-of row, row was " + lc.getRow() + ", last column was " + lc.getLastColumnNumber());
+				log("Got end-of row, row was " + lc.getRow() + ", last column was " + lc.getLastColumnNumber());
 			}
+		}
+		private static void log(String msg) {
+			if(false) { // successful tests should be quiet
+				System.out.println(msg);
+			}
+		}
+		public Record[] getRecords() {
+			Record[] result = new Record[_records.size()];
+			_records.toArray(result);
+			return result;
 		}
 	}
 }

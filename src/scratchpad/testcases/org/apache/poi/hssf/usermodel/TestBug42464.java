@@ -21,14 +21,14 @@ import java.io.FileInputStream;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.poi.hssf.record.FormulaRecord;
-import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
-import org.apache.poi.hssf.record.formula.ExpPtg;
-import org.apache.poi.hssf.util.CellReference;
-
 import junit.framework.TestCase;
 
-public class TestBug42464 extends TestCase {
+import org.apache.poi.hssf.record.FormulaRecord;
+import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
+import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator.CellValue;
+import org.apache.poi.hssf.util.CellReference;
+
+public final class TestBug42464 extends TestCase {
 	String dirname;
 
 	protected void setUp() throws Exception {
@@ -68,26 +68,27 @@ public class TestBug42464 extends TestCase {
 		Iterator it = row.cellIterator();
 		while(it.hasNext()) {
 			HSSFCell cell = (HSSFCell)it.next();
-			if(cell.getCellType() == HSSFCell.CELL_TYPE_FORMULA) {
-				FormulaRecordAggregate record = (FormulaRecordAggregate)
-					cell.getCellValueRecord();
-				FormulaRecord r = record.getFormulaRecord();
-				List ptgs = r.getParsedExpression();
-				
-				String cellRef = (new CellReference(row.getRowNum(), cell.getCellNum())).toString();
-				if(cellRef.equals("BP24")) {
-					System.out.print(cellRef);
-					System.out.println(" - has " + r.getNumberOfExpressionTokens() + " ptgs over " + r.getExpressionLength()  + " tokens:");
-					for(int i=0; i<ptgs.size(); i++) {
-						String c = ptgs.get(i).getClass().toString();
-						System.out.println("\t" + c.substring(c.lastIndexOf('.')+1) );
-					}
-					System.out.println("-> " + cell.getCellFormula());
-				}
-				
-				eval.evaluate(cell);
-				
+			if(cell.getCellType() != HSSFCell.CELL_TYPE_FORMULA) {
+			    continue;
 			}
+			FormulaRecordAggregate record = (FormulaRecordAggregate) cell.getCellValueRecord();
+			FormulaRecord r = record.getFormulaRecord();
+			List ptgs = r.getParsedExpression();
+			
+			String cellRef = new CellReference(row.getRowNum(), cell.getCellNum(), false, false).formatAsString();
+			if(false && cellRef.equals("BP24")) { // TODO - replace System.out.println()s with asserts
+				System.out.print(cellRef);
+				System.out.println(" - has " + r.getNumberOfExpressionTokens() 
+				        + " ptgs over " + r.getExpressionLength()  + " tokens:");
+				for(int i=0; i<ptgs.size(); i++) {
+					String c = ptgs.get(i).getClass().toString();
+					System.out.println("\t" + c.substring(c.lastIndexOf('.')+1) );
+				}
+				System.out.println("-> " + cell.getCellFormula());
+			}
+			
+			CellValue evalResult = eval.evaluate(cell);
+			assertNotNull(evalResult);
 		}
 	}
 }

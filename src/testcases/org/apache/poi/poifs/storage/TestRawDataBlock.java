@@ -22,6 +22,9 @@ package org.apache.poi.poifs.storage;
 import java.io.*;
 import java.util.Random;
 
+import org.apache.poi.util.DummyPOILogger;
+import org.apache.poi.util.POILogFactory;
+
 import junit.framework.*;
 
 /**
@@ -43,6 +46,13 @@ public class TestRawDataBlock
     public TestRawDataBlock(String name)
     {
         super(name);
+        
+        // We always want to use our own
+        //  logger
+        System.setProperty(
+        		"org.apache.poi.util.POILogger",
+        		"org.apache.poi.util.DummyPOILogger"
+        );
     }
 
     /**
@@ -99,11 +109,19 @@ public class TestRawDataBlock
 
     /**
      * Test creating a short RawDataBlock
+     * Will trigger a warning, but no longer an IOException,
+     *  as people seem to have "valid" truncated files
      */
-
-    public void testShortConstructor()
+    public void testShortConstructor() throws Exception
     {
-        for (int k = 1; k < 512; k++)
+        // Get the logger to be used
+        DummyPOILogger logger = (DummyPOILogger)POILogFactory.getLogger(
+        		RawDataBlock.class
+        );
+        assertEquals(0, logger.logged.size());
+        
+        // Test for various data sizes
+        for (int k = 1; k <= 512; k++)
         {
             byte[] data = new byte[ k ];
 
@@ -112,16 +130,33 @@ public class TestRawDataBlock
                 data[ j ] = ( byte ) j;
             }
             RawDataBlock block = null;
-
-            try
-            {
-                block = new RawDataBlock(new ByteArrayInputStream(data));
-                fail("Should have thrown IOException creating short block");
-            }
-            catch (IOException ignored)
-            {
-
-                // as expected
+            
+            logger.reset();
+            assertEquals(0, logger.logged.size());
+            
+            // Have it created
+            block = new RawDataBlock(new ByteArrayInputStream(data));
+            assertNotNull(block);
+            
+            // Check for the warning is there for <512
+            if(k < 512) {
+	            assertEquals(
+	            		"Warning on " + k + " byte short block",
+	            		1, logger.logged.size()
+	            );
+	
+	            // Build the expected warning message, and check
+	            String bts = k + " byte";
+	            if(k > 1) {
+	            	bts += "s";
+	            }
+	            
+	            assertEquals(
+	            		"7 - Unable to read entire block; "+bts+" read before EOF; expected 512 bytes. Your document has probably been truncated!", 
+	            		(String)(logger.logged.get(0))
+	            );
+            } else {
+            	assertEquals(0, logger.logged.size());
             }
         }
     }
@@ -132,6 +167,13 @@ public class TestRawDataBlock
      *  incorrectly think that there's not enough data
      */
     public void testSlowInputStream() throws Exception {
+        // Get the logger to be used
+        DummyPOILogger logger = (DummyPOILogger)POILogFactory.getLogger(
+        		RawDataBlock.class
+        );
+        assertEquals(0, logger.logged.size());
+        
+        // Test for various ok data sizes
         for (int k = 1; k < 512; k++) {
             byte[] data = new byte[ 512 ];
             for (int j = 0; j < data.length; j++) {
@@ -153,14 +195,17 @@ public class TestRawDataBlock
                 data[j] = (byte) j;
             }
             
-            // Shouldn't complain, as there is enough data
-            try {
-	            RawDataBlock block = 
-	            	new RawDataBlock(new SlowInputStream(data, k));
-	            fail();
-            } catch(IOException e) {
-            	// as expected
-            }
+            logger.reset();
+            assertEquals(0, logger.logged.size());
+            
+            // Should complain, as there isn't enough data
+            RawDataBlock block = 
+            	new RawDataBlock(new SlowInputStream(data, k));
+            assertNotNull(block);
+            assertEquals(
+            		"Warning on " + k + " byte short block",
+            		1, logger.logged.size()
+            );
         }
     }
     

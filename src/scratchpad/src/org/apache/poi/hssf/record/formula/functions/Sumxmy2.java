@@ -14,50 +14,23 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-/*
- * Created on May 15, 2005
- *
- */
+
 package org.apache.poi.hssf.record.formula.functions;
 
-import org.apache.poi.hssf.record.formula.eval.ErrorEval;
-import org.apache.poi.hssf.record.formula.eval.Eval;
-import org.apache.poi.hssf.record.formula.eval.NumberEval;
-import org.apache.poi.hssf.record.formula.eval.ValueEval;
-
 /**
+ * Implementation of Excel function SUMXMY2()<p/>
+ * 
+ * Calculates the sum of squares of differences between two arrays of the same size.<br/>
+ * <b>Syntax</b>:<br/>
+ * <b>SUMXMY2</b>(<b>arrayX</b>, <b>arrayY</b>)<p/>
+ * 
+ * result = &Sigma;<sub>i: 0..n</sub>(x<sub>i</sub>-y<sub>i</sub>)<sup>2</sup>
+ * 
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt; 
- *
  */
-public class Sumxmy2 extends XYNumericFunction {
+public final class Sumxmy2 extends XYNumericFunction {
 
-    
-    public Eval evaluate(Eval[] operands, int srcCellRow, short srcCellCol) {
-        ValueEval retval = null;
-        double[][] values = null;
-        
-        int checkLen = 0; // check to see that all array lengths are equal
-        switch (operands.length) {
-        default:
-            retval = ErrorEval.VALUE_INVALID;
-            break;
-        case 2:
-            values = getValues(operands, srcCellRow, srcCellCol);
-            if (values==null 
-                    || values[X] == null || values[Y] == null
-                    || values[X].length == 0 || values[Y].length == 0
-                    || values[X].length != values[Y].length) {
-                retval = ErrorEval.VALUE_INVALID;
-            }
-        }
-        
-        if (retval == null) {
-            double d = MathX.sumxmy2(values[X], values[Y]);
-            retval = (Double.isNaN(d) || Double.isInfinite(d))
-                    ? (ValueEval) ErrorEval.NUM_ERROR
-                    : new NumberEval(d);
-        }
-        
-        return retval;
+    protected double evaluate(double[] xArray, double[] yArray) {
+    	return MathX.sumxmy2(xArray, yArray);
     }
 }

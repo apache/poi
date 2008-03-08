@@ -21,6 +21,9 @@ package org.apache.poi.poifs.storage;
 
 import java.io.*;
 
+import org.apache.poi.util.DummyPOILogger;
+import org.apache.poi.util.POILogFactory;
+
 import junit.framework.*;
 
 /**
@@ -42,6 +45,13 @@ public class TestRawDataBlockList
     public TestRawDataBlockList(String name)
     {
         super(name);
+        
+        // We always want to use our own
+        //  logger
+        System.setProperty(
+        		"org.apache.poi.util.POILogger",
+        		"org.apache.poi.util.DummyPOILogger"
+        );
     }
 
     /**
@@ -78,8 +88,15 @@ public class TestRawDataBlockList
      * Test creating a short RawDataBlockList
      */
 
-    public void testShortConstructor()
+    public void testShortConstructor() throws Exception
     {
+        // Get the logger to be used
+        DummyPOILogger logger = (DummyPOILogger)POILogFactory.getLogger(
+        		RawDataBlock.class
+        );
+        assertEquals(0, logger.logged.size());
+        
+        // Test for various short sizes
         for (int k = 2049; k < 2560; k++)
         {
             byte[] data = new byte[ k ];
@@ -88,16 +105,11 @@ public class TestRawDataBlockList
             {
                 data[ j ] = ( byte ) j;
             }
-            try
-            {
-                new RawDataBlockList(new ByteArrayInputStream(data));
-                fail("Should have thrown IOException creating short block");
-            }
-            catch (IOException ignored)
-            {
 
-                // as expected
-            }
+            // Check we logged the error
+            logger.reset();
+            new RawDataBlockList(new ByteArrayInputStream(data));
+            assertEquals(1, logger.logged.size());
         }
     }
 

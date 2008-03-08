@@ -180,10 +180,7 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
             throws IOException
     {
         this.preserveNodes = preserveNodes;
-
-        // Read in the HPSF properties
         this.filesystem = fs;
-        readProperties();
         
         // If we're not preserving nodes, don't track the
         //  POIFS any more
@@ -1134,12 +1131,12 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
 	public void setPrintArea(int sheetIndex, int startColumn, int endColumn,
 							  int startRow, int endRow) {
 
-		//using absolute references because they dont get copied and pasted anyway
+		//using absolute references because they don't get copied and pasted anyway
 		CellReference cell = new CellReference(startRow, startColumn, true, true);
-		String reference = cell.toString();
+		String reference = cell.formatAsString();
 
 		cell = new CellReference(endRow, endColumn, true, true);
-		reference = reference+":"+cell.toString();
+		reference = reference+":"+cell.formatAsString();
 
 		setPrintArea(sheetIndex, reference);
 	}
@@ -1397,6 +1394,13 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
         }
     }
 
+    /**
+     * Is the workbook protected with a password (not encrypted)?
+     */
+    public boolean isWriteProtected() {
+    	return this.workbook.isWriteProtected();
+    }
+    
     /**
      * protect a workbook with a password (not encypted, just sets writeprotect
      * flags and the password.

@@ -29,15 +29,25 @@ import junit.framework.TestCase;
  *
  * @author Andrew C. Oliver (acoliver at apache dot org)
  */
-public class TestSupBookRecord
-        extends TestCase
-{
+public final class TestSupBookRecord extends TestCase {
     /**
      * This contains a fake data section of a SubBookRecord
      */
-    byte[] data = new byte[] {
-        (byte)0x04,(byte)0x00,(byte)0x01,(byte)0x04
+    byte[] dataIR = new byte[] {
+        (byte)0x04,(byte)0x00,(byte)0x01,(byte)0x04,
     };
+    byte[] dataAIF = new byte[] {
+        (byte)0x01,(byte)0x00,(byte)0x01,(byte)0x3A,
+    };
+    byte[] dataER = new byte[] {
+        (byte)0x02,(byte)0x00,
+        (byte)0x07,(byte)0x00,   (byte)0x00,   
+                (byte)'t', (byte)'e', (byte)'s', (byte)'t', (byte)'U', (byte)'R', (byte)'L',  
+        (byte)0x06,(byte)0x00,   (byte)0x00,   
+                (byte)'S', (byte)'h', (byte)'e', (byte)'e', (byte)'t', (byte)'1', 
+        (byte)0x06,(byte)0x00,   (byte)0x00,   
+                (byte)'S', (byte)'h', (byte)'e', (byte)'e', (byte)'t', (byte)'2', 
+   };
 
     public TestSupBookRecord(String name)
     {
@@ -47,36 +57,67 @@ public class TestSupBookRecord
     /**
      * tests that we can load the record
      */
-    public void testLoad()
-            throws Exception
-    {
+    public void testLoadIR() {
 
-        SupBookRecord record = new SupBookRecord(new TestcaseRecordInputStream((short)0x01AE, (short)data.length, data));      
-        assertEquals( 0x401, record.getFlag());             //expected flag
+        SupBookRecord record = new SupBookRecord(new TestcaseRecordInputStream((short)0x01AE, dataIR));      
+        assertTrue( record.isInternalReferences() );             //expected flag
         assertEquals( 0x4, record.getNumberOfSheets() );    //expected # of sheets
 
         assertEquals( 8, record.getRecordSize() );  //sid+size+data
 
         record.validateSid((short)0x01AE);
     }
+    /**
+     * tests that we can load the record
+     */
+    public void testLoadER() {
+
+        SupBookRecord record = new SupBookRecord(new TestcaseRecordInputStream((short)0x01AE, dataER));      
+        assertTrue( record.isExternalReferences() );             //expected flag
+        assertEquals( 0x2, record.getNumberOfSheets() );    //expected # of sheets
+
+        assertEquals( 34, record.getRecordSize() );  //sid+size+data
+        
+        assertEquals("testURL", record.getURL().getString());
+        UnicodeString[] sheetNames = record.getSheetNames();
+        assertEquals(2, sheetNames.length);
+        assertEquals("Sheet1", sheetNames[0].getString());
+        assertEquals("Sheet2", sheetNames[1].getString());
+
+        record.validateSid((short)0x01AE);
+    }
     
-    
+    /**
+     * tests that we can load the record
+     */
+    public void testLoadAIF() {
+
+        SupBookRecord record = new SupBookRecord(new TestcaseRecordInputStream((short)0x01AE, dataAIF));      
+        assertTrue( record.isAddInFunctions() );             //expected flag
+        assertEquals( 0x1, record.getNumberOfSheets() );    //expected # of sheets
+        assertEquals( 8, record.getRecordSize() );  //sid+size+data
+        record.validateSid((short)0x01AE);
+    }
+   
     /**
      * Tests that we can store the record
      *
      */
-    public void testStore()
-    {
-        SupBookRecord record = new SupBookRecord();
-        record.setFlag( (short) 0x401 );
-        record.setNumberOfSheets( (short)0x4 );
-        
+    public void testStoreIR() {
+        SupBookRecord record = SupBookRecord.createInternalReferences((short)4);
 
+        TestcaseRecordInputStream.confirmRecordEncoding(0x01AE, dataIR, record.serialize());
+    }   
+    
+    public void testStoreER() {
+        UnicodeString url = new UnicodeString("testURL");
+        UnicodeString[] sheetNames = {
+                new UnicodeString("Sheet1"),
+                new UnicodeString("Sheet2"),
+        };
+        SupBookRecord record = SupBookRecord.createExternalReferences(url, sheetNames);
 
-        byte [] recordBytes = record.serialize();
-        assertEquals(recordBytes.length - 4, data.length);
-        for (int i = 0; i < data.length; i++)
-            assertEquals("At offset " + i, data[i], recordBytes[i+4]);
+        TestcaseRecordInputStream.confirmRecordEncoding(0x01AE, dataER, record.serialize());
     }    
     
     public static void main(String [] args) {
@@ -84,6 +125,4 @@ public class TestSupBookRecord
         .println("Testing org.apache.poi.hssf.record.SupBookRecord");
         junit.textui.TestRunner.run(TestSupBookRecord.class);
     }
-    
-
 }

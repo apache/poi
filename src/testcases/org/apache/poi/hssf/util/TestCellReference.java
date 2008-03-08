@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -22,87 +21,74 @@ package org.apache.poi.hssf.util;
 import junit.framework.TestCase;
 
 
-public class TestCellReference extends TestCase {
-    public TestCellReference(String s) {
-        super(s);
-    }
+public final class TestCellReference extends TestCase {
     
     public void testAbsRef1(){
         CellReference cf = new CellReference("$B$5");
-        assertTrue("row is 4",cf.getRow()==4);
-        assertTrue("col is 1",cf.getCol()==1);
-        assertTrue("row is abs",cf.isRowAbsolute());
-        assertTrue("col is abs",cf.isColAbsolute());
-        assertTrue("string is $B$5",cf.toString().equals("$B$5"));
+        confirmCell(cf, null, 4, 1, true, true, "$B$5");
     }
     
     public void  testAbsRef2(){
         CellReference cf = new CellReference(4,1,true,true);
-        assertTrue("row is 4",cf.getRow()==4);
-        assertTrue("col is 1",cf.getCol()==1);
-        assertTrue("row is abs",cf.isRowAbsolute());
-        assertTrue("col is abs",cf.isColAbsolute());
-        assertTrue("string is $B$5",cf.toString().equals("$B$5"));
+        confirmCell(cf, null, 4, 1, true, true, "$B$5");
     }
 
     public void  testAbsRef3(){
         CellReference cf = new CellReference("B$5");
-        assertTrue("row is 4",cf.getRow()==4);
-        assertTrue("col is 1",cf.getCol()==1);
-        assertTrue("row is abs",cf.isRowAbsolute());
-        assertTrue("col is rel",!cf.isColAbsolute());
-        assertTrue("string is B$5",cf.toString().equals("B$5"));
+        confirmCell(cf, null, 4, 1, true, false, "B$5");
     }
     
     public void  testAbsRef4(){
         CellReference cf = new CellReference(4,1,true,false);
-        assertTrue("row is 4",cf.getRow()==4);
-        assertTrue("col is 1",cf.getCol()==1);
-        assertTrue("row is abs",cf.isRowAbsolute());
-        assertTrue("col is rel",!cf.isColAbsolute());
-        assertTrue("string is B$5",cf.toString().equals("B$5"));
+        confirmCell(cf, null, 4, 1, true, false, "B$5");
     }
     
     public void  testAbsRef5(){
         CellReference cf = new CellReference("$B5");
-        assertTrue("row is 4",cf.getRow()==4);
-        assertTrue("col is 1",cf.getCol()==1);
-        assertTrue("row is abs",!cf.isRowAbsolute());
-        assertTrue("col is rel",cf.isColAbsolute());
-        assertTrue("string is B$5",cf.toString().equals("$B5"));
+        confirmCell(cf, null, 4, 1, false, true, "$B5");
     }
     
     public void  testAbsRef6(){
         CellReference cf = new CellReference(4,1,false,true);
-        assertTrue("row is 4",cf.getRow()==4);
-        assertTrue("col is 1",cf.getCol()==1);
-        assertTrue("row is abs",!cf.isRowAbsolute());
-        assertTrue("col is rel",cf.isColAbsolute());
-        assertTrue("string is B$5",cf.toString().equals("$B5"));
+        confirmCell(cf, null, 4, 1, false, true, "$B5");
     }
 
     public void  testAbsRef7(){
         CellReference cf = new CellReference("B5");
-        assertTrue("row is 4",cf.getRow()==4);
-        assertTrue("col is 1",cf.getCol()==1);
-        assertTrue("row is abs",!cf.isRowAbsolute());
-        assertTrue("col is rel",!cf.isColAbsolute());
-        assertTrue("string is B$5",cf.toString().equals("B5"));
+        confirmCell(cf, null, 4, 1, false, false, "B5");
     }
     
     public void  testAbsRef8(){
         CellReference cf = new CellReference(4,1,false,false);
-        assertTrue("row is 4",cf.getRow()==4);
-        assertTrue("col is 1",cf.getCol()==1);
-        assertTrue("row is abs",!cf.isRowAbsolute());
-        assertTrue("col is rel",!cf.isColAbsolute());
-        assertTrue("string is B$5",cf.toString().equals("B5"));
+        confirmCell(cf, null, 4, 1, false, false, "B5");
+    }
+    
+    public void testSpecialSheetNames() {
+        CellReference cf;
+        cf = new CellReference("'profit + loss'!A1");
+        confirmCell(cf, "profit + loss", 0, 0, false, false, "'profit + loss'!A1");
+        
+        cf = new CellReference("'O''Brien''s Sales'!A1");
+        confirmCell(cf, "O'Brien's Sales", 0, 0, false, false, "'O''Brien''s Sales'!A1");
+        
+        cf = new CellReference("'Amazing!'!A1");
+        confirmCell(cf, "Amazing!", 0, 0, false, false, "'Amazing!'!A1");
     }
 
     
+    /* package */ static void confirmCell(CellReference cf, String expSheetName, int expRow, 
+            int expCol, boolean expIsRowAbs, boolean expIsColAbs, String expText) {
+        
+        assertEquals(expSheetName, cf.getSheetName());
+        assertEquals("row index is wrong", expRow, cf.getRow());
+        assertEquals("col index is wrong", expCol, cf.getCol());
+        assertEquals("isRowAbsolute is wrong", expIsRowAbs, cf.isRowAbsolute());
+        assertEquals("isColAbsolute is wrong", expIsColAbs, cf.isColAbsolute());
+        assertEquals("text is wrong", expText, cf.formatAsString());
+    }
+
     public static void main(String [] args) {
         System.out.println("Testing org.apache.poi.hssf.util.TestCellReference");
         junit.textui.TestRunner.run(TestCellReference.class);
     }
-    
 }

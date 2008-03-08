@@ -456,7 +456,7 @@ public class HSSFCell implements Cell
                 boolRec.setColumn(col);
                 if (setValue)
                 {
-                    boolRec.setValue(getBooleanCellValue());
+                    boolRec.setValue(convertCellValueToBoolean());
                 }
                 boolRec.setXFIndex(styleIndex);
                 boolRec.setRow(row);
@@ -644,7 +644,7 @@ public class HSSFCell implements Cell
             
             //only set to default if there is no extended format index already set
             if (rec.getXFIndex() == (short)0) rec.setXFIndex(( short ) 0x0f);
-            FormulaParser fp = new FormulaParser(formula+";",book);
+            FormulaParser fp = new FormulaParser(formula, book);
             fp.parse();
             Ptg[] ptg  = fp.getRPNPtg();
             int   size = 0;
@@ -829,6 +829,34 @@ public class HSSFCell implements Cell
             setCellType(CELL_TYPE_ERROR, false, row, col, styleIndex);
         }
         (( BoolErrRecord ) record).setValue(value);
+    }
+    /**
+     * Chooses a new boolean value for the cell when its type is changing.<p/>
+     * 
+     * Usually the caller is calling setCellType() with the intention of calling 
+     * setCellValue(boolean) straight afterwards.  This method only exists to give
+     * the cell a somewhat reasonable value until the setCellValue() call (if at all).
+     * TODO - perhaps a method like setCellTypeAndValue(int, Object) should be introduced to avoid this
+     */
+    private boolean convertCellValueToBoolean() {
+        
+        switch (cellType) {
+            case CELL_TYPE_BOOLEAN:
+                return (( BoolErrRecord ) record).getBooleanValue();
+            case CELL_TYPE_STRING:
+                return Boolean.valueOf(((StringRecord)record).getString()).booleanValue();
+            case CELL_TYPE_NUMERIC:
+                return ((NumberRecord)record).getValue() != 0;
+
+            // All other cases convert to false
+            // These choices are not well justified.
+            case CELL_TYPE_FORMULA:  
+                // should really evaluate, but HSSFCell can't call HSSFFormulaEvaluator
+            case CELL_TYPE_ERROR:
+            case CELL_TYPE_BLANK:
+                return false;  
+        }
+        throw new RuntimeException("Unexpected cell type (" + cellType + ")");
     }
 
     /**

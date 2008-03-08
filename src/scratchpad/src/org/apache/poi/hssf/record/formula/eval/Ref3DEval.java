@@ -14,47 +14,40 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-/*
- * Created on May 9, 2005
- *
- */
+
 package org.apache.poi.hssf.record.formula.eval;
 
-import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.record.formula.Ref3DPtg;
 
 /**
  * @author Amol S. Deshmukh
  *  
  */
-public class Ref3DEval implements RefEval {
+public final class Ref3DEval implements RefEval {
 
-    private ValueEval value;
+    private final ValueEval value;
+    private final Ref3DPtg delegate;
 
-    private Ref3DPtg delegate;
-
-    private boolean evaluated;
-
-    public Ref3DEval(Ptg ptg, ValueEval value, boolean evaluated) {
-        this.value = value;
-        this.delegate = (Ref3DPtg) ptg;
-        this.evaluated = evaluated;
+    public Ref3DEval(Ref3DPtg ptg, ValueEval ve) {
+        if(ve == null) {
+            throw new IllegalArgumentException("ve must not be null");
+        }
+        if(ptg == null) {
+            throw new IllegalArgumentException("ptg must not be null");
+        }
+        value = ve;
+        delegate = ptg;
     }
-
     public ValueEval getInnerValueEval() {
         return value;
     }
-
-    public short getRow() {
+    public int getRow() {
         return delegate.getRow();
     }
-
-    public short getColumn() {
+    public int getColumn() {
         return delegate.getColumn();
     }
-    
-    public boolean isEvaluated() {
-        return evaluated;
+    public int getExternSheetIndex() {
+        return delegate.getExternSheetIndex();
     }
-
 }

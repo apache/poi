@@ -29,10 +29,13 @@ import org.apache.poi.hssf.model.Workbook;
  * @author Andrew C. Oliver (acoliver at apache dot org)
  */
 public abstract class AbstractFunctionPtg extends OperationPtg {
-	//constant used allow a ptgAttr to be mapped properly for its functionPtg
-	public static final String ATTR_NAME = "specialflag";
-	    
-    public static final short INDEX_EXTERNAL = 255;
+
+    /**
+     * The name of the IF function (i.e. "IF").  Extracted as a constant for clarity.
+     */ 
+    public static final String FUNCTION_NAME_IF = "IF";
+    /** All external functions have function index 255 */
+    private static final short FUNCTION_INDEX_EXTERNAL = 255;
     
     private static BinaryTree map = produceHash(); 
     protected static Object[][] functionData = produceFunctionData();
@@ -66,6 +69,13 @@ public abstract class AbstractFunctionPtg extends OperationPtg {
     public String getName() {
         return lookupName(field_2_fnc_index);
     }
+    /**
+     * external functions get some special processing
+     * @return <code>true</code> if this is an external function
+     */
+    public boolean isExternalFunction() {
+        return field_2_fnc_index == FUNCTION_INDEX_EXTERNAL;
+    }
     
     public String toFormulaString(Workbook book) {
         return getName();
@@ -73,39 +83,57 @@ public abstract class AbstractFunctionPtg extends OperationPtg {
     
     public String toFormulaString(String[] operands) {
         StringBuffer buf = new StringBuffer();        
-          
-          if (field_2_fnc_index != 1) {
-              buf.append(getName());
-              buf.append('(');
-          }
-          if (operands.length >0) {
-              for (int i=0;i<operands.length;i++) {
-                  buf.append(operands[i]);
-                  buf.append(',');
-              }
-              buf.deleteCharAt(buf.length()-1);
-          }
-          if (field_2_fnc_index != 1) {
-            buf.append(")");
-          }
+        
+        if(isExternalFunction()) {
+            buf.append(operands[0]); // first operand is actually the function name
+            appendArgs(buf, 1, operands);
+        } else {
+            buf.append(getName());
+            appendArgs(buf, 0, operands);
+        }
         return buf.toString();
+    }
+
+    private static void appendArgs(StringBuffer buf, int firstArgIx, String[] operands) {
+        buf.append('(');
+        for (int i=firstArgIx;i<operands.length;i++) {
+            if (i>firstArgIx) {
+                buf.append(',');
+            }
+            buf.append(operands[i]);
+        }
+        buf.append(")");
     }
     
     public abstract void writeBytes(byte[] array, int offset);
     public abstract int getSize();
     
    
-    
-
+    /**
+     * Used to detect whether a function name found in a formula is one of the standard excel functions
+     * <p>
+     * The name matching is case insensitive.
+     * @return <code>true</code> if the name specifies a standard worksheet function, 
+     *  <code>false</code> if the name should be assumed to be an external function.
+     */
+    public static final boolean isInternalFunctionName(String name) {
+        return map.containsValue(name.toUpperCase());
+    }
     
     protected String lookupName(short index) {
         return ((String)map.get(new Integer(index))); 
     }
     
-    protected short lookupIndex(String name) {
-        Integer index = (Integer) map.getKeyForValue(name);
+    /**
+     * Resolves internal function names into function indexes.
+     * <p>
+     * The name matching is case insensitive.
+     * @return the standard worksheet function index if found, otherwise <tt>FUNCTION_INDEX_EXTERNAL</tt>
+     */
+    protected static short lookupIndex(String name) {
+        Integer index = (Integer) map.getKeyForValue(name.toUpperCase());
         if (index != null) return index.shortValue();
-        return INDEX_EXTERNAL;
+        return FUNCTION_INDEX_EXTERNAL;
     }
     
     /**
@@ -115,7 +143,7 @@ public abstract class AbstractFunctionPtg extends OperationPtg {
         BinaryTree dmap = new BinaryTree();
 
         dmap.put(new Integer(0),"COUNT");
-        dmap.put(new Integer(1),"specialflag");
+        dmap.put(new Integer(1),FUNCTION_NAME_IF);
         dmap.put(new Integer(2),"ISNA");
         dmap.put(new Integer(3),"ISERROR");
         dmap.put(new Integer(4),"SUM");
@@ -354,7 +382,7 @@ public abstract class AbstractFunctionPtg extends OperationPtg {
         dmap.put(new Integer(252),"FREQUENCY");
         dmap.put(new Integer(253),"ADDTOOLBAR");
         dmap.put(new Integer(254),"DELETETOOLBAR");
-        dmap.put(new Integer(255),"externalflag");
+        dmap.put(new Integer(FUNCTION_INDEX_EXTERNAL),"externalflag");
         dmap.put(new Integer(256),"RESETTOOLBAR");
         dmap.put(new Integer(257),"EVALUATE");
         dmap.put(new Integer(258),"GETTOOLBAR");

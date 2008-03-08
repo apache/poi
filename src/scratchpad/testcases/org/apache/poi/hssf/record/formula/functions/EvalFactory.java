@@ -58,6 +58,6 @@ final class EvalFactory {
 	 * Creates a single RefEval (with value zero)
 	 */
 	public static RefEval createRefEval(String refStr) {
-		return new Ref2DEval(new ReferencePtg(refStr), ZERO, true);
+		return new Ref2DEval(new ReferencePtg(refStr), ZERO);
 	}
 }

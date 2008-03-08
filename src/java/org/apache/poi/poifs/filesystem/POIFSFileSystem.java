@@ -19,6 +19,7 @@
 
 package org.apache.poi.poifs.filesystem;
 
+import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -30,6 +31,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.poi.poifs.dev.POIFSViewable;
 import org.apache.poi.poifs.property.DirectoryProperty;
 import org.apache.poi.poifs.property.Property;
@@ -58,6 +61,33 @@ import org.apache.poi.util.LongField;
 public class POIFSFileSystem
     implements POIFSViewable
 {
+    private static final Log _logger = LogFactory.getLog(POIFSFileSystem.class);
+    
+    
+    private static final class CloseIgnoringInputStream extends InputStream {
+
+        private final InputStream _is;
+        public CloseIgnoringInputStream(InputStream is) {
+            _is = is;
+        }
+        public int read() throws IOException {
+            return _is.read();
+        }
+        public int read(byte[] b, int off, int len) throws IOException {
+            return _is.read(b, off, len);
+        }
+        public void close() {
+            // do nothing
+        }
+    }
+    
+    /**
+     * Convenience method for clients that want to avoid the auto-close behaviour of the constructor.
+     */
+    public static InputStream createNonClosingInputStream(InputStream is) {
+        return new CloseIgnoringInputStream(is);
+    }
+    
     private PropertyTable _property_table;
     private List          _documents;
     private DirectoryNode _root;
@@ -74,23 +104,52 @@ public class POIFSFileSystem
     }
 
     /**
-     * Create a POIFSFileSystem from an InputStream
+     * Create a POIFSFileSystem from an <tt>InputStream</tt>.  Normally the stream is read until
+     * EOF.  The stream is always closed.<p/>
+     * 
+     * Some streams are usable after reaching EOF (typically those that return <code>true</code> 
+     * for <tt>markSupported()</tt>).  In the unlikely case that the caller has such a stream 
+     * <i>and</i> needs to use it after this constructor completes, a work around is to wrap the
+     * stream in order to trap the <tt>close()</tt> call.  A convenience method (
+     * <tt>createNonClosingInputStream()</tt>) has been provided for this purpose:
+     * <pre>
+     * InputStream wrappedStream = POIFSFileSystem.createNonClosingInputStream(is);
+     * HSSFWorkbook wb = new HSSFWorkbook(wrappedStream);
+     * is.reset(); 
+     * doSomethingElse(is); 
+     * </pre>
+     * Note also the special case of <tt>ByteArrayInputStream</tt> for which the <tt>close()</tt>
+     * method does nothing. 
+     * <pre>
+     * ByteArrayInputStream bais = ...
+     * HSSFWorkbook wb = new HSSFWorkbook(bais); // calls bais.close() !
+     * bais.reset(); // no problem
+     * doSomethingElse(bais);
+     * </pre>
      *
      * @param stream the InputStream from which to read the data
      *
      * @exception IOException on errors reading, or on invalid data
      */
 
-    public POIFSFileSystem(final InputStream stream)
+    public POIFSFileSystem(InputStream stream)
         throws IOException
     {
         this();
+        boolean success = false;
 
         // read the header block from the stream
-        HeaderBlockReader header_block_reader = new HeaderBlockReader(stream);
-
+        HeaderBlockReader header_block_reader;
         // read the rest of the stream into blocks
-        RawDataBlockList  data_blocks         = new RawDataBlockList(stream);
+        RawDataBlockList data_blocks;
+        try {
+            header_block_reader = new HeaderBlockReader(stream);
+            data_blocks = new RawDataBlockList(stream);
+            success = true;
+        } finally {
+            closeInputStream(stream, success);
+        }
+        
 
         // set up the block allocation table (necessary for the
         // data_blocks to be manageable
@@ -112,7 +171,32 @@ public class POIFSFileSystem
                     .getSBATStart()), data_blocks, properties.getRoot()
                         .getChildren(), null);
     }
-    
+    /**
+     * @param stream the stream to be closed
+     * @param success <code>false</code> if an exception is currently being thrown in the calling method
+     */
+    private void closeInputStream(InputStream stream, boolean success) {
+        
+        if(stream.markSupported() && !(stream instanceof ByteArrayInputStream)) {
+            String msg = "POIFS is closing the supplied input stream of type (" 
+                    + stream.getClass().getName() + ") which supports mark/reset.  "
+                    + "This will be a problem for the caller if the stream will still be used.  "
+                    + "If that is the case the caller should wrap the input stream to avoid this close logic.  "
+                    + "This warning is only temporary and will not be present in future versions of POI.";
+            _logger.warn(msg);
+        }
+        try {
+            stream.close();
+        } catch (IOException e) {
+            if(success) {
+                throw new RuntimeException(e);
+            }
+            // else not success? Try block did not complete normally 
+            // just print stack trace and leave original ex to be thrown
+            e.printStackTrace();
+        }
+    }
+
     /**
      * Checks that the supplied InputStream (which MUST
      *  support mark and reset, or be a PushbackInputStream) 
@@ -123,23 +207,23 @@ public class POIFSFileSystem
      * @param inp An InputStream which supports either mark/reset, or is a PushbackInputStream 
      */
     public static boolean hasPOIFSHeader(InputStream inp) throws IOException {
-    	// We want to peek at the first 8 bytes 
-    	inp.mark(8);
+        // We want to peek at the first 8 bytes 
+        inp.mark(8);
 
-    	byte[] header = new byte[8];
-    	IOUtils.readFully(inp, header);
+        byte[] header = new byte[8];
+        IOUtils.readFully(inp, header);
         LongField signature = new LongField(HeaderBlockConstants._signature_offset, header);
 
         // Wind back those 8 bytes
         if(inp instanceof PushbackInputStream) {
-        	PushbackInputStream pin = (PushbackInputStream)inp;
-        	pin.unread(header);
+            PushbackInputStream pin = (PushbackInputStream)inp;
+            pin.unread(header);
         } else {
-        	inp.reset();
+            inp.reset();
         }
-    	
-    	// Did it match the signature?
-    	return (signature.get() == HeaderBlockConstants._signature);
+        
+        // Did it match the signature?
+        return (signature.get() == HeaderBlockConstants._signature);
     }
 
     /**

@@ -245,6 +245,16 @@ public class LittleEndian
         putNumber(data, offset, value, SHORT_SIZE);
     }
 
+    /**
+     * executes:<p/>
+     * <code>
+     * data[offset] = (byte)value;
+     * </code></p>
+     * Added for consistency with other put~() methods
+     */
+    public static void putByte(byte[] data, int offset, int value) {
+        putNumber(data, offset, value, LittleEndianConsts.BYTE_SIZE);
+    }
 
     /**
      *  put a array of shorts into a byte array

@@ -414,7 +414,7 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
 
        //formula fields ( size and data )
        String str_formula = obj_validation.getFirstFormula();
-       FormulaParser fp = new FormulaParser(str_formula+";",book);
+       FormulaParser fp = new FormulaParser(str_formula, book);
        fp.parse();
        Stack ptg_arr = new Stack();
        Ptg[] ptg  = fp.getRPNPtg();
@@ -438,7 +438,7 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
        if ( obj_validation.getSecondFormula() != null )
        {
          str_formula = obj_validation.getSecondFormula();
-         fp = new FormulaParser(str_formula+";",book);
+         fp = new FormulaParser(str_formula, book);
          fp.parse();
          ptg_arr = new Stack();
          ptg  = fp.getRPNPtg();
@@ -642,10 +642,17 @@ public class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet
     }
 
     /**
+     * TODO: Boolean not needed, remove after next release
+     * @deprecated use getVerticallyCenter() instead
+     */
+    public boolean getVerticallyCenter(boolean value) {
+        return getVerticallyCenter();
+    }
+
+    /**
      * Determine whether printed output for this sheet will be vertically centered.
      */
-
-    public boolean getVerticallyCenter(boolean value)
+    public boolean getVerticallyCenter()
     {
         VCenterRecord record =
                 (VCenterRecord) sheet.findFirstRecordBySid(VCenterRecord.sid);

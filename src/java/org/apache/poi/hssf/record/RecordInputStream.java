@@ -267,7 +267,7 @@ public class RecordInputStream extends InputStream
     
   public String readCompressedUnicode(int length) {
     if ((length < 0) || ((remaining() < length) && !isContinueNext())) {
-            throw new IllegalArgumentException("Illegal length");
+            throw new IllegalArgumentException("Illegal length " + length);
     }
 
     StringBuffer buf = new StringBuffer(length);

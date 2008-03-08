@@ -1,4 +1,3 @@
-        
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -28,6 +27,7 @@ import junit.framework.TestCase;
 
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
  * Convenient abstract class to reduce the amount of boilerplate code needed
@@ -35,8 +35,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
  *
  * @author Daniel Noll (daniel at nuix dot com dot au)
  */
-public abstract class AbstractPtgTestCase extends TestCase
-{
+public abstract class AbstractPtgTestCase extends TestCase {
     /** Directory containing the test data. */
     private static String dataDir = System.getProperty("HSSF.testdata.path");
 
@@ -51,16 +50,16 @@ public abstract class AbstractPtgTestCase extends TestCase
             throws IOException {
         File file = new File(dataDir, filename);
         InputStream stream = new BufferedInputStream(new FileInputStream(file));
-        try
-        {
-            return new HSSFWorkbook(stream);
-        }
-        finally
-        {
+        // TODO - temp workaround to keep stdout quiet due to warning msg in POIFS 
+        // When that warning msg is disabled, remove this wrapper and the close() call, 
+        InputStream wrappedStream = POIFSFileSystem.createNonClosingInputStream(stream);
+        try {
+            return new HSSFWorkbook(wrappedStream);
+        } finally {
             stream.close();
         }
     }
-    
+
     /**
      * Creates a new Workbook and adds one sheet with the specified name
      */
@@ -73,5 +72,4 @@ public abstract class AbstractPtgTestCase extends TestCase
 		book.setSheetName(0, sheetName); 
 		return book;
 	}
-    
 }

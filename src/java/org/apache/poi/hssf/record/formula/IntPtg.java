@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -16,12 +15,6 @@
    limitations under the License.
 ==================================================================== */
 
-
-/*
- * IntPtg.java
- *
- * Created on October 29, 2001, 7:37 PM
- */
 package org.apache.poi.hssf.record.formula;
 
 import org.apache.poi.util.LittleEndian;
@@ -29,64 +22,45 @@ import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.RecordInputStream;
 
 /**
- * Integer (unsigned short intger)
+ * Integer (unsigned short integer)
  * Stores an unsigned short value (java int) in a formula
  * @author  Andrew C. Oliver (acoliver at apache dot org)
  * @author Jason Height (jheight at chariot dot net dot au)
  */
+public final class IntPtg extends Ptg {
+    // 16 bit unsigned integer
+    private static final int MIN_VALUE = 0x0000;
+    private static final int MAX_VALUE = 0xFFFF;
+    
+    /**
+     * Excel represents integers 0..65535 with the tInt token. 
+     * @return <code>true</code> if the specified value is within the range of values 
+     * <tt>IntPtg</tt> can represent. 
+     */
+    public static boolean isInRange(int i) {
+        return i>=MIN_VALUE && i <=MAX_VALUE;
+    }
 
-public class IntPtg
-    extends Ptg
-{
     public final static int  SIZE = 3;
     public final static byte sid  = 0x1e;
     private int            field_1_value;
   
-    private IntPtg() {
-      //Required for clone methods
+    public IntPtg(RecordInputStream in) {
+        this(in.readUShort());
     }
 
-    public IntPtg(RecordInputStream in)
-    {
-        setValue(in.readUShort());
-    }
-    
-    
-    // IntPtg should be able to create itself, shouldnt have to call setValue
-    public IntPtg(String formulaToken) {
-        setValue(Integer.parseInt(formulaToken));
-    }
 
-    /**
-     * Sets the wrapped value.
-     * Normally you should call with a positive int.
-     */
-    public void setValue(int value)
-    {
-        if(value < 0 || value > (Short.MAX_VALUE + 1)*2 )
-            throw new IllegalArgumentException("Unsigned short is out of range: " + value);
+    public IntPtg(int value) {
+        if(!isInRange(value)) {
+            throw new IllegalArgumentException("value is out of range: " + value);
+        }
         field_1_value = value;
     }
 
-    /**
-     * Returns the value as a short, which may have
-     *  been wrapped into negative numbers
-     */
-    public int getValue()
-    {
+    public int getValue() {
         return field_1_value;
     }
 
-    /**
-     * Returns the value as an unsigned positive int.
-     */
-    public int getValueAsInt()
-    {
-    	if(field_1_value < 0) {
-    		return (Short.MAX_VALUE + 1)*2 + field_1_value;
-    	}
-        return field_1_value;
-    }
 
     public void writeBytes(byte [] array, int offset)
     {
@@ -94,20 +68,25 @@ public class IntPtg
         LittleEndian.putUShort(array, offset + 1, getValue());
     }
 
-    public int getSize()
-    {
+    public int getSize() {
         return SIZE;
     }
 
-    public String toFormulaString(Workbook book)
-    {
-        return "" + getValue();
+    public String toFormulaString(Workbook book) {
+        return String.valueOf(getValue());
     }
- public byte getDefaultOperandClass() {return Ptg.CLASS_VALUE;}   
+    public byte getDefaultOperandClass() {
+        return Ptg.CLASS_VALUE;
+    }
 
-   public Object clone() {
-     IntPtg ptg = new IntPtg();
-     ptg.field_1_value = field_1_value;
-     return ptg;
-   }
+    public Object clone() {
+     return new IntPtg(field_1_value);
+    }
+    public String toString() {
+        StringBuffer sb = new StringBuffer(64);
+        sb.append(getClass().getName()).append(" [");
+        sb.append(field_1_value);
+        sb.append("]");
+        return sb.toString();
+    }
 }

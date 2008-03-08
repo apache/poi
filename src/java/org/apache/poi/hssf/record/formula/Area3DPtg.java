@@ -17,15 +17,13 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.hssf.util.AreaReference;
-import org.apache.poi.hssf.util.CellReference;
-import org.apache.poi.hssf.util.SheetReferences;
-
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.RecordInputStream;
+import org.apache.poi.hssf.util.AreaReference;
+import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.LittleEndian;
 
 
 /**
@@ -38,15 +36,15 @@ import org.apache.poi.util.BitFieldFactory;
  * @version 1.0-pre
  */
 
-public class Area3DPtg extends Ptg
+public class Area3DPtg extends Ptg implements AreaI
 {
 	public final static byte sid = 0x3b;
 	private final static int SIZE = 11; // 10 + 1 for Ptg
 	private short field_1_index_extern_sheet;
-	private short field_2_first_row;
-	private short field_3_last_row;
-	private short field_4_first_column;
-	private short field_5_last_column;
+	private int field_2_first_row;
+	private int field_3_last_row;
+	private int field_4_first_column;
+	private int field_5_last_column;
 
 	private BitField rowRelative = BitFieldFactory.getInstance( 0x8000 );
 	private BitField colRelative = BitFieldFactory.getInstance( 0x4000 );
@@ -66,10 +64,24 @@ public class Area3DPtg extends Ptg
 	public Area3DPtg(RecordInputStream in)
 	{
 		field_1_index_extern_sheet = in.readShort();
-		field_2_first_row = in.readShort();
-		field_3_last_row = in.readShort();
-		field_4_first_column = in.readShort();
-		field_5_last_column = in.readShort();
+		field_2_first_row = in.readUShort();
+		field_3_last_row = in.readUShort();
+		field_4_first_column = in.readUShort();
+		field_5_last_column = in.readUShort();
+	}
+
+	public Area3DPtg(short firstRow, short lastRow, short firstColumn, short lastColumn,
+			boolean firstRowRelative, boolean lastRowRelative, boolean firstColRelative, boolean lastColRelative,
+			short externalSheetIndex) {
+		  setFirstRow(firstRow);
+		  setLastRow(lastRow);
+		  setFirstColumn(firstColumn);
+		  setLastColumn(lastColumn);
+		  setFirstRowRelative(firstRowRelative);
+		  setLastRowRelative(lastRowRelative);
+		  setFirstColRelative(firstColRelative);
+		  setLastColRelative(lastColRelative);
+		  setExternSheetIndex(externalSheetIndex);
 	}
 
 	public String toString()
@@ -87,7 +99,7 @@ public class Area3DPtg extends Ptg
 		buffer.append( "lastColRowRel = "
 				+ isLastRowRelative() ).append( "\n" );
 		buffer.append( "firstColRel   = " + isFirstColRelative() ).append( "\n" );
-		buffer.append( "lastColRel    = " + isLastColRelative() ).append( "\n" );
+		buffer.append( "lastColRel	= " + isLastColRelative() ).append( "\n" );
 		return buffer.toString();
 	}
 
@@ -95,10 +107,10 @@ public class Area3DPtg extends Ptg
 	{
 		array[0 + offset] = (byte) ( sid + ptgClass );
 		LittleEndian.putShort( array, 1 + offset, getExternSheetIndex() );
-		LittleEndian.putShort( array, 3 + offset, getFirstRow() );
-		LittleEndian.putShort( array, 5 + offset, getLastRow() );
-		LittleEndian.putShort( array, 7 + offset, getFirstColumnRaw() );
-		LittleEndian.putShort( array, 9 + offset, getLastColumnRaw() );
+		LittleEndian.putShort( array, 3 + offset, (short)getFirstRow() );
+		LittleEndian.putShort( array, 5 + offset, (short)getLastRow() );
+		LittleEndian.putShort( array, 7 + offset, (short)getFirstColumnRaw() );
+		LittleEndian.putShort( array, 9 + offset, (short)getLastColumnRaw() );
 	}
 
 	public int getSize()
@@ -116,32 +128,32 @@ public class Area3DPtg extends Ptg
 		field_1_index_extern_sheet = index;
 	}
 
-	public short getFirstRow()
+	public int getFirstRow()
 	{
 		return field_2_first_row;
 	}
 
-	public void setFirstRow( short row )
+	public void setFirstRow( int row )
 	{
 		field_2_first_row = row;
 	}
 
-	public short getLastRow()
+	public int getLastRow()
 	{
 		return field_3_last_row;
 	}
 
-	public void setLastRow( short row )
+	public void setLastRow( int row )
 	{
 		field_3_last_row = row;
 	}
 
-	public short getFirstColumn()
+	public int getFirstColumn()
 	{
-		return (short) ( field_4_first_column & 0xFF );
+		return field_4_first_column & 0xFF;
 	}
 
-	public short getFirstColumnRaw()
+	public int getFirstColumnRaw()
 	{
 		return field_4_first_column;
 	}
@@ -167,12 +179,12 @@ public class Area3DPtg extends Ptg
 		field_4_first_column = column;
 	}
 
-	public short getLastColumn()
+	public int getLastColumn()
 	{
-		return (short) ( field_5_last_column & 0xFF );
+		return field_5_last_column & 0xFF;
 	}
 
-	public short getLastColumnRaw()
+	public int getLastColumnRaw()
 	{
 		return field_5_last_column;
 	}
@@ -204,7 +216,7 @@ public class Area3DPtg extends Ptg
 	 */
 	public void setFirstRowRelative( boolean rel )
 	{
-		field_4_first_column = rowRelative.setShortBoolean( field_4_first_column, rel );
+		field_4_first_column = rowRelative.setBoolean( field_4_first_column, rel );
 	}
 
 	/**
@@ -212,7 +224,7 @@ public class Area3DPtg extends Ptg
 	 */
 	public void setFirstColRelative( boolean rel )
 	{
-		field_4_first_column = colRelative.setShortBoolean( field_4_first_column, rel );
+		field_4_first_column = colRelative.setBoolean( field_4_first_column, rel );
 	}
 
 	/**
@@ -221,7 +233,7 @@ public class Area3DPtg extends Ptg
 	 */
 	public void setLastRowRelative( boolean rel )
 	{
-		field_5_last_column = rowRelative.setShortBoolean( field_5_last_column, rel );
+		field_5_last_column = rowRelative.setBoolean( field_5_last_column, rel );
 	}
 
 	/**
@@ -229,7 +241,7 @@ public class Area3DPtg extends Ptg
 	 */
 	public void setLastColRelative( boolean rel )
 	{
-		field_5_last_column = colRelative.setShortBoolean( field_5_last_column, rel );
+		field_5_last_column = colRelative.setBoolean( field_5_last_column, rel );
 	}
 
 
@@ -243,39 +255,38 @@ public class Area3DPtg extends Ptg
 	public void setArea( String ref )
 	{
 		AreaReference ar = new AreaReference( ref );
-		CellReference[] crs = ar.getCells();
 		
-		CellReference firstCell = crs[0];
-		CellReference lastCell = firstCell;
-		if(crs.length > 1) {
-			lastCell = crs[1];
-		}
+		CellReference frstCell = ar.getFirstCell();
+		CellReference lastCell = ar.getLastCell();
 
-		setFirstRow(    (short) firstCell.getRow() );
-		setFirstColumn( (short) firstCell.getCol() );
-		setLastRow(     (short) lastCell.getRow() );
-		setLastColumn(  (short) lastCell.getCol() );
-		setFirstColRelative( !firstCell.isColAbsolute() );
+		setFirstRow(	(short) frstCell.getRow() );
+		setFirstColumn(		 frstCell.getCol() );
+		setLastRow(	 (short) lastCell.getRow() );
+		setLastColumn(		  lastCell.getCol() );
+		setFirstColRelative( !frstCell.isColAbsolute() );
 		setLastColRelative(  !lastCell.isColAbsolute() );
-		setFirstRowRelative( !firstCell.isRowAbsolute() );
+		setFirstRowRelative( !frstCell.isRowAbsolute() );
 		setLastRowRelative(  !lastCell.isRowAbsolute() );
 	}
 
-    /**
-     * @return text representation of this area reference that can be used in text
-     *  formulas. The sheet name will get properly delimited if required.
-     */
+	/**
+	 * @return text representation of this area reference that can be used in text
+	 *  formulas. The sheet name will get properly delimited if required.
+	 */
 	public String toFormulaString(Workbook book)
 	{
+		// First do the sheet name
 		StringBuffer retval = new StringBuffer();
 		String sheetName = Ref3DPtg.getSheetName(book, field_1_index_extern_sheet);
 		if(sheetName != null) {
 			SheetNameFormatter.appendFormat(retval, sheetName);
 			retval.append( '!' );
 		}
-		retval.append( ( new CellReference( getFirstRow(), getFirstColumn(), !isFirstRowRelative(), !isFirstColRelative() ) ).toString() );
-		retval.append( ':' );
-		retval.append( ( new CellReference( getLastRow(), getLastColumn(), !isLastRowRelative(), !isLastColRelative() ) ).toString() );
+		
+		// Now the normal area bit
+		retval.append( AreaPtg.toFormulaString(this, book) );
+		
+		// All done
 		return retval.toString();
 	}
 
@@ -292,7 +303,7 @@ public class Area3DPtg extends Ptg
 		ptg.field_3_last_row = field_3_last_row;
 		ptg.field_4_first_column = field_4_first_column;
 		ptg.field_5_last_column = field_5_last_column;
-            ptg.setClass(ptgClass);
+		ptg.setClass(ptgClass);
 		return ptg;
 	}
 

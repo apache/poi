@@ -21,6 +21,8 @@ package org.apache.poi.poifs.storage;
 
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 import java.io.*;
 
@@ -35,6 +37,7 @@ public class RawDataBlock
 {
     private byte[]  _data;
     private boolean _eof;
+    private static POILogger log = POILogFactory.getLogger(RawDataBlock.class);
 
     /**
      * Constructor RawDataBlock
@@ -75,9 +78,12 @@ public class RawDataBlock
             String type = " byte" + ((count == 1) ? ("")
                                                   : ("s"));
 
-            throw new IOException("Unable to read entire block; " + count
-                                  + type + " read before EOF; expected "
-                                  + blockSize + " bytes");
+            log.log(POILogger.ERROR,
+            		"Unable to read entire block; " + count
+                     + type + " read before EOF; expected "
+                     + blockSize + " bytes. Your document"
+                     + " has probably been truncated!"
+            );
         }
         else {
             _eof = false;

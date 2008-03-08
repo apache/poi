@@ -24,7 +24,7 @@ package org.apache.poi.hssf.record.formula.eval;
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
  *
  */
-public class ValueEvalToNumericXlator {
+public final class ValueEvalToNumericXlator {
 
     public static final int STRING_IS_PARSED = 0x0001;
     public static final int BOOL_IS_PARSED = 0x0002;
@@ -34,26 +34,18 @@ public class ValueEvalToNumericXlator {
     public static final int REF_BOOL_IS_PARSED = 0x0010;
     public static final int REF_BLANK_IS_PARSED = 0x0020;
     
-    public static final int EVALUATED_REF_STRING_IS_PARSED = 0x0040;
-    public static final int EVALUATED_REF_BOOL_IS_PARSED = 0x0080;
-    public static final int EVALUATED_REF_BLANK_IS_PARSED = 0x0100;
-    
-    public static final int STRING_TO_BOOL_IS_PARSED = 0x0200;
-    public static final int REF_STRING_TO_BOOL_IS_PARSED = 0x0400;
-    
     public static final int STRING_IS_INVALID_VALUE = 0x0800;
-    public static final int REF_STRING_IS_INVALID_VALUE = 0x1000;
-    
-//    public static final int BOOL_IS_BLANK = 0x2000;
-//    public static final int REF_BOOL_IS_BLANK = 0x4000;
-//    public static final int STRING_IS_BLANK = 0x8000;
-//    public static final int REF_STRING_IS_BLANK = 0x10000;
     
     private final int flags;
     
     
     public ValueEvalToNumericXlator(int flags) {
-        this.flags = flags;
+    	
+    	if (false) { // uncomment to see who is using this class
+			System.err.println(new Throwable().getStackTrace()[1].getClassName() + "\t0x"
+					+ Integer.toHexString(flags).toUpperCase());
+		}
+		this.flags = flags;
     }
     
     /**
@@ -71,7 +63,7 @@ public class ValueEvalToNumericXlator {
         
         // most common case - least worries :)
         else if (eval instanceof NumberEval) {
-            retval = (NumberEval) eval; 
+            retval = eval; 
         }
         
         // booleval
@@ -125,50 +117,33 @@ public class ValueEvalToNumericXlator {
      * @param eval
      */
     private ValueEval xlateRefEval(RefEval reval) {
-        ValueEval retval = null;
-        ValueEval eval = (ValueEval) reval.getInnerValueEval();
+        ValueEval eval = reval.getInnerValueEval();
         
         // most common case - least worries :)
         if (eval instanceof NumberEval) {
-            retval = (NumberEval) eval;
+            return eval;
         }
         
-        // booleval
-        else if (eval instanceof BoolEval) {
-            retval = ((flags & REF_BOOL_IS_PARSED) > 0)
+        if (eval instanceof BoolEval) {
+            return ((flags & REF_BOOL_IS_PARSED) > 0)
                     ? (ValueEval) eval
                     : BlankEval.INSTANCE;
         } 
         
-        // stringeval 
-        else if (eval instanceof StringEval) {
-            retval = xlateRefStringEval((StringEval) eval);
+        if (eval instanceof StringEval) {
+            return xlateRefStringEval((StringEval) eval);
         }
         
-        // erroreval
-        else if (eval instanceof ErrorEval) {
-            retval = eval;
+        if (eval instanceof ErrorEval) {
+            return eval;
         }
         
-        // refeval
-        else if (eval instanceof RefEval) {
-            RefEval re = (RefEval) eval;
-            retval = xlateRefEval(re);
+        if (eval instanceof BlankEval) {
+            return xlateBlankEval(REF_BLANK_IS_PARSED);
         }
         
-        else if (eval instanceof BlankEval) {
-            retval = xlateBlankEval(reval.isEvaluated() ? EVALUATED_REF_BLANK_IS_PARSED : REF_BLANK_IS_PARSED);
-        }
-        
-        // probably AreaEval ? then not acceptable.
-        else { 
-            throw new RuntimeException("Invalid ValueEval type passed for conversion: " + eval.getClass());
-        }
-
-        
-        
-
-        return retval;
+        throw new RuntimeException("Invalid ValueEval type passed for conversion: ("
+        		+ eval.getClass().getName() + ")");
     }
     
     /**
@@ -176,93 +151,38 @@ public class ValueEvalToNumericXlator {
      * @param eval
      */
     private ValueEval xlateStringEval(StringEval eval) {
-        ValueEval retval = null;
+
         if ((flags & STRING_IS_PARSED) > 0) {
             String s = eval.getStringValue();
-            try { 
-                double d = Double.parseDouble(s);
-                retval = new NumberEval(d);
-            } 
-            catch (Exception e) {
-                if ((flags & STRING_TO_BOOL_IS_PARSED) > 0) {
-                    try { 
-                        boolean b = Boolean.getBoolean(s);
-                        retval = b ? BoolEval.TRUE : BoolEval.FALSE;
-                    } 
-                    catch (Exception e2) { retval = ErrorEval.VALUE_INVALID; }
-                }
-                else {
-                    retval = ErrorEval.VALUE_INVALID;
-                }
+            Double d = OperandResolver.parseDouble(s);
+            if(d == null) {
+                return ErrorEval.VALUE_INVALID;
             }
+            return new NumberEval(d.doubleValue());
         }
-        else if ((flags & STRING_TO_BOOL_IS_PARSED) > 0) {
-            String s = eval.getStringValue();
-            try { 
-                boolean b = Boolean.getBoolean(s);
-                retval = b ? BoolEval.TRUE : BoolEval.FALSE;
-            } 
-            catch (Exception e) { retval = ErrorEval.VALUE_INVALID; }
-        }
-        
         // strings are errors?
-        else if ((flags & STRING_IS_INVALID_VALUE) > 0) {
-            retval = ErrorEval.VALUE_INVALID;
+        if ((flags & STRING_IS_INVALID_VALUE) > 0) {
+            return ErrorEval.VALUE_INVALID;
         }
         
         // ignore strings
-        else {
-            retval = xlateBlankEval(BLANK_IS_PARSED);
-        }
-        return retval;
+        return xlateBlankEval(BLANK_IS_PARSED);
     }
     
     /**
      * uses the relevant flags to decode the StringEval
      * @param eval
      */
-    private ValueEval xlateRefStringEval(StringEval eval) {
-        ValueEval retval = null;
+    private ValueEval xlateRefStringEval(StringEval sve) {
         if ((flags & REF_STRING_IS_PARSED) > 0) {
-            StringEval sve = (StringEval) eval;
             String s = sve.getStringValue();
-            try { 
-                double d = Double.parseDouble(s);
-                retval = new NumberEval(d);
-            } 
-            catch (Exception e) { 
-                if ((flags & REF_STRING_TO_BOOL_IS_PARSED) > 0) {
-                    try { 
-                        boolean b = Boolean.getBoolean(s);
-                        retval = b ? BoolEval.TRUE : BoolEval.FALSE;
-                    } 
-                    catch (Exception e2) { retval = ErrorEval.VALUE_INVALID; }
-                }
-                else {
-                    retval = ErrorEval.VALUE_INVALID;
-                }
+            Double d = OperandResolver.parseDouble(s);
+            if(d == null) {
+                return ErrorEval.VALUE_INVALID;
             }
+            return new NumberEval(d.doubleValue());
         }
-        else if ((flags & REF_STRING_TO_BOOL_IS_PARSED) > 0) {
-            StringEval sve = (StringEval) eval;
-            String s = sve.getStringValue();
-            try { 
-                boolean b = Boolean.getBoolean(s);
-                retval = b ? BoolEval.TRUE : BoolEval.FALSE;;
-            } 
-            catch (Exception e) { retval = ErrorEval.VALUE_INVALID; }
-        }
-        
-        // strings are errors?
-        else if ((flags & REF_STRING_IS_INVALID_VALUE) > 0) {
-            retval = ErrorEval.VALUE_INVALID;
-        }
-        
         // strings are blanks
-        else {
-            retval = BlankEval.INSTANCE;
-        }
-        return retval;
+        return BlankEval.INSTANCE;
     }
-    
 }

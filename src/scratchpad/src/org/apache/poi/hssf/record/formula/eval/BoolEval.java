@@ -34,6 +34,16 @@ public class BoolEval implements NumericValueEval, StringValueEval {
     public static final BoolEval FALSE = new BoolEval(false);
     
     public static final BoolEval TRUE = new BoolEval(true);
+    
+    /**
+     * Convenience method for the following:<br/>
+     * <code>(b ? BoolEval.TRUE : BoolEval.FALSE)</code>
+     * @return a <tt>BoolEval</tt> instance representing <tt>b</tt>.
+     */
+    public static final BoolEval valueOf(boolean b) {
+        // TODO - find / replace all occurrences
+        return b ? TRUE : FALSE;
+    }
 
     public BoolEval(Ptg ptg) {
         this.value = ((BoolPtg) ptg).getValue();
@@ -48,10 +58,17 @@ public class BoolEval implements NumericValueEval, StringValueEval {
     }
 
     public double getNumberValue() {
-        return value ? (short) 1 : (short) 0;
+        return value ? 1 : 0;
     }
 
     public String getStringValue() {
         return value ? "TRUE" : "FALSE";
+    }
+    public String toString() {
+        StringBuffer sb = new StringBuffer(64);
+        sb.append(getClass().getName()).append(" [");
+        sb.append(getStringValue());
+        sb.append("]");
+        return sb.toString();
     }
 }

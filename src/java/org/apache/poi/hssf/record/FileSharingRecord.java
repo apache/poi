@@ -19,6 +19,8 @@
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 import org.apache.poi.util.StringUtil;
 
 /**
@@ -29,6 +31,8 @@ import org.apache.poi.util.StringUtil;
  */
 
 public class FileSharingRecord extends Record {
+    private static POILogger logger = POILogFactory.getLogger(FileSharingRecord.class);
+    	
     public final static short sid = 0x5b;
     private short             field_1_readonly;
     private short             field_2_password;
@@ -58,8 +62,23 @@ public class FileSharingRecord extends Record {
         field_1_readonly = in.readShort();
         field_2_password = in.readShort();
         field_3_username_length = in.readByte();
+        
+        // Is this really correct? The latest docs
+        //  seem to hint there's nothing between the
+        //  username length and the username string
         field_4_unknown = in.readShort();
-        field_5_username = in.readCompressedUnicode(field_3_username_length);
+        
+        // Ensure we don't try to read more data than
+        //  there actually is
+        if(field_3_username_length > in.remaining()) {
+        	logger.log(POILogger.WARN, "FileSharingRecord defined a username of length " + field_3_username_length + ", but only " + in.remaining() + " bytes were left, truncating");
+        	field_3_username_length = (byte)in.remaining();
+        }
+        if(field_3_username_length > 0) {
+        	field_5_username = in.readCompressedUnicode(field_3_username_length);
+        } else {
+        	field_5_username = "";
+        }
     }
 
     //this is the world's lamest "security".  thanks to Wouter van Vugt for making me

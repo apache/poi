@@ -20,11 +20,9 @@ package org.apache.poi.hssf.contrib.view;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.text.*;
 import java.util.*;
 
 import javax.swing.*;
-import javax.swing.border.*;
 import javax.swing.table.*;
 
 import org.apache.poi.hssf.usermodel.*;
