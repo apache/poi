@@ -1089,6 +1089,44 @@ extends TestCase {
         //  "EmptyStackException"
         //assertEquals("=CHOOSE(2,A2,A3,A4)", c2.getCellFormula());
     }
+    
+    /**
+     * Crystal reports generates files with short 
+     *  StyleRecords, which is against the spec
+     */
+    public void test44471() throws Exception {
+        FileInputStream in = new FileInputStream(new File(cwd, "OddStyleRecord.xls"));
+        
+        // Used to blow up with an ArrayIndexOutOfBounds
+        //  when creating a StyleRecord
+        HSSFWorkbook wb = new HSSFWorkbook(in);
+        in.close();
+        
+        assertEquals(1, wb.getNumberOfSheets());
+    }
+    
+    /**
+     * Files with "read only recommended" were giving
+     *  grief on the FileSharingRecord
+     */
+    public void test44536() throws Exception {
+        FileInputStream in = new FileInputStream(new File(cwd, "ReadOnlyRecommended.xls"));
+        
+        // Used to blow up with an IllegalArgumentException
+        //  when creating a FileSharingRecord
+        HSSFWorkbook wb = new HSSFWorkbook(in);
+        in.close();
+        
+        // Check read only advised
+        assertEquals(3, wb.getNumberOfSheets());
+        assertTrue(wb.isWriteProtected());
+        
+        // But also check that another wb isn't
+        in = new FileInputStream(new File(cwd, "SimpleWithChoose.xls"));
+        wb = new HSSFWorkbook(in);
+        in.close();
+        assertFalse(wb.isWriteProtected());
+    }
 }
 
 

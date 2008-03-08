@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,15 +14,13 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hssf.model;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.Stack;
 import java.util.regex.Pattern;
 
 //import PTG's .. since we need everything, import *
@@ -33,7 +30,7 @@ import org.apache.poi.hssf.record.formula.*;
 
 /**
  * This class parses a formula string into a List of tokens in RPN order.
- * Inspired by 
+ * Inspired by
  *           Lets Build a Compiler, by Jack Crenshaw
  * BNF for the formula expression is :
  * <expression> ::= <term> [<addop> <term>]*
@@ -48,138 +45,124 @@ import org.apache.poi.hssf.record.formula.*;
  *  @author Peter M. Murray (pete at quantrix dot com)
  *  @author Pavel Krupets (pkrupets at palmtreebusiness dot com)
  */
-public class FormulaParser {
+public final class FormulaParser {
     
+    /**
+     * Specific exception thrown when a supplied formula does not parse properly.<br/>
+     * Primarily used by test cases when testing for specific parsing exceptions.</p>
+     *    
+     */
+    static final class FormulaParseException extends RuntimeException {
+        // This class was given package scope until it would become clear that it is useful to
+        // general client code. 
+        public FormulaParseException(String msg) {
+            super(msg);
+        }
+    }
+
     public static int FORMULA_TYPE_CELL = 0;
     public static int FORMULA_TYPE_SHARED = 1;
     public static int FORMULA_TYPE_ARRAY =2;
     public static int FORMULA_TYPE_CONDFOMRAT = 3;
     public static int FORMULA_TYPE_NAMEDRANGE = 4;
-    
-    private String formulaString;
-    private int pointer=0;
-    private int formulaLength;
-    
-    private List tokens = new java.util.Stack();
-    
-    /**
-     * Using an unsynchronized linkedlist to implement a stack since we're not multi-threaded.
-     */
-    private List functionTokens = new LinkedList();
+
+    private final String formulaString;
+    private final int formulaLength;
+    private int pointer;
+
+    private final List tokens = new Stack();
 
     /**
      * Used for spotting if we have a cell reference,
      *  or a named range
      */
     private final static Pattern CELL_REFERENCE_PATTERN = Pattern.compile("(?:('?)[^:\\\\/\\?\\*\\[\\]]+\\1!)?\\$?[A-Za-z]+\\$?[\\d]+");
-        
+
     private static char TAB = '\t';
-    private static char CR = '\n';
-    
-   private char look;              // Lookahead Character
-   
-   private Workbook book;
-    
-    
-    /** 
+
+    /**
+     * Lookahead Character.
+     * gets value '\0' when the input string is exhausted
+     */
+    private char look;
+
+    private Workbook book;
+
+
+    /**
      * Create the formula parser, with the string that is to be
      *  parsed against the supplied workbook.
      * A later call the parse() method to return ptg list in
      *  rpn order, then call the getRPNPtg() to retrive the
      *  parse results.
      * This class is recommended only for single threaded use.
-     * 
+     *
      * If you only have a usermodel.HSSFWorkbook, and not a
      *  model.Workbook, then use the convenience method on
-     *  usermodel.HSSFFormulaEvaluator 
+     *  usermodel.HSSFFormulaEvaluator
      */
     public FormulaParser(String formula, Workbook book){
         formulaString = formula;
         pointer=0;
         this.book = book;
-    	formulaLength = formulaString.length();
+        formulaLength = formulaString.length();
     }
-    
+
+    public static Ptg[] parse(String formula, Workbook book) {
+        FormulaParser fp = new FormulaParser(formula, book);
+        fp.parse();
+        return fp.getRPNPtg();
+    }
 
     /** Read New Character From Input Stream */
     private void GetChar() {
         // Check to see if we've walked off the end of the string.
-	// Just return if so and reset Look to smoething to keep 
-	// SkipWhitespace from spinning
-        if (pointer == formulaLength) {
+        if (pointer > formulaLength) {
+            throw new RuntimeException("too far");
+        }
+        if (pointer < formulaLength) {
+            look=formulaString.charAt(pointer);
+        } else {
+            // Just return if so and reset 'look' to something to keep
+            // SkipWhitespace from spinning
             look = (char)0;
-	    return;
-	}
-        look=formulaString.charAt(pointer++);
+        }    
+        pointer++;
         //System.out.println("Got char: "+ look);
     }
-    
-
-    /** Report an Error */
-    private void Error(String s) {
-        System.out.println("Error: "+s);
-    }
-    
-    
- 
-    /** Report Error and Halt */
-    private void Abort(String s) {
-        Error(s);
-        //System.exit(1);  //throw exception??
-        throw new RuntimeException("Cannot Parse, sorry : " + s + " @ " + pointer + " [Formula String was: '" + formulaString + "']");
-    }
-    
-    
 
     /** Report What Was Expected */
-    private void Expected(String s) {
-        Abort(s + " Expected");
+    private RuntimeException expected(String s) {
+        return new FormulaParseException(s + " Expected");
     }
-    
-    
- 
+
+
+
     /** Recognize an Alpha Character */
     private boolean IsAlpha(char c) {
         return Character.isLetter(c) || c == '$' || c=='_';
     }
-    
-    
- 
+
+
+
     /** Recognize a Decimal Digit */
     private boolean IsDigit(char c) {
         //System.out.println("Checking digit for"+c);
         return Character.isDigit(c);
     }
-    
-    
+
+
 
     /** Recognize an Alphanumeric */
     private boolean  IsAlNum(char c) {
         return  (IsAlpha(c) || IsDigit(c));
     }
-    
-    
 
-    /** Recognize an Addop */
-    private boolean IsAddop( char c) {
-        return (c =='+' || c =='-');
-    }
-    
 
     /** Recognize White Space */
     private boolean IsWhite( char c) {
         return  (c ==' ' || c== TAB);
     }
-    
-    /**
-     * Determines special characters;primarily in use for definition of string literals
-     * @param c
-     * @return boolean
-     */
-    private boolean IsSpecialChar(char c) {
-    	return (c == '>' || c== '<' || c== '=' || c=='&' || c=='[' || c==']');
-    }
-    
 
     /** Skip Over Leading White Space */
     private void SkipWhite() {
@@ -187,108 +170,84 @@ public class FormulaParser {
             GetChar();
         }
     }
-    
-    
 
-    /** Match a Specific Input Character */
+    /**
+     *  Consumes the next input character if it is equal to the one specified otherwise throws an
+     *  unchecked exception. This method does <b>not</b> consume whitespace (before or after the
+     *  matched character). 
+     */
     private void Match(char x) {
         if (look != x) {
-            Expected("" + x + "");
-        }else {
-            GetChar();
-            SkipWhite();
+            throw expected("'" + x + "'");
         }
+        GetChar();
     }
-    
+
     /** Get an Identifier */
     private String GetName() {
         StringBuffer Token = new StringBuffer();
         if (!IsAlpha(look) && look != '\'') {
-            Expected("Name");
+            throw expected("Name");
         }
         if(look == '\'')
         {
-        	Match('\'');
-        	boolean done = look == '\'';
-        	while(!done)
-        	{
-        		Token.append(Character.toUpperCase(look));
-        		GetChar();
-        		if(look == '\'')
-        		{
-        			Match('\'');
-        			done = look != '\'';
-        		}
-        	}
+            Match('\'');
+            boolean done = look == '\'';
+            while(!done)
+            {
+                Token.append(look);
+                GetChar();
+                if(look == '\'')
+                {
+                    Match('\'');
+                    done = look != '\'';
+                }
+            }
         }
         else
         {
-	        while (IsAlNum(look)) {
-	            Token.append(Character.toUpperCase(look));
-	            GetChar();
-	        }
-		}
-        SkipWhite();
-        return Token.toString();
-    }
-    
-    /**Get an Identifier AS IS, without stripping white spaces or 
-       converting to uppercase; used for literals */
-    private String GetNameAsIs() {
-        StringBuffer Token = new StringBuffer();
-		
-		while (IsAlNum(look) || IsWhite(look) || IsSpecialChar(look)) {
-            Token = Token.append(look);
-            GetChar();
+            while (IsAlNum(look)) {
+                Token.append(look);
+                GetChar();
+            }
         }
         return Token.toString();
     }
-    
-    
+
+
     /** Get a Number */
     private String GetNum() {
         StringBuffer value = new StringBuffer();
-        
+
         while (IsDigit(this.look)){
             value.append(this.look);
             GetChar();
         }
-        
-        SkipWhite();
-        
         return value.length() == 0 ? null : value.toString();
     }
-        
-    
-    /** Output a String with Tab */
-    private void  Emit(String s){
-        System.out.print(TAB+s);
-    }
 
-    /** Output a String with Tab and CRLF */
-    private void EmitLn(String s) {
-        Emit(s);
-        System.out.println();;
-    }
-    
     /** Parse and Translate a String Identifier */
-    private void Ident() {
+    private Ptg parseIdent() {
         String name;
         name = GetName();
         if (look == '('){
             //This is a function
-            function(name);
-        } else if (look == ':' || look == '.') { // this is a AreaReference
+            return function(name);
+        }
+
+        if (look == ':' || look == '.') { // this is a AreaReference
             GetChar();
-            
+
             while (look == '.') { // formulas can have . or .. or ... instead of :
                 GetChar();
             }
-            
+
             String first = name;
             String second = GetName();
-            tokens.add(new AreaPtg(first+":"+second));
-        } else if (look == '!') {
+            return new AreaPtg(first+":"+second);
+        }
+
+        if (look == '!') {
             Match('!');
             String sheetName = name;
             String first = GetName();
@@ -297,79 +256,78 @@ public class FormulaParser {
                 Match(':');
                 String second=GetName();
                 if (look == '!') {
-                	//The sheet name was included in both of the areas. Only really
-                	//need it once
-                	Match('!');
-                	String third=GetName();
-                	
-                	if (!sheetName.equals(second))
-                		throw new RuntimeException("Unhandled double sheet reference.");
-                	
-                	tokens.add(new Area3DPtg(first+":"+third,externIdx));
-                } else {                                  
-                  tokens.add(new Area3DPtg(first+":"+second,externIdx));
+                    //The sheet name was included in both of the areas. Only really
+                    //need it once
+                    Match('!');
+                    String third=GetName();
+
+                    if (!sheetName.equals(second))
+                        throw new RuntimeException("Unhandled double sheet reference.");
+
+                    return new Area3DPtg(first+":"+third,externIdx);
                 }
-            } else {
-                tokens.add(new Ref3DPtg(first,externIdx));
+                return new Area3DPtg(first+":"+second,externIdx);
             }
-        } else {
-            // This can be either a cell ref or a named range
-        	// Try to spot which it is
-        	boolean cellRef = CELL_REFERENCE_PATTERN.matcher(name).matches();
-            boolean boolLit = (name.equals("TRUE") || name.equals("FALSE"));
-            
-            if (boolLit) {
-                tokens.add(new BoolPtg(name));
-            } else if (cellRef) {
-                tokens.add(new ReferencePtg(name));
-            } else {
-            	boolean nameRecordExists = false;
-                for(int i = 0; i < book.getNumNames(); i++) {
-                	// Our formula will by now contain an upper-cased
-                	//  version of any named range names
-                    if(book.getNameRecord(i).getNameText().toUpperCase().equals(name)) {
-                        nameRecordExists = true;
-                    }
-                }
-                if(!nameRecordExists)
-                    Abort("Found reference to named range \"" + name + "\", but that named range wasn't defined!");
-                tokens.add(new NamePtg(name, book));
+            return new Ref3DPtg(first,externIdx);
+        }
+        if (name.equalsIgnoreCase("TRUE") || name.equalsIgnoreCase("FALSE")) {
+            return new BoolPtg(name.toUpperCase());
+        }
+
+        // This can be either a cell ref or a named range
+        // Try to spot which it is
+        boolean cellRef = CELL_REFERENCE_PATTERN.matcher(name).matches();
+ 
+        if (cellRef) {
+            return new ReferencePtg(name);
+        }
+
+        for(int i = 0; i < book.getNumNames(); i++) {
+            // named range name matching is case insensitive
+            if(book.getNameRecord(i).getNameText().equalsIgnoreCase(name)) {
+                return new NamePtg(name, book);
             }
         }
+        throw new FormulaParseException("Found reference to named range \"" 
+                    + name + "\", but that named range wasn't defined!");
     }
-    
+
     /**
      * Adds a pointer to the last token to the latest function argument list.
      * @param obj
      */
-    private void addArgumentPointer() {
-		if (this.functionTokens.size() > 0) {
-			//no bounds check because this method should not be called unless a token array is setup by function()
-			List arguments = (List)this.functionTokens.get(0);
-			arguments.add(tokens.get(tokens.size()-1));
-		}
+    private void addArgumentPointer(List argumentPointers) {
+        argumentPointers.add(tokens.get(tokens.size()-1));
     }
-    
-    private void function(String name) {
-    	//average 2 args per function
-    	this.functionTokens.add(0, new ArrayList(2));
-    	
-        Match('(');
-        int numArgs = Arguments();
-        Match(')');
-                
-        AbstractFunctionPtg functionPtg = getFunction(name,(byte)numArgs);
-        
-		tokens.add(functionPtg);
- 
-        if (functionPtg.getName().equals("externalflag")) {
-            tokens.add(new NamePtg(name, this.book));
-        }
 
- 		//remove what we just put in
-		this.functionTokens.remove(0);
+    /**
+     * Note - Excel function names are 'case aware but not case sensitive'.  This method may end
+     * up creating a defined name record in the workbook if the specified name is not an internal
+     * Excel function, and has not been encountered before. 
+     * 
+     * @param name case preserved function name (as it was entered/appeared in the formula). 
+     */
+    private Ptg function(String name) {
+        int numArgs =0 ;
+        // Note regarding parameter - 
+        if(!AbstractFunctionPtg.isInternalFunctionName(name)) {
+            // external functions get a Name token which points to a defined name record
+            NamePtg nameToken = new NamePtg(name, this.book);
+            
+            // in the token tree, the name is more or less the first argument
+            numArgs++;  
+            tokens.add(nameToken);
+        }
+        //average 2 args per function
+        List argumentPointers = new ArrayList(2);
+
+        Match('(');
+        numArgs += Arguments(argumentPointers);
+        Match(')');
+
+        return getFunction(name, numArgs, argumentPointers);
     }
-    
+
     /**
      * Adds the size of all the ptgs after the provided index (inclusive).
      * <p>
@@ -378,17 +336,17 @@ public class FormulaParser {
      * @return int
      */
     private int getPtgSize(int index) {
-    	int count = 0;
-    	
-    	Iterator ptgIterator = tokens.listIterator(index);
-    	while (ptgIterator.hasNext()) {
-    		Ptg ptg = (Ptg)ptgIterator.next();
-    		count+=ptg.getSize();
-    	}
-    	
-    	return count;
+        int count = 0;
+
+        Iterator ptgIterator = tokens.listIterator(index);
+        while (ptgIterator.hasNext()) {
+            Ptg ptg = (Ptg)ptgIterator.next();
+            count+=ptg.getSize();
+        }
+
+        return count;
     }
-    
+
     private int getPtgSize(int start, int end) {
         int count = 0;
         int index = start;
@@ -398,390 +356,430 @@ public class FormulaParser {
             count+=ptg.getSize();
             index++;
         }
-        
+
         return count;
     }
     /**
      * Generates the variable function ptg for the formula.
      * <p>
-     * For IF Formulas, additional PTGs are added to the tokens 
+     * For IF Formulas, additional PTGs are added to the tokens
      * @param name
      * @param numArgs
      * @return Ptg a null is returned if we're in an IF formula, it needs extreme manipulation and is handled in this function
      */
-    private AbstractFunctionPtg getFunction(String name, byte numArgs) {
-        AbstractFunctionPtg retval = null;
-        
-        if (name.equals("IF")) {
-            retval = new FuncVarPtg(AbstractFunctionPtg.ATTR_NAME, numArgs);
-            
-            //simulated pop, no bounds checking because this list better be populated by function()
-            List argumentPointers = (List)this.functionTokens.get(0);
-            
-            
-            AttrPtg ifPtg = new AttrPtg();
-            ifPtg.setData((short)7); //mirroring excel output
-            ifPtg.setOptimizedIf(true);
-            
-            if (argumentPointers.size() != 2  && argumentPointers.size() != 3) {
-                throw new IllegalArgumentException("["+argumentPointers.size()+"] Arguments Found - An IF formula requires 2 or 3 arguments. IF(CONDITION, TRUE_VALUE, FALSE_VALUE [OPTIONAL]");
-            }
-            
-            //Biffview of an IF formula record indicates the attr ptg goes after the condition ptgs and are
-            //tracked in the argument pointers
-            //The beginning first argument pointer is the last ptg of the condition
-            int ifIndex = tokens.indexOf(argumentPointers.get(0))+1;
-            tokens.add(ifIndex, ifPtg);
-            
-            //we now need a goto ptgAttr to skip to the end of the formula after a true condition
-            //the true condition is should be inserted after the last ptg in the first argument
-            
-            int gotoIndex = tokens.indexOf(argumentPointers.get(1))+1;
-            
-            AttrPtg goto1Ptg = new AttrPtg();
-            goto1Ptg.setGoto(true);
-            
-            
-            tokens.add(gotoIndex, goto1Ptg);
-            
-            
-            if (numArgs > 2) { //only add false jump if there is a false condition
-                
-                //second goto to skip past the function ptg
-                AttrPtg goto2Ptg = new AttrPtg();
-                goto2Ptg.setGoto(true);
-                goto2Ptg.setData((short)(retval.getSize()-1));
-                //Page 472 of the Microsoft Excel Developer's kit states that:
-                //The b(or w) field specifies the number byes (or words to skip, minus 1
-                
-                tokens.add(goto2Ptg); //this goes after all the arguments are defined
-            }
-            
-            //data portion of the if ptg points to the false subexpression (Page 472 of MS Excel Developer's kit)
-            //count the number of bytes after the ifPtg to the False Subexpression
-            //doesn't specify -1 in the documentation
-            ifPtg.setData((short)(getPtgSize(ifIndex+1, gotoIndex)));
-            
-            //count all the additional (goto) ptgs but dont count itself
-            int ptgCount = this.getPtgSize(gotoIndex)-goto1Ptg.getSize()+retval.getSize();
-            if (ptgCount > (int)Short.MAX_VALUE) {
-                throw new RuntimeException("Ptg Size exceeds short when being specified for a goto ptg in an if");
-            }
-            
-            goto1Ptg.setData((short)(ptgCount-1));
-            
-        } else {
-            
-            retval = new FuncVarPtg(name,numArgs);
+    private AbstractFunctionPtg getFunction(String name, int numArgs, List argumentPointers) {
+
+        AbstractFunctionPtg retval = new FuncVarPtg(name, (byte)numArgs);
+        if (!name.equals(AbstractFunctionPtg.FUNCTION_NAME_IF)) {
+            // early return for everything else besides IF()
+            return retval;
         }
-        
+
+
+        AttrPtg ifPtg = new AttrPtg();
+        ifPtg.setData((short)7); //mirroring excel output
+        ifPtg.setOptimizedIf(true);
+
+        if (argumentPointers.size() != 2  && argumentPointers.size() != 3) {
+            throw new IllegalArgumentException("["+argumentPointers.size()+"] Arguments Found - An IF formula requires 2 or 3 arguments. IF(CONDITION, TRUE_VALUE, FALSE_VALUE [OPTIONAL]");
+        }
+
+        //Biffview of an IF formula record indicates the attr ptg goes after the condition ptgs and are
+        //tracked in the argument pointers
+        //The beginning first argument pointer is the last ptg of the condition
+        int ifIndex = tokens.indexOf(argumentPointers.get(0))+1;
+        tokens.add(ifIndex, ifPtg);
+
+        //we now need a goto ptgAttr to skip to the end of the formula after a true condition
+        //the true condition is should be inserted after the last ptg in the first argument
+
+        int gotoIndex = tokens.indexOf(argumentPointers.get(1))+1;
+
+        AttrPtg goto1Ptg = new AttrPtg();
+        goto1Ptg.setGoto(true);
+
+
+        tokens.add(gotoIndex, goto1Ptg);
+
+
+        if (numArgs > 2) { //only add false jump if there is a false condition
+
+            //second goto to skip past the function ptg
+            AttrPtg goto2Ptg = new AttrPtg();
+            goto2Ptg.setGoto(true);
+            goto2Ptg.setData((short)(retval.getSize()-1));
+            //Page 472 of the Microsoft Excel Developer's kit states that:
+            //The b(or w) field specifies the number byes (or words to skip, minus 1
+
+            tokens.add(goto2Ptg); //this goes after all the arguments are defined
+        }
+
+        //data portion of the if ptg points to the false subexpression (Page 472 of MS Excel Developer's kit)
+        //count the number of bytes after the ifPtg to the False Subexpression
+        //doesn't specify -1 in the documentation
+        ifPtg.setData((short)(getPtgSize(ifIndex+1, gotoIndex)));
+
+        //count all the additional (goto) ptgs but dont count itself
+        int ptgCount = this.getPtgSize(gotoIndex)-goto1Ptg.getSize()+retval.getSize();
+        if (ptgCount > Short.MAX_VALUE) {
+            throw new RuntimeException("Ptg Size exceeds short when being specified for a goto ptg in an if");
+        }
+
+        goto1Ptg.setData((short)(ptgCount-1));
+
         return retval;
+    }
+
+    private static boolean isArgumentDelimiter(char ch) {
+        return ch ==  ',' || ch == ')';
     }
     
     /** get arguments to a function */
-    private int Arguments() {
-        int numArgs = 0;
-        if (look != ')')  {
-            numArgs++; 
-            Expression();
-			   addArgumentPointer();
+    private int Arguments(List argumentPointers) {
+        SkipWhite();
+        if(look == ')') {
+            return 0;
         }
-        while (look == ','  || look == ';') { //TODO handle EmptyArgs
-            if(look == ',') {
-              Match(',');
+        
+        boolean missedPrevArg = true;
+        
+        int numArgs = 0;
+        while(true) {
+            SkipWhite();
+            if(isArgumentDelimiter(look)) {
+                if(missedPrevArg) {
+                    tokens.add(new MissingArgPtg());
+                    addArgumentPointer(argumentPointers);
+                    numArgs++;
+                }
+                if(look == ')') {
+                    break;
+                }
+                Match(',');
+                missedPrevArg = true;
+                continue;
             }
-            else {
-              Match(';');
-            }
-            Expression();
-			   addArgumentPointer();
+            comparisonExpression();
+            addArgumentPointer(argumentPointers);
             numArgs++;
+            missedPrevArg = false;
         }
         return numArgs;
     }
 
    /** Parse and Translate a Math Factor  */
-    private void Factor() {
-    	if (look == '-')
-    	{
-    		Match('-');
-    		Factor();
-    		tokens.add(new UnaryMinusPtg());
-    	}
-        else if (look == '+') {
-            Match('+');
-            Factor();
-            tokens.add(new UnaryPlusPtg());
-        }
-        else if (look == '(' ) {
-            Match('(');
-            Expression();
-            Match(')');
-            tokens.add(new ParenthesisPtg());
-        } else if (IsAlpha(look) || look == '\''){
-            Ident();
-        } else if(look == '"') {
-           StringLiteral();
-        } else if (look == ')' || look == ',') {
-        	tokens.add(new MissingArgPtg());
-        } else {
-            String number2 = null;
-            String exponent = null;
-            String number1 = GetNum();
-            
-            if (look == '.') {
-                GetChar();
-                number2 = GetNum();
+    private void powerFactor() {
+        percentFactor();
+        while(true) {
+            SkipWhite();
+            if(look != '^') {
+                return;
             }
-            
-            if (look == 'E') {
-                GetChar();
-                
-                String sign = "";
-                if (look == '+') {
-                    GetChar();
-                } else if (look == '-') {
-                    GetChar();
-                    sign = "-";
-                }
-                
-                String number = GetNum();
-                if (number == null) {
-                    Expected("Integer");
-                }
-                exponent = sign + number;
-            }
-            
-            if (number1 == null && number2 == null) {
-                Expected("Integer");
-            }
-            
-            tokens.add(getNumberPtgFromString(number1, number2, exponent));
+            Match('^');
+            percentFactor();
+            tokens.add(new PowerPtg());
         }
     }
     
-	/** 
-	 * Get a PTG for an integer from its string representation. 
-	 * return Int or Number Ptg based on size of input
-	 */
-	private Ptg getNumberPtgFromString(String number1, String number2, String exponent) {
+    private void percentFactor() {
+        tokens.add(parseSimpleFactor());
+        while(true) {
+            SkipWhite();
+            if(look != '%') {
+                return;
+            }
+            Match('%');
+            tokens.add(new PercentPtg());
+        }
+    }
+    
+    
+    /**
+     * factors (without ^ or % )
+     */
+    private Ptg parseSimpleFactor() {
+        SkipWhite();
+        switch(look) {
+            case '#':
+                return parseErrorLiteral();
+            case '-':
+                Match('-');
+                powerFactor();
+                return new UnaryMinusPtg();
+            case '+':
+                Match('+');
+                powerFactor();
+                return new UnaryPlusPtg();
+            case '(':
+                Match('(');
+                comparisonExpression();
+                Match(')');
+                return new ParenthesisPtg();
+            case '"':
+                return parseStringLiteral();
+            case ',':
+            case ')':
+                return new MissingArgPtg(); // TODO - not quite the right place to recognise a missing arg
+        }
+        if (IsAlpha(look) || look == '\''){
+            return parseIdent();
+        }
+        // else - assume number
+        return parseNumber();
+    }
+
+
+    private Ptg parseNumber() {
+        String number2 = null;
+        String exponent = null;
+        String number1 = GetNum();
+
+        if (look == '.') {
+            GetChar();
+            number2 = GetNum();
+        }
+
+        if (look == 'E') {
+            GetChar();
+
+            String sign = "";
+            if (look == '+') {
+                GetChar();
+            } else if (look == '-') {
+                GetChar();
+                sign = "-";
+            }
+
+            String number = GetNum();
+            if (number == null) {
+                throw expected("Integer");
+            }
+            exponent = sign + number;
+        }
+
+        if (number1 == null && number2 == null) {
+            throw expected("Integer");
+        }
+
+        return getNumberPtgFromString(number1, number2, exponent);
+    }
+
+
+    private ErrPtg parseErrorLiteral() {
+        Match('#');
+        String part1 = GetName().toUpperCase();
+
+        switch(part1.charAt(0)) {
+            case 'V':
+                if(part1.equals("VALUE")) {
+                    Match('!');
+                    return ErrPtg.VALUE_INVALID;
+                }
+                throw expected("#VALUE!");
+            case 'R':
+                if(part1.equals("REF")) {
+                    Match('!');
+                    return ErrPtg.REF_INVALID;
+                }
+                throw expected("#REF!");
+            case 'D':
+                if(part1.equals("DIV")) {
+                    Match('/');
+                    Match('0');
+                    Match('!');
+                    return ErrPtg.DIV_ZERO;
+                }
+                throw expected("#DIV/0!");
+            case 'N':
+                if(part1.equals("NAME")) {
+                    Match('?');  // only one that ends in '?'
+                    return ErrPtg.NAME_INVALID;
+                }
+                if(part1.equals("NUM")) {
+                    Match('!');
+                    return ErrPtg.NUM_ERROR;
+                }
+                if(part1.equals("NULL")) {
+                    Match('!');
+                    return ErrPtg.NULL_INTERSECTION;
+                }
+                if(part1.equals("N")) {
+                    Match('/');
+                    if(look != 'A' && look != 'a') {
+                        throw expected("#N/A");
+                    }
+                    Match(look);
+                    // Note - no '!' or '?' suffix
+                    return ErrPtg.N_A;
+                }
+                throw expected("#NAME?, #NUM!, #NULL! or #N/A");
+
+        }
+        throw expected("#VALUE!, #REF!, #DIV/0!, #NAME?, #NUM!, #NULL! or #N/A");
+    }
+
+
+    /**
+     * Get a PTG for an integer from its string representation.
+     * return Int or Number Ptg based on size of input
+     */
+    private static Ptg getNumberPtgFromString(String number1, String number2, String exponent) {
         StringBuffer number = new StringBuffer();
-        
-	    if (number2 == null) {
-	        number.append(number1);
-    	    
-    	    if (exponent != null) {
-    	        number.append('E');
-    	        number.append(exponent);
-    	    }
-    	    
-            String numberStr = number.toString();
-            
-            try {
-                return new IntPtg(numberStr);
-            } catch (NumberFormatException e) {
-                return new NumberPtg(numberStr);
-            }
-	    } else {
-            if (number1 != null) {
-                number.append(number1);
-            }
-            
-            number.append('.');
-            number.append(number2);
-            
+
+        if (number2 == null) {
+            number.append(number1);
+
             if (exponent != null) {
                 number.append('E');
                 number.append(exponent);
             }
-            
-            return new NumberPtg(number.toString());
-	    }
-	}
-	
-	
-	private void StringLiteral() 
-	{
-		// Can't use match here 'cuz it consumes whitespace
-		// which we need to preserve inside the string.
-		// - pete
-		// Match('"');
-		if (look != '"')
-			Expected("\"");
-		else
-		{
-			GetChar();
-			StringBuffer Token = new StringBuffer();
-			for (;;)
-			{
-				if (look == '"')
-				{
-					GetChar();
-					SkipWhite(); //potential white space here since it doesnt matter up to the operator
-					if (look == '"')
-						Token.append("\"");
-					else
-						break;
-				}
-				else if (look == 0)
-				{
-					break;
-				}
-				else
-				{
-					Token.append(look);
-					GetChar();
-				}
-			}
-			tokens.add(new StringPtg(Token.toString()));
-		}
-	}
-    
-    /** Recognize and Translate a Multiply */
-    private void Multiply(){
-        Match('*');
-        Factor();
-        tokens.add(new MultiplyPtg());
-  
-    }
-    
-    
-    /** Recognize and Translate a Divide */
-    private void Divide() {
-        Match('/');
-        Factor();
-        tokens.add(new DividePtg());
 
+            String numberStr = number.toString();
+            int intVal;
+            try {
+                intVal = Integer.parseInt(numberStr);
+            } catch (NumberFormatException e) {
+                return new NumberPtg(numberStr);
+            }
+            if (IntPtg.isInRange(intVal)) {
+                return new IntPtg(intVal);
+            }
+            return new NumberPtg(numberStr);
+        }
+
+        if (number1 != null) {
+            number.append(number1);
+        }
+
+        number.append('.');
+        number.append(number2);
+
+        if (exponent != null) {
+            number.append('E');
+            number.append(exponent);
+        }
+
+        return new NumberPtg(number.toString());
     }
-    
-    
+
+
+    private StringPtg parseStringLiteral()
+    {
+        Match('"');
+        
+        StringBuffer token = new StringBuffer();
+        while (true) {
+            if (look == '"') {
+                GetChar();
+                if (look != '"') {
+                    break;
+                }
+             }
+            token.append(look);
+            GetChar();
+        }
+        return new StringPtg(token.toString());
+    }
+
     /** Parse and Translate a Math Term */
-    private void  Term(){
-        Factor();
-		 while (look == '*' || look == '/' || look == '^' || look == '&') {
-        
-            ///TODO do we need to do anything here??
-            if (look == '*') Multiply();
-            else if (look == '/') Divide();
-            else if (look == '^') Power();
-            else if (look == '&') Concat();
+    private void  Term() {
+        powerFactor();
+        while(true) {
+            SkipWhite();
+            switch(look) {
+                case '*':
+                    Match('*');
+                    powerFactor();
+                    tokens.add(new MultiplyPtg());
+                    continue;
+                case '/':
+                    Match('/');
+                    powerFactor();
+                    tokens.add(new DividePtg());
+                    continue;
+            }
+            return; // finished with Term
         }
     }
     
-    /** Recognize and Translate an Add */
-    private void Add() {
-        Match('+');
-        Term();
-        tokens.add(new AddPtg());
+    private void comparisonExpression() {
+        concatExpression();
+        while (true) {
+            SkipWhite();
+            switch(look) {
+                case '=':
+                case '>':
+                case '<':
+                    Ptg comparisonToken = getComparisonToken();
+                    concatExpression();
+                    tokens.add(comparisonToken);
+                    continue;
+            }
+            return; // finished with predicate expression
+        }
     }
-    
-    /** Recognize and Translate a Concatination */
-    private void Concat() {
-        Match('&');
-        Term();
-        tokens.add(new ConcatPtg());
-    }
-    
-    /** Recognize and Translate a test for Equality  */
-    private void Equal() {
-        Match('=');
-        Expression();
-        tokens.add(new EqualPtg());
-    }
-    
-    /** Recognize and Translate a Subtract */
-    private void Subtract() {
-        Match('-');
-        Term();
-        tokens.add(new SubtractPtg());
-    }    
 
-    private void Power() {
-        Match('^');
-        Term();
-        tokens.add(new PowerPtg());
+    private Ptg getComparisonToken() {
+        if(look == '=') {
+            Match(look);
+            return new EqualPtg();
+        }
+        boolean isGreater = look == '>';
+        Match(look);
+        if(isGreater) {
+            if(look == '=') {
+                Match('=');
+                return new GreaterEqualPtg();
+            }
+            return new GreaterThanPtg();
+        }
+        switch(look) {
+            case '=':
+                Match('=');
+                return new LessEqualPtg();
+            case '>':
+                Match('>');
+                return new NotEqualPtg();
+        }
+        return new LessThanPtg();
     }
     
+
+    private void concatExpression() {
+        additiveExpression();
+        while (true) {
+            SkipWhite();
+            if(look != '&') {
+                break; // finished with concat expression
+            }
+            Match('&');
+            additiveExpression();
+            tokens.add(new ConcatPtg());
+        }
+    }
     
+
     /** Parse and Translate an Expression */
-    private void Expression() {
+    private void additiveExpression() {
         Term();
-        while (IsAddop(look)) {
-            if (look == '+' )  Add();
-            else if (look == '-') Subtract();
+        while (true) {
+            SkipWhite();
+            switch(look) {
+                case '+':
+                    Match('+');
+                    Term();
+                    tokens.add(new AddPtg());
+                    continue;
+                case '-':
+                    Match('-');
+                    Term();
+                    tokens.add(new SubtractPtg());
+                    continue;
+            }
+            return; // finished with additive expression
         }
-        
-		/*
-		 * This isn't quite right since it would allow multiple comparison operators.
-		 */
-		
-		  if(look == '=' || look == '>' || look == '<') {
-		  		if (look == '=') Equal();
-		      else if (look == '>') GreaterThan();
-		      else if (look == '<') LessThan();
-		      return;
-		  }        
-        
-        
     }
-    
-    /** Recognize and Translate a Greater Than  */
-    private void GreaterThan() {
-		Match('>');
-		if(look == '=')
-		    GreaterEqual();
-		else {
-		    Expression();
-		    tokens.add(new GreaterThanPtg());
-		}
-    }
-    
-    /** Recognize and Translate a Less Than  */
-    private void LessThan() {
-		Match('<');
-		if(look == '=')
-		    LessEqual();
-		else if(look == '>')
-		    NotEqual();
-		else {
-		    Expression();
-		    tokens.add(new LessThanPtg());
-		}
 
-	}  
-   
-   /**
-    * Recognize and translate Greater than or Equal
-    *
-    */ 
-	private void GreaterEqual() {
-	    Match('=');
-	    Expression();
-	    tokens.add(new GreaterEqualPtg());
-	}    
-
-	/**
-	 * Recognize and translate Less than or Equal
-	 *
-	 */ 
-
-	private void LessEqual() {
-	    Match('=');
-	    Expression();
-	    tokens.add(new LessEqualPtg());
-	}
-	
-	/**
-	 * Recognize and not Equal
-	 *
-	 */ 
-
-	private void NotEqual() {
-	    Match('>');
-	    Expression();
-	    tokens.add(new NotEqualPtg());
-	}    
-    
     //{--------------------------------------------------------------}
     //{ Parse and Translate an Assignment Statement }
     /**
@@ -794,48 +792,46 @@ begin
 
 end;
      **/
-    
- 
-    /** Initialize */
-    
-    private void  init() {
-        GetChar();
-        SkipWhite();
-    }
-    
+
+
     /** API call to execute the parsing of the formula
      *
      */
     public void parse() {
-        synchronized (tokens) {
-            init();
-            Expression();
+        pointer=0;
+        GetChar();
+        comparisonExpression();
+
+        if(pointer <= formulaLength) {
+            String msg = "Unused input [" + formulaString.substring(pointer-1) 
+                + "] after attempting to parse the formula [" + formulaString + "]"; 
+            throw new FormulaParseException(msg);
         }
     }
-    
-    
+
+
     /*********************************
      * PARSER IMPLEMENTATION ENDS HERE
      * EXCEL SPECIFIC METHODS BELOW
      *******************************/
-    
-    /** API call to retrive the array of Ptgs created as 
+
+    /** API call to retrive the array of Ptgs created as
      * a result of the parsing
      */
     public Ptg[] getRPNPtg() {
      return getRPNPtg(FORMULA_TYPE_CELL);
     }
-    
+
     public Ptg[] getRPNPtg(int formulaType) {
         Node node = createTree();
         setRootLevelRVA(node, formulaType);
         setParameterRVA(node,formulaType);
         return (Ptg[]) tokens.toArray(new Ptg[0]);
     }
-    
+
     private void setRootLevelRVA(Node n, int formulaType) {
         //Pg 16, excelfileformat.pdf @ openoffice.org
-        Ptg p = (Ptg) n.getValue();
+        Ptg p = n.getValue();
             if (formulaType == FormulaParser.FORMULA_TYPE_NAMEDRANGE) {
                 if (p.getDefaultOperandClass() == Ptg.CLASS_REF) {
                     setClass(n,Ptg.CLASS_REF);
@@ -845,9 +841,9 @@ end;
             } else {
                 setClass(n,Ptg.CLASS_VALUE);
             }
-        
+
     }
-    
+
     private void setParameterRVA(Node n, int formulaType) {
         Ptg p = n.getValue();
         int numOperands = n.getNumChildren();
@@ -863,11 +859,11 @@ end;
             for (int i =0;i<numOperands;i++) {
                 setParameterRVA(n.getChild(i),formulaType);
             }
-        } 
+        }
     }
     private void setParameterRVA(Node n, int expectedClass,int formulaType) {
-        Ptg p = (Ptg) n.getValue();
-        if (expectedClass == Ptg.CLASS_REF) { //pg 15, table 1 
+        Ptg p = n.getValue();
+        if (expectedClass == Ptg.CLASS_REF) { //pg 15, table 1
             if (p.getDefaultOperandClass() == Ptg.CLASS_REF ) {
                 setClass(n, Ptg.CLASS_REF);
             }
@@ -887,7 +883,7 @@ end;
             } else {
                 setClass(n,Ptg.CLASS_VALUE);
             }
-        } else { //Array class, pg 16. 
+        } else { //Array class, pg 16.
             if (p.getDefaultOperandClass() == Ptg.CLASS_VALUE &&
                  (formulaType==FORMULA_TYPE_CELL || formulaType == FORMULA_TYPE_SHARED)) {
                  setClass(n,Ptg.CLASS_VALUE);
@@ -896,9 +892,9 @@ end;
             }
         }
     }
-    
+
      private void setClass(Node n, byte theClass) {
-        Ptg p = (Ptg) n.getValue();
+        Ptg p = n.getValue();
         if (p instanceof AbstractFunctionPtg || !(p instanceof OperationPtg)) {
             p.setClass(theClass);
         } else {
@@ -909,7 +905,7 @@ end;
      }
     /**
      * Convience method which takes in a list then passes it to the
-     *  other toFormulaString signature. 
+     *  other toFormulaString signature.
      * @param book   workbook for 3D and named references
      * @param lptgs  list of Ptg, can be null or empty
      * @return a human readable String
@@ -930,9 +926,9 @@ end;
      * @return a human readable String
      */
     public String toFormulaString(List lptgs) {
-    	return toFormulaString(book, lptgs);
+        return toFormulaString(book, lptgs);
     }
-    
+
     /**
      * Static method to convert an array of Ptgs in RPN order
      * to a human readable string format in infix mode.
@@ -941,61 +937,74 @@ end;
      * @return a human readable String
      */
     public static String toFormulaString(Workbook book, Ptg[] ptgs) {
-        if (ptgs == null || ptgs.length == 0) return "#NAME";
-        java.util.Stack stack = new java.util.Stack();
-        AttrPtg ifptg = null;
+        if (ptgs == null || ptgs.length == 0) {
+            // TODO - what is the justification for returning "#NAME" (which is not "#NAME?", btw)
+            return "#NAME";
+        }
+        Stack stack = new Stack();
 
            // Excel allows to have AttrPtg at position 0 (such as Blanks) which
            // do not have any operands. Skip them.
-        stack.push(ptgs[0].toFormulaString(book));
-                  
-        for (int i = 1; i < ptgs.length; i++) {
-            if (! (ptgs[i] instanceof OperationPtg)) {
-                stack.push(ptgs[i].toFormulaString(book));
-                continue;
+        int i;
+        if(ptgs[0] instanceof AttrPtg) {
+            AttrPtg attrPtg0 = (AttrPtg) ptgs[0];
+            if(attrPtg0.isSemiVolatile()) {
+                // no visible formula for semi-volatile
+            } else {
+                // TODO -this requirement is unclear and is not addressed by any junits
+                stack.push(ptgs[0].toFormulaString(book));
             }
-                      
-            if (ptgs[i] instanceof AttrPtg && ((AttrPtg) ptgs[i]).isOptimizedIf()) {
-                ifptg = (AttrPtg) ptgs[i];
-                continue;
-            }
-                      
-            final OperationPtg o = (OperationPtg) ptgs[i];
-            final String[] operands = new String[o.getNumberOfOperands()];
-
-            for (int j = operands.length; j > 0; j--) {
-                //TODO: catch stack underflow and throw parse exception.
-                operands[j - 1] = (String) stack.pop();
-                      }  
-
-            stack.push(o.toFormulaString(operands));
-            if (!(o instanceof AbstractFunctionPtg)) continue;
-
-            final AbstractFunctionPtg f = (AbstractFunctionPtg) o;
-            final String fname = f.getName();
-            if (fname == null) continue;
-
-            if ((ifptg != null) && (fname.equals("specialflag"))) {
-                             // this special case will be way different.
-                stack.push(ifptg.toFormulaString(new String[]{(String) stack.pop()}));
-                continue;
-                      }
-            if (fname.equals("externalflag")) {
-                final String top = (String) stack.pop();
-                final int paren = top.indexOf('(');
-                final int comma = top.indexOf(',');
-                if (comma == -1) {
-                    final int rparen = top.indexOf(')');
-                    stack.push(top.substring(paren + 1, rparen) + "()");
-                  }
-                else {
-                    stack.push(top.substring(paren + 1, comma) + '(' +
-                               top.substring(comma + 1));
-            }
+            i=1;
+        } else {
+            i=0;
         }
-    }
-        // TODO: catch stack underflow and throw parse exception.
-        return (String) stack.pop();
+
+        for ( ; i < ptgs.length; i++) {
+            Ptg ptg = ptgs[i];
+            // TODO - what about MemNoMemPtg?
+            if(ptg instanceof MemAreaPtg || ptg instanceof MemFuncPtg || ptg instanceof MemErrPtg) {
+                // marks the start of a list of area expressions which will be naturally combined
+                // by their trailing operators (e.g. UnionPtg)
+                // TODO - put comment and throw exception in toFormulaString() of these classes
+                continue;
+            }
+            if (! (ptg instanceof OperationPtg)) {
+                stack.push(ptg.toFormulaString(book));
+                continue;
+            }
+
+            if (ptg instanceof AttrPtg && ((AttrPtg) ptg).isOptimizedIf()) {
+                continue;
+            }
+
+            final OperationPtg o = (OperationPtg) ptg;
+            int nOperands = o.getNumberOfOperands();
+            final String[] operands = new String[nOperands];
+
+            for (int j = nOperands-1; j >= 0; j--) {
+                if(stack.isEmpty()) {
+                    //TODO: write junit to prove this works
+                   String msg = "Too few arguments suppled to operation token ("
+                        + o.getClass().getName() + "). Expected (" + nOperands
+                        + " but got " + (nOperands - j + 1);
+                    throw new FormulaParseException(msg);
+                }
+                operands[j] = (String) stack.pop();
+            }
+            stack.push(o.toFormulaString(operands));
+        }
+        if(stack.isEmpty()) {
+            // inspection of the code above reveals that every stack.pop() is followed by a 
+            // stack.push(). So this is either an internal error or impossible.
+            throw new IllegalStateException("Stack underflow");
+        }
+        String result = (String) stack.pop();
+        if(!stack.isEmpty()) {
+            // Might be caused by some tokens like AttrPtg and Mem*Ptg, which really shouldn't
+            // put anything on the stack
+            throw new IllegalStateException("too much stuff left on the stack");
+        }
+        return result;
     }
     /**
      * Static method to convert an array of Ptgs in RPN order
@@ -1005,7 +1014,7 @@ end;
      * @return a human readable String
      */
     public String toFormulaString(Ptg[] ptgs) {
-    	return toFormulaString(book, ptgs);
+        return toFormulaString(book, ptgs);
     }
 
 
@@ -1013,19 +1022,19 @@ end;
      *used to run the class(RVA) change algo
      */
     private Node createTree() {
-        java.util.Stack stack = new java.util.Stack();
+        Stack stack = new Stack();
         int numPtgs = tokens.size();
         OperationPtg o;
         int numOperands;
         Node[] operands;
         for (int i=0;i<numPtgs;i++) {
             if (tokens.get(i) instanceof OperationPtg) {
-                
+
                 o = (OperationPtg) tokens.get(i);
                 numOperands = o.getNumberOfOperands();
                 operands = new Node[numOperands];
                 for (int j=0;j<numOperands;j++) {
-                    operands[numOperands-j-1] = (Node) stack.pop(); 
+                    operands[numOperands-j-1] = (Node) stack.pop();
                 }
                 Node result = new Node(o);
                 result.setChildren(operands);
@@ -1036,7 +1045,7 @@ end;
         }
         return (Node) stack.pop();
     }
-   
+
     /** toString on the parser instance returns the RPN ordered list of tokens
      *   Useful for testing
      */
@@ -1045,21 +1054,21 @@ end;
            for (int i=0;i<tokens.size();i++) {
             buf.append( ( (Ptg)tokens.get(i)).toFormulaString(book));
             buf.append(' ');
-        } 
+        }
         return buf.toString();
     }
-    
-}   
+
     /** Private helper class, used to create a tree representation of the formula*/
-    class Node {
+    private static final class Node {
         private Ptg value=null;
         private Node[] children=new Node[0];
         private int numChild=0;
         public Node(Ptg val) {
-            value = val; 
+            value = val;
         }
         public void setChildren(Node[] child) {children = child;numChild=child.length;}
         public int getNumChildren() {return numChild;}
         public Node getChild(int number) {return children[number];}
         public Ptg getValue() {return value;}
     }
+}

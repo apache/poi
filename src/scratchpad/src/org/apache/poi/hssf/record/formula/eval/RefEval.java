@@ -14,11 +14,7 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-/*
- * Created on May 9, 2005
- *
- * 
- */
+
 package org.apache.poi.hssf.record.formula.eval;
 
 /**
@@ -44,26 +40,12 @@ public interface RefEval extends ValueEval {
     public ValueEval getInnerValueEval();
 
     /**
-     * returns the column index.
+     * returns the zero based column index.
      */
-    public short getColumn();
+    public int getColumn();
 
     /**
-     * returns the row index.
+     * returns the zero based row index.
      */
-    public short getRow();
-    
-    /**
-     * returns true if this RefEval contains an
-     * evaluated value instead of a direct value.
-     * eg. say cell A1 has the value: ="test"
-     * Then the RefEval representing A1 will return
-     * isEvaluated() equal to false. On the other
-     * hand, say cell A1 has the value: =B1 and
-     * B1 has the value "test", then the RefEval
-     * representing A1 will return isEvaluated()
-     * equal to true.
-     */
-    public boolean isEvaluated();
-
+    public int getRow();
 }

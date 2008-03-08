@@ -18,16 +18,14 @@
 
 package org.apache.poi.hssf.record.formula;
 
-import org.apache.poi.util.LittleEndian;
-
-import org.apache.poi.hssf.util.RangeAddress;
-import org.apache.poi.hssf.util.CellReference;
-import org.apache.poi.hssf.util.SheetReferences;
-import org.apache.poi.hssf.model.Workbook;
-import org.apache.poi.util.BitField;
-import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.RecordInputStream;
+import org.apache.poi.hssf.util.CellReference;
+import org.apache.poi.hssf.util.RangeAddress;
+import org.apache.poi.hssf.util.SheetReferences;
+import org.apache.poi.util.BitField;
+import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.LittleEndian;
 
 /**
  * Title:        Reference 3D Ptg <P>
@@ -42,8 +40,14 @@ public class Ref3DPtg extends Ptg {
     public final static byte sid  = 0x3a;
     private final static int  SIZE = 7; // 6 + 1 for Ptg
     private short             field_1_index_extern_sheet;
-    private short             field_2_row;
-    private short             field_3_column;
+    /** The row index - zero based unsigned 16 bit value */
+    private int            field_2_row;
+    /** Field 2 
+     * - lower 8 bits is the zero based unsigned byte column index 
+     * - bit 16 - isRowRelative
+     * - bit 15 - isColumnRelative 
+     */
+    private int             field_3_column;
     private BitField         rowRelative = BitFieldFactory.getInstance(0x8000);
     private BitField         colRelative = BitFieldFactory.getInstance(0x4000);
 
@@ -58,8 +62,8 @@ public class Ref3DPtg extends Ptg {
     
     public Ref3DPtg(String cellref, short externIdx ) {
         CellReference c= new CellReference(cellref);
-        setRow((short) c.getRow());
-        setColumn((short) c.getCol());
+        setRow(c.getRow());
+        setColumn(c.getCol());
         setColRelative(!c.isColAbsolute());
         setRowRelative(!c.isRowAbsolute());   
         setExternSheetIndex(externIdx);
@@ -81,8 +85,8 @@ public class Ref3DPtg extends Ptg {
     public void writeBytes(byte [] array, int offset) {
         array[ 0 + offset ] = (byte) (sid + ptgClass);
         LittleEndian.putShort(array, 1 + offset , getExternSheetIndex());
-        LittleEndian.putShort(array, 3 + offset , getRow());
-        LittleEndian.putShort(array, 5 + offset , getColumnRaw());
+        LittleEndian.putShort(array, 3 + offset , (short)getRow());
+        LittleEndian.putShort(array, 5 + offset , (short)getColumnRaw());
     }
 
     public int getSize() {
@@ -97,19 +101,19 @@ public class Ref3DPtg extends Ptg {
         field_1_index_extern_sheet = index;
     }
 
-    public short getRow() {
+    public int getRow() {
         return field_2_row;
     }
 
-    public void setRow(short row) {
+    public void setRow(int row) {
         field_2_row = row;
     }
 
-    public short getColumn() {
-        return ( short ) (field_3_column & 0xFF);
+    public int getColumn() {
+        return field_3_column & 0xFF;
     }
 
-    public short getColumnRaw() {
+    public int getColumnRaw() {
         return field_3_column;
     }
 
@@ -119,7 +123,7 @@ public class Ref3DPtg extends Ptg {
     }
     
     public void setRowRelative(boolean rel) {
-        field_3_column=rowRelative.setShortBoolean(field_3_column,rel);
+        field_3_column=rowRelative.setBoolean(field_3_column,rel);
     }
     
     public boolean isColRelative()
@@ -128,7 +132,7 @@ public class Ref3DPtg extends Ptg {
     }
     
     public void setColRelative(boolean rel) {
-        field_3_column=colRelative.setShortBoolean(field_3_column,rel);
+        field_3_column=colRelative.setBoolean(field_3_column,rel);
     }
     public void setColumn(short column) {
         field_3_column &= 0xFF00;
@@ -183,7 +187,7 @@ public class Ref3DPtg extends Ptg {
             SheetNameFormatter.appendFormat(retval, sheetName);
             retval.append( '!' );
         }
-        retval.append((new CellReference(getRow(),getColumn(),!isRowRelative(),!isColRelative())).toString()); 
+        retval.append((new CellReference(getRow(),getColumn(),!isRowRelative(),!isColRelative())).formatAsString()); 
         return retval.toString();
     }
 
@@ -197,5 +201,4 @@ public class Ref3DPtg extends Ptg {
      ptg.setClass(ptgClass);
      return ptg;
    }
-
 }

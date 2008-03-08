@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -18,24 +17,35 @@
         
 package org.apache.poi.hssf.model;
 
+import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
+import org.apache.poi.hssf.model.FormulaParser.FormulaParseException;
 import org.apache.poi.hssf.record.formula.AbstractFunctionPtg;
 import org.apache.poi.hssf.record.formula.AddPtg;
+import org.apache.poi.hssf.record.formula.AreaPtg;
 import org.apache.poi.hssf.record.formula.AttrPtg;
 import org.apache.poi.hssf.record.formula.BoolPtg;
+import org.apache.poi.hssf.record.formula.ConcatPtg;
 import org.apache.poi.hssf.record.formula.DividePtg;
 import org.apache.poi.hssf.record.formula.EqualPtg;
+import org.apache.poi.hssf.record.formula.ErrPtg;
+import org.apache.poi.hssf.record.formula.FuncPtg;
 import org.apache.poi.hssf.record.formula.FuncVarPtg;
 import org.apache.poi.hssf.record.formula.IntPtg;
 import org.apache.poi.hssf.record.formula.LessEqualPtg;
 import org.apache.poi.hssf.record.formula.LessThanPtg;
+import org.apache.poi.hssf.record.formula.MissingArgPtg;
+import org.apache.poi.hssf.record.formula.MultiplyPtg;
 import org.apache.poi.hssf.record.formula.NamePtg;
 import org.apache.poi.hssf.record.formula.NotEqualPtg;
 import org.apache.poi.hssf.record.formula.NumberPtg;
+import org.apache.poi.hssf.record.formula.PercentPtg;
+import org.apache.poi.hssf.record.formula.PowerPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.record.formula.ReferencePtg;
 import org.apache.poi.hssf.record.formula.StringPtg;
+import org.apache.poi.hssf.record.formula.SubtractPtg;
 import org.apache.poi.hssf.record.formula.UnaryMinusPtg;
 import org.apache.poi.hssf.record.formula.UnaryPlusPtg;
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -49,27 +59,27 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
  * Some tests are also done in scratchpad, if they need
  *  HSSFFormulaEvaluator, which is there
  */
-public class TestFormulaParser extends TestCase {
+public final class TestFormulaParser extends TestCase {
 
-    public TestFormulaParser(String name) {
-        super(name);
-    }
-    public void setUp(){
-        
-    }
-    
-    public void tearDown() {
-        
+    /**
+     * @return parsed token array already confirmed not <code>null</code>
+     */
+    private static Ptg[] parseFormula(String s) {
+        FormulaParser fp = new FormulaParser(s, null);
+        fp.parse();
+        Ptg[] result = fp.getRPNPtg();
+        assertNotNull("Ptg array should not be null", result);
+        return result;
     }
     
     public void testSimpleFormula() {
-        FormulaParser fp = new FormulaParser("2+2;",null);
+        FormulaParser fp = new FormulaParser("2+2",null);
         fp.parse();
         Ptg[] ptgs = fp.getRPNPtg();
         assertTrue("three tokens expected, got "+ptgs.length,ptgs.length == 3);
     }
     public void testFormulaWithSpace1() {
-        FormulaParser fp = new FormulaParser(" 2 + 2 ;",null);
+        FormulaParser fp = new FormulaParser(" 2 + 2 ",null);
         fp.parse();
         Ptg[] ptgs = fp.getRPNPtg();
         assertTrue("three tokens expected, got "+ptgs.length,ptgs.length == 3);
@@ -82,7 +92,7 @@ public class TestFormulaParser extends TestCase {
     public void testFormulaWithSpace2() {
         Ptg[] ptgs;
         FormulaParser fp;
-        fp = new FormulaParser("2+ sum( 3 , 4) ;",null);
+        fp = new FormulaParser("2+ sum( 3 , 4) ",null);
         fp.parse();
         ptgs = fp.getRPNPtg();
         assertTrue("five tokens expected, got "+ptgs.length,ptgs.length == 5);
@@ -91,7 +101,7 @@ public class TestFormulaParser extends TestCase {
      public void testFormulaWithSpaceNRef() {
         Ptg[] ptgs;
         FormulaParser fp;
-        fp = new FormulaParser("sum( A2:A3 );",null);
+        fp = new FormulaParser("sum( A2:A3 )",null);
         fp.parse();
         ptgs = fp.getRPNPtg();
         assertTrue("two tokens expected, got "+ptgs.length,ptgs.length == 2);
@@ -100,7 +110,7 @@ public class TestFormulaParser extends TestCase {
     public void testFormulaWithString() {
         Ptg[] ptgs;
         FormulaParser fp;
-        fp = new FormulaParser("\"hello\" & \"world\" ;",null);
+        fp = new FormulaParser("\"hello\" & \"world\" ",null);
         fp.parse();
         ptgs = fp.getRPNPtg();
         assertTrue("three token expected, got " + ptgs.length, ptgs.length == 3);
@@ -273,20 +283,21 @@ public class TestFormulaParser extends TestCase {
 	}
 	    
     public void testMacroFunction() {
-        Workbook w = new Workbook();
+        Workbook w = Workbook.createWorkbook();
         FormulaParser fp = new FormulaParser("FOO()", w);
         fp.parse();
         Ptg[] ptg = fp.getRPNPtg();
 
-        AbstractFunctionPtg tfunc = (AbstractFunctionPtg) ptg[0];
-        assertEquals("externalflag", tfunc.getName());
-
-        NamePtg tname = (NamePtg) ptg[1];
+        // the name gets encoded as the first arg
+        NamePtg tname = (NamePtg) ptg[0];
         assertEquals("FOO", tname.toFormulaString(w));
+        
+        AbstractFunctionPtg tfunc = (AbstractFunctionPtg) ptg[1];
+        assertEquals("externalflag", tfunc.getName());
     }
 
     public void testEmbeddedSlash() {
-        FormulaParser fp = new FormulaParser("HYPERLINK(\"http://www.jakarta.org\",\"Jakarta\");",null);
+        FormulaParser fp = new FormulaParser("HYPERLINK(\"http://www.jakarta.org\",\"Jakarta\")",null);
         fp.parse();
         Ptg[] ptg = fp.getRPNPtg();
         assertTrue("first ptg is string",ptg[0] instanceof StringPtg);
@@ -397,7 +408,7 @@ public class TestFormulaParser extends TestCase {
 	public void testUnderscore() {
 		HSSFWorkbook wb = new HSSFWorkbook();
     	
-    	wb.createSheet("Cash_Flow");;
+    	wb.createSheet("Cash_Flow");
     	
     	HSSFSheet sheet = wb.createSheet("Test");
     	HSSFRow row = sheet.createRow(0);
@@ -438,7 +449,7 @@ public class TestFormulaParser extends TestCase {
     public void testExponentialInSheet() throws Exception {
         HSSFWorkbook wb = new HSSFWorkbook();
 
-        wb.createSheet("Cash_Flow");;
+        wb.createSheet("Cash_Flow");
 
         HSSFSheet sheet = wb.createSheet("Test");
         HSSFRow row = sheet.createRow(0);
@@ -514,7 +525,7 @@ public class TestFormulaParser extends TestCase {
     public void testNumbers() {
         HSSFWorkbook wb = new HSSFWorkbook();
         
-        wb.createSheet("Cash_Flow");;
+        wb.createSheet("Cash_Flow");
         
         HSSFSheet sheet = wb.createSheet("Test");
         HSSFRow row = sheet.createRow(0);
@@ -553,7 +564,7 @@ public class TestFormulaParser extends TestCase {
     public void testRanges() {
         HSSFWorkbook wb = new HSSFWorkbook();
         
-        wb.createSheet("Cash_Flow");;
+        wb.createSheet("Cash_Flow");
         
         HSSFSheet sheet = wb.createSheet("Test");
         HSSFRow row = sheet.createRow(0);
@@ -571,5 +582,266 @@ public class TestFormulaParser extends TestCase {
         cell.setCellFormula("A1...A2");
         formula = cell.getCellFormula();
         assertEquals("A1:A2", formula);
-    }        
+    }
+    
+    /**
+     * Test for bug observable at svn revision 618865 (5-Feb-2008)<br/>
+     * a formula consisting of a single no-arg function got rendered without the function braces
+     */
+    public void testToFormulaStringZeroArgFunction() {
+        
+        Workbook book = Workbook.createWorkbook(); // not really used in this test
+        
+        Ptg[] ptgs = {
+                new FuncPtg(10, 0),
+        };
+        assertEquals("NA()", FormulaParser.toFormulaString(book, ptgs));
+    }
+
+    public void testPercent() {
+        Ptg[] ptgs;
+        ptgs = parseFormula("5%");
+        assertEquals(2, ptgs.length);
+        assertEquals(ptgs[0].getClass(), IntPtg.class);
+        assertEquals(ptgs[1].getClass(), PercentPtg.class);
+
+        // spaces OK
+        ptgs = parseFormula(" 250 % ");
+        assertEquals(2, ptgs.length);
+        assertEquals(ptgs[0].getClass(), IntPtg.class);
+        assertEquals(ptgs[1].getClass(), PercentPtg.class);
+        
+        
+        // double percent OK 
+        ptgs = parseFormula("12345.678%%");
+        assertEquals(3, ptgs.length);
+        assertEquals(ptgs[0].getClass(), NumberPtg.class);
+        assertEquals(ptgs[1].getClass(), PercentPtg.class);
+        assertEquals(ptgs[2].getClass(), PercentPtg.class);
+        
+        // percent of a bracketed expression
+        ptgs = parseFormula("(A1+35)%*B1%");
+        assertEquals(8, ptgs.length);
+        assertEquals(ptgs[4].getClass(), PercentPtg.class);
+        assertEquals(ptgs[6].getClass(), PercentPtg.class);
+        
+        // percent of a text quantity
+        ptgs = parseFormula("\"8.75\"%");
+        assertEquals(2, ptgs.length);
+        assertEquals(ptgs[0].getClass(), StringPtg.class);
+        assertEquals(ptgs[1].getClass(), PercentPtg.class);
+
+        // percent to the power of
+        ptgs = parseFormula("50%^3");
+        assertEquals(4, ptgs.length);
+        assertEquals(ptgs[0].getClass(), IntPtg.class);
+        assertEquals(ptgs[1].getClass(), PercentPtg.class);
+        assertEquals(ptgs[2].getClass(), IntPtg.class);
+        assertEquals(ptgs[3].getClass(), PowerPtg.class);
+
+        //
+        // things that parse OK but would *evaluate* to an error
+        
+        ptgs = parseFormula("\"abc\"%");
+        assertEquals(2, ptgs.length);
+        assertEquals(ptgs[0].getClass(), StringPtg.class);
+        assertEquals(ptgs[1].getClass(), PercentPtg.class);
+        
+        ptgs = parseFormula("#N/A%");
+        assertEquals(2, ptgs.length);
+        assertEquals(ptgs[0].getClass(), ErrPtg.class);
+        assertEquals(ptgs[1].getClass(), PercentPtg.class);
+    }
+    
+    /**
+     * Tests combinations of various operators in the absence of brackets
+     */
+    public void testPrecedenceAndAssociativity() {
+
+        Class[] expClss;
+        
+        // TRUE=TRUE=2=2  evaluates to FALSE
+        expClss = new Class[] { BoolPtg.class, BoolPtg.class, EqualPtg.class, 
+                IntPtg.class, EqualPtg.class, IntPtg.class, EqualPtg.class,  };
+        confirmTokenClasses("TRUE=TRUE=2=2", expClss);
+       
+
+        //  2^3^2    evaluates to 64 not 512
+        expClss = new Class[] { IntPtg.class, IntPtg.class, PowerPtg.class, 
+                IntPtg.class, PowerPtg.class, };
+        confirmTokenClasses("2^3^2", expClss);
+        
+        // "abc" & 2 + 3 & "def"   evaluates to "abc5def"
+        expClss = new Class[] { StringPtg.class, IntPtg.class, IntPtg.class, 
+                AddPtg.class, ConcatPtg.class, StringPtg.class, ConcatPtg.class, };
+        confirmTokenClasses("\"abc\"&2+3&\"def\"", expClss);
+        
+        
+        //  (1 / 2) - (3 * 4)
+        expClss = new Class[] { IntPtg.class, IntPtg.class, DividePtg.class, 
+                IntPtg.class, IntPtg.class, MultiplyPtg.class, SubtractPtg.class, };
+        confirmTokenClasses("1/2-3*4", expClss);
+        
+        // 2 * (2^2)
+        expClss = new Class[] { IntPtg.class, IntPtg.class, IntPtg.class, PowerPtg.class, MultiplyPtg.class, };
+        // NOT: (2 *2) ^ 2 -> int int multiply int power
+        confirmTokenClasses("2*2^2", expClss);
+        
+        //  2^200% -> 2 not 1.6E58
+        expClss = new Class[] { IntPtg.class, IntPtg.class, PercentPtg.class, PowerPtg.class, };
+        confirmTokenClasses("2^200%", expClss);
+    }
+    
+    private static void confirmTokenClasses(String formula, Class[] expectedClasses) {
+        Ptg[] ptgs = parseFormula(formula);
+        assertEquals(expectedClasses.length, ptgs.length);
+        for (int i = 0; i < expectedClasses.length; i++) {
+            if(expectedClasses[i] != ptgs[i].getClass()) {
+                fail("difference at token[" + i + "]: expected ("
+                    + expectedClasses[i].getName() + ") but got (" 
+                    + ptgs[i].getClass().getName() + ")");
+            }
+        }
+    }
+
+    public void testPower() {
+        confirmTokenClasses("2^5", new Class[] { IntPtg.class, IntPtg.class, PowerPtg.class, });
+    }
+
+    private static Ptg parseSingleToken(String formula, Class ptgClass) {
+        Ptg[] ptgs = parseFormula(formula);
+        assertEquals(1, ptgs.length);
+        Ptg result = ptgs[0];
+        assertEquals(ptgClass, result.getClass());
+        return result;
+    }
+
+    public void testParseNumber() {
+        IntPtg ip;
+        
+        // bug 33160
+        ip = (IntPtg) parseSingleToken("40", IntPtg.class);
+        assertEquals(40, ip.getValue());
+        ip = (IntPtg) parseSingleToken("40000", IntPtg.class);
+        assertEquals(40000, ip.getValue());
+        
+        // check the upper edge of the IntPtg range:
+        ip = (IntPtg) parseSingleToken("65535", IntPtg.class);
+        assertEquals(65535, ip.getValue());
+        NumberPtg np = (NumberPtg) parseSingleToken("65536", NumberPtg.class);
+        assertEquals(65536, np.getValue(), 0);
+        
+        np = (NumberPtg) parseSingleToken("65534.6", NumberPtg.class);
+        assertEquals(65534.6, np.getValue(), 0);
+    }
+    
+    public void testMissingArgs() {
+        
+        Class[] expClss;
+        
+        expClss = new Class[] { ReferencePtg.class, MissingArgPtg.class, ReferencePtg.class, 
+                FuncVarPtg.class, };
+        confirmTokenClasses("if(A1, ,C1)", expClss);
+        
+        expClss = new Class[] { MissingArgPtg.class, AreaPtg.class, MissingArgPtg.class,
+                FuncVarPtg.class, };
+        confirmTokenClasses("counta( , A1:B2, )", expClss);
+    }
+
+    public void testParseErrorLiterals() {
+        
+        confirmParseErrorLiteral(ErrPtg.NULL_INTERSECTION, "#NULL!");
+        confirmParseErrorLiteral(ErrPtg.DIV_ZERO, "#DIV/0!");
+        confirmParseErrorLiteral(ErrPtg.VALUE_INVALID, "#VALUE!");
+        confirmParseErrorLiteral(ErrPtg.REF_INVALID, "#REF!");
+        confirmParseErrorLiteral(ErrPtg.NAME_INVALID, "#NAME?");
+        confirmParseErrorLiteral(ErrPtg.NUM_ERROR, "#NUM!");
+        confirmParseErrorLiteral(ErrPtg.N_A, "#N/A");
+    }
+
+    private static void confirmParseErrorLiteral(ErrPtg expectedToken, String formula) {
+        assertEquals(expectedToken, parseSingleToken(formula, ErrPtg.class));
+    }
+    
+    /**
+     * To aid readability the parameters have been encoded with single quotes instead of double
+     * quotes.  This method converts single quotes to double quotes before performing the parse
+     * and result check.
+     */
+    private static void confirmStringParse(String singleQuotedValue) {
+        // formula: internal quotes become double double, surround with double quotes
+        String formula = '"' + singleQuotedValue.replaceAll("'", "\"\"") + '"';
+        String expectedValue = singleQuotedValue.replace('\'', '"');
+        
+        StringPtg sp = (StringPtg) parseSingleToken(formula, StringPtg.class);
+        assertEquals(expectedValue, sp.getValue());
+    }
+    
+    public void testPaseStringLiterals() {
+        confirmStringParse("goto considered harmful");
+        
+        confirmStringParse("goto 'considered' harmful");
+        
+        confirmStringParse("");
+        confirmStringParse("'");
+        confirmStringParse("''");
+        confirmStringParse("' '");
+        confirmStringParse(" ' ");
+    }
+    
+    public void testParseSumIfSum() {
+        String formulaString;
+        Ptg[] ptgs;
+        ptgs = parseFormula("sum(5, 2, if(3>2, sum(A1:A2), 6))");
+        formulaString = FormulaParser.toFormulaString(null, ptgs);
+        assertEquals("SUM(5,2,IF(3>2,SUM(A1:A2),6))", formulaString);
+
+        ptgs = parseFormula("if(1<2,sum(5, 2, if(3>2, sum(A1:A2), 6)),4)");
+        formulaString = FormulaParser.toFormulaString(null, ptgs);
+        assertEquals("IF(1<2,SUM(5,2,IF(3>2,SUM(A1:A2),6)),4)", formulaString);
+    }
+    public void testParserErrors() {
+        parseExpectedException("1 2");
+        parseExpectedException(" 12 . 345  ");
+        parseExpectedException("1 .23  ");
+
+        parseExpectedException("sum(#NAME)");
+        parseExpectedException("1 + #N / A * 2");
+        parseExpectedException("#value?");
+        parseExpectedException("#DIV/ 0+2");
+        
+        
+        if (false) { // TODO - add functionality to detect func arg count mismatch
+            parseExpectedException("IF(TRUE)");
+            parseExpectedException("countif(A1:B5, C1, D1)");
+        }
+    }
+    
+    private static void parseExpectedException(String formula) {
+        try {
+            parseFormula(formula);
+            throw new AssertionFailedError("expected parse exception");
+        } catch (FormulaParseException e) {
+            // expected during successful test
+            assertNotNull(e.getMessage());
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+            fail("Wrong exception:" + e.getMessage());
+        }
+    }
+
+    public void testSetFormulaWithRowBeyond32768_Bug44539() {
+        
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet();
+        wb.setSheetName(0, "Sheet1");
+        
+        HSSFRow row = sheet.createRow(0);
+        HSSFCell cell = row.createCell((short)0);
+        cell.setCellFormula("SUM(A32769:A32770)");
+        if("SUM(A-32767:A-32766)".equals(cell.getCellFormula())) {
+            fail("Identified bug 44539");
+        }
+        assertEquals("SUM(A32769:A32770)", cell.getCellFormula());
+    }
 }

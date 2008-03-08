@@ -25,7 +25,6 @@ import java.awt.event.*;
 import java.io.*;
 import javax.swing.*;
 import javax.swing.table.*;
-import javax.swing.event.*;
 
 import org.apache.poi.hssf.usermodel.*;
 
@@ -260,6 +259,9 @@ public class SViewerPanel extends JPanel {
 
   /**Main method*/
   public static void main(String[] args) {
+    if(args.length < 1) {
+      throw new IllegalArgumentException("A filename to view must be supplied as the first argument, but none was given");
+    }
     try {
       FileInputStream in = new FileInputStream(args[0]);
       HSSFWorkbook wb = new HSSFWorkbook(in);

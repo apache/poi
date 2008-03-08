@@ -14,10 +14,7 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-/*
- * Created on May 15, 2005
- *
- */
+
 package org.apache.poi.hssf.record.formula.functions;
 
 import org.apache.poi.hssf.record.formula.eval.ErrorEval;
@@ -35,7 +32,6 @@ public class Mina extends MultiOperandNumericFunction {
         new ValueEvalToNumericXlator((short) (
                   ValueEvalToNumericXlator.BOOL_IS_PARSED  
                 | ValueEvalToNumericXlator.REF_BOOL_IS_PARSED  
-                | ValueEvalToNumericXlator.EVALUATED_REF_BOOL_IS_PARSED  
                 | ValueEvalToNumericXlator.STRING_IS_PARSED  
               //| ValueEvalToNumericXlator.REF_STRING_IS_PARSED  
               //| ValueEvalToNumericXlator.EVALUATED_REF_STRING_IS_PARSED  

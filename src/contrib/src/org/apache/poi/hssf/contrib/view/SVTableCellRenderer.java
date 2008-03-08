@@ -19,8 +19,6 @@
 
 package org.apache.poi.hssf.contrib.view;
 
-import java.util.Hashtable;
-
 import javax.swing.*;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.border.*;
@@ -28,14 +26,11 @@ import javax.swing.border.*;
 import java.awt.Component;
 import java.awt.Color;
 import java.awt.Rectangle;
-import java.awt.Font;
 
 import java.io.Serializable;
 import java.text.*;
 
 import org.apache.poi.hssf.usermodel.*;
-import org.apache.poi.hssf.util.HSSFColor;
-
 
 
 /**

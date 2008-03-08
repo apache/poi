@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,30 +14,30 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hssf.model;
 
 import junit.framework.TestCase;
 
+import org.apache.poi.hssf.model.FormulaParser.FormulaParseException;
 import org.apache.poi.hssf.record.formula.FuncVarPtg;
 import org.apache.poi.hssf.record.formula.NamePtg;
 import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFName;
+import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator.CellValue;
 
 /**
  * Test the low level formula parser functionality,
  *  but using parts which need to use the
  *  HSSFFormulaEvaluator, which is in scratchpad 
  */
-public class TestFormulaParserSP extends TestCase {
+public final class TestFormulaParserSP extends TestCase {
 
-    public TestFormulaParserSP(String name) {
-        super(name);
-    }
-	
 	public void testWithNamedRange() throws Exception {
 		HSSFWorkbook workbook = new HSSFWorkbook();
 		FormulaParser fp;
@@ -80,4 +79,32 @@ public class TestFormulaParserSP extends TestCase {
 		assertEquals(FuncVarPtg.class, ptgs[1].getClass());
 	}
 
+	public void testEvaluateFormulaWithRowBeyond32768_Bug44539() {
+		
+		HSSFWorkbook wb = new HSSFWorkbook();
+		HSSFSheet sheet = wb.createSheet();
+		wb.setSheetName(0, "Sheet1");
+		
+		HSSFRow row = sheet.createRow(0);
+		HSSFCell cell = row.createCell((short)0);
+		cell.setCellFormula("SUM(A32769:A32770)");
+
+		// put some values in the cells to make the evaluation more interesting
+		sheet.createRow(32768).createCell((short)0).setCellValue(31);
+		sheet.createRow(32769).createCell((short)0).setCellValue(11);
+		
+		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(sheet, wb);
+		fe.setCurrentRow(row);
+		CellValue result;
+		try {
+			result = fe.evaluate(cell);
+		} catch (FormulaParseException e) {
+			if(e.getMessage().equals("Found reference to named range \"A\", but that named range wasn't defined!")) {
+				fail("Identifed bug 44539");
+			}
+			throw new RuntimeException(e);
+		}
+		assertEquals(HSSFCell.CELL_TYPE_NUMERIC, result.getCellType());
+		assertEquals(42.0, result.getNumberValue(), 0.0);
+	}
 }

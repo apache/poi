@@ -28,28 +28,22 @@ import org.apache.poi.hssf.record.formula.eval.Eval;
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
  * 
  */
-public class If implements Function {
+public final class If implements Function {
 
-    public Eval evaluate(Eval[] evals, int srcCellRow, short srcCellCol) {
-        Eval retval = null;
+    public Eval evaluate(Eval[] args, int srcCellRow, short srcCellCol) {
+
         Eval evalWhenFalse = BoolEval.FALSE;
-        switch (evals.length) {
+        switch (args.length) {
         case 3:
-            evalWhenFalse = evals[2];
+            evalWhenFalse = args[2];
         case 2:
-            BoolEval beval = (BoolEval) evals[0];
+            BoolEval beval = (BoolEval) args[0]; // TODO - class cast exception
             if (beval.getBooleanValue()) {
-                retval = evals[1];
+                return args[1];
             }
-            else {
-                retval = evalWhenFalse;
-            }
-            break;
+            return evalWhenFalse;
         default:
-            retval = ErrorEval.UNKNOWN_ERROR;
+            return ErrorEval.VALUE_INVALID;
         }
-        return retval;
     }
-
-
 }

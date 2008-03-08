@@ -51,7 +51,7 @@ public class TestDataValidation extends TestCase
   public void testDataValidation() throws Exception
   {
     System.out.println("\nTest no. 2 - Test Excel's Data validation mechanism");
-    String resultFile   = System.getProperty("HSSF.testdata.path")+"/TestDataValidation.xls";
+    String resultFile   = System.getProperty("java.io.tmpdir")+File.separator+"TestDataValidation.xls";
     HSSFWorkbook wb = new HSSFWorkbook();
 
     HSSFCellStyle style_1 = this.createStyle( wb, HSSFCellStyle.ALIGN_LEFT );

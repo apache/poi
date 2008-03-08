@@ -15,75 +15,99 @@
    limitations under the License.
 ==================================================================== */
 
-
 package org.apache.poi.hssf.util;
+
+import org.apache.poi.hssf.record.formula.SheetNameFormatter;
 
 /**
  *
  * @author  Avik Sengupta
  * @author  Dennis Doubleday (patch to seperateRowColumns())
  */
-public class CellReference {
+public final class CellReference {
+    /** The character ($) that signifies a row or column value is absolute instead of relative */ 
+    private static final char ABSOLUTE_REFERENCE_MARKER = '$';
+    /** The character (!) that separates sheet names from cell references */ 
+    private static final char SHEET_NAME_DELIMITER = '!';
+    /** The character (') used to quote sheet names when they contain special characters */
+    private static final char SPECIAL_NAME_DELIMITER = '\'';
+    
 
-    /** Creates new CellReference */
-    private int row;
-    private int col;
-    private String sheetName;
-    private boolean rowAbs;
-    private boolean colAbs;
+    private final int _rowIndex;
+    private final int _colIndex;
+    private final String _sheetName;
+    private final boolean _isRowAbs;
+    private final boolean _isColAbs;
 
+    /**
+     * Create an cell ref from a string representation.  Sheet names containing special characters should be
+     * delimited and escaped as per normal syntax rules for formulas.
+     */
     public CellReference(String cellRef) {
         String[] parts = separateRefParts(cellRef);
-        sheetName = parts[0];
-        String ref = parts[1]; 
-        if ((ref == null)||("".equals(ref)))
-        	throw new IllegalArgumentException("Invalid Formula cell reference: '"+cellRef+"'");
-        if (ref.charAt(0) == '$') {
-            colAbs=true;
-            ref=ref.substring(1);
+        _sheetName = parts[0];
+        String colRef = parts[1]; 
+        if (colRef.length() < 1) {
+            throw new IllegalArgumentException("Invalid Formula cell reference: '"+cellRef+"'");
         }
-        col = convertColStringToNum(ref);
-        ref=parts[2];
-        if ((ref == null)||("".equals(ref)))
-        	throw new IllegalArgumentException("Invalid Formula cell reference: '"+cellRef+"'");
-        if (ref.charAt(0) == '$') {
-            rowAbs=true;
-            ref=ref.substring(1);
+        _isColAbs = colRef.charAt(0) == '$';
+        if (_isColAbs) {
+            colRef=colRef.substring(1);
         }
-        row = Integer.parseInt(ref)-1;
-    }
-
-    public CellReference(int pRow, int pCol) {
-        this(pRow,pCol,false,false);
+        _colIndex = convertColStringToNum(colRef);
+        
+        String rowRef=parts[2];
+        if (rowRef.length() < 1) {
+            throw new IllegalArgumentException("Invalid Formula cell reference: '"+cellRef+"'");
+        }
+        _isRowAbs = rowRef.charAt(0) == '$';
+        if (_isRowAbs) {
+            rowRef=rowRef.substring(1);
+        }
+        _rowIndex = Integer.parseInt(rowRef)-1; // -1 to convert 1-based to zero-based
     }
 
     public CellReference(int pRow, int pCol, boolean pAbsRow, boolean pAbsCol) {
-        row=pRow;col=pCol;
-        rowAbs = pAbsRow;
-        colAbs=pAbsCol;
-
+        this(null, pRow, pCol, pAbsRow, pAbsCol);
+    }
+    public CellReference(String pSheetName, int pRow, int pCol, boolean pAbsRow, boolean pAbsCol) {
+        // TODO - "-1" is a special value being temporarily used for whole row and whole column area references.
+        // so these checks are currently N.Q.R.
+        if(pRow < -1) {
+            throw new IllegalArgumentException("row index may not be negative");
+        }
+        if(pCol < -1) {
+            throw new IllegalArgumentException("column index may not be negative");
+        }
+        _sheetName = pSheetName;
+        _rowIndex=pRow;
+        _colIndex=pCol;
+        _isRowAbs = pAbsRow;
+        _isColAbs=pAbsCol;
     }
 
-    public int getRow(){return row;}
-    public short getCol(){return (short) col;}
-    public boolean isRowAbsolute(){return rowAbs;}
-    public boolean isColAbsolute(){return colAbs;}
-    public String getSheetName(){return sheetName;}
+    public int getRow(){return _rowIndex;}
+    public short getCol(){return (short) _colIndex;}
+    public boolean isRowAbsolute(){return _isRowAbs;}
+    public boolean isColAbsolute(){return _isColAbs;}
+    /**
+      * @return possibly <code>null</code> if this is a 2D reference.  Special characters are not
+      * escaped or delimited
+      */
+    public String getSheetName(){
+        return _sheetName;
+    }
     
-    protected void setSheetName(String sheetName) {
-    	this.sheetName = sheetName;
-    }
-
     /**
      * takes in a column reference portion of a CellRef and converts it from
      * ALPHA-26 number format to 0-based base 10.
      */
     private int convertColStringToNum(String ref) {
-        int len = ref.length();
+        int lastIx = ref.length()-1;
         int retval=0;
         int pos = 0;
 
-        for (int k = ref.length()-1; k > -1; k--) {
+        for (int k = lastIx; k > -1; k--) {
             char thechar = ref.charAt(k);
             if ( pos == 0) {
                 retval += (Character.getNumericValue(thechar)-9);
@@ -97,42 +121,86 @@ public class CellReference {
 
 
     /**
-     * Seperates the row from the columns and returns an array.  Element in
-     * position one is the substring containing the columns still in ALPHA-26
-     * number format.
+     * Separates the row from the columns and returns an array of three Strings.  The first element
+     * is the sheet name. Only the first element may be null.  The second element in is the column 
+     * name still in ALPHA-26 number format.  The third element is the row.
      */
-    private String[] separateRefParts(String reference) {
-
-        // Look for end of sheet name. This will either set
-        // start to 0 (if no sheet name present) or the
-        // index after the sheet reference ends.
-        String retval[] = new String[3];
-
-        int start = reference.indexOf("!");
-        if (start != -1) retval[0] = reference.substring(0, start);
-        start += 1;
+    private static String[] separateRefParts(String reference) {
+        
+        int plingPos = reference.lastIndexOf(SHEET_NAME_DELIMITER);
+        String sheetName = parseSheetName(reference, plingPos);
+        int start = plingPos+1;
 
         int length = reference.length();
 
 
-        char[] chars = reference.toCharArray();
         int loc = start;
-        if (chars[loc]=='$') loc++;
-        for (; loc < chars.length; loc++) {
-            if (Character.isDigit(chars[loc]) || chars[loc] == '$') {
+        // skip initial dollars 
+        if (reference.charAt(loc)==ABSOLUTE_REFERENCE_MARKER) {
+            loc++;
+        }
+        // step over column name chars until first digit (or dollars) for row number.
+        for (; loc < length; loc++) {
+            char ch = reference.charAt(loc);
+            if (Character.isDigit(ch) || ch == ABSOLUTE_REFERENCE_MARKER) {
                 break;
             }
         }
+        return new String[] {
+           sheetName,
+           reference.substring(start,loc),
+           reference.substring(loc),
+        };
+    }
 
-        retval[1] = reference.substring(start,loc);
-        retval[2] = reference.substring(loc);
-        return retval;
+    private static String parseSheetName(String reference, int indexOfSheetNameDelimiter) {
+        if(indexOfSheetNameDelimiter < 0) {
+            return null;
+        }
+        
+        boolean isQuoted = reference.charAt(0) == SPECIAL_NAME_DELIMITER;
+        if(!isQuoted) {
+            return reference.substring(0, indexOfSheetNameDelimiter);
+        }
+        int lastQuotePos = indexOfSheetNameDelimiter-1;
+        if(reference.charAt(lastQuotePos) != SPECIAL_NAME_DELIMITER) {
+            throw new RuntimeException("Mismatched quotes: (" + reference + ")");
+        }
+
+        // TODO - refactor cell reference parsing logic to one place.
+        // Current known incarnations: 
+        //   FormulaParser.GetName()
+        //   CellReference.parseSheetName() (here)
+        //   AreaReference.separateAreaRefs() 
+        //   SheetNameFormatter.format() (inverse)
+        
+        StringBuffer sb = new StringBuffer(indexOfSheetNameDelimiter);
+        
+        for(int i=1; i<lastQuotePos; i++) { // Note boundaries - skip outer quotes
+            char ch = reference.charAt(i);
+            if(ch != SPECIAL_NAME_DELIMITER) {
+                sb.append(ch);
+                continue;
+            }
+            if(i < lastQuotePos) {
+                if(reference.charAt(i+1) == SPECIAL_NAME_DELIMITER) {
+                    // two consecutive quotes is the escape sequence for a single one
+                    i++; // skip this and keep parsing the special name
+                    sb.append(ch);
+                    continue;
+                }
+            }
+            throw new RuntimeException("Bad sheet name quote escaping: (" + reference + ")");
+        }
+        return sb.toString();
     }
 
     /**
-     * takes in a 0-based base-10 column and returns a ALPHA-26 representation
+     * Takes in a 0-based base-10 column and returns a ALPHA-26
+     *  representation.
+     * eg column #3 -> D
      */
-    private static String convertNumToColString(int col) {
+    protected static String convertNumToColString(int col) {
         String retval = null;
         int mod = col % 26;
         int div = col / 26;
@@ -148,14 +216,46 @@ public class CellReference {
         return retval;
     }
 
-
+    /**
+     *  Example return values:
+     *    <table border="0" cellpadding="1" cellspacing="0" summary="Example return values">
+     *      <tr><th align='left'>Result</th><th align='left'>Comment</th></tr>
+     *      <tr><td>A1</td><td>Cell reference without sheet</td></tr>
+     *      <tr><td>Sheet1!A1</td><td>Standard sheet name</td></tr>
+     *      <tr><td>'O''Brien''s Sales'!A1'&nbsp;</td><td>Sheet name with special characters</td></tr>
+     *    </table>
+     * @return the text representation of this cell reference as it would appear in a formula.
+     */
+    public String formatAsString() {
+        StringBuffer sb = new StringBuffer(32);
+        if(_sheetName != null) {
+            SheetNameFormatter.appendFormat(sb, _sheetName);
+            sb.append(SHEET_NAME_DELIMITER);
+        }
+        appendCellReference(sb);
+        return sb.toString();
+    }
+    
     public String toString() {
-        StringBuffer retval = new StringBuffer();
-        retval.append( (colAbs)?"$":"");
-        retval.append( convertNumToColString(col));
-        retval.append((rowAbs)?"$":"");
-        retval.append(row+1);
+        StringBuffer sb = new StringBuffer(64);
+        sb.append(getClass().getName()).append(" [");
+        sb.append(formatAsString());
+        sb.append("]");
+        return sb.toString();
+    }
 
-    return retval.toString();
+    /**
+     * Appends cell reference with '$' markers for absolute values as required.
+     * Sheet name is not included.
+     */
+    /* package */ void appendCellReference(StringBuffer sb) {
+        if(_isColAbs) {
+            sb.append(ABSOLUTE_REFERENCE_MARKER);
+        }
+        sb.append( convertNumToColString(_colIndex));
+        if(_isRowAbs) {
+            sb.append(ABSOLUTE_REFERENCE_MARKER);
+        }
+        sb.append(_rowIndex+1);
     }
 }

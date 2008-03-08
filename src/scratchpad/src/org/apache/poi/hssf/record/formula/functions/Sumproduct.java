@@ -14,16 +14,228 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-/*
- * Created on May 15, 2005
- *
- */
+
+
 package org.apache.poi.hssf.record.formula.functions;
+
+import org.apache.poi.hssf.record.formula.eval.AreaEval;
+import org.apache.poi.hssf.record.formula.eval.BlankEval;
+import org.apache.poi.hssf.record.formula.eval.ErrorEval;
+import org.apache.poi.hssf.record.formula.eval.Eval;
+import org.apache.poi.hssf.record.formula.eval.NumberEval;
+import org.apache.poi.hssf.record.formula.eval.NumericValueEval;
+import org.apache.poi.hssf.record.formula.eval.RefEval;
+import org.apache.poi.hssf.record.formula.eval.StringEval;
+import org.apache.poi.hssf.record.formula.eval.ValueEval;
 
 
 /**
- * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt; 
- *
+ * Implementation for the Excel function SUMPRODUCT<p/>
+ * 
+ * Syntax : <br/>
+ *  SUMPRODUCT ( array1[, array2[, array3[, ...]]])
+ *    <table border="0" cellpadding="1" cellspacing="0" summary="Parameter descriptions">
+ *      <tr><th>array1, ... arrayN&nbsp;&nbsp;</th><td>typically area references, 
+ *      possibly cell references or scalar values</td></tr>
+ *    </table><br/>
+ *    
+ * Let A<b>n</b><sub>(<b>i</b>,<b>j</b>)</sub> represent the element in the <b>i</b>th row <b>j</b>th column 
+ * of the <b>n</b>th array<br/>   
+ * Assuming each array has the same dimensions (W, H), the result is defined as:<br/>    
+ * SUMPRODUCT = &Sigma;<sub><b>i</b>: 1..H</sub> &nbsp;
+ * 	(&nbsp; &Sigma;<sub><b>j</b>: 1..W</sub> &nbsp;
+ * 	  (&nbsp; &Pi;<sub><b>n</b>: 1..N</sub> 
+ * 			A<b>n</b><sub>(<b>i</b>,<b>j</b>)</sub>&nbsp;
+ *    )&nbsp;
+ *  ) 
+ * 
+ * @author Josh Micich
  */
-public class Sumproduct extends NotImplementedFunction {
+public final class Sumproduct implements Function {
+
+	private static final class EvalEx extends Exception {
+		private final ErrorEval _error;
+
+		public EvalEx(ErrorEval error) {
+			_error = error;
+		}
+		public ErrorEval getError() {
+			return _error;
+		}
+	}
+
+	public Eval evaluate(Eval[] args, int srcCellRow, short srcCellCol) {
+		
+		int maxN = args.length;
+		
+		if(maxN < 1) {
+			return ErrorEval.VALUE_INVALID;
+		}
+		Eval firstArg = args[0];
+		try {
+			if(firstArg instanceof NumericValueEval) {
+				return evaluateSingleProduct(args);
+			}
+			if(firstArg instanceof RefEval) {
+				return evaluateSingleProduct(args);
+			}
+			if(firstArg instanceof AreaEval) {
+				AreaEval ae = (AreaEval) firstArg;
+				if(ae.isRow() && ae.isColumn()) {
+					return evaluateSingleProduct(args);
+				}
+				return evaluateAreaSumProduct(args);
+			}
+		} catch (EvalEx e) {
+			return e.getError();
+		}
+		throw new RuntimeException("Invalid arg type for SUMPRODUCT: (" 
+				+ firstArg.getClass().getName() + ")");
+	}
+
+	private Eval evaluateSingleProduct(Eval[] evalArgs) throws EvalEx {
+		int maxN = evalArgs.length;
+
+		double term = 1D;
+		for(int n=0; n<maxN; n++) {
+			double val = getScalarValue(evalArgs[n]);
+			term *= val;
+		}
+		return new NumberEval(term);
+	}
+
+	private double getScalarValue(Eval arg) throws EvalEx {
+		
+		Eval eval;
+		if (arg instanceof RefEval) {
+			RefEval re = (RefEval) arg;
+			eval = re.getInnerValueEval();
+		} else {
+			eval = arg;
+		}
+		
+		if (eval == null) {
+			throw new RuntimeException("parameter may not be null");
+		}
+		if (eval instanceof AreaEval) {
+			AreaEval ae = (AreaEval) eval;
+			// an area ref can work as a scalar value if it is 1x1
+			if(!ae.isColumn() || !ae.isRow()) {
+				throw new EvalEx(ErrorEval.VALUE_INVALID);
+			}
+			eval = ae.getValues()[0];
+		}
+
+		if (!(eval instanceof ValueEval)) {
+			throw new RuntimeException("Unexpected value eval class (" 
+					+ eval.getClass().getName() + ")");
+		}
+		
+		return getProductTerm((ValueEval) eval, true);
+	}
+
+	private Eval evaluateAreaSumProduct(Eval[] evalArgs) throws EvalEx {
+		int maxN = evalArgs.length;
+		AreaEval[] args = new AreaEval[maxN];
+		try {
+			System.arraycopy(evalArgs, 0, args, 0, maxN);
+		} catch (ArrayStoreException e) {
+			// one of the other args was not an AreaRef
+			return ErrorEval.VALUE_INVALID;
+		}
+
+		
+		AreaEval firstArg = args[0];
+		
+		int height = firstArg.getLastRow() - firstArg.getFirstRow() + 1;
+		int width = firstArg.getLastColumn() - firstArg.getFirstColumn() + 1; // TODO - junit
+		
+		
+
+		double[][][] elements = new double[maxN][][];
+		
+		for (int n = 0; n < maxN; n++) {
+			elements[n] = evaluateArea(args[n], height, width);
+		}
+		double acc = 0;
+		
+		for(int r=0; r<height; r++) {
+			for(int c=0; c<width; c++) {
+				double term = 1D;
+				for(int n=0; n<maxN; n++) {
+					term *= elements[n][r][c];
+				}
+				acc += term;
+			}
+		}
+		
+		return new NumberEval(acc);
+	}
+
+	/**
+	 * @return a 2-D array of the specified height and width corresponding to the evaluated cell 
+	 *  values of the specified areaEval 
+	 * @throws EvalEx if any ErrorEval value was encountered while evaluating the area
+	 */
+	private static double[][] evaluateArea(AreaEval areaEval, int height, int width) throws EvalEx {
+		int fr =areaEval.getFirstRow();
+		int fc =areaEval.getFirstColumn();
+		
+		// check that height and width match
+		if(areaEval.getLastRow() - fr + 1 != height) {
+			throw new EvalEx(ErrorEval.VALUE_INVALID);
+		}
+		if(areaEval.getLastColumn() - fc + 1 != width) {
+			throw new EvalEx(ErrorEval.VALUE_INVALID);
+		}
+		ValueEval[] values = areaEval.getValues();
+		double[][] result = new double[height][width];
+		for(int r=0; r<height; r++) {
+			for(int c=0; c<width; c++) {
+				ValueEval ve = values[r*width + c];
+				result[r][c] = getProductTerm(ve, false);
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * Determines a <code>double</code> value for the specified <code>ValueEval</code>. 
+	 * @param isScalarProduct <code>false</code> for SUMPRODUCTs over area refs.
+	 * @throws EvalEx if <code>ve</code> represents an error value.
+	 * <p/>
+	 * Note - string values and empty cells are interpreted differently depending on 
+	 * <code>isScalarProduct</code>.  For scalar products, if any term is blank or a string, the
+	 * error (#VALUE!) is raised.  For area (sum)products, if any term is blank or a string, the
+	 * result is zero.
+	 */
+	private static double getProductTerm(ValueEval ve, boolean isScalarProduct) throws EvalEx {
+
+		if(ve instanceof BlankEval || ve == null) {
+			// TODO - shouldn't BlankEval.INSTANCE be used always instead of null?
+			// null seems to occur when the blank cell is part of an area ref (but not reliably)
+			if(isScalarProduct) {
+				throw new EvalEx(ErrorEval.VALUE_INVALID);
+			}
+			return 0;
+		}
+		
+		if(ve instanceof ErrorEval) {
+			throw new EvalEx((ErrorEval)ve);
+		}
+		if(ve instanceof StringEval) {
+			if(isScalarProduct) {
+				throw new EvalEx(ErrorEval.VALUE_INVALID);
+			}
+			// Note for area SUMPRODUCTs, string values are interpreted as zero
+			// even if they would parse as valid numeric values
+			return 0;
+		}
+		if(ve instanceof NumericValueEval) {
+			NumericValueEval nve = (NumericValueEval) ve;
+			return nve.getNumberValue();
+		}
+		throw new RuntimeException("Unexpected value eval class (" 
+				+ ve.getClass().getName() + ")");
+	}
 }

@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Copyright 2002-2004   Apache Software Foundation
 
@@ -20,13 +19,11 @@ package org.apache.poi.hssf.record;
 import org.apache.poi.util.LittleEndian;
 
 /**
- * Title:        DVAL Record<P>
+ * Title:        DATAVALIDATIONS Record<P>
  * Description:  used in data validation ;
- *               This record is the list header of all data validation records in the current sheet.
+ *               This record is the list header of all data validation records (0x01BE) in the current sheet.
  * @author Dragos Buleandra (dragos.buleandra@trade2b.ro)
- * @version 2.0-pre
  */
-
 public class DVALRecord extends Record
 {
 	public final static short sid = 0x01B2;
@@ -41,13 +38,14 @@ public class DVALRecord extends Record
 	/** Object ID of the drop down arrow object for list boxes ;
 	 * in our case this will be always FFFF , until
 	 * MSODrawingGroup and MSODrawing records are implemented */
-	private int  field_cbo_id      = 0xFFFFFFFF;
+	private int  field_cbo_id;
 
 	/** Number of following DV Records */
-	private int  field_5_dv_no     = 0x00000000;
+	private int  field_5_dv_no;
 
-    public DVALRecord()
-    {
+    public DVALRecord() {
+        field_cbo_id = 0xFFFFFFFF;
+        field_5_dv_no = 0x00000000;
     }
 
     /**

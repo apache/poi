@@ -21,11 +21,8 @@
 package org.apache.poi.hssf.contrib.view;
 
 import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
 import javax.swing.*;
 import javax.swing.table.*;
-import javax.swing.event.*;
 
 import org.apache.poi.hssf.usermodel.*;
 
@@ -47,7 +44,9 @@ public class SVRowHeader extends JList {
       this.sheet = sheet;
     }
 
-    public int getSize() { return sheet.getPhysicalNumberOfRows(); }
+    public int getSize() {
+    	return sheet.getLastRowNum() + 1;
+    }
     public Object getElementAt(int index) {
       return Integer.toString(index+1);
     }
@@ -73,7 +72,13 @@ public class SVRowHeader extends JList {
     public Component getListCellRendererComponent( JList list,
            Object value, int index, boolean isSelected, boolean cellHasFocus) {
       Dimension d = getPreferredSize();
-      int rowHeight = (int)sheet.getRow(index).getHeightInPoints();
+      HSSFRow row = sheet.getRow(index);
+      int rowHeight;
+      if(row == null) {
+    	  rowHeight = (int)sheet.getDefaultRowHeightInPoints();
+      } else {
+    	  rowHeight = (int)row.getHeightInPoints();
+      }
       d.height = rowHeight+extraHeight;
       setPreferredSize(d);
       setText((value == null) ? "" : value.toString());

@@ -88,13 +88,18 @@ public class StyleRecord
         else if (getType() == STYLE_USER_DEFINED)
         {
             field_2_name_length = in.readShort();
-            field_3_string_options = in.readByte();
             
-            byte[] string = in.readRemainder();
-            if (fHighByte.isSet(field_3_string_options)) {
-                field_4_name= StringUtil.getFromUnicodeBE(string, 0, field_2_name_length);
-            }else {
-                field_4_name=StringUtil.getFromCompressedUnicode(string, 0, field_2_name_length);
+            // Some files from Crystal Reports lack
+            //  the remaining fields, which is naughty
+            if(in.remaining() > 0) {
+	            field_3_string_options = in.readByte();
+	            
+	            byte[] string = in.readRemainder();
+	            if (fHighByte.isSet(field_3_string_options)) {
+	                field_4_name= StringUtil.getFromUnicodeBE(string, 0, field_2_name_length);
+	            } else {
+	                field_4_name=StringUtil.getFromCompressedUnicode(string, 0, field_2_name_length);
+	            }
             }
         }
 

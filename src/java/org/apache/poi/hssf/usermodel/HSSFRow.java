@@ -159,28 +159,25 @@ public class HSSFRow
      * @param cell to remove
      */
     public void removeCell(Cell cell) {
-    	removeCell(cell, true);
+    	removeCell((HSSFCell) cell, true);
     }
-    
-    private void removeCell(Cell cell, boolean alsoRemoveRecords) {
-        
-        HSSFCell hcell = (HSSFCell) cell;
+    private void removeCell(HSSFCell cell, boolean alsoRemoveRecords) {
     	if(alsoRemoveRecords) {
-	        CellValueRecordInterface cval = hcell.getCellValueRecord();
+	        CellValueRecordInterface cval = cell.getCellValueRecord();
 	        sheet.removeValueRecord(getRowNum(), cval);
     	}
     	
-        short column=hcell.getCellNum();
-        if(hcell!=null && column<cells.length)
+        short column=cell.getCellNum();
+        if(cell!=null && column<cells.length)
         {
           cells[column]=null;
         }
 
-        if (hcell.getCellNum() == row.getLastCol())
+        if (cell.getCellNum() == row.getLastCol())
         {
             row.setLastCol(findLastCell(row.getLastCol()));
         }
-        if (hcell.getCellNum() == row.getFirstCol())
+        if (cell.getCellNum() == row.getFirstCol())
         {
             row.setFirstCol(findFirstCell(row.getFirstCol()));
         }
@@ -471,6 +468,7 @@ public class HSSFRow
      * @return cell iterator of the physically defined cells.  Note element 4 may
      * actually be row cell depending on how many are defined!
      */
+
     public Iterator cellIterator()
     {
       return new CellIterator();

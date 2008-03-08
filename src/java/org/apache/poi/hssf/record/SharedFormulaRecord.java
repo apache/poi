@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
+ 
 package org.apache.poi.hssf.record;
 
 import java.util.Stack;
@@ -34,10 +32,7 @@ import org.apache.poi.hssf.record.formula.*;
  * record types.
  * @author Danny Mui at apache dot org
  */
-
-public class SharedFormulaRecord
-    extends Record
-{
+public final class SharedFormulaRecord extends Record {
 	 public final static short   sid = 0x4BC;
     
     private int               field_1_first_row;
@@ -58,15 +53,15 @@ public class SharedFormulaRecord
 
     public SharedFormulaRecord(RecordInputStream in)
     {
-    	  super(in);
+          super(in);
     }
     
     protected void validateSid(short id)
     {
-		if (id != this.sid)
-		{
-			throw new RecordFormatException("Not a valid SharedFormula");
-		}        
+        if (id != this.sid)
+        {
+            throw new RecordFormatException("Not a valid SharedFormula");
+        }        
     }    
     
     public int getFirstRow() {
@@ -96,14 +91,14 @@ public class SharedFormulaRecord
 
     public int serialize(int offset, byte [] data)
     {
-    	//Because this record is converted to individual Formula records, this method is not required.
-    	throw new UnsupportedOperationException("Cannot serialize a SharedFormulaRecord");
+        //Because this record is converted to individual Formula records, this method is not required.
+        throw new UnsupportedOperationException("Cannot serialize a SharedFormulaRecord");
     }
 
     public int getRecordSize()
     {
-    	//Because this record is converted to individual Formula records, this method is not required.
-    	throw new UnsupportedOperationException("Cannot get the size for a SharedFormulaRecord");
+        //Because this record is converted to individual Formula records, this method is not required.
+        throw new UnsupportedOperationException("Cannot get the size for a SharedFormulaRecord");
 
     }
 
@@ -257,39 +252,40 @@ public class SharedFormulaRecord
       }
     }
     
-    private short fixupRelativeColumn(int currentcolumn, short column, boolean relative) {
-    	if(relative) {
-    		if((column&128)!=0) column=(short)(column-256);
-    		column+=currentcolumn;
-    	}
-    	return column;
-	}
+    private int fixupRelativeColumn(int currentcolumn, int column, boolean relative) {
+        if(relative) {
+            // mask out upper bits to produce 'wrapping' at column 256 ("IV")
+            return (column + currentcolumn) & 0x00FF;
+        }
+        return column;
+    }
 
-	private short fixupRelativeRow(int currentrow, short row, boolean relative) {
-		if(relative) {
-			row+=currentrow;
-		}
-		return row;
-	}
+    private int fixupRelativeRow(int currentrow, int row, boolean relative) {
+        if(relative) {
+            // mask out upper bits to produce 'wrapping' at row 65536
+            return (row+currentrow) & 0x00FFFF;
+        }
+        return row;
+    }
 
-	/**
-	 * Mirroring formula records so it is registered in the ValueRecordsAggregate
-	 */
-	public boolean isInValueSection()
-	{
-		 return true;
-	}
+    /**
+     * Mirroring formula records so it is registered in the ValueRecordsAggregate
+     */
+    public boolean isInValueSection()
+    {
+         return true;
+    }
 
 
-	 /**
-	  * Register it in the ValueRecordsAggregate so it can go into the FormulaRecordAggregate
-	  */
-	 public boolean isValue() {
-	 	return true;
-	 }
+     /**
+      * Register it in the ValueRecordsAggregate so it can go into the FormulaRecordAggregate
+      */
+     public boolean isValue() {
+         return true;
+     }
 
     public Object clone() {
-    	//Because this record is converted to individual Formula records, this method is not required.
-    	throw new UnsupportedOperationException("Cannot clone a SharedFormulaRecord");
+        //Because this record is converted to individual Formula records, this method is not required.
+        throw new UnsupportedOperationException("Cannot clone a SharedFormulaRecord");
     }
 }

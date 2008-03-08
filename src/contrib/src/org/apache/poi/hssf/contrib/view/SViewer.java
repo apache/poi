@@ -23,13 +23,10 @@ package org.apache.poi.hssf.contrib.view;
 import java.awt.*;
 import java.awt.event.*;
 import java.net.*;
-import java.applet.*;
 import java.io.*;
 import javax.swing.*;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFCell;
 
 /**
  * Sheet Viewer - Views XLS files via HSSF.  Can be used as an applet with
@@ -143,6 +140,10 @@ public class SViewer extends JApplet {
 
   /**Main method*/
   public static void main(String[] args) {
+    if(args.length < 1) {
+      throw new IllegalArgumentException("A filename to view must be supplied as the first argument, but none was given");
+    }
+
     SViewer applet = new SViewer();
     applet.isStandalone = true;
     applet.filename = args[0];

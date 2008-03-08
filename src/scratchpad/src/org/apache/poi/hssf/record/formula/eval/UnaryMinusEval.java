@@ -14,10 +14,7 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-/*
- * Created on May 8, 2005
- *
- */
+
 package org.apache.poi.hssf.record.formula.eval;
 
 import org.apache.poi.hssf.record.formula.Ptg;
@@ -27,14 +24,12 @@ import org.apache.poi.hssf.record.formula.UnaryMinusPtg;
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
  *  
  */
-public class UnaryMinusEval extends NumericOperationEval {
+public final class UnaryMinusEval extends NumericOperationEval {
 
     private UnaryMinusPtg delegate;
     private static final ValueEvalToNumericXlator NUM_XLATOR = 
         new ValueEvalToNumericXlator((short)
                 ( ValueEvalToNumericXlator.BOOL_IS_PARSED 
-                | ValueEvalToNumericXlator.EVALUATED_REF_BOOL_IS_PARSED
-                | ValueEvalToNumericXlator.EVALUATED_REF_STRING_IS_PARSED
                 | ValueEvalToNumericXlator.REF_BOOL_IS_PARSED
                 | ValueEvalToNumericXlator.STRING_IS_PARSED
                 | ValueEvalToNumericXlator.REF_STRING_IS_PARSED
@@ -49,32 +44,24 @@ public class UnaryMinusEval extends NumericOperationEval {
         return NUM_XLATOR;
     }
 
-    public Eval evaluate(Eval[] operands, int srcRow, short srcCol) {
-        ValueEval retval = null;
+    public Eval evaluate(Eval[] args, int srcRow, short srcCol) {
+    	if(args.length != 1) {
+    		return ErrorEval.VALUE_INVALID;
+    	}
         double d = 0;
         
-        switch (operands.length) {
-        default:
-            retval = ErrorEval.UNKNOWN_ERROR;
-            break;
-        case 1:
-            ValueEval ve = singleOperandEvaluate(operands[0], srcRow, srcCol);
-            if (ve instanceof NumericValueEval) {
-                d = ((NumericValueEval) ve).getNumberValue();
-            }
-            else if (ve instanceof BlankEval) {
-                // do nothing
-            }
-            else if (ve instanceof ErrorEval) {
-                retval = ve;
-            }
+        ValueEval ve = singleOperandEvaluate(args[0], srcRow, srcCol);
+        if (ve instanceof NumericValueEval) {
+            d = ((NumericValueEval) ve).getNumberValue();
+        }
+        else if (ve instanceof BlankEval) {
+            // do nothing
+        }
+        else if (ve instanceof ErrorEval) {
+            return ve;
         }
         
-        if (retval == null) {
-            retval = new NumberEval(-d);
-        }
-
-        return retval;
+        return new NumberEval(-d);
     }
 
     public int getNumberOfOperands() {

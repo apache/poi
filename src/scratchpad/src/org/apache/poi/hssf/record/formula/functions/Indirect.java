@@ -14,12 +14,36 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-/*
- * Created on May 15, 2005
- *
- */
+
 package org.apache.poi.hssf.record.formula.functions;
 
-public class Indirect extends NotImplementedFunction {
+import org.apache.poi.hssf.record.formula.eval.ErrorEval;
+import org.apache.poi.hssf.record.formula.eval.Eval;
+import org.apache.poi.hssf.record.formula.eval.ValueEval;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+
+/**
+ * Implementation for Excel function INDIRECT<p/>
+ * 
+ * INDIRECT() returns the cell or area reference denoted by the text argument.<p/> 
+ * 
+ * <b>Syntax</b>:</br>
+ * <b>INDIRECT</b>(<b>ref_text</b>,isA1Style)<p/>
+ * 
+ * <b>ref_text</b> a string representation of the desired reference as it would normally be written
+ * in a cell formula.<br/>
+ * <b>isA1Style</b> (default TRUE) specifies whether the ref_text should be interpreted as A1-style
+ * or R1C1-style.
+ * 
+ * 
+ * @author Josh Micich
+ */
+public final class Indirect implements FreeRefFunction {
+
+	public ValueEval evaluate(Eval[] args, int srcCellRow, short srcCellCol, HSSFWorkbook workbook, HSSFSheet sheet) {
+		// TODO - implement INDIRECT()
+		return ErrorEval.FUNCTION_NOT_IMPLEMENTED;
+	}
 
 }

@@ -160,6 +160,49 @@ public class TestHSSFPalette extends TestCase
         assertEquals("FFFF:0:FFFF", p.getColor((short)14).getHexString());
     }
     
+    public void testFindSimilar() throws Exception {
+    	HSSFWorkbook book = new HSSFWorkbook();
+    	HSSFPalette p = book.getCustomPalette();
+    	
+    	
+    	// Add a few edge colours in
+    	p.setColorAtIndex((short)8, (byte)-1, (byte)0, (byte)0);
+    	p.setColorAtIndex((short)9, (byte)0, (byte)-1, (byte)0);
+    	p.setColorAtIndex((short)10, (byte)0, (byte)0, (byte)-1);
+    	
+    	// And some near a few of them
+    	p.setColorAtIndex((short)11, (byte)-1, (byte)2, (byte)2);
+    	p.setColorAtIndex((short)12, (byte)-2, (byte)2, (byte)10);
+    	p.setColorAtIndex((short)13, (byte)-4, (byte)0, (byte)0);
+    	p.setColorAtIndex((short)14, (byte)-8, (byte)0, (byte)0);
+    	
+    	assertEquals(
+    			"FFFF:0:0", p.getColor((short)8).getHexString()
+    	);
+    	
+    	// Now check we get the right stuff back
+    	assertEquals(
+    			p.getColor((short)8).getHexString(), 
+    			p.findSimilarColor((byte)-1, (byte)0, (byte)0).getHexString()
+    	);
+    	assertEquals(
+    			p.getColor((short)8).getHexString(), 
+    			p.findSimilarColor((byte)-2, (byte)0, (byte)0).getHexString()
+    	);
+    	assertEquals(
+    			p.getColor((short)8).getHexString(), 
+    			p.findSimilarColor((byte)-1, (byte)1, (byte)0).getHexString()
+    	);
+    	assertEquals(
+    			p.getColor((short)11).getHexString(), 
+    			p.findSimilarColor((byte)-1, (byte)2, (byte)1).getHexString()
+    	);
+    	assertEquals(
+    			p.getColor((short)12).getHexString(), 
+    			p.findSimilarColor((byte)-1, (byte)2, (byte)10).getHexString()
+    	);
+    }
+    
     /**
      * Verifies that the generated gnumeric-format string values match the
      * hardcoded values in the HSSFColor default color palette

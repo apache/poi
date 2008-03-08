@@ -77,7 +77,11 @@ public class RecordFactory
                 NoteRecord.class, ObjectProtectRecord.class, ScenarioProtectRecord.class, 
                 FileSharingRecord.class, ChartTitleFormatRecord.class,
                 DVRecord.class, DVALRecord.class, UncalcedRecord.class,
-                HyperlinkRecord.class
+                HyperlinkRecord.class,
+                ExternalNameRecord.class, // TODO - same changes in non-@deprecated version of this class
+                SupBookRecord.class,
+                CRNCountRecord.class,
+                CRNRecord.class,
             };
     }
     private static Map           recordsMap  = recordsToMap(records);
