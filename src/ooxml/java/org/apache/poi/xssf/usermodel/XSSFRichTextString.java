@@ -79,6 +79,9 @@ public class XSSFRichTextString implements RichTextString {
     public String getString() {
         return string;
     }
+    public String toString() {
+    	return string;
+    }
 
     public int length() {
         return string.length();

@@ -35,59 +35,56 @@ public class TestXSSFExcelExtractor extends TestCase {
 	/**
 	 * A very simple file
 	 */
-	private XSSFWorkbook xmlA;
-	private File fileA;
+	private File xmlA;
 	/**
 	 * A fairly complex file
 	 */
-	private XSSFWorkbook xmlB;
+	private File xmlB;
 	
 	/**
 	 * A fairly simple file - ooxml
 	 */
-	private XSSFWorkbook simpleXLSX; 
+	private File simpleXLSX; 
 	/**
 	 * A fairly simple file - ole2
 	 */
-	private HSSFWorkbook simpleXLS;
+	private File simpleXLS;
 
 	protected void setUp() throws Exception {
 		super.setUp();
 		
-		fileA = new File(
+		xmlA = new File(
 				System.getProperty("HSSF.testdata.path") +
 				File.separator + "sample.xlsx"
 		);
-		File fileB = new File(
+		assertTrue(xmlA.exists());
+		xmlB = new File(
 				System.getProperty("HSSF.testdata.path") +
 				File.separator + "AverageTaxRates.xlsx"
 		);
+		assertTrue(xmlB.exists());
 		
-		File fileSOOXML = new File(
+		simpleXLSX = new File(
 				System.getProperty("HSSF.testdata.path") +
 				File.separator + "SampleSS.xlsx"
 		);
-		File fileSOLE2 = new File(
+		simpleXLS = new File(
 				System.getProperty("HSSF.testdata.path") +
 				File.separator + "SampleSS.xls"
 		);
-		
-		xmlA = new XSSFWorkbook(fileA.toString());
-		xmlB = new XSSFWorkbook(fileB.toString());
-		
-		simpleXLSX = new XSSFWorkbook(fileSOOXML.toString());
-		simpleXLS = new HSSFWorkbook(new FileInputStream(fileSOLE2));
+		assertTrue(simpleXLS.exists());
+		assertTrue(simpleXLSX.exists());
 	}
 
 	/**
 	 * Get text out of the simple file
 	 */
 	public void testGetSimpleText() throws Exception {
-		new XSSFExcelExtractor(fileA.toString());
-		new XSSFExcelExtractor(xmlA);
+		new XSSFExcelExtractor(xmlA.toString());
+		new XSSFExcelExtractor(new XSSFWorkbook(xmlA.toString()));
 		
 		XSSFExcelExtractor extractor = 
-			new XSSFExcelExtractor(xmlA);
+			new XSSFExcelExtractor(xmlA.toString());
 		extractor.getText();
 		
 		String text = extractor.getText();
@@ -110,8 +107,7 @@ public class TestXSSFExcelExtractor extends TestCase {
 				"adipiscing\t777\n" +
 				"elit\t888\n" +
 				"Nunc\t999\n" +
-				"at\t4995\n" +
-				"\n\n", text);
+				"at\t4995\n", text);
 		
 		// Now get formulas not their values
 		extractor.setFormulasNotResults(true);
@@ -126,8 +122,7 @@ public class TestXSSFExcelExtractor extends TestCase {
 				"adipiscing\t777\n" +
 				"elit\t888\n" +
 				"Nunc\t999\n" +
-				"at\tSUM(B1:B9)\n" +
-				"\n\n", text);
+				"at\tSUM(B1:B9)\n", text);
 		
 		// With sheet names too
 		extractor.setIncludeSheetNames(true);
@@ -143,17 +138,17 @@ public class TestXSSFExcelExtractor extends TestCase {
 				"adipiscing\t777\n" +
 				"elit\t888\n" +
 				"Nunc\t999\n" +
-				"at\tSUM(B1:B9)\n\n" +
-				"Sheet2\n\n" +
+				"at\tSUM(B1:B9)\n" +
+				"Sheet2\n" +
 				"Sheet3\n"
 				, text);
 	}
 	
 	public void testGetComplexText() throws Exception {
-		new XSSFExcelExtractor(xmlB);
+		new XSSFExcelExtractor(xmlB.toString());
 		
 		XSSFExcelExtractor extractor = 
-			new XSSFExcelExtractor(xmlB);
+			new XSSFExcelExtractor(new XSSFWorkbook(xmlB.toString()));
 		extractor.getText();
 		
 		String text = extractor.getText();
@@ -174,9 +169,10 @@ public class TestXSSFExcelExtractor extends TestCase {
 	 */
 	public void testComparedToOLE2() throws Exception {
 		XSSFExcelExtractor ooxmlExtractor =
-			new XSSFExcelExtractor(simpleXLSX);
+			new XSSFExcelExtractor(simpleXLSX.toString());
 		ExcelExtractor ole2Extractor =
-			new ExcelExtractor(simpleXLS);
+			new ExcelExtractor(new HSSFWorkbook(
+					new FileInputStream(simpleXLS)));
 		
 		POITextExtractor[] extractors =
 			new POITextExtractor[] { ooxmlExtractor, ole2Extractor };

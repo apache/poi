@@ -78,7 +78,7 @@ public class XSSFCell implements Cell {
     }
 
     public String getCellFormula() {
-        if (STCellType.STR != cell.getT()) { 
+        if(this.cell.getF() == null) { 
             throw new NumberFormatException("You cannot get a formula from a non-formula cell");
         }
         return this.cell.getF().getStringValue();
@@ -94,6 +94,12 @@ public class XSSFCell implements Cell {
     }
 
     public int getCellType() {
+    	// Detecting formulas is quite pesky,
+    	//  as they don't get their type set
+    	if(this.cell.getF() != null) {
+    		return CELL_TYPE_FORMULA;
+    	}
+    	
         switch (this.cell.getT().intValue()) {
         case STCellType.INT_B:
             return CELL_TYPE_BOOLEAN;
@@ -288,6 +294,13 @@ public class XSSFCell implements Cell {
     @Override
     public String toString() {
         return "[" + this.row.getRowNum() + "," + this.getCellNum() + "] " + this.cell.getV();
+    }
+    
+    /**
+     * Returns the raw, underlying ooxml value for the cell
+     */
+    public String getRawValue() {
+    	return this.cell.getV();
     }
 
     /**
