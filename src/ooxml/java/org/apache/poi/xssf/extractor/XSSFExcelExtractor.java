@@ -20,6 +20,11 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.poi.POIXMLTextExtractor;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.xmlbeans.XmlException;
 import org.openxml4j.exceptions.OpenXML4JException;
@@ -33,10 +38,13 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
  * Helper class to extract text from an OOXML Excel file
  */
 public class XSSFExcelExtractor extends POIXMLTextExtractor {
-	private XSSFWorkbook workbook;
+	private Workbook workbook;
 	private boolean includeSheetNames = true;
 	private boolean formulasNotResults = false;
 	
+	public XSSFExcelExtractor(String path) throws XmlException, OpenXML4JException, IOException {
+		this(new XSSFWorkbook(path));
+	}
 	public XSSFExcelExtractor(Package container) throws XmlException, OpenXML4JException, IOException {
 		this(new XSSFWorkbook(container));
 	}
@@ -52,9 +60,7 @@ public class XSSFExcelExtractor extends POIXMLTextExtractor {
 			System.exit(1);
 		}
 		POIXMLTextExtractor extractor = 
-			new HXFExcelExtractor(HXFDocument.openPackage(
-					new File(args[0])
-			));
+			new XSSFExcelExtractor(args[0]);
 		System.out.println(extractor.getText());
 	}
 
@@ -78,48 +84,27 @@ public class XSSFExcelExtractor extends POIXMLTextExtractor {
 	public String getText() {
 		StringBuffer text = new StringBuffer();
 		
-		CTSheet[] sheetRefs =
-			workbook._getHSSFXML().getSheetReferences().getSheetArray();
-		for(int i=0; i<sheetRefs.length; i++) {
-			try {
-				CTWorksheet sheet =
-					workbook._getHSSFXML().getSheet(sheetRefs[i]);
-				CTRow[] rows =
-					sheet.getSheetData().getRowArray();
-				
-				if(i > 0) {
-					text.append("\n");
-				}
-				if(includeSheetNames) {
-					text.append(sheetRefs[i].getName() + "\n");
-				}
-				
-				for(int j=0; j<rows.length; j++) {
-					CTCell[] cells = rows[j].getCArray();
-					for(int k=0; k<cells.length; k++) {
-						CTCell cell = cells[k];
-						if(k > 0) {
-							text.append("\t");
-						}
-						
-						boolean done = false;
-						
-						// Is it a formula one?
-						if(cell.getF() != null) {
-							if(formulasNotResults) {
-								text.append(cell.getF().getStringValue());
-								done = true;
-							}
-						}
-						if(!done) {
-							HSSFXMLCell uCell = new HSSFXMLCell(cell, workbook);
-							text.append(uCell.getStringValue());
-						}
+		for(int i=0; i<workbook.getNumberOfSheets(); i++) {
+			Sheet sheet = workbook.getSheetAt(i);
+			if(includeSheetNames) {
+				text.append(workbook.getSheetName(i) + "\n");
+			}
+			
+			for (Object rawR : sheet) {
+				Row row = (Row)rawR;
+				for (Object rawC: row) {
+					Cell cell = (Cell)rawC;
+					
+					// Is it a formula one?
+					if(cell.getCellType() == Cell.CELL_TYPE_FORMULA && formulasNotResults) {
+						text.append(cell.getCellFormula());
+					} else {
+						text.append(cell.toString());
 					}
-					text.append("\n");
+					
+					text.append(",");
 				}
-			} catch(Exception e) {
-				throw new RuntimeException(e);
+				text.append("\n");
 			}
 		}
 		

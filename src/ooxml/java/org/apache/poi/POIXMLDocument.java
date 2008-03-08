@@ -46,17 +46,32 @@ public abstract class POIXMLDocument {
     
     protected POIXMLDocument() {}
     
-    protected POIXMLDocument(String path) throws IOException {
-        try {
-            this.pkg = Package.open(path);
-            PackageRelationship coreDocRelationship = this.pkg.getRelationshipsByType(
-                    PackageRelationshipTypes.CORE_DOCUMENT).getRelationship(0);
-        
-            // Get core part
-            this.corePart = this.pkg.getPart(coreDocRelationship);
-        } catch (InvalidFormatException e) {
-            throw new IOException(e.toString());
+    protected POIXMLDocument(Package pkg) throws IOException {
+    	try {
+	    	this.pkg = pkg;
+	    	
+	        PackageRelationship coreDocRelationship = this.pkg.getRelationshipsByType(
+	                PackageRelationshipTypes.CORE_DOCUMENT).getRelationship(0);
+	    
+	        // Get core part
+	        this.corePart = this.pkg.getPart(coreDocRelationship);
         } catch (OpenXML4JException e) {
+            throw new IOException(e.toString());
+    	}
+    }
+    protected POIXMLDocument(String path) throws IOException {
+   		this(openPackage(path));
+    }
+    
+    /**
+     * Wrapper to open a package, returning an IOException
+     *  in the event of a problem.
+     * Works around shortcomings in java's this() constructor calls
+     */
+    protected static Package openPackage(String path) throws IOException {
+        try {
+            return Package.open(path);
+        } catch (InvalidFormatException e) {
             throw new IOException(e.toString());
         }
     }
