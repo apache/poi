@@ -17,7 +17,11 @@
 package org.apache.poi;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.PushbackInputStream;
 
+import org.apache.poi.poifs.common.POIFSConstants;
+import org.apache.poi.util.IOUtils;
 import org.openxml4j.exceptions.InvalidFormatException;
 import org.openxml4j.exceptions.OpenXML4JException;
 import org.openxml4j.opc.Package;
