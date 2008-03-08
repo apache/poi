@@ -18,26 +18,28 @@ package org.apache.poi.xssf.usermodel;
 
 import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.RichTextString;
-import org.apache.poi.xssf.usermodel.extensions.XSSFSheetComments;
+import org.apache.poi.xssf.usermodel.extensions.XSSFComments;
+import org.apache.poi.xssf.usermodel.helpers.RichTextStringHelper;
 import org.apache.poi.xssf.util.CellReference;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
 
 public class XSSFComment implements Comment {
 	
 	private CTComment comment;
-	private XSSFSheetComments sheetComments;
+	private XSSFComments comments;
 
-	public XSSFComment(XSSFSheetComments sheetComments, CTComment comment) {
+	public XSSFComment(XSSFComments comments, CTComment comment) {
 		this.comment = comment;
-		this.sheetComments = sheetComments;
+		this.comments = comments;
 	}
 
-	public XSSFComment(XSSFSheetComments sheetComments) {
+	public XSSFComment(XSSFComments sheetComments) {
 		this(sheetComments, CTComment.Factory.newInstance());
 	}
 
 	public String getAuthor() {
-		return sheetComments.getAuthor(comment.getAuthorId());
+		return comments.getAuthor(comment.getAuthorId());
 	}
 
 	public short getColumn() {
@@ -50,11 +52,11 @@ public class XSSFComment implements Comment {
 
 	public boolean isVisible() {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	public void setAuthor(String author) {
-		sheetComments.findAuthor(author);
+		comments.findAuthor(author);
 	}
 
 	public void setColumn(short col) {
@@ -76,13 +78,22 @@ public class XSSFComment implements Comment {
 	}
 
 	public void setString(RichTextString string) {
-		// TODO Auto-generated method stub
-
+		CTRst text = comment.addNewText();
+		RichTextStringHelper.convertToRst(string, text);
+	}
+	
+	public void setString(String string) {
+		RichTextString richTextString = new XSSFRichTextString(string);
+		setString(richTextString);
 	}
 
 	public void setVisible(boolean visible) {
 		// TODO Auto-generated method stub
 
+	}
+	
+	public String getString() {
+		return comment.getText().getT().toString();
 	}
 
 }

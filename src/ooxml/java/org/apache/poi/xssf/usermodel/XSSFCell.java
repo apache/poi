@@ -26,6 +26,7 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.SharedStringSource;
+import org.apache.poi.xssf.util.CellReference;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellFormula;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellType;
@@ -73,8 +74,7 @@ public class XSSFCell implements Cell {
     }
 
     public Comment getCellComment() {
-        // TODO Auto-generated method stub
-        return null;
+    	return row.getSheet().getCellComment(row.getRowNum(), getCellNum());
     }
 
     public String getCellFormula() {
@@ -164,13 +164,12 @@ public class XSSFCell implements Cell {
     }
 
     public void setAsActiveCell() {
-        // TODO Auto-generated method stub
-
+    	row.getSheet().setActiveCell(cell.getR());
     }
 
     public void setCellComment(Comment comment) {
-        // TODO Auto-generated method stub
-
+    	String cellRef = new CellReference().convertRowColToString((short) row.getRowNum(), getCellNum());
+		row.getSheet().setCellComment(cellRef, (XSSFComment)comment);
     }
 
     public void setCellErrorValue(byte value) {

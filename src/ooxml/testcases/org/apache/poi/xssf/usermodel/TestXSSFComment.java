@@ -17,7 +17,9 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import org.apache.poi.xssf.usermodel.extensions.XSSFSheetComments;
+import org.apache.poi.hssf.usermodel.HSSFRichTextString;
+import org.apache.poi.ss.usermodel.RichTextString;
+import org.apache.poi.xssf.usermodel.extensions.XSSFComments;
 import org.apache.poi.xssf.util.CellReference;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTAuthors;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
@@ -28,10 +30,11 @@ import junit.framework.TestCase;
 
 public class TestXSSFComment extends TestCase {
     
+	private static final String TEST_RICHTEXTSTRING = "test richtextstring";
 	private static final String TEST_AUTHOR = "test_author";
 
 	public void testConstructors() {
-		XSSFSheetComments sheetComments = new XSSFSheetComments();
+		XSSFComments sheetComments = new XSSFComments();
 		XSSFComment comment = new XSSFComment(sheetComments);
 		assertNotNull(comment);
 		
@@ -41,7 +44,7 @@ public class TestXSSFComment extends TestCase {
 	}
 	
 	public void testGetColumn() {
-		XSSFSheetComments sheetComments = new XSSFSheetComments();
+		XSSFComments sheetComments = new XSSFComments();
 		CTComment ctComment = CTComment.Factory.newInstance();
 		ctComment.setRef("A1");
 		XSSFComment comment = new XSSFComment(sheetComments, ctComment);
@@ -52,7 +55,7 @@ public class TestXSSFComment extends TestCase {
 	}
 	
 	public void testGetRow() {
-		XSSFSheetComments sheetComments = new XSSFSheetComments();
+		XSSFComments sheetComments = new XSSFComments();
 		CTComment ctComment = CTComment.Factory.newInstance();
 		ctComment.setRef("A1");
 		XSSFComment comment = new XSSFComment(sheetComments, ctComment);
@@ -69,14 +72,14 @@ public class TestXSSFComment extends TestCase {
 		ctAuthors.insertAuthor(0, TEST_AUTHOR);
 		ctComment.setAuthorId(0);
 
-		XSSFSheetComments sheetComments = new XSSFSheetComments(ctComments);
+		XSSFComments sheetComments = new XSSFComments(ctComments);
 		XSSFComment comment = new XSSFComment(sheetComments, ctComment);
 		assertNotNull(comment);
 		assertEquals(TEST_AUTHOR, comment.getAuthor());
 	}
 	
 	public void testSetColumn() {
-		XSSFSheetComments sheetComments = new XSSFSheetComments();
+		XSSFComments sheetComments = new XSSFComments();
 		CTComment ctComment = CTComment.Factory.newInstance();
 		XSSFComment comment = new XSSFComment(sheetComments, ctComment);
 		comment.setColumn((short)3);
@@ -89,7 +92,7 @@ public class TestXSSFComment extends TestCase {
 	}
 	
 	public void testSetRow() {
-		XSSFSheetComments sheetComments = new XSSFSheetComments();
+		XSSFComments sheetComments = new XSSFComments();
 		CTComment ctComment = CTComment.Factory.newInstance();
 		XSSFComment comment = new XSSFComment(sheetComments, ctComment);
 		comment.setRow(20);
@@ -102,11 +105,20 @@ public class TestXSSFComment extends TestCase {
 	}
 	
 	public void testSetAuthor() {
-		XSSFSheetComments sheetComments = new XSSFSheetComments();
+		XSSFComments sheetComments = new XSSFComments();
 		CTComment ctComment = CTComment.Factory.newInstance();
 		XSSFComment comment = new XSSFComment(sheetComments, ctComment);
 		comment.setAuthor(TEST_AUTHOR);
 		assertEquals(TEST_AUTHOR, comment.getAuthor());
+	}
+	
+	public void testSetString() {
+		XSSFComments sheetComments = new XSSFComments();
+		CTComment ctComment = CTComment.Factory.newInstance();
+		XSSFComment comment = new XSSFComment(sheetComments, ctComment);
+		RichTextString richTextString = new HSSFRichTextString(TEST_RICHTEXTSTRING);
+		comment.setString(richTextString);
+		assertEquals(TEST_RICHTEXTSTRING, ctComment.getText().getT());
 	}
     
 }

@@ -31,10 +31,11 @@ import org.apache.poi.ss.usermodel.Patriarch;
 import org.apache.poi.ss.usermodel.PrintSetup;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.usermodel.extensions.XSSFComments;
 import org.apache.poi.xssf.usermodel.helpers.ColumnHelper;
 import org.apache.poi.xssf.util.CellReference;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBreak;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComments;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDialogsheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHeaderFooter;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageBreak;
@@ -42,6 +43,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageMargins;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageSetUpPr;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPrintOptions;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSelection;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetFormatPr;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetPr;
@@ -56,10 +58,11 @@ public class XSSFSheet implements Sheet {
     protected CTSheet sheet;
     protected CTWorksheet worksheet;
     protected CTDialogsheet dialogsheet;
-    protected CTComment comment;
+    protected CTComments comments;
     protected List<Row> rows;
     protected ColumnHelper columnHelper;
     protected XSSFWorkbook workbook;
+    protected XSSFComments sheetComments;
 
     public static final short LeftMargin = 0;
     public static final short RightMargin = 1;
@@ -67,6 +70,11 @@ public class XSSFSheet implements Sheet {
     public static final short BottomMargin = 3;
     public static final short HeaderMargin = 4;
     public static final short FooterMargin = 5;
+
+	public XSSFSheet(CTSheet sheet, CTWorksheet worksheet, XSSFWorkbook workbook, XSSFComments sheetComments) {
+		this(sheet, worksheet, workbook);
+		this.sheetComments = sheetComments;
+	}
 
 	public XSSFSheet(CTSheet sheet, CTWorksheet worksheet, XSSFWorkbook workbook) {
         this.workbook = workbook;
@@ -204,8 +212,7 @@ public class XSSFSheet implements Sheet {
 	}
 
     public Comment getCellComment(int row, int column) {
-        // TODO Auto-generated method stub
-        return null;
+    	return getComments().findCellComment(row, column);
     }
 
     public short[] getColumnBreaks() {
@@ -831,6 +838,25 @@ public class XSSFSheet implements Sheet {
         CTSheetView view = getDefaultSheetView();
         return view != null && view.getTabSelected();
     }
+    
+    public void setCellComment(String cellRef, XSSFComment comment) {
+    	getComments().setCellComment(cellRef, comment);
+    }
+    
+    public String getActiveCell() {
+    	return getSheetTypeSelection().getActiveCell();
+    }
+
+	public void setActiveCell(String cellRef) {
+		getSheetTypeSelection().setActiveCell(cellRef);
+	}
+
+	private CTSelection getSheetTypeSelection() {
+		if (getSheetTypeSheetView().sizeOfSelectionArray() == 0) {
+			getSheetTypeSheetView().insertNewSelection(0);
+		}
+		return getSheetTypeSheetView().getSelectionArray(0);
+	}
 
     /**
      * Return the default sheet view. This is the last one if the sheet's views, according to sec. 3.3.1.83
@@ -857,6 +883,20 @@ public class XSSFSheet implements Sheet {
     
 	private void setSheet(CTSheet sheet) {
 		this.sheet = sheet;
+	}
+	
+	private XSSFComments getComments() {
+		if (sheetComments == null) {
+			sheetComments = new XSSFComments(getCTComments());
+		}
+		return sheetComments;
+	}
+
+	private CTComments getCTComments() {
+		if (comments == null) {
+			comments = CTComments.Factory.newInstance();
+		}
+		return comments;
 	}
 
 }

@@ -24,14 +24,24 @@ import java.util.Date;
 import junit.framework.TestCase;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Comment;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.SharedStringSource;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.extensions.XSSFComments;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComments;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellType;
 
 
 public class TestXSSFCell extends TestCase {
     
-    /**
+    private static final String TEST_C10_AUTHOR = "test C10 author";
+
+	/**
      * Test setting and getting boolean values.
      */
     public void testSetGetBoolean() throws Exception {
@@ -191,14 +201,6 @@ public class TestXSSFCell extends TestCase {
         row.setRowNum(32767);
         assertEquals("IV32768", cell.formatPosition());
     }
-
-    private XSSFRow createParentObjects() {
-        XSSFWorkbook wb = new XSSFWorkbook();
-        wb.setSharedStringSource(new DummySharedStringSource());
-        XSSFSheet sheet = new XSSFSheet(wb);
-        XSSFRow row = new XSSFRow(sheet);
-        return row;
-    }
     
     public static class DummySharedStringSource implements SharedStringSource {
         ArrayList<String> strs = new ArrayList<String>();
@@ -213,5 +215,78 @@ public class TestXSSFCell extends TestCase {
             strs.add(s);
             return strs.size() - 1;
         }
+    }
+    
+    public void testGetCellComment() {
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        CTSheet ctSheet = CTSheet.Factory.newInstance();
+        CTWorksheet ctWorksheet = CTWorksheet.Factory.newInstance();
+        CTComments ctComments = CTComments.Factory.newInstance();
+        XSSFComments sheetComments = new XSSFComments(ctComments);
+        XSSFSheet sheet = new XSSFSheet(ctSheet, ctWorksheet, workbook, sheetComments);
+        assertNotNull(sheet);
+        
+        // Create C10 cell
+        Row row = sheet.createRow(9);
+        Cell cell = row.createCell((short)2);
+        Cell cell3 = row.createCell((short)3);
+        
+        
+        // Set a comment for C10 cell
+        CTComment ctComment = ctComments.addNewCommentList().insertNewComment(0);
+        ctComment.setRef("C10");
+        ctComment.setAuthorId(sheetComments.findAuthor(TEST_C10_AUTHOR));
+        
+        assertNotNull(sheet.getRow(9).getCell((short)2));
+        assertNotNull(sheet.getRow(9).getCell((short)2).getCellComment());
+        assertEquals(TEST_C10_AUTHOR, sheet.getRow(9).getCell((short)2).getCellComment().getAuthor());
+        assertNull(sheet.getRow(9).getCell((short)3).getCellComment());
+    }
+    
+    public void testSetCellComment() {
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        CTSheet ctSheet = CTSheet.Factory.newInstance();
+        CTWorksheet ctWorksheet = CTWorksheet.Factory.newInstance();
+        CTComments ctComments = CTComments.Factory.newInstance();
+        XSSFComments comments = new XSSFComments(ctComments);
+        XSSFSheet sheet = new XSSFSheet(ctSheet, ctWorksheet, workbook, comments);
+        assertNotNull(sheet);
+        
+        // Create C10 cell
+        Row row = sheet.createRow(9);
+        Cell cell = row.createCell((short)2);
+        Cell cell3 = row.createCell((short)3);
+        
+        // Create a comment
+        Comment comment = comments.addComment();
+        comment.setAuthor(TEST_C10_AUTHOR);
+        
+        // Set a comment for C10 cell
+        cell.setCellComment(comment);
+        
+        CTCell ctCell = ctWorksheet.getSheetData().getRowArray(0).getCArray(0);
+		assertNotNull(ctCell);
+		assertEquals("C10", ctCell.getR());
+		long authorId = ctComments.getCommentList().getCommentArray(0).getAuthorId();
+		assertEquals(TEST_C10_AUTHOR, comments.getAuthor(authorId));
+    }
+    
+    public void testSetAsActiveCell() {
+    	Workbook workbook = new XSSFWorkbook();
+    	CTSheet ctSheet = CTSheet.Factory.newInstance();
+    	CTWorksheet ctWorksheet = CTWorksheet.Factory.newInstance();
+    	XSSFSheet sheet = new XSSFSheet(ctSheet, ctWorksheet, (XSSFWorkbook) workbook);
+    	Cell cell = sheet.createRow(0).createCell((short)0);
+    	cell.setAsActiveCell();
+    	
+    	assertEquals("A1", ctWorksheet.getSheetViews().getSheetViewArray(0).getSelectionArray(0).getActiveCell());
+    }
+
+    private XSSFRow createParentObjects() {
+        XSSFWorkbook wb = new XSSFWorkbook();
+        wb.setSharedStringSource(new DummySharedStringSource());
+        XSSFSheet sheet = new XSSFSheet(wb);
+        XSSFRow row = new XSSFRow(sheet);
+        return row;
     }
 }
