@@ -18,14 +18,18 @@
 package org.apache.poi.xssf.usermodel;
 
 import java.util.Iterator;
-
 import junit.framework.TestCase;
-
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.extensions.XSSFComments;
 import org.apache.poi.xssf.usermodel.helpers.ColumnHelper;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComments;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 
 
 public class TestXSSFSheet extends TestCase {
@@ -480,6 +484,51 @@ public class TestXSSFSheet extends TestCase {
     	assertNull(sheet6.getRow(7));
     	assertEquals(8, sheet6.getPhysicalNumberOfRows());
     }
+    
+    public void testGetCellComment() {
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        CTSheet ctSheet = CTSheet.Factory.newInstance();
+        CTWorksheet ctWorksheet = CTWorksheet.Factory.newInstance();
+        CTComments ctComments = CTComments.Factory.newInstance();
+        XSSFComments sheetComments = new XSSFComments(ctComments);
+        XSSFSheet sheet = new XSSFSheet(ctSheet, ctWorksheet, workbook, sheetComments);
+        assertNotNull(sheet);
+        
+        CTComment ctComment = ctComments.addNewCommentList().insertNewComment(0);
+        ctComment.setRef("C10");
+        ctComment.setAuthorId(sheetComments.findAuthor("test C10 author"));
+        
+        assertNotNull(sheet.getCellComment(9, 2));
+        assertEquals("test C10 author", sheet.getCellComment(9, 2).getAuthor());
+    }
+    
+    public void testSetCellComment() {
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        CTSheet ctSheet = CTSheet.Factory.newInstance();
+        CTWorksheet ctWorksheet = CTWorksheet.Factory.newInstance();
+        XSSFSheet sheet = new XSSFSheet(ctSheet, ctWorksheet, workbook);
+        Cell cell = sheet.createRow(0).createCell((short)0);
+        CTComments ctComments = CTComments.Factory.newInstance();
+        XSSFComments comments = new XSSFComments(ctComments);
+        XSSFComment comment = comments.addComment();
+        
+        sheet.setCellComment("A1", comment);
+        assertEquals("A1", ctComments.getCommentList().getCommentArray(0).getRef());
+        comment.setAuthor("test A1 author");
+        assertEquals("test A1 author", comments.getAuthor(ctComments.getCommentList().getCommentArray(0).getAuthorId()));
+    }
+    
+    public void testGetActiveCell() {
+    	Workbook workbook = new XSSFWorkbook();
+    	CTSheet ctSheet = CTSheet.Factory.newInstance();
+    	CTWorksheet ctWorksheet = CTWorksheet.Factory.newInstance();
+    	XSSFSheet sheet = new XSSFSheet(ctSheet, ctWorksheet, (XSSFWorkbook) workbook);
+    	ctWorksheet.addNewSheetViews().addNewSheetView().addNewSelection().setActiveCell("R5");
+    	
+    	assertEquals("R5", sheet.getActiveCell());
+    	
+    }
+    
 
 	private XSSFSheet createSheet(XSSFWorkbook workbook, String name) {
         XSSFSheet sheet = (XSSFSheet) workbook.createSheet(name);

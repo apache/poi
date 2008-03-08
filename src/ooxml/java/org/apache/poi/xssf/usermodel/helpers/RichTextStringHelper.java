@@ -14,18 +14,16 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+package org.apache.poi.xssf.usermodel.helpers;
 
-package org.apache.poi.xssf.usermodel;
+import org.apache.poi.ss.usermodel.RichTextString;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
 
-import org.apache.poi.ss.usermodel.Sheet;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
+public class RichTextStringHelper {
 
-public class XSSFWorksheet extends XSSFSheet implements Sheet{
-
-	public XSSFWorksheet(CTSheet sheet, CTWorksheet worksheet,
-			XSSFWorkbook workbook) {
-		super(sheet, worksheet, workbook);
+	public static void convertToRst(RichTextString string, CTRst text) {
+		// TODO: implement RichTextString to Rst conversion
+		text.setT(string.getString());
 	}
-	
+
 }

@@ -20,7 +20,6 @@ package org.apache.poi.xssf.usermodel.helpers;
 import junit.framework.TestCase;
 
 import org.apache.poi.xssf.usermodel.helpers.HeaderFooterHelper;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHeaderFooter;
 
 
 public class TestHeaderFooterHelper extends TestCase {
