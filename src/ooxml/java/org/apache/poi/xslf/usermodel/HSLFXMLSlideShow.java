@@ -26,14 +26,14 @@ import org.apache.poi.hslf.HSLFXML;
  *  top level object for creating new slides/etc.
  */
 public class HSLFXMLSlideShow extends POIXMLDocument {
-	private org.apache.poi.hslf.HSLFXML hslfXML;
+	private org.apache.poi.hslf.XSLFXML hslfXML;
 	
-	public HSLFXMLSlideShow(HSLFXML xml) {
+	public HSLFXMLSlideShow(XSLFXML xml) {
 		super(xml);
 		this.hslfXML = xml;
 	}
 	
-	public HSLFXML _getHSLFXML() {
+	public XSLFXML _getHSLFXML() {
 		return hslfXML;
 	}
 }

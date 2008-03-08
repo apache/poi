@@ -42,7 +42,7 @@ public class HXFPowerPointExtractor extends POIXMLTextExtractor {
 	
 	public HXFPowerPointExtractor(Package container) throws XmlException, OpenXML4JException, IOException {
 		this(new HSLFXMLSlideShow(
-				new HSLFXML(container)
+				new XSLFXML(container)
 		));
 	}
 	public HXFPowerPointExtractor(HSLFXMLSlideShow slideshow) {
