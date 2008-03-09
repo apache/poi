@@ -14,11 +14,11 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.hslf;
+package org.apache.poi.xslf;
 
 import java.io.IOException;
 
-import org.apache.poi.hxf.HXFDocument;
+import org.apache.poi.POIXMLDocument;
 import org.apache.xmlbeans.XmlException;
 import org.openxml4j.exceptions.InvalidFormatException;
 import org.openxml4j.exceptions.OpenXML4JException;
@@ -49,7 +49,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.SldMasterDocument;
  * 
  * WARNING - APIs expected to change rapidly
  */
-public class HSLFXML extends HXFDocument {
+public class XSLFSlideShow extends POIXMLDocument {
 	public static final String MAIN_CONTENT_TYPE = "application/vnd.openxmlformats-officedocument.presentationml.presentation.main+xml";
 	public static final String NOTES_CONTENT_TYPE = "application/vnd.openxmlformats-officedocument.presentationml.notesSlide+xml";
 	public static final String SLIDE_CONTENT_TYPE = "application/vnd.openxmlformats-officedocument.presentationml.slide+xml";
@@ -58,11 +58,14 @@ public class HSLFXML extends HXFDocument {
 
 	private PresentationDocument presentationDoc;
 	
-	public HSLFXML(Package container) throws OpenXML4JException, IOException, XmlException {
-		super(container, MAIN_CONTENT_TYPE);
+	public XSLFSlideShow(Package container) throws OpenXML4JException, IOException, XmlException {
+		super(container);
 		
 		presentationDoc =
-			PresentationDocument.Factory.parse(basePart.getInputStream());
+			PresentationDocument.Factory.parse(getCorePart().getInputStream());
+	}
+	public XSLFSlideShow(String file) throws OpenXML4JException, IOException, XmlException {
+		this(openPackage(file));
 	}
 	
 	/**
@@ -96,11 +99,16 @@ public class HSLFXML extends HXFDocument {
 	 *  the supplied slide master reference
 	 */
 	public CTSlideMaster getSlideMaster(CTSlideMasterIdListEntry master) throws IOException, XmlException {
-		PackagePart masterPart =
-			getRelatedPackagePart(master.getId2());
-		SldMasterDocument masterDoc =
-			SldMasterDocument.Factory.parse(masterPart.getInputStream());
-		return masterDoc.getSldMaster();
+		try {
+			PackagePart masterPart =
+				getTargetPart(getCorePart().getRelationship(master.getId2()));
+				
+			SldMasterDocument masterDoc =
+				SldMasterDocument.Factory.parse(masterPart.getInputStream());
+			return masterDoc.getSldMaster();
+		} catch(InvalidFormatException e) {
+			throw new XmlException(e);
+		}
 	}
 	
 	/**
@@ -108,11 +116,15 @@ public class HSLFXML extends HXFDocument {
 	 *  the supplied slide reference
 	 */
 	public CTSlide getSlide(CTSlideIdListEntry slide) throws IOException, XmlException {
-		PackagePart slidePart =
-			getRelatedPackagePart(slide.getId2());
-		SldDocument slideDoc =
-			SldDocument.Factory.parse(slidePart.getInputStream());
-		return slideDoc.getSld();
+		try {
+			PackagePart slidePart =
+				getTargetPart(getCorePart().getRelationship(slide.getId2()));
+			SldDocument slideDoc =
+				SldDocument.Factory.parse(slidePart.getInputStream());
+			return slideDoc.getSld();
+		} catch(InvalidFormatException e) {
+			throw new XmlException(e);
+		}
 	}
 	
 	/**
@@ -120,11 +132,11 @@ public class HSLFXML extends HXFDocument {
 	 *  slide, as found from the supplied slide reference
 	 */
 	public CTNotesSlide getNotes(CTSlideIdListEntry slide) throws IOException, XmlException {
-		PackagePart slidePart =
-			getRelatedPackagePart(slide.getId2());
-		
 		PackageRelationshipCollection notes;
 		try {
+			PackagePart slidePart =
+				getTargetPart(getCorePart().getRelationship(slide.getId2()));
+		
 			notes = slidePart.getRelationshipsByType(NOTES_RELATION_TYPE);
 		} catch(InvalidFormatException e) {
 			throw new IllegalStateException(e);
@@ -138,11 +150,15 @@ public class HSLFXML extends HXFDocument {
 			throw new IllegalStateException("Expecting 0 or 1 notes for a slide, but found " + notes.size());
 		}
 		
-		PackagePart notesPart =
-			getPackagePart(notes.getRelationship(0));
-		NotesDocument notesDoc =
-			NotesDocument.Factory.parse(notesPart.getInputStream());
-		
-		return notesDoc.getNotes();
+		try {
+			PackagePart notesPart =
+				getTargetPart(notes.getRelationship(0));
+			NotesDocument notesDoc =
+				NotesDocument.Factory.parse(notesPart.getInputStream());
+			
+			return notesDoc.getNotes();
+		} catch(InvalidFormatException e) {
+			throw new IllegalStateException(e);
+		}
 	}
 }

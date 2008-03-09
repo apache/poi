@@ -14,10 +14,9 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.hslf.usermodel;
+package org.apache.poi.xslf.usermodel;
 
-import org.apache.poi.POIXMLDocument;
-import org.apache.poi.hslf.HSLFXML;
+import org.apache.poi.xslf.XSLFSlideShow;
 
 /**
  * High level representation of a ooxml slideshow.
@@ -25,15 +24,17 @@ import org.apache.poi.hslf.HSLFXML;
  *  they are reading or writing a slideshow. It is also the
  *  top level object for creating new slides/etc.
  */
-public class HSLFXMLSlideShow extends POIXMLDocument {
-	private org.apache.poi.hslf.XSLFXML hslfXML;
+public class XMLSlideShow {
+	private XSLFSlideShow slideShow;
 	
-	public HSLFXMLSlideShow(XSLFXML xml) {
-		super(xml);
-		this.hslfXML = xml;
+	public XMLSlideShow(XSLFSlideShow xml) {
+		this.slideShow = xml;
 	}
 	
-	public XSLFXML _getHSLFXML() {
-		return hslfXML;
+	public XSLFSlideShow _getXSLFSlideShow() {
+		return slideShow;
 	}
+
+	// TODO: Get slides
+	// TODO: Get notes
 }

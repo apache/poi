@@ -17,7 +17,7 @@
 ==================================================================== */
         
 
-package org.apache.poi.hxf;
+package org.apache.poi;
 
 import junit.framework.TestCase;
 import java.io.*;
@@ -38,7 +38,7 @@ public class TestDetectAsOOXML extends TestCase
 	{
 		File f = new File(dirname + "/sample.xlsx");
 
-		HXFDocument.openPackage(f);
+		POIXMLDocument.openPackage(f.toString());
 	}
 	
 	public void testDetectAsPOIFS() throws Exception {
@@ -48,18 +48,18 @@ public class TestDetectAsOOXML extends TestCase
 		in = new PushbackInputStream(
 				new FileInputStream(dirname + "/SampleSS.xlsx"), 10
 		);
-		assertTrue(HXFDocument.hasOOXMLHeader(in));
+		assertTrue(POIXMLDocument.hasOOXMLHeader(in));
 		
 		// xls file isn't
 		in = new PushbackInputStream(
 				new FileInputStream(dirname + "/SampleSS.xls"), 10
 		);
-		assertFalse(HXFDocument.hasOOXMLHeader(in));
+		assertFalse(POIXMLDocument.hasOOXMLHeader(in));
 		
 		// text file isn't
 		in = new PushbackInputStream(
 				new FileInputStream(dirname + "/SampleSS.txt"), 10
 		);
-		assertFalse(HXFDocument.hasOOXMLHeader(in));
+		assertFalse(POIXMLDocument.hasOOXMLHeader(in));
 	}
 }

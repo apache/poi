@@ -14,11 +14,11 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.hslf;
+package org.apache.poi.xslf;
 
 import java.io.File;
 
-import org.apache.poi.hxf.HXFDocument;
+import org.apache.poi.POIXMLDocument;
 import org.openxml4j.opc.Package;
 import org.openxml4j.opc.PackagePart;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideIdListEntry;
@@ -26,8 +26,8 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideMasterIdListE
 
 import junit.framework.TestCase;
 
-public class TestHSLFXML extends TestCase {
-	private File sampleFile;
+public class TestXSLFSlideShow extends TestCase {
+	private String sampleFile;
 
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -35,15 +35,15 @@ public class TestHSLFXML extends TestCase {
 		sampleFile = new File(
 				System.getProperty("HSLF.testdata.path") +
 				File.separator + "sample.pptx"
-		);
+		).toString();
 	}
 
 	public void testContainsMainContentType() throws Exception {
-		Package pack = HXFDocument.openPackage(sampleFile);
+		Package pack = POIXMLDocument.openPackage(sampleFile);
 		
 		boolean found = false;
 		for(PackagePart part : pack.getParts()) {
-			if(part.getContentType().equals(HSLFXML.MAIN_CONTENT_TYPE)) {
+			if(part.getContentType().equals(XSLFSlideShow.MAIN_CONTENT_TYPE)) {
 				found = true;
 			}
 			System.out.println(part);
@@ -52,13 +52,13 @@ public class TestHSLFXML extends TestCase {
 	}
 
 	public void testOpen() throws Exception {
-		HXFDocument.openPackage(sampleFile);
+		POIXMLDocument.openPackage(sampleFile);
 		
-		HSLFXML xml;
+		XSLFSlideShow xml;
 		
 		// With the finalised uri, should be fine
-		xml = new HSLFXML(
-				HXFDocument.openPackage(sampleFile)
+		xml = new XSLFSlideShow(
+				POIXMLDocument.openPackage(sampleFile)
 		);
 		
 		// Check the core
@@ -74,9 +74,7 @@ public class TestHSLFXML extends TestCase {
 	}
 	
 	public void testSlideBasics() throws Exception {
-		HSLFXML xml = new HSLFXML(
-				HXFDocument.openPackage(sampleFile)
-		);
+		XSLFSlideShow xml = new XSLFSlideShow(sampleFile);
 		
 		// Should have 1 master
 		assertEquals(1, xml.getSlideMasterReferences().sizeOfSldMasterIdArray());
@@ -110,9 +108,7 @@ public class TestHSLFXML extends TestCase {
 	}
 	
 	public void testMetadataBasics() throws Exception {
-		HSLFXML xml = new HSLFXML(
-				HXFDocument.openPackage(sampleFile)
-		);
+		XSLFSlideShow xml = new XSLFSlideShow(sampleFile);
 		
 		assertNotNull(xml.getCoreProperties());
 		assertNotNull(xml.getExtendedProperties());

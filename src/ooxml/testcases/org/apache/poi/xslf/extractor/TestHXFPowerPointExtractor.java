@@ -49,7 +49,7 @@ public class TestHXFPowerPointExtractor extends TestCase {
 	 */
 	public void testGetSimpleText() throws Exception {
 		new HXFPowerPointExtractor(xmlA.getPackage());
-		new HXFPowerPointExtractor(new HSLFXMLSlideShow(xmlA));
+		new HXFPowerPointExtractor(new XMLSlideShow(xmlA));
 		
 		HXFPowerPointExtractor extractor = 
 			new HXFPowerPointExtractor(xmlA.getPackage());
