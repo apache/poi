@@ -14,15 +14,14 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.hwpf.extractor;
+package org.apache.poi.xwpf.extractor;
 
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.poi.POIXMLDocument;
 import org.apache.poi.POIXMLTextExtractor;
-import org.apache.poi.hwpf.HWPFXML;
-import org.apache.poi.hwpf.usermodel.HWPFXMLDocument;
-import org.apache.poi.hxf.HXFDocument;
+import org.apache.poi.xwpf.XWPFDocument;
 import org.apache.xmlbeans.XmlException;
 import org.openxml4j.exceptions.OpenXML4JException;
 import org.openxml4j.opc.Package;
@@ -34,15 +33,13 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTText;
 /**
  * Helper class to extract text from an OOXML Word file
  */
-public class HXFWordExtractor extends POIXMLTextExtractor {
-	private HWPFXMLDocument document;
+public class XWPFWordExtractor extends POIXMLTextExtractor {
+	private XWPFDocument document;
 	
-	public HXFWordExtractor(Package container) throws XmlException, OpenXML4JException, IOException {
-		this(new HWPFXMLDocument(
-				new HWPFXML(container)
-		));
+	public XWPFWordExtractor(Package container) throws XmlException, OpenXML4JException, IOException {
+		this(new XWPFDocument(container));
 	}
-	public HXFWordExtractor(HWPFXMLDocument document) {
+	public XWPFWordExtractor(XWPFDocument document) {
 		super(document);
 		this.document = document;
 	}
@@ -54,14 +51,14 @@ public class HXFWordExtractor extends POIXMLTextExtractor {
 			System.exit(1);
 		}
 		POIXMLTextExtractor extractor = 
-			new HXFWordExtractor(HXFDocument.openPackage(
-					new File(args[0])
+			new XWPFWordExtractor(POIXMLDocument.openPackage(
+					args[0]
 			));
 		System.out.println(extractor.getText());
 	}
 
 	public String getText() {
-		CTBody body = document._getHWPFXML().getDocumentBody();
+		CTBody body = document.getDocumentBody();
 		StringBuffer text = new StringBuffer();
 		
 		// Loop over paragraphs

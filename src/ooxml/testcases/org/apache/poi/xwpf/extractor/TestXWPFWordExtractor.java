@@ -14,54 +14,57 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.hwpf.extractor;
+package org.apache.poi.xwpf.extractor;
 
 import java.io.File;
 
-import org.apache.poi.hwpf.HWPFXML;
-import org.apache.poi.hwpf.usermodel.HWPFXMLDocument;
-import org.apache.poi.hxf.HXFDocument;
+import org.apache.poi.POIXMLDocument;
+import org.apache.poi.xwpf.XWPFDocument;
 
 import junit.framework.TestCase;
 
 /**
  * Tests for HXFWordExtractor
  */
-public class TestHXFWordExtractor extends TestCase {
+public class TestXWPFWordExtractor extends TestCase {
 	/**
 	 * A very simple file
 	 */
-	private HWPFXML xmlA;
+	private XWPFDocument xmlA;
+	private File fileA;
 	/**
 	 * A fairly complex file
 	 */
-	private HWPFXML xmlB;
+	private XWPFDocument xmlB;
+	private File fileB;
 
 	protected void setUp() throws Exception {
 		super.setUp();
 		
-		File fileA = new File(
+		fileA = new File(
 				System.getProperty("HWPF.testdata.path") +
 				File.separator + "sample.docx"
 		);
-		File fileB = new File(
+		fileB = new File(
 				System.getProperty("HWPF.testdata.path") +
 				File.separator + "IllustrativeCases.docx"
 		);
+		assertTrue(fileA.exists());
+		assertTrue(fileB.exists());
 		
-		xmlA = new HWPFXML(HXFDocument.openPackage(fileA));
-		xmlB = new HWPFXML(HXFDocument.openPackage(fileB));
+		xmlA = new XWPFDocument(POIXMLDocument.openPackage(fileA.toString()));
+		xmlB = new XWPFDocument(POIXMLDocument.openPackage(fileB.toString()));
 	}
 
 	/**
 	 * Get text out of the simple file
 	 */
 	public void testGetSimpleText() throws Exception {
-		new HXFWordExtractor(xmlA.getPackage());
-		new HXFWordExtractor(new HWPFXMLDocument(xmlA));
+		new XWPFWordExtractor(xmlA);
+		new XWPFWordExtractor(POIXMLDocument.openPackage(fileA.toString()));
 		
-		HXFWordExtractor extractor = 
-			new HXFWordExtractor(xmlA.getPackage());
+		XWPFWordExtractor extractor = 
+			new XWPFWordExtractor(xmlA);
 		extractor.getText();
 		
 		String text = extractor.getText();
@@ -88,8 +91,8 @@ public class TestHXFWordExtractor extends TestCase {
 	 * Tests getting the text out of a complex file
 	 */
 	public void testGetComplexText() throws Exception {
-		HXFWordExtractor extractor = 
-			new HXFWordExtractor(xmlB.getPackage());
+		XWPFWordExtractor extractor = 
+			new XWPFWordExtractor(xmlB);
 		extractor.getText();
 		
 		String text = extractor.getText();

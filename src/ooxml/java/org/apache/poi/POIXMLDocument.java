@@ -123,6 +123,25 @@ public abstract class POIXMLDocument {
 		PackageRelationship rel = rels.getRelationship(0);
 		return getTargetPart(rel);
 	}
+
+	/**
+	 * Retrieves all the PackageParts which are defined as
+	 *  relationships of the base document with the
+	 *  specified content type.
+	 */
+	protected PackagePart[] getRelatedByType(String contentType) throws InvalidFormatException {
+		PackageRelationshipCollection partsC =
+			getCorePart().getRelationshipsByType(contentType);
+		
+		PackagePart[] parts = new PackagePart[partsC.size()];
+		int count = 0;
+		for (PackageRelationship rel : partsC) {
+			parts[count] = getTargetPart(rel);
+			count++;
+		}
+		return parts;
+	}
+
 	
     
     /**

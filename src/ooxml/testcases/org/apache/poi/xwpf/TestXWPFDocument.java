@@ -14,17 +14,17 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.hwpf;
+package org.apache.poi.xwpf;
 
 import java.io.File;
 
-import org.apache.poi.hxf.HXFDocument;
+import org.apache.poi.POIXMLDocument;
 import org.openxml4j.opc.Package;
 import org.openxml4j.opc.PackagePart;
 
 import junit.framework.TestCase;
 
-public class TestHWPFXML extends TestCase {
+public class TestXWPFDocument extends TestCase {
 	private File sampleFile;
 	private File complexFile;
 
@@ -39,14 +39,17 @@ public class TestHWPFXML extends TestCase {
 				System.getProperty("HWPF.testdata.path") +
 				File.separator + "IllustrativeCases.docx"
 		);
+		
+		assertTrue(sampleFile.exists());
+		assertTrue(complexFile.exists());
 	}
 
 	public void testContainsMainContentType() throws Exception {
-		Package pack = HXFDocument.openPackage(sampleFile);
+		Package pack = POIXMLDocument.openPackage(sampleFile.toString());
 		
 		boolean found = false;
 		for(PackagePart part : pack.getParts()) {
-			if(part.getContentType().equals(HWPFXML.MAIN_CONTENT_TYPE)) {
+			if(part.getContentType().equals(XWPFDocument.MAIN_CONTENT_TYPE)) {
 				found = true;
 			}
 			System.out.println(part);
@@ -55,14 +58,21 @@ public class TestHWPFXML extends TestCase {
 	}
 
 	public void testOpen() throws Exception {
-		HXFDocument.openPackage(sampleFile);
-		HXFDocument.openPackage(complexFile);
+		POIXMLDocument.openPackage(sampleFile.toString());
+		POIXMLDocument.openPackage(complexFile.toString());
 		
-		HWPFXML xml;
+		new XWPFDocument(
+				POIXMLDocument.openPackage(sampleFile.toString())
+		);
+		new XWPFDocument(
+				POIXMLDocument.openPackage(complexFile.toString())
+		);
+		
+		XWPFDocument xml;
 		
 		// Simple file
-		xml = new HWPFXML(
-				HXFDocument.openPackage(sampleFile)
+		xml = new XWPFDocument(
+				POIXMLDocument.openPackage(sampleFile.toString())
 		);
 		// Check it has key parts
 		assertNotNull(xml.getDocument());
@@ -70,8 +80,8 @@ public class TestHWPFXML extends TestCase {
 		assertNotNull(xml.getStyle());
 		
 		// Complex file
-		xml = new HWPFXML(
-				HXFDocument.openPackage(complexFile)
+		xml = new XWPFDocument(
+				POIXMLDocument.openPackage(complexFile.toString())
 		);
 		assertNotNull(xml.getDocument());
 		assertNotNull(xml.getDocumentBody());
@@ -79,8 +89,8 @@ public class TestHWPFXML extends TestCase {
 	}
 	
 	public void testMetadataBasics() throws Exception {
-		HWPFXML xml = new HWPFXML(
-				HXFDocument.openPackage(sampleFile)
+		XWPFDocument xml = new XWPFDocument(
+				POIXMLDocument.openPackage(sampleFile.toString())
 		);
 		assertNotNull(xml.getCoreProperties());
 		assertNotNull(xml.getExtendedProperties());
@@ -94,8 +104,8 @@ public class TestHWPFXML extends TestCase {
 	}
 	
 	public void testMetadataComplex() throws Exception {
-		HWPFXML xml = new HWPFXML(
-				HXFDocument.openPackage(complexFile)
+		XWPFDocument xml = new XWPFDocument(
+				POIXMLDocument.openPackage(complexFile.toString())
 		);
 		assertNotNull(xml.getCoreProperties());
 		assertNotNull(xml.getExtendedProperties());
