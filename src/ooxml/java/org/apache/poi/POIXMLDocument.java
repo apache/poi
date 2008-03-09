@@ -22,15 +22,19 @@ import java.io.PushbackInputStream;
 
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.util.IOUtils;
+import org.apache.xmlbeans.XmlException;
 import org.openxml4j.exceptions.InvalidFormatException;
 import org.openxml4j.exceptions.OpenXML4JException;
 import org.openxml4j.opc.Package;
 import org.openxml4j.opc.PackagePart;
 import org.openxml4j.opc.PackagePartName;
 import org.openxml4j.opc.PackageRelationship;
+import org.openxml4j.opc.PackageRelationshipCollection;
 import org.openxml4j.opc.PackageRelationshipTypes;
 import org.openxml4j.opc.PackagingURIHelper;
-
+import org.openxml4j.opc.internal.PackagePropertiesPart;
+import org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.CTProperties;
+import org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.PropertiesDocument;
 
 public abstract class POIXMLDocument {
 
@@ -68,7 +72,7 @@ public abstract class POIXMLDocument {
      *  in the event of a problem.
      * Works around shortcomings in java's this() constructor calls
      */
-    protected static Package openPackage(String path) throws IOException {
+    public static Package openPackage(String path) throws IOException {
         try {
             return Package.open(path);
         } catch (InvalidFormatException e) {
@@ -99,6 +103,27 @@ public abstract class POIXMLDocument {
         }
         return part;
     }
+
+	/**
+	 * Fetches the (single) PackagePart which is defined as
+	 *  the supplied relation content type of the base
+	 *  container, or null if none found.
+	 * @param relationType The relation content type to search for
+	 * @throws IllegalArgumentException If we find more than one part of that type
+	 */
+	protected PackagePart getSinglePartByRelationType(String relationType) throws IllegalArgumentException, OpenXML4JException {
+		PackageRelationshipCollection rels =
+			getCorePart().getRelationshipsByType(relationType);
+		if(rels.size() == 0) {
+			return null;
+		}
+		if(rels.size() > 1) {
+			throw new IllegalArgumentException("Found " + rels.size() + " relations for the type " + relationType + ", should only ever be one!");
+		}
+		PackageRelationship rel = rels.getRelationship(0);
+		return getTargetPart(rel);
+	}
+	
     
     /**
      * Checks that the supplied InputStream (which MUST
@@ -132,4 +157,30 @@ public abstract class POIXMLDocument {
         	header[3] == POIFSConstants.OOXML_FILE_HEADER[3]
         );        	                                            
     }
+
+	/**
+	 * Get the core document properties (core ooxml properties).
+	 * TODO: Replace with nice usermodel wrapper
+	 * @deprecated To be replaced with a proper user-model style view of the properties
+	 */
+	public PackagePropertiesPart getCoreProperties() throws OpenXML4JException, IOException {
+		PackagePart propsPart = getSinglePartByRelationType(CORE_PROPERTIES_REL_TYPE);
+		if(propsPart == null) {
+			return null;
+		}
+		return (PackagePropertiesPart)propsPart;
+	}
+	
+	/**
+	 * Get the extended document properties (extended ooxml properties)
+	 * TODO: Replace with nice usermodel wrapper
+	 * @deprecated To be replaced with a proper user-model style view of the properties
+	 */
+	public CTProperties getExtendedProperties() throws OpenXML4JException, XmlException, IOException {
+		PackagePart propsPart = getSinglePartByRelationType(EXTENDED_PROPERTIES_REL_TYPE);
+		
+		PropertiesDocument props = PropertiesDocument.Factory.parse(
+				propsPart.getInputStream());
+		return props.getProperties();
+	}
 }

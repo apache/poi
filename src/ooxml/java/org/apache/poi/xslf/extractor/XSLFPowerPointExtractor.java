@@ -14,15 +14,14 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.hslf.extractor;
+package org.apache.poi.xslf.extractor;
 
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.poi.POIXMLDocument;
 import org.apache.poi.POIXMLTextExtractor;
-import org.apache.poi.hslf.HSLFXML;
-import org.apache.poi.hslf.usermodel.HSLFXMLSlideShow;
-import org.apache.poi.hxf.HXFDocument;
+import org.apache.poi.xslf.XSLFSlideShow;
 import org.apache.xmlbeans.XmlException;
 import org.openxml4j.exceptions.OpenXML4JException;
 import org.openxml4j.opc.Package;
@@ -35,17 +34,15 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlide;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideIdListEntry;
 
-public class HXFPowerPointExtractor extends POIXMLTextExtractor {
-	private HSLFXMLSlideShow slideshow;
+public class XSLFPowerPointExtractor extends POIXMLTextExtractor {
+	private XSLFSlideShow slideshow;
 	private boolean slidesByDefault = true;
 	private boolean notesByDefault = false;
 	
-	public HXFPowerPointExtractor(Package container) throws XmlException, OpenXML4JException, IOException {
-		this(new HSLFXMLSlideShow(
-				new XSLFXML(container)
-		));
+	public XSLFPowerPointExtractor(Package container) throws XmlException, OpenXML4JException, IOException {
+		this(new XSLFSlideShow(container));
 	}
-	public HXFPowerPointExtractor(HSLFXMLSlideShow slideshow) {
+	public XSLFPowerPointExtractor(XSLFSlideShow slideshow) {
 		super(slideshow);
 		this.slideshow = slideshow;
 	}
@@ -57,9 +54,8 @@ public class HXFPowerPointExtractor extends POIXMLTextExtractor {
 			System.exit(1);
 		}
 		POIXMLTextExtractor extractor = 
-			new HXFPowerPointExtractor(HXFDocument.openPackage(
-					new File(args[0])
-			));
+			new XSLFPowerPointExtractor(
+					new XSLFSlideShow(args[0]));
 		System.out.println(extractor.getText());
 	}
 
@@ -94,13 +90,13 @@ public class HXFPowerPointExtractor extends POIXMLTextExtractor {
 		StringBuffer text = new StringBuffer();
 		
 		CTSlideIdListEntry[] slideRefs =
-			slideshow._getHSLFXML().getSlideReferences().getSldIdArray();
+			slideshow.getSlideReferences().getSldIdArray();
 		for (int i = 0; i < slideRefs.length; i++) {
 			try {
 				CTSlide slide =
-					slideshow._getHSLFXML().getSlide(slideRefs[i]);
+					slideshow.getSlide(slideRefs[i]);
 				CTNotesSlide notes = 
-					slideshow._getHSLFXML().getNotes(slideRefs[i]);
+					slideshow.getNotes(slideRefs[i]);
 				
 				if(slideText) {
 					extractText(slide.getCSld().getSpTree(), text);
