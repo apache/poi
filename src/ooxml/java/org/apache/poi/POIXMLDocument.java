@@ -107,13 +107,13 @@ public abstract class POIXMLDocument {
 	/**
 	 * Fetches the (single) PackagePart which is defined as
 	 *  the supplied relation content type of the base
-	 *  container, or null if none found.
+	 *  package/container, or null if none found.
 	 * @param relationType The relation content type to search for
 	 * @throws IllegalArgumentException If we find more than one part of that type
 	 */
 	protected PackagePart getSinglePartByRelationType(String relationType) throws IllegalArgumentException, OpenXML4JException {
 		PackageRelationshipCollection rels =
-			getCorePart().getRelationshipsByType(relationType);
+			pkg.getRelationshipsByType(relationType);
 		if(rels.size() == 0) {
 			return null;
 		}
