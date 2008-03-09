@@ -14,45 +14,47 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.hslf.extractor;
+package org.apache.poi.xslf.extractor;
 
 import java.io.File;
 
-import org.apache.poi.hslf.HSLFXML;
-import org.apache.poi.hslf.usermodel.HSLFXMLSlideShow;
-import org.apache.poi.hxf.HXFDocument;
+import org.apache.poi.POIXMLDocument;
+import org.apache.poi.xslf.XSLFSlideShow;
 
 import junit.framework.TestCase;
 
 /**
  * Tests for HXFPowerPointExtractor
  */
-public class TestHXFPowerPointExtractor extends TestCase {
+public class TestXSLFPowerPointExtractor extends TestCase {
 	/**
 	 * A simple file
 	 */
-	private HSLFXML xmlA;
+	private XSLFSlideShow xmlA;
+	private File fileA;
 
 	protected void setUp() throws Exception {
 		super.setUp();
 		
-		File fileA = new File(
+		fileA = new File(
 				System.getProperty("HSLF.testdata.path") +
 				File.separator + "sample.pptx"
 		);
+		assertTrue(fileA.exists());
 		
-		xmlA = new HSLFXML(HXFDocument.openPackage(fileA));
+		xmlA = new XSLFSlideShow(fileA.toString());
 	}
 
 	/**
 	 * Get text out of the simple file
 	 */
 	public void testGetSimpleText() throws Exception {
-		new HXFPowerPointExtractor(xmlA.getPackage());
-		new HXFPowerPointExtractor(new XMLSlideShow(xmlA));
+		new XSLFPowerPointExtractor(xmlA);
+		new XSLFPowerPointExtractor(
+				POIXMLDocument.openPackage(fileA.toString()));
 		
-		HXFPowerPointExtractor extractor = 
-			new HXFPowerPointExtractor(xmlA.getPackage());
+		XSLFPowerPointExtractor extractor = 
+			new XSLFPowerPointExtractor(xmlA);
 		extractor.getText();
 		
 		String text = extractor.getText();

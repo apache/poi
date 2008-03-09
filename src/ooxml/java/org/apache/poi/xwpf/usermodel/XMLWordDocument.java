@@ -14,23 +14,21 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.hwpf.usermodel;
+package org.apache.poi.xwpf.usermodel;
 
-import org.apache.poi.POIXMLDocument;
-import org.apache.poi.hwpf.HWPFXML;
+import org.apache.poi.xwpf.XWPFDocument;
 
 /**
  * High level representation of a ooxml text document.
  */
-public class HWPFXMLDocument extends POIXMLDocument {
-	private HWPFXML hwpfXML;
+public class XMLWordDocument {
+	private XWPFDocument xwpfXML;
 	
-	public HWPFXMLDocument(HWPFXML xml) {
-		super(xml);
-		this.hwpfXML = xml;
+	public XMLWordDocument(XWPFDocument xml) {
+		this.xwpfXML = xml;
 	}
 	
-	public HWPFXML _getHWPFXML() {
-		return hwpfXML;
+	public XWPFDocument _getXWPFXML() {
+		return xwpfXML;
 	}
 }

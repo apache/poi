@@ -14,11 +14,11 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.hwpf;
+package org.apache.poi.xwpf;
 
 import java.io.IOException;
 
-import org.apache.poi.hxf.HXFDocument;
+import org.apache.poi.POIXMLDocument;
 import org.apache.xmlbeans.XmlException;
 import org.openxml4j.exceptions.InvalidFormatException;
 import org.openxml4j.exceptions.OpenXML4JException;
@@ -41,7 +41,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.StylesDocument;
  *  
  * WARNING - APIs expected to change rapidly
  */
-public class HWPFXML extends HXFDocument {
+public class XWPFDocument extends POIXMLDocument {
 	public static final String MAIN_CONTENT_TYPE = "application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml";
 	public static final String FOOTER_CONTENT_TYPE = "application/vnd.openxmlformats-officedocument.wordprocessingml.footer+xml";
 	public static final String HEADER_CONTENT_TYPE = "application/vnd.openxmlformats-officedocument.wordprocessingml.header+xml";
@@ -50,11 +50,11 @@ public class HWPFXML extends HXFDocument {
 	
 	private DocumentDocument wordDoc;
 	
-	public HWPFXML(Package container) throws OpenXML4JException, IOException, XmlException {
-		super(container, MAIN_CONTENT_TYPE);
+	public XWPFDocument(Package container) throws OpenXML4JException, IOException, XmlException {
+		super(container);
 		
 		wordDoc =
-			DocumentDocument.Factory.parse(basePart.getInputStream());
+			DocumentDocument.Factory.parse(getCorePart().getInputStream());
 	}
 	
 	/**
