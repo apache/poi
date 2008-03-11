@@ -77,8 +77,13 @@
                 <anchor id="NewWorkbook"/>
                 <section><title>New Workbook</title>
                     <source>
-    HSSFWorkbook wb = new HSSFWorkbook();
+    Workbook wb = new HSSFWorkbook();
     FileOutputStream fileOut = new FileOutputStream("workbook.xls");
+    wb.write(fileOut);
+    fileOut.close();
+
+    Workbook wb = new XSSFWorkbook();
+    FileOutputStream fileOut = new FileOutputStream("workbook.xlsx");
     wb.write(fileOut);
     fileOut.close();
                     </source>
@@ -86,9 +91,10 @@
                 <anchor id="NewSheet"/>
                 <section><title>New Sheet</title>
                     <source>
-    HSSFWorkbook wb = new HSSFWorkbook();
-    HSSFSheet sheet1 = wb.createSheet("new sheet");
-    HSSFSheet sheet2 = wb.createSheet("second sheet");
+    Workbook wb = new HSSFWorkbook();
+    //Workbook wb = new XSSFWorkbook();
+    Sheet sheet1 = wb.createSheet("new sheet");
+    Sheet sheet2 = wb.createSheet("second sheet");
     FileOutputStream fileOut = new FileOutputStream("workbook.xls");
     wb.write(fileOut);
     fileOut.close();
@@ -97,13 +103,14 @@
                 <anchor id="CreateCells"/>
                 <section><title>Creating Cells</title>
                     <source>
-    HSSFWorkbook wb = new HSSFWorkbook();
-    HSSFSheet sheet = wb.createSheet("new sheet");
+    Workbook wb = new HSSFWorkbook();
+    //Workbook wb = new XSSFWorkbook();
+    Sheet sheet = wb.createSheet("new sheet");
 
     // Create a row and put some cells in it. Rows are 0 based.
-    HSSFRow row = sheet.createRow((short)0);
+    Row row = sheet.createRow((short)0);
     // Create a cell and put a value in it.
-    HSSFCell cell = row.createCell((short)0);
+    Cell cell = row.createCell((short)0);
     cell.setCellValue(1);
 
     // Or do it on one line.
@@ -481,15 +488,16 @@ Examples:
                 <anchor id="ReadWriteWorkbook"/>
                 <section><title>Reading and Rewriting Workbooks</title>
                     <source>
-    POIFSFileSystem fs      =
-            new POIFSFileSystem(new FileInputStream("workbook.xls"));
-    HSSFWorkbook wb = new HSSFWorkbook(fs);
-    HSSFSheet sheet = wb.getSheetAt(0);
-    HSSFRow row = sheet.getRow(2);
-    HSSFCell cell = row.getCell((short)3);
+    InputStream inp = new FileInputStream("workbook.xls");
+    //InputStream inp = new FileInputStream("workbook.xlsx");
+
+    Workbook wb = WorkbookFactory.create(inp);
+    Sheet sheet = wb.getSheetAt(0);
+    Row row = sheet.getRow(2);
+    Cell cell = row.getCell((short)3);
     if (cell == null)
         cell = row.createCell((short)3);
-    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+    cell.setCellType(Cell.CELL_TYPE_STRING);
     cell.setCellValue("a test");
 
     // Write the output to a file
