@@ -689,14 +689,14 @@ under the License.
 
 	<target name="single-scratchpad-test" depends="compile-scratchpad,-test-property-check" description="Runs a single test case specified with -Dtestcase=classname">
 	        <junit printsummary="yes" showoutput="true" filtertrace="no" haltonfailure="false" >
-	            <classpath refid="test.classpath"/>
-	                 <classpath>
-	                                <path refid="scratchpad.classpath"/>
-	                                <pathelement location="${main.output.dir}"/>
-	                                <pathelement location="${scratchpad.output.dir}"/>
-	                                <pathelement location="${scratchpad.output.test.dir}"/>
-	                                <pathelement location="${junit.jar1.dir}"/>
-	                            </classpath>
+	        <classpath refid="test.classpath"/>
+	        <classpath>
+	            <path refid="scratchpad.classpath"/>
+	            <pathelement location="${main.output.dir}"/>
+	            <pathelement location="${scratchpad.output.dir}"/>
+	            <pathelement location="${scratchpad.output.test.dir}"/>
+	            <pathelement location="${junit.jar1.dir}"/>
+	        </classpath>
                 <sysproperty key="HSSF.testdata.path" file="${main.src.test}/org/apache/poi/hssf/data"/>
 	            <sysproperty key="HPSF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hpsf/data"/>
 	            <sysproperty key="HWPF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hwpf/data"/>
@@ -704,7 +704,7 @@ under the License.
                 <sysproperty key="HSMF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hsmf/data"/>
                 <sysproperty key="HDGF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hdgf/data"/>
 	            <sysproperty key="java.awt.headless" value="true"/>
-	                <sysproperty key="java.awt.headless" value="true"/>
+	            <sysproperty key="java.awt.headless" value="true"/>
 	            <formatter type="plain" usefile="no"/>
 	            <formatter type="xml"/>
 	            <test name="${testcase}"/>
@@ -782,6 +782,28 @@ under the License.
 
     <target name="-test-ooxml-write-testfile" unless="ooxml.test.failed">
         <echo file="${ooxml.testokfile}" append="false" message="testok"/>
+    </target>
+
+    <target name="single-test-ooxml" depends="-test-property-check,compile-main,compile-ooxml" description="Runs a single ooxml test case specified with -Dtestcase=classname">
+        <junit printsummary="yes" showoutput="true" filtertrace="no" haltonfailure="false" >
+            <classpath>
+                <path refid="ooxml.classpath"/>
+                <pathelement location="${main.output.dir}"/>
+                <pathelement location="${ooxml.output.dir}"/>
+                <pathelement location="${ooxml.output.test.dir}"/>
+                <pathelement location="${junit.jar1.dir}"/>
+            </classpath>
+            <sysproperty key="HSSF.testdata.path" file="${main.src.test}/org/apache/poi/hssf/data"/>
+            <sysproperty key="HPSF.testdata.path" file="${main.src.test}/org/apache/poi/hpsf/data"/>
+            <sysproperty key="HSLF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hslf/data"/>
+            <sysproperty key="HWPF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hwpf/data"/>
+            <sysproperty key="HSMF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hsmf/data"/>
+            <sysproperty key="HDGF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hdgf/data"/>
+            <sysproperty key="java.awt.headless" value="true"/>
+            <formatter type="plain" usefile="no"/>
+            <formatter type="xml"/>
+            <test name="${testcase}"/>
+        </junit>
     </target>
 
     <target name="-check-docs">
