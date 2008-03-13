@@ -37,7 +37,7 @@ public class TestLoadSaveXSSF extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
         System.setProperty("org.apache.poi.util.POILogger", org.apache.poi.util.CommonsLogger.class.getName());
-        filename = System.getProperty("HSSF.testdata.path");
+        filename = System.getProperty("XSSF.testdata.path");
         if (filename == null) {
             filename = "src/ooxml/testcases/org/apache/poi/xssf/data";
         }
@@ -58,7 +58,7 @@ public class TestLoadSaveXSSF extends TestCase {
     
     // TODO filename string hard coded in XSSFWorkbook constructor in order to make ant test-ooxml target be successfull.
     public void testLoadStyles() throws Exception {
-        XSSFWorkbook workbook = new XSSFWorkbook(new File("src/ooxml/testcases/org/apache/poi/xssf/data", "styles.xlsx").getAbsolutePath());
+        XSSFWorkbook workbook = new XSSFWorkbook(new File(filename, "styles.xlsx").getAbsolutePath());
         Sheet sheet = workbook.getSheetAt(0);
         Row row = sheet.getRow(0);
         Cell cell = row.getCell((short) 0);
@@ -68,7 +68,7 @@ public class TestLoadSaveXSSF extends TestCase {
 
     // TODO filename string hard coded in XSSFWorkbook constructor in order to make ant test-ooxml target be successfull.
     public void testLoadPictures() throws Exception {
-        XSSFWorkbook workbook = new XSSFWorkbook(new File("src/ooxml/testcases/org/apache/poi/xssf/data", "picture.xlsx").getAbsolutePath());
+        XSSFWorkbook workbook = new XSSFWorkbook(new File(filename, "picture.xlsx").getAbsolutePath());
         List<PictureData> pictures = workbook.getAllPictures();
         assertEquals(1, pictures.size());
     }
