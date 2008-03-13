@@ -1127,6 +1127,23 @@ extends TestCase {
         in.close();
         assertFalse(wb.isWriteProtected());
     }
+    
+    /**
+     * Some files were having problems with the DVRecord,
+     *  probably due to dropdowns
+     */
+    public void test44593() throws Exception {
+        FileInputStream in = new FileInputStream(new File(cwd, "Bug44593.xls"));
+        
+        // Used to blow up with an IllegalArgumentException
+        //  when creating a DVRecord
+        // Now won't, but no idea if this means we have
+        //  rubbish in the DVRecord or not...
+        HSSFWorkbook wb = new HSSFWorkbook(in);
+        in.close();
+        
+        assertEquals(2, wb.getNumberOfSheets());
+    }
 }
 
 
