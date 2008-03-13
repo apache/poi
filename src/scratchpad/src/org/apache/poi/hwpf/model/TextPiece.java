@@ -90,7 +90,19 @@ public class TextPiece extends PropertyNode implements Comparable
 
    public void adjustForDelete(int start, int length)
    {
+	   int myStart = getStart();
+	   int myEnd = getEnd();
+	   int end = start + length;
 
+	   /* do we have to delete from this text piece? */
+	   if (start <= myEnd && end >= myStart) {
+		   /* find where the deleted area overlaps with this text piece */
+		   int overlapStart = Math.max(myStart, start);
+		   int overlapEnd = Math.min(myEnd, end);
+		   ((StringBuffer)_buf).delete(overlapStart, overlapEnd);
+		   
+		   super.adjustForDelete(start, length);
+	   }
    }
 
    public int characterLength()
