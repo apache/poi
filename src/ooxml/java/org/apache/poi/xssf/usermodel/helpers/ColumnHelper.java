@@ -17,14 +17,16 @@
 
 package org.apache.poi.xssf.usermodel.helpers;
 
+import java.util.Arrays;
 
+import org.apache.poi.xssf.util.CTColComparator;
+import org.apache.poi.xssf.util.NumericRanges;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 
-
 public class ColumnHelper {
-    
+
     private CTWorksheet worksheet;
     private CTCols newCols;
 
@@ -38,81 +40,169 @@ public class ColumnHelper {
         this.newCols = CTCols.Factory.newInstance();
         CTCols[] colsArray = worksheet.getColsArray();
         int i = 0;
-        for (i = 0 ; i < colsArray.length ; i++) {
+        for (i = 0; i < colsArray.length; i++) {
             CTCols cols = colsArray[i];
             CTCol[] colArray = cols.getColArray();
-            for (int y = 0 ; y < colArray.length ; y++) {
-                 CTCol col = colArray[y];
-                 for (long k = col.getMin() ; k <= col.getMax() ; k++) {
-                     if (!columnExists(newCols, k)) {
-                         CTCol newCol = newCols.addNewCol();
-                         newCol.setMin(k);
-                         newCol.setMax(k);
-                         setColumnAttributes(col, newCol);
-                     }
-                 }
+            for (int y = 0; y < colArray.length; y++) {
+                CTCol col = colArray[y];
+                newCols = addCleanColIntoCols(newCols, col);
             }
         }
-        for (int y = i-1 ; y >= 0 ; y--) {
+        for (int y = i - 1; y >= 0; y--) {
             worksheet.removeCols(y);
         }
         worksheet.addNewCols();
         worksheet.setColsArray(0, newCols);
     }
-    
+
+    public void sortColumns(CTCols newCols) {
+        CTCol[] colArray = newCols.getColArray();
+        Arrays.sort(colArray, new CTColComparator());
+        newCols.setColArray(colArray);
+    }
+
+    public CTCol cloneCol(CTCols cols, CTCol col) {
+        CTCol newCol = cols.addNewCol();
+        newCol.setMin(col.getMin());
+        newCol.setMax(col.getMax());
+        setColumnAttributes(col, newCol);
+        return newCol;
+    }
+
     public CTCol getColumn(long index) {
-        for (int i = 0 ; i < worksheet.getColsArray(0).sizeOfColArray() ; i++) {
+        for (int i = 0; i < worksheet.getColsArray(0).sizeOfColArray(); i++) {
             if (worksheet.getColsArray(0).getColArray(i).getMin() == index) {
                 return worksheet.getColsArray(0).getColArray(i);
             }
         }
-        return  null;
+        return null;
     }
-    
+
+    public CTCols addCleanColIntoCols(CTCols cols, CTCol col) {
+        boolean colOverlaps = false;
+        for (int i = 0; i < cols.sizeOfColArray(); i++) {
+            CTCol ithCol = cols.getColArray(i);
+            long[] range1 = { ithCol.getMin(), ithCol.getMax() };
+            long[] range2 = { col.getMin(), col.getMax() };
+            long[] overlappingRange = NumericRanges.getOverlappingRange(range1,
+                    range2);
+            int overlappingType = NumericRanges.getOverlappingType(range1,
+                    range2);
+            // different behavior required for each of the 4 different
+            // overlapping types
+            if (overlappingType == NumericRanges.OVERLAPS_1_MINOR) {
+                ithCol.setMax(overlappingRange[0] - 1);
+                CTCol rangeCol = insertCol(cols, overlappingRange[0],
+                        overlappingRange[1], new CTCol[] { ithCol, col });
+                i++;
+                CTCol newCol = insertCol(cols, (overlappingRange[1] + 1), col
+                        .getMax(), new CTCol[] { col });
+                i++;
+            } else if (overlappingType == NumericRanges.OVERLAPS_2_MINOR) {
+                ithCol.setMin(overlappingRange[1] + 1);
+                CTCol rangeCol = insertCol(cols, overlappingRange[0],
+                        overlappingRange[1], new CTCol[] { ithCol, col });
+                i++;
+                CTCol newCol = insertCol(cols, col.getMin(),
+                        (overlappingRange[0] - 1), new CTCol[] { col });
+                i++;
+            } else if (overlappingType == NumericRanges.OVERLAPS_2_WRAPS) {
+                setColumnAttributes(col, ithCol);
+                if (col.getMin() != ithCol.getMin()) {
+                    CTCol newColBefore = insertCol(cols, col.getMin(), (ithCol
+                            .getMin() - 1), new CTCol[] { col });
+                    i++;
+                }
+                if (col.getMax() != ithCol.getMax()) {
+                    CTCol newColAfter = insertCol(cols, (ithCol.getMax() + 1),
+                            col.getMax(), new CTCol[] { col });
+                    i++;
+                }
+            } else if (overlappingType == NumericRanges.OVERLAPS_1_WRAPS) {
+                if (col.getMin() != ithCol.getMin()) {
+                    CTCol newColBefore = insertCol(cols, ithCol.getMin(), (col
+                            .getMin() - 1), new CTCol[] { ithCol });
+                    i++;
+                }
+                if (col.getMax() != ithCol.getMax()) {
+                    CTCol newColAfter = insertCol(cols, (col.getMax() + 1),
+                            ithCol.getMax(), new CTCol[] { ithCol });
+                    i++;
+                }
+                ithCol.setMin(overlappingRange[0]);
+                ithCol.setMax(overlappingRange[1]);
+                setColumnAttributes(col, ithCol);
+            }
+            if (overlappingType != NumericRanges.NO_OVERLAPS) {
+                colOverlaps = true;
+            }
+        }
+        if (!colOverlaps) {
+            CTCol newCol = cloneCol(cols, col);
+        }
+        sortColumns(cols);
+        return cols;
+    }
+
+    /*
+     * Insert a new CTCol at position 0 into cols, setting min=min, max=max and
+     * copying all the colsWithAttributes array cols attributes into newCol
+     */
+    private CTCol insertCol(CTCols cols, long min, long max,
+            CTCol[] colsWithAttributes) {
+        CTCol newCol = cols.insertNewCol(0);
+        newCol.setMin(min);
+        newCol.setMax(max);
+        for (CTCol col : colsWithAttributes) {
+            setColumnAttributes(col, newCol);
+        }
+        return newCol;
+    }
+
     public boolean columnExists(CTCols cols, long index) {
-        for (int i = 0 ; i < cols.sizeOfColArray() ; i++) {
+        for (int i = 0; i < cols.sizeOfColArray(); i++) {
             if (cols.getColArray(i).getMin() == index) {
                 return true;
             }
         }
         return false;
     }
-    
-    public void setColumnAttributes(CTCol col, CTCol newCol) {
-        if (col.getWidth() != 0) {
-            newCol.setWidth(col.getWidth());
+
+    public void setColumnAttributes(CTCol fromCol, CTCol toCol) {
+        if (fromCol.getWidth() != 0) {
+            toCol.setWidth(fromCol.getWidth());
         }
-        if (col.getHidden()) {
-            newCol.setHidden(true);
+        if (fromCol.getHidden()) {
+            toCol.setHidden(true);
         }
-        if (col.getBestFit()) {
-            newCol.setBestFit(true);
+        if (fromCol.getBestFit()) {
+            toCol.setBestFit(true);
         }
-    }
-    
-    public void setColBestFit(long index, boolean bestFit) {
-    	CTCol col = getOrCreateColumn(index);
-    	col.setBestFit(bestFit);
-    }
-    
-    public void setColWidth(long index, double width) {
-    	CTCol col = getOrCreateColumn(index);
-    	col.setWidth(width);
-    }
-    
-    public void setColHidden(long index, boolean hidden) {
-    	CTCol col = getOrCreateColumn(index);
-    	col.setHidden(hidden);
     }
 
-	protected CTCol getOrCreateColumn(long index) {
-		CTCol col = getColumn(index);
-    	if (col == null) {
-    		col = worksheet.getColsArray(0).addNewCol();
-    		col.setMin(index);
-    		col.setMax(index);
-    	}
-    	return col;
-	}
-    
+    public void setColBestFit(long index, boolean bestFit) {
+        CTCol col = getOrCreateColumn(index);
+        col.setBestFit(bestFit);
+    }
+
+    public void setColWidth(long index, double width) {
+        CTCol col = getOrCreateColumn(index);
+        col.setWidth(width);
+    }
+
+    public void setColHidden(long index, boolean hidden) {
+        CTCol col = getOrCreateColumn(index);
+        col.setHidden(hidden);
+    }
+
+    protected CTCol getOrCreateColumn(long index) {
+        CTCol col = getColumn(index);
+        if (col == null) {
+            col = worksheet.getColsArray(0).addNewCol();
+            col.setMin(index);
+            col.setMax(index);
+        }
+        return col;
+    }
+
 }
