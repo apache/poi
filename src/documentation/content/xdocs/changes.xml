@@ -36,6 +36,7 @@
 
 		<!-- Don't forget to update status.xml too! -->
         <release version="3.1-beta1" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="add">28627 / 44580 - Fix Range.delete() in HWPF</action>
            <action dev="POI-DEVELOPERS" type="add">44539 - Support for area references in formulas of rows >= 32768</action>
            <action dev="POI-DEVELOPERS" type="add">44536 - Improved support for detecting read-only recommended files</action>
            <action dev="POI-DEVELOPERS" type="fix">43901 - Correctly update the internal last cell number when adding and removing cells (previously sometimes off-by-one)</action>
