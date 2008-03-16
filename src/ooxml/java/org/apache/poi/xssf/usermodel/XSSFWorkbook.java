@@ -18,7 +18,9 @@
 package org.apache.poi.xssf.usermodel;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Constructor;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -65,22 +67,6 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.WorksheetDocument;
 
 
 public class XSSFWorkbook extends POIXMLDocument implements Workbook {
-	public static class XSSFRelation {
-		private String TYPE;
-		private String REL;
-		private String DEFAULT_NAME;
-		private Class<? extends XSSFModel> CLASS;
-		private XSSFRelation(String TYPE, String REL, String DEFAULT_NAME, Class<? extends XSSFModel> CLASS) {
-			this.TYPE = TYPE;
-			this.REL = REL;
-			this.DEFAULT_NAME = DEFAULT_NAME;
-			this.CLASS = CLASS;
-		}
-		public String getContentType() { return TYPE; }
-		public String getRelation() { return REL; }
-		public String getDefaultFileName() { return DEFAULT_NAME; }
-	}
-	
 	public static final XSSFRelation WORKSHEET = new XSSFRelation(
 			"application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml",
 			"http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet",
@@ -112,6 +98,70 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     		null
     );
     
+	public static class XSSFRelation {
+		private String TYPE;
+		private String REL;
+		private String DEFAULT_NAME;
+		private Class<? extends XSSFModel> CLASS;
+		private XSSFRelation(String TYPE, String REL, String DEFAULT_NAME, Class<? extends XSSFModel> CLASS) {
+			this.TYPE = TYPE;
+			this.REL = REL;
+			this.DEFAULT_NAME = DEFAULT_NAME;
+			this.CLASS = CLASS;
+		}
+		public String getContentType() { return TYPE; }
+		public String getRelation() { return REL; }
+		public String getDefaultFileName() { return DEFAULT_NAME; }
+
+		/**
+		 * Load, off the specified core part
+		 */
+		private XSSFModel load(PackagePart corePart) throws Exception {
+			Constructor<? extends XSSFModel> c = CLASS.getConstructor(InputStream.class);
+			XSSFModel model = null;
+			
+            PackageRelationshipCollection prc =
+            	corePart.getRelationshipsByType(REL);
+            Iterator<PackageRelationship> it = prc.iterator();
+            if(it.hasNext()) {
+                PackageRelationship rel = it.next();
+                PackagePartName relName = PackagingURIHelper.createPartName(rel.getTargetURI());
+                PackagePart part = corePart.getPackage().getPart(relName);
+                InputStream is = part.getInputStream();
+                try {
+                	model = c.newInstance(is);
+                } finally {
+                	is.close();
+                }
+            } else {
+            	log.log(POILogger.WARN, "No part " + DEFAULT_NAME + " found");
+            }
+            return model;
+		}
+		/**
+		 * Save, with the default name
+		 */
+		private void save(XSSFModel model, PackagePart corePart) throws IOException {
+			save(model, corePart, DEFAULT_NAME);
+		}
+		/**
+		 * Save, with the specified name
+		 */
+		private void save(XSSFModel model, PackagePart corePart, String name) throws IOException {
+            PackagePartName ppName = null;
+            try {
+            	ppName = PackagingURIHelper.createPartName(name);
+            } catch(InvalidFormatException e) {
+            	throw new IllegalStateException(e);
+            }
+            corePart.addRelationship(ppName, TargetMode.INTERNAL, REL);
+            PackagePart part = corePart.getPackage().createPart(ppName, TYPE);
+            OutputStream out = part.getOutputStream();
+            model.writeTo(out);
+            out.close();
+		}
+	}
+	
     private CTWorkbook workbook;
     
     private List<XSSFSheet> sheets = new LinkedList<XSSFSheet>();
@@ -138,34 +188,22 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
             WorkbookDocument doc = WorkbookDocument.Factory.parse(getCorePart().getInputStream());
             this.workbook = doc.getWorkbook();
             
-            PackageRelationshipCollection prc;
-            Iterator<PackageRelationship> it;
-            
-            // Load shared strings
-            prc = getCorePart().getRelationshipsByType(SHARED_STRINGS.getRelation());
-            it = prc.iterator();
-            if (it.hasNext()) { 
-                PackageRelationship rel = it.next();
-                PackagePart part = getTargetPart(rel);
-                this.sharedStringSource = new SharedStringsTable(part);
-            } else {
-            	log.log(POILogger.WARN, "No shared strings part found");
-            }
-            // Load styles source
-            prc = getCorePart().getRelationshipsByType(STYLES.getRelation());
-            it = prc.iterator();
-            if (it.hasNext()) { 
-                PackageRelationship rel = it.next();
-                PackagePart part = getTargetPart(rel);
-                this.stylesSource = new StylesTable(part);
-            } else {
-            	log.log(POILogger.WARN, "No styles part found");
+            try {
+	            // Load shared strings
+	            this.sharedStringSource = (SharedStringSource)
+	            	SHARED_STRINGS.load(getCorePart());
+	            // Load styles source
+	            this.stylesSource = (StylesSource)
+	            	STYLES.load(getCorePart());
+            } catch(Exception e) {
+            	throw new IOException(e.getMessage());
             }
             
             // Load individual sheets
             for (CTSheet ctSheet : this.workbook.getSheets().getSheetArray()) {
                 PackagePart part = getPackagePart(ctSheet);
                 if (part == null) {
+                	log.log(POILogger.WARN, "Sheet with name " + ctSheet.getName() + " was defined, but didn't exist, skipping");
                     continue;
                 }
                 WorksheetDocument worksheetDoc = WorksheetDocument.Factory.parse(part.getInputStream());
@@ -572,21 +610,11 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
              // Write shared strings and styles
              if(sharedStringSource != null) {
 	             SharedStringsTable sst = (SharedStringsTable)sharedStringSource;
-	             PackagePartName sstName = PackagingURIHelper.createPartName(SHARED_STRINGS.getDefaultFileName());
-	             corePart.addRelationship(sstName, TargetMode.INTERNAL, SHARED_STRINGS.getRelation());
-	             PackagePart sstPart = pkg.createPart(sstName, SHARED_STRINGS.getContentType());
-	             out = sstPart.getOutputStream();
-	             sst.writeTo(out);
-	             out.close();
+	             SHARED_STRINGS.save(sst, corePart);
              }
              if(stylesSource != null) {
 	             StylesTable st = (StylesTable)stylesSource;
-	             PackagePartName stName = PackagingURIHelper.createPartName(STYLES.getDefaultFileName());
-	             corePart.addRelationship(stName, TargetMode.INTERNAL, STYLES.getRelation());
-	             PackagePart stPart = pkg.createPart(stName, STYLES.getContentType());
-	             out = stPart.getOutputStream();
-	             st.writeTo(out);
-	             out.close();
+	             STYLES.save(st, corePart);
              }
 
              //  All done

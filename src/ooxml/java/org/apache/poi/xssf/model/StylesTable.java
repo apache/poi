@@ -25,13 +25,14 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.Map.Entry;
 
+import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.StylesSource;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
-import org.openxml4j.opc.PackagePart;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorder;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFill;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFont;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFonts;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTNumFmt;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTNumFmts;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.StyleSheetDocument;;
@@ -39,10 +40,6 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.StyleSheetDocument;;
 
 /**
  * Table of styles shared across all sheets in a workbook.
- * 
- * FIXME: I don't like having a dependency on PackagePart (from OpenXML4J) in model classes.
- * I'd rather let Workbook keep track of all part-document relationships and keep all other
- * classes clean. -- Ugo
  * 
  * @version $Id: SharedStringsTable.java 612495 2008-01-16 16:08:22Z ugo $
  */
@@ -52,23 +49,28 @@ public class StylesTable implements StylesSource, XSSFModel {
     private final LinkedList<CTFill> fills = new LinkedList<CTFill>();
     private final LinkedList<CTBorder> borders = new LinkedList<CTBorder>();
     
-    private PackagePart part;
+    /**
+     * The first style id available for use as a custom style
+     */
+    public static final long FIRST_CUSTOM_STYLE_ID = 165;
+    
     private StyleSheetDocument doc;
    
     /**
-     * Create a new StylesTable by reading it from a PackagePart.
+     * Create a new StylesTable, by reading it from 
+     *  the InputStream of a a PackagePart.
      * 
-     * @param part The PackagePart to read.
+     * @param is The input stream containing the XML document.
      * @throws IOException if an error occurs while reading.
      */
-    public StylesTable(PackagePart part) throws IOException {
-        this.part = part;
-        InputStream is = part.getInputStream();
-        try {
-            readFrom(is);
-        } finally {
-            if (is != null) is.close();
-        }
+    public StylesTable(InputStream is) throws IOException {
+        readFrom(is);
+    }
+    /**
+     * Create a new, empty StylesTable
+     */
+    public StylesTable() {
+    	doc = StyleSheetDocument.Factory.newInstance();
     }
 
     /**
@@ -106,7 +108,6 @@ public class StylesTable implements StylesSource, XSSFModel {
     public String getNumberFormatAt(long idx) {
         return numberFormats.get(idx);
     }
-
     public synchronized long putNumberFormat(String fmt) {
         if (numberFormats.containsValue(fmt)) {
         	// Find the key, and return that
@@ -120,12 +121,21 @@ public class StylesTable implements StylesSource, XSSFModel {
         }
         
         // Find a spare key, and add that
-        long newKey = 1;
+        long newKey = FIRST_CUSTOM_STYLE_ID;
         while(numberFormats.containsKey(newKey)) {
         	newKey++;
         }
         numberFormats.put(newKey, fmt);
         return newKey;
+    }
+    
+    public Font getFontAt(long idx) {
+    	// TODO
+    	return null;
+    }
+    public synchronized long putFont(Font font) {
+    	// TODO
+    	return -1;
     }
     
     /**
@@ -155,20 +165,6 @@ public class StylesTable implements StylesSource, XSSFModel {
     
 
     /**
-     * Save this table to its own PackagePart.
-     * 
-     * @throws IOException if an error occurs while writing.
-     */
-    public void save() throws IOException {
-        OutputStream out = this.part.getOutputStream();
-        try {
-            writeTo(out);
-        } finally {
-            out.close();
-        }
-    }
-
-    /**
      * Write this table out as XML.
      * 
      * @param out The stream to write to.
@@ -193,7 +189,12 @@ public class StylesTable implements StylesSource, XSSFModel {
     	doc.getStyleSheet().setNumFmts(formats);
     	
     	// Fonts
-    	// TODO
+    	CTFonts fnts = CTFonts.Factory.newInstance();
+    	fnts.setCount(fonts.size());
+    	fnts.setFontArray(
+    			fonts.toArray(new CTFont[fonts.size()])
+    	);
+    	doc.getStyleSheet().setFonts(fnts);
     	
     	// Fills
     	// TODO

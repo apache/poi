@@ -39,9 +39,4 @@ public interface SharedStringSource {
      * @return The 0-based position of the newly added string.
      */
     public int putSharedString(String s);
-    
-    /**
-     * Write back out
-     */
-    public void save() throws IOException;
 }
