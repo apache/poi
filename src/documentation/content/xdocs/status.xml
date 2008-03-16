@@ -33,6 +33,7 @@
 	<!-- Don't forget to update changes.xml too! -->
     <changes>
         <release version="3.1-beta1" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">44609 - Handle leading spaces in formulas, such as '= 4'</action>
            <action dev="POI-DEVELOPERS" type="add">44608 - Support for PercentPtg in the formula evaluator</action>
            <action dev="POI-DEVELOPERS" type="fix">44606 - Support calculated string values for evaluated formulas</action>
            <action dev="POI-DEVELOPERS" type="add">Add accessors to horizontal and vertical alignment in HSSFTextbox</action>

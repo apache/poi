@@ -33,20 +33,42 @@ import org.apache.poi.util.BitFieldFactory;
  * @author Jason Height (jheight at chariot dot net dot au)
  */
 
-public class AttrPtg
-    extends OperationPtg
-{
+public final class AttrPtg extends OperationPtg {
     public final static byte sid  = 0x19;
     private final static int  SIZE = 4;
     private byte              field_1_options;
     private short             field_2_data;
-    private BitField          semiVolatile = BitFieldFactory.getInstance(0x01);
-    private BitField          optiIf       = BitFieldFactory.getInstance(0x02);
-    private BitField          optiChoose   = BitFieldFactory.getInstance(0x04);
-    private BitField          optGoto      = BitFieldFactory.getInstance(0x08);
-    private BitField          sum          = BitFieldFactory.getInstance(0x10);
-    private BitField          baxcel       = BitFieldFactory.getInstance(0x20);
-    private BitField          space        = BitFieldFactory.getInstance(0x40);
+    
+    // flags 'volatile' and 'space', can be combined.  
+    // OOO spec says other combinations are theoretically possible but not likely to occur.
+    private static final BitField semiVolatile = BitFieldFactory.getInstance(0x01);
+    private static final BitField optiIf       = BitFieldFactory.getInstance(0x02);
+    private static final BitField optiChoose   = BitFieldFactory.getInstance(0x04);
+    private static final BitField optGoto      = BitFieldFactory.getInstance(0x08); // skip
+    private static final BitField sum          = BitFieldFactory.getInstance(0x10);
+    private static final BitField baxcel       = BitFieldFactory.getInstance(0x20); // 'assignment-style formula in a macro sheet'
+    private static final BitField space        = BitFieldFactory.getInstance(0x40);
+    
+    public static final class SpaceType {
+        private SpaceType() {
+            // no instances of this class
+        }
+        
+        /** 00H = Spaces before the next token (not allowed before tParen token) */
+        public static final int SPACE_BEFORE = 0x00;
+        /** 01H = Carriage returns before the next token (not allowed before tParen token) */
+        public static final int CR_BEFORE = 0x01;
+        /** 02H = Spaces before opening parenthesis (only allowed before tParen token) */
+        public static final int SPACE_BEFORE_OPEN_PAREN = 0x02;
+        /** 03H = Carriage returns before opening parenthesis (only allowed before tParen token) */
+        public static final int CR_BEFORE_OPEN_PAREN = 0x03;
+        /** 04H = Spaces before closing parenthesis (only allowed before tParen, tFunc, and tFuncVar tokens) */
+        public static final int SPACE_BEFORE_CLOSE_PAERN = 0x04;
+        /** 05H = Carriage returns before closing parenthesis (only allowed before tParen, tFunc, and tFuncVar tokens) */
+        public static final int CR_BEFORE_CLOSE_PAREN = 0x05;
+        /** 06H = Spaces following the equality sign (only in macro sheets) */
+        public static final int SPACE_AFTER_EQUALITY = 0x06;
+    }
 
     public AttrPtg() {
     }
@@ -55,6 +77,19 @@ public class AttrPtg
     {
         field_1_options = in.readByte();
         field_2_data    = in.readShort();
+    }
+    private AttrPtg(int options, int data) {
+        field_1_options = (byte) options;
+        field_2_data = (short) data;
+    }
+    
+    /**
+     * @param type a constant from <tt>SpaceType</tt>
+     * @param count the number of space characters
+     */
+    public static AttrPtg createSpace(int type, int count) {
+        int data = type & 0x00FF | (count << 8) & 0x00FFFF;
+        return new AttrPtg(space.set(0), data);
     }
 
     public void setOptions(byte options)
@@ -131,21 +166,31 @@ public class AttrPtg
         return field_2_data;
     }
 
-    public String toString()
-    {
-        StringBuffer buffer = new StringBuffer();
+    public String toString() {
+        StringBuffer sb = new StringBuffer(64);
+        sb.append(getClass().getName()).append(" [");
 
-        buffer.append("AttrPtg\n");
-        buffer.append("options=").append(field_1_options).append("\n");
-        buffer.append("data   =").append(field_2_data).append("\n");
-        buffer.append("semi   =").append(isSemiVolatile()).append("\n");
-        buffer.append("optimif=").append(isOptimizedIf()).append("\n");
-        buffer.append("optchos=").append(isOptimizedChoose()).append("\n");
-        buffer.append("isGoto =").append(isGoto()).append("\n");
-        buffer.append("isSum  =").append(isSum()).append("\n");
-        buffer.append("isBaxce=").append(isBaxcel()).append("\n");
-        buffer.append("isSpace=").append(isSpace()).append("\n");
-        return buffer.toString();
+        if(isSemiVolatile()) {
+            sb.append("volatile ");
+        }
+        if(isSpace()) {
+            sb.append("space count=").append((field_2_data >> 8) & 0x00FF);
+            sb.append(" type=").append(field_2_data & 0x00FF).append(" ");
+        }
+        // the rest seem to be mutually exclusive
+        if(isOptimizedIf()) {
+            sb.append("if dist=").append(getData());
+        } else if(isOptimizedChoose()) {
+            sb.append("choose dist=").append(getData());
+        } else if(isGoto()) {
+            sb.append("skip dist=").append(getData()); 
+        } else if(isSum()) {
+            sb.append("sum ");
+        } else if(isBaxcel()) {
+            sb.append("assign ");
+        }
+        sb.append("]");
+        return sb.toString();
     }
 
     public void writeBytes(byte [] array, int offset)
