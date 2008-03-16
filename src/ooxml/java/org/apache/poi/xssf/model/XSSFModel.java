@@ -14,34 +14,13 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-
-package org.apache.poi.ss.usermodel;
+package org.apache.poi.xssf.model;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
-/**
- * Allows the getting and saving of shared strings
- */
-public interface SharedStringSource {
-    
-    /**
-     * Return the string at position <code>idx</idx> (0-based) in this source.
-     * 
-     * @param idx String position.
-     * @return The string, or null if not found.
-     */
-    public String getSharedStringAt(int idx);
-    
-    /**
-     * Store a string in this source.
-     * 
-     * @param s The string to store.
-     * @return The 0-based position of the newly added string.
-     */
-    public int putSharedString(String s);
-    
-    /**
-     * Write back out
-     */
-    public void save() throws IOException;
+public interface XSSFModel {
+	public void readFrom(InputStream is) throws IOException;
+	public void writeTo(OutputStream out) throws IOException;
 }
