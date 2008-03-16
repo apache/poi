@@ -20,9 +20,12 @@ package org.apache.poi.xssf.model;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.LinkedList;
+import java.util.Map.Entry;
 
-import org.apache.poi.ss.usermodel.SharedStringSource;
+import org.apache.poi.ss.usermodel.StylesSource;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxml4j.opc.PackagePart;
@@ -43,8 +46,8 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.StyleSheetDocument;;
  * 
  * @version $Id: SharedStringsTable.java 612495 2008-01-16 16:08:22Z ugo $
  */
-public class StylesTable {
-    private final LinkedList<String> numberFormats = new LinkedList<String>();
+public class StylesTable implements StylesSource {
+    private final Hashtable<Long,String> numberFormats = new Hashtable<Long,String>();
     private final LinkedList<CTFont> fonts = new LinkedList<CTFont>();
     private final LinkedList<CTFill> fills = new LinkedList<CTFill>();
     private final LinkedList<CTBorder> borders = new LinkedList<CTBorder>();
@@ -80,7 +83,7 @@ public class StylesTable {
         	
         	// Grab all the different bits we care about
         	for (CTNumFmt nfmt : doc.getStyleSheet().getNumFmts().getNumFmtArray()) {
-        		numberFormats.add(nfmt.getFormatCode());
+        		numberFormats.put(nfmt.getNumFmtId(), nfmt.getFormatCode());
         	}
         	for (CTFont font : doc.getStyleSheet().getFonts().getFontArray()) {
         		fonts.add(font);
@@ -96,17 +99,56 @@ public class StylesTable {
         }
     }
 
-    public String getNumberFormatAt(int idx) {
+    public String getNumberFormatAt(long idx) {
         return numberFormats.get(idx);
     }
 
-    public synchronized int putNumberFormat(String fmt) {
-        if (numberFormats.contains(fmt)) {
-            return numberFormats.indexOf(fmt);
+    public synchronized long putNumberFormat(String fmt) {
+        if (numberFormats.containsValue(fmt)) {
+        	// Find the key, and return that
+        	for(Enumeration<Long> keys = numberFormats.keys(); keys.hasMoreElements();) {
+        		Long key = keys.nextElement();
+        		if(numberFormats.get(key).equals(fmt)) {
+        			return key;
+        		}
+        	}
+        	throw new IllegalStateException("Found the format, but couldn't figure out where - should never happen!");
         }
-        numberFormats.add(fmt);
-        return numberFormats.size() - 1;
+        
+        // Find a spare key, and add that
+        long newKey = 1;
+        while(numberFormats.containsKey(newKey)) {
+        	newKey++;
+        }
+        numberFormats.put(newKey, fmt);
+        return newKey;
     }
+    
+    /**
+     * For unit testing only
+     */
+    public int _getNumberFormatSize() {
+    	return numberFormats.size();
+    }
+    /**
+     * For unit testing only
+     */
+    public int _getFontsSize() {
+    	return fonts.size();
+    }
+    /**
+     * For unit testing only
+     */
+    public int _getFillsSize() {
+    	return fills.size();
+    }
+    /**
+     * For unit testing only
+     */
+    public int _getBordersSize() {
+    	return borders.size();
+    }
+    
 
     /**
      * Save this table to its own PackagePart.
@@ -139,16 +181,21 @@ public class StylesTable {
     	// Formats
     	CTNumFmts formats = CTNumFmts.Factory.newInstance(); 
     	formats.setCount(numberFormats.size());
-    	for (String fmt : numberFormats) {
-    		formats.addNewNumFmt().setFormatCode(fmt);
+    	for (Entry<Long, String> fmt : numberFormats.entrySet()) {
+    		CTNumFmt ctFmt = formats.addNewNumFmt();
+    		ctFmt.setNumFmtId(fmt.getKey());
+    		ctFmt.setFormatCode(fmt.getValue());
     	}
     	doc.getStyleSheet().setNumFmts(formats);
     	
     	// Fonts
+    	// TODO
     	
     	// Fills
+    	// TODO
     	
     	// Borders
+    	// TODO
     	
         // Save
         doc.save(out);

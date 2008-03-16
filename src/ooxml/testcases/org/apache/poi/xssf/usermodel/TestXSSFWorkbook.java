@@ -24,6 +24,8 @@ import java.io.OutputStream;
 import junit.framework.TestCase;
 
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.StylesSource;
+import org.apache.poi.xssf.model.StylesTable;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbook;
 
@@ -129,5 +131,41 @@ public class TestXSSFWorkbook extends TestCase {
         OutputStream out = new FileOutputStream(file);
         workbook.write(out);
         out.close();
+    }
+    
+    public void testExisting() throws Exception {
+		File xml = new File(
+				System.getProperty("HSSF.testdata.path") +
+				File.separator + "Formatting.xlsx"
+		);
+		assertTrue(xml.exists());
+    	
+		XSSFWorkbook workbook = new XSSFWorkbook(xml.toString());
+		assertNotNull(workbook.getSharedStringSource());
+		assertNotNull(workbook.getStylesSource());
+    }
+    
+    public void testStyles() throws Exception {
+		File xml = new File(
+				System.getProperty("HSSF.testdata.path") +
+				File.separator + "Formatting.xlsx"
+		);
+		assertTrue(xml.exists());
+    	
+		XSSFWorkbook workbook = new XSSFWorkbook(xml.toString());
+		
+		StylesSource ss = workbook.getStylesSource();
+		assertNotNull(ss);
+		assertTrue(ss instanceof StylesTable);
+		StylesTable st = (StylesTable)ss;
+		
+		// Has 8 number formats
+		assertEquals(8, st._getNumberFormatSize());
+		// Has 2 fonts
+		assertEquals(2, st._getFontsSize());
+		// Has 2 fills
+		assertEquals(2, st._getFillsSize());
+		// Has 1 border
+		assertEquals(1, st._getBordersSize());
     }
 }

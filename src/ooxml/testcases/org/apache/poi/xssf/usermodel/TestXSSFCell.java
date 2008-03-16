@@ -281,6 +281,10 @@ public class TestXSSFCell extends TestCase {
     	
     	assertEquals("A1", ctWorksheet.getSheetViews().getSheetViewArray(0).getSelectionArray(0).getActiveCell());
     }
+    
+    public void testCellFormatting() {
+    	
+    }
 
     private XSSFRow createParentObjects() {
         XSSFWorkbook wb = new XSSFWorkbook();

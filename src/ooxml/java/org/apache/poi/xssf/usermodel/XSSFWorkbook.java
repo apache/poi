@@ -35,10 +35,12 @@ import org.apache.poi.ss.usermodel.Palette;
 import org.apache.poi.ss.usermodel.PictureData;
 import org.apache.poi.ss.usermodel.SharedStringSource;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.StylesSource;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.xssf.model.SharedStringsTable;
+import org.apache.poi.xssf.model.StylesTable;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
@@ -69,6 +71,8 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 
     private static final String SHARED_STRINGS_RELATIONSHIP = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings";
     
+    private static final String STYLES_RELATIONSHIP = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles";
+    
     private static final String DRAWING_RELATIONSHIP = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing";
     
     private static final String IMAGE_RELATIONSHIP = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image";
@@ -78,6 +82,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     private List<XSSFSheet> sheets = new LinkedList<XSSFSheet>();
     
     private SharedStringSource sharedStringSource;
+    private StylesSource stylesSource;
 
     private static POILogger log = POILogFactory.getLogger(XSSFWorkbook.class);
     
@@ -97,14 +102,27 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         try {
             WorkbookDocument doc = WorkbookDocument.Factory.parse(getCorePart().getInputStream());
             this.workbook = doc.getWorkbook();
+            
+            PackageRelationshipCollection prc;
+            Iterator<PackageRelationship> it;
+            
             // Load shared strings
-            PackageRelationshipCollection prc = getCorePart().getRelationshipsByType(SHARED_STRINGS_RELATIONSHIP);
-            Iterator<PackageRelationship> it = prc.iterator();
+            prc = getCorePart().getRelationshipsByType(SHARED_STRINGS_RELATIONSHIP);
+            it = prc.iterator();
             if (it.hasNext()) { 
                 PackageRelationship rel = it.next();
                 PackagePart part = getTargetPart(rel);
                 this.sharedStringSource = new SharedStringsTable(part);
             }
+            // Load styles source
+            prc = getCorePart().getRelationshipsByType(STYLES_RELATIONSHIP);
+            it = prc.iterator();
+            if (it.hasNext()) { 
+                PackageRelationship rel = it.next();
+                PackagePart part = getTargetPart(rel);
+                this.stylesSource = new StylesTable(part);
+            }
+            
             // Load individual sheets
             for (CTSheet ctSheet : this.workbook.getSheets().getSheetArray()) {
                 PackagePart part = getPackagePart(ctSheet);
@@ -345,8 +363,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     }
 
     public String getSSTString(int index) {
-        // TODO Auto-generated method stub
-        return null;
+        return getSharedStringSource().getSharedStringAt(index);
     }
 
     public short getSelectedTab() {
@@ -513,6 +530,9 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
                  out.close();
              }
              
+             // TODO - shared strings source
+             // TODO - styles source
+             
              pkg.close();
              
         } catch (InvalidFormatException e) {
@@ -529,9 +549,15 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     public SharedStringSource getSharedStringSource() {
         return this.sharedStringSource;
     }
-
     protected void setSharedStringSource(SharedStringSource sharedStringSource) {
         this.sharedStringSource = sharedStringSource;
+    }
+    
+    public StylesSource getStylesSource() {
+    	return this.stylesSource;
+    }
+    protected void setStylesSource(StylesSource stylesSource) {
+    	this.stylesSource = stylesSource;
     }
 
     public CreationHelper getCreationHelper() {
