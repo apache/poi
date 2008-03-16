@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.usermodel;
 
@@ -24,12 +22,11 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.List;
 
+import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.model.Sheet;
-import org.apache.poi.hssf.record.HyperlinkRecord;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.TempFile;
@@ -41,12 +38,7 @@ import org.apache.poi.util.TempFile;
  * @author  Dan Sherman (dsherman at isisph.com)
  * @author Alex Jacoby (ajacoby at gmail.com)
  */
-
-public class TestHSSFCell
-extends TestCase {
-    public TestHSSFCell(String s) {
-        super(s);
-    }
+public final class TestHSSFCell extends TestCase {
 
     /**
      * test that Boolean and Error types (BoolErrRecord) are supported properly.
@@ -386,6 +378,17 @@ extends TestCase {
     	assertEquals("Error", "#ERR7", c.toString());
     	c=r.getCell((short)4); 
     	assertEquals("Formula", "A1+B1", c.toString());
+    }
+    
+    public void testSetStringInFormulaCell_bug44606() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFCell cell = wb.createSheet("Sheet1").createRow(0).createCell((short)0);
+        cell.setCellFormula("B1&C1");
+        try {
+            cell.setCellValue(new HSSFRichTextString("hello"));
+        } catch (ClassCastException e) {
+            throw new AssertionFailedError("Identified bug 44606");
+        }
     }
     
     public static void main(String [] args) {
