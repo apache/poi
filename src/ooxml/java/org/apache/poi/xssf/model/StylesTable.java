@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xssf.strings;
+package org.apache.poi.xssf.model;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,33 +26,39 @@ import org.apache.poi.ss.usermodel.SharedStringSource;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxml4j.opc.PackagePart;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSst;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.SstDocument;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorder;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFill;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFont;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTNumFmt;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTNumFmts;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.StyleSheetDocument;;
 
 
 /**
- * Table of strings shared across all sheets in a workbook.
+ * Table of styles shared across all sheets in a workbook.
  * 
  * FIXME: I don't like having a dependency on PackagePart (from OpenXML4J) in model classes.
  * I'd rather let Workbook keep track of all part-document relationships and keep all other
  * classes clean. -- Ugo
  * 
- * @version $Id$
+ * @version $Id: SharedStringsTable.java 612495 2008-01-16 16:08:22Z ugo $
  */
-public class SharedStringsTable implements SharedStringSource {
-
-    private final LinkedList<String> strings = new LinkedList<String>();
+public class StylesTable {
+    private final LinkedList<String> numberFormats = new LinkedList<String>();
+    private final LinkedList<CTFont> fonts = new LinkedList<CTFont>();
+    private final LinkedList<CTFill> fills = new LinkedList<CTFill>();
+    private final LinkedList<CTBorder> borders = new LinkedList<CTBorder>();
     
     private PackagePart part;
+    private StyleSheetDocument doc;
    
     /**
-     * Create a new SharedStringsTable by reading it from a PackagePart.
+     * Create a new StylesTable by reading it from a PackagePart.
      * 
      * @param part The PackagePart to read.
      * @throws IOException if an error occurs while reading.
      */
-    public SharedStringsTable(PackagePart part) throws IOException {
+    public StylesTable(PackagePart part) throws IOException {
         this.part = part;
         InputStream is = part.getInputStream();
         try {
@@ -63,32 +69,43 @@ public class SharedStringsTable implements SharedStringSource {
     }
 
     /**
-     * Read this shared strings table from an XML file.
+     * Read this shared styles table from an XML file.
      * 
      * @param is The input stream containing the XML document.
      * @throws IOException if an error occurs while reading.
      */
     public void readFrom(InputStream is) throws IOException {
         try {
-            SstDocument doc = SstDocument.Factory.parse(is);
-            for (CTRst rst : doc.getSst().getSiArray()) {
-                strings.add(rst.getT());
-            }
+        	doc = StyleSheetDocument.Factory.parse(is);
+        	
+        	// Grab all the different bits we care about
+        	for (CTNumFmt nfmt : doc.getStyleSheet().getNumFmts().getNumFmtArray()) {
+        		numberFormats.add(nfmt.getFormatCode());
+        	}
+        	for (CTFont font : doc.getStyleSheet().getFonts().getFontArray()) {
+        		fonts.add(font);
+        	}
+        	for (CTFill fill : doc.getStyleSheet().getFills().getFillArray()) {
+        		fills.add(fill);
+        	}
+        	for (CTBorder border : doc.getStyleSheet().getBorders().getBorderArray()) {
+        		borders.add(border);
+        	}
         } catch (XmlException e) {
             throw new IOException(e.getLocalizedMessage());
         }
     }
 
-    public String getSharedStringAt(int idx) {
-        return strings.get(idx);
+    public String getNumberFormatAt(int idx) {
+        return numberFormats.get(idx);
     }
 
-    public synchronized int putSharedString(String s) {
-        if (strings.contains(s)) {
-            return strings.indexOf(s);
+    public synchronized int putNumberFormat(String fmt) {
+        if (numberFormats.contains(fmt)) {
+            return numberFormats.indexOf(fmt);
         }
-        strings.add(s);
-        return strings.size() - 1;
+        numberFormats.add(fmt);
+        return numberFormats.size() - 1;
     }
 
     /**
@@ -114,13 +131,26 @@ public class SharedStringsTable implements SharedStringSource {
     public void writeTo(OutputStream out) throws IOException {
         XmlOptions options = new XmlOptions();
         options.setSaveOuter();
-        SstDocument doc = SstDocument.Factory.newInstance(options);
-        CTSst sst = doc.addNewSst();
-        sst.setCount(strings.size());
-        sst.setUniqueCount(strings.size());
-        for (String s : strings) {
-            sst.addNewSi().setT(s);
-        }
+        
+        // Work on the current one
+        // Need to do this, as we don't handle
+        //  all the possible entries yet
+
+    	// Formats
+    	CTNumFmts formats = CTNumFmts.Factory.newInstance(); 
+    	formats.setCount(numberFormats.size());
+    	for (String fmt : numberFormats) {
+    		formats.addNewNumFmt().setFormatCode(fmt);
+    	}
+    	doc.getStyleSheet().setNumFmts(formats);
+    	
+    	// Fonts
+    	
+    	// Fills
+    	
+    	// Borders
+    	
+        // Save
         doc.save(out);
     }
 }
