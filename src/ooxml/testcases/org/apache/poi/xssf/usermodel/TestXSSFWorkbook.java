@@ -31,8 +31,17 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbook;
 
 
 public class TestXSSFWorkbook extends TestCase {
-    
-    public void testGetSheetIndex() {
+    public TestXSSFWorkbook(String name) {
+		super(name);
+		
+		// Use system out logger
+	    System.setProperty(
+	            "org.apache.poi.util.POILogger",
+	            "org.apache.poi.util.SystemOutLogger"
+	    );
+	}
+
+	public void testGetSheetIndex() {
         XSSFWorkbook workbook = new XSSFWorkbook();
         Sheet sheet1 = workbook.createSheet("sheet1");
         Sheet sheet2 = workbook.createSheet("sheet2");
@@ -127,7 +136,7 @@ public class TestXSSFWorkbook extends TestCase {
         Sheet sheet2 = workbook.createSheet("sheet2");
         Sheet sheet3 = workbook.createSheet("sheet3");
         File file = File.createTempFile("poi-", ".xlsx");
-        System.out.println("Saving to " + file.getAbsolutePath());
+        System.out.println("Saving newly created file to " + file.getAbsolutePath());
         OutputStream out = new FileOutputStream(file);
         workbook.write(out);
         out.close();
@@ -194,5 +203,17 @@ public class TestXSSFWorkbook extends TestCase {
 		assertEquals(2, st._getFillsSize());
 		// Has 1 border
 		assertEquals(1, st._getBordersSize());
+		
+		// Add two more styles
+		assertEquals(StylesTable.FIRST_CUSTOM_STYLE_ID + 8, 
+				st.putNumberFormat("testFORMAT"));
+		assertEquals(StylesTable.FIRST_CUSTOM_STYLE_ID + 8, 
+				st.putNumberFormat("testFORMAT"));
+		assertEquals(StylesTable.FIRST_CUSTOM_STYLE_ID + 9, 
+				st.putNumberFormat("testFORMAT2"));
+		assertEquals(10, st._getNumberFormatSize());
+		
+		// Save, load back in again, and check
+		// TODO
     }
 }

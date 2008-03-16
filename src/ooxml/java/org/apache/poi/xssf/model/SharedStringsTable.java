@@ -25,7 +25,6 @@ import java.util.LinkedList;
 import org.apache.poi.ss.usermodel.SharedStringSource;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
-import org.openxml4j.opc.PackagePart;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSst;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.SstDocument;
@@ -34,32 +33,28 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.SstDocument;
 /**
  * Table of strings shared across all sheets in a workbook.
  * 
- * FIXME: I don't like having a dependency on PackagePart (from OpenXML4J) in model classes.
- * I'd rather let Workbook keep track of all part-document relationships and keep all other
- * classes clean. -- Ugo
- * 
  * @version $Id$
  */
 public class SharedStringsTable implements SharedStringSource, XSSFModel {
 
     private final LinkedList<String> strings = new LinkedList<String>();
+    private SstDocument doc;
     
-    private PackagePart part;
-   
     /**
-     * Create a new SharedStringsTable by reading it from a PackagePart.
+     * Create a new SharedStringsTable, by reading it 
+     *  from the InputStream of a PackagePart.
      * 
-     * @param part The PackagePart to read.
+     * @param is The input stream containing the XML document.
      * @throws IOException if an error occurs while reading.
      */
-    public SharedStringsTable(PackagePart part) throws IOException {
-        this.part = part;
-        InputStream is = part.getInputStream();
-        try {
-            readFrom(is);
-        } finally {
-            if (is != null) is.close();
-        }
+    public SharedStringsTable(InputStream is) throws IOException {
+        readFrom(is);
+    }
+    /**
+     * Create a new, empty SharedStringsTable
+     */
+    public SharedStringsTable() {
+    	doc = SstDocument.Factory.newInstance();
     }
 
     /**
@@ -70,7 +65,7 @@ public class SharedStringsTable implements SharedStringSource, XSSFModel {
      */
     public void readFrom(InputStream is) throws IOException {
         try {
-            SstDocument doc = SstDocument.Factory.parse(is);
+            doc = SstDocument.Factory.parse(is);
             for (CTRst rst : doc.getSst().getSiArray()) {
                 strings.add(rst.getT());
             }
@@ -89,20 +84,6 @@ public class SharedStringsTable implements SharedStringSource, XSSFModel {
         }
         strings.add(s);
         return strings.size() - 1;
-    }
-
-    /**
-     * Save this table to its own PackagePart.
-     * 
-     * @throws IOException if an error occurs while writing.
-     */
-    public void save() throws IOException {
-        OutputStream out = this.part.getOutputStream();
-        try {
-            writeTo(out);
-        } finally {
-            out.close();
-        }
     }
 
     /**
