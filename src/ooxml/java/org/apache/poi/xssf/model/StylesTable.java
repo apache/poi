@@ -46,7 +46,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.StyleSheetDocument;;
  * 
  * @version $Id: SharedStringsTable.java 612495 2008-01-16 16:08:22Z ugo $
  */
-public class StylesTable implements StylesSource {
+public class StylesTable implements StylesSource, XSSFModel {
     private final Hashtable<Long,String> numberFormats = new Hashtable<Long,String>();
     private final LinkedList<CTFont> fonts = new LinkedList<CTFont>();
     private final LinkedList<CTFill> fills = new LinkedList<CTFill>();
@@ -99,6 +99,10 @@ public class StylesTable implements StylesSource {
         }
     }
 
+    // ===========================================================
+    //  Start of style related getters and setters
+    // ===========================================================
+    
     public String getNumberFormatAt(long idx) {
         return numberFormats.get(idx);
     }

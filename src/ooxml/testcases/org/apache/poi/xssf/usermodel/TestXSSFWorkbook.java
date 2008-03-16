@@ -145,6 +145,33 @@ public class TestXSSFWorkbook extends TestCase {
 		assertNotNull(workbook.getStylesSource());
     }
     
+    public void testLoadSave() throws Exception {
+		File xml = new File(
+				System.getProperty("HSSF.testdata.path") +
+				File.separator + "Formatting.xlsx"
+		);
+		assertTrue(xml.exists());
+    	
+		XSSFWorkbook workbook = new XSSFWorkbook(xml.toString());
+		assertEquals(3, workbook.getNumberOfSheets());
+		assertEquals("dd/mm/yyyy", workbook.getSheetAt(0).getRow(1).getCell(0).getRichStringCellValue().getString());
+		assertNotNull(workbook.getSharedStringSource());
+		assertNotNull(workbook.getStylesSource());
+		
+		// Write out, and check
+		File tmpFile = File.createTempFile("poi-tmp", ".xlsx");
+		workbook.write(new FileOutputStream(tmpFile));
+		
+		// Load up again, check all still there
+		XSSFWorkbook wb2 = new XSSFWorkbook(tmpFile.toString());
+		assertEquals(3, wb2.getNumberOfSheets());
+		
+		// TODO - fix these!
+		assertEquals("dd/mm/yyyy", wb2.getSheetAt(0).getRow(1).getCell(0).getRichStringCellValue().getString());
+		assertNotNull(wb2.getSharedStringSource());
+		assertNotNull(wb2.getStylesSource());
+    }
+    
     public void testStyles() throws Exception {
 		File xml = new File(
 				System.getProperty("HSSF.testdata.path") +

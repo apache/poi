@@ -40,7 +40,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.SstDocument;
  * 
  * @version $Id$
  */
-public class SharedStringsTable implements SharedStringSource {
+public class SharedStringsTable implements SharedStringSource, XSSFModel {
 
     private final LinkedList<String> strings = new LinkedList<String>();
     

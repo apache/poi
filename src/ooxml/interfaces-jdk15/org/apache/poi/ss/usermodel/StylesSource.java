@@ -16,7 +16,14 @@
 ==================================================================== */
 package org.apache.poi.ss.usermodel;
 
+import java.io.IOException;
+
 public interface StylesSource {
     public String getNumberFormatAt(long idx);
     public long putNumberFormat(String fmt);
+    
+    /**
+     * Write back out
+     */
+    public void save() throws IOException;
 }

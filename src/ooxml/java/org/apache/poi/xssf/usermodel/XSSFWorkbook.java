@@ -41,6 +41,7 @@ import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.model.StylesTable;
+import org.apache.poi.xssf.model.XSSFModel;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
@@ -64,18 +65,52 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.WorksheetDocument;
 
 
 public class XSSFWorkbook extends POIXMLDocument implements Workbook {
-
-    private static final String WORKSHEET_TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml";
-
-    private static final String WORKSHEET_RELATIONSHIP = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet";
-
-    private static final String SHARED_STRINGS_RELATIONSHIP = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings";
-    
-    private static final String STYLES_RELATIONSHIP = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles";
-    
-    private static final String DRAWING_RELATIONSHIP = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing";
-    
-    private static final String IMAGE_RELATIONSHIP = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image";
+	public static class XSSFRelation {
+		private String TYPE;
+		private String REL;
+		private String DEFAULT_NAME;
+		private Class<? extends XSSFModel> CLASS;
+		private XSSFRelation(String TYPE, String REL, String DEFAULT_NAME, Class<? extends XSSFModel> CLASS) {
+			this.TYPE = TYPE;
+			this.REL = REL;
+			this.DEFAULT_NAME = DEFAULT_NAME;
+			this.CLASS = CLASS;
+		}
+		public String getContentType() { return TYPE; }
+		public String getRelation() { return REL; }
+		public String getDefaultFileName() { return DEFAULT_NAME; }
+	}
+	
+	public static final XSSFRelation WORKSHEET = new XSSFRelation(
+			"application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml",
+			"http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet",
+			"/xl/worksheets/sheet#.xml",
+			null
+	);
+	public static final XSSFRelation SHARED_STRINGS = new XSSFRelation(
+			"application/vnd.openxmlformats-officedocument.spreadsheetml.sharedStrings+xml",
+			"http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings",
+			"/xl/sharedStrings.xml",
+			SharedStringsTable.class
+	);
+	public static final XSSFRelation STYLES = new XSSFRelation(
+		    "application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml",
+		    "http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles",
+		    "/xl/styles.xml",
+		    StylesTable.class
+	);
+	public static final XSSFRelation DRAWINGS = new XSSFRelation(
+			"application/vnd.openxmlformats-officedocument.drawingml.chart+xml",
+			"http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing",
+			"/xl/drawings/drawing#.xml",
+			null
+	);
+    public static final XSSFRelation IMAGES = new XSSFRelation(
+    		null, // TODO
+    		"http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
+    		"/xl/image#.xml",
+    		null
+    );
     
     private CTWorkbook workbook;
     
@@ -107,20 +142,24 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
             Iterator<PackageRelationship> it;
             
             // Load shared strings
-            prc = getCorePart().getRelationshipsByType(SHARED_STRINGS_RELATIONSHIP);
+            prc = getCorePart().getRelationshipsByType(SHARED_STRINGS.getRelation());
             it = prc.iterator();
             if (it.hasNext()) { 
                 PackageRelationship rel = it.next();
                 PackagePart part = getTargetPart(rel);
                 this.sharedStringSource = new SharedStringsTable(part);
+            } else {
+            	log.log(POILogger.WARN, "No shared strings part found");
             }
             // Load styles source
-            prc = getCorePart().getRelationshipsByType(STYLES_RELATIONSHIP);
+            prc = getCorePart().getRelationshipsByType(STYLES.getRelation());
             it = prc.iterator();
             if (it.hasNext()) { 
                 PackageRelationship rel = it.next();
                 PackagePart part = getTargetPart(rel);
                 this.stylesSource = new StylesTable(part);
+            } else {
+            	log.log(POILogger.WARN, "No styles part found");
             }
             
             // Load individual sheets
@@ -276,10 +315,10 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
                 if (sheetPart == null) {
                     continue;
                 }
-                PackageRelationshipCollection prc = sheetPart.getRelationshipsByType(DRAWING_RELATIONSHIP);
+                PackageRelationshipCollection prc = sheetPart.getRelationshipsByType(DRAWINGS.getRelation());
                 for (PackageRelationship rel : prc) {
                     PackagePart drawingPart = getTargetPart(rel);
-                    PackageRelationshipCollection prc2 = drawingPart.getRelationshipsByType(IMAGE_RELATIONSHIP);
+                    PackageRelationshipCollection prc2 = drawingPart.getRelationshipsByType(IMAGES.getRelation());
                     for (PackageRelationship rel2 : prc2) {
                         PackagePart imagePart = getTargetPart(rel2);
                         XSSFPictureData pd = new XSSFPictureData(imagePart);
@@ -519,8 +558,8 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
              for (int i = 0 ; i < this.getNumberOfSheets() ; ++i) {
             	 XSSFSheet sheet = (XSSFSheet) this.getSheetAt(i);
                  PackagePartName partName = PackagingURIHelper.createPartName("/xl/worksheets/sheet" + i + ".xml");
-                 corePart.addRelationship(partName, TargetMode.INTERNAL, WORKSHEET_RELATIONSHIP, "rSheet" + 1);
-                 PackagePart part = pkg.createPart(partName, WORKSHEET_TYPE);
+                 corePart.addRelationship(partName, TargetMode.INTERNAL, WORKSHEET.getRelation(), "rSheet" + 1);
+                 PackagePart part = pkg.createPart(partName, WORKSHEET.getContentType());
                  
                  // XXX This should not be needed, but apparently the setSaveOuter call above does not work in XMLBeans 2.2
                  xmlOptions.setSaveSyntheticDocumentElement(new QName(CTWorksheet.type.getName().getNamespaceURI(), "worksheet"));
@@ -530,11 +569,28 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
                  out.close();
              }
              
-             // TODO - shared strings source
-             // TODO - styles source
-             
+             // Write shared strings and styles
+             if(sharedStringSource != null) {
+	             SharedStringsTable sst = (SharedStringsTable)sharedStringSource;
+	             PackagePartName sstName = PackagingURIHelper.createPartName(SHARED_STRINGS.getDefaultFileName());
+	             corePart.addRelationship(sstName, TargetMode.INTERNAL, SHARED_STRINGS.getRelation());
+	             PackagePart sstPart = pkg.createPart(sstName, SHARED_STRINGS.getContentType());
+	             out = sstPart.getOutputStream();
+	             sst.writeTo(out);
+	             out.close();
+             }
+             if(stylesSource != null) {
+	             StylesTable st = (StylesTable)stylesSource;
+	             PackagePartName stName = PackagingURIHelper.createPartName(STYLES.getDefaultFileName());
+	             corePart.addRelationship(stName, TargetMode.INTERNAL, STYLES.getRelation());
+	             PackagePart stPart = pkg.createPart(stName, STYLES.getContentType());
+	             out = stPart.getOutputStream();
+	             st.writeTo(out);
+	             out.close();
+             }
+
+             //  All done
              pkg.close();
-             
         } catch (InvalidFormatException e) {
             // TODO: replace with more meaningful exception
             throw new RuntimeException(e);
