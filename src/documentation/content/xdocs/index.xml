@@ -123,7 +123,7 @@
              <p>HSSF is our port of the Microsoft Excel 97(-2007) file format (BIFF8) to pure 
               Java. XSSF is our port of the Microsoft Excel XML (2007+) file format (OOXML) to
               pure Java. They both supports read and write capability. Please see 
-              <link href="./ss/index.html">the HSSF+XSSF project page</link> for more 
+              <link href="./spreadsheet/index.html">the HSSF+XSSF project page</link> for more 
               information.</p>
         </section>
         <section><title>HWPF for Word Documents</title>
@@ -139,7 +139,7 @@
 	<p>HSLF is our port of the Microsoft PowerPoint 97(-2003) file format to pure
 	  Java. It supports read and write capabilities of some, but not yet all
       of the core records. Please see <link
-	    href="./hslf/index.html">the HSLF project page for more
+	    href="./slideshow/index.html">the HSLF project page for more
 	    information</link>.</p>
         </section>
         <section><title>HDGF for Visio Documents</title>
