@@ -17,12 +17,17 @@
 
 package org.apache.poi.ss.usermodel;
 
-
+/**
+ * Rich text unicode string.  These strings can have fonts 
+ *  applied to arbitary parts of the string.
+ *  
+ * @author Glen Stampoultzis (glens at apache.org)
+ * @author Jason Height (jheight at apache.org)
+ */
 public interface RichTextString {
-
     /** Place holder for indicating that NO_FONT has been applied here */
     public static final short NO_FONT = 0;
-
+    
     /**
      * Applies a font to the specified characters of a string.
      *

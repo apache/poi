@@ -1141,4 +1141,11 @@ public class HSSFCell implements Cell
         int eofLoc = sheet.findFirstRecordLocBySid( EOFRecord.sid );
         sheet.getRecords().add( eofLoc, link.record );
     }
+
+    /**
+     * Creates a new HSSFRichTextString for you.
+     */
+	public RichTextString createRichTextString(String text) {
+		return new HSSFRichTextString(text);
+	}
 }

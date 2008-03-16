@@ -316,5 +316,10 @@ public class XSSFCell implements Cell {
       }
     }
 
-    
+    /**
+     * Creates an XSSFRichTextString for you.
+     */
+	public RichTextString createRichTextString(String text) {
+		return new XSSFRichTextString(text);
+	}
 }

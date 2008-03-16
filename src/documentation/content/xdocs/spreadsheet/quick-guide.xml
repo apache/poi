@@ -115,7 +115,8 @@
 
     // Or do it on one line.
     row.createCell((short)1).setCellValue(1.2);
-    row.createCell((short)2).setCellValue("This is a string");
+    row.createCell((short)2).setCellValue(
+         cell.createRichTextString("This is a string"));
     row.createCell((short)3).setCellValue(true);
 
     // Write the output to a file
