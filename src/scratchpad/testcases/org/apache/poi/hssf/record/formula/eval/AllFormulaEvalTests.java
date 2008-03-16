@@ -31,6 +31,7 @@ public class AllFormulaEvalTests {
 		TestSuite result = new TestSuite("Tests for org.apache.poi.hssf.record.formula.eval");
 		result.addTestSuite(TestCircularReferences.class);
 		result.addTestSuite(TestExternalFunction.class);
+		result.addTestSuite(TestFormulaBugs.class);
 		result.addTestSuite(TestFormulasFromSpreadsheet.class);
 		result.addTestSuite(TestUnaryPlusEval.class);
 		return result;
