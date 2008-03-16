@@ -63,6 +63,7 @@ import org.apache.poi.hssf.record.formula.MemFuncPtg;
 import org.apache.poi.hssf.record.formula.UnionPtg;
 import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -1459,6 +1460,10 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
                 }
             }
         }
+    }
+    
+    public CreationHelper getCreationHelper() {
+    	return new HSSFCreationHelper(this);
     }
 
     private byte[] newUID()
