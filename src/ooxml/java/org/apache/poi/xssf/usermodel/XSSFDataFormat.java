@@ -14,22 +14,19 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+package org.apache.poi.xssf.usermodel;
 
-package org.apache.poi.ss.usermodel;
+import org.apache.poi.ss.usermodel.DataFormat;
 
-public interface DataFormat {
-    /**
-     * get the format index that matches the given format string.
-     * Creates a new format if one is not found.  Aliases text to the proper format.
-     * @param format string matching a built in format
-     * @return index of format.
-     */
-    short getFormat(String format);
+/**
+ * TODO - figure out how this should really work for XSSF
+ */
+public class XSSFDataFormat implements DataFormat {
+	public short getFormat(String format) {
+		return -1;
+	}
 
-    /**
-     * get the format string that matches the given format index
-     * @param index of a format
-     * @return string represented at index of format or null if there is not a  format at that index
-     */
-    String getFormat(short index);
+	public String getFormat(short index) {
+		return null;
+	}
 }

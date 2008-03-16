@@ -27,6 +27,7 @@ import javax.xml.namespace.QName;
 
 import org.apache.poi.POIXMLDocument;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Name;
@@ -533,4 +534,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         this.sharedStringSource = sharedStringSource;
     }
 
+    public CreationHelper getCreationHelper() {
+    	return new XSSFCreationHelper(this);
+    }
 }

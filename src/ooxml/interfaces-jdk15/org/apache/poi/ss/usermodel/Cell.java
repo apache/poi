@@ -154,17 +154,6 @@ public interface Cell {
     String getCellFormula();
 
     /**
-     * Creates a RichTextString, which you can then pass to
-     *  {@link #setCellValue(RichTextString)}. This is required
-     *  because Java is broken, and won't allow you to define
-     *  static methods or constructors on interfaces, and without
-     *  that there's no way to get a RichTextString without
-     *  creating the appropriate concrete class. 
-     * @param text The text to initialise the RichTextString with
-     */
-    RichTextString createRichTextString(String text);
-    
-    /**
      * get the value of the cell as a number.  For strings we throw an exception.
      * For blank cells we return a 0.
      */

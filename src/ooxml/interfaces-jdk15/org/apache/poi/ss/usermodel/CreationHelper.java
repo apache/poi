@@ -14,22 +14,29 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-
 package org.apache.poi.ss.usermodel;
 
-public interface DataFormat {
+/**
+ * An object that handles instantiating concrete
+ *  classes of the various instances one needs for 
+ *  HSSF and XSSF.
+ * Works around a major shortcoming in Java, where we
+ *  can't have static methods on interfaces or abstract
+ *  classes.
+ * This allows you to get the appropriate class for
+ *  a given interface, without you having to worry
+ *  about if you're dealing with HSSF or XSSF, despite
+ *  Java being quite rubbish.
+ */
+public interface CreationHelper {
     /**
-     * get the format index that matches the given format string.
-     * Creates a new format if one is not found.  Aliases text to the proper format.
-     * @param format string matching a built in format
-     * @return index of format.
+     * Creates a new RichTextString instance 
+     * @param text The text to initialise the RichTextString with
      */
-    short getFormat(String format);
-
+    RichTextString createRichTextString(String text);
+    
     /**
-     * get the format string that matches the given format index
-     * @param index of a format
-     * @return string represented at index of format or null if there is not a  format at that index
+     * Creates a new DataFormat instance
      */
-    String getFormat(short index);
+    DataFormat createDataFormat();
 }

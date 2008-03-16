@@ -14,22 +14,30 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+package org.apache.poi.xssf.usermodel;
 
-package org.apache.poi.ss.usermodel;
+import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.DataFormat;
+import org.apache.poi.ss.usermodel.RichTextString;
 
-public interface DataFormat {
+public class XSSFCreationHelper implements CreationHelper {
+	private XSSFWorkbook workbook;
+	private XSSFDataFormat dataFormat;
+	XSSFCreationHelper(XSSFWorkbook wb) {
+		workbook = wb;
+		
+		// Create the things we only ever need one of
+		dataFormat = new XSSFDataFormat();
+	}
+	
     /**
-     * get the format index that matches the given format string.
-     * Creates a new format if one is not found.  Aliases text to the proper format.
-     * @param format string matching a built in format
-     * @return index of format.
+     * Creates a new XSSFRichTextString for you.
      */
-    short getFormat(String format);
-
-    /**
-     * get the format string that matches the given format index
-     * @param index of a format
-     * @return string represented at index of format or null if there is not a  format at that index
-     */
-    String getFormat(short index);
+	public RichTextString createRichTextString(String text) {
+		return new XSSFRichTextString(text);
+	}
+	
+	public DataFormat createDataFormat() {
+		return dataFormat;
+	}
 }
