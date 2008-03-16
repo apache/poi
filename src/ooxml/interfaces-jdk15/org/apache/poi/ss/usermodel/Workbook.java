@@ -455,4 +455,13 @@ public interface Workbook {
      */
     List getAllEmbeddedObjects();
 
+    /**
+     * Returns an object that handles instantiating concrete
+     *  classes of the various instances one needs for 
+     *  HSSF and XSSF.
+     * Works around a major shortcoming in Java, where we
+     *  can't have static methods on interfaces or abstract
+     *  classes.
+     */
+    CreationHelper getCreationHelper();
 }
