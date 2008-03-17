@@ -37,6 +37,7 @@ public class HSSFTextbox
     public final static short  HORIZONTAL_ALIGNMENT_CENTERED = 2;
     public final static short  HORIZONTAL_ALIGNMENT_RIGHT = 3;
     public final static short  HORIZONTAL_ALIGNMENT_JUSTIFIED = 4;
+    public final static short  HORIZONTAL_ALIGNMENT_DISTRIBUTED = 7;
 
     /**
      * How to align text vertically
@@ -45,6 +46,7 @@ public class HSSFTextbox
     public final static short  VERTICAL_ALIGNMENT_CENTER = 2;
     public final static short  VERTICAL_ALIGNMENT_BOTTOM = 3;
     public final static short  VERTICAL_ALIGNMENT_JUSTIFY = 4;
+    public final static short  VERTICAL_ALIGNMENT_DISTRIBUTED= 7;
 
 
     int marginLeft, marginRight, marginTop, marginBottom;
