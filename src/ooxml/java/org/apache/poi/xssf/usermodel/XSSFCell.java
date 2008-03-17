@@ -26,6 +26,7 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.SharedStringSource;
+import org.apache.poi.ss.usermodel.StylesSource;
 import org.apache.poi.xssf.util.CellReference;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellFormula;
@@ -40,6 +41,7 @@ public class XSSFCell implements Cell {
     private final XSSFRow row;
     private short cellNum;
     private SharedStringSource sharedStringSource;
+    private StylesSource stylesSource;
     
     /**
      * Create a new XSSFCell. This method is protected to be used only by
@@ -56,10 +58,14 @@ public class XSSFCell implements Cell {
             this.cellNum = parseCellNum(cell.getR());
         }
         this.sharedStringSource = row.getSheet().getWorkbook().getSharedStringSource();
+        this.stylesSource = row.getSheet().getWorkbook().getStylesSource();
     }
     
     protected SharedStringSource getSharedStringSource() {
         return this.sharedStringSource;
+    }
+    protected StylesSource getStylesSource() {
+    	return this.stylesSource;
     }
 
     public boolean getBooleanCellValue() {
@@ -89,8 +95,10 @@ public class XSSFCell implements Cell {
     }
 
     public CellStyle getCellStyle() {
-        // TODO Auto-generated method stub
-        return null;
+    	if(this.cell.getS() > 0) {
+    		return stylesSource.getStyleAt(this.cell.getS());
+    	}
+    	return null;
     }
 
     public int getCellType() {

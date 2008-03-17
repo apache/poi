@@ -283,7 +283,13 @@ public class TestXSSFCell extends TestCase {
     }
     
     public void testCellFormatting() {
-    	
+    	Workbook workbook = new XSSFWorkbook();
+    	CTSheet ctSheet = CTSheet.Factory.newInstance();
+    	CTWorksheet ctWorksheet = CTWorksheet.Factory.newInstance();
+    	XSSFSheet sheet = new XSSFSheet(ctSheet, ctWorksheet, (XSSFWorkbook) workbook);
+    	Cell cell = sheet.createRow(0).createCell((short)0);
+
+    	// TODO
     }
 
     private XSSFRow createParentObjects() {

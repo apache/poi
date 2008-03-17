@@ -23,15 +23,32 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STBorderStyle.Enum;
 
 
 public class XSSFCellBorder {
-	
 	private CTBorder border;
 	
+	/**
+	 * Creates a Cell Border from the supplied XML definition
+	 */
 	public XSSFCellBorder(CTBorder border) {
 		this.border = border;
+	}
+	/**
+	 * Creates a new, empty Cell Border, on the
+	 *  given Styles Table
+	 */
+	public XSSFCellBorder() {
+		border = CTBorder.Factory.newInstance();
 	}
 	
 	public static enum BorderSides {
 		TOP, RIGHT, BOTTOM, LEFT
+	}
+	
+	/**
+	 * TODO - is this the best way to allow StylesTable
+	 *  to record us?
+	 */
+	public CTBorder getCTBorder() {
+		return border;
 	}
 	
 	public Enum getBorderStyle(BorderSides side) {
@@ -55,5 +72,4 @@ public class XSSFCellBorder {
 		default: throw new IllegalArgumentException("No suitable side specified for the border");
 		}
 	}
-
 }

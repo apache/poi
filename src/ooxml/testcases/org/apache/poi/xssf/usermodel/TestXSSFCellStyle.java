@@ -19,6 +19,8 @@ package org.apache.poi.xssf.usermodel;
 
 import junit.framework.TestCase;
 
+import org.apache.poi.xssf.model.StylesTable;
+import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorder;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTStylesheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTXf;
@@ -27,59 +29,71 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STBorderStyle;
 
 public class TestXSSFCellStyle extends TestCase {
 	
-	private CTStylesheet ctStylesheet;
-	private CTBorder ctBorder;
+	private StylesTable stylesTable;
+	private CTBorder ctBorderA;
+	private CTBorder ctBorderB;
 	private CTXf cellStyleXf;
 	private CTXf cellXf;
 	private XSSFCellStyle cellStyle;
 
 	public void setUp() {
-		ctStylesheet = CTStylesheet.Factory.newInstance();
-		ctBorder = ctStylesheet.addNewBorders().insertNewBorder(0);
+		stylesTable = new StylesTable();
+		
+		CTStylesheet ctStylesheet = stylesTable._getRawStylesheet();
+		
+		// Until we do XSSFBorder properly, cheat
+		ctBorderA = CTBorder.Factory.newInstance();
+		long borderId = stylesTable.putBorder(ctBorderA);
+		assertEquals(0, borderId);
+		
+		XSSFCellBorder borderB = new XSSFCellBorder();
+		ctBorderB = borderB.getCTBorder();
+		assertEquals(1, stylesTable.putBorder(borderB));
+		
 		cellStyleXf = ctStylesheet.addNewCellStyleXfs().addNewXf();
 		cellStyleXf.setBorderId(0);
 		cellXf = ctStylesheet.addNewCellXfs().addNewXf();
 		cellXf.setXfId(0);
-		cellStyle = new XSSFCellStyle(ctStylesheet, 0);
+		cellStyle = new XSSFCellStyle(cellXf, cellStyleXf, stylesTable);
 	}
 	
 	public void testGetBorderBottom() {		
-		ctBorder.addNewBottom().setStyle(STBorderStyle.THIN);
+		ctBorderA.addNewBottom().setStyle(STBorderStyle.THIN);
 		assertEquals((short)1, cellStyle.getBorderBottom());
 	}
 
 	public void testGetBorderBottomAsString() {
-		ctBorder.addNewBottom().setStyle(STBorderStyle.THIN);
+		ctBorderA.addNewBottom().setStyle(STBorderStyle.THIN);
 		assertEquals("thin", cellStyle.getBorderBottomAsString());
 	}
 	
 	public void testGetBorderRight() {
-		ctBorder.addNewRight().setStyle(STBorderStyle.MEDIUM);
+		ctBorderA.addNewRight().setStyle(STBorderStyle.MEDIUM);
 		assertEquals((short)2, cellStyle.getBorderRight());
 	}
 
 	public void testGetBorderRightAsString() {
-		ctBorder.addNewRight().setStyle(STBorderStyle.MEDIUM);
+		ctBorderA.addNewRight().setStyle(STBorderStyle.MEDIUM);
 		assertEquals("medium", cellStyle.getBorderRightAsString());
 	}
 	
 	public void testGetBorderLeft() {
-		ctBorder.addNewLeft().setStyle(STBorderStyle.DASHED);
+		ctBorderA.addNewLeft().setStyle(STBorderStyle.DASHED);
 		assertEquals((short)3, cellStyle.getBorderLeft());
 	}
 
 	public void testGetBorderLeftAsString() {
-		ctBorder.addNewLeft().setStyle(STBorderStyle.DASHED);
+		ctBorderA.addNewLeft().setStyle(STBorderStyle.DASHED);
 		assertEquals("dashed", cellStyle.getBorderLeftAsString());
 	}
 	
 	public void testGetBorderTop() {
-		ctBorder.addNewTop().setStyle(STBorderStyle.HAIR);
+		ctBorderA.addNewTop().setStyle(STBorderStyle.HAIR);
 		assertEquals((short)7, cellStyle.getBorderTop());
 	}
 
 	public void testGetTopBottomAsString() {
-		ctBorder.addNewTop().setStyle(STBorderStyle.HAIR);
+		ctBorderA.addNewTop().setStyle(STBorderStyle.HAIR);
 		assertEquals("hair", cellStyle.getBorderTopAsString());
 	}
 }

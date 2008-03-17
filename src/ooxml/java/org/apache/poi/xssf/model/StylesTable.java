@@ -25,8 +25,11 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.Map.Entry;
 
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.StylesSource;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorder;
@@ -35,6 +38,8 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFont;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFonts;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTNumFmt;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTNumFmts;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTStylesheet;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTXf;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.StyleSheetDocument;;
 
 
@@ -48,6 +53,8 @@ public class StylesTable implements StylesSource, XSSFModel {
     private final LinkedList<CTFont> fonts = new LinkedList<CTFont>();
     private final LinkedList<CTFill> fills = new LinkedList<CTFill>();
     private final LinkedList<CTBorder> borders = new LinkedList<CTBorder>();
+    private final LinkedList<CTXf> styleXfs = new LinkedList<CTXf>();
+    private final LinkedList<CTXf> xfs = new LinkedList<CTXf>();
     
     /**
      * The first style id available for use as a custom style
@@ -71,6 +78,7 @@ public class StylesTable implements StylesSource, XSSFModel {
      */
     public StylesTable() {
     	doc = StyleSheetDocument.Factory.newInstance();
+    	doc.addNewStyleSheet();
     }
 
     /**
@@ -95,6 +103,12 @@ public class StylesTable implements StylesSource, XSSFModel {
         	}
         	for (CTBorder border : doc.getStyleSheet().getBorders().getBorderArray()) {
         		borders.add(border);
+        	}
+        	for (CTXf xf : doc.getStyleSheet().getCellXfs().getXfArray()) {
+        		xfs.add(xf);
+        	}
+        	for (CTXf xf : doc.getStyleSheet().getCellStyleXfs().getXfArray()) {
+        		styleXfs.add(xf);
         	}
         } catch (XmlException e) {
             throw new IOException(e.getLocalizedMessage());
@@ -138,7 +152,35 @@ public class StylesTable implements StylesSource, XSSFModel {
     	return -1;
     }
     
-    /**
+    public CellStyle getStyleAt(long idx) {
+    	CTXf mainXf = styleXfs.get((int)idx);
+    	CTXf styleXf = null;
+    	if(mainXf.getXfId() > -1) {
+    		styleXf = styleXfs.get((int)mainXf.getXfId());
+    	}
+    	
+		return new XSSFCellStyle(mainXf, styleXf, this);
+	}
+	public long putStyle(CellStyle style) {
+		// TODO
+		return -1;
+	}
+	
+	public XSSFCellBorder getBorderAt(long idx) {
+		return new XSSFCellBorder(borders.get((int)idx));
+	}
+	public long putBorder(XSSFCellBorder border) {
+		return putBorder(border.getCTBorder());
+	}
+	public synchronized long putBorder(CTBorder border) {
+		if(borders.contains(border)) {
+			return borders.indexOf(border);
+		}
+		borders.add(border);
+		return borders.size() - 1;
+	}
+	
+	/**
      * For unit testing only
      */
     public int _getNumberFormatSize() {
@@ -161,6 +203,12 @@ public class StylesTable implements StylesSource, XSSFModel {
      */
     public int _getBordersSize() {
     	return borders.size();
+    }
+    /**
+     * For unit testing only!
+     */
+    public CTStylesheet _getRawStylesheet() {
+    	return doc.getStyleSheet();
     }
     
 
@@ -200,6 +248,9 @@ public class StylesTable implements StylesSource, XSSFModel {
     	// TODO
     	
     	// Borders
+    	// TODO
+    	
+    	// Xfs
     	// TODO
     	
         // Save
