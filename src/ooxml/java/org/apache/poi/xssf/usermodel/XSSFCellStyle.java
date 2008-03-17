@@ -20,27 +20,28 @@ package org.apache.poi.xssf.usermodel;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder.BorderSides;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorder;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTStylesheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTXf;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STBorderStyle.Enum;
 
 
 public class XSSFCellStyle implements CellStyle {
-	
-	private CTStylesheet stylesheet;
+	private StylesTable stylesTable;
 	private CTXf cellXf;
 	private CTXf cellStyleXf;
 	private XSSFCellBorder cellBorder;
 	
-	public XSSFCellStyle(CTStylesheet stylesheet, int cellXfsId) {
-		this.stylesheet = stylesheet;
-		this.cellXf = stylesheet.getCellStyleXfs().getXfArray(cellXfsId);
-		if (cellXf.isSetXfId()) {
-			this.cellStyleXf = stylesheet.getCellStyleXfs().getXfArray((int) cellXf.getXfId());
-		}
+	/**
+	 * @param cellXf The main XF for the cell
+	 * @param cellStyleXf Optional, style xf
+	 * @param stylesTable Styles Table to work off
+	 */
+	public XSSFCellStyle(CTXf cellXf, CTXf cellStyleXf, StylesTable stylesTable) {
+		this.stylesTable = stylesTable;
+		this.cellXf = cellXf;
+		this.cellStyleXf = cellStyleXf;
 	}
 
 	public short getAlignment() {
@@ -85,8 +86,10 @@ public class XSSFCellStyle implements CellStyle {
 	}
 
 	public short getDataFormat() {
-		// TODO Auto-generated method stub
-		return 0;
+		return (short)cellXf.getNumFmtId();
+	}
+	public String getDataFormatString() {
+		return stylesTable.getNumberFormatAt(getDataFormat());
 	}
 
 	public short getFillBackgroundColor() {
@@ -263,8 +266,7 @@ public class XSSFCellStyle implements CellStyle {
 
 	private XSSFCellBorder getCellBorder() {
 		if (cellBorder == null) {
-			CTBorder border = stylesheet.getBorders().getBorderArray(getBorderId());
-			cellBorder = new XSSFCellBorder(border);
+			cellBorder = stylesTable.getBorderAt(getBorderId());
 		}
 		return cellBorder;
 	}

@@ -22,4 +22,7 @@ public interface StylesSource {
     
     public Font getFontAt(long idx);
     public long putFont(Font font);
+    
+    public CellStyle getStyleAt(long idx);
+    public long putStyle(CellStyle style);
 }
