@@ -1137,6 +1137,20 @@ extends TestCase {
     }
     
     /**
+     * Something up with the FileSharingRecord
+     */
+    public void test43251() throws Exception {
+        FileInputStream in = new FileInputStream(new File(cwd, "43251.xls"));
+        
+        // Used to blow up with an IllegalArgumentException
+        //  when creating a FileSharingRecord
+        HSSFWorkbook wb = new HSSFWorkbook(in);
+        in.close();
+        
+        assertEquals(1, wb.getNumberOfSheets());
+    }
+    
+    /**
      * Crystal reports generates files with short 
      *  StyleRecords, which is against the spec
      */
