@@ -31,6 +31,15 @@
   </header>
 
   <body>
+    <section><title>Office Open XML Support</title>
+      <p>We are currently working to support the new Office Open XML
+       file formats, such as XLSX and PPTX, which were introduced in
+       Office 2007.</p>
+      <p>Support for these is currently only available in an svn branch,
+       but we hope to have a full release including it by the summer.
+       People interested should follow the
+       <link href="mailinglists.html">dev list</link> to track progress.</p>
+    </section>
     <section><title>February 06 2008 - POI 3.0.2 Released</title>
       <p>The POI team is pleased to announce POI 3.0.2, the latest release of Apache POI.
         There have been many important bug fixes since the 3.0.1 release and a lot of new features.  A full list of changes	is available in 
@@ -38,27 +47,17 @@
 		<link href="http://www.apache.org/dyn/closer.cgi/poi/release/">download</link>
 		the source and binaries from your
     <link href="http://www.apache.org/dyn/closer.cgi/poi/release/">local mirror</link>.
-  </p>
-    <p>
-      The release is also available from the central Maven repository under Group ID "org.apache.poi" and Version "3.0.2-FINAL".
-    </p>  
-  </section>
-
-  <section><title>POI 3.0.1 Release</title>
-	  <p>The latest release of Apache POI (formerly Apache Jakarta POI),
-		version 3.0.1, has now been released. It contains a mixture of
-		new features and bug fixes, compared to 3.0. A full list of changes
-		is available in 
-		<link href="./changes.html">the changelog</link>, and 
-		<link href="http://www.apache.org/dyn/closer.cgi/poi/release/">download</link>
-		the source and binaries from your
-		<link href="http://www.apache.org/dyn/closer.cgi/poi/release/">local mirror</link>.</p>
+      </p>
+      <p>
+        The release is also available from the central Maven repository 
+        under Group ID "org.apache.poi" and Version "3.0.2-FINAL".
+      </p>  
       <p>We would also like to confirm that verions 3.0 and 3.0.1 of Apache 
 		POI do
 		<em>not</em> contain any viruses. Users of broken virus checkers
 		which do detect a 94 byte file, sci_cec.db, as containing one are
 		advised to contact their vendor for a fix.</p>
-	</section>
+    </section>
 
     <section><title>Purpose</title>
       <p>
