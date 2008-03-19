@@ -31,51 +31,60 @@
   </header>
 
   <body>
-    <section><title>February 06 2008 - POI 3.0.2 Released</title>
+    <section><title>POI 3.0.2 Released</title>
       <p>The POI team is pleased to announce POI 3.0.2, the latest release of Apache POI.
         There have been many important bug fixes since the 3.0.1 release and a lot of new features.  A full list of changes	is available in 
       <link href="./changes.html">the changelog</link>, and 
 		<link href="http://www.apache.org/dyn/closer.cgi/poi/release/">download</link>
 		the source and binaries from your
     <link href="http://www.apache.org/dyn/closer.cgi/poi/release/">local mirror</link>.
-  </p>
-    <p>
-      The release is also available from the central Maven repository under Group ID "org.apache.poi" and Version "3.0.2-FINAL".
-    </p>  
-  </section>
-
-  <section><title>POI 3.0.1 Release</title>
-	  <p>The latest release of Apache POI (formerly Apache Jakarta POI),
-		version 3.0.1, has now been released. It contains a mixture of
-		new features and bug fixes, compared to 3.0. A full list of changes
-		is available in 
-		<link href="./changes.html">the changelog</link>, and 
-		<link href="http://www.apache.org/dyn/closer.cgi/poi/release/">download</link>
-		the source and binaries from your
-		<link href="http://www.apache.org/dyn/closer.cgi/poi/release/">local mirror</link>.</p>
+      </p>
+      <p>
+        The release is also available from the central Maven repository 
+        under Group ID "org.apache.poi" and Version "3.0.2-FINAL".
+      </p>  
       <p>We would also like to confirm that verions 3.0 and 3.0.1 of Apache 
 		POI do
 		<em>not</em> contain any viruses. Users of broken virus checkers
 		which do detect a 94 byte file, sci_cec.db, as containing one are
 		advised to contact their vendor for a fix.</p>
-	</section>
+    </section>
+    <section><title>Office Open XML Support</title>
+      <p>We are currently working to support the new Office Open XML
+       file formats, such as XLSX and PPTX, which were introduced in
+       Office 2007.</p>
+      <p>Support for these is currently only available in an svn branch,
+       but we hope to have a full release including it by the summer.
+       People interested should follow the
+       <link href="mailinglists.html">dev list</link> to track progress.</p>
+    </section>
 
     <section><title>Purpose</title>
       <p>
       The POI project consists of APIs for manipulating various file formats
-      based upon Microsoft's OLE 2 Compound Document format using pure Java.  In short, you can
-      read and write MS Excel files using Java.  Soon, you'll be able to read and write 
-      Word files using Java.  POI is your Java Excel solution as well as your Java Word solution.
-      However, we have a complete API for porting other OLE 2 Compound Document formats and welcome
-      others to participate.
+      based upon Microsoft's OLE 2 Compound Document format using pure Java.  
+      In short, you can read and write MS Excel files using Java.  Soon, 
+      you'll be able to read and write Word, PowerPoint and Visio files 
+      using Java. POI is your Java Excel solution as well as your Java 
+      Word solution. However, we have a complete API for porting other OLE 
+      2 Compound Document formats, and welcome others to participate.
       </p>
       <p>
       OLE 2 Compound Document Format based files include most Microsoft Office
-      files such as XLS and DOC as well as MFC serialization API based file formats.
+      files such as XLS and DOC as well as MFC serialization API based file 
+      formats.
       </p>
       <p>
-         As a general policy we try to collaborate as much as possible with other projects to
-         provide this functionality.  Examples include: <link href="http://xml.apache.org/cocoon">Cocoon</link> for
+      At this time, none of our releases support the new Office Open XML
+      file formats, such as .xlsx or .docx. Work to support these is in
+      progress, and people interested should follow the 
+      <link href="mailinglists.html">dev list</link>. We expect this
+      support to make it into a full release by the summer.
+      </p>
+      <p>
+         As a general policy, we try to collaborate as much as possible
+         with other projects to provide this functionality.  Examples 
+         include: <link href="http://xml.apache.org/cocoon">Cocoon</link> for
          which there are serializers for HSSF;
          <link href="http://www.openoffice.org">Open Office.org</link> with whom we collaborate in documenting the
          XLS format; and <link href="http://lucene.apache.org/">Lucene</link> 
@@ -96,8 +105,8 @@
 		we say that POIFS is the most complete and correct implementation of this file format to date!
         </p>
         <p>
-		You'd use HSSF if you needed to read or write an Excel file using Java (XLS). You can also read and modify
-		spreadsheets using this API, although right now writing is more mature.
+		You'd use HSSF if you needed to read, write or modify an Excel file 
+        using Java (XLS).
         </p>
       </section>
     </section>
@@ -114,8 +123,11 @@
              definition.  Please see <link href="./poifs/index.html">the POIFS project page</link> for more information.</p>
         </section>
         <section><title>HSSF for Excel Documents</title>
-             <p>HSSF is our port of the Microsoft Excel 97(-2003) file format (BIFF8) to pure Java.  It supports read and write
-             capability.  Please see <link href="./hssf/index.html">the HSSF project page</link> for more information.</p>
+             <p>HSSF is our port of the Microsoft Excel 97(-2003) file 
+             format (BIFF8) to pure Java.  It supports read and write
+             capability. (Support for Excel 2007 .xlsx files is in progress). 
+             Please see <link href="./hssf/index.html">the HSSF project 
+             page</link> for more information.</p>
         </section>
         <section><title>HWPF for Word Documents</title>
 	<p>HWPF is our port of the Microsoft Word 97 file format to pure
