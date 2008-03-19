@@ -33,6 +33,7 @@
 	<!-- Don't forget to update changes.xml too! -->
     <changes>
         <release version="3.1-beta1" date="2008-??-??">
+           <action dev="POI-DEVELOPERS" type="fix">44627 - Improve the thread safety of POILogFactory</action>
            <action dev="POI-DEVELOPERS" type="add">30311 - Initial support for Conditional Formatting</action>
            <action dev="POI-DEVELOPERS" type="fix">44609 - Handle leading spaces in formulas, such as '= 4'</action>
            <action dev="POI-DEVELOPERS" type="add">44608 - Support for PercentPtg in the formula evaluator</action>
