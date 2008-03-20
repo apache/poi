@@ -15,7 +15,7 @@
 -->
 <!-- ===================================================================
 
-     Apache Todos DTD (Version 1.1)
+     Apache Todos DTD (Version 1.2)
 
 PURPOSE:
   This DTD was developed to create a simple yet powerful document
@@ -52,6 +52,9 @@ CHANGE HISTORY:
 [Version 1.1]
   20011212 Used public identifiers for external entities (SM)
   20020613 Include the module of ISO character entity sets (DC)
+[Version 1.2]
+  20030424 Adopt the loosened content model from document-v12 (JT)
+  20040614 Stay current with latest document-v13 (class attribute)
 
 ==================================================================== -->
 
@@ -60,8 +63,8 @@ CHANGE HISTORY:
 <!-- =============================================================== -->
 
 <!ENTITY % document PUBLIC
-    "-//APACHE//ENTITIES Documentation V1.1//EN"
-    "document-v11.mod">
+    "-//APACHE//ENTITIES Documentation V1.3//EN"
+    "document-v13.mod">
 %document;
 
 <!-- =============================================================== -->
