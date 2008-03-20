@@ -54,7 +54,7 @@ public final class TestFormulaEvaluatorBugs extends TestCase {
 		row.getCell((short)2).setCellValue(25);
 		
 		HSSFFormulaEvaluator.evaluateAllFormulaCells(wb);
-		assertEquals(4.2*25, row.getCell((short)3).getNumericCellValue());
+		assertEquals(4.2*25, row.getCell((short)3).getNumericCellValue(), 0.0001);
 		
 		// Save
 		File existing = new File(tmpDirName,"44636-existing.xls");
@@ -76,7 +76,7 @@ public final class TestFormulaEvaluatorBugs extends TestCase {
 		row.createCell((short)0).setCellFormula("SUM(A1:B1)");
 		
 		HSSFFormulaEvaluator.evaluateAllFormulaCells(wb);
-		assertEquals(5.4, row.getCell((short)0).getNumericCellValue());
+		assertEquals(5.4, row.getCell((short)0).getNumericCellValue(), 0.0001);
 				
 		// Save
 		File scratch = new File(tmpDirName,"44636-scratch.xls");
