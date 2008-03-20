@@ -15,7 +15,7 @@
 -->
 <!-- ===================================================================
 
-     Apache Todos DTD (Version 1.1)
+     Apache Todos module (Version 1.0)
 
 PURPOSE:
   This DTD was developed to create a simple yet powerful document
@@ -25,9 +25,10 @@ PURPOSE:
 
 TYPICAL INVOCATION:
 
-  <!DOCTYPE todo PUBLIC
-       "-//APACHE//DTD Todo Vx.y//EN"
-       "todo-vxy.dtd">
+  <!ENTITY % todo PUBLIC
+      "-//APACHE//ENTITIES Todo Vxy//EN"
+      "todo-vxy.mod">
+  %todo;
 
   where
 
@@ -51,46 +52,25 @@ CHANGE HISTORY:
   19991225 Added actions element for better structure (SM)
 [Version 1.1]
   20011212 Used public identifiers for external entities (SM)
-  20020613 Include the module of ISO character entity sets (DC)
 
 ==================================================================== -->
-
 <!-- =============================================================== -->
-<!-- Include the Documentation DTD -->
+<!-- Common entities -->
 <!-- =============================================================== -->
-
-<!ENTITY % document PUBLIC
-    "-//APACHE//ENTITIES Documentation V1.1//EN"
-    "document-v11.mod">
-%document;
-
+<!ENTITY % priorities "showstopper|high|medium|low|wish|dream">
 <!-- =============================================================== -->
-<!-- Include the Common ISO Character Entity Sets -->
+<!-- Document Type Definition -->
 <!-- =============================================================== -->
+<!ELEMENT todo (title?, devs?, actions+)>
+<!ATTLIST todo
+  %common.att; 
+>
 
-<!ENTITY % common-charents PUBLIC
-    "-//APACHE//ENTITIES Common Character Entity Sets V1.0//EN"
-    "common-charents-v10.mod">
-%common-charents;
-
-<!-- =============================================================== -->
-<!-- Include the Common elements -->
-<!-- =============================================================== -->
-
-<!ENTITY % common PUBLIC
-    "-//APACHE//ENTITIES Common Elements V1.0//EN"
-    "common-elems-v10.mod">
-%common;
-
-<!-- =============================================================== -->
-<!-- Include the Todo module -->
-<!-- =============================================================== -->
-
-<!ENTITY % todo PUBLIC
-    "-//APACHE//ENTITIES Todo V1.1//EN"
-    "todo-v11.mod">
-%todo;
-
+<!ELEMENT actions (action+)>
+<!ATTLIST actions
+  %common.att; 
+  priority (%priorities;) #IMPLIED
+>
 <!-- =============================================================== -->
 <!-- End of DTD -->
 <!-- =============================================================== -->

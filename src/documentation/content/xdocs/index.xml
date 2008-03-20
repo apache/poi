@@ -17,7 +17,7 @@
    limitations under the License.
    ====================================================================
 -->
-<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "./dtd/document-v11.dtd">
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.3//EN" "./dtd/document-v13.dtd">
 
 <document>
   <header>
@@ -43,11 +43,21 @@
         The release is also available from the central Maven repository 
         under Group ID "org.apache.poi" and Version "3.0.2-FINAL".
       </p>  
-      <p>We would also like to confirm that verions 3.0 and 3.0.1 of Apache 
-		POI do
+      <p>We would also like to confirm that versions 3.0.1 and 3.0.2 of 
+        Apache POI do
 		<em>not</em> contain any viruses. Users of broken virus checkers
 		which do detect a 94 byte file, sci_cec.db, as containing one are
 		advised to contact their vendor for a fix.</p>
+    </section>
+    <section><title>ApacheCon Europe Coming Soon</title>
+      <p><img src="images/ApacheConEu08.jpg" width="234" height="60" 
+        alt="ApacheCon Europe 2008 banner" class="ontheright" />
+       ApacheCon Europe 2008 will once again be held at the Mövenpick 
+       Hotel in Amsterdam, April 7-11. This year, there will be a number
+       of POI sessions, including a tutorial covering the new Office Open
+       XML support.</p>
+      <p>For further information, see the ApacheCon Europe Web site at
+       <link href="http://www.eu.apachecon.com/">www.eu.apachecon.com</link></p>
     </section>
     <section><title>Office Open XML Support</title>
       <p>We are currently working to support the new Office Open XML

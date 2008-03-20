@@ -19,6 +19,10 @@ div#banner {
  border-bottom: 1px solid #aaa;
 }
 
+p img.ontheright {
+	float: right;
+}
+
 #banner, #banner td {
  background: #fff;
  color: #036;
