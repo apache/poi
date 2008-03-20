@@ -1204,6 +1204,20 @@ extends TestCase {
         
         assertEquals(2, wb.getNumberOfSheets());
     }
+    
+    /**
+     * Used to give problems due to trying to read a zero
+     *  length string, but that's now properly handled
+     */
+    public void test44643() throws Exception {
+        FileInputStream in = new FileInputStream(new File(cwd, "44643.xls"));
+        
+        // Used to blow up with an IllegalArgumentException
+        HSSFWorkbook wb = new HSSFWorkbook(in);
+        in.close();
+        
+        assertEquals(1, wb.getNumberOfSheets());
+    }
 }
 
 
