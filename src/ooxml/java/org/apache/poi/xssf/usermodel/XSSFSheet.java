@@ -17,6 +17,8 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -34,7 +36,10 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.extensions.XSSFComments;
 import org.apache.poi.xssf.usermodel.helpers.ColumnHelper;
 import org.apache.poi.xssf.util.CellReference;
+import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBreak;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComments;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDialogsheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHeaderFooter;
@@ -96,6 +101,24 @@ public class XSSFSheet implements Sheet {
 
     public XSSFWorkbook getWorkbook() {
         return this.workbook;
+    }
+
+    /**
+     * Tweaks the CTWorksheet to fit with what Excel
+     *  will accept without a massive huff, and write into
+     *  the OutputStream supplied.
+     */
+    protected void save(OutputStream out, XmlOptions xmlOptions) throws IOException {
+    	// Excel objects to <cols/>
+    	if(worksheet.getColsArray().length == 1) {
+    		CTCols col = worksheet.getColsArray(0);
+    		if(col.getColArray().length == 0) {
+    			worksheet.setColsArray(null);
+    		}
+    	}
+
+    	// Save
+        worksheet.save(out, xmlOptions);
     }
     
     protected CTWorksheet getWorksheet() {

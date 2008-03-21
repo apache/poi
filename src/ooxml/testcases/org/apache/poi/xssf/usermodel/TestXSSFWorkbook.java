@@ -245,9 +245,14 @@ public class TestXSSFWorkbook extends TestCase {
 		// Load up again, check all still there
 		XSSFWorkbook wb2 = new XSSFWorkbook(tmpFile.toString());
 		assertEquals(3, wb2.getNumberOfSheets());
+		assertNotNull(wb2.getSheetAt(0));
+		assertNotNull(wb2.getSheetAt(1));
+		assertNotNull(wb2.getSheetAt(2));
 		
-		// TODO - fix these!
 		assertEquals("dd/mm/yyyy", wb2.getSheetAt(0).getRow(1).getCell(0).getRichStringCellValue().getString());
+		assertEquals("yyyy/mm/dd", wb2.getSheetAt(0).getRow(2).getCell(0).getRichStringCellValue().getString());
+		assertEquals("yyyy-mm-dd", wb2.getSheetAt(0).getRow(3).getCell(0).getRichStringCellValue().getString());
+		assertEquals("yy/mm/dd", wb2.getSheetAt(0).getRow(4).getCell(0).getRichStringCellValue().getString());
 		assertNotNull(wb2.getSharedStringSource());
 		assertNotNull(wb2.getStylesSource());
     }

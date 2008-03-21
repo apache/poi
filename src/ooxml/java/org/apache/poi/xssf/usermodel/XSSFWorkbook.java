@@ -612,7 +612,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
                 // XXX This should not be needed, but apparently the setSaveOuter call above does not work in XMLBeans 2.2
                 xmlOptions.setSaveSyntheticDocumentElement(new QName(CTWorksheet.type.getName().getNamespaceURI(), "worksheet"));
                 out = part.getOutputStream();
-                sheet.getWorksheet().save(out, xmlOptions);
+                sheet.save(out, xmlOptions);
                 out.close();
                  
                 // Update our internal reference for the package part
