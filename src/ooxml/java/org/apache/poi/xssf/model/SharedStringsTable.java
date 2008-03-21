@@ -22,6 +22,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.LinkedList;
 
+import javax.xml.namespace.QName;
+
 import org.apache.poi.ss.usermodel.SharedStringSource;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
@@ -95,6 +97,11 @@ public class SharedStringsTable implements SharedStringSource, XSSFModel {
     public void writeTo(OutputStream out) throws IOException {
         XmlOptions options = new XmlOptions();
         options.setSaveOuter();
+        options.setUseDefaultNamespace();
+        
+        // Requests use of whitespace for easier reading
+        options.setSavePrettyPrint();
+
         SstDocument doc = SstDocument.Factory.newInstance(options);
         CTSst sst = doc.addNewSst();
         sst.setCount(strings.size());
@@ -102,6 +109,6 @@ public class SharedStringsTable implements SharedStringSource, XSSFModel {
         for (String s : strings) {
             sst.addNewSi().setT(s);
         }
-        doc.save(out);
+        doc.save(out, options);
     }
 }

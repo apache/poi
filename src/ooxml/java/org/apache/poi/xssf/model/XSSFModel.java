@@ -21,6 +21,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 public interface XSSFModel {
+	/** Read from the given InputStream */
 	public void readFrom(InputStream is) throws IOException;
+	/** Write to the supplied OutputStream, with default options */
 	public void writeTo(OutputStream out) throws IOException;
 }

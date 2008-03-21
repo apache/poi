@@ -40,7 +40,9 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTNumFmt;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTNumFmts;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTStylesheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTXf;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.StyleSheetDocument;;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.StyleSheetDocument;
+import javax.xml.namespace.QName;
+
 
 
 /**
@@ -92,21 +94,27 @@ public class StylesTable implements StylesSource, XSSFModel {
         	doc = StyleSheetDocument.Factory.parse(is);
         	
         	// Grab all the different bits we care about
+        	if(doc.getStyleSheet().getNumFmts() != null)
         	for (CTNumFmt nfmt : doc.getStyleSheet().getNumFmts().getNumFmtArray()) {
         		numberFormats.put(nfmt.getNumFmtId(), nfmt.getFormatCode());
         	}
+        	if(doc.getStyleSheet().getFonts() != null)
         	for (CTFont font : doc.getStyleSheet().getFonts().getFontArray()) {
         		fonts.add(font);
         	}
+        	if(doc.getStyleSheet().getFills() != null)
         	for (CTFill fill : doc.getStyleSheet().getFills().getFillArray()) {
         		fills.add(fill);
         	}
+        	if(doc.getStyleSheet().getBorders() != null)
         	for (CTBorder border : doc.getStyleSheet().getBorders().getBorderArray()) {
         		borders.add(border);
         	}
+        	if(doc.getStyleSheet().getCellStyleXfs() != null)
         	for (CTXf xf : doc.getStyleSheet().getCellXfs().getXfArray()) {
         		xfs.add(xf);
         	}
+        	if(doc.getStyleSheet().getCellStyleXfs() != null)
         	for (CTXf xf : doc.getStyleSheet().getCellStyleXfs().getXfArray()) {
         		styleXfs.add(xf);
         	}
@@ -221,6 +229,15 @@ public class StylesTable implements StylesSource, XSSFModel {
     public void writeTo(OutputStream out) throws IOException {
         XmlOptions options = new XmlOptions();
         options.setSaveOuter();
+        options.setUseDefaultNamespace();
+        
+        // Requests use of whitespace for easier reading
+        options.setSavePrettyPrint();
+
+        // XXX This should not be needed, but apparently the setSaveOuter call above does not work in XMLBeans 2.2
+        options.setSaveSyntheticDocumentElement(
+        		new QName(CTStylesheet.type.getName().getNamespaceURI(), doc.getStyleSheet().getDomNode().getNodeName()));
+
         
         // Work on the current one
         // Need to do this, as we don't handle
@@ -254,6 +271,6 @@ public class StylesTable implements StylesSource, XSSFModel {
     	// TODO
     	
         // Save
-        doc.save(out);
+        doc.save(out, options);
     }
 }
