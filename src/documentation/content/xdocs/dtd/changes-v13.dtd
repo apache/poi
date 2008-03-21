@@ -1,5 +1,5 @@
 <!--
-  Copyright 1999-2004 The Apache Software Foundation
+  Copyright 2002-2004 The Apache Software Foundation
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -15,19 +15,19 @@
 -->
 <!-- ===================================================================
 
-     Apache Todos DTD (Version 1.1)
+     Apache Changes DTD (Version 1.2)
 
 PURPOSE:
   This DTD was developed to create a simple yet powerful document
-  type for software development todo lists for use with the Apache projects.
+  type for software development changes for use with the Apache projects.
   It is an XML-compliant DTD and it's maintained by the Apache XML
   project.
 
 TYPICAL INVOCATION:
 
-  <!DOCTYPE todo PUBLIC
-       "-//APACHE//DTD Todo Vx.y//EN"
-       "todo-vxy.dtd">
+  <!DOCTYPE document PUBLIC
+       "-//APACHE//DTD Changes Vx.y//EN"
+       "changes-vxy.dtd">
 
   where
 
@@ -36,22 +36,21 @@ TYPICAL INVOCATION:
 
 NOTES:
   It is important, expecially in open developped software projects, to keep
-  track of software changes that need to be done, planned features, development
-  assignment, etc. in order to allow better work parallelization and create
-  an entry point for people that want to help. This DTD wants to provide
-  a solid foundation to provide such information and to allow it to be
-  published as well as distributed in a common format.
+  track of software changes both to give users indications of bugs that might
+  have been resolved, as well, and not less important, to provide credits
+  for the support given to the project. It is considered vital to provide
+  adequate payback using recognition and credits to let users and developers
+  feel part of the community, thus increasing development power.
 
 FIXME:
-  - do we need anymore working contexts? (SM)
 
 CHANGE HISTORY:
 [Version 1.0]
-  19991129 Initial version. (SM)
-  19991225 Added actions element for better structure (SM)
-[Version 1.1]
-  20011212 Used public identifiers for external entities (SM)
+  20020611 Initial version. (SN)
   20020613 Include the module of ISO character entity sets (DC)
+[Version 1.2]
+  20030424 Adopt the loosened content model from document-v12 (JT)
+  20040614 Stay current with latest document-v13 (class attribute)
 
 ==================================================================== -->
 
@@ -60,8 +59,8 @@ CHANGE HISTORY:
 <!-- =============================================================== -->
 
 <!ENTITY % document PUBLIC
-    "-//APACHE//ENTITIES Documentation V1.1//EN"
-    "document-v11.mod">
+    "-//APACHE//ENTITIES Documentation V1.3//EN"
+    "document-v13.mod">
 %document;
 
 <!-- =============================================================== -->
@@ -83,13 +82,13 @@ CHANGE HISTORY:
 %common;
 
 <!-- =============================================================== -->
-<!-- Include the Todo module -->
+<!-- Include the Changes module -->
 <!-- =============================================================== -->
 
-<!ENTITY % todo PUBLIC
-    "-//APACHE//ENTITIES Todo V1.1//EN"
-    "todo-v11.mod">
-%todo;
+<!ENTITY % changes PUBLIC
+    "-//APACHE//ENTITIES Changes V1.1//EN"
+    "changes-v11.mod">
+%changes;
 
 <!-- =============================================================== -->
 <!-- End of DTD -->
