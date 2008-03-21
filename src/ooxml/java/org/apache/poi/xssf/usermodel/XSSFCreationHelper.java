@@ -27,7 +27,7 @@ public class XSSFCreationHelper implements CreationHelper {
 		workbook = wb;
 		
 		// Create the things we only ever need one of
-		dataFormat = new XSSFDataFormat();
+		dataFormat = new XSSFDataFormat(workbook.getStylesSource());
 	}
 	
     /**

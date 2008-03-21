@@ -17,16 +17,23 @@
 package org.apache.poi.xssf.usermodel;
 
 import org.apache.poi.ss.usermodel.DataFormat;
+import org.apache.poi.ss.usermodel.StylesSource;
 
 /**
- * TODO - figure out how this should really work for XSSF
+ * Handles data formats for XSSF.
+ * TODO Figure out if there are build in formats too 
  */
 public class XSSFDataFormat implements DataFormat {
+	private StylesSource stylesSource;
+	public XSSFDataFormat(StylesSource stylesSource) {
+		this.stylesSource = stylesSource;
+	}
+	
 	public short getFormat(String format) {
-		return -1;
+		return (short)stylesSource.putNumberFormat(format);
 	}
 
 	public String getFormat(short index) {
-		return null;
+		return stylesSource.getNumberFormatAt((long)index);
 	}
 }

@@ -23,6 +23,7 @@ import java.io.OutputStream;
 
 import junit.framework.TestCase;
 
+import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.StylesSource;
 import org.apache.poi.xssf.model.StylesTable;
@@ -158,8 +159,10 @@ public class TestXSSFWorkbook extends TestCase {
         Sheet sheet2 = workbook.createSheet("sheet2");
         Sheet sheet3 = workbook.createSheet("sheet3");
         
-        sheet1.createRow(0);
-        sheet1.createRow(1);
+        RichTextString rts = workbook.getCreationHelper().createRichTextString("hello world");
+        
+        sheet1.createRow(0).createCell((short)0).setCellValue(1.2);
+        sheet1.createRow(1).createCell((short)0).setCellValue(rts);
         sheet2.createRow(0);
         
         assertEquals(0, workbook.getSheetAt(0).getFirstRowNum());
@@ -184,9 +187,9 @@ public class TestXSSFWorkbook extends TestCase {
         
         PackagePart wbPart = 
         	pkg.getPart(PackagingURIHelper.createPartName("/xl/workbook.xml"));
-        // Links to the three sheets
+        // Links to the three sheets, shared strings and styles
         assertTrue(wbPart.hasRelationships());
-        assertEquals(3, wbPart.getRelationships().size());
+        assertEquals(5, wbPart.getRelationships().size());
         
         // Load back the XSSFWorkbook
         workbook = new XSSFWorkbook(pkg);
@@ -195,12 +198,19 @@ public class TestXSSFWorkbook extends TestCase {
         assertNotNull(workbook.getSheetAt(1));
         assertNotNull(workbook.getSheetAt(2));
         
+        assertNotNull(workbook.getSharedStringSource());
+        assertNotNull(workbook.getStylesSource());
+        
         assertEquals(0, workbook.getSheetAt(0).getFirstRowNum());
         assertEquals(1, workbook.getSheetAt(0).getLastRowNum());
         assertEquals(0, workbook.getSheetAt(1).getFirstRowNum());
         assertEquals(0, workbook.getSheetAt(1).getLastRowNum());
         assertEquals(-1, workbook.getSheetAt(2).getFirstRowNum());
         assertEquals(-1, workbook.getSheetAt(2).getLastRowNum());
+        
+        sheet1 = workbook.getSheetAt(0);
+        assertEquals(1.2, sheet1.getRow(0).getCell(0).getNumericCellValue(), 0.0001);
+        assertEquals("hello world", sheet1.getRow(1).getCell(0).getRichStringCellValue().getString());
     }
     
     public void testExisting() throws Exception {

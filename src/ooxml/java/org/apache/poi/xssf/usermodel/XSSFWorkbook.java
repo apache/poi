@@ -165,6 +165,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
             PackageRelationship rel =
             	corePart.addRelationship(ppName, TargetMode.INTERNAL, REL);
             PackagePart part = corePart.getPackage().createPart(ppName, TYPE);
+            
             OutputStream out = part.getOutputStream();
             model.writeTo(out);
             out.close();
@@ -188,6 +189,10 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         CTBookView bv = bvs.addNewWorkbookView();
         bv.setActiveTab(0);
         this.workbook.addNewSheets();
+        
+        // We always require styles and shared strings
+        sharedStringSource = new SharedStringsTable();
+        stylesSource = new StylesTable();
     }
     
     public XSSFWorkbook(String path) throws IOException {
@@ -203,11 +208,16 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 	            // Load shared strings
 	            this.sharedStringSource = (SharedStringSource)
 	            	SHARED_STRINGS.load(getCorePart());
+            } catch(Exception e) {
+            	throw new IOException("Unable to load shared strings - " + e.toString());
+            }
+            try {
 	            // Load styles source
 	            this.stylesSource = (StylesSource)
 	            	STYLES.load(getCorePart());
             } catch(Exception e) {
-            	throw new IOException(e.getMessage());
+            	e.printStackTrace();
+            	throw new IOException("Unable to load styles - " + e.toString());
             }
             
             // Load individual sheets
@@ -617,6 +627,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
                  
                 // Update our internal reference for the package part
                 workbook.getSheets().getSheetArray(i).setId(rel.getId());
+                workbook.getSheets().getSheetArray(i).setSheetId(sheetNumber);
             }
              
             // Write shared strings and styles
