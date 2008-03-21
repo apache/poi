@@ -140,13 +140,15 @@ under the License.
   <property name="ooxml.jar1.url" value="${repository}/dom4j/jars/dom4j-1.6.1.jar"/>
   <property name="ooxml.jar2.dir" location="${ooxml.lib}/jaxen-1.1.jar"/>
   <property name="ooxml.jar2.url" value="${repository}/jaxen/jars/jaxen-1.1.jar"/>
-  <property name="ooxml.jar3.dir" location="${ooxml.lib}/xmlbeans-2.3.0.jar"/>
-  <property name="ooxml.jar3.url" value="${repository}/org.apache.xmlbeans/jars/xmlbeans-2.3.0.jar"/>
-  <property name="ooxml.jar4.dir" location="${ooxml.lib}/jsr173_1.0_api.jar"/>
-  <property name="ooxml.jar4.url" value="${repository}/xmlbeans/jars/jsr173_1.0_api.jar"/>
+  <property name="ooxml.jar3.dir" location="${ooxml.lib}/xercesImpl-2.8.1.jar"/>
+  <property name="ooxml.jar3.url" value="${repository}/xerces/jars/xercesImpl-2.8.1.jar"/>
+  <property name="ooxml.jar4.dir" location="${ooxml.lib}/xmlbeans-2.3.0.jar"/>
+  <property name="ooxml.jar4.url" value="${repository}/org.apache.xmlbeans/jars/xmlbeans-2.3.0.jar"/>
+  <property name="ooxml.jar5.dir" location="${ooxml.lib}/jsr173_1.0_api.jar"/>
+  <property name="ooxml.jar5.url" value="${repository}/xmlbeans/jars/jsr173_1.0_api.jar"/>
   <!-- No official release of openxml4j yet -->
-  <property name="ooxml.jar5.dir" location="${ooxml.lib}/openxml4j-bin-alpha-080311.jar"/>
-  <property name="ooxml.jar5.url" value="http://people.apache.org/~nick/openxml4j-bin-alpha-080311.jar"/>
+  <property name="ooxml.jar6.dir" location="${ooxml.lib}/openxml4j-bin-alpha-080311.jar"/>
+  <property name="ooxml.jar6.url" value="http://people.apache.org/~nick/openxml4j-bin-alpha-080311.jar"/>
 
   <!-- See http://www.ecma-international.org/publications/standards/Ecma-376.htm -->
   <!-- "Copy these file(s), free of charge" -->
@@ -219,6 +221,20 @@ under the License.
 		</fileset>
     </path>
 
+    <path id="test.classpath">
+        <path refid="main.classpath"/>
+        <pathelement location="${main.output.dir}"/>
+        <pathelement location="${main.output.test.dir}"/>
+        <pathelement location="${junit.jar1.dir}"/>
+    </path>
+
+    <path id="test.ooxml.classpath">
+        <path refid="ooxml.classpath"/>
+        <pathelement location="${ooxml.output.dir}"/>
+        <pathelement location="${ooxml.output.test.dir}"/>
+        <pathelement location="${junit.jar1.dir}"/>
+    </path>
+
 
   <path id="examples.classpath">
     <path refid="main.classpath"/>
@@ -248,6 +264,8 @@ under the License.
           connection to the Internet.
       -Dtestcase=org.apache.poi.xxx.xxx : for the single-test target, specify
 	      the test to run
+      -Dfilename=xxxx.xls : for the command line task targets, specify the
+          file to run against
 
       WARNING: This list is not exhaustive.
     </echo>
@@ -499,7 +517,12 @@ under the License.
   <target name="compile-examples" depends="init">
     <javac target="${jdk.version.class}" source="${jdk.version.source}"
       destdir="${examples.output.dir}" debug="on" srcdir="${examples.src}">
-      <classpath refid="examples.classpath"/>
+      <classpath>
+        <path refid="examples.classpath"/>
+        <path refid="ooxml.classpath"/>
+        <pathelement location="${ooxml.output.dir}"/>
+        <pathelement location="${junit.jar1.dir}"/>
+      </classpath>
     </javac>
   </target>
 
@@ -530,13 +553,6 @@ under the License.
             <srcfiles dir="${main.src.test}"/>
         </uptodate>
     </target>
-
-    <path id="test.classpath">
-        <path refid="main.classpath"/>
-        <pathelement location="${main.output.dir}"/>
-        <pathelement location="${main.output.test.dir}"/>
-        <pathelement location="${junit.jar1.dir}"/>
-    </path>
 
   <target name="test-main" unless="main.test.notRequired"
     depends="compile-main, -test-main-check, fail-unless-junit-is-available">
@@ -756,13 +772,7 @@ under the License.
 
     <target name="test-ooxml" depends="compile-main,compile-ooxml,-test-ooxml-check" unless="ooxml.test.notRequired">
         <junit printsummary="yes" fork="no" haltonfailure="${halt.on.test.failure}" failureproperty="ooxml.test.failed">
-            <classpath>
-                <path refid="ooxml.classpath"/>
-                <pathelement location="${main.output.dir}"/>
-                <pathelement location="${ooxml.output.dir}"/>
-                <pathelement location="${ooxml.output.test.dir}"/>
-                <pathelement location="${junit.jar1.dir}"/>
-            </classpath>
+            <classpath refid="test.ooxml.classpath" />
             <sysproperty key="HSSF.testdata.path" file="${main.src.test}/org/apache/poi/hssf/data"/>
             <sysproperty key="HWPF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hwpf/data"/>
             <sysproperty key="HSLF.testdata.path" file="${scratchpad.src.test}/org/apache/poi/hslf/data"/>
@@ -1411,6 +1421,35 @@ FORREST_HOME environment variable!</echo>
       in="${jdepend.report.dir}/jdepend.xml"
       out="${jdepend.report.out.dir}/index.html"
       style="jdepend.xsl"/>
+  </target>
+
+
+  <target name="-require-filename" description="Ensure -Dfilename=... was given">
+     <fail unless="filename" message="A filename must be supplied with -Dfilename=, eg -Dfilename=test.xls" />
+  </target>
+
+  <!-- These tasks make it easy to run our command line tools, -->
+  <!--  without you needing to worry about classpaths etc -->
+  <target name="POIFSViewer" depends="compile-main,-require-filename"
+    description="Runs poifs.dev.POIFSViewer against the supplied file">
+    <java classname="org.apache.poi.poifs.dev.POIFSViewer">
+        <arg line="${filename}" />
+        <classpath refid="test.classpath"/>
+    </java>
+  </target>
+  <target name="OOXMLLister" depends="compile-ooxml,-require-filename"
+    description="Runs dev.OOXMLLister against the supplied file">
+    <java classname="org.apache.poi.dev.OOXMLLister">
+        <arg line="${filename}" />
+        <classpath refid="test.ooxml.classpath"/>
+    </java>
+  </target>
+  <target name="BiffViewer" depends="compile-main,-require-filename"
+    description="Runs hssf.dev.BiffViewer against the supplied file">
+    <java classname="org.apache.poi.hssf.dev.BiffViewer">
+        <arg line="${filename}" />
+        <classpath refid="test.classpath"/>
+    </java>
   </target>
 
 </project>
