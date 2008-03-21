@@ -29,6 +29,10 @@ import org.apache.poi.xssf.model.StylesTable;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbook;
 
+import org.openxml4j.opc.ContentTypes;
+import org.openxml4j.opc.Package;
+import org.openxml4j.opc.PackagePart;
+import org.openxml4j.opc.PackagingURIHelper;
 
 public class TestXSSFWorkbook extends TestCase {
     public TestXSSFWorkbook(String name) {
@@ -170,8 +174,22 @@ public class TestXSSFWorkbook extends TestCase {
         workbook.write(out);
         out.close();
         
-        // Load back in again
-        workbook = new XSSFWorkbook(file.toString());
+        // Check the package contains what we'd expect it to
+        Package pkg = Package.open(file.toString());
+        PackagePart wbRelPart = 
+        	pkg.getPart(PackagingURIHelper.createPartName("/xl/_rels/workbook.xml.rels"));
+        assertNotNull(wbRelPart);
+        assertTrue(wbRelPart.isRelationshipPart());
+        assertEquals(ContentTypes.RELATIONSHIPS_PART, wbRelPart.getContentType());
+        
+        PackagePart wbPart = 
+        	pkg.getPart(PackagingURIHelper.createPartName("/xl/workbook.xml"));
+        // Links to the three sheets
+        assertTrue(wbPart.hasRelationships());
+        assertEquals(3, wbPart.getRelationships().size());
+        
+        // Load back the XSSFWorkbook
+        workbook = new XSSFWorkbook(pkg);
         assertEquals(3, workbook.getNumberOfSheets());
         assertNotNull(workbook.getSheetAt(0));
         assertNotNull(workbook.getSheetAt(1));
@@ -195,6 +213,16 @@ public class TestXSSFWorkbook extends TestCase {
 		XSSFWorkbook workbook = new XSSFWorkbook(xml.toString());
 		assertNotNull(workbook.getSharedStringSource());
 		assertNotNull(workbook.getStylesSource());
+		
+		// And check a few low level bits too
+		Package pkg = Package.open(xml.toString());
+        PackagePart wbPart = 
+        	pkg.getPart(PackagingURIHelper.createPartName("/xl/workbook.xml"));
+        
+        // Links to the three sheets, shared, styles and themes
+        assertTrue(wbPart.hasRelationships());
+        assertEquals(6, wbPart.getRelationships().size());
+
     }
     
     public void testLoadSave() throws Exception {
