@@ -130,7 +130,10 @@ public class TestXSSFWorkbook extends TestCase {
         assertEquals(0, workbook.getNumberOfSheets());
     }
     
-    public void testSave() throws Exception {
+    /**
+     * Tests that we can save a new document
+     */
+    public void testSaveNew() throws Exception {
         XSSFWorkbook workbook = new XSSFWorkbook();
         Sheet sheet1 = workbook.createSheet("sheet1");
         Sheet sheet2 = workbook.createSheet("sheet2");
@@ -140,6 +143,46 @@ public class TestXSSFWorkbook extends TestCase {
         OutputStream out = new FileOutputStream(file);
         workbook.write(out);
         out.close();
+    }
+
+    /**
+     * Tests that we can save, and then re-load a new document
+     */
+    public void testSaveLoadNew() throws Exception {
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        Sheet sheet1 = workbook.createSheet("sheet1");
+        Sheet sheet2 = workbook.createSheet("sheet2");
+        Sheet sheet3 = workbook.createSheet("sheet3");
+        
+        sheet1.createRow(0);
+        sheet1.createRow(1);
+        sheet2.createRow(0);
+        
+        assertEquals(0, workbook.getSheetAt(0).getFirstRowNum());
+        assertEquals(1, workbook.getSheetAt(0).getLastRowNum());
+        assertEquals(0, workbook.getSheetAt(1).getFirstRowNum());
+        assertEquals(0, workbook.getSheetAt(1).getLastRowNum());
+        assertEquals(-1, workbook.getSheetAt(2).getFirstRowNum());
+        assertEquals(-1, workbook.getSheetAt(2).getLastRowNum());
+        
+        File file = File.createTempFile("poi-", ".xlsx");
+        OutputStream out = new FileOutputStream(file);
+        workbook.write(out);
+        out.close();
+        
+        // Load back in again
+        workbook = new XSSFWorkbook(file.toString());
+        assertEquals(3, workbook.getNumberOfSheets());
+        assertNotNull(workbook.getSheetAt(0));
+        assertNotNull(workbook.getSheetAt(1));
+        assertNotNull(workbook.getSheetAt(2));
+        
+        assertEquals(0, workbook.getSheetAt(0).getFirstRowNum());
+        assertEquals(1, workbook.getSheetAt(0).getLastRowNum());
+        assertEquals(0, workbook.getSheetAt(1).getFirstRowNum());
+        assertEquals(0, workbook.getSheetAt(1).getLastRowNum());
+        assertEquals(-1, workbook.getSheetAt(2).getFirstRowNum());
+        assertEquals(-1, workbook.getSheetAt(2).getLastRowNum());
     }
     
     public void testExisting() throws Exception {
