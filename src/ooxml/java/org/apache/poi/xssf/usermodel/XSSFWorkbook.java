@@ -67,6 +67,12 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.WorksheetDocument;
 
 
 public class XSSFWorkbook extends POIXMLDocument implements Workbook {
+	public static final XSSFRelation WORKBOOK = new XSSFRelation(
+			"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml",
+			"http://schemas.openxmlformats.org/officeDocument/2006/relationships/workbook",
+			"/xl/workbook.xml",
+			null
+	);
 	public static final XSSFRelation WORKSHEET = new XSSFRelation(
 			"application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml",
 			"http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet",
@@ -140,25 +146,30 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 		}
 		/**
 		 * Save, with the default name
+		 * @return The internal reference ID it was saved at, normally then used as an r:id
 		 */
-		private void save(XSSFModel model, PackagePart corePart) throws IOException {
-			save(model, corePart, DEFAULT_NAME);
+		private String save(XSSFModel model, PackagePart corePart) throws IOException {
+			return save(model, corePart, DEFAULT_NAME);
 		}
 		/**
 		 * Save, with the specified name
+		 * @return The internal reference ID it was saved at, normally then used as an r:id
 		 */
-		private void save(XSSFModel model, PackagePart corePart, String name) throws IOException {
+		private String save(XSSFModel model, PackagePart corePart, String name) throws IOException {
             PackagePartName ppName = null;
             try {
             	ppName = PackagingURIHelper.createPartName(name);
             } catch(InvalidFormatException e) {
             	throw new IllegalStateException(e);
             }
-            corePart.addRelationship(ppName, TargetMode.INTERNAL, REL);
+            PackageRelationship rel =
+            	corePart.addRelationship(ppName, TargetMode.INTERNAL, REL);
             PackagePart part = corePart.getPackage().createPart(ppName, TYPE);
             OutputStream out = part.getOutputStream();
             model.writeTo(out);
             out.close();
+            
+            return rel.getId();
 		}
 	}
 	
@@ -203,7 +214,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
             for (CTSheet ctSheet : this.workbook.getSheets().getSheetArray()) {
                 PackagePart part = getPackagePart(ctSheet);
                 if (part == null) {
-                	log.log(POILogger.WARN, "Sheet with name " + ctSheet.getName() + " was defined, but didn't exist, skipping");
+                	log.log(POILogger.WARN, "Sheet with name " + ctSheet.getName() + " and r:id " + ctSheet.getId()+ " was defined, but didn't exist in package, skipping");
                     continue;
                 }
                 WorksheetDocument worksheetDoc = WorksheetDocument.Factory.parse(part.getInputStream());
@@ -231,7 +242,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     private PackagePart getPackagePart(CTSheet ctSheet) throws InvalidFormatException {
         PackageRelationship rel = this.getCorePart().getRelationship(ctSheet.getId());
         if (rel == null) {
-            log.log(POILogger.WARN, "No relationship found for sheet " + ctSheet.getId());
+            log.log(POILogger.WARN, "No relationship found for sheet " + ctSheet.getId() + " - core part has " + this.getCorePart().getRelationships().size() + " relations defined");
             return null;
         }
         return getTargetPart(rel);
@@ -579,46 +590,55 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
             // Create main part relationship
             pkg.addRelationship(corePartName, TargetMode.INTERNAL, PackageRelationshipTypes.CORE_DOCUMENT, "rId1");
             // Create main document part
-            PackagePart corePart = pkg.createPart(corePartName,
-                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml");
+            PackagePart corePart = pkg.createPart(corePartName, WORKBOOK.getContentType());
+            OutputStream out;
+
             XmlOptions xmlOptions = new XmlOptions();
-             // Requests use of whitespace for easier reading
-             xmlOptions.setSavePrettyPrint();
-             xmlOptions.setSaveOuter();
-             // XXX This should not be needed, but apparently the setSaveOuter call above does not work in XMLBeans 2.2
-             xmlOptions.setSaveSyntheticDocumentElement(new QName(CTWorkbook.type.getName().getNamespaceURI(), "workbook"));
-             xmlOptions.setUseDefaultNamespace();
-             
-             OutputStream out = corePart.getOutputStream();
-             workbook.save(out, xmlOptions);
-             out.close();
-             
-             for (int i = 0 ; i < this.getNumberOfSheets() ; ++i) {
-            	 XSSFSheet sheet = (XSSFSheet) this.getSheetAt(i);
-                 PackagePartName partName = PackagingURIHelper.createPartName("/xl/worksheets/sheet" + i + ".xml");
-                 corePart.addRelationship(partName, TargetMode.INTERNAL, WORKSHEET.getRelation(), "rSheet" + 1);
-                 PackagePart part = pkg.createPart(partName, WORKSHEET.getContentType());
+            // Requests use of whitespace for easier reading
+            xmlOptions.setSavePrettyPrint();
+            xmlOptions.setSaveOuter();
+            xmlOptions.setUseDefaultNamespace();
+            
+            // Write out our sheets, updating the references
+            //  to them in the main workbook as we go
+            for (int i=0 ; i < this.getNumberOfSheets(); i++) {
+            	int sheetNumber = (i+1);
+            	XSSFSheet sheet = (XSSFSheet) this.getSheetAt(i);
+                PackagePartName partName = PackagingURIHelper.createPartName("/xl/worksheets/sheet" + sheetNumber + ".xml");
+                PackageRelationship rel =
+                	 corePart.addRelationship(partName, TargetMode.INTERNAL, WORKSHEET.getRelation(), "rSheet" + sheetNumber);
+                PackagePart part = pkg.createPart(partName, WORKSHEET.getContentType());
                  
-                 // XXX This should not be needed, but apparently the setSaveOuter call above does not work in XMLBeans 2.2
-                 xmlOptions.setSaveSyntheticDocumentElement(new QName(CTWorksheet.type.getName().getNamespaceURI(), "worksheet"));
-                 out = part.getOutputStream();
-                 sheet.getWorksheet().save(out, xmlOptions);
+                // XXX This should not be needed, but apparently the setSaveOuter call above does not work in XMLBeans 2.2
+                xmlOptions.setSaveSyntheticDocumentElement(new QName(CTWorksheet.type.getName().getNamespaceURI(), "worksheet"));
+                out = part.getOutputStream();
+                sheet.getWorksheet().save(out, xmlOptions);
+                out.close();
                  
-                 out.close();
-             }
+                // Update our internal reference for the package part
+                workbook.getSheets().getSheetArray(i).setId(rel.getId());
+            }
              
-             // Write shared strings and styles
-             if(sharedStringSource != null) {
+            // Write shared strings and styles
+            if(sharedStringSource != null) {
 	             SharedStringsTable sst = (SharedStringsTable)sharedStringSource;
 	             SHARED_STRINGS.save(sst, corePart);
-             }
-             if(stylesSource != null) {
+            }
+            if(stylesSource != null) {
 	             StylesTable st = (StylesTable)stylesSource;
 	             STYLES.save(st, corePart);
-             }
+            }
 
-             //  All done
-             pkg.close();
+            // Now we can write out the main Workbook, with
+            //  the correct references to the other parts
+            out = corePart.getOutputStream();
+            // XXX This should not be needed, but apparently the setSaveOuter call above does not work in XMLBeans 2.2
+            xmlOptions.setSaveSyntheticDocumentElement(new QName(CTWorkbook.type.getName().getNamespaceURI(), "workbook"));
+            workbook.save(out, xmlOptions);
+            out.close();
+             
+            //  All done
+            pkg.close();
         } catch (InvalidFormatException e) {
             // TODO: replace with more meaningful exception
             throw new RuntimeException(e);
