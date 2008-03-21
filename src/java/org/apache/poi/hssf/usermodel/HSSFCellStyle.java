@@ -20,7 +20,7 @@ package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.hssf.model.Workbook;
 import org.apache.poi.hssf.record.ExtendedFormatRecord;
-import org.apache.poi.hssf.util.*;
+import org.apache.poi.hssf.util.HSSFColor;
 
 /**
  * High level representation of the style of a cell in a sheet of a workbook.
@@ -38,6 +38,7 @@ public class HSSFCellStyle
 {
     private ExtendedFormatRecord format                     = null;
     private short                index                      = 0;
+    private Workbook             workbook                   = null;
 
     /**
      * general (normal) horizontal alignment
@@ -230,9 +231,13 @@ public class HSSFCellStyle
 
 
     /** Creates new HSSFCellStyle why would you want to do this?? */
-
-    protected HSSFCellStyle(short index, ExtendedFormatRecord rec)
+    protected HSSFCellStyle(short index, ExtendedFormatRecord rec, HSSFWorkbook workbook)
     {
+    	this(index, rec, workbook.getWorkbook());
+    }
+    protected HSSFCellStyle(short index, ExtendedFormatRecord rec, Workbook workbook)
+    {
+        this.workbook = workbook;
         this.index = index;
         format     = rec;
     }
@@ -270,6 +275,16 @@ public class HSSFCellStyle
     
     /**
      * Get the contents of the format string, by looking up
+     *  the DataFormat against the bound workbook
+     * @see org.apache.poi.hssf.usermodel.HSSFDataFormat
+     */
+    public String getDataFormatString() {
+    	HSSFDataFormat format = new HSSFDataFormat(workbook);
+    	
+        return format.getFormat(getDataFormat());
+    }
+    /**
+     * Get the contents of the format string, by looking up
      *  the DataFormat against the supplied workbook
      * @see org.apache.poi.hssf.usermodel.HSSFDataFormat
      */
@@ -289,7 +304,7 @@ public class HSSFCellStyle
     public void setFont(HSSFFont font)
     {
         format.setIndentNotParentFont(true);
-        short fontindex = font.getIndex();
+        short fontindex = ((HSSFFont) font).getIndex();
         format.setFontIndex(fontindex);
     }
 
@@ -309,7 +324,7 @@ public class HSSFCellStyle
      * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#getFontAt(short)
      */
     public HSSFFont getFont(HSSFWorkbook parentWorkbook) {
-    	return parentWorkbook.getFontAt(getFontIndex());
+    	return ((HSSFWorkbook) parentWorkbook).getFontAt(getFontIndex());
     }
 
     /**
