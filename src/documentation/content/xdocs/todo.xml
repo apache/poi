@@ -18,7 +18,7 @@
    ====================================================================
 -->
 
-<!DOCTYPE todo PUBLIC "-//APACHE//DTD Todo V1.1//EN" "./dtd/todo-v11.dtd">
+<!DOCTYPE todo PUBLIC "-//APACHE//DTD Todo V1.3//EN" "./dtd/todo-v13.dtd">
 
 <todo><title>Things To Do for Poi</title>
 
