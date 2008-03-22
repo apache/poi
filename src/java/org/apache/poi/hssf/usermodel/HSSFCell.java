@@ -215,7 +215,7 @@ public class HSSFCell implements Cell
         }
         ExtendedFormatRecord xf = book.getExFormatAt(cval.getXFIndex());
 
-        setCellStyle(new HSSFCellStyle(( short ) cval.getXFIndex(), xf));
+        setCellStyle(new HSSFCellStyle(( short ) cval.getXFIndex(), xf, book));
     }
 
     /**
@@ -921,7 +921,7 @@ public class HSSFCell implements Cell
     {
       short styleIndex=record.getXFIndex();
       ExtendedFormatRecord xf = book.getExFormatAt(styleIndex);
-      return new HSSFCellStyle(styleIndex, xf);
+      return new HSSFCellStyle(styleIndex, xf, book);
     }
 
     /**

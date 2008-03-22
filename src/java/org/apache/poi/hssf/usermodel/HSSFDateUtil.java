@@ -281,7 +281,7 @@ public class HSSFDateUtil
         if ( HSSFDateUtil.isValidExcelDate(d) ) {
             HSSFCellStyle style = cell.getCellStyle();
             int i = style.getDataFormat();
-            String f = style.getDataFormatString(cell.getBoundWorkbook());
+            String f = style.getDataFormatString();
             bDate = isADateFormat(i, f);
         }
         return bDate;

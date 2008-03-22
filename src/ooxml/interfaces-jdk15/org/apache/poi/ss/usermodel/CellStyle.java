@@ -245,8 +245,12 @@ public interface CellStyle {
      * get the index of the format
      * @see org.apache.poi.hssf.usermodel.HSSFDataFormat
      */
-
     short getDataFormat();
+
+    /**
+     * Get the format string
+     */
+    public String getDataFormatString();
 
     /**
      * Get the contents of the format string, by looking up

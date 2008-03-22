@@ -919,7 +919,7 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
     {
         ExtendedFormatRecord xfr = workbook.createCellXF();
         short index = (short) (getNumCellStyles() - 1);
-        HSSFCellStyle style = new HSSFCellStyle(index, xfr);
+        HSSFCellStyle style = new HSSFCellStyle(index, xfr, this);
 
         return style;
     }
@@ -943,7 +943,7 @@ public class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.userm
     public HSSFCellStyle getCellStyleAt(short idx)
     {
         ExtendedFormatRecord xfr = workbook.getExFormatAt(idx);
-        HSSFCellStyle style = new HSSFCellStyle(idx, xfr);
+        HSSFCellStyle style = new HSSFCellStyle(idx, xfr, this);
 
         return style;
     }

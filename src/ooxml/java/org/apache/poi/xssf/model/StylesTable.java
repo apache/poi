@@ -33,6 +33,8 @@ import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorder;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellStyleXfs;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellXfs;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFill;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFont;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFonts;
@@ -81,6 +83,9 @@ public class StylesTable implements StylesSource, XSSFModel {
     public StylesTable() {
     	doc = StyleSheetDocument.Factory.newInstance();
     	doc.addNewStyleSheet();
+    	
+    	// Add a single, default cell style xf
+    	xfs.add(CTXf.Factory.newInstance());
     }
 
     /**
@@ -110,7 +115,7 @@ public class StylesTable implements StylesSource, XSSFModel {
         	for (CTBorder border : doc.getStyleSheet().getBorders().getBorderArray()) {
         		borders.add(border);
         	}
-        	if(doc.getStyleSheet().getCellStyleXfs() != null)
+        	if(doc.getStyleSheet().getCellXfs() != null)
         	for (CTXf xf : doc.getStyleSheet().getCellXfs().getXfArray()) {
         		xfs.add(xf);
         	}
@@ -161,18 +166,25 @@ public class StylesTable implements StylesSource, XSSFModel {
     }
     
     public CellStyle getStyleAt(long idx) {
-    	CTXf mainXf = styleXfs.get((int)idx);
+    	CTXf mainXf = xfs.get((int)idx);
     	CTXf styleXf = null;
-    	if(mainXf.getXfId() > -1) {
+    	
+    	// 0 is the empty default
+    	if(mainXf.getXfId() > 0) {
     		styleXf = styleXfs.get((int)mainXf.getXfId());
     	}
     	
 		return new XSSFCellStyle(mainXf, styleXf, this);
 	}
-	public long putStyle(CellStyle style) {
-		// TODO
-		return -1;
-	}
+    public synchronized long putStyle(CellStyle style) {
+    	XSSFCellStyle xStyle = (XSSFCellStyle)style;
+    	CTXf mainXF = xStyle.getCoreXf();
+    	
+    	if(! xfs.contains(mainXF)) {
+    		xfs.add(mainXF);
+    	}
+		return xfs.indexOf(mainXF);
+    }
 	
 	public XSSFCellBorder getBorderAt(long idx) {
 		return new XSSFCellBorder(borders.get((int)idx));
@@ -268,7 +280,24 @@ public class StylesTable implements StylesSource, XSSFModel {
     	// TODO
     	
     	// Xfs
-    	// TODO
+    	if(xfs.size() > 0) {
+	    	CTCellXfs ctXfs = CTCellXfs.Factory.newInstance();
+	    	ctXfs.setCount(xfs.size());
+	    	ctXfs.setXfArray(
+	    			xfs.toArray(new CTXf[xfs.size()])
+	    	);
+	    	doc.getStyleSheet().setCellXfs(ctXfs);
+    	}
+    	
+    	// Style xfs
+    	if(styleXfs.size() > 0) {
+        	CTCellStyleXfs ctSXfs = CTCellStyleXfs.Factory.newInstance();
+        	ctSXfs.setCount(styleXfs.size());
+        	ctSXfs.setXfArray(
+        			styleXfs.toArray(new CTXf[styleXfs.size()])
+        	);
+        	doc.getStyleSheet().setCellStyleXfs(ctSXfs);
+    	}
     	
         // Save
         doc.save(out, options);

@@ -239,8 +239,13 @@ public class XSSFCell implements Cell {
     }
 
     public void setCellStyle(CellStyle style) {
-        // TODO Auto-generated method stub
-
+    	if(style == null) {
+    		this.cell.setS(0);
+    	} else {
+    		this.cell.setS(
+    			row.getSheet().getWorkbook().getStylesSource().putStyle(style)
+    		);
+    	}
     }
 
     public void setCellType(int cellType) {

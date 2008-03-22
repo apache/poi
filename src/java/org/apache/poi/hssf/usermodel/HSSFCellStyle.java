@@ -40,6 +40,7 @@ public class HSSFCellStyle implements CellStyle
 {
     private ExtendedFormatRecord format                     = null;
     private short                index                      = 0;
+    private Workbook             workbook                   = null;
 
     /**
      * general (normal) horizontal alignment
@@ -232,9 +233,13 @@ public class HSSFCellStyle implements CellStyle
 
 
     /** Creates new HSSFCellStyle why would you want to do this?? */
-
-    protected HSSFCellStyle(short index, ExtendedFormatRecord rec)
+    protected HSSFCellStyle(short index, ExtendedFormatRecord rec, HSSFWorkbook workbook)
     {
+    	this(index, rec, workbook.getWorkbook());
+    }
+    protected HSSFCellStyle(short index, ExtendedFormatRecord rec, Workbook workbook)
+    {
+        this.workbook = workbook;
         this.index = index;
         format     = rec;
     }
@@ -275,7 +280,7 @@ public class HSSFCellStyle implements CellStyle
      *  the DataFormat against the supplied workbook
      * @see org.apache.poi.hssf.usermodel.HSSFDataFormat
      */
-    public String getDataFormatString(Workbook workbook) {
+    public String getDataFormatString() {
     	HSSFDataFormat format = new HSSFDataFormat(workbook);
     	
         return format.getFormat(getDataFormat());
