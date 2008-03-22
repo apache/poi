@@ -301,13 +301,11 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     }
 
     public CellStyle createCellStyle() {
-        // TODO Auto-generated method stub
-        return null;
+    	return new XSSFCellStyle(stylesSource);
     }
 
     public DataFormat createDataFormat() {
-        // TODO Auto-generated method stub
-        return null;
+    	return getCreationHelper().createDataFormat();
     }
 
     public Font createFont() {

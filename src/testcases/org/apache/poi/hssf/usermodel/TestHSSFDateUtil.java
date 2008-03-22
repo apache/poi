@@ -322,9 +322,9 @@ public class TestHSSFDateUtil
         cell = row.getCell((short)1);
         style = cell.getCellStyle();
         assertEquals(aug_10_2007, cell.getNumericCellValue(), 0.0001);
-        assertEquals("d-mmm-yy", style.getDataFormatString(wb));
+        assertEquals("d-mmm-yy", style.getDataFormatString());
         assertTrue(HSSFDateUtil.isInternalDateFormat(style.getDataFormat()));
-        assertTrue(HSSFDateUtil.isADateFormat(style.getDataFormat(), style.getDataFormatString(wb)));
+        assertTrue(HSSFDateUtil.isADateFormat(style.getDataFormat(), style.getDataFormatString()));
         assertTrue(HSSFDateUtil.isCellDateFormatted(cell));
         
         row  = sheet.getRow(1);
@@ -332,7 +332,7 @@ public class TestHSSFDateUtil
         style = cell.getCellStyle();
         assertEquals(aug_10_2007, cell.getNumericCellValue(), 0.0001);
         assertFalse(HSSFDateUtil.isInternalDateFormat(cell.getCellStyle().getDataFormat()));
-        assertTrue(HSSFDateUtil.isADateFormat(style.getDataFormat(), style.getDataFormatString(wb)));
+        assertTrue(HSSFDateUtil.isADateFormat(style.getDataFormat(), style.getDataFormatString()));
         assertTrue(HSSFDateUtil.isCellDateFormatted(cell));
         
         row  = sheet.getRow(2);
@@ -340,7 +340,7 @@ public class TestHSSFDateUtil
         style = cell.getCellStyle();
         assertEquals(aug_10_2007, cell.getNumericCellValue(), 0.0001);
         assertTrue(HSSFDateUtil.isInternalDateFormat(cell.getCellStyle().getDataFormat()));
-        assertTrue(HSSFDateUtil.isADateFormat(style.getDataFormat(), style.getDataFormatString(wb)));
+        assertTrue(HSSFDateUtil.isADateFormat(style.getDataFormat(), style.getDataFormatString()));
         assertTrue(HSSFDateUtil.isCellDateFormatted(cell));
         
         row  = sheet.getRow(3);
@@ -348,7 +348,7 @@ public class TestHSSFDateUtil
         style = cell.getCellStyle();
         assertEquals(aug_10_2007, cell.getNumericCellValue(), 0.0001);
         assertFalse(HSSFDateUtil.isInternalDateFormat(cell.getCellStyle().getDataFormat()));
-        assertTrue(HSSFDateUtil.isADateFormat(style.getDataFormat(), style.getDataFormatString(wb)));
+        assertTrue(HSSFDateUtil.isADateFormat(style.getDataFormat(), style.getDataFormatString()));
         assertTrue(HSSFDateUtil.isCellDateFormatted(cell));
         
         row  = sheet.getRow(4);
@@ -356,7 +356,7 @@ public class TestHSSFDateUtil
         style = cell.getCellStyle();
         assertEquals(aug_10_2007, cell.getNumericCellValue(), 0.0001);
         assertFalse(HSSFDateUtil.isInternalDateFormat(cell.getCellStyle().getDataFormat()));
-        assertTrue(HSSFDateUtil.isADateFormat(style.getDataFormat(), style.getDataFormatString(wb)));
+        assertTrue(HSSFDateUtil.isADateFormat(style.getDataFormat(), style.getDataFormatString()));
         assertTrue(HSSFDateUtil.isCellDateFormatted(cell));
     }
     

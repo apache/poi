@@ -19,6 +19,7 @@ package org.apache.poi.xssf.usermodel;
 
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.StylesSource;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder;
@@ -28,22 +29,48 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STBorderStyle.Enum;
 
 
 public class XSSFCellStyle implements CellStyle {
-	private StylesTable stylesTable;
+	private StylesSource stylesSource;
 	private CTXf cellXf;
 	private CTXf cellStyleXf;
 	private XSSFCellBorder cellBorder;
 	
 	/**
+	 * Creates a Cell Style from the supplied parts
 	 * @param cellXf The main XF for the cell
 	 * @param cellStyleXf Optional, style xf
-	 * @param stylesTable Styles Table to work off
+	 * @param stylesSource Styles Source to work off
 	 */
-	public XSSFCellStyle(CTXf cellXf, CTXf cellStyleXf, StylesTable stylesTable) {
-		this.stylesTable = stylesTable;
+	public XSSFCellStyle(CTXf cellXf, CTXf cellStyleXf, StylesSource stylesSource) {
+		this.stylesSource = stylesSource;
 		this.cellXf = cellXf;
 		this.cellStyleXf = cellStyleXf;
 	}
-
+	
+	/**
+	 * Used so that StylesSource can figure out our location
+	 */
+	public CTXf getCoreXf() {
+		return cellXf;
+	}
+	/**
+	 * Used so that StylesSource can figure out our location
+	 */
+	public CTXf getStyleXf() {
+		return cellStyleXf;
+	}
+	
+	/**
+	 * Creates an empty Cell Style
+	 */
+	public XSSFCellStyle(StylesSource stylesSource) {
+		this.stylesSource = stylesSource;
+		
+		// We need a new CTXf for the main styles
+		// TODO decide on a style ctxf
+		cellXf = CTXf.Factory.newInstance();
+    	cellStyleXf = null;
+	}
+	
 	public short getAlignment() {
 		// TODO Auto-generated method stub
 		return 0;
@@ -89,7 +116,7 @@ public class XSSFCellStyle implements CellStyle {
 		return (short)cellXf.getNumFmtId();
 	}
 	public String getDataFormatString() {
-		return stylesTable.getNumberFormatAt(getDataFormat());
+		return stylesSource.getNumberFormatAt(getDataFormat());
 	}
 
 	public short getFillBackgroundColor() {
@@ -195,8 +222,7 @@ public class XSSFCellStyle implements CellStyle {
 	}
 
 	public void setDataFormat(short fmt) {
-		// TODO Auto-generated method stub
-		
+		cellXf.setNumFmtId((long)fmt);
 	}
 
 	public void setFillBackgroundColor(short bg) {
@@ -266,7 +292,8 @@ public class XSSFCellStyle implements CellStyle {
 
 	private XSSFCellBorder getCellBorder() {
 		if (cellBorder == null) {
-			cellBorder = stylesTable.getBorderAt(getBorderId());
+			// TODO make a common Cell Border object
+			cellBorder = ((StylesTable)stylesSource).getBorderAt(getBorderId());
 		}
 		return cellBorder;
 	}

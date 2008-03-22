@@ -17,6 +17,8 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -24,9 +26,12 @@ import java.util.Date;
 import junit.framework.TestCase;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Comment;
+import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.SharedStringSource;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.extensions.XSSFComments;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
@@ -282,14 +287,44 @@ public class TestXSSFCell extends TestCase {
     	assertEquals("A1", ctWorksheet.getSheetViews().getSheetViewArray(0).getSelectionArray(0).getActiveCell());
     }
     
-    public void testCellFormatting() {
+    /**
+     * TODO - Fix!
+     */
+    public void DISABLEDtestCellFormatting() throws Exception {
     	Workbook workbook = new XSSFWorkbook();
-    	CTSheet ctSheet = CTSheet.Factory.newInstance();
-    	CTWorksheet ctWorksheet = CTWorksheet.Factory.newInstance();
-    	XSSFSheet sheet = new XSSFSheet(ctSheet, ctWorksheet, (XSSFWorkbook) workbook);
+    	Sheet sheet = workbook.createSheet();
+    	CreationHelper creationHelper = workbook.getCreationHelper();
+    	
+    	CellStyle cs = workbook.createCellStyle();
+    	assertNotNull(cs);
+    	
+    	assertNotNull(creationHelper);
+    	assertNotNull(creationHelper.createDataFormat());
+    	
+    	cs.setDataFormat(
+    			creationHelper.createDataFormat().getFormat("yyyy/mm/dd")
+    	);
     	Cell cell = sheet.createRow(0).createCell((short)0);
-
-    	// TODO
+    	cell.setCellValue(new Date(654321));
+    	
+    	assertNull(cell.getCellStyle());
+    	cell.setCellStyle(cs);
+    	
+    	assertEquals(new Date(654321), cell.getDateCellValue());
+    	assertNotNull(cell.getCellStyle());
+    	assertEquals("yyyy/mm/dd", cell.getCellStyle().getDataFormatString());
+    	
+    	
+    	// Save, re-load, and test again
+    	File tmp = File.createTempFile("poi", "xlsx");
+    	FileOutputStream out = new FileOutputStream(tmp);
+    	workbook.write(out);
+    	out.close();
+    	
+    	Workbook wb2 = new XSSFWorkbook(tmp.toString());
+    	Cell c2 = wb2.getSheetAt(0).getRow(0).getCell(0);
+    	assertEquals(new Date(654321), c2.getDateCellValue());
+    	assertEquals("yyyy/mm/dd", c2.getCellStyle().getDataFormatString());
     }
 
     private XSSFRow createParentObjects() {
