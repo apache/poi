@@ -288,9 +288,9 @@ public class TestXSSFCell extends TestCase {
     }
     
     /**
-     * TODO - Fix!
+     * Tests that cell formatting stuff works as expected
      */
-    public void DISABLEDtestCellFormatting() throws Exception {
+    public void testCellFormatting() throws Exception {
     	Workbook workbook = new XSSFWorkbook();
     	Sheet sheet = workbook.createSheet();
     	CreationHelper creationHelper = workbook.getCreationHelper();
