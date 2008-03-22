@@ -45,6 +45,10 @@ under the License.
     To build the documentation you will need to install forrest and set
     the FORREST_HOME environment variable.  Forrest 0.5.1 required.
 
+    Some people may find the tests hang when run through Ant. If this
+    happens to you, try giving Ant some more memory when you run it, eg:
+          ANT_OPTS="-Xmx1024m -XX:MaxPermSize=256m" ant test
+
 
     TO BE COMPLETED:
 
