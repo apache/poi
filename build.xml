@@ -48,6 +48,10 @@ under the License.
     You will need JDK 1.5 or newer to build much of POI. If all you want
     is the core OLE2 support, then you only need JDK 1.4
 
+    Some people may find the tests hang when run through Ant. If this
+    happens to you, try giving Ant some more memory when you run it, eg:
+          ANT_OPTS="-Xmx1024m -XX:MaxPermSize=256m" ant test
+
 
     TO BE COMPLETED:
 
