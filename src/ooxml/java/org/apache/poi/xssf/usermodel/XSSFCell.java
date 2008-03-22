@@ -95,6 +95,7 @@ public class XSSFCell implements Cell {
     }
 
     public CellStyle getCellStyle() {
+    	// Zero is the empty default
     	if(this.cell.getS() > 0) {
     		return stylesSource.getStyleAt(this.cell.getS());
     	}

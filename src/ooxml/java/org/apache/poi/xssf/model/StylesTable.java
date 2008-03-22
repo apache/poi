@@ -84,8 +84,15 @@ public class StylesTable implements StylesSource, XSSFModel {
     	doc = StyleSheetDocument.Factory.newInstance();
     	doc.addNewStyleSheet();
     	
-    	// Add a single, default cell style xf
-    	xfs.add(CTXf.Factory.newInstance());
+    	// Add a single, default cell xf and cell style xf
+    	// Excel seems to require these
+    	CTXf[] ctxfs = new CTXf[2];
+    	for (int i = 0; i < ctxfs.length; i++) {
+			ctxfs[i] = CTXf.Factory.newInstance(); 
+			ctxfs[i].setNumFmtId(0);
+		}
+    	xfs.add(ctxfs[0]);
+    	styleXfs.add(ctxfs[1]);
     }
 
     /**
@@ -225,6 +232,18 @@ public class StylesTable implements StylesSource, XSSFModel {
     	return borders.size();
     }
     /**
+     * For unit testing only
+     */
+    public int _getXfsSize() {
+    	return xfs.size();
+    }
+    /**
+     * For unit testing only
+     */
+    public int _getStyleXfsSize() {
+    	return styleXfs.size();
+    }
+    /**
      * For unit testing only!
      */
     public CTStylesheet _getRawStylesheet() {
@@ -245,10 +264,6 @@ public class StylesTable implements StylesSource, XSSFModel {
         
         // Requests use of whitespace for easier reading
         options.setSavePrettyPrint();
-
-        // XXX This should not be needed, but apparently the setSaveOuter call above does not work in XMLBeans 2.2
-        options.setSaveSyntheticDocumentElement(
-        		new QName(CTStylesheet.type.getName().getNamespaceURI(), doc.getStyleSheet().getDomNode().getNodeName()));
 
         
         // Work on the current one
