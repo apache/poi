@@ -70,9 +70,11 @@ public class TestWorkbookFactory extends TestCase {
 	}
 		
 	/**
-	 * TODO - fix openxml4j to support input stream
+	 * Creates the appropriate kind of Workbook, but
+	 *  checking the mime magic at the start of the
+	 *  InputStream, then creating what's required.
 	 */
-	public void DISABLEDtestCreateGeneric() throws Exception {
+	public void testCreateGeneric() throws Exception {
 		Workbook wb;
 		
 		// InputStream -> either
@@ -86,7 +88,7 @@ public class TestWorkbookFactory extends TestCase {
 				new FileInputStream(xlsx)
 		);
 		assertNotNull(wb);
-		assertTrue(wb instanceof HSSFWorkbook);
+		assertTrue(wb instanceof XSSFWorkbook);
 		
 		try {
 			wb = WorkbookFactory.create(
