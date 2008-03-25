@@ -21,10 +21,15 @@ import junit.framework.TestCase;
 
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder;
+import org.apache.poi.xssf.usermodel.extensions.XSSFCellFill;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorder;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFill;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPatternFill;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTStylesheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTXf;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STBorderStyle;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPatternType;
 
 
 public class TestXSSFCellStyle extends TestCase {
@@ -32,6 +37,7 @@ public class TestXSSFCellStyle extends TestCase {
 	private StylesTable stylesTable;
 	private CTBorder ctBorderA;
 	private CTBorder ctBorderB;
+	private CTFill ctFill;
 	private CTXf cellStyleXf;
 	private CTXf cellXf;
 	private XSSFCellStyle cellStyle;
@@ -49,6 +55,11 @@ public class TestXSSFCellStyle extends TestCase {
 		XSSFCellBorder borderB = new XSSFCellBorder();
 		ctBorderB = borderB.getCTBorder();
 		assertEquals(1, stylesTable.putBorder(borderB));
+		
+		ctFill = CTFill.Factory.newInstance();
+		XSSFCellFill fill = new XSSFCellFill(ctFill);
+		long fillId = stylesTable.putFill(fill);
+		assertEquals(0, fillId);
 		
 		cellStyleXf = ctStylesheet.addNewCellStyleXfs().addNewXf();
 		cellStyleXf.setBorderId(0);
@@ -95,5 +106,25 @@ public class TestXSSFCellStyle extends TestCase {
 	public void testGetTopBottomAsString() {
 		ctBorderA.addNewTop().setStyle(STBorderStyle.HAIR);
 		assertEquals("hair", cellStyle.getBorderTopAsString());
+	}
+	
+	public void testGetFillBackgroundColor() {
+		CTPatternFill ctPatternFill = ctFill.addNewPatternFill();
+		CTColor ctBgColor = ctPatternFill.addNewBgColor();
+		ctBgColor.setIndexed(4);
+		assertEquals(4, cellStyle.getFillBackgroundColor());
+	}
+	
+	public void testGetFillForegroundColor() {
+		CTPatternFill ctPatternFill = ctFill.addNewPatternFill();
+		CTColor ctFgColor = ctPatternFill.addNewFgColor();
+		ctFgColor.setIndexed(5);
+		assertEquals(5, cellStyle.getFillForegroundColor());
+	}
+	
+	public void testGetFillPattern() {
+		CTPatternFill ctPatternFill = ctFill.addNewPatternFill();
+		ctPatternFill.setPatternType(STPatternType.DARK_DOWN);
+		assertEquals(8, cellStyle.getFillPattern());
 	}
 }

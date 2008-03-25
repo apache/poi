@@ -30,6 +30,7 @@ import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.StylesSource;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder;
+import org.apache.poi.xssf.usermodel.extensions.XSSFCellFill;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorder;
@@ -206,7 +207,20 @@ public class StylesTable implements StylesSource, XSSFModel {
 		borders.add(border);
 		return borders.size() - 1;
 	}
-	
+
+	public XSSFCellFill getFillAt(long idx) {
+		return new XSSFCellFill(fills.get((int) idx));
+	}
+	public long putFill(XSSFCellFill fill) {
+		return putFill(fill.getCTFill());
+	}
+	public synchronized long putFill(CTFill fill) {
+		if (fills.contains(fill)) {
+			return fills.indexOf(fill);
+		}
+		fills.add(fill);
+		return fills.size() - 1;
+	}
 	/**
      * For unit testing only
      */

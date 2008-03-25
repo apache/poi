@@ -23,6 +23,7 @@ import org.apache.poi.ss.usermodel.StylesSource;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder;
+import org.apache.poi.xssf.usermodel.extensions.XSSFCellFill;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder.BorderSides;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTXf;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STBorderStyle.Enum;
@@ -33,6 +34,7 @@ public class XSSFCellStyle implements CellStyle {
 	private CTXf cellXf;
 	private CTXf cellStyleXf;
 	private XSSFCellBorder cellBorder;
+	private XSSFCellFill cellFill;
 	
 	/**
 	 * Creates a Cell Style from the supplied parts
@@ -120,18 +122,15 @@ public class XSSFCellStyle implements CellStyle {
 	}
 
 	public short getFillBackgroundColor() {
-		// TODO Auto-generated method stub
-		return 0;
+		return (short) getCellFill().getFillBackgroundColor().getIndexed();
 	}
 
 	public short getFillForegroundColor() {
-		// TODO Auto-generated method stub
-		return 0;
+		return (short) getCellFill().getFillForegroundColor().getIndexed();
 	}
 
 	public short getFillPattern() {
-		// TODO Auto-generated method stub
-		return 0;
+		return (short) getCellFill().getPatternType().intValue();
 	}
 
 	public Font getFont(Workbook parentWorkbook) {
@@ -303,6 +302,20 @@ public class XSSFCellStyle implements CellStyle {
 			return (int) cellXf.getBorderId();
 		}
 		return (int) cellStyleXf.getBorderId();
+	}
+	
+	private XSSFCellFill getCellFill() {
+		if (cellFill == null) {
+			cellFill = ((StylesTable)stylesSource).getFillAt(getFillId());
+		}
+		return cellFill;
+	}
+	
+	private int getFillId() {
+		if (cellXf.isSetFillId()) {
+			return (int) cellXf.getFillId();
+		}
+		return (int) cellStyleXf.getFillId();
 	}
 
 	private Enum getBorderStyle(BorderSides side) {
