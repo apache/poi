@@ -29,6 +29,7 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.StylesSource;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellFill;
 import org.apache.xmlbeans.XmlException;
@@ -164,15 +165,13 @@ public class StylesTable implements StylesSource, XSSFModel {
     }
     
     public Font getFontAt(long idx) {
-    	// TODO
-    	return null;
+    	return new XSSFFont(fonts.get((int) idx));
     }
     public synchronized long putFont(Font font) {
-    	// TODO
-    	return -1;
+    	return putFont((XSSFFont)font, fonts);
     }
     
-    public CellStyle getStyleAt(long idx) {
+	public CellStyle getStyleAt(long idx) {
     	CTXf mainXf = xfs.get((int)idx);
     	CTXf styleXf = null;
     	
@@ -320,7 +319,12 @@ public class StylesTable implements StylesSource, XSSFModel {
 	private long putBorder(XSSFCellBorder border, LinkedList<CTBorder> borders) {
 		return border.putBorder(borders);
 	}
+	
 	private long putFill(XSSFCellFill fill, LinkedList<CTFill> fills) {
 		return fill.putFill(fills);
+	}
+
+    private long putFont(XSSFFont font, LinkedList<CTFont> fonts) {
+    	return font.putFont(fonts);
 	}
 }

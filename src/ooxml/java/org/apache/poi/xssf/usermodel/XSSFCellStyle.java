@@ -35,6 +35,7 @@ public class XSSFCellStyle implements CellStyle {
 	private CTXf cellStyleXf;
 	private XSSFCellBorder cellBorder;
 	private XSSFCellFill cellFill;
+	private XSSFFont font;
 	
 	/**
 	 * Creates a Cell Style from the supplied parts
@@ -136,6 +137,13 @@ public class XSSFCellStyle implements CellStyle {
 	public Font getFont(Workbook parentWorkbook) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	public Font getFont() {
+		if (font == null) {
+			font = (XSSFFont) ((StylesTable)stylesSource).getFontAt(getFontId());
+		}
+		return font;
 	}
 
 	public short getFontIndex() {
@@ -324,6 +332,13 @@ public class XSSFCellStyle implements CellStyle {
 
 	private short getBorderColorBySide(BorderSides side) {
 		return (short) getCellBorder().getBorderColor(side).getIndexed();
+	}
+	
+	private int getFontId() {
+		if (cellXf.isSetFontId()) {
+			return (int) cellXf.getFontId();
+		}
+		return (int) cellStyleXf.getFontId();
 	}
 	
 }

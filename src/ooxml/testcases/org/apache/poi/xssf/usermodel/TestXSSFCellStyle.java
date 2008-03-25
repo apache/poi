@@ -25,6 +25,7 @@ import org.apache.poi.xssf.usermodel.extensions.XSSFCellFill;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorder;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFill;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFont;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPatternFill;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTStylesheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTXf;
@@ -37,6 +38,7 @@ public class TestXSSFCellStyle extends TestCase {
 	private StylesTable stylesTable;
 	private CTBorder ctBorderA;
 	private CTFill ctFill;
+	private CTFont ctFont;
 	private CTXf cellStyleXf;
 	private CTXf cellXf;
 	private XSSFCellStyle cellStyle;
@@ -59,6 +61,11 @@ public class TestXSSFCellStyle extends TestCase {
 		XSSFCellFill fill = new XSSFCellFill(ctFill);
 		long fillId = stylesTable.putFill(fill);
 		assertEquals(0, fillId);
+		
+		ctFont = CTFont.Factory.newInstance();
+		XSSFFont font = new XSSFFont(ctFont);
+		long fontId = stylesTable.putFont(font);
+		assertEquals(0, fontId);
 		
 		cellStyleXf = ctStylesheet.addNewCellStyleXfs().addNewXf();
 		cellStyleXf.setBorderId(0);
@@ -125,5 +132,9 @@ public class TestXSSFCellStyle extends TestCase {
 		CTPatternFill ctPatternFill = ctFill.addNewPatternFill();
 		ctPatternFill.setPatternType(STPatternType.DARK_DOWN);
 		assertEquals(8, cellStyle.getFillPattern());
+	}
+	
+	public void testGetFont() {
+		assertNotNull(cellStyle.getFont());
 	}
 }
