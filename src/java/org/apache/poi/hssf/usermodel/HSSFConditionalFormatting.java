@@ -25,6 +25,51 @@ import org.apache.poi.hssf.record.aggregates.CFRecordsAggregate;
 import org.apache.poi.hssf.record.cf.CellRange;
 import org.apache.poi.hssf.util.Region;
 
+/**
+ * HSSFConditionalFormatting class encapsulates all settings of Conditional Formatting. 
+ * The class is not intended to be used explicitly except cases when there is a need 
+ * to make a copy HSSFConditionalFormatting settings for some reason. 
+ * 
+ * For example:
+ * <PRE>
+ * HSSFConditionalFormatting cf = sheet.getConditionalFormattingAt(index);
+ * newSheet.addConditionalFormatting(cf);
+ * </PRE>
+ * 
+ * To create a new Conditional Formatting set use the following approach:
+ * <PRE>
+ * // Create pattern with red background
+ * HSSFPatternFormatting patternFormatting = new HSSFPatternFormatting();
+ * patternFormatting.setFillBackgroundColor(HSSFColor.RED.index);
+ * 
+ * Region [] regions =
+ * {
+ *     // Define a region containing first column
+ *     new Region(1,(short)1,-1,(short)1)
+ * };
+ *     
+ * HSSFConditionalFormattingRule[] rules = 
+ * {
+ *     // Define a Conditional Formatting rule, which triggers formatting
+ *     // when cell's value is greater or equal than 100.0 and
+ *     // applies patternFormatting defined above.
+ *         
+ *     sheet.createConditionalFormattingRule(
+ *             HSSFConditionalFormattingRule.COMPARISON_OPERATOR_GE, 
+ *             "100.0", // 1st formula 
+ *             null,    // 2nd formula is not used for comparison operator GE
+ *             null,    // do not override Font Formatting
+ *             null,    // do not override Border Formatting
+ *             patternFormatting
+ *     )
+ * };
+ *     
+ * // Apply Conditional Formatting rules defined above to the regions  
+ * sheet.addConditionalFormatting(regions, rules);
+ * </PRE>
+ * 
+ * @author Dmitriy Kumshayev
+ */
 public class HSSFConditionalFormatting
 {
 	HSSFSheet sheet;
