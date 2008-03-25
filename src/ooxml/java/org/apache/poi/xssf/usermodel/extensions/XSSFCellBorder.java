@@ -17,6 +17,8 @@
 package org.apache.poi.xssf.usermodel.extensions;
 
 
+import java.util.LinkedList;
+
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorder;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorderPr;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STBorderStyle.Enum;
@@ -43,12 +45,12 @@ public class XSSFCellBorder {
 		TOP, RIGHT, BOTTOM, LEFT
 	}
 	
-	/**
-	 * TODO - is this the best way to allow StylesTable
-	 *  to record us?
-	 */
-	public CTBorder getCTBorder() {
-		return border;
+	public long putBorder(LinkedList<CTBorder> borders) {
+		if(borders.contains(border)) {
+			return borders.indexOf(border);
+		}
+		borders.add(border);
+		return borders.size() - 1;
 	}
 	
 	public Enum getBorderStyle(BorderSides side) {

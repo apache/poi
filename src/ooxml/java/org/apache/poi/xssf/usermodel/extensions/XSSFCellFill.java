@@ -1,5 +1,7 @@
 package org.apache.poi.xssf.usermodel.extensions;
 
+import java.util.LinkedList;
+
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFill;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPatternFill;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPatternType.Enum;
@@ -26,6 +28,14 @@ public class XSSFCellFill {
 
 	public Enum getPatternType() {
 		return getPatternFill().getPatternType();
+	}
+	
+	public long putFill(LinkedList<CTFill> fills) {
+		if (fills.contains(fill)) {
+			return fills.indexOf(fill);
+		}
+		fills.add(fill);
+		return fills.size() - 1;
 	}
 
 	private CTPatternFill getPatternFill() {
