@@ -44,7 +44,6 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTNumFmts;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTStylesheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTXf;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.StyleSheetDocument;
-import javax.xml.namespace.QName;
 
 
 
@@ -198,28 +197,14 @@ public class StylesTable implements StylesSource, XSSFModel {
 		return new XSSFCellBorder(borders.get((int)idx));
 	}
 	public long putBorder(XSSFCellBorder border) {
-		return putBorder(border.getCTBorder());
-	}
-	public synchronized long putBorder(CTBorder border) {
-		if(borders.contains(border)) {
-			return borders.indexOf(border);
-		}
-		borders.add(border);
-		return borders.size() - 1;
+		return putBorder(border, borders);
 	}
 
 	public XSSFCellFill getFillAt(long idx) {
 		return new XSSFCellFill(fills.get((int) idx));
 	}
 	public long putFill(XSSFCellFill fill) {
-		return putFill(fill.getCTFill());
-	}
-	public synchronized long putFill(CTFill fill) {
-		if (fills.contains(fill)) {
-			return fills.indexOf(fill);
-		}
-		fills.add(fill);
-		return fills.size() - 1;
+		return putFill(fill, fills);
 	}
 	/**
      * For unit testing only
@@ -331,4 +316,11 @@ public class StylesTable implements StylesSource, XSSFModel {
         // Save
         doc.save(out, options);
     }
+    
+	private long putBorder(XSSFCellBorder border, LinkedList<CTBorder> borders) {
+		return border.putBorder(borders);
+	}
+	private long putFill(XSSFCellFill fill, LinkedList<CTFill> fills) {
+		return fill.putFill(fills);
+	}
 }

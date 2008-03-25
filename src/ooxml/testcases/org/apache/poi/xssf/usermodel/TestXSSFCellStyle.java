@@ -36,7 +36,6 @@ public class TestXSSFCellStyle extends TestCase {
 	
 	private StylesTable stylesTable;
 	private CTBorder ctBorderA;
-	private CTBorder ctBorderB;
 	private CTFill ctFill;
 	private CTXf cellStyleXf;
 	private CTXf cellXf;
@@ -49,11 +48,11 @@ public class TestXSSFCellStyle extends TestCase {
 		
 		// Until we do XSSFBorder properly, cheat
 		ctBorderA = CTBorder.Factory.newInstance();
-		long borderId = stylesTable.putBorder(ctBorderA);
+		XSSFCellBorder borderA = new XSSFCellBorder(ctBorderA);
+		long borderId = stylesTable.putBorder(borderA);
 		assertEquals(0, borderId);
 		
 		XSSFCellBorder borderB = new XSSFCellBorder();
-		ctBorderB = borderB.getCTBorder();
 		assertEquals(1, stylesTable.putBorder(borderB));
 		
 		ctFill = CTFill.Factory.newInstance();
