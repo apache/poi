@@ -19,12 +19,14 @@
 package org.apache.poi.hssf.record.formula;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.hssf.record.RecordInputStream;
+import org.apache.poi.hssf.record.formula.function.FunctionMetadata;
+import org.apache.poi.hssf.record.formula.function.FunctionMetadataRegistry;
 
 /**
  *
  * @author Jason Height (jheight at chariot dot net dot au)
  */
-public class FuncVarPtg extends AbstractFunctionPtg{
+public final class FuncVarPtg extends AbstractFunctionPtg{
     
     public final static byte sid  = 0x22;
     private final static int  SIZE = 4;  
@@ -47,10 +49,12 @@ public class FuncVarPtg extends AbstractFunctionPtg{
     public FuncVarPtg(String pName, byte pNumOperands) {
         field_1_num_args = pNumOperands;
         field_2_fnc_index = lookupIndex(pName);
-        try{
-            returnClass = ( (Byte) functionData[field_2_fnc_index][0]).byteValue();
-            paramClass = (byte[]) functionData[field_2_fnc_index][1];
-        } catch (NullPointerException npe ) {
+        FunctionMetadata fm = FunctionMetadataRegistry.getFunctionByIndex(field_2_fnc_index);
+        if(fm == null) {
+            // Happens only as a result of a call to FormulaParser.parse(), with a non-built-in function name
+            returnClass = Ptg.CLASS_VALUE;
+            paramClass = new byte[] {Ptg.CLASS_VALUE};
+        } else {
             returnClass = Ptg.CLASS_VALUE;
             paramClass = new byte[] {Ptg.CLASS_VALUE};
         }
@@ -79,15 +83,11 @@ public class FuncVarPtg extends AbstractFunctionPtg{
     }
     
     public String toString() {
-        StringBuffer buffer = new StringBuffer();
-        buffer
-        .append("<FunctionVarPtg>").append("\n")
-        .append("   field_1_num_args=").append(field_1_num_args).append("\n")
-        .append("      name         =").append(lookupName(field_2_fnc_index)).append("\n")
-        .append("   field_2_fnc_index=").append(field_2_fnc_index).append("\n")
-        .append("</FunctionPtg>");
-        return buffer.toString();
+        StringBuffer sb = new StringBuffer(64);
+        sb.append(getClass().getName()).append(" [");
+        sb.append(lookupName(field_2_fnc_index));
+        sb.append(" nArgs=").append(field_1_num_args);
+        sb.append("]");
+        return sb.toString();
     }
-
-    
 }

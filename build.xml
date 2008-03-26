@@ -67,7 +67,7 @@ under the License.
   <property name="forrest.home" value="${env.FORREST_HOME}"/>
 
   <!-- Main: -->
-  <property name="main.resource1.dir" value="src/resources/fontmetrics"/>
+  <property name="main.resource1.dir" value="src/resources/main"/>
   <property name="main.src" location="src/java"/>
   <property name="main.src.test" location="src/testcases"/>
   <property name="main.documentation" value="src/documentation"/>
