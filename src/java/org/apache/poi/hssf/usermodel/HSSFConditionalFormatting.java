@@ -27,8 +27,14 @@ import org.apache.poi.hssf.util.Region;
 
 /**
  * HSSFConditionalFormatting class encapsulates all settings of Conditional Formatting. 
- * The class is not intended to be used explicitly except cases when there is a need 
- * to make a copy HSSFConditionalFormatting settings for some reason. 
+ * 
+ * The class can be used 
+ * 
+ * <UL>
+ * <LI>
+ * to make a copy HSSFConditionalFormatting settings.
+ * </LI>
+ *  
  * 
  * For example:
  * <PRE>
@@ -36,7 +42,15 @@ import org.apache.poi.hssf.util.Region;
  * newSheet.addConditionalFormatting(cf);
  * </PRE>
  * 
+ *  <LI>
+ *  or to modify existing Conditional Formatting settings (formatting regions and/or rules).
+ *  </LI>
+ *  </UL>
+ * 
+ * Use {@link HSSFSheet#getConditionalFormattingAt(int)} to get access to an instance of this class. 
+ * <P>
  * To create a new Conditional Formatting set use the following approach:
+ * 
  * <PRE>
  * // Create pattern with red background
  * HSSFPatternFormatting patternFormatting = new HSSFPatternFormatting();
@@ -70,23 +84,29 @@ import org.apache.poi.hssf.util.Region;
  * 
  * @author Dmitriy Kumshayev
  */
-public class HSSFConditionalFormatting
+public final class HSSFConditionalFormatting
 {
-	HSSFSheet sheet;
-	CFRecordsAggregate cfAggregate;
-	
-	protected HSSFConditionalFormatting(HSSFSheet sheet)
-	{
-		this.sheet = sheet;
-		this.cfAggregate = new CFRecordsAggregate();
+	private final HSSFSheet sheet;
+	private final CFRecordsAggregate cfAggregate;
+
+	HSSFConditionalFormatting(HSSFSheet sheet) {
+		this(sheet, new CFRecordsAggregate());
 	}
-	
-	protected HSSFConditionalFormatting(HSSFSheet sheet, CFRecordsAggregate cfAggregate)
+
+	HSSFConditionalFormatting(HSSFSheet sheet, CFRecordsAggregate cfAggregate)
 	{
+		if(sheet == null) {
+			throw new IllegalArgumentException("sheet must not be null");
+		}
+		if(cfAggregate == null) {
+			throw new IllegalArgumentException("cfAggregate must not be null");
+		}
 		this.sheet = sheet;
 		this.cfAggregate = cfAggregate;
 	}
-	
+	CFRecordsAggregate getCFRecordsAggregate() {
+		return cfAggregate;
+	}
 
 	public void setFormattingRegions(Region[] regions)
 	{
@@ -97,35 +117,65 @@ public class HSSFConditionalFormatting
 		}
 	}
 
+	/**
+	 * @return array of <tt>Region</tt>s. never <code>null</code>
+	 */
 	public Region[] getFormattingRegions()
 	{
 		CFHeaderRecord cfh = cfAggregate.getHeader();
-		
+
 		List cellRanges = cfh.getCellRanges();
-		
-		if (cellRanges != null)
-		{
-			return toRegionArray(cellRanges);
-		}
-		return null;
+
+		return toRegionArray(cellRanges);
 	}
-	
-	public void setConditionalFormat(int idx, HSSFConditionalFormattingRule cfRule)
+
+	/**
+	 * set a Conditional Formatting rule at position idx. 
+	 * Excel allows to create up to 3 Conditional Formatting rules.
+	 * This method can be useful to modify existing  Conditional Formatting rules.
+	 * 
+	 * @param idx position of the rule. Should be between 0 and 2.
+	 * @param cfRule - Conditional Formatting rule
+	 */
+	public void setRule(int idx, HSSFConditionalFormattingRule cfRule)
 	{
+	    if (idx < 0 || idx > 2) {
+	        throw new IllegalArgumentException("idx must be between 0 and 2 but was (" 
+	                + idx + ")");
+	    }
 		cfAggregate.getRules().set(idx, cfRule);
 	}
 
-	public void addConditionalFormat(HSSFConditionalFormattingRule cfRule)
+	/**
+	 * add a Conditional Formatting rule. 
+	 * Excel allows to create up to 3 Conditional Formatting rules.
+	 * @param cfRule - Conditional Formatting rule
+	 */
+	public void addRule(HSSFConditionalFormattingRule cfRule)
 	{
 		cfAggregate.getRules().add(cfRule);
 	}
-	
-	public HSSFConditionalFormattingRule getConditionalFormat(int idx)
+
+	/**
+	 * get a Conditional Formatting rule at position idx. 
+	 * @param idx
+	 * @return a Conditional Formatting rule at position idx.
+	 */
+	public HSSFConditionalFormattingRule getRule(int idx)
 	{
 		CFRuleRecord ruleRecord = (CFRuleRecord)cfAggregate.getRules().get(idx);
 		return new HSSFConditionalFormattingRule(sheet.workbook, ruleRecord);
 	}
-	
+
+	/**
+	 * @return number of Conditional Formatting rules.
+	 */
+	public int getNumbOfRules()
+	{
+		return cfAggregate.getRules().size();
+	}
+
+
 	/**
 	 * Do all possible cell merges between cells of the list so that:<br>
 	 * 	<li>if a cell range is completely inside of another cell range, it gets removed from the list 
@@ -136,11 +186,11 @@ public class HSSFConditionalFormatting
 	private static List mergeCellRanges(List cellRangeList)
 	{
 		boolean merged = false;
-		
+
 		do
 		{
 			merged = false;
-			
+
 			if( cellRangeList.size()>1 )
 			{
 				for( int i=0; i<cellRangeList.size(); i++)
@@ -149,7 +199,7 @@ public class HSSFConditionalFormatting
 					for( int j=i+1; j<cellRangeList.size(); j++)
 					{
 						CellRange range2 = (CellRange)cellRangeList.get(j);
-						
+
 						switch(range1.intersect(range2))
 						{
 							case CellRange.NO_INTERSECTION: 
@@ -192,10 +242,10 @@ public class HSSFConditionalFormatting
 			}
 		}
 		while( merged );
-		
+
 		return cellRangeList;
 	}
-	
+
 	/**
 	 * Convert a List of CellRange objects to an array of regions 
 	 *  
@@ -206,7 +256,7 @@ public class HSSFConditionalFormatting
 	{
 		int size = cellRanges.size();
 		Region[] regions = new Region[size];
-		
+
 		for (int i = 0; i != size; i++)
 		{
 			CellRange cr = (CellRange) cellRanges.get(i);
@@ -215,7 +265,7 @@ public class HSSFConditionalFormatting
 		}
 		return regions;
 	}
-	
+
 	/**
 	 * Convert array of regions to a List of CellRange objects
 	 *  
@@ -237,10 +287,6 @@ public class HSSFConditionalFormatting
 
 	public String toString()
 	{
-		if(cfAggregate!=null)
-		{
-			return cfAggregate.toString();
-		}
-		return null;
+		return cfAggregate.toString();
 	}
 }
