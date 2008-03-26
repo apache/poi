@@ -35,54 +35,55 @@ import org.apache.poi.util.POILogger;
  * @author Dmitriy Kumshayev
  *
  */
-public class CFRecordsAggregate extends Record
+public final class CFRecordsAggregate extends Record
 {
-    public final static short sid = -2008;
+	public final static short sid = -2008; // not a real BIFF record
 
-    private static POILogger  log = POILogFactory.getLogger(CFRecordsAggregate.class);
-    
-    private CFHeaderRecord header;
+	private static POILogger  log = POILogFactory.getLogger(CFRecordsAggregate.class);
 
-    // List of CFRuleRecord objects
-	private List rules;
-	
-    public CFRecordsAggregate()
-    {
-        header = null;
-    	rules  = new ArrayList(3);
-    }
-    
-    /**
-     * Create CFRecordsAggregate from a list of CF Records
-     * @param recs - list of {@link Record} objects
-     * @param offset - position of {@link CFHeaderRecord} object in the list of Record objects
-     * @return CFRecordsAggregate object
-     */
-    public static CFRecordsAggregate createCFAggregate(List recs, int offset)
-    {
-    	CFRecordsAggregate 	cfRecords  = new CFRecordsAggregate();
-        ArrayList 		records = new ArrayList(4);
-        
-        int count = 0;
-        Record rec = ( Record ) recs.get(offset++);
-        
-        if (rec.getSid() == CFHeaderRecord.sid)
-        {
-            records.add(rec);
-            cfRecords.header = (CFHeaderRecord)rec;
-            
-            int nRules = cfRecords.header.getNumberOfConditionalFormats();
-            int rulesCount = 0;
-            while(  offset<recs.size() &&
-            		(rec = (Record)recs.get(offset++)).getSid() == CFRuleRecord.sid && 
-            		rec instanceof CFRuleRecord &&
-            		rulesCount++ < nRules
-            	 )
-            {
-                records.add(rec);
-                cfRecords.rules.add(rec);
-            }
-            
+	private CFHeaderRecord header;
+
+	// List of CFRuleRecord objects
+	private final List rules;
+
+	public CFRecordsAggregate()
+	{
+		header = null;
+		rules  = new ArrayList(3);
+	}
+
+	/**
+	 * Create CFRecordsAggregate from a list of CF Records
+	 * @param recs - list of {@link Record} objects
+	 * @param offset - position of {@link CFHeaderRecord} object in the list of Record objects
+	 * @return CFRecordsAggregate object
+	 */
+	public static CFRecordsAggregate createCFAggregate(List recs, int pOffset)
+	{
+
+		int offset = pOffset;
+		CFRecordsAggregate 	cfRecords  = new CFRecordsAggregate();
+		ArrayList 		records = new ArrayList(4);
+
+		Record rec = ( Record ) recs.get(offset++);
+
+		if (rec.getSid() == CFHeaderRecord.sid)
+		{
+			records.add(rec);
+			cfRecords.header = (CFHeaderRecord)rec;
+
+			int nRules = cfRecords.header.getNumberOfConditionalFormats();
+			int rulesCount = 0;
+			while(  offset<recs.size() &&
+					(rec = (Record)recs.get(offset++)).getSid() == CFRuleRecord.sid && 
+					rec instanceof CFRuleRecord &&
+					rulesCount++ < nRules
+				 )
+			{
+				records.add(rec);
+				cfRecords.rules.add(rec);
+			}
+
 			if (nRules != cfRecords.rules.size())
 			{
 				if (log.check(POILogger.DEBUG))
@@ -93,66 +94,66 @@ public class CFRecordsAggregate extends Record
 				cfRecords.header.setNumberOfConditionalFormats(nRules);
 			}
 
-        }
-        return cfRecords;
-    }
-    
-    /**
-     * Create a deep clone of the record
-     * @return
-     */
-    public CFRecordsAggregate cloneCFAggregate()
-    {
-    	
-      ArrayList records = new ArrayList(this.rules.size()+1);
-      
-      records.add(this.header.clone());
-      
-      for (int i=0; i<this.rules.size();i++) 
-      {
-        Record rec = (Record)((Record)this.rules.get(i)).clone();
-        records.add(rec);
-      }
-      return createCFAggregate(records, 0);
-    }
-    
-    /** You never fill an aggregate */
+		}
+		return cfRecords;
+	}
+
+	/**
+	 * Create a deep clone of the record
+	 * @return
+	 */
+	public CFRecordsAggregate cloneCFAggregate()
+	{
+
+	  ArrayList records = new ArrayList(this.rules.size()+1);
+	  
+	  records.add(this.header.clone());
+	  
+	  for (int i=0; i<this.rules.size();i++) 
+	  {
+		Record rec = (Record)((Record)this.rules.get(i)).clone();
+		records.add(rec);
+	  }
+	  return createCFAggregate(records, 0);
+	}
+
+	/** You never fill an aggregate */
 	protected void fillFields(RecordInputStream in)
 	{
 	}
-	
+
 	public short getSid()
 	{
 		return sid;
 	}
-	
-    /**
-     * called by the class that is responsible for writing this sucker.
-     * Subclasses should implement this so that their data is passed back in a
-     * byte array.
-     *
-     * @param offset to begin writing at
-     * @param data byte array containing instance data
-     * @return number of bytes written
-     */
+
+	/**
+	 * called by the class that is responsible for writing this sucker.
+	 * Subclasses should implement this so that their data is passed back in a
+	 * byte array.
+	 *
+	 * @param offset to begin writing at
+	 * @param data byte array containing instance data
+	 * @return number of bytes written
+	 */
 
 	public int serialize(int offset, byte[] data)
 	{
-        int pos = offset;
+		int pos = offset;
 		if( header != null && rules.size()>0 )
 		{
 			header.setNumberOfConditionalFormats(rules.size());
 
-            pos += (( Record ) header).serialize(pos, data);
+			pos += (( Record ) header).serialize(pos, data);
 
-	        for(Iterator itr = rules.iterator(); itr.hasNext();)
-	        {
-	            pos += (( Record ) itr.next()).serialize(pos, data);
-	        }
+			for(Iterator itr = rules.iterator(); itr.hasNext();)
+			{
+				pos += (( Record ) itr.next()).serialize(pos, data);
+			}
 		}
-        return pos - offset;
+		return pos - offset;
 	}
-	
+
 	protected void validateSid(short id)
 	{
 		// do nothing here
@@ -179,21 +180,21 @@ public class CFRecordsAggregate extends Record
 	 */
 	public int getRecordSize() 
 	{
-        int size = 0;
-        if( header != null)
-        {
-        	size += header.getRecordSize();
-        }
-        if( rules != null)
-        {
-            for(Iterator irecs = rules.iterator(); irecs.hasNext(); )
-            {
-                size += (( Record ) irecs.next()).getRecordSize();
-            }
-        }
-        return size;
-    }
-	
+		int size = 0;
+		if( header != null)
+		{
+			size += header.getRecordSize();
+		}
+		if( rules != null)
+		{
+			for(Iterator irecs = rules.iterator(); irecs.hasNext(); )
+			{
+				size += (( Record ) irecs.next()).getRecordSize();
+			}
+		}
+		return size;
+	}
+
 	/**
 	 * String representation of CFRecordsAggregate
 	 */
@@ -206,19 +207,15 @@ public class CFRecordsAggregate extends Record
 		{
 			buffer.append(header.toString());
 		}
-		if( rules != null )
+		for(int i=0; i<rules.size(); i++)
 		{
-			for(int i=0; i<rules.size(); i++)
+			CFRuleRecord cfRule = (CFRuleRecord)rules.get(i);
+			if(cfRule!=null)
 			{
-				CFRuleRecord cfRule = (CFRuleRecord)rules.get(i);
-				if(cfRule!=null)
-				{
-					buffer.append(cfRule.toString());
-				}
+				buffer.append(cfRule.toString());
 			}
 		}
 		buffer.append("[/CF]\n");
 		return buffer.toString();
 	}
-	
 }
