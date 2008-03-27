@@ -33,8 +33,9 @@
 
    <p>The purpose of this document is to give a brief high level overview of the
       HWPF document format. This document does not go into in-depth technical
-      detail and is only meant as a supplement to the Microsoft Word 97 Binary
-      File Format freely available at <link href="http://wotsit.org">Wotsit.org</link>.</p>
+      detail and is only meant as a supplement to the Microsoft Word 97-2007 
+      Binary File Format freely available from 
+      <link href="http://www.microsoft.com/interop/docs/officebinaryformats.mspx">Microsoft</link>.</p>
    <p>The OLE file format is not discussed in this document. It is assumed that
       the reader has a working knowledge of the POIFS API. </p>
 
