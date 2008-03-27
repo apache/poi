@@ -14,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record.formula.functions;
 
@@ -41,6 +40,7 @@ public final class AllIndividualFunctionEvaluationTests {
 		result.addTestSuite(TestMid.class);
 		result.addTestSuite(TestMathX.class);
 		result.addTestSuite(TestMatch.class);
+		result.addTestSuite(TestPmt.class);
 		result.addTestSuite(TestOffset.class);
 		result.addTestSuite(TestRowCol.class);
 		result.addTestSuite(TestSumproduct.class);
@@ -50,5 +50,4 @@ public final class AllIndividualFunctionEvaluationTests {
 		result.addTestSuite(TestXYNumericFunction.class);
 		return result;
 	}
-
 }
