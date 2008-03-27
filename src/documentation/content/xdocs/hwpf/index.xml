@@ -87,7 +87,7 @@
      <li>anything else that seems reasonable</li>
     </ul>
 
-    <p>When you start start coding, you will not yet have write access to the
+    <p>When you start coding, you will not yet have write access to the
      CVS repository. Please submit your patches to <link
       href="http://issues.apache.org/">Bugzilla</link> and nag <link
       href="mailto:klute@apache.org">Rainer Klute</link> until he commits
