@@ -45,7 +45,7 @@ public final class ExternalNameRecord extends Record {
 	private short  field_2_index;
 	private short  field_3_not_used;
 	private String field_4_name;
-	private Ptg[]  field_5_name_definition; // TODO - junits for name definition field 
+	private Ptg[]  field_5_name_definition; // TODO - junits for name definition field
 
 	public ExternalNameRecord(RecordInputStream in) {
 		super(in);
