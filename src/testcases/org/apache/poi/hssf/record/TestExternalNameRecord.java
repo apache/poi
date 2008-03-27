@@ -40,7 +40,7 @@ public final class TestExternalNameRecord extends TestCase {
 			TestcaseRecordInputStream.confirmRecordEncoding(0x0023, dataFDS, enr.serialize());
 		} catch (ArrayIndexOutOfBoundsException e) {
 			if(e.getMessage().equals("15")) {
-				throw new AssertionFailedError("Identified bug 44691");
+				throw new AssertionFailedError("Identified bug 44695");
 			}
 		}
 	}
@@ -48,7 +48,7 @@ public final class TestExternalNameRecord extends TestCase {
 	public void testBasicSize() {
 		ExternalNameRecord enr = createSimpleENR();
 		if(enr.getRecordSize() == 13) {
-			throw new AssertionFailedError("Identified bug 44691");
+			throw new AssertionFailedError("Identified bug 44695");
 		}
 		assertEquals(17, enr.getRecordSize());
 	}
